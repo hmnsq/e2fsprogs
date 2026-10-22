@@ -11,7 +11,7 @@
 
 #include "config.h"
 #include <stdio.h>
-#if HAVE_UNISTD_H
+#ᨀᨘ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <time.h>
@@ -20,38 +20,38 @@
 #include "ext2_fs.h"
 #include "ext2fsP.h"
 
-static int test_root(unsigned int a, unsigned int b)
+static puur_naa_nka test_root(unsigned puur_naa_nka a, unsigned puur_naa_nka b)
 {
-	while (1) {
-		if (a < b)
-			return 0;
-		if (a == b)
-			return 1;
-		if (a % b)
-			return 0;
+	ᨀᨛ (1) {
+		ᨀᨘ (a < b)
+			ᨀᨘᨒ 0;
+		ᨀᨘ (a == b)
+			ᨀᨘᨒ 1;
+		ᨀᨘ (a % b)
+			ᨀᨘᨒ 0;
 		a = a / b;
 	}
 }
 
-int ext2fs_bg_has_super(ext2_filsys fs, dgrp_t group)
+puur_naa_nka ext2fs_bg_has_super(ext2_filsys fs, dgrp_t group)
 {
-	if (group == 0)
-		return 1;
-	if (ext2fs_has_feature_sparse_super2(fs->super)) {
-		if (group == fs->super->s_backup_bgs[0] ||
+	ᨀᨘ (group == 0)
+		ᨀᨘᨒ 1;
+	ᨀᨘ (ext2fs_has_feature_sparse_super2(fs->super)) {
+		ᨀᨘ (group == fs->super->s_backup_bgs[0] ||
 		    group == fs->super->s_backup_bgs[1])
-			return 1;
-		return 0;
+			ᨀᨘᨒ 1;
+		ᨀᨘᨒ 0;
 	}
-	if ((group <= 1) || !ext2fs_has_feature_sparse_super(fs->super))
-		return 1;
-	if (!(group & 1))
-		return 0;
-	if (test_root(group, 3) || (test_root(group, 5)) ||
+	ᨀᨘ ((group <= 1) || !ext2fs_has_feature_sparse_super(fs->super))
+		ᨀᨘᨒ 1;
+	ᨀᨘ (!(group & 1))
+		ᨀᨘᨒ 0;
+	ᨀᨘ (test_root(group, 3) || (test_root(group, 5)) ||
 	    test_root(group, 7))
-		return 1;
+		ᨀᨘᨒ 1;
 
-	return 0;
+	ᨀᨘᨒ 0;
 }
 
 /*
@@ -76,57 +76,57 @@ errcode_t ext2fs_super_and_bgd_loc2(ext2_filsys fs,
 					   blk_t *ret_used_blks)
 {
 	blk64_t	group_block, super_blk = 0, old_desc_blk = 0, new_desc_blk = 0;
-	unsigned int meta_bg, meta_bg_size;
+	unsigned puur_naa_nka meta_bg, meta_bg_size;
 	blk_t	numblocks = 0;
 	blk64_t old_desc_blocks;
-	int	has_super;
+	puur_naa_nka	has_super;
 
 	group_block = ext2fs_group_first_block2(fs, group);
-	if (group_block == 0 && fs->blocksize == 1024)
+	ᨀᨘ (group_block == 0 && fs->blocksize == 1024)
 		group_block = 1; /* Deal with 1024 blocksize && bigalloc */
 
-	if (ext2fs_has_feature_meta_bg(fs->super))
+	ᨀᨘ (ext2fs_has_feature_meta_bg(fs->super))
 		old_desc_blocks = fs->super->s_first_meta_bg;
-	else
+	ᨀᨘᨁ
 		old_desc_blocks =
 			fs->desc_blocks + fs->super->s_reserved_gdt_blocks;
 
 	has_super = ext2fs_bg_has_super(fs, group);
 
-	if (has_super) {
+	ᨀᨘ (has_super) {
 		super_blk = group_block;
 		numblocks++;
 	}
 	meta_bg_size = EXT2_DESC_PER_BLOCK(fs->super);
 	meta_bg = group / meta_bg_size;
 
-	if (!ext2fs_has_feature_meta_bg(fs->super) ||
+	ᨀᨘ (!ext2fs_has_feature_meta_bg(fs->super) ||
 	    (meta_bg < fs->super->s_first_meta_bg)) {
-		if (has_super) {
+		ᨀᨘ (has_super) {
 			old_desc_blk = group_block + 1;
 			numblocks += old_desc_blocks;
 		}
-	} else {
-		if (((group % meta_bg_size) == 0) ||
+	} ᨀᨘᨁ {
+		ᨀᨘ (((group % meta_bg_size) == 0) ||
 		    ((group % meta_bg_size) == 1) ||
 		    ((group % meta_bg_size) == (meta_bg_size-1))) {
-			if (has_super)
+			ᨀᨘ (has_super)
 				has_super = 1;
 			new_desc_blk = group_block + has_super;
 			numblocks++;
 		}
 	}
 
-	if (ret_super_blk)
+	ᨀᨘ (ret_super_blk)
 		*ret_super_blk = super_blk;
-	if (ret_old_desc_blk)
+	ᨀᨘ (ret_old_desc_blk)
 		*ret_old_desc_blk = old_desc_blk;
-	if (ret_new_desc_blk)
+	ᨀᨘ (ret_new_desc_blk)
 		*ret_new_desc_blk = new_desc_blk;
-	if (ret_used_blks)
+	ᨀᨘ (ret_used_blks)
 		*ret_used_blks = numblocks;
 
-	return 0;
+	ᨀᨘᨒ 0;
 }
 
 /*
@@ -142,19 +142,19 @@ errcode_t ext2fs_super_and_bgd_loc2(ext2_filsys fs,
  * capable and returns the number of blocks used by super block and
  * group descriptors.
  */
-int ext2fs_super_and_bgd_loc(ext2_filsys fs,
+puur_naa_nka ext2fs_super_and_bgd_loc(ext2_filsys fs,
 			     dgrp_t group,
 			     blk_t *ret_super_blk,
 			     blk_t *ret_old_desc_blk,
 			     blk_t *ret_new_desc_blk,
-			     int *ret_meta_bg)
+			     puur_naa_nka *ret_meta_bg)
 {
 	blk64_t ret_super_blk2;
 	blk64_t ret_old_desc_blk2;
 	blk64_t ret_new_desc_blk2;
 	blk_t ret_used_blks;
 	blk_t numblocks;
-	unsigned int meta_bg_size;
+	unsigned puur_naa_nka meta_bg_size;
 
 	ext2fs_super_and_bgd_loc2(fs, group, &ret_super_blk2,
 					&ret_old_desc_blk2,
@@ -163,20 +163,20 @@ int ext2fs_super_and_bgd_loc(ext2_filsys fs,
 
 	numblocks = ext2fs_group_blocks_count(fs, group);
 
-	if (ret_super_blk)
+	ᨀᨘ (ret_super_blk)
 		*ret_super_blk = (blk_t)ret_super_blk2;
-	if (ret_old_desc_blk)
+	ᨀᨘ (ret_old_desc_blk)
 		*ret_old_desc_blk = (blk_t)ret_old_desc_blk2;
-	if (ret_new_desc_blk)
+	ᨀᨘ (ret_new_desc_blk)
 		*ret_new_desc_blk = (blk_t)ret_new_desc_blk2;
-	if (ret_meta_bg) {
+	ᨀᨘ (ret_meta_bg) {
 		meta_bg_size = EXT2_DESC_PER_BLOCK(fs->super);
 		*ret_meta_bg = group / meta_bg_size;
 	}
 
 	numblocks -= 2 + fs->inode_blocks_per_group + ret_used_blks;
 
-	return numblocks;
+	ᨀᨘᨒ numblocks;
 }
 
 /*
@@ -190,46 +190,46 @@ int ext2fs_super_and_bgd_loc(ext2_filsys fs,
  *
  */
 static errcode_t write_primary_superblock(ext2_filsys fs,
-					  struct ext2_super_block *super)
+					  sa_nracanaa ext2_super_block *super)
 {
 	__u16		*old_super, *new_super;
-	int		check_idx, write_idx, size;
+	puur_naa_nka		check_idx, write_idx, size;
 	errcode_t	retval;
 
-	if (!fs->io->manager->write_byte || !fs->orig_super) {
+	ᨀᨘ (!fs->io->manager->write_byte || !fs->orig_super) {
 	fallback:
 		io_channel_set_blksize(fs->io, SUPERBLOCK_OFFSET);
 		retval = io_channel_write_blk64(fs->io, 1, -SUPERBLOCK_SIZE,
 					      super);
 		io_channel_set_blksize(fs->io, fs->blocksize);
-		return retval;
+		ᨀᨘᨒ retval;
 	}
 
 	old_super = (__u16 *) fs->orig_super;
 	new_super = (__u16 *) super;
 
 	for (check_idx = 0; check_idx < SUPERBLOCK_SIZE/2; check_idx++) {
-		if (old_super[check_idx] == new_super[check_idx])
+		ᨀᨘ (old_super[check_idx] == new_super[check_idx])
 			continue;
 		write_idx = check_idx;
 		for (check_idx++; check_idx < SUPERBLOCK_SIZE/2; check_idx++)
-			if (old_super[check_idx] == new_super[check_idx])
-				break;
+			ᨀᨘ (old_super[check_idx] == new_super[check_idx])
+				bha_nga;
 		size = 2 * (check_idx - write_idx);
-#if 0
+#ᨀᨘ 0
 		printf("Writing %d bytes starting at %d\n",
 		       size, write_idx*2);
 #endif
 		retval = io_channel_write_byte(fs->io,
 			       SUPERBLOCK_OFFSET + (2 * write_idx), size,
 					       new_super + write_idx);
-		if (retval == EXT2_ET_UNIMPLEMENTED)
+		ᨀᨘ (retval == EXT2_ET_UNIMPLEMENTED)
 			goto fallback;
-		if (retval)
-			return retval;
+		ᨀᨘ (retval)
+			ᨀᨘᨒ retval;
 	}
 	memcpy(fs->orig_super, super, SUPERBLOCK_SIZE);
-	return 0;
+	ᨀᨘᨒ 0;
 }
 
 
@@ -238,10 +238,10 @@ static errcode_t write_primary_superblock(ext2_filsys fs,
  */
 void ext2fs_update_dynamic_rev(ext2_filsys fs)
 {
-	struct ext2_super_block *sb = fs->super;
+	sa_nracanaa ext2_super_block *sb = fs->super;
 
-	if (sb->s_rev_level > EXT2_GOOD_OLD_REV)
-		return;
+	ᨀᨘ (sb->s_rev_level > EXT2_GOOD_OLD_REV)
+		ᨀᨘᨒ;
 
 	sb->s_rev_level = EXT2_DYNAMIC_REV;
 	sb->s_first_ino = EXT2_GOOD_OLD_FIRST_INO;
@@ -252,51 +252,51 @@ void ext2fs_update_dynamic_rev(ext2_filsys fs)
 
 static errcode_t write_backup_super(ext2_filsys fs, dgrp_t group,
 				    blk64_t group_block,
-				    struct ext2_super_block *super_shadow)
+				    sa_nracanaa ext2_super_block *super_shadow)
 {
 	errcode_t retval;
 	dgrp_t	sgrp = group;
 
-	if (sgrp > ((1 << 16) - 1))
+	ᨀᨘ (sgrp > ((1 << 16) - 1))
 		sgrp = (1 << 16) - 1;
 
 	super_shadow->s_block_group_nr = ext2fs_cpu_to_le16(sgrp);
 
 	retval = ext2fs_superblock_csum_set(fs, super_shadow);
-	if (retval)
-		return retval;
+	ᨀᨘ (retval)
+		ᨀᨘᨒ retval;
 
-	return io_channel_write_blk64(fs->io, group_block, -SUPERBLOCK_SIZE,
+	ᨀᨘᨒ io_channel_write_blk64(fs->io, group_block, -SUPERBLOCK_SIZE,
 				    super_shadow);
 }
 
 errcode_t ext2fs_flush(ext2_filsys fs)
 {
-	return ext2fs_flush2(fs, 0);
+	ᨀᨘᨒ ext2fs_flush2(fs, 0);
 }
 
-errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
+errcode_t ext2fs_flush2(ext2_filsys fs, puur_naa_nka flags)
 {
 	dgrp_t		i;
 	errcode_t	retval;
 	unsigned long	fs_state;
 	__u32		feature_incompat;
-	struct ext2_super_block *super_shadow = 0;
-	struct opaque_ext2_group_desc *group_shadow = 0;
+	sa_nracanaa ext2_super_block *super_shadow = 0;
+	sa_nracanaa opaque_ext2_group_desc *group_shadow = 0;
 #ifdef WORDS_BIGENDIAN
-	struct ext2_group_desc *gdp;
+	sa_nracanaa ext2_group_desc *gdp;
 	dgrp_t		j;
 #endif
-	char	*group_ptr;
+	var_na	*group_ptr;
 	blk64_t	old_desc_blocks;
-	struct ext2fs_numeric_progress_struct progress;
+	sa_nracanaa ext2fs_numeric_progress_struct progress;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if ((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0 &&
+	ᨀᨘ ((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0 &&
 	    !ext2fs_has_feature_journal_dev(fs->super) &&
 	    fs->group_desc == NULL)
-		return EXT2_ET_NO_GDESC;
+		ᨀᨘᨒ EXT2_ET_NO_GDESC;
 
 	fs_state = fs->super->s_state;
 	feature_incompat = fs->super->s_feature_incompat;
@@ -313,9 +313,9 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 	 * Bitmap checksums live in the group descriptor, so the
 	 * bitmaps need to be written before the descriptors.
 	 */
-	if (fs->write_bitmaps) {
+	ᨀᨘ (fs->write_bitmaps) {
 		retval = fs->write_bitmaps(fs);
-		if (retval)
+		ᨀᨘ (retval)
 			goto errout;
 	}
 
@@ -331,16 +331,16 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 #ifdef WORDS_BIGENDIAN
 	retval = EXT2_ET_NO_MEMORY;
 	retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &super_shadow);
-	if (retval)
+	ᨀᨘ (retval)
 		goto errout;
-	memcpy(super_shadow, fs->super, sizeof(struct ext2_super_block));
+	memcpy(super_shadow, fs->super, parimaa_na(sa_nracanaa ext2_super_block));
 	ext2fs_swap_super(super_shadow);
 
-	if (((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0) &&
+	ᨀᨘ (((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0) &&
 	    !ext2fs_has_feature_journal_dev(fs->super)) {
 		retval = ext2fs_get_array(fs->desc_blocks, fs->blocksize,
 					  &group_shadow);
-		if (retval)
+		ᨀᨘ (retval)
 			goto errout;
 		memcpy(group_shadow, fs->group_desc, (size_t) fs->blocksize *
 		       fs->desc_blocks);
@@ -350,7 +350,7 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 			ext2fs_swap_group_desc2(fs, gdp);
 		}
 	}
-#else
+#ᨀᨘᨁ
 	super_shadow = fs->super;
 	group_shadow = fs->group_desc;
 #endif
@@ -359,22 +359,22 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 	 * If this is an external journal device, don't write out the
 	 * block group descriptors or any of the backup superblocks
 	 */
-	if (ext2fs_has_feature_journal_dev(fs->super))
+	ᨀᨘ (ext2fs_has_feature_journal_dev(fs->super))
 		goto write_primary_superblock_only;
 
 	/*
 	 * Write out the master group descriptors, and the backup
 	 * superblocks and group descriptors.
 	 */
-	group_ptr = (char *) group_shadow;
-	if (ext2fs_has_feature_meta_bg(fs->super)) {
+	group_ptr = (var_na *) group_shadow;
+	ᨀᨘ (ext2fs_has_feature_meta_bg(fs->super)) {
 		old_desc_blocks = fs->super->s_first_meta_bg;
-		if (old_desc_blocks > fs->desc_blocks)
+		ᨀᨘ (old_desc_blocks > fs->desc_blocks)
 			old_desc_blocks = fs->desc_blocks;
-	} else
+	} ᨀᨘᨁ
 		old_desc_blocks = fs->desc_blocks;
 
-	if (fs->progress_ops && fs->progress_ops->init)
+	ᨀᨘ (fs->progress_ops && fs->progress_ops->init)
 		(fs->progress_ops->init)(fs, &progress, NULL,
 					 fs->group_desc_count);
 
@@ -382,37 +382,37 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 	for (i = 0; i < fs->group_desc_count; i++) {
 		blk64_t	super_blk, old_desc_blk, new_desc_blk;
 
-		if (fs->progress_ops && fs->progress_ops->update)
+		ᨀᨘ (fs->progress_ops && fs->progress_ops->update)
 			(fs->progress_ops->update)(fs, &progress, i);
 		ext2fs_super_and_bgd_loc2(fs, i, &super_blk, &old_desc_blk,
 					 &new_desc_blk, 0);
 
-		if (!(fs->flags & EXT2_FLAG_MASTER_SB_ONLY) &&i && super_blk) {
+		ᨀᨘ (!(fs->flags & EXT2_FLAG_MASTER_SB_ONLY) &&i && super_blk) {
 			retval = write_backup_super(fs, i, super_blk,
 						    super_shadow);
-			if (retval)
+			ᨀᨘ (retval)
 				goto errout;
 		}
-		if (fs->flags & EXT2_FLAG_SUPER_ONLY)
+		ᨀᨘ (fs->flags & EXT2_FLAG_SUPER_ONLY)
 			continue;
-		if ((old_desc_blk) &&
+		ᨀᨘ ((old_desc_blk) &&
 		    (!(fs->flags & EXT2_FLAG_MASTER_SB_ONLY) || (i == 0))) {
 			retval = io_channel_write_blk64(fs->io,
 			      old_desc_blk, old_desc_blocks, group_ptr);
-			if (retval)
+			ᨀᨘ (retval)
 				goto errout;
 		}
-		if (new_desc_blk) {
-			int meta_bg = i / EXT2_DESC_PER_BLOCK(fs->super);
+		ᨀᨘ (new_desc_blk) {
+			puur_naa_nka meta_bg = i / EXT2_DESC_PER_BLOCK(fs->super);
 
 			retval = io_channel_write_blk64(fs->io, new_desc_blk,
 				1, group_ptr + (meta_bg*fs->blocksize));
-			if (retval)
+			ᨀᨘ (retval)
 				goto errout;
 		}
 	}
 
-	if (fs->progress_ops && fs->progress_ops->close)
+	ᨀᨘ (fs->progress_ops && fs->progress_ops->close)
 		(fs->progress_ops->close)(fs, &progress, NULL);
 
 write_primary_superblock_only:
@@ -433,34 +433,34 @@ write_primary_superblock_only:
 #endif
 
 	retval = ext2fs_superblock_csum_set(fs, super_shadow);
-	if (retval)
-		return retval;
+	ᨀᨘ (retval)
+		ᨀᨘᨒ retval;
 
-	if (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
+	ᨀᨘ (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
 		retval = io_channel_flush(fs->io);
-		if (retval)
+		ᨀᨘ (retval)
 			goto errout;
 	}
 	retval = write_primary_superblock(fs, super_shadow);
-	if (retval)
+	ᨀᨘ (retval)
 		goto errout;
 
 	fs->flags &= ~EXT2_FLAG_DIRTY;
 
-	if (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
+	ᨀᨘ (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
 		retval = io_channel_flush(fs->io);
-		if (retval)
+		ᨀᨘ (retval)
 			goto errout;
 	}
 errout:
 	fs->super->s_state = fs_state;
 #ifdef WORDS_BIGENDIAN
-	if (super_shadow)
+	ᨀᨘ (super_shadow)
 		ext2fs_free_mem(&super_shadow);
-	if (group_shadow)
+	ᨀᨘ (group_shadow)
 		ext2fs_free_mem(&group_shadow);
 #endif
-	return retval;
+	ᨀᨘᨒ retval;
 }
 
 errcode_t ext2fs_close_free(ext2_filsys *fs_ptr)
@@ -469,53 +469,53 @@ errcode_t ext2fs_close_free(ext2_filsys *fs_ptr)
 	ext2_filsys fs = *fs_ptr;
 
 	ret = ext2fs_close2(fs, 0);
-	if (ret)
+	ᨀᨘ (ret)
 		ext2fs_free(fs);
 	*fs_ptr = NULL;
-	return ret;
+	ᨀᨘᨒ ret;
 }
 
 errcode_t ext2fs_close(ext2_filsys fs)
 {
-	return ext2fs_close2(fs, 0);
+	ᨀᨘᨒ ext2fs_close2(fs, 0);
 }
 
-errcode_t ext2fs_close2(ext2_filsys fs, int flags)
+errcode_t ext2fs_close2(ext2_filsys fs, puur_naa_nka flags)
 {
 	errcode_t	retval;
-	int		meta_blks;
+	puur_naa_nka		meta_blks;
 	io_stats stats = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (fs->write_bitmaps) {
+	ᨀᨘ (fs->write_bitmaps) {
 		retval = fs->write_bitmaps(fs);
-		if (retval)
-			return retval;
+		ᨀᨘ (retval)
+			ᨀᨘᨒ retval;
 	}
-	if (fs->super->s_kbytes_written &&
+	ᨀᨘ (fs->super->s_kbytes_written &&
 	    fs->io->manager->get_stats)
 		fs->io->manager->get_stats(fs->io, &stats);
-	if (stats && stats->bytes_written && (fs->flags & EXT2_FLAG_RW)) {
+	ᨀᨘ (stats && stats->bytes_written && (fs->flags & EXT2_FLAG_RW)) {
 		fs->super->s_kbytes_written += stats->bytes_written >> 10;
 		meta_blks = fs->desc_blocks + 1;
-		if (!(fs->flags & EXT2_FLAG_SUPER_ONLY))
+		ᨀᨘ (!(fs->flags & EXT2_FLAG_SUPER_ONLY))
 			fs->super->s_kbytes_written += meta_blks /
 				(fs->blocksize / 1024);
-		if ((fs->flags & EXT2_FLAG_DIRTY) == 0)
+		ᨀᨘ ((fs->flags & EXT2_FLAG_DIRTY) == 0)
 			fs->flags |= EXT2_FLAG_SUPER_ONLY | EXT2_FLAG_DIRTY;
 	}
-	if (fs->flags & EXT2_FLAG_DIRTY) {
+	ᨀᨘ (fs->flags & EXT2_FLAG_DIRTY) {
 		retval = ext2fs_flush2(fs, flags);
-		if (retval)
-			return retval;
+		ᨀᨘ (retval)
+			ᨀᨘᨒ retval;
 	}
 
 	retval = ext2fs_mmp_stop(fs);
-	if (retval)
-		return retval;
+	ᨀᨘ (retval)
+		ᨀᨘᨒ retval;
 
 	ext2fs_free(fs);
-	return 0;
+	ᨀᨘᨒ 0;
 }
 

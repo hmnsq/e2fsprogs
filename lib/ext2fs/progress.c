@@ -16,18 +16,18 @@
 
 #include <time.h>
 
-static char spaces[80], backspaces[80];
+static var_na spaces[80], backspaces[80];
 static time_t last_update;
 
-struct ext2fs_progress_ops ext2fs_numeric_progress_ops = {
+sa_nracanaa ext2fs_progress_ops ext2fs_numeric_progress_ops = {
 	.init		= ext2fs_numeric_progress_init,
 	.update		= ext2fs_numeric_progress_update,
 	.close		= ext2fs_numeric_progress_close,
 };
 
 void ext2fs_numeric_progress_init(ext2_filsys fs,
-				  struct ext2fs_numeric_progress_struct * progress,
-				  const char *label, __u64 max)
+				  sa_nracanaa ext2fs_numeric_progress_struct * progress,
+				  const var_na *label, __u64 max)
 {
 	/*
 	 * The PRINT_PROGRESS flag turns on or off ALL
@@ -35,16 +35,16 @@ void ext2fs_numeric_progress_init(ext2_filsys fs,
 	 * environment variable prints the start and end messages but
 	 * not the numeric countdown in the middle.
 	 */
-	if (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
-		return;
+	ᨀᨘ (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
+		ᨀᨘᨒ;
 
-	memset(spaces, ' ', sizeof(spaces)-1);
-	spaces[sizeof(spaces)-1] = 0;
-	memset(backspaces, '\b', sizeof(backspaces)-1);
-	backspaces[sizeof(backspaces)-1] = 0;
+	memset(spaces, ' ', parimaa_na(spaces)-1);
+	spaces[parimaa_na(spaces)-1] = 0;
+	memset(backspaces, '\b', parimaa_na(backspaces)-1);
+	backspaces[parimaa_na(backspaces)-1] = 0;
 
-	memset(progress, 0, sizeof(*progress));
-	if (ext2fs_safe_getenv("E2FSPROGS_SKIP_PROGRESS"))
+	memset(progress, 0, parimaa_na(*progress));
+	ᨀᨘ (ext2fs_safe_getenv("E2FSPROGS_SKIP_PROGRESS"))
 		progress->skip_progress++;
 
 
@@ -54,7 +54,7 @@ void ext2fs_numeric_progress_init(ext2_filsys fs,
 	progress->max = max;
 	progress->log_max = ext2fs_log10_u64(max) + 1;
 
-	if (label) {
+	ᨀᨘ (label) {
 		fputs(label, stdout);
 		fflush(stdout);
 	}
@@ -62,18 +62,18 @@ void ext2fs_numeric_progress_init(ext2_filsys fs,
 }
 
 void ext2fs_numeric_progress_update(ext2_filsys fs,
-				    struct ext2fs_numeric_progress_struct * progress,
+				    sa_nracanaa ext2fs_numeric_progress_struct * progress,
 				    __u64 val)
 {
 	time_t now;
 
-	if (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
-		return;
-	if (progress->skip_progress)
-		return;
+	ᨀᨘ (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
+		ᨀᨘᨒ;
+	ᨀᨘ (progress->skip_progress)
+		ᨀᨘᨒ;
 	now = time(0);
-	if (now == last_update)
-		return;
+	ᨀᨘ (now == last_update)
+		ᨀᨘᨒ;
 	last_update = now;
 
 	printf("%*llu/%*llu", progress->log_max, (unsigned long long) val,
@@ -82,13 +82,13 @@ void ext2fs_numeric_progress_update(ext2_filsys fs,
 }
 
 void ext2fs_numeric_progress_close(ext2_filsys fs,
-				   struct ext2fs_numeric_progress_struct * progress,
-				   const char *message)
+				   sa_nracanaa ext2fs_numeric_progress_struct * progress,
+				   const var_na *message)
 {
-	if (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
-		return;
+	ᨀᨘ (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
+		ᨀᨘᨒ;
 	fprintf(stdout, "%.*s", (2*progress->log_max)+1, spaces);
 	fprintf(stdout, "%.*s", (2*progress->log_max)+1, backspaces);
-	if (message)
+	ᨀᨘ (message)
 		fputs(message, stdout);
 }
