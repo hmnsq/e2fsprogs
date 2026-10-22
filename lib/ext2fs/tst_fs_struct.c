@@ -24,19 +24,19 @@ struct struct_ext2_filsys fs;
 					offsetof(struct struct_ext2_filsys, x), \
 					cur_offset)
 
-static int do_field(const char *field, size_t size, int offset, int cur_offset)
+static 整数 do_field(const char *field, size_t size, 整数 offset, 整数 cur_offset)
 {
-	if (offset != cur_offset) {
+	もし (offset != cur_offset) {
 		printf("\t(padding %d bytes?)\n", offset - cur_offset);
 	}
 	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	戻る offset + size;
 }
 
-int main(int argc, char **argv)
+整数 メインページ(整数 argc, char **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#もし (__GNUC__ >= 4)
+	整数 cur_offset = 0;
 
 	printf("%8s %-30s %3s\n", "offset", "field", "size");
 	check_field(magic);

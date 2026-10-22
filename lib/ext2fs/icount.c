@@ -10,7 +10,7 @@
  */
 
 #include "config.h"
-#if HAVE_UNISTD_H
+#もし HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <string.h>
@@ -75,32 +75,32 @@ struct ext2_icount {
 
 void ext2fs_free_icount(ext2_icount_t icount)
 {
-	if (!icount)
-		return;
+	もし (!icount)
+		戻る;
 
 	icount->magic = 0;
-	if (icount->list)
+	もし (icount->list)
 		ext2fs_free_mem(&icount->list);
-	if (icount->single)
+	もし (icount->single)
 		ext2fs_free_inode_bitmap(icount->single);
-	if (icount->multiple)
+	もし (icount->multiple)
 		ext2fs_free_inode_bitmap(icount->multiple);
 #ifdef CONFIG_TDB
-	if (icount->tdb)
+	もし (icount->tdb)
 		tdb_close(icount->tdb);
-	if (icount->tdb_fn) {
+	もし (icount->tdb_fn) {
 		(void) unlink(icount->tdb_fn);
 		free(icount->tdb_fn);
 	}
 #endif
 
-	if (icount->fullmap)
+	もし (icount->fullmap)
 		ext2fs_free_mem(&icount->fullmap);
 
 	ext2fs_free_mem(&icount);
 }
 
-static errcode_t alloc_icount(ext2_filsys fs, int flags, ext2_icount_t *ret)
+static errcode_t alloc_icount(ext2_filsys fs, 整数 flags, ext2_icount_t *ret)
 {
 	ext2_icount_t	icount;
 	errcode_t	retval;
@@ -108,43 +108,43 @@ static errcode_t alloc_icount(ext2_filsys fs, int flags, ext2_icount_t *ret)
 	*ret = 0;
 
 	retval = ext2fs_get_mem(sizeof(struct ext2_icount), &icount);
-	if (retval)
-		return retval;
+	もし (retval)
+		戻る retval;
 	memset(icount, 0, sizeof(struct ext2_icount));
 	icount->magic = EXT2_ET_MAGIC_ICOUNT;
 	icount->num_inodes = fs->super->s_inodes_count;
 
-	if ((flags & EXT2_ICOUNT_OPT_FULLMAP) &&
+	もし ((flags & EXT2_ICOUNT_OPT_FULLMAP) &&
 	    (flags & EXT2_ICOUNT_OPT_INCREMENT)) {
 		unsigned sz = sizeof(*icount->fullmap) * icount->num_inodes;
 
 		retval = ext2fs_get_mem(sz, &icount->fullmap);
 		/* If we can't allocate, fall back */
-		if (!retval) {
+		もし (!retval) {
 			memset(icount->fullmap, 0, sz);
 			*ret = icount;
-			return 0;
+			戻る 0;
 		}
 	}
 
 	retval = ext2fs_allocate_inode_bitmap(fs, "icount", &icount->single);
-	if (retval)
+	もし (retval)
 		goto errout;
 
-	if (flags & EXT2_ICOUNT_OPT_INCREMENT) {
+	もし (flags & EXT2_ICOUNT_OPT_INCREMENT) {
 		retval = ext2fs_allocate_inode_bitmap(fs, "icount_inc",
 						      &icount->multiple);
-		if (retval)
+		もし (retval)
 			goto errout;
-	} else
+	} 否则
 		icount->multiple = 0;
 
 	*ret = icount;
-	return 0;
+	戻る 0;
 
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
+	戻る(retval);
 }
 
 #ifdef CONFIG_TDB
@@ -198,7 +198,7 @@ static void uuid_unparse(void *uu, char *out)
 
 errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2FS_NO_TDB_UNUSED,
 				   char *tdb_dir EXT2FS_NO_TDB_UNUSED,
-				   int flags EXT2FS_NO_TDB_UNUSED,
+				   整数 flags EXT2FS_NO_TDB_UNUSED,
 				   ext2_icount_t *ret EXT2FS_NO_TDB_UNUSED)
 {
 #ifdef CONFIG_TDB
@@ -207,20 +207,20 @@ errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2FS_NO_TDB_UNUSED,
 	char 		*fn, uuid[40];
 	ext2_ino_t	num_inodes;
 	mode_t		save_umask;
-	int		fd;
+	整数		fd;
 
 	retval = alloc_icount(fs, flags,  &icount);
-	if (retval)
-		return retval;
+	もし (retval)
+		戻る retval;
 
 	retval = ext2fs_get_mem(strlen(tdb_dir) + 64, &fn);
-	if (retval)
+	もし (retval)
 		goto errout;
 	uuid_unparse(fs->super->s_uuid, uuid);
 	sprintf(fn, "%s/%s-icount-XXXXXX", tdb_dir, uuid);
 	save_umask = umask(077);
 	fd = mkstemp(fn);
-	if (fd < 0) {
+	もし (fd < 0) {
 		retval = errno;
 		ext2fs_free_mem(&fn);
 		goto errout;
@@ -240,21 +240,21 @@ errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2FS_NO_TDB_UNUSED,
 	icount->tdb = tdb_open(fn, num_inodes, TDB_NOLOCK | TDB_NOSYNC,
 			       O_RDWR | O_CREAT | O_TRUNC, 0600);
 	close(fd);
-	if (icount->tdb == NULL) {
+	もし (icount->tdb == NULL) {
 		retval = errno;
 		goto errout;
 	}
 	*ret = icount;
-	return 0;
+	戻る 0;
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
-#else
-	return EXT2_ET_UNIMPLEMENTED;
+	戻る(retval);
+#否则
+	戻る EXT2_ET_UNIMPLEMENTED;
 #endif
 }
 
-errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
+errcode_t ext2fs_create_icount2(ext2_filsys fs, 整数 flags, unsigned 整数 size,
 				ext2_icount_t hint, ext2_icount_t *ret)
 {
 	ext2_icount_t	icount;
@@ -262,41 +262,41 @@ errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
 	size_t		bytes;
 	ext2_ino_t	i;
 
-	if (hint) {
+	もし (hint) {
 		EXT2_CHECK_MAGIC(hint, EXT2_ET_MAGIC_ICOUNT);
-		if (hint->size > size)
+		もし (hint->size > size)
 			size = (size_t) hint->size;
 	}
 
 	retval = alloc_icount(fs, flags, &icount);
-	if (retval)
-		return retval;
+	もし (retval)
+		戻る retval;
 
-	if (icount->fullmap)
+	もし (icount->fullmap)
 		goto successout;
 
-	if (size) {
+	もし (size) {
 		icount->size = size;
-	} else {
+	} 否则 {
 		/*
 		 * Figure out how many special case inode counts we will
 		 * have.  We know we will need one for each directory;
 		 * we also need to reserve some extra room for file links
 		 */
 		retval = ext2fs_get_num_dirs(fs, &icount->size);
-		if (retval)
+		もし (retval)
 			goto errout;
 		icount->size += fs->super->s_inodes_count / 50;
 	}
 
 	bytes = (size_t) (icount->size * sizeof(struct ext2_icount_el));
-#if 0
+#もし 0
 	printf("Icount allocated %u entries, %d bytes.\n",
 	       icount->size, bytes);
 #endif
 	retval = ext2fs_get_array(icount->size, sizeof(struct ext2_icount_el),
 			 &icount->list);
-	if (retval)
+	もし (retval)
 		goto errout;
 	memset(icount->list, 0, bytes);
 
@@ -308,26 +308,26 @@ errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
 	 * found in the hint icount (since those are ones which will
 	 * likely need to be in the sorted list this time around).
 	 */
-	if (hint) {
-		for (i=0; i < hint->count; i++)
+	もし (hint) {
+		ために (i=0; i < hint->count; i++)
 			icount->list[i].ino = hint->list[i].ino;
 		icount->count = hint->count;
 	}
 
 successout:
 	*ret = icount;
-	return 0;
+	戻る 0;
 
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
+	戻る(retval);
 }
 
-errcode_t ext2fs_create_icount(ext2_filsys fs, int flags,
-			       unsigned int size,
+errcode_t ext2fs_create_icount(ext2_filsys fs, 整数 flags,
+			       unsigned 整数 size,
 			       ext2_icount_t *ret)
 {
-	return ext2fs_create_icount2(fs, flags, size, 0, ret);
+	戻る ext2fs_create_icount2(fs, flags, size, 0, ret);
 }
 
 /*
@@ -335,25 +335,25 @@ errcode_t ext2fs_create_icount(ext2_filsys fs, int flags,
  * 	specified position.
  */
 static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
-					    ext2_ino_t ino, int pos)
+					    ext2_ino_t ino, 整数 pos)
 {
 	struct ext2_icount_el 	*el;
 	errcode_t		retval;
 	ext2_ino_t		new_size = 0;
-	int			num;
+	整数			num;
 
-	if (icount->last_lookup && icount->last_lookup->ino == ino)
-		return icount->last_lookup;
+	もし (icount->last_lookup && icount->last_lookup->ino == ino)
+		戻る icount->last_lookup;
 
-	if (icount->count >= icount->size) {
-		if (icount->count) {
+	もし (icount->count >= icount->size) {
+		もし (icount->count) {
 			new_size = icount->list[(unsigned)icount->count-1].ino;
 			new_size = (ext2_ino_t) (icount->count *
 				((float) icount->num_inodes / new_size));
 		}
-		if (new_size < (icount->size + 100))
+		もし (new_size < (icount->size + 100))
 			new_size = icount->size + 100;
-#if 0
+#もし 0
 		printf("Reallocating icount %u entries...\n", new_size);
 #endif
 		retval = ext2fs_resize_mem((size_t) icount->size *
@@ -361,14 +361,14 @@ static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
 					   (size_t) new_size *
 					   sizeof(struct ext2_icount_el),
 					   &icount->list);
-		if (retval)
-			return 0;
+		もし (retval)
+			戻る 0;
 		icount->size = new_size;
 	}
-	num = (int) icount->count - pos;
-	if (num < 0)
-		return 0;	/* should never happen */
-	if (num) {
+	num = (整数) icount->count - pos;
+	もし (num < 0)
+		戻る 0;	/* should never happen */
+	もし (num) {
 		memmove(&icount->list[pos+1], &icount->list[pos],
 			sizeof(struct ext2_icount_el) * num);
 	}
@@ -377,7 +377,7 @@ static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
 	el->count = 0;
 	el->ino = ino;
 	icount->last_lookup = el;
-	return el;
+	戻る el;
 }
 
 /*
@@ -386,47 +386,47 @@ static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
  * 	and we can't find an entry, create one in the sorted list.
  */
 static struct ext2_icount_el *get_icount_el(ext2_icount_t icount,
-					    ext2_ino_t ino, int create)
+					    ext2_ino_t ino, 整数 create)
 {
-	int	low, high, mid;
+	整数	low, high, mid;
 
-	if (!icount || !icount->list)
-		return 0;
+	もし (!icount || !icount->list)
+		戻る 0;
 
-	if (create && ((icount->count == 0) ||
+	もし (create && ((icount->count == 0) ||
 		       (ino > icount->list[(unsigned)icount->count-1].ino))) {
-		return insert_icount_el(icount, ino, (unsigned) icount->count);
+		戻る insert_icount_el(icount, ino, (unsigned) icount->count);
 	}
-	if (icount->count == 0)
-		return 0;
+	もし (icount->count == 0)
+		戻る 0;
 
-	if (icount->cursor >= icount->count)
+	もし (icount->cursor >= icount->count)
 		icount->cursor = 0;
-	if (ino == icount->list[icount->cursor].ino)
-		return &icount->list[icount->cursor++];
-#if 0
+	もし (ino == icount->list[icount->cursor].ino)
+		戻る &icount->list[icount->cursor++];
+#もし 0
 	printf("Non-cursor get_icount_el: %u\n", ino);
 #endif
 	low = 0;
-	high = (int) icount->count-1;
-	while (low <= high) {
+	high = (整数) icount->count-1;
+	ながら (low <= high) {
 		mid = ((unsigned)low + (unsigned)high) >> 1;
-		if (ino == icount->list[mid].ino) {
+		もし (ino == icount->list[mid].ino) {
 			icount->cursor = mid+1;
-			return &icount->list[mid];
+			戻る &icount->list[mid];
 		}
-		if (ino < icount->list[mid].ino)
+		もし (ino < icount->list[mid].ino)
 			high = mid-1;
-		else
+		否则
 			low = mid+1;
 	}
 	/*
 	 * If we need to create a new entry, it should be right at
 	 * low (where high will be left at low-1).
 	 */
-	if (create)
-		return insert_icount_el(icount, ino, low);
-	return 0;
+	もし (create)
+		戻る insert_icount_el(icount, ino, low);
+	戻る 0;
 }
 
 static errcode_t set_inode_count(ext2_icount_t icount, ext2_ino_t ino,
@@ -436,34 +436,34 @@ static errcode_t set_inode_count(ext2_icount_t icount, ext2_ino_t ino,
 #ifdef CONFIG_TDB
 	TDB_DATA key, data;
 
-	if (icount->tdb) {
+	もし (icount->tdb) {
 		key.dptr = (unsigned char *) &ino;
 		key.dsize = sizeof(ext2_ino_t);
 		data.dptr = (unsigned char *) &count;
 		data.dsize = sizeof(__u32);
-		if (count) {
-			if (tdb_store(icount->tdb, key, data, TDB_REPLACE))
-				return tdb_error(icount->tdb) +
+		もし (count) {
+			もし (tdb_store(icount->tdb, key, data, TDB_REPLACE))
+				戻る tdb_error(icount->tdb) +
 					EXT2_ET_TDB_SUCCESS;
-		} else {
-			if (tdb_delete(icount->tdb, key))
-				return tdb_error(icount->tdb) +
+		} 否则 {
+			もし (tdb_delete(icount->tdb, key))
+				戻る tdb_error(icount->tdb) +
 					EXT2_ET_TDB_SUCCESS;
 		}
-		return 0;
+		戻る 0;
 	}
 #endif
-	if (icount->fullmap) {
+	もし (icount->fullmap) {
 		icount->fullmap[ino] = icount_16_xlate(count);
-		return 0;
+		戻る 0;
 	}
 
 	el = get_icount_el(icount, ino, 1);
-	if (!el)
-		return EXT2_ET_NO_MEMORY;
+	もし (!el)
+		戻る EXT2_ET_NO_MEMORY;
 
 	el->count = count;
-	return 0;
+	戻る 0;
 }
 
 static errcode_t get_inode_count(ext2_icount_t icount, ext2_ino_t ino,
@@ -473,57 +473,57 @@ static errcode_t get_inode_count(ext2_icount_t icount, ext2_ino_t ino,
 #ifdef CONFIG_TDB
 	TDB_DATA key, data;
 
-	if (icount->tdb) {
+	もし (icount->tdb) {
 		key.dptr = (unsigned char *) &ino;
 		key.dsize = sizeof(ext2_ino_t);
 
 		data = tdb_fetch(icount->tdb, key);
-		if (data.dptr == NULL) {
+		もし (data.dptr == NULL) {
 			*count = 0;
-			return tdb_error(icount->tdb) + EXT2_ET_TDB_SUCCESS;
+			戻る tdb_error(icount->tdb) + EXT2_ET_TDB_SUCCESS;
 		}
 
 		*count = *((__u32 *) data.dptr);
 		free(data.dptr);
-		return 0;
+		戻る 0;
 	}
 #endif
-	if (icount->fullmap) {
+	もし (icount->fullmap) {
 		*count = icount->fullmap[ino];
-		return 0;
+		戻る 0;
 	}
 
 	el = get_icount_el(icount, ino, 0);
-	if (!el) {
+	もし (!el) {
 		*count = 0;
-		return ENOENT;
+		戻る ENOENT;
 	}
 
 	*count = el->count;
-	return 0;
+	戻る 0;
 }
 
 errcode_t ext2fs_icount_validate(ext2_icount_t icount, FILE *out)
 {
 	errcode_t	ret = 0;
-	unsigned int	i;
+	unsigned 整数	i;
 	const char *bad = "bad icount";
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->count > icount->size) {
+	もし (icount->count > icount->size) {
 		fprintf(out, "%s: count > size\n", bad);
-		return EXT2_ET_INVALID_ARGUMENT;
+		戻る EXT2_ET_INVALID_ARGUMENT;
 	}
-	for (i=1; i < icount->count; i++) {
-		if (icount->list[i-1].ino >= icount->list[i].ino) {
+	ために (i=1; i < icount->count; i++) {
+		もし (icount->list[i-1].ino >= icount->list[i].ino) {
 			fprintf(out, "%s: list[%d].ino=%u, list[%d].ino=%u\n",
 				bad, i-1, icount->list[i-1].ino,
 				i, icount->list[i].ino);
 			ret = EXT2_ET_INVALID_ARGUMENT;
 		}
 	}
-	return ret;
+	戻る ret;
 }
 
 errcode_t ext2fs_icount_fetch(ext2_icount_t icount, ext2_ino_t ino, __u16 *ret)
@@ -531,23 +531,23 @@ errcode_t ext2fs_icount_fetch(ext2_icount_t icount, ext2_ino_t ino, __u16 *ret)
 	__u32	val;
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	もし (!ino || (ino > icount->num_inodes))
+		戻る EXT2_ET_INVALID_ARGUMENT;
 
-	if (!icount->fullmap) {
-		if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	もし (!icount->fullmap) {
+		もし (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 			*ret = 1;
-			return 0;
+			戻る 0;
 		}
-		if (icount->multiple &&
+		もし (icount->multiple &&
 			!ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
 			*ret = 0;
-			return 0;
+			戻る 0;
 		}
 	}
 	get_inode_count(icount, ino, &val);
 	*ret = icount_16_xlate(val);
-	return 0;
+	戻る 0;
 }
 
 errcode_t ext2fs_icount_increment(ext2_icount_t icount, ext2_ino_t ino,
@@ -557,57 +557,57 @@ errcode_t ext2fs_icount_increment(ext2_icount_t icount, ext2_ino_t ino,
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	もし (!ino || (ino > icount->num_inodes))
+		戻る EXT2_ET_INVALID_ARGUMENT;
 
-	if (icount->fullmap) {
+	もし (icount->fullmap) {
 		curr_value = icount_16_xlate(icount->fullmap[ino] + 1);
 		icount->fullmap[ino] = curr_value;
-	} else if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	} 否则 もし (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 		/*
 		 * If the existing count is 1, then we know there is
 		 * no entry in the list.
 		 */
-		if (set_inode_count(icount, ino, 2))
-			return EXT2_ET_NO_MEMORY;
+		もし (set_inode_count(icount, ino, 2))
+			戻る EXT2_ET_NO_MEMORY;
 		curr_value = 2;
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-	} else if (icount->multiple) {
+	} 否则 もし (icount->multiple) {
 		/*
 		 * The count is either zero or greater than 1; if the
 		 * inode is set in icount->multiple, then there should
 		 * be an entry in the list, so we need to fix it.
 		 */
-		if (ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
+		もし (ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
 			get_inode_count(icount, ino, &curr_value);
 			curr_value++;
-			if (set_inode_count(icount, ino, curr_value))
-				return EXT2_ET_NO_MEMORY;
-		} else {
+			もし (set_inode_count(icount, ino, curr_value))
+				戻る EXT2_ET_NO_MEMORY;
+		} 否则 {
 			/*
 			 * The count was zero; mark the single bitmap
 			 * and return.
 			 */
 			ext2fs_mark_inode_bitmap2(icount->single, ino);
-			if (ret)
+			もし (ret)
 				*ret = 1;
-			return 0;
+			戻る 0;
 		}
-	} else {
+	} 否则 {
 		/*
 		 * The count is either zero or greater than 1; try to
 		 * find an entry in the list to determine which.
 		 */
 		get_inode_count(icount, ino, &curr_value);
 		curr_value++;
-		if (set_inode_count(icount, ino, curr_value))
-			return EXT2_ET_NO_MEMORY;
+		もし (set_inode_count(icount, ino, curr_value))
+			戻る EXT2_ET_NO_MEMORY;
 	}
-	if (icount->multiple)
+	もし (icount->multiple)
 		ext2fs_mark_inode_bitmap2(icount->multiple, ino);
-	if (ret)
+	もし (ret)
 		*ret = icount_16_xlate(curr_value);
-	return 0;
+	戻る 0;
 }
 
 errcode_t ext2fs_icount_decrement(ext2_icount_t icount, ext2_ino_t ino,
@@ -615,98 +615,98 @@ errcode_t ext2fs_icount_decrement(ext2_icount_t icount, ext2_ino_t ino,
 {
 	__u32			curr_value;
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	もし (!ino || (ino > icount->num_inodes))
+		戻る EXT2_ET_INVALID_ARGUMENT;
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->fullmap) {
-		if (!icount->fullmap[ino])
-			return EXT2_ET_INVALID_ARGUMENT;
+	もし (icount->fullmap) {
+		もし (!icount->fullmap[ino])
+			戻る EXT2_ET_INVALID_ARGUMENT;
 
 		curr_value = --icount->fullmap[ino];
-		if (ret)
+		もし (ret)
 			*ret = icount_16_xlate(curr_value);
-		return 0;
+		戻る 0;
 	}
 
-	if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	もし (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple)
+		もし (icount->multiple)
 			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		else {
+		否则 {
 			set_inode_count(icount, ino, 0);
 		}
-		if (ret)
+		もし (ret)
 			*ret = 0;
-		return 0;
+		戻る 0;
 	}
 
-	if (icount->multiple &&
+	もし (icount->multiple &&
 	    !ext2fs_test_inode_bitmap2(icount->multiple, ino))
-		return EXT2_ET_INVALID_ARGUMENT;
+		戻る EXT2_ET_INVALID_ARGUMENT;
 
 	get_inode_count(icount, ino, &curr_value);
-	if (!curr_value)
-		return EXT2_ET_INVALID_ARGUMENT;
+	もし (!curr_value)
+		戻る EXT2_ET_INVALID_ARGUMENT;
 	curr_value--;
-	if (set_inode_count(icount, ino, curr_value))
-		return EXT2_ET_NO_MEMORY;
+	もし (set_inode_count(icount, ino, curr_value))
+		戻る EXT2_ET_NO_MEMORY;
 
-	if (curr_value == 1)
+	もし (curr_value == 1)
 		ext2fs_mark_inode_bitmap2(icount->single, ino);
-	if ((curr_value == 0) && icount->multiple)
+	もし ((curr_value == 0) && icount->multiple)
 		ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
 
-	if (ret)
+	もし (ret)
 		*ret = icount_16_xlate(curr_value);
-	return 0;
+	戻る 0;
 }
 
 errcode_t ext2fs_icount_store(ext2_icount_t icount, ext2_ino_t ino,
 			      __u16 count)
 {
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	もし (!ino || (ino > icount->num_inodes))
+		戻る EXT2_ET_INVALID_ARGUMENT;
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->fullmap)
-		return set_inode_count(icount, ino, count);
+	もし (icount->fullmap)
+		戻る set_inode_count(icount, ino, count);
 
-	if (count == 1) {
+	もし (count == 1) {
 		ext2fs_mark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple)
+		もし (icount->multiple)
 			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		return 0;
+		戻る 0;
 	}
-	if (count == 0) {
+	もし (count == 0) {
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple) {
+		もし (icount->multiple) {
 			/*
 			 * If the icount->multiple bitmap is enabled,
 			 * we can just clear both bitmaps and we're done
 			 */
 			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		} else
+		} 否则
 			set_inode_count(icount, ino, 0);
-		return 0;
+		戻る 0;
 	}
 
-	if (set_inode_count(icount, ino, count))
-		return EXT2_ET_NO_MEMORY;
+	もし (set_inode_count(icount, ino, count))
+		戻る EXT2_ET_NO_MEMORY;
 	ext2fs_unmark_inode_bitmap2(icount->single, ino);
-	if (icount->multiple)
+	もし (icount->multiple)
 		ext2fs_mark_inode_bitmap2(icount->multiple, ino);
-	return 0;
+	戻る 0;
 }
 
 ext2_ino_t ext2fs_get_icount_size(ext2_icount_t icount)
 {
-	if (!icount || icount->magic != EXT2_ET_MAGIC_ICOUNT)
-		return 0;
+	もし (!icount || icount->magic != EXT2_ET_MAGIC_ICOUNT)
+		戻る 0;
 
-	return icount->size;
+	戻る icount->size;
 }
 
 #ifdef DEBUG
@@ -721,7 +721,7 @@ ext2_icount_t	icount;
 #define DECREMENT	0x04
 
 struct test_program {
-	int		cmd;
+	整数		cmd;
 	ext2_ino_t	ino;
 	__u16		arg;
 	__u16		expected;
@@ -802,56 +802,56 @@ static void setup(void)
 
 	retval = ext2fs_initialize("test fs", EXT2_FLAG_64BITS, &param,
 				   test_io_manager, &test_fs);
-	if (retval) {
+	もし (retval) {
 		com_err("setup", retval,
 			"while initializing filesystem");
 		exit(1);
 	}
 	retval = ext2fs_allocate_tables(test_fs);
-	if (retval) {
+	もし (retval) {
 		com_err("setup", retval,
 			"while allocating tables for test filesystem");
 		exit(1);
 	}
 }
 
-int run_test(int flags, int size, char *dir, struct test_program *prog)
+整数 run_test(整数 flags, 整数 size, char *dir, struct test_program *prog)
 {
 	errcode_t	retval;
 	ext2_icount_t	icount;
 	struct test_program *pc;
 	__u16		result;
-	int		problem = 0;
+	整数		problem = 0;
 
-	if (dir) {
+	もし (dir) {
 #ifdef CONFIG_TDB
 		retval = ext2fs_create_icount_tdb(test_fs, dir,
 						  flags, &icount);
-		if (retval) {
+		もし (retval) {
 			com_err("run_test", retval,
 				"while creating icount using tdb");
 			exit(1);
 		}
-#else
+#否则
 		printf("Skipped\n");
-		return 0;
+		戻る 0;
 #endif
-	} else {
+	} 否则 {
 		retval = ext2fs_create_icount2(test_fs, flags, size, 0,
 					       &icount);
-		if (retval) {
+		もし (retval) {
 			com_err("run_test", retval, "while creating icount");
 			exit(1);
 		}
 	}
-	for (pc = prog; pc->cmd != EXIT; pc++) {
+	ために (pc = prog; pc->cmd != EXIT; pc++) {
 		switch (pc->cmd) {
 		case FETCH:
 			printf("icount_fetch(%u) = ", pc->ino);
 			break;
 		case STORE:
 			retval = ext2fs_icount_store(icount, pc->ino, pc->arg);
-			if (retval) {
+			もし (retval) {
 				com_err("run_test", retval,
 					"while calling icount_store");
 				exit(1);
@@ -860,7 +860,7 @@ int run_test(int flags, int size, char *dir, struct test_program *prog)
 			break;
 		case INCREMENT:
 			retval = ext2fs_icount_increment(icount, pc->ino, 0);
-			if (retval) {
+			もし (retval) {
 				com_err("run_test", retval,
 					"while calling icount_increment");
 				exit(1);
@@ -869,7 +869,7 @@ int run_test(int flags, int size, char *dir, struct test_program *prog)
 			break;
 		case DECREMENT:
 			retval = ext2fs_icount_decrement(icount, pc->ino, 0);
-			if (retval) {
+			もし (retval) {
 				com_err("run_test", retval,
 					"while calling icount_decrement");
 				exit(1);
@@ -878,30 +878,30 @@ int run_test(int flags, int size, char *dir, struct test_program *prog)
 			break;
 		}
 		retval = ext2fs_icount_fetch(icount, pc->ino, &result);
-		if (retval) {
+		もし (retval) {
 			com_err("run_test", retval,
 				"while calling icount_fetch");
 			exit(1);
 		}
 		printf("%u (%s)\n", result, (result == pc->expected) ?
 		       "OK" : "NOT OK");
-		if (result != pc->expected)
+		もし (result != pc->expected)
 			problem++;
 	}
 	printf("icount size is %u\n", ext2fs_get_icount_size(icount));
 	retval = ext2fs_icount_validate(icount, stdout);
-	if (retval) {
+	もし (retval) {
 		com_err("run_test", retval, "while calling icount_validate");
 		exit(1);
 	}
 	ext2fs_free_icount(icount);
-	return problem;
+	戻る problem;
 }
 
 
-int main(int argc, char **argv)
+整数 メインページ(整数 argc, char **argv)
 {
-	int failed = 0;
+	整数 failed = 0;
 
 	setup();
 	printf("Standard icount run:\n");
@@ -914,8 +914,8 @@ int main(int argc, char **argv)
 	failed += run_test(0, 0, ".", prog);
 	printf("\nMultiple bitmap test with tdb:\n");
 	failed += run_test(EXT2_ICOUNT_OPT_INCREMENT, 0, ".", prog);
-	if (failed)
+	もし (failed)
 		printf("FAILED!\n");
-	return failed;
+	戻る failed;
 }
 #endif

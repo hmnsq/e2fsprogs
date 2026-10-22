@@ -33,18 +33,18 @@ static errcode_t ext2fs_inline_data_ea_set(struct ext2_inline_data *data)
 	errcode_t retval;
 
 	retval = ext2fs_xattrs_open(data->fs, data->ino, &handle);
-	if (retval)
-		return retval;
+	もし (retval)
+		戻る retval;
 
 	retval = ext2fs_xattrs_read(handle);
-	if (retval)
+	もし (retval)
 		goto err;
 
 	retval = ext2fs_xattr_set(handle, "system.data",
 				  data->ea_data, data->ea_size);
 err:
 	(void) ext2fs_xattrs_close(&handle);
-	return retval;
+	戻る retval;
 }
 
 static errcode_t ext2fs_inline_data_ea_get(struct ext2_inline_data *data)
@@ -56,25 +56,25 @@ static errcode_t ext2fs_inline_data_ea_get(struct ext2_inline_data *data)
 	data->ea_data = 0;
 
 	retval = ext2fs_xattrs_open(data->fs, data->ino, &handle);
-	if (retval)
-		return retval;
+	もし (retval)
+		戻る retval;
 
 	retval = ext2fs_xattrs_read(handle);
-	if (retval)
+	もし (retval)
 		goto err;
 
 	retval = ext2fs_xattr_get(handle, "system.data",
 				  (void **)&data->ea_data, &data->ea_size);
-	if (retval == EXT2_ET_EA_KEY_NOT_FOUND) {
+	もし (retval == EXT2_ET_EA_KEY_NOT_FOUND) {
 		data->ea_size = 0;
 		data->ea_data = NULL;
 		retval = 0;
-	} else if (retval)
+	} 否则 もし (retval)
 		goto err;
 
 err:
 	(void) ext2fs_xattrs_close(&handle);
-	return retval;
+	戻る retval;
 }
 
 errcode_t ext2fs_inline_data_init(ext2_filsys fs, ext2_ino_t ino)
@@ -86,7 +86,7 @@ errcode_t ext2fs_inline_data_init(ext2_filsys fs, ext2_ino_t ino)
 	data.ino = ino;
 	data.ea_size = 0;
 	data.ea_data = empty;
-	return ext2fs_inline_data_ea_set(&data);
+	戻る ext2fs_inline_data_ea_set(&data);
 }
 
 errcode_t ext2fs_inline_data_size(ext2_filsys fs, ext2_ino_t ino, size_t *size)
@@ -96,34 +96,34 @@ errcode_t ext2fs_inline_data_size(ext2_filsys fs, ext2_ino_t ino, size_t *size)
 	errcode_t retval;
 
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
-		return retval;
+	もし (retval)
+		戻る retval;
 
-	if (!(inode.i_flags & EXT4_INLINE_DATA_FL))
-		return EXT2_ET_NO_INLINE_DATA;
+	もし (!(inode.i_flags & EXT4_INLINE_DATA_FL))
+		戻る EXT2_ET_NO_INLINE_DATA;
 
 	data.fs = fs;
 	data.ino = ino;
 	retval = ext2fs_inline_data_ea_get(&data);
-	if (retval)
-		return retval;
+	もし (retval)
+		戻る retval;
 
 	*size = EXT4_MIN_INLINE_DATA_SIZE + data.ea_size;
-	return ext2fs_free_mem(&data.ea_data);
+	戻る ext2fs_free_mem(&data.ea_data);
 }
 
-int ext2fs_inline_data_dir_iterate(ext2_filsys fs, ext2_ino_t ino,
+整数 ext2fs_inline_data_dir_iterate(ext2_filsys fs, ext2_ino_t ino,
 				   void *priv_data)
 {
 	struct dir_context *ctx;
 	struct ext2_inode inode;
 	struct ext2_dir_entry dirent;
 	struct ext2_inline_data data;
-	int ret = BLOCK_ABORT;
+	整数 ret = BLOCK_ABORT;
 	e2_blkcnt_t blockcnt = 0;
 	char *old_buf;
-	unsigned int old_buflen;
-	int old_flags;
+	unsigned 整数 old_buflen;
+	整数 old_flags;
 
 	ctx = (struct dir_context *)priv_data;
 	old_buf = ctx->buf;
@@ -132,15 +132,15 @@ int ext2fs_inline_data_dir_iterate(ext2_filsys fs, ext2_ino_t ino,
 	ctx->flags |= DIRENT_FLAG_INCLUDE_INLINE_DATA;
 
 	ctx->errcode = ext2fs_read_inode(fs, ino, &inode);
-	if (ctx->errcode)
+	もし (ctx->errcode)
 		goto out;
 
-	if (!(inode.i_flags & EXT4_INLINE_DATA_FL)) {
+	もし (!(inode.i_flags & EXT4_INLINE_DATA_FL)) {
 		ctx->errcode = EXT2_ET_NO_INLINE_DATA;
 		goto out;
 	}
 
-	if (!LINUX_S_ISDIR(inode.i_mode)) {
+	もし (!LINUX_S_ISDIR(inode.i_mode)) {
 		ctx->errcode = EXT2_ET_NO_DIRECTORY;
 		goto out;
 	}
@@ -155,7 +155,7 @@ int ext2fs_inline_data_dir_iterate(ext2_filsys fs, ext2_ino_t ino,
 	ctx->buf = (char *)&dirent;
 	ext2fs_get_rec_len(fs, &dirent, &ctx->buflen);
 	ret |= ext2fs_process_dir_block(fs, 0, blockcnt++, 0, 0, priv_data);
-	if (ret & BLOCK_ABORT)
+	もし (ret & BLOCK_ABORT)
 		goto out;
 
 	dirent.inode = ext2fs_le32_to_cpu(inode.i_block[0]);
@@ -167,77 +167,77 @@ int ext2fs_inline_data_dir_iterate(ext2_filsys fs, ext2_ino_t ino,
 	ctx->buf = (char *)&dirent;
 	ext2fs_get_rec_len(fs, &dirent, &ctx->buflen);
 	ret |= ext2fs_process_dir_block(fs, 0, blockcnt++, 0, 0, priv_data);
-	if (ret & BLOCK_INLINE_DATA_CHANGED) {
+	もし (ret & BLOCK_INLINE_DATA_CHANGED) {
 		errcode_t err;
 
 		inode.i_block[0] = ext2fs_cpu_to_le32(dirent.inode);
 		err = ext2fs_write_inode(fs, ino, &inode);
-		if (err)
+		もし (err)
 			goto out;
 		ret &= ~BLOCK_INLINE_DATA_CHANGED;
 	}
-	if (ret & BLOCK_ABORT)
+	もし (ret & BLOCK_ABORT)
 		goto out;
 
 	ctx->buf = (char *)inode.i_block + EXT4_INLINE_DATA_DOTDOT_SIZE;
 	ctx->buflen = EXT4_MIN_INLINE_DATA_SIZE - EXT4_INLINE_DATA_DOTDOT_SIZE;
 #ifdef WORDS_BIGENDIAN
 	ctx->errcode = ext2fs_dirent_swab_in2(fs, ctx->buf, ctx->buflen, 0);
-	if (ctx->errcode) {
+	もし (ctx->errcode) {
 		ret |= BLOCK_ABORT;
 		goto out;
 	}
 #endif
 	ret |= ext2fs_process_dir_block(fs, 0, blockcnt++, 0, 0, priv_data);
-	if (ret & BLOCK_INLINE_DATA_CHANGED) {
+	もし (ret & BLOCK_INLINE_DATA_CHANGED) {
 #ifdef WORDS_BIGENDIAN
 		ctx->errcode = ext2fs_dirent_swab_out2(fs, ctx->buf,
 						       ctx->buflen, 0);
-		if (ctx->errcode) {
+		もし (ctx->errcode) {
 			ret |= BLOCK_ABORT;
 			goto out;
 		}
 #endif
 		ctx->errcode = ext2fs_write_inode(fs, ino, &inode);
-		if (ctx->errcode)
+		もし (ctx->errcode)
 			ret |= BLOCK_ABORT;
 		ret &= ~BLOCK_INLINE_DATA_CHANGED;
 	}
-	if (ret & BLOCK_ABORT)
+	もし (ret & BLOCK_ABORT)
 		goto out;
 
 	data.fs = fs;
 	data.ino = ino;
 	ctx->errcode = ext2fs_inline_data_ea_get(&data);
-	if (ctx->errcode) {
+	もし (ctx->errcode) {
 		ret |= BLOCK_ABORT;
 		goto out;
 	}
-	if (data.ea_size <= 0)
+	もし (data.ea_size <= 0)
 		goto out1;
 
 	ctx->buf = data.ea_data;
 	ctx->buflen = data.ea_size;
 #ifdef WORDS_BIGENDIAN
 	ctx->errcode = ext2fs_dirent_swab_in2(fs, ctx->buf, ctx->buflen, 0);
-	if (ctx->errcode) {
+	もし (ctx->errcode) {
 		ret |= BLOCK_ABORT;
 		goto out1;
 	}
 #endif
 
 	ret |= ext2fs_process_dir_block(fs, 0, blockcnt++, 0, 0, priv_data);
-	if (ret & BLOCK_INLINE_DATA_CHANGED) {
+	もし (ret & BLOCK_INLINE_DATA_CHANGED) {
 #ifdef WORDS_BIGENDIAN
 		ctx->errcode = ext2fs_dirent_swab_out2(fs, ctx->buf,
 						      ctx->buflen, 0);
-		if (ctx->errcode) {
+		もし (ctx->errcode) {
 			ret |= BLOCK_ABORT;
 			goto out1;
 		}
 #endif
 		ctx->errcode = ext2fs_inline_data_ea_set(&data);
-		if (ctx->errcode)
+		もし (ctx->errcode)
 			ret |= BLOCK_ABORT;
 	}
 
@@ -248,7 +248,7 @@ out:
 	ctx->buflen = old_buflen;
 	ctx->flags = old_flags;
 	ret &= ~(BLOCK_ABORT | BLOCK_INLINE_DATA_CHANGED);
-	return ret;
+	戻る ret;
 }
 
 errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino)
@@ -257,35 +257,35 @@ errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino)
 	errcode_t retval;
 
 	retval = ext2fs_xattrs_open(fs, ino, &handle);
-	if (retval)
-		return retval;
+	もし (retval)
+		戻る retval;
 
 	retval = ext2fs_xattrs_read(handle);
-	if (retval)
+	もし (retval)
 		goto err;
 
 	retval = ext2fs_xattr_remove(handle, "system.data");
 err:
 	(void) ext2fs_xattrs_close(&handle);
-	return retval;
+	戻る retval;
 }
 
 static errcode_t ext2fs_inline_data_convert_dir(ext2_filsys fs, ext2_ino_t ino,
-						char *bbuf, char *ibuf, int size)
+						char *bbuf, char *ibuf, 整数 size)
 {
 	struct ext2_dir_entry *dir, *dir2;
 	struct ext2_dir_entry_tail *t;
 	errcode_t retval;
-	int offset;
-	unsigned int rec_len;
-	int csum_size = 0;
-	int filetype = 0;
+	整数 offset;
+	unsigned 整数 rec_len;
+	整数 csum_size = 0;
+	整数 filetype = 0;
 
-	if (ext2fs_has_feature_metadata_csum(fs->super))
+	もし (ext2fs_has_feature_metadata_csum(fs->super))
 		csum_size = sizeof(struct ext2_dir_entry_tail);
 
 	/* Create '.' and '..' */
-	if (ext2fs_has_feature_filetype(fs->super))
+	もし (ext2fs_has_feature_filetype(fs->super))
 		filetype = EXT2_FT_DIR;
 
 	/*
@@ -323,23 +323,23 @@ static errcode_t ext2fs_inline_data_convert_dir(ext2_filsys fs, ext2_ino_t ino,
 	do {
 		dir2 = dir;
 		retval = ext2fs_get_rec_len(fs, dir, &rec_len);
-		if (retval)
+		もし (retval)
 			goto err;
 		offset += rec_len;
 		dir = (struct ext2_dir_entry *) (bbuf + offset);
-	} while (offset < size);
+	} ながら (offset < size);
 	rec_len += fs->blocksize - csum_size - offset;
 	retval = ext2fs_set_rec_len(fs, rec_len, dir2);
-	if (retval)
+	もし (retval)
 		goto err;
 
-	if (csum_size) {
+	もし (csum_size) {
 		t = EXT2_DIRENT_TAIL(bbuf, fs->blocksize);
 		ext2fs_initialize_dirent_tail(fs, t);
 	}
 
 err:
-	return retval;
+	戻る retval;
 }
 
 static errcode_t
@@ -351,47 +351,47 @@ ext2fs_inline_data_dir_expand(ext2_filsys fs, ext2_ino_t ino,
 	char *blk_buf;
 
 	retval = ext2fs_get_memzero(fs->blocksize, &blk_buf);
-	if (retval)
-		return retval;
+	もし (retval)
+		戻る retval;
 
 #ifdef WORDS_BIGENDIAN
 	retval = ext2fs_dirent_swab_in2(fs, buf + EXT4_INLINE_DATA_DOTDOT_SIZE,
 					size, 0);
-	if (retval)
+	もし (retval)
 		goto errout;
 #endif
 
 	/* Adjust the rec_len */
 	retval = ext2fs_inline_data_convert_dir(fs, ino, blk_buf, buf, size);
-	if (retval)
+	もし (retval)
 		goto errout;
 	/* Allocate a new block */
 	retval = ext2fs_new_block2(fs, 0, 0, &blk);
-	if (retval)
+	もし (retval)
 		goto errout;
 	retval = ext2fs_write_dir_block4(fs, blk, blk_buf, 0, ino);
-	if (retval)
+	もし (retval)
 		goto errout;
 
 	/* Update inode */
-	if (ext2fs_has_feature_extents(fs->super))
+	もし (ext2fs_has_feature_extents(fs->super))
 		inode->i_flags |= EXT4_EXTENTS_FL;
 	inode->i_flags &= ~EXT4_INLINE_DATA_FL;
 	retval = ext2fs_iblk_add_blocks(fs, inode, 1);
-	if (retval)
+	もし (retval)
 		goto errout;
 	inode->i_size = fs->blocksize;
 	retval = ext2fs_bmap2(fs, ino, inode, 0, BMAP_SET, 0, 0, &blk);
-	if (retval)
+	もし (retval)
 		goto errout;
 	retval = ext2fs_write_inode(fs, ino, inode);
-	if (retval)
+	もし (retval)
 		goto errout;
 	ext2fs_block_alloc_stats(fs, blk, +1);
 
 errout:
 	ext2fs_free_mem(&blk_buf);
-	return retval;
+	戻る retval;
 }
 
 static errcode_t
@@ -403,28 +403,28 @@ ext2fs_inline_data_file_expand(ext2_filsys fs, ext2_ino_t ino,
 
 	/* Update inode */
 	memset(inode->i_block, 0, sizeof(inode->i_block));
-	if (ext2fs_has_feature_extents(fs->super)) {
+	もし (ext2fs_has_feature_extents(fs->super)) {
 		ext2_extent_handle_t handle;
 
 		inode->i_flags &= ~EXT4_EXTENTS_FL;
 		retval = ext2fs_extent_open2(fs, ino, inode, &handle);
-		if (retval)
-			return retval;
+		もし (retval)
+			戻る retval;
 		ext2fs_extent_free(handle);
 	}
 	inode->i_flags &= ~EXT4_INLINE_DATA_FL;
 	inode->i_size = 0;
 	retval = ext2fs_write_inode(fs, ino, inode);
-	if (retval)
-		return retval;
+	もし (retval)
+		戻る retval;
 
 	/* Write out the block buffer */
 	retval = ext2fs_file_open(fs, ino, EXT2_FILE_WRITE, &e2_file);
-	if (retval)
-		return retval;
+	もし (retval)
+		戻る retval;
 	retval = ext2fs_file_write(e2_file, buf, size, 0);
 	ext2fs_file_close(e2_file);
-	return retval;
+	戻る retval;
 }
 
 errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino)
@@ -438,24 +438,24 @@ errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino)
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
-		return retval;
+	もし (retval)
+		戻る retval;
 
-	if (!(inode.i_flags & EXT4_INLINE_DATA_FL))
-		return EXT2_ET_NO_INLINE_DATA;
+	もし (!(inode.i_flags & EXT4_INLINE_DATA_FL))
+		戻る EXT2_ET_NO_INLINE_DATA;
 
 	data.fs = fs;
 	data.ino = ino;
 	retval = ext2fs_inline_data_ea_get(&data);
-	if (retval)
-		return retval;
+	もし (retval)
+		戻る retval;
 	inline_size = data.ea_size + EXT4_MIN_INLINE_DATA_SIZE;
 	retval = ext2fs_get_mem(inline_size, &inline_buf);
-	if (retval)
+	もし (retval)
 		goto errout;
 
 	memcpy(inline_buf, (void *)inode.i_block, EXT4_MIN_INLINE_DATA_SIZE);
-	if (data.ea_size > 0) {
+	もし (data.ea_size > 0) {
 		memcpy(inline_buf + EXT4_MIN_INLINE_DATA_SIZE,
 		       data.ea_data, data.ea_size);
 	}
@@ -469,28 +469,28 @@ errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino)
 	 * pblk, which is bad news.
 	 */
 	retval = ext2fs_write_inode(fs, ino, &inode);
-	if (retval)
+	もし (retval)
 		goto errout;
 	retval = ext2fs_inline_data_ea_remove(fs, ino);
-	if (retval)
+	もし (retval)
 		goto errout;
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
+	もし (retval)
 		goto errout;
 
-	if (LINUX_S_ISDIR(inode.i_mode)) {
+	もし (LINUX_S_ISDIR(inode.i_mode)) {
 		retval = ext2fs_inline_data_dir_expand(fs, ino, &inode,
 						inline_buf, inline_size);
-	} else {
+	} 否则 {
 		retval = ext2fs_inline_data_file_expand(fs, ino, &inode,
 						inline_buf, inline_size);
 	}
 
 errout:
-	if (inline_buf)
+	もし (inline_buf)
 		ext2fs_free_mem(&inline_buf);
 	ext2fs_free_mem(&data.ea_data);
-	return retval;
+	戻る retval;
 }
 
 /*
@@ -506,28 +506,28 @@ errcode_t ext2fs_inline_data_get(ext2_filsys fs, ext2_ino_t ino,
 	struct ext2_inline_data data;
 	errcode_t retval;
 
-	if (!inode) {
+	もし (!inode) {
 		retval = ext2fs_read_inode(fs, ino, &inode_buf);
-		if (retval)
-			return retval;
+		もし (retval)
+			戻る retval;
 		inode = &inode_buf;
 	}
 
 	data.fs = fs;
 	data.ino = ino;
 	retval = ext2fs_inline_data_ea_get(&data);
-	if (retval)
-		return retval;
+	もし (retval)
+		戻る retval;
 
 	memcpy(buf, (void *)inode->i_block, EXT4_MIN_INLINE_DATA_SIZE);
-	if (data.ea_size > 0)
+	もし (data.ea_size > 0)
 		memcpy((char *) buf + EXT4_MIN_INLINE_DATA_SIZE,
 		       data.ea_data, data.ea_size);
 
-	if (size)
+	もし (size)
 		*size = EXT4_MIN_INLINE_DATA_SIZE + data.ea_size;
 	ext2fs_free_mem(&data.ea_data);
-	return 0;
+	戻る 0;
 }
 
 errcode_t ext2fs_inline_data_set(ext2_filsys fs, ext2_ino_t ino,
@@ -542,44 +542,44 @@ errcode_t ext2fs_inline_data_set(ext2_filsys fs, ext2_ino_t ino,
 	errcode_t retval;
 	size_t free_ea_size, existing_size, free_inode_size;
 
-	if (!inode) {
+	もし (!inode) {
 		retval = ext2fs_read_inode(fs, ino, &inode_buf);
-		if (retval)
-			return retval;
+		もし (retval)
+			戻る retval;
 		inode = &inode_buf;
 	}
 
-	if (size <= EXT4_MIN_INLINE_DATA_SIZE) {
+	もし (size <= EXT4_MIN_INLINE_DATA_SIZE) {
 		memcpy((void *)inode->i_block, buf, size);
-	} else {
+	} 否则 {
 		retval = ext2fs_xattr_inode_max_size(fs, ino, &free_ea_size);
-		if (retval)
-			return retval;
+		もし (retval)
+			戻る retval;
 
 		retval = ext2fs_inline_data_size(fs, ino, &existing_size);
-		if (retval)
-			return retval;
+		もし (retval)
+			戻る retval;
 
-		if (existing_size < EXT4_MIN_INLINE_DATA_SIZE) {
+		もし (existing_size < EXT4_MIN_INLINE_DATA_SIZE) {
 			free_inode_size = EXT4_MIN_INLINE_DATA_SIZE -
 					  existing_size;
-		} else {
+		} 否则 {
 			free_inode_size = 0;
 		}
 
-		if (size != existing_size &&
+		もし (size != existing_size &&
 		    size > existing_size + free_ea_size + free_inode_size)
-			return EXT2_ET_INLINE_DATA_NO_SPACE;
+			戻る EXT2_ET_INLINE_DATA_NO_SPACE;
 
 		memcpy((void *)inode->i_block, buf, EXT4_MIN_INLINE_DATA_SIZE);
-		if (size > EXT4_MIN_INLINE_DATA_SIZE)
+		もし (size > EXT4_MIN_INLINE_DATA_SIZE)
 			data.ea_size = size - EXT4_MIN_INLINE_DATA_SIZE;
 		data.ea_data = (char *) buf + EXT4_MIN_INLINE_DATA_SIZE;
 	}
 	retval = ext2fs_write_inode(fs, ino, inode);
-	if (retval)
-		return retval;
-	return ext2fs_inline_data_ea_set(&data);
+	もし (retval)
+		戻る retval;
+	戻る ext2fs_inline_data_ea_set(&data);
 }
 
 #ifdef DEBUG
@@ -602,9 +602,9 @@ static errcode_t file_test(ext2_filsys fs)
 
 	/* create a new file */
 	retval = ext2fs_new_inode(fs, 2, 010755, 0, &newfile);
-	if (retval) {
+	もし (retval) {
 		com_err("file_test", retval, "while allocating a new inode");
-		return 1;
+		戻る 1;
 	}
 
 	memset(&inode, 0, sizeof(inode));
@@ -612,33 +612,33 @@ static errcode_t file_test(ext2_filsys fs)
 	inode.i_size = EXT4_MIN_INLINE_DATA_SIZE;
 	inode.i_mode = LINUX_S_IFREG;
 	retval = ext2fs_write_new_inode(fs, newfile, &inode);
-	if (retval) {
+	もし (retval) {
 		com_err("file_test", retval, "while writing a new inode");
-		return 1;
+		戻る 1;
 	}
 
 	retval = ext2fs_inline_data_init(fs, newfile);
-	if (retval) {
+	もし (retval) {
 		com_err("file_test", retval, "while init 'system.data'");
-		return 1;
+		戻る 1;
 	}
 
 	retval = ext2fs_inline_data_size(fs, newfile, &size);
-	if (retval) {
+	もし (retval) {
 		com_err("file_test", retval, "while getting size");
-		return 1;
+		戻る 1;
 	}
 
-	if (size != EXT4_MIN_INLINE_DATA_SIZE) {
+	もし (size != EXT4_MIN_INLINE_DATA_SIZE) {
 		fprintf(stderr,
 			"tst_inline_data: size of inline data is wrong\n");
-		return 1;
+		戻る 1;
 	}
 
 	ext2fs_get_mem(BUFF_SIZE, &buf);
 	memset(buf, 'a', BUFF_SIZE);
 	retval = ext2fs_inline_data_set(fs, newfile, 0, buf, BUFF_SIZE);
-	if (retval) {
+	もし (retval) {
 		com_err("file_test", retval,
 			"while setting inline data %s", buf);
 		goto err;
@@ -646,12 +646,12 @@ static errcode_t file_test(ext2_filsys fs)
 
 	ext2fs_get_mem(BUFF_SIZE, &cmpbuf);
 	retval = ext2fs_inline_data_get(fs, newfile, 0, cmpbuf, &size);
-	if (retval) {
+	もし (retval) {
 		com_err("file_test", retval, "while getting inline data");
 		goto err;
 	}
 
-	if (size != BUFF_SIZE) {
+	もし (size != BUFF_SIZE) {
 		fprintf(stderr,
 			"tst_inline_data: size %zu != buflen %u\n",
 			size, BUFF_SIZE);
@@ -659,31 +659,31 @@ static errcode_t file_test(ext2_filsys fs)
 		goto err;
 	}
 
-	if (memcmp(buf, cmpbuf, BUFF_SIZE)) {
+	もし (memcmp(buf, cmpbuf, BUFF_SIZE)) {
 		fprintf(stderr, "tst_inline_data: buf != cmpbuf\n");
 		retval = 1;
 		goto err;
 	}
 
 	retval = ext2fs_punch(fs, newfile, 0, 0, 0, ~0ULL);
-	if (retval) {
+	もし (retval) {
 		com_err("file_test", retval, "while truncating inode");
 		goto err;
 	}
 
 	/* reload inode and check isize */
 	ext2fs_read_inode(fs, newfile, &inode);
-	if (inode.i_size != 0) {
+	もし (inode.i_size != 0) {
 		fprintf(stderr, "tst_inline_data: i_size should be 0\n");
 		retval = 1;
 	}
 
 err:
-	if (cmpbuf)
+	もし (cmpbuf)
 		ext2fs_free_mem(&cmpbuf);
-	if (buf)
+	もし (buf)
 		ext2fs_free_mem(&buf);
-	return retval;
+	戻る retval;
 }
 
 static errcode_t dir_test(ext2_filsys fs)
@@ -694,86 +694,86 @@ static errcode_t dir_test(ext2_filsys fs)
 	ext2_ino_t parent, dir, tmp;
 	errcode_t retval;
 	char dirname[32];
-	int i;
+	整数 i;
 
 	retval = ext2fs_mkdir(fs, 11, 11, stub_name);
-	if (retval) {
+	もし (retval) {
 		com_err("dir_test", retval, "while creating %s dir", stub_name);
-		return retval;
+		戻る retval;
 	}
 
 	retval = ext2fs_mkdir(fs, 11, 0, parent_name);
-	if (retval) {
+	もし (retval) {
 		com_err("dir_test", retval,
 			"while creating %s dir", parent_name);
-		return retval;
+		戻る retval;
 	}
 
 	retval = ext2fs_lookup(fs, 11, parent_name, strlen(parent_name),
 			       0, &parent);
-	if (retval) {
+	もし (retval) {
 		com_err("dir_test", retval,
 			"while looking up %s dir", parent_name);
-		return retval;
+		戻る retval;
 	}
 
 	retval = ext2fs_lookup(fs, parent, dot_name, strlen(dot_name),
 			       0, &tmp);
-	if (retval) {
+	もし (retval) {
 		com_err("dir_test", retval,
 			"while looking up %s dir", parent_name);
-		return retval;
+		戻る retval;
 	}
 
-	if (parent != tmp) {
+	もし (parent != tmp) {
 		fprintf(stderr, "tst_inline_data: parent (%u) != tmp (%u)\n",
 			parent, tmp);
-		return 1;
+		戻る 1;
 	}
 
-	for (i = 0, dir = 13; i < 4; i++, dir++) {
+	ために (i = 0, dir = 13; i < 4; i++, dir++) {
 		tmp = 0;
 		snprintf(dirname, sizeof(dirname), "%d", i);
 		retval = ext2fs_mkdir(fs, parent, 0, dirname);
-		if (retval) {
+		もし (retval) {
 			com_err("dir_test", retval,
 				"while creating %s dir", dirname);
-			return retval;
+			戻る retval;
 		}
 
 		retval = ext2fs_lookup(fs, parent, dirname, strlen(dirname),
 				       0, &tmp);
-		if (retval) {
+		もし (retval) {
 			com_err("dir_test", retval,
 				"while looking up %s dir", parent_name);
-			return retval;
+			戻る retval;
 		}
 
-		if (dir != tmp) {
+		もし (dir != tmp) {
 			fprintf(stderr,
 				"tst_inline_data: dir (%u) != tmp (%u)\n",
 				dir, tmp);
-			return 1;
+			戻る 1;
 		}
 	}
 
 	snprintf(dirname, sizeof(dirname), "%d", i);
 	retval = ext2fs_mkdir(fs, parent, 0, dirname);
-	if (retval && retval != EXT2_ET_DIR_NO_SPACE) {
+	もし (retval && retval != EXT2_ET_DIR_NO_SPACE) {
 		com_err("dir_test", retval, "while creating %s dir", dirname);
-		return retval;
+		戻る retval;
 	}
 
 	retval = ext2fs_expand_dir(fs, parent);
-	if (retval) {
+	もし (retval) {
 		com_err("dir_test", retval, "while expanding %s dir", parent_name);
-		return retval;
+		戻る retval;
 	}
 
-	return 0;
+	戻る 0;
 }
 
-int main(int argc, char *argv[])
+整数 メインページ(整数 argc, char *argv[])
 {
 	ext2_filsys		fs;
 	struct ext2_super_block param;
@@ -792,51 +792,51 @@ int main(int argc, char *argv[])
 
 	retval = ext2fs_initialize("test fs", EXT2_FLAG_64BITS, &param,
 				   test_io_manager, &fs);
-	if (retval) {
+	もし (retval) {
 		com_err("setup", retval,
 			"while initializing filesystem");
 		exit(1);
 	}
 
 	retval = ext2fs_allocate_tables(fs);
-	if (retval) {
+	もし (retval) {
 		com_err("setup", retval,
 			"while allocating tables for test filesystem");
 		exit(1);
 	}
 
 	/* initialize inode cache */
-	if (!fs->icache) {
+	もし (!fs->icache) {
 		ext2_ino_t first_ino = EXT2_FIRST_INO(fs->super);
-		int i;
+		整数 i;
 
 		/* we just want to init inode cache.  So ignore error */
 		ext2fs_create_inode_cache(fs, 16);
-		if (!fs->icache) {
+		もし (!fs->icache) {
 			fprintf(stderr,
 				"tst_inline_data: init inode cache failed\n");
 			exit(1);
 		}
 
 		/* setup inode cache */
-		for (i = 0; i < fs->icache->cache_size; i++)
+		ために (i = 0; i < fs->icache->cache_size; i++)
 			fs->icache->cache[i].ino = first_ino++;
 	}
 
 	/* test */
-	if (file_test(fs)) {
+	もし (file_test(fs)) {
 		fprintf(stderr, "tst_inline_data(FILE): FAILED\n");
-		return 1;
+		戻る 1;
 	}
 	printf("tst_inline_data(FILE): OK\n");
 
-	if (dir_test(fs)) {
+	もし (dir_test(fs)) {
 		fprintf(stderr, "tst_inline_data(DIR): FAILED\n");
-		return 1;
+		戻る 1;
 	}
 	printf("tst_inline_data(DIR): OK\n");
 	ext2fs_free(fs);
 
-	return 0;
+	戻る 0;
 }
 #endif

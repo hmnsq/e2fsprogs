@@ -107,16 +107,16 @@ enum {
  * system used by fast commit code.
  */
 struct ext4_fc_dentry_update {
-	int fcd_op;		/* Type of update create / unlink / link */
-	int fcd_parent;		/* Parent inode number */
-	int fcd_ino;		/* Inode number */
+	整数 fcd_op;		/* Type of update create / unlink / link */
+	整数 fcd_parent;		/* Parent inode number */
+	整数 fcd_ino;		/* Inode number */
 	struct qstr fcd_name;	/* Dirent name */
 	unsigned char fcd_iname[DNAME_INLINE_LEN];	/* Dirent name string */
 	struct list_head fcd_list;
 };
 
 struct ext4_fc_stats {
-	unsigned int fc_ineligible_reason_count[EXT4_FC_REASON_MAX];
+	unsigned 整数 fc_ineligible_reason_count[EXT4_FC_REASON_MAX];
 	unsigned long fc_num_commits;
 	unsigned long fc_ineligible_commits;
 	unsigned long fc_numblks;
@@ -134,22 +134,22 @@ struct ext4_fc_stats {
 struct ext4_fc_alloc_region {
 	ext4_lblk_t lblk;
 	ext4_fsblk_t pblk;
-	int ino, len;
+	整数 ino, len;
 };
 
 /*
  * Fast commit replay state.
  */
 struct ext4_fc_replay_state {
-	int fc_replay_num_tags;
-	int fc_replay_expected_off;
-	int fc_current_pass;
-	int fc_cur_tag;
-	int fc_crc;
+	整数 fc_replay_num_tags;
+	整数 fc_replay_expected_off;
+	整数 fc_current_pass;
+	整数 fc_cur_tag;
+	整数 fc_crc;
 	struct ext4_fc_alloc_region *fc_regions;
-	int fc_regions_size, fc_regions_used, fc_regions_valid;
-	int *fc_modified_inodes;
-	int fc_modified_inodes_used, fc_modified_inodes_size;
+	整数 fc_regions_size, fc_regions_used, fc_regions_valid;
+	整数 *fc_modified_inodes;
+	整数 fc_modified_inodes_used, fc_modified_inodes_size;
 };
 
 #define region_last(__region) (((__region)->lblk) + ((__region)->len) - 1)
@@ -159,32 +159,32 @@ static inline const char *tag2str(__u16 tag)
 {
 	switch (tag) {
 	case EXT4_FC_TAG_LINK:
-		return "ADD_ENTRY";
+		戻る "ADD_ENTRY";
 	case EXT4_FC_TAG_UNLINK:
-		return "DEL_ENTRY";
+		戻る "DEL_ENTRY";
 	case EXT4_FC_TAG_ADD_RANGE:
-		return "ADD_RANGE";
+		戻る "ADD_RANGE";
 	case EXT4_FC_TAG_CREAT:
-		return "CREAT_DENTRY";
+		戻る "CREAT_DENTRY";
 	case EXT4_FC_TAG_DEL_RANGE:
-		return "DEL_RANGE";
+		戻る "DEL_RANGE";
 	case EXT4_FC_TAG_INODE:
-		return "INODE";
+		戻る "INODE";
 	case EXT4_FC_TAG_PAD:
-		return "PAD";
+		戻る "PAD";
 	case EXT4_FC_TAG_TAIL:
-		return "TAIL";
+		戻る "TAIL";
 	case EXT4_FC_TAG_HEAD:
-		return "HEAD";
+		戻る "HEAD";
 	default:
-		return "ERROR";
+		戻る "ERROR";
 	}
 }
 
 /* Get length of a particular tlv */
-static inline int ext4_fc_tag_len(struct ext4_fc_tl *tl)
+static inline 整数 ext4_fc_tag_len(struct ext4_fc_tl *tl)
 {
-	return le16_to_cpu(tl->fc_len);
+	戻る le16_to_cpu(tl->fc_len);
 }
 
 #endif /* __FAST_COMMIT_H__ */

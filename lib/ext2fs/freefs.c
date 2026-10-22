@@ -11,7 +11,7 @@
 
 #include "config.h"
 #include <stdio.h>
-#if HAVE_UNISTD_H
+#もし HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
@@ -21,46 +21,46 @@
 
 void ext2fs_free(ext2_filsys fs)
 {
-	if (!fs || (fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS))
-		return;
-	if (fs->image_io != fs->io) {
-		if (fs->image_io)
+	もし (!fs || (fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS))
+		戻る;
+	もし (fs->image_io != fs->io) {
+		もし (fs->image_io)
 			io_channel_close(fs->image_io);
 	}
-	if (fs->io) {
+	もし (fs->io) {
 		io_channel_close(fs->io);
 	}
-	if (fs->device_name)
+	もし (fs->device_name)
 		ext2fs_free_mem(&fs->device_name);
-	if (fs->super)
+	もし (fs->super)
 		ext2fs_free_mem(&fs->super);
-	if (fs->orig_super)
+	もし (fs->orig_super)
 		ext2fs_free_mem(&fs->orig_super);
-	if (fs->group_desc)
+	もし (fs->group_desc)
 		ext2fs_free_mem(&fs->group_desc);
-	if (fs->block_map)
+	もし (fs->block_map)
 		ext2fs_free_block_bitmap(fs->block_map);
-	if (fs->inode_map)
+	もし (fs->inode_map)
 		ext2fs_free_inode_bitmap(fs->inode_map);
-	if (fs->image_header)
+	もし (fs->image_header)
 		ext2fs_free_mem(&fs->image_header);
 
-	if (fs->badblocks)
+	もし (fs->badblocks)
 		ext2fs_badblocks_list_free(fs->badblocks);
 	fs->badblocks = 0;
 
-	if (fs->dblist)
+	もし (fs->dblist)
 		ext2fs_free_dblist(fs->dblist);
 
-	if (fs->icache)
+	もし (fs->icache)
 		ext2fs_free_inode_cache(fs->icache);
 
-	if (fs->mmp_buf)
+	もし (fs->mmp_buf)
 		ext2fs_free_mem(&fs->mmp_buf);
-	if (fs->mmp_cmp)
+	もし (fs->mmp_cmp)
 		ext2fs_free_mem(&fs->mmp_cmp);
 
-	if (fs->block_sha_map)
+	もし (fs->block_sha_map)
 		ext2fs_hashmap_free(fs->block_sha_map);
 
 	fs->magic = 0;
@@ -74,10 +74,10 @@ void ext2fs_free(ext2_filsys fs)
  */
 void ext2fs_u32_list_free(ext2_u32_list bb)
 {
-	if (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
-		return;
+	もし (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
+		戻る;
 
-	if (bb->list)
+	もし (bb->list)
 		ext2fs_free_mem(&bb->list);
 	bb->list = 0;
 	ext2fs_free_mem(&bb);
@@ -94,13 +94,13 @@ void ext2fs_badblocks_list_free(ext2_badblocks_list bb)
  */
 void ext2fs_free_dblist(ext2_dblist dblist)
 {
-	if (!dblist || (dblist->magic != EXT2_ET_MAGIC_DBLIST))
-		return;
+	もし (!dblist || (dblist->magic != EXT2_ET_MAGIC_DBLIST))
+		戻る;
 
-	if (dblist->list)
+	もし (dblist->list)
 		ext2fs_free_mem(&dblist->list);
 	dblist->list = 0;
-	if (dblist->fs && dblist->fs->dblist == dblist)
+	もし (dblist->fs && dblist->fs->dblist == dblist)
 		dblist->fs->dblist = 0;
 	dblist->magic = 0;
 	ext2fs_free_mem(&dblist);
