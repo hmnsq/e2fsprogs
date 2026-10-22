@@ -9,16 +9,16 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#𐤀𐤌 HAVE_UNISTD_H
+#ضمن <unistd.h>
 #endif
-#include <time.h>
-#include <string.h>
+#ضمن <time.h>
+#ضمن <string.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fsP.h"
 
 errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest)
 {
@@ -27,9 +27,9 @@ errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest)
 
 	EXT2_CHECK_MAGIC(src, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	retval = ext2fs_get_mem(sizeof(struct struct_ext2_filsys), &fs);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(حجم(بنية struct_ext2_filsys), &fs);
+	𐤀𐤌 (retval)
+		أرجع retval;
 
 	*fs = *src;
 	fs->device_name = 0;
@@ -45,75 +45,75 @@ errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest)
 	fs->mmp_fd = -1;
 
 	io_channel_bumpcount(fs->io);
-	if (fs->icache)
+	𐤀𐤌 (fs->icache)
 		fs->icache->refcount++;
 
 	retval = ext2fs_get_mem(strlen(src->device_name)+1, &fs->device_name);
-	if (retval)
-		goto errout;
+	𐤀𐤌 (retval)
+		اذهب errout;
 	strcpy(fs->device_name, src->device_name);
 
 	retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &fs->super);
-	if (retval)
-		goto errout;
+	𐤀𐤌 (retval)
+		اذهب errout;
 	memcpy(fs->super, src->super, SUPERBLOCK_SIZE);
 
 	retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &fs->orig_super);
-	if (retval)
-		goto errout;
+	𐤀𐤌 (retval)
+		اذهب errout;
 	memcpy(fs->orig_super, src->orig_super, SUPERBLOCK_SIZE);
 
 	retval = ext2fs_get_array(fs->desc_blocks, fs->blocksize,
 				&fs->group_desc);
-	if (retval)
-		goto errout;
+	𐤀𐤌 (retval)
+		اذهب errout;
 	memcpy(fs->group_desc, src->group_desc,
 	       (size_t) fs->desc_blocks * fs->blocksize);
 
-	if (src->inode_map) {
+	𐤀𐤌 (src->inode_map) {
 		retval = ext2fs_copy_bitmap(src->inode_map, &fs->inode_map);
-		if (retval)
-			goto errout;
+		𐤀𐤌 (retval)
+			اذهب errout;
 	}
-	if (src->block_map) {
+	𐤀𐤌 (src->block_map) {
 		retval = ext2fs_copy_bitmap(src->block_map, &fs->block_map);
-		if (retval)
-			goto errout;
+		𐤀𐤌 (retval)
+			اذهب errout;
 	}
-	if (src->badblocks) {
+	𐤀𐤌 (src->badblocks) {
 		retval = ext2fs_badblocks_copy(src->badblocks, &fs->badblocks);
-		if (retval)
-			goto errout;
+		𐤀𐤌 (retval)
+			اذهب errout;
 	}
-	if (src->dblist) {
+	𐤀𐤌 (src->dblist) {
 		retval = ext2fs_copy_dblist(src->dblist, &fs->dblist);
-		if (retval)
-			goto errout;
+		𐤀𐤌 (retval)
+			اذهب errout;
 	}
-	if (src->mmp_buf) {
+	𐤀𐤌 (src->mmp_buf) {
 		retval = ext2fs_mmp_get_mem(src, &fs->mmp_buf);
-		if (retval)
-			goto errout;
+		𐤀𐤌 (retval)
+			اذهب errout;
 		memcpy(fs->mmp_buf, src->mmp_buf, src->blocksize);
 	}
-	if (src->mmp_fd >= 0) {
+	𐤀𐤌 (src->mmp_fd >= 0) {
 		fs->mmp_fd = dup(src->mmp_fd);
-		if (fs->mmp_fd < 0) {
+		𐤀𐤌 (fs->mmp_fd < 0) {
 			retval = EXT2_ET_MMP_OPEN_DIRECT;
-			goto errout;
+			اذهب errout;
 		}
 	}
-	if (src->mmp_cmp) {
+	𐤀𐤌 (src->mmp_cmp) {
 		retval = ext2fs_mmp_get_mem(src, &fs->mmp_cmp);
-		if (retval)
-			goto errout;
+		𐤀𐤌 (retval)
+			اذهب errout;
 		memcpy(fs->mmp_cmp, src->mmp_cmp, src->blocksize);
 	}
 	*dest = fs;
-	return 0;
+	أرجع 0;
 errout:
 	ext2fs_free(fs);
-	return retval;
+	أرجع retval;
 
 }
 

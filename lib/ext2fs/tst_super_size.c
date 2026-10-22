@@ -9,47 +9,47 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <unistd.h>
+#ضمن <stdlib.h>
 
-#include "ext2_fs.h"
+#ضمن "ext2_fs.h"
 
 #define sb_struct ext2_super_block
 #define sb_struct_name "ext2_super_block"
 
-struct sb_struct sb;
+بنية sb_struct sb;
 
 #ifndef offsetof
 #define offsetof(type, member)  __builtin_offsetof (type, member)
 #endif
 
-#define check_field(x, s) cur_offset = do_field(#x, s, sizeof(sb.x),	       \
-						offsetof(struct sb_struct, x), \
+#define check_field(x, s) cur_offset = do_field(#x, s, حجم(sb.x),	       \
+						offsetof(بنية sb_struct, x), \
 						cur_offset)
 
-static int do_field(const char *field, unsigned size, unsigned cur_size,
+ساكن صحيح do_field(ثابت حرف *field, unsigned size, unsigned cur_size,
 		    unsigned offset, unsigned cur_offset)
 {
-	if (size != cur_size) {
+	𐤀𐤌 (size != cur_size) {
 		printf("error: %s size %u should be %u\n",
 		       field, cur_size, size);
 		exit(1);
 	}
-	if (offset != cur_offset) {
+	𐤀𐤌 (offset != cur_offset) {
 		printf("error: %s offset %u should be %u\n",
 		       field, cur_offset, offset);
 		exit(1);
 	}
 	printf("%8d %-30s %3u\n", offset, field, size);
-	return offset + size;
+	أرجع offset + size;
 }
 
-int main(int argc, char **argv)
+صحيح main(صحيح argc, حرف **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#𐤀𐤌 (__GNUC__ >= 4)
+	صحيح cur_offset = 0;
 
 	printf("%8s %-30s %3s\n", "offset", "field", "size");
 	check_field(s_inodes_count, 4);
@@ -157,5 +157,5 @@ int main(int argc, char **argv)
 	check_field(s_checksum, 4);
 	do_field("Superblock end", 0, 0, cur_offset, 1024);
 #endif
-	return 0;
+	أرجع 0;
 }

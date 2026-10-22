@@ -9,45 +9,45 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#𐤀𐤌 HAVE_UNISTD_H
+#ضمن <unistd.h>
 #endif
-#include <string.h>
-#include <time.h>
+#ضمن <string.h>
+#ضمن <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fsP.h"
 
-static int db_dir_proc(ext2_filsys fs, struct ext2_db_entry2 *db_info,
-		       void *priv_data);
+ساكن صحيح db_dir_proc(ext2_filsys fs, بنية ext2_db_entry2 *db_info,
+		       فراغ *priv_data);
 
 errcode_t ext2fs_dblist_dir_iterate(ext2_dblist dblist,
-				    int	flags,
-				    char	*block_buf,
-				    int (*func)(ext2_ino_t dir,
-						int	entry,
-						struct ext2_dir_entry *dirent,
-						int	offset,
-						int	blocksize,
-						char	*buf,
-						void	*priv_data),
-				    void *priv_data)
+				    صحيح	flags,
+				    حرف	*block_buf,
+				    صحيح (*func)(ext2_ino_t dir,
+						صحيح	entry,
+						بنية ext2_dir_entry *dirent,
+						صحيح	offset,
+						صحيح	blocksize,
+						حرف	*buf,
+						فراغ	*priv_data),
+				    فراغ *priv_data)
 {
 	errcode_t		retval;
-	struct dir_context	ctx;
+	بنية dir_context	ctx;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
 	ctx.dir = 0;
 	ctx.flags = flags;
-	if (block_buf)
+	𐤀𐤌 (block_buf)
 		ctx.buf = block_buf;
-	else {
+	وإلا {
 		retval = ext2fs_get_mem(dblist->fs->blocksize, &ctx.buf);
-		if (retval)
-			return retval;
+		𐤀𐤌 (retval)
+			أرجع retval;
 	}
 	ctx.func = func;
 	ctx.priv_data = priv_data;
@@ -55,34 +55,34 @@ errcode_t ext2fs_dblist_dir_iterate(ext2_dblist dblist,
 
 	retval = ext2fs_dblist_iterate2(dblist, db_dir_proc, &ctx);
 
-	if (!block_buf)
+	𐤀𐤌 (!block_buf)
 		ext2fs_free_mem(&ctx.buf);
-	if (retval)
-		return retval;
-	return ctx.errcode;
+	𐤀𐤌 (retval)
+		أرجع retval;
+	أرجع ctx.errcode;
 }
 
-static int db_dir_proc(ext2_filsys fs, struct ext2_db_entry2 *db_info,
-		       void *priv_data)
+ساكن صحيح db_dir_proc(ext2_filsys fs, بنية ext2_db_entry2 *db_info,
+		       فراغ *priv_data)
 {
-	struct ext2_inode	inode;
-	struct dir_context	*ctx;
-	int			ret;
+	بنية ext2_inode	inode;
+	بنية dir_context	*ctx;
+	صحيح			ret;
 
-	ctx = (struct dir_context *) priv_data;
+	ctx = (بنية dir_context *) priv_data;
 	ctx->dir = db_info->ino;
 	ctx->errcode = 0;
 
 	ctx->errcode = ext2fs_read_inode(fs, ctx->dir, &inode);
-	if (ctx->errcode)
-		return DBLIST_ABORT;
-	if (inode.i_flags & EXT4_INLINE_DATA_FL)
+	𐤀𐤌 (ctx->errcode)
+		أرجع DBLIST_ABORT;
+	𐤀𐤌 (inode.i_flags & EXT4_INLINE_DATA_FL)
 		ret = ext2fs_inline_data_dir_iterate(fs, ctx->dir, ctx);
-	else
+	وإلا
 		ret = ext2fs_process_dir_block(fs, &db_info->blk,
 					       db_info->blockcnt, 0, 0,
 					       priv_data);
-	if ((ret & BLOCK_ABORT) && !ctx->errcode)
-		return DBLIST_ABORT;
-	return 0;
+	𐤀𐤌 ((ret & BLOCK_ABORT) && !ctx->errcode)
+		أرجع DBLIST_ABORT;
+	أرجع 0;
 }
