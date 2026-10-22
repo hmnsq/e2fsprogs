@@ -9,54 +9,54 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <stdlib.h>
 
-#include "ext2_fs.h"
+#अन्तर्भाव "ext2_fs.h"
 
 #define sb_struct ext2_super_block
 #define sb_struct_name "ext2_super_block"
 
-struct sb_struct sb;
+संरचना sb_struct sb;
 
 #ifndef offsetof
 #define offsetof(type, member)  __builtin_offsetof (type, member)
 #endif
 
-#define check_field(x, s) cur_offset = do_field(#x, s, sizeof(sb.x),	       \
-						offsetof(struct sb_struct, x), \
+#define check_field(x, s) cur_offset = do_field(#x, s, परिमाण(sb.x),	       \
+						offsetof(संरचना sb_struct, x), \
 						cur_offset)
 
-static int do_field(const char *field, unsigned size, unsigned cur_size,
+स्थिर पूर्णाङ्क do_field(ध्रुव वर्ण *field, unsigned size, unsigned cur_size,
 		    unsigned offset, unsigned cur_offset)
 {
-	if (size != cur_size) {
+	यदि (size != cur_size) {
 		printf("error: %s size %u should be %u\n",
 		       field, cur_size, size);
 		exit(1);
 	}
-	if (offset != cur_offset) {
+	यदि (offset != cur_offset) {
 		printf("error: %s offset %u should be %u\n",
 		       field, cur_offset, offset);
 		exit(1);
 	}
 	printf("%8d %-30s %3u\n", offset, field, size);
-	return offset + size;
+	प्रत्यागम offset + size;
 }
 
-int main(int argc, char **argv)
+पूर्णाङ्क main(पूर्णाङ्क argc, वर्ण **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#यदि (__GNUC__ >= 4)
+	पूर्णाङ्क cur_offset = 0;
 
 	printf("%8s %-30s %3s\n", "offset", "field", "size");
-	check_field(s_inodes_count, 4);
-	check_field(s_blocks_count, 4);
-	check_field(s_r_blocks_count, 4);
-	check_field(s_free_blocks_count, 4);
-	check_field(s_free_inodes_count, 4);
+	check_field(s_inodes_मोजणी, 4);
+	check_field(s_blocks_मोजणी, 4);
+	check_field(s_r_blocks_मोजणी, 4);
+	check_field(s_free_blocks_मोजणी, 4);
+	check_field(s_free_inodes_मोजणी, 4);
 	check_field(s_first_data_block, 4);
 	check_field(s_log_block_size, 4);
 	check_field(s_log_cluster_size, 4);
@@ -65,8 +65,8 @@ int main(int argc, char **argv)
 	check_field(s_inodes_per_group, 4);
 	check_field(s_mtime, 4);
 	check_field(s_wtime, 4);
-	check_field(s_mnt_count, 2);
-	check_field(s_max_mnt_count, 2);
+	check_field(s_mnt_मोजणी, 2);
+	check_field(s_max_mnt_मोजणी, 2);
 	check_field(s_magic, 2);
 	check_field(s_state, 2);
 	check_field(s_errors, 2);
@@ -102,8 +102,8 @@ int main(int argc, char **argv)
 	check_field(s_first_meta_bg, 4);
 	check_field(s_mkfs_time, 4);
 	check_field(s_jnl_blocks, 17 * 4);
-	check_field(s_blocks_count_hi, 4);
-	check_field(s_r_blocks_count_hi, 4);
+	check_field(s_blocks_मोजणी_hi, 4);
+	check_field(s_r_blocks_मोजणी_hi, 4);
 	check_field(s_free_blocks_hi, 4);
 	check_field(s_min_extra_isize, 2);
 	check_field(s_want_extra_isize, 2);
@@ -119,17 +119,17 @@ int main(int argc, char **argv)
 	check_field(s_kbytes_written, 8);
 	check_field(s_snapshot_inum, 4);
 	check_field(s_snapshot_id, 4);
-	check_field(s_snapshot_r_blocks_count, 8);
+	check_field(s_snapshot_r_blocks_मोजणी, 8);
 	check_field(s_snapshot_list, 4);
-	check_field(s_error_count, 4);
+	check_field(s_error_मोजणी, 4);
 	check_field(s_first_error_time, 4);
 	check_field(s_first_error_ino, 4);
 	check_field(s_first_error_block, 8);
 	check_field(s_first_error_func, 32);
-	check_field(s_first_error_line, 4);
+	check_field(s_first_error_ओळ, 4);
 	check_field(s_last_error_time, 4);
 	check_field(s_last_error_ino, 4);
-	check_field(s_last_error_line, 4);
+	check_field(s_last_error_ओळ, 4);
 	check_field(s_last_error_block, 8);
 	check_field(s_last_error_func, 32);
 	check_field(s_mount_opts, 64);
@@ -157,5 +157,5 @@ int main(int argc, char **argv)
 	check_field(s_checksum, 4);
 	do_field("Superblock end", 0, 0, cur_offset, 1024);
 #endif
-	return 0;
+	प्रत्यागम 0;
 }
