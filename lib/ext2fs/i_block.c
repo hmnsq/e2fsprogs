@@ -9,82 +9,82 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <time.h>
-#include <string.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#include <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਜੇ HAVE_UNISTD_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਜੇ HAVE_SYS_STAT_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਜੇ_ਅੰਤ
+#ਜੇ HAVE_SYS_TYPES_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fs.h"
 
-errcode_t ext2fs_iblk_add_blocks(ext2_filsys fs, struct ext2_inode *inode,
-				 blk64_t num_blocks)
+errcode_t ext2fs_iblk_ਜੋੜੋ_ਖੰਡਾਂ(ext2_filsys fs, ਬਣਤਰ ext2_inode *inode,
+				 blk64_t ਅੰਕ_ਖੰਡਾਂ)
 {
-	unsigned long long b = inode->i_blocks;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ b = inode->i_ਖੰਡਾਂ;
 
-	if (ext2fs_has_feature_huge_file(fs->super))
-		b += ((long long) inode->osd2.linux2.l_i_blocks_hi) << 32;
+	ਜੇ (ext2fs_has_feature_huge_file(fs->super))
+		b += ((ਲੰਮਾ ਲੰਮਾ) inode->osd2.linux2.l_i_ਖੰਡਾਂ_hi) << 32;
 
-	if (!ext2fs_has_feature_huge_file(fs->super) ||
+	ਜੇ (!ext2fs_has_feature_huge_file(fs->super) ||
 	    !(inode->i_flags & EXT4_HUGE_FILE_FL))
-	    num_blocks *= fs->blocksize / 512;
-	num_blocks *= EXT2FS_CLUSTER_RATIO(fs);
+	    ਅੰਕ_ਖੰਡਾਂ *= fs->blocksize / 512;
+	ਅੰਕ_ਖੰਡਾਂ *= EXT2_FS_CLUSTER_ਅਨੁਪਾਤ(fs);
 
-	b += num_blocks;
+	b += ਅੰਕ_ਖੰਡਾਂ;
 
-	if (ext2fs_has_feature_huge_file(fs->super))
-		inode->osd2.linux2.l_i_blocks_hi = b >> 32;
-	else if (b > 0xFFFFFFFF)
-		return EOVERFLOW;
-	inode->i_blocks = b & 0xFFFFFFFF;
-	return 0;
+	ਜੇ (ext2fs_has_feature_huge_file(fs->super))
+		inode->osd2.linux2.l_i_ਖੰਡਾਂ_hi = b >> 32;
+	ਨਹੀਂਤਾਂ ਜੇ (b > 0xFFFFFFFF)
+		ਵਾਪਸ EOVERFLOW;
+	inode->i_ਖੰਡਾਂ = b & 0xFFFFFFFF;
+	ਵਾਪਸ 0;
 }
 
-errcode_t ext2fs_iblk_sub_blocks(ext2_filsys fs, struct ext2_inode *inode,
-				 blk64_t num_blocks)
+errcode_t ext2fs_iblk_sub_ਖੰਡਾਂ(ext2_filsys fs, ਬਣਤਰ ext2_inode *inode,
+				 blk64_t ਅੰਕ_ਖੰਡਾਂ)
 {
-	unsigned long long b = inode->i_blocks;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ b = inode->i_ਖੰਡਾਂ;
 
-	if (ext2fs_has_feature_huge_file(fs->super))
-		b += ((long long) inode->osd2.linux2.l_i_blocks_hi) << 32;
+	ਜੇ (ext2fs_has_feature_huge_file(fs->super))
+		b += ((ਲੰਮਾ ਲੰਮਾ) inode->osd2.linux2.l_i_ਖੰਡਾਂ_hi) << 32;
 
-	if (!ext2fs_has_feature_huge_file(fs->super) ||
+	ਜੇ (!ext2fs_has_feature_huge_file(fs->super) ||
 	    !(inode->i_flags & EXT4_HUGE_FILE_FL))
-	    num_blocks *= fs->blocksize / 512;
-	num_blocks *= EXT2FS_CLUSTER_RATIO(fs);
+	    ਅੰਕ_ਖੰਡਾਂ *= fs->blocksize / 512;
+	ਅੰਕ_ਖੰਡਾਂ *= EXT2_FS_CLUSTER_ਅਨੁਪਾਤ(fs);
 
-	if (num_blocks > b)
-		return EOVERFLOW;
+	ਜੇ (ਅੰਕ_ਖੰਡਾਂ > b)
+		ਵਾਪਸ EOVERFLOW;
 
-	b -= num_blocks;
+	b -= ਅੰਕ_ਖੰਡਾਂ;
 
-	if (ext2fs_has_feature_huge_file(fs->super))
-		inode->osd2.linux2.l_i_blocks_hi = b >> 32;
-	inode->i_blocks = b & 0xFFFFFFFF;
-	return 0;
+	ਜੇ (ext2fs_has_feature_huge_file(fs->super))
+		inode->osd2.linux2.l_i_ਖੰਡਾਂ_hi = b >> 32;
+	inode->i_ਖੰਡਾਂ = b & 0xFFFFFFFF;
+	ਵਾਪਸ 0;
 }
 
-errcode_t ext2fs_iblk_set(ext2_filsys fs, struct ext2_inode *inode, blk64_t b)
+errcode_t ext2fs_iblk_ਸੈੱਟ(ext2_filsys fs, ਬਣਤਰ ext2_inode *inode, blk64_t b)
 {
-	if (!ext2fs_has_feature_huge_file(fs->super) ||
+	ਜੇ (!ext2fs_has_feature_huge_file(fs->super) ||
 	    !(inode->i_flags & EXT4_HUGE_FILE_FL))
 		b *= fs->blocksize / 512;
-	b *= EXT2FS_CLUSTER_RATIO(fs);
+	b *= EXT2_FS_CLUSTER_ਅਨੁਪਾਤ(fs);
 
-	inode->i_blocks = b & 0xFFFFFFFF;
-	if (ext2fs_has_feature_huge_file(fs->super))
-		inode->osd2.linux2.l_i_blocks_hi = b >> 32;
-	else if (b >> 32)
-		return EOVERFLOW;
-	return 0;
+	inode->i_ਖੰਡਾਂ = b & 0xFFFFFFFF;
+	ਜੇ (ext2fs_has_feature_huge_file(fs->super))
+		inode->osd2.linux2.l_i_ਖੰਡਾਂ_hi = b >> 32;
+	ਨਹੀਂਤਾਂ ਜੇ (b >> 32)
+		ਵਾਪਸ EOVERFLOW;
+	ਵਾਪਸ 0;
 }

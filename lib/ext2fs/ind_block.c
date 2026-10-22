@@ -10,58 +10,58 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਜੇ HAVE_UNISTD_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਜੇ_ਅੰਤ
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fs.h"
 
-errcode_t ext2fs_read_ind_block(ext2_filsys fs, blk_t blk, void *buf)
+errcode_t ext2fs_read_ind_ਖੰਡ(ext2_filsys fs, blk_t blk, ਖਾਲੀ *buf)
 {
 	errcode_t	retval;
-#ifdef WORDS_BIGENDIAN
-	blk_t		*block_nr;
-	int		i;
-	int		limit = fs->blocksize >> 2;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ਸ਼ਬਦ_BIGENDIAN
+	blk_t		*ਖੰਡ_nr;
+	ਪੂਰਨ		i;
+	ਪੂਰਨ		ਹੱਦਬੰਦੀ = fs->blocksize >> 2;
+#ਜੇ_ਅੰਤ
 
-	if ((fs->flags & EXT2_FLAG_IMAGE_FILE) &&
+	ਜੇ ((fs->flags & EXT2_FLAG_IMAGE_FILE) &&
 	    (fs->io != fs->image_io))
 		memset(buf, 0, fs->blocksize);
-	else {
+	ਨਹੀਂਤਾਂ {
 		retval = io_channel_read_blk(fs->io, blk, 1, buf);
-		if (retval)
-			return retval;
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
 	}
-#ifdef WORDS_BIGENDIAN
-	block_nr = (blk_t *) buf;
-	for (i = 0; i < limit; i++, block_nr++)
-		*block_nr = ext2fs_swab32(*block_nr);
-#endif
-	return 0;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ਸ਼ਬਦ_BIGENDIAN
+	ਖੰਡ_nr = (blk_t *) buf;
+	ਲਈ (i = 0; i < ਹੱਦਬੰਦੀ; i++, ਖੰਡ_nr++)
+		*ਖੰਡ_nr = ext2fs_swab32(*ਖੰਡ_nr);
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ 0;
 }
 
-errcode_t ext2fs_write_ind_block(ext2_filsys fs, blk_t blk, void *buf)
+errcode_t ext2fs_write_ind_ਖੰਡ(ext2_filsys fs, blk_t blk, ਖਾਲੀ *buf)
 {
-#ifdef WORDS_BIGENDIAN
-	blk_t		*block_nr;
-	int		i;
-	int		limit = fs->blocksize >> 2;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ਸ਼ਬਦ_BIGENDIAN
+	blk_t		*ਖੰਡ_nr;
+	ਪੂਰਨ		i;
+	ਪੂਰਨ		ਹੱਦਬੰਦੀ = fs->blocksize >> 2;
+#ਜੇ_ਅੰਤ
 
-	if (fs->flags & EXT2_FLAG_IMAGE_FILE)
-		return 0;
+	ਜੇ (fs->flags & EXT2_FLAG_IMAGE_FILE)
+		ਵਾਪਸ 0;
 
-#ifdef WORDS_BIGENDIAN
-	block_nr = (blk_t *) buf;
-	for (i = 0; i < limit; i++, block_nr++)
-		*block_nr = ext2fs_swab32(*block_nr);
-#endif
-	return io_channel_write_blk(fs->io, blk, 1, buf);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ਸ਼ਬਦ_BIGENDIAN
+	ਖੰਡ_nr = (blk_t *) buf;
+	ਲਈ (i = 0; i < ਹੱਦਬੰਦੀ; i++, ਖੰਡ_nr++)
+		*ਖੰਡ_nr = ext2fs_swab32(*ਖੰਡ_nr);
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ io_channel_write_blk(fs->io, blk, 1, buf);
 }
 
 

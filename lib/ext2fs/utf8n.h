@@ -17,25 +17,25 @@
  * version here to such that hashes will match that implementation.
  */
 
-#ifndef UTF8NORM_H
-#define UTF8NORM_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ UTF8NORM_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ UTF8NORM_H
 
-#include <stdint.h>
-#include <unistd.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
 /* Encoding a unicode version number as a single unsigned int. */
-#define UNICODE_MAJ_SHIFT		(16)
-#define UNICODE_MIN_SHIFT		(8)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ UNICODE_MAJ_ਖਿਸਕਾਓ		(16)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ UNICODE_MIN_ਖਿਸਕਾਓ		(8)
 
-#define UNICODE_AGE(MAJ, MIN, REV)			\
-	(((unsigned int)(MAJ) << UNICODE_MAJ_SHIFT) |	\
-	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
-	 ((unsigned int)(REV)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ UNICODE_AGE(MAJ, MIN, REV)			\
+	(((ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)(MAJ) << UNICODE_MAJ_ਖਿਸਕਾਓ) |	\
+	 ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)(MIN) << UNICODE_MIN_ਖਿਸਕਾਓ) |	\
+	 ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)(REV)))
 
 /* Highest unicode version supported by the data tables. */
-extern int utf8version_is_supported(uint8_t maj, uint8_t min, uint8_t rev);
-extern int utf8version_latest(void);
+ਬਾਹਰੀ ਪੂਰਨ utf8version_is_supported(uint8_t maj, uint8_t min, uint8_t rev);
+ਬਾਹਰੀ ਪੂਰਨ utf8version_latest(ਖਾਲੀ);
 
 /*
  * Look for the correct const struct utf8data for a unicode version.
@@ -52,24 +52,24 @@ extern int utf8version_latest(void);
  *  - Remove any Default_Ignorable_Code_Point.
  *  - Apply a full casefold (C + F).
  */
-extern const struct utf8data *utf8nfdi(unsigned int maxage);
-extern const struct utf8data *utf8nfdicf(unsigned int maxage);
+ਬਾਹਰੀ ਅਚਲ ਬਣਤਰ utf8data *utf8nfdi(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ maxage);
+ਬਾਹਰੀ ਅਚਲ ਬਣਤਰ utf8data *utf8nfdicf(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ maxage);
 
 /*
  * Determine the maximum age of any unicode character in the string.
  * Returns 0 if only unassigned code points are present.
  * Returns -1 if the input is not valid UTF-8.
  */
-extern int utf8agemax(const struct utf8data *data, const char *s);
-extern int utf8nagemax(const struct utf8data *data, const char *s, size_t len);
+ਬਾਹਰੀ ਪੂਰਨ utf8agemax(ਅਚਲ ਬਣਤਰ utf8data *ਅੰਕੜੇ, ਅਚਲ ਅੱਖਰ *s);
+ਬਾਹਰੀ ਪੂਰਨ utf8nagemax(ਅਚਲ ਬਣਤਰ utf8data *ਅੰਕੜੇ, ਅਚਲ ਅੱਖਰ *s, size_t len);
 
 /*
  * Determine the minimum age of any unicode character in the string.
  * Returns 0 if any unassigned code points are present.
  * Returns -1 if the input is not valid UTF-8.
  */
-extern int utf8agemin(const struct utf8data *data, const char *s);
-extern int utf8nagemin(const struct utf8data *data, const char *s, size_t len);
+ਬਾਹਰੀ ਪੂਰਨ utf8agemin(ਅਚਲ ਬਣਤਰ utf8data *ਅੰਕੜੇ, ਅਚਲ ਅੱਖਰ *s);
+ਬਾਹਰੀ ਪੂਰਨ utf8nagemin(ਅਚਲ ਬਣਤਰ utf8data *ਅੰਕੜੇ, ਅਚਲ ਅੱਖਰ *s, size_t len);
 
 /*
  * Determine the length of the normalized from of the string,
@@ -77,26 +77,26 @@ extern int utf8nagemin(const struct utf8data *data, const char *s, size_t len);
  * Returns 0 if only ignorable code points are present.
  * Returns -1 if the input is not valid UTF-8.
  */
-extern ssize_t utf8len(const struct utf8data *data, const char *s);
-extern ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len);
+ਬਾਹਰੀ ssize_t utf8len(ਅਚਲ ਬਣਤਰ utf8data *ਅੰਕੜੇ, ਅਚਲ ਅੱਖਰ *s);
+ਬਾਹਰੀ ssize_t utf8nlen(ਅਚਲ ਬਣਤਰ utf8data *ਅੰਕੜੇ, ਅਚਲ ਅੱਖਰ *s, size_t len);
 
 /* Needed in struct utf8cursor below. */
-#define UTF8HANGULLEAF	(12)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ UTF8HANGULLEAF	(12)
 
 /*
  * Cursor structure used by the normalizer.
  */
-struct utf8cursor {
-	const struct utf8data	*data;
-	const char	*s;
-	const char	*p;
-	const char	*ss;
-	const char	*sp;
-	unsigned int	len;
-	unsigned int	slen;
-	short int	ccc;
-	short int	nccc;
-	unsigned char	hangul[UTF8HANGULLEAF];
+ਬਣਤਰ utf8cursor {
+	ਅਚਲ ਬਣਤਰ utf8data	*ਅੰਕੜੇ;
+	ਅਚਲ ਅੱਖਰ	*s;
+	ਅਚਲ ਅੱਖਰ	*p;
+	ਅਚਲ ਅੱਖਰ	*ss;
+	ਅਚਲ ਅੱਖਰ	*sp;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ	len;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ	slen;
+	ਛੋਟਾ ਪੂਰਨ	ccc;
+	ਛੋਟਾ ਪੂਰਨ	nccc;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ	hangul[UTF8HANGULLEAF];
 };
 
 /*
@@ -104,10 +104,10 @@ struct utf8cursor {
  * Returns 0 on success.
  * Returns -1 on failure.
  */
-extern int utf8cursor(struct utf8cursor *u8c, const struct utf8data *data,
-		      const char *s);
-extern int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
-		       const char *s, size_t len);
+ਬਾਹਰੀ ਪੂਰਨ utf8cursor(ਬਣਤਰ utf8cursor *u8c, ਅਚਲ ਬਣਤਰ utf8data *ਅੰਕੜੇ,
+		      ਅਚਲ ਅੱਖਰ *s);
+ਬਾਹਰੀ ਪੂਰਨ utf8ncursor(ਬਣਤਰ utf8cursor *u8c, ਅਚਲ ਬਣਤਰ utf8data *ਅੰਕੜੇ,
+		       ਅਚਲ ਅੱਖਰ *s, size_t len);
 
 /*
  * Get the next byte in the normalization.
@@ -115,6 +115,6 @@ extern int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
  * Returns 0 when the end of the normalization is reached.
  * Returns -1 if the string being normalized is not valid UTF-8.
  */
-extern int utf8byte(struct utf8cursor *u8c);
+ਬਾਹਰੀ ਪੂਰਨ utf8byte(ਬਣਤਰ utf8cursor *u8c);
 
-#endif /* UTF8NORM_H */
+#ਜੇ_ਅੰਤ /* UTF8NORM_H */

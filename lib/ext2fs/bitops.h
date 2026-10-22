@@ -10,207 +10,207 @@
  * %End-Header%
  */
 
-#ifdef WORDS_BIGENDIAN
-#define ext2fs_cpu_to_le64(x) ((__force __le64)ext2fs_swab64((__u64)(x)))
-#define ext2fs_le64_to_cpu(x) ext2fs_swab64((__force __u64)(__le64)(x))
-#define ext2fs_cpu_to_le32(x) ((__force __le32)ext2fs_swab32((__u32)(x)))
-#define ext2fs_le32_to_cpu(x) ext2fs_swab32((__force __u32)(__le32)(x))
-#define ext2fs_cpu_to_le16(x) ((__force __le16)ext2fs_swab16((__u16)(x)))
-#define ext2fs_le16_to_cpu(x) ext2fs_swab16((__force __u16)(__le16)(x))
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ਸ਼ਬਦ_BIGENDIAN
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_cpu_ਮੰਜ਼ਿਲ_le64(x) ((__force __le64)ext2fs_swab64((__u64)(x)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_le64_ਮੰਜ਼ਿਲ_cpu(x) ext2fs_swab64((__force __u64)(__le64)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_cpu_ਮੰਜ਼ਿਲ_le32(x) ((__force __le32)ext2fs_swab32((__u32)(x)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_le32_ਮੰਜ਼ਿਲ_cpu(x) ext2fs_swab32((__force __u32)(__le32)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_cpu_ਮੰਜ਼ਿਲ_le16(x) ((__force __le16)ext2fs_swab16((__u16)(x)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_le16_ਮੰਜ਼ਿਲ_cpu(x) ext2fs_swab16((__force __u16)(__le16)(x))
 
-#define ext2fs_cpu_to_be64(x) ((__force __be64)(__u64)(x))
-#define ext2fs_be64_to_cpu(x) ((__force __u64)(__be64)(x))
-#define ext2fs_cpu_to_be32(x) ((__force __be32)(__u32)(x))
-#define ext2fs_be32_to_cpu(x) ((__force __u32)(__be32)(x))
-#define ext2fs_cpu_to_be16(x) ((__force __be16)(__u16)(x))
-#define ext2fs_be16_to_cpu(x) ((__force __u16)(__be16)(x))
-#else
-#define ext2fs_cpu_to_le64(x) ((__force __le64)(__u64)(x))
-#define ext2fs_le64_to_cpu(x) ((__force __u64)(__le64)(x))
-#define ext2fs_cpu_to_le32(x) ((__force __le32)(__u32)(x))
-#define ext2fs_le32_to_cpu(x) ((__force __u32)(__le32)(x))
-#define ext2fs_cpu_to_le16(x) ((__force __le16)(__u16)(x))
-#define ext2fs_le16_to_cpu(x) ((__force __u16)(__le16)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_cpu_ਮੰਜ਼ਿਲ_be64(x) ((__force __be64)(__u64)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_be64_ਮੰਜ਼ਿਲ_cpu(x) ((__force __u64)(__be64)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_cpu_ਮੰਜ਼ਿਲ_be32(x) ((__force __be32)(__u32)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_be32_ਮੰਜ਼ਿਲ_cpu(x) ((__force __u32)(__be32)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_cpu_ਮੰਜ਼ਿਲ_be16(x) ((__force __be16)(__u16)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_be16_ਮੰਜ਼ਿਲ_cpu(x) ((__force __u16)(__be16)(x))
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_cpu_ਮੰਜ਼ਿਲ_le64(x) ((__force __le64)(__u64)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_le64_ਮੰਜ਼ਿਲ_cpu(x) ((__force __u64)(__le64)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_cpu_ਮੰਜ਼ਿਲ_le32(x) ((__force __le32)(__u32)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_le32_ਮੰਜ਼ਿਲ_cpu(x) ((__force __u32)(__le32)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_cpu_ਮੰਜ਼ਿਲ_le16(x) ((__force __le16)(__u16)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_le16_ਮੰਜ਼ਿਲ_cpu(x) ((__force __u16)(__le16)(x))
 
-#define ext2fs_cpu_to_be64(x) ((__force __be64)ext2fs_swab64((__u64)(x)))
-#define ext2fs_be64_to_cpu(x) ext2fs_swab64((__force __u64)(__be64)(x))
-#define ext2fs_cpu_to_be32(x) ((__force __be32)ext2fs_swab32((__u32)(x)))
-#define ext2fs_be32_to_cpu(x) ext2fs_swab32((__force __u32)(__be32)(x))
-#define ext2fs_cpu_to_be16(x) ((__force __be16)ext2fs_swab16((__u16)(x)))
-#define ext2fs_be16_to_cpu(x) ext2fs_swab16((__force __u16)(__be16)(x))
-#endif
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_cpu_ਮੰਜ਼ਿਲ_be64(x) ((__force __be64)ext2fs_swab64((__u64)(x)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_be64_ਮੰਜ਼ਿਲ_cpu(x) ext2fs_swab64((__force __u64)(__be64)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_cpu_ਮੰਜ਼ਿਲ_be32(x) ((__force __be32)ext2fs_swab32((__u32)(x)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_be32_ਮੰਜ਼ਿਲ_cpu(x) ext2fs_swab32((__force __u32)(__be32)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_cpu_ਮੰਜ਼ਿਲ_be16(x) ((__force __be16)ext2fs_swab16((__u16)(x)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ext2fs_be16_ਮੰਜ਼ਿਲ_cpu(x) ext2fs_swab16((__force __u16)(__be16)(x))
+#ਜੇ_ਅੰਤ
 
 /*
  * EXT2FS bitmap manipulation routines.
  */
 
 /* Support for sending warning messages from the inline subroutines */
-extern const char *ext2fs_block_string;
-extern const char *ext2fs_inode_string;
-extern const char *ext2fs_mark_string;
-extern const char *ext2fs_unmark_string;
-extern const char *ext2fs_test_string;
-extern void ext2fs_warn_bitmap(errcode_t errcode, unsigned long arg,
-			       const char *description);
-extern void ext2fs_warn_bitmap2(ext2fs_generic_bitmap bitmap,
-				int code, unsigned long arg);
+ਬਾਹਰੀ ਅਚਲ ਅੱਖਰ *ext2fs_ਖੰਡ_string;
+ਬਾਹਰੀ ਅਚਲ ਅੱਖਰ *ext2fs_inode_string;
+ਬਾਹਰੀ ਅਚਲ ਅੱਖਰ *ext2fs_mark_string;
+ਬਾਹਰੀ ਅਚਲ ਅੱਖਰ *ext2fs_unmark_string;
+ਬਾਹਰੀ ਅਚਲ ਅੱਖਰ *ext2fs_test_string;
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_warn_bitmap(errcode_t errcode, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ arg,
+			       ਅਚਲ ਅੱਖਰ *description);
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_warn_bitmap2(ext2fs_generic_bitmap bitmap,
+				ਪੂਰਨ ਕੋਡ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ arg);
 
-#ifdef NO_INLINE_FUNCS
-extern void ext2fs_fast_set_bit(unsigned int nr,void * addr);
-extern void ext2fs_fast_clear_bit(unsigned int nr, void * addr);
-extern void ext2fs_fast_set_bit64(__u64 nr,void * addr);
-extern void ext2fs_fast_clear_bit64(__u64 nr, void * addr);
-extern __u16 ext2fs_swab16(__u16 val);
-extern __u32 ext2fs_swab32(__u32 val);
-extern __u64 ext2fs_swab64(__u64 val);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ NO_INLINE_FUNCS
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_ਸੈੱਟ_ਦੋਆਧਾਰੀ_ਅੰਕ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr,ਖਾਲੀ * addr);
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_clear_ਦੋਆਧਾਰੀ_ਅੰਕ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr, ਖਾਲੀ * addr);
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_ਸੈੱਟ_bit64(__u64 nr,ਖਾਲੀ * addr);
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_clear_bit64(__u64 nr, ਖਾਲੀ * addr);
+ਬਾਹਰੀ __u16 ext2fs_swab16(__u16 val);
+ਬਾਹਰੀ __u32 ext2fs_swab32(__u32 val);
+ਬਾਹਰੀ __u64 ext2fs_swab64(__u64 val);
 
-extern int ext2fs_mark_block_bitmap(ext2fs_block_bitmap bitmap, blk_t block);
-extern int ext2fs_unmark_block_bitmap(ext2fs_block_bitmap bitmap,
-				       blk_t block);
-extern int ext2fs_test_block_bitmap(ext2fs_block_bitmap bitmap, blk_t block);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_mark_ਖੰਡ_bitmap(ext2fs_ਖੰਡ_bitmap bitmap, blk_t ਖੰਡ);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_unmark_ਖੰਡ_bitmap(ext2fs_ਖੰਡ_bitmap bitmap,
+				       blk_t ਖੰਡ);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_test_ਖੰਡ_bitmap(ext2fs_ਖੰਡ_bitmap bitmap, blk_t ਖੰਡ);
 
-extern int ext2fs_mark_inode_bitmap(ext2fs_inode_bitmap bitmap, ext2_ino_t inode);
-extern int ext2fs_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_mark_inode_bitmap(ext2fs_inode_bitmap bitmap, ext2_ino_t inode);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
 				       ext2_ino_t inode);
-extern int ext2fs_test_inode_bitmap(ext2fs_inode_bitmap bitmap, ext2_ino_t inode);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_test_inode_bitmap(ext2fs_inode_bitmap bitmap, ext2_ino_t inode);
 
-extern void ext2fs_fast_mark_block_bitmap(ext2fs_block_bitmap bitmap,
-					  blk_t block);
-extern void ext2fs_fast_unmark_block_bitmap(ext2fs_block_bitmap bitmap,
-					    blk_t block);
-extern int ext2fs_fast_test_block_bitmap(ext2fs_block_bitmap bitmap,
-					 blk_t block);
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_mark_ਖੰਡ_bitmap(ext2fs_ਖੰਡ_bitmap bitmap,
+					  blk_t ਖੰਡ);
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_unmark_ਖੰਡ_bitmap(ext2fs_ਖੰਡ_bitmap bitmap,
+					    blk_t ਖੰਡ);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_fast_test_ਖੰਡ_bitmap(ext2fs_ਖੰਡ_bitmap bitmap,
+					 blk_t ਖੰਡ);
 
-extern void ext2fs_fast_mark_inode_bitmap(ext2fs_inode_bitmap bitmap,
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_mark_inode_bitmap(ext2fs_inode_bitmap bitmap,
 					  ext2_ino_t inode);
-extern void ext2fs_fast_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
 					    ext2_ino_t inode);
-extern int ext2fs_fast_test_inode_bitmap(ext2fs_inode_bitmap bitmap,
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_fast_test_inode_bitmap(ext2fs_inode_bitmap bitmap,
 					 ext2_ino_t inode);
-extern blk_t ext2fs_get_block_bitmap_start(ext2fs_block_bitmap bitmap);
-extern ext2_ino_t ext2fs_get_inode_bitmap_start(ext2fs_inode_bitmap bitmap);
-extern blk_t ext2fs_get_block_bitmap_end(ext2fs_block_bitmap bitmap);
-extern ext2_ino_t ext2fs_get_inode_bitmap_end(ext2fs_inode_bitmap bitmap);
+ਬਾਹਰੀ blk_t ext2fs_get_ਖੰਡ_bitmap_ਸ਼ੁਰੂ(ext2fs_ਖੰਡ_bitmap bitmap);
+ਬਾਹਰੀ ext2_ino_t ext2fs_get_inode_bitmap_ਸ਼ੁਰੂ(ext2fs_inode_bitmap bitmap);
+ਬਾਹਰੀ blk_t ext2fs_get_ਖੰਡ_bitmap_ਸਿਰਾ(ext2fs_ਖੰਡ_bitmap bitmap);
+ਬਾਹਰੀ ext2_ino_t ext2fs_get_inode_bitmap_ਸਿਰਾ(ext2fs_inode_bitmap bitmap);
 
-extern void ext2fs_fast_mark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-						blk_t block, int num);
-extern void ext2fs_fast_unmark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-						  blk_t block, int num);
-extern int ext2fs_fast_test_block_bitmap_range(ext2fs_block_bitmap bitmap,
-					       blk_t block, int num);
-#endif
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_mark_ਖੰਡ_bitmap_range(ext2fs_ਖੰਡ_bitmap bitmap,
+						blk_t ਖੰਡ, ਪੂਰਨ ਅੰਕ);
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_unmark_ਖੰਡ_bitmap_range(ext2fs_ਖੰਡ_bitmap bitmap,
+						  blk_t ਖੰਡ, ਪੂਰਨ ਅੰਕ);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_fast_test_ਖੰਡ_bitmap_range(ext2fs_ਖੰਡ_bitmap bitmap,
+					       blk_t ਖੰਡ, ਪੂਰਨ ਅੰਕ);
+#ਜੇ_ਅੰਤ
 
 /* These functions routines moved to gen_bitmap.c */
-extern void ext2fs_mark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-					   blk_t block, int num);
-extern void ext2fs_unmark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-					     blk_t block, int num);
-extern int ext2fs_test_block_bitmap_range(ext2fs_block_bitmap bitmap,
-					  blk_t block, int num);
-extern int ext2fs_test_inode_bitmap_range(ext2fs_inode_bitmap bitmap,
-					  ext2_ino_t inode, int num);
-extern int ext2fs_mark_generic_bitmap(ext2fs_generic_bitmap bitmap,
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_mark_ਖੰਡ_bitmap_range(ext2fs_ਖੰਡ_bitmap bitmap,
+					   blk_t ਖੰਡ, ਪੂਰਨ ਅੰਕ);
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_unmark_ਖੰਡ_bitmap_range(ext2fs_ਖੰਡ_bitmap bitmap,
+					     blk_t ਖੰਡ, ਪੂਰਨ ਅੰਕ);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_test_ਖੰਡ_bitmap_range(ext2fs_ਖੰਡ_bitmap bitmap,
+					  blk_t ਖੰਡ, ਪੂਰਨ ਅੰਕ);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_test_inode_bitmap_range(ext2fs_inode_bitmap bitmap,
+					  ext2_ino_t inode, ਪੂਰਨ ਅੰਕ);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_mark_generic_bitmap(ext2fs_generic_bitmap bitmap,
 					 __u32 bitno);
-extern int ext2fs_unmark_generic_bitmap(ext2fs_generic_bitmap bitmap,
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_unmark_generic_bitmap(ext2fs_generic_bitmap bitmap,
 					   blk_t bitno);
-extern int ext2fs_test_generic_bitmap(ext2fs_generic_bitmap bitmap,
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_test_generic_bitmap(ext2fs_generic_bitmap bitmap,
 				      blk_t bitno);
-extern int ext2fs_test_block_bitmap_range(ext2fs_block_bitmap bitmap,
-					  blk_t block, int num);
-extern void ext2fs_set_bitmap_padding(ext2fs_generic_bitmap map);
-extern __u32 ext2fs_get_generic_bitmap_start(ext2fs_generic_bitmap bitmap);
-extern __u32 ext2fs_get_generic_bitmap_end(ext2fs_generic_bitmap bitmap);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_test_ਖੰਡ_bitmap_range(ext2fs_ਖੰਡ_bitmap bitmap,
+					  blk_t ਖੰਡ, ਪੂਰਨ ਅੰਕ);
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_ਸੈੱਟ_bitmap_padding(ext2fs_generic_bitmap map);
+ਬਾਹਰੀ __u32 ext2fs_get_generic_bitmap_ਸ਼ੁਰੂ(ext2fs_generic_bitmap bitmap);
+ਬਾਹਰੀ __u32 ext2fs_get_generic_bitmap_ਸਿਰਾ(ext2fs_generic_bitmap bitmap);
 
 /* 64-bit versions */
 
-#ifdef NO_INLINE_FUNCS
-extern int ext2fs_mark_block_bitmap2(ext2fs_block_bitmap bitmap,
-				     blk64_t block);
-extern int ext2fs_unmark_block_bitmap2(ext2fs_block_bitmap bitmap,
-				       blk64_t block);
-extern int ext2fs_test_block_bitmap2(ext2fs_block_bitmap bitmap,
-				     blk64_t block);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ NO_INLINE_FUNCS
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_mark_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+				     blk64_t ਖੰਡ);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_unmark_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+				       blk64_t ਖੰਡ);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_test_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+				     blk64_t ਖੰਡ);
 
-extern int ext2fs_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 				     ext2_ino_t inode);
-extern int ext2fs_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 				       ext2_ino_t inode);
-extern int ext2fs_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 				     ext2_ino_t inode);
 
-extern void ext2fs_fast_mark_block_bitmap2(ext2fs_block_bitmap bitmap,
-					   blk64_t block);
-extern void ext2fs_fast_unmark_block_bitmap2(ext2fs_block_bitmap bitmap,
-					     blk64_t block);
-extern int ext2fs_fast_test_block_bitmap2(ext2fs_block_bitmap bitmap,
-					  blk64_t block);
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_mark_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+					   blk64_t ਖੰਡ);
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_unmark_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+					     blk64_t ਖੰਡ);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_fast_test_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+					  blk64_t ਖੰਡ);
 
-extern void ext2fs_fast_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 					   ext2_ino_t inode);
-extern void ext2fs_fast_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 					    ext2_ino_t inode);
-extern int ext2fs_fast_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_fast_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 					  ext2_ino_t inode);
-extern errcode_t ext2fs_find_first_zero_block_bitmap2(ext2fs_block_bitmap bitmap,
-						      blk64_t start,
-						      blk64_t end,
-						      blk64_t *out);
-extern errcode_t ext2fs_find_first_zero_inode_bitmap2(ext2fs_inode_bitmap bitmap,
-						      ext2_ino_t start,
-						      ext2_ino_t end,
-						      ext2_ino_t *out);
-extern errcode_t ext2fs_find_first_set_block_bitmap2(ext2fs_block_bitmap bitmap,
-						     blk64_t start,
-						     blk64_t end,
-						     blk64_t *out);
-extern errcode_t ext2fs_find_first_set_inode_bitmap2(ext2fs_inode_bitmap bitmap,
-						      ext2_ino_t start,
-						      ext2_ino_t end,
-						      ext2_ino_t *out);
-extern blk64_t ext2fs_get_block_bitmap_start2(ext2fs_block_bitmap bitmap);
-extern ext2_ino_t ext2fs_get_inode_bitmap_start2(ext2fs_inode_bitmap bitmap);
-extern blk64_t ext2fs_get_block_bitmap_end2(ext2fs_block_bitmap bitmap);
-extern ext2_ino_t ext2fs_get_inode_bitmap_end2(ext2fs_inode_bitmap bitmap);
+ਬਾਹਰੀ errcode_t ext2fs_ਲੱਭੋ_ਪਹਿਲਾ_zero_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+						      blk64_t ਸ਼ੁਰੂ,
+						      blk64_t ਸਿਰਾ,
+						      blk64_t *ਬਾਹਰਲਾ);
+ਬਾਹਰੀ errcode_t ext2fs_ਲੱਭੋ_ਪਹਿਲਾ_zero_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+						      ext2_ino_t ਸ਼ੁਰੂ,
+						      ext2_ino_t ਸਿਰਾ,
+						      ext2_ino_t *ਬਾਹਰਲਾ);
+ਬਾਹਰੀ errcode_t ext2fs_ਲੱਭੋ_ਪਹਿਲਾ_ਸੈੱਟ_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+						     blk64_t ਸ਼ੁਰੂ,
+						     blk64_t ਸਿਰਾ,
+						     blk64_t *ਬਾਹਰਲਾ);
+ਬਾਹਰੀ errcode_t ext2fs_ਲੱਭੋ_ਪਹਿਲਾ_ਸੈੱਟ_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+						      ext2_ino_t ਸ਼ੁਰੂ,
+						      ext2_ino_t ਸਿਰਾ,
+						      ext2_ino_t *ਬਾਹਰਲਾ);
+ਬਾਹਰੀ blk64_t ext2fs_get_ਖੰਡ_bitmap_start2(ext2fs_ਖੰਡ_bitmap bitmap);
+ਬਾਹਰੀ ext2_ino_t ext2fs_get_inode_bitmap_start2(ext2fs_inode_bitmap bitmap);
+ਬਾਹਰੀ blk64_t ext2fs_get_ਖੰਡ_bitmap_end2(ext2fs_ਖੰਡ_bitmap bitmap);
+ਬਾਹਰੀ ext2_ino_t ext2fs_get_inode_bitmap_end2(ext2fs_inode_bitmap bitmap);
 
-extern int ext2fs_fast_test_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-						blk64_t block,
-						unsigned int num);
-extern void ext2fs_fast_mark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-						 blk64_t block,
-						 unsigned int num);
-extern void ext2fs_fast_unmark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-						   blk64_t block,
-						   unsigned int num);
-#endif
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_fast_test_ਖੰਡ_bitmap_range2(ext2fs_ਖੰਡ_bitmap bitmap,
+						blk64_t ਖੰਡ,
+						ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ);
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_mark_ਖੰਡ_bitmap_range2(ext2fs_ਖੰਡ_bitmap bitmap,
+						 blk64_t ਖੰਡ,
+						 ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ);
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_fast_unmark_ਖੰਡ_bitmap_range2(ext2fs_ਖੰਡ_bitmap bitmap,
+						   blk64_t ਖੰਡ,
+						   ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ);
+#ਜੇ_ਅੰਤ
 
 /* These routines moved to gen_bitmap64.c */
-extern void ext2fs_clear_generic_bmap(ext2fs_generic_bitmap bitmap);
-extern errcode_t ext2fs_compare_generic_bmap(errcode_t neq,
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_clear_generic_bmap(ext2fs_generic_bitmap bitmap);
+ਬਾਹਰੀ errcode_t ext2fs_compare_generic_bmap(errcode_t neq,
 					     ext2fs_generic_bitmap bm1,
 					     ext2fs_generic_bitmap bm2);
-extern void ext2fs_set_generic_bmap_padding(ext2fs_generic_bitmap bmap);
-extern int ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_ਸੈੱਟ_generic_bmap_padding(ext2fs_generic_bitmap bmap);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    blk64_t bitno);
-extern int ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				      blk64_t bitno);
-extern int ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    blk64_t bitno);
-extern int ext2fs_test_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-					   blk64_t block, unsigned int num);
-extern __u64 ext2fs_get_generic_bmap_start(ext2fs_generic_bitmap bitmap);
-extern __u64 ext2fs_get_generic_bmap_end(ext2fs_generic_bitmap bitmap);
-extern int ext2fs_test_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-					   blk64_t block, unsigned int num);
-extern void ext2fs_mark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-					    blk64_t block, unsigned int num);
-extern void ext2fs_unmark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-					      blk64_t block, unsigned int num);
-extern errcode_t ext2fs_find_first_zero_generic_bmap(ext2fs_generic_bitmap bitmap,
-						     __u64 start, __u64 end,
-						     __u64 *out);
-extern errcode_t ext2fs_find_first_set_generic_bmap(ext2fs_generic_bitmap bitmap,
-						    __u64 start, __u64 end,
-						    __u64 *out);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_test_ਖੰਡ_bitmap_range2(ext2fs_ਖੰਡ_bitmap bitmap,
+					   blk64_t ਖੰਡ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ);
+ਬਾਹਰੀ __u64 ext2fs_get_generic_bmap_ਸ਼ੁਰੂ(ext2fs_generic_bitmap bitmap);
+ਬਾਹਰੀ __u64 ext2fs_get_generic_bmap_ਸਿਰਾ(ext2fs_generic_bitmap bitmap);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_test_ਖੰਡ_bitmap_range2(ext2fs_ਖੰਡ_bitmap bitmap,
+					   blk64_t ਖੰਡ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ);
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_mark_ਖੰਡ_bitmap_range2(ext2fs_ਖੰਡ_bitmap bitmap,
+					    blk64_t ਖੰਡ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ);
+ਬਾਹਰੀ ਖਾਲੀ ext2fs_unmark_ਖੰਡ_bitmap_range2(ext2fs_ਖੰਡ_bitmap bitmap,
+					      blk64_t ਖੰਡ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ);
+ਬਾਹਰੀ errcode_t ext2fs_ਲੱਭੋ_ਪਹਿਲਾ_zero_generic_bmap(ext2fs_generic_bitmap bitmap,
+						     __u64 ਸ਼ੁਰੂ, __u64 ਸਿਰਾ,
+						     __u64 *ਬਾਹਰਲਾ);
+ਬਾਹਰੀ errcode_t ext2fs_ਲੱਭੋ_ਪਹਿਲਾ_ਸੈੱਟ_generic_bmap(ext2fs_generic_bitmap bitmap,
+						    __u64 ਸ਼ੁਰੂ, __u64 ਸਿਰਾ,
+						    __u64 *ਬਾਹਰਲਾ);
 
 /*
  * The inline routines themselves...
@@ -220,387 +220,387 @@ extern errcode_t ext2fs_find_first_set_generic_bmap(ext2fs_generic_bitmap bitmap
  * inline.c
  */
 
-#if (defined(INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
-#ifdef INCLUDE_INLINE_FUNCS
-#if (__STDC_VERSION__ >= 199901L)
-#define _INLINE_ extern inline
-#else
-#define _INLINE_ inline
-#endif
-#else /* !INCLUDE_INLINE FUNCS */
-#if (__STDC_VERSION__ >= 199901L)
-#define _INLINE_ inline
-#else /* not C99 */
-#ifdef __GNUC__
-#define _INLINE_ extern __inline__
-#else				/* For Watcom C */
-#define _INLINE_ extern inline
-#endif /* __GNUC__ */
-#endif /* __STDC_VERSION__ >= 199901L */
-#endif /* INCLUDE_INLINE_FUNCS */
+#ਜੇ (defined(INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ INCLUDE_INLINE_FUNCS
+#ਜੇ (__STDC_VERSION__ >= 199901L)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _INLINE_ ਬਾਹਰੀ ਸਤਰਅੰਦਰ
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _INLINE_ ਸਤਰਅੰਦਰ
+#ਜੇ_ਅੰਤ
+#ਨਹੀਂਤਾਂ /* !INCLUDE_INLINE FUNCS */
+#ਜੇ (__STDC_VERSION__ >= 199901L)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _INLINE_ ਸਤਰਅੰਦਰ
+#ਨਹੀਂਤਾਂ /* not C99 */
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __GNUC__
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _INLINE_ ਬਾਹਰੀ __inline__
+#ਨਹੀਂਤਾਂ				/* For Watcom C */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _INLINE_ ਬਾਹਰੀ ਸਤਰਅੰਦਰ
+#ਜੇ_ਅੰਤ /* __GNUC__ */
+#ਜੇ_ਅੰਤ /* __STDC_VERSION__ >= 199901L */
+#ਜੇ_ਅੰਤ /* INCLUDE_INLINE_FUNCS */
 
 /*
  * Fast bit set/clear functions that doesn't need to return the
  * previous bit value.
  */
 
-_INLINE_ void ext2fs_fast_set_bit(unsigned int nr,void * addr)
+_INLINE_ ਖਾਲੀ ext2fs_fast_ਸੈੱਟ_ਦੋਆਧਾਰੀ_ਅੰਕ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr,ਖਾਲੀ * addr)
 {
-	unsigned char	*ADDR = (unsigned char *) addr;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ	*ADDR = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *) addr;
 
 	ADDR += nr >> 3;
-	*ADDR |= (unsigned char) (1 << (nr & 0x07));
+	*ADDR |= (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) (1 << (nr & 0x07));
 }
 
-_INLINE_ void ext2fs_fast_clear_bit(unsigned int nr, void * addr)
+_INLINE_ ਖਾਲੀ ext2fs_fast_clear_ਦੋਆਧਾਰੀ_ਅੰਕ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr, ਖਾਲੀ * addr)
 {
-	unsigned char	*ADDR = (unsigned char *) addr;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ	*ADDR = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *) addr;
 
 	ADDR += nr >> 3;
-	*ADDR &= (unsigned char) ~(1 << (nr & 0x07));
+	*ADDR &= (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) ~(1 << (nr & 0x07));
 }
 
 
-_INLINE_ void ext2fs_fast_set_bit64(__u64 nr, void * addr)
+_INLINE_ ਖਾਲੀ ext2fs_fast_ਸੈੱਟ_bit64(__u64 nr, ਖਾਲੀ * addr)
 {
-	unsigned char	*ADDR = (unsigned char *) addr;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ	*ADDR = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *) addr;
 
 	ADDR += nr >> 3;
-	*ADDR |= (unsigned char) (1 << (nr & 0x07));
+	*ADDR |= (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) (1 << (nr & 0x07));
 }
 
-_INLINE_ void ext2fs_fast_clear_bit64(__u64 nr, void * addr)
+_INLINE_ ਖਾਲੀ ext2fs_fast_clear_bit64(__u64 nr, ਖਾਲੀ * addr)
 {
-	unsigned char	*ADDR = (unsigned char *) addr;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ	*ADDR = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *) addr;
 
 	ADDR += nr >> 3;
-	*ADDR &= (unsigned char) ~(1 << (nr & 0x07));
+	*ADDR &= (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) ~(1 << (nr & 0x07));
 }
 
 _INLINE_ __u16 ext2fs_swab16(__u16 val)
 {
-	return (val >> 8) | (__u16) (val << 8);
+	ਵਾਪਸ (val >> 8) | (__u16) (val << 8);
 }
 
 _INLINE_ __u32 ext2fs_swab32(__u32 val)
 {
-	return ((val>>24) | ((val>>8)&0xFF00) |
+	ਵਾਪਸ ((val>>24) | ((val>>8)&0xFF00) |
 		((val<<8)&0xFF0000) | (val<<24));
 }
 
 _INLINE_ __u64 ext2fs_swab64(__u64 val)
 {
-	return (ext2fs_swab32((__u32) (val >> 32)) |
+	ਵਾਪਸ (ext2fs_swab32((__u32) (val >> 32)) |
 		(((__u64)ext2fs_swab32(val & 0xFFFFFFFFUL)) << 32));
 }
 
-_INLINE_ int ext2fs_mark_block_bitmap(ext2fs_block_bitmap bitmap,
-				       blk_t block)
+_INLINE_ ਪੂਰਨ ext2fs_mark_ਖੰਡ_bitmap(ext2fs_ਖੰਡ_bitmap bitmap,
+				       blk_t ਖੰਡ)
 {
-	return ext2fs_mark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
-					  block);
+	ਵਾਪਸ ext2fs_mark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+					  ਖੰਡ);
 }
 
-_INLINE_ int ext2fs_unmark_block_bitmap(ext2fs_block_bitmap bitmap,
-					 blk_t block)
+_INLINE_ ਪੂਰਨ ext2fs_unmark_ਖੰਡ_bitmap(ext2fs_ਖੰਡ_bitmap bitmap,
+					 blk_t ਖੰਡ)
 {
-	return ext2fs_unmark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
-					    block);
+	ਵਾਪਸ ext2fs_unmark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+					    ਖੰਡ);
 }
 
-_INLINE_ int ext2fs_test_block_bitmap(ext2fs_block_bitmap bitmap,
-				       blk_t block)
+_INLINE_ ਪੂਰਨ ext2fs_test_ਖੰਡ_bitmap(ext2fs_ਖੰਡ_bitmap bitmap,
+				       blk_t ਖੰਡ)
 {
-	return ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
-					  block);
+	ਵਾਪਸ ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+					  ਖੰਡ);
 }
 
-_INLINE_ int ext2fs_mark_inode_bitmap(ext2fs_inode_bitmap bitmap,
+_INLINE_ ਪੂਰਨ ext2fs_mark_inode_bitmap(ext2fs_inode_bitmap bitmap,
 				       ext2_ino_t inode)
 {
-	return ext2fs_mark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+	ਵਾਪਸ ext2fs_mark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
 					  inode);
 }
 
-_INLINE_ int ext2fs_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
+_INLINE_ ਪੂਰਨ ext2fs_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
 					 ext2_ino_t inode)
 {
-	return ext2fs_unmark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+	ਵਾਪਸ ext2fs_unmark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
 				     inode);
 }
 
-_INLINE_ int ext2fs_test_inode_bitmap(ext2fs_inode_bitmap bitmap,
+_INLINE_ ਪੂਰਨ ext2fs_test_inode_bitmap(ext2fs_inode_bitmap bitmap,
 				       ext2_ino_t inode)
 {
-	return ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+	ਵਾਪਸ ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
 					  inode);
 }
 
-_INLINE_ void ext2fs_fast_mark_block_bitmap(ext2fs_block_bitmap bitmap,
-					    blk_t block)
+_INLINE_ ਖਾਲੀ ext2fs_fast_mark_ਖੰਡ_bitmap(ext2fs_ਖੰਡ_bitmap bitmap,
+					    blk_t ਖੰਡ)
 {
-	ext2fs_mark_generic_bitmap((ext2fs_generic_bitmap) bitmap, block);
+	ext2fs_mark_generic_bitmap((ext2fs_generic_bitmap) bitmap, ਖੰਡ);
 }
 
-_INLINE_ void ext2fs_fast_unmark_block_bitmap(ext2fs_block_bitmap bitmap,
-					      blk_t block)
+_INLINE_ ਖਾਲੀ ext2fs_fast_unmark_ਖੰਡ_bitmap(ext2fs_ਖੰਡ_bitmap bitmap,
+					      blk_t ਖੰਡ)
 {
-	ext2fs_unmark_generic_bitmap((ext2fs_generic_bitmap) bitmap, block);
+	ext2fs_unmark_generic_bitmap((ext2fs_generic_bitmap) bitmap, ਖੰਡ);
 }
 
-_INLINE_ int ext2fs_fast_test_block_bitmap(ext2fs_block_bitmap bitmap,
-					    blk_t block)
+_INLINE_ ਪੂਰਨ ext2fs_fast_test_ਖੰਡ_bitmap(ext2fs_ਖੰਡ_bitmap bitmap,
+					    blk_t ਖੰਡ)
 {
-	return ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
-					  block);
+	ਵਾਪਸ ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+					  ਖੰਡ);
 }
 
-_INLINE_ void ext2fs_fast_mark_inode_bitmap(ext2fs_inode_bitmap bitmap,
+_INLINE_ ਖਾਲੀ ext2fs_fast_mark_inode_bitmap(ext2fs_inode_bitmap bitmap,
 					    ext2_ino_t inode)
 {
 	ext2fs_mark_generic_bitmap((ext2fs_generic_bitmap) bitmap, inode);
 }
 
-_INLINE_ void ext2fs_fast_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
+_INLINE_ ਖਾਲੀ ext2fs_fast_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
 					      ext2_ino_t inode)
 {
 	ext2fs_unmark_generic_bitmap((ext2fs_generic_bitmap) bitmap, inode);
 }
 
-_INLINE_ int ext2fs_fast_test_inode_bitmap(ext2fs_inode_bitmap bitmap,
+_INLINE_ ਪੂਰਨ ext2fs_fast_test_inode_bitmap(ext2fs_inode_bitmap bitmap,
 					   ext2_ino_t inode)
 {
-	return ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+	ਵਾਪਸ ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
 					  inode);
 }
 
-_INLINE_ blk_t ext2fs_get_block_bitmap_start(ext2fs_block_bitmap bitmap)
+_INLINE_ blk_t ext2fs_get_ਖੰਡ_bitmap_ਸ਼ੁਰੂ(ext2fs_ਖੰਡ_bitmap bitmap)
 {
-	return ext2fs_get_generic_bitmap_start((ext2fs_generic_bitmap) bitmap);
+	ਵਾਪਸ ext2fs_get_generic_bitmap_ਸ਼ੁਰੂ((ext2fs_generic_bitmap) bitmap);
 }
 
-_INLINE_ ext2_ino_t ext2fs_get_inode_bitmap_start(ext2fs_inode_bitmap bitmap)
+_INLINE_ ext2_ino_t ext2fs_get_inode_bitmap_ਸ਼ੁਰੂ(ext2fs_inode_bitmap bitmap)
 {
-	return ext2fs_get_generic_bitmap_start((ext2fs_generic_bitmap) bitmap);
+	ਵਾਪਸ ext2fs_get_generic_bitmap_ਸ਼ੁਰੂ((ext2fs_generic_bitmap) bitmap);
 }
 
-_INLINE_ blk_t ext2fs_get_block_bitmap_end(ext2fs_block_bitmap bitmap)
+_INLINE_ blk_t ext2fs_get_ਖੰਡ_bitmap_ਸਿਰਾ(ext2fs_ਖੰਡ_bitmap bitmap)
 {
-	return ext2fs_get_generic_bitmap_end((ext2fs_generic_bitmap) bitmap);
+	ਵਾਪਸ ext2fs_get_generic_bitmap_ਸਿਰਾ((ext2fs_generic_bitmap) bitmap);
 }
 
-_INLINE_ ext2_ino_t ext2fs_get_inode_bitmap_end(ext2fs_inode_bitmap bitmap)
+_INLINE_ ext2_ino_t ext2fs_get_inode_bitmap_ਸਿਰਾ(ext2fs_inode_bitmap bitmap)
 {
-	return ext2fs_get_generic_bitmap_end((ext2fs_generic_bitmap) bitmap);
+	ਵਾਪਸ ext2fs_get_generic_bitmap_ਸਿਰਾ((ext2fs_generic_bitmap) bitmap);
 }
 
-_INLINE_ int ext2fs_fast_test_block_bitmap_range(ext2fs_block_bitmap bitmap,
-						 blk_t block, int num)
+_INLINE_ ਪੂਰਨ ext2fs_fast_test_ਖੰਡ_bitmap_range(ext2fs_ਖੰਡ_bitmap bitmap,
+						 blk_t ਖੰਡ, ਪੂਰਨ ਅੰਕ)
 {
-	return ext2fs_test_block_bitmap_range(bitmap, block, num);
+	ਵਾਪਸ ext2fs_test_ਖੰਡ_bitmap_range(bitmap, ਖੰਡ, ਅੰਕ);
 }
 
-_INLINE_ void ext2fs_fast_mark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-						  blk_t block, int num)
+_INLINE_ ਖਾਲੀ ext2fs_fast_mark_ਖੰਡ_bitmap_range(ext2fs_ਖੰਡ_bitmap bitmap,
+						  blk_t ਖੰਡ, ਪੂਰਨ ਅੰਕ)
 {
-	ext2fs_mark_block_bitmap_range(bitmap, block, num);
+	ext2fs_mark_ਖੰਡ_bitmap_range(bitmap, ਖੰਡ, ਅੰਕ);
 }
 
-_INLINE_ void ext2fs_fast_unmark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-						    blk_t block, int num)
+_INLINE_ ਖਾਲੀ ext2fs_fast_unmark_ਖੰਡ_bitmap_range(ext2fs_ਖੰਡ_bitmap bitmap,
+						    blk_t ਖੰਡ, ਪੂਰਨ ਅੰਕ)
 {
-	ext2fs_unmark_block_bitmap_range(bitmap, block, num);
+	ext2fs_unmark_ਖੰਡ_bitmap_range(bitmap, ਖੰਡ, ਅੰਕ);
 }
 
 /* 64-bit versions */
 
-_INLINE_ int ext2fs_mark_block_bitmap2(ext2fs_block_bitmap bitmap,
-				       blk64_t block)
+_INLINE_ ਪੂਰਨ ext2fs_mark_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+				       blk64_t ਖੰਡ)
 {
-	return ext2fs_mark_generic_bmap((ext2fs_generic_bitmap) bitmap,
-					block);
+	ਵਾਪਸ ext2fs_mark_generic_bmap((ext2fs_generic_bitmap) bitmap,
+					ਖੰਡ);
 }
 
-_INLINE_ int ext2fs_unmark_block_bitmap2(ext2fs_block_bitmap bitmap,
-					 blk64_t block)
+_INLINE_ ਪੂਰਨ ext2fs_unmark_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+					 blk64_t ਖੰਡ)
 {
-	return ext2fs_unmark_generic_bmap((ext2fs_generic_bitmap) bitmap, block);
+	ਵਾਪਸ ext2fs_unmark_generic_bmap((ext2fs_generic_bitmap) bitmap, ਖੰਡ);
 }
 
-_INLINE_ int ext2fs_test_block_bitmap2(ext2fs_block_bitmap bitmap,
-				       blk64_t block)
+_INLINE_ ਪੂਰਨ ext2fs_test_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+				       blk64_t ਖੰਡ)
 {
-	return ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
-					block);
+	ਵਾਪਸ ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
+					ਖੰਡ);
 }
 
-_INLINE_ int ext2fs_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+_INLINE_ ਪੂਰਨ ext2fs_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 				       ext2_ino_t inode)
 {
-	return ext2fs_mark_generic_bmap((ext2fs_generic_bitmap) bitmap,
+	ਵਾਪਸ ext2fs_mark_generic_bmap((ext2fs_generic_bitmap) bitmap,
 					inode);
 }
 
-_INLINE_ int ext2fs_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+_INLINE_ ਪੂਰਨ ext2fs_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 					 ext2_ino_t inode)
 {
-	return ext2fs_unmark_generic_bmap((ext2fs_generic_bitmap) bitmap,
+	ਵਾਪਸ ext2fs_unmark_generic_bmap((ext2fs_generic_bitmap) bitmap,
 					  inode);
 }
 
-_INLINE_ int ext2fs_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+_INLINE_ ਪੂਰਨ ext2fs_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 				       ext2_ino_t inode)
 {
-	return ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
+	ਵਾਪਸ ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
 					inode);
 }
 
-_INLINE_ void ext2fs_fast_mark_block_bitmap2(ext2fs_block_bitmap bitmap,
-					     blk64_t block)
+_INLINE_ ਖਾਲੀ ext2fs_fast_mark_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+					     blk64_t ਖੰਡ)
 {
-	ext2fs_mark_generic_bmap((ext2fs_generic_bitmap) bitmap, block);
+	ext2fs_mark_generic_bmap((ext2fs_generic_bitmap) bitmap, ਖੰਡ);
 }
 
-_INLINE_ void ext2fs_fast_unmark_block_bitmap2(ext2fs_block_bitmap bitmap,
-					       blk64_t block)
+_INLINE_ ਖਾਲੀ ext2fs_fast_unmark_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+					       blk64_t ਖੰਡ)
 {
-	ext2fs_unmark_generic_bmap((ext2fs_generic_bitmap) bitmap, block);
+	ext2fs_unmark_generic_bmap((ext2fs_generic_bitmap) bitmap, ਖੰਡ);
 }
 
-_INLINE_ int ext2fs_fast_test_block_bitmap2(ext2fs_block_bitmap bitmap,
-					    blk64_t block)
+_INLINE_ ਪੂਰਨ ext2fs_fast_test_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+					    blk64_t ਖੰਡ)
 {
-	return ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
-					block);
+	ਵਾਪਸ ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
+					ਖੰਡ);
 }
 
-_INLINE_ void ext2fs_fast_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+_INLINE_ ਖਾਲੀ ext2fs_fast_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 					     ext2_ino_t inode)
 {
 	ext2fs_mark_generic_bmap((ext2fs_generic_bitmap) bitmap, inode);
 }
 
-_INLINE_ void ext2fs_fast_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+_INLINE_ ਖਾਲੀ ext2fs_fast_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 					       ext2_ino_t inode)
 {
 	ext2fs_unmark_generic_bmap((ext2fs_generic_bitmap) bitmap, inode);
 }
 
-_INLINE_ int ext2fs_fast_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+_INLINE_ ਪੂਰਨ ext2fs_fast_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 					    ext2_ino_t inode)
 {
-	return ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
+	ਵਾਪਸ ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
 					inode);
 }
 
-_INLINE_ errcode_t ext2fs_find_first_zero_block_bitmap2(ext2fs_block_bitmap bitmap,
-							blk64_t start,
-							blk64_t end,
-							blk64_t *out)
+_INLINE_ errcode_t ext2fs_ਲੱਭੋ_ਪਹਿਲਾ_zero_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+							blk64_t ਸ਼ੁਰੂ,
+							blk64_t ਸਿਰਾ,
+							blk64_t *ਬਾਹਰਲਾ)
 {
 	__u64 o;
 	errcode_t rv;
 
-	rv = ext2fs_find_first_zero_generic_bmap((ext2fs_generic_bitmap) bitmap,
-						 start, end, &o);
-	if (!rv)
-		*out = o;
-	return rv;
+	rv = ext2fs_ਲੱਭੋ_ਪਹਿਲਾ_zero_generic_bmap((ext2fs_generic_bitmap) bitmap,
+						 ਸ਼ੁਰੂ, ਸਿਰਾ, &o);
+	ਜੇ (!rv)
+		*ਬਾਹਰਲਾ = o;
+	ਵਾਪਸ rv;
 }
 
-_INLINE_ errcode_t ext2fs_find_first_zero_inode_bitmap2(ext2fs_inode_bitmap bitmap,
-							ext2_ino_t start,
-							ext2_ino_t end,
-							ext2_ino_t *out)
+_INLINE_ errcode_t ext2fs_ਲੱਭੋ_ਪਹਿਲਾ_zero_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+							ext2_ino_t ਸ਼ੁਰੂ,
+							ext2_ino_t ਸਿਰਾ,
+							ext2_ino_t *ਬਾਹਰਲਾ)
 {
 	__u64 o;
 	errcode_t rv;
 
-	rv = ext2fs_find_first_zero_generic_bmap((ext2fs_generic_bitmap) bitmap,
-						 start, end, &o);
-	if (!rv)
-		*out = (ext2_ino_t) o;
-	return rv;
+	rv = ext2fs_ਲੱਭੋ_ਪਹਿਲਾ_zero_generic_bmap((ext2fs_generic_bitmap) bitmap,
+						 ਸ਼ੁਰੂ, ਸਿਰਾ, &o);
+	ਜੇ (!rv)
+		*ਬਾਹਰਲਾ = (ext2_ino_t) o;
+	ਵਾਪਸ rv;
 }
 
-_INLINE_ errcode_t ext2fs_find_first_set_block_bitmap2(ext2fs_block_bitmap bitmap,
-						       blk64_t start,
-						       blk64_t end,
-						       blk64_t *out)
+_INLINE_ errcode_t ext2fs_ਲੱਭੋ_ਪਹਿਲਾ_ਸੈੱਟ_ਖੰਡ_bitmap2(ext2fs_ਖੰਡ_bitmap bitmap,
+						       blk64_t ਸ਼ੁਰੂ,
+						       blk64_t ਸਿਰਾ,
+						       blk64_t *ਬਾਹਰਲਾ)
 {
 	__u64 o;
 	errcode_t rv;
 
-	rv = ext2fs_find_first_set_generic_bmap((ext2fs_generic_bitmap) bitmap,
-						start, end, &o);
-	if (!rv)
-		*out = o;
-	return rv;
+	rv = ext2fs_ਲੱਭੋ_ਪਹਿਲਾ_ਸੈੱਟ_generic_bmap((ext2fs_generic_bitmap) bitmap,
+						ਸ਼ੁਰੂ, ਸਿਰਾ, &o);
+	ਜੇ (!rv)
+		*ਬਾਹਰਲਾ = o;
+	ਵਾਪਸ rv;
 }
 
-_INLINE_ errcode_t ext2fs_find_first_set_inode_bitmap2(ext2fs_inode_bitmap bitmap,
-						       ext2_ino_t start,
-						       ext2_ino_t end,
-						       ext2_ino_t *out)
+_INLINE_ errcode_t ext2fs_ਲੱਭੋ_ਪਹਿਲਾ_ਸੈੱਟ_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+						       ext2_ino_t ਸ਼ੁਰੂ,
+						       ext2_ino_t ਸਿਰਾ,
+						       ext2_ino_t *ਬਾਹਰਲਾ)
 {
 	__u64 o;
 	errcode_t rv;
 
-	rv = ext2fs_find_first_set_generic_bmap((ext2fs_generic_bitmap) bitmap,
-						start, end, &o);
-	if (!rv)
-		*out = (ext2_ino_t) o;
-	return rv;
+	rv = ext2fs_ਲੱਭੋ_ਪਹਿਲਾ_ਸੈੱਟ_generic_bmap((ext2fs_generic_bitmap) bitmap,
+						ਸ਼ੁਰੂ, ਸਿਰਾ, &o);
+	ਜੇ (!rv)
+		*ਬਾਹਰਲਾ = (ext2_ino_t) o;
+	ਵਾਪਸ rv;
 }
 
-_INLINE_ blk64_t ext2fs_get_block_bitmap_start2(ext2fs_block_bitmap bitmap)
+_INLINE_ blk64_t ext2fs_get_ਖੰਡ_bitmap_start2(ext2fs_ਖੰਡ_bitmap bitmap)
 {
-	return ext2fs_get_generic_bmap_start((ext2fs_generic_bitmap) bitmap);
+	ਵਾਪਸ ext2fs_get_generic_bmap_ਸ਼ੁਰੂ((ext2fs_generic_bitmap) bitmap);
 }
 
 _INLINE_ ext2_ino_t ext2fs_get_inode_bitmap_start2(ext2fs_inode_bitmap bitmap)
 {
-	return (ext2_ino_t) ext2fs_get_generic_bmap_start((ext2fs_generic_bitmap) bitmap);
+	ਵਾਪਸ (ext2_ino_t) ext2fs_get_generic_bmap_ਸ਼ੁਰੂ((ext2fs_generic_bitmap) bitmap);
 }
 
-_INLINE_ blk64_t ext2fs_get_block_bitmap_end2(ext2fs_block_bitmap bitmap)
+_INLINE_ blk64_t ext2fs_get_ਖੰਡ_bitmap_end2(ext2fs_ਖੰਡ_bitmap bitmap)
 {
-	return ext2fs_get_generic_bmap_end((ext2fs_generic_bitmap) bitmap);
+	ਵਾਪਸ ext2fs_get_generic_bmap_ਸਿਰਾ((ext2fs_generic_bitmap) bitmap);
 }
 
 _INLINE_ ext2_ino_t ext2fs_get_inode_bitmap_end2(ext2fs_inode_bitmap bitmap)
 {
-	return (ext2_ino_t) ext2fs_get_generic_bmap_end((ext2fs_generic_bitmap) bitmap);
+	ਵਾਪਸ (ext2_ino_t) ext2fs_get_generic_bmap_ਸਿਰਾ((ext2fs_generic_bitmap) bitmap);
 }
 
-_INLINE_ int ext2fs_fast_test_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-						  blk64_t block,
-						  unsigned int num)
+_INLINE_ ਪੂਰਨ ext2fs_fast_test_ਖੰਡ_bitmap_range2(ext2fs_ਖੰਡ_bitmap bitmap,
+						  blk64_t ਖੰਡ,
+						  ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ)
 {
-	return ext2fs_test_block_bitmap_range2(bitmap, block, num);
+	ਵਾਪਸ ext2fs_test_ਖੰਡ_bitmap_range2(bitmap, ਖੰਡ, ਅੰਕ);
 }
 
-_INLINE_ void ext2fs_fast_mark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-						   blk64_t block,
-						   unsigned int num)
+_INLINE_ ਖਾਲੀ ext2fs_fast_mark_ਖੰਡ_bitmap_range2(ext2fs_ਖੰਡ_bitmap bitmap,
+						   blk64_t ਖੰਡ,
+						   ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ)
 {
-	ext2fs_mark_block_bitmap_range2(bitmap, block, num);
+	ext2fs_mark_ਖੰਡ_bitmap_range2(bitmap, ਖੰਡ, ਅੰਕ);
 }
 
-_INLINE_ void ext2fs_fast_unmark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-						     blk64_t block,
-						     unsigned int num)
+_INLINE_ ਖਾਲੀ ext2fs_fast_unmark_ਖੰਡ_bitmap_range2(ext2fs_ਖੰਡ_bitmap bitmap,
+						     blk64_t ਖੰਡ,
+						     ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ)
 {
-	ext2fs_unmark_block_bitmap_range2(bitmap, block, num);
+	ext2fs_unmark_ਖੰਡ_bitmap_range2(bitmap, ਖੰਡ, ਅੰਕ);
 }
 
-#undef _INLINE_
-#endif
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ _INLINE_
+#ਜੇ_ਅੰਤ
 
-extern int ext2fs_set_bit(unsigned int nr,void * addr);
-extern int ext2fs_clear_bit(unsigned int nr, void * addr);
-extern int ext2fs_test_bit(unsigned int nr, const void * addr);
-extern int ext2fs_set_bit64(__u64 nr,void * addr);
-extern int ext2fs_clear_bit64(__u64 nr, void * addr);
-extern int ext2fs_test_bit64(__u64 nr, const void * addr);
-extern unsigned int ext2fs_bitcount(const void *addr, unsigned int nbytes);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_ਸੈੱਟ_ਦੋਆਧਾਰੀ_ਅੰਕ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr,ਖਾਲੀ * addr);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_clear_ਦੋਆਧਾਰੀ_ਅੰਕ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr, ਖਾਲੀ * addr);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_test_ਦੋਆਧਾਰੀ_ਅੰਕ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr, ਅਚਲ ਖਾਲੀ * addr);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_ਸੈੱਟ_bit64(__u64 nr,ਖਾਲੀ * addr);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_clear_bit64(__u64 nr, ਖਾਲੀ * addr);
+ਬਾਹਰੀ ਪੂਰਨ ext2fs_test_bit64(__u64 nr, ਅਚਲ ਖਾਲੀ * addr);
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ext2fs_bitcount(ਅਚਲ ਖਾਲੀ *addr, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nbytes);

@@ -9,56 +9,56 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
 
-#include "ext2fs/ext2_types.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fs/ext2_types.h"
 
-int main(int argc, char **argv)
+ਪੂਰਨ ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-	if (sizeof(__u8) != 1) {
-		printf("Sizeof(__u8) is %d should be 1\n",
-		       (int)sizeof(__u8));
-		exit(1);
+	ਜੇ (ਆਕਾਰ(__u8) != 1) {
+		ਲਿਖੋ("Sizeof(__u8) is %d should be 1\n",
+		       (ਪੂਰਨ)ਆਕਾਰ(__u8));
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
-	if (sizeof(__s8) != 1) {
-		printf("Sizeof(_s8) is %d should be 1\n",
-		       (int)sizeof(__s8));
-		exit(1);
+	ਜੇ (ਆਕਾਰ(__s8) != 1) {
+		ਲਿਖੋ("Sizeof(_s8) is %d should be 1\n",
+		       (ਪੂਰਨ)ਆਕਾਰ(__s8));
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
-	if (sizeof(__u16) != 2) {
-		printf("Sizeof(__u16) is %d should be 2\n",
-		       (int)sizeof(__u16));
-		exit(1);
+	ਜੇ (ਆਕਾਰ(__u16) != 2) {
+		ਲਿਖੋ("Sizeof(__u16) is %d should be 2\n",
+		       (ਪੂਰਨ)ਆਕਾਰ(__u16));
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
-	if (sizeof(__s16) != 2) {
-		printf("Sizeof(__s16) is %d should be 2\n",
-		       (int)sizeof(__s16));
-		exit(1);
+	ਜੇ (ਆਕਾਰ(__s16) != 2) {
+		ਲਿਖੋ("Sizeof(__s16) is %d should be 2\n",
+		       (ਪੂਰਨ)ਆਕਾਰ(__s16));
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
-	if (sizeof(__u32) != 4) {
-		printf("Sizeof(__u32) is %d should be 4\n",
-		       (int)sizeof(__u32));
-		exit(1);
+	ਜੇ (ਆਕਾਰ(__u32) != 4) {
+		ਲਿਖੋ("Sizeof(__u32) is %d should be 4\n",
+		       (ਪੂਰਨ)ਆਕਾਰ(__u32));
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
-	if (sizeof(__s32) != 4) {
-		printf("Sizeof(__s32) is %d should be 4\n",
-		       (int)sizeof(__s32));
-		exit(1);
+	ਜੇ (ਆਕਾਰ(__s32) != 4) {
+		ਲਿਖੋ("Sizeof(__s32) is %d should be 4\n",
+		       (ਪੂਰਨ)ਆਕਾਰ(__s32));
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
-	if (sizeof(__u64) != 8) {
-		printf("Sizeof(__u64) is %d should be 8\n",
-		       (int)sizeof(__u64));
-		exit(1);
+	ਜੇ (ਆਕਾਰ(__u64) != 8) {
+		ਲਿਖੋ("Sizeof(__u64) is %d should be 8\n",
+		       (ਪੂਰਨ)ਆਕਾਰ(__u64));
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
-	if (sizeof(__s64) != 8) {
-		printf("Sizeof(__s64) is %d should be 8\n",
-		       (int)sizeof(__s64));
-		exit(1);
+	ਜੇ (ਆਕਾਰ(__s64) != 8) {
+		ਲਿਖੋ("Sizeof(__s64) is %d should be 8\n",
+		       (ਪੂਰਨ)ਆਕਾਰ(__s64));
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
-	printf("The ext2_types.h types are correct.\n");
-	exit(0);
+	ਲਿਖੋ("The ext2_types.h types are correct.\n");
+	ਬਾਹਰ_ਨਿਕਲੋ(0);
 }
 

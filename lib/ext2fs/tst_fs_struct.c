@@ -9,73 +9,73 @@
  * %End-Header%
  */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
 
-#include "ext2fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fs.h"
 
-struct struct_ext2_filsys fs;
+ਬਣਤਰ struct_ext2_filsys fs;
 
-#ifndef offsetof
-#define offsetof(type, member)  __builtin_offsetof (type, member)
-#endif
-#define check_field(x) cur_offset = do_field(#x, sizeof(fs.x),		\
-					offsetof(struct struct_ext2_filsys, x), \
-					cur_offset)
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ offsetof
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ offsetof(type, member)  __builtin_offsetof (type, member)
+#ਜੇ_ਅੰਤ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ check_ਖੇਤਰ(x) cur_ਵਿੱਥ = do_ਖੇਤਰ(#x, ਆਕਾਰ(fs.x),		\
+					offsetof(ਬਣਤਰ struct_ext2_filsys, x), \
+					cur_ਵਿੱਥ)
 
-static int do_field(const char *field, size_t size, int offset, int cur_offset)
+ਸਥਿਰ ਪੂਰਨ do_ਖੇਤਰ(ਅਚਲ ਅੱਖਰ *ਖੇਤਰ, size_t ਮਾਪ, ਪੂਰਨ ਵਿੱਥ, ਪੂਰਨ cur_ਵਿੱਥ)
 {
-	if (offset != cur_offset) {
-		printf("\t(padding %d bytes?)\n", offset - cur_offset);
+	ਜੇ (ਵਿੱਥ != cur_ਵਿੱਥ) {
+		ਲਿਖੋ("\t(padding %d bytes?)\n", ਵਿੱਥ - cur_ਵਿੱਥ);
 	}
-	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	ਲਿਖੋ("%8d %-30s %3u\n", ਵਿੱਥ, ਖੇਤਰ, (ਬਿਨਾਨਿਸ਼ਾਨੀ) ਮਾਪ);
+	ਵਾਪਸ ਵਿੱਥ + ਮਾਪ;
 }
 
-int main(int argc, char **argv)
+ਪੂਰਨ ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#ਜੇ (__GNUC__ >= 4)
+	ਪੂਰਨ cur_ਵਿੱਥ = 0;
 
-	printf("%8s %-30s %3s\n", "offset", "field", "size");
-	check_field(magic);
-	check_field(io);
-	check_field(flags);
-	check_field(device_name);
-	check_field(super);
-	check_field(blocksize);
-	check_field(fragsize);
-	check_field(group_desc_count);
-	check_field(desc_blocks);
-	check_field(group_desc);
-	check_field(inode_blocks_per_group);
-	check_field(inode_map);
-	check_field(block_map);
-	check_field(get_blocks);
-	check_field(check_directory);
-	check_field(write_bitmaps);
-	check_field(read_inode);
-	check_field(write_inode);
-	check_field(badblocks);
-	check_field(dblist);
-	check_field(stride);
-	check_field(orig_super);
-	check_field(image_header);
-	check_field(umask);
-	check_field(now);
-	check_field(cluster_ratio_bits);
-	check_field(reserved);
-	check_field(priv_data);
-	check_field(icache);
-	check_field(image_io);
-	check_field(get_alloc_block);
-	check_field(block_alloc_stats);
-	check_field(mmp_buf);
-	check_field(mmp_cmp);
-	check_field(mmp_fd);
-	check_field(mmp_last_written);
-	printf("Ending offset is %d\n\n", cur_offset);
-#endif
-	exit(0);
+	ਲਿਖੋ("%8s %-30s %3s\n", "offset", "field", "size");
+	check_ਖੇਤਰ(magic);
+	check_ਖੇਤਰ(io);
+	check_ਖੇਤਰ(flags);
+	check_ਖੇਤਰ(device_name);
+	check_ਖੇਤਰ(super);
+	check_ਖੇਤਰ(blocksize);
+	check_ਖੇਤਰ(fragsize);
+	check_ਖੇਤਰ(ਸਮੂਹ_desc_ਗਿਣਤੀ);
+	check_ਖੇਤਰ(desc_ਖੰਡਾਂ);
+	check_ਖੇਤਰ(ਸਮੂਹ_desc);
+	check_ਖੇਤਰ(inode_ਖੰਡਾਂ_ਪ੍ਰਤੀ_ਸਮੂਹ);
+	check_ਖੇਤਰ(inode_map);
+	check_ਖੇਤਰ(ਖੰਡ_map);
+	check_ਖੇਤਰ(get_ਖੰਡਾਂ);
+	check_ਖੇਤਰ(check_directory);
+	check_ਖੇਤਰ(write_bitmaps);
+	check_ਖੇਤਰ(read_inode);
+	check_ਖੇਤਰ(write_inode);
+	check_ਖੇਤਰ(badblocks);
+	check_ਖੇਤਰ(dblist);
+	check_ਖੇਤਰ(stride);
+	check_ਖੇਤਰ(orig_super);
+	check_ਖੇਤਰ(image_ਸਿਰਲੇਖ);
+	check_ਖੇਤਰ(umask);
+	check_ਖੇਤਰ(now);
+	check_ਖੇਤਰ(cluster_ਅਨੁਪਾਤ_ਬਿੱਟ);
+	check_ਖੇਤਰ(reserved);
+	check_ਖੇਤਰ(priv_ਅੰਕੜੇ);
+	check_ਖੇਤਰ(icache);
+	check_ਖੇਤਰ(image_io);
+	check_ਖੇਤਰ(get_alloc_ਖੰਡ);
+	check_ਖੇਤਰ(ਖੰਡ_alloc_stats);
+	check_ਖੇਤਰ(mmp_buf);
+	check_ਖੇਤਰ(mmp_cmp);
+	check_ਖੇਤਰ(mmp_fd);
+	check_ਖੇਤਰ(mmp_ਆਖਰੀ_written);
+	ਲਿਖੋ("Ending offset is %d\n\n", cur_ਵਿੱਥ);
+#ਜੇ_ਅੰਤ
+	ਬਾਹਰ_ਨਿਕਲੋ(0);
 }

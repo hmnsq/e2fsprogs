@@ -9,146 +9,146 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਜੇ HAVE_UNISTD_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fsP.h"
 
-#if defined(__GNUC__) && !defined(NO_INLINE_FUNCS)
-#define _BMAP_INLINE_	__inline__
-#else
-#define _BMAP_INLINE_
-#endif
+#ਜੇ defined(__GNUC__) && !defined(NO_INLINE_FUNCS)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _BMAP_INLINE_	__inline__
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _BMAP_INLINE_
+#ਜੇ_ਅੰਤ
 
-extern errcode_t ext2fs_bmap(ext2_filsys fs, ext2_ino_t ino,
-			     struct ext2_inode *inode,
-			     char *block_buf, int bmap_flags,
-			     blk_t block, blk_t *phys_blk);
+ਬਾਹਰੀ errcode_t ext2fs_bmap(ext2_filsys fs, ext2_ino_t ino,
+			     ਬਣਤਰ ext2_inode *inode,
+			     ਅੱਖਰ *ਖੰਡ_buf, ਪੂਰਨ bmap_flags,
+			     blk_t ਖੰਡ, blk_t *phys_blk);
 
-#define inode_bmap(inode, nr) ((inode)->i_block[(nr)])
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ inode_bmap(inode, nr) ((inode)->i_ਖੰਡ[(nr)])
 
-static _BMAP_INLINE_ errcode_t block_ind_bmap(ext2_filsys fs, int flags,
-					      blk_t ind, char *block_buf,
-					      int *blocks_alloc,
+ਸਥਿਰ _BMAP_INLINE_ errcode_t ਖੰਡ_ind_bmap(ext2_filsys fs, ਪੂਰਨ flags,
+					      blk_t ind, ਅੱਖਰ *ਖੰਡ_buf,
+					      ਪੂਰਨ *ਖੰਡਾਂ_alloc,
 					      blk_t nr, blk_t *ret_blk)
 {
 	errcode_t	retval;
 	blk_t		b;
 
-	if (!ind) {
-		if (flags & BMAP_SET)
-			return EXT2_ET_SET_BMAP_NO_IND;
+	ਜੇ (!ind) {
+		ਜੇ (flags & BMAP_ਸੈੱਟ)
+			ਵਾਪਸ EXT2_ET_ਸੈੱਟ_BMAP_NO_IND;
 		*ret_blk = 0;
-		return 0;
+		ਵਾਪਸ 0;
 	}
-	retval = io_channel_read_blk(fs->io, ind, 1, block_buf);
-	if (retval)
-		return retval;
+	retval = io_channel_read_blk(fs->io, ind, 1, ਖੰਡ_buf);
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
-	if (flags & BMAP_SET) {
+	ਜੇ (flags & BMAP_ਸੈੱਟ) {
 		b = *ret_blk;
-#ifdef WORDS_BIGENDIAN
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ਸ਼ਬਦ_BIGENDIAN
 		b = ext2fs_swab32(b);
-#endif
-		((blk_t *) block_buf)[nr] = b;
-		return io_channel_write_blk(fs->io, ind, 1, block_buf);
+#ਜੇ_ਅੰਤ
+		((blk_t *) ਖੰਡ_buf)[nr] = b;
+		ਵਾਪਸ io_channel_write_blk(fs->io, ind, 1, ਖੰਡ_buf);
 	}
 
-	b = ((blk_t *) block_buf)[nr];
+	b = ((blk_t *) ਖੰਡ_buf)[nr];
 
-#ifdef WORDS_BIGENDIAN
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ਸ਼ਬਦ_BIGENDIAN
 	b = ext2fs_swab32(b);
-#endif
+#ਜੇ_ਅੰਤ
 
-	if (!b && (flags & BMAP_ALLOC)) {
-		b = nr ? ext2fs_le32_to_cpu(((blk_t *)block_buf)[nr - 1]) : ind;
-		retval = ext2fs_alloc_block(fs, b,
-					    block_buf + fs->blocksize, &b);
-		if (retval)
-			return retval;
+	ਜੇ (!b && (flags & BMAP_ALLOC)) {
+		b = nr ? ext2fs_le32_ਮੰਜ਼ਿਲ_cpu(((blk_t *)ਖੰਡ_buf)[nr - 1]) : ind;
+		retval = ext2fs_alloc_ਖੰਡ(fs, b,
+					    ਖੰਡ_buf + fs->blocksize, &b);
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
 
-#ifdef WORDS_BIGENDIAN
-		((blk_t *) block_buf)[nr] = ext2fs_swab32(b);
-#else
-		((blk_t *) block_buf)[nr] = b;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ਸ਼ਬਦ_BIGENDIAN
+		((blk_t *) ਖੰਡ_buf)[nr] = ext2fs_swab32(b);
+#ਨਹੀਂਤਾਂ
+		((blk_t *) ਖੰਡ_buf)[nr] = b;
+#ਜੇ_ਅੰਤ
 
-		retval = io_channel_write_blk(fs->io, ind, 1, block_buf);
-		if (retval)
-			return retval;
+		retval = io_channel_write_blk(fs->io, ind, 1, ਖੰਡ_buf);
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
 
-		(*blocks_alloc)++;
+		(*ਖੰਡਾਂ_alloc)++;
 	}
 
 	*ret_blk = b;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static _BMAP_INLINE_ errcode_t block_dind_bmap(ext2_filsys fs, int flags,
-					       blk_t dind, char *block_buf,
-					       int *blocks_alloc,
+ਸਥਿਰ _BMAP_INLINE_ errcode_t ਖੰਡ_dind_bmap(ext2_filsys fs, ਪੂਰਨ flags,
+					       blk_t dind, ਅੱਖਰ *ਖੰਡ_buf,
+					       ਪੂਰਨ *ਖੰਡਾਂ_alloc,
 					       blk_t nr, blk_t *ret_blk)
 {
 	blk_t		b = 0;
 	errcode_t	retval;
-	blk_t		addr_per_block;
+	blk_t		addr_ਪ੍ਰਤੀ_ਖੰਡ;
 
-	addr_per_block = (blk_t) fs->blocksize >> 2;
+	addr_ਪ੍ਰਤੀ_ਖੰਡ = (blk_t) fs->blocksize >> 2;
 
-	retval = block_ind_bmap(fs, flags & ~BMAP_SET, dind, block_buf,
-				blocks_alloc, nr / addr_per_block, &b);
-	if (retval)
-		return retval;
-	retval = block_ind_bmap(fs, flags, b, block_buf, blocks_alloc,
-				nr % addr_per_block, ret_blk);
-	return retval;
+	retval = ਖੰਡ_ind_bmap(fs, flags & ~BMAP_ਸੈੱਟ, dind, ਖੰਡ_buf,
+				ਖੰਡਾਂ_alloc, nr / addr_ਪ੍ਰਤੀ_ਖੰਡ, &b);
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
+	retval = ਖੰਡ_ind_bmap(fs, flags, b, ਖੰਡ_buf, ਖੰਡਾਂ_alloc,
+				nr % addr_ਪ੍ਰਤੀ_ਖੰਡ, ret_blk);
+	ਵਾਪਸ retval;
 }
 
-static _BMAP_INLINE_ errcode_t block_tind_bmap(ext2_filsys fs, int flags,
-					       blk_t tind, char *block_buf,
-					       int *blocks_alloc,
+ਸਥਿਰ _BMAP_INLINE_ errcode_t ਖੰਡ_tind_bmap(ext2_filsys fs, ਪੂਰਨ flags,
+					       blk_t tind, ਅੱਖਰ *ਖੰਡ_buf,
+					       ਪੂਰਨ *ਖੰਡਾਂ_alloc,
 					       blk_t nr, blk_t *ret_blk)
 {
 	blk_t		b = 0;
 	errcode_t	retval;
-	blk_t		addr_per_block;
+	blk_t		addr_ਪ੍ਰਤੀ_ਖੰਡ;
 
-	addr_per_block = (blk_t) fs->blocksize >> 2;
+	addr_ਪ੍ਰਤੀ_ਖੰਡ = (blk_t) fs->blocksize >> 2;
 
-	retval = block_dind_bmap(fs, flags & ~BMAP_SET, tind, block_buf,
-				 blocks_alloc, nr / addr_per_block, &b);
-	if (retval)
-		return retval;
-	retval = block_ind_bmap(fs, flags, b, block_buf, blocks_alloc,
-				nr % addr_per_block, ret_blk);
-	return retval;
+	retval = ਖੰਡ_dind_bmap(fs, flags & ~BMAP_ਸੈੱਟ, tind, ਖੰਡ_buf,
+				 ਖੰਡਾਂ_alloc, nr / addr_ਪ੍ਰਤੀ_ਖੰਡ, &b);
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
+	retval = ਖੰਡ_ind_bmap(fs, flags, b, ਖੰਡ_buf, ਖੰਡਾਂ_alloc,
+				nr % addr_ਪ੍ਰਤੀ_ਖੰਡ, ret_blk);
+	ਵਾਪਸ retval;
 }
 
-static errcode_t extent_bmap(ext2_filsys fs, ext2_ino_t ino,
-			     struct ext2_inode *inode,
+ਸਥਿਰ errcode_t extent_bmap(ext2_filsys fs, ext2_ino_t ino,
+			     ਬਣਤਰ ext2_inode *inode,
 			     ext2_extent_handle_t handle,
-			     char *block_buf, int bmap_flags, blk64_t block,
-			     int *ret_flags, int *blocks_alloc,
+			     ਅੱਖਰ *ਖੰਡ_buf, ਪੂਰਨ bmap_flags, blk64_t ਖੰਡ,
+			     ਪੂਰਨ *ret_flags, ਪੂਰਨ *ਖੰਡਾਂ_alloc,
 			     blk64_t *phys_blk);
 
-static errcode_t implied_cluster_alloc(ext2_filsys fs, ext2_ino_t ino,
-				       struct ext2_inode *inode,
+ਸਥਿਰ errcode_t implied_cluster_alloc(ext2_filsys fs, ext2_ino_t ino,
+				       ਬਣਤਰ ext2_inode *inode,
 				       ext2_extent_handle_t handle,
 				       blk64_t lblk, blk64_t *phys_blk)
 {
-	blk64_t	base_block, pblock = 0;
-	int i;
+	blk64_t	ਅਧਾਰ_ਖੰਡ, pblock = 0;
+	ਪੂਰਨ i;
 
-	if (!ext2fs_has_feature_bigalloc(fs->super))
-		return 0;
+	ਜੇ (!ext2fs_has_feature_bigalloc(fs->super))
+		ਵਾਪਸ 0;
 
-	base_block = lblk & ~EXT2FS_CLUSTER_MASK(fs);
+	ਅਧਾਰ_ਖੰਡ = lblk & ~EXT2_FS_CLUSTER_ਨਕਾਬ(fs);
 	/*
 	 * Except for the logical block (lblk) that was passed in, search all
 	 * blocks in this logical cluster for a mapping to a physical cluster.
@@ -158,23 +158,23 @@ static errcode_t implied_cluster_alloc(ext2_filsys fs, ext2_ino_t ino,
 	 * The old code wouldn't even look if (block % cluster_ratio) == 0;
 	 * this is incorrect if we're allocating blocks in reverse order.
 	 */
-	for (i = 0; i < EXT2FS_CLUSTER_RATIO(fs); i++) {
-		if (base_block + i == lblk)
-			continue;
+	ਲਈ (i = 0; i < EXT2_FS_CLUSTER_ਅਨੁਪਾਤ(fs); i++) {
+		ਜੇ (ਅਧਾਰ_ਖੰਡ + i == lblk)
+			ਜਾਰੀ;
 		extent_bmap(fs, ino, inode, handle, 0, 0,
-			    base_block + i, 0, 0, &pblock);
-		if (pblock)
-			break;
+			    ਅਧਾਰ_ਖੰਡ + i, 0, 0, &pblock);
+		ਜੇ (pblock)
+			ਰੋਕੋ;
 	}
-	if (pblock == 0)
-		return 0;
-	*phys_blk = pblock - i + (lblk - base_block);
-	return 0;
+	ਜੇ (pblock == 0)
+		ਵਾਪਸ 0;
+	*phys_blk = pblock - i + (lblk - ਅਧਾਰ_ਖੰਡ);
+	ਵਾਪਸ 0;
 }
 
 /* Try to map a logical block to an already-allocated physical cluster. */
-errcode_t ext2fs_map_cluster_block(ext2_filsys fs, ext2_ino_t ino,
-				   struct ext2_inode *inode, blk64_t lblk,
+errcode_t ext2fs_map_cluster_ਖੰਡ(ext2_filsys fs, ext2_ino_t ino,
+				   ਬਣਤਰ ext2_inode *inode, blk64_t lblk,
 				   blk64_t *pblk)
 {
 	ext2_extent_handle_t handle;
@@ -182,318 +182,318 @@ errcode_t ext2fs_map_cluster_block(ext2_filsys fs, ext2_ino_t ino,
 
 	/* Need bigalloc and extents to be enabled */
 	*pblk = 0;
-	if (!ext2fs_has_feature_bigalloc(fs->super) ||
+	ਜੇ (!ext2fs_has_feature_bigalloc(fs->super) ||
 	    !(inode->i_flags & EXT4_EXTENTS_FL))
-		return 0;
+		ਵਾਪਸ 0;
 
 	retval = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (retval)
-		goto out;
+	ਜੇ (retval)
+		ਜਾਓ ਬਾਹਰਲਾ;
 
 	retval = implied_cluster_alloc(fs, ino, inode, handle, lblk, pblk);
-	if (retval)
-		goto out2;
+	ਜੇ (retval)
+		ਜਾਓ out2;
 
 out2:
 	ext2fs_extent_free(handle);
-out:
-	return retval;
+ਬਾਹਰਲਾ:
+	ਵਾਪਸ retval;
 }
 
-static errcode_t extent_bmap(ext2_filsys fs, ext2_ino_t ino,
-			     struct ext2_inode *inode,
+ਸਥਿਰ errcode_t extent_bmap(ext2_filsys fs, ext2_ino_t ino,
+			     ਬਣਤਰ ext2_inode *inode,
 			     ext2_extent_handle_t handle,
-			     char *block_buf, int bmap_flags, blk64_t block,
-			     int *ret_flags, int *blocks_alloc,
+			     ਅੱਖਰ *ਖੰਡ_buf, ਪੂਰਨ bmap_flags, blk64_t ਖੰਡ,
+			     ਪੂਰਨ *ret_flags, ਪੂਰਨ *ਖੰਡਾਂ_alloc,
 			     blk64_t *phys_blk)
 {
-	struct blk_alloc_ctx	alloc_ctx;
-	struct ext2fs_extent	extent;
-	unsigned int		offset;
+	ਬਣਤਰ blk_alloc_ctx	alloc_ctx;
+	ਬਣਤਰ ext2fs_extent	extent;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		ਵਿੱਥ;
 	errcode_t		retval = 0;
 	blk64_t			blk64 = 0;
-	int			alloc = 0;
-	int			set_flags;
+	ਪੂਰਨ			alloc = 0;
+	ਪੂਰਨ			ਸੈੱਟ_flags;
 
-	set_flags = bmap_flags & BMAP_UNINIT ? EXT2_EXTENT_SET_BMAP_UNINIT : 0;
+	ਸੈੱਟ_flags = bmap_flags & BMAP_UNINIT ? EXT2_EXTENT_ਸੈੱਟ_BMAP_UNINIT : 0;
 
-	if (bmap_flags & BMAP_SET) {
-		retval = ext2fs_extent_set_bmap(handle, block,
-						*phys_blk, set_flags);
-		return retval;
+	ਜੇ (bmap_flags & BMAP_ਸੈੱਟ) {
+		retval = ext2fs_extent_ਸੈੱਟ_bmap(handle, ਖੰਡ,
+						*phys_blk, ਸੈੱਟ_flags);
+		ਵਾਪਸ retval;
 	}
-	retval = ext2fs_extent_goto(handle, block);
-	if (retval) {
+	retval = ext2fs_extent_goto(handle, ਖੰਡ);
+	ਜੇ (retval) {
 		/* If the extent is not found, return phys_blk = 0 */
-		if (retval == EXT2_ET_EXTENT_NOT_FOUND) {
-			extent.e_lblk = block;
-			goto got_block;
+		ਜੇ (retval == EXT2_ET_EXTENT_NOT_ਮਿਲਿਆ) {
+			extent.e_lblk = ਖੰਡ;
+			ਜਾਓ got_ਖੰਡ;
 		}
-		return retval;
+		ਵਾਪਸ retval;
 	}
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
-		return retval;
-	offset = block - extent.e_lblk;
-	if (block >= extent.e_lblk && (offset <= extent.e_len)) {
-		*phys_blk = extent.e_pblk + offset;
-		if (ret_flags && extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
+	ਵਿੱਥ = ਖੰਡ - extent.e_lblk;
+	ਜੇ (ਖੰਡ >= extent.e_lblk && (ਵਿੱਥ <= extent.e_len)) {
+		*phys_blk = extent.e_pblk + ਵਿੱਥ;
+		ਜੇ (ret_flags && extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 			*ret_flags |= BMAP_RET_UNINIT;
 	}
-got_block:
-	if ((*phys_blk == 0) && (bmap_flags & BMAP_ALLOC)) {
-		implied_cluster_alloc(fs, ino, inode, handle, block, &blk64);
-		if (blk64)
-			goto set_extent;
-		retval = extent_bmap(fs, ino, inode, handle, block_buf,
-				     0, block-1, 0, blocks_alloc, &blk64);
-		if (retval)
-			blk64 = ext2fs_find_inode_goal(fs, ino, inode, block);
+got_ਖੰਡ:
+	ਜੇ ((*phys_blk == 0) && (bmap_flags & BMAP_ALLOC)) {
+		implied_cluster_alloc(fs, ino, inode, handle, ਖੰਡ, &blk64);
+		ਜੇ (blk64)
+			ਜਾਓ ਸੈੱਟ_extent;
+		retval = extent_bmap(fs, ino, inode, handle, ਖੰਡ_buf,
+				     0, ਖੰਡ-1, 0, ਖੰਡਾਂ_alloc, &blk64);
+		ਜੇ (retval)
+			blk64 = ext2fs_ਲੱਭੋ_inode_goal(fs, ino, inode, ਖੰਡ);
 		alloc_ctx.ino = ino;
 		alloc_ctx.inode = inode;
 		alloc_ctx.lblk = extent.e_lblk;
-		alloc_ctx.flags = BLOCK_ALLOC_DATA;
-		retval = ext2fs_alloc_block3(fs, blk64, block_buf, &blk64,
+		alloc_ctx.flags = ਖੰਡ_ALLOC_ਅੰਕੜੇ;
+		retval = ext2fs_alloc_block3(fs, blk64, ਖੰਡ_buf, &blk64,
 					     &alloc_ctx);
-		if (retval)
-			return retval;
-		blk64 &= ~EXT2FS_CLUSTER_MASK(fs);
-		blk64 += EXT2FS_CLUSTER_MASK(fs) & block;
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
+		blk64 &= ~EXT2_FS_CLUSTER_ਨਕਾਬ(fs);
+		blk64 += EXT2_FS_CLUSTER_ਨਕਾਬ(fs) & ਖੰਡ;
 		alloc++;
-	set_extent:
-		retval = ext2fs_extent_set_bmap(handle, block,
-						blk64, set_flags);
-		if (retval) {
-			ext2fs_block_alloc_stats2(fs, blk64, -1);
-			return retval;
+	ਸੈੱਟ_extent:
+		retval = ext2fs_extent_ਸੈੱਟ_bmap(handle, ਖੰਡ,
+						blk64, ਸੈੱਟ_flags);
+		ਜੇ (retval) {
+			ext2fs_ਖੰਡ_alloc_stats2(fs, blk64, -1);
+			ਵਾਪਸ retval;
 		}
 		/* Update inode after setting extent */
 		retval = ext2fs_read_inode(fs, ino, inode);
-		if (retval)
-			return retval;
-		*blocks_alloc += alloc;
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
+		*ਖੰਡਾਂ_alloc += alloc;
 		*phys_blk = blk64;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int ext2fs_file_block_offset_too_big(ext2_filsys fs,
-				     struct ext2_inode *inode,
-				     blk64_t offset)
+ਪੂਰਨ ext2fs_file_ਖੰਡ_ਵਿੱਥ_too_big(ext2_filsys fs,
+				     ਬਣਤਰ ext2_inode *inode,
+				     blk64_t ਵਿੱਥ)
 {
-	blk64_t addr_per_block, max_map_block;
+	blk64_t addr_ਪ੍ਰਤੀ_ਖੰਡ, max_map_ਖੰਡ;
 
 	/* Kernel seems to cut us off at 4294967294 blocks */
-	if (offset >= (1ULL << 32) - 1)
-		return 1;
+	ਜੇ (ਵਿੱਥ >= (1ULL << 32) - 1)
+		ਵਾਪਸ 1;
 
-	if (inode->i_flags & EXT4_EXTENTS_FL)
-		return 0;
+	ਜੇ (inode->i_flags & EXT4_EXTENTS_FL)
+		ਵਾਪਸ 0;
 
-	addr_per_block = fs->blocksize >> 2;
-	max_map_block = addr_per_block;
-	max_map_block += addr_per_block * addr_per_block;
-	max_map_block += addr_per_block * addr_per_block * addr_per_block;
-	max_map_block += 12;
+	addr_ਪ੍ਰਤੀ_ਖੰਡ = fs->blocksize >> 2;
+	max_map_ਖੰਡ = addr_ਪ੍ਰਤੀ_ਖੰਡ;
+	max_map_ਖੰਡ += addr_ਪ੍ਰਤੀ_ਖੰਡ * addr_ਪ੍ਰਤੀ_ਖੰਡ;
+	max_map_ਖੰਡ += addr_ਪ੍ਰਤੀ_ਖੰਡ * addr_ਪ੍ਰਤੀ_ਖੰਡ * addr_ਪ੍ਰਤੀ_ਖੰਡ;
+	max_map_ਖੰਡ += 12;
 
-	return offset >= max_map_block;
+	ਵਾਪਸ ਵਿੱਥ >= max_map_ਖੰਡ;
 }
 
-errcode_t ext2fs_bmap2(ext2_filsys fs, ext2_ino_t ino, struct ext2_inode *inode,
-		       char *block_buf, int bmap_flags, blk64_t block,
-		       int *ret_flags, blk64_t *phys_blk)
+errcode_t ext2fs_bmap2(ext2_filsys fs, ext2_ino_t ino, ਬਣਤਰ ext2_inode *inode,
+		       ਅੱਖਰ *ਖੰਡ_buf, ਪੂਰਨ bmap_flags, blk64_t ਖੰਡ,
+		       ਪੂਰਨ *ret_flags, blk64_t *phys_blk)
 {
-	struct ext2_inode inode_buf;
+	ਬਣਤਰ ext2_inode inode_buf;
 	ext2_extent_handle_t handle = 0;
-	blk_t addr_per_block;
+	blk_t addr_ਪ੍ਰਤੀ_ਖੰਡ;
 	blk_t	b, blk32;
 	blk64_t b64;
-	char	*buf = 0;
+	ਅੱਖਰ	*buf = 0;
 	errcode_t	retval = 0;
-	int		blocks_alloc = 0, inode_dirty = 0;
-	struct blk_alloc_ctx alloc_ctx = {
+	ਪੂਰਨ		ਖੰਡਾਂ_alloc = 0, inode_dirty = 0;
+	ਬਣਤਰ blk_alloc_ctx alloc_ctx = {
 		.ino	= ino,
 		.inode	= inode,
 		.lblk	= 0,
-		.flags	= BLOCK_ALLOC_DATA,
+		.flags	= ਖੰਡ_ALLOC_ਅੰਕੜੇ,
 	};
 
-	if (!(bmap_flags & BMAP_SET))
+	ਜੇ (!(bmap_flags & BMAP_ਸੈੱਟ))
 		*phys_blk = 0;
 
-	if (ret_flags)
+	ਜੇ (ret_flags)
 		*ret_flags = 0;
 
 	/* Read inode structure if necessary */
-	if (!inode) {
+	ਜੇ (!inode) {
 		retval = ext2fs_read_inode(fs, ino, &inode_buf);
-		if (retval)
-			return retval;
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
 		inode = &inode_buf;
 	}
-	addr_per_block = (blk_t) fs->blocksize >> 2;
+	addr_ਪ੍ਰਤੀ_ਖੰਡ = (blk_t) fs->blocksize >> 2;
 
-	if (ext2fs_file_block_offset_too_big(fs, inode, block))
-		return EXT2_ET_FILE_TOO_BIG;
+	ਜੇ (ext2fs_file_ਖੰਡ_ਵਿੱਥ_too_big(fs, inode, ਖੰਡ))
+		ਵਾਪਸ EXT2_ET_FILE_TOO_BIG;
 
 	/*
 	 * If an inode has inline data, that means that it doesn't have
 	 * any blocks and we shouldn't map any blocks for it.
 	 */
-	if (inode->i_flags & EXT4_INLINE_DATA_FL)
-		return EXT2_ET_INLINE_DATA_NO_BLOCK;
+	ਜੇ (inode->i_flags & EXT4_INLINE_ਅੰਕੜੇ_FL)
+		ਵਾਪਸ EXT2_ET_INLINE_ਅੰਕੜੇ_NO_ਖੰਡ;
 
-	if (!block_buf) {
+	ਜੇ (!ਖੰਡ_buf) {
 		retval = ext2fs_get_array(2, fs->blocksize, &buf);
-		if (retval)
-			return retval;
-		block_buf = buf;
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
+		ਖੰਡ_buf = buf;
 	}
 
-	if (inode->i_flags & EXT4_EXTENTS_FL) {
+	ਜੇ (inode->i_flags & EXT4_EXTENTS_FL) {
 		retval = ext2fs_extent_open2(fs, ino, inode, &handle);
-		if (retval)
-			goto done;
-		retval = extent_bmap(fs, ino, inode, handle, block_buf,
-				     bmap_flags, block, ret_flags,
-				     &blocks_alloc, phys_blk);
-		goto done;
+		ਜੇ (retval)
+			ਜਾਓ ਪੂਰਾ;
+		retval = extent_bmap(fs, ino, inode, handle, ਖੰਡ_buf,
+				     bmap_flags, ਖੰਡ, ret_flags,
+				     &ਖੰਡਾਂ_alloc, phys_blk);
+		ਜਾਓ ਪੂਰਾ;
 	}
 
-	if (block < EXT2_NDIR_BLOCKS) {
-		if (bmap_flags & BMAP_SET) {
+	ਜੇ (ਖੰਡ < EXT2_NDIR_ਖੰਡਾਂ) {
+		ਜੇ (bmap_flags & BMAP_ਸੈੱਟ) {
 			b = *phys_blk;
-			inode_bmap(inode, block) = b;
+			inode_bmap(inode, ਖੰਡ) = b;
 			inode_dirty++;
-			goto done;
+			ਜਾਓ ਪੂਰਾ;
 		}
 
-		*phys_blk = inode_bmap(inode, block);
-		b = block ? inode_bmap(inode, block - 1) :
-			    ext2fs_find_inode_goal(fs, ino, inode, block);
+		*phys_blk = inode_bmap(inode, ਖੰਡ);
+		b = ਖੰਡ ? inode_bmap(inode, ਖੰਡ - 1) :
+			    ext2fs_ਲੱਭੋ_inode_goal(fs, ino, inode, ਖੰਡ);
 
-		if ((*phys_blk == 0) && (bmap_flags & BMAP_ALLOC)) {
+		ਜੇ ((*phys_blk == 0) && (bmap_flags & BMAP_ALLOC)) {
 			b64 = b;
-			retval = ext2fs_alloc_block3(fs, b64, block_buf, &b64,
+			retval = ext2fs_alloc_block3(fs, b64, ਖੰਡ_buf, &b64,
 						     &alloc_ctx);
 			b = b64;
-			if (retval)
-				goto done;
-			inode_bmap(inode, block) = b;
-			blocks_alloc++;
+			ਜੇ (retval)
+				ਜਾਓ ਪੂਰਾ;
+			inode_bmap(inode, ਖੰਡ) = b;
+			ਖੰਡਾਂ_alloc++;
 			*phys_blk = b;
 		}
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
 
 	/* Indirect block */
-	block -= EXT2_NDIR_BLOCKS;
+	ਖੰਡ -= EXT2_NDIR_ਖੰਡਾਂ;
 	blk32 = *phys_blk;
-	if (block < addr_per_block) {
-		b = inode_bmap(inode, EXT2_IND_BLOCK);
-		if (!b) {
-			if (!(bmap_flags & BMAP_ALLOC)) {
-				if (bmap_flags & BMAP_SET)
-					retval = EXT2_ET_SET_BMAP_NO_IND;
-				goto done;
+	ਜੇ (ਖੰਡ < addr_ਪ੍ਰਤੀ_ਖੰਡ) {
+		b = inode_bmap(inode, EXT2_IND_ਖੰਡ);
+		ਜੇ (!b) {
+			ਜੇ (!(bmap_flags & BMAP_ALLOC)) {
+				ਜੇ (bmap_flags & BMAP_ਸੈੱਟ)
+					retval = EXT2_ET_ਸੈੱਟ_BMAP_NO_IND;
+				ਜਾਓ ਪੂਰਾ;
 			}
 
-			b = inode_bmap(inode, EXT2_IND_BLOCK-1);
+			b = inode_bmap(inode, EXT2_IND_ਖੰਡ-1);
 			b64 = b;
-			retval = ext2fs_alloc_block3(fs, b64, block_buf, &b64,
+			retval = ext2fs_alloc_block3(fs, b64, ਖੰਡ_buf, &b64,
 						     &alloc_ctx);
 			b = b64;
-			if (retval)
-				goto done;
-			inode_bmap(inode, EXT2_IND_BLOCK) = b;
-			blocks_alloc++;
+			ਜੇ (retval)
+				ਜਾਓ ਪੂਰਾ;
+			inode_bmap(inode, EXT2_IND_ਖੰਡ) = b;
+			ਖੰਡਾਂ_alloc++;
 		}
-		retval = block_ind_bmap(fs, bmap_flags, b, block_buf,
-					&blocks_alloc, block, &blk32);
-		if (retval == 0)
+		retval = ਖੰਡ_ind_bmap(fs, bmap_flags, b, ਖੰਡ_buf,
+					&ਖੰਡਾਂ_alloc, ਖੰਡ, &blk32);
+		ਜੇ (retval == 0)
 			*phys_blk = blk32;
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
 
 	/* Doubly indirect block  */
-	block -= addr_per_block;
-	if (block < addr_per_block * addr_per_block) {
-		b = inode_bmap(inode, EXT2_DIND_BLOCK);
-		if (!b) {
-			if (!(bmap_flags & BMAP_ALLOC)) {
-				if (bmap_flags & BMAP_SET)
-					retval = EXT2_ET_SET_BMAP_NO_IND;
-				goto done;
+	ਖੰਡ -= addr_ਪ੍ਰਤੀ_ਖੰਡ;
+	ਜੇ (ਖੰਡ < addr_ਪ੍ਰਤੀ_ਖੰਡ * addr_ਪ੍ਰਤੀ_ਖੰਡ) {
+		b = inode_bmap(inode, EXT2_DIND_ਖੰਡ);
+		ਜੇ (!b) {
+			ਜੇ (!(bmap_flags & BMAP_ALLOC)) {
+				ਜੇ (bmap_flags & BMAP_ਸੈੱਟ)
+					retval = EXT2_ET_ਸੈੱਟ_BMAP_NO_IND;
+				ਜਾਓ ਪੂਰਾ;
 			}
 
-			b = inode_bmap(inode, EXT2_IND_BLOCK);
+			b = inode_bmap(inode, EXT2_IND_ਖੰਡ);
 			b64 = b;
-			retval = ext2fs_alloc_block3(fs, b64, block_buf, &b64,
+			retval = ext2fs_alloc_block3(fs, b64, ਖੰਡ_buf, &b64,
 						     &alloc_ctx);
 			b = b64;
-			if (retval)
-				goto done;
-			inode_bmap(inode, EXT2_DIND_BLOCK) = b;
-			blocks_alloc++;
+			ਜੇ (retval)
+				ਜਾਓ ਪੂਰਾ;
+			inode_bmap(inode, EXT2_DIND_ਖੰਡ) = b;
+			ਖੰਡਾਂ_alloc++;
 		}
-		retval = block_dind_bmap(fs, bmap_flags, b, block_buf,
-					 &blocks_alloc, block, &blk32);
-		if (retval == 0)
+		retval = ਖੰਡ_dind_bmap(fs, bmap_flags, b, ਖੰਡ_buf,
+					 &ਖੰਡਾਂ_alloc, ਖੰਡ, &blk32);
+		ਜੇ (retval == 0)
 			*phys_blk = blk32;
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
 
 	/* Triply indirect block */
-	block -= addr_per_block * addr_per_block;
-	b = inode_bmap(inode, EXT2_TIND_BLOCK);
-	if (!b) {
-		if (!(bmap_flags & BMAP_ALLOC)) {
-			if (bmap_flags & BMAP_SET)
-				retval = EXT2_ET_SET_BMAP_NO_IND;
-			goto done;
+	ਖੰਡ -= addr_ਪ੍ਰਤੀ_ਖੰਡ * addr_ਪ੍ਰਤੀ_ਖੰਡ;
+	b = inode_bmap(inode, EXT2_TIND_ਖੰਡ);
+	ਜੇ (!b) {
+		ਜੇ (!(bmap_flags & BMAP_ALLOC)) {
+			ਜੇ (bmap_flags & BMAP_ਸੈੱਟ)
+				retval = EXT2_ET_ਸੈੱਟ_BMAP_NO_IND;
+			ਜਾਓ ਪੂਰਾ;
 		}
 
-		b = inode_bmap(inode, EXT2_DIND_BLOCK);
+		b = inode_bmap(inode, EXT2_DIND_ਖੰਡ);
 		b64 = b;
-		retval = ext2fs_alloc_block3(fs, b64, block_buf, &b64,
+		retval = ext2fs_alloc_block3(fs, b64, ਖੰਡ_buf, &b64,
 					     &alloc_ctx);
 		b = b64;
-		if (retval)
-			goto done;
-		inode_bmap(inode, EXT2_TIND_BLOCK) = b;
-		blocks_alloc++;
+		ਜੇ (retval)
+			ਜਾਓ ਪੂਰਾ;
+		inode_bmap(inode, EXT2_TIND_ਖੰਡ) = b;
+		ਖੰਡਾਂ_alloc++;
 	}
-	retval = block_tind_bmap(fs, bmap_flags, b, block_buf,
-				 &blocks_alloc, block, &blk32);
-	if (retval == 0)
+	retval = ਖੰਡ_tind_bmap(fs, bmap_flags, b, ਖੰਡ_buf,
+				 &ਖੰਡਾਂ_alloc, ਖੰਡ, &blk32);
+	ਜੇ (retval == 0)
 		*phys_blk = blk32;
-done:
-	if (*phys_blk && retval == 0 && (bmap_flags & BMAP_ZERO))
-		retval = ext2fs_zero_blocks2(fs, *phys_blk, 1, NULL, NULL);
-	if (buf)
+ਪੂਰਾ:
+	ਜੇ (*phys_blk && retval == 0 && (bmap_flags & BMAP_ZERO))
+		retval = ext2fs_zero_blocks2(fs, *phys_blk, 1, ਨਿਰਾ, ਨਿਰਾ);
+	ਜੇ (buf)
 		ext2fs_free_mem(&buf);
-	if (handle)
+	ਜੇ (handle)
 		ext2fs_extent_free(handle);
-	if ((retval == 0) && (blocks_alloc || inode_dirty)) {
-		ext2fs_iblk_add_blocks(fs, inode, blocks_alloc);
+	ਜੇ ((retval == 0) && (ਖੰਡਾਂ_alloc || inode_dirty)) {
+		ext2fs_iblk_ਜੋੜੋ_ਖੰਡਾਂ(fs, inode, ਖੰਡਾਂ_alloc);
 		retval = ext2fs_write_inode(fs, ino, inode);
 	}
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-errcode_t ext2fs_bmap(ext2_filsys fs, ext2_ino_t ino, struct ext2_inode *inode,
-		      char *block_buf, int bmap_flags, blk_t block,
+errcode_t ext2fs_bmap(ext2_filsys fs, ext2_ino_t ino, ਬਣਤਰ ext2_inode *inode,
+		      ਅੱਖਰ *ਖੰਡ_buf, ਪੂਰਨ bmap_flags, blk_t ਖੰਡ,
 		      blk_t *phys_blk)
 {
 	errcode_t ret;
 	blk64_t	ret_blk = *phys_blk;
 
-	ret = ext2fs_bmap2(fs, ino, inode, block_buf, bmap_flags, block,
+	ret = ext2fs_bmap2(fs, ino, inode, ਖੰਡ_buf, bmap_flags, ਖੰਡ,
 			    0, &ret_blk);
-	if (ret)
-		return ret;
-	if (ret_blk >= ((long long) 1 << 32))
-		return EOVERFLOW;
+	ਜੇ (ret)
+		ਵਾਪਸ ret;
+	ਜੇ (ret_blk >= ((ਲੰਮਾ ਲੰਮਾ) 1 << 32))
+		ਵਾਪਸ EOVERFLOW;
 	*phys_blk = ret_blk;
-	return 0;
+	ਵਾਪਸ 0;
 }

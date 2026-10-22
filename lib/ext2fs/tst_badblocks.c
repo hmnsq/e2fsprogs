@@ -9,25 +9,25 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਜੇ HAVE_UNISTD_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਜੇ HAVE_ERRNO_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਜੇ_ਅੰਤ
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fs.h"
 
-#define ADD_BLK	0x0001
-#define DEL_BLK	0x0002
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਜੋੜੋ_BLK	0x0001
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DEL_BLK	0x0002
 
 blk_t test1[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0 };
 blk_t test2[] = { 11, 10, 9, 8, 7, 6, 5, 4, 3, 3, 2, 1, 0 };
@@ -50,320 +50,320 @@ blk_t test4a[] = {
 	0 };
 blk_t test5[] = { 31, 20, 17, 51, 23, 1, 56, 57, 0 };
 blk_t test5a[] = {
-	50, ADD_BLK,
+	50, ਜੋੜੋ_BLK,
 	51, DEL_BLK,
 	57, DEL_BLK,
-	66, ADD_BLK,
+	66, ਜੋੜੋ_BLK,
 	31, DEL_BLK,
-	12, ADD_BLK,
-	2, ADD_BLK,
-	13, ADD_BLK,
+	12, ਜੋੜੋ_BLK,
+	2, ਜੋੜੋ_BLK,
+	13, ਜੋੜੋ_BLK,
 	1, DEL_BLK,
 	0
 	};
 
 
-static int test_fail = 0;
-static int test_expected_fail = 0;
+ਸਥਿਰ ਪੂਰਨ test_fail = 0;
+ਸਥਿਰ ਪੂਰਨ test_expected_fail = 0;
 
-static errcode_t create_test_list(blk_t *vec, badblocks_list *ret)
+ਸਥਿਰ errcode_t create_test_list(blk_t *vec, badblocks_list *ret)
 {
 	errcode_t	retval;
 	badblocks_list	bb;
-	int		i;
+	ਪੂਰਨ		i;
 
 	retval = ext2fs_badblocks_list_create(&bb, 5);
-	if (retval) {
+	ਜੇ (retval) {
 		com_err("create_test_list", retval, "while creating list");
-		return retval;
+		ਵਾਪਸ retval;
 	}
-	for (i=0; vec[i]; i++) {
-		retval = ext2fs_badblocks_list_add(bb, vec[i]);
-		if (retval) {
+	ਲਈ (i=0; vec[i]; i++) {
+		retval = ext2fs_badblocks_list_ਜੋੜੋ(bb, vec[i]);
+		ਜੇ (retval) {
 			com_err("create_test_list", retval,
 				"while adding test vector %d", i);
 			ext2fs_badblocks_list_free(bb);
-			return retval;
+			ਵਾਪਸ retval;
 		}
 	}
 	*ret = bb;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static void print_list(badblocks_list bb, int verify)
+ਸਥਿਰ ਖਾਲੀ print_list(badblocks_list bb, ਪੂਰਨ verify)
 {
 	errcode_t	retval;
 	badblocks_iterate	iter;
 	blk_t			blk;
-	int			i, ok;
+	ਪੂਰਨ			i, ok;
 
 	retval = ext2fs_badblocks_list_iterate_begin(bb, &iter);
-	if (retval) {
+	ਜੇ (retval) {
 		com_err("print_list", retval, "while setting up iterator");
-		return;
+		ਵਾਪਸ;
 	}
 	ok = i = 1;
-	while (ext2fs_badblocks_list_iterate(iter, &blk)) {
-		printf("%u ", blk);
-		if (i++ != blk)
+	ਜਦੋਂ (ext2fs_badblocks_list_iterate(iter, &blk)) {
+		ਲਿਖੋ("%u ", blk);
+		ਜੇ (i++ != blk)
 			ok = 0;
 	}
-	ext2fs_badblocks_list_iterate_end(iter);
-	if (verify) {
-		if (ok)
-			printf("--- OK");
-		else {
-			printf("--- NOT OK");
+	ext2fs_badblocks_list_iterate_ਸਿਰਾ(iter);
+	ਜੇ (verify) {
+		ਜੇ (ok)
+			ਲਿਖੋ("--- OK");
+		ਨਹੀਂਤਾਂ {
+			ਲਿਖੋ("--- NOT OK");
 			test_fail++;
 		}
 	}
 }
 
-static void validate_test_seq(badblocks_list bb, blk_t *vec)
+ਸਥਿਰ ਖਾਲੀ validate_test_seq(badblocks_list bb, blk_t *vec)
 {
-	int	i, match, ok;
+	ਪੂਰਨ	i, ਮੇਲ, ok;
 
-	for (i = 0; vec[i]; i += 2) {
-		match = ext2fs_badblocks_list_test(bb, vec[i]);
-		if (match == vec[i+1])
+	ਲਈ (i = 0; vec[i]; i += 2) {
+		ਮੇਲ = ext2fs_badblocks_list_test(bb, vec[i]);
+		ਜੇ (ਮੇਲ == vec[i+1])
 			ok = 1;
-		else {
+		ਨਹੀਂਤਾਂ {
 			ok = 0;
 			test_fail++;
 		}
-		printf("\tblock %u is %s --- %s\n", vec[i],
-		       match ? "present" : "absent",
+		ਲਿਖੋ("\tblock %u is %s --- %s\n", vec[i],
+		       ਮੇਲ ? "present" : "absent",
 		       ok ? "OK" : "NOT OK");
 	}
 }
 
-static void do_test_seq(badblocks_list bb, blk_t *vec)
+ਸਥਿਰ ਖਾਲੀ do_test_seq(badblocks_list bb, blk_t *vec)
 {
-	int	i, match;
+	ਪੂਰਨ	i, ਮੇਲ;
 
-	for (i = 0; vec[i]; i += 2) {
-		switch (vec[i+1]) {
-		case ADD_BLK:
-			ext2fs_badblocks_list_add(bb, vec[i]);
-			match = ext2fs_badblocks_list_test(bb, vec[i]);
-			printf("Adding block %u --- now %s\n", vec[i],
-			       match ? "present" : "absent");
-			if (!match) {
-				printf("FAILURE!\n");
+	ਲਈ (i = 0; vec[i]; i += 2) {
+		ਚੋਣ (vec[i+1]) {
+		ਹਾਲਤ ਜੋੜੋ_BLK:
+			ext2fs_badblocks_list_ਜੋੜੋ(bb, vec[i]);
+			ਮੇਲ = ext2fs_badblocks_list_test(bb, vec[i]);
+			ਲਿਖੋ("Adding block %u --- now %s\n", vec[i],
+			       ਮੇਲ ? "present" : "absent");
+			ਜੇ (!ਮੇਲ) {
+				ਲਿਖੋ("FAILURE!\n");
 				test_fail++;
 			}
-			break;
-		case DEL_BLK:
+			ਰੋਕੋ;
+		ਹਾਲਤ DEL_BLK:
 			ext2fs_badblocks_list_del(bb, vec[i]);
-			match = ext2fs_badblocks_list_test(bb, vec[i]);
-			printf("Removing block %u --- now %s\n", vec[i],
+			ਮੇਲ = ext2fs_badblocks_list_test(bb, vec[i]);
+			ਲਿਖੋ("Removing block %u --- now %s\n", vec[i],
 			       ext2fs_badblocks_list_test(bb, vec[i]) ?
 			       "present" : "absent");
-			if (match) {
-				printf("FAILURE!\n");
+			ਜੇ (ਮੇਲ) {
+				ਲਿਖੋ("FAILURE!\n");
 				test_fail++;
 			}
-			break;
+			ਰੋਕੋ;
 		}
 	}
 }
 
 
-int file_test(badblocks_list bb)
+ਪੂਰਨ file_test(badblocks_list bb)
 {
 	badblocks_list new_bb = 0;
 	errcode_t	retval;
 	FILE	*f;
 
 	f = tmpfile();
-	if (!f) {
+	ਜੇ (!f) {
 		fprintf(stderr, "Error opening temp file: %s\n",
-			error_message(errno));
-		return 1;
+			error_ਸੁਨੇਹਾ(errno));
+		ਵਾਪਸ 1;
 	}
 	retval = ext2fs_write_bb_FILE(bb, 0, f);
-	if (retval) {
+	ਜੇ (retval) {
 		com_err("file_test", retval, "while writing bad blocks");
-		return 1;
+		ਵਾਪਸ 1;
 	}
 
 	rewind(f);
 	retval = ext2fs_read_bb_FILE2(0, f, &new_bb, 0, 0);
-	if (retval) {
+	ਜੇ (retval) {
 		com_err("file_test", retval, "while reading bad blocks");
-		return 1;
+		ਵਾਪਸ 1;
 	}
 	fclose(f);
 
-	if (ext2fs_badblocks_equal(bb, new_bb)) {
-		printf("Block bitmap matched after reading and writing.\n");
-	} else {
-		printf("Block bitmap NOT matched.\n");
+	ਜੇ (ext2fs_badblocks_equal(bb, new_bb)) {
+		ਲਿਖੋ("Block bitmap matched after reading and writing.\n");
+	} ਨਹੀਂਤਾਂ {
+		ਲਿਖੋ("Block bitmap NOT matched.\n");
 		test_fail++;
 	}
 	ext2fs_badblocks_list_free(new_bb);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static void invalid_proc(ext2_filsys fs, blk_t blk)
+ਸਥਿਰ ਖਾਲੀ invalid_proc(ext2_filsys fs, blk_t blk)
 {
-	if (blk == 34500) {
-		printf("Expected invalid block\n");
+	ਜੇ (blk == 34500) {
+		ਲਿਖੋ("Expected invalid block\n");
 		test_expected_fail++;
-	} else {
-		printf("Invalid block #: %u\n", blk);
+	} ਨਹੀਂਤਾਂ {
+		ਲਿਖੋ("Invalid block #: %u\n", blk);
 		test_fail++;
 	}
 }
 
-void file_test_invalid(badblocks_list bb)
+ਖਾਲੀ file_test_invalid(badblocks_list bb)
 {
 	badblocks_list new_bb = 0;
 	errcode_t	retval;
 	ext2_filsys 	fs;
 	FILE	*f;
 
-	fs = malloc(sizeof(struct struct_ext2_filsys));
-	memset(fs, 0, sizeof(struct struct_ext2_filsys));
+	fs = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(ਬਣਤਰ struct_ext2_filsys));
+	memset(fs, 0, ਆਕਾਰ(ਬਣਤਰ struct_ext2_filsys));
 	fs->magic = EXT2_ET_MAGIC_EXT2FS_FILSYS;
-	fs->super = malloc(SUPERBLOCK_SIZE);
-	memset(fs->super, 0, SUPERBLOCK_SIZE);
-	fs->super->s_first_data_block = 1;
-	ext2fs_blocks_count_set(fs->super, 100);
+	fs->super = ਸਮ੍ਰਿਤੀ_ਦਿਓ(SUPERBLOCK_ਮਾਪ);
+	memset(fs->super, 0, SUPERBLOCK_ਮਾਪ);
+	fs->super->s_ਪਹਿਲਾ_ਅੰਕੜੇ_ਖੰਡ = 1;
+	ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ_ਸੈੱਟ(fs->super, 100);
 
 	f = tmpfile();
-	if (!f) {
+	ਜੇ (!f) {
 		fprintf(stderr, "Error opening temp file: %s\n",
-			error_message(errno));
+			error_ਸੁਨੇਹਾ(errno));
 		test_fail++;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 	retval = ext2fs_write_bb_FILE(bb, 0, f);
-	if (retval) {
+	ਜੇ (retval) {
 		com_err("file_test", retval, "while writing bad blocks");
 		test_fail++;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 	fprintf(f, "34500\n");
 
 	rewind(f);
 	test_expected_fail = 0;
 	retval = ext2fs_read_bb_FILE(fs, f, &new_bb, invalid_proc);
-	if (retval) {
+	ਜੇ (retval) {
 		com_err("file_test", retval, "while reading bad blocks");
 		test_fail++;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 	fclose(f);
-	if (!test_expected_fail) {
-		printf("Expected test failure didn't happen!\n");
+	ਜੇ (!test_expected_fail) {
+		ਲਿਖੋ("Expected test failure didn't happen!\n");
 		test_fail++;
 	}
 
 
-	if (ext2fs_badblocks_equal(bb, new_bb)) {
-		printf("Block bitmap matched after reading and writing.\n");
-	} else {
-		printf("Block bitmap NOT matched.\n");
+	ਜੇ (ext2fs_badblocks_equal(bb, new_bb)) {
+		ਲਿਖੋ("Block bitmap matched after reading and writing.\n");
+	} ਨਹੀਂਤਾਂ {
+		ਲਿਖੋ("Block bitmap NOT matched.\n");
 		test_fail++;
 	}
 	ext2fs_badblocks_list_free(new_bb);
-out:
-	free(fs->super);
-	free(fs);
+ਬਾਹਰਲਾ:
+	ਮੁਕਤ(fs->super);
+	ਮੁਕਤ(fs);
 }
 
-int main(int argc, char **argv)
+ਪੂਰਨ ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
 	badblocks_list bb1, bb2, bb3, bb4, bb5;
-	int	equal;
+	ਪੂਰਨ	equal;
 	errcode_t	retval;
 
-	add_error_table(&et_ext2_error_table);
+	ਜੋੜੋ_error_ਸਾਰਣੀ(&et_ext2_error_ਸਾਰਣੀ);
 
 	bb1 = bb2 = bb3 = bb4 = bb5 = 0;
 
-	printf("test1: ");
+	ਲਿਖੋ("test1: ");
 	retval = create_test_list(test1, &bb1);
-	if (retval == 0)
+	ਜੇ (retval == 0)
 		print_list(bb1, 1);
-	printf("\n");
+	ਲਿਖੋ("\n");
 
-	printf("test2: ");
+	ਲਿਖੋ("test2: ");
 	retval = create_test_list(test2, &bb2);
-	if (retval == 0)
+	ਜੇ (retval == 0)
 		print_list(bb2, 1);
-	printf("\n");
+	ਲਿਖੋ("\n");
 
-	printf("test3: ");
+	ਲਿਖੋ("test3: ");
 	retval = create_test_list(test3, &bb3);
-	if (retval == 0)
+	ਜੇ (retval == 0)
 		print_list(bb3, 1);
-	printf("\n");
+	ਲਿਖੋ("\n");
 
-	printf("test4: ");
+	ਲਿਖੋ("test4: ");
 	retval = create_test_list(test4, &bb4);
-	if (retval == 0) {
+	ਜੇ (retval == 0) {
 		print_list(bb4, 0);
-		printf("\n");
+		ਲਿਖੋ("\n");
 		validate_test_seq(bb4, test4a);
 	}
-	printf("\n");
+	ਲਿਖੋ("\n");
 
-	printf("test5: ");
+	ਲਿਖੋ("test5: ");
 	retval = create_test_list(test5, &bb5);
-	if (retval == 0) {
+	ਜੇ (retval == 0) {
 		print_list(bb5, 0);
-		printf("\n");
+		ਲਿਖੋ("\n");
 		do_test_seq(bb5, test5a);
-		printf("After test5 sequence: ");
+		ਲਿਖੋ("After test5 sequence: ");
 		print_list(bb5, 0);
-		printf("\n");
+		ਲਿਖੋ("\n");
 	}
-	printf("\n");
+	ਲਿਖੋ("\n");
 
-	if (bb1 && bb2 && bb3 && bb4 && bb5) {
-		printf("Comparison tests:\n");
+	ਜੇ (bb1 && bb2 && bb3 && bb4 && bb5) {
+		ਲਿਖੋ("Comparison tests:\n");
 		equal = ext2fs_badblocks_equal(bb1, bb2);
-		printf("bb1 and bb2 are %sequal.\n", equal ? "" : "NOT ");
-		if (equal)
+		ਲਿਖੋ("bb1 and bb2 are %sequal.\n", equal ? "" : "NOT ");
+		ਜੇ (equal)
 			test_fail++;
 
 		equal = ext2fs_badblocks_equal(bb1, bb3);
-		printf("bb1 and bb3 are %sequal.\n", equal ? "" : "NOT ");
-		if (!equal)
+		ਲਿਖੋ("bb1 and bb3 are %sequal.\n", equal ? "" : "NOT ");
+		ਜੇ (!equal)
 			test_fail++;
 
 		equal = ext2fs_badblocks_equal(bb1, bb4);
-		printf("bb1 and bb4 are %sequal.\n", equal ? "" : "NOT ");
-		if (equal)
+		ਲਿਖੋ("bb1 and bb4 are %sequal.\n", equal ? "" : "NOT ");
+		ਜੇ (equal)
 			test_fail++;
 
 		equal = ext2fs_badblocks_equal(bb4, bb5);
-		printf("bb4 and bb5 are %sequal.\n", equal ? "" : "NOT ");
-		if (!equal)
+		ਲਿਖੋ("bb4 and bb5 are %sequal.\n", equal ? "" : "NOT ");
+		ਜੇ (!equal)
 			test_fail++;
-		printf("\n");
+		ਲਿਖੋ("\n");
 	}
 
 	file_test(bb4);
 
 	file_test_invalid(bb4);
 
-	if (test_fail == 0)
-		printf("ext2fs library badblocks tests checks out OK!\n");
+	ਜੇ (test_fail == 0)
+		ਲਿਖੋ("ext2fs library badblocks tests checks out OK!\n");
 
-	if (bb1)
+	ਜੇ (bb1)
 		ext2fs_badblocks_list_free(bb1);
-	if (bb2)
+	ਜੇ (bb2)
 		ext2fs_badblocks_list_free(bb2);
-	if (bb3)
+	ਜੇ (bb3)
 		ext2fs_badblocks_list_free(bb3);
-	if (bb4)
+	ਜੇ (bb4)
 		ext2fs_badblocks_list_free(bb4);
-	if (bb5)
+	ਜੇ (bb5)
 		ext2fs_badblocks_list_free(bb5);
 
-	return test_fail;
+	ਵਾਪਸ test_fail;
 
 }

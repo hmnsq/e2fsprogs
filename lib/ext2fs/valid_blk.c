@@ -9,48 +9,48 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <string.h>
-#include <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਜੇ HAVE_UNISTD_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fs.h"
 
 /*
  * This function returns 1 if the inode's block entries actually
  * contain block entries.
  */
-int ext2fs_inode_has_valid_blocks2(ext2_filsys fs, struct ext2_inode *inode)
+ਪੂਰਨ ext2fs_inode_has_valid_blocks2(ext2_filsys fs, ਬਣਤਰ ext2_inode *inode)
 {
 	/*
 	 * Only directories, regular files, and some symbolic links
 	 * have valid block entries.
 	 */
-	if (!LINUX_S_ISDIR(inode->i_mode) && !LINUX_S_ISREG(inode->i_mode) &&
-	    !LINUX_S_ISLNK(inode->i_mode))
-		return 0;
+	ਜੇ (!LINUX_S_ISDIR(inode->i_ਬਹੁਲਕ) && !LINUX_S_ISREG(inode->i_ਬਹੁਲਕ) &&
+	    !LINUX_S_ISLNK(inode->i_ਬਹੁਲਕ))
+		ਵਾਪਸ 0;
 
 	/*
 	 * If the symbolic link is a "fast symlink", then the symlink
 	 * target is stored in the block entries.
 	 */
-	if (LINUX_S_ISLNK (inode->i_mode)) {
-		if (ext2fs_file_acl_block(fs, inode) == 0) {
+	ਜੇ (LINUX_S_ISLNK (inode->i_ਬਹੁਲਕ)) {
+		ਜੇ (ext2fs_file_acl_ਖੰਡ(fs, inode) == 0) {
 			/* With no EA block, we can rely on i_blocks */
-			if (inode->i_blocks == 0)
-				return 0;
-			return !ext2fs_is_fast_symlink(inode);
-		} else {
+			ਜੇ (inode->i_ਖੰਡਾਂ == 0)
+				ਵਾਪਸ 0;
+			ਵਾਪਸ !ext2fs_is_fast_symlink(inode);
+		} ਨਹੀਂਤਾਂ {
 			/* With an EA block, life gets more tricky */
-			if (inode->i_size >= EXT2_N_BLOCKS*4)
-				return 1; /* definitely using i_block[] */
-			if (inode->i_size > 4 && inode->i_block[1] == 0)
-				return 1; /* definitely using i_block[] */
-			return 0; /* Probably a fast symlink */
+			ਜੇ (inode->i_ਮਾਪ >= EXT2_N_ਖੰਡਾਂ*4)
+				ਵਾਪਸ 1; /* definitely using i_block[] */
+			ਜੇ (inode->i_ਮਾਪ > 4 && inode->i_ਖੰਡ[1] == 0)
+				ਵਾਪਸ 1; /* definitely using i_block[] */
+			ਵਾਪਸ 0; /* Probably a fast symlink */
 		}
 	}
 
@@ -58,12 +58,12 @@ int ext2fs_inode_has_valid_blocks2(ext2_filsys fs, struct ext2_inode *inode)
 	 * If this inode has inline data, it shouldn't have valid block
 	 * entries.
 	 */
-	if (inode->i_flags & EXT4_INLINE_DATA_FL)
-		return 0;
-	return 1;
+	ਜੇ (inode->i_flags & EXT4_INLINE_ਅੰਕੜੇ_FL)
+		ਵਾਪਸ 0;
+	ਵਾਪਸ 1;
 }
 
-int ext2fs_inode_has_valid_blocks(struct ext2_inode *inode)
+ਪੂਰਨ ext2fs_inode_has_valid_ਖੰਡਾਂ(ਬਣਤਰ ext2_inode *inode)
 {
-	return ext2fs_inode_has_valid_blocks2(NULL, inode);
+	ਵਾਪਸ ext2fs_inode_has_valid_blocks2(ਨਿਰਾ, inode);
 }

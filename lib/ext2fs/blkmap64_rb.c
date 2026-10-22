@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#if HAVE_LINUX_TYPES_H
-#include <linux/types.h>
-#endif
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਜੇ HAVE_UNISTD_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਜੇ HAVE_SYS_STAT_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਜੇ_ਅੰਤ
+#ਜੇ HAVE_SYS_TYPES_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਜੇ_ਅੰਤ
+#ਜੇ HAVE_LINUX_TYPES_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/types.h>
+#ਜੇ_ਅੰਤ
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
-#include "bmap64.h"
-#include "rbtree.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fsP.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "bmap64.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "rbtree.h"
 
-#include <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
 
-struct bmap_rb_extent {
-	struct rb_node node;
-	__u64 start;
-	__u64 count;
+ਬਣਤਰ bmap_rb_extent {
+	ਬਣਤਰ rb_ਗੰਢ ਗੰਢ;
+	__u64 ਸ਼ੁਰੂ;
+	__u64 ਗਿਣਤੀ_2;
 };
 
-struct ext2fs_rb_private {
-	struct rb_root root;
-	struct bmap_rb_extent *wcursor;
-	struct bmap_rb_extent *rcursor;
-	struct bmap_rb_extent *rcursor_next;
-#ifdef ENABLE_BMAP_STATS_OPS
-	__u64 mark_hit;
-	__u64 test_hit;
-#endif
+ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ {
+	ਬਣਤਰ rb_ਜੜ੍ਹ ਜੜ੍ਹ;
+	ਬਣਤਰ bmap_rb_extent *wcursor;
+	ਬਣਤਰ bmap_rb_extent *rcursor;
+	ਬਣਤਰ bmap_rb_extent *rcursor_ਅਗਲਾ;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_BMAP_STATS_OPS
+	__u64 mark_ਪ੍ਰਾਪਤੀ;
+	__u64 test_ਪ੍ਰਾਪਤੀ;
+#ਜੇ_ਅੰਤ
 };
 
-inline static struct bmap_rb_extent *node_to_extent(struct rb_node *node)
+ਸਤਰਅੰਦਰ ਸਥਿਰ ਬਣਤਰ bmap_rb_extent *ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਬਣਤਰ rb_ਗੰਢ *ਗੰਢ)
 {
 	/*
 	 * This depends on the fact the struct rb_node is at the
@@ -59,925 +59,925 @@ inline static struct bmap_rb_extent *node_to_extent(struct rb_node *node)
 	 * instead of the ext2fs_rb_entry macro because it causes gcc
 	 * -Wall to generate a huge amount of noise.
 	 */
-	return (struct bmap_rb_extent *) node;
+	ਵਾਪਸ (ਬਣਤਰ bmap_rb_extent *) ਗੰਢ;
 }
 
-static int rb_insert_extent(__u64 start, __u64 count,
-			    struct ext2fs_rb_private *);
-static void rb_get_new_extent(struct bmap_rb_extent **, __u64, __u64);
+ਸਥਿਰ ਪੂਰਨ rb_ਪਾਓ_extent(__u64 ਸ਼ੁਰੂ, __u64 ਗਿਣਤੀ_2,
+			    ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *);
+ਸਥਿਰ ਖਾਲੀ rb_get_new_extent(ਬਣਤਰ bmap_rb_extent **, __u64, __u64);
 
 /* #define DEBUG_RB */
 
-#ifdef DEBUG_RB
-static void print_tree(struct rb_root *root)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG_RB
+ਸਥਿਰ ਖਾਲੀ print_ਰੁੱਖ(ਬਣਤਰ rb_ਜੜ੍ਹ *ਜੜ੍ਹ)
 {
-	struct rb_node *node = NULL;
-	struct bmap_rb_extent *ext;
+	ਬਣਤਰ rb_ਗੰਢ *ਗੰਢ = ਨਿਰਾ;
+	ਬਣਤਰ bmap_rb_extent *ext;
 
 	fprintf(stderr, "\t\t\t=================================\n");
-	node = ext2fs_rb_first(root);
-	for (node = ext2fs_rb_first(root); node != NULL; 
-	     node = ext2fs_rb_next(node)) {
-		ext = node_to_extent(node);
+	ਗੰਢ = ext2fs_rb_ਪਹਿਲਾ(ਜੜ੍ਹ);
+	ਲਈ (ਗੰਢ = ext2fs_rb_ਪਹਿਲਾ(ਜੜ੍ਹ); ਗੰਢ != ਨਿਰਾ; 
+	     ਗੰਢ = ext2fs_rb_ਅਗਲਾ(ਗੰਢ)) {
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਗੰਢ);
 		fprintf(stderr, "\t\t\t--> (%llu -> %llu)\n",
-			(unsigned long long) ext->start,
-			(unsigned long long) ext->start + ext->count);
+			(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ext->ਸ਼ੁਰੂ,
+			(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2);
 	}
 	fprintf(stderr, "\t\t\t=================================\n");
 }
 
-static void check_tree(struct rb_root *root, const char *msg)
+ਸਥਿਰ ਖਾਲੀ check_ਰੁੱਖ(ਬਣਤਰ rb_ਜੜ੍ਹ *ਜੜ੍ਹ, ਅਚਲ ਅੱਖਰ *ਸੁਨੇਹਾ)
 {
-	struct rb_node *node;
-	struct bmap_rb_extent *ext, *old = NULL;
+	ਬਣਤਰ rb_ਗੰਢ *ਗੰਢ;
+	ਬਣਤਰ bmap_rb_extent *ext, *old = ਨਿਰਾ;
 
-	for (node = ext2fs_rb_first(root); node;
-	     node = ext2fs_rb_next(node)) {
-		ext = node_to_extent(node);
-		if (ext->count == 0) {
+	ਲਈ (ਗੰਢ = ext2fs_rb_ਪਹਿਲਾ(ਜੜ੍ਹ); ਗੰਢ;
+	     ਗੰਢ = ext2fs_rb_ਅਗਲਾ(ਗੰਢ)) {
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਗੰਢ);
+		ਜੇ (ext->ਗਿਣਤੀ_2 == 0) {
 			fprintf(stderr, "Tree Error: count is zero\n");
 			fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
-				(unsigned long long) ext->start,
-				(unsigned long long) ext->start + ext->count,
-				(unsigned long long) ext->count);
-			goto err_out;
+				(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ext->ਸ਼ੁਰੂ,
+				(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2,
+				(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ext->ਗਿਣਤੀ_2);
+			ਜਾਓ err_ਬਾਹਰਲਾ;
 		}
-		if (ext->start + ext->count < ext->start) {
+		ਜੇ (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2 < ext->ਸ਼ੁਰੂ) {
 			fprintf(stderr,
 				"Tree Error: start or count is crazy\n");
 			fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
-				(unsigned long long) ext->start,
-				(unsigned long long) ext->start + ext->count,
-				(unsigned long long) ext->count);
-			goto err_out;
+				(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ext->ਸ਼ੁਰੂ,
+				(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2,
+				(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ext->ਗਿਣਤੀ_2);
+			ਜਾਓ err_ਬਾਹਰਲਾ;
 		}
 
-		if (old) {
-			if (old->start > ext->start) {
+		ਜੇ (old) {
+			ਜੇ (old->ਸ਼ੁਰੂ > ext->ਸ਼ੁਰੂ) {
 				fprintf(stderr, "Tree Error: start is crazy\n");
 				fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
-					(unsigned long long) old->start,
-					(unsigned long long) old->start + old->count,
-					(unsigned long long) old->count);
+					(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) old->ਸ਼ੁਰੂ,
+					(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) old->ਸ਼ੁਰੂ + old->ਗਿਣਤੀ_2,
+					(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) old->ਗਿਣਤੀ_2);
 				fprintf(stderr,
 					"extent next: %llu -> %llu (%llu)\n",
-					(unsigned long long) ext->start,
-					(unsigned long long) ext->start + ext->count,
-					(unsigned long long) ext->count);
-				goto err_out;
+					(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ext->ਸ਼ੁਰੂ,
+					(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2,
+					(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ext->ਗਿਣਤੀ_2);
+				ਜਾਓ err_ਬਾਹਰਲਾ;
 			}
-			if ((old->start + old->count) >= ext->start) {
+			ਜੇ ((old->ਸ਼ੁਰੂ + old->ਗਿਣਤੀ_2) >= ext->ਸ਼ੁਰੂ) {
 				fprintf(stderr,
 					"Tree Error: extent is crazy\n");
 				fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
-					(unsigned long long) old->start,
-					(unsigned long long) old->start + old->count,
-					(unsigned long long) old->count);
+					(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) old->ਸ਼ੁਰੂ,
+					(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) old->ਸ਼ੁਰੂ + old->ਗਿਣਤੀ_2,
+					(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) old->ਗਿਣਤੀ_2);
 				fprintf(stderr,
 					"extent next: %llu -> %llu (%llu)\n",
-					(unsigned long long) ext->start,
-					(unsigned long long) ext->start + ext->count,
-					(unsigned long long) ext->count);
-				goto err_out;
+					(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ext->ਸ਼ੁਰੂ,
+					(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2,
+					(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ext->ਗਿਣਤੀ_2);
+				ਜਾਓ err_ਬਾਹਰਲਾ;
 			}
 		}
 		old = ext;
 	}
-	return;
+	ਵਾਪਸ;
 
-err_out:
-	fprintf(stderr, "%s\n", msg);
-	print_tree(root);
-	exit(1);
+err_ਬਾਹਰਲਾ:
+	fprintf(stderr, "%s\n", ਸੁਨੇਹਾ);
+	print_ਰੁੱਖ(ਜੜ੍ਹ);
+	ਬਾਹਰ_ਨਿਕਲੋ(1);
 }
-#else
-#define check_tree(root, msg) do {} while (0)
-#define print_tree(root) do {} while (0)
-#endif
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ check_ਰੁੱਖ(ਜੜ੍ਹ, ਸੁਨੇਹਾ) ਕਰੋ {} ਜਦੋਂ (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ print_ਰੁੱਖ(ਜੜ੍ਹ) ਕਰੋ {} ਜਦੋਂ (0)
+#ਜੇ_ਅੰਤ
 
-static void rb_get_new_extent(struct bmap_rb_extent **ext, __u64 start,
-			     __u64 count)
+ਸਥਿਰ ਖਾਲੀ rb_get_new_extent(ਬਣਤਰ bmap_rb_extent **ext, __u64 ਸ਼ੁਰੂ,
+			     __u64 ਗਿਣਤੀ_2)
 {
-	struct bmap_rb_extent *new_ext;
-	int retval;
+	ਬਣਤਰ bmap_rb_extent *new_ext;
+	ਪੂਰਨ retval;
 
-	retval = ext2fs_get_mem(sizeof (struct bmap_rb_extent),
+	retval = ext2fs_get_mem(ਆਕਾਰ (ਬਣਤਰ bmap_rb_extent),
 				&new_ext);
-	if (retval)
+	ਜੇ (retval)
 		abort();
 
-	new_ext->start = start;
-	new_ext->count = count;
+	new_ext->ਸ਼ੁਰੂ = ਸ਼ੁਰੂ;
+	new_ext->ਗਿਣਤੀ_2 = ਗਿਣਤੀ_2;
 	*ext = new_ext;
 }
 
-inline
-static void rb_free_extent(struct ext2fs_rb_private *bp,
-			   struct bmap_rb_extent *ext)
+ਸਤਰਅੰਦਰ
+ਸਥਿਰ ਖਾਲੀ rb_free_extent(ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp,
+			   ਬਣਤਰ bmap_rb_extent *ext)
 {
-	if (bp->wcursor == ext)
-		bp->wcursor = NULL;
-	if (bp->rcursor == ext)
-		bp->rcursor = NULL;
-	if (bp->rcursor_next == ext)
-		bp->rcursor_next = NULL;
+	ਜੇ (bp->wcursor == ext)
+		bp->wcursor = ਨਿਰਾ;
+	ਜੇ (bp->rcursor == ext)
+		bp->rcursor = ਨਿਰਾ;
+	ਜੇ (bp->rcursor_ਅਗਲਾ == ext)
+		bp->rcursor_ਅਗਲਾ = ਨਿਰਾ;
 	ext2fs_free_mem(&ext);
 }
 
-static errcode_t rb_alloc_private_data (ext2fs_generic_bitmap_64 bitmap)
+ਸਥਿਰ errcode_t rb_alloc_ਨਿੱਜੀ_ਅੰਕੜੇ (ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp;
 	errcode_t	retval;
 
-	retval = ext2fs_get_mem(sizeof (struct ext2fs_rb_private), &bp);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(ਆਕਾਰ (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ), &bp);
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
-	bp->root = RB_ROOT;
-	bp->rcursor = NULL;
-	bp->rcursor_next = NULL;
-	bp->wcursor = NULL;
+	bp->ਜੜ੍ਹ = RB_ਜੜ੍ਹ;
+	bp->rcursor = ਨਿਰਾ;
+	bp->rcursor_ਅਗਲਾ = ਨਿਰਾ;
+	bp->wcursor = ਨਿਰਾ;
 
-#ifdef ENABLE_BMAP_STATS_OPS
-	bp->test_hit = 0;
-	bp->mark_hit = 0;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_BMAP_STATS_OPS
+	bp->test_ਪ੍ਰਾਪਤੀ = 0;
+	bp->mark_ਪ੍ਰਾਪਤੀ = 0;
+#ਜੇ_ਅੰਤ
 
-	bitmap->private = (void *) bp;
-	return 0;
+	bitmap->ਨਿਜੀ = (ਖਾਲੀ *) bp;
+	ਵਾਪਸ 0;
 }
 
-static errcode_t rb_new_bmap(ext2_filsys fs EXT2FS_ATTR((unused)),
+ਸਥਿਰ errcode_t rb_new_bmap(ext2_filsys fs EXT2FS_ATTR((ਅਣਵਰਤਿਆ)),
 			     ext2fs_generic_bitmap_64 bitmap)
 {
 	errcode_t	retval;
 
-	retval = rb_alloc_private_data (bitmap);
-	if (retval)
-		return retval;
+	retval = rb_alloc_ਨਿੱਜੀ_ਅੰਕੜੇ (bitmap);
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static void rb_free_tree(struct rb_root *root)
+ਸਥਿਰ ਖਾਲੀ rb_free_ਰੁੱਖ(ਬਣਤਰ rb_ਜੜ੍ਹ *ਜੜ੍ਹ)
 {
-	struct bmap_rb_extent *ext;
-	struct rb_node *node, *next;
+	ਬਣਤਰ bmap_rb_extent *ext;
+	ਬਣਤਰ rb_ਗੰਢ *ਗੰਢ, *ਅਗਲਾ;
 
-	for (node = ext2fs_rb_first(root); node; node = next) {
-		next = ext2fs_rb_next(node);
-		ext = node_to_extent(node);
-		ext2fs_rb_erase(node, root);
+	ਲਈ (ਗੰਢ = ext2fs_rb_ਪਹਿਲਾ(ਜੜ੍ਹ); ਗੰਢ; ਗੰਢ = ਅਗਲਾ) {
+		ਅਗਲਾ = ext2fs_rb_ਅਗਲਾ(ਗੰਢ);
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਗੰਢ);
+		ext2fs_rb_erase(ਗੰਢ, ਜੜ੍ਹ);
 		ext2fs_free_mem(&ext);
 	}
 }
 
-static void rb_free_bmap(ext2fs_generic_bitmap_64 bitmap)
+ਸਥਿਰ ਖਾਲੀ rb_free_bmap(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) bitmap->ਨਿਜੀ;
 
-	rb_free_tree(&bp->root);
+	rb_free_ਰੁੱਖ(&bp->ਜੜ੍ਹ);
 	ext2fs_free_mem(&bp);
 	bp = 0;
 }
 
-static errcode_t rb_copy_bmap(ext2fs_generic_bitmap_64 src,
+ਸਥਿਰ errcode_t rb_copy_bmap(ext2fs_generic_bitmap_64 src,
 			      ext2fs_generic_bitmap_64 dest)
 {
-	struct ext2fs_rb_private *src_bp, *dest_bp;
-	struct bmap_rb_extent *src_ext, *dest_ext;
-	struct rb_node *dest_node, *src_node, *dest_last, **n;
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *src_bp, *dest_bp;
+	ਬਣਤਰ bmap_rb_extent *src_ext, *dest_ext;
+	ਬਣਤਰ rb_ਗੰਢ *dest_ਗੰਢ, *src_ਗੰਢ, *dest_ਆਖਰੀ, **n;
 	errcode_t retval = 0;
 
-	retval = rb_alloc_private_data (dest);
-	if (retval)
-		return retval;
+	retval = rb_alloc_ਨਿੱਜੀ_ਅੰਕੜੇ (dest);
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
-	src_bp = (struct ext2fs_rb_private *) src->private;
-	dest_bp = (struct ext2fs_rb_private *) dest->private;
-	src_bp->rcursor = NULL;
-	dest_bp->rcursor = NULL;
+	src_bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) src->ਨਿਜੀ;
+	dest_bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) dest->ਨਿਜੀ;
+	src_bp->rcursor = ਨਿਰਾ;
+	dest_bp->rcursor = ਨਿਰਾ;
 
-	src_node = ext2fs_rb_first(&src_bp->root);
-	while (src_node) {
-		src_ext = node_to_extent(src_node);
-		retval = ext2fs_get_mem(sizeof (struct bmap_rb_extent),
+	src_ਗੰਢ = ext2fs_rb_ਪਹਿਲਾ(&src_bp->ਜੜ੍ਹ);
+	ਜਦੋਂ (src_ਗੰਢ) {
+		src_ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(src_ਗੰਢ);
+		retval = ext2fs_get_mem(ਆਕਾਰ (ਬਣਤਰ bmap_rb_extent),
 					&dest_ext);
-		if (retval)
-			break;
+		ਜੇ (retval)
+			ਰੋਕੋ;
 
-		memcpy(dest_ext, src_ext, sizeof(struct bmap_rb_extent));
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(dest_ext, src_ext, ਆਕਾਰ(ਬਣਤਰ bmap_rb_extent));
 
-		dest_node = &dest_ext->node;
-		n = &dest_bp->root.rb_node;
+		dest_ਗੰਢ = &dest_ext->ਗੰਢ;
+		n = &dest_bp->ਜੜ੍ਹ.rb_ਗੰਢ;
 
-		dest_last = NULL;
-		if (*n) {
-			dest_last = ext2fs_rb_last(&dest_bp->root);
-			n = &(dest_last)->rb_right;
+		dest_ਆਖਰੀ = ਨਿਰਾ;
+		ਜੇ (*n) {
+			dest_ਆਖਰੀ = ext2fs_rb_ਆਖਰੀ(&dest_bp->ਜੜ੍ਹ);
+			n = &(dest_ਆਖਰੀ)->rb_ਸੱਜਾ;
 		}
 
-		ext2fs_rb_link_node(dest_node, dest_last, n);
-		ext2fs_rb_insert_color(dest_node, &dest_bp->root);
+		ext2fs_rb_link_ਗੰਢ(dest_ਗੰਢ, dest_ਆਖਰੀ, n);
+		ext2fs_rb_ਪਾਓ_color(dest_ਗੰਢ, &dest_bp->ਜੜ੍ਹ);
 
-		src_node = ext2fs_rb_next(src_node);
+		src_ਗੰਢ = ext2fs_rb_ਅਗਲਾ(src_ਗੰਢ);
 	}
 
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-static void rb_truncate(__u64 new_max, struct rb_root *root)
+ਸਥਿਰ ਖਾਲੀ rb_truncate(__u64 new_max, ਬਣਤਰ rb_ਜੜ੍ਹ *ਜੜ੍ਹ)
 {
-	struct bmap_rb_extent *ext;
-	struct rb_node *node;
+	ਬਣਤਰ bmap_rb_extent *ext;
+	ਬਣਤਰ rb_ਗੰਢ *ਗੰਢ;
 
-	node = ext2fs_rb_last(root);
-	while (node) {
-		ext = node_to_extent(node);
+	ਗੰਢ = ext2fs_rb_ਆਖਰੀ(ਜੜ੍ਹ);
+	ਜਦੋਂ (ਗੰਢ) {
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਗੰਢ);
 
-		if ((ext->start + ext->count - 1) <= new_max)
-			break;
-		else if (ext->start > new_max) {
-			ext2fs_rb_erase(node, root);
+		ਜੇ ((ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2 - 1) <= new_max)
+			ਰੋਕੋ;
+		ਨਹੀਂਤਾਂ ਜੇ (ext->ਸ਼ੁਰੂ > new_max) {
+			ext2fs_rb_erase(ਗੰਢ, ਜੜ੍ਹ);
 			ext2fs_free_mem(&ext);
-			node = ext2fs_rb_last(root);
-			continue;
-		} else
-			ext->count = new_max - ext->start + 1;
+			ਗੰਢ = ext2fs_rb_ਆਖਰੀ(ਜੜ੍ਹ);
+			ਜਾਰੀ;
+		} ਨਹੀਂਤਾਂ
+			ext->ਗਿਣਤੀ_2 = new_max - ext->ਸ਼ੁਰੂ + 1;
 	}
 }
 
-static errcode_t rb_resize_bmap(ext2fs_generic_bitmap_64 bmap,
-				__u64 new_end, __u64 new_real_end)
+ਸਥਿਰ errcode_t rb_resize_bmap(ext2fs_generic_bitmap_64 bmap,
+				__u64 new_ਸਿਰਾ, __u64 new_real_ਸਿਰਾ)
 {
-	struct ext2fs_rb_private *bp;
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp;
 
-	bp = (struct ext2fs_rb_private *) bmap->private;
-	bp->rcursor = NULL;
-	bp->wcursor = NULL;
+	bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) bmap->ਨਿਜੀ;
+	bp->rcursor = ਨਿਰਾ;
+	bp->wcursor = ਨਿਰਾ;
 
-	rb_truncate(((new_end < bmap->end) ? new_end : bmap->end) - bmap->start,
-		    &bp->root);
+	rb_truncate(((new_ਸਿਰਾ < bmap->ਸਿਰਾ) ? new_ਸਿਰਾ : bmap->ਸਿਰਾ) - bmap->ਸ਼ੁਰੂ,
+		    &bp->ਜੜ੍ਹ);
 
-	bmap->end = new_end;
-	bmap->real_end = new_real_end;
+	bmap->ਸਿਰਾ = new_ਸਿਰਾ;
+	bmap->real_ਸਿਰਾ = new_real_ਸਿਰਾ;
 
-	if (bmap->end < bmap->real_end)
-		rb_insert_extent(bmap->end + 1 - bmap->start,
-				 bmap->real_end - bmap->end, bp);
-	return 0;
+	ਜੇ (bmap->ਸਿਰਾ < bmap->real_ਸਿਰਾ)
+		rb_ਪਾਓ_extent(bmap->ਸਿਰਾ + 1 - bmap->ਸ਼ੁਰੂ,
+				 bmap->real_ਸਿਰਾ - bmap->ਸਿਰਾ, bp);
+	ਵਾਪਸ 0;
 
 }
 
-inline static int
-rb_test_bit(struct ext2fs_rb_private *bp, __u64 bit)
+ਸਤਰਅੰਦਰ ਸਥਿਰ ਪੂਰਨ
+rb_test_ਦੋਆਧਾਰੀ_ਅੰਕ(ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp, __u64 ਦੋਆਧਾਰੀ_ਅੰਕ)
 {
-	struct bmap_rb_extent *rcursor, *next_ext = NULL;
-	struct rb_node *parent = NULL, *next;
-	struct rb_node **n = &bp->root.rb_node;
-	struct bmap_rb_extent *ext;
+	ਬਣਤਰ bmap_rb_extent *rcursor, *ਅਗਲਾ_ext = ਨਿਰਾ;
+	ਬਣਤਰ rb_ਗੰਢ *ਮਾਪਾ = ਨਿਰਾ, *ਅਗਲਾ;
+	ਬਣਤਰ rb_ਗੰਢ **n = &bp->ਜੜ੍ਹ.rb_ਗੰਢ;
+	ਬਣਤਰ bmap_rb_extent *ext;
 
 	rcursor = bp->rcursor;
-	if (!rcursor)
-		goto search_tree;
+	ਜੇ (!rcursor)
+		ਜਾਓ ਖੋਜ_ਰੁੱਖ;
 
-	if (bit >= rcursor->start && bit < rcursor->start + rcursor->count) {
-#ifdef ENABLE_BMAP_STATS_OPS
-		bp->test_hit++;
-#endif
-		return 1;
+	ਜੇ (ਦੋਆਧਾਰੀ_ਅੰਕ >= rcursor->ਸ਼ੁਰੂ && ਦੋਆਧਾਰੀ_ਅੰਕ < rcursor->ਸ਼ੁਰੂ + rcursor->ਗਿਣਤੀ_2) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_BMAP_STATS_OPS
+		bp->test_ਪ੍ਰਾਪਤੀ++;
+#ਜੇ_ਅੰਤ
+		ਵਾਪਸ 1;
 	}
 
-	next_ext = bp->rcursor_next;
-	if (!next_ext) {
-		next = ext2fs_rb_next(&rcursor->node);
-		if (next)
-			next_ext = node_to_extent(next);
-		bp->rcursor_next = next_ext;
+	ਅਗਲਾ_ext = bp->rcursor_ਅਗਲਾ;
+	ਜੇ (!ਅਗਲਾ_ext) {
+		ਅਗਲਾ = ext2fs_rb_ਅਗਲਾ(&rcursor->ਗੰਢ);
+		ਜੇ (ਅਗਲਾ)
+			ਅਗਲਾ_ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਅਗਲਾ);
+		bp->rcursor_ਅਗਲਾ = ਅਗਲਾ_ext;
 	}
-	if (next_ext) {
-		if ((bit >= rcursor->start + rcursor->count) &&
-		    (bit < next_ext->start)) {
-#ifdef BMAP_STATS_OPS
-			bp->test_hit++;
-#endif
-			return 0;
+	ਜੇ (ਅਗਲਾ_ext) {
+		ਜੇ ((ਦੋਆਧਾਰੀ_ਅੰਕ >= rcursor->ਸ਼ੁਰੂ + rcursor->ਗਿਣਤੀ_2) &&
+		    (ਦੋਆਧਾਰੀ_ਅੰਕ < ਅਗਲਾ_ext->ਸ਼ੁਰੂ)) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BMAP_STATS_OPS
+			bp->test_ਪ੍ਰਾਪਤੀ++;
+#ਜੇ_ਅੰਤ
+			ਵਾਪਸ 0;
 		}
 	}
-	bp->rcursor = NULL;
-	bp->rcursor_next = NULL;
+	bp->rcursor = ਨਿਰਾ;
+	bp->rcursor_ਅਗਲਾ = ਨਿਰਾ;
 
 	rcursor = bp->wcursor;
-	if (!rcursor)
-		goto search_tree;
+	ਜੇ (!rcursor)
+		ਜਾਓ ਖੋਜ_ਰੁੱਖ;
 
-	if (bit >= rcursor->start && bit < rcursor->start + rcursor->count)
-		return 1;
+	ਜੇ (ਦੋਆਧਾਰੀ_ਅੰਕ >= rcursor->ਸ਼ੁਰੂ && ਦੋਆਧਾਰੀ_ਅੰਕ < rcursor->ਸ਼ੁਰੂ + rcursor->ਗਿਣਤੀ_2)
+		ਵਾਪਸ 1;
 
-search_tree:
+ਖੋਜ_ਰੁੱਖ:
 
-	while (*n) {
-		parent = *n;
-		ext = node_to_extent(parent);
-		if (bit < ext->start)
-			n = &(*n)->rb_left;
-		else if (bit >= (ext->start + ext->count))
-			n = &(*n)->rb_right;
-		else {
+	ਜਦੋਂ (*n) {
+		ਮਾਪਾ = *n;
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਮਾਪਾ);
+		ਜੇ (ਦੋਆਧਾਰੀ_ਅੰਕ < ext->ਸ਼ੁਰੂ)
+			n = &(*n)->rb_ਖੱਬਾ;
+		ਨਹੀਂਤਾਂ ਜੇ (ਦੋਆਧਾਰੀ_ਅੰਕ >= (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2))
+			n = &(*n)->rb_ਸੱਜਾ;
+		ਨਹੀਂਤਾਂ {
 			bp->rcursor = ext;
-			bp->rcursor_next = NULL;
-			return 1;
+			bp->rcursor_ਅਗਲਾ = ਨਿਰਾ;
+			ਵਾਪਸ 1;
 		}
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int rb_insert_extent(__u64 start, __u64 count,
-			    struct ext2fs_rb_private *bp)
+ਸਥਿਰ ਪੂਰਨ rb_ਪਾਓ_extent(__u64 ਸ਼ੁਰੂ, __u64 ਗਿਣਤੀ_2,
+			    ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp)
 {
-	struct rb_root *root = &bp->root;
-	struct rb_node *parent = NULL, **n = &root->rb_node;
-	struct rb_node *new_node, *node, *next;
-	struct bmap_rb_extent *new_ext;
-	struct bmap_rb_extent *ext;
-	int retval = 0;
+	ਬਣਤਰ rb_ਜੜ੍ਹ *ਜੜ੍ਹ = &bp->ਜੜ੍ਹ;
+	ਬਣਤਰ rb_ਗੰਢ *ਮਾਪਾ = ਨਿਰਾ, **n = &ਜੜ੍ਹ->rb_ਗੰਢ;
+	ਬਣਤਰ rb_ਗੰਢ *new_ਗੰਢ, *ਗੰਢ, *ਅਗਲਾ;
+	ਬਣਤਰ bmap_rb_extent *new_ext;
+	ਬਣਤਰ bmap_rb_extent *ext;
+	ਪੂਰਨ retval = 0;
 
-	if (count == 0)
-		return 0;
+	ਜੇ (ਗਿਣਤੀ_2 == 0)
+		ਵਾਪਸ 0;
 
-	bp->rcursor_next = NULL;
+	bp->rcursor_ਅਗਲਾ = ਨਿਰਾ;
 	ext = bp->wcursor;
-	if (ext) {
-		if (start >= ext->start &&
-		    start <= (ext->start + ext->count)) {
-#ifdef ENABLE_BMAP_STATS_OPS
-			bp->mark_hit++;
-#endif
-			goto got_extent;
+	ਜੇ (ext) {
+		ਜੇ (ਸ਼ੁਰੂ >= ext->ਸ਼ੁਰੂ &&
+		    ਸ਼ੁਰੂ <= (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2)) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_BMAP_STATS_OPS
+			bp->mark_ਪ੍ਰਾਪਤੀ++;
+#ਜੇ_ਅੰਤ
+			ਜਾਓ got_extent;
 		}
 	}
 
-	while (*n) {
-		parent = *n;
-		ext = node_to_extent(parent);
+	ਜਦੋਂ (*n) {
+		ਮਾਪਾ = *n;
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਮਾਪਾ);
 
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start > (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else {
+		ਜੇ (ਸ਼ੁਰੂ < ext->ਸ਼ੁਰੂ) {
+			n = &(*n)->rb_ਖੱਬਾ;
+		} ਨਹੀਂਤਾਂ ਜੇ (ਸ਼ੁਰੂ > (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2)) {
+			n = &(*n)->rb_ਸੱਜਾ;
+		} ਨਹੀਂਤਾਂ {
 got_extent:
-			if ((start + count) <= (ext->start + ext->count))
-				return 1;
+			ਜੇ ((ਸ਼ੁਰੂ + ਗਿਣਤੀ_2) <= (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2))
+				ਵਾਪਸ 1;
 
-			if ((ext->start + ext->count) == start)
+			ਜੇ ((ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2) == ਸ਼ੁਰੂ)
 				retval = 0;
-			else
+			ਨਹੀਂਤਾਂ
 				retval = 1;
 
-			count += (start - ext->start);
-			start = ext->start;
+			ਗਿਣਤੀ_2 += (ਸ਼ੁਰੂ - ext->ਸ਼ੁਰੂ);
+			ਸ਼ੁਰੂ = ext->ਸ਼ੁਰੂ;
 			new_ext = ext;
-			new_node = &ext->node;
+			new_ਗੰਢ = &ext->ਗੰਢ;
 
-			goto skip_insert;
+			ਜਾਓ skip_ਪਾਓ;
 		}
 	}
 
-	rb_get_new_extent(&new_ext, start, count);
+	rb_get_new_extent(&new_ext, ਸ਼ੁਰੂ, ਗਿਣਤੀ_2);
 
-	new_node = &new_ext->node;
-	ext2fs_rb_link_node(new_node, parent, n);
-	ext2fs_rb_insert_color(new_node, root);
+	new_ਗੰਢ = &new_ext->ਗੰਢ;
+	ext2fs_rb_link_ਗੰਢ(new_ਗੰਢ, ਮਾਪਾ, n);
+	ext2fs_rb_ਪਾਓ_color(new_ਗੰਢ, ਜੜ੍ਹ);
 	bp->wcursor = new_ext;
 
-	node = ext2fs_rb_prev(new_node);
-	if (node) {
-		ext = node_to_extent(node);
-		if ((ext->start + ext->count) == start) {
-			start = ext->start;
-			count += ext->count;
-			ext2fs_rb_erase(node, root);
+	ਗੰਢ = ext2fs_rb_prev(new_ਗੰਢ);
+	ਜੇ (ਗੰਢ) {
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਗੰਢ);
+		ਜੇ ((ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2) == ਸ਼ੁਰੂ) {
+			ਸ਼ੁਰੂ = ext->ਸ਼ੁਰੂ;
+			ਗਿਣਤੀ_2 += ext->ਗਿਣਤੀ_2;
+			ext2fs_rb_erase(ਗੰਢ, ਜੜ੍ਹ);
 			rb_free_extent(bp, ext);
 		}
 	}
 
-skip_insert:
+skip_ਪਾਓ:
 	/* See if we can merge extent to the right */
-	for (node = ext2fs_rb_next(new_node); node != NULL; node = next) {
-		next = ext2fs_rb_next(node);
-		ext = node_to_extent(node);
+	ਲਈ (ਗੰਢ = ext2fs_rb_ਅਗਲਾ(new_ਗੰਢ); ਗੰਢ != ਨਿਰਾ; ਗੰਢ = ਅਗਲਾ) {
+		ਅਗਲਾ = ext2fs_rb_ਅਗਲਾ(ਗੰਢ);
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਗੰਢ);
 
-		if ((ext->start + ext->count) <= start)
-			continue;
+		ਜੇ ((ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2) <= ਸ਼ੁਰੂ)
+			ਜਾਰੀ;
 
 		/* No more merging */
-		if ((start + count) < ext->start)
-			break;
+		ਜੇ ((ਸ਼ੁਰੂ + ਗਿਣਤੀ_2) < ext->ਸ਼ੁਰੂ)
+			ਰੋਕੋ;
 
 		/* ext is embedded in new_ext interval */
-		if ((start + count) >= (ext->start + ext->count)) {
-			ext2fs_rb_erase(node, root);
+		ਜੇ ((ਸ਼ੁਰੂ + ਗਿਣਤੀ_2) >= (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2)) {
+			ext2fs_rb_erase(ਗੰਢ, ਜੜ੍ਹ);
 			rb_free_extent(bp, ext);
-			continue;
-		} else {
+			ਜਾਰੀ;
+		} ਨਹੀਂਤਾਂ {
 		/* merge ext with new_ext */
-			count += ((ext->start + ext->count) -
-				  (start + count));
-			ext2fs_rb_erase(node, root);
+			ਗਿਣਤੀ_2 += ((ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2) -
+				  (ਸ਼ੁਰੂ + ਗਿਣਤੀ_2));
+			ext2fs_rb_erase(ਗੰਢ, ਜੜ੍ਹ);
 			rb_free_extent(bp, ext);
-			break;
+			ਰੋਕੋ;
 		}
 	}
 
-	new_ext->start = start;
-	new_ext->count = count;
+	new_ext->ਸ਼ੁਰੂ = ਸ਼ੁਰੂ;
+	new_ext->ਗਿਣਤੀ_2 = ਗਿਣਤੀ_2;
 
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-static int rb_remove_extent(__u64 start, __u64 count,
-			    struct ext2fs_rb_private *bp)
+ਸਥਿਰ ਪੂਰਨ rb_remove_extent(__u64 ਸ਼ੁਰੂ, __u64 ਗਿਣਤੀ_2,
+			    ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp)
 {
-	struct rb_root *root = &bp->root;
-	struct rb_node *parent = NULL, **n = &root->rb_node;
-	struct rb_node *node;
-	struct bmap_rb_extent *ext;
-	__u64 new_start, new_count;
-	int retval = 0;
+	ਬਣਤਰ rb_ਜੜ੍ਹ *ਜੜ੍ਹ = &bp->ਜੜ੍ਹ;
+	ਬਣਤਰ rb_ਗੰਢ *ਮਾਪਾ = ਨਿਰਾ, **n = &ਜੜ੍ਹ->rb_ਗੰਢ;
+	ਬਣਤਰ rb_ਗੰਢ *ਗੰਢ;
+	ਬਣਤਰ bmap_rb_extent *ext;
+	__u64 new_ਸ਼ੁਰੂ, new_ਗਿਣਤੀ;
+	ਪੂਰਨ retval = 0;
 
-	if (ext2fs_rb_empty_root(root))
-		return 0;
+	ਜੇ (ext2fs_rb_ਖਾਲੀ_ਥਾਵਾਂ_ਜੜ੍ਹ(ਜੜ੍ਹ))
+		ਵਾਪਸ 0;
 
-	while (*n) {
-		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-			continue;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-			continue;
+	ਜਦੋਂ (*n) {
+		ਮਾਪਾ = *n;
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਮਾਪਾ);
+		ਜੇ (ਸ਼ੁਰੂ < ext->ਸ਼ੁਰੂ) {
+			n = &(*n)->rb_ਖੱਬਾ;
+			ਜਾਰੀ;
+		} ਨਹੀਂਤਾਂ ਜੇ (ਸ਼ੁਰੂ >= (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2)) {
+			n = &(*n)->rb_ਸੱਜਾ;
+			ਜਾਰੀ;
 		}
 
-		if ((start > ext->start) &&
-		    (start + count) < (ext->start + ext->count)) {
+		ਜੇ ((ਸ਼ੁਰੂ > ext->ਸ਼ੁਰੂ) &&
+		    (ਸ਼ੁਰੂ + ਗਿਣਤੀ_2) < (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2)) {
 			/* We have to split extent into two */
-			new_start = start + count;
-			new_count = (ext->start + ext->count) - new_start;
+			new_ਸ਼ੁਰੂ = ਸ਼ੁਰੂ + ਗਿਣਤੀ_2;
+			new_ਗਿਣਤੀ = (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2) - new_ਸ਼ੁਰੂ;
 
-			ext->count = start - ext->start;
+			ext->ਗਿਣਤੀ_2 = ਸ਼ੁਰੂ - ext->ਸ਼ੁਰੂ;
 
-			rb_insert_extent(new_start, new_count, bp);
-			return 1;
+			rb_ਪਾਓ_extent(new_ਸ਼ੁਰੂ, new_ਗਿਣਤੀ, bp);
+			ਵਾਪਸ 1;
 		}
 
-		if ((start + count) >= (ext->start + ext->count)) {
-			ext->count = start - ext->start;
+		ਜੇ ((ਸ਼ੁਰੂ + ਗਿਣਤੀ_2) >= (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2)) {
+			ext->ਗਿਣਤੀ_2 = ਸ਼ੁਰੂ - ext->ਸ਼ੁਰੂ;
 			retval = 1;
 		}
 
-		if (0 == ext->count) {
-			parent = ext2fs_rb_next(&ext->node);
-			ext2fs_rb_erase(&ext->node, root);
+		ਜੇ (0 == ext->ਗਿਣਤੀ_2) {
+			ਮਾਪਾ = ext2fs_rb_ਅਗਲਾ(&ext->ਗੰਢ);
+			ext2fs_rb_erase(&ext->ਗੰਢ, ਜੜ੍ਹ);
 			rb_free_extent(bp, ext);
-			break;
+			ਰੋਕੋ;
 		}
 
-		if (start == ext->start) {
-			ext->start += count;
-			ext->count -= count;
-			return 1;
+		ਜੇ (ਸ਼ੁਰੂ == ext->ਸ਼ੁਰੂ) {
+			ext->ਸ਼ੁਰੂ += ਗਿਣਤੀ_2;
+			ext->ਗਿਣਤੀ_2 -= ਗਿਣਤੀ_2;
+			ਵਾਪਸ 1;
 		}
 	}
 
 	/* See if we should delete or truncate extent on the right */
-	for (; parent != NULL; parent = node) {
-		node = ext2fs_rb_next(parent);
-		ext = node_to_extent(parent);
-		if ((ext->start + ext->count) <= start)
-			continue;
+	ਲਈ (; ਮਾਪਾ != ਨਿਰਾ; ਮਾਪਾ = ਗੰਢ) {
+		ਗੰਢ = ext2fs_rb_ਅਗਲਾ(ਮਾਪਾ);
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਮਾਪਾ);
+		ਜੇ ((ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2) <= ਸ਼ੁਰੂ)
+			ਜਾਰੀ;
 
 		/* No more extents to be removed/truncated */
-		if ((start + count) < ext->start)
-			break;
+		ਜੇ ((ਸ਼ੁਰੂ + ਗਿਣਤੀ_2) < ext->ਸ਼ੁਰੂ)
+			ਰੋਕੋ;
 
 		/* The entire extent is within the region to be removed */
-		if ((start + count) >= (ext->start + ext->count)) {
-			ext2fs_rb_erase(parent, root);
+		ਜੇ ((ਸ਼ੁਰੂ + ਗਿਣਤੀ_2) >= (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2)) {
+			ext2fs_rb_erase(ਮਾਪਾ, ਜੜ੍ਹ);
 			rb_free_extent(bp, ext);
 			retval = 1;
-			continue;
-		} else {
+			ਜਾਰੀ;
+		} ਨਹੀਂਤਾਂ {
 			/* modify the last extent in region to be removed */
-			ext->count -= ((start + count) - ext->start);
-			ext->start = start + count;
+			ext->ਗਿਣਤੀ_2 -= ((ਸ਼ੁਰੂ + ਗਿਣਤੀ_2) - ext->ਸ਼ੁਰੂ);
+			ext->ਸ਼ੁਰੂ = ਸ਼ੁਰੂ + ਗਿਣਤੀ_2;
 			retval = 1;
-			break;
+			ਰੋਕੋ;
 		}
 	}
 
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-static int rb_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+ਸਥਿਰ ਪੂਰਨ rb_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	struct ext2fs_rb_private *bp;
-	int retval;
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp;
+	ਪੂਰਨ retval;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	arg -= bitmap->start;
+	bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) bitmap->ਨਿਜੀ;
+	arg -= bitmap->ਸ਼ੁਰੂ;
 
-	retval = rb_insert_extent(arg, 1, bp);
-	check_tree(&bp->root, __func__);
-	return retval;
+	retval = rb_ਪਾਓ_extent(arg, 1, bp);
+	check_ਰੁੱਖ(&bp->ਜੜ੍ਹ, __func__);
+	ਵਾਪਸ retval;
 }
 
-static int rb_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+ਸਥਿਰ ਪੂਰਨ rb_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	struct ext2fs_rb_private *bp;
-	int retval;
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp;
+	ਪੂਰਨ retval;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	arg -= bitmap->start;
+	bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) bitmap->ਨਿਜੀ;
+	arg -= bitmap->ਸ਼ੁਰੂ;
 
 	retval = rb_remove_extent(arg, 1, bp);
-	check_tree(&bp->root, __func__);
+	check_ਰੁੱਖ(&bp->ਜੜ੍ਹ, __func__);
 
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-inline
-static int rb_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+ਸਤਰਅੰਦਰ
+ਸਥਿਰ ਪੂਰਨ rb_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	struct ext2fs_rb_private *bp;
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	arg -= bitmap->start;
+	bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) bitmap->ਨਿਜੀ;
+	arg -= bitmap->ਸ਼ੁਰੂ;
 
-	return rb_test_bit(bp, arg);
+	ਵਾਪਸ rb_test_ਦੋਆਧਾਰੀ_ਅੰਕ(bp, arg);
 }
 
-static void rb_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				unsigned int num)
+ਸਥਿਰ ਖਾਲੀ rb_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ)
 {
-	struct ext2fs_rb_private *bp;
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	arg -= bitmap->start;
+	bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) bitmap->ਨਿਜੀ;
+	arg -= bitmap->ਸ਼ੁਰੂ;
 
-	rb_insert_extent(arg, num, bp);
-	check_tree(&bp->root, __func__);
+	rb_ਪਾਓ_extent(arg, ਅੰਕ, bp);
+	check_ਰੁੱਖ(&bp->ਜੜ੍ਹ, __func__);
 }
 
-static void rb_unmark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				  unsigned int num)
+ਸਥਿਰ ਖਾਲੀ rb_unmark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				  ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ)
 {
-	struct ext2fs_rb_private *bp;
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	arg -= bitmap->start;
+	bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) bitmap->ਨਿਜੀ;
+	arg -= bitmap->ਸ਼ੁਰੂ;
 
-	rb_remove_extent(arg, num, bp);
-	check_tree(&bp->root, __func__);
+	rb_remove_extent(arg, ਅੰਕ, bp);
+	check_ਰੁੱਖ(&bp->ਜੜ੍ਹ, __func__);
 }
 
-static int rb_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, unsigned int len)
+ਸਥਿਰ ਪੂਰਨ rb_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 ਸ਼ੁਰੂ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ len)
 {
-	struct rb_node *parent = NULL, **n;
-	struct rb_node *node, *next;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
-	int retval = 1;
+	ਬਣਤਰ rb_ਗੰਢ *ਮਾਪਾ = ਨਿਰਾ, **n;
+	ਬਣਤਰ rb_ਗੰਢ *ਗੰਢ, *ਅਗਲਾ;
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp;
+	ਬਣਤਰ bmap_rb_extent *ext;
+	ਪੂਰਨ retval = 1;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
-	start -= bitmap->start;
+	bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) bitmap->ਨਿਜੀ;
+	n = &bp->ਜੜ੍ਹ.rb_ਗੰਢ;
+	ਸ਼ੁਰੂ -= bitmap->ਸ਼ੁਰੂ;
 
-	if (len == 0 || ext2fs_rb_empty_root(&bp->root))
-		return 1;
+	ਜੇ (len == 0 || ext2fs_rb_ਖਾਲੀ_ਥਾਵਾਂ_ਜੜ੍ਹ(&bp->ਜੜ੍ਹ))
+		ਵਾਪਸ 1;
 
 	/*
 	 * If we find nothing, we should examine whole extent, but
 	 * when we find match, the extent is not clean, thus be return
 	 * false.
 	 */
-	while (*n) {
-		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else {
+	ਜਦੋਂ (*n) {
+		ਮਾਪਾ = *n;
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਮਾਪਾ);
+		ਜੇ (ਸ਼ੁਰੂ < ext->ਸ਼ੁਰੂ) {
+			n = &(*n)->rb_ਖੱਬਾ;
+		} ਨਹੀਂਤਾਂ ਜੇ (ਸ਼ੁਰੂ >= (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2)) {
+			n = &(*n)->rb_ਸੱਜਾ;
+		} ਨਹੀਂਤਾਂ {
 			/*
 			 * We found extent int the tree -> extent is not
 			 * clean
 			 */
-			return 0;
+			ਵਾਪਸ 0;
 		}
 	}
 
-	node = parent;
-	while (node) {
-		next = ext2fs_rb_next(node);
-		ext = node_to_extent(node);
-		node = next;
+	ਗੰਢ = ਮਾਪਾ;
+	ਜਦੋਂ (ਗੰਢ) {
+		ਅਗਲਾ = ext2fs_rb_ਅਗਲਾ(ਗੰਢ);
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਗੰਢ);
+		ਗੰਢ = ਅਗਲਾ;
 
-		if ((ext->start + ext->count) <= start)
-			continue;
+		ਜੇ ((ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2) <= ਸ਼ੁਰੂ)
+			ਜਾਰੀ;
 
 		/* No more merging */
-		if ((start + len) <= ext->start)
-			break;
+		ਜੇ ((ਸ਼ੁਰੂ + len) <= ext->ਸ਼ੁਰੂ)
+			ਰੋਕੋ;
 
 		retval = 0;
-		break;
+		ਰੋਕੋ;
 	}
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-static errcode_t rb_set_bmap_range(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, size_t num, void *in)
+ਸਥਿਰ errcode_t rb_ਸੈੱਟ_bmap_range(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 ਸ਼ੁਰੂ, size_t ਅੰਕ, ਖਾਲੀ *ਵਿੱਚ)
 {
-	struct ext2fs_rb_private *bp;
-	unsigned char *cp = in;
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *cp = ਵਿੱਚ;
 	size_t i;
-	int first_set = -1;
+	ਪੂਰਨ ਪਹਿਲਾ_ਸੈੱਟ = -1;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) bitmap->ਨਿਜੀ;
 
-	for (i = 0; i < num; i++) {
-		if ((i & 7) == 0) {
-			unsigned char c = cp[i/8];
-			if (c == 0xFF) {
-				if (first_set == -1)
-					first_set = i;
+	ਲਈ (i = 0; i < ਅੰਕ; i++) {
+		ਜੇ ((i & 7) == 0) {
+			ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ c = cp[i/8];
+			ਜੇ (c == 0xFF) {
+				ਜੇ (ਪਹਿਲਾ_ਸੈੱਟ == -1)
+					ਪਹਿਲਾ_ਸੈੱਟ = i;
 				i += 7;
-				continue;
+				ਜਾਰੀ;
 			}
-			if ((c == 0x00) && (first_set == -1)) {
+			ਜੇ ((c == 0x00) && (ਪਹਿਲਾ_ਸੈੱਟ == -1)) {
 				i += 7;
-				continue;
+				ਜਾਰੀ;
 			}
 		}
-		if (ext2fs_test_bit(i, in)) {
-			if (first_set == -1)
-				first_set = i;
-			continue;
+		ਜੇ (ext2fs_test_ਦੋਆਧਾਰੀ_ਅੰਕ(i, ਵਿੱਚ)) {
+			ਜੇ (ਪਹਿਲਾ_ਸੈੱਟ == -1)
+				ਪਹਿਲਾ_ਸੈੱਟ = i;
+			ਜਾਰੀ;
 		}
-		if (first_set == -1)
-			continue;
+		ਜੇ (ਪਹਿਲਾ_ਸੈੱਟ == -1)
+			ਜਾਰੀ;
 
-		rb_insert_extent(start + first_set - bitmap->start,
-				 i - first_set, bp);
-		check_tree(&bp->root, __func__);
-		first_set = -1;
+		rb_ਪਾਓ_extent(ਸ਼ੁਰੂ + ਪਹਿਲਾ_ਸੈੱਟ - bitmap->ਸ਼ੁਰੂ,
+				 i - ਪਹਿਲਾ_ਸੈੱਟ, bp);
+		check_ਰੁੱਖ(&bp->ਜੜ੍ਹ, __func__);
+		ਪਹਿਲਾ_ਸੈੱਟ = -1;
 	}
-	if (first_set != -1) {
-		rb_insert_extent(start + first_set - bitmap->start,
-				 num - first_set, bp);
-		check_tree(&bp->root, __func__);
+	ਜੇ (ਪਹਿਲਾ_ਸੈੱਟ != -1) {
+		rb_ਪਾਓ_extent(ਸ਼ੁਰੂ + ਪਹਿਲਾ_ਸੈੱਟ - bitmap->ਸ਼ੁਰੂ,
+				 ਅੰਕ - ਪਹਿਲਾ_ਸੈੱਟ, bp);
+		check_ਰੁੱਖ(&bp->ਜੜ੍ਹ, __func__);
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static errcode_t rb_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, size_t num, void *out)
+ਸਥਿਰ errcode_t rb_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 ਸ਼ੁਰੂ, size_t ਅੰਕ, ਖਾਲੀ *ਬਾਹਰਲਾ)
 {
 
-	struct rb_node *parent = NULL, *next, **n;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
-	__u64 count, pos;
+	ਬਣਤਰ rb_ਗੰਢ *ਮਾਪਾ = ਨਿਰਾ, *ਅਗਲਾ, **n;
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp;
+	ਬਣਤਰ bmap_rb_extent *ext;
+	__u64 ਗਿਣਤੀ_2, pos;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
-	start -= bitmap->start;
+	bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) bitmap->ਨਿਜੀ;
+	n = &bp->ਜੜ੍ਹ.rb_ਗੰਢ;
+	ਸ਼ੁਰੂ -= bitmap->ਸ਼ੁਰੂ;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return 0;
+	ਜੇ (ext2fs_rb_ਖਾਲੀ_ਥਾਵਾਂ_ਜੜ੍ਹ(&bp->ਜੜ੍ਹ))
+		ਵਾਪਸ 0;
 
-	while (*n) {
-		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else
-			break;
+	ਜਦੋਂ (*n) {
+		ਮਾਪਾ = *n;
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਮਾਪਾ);
+		ਜੇ (ਸ਼ੁਰੂ < ext->ਸ਼ੁਰੂ) {
+			n = &(*n)->rb_ਖੱਬਾ;
+		} ਨਹੀਂਤਾਂ ਜੇ (ਸ਼ੁਰੂ >= (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2)) {
+			n = &(*n)->rb_ਸੱਜਾ;
+		} ਨਹੀਂਤਾਂ
+			ਰੋਕੋ;
 	}
 
-	memset(out, 0, (num + 7) >> 3);
+	memset(ਬਾਹਰਲਾ, 0, (ਅੰਕ + 7) >> 3);
 
-	for (; parent != NULL; parent = next) {
-		next = ext2fs_rb_next(parent);
-		ext = node_to_extent(parent);
+	ਲਈ (; ਮਾਪਾ != ਨਿਰਾ; ਮਾਪਾ = ਅਗਲਾ) {
+		ਅਗਲਾ = ext2fs_rb_ਅਗਲਾ(ਮਾਪਾ);
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਮਾਪਾ);
 
-		pos = ext->start;
-		count = ext->count;
-		if (pos >= start + num)
-			break;
-		if (pos < start) {
-			if (pos + count <  start)
-				continue;
-			count -= start - pos;
-			pos = start;
+		pos = ext->ਸ਼ੁਰੂ;
+		ਗਿਣਤੀ_2 = ext->ਗਿਣਤੀ_2;
+		ਜੇ (pos >= ਸ਼ੁਰੂ + ਅੰਕ)
+			ਰੋਕੋ;
+		ਜੇ (pos < ਸ਼ੁਰੂ) {
+			ਜੇ (pos + ਗਿਣਤੀ_2 <  ਸ਼ੁਰੂ)
+				ਜਾਰੀ;
+			ਗਿਣਤੀ_2 -= ਸ਼ੁਰੂ - pos;
+			pos = ਸ਼ੁਰੂ;
 		}
-		if (pos + count > start + num)
-			count = start + num - pos;
+		ਜੇ (pos + ਗਿਣਤੀ_2 > ਸ਼ੁਰੂ + ਅੰਕ)
+			ਗਿਣਤੀ_2 = ਸ਼ੁਰੂ + ਅੰਕ - pos;
 
-		while (count > 0) {
-			if ((count >= 8) &&
-			    ((pos - start) % 8) == 0) {
-				int nbytes = count >> 3;
-				int offset = (pos - start) >> 3;
+		ਜਦੋਂ (ਗਿਣਤੀ_2 > 0) {
+			ਜੇ ((ਗਿਣਤੀ_2 >= 8) &&
+			    ((pos - ਸ਼ੁਰੂ) % 8) == 0) {
+				ਪੂਰਨ nbytes = ਗਿਣਤੀ_2 >> 3;
+				ਪੂਰਨ ਵਿੱਥ = (pos - ਸ਼ੁਰੂ) >> 3;
 
-				memset(((char *) out) + offset, 0xFF, nbytes);
+				memset(((ਅੱਖਰ *) ਬਾਹਰਲਾ) + ਵਿੱਥ, 0xFF, nbytes);
 				pos += nbytes << 3;
-				count -= nbytes << 3;
-				continue;
+				ਗਿਣਤੀ_2 -= nbytes << 3;
+				ਜਾਰੀ;
 			}
-			ext2fs_fast_set_bit64((pos - start), out);
+			ext2fs_fast_ਸੈੱਟ_bit64((pos - ਸ਼ੁਰੂ), ਬਾਹਰਲਾ);
 			pos++;
-			count--;
+			ਗਿਣਤੀ_2--;
 		}
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static void rb_clear_bmap(ext2fs_generic_bitmap_64 bitmap)
+ਸਥਿਰ ਖਾਲੀ rb_clear_bmap(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) bitmap->ਨਿਜੀ;
 
-	rb_free_tree(&bp->root);
-	bp->rcursor = NULL;
-	bp->rcursor_next = NULL;
-	bp->wcursor = NULL;
-	check_tree(&bp->root, __func__);
+	rb_free_ਰੁੱਖ(&bp->ਜੜ੍ਹ);
+	bp->rcursor = ਨਿਰਾ;
+	bp->rcursor_ਅਗਲਾ = ਨਿਰਾ;
+	bp->wcursor = ਨਿਰਾ;
+	check_ਰੁੱਖ(&bp->ਜੜ੍ਹ, __func__);
 }
 
-static errcode_t rb_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
-				   __u64 start, __u64 end, __u64 *out)
+ਸਥਿਰ errcode_t rb_ਲੱਭੋ_ਪਹਿਲਾ_zero(ext2fs_generic_bitmap_64 bitmap,
+				   __u64 ਸ਼ੁਰੂ, __u64 ਸਿਰਾ, __u64 *ਬਾਹਰਲਾ)
 {
-	struct rb_node *parent = NULL, **n;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
+	ਬਣਤਰ rb_ਗੰਢ *ਮਾਪਾ = ਨਿਰਾ, **n;
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp;
+	ਬਣਤਰ bmap_rb_extent *ext;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
-	start -= bitmap->start;
-	end -= bitmap->start;
+	bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) bitmap->ਨਿਜੀ;
+	n = &bp->ਜੜ੍ਹ.rb_ਗੰਢ;
+	ਸ਼ੁਰੂ -= bitmap->ਸ਼ੁਰੂ;
+	ਸਿਰਾ -= bitmap->ਸ਼ੁਰੂ;
 
-	if (start > end)
-		return EINVAL;
+	ਜੇ (ਸ਼ੁਰੂ > ਸਿਰਾ)
+		ਵਾਪਸ EINVAL;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return ENOENT;
+	ਜੇ (ext2fs_rb_ਖਾਲੀ_ਥਾਵਾਂ_ਜੜ੍ਹ(&bp->ਜੜ੍ਹ))
+		ਵਾਪਸ ENOENT;
 
-	while (*n) {
-		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else if (ext->start + ext->count <= end) {
-			*out = ext->start + ext->count + bitmap->start;
-			return 0;
-		} else
-			return ENOENT;
+	ਜਦੋਂ (*n) {
+		ਮਾਪਾ = *n;
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਮਾਪਾ);
+		ਜੇ (ਸ਼ੁਰੂ < ext->ਸ਼ੁਰੂ) {
+			n = &(*n)->rb_ਖੱਬਾ;
+		} ਨਹੀਂਤਾਂ ਜੇ (ਸ਼ੁਰੂ >= (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2)) {
+			n = &(*n)->rb_ਸੱਜਾ;
+		} ਨਹੀਂਤਾਂ ਜੇ (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2 <= ਸਿਰਾ) {
+			*ਬਾਹਰਲਾ = ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2 + bitmap->ਸ਼ੁਰੂ;
+			ਵਾਪਸ 0;
+		} ਨਹੀਂਤਾਂ
+			ਵਾਪਸ ENOENT;
 	}
 
-	*out = start + bitmap->start;
-	return 0;
+	*ਬਾਹਰਲਾ = ਸ਼ੁਰੂ + bitmap->ਸ਼ੁਰੂ;
+	ਵਾਪਸ 0;
 }
 
-static errcode_t rb_find_first_set(ext2fs_generic_bitmap_64 bitmap,
-				   __u64 start, __u64 end, __u64 *out)
+ਸਥਿਰ errcode_t rb_ਲੱਭੋ_ਪਹਿਲਾ_ਸੈੱਟ(ext2fs_generic_bitmap_64 bitmap,
+				   __u64 ਸ਼ੁਰੂ, __u64 ਸਿਰਾ, __u64 *ਬਾਹਰਲਾ)
 {
-	struct rb_node *parent = NULL, **n;
-	struct rb_node *node;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
+	ਬਣਤਰ rb_ਗੰਢ *ਮਾਪਾ = ਨਿਰਾ, **n;
+	ਬਣਤਰ rb_ਗੰਢ *ਗੰਢ;
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp;
+	ਬਣਤਰ bmap_rb_extent *ext;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
-	start -= bitmap->start;
-	end -= bitmap->start;
+	bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) bitmap->ਨਿਜੀ;
+	n = &bp->ਜੜ੍ਹ.rb_ਗੰਢ;
+	ਸ਼ੁਰੂ -= bitmap->ਸ਼ੁਰੂ;
+	ਸਿਰਾ -= bitmap->ਸ਼ੁਰੂ;
 
-	if (start > end)
-		return EINVAL;
+	ਜੇ (ਸ਼ੁਰੂ > ਸਿਰਾ)
+		ਵਾਪਸ EINVAL;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return ENOENT;
+	ਜੇ (ext2fs_rb_ਖਾਲੀ_ਥਾਵਾਂ_ਜੜ੍ਹ(&bp->ਜੜ੍ਹ))
+		ਵਾਪਸ ENOENT;
 
-	while (*n) {
-		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else {
+	ਜਦੋਂ (*n) {
+		ਮਾਪਾ = *n;
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਮਾਪਾ);
+		ਜੇ (ਸ਼ੁਰੂ < ext->ਸ਼ੁਰੂ) {
+			n = &(*n)->rb_ਖੱਬਾ;
+		} ਨਹੀਂਤਾਂ ਜੇ (ਸ਼ੁਰੂ >= (ext->ਸ਼ੁਰੂ + ext->ਗਿਣਤੀ_2)) {
+			n = &(*n)->rb_ਸੱਜਾ;
+		} ਨਹੀਂਤਾਂ {
 			/* The start bit is set */
-			*out = start + bitmap->start;
-			return 0;
+			*ਬਾਹਰਲਾ = ਸ਼ੁਰੂ + bitmap->ਸ਼ੁਰੂ;
+			ਵਾਪਸ 0;
 		}
 	}
 
-	node = parent;
-	ext = node_to_extent(node);
-	if (ext->start < start) {
-		node = ext2fs_rb_next(node);
-		if (node == NULL)
-			return ENOENT;
-		ext = node_to_extent(node);
+	ਗੰਢ = ਮਾਪਾ;
+	ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਗੰਢ);
+	ਜੇ (ext->ਸ਼ੁਰੂ < ਸ਼ੁਰੂ) {
+		ਗੰਢ = ext2fs_rb_ਅਗਲਾ(ਗੰਢ);
+		ਜੇ (ਗੰਢ == ਨਿਰਾ)
+			ਵਾਪਸ ENOENT;
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਗੰਢ);
 	}
-	if (ext->start <= end) {
-		*out = ext->start + bitmap->start;
-		return 0;
+	ਜੇ (ext->ਸ਼ੁਰੂ <= ਸਿਰਾ) {
+		*ਬਾਹਰਲਾ = ext->ਸ਼ੁਰੂ + bitmap->ਸ਼ੁਰੂ;
+		ਵਾਪਸ 0;
 	}
-	return ENOENT;
+	ਵਾਪਸ ENOENT;
 }
 
-#ifdef ENABLE_BMAP_STATS
-static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_BMAP_STATS
+ਸਥਿਰ ਖਾਲੀ rb_print_stats(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
-	struct rb_node *node = NULL;
-	struct bmap_rb_extent *ext;
-	__u64 count = 0;
-	__u64 max_size = 0;
-	__u64 min_size = ULONG_MAX;
-	__u64 size = 0, avg_size = 0;
-	double eff;
-#ifdef ENABLE_BMAP_STATS_OPS
+	ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *bp;
+	ਬਣਤਰ rb_ਗੰਢ *ਗੰਢ = ਨਿਰਾ;
+	ਬਣਤਰ bmap_rb_extent *ext;
+	__u64 ਗਿਣਤੀ_2 = 0;
+	__u64 max_ਮਾਪ = 0;
+	__u64 min_ਮਾਪ = ULONG_MAX;
+	__u64 ਮਾਪ = 0, avg_ਮਾਪ = 0;
+	ਦੁੱਗਣਾ eff;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_BMAP_STATS_OPS
 	__u64 mark_all, test_all;
-	double m_hit = 0.0, t_hit = 0.0;
-#endif
+	ਦੁੱਗਣਾ m_ਪ੍ਰਾਪਤੀ = 0.0, t_ਪ੍ਰਾਪਤੀ = 0.0;
+#ਜੇ_ਅੰਤ
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ *) bitmap->ਨਿਜੀ;
 
-	for (node = ext2fs_rb_first(&bp->root); node != NULL;
-	     node = ext2fs_rb_next(node)) {
-		ext = node_to_extent(node);
-		count++;
-		if (ext->count > max_size)
-			max_size = ext->count;
-		if (ext->count < min_size)
-			min_size = ext->count;
-		size += ext->count;
+	ਲਈ (ਗੰਢ = ext2fs_rb_ਪਹਿਲਾ(&bp->ਜੜ੍ਹ); ਗੰਢ != ਨਿਰਾ;
+	     ਗੰਢ = ext2fs_rb_ਅਗਲਾ(ਗੰਢ)) {
+		ext = ਗੰਢ_ਮੰਜ਼ਿਲ_extent(ਗੰਢ);
+		ਗਿਣਤੀ_2++;
+		ਜੇ (ext->ਗਿਣਤੀ_2 > max_ਮਾਪ)
+			max_ਮਾਪ = ext->ਗਿਣਤੀ_2;
+		ਜੇ (ext->ਗਿਣਤੀ_2 < min_ਮਾਪ)
+			min_ਮਾਪ = ext->ਗਿਣਤੀ_2;
+		ਮਾਪ += ext->ਗਿਣਤੀ_2;
 	}
 
-	if (count)
-		avg_size = size / count;
-	if (min_size == ULONG_MAX)
-		min_size = 0;
-	eff = (double)((count * sizeof(struct bmap_rb_extent)) << 3) /
-	      (bitmap->real_end - bitmap->start);
-#ifdef ENABLE_BMAP_STATS_OPS
-	mark_all = bitmap->stats.mark_count + bitmap->stats.mark_ext_count;
-	test_all = bitmap->stats.test_count + bitmap->stats.test_ext_count;
-	if (mark_all)
-		m_hit = ((double)bp->mark_hit / mark_all) * 100;
-	if (test_all)
-		t_hit = ((double)bp->test_hit / test_all) * 100;
+	ਜੇ (ਗਿਣਤੀ_2)
+		avg_ਮਾਪ = ਮਾਪ / ਗਿਣਤੀ_2;
+	ਜੇ (min_ਮਾਪ == ULONG_MAX)
+		min_ਮਾਪ = 0;
+	eff = (ਦੁੱਗਣਾ)((ਗਿਣਤੀ_2 * ਆਕਾਰ(ਬਣਤਰ bmap_rb_extent)) << 3) /
+	      (bitmap->real_ਸਿਰਾ - bitmap->ਸ਼ੁਰੂ);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_BMAP_STATS_OPS
+	mark_all = bitmap->stats.mark_ਗਿਣਤੀ + bitmap->stats.mark_ext_ਗਿਣਤੀ;
+	test_all = bitmap->stats.test_ਗਿਣਤੀ + bitmap->stats.test_ext_ਗਿਣਤੀ;
+	ਜੇ (mark_all)
+		m_ਪ੍ਰਾਪਤੀ = ((ਦੁੱਗਣਾ)bp->mark_ਪ੍ਰਾਪਤੀ / mark_all) * 100;
+	ਜੇ (test_all)
+		t_ਪ੍ਰਾਪਤੀ = ((ਦੁੱਗਣਾ)bp->test_ਪ੍ਰਾਪਤੀ / test_all) * 100;
 
 	fprintf(stderr, "%16llu cache hits on test (%.2f%%)\n"
 		"%16llu cache hits on mark (%.2f%%)\n",
-		bp->test_hit, t_hit, bp->mark_hit, m_hit);
-#endif
+		bp->test_ਪ੍ਰਾਪਤੀ, t_ਪ੍ਰਾਪਤੀ, bp->mark_ਪ੍ਰਾਪਤੀ, m_ਪ੍ਰਾਪਤੀ);
+#ਜੇ_ਅੰਤ
 	fprintf(stderr, "%16llu extents (%llu bytes)\n",
-		(unsigned long long) count, (unsigned long long)
-		((count * sizeof(struct bmap_rb_extent)) +
-		 sizeof(struct ext2fs_rb_private)));
+		(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ਗਿਣਤੀ_2, (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)
+		((ਗਿਣਤੀ_2 * ਆਕਾਰ(ਬਣਤਰ bmap_rb_extent)) +
+		 ਆਕਾਰ(ਬਣਤਰ ext2fs_rb_ਨਿੱਜੀ)));
  	fprintf(stderr, "%16llu bits minimum size\n",
-		(unsigned long long) min_size);
+		(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) min_ਮਾਪ);
 	fprintf(stderr, "%16llu bits maximum size\n"
 		"%16llu bits average size\n",
-		(unsigned long long) max_size, (unsigned long long) avg_size);
+		(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) max_ਮਾਪ, (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) avg_ਮਾਪ);
 	fprintf(stderr, "%16llu bits set in bitmap (out of %llu)\n",
-		(unsigned long long) size,
-		(unsigned long long) bitmap->real_end - bitmap->start);
+		(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) ਮਾਪ,
+		(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ) bitmap->real_ਸਿਰਾ - bitmap->ਸ਼ੁਰੂ);
 	fprintf(stderr,
 		"%16.4lf memory / bitmap bit memory ratio (bitarray = 1)\n",
 		eff);
 }
-#else
-static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap EXT2FS_ATTR((unused)))
+#ਨਹੀਂਤਾਂ
+ਸਥਿਰ ਖਾਲੀ rb_print_stats(ext2fs_generic_bitmap_64 bitmap EXT2FS_ATTR((ਅਣਵਰਤਿਆ)))
 {
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-struct ext2_bitmap_ops ext2fs_blkmap64_rbtree = {
+ਬਣਤਰ ext2_bitmap_ops ext2fs_blkmap64_rbtree = {
 	.type = EXT2FS_BMAP64_RBTREE,
 	.new_bmap = rb_new_bmap,
 	.free_bmap = rb_free_bmap,
@@ -989,10 +989,10 @@ struct ext2_bitmap_ops ext2fs_blkmap64_rbtree = {
 	.test_clear_bmap_extent = rb_test_clear_bmap_extent,
 	.mark_bmap_extent = rb_mark_bmap_extent,
 	.unmark_bmap_extent = rb_unmark_bmap_extent,
-	.set_bmap_range = rb_set_bmap_range,
+	.ਸੈੱਟ_bmap_range = rb_ਸੈੱਟ_bmap_range,
 	.get_bmap_range = rb_get_bmap_range,
 	.clear_bmap = rb_clear_bmap,
 	.print_stats = rb_print_stats,
-	.find_first_zero = rb_find_first_zero,
-	.find_first_set = rb_find_first_set,
+	.ਲੱਭੋ_ਪਹਿਲਾ_zero = rb_ਲੱਭੋ_ਪਹਿਲਾ_zero,
+	.ਲੱਭੋ_ਪਹਿਲਾ_ਸੈੱਟ = rb_ਲੱਭੋ_ਪਹਿਲਾ_ਸੈੱਟ,
 };

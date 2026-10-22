@@ -9,89 +9,89 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <fcntl.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#if HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
-#endif
-#if HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <assert.h>
+#ਜੇ HAVE_UNISTD_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਜੇ_ਅੰਤ
+#ਜੇ HAVE_ERRNO_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਜੇ HAVE_SYS_STAT_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਜੇ_ਅੰਤ
+#ਜੇ HAVE_SYS_TYPES_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਜੇ_ਅੰਤ
+#ਜੇ HAVE_SYS_IOCTL_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/ioctl.h>
+#ਜੇ_ਅੰਤ
+#ਜੇ HAVE_NETINET_ਵਿੱਚ_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <netinet/in.h>
+#ਜੇ_ਅੰਤ
 
-#include "ext2_fs.h"
-#include "e2p/e2p.h"
-#include "ext2fsP.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "e2p/e2p.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fsP.h"
 
-#include "kernel-jbd.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "kernel-jbd.h"
 
 /*
  * This function automatically sets up the journal superblock and
  * returns it as an allocated block.
  */
 errcode_t ext2fs_create_journal_superblock2(ext2_filsys fs,
-					   struct ext2fs_journal_params *jparams,
-					   int flags, char **ret_jsb)
+					   ਬਣਤਰ ext2fs_journal_params *jparams,
+					   ਪੂਰਨ flags, ਅੱਖਰ **ret_jsb)
 {
 	errcode_t		retval;
 	journal_superblock_t	*jsb;
 
-	if (jparams->num_journal_blocks < JBD2_MIN_JOURNAL_BLOCKS)
-		return EXT2_ET_JOURNAL_TOO_SMALL;
+	ਜੇ (jparams->ਅੰਕ_journal_ਖੰਡਾਂ < JBD2_MIN_JOURNAL_ਖੰਡਾਂ)
+		ਵਾਪਸ EXT2_ET_JOURNAL_TOO_SMALL;
 
-	if ((retval = ext2fs_get_mem(fs->blocksize, &jsb)))
-		return retval;
+	ਜੇ ((retval = ext2fs_get_mem(fs->blocksize, &jsb)))
+		ਵਾਪਸ retval;
 
 	memset (jsb, 0, fs->blocksize);
 
-	jsb->s_header.h_magic = htonl(JBD2_MAGIC_NUMBER);
-	if (flags & EXT2_MKJOURNAL_V1_SUPER)
-		jsb->s_header.h_blocktype = htonl(JBD2_SUPERBLOCK_V1);
-	else
-		jsb->s_header.h_blocktype = htonl(JBD2_SUPERBLOCK_V2);
+	jsb->s_ਸਿਰਲੇਖ.h_magic = htonl(JBD2_MAGIC_ਸੰਖਿਆ);
+	ਜੇ (flags & EXT2_MKJOURNAL_V1_SUPER)
+		jsb->s_ਸਿਰਲੇਖ.h_blocktype = htonl(JBD2_SUPERBLOCK_V1);
+	ਨਹੀਂਤਾਂ
+		jsb->s_ਸਿਰਲੇਖ.h_blocktype = htonl(JBD2_SUPERBLOCK_V2);
 	jsb->s_blocksize = htonl(fs->blocksize);
-	jsb->s_maxlen = htonl(jparams->num_journal_blocks + jparams->num_fc_blocks);
+	jsb->s_maxlen = htonl(jparams->ਅੰਕ_journal_ਖੰਡਾਂ + jparams->ਅੰਕ_fc_ਖੰਡਾਂ);
 	jsb->s_nr_users = htonl(1);
-	jsb->s_first = htonl(1);
+	jsb->s_ਪਹਿਲਾ = htonl(1);
 	jsb->s_sequence = htonl(1);
-	jsb->s_num_fc_blks = htonl(jparams->num_fc_blocks);
-	memcpy(jsb->s_uuid, fs->super->s_uuid, sizeof(fs->super->s_uuid));
+	jsb->s_ਅੰਕ_fc_blks = htonl(jparams->ਅੰਕ_fc_ਖੰਡਾਂ);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(jsb->s_uuid, fs->super->s_uuid, ਆਕਾਰ(fs->super->s_uuid));
 	/*
 	 * If we're creating an external journal device, we need to
 	 * adjust these fields.
 	 */
-	if (ext2fs_has_feature_journal_dev(fs->super)) {
+	ਜੇ (ext2fs_has_feature_journal_dev(fs->super)) {
 		jsb->s_nr_users = 0;
-		jsb->s_first = htonl(ext2fs_journal_sb_start(fs->blocksize) + 1);
+		jsb->s_ਪਹਿਲਾ = htonl(ext2fs_journal_sb_ਸ਼ੁਰੂ(fs->blocksize) + 1);
 	}
 
-	*ret_jsb = (char *) jsb;
-	return 0;
+	*ret_jsb = (ਅੱਖਰ *) jsb;
+	ਵਾਪਸ 0;
 }
 
-errcode_t ext2fs_create_journal_superblock(ext2_filsys fs, __u32 num_blocks,
-					int flags, char **ret_sb)
+errcode_t ext2fs_create_journal_superblock(ext2_filsys fs, __u32 ਅੰਕ_ਖੰਡਾਂ,
+					ਪੂਰਨ flags, ਅੱਖਰ **ret_sb)
 {
-	struct ext2fs_journal_params jparams;
+	ਬਣਤਰ ext2fs_journal_params jparams;
 
-	jparams.num_journal_blocks = num_blocks;
-	jparams.num_fc_blocks = 0;
+	jparams.ਅੰਕ_journal_ਖੰਡਾਂ = ਅੰਕ_ਖੰਡਾਂ;
+	jparams.ਅੰਕ_fc_ਖੰਡਾਂ = 0;
 
-	return ext2fs_create_journal_superblock2(fs, &jparams, flags, ret_sb);
+	ਵਾਪਸ ext2fs_create_journal_superblock2(fs, &jparams, flags, ret_sb);
 }
 
 /*
@@ -99,47 +99,47 @@ errcode_t ext2fs_create_journal_superblock(ext2_filsys fs, __u32 num_blocks,
  * for creating external journals and creating journals on live
  * filesystems.
  */
-static errcode_t write_journal_file(ext2_filsys fs, char *filename,
-				    struct ext2fs_journal_params *jparams,
-				    int flags)
+ਸਥਿਰ errcode_t write_journal_file(ext2_filsys fs, ਅੱਖਰ *filename,
+				    ਬਣਤਰ ext2fs_journal_params *jparams,
+				    ਪੂਰਨ flags)
 {
 	errcode_t	retval;
-	char		*buf = 0;
-	int		fd, ret_size;
+	ਅੱਖਰ		*buf = 0;
+	ਪੂਰਨ		fd, ret_ਮਾਪ;
 	blk_t		i;
 
-	if ((retval = ext2fs_create_journal_superblock2(fs, jparams, flags,
+	ਜੇ ((retval = ext2fs_create_journal_superblock2(fs, jparams, flags,
 						       &buf)))
-		return retval;
+		ਵਾਪਸ retval;
 
 	/* Open the device or journal file */
-	if ((fd = open(filename, O_WRONLY)) < 0) {
+	ਜੇ ((fd = open(filename, O_WRONLY)) < 0) {
 		retval = errno;
-		goto errfree;
+		ਜਾਓ errfree;
 	}
 
 	/* Write the superblock out */
 	retval = EXT2_ET_SHORT_WRITE;
-	ret_size = write(fd, buf, fs->blocksize);
-	if (ret_size < 0) {
+	ret_ਮਾਪ = ਲਿਖ(fd, buf, fs->blocksize);
+	ਜੇ (ret_ਮਾਪ < 0) {
 		retval = errno;
-		goto errout;
+		ਜਾਓ errout;
 	}
-	if (ret_size != (int) fs->blocksize)
-		goto errout;
+	ਜੇ (ret_ਮਾਪ != (ਪੂਰਨ) fs->blocksize)
+		ਜਾਓ errout;
 	memset(buf, 0, fs->blocksize);
 
-	if (flags & EXT2_MKJOURNAL_LAZYINIT)
-		goto success;
+	ਜੇ (flags & EXT2_MKJOURNAL_LAZYINIT)
+		ਜਾਓ success;
 
-	for (i = 1; i < jparams->num_journal_blocks + jparams->num_fc_blocks; i++) {
-		ret_size = write(fd, buf, fs->blocksize);
-		if (ret_size < 0) {
+	ਲਈ (i = 1; i < jparams->ਅੰਕ_journal_ਖੰਡਾਂ + jparams->ਅੰਕ_fc_ਖੰਡਾਂ; i++) {
+		ret_ਮਾਪ = ਲਿਖ(fd, buf, fs->blocksize);
+		ਜੇ (ret_ਮਾਪ < 0) {
 			retval = errno;
-			goto errout;
+			ਜਾਓ errout;
 		}
-		if (ret_size != (int) fs->blocksize)
-			goto errout;
+		ਜੇ (ret_ਮਾਪ != (ਪੂਰਨ) fs->blocksize)
+			ਜਾਓ errout;
 	}
 
 success:
@@ -148,7 +148,7 @@ errout:
 	close(fd);
 errfree:
 	ext2fs_free_mem(&buf);
-	return retval;
+	ਵਾਪਸ retval;
 }
 
 /*
@@ -161,83 +161,83 @@ errfree:
  * attempt to free the static zeroizing buffer.  (This is to keep
  * programs that check for memory leaks happy.)
  */
-#define MAX_STRIDE_LENGTH (4194304 / (int) fs->blocksize)
-errcode_t ext2fs_zero_blocks2(ext2_filsys fs, blk64_t blk, int num,
-			      blk64_t *ret_blk, int *ret_count)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAX_STRIDE_ਲੰਮਾਈ (4194304 / (ਪੂਰਨ) fs->blocksize)
+errcode_t ext2fs_zero_blocks2(ext2_filsys fs, blk64_t blk, ਪੂਰਨ ਅੰਕ,
+			      blk64_t *ret_blk, ਪੂਰਨ *ret_ਗਿਣਤੀ)
 {
-	int		j, count;
-	static void	*buf;
-	static int	stride_length;
+	ਪੂਰਨ		j, ਗਿਣਤੀ_2;
+	ਸਥਿਰ ਖਾਲੀ	*buf;
+	ਸਥਿਰ ਪੂਰਨ	stride_ਲੰਮਾਈ;
 	errcode_t	retval;
 
 	/* If fs is null, clean up the static buffer and return */
-	if (!fs) {
-		if (buf) {
-			free(buf);
+	ਜੇ (!fs) {
+		ਜੇ (buf) {
+			ਮੁਕਤ(buf);
 			buf = 0;
-			stride_length = 0;
+			stride_ਲੰਮਾਈ = 0;
 		}
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
 	/* Deal with zeroing less than 1 block */
-	if (num <= 0)
-		return 0;
+	ਜੇ (ਅੰਕ <= 0)
+		ਵਾਪਸ 0;
 
 	/* Try a zero out command, if supported */
-	retval = io_channel_zeroout(fs->io, blk, num);
-	if (retval == 0)
-		return 0;
+	retval = io_channel_zeroout(fs->io, blk, ਅੰਕ);
+	ਜੇ (retval == 0)
+		ਵਾਪਸ 0;
 
 	/* Allocate the zeroizing buffer if necessary */
-	if (num > stride_length && stride_length < MAX_STRIDE_LENGTH) {
-		void *p;
-		int new_stride = num;
+	ਜੇ (ਅੰਕ > stride_ਲੰਮਾਈ && stride_ਲੰਮਾਈ < MAX_STRIDE_ਲੰਮਾਈ) {
+		ਖਾਲੀ *p;
+		ਪੂਰਨ new_stride = ਅੰਕ;
 
-		if (new_stride > MAX_STRIDE_LENGTH)
-			new_stride = MAX_STRIDE_LENGTH;
+		ਜੇ (new_stride > MAX_STRIDE_ਲੰਮਾਈ)
+			new_stride = MAX_STRIDE_ਲੰਮਾਈ;
 		p = realloc(buf, fs->blocksize * new_stride);
-		if (!p)
-			return EXT2_ET_NO_MEMORY;
+		ਜੇ (!p)
+			ਵਾਪਸ EXT2_ET_NO_ਸਮ੍ਰਿਤੀ;
 		buf = p;
-		stride_length = new_stride;
-		memset(buf, 0, fs->blocksize * stride_length);
+		stride_ਲੰਮਾਈ = new_stride;
+		memset(buf, 0, fs->blocksize * stride_ਲੰਮਾਈ);
 	}
 	/* OK, do the write loop */
 	j=0;
-	while (j < num) {
-		if (blk % stride_length) {
-			count = stride_length - (blk % stride_length);
-			if (count > (num - j))
-				count = num - j;
-		} else {
-			count = num - j;
-			if (count > stride_length)
-				count = stride_length;
+	ਜਦੋਂ (j < ਅੰਕ) {
+		ਜੇ (blk % stride_ਲੰਮਾਈ) {
+			ਗਿਣਤੀ_2 = stride_ਲੰਮਾਈ - (blk % stride_ਲੰਮਾਈ);
+			ਜੇ (ਗਿਣਤੀ_2 > (ਅੰਕ - j))
+				ਗਿਣਤੀ_2 = ਅੰਕ - j;
+		} ਨਹੀਂਤਾਂ {
+			ਗਿਣਤੀ_2 = ਅੰਕ - j;
+			ਜੇ (ਗਿਣਤੀ_2 > stride_ਲੰਮਾਈ)
+				ਗਿਣਤੀ_2 = stride_ਲੰਮਾਈ;
 		}
-		retval = io_channel_write_blk64(fs->io, blk, count, buf);
-		if (retval) {
-			if (ret_count)
-				*ret_count = count;
-			if (ret_blk)
+		retval = io_channel_write_blk64(fs->io, blk, ਗਿਣਤੀ_2, buf);
+		ਜੇ (retval) {
+			ਜੇ (ret_ਗਿਣਤੀ)
+				*ret_ਗਿਣਤੀ = ਗਿਣਤੀ_2;
+			ਜੇ (ret_blk)
 				*ret_blk = blk;
-			return retval;
+			ਵਾਪਸ retval;
 		}
-		j += count; blk += count;
+		j += ਗਿਣਤੀ_2; blk += ਗਿਣਤੀ_2;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-errcode_t ext2fs_zero_blocks(ext2_filsys fs, blk_t blk, int num,
-			     blk_t *ret_blk, int *ret_count)
+errcode_t ext2fs_zero_ਖੰਡਾਂ(ext2_filsys fs, blk_t blk, ਪੂਰਨ ਅੰਕ,
+			     blk_t *ret_blk, ਪੂਰਨ *ret_ਗਿਣਤੀ)
 {
 	blk64_t ret_blk2;
 	errcode_t retval;
 
-	retval = ext2fs_zero_blocks2(fs, blk, num, &ret_blk2, ret_count);
-	if (retval)
+	retval = ext2fs_zero_blocks2(fs, blk, ਅੰਕ, &ret_blk2, ret_ਗਿਣਤੀ);
+	ਜੇ (retval)
 		*ret_blk = (blk_t) ret_blk2;
-	return retval;
+	ਵਾਪਸ retval;
 }
 
 /*
@@ -245,108 +245,108 @@ errcode_t ext2fs_zero_blocks(ext2_filsys fs, blk_t blk, int num,
  * filesystem.  Pick a group that has the largest number of free
  * blocks.
  */
-static blk64_t get_midpoint_journal_block(ext2_filsys fs)
+ਸਥਿਰ blk64_t get_midpoint_journal_ਖੰਡ(ext2_filsys fs)
 {
-	dgrp_t	group, start, end, i, log_flex;
+	dgrp_t	ਸਮੂਹ, ਸ਼ੁਰੂ, ਸਿਰਾ, i, log_flex;
 
-	group = ext2fs_group_of_blk2(fs, (ext2fs_blocks_count(fs->super) -
-					 fs->super->s_first_data_block) / 2);
-	log_flex = 1U << fs->super->s_log_groups_per_flex;
-	if (fs->super->s_log_groups_per_flex && (group > log_flex)) {
-		group = group & ~(log_flex - 1);
-		while ((group < fs->group_desc_count) &&
-		       ext2fs_bg_free_blocks_count(fs, group) == 0)
-			group++;
-		if (group == fs->group_desc_count)
-			group = 0;
-		start = group;
-	} else
-		start = (group > 0) ? group-1 : group;
-	end = ((group+1) < fs->group_desc_count) ? group+1 : group;
-	group = start;
-	for (i = start + 1; i <= end; i++)
-		if (ext2fs_bg_free_blocks_count(fs, i) >
-		    ext2fs_bg_free_blocks_count(fs, group))
-			group = i;
-	return ext2fs_group_first_block2(fs, group);
+	ਸਮੂਹ = ext2fs_ਸਮੂਹ_ਦਾ_blk2(fs, (ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super) -
+					 fs->super->s_ਪਹਿਲਾ_ਅੰਕੜੇ_ਖੰਡ) / 2);
+	log_flex = 1U << fs->super->s_log_groups_ਪ੍ਰਤੀ_flex;
+	ਜੇ (fs->super->s_log_groups_ਪ੍ਰਤੀ_flex && (ਸਮੂਹ > log_flex)) {
+		ਸਮੂਹ = ਸਮੂਹ & ~(log_flex - 1);
+		ਜਦੋਂ ((ਸਮੂਹ < fs->ਸਮੂਹ_desc_ਗਿਣਤੀ) &&
+		       ext2fs_bg_free_ਖੰਡਾਂ_ਗਿਣਤੀ(fs, ਸਮੂਹ) == 0)
+			ਸਮੂਹ++;
+		ਜੇ (ਸਮੂਹ == fs->ਸਮੂਹ_desc_ਗਿਣਤੀ)
+			ਸਮੂਹ = 0;
+		ਸ਼ੁਰੂ = ਸਮੂਹ;
+	} ਨਹੀਂਤਾਂ
+		ਸ਼ੁਰੂ = (ਸਮੂਹ > 0) ? ਸਮੂਹ-1 : ਸਮੂਹ;
+	ਸਿਰਾ = ((ਸਮੂਹ+1) < fs->ਸਮੂਹ_desc_ਗਿਣਤੀ) ? ਸਮੂਹ+1 : ਸਮੂਹ;
+	ਸਮੂਹ = ਸ਼ੁਰੂ;
+	ਲਈ (i = ਸ਼ੁਰੂ + 1; i <= ਸਿਰਾ; i++)
+		ਜੇ (ext2fs_bg_free_ਖੰਡਾਂ_ਗਿਣਤੀ(fs, i) >
+		    ext2fs_bg_free_ਖੰਡਾਂ_ਗਿਣਤੀ(fs, ਸਮੂਹ))
+			ਸਮੂਹ = i;
+	ਵਾਪਸ ext2fs_ਸਮੂਹ_ਪਹਿਲਾ_block2(fs, ਸਮੂਹ);
 }
 
 /*
  * This function creates a journal using direct I/O routines.
  */
-static errcode_t write_journal_inode(ext2_filsys fs, ext2_ino_t journal_ino,
-				     struct ext2fs_journal_params *jparams,
-				     blk64_t goal, int flags)
+ਸਥਿਰ errcode_t write_journal_inode(ext2_filsys fs, ext2_ino_t journal_ino,
+				     ਬਣਤਰ ext2fs_journal_params *jparams,
+				     blk64_t goal, ਪੂਰਨ flags)
 {
-	char			*buf;
+	ਅੱਖਰ			*buf;
 	errcode_t		retval;
-	struct ext2_inode	inode;
-	unsigned long long	inode_size;
-	int			falloc_flags = EXT2_FALLOCATE_FORCE_INIT;
+	ਬਣਤਰ ext2_inode	inode;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ	inode_ਮਾਪ;
+	ਪੂਰਨ			falloc_flags = EXT2_FALLOCATE_FORCE_INIT;
 	blk64_t			zblk;
 	time_t			now;
 
-	if ((retval = ext2fs_create_journal_superblock2(fs, jparams, flags,
+	ਜੇ ((retval = ext2fs_create_journal_superblock2(fs, jparams, flags,
 						       &buf)))
-		return retval;
+		ਵਾਪਸ retval;
 
-	if ((retval = ext2fs_read_bitmaps(fs)))
-		goto out2;
+	ਜੇ ((retval = ext2fs_read_bitmaps(fs)))
+		ਜਾਓ out2;
 
-	if ((retval = ext2fs_read_inode(fs, journal_ino, &inode)))
-		goto out2;
+	ਜੇ ((retval = ext2fs_read_inode(fs, journal_ino, &inode)))
+		ਜਾਓ out2;
 
-	if (inode.i_blocks > 0) {
+	ਜੇ (inode.i_ਖੰਡਾਂ > 0) {
 		retval = EEXIST;
-		goto out2;
+		ਜਾਓ out2;
 	}
 
-	if (goal == ~0ULL)
-		goal = get_midpoint_journal_block(fs);
+	ਜੇ (goal == ~0ULL)
+		goal = get_midpoint_journal_ਖੰਡ(fs);
 
-	if (ext2fs_has_feature_extents(fs->super))
+	ਜੇ (ext2fs_has_feature_extents(fs->super))
 		inode.i_flags |= EXT4_EXTENTS_FL;
 
-	if (!(flags & EXT2_MKJOURNAL_LAZYINIT))
-		falloc_flags |= EXT2_FALLOCATE_ZERO_BLOCKS;
+	ਜੇ (!(flags & EXT2_MKJOURNAL_LAZYINIT))
+		falloc_flags |= EXT2_FALLOCATE_ZERO_ਖੰਡਾਂ;
 
-	inode_size = (unsigned long long)fs->blocksize *
-			(jparams->num_journal_blocks + jparams->num_fc_blocks);
-	now = ext2fsP_get_time(fs);
-	ext2fs_inode_xtime_set(&inode, i_mtime, now);
-	ext2fs_inode_xtime_set(&inode, i_ctime, now);
-	inode.i_links_count = 1;
-	inode.i_mode = LINUX_S_IFREG | 0600;
-	retval = ext2fs_inode_size_set(fs, &inode, inode_size);
-	if (retval)
-		goto out2;
+	inode_ਮਾਪ = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)fs->blocksize *
+			(jparams->ਅੰਕ_journal_ਖੰਡਾਂ + jparams->ਅੰਕ_fc_ਖੰਡਾਂ);
+	now = ext2fs_P_get_ਸਮਾਂ(fs);
+	ext2fs_inode_xtime_ਸੈੱਟ(&inode, i_mtime, now);
+	ext2fs_inode_xtime_ਸੈੱਟ(&inode, i_ctime, now);
+	inode.i_links_ਗਿਣਤੀ = 1;
+	inode.i_ਬਹੁਲਕ = LINUX_S_IFREG | 0600;
+	retval = ext2fs_inode_ਮਾਪ_ਸੈੱਟ(fs, &inode, inode_ਮਾਪ);
+	ਜੇ (retval)
+		ਜਾਓ out2;
 
 	retval = ext2fs_fallocate(fs, falloc_flags, journal_ino,
 				  &inode, goal, 0,
-				  jparams->num_journal_blocks + jparams->num_fc_blocks);
-	if (retval)
-		goto out2;
+				  jparams->ਅੰਕ_journal_ਖੰਡਾਂ + jparams->ਅੰਕ_fc_ਖੰਡਾਂ);
+	ਜੇ (retval)
+		ਜਾਓ out2;
 
-	if ((retval = ext2fs_write_new_inode(fs, journal_ino, &inode)))
-		goto out2;
+	ਜੇ ((retval = ext2fs_write_new_inode(fs, journal_ino, &inode)))
+		ਜਾਓ out2;
 
-	retval = ext2fs_bmap2(fs, journal_ino, &inode, NULL, 0, 0, NULL, &zblk);
-	if (retval)
-		goto out2;
+	retval = ext2fs_bmap2(fs, journal_ino, &inode, ਨਿਰਾ, 0, 0, ਨਿਰਾ, &zblk);
+	ਜੇ (retval)
+		ਜਾਓ out2;
 
 	retval = io_channel_write_blk64(fs->io, zblk, 1, buf);
-	if (retval)
-		goto out2;
+	ਜੇ (retval)
+		ਜਾਓ out2;
 
-	memcpy(fs->super->s_jnl_blocks, inode.i_block, EXT2_N_BLOCKS*4);
-	fs->super->s_jnl_blocks[15] = inode.i_size_high;
-	fs->super->s_jnl_blocks[16] = inode.i_size;
-	fs->super->s_jnl_backup_type = EXT3_JNL_BACKUP_BLOCKS;
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(fs->super->s_jnl_ਖੰਡਾਂ, inode.i_ਖੰਡ, EXT2_N_ਖੰਡਾਂ*4);
+	fs->super->s_jnl_ਖੰਡਾਂ[15] = inode.i_ਮਾਪ_ਉੱਚਾ;
+	fs->super->s_jnl_ਖੰਡਾਂ[16] = inode.i_ਮਾਪ;
+	fs->super->s_jnl_backup_type = EXT3_JNL_BACKUP_ਖੰਡਾਂ;
 	ext2fs_mark_super_dirty(fs);
 
 out2:
 	ext2fs_free_mem(&buf);
-	return retval;
+	ਵਾਪਸ retval;
 }
 
 /*
@@ -356,133 +356,133 @@ out2:
  *
  * n.b. comments assume 4k blocks
  */
-int ext2fs_default_journal_size(__u64 num_blocks)
+ਪੂਰਨ ext2fs_default_journal_ਮਾਪ(__u64 ਅੰਕ_ਖੰਡਾਂ)
 {
-	if (num_blocks < 2048)
-		return -1;
-	if (num_blocks < 32768)		/* 128 MB */
-		return (1024);			/* 4 MB */
-	if (num_blocks < 256*1024)	/* 1 GB */
-		return (4096);			/* 16 MB */
-	if (num_blocks < 512*1024)	/* 2 GB */
-		return (8192);			/* 32 MB */
-	if (num_blocks < 4096*1024)	/* 16 GB */
-		return (16384);			/* 64 MB */
-	if (num_blocks < 8192*1024)	/* 32 GB */
-		return (32768);			/* 128 MB */
-	if (num_blocks < 16384*1024)	/* 64 GB */
-		return (65536);			/* 256 MB */
-	if (num_blocks < 32768*1024)	/* 128 GB */
-		return (131072);		/* 512 MB */
-	return 262144;				/* 1 GB */
+	ਜੇ (ਅੰਕ_ਖੰਡਾਂ < 2048)
+		ਵਾਪਸ -1;
+	ਜੇ (ਅੰਕ_ਖੰਡਾਂ < 32768)		/* 128 MB */
+		ਵਾਪਸ (1024);			/* 4 MB */
+	ਜੇ (ਅੰਕ_ਖੰਡਾਂ < 256*1024)	/* 1 GB */
+		ਵਾਪਸ (4096);			/* 16 MB */
+	ਜੇ (ਅੰਕ_ਖੰਡਾਂ < 512*1024)	/* 2 GB */
+		ਵਾਪਸ (8192);			/* 32 MB */
+	ਜੇ (ਅੰਕ_ਖੰਡਾਂ < 4096*1024)	/* 16 GB */
+		ਵਾਪਸ (16384);			/* 64 MB */
+	ਜੇ (ਅੰਕ_ਖੰਡਾਂ < 8192*1024)	/* 32 GB */
+		ਵਾਪਸ (32768);			/* 128 MB */
+	ਜੇ (ਅੰਕ_ਖੰਡਾਂ < 16384*1024)	/* 64 GB */
+		ਵਾਪਸ (65536);			/* 256 MB */
+	ਜੇ (ਅੰਕ_ਖੰਡਾਂ < 32768*1024)	/* 128 GB */
+		ਵਾਪਸ (131072);		/* 512 MB */
+	ਵਾਪਸ 262144;				/* 1 GB */
 }
 
-errcode_t ext2fs_get_journal_params(struct ext2fs_journal_params *params,
+errcode_t ext2fs_get_journal_params(ਬਣਤਰ ext2fs_journal_params *params,
 		ext2_filsys fs)
 {
-	blk_t total_blks;
-	int ret;
+	blk_t ਕੁੱਲ_blks;
+	ਪੂਰਨ ret;
 
-	memset(params, 0, sizeof(*params));
-	if (ext2fs_has_feature_journal_dev(fs->super)) {
-		total_blks = ext2fs_blocks_count(fs->super);
-		if (total_blks < JBD2_MIN_JOURNAL_BLOCKS)
-			return EXT2_ET_JOURNAL_TOO_SMALL;
+	memset(params, 0, ਆਕਾਰ(*params));
+	ਜੇ (ext2fs_has_feature_journal_dev(fs->super)) {
+		ਕੁੱਲ_blks = ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super);
+		ਜੇ (ਕੁੱਲ_blks < JBD2_MIN_JOURNAL_ਖੰਡਾਂ)
+			ਵਾਪਸ EXT2_ET_JOURNAL_TOO_SMALL;
 
-		if (!ext2fs_has_feature_fast_commit(fs->super)) {
-			params->num_journal_blocks = total_blks;
-			params->num_fc_blocks = 0;
-			return 0;
+		ਜੇ (!ext2fs_has_feature_fast_commit(fs->super)) {
+			params->ਅੰਕ_journal_ਖੰਡਾਂ = ਕੁੱਲ_blks;
+			params->ਅੰਕ_fc_ਖੰਡਾਂ = 0;
+			ਵਾਪਸ 0;
 		}
-		params->num_journal_blocks = ext2fs_blocks_count(fs->super) *
-				EXT2_JOURNAL_TO_FC_BLKS_RATIO /
-				(EXT2_JOURNAL_TO_FC_BLKS_RATIO + 1);
-		if (JBD2_MIN_JOURNAL_BLOCKS > params->num_journal_blocks)
-			params->num_journal_blocks = JBD2_MIN_JOURNAL_BLOCKS;
-		params->num_fc_blocks = total_blks - params->num_journal_blocks;
-		return 0;
+		params->ਅੰਕ_journal_ਖੰਡਾਂ = ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super) *
+				EXT2_JOURNAL_ਮੰਜ਼ਿਲ_FC_BLKS_ਅਨੁਪਾਤ /
+				(EXT2_JOURNAL_ਮੰਜ਼ਿਲ_FC_BLKS_ਅਨੁਪਾਤ + 1);
+		ਜੇ (JBD2_MIN_JOURNAL_ਖੰਡਾਂ > params->ਅੰਕ_journal_ਖੰਡਾਂ)
+			params->ਅੰਕ_journal_ਖੰਡਾਂ = JBD2_MIN_JOURNAL_ਖੰਡਾਂ;
+		params->ਅੰਕ_fc_ਖੰਡਾਂ = ਕੁੱਲ_blks - params->ਅੰਕ_journal_ਖੰਡਾਂ;
+		ਵਾਪਸ 0;
 	}
 
-	ret = ext2fs_default_journal_size(ext2fs_blocks_count(fs->super));
-	if (ret < 0)
-		return EXT2_ET_JOURNAL_TOO_SMALL;
+	ret = ext2fs_default_journal_ਮਾਪ(ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super));
+	ਜੇ (ret < 0)
+		ਵਾਪਸ EXT2_ET_JOURNAL_TOO_SMALL;
 
-	params->num_journal_blocks = ret;
-	if (ext2fs_has_feature_fast_commit(fs->super))
-		params->num_fc_blocks = params->num_journal_blocks /
-			EXT2_JOURNAL_TO_FC_BLKS_RATIO;
-	return 0;
+	params->ਅੰਕ_journal_ਖੰਡਾਂ = ret;
+	ਜੇ (ext2fs_has_feature_fast_commit(fs->super))
+		params->ਅੰਕ_fc_ਖੰਡਾਂ = params->ਅੰਕ_journal_ਖੰਡਾਂ /
+			EXT2_JOURNAL_ਮੰਜ਼ਿਲ_FC_BLKS_ਅਨੁਪਾਤ;
+	ਵਾਪਸ 0;
 }
 
-int ext2fs_journal_sb_start(int blocksize)
+ਪੂਰਨ ext2fs_journal_sb_ਸ਼ੁਰੂ(ਪੂਰਨ blocksize)
 {
-	if (blocksize == EXT2_MIN_BLOCK_SIZE)
-		return 2;
-	return 1;
+	ਜੇ (blocksize == EXT2_MIN_ਖੰਡ_ਮਾਪ)
+		ਵਾਪਸ 2;
+	ਵਾਪਸ 1;
 }
 
 /*
  * This function adds a journal device to a filesystem
  */
-errcode_t ext2fs_add_journal_device(ext2_filsys fs, ext2_filsys journal_dev)
+errcode_t ext2fs_ਜੋੜੋ_journal_device(ext2_filsys fs, ext2_filsys journal_dev)
 {
-	struct stat	st;
+	ਬਣਤਰ stat	st;
 	errcode_t	retval;
-	char		buf[SUPERBLOCK_SIZE];
+	ਅੱਖਰ		buf[SUPERBLOCK_ਮਾਪ];
 	journal_superblock_t	*jsb;
-	int		start;
+	ਪੂਰਨ		ਸ਼ੁਰੂ;
 	__u32		i, nr_users;
 
 	/* Make sure the device exists and is a block device */
-	if (stat(journal_dev->device_name, &st) < 0)
-		return errno;
+	ਜੇ (stat(journal_dev->device_name, &st) < 0)
+		ਵਾਪਸ errno;
 
-	if (!S_ISBLK(st.st_mode))
-		return EXT2_ET_JOURNAL_NOT_BLOCK; /* Must be a block device */
+	ਜੇ (!S_ISBLK(st.st_ਬਹੁਲਕ))
+		ਵਾਪਸ EXT2_ET_JOURNAL_NOT_ਖੰਡ; /* Must be a block device */
 
 	/* Get the journal superblock */
-	start = ext2fs_journal_sb_start(journal_dev->blocksize);
-	if ((retval = io_channel_read_blk64(journal_dev->io, start,
-					    -SUPERBLOCK_SIZE,
+	ਸ਼ੁਰੂ = ext2fs_journal_sb_ਸ਼ੁਰੂ(journal_dev->blocksize);
+	ਜੇ ((retval = io_channel_read_blk64(journal_dev->io, ਸ਼ੁਰੂ,
+					    -SUPERBLOCK_ਮਾਪ,
 					    buf)))
-		return retval;
+		ਵਾਪਸ retval;
 
 	jsb = (journal_superblock_t *) buf;
-	if ((jsb->s_header.h_magic != (unsigned) ntohl(JBD2_MAGIC_NUMBER)) ||
-	    (jsb->s_header.h_blocktype != (unsigned) ntohl(JBD2_SUPERBLOCK_V2)))
-		return EXT2_ET_NO_JOURNAL_SB;
+	ਜੇ ((jsb->s_ਸਿਰਲੇਖ.h_magic != (ਬਿਨਾਨਿਸ਼ਾਨੀ) ntohl(JBD2_MAGIC_ਸੰਖਿਆ)) ||
+	    (jsb->s_ਸਿਰਲੇਖ.h_blocktype != (ਬਿਨਾਨਿਸ਼ਾਨੀ) ntohl(JBD2_SUPERBLOCK_V2)))
+		ਵਾਪਸ EXT2_ET_NO_JOURNAL_SB;
 
-	if (ntohl(jsb->s_blocksize) != (unsigned long) fs->blocksize)
-		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	ਜੇ (ntohl(jsb->s_blocksize) != (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ) fs->blocksize)
+		ਵਾਪਸ EXT2_ET_UNEXPECTED_ਖੰਡ_ਮਾਪ;
 
 	/* Check and see if this filesystem has already been added */
 	nr_users = ntohl(jsb->s_nr_users);
-	if (nr_users > JBD2_USERS_MAX)
-		return EXT2_ET_CORRUPT_JOURNAL_SB;
-	for (i=0; i < nr_users; i++) {
-		if (memcmp(fs->super->s_uuid,
+	ਜੇ (nr_users > JBD2_USERS_MAX)
+		ਵਾਪਸ EXT2_ET_CORRUPT_JOURNAL_SB;
+	ਲਈ (i=0; i < nr_users; i++) {
+		ਜੇ (memcmp(fs->super->s_uuid,
 			   &jsb->s_users[i*16], 16) == 0)
-			break;
+			ਰੋਕੋ;
 	}
-	if (i >= nr_users) {
-		memcpy(&jsb->s_users[nr_users*16],
+	ਜੇ (i >= nr_users) {
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(&jsb->s_users[nr_users*16],
 		       fs->super->s_uuid, 16);
 		jsb->s_nr_users = htonl(nr_users+1);
 	}
 
 	/* Writeback the journal superblock */
-	if ((retval = io_channel_write_blk64(journal_dev->io, start,
-					    -SUPERBLOCK_SIZE, buf)))
-		return retval;
+	ਜੇ ((retval = io_channel_write_blk64(journal_dev->io, ਸ਼ੁਰੂ,
+					    -SUPERBLOCK_ਮਾਪ, buf)))
+		ਵਾਪਸ retval;
 
 	fs->super->s_journal_inum = 0;
 	fs->super->s_journal_dev = st.st_rdev;
-	memcpy(fs->super->s_journal_uuid, jsb->s_uuid,
-	       sizeof(fs->super->s_journal_uuid));
-	memset(fs->super->s_jnl_blocks, 0, sizeof(fs->super->s_jnl_blocks));
-	ext2fs_set_feature_journal(fs->super);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(fs->super->s_journal_uuid, jsb->s_uuid,
+	       ਆਕਾਰ(fs->super->s_journal_uuid));
+	memset(fs->super->s_jnl_ਖੰਡਾਂ, 0, ਆਕਾਰ(fs->super->s_jnl_ਖੰਡਾਂ));
+	ext2fs_ਸੈੱਟ_feature_journal(fs->super);
 	ext2fs_mark_super_dirty(fs);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
@@ -490,50 +490,50 @@ errcode_t ext2fs_add_journal_device(ext2_filsys fs, ext2_filsys journal_dev)
  * POSIX routines if the filesystem is mounted, or using direct I/O
  * functions if it is not.
  */
-errcode_t ext2fs_add_journal_inode3(ext2_filsys fs, struct ext2fs_journal_params *jparams,
-				    blk64_t goal, int flags)
+errcode_t ext2fs_ਜੋੜੋ_journal_inode3(ext2_filsys fs, ਬਣਤਰ ext2fs_journal_params *jparams,
+				    blk64_t goal, ਪੂਰਨ flags)
 {
 	errcode_t		retval;
 	ext2_ino_t		journal_ino;
-	struct stat		st;
-	char			jfile[1024];
-	int			mount_flags;
-	int			fd = -1;
+	ਬਣਤਰ stat		st;
+	ਅੱਖਰ			jfile[1024];
+	ਪੂਰਨ			mount_flags;
+	ਪੂਰਨ			fd = -1;
 
-	if (flags & EXT2_MKJOURNAL_NO_MNT_CHECK)
+	ਜੇ (flags & EXT2_MKJOURNAL_NO_MNT_CHECK)
 		mount_flags = 0;
-	else if ((retval = ext2fs_check_mount_point(fs->device_name,
+	ਨਹੀਂਤਾਂ ਜੇ ((retval = ext2fs_check_mount_ਬਿੰਦੂ(fs->device_name,
 						    &mount_flags,
-						    jfile, sizeof(jfile)-10)))
-		return retval;
+						    jfile, ਆਕਾਰ(jfile)-10)))
+		ਵਾਪਸ retval;
 
-	if (mount_flags & EXT2_MF_MOUNTED) {
-#if HAVE_EXT2_IOCTLS
-		int f = 0;
-#endif
+	ਜੇ (mount_flags & EXT2_MF_MOUNTED) {
+#ਜੇ HAVE_EXT2_IOCTLS
+		ਪੂਰਨ f = 0;
+#ਜੇ_ਅੰਤ
 		strcat(jfile, "/.journal");
 
 		/*
 		 * If .../.journal already exists, make sure any
 		 * immutable or append-only flags are cleared.
 		 */
-#if defined(HAVE_CHFLAGS) && defined(UF_NODUMP)
-		(void) chflags (jfile, 0);
-#else
-#if HAVE_EXT2_IOCTLS
+#ਜੇ defined(HAVE_CHFLAGS) && defined(UF_NODUMP)
+		(ਖਾਲੀ) chflags (jfile, 0);
+#ਨਹੀਂਤਾਂ
+#ਜੇ HAVE_EXT2_IOCTLS
 		fd = open(jfile, O_RDONLY);
-		if (fd >= 0) {
+		ਜੇ (fd >= 0) {
 			retval = ioctl(fd, EXT2_IOC_SETFLAGS, &f);
 			close(fd);
-			if (retval)
-				return errno;
+			ਜੇ (retval)
+				ਵਾਪਸ errno;
 		}
-#endif
-#endif
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ
 
 		/* Create the journal file */
-		if ((fd = open(jfile, O_CREAT|O_WRONLY, 0600)) < 0)
-			return errno;
+		ਜੇ ((fd = open(jfile, O_CREAT|O_WRONLY, 0600)) < 0)
+			ਵਾਪਸ errno;
 
 		/* Note that we can't do lazy journal initialization for mounted
 		 * filesystems, since the zero writing is also allocating the
@@ -542,115 +542,115 @@ errcode_t ext2fs_add_journal_inode3(ext2_filsys fs, struct ext2fs_journal_params
 		 * filesystems is extremely rare these days...  Ignore it. */
 		flags &= ~EXT2_MKJOURNAL_LAZYINIT;
 
-		if ((retval = write_journal_file(fs, jfile, jparams, flags)))
-			goto errout;
+		ਜੇ ((retval = write_journal_file(fs, jfile, jparams, flags)))
+			ਜਾਓ errout;
 
 		/* Get inode number of the journal file */
-		if (fstat(fd, &st) < 0) {
+		ਜੇ (fstat(fd, &st) < 0) {
 			retval = errno;
-			goto errout;
+			ਜਾਓ errout;
 		}
 
-#if defined(HAVE_CHFLAGS) && defined(UF_NODUMP)
+#ਜੇ defined(HAVE_CHFLAGS) && defined(UF_NODUMP)
 		retval = fchflags (fd, UF_NODUMP|UF_IMMUTABLE);
-#else
-#if HAVE_EXT2_IOCTLS
-		if (ioctl(fd, EXT2_IOC_GETFLAGS, &f) < 0) {
+#ਨਹੀਂਤਾਂ
+#ਜੇ HAVE_EXT2_IOCTLS
+		ਜੇ (ioctl(fd, EXT2_IOC_GETFLAGS, &f) < 0) {
 			retval = errno;
-			goto errout;
+			ਜਾਓ errout;
 		}
 		f |= EXT2_NODUMP_FL | EXT2_IMMUTABLE_FL;
 		retval = ioctl(fd, EXT2_IOC_SETFLAGS, &f);
-#endif
-#endif
-		if (retval) {
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ
+		ਜੇ (retval) {
 			retval = errno;
-			goto errout;
+			ਜਾਓ errout;
 		}
 
-		if (close(fd) < 0) {
+		ਜੇ (close(fd) < 0) {
 			retval = errno;
 			fd = -1;
-			goto errout;
+			ਜਾਓ errout;
 		}
 		journal_ino = st.st_ino;
-		memset(fs->super->s_jnl_blocks, 0,
-		       sizeof(fs->super->s_jnl_blocks));
-	} else {
-		if ((mount_flags & EXT2_MF_BUSY) &&
+		memset(fs->super->s_jnl_ਖੰਡਾਂ, 0,
+		       ਆਕਾਰ(fs->super->s_jnl_ਖੰਡਾਂ));
+	} ਨਹੀਂਤਾਂ {
+		ਜੇ ((mount_flags & EXT2_MF_BUSY) &&
 		    !(fs->flags & EXT2_FLAG_EXCLUSIVE)) {
 			retval = EBUSY;
-			goto errout;
+			ਜਾਓ errout;
 		}
 		journal_ino = EXT2_JOURNAL_INO;
-		if ((retval = write_journal_inode(fs, journal_ino,
+		ਜੇ ((retval = write_journal_inode(fs, journal_ino,
 						  jparams, goal, flags)))
-			return retval;
+			ਵਾਪਸ retval;
 	}
 
 	fs->super->s_journal_inum = journal_ino;
 	fs->super->s_journal_dev = 0;
 	memset(fs->super->s_journal_uuid, 0,
-	       sizeof(fs->super->s_journal_uuid));
-	ext2fs_set_feature_journal(fs->super);
+	       ਆਕਾਰ(fs->super->s_journal_uuid));
+	ext2fs_ਸੈੱਟ_feature_journal(fs->super);
 
 	ext2fs_mark_super_dirty(fs);
-	return 0;
+	ਵਾਪਸ 0;
 errout:
-	if (fd >= 0)
+	ਜੇ (fd >= 0)
 		close(fd);
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-errcode_t ext2fs_add_journal_inode2(ext2_filsys fs, blk_t num_blocks,
-				    blk64_t goal, int flags)
+errcode_t ext2fs_ਜੋੜੋ_journal_inode2(ext2_filsys fs, blk_t ਅੰਕ_ਖੰਡਾਂ,
+				    blk64_t goal, ਪੂਰਨ flags)
 {
-	struct ext2fs_journal_params jparams;
+	ਬਣਤਰ ext2fs_journal_params jparams;
 
-	jparams.num_journal_blocks = num_blocks;
-	jparams.num_fc_blocks = 0;
+	jparams.ਅੰਕ_journal_ਖੰਡਾਂ = ਅੰਕ_ਖੰਡਾਂ;
+	jparams.ਅੰਕ_fc_ਖੰਡਾਂ = 0;
 
-	return ext2fs_add_journal_inode3(fs, &jparams, goal, flags);
+	ਵਾਪਸ ext2fs_ਜੋੜੋ_journal_inode3(fs, &jparams, goal, flags);
 }
 
-errcode_t ext2fs_add_journal_inode(ext2_filsys fs, blk_t num_blocks, int flags)
+errcode_t ext2fs_ਜੋੜੋ_journal_inode(ext2_filsys fs, blk_t ਅੰਕ_ਖੰਡਾਂ, ਪੂਰਨ flags)
 {
-	return ext2fs_add_journal_inode2(fs, num_blocks, ~0ULL, flags);
+	ਵਾਪਸ ext2fs_ਜੋੜੋ_journal_inode2(fs, ਅੰਕ_ਖੰਡਾਂ, ~0ULL, flags);
 }
 
 
-#ifdef DEBUG
-main(int argc, char **argv)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG
+ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
 	errcode_t	retval;
-	char		*device_name;
+	ਅੱਖਰ		*device_name;
 	ext2_filsys	fs;
 
-	if (argc < 2) {
+	ਜੇ (argc < 2) {
 		fprintf(stderr, "Usage: %s filesystem\n", argv[0]);
-		exit(1);
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
 	device_name = argv[1];
 
 	retval = ext2fs_open (device_name, EXT2_FLAG_RW, 0, 0,
 			      unix_io_manager, &fs);
-	if (retval) {
+	ਜੇ (retval) {
 		com_err(argv[0], retval, "while opening %s", device_name);
-		exit(1);
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
 
-	retval = ext2fs_add_journal_inode(fs, JBD2_MIN_JOURNAL_BLOCKS, 0);
-	if (retval) {
+	retval = ext2fs_ਜੋੜੋ_journal_inode(fs, JBD2_MIN_JOURNAL_ਖੰਡਾਂ, 0);
+	ਜੇ (retval) {
 		com_err(argv[0], retval, "while adding journal to %s",
 			device_name);
-		exit(1);
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
 	retval = ext2fs_flush(fs);
-	if (retval) {
-		printf("Warning, had trouble writing out superblocks.\n");
+	ਜੇ (retval) {
+		ਲਿਖੋ("Warning, had trouble writing out superblocks.\n");
 	}
 	ext2fs_close_free(&fs);
-	exit(0);
+	ਬਾਹਰ_ਨਿਕਲੋ(0);
 
 }
-#endif
+#ਜੇ_ਅੰਤ

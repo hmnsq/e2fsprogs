@@ -13,42 +13,42 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਜੇ HAVE_UNISTD_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਜੇ HAVE_SYS_STAT_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਜੇ_ਅੰਤ
+#ਜੇ HAVE_SYS_TYPES_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਜੇ_ਅੰਤ
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fsP.h"
 
-struct set_badblock_record {
+ਬਣਤਰ ਸੈੱਟ_badblock_ਰਿਕਾਰਡ {
 	ext2_badblocks_iterate	bb_iter;
-	int		bad_block_count;
-	blk_t		*ind_blocks;
-	int		max_ind_blocks;
-	int		ind_blocks_size;
-	int		ind_blocks_ptr;
-	char		*block_buf;
+	ਪੂਰਨ		bad_ਖੰਡ_ਗਿਣਤੀ;
+	blk_t		*ind_ਖੰਡਾਂ;
+	ਪੂਰਨ		max_ind_ਖੰਡਾਂ;
+	ਪੂਰਨ		ind_ਖੰਡਾਂ_ਮਾਪ;
+	ਪੂਰਨ		ind_ਖੰਡਾਂ_ptr;
+	ਅੱਖਰ		*ਖੰਡ_buf;
 	errcode_t	err;
 };
 
-static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+ਸਥਿਰ ਪੂਰਨ ਸੈੱਟ_bad_ਖੰਡ_proc(ext2_filsys fs, blk_t *ਖੰਡ_nr,
 			      e2_blkcnt_t blockcnt,
-			      blk_t ref_block, int ref_offset,
-			      void *priv_data);
-static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+			      blk_t ref_ਖੰਡ, ਪੂਰਨ ref_ਵਿੱਥ,
+			      ਖਾਲੀ *priv_ਅੰਕੜੇ);
+ਸਥਿਰ ਪੂਰਨ clear_bad_ਖੰਡ_proc(ext2_filsys fs, blk_t *ਖੰਡ_nr,
 				e2_blkcnt_t blockcnt,
-				blk_t ref_block, int ref_offset,
-				void *priv_data);
+				blk_t ref_ਖੰਡ, ਪੂਰਨ ref_ਵਿੱਥ,
+				ਖਾਲੀ *priv_ਅੰਕੜੇ);
 
 /*
  * Given a bad blocks bitmap, update the bad blocks inode to reflect
@@ -57,39 +57,39 @@ static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 {
 	errcode_t			retval;
-	struct set_badblock_record	rec;
-	struct ext2_inode		inode;
+	ਬਣਤਰ ਸੈੱਟ_badblock_ਰਿਕਾਰਡ	rec;
+	ਬਣਤਰ ext2_inode		inode;
 	time_t				now;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!fs->block_map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
+	ਜੇ (!fs->ਖੰਡ_map)
+		ਵਾਪਸ EXT2_ET_NO_ਖੰਡ_BITMAP;
 
-	memset(&rec, 0, sizeof(rec));
-	rec.max_ind_blocks = 10;
-	retval = ext2fs_get_array(rec.max_ind_blocks, sizeof(blk_t),
-				&rec.ind_blocks);
-	if (retval)
-		return retval;
-	memset(rec.ind_blocks, 0, rec.max_ind_blocks * sizeof(blk_t));
-	retval = ext2fs_get_mem(fs->blocksize, &rec.block_buf);
-	if (retval)
-		goto cleanup;
-	memset(rec.block_buf, 0, fs->blocksize);
+	memset(&rec, 0, ਆਕਾਰ(rec));
+	rec.max_ind_ਖੰਡਾਂ = 10;
+	retval = ext2fs_get_array(rec.max_ind_ਖੰਡਾਂ, ਆਕਾਰ(blk_t),
+				&rec.ind_ਖੰਡਾਂ);
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
+	memset(rec.ind_ਖੰਡਾਂ, 0, rec.max_ind_ਖੰਡਾਂ * ਆਕਾਰ(blk_t));
+	retval = ext2fs_get_mem(fs->blocksize, &rec.ਖੰਡ_buf);
+	ਜੇ (retval)
+		ਜਾਓ cleanup;
+	memset(rec.ਖੰਡ_buf, 0, fs->blocksize);
 	rec.err = 0;
 
 	/*
 	 * First clear the old bad blocks (while saving the indirect blocks)
 	 */
-	retval = ext2fs_block_iterate2(fs, EXT2_BAD_INO,
-				       BLOCK_FLAG_DEPTH_TRAVERSE, 0,
-				       clear_bad_block_proc, &rec);
-	if (retval)
-		goto cleanup;
-	if (rec.err) {
+	retval = ext2fs_ਖੰਡ_iterate2(fs, EXT2_BAD_INO,
+				       ਖੰਡ_FLAG_ਡੂੰਘਾਈ_TRAVERSE, 0,
+				       clear_bad_ਖੰਡ_proc, &rec);
+	ਜੇ (retval)
+		ਜਾਓ cleanup;
+	ਜੇ (rec.err) {
 		retval = rec.err;
-		goto cleanup;
+		ਜਾਓ cleanup;
 	}
 
 	/*
@@ -99,20 +99,20 @@ errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 	 * block from being used as an indirect block for the bad
 	 * block inode (!).
 	 */
-	if (bb_list) {
+	ਜੇ (bb_list) {
 		retval = ext2fs_badblocks_list_iterate_begin(bb_list,
 							     &rec.bb_iter);
-		if (retval)
-			goto cleanup;
-		retval = ext2fs_block_iterate2(fs, EXT2_BAD_INO,
-					       BLOCK_FLAG_APPEND, 0,
-					       set_bad_block_proc, &rec);
-		ext2fs_badblocks_list_iterate_end(rec.bb_iter);
-		if (retval)
-			goto cleanup;
-		if (rec.err) {
+		ਜੇ (retval)
+			ਜਾਓ cleanup;
+		retval = ext2fs_ਖੰਡ_iterate2(fs, EXT2_BAD_INO,
+					       ਖੰਡ_FLAG_APPEND, 0,
+					       ਸੈੱਟ_bad_ਖੰਡ_proc, &rec);
+		ext2fs_badblocks_list_iterate_ਸਿਰਾ(rec.bb_iter);
+		ਜੇ (retval)
+			ਜਾਓ cleanup;
+		ਜੇ (rec.err) {
 			retval = rec.err;
-			goto cleanup;
+			ਜਾਓ cleanup;
 		}
 	}
 
@@ -121,28 +121,28 @@ errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 	 * field.
 	 */
 	retval = ext2fs_read_inode(fs, EXT2_BAD_INO, &inode);
-	if (retval)
-		goto cleanup;
+	ਜੇ (retval)
+		ਜਾਓ cleanup;
 
-	now = ext2fsP_get_time(fs);
-	ext2fs_inode_xtime_set(&inode, i_atime, now);
-	if (!ext2fs_inode_xtime_get(&inode, i_ctime))
-		ext2fs_inode_xtime_set(&inode, i_ctime, now);
-	ext2fs_inode_xtime_set(&inode, i_mtime, now);
-	ext2fs_iblk_set(fs, &inode, rec.bad_block_count);
-	retval = ext2fs_inode_size_set(fs, &inode,
-				       rec.bad_block_count * fs->blocksize);
-	if (retval)
-		goto cleanup;
+	now = ext2fs_P_get_ਸਮਾਂ(fs);
+	ext2fs_inode_xtime_ਸੈੱਟ(&inode, i_atime, now);
+	ਜੇ (!ext2fs_inode_xtime_get(&inode, i_ctime))
+		ext2fs_inode_xtime_ਸੈੱਟ(&inode, i_ctime, now);
+	ext2fs_inode_xtime_ਸੈੱਟ(&inode, i_mtime, now);
+	ext2fs_iblk_ਸੈੱਟ(fs, &inode, rec.bad_ਖੰਡ_ਗਿਣਤੀ);
+	retval = ext2fs_inode_ਮਾਪ_ਸੈੱਟ(fs, &inode,
+				       rec.bad_ਖੰਡ_ਗਿਣਤੀ * fs->blocksize);
+	ਜੇ (retval)
+		ਜਾਓ cleanup;
 
 	retval = ext2fs_write_inode(fs, EXT2_BAD_INO, &inode);
-	if (retval)
-		goto cleanup;
+	ਜੇ (retval)
+		ਜਾਓ cleanup;
 
 cleanup:
-	ext2fs_free_mem(&rec.ind_blocks);
-	ext2fs_free_mem(&rec.block_buf);
-	return retval;
+	ext2fs_free_mem(&rec.ind_ਖੰਡਾਂ);
+	ext2fs_free_mem(&rec.ਖੰਡ_buf);
+	ਵਾਪਸ retval;
 }
 
 /*
@@ -151,55 +151,55 @@ cleanup:
  * Clear the bad blocks in the bad block inode, while saving the
  * indirect blocks.
  */
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __TURBOC__
+ #ਹਦਾਇਤ argsused
+#ਜੇ_ਅੰਤ
+ਸਥਿਰ ਪੂਰਨ clear_bad_ਖੰਡ_proc(ext2_filsys fs, blk_t *ਖੰਡ_nr,
 				e2_blkcnt_t blockcnt,
-				blk_t ref_block EXT2FS_ATTR((unused)),
-				int ref_offset EXT2FS_ATTR((unused)),
-				void *priv_data)
+				blk_t ref_ਖੰਡ EXT2FS_ATTR((ਅਣਵਰਤਿਆ)),
+				ਪੂਰਨ ref_ਵਿੱਥ EXT2FS_ATTR((ਅਣਵਰਤਿਆ)),
+				ਖਾਲੀ *priv_ਅੰਕੜੇ)
 {
-	struct set_badblock_record *rec = (struct set_badblock_record *)
-		priv_data;
+	ਬਣਤਰ ਸੈੱਟ_badblock_ਰਿਕਾਰਡ *rec = (ਬਣਤਰ ਸੈੱਟ_badblock_ਰਿਕਾਰਡ *)
+		priv_ਅੰਕੜੇ;
 	errcode_t	retval;
-	unsigned long 	old_size;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ 	old_ਮਾਪ;
 
-	if (!*block_nr)
-		return 0;
+	ਜੇ (!*ਖੰਡ_nr)
+		ਵਾਪਸ 0;
 
 	/*
 	 * If the block number is outrageous, clear it and ignore it.
 	 */
-	if (*block_nr >= ext2fs_blocks_count(fs->super) ||
-	    *block_nr < fs->super->s_first_data_block) {
-		*block_nr = 0;
-		return BLOCK_CHANGED;
+	ਜੇ (*ਖੰਡ_nr >= ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super) ||
+	    *ਖੰਡ_nr < fs->super->s_ਪਹਿਲਾ_ਅੰਕੜੇ_ਖੰਡ) {
+		*ਖੰਡ_nr = 0;
+		ਵਾਪਸ ਖੰਡ_ਬਦਲਿਆ;
 	}
 
-	if (blockcnt < 0) {
-		if (rec->ind_blocks_size >= rec->max_ind_blocks) {
-			old_size = rec->max_ind_blocks * sizeof(blk_t);
-			rec->max_ind_blocks += 10;
-			retval = ext2fs_resize_mem(old_size,
-				   rec->max_ind_blocks * sizeof(blk_t),
-				   &rec->ind_blocks);
-			if (retval) {
-				rec->max_ind_blocks -= 10;
+	ਜੇ (blockcnt < 0) {
+		ਜੇ (rec->ind_ਖੰਡਾਂ_ਮਾਪ >= rec->max_ind_ਖੰਡਾਂ) {
+			old_ਮਾਪ = rec->max_ind_ਖੰਡਾਂ * ਆਕਾਰ(blk_t);
+			rec->max_ind_ਖੰਡਾਂ += 10;
+			retval = ext2fs_resize_mem(old_ਮਾਪ,
+				   rec->max_ind_ਖੰਡਾਂ * ਆਕਾਰ(blk_t),
+				   &rec->ind_ਖੰਡਾਂ);
+			ਜੇ (retval) {
+				rec->max_ind_ਖੰਡਾਂ -= 10;
 				rec->err = retval;
-				return BLOCK_ABORT;
+				ਵਾਪਸ ਖੰਡ_ABORT;
 			}
 		}
-		rec->ind_blocks[rec->ind_blocks_size++] = *block_nr;
+		rec->ind_ਖੰਡਾਂ[rec->ind_ਖੰਡਾਂ_ਮਾਪ++] = *ਖੰਡ_nr;
 	}
 
 	/*
 	 * Mark the block as unused, and update accounting information
 	 */
-	ext2fs_block_alloc_stats2(fs, *block_nr, -1);
+	ext2fs_ਖੰਡ_alloc_stats2(fs, *ਖੰਡ_nr, -1);
 
-	*block_nr = 0;
-	return BLOCK_CHANGED;
+	*ਖੰਡ_nr = 0;
+	ਵਾਪਸ ਖੰਡ_ਬਦਲਿਆ;
 }
 
 
@@ -208,28 +208,28 @@ static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
  *
  * Set the block list in the bad block inode, using the supplied bitmap.
  */
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __TURBOC__
+ #ਹਦਾਇਤ argsused
+#ਜੇ_ਅੰਤ
+ਸਥਿਰ ਪੂਰਨ ਸੈੱਟ_bad_ਖੰਡ_proc(ext2_filsys fs, blk_t *ਖੰਡ_nr,
 			      e2_blkcnt_t blockcnt,
-			      blk_t ref_block EXT2FS_ATTR((unused)),
-			      int ref_offset EXT2FS_ATTR((unused)),
-			      void *priv_data)
+			      blk_t ref_ਖੰਡ EXT2FS_ATTR((ਅਣਵਰਤਿਆ)),
+			      ਪੂਰਨ ref_ਵਿੱਥ EXT2FS_ATTR((ਅਣਵਰਤਿਆ)),
+			      ਖਾਲੀ *priv_ਅੰਕੜੇ)
 {
-	struct set_badblock_record *rec = (struct set_badblock_record *)
-		priv_data;
+	ਬਣਤਰ ਸੈੱਟ_badblock_ਰਿਕਾਰਡ *rec = (ਬਣਤਰ ਸੈੱਟ_badblock_ਰਿਕਾਰਡ *)
+		priv_ਅੰਕੜੇ;
 	errcode_t	retval;
 	blk_t		blk;
 
-	if (blockcnt >= 0) {
+	ਜੇ (blockcnt >= 0) {
 		/*
 		 * Get the next bad block.
 		 */
-		if (!ext2fs_badblocks_list_iterate(rec->bb_iter, &blk))
-			return BLOCK_ABORT;
-		rec->bad_block_count++;
-	} else {
+		ਜੇ (!ext2fs_badblocks_list_iterate(rec->bb_iter, &blk))
+			ਵਾਪਸ ਖੰਡ_ABORT;
+		rec->bad_ਖੰਡ_ਗਿਣਤੀ++;
+	} ਨਹੀਂਤਾਂ {
 		/*
 		 * An indirect block; fetch a block from the
 		 * previously used indirect block list.  The block
@@ -238,31 +238,31 @@ static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 		 * a new one.
 		 */
 	retry:
-		if (rec->ind_blocks_ptr < rec->ind_blocks_size) {
-			blk = rec->ind_blocks[rec->ind_blocks_ptr++];
-			if (ext2fs_test_block_bitmap2(fs->block_map, blk))
-				goto retry;
-		} else {
-			retval = ext2fs_new_block(fs, 0, 0, &blk);
-			if (retval) {
+		ਜੇ (rec->ind_ਖੰਡਾਂ_ptr < rec->ind_ਖੰਡਾਂ_ਮਾਪ) {
+			blk = rec->ind_ਖੰਡਾਂ[rec->ind_ਖੰਡਾਂ_ptr++];
+			ਜੇ (ext2fs_test_ਖੰਡ_bitmap2(fs->ਖੰਡ_map, blk))
+				ਜਾਓ retry;
+		} ਨਹੀਂਤਾਂ {
+			retval = ext2fs_new_ਖੰਡ(fs, 0, 0, &blk);
+			ਜੇ (retval) {
 				rec->err = retval;
-				return BLOCK_ABORT;
+				ਵਾਪਸ ਖੰਡ_ABORT;
 			}
 		}
-		retval = io_channel_write_blk64(fs->io, blk, 1, rec->block_buf);
-		if (retval) {
+		retval = io_channel_write_blk64(fs->io, blk, 1, rec->ਖੰਡ_buf);
+		ਜੇ (retval) {
 			rec->err = retval;
-			return BLOCK_ABORT;
+			ਵਾਪਸ ਖੰਡ_ABORT;
 		}
 	}
 
 	/*
 	 * Update block counts
 	 */
-	ext2fs_block_alloc_stats2(fs, blk, +1);
+	ext2fs_ਖੰਡ_alloc_stats2(fs, blk, +1);
 
-	*block_nr = blk;
-	return BLOCK_CHANGED;
+	*ਖੰਡ_nr = blk;
+	ਵਾਪਸ ਖੰਡ_ਬਦਲਿਆ;
 }
 
 

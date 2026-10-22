@@ -9,81 +9,81 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
 
-#include "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
 
-struct ext2_inode_large inode;
+ਬਣਤਰ ext2_inode_large inode;
 
-#ifndef offsetof
-#define offsetof(type, member)  __builtin_offsetof(type, member)
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ offsetof
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ offsetof(type, member)  __builtin_offsetof(type, member)
+#ਜੇ_ਅੰਤ
 
-#define check_field(x, s) cur_offset = do_field(#x, s, sizeof(inode.x),	       \
-					offsetof(struct ext2_inode_large, x),  \
-					cur_offset)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ check_ਖੇਤਰ(x, s) cur_ਵਿੱਥ = do_ਖੇਤਰ(#x, s, ਆਕਾਰ(inode.x),	       \
+					offsetof(ਬਣਤਰ ext2_inode_large, x),  \
+					cur_ਵਿੱਥ)
 
-static int do_field(const char *field, unsigned size, unsigned cur_size,
-		    unsigned offset, unsigned cur_offset)
+ਸਥਿਰ ਪੂਰਨ do_ਖੇਤਰ(ਅਚਲ ਅੱਖਰ *ਖੇਤਰ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਮਾਪ, ਬਿਨਾਨਿਸ਼ਾਨੀ cur_ਮਾਪ,
+		    ਬਿਨਾਨਿਸ਼ਾਨੀ ਵਿੱਥ, ਬਿਨਾਨਿਸ਼ਾਨੀ cur_ਵਿੱਥ)
 {
-	if (size != cur_size) {
-		printf("error: %s size %u should be %u\n",
-		       field, cur_size, size);
-		exit(1);
+	ਜੇ (ਮਾਪ != cur_ਮਾਪ) {
+		ਲਿਖੋ("error: %s size %u should be %u\n",
+		       ਖੇਤਰ, cur_ਮਾਪ, ਮਾਪ);
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
-	if (offset != cur_offset) {
-		printf("error: %s offset %u should be %u\n",
-		       field, cur_offset, offset);
-		exit(1);
+	ਜੇ (ਵਿੱਥ != cur_ਵਿੱਥ) {
+		ਲਿਖੋ("error: %s offset %u should be %u\n",
+		       ਖੇਤਰ, cur_ਵਿੱਥ, ਵਿੱਥ);
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
-	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	ਲਿਖੋ("%8d %-30s %3u\n", ਵਿੱਥ, ਖੇਤਰ, (ਬਿਨਾਨਿਸ਼ਾਨੀ) ਮਾਪ);
+	ਵਾਪਸ ਵਿੱਥ + ਮਾਪ;
 }
 
-int main(int argc, char **argv)
+ਪੂਰਨ ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#ਜੇ (__GNUC__ >= 4)
+	ਪੂਰਨ cur_ਵਿੱਥ = 0;
 
-	printf("%8s %-30s %3s\n", "offset", "field", "size");
-	check_field(i_mode, 2);
-	check_field(i_uid, 2);
-	check_field(i_size, 4);
-	check_field(i_atime, 4);
-	check_field(i_ctime, 4);
-	check_field(i_mtime, 4);
-	check_field(i_dtime, 4);
-	check_field(i_gid, 2);
-	check_field(i_links_count, 2);
-	check_field(i_blocks, 4);
-	check_field(i_flags, 4);
-	check_field(osd1.linux1.l_i_version, 4);
-	check_field(i_block, 15 * 4);
-	check_field(i_generation, 4);
-	check_field(i_file_acl, 4);
-	check_field(i_size_high, 4);
-	check_field(i_faddr, 4);
-	check_field(osd2.linux2.l_i_blocks_hi, 2);
-	check_field(osd2.linux2.l_i_file_acl_high, 2);
-	check_field(osd2.linux2.l_i_uid_high, 2);
-	check_field(osd2.linux2.l_i_gid_high, 2);
-	check_field(osd2.linux2.l_i_checksum_lo, 2);
-	check_field(osd2.linux2.l_i_reserved, 2);
-	do_field("Small inode end", 0, 0, cur_offset, 128);
-	check_field(i_extra_isize, 2);
-	check_field(i_checksum_hi, 2);
-	check_field(i_ctime_extra, 4);
-	check_field(i_mtime_extra, 4);
-	check_field(i_atime_extra, 4);
-	check_field(i_crtime, 4);
-	check_field(i_crtime_extra, 4);
-	check_field(i_version_hi, 4);
-	check_field(i_projid, 4);
+	ਲਿਖੋ("%8s %-30s %3s\n", "offset", "field", "size");
+	check_ਖੇਤਰ(i_ਬਹੁਲਕ, 2);
+	check_ਖੇਤਰ(i_uid, 2);
+	check_ਖੇਤਰ(i_ਮਾਪ, 4);
+	check_ਖੇਤਰ(i_atime, 4);
+	check_ਖੇਤਰ(i_ctime, 4);
+	check_ਖੇਤਰ(i_mtime, 4);
+	check_ਖੇਤਰ(i_dtime, 4);
+	check_ਖੇਤਰ(i_gid, 2);
+	check_ਖੇਤਰ(i_links_ਗਿਣਤੀ, 2);
+	check_ਖੇਤਰ(i_ਖੰਡਾਂ, 4);
+	check_ਖੇਤਰ(i_flags, 4);
+	check_ਖੇਤਰ(osd1.linux1.l_i_ਸੰਸਕਰਣ, 4);
+	check_ਖੇਤਰ(i_ਖੰਡ, 15 * 4);
+	check_ਖੇਤਰ(i_generation, 4);
+	check_ਖੇਤਰ(i_file_acl, 4);
+	check_ਖੇਤਰ(i_ਮਾਪ_ਉੱਚਾ, 4);
+	check_ਖੇਤਰ(i_faddr, 4);
+	check_ਖੇਤਰ(osd2.linux2.l_i_ਖੰਡਾਂ_hi, 2);
+	check_ਖੇਤਰ(osd2.linux2.l_i_file_acl_ਉੱਚਾ, 2);
+	check_ਖੇਤਰ(osd2.linux2.l_i_uid_ਉੱਚਾ, 2);
+	check_ਖੇਤਰ(osd2.linux2.l_i_gid_ਉੱਚਾ, 2);
+	check_ਖੇਤਰ(osd2.linux2.l_i_checksum_lo, 2);
+	check_ਖੇਤਰ(osd2.linux2.l_i_reserved, 2);
+	do_ਖੇਤਰ("Small inode end", 0, 0, cur_ਵਿੱਥ, 128);
+	check_ਖੇਤਰ(i_extra_isize, 2);
+	check_ਖੇਤਰ(i_checksum_hi, 2);
+	check_ਖੇਤਰ(i_ctime_extra, 4);
+	check_ਖੇਤਰ(i_mtime_extra, 4);
+	check_ਖੇਤਰ(i_atime_extra, 4);
+	check_ਖੇਤਰ(i_crtime, 4);
+	check_ਖੇਤਰ(i_crtime_extra, 4);
+	check_ਖੇਤਰ(i_ਸੰਸਕਰਣ_hi, 4);
+	check_ਖੇਤਰ(i_projid, 4);
 	/* This size will change as new fields are added */
-	do_field("Large inode end", 0, 0, cur_offset, sizeof(inode));
-#endif
-	return 0;
+	do_ਖੇਤਰ("Large inode end", 0, 0, cur_ਵਿੱਥ, ਆਕਾਰ(inode));
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ 0;
 }

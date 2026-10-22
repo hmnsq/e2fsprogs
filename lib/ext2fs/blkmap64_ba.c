@@ -9,24 +9,24 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਜੇ HAVE_UNISTD_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਜੇ HAVE_SYS_STAT_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਜੇ_ਅੰਤ
+#ਜੇ HAVE_SYS_TYPES_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਜੇ_ਅੰਤ
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
-#include "bmap64.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fsP.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "bmap64.h"
 
 /*
  * Private data for bit array implementation of bitmap ops.
@@ -34,17 +34,17 @@
  * exactly equivalent to the old-skool char * bitmap member.
  */
 
-struct ext2fs_ba_private_struct {
-	char *bitarray;
+ਬਣਤਰ ext2fs_ba_ਨਿੱਜੀ_struct {
+	ਅੱਖਰ *bitarray;
 };
 
-typedef struct ext2fs_ba_private_struct *ext2fs_ba_private;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ ext2fs_ba_ਨਿੱਜੀ_struct *ext2fs_ba_ਨਿੱਜੀ;
 
-static errcode_t ba_alloc_private_data (ext2fs_generic_bitmap_64 bitmap)
+ਸਥਿਰ errcode_t ba_alloc_ਨਿੱਜੀ_ਅੰਕੜੇ (ext2fs_generic_bitmap_64 bitmap)
 {
-	ext2fs_ba_private bp;
+	ext2fs_ba_ਨਿੱਜੀ bp;
 	errcode_t	retval;
-	size_t		size;
+	size_t		ਮਾਪ;
 
 	/*
 	 * Since we only have the one pointer, we could just shove our
@@ -52,48 +52,48 @@ static errcode_t ba_alloc_private_data (ext2fs_generic_bitmap_64 bitmap)
 	 * we'd have to do a fair bit of rewriting if we ever added a
 	 * field.  I'm agnostic.
 	 */
-	retval = ext2fs_get_mem(sizeof (ext2fs_ba_private), &bp);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(ਆਕਾਰ (ext2fs_ba_ਨਿੱਜੀ), &bp);
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
-	size = (size_t) (((bitmap->real_end - bitmap->start) / 8) + 1);
+	ਮਾਪ = (size_t) (((bitmap->real_ਸਿਰਾ - bitmap->ਸ਼ੁਰੂ) / 8) + 1);
 
-	retval = ext2fs_get_mem(size, &bp->bitarray);
-	if (retval) {
+	retval = ext2fs_get_mem(ਮਾਪ, &bp->bitarray);
+	ਜੇ (retval) {
 		ext2fs_free_mem(&bp);
 		bp = 0;
-		return retval;
+		ਵਾਪਸ retval;
 	}
-	bitmap->private = (void *) bp;
-	return 0;
+	bitmap->ਨਿਜੀ = (ਖਾਲੀ *) bp;
+	ਵਾਪਸ 0;
 }
 
-static errcode_t ba_new_bmap(ext2_filsys fs EXT2FS_ATTR((unused)),
+ਸਥਿਰ errcode_t ba_new_bmap(ext2_filsys fs EXT2FS_ATTR((ਅਣਵਰਤਿਆ)),
 			     ext2fs_generic_bitmap_64 bitmap)
 {
-	ext2fs_ba_private bp;
+	ext2fs_ba_ਨਿੱਜੀ bp;
 	errcode_t	retval;
-	size_t		size;
+	size_t		ਮਾਪ;
 
-	retval = ba_alloc_private_data (bitmap);
-	if (retval)
-		return retval;
+	retval = ba_alloc_ਨਿੱਜੀ_ਅੰਕੜੇ (bitmap);
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
-	bp = (ext2fs_ba_private) bitmap->private;
-	size = (size_t) (((bitmap->real_end - bitmap->start) / 8) + 1);
-	memset(bp->bitarray, 0, size);
+	bp = (ext2fs_ba_ਨਿੱਜੀ) bitmap->ਨਿਜੀ;
+	ਮਾਪ = (size_t) (((bitmap->real_ਸਿਰਾ - bitmap->ਸ਼ੁਰੂ) / 8) + 1);
+	memset(bp->bitarray, 0, ਮਾਪ);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static void ba_free_bmap(ext2fs_generic_bitmap_64 bitmap)
+ਸਥਿਰ ਖਾਲੀ ba_free_bmap(ext2fs_generic_bitmap_64 bitmap)
 {
-	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
+	ext2fs_ba_ਨਿੱਜੀ bp = (ext2fs_ba_ਨਿੱਜੀ) bitmap->ਨਿਜੀ;
 
-	if (!bp)
-		return;
+	ਜੇ (!bp)
+		ਵਾਪਸ;
 
-	if (bp->bitarray) {
+	ਜੇ (bp->bitarray) {
 		ext2fs_free_mem (&bp->bitarray);
 		bp->bitarray = 0;
 	}
@@ -101,377 +101,377 @@ static void ba_free_bmap(ext2fs_generic_bitmap_64 bitmap)
 	bp = 0;
 }
 
-static errcode_t ba_copy_bmap(ext2fs_generic_bitmap_64 src,
+ਸਥਿਰ errcode_t ba_copy_bmap(ext2fs_generic_bitmap_64 src,
 			      ext2fs_generic_bitmap_64 dest)
 {
-	ext2fs_ba_private src_bp = (ext2fs_ba_private) src->private;
-	ext2fs_ba_private dest_bp;
+	ext2fs_ba_ਨਿੱਜੀ src_bp = (ext2fs_ba_ਨਿੱਜੀ) src->ਨਿਜੀ;
+	ext2fs_ba_ਨਿੱਜੀ dest_bp;
 	errcode_t retval;
-	size_t size;
+	size_t ਮਾਪ;
 
-	retval = ba_alloc_private_data (dest);
-	if (retval)
-		return retval;
+	retval = ba_alloc_ਨਿੱਜੀ_ਅੰਕੜੇ (dest);
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
-	dest_bp = (ext2fs_ba_private) dest->private;
+	dest_bp = (ext2fs_ba_ਨਿੱਜੀ) dest->ਨਿਜੀ;
 
-	size = (size_t) (((src->real_end - src->start) / 8) + 1);
-	memcpy (dest_bp->bitarray, src_bp->bitarray, size);
+	ਮਾਪ = (size_t) (((src->real_ਸਿਰਾ - src->ਸ਼ੁਰੂ) / 8) + 1);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ (dest_bp->bitarray, src_bp->bitarray, ਮਾਪ);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static errcode_t ba_resize_bmap(ext2fs_generic_bitmap_64 bmap,
-				__u64 new_end, __u64 new_real_end)
+ਸਥਿਰ errcode_t ba_resize_bmap(ext2fs_generic_bitmap_64 bmap,
+				__u64 new_ਸਿਰਾ, __u64 new_real_ਸਿਰਾ)
 {
-	ext2fs_ba_private bp = (ext2fs_ba_private) bmap->private;
+	ext2fs_ba_ਨਿੱਜੀ bp = (ext2fs_ba_ਨਿੱਜੀ) bmap->ਨਿਜੀ;
 	errcode_t	retval;
-	size_t		size, new_size;
+	size_t		ਮਾਪ, new_ਮਾਪ;
 	__u64		bitno;
 
 	/*
 	 * If we're expanding the bitmap, make sure all of the new
 	 * parts of the bitmap are zero.
 	 */
-	if (new_end > bmap->end) {
-		bitno = bmap->real_end;
-		if (bitno > new_end)
-			bitno = new_end;
-		for (; bitno > bmap->end; bitno--)
-			ext2fs_clear_bit64(bitno - bmap->start, bp->bitarray);
+	ਜੇ (new_ਸਿਰਾ > bmap->ਸਿਰਾ) {
+		bitno = bmap->real_ਸਿਰਾ;
+		ਜੇ (bitno > new_ਸਿਰਾ)
+			bitno = new_ਸਿਰਾ;
+		ਲਈ (; bitno > bmap->ਸਿਰਾ; bitno--)
+			ext2fs_clear_bit64(bitno - bmap->ਸ਼ੁਰੂ, bp->bitarray);
 	}
-	if (new_real_end == bmap->real_end) {
-		bmap->end = new_end;
-		return 0;
+	ਜੇ (new_real_ਸਿਰਾ == bmap->real_ਸਿਰਾ) {
+		bmap->ਸਿਰਾ = new_ਸਿਰਾ;
+		ਵਾਪਸ 0;
 	}
 
-	size = ((bmap->real_end - bmap->start) / 8) + 1;
-	new_size = ((new_real_end - bmap->start) / 8) + 1;
+	ਮਾਪ = ((bmap->real_ਸਿਰਾ - bmap->ਸ਼ੁਰੂ) / 8) + 1;
+	new_ਮਾਪ = ((new_real_ਸਿਰਾ - bmap->ਸ਼ੁਰੂ) / 8) + 1;
 
-	if (size != new_size) {
-		retval = ext2fs_resize_mem(size, new_size, &bp->bitarray);
-		if (retval)
-			return retval;
+	ਜੇ (ਮਾਪ != new_ਮਾਪ) {
+		retval = ext2fs_resize_mem(ਮਾਪ, new_ਮਾਪ, &bp->bitarray);
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
 	}
-	if (new_size > size)
-		memset(bp->bitarray + size, 0, new_size - size);
+	ਜੇ (new_ਮਾਪ > ਮਾਪ)
+		memset(bp->bitarray + ਮਾਪ, 0, new_ਮਾਪ - ਮਾਪ);
 
-	bmap->end = new_end;
-	bmap->real_end = new_real_end;
-	return 0;
+	bmap->ਸਿਰਾ = new_ਸਿਰਾ;
+	bmap->real_ਸਿਰਾ = new_real_ਸਿਰਾ;
+	ਵਾਪਸ 0;
 
 }
 
-static int ba_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+ਸਥਿਰ ਪੂਰਨ ba_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
+	ext2fs_ba_ਨਿੱਜੀ bp = (ext2fs_ba_ਨਿੱਜੀ) bitmap->ਨਿਜੀ;
 	blk64_t bitno = (blk64_t) arg;
 
-	return ext2fs_set_bit64(bitno - bitmap->start, bp->bitarray);
+	ਵਾਪਸ ext2fs_ਸੈੱਟ_bit64(bitno - bitmap->ਸ਼ੁਰੂ, bp->bitarray);
 }
 
-static int ba_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+ਸਥਿਰ ਪੂਰਨ ba_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
+	ext2fs_ba_ਨਿੱਜੀ bp = (ext2fs_ba_ਨਿੱਜੀ) bitmap->ਨਿਜੀ;
 	blk64_t bitno = (blk64_t) arg;
 
-	return ext2fs_clear_bit64(bitno - bitmap->start, bp->bitarray);
+	ਵਾਪਸ ext2fs_clear_bit64(bitno - bitmap->ਸ਼ੁਰੂ, bp->bitarray);
 }
 
-static int ba_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+ਸਥਿਰ ਪੂਰਨ ba_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
+	ext2fs_ba_ਨਿੱਜੀ bp = (ext2fs_ba_ਨਿੱਜੀ) bitmap->ਨਿਜੀ;
 	blk64_t bitno = (blk64_t) arg;
 
-	return ext2fs_test_bit64(bitno - bitmap->start, bp->bitarray);
+	ਵਾਪਸ ext2fs_test_bit64(bitno - bitmap->ਸ਼ੁਰੂ, bp->bitarray);
 }
 
-static void ba_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				unsigned int num)
+ਸਥਿਰ ਖਾਲੀ ba_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ)
 {
-	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
+	ext2fs_ba_ਨਿੱਜੀ bp = (ext2fs_ba_ਨਿੱਜੀ) bitmap->ਨਿਜੀ;
 	blk64_t bitno = (blk64_t) arg;
-	unsigned int i;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ i;
 
-	for (i = 0; i < num; i++)
-		ext2fs_fast_set_bit64(bitno + i - bitmap->start, bp->bitarray);
+	ਲਈ (i = 0; i < ਅੰਕ; i++)
+		ext2fs_fast_ਸੈੱਟ_bit64(bitno + i - bitmap->ਸ਼ੁਰੂ, bp->bitarray);
 }
 
-static void ba_unmark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				  unsigned int num)
+ਸਥਿਰ ਖਾਲੀ ba_unmark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				  ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ)
 {
-	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
+	ext2fs_ba_ਨਿੱਜੀ bp = (ext2fs_ba_ਨਿੱਜੀ) bitmap->ਨਿਜੀ;
 	blk64_t bitno = (blk64_t) arg;
-	unsigned int i;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ i;
 
-	for (i = 0; i < num; i++)
-		ext2fs_fast_clear_bit64(bitno + i - bitmap->start, bp->bitarray);
+	ਲਈ (i = 0; i < ਅੰਕ; i++)
+		ext2fs_fast_clear_bit64(bitno + i - bitmap->ਸ਼ੁਰੂ, bp->bitarray);
 }
 
-static int ba_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, unsigned int len)
+ਸਥਿਰ ਪੂਰਨ ba_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 ਸ਼ੁਰੂ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ len)
 {
-	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
-	__u64 start_byte, len_byte = len >> 3;
-	unsigned int start_bit, len_bit = len % 8;
-	unsigned int first_bit = 0;
-	unsigned int last_bit  = 0;
-	int mark_count = 0;
-	int mark_bit = 0;
-	int i;
-	const char *ADDR;
+	ext2fs_ba_ਨਿੱਜੀ bp = (ext2fs_ba_ਨਿੱਜੀ) bitmap->ਨਿਜੀ;
+	__u64 ਸ਼ੁਰੂ_byte, len_byte = len >> 3;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਸ਼ੁਰੂ_ਦੋਆਧਾਰੀ_ਅੰਕ, len_ਦੋਆਧਾਰੀ_ਅੰਕ = len % 8;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਪਹਿਲਾ_ਦੋਆਧਾਰੀ_ਅੰਕ = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਆਖਰੀ_ਦੋਆਧਾਰੀ_ਅੰਕ  = 0;
+	ਪੂਰਨ mark_ਗਿਣਤੀ = 0;
+	ਪੂਰਨ mark_ਦੋਆਧਾਰੀ_ਅੰਕ = 0;
+	ਪੂਰਨ i;
+	ਅਚਲ ਅੱਖਰ *ADDR;
 
 	ADDR = bp->bitarray;
-	start -= bitmap->start;
-	start_byte = start >> 3;
-	start_bit = start % 8;
+	ਸ਼ੁਰੂ -= bitmap->ਸ਼ੁਰੂ;
+	ਸ਼ੁਰੂ_byte = ਸ਼ੁਰੂ >> 3;
+	ਸ਼ੁਰੂ_ਦੋਆਧਾਰੀ_ਅੰਕ = ਸ਼ੁਰੂ % 8;
 
-	if (start_bit != 0) {
+	ਜੇ (ਸ਼ੁਰੂ_ਦੋਆਧਾਰੀ_ਅੰਕ != 0) {
 		/*
 		 * The compared start block number or start inode number
 		 * is not the first bit in a byte.
 		 */
-		mark_count = 8 - start_bit;
-		if (len < 8 - start_bit) {
-			mark_count = (int)len;
-			mark_bit = len + start_bit - 1;
-		} else
-			mark_bit = 7;
+		mark_ਗਿਣਤੀ = 8 - ਸ਼ੁਰੂ_ਦੋਆਧਾਰੀ_ਅੰਕ;
+		ਜੇ (len < 8 - ਸ਼ੁਰੂ_ਦੋਆਧਾਰੀ_ਅੰਕ) {
+			mark_ਗਿਣਤੀ = (ਪੂਰਨ)len;
+			mark_ਦੋਆਧਾਰੀ_ਅੰਕ = len + ਸ਼ੁਰੂ_ਦੋਆਧਾਰੀ_ਅੰਕ - 1;
+		} ਨਹੀਂਤਾਂ
+			mark_ਦੋਆਧਾਰੀ_ਅੰਕ = 7;
 
-		for (i = mark_count; i > 0; i--, mark_bit--)
-			first_bit |= 1 << mark_bit;
+		ਲਈ (i = mark_ਗਿਣਤੀ; i > 0; i--, mark_ਦੋਆਧਾਰੀ_ਅੰਕ--)
+			ਪਹਿਲਾ_ਦੋਆਧਾਰੀ_ਅੰਕ |= 1 << mark_ਦੋਆਧਾਰੀ_ਅੰਕ;
 
 		/*
 		 * Compare blocks or inodes in the first byte.
 		 * If there is any marked bit, this function returns 0.
 		 */
-		if (first_bit & ADDR[start_byte])
-			return 0;
-		else if (len <= 8 - start_bit)
-			return 1;
+		ਜੇ (ਪਹਿਲਾ_ਦੋਆਧਾਰੀ_ਅੰਕ & ADDR[ਸ਼ੁਰੂ_byte])
+			ਵਾਪਸ 0;
+		ਨਹੀਂਤਾਂ ਜੇ (len <= 8 - ਸ਼ੁਰੂ_ਦੋਆਧਾਰੀ_ਅੰਕ)
+			ਵਾਪਸ 1;
 
-		start_byte++;
-		len_bit = (len - mark_count) % 8;
-		len_byte = (len - mark_count) >> 3;
+		ਸ਼ੁਰੂ_byte++;
+		len_ਦੋਆਧਾਰੀ_ਅੰਕ = (len - mark_ਗਿਣਤੀ) % 8;
+		len_byte = (len - mark_ਗਿਣਤੀ) >> 3;
 	}
 
 	/*
 	 * The compared start block number or start inode number is
 	 * the first bit in a byte.
 	 */
-	if (len_bit != 0) {
+	ਜੇ (len_ਦੋਆਧਾਰੀ_ਅੰਕ != 0) {
 		/*
 		 * The compared end block number or end inode number is
 		 * not the last bit in a byte.
 		 */
-		for (mark_bit = len_bit - 1; mark_bit >= 0; mark_bit--)
-			last_bit |= 1 << mark_bit;
+		ਲਈ (mark_ਦੋਆਧਾਰੀ_ਅੰਕ = len_ਦੋਆਧਾਰੀ_ਅੰਕ - 1; mark_ਦੋਆਧਾਰੀ_ਅੰਕ >= 0; mark_ਦੋਆਧਾਰੀ_ਅੰਕ--)
+			ਆਖਰੀ_ਦੋਆਧਾਰੀ_ਅੰਕ |= 1 << mark_ਦੋਆਧਾਰੀ_ਅੰਕ;
 
 		/*
 		 * Compare blocks or inodes in the last byte.
 		 * If there is any marked bit, this function returns 0.
 		 */
-		if (last_bit & ADDR[start_byte + len_byte])
-			return 0;
-		else if (len_byte == 0)
-			return 1;
+		ਜੇ (ਆਖਰੀ_ਦੋਆਧਾਰੀ_ਅੰਕ & ADDR[ਸ਼ੁਰੂ_byte + len_byte])
+			ਵਾਪਸ 0;
+		ਨਹੀਂਤਾਂ ਜੇ (len_byte == 0)
+			ਵਾਪਸ 1;
 	}
 
 	/* Check whether all bytes are 0 */
-	return ext2fs_mem_is_zero(ADDR + start_byte, len_byte);
+	ਵਾਪਸ ext2fs_mem_is_zero(ADDR + ਸ਼ੁਰੂ_byte, len_byte);
 }
 
 
-static errcode_t ba_set_bmap_range(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, size_t num, void *in)
+ਸਥਿਰ errcode_t ba_ਸੈੱਟ_bmap_range(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 ਸ਼ੁਰੂ, size_t ਅੰਕ, ਖਾਲੀ *ਵਿੱਚ)
 {
-	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
+	ext2fs_ba_ਨਿੱਜੀ bp = (ext2fs_ba_ਨਿੱਜੀ) bitmap->ਨਿਜੀ;
 
-	memcpy (bp->bitarray + (start >> 3), in, (num + 7) >> 3);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ (bp->bitarray + (ਸ਼ੁਰੂ >> 3), ਵਿੱਚ, (ਅੰਕ + 7) >> 3);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static errcode_t ba_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, size_t num, void *out)
+ਸਥਿਰ errcode_t ba_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 ਸ਼ੁਰੂ, size_t ਅੰਕ, ਖਾਲੀ *ਬਾਹਰਲਾ)
 {
-	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
+	ext2fs_ba_ਨਿੱਜੀ bp = (ext2fs_ba_ਨਿੱਜੀ) bitmap->ਨਿਜੀ;
 
-	memcpy (out, bp->bitarray + (start >> 3), (num + 7) >> 3);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ (ਬਾਹਰਲਾ, bp->bitarray + (ਸ਼ੁਰੂ >> 3), (ਅੰਕ + 7) >> 3);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static void ba_clear_bmap(ext2fs_generic_bitmap_64 bitmap)
+ਸਥਿਰ ਖਾਲੀ ba_clear_bmap(ext2fs_generic_bitmap_64 bitmap)
 {
-	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
+	ext2fs_ba_ਨਿੱਜੀ bp = (ext2fs_ba_ਨਿੱਜੀ) bitmap->ਨਿਜੀ;
 
 	memset(bp->bitarray, 0,
-	       (size_t) (((bitmap->real_end - bitmap->start) / 8) + 1));
+	       (size_t) (((bitmap->real_ਸਿਰਾ - bitmap->ਸ਼ੁਰੂ) / 8) + 1));
 }
 
-#ifdef ENABLE_BMAP_STATS
-static void ba_print_stats(ext2fs_generic_bitmap_64 bitmap)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_BMAP_STATS
+ਸਥਿਰ ਖਾਲੀ ba_print_stats(ext2fs_generic_bitmap_64 bitmap)
 {
-	fprintf(stderr, "%16llu Bytes used by bitarray\n", (unsigned long long)
-		((bitmap->real_end - bitmap->start) >> 3) + 1 +
-		sizeof(struct ext2fs_ba_private_struct));
+	fprintf(stderr, "%16llu Bytes used by bitarray\n", (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)
+		((bitmap->real_ਸਿਰਾ - bitmap->ਸ਼ੁਰੂ) >> 3) + 1 +
+		ਆਕਾਰ(ਬਣਤਰ ext2fs_ba_ਨਿੱਜੀ_struct));
 }
-#else
-static void ba_print_stats(ext2fs_generic_bitmap_64 bitmap EXT2FS_ATTR((unused)))
+#ਨਹੀਂਤਾਂ
+ਸਥਿਰ ਖਾਲੀ ba_print_stats(ext2fs_generic_bitmap_64 bitmap EXT2FS_ATTR((ਅਣਵਰਤਿਆ)))
 {
 }
-#endif
+#ਜੇ_ਅੰਤ
 
 /* Find the first zero bit between start and end, inclusive. */
-static errcode_t ba_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
-				    __u64 start, __u64 end, __u64 *out)
+ਸਥਿਰ errcode_t ba_ਲੱਭੋ_ਪਹਿਲਾ_zero(ext2fs_generic_bitmap_64 bitmap,
+				    __u64 ਸ਼ੁਰੂ, __u64 ਸਿਰਾ, __u64 *ਬਾਹਰਲਾ)
 {
-	ext2fs_ba_private bp = (ext2fs_ba_private)bitmap->private;
-	unsigned long bitpos = start - bitmap->start;
-	unsigned long count = end - start + 1;
-	int byte_found = 0; /* whether a != 0xff byte has been found */
-	const unsigned char *pos;
-	unsigned long max_loop_count, i;
+	ext2fs_ba_ਨਿੱਜੀ bp = (ext2fs_ba_ਨਿੱਜੀ)bitmap->ਨਿਜੀ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ bitpos = ਸ਼ੁਰੂ - bitmap->ਸ਼ੁਰੂ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਗਿਣਤੀ_2 = ਸਿਰਾ - ਸ਼ੁਰੂ + 1;
+	ਪੂਰਨ byte_ਮਿਲਿਆ = 0; /* whether a != 0xff byte has been found */
+	ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *pos;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ max_loop_ਗਿਣਤੀ, i;
 
 	/* scan bits until we hit a byte boundary */
-	while ((bitpos & 0x7) != 0 && count > 0) {
-		if (!ext2fs_test_bit64(bitpos, bp->bitarray)) {
-			*out = bitpos + bitmap->start;
-			return 0;
+	ਜਦੋਂ ((bitpos & 0x7) != 0 && ਗਿਣਤੀ_2 > 0) {
+		ਜੇ (!ext2fs_test_bit64(bitpos, bp->bitarray)) {
+			*ਬਾਹਰਲਾ = bitpos + bitmap->ਸ਼ੁਰੂ;
+			ਵਾਪਸ 0;
 		}
 		bitpos++;
-		count--;
+		ਗਿਣਤੀ_2--;
 	}
 
-	if (!count)
-		return ENOENT;
+	ਜੇ (!ਗਿਣਤੀ_2)
+		ਵਾਪਸ ENOENT;
 
-	pos = ((unsigned char *)bp->bitarray) + (bitpos >> 3);
+	pos = ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)bp->bitarray) + (bitpos >> 3);
 	/* scan bytes until 8-byte (64-bit) aligned */
-	while (count >= 8 && (((uintptr_t)pos) & 0x07)) {
-		if (*pos != 0xff) {
-			byte_found = 1;
-			break;
+	ਜਦੋਂ (ਗਿਣਤੀ_2 >= 8 && (((uintptr_t)pos) & 0x07)) {
+		ਜੇ (*pos != 0xff) {
+			byte_ਮਿਲਿਆ = 1;
+			ਰੋਕੋ;
 		}
 		pos++;
-		count -= 8;
+		ਗਿਣਤੀ_2 -= 8;
 		bitpos += 8;
 	}
 
-	if (!byte_found) {
-		max_loop_count = count >> 6; /* 8-byte blocks */
-		i = max_loop_count;
-		while (i) {
-			if (*((const __u64 *)pos) != ((__u64)-1))
-				break;
+	ਜੇ (!byte_ਮਿਲਿਆ) {
+		max_loop_ਗਿਣਤੀ = ਗਿਣਤੀ_2 >> 6; /* 8-byte blocks */
+		i = max_loop_ਗਿਣਤੀ;
+		ਜਦੋਂ (i) {
+			ਜੇ (*((ਅਚਲ __u64 *)pos) != ((__u64)-1))
+				ਰੋਕੋ;
 			pos += 8;
 			i--;
 		}
-		count -= 64 * (max_loop_count - i);
-		bitpos += 64 * (max_loop_count - i);
+		ਗਿਣਤੀ_2 -= 64 * (max_loop_ਗਿਣਤੀ - i);
+		bitpos += 64 * (max_loop_ਗਿਣਤੀ - i);
 
-		max_loop_count = count >> 3;
-		i = max_loop_count;
-		while (i) {
-			if (*pos != 0xff) {
-				byte_found = 1;
-				break;
+		max_loop_ਗਿਣਤੀ = ਗਿਣਤੀ_2 >> 3;
+		i = max_loop_ਗਿਣਤੀ;
+		ਜਦੋਂ (i) {
+			ਜੇ (*pos != 0xff) {
+				byte_ਮਿਲਿਆ = 1;
+				ਰੋਕੋ;
 			}
 			pos++;
 			i--;
 		}
-		count -= 8 * (max_loop_count - i);
-		bitpos += 8 * (max_loop_count - i);
+		ਗਿਣਤੀ_2 -= 8 * (max_loop_ਗਿਣਤੀ - i);
+		bitpos += 8 * (max_loop_ਗਿਣਤੀ - i);
 	}
 
 	/* Here either count < 8 or byte_found == 1. */
-	while (count-- > 0) {
-		if (!ext2fs_test_bit64(bitpos, bp->bitarray)) {
-			*out = bitpos + bitmap->start;
-			return 0;
+	ਜਦੋਂ (ਗਿਣਤੀ_2-- > 0) {
+		ਜੇ (!ext2fs_test_bit64(bitpos, bp->bitarray)) {
+			*ਬਾਹਰਲਾ = bitpos + bitmap->ਸ਼ੁਰੂ;
+			ਵਾਪਸ 0;
 		}
 		bitpos++;
 	}
 
-	return ENOENT;
+	ਵਾਪਸ ENOENT;
 }
 
 /* Find the first one bit between start and end, inclusive. */
-static errcode_t ba_find_first_set(ext2fs_generic_bitmap_64 bitmap,
-				    __u64 start, __u64 end, __u64 *out)
+ਸਥਿਰ errcode_t ba_ਲੱਭੋ_ਪਹਿਲਾ_ਸੈੱਟ(ext2fs_generic_bitmap_64 bitmap,
+				    __u64 ਸ਼ੁਰੂ, __u64 ਸਿਰਾ, __u64 *ਬਾਹਰਲਾ)
 {
-	ext2fs_ba_private bp = (ext2fs_ba_private)bitmap->private;
-	unsigned long bitpos = start - bitmap->start;
-	unsigned long count = end - start + 1;
-	int byte_found = 0; /* whether a != 0xff byte has been found */
-	const unsigned char *pos;
-	unsigned long max_loop_count, i;
+	ext2fs_ba_ਨਿੱਜੀ bp = (ext2fs_ba_ਨਿੱਜੀ)bitmap->ਨਿਜੀ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ bitpos = ਸ਼ੁਰੂ - bitmap->ਸ਼ੁਰੂ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਗਿਣਤੀ_2 = ਸਿਰਾ - ਸ਼ੁਰੂ + 1;
+	ਪੂਰਨ byte_ਮਿਲਿਆ = 0; /* whether a != 0xff byte has been found */
+	ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *pos;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ max_loop_ਗਿਣਤੀ, i;
 
 	/* scan bits until we hit a byte boundary */
-	while ((bitpos & 0x7) != 0 && count > 0) {
-		if (ext2fs_test_bit64(bitpos, bp->bitarray)) {
-			*out = bitpos + bitmap->start;
-			return 0;
+	ਜਦੋਂ ((bitpos & 0x7) != 0 && ਗਿਣਤੀ_2 > 0) {
+		ਜੇ (ext2fs_test_bit64(bitpos, bp->bitarray)) {
+			*ਬਾਹਰਲਾ = bitpos + bitmap->ਸ਼ੁਰੂ;
+			ਵਾਪਸ 0;
 		}
 		bitpos++;
-		count--;
+		ਗਿਣਤੀ_2--;
 	}
 
-	if (!count)
-		return ENOENT;
+	ਜੇ (!ਗਿਣਤੀ_2)
+		ਵਾਪਸ ENOENT;
 
-	pos = ((unsigned char *)bp->bitarray) + (bitpos >> 3);
+	pos = ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)bp->bitarray) + (bitpos >> 3);
 	/* scan bytes until 8-byte (64-bit) aligned */
-	while (count >= 8 && (((uintptr_t)pos) & 0x07)) {
-		if (*pos != 0) {
-			byte_found = 1;
-			break;
+	ਜਦੋਂ (ਗਿਣਤੀ_2 >= 8 && (((uintptr_t)pos) & 0x07)) {
+		ਜੇ (*pos != 0) {
+			byte_ਮਿਲਿਆ = 1;
+			ਰੋਕੋ;
 		}
 		pos++;
-		count -= 8;
+		ਗਿਣਤੀ_2 -= 8;
 		bitpos += 8;
 	}
 
-	if (!byte_found) {
-		max_loop_count = count >> 6; /* 8-byte blocks */
-		i = max_loop_count;
-		while (i) {
-			if (*((const __u64 *)pos) != 0)
-				break;
+	ਜੇ (!byte_ਮਿਲਿਆ) {
+		max_loop_ਗਿਣਤੀ = ਗਿਣਤੀ_2 >> 6; /* 8-byte blocks */
+		i = max_loop_ਗਿਣਤੀ;
+		ਜਦੋਂ (i) {
+			ਜੇ (*((ਅਚਲ __u64 *)pos) != 0)
+				ਰੋਕੋ;
 			pos += 8;
 			i--;
 		}
-		count -= 64 * (max_loop_count - i);
-		bitpos += 64 * (max_loop_count - i);
+		ਗਿਣਤੀ_2 -= 64 * (max_loop_ਗਿਣਤੀ - i);
+		bitpos += 64 * (max_loop_ਗਿਣਤੀ - i);
 
-		max_loop_count = count >> 3;
-		i = max_loop_count;
-		while (i) {
-			if (*pos != 0) {
-				byte_found = 1;
-				break;
+		max_loop_ਗਿਣਤੀ = ਗਿਣਤੀ_2 >> 3;
+		i = max_loop_ਗਿਣਤੀ;
+		ਜਦੋਂ (i) {
+			ਜੇ (*pos != 0) {
+				byte_ਮਿਲਿਆ = 1;
+				ਰੋਕੋ;
 			}
 			pos++;
 			i--;
 		}
-		count -= 8 * (max_loop_count - i);
-		bitpos += 8 * (max_loop_count - i);
+		ਗਿਣਤੀ_2 -= 8 * (max_loop_ਗਿਣਤੀ - i);
+		bitpos += 8 * (max_loop_ਗਿਣਤੀ - i);
 	}
 
 	/* Here either count < 8 or byte_found == 1. */
-	while (count-- > 0) {
-		if (ext2fs_test_bit64(bitpos, bp->bitarray)) {
-			*out = bitpos + bitmap->start;
-			return 0;
+	ਜਦੋਂ (ਗਿਣਤੀ_2-- > 0) {
+		ਜੇ (ext2fs_test_bit64(bitpos, bp->bitarray)) {
+			*ਬਾਹਰਲਾ = bitpos + bitmap->ਸ਼ੁਰੂ;
+			ਵਾਪਸ 0;
 		}
 		bitpos++;
 	}
 
-	return ENOENT;
+	ਵਾਪਸ ENOENT;
 }
 
-struct ext2_bitmap_ops ext2fs_blkmap64_bitarray = {
+ਬਣਤਰ ext2_bitmap_ops ext2fs_blkmap64_bitarray = {
 	.type = EXT2FS_BMAP64_BITARRAY,
 	.new_bmap = ba_new_bmap,
 	.free_bmap = ba_free_bmap,
@@ -483,10 +483,10 @@ struct ext2_bitmap_ops ext2fs_blkmap64_bitarray = {
 	.test_clear_bmap_extent = ba_test_clear_bmap_extent,
 	.mark_bmap_extent = ba_mark_bmap_extent,
 	.unmark_bmap_extent = ba_unmark_bmap_extent,
-	.set_bmap_range = ba_set_bmap_range,
+	.ਸੈੱਟ_bmap_range = ba_ਸੈੱਟ_bmap_range,
 	.get_bmap_range = ba_get_bmap_range,
 	.clear_bmap = ba_clear_bmap,
 	.print_stats = ba_print_stats,
-	.find_first_zero = ba_find_first_zero,
-	.find_first_set = ba_find_first_set
+	.ਲੱਭੋ_ਪਹਿਲਾ_zero = ba_ਲੱਭੋ_ਪਹਿਲਾ_zero,
+	.ਲੱਭੋ_ਪਹਿਲਾ_ਸੈੱਟ = ba_ਲੱਭੋ_ਪਹਿਲਾ_ਸੈੱਟ
 };

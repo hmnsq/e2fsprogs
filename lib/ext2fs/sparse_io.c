@@ -1,527 +1,527 @@
-#include "config.h"
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdint.h>
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fs.h"
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ O_ਦੁਆਧਾਰੀ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ O_ਦੁਆਧਾਰੀ 0
+#ਜੇ_ਅੰਤ
 
-#if !defined(ENABLE_LIBSPARSE)
-static errcode_t sparse_open(const char *name EXT2FS_ATTR((unused)),
-			     int flags EXT2FS_ATTR((unused)),
-			     io_channel *channel EXT2FS_ATTR((unused)))
+#ਜੇ !defined(ENABLE_LIBSPARSE)
+ਸਥਿਰ errcode_t sparse_open(ਅਚਲ ਅੱਖਰ *name EXT2FS_ATTR((ਅਣਵਰਤਿਆ)),
+			     ਪੂਰਨ flags EXT2FS_ATTR((ਅਣਵਰਤਿਆ)),
+			     io_channel *channel EXT2FS_ATTR((ਅਣਵਰਤਿਆ)))
 {
-	return EXT2_ET_UNIMPLEMENTED;
+	ਵਾਪਸ EXT2_ET_UNIMPLEMENTED;
 }
-static errcode_t sparse_close(io_channel channel EXT2FS_ATTR((unused)))
+ਸਥਿਰ errcode_t sparse_close(io_channel channel EXT2FS_ATTR((ਅਣਵਰਤਿਆ)))
 {
-	return EXT2_ET_UNIMPLEMENTED;
+	ਵਾਪਸ EXT2_ET_UNIMPLEMENTED;
 }
-static struct struct_io_manager struct_sparse_manager = {
+ਸਥਿਰ ਬਣਤਰ struct_io_manager struct_sparse_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse I/O Manager",
 	.open			= sparse_open,
 	.close			= sparse_close,
 };
-static struct struct_io_manager struct_sparsefd_manager = {
+ਸਥਿਰ ਬਣਤਰ struct_io_manager struct_sparsefd_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse fd I/O Manager",
 	.open			= sparse_open,
 	.close			= sparse_close,
 };
-#else
-#include <sparse/sparse.h>
+#ਨਹੀਂਤਾਂ
+#ਅਨ੍ਤਰ੍ਭਾਵ <sparse/sparse.h>
 
-struct sparse_map {
-	int			fd;
-	char			**blocks;
-	int			block_size;
-	uint64_t		blocks_count;
-	char			*file;
-	struct sparse_file	*sparse_file;
+ਬਣਤਰ sparse_map {
+	ਪੂਰਨ			fd;
+	ਅੱਖਰ			**ਖੰਡਾਂ;
+	ਪੂਰਨ			ਖੰਡ_ਮਾਪ;
+	uint64_t		ਖੰਡਾਂ_ਗਿਣਤੀ;
+	ਅੱਖਰ			*file;
+	ਬਣਤਰ sparse_file	*sparse_file;
 	io_channel		channel;
 };
 
-struct sparse_io_params {
-	int			fd;
-	char			*file;
-	uint64_t		blocks_count;
-	unsigned int		block_size;
+ਬਣਤਰ sparse_io_params {
+	ਪੂਰਨ			fd;
+	ਅੱਖਰ			*file;
+	uint64_t		ਖੰਡਾਂ_ਗਿਣਤੀ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		ਖੰਡ_ਮਾਪ;
 };
 
-static errcode_t sparse_write_blk(io_channel channel, unsigned long block,
-				  int count, const void *buf);
+ਸਥਿਰ errcode_t sparse_write_blk(io_channel channel, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਖੰਡ,
+				  ਪੂਰਨ ਗਿਣਤੀ_2, ਅਚਲ ਖਾਲੀ *buf);
 
-static void free_sparse_blocks(struct sparse_map *sm)
+ਸਥਿਰ ਖਾਲੀ free_sparse_ਖੰਡਾਂ(ਬਣਤਰ sparse_map *sm)
 {
 	uint64_t i;
 
-	for (i = 0; i < sm->blocks_count; ++i)
-		free(sm->blocks[i]);
-	free(sm->blocks);
-	sm->blocks = NULL;
+	ਲਈ (i = 0; i < sm->ਖੰਡਾਂ_ਗਿਣਤੀ; ++i)
+		ਮੁਕਤ(sm->ਖੰਡਾਂ[i]);
+	ਮੁਕਤ(sm->ਖੰਡਾਂ);
+	sm->ਖੰਡਾਂ = ਨਿਰਾ;
 }
 
-static int sparse_import_segment(void *priv, const void *data, size_t len,
-				 unsigned int block, unsigned int nr_blocks)
+ਸਥਿਰ ਪੂਰਨ sparse_import_segment(ਖਾਲੀ *priv, ਅਚਲ ਖਾਲੀ *ਅੰਕੜੇ, size_t len,
+				 ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਖੰਡ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr_ਖੰਡਾਂ)
 {
-	struct sparse_map *sm = priv;
+	ਬਣਤਰ sparse_map *sm = priv;
 
 	/* Ignore chunk headers, only write the data */
-	if (!nr_blocks || len % sm->block_size)
-		return 0;
+	ਜੇ (!nr_ਖੰਡਾਂ || len % sm->ਖੰਡ_ਮਾਪ)
+		ਵਾਪਸ 0;
 
-	return sparse_write_blk(sm->channel, block, nr_blocks, data);
+	ਵਾਪਸ sparse_write_blk(sm->channel, ਖੰਡ, nr_ਖੰਡਾਂ, ਅੰਕੜੇ);
 }
 
-static errcode_t io_manager_import_sparse(struct sparse_io_params *params,
-					  struct sparse_map *sm, io_channel io)
+ਸਥਿਰ errcode_t io_manager_import_sparse(ਬਣਤਰ sparse_io_params *params,
+					  ਬਣਤਰ sparse_map *sm, io_channel io)
 {
-	int fd;
+	ਪੂਰਨ fd;
 	errcode_t retval;
-	struct sparse_file *sparse_file;
+	ਬਣਤਰ sparse_file *sparse_file;
 
-	if (params->fd < 0) {
+	ਜੇ (params->fd < 0) {
 		fd = open(params->file, O_RDONLY);
-		if (fd < 0) {
+		ਜੇ (fd < 0) {
 			retval = -1;
-			goto err_open;
+			ਜਾਓ err_open;
 		}
-	} else
+	} ਨਹੀਂਤਾਂ
 		fd = params->fd;
 	sparse_file = sparse_file_import(fd, false, false);
-	if (!sparse_file) {
+	ਜੇ (!sparse_file) {
 		retval = -1;
-		goto err_sparse;
+		ਜਾਓ err_sparse;
 	}
 
-	sm->block_size = sparse_file_block_size(sparse_file);
-	sm->blocks_count = (sparse_file_len(sparse_file, 0, 0) - 1)
-				/ sm->block_size + 1;
-	sm->blocks = calloc(sm->blocks_count, sizeof(char*));
-	if (!sm->blocks) {
+	sm->ਖੰਡ_ਮਾਪ = sparse_file_ਖੰਡ_ਮਾਪ(sparse_file);
+	sm->ਖੰਡਾਂ_ਗਿਣਤੀ = (sparse_file_len(sparse_file, 0, 0) - 1)
+				/ sm->ਖੰਡ_ਮਾਪ + 1;
+	sm->ਖੰਡਾਂ = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(sm->ਖੰਡਾਂ_ਗਿਣਤੀ, ਆਕਾਰ(ਅੱਖਰ*));
+	ਜੇ (!sm->ਖੰਡਾਂ) {
 		retval = -1;
-		goto err_alloc;
+		ਜਾਓ err_alloc;
 	}
-	io->block_size = sm->block_size;
+	io->ਖੰਡ_ਮਾਪ = sm->ਖੰਡ_ਮਾਪ;
 
 	retval = sparse_file_foreach_chunk(sparse_file, true, false,
 					   sparse_import_segment, sm);
 
-	if (retval)
-		free_sparse_blocks(sm);
+	ਜੇ (retval)
+		free_sparse_ਖੰਡਾਂ(sm);
 err_alloc:
 	sparse_file_destroy(sparse_file);
 err_sparse:
 	close(fd);
 err_open:
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-static errcode_t io_manager_configure(struct sparse_io_params *params,
-				      int flags, io_channel io)
+ਸਥਿਰ errcode_t io_manager_configure(ਬਣਤਰ sparse_io_params *params,
+				      ਪੂਰਨ flags, io_channel io)
 {
 	errcode_t retval;
-	uint64_t img_size;
-	struct sparse_map *sm = calloc(1, sizeof(*sm));
-	if (!sm)
-		return EXT2_ET_NO_MEMORY;
+	uint64_t img_ਮਾਪ;
+	ਬਣਤਰ sparse_map *sm = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(*sm));
+	ਜੇ (!sm)
+		ਵਾਪਸ EXT2_ET_NO_ਸਮ੍ਰਿਤੀ;
 
 	sm->file = params->file;
 	sm->channel = io;
-	io->private_data = sm;
+	io->ਨਿੱਜੀ_ਅੰਕੜੇ = sm;
 	retval = io_manager_import_sparse(params, sm, io);
-	if (retval) {
-		if (!params->block_size || !params->blocks_count) {
+	ਜੇ (retval) {
+		ਜੇ (!params->ਖੰਡ_ਮਾਪ || !params->ਖੰਡਾਂ_ਗਿਣਤੀ) {
 			retval = EINVAL;
-			goto err_params;
+			ਜਾਓ err_params;
 		}
-		sm->block_size = params->block_size;
-		sm->blocks_count = params->blocks_count;
-		sm->blocks = calloc(params->blocks_count, sizeof(void*));
-		if (!sm->blocks) {
-			retval = EXT2_ET_NO_MEMORY;
-			goto err_alloc;
+		sm->ਖੰਡ_ਮਾਪ = params->ਖੰਡ_ਮਾਪ;
+		sm->ਖੰਡਾਂ_ਗਿਣਤੀ = params->ਖੰਡਾਂ_ਗਿਣਤੀ;
+		sm->ਖੰਡਾਂ = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(params->ਖੰਡਾਂ_ਗਿਣਤੀ, ਆਕਾਰ(ਖਾਲੀ*));
+		ਜੇ (!sm->ਖੰਡਾਂ) {
+			retval = EXT2_ET_NO_ਸਮ੍ਰਿਤੀ;
+			ਜਾਓ err_alloc;
 		}
 	}
-	io->block_size = sm->block_size;
-	img_size = (uint64_t)sm->block_size * sm->blocks_count;
+	io->ਖੰਡ_ਮਾਪ = sm->ਖੰਡ_ਮਾਪ;
+	img_ਮਾਪ = (uint64_t)sm->ਖੰਡ_ਮਾਪ * sm->ਖੰਡਾਂ_ਗਿਣਤੀ;
 
-	if (flags & IO_FLAG_RW) {
-		sm->sparse_file = sparse_file_new(sm->block_size, img_size);
-		if (!sm->sparse_file) {
-			retval = EXT2_ET_NO_MEMORY;
-			goto err_alloc;
+	ਜੇ (flags & IO_FLAG_RW) {
+		sm->sparse_file = sparse_file_new(sm->ਖੰਡ_ਮਾਪ, img_ਮਾਪ);
+		ਜੇ (!sm->sparse_file) {
+			retval = EXT2_ET_NO_ਸਮ੍ਰਿਤੀ;
+			ਜਾਓ err_alloc;
 		}
-		if (params->fd < 0) {
-			sm->fd = open(params->file, O_CREAT | O_RDWR | O_TRUNC | O_BINARY,
+		ਜੇ (params->fd < 0) {
+			sm->fd = open(params->file, O_CREAT | O_RDWR | O_TRUNC | O_ਦੁਆਧਾਰੀ,
 				      0644);
-			if (sm->fd < 0) {
+			ਜੇ (sm->fd < 0) {
 				retval = errno;
-				goto err_open;
+				ਜਾਓ err_open;
 			}
-		} else
+		} ਨਹੀਂਤਾਂ
 			sm->fd = params->fd;
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		sm->fd = -1;
-		sm->sparse_file = NULL;
+		sm->sparse_file = ਨਿਰਾ;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 
 err_open:
 	sparse_file_destroy(sm->sparse_file);
 err_alloc:
-	free_sparse_blocks(sm);
+	free_sparse_ਖੰਡਾਂ(sm);
 err_params:
-	free(sm);
-	return retval;
+	ਮੁਕਤ(sm);
+	ਵਾਪਸ retval;
 }
 
-static errcode_t sparse_open_channel(struct sparse_io_params *sparse_params,
-				     int flags, io_channel *channel)
+ਸਥਿਰ errcode_t sparse_open_channel(ਬਣਤਰ sparse_io_params *sparse_params,
+				     ਪੂਰਨ flags, io_channel *channel)
 {
 	errcode_t retval;
 	io_channel io;
 
-	io = calloc(1, sizeof(struct struct_io_channel));
+	io = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(ਬਣਤਰ struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
-	io->block_size = 0;
+	io->ਖੰਡ_ਮਾਪ = 0;
 	io->refcount = 1;
 
 	retval = io_manager_configure(sparse_params, flags, io);
-	if (retval) {
-		free(io);
-		return retval;
+	ਜੇ (retval) {
+		ਮੁਕਤ(io);
+		ਵਾਪਸ retval;
 	}
 
 	*channel = io;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static errcode_t read_sparse_argv(const char *name, bool is_fd,
-				  struct sparse_io_params *sparse_params)
+ਸਥਿਰ errcode_t read_sparse_argv(ਅਚਲ ਅੱਖਰ *name, bool is_fd,
+				  ਬਣਤਰ sparse_io_params *sparse_params)
 {
-	int ret;
+	ਪੂਰਨ ret;
 	sparse_params->fd = -1;
-	sparse_params->block_size = 0;
-	sparse_params->blocks_count = 0;
+	sparse_params->ਖੰਡ_ਮਾਪ = 0;
+	sparse_params->ਖੰਡਾਂ_ਗਿਣਤੀ = 0;
 
-	sparse_params->file = malloc(strlen(name) + 1);
-	if (!sparse_params->file) {
-		fprintf(stderr, "failed to alloc %zu\n", strlen(name) + 1);
-		return EXT2_ET_NO_MEMORY;
+	sparse_params->file = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਲੜੀ_ਲੰਬਾਈ(name) + 1);
+	ਜੇ (!sparse_params->file) {
+		fprintf(stderr, "failed to alloc %zu\n", ਲੜੀ_ਲੰਬਾਈ(name) + 1);
+		ਵਾਪਸ EXT2_ET_NO_ਸਮ੍ਰਿਤੀ;
 	}
 
-	if (is_fd) {
-		ret = sscanf(name, "(%d):%llu:%u", &sparse_params->fd,
-			     (unsigned long long *)&sparse_params->blocks_count,
-			     &sparse_params->block_size);
-	} else {
-		ret = sscanf(name, "(%[^)])%*[:]%llu%*[:]%u", sparse_params->file,
-			     (unsigned long long *)&sparse_params->blocks_count,
-			     &sparse_params->block_size);
+	ਜੇ (is_fd) {
+		ret = ਲੜੀ_ਤੋਂ_ਪੜ੍ਹੋ(name, "(%d):%llu:%u", &sparse_params->fd,
+			     (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ *)&sparse_params->ਖੰਡਾਂ_ਗਿਣਤੀ,
+			     &sparse_params->ਖੰਡ_ਮਾਪ);
+	} ਨਹੀਂਤਾਂ {
+		ret = ਲੜੀ_ਤੋਂ_ਪੜ੍ਹੋ(name, "(%[^)])%*[:]%llu%*[:]%u", sparse_params->file,
+			     (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ *)&sparse_params->ਖੰਡਾਂ_ਗਿਣਤੀ,
+			     &sparse_params->ਖੰਡ_ਮਾਪ);
 	}
 
-	if (ret < 1) {
-		free(sparse_params->file);
-		return EINVAL;
+	ਜੇ (ret < 1) {
+		ਮੁਕਤ(sparse_params->file);
+		ਵਾਪਸ EINVAL;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static errcode_t sparse_open(const char *name, int flags, io_channel *channel)
+ਸਥਿਰ errcode_t sparse_open(ਅਚਲ ਅੱਖਰ *name, ਪੂਰਨ flags, io_channel *channel)
 {
 	errcode_t retval;
-	struct sparse_io_params sparse_params;
+	ਬਣਤਰ sparse_io_params sparse_params;
 
 	retval = read_sparse_argv(name, false, &sparse_params);
-	if (retval)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	ਜੇ (retval)
+		ਵਾਪਸ EXT2_ET_BAD_DEVICE_NAME;
 
 	retval = sparse_open_channel(&sparse_params, flags, channel);
-	if (retval)
-		return retval;
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 	(*channel)->manager = sparse_io_manager;
 
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-static errcode_t sparsefd_open(const char *name, int flags, io_channel *channel)
+ਸਥਿਰ errcode_t sparsefd_open(ਅਚਲ ਅੱਖਰ *name, ਪੂਰਨ flags, io_channel *channel)
 {
 	errcode_t retval;
-	struct sparse_io_params sparse_params;
+	ਬਣਤਰ sparse_io_params sparse_params;
 
 	retval = read_sparse_argv(name, true, &sparse_params);
-	if (retval)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	ਜੇ (retval)
+		ਵਾਪਸ EXT2_ET_BAD_DEVICE_NAME;
 
 	retval = sparse_open_channel(&sparse_params, flags, channel);
-	if (retval)
-		return retval;
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 	(*channel)->manager = sparsefd_io_manager;
 
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-static errcode_t sparse_merge_blocks(struct sparse_map *sm, uint64_t start,
-					uint64_t num)
+ਸਥਿਰ errcode_t sparse_ਮਿਲਾਓ_ਖੰਡਾਂ(ਬਣਤਰ sparse_map *sm, uint64_t ਸ਼ੁਰੂ,
+					uint64_t ਅੰਕ)
 {
-	char *buf;
+	ਅੱਖਰ *buf;
 	uint64_t i;
-	unsigned int block_size = sm->block_size;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਖੰਡ_ਮਾਪ = sm->ਖੰਡ_ਮਾਪ;
 	errcode_t retval = 0;
 
-	buf = calloc(num, block_size);
-	if (!buf) {
+	buf = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਅੰਕ, ਖੰਡ_ਮਾਪ);
+	ਜੇ (!buf) {
 		fprintf(stderr, "failed to alloc %llu\n",
-			(unsigned long long)num * block_size);
-		return EXT2_ET_NO_MEMORY;
+			(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)ਅੰਕ * ਖੰਡ_ਮਾਪ);
+		ਵਾਪਸ EXT2_ET_NO_ਸਮ੍ਰਿਤੀ;
 	}
 
-	for (i = 0; i < num; i++) {
-		memcpy(buf + i * block_size, sm->blocks[start + i] , block_size);
-		free(sm->blocks[start + i]);
-		sm->blocks[start + i] = NULL;
+	ਲਈ (i = 0; i < ਅੰਕ; i++) {
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(buf + i * ਖੰਡ_ਮਾਪ, sm->ਖੰਡਾਂ[ਸ਼ੁਰੂ + i] , ਖੰਡ_ਮਾਪ);
+		ਮੁਕਤ(sm->ਖੰਡਾਂ[ਸ਼ੁਰੂ + i]);
+		sm->ਖੰਡਾਂ[ਸ਼ੁਰੂ + i] = ਨਿਰਾ;
 	}
 
 	/* free_sparse_blocks will release this buf. */
-	sm->blocks[start] = buf;
+	sm->ਖੰਡਾਂ[ਸ਼ੁਰੂ] = buf;
 
-	retval = sparse_file_add_data(sm->sparse_file, sm->blocks[start],
-					block_size * num, start);
+	retval = sparse_file_ਜੋੜੋ_ਅੰਕੜੇ(sm->sparse_file, sm->ਖੰਡਾਂ[ਸ਼ੁਰੂ],
+					ਖੰਡ_ਮਾਪ * ਅੰਕ, ਸ਼ੁਰੂ);
 
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-static errcode_t sparse_close_channel(io_channel channel)
+ਸਥਿਰ errcode_t sparse_close_channel(io_channel channel)
 {
 	uint64_t i;
 	errcode_t retval = 0;
-	struct sparse_map *sm = channel->private_data;
+	ਬਣਤਰ sparse_map *sm = channel->ਨਿੱਜੀ_ਅੰਕੜੇ;
 
-	if (sm->sparse_file) {
-		int64_t chunk_start = (sm->blocks[0] == NULL) ? -1 : 0;
-		for (i = 0; i < sm->blocks_count; ++i) {
-			if (!sm->blocks[i] && chunk_start != -1) {
-				retval = sparse_merge_blocks(sm, chunk_start, i - chunk_start);
-				chunk_start = -1;
-			} else if (sm->blocks[i] && chunk_start == -1) {
-				chunk_start = i;
+	ਜੇ (sm->sparse_file) {
+		int64_t chunk_ਸ਼ੁਰੂ = (sm->ਖੰਡਾਂ[0] == ਨਿਰਾ) ? -1 : 0;
+		ਲਈ (i = 0; i < sm->ਖੰਡਾਂ_ਗਿਣਤੀ; ++i) {
+			ਜੇ (!sm->ਖੰਡਾਂ[i] && chunk_ਸ਼ੁਰੂ != -1) {
+				retval = sparse_ਮਿਲਾਓ_ਖੰਡਾਂ(sm, chunk_ਸ਼ੁਰੂ, i - chunk_ਸ਼ੁਰੂ);
+				chunk_ਸ਼ੁਰੂ = -1;
+			} ਨਹੀਂਤਾਂ ਜੇ (sm->ਖੰਡਾਂ[i] && chunk_ਸ਼ੁਰੂ == -1) {
+				chunk_ਸ਼ੁਰੂ = i;
 			}
-			if (retval)
-				goto ret;
+			ਜੇ (retval)
+				ਜਾਓ ret;
 		}
-		if (chunk_start != -1) {
-			retval = sparse_merge_blocks(sm, chunk_start,
-							sm->blocks_count - chunk_start);
-			if (retval)
-				goto ret;
+		ਜੇ (chunk_ਸ਼ੁਰੂ != -1) {
+			retval = sparse_ਮਿਲਾਓ_ਖੰਡਾਂ(sm, chunk_ਸ਼ੁਰੂ,
+							sm->ਖੰਡਾਂ_ਗਿਣਤੀ - chunk_ਸ਼ੁਰੂ);
+			ਜੇ (retval)
+				ਜਾਓ ret;
 		}
 		retval = sparse_file_write(sm->sparse_file, sm->fd,
-					   /*gzip*/0, /*sparse*/1, /*crc*/0);
+					   /*gzip*/0, /*sparse*/1, /*ਚੱਕਰੀ_ਜਾਂਚ*/0);
 	}
 
 ret:
-	if (sm->sparse_file)
+	ਜੇ (sm->sparse_file)
 		sparse_file_destroy(sm->sparse_file);
-	free_sparse_blocks(sm);
-	free(sm->file);
-	free(sm);
-	free(channel);
-	return retval;
+	free_sparse_ਖੰਡਾਂ(sm);
+	ਮੁਕਤ(sm->file);
+	ਮੁਕਤ(sm);
+	ਮੁਕਤ(channel);
+	ਵਾਪਸ retval;
 }
 
-static errcode_t sparse_close(io_channel channel)
+ਸਥਿਰ errcode_t sparse_close(io_channel channel)
 {
 	errcode_t retval;
-	struct sparse_map *sm = channel->private_data;
-	int fd = sm->fd;
+	ਬਣਤਰ sparse_map *sm = channel->ਨਿੱਜੀ_ਅੰਕੜੇ;
+	ਪੂਰਨ fd = sm->fd;
 
 	retval = sparse_close_channel(channel);
-	if (fd >= 0)
+	ਜੇ (fd >= 0)
 		close(fd);
 
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-static errcode_t sparse_set_blksize(io_channel channel, int blksize)
+ਸਥਿਰ errcode_t sparse_ਸੈੱਟ_blksize(io_channel channel, ਪੂਰਨ blksize)
 {
-	channel->block_size = blksize;
-	return 0;
+	channel->ਖੰਡ_ਮਾਪ = blksize;
+	ਵਾਪਸ 0;
 }
 
-static blk64_t block_to_sparse_block(blk64_t block, blk64_t *offset,
-			       io_channel channel, struct sparse_map *sm)
+ਸਥਿਰ blk64_t ਖੰਡ_ਮੰਜ਼ਿਲ_sparse_ਖੰਡ(blk64_t ਖੰਡ, blk64_t *ਵਿੱਥ,
+			       io_channel channel, ਬਣਤਰ sparse_map *sm)
 {
-	int ratio;
-	blk64_t ret = block;
+	ਪੂਰਨ ਅਨੁਪਾਤ;
+	blk64_t ret = ਖੰਡ;
 
-	ratio = sm->block_size / channel->block_size;
-	ret /= ratio;
-	*offset = (block % ratio) * channel->block_size;
+	ਅਨੁਪਾਤ = sm->ਖੰਡ_ਮਾਪ / channel->ਖੰਡ_ਮਾਪ;
+	ret /= ਅਨੁਪਾਤ;
+	*ਵਿੱਥ = (ਖੰਡ % ਅਨੁਪਾਤ) * channel->ਖੰਡ_ਮਾਪ;
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-static errcode_t check_block_size(io_channel channel, struct sparse_map *sm)
+ਸਥਿਰ errcode_t check_ਖੰਡ_ਮਾਪ(io_channel channel, ਬਣਤਰ sparse_map *sm)
 {
-	if (sm->block_size >= channel->block_size)
-		return 0;
-	return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	ਜੇ (sm->ਖੰਡ_ਮਾਪ >= channel->ਖੰਡ_ਮਾਪ)
+		ਵਾਪਸ 0;
+	ਵਾਪਸ EXT2_ET_UNEXPECTED_ਖੰਡ_ਮਾਪ;
 }
 
-static errcode_t sparse_read_blk64(io_channel channel, blk64_t block,
-				   int count, void *buf)
+ਸਥਿਰ errcode_t sparse_read_blk64(io_channel channel, blk64_t ਖੰਡ,
+				   ਪੂਰਨ ਗਿਣਤੀ_2, ਖਾਲੀ *buf)
 {
-	int i;
-	char *out = buf;
-	blk64_t offset = 0, cur_block;
-	struct sparse_map *sm = channel->private_data;
+	ਪੂਰਨ i;
+	ਅੱਖਰ *ਬਾਹਰਲਾ = buf;
+	blk64_t ਵਿੱਥ = 0, cur_ਖੰਡ;
+	ਬਣਤਰ sparse_map *sm = channel->ਨਿੱਜੀ_ਅੰਕੜੇ;
 
-	if (check_block_size(channel, sm))
-		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	ਜੇ (check_ਖੰਡ_ਮਾਪ(channel, sm))
+		ਵਾਪਸ EXT2_ET_UNEXPECTED_ਖੰਡ_ਮਾਪ;
 
-	if (count < 0) { //partial read
-		count = -count;
-		cur_block = block_to_sparse_block(block, &offset, channel, sm);
-		if (sm->blocks[cur_block])
-			memcpy(out, (sm->blocks[cur_block]) + offset, count);
-		else
-			memset(out, 0, count);
-	} else {
-		for (i = 0; i < count; ++i) {
-			cur_block = block_to_sparse_block(block + i, &offset,
+	ਜੇ (ਗਿਣਤੀ_2 < 0) { //partial read
+		ਗਿਣਤੀ_2 = -ਗਿਣਤੀ_2;
+		cur_ਖੰਡ = ਖੰਡ_ਮੰਜ਼ਿਲ_sparse_ਖੰਡ(ਖੰਡ, &ਵਿੱਥ, channel, sm);
+		ਜੇ (sm->ਖੰਡਾਂ[cur_ਖੰਡ])
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(ਬਾਹਰਲਾ, (sm->ਖੰਡਾਂ[cur_ਖੰਡ]) + ਵਿੱਥ, ਗਿਣਤੀ_2);
+		ਨਹੀਂਤਾਂ
+			memset(ਬਾਹਰਲਾ, 0, ਗਿਣਤੀ_2);
+	} ਨਹੀਂਤਾਂ {
+		ਲਈ (i = 0; i < ਗਿਣਤੀ_2; ++i) {
+			cur_ਖੰਡ = ਖੰਡ_ਮੰਜ਼ਿਲ_sparse_ਖੰਡ(ਖੰਡ + i, &ਵਿੱਥ,
 						    channel, sm);
-			if (sm->blocks[cur_block])
-				memcpy(out + (i * channel->block_size),
-				       sm->blocks[cur_block] + offset,
-				       channel->block_size);
-			else if (sm->blocks)
-				memset(out + (i * channel->block_size), 0,
-				       channel->block_size);
+			ਜੇ (sm->ਖੰਡਾਂ[cur_ਖੰਡ])
+				ਸਮ੍ਰਿਤੀ_ਨਕਲ(ਬਾਹਰਲਾ + (i * channel->ਖੰਡ_ਮਾਪ),
+				       sm->ਖੰਡਾਂ[cur_ਖੰਡ] + ਵਿੱਥ,
+				       channel->ਖੰਡ_ਮਾਪ);
+			ਨਹੀਂਤਾਂ ਜੇ (sm->ਖੰਡਾਂ)
+				memset(ਬਾਹਰਲਾ + (i * channel->ਖੰਡ_ਮਾਪ), 0,
+				       channel->ਖੰਡ_ਮਾਪ);
 		}
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static errcode_t sparse_read_blk(io_channel channel, unsigned long block,
-				 int count, void *buf)
+ਸਥਿਰ errcode_t sparse_read_blk(io_channel channel, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਖੰਡ,
+				 ਪੂਰਨ ਗਿਣਤੀ_2, ਖਾਲੀ *buf)
 {
-	return sparse_read_blk64(channel, block, count, buf);
+	ਵਾਪਸ sparse_read_blk64(channel, ਖੰਡ, ਗਿਣਤੀ_2, buf);
 }
 
-static errcode_t sparse_write_blk64(io_channel channel, blk64_t block,
-				    int count, const void *buf)
+ਸਥਿਰ errcode_t sparse_write_blk64(io_channel channel, blk64_t ਖੰਡ,
+				    ਪੂਰਨ ਗਿਣਤੀ_2, ਅਚਲ ਖਾਲੀ *buf)
 {
-	int i;
-	blk64_t offset = 0, cur_block;
-	const char *in = buf;
-	struct sparse_map *sm = channel->private_data;
+	ਪੂਰਨ i;
+	blk64_t ਵਿੱਥ = 0, cur_ਖੰਡ;
+	ਅਚਲ ਅੱਖਰ *ਵਿੱਚ = buf;
+	ਬਣਤਰ sparse_map *sm = channel->ਨਿੱਜੀ_ਅੰਕੜੇ;
 
-	if (check_block_size(channel, sm))
-		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	ਜੇ (check_ਖੰਡ_ਮਾਪ(channel, sm))
+		ਵਾਪਸ EXT2_ET_UNEXPECTED_ਖੰਡ_ਮਾਪ;
 
-	if (count < 0) { //partial write
-		count = -count;
-		cur_block = block_to_sparse_block(block, &offset, channel,
+	ਜੇ (ਗਿਣਤੀ_2 < 0) { //partial write
+		ਗਿਣਤੀ_2 = -ਗਿਣਤੀ_2;
+		cur_ਖੰਡ = ਖੰਡ_ਮੰਜ਼ਿਲ_sparse_ਖੰਡ(ਖੰਡ, &ਵਿੱਥ, channel,
 						  sm);
-		if (!sm->blocks[cur_block]) {
-			sm->blocks[cur_block] = calloc(1, sm->block_size);
-			if (!sm->blocks[cur_block])
-				return EXT2_ET_NO_MEMORY;
+		ਜੇ (!sm->ਖੰਡਾਂ[cur_ਖੰਡ]) {
+			sm->ਖੰਡਾਂ[cur_ਖੰਡ] = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, sm->ਖੰਡ_ਮਾਪ);
+			ਜੇ (!sm->ਖੰਡਾਂ[cur_ਖੰਡ])
+				ਵਾਪਸ EXT2_ET_NO_ਸਮ੍ਰਿਤੀ;
 		}
-		memcpy(sm->blocks[cur_block] + offset, in, count);
-	} else {
-		for (i = 0; i < count; ++i) {
-			if (block + i >= sm->blocks_count)
-				return 0;
-			cur_block = block_to_sparse_block(block + i, &offset,
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(sm->ਖੰਡਾਂ[cur_ਖੰਡ] + ਵਿੱਥ, ਵਿੱਚ, ਗਿਣਤੀ_2);
+	} ਨਹੀਂਤਾਂ {
+		ਲਈ (i = 0; i < ਗਿਣਤੀ_2; ++i) {
+			ਜੇ (ਖੰਡ + i >= sm->ਖੰਡਾਂ_ਗਿਣਤੀ)
+				ਵਾਪਸ 0;
+			cur_ਖੰਡ = ਖੰਡ_ਮੰਜ਼ਿਲ_sparse_ਖੰਡ(ਖੰਡ + i, &ਵਿੱਥ,
 						    channel, sm);
-			if (!sm->blocks[cur_block]) {
-				sm->blocks[cur_block] =
-					calloc(1, sm->block_size);
-				if (!sm->blocks[cur_block])
-					return EXT2_ET_NO_MEMORY;
+			ਜੇ (!sm->ਖੰਡਾਂ[cur_ਖੰਡ]) {
+				sm->ਖੰਡਾਂ[cur_ਖੰਡ] =
+					ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, sm->ਖੰਡ_ਮਾਪ);
+				ਜੇ (!sm->ਖੰਡਾਂ[cur_ਖੰਡ])
+					ਵਾਪਸ EXT2_ET_NO_ਸਮ੍ਰਿਤੀ;
 			}
-			memcpy(sm->blocks[cur_block] + offset,
-			       in + (i * channel->block_size),
-			       channel->block_size);
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(sm->ਖੰਡਾਂ[cur_ਖੰਡ] + ਵਿੱਥ,
+			       ਵਿੱਚ + (i * channel->ਖੰਡ_ਮਾਪ),
+			       channel->ਖੰਡ_ਮਾਪ);
 		}
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static errcode_t sparse_write_blk(io_channel channel, unsigned long block,
-				  int count, const void *buf)
+ਸਥਿਰ errcode_t sparse_write_blk(io_channel channel, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਖੰਡ,
+				  ਪੂਰਨ ਗਿਣਤੀ_2, ਅਚਲ ਖਾਲੀ *buf)
 {
-	return sparse_write_blk64(channel, block, count, buf);
+	ਵਾਪਸ sparse_write_blk64(channel, ਖੰਡ, ਗਿਣਤੀ_2, buf);
 }
 
-static errcode_t sparse_discard(io_channel channel __attribute__((unused)),
-				blk64_t blk, unsigned long long count)
+ਸਥਿਰ errcode_t sparse_discard(io_channel channel __attribute__((ਅਣਵਰਤਿਆ)),
+				blk64_t blk, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ ਗਿਣਤੀ_2)
 {
-	blk64_t cur_block, offset;
-	struct sparse_map *sm = channel->private_data;
+	blk64_t cur_ਖੰਡ, ਵਿੱਥ;
+	ਬਣਤਰ sparse_map *sm = channel->ਨਿੱਜੀ_ਅੰਕੜੇ;
 
-	if (check_block_size(channel, sm))
-		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	ਜੇ (check_ਖੰਡ_ਮਾਪ(channel, sm))
+		ਵਾਪਸ EXT2_ET_UNEXPECTED_ਖੰਡ_ਮਾਪ;
 
-	for (unsigned long long i = 0; i < count; ++i) {
-		if (blk + i >= sm->blocks_count)
-			return 0;
-		cur_block = block_to_sparse_block(blk + i, &offset, channel,
+	ਲਈ (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ i = 0; i < ਗਿਣਤੀ_2; ++i) {
+		ਜੇ (blk + i >= sm->ਖੰਡਾਂ_ਗਿਣਤੀ)
+			ਵਾਪਸ 0;
+		cur_ਖੰਡ = ਖੰਡ_ਮੰਜ਼ਿਲ_sparse_ਖੰਡ(blk + i, &ਵਿੱਥ, channel,
 						  sm);
-		if (!sm->blocks[cur_block])
-			continue;
-		free(sm->blocks[cur_block]);
-		sm->blocks[cur_block] = NULL;
+		ਜੇ (!sm->ਖੰਡਾਂ[cur_ਖੰਡ])
+			ਜਾਰੀ;
+		ਮੁਕਤ(sm->ਖੰਡਾਂ[cur_ਖੰਡ]);
+		sm->ਖੰਡਾਂ[cur_ਖੰਡ] = ਨਿਰਾ;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static errcode_t sparse_zeroout(io_channel channel, blk64_t blk,
-				unsigned long long count)
+ਸਥਿਰ errcode_t sparse_zeroout(io_channel channel, blk64_t blk,
+				ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ ਗਿਣਤੀ_2)
 {
-	return sparse_discard(channel, blk, count);
+	ਵਾਪਸ sparse_discard(channel, blk, ਗਿਣਤੀ_2);
 }
 
-static errcode_t sparse_flush(io_channel channel __attribute__((unused)))
+ਸਥਿਰ errcode_t sparse_flush(io_channel channel __attribute__((ਅਣਵਰਤਿਆ)))
 {
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static errcode_t sparse_set_option(io_channel channel __attribute__((unused)),
-                                   const char *option __attribute__((unused)),
-                                   const char *arg __attribute__((unused)))
+ਸਥਿਰ errcode_t sparse_ਸੈੱਟ_option(io_channel channel __attribute__((ਅਣਵਰਤਿਆ)),
+                                   ਅਚਲ ਅੱਖਰ *option __attribute__((ਅਣਵਰਤਿਆ)),
+                                   ਅਚਲ ਅੱਖਰ *arg __attribute__((ਅਣਵਰਤਿਆ)))
 {
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static errcode_t sparse_cache_readahead(
-			io_channel channel __attribute__((unused)),
-			blk64_t blk __attribute__((unused)),
-			unsigned long long count __attribute__((unused)))
+ਸਥਿਰ errcode_t sparse_cache_readahead(
+			io_channel channel __attribute__((ਅਣਵਰਤਿਆ)),
+			blk64_t blk __attribute__((ਅਣਵਰਤਿਆ)),
+			ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ ਗਿਣਤੀ_2 __attribute__((ਅਣਵਰਤਿਆ)))
 {
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static struct struct_io_manager struct_sparse_manager = {
+ਸਥਿਰ ਬਣਤਰ struct_io_manager struct_sparse_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse I/O Manager",
 	.open			= sparse_open,
 	.close			= sparse_close,
-	.set_blksize		= sparse_set_blksize,
+	.ਸੈੱਟ_blksize		= sparse_ਸੈੱਟ_blksize,
 	.read_blk		= sparse_read_blk,
 	.write_blk		= sparse_write_blk,
 	.flush			= sparse_flush,
-	.write_byte		= NULL,
-	.set_option		= sparse_set_option,
-	.get_stats		= NULL,
+	.write_byte		= ਨਿਰਾ,
+	.ਸੈੱਟ_option		= sparse_ਸੈੱਟ_option,
+	.get_stats		= ਨਿਰਾ,
 	.read_blk64		= sparse_read_blk64,
 	.write_blk64		= sparse_write_blk64,
 	.discard		= sparse_discard,
@@ -529,18 +529,18 @@ static struct struct_io_manager struct_sparse_manager = {
 	.zeroout		= sparse_zeroout,
 };
 
-static struct struct_io_manager struct_sparsefd_manager = {
+ਸਥਿਰ ਬਣਤਰ struct_io_manager struct_sparsefd_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse fd I/O Manager",
 	.open			= sparsefd_open,
 	.close			= sparse_close,
-	.set_blksize		= sparse_set_blksize,
+	.ਸੈੱਟ_blksize		= sparse_ਸੈੱਟ_blksize,
 	.read_blk		= sparse_read_blk,
 	.write_blk		= sparse_write_blk,
 	.flush			= sparse_flush,
-	.write_byte		= NULL,
-	.set_option		= sparse_set_option,
-	.get_stats		= NULL,
+	.write_byte		= ਨਿਰਾ,
+	.ਸੈੱਟ_option		= sparse_ਸੈੱਟ_option,
+	.get_stats		= ਨਿਰਾ,
 	.read_blk64		= sparse_read_blk64,
 	.write_blk64		= sparse_write_blk64,
 	.discard		= sparse_discard,
@@ -548,7 +548,7 @@ static struct struct_io_manager struct_sparsefd_manager = {
 	.zeroout		= sparse_zeroout,
 };
 
-#endif
+#ਜੇ_ਅੰਤ
 
 io_manager sparse_io_manager = &struct_sparse_manager;
 io_manager sparsefd_io_manager = &struct_sparsefd_manager;

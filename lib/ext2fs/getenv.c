@@ -9,49 +9,49 @@
  * General Public License, version 2.
  * %End-Header%
  */
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
-#define _XOPEN_SOURCE 600
-#define _DARWIN_C_SOURCE
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#endif
+#ਜੇ !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ XOPEN_ਸਰੋਤ 600
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DARWIN_C_ਸਰੋਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ GNU_ਸਰੋਤ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ GNU_ਸਰੋਤ
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ
 
-#include "config.h"
-#include <stdlib.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef HAVE_SYS_PRCTL_H
-#include <sys/prctl.h>
-#else
-#define PR_GET_DUMPABLE 3
-#endif
-#if (!defined(HAVE_PRCTL) && defined(linux))
-#include <sys/syscall.h>
-#endif
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਜੇ HAVE_UNISTD_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_SYS_PRCTL_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/prctl.h>
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ PR_GET_DUMPABLE 3
+#ਜੇ_ਅੰਤ
+#ਜੇ (!defined(HAVE_PRCTL) && defined(linux))
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/syscall.h>
+#ਜੇ_ਅੰਤ
 
-#include "ext2fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fs.h"
 
-char *ext2fs_safe_getenv(const char *arg)
+ਅੱਖਰ *ext2fs_ਸੁਰੱਖਿਅਤ_getenv(ਅਚਲ ਅੱਖਰ *arg)
 {
-	if ((getuid() != geteuid()) || (getgid() != getegid()))
-		return NULL;
-#ifdef HAVE_PRCTL
-	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#else
-#if (defined(linux) && defined(SYS_prctl))
-	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#endif
-#endif
+	ਜੇ ((getuid() != geteuid()) || (getgid() != getegid()))
+		ਵਾਪਸ ਨਿਰਾ;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_PRCTL
+	ਜੇ (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		ਵਾਪਸ ਨਿਰਾ;
+#ਨਹੀਂਤਾਂ
+#ਜੇ (defined(linux) && defined(SYS_prctl))
+	ਜੇ (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		ਵਾਪਸ ਨਿਰਾ;
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ
 
-#if defined(HAVE_SECURE_GETENV)
-	return secure_getenv(arg);
-#elif defined(HAVE___SECURE_GETENV)
-	return __secure_getenv(arg);
-#else
-	return getenv(arg);
-#endif
+#ਜੇ defined(HAVE_SECURE_GETENV)
+	ਵਾਪਸ secure_getenv(arg);
+#ਜਾਂਜੇ defined(HAVE___SECURE_GETENV)
+	ਵਾਪਸ __secure_getenv(arg);
+#ਨਹੀਂਤਾਂ
+	ਵਾਪਸ getenv(arg);
+#ਜੇ_ਅੰਤ
 }

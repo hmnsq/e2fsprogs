@@ -10,40 +10,40 @@
  * %End-Header%
  */
 
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ LARGEFILE_ਸਰੋਤ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LARGEFILE_ਸਰੋਤ
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ LARGEFILE64_ਸਰੋਤ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LARGEFILE64_ਸਰੋਤ
+#ਜੇ_ਅੰਤ
 
-#include "config.h"
-#include <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fsP.h"
 
-struct exit_data {
+ਬਣਤਰ exit_ਅੰਕੜੇ {
 	ext2_exit_fn func;
-	void *data;
+	ਖਾਲੀ *ਅੰਕੜੇ;
 };
 
-static struct exit_data *items;
-static size_t nr_items;
+ਸਥਿਰ ਬਣਤਰ exit_ਅੰਕੜੇ *ਚੀਜ਼ਾਂ;
+ਸਥਿਰ size_t nr_ਚੀਜ਼ਾਂ;
 
-static void handle_exit(void)
+ਸਥਿਰ ਖਾਲੀ handle_exit(ਖਾਲੀ)
 {
-	struct exit_data *ed;
+	ਬਣਤਰ exit_ਅੰਕੜੇ *ed;
 
-	for (ed = items + nr_items - 1; ed >= items; ed--) {
-		if (ed->func == NULL)
-			continue;
-		ed->func(ed->data);
+	ਲਈ (ed = ਚੀਜ਼ਾਂ + nr_ਚੀਜ਼ਾਂ - 1; ed >= ਚੀਜ਼ਾਂ; ed--) {
+		ਜੇ (ed->func == ਨਿਰਾ)
+			ਜਾਰੀ;
+		ed->func(ed->ਅੰਕੜੇ);
 	}
 
-	ext2fs_free_mem(&items);
-	nr_items = 0;
+	ext2fs_free_mem(&ਚੀਜ਼ਾਂ);
+	nr_ਚੀਜ਼ਾਂ = 0;
 }
 
 /*
@@ -51,66 +51,66 @@ static void handle_exit(void)
  * If you want this to be called during a signal exit, you must capture
  * the signal and call exit() yourself!
  */
-errcode_t ext2fs_add_exit_fn(ext2_exit_fn func, void *data)
+errcode_t ext2fs_ਜੋੜੋ_exit_fn(ext2_exit_fn func, ਖਾਲੀ *ਅੰਕੜੇ)
 {
-	struct exit_data *ed, *free_ed = NULL;
+	ਬਣਤਰ exit_ਅੰਕੜੇ *ed, *free_ed = ਨਿਰਾ;
 	size_t x;
 	errcode_t ret;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ਜੇ (func == ਨਿਰਾ)
+		ਵਾਪਸ EXT2_ET_INVALID_ਦਲੀਲ;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == func && ed->data == data)
-			return EXT2_ET_FILE_EXISTS;
-		if (ed->func == NULL)
+	ਲਈ (x = 0, ed = ਚੀਜ਼ਾਂ; x < nr_ਚੀਜ਼ਾਂ; x++, ed++) {
+		ਜੇ (ed->func == func && ed->ਅੰਕੜੇ == ਅੰਕੜੇ)
+			ਵਾਪਸ EXT2_ET_FILE_EXISTS;
+		ਜੇ (ed->func == ਨਿਰਾ)
 			free_ed = ed;
 	}
 
-	if (free_ed) {
+	ਜੇ (free_ed) {
 		free_ed->func = func;
-		free_ed->data = data;
-		return 0;
+		free_ed->ਅੰਕੜੇ = ਅੰਕੜੇ;
+		ਵਾਪਸ 0;
 	}
 
-	if (nr_items == 0) {
+	ਜੇ (nr_ਚੀਜ਼ਾਂ == 0) {
 		ret = atexit(handle_exit);
-		if (ret)
-			return ret;
+		ਜੇ (ret)
+			ਵਾਪਸ ret;
 	}
 
-	ret = ext2fs_resize_mem(0, (nr_items + 1) * sizeof(struct exit_data),
-				&items);
-	if (ret)
-		return ret;
+	ret = ext2fs_resize_mem(0, (nr_ਚੀਜ਼ਾਂ + 1) * ਆਕਾਰ(ਬਣਤਰ exit_ਅੰਕੜੇ),
+				&ਚੀਜ਼ਾਂ);
+	ਜੇ (ret)
+		ਵਾਪਸ ret;
 
-	items[nr_items].func = func;
-	items[nr_items].data = data;
-	nr_items++;
+	ਚੀਜ਼ਾਂ[nr_ਚੀਜ਼ਾਂ].func = func;
+	ਚੀਜ਼ਾਂ[nr_ਚੀਜ਼ਾਂ].ਅੰਕੜੇ = ਅੰਕੜੇ;
+	nr_ਚੀਜ਼ਾਂ++;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* Remove a function from the exit cleanup list. */
-errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, void *data)
+errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, ਖਾਲੀ *ਅੰਕੜੇ)
 {
-	struct exit_data *ed;
+	ਬਣਤਰ exit_ਅੰਕੜੇ *ed;
 	size_t x;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ਜੇ (func == ਨਿਰਾ)
+		ਵਾਪਸ EXT2_ET_INVALID_ਦਲੀਲ;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == NULL)
-			return 0;
-		if (ed->func == func && ed->data == data) {
-			size_t sz = (nr_items - (x + 1)) *
-				    sizeof(struct exit_data);
+	ਲਈ (x = 0, ed = ਚੀਜ਼ਾਂ; x < nr_ਚੀਜ਼ਾਂ; x++, ed++) {
+		ਜੇ (ed->func == ਨਿਰਾ)
+			ਵਾਪਸ 0;
+		ਜੇ (ed->func == func && ed->ਅੰਕੜੇ == ਅੰਕੜੇ) {
+			size_t sz = (nr_ਚੀਜ਼ਾਂ - (x + 1)) *
+				    ਆਕਾਰ(ਬਣਤਰ exit_ਅੰਕੜੇ);
 			memmove(ed, ed + 1, sz);
-			memset(items + nr_items - 1, 0,
-			       sizeof(struct exit_data));
+			memset(ਚੀਜ਼ਾਂ + nr_ਚੀਜ਼ਾਂ - 1, 0,
+			       ਆਕਾਰ(ਬਣਤਰ exit_ਅੰਕੜੇ));
 		}
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }

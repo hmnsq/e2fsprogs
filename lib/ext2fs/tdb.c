@@ -29,157 +29,157 @@ Last Changed Date: 2007-06-22 13:36:10 -0400 (Fri, 22 Jun 2007)
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-#ifdef CONFIG_STAND_ALONE
-#define HAVE_MMAP
-#define HAVE_STRDUP
-#define HAVE_SYS_MMAN_H
-#define HAVE_UTIME_H
-#define HAVE_UTIME
-#endif
-#ifndef __FreeBSD__
-#define _XOPEN_SOURCE 600
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_STAND_ALONE
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ HAVE_MMAP
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ HAVE_STRDUP
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ HAVE_SYS_MMAN_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ HAVE_UTIME_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ HAVE_UTIME
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ __FreeBSD__
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ XOPEN_ਸਰੋਤ 600
+#ਜੇ_ਅੰਤ
 
-#include "config.h"
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <errno.h>
-#include <string.h>
-#ifdef HAVE_SYS_SELECT_H
-#include <sys/select.h>
-#endif
-#include <sys/time.h>
-#include <sys/types.h>
-#include <time.h>
-#ifdef HAVE_UTIME_H
-#include <utime.h>
-#endif
-#include <sys/stat.h>
-#include <sys/file.h>
-#include <fcntl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stddef.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_SYS_SELECT_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/select.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_UTIME_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <utime.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/file.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
 
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_SYS_MMAN_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/mman.h>
+#ਜੇ_ਅੰਤ
 
-#ifdef __GNUC__
-#define EXT2FS_ATTR(x) __attribute__(x)
-#else
-#define EXT2FS_ATTR(x)
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __GNUC__
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ EXT2FS_ATTR(x) __attribute__(x)
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ EXT2FS_ATTR(x)
+#ਜੇ_ਅੰਤ
 
-#ifndef MAP_FILE
-#define MAP_FILE 0
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ MAP_FILE
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAP_FILE 0
+#ਜੇ_ਅੰਤ
 
-#ifndef MAP_FAILED
-#define MAP_FAILED ((void *)-1)
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ MAP_FAILED
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAP_FAILED ((ਖਾਲੀ *)-1)
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_STRDUP
-#define strdup rep_strdup
-static char *rep_strdup(const char *s)
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_STRDUP
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ strdup rep_strdup
+ਸਥਿਰ ਅੱਖਰ *rep_strdup(ਅਚਲ ਅੱਖਰ *s)
 {
-	char *ret;
-	int length;
+	ਅੱਖਰ *ret;
+	ਪੂਰਨ ਲੰਮਾਈ;
 
-	if (!s)
-		return NULL;
-	length = strlen(s);
-	ret = malloc(length + 1);
-	if (ret) {
-		strncpy(ret, s, length);
-		ret[length] = '\0';
+	ਜੇ (!s)
+		ਵਾਪਸ ਨਿਰਾ;
+	ਲੰਮਾਈ = ਲੜੀ_ਲੰਬਾਈ(s);
+	ret = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਲੰਮਾਈ + 1);
+	ਜੇ (ret) {
+		strncpy(ret, s, ਲੰਮਾਈ);
+		ret[ਲੰਮਾਈ] = '\0';
 	}
-	return ret;
+	ਵਾਪਸ ret;
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifndef PRINTF_ATTRIBUTE
-#if (__GNUC__ >= 3) && (__GNUC_MINOR__ >= 1 )
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ PRINTF_ATTRIBUTE
+#ਜੇ (__GNUC__ >= 3) && (__GNUC_MINOR__ >= 1 )
 /** Use gcc attribute to check printf fns.  a1 is the 1-based index of
  * the parameter containing the format, and a2 the index of the first
  * argument. Note that some gcc 2.x versions don't handle this
  * properly **/
-#define PRINTF_ATTRIBUTE(a1, a2) __attribute__ ((format (__printf__, a1, a2)))
-#else
-#define PRINTF_ATTRIBUTE(a1, a2)
-#endif
-#endif
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ PRINTF_ATTRIBUTE(a1, a2) __attribute__ ((format (__printf__, a1, a2)))
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ PRINTF_ATTRIBUTE(a1, a2)
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ
 
-#if defined __STDC__ && defined __STDC_VERSION__ && __STDC_VERSION__ <= 201710L
-typedef int bool;
-#endif
+#ਜੇ defined __STDC__ && defined __STDC_VERSION__ && __STDC_VERSION__ <= 201710L
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਪੂਰਨ bool;
+#ਜੇ_ਅੰਤ
 
-#include "tdb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "tdb.h"
 
-static TDB_DATA tdb_null;
+ਸਥਿਰ TDB_ਅੰਕੜੇ tdb_null;
 
-#ifndef u32
-#define u32 unsigned
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ u32
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ u32 ਬਿਨਾਨਿਸ਼ਾਨੀ
+#ਜੇ_ਅੰਤ
 
-typedef u32 tdb_len_t;
-typedef u32 tdb_off_t;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ u32 tdb_len_t;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ u32 tdb_off_t;
 
-#ifndef offsetof
-#define offsetof(t,f) ((unsigned int)&((t *)0)->f)
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ offsetof
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ offsetof(t,f) ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)&((t *)0)->f)
+#ਜੇ_ਅੰਤ
 
-#define TDB_MAGIC_FOOD "TDB file\n"
-#define TDB_VERSION (0x26011967 + 6)
-#define TDB_MAGIC (0x26011999U)
-#define TDB_FREE_MAGIC (~TDB_MAGIC)
-#define TDB_DEAD_MAGIC (0xFEE1DEAD)
-#define TDB_RECOVERY_MAGIC (0xf53bc0e7U)
-#define TDB_ALIGNMENT 4
-#define MIN_REC_SIZE (2*sizeof(struct list_struct) + TDB_ALIGNMENT)
-#define DEFAULT_HASH_SIZE 131
-#define FREELIST_TOP (sizeof(struct tdb_header))
-#define TDB_ALIGN(x,a) (((x) + (a)-1) & ~((a)-1))
-#define TDB_BYTEREV(x) (((((x)&0xff)<<24)|((x)&0xFF00)<<8)|(((x)>>8)&0xFF00)|((x)>>24))
-#define TDB_DEAD(r) ((r)->magic == TDB_DEAD_MAGIC)
-#define TDB_BAD_MAGIC(r) ((r)->magic != TDB_MAGIC && !TDB_DEAD(r))
-#define TDB_HASH_TOP(hash) (FREELIST_TOP + (BUCKET(hash)+1)*sizeof(tdb_off_t))
-#define TDB_HASHTABLE_SIZE(tdb) ((tdb->header.hash_size+1)*sizeof(tdb_off_t))
-#define TDB_DATA_START(hash_size) TDB_HASH_TOP(hash_size-1)
-#define TDB_RECOVERY_HEAD offsetof(struct tdb_header, recovery_start)
-#define TDB_SEQNUM_OFS    offsetof(struct tdb_header, sequence_number)
-#define TDB_PAD_BYTE 0x42
-#define TDB_PAD_U32  0x42424242
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_MAGIC_FOOD "TDB file\n"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_ਸੰਸਕਰਣ (0x26011967 + 6)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_MAGIC (0x26011999U)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_FREE_MAGIC (~TDB_MAGIC)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_DEAD_MAGIC (0xFEE1DEAD)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_RECOVERY_MAGIC (0xf53bc0e7U)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_ALIGNMENT 4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MIN_REC_ਮਾਪ (2*ਆਕਾਰ(ਬਣਤਰ list_struct) + TDB_ALIGNMENT)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DEFAULT_HASH_ਮਾਪ 131
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FREELIST_ਸਿਖਰ (ਆਕਾਰ(ਬਣਤਰ tdb_ਸਿਰਲੇਖ))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_ALIGN(x,a) (((x) + (a)-1) & ~((a)-1))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_BYTEREV(x) (((((x)&0xff)<<24)|((x)&0xFF00)<<8)|(((x)>>8)&0xFF00)|((x)>>24))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_DEAD(r) ((r)->magic == TDB_DEAD_MAGIC)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_BAD_MAGIC(r) ((r)->magic != TDB_MAGIC && !TDB_DEAD(r))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_HASH_ਸਿਖਰ(hash) (FREELIST_ਸਿਖਰ + (ਬਾਲਟੀ(hash)+1)*ਆਕਾਰ(tdb_off_t))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_HASHTABLE_ਮਾਪ(tdb) ((tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ+1)*ਆਕਾਰ(tdb_off_t))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_ਅੰਕੜੇ_ਸ਼ੁਰੂ(hash_ਮਾਪ) TDB_HASH_ਸਿਖਰ(hash_ਮਾਪ-1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_RECOVERY_ਸਿਰ offsetof(ਬਣਤਰ tdb_ਸਿਰਲੇਖ, recovery_ਸ਼ੁਰੂ)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_SEQNUM_OFS    offsetof(ਬਣਤਰ tdb_ਸਿਰਲੇਖ, sequence_ਸੰਖਿਆ)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_PAD_BYTE 0x42
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_PAD_U32  0x42424242
 
 /* NB assumes there is a local variable called "tdb" that is the
  * current context, also takes doubly-parenthesized print-style
  * argument. */
-#define TDB_LOG(x) tdb->log.log_fn x
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_LOG(x) tdb->ਲਘੂਗਣਕ.log_fn x
 
 /* lock offsets */
-#define GLOBAL_LOCK      0
-#define ACTIVE_LOCK      4
-#define TRANSACTION_LOCK 8
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ GLOBAL_ਤਾਲਾ      0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਸਰਗਰਮ_ਤਾਲਾ      4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TRANSACTION_ਤਾਲਾ 8
 
 /* free memory if the pointer is valid and zero the pointer */
-#ifndef SAFE_FREE
-#define SAFE_FREE(x) do { if ((x) != NULL) {free(x); (x)=NULL;} } while(0)
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ ਸੁਰੱਖਿਅਤ_FREE
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਸੁਰੱਖਿਅਤ_FREE(x) ਕਰੋ { ਜੇ ((x) != ਨਿਰਾ) {ਮੁਕਤ(x); (x)=ਨਿਰਾ;} } ਜਦੋਂ(0)
+#ਜੇ_ਅੰਤ
 
-#define BUCKET(hash) ((hash) % tdb->header.hash_size)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਬਾਲਟੀ(hash) ((hash) % tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ)
 
-#define DOCONV() (tdb->flags & TDB_CONVERT)
-#define CONVERT(x) (DOCONV() ? tdb_convert(&x, sizeof(x)) : &x)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DOCONV() (tdb->flags & TDB_CONVERT)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CONVERT(x) (DOCONV() ? tdb_convert(&x, ਆਕਾਰ(x)) : &x)
 
 
 /* the body of the database is made of one list_struct for the free space
    plus a separate data list for each hash value */
-struct list_struct {
-	tdb_off_t next; /* offset of the next record in the list */
+ਬਣਤਰ list_struct {
+	tdb_off_t ਅਗਲਾ; /* offset of the next record in the list */
 	tdb_len_t rec_len; /* total byte length of record */
-	tdb_len_t key_len; /* byte length of key */
-	tdb_len_t data_len; /* byte length of data */
-	u32 full_hash; /* the full 32 bit hash of the key */
+	tdb_len_t ਕੁੰਜੀ_len; /* byte length of key */
+	tdb_len_t ਅੰਕੜੇ_len; /* byte length of data */
+	u32 ਭਰਿਆ_hash; /* the full 32 bit hash of the key */
 	u32 magic;   /* try to catch errors */
 	/* the following union is implied:
 		union {
@@ -195,122 +195,122 @@ struct list_struct {
 
 
 /* this is stored at the front of every database */
-struct tdb_header {
-	char magic_food[32]; /* for /etc/magic */
-	u32 version; /* version of the code */
-	u32 hash_size; /* number of hash entries */
+ਬਣਤਰ tdb_ਸਿਰਲੇਖ {
+	ਅੱਖਰ magic_food[32]; /* for /etc/magic */
+	u32 ਸੰਸਕਰਣ; /* version of the code */
+	u32 hash_ਮਾਪ; /* number of hash entries */
 	tdb_off_t rwlocks; /* obsolete - kept to detect old formats */
-	tdb_off_t recovery_start; /* offset of transaction recovery region */
-	tdb_off_t sequence_number; /* used when TDB_SEQNUM is set */
+	tdb_off_t recovery_ਸ਼ੁਰੂ; /* offset of transaction recovery region */
+	tdb_off_t sequence_ਸੰਖਿਆ; /* used when TDB_SEQNUM is set */
 	tdb_off_t reserved[29];
 };
 
-struct tdb_lock_type {
-	int list;
-	u32 count;
+ਬਣਤਰ tdb_ਤਾਲਾ_type {
+	ਪੂਰਨ list;
+	u32 ਗਿਣਤੀ_2;
 	u32 ltype;
 };
 
-struct tdb_traverse_lock {
-	struct tdb_traverse_lock *next;
+ਬਣਤਰ tdb_traverse_ਤਾਲਾ {
+	ਬਣਤਰ tdb_traverse_ਤਾਲਾ *ਅਗਲਾ;
 	u32 off;
 	u32 hash;
-	int lock_rw;
+	ਪੂਰਨ ਤਾਲਾ_rw;
 };
 
 
-struct tdb_methods {
-	int (*tdb_read)(struct tdb_context *, tdb_off_t , void *, tdb_len_t , int );
-	int (*tdb_write)(struct tdb_context *, tdb_off_t, const void *, tdb_len_t);
-	void (*next_hash_chain)(struct tdb_context *, u32 *);
-	int (*tdb_oob)(struct tdb_context *, tdb_off_t , int );
-	int (*tdb_expand_file)(struct tdb_context *, tdb_off_t , tdb_off_t );
-	int (*tdb_brlock)(struct tdb_context *, tdb_off_t , int, int, int, size_t);
+ਬਣਤਰ tdb_methods {
+	ਪੂਰਨ (*tdb_read)(ਬਣਤਰ tdb_context *, tdb_off_t , ਖਾਲੀ *, tdb_len_t , ਪੂਰਨ );
+	ਪੂਰਨ (*tdb_write)(ਬਣਤਰ tdb_context *, tdb_off_t, ਅਚਲ ਖਾਲੀ *, tdb_len_t);
+	ਖਾਲੀ (*ਅਗਲਾ_hash_chain)(ਬਣਤਰ tdb_context *, u32 *);
+	ਪੂਰਨ (*tdb_oob)(ਬਣਤਰ tdb_context *, tdb_off_t , ਪੂਰਨ );
+	ਪੂਰਨ (*tdb_expand_file)(ਬਣਤਰ tdb_context *, tdb_off_t , tdb_off_t );
+	ਪੂਰਨ (*tdb_brlock)(ਬਣਤਰ tdb_context *, tdb_off_t , ਪੂਰਨ, ਪੂਰਨ, ਪੂਰਨ, size_t);
 };
 
-struct tdb_context {
-	char *name; /* the name of the database */
-	void *map_ptr; /* where it is currently mapped */
-	int fd; /* open file descriptor for the database */
-	tdb_len_t map_size; /* how much space has been mapped */
-	int read_only; /* opened read-only */
-	int traverse_read; /* read-only traversal */
-	struct tdb_lock_type global_lock;
-	int num_lockrecs;
-	struct tdb_lock_type *lockrecs; /* only real locks, all with count>0 */
-	enum TDB_ERROR ecode; /* error code for last tdb error */
-	struct tdb_header header; /* a cached copy of the header */
+ਬਣਤਰ tdb_context {
+	ਅੱਖਰ *name; /* the name of the database */
+	ਖਾਲੀ *map_ptr; /* where it is currently mapped */
+	ਪੂਰਨ fd; /* open file descriptor for the database */
+	tdb_len_t map_ਮਾਪ; /* how much space has been mapped */
+	ਪੂਰਨ read_only; /* opened read-only */
+	ਪੂਰਨ traverse_read; /* read-only traversal */
+	ਬਣਤਰ tdb_ਤਾਲਾ_type global_ਤਾਲਾ;
+	ਪੂਰਨ ਅੰਕ_lockrecs;
+	ਬਣਤਰ tdb_ਤਾਲਾ_type *lockrecs; /* only real locks, all with count>0 */
+	ਗਿਣਤੀ TDB_ERROR ecode; /* error code for last tdb error */
+	ਬਣਤਰ tdb_ਸਿਰਲੇਖ ਸਿਰਲੇਖ; /* a cached copy of the header */
 	u32 flags; /* the flags passed to tdb_open */
-	struct tdb_traverse_lock travlocks; /* current traversal locks */
-	struct tdb_context *next; /* all tdbs to avoid multiple opens */
+	ਬਣਤਰ tdb_traverse_ਤਾਲਾ travlocks; /* current traversal locks */
+	ਬਣਤਰ tdb_context *ਅਗਲਾ; /* all tdbs to avoid multiple opens */
 	dev_t device;	/* uniquely identifies this tdb */
 	ino_t inode;	/* uniquely identifies this tdb */
-	struct tdb_logging_context log;
-	unsigned int (*hash_fn)(TDB_DATA *key);
-	int open_flags; /* flags used in the open - needed by reopen */
-	unsigned int num_locks; /* number of chain locks held */
-	const struct tdb_methods *methods;
-	struct tdb_transaction *transaction;
-	int page_size;
-	int max_dead_records;
-	bool have_transaction_lock;
-	tdb_len_t real_map_size; /* how much space has been mapped */
+	ਬਣਤਰ tdb_logging_context ਲਘੂਗਣਕ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ (*hash_fn)(TDB_ਅੰਕੜੇ *ਕੁੰਜੀ);
+	ਪੂਰਨ open_flags; /* flags used in the open - needed by reopen */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ_locks; /* number of chain locks held */
+	ਅਚਲ ਬਣਤਰ tdb_methods *methods;
+	ਬਣਤਰ tdb_transaction *transaction;
+	ਪੂਰਨ ਪੰਨਾ_ਮਾਪ;
+	ਪੂਰਨ max_dead_ਰਿਕਾਰਡਾਂ;
+	bool have_transaction_ਤਾਲਾ;
+	tdb_len_t real_map_ਮਾਪ; /* how much space has been mapped */
 };
 
 
 /*
   internal prototypes
 */
-static int tdb_munmap(struct tdb_context *tdb);
-static void tdb_mmap(struct tdb_context *tdb);
-static int tdb_lock(struct tdb_context *tdb, int list, int ltype);
-int tdb_lock_nonblock(struct tdb_context *tdb, int list, int ltype);
-static int tdb_unlock(struct tdb_context *tdb, int list, int ltype);
-static int tdb_brlock(struct tdb_context *tdb, tdb_off_t offset, int rw_type, int lck_type, int probe, size_t len);
-static int tdb_transaction_lock(struct tdb_context *tdb, int ltype);
-static int tdb_transaction_unlock(struct tdb_context *tdb);
-static int tdb_brlock_upgrade(struct tdb_context *tdb, tdb_off_t offset, size_t len);
-static int tdb_write_lock_record(struct tdb_context *tdb, tdb_off_t off);
-static int tdb_write_unlock_record(struct tdb_context *tdb, tdb_off_t off);
-static int tdb_ofs_read(struct tdb_context *tdb, tdb_off_t offset, tdb_off_t *d);
-static int tdb_ofs_write(struct tdb_context *tdb, tdb_off_t offset, tdb_off_t *d);
-static void *tdb_convert(void *buf, u32 size);
-static int tdb_free(struct tdb_context *tdb, tdb_off_t offset, struct list_struct *rec);
-static tdb_off_t tdb_allocate(struct tdb_context *tdb, tdb_len_t length, struct list_struct *rec);
-static int tdb_ofs_read(struct tdb_context *tdb, tdb_off_t offset, tdb_off_t *d);
-static int tdb_ofs_write(struct tdb_context *tdb, tdb_off_t offset, tdb_off_t *d);
-static int tdb_lock_record(struct tdb_context *tdb, tdb_off_t off);
-static int tdb_unlock_record(struct tdb_context *tdb, tdb_off_t off);
-static int tdb_rec_read(struct tdb_context *tdb, tdb_off_t offset, struct list_struct *rec);
-static int tdb_rec_write(struct tdb_context *tdb, tdb_off_t offset, struct list_struct *rec);
-static int tdb_do_delete(struct tdb_context *tdb, tdb_off_t rec_ptr, struct list_struct *rec);
-static unsigned char *tdb_alloc_read(struct tdb_context *tdb, tdb_off_t offset, tdb_len_t len);
-static int tdb_parse_data(struct tdb_context *tdb, TDB_DATA key,
-		   tdb_off_t offset, tdb_len_t len,
-		   int (*parser)(TDB_DATA key, TDB_DATA data,
-				 void *private_data),
-		   void *private_data);
-static tdb_off_t tdb_find_lock_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash, int locktype,
-			   struct list_struct *rec);
-static void tdb_io_init(struct tdb_context *tdb);
-static int tdb_expand(struct tdb_context *tdb, tdb_off_t size);
-static int tdb_rec_free_read(struct tdb_context *tdb, tdb_off_t off,
-		      struct list_struct *rec);
+ਸਥਿਰ ਪੂਰਨ tdb_munmap(ਬਣਤਰ tdb_context *tdb);
+ਸਥਿਰ ਖਾਲੀ tdb_mmap(ਬਣਤਰ tdb_context *tdb);
+ਸਥਿਰ ਪੂਰਨ tdb_ਤਾਲਾ(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ list, ਪੂਰਨ ltype);
+ਪੂਰਨ tdb_ਤਾਲਾ_nonblock(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ list, ਪੂਰਨ ltype);
+ਸਥਿਰ ਪੂਰਨ tdb_unlock(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ list, ਪੂਰਨ ltype);
+ਸਥਿਰ ਪੂਰਨ tdb_brlock(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, ਪੂਰਨ rw_type, ਪੂਰਨ lck_type, ਪੂਰਨ probe, size_t len);
+ਸਥਿਰ ਪੂਰਨ tdb_transaction_ਤਾਲਾ(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ ltype);
+ਸਥਿਰ ਪੂਰਨ tdb_transaction_unlock(ਬਣਤਰ tdb_context *tdb);
+ਸਥਿਰ ਪੂਰਨ tdb_brlock_upgrade(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, size_t len);
+ਸਥਿਰ ਪੂਰਨ tdb_write_ਤਾਲਾ_ਰਿਕਾਰਡ(ਬਣਤਰ tdb_context *tdb, tdb_off_t off);
+ਸਥਿਰ ਪੂਰਨ tdb_write_unlock_ਰਿਕਾਰਡ(ਬਣਤਰ tdb_context *tdb, tdb_off_t off);
+ਸਥਿਰ ਪੂਰਨ tdb_ofs_read(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, tdb_off_t *d);
+ਸਥਿਰ ਪੂਰਨ tdb_ofs_write(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, tdb_off_t *d);
+ਸਥਿਰ ਖਾਲੀ *tdb_convert(ਖਾਲੀ *buf, u32 ਮਾਪ);
+ਸਥਿਰ ਪੂਰਨ tdb_free(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, ਬਣਤਰ list_struct *rec);
+ਸਥਿਰ tdb_off_t tdb_allocate(ਬਣਤਰ tdb_context *tdb, tdb_len_t ਲੰਮਾਈ, ਬਣਤਰ list_struct *rec);
+ਸਥਿਰ ਪੂਰਨ tdb_ofs_read(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, tdb_off_t *d);
+ਸਥਿਰ ਪੂਰਨ tdb_ofs_write(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, tdb_off_t *d);
+ਸਥਿਰ ਪੂਰਨ tdb_ਤਾਲਾ_ਰਿਕਾਰਡ(ਬਣਤਰ tdb_context *tdb, tdb_off_t off);
+ਸਥਿਰ ਪੂਰਨ tdb_unlock_ਰਿਕਾਰਡ(ਬਣਤਰ tdb_context *tdb, tdb_off_t off);
+ਸਥਿਰ ਪੂਰਨ tdb_rec_read(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, ਬਣਤਰ list_struct *rec);
+ਸਥਿਰ ਪੂਰਨ tdb_rec_write(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, ਬਣਤਰ list_struct *rec);
+ਸਥਿਰ ਪੂਰਨ tdb_do_delete(ਬਣਤਰ tdb_context *tdb, tdb_off_t rec_ptr, ਬਣਤਰ list_struct *rec);
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *tdb_alloc_read(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, tdb_len_t len);
+ਸਥਿਰ ਪੂਰਨ tdb_parse_ਅੰਕੜੇ(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ,
+		   tdb_off_t ਵਿੱਥ, tdb_len_t len,
+		   ਪੂਰਨ (*parser)(TDB_ਅੰਕੜੇ ਕੁੰਜੀ, TDB_ਅੰਕੜੇ ਅੰਕੜੇ,
+				 ਖਾਲੀ *ਨਿੱਜੀ_ਅੰਕੜੇ),
+		   ਖਾਲੀ *ਨਿੱਜੀ_ਅੰਕੜੇ);
+ਸਥਿਰ tdb_off_t tdb_ਲੱਭੋ_ਤਾਲਾ_hash(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ, u32 hash, ਪੂਰਨ locktype,
+			   ਬਣਤਰ list_struct *rec);
+ਸਥਿਰ ਖਾਲੀ tdb_io_init(ਬਣਤਰ tdb_context *tdb);
+ਸਥਿਰ ਪੂਰਨ tdb_expand(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਮਾਪ);
+ਸਥਿਰ ਪੂਰਨ tdb_rec_free_read(ਬਣਤਰ tdb_context *tdb, tdb_off_t off,
+		      ਬਣਤਰ list_struct *rec);
 
 
 /* file: error.c */
 
-enum TDB_ERROR tdb_error(struct tdb_context *tdb)
+ਗਿਣਤੀ TDB_ERROR tdb_error(ਬਣਤਰ tdb_context *tdb)
 {
-	return tdb->ecode;
+	ਵਾਪਸ tdb->ecode;
 }
 
-static struct tdb_errname {
-	enum TDB_ERROR ecode; const char *estring;
+ਸਥਿਰ ਬਣਤਰ tdb_errname {
+	ਗਿਣਤੀ TDB_ERROR ecode; ਅਚਲ ਅੱਖਰ *estring;
 } emap[] = { {TDB_SUCCESS, "Success"},
 	     {TDB_ERR_CORRUPT, "Corrupt database"},
 	     {TDB_ERR_IO, "IO Error"},
-	     {TDB_ERR_LOCK, "Locking error"},
+	     {TDB_ERR_ਤਾਲਾ, "Locking error"},
 	     {TDB_ERR_OOM, "Out of memory"},
 	     {TDB_ERR_EXISTS, "Record exists"},
 	     {TDB_ERR_NOLOCK, "Lock exists on other keys"},
@@ -319,18 +319,18 @@ static struct tdb_errname {
 	     {TDB_ERR_RDONLY, "write not permitted"} };
 
 /* Error string for the last tdb error */
-const char *tdb_errorstr(struct tdb_context *tdb)
+ਅਚਲ ਅੱਖਰ *tdb_errorstr(ਬਣਤਰ tdb_context *tdb)
 {
 	u32 i;
-	for (i = 0; i < sizeof(emap) / sizeof(struct tdb_errname); i++)
-		if (tdb->ecode == emap[i].ecode)
-			return emap[i].estring;
-	return "Invalid error code";
+	ਲਈ (i = 0; i < ਆਕਾਰ(emap) / ਆਕਾਰ(ਬਣਤਰ tdb_errname); i++)
+		ਜੇ (tdb->ecode == emap[i].ecode)
+			ਵਾਪਸ emap[i].estring;
+	ਵਾਪਸ "Invalid error code";
 }
 
 /* file: lock.c */
 
-#define TDB_MARK_LOCK 0x80000000
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TDB_MARK_ਤਾਲਾ 0x80000000
 
 /* a byte range locking function - return 0 on success
    this functions locks/unlocks 1 byte at the specified offset.
@@ -340,44 +340,44 @@ const char *tdb_errorstr(struct tdb_context *tdb)
 
    note that a len of zero means lock to end of file
 */
-int tdb_brlock(struct tdb_context *tdb, tdb_off_t offset,
-	       int rw_type, int lck_type, int probe, size_t len)
+ਪੂਰਨ tdb_brlock(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ,
+	       ਪੂਰਨ rw_type, ਪੂਰਨ lck_type, ਪੂਰਨ probe, size_t len)
 {
-	struct flock fl;
-	int ret;
+	ਬਣਤਰ flock fl;
+	ਪੂਰਨ ret;
 
-	if (tdb->flags & TDB_NOLOCK) {
-		return 0;
+	ਜੇ (tdb->flags & TDB_NOLOCK) {
+		ਵਾਪਸ 0;
 	}
 
-	if ((rw_type == F_WRLCK) && (tdb->read_only || tdb->traverse_read)) {
+	ਜੇ ((rw_type == F_WRLCK) && (tdb->read_only || tdb->traverse_read)) {
 		tdb->ecode = TDB_ERR_RDONLY;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	fl.l_type = rw_type;
 	fl.l_whence = SEEK_SET;
-	fl.l_start = offset;
+	fl.l_ਸ਼ੁਰੂ = ਵਿੱਥ;
 	fl.l_len = len;
 	fl.l_pid = 0;
 
-	do {
+	ਕਰੋ {
 		ret = fcntl(tdb->fd,lck_type,&fl);
-	} while (ret == -1 && errno == EINTR);
+	} ਜਦੋਂ (ret == -1 && errno == EINTR);
 
-	if (ret == -1) {
+	ਜੇ (ret == -1) {
 		/* Generic lock error. errno set by fcntl.
 		 * EAGAIN is an expected return from non-blocking
 		 * locks. */
-		if (!probe && lck_type != F_SETLK) {
+		ਜੇ (!probe && lck_type != F_SETLK) {
 			/* Ensure error code is set for log fun to examine. */
-			tdb->ecode = TDB_ERR_LOCK;
+			tdb->ecode = TDB_ERR_ਤਾਲਾ;
 			TDB_LOG((tdb, TDB_DEBUG_TRACE,"tdb_brlock failed (fd=%d) at offset %d rw_type=%d lck_type=%d len=%d\n",
-				 tdb->fd, offset, rw_type, lck_type, (int)len));
+				 tdb->fd, ਵਿੱਥ, rw_type, lck_type, (ਪੂਰਨ)len));
 		}
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_ਤਾਲਾ, -1);
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 
@@ -387,57 +387,57 @@ int tdb_brlock(struct tdb_context *tdb, tdb_off_t offset,
   deadlock detection and claim a deadlock when progress can be
   made. For those OSes we may loop for a while.
 */
-int tdb_brlock_upgrade(struct tdb_context *tdb, tdb_off_t offset, size_t len)
+ਪੂਰਨ tdb_brlock_upgrade(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, size_t len)
 {
-	int count = 1000;
-	while (count--) {
-		struct timeval tv;
-		if (tdb_brlock(tdb, offset, F_WRLCK, F_SETLKW, 1, len) == 0) {
-			return 0;
+	ਪੂਰਨ ਗਿਣਤੀ_2 = 1000;
+	ਜਦੋਂ (ਗਿਣਤੀ_2--) {
+		ਬਣਤਰ timeval tv;
+		ਜੇ (tdb_brlock(tdb, ਵਿੱਥ, F_WRLCK, F_SETLKW, 1, len) == 0) {
+			ਵਾਪਸ 0;
 		}
-		if (errno != EDEADLK) {
-			break;
+		ਜੇ (errno != EDEADLK) {
+			ਰੋਕੋ;
 		}
 		/* sleep for as short a time as we can - more portable than usleep() */
 		tv.tv_sec = 0;
 		tv.tv_usec = 1;
-		select(0, NULL, NULL, NULL, &tv);
+		select(0, ਨਿਰਾ, ਨਿਰਾ, ਨਿਰਾ, &tv);
 	}
-	TDB_LOG((tdb, TDB_DEBUG_TRACE,"tdb_brlock_upgrade failed at offset %d\n", offset));
-	return -1;
+	TDB_LOG((tdb, TDB_DEBUG_TRACE,"tdb_brlock_upgrade failed at offset %d\n", ਵਿੱਥ));
+	ਵਾਪਸ -1;
 }
 
 
 /* lock a list in the database. list -1 is the alloc list */
-static int _tdb_lock(struct tdb_context *tdb, int list, int ltype, int op)
+ਸਥਿਰ ਪੂਰਨ tdb_ਤਾਲਾ_2(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ list, ਪੂਰਨ ltype, ਪੂਰਨ op)
 {
-	struct tdb_lock_type *new_lck;
-	int i;
-	bool mark_lock = ((ltype & TDB_MARK_LOCK) == TDB_MARK_LOCK);
+	ਬਣਤਰ tdb_ਤਾਲਾ_type *new_lck;
+	ਪੂਰਨ i;
+	bool mark_ਤਾਲਾ = ((ltype & TDB_MARK_ਤਾਲਾ) == TDB_MARK_ਤਾਲਾ);
 
-	ltype &= ~TDB_MARK_LOCK;
+	ltype &= ~TDB_MARK_ਤਾਲਾ;
 
 	/* a global lock allows us to avoid per chain locks */
-	if (tdb->global_lock.count &&
-	    ((u32)ltype == tdb->global_lock.ltype || ltype == F_RDLCK)) {
-		return 0;
+	ਜੇ (tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2 &&
+	    ((u32)ltype == tdb->global_ਤਾਲਾ.ltype || ltype == F_RDLCK)) {
+		ਵਾਪਸ 0;
 	}
 
-	if (tdb->global_lock.count) {
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+	ਜੇ (tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2) {
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_ਤਾਲਾ, -1);
 	}
 
-	if (list < -1 || list >= (int)tdb->header.hash_size) {
+	ਜੇ (list < -1 || list >= (ਪੂਰਨ)tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR,"tdb_lock: invalid list %d for ltype=%d\n",
 			   list, ltype));
-		return -1;
+		ਵਾਪਸ -1;
 	}
-	if (tdb->flags & TDB_NOLOCK)
-		return 0;
+	ਜੇ (tdb->flags & TDB_NOLOCK)
+		ਵਾਪਸ 0;
 
-	for (i=0; i<tdb->num_lockrecs; i++) {
-		if (tdb->lockrecs[i].list == list) {
-			if (tdb->lockrecs[i].count == 0) {
+	ਲਈ (i=0; i<tdb->ਅੰਕ_lockrecs; i++) {
+		ਜੇ (tdb->lockrecs[i].list == list) {
+			ਜੇ (tdb->lockrecs[i].ਗਿਣਤੀ_2 == 0) {
 				/*
 				 * Can't happen, see tdb_unlock(). It should
 				 * be an assert.
@@ -449,103 +449,103 @@ static int _tdb_lock(struct tdb_context *tdb, int list, int ltype, int op)
 			 * Just increment the in-memory struct, posix locks
 			 * don't stack.
 			 */
-			tdb->lockrecs[i].count++;
-			return 0;
+			tdb->lockrecs[i].ਗਿਣਤੀ_2++;
+			ਵਾਪਸ 0;
 		}
 	}
 
-	new_lck = (struct tdb_lock_type *)realloc(
+	new_lck = (ਬਣਤਰ tdb_ਤਾਲਾ_type *)realloc(
 		tdb->lockrecs,
-		sizeof(*tdb->lockrecs) * (tdb->num_lockrecs+1));
-	if (new_lck == NULL) {
+		ਆਕਾਰ(*tdb->lockrecs) * (tdb->ਅੰਕ_lockrecs+1));
+	ਜੇ (new_lck == ਨਿਰਾ) {
 		errno = ENOMEM;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 	tdb->lockrecs = new_lck;
 
 	/* Since fcntl locks don't nest, we do a lock for the first one,
 	   and simply bump the count for future ones */
-	if (!mark_lock &&
-	    tdb->methods->tdb_brlock(tdb,FREELIST_TOP+4*list, ltype, op,
+	ਜੇ (!mark_ਤਾਲਾ &&
+	    tdb->methods->tdb_brlock(tdb,FREELIST_ਸਿਖਰ+4*list, ltype, op,
 				     0, 1)) {
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	tdb->num_locks++;
+	tdb->ਅੰਕ_locks++;
 
-	tdb->lockrecs[tdb->num_lockrecs].list = list;
-	tdb->lockrecs[tdb->num_lockrecs].count = 1;
-	tdb->lockrecs[tdb->num_lockrecs].ltype = ltype;
-	tdb->num_lockrecs += 1;
+	tdb->lockrecs[tdb->ਅੰਕ_lockrecs].list = list;
+	tdb->lockrecs[tdb->ਅੰਕ_lockrecs].ਗਿਣਤੀ_2 = 1;
+	tdb->lockrecs[tdb->ਅੰਕ_lockrecs].ltype = ltype;
+	tdb->ਅੰਕ_lockrecs += 1;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* lock a list in the database. list -1 is the alloc list */
-int tdb_lock(struct tdb_context *tdb, int list, int ltype)
+ਪੂਰਨ tdb_ਤਾਲਾ(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ list, ਪੂਰਨ ltype)
 {
-	int ret;
-	ret = _tdb_lock(tdb, list, ltype, F_SETLKW);
-	if (ret) {
+	ਪੂਰਨ ret;
+	ret = tdb_ਤਾਲਾ_2(tdb, list, ltype, F_SETLKW);
+	ਜੇ (ret) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_lock failed on list %d "
 			 "ltype=%d (%s)\n",  list, ltype, strerror(errno)));
 	}
-	return ret;
+	ਵਾਪਸ ret;
 }
 
 /* lock a list in the database. list -1 is the alloc list. non-blocking lock */
-int tdb_lock_nonblock(struct tdb_context *tdb, int list, int ltype)
+ਪੂਰਨ tdb_ਤਾਲਾ_nonblock(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ list, ਪੂਰਨ ltype)
 {
-	return _tdb_lock(tdb, list, ltype, F_SETLK);
+	ਵਾਪਸ tdb_ਤਾਲਾ_2(tdb, list, ltype, F_SETLK);
 }
 
 
 /* unlock the database: returns void because it's too late for errors. */
 	/* changed to return int it may be interesting to know there
 	   has been an error  --simo */
-int tdb_unlock(struct tdb_context *tdb, int list, int ltype)
+ਪੂਰਨ tdb_unlock(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ list, ਪੂਰਨ ltype)
 {
-	int ret = -1;
-	int i;
-	struct tdb_lock_type *lck = NULL;
-	bool mark_lock = ((ltype & TDB_MARK_LOCK) == TDB_MARK_LOCK);
+	ਪੂਰਨ ret = -1;
+	ਪੂਰਨ i;
+	ਬਣਤਰ tdb_ਤਾਲਾ_type *lck = ਨਿਰਾ;
+	bool mark_ਤਾਲਾ = ((ltype & TDB_MARK_ਤਾਲਾ) == TDB_MARK_ਤਾਲਾ);
 
-	ltype &= ~TDB_MARK_LOCK;
+	ltype &= ~TDB_MARK_ਤਾਲਾ;
 
 	/* a global lock allows us to avoid per chain locks */
-	if (tdb->global_lock.count &&
-	    ((u32)ltype == tdb->global_lock.ltype || ltype == F_RDLCK)) {
-		return 0;
+	ਜੇ (tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2 &&
+	    ((u32)ltype == tdb->global_ਤਾਲਾ.ltype || ltype == F_RDLCK)) {
+		ਵਾਪਸ 0;
 	}
 
-	if (tdb->global_lock.count) {
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+	ਜੇ (tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2) {
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_ਤਾਲਾ, -1);
 	}
 
-	if (tdb->flags & TDB_NOLOCK)
-		return 0;
+	ਜੇ (tdb->flags & TDB_NOLOCK)
+		ਵਾਪਸ 0;
 
 	/* Sanity checks */
-	if (list < -1 || list >= (int)tdb->header.hash_size) {
-		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_unlock: list %d invalid (%d)\n", list, tdb->header.hash_size));
-		return ret;
+	ਜੇ (list < -1 || list >= (ਪੂਰਨ)tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ) {
+		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_unlock: list %d invalid (%d)\n", list, tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ));
+		ਵਾਪਸ ret;
 	}
 
-	for (i=0; i<tdb->num_lockrecs; i++) {
-		if (tdb->lockrecs[i].list == list) {
+	ਲਈ (i=0; i<tdb->ਅੰਕ_lockrecs; i++) {
+		ਜੇ (tdb->lockrecs[i].list == list) {
 			lck = &tdb->lockrecs[i];
-			break;
+			ਰੋਕੋ;
 		}
 	}
 
-	if ((lck == NULL) || (lck->count == 0)) {
+	ਜੇ ((lck == ਨਿਰਾ) || (lck->ਗਿਣਤੀ_2 == 0)) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_unlock: count is 0\n"));
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	if (lck->count > 1) {
-		lck->count--;
-		return 0;
+	ਜੇ (lck->ਗਿਣਤੀ_2 > 1) {
+		lck->ਗਿਣਤੀ_2--;
+		ਵਾਪਸ 0;
 	}
 
 	/*
@@ -555,249 +555,249 @@ int tdb_unlock(struct tdb_context *tdb, int list, int ltype)
 	 * anyway.
 	 */
 
-	if (mark_lock) {
+	ਜੇ (mark_ਤਾਲਾ) {
 		ret = 0;
-	} else {
-		ret = tdb->methods->tdb_brlock(tdb, FREELIST_TOP+4*list, F_UNLCK,
+	} ਨਹੀਂਤਾਂ {
+		ret = tdb->methods->tdb_brlock(tdb, FREELIST_ਸਿਖਰ+4*list, F_UNLCK,
 					       F_SETLKW, 0, 1);
 	}
-	tdb->num_locks--;
+	tdb->ਅੰਕ_locks--;
 
 	/*
 	 * Shrink the array by overwriting the element just unlocked with the
 	 * last array element.
 	 */
 
-	if (tdb->num_lockrecs > 1) {
-		*lck = tdb->lockrecs[tdb->num_lockrecs-1];
+	ਜੇ (tdb->ਅੰਕ_lockrecs > 1) {
+		*lck = tdb->lockrecs[tdb->ਅੰਕ_lockrecs-1];
 	}
-	tdb->num_lockrecs -= 1;
+	tdb->ਅੰਕ_lockrecs -= 1;
 
 	/*
 	 * We don't bother with realloc when the array shrinks, but if we have
 	 * a completely idle tdb we should get rid of the locked array.
 	 */
 
-	if (tdb->num_lockrecs == 0) {
-		SAFE_FREE(tdb->lockrecs);
+	ਜੇ (tdb->ਅੰਕ_lockrecs == 0) {
+		ਸੁਰੱਖਿਅਤ_FREE(tdb->lockrecs);
 	}
 
-	if (ret)
+	ਜੇ (ret)
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_unlock: An error occurred unlocking!\n"));
-	return ret;
+	ਵਾਪਸ ret;
 }
 
 /*
   get the transaction lock
  */
-int tdb_transaction_lock(struct tdb_context *tdb, int ltype)
+ਪੂਰਨ tdb_transaction_ਤਾਲਾ(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ ltype)
 {
-	if (tdb->have_transaction_lock || tdb->global_lock.count) {
-		return 0;
+	ਜੇ (tdb->have_transaction_ਤਾਲਾ || tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2) {
+		ਵਾਪਸ 0;
 	}
-	if (tdb->methods->tdb_brlock(tdb, TRANSACTION_LOCK, ltype,
+	ਜੇ (tdb->methods->tdb_brlock(tdb, TRANSACTION_ਤਾਲਾ, ltype,
 				     F_SETLKW, 0, 1) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_lock: failed to get transaction lock\n"));
-		tdb->ecode = TDB_ERR_LOCK;
-		return -1;
+		tdb->ecode = TDB_ERR_ਤਾਲਾ;
+		ਵਾਪਸ -1;
 	}
-	tdb->have_transaction_lock = 1;
-	return 0;
+	tdb->have_transaction_ਤਾਲਾ = 1;
+	ਵਾਪਸ 0;
 }
 
 /*
   release the transaction lock
  */
-int tdb_transaction_unlock(struct tdb_context *tdb)
+ਪੂਰਨ tdb_transaction_unlock(ਬਣਤਰ tdb_context *tdb)
 {
-	int ret;
-	if (!tdb->have_transaction_lock) {
-		return 0;
+	ਪੂਰਨ ret;
+	ਜੇ (!tdb->have_transaction_ਤਾਲਾ) {
+		ਵਾਪਸ 0;
 	}
-	ret = tdb->methods->tdb_brlock(tdb, TRANSACTION_LOCK, F_UNLCK, F_SETLKW, 0, 1);
-	if (ret == 0) {
-		tdb->have_transaction_lock = 0;
+	ret = tdb->methods->tdb_brlock(tdb, TRANSACTION_ਤਾਲਾ, F_UNLCK, F_SETLKW, 0, 1);
+	ਜੇ (ret == 0) {
+		tdb->have_transaction_ਤਾਲਾ = 0;
 	}
-	return ret;
+	ਵਾਪਸ ret;
 }
 
 
 
 
 /* lock/unlock entire database */
-static int _tdb_lockall(struct tdb_context *tdb, int ltype, int op)
+ਸਥਿਰ ਪੂਰਨ _tdb_lockall(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ ltype, ਪੂਰਨ op)
 {
-	bool mark_lock = ((ltype & TDB_MARK_LOCK) == TDB_MARK_LOCK);
+	bool mark_ਤਾਲਾ = ((ltype & TDB_MARK_ਤਾਲਾ) == TDB_MARK_ਤਾਲਾ);
 
-	ltype &= ~TDB_MARK_LOCK;
+	ltype &= ~TDB_MARK_ਤਾਲਾ;
 
 	/* There are no locks on read-only dbs */
-	if (tdb->read_only || tdb->traverse_read)
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+	ਜੇ (tdb->read_only || tdb->traverse_read)
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_ਤਾਲਾ, -1);
 
-	if (tdb->global_lock.count && tdb->global_lock.ltype == (u32)ltype) {
-		tdb->global_lock.count++;
-		return 0;
+	ਜੇ (tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2 && tdb->global_ਤਾਲਾ.ltype == (u32)ltype) {
+		tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2++;
+		ਵਾਪਸ 0;
 	}
 
-	if (tdb->global_lock.count) {
+	ਜੇ (tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2) {
 		/* a global lock of a different type exists */
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_ਤਾਲਾ, -1);
 	}
 
-	if (tdb->num_locks != 0) {
+	ਜੇ (tdb->ਅੰਕ_locks != 0) {
 		/* can't combine global and chain locks */
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_ਤਾਲਾ, -1);
 	}
 
-	if (!mark_lock &&
-	    tdb->methods->tdb_brlock(tdb, FREELIST_TOP, ltype, op,
-				     0, 4*tdb->header.hash_size)) {
-		if (op == F_SETLKW) {
+	ਜੇ (!mark_ਤਾਲਾ &&
+	    tdb->methods->tdb_brlock(tdb, FREELIST_ਸਿਖਰ, ltype, op,
+				     0, 4*tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ)) {
+		ਜੇ (op == F_SETLKW) {
 			TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_lockall failed (%s)\n", strerror(errno)));
 		}
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	tdb->global_lock.count = 1;
-	tdb->global_lock.ltype = ltype;
+	tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2 = 1;
+	tdb->global_ਤਾਲਾ.ltype = ltype;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 
 
 /* unlock entire db */
-static int _tdb_unlockall(struct tdb_context *tdb, int ltype)
+ਸਥਿਰ ਪੂਰਨ _tdb_unlockall(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ ltype)
 {
-	bool mark_lock = ((ltype & TDB_MARK_LOCK) == TDB_MARK_LOCK);
+	bool mark_ਤਾਲਾ = ((ltype & TDB_MARK_ਤਾਲਾ) == TDB_MARK_ਤਾਲਾ);
 
-	ltype &= ~TDB_MARK_LOCK;
+	ltype &= ~TDB_MARK_ਤਾਲਾ;
 
 	/* There are no locks on read-only dbs */
-	if (tdb->read_only || tdb->traverse_read) {
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+	ਜੇ (tdb->read_only || tdb->traverse_read) {
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_ਤਾਲਾ, -1);
 	}
 
-	if (tdb->global_lock.ltype != (u32)ltype ||
-	    tdb->global_lock.count == 0) {
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+	ਜੇ (tdb->global_ਤਾਲਾ.ltype != (u32)ltype ||
+	    tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2 == 0) {
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_ਤਾਲਾ, -1);
 	}
 
-	if (tdb->global_lock.count > 1) {
-		tdb->global_lock.count--;
-		return 0;
+	ਜੇ (tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2 > 1) {
+		tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2--;
+		ਵਾਪਸ 0;
 	}
 
-	if (!mark_lock &&
-	    tdb->methods->tdb_brlock(tdb, FREELIST_TOP, F_UNLCK, F_SETLKW,
-				     0, 4*tdb->header.hash_size)) {
+	ਜੇ (!mark_ਤਾਲਾ &&
+	    tdb->methods->tdb_brlock(tdb, FREELIST_ਸਿਖਰ, F_UNLCK, F_SETLKW,
+				     0, 4*tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ)) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_unlockall failed (%s)\n", strerror(errno)));
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	tdb->global_lock.count = 0;
-	tdb->global_lock.ltype = 0;
+	tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2 = 0;
+	tdb->global_ਤਾਲਾ.ltype = 0;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* lock entire database with write lock */
-int tdb_lockall(struct tdb_context *tdb)
+ਪੂਰਨ tdb_lockall(ਬਣਤਰ tdb_context *tdb)
 {
-	return _tdb_lockall(tdb, F_WRLCK, F_SETLKW);
+	ਵਾਪਸ _tdb_lockall(tdb, F_WRLCK, F_SETLKW);
 }
 
 /* lock entire database with write lock - mark only */
-int tdb_lockall_mark(struct tdb_context *tdb)
+ਪੂਰਨ tdb_lockall_mark(ਬਣਤਰ tdb_context *tdb)
 {
-	return _tdb_lockall(tdb, F_WRLCK | TDB_MARK_LOCK, F_SETLKW);
+	ਵਾਪਸ _tdb_lockall(tdb, F_WRLCK | TDB_MARK_ਤਾਲਾ, F_SETLKW);
 }
 
 /* unlock entire database with write lock - unmark only */
-int tdb_lockall_unmark(struct tdb_context *tdb)
+ਪੂਰਨ tdb_lockall_unmark(ਬਣਤਰ tdb_context *tdb)
 {
-	return _tdb_unlockall(tdb, F_WRLCK | TDB_MARK_LOCK);
+	ਵਾਪਸ _tdb_unlockall(tdb, F_WRLCK | TDB_MARK_ਤਾਲਾ);
 }
 
 /* lock entire database with write lock - nonblocking variant */
-int tdb_lockall_nonblock(struct tdb_context *tdb)
+ਪੂਰਨ tdb_lockall_nonblock(ਬਣਤਰ tdb_context *tdb)
 {
-	return _tdb_lockall(tdb, F_WRLCK, F_SETLK);
+	ਵਾਪਸ _tdb_lockall(tdb, F_WRLCK, F_SETLK);
 }
 
 /* unlock entire database with write lock */
-int tdb_unlockall(struct tdb_context *tdb)
+ਪੂਰਨ tdb_unlockall(ਬਣਤਰ tdb_context *tdb)
 {
-	return _tdb_unlockall(tdb, F_WRLCK);
+	ਵਾਪਸ _tdb_unlockall(tdb, F_WRLCK);
 }
 
 /* lock entire database with read lock */
-int tdb_lockall_read(struct tdb_context *tdb)
+ਪੂਰਨ tdb_lockall_read(ਬਣਤਰ tdb_context *tdb)
 {
-	return _tdb_lockall(tdb, F_RDLCK, F_SETLKW);
+	ਵਾਪਸ _tdb_lockall(tdb, F_RDLCK, F_SETLKW);
 }
 
 /* lock entire database with read lock - nonblock variant */
-int tdb_lockall_read_nonblock(struct tdb_context *tdb)
+ਪੂਰਨ tdb_lockall_read_nonblock(ਬਣਤਰ tdb_context *tdb)
 {
-	return _tdb_lockall(tdb, F_RDLCK, F_SETLK);
+	ਵਾਪਸ _tdb_lockall(tdb, F_RDLCK, F_SETLK);
 }
 
 /* unlock entire database with read lock */
-int tdb_unlockall_read(struct tdb_context *tdb)
+ਪੂਰਨ tdb_unlockall_read(ਬਣਤਰ tdb_context *tdb)
 {
-	return _tdb_unlockall(tdb, F_RDLCK);
+	ਵਾਪਸ _tdb_unlockall(tdb, F_RDLCK);
 }
 
 /* lock/unlock one hash chain. This is meant to be used to reduce
    contention - it cannot guarantee how many records will be locked */
-int tdb_chainlock(struct tdb_context *tdb, TDB_DATA key)
+ਪੂਰਨ tdb_chainlock(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ)
 {
-	return tdb_lock(tdb, BUCKET(tdb->hash_fn(&key)), F_WRLCK);
+	ਵਾਪਸ tdb_ਤਾਲਾ(tdb, ਬਾਲਟੀ(tdb->hash_fn(&ਕੁੰਜੀ)), F_WRLCK);
 }
 
 /* lock/unlock one hash chain, non-blocking. This is meant to be used
    to reduce contention - it cannot guarantee how many records will be
    locked */
-int tdb_chainlock_nonblock(struct tdb_context *tdb, TDB_DATA key)
+ਪੂਰਨ tdb_chainlock_nonblock(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ)
 {
-	return tdb_lock_nonblock(tdb, BUCKET(tdb->hash_fn(&key)), F_WRLCK);
+	ਵਾਪਸ tdb_ਤਾਲਾ_nonblock(tdb, ਬਾਲਟੀ(tdb->hash_fn(&ਕੁੰਜੀ)), F_WRLCK);
 }
 
 /* mark a chain as locked without actually locking it. Warning! use with great caution! */
-int tdb_chainlock_mark(struct tdb_context *tdb, TDB_DATA key)
+ਪੂਰਨ tdb_chainlock_mark(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ)
 {
-	return tdb_lock(tdb, BUCKET(tdb->hash_fn(&key)), F_WRLCK | TDB_MARK_LOCK);
+	ਵਾਪਸ tdb_ਤਾਲਾ(tdb, ਬਾਲਟੀ(tdb->hash_fn(&ਕੁੰਜੀ)), F_WRLCK | TDB_MARK_ਤਾਲਾ);
 }
 
 /* unmark a chain as locked without actually locking it. Warning! use with great caution! */
-int tdb_chainlock_unmark(struct tdb_context *tdb, TDB_DATA key)
+ਪੂਰਨ tdb_chainlock_unmark(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ)
 {
-	return tdb_unlock(tdb, BUCKET(tdb->hash_fn(&key)), F_WRLCK | TDB_MARK_LOCK);
+	ਵਾਪਸ tdb_unlock(tdb, ਬਾਲਟੀ(tdb->hash_fn(&ਕੁੰਜੀ)), F_WRLCK | TDB_MARK_ਤਾਲਾ);
 }
 
-int tdb_chainunlock(struct tdb_context *tdb, TDB_DATA key)
+ਪੂਰਨ tdb_chainunlock(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ)
 {
-	return tdb_unlock(tdb, BUCKET(tdb->hash_fn(&key)), F_WRLCK);
+	ਵਾਪਸ tdb_unlock(tdb, ਬਾਲਟੀ(tdb->hash_fn(&ਕੁੰਜੀ)), F_WRLCK);
 }
 
-int tdb_chainlock_read(struct tdb_context *tdb, TDB_DATA key)
+ਪੂਰਨ tdb_chainlock_read(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ)
 {
-	return tdb_lock(tdb, BUCKET(tdb->hash_fn(&key)), F_RDLCK);
+	ਵਾਪਸ tdb_ਤਾਲਾ(tdb, ਬਾਲਟੀ(tdb->hash_fn(&ਕੁੰਜੀ)), F_RDLCK);
 }
 
-int tdb_chainunlock_read(struct tdb_context *tdb, TDB_DATA key)
+ਪੂਰਨ tdb_chainunlock_read(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ)
 {
-	return tdb_unlock(tdb, BUCKET(tdb->hash_fn(&key)), F_RDLCK);
+	ਵਾਪਸ tdb_unlock(tdb, ਬਾਲਟੀ(tdb->hash_fn(&ਕੁੰਜੀ)), F_RDLCK);
 }
 
 
 
 /* record lock stops delete underneath */
-int tdb_lock_record(struct tdb_context *tdb, tdb_off_t off)
+ਪੂਰਨ tdb_ਤਾਲਾ_ਰਿਕਾਰਡ(ਬਣਤਰ tdb_context *tdb, tdb_off_t off)
 {
-	return off ? tdb->methods->tdb_brlock(tdb, off, F_RDLCK, F_SETLKW, 0, 1) : 0;
+	ਵਾਪਸ off ? tdb->methods->tdb_brlock(tdb, off, F_RDLCK, F_SETLKW, 0, 1) : 0;
 }
 
 /*
@@ -805,36 +805,36 @@ int tdb_lock_record(struct tdb_context *tdb, tdb_off_t off)
   Note this is meant to be F_SETLK, *not* F_SETLKW, as it's not
   an error to fail to get the lock here.
 */
-int tdb_write_lock_record(struct tdb_context *tdb, tdb_off_t off)
+ਪੂਰਨ tdb_write_ਤਾਲਾ_ਰਿਕਾਰਡ(ਬਣਤਰ tdb_context *tdb, tdb_off_t off)
 {
-	struct tdb_traverse_lock *i;
-	for (i = &tdb->travlocks; i; i = i->next)
-		if (i->off == off)
-			return -1;
-	return tdb->methods->tdb_brlock(tdb, off, F_WRLCK, F_SETLK, 1, 1);
+	ਬਣਤਰ tdb_traverse_ਤਾਲਾ *i;
+	ਲਈ (i = &tdb->travlocks; i; i = i->ਅਗਲਾ)
+		ਜੇ (i->off == off)
+			ਵਾਪਸ -1;
+	ਵਾਪਸ tdb->methods->tdb_brlock(tdb, off, F_WRLCK, F_SETLK, 1, 1);
 }
 
 /*
   Note this is meant to be F_SETLK, *not* F_SETLKW, as it's not
   an error to fail to get the lock here.
 */
-int tdb_write_unlock_record(struct tdb_context *tdb, tdb_off_t off)
+ਪੂਰਨ tdb_write_unlock_ਰਿਕਾਰਡ(ਬਣਤਰ tdb_context *tdb, tdb_off_t off)
 {
-	return tdb->methods->tdb_brlock(tdb, off, F_UNLCK, F_SETLK, 0, 1);
+	ਵਾਪਸ tdb->methods->tdb_brlock(tdb, off, F_UNLCK, F_SETLK, 0, 1);
 }
 
 /* fcntl locks don't stack: avoid unlocking someone else's */
-int tdb_unlock_record(struct tdb_context *tdb, tdb_off_t off)
+ਪੂਰਨ tdb_unlock_ਰਿਕਾਰਡ(ਬਣਤਰ tdb_context *tdb, tdb_off_t off)
 {
-	struct tdb_traverse_lock *i;
-	u32 count = 0;
+	ਬਣਤਰ tdb_traverse_ਤਾਲਾ *i;
+	u32 ਗਿਣਤੀ_2 = 0;
 
-	if (off == 0)
-		return 0;
-	for (i = &tdb->travlocks; i; i = i->next)
-		if (i->off == off)
-			count++;
-	return (count == 1 ? tdb->methods->tdb_brlock(tdb, off, F_UNLCK, F_SETLKW, 0, 1) : 0);
+	ਜੇ (off == 0)
+		ਵਾਪਸ 0;
+	ਲਈ (i = &tdb->travlocks; i; i = i->ਅਗਲਾ)
+		ਜੇ (i->off == off)
+			ਗਿਣਤੀ_2++;
+	ਵਾਪਸ (ਗਿਣਤੀ_2 == 1 ? tdb->methods->tdb_brlock(tdb, off, F_UNLCK, F_SETLKW, 0, 1) : 0);
 }
 
 /* file: io.c */
@@ -844,107 +844,107 @@ int tdb_unlock_record(struct tdb_context *tdb, tdb_off_t off)
    if necessary
    note that "len" is the minimum length needed for the db
 */
-static int tdb_oob(struct tdb_context *tdb, tdb_off_t len, int probe)
+ਸਥਿਰ ਪੂਰਨ tdb_oob(ਬਣਤਰ tdb_context *tdb, tdb_off_t len, ਪੂਰਨ probe)
 {
-	struct stat st;
-	if (len <= tdb->map_size)
-		return 0;
-	if (tdb->flags & TDB_INTERNAL) {
-		if (!probe) {
+	ਬਣਤਰ stat st;
+	ਜੇ (len <= tdb->map_ਮਾਪ)
+		ਵਾਪਸ 0;
+	ਜੇ (tdb->flags & TDB_ਅੰਦਰੂਨੀ) {
+		ਜੇ (!probe) {
 			/* Ensure ecode is set for log fn. */
 			tdb->ecode = TDB_ERR_IO;
 			TDB_LOG((tdb, TDB_DEBUG_FATAL,"tdb_oob len %d beyond internal malloc size %d\n",
-				 (int)len, (int)tdb->map_size));
+				 (ਪੂਰਨ)len, (ਪੂਰਨ)tdb->map_ਮਾਪ));
 		}
-		return TDB_ERRCODE(TDB_ERR_IO, -1);
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_IO, -1);
 	}
 
-	if (fstat(tdb->fd, &st) == -1) {
-		return TDB_ERRCODE(TDB_ERR_IO, -1);
+	ਜੇ (fstat(tdb->fd, &st) == -1) {
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_IO, -1);
 	}
 
-	if (st.st_size < (off_t)len) {
-		if (!probe) {
+	ਜੇ (st.st_ਮਾਪ < (off_t)len) {
+		ਜੇ (!probe) {
 			/* Ensure ecode is set for log fn. */
 			tdb->ecode = TDB_ERR_IO;
 			TDB_LOG((tdb, TDB_DEBUG_FATAL,"tdb_oob len %d beyond eof at %d\n",
-				 (int)len, (int)st.st_size));
+				 (ਪੂਰਨ)len, (ਪੂਰਨ)st.st_ਮਾਪ));
 		}
-		return TDB_ERRCODE(TDB_ERR_IO, -1);
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_IO, -1);
 	}
 
 	/* Unmap, update size, remap */
-	if (tdb_munmap(tdb) == -1)
-		return TDB_ERRCODE(TDB_ERR_IO, -1);
-	tdb->map_size = st.st_size;
+	ਜੇ (tdb_munmap(tdb) == -1)
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_IO, -1);
+	tdb->map_ਮਾਪ = st.st_ਮਾਪ;
 	tdb_mmap(tdb);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* write a lump of data at a specified offset */
-static int tdb_write(struct tdb_context *tdb, tdb_off_t off,
-		     const void *buf, tdb_len_t len)
+ਸਥਿਰ ਪੂਰਨ tdb_write(ਬਣਤਰ tdb_context *tdb, tdb_off_t off,
+		     ਅਚਲ ਖਾਲੀ *buf, tdb_len_t len)
 {
-	if (len == 0) {
-		return 0;
+	ਜੇ (len == 0) {
+		ਵਾਪਸ 0;
 	}
 
-	if (tdb->read_only || tdb->traverse_read) {
+	ਜੇ (tdb->read_only || tdb->traverse_read) {
 		tdb->ecode = TDB_ERR_RDONLY;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	if (tdb->methods->tdb_oob(tdb, off + len, 0) != 0)
-		return -1;
+	ਜੇ (tdb->methods->tdb_oob(tdb, off + len, 0) != 0)
+		ਵਾਪਸ -1;
 
-	if (tdb->map_ptr) {
-		memcpy(off + (char *)tdb->map_ptr, buf, len);
-	} else if (pwrite(tdb->fd, buf, len, off) != (ssize_t)len) {
+	ਜੇ (tdb->map_ptr) {
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(off + (ਅੱਖਰ *)tdb->map_ptr, buf, len);
+	} ਨਹੀਂਤਾਂ ਜੇ (pwrite(tdb->fd, buf, len, off) != (ssize_t)len) {
 		/* Ensure ecode is set for log fn. */
 		tdb->ecode = TDB_ERR_IO;
 		TDB_LOG((tdb, TDB_DEBUG_FATAL,"tdb_write failed at %d len=%d (%s)\n",
 			   off, len, strerror(errno)));
-		return TDB_ERRCODE(TDB_ERR_IO, -1);
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_IO, -1);
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* Endian conversion: we only ever deal with 4 byte quantities */
-void *tdb_convert(void *buf, u32 size)
+ਖਾਲੀ *tdb_convert(ਖਾਲੀ *buf, u32 ਮਾਪ)
 {
 	u32 i, *p = (u32 *)buf;
-	for (i = 0; i < size / 4; i++)
+	ਲਈ (i = 0; i < ਮਾਪ / 4; i++)
 		p[i] = TDB_BYTEREV(p[i]);
-	return buf;
+	ਵਾਪਸ buf;
 }
 
 
 /* read a lump of data at a specified offset, maybe convert */
-static int tdb_read(struct tdb_context *tdb, tdb_off_t off, void *buf,
-		    tdb_len_t len, int cv)
+ਸਥਿਰ ਪੂਰਨ tdb_read(ਬਣਤਰ tdb_context *tdb, tdb_off_t off, ਖਾਲੀ *buf,
+		    tdb_len_t len, ਪੂਰਨ cv)
 {
-	if (tdb->methods->tdb_oob(tdb, off + len, 0) != 0) {
-		return -1;
+	ਜੇ (tdb->methods->tdb_oob(tdb, off + len, 0) != 0) {
+		ਵਾਪਸ -1;
 	}
 
-	if (tdb->map_ptr) {
-		memcpy(buf, off + (char *)tdb->map_ptr, len);
-	} else {
+	ਜੇ (tdb->map_ptr) {
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(buf, off + (ਅੱਖਰ *)tdb->map_ptr, len);
+	} ਨਹੀਂਤਾਂ {
 		ssize_t ret = pread(tdb->fd, buf, len, off);
-		if (ret != (ssize_t)len) {
+		ਜੇ (ret != (ssize_t)len) {
 			/* Ensure ecode is set for log fn. */
 			tdb->ecode = TDB_ERR_IO;
 			TDB_LOG((tdb, TDB_DEBUG_FATAL,"tdb_read failed at %d "
 				 "len=%d ret=%d (%s) map_size=%d\n",
-				 (int)off, (int)len, (int)ret, strerror(errno),
-				 (int)tdb->map_size));
-			return TDB_ERRCODE(TDB_ERR_IO, -1);
+				 (ਪੂਰਨ)off, (ਪੂਰਨ)len, (ਪੂਰਨ)ret, strerror(errno),
+				 (ਪੂਰਨ)tdb->map_ਮਾਪ));
+			ਵਾਪਸ TDB_ERRCODE(TDB_ERR_IO, -1);
 		}
 	}
-	if (cv) {
+	ਜੇ (cv) {
 		tdb_convert(buf, len);
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 
@@ -953,20 +953,20 @@ static int tdb_read(struct tdb_context *tdb, tdb_off_t off, void *buf,
   do an unlocked scan of the hash table heads to find the next non-zero head. The value
   will then be confirmed with the lock held
 */
-static void tdb_next_hash_chain(struct tdb_context *tdb, u32 *chain)
+ਸਥਿਰ ਖਾਲੀ tdb_ਅਗਲਾ_hash_chain(ਬਣਤਰ tdb_context *tdb, u32 *chain)
 {
 	u32 h = *chain;
-	if (tdb->map_ptr) {
-		for (;h < tdb->header.hash_size;h++) {
-			if (0 != *(u32 *)(TDB_HASH_TOP(h) + (unsigned char *)tdb->map_ptr)) {
-				break;
+	ਜੇ (tdb->map_ptr) {
+		ਲਈ (;h < tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ;h++) {
+			ਜੇ (0 != *(u32 *)(TDB_HASH_ਸਿਖਰ(h) + (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)tdb->map_ptr)) {
+				ਰੋਕੋ;
 			}
 		}
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		u32 off=0;
-		for (;h < tdb->header.hash_size;h++) {
-			if (tdb_ofs_read(tdb, TDB_HASH_TOP(h), &off) != 0 || off != 0) {
-				break;
+		ਲਈ (;h < tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ;h++) {
+			ਜੇ (tdb_ofs_read(tdb, TDB_HASH_ਸਿਖਰ(h), &off) != 0 || off != 0) {
+				ਰੋਕੋ;
 			}
 		}
 	}
@@ -974,31 +974,31 @@ static void tdb_next_hash_chain(struct tdb_context *tdb, u32 *chain)
 }
 
 
-int tdb_munmap(struct tdb_context *tdb)
+ਪੂਰਨ tdb_munmap(ਬਣਤਰ tdb_context *tdb)
 {
-	if (tdb->flags & TDB_INTERNAL)
-		return 0;
+	ਜੇ (tdb->flags & TDB_ਅੰਦਰੂਨੀ)
+		ਵਾਪਸ 0;
 
-#ifdef HAVE_MMAP
-	if (tdb->map_ptr) {
-		int ret = munmap(tdb->map_ptr, tdb->real_map_size);
-		if (ret != 0)
-			return ret;
-		tdb->real_map_size = 0;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_MMAP
+	ਜੇ (tdb->map_ptr) {
+		ਪੂਰਨ ret = munmap(tdb->map_ptr, tdb->real_map_ਮਾਪ);
+		ਜੇ (ret != 0)
+			ਵਾਪਸ ret;
+		tdb->real_map_ਮਾਪ = 0;
 	}
-#endif
-	tdb->map_ptr = NULL;
-	return 0;
+#ਜੇ_ਅੰਤ
+	tdb->map_ptr = ਨਿਰਾ;
+	ਵਾਪਸ 0;
 }
 
-void tdb_mmap(struct tdb_context *tdb)
+ਖਾਲੀ tdb_mmap(ਬਣਤਰ tdb_context *tdb)
 {
-	if (tdb->flags & TDB_INTERNAL)
-		return;
+	ਜੇ (tdb->flags & TDB_ਅੰਦਰੂਨੀ)
+		ਵਾਪਸ;
 
-#ifdef HAVE_MMAP
-	if (!(tdb->flags & TDB_NOMMAP)) {
-		tdb->map_ptr = mmap(NULL, tdb->map_size,
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_MMAP
+	ਜੇ (!(tdb->flags & TDB_NOMMAP)) {
+		tdb->map_ptr = mmap(ਨਿਰਾ, tdb->map_ਮਾਪ,
 				    PROT_READ|(tdb->read_only? 0:PROT_WRITE),
 				    MAP_SHARED|MAP_FILE, tdb->fd, 0);
 
@@ -1006,80 +1006,80 @@ void tdb_mmap(struct tdb_context *tdb)
 		 * NB. When mmap fails it returns MAP_FAILED *NOT* NULL !!!!
 		 */
 
-		if (tdb->map_ptr == MAP_FAILED) {
-			tdb->real_map_size = 0;
-			tdb->map_ptr = NULL;
+		ਜੇ (tdb->map_ptr == MAP_FAILED) {
+			tdb->real_map_ਮਾਪ = 0;
+			tdb->map_ptr = ਨਿਰਾ;
 			TDB_LOG((tdb, TDB_DEBUG_WARNING, "tdb_mmap failed for size %d (%s)\n",
-				 tdb->map_size, strerror(errno)));
+				 tdb->map_ਮਾਪ, strerror(errno)));
 		}
-		tdb->real_map_size = tdb->map_size;
-	} else {
-		tdb->map_ptr = NULL;
+		tdb->real_map_ਮਾਪ = tdb->map_ਮਾਪ;
+	} ਨਹੀਂਤਾਂ {
+		tdb->map_ptr = ਨਿਰਾ;
 	}
-#else
-	tdb->map_ptr = NULL;
-#endif
+#ਨਹੀਂਤਾਂ
+	tdb->map_ptr = ਨਿਰਾ;
+#ਜੇ_ਅੰਤ
 }
 
 /* expand a file.  we prefer to use ftruncate, as that is what posix
   says to use for mmap expansion */
-static int tdb_expand_file(struct tdb_context *tdb, tdb_off_t size, tdb_off_t addition)
+ਸਥਿਰ ਪੂਰਨ tdb_expand_file(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਮਾਪ, tdb_off_t addition)
 {
-	char buf[1024];
+	ਅੱਖਰ buf[1024];
 
-	if (tdb->read_only || tdb->traverse_read) {
+	ਜੇ (tdb->read_only || tdb->traverse_read) {
 		tdb->ecode = TDB_ERR_RDONLY;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	if (ftruncate(tdb->fd, size+addition) == -1) {
-		char b = 0;
-		if (pwrite(tdb->fd,  &b, 1, (size+addition) - 1) != 1) {
+	ਜੇ (ftruncate(tdb->fd, ਮਾਪ+addition) == -1) {
+		ਅੱਖਰ b = 0;
+		ਜੇ (pwrite(tdb->fd,  &b, 1, (ਮਾਪ+addition) - 1) != 1) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "expand_file to %d failed (%s)\n",
-				 size+addition, strerror(errno)));
-			return -1;
+				 ਮਾਪ+addition, strerror(errno)));
+			ਵਾਪਸ -1;
 		}
 	}
 
 	/* now fill the file with something. This ensures that the
 	   file isn't sparse, which would be very bad if we ran out of
 	   disk. This must be done with write, not via mmap */
-	memset(buf, TDB_PAD_BYTE, sizeof(buf));
-	while (addition) {
-		int n = addition>sizeof(buf)?sizeof(buf):addition;
-		int ret = pwrite(tdb->fd, buf, n, size);
-		if (ret != n) {
+	memset(buf, TDB_PAD_BYTE, ਆਕਾਰ(buf));
+	ਜਦੋਂ (addition) {
+		ਪੂਰਨ n = addition>ਆਕਾਰ(buf)?ਆਕਾਰ(buf):addition;
+		ਪੂਰਨ ret = pwrite(tdb->fd, buf, n, ਮਾਪ);
+		ਜੇ (ret != n) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "expand_file write of %d failed (%s)\n",
 				   n, strerror(errno)));
-			return -1;
+			ਵਾਪਸ -1;
 		}
 		addition -= n;
-		size += n;
+		ਮਾਪ += n;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 
 /* expand the database at least size bytes by expanding the underlying
    file and doing the mmap again if necessary */
-int tdb_expand(struct tdb_context *tdb, tdb_off_t size)
+ਪੂਰਨ tdb_expand(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਮਾਪ)
 {
-	struct list_struct rec;
-	tdb_off_t offset;
+	ਬਣਤਰ list_struct rec;
+	tdb_off_t ਵਿੱਥ;
 
-	if (tdb_lock(tdb, -1, F_WRLCK) == -1) {
+	ਜੇ (tdb_ਤਾਲਾ(tdb, -1, F_WRLCK) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "lock failed in tdb_expand\n"));
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	/* must know about any previous expansions by another process */
-	tdb->methods->tdb_oob(tdb, tdb->map_size + 1, 1);
+	tdb->methods->tdb_oob(tdb, tdb->map_ਮਾਪ + 1, 1);
 
 	/* always make room for at least 10 more records, and round
            the database up to a multiple of the page size */
-	size = TDB_ALIGN(tdb->map_size + size*10, tdb->page_size) - tdb->map_size;
+	ਮਾਪ = TDB_ALIGN(tdb->map_ਮਾਪ + ਮਾਪ*10, tdb->ਪੰਨਾ_ਮਾਪ) - tdb->map_ਮਾਪ;
 
-	if (!(tdb->flags & TDB_INTERNAL))
+	ਜੇ (!(tdb->flags & TDB_ਅੰਦਰੂਨੀ))
 		tdb_munmap(tdb);
 
 	/*
@@ -1089,22 +1089,22 @@ int tdb_expand(struct tdb_context *tdb, tdb_off_t size)
 	 */
 
 	/* expand the file itself */
-	if (!(tdb->flags & TDB_INTERNAL)) {
-		if (tdb->methods->tdb_expand_file(tdb, tdb->map_size, size) != 0)
-			goto fail;
+	ਜੇ (!(tdb->flags & TDB_ਅੰਦਰੂਨੀ)) {
+		ਜੇ (tdb->methods->tdb_expand_file(tdb, tdb->map_ਮਾਪ, ਮਾਪ) != 0)
+			ਜਾਓ fail;
 	}
 
-	tdb->map_size += size;
+	tdb->map_ਮਾਪ += ਮਾਪ;
 
-	if (tdb->flags & TDB_INTERNAL) {
-		char *new_map_ptr = (char *)realloc(tdb->map_ptr,
-						    tdb->map_size);
-		if (!new_map_ptr) {
-			tdb->map_size -= size;
-			goto fail;
+	ਜੇ (tdb->flags & TDB_ਅੰਦਰੂਨੀ) {
+		ਅੱਖਰ *new_map_ptr = (ਅੱਖਰ *)realloc(tdb->map_ptr,
+						    tdb->map_ਮਾਪ);
+		ਜੇ (!new_map_ptr) {
+			tdb->map_ਮਾਪ -= ਮਾਪ;
+			ਜਾਓ fail;
 		}
 		tdb->map_ptr = new_map_ptr;
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/*
 		 * We must ensure the file is remapped before adding the space
 		 * to ensure consistency with systems like OpenBSD where
@@ -1116,116 +1116,116 @@ int tdb_expand(struct tdb_context *tdb, tdb_off_t size)
 	}
 
 	/* form a new freelist record */
-	memset(&rec,'\0',sizeof(rec));
-	rec.rec_len = size - sizeof(rec);
+	memset(&rec,'\0',ਆਕਾਰ(rec));
+	rec.rec_len = ਮਾਪ - ਆਕਾਰ(rec);
 
 	/* link it into the free list */
-	offset = tdb->map_size - size;
-	if (tdb_free(tdb, offset, &rec) == -1)
-		goto fail;
+	ਵਿੱਥ = tdb->map_ਮਾਪ - ਮਾਪ;
+	ਜੇ (tdb_free(tdb, ਵਿੱਥ, &rec) == -1)
+		ਜਾਓ fail;
 
 	tdb_unlock(tdb, -1, F_WRLCK);
-	return 0;
+	ਵਾਪਸ 0;
  fail:
 	tdb_unlock(tdb, -1, F_WRLCK);
-	return -1;
+	ਵਾਪਸ -1;
 }
 
 /* read/write a tdb_off_t */
-int tdb_ofs_read(struct tdb_context *tdb, tdb_off_t offset, tdb_off_t *d)
+ਪੂਰਨ tdb_ofs_read(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, tdb_off_t *d)
 {
-	return tdb->methods->tdb_read(tdb, offset, (char*)d, sizeof(*d), DOCONV());
+	ਵਾਪਸ tdb->methods->tdb_read(tdb, ਵਿੱਥ, (ਅੱਖਰ*)d, ਆਕਾਰ(*d), DOCONV());
 }
 
-int tdb_ofs_write(struct tdb_context *tdb, tdb_off_t offset, tdb_off_t *d)
+ਪੂਰਨ tdb_ofs_write(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, tdb_off_t *d)
 {
 	tdb_off_t off = *d;
-	return tdb->methods->tdb_write(tdb, offset, CONVERT(off), sizeof(*d));
+	ਵਾਪਸ tdb->methods->tdb_write(tdb, ਵਿੱਥ, CONVERT(off), ਆਕਾਰ(*d));
 }
 
 
 /* read a lump of data, allocating the space for it */
-unsigned char *tdb_alloc_read(struct tdb_context *tdb, tdb_off_t offset, tdb_len_t len)
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *tdb_alloc_read(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, tdb_len_t len)
 {
-	unsigned char *buf;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *buf;
 
 	/* some systems don't like zero length malloc */
-	if (len == 0) {
+	ਜੇ (len == 0) {
 		len = 1;
 	}
 
-	if (!(buf = (unsigned char *)malloc(len))) {
+	ਜੇ (!(buf = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)ਸਮ੍ਰਿਤੀ_ਦਿਓ(len))) {
 		/* Ensure ecode is set for log fn. */
 		tdb->ecode = TDB_ERR_OOM;
 		TDB_LOG((tdb, TDB_DEBUG_ERROR,"tdb_alloc_read malloc failed len=%d (%s)\n",
 			   len, strerror(errno)));
-		return TDB_ERRCODE(TDB_ERR_OOM, buf);
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_OOM, buf);
 	}
-	if (tdb->methods->tdb_read(tdb, offset, buf, len, 0) == -1) {
-		SAFE_FREE(buf);
-		return NULL;
+	ਜੇ (tdb->methods->tdb_read(tdb, ਵਿੱਥ, buf, len, 0) == -1) {
+		ਸੁਰੱਖਿਅਤ_FREE(buf);
+		ਵਾਪਸ ਨਿਰਾ;
 	}
-	return buf;
+	ਵਾਪਸ buf;
 }
 
 /* Give a piece of tdb data to a parser */
 
-int tdb_parse_data(struct tdb_context *tdb, TDB_DATA key,
-		   tdb_off_t offset, tdb_len_t len,
-		   int (*parser)(TDB_DATA key, TDB_DATA data,
-				 void *private_data),
-		   void *private_data)
+ਪੂਰਨ tdb_parse_ਅੰਕੜੇ(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ,
+		   tdb_off_t ਵਿੱਥ, tdb_len_t len,
+		   ਪੂਰਨ (*parser)(TDB_ਅੰਕੜੇ ਕੁੰਜੀ, TDB_ਅੰਕੜੇ ਅੰਕੜੇ,
+				 ਖਾਲੀ *ਨਿੱਜੀ_ਅੰਕੜੇ),
+		   ਖਾਲੀ *ਨਿੱਜੀ_ਅੰਕੜੇ)
 {
-	TDB_DATA data;
-	int result;
+	TDB_ਅੰਕੜੇ ਅੰਕੜੇ;
+	ਪੂਰਨ ਨਤੀਜਾ;
 
-	data.dsize = len;
+	ਅੰਕੜੇ.dsize = len;
 
-	if ((tdb->transaction == NULL) && (tdb->map_ptr != NULL)) {
+	ਜੇ ((tdb->transaction == ਨਿਰਾ) && (tdb->map_ptr != ਨਿਰਾ)) {
 		/*
 		 * Optimize by avoiding the malloc/memcpy/free, point the
 		 * parser directly at the mmap area.
 		 */
-		if (tdb->methods->tdb_oob(tdb, offset+len, 0) != 0) {
-			return -1;
+		ਜੇ (tdb->methods->tdb_oob(tdb, ਵਿੱਥ+len, 0) != 0) {
+			ਵਾਪਸ -1;
 		}
-		data.dptr = offset + (unsigned char *)tdb->map_ptr;
-		return parser(key, data, private_data);
+		ਅੰਕੜੇ.dptr = ਵਿੱਥ + (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)tdb->map_ptr;
+		ਵਾਪਸ parser(ਕੁੰਜੀ, ਅੰਕੜੇ, ਨਿੱਜੀ_ਅੰਕੜੇ);
 	}
 
-	if (!(data.dptr = tdb_alloc_read(tdb, offset, len))) {
-		return -1;
+	ਜੇ (!(ਅੰਕੜੇ.dptr = tdb_alloc_read(tdb, ਵਿੱਥ, len))) {
+		ਵਾਪਸ -1;
 	}
 
-	result = parser(key, data, private_data);
-	free(data.dptr);
-	return result;
+	ਨਤੀਜਾ = parser(ਕੁੰਜੀ, ਅੰਕੜੇ, ਨਿੱਜੀ_ਅੰਕੜੇ);
+	ਮੁਕਤ(ਅੰਕੜੇ.dptr);
+	ਵਾਪਸ ਨਤੀਜਾ;
 }
 
 /* read/write a record */
-int tdb_rec_read(struct tdb_context *tdb, tdb_off_t offset, struct list_struct *rec)
+ਪੂਰਨ tdb_rec_read(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, ਬਣਤਰ list_struct *rec)
 {
-	if (tdb->methods->tdb_read(tdb, offset, rec, sizeof(*rec),DOCONV()) == -1)
-		return -1;
-	if (TDB_BAD_MAGIC(rec)) {
+	ਜੇ (tdb->methods->tdb_read(tdb, ਵਿੱਥ, rec, ਆਕਾਰ(*rec),DOCONV()) == -1)
+		ਵਾਪਸ -1;
+	ਜੇ (TDB_BAD_MAGIC(rec)) {
 		/* Ensure ecode is set for log fn. */
 		tdb->ecode = TDB_ERR_CORRUPT;
-		TDB_LOG((tdb, TDB_DEBUG_FATAL,"tdb_rec_read bad magic 0x%x at offset=%d\n", rec->magic, offset));
-		return TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
+		TDB_LOG((tdb, TDB_DEBUG_FATAL,"tdb_rec_read bad magic 0x%x at offset=%d\n", rec->magic, ਵਿੱਥ));
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
 	}
-	return tdb->methods->tdb_oob(tdb, rec->next+sizeof(*rec), 0);
+	ਵਾਪਸ tdb->methods->tdb_oob(tdb, rec->ਅਗਲਾ+ਆਕਾਰ(*rec), 0);
 }
 
-int tdb_rec_write(struct tdb_context *tdb, tdb_off_t offset, struct list_struct *rec)
+ਪੂਰਨ tdb_rec_write(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, ਬਣਤਰ list_struct *rec)
 {
-	struct list_struct r = *rec;
-	return tdb->methods->tdb_write(tdb, offset, CONVERT(r), sizeof(r));
+	ਬਣਤਰ list_struct r = *rec;
+	ਵਾਪਸ tdb->methods->tdb_write(tdb, ਵਿੱਥ, CONVERT(r), ਆਕਾਰ(r));
 }
 
-static const struct tdb_methods io_methods = {
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ tdb_methods io_methods = {
 	tdb_read,
 	tdb_write,
-	tdb_next_hash_chain,
+	tdb_ਅਗਲਾ_hash_chain,
 	tdb_oob,
 	tdb_expand_file,
 	tdb_brlock
@@ -1234,7 +1234,7 @@ static const struct tdb_methods io_methods = {
 /*
   initialise the default methods table
 */
-void tdb_io_init(struct tdb_context *tdb)
+ਖਾਲੀ tdb_io_init(ਬਣਤਰ tdb_context *tdb)
 {
 	tdb->methods = &io_methods;
 }
@@ -1303,43 +1303,43 @@ void tdb_io_init(struct tdb_context *tdb)
 
 */
 
-struct tdb_transaction_el {
-	struct tdb_transaction_el *next, *prev;
-	tdb_off_t offset;
-	tdb_len_t length;
-	unsigned char *data;
+ਬਣਤਰ tdb_transaction_el {
+	ਬਣਤਰ tdb_transaction_el *ਅਗਲਾ, *prev;
+	tdb_off_t ਵਿੱਥ;
+	tdb_len_t ਲੰਮਾਈ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਅੰਕੜੇ;
 };
 
 /*
   hold the context of any current transaction
 */
-struct tdb_transaction {
+ਬਣਤਰ tdb_transaction {
 	/* we keep a mirrored copy of the tdb hash heads here so
 	   tdb_next_hash_chain() can operate efficiently */
 	u32 *hash_heads;
 
 	/* the original io methods - used to do IOs to the real db */
-	const struct tdb_methods *io_methods;
+	ਅਚਲ ਬਣਤਰ tdb_methods *io_methods;
 
 	/* the list of transaction elements. We use a doubly linked
 	   list with a last pointer to allow us to keep the list
 	   ordered, with first element at the front of the list. It
 	   needs to be doubly linked as the read/write traversals need
 	   to be backwards, while the commit needs to be forwards */
-	struct tdb_transaction_el *elements, *elements_last;
+	ਬਣਤਰ tdb_transaction_el *elements, *elements_ਆਖਰੀ;
 
 	/* non-zero when an internal transaction error has
 	   occurred. All write operations will then fail until the
 	   transaction is ended */
-	int transaction_error;
+	ਪੂਰਨ transaction_error;
 
 	/* when inside a transaction we need to keep track of any
 	   nested tdb_transaction_start() calls, as these are allowed,
 	   but don't create a new transaction */
-	int nesting;
+	ਪੂਰਨ nesting;
 
 	/* old file size before transaction */
-	tdb_len_t old_map_size;
+	tdb_len_t old_map_ਮਾਪ;
 };
 
 
@@ -1347,198 +1347,198 @@ struct tdb_transaction {
   read while in a transaction. We need to check first if the data is in our list
   of transaction elements, then if not do a real read
 */
-static int transaction_read(struct tdb_context *tdb, tdb_off_t off, void *buf,
-			    tdb_len_t len, int cv)
+ਸਥਿਰ ਪੂਰਨ transaction_read(ਬਣਤਰ tdb_context *tdb, tdb_off_t off, ਖਾਲੀ *buf,
+			    tdb_len_t len, ਪੂਰਨ cv)
 {
-	struct tdb_transaction_el *el;
+	ਬਣਤਰ tdb_transaction_el *el;
 
 	/* we need to walk the list backwards to get the most recent data */
-	for (el=tdb->transaction->elements_last;el;el=el->prev) {
+	ਲਈ (el=tdb->transaction->elements_ਆਖਰੀ;el;el=el->prev) {
 		tdb_len_t partial;
 
-		if (off+len <= el->offset) {
-			continue;
+		ਜੇ (off+len <= el->ਵਿੱਥ) {
+			ਜਾਰੀ;
 		}
-		if (off >= el->offset + el->length) {
-			continue;
+		ਜੇ (off >= el->ਵਿੱਥ + el->ਲੰਮਾਈ) {
+			ਜਾਰੀ;
 		}
 
 		/* an overlapping read - needs to be split into up to
 		   2 reads and a memcpy */
-		if (off < el->offset) {
-			partial = el->offset - off;
-			if (transaction_read(tdb, off, buf, partial, cv) != 0) {
-				goto fail;
+		ਜੇ (off < el->ਵਿੱਥ) {
+			partial = el->ਵਿੱਥ - off;
+			ਜੇ (transaction_read(tdb, off, buf, partial, cv) != 0) {
+				ਜਾਓ fail;
 			}
 			len -= partial;
 			off += partial;
-			buf = (void *)(partial + (char *)buf);
+			buf = (ਖਾਲੀ *)(partial + (ਅੱਖਰ *)buf);
 		}
-		if (off + len <= el->offset + el->length) {
+		ਜੇ (off + len <= el->ਵਿੱਥ + el->ਲੰਮਾਈ) {
 			partial = len;
-		} else {
-			partial = el->offset + el->length - off;
+		} ਨਹੀਂਤਾਂ {
+			partial = el->ਵਿੱਥ + el->ਲੰਮਾਈ - off;
 		}
-		memcpy(buf, el->data + (off - el->offset), partial);
-		if (cv) {
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(buf, el->ਅੰਕੜੇ + (off - el->ਵਿੱਥ), partial);
+		ਜੇ (cv) {
 			tdb_convert(buf, len);
 		}
 		len -= partial;
 		off += partial;
-		buf = (void *)(partial + (char *)buf);
+		buf = (ਖਾਲੀ *)(partial + (ਅੱਖਰ *)buf);
 
-		if (len != 0 && transaction_read(tdb, off, buf, len, cv) != 0) {
-			goto fail;
+		ਜੇ (len != 0 && transaction_read(tdb, off, buf, len, cv) != 0) {
+			ਜਾਓ fail;
 		}
 
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
 	/* its not in the transaction elements - do a real read */
-	return tdb->transaction->io_methods->tdb_read(tdb, off, buf, len, cv);
+	ਵਾਪਸ tdb->transaction->io_methods->tdb_read(tdb, off, buf, len, cv);
 
 fail:
 	TDB_LOG((tdb, TDB_DEBUG_FATAL, "transaction_read: failed at off=%d len=%d\n", off, len));
 	tdb->ecode = TDB_ERR_IO;
 	tdb->transaction->transaction_error = 1;
-	return -1;
+	ਵਾਪਸ -1;
 }
 
 
 /*
   write while in a transaction
 */
-static int transaction_write(struct tdb_context *tdb, tdb_off_t off,
-			     const void *buf, tdb_len_t len)
+ਸਥਿਰ ਪੂਰਨ transaction_write(ਬਣਤਰ tdb_context *tdb, tdb_off_t off,
+			     ਅਚਲ ਖਾਲੀ *buf, tdb_len_t len)
 {
-	struct tdb_transaction_el *el, *best_el=NULL;
+	ਬਣਤਰ tdb_transaction_el *el, *ਉੱਤਮ_el=ਨਿਰਾ;
 
-	if (len == 0) {
-		return 0;
+	ਜੇ (len == 0) {
+		ਵਾਪਸ 0;
 	}
 
 	/* if the write is to a hash head, then update the transaction
 	   hash heads */
-	if (len == sizeof(tdb_off_t) && off >= FREELIST_TOP &&
-	    off < FREELIST_TOP+TDB_HASHTABLE_SIZE(tdb)) {
-		u32 chain = (off-FREELIST_TOP) / sizeof(tdb_off_t);
-		memcpy(&tdb->transaction->hash_heads[chain], buf, len);
+	ਜੇ (len == ਆਕਾਰ(tdb_off_t) && off >= FREELIST_ਸਿਖਰ &&
+	    off < FREELIST_ਸਿਖਰ+TDB_HASHTABLE_ਮਾਪ(tdb)) {
+		u32 chain = (off-FREELIST_ਸਿਖਰ) / ਆਕਾਰ(tdb_off_t);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(&tdb->transaction->hash_heads[chain], buf, len);
 	}
 
 	/* first see if we can replace an existing entry */
-	for (el=tdb->transaction->elements_last;el;el=el->prev) {
+	ਲਈ (el=tdb->transaction->elements_ਆਖਰੀ;el;el=el->prev) {
 		tdb_len_t partial;
 
-		if (best_el == NULL && off == el->offset+el->length) {
-			best_el = el;
+		ਜੇ (ਉੱਤਮ_el == ਨਿਰਾ && off == el->ਵਿੱਥ+el->ਲੰਮਾਈ) {
+			ਉੱਤਮ_el = el;
 		}
 
-		if (off+len <= el->offset) {
-			continue;
+		ਜੇ (off+len <= el->ਵਿੱਥ) {
+			ਜਾਰੀ;
 		}
-		if (off >= el->offset + el->length) {
-			continue;
+		ਜੇ (off >= el->ਵਿੱਥ + el->ਲੰਮਾਈ) {
+			ਜਾਰੀ;
 		}
 
 		/* an overlapping write - needs to be split into up to
 		   2 writes and a memcpy */
-		if (off < el->offset) {
-			partial = el->offset - off;
-			if (transaction_write(tdb, off, buf, partial) != 0) {
-				goto fail;
+		ਜੇ (off < el->ਵਿੱਥ) {
+			partial = el->ਵਿੱਥ - off;
+			ਜੇ (transaction_write(tdb, off, buf, partial) != 0) {
+				ਜਾਓ fail;
 			}
 			len -= partial;
 			off += partial;
-			buf = (const void *)(partial + (const char *)buf);
+			buf = (ਅਚਲ ਖਾਲੀ *)(partial + (ਅਚਲ ਅੱਖਰ *)buf);
 		}
-		if (off + len <= el->offset + el->length) {
+		ਜੇ (off + len <= el->ਵਿੱਥ + el->ਲੰਮਾਈ) {
 			partial = len;
-		} else {
-			partial = el->offset + el->length - off;
+		} ਨਹੀਂਤਾਂ {
+			partial = el->ਵਿੱਥ + el->ਲੰਮਾਈ - off;
 		}
-		memcpy(el->data + (off - el->offset), buf, partial);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(el->ਅੰਕੜੇ + (off - el->ਵਿੱਥ), buf, partial);
 		len -= partial;
 		off += partial;
-		buf = (const void *)(partial + (const char *)buf);
+		buf = (ਅਚਲ ਖਾਲੀ *)(partial + (ਅਚਲ ਅੱਖਰ *)buf);
 
-		if (len != 0 && transaction_write(tdb, off, buf, len) != 0) {
-			goto fail;
+		ਜੇ (len != 0 && transaction_write(tdb, off, buf, len) != 0) {
+			ਜਾਓ fail;
 		}
 
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
 	/* see if we can append the new entry to an existing entry */
-	if (best_el && best_el->offset + best_el->length == off &&
-	    (off+len < tdb->transaction->old_map_size ||
-	     off > tdb->transaction->old_map_size)) {
-		unsigned char *data = best_el->data;
-		el = best_el;
-		el->data = (unsigned char *)realloc(el->data,
-						    el->length + len);
-		if (el->data == NULL) {
+	ਜੇ (ਉੱਤਮ_el && ਉੱਤਮ_el->ਵਿੱਥ + ਉੱਤਮ_el->ਲੰਮਾਈ == off &&
+	    (off+len < tdb->transaction->old_map_ਮਾਪ ||
+	     off > tdb->transaction->old_map_ਮਾਪ)) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਅੰਕੜੇ = ਉੱਤਮ_el->ਅੰਕੜੇ;
+		el = ਉੱਤਮ_el;
+		el->ਅੰਕੜੇ = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)realloc(el->ਅੰਕੜੇ,
+						    el->ਲੰਮਾਈ + len);
+		ਜੇ (el->ਅੰਕੜੇ == ਨਿਰਾ) {
 			tdb->ecode = TDB_ERR_OOM;
 			tdb->transaction->transaction_error = 1;
-			el->data = data;
-			return -1;
+			el->ਅੰਕੜੇ = ਅੰਕੜੇ;
+			ਵਾਪਸ -1;
 		}
-		if (buf) {
-			memcpy(el->data + el->length, buf, len);
-		} else {
-			memset(el->data + el->length, TDB_PAD_BYTE, len);
+		ਜੇ (buf) {
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(el->ਅੰਕੜੇ + el->ਲੰਮਾਈ, buf, len);
+		} ਨਹੀਂਤਾਂ {
+			memset(el->ਅੰਕੜੇ + el->ਲੰਮਾਈ, TDB_PAD_BYTE, len);
 		}
-		el->length += len;
-		return 0;
+		el->ਲੰਮਾਈ += len;
+		ਵਾਪਸ 0;
 	}
 
 	/* add a new entry at the end of the list */
-	el = (struct tdb_transaction_el *)malloc(sizeof(*el));
-	if (el == NULL) {
+	el = (ਬਣਤਰ tdb_transaction_el *)ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(*el));
+	ਜੇ (el == ਨਿਰਾ) {
 		tdb->ecode = TDB_ERR_OOM;
 		tdb->transaction->transaction_error = 1;
-		return -1;
+		ਵਾਪਸ -1;
 	}
-	el->next = NULL;
-	el->prev = tdb->transaction->elements_last;
-	el->offset = off;
-	el->length = len;
-	el->data = (unsigned char *)malloc(len);
-	if (el->data == NULL) {
-		free(el);
+	el->ਅਗਲਾ = ਨਿਰਾ;
+	el->prev = tdb->transaction->elements_ਆਖਰੀ;
+	el->ਵਿੱਥ = off;
+	el->ਲੰਮਾਈ = len;
+	el->ਅੰਕੜੇ = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)ਸਮ੍ਰਿਤੀ_ਦਿਓ(len);
+	ਜੇ (el->ਅੰਕੜੇ == ਨਿਰਾ) {
+		ਮੁਕਤ(el);
 		tdb->ecode = TDB_ERR_OOM;
 		tdb->transaction->transaction_error = 1;
-		return -1;
+		ਵਾਪਸ -1;
 	}
-	if (buf) {
-		memcpy(el->data, buf, len);
-	} else {
-		memset(el->data, TDB_PAD_BYTE, len);
+	ਜੇ (buf) {
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(el->ਅੰਕੜੇ, buf, len);
+	} ਨਹੀਂਤਾਂ {
+		memset(el->ਅੰਕੜੇ, TDB_PAD_BYTE, len);
 	}
-	if (el->prev) {
-		el->prev->next = el;
-	} else {
+	ਜੇ (el->prev) {
+		el->prev->ਅਗਲਾ = el;
+	} ਨਹੀਂਤਾਂ {
 		tdb->transaction->elements = el;
 	}
-	tdb->transaction->elements_last = el;
-	return 0;
+	tdb->transaction->elements_ਆਖਰੀ = el;
+	ਵਾਪਸ 0;
 
 fail:
 	TDB_LOG((tdb, TDB_DEBUG_FATAL, "transaction_write: failed at off=%d len=%d\n", off, len));
 	tdb->ecode = TDB_ERR_IO;
 	tdb->transaction->transaction_error = 1;
-	return -1;
+	ਵਾਪਸ -1;
 }
 
 /*
   accelerated hash chain head search, using the cached hash heads
 */
-static void transaction_next_hash_chain(struct tdb_context *tdb, u32 *chain)
+ਸਥਿਰ ਖਾਲੀ transaction_ਅਗਲਾ_hash_chain(ਬਣਤਰ tdb_context *tdb, u32 *chain)
 {
 	u32 h = *chain;
-	for (;h < tdb->header.hash_size;h++) {
+	ਲਈ (;h < tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ;h++) {
 		/* the +1 takes account of the freelist */
-		if (0 != tdb->transaction->hash_heads[h+1]) {
-			break;
+		ਜੇ (0 != tdb->transaction->hash_heads[h+1]) {
+			ਰੋਕੋ;
 		}
 	}
 	(*chain) = h;
@@ -1547,47 +1547,47 @@ static void transaction_next_hash_chain(struct tdb_context *tdb, u32 *chain)
 /*
   out of bounds check during a transaction
 */
-static int transaction_oob(struct tdb_context *tdb, tdb_off_t len,
-			   int probe EXT2FS_ATTR((unused)))
+ਸਥਿਰ ਪੂਰਨ transaction_oob(ਬਣਤਰ tdb_context *tdb, tdb_off_t len,
+			   ਪੂਰਨ probe EXT2FS_ATTR((ਅਣਵਰਤਿਆ)))
 {
-	if (len <= tdb->map_size) {
-		return 0;
+	ਜੇ (len <= tdb->map_ਮਾਪ) {
+		ਵਾਪਸ 0;
 	}
-	return TDB_ERRCODE(TDB_ERR_IO, -1);
+	ਵਾਪਸ TDB_ERRCODE(TDB_ERR_IO, -1);
 }
 
 /*
   transaction version of tdb_expand().
 */
-static int transaction_expand_file(struct tdb_context *tdb, tdb_off_t size,
+ਸਥਿਰ ਪੂਰਨ transaction_expand_file(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਮਾਪ,
 				   tdb_off_t addition)
 {
 	/* add a write to the transaction elements, so subsequent
 	   reads see the zero data */
-	if (transaction_write(tdb, size, NULL, addition) != 0) {
-		return -1;
+	ਜੇ (transaction_write(tdb, ਮਾਪ, ਨਿਰਾ, addition) != 0) {
+		ਵਾਪਸ -1;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
   brlock during a transaction - ignore them
 */
-static int transaction_brlock(struct tdb_context *tdb EXT2FS_ATTR((unused)),
-			      tdb_off_t offset EXT2FS_ATTR((unused)),
-			      int rw_type EXT2FS_ATTR((unused)),
-			      int lck_type EXT2FS_ATTR((unused)),
-			      int probe EXT2FS_ATTR((unused)),
-			      size_t len EXT2FS_ATTR((unused)))
+ਸਥਿਰ ਪੂਰਨ transaction_brlock(ਬਣਤਰ tdb_context *tdb EXT2FS_ATTR((ਅਣਵਰਤਿਆ)),
+			      tdb_off_t ਵਿੱਥ EXT2FS_ATTR((ਅਣਵਰਤਿਆ)),
+			      ਪੂਰਨ rw_type EXT2FS_ATTR((ਅਣਵਰਤਿਆ)),
+			      ਪੂਰਨ lck_type EXT2FS_ATTR((ਅਣਵਰਤਿਆ)),
+			      ਪੂਰਨ probe EXT2FS_ATTR((ਅਣਵਰਤਿਆ)),
+			      size_t len EXT2FS_ATTR((ਅਣਵਰਤਿਆ)))
 {
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static const struct tdb_methods transaction_methods = {
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ tdb_methods transaction_methods = {
 	transaction_read,
 	transaction_write,
-	transaction_next_hash_chain,
+	transaction_ਅਗਲਾ_hash_chain,
 	transaction_oob,
 	transaction_expand_file,
 	transaction_brlock
@@ -1598,83 +1598,83 @@ static const struct tdb_methods transaction_methods = {
   start a tdb transaction. No token is returned, as only a single
   transaction is allowed to be pending per tdb_context
 */
-int tdb_transaction_start(struct tdb_context *tdb)
+ਪੂਰਨ tdb_transaction_ਸ਼ੁਰੂ(ਬਣਤਰ tdb_context *tdb)
 {
 	/* some sanity checks */
-	if (tdb->read_only || (tdb->flags & TDB_INTERNAL) || tdb->traverse_read) {
+	ਜੇ (tdb->read_only || (tdb->flags & TDB_ਅੰਦਰੂਨੀ) || tdb->traverse_read) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_start: cannot start a transaction on a read-only or internal db\n"));
 		tdb->ecode = TDB_ERR_EINVAL;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	/* cope with nested tdb_transaction_start() calls */
-	if (tdb->transaction != NULL) {
+	ਜੇ (tdb->transaction != ਨਿਰਾ) {
 		tdb->transaction->nesting++;
 		TDB_LOG((tdb, TDB_DEBUG_TRACE, "tdb_transaction_start: nesting %d\n",
 			 tdb->transaction->nesting));
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
-	if (tdb->num_locks != 0 || tdb->global_lock.count) {
+	ਜੇ (tdb->ਅੰਕ_locks != 0 || tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2) {
 		/* the caller must not have any locks when starting a
 		   transaction as otherwise we'll be screwed by lack
 		   of nested locks in posix */
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_start: cannot start a transaction with locks held\n"));
-		tdb->ecode = TDB_ERR_LOCK;
-		return -1;
+		tdb->ecode = TDB_ERR_ਤਾਲਾ;
+		ਵਾਪਸ -1;
 	}
 
-	if (tdb->travlocks.next != NULL) {
+	ਜੇ (tdb->travlocks.ਅਗਲਾ != ਨਿਰਾ) {
 		/* you cannot use transactions inside a traverse (although you can use
 		   traverse inside a transaction) as otherwise you can end up with
 		   deadlock */
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_start: cannot start a transaction within a traverse\n"));
-		tdb->ecode = TDB_ERR_LOCK;
-		return -1;
+		tdb->ecode = TDB_ERR_ਤਾਲਾ;
+		ਵਾਪਸ -1;
 	}
 
-	tdb->transaction = (struct tdb_transaction *)
-		calloc(sizeof(struct tdb_transaction), 1);
-	if (tdb->transaction == NULL) {
+	tdb->transaction = (ਬਣਤਰ tdb_transaction *)
+		ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(ਬਣਤਰ tdb_transaction), 1);
+	ਜੇ (tdb->transaction == ਨਿਰਾ) {
 		tdb->ecode = TDB_ERR_OOM;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	/* get the transaction write lock. This is a blocking lock. As
 	   discussed with Volker, there are a number of ways we could
 	   make this async, which we will probably do in the future */
-	if (tdb_transaction_lock(tdb, F_WRLCK) == -1) {
-		SAFE_FREE(tdb->transaction);
-		return -1;
+	ਜੇ (tdb_transaction_ਤਾਲਾ(tdb, F_WRLCK) == -1) {
+		ਸੁਰੱਖਿਅਤ_FREE(tdb->transaction);
+		ਵਾਪਸ -1;
 	}
 
 	/* get a read lock from the freelist to the end of file. This
 	   is upgraded to a write lock during the commit */
-	if (tdb_brlock(tdb, FREELIST_TOP, F_RDLCK, F_SETLKW, 0, 0) == -1) {
+	ਜੇ (tdb_brlock(tdb, FREELIST_ਸਿਖਰ, F_RDLCK, F_SETLKW, 0, 0) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_start: failed to get hash locks\n"));
-		tdb->ecode = TDB_ERR_LOCK;
-		goto fail;
+		tdb->ecode = TDB_ERR_ਤਾਲਾ;
+		ਜਾਓ fail;
 	}
 
 	/* setup a copy of the hash table heads so the hash scan in
 	   traverse can be fast */
 	tdb->transaction->hash_heads = (u32 *)
-		calloc(tdb->header.hash_size+1, sizeof(u32));
-	if (tdb->transaction->hash_heads == NULL) {
+		ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ+1, ਆਕਾਰ(u32));
+	ਜੇ (tdb->transaction->hash_heads == ਨਿਰਾ) {
 		tdb->ecode = TDB_ERR_OOM;
-		goto fail;
+		ਜਾਓ fail;
 	}
-	if (tdb->methods->tdb_read(tdb, FREELIST_TOP, tdb->transaction->hash_heads,
-				   TDB_HASHTABLE_SIZE(tdb), 0) != 0) {
+	ਜੇ (tdb->methods->tdb_read(tdb, FREELIST_ਸਿਖਰ, tdb->transaction->hash_heads,
+				   TDB_HASHTABLE_ਮਾਪ(tdb), 0) != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_start: failed to read hash heads\n"));
 		tdb->ecode = TDB_ERR_IO;
-		goto fail;
+		ਜਾਓ fail;
 	}
 
 	/* make sure we know about any file expansions already done by
 	   anyone else */
-	tdb->methods->tdb_oob(tdb, tdb->map_size + 1, 1);
-	tdb->transaction->old_map_size = tdb->map_size;
+	tdb->methods->tdb_oob(tdb, tdb->map_ਮਾਪ + 1, 1);
+	tdb->transaction->old_map_ਮਾਪ = tdb->map_ਮਾਪ;
 
 	/* finally hook the io methods, replacing them with
 	   transaction specific methods */
@@ -1683,158 +1683,158 @@ int tdb_transaction_start(struct tdb_context *tdb)
 
 	/* by calling this transaction write here, we ensure that we don't grow the
 	   transaction linked list due to hash table updates */
-	if (transaction_write(tdb, FREELIST_TOP, tdb->transaction->hash_heads,
-			      TDB_HASHTABLE_SIZE(tdb)) != 0) {
+	ਜੇ (transaction_write(tdb, FREELIST_ਸਿਖਰ, tdb->transaction->hash_heads,
+			      TDB_HASHTABLE_ਮਾਪ(tdb)) != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_start: failed to prime hash table\n"));
 		tdb->ecode = TDB_ERR_IO;
 		tdb->methods = tdb->transaction->io_methods;
-		goto fail;
+		ਜਾਓ fail;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 
 fail:
-	tdb_brlock(tdb, FREELIST_TOP, F_UNLCK, F_SETLKW, 0, 0);
+	tdb_brlock(tdb, FREELIST_ਸਿਖਰ, F_UNLCK, F_SETLKW, 0, 0);
 	tdb_transaction_unlock(tdb);
-	SAFE_FREE(tdb->transaction->hash_heads);
-	SAFE_FREE(tdb->transaction);
-	return -1;
+	ਸੁਰੱਖਿਅਤ_FREE(tdb->transaction->hash_heads);
+	ਸੁਰੱਖਿਅਤ_FREE(tdb->transaction);
+	ਵਾਪਸ -1;
 }
 
 
 /*
   cancel the current transaction
 */
-int tdb_transaction_cancel(struct tdb_context *tdb)
+ਪੂਰਨ tdb_transaction_cancel(ਬਣਤਰ tdb_context *tdb)
 {
-	if (tdb->transaction == NULL) {
+	ਜੇ (tdb->transaction == ਨਿਰਾ) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_cancel: no transaction\n"));
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	if (tdb->transaction->nesting != 0) {
+	ਜੇ (tdb->transaction->nesting != 0) {
 		tdb->transaction->transaction_error = 1;
 		tdb->transaction->nesting--;
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
-	tdb->map_size = tdb->transaction->old_map_size;
+	tdb->map_ਮਾਪ = tdb->transaction->old_map_ਮਾਪ;
 
 	/* free all the transaction elements */
-	while (tdb->transaction->elements) {
-		struct tdb_transaction_el *el = tdb->transaction->elements;
-		tdb->transaction->elements = el->next;
-		free(el->data);
-		free(el);
+	ਜਦੋਂ (tdb->transaction->elements) {
+		ਬਣਤਰ tdb_transaction_el *el = tdb->transaction->elements;
+		tdb->transaction->elements = el->ਅਗਲਾ;
+		ਮੁਕਤ(el->ਅੰਕੜੇ);
+		ਮੁਕਤ(el);
 	}
 
 	/* remove any global lock created during the transaction */
-	if (tdb->global_lock.count != 0) {
-		tdb_brlock(tdb, FREELIST_TOP, F_UNLCK, F_SETLKW, 0, 4*tdb->header.hash_size);
-		tdb->global_lock.count = 0;
+	ਜੇ (tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2 != 0) {
+		tdb_brlock(tdb, FREELIST_ਸਿਖਰ, F_UNLCK, F_SETLKW, 0, 4*tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ);
+		tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2 = 0;
 	}
 
 	/* remove any locks created during the transaction */
-	if (tdb->num_locks != 0) {
-		int i;
-		for (i=0;i<tdb->num_lockrecs;i++) {
-			tdb_brlock(tdb,FREELIST_TOP+4*tdb->lockrecs[i].list,
+	ਜੇ (tdb->ਅੰਕ_locks != 0) {
+		ਪੂਰਨ i;
+		ਲਈ (i=0;i<tdb->ਅੰਕ_lockrecs;i++) {
+			tdb_brlock(tdb,FREELIST_ਸਿਖਰ+4*tdb->lockrecs[i].list,
 				   F_UNLCK,F_SETLKW, 0, 1);
 		}
-		tdb->num_locks = 0;
-		tdb->num_lockrecs = 0;
-		SAFE_FREE(tdb->lockrecs);
+		tdb->ਅੰਕ_locks = 0;
+		tdb->ਅੰਕ_lockrecs = 0;
+		ਸੁਰੱਖਿਅਤ_FREE(tdb->lockrecs);
 	}
 
 	/* restore the normal io methods */
 	tdb->methods = tdb->transaction->io_methods;
 
-	tdb_brlock(tdb, FREELIST_TOP, F_UNLCK, F_SETLKW, 0, 0);
+	tdb_brlock(tdb, FREELIST_ਸਿਖਰ, F_UNLCK, F_SETLKW, 0, 0);
 	tdb_transaction_unlock(tdb);
-	SAFE_FREE(tdb->transaction->hash_heads);
-	SAFE_FREE(tdb->transaction);
+	ਸੁਰੱਖਿਅਤ_FREE(tdb->transaction->hash_heads);
+	ਸੁਰੱਖਿਅਤ_FREE(tdb->transaction);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
   sync to disk
 */
-static int transaction_sync(struct tdb_context *tdb, tdb_off_t offset, tdb_len_t length)
+ਸਥਿਰ ਪੂਰਨ transaction_sync(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, tdb_len_t ਲੰਮਾਈ)
 {
-	if (fsync(tdb->fd) != 0) {
+	ਜੇ (fsync(tdb->fd) != 0) {
 		tdb->ecode = TDB_ERR_IO;
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction: fsync failed\n"));
-		return -1;
+		ਵਾਪਸ -1;
 	}
-#if defined(HAVE_MSYNC) && defined(MS_SYNC)
-	if (tdb->map_ptr) {
-		tdb_off_t moffset = offset & ~(tdb->page_size-1);
-		if (msync(moffset + (char *)tdb->map_ptr,
-			  length + (offset - moffset), MS_SYNC) != 0) {
+#ਜੇ defined(HAVE_MSYNC) && defined(MS_SYNC)
+	ਜੇ (tdb->map_ptr) {
+		tdb_off_t moffset = ਵਿੱਥ & ~(tdb->ਪੰਨਾ_ਮਾਪ-1);
+		ਜੇ (msync(moffset + (ਅੱਖਰ *)tdb->map_ptr,
+			  ਲੰਮਾਈ + (ਵਿੱਥ - moffset), MS_SYNC) != 0) {
 			tdb->ecode = TDB_ERR_IO;
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction: msync failed - %s\n",
 				 strerror(errno)));
-			return -1;
+			ਵਾਪਸ -1;
 		}
 	}
-#endif
-	return 0;
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ 0;
 }
 
 
 /*
   work out how much space the linearised recovery data will consume
 */
-static tdb_len_t tdb_recovery_size(struct tdb_context *tdb)
+ਸਥਿਰ tdb_len_t tdb_recovery_ਮਾਪ(ਬਣਤਰ tdb_context *tdb)
 {
-	struct tdb_transaction_el *el;
-	tdb_len_t recovery_size = 0;
+	ਬਣਤਰ tdb_transaction_el *el;
+	tdb_len_t recovery_ਮਾਪ = 0;
 
-	recovery_size = sizeof(u32);
-	for (el=tdb->transaction->elements;el;el=el->next) {
-		if (el->offset >= tdb->transaction->old_map_size) {
-			continue;
+	recovery_ਮਾਪ = ਆਕਾਰ(u32);
+	ਲਈ (el=tdb->transaction->elements;el;el=el->ਅਗਲਾ) {
+		ਜੇ (el->ਵਿੱਥ >= tdb->transaction->old_map_ਮਾਪ) {
+			ਜਾਰੀ;
 		}
-		recovery_size += 2*sizeof(tdb_off_t) + el->length;
+		recovery_ਮਾਪ += 2*ਆਕਾਰ(tdb_off_t) + el->ਲੰਮਾਈ;
 	}
 
-	return recovery_size;
+	ਵਾਪਸ recovery_ਮਾਪ;
 }
 
 /*
   allocate the recovery area, or use an existing recovery area if it is
   large enough
 */
-static int tdb_recovery_allocate(struct tdb_context *tdb,
-				 tdb_len_t *recovery_size,
-				 tdb_off_t *recovery_offset,
-				 tdb_len_t *recovery_max_size)
+ਸਥਿਰ ਪੂਰਨ tdb_recovery_allocate(ਬਣਤਰ tdb_context *tdb,
+				 tdb_len_t *recovery_ਮਾਪ,
+				 tdb_off_t *recovery_ਵਿੱਥ,
+				 tdb_len_t *recovery_max_ਮਾਪ)
 {
-	struct list_struct rec;
-	const struct tdb_methods *methods = tdb->transaction->io_methods;
-	tdb_off_t recovery_head;
+	ਬਣਤਰ list_struct rec;
+	ਅਚਲ ਬਣਤਰ tdb_methods *methods = tdb->transaction->io_methods;
+	tdb_off_t recovery_ਸਿਰ;
 
-	if (tdb_ofs_read(tdb, TDB_RECOVERY_HEAD, &recovery_head) == -1) {
+	ਜੇ (tdb_ofs_read(tdb, TDB_RECOVERY_ਸਿਰ, &recovery_ਸਿਰ) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_recovery_allocate: failed to read recovery head\n"));
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	rec.rec_len = 0;
 
-	if (recovery_head != 0 &&
-	    methods->tdb_read(tdb, recovery_head, &rec, sizeof(rec), DOCONV()) == -1) {
+	ਜੇ (recovery_ਸਿਰ != 0 &&
+	    methods->tdb_read(tdb, recovery_ਸਿਰ, &rec, ਆਕਾਰ(rec), DOCONV()) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_recovery_allocate: failed to read recovery record\n"));
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	*recovery_size = tdb_recovery_size(tdb);
+	*recovery_ਮਾਪ = tdb_recovery_ਮਾਪ(tdb);
 
-	if (recovery_head != 0 && *recovery_size <= rec.rec_len) {
+	ਜੇ (recovery_ਸਿਰ != 0 && *recovery_ਮਾਪ <= rec.rec_len) {
 		/* it fits in the existing area */
-		*recovery_max_size = rec.rec_len;
-		*recovery_offset = recovery_head;
-		return 0;
+		*recovery_max_ਮਾਪ = rec.rec_len;
+		*recovery_ਵਿੱਥ = recovery_ਸਿਰ;
+		ਵਾਪਸ 0;
 	}
 
 	/* we need to free up the old recovery area, then allocate a
@@ -1842,247 +1842,247 @@ static int tdb_recovery_allocate(struct tdb_context *tdb,
 	   tdb_allocate() to allocate the new one as that might return
 	   us an area that is being currently used (as of the start of
 	   the transaction) */
-	if (recovery_head != 0) {
-		if (tdb_free(tdb, recovery_head, &rec) == -1) {
+	ਜੇ (recovery_ਸਿਰ != 0) {
+		ਜੇ (tdb_free(tdb, recovery_ਸਿਰ, &rec) == -1) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_recovery_allocate: failed to free previous recovery area\n"));
-			return -1;
+			ਵਾਪਸ -1;
 		}
 	}
 
 	/* the tdb_free() call might have increased the recovery size */
-	*recovery_size = tdb_recovery_size(tdb);
+	*recovery_ਮਾਪ = tdb_recovery_ਮਾਪ(tdb);
 
 	/* round up to a multiple of page size */
-	*recovery_max_size = TDB_ALIGN(sizeof(rec) + *recovery_size, tdb->page_size) - sizeof(rec);
-	*recovery_offset = tdb->map_size;
-	recovery_head = *recovery_offset;
+	*recovery_max_ਮਾਪ = TDB_ALIGN(ਆਕਾਰ(rec) + *recovery_ਮਾਪ, tdb->ਪੰਨਾ_ਮਾਪ) - ਆਕਾਰ(rec);
+	*recovery_ਵਿੱਥ = tdb->map_ਮਾਪ;
+	recovery_ਸਿਰ = *recovery_ਵਿੱਥ;
 
-	if (methods->tdb_expand_file(tdb, tdb->transaction->old_map_size,
-				     (tdb->map_size - tdb->transaction->old_map_size) +
-				     sizeof(rec) + *recovery_max_size) == -1) {
+	ਜੇ (methods->tdb_expand_file(tdb, tdb->transaction->old_map_ਮਾਪ,
+				     (tdb->map_ਮਾਪ - tdb->transaction->old_map_ਮਾਪ) +
+				     ਆਕਾਰ(rec) + *recovery_max_ਮਾਪ) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_recovery_allocate: failed to create recovery area\n"));
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	/* remap the file (if using mmap) */
-	methods->tdb_oob(tdb, tdb->map_size + 1, 1);
+	methods->tdb_oob(tdb, tdb->map_ਮਾਪ + 1, 1);
 
 	/* we have to reset the old map size so that we don't try to expand the file
 	   again in the transaction commit, which would destroy the recovery area */
-	tdb->transaction->old_map_size = tdb->map_size;
+	tdb->transaction->old_map_ਮਾਪ = tdb->map_ਮਾਪ;
 
 	/* write the recovery header offset and sync - we can sync without a race here
 	   as the magic ptr in the recovery record has not been set */
-	CONVERT(recovery_head);
-	if (methods->tdb_write(tdb, TDB_RECOVERY_HEAD,
-			       &recovery_head, sizeof(tdb_off_t)) == -1) {
+	CONVERT(recovery_ਸਿਰ);
+	ਜੇ (methods->tdb_write(tdb, TDB_RECOVERY_ਸਿਰ,
+			       &recovery_ਸਿਰ, ਆਕਾਰ(tdb_off_t)) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_recovery_allocate: failed to write recovery head\n"));
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 
 /*
   setup the recovery data that will be used on a crash during commit
 */
-static int transaction_setup_recovery(struct tdb_context *tdb,
-				      tdb_off_t *magic_offset)
+ਸਥਿਰ ਪੂਰਨ transaction_ਤਿਆਰੀ_recovery(ਬਣਤਰ tdb_context *tdb,
+				      tdb_off_t *magic_ਵਿੱਥ)
 {
-	struct tdb_transaction_el *el;
-	tdb_len_t recovery_size;
-	unsigned char *data, *p;
-	const struct tdb_methods *methods = tdb->transaction->io_methods;
-	struct list_struct *rec;
-	tdb_off_t recovery_offset, recovery_max_size;
-	tdb_off_t old_map_size = tdb->transaction->old_map_size;
+	ਬਣਤਰ tdb_transaction_el *el;
+	tdb_len_t recovery_ਮਾਪ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਅੰਕੜੇ, *p;
+	ਅਚਲ ਬਣਤਰ tdb_methods *methods = tdb->transaction->io_methods;
+	ਬਣਤਰ list_struct *rec;
+	tdb_off_t recovery_ਵਿੱਥ, recovery_max_ਮਾਪ;
+	tdb_off_t old_map_ਮਾਪ = tdb->transaction->old_map_ਮਾਪ;
 	u32 magic, tailer;
 
 	/*
 	  check that the recovery area has enough space
 	*/
-	if (tdb_recovery_allocate(tdb, &recovery_size,
-				  &recovery_offset, &recovery_max_size) == -1) {
-		return -1;
+	ਜੇ (tdb_recovery_allocate(tdb, &recovery_ਮਾਪ,
+				  &recovery_ਵਿੱਥ, &recovery_max_ਮਾਪ) == -1) {
+		ਵਾਪਸ -1;
 	}
 
-	data = (unsigned char *)malloc(recovery_size + sizeof(*rec));
-	if (data == NULL) {
+	ਅੰਕੜੇ = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)ਸਮ੍ਰਿਤੀ_ਦਿਓ(recovery_ਮਾਪ + ਆਕਾਰ(*rec));
+	ਜੇ (ਅੰਕੜੇ == ਨਿਰਾ) {
 		tdb->ecode = TDB_ERR_OOM;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	rec = (struct list_struct *)data;
-	memset(rec, 0, sizeof(*rec));
+	rec = (ਬਣਤਰ list_struct *)ਅੰਕੜੇ;
+	memset(rec, 0, ਆਕਾਰ(*rec));
 
 	rec->magic    = 0;
-	rec->data_len = recovery_size;
-	rec->rec_len  = recovery_max_size;
-	rec->key_len  = old_map_size;
+	rec->ਅੰਕੜੇ_len = recovery_ਮਾਪ;
+	rec->rec_len  = recovery_max_ਮਾਪ;
+	rec->ਕੁੰਜੀ_len  = old_map_ਮਾਪ;
 	CONVERT(rec);
 
 	/* build the recovery data into a single blob to allow us to do a single
 	   large write, which should be more efficient */
-	p = data + sizeof(*rec);
-	for (el=tdb->transaction->elements;el;el=el->next) {
-		if (el->offset >= old_map_size) {
-			continue;
+	p = ਅੰਕੜੇ + ਆਕਾਰ(*rec);
+	ਲਈ (el=tdb->transaction->elements;el;el=el->ਅਗਲਾ) {
+		ਜੇ (el->ਵਿੱਥ >= old_map_ਮਾਪ) {
+			ਜਾਰੀ;
 		}
-		if (el->offset + el->length > tdb->transaction->old_map_size) {
+		ਜੇ (el->ਵਿੱਥ + el->ਲੰਮਾਈ > tdb->transaction->old_map_ਮਾਪ) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_setup_recovery: transaction data over new region boundary\n"));
-			free(data);
+			ਮੁਕਤ(ਅੰਕੜੇ);
 			tdb->ecode = TDB_ERR_CORRUPT;
-			return -1;
+			ਵਾਪਸ -1;
 		}
-		memcpy(p, &el->offset, 4);
-		memcpy(p+4, &el->length, 4);
-		if (DOCONV()) {
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(p, &el->ਵਿੱਥ, 4);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(p+4, &el->ਲੰਮਾਈ, 4);
+		ਜੇ (DOCONV()) {
 			tdb_convert(p, 8);
 		}
 		/* the recovery area contains the old data, not the
 		   new data, so we have to call the original tdb_read
 		   method to get it */
-		if (methods->tdb_read(tdb, el->offset, p + 8, el->length, 0) != 0) {
-			free(data);
+		ਜੇ (methods->tdb_read(tdb, el->ਵਿੱਥ, p + 8, el->ਲੰਮਾਈ, 0) != 0) {
+			ਮੁਕਤ(ਅੰਕੜੇ);
 			tdb->ecode = TDB_ERR_IO;
-			return -1;
+			ਵਾਪਸ -1;
 		}
-		p += 8 + el->length;
+		p += 8 + el->ਲੰਮਾਈ;
 	}
 
 	/* and the tailer */
-	tailer = sizeof(*rec) + recovery_max_size;
-	memcpy(p, &tailer, 4);
+	tailer = ਆਕਾਰ(*rec) + recovery_max_ਮਾਪ;
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(p, &tailer, 4);
 	CONVERT(p);
 
 	/* write the recovery data to the recovery area */
-	if (methods->tdb_write(tdb, recovery_offset, data, sizeof(*rec) + recovery_size) == -1) {
+	ਜੇ (methods->tdb_write(tdb, recovery_ਵਿੱਥ, ਅੰਕੜੇ, ਆਕਾਰ(*rec) + recovery_ਮਾਪ) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_setup_recovery: failed to write recovery data\n"));
-		free(data);
+		ਮੁਕਤ(ਅੰਕੜੇ);
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	/* as we don't have ordered writes, we have to sync the recovery
 	   data before we update the magic to indicate that the recovery
 	   data is present */
-	if (transaction_sync(tdb, recovery_offset, sizeof(*rec) + recovery_size) == -1) {
-		free(data);
-		return -1;
+	ਜੇ (transaction_sync(tdb, recovery_ਵਿੱਥ, ਆਕਾਰ(*rec) + recovery_ਮਾਪ) == -1) {
+		ਮੁਕਤ(ਅੰਕੜੇ);
+		ਵਾਪਸ -1;
 	}
 
-	free(data);
+	ਮੁਕਤ(ਅੰਕੜੇ);
 
 	magic = TDB_RECOVERY_MAGIC;
 	CONVERT(magic);
 
-	*magic_offset = recovery_offset + offsetof(struct list_struct, magic);
+	*magic_ਵਿੱਥ = recovery_ਵਿੱਥ + offsetof(ਬਣਤਰ list_struct, magic);
 
-	if (methods->tdb_write(tdb, *magic_offset, &magic, sizeof(magic)) == -1) {
+	ਜੇ (methods->tdb_write(tdb, *magic_ਵਿੱਥ, &magic, ਆਕਾਰ(magic)) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_setup_recovery: failed to write recovery magic\n"));
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	/* ensure the recovery magic marker is on disk */
-	if (transaction_sync(tdb, *magic_offset, sizeof(magic)) == -1) {
-		return -1;
+	ਜੇ (transaction_sync(tdb, *magic_ਵਿੱਥ, ਆਕਾਰ(magic)) == -1) {
+		ਵਾਪਸ -1;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
   commit the current transaction
 */
-int tdb_transaction_commit(struct tdb_context *tdb)
+ਪੂਰਨ tdb_transaction_commit(ਬਣਤਰ tdb_context *tdb)
 {
-	const struct tdb_methods *methods;
-	tdb_off_t magic_offset = 0;
+	ਅਚਲ ਬਣਤਰ tdb_methods *methods;
+	tdb_off_t magic_ਵਿੱਥ = 0;
 	u32 zero = 0;
 
-	if (tdb->transaction == NULL) {
+	ਜੇ (tdb->transaction == ਨਿਰਾ) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_commit: no transaction\n"));
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	if (tdb->transaction->transaction_error) {
+	ਜੇ (tdb->transaction->transaction_error) {
 		tdb->ecode = TDB_ERR_IO;
 		tdb_transaction_cancel(tdb);
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_commit: transaction error pending\n"));
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	if (tdb->transaction->nesting != 0) {
+	ਜੇ (tdb->transaction->nesting != 0) {
 		tdb->transaction->nesting--;
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
 	/* check for a null transaction */
-	if (tdb->transaction->elements == NULL) {
+	ਜੇ (tdb->transaction->elements == ਨਿਰਾ) {
 		tdb_transaction_cancel(tdb);
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
 	methods = tdb->transaction->io_methods;
 
 	/* if there are any locks pending then the caller has not
 	   nested their locks properly, so fail the transaction */
-	if (tdb->num_locks || tdb->global_lock.count) {
-		tdb->ecode = TDB_ERR_LOCK;
+	ਜੇ (tdb->ਅੰਕ_locks || tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2) {
+		tdb->ecode = TDB_ERR_ਤਾਲਾ;
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_commit: locks pending on commit\n"));
 		tdb_transaction_cancel(tdb);
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	/* upgrade the main transaction lock region to a write lock */
-	if (tdb_brlock_upgrade(tdb, FREELIST_TOP, 0) == -1) {
+	ਜੇ (tdb_brlock_upgrade(tdb, FREELIST_ਸਿਖਰ, 0) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_start: failed to upgrade hash locks\n"));
-		tdb->ecode = TDB_ERR_LOCK;
+		tdb->ecode = TDB_ERR_ਤਾਲਾ;
 		tdb_transaction_cancel(tdb);
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	/* get the global lock - this prevents new users attaching to the database
 	   during the commit */
-	if (tdb_brlock(tdb, GLOBAL_LOCK, F_WRLCK, F_SETLKW, 0, 1) == -1) {
+	ਜੇ (tdb_brlock(tdb, GLOBAL_ਤਾਲਾ, F_WRLCK, F_SETLKW, 0, 1) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_commit: failed to get global lock\n"));
-		tdb->ecode = TDB_ERR_LOCK;
+		tdb->ecode = TDB_ERR_ਤਾਲਾ;
 		tdb_transaction_cancel(tdb);
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	if (!(tdb->flags & TDB_NOSYNC)) {
+	ਜੇ (!(tdb->flags & TDB_NOSYNC)) {
 		/* write the recovery data to the end of the file */
-		if (transaction_setup_recovery(tdb, &magic_offset) == -1) {
+		ਜੇ (transaction_ਤਿਆਰੀ_recovery(tdb, &magic_ਵਿੱਥ) == -1) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_commit: failed to setup recovery data\n"));
-			tdb_brlock(tdb, GLOBAL_LOCK, F_UNLCK, F_SETLKW, 0, 1);
+			tdb_brlock(tdb, GLOBAL_ਤਾਲਾ, F_UNLCK, F_SETLKW, 0, 1);
 			tdb_transaction_cancel(tdb);
-			return -1;
+			ਵਾਪਸ -1;
 		}
 	}
 
 	/* expand the file to the new size if needed */
-	if (tdb->map_size != tdb->transaction->old_map_size) {
-		if (methods->tdb_expand_file(tdb, tdb->transaction->old_map_size,
-					     tdb->map_size -
-					     tdb->transaction->old_map_size) == -1) {
+	ਜੇ (tdb->map_ਮਾਪ != tdb->transaction->old_map_ਮਾਪ) {
+		ਜੇ (methods->tdb_expand_file(tdb, tdb->transaction->old_map_ਮਾਪ,
+					     tdb->map_ਮਾਪ -
+					     tdb->transaction->old_map_ਮਾਪ) == -1) {
 			tdb->ecode = TDB_ERR_IO;
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_commit: expansion failed\n"));
-			tdb_brlock(tdb, GLOBAL_LOCK, F_UNLCK, F_SETLKW, 0, 1);
+			tdb_brlock(tdb, GLOBAL_ਤਾਲਾ, F_UNLCK, F_SETLKW, 0, 1);
 			tdb_transaction_cancel(tdb);
-			return -1;
+			ਵਾਪਸ -1;
 		}
-		tdb->map_size = tdb->transaction->old_map_size;
-		methods->tdb_oob(tdb, tdb->map_size + 1, 1);
+		tdb->map_ਮਾਪ = tdb->transaction->old_map_ਮਾਪ;
+		methods->tdb_oob(tdb, tdb->map_ਮਾਪ + 1, 1);
 	}
 
 	/* perform all the writes */
-	while (tdb->transaction->elements) {
-		struct tdb_transaction_el *el = tdb->transaction->elements;
+	ਜਦੋਂ (tdb->transaction->elements) {
+		ਬਣਤਰ tdb_transaction_el *el = tdb->transaction->elements;
 
-		if (methods->tdb_write(tdb, el->offset, el->data, el->length) == -1) {
+		ਜੇ (methods->tdb_write(tdb, el->ਵਿੱਥ, el->ਅੰਕੜੇ, el->ਲੰਮਾਈ) == -1) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_commit: write failed during commit\n"));
 
 			/* we've overwritten part of the data and
@@ -2092,35 +2092,35 @@ int tdb_transaction_commit(struct tdb_context *tdb)
 			tdb_transaction_recover(tdb);
 
 			tdb_transaction_cancel(tdb);
-			tdb_brlock(tdb, GLOBAL_LOCK, F_UNLCK, F_SETLKW, 0, 1);
+			tdb_brlock(tdb, GLOBAL_ਤਾਲਾ, F_UNLCK, F_SETLKW, 0, 1);
 
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_commit: write failed\n"));
-			return -1;
+			ਵਾਪਸ -1;
 		}
-		tdb->transaction->elements = el->next;
-		free(el->data);
-		free(el);
+		tdb->transaction->elements = el->ਅਗਲਾ;
+		ਮੁਕਤ(el->ਅੰਕੜੇ);
+		ਮੁਕਤ(el);
 	}
 
-	if (!(tdb->flags & TDB_NOSYNC)) {
+	ਜੇ (!(tdb->flags & TDB_NOSYNC)) {
 		/* ensure the new data is on disk */
-		if (transaction_sync(tdb, 0, tdb->map_size) == -1) {
-			return -1;
+		ਜੇ (transaction_sync(tdb, 0, tdb->map_ਮਾਪ) == -1) {
+			ਵਾਪਸ -1;
 		}
 
 		/* remove the recovery marker */
-		if (methods->tdb_write(tdb, magic_offset, &zero, 4) == -1) {
+		ਜੇ (methods->tdb_write(tdb, magic_ਵਿੱਥ, &zero, 4) == -1) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_commit: failed to remove recovery magic\n"));
-			return -1;
+			ਵਾਪਸ -1;
 		}
 
 		/* ensure the recovery marker has been removed on disk */
-		if (transaction_sync(tdb, magic_offset, 4) == -1) {
-			return -1;
+		ਜੇ (transaction_sync(tdb, magic_ਵਿੱਥ, 4) == -1) {
+			ਵਾਪਸ -1;
 		}
 	}
 
-	tdb_brlock(tdb, GLOBAL_LOCK, F_UNLCK, F_SETLKW, 0, 1);
+	tdb_brlock(tdb, GLOBAL_ਤਾਲਾ, F_UNLCK, F_SETLKW, 0, 1);
 
 	/*
 	  TODO: maybe write to some dummy hdr field, or write to magic
@@ -2133,14 +2133,14 @@ int tdb_transaction_commit(struct tdb_context *tdb)
 	   not be backed up (as tdb rounding to block sizes means that
 	   file size changes are quite rare too). The following forces
 	   mtime changes when a transaction completes */
-#ifdef HAVE_UTIME
-	utime(tdb->name, NULL);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_UTIME
+	utime(tdb->name, ਨਿਰਾ);
+#ਜੇ_ਅੰਤ
 
 	/* use a transaction cancel to free memory and remove the
 	   transaction locks */
 	tdb_transaction_cancel(tdb);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 
@@ -2149,290 +2149,290 @@ int tdb_transaction_commit(struct tdb_context *tdb)
   database write access already established (including the global
   lock to prevent new processes attaching)
 */
-int tdb_transaction_recover(struct tdb_context *tdb)
+ਪੂਰਨ tdb_transaction_recover(ਬਣਤਰ tdb_context *tdb)
 {
-	tdb_off_t recovery_head, recovery_eof;
-	unsigned char *data, *p;
+	tdb_off_t recovery_ਸਿਰ, recovery_eof;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਅੰਕੜੇ, *p;
 	u32 zero = 0;
-	struct list_struct rec;
+	ਬਣਤਰ list_struct rec;
 
 	/* find the recovery area */
-	if (tdb_ofs_read(tdb, TDB_RECOVERY_HEAD, &recovery_head) == -1) {
+	ਜੇ (tdb_ofs_read(tdb, TDB_RECOVERY_ਸਿਰ, &recovery_ਸਿਰ) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to read recovery head\n"));
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	if (recovery_head == 0) {
+	ਜੇ (recovery_ਸਿਰ == 0) {
 		/* we have never allocated a recovery record */
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
 	/* read the recovery record */
-	if (tdb->methods->tdb_read(tdb, recovery_head, &rec,
-				   sizeof(rec), DOCONV()) == -1) {
+	ਜੇ (tdb->methods->tdb_read(tdb, recovery_ਸਿਰ, &rec,
+				   ਆਕਾਰ(rec), DOCONV()) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to read recovery record\n"));
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	if (rec.magic != TDB_RECOVERY_MAGIC) {
+	ਜੇ (rec.magic != TDB_RECOVERY_MAGIC) {
 		/* there is no valid recovery data */
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
-	if (tdb->read_only) {
+	ਜੇ (tdb->read_only) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: attempt to recover read only database\n"));
 		tdb->ecode = TDB_ERR_CORRUPT;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	recovery_eof = rec.key_len;
+	recovery_eof = rec.ਕੁੰਜੀ_len;
 
-	data = (unsigned char *)malloc(rec.data_len);
-	if (data == NULL) {
+	ਅੰਕੜੇ = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)ਸਮ੍ਰਿਤੀ_ਦਿਓ(rec.ਅੰਕੜੇ_len);
+	ਜੇ (ਅੰਕੜੇ == ਨਿਰਾ) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to allocate recovery data\n"));
 		tdb->ecode = TDB_ERR_OOM;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	/* read the full recovery data */
-	if (tdb->methods->tdb_read(tdb, recovery_head + sizeof(rec), data,
-				   rec.data_len, 0) == -1) {
+	ਜੇ (tdb->methods->tdb_read(tdb, recovery_ਸਿਰ + ਆਕਾਰ(rec), ਅੰਕੜੇ,
+				   rec.ਅੰਕੜੇ_len, 0) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to read recovery data\n"));
 		tdb->ecode = TDB_ERR_IO;
-		free(data);
-		return -1;
+		ਮੁਕਤ(ਅੰਕੜੇ);
+		ਵਾਪਸ -1;
 	}
 
 	/* recover the file data */
-	p = data;
-	while (p+8 < data + rec.data_len) {
+	p = ਅੰਕੜੇ;
+	ਜਦੋਂ (p+8 < ਅੰਕੜੇ + rec.ਅੰਕੜੇ_len) {
 		u32 ofs, len;
-		if (DOCONV()) {
+		ਜੇ (DOCONV()) {
 			tdb_convert(p, 8);
 		}
-		memcpy(&ofs, p, 4);
-		memcpy(&len, p+4, 4);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(&ofs, p, 4);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(&len, p+4, 4);
 
-		if (tdb->methods->tdb_write(tdb, ofs, p+8, len) == -1) {
-			free(data);
+		ਜੇ (tdb->methods->tdb_write(tdb, ofs, p+8, len) == -1) {
+			ਮੁਕਤ(ਅੰਕੜੇ);
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to recover %d bytes at offset %d\n", len, ofs));
 			tdb->ecode = TDB_ERR_IO;
-			return -1;
+			ਵਾਪਸ -1;
 		}
 		p += 8 + len;
 	}
 
-	free(data);
+	ਮੁਕਤ(ਅੰਕੜੇ);
 
-	if (transaction_sync(tdb, 0, tdb->map_size) == -1) {
+	ਜੇ (transaction_sync(tdb, 0, tdb->map_ਮਾਪ) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to sync recovery\n"));
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	/* if the recovery area is after the recovered eof then remove it */
-	if (recovery_eof <= recovery_head) {
-		if (tdb_ofs_write(tdb, TDB_RECOVERY_HEAD, &zero) == -1) {
+	ਜੇ (recovery_eof <= recovery_ਸਿਰ) {
+		ਜੇ (tdb_ofs_write(tdb, TDB_RECOVERY_ਸਿਰ, &zero) == -1) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to remove recovery head\n"));
 			tdb->ecode = TDB_ERR_IO;
-			return -1;
+			ਵਾਪਸ -1;
 		}
 	}
 
 	/* remove the recovery magic */
-	if (tdb_ofs_write(tdb, recovery_head + offsetof(struct list_struct, magic),
+	ਜੇ (tdb_ofs_write(tdb, recovery_ਸਿਰ + offsetof(ਬਣਤਰ list_struct, magic),
 			  &zero) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to remove recovery magic\n"));
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	/* reduce the file size to the old size */
 	tdb_munmap(tdb);
-	if (ftruncate(tdb->fd, recovery_eof) != 0) {
+	ਜੇ (ftruncate(tdb->fd, recovery_eof) != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to reduce to recovery size\n"));
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		ਵਾਪਸ -1;
 	}
-	tdb->map_size = recovery_eof;
+	tdb->map_ਮਾਪ = recovery_eof;
 	tdb_mmap(tdb);
 
-	if (transaction_sync(tdb, 0, recovery_eof) == -1) {
+	ਜੇ (transaction_sync(tdb, 0, recovery_eof) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to sync2 recovery\n"));
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	TDB_LOG((tdb, TDB_DEBUG_TRACE, "tdb_transaction_recover: recovered %d byte database\n",
 		 recovery_eof));
 
 	/* all done */
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* file: freelist.c */
 
 /* read a freelist record and check for simple errors */
-static int tdb_rec_free_read(struct tdb_context *tdb, tdb_off_t off, struct list_struct *rec)
+ਸਥਿਰ ਪੂਰਨ tdb_rec_free_read(ਬਣਤਰ tdb_context *tdb, tdb_off_t off, ਬਣਤਰ list_struct *rec)
 {
-	if (tdb->methods->tdb_read(tdb, off, rec, sizeof(*rec),DOCONV()) == -1)
-		return -1;
+	ਜੇ (tdb->methods->tdb_read(tdb, off, rec, ਆਕਾਰ(*rec),DOCONV()) == -1)
+		ਵਾਪਸ -1;
 
-	if (rec->magic == TDB_MAGIC) {
+	ਜੇ (rec->magic == TDB_MAGIC) {
 		/* this happens when a app is showdown while deleting a record - we should
 		   not completely fail when this happens */
 		TDB_LOG((tdb, TDB_DEBUG_WARNING, "tdb_rec_free_read non-free magic 0x%x at offset=%d - fixing\n",
 			 rec->magic, off));
 		rec->magic = TDB_FREE_MAGIC;
-		if (tdb->methods->tdb_write(tdb, off, rec, sizeof(*rec)) == -1)
-			return -1;
+		ਜੇ (tdb->methods->tdb_write(tdb, off, rec, ਆਕਾਰ(*rec)) == -1)
+			ਵਾਪਸ -1;
 	}
 
-	if (rec->magic != TDB_FREE_MAGIC) {
+	ਜੇ (rec->magic != TDB_FREE_MAGIC) {
 		/* Ensure ecode is set for log fn. */
 		tdb->ecode = TDB_ERR_CORRUPT;
 		TDB_LOG((tdb, TDB_DEBUG_WARNING, "tdb_rec_free_read bad magic 0x%x at offset=%d\n",
 			   rec->magic, off));
-		return TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
 	}
-	if (tdb->methods->tdb_oob(tdb, rec->next+sizeof(*rec), 0) != 0)
-		return -1;
-	return 0;
+	ਜੇ (tdb->methods->tdb_oob(tdb, rec->ਅਗਲਾ+ਆਕਾਰ(*rec), 0) != 0)
+		ਵਾਪਸ -1;
+	ਵਾਪਸ 0;
 }
 
 
 
 /* Remove an element from the freelist.  Must have alloc lock. */
-static int remove_from_freelist(struct tdb_context *tdb, tdb_off_t off, tdb_off_t next)
+ਸਥਿਰ ਪੂਰਨ remove_from_freelist(ਬਣਤਰ tdb_context *tdb, tdb_off_t off, tdb_off_t ਅਗਲਾ)
 {
-	tdb_off_t last_ptr, i;
+	tdb_off_t ਆਖਰੀ_ptr, i;
 
 	/* read in the freelist top */
-	last_ptr = FREELIST_TOP;
-	while (tdb_ofs_read(tdb, last_ptr, &i) != -1 && i != 0) {
-		if (i == off) {
+	ਆਖਰੀ_ptr = FREELIST_ਸਿਖਰ;
+	ਜਦੋਂ (tdb_ofs_read(tdb, ਆਖਰੀ_ptr, &i) != -1 && i != 0) {
+		ਜੇ (i == off) {
 			/* We've found it! */
-			return tdb_ofs_write(tdb, last_ptr, &next);
+			ਵਾਪਸ tdb_ofs_write(tdb, ਆਖਰੀ_ptr, &ਅਗਲਾ);
 		}
 		/* Follow chain (next offset is at start of record) */
-		last_ptr = i;
+		ਆਖਰੀ_ptr = i;
 	}
 	TDB_LOG((tdb, TDB_DEBUG_FATAL,"remove_from_freelist: not on list at off=%d\n", off));
-	return TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
+	ਵਾਪਸ TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
 }
 
 
 /* update a record tailer (must hold allocation lock) */
-static int update_tailer(struct tdb_context *tdb, tdb_off_t offset,
-			 const struct list_struct *rec)
+ਸਥਿਰ ਪੂਰਨ update_tailer(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ,
+			 ਅਚਲ ਬਣਤਰ list_struct *rec)
 {
 	tdb_off_t totalsize;
 
 	/* Offset of tailer from record header */
-	totalsize = sizeof(*rec) + rec->rec_len;
-	return tdb_ofs_write(tdb, offset + totalsize - sizeof(tdb_off_t),
+	totalsize = ਆਕਾਰ(*rec) + rec->rec_len;
+	ਵਾਪਸ tdb_ofs_write(tdb, ਵਿੱਥ + totalsize - ਆਕਾਰ(tdb_off_t),
 			 &totalsize);
 }
 
 /* Add an element into the freelist. Merge adjacent records if
    necessary. */
-int tdb_free(struct tdb_context *tdb, tdb_off_t offset, struct list_struct *rec)
+ਪੂਰਨ tdb_free(ਬਣਤਰ tdb_context *tdb, tdb_off_t ਵਿੱਥ, ਬਣਤਰ list_struct *rec)
 {
-	tdb_off_t right, left;
+	tdb_off_t ਸੱਜਾ, ਖੱਬਾ;
 
 	/* Allocation and tailer lock */
-	if (tdb_lock(tdb, -1, F_WRLCK) != 0)
-		return -1;
+	ਜੇ (tdb_ਤਾਲਾ(tdb, -1, F_WRLCK) != 0)
+		ਵਾਪਸ -1;
 
 	/* set an initial tailer, so if we fail we don't leave a bogus record */
-	if (update_tailer(tdb, offset, rec) != 0) {
+	ਜੇ (update_tailer(tdb, ਵਿੱਥ, rec) != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: update_tailer failed!\n"));
-		goto fail;
+		ਜਾਓ fail;
 	}
 
 	/* Look right first (I'm an Australian, dammit) */
-	right = offset + sizeof(*rec) + rec->rec_len;
-	if (right + sizeof(*rec) <= tdb->map_size) {
-		struct list_struct r;
+	ਸੱਜਾ = ਵਿੱਥ + ਆਕਾਰ(*rec) + rec->rec_len;
+	ਜੇ (ਸੱਜਾ + ਆਕਾਰ(*rec) <= tdb->map_ਮਾਪ) {
+		ਬਣਤਰ list_struct r;
 
-		if (tdb->methods->tdb_read(tdb, right, &r, sizeof(r), DOCONV()) == -1) {
-			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: right read failed at %u\n", right));
-			goto left;
+		ਜੇ (tdb->methods->tdb_read(tdb, ਸੱਜਾ, &r, ਆਕਾਰ(r), DOCONV()) == -1) {
+			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: right read failed at %u\n", ਸੱਜਾ));
+			ਜਾਓ ਖੱਬਾ;
 		}
 
 		/* If it's free, expand to include it. */
-		if (r.magic == TDB_FREE_MAGIC) {
-			if (remove_from_freelist(tdb, right, r.next) == -1) {
-				TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: right free failed at %u\n", right));
-				goto left;
+		ਜੇ (r.magic == TDB_FREE_MAGIC) {
+			ਜੇ (remove_from_freelist(tdb, ਸੱਜਾ, r.ਅਗਲਾ) == -1) {
+				TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: right free failed at %u\n", ਸੱਜਾ));
+				ਜਾਓ ਖੱਬਾ;
 			}
-			rec->rec_len += sizeof(r) + r.rec_len;
+			rec->rec_len += ਆਕਾਰ(r) + r.rec_len;
 		}
 	}
 
-left:
+ਖੱਬਾ:
 	/* Look left */
-	left = offset - sizeof(tdb_off_t);
-	if (left > TDB_DATA_START(tdb->header.hash_size)) {
-		struct list_struct l;
+	ਖੱਬਾ = ਵਿੱਥ - ਆਕਾਰ(tdb_off_t);
+	ਜੇ (ਖੱਬਾ > TDB_ਅੰਕੜੇ_ਸ਼ੁਰੂ(tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ)) {
+		ਬਣਤਰ list_struct l;
 		tdb_off_t leftsize;
 
 		/* Read in tailer and jump back to header */
-		if (tdb_ofs_read(tdb, left, &leftsize) == -1) {
-			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: left offset read failed at %u\n", left));
-			goto update;
+		ਜੇ (tdb_ofs_read(tdb, ਖੱਬਾ, &leftsize) == -1) {
+			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: left offset read failed at %u\n", ਖੱਬਾ));
+			ਜਾਓ update;
 		}
 
 		/* it could be uninitialised data */
-		if (leftsize == 0 || leftsize == TDB_PAD_U32) {
-			goto update;
+		ਜੇ (leftsize == 0 || leftsize == TDB_PAD_U32) {
+			ਜਾਓ update;
 		}
 
-		left = offset - leftsize;
+		ਖੱਬਾ = ਵਿੱਥ - leftsize;
 
 		/* Now read in record */
-		if (tdb->methods->tdb_read(tdb, left, &l, sizeof(l), DOCONV()) == -1) {
-			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: left read failed at %u (%u)\n", left, leftsize));
-			goto update;
+		ਜੇ (tdb->methods->tdb_read(tdb, ਖੱਬਾ, &l, ਆਕਾਰ(l), DOCONV()) == -1) {
+			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: left read failed at %u (%u)\n", ਖੱਬਾ, leftsize));
+			ਜਾਓ update;
 		}
 
 		/* If it's free, expand to include it. */
-		if (l.magic == TDB_FREE_MAGIC) {
-			if (remove_from_freelist(tdb, left, l.next) == -1) {
-				TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: left free failed at %u\n", left));
-				goto update;
-			} else {
-				offset = left;
+		ਜੇ (l.magic == TDB_FREE_MAGIC) {
+			ਜੇ (remove_from_freelist(tdb, ਖੱਬਾ, l.ਅਗਲਾ) == -1) {
+				TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: left free failed at %u\n", ਖੱਬਾ));
+				ਜਾਓ update;
+			} ਨਹੀਂਤਾਂ {
+				ਵਿੱਥ = ਖੱਬਾ;
 				rec->rec_len += leftsize;
 			}
 		}
 	}
 
 update:
-	if (update_tailer(tdb, offset, rec) == -1) {
-		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: update_tailer failed at %u\n", offset));
-		goto fail;
+	ਜੇ (update_tailer(tdb, ਵਿੱਥ, rec) == -1) {
+		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: update_tailer failed at %u\n", ਵਿੱਥ));
+		ਜਾਓ fail;
 	}
 
 	/* Now, prepend to free list */
 	rec->magic = TDB_FREE_MAGIC;
 
-	if (tdb_ofs_read(tdb, FREELIST_TOP, &rec->next) == -1 ||
-	    tdb_rec_write(tdb, offset, rec) == -1 ||
-	    tdb_ofs_write(tdb, FREELIST_TOP, &offset) == -1) {
-		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free record write failed at offset=%d\n", offset));
-		goto fail;
+	ਜੇ (tdb_ofs_read(tdb, FREELIST_ਸਿਖਰ, &rec->ਅਗਲਾ) == -1 ||
+	    tdb_rec_write(tdb, ਵਿੱਥ, rec) == -1 ||
+	    tdb_ofs_write(tdb, FREELIST_ਸਿਖਰ, &ਵਿੱਥ) == -1) {
+		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free record write failed at offset=%d\n", ਵਿੱਥ));
+		ਜਾਓ fail;
 	}
 
 	/* And we're done. */
 	tdb_unlock(tdb, -1, F_WRLCK);
-	return 0;
+	ਵਾਪਸ 0;
 
  fail:
 	tdb_unlock(tdb, -1, F_WRLCK);
-	return -1;
+	ਵਾਪਸ -1;
 }
 
 
@@ -2440,32 +2440,32 @@ update:
    the core of tdb_allocate - called when we have decided which
    free list entry to use
  */
-static tdb_off_t tdb_allocate_ofs(struct tdb_context *tdb, tdb_len_t length, tdb_off_t rec_ptr,
-				struct list_struct *rec, tdb_off_t last_ptr)
+ਸਥਿਰ tdb_off_t tdb_allocate_ofs(ਬਣਤਰ tdb_context *tdb, tdb_len_t ਲੰਮਾਈ, tdb_off_t rec_ptr,
+				ਬਣਤਰ list_struct *rec, tdb_off_t ਆਖਰੀ_ptr)
 {
-	struct list_struct newrec;
+	ਬਣਤਰ list_struct newrec;
 	tdb_off_t newrec_ptr;
 
-	memset(&newrec, '\0', sizeof(newrec));
+	memset(&newrec, '\0', ਆਕਾਰ(newrec));
 
 	/* found it - now possibly split it up  */
-	if (rec->rec_len > length + MIN_REC_SIZE) {
+	ਜੇ (rec->rec_len > ਲੰਮਾਈ + MIN_REC_ਮਾਪ) {
 		/* Length of left piece */
-		length = TDB_ALIGN(length, TDB_ALIGNMENT);
+		ਲੰਮਾਈ = TDB_ALIGN(ਲੰਮਾਈ, TDB_ALIGNMENT);
 
 		/* Right piece to go on free list */
-		newrec.rec_len = rec->rec_len - (sizeof(*rec) + length);
-		newrec_ptr = rec_ptr + sizeof(*rec) + length;
+		newrec.rec_len = rec->rec_len - (ਆਕਾਰ(*rec) + ਲੰਮਾਈ);
+		newrec_ptr = rec_ptr + ਆਕਾਰ(*rec) + ਲੰਮਾਈ;
 
 		/* And left record is shortened */
-		rec->rec_len = length;
-	} else {
+		rec->rec_len = ਲੰਮਾਈ;
+	} ਨਹੀਂਤਾਂ {
 		newrec_ptr = 0;
 	}
 
 	/* Remove allocated record from the free list */
-	if (tdb_ofs_write(tdb, last_ptr, &rec->next) == -1) {
-		return 0;
+	ਜੇ (tdb_ofs_write(tdb, ਆਖਰੀ_ptr, &rec->ਅਗਲਾ) == -1) {
+		ਵਾਪਸ 0;
 	}
 
 	/* Update header: do this before we drop alloc
@@ -2473,26 +2473,26 @@ static tdb_off_t tdb_allocate_ofs(struct tdb_context *tdb, tdb_len_t length, tdb
 	   merge with us, thinking we're free.
 	   (Thanks Jeremy Allison). */
 	rec->magic = TDB_MAGIC;
-	if (tdb_rec_write(tdb, rec_ptr, rec) == -1) {
-		return 0;
+	ਜੇ (tdb_rec_write(tdb, rec_ptr, rec) == -1) {
+		ਵਾਪਸ 0;
 	}
 
 	/* Did we create new block? */
-	if (newrec_ptr) {
+	ਜੇ (newrec_ptr) {
 		/* Update allocated record tailer (we
 		   shortened it). */
-		if (update_tailer(tdb, rec_ptr, rec) == -1) {
-			return 0;
+		ਜੇ (update_tailer(tdb, rec_ptr, rec) == -1) {
+			ਵਾਪਸ 0;
 		}
 
 		/* Free new record */
-		if (tdb_free(tdb, newrec_ptr, &newrec) == -1) {
-			return 0;
+		ਜੇ (tdb_free(tdb, newrec_ptr, &newrec) == -1) {
+			ਵਾਪਸ 0;
 		}
 	}
 
 	/* all done - return the new record offset */
-	return rec_ptr;
+	ਵਾਪਸ rec_ptr;
 }
 
 /* allocate some space from the free list. The offset returned points
@@ -2501,29 +2501,29 @@ static tdb_off_t tdb_allocate_ofs(struct tdb_context *tdb, tdb_len_t length, tdb
 
    0 is returned if the space could not be allocated
  */
-tdb_off_t tdb_allocate(struct tdb_context *tdb, tdb_len_t length, struct list_struct *rec)
+tdb_off_t tdb_allocate(ਬਣਤਰ tdb_context *tdb, tdb_len_t ਲੰਮਾਈ, ਬਣਤਰ list_struct *rec)
 {
-	tdb_off_t rec_ptr, last_ptr, newrec_ptr;
-	struct {
-		tdb_off_t rec_ptr, last_ptr;
+	tdb_off_t rec_ptr, ਆਖਰੀ_ptr, newrec_ptr;
+	ਬਣਤਰ {
+		tdb_off_t rec_ptr, ਆਖਰੀ_ptr;
 		tdb_len_t rec_len;
 	} bestfit;
 
-	if (tdb_lock(tdb, -1, F_WRLCK) == -1)
-		return 0;
+	ਜੇ (tdb_ਤਾਲਾ(tdb, -1, F_WRLCK) == -1)
+		ਵਾਪਸ 0;
 
 	/* Extra bytes required for tailer */
-	length += sizeof(tdb_off_t);
+	ਲੰਮਾਈ += ਆਕਾਰ(tdb_off_t);
 
  again:
-	last_ptr = FREELIST_TOP;
+	ਆਖਰੀ_ptr = FREELIST_ਸਿਖਰ;
 
 	/* read in the freelist top */
-	if (tdb_ofs_read(tdb, FREELIST_TOP, &rec_ptr) == -1)
-		goto fail;
+	ਜੇ (tdb_ofs_read(tdb, FREELIST_ਸਿਖਰ, &rec_ptr) == -1)
+		ਜਾਓ fail;
 
 	bestfit.rec_ptr = 0;
-	bestfit.last_ptr = 0;
+	bestfit.ਆਖਰੀ_ptr = 0;
 	bestfit.rec_len = 0;
 
 	/*
@@ -2531,48 +2531,48 @@ tdb_off_t tdb_allocate(struct tdb_context *tdb, tdb_len_t length, struct list_st
 	   a first fit strategy, but it suffered from massive fragmentation
 	   issues when faced with a slowly increasing record size.
 	 */
-	while (rec_ptr) {
-		if (tdb_rec_free_read(tdb, rec_ptr, rec) == -1) {
-			goto fail;
+	ਜਦੋਂ (rec_ptr) {
+		ਜੇ (tdb_rec_free_read(tdb, rec_ptr, rec) == -1) {
+			ਜਾਓ fail;
 		}
 
-		if (rec->rec_len >= length) {
-			if (bestfit.rec_ptr == 0 ||
+		ਜੇ (rec->rec_len >= ਲੰਮਾਈ) {
+			ਜੇ (bestfit.rec_ptr == 0 ||
 			    rec->rec_len < bestfit.rec_len) {
 				bestfit.rec_len = rec->rec_len;
 				bestfit.rec_ptr = rec_ptr;
-				bestfit.last_ptr = last_ptr;
+				bestfit.ਆਖਰੀ_ptr = ਆਖਰੀ_ptr;
 				/* consider a fit to be good enough if
 				   we aren't wasting more than half
 				   the space */
-				if (bestfit.rec_len < 2*length) {
-					break;
+				ਜੇ (bestfit.rec_len < 2*ਲੰਮਾਈ) {
+					ਰੋਕੋ;
 				}
 			}
 		}
 
 		/* move to the next record */
-		last_ptr = rec_ptr;
-		rec_ptr = rec->next;
+		ਆਖਰੀ_ptr = rec_ptr;
+		rec_ptr = rec->ਅਗਲਾ;
 	}
 
-	if (bestfit.rec_ptr != 0) {
-		if (tdb_rec_free_read(tdb, bestfit.rec_ptr, rec) == -1) {
-			goto fail;
+	ਜੇ (bestfit.rec_ptr != 0) {
+		ਜੇ (tdb_rec_free_read(tdb, bestfit.rec_ptr, rec) == -1) {
+			ਜਾਓ fail;
 		}
 
-		newrec_ptr = tdb_allocate_ofs(tdb, length, bestfit.rec_ptr, rec, bestfit.last_ptr);
+		newrec_ptr = tdb_allocate_ofs(tdb, ਲੰਮਾਈ, bestfit.rec_ptr, rec, bestfit.ਆਖਰੀ_ptr);
 		tdb_unlock(tdb, -1, F_WRLCK);
-		return newrec_ptr;
+		ਵਾਪਸ newrec_ptr;
 	}
 
 	/* we didn't find enough space. See if we can expand the
 	   database and if we can then try again */
-	if (tdb_expand(tdb, length + sizeof(*rec)) == 0)
-		goto again;
+	ਜੇ (tdb_expand(tdb, ਲੰਮਾਈ + ਆਕਾਰ(*rec)) == 0)
+		ਜਾਓ again;
  fail:
 	tdb_unlock(tdb, -1, F_WRLCK);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* file: freelistcheck.c */
@@ -2585,67 +2585,67 @@ tdb_off_t tdb_allocate(struct tdb_context *tdb, tdb_len_t length, struct list_st
    data structure implementation :-).
  */
 
-static int seen_insert(struct tdb_context *mem_tdb, tdb_off_t rec_ptr)
+ਸਥਿਰ ਪੂਰਨ ਵੇਖਿਆ_ਪਾਓ(ਬਣਤਰ tdb_context *mem_tdb, tdb_off_t rec_ptr)
 {
-	TDB_DATA key, data;
+	TDB_ਅੰਕੜੇ ਕੁੰਜੀ, ਅੰਕੜੇ;
 
-	memset(&data, '\0', sizeof(data));
-	key.dptr = (unsigned char *)&rec_ptr;
-	key.dsize = sizeof(rec_ptr);
-	return tdb_store(mem_tdb, key, data, TDB_INSERT);
+	memset(&ਅੰਕੜੇ, '\0', ਆਕਾਰ(ਅੰਕੜੇ));
+	ਕੁੰਜੀ.dptr = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)&rec_ptr;
+	ਕੁੰਜੀ.dsize = ਆਕਾਰ(rec_ptr);
+	ਵਾਪਸ tdb_store(mem_tdb, ਕੁੰਜੀ, ਅੰਕੜੇ, TDB_ਪਾਓ);
 }
 
-int tdb_validate_freelist(struct tdb_context *tdb, int *pnum_entries)
+ਪੂਰਨ tdb_validate_freelist(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ *pnum_entries)
 {
-	struct tdb_context *mem_tdb = NULL;
-	struct list_struct rec;
-	tdb_off_t rec_ptr, last_ptr;
-	int ret = -1;
+	ਬਣਤਰ tdb_context *mem_tdb = ਨਿਰਾ;
+	ਬਣਤਰ list_struct rec;
+	tdb_off_t rec_ptr, ਆਖਰੀ_ptr;
+	ਪੂਰਨ ret = -1;
 
 	*pnum_entries = 0;
 
-	mem_tdb = tdb_open("flval", tdb->header.hash_size,
-				TDB_INTERNAL, O_RDWR, 0600);
-	if (!mem_tdb) {
-		return -1;
+	mem_tdb = tdb_open("flval", tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ,
+				TDB_ਅੰਦਰੂਨੀ, O_RDWR, 0600);
+	ਜੇ (!mem_tdb) {
+		ਵਾਪਸ -1;
 	}
 
-	if (tdb_lock(tdb, -1, F_WRLCK) == -1) {
+	ਜੇ (tdb_ਤਾਲਾ(tdb, -1, F_WRLCK) == -1) {
 		tdb_close(mem_tdb);
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
-	last_ptr = FREELIST_TOP;
+	ਆਖਰੀ_ptr = FREELIST_ਸਿਖਰ;
 
 	/* Store the FREELIST_TOP record. */
-	if (seen_insert(mem_tdb, last_ptr) == -1) {
+	ਜੇ (ਵੇਖਿਆ_ਪਾਓ(mem_tdb, ਆਖਰੀ_ptr) == -1) {
 		ret = TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
-		goto fail;
+		ਜਾਓ fail;
 	}
 
 	/* read in the freelist top */
-	if (tdb_ofs_read(tdb, FREELIST_TOP, &rec_ptr) == -1) {
-		goto fail;
+	ਜੇ (tdb_ofs_read(tdb, FREELIST_ਸਿਖਰ, &rec_ptr) == -1) {
+		ਜਾਓ fail;
 	}
 
-	while (rec_ptr) {
+	ਜਦੋਂ (rec_ptr) {
 
 		/* If we can't store this record (we've seen it
 		   before) then the free list has a loop and must
 		   be corrupt. */
 
-		if (seen_insert(mem_tdb, rec_ptr)) {
+		ਜੇ (ਵੇਖਿਆ_ਪਾਓ(mem_tdb, rec_ptr)) {
 			ret = TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
-			goto fail;
+			ਜਾਓ fail;
 		}
 
-		if (tdb_rec_free_read(tdb, rec_ptr, &rec) == -1) {
-			goto fail;
+		ਜੇ (tdb_rec_free_read(tdb, rec_ptr, &rec) == -1) {
+			ਜਾਓ fail;
 		}
 
 		/* move to the next record */
-		last_ptr = rec_ptr;
-		rec_ptr = rec.next;
+		ਆਖਰੀ_ptr = rec_ptr;
+		rec_ptr = rec.ਅਗਲਾ;
 		*pnum_entries += 1;
 	}
 
@@ -2655,20 +2655,20 @@ int tdb_validate_freelist(struct tdb_context *tdb, int *pnum_entries)
 
 	tdb_close(mem_tdb);
 	tdb_unlock(tdb, -1, F_WRLCK);
-	return ret;
+	ਵਾਪਸ ret;
 }
 
 /* file: traverse.c */
 
 /* Uses traverse lock: 0 = finish, -1 = error, other = record offset */
-static int tdb_next_lock(struct tdb_context *tdb, struct tdb_traverse_lock *tlock,
-			 struct list_struct *rec)
+ਸਥਿਰ ਪੂਰਨ tdb_ਅਗਲਾ_ਤਾਲਾ(ਬਣਤਰ tdb_context *tdb, ਬਣਤਰ tdb_traverse_ਤਾਲਾ *tlock,
+			 ਬਣਤਰ list_struct *rec)
 {
-	int want_next = (tlock->off != 0);
+	ਪੂਰਨ want_ਅਗਲਾ = (tlock->off != 0);
 
 	/* Lock each chain from the start one. */
-	for (; tlock->hash < tdb->header.hash_size; tlock->hash++) {
-		if (!tlock->off && tlock->hash != 0) {
+	ਲਈ (; tlock->hash < tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ; tlock->hash++) {
+		ਜੇ (!tlock->off && tlock->hash != 0) {
 			/* this is an optimisation for the common case where
 			   the hash chain is empty, which is particularly
 			   common for the use of tdb with ldb, where large
@@ -2697,70 +2697,70 @@ static int tdb_next_lock(struct tdb_context *tdb, struct tdb_traverse_lock *tloc
 			   factor of around 80 in speed on a linux 2.6.x
 			   system (testing using ldbtest).
 			*/
-			tdb->methods->next_hash_chain(tdb, &tlock->hash);
-			if (tlock->hash == tdb->header.hash_size) {
-				continue;
+			tdb->methods->ਅਗਲਾ_hash_chain(tdb, &tlock->hash);
+			ਜੇ (tlock->hash == tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ) {
+				ਜਾਰੀ;
 			}
 		}
 
-		if (tdb_lock(tdb, tlock->hash, tlock->lock_rw) == -1)
-			return -1;
+		ਜੇ (tdb_ਤਾਲਾ(tdb, tlock->hash, tlock->ਤਾਲਾ_rw) == -1)
+			ਵਾਪਸ -1;
 
 		/* No previous record?  Start at top of chain. */
-		if (!tlock->off) {
-			if (tdb_ofs_read(tdb, TDB_HASH_TOP(tlock->hash),
+		ਜੇ (!tlock->off) {
+			ਜੇ (tdb_ofs_read(tdb, TDB_HASH_ਸਿਖਰ(tlock->hash),
 				     &tlock->off) == -1)
-				goto fail;
-		} else {
+				ਜਾਓ fail;
+		} ਨਹੀਂਤਾਂ {
 			/* Otherwise unlock the previous record. */
-			if (tdb_unlock_record(tdb, tlock->off) != 0)
-				goto fail;
+			ਜੇ (tdb_unlock_ਰਿਕਾਰਡ(tdb, tlock->off) != 0)
+				ਜਾਓ fail;
 		}
 
-		if (want_next) {
+		ਜੇ (want_ਅਗਲਾ) {
 			/* We have offset of old record: grab next */
-			if (tdb_rec_read(tdb, tlock->off, rec) == -1)
-				goto fail;
-			tlock->off = rec->next;
+			ਜੇ (tdb_rec_read(tdb, tlock->off, rec) == -1)
+				ਜਾਓ fail;
+			tlock->off = rec->ਅਗਲਾ;
 		}
 
 		/* Iterate through chain */
-		while( tlock->off) {
+		ਜਦੋਂ( tlock->off) {
 			tdb_off_t current;
-			if (tdb_rec_read(tdb, tlock->off, rec) == -1)
-				goto fail;
+			ਜੇ (tdb_rec_read(tdb, tlock->off, rec) == -1)
+				ਜਾਓ fail;
 
 			/* Detect infinite loops. From "Shlomi Yaakobovich" <Shlomi@exanet.com>. */
-			if (tlock->off == rec->next) {
+			ਜੇ (tlock->off == rec->ਅਗਲਾ) {
 				TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_next_lock: loop detected.\n"));
-				goto fail;
+				ਜਾਓ fail;
 			}
 
-			if (!TDB_DEAD(rec)) {
+			ਜੇ (!TDB_DEAD(rec)) {
 				/* Woohoo: we found one! */
-				if (tdb_lock_record(tdb, tlock->off) != 0)
-					goto fail;
-				return tlock->off;
+				ਜੇ (tdb_ਤਾਲਾ_ਰਿਕਾਰਡ(tdb, tlock->off) != 0)
+					ਜਾਓ fail;
+				ਵਾਪਸ tlock->off;
 			}
 
 			/* Try to clean dead ones from old traverses */
 			current = tlock->off;
-			tlock->off = rec->next;
-			if (!(tdb->read_only || tdb->traverse_read) &&
+			tlock->off = rec->ਅਗਲਾ;
+			ਜੇ (!(tdb->read_only || tdb->traverse_read) &&
 			    tdb_do_delete(tdb, current, rec) != 0)
-				goto fail;
+				ਜਾਓ fail;
 		}
-		tdb_unlock(tdb, tlock->hash, tlock->lock_rw);
-		want_next = 0;
+		tdb_unlock(tdb, tlock->hash, tlock->ਤਾਲਾ_rw);
+		want_ਅਗਲਾ = 0;
 	}
 	/* We finished iteration without finding anything */
-	return TDB_ERRCODE(TDB_SUCCESS, 0);
+	ਵਾਪਸ TDB_ERRCODE(TDB_SUCCESS, 0);
 
  fail:
 	tlock->off = 0;
-	if (tdb_unlock(tdb, tlock->hash, tlock->lock_rw) != 0)
+	ਜੇ (tdb_unlock(tdb, tlock->hash, tlock->ਤਾਲਾ_rw) != 0)
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_next_lock: On error unlock failed!\n"));
-	return -1;
+	ਵਾਪਸ -1;
 }
 
 /* traverse the entire database - calling fn(tdb, key, data) on each element.
@@ -2768,310 +2768,310 @@ static int tdb_next_lock(struct tdb_context *tdb, struct tdb_traverse_lock *tloc
    if fn is NULL then it is not called
    a non-zero return value from fn() indicates that the traversal should stop
   */
-static int tdb_traverse_internal(struct tdb_context *tdb,
-				 tdb_traverse_func fn, void *private_data,
-				 struct tdb_traverse_lock *tl)
+ਸਥਿਰ ਪੂਰਨ tdb_traverse_ਅੰਦਰੂਨੀ(ਬਣਤਰ tdb_context *tdb,
+				 tdb_traverse_func fn, ਖਾਲੀ *ਨਿੱਜੀ_ਅੰਕੜੇ,
+				 ਬਣਤਰ tdb_traverse_ਤਾਲਾ *tl)
 {
-	TDB_DATA key, dbuf;
-	struct list_struct rec;
-	int ret, count = 0;
+	TDB_ਅੰਕੜੇ ਕੁੰਜੀ, dbuf;
+	ਬਣਤਰ list_struct rec;
+	ਪੂਰਨ ret, ਗਿਣਤੀ_2 = 0;
 
 	/* This was in the initialization, above, but the IRIX compiler
 	 * did not like it.  crh
 	 */
-	tl->next = tdb->travlocks.next;
+	tl->ਅਗਲਾ = tdb->travlocks.ਅਗਲਾ;
 
 	/* fcntl locks don't stack: beware traverse inside traverse */
-	tdb->travlocks.next = tl;
+	tdb->travlocks.ਅਗਲਾ = tl;
 
 	/* tdb_next_lock places locks on the record returned, and its chain */
-	while ((ret = tdb_next_lock(tdb, tl, &rec)) > 0) {
-		count++;
+	ਜਦੋਂ ((ret = tdb_ਅਗਲਾ_ਤਾਲਾ(tdb, tl, &rec)) > 0) {
+		ਗਿਣਤੀ_2++;
 		/* now read the full record */
-		key.dptr = tdb_alloc_read(tdb, tl->off + sizeof(rec),
-					  rec.key_len + rec.data_len);
-		if (!key.dptr) {
+		ਕੁੰਜੀ.dptr = tdb_alloc_read(tdb, tl->off + ਆਕਾਰ(rec),
+					  rec.ਕੁੰਜੀ_len + rec.ਅੰਕੜੇ_len);
+		ਜੇ (!ਕੁੰਜੀ.dptr) {
 			ret = -1;
-			if (tdb_unlock(tdb, tl->hash, tl->lock_rw) != 0)
-				goto out;
-			if (tdb_unlock_record(tdb, tl->off) != 0)
+			ਜੇ (tdb_unlock(tdb, tl->hash, tl->ਤਾਲਾ_rw) != 0)
+				ਜਾਓ ਬਾਹਰਲਾ;
+			ਜੇ (tdb_unlock_ਰਿਕਾਰਡ(tdb, tl->off) != 0)
 				TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_traverse: key.dptr == NULL and unlock_record failed!\n"));
-			goto out;
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
-		key.dsize = rec.key_len;
-		dbuf.dptr = key.dptr + rec.key_len;
-		dbuf.dsize = rec.data_len;
+		ਕੁੰਜੀ.dsize = rec.ਕੁੰਜੀ_len;
+		dbuf.dptr = ਕੁੰਜੀ.dptr + rec.ਕੁੰਜੀ_len;
+		dbuf.dsize = rec.ਅੰਕੜੇ_len;
 
 		/* Drop chain lock, call out */
-		if (tdb_unlock(tdb, tl->hash, tl->lock_rw) != 0) {
+		ਜੇ (tdb_unlock(tdb, tl->hash, tl->ਤਾਲਾ_rw) != 0) {
 			ret = -1;
-			SAFE_FREE(key.dptr);
-			goto out;
+			ਸੁਰੱਖਿਅਤ_FREE(ਕੁੰਜੀ.dptr);
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
-		if (fn && fn(tdb, key, dbuf, private_data)) {
+		ਜੇ (fn && fn(tdb, ਕੁੰਜੀ, dbuf, ਨਿੱਜੀ_ਅੰਕੜੇ)) {
 			/* They want us to terminate traversal */
-			ret = count;
-			if (tdb_unlock_record(tdb, tl->off) != 0) {
+			ret = ਗਿਣਤੀ_2;
+			ਜੇ (tdb_unlock_ਰਿਕਾਰਡ(tdb, tl->off) != 0) {
 				TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_traverse: unlock_record failed!\n"));;
 				ret = -1;
 			}
-			SAFE_FREE(key.dptr);
-			goto out;
+			ਸੁਰੱਖਿਅਤ_FREE(ਕੁੰਜੀ.dptr);
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
-		SAFE_FREE(key.dptr);
+		ਸੁਰੱਖਿਅਤ_FREE(ਕੁੰਜੀ.dptr);
 	}
-out:
-	tdb->travlocks.next = tl->next;
-	if (ret < 0)
-		return -1;
-	else
-		return count;
+ਬਾਹਰਲਾ:
+	tdb->travlocks.ਅਗਲਾ = tl->ਅਗਲਾ;
+	ਜੇ (ret < 0)
+		ਵਾਪਸ -1;
+	ਨਹੀਂਤਾਂ
+		ਵਾਪਸ ਗਿਣਤੀ_2;
 }
 
 
 /*
   a write style traverse - temporarily marks the db read only
 */
-int tdb_traverse_read(struct tdb_context *tdb,
-		      tdb_traverse_func fn, void *private_data)
+ਪੂਰਨ tdb_traverse_read(ਬਣਤਰ tdb_context *tdb,
+		      tdb_traverse_func fn, ਖਾਲੀ *ਨਿੱਜੀ_ਅੰਕੜੇ)
 {
-	struct tdb_traverse_lock tl = { NULL, 0, 0, F_RDLCK };
-	int ret;
+	ਬਣਤਰ tdb_traverse_ਤਾਲਾ tl = { ਨਿਰਾ, 0, 0, F_RDLCK };
+	ਪੂਰਨ ret;
 
 	/* we need to get a read lock on the transaction lock here to
 	   cope with the lock ordering semantics of solaris10 */
-	if (tdb_transaction_lock(tdb, F_RDLCK)) {
-		return -1;
+	ਜੇ (tdb_transaction_ਤਾਲਾ(tdb, F_RDLCK)) {
+		ਵਾਪਸ -1;
 	}
 
 	tdb->traverse_read++;
-	ret = tdb_traverse_internal(tdb, fn, private_data, &tl);
+	ret = tdb_traverse_ਅੰਦਰੂਨੀ(tdb, fn, ਨਿੱਜੀ_ਅੰਕੜੇ, &tl);
 	tdb->traverse_read--;
 
 	tdb_transaction_unlock(tdb);
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
 /*
   a write style traverse - needs to get the transaction lock to
   prevent deadlocks
 */
-int tdb_traverse(struct tdb_context *tdb,
-		 tdb_traverse_func fn, void *private_data)
+ਪੂਰਨ tdb_traverse(ਬਣਤਰ tdb_context *tdb,
+		 tdb_traverse_func fn, ਖਾਲੀ *ਨਿੱਜੀ_ਅੰਕੜੇ)
 {
-	struct tdb_traverse_lock tl = { NULL, 0, 0, F_WRLCK };
-	int ret;
+	ਬਣਤਰ tdb_traverse_ਤਾਲਾ tl = { ਨਿਰਾ, 0, 0, F_WRLCK };
+	ਪੂਰਨ ret;
 
-	if (tdb->read_only || tdb->traverse_read) {
-		return tdb_traverse_read(tdb, fn, private_data);
+	ਜੇ (tdb->read_only || tdb->traverse_read) {
+		ਵਾਪਸ tdb_traverse_read(tdb, fn, ਨਿੱਜੀ_ਅੰਕੜੇ);
 	}
 
-	if (tdb_transaction_lock(tdb, F_WRLCK)) {
-		return -1;
+	ਜੇ (tdb_transaction_ਤਾਲਾ(tdb, F_WRLCK)) {
+		ਵਾਪਸ -1;
 	}
 
-	ret = tdb_traverse_internal(tdb, fn, private_data, &tl);
+	ret = tdb_traverse_ਅੰਦਰੂਨੀ(tdb, fn, ਨਿੱਜੀ_ਅੰਕੜੇ, &tl);
 
 	tdb_transaction_unlock(tdb);
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
 
 /* find the first entry in the database and return its key */
-TDB_DATA tdb_firstkey(struct tdb_context *tdb)
+TDB_ਅੰਕੜੇ tdb_firstkey(ਬਣਤਰ tdb_context *tdb)
 {
-	TDB_DATA key;
-	struct list_struct rec;
+	TDB_ਅੰਕੜੇ ਕੁੰਜੀ;
+	ਬਣਤਰ list_struct rec;
 
 	/* release any old lock */
-	if (tdb_unlock_record(tdb, tdb->travlocks.off) != 0)
-		return tdb_null;
+	ਜੇ (tdb_unlock_ਰਿਕਾਰਡ(tdb, tdb->travlocks.off) != 0)
+		ਵਾਪਸ tdb_null;
 	tdb->travlocks.off = tdb->travlocks.hash = 0;
-	tdb->travlocks.lock_rw = F_RDLCK;
+	tdb->travlocks.ਤਾਲਾ_rw = F_RDLCK;
 
 	/* Grab first record: locks chain and returned record. */
-	if (tdb_next_lock(tdb, &tdb->travlocks, &rec) <= 0)
-		return tdb_null;
+	ਜੇ (tdb_ਅਗਲਾ_ਤਾਲਾ(tdb, &tdb->travlocks, &rec) <= 0)
+		ਵਾਪਸ tdb_null;
 	/* now read the key */
-	key.dsize = rec.key_len;
-	key.dptr =tdb_alloc_read(tdb,tdb->travlocks.off+sizeof(rec),key.dsize);
+	ਕੁੰਜੀ.dsize = rec.ਕੁੰਜੀ_len;
+	ਕੁੰਜੀ.dptr =tdb_alloc_read(tdb,tdb->travlocks.off+ਆਕਾਰ(rec),ਕੁੰਜੀ.dsize);
 
 	/* Unlock the hash chain of the record we just read. */
-	if (tdb_unlock(tdb, tdb->travlocks.hash, tdb->travlocks.lock_rw) != 0)
+	ਜੇ (tdb_unlock(tdb, tdb->travlocks.hash, tdb->travlocks.ਤਾਲਾ_rw) != 0)
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_firstkey: error occurred while tdb_unlocking!\n"));
-	return key;
+	ਵਾਪਸ ਕੁੰਜੀ;
 }
 
 /* find the next entry in the database, returning its key */
-TDB_DATA tdb_nextkey(struct tdb_context *tdb, TDB_DATA oldkey)
+TDB_ਅੰਕੜੇ tdb_nextkey(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ oldkey)
 {
 	u32 oldhash;
-	TDB_DATA key = tdb_null;
-	struct list_struct rec;
-	unsigned char *k = NULL;
+	TDB_ਅੰਕੜੇ ਕੁੰਜੀ = tdb_null;
+	ਬਣਤਰ list_struct rec;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *k = ਨਿਰਾ;
 
 	/* Is locked key the old key?  If so, traverse will be reliable. */
-	if (tdb->travlocks.off) {
-		if (tdb_lock(tdb,tdb->travlocks.hash,tdb->travlocks.lock_rw))
-			return tdb_null;
-		if (tdb_rec_read(tdb, tdb->travlocks.off, &rec) == -1
-		    || !(k = tdb_alloc_read(tdb,tdb->travlocks.off+sizeof(rec),
-					    rec.key_len))
+	ਜੇ (tdb->travlocks.off) {
+		ਜੇ (tdb_ਤਾਲਾ(tdb,tdb->travlocks.hash,tdb->travlocks.ਤਾਲਾ_rw))
+			ਵਾਪਸ tdb_null;
+		ਜੇ (tdb_rec_read(tdb, tdb->travlocks.off, &rec) == -1
+		    || !(k = tdb_alloc_read(tdb,tdb->travlocks.off+ਆਕਾਰ(rec),
+					    rec.ਕੁੰਜੀ_len))
 		    || memcmp(k, oldkey.dptr, oldkey.dsize) != 0) {
 			/* No, it wasn't: unlock it and start from scratch */
-			if (tdb_unlock_record(tdb, tdb->travlocks.off) != 0) {
-				SAFE_FREE(k);
-				return tdb_null;
+			ਜੇ (tdb_unlock_ਰਿਕਾਰਡ(tdb, tdb->travlocks.off) != 0) {
+				ਸੁਰੱਖਿਅਤ_FREE(k);
+				ਵਾਪਸ tdb_null;
 			}
-			if (tdb_unlock(tdb, tdb->travlocks.hash, tdb->travlocks.lock_rw) != 0) {
-				SAFE_FREE(k);
-				return tdb_null;
+			ਜੇ (tdb_unlock(tdb, tdb->travlocks.hash, tdb->travlocks.ਤਾਲਾ_rw) != 0) {
+				ਸੁਰੱਖਿਅਤ_FREE(k);
+				ਵਾਪਸ tdb_null;
 			}
 			tdb->travlocks.off = 0;
 		}
 
-		SAFE_FREE(k);
+		ਸੁਰੱਖਿਅਤ_FREE(k);
 	}
 
-	if (!tdb->travlocks.off) {
+	ਜੇ (!tdb->travlocks.off) {
 		/* No previous element: do normal find, and lock record */
-		tdb->travlocks.off = tdb_find_lock_hash(tdb, oldkey, tdb->hash_fn(&oldkey), tdb->travlocks.lock_rw, &rec);
-		if (!tdb->travlocks.off)
-			return tdb_null;
-		tdb->travlocks.hash = BUCKET(rec.full_hash);
-		if (tdb_lock_record(tdb, tdb->travlocks.off) != 0) {
+		tdb->travlocks.off = tdb_ਲੱਭੋ_ਤਾਲਾ_hash(tdb, oldkey, tdb->hash_fn(&oldkey), tdb->travlocks.ਤਾਲਾ_rw, &rec);
+		ਜੇ (!tdb->travlocks.off)
+			ਵਾਪਸ tdb_null;
+		tdb->travlocks.hash = ਬਾਲਟੀ(rec.ਭਰਿਆ_hash);
+		ਜੇ (tdb_ਤਾਲਾ_ਰਿਕਾਰਡ(tdb, tdb->travlocks.off) != 0) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_nextkey: lock_record failed (%s)!\n", strerror(errno)));
-			return tdb_null;
+			ਵਾਪਸ tdb_null;
 		}
 	}
 	oldhash = tdb->travlocks.hash;
 
 	/* Grab next record: locks chain and returned record,
 	   unlocks old record */
-	if (tdb_next_lock(tdb, &tdb->travlocks, &rec) > 0) {
-		key.dsize = rec.key_len;
-		key.dptr = tdb_alloc_read(tdb, tdb->travlocks.off+sizeof(rec),
-					  key.dsize);
+	ਜੇ (tdb_ਅਗਲਾ_ਤਾਲਾ(tdb, &tdb->travlocks, &rec) > 0) {
+		ਕੁੰਜੀ.dsize = rec.ਕੁੰਜੀ_len;
+		ਕੁੰਜੀ.dptr = tdb_alloc_read(tdb, tdb->travlocks.off+ਆਕਾਰ(rec),
+					  ਕੁੰਜੀ.dsize);
 		/* Unlock the chain of this new record */
-		if (tdb_unlock(tdb, tdb->travlocks.hash, tdb->travlocks.lock_rw) != 0)
+		ਜੇ (tdb_unlock(tdb, tdb->travlocks.hash, tdb->travlocks.ਤਾਲਾ_rw) != 0)
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_nextkey: WARNING tdb_unlock failed!\n"));
 	}
 	/* Unlock the chain of old record */
-	if (tdb_unlock(tdb, BUCKET(oldhash), tdb->travlocks.lock_rw) != 0)
+	ਜੇ (tdb_unlock(tdb, ਬਾਲਟੀ(oldhash), tdb->travlocks.ਤਾਲਾ_rw) != 0)
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_nextkey: WARNING tdb_unlock failed!\n"));
-	return key;
+	ਵਾਪਸ ਕੁੰਜੀ;
 }
 
 /* file: dump.c */
 
-static tdb_off_t tdb_dump_record(struct tdb_context *tdb, int hash,
-				 tdb_off_t offset)
+ਸਥਿਰ tdb_off_t tdb_dump_ਰਿਕਾਰਡ(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ hash,
+				 tdb_off_t ਵਿੱਥ)
 {
-	struct list_struct rec;
+	ਬਣਤਰ list_struct rec;
 	tdb_off_t tailer_ofs, tailer;
 
-	if (tdb->methods->tdb_read(tdb, offset, (char *)&rec,
-				   sizeof(rec), DOCONV()) == -1) {
-		printf("ERROR: failed to read record at %u\n", offset);
-		return 0;
+	ਜੇ (tdb->methods->tdb_read(tdb, ਵਿੱਥ, (ਅੱਖਰ *)&rec,
+				   ਆਕਾਰ(rec), DOCONV()) == -1) {
+		ਲਿਖੋ("ERROR: failed to read record at %u\n", ਵਿੱਥ);
+		ਵਾਪਸ 0;
 	}
 
-	printf(" rec: hash=%d offset=0x%08x next=0x%08x rec_len=%d "
+	ਲਿਖੋ(" rec: hash=%d offset=0x%08x next=0x%08x rec_len=%d "
 	       "key_len=%d data_len=%d full_hash=0x%x magic=0x%x\n",
-	       hash, offset, rec.next, rec.rec_len, rec.key_len, rec.data_len,
-	       rec.full_hash, rec.magic);
+	       hash, ਵਿੱਥ, rec.ਅਗਲਾ, rec.rec_len, rec.ਕੁੰਜੀ_len, rec.ਅੰਕੜੇ_len,
+	       rec.ਭਰਿਆ_hash, rec.magic);
 
-	tailer_ofs = offset + sizeof(rec) + rec.rec_len - sizeof(tdb_off_t);
+	tailer_ofs = ਵਿੱਥ + ਆਕਾਰ(rec) + rec.rec_len - ਆਕਾਰ(tdb_off_t);
 
-	if (tdb_ofs_read(tdb, tailer_ofs, &tailer) == -1) {
-		printf("ERROR: failed to read tailer at %u\n", tailer_ofs);
-		return rec.next;
+	ਜੇ (tdb_ofs_read(tdb, tailer_ofs, &tailer) == -1) {
+		ਲਿਖੋ("ERROR: failed to read tailer at %u\n", tailer_ofs);
+		ਵਾਪਸ rec.ਅਗਲਾ;
 	}
 
-	if (tailer != rec.rec_len + sizeof(rec)) {
-		printf("ERROR: tailer does not match record! tailer=%u totalsize=%u\n",
-				(unsigned int)tailer, (unsigned int)(rec.rec_len + sizeof(rec)));
+	ਜੇ (tailer != rec.rec_len + ਆਕਾਰ(rec)) {
+		ਲਿਖੋ("ERROR: tailer does not match record! tailer=%u totalsize=%u\n",
+				(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)tailer, (ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)(rec.rec_len + ਆਕਾਰ(rec)));
 	}
-	return rec.next;
+	ਵਾਪਸ rec.ਅਗਲਾ;
 }
 
-static int tdb_dump_chain(struct tdb_context *tdb, int i)
+ਸਥਿਰ ਪੂਰਨ tdb_dump_chain(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ i)
 {
-	tdb_off_t rec_ptr, top;
+	tdb_off_t rec_ptr, ਸਿਖਰ;
 
-	top = TDB_HASH_TOP(i);
+	ਸਿਖਰ = TDB_HASH_ਸਿਖਰ(i);
 
-	if (tdb_lock(tdb, i, F_WRLCK) != 0)
-		return -1;
+	ਜੇ (tdb_ਤਾਲਾ(tdb, i, F_WRLCK) != 0)
+		ਵਾਪਸ -1;
 
-	if (tdb_ofs_read(tdb, top, &rec_ptr) == -1)
-		return tdb_unlock(tdb, i, F_WRLCK);
+	ਜੇ (tdb_ofs_read(tdb, ਸਿਖਰ, &rec_ptr) == -1)
+		ਵਾਪਸ tdb_unlock(tdb, i, F_WRLCK);
 
-	if (rec_ptr)
-		printf("hash=%d\n", i);
+	ਜੇ (rec_ptr)
+		ਲਿਖੋ("hash=%d\n", i);
 
-	while (rec_ptr) {
-		rec_ptr = tdb_dump_record(tdb, i, rec_ptr);
+	ਜਦੋਂ (rec_ptr) {
+		rec_ptr = tdb_dump_ਰਿਕਾਰਡ(tdb, i, rec_ptr);
 	}
 
-	return tdb_unlock(tdb, i, F_WRLCK);
+	ਵਾਪਸ tdb_unlock(tdb, i, F_WRLCK);
 }
 
-void tdb_dump_all(struct tdb_context *tdb)
+ਖਾਲੀ tdb_dump_all(ਬਣਤਰ tdb_context *tdb)
 {
-	int i;
-	for (i = 0; i < (int)tdb->header.hash_size; i++) {
+	ਪੂਰਨ i;
+	ਲਈ (i = 0; i < (ਪੂਰਨ)tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ; i++) {
 		tdb_dump_chain(tdb, i);
 	}
-	printf("freelist:\n");
+	ਲਿਖੋ("freelist:\n");
 	tdb_dump_chain(tdb, -1);
 }
 
-int tdb_printfreelist(struct tdb_context *tdb)
+ਪੂਰਨ tdb_printfreelist(ਬਣਤਰ tdb_context *tdb)
 {
-	int ret;
-	long total_free = 0;
-	tdb_off_t offset, rec_ptr;
-	struct list_struct rec;
+	ਪੂਰਨ ret;
+	ਲੰਮਾ ਕੁੱਲ_free = 0;
+	tdb_off_t ਵਿੱਥ, rec_ptr;
+	ਬਣਤਰ list_struct rec;
 
-	if ((ret = tdb_lock(tdb, -1, F_WRLCK)) != 0)
-		return ret;
+	ਜੇ ((ret = tdb_ਤਾਲਾ(tdb, -1, F_WRLCK)) != 0)
+		ਵਾਪਸ ret;
 
-	offset = FREELIST_TOP;
+	ਵਿੱਥ = FREELIST_ਸਿਖਰ;
 
 	/* read in the freelist top */
-	if (tdb_ofs_read(tdb, offset, &rec_ptr) == -1) {
+	ਜੇ (tdb_ofs_read(tdb, ਵਿੱਥ, &rec_ptr) == -1) {
 		tdb_unlock(tdb, -1, F_WRLCK);
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
-	printf("freelist top=[0x%08x]\n", rec_ptr );
-	while (rec_ptr) {
-		if (tdb->methods->tdb_read(tdb, rec_ptr, (char *)&rec,
-					   sizeof(rec), DOCONV()) == -1) {
+	ਲਿਖੋ("freelist top=[0x%08x]\n", rec_ptr );
+	ਜਦੋਂ (rec_ptr) {
+		ਜੇ (tdb->methods->tdb_read(tdb, rec_ptr, (ਅੱਖਰ *)&rec,
+					   ਆਕਾਰ(rec), DOCONV()) == -1) {
 			tdb_unlock(tdb, -1, F_WRLCK);
-			return -1;
+			ਵਾਪਸ -1;
 		}
 
-		if (rec.magic != TDB_FREE_MAGIC) {
-			printf("bad magic 0x%08x in free list\n", rec.magic);
+		ਜੇ (rec.magic != TDB_FREE_MAGIC) {
+			ਲਿਖੋ("bad magic 0x%08x in free list\n", rec.magic);
 			tdb_unlock(tdb, -1, F_WRLCK);
-			return -1;
+			ਵਾਪਸ -1;
 		}
 
-		printf("entry offset=[0x%08x], rec.rec_len = [0x%08x (%d)] (end = 0x%08x)\n",
+		ਲਿਖੋ("entry offset=[0x%08x], rec.rec_len = [0x%08x (%d)] (end = 0x%08x)\n",
 		       rec_ptr, rec.rec_len, rec.rec_len, rec_ptr + rec.rec_len);
-		total_free += rec.rec_len;
+		ਕੁੱਲ_free += rec.rec_len;
 
 		/* move to the next record */
-		rec_ptr = rec.next;
+		rec_ptr = rec.ਅਗਲਾ;
 	}
-	printf("total rec_len = [0x%08x (%d)]\n", (int)total_free,
-               (int)total_free);
+	ਲਿਖੋ("total rec_len = [0x%08x (%d)]\n", (ਪੂਰਨ)ਕੁੱਲ_free,
+               (ਪੂਰਨ)ਕੁੱਲ_free);
 
-	return tdb_unlock(tdb, -1, F_WRLCK);
+	ਵਾਪਸ tdb_unlock(tdb, -1, F_WRLCK);
 }
 
 /* file: tdb.c */
@@ -3080,35 +3080,35 @@ int tdb_printfreelist(struct tdb_context *tdb)
   non-blocking increment of the tdb sequence number if the tdb has been opened using
   the TDB_SEQNUM flag
 */
-void tdb_increment_seqnum_nonblock(struct tdb_context *tdb)
+ਖਾਲੀ tdb_increment_seqnum_nonblock(ਬਣਤਰ tdb_context *tdb)
 {
 	tdb_off_t seqnum=0;
 
-	if (!(tdb->flags & TDB_SEQNUM)) {
-		return;
+	ਜੇ (!(tdb->flags & TDB_SEQNUM)) {
+		ਵਾਪਸ;
 	}
 
 	/* we ignore errors from this, as we have no sane way of
 	   dealing with them.
 	*/
-	if (tdb_ofs_read(tdb, TDB_SEQNUM_OFS, &seqnum) == -1)
-		return;
+	ਜੇ (tdb_ofs_read(tdb, TDB_SEQNUM_OFS, &seqnum) == -1)
+		ਵਾਪਸ;
 	seqnum++;
-	(void) tdb_ofs_write(tdb, TDB_SEQNUM_OFS, &seqnum);
+	(ਖਾਲੀ) tdb_ofs_write(tdb, TDB_SEQNUM_OFS, &seqnum);
 }
 
 /*
   increment the tdb sequence number if the tdb has been opened using
   the TDB_SEQNUM flag
 */
-static void tdb_increment_seqnum(struct tdb_context *tdb)
+ਸਥਿਰ ਖਾਲੀ tdb_increment_seqnum(ਬਣਤਰ tdb_context *tdb)
 {
-	if (!(tdb->flags & TDB_SEQNUM)) {
-		return;
+	ਜੇ (!(tdb->flags & TDB_SEQNUM)) {
+		ਵਾਪਸ;
 	}
 
-	if (tdb_brlock(tdb, TDB_SEQNUM_OFS, F_WRLCK, F_SETLKW, 1, 1) != 0) {
-		return;
+	ਜੇ (tdb_brlock(tdb, TDB_SEQNUM_OFS, F_WRLCK, F_SETLKW, 1, 1) != 0) {
+		ਵਾਪਸ;
 	}
 
 	tdb_increment_seqnum_nonblock(tdb);
@@ -3116,51 +3116,51 @@ static void tdb_increment_seqnum(struct tdb_context *tdb)
 	tdb_brlock(tdb, TDB_SEQNUM_OFS, F_UNLCK, F_SETLKW, 1, 1);
 }
 
-static int tdb_key_compare(TDB_DATA key, TDB_DATA data,
-			   void *private_data EXT2FS_ATTR((unused)))
+ਸਥਿਰ ਪੂਰਨ tdb_ਕੁੰਜੀ_compare(TDB_ਅੰਕੜੇ ਕੁੰਜੀ, TDB_ਅੰਕੜੇ ਅੰਕੜੇ,
+			   ਖਾਲੀ *ਨਿੱਜੀ_ਅੰਕੜੇ EXT2FS_ATTR((ਅਣਵਰਤਿਆ)))
 {
-	return memcmp(data.dptr, key.dptr, data.dsize);
+	ਵਾਪਸ memcmp(ਅੰਕੜੇ.dptr, ਕੁੰਜੀ.dptr, ਅੰਕੜੇ.dsize);
 }
 
 /* Returns 0 on fail.  On success, return offset of record, and fills
    in rec */
-static tdb_off_t tdb_find(struct tdb_context *tdb, TDB_DATA key, u32 hash,
-			struct list_struct *r)
+ਸਥਿਰ tdb_off_t tdb_ਲੱਭੋ(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ, u32 hash,
+			ਬਣਤਰ list_struct *r)
 {
 	tdb_off_t rec_ptr;
 
 	/* read in the hash top */
-	if (tdb_ofs_read(tdb, TDB_HASH_TOP(hash), &rec_ptr) == -1)
-		return 0;
+	ਜੇ (tdb_ofs_read(tdb, TDB_HASH_ਸਿਖਰ(hash), &rec_ptr) == -1)
+		ਵਾਪਸ 0;
 
 	/* keep looking until we find the right record */
-	while (rec_ptr) {
-		if (tdb_rec_read(tdb, rec_ptr, r) == -1)
-			return 0;
+	ਜਦੋਂ (rec_ptr) {
+		ਜੇ (tdb_rec_read(tdb, rec_ptr, r) == -1)
+			ਵਾਪਸ 0;
 
-		if (!TDB_DEAD(r) && hash==r->full_hash
-		    && key.dsize==r->key_len
-		    && tdb_parse_data(tdb, key, rec_ptr + sizeof(*r),
-				      r->key_len, tdb_key_compare,
-				      NULL) == 0) {
-			return rec_ptr;
+		ਜੇ (!TDB_DEAD(r) && hash==r->ਭਰਿਆ_hash
+		    && ਕੁੰਜੀ.dsize==r->ਕੁੰਜੀ_len
+		    && tdb_parse_ਅੰਕੜੇ(tdb, ਕੁੰਜੀ, rec_ptr + ਆਕਾਰ(*r),
+				      r->ਕੁੰਜੀ_len, tdb_ਕੁੰਜੀ_compare,
+				      ਨਿਰਾ) == 0) {
+			ਵਾਪਸ rec_ptr;
 		}
-		rec_ptr = r->next;
+		rec_ptr = r->ਅਗਲਾ;
 	}
-	return TDB_ERRCODE(TDB_ERR_NOEXIST, 0);
+	ਵਾਪਸ TDB_ERRCODE(TDB_ERR_NOEXIST, 0);
 }
 
 /* As tdb_find, but if you succeed, keep the lock */
-tdb_off_t tdb_find_lock_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash, int locktype,
-			   struct list_struct *rec)
+tdb_off_t tdb_ਲੱਭੋ_ਤਾਲਾ_hash(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ, u32 hash, ਪੂਰਨ locktype,
+			   ਬਣਤਰ list_struct *rec)
 {
 	u32 rec_ptr;
 
-	if (tdb_lock(tdb, BUCKET(hash), locktype) == -1)
-		return 0;
-	if (!(rec_ptr = tdb_find(tdb, key, hash, rec)))
-		tdb_unlock(tdb, BUCKET(hash), locktype);
-	return rec_ptr;
+	ਜੇ (tdb_ਤਾਲਾ(tdb, ਬਾਲਟੀ(hash), locktype) == -1)
+		ਵਾਪਸ 0;
+	ਜੇ (!(rec_ptr = tdb_ਲੱਭੋ(tdb, ਕੁੰਜੀ, hash, rec)))
+		tdb_unlock(tdb, ਬਾਲਟੀ(hash), locktype);
+	ਵਾਪਸ rec_ptr;
 }
 
 
@@ -3168,32 +3168,32 @@ tdb_off_t tdb_find_lock_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash, in
    is <= the old data size and the key exists.
    on failure return -1.
 */
-static int tdb_update_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash, TDB_DATA dbuf)
+ਸਥਿਰ ਪੂਰਨ tdb_update_hash(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ, u32 hash, TDB_ਅੰਕੜੇ dbuf)
 {
-	struct list_struct rec;
+	ਬਣਤਰ list_struct rec;
 	tdb_off_t rec_ptr;
 
 	/* find entry */
-	if (!(rec_ptr = tdb_find(tdb, key, hash, &rec)))
-		return -1;
+	ਜੇ (!(rec_ptr = tdb_ਲੱਭੋ(tdb, ਕੁੰਜੀ, hash, &rec)))
+		ਵਾਪਸ -1;
 
 	/* must be long enough key, data and tailer */
-	if (rec.rec_len < key.dsize + dbuf.dsize + sizeof(tdb_off_t)) {
+	ਜੇ (rec.rec_len < ਕੁੰਜੀ.dsize + dbuf.dsize + ਆਕਾਰ(tdb_off_t)) {
 		tdb->ecode = TDB_SUCCESS; /* Not really an error */
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	if (tdb->methods->tdb_write(tdb, rec_ptr + sizeof(rec) + rec.key_len,
+	ਜੇ (tdb->methods->tdb_write(tdb, rec_ptr + ਆਕਾਰ(rec) + rec.ਕੁੰਜੀ_len,
 		      dbuf.dptr, dbuf.dsize) == -1)
-		return -1;
+		ਵਾਪਸ -1;
 
-	if (dbuf.dsize != rec.data_len) {
+	ਜੇ (dbuf.dsize != rec.ਅੰਕੜੇ_len) {
 		/* update size */
-		rec.data_len = dbuf.dsize;
-		return tdb_rec_write(tdb, rec_ptr, &rec);
+		rec.ਅੰਕੜੇ_len = dbuf.dsize;
+		ਵਾਪਸ tdb_rec_write(tdb, rec_ptr, &rec);
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* find an entry in the database given a key */
@@ -3202,23 +3202,23 @@ static int tdb_update_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash, TDB_
  * then the TDB_DATA will have zero length but
  * a non-zero pointer
  */
-TDB_DATA tdb_fetch(struct tdb_context *tdb, TDB_DATA key)
+TDB_ਅੰਕੜੇ tdb_fetch(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ)
 {
 	tdb_off_t rec_ptr;
-	struct list_struct rec;
-	TDB_DATA ret;
+	ਬਣਤਰ list_struct rec;
+	TDB_ਅੰਕੜੇ ret;
 	u32 hash;
 
 	/* find which hash bucket it is in */
-	hash = tdb->hash_fn(&key);
-	if (!(rec_ptr = tdb_find_lock_hash(tdb,key,hash,F_RDLCK,&rec)))
-		return tdb_null;
+	hash = tdb->hash_fn(&ਕੁੰਜੀ);
+	ਜੇ (!(rec_ptr = tdb_ਲੱਭੋ_ਤਾਲਾ_hash(tdb,ਕੁੰਜੀ,hash,F_RDLCK,&rec)))
+		ਵਾਪਸ tdb_null;
 
-	ret.dptr = tdb_alloc_read(tdb, rec_ptr + sizeof(rec) + rec.key_len,
-				  rec.data_len);
-	ret.dsize = rec.data_len;
-	tdb_unlock(tdb, BUCKET(rec.full_hash), F_RDLCK);
-	return ret;
+	ret.dptr = tdb_alloc_read(tdb, rec_ptr + ਆਕਾਰ(rec) + rec.ਕੁੰਜੀ_len,
+				  rec.ਅੰਕੜੇ_len);
+	ret.dsize = rec.ਅੰਕੜੇ_len;
+	tdb_unlock(tdb, ਬਾਲਟੀ(rec.ਭਰਿਆ_hash), F_RDLCK);
+	ਵਾਪਸ ret;
 }
 
 /*
@@ -3237,29 +3237,29 @@ TDB_DATA tdb_fetch(struct tdb_context *tdb, TDB_DATA key)
  * the tdb records, ldb indexes being one example.
  */
 
-int tdb_parse_record(struct tdb_context *tdb, TDB_DATA key,
-		     int (*parser)(TDB_DATA key, TDB_DATA data,
-				   void *private_data),
-		     void *private_data)
+ਪੂਰਨ tdb_parse_ਰਿਕਾਰਡ(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ,
+		     ਪੂਰਨ (*parser)(TDB_ਅੰਕੜੇ ਕੁੰਜੀ, TDB_ਅੰਕੜੇ ਅੰਕੜੇ,
+				   ਖਾਲੀ *ਨਿੱਜੀ_ਅੰਕੜੇ),
+		     ਖਾਲੀ *ਨਿੱਜੀ_ਅੰਕੜੇ)
 {
 	tdb_off_t rec_ptr;
-	struct list_struct rec;
-	int ret;
+	ਬਣਤਰ list_struct rec;
+	ਪੂਰਨ ret;
 	u32 hash;
 
 	/* find which hash bucket it is in */
-	hash = tdb->hash_fn(&key);
+	hash = tdb->hash_fn(&ਕੁੰਜੀ);
 
-	if (!(rec_ptr = tdb_find_lock_hash(tdb,key,hash,F_RDLCK,&rec))) {
-		return TDB_ERRCODE(TDB_ERR_NOEXIST, 0);
+	ਜੇ (!(rec_ptr = tdb_ਲੱਭੋ_ਤਾਲਾ_hash(tdb,ਕੁੰਜੀ,hash,F_RDLCK,&rec))) {
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_NOEXIST, 0);
 	}
 
-	ret = tdb_parse_data(tdb, key, rec_ptr + sizeof(rec) + rec.key_len,
-			     rec.data_len, parser, private_data);
+	ret = tdb_parse_ਅੰਕੜੇ(tdb, ਕੁੰਜੀ, rec_ptr + ਆਕਾਰ(rec) + rec.ਕੁੰਜੀ_len,
+			     rec.ਅੰਕੜੇ_len, parser, ਨਿੱਜੀ_ਅੰਕੜੇ);
 
-	tdb_unlock(tdb, BUCKET(rec.full_hash), F_RDLCK);
+	tdb_unlock(tdb, ਬਾਲਟੀ(rec.ਭਰਿਆ_hash), F_RDLCK);
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
 /* check if an entry in the database exists
@@ -3268,135 +3268,135 @@ int tdb_parse_record(struct tdb_context *tdb, TDB_DATA key,
    this doesn't match the conventions in the rest of this module, but is
    compatible with gdbm
 */
-static int tdb_exists_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash)
+ਸਥਿਰ ਪੂਰਨ tdb_exists_hash(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ, u32 hash)
 {
-	struct list_struct rec;
+	ਬਣਤਰ list_struct rec;
 
-	if (tdb_find_lock_hash(tdb, key, hash, F_RDLCK, &rec) == 0)
-		return 0;
-	tdb_unlock(tdb, BUCKET(rec.full_hash), F_RDLCK);
-	return 1;
+	ਜੇ (tdb_ਲੱਭੋ_ਤਾਲਾ_hash(tdb, ਕੁੰਜੀ, hash, F_RDLCK, &rec) == 0)
+		ਵਾਪਸ 0;
+	tdb_unlock(tdb, ਬਾਲਟੀ(rec.ਭਰਿਆ_hash), F_RDLCK);
+	ਵਾਪਸ 1;
 }
 
-int tdb_exists(struct tdb_context *tdb, TDB_DATA key)
+ਪੂਰਨ tdb_exists(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ)
 {
-	u32 hash = tdb->hash_fn(&key);
-	return tdb_exists_hash(tdb, key, hash);
+	u32 hash = tdb->hash_fn(&ਕੁੰਜੀ);
+	ਵਾਪਸ tdb_exists_hash(tdb, ਕੁੰਜੀ, hash);
 }
 
 /* actually delete an entry in the database given the offset */
-int tdb_do_delete(struct tdb_context *tdb, tdb_off_t rec_ptr, struct list_struct*rec)
+ਪੂਰਨ tdb_do_delete(ਬਣਤਰ tdb_context *tdb, tdb_off_t rec_ptr, ਬਣਤਰ list_struct*rec)
 {
-	tdb_off_t last_ptr, i;
-	struct list_struct lastrec;
+	tdb_off_t ਆਖਰੀ_ptr, i;
+	ਬਣਤਰ list_struct lastrec;
 
-	if (tdb->read_only || tdb->traverse_read) return -1;
+	ਜੇ (tdb->read_only || tdb->traverse_read) ਵਾਪਸ -1;
 
-	if (tdb_write_lock_record(tdb, rec_ptr) == -1) {
+	ਜੇ (tdb_write_ਤਾਲਾ_ਰਿਕਾਰਡ(tdb, rec_ptr) == -1) {
 		/* Someone traversing here: mark it as dead */
 		rec->magic = TDB_DEAD_MAGIC;
-		return tdb_rec_write(tdb, rec_ptr, rec);
+		ਵਾਪਸ tdb_rec_write(tdb, rec_ptr, rec);
 	}
-	if (tdb_write_unlock_record(tdb, rec_ptr) != 0)
-		return -1;
+	ਜੇ (tdb_write_unlock_ਰਿਕਾਰਡ(tdb, rec_ptr) != 0)
+		ਵਾਪਸ -1;
 
 	/* find previous record in hash chain */
-	if (tdb_ofs_read(tdb, TDB_HASH_TOP(rec->full_hash), &i) == -1)
-		return -1;
-	for (last_ptr = 0; i != rec_ptr; last_ptr = i, i = lastrec.next)
-		if (tdb_rec_read(tdb, i, &lastrec) == -1)
-			return -1;
+	ਜੇ (tdb_ofs_read(tdb, TDB_HASH_ਸਿਖਰ(rec->ਭਰਿਆ_hash), &i) == -1)
+		ਵਾਪਸ -1;
+	ਲਈ (ਆਖਰੀ_ptr = 0; i != rec_ptr; ਆਖਰੀ_ptr = i, i = lastrec.ਅਗਲਾ)
+		ਜੇ (tdb_rec_read(tdb, i, &lastrec) == -1)
+			ਵਾਪਸ -1;
 
 	/* unlink it: next ptr is at start of record. */
-	if (last_ptr == 0)
-		last_ptr = TDB_HASH_TOP(rec->full_hash);
-	if (tdb_ofs_write(tdb, last_ptr, &rec->next) == -1)
-		return -1;
+	ਜੇ (ਆਖਰੀ_ptr == 0)
+		ਆਖਰੀ_ptr = TDB_HASH_ਸਿਖਰ(rec->ਭਰਿਆ_hash);
+	ਜੇ (tdb_ofs_write(tdb, ਆਖਰੀ_ptr, &rec->ਅਗਲਾ) == -1)
+		ਵਾਪਸ -1;
 
 	/* recover the space */
-	if (tdb_free(tdb, rec_ptr, rec) == -1)
-		return -1;
-	return 0;
+	ਜੇ (tdb_free(tdb, rec_ptr, rec) == -1)
+		ਵਾਪਸ -1;
+	ਵਾਪਸ 0;
 }
 
-static int tdb_count_dead(struct tdb_context *tdb, u32 hash)
+ਸਥਿਰ ਪੂਰਨ tdb_ਗਿਣਤੀ_dead(ਬਣਤਰ tdb_context *tdb, u32 hash)
 {
-	int res = 0;
+	ਪੂਰਨ res = 0;
 	tdb_off_t rec_ptr;
-	struct list_struct rec;
+	ਬਣਤਰ list_struct rec;
 
 	/* read in the hash top */
-	if (tdb_ofs_read(tdb, TDB_HASH_TOP(hash), &rec_ptr) == -1)
-		return 0;
+	ਜੇ (tdb_ofs_read(tdb, TDB_HASH_ਸਿਖਰ(hash), &rec_ptr) == -1)
+		ਵਾਪਸ 0;
 
-	while (rec_ptr) {
-		if (tdb_rec_read(tdb, rec_ptr, &rec) == -1)
-			return 0;
+	ਜਦੋਂ (rec_ptr) {
+		ਜੇ (tdb_rec_read(tdb, rec_ptr, &rec) == -1)
+			ਵਾਪਸ 0;
 
-		if (rec.magic == TDB_DEAD_MAGIC) {
+		ਜੇ (rec.magic == TDB_DEAD_MAGIC) {
 			res += 1;
 		}
-		rec_ptr = rec.next;
+		rec_ptr = rec.ਅਗਲਾ;
 	}
-	return res;
+	ਵਾਪਸ res;
 }
 
 /*
  * Purge all DEAD records from a hash chain
  */
-static int tdb_purge_dead(struct tdb_context *tdb, u32 hash)
+ਸਥਿਰ ਪੂਰਨ tdb_purge_dead(ਬਣਤਰ tdb_context *tdb, u32 hash)
 {
-	int res = -1;
-	struct list_struct rec;
+	ਪੂਰਨ res = -1;
+	ਬਣਤਰ list_struct rec;
 	tdb_off_t rec_ptr;
 
-	if (tdb_lock(tdb, -1, F_WRLCK) == -1) {
-		return -1;
+	ਜੇ (tdb_ਤਾਲਾ(tdb, -1, F_WRLCK) == -1) {
+		ਵਾਪਸ -1;
 	}
 
 	/* read in the hash top */
-	if (tdb_ofs_read(tdb, TDB_HASH_TOP(hash), &rec_ptr) == -1)
-		goto fail;
+	ਜੇ (tdb_ofs_read(tdb, TDB_HASH_ਸਿਖਰ(hash), &rec_ptr) == -1)
+		ਜਾਓ fail;
 
-	while (rec_ptr) {
-		tdb_off_t next;
+	ਜਦੋਂ (rec_ptr) {
+		tdb_off_t ਅਗਲਾ;
 
-		if (tdb_rec_read(tdb, rec_ptr, &rec) == -1) {
-			goto fail;
+		ਜੇ (tdb_rec_read(tdb, rec_ptr, &rec) == -1) {
+			ਜਾਓ fail;
 		}
 
-		next = rec.next;
+		ਅਗਲਾ = rec.ਅਗਲਾ;
 
-		if (rec.magic == TDB_DEAD_MAGIC
+		ਜੇ (rec.magic == TDB_DEAD_MAGIC
 		    && tdb_do_delete(tdb, rec_ptr, &rec) == -1) {
-			goto fail;
+			ਜਾਓ fail;
 		}
-		rec_ptr = next;
+		rec_ptr = ਅਗਲਾ;
 	}
 	res = 0;
  fail:
 	tdb_unlock(tdb, -1, F_WRLCK);
-	return res;
+	ਵਾਪਸ res;
 }
 
 /* delete an entry in the database given a key */
-static int tdb_delete_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash)
+ਸਥਿਰ ਪੂਰਨ tdb_delete_hash(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ, u32 hash)
 {
 	tdb_off_t rec_ptr;
-	struct list_struct rec;
-	int ret;
+	ਬਣਤਰ list_struct rec;
+	ਪੂਰਨ ret;
 
-	if (tdb->max_dead_records != 0) {
+	ਜੇ (tdb->max_dead_ਰਿਕਾਰਡਾਂ != 0) {
 
 		/*
 		 * Allow for some dead records per hash chain, mainly for
 		 * tdb's with a very high create/delete rate like locking.tdb.
 		 */
 
-		if (tdb_lock(tdb, BUCKET(hash), F_WRLCK) == -1)
-			return -1;
+		ਜੇ (tdb_ਤਾਲਾ(tdb, ਬਾਲਟੀ(hash), F_WRLCK) == -1)
+			ਵਾਪਸ -1;
 
-		if (tdb_count_dead(tdb, hash) >= tdb->max_dead_records) {
+		ਜੇ (tdb_ਗਿਣਤੀ_dead(tdb, hash) >= tdb->max_dead_ਰਿਕਾਰਡਾਂ) {
 			/*
 			 * Don't let the per-chain freelist grow too large,
 			 * delete all existing dead records
@@ -3404,9 +3404,9 @@ static int tdb_delete_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash)
 			tdb_purge_dead(tdb, hash);
 		}
 
-		if (!(rec_ptr = tdb_find(tdb, key, hash, &rec))) {
-			tdb_unlock(tdb, BUCKET(hash), F_WRLCK);
-			return -1;
+		ਜੇ (!(rec_ptr = tdb_ਲੱਭੋ(tdb, ਕੁੰਜੀ, hash, &rec))) {
+			tdb_unlock(tdb, ਬਾਲਟੀ(hash), F_WRLCK);
+			ਵਾਪਸ -1;
 		}
 
 		/*
@@ -3415,56 +3415,56 @@ static int tdb_delete_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash)
 		rec.magic = TDB_DEAD_MAGIC;
 		ret = tdb_rec_write(tdb, rec_ptr, &rec);
 	}
-	else {
-		if (!(rec_ptr = tdb_find_lock_hash(tdb, key, hash, F_WRLCK,
+	ਨਹੀਂਤਾਂ {
+		ਜੇ (!(rec_ptr = tdb_ਲੱਭੋ_ਤਾਲਾ_hash(tdb, ਕੁੰਜੀ, hash, F_WRLCK,
 						   &rec)))
-			return -1;
+			ਵਾਪਸ -1;
 
 		ret = tdb_do_delete(tdb, rec_ptr, &rec);
 	}
 
-	if (ret == 0) {
+	ਜੇ (ret == 0) {
 		tdb_increment_seqnum(tdb);
 	}
 
-	if (tdb_unlock(tdb, BUCKET(rec.full_hash), F_WRLCK) != 0)
+	ਜੇ (tdb_unlock(tdb, ਬਾਲਟੀ(rec.ਭਰਿਆ_hash), F_WRLCK) != 0)
 		TDB_LOG((tdb, TDB_DEBUG_WARNING, "tdb_delete: WARNING tdb_unlock failed!\n"));
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-int tdb_delete(struct tdb_context *tdb, TDB_DATA key)
+ਪੂਰਨ tdb_delete(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ)
 {
-	u32 hash = tdb->hash_fn(&key);
-	return tdb_delete_hash(tdb, key, hash);
+	u32 hash = tdb->hash_fn(&ਕੁੰਜੀ);
+	ਵਾਪਸ tdb_delete_hash(tdb, ਕੁੰਜੀ, hash);
 }
 
 /*
  * See if we have a dead record around with enough space
  */
-static tdb_off_t tdb_find_dead(struct tdb_context *tdb, u32 hash,
-			       struct list_struct *r, tdb_len_t length)
+ਸਥਿਰ tdb_off_t tdb_ਲੱਭੋ_dead(ਬਣਤਰ tdb_context *tdb, u32 hash,
+			       ਬਣਤਰ list_struct *r, tdb_len_t ਲੰਮਾਈ)
 {
 	tdb_off_t rec_ptr;
 
 	/* read in the hash top */
-	if (tdb_ofs_read(tdb, TDB_HASH_TOP(hash), &rec_ptr) == -1)
-		return 0;
+	ਜੇ (tdb_ofs_read(tdb, TDB_HASH_ਸਿਖਰ(hash), &rec_ptr) == -1)
+		ਵਾਪਸ 0;
 
 	/* keep looking until we find the right record */
-	while (rec_ptr) {
-		if (tdb_rec_read(tdb, rec_ptr, r) == -1)
-			return 0;
+	ਜਦੋਂ (rec_ptr) {
+		ਜੇ (tdb_rec_read(tdb, rec_ptr, r) == -1)
+			ਵਾਪਸ 0;
 
-		if (TDB_DEAD(r) && r->rec_len >= length) {
+		ਜੇ (TDB_DEAD(r) && r->rec_len >= ਲੰਮਾਈ) {
 			/*
 			 * First fit for simple coding, TODO: change to best
 			 * fit
 			 */
-			return rec_ptr;
+			ਵਾਪਸ rec_ptr;
 		}
-		rec_ptr = r->next;
+		rec_ptr = r->ਅਗਲਾ;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* store an element in the database, replacing any existing element
@@ -3472,40 +3472,40 @@ static tdb_off_t tdb_find_dead(struct tdb_context *tdb, u32 hash,
 
    return 0 on success, -1 on failure
 */
-int tdb_store(struct tdb_context *tdb, TDB_DATA key, TDB_DATA dbuf, int flag)
+ਪੂਰਨ tdb_store(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ, TDB_ਅੰਕੜੇ dbuf, ਪੂਰਨ flag)
 {
-	struct list_struct rec;
+	ਬਣਤਰ list_struct rec;
 	u32 hash;
 	tdb_off_t rec_ptr;
-	char *p = NULL;
-	int ret = -1;
+	ਅੱਖਰ *p = ਨਿਰਾ;
+	ਪੂਰਨ ret = -1;
 
-	if (tdb->read_only || tdb->traverse_read) {
+	ਜੇ (tdb->read_only || tdb->traverse_read) {
 		tdb->ecode = TDB_ERR_RDONLY;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	/* find which hash bucket it is in */
-	hash = tdb->hash_fn(&key);
-	if (tdb_lock(tdb, BUCKET(hash), F_WRLCK) == -1)
-		return -1;
+	hash = tdb->hash_fn(&ਕੁੰਜੀ);
+	ਜੇ (tdb_ਤਾਲਾ(tdb, ਬਾਲਟੀ(hash), F_WRLCK) == -1)
+		ਵਾਪਸ -1;
 
 	/* check for it existing, on insert. */
-	if (flag == TDB_INSERT) {
-		if (tdb_exists_hash(tdb, key, hash)) {
+	ਜੇ (flag == TDB_ਪਾਓ) {
+		ਜੇ (tdb_exists_hash(tdb, ਕੁੰਜੀ, hash)) {
 			tdb->ecode = TDB_ERR_EXISTS;
-			goto fail;
+			ਜਾਓ fail;
 		}
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/* first try in-place update, on modify or replace. */
-		if (tdb_update_hash(tdb, key, hash, dbuf) == 0) {
-			goto done;
+		ਜੇ (tdb_update_hash(tdb, ਕੁੰਜੀ, hash, dbuf) == 0) {
+			ਜਾਓ ਪੂਰਾ;
 		}
-		if (tdb->ecode == TDB_ERR_NOEXIST &&
+		ਜੇ (tdb->ecode == TDB_ERR_NOEXIST &&
 		    flag == TDB_MODIFY) {
 			/* if the record doesn't exist and we are in TDB_MODIFY mode then
 			 we should fail the store */
-			goto fail;
+			ਜਾਓ fail;
 		}
 	}
 	/* reset the error code potentially set by the tdb_update() */
@@ -3514,44 +3514,44 @@ int tdb_store(struct tdb_context *tdb, TDB_DATA key, TDB_DATA dbuf, int flag)
 	/* delete any existing record - if it doesn't exist we don't
            care.  Doing this first reduces fragmentation, and avoids
            coalescing with `allocated' block before it's updated. */
-	if (flag != TDB_INSERT)
-		tdb_delete_hash(tdb, key, hash);
+	ਜੇ (flag != TDB_ਪਾਓ)
+		tdb_delete_hash(tdb, ਕੁੰਜੀ, hash);
 
 	/* Copy key+value *before* allocating free space in case malloc
 	   fails and we are left with a dead spot in the tdb. */
 
-	if (!(p = (char *)malloc(key.dsize + dbuf.dsize))) {
+	ਜੇ (!(p = (ਅੱਖਰ *)ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਕੁੰਜੀ.dsize + dbuf.dsize))) {
 		tdb->ecode = TDB_ERR_OOM;
-		goto fail;
+		ਜਾਓ fail;
 	}
 
-	memcpy(p, key.dptr, key.dsize);
-	if (dbuf.dsize)
-		memcpy(p+key.dsize, dbuf.dptr, dbuf.dsize);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(p, ਕੁੰਜੀ.dptr, ਕੁੰਜੀ.dsize);
+	ਜੇ (dbuf.dsize)
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(p+ਕੁੰਜੀ.dsize, dbuf.dptr, dbuf.dsize);
 
-	if (tdb->max_dead_records != 0) {
+	ਜੇ (tdb->max_dead_ਰਿਕਾਰਡਾਂ != 0) {
 		/*
 		 * Allow for some dead records per hash chain, look if we can
 		 * find one that can hold the new record. We need enough space
 		 * for key, data and tailer. If we find one, we don't have to
 		 * consult the central freelist.
 		 */
-		rec_ptr = tdb_find_dead(
+		rec_ptr = tdb_ਲੱਭੋ_dead(
 			tdb, hash, &rec,
-			key.dsize + dbuf.dsize + sizeof(tdb_off_t));
+			ਕੁੰਜੀ.dsize + dbuf.dsize + ਆਕਾਰ(tdb_off_t));
 
-		if (rec_ptr != 0) {
-			rec.key_len = key.dsize;
-			rec.data_len = dbuf.dsize;
-			rec.full_hash = hash;
+		ਜੇ (rec_ptr != 0) {
+			rec.ਕੁੰਜੀ_len = ਕੁੰਜੀ.dsize;
+			rec.ਅੰਕੜੇ_len = dbuf.dsize;
+			rec.ਭਰਿਆ_hash = hash;
 			rec.magic = TDB_MAGIC;
-			if (tdb_rec_write(tdb, rec_ptr, &rec) == -1
+			ਜੇ (tdb_rec_write(tdb, rec_ptr, &rec) == -1
 			    || tdb->methods->tdb_write(
-				    tdb, rec_ptr + sizeof(rec),
-				    p, key.dsize + dbuf.dsize) == -1) {
-				goto fail;
+				    tdb, rec_ptr + ਆਕਾਰ(rec),
+				    p, ਕੁੰਜੀ.dsize + dbuf.dsize) == -1) {
+				ਜਾਓ fail;
 			}
-			goto done;
+			ਜਾਓ ਪੂਰਾ;
 		}
 	}
 
@@ -3561,94 +3561,94 @@ int tdb_store(struct tdb_context *tdb, TDB_DATA key, TDB_DATA dbuf, int flag)
 	 * the hash chain under the freelist lock.
 	 */
 
-	if (tdb_lock(tdb, -1, F_WRLCK) == -1) {
-		goto fail;
+	ਜੇ (tdb_ਤਾਲਾ(tdb, -1, F_WRLCK) == -1) {
+		ਜਾਓ fail;
 	}
 
-	if ((tdb->max_dead_records != 0)
+	ਜੇ ((tdb->max_dead_ਰਿਕਾਰਡਾਂ != 0)
 	    && (tdb_purge_dead(tdb, hash) == -1)) {
 		tdb_unlock(tdb, -1, F_WRLCK);
-		goto fail;
+		ਜਾਓ fail;
 	}
 
 	/* we have to allocate some space */
-	rec_ptr = tdb_allocate(tdb, key.dsize + dbuf.dsize, &rec);
+	rec_ptr = tdb_allocate(tdb, ਕੁੰਜੀ.dsize + dbuf.dsize, &rec);
 
 	tdb_unlock(tdb, -1, F_WRLCK);
 
-	if (rec_ptr == 0) {
-		goto fail;
+	ਜੇ (rec_ptr == 0) {
+		ਜਾਓ fail;
 	}
 
 	/* Read hash top into next ptr */
-	if (tdb_ofs_read(tdb, TDB_HASH_TOP(hash), &rec.next) == -1)
-		goto fail;
+	ਜੇ (tdb_ofs_read(tdb, TDB_HASH_ਸਿਖਰ(hash), &rec.ਅਗਲਾ) == -1)
+		ਜਾਓ fail;
 
-	rec.key_len = key.dsize;
-	rec.data_len = dbuf.dsize;
-	rec.full_hash = hash;
+	rec.ਕੁੰਜੀ_len = ਕੁੰਜੀ.dsize;
+	rec.ਅੰਕੜੇ_len = dbuf.dsize;
+	rec.ਭਰਿਆ_hash = hash;
 	rec.magic = TDB_MAGIC;
 
 	/* write out and point the top of the hash chain at it */
-	if (tdb_rec_write(tdb, rec_ptr, &rec) == -1
-	    || tdb->methods->tdb_write(tdb, rec_ptr+sizeof(rec), p, key.dsize+dbuf.dsize)==-1
-	    || tdb_ofs_write(tdb, TDB_HASH_TOP(hash), &rec_ptr) == -1) {
+	ਜੇ (tdb_rec_write(tdb, rec_ptr, &rec) == -1
+	    || tdb->methods->tdb_write(tdb, rec_ptr+ਆਕਾਰ(rec), p, ਕੁੰਜੀ.dsize+dbuf.dsize)==-1
+	    || tdb_ofs_write(tdb, TDB_HASH_ਸਿਖਰ(hash), &rec_ptr) == -1) {
 		/* Need to tdb_unallocate() here */
-		goto fail;
+		ਜਾਓ fail;
 	}
 
- done:
+ ਪੂਰਾ:
 	ret = 0;
  fail:
-	if (ret == 0) {
+	ਜੇ (ret == 0) {
 		tdb_increment_seqnum(tdb);
 	}
 
-	SAFE_FREE(p);
-	tdb_unlock(tdb, BUCKET(hash), F_WRLCK);
-	return ret;
+	ਸੁਰੱਖਿਅਤ_FREE(p);
+	tdb_unlock(tdb, ਬਾਲਟੀ(hash), F_WRLCK);
+	ਵਾਪਸ ret;
 }
 
 
 /* Append to an entry. Create if not exist. */
-int tdb_append(struct tdb_context *tdb, TDB_DATA key, TDB_DATA new_dbuf)
+ਪੂਰਨ tdb_append(ਬਣਤਰ tdb_context *tdb, TDB_ਅੰਕੜੇ ਕੁੰਜੀ, TDB_ਅੰਕੜੇ new_dbuf)
 {
 	u32 hash;
-	TDB_DATA dbuf;
-	int ret = -1;
+	TDB_ਅੰਕੜੇ dbuf;
+	ਪੂਰਨ ret = -1;
 
 	/* find which hash bucket it is in */
-	hash = tdb->hash_fn(&key);
-	if (tdb_lock(tdb, BUCKET(hash), F_WRLCK) == -1)
-		return -1;
+	hash = tdb->hash_fn(&ਕੁੰਜੀ);
+	ਜੇ (tdb_ਤਾਲਾ(tdb, ਬਾਲਟੀ(hash), F_WRLCK) == -1)
+		ਵਾਪਸ -1;
 
-	dbuf = tdb_fetch(tdb, key);
+	dbuf = tdb_fetch(tdb, ਕੁੰਜੀ);
 
-	if (dbuf.dptr == NULL) {
-		dbuf.dptr = (unsigned char *)malloc(new_dbuf.dsize);
-	} else {
-		unsigned char *new_dptr = (unsigned char *)realloc(dbuf.dptr,
+	ਜੇ (dbuf.dptr == ਨਿਰਾ) {
+		dbuf.dptr = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)ਸਮ੍ਰਿਤੀ_ਦਿਓ(new_dbuf.dsize);
+	} ਨਹੀਂਤਾਂ {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *new_dptr = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)realloc(dbuf.dptr,
 						     dbuf.dsize + new_dbuf.dsize);
-		if (new_dptr == NULL) {
-			free(dbuf.dptr);
+		ਜੇ (new_dptr == ਨਿਰਾ) {
+			ਮੁਕਤ(dbuf.dptr);
 		}
 		dbuf.dptr = new_dptr;
 	}
 
-	if (dbuf.dptr == NULL) {
+	ਜੇ (dbuf.dptr == ਨਿਰਾ) {
 		tdb->ecode = TDB_ERR_OOM;
-		goto failed;
+		ਜਾਓ failed;
 	}
 
-	memcpy(dbuf.dptr + dbuf.dsize, new_dbuf.dptr, new_dbuf.dsize);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(dbuf.dptr + dbuf.dsize, new_dbuf.dptr, new_dbuf.dsize);
 	dbuf.dsize += new_dbuf.dsize;
 
-	ret = tdb_store(tdb, key, dbuf, 0);
+	ret = tdb_store(tdb, ਕੁੰਜੀ, dbuf, 0);
 
 failed:
-	tdb_unlock(tdb, BUCKET(hash), F_WRLCK);
-	SAFE_FREE(dbuf.dptr);
-	return ret;
+	tdb_unlock(tdb, ਬਾਲਟੀ(hash), F_WRLCK);
+	ਸੁਰੱਖਿਅਤ_FREE(dbuf.dptr);
+	ਵਾਪਸ ret;
 }
 
 
@@ -3656,9 +3656,9 @@ failed:
   return the name of the current tdb file
   useful for external logging functions
 */
-const char *tdb_name(struct tdb_context *tdb)
+ਅਚਲ ਅੱਖਰ *tdb_name(ਬਣਤਰ tdb_context *tdb)
 {
-	return tdb->name;
+	ਵਾਪਸ tdb->name;
 }
 
 /*
@@ -3666,18 +3666,18 @@ const char *tdb_name(struct tdb_context *tdb)
   useful for external routines that want to check the device/inode
   of the fd
 */
-int tdb_fd(struct tdb_context *tdb)
+ਪੂਰਨ tdb_fd(ਬਣਤਰ tdb_context *tdb)
 {
-	return tdb->fd;
+	ਵਾਪਸ tdb->fd;
 }
 
 /*
   return the current logging function
   useful for external tdb routines that wish to log tdb errors
 */
-tdb_log_func tdb_log_fn(struct tdb_context *tdb)
+tdb_log_func tdb_log_fn(ਬਣਤਰ tdb_context *tdb)
 {
-	return tdb->log.log_fn;
+	ਵਾਪਸ tdb->ਲਘੂਗਣਕ.log_fn;
 }
 
 
@@ -3691,35 +3691,35 @@ tdb_log_func tdb_log_fn(struct tdb_context *tdb)
   The aim of this sequence number is to allow for a very lightweight
   test of a possible tdb change.
 */
-int tdb_get_seqnum(struct tdb_context *tdb)
+ਪੂਰਨ tdb_get_seqnum(ਬਣਤਰ tdb_context *tdb)
 {
 	tdb_off_t seqnum=0;
 
-	if (tdb_ofs_read(tdb, TDB_SEQNUM_OFS, &seqnum) == -1)
-		return 0;
-	return seqnum;
+	ਜੇ (tdb_ofs_read(tdb, TDB_SEQNUM_OFS, &seqnum) == -1)
+		ਵਾਪਸ 0;
+	ਵਾਪਸ seqnum;
 }
 
-int tdb_hash_size(struct tdb_context *tdb)
+ਪੂਰਨ tdb_hash_ਮਾਪ(ਬਣਤਰ tdb_context *tdb)
 {
-	return tdb->header.hash_size;
+	ਵਾਪਸ tdb->ਸਿਰਲੇਖ.hash_ਮਾਪ;
 }
 
-size_t tdb_map_size(struct tdb_context *tdb)
+size_t tdb_map_ਮਾਪ(ਬਣਤਰ tdb_context *tdb)
 {
-	return tdb->map_size;
+	ਵਾਪਸ tdb->map_ਮਾਪ;
 }
 
-int tdb_get_flags(struct tdb_context *tdb)
+ਪੂਰਨ tdb_get_flags(ਬਣਤਰ tdb_context *tdb)
 {
-	return tdb->flags;
+	ਵਾਪਸ tdb->flags;
 }
 
 
 /*
   enable sequence number handling on an open tdb
 */
-void tdb_enable_seqnum(struct tdb_context *tdb)
+ਖਾਲੀ tdb_enable_seqnum(ਬਣਤਰ tdb_context *tdb)
 {
 	tdb->flags |= TDB_SEQNUM;
 }
@@ -3727,81 +3727,81 @@ void tdb_enable_seqnum(struct tdb_context *tdb)
 /* file: open.c */
 
 /* all contexts, to ensure no double-opens (fcntl locks don't nest!) */
-static struct tdb_context *tdbs = NULL;
+ਸਥਿਰ ਬਣਤਰ tdb_context *tdbs = ਨਿਰਾ;
 
 
 /* This is from a hash algorithm suggested by Rogier Wolff */
-static unsigned int default_tdb_hash(TDB_DATA *key)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ default_tdb_hash(TDB_ਅੰਕੜੇ *ਕੁੰਜੀ)
 {
-	u32 value;	/* Used to compute the hash value.  */
+	u32 ਮੁੱਲ;	/* Used to compute the hash value.  */
 	u32   i;	/* Used to cycle through random values. */
 
 	/* Set the initial value from the key size. */
-	for (value = 0, i=0; i < key->dsize; i++)
-		value = value * 256 + key->dptr[i] + (value >> 24) * 241;
+	ਲਈ (ਮੁੱਲ = 0, i=0; i < ਕੁੰਜੀ->dsize; i++)
+		ਮੁੱਲ = ਮੁੱਲ * 256 + ਕੁੰਜੀ->dptr[i] + (ਮੁੱਲ >> 24) * 241;
 
-	return value;
+	ਵਾਪਸ ਮੁੱਲ;
 }
 
 
 /* initialise a new database with a specified hash size */
-static int tdb_new_database(struct tdb_context *tdb, int hash_size)
+ਸਥਿਰ ਪੂਰਨ tdb_new_database(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ hash_ਮਾਪ)
 {
-	struct tdb_header *newdb;
-	int size, ret = -1;
+	ਬਣਤਰ tdb_ਸਿਰਲੇਖ *newdb;
+	ਪੂਰਨ ਮਾਪ, ret = -1;
 
 	/* We make it up in memory, then write it out if not internal */
-	size = sizeof(struct tdb_header) + (hash_size+1)*sizeof(tdb_off_t);
-	if (!(newdb = (struct tdb_header *)calloc(size, 1)))
-		return TDB_ERRCODE(TDB_ERR_OOM, -1);
+	ਮਾਪ = ਆਕਾਰ(ਬਣਤਰ tdb_ਸਿਰਲੇਖ) + (hash_ਮਾਪ+1)*ਆਕਾਰ(tdb_off_t);
+	ਜੇ (!(newdb = (ਬਣਤਰ tdb_ਸਿਰਲੇਖ *)ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਮਾਪ, 1)))
+		ਵਾਪਸ TDB_ERRCODE(TDB_ERR_OOM, -1);
 
 	/* Fill in the header */
-	newdb->version = TDB_VERSION;
-	newdb->hash_size = hash_size;
-	if (tdb->flags & TDB_INTERNAL) {
-		tdb->map_size = size;
-		tdb->map_ptr = (char *)newdb;
-		memcpy(&tdb->header, newdb, sizeof(tdb->header));
+	newdb->ਸੰਸਕਰਣ = TDB_ਸੰਸਕਰਣ;
+	newdb->hash_ਮਾਪ = hash_ਮਾਪ;
+	ਜੇ (tdb->flags & TDB_ਅੰਦਰੂਨੀ) {
+		tdb->map_ਮਾਪ = ਮਾਪ;
+		tdb->map_ptr = (ਅੱਖਰ *)newdb;
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(&tdb->ਸਿਰਲੇਖ, newdb, ਆਕਾਰ(tdb->ਸਿਰਲੇਖ));
 		/* Convert the `ondisk' version if asked. */
 		CONVERT(*newdb);
-		return 0;
+		ਵਾਪਸ 0;
 	}
-	if (lseek(tdb->fd, 0, SEEK_SET) == -1)
-		goto fail;
+	ਜੇ (lseek(tdb->fd, 0, SEEK_SET) == -1)
+		ਜਾਓ fail;
 
-	if (ftruncate(tdb->fd, 0) == -1)
-		goto fail;
+	ਜੇ (ftruncate(tdb->fd, 0) == -1)
+		ਜਾਓ fail;
 
 	/* This creates an endian-converted header, as if read from disk */
 	CONVERT(*newdb);
-	memcpy(&tdb->header, newdb, sizeof(tdb->header));
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(&tdb->ਸਿਰਲੇਖ, newdb, ਆਕਾਰ(tdb->ਸਿਰਲੇਖ));
 	/* Don't endian-convert the magic food! */
-	memcpy(newdb->magic_food, TDB_MAGIC_FOOD, strlen(TDB_MAGIC_FOOD)+1);
-	if (write(tdb->fd, newdb, size) != size) {
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(newdb->magic_food, TDB_MAGIC_FOOD, ਲੜੀ_ਲੰਬਾਈ(TDB_MAGIC_FOOD)+1);
+	ਜੇ (ਲਿਖ(tdb->fd, newdb, ਮਾਪ) != ਮਾਪ) {
 		ret = -1;
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		ret = 0;
 	}
 
   fail:
-	SAFE_FREE(newdb);
-	return ret;
+	ਸੁਰੱਖਿਅਤ_FREE(newdb);
+	ਵਾਪਸ ret;
 }
 
 
 
-static int tdb_already_open(dev_t device,
+ਸਥਿਰ ਪੂਰਨ tdb_already_open(dev_t device,
 			    ino_t ino)
 {
-	struct tdb_context *i;
+	ਬਣਤਰ tdb_context *i;
 
-	for (i = tdbs; i; i = i->next) {
-		if (i->device == device && i->inode == ino) {
-			return 1;
+	ਲਈ (i = tdbs; i; i = i->ਅਗਲਾ) {
+		ਜੇ (i->device == device && i->inode == ino) {
+			ਵਾਪਸ 1;
 		}
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* open the database, creating it if necessary
@@ -3814,164 +3814,164 @@ static int tdb_already_open(dev_t device,
    try to call tdb_error or tdb_errname, just do strerror(errno).
 
    @param name may be NULL for internal databases. */
-struct tdb_context *tdb_open(const char *name, int hash_size, int tdb_flags,
-		      int open_flags, mode_t mode)
+ਬਣਤਰ tdb_context *tdb_open(ਅਚਲ ਅੱਖਰ *name, ਪੂਰਨ hash_ਮਾਪ, ਪੂਰਨ tdb_flags,
+		      ਪੂਰਨ open_flags, mode_t ਬਹੁਲਕ)
 {
-	return tdb_open_ex(name, hash_size, tdb_flags, open_flags, mode, NULL, NULL);
+	ਵਾਪਸ tdb_open_ex(name, hash_ਮਾਪ, tdb_flags, open_flags, ਬਹੁਲਕ, ਨਿਰਾ, ਨਿਰਾ);
 }
 
 /* a default logging function */
-static void null_log_fn(struct tdb_context *tdb, enum tdb_debug_level level, const char *fmt, ...) PRINTF_ATTRIBUTE(3, 4);
-static void null_log_fn(struct tdb_context *tdb EXT2FS_ATTR((unused)),
-			enum tdb_debug_level level EXT2FS_ATTR((unused)),
-			const char *fmt EXT2FS_ATTR((unused)), ...)
+ਸਥਿਰ ਖਾਲੀ null_log_fn(ਬਣਤਰ tdb_context *tdb, ਗਿਣਤੀ tdb_debug_level level, ਅਚਲ ਅੱਖਰ *fmt, ...) PRINTF_ATTRIBUTE(3, 4);
+ਸਥਿਰ ਖਾਲੀ null_log_fn(ਬਣਤਰ tdb_context *tdb EXT2FS_ATTR((ਅਣਵਰਤਿਆ)),
+			ਗਿਣਤੀ tdb_debug_level level EXT2FS_ATTR((ਅਣਵਰਤਿਆ)),
+			ਅਚਲ ਅੱਖਰ *fmt EXT2FS_ATTR((ਅਣਵਰਤਿਆ)), ...)
 {
 }
 
 
-struct tdb_context *tdb_open_ex(const char *name, int hash_size, int tdb_flags,
-				int open_flags, mode_t mode,
-				const struct tdb_logging_context *log_ctx,
+ਬਣਤਰ tdb_context *tdb_open_ex(ਅਚਲ ਅੱਖਰ *name, ਪੂਰਨ hash_ਮਾਪ, ਪੂਰਨ tdb_flags,
+				ਪੂਰਨ open_flags, mode_t ਬਹੁਲਕ,
+				ਅਚਲ ਬਣਤਰ tdb_logging_context *log_ctx,
 				tdb_hash_func hash_fn)
 {
-	struct tdb_context *tdb;
-	struct stat st;
-	int rev = 0, locked = 0;
-	unsigned char *vp;
+	ਬਣਤਰ tdb_context *tdb;
+	ਬਣਤਰ stat st;
+	ਪੂਰਨ rev = 0, locked = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *vp;
 	u32 vertest;
 
-	if (!(tdb = (struct tdb_context *)calloc(1, sizeof *tdb))) {
+	ਜੇ (!(tdb = (ਬਣਤਰ tdb_context *)ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ *tdb))) {
 		/* Can't log this */
 		errno = ENOMEM;
-		goto fail;
+		ਜਾਓ fail;
 	}
 	tdb_io_init(tdb);
 	tdb->fd = -1;
-	tdb->name = NULL;
-	tdb->map_ptr = NULL;
+	tdb->name = ਨਿਰਾ;
+	tdb->map_ptr = ਨਿਰਾ;
 	tdb->flags = tdb_flags;
 	tdb->open_flags = open_flags;
-	if (log_ctx) {
-		tdb->log = *log_ctx;
-	} else {
-		tdb->log.log_fn = null_log_fn;
-		tdb->log.log_private = NULL;
+	ਜੇ (log_ctx) {
+		tdb->ਲਘੂਗਣਕ = *log_ctx;
+	} ਨਹੀਂਤਾਂ {
+		tdb->ਲਘੂਗਣਕ.log_fn = null_log_fn;
+		tdb->ਲਘੂਗਣਕ.log_ਨਿੱਜੀ = ਨਿਰਾ;
 	}
 	tdb->hash_fn = hash_fn ? hash_fn : default_tdb_hash;
 
 	/* cache the page size */
-	tdb->page_size = sysconf(_SC_PAGESIZE);
-	if (tdb->page_size <= 0) {
-		tdb->page_size = 0x2000;
+	tdb->ਪੰਨਾ_ਮਾਪ = sysconf(_SC_PAGESIZE);
+	ਜੇ (tdb->ਪੰਨਾ_ਮਾਪ <= 0) {
+		tdb->ਪੰਨਾ_ਮਾਪ = 0x2000;
 	}
 
-	if ((open_flags & O_ACCMODE) == O_WRONLY) {
+	ਜੇ ((open_flags & O_ACCMODE) == O_WRONLY) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_open_ex: can't open tdb %s write-only\n",
 			 name));
 		errno = EINVAL;
-		goto fail;
+		ਜਾਓ fail;
 	}
 
-	if (hash_size == 0)
-		hash_size = DEFAULT_HASH_SIZE;
-	if ((open_flags & O_ACCMODE) == O_RDONLY) {
+	ਜੇ (hash_ਮਾਪ == 0)
+		hash_ਮਾਪ = DEFAULT_HASH_ਮਾਪ;
+	ਜੇ ((open_flags & O_ACCMODE) == O_RDONLY) {
 		tdb->read_only = 1;
 		/* read only databases don't do locking or clear if first */
 		tdb->flags |= TDB_NOLOCK;
-		tdb->flags &= ~TDB_CLEAR_IF_FIRST;
+		tdb->flags &= ~TDB_CLEAR_IF_ਪਹਿਲਾ;
 	}
 
 	/* internal databases don't mmap or lock, and start off cleared */
-	if (tdb->flags & TDB_INTERNAL) {
+	ਜੇ (tdb->flags & TDB_ਅੰਦਰੂਨੀ) {
 		tdb->flags |= (TDB_NOLOCK | TDB_NOMMAP);
-		tdb->flags &= ~TDB_CLEAR_IF_FIRST;
-		if (tdb_new_database(tdb, hash_size) != 0) {
+		tdb->flags &= ~TDB_CLEAR_IF_ਪਹਿਲਾ;
+		ਜੇ (tdb_new_database(tdb, hash_ਮਾਪ) != 0) {
 			TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_open_ex: tdb_new_database failed!"));
-			goto fail;
+			ਜਾਓ fail;
 		}
-		goto internal;
+		ਜਾਓ ਅੰਦਰੂਨੀ;
 	}
 
-	if ((tdb->fd = open(name, open_flags, mode)) == -1) {
+	ਜੇ ((tdb->fd = open(name, open_flags, ਬਹੁਲਕ)) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_WARNING, "tdb_open_ex: could not open file %s: %s\n",
 			 name, strerror(errno)));
-		goto fail;	/* errno set by open(2) */
+		ਜਾਓ fail;	/* errno set by open(2) */
 	}
 
 	/* ensure there is only one process initialising at once */
-	if (tdb->methods->tdb_brlock(tdb, GLOBAL_LOCK, F_WRLCK, F_SETLKW, 0, 1) == -1) {
+	ਜੇ (tdb->methods->tdb_brlock(tdb, GLOBAL_ਤਾਲਾ, F_WRLCK, F_SETLKW, 0, 1) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_open_ex: failed to get global lock on %s: %s\n",
 			 name, strerror(errno)));
-		goto fail;	/* errno set by tdb_brlock */
+		ਜਾਓ fail;	/* errno set by tdb_brlock */
 	}
 
 	/* we need to zero database if we are the only one with it open */
-	if ((tdb_flags & TDB_CLEAR_IF_FIRST) &&
-	    (locked = (tdb->methods->tdb_brlock(tdb, ACTIVE_LOCK, F_WRLCK, F_SETLK, 0, 1) == 0))) {
+	ਜੇ ((tdb_flags & TDB_CLEAR_IF_ਪਹਿਲਾ) &&
+	    (locked = (tdb->methods->tdb_brlock(tdb, ਸਰਗਰਮ_ਤਾਲਾ, F_WRLCK, F_SETLK, 0, 1) == 0))) {
 		open_flags |= O_CREAT;
-		if (ftruncate(tdb->fd, 0) == -1) {
+		ਜੇ (ftruncate(tdb->fd, 0) == -1) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_open_ex: "
 				 "failed to truncate %s: %s\n",
 				 name, strerror(errno)));
-			goto fail; /* errno set by ftruncate */
+			ਜਾਓ fail; /* errno set by ftruncate */
 		}
 	}
 
-	if (read(tdb->fd, &tdb->header, sizeof(tdb->header)) != sizeof(tdb->header)
-	    || memcmp(tdb->header.magic_food, TDB_MAGIC_FOOD,
-		      sizeof(TDB_MAGIC_FOOD)) != 0
-	    || (tdb->header.version != TDB_VERSION
-		&& !(rev = (tdb->header.version==TDB_BYTEREV(TDB_VERSION))))) {
+	ਜੇ (ਪਠ(tdb->fd, &tdb->ਸਿਰਲੇਖ, ਆਕਾਰ(tdb->ਸਿਰਲੇਖ)) != ਆਕਾਰ(tdb->ਸਿਰਲੇਖ)
+	    || memcmp(tdb->ਸਿਰਲੇਖ.magic_food, TDB_MAGIC_FOOD,
+		      ਆਕਾਰ(TDB_MAGIC_FOOD)) != 0
+	    || (tdb->ਸਿਰਲੇਖ.ਸੰਸਕਰਣ != TDB_ਸੰਸਕਰਣ
+		&& !(rev = (tdb->ਸਿਰਲੇਖ.ਸੰਸਕਰਣ==TDB_BYTEREV(TDB_ਸੰਸਕਰਣ))))) {
 		/* its not a valid database - possibly initialise it */
-		if (!(open_flags & O_CREAT) || tdb_new_database(tdb, hash_size) == -1) {
+		ਜੇ (!(open_flags & O_CREAT) || tdb_new_database(tdb, hash_ਮਾਪ) == -1) {
 			errno = EIO; /* ie bad format or something */
-			goto fail;
+			ਜਾਓ fail;
 		}
 		rev = (tdb->flags & TDB_CONVERT);
 	}
-	vp = (unsigned char *)&tdb->header.version;
+	vp = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)&tdb->ਸਿਰਲੇਖ.ਸੰਸਕਰਣ;
 	vertest = (((u32)vp[0]) << 24) | (((u32)vp[1]) << 16) |
 		  (((u32)vp[2]) << 8) | (u32)vp[3];
-	tdb->flags |= (vertest==TDB_VERSION) ? TDB_BIGENDIAN : 0;
-	if (!rev)
+	tdb->flags |= (vertest==TDB_ਸੰਸਕਰਣ) ? TDB_BIGENDIAN : 0;
+	ਜੇ (!rev)
 		tdb->flags &= ~TDB_CONVERT;
-	else {
+	ਨਹੀਂਤਾਂ {
 		tdb->flags |= TDB_CONVERT;
-		tdb_convert(&tdb->header, sizeof(tdb->header));
+		tdb_convert(&tdb->ਸਿਰਲੇਖ, ਆਕਾਰ(tdb->ਸਿਰਲੇਖ));
 	}
-	if (fstat(tdb->fd, &st) == -1)
-		goto fail;
+	ਜੇ (fstat(tdb->fd, &st) == -1)
+		ਜਾਓ fail;
 
-	if (tdb->header.rwlocks != 0) {
+	ਜੇ (tdb->ਸਿਰਲੇਖ.rwlocks != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_open_ex: spinlocks no longer supported\n"));
-		goto fail;
+		ਜਾਓ fail;
 	}
 
 	/* Is it already in the open list?  If so, fail. */
-	if (tdb_already_open(st.st_dev, st.st_ino)) {
+	ਜੇ (tdb_already_open(st.st_dev, st.st_ino)) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_open_ex: "
 			 "%s (%d,%d) is already open in this process\n",
-			 name, (int)st.st_dev, (int)st.st_ino));
+			 name, (ਪੂਰਨ)st.st_dev, (ਪੂਰਨ)st.st_ino));
 		errno = EBUSY;
-		goto fail;
+		ਜਾਓ fail;
 	}
 
-	if (!(tdb->name = (char *)strdup(name))) {
+	ਜੇ (!(tdb->name = (ਅੱਖਰ *)strdup(name))) {
 		errno = ENOMEM;
-		goto fail;
+		ਜਾਓ fail;
 	}
 
-	tdb->map_size = st.st_size;
+	tdb->map_ਮਾਪ = st.st_ਮਾਪ;
 	tdb->device = st.st_dev;
 	tdb->inode = st.st_ino;
-	tdb->max_dead_records = 0;
+	tdb->max_dead_ਰਿਕਾਰਡਾਂ = 0;
 	tdb_mmap(tdb);
-	if (locked) {
-		if (tdb->methods->tdb_brlock(tdb, ACTIVE_LOCK, F_UNLCK, F_SETLK, 0, 1) == -1) {
+	ਜੇ (locked) {
+		ਜੇ (tdb->methods->tdb_brlock(tdb, ਸਰਗਰਮ_ਤਾਲਾ, F_UNLCK, F_SETLK, 0, 1) == -1) {
 			TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_open_ex: "
 				 "failed to take ACTIVE_LOCK on %s: %s\n",
 				 name, strerror(errno)));
-			goto fail;
+			ਜਾਓ fail;
 		}
 
 	}
@@ -3980,46 +3980,46 @@ struct tdb_context *tdb_open_ex(const char *name, int hash_size, int tdb_flags,
 	   we didn't get the initial exclusive lock as we need to let all other
 	   users know we're using it. */
 
-	if (tdb_flags & TDB_CLEAR_IF_FIRST) {
+	ਜੇ (tdb_flags & TDB_CLEAR_IF_ਪਹਿਲਾ) {
 		/* leave this lock in place to indicate it's in use */
-		if (tdb->methods->tdb_brlock(tdb, ACTIVE_LOCK, F_RDLCK, F_SETLKW, 0, 1) == -1)
-			goto fail;
+		ਜੇ (tdb->methods->tdb_brlock(tdb, ਸਰਗਰਮ_ਤਾਲਾ, F_RDLCK, F_SETLKW, 0, 1) == -1)
+			ਜਾਓ fail;
 	}
 
 	/* if needed, run recovery */
-	if (tdb_transaction_recover(tdb) == -1) {
-		goto fail;
+	ਜੇ (tdb_transaction_recover(tdb) == -1) {
+		ਜਾਓ fail;
 	}
 
- internal:
+ ਅੰਦਰੂਨੀ:
 	/* Internal (memory-only) databases skip all the code above to
 	 * do with disk files, and resume here by releasing their
 	 * global lock and hooking into the active list. */
-	if (tdb->methods->tdb_brlock(tdb, GLOBAL_LOCK, F_UNLCK, F_SETLKW, 0, 1) == -1)
-		goto fail;
-	tdb->next = tdbs;
+	ਜੇ (tdb->methods->tdb_brlock(tdb, GLOBAL_ਤਾਲਾ, F_UNLCK, F_SETLKW, 0, 1) == -1)
+		ਜਾਓ fail;
+	tdb->ਅਗਲਾ = tdbs;
 	tdbs = tdb;
-	return tdb;
+	ਵਾਪਸ tdb;
 
  fail:
-	{ int save_errno = errno;
+	{ ਪੂਰਨ save_errno = errno;
 
-	if (!tdb)
-		return NULL;
+	ਜੇ (!tdb)
+		ਵਾਪਸ ਨਿਰਾ;
 
-	if (tdb->map_ptr) {
-		if (tdb->flags & TDB_INTERNAL)
-			SAFE_FREE(tdb->map_ptr);
-		else
+	ਜੇ (tdb->map_ptr) {
+		ਜੇ (tdb->flags & TDB_ਅੰਦਰੂਨੀ)
+			ਸੁਰੱਖਿਅਤ_FREE(tdb->map_ptr);
+		ਨਹੀਂਤਾਂ
 			tdb_munmap(tdb);
 	}
-	SAFE_FREE(tdb->name);
-	if (tdb->fd != -1)
-		if (close(tdb->fd) != 0)
+	ਸੁਰੱਖਿਅਤ_FREE(tdb->name);
+	ਜੇ (tdb->fd != -1)
+		ਜੇ (close(tdb->fd) != 0)
 			TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_open_ex: failed to close tdb->fd on error!\n"));
-	SAFE_FREE(tdb);
+	ਸੁਰੱਖਿਅਤ_FREE(tdb);
 	errno = save_errno;
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 	}
 }
 
@@ -4027,9 +4027,9 @@ struct tdb_context *tdb_open_ex(const char *name, int hash_size, int tdb_flags,
  * Set the maximum number of dead records per hash chain
  */
 
-void tdb_set_max_dead(struct tdb_context *tdb, int max_dead)
+ਖਾਲੀ tdb_ਸੈੱਟ_max_dead(ਬਣਤਰ tdb_context *tdb, ਪੂਰਨ max_dead)
 {
-	tdb->max_dead_records = max_dead;
+	tdb->max_dead_ਰਿਕਾਰਡਾਂ = max_dead;
 }
 
 /**
@@ -4037,111 +4037,111 @@ void tdb_set_max_dead(struct tdb_context *tdb, int max_dead)
  *
  * @returns -1 for error; 0 for success.
  **/
-int tdb_close(struct tdb_context *tdb)
+ਪੂਰਨ tdb_close(ਬਣਤਰ tdb_context *tdb)
 {
-	struct tdb_context **i;
-	int ret = 0;
+	ਬਣਤਰ tdb_context **i;
+	ਪੂਰਨ ret = 0;
 
-	if (tdb->transaction) {
+	ਜੇ (tdb->transaction) {
 		tdb_transaction_cancel(tdb);
 	}
 
-	if (tdb->map_ptr) {
-		if (tdb->flags & TDB_INTERNAL)
-			SAFE_FREE(tdb->map_ptr);
-		else
+	ਜੇ (tdb->map_ptr) {
+		ਜੇ (tdb->flags & TDB_ਅੰਦਰੂਨੀ)
+			ਸੁਰੱਖਿਅਤ_FREE(tdb->map_ptr);
+		ਨਹੀਂਤਾਂ
 			tdb_munmap(tdb);
 	}
-	SAFE_FREE(tdb->name);
-	if (tdb->fd != -1)
+	ਸੁਰੱਖਿਅਤ_FREE(tdb->name);
+	ਜੇ (tdb->fd != -1)
 		ret = close(tdb->fd);
-	SAFE_FREE(tdb->lockrecs);
+	ਸੁਰੱਖਿਅਤ_FREE(tdb->lockrecs);
 
 	/* Remove from contexts list */
-	for (i = &tdbs; *i; i = &(*i)->next) {
-		if (*i == tdb) {
-			*i = tdb->next;
-			break;
+	ਲਈ (i = &tdbs; *i; i = &(*i)->ਅਗਲਾ) {
+		ਜੇ (*i == tdb) {
+			*i = tdb->ਅਗਲਾ;
+			ਰੋਕੋ;
 		}
 	}
 
-	memset(tdb, 0, sizeof(*tdb));
-	SAFE_FREE(tdb);
+	memset(tdb, 0, ਆਕਾਰ(*tdb));
+	ਸੁਰੱਖਿਅਤ_FREE(tdb);
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
 /* register a logging function */
-void tdb_set_logging_function(struct tdb_context *tdb,
-                              const struct tdb_logging_context *log_ctx)
+ਖਾਲੀ tdb_ਸੈੱਟ_logging_function(ਬਣਤਰ tdb_context *tdb,
+                              ਅਚਲ ਬਣਤਰ tdb_logging_context *log_ctx)
 {
-        tdb->log = *log_ctx;
+        tdb->ਲਘੂਗਣਕ = *log_ctx;
 }
 
-void *tdb_get_logging_private(struct tdb_context *tdb)
+ਖਾਲੀ *tdb_get_logging_ਨਿੱਜੀ(ਬਣਤਰ tdb_context *tdb)
 {
-	return tdb->log.log_private;
+	ਵਾਪਸ tdb->ਲਘੂਗਣਕ.log_ਨਿੱਜੀ;
 }
 
 /* reopen a tdb - this can be used after a fork to ensure that we have an independent
    seek pointer from our parent and to re-establish locks */
-int tdb_reopen(struct tdb_context *tdb)
+ਪੂਰਨ tdb_reopen(ਬਣਤਰ tdb_context *tdb)
 {
-	struct stat st;
+	ਬਣਤਰ stat st;
 
-	if (tdb->flags & TDB_INTERNAL) {
-		return 0; /* Nothing to do. */
+	ਜੇ (tdb->flags & TDB_ਅੰਦਰੂਨੀ) {
+		ਵਾਪਸ 0; /* Nothing to do. */
 	}
 
-	if (tdb->num_locks != 0 || tdb->global_lock.count) {
+	ਜੇ (tdb->ਅੰਕ_locks != 0 || tdb->global_ਤਾਲਾ.ਗਿਣਤੀ_2) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_reopen: reopen not allowed with locks held\n"));
-		goto fail;
+		ਜਾਓ fail;
 	}
 
-	if (tdb->transaction != 0) {
+	ਜੇ (tdb->transaction != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_reopen: reopen not allowed inside a transaction\n"));
-		goto fail;
+		ਜਾਓ fail;
 	}
 
-	if (tdb_munmap(tdb) != 0) {
+	ਜੇ (tdb_munmap(tdb) != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_reopen: munmap failed (%s)\n", strerror(errno)));
-		goto fail;
+		ਜਾਓ fail;
 	}
-	if (close(tdb->fd) != 0)
+	ਜੇ (close(tdb->fd) != 0)
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_reopen: WARNING closing tdb->fd failed!\n"));
 	tdb->fd = open(tdb->name, tdb->open_flags & ~(O_CREAT|O_TRUNC), 0);
-	if (tdb->fd == -1) {
+	ਜੇ (tdb->fd == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_reopen: open failed (%s)\n", strerror(errno)));
-		goto fail;
+		ਜਾਓ fail;
 	}
-	if ((tdb->flags & TDB_CLEAR_IF_FIRST) &&
-	    (tdb->methods->tdb_brlock(tdb, ACTIVE_LOCK, F_RDLCK, F_SETLKW, 0, 1) == -1)) {
+	ਜੇ ((tdb->flags & TDB_CLEAR_IF_ਪਹਿਲਾ) &&
+	    (tdb->methods->tdb_brlock(tdb, ਸਰਗਰਮ_ਤਾਲਾ, F_RDLCK, F_SETLKW, 0, 1) == -1)) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_reopen: failed to obtain active lock\n"));
-		goto fail;
+		ਜਾਓ fail;
 	}
-	if (fstat(tdb->fd, &st) != 0) {
+	ਜੇ (fstat(tdb->fd, &st) != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_reopen: fstat failed (%s)\n", strerror(errno)));
-		goto fail;
+		ਜਾਓ fail;
 	}
-	if (st.st_ino != tdb->inode || st.st_dev != tdb->device) {
+	ਜੇ (st.st_ino != tdb->inode || st.st_dev != tdb->device) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_reopen: file dev/inode has changed!\n"));
-		goto fail;
+		ਜਾਓ fail;
 	}
 	tdb_mmap(tdb);
 
-	return 0;
+	ਵਾਪਸ 0;
 
 fail:
 	tdb_close(tdb);
-	return -1;
+	ਵਾਪਸ -1;
 }
 
 /* reopen all tdb's */
-int tdb_reopen_all(int parent_longlived)
+ਪੂਰਨ tdb_reopen_all(ਪੂਰਨ ਮਾਪਾ_longlived)
 {
-	struct tdb_context *tdb;
+	ਬਣਤਰ tdb_context *tdb;
 
-	for (tdb=tdbs; tdb; tdb = tdb->next) {
+	ਲਈ (tdb=tdbs; tdb; tdb = tdb->ਅਗਲਾ) {
 		/*
 		 * If the parent is longlived (ie. a
 		 * parent daemon architecture), we know
@@ -4153,24 +4153,24 @@ int tdb_reopen_all(int parent_longlived)
 		 * keep POSIX locks as a non-scalable data
 		 * structure in the kernel.
 		 */
-		if (parent_longlived) {
+		ਜੇ (ਮਾਪਾ_longlived) {
 			/* Ensure no clear-if-first. */
-			tdb->flags &= ~TDB_CLEAR_IF_FIRST;
+			tdb->flags &= ~TDB_CLEAR_IF_ਪਹਿਲਾ;
 		}
 
-		if (tdb_reopen(tdb) != 0)
-			return -1;
+		ਜੇ (tdb_reopen(tdb) != 0)
+			ਵਾਪਸ -1;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /**
  * Flush a database file from the page cache.
  **/
-int tdb_flush(struct tdb_context *tdb)
+ਪੂਰਨ tdb_flush(ਬਣਤਰ tdb_context *tdb)
 {
-	if (tdb->fd != -1)
-		return fsync(tdb->fd);
-	return 0;
+	ਜੇ (tdb->fd != -1)
+		ਵਾਪਸ fsync(tdb->fd);
+	ਵਾਪਸ 0;
 }

@@ -9,54 +9,54 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਜੇ HAVE_UNISTD_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਜੇ_ਅੰਤ
+#ਜੇ HAVE_ERRNO_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਜੇ HAVE_SYS_STAT_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਜੇ_ਅੰਤ
+#ਜੇ HAVE_SYS_TYPES_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਜੇ_ਅੰਤ
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
-#include "e2image.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fsP.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "e2image.h"
 
-#define IBLOCK_STATUS_CSUMS_OK	1
-#define IBLOCK_STATUS_INSANE	2
-#define SCAN_BLOCK_STATUS(scan)	((scan)->temp_buffer + (scan)->inode_size)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ IBLOCK_ਸਥਿਤੀ_CSUMS_OK	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ IBLOCK_ਸਥਿਤੀ_INSANE	2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਜਾਂਚ_ਖੰਡ_ਸਥਿਤੀ(ਜਾਂਚ)	((ਜਾਂਚ)->ਆਰਜ਼ੀ_ਬਫਰ + (ਜਾਂਚ)->inode_ਮਾਪ)
 
-struct ext2_struct_inode_scan {
+ਬਣਤਰ ext2_struct_inode_ਜਾਂਚ {
 	errcode_t		magic;
 	ext2_filsys		fs;
 	ext2_ino_t		current_inode;
-	blk64_t			current_block;
-	dgrp_t			current_group;
-	ext2_ino_t		inodes_left;
-	blk_t			blocks_left;
-	dgrp_t			groups_left;
-	blk_t			inode_buffer_blocks;
-	char *			inode_buffer;
-	int			inode_size;
-	char *			ptr;
-	int			bytes_left;
-	char			*temp_buffer;
-	errcode_t		(*done_group)(ext2_filsys fs,
-					      ext2_inode_scan scan,
-					      dgrp_t group,
-					      void * priv_data);
-	void *			done_group_data;
-	int			bad_block_ptr;
-	int			scan_flags;
-	int			reserved[6];
+	blk64_t			current_ਖੰਡ;
+	dgrp_t			current_ਸਮੂਹ;
+	ext2_ino_t		inodes_ਖੱਬਾ;
+	blk_t			ਖੰਡਾਂ_ਖੱਬਾ;
+	dgrp_t			groups_ਖੱਬਾ;
+	blk_t			inode_ਬਫਰ_ਖੰਡਾਂ;
+	ਅੱਖਰ *			inode_ਬਫਰ;
+	ਪੂਰਨ			inode_ਮਾਪ;
+	ਅੱਖਰ *			ptr;
+	ਪੂਰਨ			ਬਾਈਟਾਂ_ਖੱਬਾ;
+	ਅੱਖਰ			*ਆਰਜ਼ੀ_ਬਫਰ;
+	errcode_t		(*ਪੂਰਾ_ਸਮੂਹ)(ext2_filsys fs,
+					      ext2_inode_ਜਾਂਚ ਜਾਂਚ,
+					      dgrp_t ਸਮੂਹ,
+					      ਖਾਲੀ * priv_ਅੰਕੜੇ);
+	ਖਾਲੀ *			ਪੂਰਾ_ਸਮੂਹ_ਅੰਕੜੇ;
+	ਪੂਰਨ			bad_ਖੰਡ_ptr;
+	ਪੂਰਨ			ਜਾਂਚ_flags;
+	ਪੂਰਨ			reserved[6];
 };
 
 /*
@@ -64,259 +64,259 @@ struct ext2_struct_inode_scan {
  */
 errcode_t ext2fs_flush_icache(ext2_filsys fs)
 {
-	unsigned	i;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ	i;
 
-	if (!fs->icache)
-		return 0;
+	ਜੇ (!fs->icache)
+		ਵਾਪਸ 0;
 
-	for (i=0; i < fs->icache->cache_size; i++)
+	ਲਈ (i=0; i < fs->icache->cache_ਮਾਪ; i++)
 		fs->icache->cache[i].ino = 0;
 
-	fs->icache->buffer_blk = 0;
-	return 0;
+	fs->icache->ਬਫਰ_blk = 0;
+	ਵਾਪਸ 0;
 }
 
 /*
  * Free the inode cache structure
  */
-void ext2fs_free_inode_cache(struct ext2_inode_cache *icache)
+ਖਾਲੀ ext2fs_free_inode_cache(ਬਣਤਰ ext2_inode_cache *icache)
 {
-	unsigned i;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ i;
 
-	if (--icache->refcount)
-		return;
-	if (icache->buffer)
-		ext2fs_free_mem(&icache->buffer);
-	for (i = 0; i < icache->cache_size; i++)
+	ਜੇ (--icache->refcount)
+		ਵਾਪਸ;
+	ਜੇ (icache->ਬਫਰ)
+		ext2fs_free_mem(&icache->ਬਫਰ);
+	ਲਈ (i = 0; i < icache->cache_ਮਾਪ; i++)
 		ext2fs_free_mem(&icache->cache[i].inode);
-	if (icache->cache)
+	ਜੇ (icache->cache)
 		ext2fs_free_mem(&icache->cache);
-	icache->buffer_blk = 0;
+	icache->ਬਫਰ_blk = 0;
 	ext2fs_free_mem(&icache);
 }
 
-errcode_t ext2fs_create_inode_cache(ext2_filsys fs, unsigned int cache_size)
+errcode_t ext2fs_create_inode_cache(ext2_filsys fs, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cache_ਮਾਪ)
 {
-	unsigned	i;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ	i;
 	errcode_t	retval;
 
-	if (fs->icache)
-		return 0;
-	retval = ext2fs_get_mem(sizeof(struct ext2_inode_cache), &fs->icache);
-	if (retval)
-		return retval;
+	ਜੇ (fs->icache)
+		ਵਾਪਸ 0;
+	retval = ext2fs_get_mem(ਆਕਾਰ(ਬਣਤਰ ext2_inode_cache), &fs->icache);
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
-	memset(fs->icache, 0, sizeof(struct ext2_inode_cache));
-	retval = ext2fs_get_mem(fs->blocksize, &fs->icache->buffer);
-	if (retval)
-		goto errout;
+	memset(fs->icache, 0, ਆਕਾਰ(ਬਣਤਰ ext2_inode_cache));
+	retval = ext2fs_get_mem(fs->blocksize, &fs->icache->ਬਫਰ);
+	ਜੇ (retval)
+		ਜਾਓ errout;
 
-	fs->icache->buffer_blk = 0;
-	fs->icache->cache_last = -1;
-	fs->icache->cache_size = cache_size;
+	fs->icache->ਬਫਰ_blk = 0;
+	fs->icache->cache_ਆਖਰੀ = -1;
+	fs->icache->cache_ਮਾਪ = cache_ਮਾਪ;
 	fs->icache->refcount = 1;
-	retval = ext2fs_get_array(fs->icache->cache_size,
-				  sizeof(struct ext2_inode_cache_ent),
+	retval = ext2fs_get_array(fs->icache->cache_ਮਾਪ,
+				  ਆਕਾਰ(ਬਣਤਰ ext2_inode_cache_ent),
 				  &fs->icache->cache);
-	if (retval)
-		goto errout;
+	ਜੇ (retval)
+		ਜਾਓ errout;
 
-	for (i = 0; i < fs->icache->cache_size; i++) {
-		retval = ext2fs_get_mem(EXT2_INODE_SIZE(fs->super),
+	ਲਈ (i = 0; i < fs->icache->cache_ਮਾਪ; i++) {
+		retval = ext2fs_get_mem(EXT2_INODE_ਮਾਪ(fs->super),
 					&fs->icache->cache[i].inode);
-		if (retval)
-			goto errout;
+		ਜੇ (retval)
+			ਜਾਓ errout;
 	}
 
 	ext2fs_flush_icache(fs);
-	return 0;
+	ਵਾਪਸ 0;
 errout:
 	ext2fs_free_inode_cache(fs->icache);
 	fs->icache = 0;
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-errcode_t ext2fs_open_inode_scan(ext2_filsys fs, int buffer_blocks,
-				 ext2_inode_scan *ret_scan)
+errcode_t ext2fs_open_inode_ਜਾਂਚ(ext2_filsys fs, ਪੂਰਨ ਬਫਰ_ਖੰਡਾਂ,
+				 ext2_inode_ਜਾਂਚ *ret_ਜਾਂਚ)
 {
-	ext2_inode_scan	scan;
+	ext2_inode_ਜਾਂਚ	ਜਾਂਚ;
 	errcode_t	retval;
-	errcode_t (*save_get_blocks)(ext2_filsys f, ext2_ino_t ino, blk_t *blocks);
+	errcode_t (*save_get_ਖੰਡਾਂ)(ext2_filsys f, ext2_ino_t ino, blk_t *ਖੰਡਾਂ);
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (ext2fs_has_feature_journal_dev(fs->super))
-		return EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
+	ਜੇ (ext2fs_has_feature_journal_dev(fs->super))
+		ਵਾਪਸ EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
 
-	if (fs->blocksize < 1024)
-		return EXT2_FILSYS_CORRUPTED; /* Should never happen */
+	ਜੇ (fs->blocksize < 1024)
+		ਵਾਪਸ EXT2_FILSYS_CORRUPTED; /* Should never happen */
 
 	/*
 	 * If fs->badblocks isn't set, then set it --- since the inode
 	 * scanning functions require it.
 	 */
-	if (fs->badblocks == 0) {
+	ਜੇ (fs->badblocks == 0) {
 		/*
 		 * Temporarily save fs->get_blocks and set it to zero,
 		 * for compatibility with old e2fsck's.
 		 */
-		save_get_blocks = fs->get_blocks;
-		fs->get_blocks = 0;
+		save_get_ਖੰਡਾਂ = fs->get_ਖੰਡਾਂ;
+		fs->get_ਖੰਡਾਂ = 0;
 		retval = ext2fs_read_bb_inode(fs, &fs->badblocks);
-		if (retval && fs->badblocks) {
+		ਜੇ (retval && fs->badblocks) {
 			ext2fs_badblocks_list_free(fs->badblocks);
 			fs->badblocks = 0;
 		}
-		fs->get_blocks = save_get_blocks;
+		fs->get_ਖੰਡਾਂ = save_get_ਖੰਡਾਂ;
 	}
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_struct_inode_scan), &scan);
-	if (retval)
-		return retval;
-	memset(scan, 0, sizeof(struct ext2_struct_inode_scan));
+	retval = ext2fs_get_mem(ਆਕਾਰ(ਬਣਤਰ ext2_struct_inode_ਜਾਂਚ), &ਜਾਂਚ);
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
+	memset(ਜਾਂਚ, 0, ਆਕਾਰ(ਬਣਤਰ ext2_struct_inode_ਜਾਂਚ));
 
-	scan->magic = EXT2_ET_MAGIC_INODE_SCAN;
-	scan->fs = fs;
-	scan->inode_size = EXT2_INODE_SIZE(fs->super);
-	scan->bytes_left = 0;
-	scan->current_group = 0;
-	scan->groups_left = fs->group_desc_count - 1;
-	scan->inode_buffer_blocks = buffer_blocks ? buffer_blocks :
-				    EXT2_INODE_SCAN_DEFAULT_BUFFER_BLOCKS;
-	scan->current_block = ext2fs_inode_table_loc(scan->fs,
-						     scan->current_group);
-	if (scan->current_block &&
-	    ((scan->current_block < fs->super->s_first_data_block) ||
-	     (scan->current_block + fs->inode_blocks_per_group - 1 >=
-	      ext2fs_blocks_count(fs->super)))) {
-		ext2fs_free_mem(&scan);
-		return EXT2_ET_GDESC_BAD_INODE_TABLE;
+	ਜਾਂਚ->magic = EXT2_ET_MAGIC_INODE_ਜਾਂਚ;
+	ਜਾਂਚ->fs = fs;
+	ਜਾਂਚ->inode_ਮਾਪ = EXT2_INODE_ਮਾਪ(fs->super);
+	ਜਾਂਚ->ਬਾਈਟਾਂ_ਖੱਬਾ = 0;
+	ਜਾਂਚ->current_ਸਮੂਹ = 0;
+	ਜਾਂਚ->groups_ਖੱਬਾ = fs->ਸਮੂਹ_desc_ਗਿਣਤੀ - 1;
+	ਜਾਂਚ->inode_ਬਫਰ_ਖੰਡਾਂ = ਬਫਰ_ਖੰਡਾਂ ? ਬਫਰ_ਖੰਡਾਂ :
+				    EXT2_INODE_ਜਾਂਚ_DEFAULT_ਬਫਰ_ਖੰਡਾਂ;
+	ਜਾਂਚ->current_ਖੰਡ = ext2fs_inode_ਸਾਰਣੀ_loc(ਜਾਂਚ->fs,
+						     ਜਾਂਚ->current_ਸਮੂਹ);
+	ਜੇ (ਜਾਂਚ->current_ਖੰਡ &&
+	    ((ਜਾਂਚ->current_ਖੰਡ < fs->super->s_ਪਹਿਲਾ_ਅੰਕੜੇ_ਖੰਡ) ||
+	     (ਜਾਂਚ->current_ਖੰਡ + fs->inode_ਖੰਡਾਂ_ਪ੍ਰਤੀ_ਸਮੂਹ - 1 >=
+	      ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super)))) {
+		ext2fs_free_mem(&ਜਾਂਚ);
+		ਵਾਪਸ EXT2_ET_GDESC_BAD_INODE_ਸਾਰਣੀ;
 	}
 
-	scan->inodes_left = EXT2_INODES_PER_GROUP(scan->fs->super);
-	scan->blocks_left = scan->fs->inode_blocks_per_group;
-	if (ext2fs_has_group_desc_csum(fs)) {
-		__u32 unused = ext2fs_bg_itable_unused(fs, scan->current_group);
-		if (scan->inodes_left > unused)
-			scan->inodes_left -= unused;
-		else
-			scan->inodes_left = 0;
-		scan->blocks_left =
-			(scan->inodes_left +
-			 (fs->blocksize / scan->inode_size - 1)) *
-			scan->inode_size / fs->blocksize;
+	ਜਾਂਚ->inodes_ਖੱਬਾ = EXT2_INODES_ਪ੍ਰਤੀ_ਸਮੂਹ(ਜਾਂਚ->fs->super);
+	ਜਾਂਚ->ਖੰਡਾਂ_ਖੱਬਾ = ਜਾਂਚ->fs->inode_ਖੰਡਾਂ_ਪ੍ਰਤੀ_ਸਮੂਹ;
+	ਜੇ (ext2fs_has_ਸਮੂਹ_desc_csum(fs)) {
+		__u32 ਅਣਵਰਤਿਆ = ext2fs_bg_itable_ਅਣਵਰਤਿਆ(fs, ਜਾਂਚ->current_ਸਮੂਹ);
+		ਜੇ (ਜਾਂਚ->inodes_ਖੱਬਾ > ਅਣਵਰਤਿਆ)
+			ਜਾਂਚ->inodes_ਖੱਬਾ -= ਅਣਵਰਤਿਆ;
+		ਨਹੀਂਤਾਂ
+			ਜਾਂਚ->inodes_ਖੱਬਾ = 0;
+		ਜਾਂਚ->ਖੰਡਾਂ_ਖੱਬਾ =
+			(ਜਾਂਚ->inodes_ਖੱਬਾ +
+			 (fs->blocksize / ਜਾਂਚ->inode_ਮਾਪ - 1)) *
+			ਜਾਂਚ->inode_ਮਾਪ / fs->blocksize;
 	}
-	retval = io_channel_alloc_buf(fs->io, scan->inode_buffer_blocks,
-				      &scan->inode_buffer);
-	scan->done_group = 0;
-	scan->done_group_data = 0;
-	scan->bad_block_ptr = 0;
-	if (retval) {
-		ext2fs_free_mem(&scan);
-		return retval;
+	retval = io_channel_alloc_buf(fs->io, ਜਾਂਚ->inode_ਬਫਰ_ਖੰਡਾਂ,
+				      &ਜਾਂਚ->inode_ਬਫਰ);
+	ਜਾਂਚ->ਪੂਰਾ_ਸਮੂਹ = 0;
+	ਜਾਂਚ->ਪੂਰਾ_ਸਮੂਹ_ਅੰਕੜੇ = 0;
+	ਜਾਂਚ->bad_ਖੰਡ_ptr = 0;
+	ਜੇ (retval) {
+		ext2fs_free_mem(&ਜਾਂਚ);
+		ਵਾਪਸ retval;
 	}
-	retval = ext2fs_get_mem(scan->inode_size + scan->inode_buffer_blocks,
-				&scan->temp_buffer);
-	if (retval) {
-		ext2fs_free_mem(&scan->inode_buffer);
-		ext2fs_free_mem(&scan);
-		return retval;
+	retval = ext2fs_get_mem(ਜਾਂਚ->inode_ਮਾਪ + ਜਾਂਚ->inode_ਬਫਰ_ਖੰਡਾਂ,
+				&ਜਾਂਚ->ਆਰਜ਼ੀ_ਬਫਰ);
+	ਜੇ (retval) {
+		ext2fs_free_mem(&ਜਾਂਚ->inode_ਬਫਰ);
+		ext2fs_free_mem(&ਜਾਂਚ);
+		ਵਾਪਸ retval;
 	}
-	memset(SCAN_BLOCK_STATUS(scan), 0, scan->inode_buffer_blocks);
-	if (scan->fs->badblocks && scan->fs->badblocks->num)
-		scan->scan_flags |= EXT2_SF_CHK_BADBLOCKS;
-	if (ext2fs_has_group_desc_csum(fs))
-		scan->scan_flags |= EXT2_SF_DO_LAZY;
-	*ret_scan = scan;
-	return 0;
+	memset(ਜਾਂਚ_ਖੰਡ_ਸਥਿਤੀ(ਜਾਂਚ), 0, ਜਾਂਚ->inode_ਬਫਰ_ਖੰਡਾਂ);
+	ਜੇ (ਜਾਂਚ->fs->badblocks && ਜਾਂਚ->fs->badblocks->ਅੰਕ)
+		ਜਾਂਚ->ਜਾਂਚ_flags |= EXT2_SF_CHK_BADBLOCKS;
+	ਜੇ (ext2fs_has_ਸਮੂਹ_desc_csum(fs))
+		ਜਾਂਚ->ਜਾਂਚ_flags |= EXT2_SF_DO_LAZY;
+	*ret_ਜਾਂਚ = ਜਾਂਚ;
+	ਵਾਪਸ 0;
 }
 
-void ext2fs_close_inode_scan(ext2_inode_scan scan)
+ਖਾਲੀ ext2fs_close_inode_ਜਾਂਚ(ext2_inode_ਜਾਂਚ ਜਾਂਚ)
 {
-	if (!scan || (scan->magic != EXT2_ET_MAGIC_INODE_SCAN))
-		return;
+	ਜੇ (!ਜਾਂਚ || (ਜਾਂਚ->magic != EXT2_ET_MAGIC_INODE_ਜਾਂਚ))
+		ਵਾਪਸ;
 
-	ext2fs_free_mem(&scan->inode_buffer);
-	scan->inode_buffer = NULL;
-	ext2fs_free_mem(&scan->temp_buffer);
-	scan->temp_buffer = NULL;
-	ext2fs_free_mem(&scan);
-	return;
+	ext2fs_free_mem(&ਜਾਂਚ->inode_ਬਫਰ);
+	ਜਾਂਚ->inode_ਬਫਰ = ਨਿਰਾ;
+	ext2fs_free_mem(&ਜਾਂਚ->ਆਰਜ਼ੀ_ਬਫਰ);
+	ਜਾਂਚ->ਆਰਜ਼ੀ_ਬਫਰ = ਨਿਰਾ;
+	ext2fs_free_mem(&ਜਾਂਚ);
+	ਵਾਪਸ;
 }
 
-void ext2fs_set_inode_callback(ext2_inode_scan scan,
-			       errcode_t (*done_group)(ext2_filsys fs,
-						       ext2_inode_scan scan,
-						       dgrp_t group,
-						       void * priv_data),
-			       void *done_group_data)
+ਖਾਲੀ ext2fs_ਸੈੱਟ_inode_callback(ext2_inode_ਜਾਂਚ ਜਾਂਚ,
+			       errcode_t (*ਪੂਰਾ_ਸਮੂਹ)(ext2_filsys fs,
+						       ext2_inode_ਜਾਂਚ ਜਾਂਚ,
+						       dgrp_t ਸਮੂਹ,
+						       ਖਾਲੀ * priv_ਅੰਕੜੇ),
+			       ਖਾਲੀ *ਪੂਰਾ_ਸਮੂਹ_ਅੰਕੜੇ)
 {
-	if (!scan || (scan->magic != EXT2_ET_MAGIC_INODE_SCAN))
-		return;
+	ਜੇ (!ਜਾਂਚ || (ਜਾਂਚ->magic != EXT2_ET_MAGIC_INODE_ਜਾਂਚ))
+		ਵਾਪਸ;
 
-	scan->done_group = done_group;
-	scan->done_group_data = done_group_data;
+	ਜਾਂਚ->ਪੂਰਾ_ਸਮੂਹ = ਪੂਰਾ_ਸਮੂਹ;
+	ਜਾਂਚ->ਪੂਰਾ_ਸਮੂਹ_ਅੰਕੜੇ = ਪੂਰਾ_ਸਮੂਹ_ਅੰਕੜੇ;
 }
 
-int ext2fs_inode_scan_flags(ext2_inode_scan scan, int set_flags,
-			    int clear_flags)
+ਪੂਰਨ ext2fs_inode_ਜਾਂਚ_flags(ext2_inode_ਜਾਂਚ ਜਾਂਚ, ਪੂਰਨ ਸੈੱਟ_flags,
+			    ਪੂਰਨ clear_flags)
 {
-	int	old_flags;
+	ਪੂਰਨ	old_flags;
 
-	if (!scan || (scan->magic != EXT2_ET_MAGIC_INODE_SCAN))
-		return 0;
+	ਜੇ (!ਜਾਂਚ || (ਜਾਂਚ->magic != EXT2_ET_MAGIC_INODE_ਜਾਂਚ))
+		ਵਾਪਸ 0;
 
-	old_flags = scan->scan_flags;
-	scan->scan_flags &= ~clear_flags;
-	scan->scan_flags |= set_flags;
-	return old_flags;
+	old_flags = ਜਾਂਚ->ਜਾਂਚ_flags;
+	ਜਾਂਚ->ਜਾਂਚ_flags &= ~clear_flags;
+	ਜਾਂਚ->ਜਾਂਚ_flags |= ਸੈੱਟ_flags;
+	ਵਾਪਸ old_flags;
 }
 
 /*
  * This function is called by ext2fs_get_next_inode when it needs to
  * get ready to read in a new blockgroup.
  */
-static errcode_t get_next_blockgroup(ext2_inode_scan scan)
+ਸਥਿਰ errcode_t get_ਅਗਲਾ_blockgroup(ext2_inode_ਜਾਂਚ ਜਾਂਚ)
 {
-	ext2_filsys fs = scan->fs;
+	ext2_filsys fs = ਜਾਂਚ->fs;
 
-	scan->current_group++;
-	scan->groups_left--;
+	ਜਾਂਚ->current_ਸਮੂਹ++;
+	ਜਾਂਚ->groups_ਖੱਬਾ--;
 
-	scan->current_block = ext2fs_inode_table_loc(scan->fs,
-						     scan->current_group);
-	scan->current_inode = scan->current_group *
-		EXT2_INODES_PER_GROUP(fs->super);
+	ਜਾਂਚ->current_ਖੰਡ = ext2fs_inode_ਸਾਰਣੀ_loc(ਜਾਂਚ->fs,
+						     ਜਾਂਚ->current_ਸਮੂਹ);
+	ਜਾਂਚ->current_inode = ਜਾਂਚ->current_ਸਮੂਹ *
+		EXT2_INODES_ਪ੍ਰਤੀ_ਸਮੂਹ(fs->super);
 
-	scan->bytes_left = 0;
-	scan->inodes_left = EXT2_INODES_PER_GROUP(fs->super);
-	scan->blocks_left = fs->inode_blocks_per_group;
-	if (ext2fs_has_group_desc_csum(fs)) {
-		__u32 unused = ext2fs_bg_itable_unused(fs, scan->current_group);
-		if (scan->inodes_left > unused)
-			scan->inodes_left -= unused;
-		else
-			scan->inodes_left = 0;
-		scan->blocks_left =
-			(scan->inodes_left +
-			 (fs->blocksize / scan->inode_size - 1)) *
-			scan->inode_size / fs->blocksize;
+	ਜਾਂਚ->ਬਾਈਟਾਂ_ਖੱਬਾ = 0;
+	ਜਾਂਚ->inodes_ਖੱਬਾ = EXT2_INODES_ਪ੍ਰਤੀ_ਸਮੂਹ(fs->super);
+	ਜਾਂਚ->ਖੰਡਾਂ_ਖੱਬਾ = fs->inode_ਖੰਡਾਂ_ਪ੍ਰਤੀ_ਸਮੂਹ;
+	ਜੇ (ext2fs_has_ਸਮੂਹ_desc_csum(fs)) {
+		__u32 ਅਣਵਰਤਿਆ = ext2fs_bg_itable_ਅਣਵਰਤਿਆ(fs, ਜਾਂਚ->current_ਸਮੂਹ);
+		ਜੇ (ਜਾਂਚ->inodes_ਖੱਬਾ > ਅਣਵਰਤਿਆ)
+			ਜਾਂਚ->inodes_ਖੱਬਾ -= ਅਣਵਰਤਿਆ;
+		ਨਹੀਂਤਾਂ
+			ਜਾਂਚ->inodes_ਖੱਬਾ = 0;
+		ਜਾਂਚ->ਖੰਡਾਂ_ਖੱਬਾ =
+			(ਜਾਂਚ->inodes_ਖੱਬਾ +
+			 (fs->blocksize / ਜਾਂਚ->inode_ਮਾਪ - 1)) *
+			ਜਾਂਚ->inode_ਮਾਪ / fs->blocksize;
 	}
-	if (scan->current_block &&
-	    ((scan->current_block < fs->super->s_first_data_block) ||
-	     (scan->current_block + fs->inode_blocks_per_group - 1 >=
-	      ext2fs_blocks_count(fs->super))))
-		return EXT2_ET_GDESC_BAD_INODE_TABLE;
-	return 0;
+	ਜੇ (ਜਾਂਚ->current_ਖੰਡ &&
+	    ((ਜਾਂਚ->current_ਖੰਡ < fs->super->s_ਪਹਿਲਾ_ਅੰਕੜੇ_ਖੰਡ) ||
+	     (ਜਾਂਚ->current_ਖੰਡ + fs->inode_ਖੰਡਾਂ_ਪ੍ਰਤੀ_ਸਮੂਹ - 1 >=
+	      ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super))))
+		ਵਾਪਸ EXT2_ET_GDESC_BAD_INODE_ਸਾਰਣੀ;
+	ਵਾਪਸ 0;
 }
 
-errcode_t ext2fs_inode_scan_goto_blockgroup(ext2_inode_scan scan,
-					    int	group)
+errcode_t ext2fs_inode_ਜਾਂਚ_goto_blockgroup(ext2_inode_ਜਾਂਚ ਜਾਂਚ,
+					    ਪੂਰਨ	ਸਮੂਹ)
 {
-	scan->current_group = group - 1;
-	scan->groups_left = scan->fs->group_desc_count - group;
-	scan->bad_block_ptr = 0;
-	return get_next_blockgroup(scan);
+	ਜਾਂਚ->current_ਸਮੂਹ = ਸਮੂਹ - 1;
+	ਜਾਂਚ->groups_ਖੱਬਾ = ਜਾਂਚ->fs->ਸਮੂਹ_desc_ਗਿਣਤੀ - ਸਮੂਹ;
+	ਜਾਂਚ->bad_ਖੰਡ_ptr = 0;
+	ਵਾਪਸ get_ਅਗਲਾ_blockgroup(ਜਾਂਚ);
 }
 
 /*
@@ -326,23 +326,23 @@ errcode_t ext2fs_inode_scan_goto_blockgroup(ext2_inode_scan scan,
  * This function assumes that badblocks_list->list is sorted in
  * increasing order.
  */
-static errcode_t check_for_inode_bad_blocks(ext2_inode_scan scan,
-					    blk64_t *num_blocks)
+ਸਥਿਰ errcode_t check_for_inode_bad_ਖੰਡਾਂ(ext2_inode_ਜਾਂਚ ਜਾਂਚ,
+					    blk64_t *ਅੰਕ_ਖੰਡਾਂ)
 {
-	blk64_t	blk = scan->current_block;
-	badblocks_list	bb = scan->fs->badblocks;
+	blk64_t	blk = ਜਾਂਚ->current_ਖੰਡ;
+	badblocks_list	bb = ਜਾਂਚ->fs->badblocks;
 
 	/*
 	 * If the inode table is missing, then obviously there are no
 	 * bad blocks.  :-)
 	 */
-	if (blk == 0)
-		return 0;
+	ਜੇ (blk == 0)
+		ਵਾਪਸ 0;
 
 	/* Make sure bad_block_ptr is still valid */
-	if (scan->bad_block_ptr >= bb->num) {
-		scan->scan_flags &= ~EXT2_SF_CHK_BADBLOCKS;
-		return 0;
+	ਜੇ (ਜਾਂਚ->bad_ਖੰਡ_ptr >= bb->ਅੰਕ) {
+		ਜਾਂਚ->ਜਾਂਚ_flags &= ~EXT2_SF_CHK_BADBLOCKS;
+		ਵਾਪਸ 0;
 	}
 
 	/*
@@ -351,10 +351,10 @@ static errcode_t check_for_inode_bad_blocks(ext2_inode_scan scan,
 	 * is no longer the case.  If we run out of bad blocks, then
 	 * we don't need to do any more checking!
 	 */
-	while (blk > bb->list[scan->bad_block_ptr]) {
-		if (++scan->bad_block_ptr >= bb->num) {
-			scan->scan_flags &= ~EXT2_SF_CHK_BADBLOCKS;
-			return 0;
+	ਜਦੋਂ (blk > bb->list[ਜਾਂਚ->bad_ਖੰਡ_ptr]) {
+		ਜੇ (++ਜਾਂਚ->bad_ਖੰਡ_ptr >= bb->ਅੰਕ) {
+			ਜਾਂਚ->ਜਾਂਚ_flags &= ~EXT2_SF_CHK_BADBLOCKS;
+			ਵਾਪਸ 0;
 		}
 	}
 
@@ -366,12 +366,12 @@ static errcode_t check_for_inode_bad_blocks(ext2_inode_scan scan,
 	 * expense of a huge expense of code complexity, and for an
 	 * uncommon case at that.)
 	 */
-	if (blk == bb->list[scan->bad_block_ptr]) {
-		scan->scan_flags |= EXT2_SF_BAD_INODE_BLK;
-		*num_blocks = 1;
-		if (++scan->bad_block_ptr >= bb->num)
-			scan->scan_flags &= ~EXT2_SF_CHK_BADBLOCKS;
-		return 0;
+	ਜੇ (blk == bb->list[ਜਾਂਚ->bad_ਖੰਡ_ptr]) {
+		ਜਾਂਚ->ਜਾਂਚ_flags |= EXT2_SF_BAD_INODE_BLK;
+		*ਅੰਕ_ਖੰਡਾਂ = 1;
+		ਜੇ (++ਜਾਂਚ->bad_ਖੰਡ_ptr >= bb->ਅੰਕ)
+			ਜਾਂਚ->ਜਾਂਚ_flags &= ~EXT2_SF_CHK_BADBLOCKS;
+		ਵਾਪਸ 0;
 	}
 
 	/*
@@ -380,49 +380,49 @@ static errcode_t check_for_inode_bad_blocks(ext2_inode_scan scan,
 	 * don't read in the bad block.  (Then the next block to read
 	 * will be the bad block, which is handled in the above case.)
 	 */
-	if ((blk + *num_blocks) > bb->list[scan->bad_block_ptr])
-		*num_blocks = (int) (bb->list[scan->bad_block_ptr] - blk);
+	ਜੇ ((blk + *ਅੰਕ_ਖੰਡਾਂ) > bb->list[ਜਾਂਚ->bad_ਖੰਡ_ptr])
+		*ਅੰਕ_ਖੰਡਾਂ = (ਪੂਰਨ) (bb->list[ਜਾਂਚ->bad_ਖੰਡ_ptr] - blk);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int block_map_looks_insane(ext2_filsys fs,
-				  struct ext2_inode_large *inode)
+ਸਥਿਰ ਪੂਰਨ ਖੰਡ_map_looks_insane(ext2_filsys fs,
+				  ਬਣਤਰ ext2_inode_large *inode)
 {
-	unsigned int i, bad;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ i, bad;
 
 	/* We're only interested in block mapped files, dirs, and symlinks */
-	if ((inode->i_flags & EXT4_INLINE_DATA_FL) ||
+	ਜੇ ((inode->i_flags & EXT4_INLINE_ਅੰਕੜੇ_FL) ||
 	    (inode->i_flags & EXT4_EXTENTS_FL))
-		return 0;
-	if (!LINUX_S_ISREG(inode->i_mode) &&
-	    !LINUX_S_ISLNK(inode->i_mode) &&
-	    !LINUX_S_ISDIR(inode->i_mode))
-		return 0;
-	if (LINUX_S_ISLNK(inode->i_mode) &&
-	    EXT2_I_SIZE(inode) <= sizeof(inode->i_block))
-		return 0;
+		ਵਾਪਸ 0;
+	ਜੇ (!LINUX_S_ISREG(inode->i_ਬਹੁਲਕ) &&
+	    !LINUX_S_ISLNK(inode->i_ਬਹੁਲਕ) &&
+	    !LINUX_S_ISDIR(inode->i_ਬਹੁਲਕ))
+		ਵਾਪਸ 0;
+	ਜੇ (LINUX_S_ISLNK(inode->i_ਬਹੁਲਕ) &&
+	    EXT2_I_ਮਾਪ(inode) <= ਆਕਾਰ(inode->i_ਖੰਡ))
+		ਵਾਪਸ 0;
 
 	/* Unused inodes probably aren't insane */
-	if (inode->i_links_count == 0)
-		return 0;
+	ਜੇ (inode->i_links_ਗਿਣਤੀ == 0)
+		ਵਾਪਸ 0;
 
 	/* See if more than half the block maps are insane */
-	for (i = 0, bad = 0; i < EXT2_N_BLOCKS; i++)
-		if (inode->i_block[i] != 0 &&
-		    (inode->i_block[i] < fs->super->s_first_data_block ||
-		     inode->i_block[i] >= ext2fs_blocks_count(fs->super)))
+	ਲਈ (i = 0, bad = 0; i < EXT2_N_ਖੰਡਾਂ; i++)
+		ਜੇ (inode->i_ਖੰਡ[i] != 0 &&
+		    (inode->i_ਖੰਡ[i] < fs->super->s_ਪਹਿਲਾ_ਅੰਕੜੇ_ਖੰਡ ||
+		     inode->i_ਖੰਡ[i] >= ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super)))
 			bad++;
-	return bad > EXT2_N_BLOCKS / 2;
+	ਵਾਪਸ bad > EXT2_N_ਖੰਡਾਂ / 2;
 }
 
-static int extent_head_looks_insane(struct ext2_inode_large *inode)
+ਸਥਿਰ ਪੂਰਨ extent_ਸਿਰ_looks_insane(ਬਣਤਰ ext2_inode_large *inode)
 {
-	if (!(inode->i_flags & EXT4_EXTENTS_FL) ||
-	    ext2fs_extent_header_verify(inode->i_block,
-					sizeof(inode->i_block)) == 0)
-		return 0;
-	return 1;
+	ਜੇ (!(inode->i_flags & EXT4_EXTENTS_FL) ||
+	    ext2fs_extent_ਸਿਰਲੇਖ_verify(inode->i_ਖੰਡ,
+					ਆਕਾਰ(inode->i_ਖੰਡ)) == 0)
+		ਵਾਪਸ 0;
+	ਵਾਪਸ 1;
 }
 
 /*
@@ -430,99 +430,99 @@ static int extent_head_looks_insane(struct ext2_inode_large *inode)
  * find here -- currently, we can observe that all checksums are ok; more
  * than half the inodes are insane; or no conclusions at all.
  */
-static void check_inode_block_sanity(ext2_inode_scan scan, blk64_t num_blocks)
+ਸਥਿਰ ਖਾਲੀ check_inode_ਖੰਡ_sanity(ext2_inode_ਜਾਂਚ ਜਾਂਚ, blk64_t ਅੰਕ_ਖੰਡਾਂ)
 {
-	ext2_ino_t	ino, inodes_to_scan;
-	unsigned int	badness, checksum_failures;
-	unsigned int	inodes_in_buf, inodes_per_block;
-	char		*p;
-	struct ext2_inode_large *inode;
-	char		*block_status;
-	unsigned int	blk, bad_csum;
+	ext2_ino_t	ino, inodes_ਮੰਜ਼ਿਲ_ਜਾਂਚ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ	badness, checksum_failures;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ	inodes_ਵਿੱਚ_buf, inodes_ਪ੍ਰਤੀ_ਖੰਡ;
+	ਅੱਖਰ		*p;
+	ਬਣਤਰ ext2_inode_large *inode;
+	ਅੱਖਰ		*ਖੰਡ_ਸਥਿਤੀ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ	blk, bad_csum;
 
-	if (!(scan->scan_flags & EXT2_SF_WARN_GARBAGE_INODES))
-		return;
+	ਜੇ (!(ਜਾਂਚ->ਜਾਂਚ_flags & EXT2_SF_WARN_GARBAGE_INODES))
+		ਵਾਪਸ;
 
-	inodes_to_scan = scan->inodes_left;
-	inodes_in_buf = num_blocks * scan->fs->blocksize / scan->inode_size;
-	if (inodes_to_scan > inodes_in_buf)
-		inodes_to_scan = inodes_in_buf;
+	inodes_ਮੰਜ਼ਿਲ_ਜਾਂਚ = ਜਾਂਚ->inodes_ਖੱਬਾ;
+	inodes_ਵਿੱਚ_buf = ਅੰਕ_ਖੰਡਾਂ * ਜਾਂਚ->fs->blocksize / ਜਾਂਚ->inode_ਮਾਪ;
+	ਜੇ (inodes_ਮੰਜ਼ਿਲ_ਜਾਂਚ > inodes_ਵਿੱਚ_buf)
+		inodes_ਮੰਜ਼ਿਲ_ਜਾਂਚ = inodes_ਵਿੱਚ_buf;
 
-	p = (char *) scan->inode_buffer;
-	ino = scan->current_inode + 1;
+	p = (ਅੱਖਰ *) ਜਾਂਚ->inode_ਬਫਰ;
+	ino = ਜਾਂਚ->current_inode + 1;
 	checksum_failures = badness = 0;
-	block_status = SCAN_BLOCK_STATUS(scan);
-	memset(block_status, 0, scan->inode_buffer_blocks);
-	inodes_per_block = EXT2_INODES_PER_BLOCK(scan->fs->super);
+	ਖੰਡ_ਸਥਿਤੀ = ਜਾਂਚ_ਖੰਡ_ਸਥਿਤੀ(ਜਾਂਚ);
+	memset(ਖੰਡ_ਸਥਿਤੀ, 0, ਜਾਂਚ->inode_ਬਫਰ_ਖੰਡਾਂ);
+	inodes_ਪ੍ਰਤੀ_ਖੰਡ = EXT2_INODES_ਪ੍ਰਤੀ_ਖੰਡ(ਜਾਂਚ->fs->super);
 
-	if (inodes_per_block < 2)
-		return;
+	ਜੇ (inodes_ਪ੍ਰਤੀ_ਖੰਡ < 2)
+		ਵਾਪਸ;
 
-#ifdef WORDS_BIGENDIAN
-	if (ext2fs_get_mem(EXT2_INODE_SIZE(scan->fs->super), &inode))
-		return;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ਸ਼ਬਦ_BIGENDIAN
+	ਜੇ (ext2fs_get_mem(EXT2_INODE_ਮਾਪ(ਜਾਂਚ->fs->super), &inode))
+		ਵਾਪਸ;
+#ਜੇ_ਅੰਤ
 
-	while (inodes_to_scan > 0) {
-		blk = (p - (char *)scan->inode_buffer) / scan->fs->blocksize;
-		bad_csum = ext2fs_inode_csum_verify(scan->fs, ino,
-				(struct ext2_inode_large *) p) == 0;
+	ਜਦੋਂ (inodes_ਮੰਜ਼ਿਲ_ਜਾਂਚ > 0) {
+		blk = (p - (ਅੱਖਰ *)ਜਾਂਚ->inode_ਬਫਰ) / ਜਾਂਚ->fs->blocksize;
+		bad_csum = ext2fs_inode_csum_verify(ਜਾਂਚ->fs, ino,
+				(ਬਣਤਰ ext2_inode_large *) p) == 0;
 
-#ifdef WORDS_BIGENDIAN
-		ext2fs_swap_inode_full(scan->fs,
-			       (struct ext2_inode_large *) inode,
-			       (struct ext2_inode_large *) p,
-			       0, EXT2_INODE_SIZE(scan->fs->super));
-#else
-		inode = (struct ext2_inode_large *) p;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ਸ਼ਬਦ_BIGENDIAN
+		ext2fs_ਅਦਲਾ_ਬਦਲੀ_inode_ਭਰਿਆ(ਜਾਂਚ->fs,
+			       (ਬਣਤਰ ext2_inode_large *) inode,
+			       (ਬਣਤਰ ext2_inode_large *) p,
+			       0, EXT2_INODE_ਮਾਪ(ਜਾਂਚ->fs->super));
+#ਨਹੀਂਤਾਂ
+		inode = (ਬਣਤਰ ext2_inode_large *) p;
+#ਜੇ_ਅੰਤ
 
 		/* Is this inode insane? */
-		if (bad_csum) {
+		ਜੇ (bad_csum) {
 			checksum_failures++;
 			badness++;
-		} else if (extent_head_looks_insane(inode) ||
-			   block_map_looks_insane(scan->fs, inode))
+		} ਨਹੀਂਤਾਂ ਜੇ (extent_ਸਿਰ_looks_insane(inode) ||
+			   ਖੰਡ_map_looks_insane(ਜਾਂਚ->fs, inode))
 			badness++;
 
 		/* If more than half are insane, declare the whole block bad */
-		if (badness > inodes_per_block / 2) {
-			unsigned int ino_adj;
+		ਜੇ (badness > inodes_ਪ੍ਰਤੀ_ਖੰਡ / 2) {
+			ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ino_adj;
 
-			block_status[blk] |= IBLOCK_STATUS_INSANE;
-			ino_adj = inodes_per_block -
-						((ino - 1) % inodes_per_block);
-			if (ino_adj > inodes_to_scan)
-				ino_adj = inodes_to_scan;
-			inodes_to_scan -= ino_adj;
-			p += scan->inode_size * ino_adj;
+			ਖੰਡ_ਸਥਿਤੀ[blk] |= IBLOCK_ਸਥਿਤੀ_INSANE;
+			ino_adj = inodes_ਪ੍ਰਤੀ_ਖੰਡ -
+						((ino - 1) % inodes_ਪ੍ਰਤੀ_ਖੰਡ);
+			ਜੇ (ino_adj > inodes_ਮੰਜ਼ਿਲ_ਜਾਂਚ)
+				ino_adj = inodes_ਮੰਜ਼ਿਲ_ਜਾਂਚ;
+			inodes_ਮੰਜ਼ਿਲ_ਜਾਂਚ -= ino_adj;
+			p += ਜਾਂਚ->inode_ਮਾਪ * ino_adj;
 			ino += ino_adj;
 			checksum_failures = badness = 0;
-			continue;
+			ਜਾਰੀ;
 		}
 
-		if ((ino % inodes_per_block) == 0) {
-			if (checksum_failures == 0)
-				block_status[blk] |= IBLOCK_STATUS_CSUMS_OK;
+		ਜੇ ((ino % inodes_ਪ੍ਰਤੀ_ਖੰਡ) == 0) {
+			ਜੇ (checksum_failures == 0)
+				ਖੰਡ_ਸਥਿਤੀ[blk] |= IBLOCK_ਸਥਿਤੀ_CSUMS_OK;
 			checksum_failures = badness = 0;
 		}
-		inodes_to_scan--;
-		p += scan->inode_size;
+		inodes_ਮੰਜ਼ਿਲ_ਜਾਂਚ--;
+		p += ਜਾਂਚ->inode_ਮਾਪ;
 		ino++;
 	};
 
-#ifdef WORDS_BIGENDIAN
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ਸ਼ਬਦ_BIGENDIAN
 	ext2fs_free_mem(&inode);
-#endif
+#ਜੇ_ਅੰਤ
 }
 
 /*
  * This function is called by ext2fs_get_next_inode when it needs to
  * read in more blocks from the current blockgroup's inode table.
  */
-static errcode_t get_next_blocks(ext2_inode_scan scan)
+ਸਥਿਰ errcode_t get_ਅਗਲਾ_ਖੰਡਾਂ(ext2_inode_ਜਾਂਚ ਜਾਂਚ)
 {
-	blk64_t		num_blocks;
+	blk64_t		ਅੰਕ_ਖੰਡਾਂ;
 	errcode_t	retval;
 
 	/*
@@ -530,123 +530,123 @@ static errcode_t get_next_blocks(ext2_inode_scan scan)
 	 * inode_buffer_blocks, and perhaps less if there aren't that
 	 * many blocks left to read.
 	 */
-	num_blocks = scan->inode_buffer_blocks;
-	if (num_blocks > scan->blocks_left)
-		num_blocks = scan->blocks_left;
+	ਅੰਕ_ਖੰਡਾਂ = ਜਾਂਚ->inode_ਬਫਰ_ਖੰਡਾਂ;
+	ਜੇ (ਅੰਕ_ਖੰਡਾਂ > ਜਾਂਚ->ਖੰਡਾਂ_ਖੱਬਾ)
+		ਅੰਕ_ਖੰਡਾਂ = ਜਾਂਚ->ਖੰਡਾਂ_ਖੱਬਾ;
 
 	/*
 	 * If the past block "read" was a bad block, then mark the
 	 * left-over extra bytes as also being bad.
 	 */
-	if (scan->scan_flags & EXT2_SF_BAD_INODE_BLK) {
-		if (scan->bytes_left)
-			scan->scan_flags |= EXT2_SF_BAD_EXTRA_BYTES;
-		scan->scan_flags &= ~EXT2_SF_BAD_INODE_BLK;
+	ਜੇ (ਜਾਂਚ->ਜਾਂਚ_flags & EXT2_SF_BAD_INODE_BLK) {
+		ਜੇ (ਜਾਂਚ->ਬਾਈਟਾਂ_ਖੱਬਾ)
+			ਜਾਂਚ->ਜਾਂਚ_flags |= EXT2_SF_BAD_EXTRA_ਬਾਈਟਾਂ;
+		ਜਾਂਚ->ਜਾਂਚ_flags &= ~EXT2_SF_BAD_INODE_BLK;
 	}
 
 	/*
 	 * Do inode bad block processing, if necessary.
 	 */
-	if (scan->scan_flags & EXT2_SF_CHK_BADBLOCKS) {
-		retval = check_for_inode_bad_blocks(scan, &num_blocks);
-		if (retval)
-			return retval;
+	ਜੇ (ਜਾਂਚ->ਜਾਂਚ_flags & EXT2_SF_CHK_BADBLOCKS) {
+		retval = check_for_inode_bad_ਖੰਡਾਂ(ਜਾਂਚ, &ਅੰਕ_ਖੰਡਾਂ);
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
 	}
 
-	if ((scan->scan_flags & EXT2_SF_BAD_INODE_BLK) ||
-	    (scan->current_block == 0)) {
-		memset(scan->inode_buffer, 0,
-		       (size_t) num_blocks * scan->fs->blocksize);
-	} else {
-		retval = io_channel_read_blk64(scan->fs->io,
-					     scan->current_block,
-					     (int) num_blocks,
-					     scan->inode_buffer);
-		if (retval)
-			return EXT2_ET_NEXT_INODE_READ;
+	ਜੇ ((ਜਾਂਚ->ਜਾਂਚ_flags & EXT2_SF_BAD_INODE_BLK) ||
+	    (ਜਾਂਚ->current_ਖੰਡ == 0)) {
+		memset(ਜਾਂਚ->inode_ਬਫਰ, 0,
+		       (size_t) ਅੰਕ_ਖੰਡਾਂ * ਜਾਂਚ->fs->blocksize);
+	} ਨਹੀਂਤਾਂ {
+		retval = io_channel_read_blk64(ਜਾਂਚ->fs->io,
+					     ਜਾਂਚ->current_ਖੰਡ,
+					     (ਪੂਰਨ) ਅੰਕ_ਖੰਡਾਂ,
+					     ਜਾਂਚ->inode_ਬਫਰ);
+		ਜੇ (retval)
+			ਵਾਪਸ EXT2_ET_ਅਗਲਾ_INODE_READ;
 	}
-	check_inode_block_sanity(scan, num_blocks);
+	check_inode_ਖੰਡ_sanity(ਜਾਂਚ, ਅੰਕ_ਖੰਡਾਂ);
 
-	scan->ptr = scan->inode_buffer;
-	scan->bytes_left = num_blocks * scan->fs->blocksize;
+	ਜਾਂਚ->ptr = ਜਾਂਚ->inode_ਬਫਰ;
+	ਜਾਂਚ->ਬਾਈਟਾਂ_ਖੱਬਾ = ਅੰਕ_ਖੰਡਾਂ * ਜਾਂਚ->fs->blocksize;
 
-	scan->blocks_left -= num_blocks;
-	if (scan->current_block)
-		scan->current_block += num_blocks;
+	ਜਾਂਚ->ਖੰਡਾਂ_ਖੱਬਾ -= ਅੰਕ_ਖੰਡਾਂ;
+	ਜੇ (ਜਾਂਚ->current_ਖੰਡ)
+		ਜਾਂਚ->current_ਖੰਡ += ਅੰਕ_ਖੰਡਾਂ;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-#if 0
+#ਜੇ 0
 /*
  * Returns 1 if the entire inode_buffer has a non-zero size and
  * contains all zeros.  (Not just deleted inodes, since that means
  * that part of the inode table was used at one point; we want all
  * zeros, which means that the inode table is pristine.)
  */
-static inline int is_empty_scan(ext2_inode_scan scan)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ is_ਖਾਲੀ_ਥਾਵਾਂ_ਜਾਂਚ(ext2_inode_ਜਾਂਚ ਜਾਂਚ)
 {
-	int	i;
+	ਪੂਰਨ	i;
 
-	if (scan->bytes_left == 0)
-		return 0;
+	ਜੇ (ਜਾਂਚ->ਬਾਈਟਾਂ_ਖੱਬਾ == 0)
+		ਵਾਪਸ 0;
 
-	for (i=0; i < scan->bytes_left; i++)
-		if (scan->ptr[i])
-			return 0;
-	return 1;
+	ਲਈ (i=0; i < ਜਾਂਚ->ਬਾਈਟਾਂ_ਖੱਬਾ; i++)
+		ਜੇ (ਜਾਂਚ->ptr[i])
+			ਵਾਪਸ 0;
+	ਵਾਪਸ 1;
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-errcode_t ext2fs_get_next_inode_full(ext2_inode_scan scan, ext2_ino_t *ino,
-				     struct ext2_inode *inode, int bufsize)
+errcode_t ext2fs_get_ਅਗਲਾ_inode_ਭਰਿਆ(ext2_inode_ਜਾਂਚ ਜਾਂਚ, ext2_ino_t *ino,
+				     ਬਣਤਰ ext2_inode *inode, ਪੂਰਨ bufsize)
 {
 	errcode_t	retval;
-	int		extra_bytes = 0;
-	int		length;
-	struct ext2_inode_large	*iptr = (struct ext2_inode_large *)inode;
-	char		*iblock_status;
-	unsigned int	iblk;
+	ਪੂਰਨ		extra_ਬਾਈਟਾਂ = 0;
+	ਪੂਰਨ		ਲੰਮਾਈ;
+	ਬਣਤਰ ext2_inode_large	*iptr = (ਬਣਤਰ ext2_inode_large *)inode;
+	ਅੱਖਰ		*iblock_ਸਥਿਤੀ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ	iblk;
 
-	EXT2_CHECK_MAGIC(scan, EXT2_ET_MAGIC_INODE_SCAN);
-	length = EXT2_INODE_SIZE(scan->fs->super);
-	iblock_status = SCAN_BLOCK_STATUS(scan);
+	EXT2_CHECK_MAGIC(ਜਾਂਚ, EXT2_ET_MAGIC_INODE_ਜਾਂਚ);
+	ਲੰਮਾਈ = EXT2_INODE_ਮਾਪ(ਜਾਂਚ->fs->super);
+	iblock_ਸਥਿਤੀ = ਜਾਂਚ_ਖੰਡ_ਸਥਿਤੀ(ਜਾਂਚ);
 
 	/*
 	 * Do we need to start reading a new block group?
 	 */
-	if (scan->inodes_left <= 0) {
-	force_new_group:
-		if (scan->done_group) {
-			retval = (scan->done_group)
-				(scan->fs, scan, scan->current_group,
-				 scan->done_group_data);
-			if (retval)
-				return retval;
+	ਜੇ (ਜਾਂਚ->inodes_ਖੱਬਾ <= 0) {
+	force_new_ਸਮੂਹ:
+		ਜੇ (ਜਾਂਚ->ਪੂਰਾ_ਸਮੂਹ) {
+			retval = (ਜਾਂਚ->ਪੂਰਾ_ਸਮੂਹ)
+				(ਜਾਂਚ->fs, ਜਾਂਚ, ਜਾਂਚ->current_ਸਮੂਹ,
+				 ਜਾਂਚ->ਪੂਰਾ_ਸਮੂਹ_ਅੰਕੜੇ);
+			ਜੇ (retval)
+				ਵਾਪਸ retval;
 		}
-		if (scan->groups_left <= 0) {
+		ਜੇ (ਜਾਂਚ->groups_ਖੱਬਾ <= 0) {
 			*ino = 0;
-			return 0;
+			ਵਾਪਸ 0;
 		}
-		retval = get_next_blockgroup(scan);
-		if (retval)
-			return retval;
+		retval = get_ਅਗਲਾ_blockgroup(ਜਾਂਚ);
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
 	}
 	/*
 	 * These checks are done outside the above if statement so
 	 * they can be done for block group #0.
 	 */
-	if ((scan->scan_flags & EXT2_SF_DO_LAZY) &&
-	    (ext2fs_bg_flags_test(scan->fs, scan->current_group, EXT2_BG_INODE_UNINIT)
+	ਜੇ ((ਜਾਂਚ->ਜਾਂਚ_flags & EXT2_SF_DO_LAZY) &&
+	    (ext2fs_bg_flags_test(ਜਾਂਚ->fs, ਜਾਂਚ->current_ਸਮੂਹ, EXT2_BG_INODE_UNINIT)
 	     ))
-		goto force_new_group;
-	if (scan->inodes_left == 0)
-		goto force_new_group;
-	if (scan->current_block == 0) {
-		if (scan->scan_flags & EXT2_SF_SKIP_MISSING_ITABLE) {
-			goto force_new_group;
-		} else
-			return EXT2_ET_MISSING_INODE_TABLE;
+		ਜਾਓ force_new_ਸਮੂਹ;
+	ਜੇ (ਜਾਂਚ->inodes_ਖੱਬਾ == 0)
+		ਜਾਓ force_new_ਸਮੂਹ;
+	ਜੇ (ਜਾਂਚ->current_ਖੰਡ == 0) {
+		ਜੇ (ਜਾਂਚ->ਜਾਂਚ_flags & EXT2_SF_SKIP_MISSING_ITABLE) {
+			ਜਾਓ force_new_ਸਮੂਹ;
+		} ਨਹੀਂਤਾਂ
+			ਵਾਪਸ EXT2_ET_MISSING_INODE_ਸਾਰਣੀ;
 	}
 
 
@@ -654,381 +654,381 @@ errcode_t ext2fs_get_next_inode_full(ext2_inode_scan scan, ext2_ino_t *ino,
 	 * Have we run out of space in the inode buffer?  If so, we
 	 * need to read in more blocks.
 	 */
-	if (scan->bytes_left < scan->inode_size) {
-		if (scan->bytes_left)
-			memcpy(scan->temp_buffer, scan->ptr, scan->bytes_left);
-		extra_bytes = scan->bytes_left;
+	ਜੇ (ਜਾਂਚ->ਬਾਈਟਾਂ_ਖੱਬਾ < ਜਾਂਚ->inode_ਮਾਪ) {
+		ਜੇ (ਜਾਂਚ->ਬਾਈਟਾਂ_ਖੱਬਾ)
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(ਜਾਂਚ->ਆਰਜ਼ੀ_ਬਫਰ, ਜਾਂਚ->ptr, ਜਾਂਚ->ਬਾਈਟਾਂ_ਖੱਬਾ);
+		extra_ਬਾਈਟਾਂ = ਜਾਂਚ->ਬਾਈਟਾਂ_ਖੱਬਾ;
 
-		retval = get_next_blocks(scan);
-		if (retval)
-			return retval;
-#if 0
+		retval = get_ਅਗਲਾ_ਖੰਡਾਂ(ਜਾਂਚ);
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
+#ਜੇ 0
 		/*
 		 * XXX test  Need check for used inode somehow.
 		 * (Note: this is hard.)
 		 */
-		if (is_empty_scan(scan))
-			goto force_new_group;
-#endif
+		ਜੇ (is_ਖਾਲੀ_ਥਾਵਾਂ_ਜਾਂਚ(ਜਾਂਚ))
+			ਜਾਓ force_new_ਸਮੂਹ;
+#ਜੇ_ਅੰਤ
 	}
 
-	if (bufsize < length) {
-		retval = ext2fs_get_mem(length, &iptr);
-		if (retval)
-			return retval;
+	ਜੇ (bufsize < ਲੰਮਾਈ) {
+		retval = ext2fs_get_mem(ਲੰਮਾਈ, &iptr);
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
 	}
 
 	retval = 0;
-	iblk = scan->current_inode % EXT2_INODES_PER_GROUP(scan->fs->super) /
-				EXT2_INODES_PER_BLOCK(scan->fs->super) %
-				scan->inode_buffer_blocks;
-	if (extra_bytes) {
-		memcpy(scan->temp_buffer+extra_bytes, scan->ptr,
-		       scan->inode_size - extra_bytes);
-		scan->ptr += scan->inode_size - extra_bytes;
-		scan->bytes_left -= scan->inode_size - extra_bytes;
+	iblk = ਜਾਂਚ->current_inode % EXT2_INODES_ਪ੍ਰਤੀ_ਸਮੂਹ(ਜਾਂਚ->fs->super) /
+				EXT2_INODES_ਪ੍ਰਤੀ_ਖੰਡ(ਜਾਂਚ->fs->super) %
+				ਜਾਂਚ->inode_ਬਫਰ_ਖੰਡਾਂ;
+	ਜੇ (extra_ਬਾਈਟਾਂ) {
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(ਜਾਂਚ->ਆਰਜ਼ੀ_ਬਫਰ+extra_ਬਾਈਟਾਂ, ਜਾਂਚ->ptr,
+		       ਜਾਂਚ->inode_ਮਾਪ - extra_ਬਾਈਟਾਂ);
+		ਜਾਂਚ->ptr += ਜਾਂਚ->inode_ਮਾਪ - extra_ਬਾਈਟਾਂ;
+		ਜਾਂਚ->ਬਾਈਟਾਂ_ਖੱਬਾ -= ਜਾਂਚ->inode_ਮਾਪ - extra_ਬਾਈਟਾਂ;
 
 		/* Verify the inode checksum. */
-		if (!(iblock_status[iblk] & IBLOCK_STATUS_CSUMS_OK) &&
-		    !(scan->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
-		    !ext2fs_inode_csum_verify(scan->fs, scan->current_inode + 1,
-				(struct ext2_inode_large *)scan->temp_buffer))
+		ਜੇ (!(iblock_ਸਥਿਤੀ[iblk] & IBLOCK_ਸਥਿਤੀ_CSUMS_OK) &&
+		    !(ਜਾਂਚ->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+		    !ext2fs_inode_csum_verify(ਜਾਂਚ->fs, ਜਾਂਚ->current_inode + 1,
+				(ਬਣਤਰ ext2_inode_large *)ਜਾਂਚ->ਆਰਜ਼ੀ_ਬਫਰ))
 			retval = EXT2_ET_INODE_CSUM_INVALID;
 
-#ifdef WORDS_BIGENDIAN
-		memset(iptr, 0, length);
-		ext2fs_swap_inode_full(scan->fs,
-			       (struct ext2_inode_large *) iptr,
-			       (struct ext2_inode_large *) scan->temp_buffer,
-			       0, length);
-#else
-		memcpy(iptr, scan->temp_buffer, length);
-#endif
-		if (scan->scan_flags & EXT2_SF_BAD_EXTRA_BYTES)
-			retval = EXT2_ET_BAD_BLOCK_IN_INODE_TABLE;
-		scan->scan_flags &= ~EXT2_SF_BAD_EXTRA_BYTES;
-	} else {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ਸ਼ਬਦ_BIGENDIAN
+		memset(iptr, 0, ਲੰਮਾਈ);
+		ext2fs_ਅਦਲਾ_ਬਦਲੀ_inode_ਭਰਿਆ(ਜਾਂਚ->fs,
+			       (ਬਣਤਰ ext2_inode_large *) iptr,
+			       (ਬਣਤਰ ext2_inode_large *) ਜਾਂਚ->ਆਰਜ਼ੀ_ਬਫਰ,
+			       0, ਲੰਮਾਈ);
+#ਨਹੀਂਤਾਂ
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(iptr, ਜਾਂਚ->ਆਰਜ਼ੀ_ਬਫਰ, ਲੰਮਾਈ);
+#ਜੇ_ਅੰਤ
+		ਜੇ (ਜਾਂਚ->ਜਾਂਚ_flags & EXT2_SF_BAD_EXTRA_ਬਾਈਟਾਂ)
+			retval = EXT2_ET_BAD_ਖੰਡ_ਵਿੱਚ_INODE_ਸਾਰਣੀ;
+		ਜਾਂਚ->ਜਾਂਚ_flags &= ~EXT2_SF_BAD_EXTRA_ਬਾਈਟਾਂ;
+	} ਨਹੀਂਤਾਂ {
 		/* Verify the inode checksum. */
-		if (!(iblock_status[iblk] & IBLOCK_STATUS_CSUMS_OK) &&
-		    !(scan->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
-		    !ext2fs_inode_csum_verify(scan->fs, scan->current_inode + 1,
-				(struct ext2_inode_large *)scan->ptr))
+		ਜੇ (!(iblock_ਸਥਿਤੀ[iblk] & IBLOCK_ਸਥਿਤੀ_CSUMS_OK) &&
+		    !(ਜਾਂਚ->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+		    !ext2fs_inode_csum_verify(ਜਾਂਚ->fs, ਜਾਂਚ->current_inode + 1,
+				(ਬਣਤਰ ext2_inode_large *)ਜਾਂਚ->ptr))
 			retval = EXT2_ET_INODE_CSUM_INVALID;
 
-#ifdef WORDS_BIGENDIAN
-		memset(iptr, 0, length);
-		ext2fs_swap_inode_full(scan->fs,
-				(struct ext2_inode_large *) iptr,
-				(struct ext2_inode_large *) scan->ptr,
-				0, length);
-#else
-		memcpy(iptr, scan->ptr, length);
-#endif
-		scan->ptr += scan->inode_size;
-		scan->bytes_left -= scan->inode_size;
-		if (scan->scan_flags & EXT2_SF_BAD_INODE_BLK)
-			retval = EXT2_ET_BAD_BLOCK_IN_INODE_TABLE;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ਸ਼ਬਦ_BIGENDIAN
+		memset(iptr, 0, ਲੰਮਾਈ);
+		ext2fs_ਅਦਲਾ_ਬਦਲੀ_inode_ਭਰਿਆ(ਜਾਂਚ->fs,
+				(ਬਣਤਰ ext2_inode_large *) iptr,
+				(ਬਣਤਰ ext2_inode_large *) ਜਾਂਚ->ptr,
+				0, ਲੰਮਾਈ);
+#ਨਹੀਂਤਾਂ
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(iptr, ਜਾਂਚ->ptr, ਲੰਮਾਈ);
+#ਜੇ_ਅੰਤ
+		ਜਾਂਚ->ptr += ਜਾਂਚ->inode_ਮਾਪ;
+		ਜਾਂਚ->ਬਾਈਟਾਂ_ਖੱਬਾ -= ਜਾਂਚ->inode_ਮਾਪ;
+		ਜੇ (ਜਾਂਚ->ਜਾਂਚ_flags & EXT2_SF_BAD_INODE_BLK)
+			retval = EXT2_ET_BAD_ਖੰਡ_ਵਿੱਚ_INODE_ਸਾਰਣੀ;
 	}
-	if ((iblock_status[iblk] & IBLOCK_STATUS_INSANE) &&
+	ਜੇ ((iblock_ਸਥਿਤੀ[iblk] & IBLOCK_ਸਥਿਤੀ_INSANE) &&
 	    (retval == 0 || retval == EXT2_ET_INODE_CSUM_INVALID))
 		retval = EXT2_ET_INODE_IS_GARBAGE;
 
-	scan->inodes_left--;
-	scan->current_inode++;
-	*ino = scan->current_inode;
-	if (iptr != (struct ext2_inode_large *)inode) {
-		memcpy(inode, iptr, bufsize);
+	ਜਾਂਚ->inodes_ਖੱਬਾ--;
+	ਜਾਂਚ->current_inode++;
+	*ino = ਜਾਂਚ->current_inode;
+	ਜੇ (iptr != (ਬਣਤਰ ext2_inode_large *)inode) {
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(inode, iptr, bufsize);
 		ext2fs_free_mem(&iptr);
 	}
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-errcode_t ext2fs_get_next_inode(ext2_inode_scan scan, ext2_ino_t *ino,
-				struct ext2_inode *inode)
+errcode_t ext2fs_get_ਅਗਲਾ_inode(ext2_inode_ਜਾਂਚ ਜਾਂਚ, ext2_ino_t *ino,
+				ਬਣਤਰ ext2_inode *inode)
 {
-	return ext2fs_get_next_inode_full(scan, ino, inode,
-						sizeof(struct ext2_inode));
+	ਵਾਪਸ ext2fs_get_ਅਗਲਾ_inode_ਭਰਿਆ(ਜਾਂਚ, ino, inode,
+						ਆਕਾਰ(ਬਣਤਰ ext2_inode));
 }
 
 /*
  * Functions to read and write a single inode.
  */
 errcode_t ext2fs_read_inode2(ext2_filsys fs, ext2_ino_t ino,
-			     struct ext2_inode * inode, int bufsize,
-			     int flags)
+			     ਬਣਤਰ ext2_inode * inode, ਪੂਰਨ bufsize,
+			     ਪੂਰਨ flags)
 {
-	blk64_t		block_nr;
-	dgrp_t		group;
-	unsigned long 	block, offset;
-	char 		*ptr;
+	blk64_t		ਖੰਡ_nr;
+	dgrp_t		ਸਮੂਹ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ 	ਖੰਡ, ਵਿੱਥ;
+	ਅੱਖਰ 		*ptr;
 	errcode_t	retval;
-	unsigned	i;
-	int		clen, inodes_per_block;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ	i;
+	ਪੂਰਨ		clen, inodes_ਪ੍ਰਤੀ_ਖੰਡ;
 	io_channel	io;
-	int		length = EXT2_INODE_SIZE(fs->super);
-	struct ext2_inode_large	*iptr;
-	int		cache_slot, fail_csum;
+	ਪੂਰਨ		ਲੰਮਾਈ = EXT2_INODE_ਮਾਪ(fs->super);
+	ਬਣਤਰ ext2_inode_large	*iptr;
+	ਪੂਰਨ		cache_ਥਾਂ, fail_csum;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (ext2fs_has_feature_journal_dev(fs->super))
-		return EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
+	ਜੇ (ext2fs_has_feature_journal_dev(fs->super))
+		ਵਾਪਸ EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
 
-	if (fs->blocksize < 1024)
-		return EXT2_FILSYS_CORRUPTED; /* Should never happen */
+	ਜੇ (fs->blocksize < 1024)
+		ਵਾਪਸ EXT2_FILSYS_CORRUPTED; /* Should never happen */
 
 	/* Check to see if user has an override function */
-	if (fs->read_inode &&
-	    ((bufsize == sizeof(struct ext2_inode)) ||
-	     (EXT2_INODE_SIZE(fs->super) == sizeof(struct ext2_inode)))) {
+	ਜੇ (fs->read_inode &&
+	    ((bufsize == ਆਕਾਰ(ਬਣਤਰ ext2_inode)) ||
+	     (EXT2_INODE_ਮਾਪ(fs->super) == ਆਕਾਰ(ਬਣਤਰ ext2_inode)))) {
 		retval = (fs->read_inode)(fs, ino, inode);
-		if (retval != EXT2_ET_CALLBACK_NOTHANDLED)
-			return retval;
+		ਜੇ (retval != EXT2_ET_CALLBACK_NOTHANDLED)
+			ਵਾਪਸ retval;
 	}
-	if ((ino == 0) || (ino > fs->super->s_inodes_count))
-		return EXT2_ET_BAD_INODE_NUM;
+	ਜੇ ((ino == 0) || (ino > fs->super->s_inodes_ਗਿਣਤੀ))
+		ਵਾਪਸ EXT2_ET_BAD_INODE_ਅੰਕ;
 	/* Create inode cache if not present */
-	if (!fs->icache) {
+	ਜੇ (!fs->icache) {
 		retval = ext2fs_create_inode_cache(fs, 4);
-		if (retval)
-			return retval;
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
 	}
 	/* Check to see if it's in the inode cache */
-	for (i = 0; i < fs->icache->cache_size; i++) {
-		if (fs->icache->cache[i].ino == ino) {
-			memcpy(inode, fs->icache->cache[i].inode,
-			       (bufsize > length) ? length : bufsize);
-			return 0;
+	ਲਈ (i = 0; i < fs->icache->cache_ਮਾਪ; i++) {
+		ਜੇ (fs->icache->cache[i].ino == ino) {
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(inode, fs->icache->cache[i].inode,
+			       (bufsize > ਲੰਮਾਈ) ? ਲੰਮਾਈ : bufsize);
+			ਵਾਪਸ 0;
 		}
 	}
-	if (fs->flags & EXT2_FLAG_IMAGE_FILE) {
-		inodes_per_block = fs->blocksize / EXT2_INODE_SIZE(fs->super);
-		block_nr = ext2fs_le32_to_cpu(fs->image_header->offset_inode) / fs->blocksize;
-		block_nr += (ino - 1) / inodes_per_block;
-		offset = ((ino - 1) % inodes_per_block) *
-			EXT2_INODE_SIZE(fs->super);
+	ਜੇ (fs->flags & EXT2_FLAG_IMAGE_FILE) {
+		inodes_ਪ੍ਰਤੀ_ਖੰਡ = fs->blocksize / EXT2_INODE_ਮਾਪ(fs->super);
+		ਖੰਡ_nr = ext2fs_le32_ਮੰਜ਼ਿਲ_cpu(fs->image_ਸਿਰਲੇਖ->ਵਿੱਥ_inode) / fs->blocksize;
+		ਖੰਡ_nr += (ino - 1) / inodes_ਪ੍ਰਤੀ_ਖੰਡ;
+		ਵਿੱਥ = ((ino - 1) % inodes_ਪ੍ਰਤੀ_ਖੰਡ) *
+			EXT2_INODE_ਮਾਪ(fs->super);
 		io = fs->image_io;
-	} else {
-		group = (ino - 1) / EXT2_INODES_PER_GROUP(fs->super);
-		if (group > fs->group_desc_count)
-			return EXT2_ET_BAD_INODE_NUM;
-		offset = ((ino - 1) % EXT2_INODES_PER_GROUP(fs->super)) *
-			EXT2_INODE_SIZE(fs->super);
-		block = offset >> EXT2_BLOCK_SIZE_BITS(fs->super);
-		block_nr = ext2fs_inode_table_loc(fs, group);
-		if (!block_nr)
-			return EXT2_ET_MISSING_INODE_TABLE;
-		if ((block_nr < fs->super->s_first_data_block) ||
-		    (block_nr + fs->inode_blocks_per_group - 1 >=
-		     ext2fs_blocks_count(fs->super)))
-			return EXT2_ET_GDESC_BAD_INODE_TABLE;
-		block_nr += block;
+	} ਨਹੀਂਤਾਂ {
+		ਸਮੂਹ = (ino - 1) / EXT2_INODES_ਪ੍ਰਤੀ_ਸਮੂਹ(fs->super);
+		ਜੇ (ਸਮੂਹ > fs->ਸਮੂਹ_desc_ਗਿਣਤੀ)
+			ਵਾਪਸ EXT2_ET_BAD_INODE_ਅੰਕ;
+		ਵਿੱਥ = ((ino - 1) % EXT2_INODES_ਪ੍ਰਤੀ_ਸਮੂਹ(fs->super)) *
+			EXT2_INODE_ਮਾਪ(fs->super);
+		ਖੰਡ = ਵਿੱਥ >> EXT2_ਖੰਡ_ਮਾਪ_ਬਿੱਟ(fs->super);
+		ਖੰਡ_nr = ext2fs_inode_ਸਾਰਣੀ_loc(fs, ਸਮੂਹ);
+		ਜੇ (!ਖੰਡ_nr)
+			ਵਾਪਸ EXT2_ET_MISSING_INODE_ਸਾਰਣੀ;
+		ਜੇ ((ਖੰਡ_nr < fs->super->s_ਪਹਿਲਾ_ਅੰਕੜੇ_ਖੰਡ) ||
+		    (ਖੰਡ_nr + fs->inode_ਖੰਡਾਂ_ਪ੍ਰਤੀ_ਸਮੂਹ - 1 >=
+		     ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super)))
+			ਵਾਪਸ EXT2_ET_GDESC_BAD_INODE_ਸਾਰਣੀ;
+		ਖੰਡ_nr += ਖੰਡ;
 		io = fs->io;
 	}
-	offset &= (EXT2_BLOCK_SIZE(fs->super) - 1);
+	ਵਿੱਥ &= (EXT2_ਖੰਡ_ਮਾਪ(fs->super) - 1);
 
-	cache_slot = (fs->icache->cache_last + 1) % fs->icache->cache_size;
-	iptr = (struct ext2_inode_large *)fs->icache->cache[cache_slot].inode;
+	cache_ਥਾਂ = (fs->icache->cache_ਆਖਰੀ + 1) % fs->icache->cache_ਮਾਪ;
+	iptr = (ਬਣਤਰ ext2_inode_large *)fs->icache->cache[cache_ਥਾਂ].inode;
 
-	ptr = (char *) iptr;
-	while (length) {
-		clen = length;
-		if ((offset + length) > fs->blocksize)
-			clen = fs->blocksize - offset;
+	ptr = (ਅੱਖਰ *) iptr;
+	ਜਦੋਂ (ਲੰਮਾਈ) {
+		clen = ਲੰਮਾਈ;
+		ਜੇ ((ਵਿੱਥ + ਲੰਮਾਈ) > fs->blocksize)
+			clen = fs->blocksize - ਵਿੱਥ;
 
-		if (block_nr != fs->icache->buffer_blk) {
-			retval = io_channel_read_blk64(io, block_nr, 1,
-						     fs->icache->buffer);
-			if (retval)
-				return retval;
-			fs->icache->buffer_blk = block_nr;
+		ਜੇ (ਖੰਡ_nr != fs->icache->ਬਫਰ_blk) {
+			retval = io_channel_read_blk64(io, ਖੰਡ_nr, 1,
+						     fs->icache->ਬਫਰ);
+			ਜੇ (retval)
+				ਵਾਪਸ retval;
+			fs->icache->ਬਫਰ_blk = ਖੰਡ_nr;
 		}
 
-		memcpy(ptr, ((char *) fs->icache->buffer) + (unsigned) offset,
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(ptr, ((ਅੱਖਰ *) fs->icache->ਬਫਰ) + (ਬਿਨਾਨਿਸ਼ਾਨੀ) ਵਿੱਥ,
 		       clen);
 
-		offset = 0;
-		length -= clen;
+		ਵਿੱਥ = 0;
+		ਲੰਮਾਈ -= clen;
 		ptr += clen;
-		block_nr++;
+		ਖੰਡ_nr++;
 	}
-	length = EXT2_INODE_SIZE(fs->super);
+	ਲੰਮਾਈ = EXT2_INODE_ਮਾਪ(fs->super);
 
 	/* Verify the inode checksum. */
 	fail_csum = !ext2fs_inode_csum_verify(fs, ino, iptr);
 
-#ifdef WORDS_BIGENDIAN
-	ext2fs_swap_inode_full(fs, (struct ext2_inode_large *) iptr,
-			       (struct ext2_inode_large *) iptr,
-			       0, length);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ਸ਼ਬਦ_BIGENDIAN
+	ext2fs_ਅਦਲਾ_ਬਦਲੀ_inode_ਭਰਿਆ(fs, (ਬਣਤਰ ext2_inode_large *) iptr,
+			       (ਬਣਤਰ ext2_inode_large *) iptr,
+			       0, ਲੰਮਾਈ);
+#ਜੇ_ਅੰਤ
 
 	/* Update the inode cache bookkeeping */
-	if (!fail_csum) {
-		fs->icache->cache_last = cache_slot;
-		fs->icache->cache[cache_slot].ino = ino;
+	ਜੇ (!fail_csum) {
+		fs->icache->cache_ਆਖਰੀ = cache_ਥਾਂ;
+		fs->icache->cache[cache_ਥਾਂ].ino = ino;
 	}
-	memcpy(inode, iptr, (bufsize > length) ? length : bufsize);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(inode, iptr, (bufsize > ਲੰਮਾਈ) ? ਲੰਮਾਈ : bufsize);
 
-	if (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+	ਜੇ (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
 	    !(flags & READ_INODE_NOCSUM) && fail_csum)
-		return EXT2_ET_INODE_CSUM_INVALID;
+		ਵਾਪਸ EXT2_ET_INODE_CSUM_INVALID;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-errcode_t ext2fs_read_inode_full(ext2_filsys fs, ext2_ino_t ino,
-				 struct ext2_inode * inode, int bufsize)
+errcode_t ext2fs_read_inode_ਭਰਿਆ(ext2_filsys fs, ext2_ino_t ino,
+				 ਬਣਤਰ ext2_inode * inode, ਪੂਰਨ bufsize)
 {
-	return ext2fs_read_inode2(fs, ino, inode, bufsize, 0);
+	ਵਾਪਸ ext2fs_read_inode2(fs, ino, inode, bufsize, 0);
 }
 
 errcode_t ext2fs_read_inode(ext2_filsys fs, ext2_ino_t ino,
-			    struct ext2_inode * inode)
+			    ਬਣਤਰ ext2_inode * inode)
 {
-	return ext2fs_read_inode2(fs, ino, inode,
-				  sizeof(struct ext2_inode), 0);
+	ਵਾਪਸ ext2fs_read_inode2(fs, ino, inode,
+				  ਆਕਾਰ(ਬਣਤਰ ext2_inode), 0);
 }
 
 errcode_t ext2fs_write_inode2(ext2_filsys fs, ext2_ino_t ino,
-			      struct ext2_inode * inode, int bufsize,
-			      int flags)
+			      ਬਣਤਰ ext2_inode * inode, ਪੂਰਨ bufsize,
+			      ਪੂਰਨ flags)
 {
-	blk64_t block_nr;
-	dgrp_t group;
-	unsigned long block, offset;
+	blk64_t ਖੰਡ_nr;
+	dgrp_t ਸਮੂਹ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਖੰਡ, ਵਿੱਥ;
 	errcode_t retval = 0;
-	struct ext2_inode_large *w_inode;
-	char *ptr;
-	unsigned i;
-	int clen;
-	int length = EXT2_INODE_SIZE(fs->super);
+	ਬਣਤਰ ext2_inode_large *w_inode;
+	ਅੱਖਰ *ptr;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ i;
+	ਪੂਰਨ clen;
+	ਪੂਰਨ ਲੰਮਾਈ = EXT2_INODE_ਮਾਪ(fs->super);
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (ext2fs_has_feature_journal_dev(fs->super))
-		return EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
+	ਜੇ (ext2fs_has_feature_journal_dev(fs->super))
+		ਵਾਪਸ EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
 
 	/* Check to see if user provided an override function */
-	if (fs->write_inode) {
+	ਜੇ (fs->write_inode) {
 		retval = (fs->write_inode)(fs, ino, inode);
-		if (retval != EXT2_ET_CALLBACK_NOTHANDLED)
-			return retval;
+		ਜੇ (retval != EXT2_ET_CALLBACK_NOTHANDLED)
+			ਵਾਪਸ retval;
 	}
 
-	if ((ino == 0) || (ino > fs->super->s_inodes_count))
-		return EXT2_ET_BAD_INODE_NUM;
+	ਜੇ ((ino == 0) || (ino > fs->super->s_inodes_ਗਿਣਤੀ))
+		ਵਾਪਸ EXT2_ET_BAD_INODE_ਅੰਕ;
 
 	/* Prepare our shadow buffer for read/modify/byteswap/write */
-	retval = ext2fs_get_mem(length, &w_inode);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(ਲੰਮਾਈ, &w_inode);
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
-	if (bufsize < length) {
+	ਜੇ (bufsize < ਲੰਮਾਈ) {
 		retval = ext2fs_read_inode2(fs, ino,
-					    (struct ext2_inode *)w_inode,
-					    length, READ_INODE_NOCSUM);
-		if (retval)
-			goto errout;
+					    (ਬਣਤਰ ext2_inode *)w_inode,
+					    ਲੰਮਾਈ, READ_INODE_NOCSUM);
+		ਜੇ (retval)
+			ਜਾਓ errout;
 	}
 
 	/* Check to see if the inode cache needs to be updated */
-	if (fs->icache) {
-		for (i=0; i < fs->icache->cache_size; i++) {
-			if (fs->icache->cache[i].ino == ino) {
-				memcpy(fs->icache->cache[i].inode, inode,
-				       (bufsize > length) ? length : bufsize);
-				break;
+	ਜੇ (fs->icache) {
+		ਲਈ (i=0; i < fs->icache->cache_ਮਾਪ; i++) {
+			ਜੇ (fs->icache->cache[i].ino == ino) {
+				ਸਮ੍ਰਿਤੀ_ਨਕਲ(fs->icache->cache[i].inode, inode,
+				       (bufsize > ਲੰਮਾਈ) ? ਲੰਮਾਈ : bufsize);
+				ਰੋਕੋ;
 			}
 		}
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		retval = ext2fs_create_inode_cache(fs, 4);
-		if (retval)
-			goto errout;
+		ਜੇ (retval)
+			ਜਾਓ errout;
 	}
-	memcpy(w_inode, inode, (bufsize > length) ? length : bufsize);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(w_inode, inode, (bufsize > ਲੰਮਾਈ) ? ਲੰਮਾਈ : bufsize);
 
-	if (!(fs->flags & EXT2_FLAG_RW)) {
+	ਜੇ (!(fs->flags & EXT2_FLAG_RW)) {
 		retval = EXT2_ET_RO_FILSYS;
-		goto errout;
+		ਜਾਓ errout;
 	}
 
-#ifdef WORDS_BIGENDIAN
-	ext2fs_swap_inode_full(fs, w_inode, w_inode, 1, length);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ਸ਼ਬਦ_BIGENDIAN
+	ext2fs_ਅਦਲਾ_ਬਦਲੀ_inode_ਭਰਿਆ(fs, w_inode, w_inode, 1, ਲੰਮਾਈ);
+#ਜੇ_ਅੰਤ
 
-	if ((flags & WRITE_INODE_NOCSUM) == 0) {
-		retval = ext2fs_inode_csum_set(fs, ino, w_inode);
-		if (retval)
-			goto errout;
+	ਜੇ ((flags & WRITE_INODE_NOCSUM) == 0) {
+		retval = ext2fs_inode_csum_ਸੈੱਟ(fs, ino, w_inode);
+		ਜੇ (retval)
+			ਜਾਓ errout;
 	}
 
-	group = (ino - 1) / EXT2_INODES_PER_GROUP(fs->super);
-	offset = ((ino - 1) % EXT2_INODES_PER_GROUP(fs->super)) *
-		EXT2_INODE_SIZE(fs->super);
-	block = offset >> EXT2_BLOCK_SIZE_BITS(fs->super);
-	block_nr = ext2fs_inode_table_loc(fs, (unsigned) group);
-	if (!block_nr) {
-		retval = EXT2_ET_MISSING_INODE_TABLE;
-		goto errout;
+	ਸਮੂਹ = (ino - 1) / EXT2_INODES_ਪ੍ਰਤੀ_ਸਮੂਹ(fs->super);
+	ਵਿੱਥ = ((ino - 1) % EXT2_INODES_ਪ੍ਰਤੀ_ਸਮੂਹ(fs->super)) *
+		EXT2_INODE_ਮਾਪ(fs->super);
+	ਖੰਡ = ਵਿੱਥ >> EXT2_ਖੰਡ_ਮਾਪ_ਬਿੱਟ(fs->super);
+	ਖੰਡ_nr = ext2fs_inode_ਸਾਰਣੀ_loc(fs, (ਬਿਨਾਨਿਸ਼ਾਨੀ) ਸਮੂਹ);
+	ਜੇ (!ਖੰਡ_nr) {
+		retval = EXT2_ET_MISSING_INODE_ਸਾਰਣੀ;
+		ਜਾਓ errout;
 	}
-	if ((block_nr < fs->super->s_first_data_block) ||
-	    (block_nr + fs->inode_blocks_per_group - 1 >=
-	     ext2fs_blocks_count(fs->super))) {
-		retval = EXT2_ET_GDESC_BAD_INODE_TABLE;
-		goto errout;
+	ਜੇ ((ਖੰਡ_nr < fs->super->s_ਪਹਿਲਾ_ਅੰਕੜੇ_ਖੰਡ) ||
+	    (ਖੰਡ_nr + fs->inode_ਖੰਡਾਂ_ਪ੍ਰਤੀ_ਸਮੂਹ - 1 >=
+	     ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super))) {
+		retval = EXT2_ET_GDESC_BAD_INODE_ਸਾਰਣੀ;
+		ਜਾਓ errout;
 	}
-	block_nr += block;
+	ਖੰਡ_nr += ਖੰਡ;
 
-	offset &= (EXT2_BLOCK_SIZE(fs->super) - 1);
+	ਵਿੱਥ &= (EXT2_ਖੰਡ_ਮਾਪ(fs->super) - 1);
 
-	ptr = (char *) w_inode;
+	ptr = (ਅੱਖਰ *) w_inode;
 
-	while (length) {
-		clen = length;
-		if ((offset + length) > fs->blocksize)
-			clen = fs->blocksize - offset;
+	ਜਦੋਂ (ਲੰਮਾਈ) {
+		clen = ਲੰਮਾਈ;
+		ਜੇ ((ਵਿੱਥ + ਲੰਮਾਈ) > fs->blocksize)
+			clen = fs->blocksize - ਵਿੱਥ;
 
-		if (fs->icache->buffer_blk != block_nr) {
-			retval = io_channel_read_blk64(fs->io, block_nr, 1,
-						     fs->icache->buffer);
-			if (retval)
-				goto errout;
-			fs->icache->buffer_blk = block_nr;
+		ਜੇ (fs->icache->ਬਫਰ_blk != ਖੰਡ_nr) {
+			retval = io_channel_read_blk64(fs->io, ਖੰਡ_nr, 1,
+						     fs->icache->ਬਫਰ);
+			ਜੇ (retval)
+				ਜਾਓ errout;
+			fs->icache->ਬਫਰ_blk = ਖੰਡ_nr;
 		}
 
 
-		memcpy((char *) fs->icache->buffer + (unsigned) offset,
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ((ਅੱਖਰ *) fs->icache->ਬਫਰ + (ਬਿਨਾਨਿਸ਼ਾਨੀ) ਵਿੱਥ,
 		       ptr, clen);
 
-		retval = io_channel_write_blk64(fs->io, block_nr, 1,
-					      fs->icache->buffer);
-		if (retval)
-			goto errout;
+		retval = io_channel_write_blk64(fs->io, ਖੰਡ_nr, 1,
+					      fs->icache->ਬਫਰ);
+		ਜੇ (retval)
+			ਜਾਓ errout;
 
-		offset = 0;
+		ਵਿੱਥ = 0;
 		ptr += clen;
-		length -= clen;
-		block_nr++;
+		ਲੰਮਾਈ -= clen;
+		ਖੰਡ_nr++;
 	}
 
-	fs->flags |= EXT2_FLAG_CHANGED;
+	fs->flags |= EXT2_FLAG_ਬਦਲਿਆ;
 errout:
 	ext2fs_free_mem(&w_inode);
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-errcode_t ext2fs_write_inode_full(ext2_filsys fs, ext2_ino_t ino,
-				  struct ext2_inode * inode, int bufsize)
+errcode_t ext2fs_write_inode_ਭਰਿਆ(ext2_filsys fs, ext2_ino_t ino,
+				  ਬਣਤਰ ext2_inode * inode, ਪੂਰਨ bufsize)
 {
-	return ext2fs_write_inode2(fs, ino, inode, bufsize, 0);
+	ਵਾਪਸ ext2fs_write_inode2(fs, ino, inode, bufsize, 0);
 }
 
 errcode_t ext2fs_write_inode(ext2_filsys fs, ext2_ino_t ino,
-			     struct ext2_inode *inode)
+			     ਬਣਤਰ ext2_inode *inode)
 {
-	return ext2fs_write_inode2(fs, ino, inode,
-				   sizeof(struct ext2_inode), 0);
+	ਵਾਪਸ ext2fs_write_inode2(fs, ino, inode,
+				   ਆਕਾਰ(ਬਣਤਰ ext2_inode), 0);
 }
 
 /*
@@ -1036,87 +1036,87 @@ errcode_t ext2fs_write_inode(ext2_filsys fs, ext2_ino_t ino,
  * sure that extra part of large inodes is initialized properly.
  */
 errcode_t ext2fs_write_new_inode(ext2_filsys fs, ext2_ino_t ino,
-				 struct ext2_inode *inode)
+				 ਬਣਤਰ ext2_inode *inode)
 {
-	struct ext2_inode	*buf;
-	int			size = EXT2_INODE_SIZE(fs->super);
-	struct ext2_inode_large	*large_inode;
+	ਬਣਤਰ ext2_inode	*buf;
+	ਪੂਰਨ			ਮਾਪ = EXT2_INODE_ਮਾਪ(fs->super);
+	ਬਣਤਰ ext2_inode_large	*large_inode;
 	errcode_t		retval;
-	time_t			t = ext2fsP_get_time(fs);
+	time_t			t = ext2fs_P_get_ਸਮਾਂ(fs);
 
-	if (!ext2fs_inode_xtime_get(inode, i_atime))
-		ext2fs_inode_xtime_set(inode, i_atime, t);
-	if (!ext2fs_inode_xtime_get(inode, i_ctime))
-		ext2fs_inode_xtime_set(inode, i_ctime, t);
-	if (!ext2fs_inode_xtime_get(inode, i_mtime))
-		ext2fs_inode_xtime_set(inode, i_mtime, t);
+	ਜੇ (!ext2fs_inode_xtime_get(inode, i_atime))
+		ext2fs_inode_xtime_ਸੈੱਟ(inode, i_atime, t);
+	ਜੇ (!ext2fs_inode_xtime_get(inode, i_ctime))
+		ext2fs_inode_xtime_ਸੈੱਟ(inode, i_ctime, t);
+	ਜੇ (!ext2fs_inode_xtime_get(inode, i_mtime))
+		ext2fs_inode_xtime_ਸੈੱਟ(inode, i_mtime, t);
 
-	if (size == sizeof(struct ext2_inode))
-		return ext2fs_write_inode_full(fs, ino, inode,
-					       sizeof(struct ext2_inode));
+	ਜੇ (ਮਾਪ == ਆਕਾਰ(ਬਣਤਰ ext2_inode))
+		ਵਾਪਸ ext2fs_write_inode_ਭਰਿਆ(fs, ino, inode,
+					       ਆਕਾਰ(ਬਣਤਰ ext2_inode));
 
-	buf = malloc(size);
-	if (!buf)
-		return ENOMEM;
+	buf = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਮਾਪ);
+	ਜੇ (!buf)
+		ਵਾਪਸ ENOMEM;
 
-	memset(buf, 0, size);
+	memset(buf, 0, ਮਾਪ);
 	*buf = *inode;
 
-	large_inode = (struct ext2_inode_large *) buf;
-	large_inode->i_extra_isize = sizeof(struct ext2_inode_large) -
-		EXT2_GOOD_OLD_INODE_SIZE;
-	if (!large_inode->i_crtime)
+	large_inode = (ਬਣਤਰ ext2_inode_large *) buf;
+	large_inode->i_extra_isize = ਆਕਾਰ(ਬਣਤਰ ext2_inode_large) -
+		EXT2_GOOD_OLD_INODE_ਮਾਪ;
+	ਜੇ (!large_inode->i_crtime)
 		large_inode->i_crtime = t;
 
-	retval = ext2fs_write_inode_full(fs, ino, buf, size);
-	free(buf);
-	return retval;
+	retval = ext2fs_write_inode_ਭਰਿਆ(fs, ino, buf, ਮਾਪ);
+	ਮੁਕਤ(buf);
+	ਵਾਪਸ retval;
 }
 
 
-errcode_t ext2fs_get_blocks(ext2_filsys fs, ext2_ino_t ino, blk_t *blocks)
+errcode_t ext2fs_get_ਖੰਡਾਂ(ext2_filsys fs, ext2_ino_t ino, blk_t *ਖੰਡਾਂ)
 {
-	struct ext2_inode	inode;
-	int			i;
+	ਬਣਤਰ ext2_inode	inode;
+	ਪੂਰਨ			i;
 	errcode_t		retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (ino > fs->super->s_inodes_count)
-		return EXT2_ET_BAD_INODE_NUM;
+	ਜੇ (ino > fs->super->s_inodes_ਗਿਣਤੀ)
+		ਵਾਪਸ EXT2_ET_BAD_INODE_ਅੰਕ;
 
-	if (fs->get_blocks) {
-		if (!(*fs->get_blocks)(fs, ino, blocks))
-			return 0;
+	ਜੇ (fs->get_ਖੰਡਾਂ) {
+		ਜੇ (!(*fs->get_ਖੰਡਾਂ)(fs, ino, ਖੰਡਾਂ))
+			ਵਾਪਸ 0;
 	}
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
-		return retval;
-	for (i=0; i < EXT2_N_BLOCKS; i++)
-		blocks[i] = inode.i_block[i];
-	return 0;
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
+	ਲਈ (i=0; i < EXT2_N_ਖੰਡਾਂ; i++)
+		ਖੰਡਾਂ[i] = inode.i_ਖੰਡ[i];
+	ਵਾਪਸ 0;
 }
 
 errcode_t ext2fs_check_directory(ext2_filsys fs, ext2_ino_t ino)
 {
-	struct	ext2_inode	inode;
+	ਬਣਤਰ	ext2_inode	inode;
 	errcode_t		retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (ino > fs->super->s_inodes_count)
-		return EXT2_ET_BAD_INODE_NUM;
+	ਜੇ (ino > fs->super->s_inodes_ਗਿਣਤੀ)
+		ਵਾਪਸ EXT2_ET_BAD_INODE_ਅੰਕ;
 
-	if (fs->check_directory) {
+	ਜੇ (fs->check_directory) {
 		retval = (fs->check_directory)(fs, ino);
-		if (retval != EXT2_ET_CALLBACK_NOTHANDLED)
-			return retval;
+		ਜੇ (retval != EXT2_ET_CALLBACK_NOTHANDLED)
+			ਵਾਪਸ retval;
 	}
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
-		return retval;
-	if (!LINUX_S_ISDIR(inode.i_mode))
-		return EXT2_ET_NO_DIRECTORY;
-	return 0;
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
+	ਜੇ (!LINUX_S_ISDIR(inode.i_ਬਹੁਲਕ))
+		ਵਾਪਸ EXT2_ET_NO_DIRECTORY;
+	ਵਾਪਸ 0;
 }
 

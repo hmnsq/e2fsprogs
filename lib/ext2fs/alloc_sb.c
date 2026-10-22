@@ -10,23 +10,23 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਜੇ HAVE_UNISTD_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਜੇ HAVE_SYS_STAT_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਜੇ_ਅੰਤ
+#ਜੇ HAVE_SYS_TYPES_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਜੇ_ਅੰਤ
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fs.h"
 
 /*
  * This function reserves the superblock and block group descriptors
@@ -41,42 +41,42 @@
  *
  * See also the comment for ext2fs_super_and_bgd_loc()
  */
-int ext2fs_reserve_super_and_bgd(ext2_filsys fs,
-				 dgrp_t group,
-				 ext2fs_block_bitmap bmap)
+ਪੂਰਨ ext2fs_reserve_super_and_bgd(ext2_filsys fs,
+				 dgrp_t ਸਮੂਹ,
+				 ext2fs_ਖੰਡ_bitmap bmap)
 {
 	blk64_t	super_blk, old_desc_blk, new_desc_blk;
-	blk_t	used_blks, old_desc_blocks, num_blocks;
+	blk_t	ਵਰਤਿਆ_blks, old_desc_ਖੰਡਾਂ, ਅੰਕ_ਖੰਡਾਂ;
 
-	ext2fs_super_and_bgd_loc2(fs, group, &super_blk,
-				  &old_desc_blk, &new_desc_blk, &used_blks);
+	ext2fs_super_and_bgd_loc2(fs, ਸਮੂਹ, &super_blk,
+				  &old_desc_blk, &new_desc_blk, &ਵਰਤਿਆ_blks);
 
-	if (ext2fs_has_feature_meta_bg(fs->super))
-		old_desc_blocks = fs->super->s_first_meta_bg;
-	else
-		old_desc_blocks =
-			fs->desc_blocks + fs->super->s_reserved_gdt_blocks;
+	ਜੇ (ext2fs_has_feature_meta_bg(fs->super))
+		old_desc_ਖੰਡਾਂ = fs->super->s_ਪਹਿਲਾ_meta_bg;
+	ਨਹੀਂਤਾਂ
+		old_desc_ਖੰਡਾਂ =
+			fs->desc_ਖੰਡਾਂ + fs->super->s_reserved_gdt_ਖੰਡਾਂ;
 
-	if (super_blk || (group == 0))
-		ext2fs_mark_block_bitmap2(bmap, super_blk);
-	if ((group == 0) && (fs->blocksize == 1024) &&
-	    EXT2FS_CLUSTER_RATIO(fs) > 1)
-		ext2fs_mark_block_bitmap2(bmap, 0);
+	ਜੇ (super_blk || (ਸਮੂਹ == 0))
+		ext2fs_mark_ਖੰਡ_bitmap2(bmap, super_blk);
+	ਜੇ ((ਸਮੂਹ == 0) && (fs->blocksize == 1024) &&
+	    EXT2_FS_CLUSTER_ਅਨੁਪਾਤ(fs) > 1)
+		ext2fs_mark_ਖੰਡ_bitmap2(bmap, 0);
 
-	if (old_desc_blk) {
-		num_blocks = old_desc_blocks;
-		if (old_desc_blk + num_blocks >= ext2fs_blocks_count(fs->super))
-			num_blocks = ext2fs_blocks_count(fs->super) -
+	ਜੇ (old_desc_blk) {
+		ਅੰਕ_ਖੰਡਾਂ = old_desc_ਖੰਡਾਂ;
+		ਜੇ (old_desc_blk + ਅੰਕ_ਖੰਡਾਂ >= ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super))
+			ਅੰਕ_ਖੰਡਾਂ = ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super) -
 				old_desc_blk;
-		ext2fs_mark_block_bitmap_range2(bmap, old_desc_blk, num_blocks);
+		ext2fs_mark_ਖੰਡ_bitmap_range2(bmap, old_desc_blk, ਅੰਕ_ਖੰਡਾਂ);
 	}
-	if (new_desc_blk)
-		ext2fs_mark_block_bitmap2(bmap, new_desc_blk);
+	ਜੇ (new_desc_blk)
+		ext2fs_mark_ਖੰਡ_bitmap2(bmap, new_desc_blk);
 
-	num_blocks = ext2fs_group_blocks_count(fs, group);
-	num_blocks -= 2 + fs->inode_blocks_per_group + used_blks;
+	ਅੰਕ_ਖੰਡਾਂ = ext2fs_ਸਮੂਹ_ਖੰਡਾਂ_ਗਿਣਤੀ(fs, ਸਮੂਹ);
+	ਅੰਕ_ਖੰਡਾਂ -= 2 + fs->inode_ਖੰਡਾਂ_ਪ੍ਰਤੀ_ਸਮੂਹ + ਵਰਤਿਆ_blks;
 
-	return num_blocks  ;
+	ਵਾਪਸ ਅੰਕ_ਖੰਡਾਂ  ;
 }
 
 /*
@@ -85,21 +85,21 @@ int ext2fs_reserve_super_and_bgd(ext2_filsys fs,
  * super block and group descriptors by looking up the block bitmap.
  */
 errcode_t ext2fs_reserve_super_and_bgd2(ext2_filsys fs,
-				        dgrp_t group,
-				        ext2fs_block_bitmap bmap,
-				        blk_t *desc_blocks)
+				        dgrp_t ਸਮੂਹ,
+				        ext2fs_ਖੰਡ_bitmap bmap,
+				        blk_t *desc_ਖੰਡਾਂ)
 {
-	blk64_t	num_blocks;
+	blk64_t	ਅੰਕ_ਖੰਡਾਂ;
 	errcode_t retval = 0;
 
-	ext2fs_reserve_super_and_bgd(fs, group, bmap);
+	ext2fs_reserve_super_and_bgd(fs, ਸਮੂਹ, bmap);
 
-	retval = ext2fs_count_used_blocks(fs,
-					ext2fs_group_first_block2(fs, group),
-					ext2fs_group_last_block2(fs, group),
-					&num_blocks);
-	if (!retval)
-		*desc_blocks = num_blocks;
+	retval = ext2fs_ਗਿਣਤੀ_ਵਰਤਿਆ_ਖੰਡਾਂ(fs,
+					ext2fs_ਸਮੂਹ_ਪਹਿਲਾ_block2(fs, ਸਮੂਹ),
+					ext2fs_ਸਮੂਹ_ਆਖਰੀ_block2(fs, ਸਮੂਹ),
+					&ਅੰਕ_ਖੰਡਾਂ);
+	ਜੇ (!retval)
+		*desc_ਖੰਡਾਂ = ਅੰਕ_ਖੰਡਾਂ;
 
-	return retval;
+	ਵਾਪਸ retval;
 }

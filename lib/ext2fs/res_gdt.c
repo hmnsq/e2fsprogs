@@ -10,12 +10,12 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fsP.h"
 
 /*
  * Iterate through the groups which hold BACKUP superblock/GDT copies in an
@@ -29,48 +29,48 @@ dgrp_t ext2fs_list_backups(ext2_filsys fs, dgrp_t *three,
 			   dgrp_t *five, dgrp_t *seven)
 {
 	dgrp_t *min = three;
-	unsigned long long mult = 3;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ mult = 3;
 	dgrp_t ret;
 
-	if (fs && ext2fs_has_feature_sparse_super2(fs->super)) {
-		if (*min == 1) {
+	ਜੇ (fs && ext2fs_has_feature_sparse_super2(fs->super)) {
+		ਜੇ (*min == 1) {
 			*min += 1;
-			if (fs->super->s_backup_bgs[0])
-				return fs->super->s_backup_bgs[0];
+			ਜੇ (fs->super->s_backup_bgs[0])
+				ਵਾਪਸ fs->super->s_backup_bgs[0];
 		}
-		if (*min == 2) {
+		ਜੇ (*min == 2) {
 			*min += 1;
-			if (fs->super->s_backup_bgs[1])
-				return fs->super->s_backup_bgs[1];
+			ਜੇ (fs->super->s_backup_bgs[1])
+				ਵਾਪਸ fs->super->s_backup_bgs[1];
 		}
 
-		return fs->group_desc_count;
+		ਵਾਪਸ fs->ਸਮੂਹ_desc_ਗਿਣਤੀ;
 	}
 
-	if (fs && !ext2fs_has_feature_sparse_super(fs->super)) {
+	ਜੇ (fs && !ext2fs_has_feature_sparse_super(fs->super)) {
 		ret = *min;
 		*min += 1;
 
-		return ret;
+		ਵਾਪਸ ret;
 	}
 
-	if (*five < *min) {
+	ਜੇ (*five < *min) {
 		min = five;
 		mult = 5;
 	}
-	if (*seven < *min) {
+	ਜੇ (*seven < *min) {
 		min = seven;
 		mult = 7;
 	}
 
 	ret = *min;
 	mult *= *min;
-	if (mult > (dgrp_t)-1)
+	ਜੇ (mult > (dgrp_t)-1)
 		*min = (dgrp_t)-1;
-	else
+	ਨਹੀਂਤਾਂ
 		*min = mult;
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
 /*
@@ -82,80 +82,80 @@ dgrp_t ext2fs_list_backups(ext2_filsys fs, dgrp_t *three,
 errcode_t ext2fs_create_resize_inode(ext2_filsys fs)
 {
 	errcode_t		retval, retval2;
-	struct ext2_super_block	*sb;
-	struct ext2_inode	inode;
+	ਬਣਤਰ ext2_super_ਖੰਡ	*sb;
+	ਬਣਤਰ ext2_inode	inode;
 	__u32			*dindir_buf, *gdt_buf;
-	unsigned long long	apb, inode_size;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ	apb, inode_ਮਾਪ;
 	/* FIXME-64 - can't deal with extents */
 	blk_t			dindir_blk, rsv_off, gdt_off, gdt_blk;
-	int			dindir_dirty = 0, inode_dirty = 0, sb_blk = 0;
+	ਪੂਰਨ			dindir_dirty = 0, inode_dirty = 0, sb_blk = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	sb = fs->super;
 
 	retval = ext2fs_get_array(2, fs->blocksize, &dindir_buf);
-	if (retval)
-		return retval;
-	gdt_buf = (__u32 *)((char *)dindir_buf + fs->blocksize);
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
+	gdt_buf = (__u32 *)((ਅੱਖਰ *)dindir_buf + fs->blocksize);
 
 	retval = ext2fs_read_inode(fs, EXT2_RESIZE_INO, &inode);
-	if (retval)
-		goto out_free;
+	ਜੇ (retval)
+		ਜਾਓ ਬਾਹਰਲਾ_free;
 
 	/*
 	 * File systems with a blocksize of 1024 and bigalloc have
 	 * sb->s_first_data_block of 0; yet the superblock is still at
 	 * block #1.  We compensate for it here.
 	 */
-	sb_blk = sb->s_first_data_block;
-	if (fs->blocksize == 1024 && sb_blk == 0)
+	sb_blk = sb->s_ਪਹਿਲਾ_ਅੰਕੜੇ_ਖੰਡ;
+	ਜੇ (fs->blocksize == 1024 && sb_blk == 0)
 		sb_blk = 1;
 
 	/* Maximum possible file size (we only use double indirect blocks) */
-	apb = EXT2_ADDR_PER_BLOCK(sb);
-	if ((dindir_blk = inode.i_block[EXT2_DIND_BLOCK])) {
-#ifdef RES_GDT_DEBUG
-		printf("reading GDT dindir %u\n", dindir_blk);
-#endif
-		retval = ext2fs_read_ind_block(fs, dindir_blk, dindir_buf);
-		if (retval)
-			goto out_inode;
-	} else {
-		blk_t goal = sb_blk + fs->desc_blocks +
-			sb->s_reserved_gdt_blocks + 2 +
-			fs->inode_blocks_per_group;
+	apb = EXT2_ADDR_ਪ੍ਰਤੀ_ਖੰਡ(sb);
+	ਜੇ ((dindir_blk = inode.i_ਖੰਡ[EXT2_DIND_ਖੰਡ])) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ RES_GDT_DEBUG
+		ਲਿਖੋ("reading GDT dindir %u\n", dindir_blk);
+#ਜੇ_ਅੰਤ
+		retval = ext2fs_read_ind_ਖੰਡ(fs, dindir_blk, dindir_buf);
+		ਜੇ (retval)
+			ਜਾਓ ਬਾਹਰਲਾ_inode;
+	} ਨਹੀਂਤਾਂ {
+		blk_t goal = sb_blk + fs->desc_ਖੰਡਾਂ +
+			sb->s_reserved_gdt_ਖੰਡਾਂ + 2 +
+			fs->inode_ਖੰਡਾਂ_ਪ੍ਰਤੀ_ਸਮੂਹ;
 
-		retval = ext2fs_alloc_block(fs, goal, 0, &dindir_blk);
-		if (retval)
-			goto out_free;
-		inode.i_mode = LINUX_S_IFREG | 0600;
-		inode.i_links_count = 1;
-		inode.i_block[EXT2_DIND_BLOCK] = dindir_blk;
-		ext2fs_iblk_set(fs, &inode, 1);
+		retval = ext2fs_alloc_ਖੰਡ(fs, goal, 0, &dindir_blk);
+		ਜੇ (retval)
+			ਜਾਓ ਬਾਹਰਲਾ_free;
+		inode.i_ਬਹੁਲਕ = LINUX_S_IFREG | 0600;
+		inode.i_links_ਗਿਣਤੀ = 1;
+		inode.i_ਖੰਡ[EXT2_DIND_ਖੰਡ] = dindir_blk;
+		ext2fs_iblk_ਸੈੱਟ(fs, &inode, 1);
 		memset(dindir_buf, 0, fs->blocksize);
-#ifdef RES_GDT_DEBUG
-		printf("allocated GDT dindir %u\n", dindir_blk);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ RES_GDT_DEBUG
+		ਲਿਖੋ("allocated GDT dindir %u\n", dindir_blk);
+#ਜੇ_ਅੰਤ
 		dindir_dirty = inode_dirty = 1;
-		inode_size = apb*apb + apb + EXT2_NDIR_BLOCKS;
-		inode_size *= fs->blocksize;
-		retval = ext2fs_inode_size_set(fs, &inode, inode_size);
-		if (retval)
-			goto out_free;
-		inode.i_ctime = ext2fsP_get_time(fs);
+		inode_ਮਾਪ = apb*apb + apb + EXT2_NDIR_ਖੰਡਾਂ;
+		inode_ਮਾਪ *= fs->blocksize;
+		retval = ext2fs_inode_ਮਾਪ_ਸੈੱਟ(fs, &inode, inode_ਮਾਪ);
+		ਜੇ (retval)
+			ਜਾਓ ਬਾਹਰਲਾ_free;
+		inode.i_ctime = ext2fs_P_get_ਸਮਾਂ(fs);
 	}
 
-	for (rsv_off = 0, gdt_off = fs->desc_blocks,
-	     gdt_blk = sb_blk + 1 + fs->desc_blocks;
-	     rsv_off < sb->s_reserved_gdt_blocks;
+	ਲਈ (rsv_off = 0, gdt_off = fs->desc_ਖੰਡਾਂ,
+	     gdt_blk = sb_blk + 1 + fs->desc_ਖੰਡਾਂ;
+	     rsv_off < sb->s_reserved_gdt_ਖੰਡਾਂ;
 	     rsv_off++, gdt_off++, gdt_blk++) {
 		dgrp_t three = 1, five = 5, seven = 7;
-		dgrp_t grp, last = 0;
-		int gdt_dirty = 0;
+		dgrp_t grp, ਆਖਰੀ = 0;
+		ਪੂਰਨ gdt_dirty = 0;
 
 		gdt_off %= apb;
-		if (!dindir_buf[gdt_off]) {
+		ਜੇ (!dindir_buf[gdt_off]) {
 			/* FIXME XXX XXX
 			blk_t new_blk;
 
@@ -170,81 +170,81 @@ errcode_t ext2fs_create_resize_inode(ext2_filsys fs)
 			gdt_dirty = dindir_dirty = inode_dirty = 1;
 			memset(gdt_buf, 0, fs->blocksize);
 			dindir_buf[gdt_off] = gdt_blk;
-			ext2fs_iblk_add_blocks(fs, &inode, 1);
-#ifdef RES_GDT_DEBUG
-			printf("added primary GDT block %u at %u[%u]\n",
+			ext2fs_iblk_ਜੋੜੋ_ਖੰਡਾਂ(fs, &inode, 1);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ RES_GDT_DEBUG
+			ਲਿਖੋ("added primary GDT block %u at %u[%u]\n",
 			       gdt_blk, dindir_blk, gdt_off);
-#endif
-		} else if (dindir_buf[gdt_off] == gdt_blk) {
-#ifdef RES_GDT_DEBUG
-			printf("reading primary GDT block %u\n", gdt_blk);
-#endif
-			retval = ext2fs_read_ind_block(fs, gdt_blk, gdt_buf);
-			if (retval)
-				goto out_dindir;
-		} else {
-#ifdef RES_GDT_DEBUG
-			printf("bad primary GDT %u != %u at %u[%u]\n",
+#ਜੇ_ਅੰਤ
+		} ਨਹੀਂਤਾਂ ਜੇ (dindir_buf[gdt_off] == gdt_blk) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ RES_GDT_DEBUG
+			ਲਿਖੋ("reading primary GDT block %u\n", gdt_blk);
+#ਜੇ_ਅੰਤ
+			retval = ext2fs_read_ind_ਖੰਡ(fs, gdt_blk, gdt_buf);
+			ਜੇ (retval)
+				ਜਾਓ ਬਾਹਰਲਾ_dindir;
+		} ਨਹੀਂਤਾਂ {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ RES_GDT_DEBUG
+			ਲਿਖੋ("bad primary GDT %u != %u at %u[%u]\n",
 			       dindir_buf[gdt_off], gdt_blk,dindir_blk,gdt_off);
-#endif
+#ਜੇ_ਅੰਤ
 			retval = EXT2_ET_RESIZE_INODE_CORRUPT;
-			goto out_dindir;
+			ਜਾਓ ਬਾਹਰਲਾ_dindir;
 		}
 
-		while ((grp = ext2fs_list_backups(fs, &three, &five, &seven)) <
-		       fs->group_desc_count) {
-			blk_t expect = gdt_blk + grp * sb->s_blocks_per_group;
+		ਜਦੋਂ ((grp = ext2fs_list_backups(fs, &three, &five, &seven)) <
+		       fs->ਸਮੂਹ_desc_ਗਿਣਤੀ) {
+			blk_t expect = gdt_blk + grp * sb->s_ਖੰਡਾਂ_ਪ੍ਰਤੀ_ਸਮੂਹ;
 
-			if (!gdt_buf[last]) {
-#ifdef RES_GDT_DEBUG
-				printf("added backup GDT %u grp %u@%u[%u]\n",
-				       expect, grp, gdt_blk, last);
-#endif
-				gdt_buf[last] = expect;
-				ext2fs_iblk_add_blocks(fs, &inode, 1);
+			ਜੇ (!gdt_buf[ਆਖਰੀ]) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ RES_GDT_DEBUG
+				ਲਿਖੋ("added backup GDT %u grp %u@%u[%u]\n",
+				       expect, grp, gdt_blk, ਆਖਰੀ);
+#ਜੇ_ਅੰਤ
+				gdt_buf[ਆਖਰੀ] = expect;
+				ext2fs_iblk_ਜੋੜੋ_ਖੰਡਾਂ(fs, &inode, 1);
 				gdt_dirty = inode_dirty = 1;
-			} else if (gdt_buf[last] != expect) {
-#ifdef RES_GDT_DEBUG
-				printf("bad backup GDT %u != %u at %u[%u]\n",
-				       gdt_buf[last], expect, gdt_blk, last);
-#endif
+			} ਨਹੀਂਤਾਂ ਜੇ (gdt_buf[ਆਖਰੀ] != expect) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ RES_GDT_DEBUG
+				ਲਿਖੋ("bad backup GDT %u != %u at %u[%u]\n",
+				       gdt_buf[ਆਖਰੀ], expect, gdt_blk, ਆਖਰੀ);
+#ਜੇ_ਅੰਤ
 				retval = EXT2_ET_RESIZE_INODE_CORRUPT;
-				goto out_dindir;
+				ਜਾਓ ਬਾਹਰਲਾ_dindir;
 			}
-			last++;
+			ਆਖਰੀ++;
 		}
-		if (gdt_dirty) {
-#ifdef RES_GDT_DEBUG
-			printf("writing primary GDT block %u\n", gdt_blk);
-#endif
-			retval = ext2fs_write_ind_block(fs, gdt_blk, gdt_buf);
-			if (retval)
-				goto out_dindir;
+		ਜੇ (gdt_dirty) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ RES_GDT_DEBUG
+			ਲਿਖੋ("writing primary GDT block %u\n", gdt_blk);
+#ਜੇ_ਅੰਤ
+			retval = ext2fs_write_ind_ਖੰਡ(fs, gdt_blk, gdt_buf);
+			ਜੇ (retval)
+				ਜਾਓ ਬਾਹਰਲਾ_dindir;
 		}
 	}
 
-out_dindir:
-	if (dindir_dirty) {
-		retval2 = ext2fs_write_ind_block(fs, dindir_blk, dindir_buf);
-		if (!retval)
+ਬਾਹਰਲਾ_dindir:
+	ਜੇ (dindir_dirty) {
+		retval2 = ext2fs_write_ind_ਖੰਡ(fs, dindir_blk, dindir_buf);
+		ਜੇ (!retval)
 			retval = retval2;
 	}
-out_inode:
-#ifdef RES_GDT_DEBUG
-	printf("inode.i_blocks = %u, i_size = %lu\n", inode.i_blocks,
-	       EXT2_I_SIZE(&inode));
-#endif
-	if (inode_dirty) {
-		time_t now = ext2fsP_get_time(fs);
+ਬਾਹਰਲਾ_inode:
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ RES_GDT_DEBUG
+	ਲਿਖੋ("inode.i_blocks = %u, i_size = %lu\n", inode.i_ਖੰਡਾਂ,
+	       EXT2_I_ਮਾਪ(&inode));
+#ਜੇ_ਅੰਤ
+	ਜੇ (inode_dirty) {
+		time_t now = ext2fs_P_get_ਸਮਾਂ(fs);
 
-		ext2fs_inode_xtime_set(&inode, i_atime, now);
-		ext2fs_inode_xtime_set(&inode, i_mtime, now);
+		ext2fs_inode_xtime_ਸੈੱਟ(&inode, i_atime, now);
+		ext2fs_inode_xtime_ਸੈੱਟ(&inode, i_mtime, now);
 		retval2 = ext2fs_write_new_inode(fs, EXT2_RESIZE_INO, &inode);
-		if (!retval)
+		ਜੇ (!retval)
 			retval = retval2;
 	}
-out_free:
+ਬਾਹਰਲਾ_free:
 	ext2fs_free_mem(&dindir_buf);
-	return retval;
+	ਵਾਪਸ retval;
 }
 

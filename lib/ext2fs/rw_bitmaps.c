@@ -9,674 +9,674 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_PTHREAD_H
-#include <pthread.h>
-#endif
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਜੇ HAVE_UNISTD_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_SYS_STAT_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_SYS_TYPES_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_PTHREAD_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <pthread.h>
+#ਜੇ_ਅੰਤ
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "e2image.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2_fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext2fs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "e2image.h"
 
-#ifdef HAVE_PTHREAD
-typedef pthread_mutex_t mutex_t;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_PTHREAD
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ pthread_mutex_t mutex_t;
 
-static void unix_pthread_mutex_lock(mutex_t *mutex)
+ਸਥਿਰ ਖਾਲੀ unix_pthread_mutex_ਤਾਲਾ(mutex_t *mutex)
 {
-	if (mutex)
-		pthread_mutex_lock(mutex);
+	ਜੇ (mutex)
+		pthread_mutex_ਤਾਲਾ(mutex);
 }
-static void unix_pthread_mutex_unlock(mutex_t *mutex)
+ਸਥਿਰ ਖਾਲੀ unix_pthread_mutex_unlock(mutex_t *mutex)
 {
-	if (mutex)
+	ਜੇ (mutex)
 		pthread_mutex_unlock(mutex);
 }
-#else
-typedef int mutex_t;
-#define unix_pthread_mutex_lock(mutex_t) do {} while (0)
-#define unix_pthread_mutex_unlock(mutex_t) do {} while (0)
-#endif
+#ਨਹੀਂਤਾਂ
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਪੂਰਨ mutex_t;
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ unix_pthread_mutex_ਤਾਲਾ(mutex_t) ਕਰੋ {} ਜਦੋਂ (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ unix_pthread_mutex_unlock(mutex_t) ਕਰੋ {} ਜਦੋਂ (0)
+#ਜੇ_ਅੰਤ
 
-static errcode_t write_bitmaps(ext2_filsys fs, int do_inode, int do_block)
+ਸਥਿਰ errcode_t write_bitmaps(ext2_filsys fs, ਪੂਰਨ do_inode, ਪੂਰਨ do_ਖੰਡ)
 {
 	dgrp_t 		i;
-	unsigned int	j;
-	int		block_nbytes, inode_nbytes;
-	unsigned int	nbits;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ	j;
+	ਪੂਰਨ		ਖੰਡ_nbytes, inode_nbytes;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ	nbits;
 	errcode_t	retval;
-	char		*block_buf = NULL, *inode_buf = NULL;
-	int		csum_flag;
+	ਅੱਖਰ		*ਖੰਡ_buf = ਨਿਰਾ, *inode_buf = ਨਿਰਾ;
+	ਪੂਰਨ		csum_flag;
 	blk64_t		blk;
-	blk64_t		blk_itr = EXT2FS_B2C(fs, fs->super->s_first_data_block);
+	blk64_t		blk_itr = EXT2FS_B2C(fs, fs->super->s_ਪਹਿਲਾ_ਅੰਕੜੇ_ਖੰਡ);
 	ext2_ino_t	ino_itr = 1;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ਜੇ (!(fs->flags & EXT2_FLAG_RW))
+		ਵਾਪਸ EXT2_ET_RO_FILSYS;
 
-	csum_flag = ext2fs_has_group_desc_csum(fs);
+	csum_flag = ext2fs_has_ਸਮੂਹ_desc_csum(fs);
 
-	inode_nbytes = block_nbytes = 0;
-	if (do_block) {
-		block_nbytes = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
-		retval = io_channel_alloc_buf(fs->io, 0, &block_buf);
-		if (retval)
-			goto errout;
-		memset(block_buf, 0xff, fs->blocksize);
+	inode_nbytes = ਖੰਡ_nbytes = 0;
+	ਜੇ (do_ਖੰਡ) {
+		ਖੰਡ_nbytes = EXT2_CLUSTERS_ਪ੍ਰਤੀ_ਸਮੂਹ(fs->super) / 8;
+		retval = io_channel_alloc_buf(fs->io, 0, &ਖੰਡ_buf);
+		ਜੇ (retval)
+			ਜਾਓ errout;
+		memset(ਖੰਡ_buf, 0xff, fs->blocksize);
 	}
-	if (do_inode) {
+	ਜੇ (do_inode) {
 		inode_nbytes = (size_t)
-			((EXT2_INODES_PER_GROUP(fs->super)+7) / 8);
+			((EXT2_INODES_ਪ੍ਰਤੀ_ਸਮੂਹ(fs->super)+7) / 8);
 		retval = io_channel_alloc_buf(fs->io, 0, &inode_buf);
-		if (retval)
-			goto errout;
+		ਜੇ (retval)
+			ਜਾਓ errout;
 		memset(inode_buf, 0xff, fs->blocksize);
 	}
 
-	for (i = 0; i < fs->group_desc_count; i++) {
-		if (!do_block)
-			goto skip_block_bitmap;
+	ਲਈ (i = 0; i < fs->ਸਮੂਹ_desc_ਗਿਣਤੀ; i++) {
+		ਜੇ (!do_ਖੰਡ)
+			ਜਾਓ skip_ਖੰਡ_bitmap;
 
-		if (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_BLOCK_UNINIT)
+		ਜੇ (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_ਖੰਡ_UNINIT)
 		    )
-			goto skip_this_block_bitmap;
+			ਜਾਓ skip_this_ਖੰਡ_bitmap;
 
-		retval = ext2fs_get_block_bitmap_range2(fs->block_map,
-				blk_itr, block_nbytes << 3, block_buf);
-		if (retval)
-			goto errout;
+		retval = ext2fs_get_ਖੰਡ_bitmap_range2(fs->ਖੰਡ_map,
+				blk_itr, ਖੰਡ_nbytes << 3, ਖੰਡ_buf);
+		ਜੇ (retval)
+			ਜਾਓ errout;
 
-		if (i == fs->group_desc_count - 1) {
+		ਜੇ (i == fs->ਸਮੂਹ_desc_ਗਿਣਤੀ - 1) {
 			/* Force bitmap padding for the last group */
-			nbits = EXT2FS_NUM_B2C(fs,
-				((ext2fs_blocks_count(fs->super)
-				  - (__u64) fs->super->s_first_data_block)
-				 % (__u64) EXT2_BLOCKS_PER_GROUP(fs->super)));
-			if (nbits)
-				for (j = nbits; j < fs->blocksize * 8; j++)
-					ext2fs_set_bit(j, block_buf);
+			nbits = EXT2_FS_ਅੰਕ_B2_C(fs,
+				((ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super)
+				  - (__u64) fs->super->s_ਪਹਿਲਾ_ਅੰਕੜੇ_ਖੰਡ)
+				 % (__u64) EXT2_ਖੰਡਾਂ_ਪ੍ਰਤੀ_ਸਮੂਹ(fs->super)));
+			ਜੇ (nbits)
+				ਲਈ (j = nbits; j < fs->blocksize * 8; j++)
+					ext2fs_ਸੈੱਟ_ਦੋਆਧਾਰੀ_ਅੰਕ(j, ਖੰਡ_buf);
 		}
 
-		retval = ext2fs_block_bitmap_csum_set(fs, i, block_buf,
-						      block_nbytes);
-		if (retval)
-			return retval;
-		ext2fs_group_desc_csum_set(fs, i);
+		retval = ext2fs_ਖੰਡ_bitmap_csum_ਸੈੱਟ(fs, i, ਖੰਡ_buf,
+						      ਖੰਡ_nbytes);
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
+		ext2fs_ਸਮੂਹ_desc_csum_ਸੈੱਟ(fs, i);
 		fs->flags |= EXT2_FLAG_DIRTY;
 
-		blk = ext2fs_block_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super)) {
+		blk = ext2fs_ਖੰਡ_bitmap_loc(fs, i);
+		ਜੇ (blk && blk < ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super)) {
 			retval = io_channel_write_blk64(fs->io, blk, 1,
-							block_buf);
-			if (retval) {
-				retval = EXT2_ET_BLOCK_BITMAP_WRITE;
-				goto errout;
+							ਖੰਡ_buf);
+			ਜੇ (retval) {
+				retval = EXT2_ET_ਖੰਡ_BITMAP_WRITE;
+				ਜਾਓ errout;
 			}
 		}
-	skip_this_block_bitmap:
-		blk_itr += block_nbytes << 3;
-	skip_block_bitmap:
+	skip_this_ਖੰਡ_bitmap:
+		blk_itr += ਖੰਡ_nbytes << 3;
+	skip_ਖੰਡ_bitmap:
 
-		if (!do_inode)
-			continue;
+		ਜੇ (!do_inode)
+			ਜਾਰੀ;
 
-		if (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_INODE_UNINIT)
+		ਜੇ (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_INODE_UNINIT)
 		    )
-			goto skip_this_inode_bitmap;
+			ਜਾਓ skip_this_inode_bitmap;
 
 		retval = ext2fs_get_inode_bitmap_range2(fs->inode_map,
 				ino_itr, inode_nbytes << 3, inode_buf);
-		if (retval)
-			goto errout;
+		ਜੇ (retval)
+			ਜਾਓ errout;
 
-		retval = ext2fs_inode_bitmap_csum_set(fs, i, inode_buf,
+		retval = ext2fs_inode_bitmap_csum_ਸੈੱਟ(fs, i, inode_buf,
 						      inode_nbytes);
-		if (retval)
-			goto errout;
-		ext2fs_group_desc_csum_set(fs, i);
+		ਜੇ (retval)
+			ਜਾਓ errout;
+		ext2fs_ਸਮੂਹ_desc_csum_ਸੈੱਟ(fs, i);
 		fs->flags |= EXT2_FLAG_DIRTY;
 
 		blk = ext2fs_inode_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super)) {
+		ਜੇ (blk && blk < ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super)) {
 			retval = io_channel_write_blk64(fs->io, blk, 1,
 						      inode_buf);
-			if (retval) {
+			ਜੇ (retval) {
 				retval = EXT2_ET_INODE_BITMAP_WRITE;
-				goto errout;
+				ਜਾਓ errout;
 			}
 		}
 	skip_this_inode_bitmap:
 		ino_itr += inode_nbytes << 3;
 
 	}
-	if (do_block) {
+	ਜੇ (do_ਖੰਡ) {
 		fs->flags &= ~EXT2_FLAG_BB_DIRTY;
-		ext2fs_free_mem(&block_buf);
+		ext2fs_free_mem(&ਖੰਡ_buf);
 	}
-	if (do_inode) {
+	ਜੇ (do_inode) {
 		fs->flags &= ~EXT2_FLAG_IB_DIRTY;
 		ext2fs_free_mem(&inode_buf);
 	}
-	return 0;
+	ਵਾਪਸ 0;
 errout:
-	if (inode_buf)
+	ਜੇ (inode_buf)
 		ext2fs_free_mem(&inode_buf);
-	if (block_buf)
-		ext2fs_free_mem(&block_buf);
-	return retval;
+	ਜੇ (ਖੰਡ_buf)
+		ext2fs_free_mem(&ਖੰਡ_buf);
+	ਵਾਪਸ retval;
 }
 
-static errcode_t mark_uninit_bg_group_blocks(ext2_filsys fs)
+ਸਥਿਰ errcode_t mark_uninit_bg_ਸਮੂਹ_ਖੰਡਾਂ(ext2_filsys fs)
 {
 	dgrp_t			i;
 	blk64_t			blk;
-	ext2fs_block_bitmap	bmap = fs->block_map;
+	ext2fs_ਖੰਡ_bitmap	bmap = fs->ਖੰਡ_map;
 
-	for (i = 0; i < fs->group_desc_count; i++) {
-		if (!ext2fs_bg_flags_test(fs, i, EXT2_BG_BLOCK_UNINIT))
-			continue;
+	ਲਈ (i = 0; i < fs->ਸਮੂਹ_desc_ਗਿਣਤੀ; i++) {
+		ਜੇ (!ext2fs_bg_flags_test(fs, i, EXT2_BG_ਖੰਡ_UNINIT))
+			ਜਾਰੀ;
 
 		ext2fs_reserve_super_and_bgd(fs, i, bmap);
 
 		/*
 		 * Mark the blocks used for the inode table
 		 */
-		blk = ext2fs_inode_table_loc(fs, i);
-		if (blk)
-			ext2fs_mark_block_bitmap_range2(bmap, blk,
-						fs->inode_blocks_per_group);
+		blk = ext2fs_inode_ਸਾਰਣੀ_loc(fs, i);
+		ਜੇ (blk)
+			ext2fs_mark_ਖੰਡ_bitmap_range2(bmap, blk,
+						fs->inode_ਖੰਡਾਂ_ਪ੍ਰਤੀ_ਸਮੂਹ);
 
 		/*
 		 * Mark block used for the block bitmap
 		 */
-		blk = ext2fs_block_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super))
-			ext2fs_mark_block_bitmap2(bmap, blk);
+		blk = ext2fs_ਖੰਡ_bitmap_loc(fs, i);
+		ਜੇ (blk && blk < ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super))
+			ext2fs_mark_ਖੰਡ_bitmap2(bmap, blk);
 
 		/*
 		 * Mark block used for the inode bitmap
 		 */
 		blk = ext2fs_inode_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super))
-			ext2fs_mark_block_bitmap2(bmap, blk);
+		ਜੇ (blk && blk < ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super))
+			ext2fs_mark_ਖੰਡ_bitmap2(bmap, blk);
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int bitmap_tail_verify(unsigned char *bitmap, int first, int last)
+ਸਥਿਰ ਪੂਰਨ bitmap_ਪੂਛ_verify(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *bitmap, ਪੂਰਨ ਪਹਿਲਾ, ਪੂਰਨ ਆਖਰੀ)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	for (i = first; i <= last; i++)
-		if (bitmap[i] != 0xff)
-			return 0;
-	return 1;
+	ਲਈ (i = ਪਹਿਲਾ; i <= ਆਖਰੀ; i++)
+		ਜੇ (bitmap[i] != 0xff)
+			ਵਾਪਸ 0;
+	ਵਾਪਸ 1;
 }
 
-static errcode_t read_bitmaps_range_prepare(ext2_filsys fs, int flags)
+ਸਥਿਰ errcode_t read_bitmaps_range_prepare(ext2_filsys fs, ਪੂਰਨ flags)
 {
 	errcode_t retval;
-	int block_nbytes = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
-	int inode_nbytes = EXT2_INODES_PER_GROUP(fs->super) / 8;
-	char *buf;
+	ਪੂਰਨ ਖੰਡ_nbytes = EXT2_CLUSTERS_ਪ੍ਰਤੀ_ਸਮੂਹ(fs->super) / 8;
+	ਪੂਰਨ inode_nbytes = EXT2_INODES_ਪ੍ਰਤੀ_ਸਮੂਹ(fs->super) / 8;
+	ਅੱਖਰ *buf;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if ((block_nbytes > (int) fs->blocksize) ||
-	    (inode_nbytes > (int) fs->blocksize))
-		return EXT2_ET_CORRUPT_SUPERBLOCK;
+	ਜੇ ((ਖੰਡ_nbytes > (ਪੂਰਨ) fs->blocksize) ||
+	    (inode_nbytes > (ਪੂਰਨ) fs->blocksize))
+		ਵਾਪਸ EXT2_ET_CORRUPT_SUPERBLOCK;
 
 	fs->write_bitmaps = ext2fs_write_bitmaps;
 
-	retval = ext2fs_get_mem(strlen(fs->device_name) + 80, &buf);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(ਲੜੀ_ਲੰਬਾਈ(fs->device_name) + 80, &buf);
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		if (fs->block_map)
-			ext2fs_free_block_bitmap(fs->block_map);
+	ਜੇ (flags & EXT2_FS_BITMAPS_ਖੰਡ) {
+		ਜੇ (fs->ਖੰਡ_map)
+			ext2fs_free_ਖੰਡ_bitmap(fs->ਖੰਡ_map);
 		strcpy(buf, "block bitmap for ");
 		strcat(buf, fs->device_name);
-		retval = ext2fs_allocate_block_bitmap(fs, buf, &fs->block_map);
-		if (retval)
-			goto cleanup;
+		retval = ext2fs_allocate_ਖੰਡ_bitmap(fs, buf, &fs->ਖੰਡ_map);
+		ਜੇ (retval)
+			ਜਾਓ cleanup;
 	}
 
-	if (flags & EXT2FS_BITMAPS_INODE) {
-		if (fs->inode_map)
+	ਜੇ (flags & EXT2FS_BITMAPS_INODE) {
+		ਜੇ (fs->inode_map)
 			ext2fs_free_inode_bitmap(fs->inode_map);
 		strcpy(buf, "inode bitmap for ");
 		strcat(buf, fs->device_name);
 		retval = ext2fs_allocate_inode_bitmap(fs, buf, &fs->inode_map);
-		if (retval)
-			goto cleanup;
+		ਜੇ (retval)
+			ਜਾਓ cleanup;
 	}
 	ext2fs_free_mem(&buf);
-	return retval;
+	ਵਾਪਸ retval;
 
 cleanup:
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		ext2fs_free_block_bitmap(fs->block_map);
-		fs->block_map = 0;
+	ਜੇ (flags & EXT2_FS_BITMAPS_ਖੰਡ) {
+		ext2fs_free_ਖੰਡ_bitmap(fs->ਖੰਡ_map);
+		fs->ਖੰਡ_map = 0;
 	}
-	if (flags & EXT2FS_BITMAPS_INODE) {
+	ਜੇ (flags & EXT2FS_BITMAPS_INODE) {
 		ext2fs_free_inode_bitmap(fs->inode_map);
 		fs->inode_map = 0;
 	}
 	ext2fs_free_mem(&buf);
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-static errcode_t read_bitmaps_range_start(ext2_filsys fs, int flags,
-					  dgrp_t start, dgrp_t end,
+ਸਥਿਰ errcode_t read_bitmaps_range_ਸ਼ੁਰੂ(ext2_filsys fs, ਪੂਰਨ flags,
+					  dgrp_t ਸ਼ੁਰੂ, dgrp_t ਸਿਰਾ,
 					  mutex_t *mutex,
-					  int *tail_flags)
+					  ਪੂਰਨ *ਪੂਛ_flags)
 {
 	dgrp_t i;
-	char *block_bitmap = 0, *inode_bitmap = 0;
+	ਅੱਖਰ *ਖੰਡ_bitmap = 0, *inode_bitmap = 0;
 	errcode_t retval = 0;
-	int block_nbytes = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
-	int inode_nbytes = EXT2_INODES_PER_GROUP(fs->super) / 8;
-	int csum_flag;
-	unsigned int	cnt;
+	ਪੂਰਨ ਖੰਡ_nbytes = EXT2_CLUSTERS_ਪ੍ਰਤੀ_ਸਮੂਹ(fs->super) / 8;
+	ਪੂਰਨ inode_nbytes = EXT2_INODES_ਪ੍ਰਤੀ_ਸਮੂਹ(fs->super) / 8;
+	ਪੂਰਨ csum_flag;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ	cnt;
 	blk64_t	blk;
-	blk64_t	blk_itr = EXT2FS_B2C(fs, fs->super->s_first_data_block);
+	blk64_t	blk_itr = EXT2FS_B2C(fs, fs->super->s_ਪਹਿਲਾ_ਅੰਕੜੇ_ਖੰਡ);
 	blk64_t   blk_cnt;
 	ext2_ino_t ino_itr = 1;
 	ext2_ino_t ino_cnt;
 
-	csum_flag = ext2fs_has_group_desc_csum(fs);
+	csum_flag = ext2fs_has_ਸਮੂਹ_desc_csum(fs);
 
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		retval = io_channel_alloc_buf(fs->io, 0, &block_bitmap);
-		if (retval)
-			goto cleanup;
-	} else {
-		block_nbytes = 0;
+	ਜੇ (flags & EXT2_FS_BITMAPS_ਖੰਡ) {
+		retval = io_channel_alloc_buf(fs->io, 0, &ਖੰਡ_bitmap);
+		ਜੇ (retval)
+			ਜਾਓ cleanup;
+	} ਨਹੀਂਤਾਂ {
+		ਖੰਡ_nbytes = 0;
 	}
 
-	if (flags & EXT2FS_BITMAPS_INODE) {
+	ਜੇ (flags & EXT2FS_BITMAPS_INODE) {
 		retval = io_channel_alloc_buf(fs->io, 0, &inode_bitmap);
-		if (retval)
-			goto cleanup;
-	} else {
+		ਜੇ (retval)
+			ਜਾਓ cleanup;
+	} ਨਹੀਂਤਾਂ {
 		inode_nbytes = 0;
 	}
 
 	/* io should be null */
-	if (fs->flags & EXT2_FLAG_IMAGE_FILE) {
-		blk = (ext2fs_le32_to_cpu(fs->image_header->offset_inodemap) / fs->blocksize);
-		ino_cnt = fs->super->s_inodes_count;
-		while (inode_bitmap && ino_cnt > 0) {
+	ਜੇ (fs->flags & EXT2_FLAG_IMAGE_FILE) {
+		blk = (ext2fs_le32_ਮੰਜ਼ਿਲ_cpu(fs->image_ਸਿਰਲੇਖ->ਵਿੱਥ_inodemap) / fs->blocksize);
+		ino_cnt = fs->super->s_inodes_ਗਿਣਤੀ;
+		ਜਦੋਂ (inode_bitmap && ino_cnt > 0) {
 			retval = io_channel_read_blk64(fs->image_io, blk++,
 						     1, inode_bitmap);
-			if (retval)
-				goto cleanup;
+			ਜੇ (retval)
+				ਜਾਓ cleanup;
 			cnt = fs->blocksize << 3;
-			if (cnt > ino_cnt)
+			ਜੇ (cnt > ino_cnt)
 				cnt = ino_cnt;
-			retval = ext2fs_set_inode_bitmap_range2(fs->inode_map,
+			retval = ext2fs_ਸੈੱਟ_inode_bitmap_range2(fs->inode_map,
 					       ino_itr, cnt, inode_bitmap);
-			if (retval)
-				goto cleanup;
+			ਜੇ (retval)
+				ਜਾਓ cleanup;
 			ino_itr += cnt;
 			ino_cnt -= cnt;
 		}
-		blk = (ext2fs_le32_to_cpu(fs->image_header->offset_blockmap) /
+		blk = (ext2fs_le32_ਮੰਜ਼ਿਲ_cpu(fs->image_ਸਿਰਲੇਖ->ਵਿੱਥ_blockmap) /
 		       fs->blocksize);
-		blk_cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super,
-						  fs->group_desc_count);
-		while (block_bitmap && blk_cnt > 0) {
+		blk_cnt = EXT2_GROUPS_ਮੰਜ਼ਿਲ_CLUSTERS(fs->super,
+						  fs->ਸਮੂਹ_desc_ਗਿਣਤੀ);
+		ਜਦੋਂ (ਖੰਡ_bitmap && blk_cnt > 0) {
 			retval = io_channel_read_blk64(fs->image_io, blk++,
-						     1, block_bitmap);
-			if (retval)
-				goto cleanup;
+						     1, ਖੰਡ_bitmap);
+			ਜੇ (retval)
+				ਜਾਓ cleanup;
 			cnt = fs->blocksize << 3;
-			if (cnt > blk_cnt)
+			ਜੇ (cnt > blk_cnt)
 				cnt = blk_cnt;
-			retval = ext2fs_set_block_bitmap_range2(fs->block_map,
-				       blk_itr, cnt, block_bitmap);
-			if (retval)
-				goto cleanup;
+			retval = ext2fs_ਸੈੱਟ_ਖੰਡ_bitmap_range2(fs->ਖੰਡ_map,
+				       blk_itr, cnt, ਖੰਡ_bitmap);
+			ਜੇ (retval)
+				ਜਾਓ cleanup;
 			blk_itr += cnt;
 			blk_cnt -= cnt;
 		}
-		goto cleanup;
+		ਜਾਓ cleanup;
 	}
 
-	blk_itr += ((blk64_t)start * (block_nbytes << 3));
-	ino_itr += ((blk64_t)start * (inode_nbytes << 3));
-	for (i = start; i <= end; i++) {
-		if (block_bitmap) {
-			blk = ext2fs_block_bitmap_loc(fs, i);
-			if ((csum_flag &&
-			     ext2fs_bg_flags_test(fs, i, EXT2_BG_BLOCK_UNINIT) &&
-			     ext2fs_group_desc_csum_verify(fs, i)) ||
-			    (blk >= ext2fs_blocks_count(fs->super)))
+	blk_itr += ((blk64_t)ਸ਼ੁਰੂ * (ਖੰਡ_nbytes << 3));
+	ino_itr += ((blk64_t)ਸ਼ੁਰੂ * (inode_nbytes << 3));
+	ਲਈ (i = ਸ਼ੁਰੂ; i <= ਸਿਰਾ; i++) {
+		ਜੇ (ਖੰਡ_bitmap) {
+			blk = ext2fs_ਖੰਡ_bitmap_loc(fs, i);
+			ਜੇ ((csum_flag &&
+			     ext2fs_bg_flags_test(fs, i, EXT2_BG_ਖੰਡ_UNINIT) &&
+			     ext2fs_ਸਮੂਹ_desc_csum_verify(fs, i)) ||
+			    (blk >= ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super)))
 				blk = 0;
-			if (blk) {
+			ਜੇ (blk) {
 				retval = io_channel_read_blk64(fs->io, blk,
-							       1, block_bitmap);
-				if (retval) {
-					retval = EXT2_ET_BLOCK_BITMAP_READ;
-					goto cleanup;
+							       1, ਖੰਡ_bitmap);
+				ਜੇ (retval) {
+					retval = EXT2_ET_ਖੰਡ_BITMAP_READ;
+					ਜਾਓ cleanup;
 				}
 				/* verify block bitmap checksum */
-				if (!(fs->flags &
+				ਜੇ (!(fs->flags &
 				      EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
-				    !ext2fs_block_bitmap_csum_verify(fs, i,
-						block_bitmap, block_nbytes)) {
+				    !ext2fs_ਖੰਡ_bitmap_csum_verify(fs, i,
+						ਖੰਡ_bitmap, ਖੰਡ_nbytes)) {
 					retval =
-					EXT2_ET_BLOCK_BITMAP_CSUM_INVALID;
-					goto cleanup;
+					EXT2_ET_ਖੰਡ_BITMAP_CSUM_INVALID;
+					ਜਾਓ cleanup;
 				}
-				if (!bitmap_tail_verify((unsigned char *) block_bitmap,
-							block_nbytes, fs->blocksize - 1))
-					*tail_flags |= EXT2_FLAG_BBITMAP_TAIL_PROBLEM;
-			} else
-				memset(block_bitmap, 0, block_nbytes);
-			cnt = block_nbytes << 3;
-			unix_pthread_mutex_lock(mutex);
-			retval = ext2fs_set_block_bitmap_range2(fs->block_map,
-					       blk_itr, cnt, block_bitmap);
+				ਜੇ (!bitmap_ਪੂਛ_verify((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *) ਖੰਡ_bitmap,
+							ਖੰਡ_nbytes, fs->blocksize - 1))
+					*ਪੂਛ_flags |= EXT2_FLAG_BBITMAP_ਪੂਛ_PROBLEM;
+			} ਨਹੀਂਤਾਂ
+				memset(ਖੰਡ_bitmap, 0, ਖੰਡ_nbytes);
+			cnt = ਖੰਡ_nbytes << 3;
+			unix_pthread_mutex_ਤਾਲਾ(mutex);
+			retval = ext2fs_ਸੈੱਟ_ਖੰਡ_bitmap_range2(fs->ਖੰਡ_map,
+					       blk_itr, cnt, ਖੰਡ_bitmap);
 			unix_pthread_mutex_unlock(mutex);
-			if (retval)
-				goto cleanup;
-			blk_itr += block_nbytes << 3;
+			ਜੇ (retval)
+				ਜਾਓ cleanup;
+			blk_itr += ਖੰਡ_nbytes << 3;
 		}
-		if (inode_bitmap) {
+		ਜੇ (inode_bitmap) {
 			blk = ext2fs_inode_bitmap_loc(fs, i);
-			if ((csum_flag &&
+			ਜੇ ((csum_flag &&
 			     ext2fs_bg_flags_test(fs, i, EXT2_BG_INODE_UNINIT) &&
-			     ext2fs_group_desc_csum_verify(fs, i)) ||
-			    (blk >= ext2fs_blocks_count(fs->super)))
+			     ext2fs_ਸਮੂਹ_desc_csum_verify(fs, i)) ||
+			    (blk >= ext2fs_ਖੰਡਾਂ_ਗਿਣਤੀ(fs->super)))
 				blk = 0;
-			if (blk) {
+			ਜੇ (blk) {
 				retval = io_channel_read_blk64(fs->io, blk,
 							       1, inode_bitmap);
-				if (retval) {
+				ਜੇ (retval) {
 					retval = EXT2_ET_INODE_BITMAP_READ;
-					goto cleanup;
+					ਜਾਓ cleanup;
 				}
 
 				/* verify inode bitmap checksum */
-				if (!(fs->flags &
+				ਜੇ (!(fs->flags &
 				      EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
 				    !ext2fs_inode_bitmap_csum_verify(fs, i,
 						inode_bitmap, inode_nbytes)) {
 					retval =
 					EXT2_ET_INODE_BITMAP_CSUM_INVALID;
-					goto cleanup;
+					ਜਾਓ cleanup;
 				}
-				if (!bitmap_tail_verify((unsigned char *) inode_bitmap,
+				ਜੇ (!bitmap_ਪੂਛ_verify((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *) inode_bitmap,
 							inode_nbytes, fs->blocksize - 1))
-					*tail_flags |= EXT2_FLAG_IBITMAP_TAIL_PROBLEM;
-			} else
+					*ਪੂਛ_flags |= EXT2_FLAG_IBITMAP_ਪੂਛ_PROBLEM;
+			} ਨਹੀਂਤਾਂ
 				memset(inode_bitmap, 0, inode_nbytes);
 			cnt = inode_nbytes << 3;
-			unix_pthread_mutex_lock(mutex);
-			retval = ext2fs_set_inode_bitmap_range2(fs->inode_map,
+			unix_pthread_mutex_ਤਾਲਾ(mutex);
+			retval = ext2fs_ਸੈੱਟ_inode_bitmap_range2(fs->inode_map,
 					       ino_itr, cnt, inode_bitmap);
 			unix_pthread_mutex_unlock(mutex);
-			if (retval)
-				goto cleanup;
+			ਜੇ (retval)
+				ਜਾਓ cleanup;
 			ino_itr += inode_nbytes << 3;
 		}
 	}
 
 cleanup:
-	if (inode_bitmap)
+	ਜੇ (inode_bitmap)
 		ext2fs_free_mem(&inode_bitmap);
-	if (block_bitmap)
-		ext2fs_free_mem(&block_bitmap);
-	return retval;
+	ਜੇ (ਖੰਡ_bitmap)
+		ext2fs_free_mem(&ਖੰਡ_bitmap);
+	ਵਾਪਸ retval;
 }
 
-static errcode_t read_bitmaps_range_end(ext2_filsys fs, int flags,
-					int tail_flags)
+ਸਥਿਰ errcode_t read_bitmaps_range_ਸਿਰਾ(ext2_filsys fs, ਪੂਰਨ flags,
+					ਪੂਰਨ ਪੂਛ_flags)
 {
 	errcode_t retval;
 
 	/* Mark group blocks for any BLOCK_UNINIT groups */
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		retval = mark_uninit_bg_group_blocks(fs);
-		if (retval)
-			return retval;
-		fs->flags &= ~EXT2_FLAG_BBITMAP_TAIL_PROBLEM;
+	ਜੇ (flags & EXT2_FS_BITMAPS_ਖੰਡ) {
+		retval = mark_uninit_bg_ਸਮੂਹ_ਖੰਡਾਂ(fs);
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
+		fs->flags &= ~EXT2_FLAG_BBITMAP_ਪੂਛ_PROBLEM;
 	}
-	if (flags & EXT2FS_BITMAPS_INODE)
-		fs->flags &= ~EXT2_FLAG_IBITMAP_TAIL_PROBLEM;
-	fs->flags |= tail_flags;
+	ਜੇ (flags & EXT2FS_BITMAPS_INODE)
+		fs->flags &= ~EXT2_FLAG_IBITMAP_ਪੂਛ_PROBLEM;
+	fs->flags |= ਪੂਛ_flags;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static void read_bitmaps_cleanup_on_error(ext2_filsys fs, int flags)
+ਸਥਿਰ ਖਾਲੀ read_bitmaps_cleanup_on_error(ext2_filsys fs, ਪੂਰਨ flags)
 {
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		ext2fs_free_block_bitmap(fs->block_map);
-		fs->block_map = 0;
+	ਜੇ (flags & EXT2_FS_BITMAPS_ਖੰਡ) {
+		ext2fs_free_ਖੰਡ_bitmap(fs->ਖੰਡ_map);
+		fs->ਖੰਡ_map = 0;
 	}
-	if (flags & EXT2FS_BITMAPS_INODE) {
+	ਜੇ (flags & EXT2FS_BITMAPS_INODE) {
 		ext2fs_free_inode_bitmap(fs->inode_map);
 		fs->inode_map = 0;
 	}
 }
 
-static errcode_t read_bitmaps_range(ext2_filsys fs, int flags,
-				    dgrp_t start, dgrp_t end)
+ਸਥਿਰ errcode_t read_bitmaps_range(ext2_filsys fs, ਪੂਰਨ flags,
+				    dgrp_t ਸ਼ੁਰੂ, dgrp_t ਸਿਰਾ)
 {
 	errcode_t retval;
-	int tail_flags = 0;
+	ਪੂਰਨ ਪੂਛ_flags = 0;
 
 	retval = read_bitmaps_range_prepare(fs, flags);
-	if (retval)
-		return retval;
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
-	retval = read_bitmaps_range_start(fs, flags, start, end,
-					  NULL, &tail_flags);
-	if (retval == 0)
-		retval = read_bitmaps_range_end(fs, flags, tail_flags);
-	if (retval)
+	retval = read_bitmaps_range_ਸ਼ੁਰੂ(fs, flags, ਸ਼ੁਰੂ, ਸਿਰਾ,
+					  ਨਿਰਾ, &ਪੂਛ_flags);
+	ਜੇ (retval == 0)
+		retval = read_bitmaps_range_ਸਿਰਾ(fs, flags, ਪੂਛ_flags);
+	ਜੇ (retval)
 		read_bitmaps_cleanup_on_error(fs, flags);
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-#ifdef HAVE_PTHREAD
-struct read_bitmaps_thread_info {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_PTHREAD
+ਬਣਤਰ read_bitmaps_thread_info {
 	ext2_filsys	rbt_fs;
-	int		rbt_flags;
-	dgrp_t		rbt_grp_start;
-	dgrp_t		rbt_grp_end;
+	ਪੂਰਨ		rbt_flags;
+	dgrp_t		rbt_grp_ਸ਼ੁਰੂ;
+	dgrp_t		rbt_grp_ਸਿਰਾ;
 	errcode_t	rbt_retval;
 	pthread_mutex_t *rbt_mutex;
-	int		rbt_tail_flags;
+	ਪੂਰਨ		rbt_ਪੂਛ_flags;
 };
 
-static void *read_bitmaps_thread(void *data)
+ਸਥਿਰ ਖਾਲੀ *read_bitmaps_thread(ਖਾਲੀ *ਅੰਕੜੇ)
 {
-	struct read_bitmaps_thread_info *rbt = data;
+	ਬਣਤਰ read_bitmaps_thread_info *rbt = ਅੰਕੜੇ;
 
-	rbt->rbt_retval = read_bitmaps_range_start(rbt->rbt_fs, rbt->rbt_flags,
-				rbt->rbt_grp_start, rbt->rbt_grp_end,
-				rbt->rbt_mutex, &rbt->rbt_tail_flags);
-	return NULL;
+	rbt->rbt_retval = read_bitmaps_range_ਸ਼ੁਰੂ(rbt->rbt_fs, rbt->rbt_flags,
+				rbt->rbt_grp_ਸ਼ੁਰੂ, rbt->rbt_grp_ਸਿਰਾ,
+				rbt->rbt_mutex, &rbt->rbt_ਪੂਛ_flags);
+	ਵਾਪਸ ਨਿਰਾ;
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, int flags, int num_threads)
+errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, ਪੂਰਨ flags, ਪੂਰਨ ਅੰਕ_ਧਾਗੇ)
 {
-#ifdef HAVE_PTHREAD
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_PTHREAD
 	pthread_attr_t	attr;
-	pthread_t *thread_ids = NULL;
-	struct read_bitmaps_thread_info *thread_infos = NULL;
+	pthread_t *thread_ids = ਨਿਰਾ;
+	ਬਣਤਰ read_bitmaps_thread_info *thread_infos = ਨਿਰਾ;
 	pthread_mutex_t rbt_mutex = PTHREAD_MUTEX_INITIALIZER;
 	errcode_t retval;
 	errcode_t rc;
-	unsigned flexbg_size = 1U << fs->super->s_log_groups_per_flex;
-	dgrp_t average_group;
-	int i, tail_flags = 0;
-#endif
+	ਬਿਨਾਨਿਸ਼ਾਨੀ flexbg_ਮਾਪ = 1U << fs->super->s_log_groups_ਪ੍ਰਤੀ_flex;
+	dgrp_t ਔਸਤਨ_ਸਮੂਹ;
+	ਪੂਰਨ i, ਪੂਛ_flags = 0;
+#ਜੇ_ਅੰਤ
 
-	if (flags & ~EXT2FS_BITMAPS_VALID_FLAGS)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ਜੇ (flags & ~EXT2FS_BITMAPS_VALID_FLAGS)
+		ਵਾਪਸ EXT2_ET_INVALID_ਦਲੀਲ;
 
-	if (ext2fs_has_feature_journal_dev(fs->super))
-		return EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
+	ਜੇ (ext2fs_has_feature_journal_dev(fs->super))
+		ਵਾਪਸ EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
 
-	if (flags & EXT2FS_BITMAPS_WRITE)
-		return write_bitmaps(fs, flags & EXT2FS_BITMAPS_INODE,
-				     flags & EXT2FS_BITMAPS_BLOCK);
+	ਜੇ (flags & EXT2FS_BITMAPS_WRITE)
+		ਵਾਪਸ write_bitmaps(fs, flags & EXT2FS_BITMAPS_INODE,
+				     flags & EXT2_FS_BITMAPS_ਖੰਡ);
 
-#ifdef HAVE_PTHREAD
-	if (((fs->io->flags & CHANNEL_FLAGS_THREADS) == 0) ||
-	    (num_threads == 1) || (fs->flags & EXT2_FLAG_IMAGE_FILE))
-		goto fallback;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_PTHREAD
+	ਜੇ (((fs->io->flags & CHANNEL_FLAGS_ਧਾਗੇ) == 0) ||
+	    (ਅੰਕ_ਧਾਗੇ == 1) || (fs->flags & EXT2_FLAG_IMAGE_FILE))
+		ਜਾਓ fallback;
 
-#if defined(HAVE_SYSCONF) && defined(_SC_NPROCESSORS_CONF)
-	if (num_threads < 0)
-		num_threads = sysconf(_SC_NPROCESSORS_CONF);
-#endif
+#ਜੇ defined(HAVE_SYSCONF) && defined(_SC_NPROCESSORS_CONF)
+	ਜੇ (ਅੰਕ_ਧਾਗੇ < 0)
+		ਅੰਕ_ਧਾਗੇ = sysconf(_SC_NPROCESSORS_CONF);
+#ਜੇ_ਅੰਤ
 	/*
 	 * Guess for now; eventually we should probably define
 	 * ext2fs_get_num_cpus() and teach it how to get this info on
 	 * MacOS, FreeBSD, etc.
 	 * ref: https://stackoverflow.com/questions/150355
 	 */
-	if (num_threads <= 0)
-		num_threads = 4;
+	ਜੇ (ਅੰਕ_ਧਾਗੇ <= 0)
+		ਅੰਕ_ਧਾਗੇ = 4;
 
-	if ((unsigned) num_threads > fs->group_desc_count)
-		num_threads = fs->group_desc_count;
-	average_group = fs->group_desc_count / num_threads;
-	if (ext2fs_has_feature_flex_bg(fs->super)) {
-		average_group = (average_group / flexbg_size) * flexbg_size;
+	ਜੇ ((ਬਿਨਾਨਿਸ਼ਾਨੀ) ਅੰਕ_ਧਾਗੇ > fs->ਸਮੂਹ_desc_ਗਿਣਤੀ)
+		ਅੰਕ_ਧਾਗੇ = fs->ਸਮੂਹ_desc_ਗਿਣਤੀ;
+	ਔਸਤਨ_ਸਮੂਹ = fs->ਸਮੂਹ_desc_ਗਿਣਤੀ / ਅੰਕ_ਧਾਗੇ;
+	ਜੇ (ext2fs_has_feature_flex_bg(fs->super)) {
+		ਔਸਤਨ_ਸਮੂਹ = (ਔਸਤਨ_ਸਮੂਹ / flexbg_ਮਾਪ) * flexbg_ਮਾਪ;
 	}
-	if ((num_threads <= 1) || (average_group == 0))
-		goto fallback;
+	ਜੇ ((ਅੰਕ_ਧਾਗੇ <= 1) || (ਔਸਤਨ_ਸਮੂਹ == 0))
+		ਜਾਓ fallback;
 
-	io_channel_set_options(fs->io, "cache=off");
+	io_channel_ਸੈੱਟ_options(fs->io, "cache=off");
 	retval = pthread_attr_init(&attr);
-	if (retval)
-		return retval;
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
-	thread_ids = calloc(sizeof(pthread_t), num_threads);
-	if (!thread_ids)
-		return ENOMEM;
+	thread_ids = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(pthread_t), ਅੰਕ_ਧਾਗੇ);
+	ਜੇ (!thread_ids)
+		ਵਾਪਸ ENOMEM;
 
-	thread_infos = calloc(sizeof(struct read_bitmaps_thread_info),
-				num_threads);
-	if (!thread_infos)
-		goto out;
+	thread_infos = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(ਬਣਤਰ read_bitmaps_thread_info),
+				ਅੰਕ_ਧਾਗੇ);
+	ਜੇ (!thread_infos)
+		ਜਾਓ ਬਾਹਰਲਾ;
 
 	retval = read_bitmaps_range_prepare(fs, flags);
-	if (retval)
-		goto out;
+	ਜੇ (retval)
+		ਜਾਓ ਬਾਹਰਲਾ;
 
 //	fprintf(stdout, "Multiple threads triggered to read bitmaps\n");
-	for (i = 0; i < num_threads; i++) {
+	ਲਈ (i = 0; i < ਅੰਕ_ਧਾਗੇ; i++) {
 		thread_infos[i].rbt_fs = fs;
 		thread_infos[i].rbt_flags = flags;
 		thread_infos[i].rbt_mutex = &rbt_mutex;
-		thread_infos[i].rbt_tail_flags = 0;
-		if (i == 0)
-			thread_infos[i].rbt_grp_start = 0;
-		else
-			thread_infos[i].rbt_grp_start = average_group * i + 1;
+		thread_infos[i].rbt_ਪੂਛ_flags = 0;
+		ਜੇ (i == 0)
+			thread_infos[i].rbt_grp_ਸ਼ੁਰੂ = 0;
+		ਨਹੀਂਤਾਂ
+			thread_infos[i].rbt_grp_ਸ਼ੁਰੂ = ਔਸਤਨ_ਸਮੂਹ * i + 1;
 
-		if (i == num_threads - 1)
-			thread_infos[i].rbt_grp_end = fs->group_desc_count - 1;
-		else
-			thread_infos[i].rbt_grp_end = average_group * (i + 1);
+		ਜੇ (i == ਅੰਕ_ਧਾਗੇ - 1)
+			thread_infos[i].rbt_grp_ਸਿਰਾ = fs->ਸਮੂਹ_desc_ਗਿਣਤੀ - 1;
+		ਨਹੀਂਤਾਂ
+			thread_infos[i].rbt_grp_ਸਿਰਾ = ਔਸਤਨ_ਸਮੂਹ * (i + 1);
 		retval = pthread_create(&thread_ids[i], &attr,
 					&read_bitmaps_thread, &thread_infos[i]);
-		if (retval)
-			break;
+		ਜੇ (retval)
+			ਰੋਕੋ;
 	}
-	for (i = 0; i < num_threads; i++) {
-		if (!thread_ids[i])
-			break;
-		rc = pthread_join(thread_ids[i], NULL);
-		if (rc && !retval)
+	ਲਈ (i = 0; i < ਅੰਕ_ਧਾਗੇ; i++) {
+		ਜੇ (!thread_ids[i])
+			ਰੋਕੋ;
+		rc = pthread_join(thread_ids[i], ਨਿਰਾ);
+		ਜੇ (rc && !retval)
 			retval = rc;
 		rc = thread_infos[i].rbt_retval;
-		if (rc && !retval)
+		ਜੇ (rc && !retval)
 			retval = rc;
-		tail_flags |= thread_infos[i].rbt_tail_flags;
+		ਪੂਛ_flags |= thread_infos[i].rbt_ਪੂਛ_flags;
 	}
-out:
+ਬਾਹਰਲਾ:
 	rc = pthread_attr_destroy(&attr);
-	if (rc && !retval)
+	ਜੇ (rc && !retval)
 		retval = rc;
-	free(thread_infos);
-	free(thread_ids);
+	ਮੁਕਤ(thread_infos);
+	ਮੁਕਤ(thread_ids);
 
-	if (retval == 0)
-		retval = read_bitmaps_range_end(fs, flags, tail_flags);
-	if (retval)
+	ਜੇ (retval == 0)
+		retval = read_bitmaps_range_ਸਿਰਾ(fs, flags, ਪੂਛ_flags);
+	ਜੇ (retval)
 		read_bitmaps_cleanup_on_error(fs, flags);
 	/* XXX should save and restore cache setting */
-	io_channel_set_options(fs->io, "cache=on");
-	return retval;
+	io_channel_ਸੈੱਟ_options(fs->io, "cache=on");
+	ਵਾਪਸ retval;
 fallback:
-#endif /* HAVE_PTHREAD */
-	return read_bitmaps_range(fs, flags, 0, fs->group_desc_count - 1);
+#ਜੇ_ਅੰਤ /* HAVE_PTHREAD */
+	ਵਾਪਸ read_bitmaps_range(fs, flags, 0, fs->ਸਮੂਹ_desc_ਗਿਣਤੀ - 1);
 }
 
 errcode_t ext2fs_read_inode_bitmap(ext2_filsys fs)
 {
-	return ext2fs_rw_bitmaps(fs, EXT2FS_BITMAPS_INODE, -1);
+	ਵਾਪਸ ext2fs_rw_bitmaps(fs, EXT2FS_BITMAPS_INODE, -1);
 }
 
-errcode_t ext2fs_read_block_bitmap(ext2_filsys fs)
+errcode_t ext2fs_read_ਖੰਡ_bitmap(ext2_filsys fs)
 {
-	return ext2fs_rw_bitmaps(fs, EXT2FS_BITMAPS_BLOCK, -1);
+	ਵਾਪਸ ext2fs_rw_bitmaps(fs, EXT2_FS_BITMAPS_ਖੰਡ, -1);
 }
 
 errcode_t ext2fs_write_inode_bitmap(ext2_filsys fs)
 {
-	return write_bitmaps(fs, 1, 0);
+	ਵਾਪਸ write_bitmaps(fs, 1, 0);
 }
 
-errcode_t ext2fs_write_block_bitmap (ext2_filsys fs)
+errcode_t ext2fs_write_ਖੰਡ_bitmap (ext2_filsys fs)
 {
-	return write_bitmaps(fs, 0, 1);
+	ਵਾਪਸ write_bitmaps(fs, 0, 1);
 }
 
 errcode_t ext2fs_read_bitmaps(ext2_filsys fs)
 {
-	int flags = 0;
+	ਪੂਰਨ flags = 0;
 
-	if (!fs->inode_map)
+	ਜੇ (!fs->inode_map)
 		flags |= EXT2FS_BITMAPS_INODE;
-	if (!fs->block_map)
-		flags |= EXT2FS_BITMAPS_BLOCK;
-	if (flags == 0)
-		return 0;
-	return ext2fs_rw_bitmaps(fs, flags, -1);
+	ਜੇ (!fs->ਖੰਡ_map)
+		flags |= EXT2_FS_BITMAPS_ਖੰਡ;
+	ਜੇ (flags == 0)
+		ਵਾਪਸ 0;
+	ਵਾਪਸ ext2fs_rw_bitmaps(fs, flags, -1);
 }
 
 errcode_t ext2fs_write_bitmaps(ext2_filsys fs)
 {
-	int do_inode = fs->inode_map && ext2fs_test_ib_dirty(fs);
-	int do_block = fs->block_map && ext2fs_test_bb_dirty(fs);
+	ਪੂਰਨ do_inode = fs->inode_map && ext2fs_test_ib_dirty(fs);
+	ਪੂਰਨ do_ਖੰਡ = fs->ਖੰਡ_map && ext2fs_test_bb_dirty(fs);
 
-	if (!do_inode && !do_block)
-		return 0;
+	ਜੇ (!do_inode && !do_ਖੰਡ)
+		ਵਾਪਸ 0;
 
-	return write_bitmaps(fs, do_inode, do_block);
+	ਵਾਪਸ write_bitmaps(fs, do_inode, do_ਖੰਡ);
 }

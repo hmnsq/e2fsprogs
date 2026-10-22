@@ -1,27 +1,27 @@
-#include <stdio.h>
-#include "crc32c_defs.h"
-#include <inttypes.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "crc32c_defs.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <inttypes.h>
 
-#define ENTRIES_PER_LINE 4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ENTRIES_ਪ੍ਰਤੀ_ਸਤਰ 4
 
-#if CRC_LE_BITS > 8
-# define LE_TABLE_ROWS (CRC_LE_BITS/8)
-# define LE_TABLE_SIZE 256
-#else
-# define LE_TABLE_ROWS 1
-# define LE_TABLE_SIZE (1 << CRC_LE_BITS)
-#endif
+#ਜੇ ਚੱਕਰੀ_ਜਾਂਚ_LE_ਬਿੱਟ > 8
+# define LE_ਸਾਰਣੀ_ਪੰਕਤੀਆਂ (ਚੱਕਰੀ_ਜਾਂਚ_LE_ਬਿੱਟ/8)
+# define LE_ਸਾਰਣੀ_ਮਾਪ 256
+#ਨਹੀਂਤਾਂ
+# define LE_ਸਾਰਣੀ_ਪੰਕਤੀਆਂ 1
+# define LE_ਸਾਰਣੀ_ਮਾਪ (1 << ਚੱਕਰੀ_ਜਾਂਚ_LE_ਬਿੱਟ)
+#ਜੇ_ਅੰਤ
 
-#if CRC_BE_BITS > 8
-# define BE_TABLE_ROWS (CRC_BE_BITS/8)
-# define BE_TABLE_SIZE 256
-#else
-# define BE_TABLE_ROWS 1
-# define BE_TABLE_SIZE (1 << CRC_BE_BITS)
-#endif
+#ਜੇ ਚੱਕਰੀ_ਜਾਂਚ_BE_ਬਿੱਟ > 8
+# define BE_ਸਾਰਣੀ_ਪੰਕਤੀਆਂ (ਚੱਕਰੀ_ਜਾਂਚ_BE_ਬਿੱਟ/8)
+# define BE_ਸਾਰਣੀ_ਮਾਪ 256
+#ਨਹੀਂਤਾਂ
+# define BE_ਸਾਰਣੀ_ਪੰਕਤੀਆਂ 1
+# define BE_ਸਾਰਣੀ_ਮਾਪ (1 << ਚੱਕਰੀ_ਜਾਂਚ_BE_ਬਿੱਟ)
+#ਜੇ_ਅੰਤ
 
-static uint32_t crc32table_be[BE_TABLE_ROWS][256];
-static uint32_t crc32ctable_le[LE_TABLE_ROWS][256];
+ਸਥਿਰ uint32_t crc32table_be[BE_ਸਾਰਣੀ_ਪੰਕਤੀਆਂ][256];
+ਸਥਿਰ uint32_t crc32ctable_le[LE_ਸਾਰਣੀ_ਪੰਕਤੀਆਂ][256];
 
 /**
  * crc32init_le() - allocate and initialize LE table data
@@ -30,23 +30,23 @@ static uint32_t crc32ctable_le[LE_TABLE_ROWS][256];
  * fact that crctable[i^j] = crctable[i] ^ crctable[j].
  *
  */
-static void crc32cinit_le(void)
+ਸਥਿਰ ਖਾਲੀ crc32cinit_le(ਖਾਲੀ)
 {
-	unsigned i, j;
-	uint32_t crc = 1;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ i, j;
+	uint32_t ਚੱਕਰੀ_ਜਾਂਚ = 1;
 
 	crc32ctable_le[0][0] = 0;
 
-	for (i = LE_TABLE_SIZE >> 1; i; i >>= 1) {
-		crc = (crc >> 1) ^ ((crc & 1) ? CRC32C_POLY_LE : 0);
-		for (j = 0; j < LE_TABLE_SIZE; j += 2 * i)
-			crc32ctable_le[0][i + j] = crc ^ crc32ctable_le[0][j];
+	ਲਈ (i = LE_ਸਾਰਣੀ_ਮਾਪ >> 1; i; i >>= 1) {
+		ਚੱਕਰੀ_ਜਾਂਚ = (ਚੱਕਰੀ_ਜਾਂਚ >> 1) ^ ((ਚੱਕਰੀ_ਜਾਂਚ & 1) ? ਚੱਕਰੀ_ਜਾਂਚ_32_C_POLY_LE : 0);
+		ਲਈ (j = 0; j < LE_ਸਾਰਣੀ_ਮਾਪ; j += 2 * i)
+			crc32ctable_le[0][i + j] = ਚੱਕਰੀ_ਜਾਂਚ ^ crc32ctable_le[0][j];
 	}
-	for (i = 0; i < LE_TABLE_SIZE; i++) {
-		crc = crc32ctable_le[0][i];
-		for (j = 1; j < LE_TABLE_ROWS; j++) {
-			crc = crc32ctable_le[0][crc & 0xff] ^ (crc >> 8);
-			crc32ctable_le[j][i] = crc;
+	ਲਈ (i = 0; i < LE_ਸਾਰਣੀ_ਮਾਪ; i++) {
+		ਚੱਕਰੀ_ਜਾਂਚ = crc32ctable_le[0][i];
+		ਲਈ (j = 1; j < LE_ਸਾਰਣੀ_ਪੰਕਤੀਆਂ; j++) {
+			ਚੱਕਰੀ_ਜਾਂਚ = crc32ctable_le[0][ਚੱਕਰੀ_ਜਾਂਚ & 0xff] ^ (ਚੱਕਰੀ_ਜਾਂਚ >> 8);
+			crc32ctable_le[j][i] = ਚੱਕਰੀ_ਜਾਂਚ;
 		}
 	}
 }
@@ -54,64 +54,64 @@ static void crc32cinit_le(void)
 /**
  * crc32init_be() - allocate and initialize BE table data
  */
-static void crc32init_be(void)
+ਸਥਿਰ ਖਾਲੀ crc32init_be(ਖਾਲੀ)
 {
-	unsigned i, j;
-	uint32_t crc = 0x80000000;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ i, j;
+	uint32_t ਚੱਕਰੀ_ਜਾਂਚ = 0x80000000;
 
 	crc32table_be[0][0] = 0;
 
-	for (i = 1; i < BE_TABLE_SIZE; i <<= 1) {
-		crc = (crc << 1) ^ ((crc & 0x80000000) ? CRCPOLY_BE : 0);
-		for (j = 0; j < i; j++)
-			crc32table_be[0][i + j] = crc ^ crc32table_be[0][j];
+	ਲਈ (i = 1; i < BE_ਸਾਰਣੀ_ਮਾਪ; i <<= 1) {
+		ਚੱਕਰੀ_ਜਾਂਚ = (ਚੱਕਰੀ_ਜਾਂਚ << 1) ^ ((ਚੱਕਰੀ_ਜਾਂਚ & 0x80000000) ? CRCPOLY_BE : 0);
+		ਲਈ (j = 0; j < i; j++)
+			crc32table_be[0][i + j] = ਚੱਕਰੀ_ਜਾਂਚ ^ crc32table_be[0][j];
 	}
-	for (i = 0; i < BE_TABLE_SIZE; i++) {
-		crc = crc32table_be[0][i];
-		for (j = 1; j < BE_TABLE_ROWS; j++) {
-			crc = crc32table_be[0][(crc >> 24) & 0xff] ^ (crc << 8);
-			crc32table_be[j][i] = crc;
+	ਲਈ (i = 0; i < BE_ਸਾਰਣੀ_ਮਾਪ; i++) {
+		ਚੱਕਰੀ_ਜਾਂਚ = crc32table_be[0][i];
+		ਲਈ (j = 1; j < BE_ਸਾਰਣੀ_ਪੰਕਤੀਆਂ; j++) {
+			ਚੱਕਰੀ_ਜਾਂਚ = crc32table_be[0][(ਚੱਕਰੀ_ਜਾਂਚ >> 24) & 0xff] ^ (ਚੱਕਰੀ_ਜਾਂਚ << 8);
+			crc32table_be[j][i] = ਚੱਕਰੀ_ਜਾਂਚ;
 		}
 	}
 }
 
-static void output_table(uint32_t (*table)[256], int rows, int len, char *trans)
+ਸਥਿਰ ਖਾਲੀ output_ਸਾਰਣੀ(uint32_t (*ਸਾਰਣੀ)[256], ਪੂਰਨ ਪੰਕਤੀਆਂ, ਪੂਰਨ len, ਅੱਖਰ *trans)
 {
-	int i, j;
+	ਪੂਰਨ i, j;
 
-	for (j = 0 ; j < rows; j++) {
-		printf("{");
-		for (i = 0; i < len - 1; i++) {
-			if (i % ENTRIES_PER_LINE == 0)
-				printf("\n");
-			printf("%s(0x%8.8xL), ", trans, table[j][i]);
+	ਲਈ (j = 0 ; j < ਪੰਕਤੀਆਂ; j++) {
+		ਲਿਖੋ("{");
+		ਲਈ (i = 0; i < len - 1; i++) {
+			ਜੇ (i % ENTRIES_ਪ੍ਰਤੀ_ਸਤਰ == 0)
+				ਲਿਖੋ("\n");
+			ਲਿਖੋ("%s(0x%8.8xL), ", trans, ਸਾਰਣੀ[j][i]);
 		}
-		printf("%s(0x%8.8xL)},\n", trans, table[j][len - 1]);
+		ਲਿਖੋ("%s(0x%8.8xL)},\n", trans, ਸਾਰਣੀ[j][len - 1]);
 	}
 }
 
-int main(int argc, char **argv)
+ਪੂਰਨ ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-	printf("/* this file is generated - do not edit */\n\n");
+	ਲਿਖੋ("/* this file is generated - do not edit */\n\n");
 
-	if (CRC_BE_BITS > 1) {
+	ਜੇ (ਚੱਕਰੀ_ਜਾਂਚ_BE_ਬਿੱਟ > 1) {
 		crc32init_be();
-		printf("static const uint32_t "
+		ਲਿਖੋ("static const uint32_t "
 		       "crc32table_be[%d][%d] = {",
-		       BE_TABLE_ROWS, BE_TABLE_SIZE);
-		output_table(crc32table_be, LE_TABLE_ROWS,
-			     BE_TABLE_SIZE, "tobe");
-		printf("};\n");
+		       BE_ਸਾਰਣੀ_ਪੰਕਤੀਆਂ, BE_ਸਾਰਣੀ_ਮਾਪ);
+		output_ਸਾਰਣੀ(crc32table_be, LE_ਸਾਰਣੀ_ਪੰਕਤੀਆਂ,
+			     BE_ਸਾਰਣੀ_ਮਾਪ, "tobe");
+		ਲਿਖੋ("};\n");
 	}
-	if (CRC_LE_BITS > 1) {
+	ਜੇ (ਚੱਕਰੀ_ਜਾਂਚ_LE_ਬਿੱਟ > 1) {
 		crc32cinit_le();
-		printf("static const uint32_t "
+		ਲਿਖੋ("static const uint32_t "
 		       "crc32ctable_le[%d][%d] = {",
-		       LE_TABLE_ROWS, LE_TABLE_SIZE);
-		output_table(crc32ctable_le, LE_TABLE_ROWS,
-			     LE_TABLE_SIZE, "tole");
-		printf("};\n");
+		       LE_ਸਾਰਣੀ_ਪੰਕਤੀਆਂ, LE_ਸਾਰਣੀ_ਮਾਪ);
+		output_ਸਾਰਣੀ(crc32ctable_le, LE_ਸਾਰਣੀ_ਪੰਕਤੀਆਂ,
+			     LE_ਸਾਰਣੀ_ਮਾਪ, "tole");
+		ਲਿਖੋ("};\n");
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }

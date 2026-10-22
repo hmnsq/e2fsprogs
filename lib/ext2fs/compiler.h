@@ -1,26 +1,26 @@
-#ifndef _EXT2FS_COMPILER_H
-#define _EXT2FS_COMPILER_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _EXT2FS_COMPILER_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _EXT2FS_COMPILER_H
 
-#include <stddef.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stddef.h>
 
-#ifdef __GNUC__
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __GNUC__
 
-#ifndef __GNUC_PREREQ
-#if defined(__GNUC__) && defined(__GNUC_MINOR__)
-#define __GNUC_PREREQ(maj, min) \
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ __GNUC_PREREQ
+#ਜੇ defined(__GNUC__) && defined(__GNUC_MINOR__)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ __GNUC_PREREQ(maj, min) \
 	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
-#else
-#define __GNUC_PREREQ(maj, min) 0
-#endif
-#endif
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ __GNUC_PREREQ(maj, min) 0
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ
 
-#define container_of(ptr, type, member) ({				\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ container_ਦਾ(ptr, type, member) ({				\
 	__typeof__( ((type *)0)->member ) *__mptr = (ptr);	\
-	(type *)( (char *)__mptr - offsetof(type,member) );})
-#else
-#define container_of(ptr, type, member)				\
-	((type *)((char *)(ptr) - offsetof(type, member)))
-#endif
+	(type *)( (ਅੱਖਰ *)__mptr - offsetof(type,member) );})
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ container_ਦਾ(ptr, type, member)				\
+	((type *)((ਅੱਖਰ *)(ptr) - offsetof(type, member)))
+#ਜੇ_ਅੰਤ
 
 
-#endif /* _EXT2FS_COMPILER_H */
+#ਜੇ_ਅੰਤ /* _EXT2FS_COMPILER_H */
