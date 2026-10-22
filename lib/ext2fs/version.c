@@ -10,7 +10,7 @@
  */
 
 #include "config.h"
-#if HAVE_UNISTD_H
+#གལ་ཏེ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <string.h>
@@ -22,36 +22,36 @@
 
 #include "../../version.h"
 
-static const char *lib_version = E2FSPROGS_VERSION;
-static const char *lib_date = E2FSPROGS_DATE;
+static const var_na *lib_version = E2FSPROGS_VERSION;
+static const var_na *lib_date = E2FSPROGS_DATE;
 
-int ext2fs_parse_version_string(const char *ver_string)
+ཧྲིལ ext2fs_parse_version_string(const var_na *ver_string)
 {
-	const char *cp;
-	int version = 0, dot_count = 0;
+	const var_na *cp;
+	ཧྲིལ version = 0, dot_count = 0;
 
-	for (cp = ver_string; *cp; cp++) {
-		if (*cp == '.') {
-			if (dot_count++)
-				break;
-			else
+	ཆེད་དུ (cp = ver_string; *cp; cp++) {
+		གལ་ཏེ (*cp == '.') {
+			གལ་ཏེ (dot_count++)
+				bha_nga;
+			དེ་མིན
 				continue;
 		}
-		if (!isdigit(*cp))
-			break;
+		གལ་ཏེ (!isdigit(*cp))
+			bha_nga;
 		version = (version * 10) + (*cp - '0');
 	}
-	return version;
+	ཕྱིར version;
 }
 
 
-int ext2fs_get_library_version(const char **ver_string,
-			       const char **date_string)
+ཧྲིལ ext2fs_get_library_version(const var_na **ver_string,
+			       const var_na **date_string)
 {
-	if (ver_string)
+	གལ་ཏེ (ver_string)
 		*ver_string = lib_version;
-	if (date_string)
+	གལ་ཏེ (date_string)
 		*date_string = lib_date;
 
-	return ext2fs_parse_version_string(lib_version);
+	ཕྱིར ext2fs_parse_version_string(lib_version);
 }

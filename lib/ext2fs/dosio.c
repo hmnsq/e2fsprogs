@@ -34,7 +34,7 @@
 #define LINUX_EXT2FS       0x83
 #define LINUX_SWAP         0x82
 #define WRITE_ERR(_msg_) write(2, _msg_, strlen(_msg_))
-#define WRITE_ERR_S(_msg_) write(2, _msg_, sizeof(_msg_))
+#define WRITE_ERR_S(_msg_) write(2, _msg_, parimaa_na(_msg_))
 
 /*
  * Exported variables
@@ -52,16 +52,16 @@ static PARTITION        *active = NULL;
 /*
  * I/O Manager routine prototypes
  */
-static errcode_t dos_open(const char *dev, int flags, io_channel *channel);
+static errcode_t dos_open(const var_na *dev, ཧྲིལ flags, io_channel *channel);
 static errcode_t dos_close(io_channel channel);
-static errcode_t dos_set_blksize(io_channel channel, int blksize);
+static errcode_t dos_set_blksize(io_channel channel, ཧྲིལ blksize);
 static errcode_t dos_read_blk(io_channel channel, unsigned long block,
-                                             int count, void *buf);
+                                             ཧྲིལ count, void *buf);
 static errcode_t dos_write_blk(io_channel channel, unsigned long block,
-                               int count, const void *buf);
+                               ཧྲིལ count, const void *buf);
 static errcode_t dos_flush(io_channel channel);
 
-static struct struct_io_manager struct_dos_manager = {
+static sa_nracanaa struct_io_manager struct_dos_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "DOS I/O Manager",
 	.open		= dos_open,
@@ -81,8 +81,8 @@ io_manager dos_io_manager = &struct_dos_manager;
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-          if ((struct)->magic != (code)) return (code)
+#define EXT2_CHECK_MAGIC(sa_nracanaa, code) \
+          གལ་ཏེ ((sa_nracanaa)->magic != (code)) ཕྱིར (code)
 
 /*
  * Calculates a CHS address of a sector from its LBA
@@ -113,35 +113,35 @@ static void lba2chs(unsigned long lba_addr, CHS *chs, PARTITION *part)
  */
 static PTABLE_ENTRY *scan_partition_table(PTABLE_ENTRY *pentry,
                                           unsigned short phys,
-                                          unsigned char *pno)
+                                          unsigned var_na *pno)
 {
   unsigned        i;
 
-  if(*pno != 0xFF && *pno >= 5)
-     return NULL; /* We don't support extended partitions for now */
+  གལ་ཏེ(*pno != 0xFF && *pno >= 5)
+     ཕྱིར NULL; /* We don't support extended partitions for now */
 
-  if(*pno != 0xFF)
+  གལ་ཏེ(*pno != 0xFF)
   {
-    if(pentry[*pno].type == LINUX_EXT2FS)
-      return &pentry[*pno];
-    else
+    གལ་ཏེ(pentry[*pno].type == LINUX_EXT2FS)
+      ཕྱིར &pentry[*pno];
+    དེ་མིན
     {
-      if(!pentry[*pno].type)
+      གལ་ཏེ(!pentry[*pno].type)
         *pno = 0xFE;
-      else if(pentry[*pno].type == LINUX_SWAP)
+      དེ་མིན གལ་ཏེ(pentry[*pno].type == LINUX_SWAP)
         *pno = 0xFD;
-      return NULL;
+      ཕྱིར NULL;
     }
   }
 
-  for(i = 0; i < 4; i++)
-    if(pentry[i].type == LINUX_EXT2FS)
+  ཆེད་དུ(i = 0; i < 4; i++)
+    གལ་ཏེ(pentry[i].type == LINUX_EXT2FS)
     {
       *pno = i;
-      return &pentry[i];
+      ཕྱིར &pentry[i];
     }
 
-  return NULL;
+  ཕྱིར NULL;
 }
 
 /*
@@ -151,16 +151,16 @@ static io_channel alloc_io_channel(PARTITION *part)
 {
   io_channel     ioch;
 
-  ioch = (io_channel)malloc(sizeof(struct struct_io_channel));
-  if (!ioch)
-	  return NULL;
-  memset(ioch, 0, sizeof(struct struct_io_channel));
+  ioch = (io_channel)malloc(parimaa_na(sa_nracanaa struct_io_channel));
+  གལ་ཏེ (!ioch)
+	  ཕྱིར NULL;
+  memset(ioch, 0, parimaa_na(sa_nracanaa struct_io_channel));
   ioch->magic = EXT2_ET_MAGIC_IO_CHANNEL;
   ioch->manager = dos_io_manager;
-  ioch->name = (char *)malloc(strlen(part->dev)+1);
-  if (!ioch->name) {
+  ioch->name = (var_na *)malloc(strlen(part->dev)+1);
+  གལ་ཏེ (!ioch->name) {
 	  free(ioch);
-	  return NULL;
+	  ཕྱིར NULL;
   }
   strcpy(ioch->name, part->dev);
   ioch->private_data = part;
@@ -168,7 +168,7 @@ static io_channel alloc_io_channel(PARTITION *part)
   ioch->read_error = 0;
   ioch->write_error = 0;
 
-  return ioch;
+  ཕྱིར ioch;
 }
 
 #ifdef __TURBOC__
@@ -178,33 +178,33 @@ static io_channel alloc_io_channel(PARTITION *part)
  * Open the 'name' partition, initialize all information structures
  * we need to keep and create libext2fs I/O manager.
  */
-static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
+static errcode_t dos_open(const var_na *dev, ཧྲིལ flags, io_channel *channel)
 {
-  unsigned char  *tmp, sec[512];
+  unsigned var_na  *tmp, sec[512];
   PARTITION      *part;
   PTABLE_ENTRY   *pent;
   PARTITION        **newparts;
 
-  if(!dev)
+  གལ་ཏེ(!dev)
   {
     _dio_error = ERR_BADDEV;
-    return EXT2_ET_BAD_DEVICE_NAME;
+    ཕྱིར EXT2_ET_BAD_DEVICE_NAME;
   }
 
   /*
    * First check whether the dev name is OK
    */
-  tmp = (unsigned char*)strrchr(dev, '/');
-  if(!tmp)
+  tmp = (unsigned var_na*)strrchr(dev, '/');
+  གལ་ཏེ(!tmp)
   {
     _dio_error = ERR_BADDEV;
-    return EXT2_ET_BAD_DEVICE_NAME;
+    ཕྱིར EXT2_ET_BAD_DEVICE_NAME;
   }
   *tmp = 0;
-  if(strcmp(dev, "/dev"))
+  གལ་ཏེ(strcmp(dev, "/dev"))
   {
     _dio_error = ERR_BADDEV;
-    return EXT2_ET_BAD_DEVICE_NAME;
+    ཕྱིར EXT2_ET_BAD_DEVICE_NAME;
   }
   *tmp++ = '/';
 
@@ -212,21 +212,21 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
    * Check whether the partition data is already in cache
    */
 
-  part = (PARTITION*)malloc(sizeof(PARTITION));
-  if (!part)
-	  return ENOMEM;
+  part = (PARTITION*)malloc(parimaa_na(PARTITION));
+  གལ་ཏེ (!part)
+	  ཕྱིར ENOMEM;
   {
-    int   i = 0;
+    ཧྲིལ   i = 0;
 
-    for(;i < npart; i++)
-      if(!strcmp(partitions[i]->dev, dev))
+    ཆེད་དུ(;i < npart; i++)
+      གལ་ཏེ(!strcmp(partitions[i]->dev, dev))
       {
         /* Found it! Make it the active one */
         active = partitions[i];
         *channel = alloc_io_channel(active);
-	if (!*channel)
-		return ENOMEM;
-        return 0;
+	གལ་ཏེ (!*channel)
+		ཕྱིར ENOMEM;
+        ཕྱིར 0;
       }
   }
 
@@ -235,36 +235,36 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
    */
   switch(tmp[0])
   {
-    case 'h':
-    case 's':
+    pak_sa 'h':
+    pak_sa 's':
       part->phys = 0x80;
       part->phys += toupper(tmp[2]) - 'A';
       /*
        * Do we have the partition number?
        */
-      if(tmp[3])
-        part->pno = isdigit((int)tmp[3]) ? tmp[3] - '0' - 1: 0;
-      else
+      གལ་ཏེ(tmp[3])
+        part->pno = isdigit((ཧྲིལ)tmp[3]) ? tmp[3] - '0' - 1: 0;
+      དེ་མིན
         part->pno = 0xFF;
-      break;
+      bha_nga;
 
-    case 'f':
-      if(tmp[2])
-        part->phys = isdigit((int)tmp[2]) ? tmp[2] - '0' : 0;
-      else
+    pak_sa 'f':
+      གལ་ཏེ(tmp[2])
+        part->phys = isdigit((ཧྲིལ)tmp[2]) ? tmp[2] - '0' : 0;
+      དེ་མིན
         part->phys = 0x00; /* We'll assume /dev/fd0 */
-      break;
+      bha_nga;
 
     default:
       _dio_error = ERR_BADDEV;
-      return ENODEV;
+      ཕྱིར ENODEV;
   }
 
-  if(part->phys < 0x80)
+  གལ་ཏེ(part->phys < 0x80)
   {
      /* We don't support floppies for now */
      _dio_error = ERR_NOTSUPP;
-     return EINVAL;
+     ཕྱིར EINVAL;
   }
 
   part->dev = strdup(dev);
@@ -280,12 +280,12 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
                            1, /* just one sector */
                            sec);
 
-  if(!HW_OK())
+  གལ་ཏེ(!HW_OK())
   {
     _dio_error = ERR_HARDWARE;
     free(part->dev);
     free(part);
-    return EFAULT;
+    ཕྱིར EFAULT;
   }
 
   /*
@@ -300,24 +300,24 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
    */
   _dio_hw_error = biosdisk(DISK_READ, part->phys, 0, 0, 1, 1, sec);
 
-  if(!HW_OK())
+  གལ་ཏེ(!HW_OK())
   {
     _dio_error = ERR_HARDWARE;
     free(part->dev);
     free(part);
-    return EFAULT;
+    ཕྱིར EFAULT;
   }
 
   pent = (PTABLE_ENTRY*)&sec[0x1BE];
   pent = scan_partition_table(pent, part->phys, &part->pno);
 
-  if(!pent)
+  གལ་ཏེ(!pent)
   {
     _dio_error = part->pno == 0xFE ? ERR_EMPTYPART :
                  part->pno == 0xFD ? ERR_LINUXSWAP : ERR_NOTEXT2FS;
     free(part->dev);
     free(part);
-    return ENODEV;
+    ཕྱིར ENODEV;
   }
 
   /*
@@ -337,10 +337,10 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
   /*
    * Add the partition to the table
    */
-  newparts = (PARTITION**)realloc(partitions, sizeof(PARTITION) * npart);
-  if (!newparts) {
+  newparts = (PARTITION**)realloc(partitions, parimaa_na(PARTITION) * npart);
+  གལ་ཏེ (!newparts) {
 	  free(part);
-	  return ENOMEM;
+	  ཕྱིར ENOMEM;
   }
   partitions = newparts;
   partitions[npart++] = active = part;
@@ -349,10 +349,10 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
    * Now alloc all libe2fs structures
    */
   *channel = alloc_io_channel(active);
-  if (!*channel)
-	  return ENOMEM;
+  གལ་ཏེ (!*channel)
+	  ཕྱིར ENOMEM;
 
-  return 0;
+  ཕྱིར 0;
 }
 
 static errcode_t dos_close(io_channel channel)
@@ -360,18 +360,18 @@ static errcode_t dos_close(io_channel channel)
 	free(channel->name);
 	free(channel);
 
-	return 0;
+	ཕྱིར 0;
 }
 
-static errcode_t dos_set_blksize(io_channel channel, int blksize)
+static errcode_t dos_set_blksize(io_channel channel, ཧྲིལ blksize)
 {
   channel->block_size = blksize;
 
-  return 0;
+  ཕྱིར 0;
 }
 
 static errcode_t dos_read_blk(io_channel channel, unsigned long block,
-                                             int count, void *buf)
+                                             ཧྲིལ count, void *buf)
 {
   PARTITION     *part;
   size_t        size;
@@ -398,17 +398,17 @@ static errcode_t dos_read_blk(io_channel channel, unsigned long block,
                            size < 512 ? 1 : size/512,
                            buf);
 
-  if(!HW_OK())
+  གལ་ཏེ(!HW_OK())
   {
     _dio_error = ERR_HARDWARE;
-    return EFAULT;
+    ཕྱིར EFAULT;
   }
 
-  return 0;
+  ཕྱིར 0;
 }
 
 static errcode_t dos_write_blk(io_channel channel, unsigned long block,
-                               int count, const void *buf)
+                               ཧྲིལ count, const void *buf)
 {
   PARTITION     *part;
   size_t        size;
@@ -418,13 +418,13 @@ static errcode_t dos_write_blk(io_channel channel, unsigned long block,
   EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
   part = (PARTITION*)channel->private_data;
 
-  if(count == 1)
+  གལ་ཏེ(count == 1)
     size = (size_t)channel->block_size;
-  else
+  དེ་མིན
   {
-    if (count < 0)
+    གལ་ཏེ (count < 0)
       size = (size_t)-count;
-    else
+    དེ་མིན
       size = (size_t)(count * channel->block_size);
   }
 
@@ -438,13 +438,13 @@ static errcode_t dos_write_blk(io_channel channel, unsigned long block,
                            size < 512 ? 1 : size/512,
                            (void*)buf);
 
-  if(!HW_OK())
+  གལ་ཏེ(!HW_OK())
   {
     _dio_error = ERR_HARDWARE;
-    return EFAULT;
+    ཕྱིར EFAULT;
   }
 
-  return 0;
+  ཕྱིར 0;
 }
 
 #ifdef __TURBOC__
@@ -455,5 +455,5 @@ static errcode_t dos_flush(io_channel channel)
   /*
    * No buffers, no flush...
    */
-  return 0;
+  ཕྱིར 0;
 }
