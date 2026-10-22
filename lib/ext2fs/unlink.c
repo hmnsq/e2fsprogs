@@ -9,79 +9,79 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#אם HAVE_UNISTD_H
+#ضمن <unistd.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
-struct link_struct  {
-	const char	*name;
-	int		namelen;
+بنية link_struct  {
+	ثابت حرف	*name;
+	صحيح		namelen;
 	ext2_ino_t	inode;
-	int		flags;
-	struct ext2_dir_entry *prev;
-	int		done;
+	صحيح		flags;
+	بنية ext2_dir_entry *prev;
+	صحيح		done;
 };
 
 #ifdef __TURBOC__
  #pragma argsused
 #endif
-static int unlink_proc(struct ext2_dir_entry *dirent,
-		     int	offset,
-		     int	blocksize EXT2FS_ATTR((unused)),
-		     char	*buf EXT2FS_ATTR((unused)),
-		     void	*priv_data)
+ساكن صحيح unlink_proc(بنية ext2_dir_entry *dirent,
+		     صحيح	offset,
+		     صحيح	blocksize EXT2FS_ATTR((unused)),
+		     حرف	*buf EXT2FS_ATTR((unused)),
+		     فراغ	*priv_data)
 {
-	struct link_struct *ls = (struct link_struct *) priv_data;
-	struct ext2_dir_entry *prev;
+	بنية link_struct *ls = (بنية link_struct *) priv_data;
+	بنية ext2_dir_entry *prev;
 
 	prev = ls->prev;
 	ls->prev = dirent;
 
-	if (ls->name) {
-		if (ext2fs_dirent_name_len(dirent) != ls->namelen)
-			return 0;
-		if (strncmp(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
-			return 0;
+	אם (ls->name) {
+		אם (ext2fs_dirent_name_len(dirent) != ls->namelen)
+			החזר 0;
+		אם (strncmp(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
+			החזר 0;
 	}
-	if (!(ls->flags & EXT2FS_UNLINK_FORCE) && ls->inode) {
-		if (dirent->inode != ls->inode)
-			return 0;
-	} else {
-		if (!dirent->inode)
-			return 0;
+	אם (!(ls->flags & EXT2FS_UNLINK_FORCE) && ls->inode) {
+		אם (dirent->inode != ls->inode)
+			החזר 0;
+	} אחרת {
+		אם (!dirent->inode)
+			החזר 0;
 	}
 
-	if (offset)
+	אם (offset)
 		prev->rec_len += dirent->rec_len;
-	else
+	אחרת
 		dirent->inode = 0;
 	ls->done++;
-	return DIRENT_ABORT|DIRENT_CHANGED;
+	החזר DIRENT_ABORT|DIRENT_CHANGED;
 }
 
 #ifdef __TURBOC__
  #pragma argsused
 #endif
 errcode_t ext2fs_unlink(ext2_filsys fs, ext2_ino_t dir,
-			const char *name, ext2_ino_t ino,
-			int flags)
+			ثابت حرف *name, ext2_ino_t ino,
+			صحيح flags)
 {
 	errcode_t	retval;
-	struct link_struct ls;
+	بنية link_struct ls;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!name && !ino)
-		return EXT2_ET_INVALID_ARGUMENT;
+	אם (!name && !ino)
+		החזר EXT2_ET_INVALID_ARGUMENT;
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	אם (!(fs->flags & EXT2_FLAG_RW))
+		החזר EXT2_ET_RO_FILSYS;
 
 	ls.name = name;
 	ls.namelen = name ? strlen(name) : 0;
@@ -92,9 +92,9 @@ errcode_t ext2fs_unlink(ext2_filsys fs, ext2_ino_t dir,
 
 	retval = ext2fs_dir_iterate(fs, dir, DIRENT_FLAG_INCLUDE_EMPTY,
 				    0, unlink_proc, &ls);
-	if (retval)
-		return retval;
+	אם (retval)
+		החזר retval;
 
-	return (ls.done) ? 0 : EXT2_ET_DIR_NO_SPACE;
+	החזר (ls.done) ? 0 : EXT2_ET_DIR_NO_SPACE;
 }
 
