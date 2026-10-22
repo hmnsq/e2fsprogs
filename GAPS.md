@@ -1,0 +1,543 @@
+# What is still missing
+
+76 languages. Each line says in how many languages it is missing.
+
+## Files in languages BURP cannot read yet
+
+
+## Keywords with no word in a language's table
+
+- guru:__FILE__: 75
+- guru:size_t: 71
+- guru:errno: 71
+- guru:fprintf: 71
+- guru:stderr: 71
+- guru:close: 71
+- guru:stdout: 71
+- guru:offsetof: 71
+- guru:memcmp: 71
+- guru:strerror: 71
+- guru:time_t: 71
+- guru:FILE: 71
+- guru:SEEK_SET: 71
+- guru:fputs: 71
+- guru:dirname: 71
+- guru:strtoul: 71
+- guru:strchr: 71
+- guru:strncpy: 71
+- guru:fflush: 71
+- guru:memmove: 71
+- guru:realloc: 71
+- guru:fstat: 71
+- guru:sprintf: 71
+- guru:perror: 71
+- guru:fgets: 71
+- guru:fclose: 71
+- guru:time: 71
+- guru:fputc: 71
+- guru:fopen: 71
+- guru:abort: 71
+- guru:ULONG_MAX: 71
+- guru:readdir: 71
+- guru:closedir: 71
+- guru:feof: 71
+- guru:stdin: 71
+- guru:tmpfile: 71
+- guru:rewind: 71
+- guru:setbuf: 71
+- guru:EOF: 71
+- guru:atexit: 71
+- guru:strrchr: 71
+- guru:DIR: 71
+- guru:opendir: 71
+- guru:getenv: 71
+- guru:SEEK_CUR: 71
+- guru:isprint: 71
+- guru:system: 71
+- guru:strtol: 71
+- guru:putc: 71
+- guru:atoi: 71
+- guru:memset: 70
+- guru:open: 70
+- guru:strcpy: 70
+- guru:strcmp: 70
+- guru:strcat: 70
+- guru:qsort: 70
+- guru:puts: 70
+- guru:rand: 70
+- guru:srand: 70
+- guru:log: 67
+- guru:#define: 66
+- guru:#endif: 66
+- guru:#ifdef: 66
+- guru:#ifndef: 66
+- guru:#pragma: 66
+- guru:#undef: 66
+- guru:#error: 66
+- guru:unsigned: 62
+- guru:long: 62
+- guru:printf: 62
+- guru:memcpy: 62
+- guru:exit: 62
+- guru:strlen: 62
+- guru:malloc: 62
+- guru:calloc: 62
+- guru:short: 62
+- guru:strncmp: 62
+- guru:signed: 62
+- guru:isdigit: 62
+- guru:sscanf: 62
+- guru:INT_MAX: 62
+- guru:toupper: 62
+- guru:main: 54
+- guru:void: 25
+- guru:goto: 25
+- guru:static: 25
+- guru:extern: 25
+- guru:const: 25
+- guru:NULL: 25
+- guru:free: 25
+- guru:continue: 25
+- guru:typedef: 25
+- guru:do: 25
+- guru:private: 25
+- guru:switch: 25
+- guru:default: 25
+- guru:write: 25
+- guru:read: 25
+- guru:#elif: 25
+- guru:float: 25
+- guru:assert: 25
+- guru:for: 9
+- guru:struct: 9
+- guru:char: 9
+- guru:sizeof: 9
+- guru:break: 9
+- guru:case: 9
+- guru:inline: 9
+- guru:enum: 9
+- guru:double: 9
+- guru:union: 9
+- guru:register: 9
+- guru:if: 1
+- guru:return: 1
+- guru:int: 1
+- guru:else: 1
+- guru:#if: 1
+- guru:while: 1
+- guru:#else: 1
+
+## Names with no dictionary entry (the most common first)
+
+- `fs`: 76
+- `retval`: 76
+- `errcode_t`: 76
+- `i`: 76
+- `tdb`: 76
+- `inode`: 76
+- `buf`: 76
+- `ext2_filsys`: 76
+- `super`: 76
+- `flags`: 76
+- `channel`: 76
+- `ino`: 76
+- `bitmap`: 76
+- `blk64_t`: 76
+- `handle`: 76
+- `ret`: 76
+- `err`: 76
+- `x`: 76
+- `ext2_ino_t`: 76
+- `blk`: 76
+- `name`: 76
+- `len`: 76
+- `blocksize`: 76
+- `blk_t`: 76
+- `bmap`: 76
+- `ctx`: 76
+- `io`: 76
+- `rec`: 76
+- `file`: 76
+- `sb`: 76
+- `extent`: 76
+- `cache`: 76
+- `ext2fs_free_mem`: 76
+- `EXT2_CHECK_MAGIC`: 76
+- `icount`: 76
+- `tdb_context`: 76
+- `ext2_inode`: 76
+- `io_channel`: 76
+- `fd`: 76
+- `h`: 76
+- `magic`: 76
+- `b`: 76
+- `n`: 76
+- `hash`: 76
+- `dir`: 76
+- `s`: 76
+- `argv`: 76
+- `p`: 76
+- `errout`: 76
+- `ext`: 76
+- `bp`: 76
+- `ext2fs_generic_bitmap`: 76
+- `j`: 76
+- `dgrp_t`: 76
+- `cleanup`: 76
+- `gdp`: 76
+- `dirent`: 76
+- `c`: 76
+- `rec_len`: 76
+- `defined`: 76
+- `old`: 76
+- `dblist`: 76
+- `bb`: 76
+- `ma`: 76
+- `errcode`: 76
+- `e_lblk`: 76
+- `arg`: 76
+- `tmp`: 76
+- `tdb_off_t`: 76
+- `f`: 76
+- `_INLINE_`: 76
+- `list`: 76
+- `t`: 76
+- `actual`: 76
+- `ext2fs_swab32`: 76
+- `off`: 76
+- `S`: 76
+- `EXT2FS_ATTR`: 76
+- `ext2fs_get_mem`: 76
+- `ext2fs_generic_bitmap_64`: 76
+- `cp`: 76
+- `el`: 76
+- `fail`: 76
+- `irel`: 76
+- `md`: 76
+- `sm`: 76
+- `ptr`: 76
+- `rec_ptr`: 76
+- `TDB_LOG`: 76
+- `a`: 76
+- `goal`: 76
+- `e_len`: 76
+- `func`: 76
+- `CONST64`: 76
+- `entries`: 76
+- `align`: 76
+- `level`: 76
+- `com_err`: 76
+- `u8c`: 76
+- `y`: 76
+- `src`: 76
+- `info`: 76
+- `blockcnt`: 76
+- `ls`: 76
+- `argc`: 76
+- `eh`: 76
+- `dbuf`: 76
+- `real`: 76
+- `ext2fs_inode_bitmap`: 76
+- `HAVE_UNISTD_H`: 76
+- `hdr`: 76
+- `d`: 76
+- `brel`: 76
+- `map`: 76
+- `inum`: 76
+- `EXT2_ET_MAGIC_IO_CHANNEL`: 76
+- `pos`: 76
+- `stats`: 76
+- `ext2_inode_large`: 76
+- `transaction`: 76
+- `i_flags`: 76
+- `ext2fs_swab16`: 76
+- `methods`: 76
+- `pblk`: 76
+- `dev`: 76
+- `dsize`: 76
+- `u32`: 76
+- `manager`: 76
+- `TDB_DEBUG_FATAL`: 76
+- `part`: 76
+- `icache`: 76
+- `ecode`: 76
+- `r`: 76
+- `e_flags`: 76
+- `e_pblk`: 76
+- `param`: 76
+- `ix`: 76
+- `test_fs`: 76
+- `e`: 76
+- `nr`: 76
+- `attrs`: 76
+- `osd2`: 76
+- `newex`: 76
+- `dptr`: 76
+- `ent`: 76
+- `st`: 76
+- `bitno`: 76
+- `op`: 76
+- `name_len`: 76
+- `EXT2_ET_MAGIC_EXT2FS_FILSYS`: 76
+- `gen_bitmap`: 76
+- `val`: 76
+- `type`: 76
+- `ext2fs_generic_bitmap_32`: 76
+- `DEBUG`: 76
+- `ext2fs_extent_get`: 76
+- `mount_flags`: 76
+- `list_struct`: 76
+- `ext2_extent_handle_t`: 76
+- `blk64`: 76
+- `cluster_fill`: 76
+- `Handle`: 76
+- `testarray`: 76
+- `ext2_dblist`: 76
+- `img`: 76
+- `HAVE_SYS_TYPES_H`: 76
+- `inode_map`: 76
+- `ADDR`: 76
+- `fillable`: 76
+- `iter`: 76
+- `ext2fs_crc32c_le`: 76
+- `ltype`: 76
+- `plen`: 76
+- `inuse`: 76
+- `dest`: 76
+- `ext2fs_read_inode`: 76
+- `ext2_loff_t`: 76
+- `ext2_file_t`: 76
+- `sha256`: 76
+- `sha512`: 76
+- `min`: 76
+- `ex`: 76
+- `ext2_u32_list`: 76
+- `description`: 76
+- `lblk`: 76
+- `EXT2_EXTENT_FLAGS_UNINIT`: 76
+- `curr`: 76
+- `STORE`: 76
+- `linux2`: 76
+- `ext2_irel`: 76
+- `tdb_unlock`: 76
+- `new_blk`: 76
+- `bitarray`: 76
+- `bufsize`: 76
+- `travlocks`: 76
+- `now`: 76
+- `addr`: 76
+- `mmp_cmp`: 76
+- `ext2_xattr_handle`: 76
+- `gen_bmap`: 76
+- `other`: 76
+- `location`: 76
+- `HAVE_SYS_STAT_H`: 76
+- `ext2fs_extent`: 76
+- `dbg_printf`: 76
+- `io_channel_write_blk64`: 76
+- `blksize`: 76
+- `ext2_icount_t`: 76
+- `tdb_brlock`: 76
+- `TDB_ERR_IO`: 76
+- `ext2_badblocks_list`: 76
+- `e2_blkcnt_t`: 76
+- `descr`: 76
+- `mmp`: 76
+- `io_manager`: 76
+- `device_name`: 76
+- `open_flags`: 76
+- `journal_t`: 76
+- `mmp_s`: 76
+- `utf8data`: 76
+- `curlen`: 76
+- `bigarray`: 76
+- `define`: 76
+- `bm1`: 76
+- `desc`: 76
+- `params`: 76
+- `cnt`: 76
+- `de`: 76
+- `tdb_len_t`: 76
+- `TDB_DEBUG_ERROR`: 76
+- `bmap_rb_extent`: 76
+- `bmap_flags`: 76
+- `ext2fs_has_feature_metadata_csum`: 76
+- `calculated`: 76
+- `dp`: 76
+- `i_extra_isize`: 76
+- `range_len`: 76
+- `Errno`: 76
+- `res`: 76
+- `s_backup_bgs`: 76
+- `dirty`: 76
+- `ext2_db_entry2`: 76
+- `_dio_hw_error`: 76
+- `mmp_buf`: 76
+- `ssize_t`: 76
+- `jsb`: 76
+- `oi`: 76
+- `sci_idx`: 76
+- `out2`: 76
+- `pb`: 76
+- `io_channel_read_blk64`: 76
+- `EXT2_FLAG_RW`: 76
+- `tlock`: 76
+- `ext2fs_write_inode`: 76
+- `bmap64`: 76
+- `phys_blk`: 76
+- `EXT2FS_IS_32_BITMAP`: 76
+- `tab`: 76
+- `HANDLE`: 76
+- `Device`: 76
+- `map_ptr`: 76
+- `undo_file`: 76
+- `EXT2FS_IS_64_BITMAP`: 76
+- `ext2fs_has_feature_64bit`: 76
+- `blocknr`: 76
+- `HAVE_ERRNO_H`: 76
+- `es`: 76
+- `stat`: 76
+- `old_idx`: 76
+- `st_buf`: 76
+- `jparams`: 76
+- `hangul`: 76
+- `TDB_ERRCODE`: 76
+- `EXT2_ET_MAGIC_UNIX_IO_CHANNEL`: 76
+- `ed`: 76
+- `nbytes`: 76
+- `rcursor`: 76
+- `ext2fs_extent_replace`: 76
+- `inode_buf`: 76
+- `bitmap_ops`: 76
+- `ext2_brel`: 76
+- `pathname`: 76
+- `parse_ulong`: 76
+- `CACHE_MTX`: 76
+- `mutex_unlock`: 76
+- `EXT4_EXTENTS_FL`: 76
+- `bitpos`: 76
+- `ret_blk`: 76
+- `ext2fs_extent_goto`: 76
+- `numblocks`: 76
+- `q`: 76
+- `EXT2_SB`: 76
+- `ea_ino`: 76
+- `ccc`: 76
+- `ULONG`: 76
+- `OPTIONAL`: 76
+- `partial`: 76
+- `bounce`: 76
+- `IS_ALIGNED`: 76
+- `ext2fs_get_array`: 76
+
+## Comments with no translation
+
+- * For checking structure magic numbers...: 76
+- Ensure ecode is set for log fn.: 76
+- __GNU__: 76
+- NO_IO_CACHE: 76
+- fallthrough: 76
+- * Flush data buffers to disk.: 76
+- UNITTEST: 76
+- Free blocks count: 76
+- crc32c(s_uuid+grp_num+bitmap) LSB: 76
+- read in the freelist top: 76
+- read in the hash top: 76
+- find which hash bucket it is in: 76
+- FIXME: Take backup group descriptor blocks into account
+		 * if the flexbg allocations will grow to : 76
+- For Watcom C: 76
+- __GNUC__: 76
+- __STDC_VERSION__ >= 199901L: 76
+- Read inode structure if necessary: 76
+- ENABLE_BMAP_STATS_OPS: 76
+- Should never happen: 76
+- Free inodes count: 76
+- reserved for userspace lib: 76
+- Blocks count: 76
+- crc32c(uuid+inum+inode): 76
+- Inode number: 76
+- We only know how to deal with v2 EA blocks: 76
+- Zero blocks if necessary: 76
+- User requires init/uninit but extent is uninit/init.: 76
+- insert before: 76
+- convert to clusters if necessary: 76
+- Verify the inode checksum.: 76
+- HAVE_GETMNTINFO: 76
+- The GNU hurd is broken with respect to stat devices: 76
+- DEBUG: 76
+- If it's in the cache, use it!: 76
+- move to the next record: 76
+- * First write the existing content into database: 76
+- 64-bit versions: 76
+- not C99: 76
+- INCLUDE_INLINE_FUNCS: 76
+- * If we're expanding the bitmap, make sure all of the new
+	 * parts of the bitmap are zero.: 76
+- * The compared start block number or start inode number
+		 * is not the first bit in a byte.: 76
+- * Compare blocks or inodes in the first byte.
+		 * If there is any marked bit, this function returns: 76
+- * The compared start block number or start inode number is
+	 * the first bit in a byte.: 76
+- * The compared end block number or end inode number is
+		 * not the last bit in a byte.: 76
+- * Compare blocks or inodes in the last byte.
+		 * If there is any marked bit, this function returns : 76
+- Check whether all bytes are 0: 76
+- whether a != 0xff byte has been found: 76
+- scan bits until we hit a byte boundary: 76
+- scan bytes until 8-byte (64-bit) aligned: 76
+- 8-byte blocks: 76
+- Here either count < 8 or byte_found == 1.: 76
+- No more merging: 76
+- * Return the group # of a block: 76
+- * Return the first block (inclusive) in a group: 76
+- * Return the last block (inclusive) in a group: 76
+- * The iterator function for the inode relocation entries.
+	 * Returns an inode number of 0 when out : 76
+- * Allocate memory structures: 76
+- use pre increment for speed: 76
+- NOTE: The input to this function MUST be in LE order: 76
+- * The extent tree structures are accessed in LE order, so we must
+	 * swap the checksum bytes here.: 76
+- Have to swab back to little-endian to do the checksum: 76
+- skip checksum: 76
+- for checksum of struct ext4_group_desc do the rest...: 76
+- * Add a directory block to the directory block list: 76
+- * Change the directory block to the directory block list: 76
+- * This function iterates over the directory block list: 76
+- Byte offset of the inode bitmaps: 76
+- __has_attribute(__nonstring__): 76
+- __has_attribute: 76
+- __nonstring: 76
+- * Structure of a blocks group descriptor: 76
+- Blocks bitmap block: 76
+- Inodes bitmap block: 76
+- Inodes table block: 76
+- Directories count: 76
+- Exclude bitmap for snapshots: 76
+- Unused inodes count: 76
+- crc32c(s_uuid+grp_num+bitmap) MSB: 76
+- Group number for this data: 76
+- Absolute block number of block bitmap: 76
+- Absolute block number of inode bitmap: 76
+- Absolute block number of inode table start: 76
+- Total number of blocks in this group: 76
+- Number of reserved blocks in this group: 76
+- File mode: 76
+- Low 16 bits of Owner Uid: 76
+- Size in bytes: 76
+- Access time: 76
+- Modification time: 76
+- Deletion Time: 76
+- Low 16 bits of Group Id: 76
+- Links count: 76
+- File flags: 76
+- was l_i_reserved1: 76
+- OS dependent 1: 76
+- Pointers to blocks: 76
+- File version (for NFS): 76
+- File ACL: 76
+- Fragment address: 76
+- these 2 fields: 76
