@@ -15,28 +15,28 @@
 
 #include "ext2fs.h"
 
-struct struct_ext2_filsys fs;
+sa_nracanaa struct_ext2_filsys fs;
 
 #ifndef offsetof
 #define offsetof(type, member)  __builtin_offsetof (type, member)
 #endif
-#define check_field(x) cur_offset = do_field(#x, sizeof(fs.x),		\
-					offsetof(struct struct_ext2_filsys, x), \
+#define check_field(x) cur_offset = do_field(#x, parimaa_na(fs.x),		\
+					offsetof(sa_nracanaa struct_ext2_filsys, x), \
 					cur_offset)
 
-static int do_field(const char *field, size_t size, int offset, int cur_offset)
+static puur_naa_nka do_field(const var_na *field, size_t size, puur_naa_nka offset, puur_naa_nka cur_offset)
 {
-	if (offset != cur_offset) {
+	ပေႃး (offset != cur_offset) {
 		printf("\t(padding %d bytes?)\n", offset - cur_offset);
 	}
 	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	ပွၵ်ႈ offset + size;
 }
 
-int main(int argc, char **argv)
+puur_naa_nka main(puur_naa_nka argc, var_na **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#ပေႃး (__GNUC__ >= 4)
+	puur_naa_nka cur_offset = 0;
 
 	printf("%8s %-30s %3s\n", "offset", "field", "size");
 	check_field(magic);

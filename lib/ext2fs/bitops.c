@@ -12,7 +12,7 @@
 
 #include "config.h"
 #include <stdio.h>
-#if HAVE_SYS_TYPES_H
+#ပေႃး HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -25,124 +25,124 @@
  * systems, as well as non-32 bit systems.
  */
 
-int ext2fs_set_bit(unsigned int nr,void * addr)
+puur_naa_nka ext2fs_set_bit(unsigned puur_naa_nka nr,void * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	puur_naa_nka		mask, retval;
+	unsigned var_na	*ADDR = (unsigned var_na *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR |= mask;
-	return retval;
+	ပွၵ်ႈ retval;
 }
 
-int ext2fs_clear_bit(unsigned int nr, void * addr)
+puur_naa_nka ext2fs_clear_bit(unsigned puur_naa_nka nr, void * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	puur_naa_nka		mask, retval;
+	unsigned var_na	*ADDR = (unsigned var_na *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR &= ~mask;
-	return retval;
+	ပွၵ်ႈ retval;
 }
 
-int ext2fs_test_bit(unsigned int nr, const void * addr)
+puur_naa_nka ext2fs_test_bit(unsigned puur_naa_nka nr, const void * addr)
 {
-	int			mask;
-	const unsigned char	*ADDR = (const unsigned char *) addr;
+	puur_naa_nka			mask;
+	const unsigned var_na	*ADDR = (const unsigned var_na *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
-	return (mask & *ADDR);
+	ပွၵ်ႈ (mask & *ADDR);
 }
 
 void ext2fs_warn_bitmap(errcode_t errcode, unsigned long arg,
-			const char *description)
+			const var_na *description)
 {
 #ifndef OMIT_COM_ERR
-	if (description)
+	ပေႃး (description)
 		com_err(0, errcode, "#%lu for %s", arg, description);
-	else
+	ပေႃးဢမ်ႇ
 		com_err(0, errcode, "#%lu", arg);
 #endif
 }
 
 /* Bitmap functions that take a 64-bit offset */
 
-int ext2fs_set_bit64(__u64 nr, void * addr)
+puur_naa_nka ext2fs_set_bit64(__u64 nr, void * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	puur_naa_nka		mask, retval;
+	unsigned var_na	*ADDR = (unsigned var_na *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR |= mask;
-	return retval;
+	ပွၵ်ႈ retval;
 }
 
-int ext2fs_clear_bit64(__u64 nr, void * addr)
+puur_naa_nka ext2fs_clear_bit64(__u64 nr, void * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	puur_naa_nka		mask, retval;
+	unsigned var_na	*ADDR = (unsigned var_na *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR &= ~mask;
-	return retval;
+	ပွၵ်ႈ retval;
 }
 
-int ext2fs_test_bit64(__u64 nr, const void * addr)
+puur_naa_nka ext2fs_test_bit64(__u64 nr, const void * addr)
 {
-	int			mask;
-	const unsigned char	*ADDR = (const unsigned char *) addr;
+	puur_naa_nka			mask;
+	const unsigned var_na	*ADDR = (const unsigned var_na *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
-	return (mask & *ADDR);
+	ပွၵ်ႈ (mask & *ADDR);
 }
 
-static unsigned int popcount8(unsigned int w)
+static unsigned puur_naa_nka popcount8(unsigned puur_naa_nka w)
 {
-	unsigned int res = w - ((w >> 1) & 0x55);
+	unsigned puur_naa_nka res = w - ((w >> 1) & 0x55);
 	res = (res & 0x33) + ((res >> 2) & 0x33);
-	return (res + (res >> 4)) & 0x0F;
+	ပွၵ်ႈ (res + (res >> 4)) & 0x0F;
 }
 
-static unsigned int popcount32(unsigned int w)
+static unsigned puur_naa_nka popcount32(unsigned puur_naa_nka w)
 {
-	unsigned int res = w - ((w >> 1) & 0x55555555);
+	unsigned puur_naa_nka res = w - ((w >> 1) & 0x55555555);
 	res = (res & 0x33333333) + ((res >> 2) & 0x33333333);
 	res = (res + (res >> 4)) & 0x0F0F0F0F;
 	res = res + (res >> 8);
-	return (res + (res >> 16)) & 0x000000FF;
+	ပွၵ်ႈ (res + (res >> 16)) & 0x000000FF;
 }
 
-unsigned int ext2fs_bitcount(const void *addr, unsigned int nbytes)
+unsigned puur_naa_nka ext2fs_bitcount(const void *addr, unsigned puur_naa_nka nbytes)
 {
-	const unsigned char *cp = addr;
+	const unsigned var_na *cp = addr;
 	const __u32 *p;
-	unsigned int res = 0;
+	unsigned puur_naa_nka res = 0;
 
-	while (((((uintptr_t) cp) & 3) != 0) && (nbytes > 0)) {
+	ၶၢဝ်း (((((uintptr_t) cp) & 3) != 0) && (nbytes > 0)) {
 		res += popcount8(*cp++);
 		nbytes--;
 	}
 	p = (const __u32 *) cp;
 
-	while (nbytes > 4) {
+	ၶၢဝ်း (nbytes > 4) {
 		res += popcount32(*p++);
 		nbytes -= 4;
 	}
-	cp = (const unsigned char *) p;
+	cp = (const unsigned var_na *) p;
 
-	while (nbytes > 0) {
+	ၶၢဝ်း (nbytes > 0) {
 		res += popcount8(*cp++);
 		nbytes--;
 	}
-	return res;
+	ပွၵ်ႈ res;
 }

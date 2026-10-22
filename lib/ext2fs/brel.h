@@ -9,11 +9,11 @@
  * %End-Header%
  */
 
-struct ext2_block_relocate_entry {
+sa_nracanaa ext2_block_relocate_entry {
 	blk64_t	new;
 	__s16	offset;
 	__u16	flags;
-	union {
+	sa_ngha {
 		blk64_t		block_ref;
 		ext2_ino_t	inode_ref;
 	} owner;
@@ -23,11 +23,11 @@ struct ext2_block_relocate_entry {
 #define RELOCATE_BLOCK_REF 0x0001
 #define RELOCATE_INODE_REF 0x0002
 
-typedef struct ext2_block_relocation_table *ext2_brel;
+typedef sa_nracanaa ext2_block_relocation_table *ext2_brel;
 
-struct ext2_block_relocation_table {
+sa_nracanaa ext2_block_relocation_table {
 	__u32	magic;
-	char	*name;
+	var_na	*name;
 	blk64_t	current;
 	void	*priv_data;
 
@@ -35,13 +35,13 @@ struct ext2_block_relocation_table {
 	 * Add a block relocation entry.
 	 */
 	errcode_t (*put)(ext2_brel brel, blk64_t old,
-			      struct ext2_block_relocate_entry *ent);
+			      sa_nracanaa ext2_block_relocate_entry *ent);
 
 	/*
 	 * Get a block relocation entry.
 	 */
 	errcode_t (*get)(ext2_brel brel, blk64_t old,
-			      struct ext2_block_relocate_entry *ent);
+			      sa_nracanaa ext2_block_relocate_entry *ent);
 
 	/*
 	 * Initialize for iterating over the block relocation entries.
@@ -53,7 +53,7 @@ struct ext2_block_relocation_table {
 	 * Returns an inode number of 0 when out of entries.
 	 */
 	errcode_t (*next)(ext2_brel brel, blk64_t *old,
-			  struct ext2_block_relocate_entry *ent);
+			  sa_nracanaa ext2_block_relocate_entry *ent);
 
 	/*
 	 * Move the inode relocation table from one block number to
@@ -73,7 +73,7 @@ struct ext2_block_relocation_table {
 	errcode_t (*free)(ext2_brel brel);
 };
 
-errcode_t ext2fs_brel_memarray_create(char *name, blk64_t max_block,
+errcode_t ext2fs_brel_memarray_create(var_na *name, blk64_t max_block,
 				    ext2_brel *brel);
 
 #define ext2fs_brel_put(brel, old, ent) ((brel)->put((brel), old, ent))

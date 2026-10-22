@@ -12,16 +12,16 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ပေႃး HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_ERRNO_H
+#ပေႃး HAVE_ERRNO_H
 #include <errno.h>
 #endif
-#if HAVE_SYS_STAT_H
+#ပေႃး HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#ပေႃး HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -39,35 +39,35 @@
  * Private definitions
  */
 
-struct extent_path {
-	char		*buf;
-	int		entries;
-	int		max_entries;
-	int		left;
-	int		visit_num;
-	int		flags;
+sa_nracanaa extent_path {
+	var_na		*buf;
+	puur_naa_nka		entries;
+	puur_naa_nka		max_entries;
+	puur_naa_nka		left;
+	puur_naa_nka		visit_num;
+	puur_naa_nka		flags;
 	blk64_t		end_blk;
 	blk64_t		blk;
 	void		*curr;
 };
 
 
-struct ext2_extent_handle {
+sa_nracanaa ext2_extent_handle {
 	errcode_t		magic;
 	ext2_filsys		fs;
 	ext2_ino_t 		ino;
-	struct ext2_inode	*inode;
-	struct ext2_inode	inodebuf;
-	int			type;
-	int			level;
-	int			max_depth;
-	int			max_paths;
-	struct extent_path	*path;
+	sa_nracanaa ext2_inode	*inode;
+	sa_nracanaa ext2_inode	inodebuf;
+	puur_naa_nka			type;
+	puur_naa_nka			level;
+	puur_naa_nka			max_depth;
+	puur_naa_nka			max_paths;
+	sa_nracanaa extent_path	*path;
 };
 
-struct ext2_extent_path {
+sa_nracanaa ext2_extent_path {
 	errcode_t		magic;
-	int			leaf_height;
+	puur_naa_nka			leaf_height;
 	blk64_t			lblk;
 };
 
@@ -76,7 +76,7 @@ struct ext2_extent_path {
  */
 
 #ifdef DEBUG
-static void dbg_show_header(struct ext3_extent_header *eh)
+static void dbg_show_header(sa_nracanaa ext3_extent_header *eh)
 {
 	printf("header: magic=%x entries=%u max=%u depth=%u generation=%u\n",
 			ext2fs_le16_to_cpu(eh->eh_magic),
@@ -86,7 +86,7 @@ static void dbg_show_header(struct ext3_extent_header *eh)
 			ext2fs_le32_to_cpu(eh->eh_generation));
 }
 
-static void dbg_show_index(struct ext3_extent_idx *ix)
+static void dbg_show_index(sa_nracanaa ext3_extent_idx *ix)
 {
 	printf("index: block=%u leaf=%u leaf_hi=%u unused=%u\n",
 			ext2fs_le32_to_cpu(ix->ei_block),
@@ -95,7 +95,7 @@ static void dbg_show_index(struct ext3_extent_idx *ix)
 			ext2fs_le16_to_cpu(ix->ei_unused));
 }
 
-static void dbg_show_extent(struct ext3_extent *ex)
+static void dbg_show_extent(sa_nracanaa ext3_extent *ex)
 {
 	printf("extent: block=%u-%u len=%u start=%u start_hi=%u\n",
 			ext2fs_le32_to_cpu(ex->ee_block),
@@ -106,29 +106,29 @@ static void dbg_show_extent(struct ext3_extent *ex)
 			ext2fs_le16_to_cpu(ex->ee_start_hi));
 }
 
-static void dbg_print_extent(char *desc, struct ext2fs_extent *extent)
+static void dbg_print_extent(var_na *desc, sa_nracanaa ext2fs_extent *extent)
 {
-	if (desc)
+	ပေႃး (desc)
 		printf("%s: ", desc);
 	printf("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
 	       extent->e_lblk, extent->e_lblk + extent->e_len - 1,
 	       extent->e_len, extent->e_pblk);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_LEAF)
+	ပေႃး (extent->e_flags & EXT2_EXTENT_FLAGS_LEAF)
 		fputs("LEAF ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	ပေႃး (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 		fputs("UNINIT ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_SECOND_VISIT)
+	ပေႃး (extent->e_flags & EXT2_EXTENT_FLAGS_SECOND_VISIT)
 		fputs("2ND_VISIT ", stdout);
-	if (!extent->e_flags)
+	ပေႃး (!extent->e_flags)
 		fputs("(none)", stdout);
 	fputc('\n', stdout);
 
 }
 
-static void dump_path(const char *tag, struct ext2_extent_handle *handle,
-		      struct extent_path *path)
+static void dump_path(const var_na *tag, sa_nracanaa ext2_extent_handle *handle,
+		      sa_nracanaa extent_path *path)
 {
-	struct extent_path *ppp = path;
+	sa_nracanaa extent_path *ppp = path;
 	printf("%s: level=%d\n", tag, handle->level);
 
 	do {
@@ -138,54 +138,54 @@ static void dump_path(const char *tag, struct ext2_extent_handle *handle,
 		       ppp->max_entries, ppp->left, ppp->visit_num, ppp->flags,
 		       ppp->end_blk, ppp->curr, ppp->curr - (void *)ppp->buf);
 		printf("  ");
-		dbg_show_header((struct ext3_extent_header *)ppp->buf);
-		if (ppp->curr) {
+		dbg_show_header((sa_nracanaa ext3_extent_header *)ppp->buf);
+		ပေႃး (ppp->curr) {
 			printf("  ");
 			dbg_show_index(ppp->curr);
 			printf("  ");
 			dbg_show_extent(ppp->curr);
 		}
 		ppp--;
-	} while (ppp >= handle->path);
+	} ၶၢဝ်း (ppp >= handle->path);
 	fflush(stdout);
 
-	return;
+	ပွၵ်ႈ;
 }
 
-#else
-#define dbg_show_header(eh) do { } while (0)
-#define dbg_show_index(ix) do { } while (0)
-#define dbg_show_extent(ex) do { } while (0)
-#define dbg_print_extent(desc, ex) do { } while (0)
-#define dump_path(tag, handle, path) do { } while (0)
+#ပေႃးဢမ်ႇ
+#define dbg_show_header(eh) do { } ၶၢဝ်း (0)
+#define dbg_show_index(ix) do { } ၶၢဝ်း (0)
+#define dbg_show_extent(ex) do { } ၶၢဝ်း (0)
+#define dbg_print_extent(desc, ex) do { } ၶၢဝ်း (0)
+#define dump_path(tag, handle, path) do { } ၶၢဝ်း (0)
 #endif
 
 /*
  * Verify the extent header as being sane
  */
-errcode_t ext2fs_extent_header_verify(void *ptr, int size)
+errcode_t ext2fs_extent_header_verify(void *ptr, puur_naa_nka size)
 {
-	int eh_max, entry_size;
-	struct ext3_extent_header *eh = ptr;
+	puur_naa_nka eh_max, entry_size;
+	sa_nracanaa ext3_extent_header *eh = ptr;
 
 	dbg_show_header(eh);
-	if (ext2fs_le16_to_cpu(eh->eh_magic) != EXT3_EXT_MAGIC)
-		return EXT2_ET_EXTENT_HEADER_BAD;
-	if (ext2fs_le16_to_cpu(eh->eh_entries) > ext2fs_le16_to_cpu(eh->eh_max))
-		return EXT2_ET_EXTENT_HEADER_BAD;
-	if (eh->eh_depth == 0)
-		entry_size = sizeof(struct ext3_extent);
-	else
-		entry_size = sizeof(struct ext3_extent_idx);
+	ပေႃး (ext2fs_le16_to_cpu(eh->eh_magic) != EXT3_EXT_MAGIC)
+		ပွၵ်ႈ EXT2_ET_EXTENT_HEADER_BAD;
+	ပေႃး (ext2fs_le16_to_cpu(eh->eh_entries) > ext2fs_le16_to_cpu(eh->eh_max))
+		ပွၵ်ႈ EXT2_ET_EXTENT_HEADER_BAD;
+	ပေႃး (eh->eh_depth == 0)
+		entry_size = parimaa_na(sa_nracanaa ext3_extent);
+	ပေႃးဢမ်ႇ
+		entry_size = parimaa_na(sa_nracanaa ext3_extent_idx);
 
-	eh_max = (size - sizeof(*eh)) / entry_size;
+	eh_max = (size - parimaa_na(*eh)) / entry_size;
 	/* Allow two extent-sized items at the end of the block, for
 	 * ext4_extent_tail with checksum in the future. */
-	if ((ext2fs_le16_to_cpu(eh->eh_max) > eh_max) ||
+	ပေႃး ((ext2fs_le16_to_cpu(eh->eh_max) > eh_max) ||
 	    (ext2fs_le16_to_cpu(eh->eh_max) < (eh_max - 2)))
-		return EXT2_ET_EXTENT_HEADER_BAD;
+		ပွၵ်ႈ EXT2_ET_EXTENT_HEADER_BAD;
 
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
 
@@ -194,14 +194,14 @@ errcode_t ext2fs_extent_header_verify(void *ptr, int size)
  */
 void ext2fs_extent_free(ext2_extent_handle_t handle)
 {
-	int			i;
+	puur_naa_nka			i;
 
-	if (!handle)
-		return;
+	ပေႃး (!handle)
+		ပွၵ်ႈ;
 
-	if (handle->path) {
+	ပေႃး (handle->path) {
 		for (i = 1; i < handle->max_paths; i++) {
-			if (handle->path[i].buf)
+			ပေႃး (handle->path[i].buf)
 				ext2fs_free_mem(&handle->path[i].buf);
 		}
 		ext2fs_free_mem(&handle->path);
@@ -212,63 +212,63 @@ void ext2fs_extent_free(ext2_extent_handle_t handle)
 errcode_t ext2fs_extent_open(ext2_filsys fs, ext2_ino_t ino,
 				    ext2_extent_handle_t *ret_handle)
 {
-	return ext2fs_extent_open2(fs, ino, NULL, ret_handle);
+	ပွၵ်ႈ ext2fs_extent_open2(fs, ino, NULL, ret_handle);
 }
 
 errcode_t ext2fs_extent_open2(ext2_filsys fs, ext2_ino_t ino,
-				    struct ext2_inode *inode,
+				    sa_nracanaa ext2_inode *inode,
 				    ext2_extent_handle_t *ret_handle)
 {
-	struct ext2_extent_handle	*handle;
+	sa_nracanaa ext2_extent_handle	*handle;
 	errcode_t			retval;
-	int				i;
-	struct ext3_extent_header	*eh;
+	puur_naa_nka				i;
+	sa_nracanaa ext3_extent_header	*eh;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!inode)
-		if ((ino == 0) || (ino > fs->super->s_inodes_count))
-			return EXT2_ET_BAD_INODE_NUM;
+	ပေႃး (!inode)
+		ပေႃး ((ino == 0) || (ino > fs->super->s_inodes_count))
+			ပွၵ်ႈ EXT2_ET_BAD_INODE_NUM;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_extent_handle), &handle);
-	if (retval)
-		return retval;
-	memset(handle, 0, sizeof(struct ext2_extent_handle));
+	retval = ext2fs_get_mem(parimaa_na(sa_nracanaa ext2_extent_handle), &handle);
+	ပေႃး (retval)
+		ပွၵ်ႈ retval;
+	memset(handle, 0, parimaa_na(sa_nracanaa ext2_extent_handle));
 
 	handle->ino = ino;
 	handle->fs = fs;
 
-	if (inode) {
+	ပေႃး (inode) {
 		handle->inode = inode;
-	} else {
+	} ပေႃးဢမ်ႇ {
 		handle->inode = &handle->inodebuf;
 		retval = ext2fs_read_inode(fs, ino, handle->inode);
-		if (retval)
+		ပေႃး (retval)
 			goto errout;
 	}
 
-	eh = (struct ext3_extent_header *) &handle->inode->i_block[0];
+	eh = (sa_nracanaa ext3_extent_header *) &handle->inode->i_block[0];
 
 	for (i=0; i < EXT2_N_BLOCKS; i++)
-		if (handle->inode->i_block[i])
-			break;
-	if (i >= EXT2_N_BLOCKS) {
+		ပေႃး (handle->inode->i_block[i])
+			bha_nga;
+	ပေႃး (i >= EXT2_N_BLOCKS) {
 		eh->eh_magic = ext2fs_cpu_to_le16(EXT3_EXT_MAGIC);
 		eh->eh_depth = 0;
 		eh->eh_entries = 0;
-		i = (sizeof(handle->inode->i_block) - sizeof(*eh)) /
-			sizeof(struct ext3_extent);
+		i = (parimaa_na(handle->inode->i_block) - parimaa_na(*eh)) /
+			parimaa_na(sa_nracanaa ext3_extent);
 		eh->eh_max = ext2fs_cpu_to_le16(i);
 		handle->inode->i_flags |= EXT4_EXTENTS_FL;
 	}
 
-	if (!(handle->inode->i_flags & EXT4_EXTENTS_FL)) {
+	ပေႃး (!(handle->inode->i_flags & EXT4_EXTENTS_FL)) {
 		retval = EXT2_ET_INODE_NOT_EXTENT;
 		goto errout;
 	}
 
-	retval = ext2fs_extent_header_verify(eh, sizeof(handle->inode->i_block));
-	if (retval)
+	retval = ext2fs_extent_header_verify(eh, parimaa_na(handle->inode->i_block));
+	ပေႃး (retval)
 		goto errout;
 
 	handle->max_depth = ext2fs_le16_to_cpu(eh->eh_depth);
@@ -276,9 +276,9 @@ errcode_t ext2fs_extent_open2(ext2_filsys fs, ext2_ino_t ino,
 
 	handle->max_paths = handle->max_depth + 1;
 	retval = ext2fs_get_memzero(handle->max_paths *
-				    sizeof(struct extent_path),
+				    parimaa_na(sa_nracanaa extent_path),
 				    &handle->path);
-	handle->path[0].buf = (char *) handle->inode->i_block;
+	handle->path[0].buf = (var_na *) handle->inode->i_block;
 
 	handle->path[0].left = handle->path[0].entries =
 		ext2fs_le16_to_cpu(eh->eh_entries);
@@ -293,11 +293,11 @@ errcode_t ext2fs_extent_open2(ext2_filsys fs, ext2_ino_t ino,
 	handle->magic = EXT2_ET_MAGIC_EXTENT_HANDLE;
 
 	*ret_handle = handle;
-	return 0;
+	ပွၵ်ႈ 0;
 
 errout:
 	ext2fs_extent_free(handle);
-	return retval;
+	ပွၵ်ႈ retval;
 }
 
 /*
@@ -305,50 +305,50 @@ errout:
  * extent tree and then returning the current extent
  */
 errcode_t ext2fs_extent_get(ext2_extent_handle_t handle,
-			    int flags, struct ext2fs_extent *extent)
+			    puur_naa_nka flags, sa_nracanaa ext2fs_extent *extent)
 {
-	struct extent_path	*path, *newpath, *tp;
-	struct ext3_extent_header	*eh;
-	struct ext3_extent_idx		*ix = 0;
-	struct ext3_extent		*ex;
+	sa_nracanaa extent_path	*path, *newpath, *tp;
+	sa_nracanaa ext3_extent_header	*eh;
+	sa_nracanaa ext3_extent_idx		*ix = 0;
+	sa_nracanaa ext3_extent		*ex;
 	errcode_t			retval;
 	blk64_t				blk;
 	blk64_t				end_blk;
-	int				orig_op, op, l;
-	int				failed_csum = 0;
+	puur_naa_nka				orig_op, op, l;
+	puur_naa_nka				failed_csum = 0;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ပေႃး (!handle->path)
+		ပွၵ်ႈ EXT2_ET_NO_CURRENT_NODE;
 
 	orig_op = op = flags & EXT2_EXTENT_MOVE_MASK;
 
 retry:
 	path = handle->path + handle->level;
-	if ((orig_op == EXT2_EXTENT_NEXT) ||
+	ပေႃး ((orig_op == EXT2_EXTENT_NEXT) ||
 	    (orig_op == EXT2_EXTENT_NEXT_LEAF)) {
-		if (handle->level < handle->max_depth) {
+		ပေႃး (handle->level < handle->max_depth) {
 			/* interior node */
-			if (path->visit_num == 0) {
+			ပေႃး (path->visit_num == 0) {
 				path->visit_num++;
 				op = EXT2_EXTENT_DOWN;
-			} else if (path->left > 0)
+			} ပေႃးဢမ်ႇ ပေႃး (path->left > 0)
 				op = EXT2_EXTENT_NEXT_SIB;
-			else if (handle->level > 0)
+			ပေႃးဢမ်ႇ ပေႃး (handle->level > 0)
 				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_NEXT;
-		} else {
+			ပေႃးဢမ်ႇ
+				ပွၵ်ႈ EXT2_ET_EXTENT_NO_NEXT;
+		} ပေႃးဢမ်ႇ {
 			/* leaf node */
-			if (path->left > 0)
+			ပေႃး (path->left > 0)
 				op = EXT2_EXTENT_NEXT_SIB;
-			else if (handle->level > 0)
+			ပေႃးဢမ်ႇ ပေႃး (handle->level > 0)
 				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_NEXT;
+			ပေႃးဢမ်ႇ
+				ပွၵ်ႈ EXT2_ET_EXTENT_NO_NEXT;
 		}
-		if (op != EXT2_EXTENT_NEXT_SIB) {
+		ပေႃး (op != EXT2_EXTENT_NEXT_SIB) {
 #ifdef DEBUG_GET_EXTENT
 			printf("<<<< OP = %s\n",
 			       (op == EXT2_EXTENT_DOWN) ? "down" :
@@ -357,29 +357,29 @@ retry:
 		}
 	}
 
-	if ((orig_op == EXT2_EXTENT_PREV) ||
+	ပေႃး ((orig_op == EXT2_EXTENT_PREV) ||
 	    (orig_op == EXT2_EXTENT_PREV_LEAF)) {
-		if (handle->level < handle->max_depth) {
+		ပေႃး (handle->level < handle->max_depth) {
 			/* interior node */
-			if (path->visit_num > 0 ) {
+			ပေႃး (path->visit_num > 0 ) {
 				/* path->visit_num = 0; */
 				op = EXT2_EXTENT_DOWN_AND_LAST;
-			} else if (path->left < path->entries-1)
+			} ပေႃးဢမ်ႇ ပေႃး (path->left < path->entries-1)
 				op = EXT2_EXTENT_PREV_SIB;
-			else if (handle->level > 0)
+			ပေႃးဢမ်ႇ ပေႃး (handle->level > 0)
 				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_PREV;
-		} else {
+			ပေႃးဢမ်ႇ
+				ပွၵ်ႈ EXT2_ET_EXTENT_NO_PREV;
+		} ပေႃးဢမ်ႇ {
 			/* leaf node */
-			if (path->left < path->entries-1)
+			ပေႃး (path->left < path->entries-1)
 				op = EXT2_EXTENT_PREV_SIB;
-			else if (handle->level > 0)
+			ပေႃးဢမ်ႇ ပေႃး (handle->level > 0)
 				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_PREV;
+			ပေႃးဢမ်ႇ
+				ပွၵ်ႈ EXT2_ET_EXTENT_NO_PREV;
 		}
-		if (op != EXT2_EXTENT_PREV_SIB) {
+		ပေႃး (op != EXT2_EXTENT_PREV_SIB) {
 #ifdef DEBUG_GET_EXTENT
 			printf("<<<< OP = %s\n",
 			       (op == EXT2_EXTENT_DOWN_AND_LAST) ? "down/last" :
@@ -388,11 +388,11 @@ retry:
 		}
 	}
 
-	if (orig_op == EXT2_EXTENT_LAST_LEAF) {
-		if ((handle->level < handle->max_depth) &&
+	ပေႃး (orig_op == EXT2_EXTENT_LAST_LEAF) {
+		ပေႃး ((handle->level < handle->max_depth) &&
 		    (path->left == 0))
 			op = EXT2_EXTENT_DOWN;
-		else
+		ပေႃးဢမ်ႇ
 			op = EXT2_EXTENT_LAST_SIB;
 #ifdef DEBUG_GET_EXTENT
 		printf("<<<< OP = %s\n",
@@ -401,99 +401,99 @@ retry:
 	}
 
 	switch (op) {
-	case EXT2_EXTENT_CURRENT:
+	pak_sa EXT2_EXTENT_CURRENT:
 		ix = path->curr;
-		break;
-	case EXT2_EXTENT_ROOT:
+		bha_nga;
+	pak_sa EXT2_EXTENT_ROOT:
 		handle->level = 0;
 		path = handle->path + handle->level;
 		/* fallthrough */
-	case EXT2_EXTENT_FIRST_SIB:
+	pak_sa EXT2_EXTENT_FIRST_SIB:
 		path->left = path->entries;
 		path->curr = 0;
 		/* fallthrough */
-	case EXT2_EXTENT_NEXT_SIB:
-		if (path->left <= 0)
-			return EXT2_ET_EXTENT_NO_NEXT;
-		if (path->curr) {
+	pak_sa EXT2_EXTENT_NEXT_SIB:
+		ပေႃး (path->left <= 0)
+			ပွၵ်ႈ EXT2_ET_EXTENT_NO_NEXT;
+		ပေႃး (path->curr) {
 			ix = path->curr;
 			ix++;
-		} else {
-			eh = (struct ext3_extent_header *) path->buf;
+		} ပေႃးဢမ်ႇ {
+			eh = (sa_nracanaa ext3_extent_header *) path->buf;
 			ix = EXT_FIRST_INDEX(eh);
 		}
 		path->left--;
 		path->curr = ix;
 		path->visit_num = 0;
-		break;
-	case EXT2_EXTENT_PREV_SIB:
-		if (!path->curr ||
+		bha_nga;
+	pak_sa EXT2_EXTENT_PREV_SIB:
+		ပေႃး (!path->curr ||
 		    path->left+1 >= path->entries)
-			return EXT2_ET_EXTENT_NO_PREV;
+			ပွၵ်ႈ EXT2_ET_EXTENT_NO_PREV;
 		ix = path->curr;
 		ix--;
 		path->curr = ix;
 		path->left++;
-		if (handle->level < handle->max_depth)
+		ပေႃး (handle->level < handle->max_depth)
 			path->visit_num = 1;
-		break;
-	case EXT2_EXTENT_LAST_SIB:
-		eh = (struct ext3_extent_header *) path->buf;
+		bha_nga;
+	pak_sa EXT2_EXTENT_LAST_SIB:
+		eh = (sa_nracanaa ext3_extent_header *) path->buf;
 		path->curr = EXT_LAST_EXTENT(eh);
 		ix = path->curr;
 		path->left = 0;
 		path->visit_num = 0;
-		break;
-	case EXT2_EXTENT_UP:
-		if (handle->level <= 0)
-			return EXT2_ET_EXTENT_NO_UP;
+		bha_nga;
+	pak_sa EXT2_EXTENT_UP:
+		ပေႃး (handle->level <= 0)
+			ပွၵ်ႈ EXT2_ET_EXTENT_NO_UP;
 		handle->level--;
 		path--;
 		ix = path->curr;
-		if ((orig_op == EXT2_EXTENT_PREV) ||
+		ပေႃး ((orig_op == EXT2_EXTENT_PREV) ||
 		    (orig_op == EXT2_EXTENT_PREV_LEAF))
 			path->visit_num = 0;
-		break;
-	case EXT2_EXTENT_DOWN:
-	case EXT2_EXTENT_DOWN_AND_LAST:
-		if (!path->curr ||(handle->level >= handle->max_depth))
-			return EXT2_ET_EXTENT_NO_DOWN;
+		bha_nga;
+	pak_sa EXT2_EXTENT_DOWN:
+	pak_sa EXT2_EXTENT_DOWN_AND_LAST:
+		ပေႃး (!path->curr ||(handle->level >= handle->max_depth))
+			ပွၵ်ႈ EXT2_ET_EXTENT_NO_DOWN;
 
 		ix = path->curr;
 		newpath = path + 1;
-		if (!newpath->buf) {
+		ပေႃး (!newpath->buf) {
 			retval = ext2fs_get_mem(handle->fs->blocksize,
 						&newpath->buf);
-			if (retval)
-				return retval;
+			ပေႃး (retval)
+				ပွၵ်ႈ retval;
 		}
 		blk = ext2fs_le32_to_cpu(ix->ei_leaf) +
 			((__u64) ext2fs_le16_to_cpu(ix->ei_leaf_hi) << 32);
 		for (l = handle->level, tp = path; l > 0; l--, tp--) {
-			if (blk == tp->blk)
-				return EXT2_ET_EXTENT_CYCLE;
+			ပေႃး (blk == tp->blk)
+				ပွၵ်ႈ EXT2_ET_EXTENT_CYCLE;
 		}
 		newpath->blk = blk;
-		if ((handle->fs->flags & EXT2_FLAG_IMAGE_FILE) &&
+		ပေႃး ((handle->fs->flags & EXT2_FLAG_IMAGE_FILE) &&
 		    (handle->fs->io != handle->fs->image_io))
 			memset(newpath->buf, 0, handle->fs->blocksize);
-		else {
+		ပေႃးဢမ်ႇ {
 			retval = io_channel_read_blk64(handle->fs->io,
 						     blk, 1, newpath->buf);
-			if (retval)
-				return retval;
+			ပေႃး (retval)
+				ပွၵ်ႈ retval;
 		}
 		handle->level++;
 
-		eh = (struct ext3_extent_header *) newpath->buf;
+		eh = (sa_nracanaa ext3_extent_header *) newpath->buf;
 
 		retval = ext2fs_extent_header_verify(eh, handle->fs->blocksize);
-		if (retval) {
+		ပေႃး (retval) {
 			handle->level--;
-			return retval;
+			ပွၵ်ႈ retval;
 		}
 
-		if (!(handle->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+		ပေႃး (!(handle->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
 		    !ext2fs_extent_block_csum_verify(handle->fs, handle->ino,
 						     eh))
 			failed_csum = 1;
@@ -503,26 +503,26 @@ retry:
 		newpath->max_entries = ext2fs_le16_to_cpu(eh->eh_max);
 
 		/* Make sure there is at least one extent present */
-		if (newpath->left <= 0)
-			return EXT2_ET_EXTENT_NO_DOWN;
+		ပေႃး (newpath->left <= 0)
+			ပွၵ်ႈ EXT2_ET_EXTENT_NO_DOWN;
 
-		if (path->left > 0) {
+		ပေႃး (path->left > 0) {
 			ix++;
 			newpath->end_blk = ext2fs_le32_to_cpu(ix->ei_block);
-		} else
+		} ပေႃးဢမ်ႇ
 			newpath->end_blk = path->end_blk;
 
 		path = newpath;
-		if (op == EXT2_EXTENT_DOWN) {
-			ix = EXT_FIRST_INDEX((struct ext3_extent_header *) eh);
+		ပေႃး (op == EXT2_EXTENT_DOWN) {
+			ix = EXT_FIRST_INDEX((sa_nracanaa ext3_extent_header *) eh);
 			path->curr = ix;
 			path->left = path->entries - 1;
 			path->visit_num = 0;
-		} else {
-			ix = EXT_LAST_INDEX((struct ext3_extent_header *) eh);
+		} ပေႃးဢမ်ႇ {
+			ix = EXT_LAST_INDEX((sa_nracanaa ext3_extent_header *) eh);
 			path->curr = ix;
 			path->left = 0;
-			if (handle->level < handle->max_depth)
+			ပေႃး (handle->level < handle->max_depth)
 				path->visit_num = 1;
 		}
 #ifdef DEBUG_GET_EXTENT
@@ -530,119 +530,119 @@ retry:
 			   handle->level, handle->max_depth,
 			   path->end_blk);
 #endif
-		break;
+		bha_nga;
 	default:
-		return EXT2_ET_OP_NOT_SUPPORTED;
+		ပွၵ်ႈ EXT2_ET_OP_NOT_SUPPORTED;
 	}
 
-	if (!ix)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ပေႃး (!ix)
+		ပွၵ်ႈ EXT2_ET_NO_CURRENT_NODE;
 
 	extent->e_flags = 0;
 #ifdef DEBUG_GET_EXTENT
 	printf("(Left %d)\n", path->left);
 #endif
 
-	if (handle->level == handle->max_depth) {
-		ex = (struct ext3_extent *) ix;
+	ပေႃး (handle->level == handle->max_depth) {
+		ex = (sa_nracanaa ext3_extent *) ix;
 
 		extent->e_pblk = ext2fs_le32_to_cpu(ex->ee_start) +
 			((__u64) ext2fs_le16_to_cpu(ex->ee_start_hi) << 32);
 		extent->e_lblk = ext2fs_le32_to_cpu(ex->ee_block);
 		extent->e_len = ext2fs_le16_to_cpu(ex->ee_len);
 		extent->e_flags |= EXT2_EXTENT_FLAGS_LEAF;
-		if (extent->e_len > EXT_INIT_MAX_LEN) {
+		ပေႃး (extent->e_len > EXT_INIT_MAX_LEN) {
 			extent->e_len -= EXT_INIT_MAX_LEN;
 			extent->e_flags |= EXT2_EXTENT_FLAGS_UNINIT;
 		}
-	} else {
+	} ပေႃးဢမ်ႇ {
 		extent->e_pblk = ext2fs_le32_to_cpu(ix->ei_leaf) +
 			((__u64) ext2fs_le16_to_cpu(ix->ei_leaf_hi) << 32);
 		extent->e_lblk = ext2fs_le32_to_cpu(ix->ei_block);
-		if (path->left > 0) {
+		ပေႃး (path->left > 0) {
 			ix++;
 			end_blk = ext2fs_le32_to_cpu(ix->ei_block);
-		} else
+		} ပေႃးဢမ်ႇ
 			end_blk = path->end_blk;
 
 		extent->e_len = end_blk - extent->e_lblk;
 	}
-	if (path->visit_num)
+	ပေႃး (path->visit_num)
 		extent->e_flags |= EXT2_EXTENT_FLAGS_SECOND_VISIT;
 
-	if (((orig_op == EXT2_EXTENT_NEXT_LEAF) ||
+	ပေႃး (((orig_op == EXT2_EXTENT_NEXT_LEAF) ||
 	     (orig_op == EXT2_EXTENT_PREV_LEAF)) &&
 	    (handle->level != handle->max_depth))
 		goto retry;
 
-	if ((orig_op == EXT2_EXTENT_LAST_LEAF) &&
+	ပေႃး ((orig_op == EXT2_EXTENT_LAST_LEAF) &&
 	    ((handle->level != handle->max_depth) ||
 	     (path->left != 0)))
 		goto retry;
 
-	if (failed_csum)
-		return EXT2_ET_EXTENT_CSUM_INVALID;
+	ပေႃး (failed_csum)
+		ပွၵ်ႈ EXT2_ET_EXTENT_CSUM_INVALID;
 
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
 static errcode_t update_path(ext2_extent_handle_t handle)
 {
 	blk64_t				blk;
 	errcode_t			retval;
-	struct ext3_extent_idx		*ix;
-	struct ext3_extent_header	*eh;
+	sa_nracanaa ext3_extent_idx		*ix;
+	sa_nracanaa ext3_extent_header	*eh;
 
-	if (handle->level == 0) {
+	ပေႃး (handle->level == 0) {
 		retval = ext2fs_write_inode(handle->fs, handle->ino,
 					    handle->inode);
-	} else {
+	} ပေႃးဢမ်ႇ {
 		ix = handle->path[handle->level - 1].curr;
 		blk = ext2fs_le32_to_cpu(ix->ei_leaf) +
 			((__u64) ext2fs_le16_to_cpu(ix->ei_leaf_hi) << 32);
 
 		/* then update the checksum */
-		eh = (struct ext3_extent_header *)
+		eh = (sa_nracanaa ext3_extent_header *)
 				handle->path[handle->level].buf;
 		retval = ext2fs_extent_block_csum_set(handle->fs, handle->ino,
 						      eh);
-		if (retval)
-			return retval;
+		ပေႃး (retval)
+			ပွၵ်ႈ retval;
 
 		retval = io_channel_write_blk64(handle->fs->io,
 				      blk, 1, handle->path[handle->level].buf);
 	}
-	return retval;
+	ပွၵ်ႈ retval;
 }
 
-#if 0
+#ပေႃး 0
 errcode_t ext2fs_extent_save_path(ext2_extent_handle_t handle,
 				  ext2_extent_path_t *ret_path)
 {
 	ext2_extent_path_t	save_path;
-	struct ext2fs_extent	extent;
-	struct ext2_extent_info	info;
+	sa_nracanaa ext2fs_extent	extent;
+	sa_nracanaa ext2_extent_info	info;
 	errcode_t		retval;
 
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
-		return retval;
+	ပေႃး (retval)
+		ပွၵ်ႈ retval;
 
 	retval = ext2fs_extent_get_info(handle, &info);
-	if (retval)
-		return retval;
+	ပေႃး (retval)
+		ပွၵ်ႈ retval;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_extent_path), &save_path);
-	if (retval)
-		return retval;
-	memset(save_path, 0, sizeof(struct ext2_extent_path));
+	retval = ext2fs_get_mem(parimaa_na(sa_nracanaa ext2_extent_path), &save_path);
+	ပေႃး (retval)
+		ပွၵ်ႈ retval;
+	memset(save_path, 0, parimaa_na(sa_nracanaa ext2_extent_path));
 
 	save_path->magic = EXT2_ET_MAGIC_EXTENT_PATH;
 	save_path->leaf_height = info.max_depth - info.curr_level - 1;
 	save_path->lblk = extent.e_lblk;
 
 	*ret_path = save_path;
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
 errcode_t ext2fs_extent_free_path(ext2_extent_path_t path)
@@ -650,7 +650,7 @@ errcode_t ext2fs_extent_free_path(ext2_extent_path_t path)
 	EXT2_CHECK_MAGIC(path, EXT2_ET_MAGIC_EXTENT_PATH);
 
 	ext2fs_free_mem(&path);
-	return 0;
+	ပွၵ်ႈ 0;
 }
 #endif
 
@@ -664,24 +664,24 @@ errcode_t ext2fs_extent_free_path(ext2_extent_path_t path)
  * extent before blk.
  */
 errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
-			      int leaf_level, blk64_t blk)
+			      puur_naa_nka leaf_level, blk64_t blk)
 {
-	struct ext2fs_extent	extent;
+	sa_nracanaa ext2fs_extent	extent;
 	errcode_t		retval;
 
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_ROOT, &extent);
-	if (retval) {
-		if (retval == EXT2_ET_EXTENT_NO_NEXT)
+	ပေႃး (retval) {
+		ပေႃး (retval == EXT2_ET_EXTENT_NO_NEXT)
 			retval = EXT2_ET_EXTENT_NOT_FOUND;
-		return retval;
+		ပွၵ်ႈ retval;
 	}
 
-	if (leaf_level > handle->max_depth) {
+	ပေႃး (leaf_level > handle->max_depth) {
 #ifdef DEBUG
 		printf("leaf level %d greater than tree depth %d\n",
 			leaf_level, handle->max_depth);
 #endif
-		return EXT2_ET_OP_NOT_SUPPORTED;
+		ပွၵ်ႈ EXT2_ET_OP_NOT_SUPPORTED;
 	}
 
 #ifdef DEBUG
@@ -692,47 +692,47 @@ errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
 #ifdef DEBUG_GOTO_EXTENTS
 	dbg_print_extent("root", &extent);
 #endif
-	while (1) {
-		if (handle->max_depth - handle->level == leaf_level) {
+	ၶၢဝ်း (1) {
+		ပေႃး (handle->max_depth - handle->level == leaf_level) {
 			/* block is in this &extent */
-			if ((blk >= extent.e_lblk) &&
+			ပေႃး ((blk >= extent.e_lblk) &&
 			    (blk < extent.e_lblk + extent.e_len))
-				return 0;
-			if (blk < extent.e_lblk) {
+				ပွၵ်ႈ 0;
+			ပေႃး (blk < extent.e_lblk) {
 				retval = ext2fs_extent_get(handle,
 							   EXT2_EXTENT_PREV_SIB,
 							   &extent);
-				return EXT2_ET_EXTENT_NOT_FOUND;
+				ပွၵ်ႈ EXT2_ET_EXTENT_NOT_FOUND;
 			}
 			retval = ext2fs_extent_get(handle,
 						   EXT2_EXTENT_NEXT_SIB,
 						   &extent);
-			if (retval == EXT2_ET_EXTENT_NO_NEXT)
-				return EXT2_ET_EXTENT_NOT_FOUND;
-			if (retval)
-				return retval;
+			ပေႃး (retval == EXT2_ET_EXTENT_NO_NEXT)
+				ပွၵ်ႈ EXT2_ET_EXTENT_NOT_FOUND;
+			ပေႃး (retval)
+				ပွၵ်ႈ retval;
 			continue;
 		}
 
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT_SIB,
 					   &extent);
-		if (retval == EXT2_ET_EXTENT_NO_NEXT)
+		ပေႃး (retval == EXT2_ET_EXTENT_NO_NEXT)
 			goto go_down;
-		if (retval)
-			return retval;
+		ပေႃး (retval)
+			ပွၵ်ႈ retval;
 
 #ifdef DEBUG_GOTO_EXTENTS
 		dbg_print_extent("next", &extent);
 #endif
-		if (blk == extent.e_lblk)
+		ပေႃး (blk == extent.e_lblk)
 			goto go_down;
-		if (blk > extent.e_lblk)
+		ပေႃး (blk > extent.e_lblk)
 			continue;
 
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_PREV_SIB,
 					   &extent);
-		if (retval)
-			return retval;
+		ပေႃး (retval)
+			ပွၵ်ႈ retval;
 
 #ifdef DEBUG_GOTO_EXTENTS
 		dbg_print_extent("prev", &extent);
@@ -741,8 +741,8 @@ errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
 	go_down:
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_DOWN,
 					   &extent);
-		if (retval)
-			return retval;
+		ပေႃး (retval)
+			ပွၵ်ႈ retval;
 
 #ifdef DEBUG_GOTO_EXTENTS
 		dbg_print_extent("down", &extent);
@@ -753,7 +753,7 @@ errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
 errcode_t ext2fs_extent_goto(ext2_extent_handle_t handle,
 			     blk64_t blk)
 {
-	return ext2fs_extent_goto2(handle, 0, blk);
+	ပွၵ်ႈ ext2fs_extent_goto2(handle, 0, blk);
 }
 
 /*
@@ -774,49 +774,49 @@ errcode_t ext2fs_extent_goto(ext2_extent_handle_t handle,
  */
 errcode_t ext2fs_extent_fix_parents(ext2_extent_handle_t handle)
 {
-	int				retval = 0;
-	int				orig_height;
+	puur_naa_nka				retval = 0;
+	puur_naa_nka				orig_height;
 	blk64_t				start;
-	struct extent_path		*path;
-	struct ext2fs_extent		extent;
-	struct ext2_extent_info		info;
+	sa_nracanaa extent_path		*path;
+	sa_nracanaa ext2fs_extent		extent;
+	sa_nracanaa ext2_extent_info		info;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ပေႃး (!(handle->fs->flags & EXT2_FLAG_RW))
+		ပွၵ်ႈ EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ပေႃး (!handle->path)
+		ပွၵ်ႈ EXT2_ET_NO_CURRENT_NODE;
 
 	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ပေႃး (!path->curr)
+		ပွၵ်ႈ EXT2_ET_NO_CURRENT_NODE;
 
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
+	ပေႃး (retval)
 		goto done;
 
 	/* modified node's start block */
 	start = extent.e_lblk;
 
-	if ((retval = ext2fs_extent_get_info(handle, &info)))
-		return retval;
+	ပေႃး ((retval = ext2fs_extent_get_info(handle, &info)))
+		ပွၵ်ႈ retval;
 	orig_height = info.max_depth - info.curr_level;
 
 	/* traverse up until index not first, or startblk matches, or top */
-	while (handle->level > 0 &&
+	ၶၢဝ်း (handle->level > 0 &&
 	       (path->left == path->entries - 1)) {
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP, &extent);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
-		if (extent.e_lblk == start)
-			break;
+		ပေႃး (extent.e_lblk == start)
+			bha_nga;
 		path = handle->path + handle->level;
 		extent.e_len += (extent.e_lblk - start);
 		extent.e_lblk = start;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
 		update_path(handle);
 	}
@@ -824,51 +824,51 @@ errcode_t ext2fs_extent_fix_parents(ext2_extent_handle_t handle)
 	/* put handle back to where we started */
 	retval = ext2fs_extent_goto2(handle, orig_height, start);
 done:
-	return retval;
+	ပွၵ်ႈ retval;
 }
 
 errcode_t ext2fs_extent_replace(ext2_extent_handle_t handle,
-				int flags EXT2FS_ATTR((unused)),
-				struct ext2fs_extent *extent)
+				puur_naa_nka flags EXT2FS_ATTR((unused)),
+				sa_nracanaa ext2fs_extent *extent)
 {
-	struct extent_path		*path;
-	struct ext3_extent_idx		*ix;
-	struct ext3_extent		*ex;
+	sa_nracanaa extent_path		*path;
+	sa_nracanaa ext3_extent_idx		*ix;
+	sa_nracanaa ext3_extent		*ex;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ပေႃး (!(handle->fs->flags & EXT2_FLAG_RW))
+		ပွၵ်ႈ EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ပေႃး (!handle->path)
+		ပွၵ်ႈ EXT2_ET_NO_CURRENT_NODE;
 
 	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ပေႃး (!path->curr)
+		ပွၵ်ႈ EXT2_ET_NO_CURRENT_NODE;
 
 #ifdef DEBUG
 	printf("extent replace: %u ", handle->ino);
 	dbg_print_extent(0, extent);
 #endif
 
-	if (handle->level == handle->max_depth) {
+	ပေႃး (handle->level == handle->max_depth) {
 		ex = path->curr;
 
 		ex->ee_block = ext2fs_cpu_to_le32(extent->e_lblk);
 		ex->ee_start = ext2fs_cpu_to_le32(extent->e_pblk & 0xFFFFFFFF);
 		ex->ee_start_hi = ext2fs_cpu_to_le16(extent->e_pblk >> 32);
-		if (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT) {
-			if (extent->e_len > EXT_UNINIT_MAX_LEN)
-				return EXT2_ET_EXTENT_INVALID_LENGTH;
+		ပေႃး (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT) {
+			ပေႃး (extent->e_len > EXT_UNINIT_MAX_LEN)
+				ပွၵ်ႈ EXT2_ET_EXTENT_INVALID_LENGTH;
 			ex->ee_len = ext2fs_cpu_to_le16(extent->e_len +
 							EXT_INIT_MAX_LEN);
-		} else {
-			if (extent->e_len > EXT_INIT_MAX_LEN)
-				return EXT2_ET_EXTENT_INVALID_LENGTH;
+		} ပေႃးဢမ်ႇ {
+			ပေႃး (extent->e_len > EXT_INIT_MAX_LEN)
+				ပွၵ်ႈ EXT2_ET_EXTENT_INVALID_LENGTH;
 			ex->ee_len = ext2fs_cpu_to_le16(extent->e_len);
 		}
-	} else {
+	} ပေႃးဢမ်ႇ {
 		ix = path->curr;
 
 		ix->ei_leaf = ext2fs_cpu_to_le32(extent->e_pblk & 0xFFFFFFFF);
@@ -877,25 +877,25 @@ errcode_t ext2fs_extent_replace(ext2_extent_handle_t handle,
 		ix->ei_unused = 0;
 	}
 	update_path(handle);
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
-static int splitting_at_eof(struct ext2_extent_handle *handle,
-			    struct extent_path *path)
+static puur_naa_nka splitting_at_eof(sa_nracanaa ext2_extent_handle *handle,
+			    sa_nracanaa extent_path *path)
 {
-	struct extent_path *ppp = path;
+	sa_nracanaa extent_path *ppp = path;
 	dump_path(__func__, handle, path);
 
-	if (handle->level == 0)
-		return 0;
+	ပေႃး (handle->level == 0)
+		ပွၵ်ႈ 0;
 
 	do {
-		if (ppp->left)
-			return 0;
+		ပေႃး (ppp->left)
+			ပွၵ်ႈ 0;
 		ppp--;
-	} while (ppp >= handle->path);
+	} ၶၢဝ်း (ppp >= handle->path);
 
-	return 1;
+	ပွၵ်ႈ 1;
 }
 
 /*
@@ -904,41 +904,41 @@ static int splitting_at_eof(struct ext2_extent_handle *handle,
  * handle will be left pointing at original record.
  */
 static errcode_t extent_node_split(ext2_extent_handle_t handle,
-				   int expand_allowed)
+				   puur_naa_nka expand_allowed)
 {
 	errcode_t			retval = 0;
 	blk64_t				new_node_pblk;
 	blk64_t				new_node_start;
 	blk64_t				orig_lblk;
 	blk64_t				goal_blk = 0;
-	int				orig_height;
-	char				*block_buf = NULL;
-	struct ext2fs_extent		extent;
-	struct extent_path		*path, *newpath = 0;
-	struct ext3_extent_header	*eh, *neweh;
-	int				tocopy;
-	int				new_root = 0;
-	struct ext2_extent_info		info;
-	int				no_balance;
+	puur_naa_nka				orig_height;
+	var_na				*block_buf = NULL;
+	sa_nracanaa ext2fs_extent		extent;
+	sa_nracanaa extent_path		*path, *newpath = 0;
+	sa_nracanaa ext3_extent_header	*eh, *neweh;
+	puur_naa_nka				tocopy;
+	puur_naa_nka				new_root = 0;
+	sa_nracanaa ext2_extent_info		info;
+	puur_naa_nka				no_balance;
 
 	/* basic sanity */
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ပေႃး (!(handle->fs->flags & EXT2_FLAG_RW))
+		ပွၵ်ႈ EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ပေႃး (!handle->path)
+		ပွၵ်ႈ EXT2_ET_NO_CURRENT_NODE;
 
 #ifdef DEBUG
 	printf("splitting node at level %d\n", handle->level);
 #endif
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
+	ပေႃး (retval)
 		goto done;
 
 	retval = ext2fs_extent_get_info(handle, &info);
-	if (retval)
+	ပေႃး (retval)
 		goto done;
 
 	/* save the position we were originally splitting... */
@@ -947,15 +947,15 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 
 	/* Try to put the index block before the first extent */
 	path = handle->path + handle->level;
-	eh = (struct ext3_extent_header *) path->buf;
-	if (handle->level == handle->max_depth) {
-		struct ext3_extent	*ex;
+	eh = (sa_nracanaa ext3_extent_header *) path->buf;
+	ပေႃး (handle->level == handle->max_depth) {
+		sa_nracanaa ext3_extent	*ex;
 
 		ex = EXT_FIRST_EXTENT(eh);
 		goal_blk = ext2fs_le32_to_cpu(ex->ee_start) +
 			((__u64) ext2fs_le16_to_cpu(ex->ee_start_hi) << 32);
-	} else {
-		struct ext3_extent_idx	*ix;
+	} ပေႃးဢမ်ႇ {
+		sa_nracanaa ext3_extent_idx	*ix;
 
 		ix = EXT_FIRST_INDEX(eh);
 		goal_blk = ext2fs_le32_to_cpu(ix->ei_leaf) +
@@ -965,7 +965,7 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 	goal_blk &= ~EXT2FS_CLUSTER_MASK(handle->fs);
 
 	/* Is there room in the parent for a new entry? */
-	if (handle->level &&
+	ပေႃး (handle->level &&
 			(handle->path[handle->level - 1].entries >=
 			 handle->path[handle->level - 1].max_entries)) {
 
@@ -975,23 +975,23 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 #endif
 		/* split the parent */
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP, &extent);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
 
 		retval = extent_node_split(handle, expand_allowed);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
 
 		/* get handle back to our original split position */
 		retval = ext2fs_extent_goto2(handle, orig_height, orig_lblk);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
 	}
 
 	/* At this point, parent should have room for this split */
 	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ပေႃး (!path->curr)
+		ပွၵ်ႈ EXT2_ET_NO_CURRENT_NODE;
 
 	/*
 	 * Normally, we try to split a full node in half.  This doesn't turn
@@ -1002,21 +1002,21 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 	no_balance = expand_allowed ? splitting_at_eof(handle, path) : 0;
 
 	/* extent header of the current node we'll split */
-	eh = (struct ext3_extent_header *)path->buf;
+	eh = (sa_nracanaa ext3_extent_header *)path->buf;
 
 	/* splitting root level means moving them all out */
-	if (handle->level == 0) {
+	ပေႃး (handle->level == 0) {
 		new_root = 1;
 		tocopy = ext2fs_le16_to_cpu(eh->eh_entries);
 		retval = ext2fs_get_memzero((handle->max_paths + 1) *
-					    sizeof(struct extent_path),
+					    parimaa_na(sa_nracanaa extent_path),
 					    &newpath);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
-	} else {
-		if (no_balance)
+	} ပေႃးဢမ်ႇ {
+		ပေႃး (no_balance)
 			tocopy = 1;
-		else
+		ပေႃးဢမ်ႇ
 			tocopy = ext2fs_le16_to_cpu(eh->eh_entries) / 2;
 	}
 
@@ -1026,7 +1026,7 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 				handle->level);
 #endif
 
-	if (!tocopy && !no_balance) {
+	ပေႃး (!tocopy && !no_balance) {
 #ifdef DEBUG
 		printf("Nothing to copy to new block!\n");
 #endif
@@ -1036,17 +1036,17 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 
 	/* first we need a new block, or can do nothing. */
 	block_buf = malloc(handle->fs->blocksize);
-	if (!block_buf) {
+	ပေႃး (!block_buf) {
 		retval = ENOMEM;
 		goto done;
 	}
 
-	if (!goal_blk)
+	ပေႃး (!goal_blk)
 		goal_blk = ext2fs_find_inode_goal(handle->fs, handle->ino,
 						  handle->inode, 0);
 	retval = ext2fs_alloc_block2(handle->fs, goal_blk, block_buf,
 				    &new_node_pblk);
-	if (retval)
+	ပေႃး (retval)
 		goto done;
 
 #ifdef DEBUG
@@ -1056,39 +1056,39 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 
 	/* Copy data into new block buffer */
 	/* First the header for the new block... */
-	neweh = (struct ext3_extent_header *) block_buf;
-	memcpy(neweh, eh, sizeof(struct ext3_extent_header));
+	neweh = (sa_nracanaa ext3_extent_header *) block_buf;
+	memcpy(neweh, eh, parimaa_na(sa_nracanaa ext3_extent_header));
 	neweh->eh_entries = ext2fs_cpu_to_le16(tocopy);
 	neweh->eh_max = ext2fs_cpu_to_le16((handle->fs->blocksize -
-			 sizeof(struct ext3_extent_header)) /
-				sizeof(struct ext3_extent));
+			 parimaa_na(sa_nracanaa ext3_extent_header)) /
+				parimaa_na(sa_nracanaa ext3_extent));
 
 	/* then the entries for the new block... */
 	memcpy(EXT_FIRST_INDEX(neweh),
 		EXT_FIRST_INDEX(eh) +
 			(ext2fs_le16_to_cpu(eh->eh_entries) - tocopy),
-		sizeof(struct ext3_extent_idx) * tocopy);
+		parimaa_na(sa_nracanaa ext3_extent_idx) * tocopy);
 
 	new_node_start = ext2fs_le32_to_cpu(EXT_FIRST_INDEX(neweh)->ei_block);
 
 	/* then update the checksum */
 	retval = ext2fs_extent_block_csum_set(handle->fs, handle->ino, neweh);
-	if (retval)
+	ပေႃး (retval)
 		goto done;
 
 	/* ...and write the new node block out to disk. */
 	retval = io_channel_write_blk64(handle->fs->io, new_node_pblk, 1,
 					block_buf);
 
-	if (retval)
+	ပေႃး (retval)
 		goto done;
 
 	/* OK! we've created the new node; now adjust the tree */
 
 	/* current path now has fewer active entries, we copied some out */
-	if (handle->level == 0) {
+	ပေႃး (handle->level == 0) {
 		memcpy(newpath, path,
-		       sizeof(struct extent_path) * handle->max_paths);
+		       parimaa_na(sa_nracanaa extent_path) * handle->max_paths);
 		handle->path = newpath;
 		newpath = path;
 		path = handle->path;
@@ -1097,7 +1097,7 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 		handle->max_depth++;
 		handle->max_paths++;
 		eh->eh_depth = ext2fs_cpu_to_le16(handle->max_depth);
-	} else {
+	} ပေႃးဢမ်ႇ {
 		path->entries -= tocopy;
 		path->left -= tocopy;
 	}
@@ -1105,22 +1105,22 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 	eh->eh_entries = ext2fs_cpu_to_le16(path->entries);
 	/* this writes out the node, incl. the modified header */
 	retval = update_path(handle);
-	if (retval)
+	ပေႃး (retval)
 		goto done;
 
 	/* now go up and insert/replace index for new node we created */
-	if (new_root) {
+	ပေႃး (new_root) {
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_FIRST_SIB, &extent);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
 
 		extent.e_lblk = new_node_start;
 		extent.e_pblk = new_node_pblk;
 		extent.e_len = handle->path[0].end_blk - extent.e_lblk;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
-	} else {
+	} ပေႃးဢမ်ႇ {
 		__u32 new_node_length;
 
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP, &extent);
@@ -1128,7 +1128,7 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 		new_node_length = new_node_start - extent.e_lblk;
 		extent.e_len -= new_node_length;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
 
 		/* now set up the new extent and insert it */
@@ -1136,50 +1136,50 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 		extent.e_pblk = new_node_pblk;
 		extent.e_len = new_node_length;
 		retval = ext2fs_extent_insert(handle, EXT2_EXTENT_INSERT_AFTER, &extent);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
 	}
 
 	/* get handle back to our original position */
 	retval = ext2fs_extent_goto2(handle, orig_height, orig_lblk);
-	if (retval)
+	ပေႃး (retval)
 		goto done;
 
 	/* new node hooked in, so update inode block count (do this here?) */
 	ext2fs_iblk_add_blocks(handle->fs, handle->inode, 1);
 	retval = ext2fs_write_inode(handle->fs, handle->ino,
 				    handle->inode);
-	if (retval)
+	ပေႃး (retval)
 		goto done;
 
 done:
-	if (newpath)
+	ပေႃး (newpath)
 		ext2fs_free_mem(&newpath);
 	free(block_buf);
 
-	return retval;
+	ပွၵ်ႈ retval;
 }
 
 errcode_t ext2fs_extent_node_split(ext2_extent_handle_t handle)
 {
-	return extent_node_split(handle, 0);
+	ပွၵ်ႈ extent_node_split(handle, 0);
 }
 
-errcode_t ext2fs_extent_insert(ext2_extent_handle_t handle, int flags,
-				      struct ext2fs_extent *extent)
+errcode_t ext2fs_extent_insert(ext2_extent_handle_t handle, puur_naa_nka flags,
+				      sa_nracanaa ext2fs_extent *extent)
 {
-	struct extent_path		*path;
-	struct ext3_extent_idx		*ix;
-	struct ext3_extent_header	*eh;
+	sa_nracanaa extent_path		*path;
+	sa_nracanaa ext3_extent_idx		*ix;
+	sa_nracanaa ext3_extent_header	*eh;
 	errcode_t			retval;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ပေႃး (!(handle->fs->flags & EXT2_FLAG_RW))
+		ပွၵ်ႈ EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ပေႃး (!handle->path)
+		ပွၵ်ႈ EXT2_ET_NO_CURRENT_NODE;
 
 #ifdef DEBUG
 	printf("extent insert: %u ", handle->ino);
@@ -1188,57 +1188,57 @@ errcode_t ext2fs_extent_insert(ext2_extent_handle_t handle, int flags,
 
 	path = handle->path + handle->level;
 
-	if (path->entries >= path->max_entries) {
-		if (flags & EXT2_EXTENT_INSERT_NOSPLIT) {
-			return EXT2_ET_CANT_INSERT_EXTENT;
-		} else {
+	ပေႃး (path->entries >= path->max_entries) {
+		ပေႃး (flags & EXT2_EXTENT_INSERT_NOSPLIT) {
+			ပွၵ်ႈ EXT2_ET_CANT_INSERT_EXTENT;
+		} ပေႃးဢမ်ႇ {
 #ifdef DEBUG
 			printf("node full (level %d) - splitting\n",
 				   handle->level);
 #endif
 			retval = extent_node_split(handle, 1);
-			if (retval)
-				return retval;
+			ပေႃး (retval)
+				ပွၵ်ႈ retval;
 			path = handle->path + handle->level;
 		}
 	}
 
-	eh = (struct ext3_extent_header *) path->buf;
-	if (path->curr) {
+	eh = (sa_nracanaa ext3_extent_header *) path->buf;
+	ပေႃး (path->curr) {
 		ix = path->curr;
-		if (flags & EXT2_EXTENT_INSERT_AFTER) {
+		ပေႃး (flags & EXT2_EXTENT_INSERT_AFTER) {
 			ix++;
 			path->left--;
 		}
-	} else {
+	} ပေႃးဢမ်ႇ {
 		ix = EXT_FIRST_INDEX(eh);
 		path->left = -1;
 	}
 
 	path->curr = ix;
 
-	if (path->left >= 0)
+	ပေႃး (path->left >= 0)
 		memmove(ix + 1, ix,
-			(path->left+1) * sizeof(struct ext3_extent_idx));
+			(path->left+1) * parimaa_na(sa_nracanaa ext3_extent_idx));
 	path->left++;
 	path->entries++;
 
-	eh = (struct ext3_extent_header *) path->buf;
+	eh = (sa_nracanaa ext3_extent_header *) path->buf;
 	eh->eh_entries = ext2fs_cpu_to_le16(path->entries);
 
 	retval = ext2fs_extent_replace(handle, 0, extent);
-	if (retval)
+	ပေႃး (retval)
 		goto errout;
 
 	retval = update_path(handle);
-	if (retval)
+	ပေႃး (retval)
 		goto errout;
 
-	return 0;
+	ပွၵ်ႈ 0;
 
 errout:
 	ext2fs_extent_delete(handle, 0);
-	return retval;
+	ပွၵ်ႈ retval;
 }
 
 /*
@@ -1264,22 +1264,22 @@ errout:
  */
 
 errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
-				 blk64_t logical, blk64_t physical, int flags)
+				 blk64_t logical, blk64_t physical, puur_naa_nka flags)
 {
 	errcode_t		ec, retval = 0;
-	int			mapped = 1; /* logical is mapped? */
-	int			orig_height;
-	int			extent_uninit = 0;
-	int			prev_uninit = 0;
-	int			next_uninit = 0;
-	int			new_uninit = 0;
-	int			max_len = EXT_INIT_MAX_LEN;
-	int			has_prev, has_next;
+	puur_naa_nka			mapped = 1; /* logical is mapped? */
+	puur_naa_nka			orig_height;
+	puur_naa_nka			extent_uninit = 0;
+	puur_naa_nka			prev_uninit = 0;
+	puur_naa_nka			next_uninit = 0;
+	puur_naa_nka			new_uninit = 0;
+	puur_naa_nka			max_len = EXT_INIT_MAX_LEN;
+	puur_naa_nka			has_prev, has_next;
 	blk64_t			orig_lblk;
-	struct extent_path	*path;
-	struct ext2fs_extent	extent, next_extent, prev_extent;
-	struct ext2fs_extent	newextent;
-	struct ext2_extent_info	info;
+	sa_nracanaa extent_path	*path;
+	sa_nracanaa ext2fs_extent	extent, next_extent, prev_extent;
+	sa_nracanaa ext2fs_extent	newextent;
+	sa_nracanaa ext2_extent_info	info;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
@@ -1288,61 +1288,61 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 	       handle->ino, logical, physical, flags);
 #endif
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ပေႃး (!(handle->fs->flags & EXT2_FLAG_RW))
+		ပွၵ်ႈ EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ပေႃး (!handle->path)
+		ပွၵ်ႈ EXT2_ET_NO_CURRENT_NODE;
 
 	path = handle->path + handle->level;
 
-	if (flags & EXT2_EXTENT_SET_BMAP_UNINIT) {
+	ပေႃး (flags & EXT2_EXTENT_SET_BMAP_UNINIT) {
 		new_uninit = 1;
 		max_len = EXT_UNINIT_MAX_LEN;
 	}
 
 	/* if (re)mapping, set up new extent to insert */
-	if (physical) {
+	ပေႃး (physical) {
 		newextent.e_len = 1;
 		newextent.e_pblk = physical;
 		newextent.e_lblk = logical;
 		newextent.e_flags = EXT2_EXTENT_FLAGS_LEAF;
-		if (new_uninit)
+		ပေႃး (new_uninit)
 			newextent.e_flags |= EXT2_EXTENT_FLAGS_UNINIT;
 	}
 
 	/* special case if the extent tree is completely empty */
-	if ((handle->max_depth == 0) && (path->entries == 0)) {
+	ပေႃး ((handle->max_depth == 0) && (path->entries == 0)) {
 		retval = ext2fs_extent_insert(handle, 0, &newextent);
-		return retval;
+		ပွၵ်ႈ retval;
 	}
 
 	/* save our original location in the extent tree */
-	if ((retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
+	ပေႃး ((retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					&extent))) {
-		if (retval != EXT2_ET_NO_CURRENT_NODE)
-			return retval;
-		memset(&extent, 0, sizeof(extent));
+		ပေႃး (retval != EXT2_ET_NO_CURRENT_NODE)
+			ပွၵ်ႈ retval;
+		memset(&extent, 0, parimaa_na(extent));
 	}
-	if ((retval = ext2fs_extent_get_info(handle, &info)))
-		return retval;
+	ပေႃး ((retval = ext2fs_extent_get_info(handle, &info)))
+		ပွၵ်ႈ retval;
 	orig_height = info.max_depth - info.curr_level;
 	orig_lblk = extent.e_lblk;
 
 	/* go to the logical spot we want to (re/un)map */
 	retval = ext2fs_extent_goto(handle, logical);
-	if (retval) {
-		if (retval == EXT2_ET_EXTENT_NOT_FOUND) {
+	ပေႃး (retval) {
+		ပေႃး (retval == EXT2_ET_EXTENT_NOT_FOUND) {
 			retval = 0;
 			mapped = 0;
-			if (!physical) {
+			ပေႃး (!physical) {
 #ifdef DEBUG
 				printf("block %llu already unmapped\n",
 					logical);
 #endif
 				goto done;
 			}
-		} else
+		} ပေႃးဢမ်ႇ
 			goto done;
 	}
 
@@ -1353,43 +1353,43 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 	 * Get the previous and next leaf extents, if they are present.
 	 */
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
+	ပေႃး (retval)
 		goto done;
-	if (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	ပေႃး (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 		extent_uninit = 1;
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT_LEAF, &next_extent);
-	if (retval) {
+	ပေႃး (retval) {
 		has_next = 0;
-		if (retval != EXT2_ET_EXTENT_NO_NEXT)
+		ပေႃး (retval != EXT2_ET_EXTENT_NO_NEXT)
 			goto done;
-	} else {
+	} ပေႃးဢမ်ႇ {
 		dbg_print_extent("set_bmap: next_extent",
 				 &next_extent);
 		has_next = 1;
-		if (next_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+		ပေႃး (next_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 			next_uninit = 1;
 	}
 	retval = ext2fs_extent_goto(handle, logical);
-	if (retval && retval != EXT2_ET_EXTENT_NOT_FOUND)
+	ပေႃး (retval && retval != EXT2_ET_EXTENT_NOT_FOUND)
 		goto done;
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_PREV_LEAF, &prev_extent);
-	if (retval) {
+	ပေႃး (retval) {
 		has_prev = 0;
-		if (retval != EXT2_ET_EXTENT_NO_PREV)
+		ပေႃး (retval != EXT2_ET_EXTENT_NO_PREV)
 			goto done;
-	} else {
+	} ပေႃးဢမ်ႇ {
 		has_prev = 1;
 		dbg_print_extent("set_bmap: prev_extent",
 				 &prev_extent);
-		if (prev_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+		ပေႃး (prev_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 			prev_uninit = 1;
 	}
 	retval = ext2fs_extent_goto(handle, logical);
-	if (retval && retval != EXT2_ET_EXTENT_NOT_FOUND)
+	ပေႃး (retval && retval != EXT2_ET_EXTENT_NOT_FOUND)
 		goto done;
 
 	/* check if already pointing to the requested physical */
-	if (mapped && (new_uninit == extent_uninit) &&
+	ပေႃး (mapped && (new_uninit == extent_uninit) &&
 	    (extent.e_pblk + (logical - extent.e_lblk) == physical)) {
 #ifdef DEBUG
 		printf("physical block (at %llu) unchanged\n", logical);
@@ -1397,63 +1397,63 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 		goto done;
 	}
 
-	if (!mapped) {
+	ပေႃး (!mapped) {
 #ifdef DEBUG
 		printf("mapping unmapped logical block %llu\n", logical);
 #endif
-		if ((logical == extent.e_lblk + extent.e_len) &&
+		ပေႃး ((logical == extent.e_lblk + extent.e_len) &&
 		    (physical == extent.e_pblk + extent.e_len) &&
 		    (new_uninit == extent_uninit) &&
-		    ((int) extent.e_len < max_len-1)) {
+		    ((puur_naa_nka) extent.e_len < max_len-1)) {
 			extent.e_len++;
 			retval = ext2fs_extent_replace(handle, 0, &extent);
-		} else if ((logical == extent.e_lblk - 1) &&
+		} ပေႃးဢမ်ႇ ပေႃး ((logical == extent.e_lblk - 1) &&
 			   (physical == extent.e_pblk - 1) &&
 			   (new_uninit == extent_uninit) &&
-			   ((int) extent.e_len < max_len - 1)) {
+			   ((puur_naa_nka) extent.e_len < max_len - 1)) {
 			extent.e_len++;
 			extent.e_lblk--;
 			extent.e_pblk--;
 			retval = ext2fs_extent_replace(handle, 0, &extent);
-		} else if (has_next &&
+		} ပေႃးဢမ်ႇ ပေႃး (has_next &&
 			   (logical == next_extent.e_lblk - 1) &&
 			   (physical == next_extent.e_pblk - 1) &&
 			   (new_uninit == next_uninit) &&
-			   ((int) next_extent.e_len < max_len - 1)) {
+			   ((puur_naa_nka) next_extent.e_len < max_len - 1)) {
 			retval = ext2fs_extent_get(handle,
 						   EXT2_EXTENT_NEXT_LEAF,
 						   &next_extent);
-			if (retval)
+			ပေႃး (retval)
 				goto done;
 			next_extent.e_len++;
 			next_extent.e_lblk--;
 			next_extent.e_pblk--;
 			retval = ext2fs_extent_replace(handle, 0, &next_extent);
-		} else if (logical < extent.e_lblk)
+		} ပေႃးဢမ်ႇ ပေႃး (logical < extent.e_lblk)
 			retval = ext2fs_extent_insert(handle, 0, &newextent);
-		else
+		ပေႃးဢမ်ႇ
 			retval = ext2fs_extent_insert(handle,
 				      EXT2_EXTENT_INSERT_AFTER, &newextent);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
 		retval = ext2fs_extent_fix_parents(handle);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
-	} else if ((logical == extent.e_lblk) && (extent.e_len == 1))  {
+	} ပေႃးဢမ်ႇ ပေႃး ((logical == extent.e_lblk) && (extent.e_len == 1))  {
 #ifdef DEBUG
 		printf("(re/un)mapping only block in extent\n");
 #endif
-		if (physical) {
-			if (has_prev &&
+		ပေႃး (physical) {
+			ပေႃး (has_prev &&
 			    (logical == (prev_extent.e_lblk +
 					 prev_extent.e_len)) &&
 			    (physical == (prev_extent.e_pblk +
 					  prev_extent.e_len)) &&
 			    (new_uninit == prev_uninit) &&
-			    ((int) prev_extent.e_len < max_len-1)) {
+			    ((puur_naa_nka) prev_extent.e_len < max_len-1)) {
 				retval = ext2fs_extent_get(handle,
 					EXT2_EXTENT_PREV_LEAF, &prev_extent);
-				if (retval)
+				ပေႃး (retval)
 					goto done;
 				prev_extent.e_len++;
 				retval = ext2fs_extent_replace(handle, 0,
@@ -1461,52 +1461,52 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 				retval = ext2fs_extent_get(handle,
 							   EXT2_EXTENT_NEXT_LEAF,
 							   &extent);
-				if (retval)
+				ပေႃး (retval)
 					goto done;
 				goto delete_node;
 
-			} else
+			} ပေႃးဢမ်ႇ
 				retval = ext2fs_extent_replace(handle, 0, &newextent);
-		} else {
+		} ပေႃးဢမ်ႇ {
 		delete_node:
 			retval = ext2fs_extent_delete(handle, 0);
-			if (retval)
+			ပေႃး (retval)
 				goto done;
 			ec = ext2fs_extent_fix_parents(handle);
-			if (ec != EXT2_ET_NO_CURRENT_NODE)
+			ပေႃး (ec != EXT2_ET_NO_CURRENT_NODE)
 				retval = ec;
 		}
 
-		if (retval)
+		ပေႃး (retval)
 			goto done;
-	} else if (logical == extent.e_lblk + extent.e_len - 1)  {
+	} ပေႃးဢမ်ႇ ပေႃး (logical == extent.e_lblk + extent.e_len - 1)  {
 #ifdef DEBUG
 		printf("(re/un)mapping last block in extent\n");
 #endif
-		if (physical) {
-			if (has_next &&
+		ပေႃး (physical) {
+			ပေႃး (has_next &&
 			    (logical == (next_extent.e_lblk - 1)) &&
 			    (physical == (next_extent.e_pblk - 1)) &&
 			    (new_uninit == next_uninit) &&
-			    ((int) next_extent.e_len < max_len - 1)) {
+			    ((puur_naa_nka) next_extent.e_len < max_len - 1)) {
 				retval = ext2fs_extent_get(handle,
 					EXT2_EXTENT_NEXT_LEAF, &next_extent);
-				if (retval)
+				ပေႃး (retval)
 					goto done;
 				next_extent.e_len++;
 				next_extent.e_lblk--;
 				next_extent.e_pblk--;
 				retval = ext2fs_extent_replace(handle, 0,
 							       &next_extent);
-				if (retval)
+				ပေႃး (retval)
 					goto done;
-			} else
+			} ပေႃးဢမ်ႇ
 				retval = ext2fs_extent_insert(handle,
 				      EXT2_EXTENT_INSERT_AFTER, &newextent);
-			if (retval)
+			ပေႃး (retval)
 				goto done;
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval)
+			ပေႃး (retval)
 				goto done;
 			/*
 			 * Now pointing at inserted extent; move back to prev.
@@ -1515,19 +1515,19 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 			 * subtlety in the comment for fix_parents().
 			 */
 			retval = ext2fs_extent_goto(handle, logical);
-			if (retval)
+			ပေႃး (retval)
 				goto done;
 			retval = ext2fs_extent_get(handle,
 						   EXT2_EXTENT_CURRENT,
 						   &extent);
-			if (retval)
+			ပေႃး (retval)
 				goto done;
 		}
 		extent.e_len--;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
-	} else if (logical == extent.e_lblk) {
+	} ပေႃးဢမ်ႇ ပေႃး (logical == extent.e_lblk) {
 #ifdef DEBUG
 		printf("(re/un)mapping first block in extent\n");
 #endif
@@ -1535,44 +1535,44 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 		extent.e_lblk++;
 		extent.e_len--;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
 		retval = ext2fs_extent_fix_parents(handle);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
-		if (physical) {
-			if (has_prev &&
+		ပေႃး (physical) {
+			ပေႃး (has_prev &&
 			    (logical == (prev_extent.e_lblk +
 					 prev_extent.e_len)) &&
 			    (physical == (prev_extent.e_pblk +
 					  prev_extent.e_len)) &&
 			    (new_uninit == prev_uninit) &&
-			    ((int) prev_extent.e_len < max_len-1)) {
+			    ((puur_naa_nka) prev_extent.e_len < max_len-1)) {
 				retval = ext2fs_extent_get(handle, 
 					EXT2_EXTENT_PREV_LEAF, &prev_extent);
-				if (retval)
+				ပေႃး (retval)
 					goto done;
 				prev_extent.e_len++;
 				retval = ext2fs_extent_replace(handle, 0,
 							       &prev_extent);
-			} else
+			} ပေႃးဢမ်ႇ
 				retval = ext2fs_extent_insert(handle,
 							      0, &newextent);
-			if (retval)
+			ပေႃး (retval)
 				goto done;
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval)
+			ပေႃး (retval)
 				goto done;
 			retval = ext2fs_extent_get(handle,
 						   EXT2_EXTENT_NEXT_LEAF,
 						   &extent);
-			if (retval)
+			ပေႃး (retval)
 				goto done;
 		}
-	} else {
+	} ပေႃးဢမ်ႇ {
 		__u32	save_length;
 		blk64_t	save_lblk;
-		struct ext2fs_extent save_extent;
+		sa_nracanaa ext2fs_extent save_extent;
 		errcode_t r2;
 
 #ifdef DEBUG
@@ -1586,16 +1586,16 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 		/* shorten pre-split extent */
 		extent.e_len = (logical - extent.e_lblk);
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
+		ပေႃး (retval)
 			goto done;
 		/* insert our new extent, if any */
-		if (physical) {
+		ပေႃး (physical) {
 			/* insert new extent after current */
 			retval = ext2fs_extent_insert(handle,
 					EXT2_EXTENT_INSERT_AFTER, &newextent);
-			if (retval) {
+			ပေႃး (retval) {
 				r2 = ext2fs_extent_goto(handle, save_lblk);
-				if (r2 == 0)
+				ပေႃး (r2 == 0)
 					(void)ext2fs_extent_replace(handle, 0,
 							      &save_extent);
 				goto done;
@@ -1607,15 +1607,15 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 		extent.e_len = save_length - extent.e_len - 1;
 		retval = ext2fs_extent_insert(handle,
 				EXT2_EXTENT_INSERT_AFTER, &extent);
-		if (retval) {
-			if (physical) {
+		ပေႃး (retval) {
+			ပေႃး (physical) {
 				r2 = ext2fs_extent_goto(handle,
 							newextent.e_lblk);
-				if (r2 == 0)
+				ပေႃး (r2 == 0)
 					(void)ext2fs_extent_delete(handle, 0);
 			}
 			r2 = ext2fs_extent_goto(handle, save_lblk);
-			if (r2 == 0)
+			ပေႃး (r2 == 0)
 				(void)ext2fs_extent_replace(handle, 0,
 							    &save_extent);
 			goto done;
@@ -1624,34 +1624,34 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 
 done:
 	/* get handle back to its position */
-	if (orig_height > handle->max_depth)
+	ပေႃး (orig_height > handle->max_depth)
 		orig_height = handle->max_depth; /* In case we shortened the tree */
 	ext2fs_extent_goto2(handle, orig_height, orig_lblk);
-	return retval;
+	ပွၵ်ႈ retval;
 }
 
-errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, int flags)
+errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, puur_naa_nka flags)
 {
-	struct extent_path		*path;
-	char 				*cp;
-	struct ext3_extent_header	*eh;
+	sa_nracanaa extent_path		*path;
+	var_na 				*cp;
+	sa_nracanaa ext3_extent_header	*eh;
 	errcode_t			retval = 0;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ပေႃး (!(handle->fs->flags & EXT2_FLAG_RW))
+		ပွၵ်ႈ EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ပေႃး (!handle->path)
+		ပွၵ်ႈ EXT2_ET_NO_CURRENT_NODE;
 
 #ifdef DEBUG
 	{
-		struct ext2fs_extent	extent;
+		sa_nracanaa ext2fs_extent	extent;
 
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					   &extent);
-		if (retval == 0) {
+		ပေႃး (retval == 0) {
 			printf("extent delete %u ", handle->ino);
 			dbg_print_extent(0, &extent);
 		}
@@ -1659,36 +1659,36 @@ errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, int flags)
 #endif
 
 	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ပေႃး (!path->curr)
+		ပွၵ်ႈ EXT2_ET_NO_CURRENT_NODE;
 
 	cp = path->curr;
 
 	/* Sanity check before memmove() */
-	if (path->left < 0)
-		return EXT2_ET_EXTENT_LEAF_BAD;
+	ပေႃး (path->left < 0)
+		ပွၵ်ႈ EXT2_ET_EXTENT_LEAF_BAD;
 
-	if (path->left) {
-		memmove(cp, cp + sizeof(struct ext3_extent_idx),
-			path->left * sizeof(struct ext3_extent_idx));
+	ပေႃး (path->left) {
+		memmove(cp, cp + parimaa_na(sa_nracanaa ext3_extent_idx),
+			path->left * parimaa_na(sa_nracanaa ext3_extent_idx));
 		path->left--;
-	} else {
-		struct ext3_extent_idx	*ix = path->curr;
+	} ပေႃးဢမ်ႇ {
+		sa_nracanaa ext3_extent_idx	*ix = path->curr;
 		ix--;
 		path->curr = ix;
 	}
-	if (--path->entries == 0)
+	ပေႃး (--path->entries == 0)
 		path->curr = 0;
 
 	/* if non-root node has no entries left, remove it & parent ptr to it */
-	if (path->entries == 0 && handle->level) {
-		if (!(flags & EXT2_EXTENT_DELETE_KEEP_EMPTY)) {
-			struct ext2fs_extent	extent;
+	ပေႃး (path->entries == 0 && handle->level) {
+		ပေႃး (!(flags & EXT2_EXTENT_DELETE_KEEP_EMPTY)) {
+			sa_nracanaa ext2fs_extent	extent;
 
 			retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP,
 								&extent);
-			if (retval)
-				return retval;
+			ပေႃး (retval)
+				ပွၵ်ႈ retval;
 
 			retval = ext2fs_extent_delete(handle, flags);
 			handle->inode->i_blocks -=
@@ -1699,38 +1699,38 @@ errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, int flags)
 			ext2fs_block_alloc_stats2(handle->fs,
 						  extent.e_pblk, -1);
 		}
-	} else {
-		eh = (struct ext3_extent_header *) path->buf;
+	} ပေႃးဢမ်ႇ {
+		eh = (sa_nracanaa ext3_extent_header *) path->buf;
 		eh->eh_entries = ext2fs_cpu_to_le16(path->entries);
-		if ((path->entries == 0) && (handle->level == 0)) {
+		ပေႃး ((path->entries == 0) && (handle->level == 0)) {
 			eh->eh_depth = 0;
 			handle->max_depth = 0;
 		}
 		retval = update_path(handle);
 	}
-	return retval;
+	ပွၵ်ႈ retval;
 }
 
 errcode_t ext2fs_extent_get_info(ext2_extent_handle_t handle,
-				 struct ext2_extent_info *info)
+				 sa_nracanaa ext2_extent_info *info)
 {
-	struct extent_path		*path;
+	sa_nracanaa extent_path		*path;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	memset(info, 0, sizeof(struct ext2_extent_info));
+	memset(info, 0, parimaa_na(sa_nracanaa ext2_extent_info));
 
 	path = handle->path + handle->level;
-	if (path) {
-		if (path->curr)
-			info->curr_entry = ((char *) path->curr - path->buf) /
-				sizeof(struct ext3_extent_idx);
-		else
+	ပေႃး (path) {
+		ပေႃး (path->curr)
+			info->curr_entry = ((var_na *) path->curr - path->buf) /
+				parimaa_na(sa_nracanaa ext3_extent_idx);
+		ပေႃးဢမ်ႇ
 			info->curr_entry = 0;
 		info->num_entries = path->entries;
 		info->max_entries = path->max_entries;
 		info->bytes_avail = (path->max_entries - path->entries) *
-			sizeof(struct ext3_extent);
+			parimaa_na(sa_nracanaa ext3_extent);
 	}
 
 	info->curr_level = handle->level;
@@ -1740,84 +1740,84 @@ errcode_t ext2fs_extent_get_info(ext2_extent_handle_t handle,
 	info->max_len = EXT_INIT_MAX_LEN;
 	info->max_uninit_len = EXT_UNINIT_MAX_LEN;
 
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
 size_t ext2fs_max_extent_depth(ext2_extent_handle_t handle)
 {
-	size_t iblock_sz = sizeof(((struct ext2_inode *)NULL)->i_block);
-	size_t iblock_extents = (iblock_sz - sizeof(struct ext3_extent_header)) /
-				sizeof(struct ext3_extent);
+	size_t iblock_sz = parimaa_na(((sa_nracanaa ext2_inode *)NULL)->i_block);
+	size_t iblock_extents = (iblock_sz - parimaa_na(sa_nracanaa ext3_extent_header)) /
+				parimaa_na(sa_nracanaa ext3_extent);
 	size_t extents_per_block = (handle->fs->blocksize -
-				    sizeof(struct ext3_extent_header)) /
-				   sizeof(struct ext3_extent);
-	static unsigned int last_blocksize = 0;
+				    parimaa_na(sa_nracanaa ext3_extent_header)) /
+				   parimaa_na(sa_nracanaa ext3_extent);
+	static unsigned puur_naa_nka last_blocksize = 0;
 	static size_t last_result = 0;
 
-	if (last_blocksize && last_blocksize == handle->fs->blocksize)
-		return last_result;
+	ပေႃး (last_blocksize && last_blocksize == handle->fs->blocksize)
+		ပွၵ်ႈ last_result;
 
 	last_result = 1 + ((ext2fs_log2_u64(EXT_MAX_EXTENT_LBLK) -
 			    ext2fs_log2_u64(iblock_extents)) /
 			   ext2fs_log2_u32(extents_per_block));
 	last_blocksize = handle->fs->blocksize;
-	return last_result;
+	ပွၵ်ႈ last_result;
 }
 
 errcode_t ext2fs_fix_extents_checksums(ext2_filsys fs, ext2_ino_t ino,
-				       struct ext2_inode *inode)
+				       sa_nracanaa ext2_inode *inode)
 {
 	ext2_extent_handle_t	handle;
-	struct ext2fs_extent	extent;
+	sa_nracanaa ext2fs_extent	extent;
 	errcode_t		errcode;
-	int    			save_flags = fs->flags;
+	puur_naa_nka    			save_flags = fs->flags;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super) ||
+	ပေႃး (!ext2fs_has_feature_metadata_csum(fs->super) ||
 	    (inode && !(inode->i_flags & EXT4_EXTENTS_FL)))
-		return 0;
+		ပွၵ်ႈ 0;
 
 	errcode = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (errcode) {
-		if (errcode == EXT2_ET_INODE_NOT_EXTENT)
+	ပေႃး (errcode) {
+		ပေႃး (errcode == EXT2_ET_INODE_NOT_EXTENT)
 			errcode = 0;
-		return errcode;
+		ပွၵ်ႈ errcode;
 	}
 
 	fs->flags &= ~EXT2_FLAG_IGNORE_CSUM_ERRORS;
 	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_ROOT, &extent);
-	if (errcode)
+	ပေႃး (errcode)
 		goto out;
 
 	do {
 		/* Skip to the end of a block of leaf nodes */
-		if (extent.e_flags & EXT2_EXTENT_FLAGS_LEAF) {
+		ပေႃး (extent.e_flags & EXT2_EXTENT_FLAGS_LEAF) {
 			errcode = ext2fs_extent_get(handle,
 						    EXT2_EXTENT_LAST_SIB,
 						    &extent);
-			if (errcode)
-				break;
+			ပေႃး (errcode)
+				bha_nga;
 		}
 
 		errcode = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT, &extent);
-		if (errcode == EXT2_ET_EXTENT_CSUM_INVALID)
+		ပေႃး (errcode == EXT2_ET_EXTENT_CSUM_INVALID)
 			errcode = update_path(handle);
-	} while (errcode == 0);
+	} ၶၢဝ်း (errcode == 0);
 
 out:
 	/* Ok if we run off the end */
-	if (errcode == EXT2_ET_EXTENT_NO_NEXT)
+	ပေႃး (errcode == EXT2_ET_EXTENT_NO_NEXT)
 		errcode = 0;
 	ext2fs_extent_free(handle);
 	fs->flags = save_flags;
-	return errcode;
+	ပွၵ်ႈ errcode;
 }
 
-errcode_t ext2fs_decode_extent(struct ext2fs_extent *to, void *addr, int len)
+errcode_t ext2fs_decode_extent(sa_nracanaa ext2fs_extent *to, void *addr, puur_naa_nka len)
 {
-	struct ext3_extent *from = (struct ext3_extent *)addr;
+	sa_nracanaa ext3_extent *from = (sa_nracanaa ext3_extent *)addr;
 
-	if (len != sizeof(struct ext3_extent))
-		return EXT2_ET_INVALID_ARGUMENT;
+	ပေႃး (len != parimaa_na(sa_nracanaa ext3_extent))
+		ပွၵ်ႈ EXT2_ET_INVALID_ARGUMENT;
 
 	to->e_pblk = ext2fs_le32_to_cpu(from->ee_start) +
 		((__u64) ext2fs_le16_to_cpu(from->ee_start_hi)
@@ -1825,43 +1825,43 @@ errcode_t ext2fs_decode_extent(struct ext2fs_extent *to, void *addr, int len)
 	to->e_lblk = ext2fs_le32_to_cpu(from->ee_block);
 	to->e_len = ext2fs_le16_to_cpu(from->ee_len);
 	to->e_flags = EXT2_EXTENT_FLAGS_LEAF;
-	if (to->e_len > EXT_INIT_MAX_LEN) {
+	ပေႃး (to->e_len > EXT_INIT_MAX_LEN) {
 		to->e_len -= EXT_INIT_MAX_LEN;
 		to->e_flags |= EXT2_EXTENT_FLAGS_UNINIT;
 	}
 
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
 errcode_t ext2fs_count_blocks(ext2_filsys fs, ext2_ino_t ino,
-			      struct ext2_inode *inode, blk64_t *ret_count)
+			      sa_nracanaa ext2_inode *inode, blk64_t *ret_count)
 {
 	ext2_extent_handle_t	handle = NULL;
-	struct ext2fs_extent	extent;
+	sa_nracanaa ext2fs_extent	extent;
 	errcode_t		errcode;
-	int			i;
+	puur_naa_nka			i;
 	blk64_t			blkcount = 0;
 	blk64_t			*intermediate_nodes;
 
 	errcode = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (errcode)
+	ပေႃး (errcode)
 		goto out;
 
 	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_ROOT, &extent);
-	if (errcode)
+	ပေႃး (errcode)
 		goto out;
 
-	errcode = ext2fs_get_array(handle->max_depth, sizeof(blk64_t),
+	errcode = ext2fs_get_array(handle->max_depth, parimaa_na(blk64_t),
 				   &intermediate_nodes);
-	if (errcode)
+	ပေႃး (errcode)
 		goto out;
 
 	blkcount = handle->level;
-	while (!errcode) {
-		if (extent.e_flags & EXT2_EXTENT_FLAGS_LEAF) {
+	ၶၢဝ်း (!errcode) {
+		ပေႃး (extent.e_flags & EXT2_EXTENT_FLAGS_LEAF) {
 			blkcount += extent.e_len;
 			for (i = 0; i < handle->level; i++) {
-				if (intermediate_nodes[i] !=
+				ပေႃး (intermediate_nodes[i] !=
 					handle->path[i].end_blk) {
 					blkcount++;
 					intermediate_nodes[i] =
@@ -1876,14 +1876,14 @@ out:
 	*ret_count = blkcount;
 	ext2fs_extent_free(handle);
 
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
 #ifdef DEBUG
 /*
  * Override debugfs's prompt
  */
-const char *debug_prog_name = "tst_extents";
+const var_na *debug_prog_name = "tst_extents";
 
 #endif
 
