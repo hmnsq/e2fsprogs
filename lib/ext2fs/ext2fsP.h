@@ -9,7 +9,7 @@
  * %End-Header%
  */
 
-#if HAVE_SYS_STAT_H
+#නම් HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
 
@@ -17,66 +17,66 @@
 
 #define EXT2FS_MAX_NESTED_LINKS  8
 
-static inline int ext2fsP_is_disk_device(mode_t mode)
+static anta_hstha පූර්ණ_සංඛ්‍යා ext2fsP_is_disk_device(mode_t mode)
 {
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-	return S_ISBLK(mode) || S_ISCHR(mode);
-#else
-	return S_ISBLK(mode);
+#නම් defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+	ආපසු S_ISBLK(mode) || S_ISCHR(mode);
+#නැතහොත්
+	ආපසු S_ISBLK(mode);
 #endif
 }
 
-static inline time_t ext2fsP_get_time(ext2_filsys fs)
+static anta_hstha time_t ext2fsP_get_time(ext2_filsys fs)
 {
-	if (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
-		return fs->now;
-	return time(NULL);
+	නම් (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
+		ආපසු fs->now;
+	ආපසු time(NULL);
 }
 
 /*
  * Badblocks list
  */
-struct ext2_struct_u32_list {
-	int	magic;
-	int	num;
-	int	size;
+sa_nracanaa ext2_struct_u32_list {
+	පූර්ණ_සංඛ්‍යා	magic;
+	පූර්ණ_සංඛ්‍යා	num;
+	පූර්ණ_සංඛ්‍යා	size;
 	__u32	*list;
-	int	badblocks_flags;
+	පූර්ණ_සංඛ්‍යා	badblocks_flags;
 };
 
-struct ext2_struct_u32_iterate {
-	int			magic;
+sa_nracanaa ext2_struct_u32_iterate {
+	පූර්ණ_සංඛ්‍යා			magic;
 	ext2_u32_list		bb;
-	int			ptr;
+	පූර්ණ_සංඛ්‍යා			ptr;
 };
 
 
 /*
  * Directory block iterator definition
  */
-struct ext2_struct_dblist {
-	int			magic;
+sa_nracanaa ext2_struct_dblist {
+	පූර්ණ_සංඛ්‍යා			magic;
 	ext2_filsys		fs;
 	unsigned long long	size;
 	unsigned long long	count;
-	int			sorted;
-	struct ext2_db_entry2 *	list;
+	පූර්ණ_සංඛ්‍යා			sorted;
+	sa_nracanaa ext2_db_entry2 *	list;
 };
 
 /*
  * For directory iterators
  */
-struct dir_context {
+sa_nracanaa dir_context {
 	ext2_ino_t		dir;
-	int		flags;
-	char		*buf;
-	unsigned int	buflen;
-	int (*func)(ext2_ino_t	dir,
-		    int	entry,
-		    struct ext2_dir_entry *dirent,
-		    int	offset,
-		    int	blocksize,
-		    char	*buf,
+	පූර්ණ_සංඛ්‍යා		flags;
+	var_na		*buf;
+	unsigned පූර්ණ_සංඛ්‍යා	buflen;
+	පූර්ණ_සංඛ්‍යා (*func)(ext2_ino_t	dir,
+		    පූර්ණ_සංඛ්‍යා	entry,
+		    sa_nracanaa ext2_dir_entry *dirent,
+		    පූර්ණ_සංඛ්‍යා	offset,
+		    පූර්ණ_සංඛ්‍යා	blocksize,
+		    var_na	*buf,
 		    void	*priv_data);
 	void		*priv_data;
 	errcode_t	errcode;
@@ -85,97 +85,97 @@ struct dir_context {
 /*
  * Inode cache structure
  */
-struct ext2_inode_cache {
+sa_nracanaa ext2_inode_cache {
 	void *				buffer;
 	blk64_t				buffer_blk;
-	int				cache_last;
-	unsigned int			cache_size;
-	int				refcount;
-	struct ext2_inode_cache_ent	*cache;
+	පූර්ණ_සංඛ්‍යා				cache_last;
+	unsigned පූර්ණ_සංඛ්‍යා			cache_size;
+	පූර්ණ_සංඛ්‍යා				refcount;
+	sa_nracanaa ext2_inode_cache_ent	*cache;
 };
 
-struct ext2_inode_cache_ent {
+sa_nracanaa ext2_inode_cache_ent {
 	ext2_ino_t		ino;
-	struct ext2_inode	*inode;
+	sa_nracanaa ext2_inode	*inode;
 };
 
 /*
  * NLS definitions
  */
-struct ext2fs_nls_table {
-	int version;
-	const struct ext2fs_nls_ops *ops;
+sa_nracanaa ext2fs_nls_table {
+	පූර්ණ_සංඛ්‍යා version;
+	const sa_nracanaa ext2fs_nls_ops *ops;
 };
 
-struct ext2fs_nls_ops {
-	int (*casefold)(const struct ext2fs_nls_table *charset,
-			const unsigned char *str, size_t len,
-			unsigned char *dest, size_t dlen);
-	int (*validate)(const struct ext2fs_nls_table *table,
-			char *s, size_t len, char **pos);
-	int (*casefold_cmp)(const struct ext2fs_nls_table *table,
-			    const unsigned char *str1, size_t len1,
-			    const unsigned char *str2, size_t len2);
+sa_nracanaa ext2fs_nls_ops {
+	පූර්ණ_සංඛ්‍යා (*casefold)(const sa_nracanaa ext2fs_nls_table *charset,
+			const unsigned var_na *str, size_t len,
+			unsigned var_na *dest, size_t dlen);
+	පූර්ණ_සංඛ්‍යා (*validate)(const sa_nracanaa ext2fs_nls_table *table,
+			var_na *s, size_t len, var_na **pos);
+	පූර්ණ_සංඛ්‍යා (*casefold_cmp)(const sa_nracanaa ext2fs_nls_table *table,
+			    const unsigned var_na *str1, size_t len1,
+			    const unsigned var_na *str2, size_t len2);
 };
 
 /* Function prototypes */
 
-extern int ext2fs_process_dir_block(ext2_filsys  	fs,
+extern පූර්ණ_සංඛ්‍යා ext2fs_process_dir_block(ext2_filsys  	fs,
 				    blk64_t		*blocknr,
 				    e2_blkcnt_t		blockcnt,
 				    blk64_t		ref_block,
-				    int			ref_offset,
+				    පූර්ණ_සංඛ්‍යා			ref_offset,
 				    void		*priv_data);
 
 extern errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino);
 extern errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino);
-extern int ext2fs_inline_data_dir_iterate(ext2_filsys fs,
+extern පූර්ණ_සංඛ්‍යා ext2fs_inline_data_dir_iterate(ext2_filsys fs,
 					  ext2_ino_t ino,
 					  void *priv_data);
 
 /* Generic numeric progress meter */
 
-struct ext2fs_numeric_progress_struct {
+sa_nracanaa ext2fs_numeric_progress_struct {
 	__u64		max;
-	int		log_max;
-	int		skip_progress;
+	පූර්ණ_සංඛ්‍යා		log_max;
+	පූර්ණ_සංඛ්‍යා		skip_progress;
 };
 
 /*
  * progress callback functions
  */
-struct ext2fs_progress_ops {
+sa_nracanaa ext2fs_progress_ops {
 	void (*init)(ext2_filsys fs,
-		     struct ext2fs_numeric_progress_struct * progress,
-		     const char *label, __u64 max);
+		     sa_nracanaa ext2fs_numeric_progress_struct * progress,
+		     const var_na *label, __u64 max);
 	void (*update)(ext2_filsys fs,
-		       struct ext2fs_numeric_progress_struct * progress,
+		       sa_nracanaa ext2fs_numeric_progress_struct * progress,
 		       __u64 val);
 	void (*close)(ext2_filsys fs,
-		      struct ext2fs_numeric_progress_struct * progress,
-		      const char *message);
+		      sa_nracanaa ext2fs_numeric_progress_struct * progress,
+		      const var_na *message);
 };
 
-extern struct ext2fs_progress_ops ext2fs_numeric_progress_ops;
+extern sa_nracanaa ext2fs_progress_ops ext2fs_numeric_progress_ops;
 
 extern void ext2fs_numeric_progress_init(ext2_filsys fs,
-					 struct ext2fs_numeric_progress_struct * progress,
-					 const char *label, __u64 max);
+					 sa_nracanaa ext2fs_numeric_progress_struct * progress,
+					 const var_na *label, __u64 max);
 extern void ext2fs_numeric_progress_update(ext2_filsys fs,
-					   struct ext2fs_numeric_progress_struct * progress,
+					   sa_nracanaa ext2fs_numeric_progress_struct * progress,
 					   __u64 val);
 extern void ext2fs_numeric_progress_close(ext2_filsys fs,
-					  struct ext2fs_numeric_progress_struct * progress,
-					  const char *message);
+					  sa_nracanaa ext2fs_numeric_progress_struct * progress,
+					  const var_na *message);
 
 /*
  * 64-bit bitmap support
  */
 
 extern errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
-					   int type, __u64 start, __u64 end,
+					   පූර්ණ_සංඛ්‍යා type, __u64 start, __u64 end,
 					   __u64 real_end,
-					   const char * description,
+					   const var_na * description,
 					   ext2fs_generic_bitmap *bmap);
 
 extern void ext2fs_free_generic_bmap(ext2fs_generic_bitmap bmap);
@@ -189,24 +189,24 @@ extern errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap bmap,
 extern errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap bitmap,
 					       errcode_t neq,
 					       __u64 end, __u64 *oend);
-extern int ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
+extern පූර්ණ_සංඛ්‍යා ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
-extern int ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
+extern පූර්ණ_සංඛ්‍යා ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				      __u64 arg);
-extern int ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
+extern පූර්ණ_සංඛ්‍යා ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
 extern errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
+					       __u64 start, unsigned පූර්ණ_සංඛ්‍යා num,
 					       void *in);
 extern errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
+					       __u64 start, unsigned පූර්ණ_සංඛ්‍යා num,
 					       void *out);
-extern void ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,const char *func);
+extern void ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,const var_na *func);
 
-extern int ext2fs_mem_is_zero(const char *mem, size_t len);
+extern පූර්ණ_සංඛ්‍යා ext2fs_mem_is_zero(const var_na *mem, size_t len);
 
-extern int ext2fs_file_block_offset_too_big(ext2_filsys fs,
-					    struct ext2_inode *inode,
+extern පූර්ණ_සංඛ්‍යා ext2fs_file_block_offset_too_big(ext2_filsys fs,
+					    sa_nracanaa ext2_inode *inode,
 					    blk64_t offset);
 
 /* atexit support */
@@ -215,6 +215,6 @@ errcode_t ext2fs_add_exit_fn(ext2_exit_fn fn, void *data);
 errcode_t ext2fs_remove_exit_fn(ext2_exit_fn fn, void *data);
 
 #define ARRAY_SIZE(array)			\
-        (sizeof(array) / sizeof(array[0]))
+        (parimaa_na(array) / parimaa_na(array[0]))
 
-#define EXT2FS_BUILD_BUG_ON(cond) ((void)sizeof(char[1 - 2*!!(cond)]))
+#define EXT2FS_BUILD_BUG_ON(cond) ((void)parimaa_na(var_na[1 - 2*!!(cond)]))

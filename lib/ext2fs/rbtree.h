@@ -98,77 +98,77 @@ static inline struct page * rb_insert_page_cache(struct inode * inode,
 #include <stdint.h>
 #include "compiler.h"
 
-#if __GNUC_PREREQ (4, 6)
+#නම් __GNUC_PREREQ (4, 6)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-function"
 #endif
 
-struct rb_node
+sa_nracanaa rb_node
 {
 	uintptr_t  rb_parent_color;
 #define	RB_RED		0
 #define	RB_BLACK	1
-	struct rb_node *rb_right;
-	struct rb_node *rb_left;
-} __attribute__((aligned(sizeof(long))));
+	sa_nracanaa rb_node *rb_right;
+	sa_nracanaa rb_node *rb_left;
+} __attribute__((aligned(parimaa_na(long))));
     /* The alignment might seem pointless, but allegedly CRIS needs it */
 
-struct rb_root
+sa_nracanaa rb_root
 {
-	struct rb_node *rb_node;
+	sa_nracanaa rb_node *rb_node;
 };
 
 
-#define ext2fs_rb_parent(r)   ((struct rb_node *)((r)->rb_parent_color & ~3))
+#define ext2fs_rb_parent(r)   ((sa_nracanaa rb_node *)((r)->rb_parent_color & ~3))
 #define ext2fs_rb_color(r)   ((r)->rb_parent_color & 1)
 #define ext2fs_rb_is_red(r)   (!ext2fs_rb_color(r))
 #define ext2fs_rb_is_black(r) ext2fs_rb_color(r)
-#define ext2fs_rb_set_red(r)  do { (r)->rb_parent_color &= ~1; } while (0)
-#define ext2fs_rb_set_black(r)  do { (r)->rb_parent_color |= 1; } while (0)
+#define ext2fs_rb_set_red(r)  do { (r)->rb_parent_color &= ~1; } අතරතුර (0)
+#define ext2fs_rb_set_black(r)  do { (r)->rb_parent_color |= 1; } අතරතුර (0)
 
-static inline void ext2fs_rb_set_parent(struct rb_node *rb, struct rb_node *p)
+static anta_hstha void ext2fs_rb_set_parent(sa_nracanaa rb_node *rb, sa_nracanaa rb_node *p)
 {
 	rb->rb_parent_color = (rb->rb_parent_color & 3) | (uintptr_t)p;
 }
-static inline void ext2fs_rb_set_color(struct rb_node *rb, int color)
+static anta_hstha void ext2fs_rb_set_color(sa_nracanaa rb_node *rb, පූර්ණ_සංඛ්‍යා color)
 {
 	rb->rb_parent_color = (rb->rb_parent_color & ~1) | color;
 }
 
-#define RB_ROOT	(struct rb_root) { NULL, }
+#define RB_ROOT	(sa_nracanaa rb_root) { NULL, }
 #define	ext2fs_rb_entry(ptr, type, member) container_of(ptr, type, member)
 
-static inline int ext2fs_rb_empty_root(struct rb_root *root)
+static anta_hstha පූර්ණ_සංඛ්‍යා ext2fs_rb_empty_root(sa_nracanaa rb_root *root)
 {
-	return root->rb_node == NULL;
+	ආපසු root->rb_node == NULL;
 }
 
-static inline int ext2fs_rb_empty_node(struct rb_node *node)
+static anta_hstha පූර්ණ_සංඛ්‍යා ext2fs_rb_empty_node(sa_nracanaa rb_node *node)
 {
-	return ext2fs_rb_parent(node) == node;
+	ආපසු ext2fs_rb_parent(node) == node;
 }
 
-static inline void ext2fs_rb_clear_node(struct rb_node *node)
+static anta_hstha void ext2fs_rb_clear_node(sa_nracanaa rb_node *node)
 {
 	ext2fs_rb_set_parent(node, node);
 }
 
-extern void ext2fs_rb_insert_color(struct rb_node *, struct rb_root *);
-extern void ext2fs_rb_erase(struct rb_node *, struct rb_root *);
+extern void ext2fs_rb_insert_color(sa_nracanaa rb_node *, sa_nracanaa rb_root *);
+extern void ext2fs_rb_erase(sa_nracanaa rb_node *, sa_nracanaa rb_root *);
 
 /* Find logical next and previous nodes in a tree */
-extern struct rb_node *ext2fs_rb_next(struct rb_node *);
-extern struct rb_node *ext2fs_rb_prev(struct rb_node *);
-extern struct rb_node *ext2fs_rb_first(const struct rb_root *);
-extern struct rb_node *ext2fs_rb_last(const struct rb_root *);
+extern sa_nracanaa rb_node *ext2fs_rb_next(sa_nracanaa rb_node *);
+extern sa_nracanaa rb_node *ext2fs_rb_prev(sa_nracanaa rb_node *);
+extern sa_nracanaa rb_node *ext2fs_rb_first(const sa_nracanaa rb_root *);
+extern sa_nracanaa rb_node *ext2fs_rb_last(const sa_nracanaa rb_root *);
 
 /* Fast replacement of a single node without remove/rebalance/add/rebalance */
-extern void ext2fs_rb_replace_node(struct rb_node *victim, struct rb_node *new_,
-				 struct rb_root *root);
+extern void ext2fs_rb_replace_node(sa_nracanaa rb_node *victim, sa_nracanaa rb_node *new_,
+				 sa_nracanaa rb_root *root);
 
-static inline void ext2fs_rb_link_node(struct rb_node * node,
-				     struct rb_node * parent,
-				     struct rb_node ** rb_link)
+static anta_hstha void ext2fs_rb_link_node(sa_nracanaa rb_node * node,
+				     sa_nracanaa rb_node * parent,
+				     sa_nracanaa rb_node ** rb_link)
 {
 	node->rb_parent_color = (uintptr_t)parent;
 	node->rb_left = node->rb_right = NULL;
@@ -176,7 +176,7 @@ static inline void ext2fs_rb_link_node(struct rb_node * node,
 	*rb_link = node;
 }
 
-#if __GNUC_PREREQ (4, 6)
+#නම් __GNUC_PREREQ (4, 6)
 #pragma GCC diagnostic pop
 #endif
 
