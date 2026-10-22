@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <time.h>
-#include <string.h>
+#شامل "config.h"
+#شامل <stdio.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
+#شامل <time.h>
+#شامل <string.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fsP.h"
 
-static int test_root(unsigned int a, unsigned int b)
+ساکن صحیح test_جڑ(غیرعلامتی صحیح a, غیرعلامتی صحیح b)
 {
-	while (1) {
-		if (a < b)
-			return 0;
-		if (a == b)
-			return 1;
-		if (a % b)
-			return 0;
+	جب (1) {
+		اگر (a < b)
+			واپس 0;
+		اگر (a == b)
+			واپس 1;
+		اگر (a % b)
+			واپس 0;
 		a = a / b;
 	}
 }
 
-int ext2fs_bg_has_super(ext2_filsys fs, dgrp_t group)
+صحیح ext2fs_bg_has_super(ext2_filsys fs, dgrp_t گروہ)
 {
-	if (group == 0)
-		return 1;
-	if (ext2fs_has_feature_sparse_super2(fs->super)) {
-		if (group == fs->super->s_backup_bgs[0] ||
-		    group == fs->super->s_backup_bgs[1])
-			return 1;
-		return 0;
+	اگر (گروہ == 0)
+		واپس 1;
+	اگر (ext2fs_has_feature_sparse_super2(fs->super)) {
+		اگر (گروہ == fs->super->s_backup_bgs[0] ||
+		    گروہ == fs->super->s_backup_bgs[1])
+			واپس 1;
+		واپس 0;
 	}
-	if ((group <= 1) || !ext2fs_has_feature_sparse_super(fs->super))
-		return 1;
-	if (!(group & 1))
-		return 0;
-	if (test_root(group, 3) || (test_root(group, 5)) ||
-	    test_root(group, 7))
-		return 1;
+	اگر ((گروہ <= 1) || !ext2fs_has_feature_sparse_super(fs->super))
+		واپس 1;
+	اگر (!(گروہ & 1))
+		واپس 0;
+	اگر (test_جڑ(گروہ, 3) || (test_جڑ(گروہ, 5)) ||
+	    test_جڑ(گروہ, 7))
+		واپس 1;
 
-	return 0;
+	واپس 0;
 }
 
 /*
@@ -69,64 +69,64 @@ int ext2fs_bg_has_super(ext2_filsys fs, dgrp_t group)
  * Returns errcode_t of 0
  */
 errcode_t ext2fs_super_and_bgd_loc2(ext2_filsys fs,
-					   dgrp_t group,
+					   dgrp_t گروہ,
 					   blk64_t *ret_super_blk,
 					   blk64_t *ret_old_desc_blk,
 					   blk64_t *ret_new_desc_blk,
-					   blk_t *ret_used_blks)
+					   blk_t *ret_مستعمل_blks)
 {
-	blk64_t	group_block, super_blk = 0, old_desc_blk = 0, new_desc_blk = 0;
-	unsigned int meta_bg, meta_bg_size;
+	blk64_t	گروہ_بلاک, super_blk = 0, old_desc_blk = 0, new_desc_blk = 0;
+	غیرعلامتی صحیح meta_bg, meta_bg_سائز;
 	blk_t	numblocks = 0;
-	blk64_t old_desc_blocks;
-	int	has_super;
+	blk64_t old_desc_بلاکیں;
+	صحیح	has_super;
 
-	group_block = ext2fs_group_first_block2(fs, group);
-	if (group_block == 0 && fs->blocksize == 1024)
-		group_block = 1; /* Deal with 1024 blocksize && bigalloc */
+	گروہ_بلاک = ext2fs_گروہ_پہلا_block2(fs, گروہ);
+	اگر (گروہ_بلاک == 0 && fs->blocksize == 1024)
+		گروہ_بلاک = 1; /* Deal with 1024 blocksize && bigalloc */
 
-	if (ext2fs_has_feature_meta_bg(fs->super))
-		old_desc_blocks = fs->super->s_first_meta_bg;
-	else
-		old_desc_blocks =
-			fs->desc_blocks + fs->super->s_reserved_gdt_blocks;
+	اگر (ext2fs_has_feature_meta_bg(fs->super))
+		old_desc_بلاکیں = fs->super->s_پہلا_meta_bg;
+	ورنہ
+		old_desc_بلاکیں =
+			fs->desc_بلاکیں + fs->super->s_reserved_gdt_بلاکیں;
 
-	has_super = ext2fs_bg_has_super(fs, group);
+	has_super = ext2fs_bg_has_super(fs, گروہ);
 
-	if (has_super) {
-		super_blk = group_block;
+	اگر (has_super) {
+		super_blk = گروہ_بلاک;
 		numblocks++;
 	}
-	meta_bg_size = EXT2_DESC_PER_BLOCK(fs->super);
-	meta_bg = group / meta_bg_size;
+	meta_bg_سائز = EXT2_DESC_فی_بلاک(fs->super);
+	meta_bg = گروہ / meta_bg_سائز;
 
-	if (!ext2fs_has_feature_meta_bg(fs->super) ||
-	    (meta_bg < fs->super->s_first_meta_bg)) {
-		if (has_super) {
-			old_desc_blk = group_block + 1;
-			numblocks += old_desc_blocks;
+	اگر (!ext2fs_has_feature_meta_bg(fs->super) ||
+	    (meta_bg < fs->super->s_پہلا_meta_bg)) {
+		اگر (has_super) {
+			old_desc_blk = گروہ_بلاک + 1;
+			numblocks += old_desc_بلاکیں;
 		}
-	} else {
-		if (((group % meta_bg_size) == 0) ||
-		    ((group % meta_bg_size) == 1) ||
-		    ((group % meta_bg_size) == (meta_bg_size-1))) {
-			if (has_super)
+	} ورنہ {
+		اگر (((گروہ % meta_bg_سائز) == 0) ||
+		    ((گروہ % meta_bg_سائز) == 1) ||
+		    ((گروہ % meta_bg_سائز) == (meta_bg_سائز-1))) {
+			اگر (has_super)
 				has_super = 1;
-			new_desc_blk = group_block + has_super;
+			new_desc_blk = گروہ_بلاک + has_super;
 			numblocks++;
 		}
 	}
 
-	if (ret_super_blk)
+	اگر (ret_super_blk)
 		*ret_super_blk = super_blk;
-	if (ret_old_desc_blk)
+	اگر (ret_old_desc_blk)
 		*ret_old_desc_blk = old_desc_blk;
-	if (ret_new_desc_blk)
+	اگر (ret_new_desc_blk)
 		*ret_new_desc_blk = new_desc_blk;
-	if (ret_used_blks)
-		*ret_used_blks = numblocks;
+	اگر (ret_مستعمل_blks)
+		*ret_مستعمل_blks = numblocks;
 
-	return 0;
+	واپس 0;
 }
 
 /*
@@ -142,41 +142,41 @@ errcode_t ext2fs_super_and_bgd_loc2(ext2_filsys fs,
  * capable and returns the number of blocks used by super block and
  * group descriptors.
  */
-int ext2fs_super_and_bgd_loc(ext2_filsys fs,
-			     dgrp_t group,
+صحیح ext2fs_super_and_bgd_loc(ext2_filsys fs,
+			     dgrp_t گروہ,
 			     blk_t *ret_super_blk,
 			     blk_t *ret_old_desc_blk,
 			     blk_t *ret_new_desc_blk,
-			     int *ret_meta_bg)
+			     صحیح *ret_meta_bg)
 {
 	blk64_t ret_super_blk2;
 	blk64_t ret_old_desc_blk2;
 	blk64_t ret_new_desc_blk2;
-	blk_t ret_used_blks;
+	blk_t ret_مستعمل_blks;
 	blk_t numblocks;
-	unsigned int meta_bg_size;
+	غیرعلامتی صحیح meta_bg_سائز;
 
-	ext2fs_super_and_bgd_loc2(fs, group, &ret_super_blk2,
+	ext2fs_super_and_bgd_loc2(fs, گروہ, &ret_super_blk2,
 					&ret_old_desc_blk2,
 					&ret_new_desc_blk2,
-					&ret_used_blks);
+					&ret_مستعمل_blks);
 
-	numblocks = ext2fs_group_blocks_count(fs, group);
+	numblocks = ext2fs_گروہ_بلاکیں_گنتی(fs, گروہ);
 
-	if (ret_super_blk)
+	اگر (ret_super_blk)
 		*ret_super_blk = (blk_t)ret_super_blk2;
-	if (ret_old_desc_blk)
+	اگر (ret_old_desc_blk)
 		*ret_old_desc_blk = (blk_t)ret_old_desc_blk2;
-	if (ret_new_desc_blk)
+	اگر (ret_new_desc_blk)
 		*ret_new_desc_blk = (blk_t)ret_new_desc_blk2;
-	if (ret_meta_bg) {
-		meta_bg_size = EXT2_DESC_PER_BLOCK(fs->super);
-		*ret_meta_bg = group / meta_bg_size;
+	اگر (ret_meta_bg) {
+		meta_bg_سائز = EXT2_DESC_فی_بلاک(fs->super);
+		*ret_meta_bg = گروہ / meta_bg_سائز;
 	}
 
-	numblocks -= 2 + fs->inode_blocks_per_group + ret_used_blks;
+	numblocks -= 2 + fs->inode_بلاکیں_فی_گروہ + ret_مستعمل_blks;
 
-	return numblocks;
+	واپس numblocks;
 }
 
 /*
@@ -189,120 +189,120 @@ int ext2fs_super_and_bgd_loc(ext2_filsys fs,
  * (if necessary).
  *
  */
-static errcode_t write_primary_superblock(ext2_filsys fs,
-					  struct ext2_super_block *super)
+ساکن errcode_t write_primary_superblock(ext2_filsys fs,
+					  ساخت ext2_super_بلاک *super)
 {
 	__u16		*old_super, *new_super;
-	int		check_idx, write_idx, size;
+	صحیح		check_idx, write_idx, سائز;
 	errcode_t	retval;
 
-	if (!fs->io->manager->write_byte || !fs->orig_super) {
+	اگر (!fs->io->manager->write_byte || !fs->orig_super) {
 	fallback:
-		io_channel_set_blksize(fs->io, SUPERBLOCK_OFFSET);
-		retval = io_channel_write_blk64(fs->io, 1, -SUPERBLOCK_SIZE,
+		io_channel_سیٹ_blksize(fs->io, SUPERBLOCK_انحراف);
+		retval = io_channel_write_blk64(fs->io, 1, -SUPERBLOCK_سائز,
 					      super);
-		io_channel_set_blksize(fs->io, fs->blocksize);
-		return retval;
+		io_channel_سیٹ_blksize(fs->io, fs->blocksize);
+		واپس retval;
 	}
 
 	old_super = (__u16 *) fs->orig_super;
 	new_super = (__u16 *) super;
 
-	for (check_idx = 0; check_idx < SUPERBLOCK_SIZE/2; check_idx++) {
-		if (old_super[check_idx] == new_super[check_idx])
-			continue;
+	برائے (check_idx = 0; check_idx < SUPERBLOCK_سائز/2; check_idx++) {
+		اگر (old_super[check_idx] == new_super[check_idx])
+			جاری;
 		write_idx = check_idx;
-		for (check_idx++; check_idx < SUPERBLOCK_SIZE/2; check_idx++)
-			if (old_super[check_idx] == new_super[check_idx])
-				break;
-		size = 2 * (check_idx - write_idx);
-#if 0
-		printf("Writing %d bytes starting at %d\n",
-		       size, write_idx*2);
-#endif
+		برائے (check_idx++; check_idx < SUPERBLOCK_سائز/2; check_idx++)
+			اگر (old_super[check_idx] == new_super[check_idx])
+				توڑو;
+		سائز = 2 * (check_idx - write_idx);
+#اگر 0
+		لکھو("Writing %d bytes starting at %d\n",
+		       سائز, write_idx*2);
+#اگر_ختم
 		retval = io_channel_write_byte(fs->io,
-			       SUPERBLOCK_OFFSET + (2 * write_idx), size,
+			       SUPERBLOCK_انحراف + (2 * write_idx), سائز,
 					       new_super + write_idx);
-		if (retval == EXT2_ET_UNIMPLEMENTED)
-			goto fallback;
-		if (retval)
-			return retval;
+		اگر (retval == EXT2_ET_UNIMPLEMENTED)
+			جاؤ fallback;
+		اگر (retval)
+			واپس retval;
 	}
-	memcpy(fs->orig_super, super, SUPERBLOCK_SIZE);
-	return 0;
+	حافظہ_نقل(fs->orig_super, super, SUPERBLOCK_سائز);
+	واپس 0;
 }
 
 
 /*
  * Updates the revision to EXT2_DYNAMIC_REV
  */
-void ext2fs_update_dynamic_rev(ext2_filsys fs)
+خالی ext2fs_update_dynamic_rev(ext2_filsys fs)
 {
-	struct ext2_super_block *sb = fs->super;
+	ساخت ext2_super_بلاک *sb = fs->super;
 
-	if (sb->s_rev_level > EXT2_GOOD_OLD_REV)
-		return;
+	اگر (sb->s_rev_level > EXT2_GOOD_OLD_REV)
+		واپس;
 
 	sb->s_rev_level = EXT2_DYNAMIC_REV;
-	sb->s_first_ino = EXT2_GOOD_OLD_FIRST_INO;
-	sb->s_inode_size = EXT2_GOOD_OLD_INODE_SIZE;
+	sb->s_پہلا_ino = EXT2_GOOD_OLD_پہلا_INO;
+	sb->s_inode_سائز = EXT2_GOOD_OLD_INODE_سائز;
 	/* s_uuid is handled by e2fsck already */
 	/* other fields should be left alone */
 }
 
-static errcode_t write_backup_super(ext2_filsys fs, dgrp_t group,
-				    blk64_t group_block,
-				    struct ext2_super_block *super_shadow)
+ساکن errcode_t write_backup_super(ext2_filsys fs, dgrp_t گروہ,
+				    blk64_t گروہ_بلاک,
+				    ساخت ext2_super_بلاک *super_shadow)
 {
 	errcode_t retval;
-	dgrp_t	sgrp = group;
+	dgrp_t	sgrp = گروہ;
 
-	if (sgrp > ((1 << 16) - 1))
+	اگر (sgrp > ((1 << 16) - 1))
 		sgrp = (1 << 16) - 1;
 
-	super_shadow->s_block_group_nr = ext2fs_cpu_to_le16(sgrp);
+	super_shadow->s_بلاک_گروہ_nr = ext2fs_cpu_مقصد_le16(sgrp);
 
-	retval = ext2fs_superblock_csum_set(fs, super_shadow);
-	if (retval)
-		return retval;
+	retval = ext2fs_superblock_csum_سیٹ(fs, super_shadow);
+	اگر (retval)
+		واپس retval;
 
-	return io_channel_write_blk64(fs->io, group_block, -SUPERBLOCK_SIZE,
+	واپس io_channel_write_blk64(fs->io, گروہ_بلاک, -SUPERBLOCK_سائز,
 				    super_shadow);
 }
 
 errcode_t ext2fs_flush(ext2_filsys fs)
 {
-	return ext2fs_flush2(fs, 0);
+	واپس ext2fs_flush2(fs, 0);
 }
 
-errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
+errcode_t ext2fs_flush2(ext2_filsys fs, صحیح flags)
 {
 	dgrp_t		i;
 	errcode_t	retval;
-	unsigned long	fs_state;
+	غیرعلامتی طویل	fs_state;
 	__u32		feature_incompat;
-	struct ext2_super_block *super_shadow = 0;
-	struct opaque_ext2_group_desc *group_shadow = 0;
-#ifdef WORDS_BIGENDIAN
-	struct ext2_group_desc *gdp;
+	ساخت ext2_super_بلاک *super_shadow = 0;
+	ساخت opaque_ext2_گروہ_desc *گروہ_shadow = 0;
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
+	ساخت ext2_گروہ_desc *gdp;
 	dgrp_t		j;
-#endif
-	char	*group_ptr;
-	blk64_t	old_desc_blocks;
-	struct ext2fs_numeric_progress_struct progress;
+#اگر_ختم
+	حرف	*گروہ_ptr;
+	blk64_t	old_desc_بلاکیں;
+	ساخت ext2fs_numeric_پیش_رفت_struct پیش_رفت;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if ((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0 &&
+	اگر ((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0 &&
 	    !ext2fs_has_feature_journal_dev(fs->super) &&
-	    fs->group_desc == NULL)
-		return EXT2_ET_NO_GDESC;
+	    fs->گروہ_desc == تہی)
+		واپس EXT2_ET_NO_GDESC;
 
 	fs_state = fs->super->s_state;
 	feature_incompat = fs->super->s_feature_incompat;
 
-	ext2fs_set_tstamp(fs->super, s_wtime, ext2fsP_get_time(fs));
-	fs->super->s_block_group_nr = 0;
+	ext2fs_سیٹ_tstamp(fs->super, s_wtime, ext2fs_P_get_وقت(fs));
+	fs->super->s_بلاک_گروہ_nr = 0;
 
 	/*
 	 * If the write_bitmaps() function is present, call it to
@@ -313,10 +313,10 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 	 * Bitmap checksums live in the group descriptor, so the
 	 * bitmaps need to be written before the descriptors.
 	 */
-	if (fs->write_bitmaps) {
+	اگر (fs->write_bitmaps) {
 		retval = fs->write_bitmaps(fs);
-		if (retval)
-			goto errout;
+		اگر (retval)
+			جاؤ errout;
 	}
 
 	/*
@@ -328,92 +328,92 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 	ext2fs_clear_feature_journal_needs_recovery(fs->super);
 
 	/* Byte swap the superblock and the group descriptors if necessary */
-#ifdef WORDS_BIGENDIAN
-	retval = EXT2_ET_NO_MEMORY;
-	retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &super_shadow);
-	if (retval)
-		goto errout;
-	memcpy(super_shadow, fs->super, sizeof(struct ext2_super_block));
-	ext2fs_swap_super(super_shadow);
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
+	retval = EXT2_ET_NO_حافظہ;
+	retval = ext2fs_get_mem(SUPERBLOCK_سائز, &super_shadow);
+	اگر (retval)
+		جاؤ errout;
+	حافظہ_نقل(super_shadow, fs->super, حجم(ساخت ext2_super_بلاک));
+	ext2fs_تبادلہ_super(super_shadow);
 
-	if (((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0) &&
+	اگر (((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0) &&
 	    !ext2fs_has_feature_journal_dev(fs->super)) {
-		retval = ext2fs_get_array(fs->desc_blocks, fs->blocksize,
-					  &group_shadow);
-		if (retval)
-			goto errout;
-		memcpy(group_shadow, fs->group_desc, (size_t) fs->blocksize *
-		       fs->desc_blocks);
+		retval = ext2fs_get_array(fs->desc_بلاکیں, fs->blocksize,
+					  &گروہ_shadow);
+		اگر (retval)
+			جاؤ errout;
+		حافظہ_نقل(گروہ_shadow, fs->گروہ_desc, (size_t) fs->blocksize *
+		       fs->desc_بلاکیں);
 
-		for (j = 0; j < fs->group_desc_count; j++) {
-			gdp = ext2fs_group_desc(fs, group_shadow, j);
-			ext2fs_swap_group_desc2(fs, gdp);
+		برائے (j = 0; j < fs->گروہ_desc_گنتی; j++) {
+			gdp = ext2fs_گروہ_desc(fs, گروہ_shadow, j);
+			ext2fs_تبادلہ_گروہ_desc2(fs, gdp);
 		}
 	}
-#else
+#ورنہ
 	super_shadow = fs->super;
-	group_shadow = fs->group_desc;
-#endif
+	گروہ_shadow = fs->گروہ_desc;
+#اگر_ختم
 
 	/*
 	 * If this is an external journal device, don't write out the
 	 * block group descriptors or any of the backup superblocks
 	 */
-	if (ext2fs_has_feature_journal_dev(fs->super))
-		goto write_primary_superblock_only;
+	اگر (ext2fs_has_feature_journal_dev(fs->super))
+		جاؤ write_primary_superblock_only;
 
 	/*
 	 * Write out the master group descriptors, and the backup
 	 * superblocks and group descriptors.
 	 */
-	group_ptr = (char *) group_shadow;
-	if (ext2fs_has_feature_meta_bg(fs->super)) {
-		old_desc_blocks = fs->super->s_first_meta_bg;
-		if (old_desc_blocks > fs->desc_blocks)
-			old_desc_blocks = fs->desc_blocks;
-	} else
-		old_desc_blocks = fs->desc_blocks;
+	گروہ_ptr = (حرف *) گروہ_shadow;
+	اگر (ext2fs_has_feature_meta_bg(fs->super)) {
+		old_desc_بلاکیں = fs->super->s_پہلا_meta_bg;
+		اگر (old_desc_بلاکیں > fs->desc_بلاکیں)
+			old_desc_بلاکیں = fs->desc_بلاکیں;
+	} ورنہ
+		old_desc_بلاکیں = fs->desc_بلاکیں;
 
-	if (fs->progress_ops && fs->progress_ops->init)
-		(fs->progress_ops->init)(fs, &progress, NULL,
-					 fs->group_desc_count);
+	اگر (fs->پیش_رفت_ops && fs->پیش_رفت_ops->init)
+		(fs->پیش_رفت_ops->init)(fs, &پیش_رفت, تہی,
+					 fs->گروہ_desc_گنتی);
 
 
-	for (i = 0; i < fs->group_desc_count; i++) {
+	برائے (i = 0; i < fs->گروہ_desc_گنتی; i++) {
 		blk64_t	super_blk, old_desc_blk, new_desc_blk;
 
-		if (fs->progress_ops && fs->progress_ops->update)
-			(fs->progress_ops->update)(fs, &progress, i);
+		اگر (fs->پیش_رفت_ops && fs->پیش_رفت_ops->update)
+			(fs->پیش_رفت_ops->update)(fs, &پیش_رفت, i);
 		ext2fs_super_and_bgd_loc2(fs, i, &super_blk, &old_desc_blk,
 					 &new_desc_blk, 0);
 
-		if (!(fs->flags & EXT2_FLAG_MASTER_SB_ONLY) &&i && super_blk) {
+		اگر (!(fs->flags & EXT2_FLAG_MASTER_SB_ONLY) &&i && super_blk) {
 			retval = write_backup_super(fs, i, super_blk,
 						    super_shadow);
-			if (retval)
-				goto errout;
+			اگر (retval)
+				جاؤ errout;
 		}
-		if (fs->flags & EXT2_FLAG_SUPER_ONLY)
-			continue;
-		if ((old_desc_blk) &&
+		اگر (fs->flags & EXT2_FLAG_SUPER_ONLY)
+			جاری;
+		اگر ((old_desc_blk) &&
 		    (!(fs->flags & EXT2_FLAG_MASTER_SB_ONLY) || (i == 0))) {
 			retval = io_channel_write_blk64(fs->io,
-			      old_desc_blk, old_desc_blocks, group_ptr);
-			if (retval)
-				goto errout;
+			      old_desc_blk, old_desc_بلاکیں, گروہ_ptr);
+			اگر (retval)
+				جاؤ errout;
 		}
-		if (new_desc_blk) {
-			int meta_bg = i / EXT2_DESC_PER_BLOCK(fs->super);
+		اگر (new_desc_blk) {
+			صحیح meta_bg = i / EXT2_DESC_فی_بلاک(fs->super);
 
 			retval = io_channel_write_blk64(fs->io, new_desc_blk,
-				1, group_ptr + (meta_bg*fs->blocksize));
-			if (retval)
-				goto errout;
+				1, گروہ_ptr + (meta_bg*fs->blocksize));
+			اگر (retval)
+				جاؤ errout;
 		}
 	}
 
-	if (fs->progress_ops && fs->progress_ops->close)
-		(fs->progress_ops->close)(fs, &progress, NULL);
+	اگر (fs->پیش_رفت_ops && fs->پیش_رفت_ops->close)
+		(fs->پیش_رفت_ops->close)(fs, &پیش_رفت, تہی);
 
 write_primary_superblock_only:
 	/*
@@ -424,43 +424,43 @@ write_primary_superblock_only:
 	 * insy-tinsy window....
 	 */
 
-	fs->super->s_block_group_nr = 0;
+	fs->super->s_بلاک_گروہ_nr = 0;
 	fs->super->s_state = fs_state;
 	fs->super->s_feature_incompat = feature_incompat;
-#ifdef WORDS_BIGENDIAN
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
 	*super_shadow = *fs->super;
-	ext2fs_swap_super(super_shadow);
-#endif
+	ext2fs_تبادلہ_super(super_shadow);
+#اگر_ختم
 
-	retval = ext2fs_superblock_csum_set(fs, super_shadow);
-	if (retval)
-		return retval;
+	retval = ext2fs_superblock_csum_سیٹ(fs, super_shadow);
+	اگر (retval)
+		واپس retval;
 
-	if (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
+	اگر (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
 		retval = io_channel_flush(fs->io);
-		if (retval)
-			goto errout;
+		اگر (retval)
+			جاؤ errout;
 	}
 	retval = write_primary_superblock(fs, super_shadow);
-	if (retval)
-		goto errout;
+	اگر (retval)
+		جاؤ errout;
 
 	fs->flags &= ~EXT2_FLAG_DIRTY;
 
-	if (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
+	اگر (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
 		retval = io_channel_flush(fs->io);
-		if (retval)
-			goto errout;
+		اگر (retval)
+			جاؤ errout;
 	}
 errout:
 	fs->super->s_state = fs_state;
-#ifdef WORDS_BIGENDIAN
-	if (super_shadow)
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
+	اگر (super_shadow)
 		ext2fs_free_mem(&super_shadow);
-	if (group_shadow)
-		ext2fs_free_mem(&group_shadow);
-#endif
-	return retval;
+	اگر (گروہ_shadow)
+		ext2fs_free_mem(&گروہ_shadow);
+#اگر_ختم
+	واپس retval;
 }
 
 errcode_t ext2fs_close_free(ext2_filsys *fs_ptr)
@@ -469,53 +469,53 @@ errcode_t ext2fs_close_free(ext2_filsys *fs_ptr)
 	ext2_filsys fs = *fs_ptr;
 
 	ret = ext2fs_close2(fs, 0);
-	if (ret)
+	اگر (ret)
 		ext2fs_free(fs);
-	*fs_ptr = NULL;
-	return ret;
+	*fs_ptr = تہی;
+	واپس ret;
 }
 
 errcode_t ext2fs_close(ext2_filsys fs)
 {
-	return ext2fs_close2(fs, 0);
+	واپس ext2fs_close2(fs, 0);
 }
 
-errcode_t ext2fs_close2(ext2_filsys fs, int flags)
+errcode_t ext2fs_close2(ext2_filsys fs, صحیح flags)
 {
 	errcode_t	retval;
-	int		meta_blks;
+	صحیح		meta_blks;
 	io_stats stats = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (fs->write_bitmaps) {
+	اگر (fs->write_bitmaps) {
 		retval = fs->write_bitmaps(fs);
-		if (retval)
-			return retval;
+		اگر (retval)
+			واپس retval;
 	}
-	if (fs->super->s_kbytes_written &&
+	اگر (fs->super->s_kbytes_written &&
 	    fs->io->manager->get_stats)
 		fs->io->manager->get_stats(fs->io, &stats);
-	if (stats && stats->bytes_written && (fs->flags & EXT2_FLAG_RW)) {
-		fs->super->s_kbytes_written += stats->bytes_written >> 10;
-		meta_blks = fs->desc_blocks + 1;
-		if (!(fs->flags & EXT2_FLAG_SUPER_ONLY))
+	اگر (stats && stats->بائٹیں_written && (fs->flags & EXT2_FLAG_RW)) {
+		fs->super->s_kbytes_written += stats->بائٹیں_written >> 10;
+		meta_blks = fs->desc_بلاکیں + 1;
+		اگر (!(fs->flags & EXT2_FLAG_SUPER_ONLY))
 			fs->super->s_kbytes_written += meta_blks /
 				(fs->blocksize / 1024);
-		if ((fs->flags & EXT2_FLAG_DIRTY) == 0)
+		اگر ((fs->flags & EXT2_FLAG_DIRTY) == 0)
 			fs->flags |= EXT2_FLAG_SUPER_ONLY | EXT2_FLAG_DIRTY;
 	}
-	if (fs->flags & EXT2_FLAG_DIRTY) {
+	اگر (fs->flags & EXT2_FLAG_DIRTY) {
 		retval = ext2fs_flush2(fs, flags);
-		if (retval)
-			return retval;
+		اگر (retval)
+			واپس retval;
 	}
 
 	retval = ext2fs_mmp_stop(fs);
-	if (retval)
-		return retval;
+	اگر (retval)
+		واپس retval;
 
 	ext2fs_free(fs);
-	return 0;
+	واپس 0;
 }
 

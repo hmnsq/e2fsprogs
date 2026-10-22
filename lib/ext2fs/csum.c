@@ -10,670 +10,670 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#شامل "config.h"
+#اگر HAVE_SYS_TYPES_H
+#شامل <sys/types.h>
+#اگر_ختم
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "crc16.h"
-#include <assert.h>
+#شامل "ext2_fs.h"
+#شامل "ext2fs.h"
+#شامل "crc16.h"
+#شامل <assert.h>
 
-#ifndef offsetof
-#define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
-#endif
+#اگر_غیر_تعریف_شدہ offsetof
+#تعریف_کرو offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
+#اگر_ختم
 
-#ifdef DEBUG
-#define STATIC
-#else
-#define STATIC static
-#endif
+#اگر_تعریف_شدہ DEBUG
+#تعریف_کرو STATIC
+#ورنہ
+#تعریف_کرو STATIC ساکن
+#اگر_ختم
 
-void ext2fs_init_csum_seed(ext2_filsys fs)
+خالی ext2fs_init_csum_بیج(ext2_filsys fs)
 {
-	if (ext2fs_has_feature_csum_seed(fs->super))
-		fs->csum_seed = fs->super->s_checksum_seed;
-	else if (ext2fs_has_feature_metadata_csum(fs->super) ||
+	اگر (ext2fs_has_feature_csum_بیج(fs->super))
+		fs->csum_بیج = fs->super->s_checksum_بیج;
+	ورنہ اگر (ext2fs_has_feature_metadata_csum(fs->super) ||
 		 ext2fs_has_feature_ea_inode(fs->super))
-		fs->csum_seed = ext2fs_crc32c_le(~0, fs->super->s_uuid,
-						 sizeof(fs->super->s_uuid));
+		fs->csum_بیج = ext2fs_crc32c_le(~0, fs->super->s_uuid,
+						 حجم(fs->super->s_uuid));
 }
 
-static __u32 ext2fs_mmp_csum(ext2_filsys fs, struct mmp_struct *mmp)
+ساکن __u32 ext2fs_mmp_csum(ext2_filsys fs, ساخت mmp_struct *mmp)
 {
-	int offset = offsetof(struct mmp_struct, mmp_checksum);
+	صحیح انحراف = offsetof(ساخت mmp_struct, mmp_checksum);
 
-	return ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)mmp, offset);
+	واپس ext2fs_crc32c_le(fs->csum_بیج, (غیرعلامتی حرف *)mmp, انحراف);
 }
 
-int ext2fs_mmp_csum_verify(ext2_filsys fs, struct mmp_struct *mmp)
+صحیح ext2fs_mmp_csum_verify(ext2_filsys fs, ساخت mmp_struct *mmp)
 {
 	__u32 calculated;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
+	اگر (!ext2fs_has_feature_metadata_csum(fs->super))
+		واپس 1;
 
 	calculated = ext2fs_mmp_csum(fs, mmp);
 
-	return ext2fs_le32_to_cpu(mmp->mmp_checksum) == calculated;
+	واپس ext2fs_le32_مقصد_cpu(mmp->mmp_checksum) == calculated;
 }
 
-errcode_t ext2fs_mmp_csum_set(ext2_filsys fs, struct mmp_struct *mmp)
+errcode_t ext2fs_mmp_csum_سیٹ(ext2_filsys fs, ساخت mmp_struct *mmp)
 {
-	__u32 crc;
+	__u32 چکری_جانچ;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 0;
+	اگر (!ext2fs_has_feature_metadata_csum(fs->super))
+		واپس 0;
 
-	crc = ext2fs_mmp_csum(fs, mmp);
-	mmp->mmp_checksum = ext2fs_cpu_to_le32(crc);
+	چکری_جانچ = ext2fs_mmp_csum(fs, mmp);
+	mmp->mmp_checksum = ext2fs_cpu_مقصد_le32(چکری_جانچ);
 
-	return 0;
+	واپس 0;
 }
 
-int ext2fs_verify_csum_type(ext2_filsys fs, struct ext2_super_block *sb)
+صحیح ext2fs_verify_csum_type(ext2_filsys fs, ساخت ext2_super_بلاک *sb)
 {
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
+	اگر (!ext2fs_has_feature_metadata_csum(fs->super))
+		واپس 1;
 
-	return sb->s_checksum_type == EXT2_CRC32C_CHKSUM;
+	واپس sb->s_checksum_type == EXT2_چکری_جانچ_32_C_CHKSUM;
 }
 
-static __u32 ext2fs_superblock_csum(ext2_filsys fs EXT2FS_ATTR((unused)),
-				    struct ext2_super_block *sb)
+ساکن __u32 ext2fs_superblock_csum(ext2_filsys fs EXT2FS_ATTR((غیر_مستعمل)),
+				    ساخت ext2_super_بلاک *sb)
 {
-	int offset = offsetof(struct ext2_super_block, s_checksum);
+	صحیح انحراف = offsetof(ساخت ext2_super_بلاک, s_checksum);
 
-	return ext2fs_crc32c_le(~0, (unsigned char *)sb, offset);
+	واپس ext2fs_crc32c_le(~0, (غیرعلامتی حرف *)sb, انحراف);
 }
 
 /* NOTE: The input to this function MUST be in LE order */
-int ext2fs_superblock_csum_verify(ext2_filsys fs, struct ext2_super_block *sb)
+صحیح ext2fs_superblock_csum_verify(ext2_filsys fs, ساخت ext2_super_بلاک *sb)
 {
 	__u32 flag, calculated;
 
-	if (fs->flags & EXT2_FLAG_SWAP_BYTES)
+	اگر (fs->flags & EXT2_FLAG_تبادلہ_بائٹیں)
 		flag = EXT4_FEATURE_RO_COMPAT_METADATA_CSUM;
-	else
-		flag = ext2fs_cpu_to_le32(EXT4_FEATURE_RO_COMPAT_METADATA_CSUM);
+	ورنہ
+		flag = ext2fs_cpu_مقصد_le32(EXT4_FEATURE_RO_COMPAT_METADATA_CSUM);
 
-	if (!EXT2_HAS_RO_COMPAT_FEATURE(fs->super, flag))
-		return 1;
+	اگر (!EXT2_HAS_RO_COMPAT_FEATURE(fs->super, flag))
+		واپس 1;
 
 	calculated = ext2fs_superblock_csum(fs, sb);
 
-	return ext2fs_le32_to_cpu(sb->s_checksum) == calculated;
+	واپس ext2fs_le32_مقصد_cpu(sb->s_checksum) == calculated;
 }
 
 /* NOTE: The input to this function MUST be in LE order */
-errcode_t ext2fs_superblock_csum_set(ext2_filsys fs,
-				     struct ext2_super_block *sb)
+errcode_t ext2fs_superblock_csum_سیٹ(ext2_filsys fs,
+				     ساخت ext2_super_بلاک *sb)
 {
-	__u32 flag, crc;
+	__u32 flag, چکری_جانچ;
 
-	if (fs->flags & EXT2_FLAG_SWAP_BYTES)
+	اگر (fs->flags & EXT2_FLAG_تبادلہ_بائٹیں)
 		flag = EXT4_FEATURE_RO_COMPAT_METADATA_CSUM;
-	else
-		flag = ext2fs_cpu_to_le32(EXT4_FEATURE_RO_COMPAT_METADATA_CSUM);
+	ورنہ
+		flag = ext2fs_cpu_مقصد_le32(EXT4_FEATURE_RO_COMPAT_METADATA_CSUM);
 
-	if (!EXT2_HAS_RO_COMPAT_FEATURE(fs->super, flag))
-		return 0;
+	اگر (!EXT2_HAS_RO_COMPAT_FEATURE(fs->super, flag))
+		واپس 0;
 
-	crc = ext2fs_superblock_csum(fs, sb);
-	sb->s_checksum = ext2fs_cpu_to_le32(crc);
+	چکری_جانچ = ext2fs_superblock_csum(fs, sb);
+	sb->s_checksum = ext2fs_cpu_مقصد_le32(چکری_جانچ);
 
-	return 0;
+	واپس 0;
 }
 
-static errcode_t ext2fs_ext_attr_block_csum(ext2_filsys fs,
-					    ext2_ino_t inum EXT2FS_ATTR((unused)),
-					    blk64_t block,
-					    struct ext2_ext_attr_header *hdr,
-					    __u32 *crc)
+ساکن errcode_t ext2fs_ext_attr_بلاک_csum(ext2_filsys fs,
+					    ext2_ino_t inum EXT2FS_ATTR((غیر_مستعمل)),
+					    blk64_t بلاک,
+					    ساخت ext2_ext_attr_سرخی *hdr,
+					    __u32 *چکری_جانچ)
 {
-	char *buf = (char *)hdr;
-	__u32 old_crc = hdr->h_checksum;
+	حرف *buf = (حرف *)hdr;
+	__u32 old_چکری_جانچ = hdr->h_checksum;
 
 	hdr->h_checksum = 0;
-	block = ext2fs_cpu_to_le64(block);
-	*crc = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)&block,
-				sizeof(block));
-	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)buf, fs->blocksize);
-	hdr->h_checksum = old_crc;
+	بلاک = ext2fs_cpu_مقصد_le64(بلاک);
+	*چکری_جانچ = ext2fs_crc32c_le(fs->csum_بیج, (غیرعلامتی حرف *)&بلاک,
+				حجم(بلاک));
+	*چکری_جانچ = ext2fs_crc32c_le(*چکری_جانچ, (غیرعلامتی حرف *)buf, fs->blocksize);
+	hdr->h_checksum = old_چکری_جانچ;
 
-	return 0;
+	واپس 0;
 }
 
-int ext2fs_ext_attr_block_csum_verify(ext2_filsys fs, ext2_ino_t inum,
-				      blk64_t block,
-				      struct ext2_ext_attr_header *hdr)
+صحیح ext2fs_ext_attr_بلاک_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+				      blk64_t بلاک,
+				      ساخت ext2_ext_attr_سرخی *hdr)
 {
 	__u32 calculated;
 	errcode_t retval;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
+	اگر (!ext2fs_has_feature_metadata_csum(fs->super))
+		واپس 1;
 
-	retval = ext2fs_ext_attr_block_csum(fs, inum, block, hdr, &calculated);
-	if (retval)
-		return 0;
+	retval = ext2fs_ext_attr_بلاک_csum(fs, inum, بلاک, hdr, &calculated);
+	اگر (retval)
+		واپس 0;
 
-	return ext2fs_le32_to_cpu(hdr->h_checksum) == calculated;
+	واپس ext2fs_le32_مقصد_cpu(hdr->h_checksum) == calculated;
 }
 
-errcode_t ext2fs_ext_attr_block_csum_set(ext2_filsys fs, ext2_ino_t inum,
-					 blk64_t block,
-					 struct ext2_ext_attr_header *hdr)
+errcode_t ext2fs_ext_attr_بلاک_csum_سیٹ(ext2_filsys fs, ext2_ino_t inum,
+					 blk64_t بلاک,
+					 ساخت ext2_ext_attr_سرخی *hdr)
 {
 	errcode_t retval;
-	__u32 crc;
+	__u32 چکری_جانچ;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 0;
+	اگر (!ext2fs_has_feature_metadata_csum(fs->super))
+		واپس 0;
 
-	retval = ext2fs_ext_attr_block_csum(fs, inum, block, hdr, &crc);
-	if (retval)
-		return retval;
-	hdr->h_checksum = ext2fs_cpu_to_le32(crc);
-	return 0;
+	retval = ext2fs_ext_attr_بلاک_csum(fs, inum, بلاک, hdr, &چکری_جانچ);
+	اگر (retval)
+		واپس retval;
+	hdr->h_checksum = ext2fs_cpu_مقصد_le32(چکری_جانچ);
+	واپس 0;
 }
 
-static __u16 do_nothing16(__u16 x)
+ساکن __u16 do_nothing16(__u16 x)
 {
-	return x;
+	واپس x;
 }
 
-static __u16 disk_to_host16(__u16 x)
+ساکن __u16 disk_مقصد_host16(__u16 x)
 {
-	return ext2fs_le16_to_cpu(x);
+	واپس ext2fs_le16_مقصد_cpu(x);
 }
 
-static errcode_t __get_dx_countlimit(ext2_filsys fs,
-				     struct ext2_dir_entry *dirent,
-				     struct ext2_dx_countlimit **cc,
-				     int *offset,
-				     int need_swab)
+ساکن errcode_t __get_dx_countlimit(ext2_filsys fs,
+				     ساخت ext2_dir_اندراج *dirent,
+				     ساخت ext2_dx_countlimit **cc,
+				     صحیح *انحراف,
+				     صحیح need_swab)
 {
-	struct ext2_dir_entry *dp;
-	struct ext2_dx_root_info *root;
-	struct ext2_dx_countlimit *c;
-	int count_offset, max_sane_entries;
-	unsigned int rec_len;
-	__u16 (*translate)(__u16) = (need_swab ? disk_to_host16 : do_nothing16);
+	ساخت ext2_dir_اندراج *dp;
+	ساخت ext2_dx_جڑ_info *جڑ;
+	ساخت ext2_dx_countlimit *c;
+	صحیح گنتی_انحراف, max_sane_entries;
+	غیرعلامتی صحیح rec_len;
+	__u16 (*translate)(__u16) = (need_swab ? disk_مقصد_host16 : do_nothing16);
 
 	rec_len = translate(dirent->rec_len);
 
-	if (rec_len == fs->blocksize && translate(dirent->name_len) == 0)
-		count_offset = 8;
-	else if (rec_len == 12) {
-		dp = (struct ext2_dir_entry *)(((char *)dirent) + rec_len);
+	اگر (rec_len == fs->blocksize && translate(dirent->name_len) == 0)
+		گنتی_انحراف = 8;
+	ورنہ اگر (rec_len == 12) {
+		dp = (ساخت ext2_dir_اندراج *)(((حرف *)dirent) + rec_len);
 		rec_len = translate(dp->rec_len);
-		if (rec_len != fs->blocksize - 12)
-			return EXT2_ET_DB_NOT_FOUND;
-		root = (struct ext2_dx_root_info *)(((char *)dp + 12));
-		if (root->reserved_zero ||
-		    root->info_length != sizeof(struct ext2_dx_root_info))
-			return EXT2_ET_DB_NOT_FOUND;
-		count_offset = 32;
-	} else
-		return EXT2_ET_DB_NOT_FOUND;
+		اگر (rec_len != fs->blocksize - 12)
+			واپس EXT2_ET_DB_NOT_ملا;
+		جڑ = (ساخت ext2_dx_جڑ_info *)(((حرف *)dp + 12));
+		اگر (جڑ->reserved_zero ||
+		    جڑ->info_لمبائی != حجم(ساخت ext2_dx_جڑ_info))
+			واپس EXT2_ET_DB_NOT_ملا;
+		گنتی_انحراف = 32;
+	} ورنہ
+		واپس EXT2_ET_DB_NOT_ملا;
 
-	c = (struct ext2_dx_countlimit *)(((char *)dirent) + count_offset);
-	max_sane_entries = (fs->blocksize - count_offset) /
-			   sizeof(struct ext2_dx_entry);
-	if (ext2fs_le16_to_cpu(c->limit) > max_sane_entries ||
-	    ext2fs_le16_to_cpu(c->count) > max_sane_entries)
-		return EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
+	c = (ساخت ext2_dx_countlimit *)(((حرف *)dirent) + گنتی_انحراف);
+	max_sane_entries = (fs->blocksize - گنتی_انحراف) /
+			   حجم(ساخت ext2_dx_اندراج);
+	اگر (ext2fs_le16_مقصد_cpu(c->حد_بندی) > max_sane_entries ||
+	    ext2fs_le16_مقصد_cpu(c->گنتی) > max_sane_entries)
+		واپس EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
 
-	if (offset)
-		*offset = count_offset;
-	if (cc)
+	اگر (انحراف)
+		*انحراف = گنتی_انحراف;
+	اگر (cc)
 		*cc = c;
 
-	return 0;
+	واپس 0;
 }
 
 errcode_t ext2fs_get_dx_countlimit(ext2_filsys fs,
-				   struct ext2_dir_entry *dirent,
-				   struct ext2_dx_countlimit **cc,
-				   int *offset)
+				   ساخت ext2_dir_اندراج *dirent,
+				   ساخت ext2_dx_countlimit **cc,
+				   صحیح *انحراف)
 {
-	return __get_dx_countlimit(fs, dirent, cc, offset, 0);
+	واپس __get_dx_countlimit(fs, dirent, cc, انحراف, 0);
 }
 
-void ext2fs_initialize_dirent_tail(ext2_filsys fs,
-				   struct ext2_dir_entry_tail *t)
+خالی ext2fs_initialize_dirent_دم(ext2_filsys fs,
+				   ساخت ext2_dir_اندراج_دم *t)
 {
-	memset(t, 0, sizeof(struct ext2_dir_entry_tail));
-	ext2fs_set_rec_len(fs, sizeof(struct ext2_dir_entry_tail),
-			   (struct ext2_dir_entry *)t);
+	memset(t, 0, حجم(ساخت ext2_dir_اندراج_دم));
+	ext2fs_سیٹ_rec_len(fs, حجم(ساخت ext2_dir_اندراج_دم),
+			   (ساخت ext2_dir_اندراج *)t);
 	t->det_reserved_name_len = EXT2_DIR_NAME_LEN_CSUM;
 }
 
-static errcode_t __get_dirent_tail(ext2_filsys fs,
-				   struct ext2_dir_entry *dirent,
-				   struct ext2_dir_entry_tail **tt,
-				   int need_swab)
+ساکن errcode_t __get_dirent_tail(ext2_filsys fs,
+				   ساخت ext2_dir_اندراج *dirent,
+				   ساخت ext2_dir_اندراج_دم **tt,
+				   صحیح need_swab)
 {
-	struct ext2_dir_entry *d;
-	void *top;
-	struct ext2_dir_entry_tail *t;
-	unsigned int rec_len;
+	ساخت ext2_dir_اندراج *d;
+	خالی *چوٹی;
+	ساخت ext2_dir_اندراج_دم *t;
+	غیرعلامتی صحیح rec_len;
 	errcode_t retval = 0;
-	__u16 (*translate)(__u16) = (need_swab ? disk_to_host16 : do_nothing16);
+	__u16 (*translate)(__u16) = (need_swab ? disk_مقصد_host16 : do_nothing16);
 
-	if (fs->blocksize < 1024)
-		return EXT2_FILSYS_CORRUPTED; /* Should never happen */
+	اگر (fs->blocksize < 1024)
+		واپس EXT2_FILSYS_CORRUPTED; /* Should never happen */
 
 	d = dirent;
-	top = EXT2_DIRENT_TAIL(dirent, fs->blocksize);
+	چوٹی = EXT2_DIRENT_دم(dirent, fs->blocksize);
 
-	while ((void *) d < top) {
+	جب ((خالی *) d < چوٹی) {
 		rec_len = translate(d->rec_len);
-		if ((rec_len < 8) || (rec_len & 0x03))
-			return EXT2_ET_DIR_CORRUPTED;
-		d = (struct ext2_dir_entry *)(((char *)d) + rec_len);
+		اگر ((rec_len < 8) || (rec_len & 0x03))
+			واپس EXT2_ET_DIR_CORRUPTED;
+		d = (ساخت ext2_dir_اندراج *)(((حرف *)d) + rec_len);
 	}
 
-	if ((char *)d > ((char *)dirent + fs->blocksize))
-			return EXT2_ET_DIR_CORRUPTED;
-	if (d != top)
-		return EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
+	اگر ((حرف *)d > ((حرف *)dirent + fs->blocksize))
+			واپس EXT2_ET_DIR_CORRUPTED;
+	اگر (d != چوٹی)
+		واپس EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
 
-	t = (struct ext2_dir_entry_tail *)d;
-	if (t->det_reserved_zero1 ||
-	    translate(t->det_rec_len) != sizeof(struct ext2_dir_entry_tail) ||
+	t = (ساخت ext2_dir_اندراج_دم *)d;
+	اگر (t->det_reserved_zero1 ||
+	    translate(t->det_rec_len) != حجم(ساخت ext2_dir_اندراج_دم) ||
 	    translate(t->det_reserved_name_len) != EXT2_DIR_NAME_LEN_CSUM)
-		return EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
+		واپس EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
 
-	if (tt)
+	اگر (tt)
 		*tt = t;
-	return retval;
+	واپس retval;
 }
 
-int ext2fs_dirent_has_tail(ext2_filsys fs, struct ext2_dir_entry *dirent)
+صحیح ext2fs_dirent_has_دم(ext2_filsys fs, ساخت ext2_dir_اندراج *dirent)
 {
-	return __get_dirent_tail(fs, dirent, NULL, 0) !=
+	واپس __get_dirent_tail(fs, dirent, تہی, 0) !=
 		EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
 }
 
-static errcode_t ext2fs_dirent_csum(ext2_filsys fs, ext2_ino_t inum,
-				    struct ext2_dir_entry *dirent, __u32 *crc,
-				    int size)
+ساکن errcode_t ext2fs_dirent_csum(ext2_filsys fs, ext2_ino_t inum,
+				    ساخت ext2_dir_اندراج *dirent, __u32 *چکری_جانچ,
+				    صحیح سائز)
 {
 	errcode_t retval;
-	char *buf = (char *)dirent;
+	حرف *buf = (حرف *)dirent;
 	__u32 gen;
-	struct ext2_inode inode;
+	ساخت ext2_inode inode;
 
 	retval = ext2fs_read_inode(fs, inum, &inode);
-	if (retval)
-		return retval;
+	اگر (retval)
+		واپس retval;
 
-	inum = ext2fs_cpu_to_le32(inum);
-	gen = ext2fs_cpu_to_le32(inode.i_generation);
-	*crc = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)&inum,
-				sizeof(inum));
-	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)&gen, sizeof(gen));
-	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)buf, size);
+	inum = ext2fs_cpu_مقصد_le32(inum);
+	gen = ext2fs_cpu_مقصد_le32(inode.i_generation);
+	*چکری_جانچ = ext2fs_crc32c_le(fs->csum_بیج, (غیرعلامتی حرف *)&inum,
+				حجم(inum));
+	*چکری_جانچ = ext2fs_crc32c_le(*چکری_جانچ, (غیرعلامتی حرف *)&gen, حجم(gen));
+	*چکری_جانچ = ext2fs_crc32c_le(*چکری_جانچ, (غیرعلامتی حرف *)buf, سائز);
 
-	return 0;
+	واپس 0;
 }
 
-int ext2fs_dirent_csum_verify(ext2_filsys fs, ext2_ino_t inum,
-			      struct ext2_dir_entry *dirent)
+صحیح ext2fs_dirent_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+			      ساخت ext2_dir_اندراج *dirent)
 {
 	errcode_t retval;
 	__u32 calculated;
-	struct ext2_dir_entry_tail *t;
+	ساخت ext2_dir_اندراج_دم *t;
 
 	retval = __get_dirent_tail(fs, dirent, &t, 1);
-	if (retval)
-		return 1;
+	اگر (retval)
+		واپس 1;
 
 	/*
 	 * The checksum field is overlaid with the dirent->name field
 	 * so the swapfs.c functions won't change the endianness.
 	 */
 	retval = ext2fs_dirent_csum(fs, inum, dirent, &calculated,
-				    (char *)t - (char *)dirent);
-	if (retval)
-		return 0;
-	return ext2fs_le32_to_cpu(t->det_checksum) == calculated;
+				    (حرف *)t - (حرف *)dirent);
+	اگر (retval)
+		واپس 0;
+	واپس ext2fs_le32_مقصد_cpu(t->det_checksum) == calculated;
 }
 
-static errcode_t ext2fs_dirent_csum_set(ext2_filsys fs, ext2_ino_t inum,
-					struct ext2_dir_entry *dirent)
+ساکن errcode_t ext2fs_dirent_csum_سیٹ(ext2_filsys fs, ext2_ino_t inum,
+					ساخت ext2_dir_اندراج *dirent)
 {
 	errcode_t retval;
-	__u32 crc;
-	struct ext2_dir_entry_tail *t;
+	__u32 چکری_جانچ;
+	ساخت ext2_dir_اندراج_دم *t;
 
 	retval = __get_dirent_tail(fs, dirent, &t, 1);
-	if (retval)
-		return retval;
+	اگر (retval)
+		واپس retval;
 
 	/* swapfs.c functions don't change the checksum endianness */
-	retval = ext2fs_dirent_csum(fs, inum, dirent, &crc,
-				    (char *)t - (char *)dirent);
-	if (retval)
-		return retval;
-	t->det_checksum = ext2fs_cpu_to_le32(crc);
-	return 0;
+	retval = ext2fs_dirent_csum(fs, inum, dirent, &چکری_جانچ,
+				    (حرف *)t - (حرف *)dirent);
+	اگر (retval)
+		واپس retval;
+	t->det_checksum = ext2fs_cpu_مقصد_le32(چکری_جانچ);
+	واپس 0;
 }
 
 errcode_t ext2fs_dx_csum(ext2_filsys fs, ext2_ino_t inum,
-			 struct ext2_dir_entry *dirent,
-			 __u32 *crc, struct ext2_dx_tail **ret_t)
+			 ساخت ext2_dir_اندراج *dirent,
+			 __u32 *چکری_جانچ, ساخت ext2_dx_دم **ret_t)
 {
 	errcode_t retval;
-	char *buf = (char *)dirent;
-	int size;
+	حرف *buf = (حرف *)dirent;
+	صحیح سائز;
 	__u32 gen, dummy_csum = 0;
-	struct ext2_inode inode;
-	struct ext2_dx_tail *t;
-	struct ext2_dx_countlimit *c;
-	int count_offset, limit, count;
+	ساخت ext2_inode inode;
+	ساخت ext2_dx_دم *t;
+	ساخت ext2_dx_countlimit *c;
+	صحیح گنتی_انحراف, حد_بندی, گنتی;
 
-	retval = __get_dx_countlimit(fs, dirent, &c, &count_offset, 1);
-	if (retval)
-		return retval;
-	limit = ext2fs_le16_to_cpu(c->limit);
-	count = ext2fs_le16_to_cpu(c->count);
-	if (count_offset + (limit * sizeof(struct ext2_dx_entry)) >
-	    fs->blocksize - sizeof(struct ext2_dx_tail))
-		return EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
+	retval = __get_dx_countlimit(fs, dirent, &c, &گنتی_انحراف, 1);
+	اگر (retval)
+		واپس retval;
+	حد_بندی = ext2fs_le16_مقصد_cpu(c->حد_بندی);
+	گنتی = ext2fs_le16_مقصد_cpu(c->گنتی);
+	اگر (گنتی_انحراف + (حد_بندی * حجم(ساخت ext2_dx_اندراج)) >
+	    fs->blocksize - حجم(ساخت ext2_dx_دم))
+		واپس EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
 	/* htree structs are accessed in LE order */
-	t = (struct ext2_dx_tail *)(((struct ext2_dx_entry *)c) + limit);
+	t = (ساخت ext2_dx_دم *)(((ساخت ext2_dx_اندراج *)c) + حد_بندی);
 
-	size = count_offset + (count * sizeof(struct ext2_dx_entry));
+	سائز = گنتی_انحراف + (گنتی * حجم(ساخت ext2_dx_اندراج));
 
 	retval = ext2fs_read_inode(fs, inum, &inode);
-	if (retval)
-		return retval;
+	اگر (retval)
+		واپس retval;
 
-	inum = ext2fs_cpu_to_le32(inum);
-	gen = ext2fs_cpu_to_le32(inode.i_generation);
-	*crc = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)&inum,
-				sizeof(inum));
-	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)&gen, sizeof(gen));
-	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)buf, size);
-	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)t, 4);
-	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)&dummy_csum, 4);
+	inum = ext2fs_cpu_مقصد_le32(inum);
+	gen = ext2fs_cpu_مقصد_le32(inode.i_generation);
+	*چکری_جانچ = ext2fs_crc32c_le(fs->csum_بیج, (غیرعلامتی حرف *)&inum,
+				حجم(inum));
+	*چکری_جانچ = ext2fs_crc32c_le(*چکری_جانچ, (غیرعلامتی حرف *)&gen, حجم(gen));
+	*چکری_جانچ = ext2fs_crc32c_le(*چکری_جانچ, (غیرعلامتی حرف *)buf, سائز);
+	*چکری_جانچ = ext2fs_crc32c_le(*چکری_جانچ, (غیرعلامتی حرف *)t, 4);
+	*چکری_جانچ = ext2fs_crc32c_le(*چکری_جانچ, (غیرعلامتی حرف *)&dummy_csum, 4);
 
-	if (ret_t)
+	اگر (ret_t)
 		*ret_t = t;
-	return 0;
+	واپس 0;
 }
 
-static int ext2fs_dx_csum_verify(ext2_filsys fs, ext2_ino_t inum,
-				 struct ext2_dir_entry *dirent)
+ساکن صحیح ext2fs_dx_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+				 ساخت ext2_dir_اندراج *dirent)
 {
 	__u32 calculated;
 	errcode_t retval;
-	struct ext2_dx_tail *t;
+	ساخت ext2_dx_دم *t;
 
 	retval = ext2fs_dx_csum(fs, inum, dirent, &calculated, &t);
-	if (retval)
-		return 0;
+	اگر (retval)
+		واپس 0;
 
-	return ext2fs_le32_to_cpu(t->dt_checksum) == calculated;
+	واپس ext2fs_le32_مقصد_cpu(t->dt_checksum) == calculated;
 }
 
-static errcode_t ext2fs_dx_csum_set(ext2_filsys fs, ext2_ino_t inum,
-				    struct ext2_dir_entry *dirent)
+ساکن errcode_t ext2fs_dx_csum_سیٹ(ext2_filsys fs, ext2_ino_t inum,
+				    ساخت ext2_dir_اندراج *dirent)
 {
-	__u32 crc;
+	__u32 چکری_جانچ;
 	errcode_t retval = 0;
-	struct ext2_dx_tail *t;
+	ساخت ext2_dx_دم *t;
 
-	retval = ext2fs_dx_csum(fs, inum, dirent, &crc, &t);
-	if (retval)
-		return retval;
-	t->dt_checksum = ext2fs_cpu_to_le32(crc);
-	return retval;
+	retval = ext2fs_dx_csum(fs, inum, dirent, &چکری_جانچ, &t);
+	اگر (retval)
+		واپس retval;
+	t->dt_checksum = ext2fs_cpu_مقصد_le32(چکری_جانچ);
+	واپس retval;
 }
 
-int ext2fs_dir_block_csum_verify(ext2_filsys fs, ext2_ino_t inum,
-				 struct ext2_dir_entry *dirent)
+صحیح ext2fs_dir_بلاک_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+				 ساخت ext2_dir_اندراج *dirent)
 {
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
+	اگر (!ext2fs_has_feature_metadata_csum(fs->super))
+		واپس 1;
 
-	if (__get_dirent_tail(fs, dirent, NULL, 1) == 0)
-		return ext2fs_dirent_csum_verify(fs, inum, dirent);
-	if (__get_dx_countlimit(fs, dirent, NULL, NULL, 1) == 0)
-		return ext2fs_dx_csum_verify(fs, inum, dirent);
+	اگر (__get_dirent_tail(fs, dirent, تہی, 1) == 0)
+		واپس ext2fs_dirent_csum_verify(fs, inum, dirent);
+	اگر (__get_dx_countlimit(fs, dirent, تہی, تہی, 1) == 0)
+		واپس ext2fs_dx_csum_verify(fs, inum, dirent);
 
-	return 0;
+	واپس 0;
 }
 
-errcode_t ext2fs_dir_block_csum_set(ext2_filsys fs, ext2_ino_t inum,
-				    struct ext2_dir_entry *dirent)
+errcode_t ext2fs_dir_بلاک_csum_سیٹ(ext2_filsys fs, ext2_ino_t inum,
+				    ساخت ext2_dir_اندراج *dirent)
 {
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 0;
+	اگر (!ext2fs_has_feature_metadata_csum(fs->super))
+		واپس 0;
 
-	if (__get_dirent_tail(fs, dirent, NULL, 1) == 0)
-		return ext2fs_dirent_csum_set(fs, inum, dirent);
-	if (__get_dx_countlimit(fs, dirent, NULL, NULL, 1) == 0)
-		return ext2fs_dx_csum_set(fs, inum, dirent);
+	اگر (__get_dirent_tail(fs, dirent, تہی, 1) == 0)
+		واپس ext2fs_dirent_csum_سیٹ(fs, inum, dirent);
+	اگر (__get_dx_countlimit(fs, dirent, تہی, تہی, 1) == 0)
+		واپس ext2fs_dx_csum_سیٹ(fs, inum, dirent);
 
-	if (fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS)
-		return 0;
-	return EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
+	اگر (fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS)
+		واپس 0;
+	واپس EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
 }
 
-#define EXT3_EXTENT_TAIL_OFFSET(hdr)	(sizeof(struct ext3_extent_header) + \
-	(sizeof(struct ext3_extent) * ext2fs_le16_to_cpu((hdr)->eh_max)))
+#تعریف_کرو EXT3_EXTENT_دم_انحراف(hdr)	(حجم(ساخت ext3_extent_سرخی) + \
+	(حجم(ساخت ext3_extent) * ext2fs_le16_مقصد_cpu((hdr)->eh_max)))
 
-static struct ext3_extent_tail *get_extent_tail(struct ext3_extent_header *h)
+ساکن ساخت ext3_extent_دم *get_extent_دم(ساخت ext3_extent_سرخی *h)
 {
-	return (struct ext3_extent_tail *)(((char *)h) +
-					   EXT3_EXTENT_TAIL_OFFSET(h));
+	واپس (ساخت ext3_extent_دم *)(((حرف *)h) +
+					   EXT3_EXTENT_دم_انحراف(h));
 }
 
-static errcode_t ext2fs_extent_block_csum(ext2_filsys fs, ext2_ino_t inum,
-					  struct ext3_extent_header *eh,
-					  __u32 *crc)
+ساکن errcode_t ext2fs_extent_بلاک_csum(ext2_filsys fs, ext2_ino_t inum,
+					  ساخت ext3_extent_سرخی *eh,
+					  __u32 *چکری_جانچ)
 {
-	int size;
+	صحیح سائز;
 	__u32 gen;
 	errcode_t retval;
-	struct ext2_inode inode;
+	ساخت ext2_inode inode;
 
-	size = EXT3_EXTENT_TAIL_OFFSET(eh) + offsetof(struct ext3_extent_tail,
+	سائز = EXT3_EXTENT_دم_انحراف(eh) + offsetof(ساخت ext3_extent_دم,
 						      et_checksum);
 
 	retval = ext2fs_read_inode(fs, inum, &inode);
-	if (retval)
-		return retval;
-	inum = ext2fs_cpu_to_le32(inum);
-	gen = ext2fs_cpu_to_le32(inode.i_generation);
-	*crc = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)&inum,
-				sizeof(inum));
-	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)&gen, sizeof(gen));
-	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)eh, size);
+	اگر (retval)
+		واپس retval;
+	inum = ext2fs_cpu_مقصد_le32(inum);
+	gen = ext2fs_cpu_مقصد_le32(inode.i_generation);
+	*چکری_جانچ = ext2fs_crc32c_le(fs->csum_بیج, (غیرعلامتی حرف *)&inum,
+				حجم(inum));
+	*چکری_جانچ = ext2fs_crc32c_le(*چکری_جانچ, (غیرعلامتی حرف *)&gen, حجم(gen));
+	*چکری_جانچ = ext2fs_crc32c_le(*چکری_جانچ, (غیرعلامتی حرف *)eh, سائز);
 
-	return 0;
+	واپس 0;
 }
 
-int ext2fs_extent_block_csum_verify(ext2_filsys fs, ext2_ino_t inum,
-				    struct ext3_extent_header *eh)
+صحیح ext2fs_extent_بلاک_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+				    ساخت ext3_extent_سرخی *eh)
 {
 	errcode_t retval;
 	__u32 provided, calculated;
-	struct ext3_extent_tail *t = get_extent_tail(eh);
+	ساخت ext3_extent_دم *t = get_extent_دم(eh);
 
 	/*
 	 * The extent tree structures are accessed in LE order, so we must
 	 * swap the checksum bytes here.
 	 */
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
+	اگر (!ext2fs_has_feature_metadata_csum(fs->super))
+		واپس 1;
 
-	provided = ext2fs_le32_to_cpu(t->et_checksum);
-	retval = ext2fs_extent_block_csum(fs, inum, eh, &calculated);
-	if (retval)
-		return 0;
+	provided = ext2fs_le32_مقصد_cpu(t->et_checksum);
+	retval = ext2fs_extent_بلاک_csum(fs, inum, eh, &calculated);
+	اگر (retval)
+		واپس 0;
 
-	return provided == calculated;
+	واپس provided == calculated;
 }
 
-errcode_t ext2fs_extent_block_csum_set(ext2_filsys fs, ext2_ino_t inum,
-				       struct ext3_extent_header *eh)
+errcode_t ext2fs_extent_بلاک_csum_سیٹ(ext2_filsys fs, ext2_ino_t inum,
+				       ساخت ext3_extent_سرخی *eh)
 {
 	errcode_t retval;
-	__u32 crc;
-	struct ext3_extent_tail *t = get_extent_tail(eh);
+	__u32 چکری_جانچ;
+	ساخت ext3_extent_دم *t = get_extent_دم(eh);
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 0;
+	اگر (!ext2fs_has_feature_metadata_csum(fs->super))
+		واپس 0;
 
 	/*
 	 * The extent tree structures are accessed in LE order, so we must
 	 * swap the checksum bytes here.
 	 */
-	retval = ext2fs_extent_block_csum(fs, inum, eh, &crc);
-	if (retval)
-		return retval;
-	t->et_checksum = ext2fs_cpu_to_le32(crc);
-	return retval;
+	retval = ext2fs_extent_بلاک_csum(fs, inum, eh, &چکری_جانچ);
+	اگر (retval)
+		واپس retval;
+	t->et_checksum = ext2fs_cpu_مقصد_le32(چکری_جانچ);
+	واپس retval;
 }
 
-int ext2fs_inode_bitmap_csum_verify(ext2_filsys fs, dgrp_t group,
-				    char *bitmap, int size)
+صحیح ext2fs_inode_bitmap_csum_verify(ext2_filsys fs, dgrp_t گروہ,
+				    حرف *bitmap, صحیح سائز)
 {
-	struct ext4_group_desc *gdp = (struct ext4_group_desc *)
-			ext2fs_group_desc(fs, fs->group_desc, group);
+	ساخت ext4_گروہ_desc *gdp = (ساخت ext4_گروہ_desc *)
+			ext2fs_گروہ_desc(fs, fs->گروہ_desc, گروہ);
 	__u32 provided, calculated;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
+	اگر (!ext2fs_has_feature_metadata_csum(fs->super))
+		واپس 1;
 	provided = gdp->bg_inode_bitmap_csum_lo;
-	calculated = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)bitmap,
-				      size);
-	if (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_INODE_BITMAP_CSUM_HI_END)
+	calculated = ext2fs_crc32c_le(fs->csum_بیج, (غیرعلامتی حرف *)bitmap,
+				      سائز);
+	اگر (EXT2_DESC_سائز(fs->super) >= EXT4_BG_INODE_BITMAP_CSUM_HI_انتہا)
 		provided |= (__u32)gdp->bg_inode_bitmap_csum_hi << 16;
-	else
+	ورنہ
 		calculated &= 0xFFFF;
 
-	return provided == calculated;
+	واپس provided == calculated;
 }
 
-errcode_t ext2fs_inode_bitmap_csum_set(ext2_filsys fs, dgrp_t group,
-				       char *bitmap, int size)
+errcode_t ext2fs_inode_bitmap_csum_سیٹ(ext2_filsys fs, dgrp_t گروہ,
+				       حرف *bitmap, صحیح سائز)
 {
-	__u32 crc;
-	struct ext4_group_desc *gdp = (struct ext4_group_desc *)
-			ext2fs_group_desc(fs, fs->group_desc, group);
+	__u32 چکری_جانچ;
+	ساخت ext4_گروہ_desc *gdp = (ساخت ext4_گروہ_desc *)
+			ext2fs_گروہ_desc(fs, fs->گروہ_desc, گروہ);
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 0;
+	اگر (!ext2fs_has_feature_metadata_csum(fs->super))
+		واپس 0;
 
-	crc = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)bitmap, size);
-	gdp->bg_inode_bitmap_csum_lo = crc & 0xFFFF;
-	if (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_INODE_BITMAP_CSUM_HI_END)
-		gdp->bg_inode_bitmap_csum_hi = crc >> 16;
+	چکری_جانچ = ext2fs_crc32c_le(fs->csum_بیج, (غیرعلامتی حرف *)bitmap, سائز);
+	gdp->bg_inode_bitmap_csum_lo = چکری_جانچ & 0xFFFF;
+	اگر (EXT2_DESC_سائز(fs->super) >= EXT4_BG_INODE_BITMAP_CSUM_HI_انتہا)
+		gdp->bg_inode_bitmap_csum_hi = چکری_جانچ >> 16;
 
-	return 0;
+	واپس 0;
 }
 
-int ext2fs_block_bitmap_csum_verify(ext2_filsys fs, dgrp_t group,
-				    char *bitmap, int size)
+صحیح ext2fs_بلاک_bitmap_csum_verify(ext2_filsys fs, dgrp_t گروہ,
+				    حرف *bitmap, صحیح سائز)
 {
-	struct ext4_group_desc *gdp = (struct ext4_group_desc *)
-			ext2fs_group_desc(fs, fs->group_desc, group);
+	ساخت ext4_گروہ_desc *gdp = (ساخت ext4_گروہ_desc *)
+			ext2fs_گروہ_desc(fs, fs->گروہ_desc, گروہ);
 	__u32 provided, calculated;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
-	provided = gdp->bg_block_bitmap_csum_lo;
-	calculated = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)bitmap,
-				      size);
-	if (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_BLOCK_BITMAP_CSUM_HI_LOCATION)
-		provided |= (__u32)gdp->bg_block_bitmap_csum_hi << 16;
-	else
+	اگر (!ext2fs_has_feature_metadata_csum(fs->super))
+		واپس 1;
+	provided = gdp->bg_بلاک_bitmap_csum_lo;
+	calculated = ext2fs_crc32c_le(fs->csum_بیج, (غیرعلامتی حرف *)bitmap,
+				      سائز);
+	اگر (EXT2_DESC_سائز(fs->super) >= EXT4_BG_بلاک_BITMAP_CSUM_HI_LOCATION)
+		provided |= (__u32)gdp->bg_بلاک_bitmap_csum_hi << 16;
+	ورنہ
 		calculated &= 0xFFFF;
 
-	return provided == calculated;
+	واپس provided == calculated;
 }
 
-errcode_t ext2fs_block_bitmap_csum_set(ext2_filsys fs, dgrp_t group,
-				       char *bitmap, int size)
+errcode_t ext2fs_بلاک_bitmap_csum_سیٹ(ext2_filsys fs, dgrp_t گروہ,
+				       حرف *bitmap, صحیح سائز)
 {
-	__u32 crc;
-	struct ext4_group_desc *gdp = (struct ext4_group_desc *)
-			ext2fs_group_desc(fs, fs->group_desc, group);
+	__u32 چکری_جانچ;
+	ساخت ext4_گروہ_desc *gdp = (ساخت ext4_گروہ_desc *)
+			ext2fs_گروہ_desc(fs, fs->گروہ_desc, گروہ);
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 0;
+	اگر (!ext2fs_has_feature_metadata_csum(fs->super))
+		واپس 0;
 
-	crc = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)bitmap, size);
-	gdp->bg_block_bitmap_csum_lo = crc & 0xFFFF;
-	if (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_BLOCK_BITMAP_CSUM_HI_LOCATION)
-		gdp->bg_block_bitmap_csum_hi = crc >> 16;
+	چکری_جانچ = ext2fs_crc32c_le(fs->csum_بیج, (غیرعلامتی حرف *)bitmap, سائز);
+	gdp->bg_بلاک_bitmap_csum_lo = چکری_جانچ & 0xFFFF;
+	اگر (EXT2_DESC_سائز(fs->super) >= EXT4_BG_بلاک_BITMAP_CSUM_HI_LOCATION)
+		gdp->bg_بلاک_bitmap_csum_hi = چکری_جانچ >> 16;
 
-	return 0;
+	واپس 0;
 }
 
-static errcode_t ext2fs_inode_csum(ext2_filsys fs, ext2_ino_t inum,
-			       struct ext2_inode_large *inode,
-			       __u32 *crc, int has_hi)
+ساکن errcode_t ext2fs_inode_csum(ext2_filsys fs, ext2_ino_t inum,
+			       ساخت ext2_inode_large *inode,
+			       __u32 *چکری_جانچ, صحیح has_hi)
 {
 	__u32 gen;
-	struct ext2_inode_large *desc = inode;
-	size_t size = EXT2_INODE_SIZE(fs->super);
+	ساخت ext2_inode_large *desc = inode;
+	size_t سائز = EXT2_INODE_سائز(fs->super);
 	__u16 old_lo;
 	__u16 old_hi = 0;
 
 	old_lo = inode->i_checksum_lo;
 	inode->i_checksum_lo = 0;
-	if (has_hi) {
+	اگر (has_hi) {
 		old_hi = inode->i_checksum_hi;
 		inode->i_checksum_hi = 0;
 	}
 
-	inum = ext2fs_cpu_to_le32(inum);
+	inum = ext2fs_cpu_مقصد_le32(inum);
 	gen = inode->i_generation;
-	*crc = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)&inum,
-				sizeof(inum));
-	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)&gen, sizeof(gen));
-	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)desc, size);
+	*چکری_جانچ = ext2fs_crc32c_le(fs->csum_بیج, (غیرعلامتی حرف *)&inum,
+				حجم(inum));
+	*چکری_جانچ = ext2fs_crc32c_le(*چکری_جانچ, (غیرعلامتی حرف *)&gen, حجم(gen));
+	*چکری_جانچ = ext2fs_crc32c_le(*چکری_جانچ, (غیرعلامتی حرف *)desc, سائز);
 
 	inode->i_checksum_lo = old_lo;
-	if (has_hi)
+	اگر (has_hi)
 		inode->i_checksum_hi = old_hi;
-	return 0;
+	واپس 0;
 }
 
-int ext2fs_inode_csum_verify(ext2_filsys fs, ext2_ino_t inum,
-			     struct ext2_inode_large *inode)
+صحیح ext2fs_inode_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+			     ساخت ext2_inode_large *inode)
 {
 	errcode_t retval;
 	__u32 provided, calculated;
-	unsigned int i, has_hi;
-	char *cp;
+	غیرعلامتی صحیح i, has_hi;
+	حرف *cp;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
+	اگر (!ext2fs_has_feature_metadata_csum(fs->super))
+		واپس 1;
 
-	has_hi = (EXT2_INODE_SIZE(fs->super) > EXT2_GOOD_OLD_INODE_SIZE &&
-		  inode->i_extra_isize >= EXT4_INODE_CSUM_HI_EXTRA_END);
+	has_hi = (EXT2_INODE_سائز(fs->super) > EXT2_GOOD_OLD_INODE_سائز &&
+		  inode->i_extra_isize >= EXT4_INODE_CSUM_HI_EXTRA_انتہا);
 
-	provided = ext2fs_le16_to_cpu(inode->i_checksum_lo);
+	provided = ext2fs_le16_مقصد_cpu(inode->i_checksum_lo);
 	retval = ext2fs_inode_csum(fs, inum, inode, &calculated, has_hi);
-	if (retval)
-		return 0;
-	if (has_hi) {
-		__u32 hi = ext2fs_le16_to_cpu(inode->i_checksum_hi);
+	اگر (retval)
+		واپس 0;
+	اگر (has_hi) {
+		__u32 hi = ext2fs_le16_مقصد_cpu(inode->i_checksum_hi);
 		provided |= hi << 16;
-	} else
+	} ورنہ
 		calculated &= 0xFFFF;
 
-	if (provided == calculated)
-		return 1;
+	اگر (provided == calculated)
+		واپس 1;
 
 	/*
 	 * If the checksum didn't match, it's possible it was due to
@@ -683,329 +683,329 @@ int ext2fs_inode_csum_verify(ext2_filsys fs, ext2_ino_t inum,
 	 * worth the bother to figure out how much of the extended
 	 * inode, if any, is present.)
 	 */
-	for (cp = (char *) inode, i = 0;
-	     i < sizeof(struct ext2_inode);
+	برائے (cp = (حرف *) inode, i = 0;
+	     i < حجم(ساخت ext2_inode);
 	     cp++, i++)
-		if (*cp)
-			return 0;
-	return 1;		/* Inode must have been all zero's */
+		اگر (*cp)
+			واپس 0;
+	واپس 1;		/* Inode must have been all zero's */
 }
 
-errcode_t ext2fs_inode_csum_set(ext2_filsys fs, ext2_ino_t inum,
-			   struct ext2_inode_large *inode)
+errcode_t ext2fs_inode_csum_سیٹ(ext2_filsys fs, ext2_ino_t inum,
+			   ساخت ext2_inode_large *inode)
 {
 	errcode_t retval;
-	__u32 crc;
-	int has_hi;
+	__u32 چکری_جانچ;
+	صحیح has_hi;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 0;
+	اگر (!ext2fs_has_feature_metadata_csum(fs->super))
+		واپس 0;
 
-	has_hi = (EXT2_INODE_SIZE(fs->super) > EXT2_GOOD_OLD_INODE_SIZE &&
-		  inode->i_extra_isize >= EXT4_INODE_CSUM_HI_EXTRA_END);
+	has_hi = (EXT2_INODE_سائز(fs->super) > EXT2_GOOD_OLD_INODE_سائز &&
+		  inode->i_extra_isize >= EXT4_INODE_CSUM_HI_EXTRA_انتہا);
 
-	retval = ext2fs_inode_csum(fs, inum, inode, &crc, has_hi);
-	if (retval)
-		return retval;
-	inode->i_checksum_lo = ext2fs_cpu_to_le16(crc & 0xFFFF);
-	if (has_hi)
-		inode->i_checksum_hi = ext2fs_cpu_to_le16(crc >> 16);
-	return 0;
+	retval = ext2fs_inode_csum(fs, inum, inode, &چکری_جانچ, has_hi);
+	اگر (retval)
+		واپس retval;
+	inode->i_checksum_lo = ext2fs_cpu_مقصد_le16(چکری_جانچ & 0xFFFF);
+	اگر (has_hi)
+		inode->i_checksum_hi = ext2fs_cpu_مقصد_le16(چکری_جانچ >> 16);
+	واپس 0;
 }
 
-__u16 ext2fs_group_desc_csum(ext2_filsys fs, dgrp_t group)
+__u16 ext2fs_گروہ_desc_csum(ext2_filsys fs, dgrp_t گروہ)
 {
-	struct ext2_group_desc *desc = ext2fs_group_desc(fs, fs->group_desc,
-							 group);
-	size_t offset, size = EXT2_DESC_SIZE(fs->super);
-	__u16 crc = 0;
-#ifdef WORDS_BIGENDIAN
-	struct ext4_group_desc swabdesc;
-	size_t save_size = size;
-	const size_t ext4_bg_size = sizeof(struct ext4_group_desc);
-	struct ext2_group_desc *save_desc = desc;
+	ساخت ext2_گروہ_desc *desc = ext2fs_گروہ_desc(fs, fs->گروہ_desc,
+							 گروہ);
+	size_t انحراف, سائز = EXT2_DESC_سائز(fs->super);
+	__u16 چکری_جانچ = 0;
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
+	ساخت ext4_گروہ_desc swabdesc;
+	size_t save_سائز = سائز;
+	ثابت size_t ext4_bg_سائز = حجم(ساخت ext4_گروہ_desc);
+	ساخت ext2_گروہ_desc *save_desc = desc;
 
 	/* Have to swab back to little-endian to do the checksum */
-	if (size > ext4_bg_size)
-		size = ext4_bg_size;
-	memcpy(&swabdesc, desc, size);
-	ext2fs_swap_group_desc2(fs, (struct ext2_group_desc *) &swabdesc);
-	desc = (struct ext2_group_desc *) &swabdesc;
-	group = ext2fs_swab32(group);
-#endif
+	اگر (سائز > ext4_bg_سائز)
+		سائز = ext4_bg_سائز;
+	حافظہ_نقل(&swabdesc, desc, سائز);
+	ext2fs_تبادلہ_گروہ_desc2(fs, (ساخت ext2_گروہ_desc *) &swabdesc);
+	desc = (ساخت ext2_گروہ_desc *) &swabdesc;
+	گروہ = ext2fs_swab32(گروہ);
+#اگر_ختم
 
-	if (ext2fs_has_feature_metadata_csum(fs->super)) {
+	اگر (ext2fs_has_feature_metadata_csum(fs->super)) {
 		/* new metadata csum code */
-		__u16 old_crc;
-		__u32 crc32;
+		__u16 old_چکری_جانچ;
+		__u32 چکری_جانچ_32;
 
-		old_crc = desc->bg_checksum;
+		old_چکری_جانچ = desc->bg_checksum;
 		desc->bg_checksum = 0;
-		crc32 = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)&group,
-					 sizeof(group));
-		crc32 = ext2fs_crc32c_le(crc32, (unsigned char *)desc,
-					 size);
-		desc->bg_checksum = old_crc;
-#ifdef WORDS_BIGENDIAN
-		if (save_size > ext4_bg_size)
-			crc32 = ext2fs_crc32c_le(crc32,
-				     (unsigned char *)save_desc + ext4_bg_size,
-	                             save_size - ext4_bg_size);
-#endif
-		crc = crc32 & 0xFFFF;
-		goto out;
+		چکری_جانچ_32 = ext2fs_crc32c_le(fs->csum_بیج, (غیرعلامتی حرف *)&گروہ,
+					 حجم(گروہ));
+		چکری_جانچ_32 = ext2fs_crc32c_le(چکری_جانچ_32, (غیرعلامتی حرف *)desc,
+					 سائز);
+		desc->bg_checksum = old_چکری_جانچ;
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
+		اگر (save_سائز > ext4_bg_سائز)
+			چکری_جانچ_32 = ext2fs_crc32c_le(چکری_جانچ_32,
+				     (غیرعلامتی حرف *)save_desc + ext4_bg_سائز,
+	                             save_سائز - ext4_bg_سائز);
+#اگر_ختم
+		چکری_جانچ = چکری_جانچ_32 & 0xFFFF;
+		جاؤ برآمد;
 	}
 
 	/* old crc16 code */
-	offset = offsetof(struct ext2_group_desc, bg_checksum);
-	crc = ext2fs_crc16(~0, fs->super->s_uuid,
-			   sizeof(fs->super->s_uuid));
-	crc = ext2fs_crc16(crc, &group, sizeof(group));
-	crc = ext2fs_crc16(crc, desc, offset);
-	offset += sizeof(desc->bg_checksum); /* skip checksum */
+	انحراف = offsetof(ساخت ext2_گروہ_desc, bg_checksum);
+	چکری_جانچ = ext2fs_crc16(~0, fs->super->s_uuid,
+			   حجم(fs->super->s_uuid));
+	چکری_جانچ = ext2fs_crc16(چکری_جانچ, &گروہ, حجم(گروہ));
+	چکری_جانچ = ext2fs_crc16(چکری_جانچ, desc, انحراف);
+	انحراف += حجم(desc->bg_checksum); /* skip checksum */
 	/* for checksum of struct ext4_group_desc do the rest...*/
-	if (offset < size) {
-		crc = ext2fs_crc16(crc, (char *)desc + offset,
-				   size - offset);
+	اگر (انحراف < سائز) {
+		چکری_جانچ = ext2fs_crc16(چکری_جانچ, (حرف *)desc + انحراف,
+				   سائز - انحراف);
 	}
-#ifdef WORDS_BIGENDIAN
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
 	/*
 	 * If the size of the bg descriptor is greater than 64
 	 * bytes, which is the size of the traditional ext4 bg
 	 * descriptor, checksum the rest of the descriptor here
 	 */
-	if (save_size > ext4_bg_size)
-		crc = ext2fs_crc16(crc, (char *)save_desc + ext4_bg_size,
-				   save_size - ext4_bg_size);
-#endif
+	اگر (save_سائز > ext4_bg_سائز)
+		چکری_جانچ = ext2fs_crc16(چکری_جانچ, (حرف *)save_desc + ext4_bg_سائز,
+				   save_سائز - ext4_bg_سائز);
+#اگر_ختم
 
-out:
-	return crc;
+برآمد:
+	واپس چکری_جانچ;
 }
 
-int ext2fs_group_desc_csum_verify(ext2_filsys fs, dgrp_t group)
+صحیح ext2fs_گروہ_desc_csum_verify(ext2_filsys fs, dgrp_t گروہ)
 {
-	if (ext2fs_has_group_desc_csum(fs) &&
-	    (ext2fs_bg_checksum(fs, group) !=
-	     ext2fs_group_desc_csum(fs, group)))
-		return 0;
+	اگر (ext2fs_has_گروہ_desc_csum(fs) &&
+	    (ext2fs_bg_checksum(fs, گروہ) !=
+	     ext2fs_گروہ_desc_csum(fs, گروہ)))
+		واپس 0;
 
-	return 1;
+	واپس 1;
 }
 
-void ext2fs_group_desc_csum_set(ext2_filsys fs, dgrp_t group)
+خالی ext2fs_گروہ_desc_csum_سیٹ(ext2_filsys fs, dgrp_t گروہ)
 {
-	if (!ext2fs_has_group_desc_csum(fs))
-		return;
+	اگر (!ext2fs_has_گروہ_desc_csum(fs))
+		واپس;
 
 	/* ext2fs_bg_checksum_set() sets the actual checksum field but
 	 * does not calculate the checksum itself. */
-	ext2fs_bg_checksum_set(fs, group, ext2fs_group_desc_csum(fs, group));
+	ext2fs_bg_checksum_سیٹ(fs, گروہ, ext2fs_گروہ_desc_csum(fs, گروہ));
 }
 
-static __u32 find_last_inode_ingrp(ext2fs_inode_bitmap bitmap,
-				   __u32 inodes_per_grp, dgrp_t grp_no)
+ساکن __u32 ڈھونڈو_آخری_inode_ingrp(ext2fs_inode_bitmap bitmap,
+				   __u32 inodes_فی_grp, dgrp_t grp_no)
 {
-	ext2_ino_t i, start_ino, end_ino;
+	ext2_ino_t i, آغاز_ino, انتہا_ino;
 
-	start_ino = grp_no * inodes_per_grp + 1;
-	end_ino = start_ino + inodes_per_grp - 1;
+	آغاز_ino = grp_no * inodes_فی_grp + 1;
+	انتہا_ino = آغاز_ino + inodes_فی_grp - 1;
 
-	for (i = end_ino; i >= start_ino; i--) {
-		if (ext2fs_fast_test_inode_bitmap2(bitmap, i))
-			return i - start_ino + 1;
+	برائے (i = انتہا_ino; i >= آغاز_ino; i--) {
+		اگر (ext2fs_fast_test_inode_bitmap2(bitmap, i))
+			واپس i - آغاز_ino + 1;
 	}
-	return inodes_per_grp;
+	واپس inodes_فی_grp;
 }
 
 /* update the bitmap flags, set the itable high watermark, and calculate
  * checksums for the group descriptors */
-errcode_t ext2fs_set_gdt_csum(ext2_filsys fs)
+errcode_t ext2fs_سیٹ_gdt_csum(ext2_filsys fs)
 {
-	struct ext2_super_block *sb = fs->super;
-	int dirty = 0;
+	ساخت ext2_super_بلاک *sb = fs->super;
+	صحیح dirty = 0;
 	dgrp_t i;
 
-	if (!fs->inode_map)
-		return EXT2_ET_NO_INODE_BITMAP;
+	اگر (!fs->inode_map)
+		واپس EXT2_ET_NO_INODE_BITMAP;
 
-	if (!ext2fs_has_group_desc_csum(fs))
-		return 0;
+	اگر (!ext2fs_has_گروہ_desc_csum(fs))
+		واپس 0;
 
-	for (i = 0; i < fs->group_desc_count; i++) {
+	برائے (i = 0; i < fs->گروہ_desc_گنتی; i++) {
 		__u32 old_csum = ext2fs_bg_checksum(fs, i);
-		__u32 old_unused = ext2fs_bg_itable_unused(fs, i);
+		__u32 old_غیر_مستعمل = ext2fs_bg_itable_غیر_مستعمل(fs, i);
 		__u32 old_flags = ext2fs_bg_flags(fs, i);
-		__u32 old_free_inodes_count = ext2fs_bg_free_inodes_count(fs, i);
-		__u32 old_free_blocks_count = ext2fs_bg_free_blocks_count(fs, i);
+		__u32 old_free_inodes_گنتی = ext2fs_bg_free_inodes_گنتی(fs, i);
+		__u32 old_free_بلاکیں_گنتی = ext2fs_bg_free_بلاکیں_گنتی(fs, i);
 
-		if (old_free_blocks_count == sb->s_blocks_per_group &&
-		    i != fs->group_desc_count - 1)
-			ext2fs_bg_flags_set(fs, i, EXT2_BG_BLOCK_UNINIT);
+		اگر (old_free_بلاکیں_گنتی == sb->s_بلاکیں_فی_گروہ &&
+		    i != fs->گروہ_desc_گنتی - 1)
+			ext2fs_bg_flags_سیٹ(fs, i, EXT2_BG_بلاک_UNINIT);
 
-		if (old_free_inodes_count == sb->s_inodes_per_group) {
-			ext2fs_bg_flags_set(fs, i, EXT2_BG_INODE_UNINIT);
-			ext2fs_bg_itable_unused_set(fs, i, sb->s_inodes_per_group);
-		} else {
-			int unused =
-				sb->s_inodes_per_group -
-				find_last_inode_ingrp(fs->inode_map,
-						      sb->s_inodes_per_group, i);
+		اگر (old_free_inodes_گنتی == sb->s_inodes_فی_گروہ) {
+			ext2fs_bg_flags_سیٹ(fs, i, EXT2_BG_INODE_UNINIT);
+			ext2fs_bg_itable_غیر_مستعمل_سیٹ(fs, i, sb->s_inodes_فی_گروہ);
+		} ورنہ {
+			صحیح غیر_مستعمل =
+				sb->s_inodes_فی_گروہ -
+				ڈھونڈو_آخری_inode_ingrp(fs->inode_map,
+						      sb->s_inodes_فی_گروہ, i);
 
 			ext2fs_bg_flags_clear(fs, i, EXT2_BG_INODE_UNINIT);
-			ext2fs_bg_itable_unused_set(fs, i, unused);
+			ext2fs_bg_itable_غیر_مستعمل_سیٹ(fs, i, غیر_مستعمل);
 		}
 
-		ext2fs_group_desc_csum_set(fs, i);
-		if (old_flags != ext2fs_bg_flags(fs, i))
+		ext2fs_گروہ_desc_csum_سیٹ(fs, i);
+		اگر (old_flags != ext2fs_bg_flags(fs, i))
 			dirty = 1;
-		if (old_unused != ext2fs_bg_itable_unused(fs, i))
+		اگر (old_غیر_مستعمل != ext2fs_bg_itable_غیر_مستعمل(fs, i))
 			dirty = 1;
-		if (old_csum != ext2fs_bg_checksum(fs, i))
+		اگر (old_csum != ext2fs_bg_checksum(fs, i))
 			dirty = 1;
 	}
-	if (dirty)
+	اگر (dirty)
 		ext2fs_mark_super_dirty(fs);
-	return 0;
+	واپس 0;
 }
 
-#ifdef DEBUG
-#include "e2p/e2p.h"
+#اگر_تعریف_شدہ DEBUG
+#شامل "e2p/e2p.h"
 
-void print_csum(const char *msg, ext2_filsys fs, dgrp_t group)
+خالی print_csum(ثابت حرف *پیغام, ext2_filsys fs, dgrp_t گروہ)
 {
 	__u16 crc1, crc2, crc3;
 	dgrp_t swabgroup;
-	struct ext2_group_desc *desc = ext2fs_group_desc(fs, fs->group_desc,
-							 group);
-	size_t size = EXT2_DESC_SIZE(fs->super);
-	struct ext2_super_block *sb = fs->super;
-	int offset = offsetof(struct ext2_group_desc, bg_checksum);
-#ifdef WORDS_BIGENDIAN
-	struct ext4_group_desc swabdesc;
-	struct ext2_group_desc *save_desc = desc;
-	const size_t ext4_bg_size = sizeof(struct ext4_group_desc);
-	size_t save_size = size;
-#endif
+	ساخت ext2_گروہ_desc *desc = ext2fs_گروہ_desc(fs, fs->گروہ_desc,
+							 گروہ);
+	size_t سائز = EXT2_DESC_سائز(fs->super);
+	ساخت ext2_super_بلاک *sb = fs->super;
+	صحیح انحراف = offsetof(ساخت ext2_گروہ_desc, bg_checksum);
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
+	ساخت ext4_گروہ_desc swabdesc;
+	ساخت ext2_گروہ_desc *save_desc = desc;
+	ثابت size_t ext4_bg_سائز = حجم(ساخت ext4_گروہ_desc);
+	size_t save_سائز = سائز;
+#اگر_ختم
 
-#ifdef WORDS_BIGENDIAN
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
 	/* Have to swab back to little-endian to do the checksum */
-	if (size > ext4_bg_size)
-		size = ext4_bg_size;
-	memcpy(&swabdesc, desc, size);
-	ext2fs_swap_group_desc2(fs, (struct ext2_group_desc *) &swabdesc);
-	desc = (struct ext2_group_desc *) &swabdesc;
+	اگر (سائز > ext4_bg_سائز)
+		سائز = ext4_bg_سائز;
+	حافظہ_نقل(&swabdesc, desc, سائز);
+	ext2fs_تبادلہ_گروہ_desc2(fs, (ساخت ext2_گروہ_desc *) &swabdesc);
+	desc = (ساخت ext2_گروہ_desc *) &swabdesc;
 
-	swabgroup = ext2fs_swab32(group);
-#else
-	swabgroup = group;
-#endif
+	swabgroup = ext2fs_swab32(گروہ);
+#ورنہ
+	swabgroup = گروہ;
+#اگر_ختم
 
-	crc1 = ext2fs_crc16(~0, sb->s_uuid, sizeof(fs->super->s_uuid));
-	crc2 = ext2fs_crc16(crc1, &swabgroup, sizeof(swabgroup));
-	crc3 = ext2fs_crc16(crc2, desc, offset);
-	offset += sizeof(desc->bg_checksum); /* skip checksum */
+	crc1 = ext2fs_crc16(~0, sb->s_uuid, حجم(fs->super->s_uuid));
+	crc2 = ext2fs_crc16(crc1, &swabgroup, حجم(swabgroup));
+	crc3 = ext2fs_crc16(crc2, desc, انحراف);
+	انحراف += حجم(desc->bg_checksum); /* skip checksum */
 	/* for checksum of struct ext4_group_desc do the rest...*/
-	if (offset < size)
-		crc3 = ext2fs_crc16(crc3, (char *)desc + offset, size - offset);
-#ifdef WORDS_BIGENDIAN
-	if (save_size > ext4_bg_size)
-		crc3 = ext2fs_crc16(crc3, (char *)save_desc + ext4_bg_size,
-				    save_size - ext4_bg_size);
-#endif
+	اگر (انحراف < سائز)
+		crc3 = ext2fs_crc16(crc3, (حرف *)desc + انحراف, سائز - انحراف);
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
+	اگر (save_سائز > ext4_bg_سائز)
+		crc3 = ext2fs_crc16(crc3, (حرف *)save_desc + ext4_bg_سائز,
+				    save_سائز - ext4_bg_سائز);
+#اگر_ختم
 
-	printf("%s UUID %s=%04x, grp %u=%04x: %04x=%04x\n",
-	       msg, e2p_uuid2str(sb->s_uuid), crc1, group, crc2, crc3,
-	       ext2fs_group_desc_csum(fs, group));
+	لکھو("%s UUID %s=%04x, grp %u=%04x: %04x=%04x\n",
+	       پیغام, e2p_uuid2str(sb->s_uuid), crc1, گروہ, crc2, crc3,
+	       ext2fs_گروہ_desc_csum(fs, گروہ));
 }
 
-unsigned char sb_uuid[16] = { 0x4f, 0x25, 0xe8, 0xcf, 0xe7, 0x97, 0x48, 0x23,
+غیرعلامتی حرف sb_uuid[16] = { 0x4f, 0x25, 0xe8, 0xcf, 0xe7, 0x97, 0x48, 0x23,
 			      0xbe, 0xfa, 0xa7, 0x88, 0x4b, 0xae, 0xec, 0xdb };
 
-int main(int argc, char **argv)
+صحیح مین(صحیح argc, حرف **argv)
 {
-	struct ext2_super_block param;
+	ساخت ext2_super_بلاک param;
 	errcode_t		retval;
 	ext2_filsys		fs;
-	int			i;
-	__u16 csum1, csum2, csum_known = 0xd3a4;
+	صحیح			i;
+	__u16 csum1, csum2, csum_معلوم = 0xd3a4;
 
-	memset(&param, 0, sizeof(param));
-	ext2fs_blocks_count_set(&param, 32768);
-#if 0
-	param.s_feature_incompat |= EXT4_FEATURE_INCOMPAT_64BIT;
-	param.s_desc_size = 128;
-	csum_known = 0x5b6e;
-#endif
+	memset(&param, 0, حجم(param));
+	ext2fs_بلاکیں_گنتی_سیٹ(&param, 32768);
+#اگر 0
+	param.s_feature_incompat |= EXT4_FEATURE_INCOMPAT_64_ثنائی_ہندسہ;
+	param.s_desc_سائز = 128;
+	csum_معلوم = 0x5b6e;
+#اگر_ختم
 
-	retval = ext2fs_initialize("test fs", EXT2_FLAG_64BITS, &param,
+	retval = ext2fs_initialize("test fs", EXT2_FLAG_64_بٹ, &param,
 				   test_io_manager, &fs);
-	if (retval) {
+	اگر (retval) {
 		com_err("setup", retval,
 			"While initializing filesystem");
-		exit(1);
+		باہر_نکلو(1);
 	}
-	memcpy(fs->super->s_uuid, sb_uuid, 16);
+	حافظہ_نقل(fs->super->s_uuid, sb_uuid, 16);
 	fs->super->s_feature_ro_compat = EXT4_FEATURE_RO_COMPAT_GDT_CSUM;
 
-	for (i=0; i < fs->group_desc_count; i++) {
-		ext2fs_block_bitmap_loc_set(fs, i, 124);
-		ext2fs_inode_bitmap_loc_set(fs, i, 125);
-		ext2fs_inode_table_loc_set(fs, i, 126);
-		ext2fs_bg_free_blocks_count_set(fs, i, 31119);
-		ext2fs_bg_free_inodes_count_set(fs, i, 15701);
-		ext2fs_bg_used_dirs_count_set(fs, i, 2);
+	برائے (i=0; i < fs->گروہ_desc_گنتی; i++) {
+		ext2fs_بلاک_bitmap_loc_سیٹ(fs, i, 124);
+		ext2fs_inode_bitmap_loc_سیٹ(fs, i, 125);
+		ext2fs_inode_جدول_loc_سیٹ(fs, i, 126);
+		ext2fs_bg_free_بلاکیں_گنتی_سیٹ(fs, i, 31119);
+		ext2fs_bg_free_inodes_گنتی_سیٹ(fs, i, 15701);
+		ext2fs_bg_مستعمل_dirs_گنتی_سیٹ(fs, i, 2);
 		ext2fs_bg_flags_zap(fs, i);
 	};
 
-	csum1 = ext2fs_group_desc_csum(fs, 0);
+	csum1 = ext2fs_گروہ_desc_csum(fs, 0);
 	print_csum("csum0000", fs, 0);
 
-	if (csum1 != csum_known) {
-		printf("checksum for group 0 should be %04x\n", csum_known);
-		exit(1);
+	اگر (csum1 != csum_معلوم) {
+		لکھو("checksum for group 0 should be %04x\n", csum_معلوم);
+		باہر_نکلو(1);
 	}
-	csum2 = ext2fs_group_desc_csum(fs, 1);
+	csum2 = ext2fs_گروہ_desc_csum(fs, 1);
 	print_csum("csum0001", fs, 1);
-	if (csum1 == csum2) {
-		printf("checksums for different groups shouldn't match\n");
-		exit(1);
+	اگر (csum1 == csum2) {
+		لکھو("checksums for different groups shouldn't match\n");
+		باہر_نکلو(1);
 	}
-	csum2 = ext2fs_group_desc_csum(fs, 2);
+	csum2 = ext2fs_گروہ_desc_csum(fs, 2);
 	print_csum("csumffff", fs, 2);
-	if (csum1 == csum2) {
-		printf("checksums for different groups shouldn't match\n");
-		exit(1);
+	اگر (csum1 == csum2) {
+		لکھو("checksums for different groups shouldn't match\n");
+		باہر_نکلو(1);
 	}
-	ext2fs_bg_checksum_set(fs, 0, csum1);
-	csum2 = ext2fs_group_desc_csum(fs, 0);
+	ext2fs_bg_checksum_سیٹ(fs, 0, csum1);
+	csum2 = ext2fs_گروہ_desc_csum(fs, 0);
 	print_csum("csum_set", fs, 0);
-	if (csum1 != csum2) {
-		printf("checksums should not depend on checksum field\n");
-		exit(1);
+	اگر (csum1 != csum2) {
+		لکھو("checksums should not depend on checksum field\n");
+		باہر_نکلو(1);
 	}
-	if (!ext2fs_group_desc_csum_verify(fs, 0)) {
-		printf("checksums should verify against gd_checksum\n");
-		exit(1);
+	اگر (!ext2fs_گروہ_desc_csum_verify(fs, 0)) {
+		لکھو("checksums should verify against gd_checksum\n");
+		باہر_نکلو(1);
 	}
-	memset(fs->super->s_uuid, 0x30, sizeof(fs->super->s_uuid));
+	memset(fs->super->s_uuid, 0x30, حجم(fs->super->s_uuid));
 	print_csum("new_uuid", fs, 0);
-	if (ext2fs_group_desc_csum_verify(fs, 0) != 0) {
-		printf("checksums for different filesystems shouldn't match\n");
-		exit(1);
+	اگر (ext2fs_گروہ_desc_csum_verify(fs, 0) != 0) {
+		لکھو("checksums for different filesystems shouldn't match\n");
+		باہر_نکلو(1);
 	}
-	csum1 = ext2fs_group_desc_csum(fs, 0);
-	ext2fs_bg_checksum_set(fs, 0, csum1);
+	csum1 = ext2fs_گروہ_desc_csum(fs, 0);
+	ext2fs_bg_checksum_سیٹ(fs, 0, csum1);
 	print_csum("csum_new", fs, 0);
-	ext2fs_bg_free_blocks_count_set(fs, 0, 1);
-	csum2 = ext2fs_group_desc_csum(fs, 0);
+	ext2fs_bg_free_بلاکیں_گنتی_سیٹ(fs, 0, 1);
+	csum2 = ext2fs_گروہ_desc_csum(fs, 0);
 	print_csum("csum_blk", fs, 0);
-	if (csum1 == csum2) {
-		printf("checksums for different data shouldn't match\n");
-		exit(1);
+	اگر (csum1 == csum2) {
+		لکھو("checksums for different data shouldn't match\n");
+		باہر_نکلو(1);
 	}
 	ext2fs_free(fs);
 
-	return 0;
+	واپس 0;
 }
-#endif
+#اگر_ختم

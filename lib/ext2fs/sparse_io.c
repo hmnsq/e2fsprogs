@@ -1,527 +1,527 @@
-#include "config.h"
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdint.h>
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#شامل "config.h"
+#شامل <sys/types.h>
+#شامل <sys/stat.h>
+#شامل <fcntl.h>
+#شامل <unistd.h>
+#شامل <stdint.h>
+#شامل "ext2_fs.h"
+#شامل "ext2fs.h"
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
+#اگر_غیر_تعریف_شدہ O_ثنائی
+#تعریف_کرو O_ثنائی 0
+#اگر_ختم
 
-#if !defined(ENABLE_LIBSPARSE)
-static errcode_t sparse_open(const char *name EXT2FS_ATTR((unused)),
-			     int flags EXT2FS_ATTR((unused)),
-			     io_channel *channel EXT2FS_ATTR((unused)))
+#اگر !defined(ENABLE_LIBSPARSE)
+ساکن errcode_t sparse_open(ثابت حرف *name EXT2FS_ATTR((غیر_مستعمل)),
+			     صحیح flags EXT2FS_ATTR((غیر_مستعمل)),
+			     io_channel *channel EXT2FS_ATTR((غیر_مستعمل)))
 {
-	return EXT2_ET_UNIMPLEMENTED;
+	واپس EXT2_ET_UNIMPLEMENTED;
 }
-static errcode_t sparse_close(io_channel channel EXT2FS_ATTR((unused)))
+ساکن errcode_t sparse_close(io_channel channel EXT2FS_ATTR((غیر_مستعمل)))
 {
-	return EXT2_ET_UNIMPLEMENTED;
+	واپس EXT2_ET_UNIMPLEMENTED;
 }
-static struct struct_io_manager struct_sparse_manager = {
+ساکن ساخت struct_io_manager struct_sparse_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse I/O Manager",
 	.open			= sparse_open,
 	.close			= sparse_close,
 };
-static struct struct_io_manager struct_sparsefd_manager = {
+ساکن ساخت struct_io_manager struct_sparsefd_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse fd I/O Manager",
 	.open			= sparse_open,
 	.close			= sparse_close,
 };
-#else
-#include <sparse/sparse.h>
+#ورنہ
+#شامل <sparse/sparse.h>
 
-struct sparse_map {
-	int			fd;
-	char			**blocks;
-	int			block_size;
-	uint64_t		blocks_count;
-	char			*file;
-	struct sparse_file	*sparse_file;
+ساخت sparse_map {
+	صحیح			fd;
+	حرف			**بلاکیں;
+	صحیح			بلاک_سائز;
+	uint64_t		بلاکیں_گنتی;
+	حرف			*file;
+	ساخت sparse_file	*sparse_file;
 	io_channel		channel;
 };
 
-struct sparse_io_params {
-	int			fd;
-	char			*file;
-	uint64_t		blocks_count;
-	unsigned int		block_size;
+ساخت sparse_io_params {
+	صحیح			fd;
+	حرف			*file;
+	uint64_t		بلاکیں_گنتی;
+	غیرعلامتی صحیح		بلاک_سائز;
 };
 
-static errcode_t sparse_write_blk(io_channel channel, unsigned long block,
-				  int count, const void *buf);
+ساکن errcode_t sparse_write_blk(io_channel channel, غیرعلامتی طویل بلاک,
+				  صحیح گنتی, ثابت خالی *buf);
 
-static void free_sparse_blocks(struct sparse_map *sm)
+ساکن خالی free_sparse_بلاکیں(ساخت sparse_map *sm)
 {
 	uint64_t i;
 
-	for (i = 0; i < sm->blocks_count; ++i)
-		free(sm->blocks[i]);
-	free(sm->blocks);
-	sm->blocks = NULL;
+	برائے (i = 0; i < sm->بلاکیں_گنتی; ++i)
+		آزاد(sm->بلاکیں[i]);
+	آزاد(sm->بلاکیں);
+	sm->بلاکیں = تہی;
 }
 
-static int sparse_import_segment(void *priv, const void *data, size_t len,
-				 unsigned int block, unsigned int nr_blocks)
+ساکن صحیح sparse_import_segment(خالی *priv, ثابت خالی *ڈیٹا, size_t len,
+				 غیرعلامتی صحیح بلاک, غیرعلامتی صحیح nr_بلاکیں)
 {
-	struct sparse_map *sm = priv;
+	ساخت sparse_map *sm = priv;
 
 	/* Ignore chunk headers, only write the data */
-	if (!nr_blocks || len % sm->block_size)
-		return 0;
+	اگر (!nr_بلاکیں || len % sm->بلاک_سائز)
+		واپس 0;
 
-	return sparse_write_blk(sm->channel, block, nr_blocks, data);
+	واپس sparse_write_blk(sm->channel, بلاک, nr_بلاکیں, ڈیٹا);
 }
 
-static errcode_t io_manager_import_sparse(struct sparse_io_params *params,
-					  struct sparse_map *sm, io_channel io)
+ساکن errcode_t io_manager_import_sparse(ساخت sparse_io_params *params,
+					  ساخت sparse_map *sm, io_channel io)
 {
-	int fd;
+	صحیح fd;
 	errcode_t retval;
-	struct sparse_file *sparse_file;
+	ساخت sparse_file *sparse_file;
 
-	if (params->fd < 0) {
+	اگر (params->fd < 0) {
 		fd = open(params->file, O_RDONLY);
-		if (fd < 0) {
+		اگر (fd < 0) {
 			retval = -1;
-			goto err_open;
+			جاؤ err_open;
 		}
-	} else
+	} ورنہ
 		fd = params->fd;
 	sparse_file = sparse_file_import(fd, false, false);
-	if (!sparse_file) {
+	اگر (!sparse_file) {
 		retval = -1;
-		goto err_sparse;
+		جاؤ err_sparse;
 	}
 
-	sm->block_size = sparse_file_block_size(sparse_file);
-	sm->blocks_count = (sparse_file_len(sparse_file, 0, 0) - 1)
-				/ sm->block_size + 1;
-	sm->blocks = calloc(sm->blocks_count, sizeof(char*));
-	if (!sm->blocks) {
+	sm->بلاک_سائز = sparse_file_بلاک_سائز(sparse_file);
+	sm->بلاکیں_گنتی = (sparse_file_len(sparse_file, 0, 0) - 1)
+				/ sm->بلاک_سائز + 1;
+	sm->بلاکیں = صفر_حافظہ_دو(sm->بلاکیں_گنتی, حجم(حرف*));
+	اگر (!sm->بلاکیں) {
 		retval = -1;
-		goto err_alloc;
+		جاؤ err_alloc;
 	}
-	io->block_size = sm->block_size;
+	io->بلاک_سائز = sm->بلاک_سائز;
 
 	retval = sparse_file_foreach_chunk(sparse_file, true, false,
 					   sparse_import_segment, sm);
 
-	if (retval)
-		free_sparse_blocks(sm);
+	اگر (retval)
+		free_sparse_بلاکیں(sm);
 err_alloc:
 	sparse_file_destroy(sparse_file);
 err_sparse:
 	close(fd);
 err_open:
-	return retval;
+	واپس retval;
 }
 
-static errcode_t io_manager_configure(struct sparse_io_params *params,
-				      int flags, io_channel io)
+ساکن errcode_t io_manager_configure(ساخت sparse_io_params *params,
+				      صحیح flags, io_channel io)
 {
 	errcode_t retval;
-	uint64_t img_size;
-	struct sparse_map *sm = calloc(1, sizeof(*sm));
-	if (!sm)
-		return EXT2_ET_NO_MEMORY;
+	uint64_t img_سائز;
+	ساخت sparse_map *sm = صفر_حافظہ_دو(1, حجم(*sm));
+	اگر (!sm)
+		واپس EXT2_ET_NO_حافظہ;
 
 	sm->file = params->file;
 	sm->channel = io;
-	io->private_data = sm;
+	io->نجی_ڈیٹا = sm;
 	retval = io_manager_import_sparse(params, sm, io);
-	if (retval) {
-		if (!params->block_size || !params->blocks_count) {
+	اگر (retval) {
+		اگر (!params->بلاک_سائز || !params->بلاکیں_گنتی) {
 			retval = EINVAL;
-			goto err_params;
+			جاؤ err_params;
 		}
-		sm->block_size = params->block_size;
-		sm->blocks_count = params->blocks_count;
-		sm->blocks = calloc(params->blocks_count, sizeof(void*));
-		if (!sm->blocks) {
-			retval = EXT2_ET_NO_MEMORY;
-			goto err_alloc;
+		sm->بلاک_سائز = params->بلاک_سائز;
+		sm->بلاکیں_گنتی = params->بلاکیں_گنتی;
+		sm->بلاکیں = صفر_حافظہ_دو(params->بلاکیں_گنتی, حجم(خالی*));
+		اگر (!sm->بلاکیں) {
+			retval = EXT2_ET_NO_حافظہ;
+			جاؤ err_alloc;
 		}
 	}
-	io->block_size = sm->block_size;
-	img_size = (uint64_t)sm->block_size * sm->blocks_count;
+	io->بلاک_سائز = sm->بلاک_سائز;
+	img_سائز = (uint64_t)sm->بلاک_سائز * sm->بلاکیں_گنتی;
 
-	if (flags & IO_FLAG_RW) {
-		sm->sparse_file = sparse_file_new(sm->block_size, img_size);
-		if (!sm->sparse_file) {
-			retval = EXT2_ET_NO_MEMORY;
-			goto err_alloc;
+	اگر (flags & IO_FLAG_RW) {
+		sm->sparse_file = sparse_file_new(sm->بلاک_سائز, img_سائز);
+		اگر (!sm->sparse_file) {
+			retval = EXT2_ET_NO_حافظہ;
+			جاؤ err_alloc;
 		}
-		if (params->fd < 0) {
-			sm->fd = open(params->file, O_CREAT | O_RDWR | O_TRUNC | O_BINARY,
+		اگر (params->fd < 0) {
+			sm->fd = open(params->file, O_CREAT | O_RDWR | O_TRUNC | O_ثنائی,
 				      0644);
-			if (sm->fd < 0) {
+			اگر (sm->fd < 0) {
 				retval = errno;
-				goto err_open;
+				جاؤ err_open;
 			}
-		} else
+		} ورنہ
 			sm->fd = params->fd;
-	} else {
+	} ورنہ {
 		sm->fd = -1;
-		sm->sparse_file = NULL;
+		sm->sparse_file = تہی;
 	}
-	return 0;
+	واپس 0;
 
 err_open:
 	sparse_file_destroy(sm->sparse_file);
 err_alloc:
-	free_sparse_blocks(sm);
+	free_sparse_بلاکیں(sm);
 err_params:
-	free(sm);
-	return retval;
+	آزاد(sm);
+	واپس retval;
 }
 
-static errcode_t sparse_open_channel(struct sparse_io_params *sparse_params,
-				     int flags, io_channel *channel)
+ساکن errcode_t sparse_open_channel(ساخت sparse_io_params *sparse_params,
+				     صحیح flags, io_channel *channel)
 {
 	errcode_t retval;
 	io_channel io;
 
-	io = calloc(1, sizeof(struct struct_io_channel));
+	io = صفر_حافظہ_دو(1, حجم(ساخت struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
-	io->block_size = 0;
+	io->بلاک_سائز = 0;
 	io->refcount = 1;
 
 	retval = io_manager_configure(sparse_params, flags, io);
-	if (retval) {
-		free(io);
-		return retval;
+	اگر (retval) {
+		آزاد(io);
+		واپس retval;
 	}
 
 	*channel = io;
-	return 0;
+	واپس 0;
 }
 
-static errcode_t read_sparse_argv(const char *name, bool is_fd,
-				  struct sparse_io_params *sparse_params)
+ساکن errcode_t read_sparse_argv(ثابت حرف *name, bool is_fd,
+				  ساخت sparse_io_params *sparse_params)
 {
-	int ret;
+	صحیح ret;
 	sparse_params->fd = -1;
-	sparse_params->block_size = 0;
-	sparse_params->blocks_count = 0;
+	sparse_params->بلاک_سائز = 0;
+	sparse_params->بلاکیں_گنتی = 0;
 
-	sparse_params->file = malloc(strlen(name) + 1);
-	if (!sparse_params->file) {
-		fprintf(stderr, "failed to alloc %zu\n", strlen(name) + 1);
-		return EXT2_ET_NO_MEMORY;
+	sparse_params->file = حافظہ_دو(لڑی_لمبائی(name) + 1);
+	اگر (!sparse_params->file) {
+		fprintf(stderr, "failed to alloc %zu\n", لڑی_لمبائی(name) + 1);
+		واپس EXT2_ET_NO_حافظہ;
 	}
 
-	if (is_fd) {
-		ret = sscanf(name, "(%d):%llu:%u", &sparse_params->fd,
-			     (unsigned long long *)&sparse_params->blocks_count,
-			     &sparse_params->block_size);
-	} else {
-		ret = sscanf(name, "(%[^)])%*[:]%llu%*[:]%u", sparse_params->file,
-			     (unsigned long long *)&sparse_params->blocks_count,
-			     &sparse_params->block_size);
+	اگر (is_fd) {
+		ret = لڑی_سے_پڑھو(name, "(%d):%llu:%u", &sparse_params->fd,
+			     (غیرعلامتی طویل طویل *)&sparse_params->بلاکیں_گنتی,
+			     &sparse_params->بلاک_سائز);
+	} ورنہ {
+		ret = لڑی_سے_پڑھو(name, "(%[^)])%*[:]%llu%*[:]%u", sparse_params->file,
+			     (غیرعلامتی طویل طویل *)&sparse_params->بلاکیں_گنتی,
+			     &sparse_params->بلاک_سائز);
 	}
 
-	if (ret < 1) {
-		free(sparse_params->file);
-		return EINVAL;
+	اگر (ret < 1) {
+		آزاد(sparse_params->file);
+		واپس EINVAL;
 	}
-	return 0;
+	واپس 0;
 }
 
-static errcode_t sparse_open(const char *name, int flags, io_channel *channel)
+ساکن errcode_t sparse_open(ثابت حرف *name, صحیح flags, io_channel *channel)
 {
 	errcode_t retval;
-	struct sparse_io_params sparse_params;
+	ساخت sparse_io_params sparse_params;
 
 	retval = read_sparse_argv(name, false, &sparse_params);
-	if (retval)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	اگر (retval)
+		واپس EXT2_ET_BAD_DEVICE_NAME;
 
 	retval = sparse_open_channel(&sparse_params, flags, channel);
-	if (retval)
-		return retval;
+	اگر (retval)
+		واپس retval;
 	(*channel)->manager = sparse_io_manager;
 
-	return retval;
+	واپس retval;
 }
 
-static errcode_t sparsefd_open(const char *name, int flags, io_channel *channel)
+ساکن errcode_t sparsefd_open(ثابت حرف *name, صحیح flags, io_channel *channel)
 {
 	errcode_t retval;
-	struct sparse_io_params sparse_params;
+	ساخت sparse_io_params sparse_params;
 
 	retval = read_sparse_argv(name, true, &sparse_params);
-	if (retval)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	اگر (retval)
+		واپس EXT2_ET_BAD_DEVICE_NAME;
 
 	retval = sparse_open_channel(&sparse_params, flags, channel);
-	if (retval)
-		return retval;
+	اگر (retval)
+		واپس retval;
 	(*channel)->manager = sparsefd_io_manager;
 
-	return retval;
+	واپس retval;
 }
 
-static errcode_t sparse_merge_blocks(struct sparse_map *sm, uint64_t start,
-					uint64_t num)
+ساکن errcode_t sparse_ملاؤ_بلاکیں(ساخت sparse_map *sm, uint64_t آغاز,
+					uint64_t عدد)
 {
-	char *buf;
+	حرف *buf;
 	uint64_t i;
-	unsigned int block_size = sm->block_size;
+	غیرعلامتی صحیح بلاک_سائز = sm->بلاک_سائز;
 	errcode_t retval = 0;
 
-	buf = calloc(num, block_size);
-	if (!buf) {
+	buf = صفر_حافظہ_دو(عدد, بلاک_سائز);
+	اگر (!buf) {
 		fprintf(stderr, "failed to alloc %llu\n",
-			(unsigned long long)num * block_size);
-		return EXT2_ET_NO_MEMORY;
+			(غیرعلامتی طویل طویل)عدد * بلاک_سائز);
+		واپس EXT2_ET_NO_حافظہ;
 	}
 
-	for (i = 0; i < num; i++) {
-		memcpy(buf + i * block_size, sm->blocks[start + i] , block_size);
-		free(sm->blocks[start + i]);
-		sm->blocks[start + i] = NULL;
+	برائے (i = 0; i < عدد; i++) {
+		حافظہ_نقل(buf + i * بلاک_سائز, sm->بلاکیں[آغاز + i] , بلاک_سائز);
+		آزاد(sm->بلاکیں[آغاز + i]);
+		sm->بلاکیں[آغاز + i] = تہی;
 	}
 
 	/* free_sparse_blocks will release this buf. */
-	sm->blocks[start] = buf;
+	sm->بلاکیں[آغاز] = buf;
 
-	retval = sparse_file_add_data(sm->sparse_file, sm->blocks[start],
-					block_size * num, start);
+	retval = sparse_file_جوڑو_ڈیٹا(sm->sparse_file, sm->بلاکیں[آغاز],
+					بلاک_سائز * عدد, آغاز);
 
-	return retval;
+	واپس retval;
 }
 
-static errcode_t sparse_close_channel(io_channel channel)
+ساکن errcode_t sparse_close_channel(io_channel channel)
 {
 	uint64_t i;
 	errcode_t retval = 0;
-	struct sparse_map *sm = channel->private_data;
+	ساخت sparse_map *sm = channel->نجی_ڈیٹا;
 
-	if (sm->sparse_file) {
-		int64_t chunk_start = (sm->blocks[0] == NULL) ? -1 : 0;
-		for (i = 0; i < sm->blocks_count; ++i) {
-			if (!sm->blocks[i] && chunk_start != -1) {
-				retval = sparse_merge_blocks(sm, chunk_start, i - chunk_start);
-				chunk_start = -1;
-			} else if (sm->blocks[i] && chunk_start == -1) {
-				chunk_start = i;
+	اگر (sm->sparse_file) {
+		int64_t chunk_آغاز = (sm->بلاکیں[0] == تہی) ? -1 : 0;
+		برائے (i = 0; i < sm->بلاکیں_گنتی; ++i) {
+			اگر (!sm->بلاکیں[i] && chunk_آغاز != -1) {
+				retval = sparse_ملاؤ_بلاکیں(sm, chunk_آغاز, i - chunk_آغاز);
+				chunk_آغاز = -1;
+			} ورنہ اگر (sm->بلاکیں[i] && chunk_آغاز == -1) {
+				chunk_آغاز = i;
 			}
-			if (retval)
-				goto ret;
+			اگر (retval)
+				جاؤ ret;
 		}
-		if (chunk_start != -1) {
-			retval = sparse_merge_blocks(sm, chunk_start,
-							sm->blocks_count - chunk_start);
-			if (retval)
-				goto ret;
+		اگر (chunk_آغاز != -1) {
+			retval = sparse_ملاؤ_بلاکیں(sm, chunk_آغاز,
+							sm->بلاکیں_گنتی - chunk_آغاز);
+			اگر (retval)
+				جاؤ ret;
 		}
 		retval = sparse_file_write(sm->sparse_file, sm->fd,
-					   /*gzip*/0, /*sparse*/1, /*crc*/0);
+					   /*gzip*/0, /*sparse*/1, /*چکری_جانچ*/0);
 	}
 
 ret:
-	if (sm->sparse_file)
+	اگر (sm->sparse_file)
 		sparse_file_destroy(sm->sparse_file);
-	free_sparse_blocks(sm);
-	free(sm->file);
-	free(sm);
-	free(channel);
-	return retval;
+	free_sparse_بلاکیں(sm);
+	آزاد(sm->file);
+	آزاد(sm);
+	آزاد(channel);
+	واپس retval;
 }
 
-static errcode_t sparse_close(io_channel channel)
+ساکن errcode_t sparse_close(io_channel channel)
 {
 	errcode_t retval;
-	struct sparse_map *sm = channel->private_data;
-	int fd = sm->fd;
+	ساخت sparse_map *sm = channel->نجی_ڈیٹا;
+	صحیح fd = sm->fd;
 
 	retval = sparse_close_channel(channel);
-	if (fd >= 0)
+	اگر (fd >= 0)
 		close(fd);
 
-	return retval;
+	واپس retval;
 }
 
-static errcode_t sparse_set_blksize(io_channel channel, int blksize)
+ساکن errcode_t sparse_سیٹ_blksize(io_channel channel, صحیح blksize)
 {
-	channel->block_size = blksize;
-	return 0;
+	channel->بلاک_سائز = blksize;
+	واپس 0;
 }
 
-static blk64_t block_to_sparse_block(blk64_t block, blk64_t *offset,
-			       io_channel channel, struct sparse_map *sm)
+ساکن blk64_t بلاک_مقصد_sparse_بلاک(blk64_t بلاک, blk64_t *انحراف,
+			       io_channel channel, ساخت sparse_map *sm)
 {
-	int ratio;
-	blk64_t ret = block;
+	صحیح تناسب;
+	blk64_t ret = بلاک;
 
-	ratio = sm->block_size / channel->block_size;
-	ret /= ratio;
-	*offset = (block % ratio) * channel->block_size;
+	تناسب = sm->بلاک_سائز / channel->بلاک_سائز;
+	ret /= تناسب;
+	*انحراف = (بلاک % تناسب) * channel->بلاک_سائز;
 
-	return ret;
+	واپس ret;
 }
 
-static errcode_t check_block_size(io_channel channel, struct sparse_map *sm)
+ساکن errcode_t check_بلاک_سائز(io_channel channel, ساخت sparse_map *sm)
 {
-	if (sm->block_size >= channel->block_size)
-		return 0;
-	return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	اگر (sm->بلاک_سائز >= channel->بلاک_سائز)
+		واپس 0;
+	واپس EXT2_ET_UNEXPECTED_بلاک_سائز;
 }
 
-static errcode_t sparse_read_blk64(io_channel channel, blk64_t block,
-				   int count, void *buf)
+ساکن errcode_t sparse_read_blk64(io_channel channel, blk64_t بلاک,
+				   صحیح گنتی, خالی *buf)
 {
-	int i;
-	char *out = buf;
-	blk64_t offset = 0, cur_block;
-	struct sparse_map *sm = channel->private_data;
+	صحیح i;
+	حرف *برآمد = buf;
+	blk64_t انحراف = 0, cur_بلاک;
+	ساخت sparse_map *sm = channel->نجی_ڈیٹا;
 
-	if (check_block_size(channel, sm))
-		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	اگر (check_بلاک_سائز(channel, sm))
+		واپس EXT2_ET_UNEXPECTED_بلاک_سائز;
 
-	if (count < 0) { //partial read
-		count = -count;
-		cur_block = block_to_sparse_block(block, &offset, channel, sm);
-		if (sm->blocks[cur_block])
-			memcpy(out, (sm->blocks[cur_block]) + offset, count);
-		else
-			memset(out, 0, count);
-	} else {
-		for (i = 0; i < count; ++i) {
-			cur_block = block_to_sparse_block(block + i, &offset,
+	اگر (گنتی < 0) { //partial read
+		گنتی = -گنتی;
+		cur_بلاک = بلاک_مقصد_sparse_بلاک(بلاک, &انحراف, channel, sm);
+		اگر (sm->بلاکیں[cur_بلاک])
+			حافظہ_نقل(برآمد, (sm->بلاکیں[cur_بلاک]) + انحراف, گنتی);
+		ورنہ
+			memset(برآمد, 0, گنتی);
+	} ورنہ {
+		برائے (i = 0; i < گنتی; ++i) {
+			cur_بلاک = بلاک_مقصد_sparse_بلاک(بلاک + i, &انحراف,
 						    channel, sm);
-			if (sm->blocks[cur_block])
-				memcpy(out + (i * channel->block_size),
-				       sm->blocks[cur_block] + offset,
-				       channel->block_size);
-			else if (sm->blocks)
-				memset(out + (i * channel->block_size), 0,
-				       channel->block_size);
+			اگر (sm->بلاکیں[cur_بلاک])
+				حافظہ_نقل(برآمد + (i * channel->بلاک_سائز),
+				       sm->بلاکیں[cur_بلاک] + انحراف,
+				       channel->بلاک_سائز);
+			ورنہ اگر (sm->بلاکیں)
+				memset(برآمد + (i * channel->بلاک_سائز), 0,
+				       channel->بلاک_سائز);
 		}
 	}
-	return 0;
+	واپس 0;
 }
 
-static errcode_t sparse_read_blk(io_channel channel, unsigned long block,
-				 int count, void *buf)
+ساکن errcode_t sparse_read_blk(io_channel channel, غیرعلامتی طویل بلاک,
+				 صحیح گنتی, خالی *buf)
 {
-	return sparse_read_blk64(channel, block, count, buf);
+	واپس sparse_read_blk64(channel, بلاک, گنتی, buf);
 }
 
-static errcode_t sparse_write_blk64(io_channel channel, blk64_t block,
-				    int count, const void *buf)
+ساکن errcode_t sparse_write_blk64(io_channel channel, blk64_t بلاک,
+				    صحیح گنتی, ثابت خالی *buf)
 {
-	int i;
-	blk64_t offset = 0, cur_block;
-	const char *in = buf;
-	struct sparse_map *sm = channel->private_data;
+	صحیح i;
+	blk64_t انحراف = 0, cur_بلاک;
+	ثابت حرف *اندر = buf;
+	ساخت sparse_map *sm = channel->نجی_ڈیٹا;
 
-	if (check_block_size(channel, sm))
-		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	اگر (check_بلاک_سائز(channel, sm))
+		واپس EXT2_ET_UNEXPECTED_بلاک_سائز;
 
-	if (count < 0) { //partial write
-		count = -count;
-		cur_block = block_to_sparse_block(block, &offset, channel,
+	اگر (گنتی < 0) { //partial write
+		گنتی = -گنتی;
+		cur_بلاک = بلاک_مقصد_sparse_بلاک(بلاک, &انحراف, channel,
 						  sm);
-		if (!sm->blocks[cur_block]) {
-			sm->blocks[cur_block] = calloc(1, sm->block_size);
-			if (!sm->blocks[cur_block])
-				return EXT2_ET_NO_MEMORY;
+		اگر (!sm->بلاکیں[cur_بلاک]) {
+			sm->بلاکیں[cur_بلاک] = صفر_حافظہ_دو(1, sm->بلاک_سائز);
+			اگر (!sm->بلاکیں[cur_بلاک])
+				واپس EXT2_ET_NO_حافظہ;
 		}
-		memcpy(sm->blocks[cur_block] + offset, in, count);
-	} else {
-		for (i = 0; i < count; ++i) {
-			if (block + i >= sm->blocks_count)
-				return 0;
-			cur_block = block_to_sparse_block(block + i, &offset,
+		حافظہ_نقل(sm->بلاکیں[cur_بلاک] + انحراف, اندر, گنتی);
+	} ورنہ {
+		برائے (i = 0; i < گنتی; ++i) {
+			اگر (بلاک + i >= sm->بلاکیں_گنتی)
+				واپس 0;
+			cur_بلاک = بلاک_مقصد_sparse_بلاک(بلاک + i, &انحراف,
 						    channel, sm);
-			if (!sm->blocks[cur_block]) {
-				sm->blocks[cur_block] =
-					calloc(1, sm->block_size);
-				if (!sm->blocks[cur_block])
-					return EXT2_ET_NO_MEMORY;
+			اگر (!sm->بلاکیں[cur_بلاک]) {
+				sm->بلاکیں[cur_بلاک] =
+					صفر_حافظہ_دو(1, sm->بلاک_سائز);
+				اگر (!sm->بلاکیں[cur_بلاک])
+					واپس EXT2_ET_NO_حافظہ;
 			}
-			memcpy(sm->blocks[cur_block] + offset,
-			       in + (i * channel->block_size),
-			       channel->block_size);
+			حافظہ_نقل(sm->بلاکیں[cur_بلاک] + انحراف,
+			       اندر + (i * channel->بلاک_سائز),
+			       channel->بلاک_سائز);
 		}
 	}
-	return 0;
+	واپس 0;
 }
 
-static errcode_t sparse_write_blk(io_channel channel, unsigned long block,
-				  int count, const void *buf)
+ساکن errcode_t sparse_write_blk(io_channel channel, غیرعلامتی طویل بلاک,
+				  صحیح گنتی, ثابت خالی *buf)
 {
-	return sparse_write_blk64(channel, block, count, buf);
+	واپس sparse_write_blk64(channel, بلاک, گنتی, buf);
 }
 
-static errcode_t sparse_discard(io_channel channel __attribute__((unused)),
-				blk64_t blk, unsigned long long count)
+ساکن errcode_t sparse_discard(io_channel channel __attribute__((غیر_مستعمل)),
+				blk64_t blk, غیرعلامتی طویل طویل گنتی)
 {
-	blk64_t cur_block, offset;
-	struct sparse_map *sm = channel->private_data;
+	blk64_t cur_بلاک, انحراف;
+	ساخت sparse_map *sm = channel->نجی_ڈیٹا;
 
-	if (check_block_size(channel, sm))
-		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	اگر (check_بلاک_سائز(channel, sm))
+		واپس EXT2_ET_UNEXPECTED_بلاک_سائز;
 
-	for (unsigned long long i = 0; i < count; ++i) {
-		if (blk + i >= sm->blocks_count)
-			return 0;
-		cur_block = block_to_sparse_block(blk + i, &offset, channel,
+	برائے (غیرعلامتی طویل طویل i = 0; i < گنتی; ++i) {
+		اگر (blk + i >= sm->بلاکیں_گنتی)
+			واپس 0;
+		cur_بلاک = بلاک_مقصد_sparse_بلاک(blk + i, &انحراف, channel,
 						  sm);
-		if (!sm->blocks[cur_block])
-			continue;
-		free(sm->blocks[cur_block]);
-		sm->blocks[cur_block] = NULL;
+		اگر (!sm->بلاکیں[cur_بلاک])
+			جاری;
+		آزاد(sm->بلاکیں[cur_بلاک]);
+		sm->بلاکیں[cur_بلاک] = تہی;
 	}
-	return 0;
+	واپس 0;
 }
 
-static errcode_t sparse_zeroout(io_channel channel, blk64_t blk,
-				unsigned long long count)
+ساکن errcode_t sparse_zeroout(io_channel channel, blk64_t blk,
+				غیرعلامتی طویل طویل گنتی)
 {
-	return sparse_discard(channel, blk, count);
+	واپس sparse_discard(channel, blk, گنتی);
 }
 
-static errcode_t sparse_flush(io_channel channel __attribute__((unused)))
+ساکن errcode_t sparse_flush(io_channel channel __attribute__((غیر_مستعمل)))
 {
-	return 0;
+	واپس 0;
 }
 
-static errcode_t sparse_set_option(io_channel channel __attribute__((unused)),
-                                   const char *option __attribute__((unused)),
-                                   const char *arg __attribute__((unused)))
+ساکن errcode_t sparse_سیٹ_option(io_channel channel __attribute__((غیر_مستعمل)),
+                                   ثابت حرف *option __attribute__((غیر_مستعمل)),
+                                   ثابت حرف *arg __attribute__((غیر_مستعمل)))
 {
-	return 0;
+	واپس 0;
 }
 
-static errcode_t sparse_cache_readahead(
-			io_channel channel __attribute__((unused)),
-			blk64_t blk __attribute__((unused)),
-			unsigned long long count __attribute__((unused)))
+ساکن errcode_t sparse_cache_readahead(
+			io_channel channel __attribute__((غیر_مستعمل)),
+			blk64_t blk __attribute__((غیر_مستعمل)),
+			غیرعلامتی طویل طویل گنتی __attribute__((غیر_مستعمل)))
 {
-	return 0;
+	واپس 0;
 }
 
-static struct struct_io_manager struct_sparse_manager = {
+ساکن ساخت struct_io_manager struct_sparse_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse I/O Manager",
 	.open			= sparse_open,
 	.close			= sparse_close,
-	.set_blksize		= sparse_set_blksize,
+	.سیٹ_blksize		= sparse_سیٹ_blksize,
 	.read_blk		= sparse_read_blk,
 	.write_blk		= sparse_write_blk,
 	.flush			= sparse_flush,
-	.write_byte		= NULL,
-	.set_option		= sparse_set_option,
-	.get_stats		= NULL,
+	.write_byte		= تہی,
+	.سیٹ_option		= sparse_سیٹ_option,
+	.get_stats		= تہی,
 	.read_blk64		= sparse_read_blk64,
 	.write_blk64		= sparse_write_blk64,
 	.discard		= sparse_discard,
@@ -529,18 +529,18 @@ static struct struct_io_manager struct_sparse_manager = {
 	.zeroout		= sparse_zeroout,
 };
 
-static struct struct_io_manager struct_sparsefd_manager = {
+ساکن ساخت struct_io_manager struct_sparsefd_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse fd I/O Manager",
 	.open			= sparsefd_open,
 	.close			= sparse_close,
-	.set_blksize		= sparse_set_blksize,
+	.سیٹ_blksize		= sparse_سیٹ_blksize,
 	.read_blk		= sparse_read_blk,
 	.write_blk		= sparse_write_blk,
 	.flush			= sparse_flush,
-	.write_byte		= NULL,
-	.set_option		= sparse_set_option,
-	.get_stats		= NULL,
+	.write_byte		= تہی,
+	.سیٹ_option		= sparse_سیٹ_option,
+	.get_stats		= تہی,
 	.read_blk64		= sparse_read_blk64,
 	.write_blk64		= sparse_write_blk64,
 	.discard		= sparse_discard,
@@ -548,7 +548,7 @@ static struct struct_io_manager struct_sparsefd_manager = {
 	.zeroout		= sparse_zeroout,
 };
 
-#endif
+#اگر_ختم
 
 io_manager sparse_io_manager = &struct_sparse_manager;
 io_manager sparsefd_io_manager = &struct_sparsefd_manager;

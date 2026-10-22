@@ -9,128 +9,128 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
+#شامل "config.h"
+#شامل <stdio.h>
+#شامل <string.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
+#شامل <fcntl.h>
+#شامل <time.h>
+#شامل <sys/stat.h>
+#شامل <sys/types.h>
+#اگر HAVE_ERRNO_H
+#شامل <errno.h>
+#اگر_ختم
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fs.h"
 
 blk64_t test_vec[] = { 8, 12, 24, 34, 43, 44, 100, 0 };
 
 ext2_filsys	test_fs;
-ext2fs_block_bitmap bad_block_map, touched_map;
+ext2fs_بلاک_bitmap bad_بلاک_map, touched_map;
 ext2fs_inode_bitmap bad_inode_map;
 badblocks_list	test_badblocks;
 
-int first_no_comma = 1;
-int failed = 0;
+صحیح پہلا_no_comma = 1;
+صحیح failed = 0;
 
-static void iscan_test_read_blk64(unsigned long long block, int count, errcode_t err)
+ساکن خالی iscan_test_read_blk64(غیرعلامتی طویل طویل بلاک, صحیح گنتی, errcode_t err)
 {
-	int	i;
+	صحیح	i;
 
-	if (first_no_comma)
-		first_no_comma = 0;
-	else
-		printf(", ");
+	اگر (پہلا_no_comma)
+		پہلا_no_comma = 0;
+	ورنہ
+		لکھو(", ");
 
-	if (count > 1)
-		printf("%llu-%llu", block, block+count-1);
-	else
-		printf("%llu", block);
+	اگر (گنتی > 1)
+		لکھو("%llu-%llu", بلاک, بلاک+گنتی-1);
+	ورنہ
+		لکھو("%llu", بلاک);
 
-	for (i=0; i < count; i++, block++) {
-		if (ext2fs_test_block_bitmap2(touched_map, block)) {
-			printf("\nDuplicate block?!? --- %llu\n", block);
+	برائے (i=0; i < گنتی; i++, بلاک++) {
+		اگر (ext2fs_test_بلاک_bitmap2(touched_map, بلاک)) {
+			لکھو("\nDuplicate block?!? --- %llu\n", بلاک);
 			failed++;
-			first_no_comma = 1;
+			پہلا_no_comma = 1;
 		}
-		ext2fs_mark_block_bitmap2(touched_map, block);
+		ext2fs_mark_بلاک_bitmap2(touched_map, بلاک);
 	}
 }
 
-static void iscan_test_read_blk(unsigned long block, int count, errcode_t err)
+ساکن خالی iscan_test_read_blk(غیرعلامتی طویل بلاک, صحیح گنتی, errcode_t err)
 {
-	iscan_test_read_blk64(block, count, err);
+	iscan_test_read_blk64(بلاک, گنتی, err);
 }
 
 /*
  * Setup the variables for doing the inode scan test.
  */
-static void setup(void)
+ساکن خالی تیاری(خالی)
 {
 	errcode_t	retval;
-	int		i;
-	struct ext2_super_block param;
+	صحیح		i;
+	ساخت ext2_super_بلاک param;
 
-	initialize_ext2_error_table();
+	initialize_ext2_error_جدول();
 
-	memset(&param, 0, sizeof(param));
-	ext2fs_blocks_count_set(&param, 12000);
+	memset(&param, 0, حجم(param));
+	ext2fs_بلاکیں_گنتی_سیٹ(&param, 12000);
 
 
 	test_io_cb_read_blk = iscan_test_read_blk;
 	test_io_cb_read_blk64 = iscan_test_read_blk64;
 
-	retval = ext2fs_initialize("test fs", EXT2_FLAG_64BITS, &param,
+	retval = ext2fs_initialize("test fs", EXT2_FLAG_64_بٹ, &param,
 				   test_io_manager, &test_fs);
-	if (retval) {
+	اگر (retval) {
 		com_err("setup", retval,
 			"While initializing filesystem");
-		exit(1);
+		باہر_نکلو(1);
 	}
 	retval = ext2fs_allocate_tables(test_fs);
-	if (retval) {
+	اگر (retval) {
 		com_err("setup", retval,
 			"While allocating tables for test filesystem");
-		exit(1);
+		باہر_نکلو(1);
 	}
-	retval = ext2fs_allocate_block_bitmap(test_fs, "bad block map",
-					      &bad_block_map);
-	if (retval) {
+	retval = ext2fs_allocate_بلاک_bitmap(test_fs, "bad block map",
+					      &bad_بلاک_map);
+	اگر (retval) {
 		com_err("setup", retval,
 			"While allocating bad_block bitmap");
-		exit(1);
+		باہر_نکلو(1);
 	}
-	retval = ext2fs_allocate_block_bitmap(test_fs, "touched map",
+	retval = ext2fs_allocate_بلاک_bitmap(test_fs, "touched map",
 					      &touched_map);
-	if (retval) {
+	اگر (retval) {
 		com_err("setup", retval,
 			"While allocating touched block bitmap");
-		exit(1);
+		باہر_نکلو(1);
 	}
 	retval = ext2fs_allocate_inode_bitmap(test_fs, "bad inode map",
 					      &bad_inode_map);
-	if (retval) {
+	اگر (retval) {
 		com_err("setup", retval,
 			"While allocating bad inode bitmap");
-		exit(1);
+		باہر_نکلو(1);
 	}
 
 	retval = ext2fs_badblocks_list_create(&test_badblocks, 5);
-	if (retval) {
+	اگر (retval) {
 		com_err("setup", retval, "while creating badblocks list");
-		exit(1);
+		باہر_نکلو(1);
 	}
-	for (i=0; test_vec[i]; i++) {
-		retval = ext2fs_badblocks_list_add(test_badblocks, test_vec[i]);
-		if (retval) {
+	برائے (i=0; test_vec[i]; i++) {
+		retval = ext2fs_badblocks_list_جوڑو(test_badblocks, test_vec[i]);
+		اگر (retval) {
 			com_err("setup", retval,
 				"while adding test vector %d", i);
-			exit(1);
+			باہر_نکلو(1);
 		}
-		ext2fs_mark_block_bitmap2(bad_block_map, test_vec[i]);
+		ext2fs_mark_بلاک_bitmap2(bad_بلاک_map, test_vec[i]);
 	}
 	test_fs->badblocks = test_badblocks;
 }
@@ -138,90 +138,90 @@ static void setup(void)
 /*
  * Iterate using inode_scan
  */
-static void iterate(void)
+ساکن خالی iterate(خالی)
 {
-	struct ext2_inode inode;
-	ext2_inode_scan	scan;
+	ساخت ext2_inode inode;
+	ext2_inode_جائزہ	جائزہ;
 	errcode_t	retval;
 	ext2_ino_t	ino;
 
-	retval = ext2fs_open_inode_scan(test_fs, 8, &scan);
-	if (retval) {
+	retval = ext2fs_open_inode_جائزہ(test_fs, 8, &جائزہ);
+	اگر (retval) {
 		com_err("iterate", retval, "While opening inode scan");
-		exit(1);
+		باہر_نکلو(1);
 	}
-	printf("Reading blocks: ");
-	retval = ext2fs_get_next_inode(scan, &ino, &inode);
-	if (retval) {
+	لکھو("Reading blocks: ");
+	retval = ext2fs_get_اگلا_inode(جائزہ, &ino, &inode);
+	اگر (retval) {
 		com_err("iterate", retval, "while reading first inode");
-		exit(1);
+		باہر_نکلو(1);
 	}
-	while (ino) {
-		retval = ext2fs_get_next_inode(scan, &ino, &inode);
-		if (retval == EXT2_ET_BAD_BLOCK_IN_INODE_TABLE) {
+	جب (ino) {
+		retval = ext2fs_get_اگلا_inode(جائزہ, &ino, &inode);
+		اگر (retval == EXT2_ET_BAD_بلاک_اندر_INODE_جدول) {
 			ext2fs_mark_inode_bitmap2(bad_inode_map, ino);
-			continue;
+			جاری;
 		}
-		if (retval) {
+		اگر (retval) {
 			com_err("iterate", retval,
 				"while getting next inode");
-			exit(1);
+			باہر_نکلو(1);
 		}
 	}
-	printf("\n");
-	ext2fs_close_inode_scan(scan);
+	لکھو("\n");
+	ext2fs_close_inode_جائزہ(جائزہ);
 }
 
 /*
  * Verify the touched map
  */
-static void check_map(void)
+ساکن خالی check_map(خالی)
 {
-	int	i, j, first=1;
+	صحیح	i, j, پہلا=1;
 	blk64_t	blk;
 
-	for (i=0; test_vec[i]; i++) {
-		if (ext2fs_test_block_bitmap2(touched_map, test_vec[i])) {
-			printf("Bad block was touched --- %llu\n",
-			       (unsigned long long) test_vec[i]);
+	برائے (i=0; test_vec[i]; i++) {
+		اگر (ext2fs_test_بلاک_bitmap2(touched_map, test_vec[i])) {
+			لکھو("Bad block was touched --- %llu\n",
+			       (غیرعلامتی طویل طویل) test_vec[i]);
 			failed++;
-			first_no_comma = 1;
+			پہلا_no_comma = 1;
 		}
-		ext2fs_mark_block_bitmap2(touched_map, test_vec[i]);
+		ext2fs_mark_بلاک_bitmap2(touched_map, test_vec[i]);
 	}
-	for (i = 0; i < test_fs->group_desc_count; i++) {
-		for (j=0, blk = ext2fs_inode_table_loc(test_fs, i);
-		     j < test_fs->inode_blocks_per_group;
+	برائے (i = 0; i < test_fs->گروہ_desc_گنتی; i++) {
+		برائے (j=0, blk = ext2fs_inode_جدول_loc(test_fs, i);
+		     j < test_fs->inode_بلاکیں_فی_گروہ;
 		     j++, blk++) {
-			if (!ext2fs_test_block_bitmap2(touched_map, blk) &&
-			    !ext2fs_test_block_bitmap2(bad_block_map, blk)) {
-				printf("Missing block --- %llu\n",
-				       (unsigned long long) blk);
+			اگر (!ext2fs_test_بلاک_bitmap2(touched_map, blk) &&
+			    !ext2fs_test_بلاک_bitmap2(bad_بلاک_map, blk)) {
+				لکھو("Missing block --- %llu\n",
+				       (غیرعلامتی طویل طویل) blk);
 				failed++;
 			}
 		}
 	}
-	printf("Bad inodes: ");
-	for (i=1; i <= test_fs->super->s_inodes_count; i++) {
-		if (ext2fs_test_inode_bitmap2(bad_inode_map, i)) {
-			if (first)
-				first = 0;
-			else
-				printf(", ");
-			printf("%u", i);
+	لکھو("Bad inodes: ");
+	برائے (i=1; i <= test_fs->super->s_inodes_گنتی; i++) {
+		اگر (ext2fs_test_inode_bitmap2(bad_inode_map, i)) {
+			اگر (پہلا)
+				پہلا = 0;
+			ورنہ
+				لکھو(", ");
+			لکھو("%u", i);
 		}
 	}
-	printf("\n");
+	لکھو("\n");
 }
 
 
-int main(int argc, char **argv)
+صحیح مین(صحیح argc, حرف **argv)
 {
-	setup();
+	تیاری();
 	iterate();
 	check_map();
-	if (!failed)
-		printf("Inode scan tested OK!\n");
-	return failed;
+	اگر (!failed)
+		لکھو("Inode scan tested OK!\n");
+	واپس failed;
 }
 

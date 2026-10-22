@@ -9,92 +9,92 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#شامل "config.h"
+#شامل <stdio.h>
+#شامل <string.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fs.h"
 
-struct link_struct  {
-	const char	*name;
-	int		namelen;
+ساخت link_struct  {
+	ثابت حرف	*name;
+	صحیح		namelen;
 	ext2_ino_t	inode;
-	int		flags;
-	struct ext2_dir_entry *prev;
-	int		done;
+	صحیح		flags;
+	ساخت ext2_dir_اندراج *پچھلا;
+	صحیح		مکمل;
 };
 
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-static int unlink_proc(struct ext2_dir_entry *dirent,
-		     int	offset,
-		     int	blocksize EXT2FS_ATTR((unused)),
-		     char	*buf EXT2FS_ATTR((unused)),
-		     void	*priv_data)
+#اگر_تعریف_شدہ __TURBOC__
+ #ہدایت argsused
+#اگر_ختم
+ساکن صحیح unlink_proc(ساخت ext2_dir_اندراج *dirent,
+		     صحیح	انحراف,
+		     صحیح	blocksize EXT2FS_ATTR((غیر_مستعمل)),
+		     حرف	*buf EXT2FS_ATTR((غیر_مستعمل)),
+		     خالی	*priv_ڈیٹا)
 {
-	struct link_struct *ls = (struct link_struct *) priv_data;
-	struct ext2_dir_entry *prev;
+	ساخت link_struct *ls = (ساخت link_struct *) priv_ڈیٹا;
+	ساخت ext2_dir_اندراج *پچھلا;
 
-	prev = ls->prev;
-	ls->prev = dirent;
+	پچھلا = ls->پچھلا;
+	ls->پچھلا = dirent;
 
-	if (ls->name) {
-		if (ext2fs_dirent_name_len(dirent) != ls->namelen)
-			return 0;
-		if (strncmp(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
-			return 0;
+	اگر (ls->name) {
+		اگر (ext2fs_dirent_name_len(dirent) != ls->namelen)
+			واپس 0;
+		اگر (لڑی_موازنہ(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
+			واپس 0;
 	}
-	if (!(ls->flags & EXT2FS_UNLINK_FORCE) && ls->inode) {
-		if (dirent->inode != ls->inode)
-			return 0;
-	} else {
-		if (!dirent->inode)
-			return 0;
+	اگر (!(ls->flags & EXT2FS_UNLINK_FORCE) && ls->inode) {
+		اگر (dirent->inode != ls->inode)
+			واپس 0;
+	} ورنہ {
+		اگر (!dirent->inode)
+			واپس 0;
 	}
 
-	if (offset)
-		prev->rec_len += dirent->rec_len;
-	else
+	اگر (انحراف)
+		پچھلا->rec_len += dirent->rec_len;
+	ورنہ
 		dirent->inode = 0;
-	ls->done++;
-	return DIRENT_ABORT|DIRENT_CHANGED;
+	ls->مکمل++;
+	واپس DIRENT_ABORT|DIRENT_بدلا;
 }
 
-#ifdef __TURBOC__
- #pragma argsused
-#endif
+#اگر_تعریف_شدہ __TURBOC__
+ #ہدایت argsused
+#اگر_ختم
 errcode_t ext2fs_unlink(ext2_filsys fs, ext2_ino_t dir,
-			const char *name, ext2_ino_t ino,
-			int flags)
+			ثابت حرف *name, ext2_ino_t ino,
+			صحیح flags)
 {
 	errcode_t	retval;
-	struct link_struct ls;
+	ساخت link_struct ls;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!name && !ino)
-		return EXT2_ET_INVALID_ARGUMENT;
+	اگر (!name && !ino)
+		واپس EXT2_ET_INVALID_دلیل;
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	اگر (!(fs->flags & EXT2_FLAG_RW))
+		واپس EXT2_ET_RO_FILSYS;
 
 	ls.name = name;
-	ls.namelen = name ? strlen(name) : 0;
+	ls.namelen = name ? لڑی_لمبائی(name) : 0;
 	ls.inode = ino;
 	ls.flags = flags;
-	ls.done = 0;
-	ls.prev = 0;
+	ls.مکمل = 0;
+	ls.پچھلا = 0;
 
-	retval = ext2fs_dir_iterate(fs, dir, DIRENT_FLAG_INCLUDE_EMPTY,
+	retval = ext2fs_dir_iterate(fs, dir, DIRENT_FLAG_INCLUDE_خالی_خانے,
 				    0, unlink_proc, &ls);
-	if (retval)
-		return retval;
+	اگر (retval)
+		واپس retval;
 
-	return (ls.done) ? 0 : EXT2_ET_DIR_NO_SPACE;
+	واپس (ls.مکمل) ? 0 : EXT2_ET_DIR_NO_SPACE;
 }
 

@@ -10,207 +10,207 @@
  * %End-Header%
  */
 
-#ifdef WORDS_BIGENDIAN
-#define ext2fs_cpu_to_le64(x) ((__force __le64)ext2fs_swab64((__u64)(x)))
-#define ext2fs_le64_to_cpu(x) ext2fs_swab64((__force __u64)(__le64)(x))
-#define ext2fs_cpu_to_le32(x) ((__force __le32)ext2fs_swab32((__u32)(x)))
-#define ext2fs_le32_to_cpu(x) ext2fs_swab32((__force __u32)(__le32)(x))
-#define ext2fs_cpu_to_le16(x) ((__force __le16)ext2fs_swab16((__u16)(x)))
-#define ext2fs_le16_to_cpu(x) ext2fs_swab16((__force __u16)(__le16)(x))
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
+#تعریف_کرو ext2fs_cpu_مقصد_le64(x) ((__force __le64)ext2fs_swab64((__u64)(x)))
+#تعریف_کرو ext2fs_le64_مقصد_cpu(x) ext2fs_swab64((__force __u64)(__le64)(x))
+#تعریف_کرو ext2fs_cpu_مقصد_le32(x) ((__force __le32)ext2fs_swab32((__u32)(x)))
+#تعریف_کرو ext2fs_le32_مقصد_cpu(x) ext2fs_swab32((__force __u32)(__le32)(x))
+#تعریف_کرو ext2fs_cpu_مقصد_le16(x) ((__force __le16)ext2fs_swab16((__u16)(x)))
+#تعریف_کرو ext2fs_le16_مقصد_cpu(x) ext2fs_swab16((__force __u16)(__le16)(x))
 
-#define ext2fs_cpu_to_be64(x) ((__force __be64)(__u64)(x))
-#define ext2fs_be64_to_cpu(x) ((__force __u64)(__be64)(x))
-#define ext2fs_cpu_to_be32(x) ((__force __be32)(__u32)(x))
-#define ext2fs_be32_to_cpu(x) ((__force __u32)(__be32)(x))
-#define ext2fs_cpu_to_be16(x) ((__force __be16)(__u16)(x))
-#define ext2fs_be16_to_cpu(x) ((__force __u16)(__be16)(x))
-#else
-#define ext2fs_cpu_to_le64(x) ((__force __le64)(__u64)(x))
-#define ext2fs_le64_to_cpu(x) ((__force __u64)(__le64)(x))
-#define ext2fs_cpu_to_le32(x) ((__force __le32)(__u32)(x))
-#define ext2fs_le32_to_cpu(x) ((__force __u32)(__le32)(x))
-#define ext2fs_cpu_to_le16(x) ((__force __le16)(__u16)(x))
-#define ext2fs_le16_to_cpu(x) ((__force __u16)(__le16)(x))
+#تعریف_کرو ext2fs_cpu_مقصد_be64(x) ((__force __be64)(__u64)(x))
+#تعریف_کرو ext2fs_be64_مقصد_cpu(x) ((__force __u64)(__be64)(x))
+#تعریف_کرو ext2fs_cpu_مقصد_be32(x) ((__force __be32)(__u32)(x))
+#تعریف_کرو ext2fs_be32_مقصد_cpu(x) ((__force __u32)(__be32)(x))
+#تعریف_کرو ext2fs_cpu_مقصد_be16(x) ((__force __be16)(__u16)(x))
+#تعریف_کرو ext2fs_be16_مقصد_cpu(x) ((__force __u16)(__be16)(x))
+#ورنہ
+#تعریف_کرو ext2fs_cpu_مقصد_le64(x) ((__force __le64)(__u64)(x))
+#تعریف_کرو ext2fs_le64_مقصد_cpu(x) ((__force __u64)(__le64)(x))
+#تعریف_کرو ext2fs_cpu_مقصد_le32(x) ((__force __le32)(__u32)(x))
+#تعریف_کرو ext2fs_le32_مقصد_cpu(x) ((__force __u32)(__le32)(x))
+#تعریف_کرو ext2fs_cpu_مقصد_le16(x) ((__force __le16)(__u16)(x))
+#تعریف_کرو ext2fs_le16_مقصد_cpu(x) ((__force __u16)(__le16)(x))
 
-#define ext2fs_cpu_to_be64(x) ((__force __be64)ext2fs_swab64((__u64)(x)))
-#define ext2fs_be64_to_cpu(x) ext2fs_swab64((__force __u64)(__be64)(x))
-#define ext2fs_cpu_to_be32(x) ((__force __be32)ext2fs_swab32((__u32)(x)))
-#define ext2fs_be32_to_cpu(x) ext2fs_swab32((__force __u32)(__be32)(x))
-#define ext2fs_cpu_to_be16(x) ((__force __be16)ext2fs_swab16((__u16)(x)))
-#define ext2fs_be16_to_cpu(x) ext2fs_swab16((__force __u16)(__be16)(x))
-#endif
+#تعریف_کرو ext2fs_cpu_مقصد_be64(x) ((__force __be64)ext2fs_swab64((__u64)(x)))
+#تعریف_کرو ext2fs_be64_مقصد_cpu(x) ext2fs_swab64((__force __u64)(__be64)(x))
+#تعریف_کرو ext2fs_cpu_مقصد_be32(x) ((__force __be32)ext2fs_swab32((__u32)(x)))
+#تعریف_کرو ext2fs_be32_مقصد_cpu(x) ext2fs_swab32((__force __u32)(__be32)(x))
+#تعریف_کرو ext2fs_cpu_مقصد_be16(x) ((__force __be16)ext2fs_swab16((__u16)(x)))
+#تعریف_کرو ext2fs_be16_مقصد_cpu(x) ext2fs_swab16((__force __u16)(__be16)(x))
+#اگر_ختم
 
 /*
  * EXT2FS bitmap manipulation routines.
  */
 
 /* Support for sending warning messages from the inline subroutines */
-extern const char *ext2fs_block_string;
-extern const char *ext2fs_inode_string;
-extern const char *ext2fs_mark_string;
-extern const char *ext2fs_unmark_string;
-extern const char *ext2fs_test_string;
-extern void ext2fs_warn_bitmap(errcode_t errcode, unsigned long arg,
-			       const char *description);
-extern void ext2fs_warn_bitmap2(ext2fs_generic_bitmap bitmap,
-				int code, unsigned long arg);
+خارجی ثابت حرف *ext2fs_بلاک_string;
+خارجی ثابت حرف *ext2fs_inode_string;
+خارجی ثابت حرف *ext2fs_mark_string;
+خارجی ثابت حرف *ext2fs_unmark_string;
+خارجی ثابت حرف *ext2fs_test_string;
+خارجی خالی ext2fs_warn_bitmap(errcode_t errcode, غیرعلامتی طویل arg,
+			       ثابت حرف *description);
+خارجی خالی ext2fs_warn_bitmap2(ext2fs_generic_bitmap bitmap,
+				صحیح رمز, غیرعلامتی طویل arg);
 
-#ifdef NO_INLINE_FUNCS
-extern void ext2fs_fast_set_bit(unsigned int nr,void * addr);
-extern void ext2fs_fast_clear_bit(unsigned int nr, void * addr);
-extern void ext2fs_fast_set_bit64(__u64 nr,void * addr);
-extern void ext2fs_fast_clear_bit64(__u64 nr, void * addr);
-extern __u16 ext2fs_swab16(__u16 val);
-extern __u32 ext2fs_swab32(__u32 val);
-extern __u64 ext2fs_swab64(__u64 val);
+#اگر_تعریف_شدہ NO_INLINE_FUNCS
+خارجی خالی ext2fs_fast_سیٹ_ثنائی_ہندسہ(غیرعلامتی صحیح nr,خالی * addr);
+خارجی خالی ext2fs_fast_clear_ثنائی_ہندسہ(غیرعلامتی صحیح nr, خالی * addr);
+خارجی خالی ext2fs_fast_سیٹ_bit64(__u64 nr,خالی * addr);
+خارجی خالی ext2fs_fast_clear_bit64(__u64 nr, خالی * addr);
+خارجی __u16 ext2fs_swab16(__u16 val);
+خارجی __u32 ext2fs_swab32(__u32 val);
+خارجی __u64 ext2fs_swab64(__u64 val);
 
-extern int ext2fs_mark_block_bitmap(ext2fs_block_bitmap bitmap, blk_t block);
-extern int ext2fs_unmark_block_bitmap(ext2fs_block_bitmap bitmap,
-				       blk_t block);
-extern int ext2fs_test_block_bitmap(ext2fs_block_bitmap bitmap, blk_t block);
+خارجی صحیح ext2fs_mark_بلاک_bitmap(ext2fs_بلاک_bitmap bitmap, blk_t بلاک);
+خارجی صحیح ext2fs_unmark_بلاک_bitmap(ext2fs_بلاک_bitmap bitmap,
+				       blk_t بلاک);
+خارجی صحیح ext2fs_test_بلاک_bitmap(ext2fs_بلاک_bitmap bitmap, blk_t بلاک);
 
-extern int ext2fs_mark_inode_bitmap(ext2fs_inode_bitmap bitmap, ext2_ino_t inode);
-extern int ext2fs_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
+خارجی صحیح ext2fs_mark_inode_bitmap(ext2fs_inode_bitmap bitmap, ext2_ino_t inode);
+خارجی صحیح ext2fs_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
 				       ext2_ino_t inode);
-extern int ext2fs_test_inode_bitmap(ext2fs_inode_bitmap bitmap, ext2_ino_t inode);
+خارجی صحیح ext2fs_test_inode_bitmap(ext2fs_inode_bitmap bitmap, ext2_ino_t inode);
 
-extern void ext2fs_fast_mark_block_bitmap(ext2fs_block_bitmap bitmap,
-					  blk_t block);
-extern void ext2fs_fast_unmark_block_bitmap(ext2fs_block_bitmap bitmap,
-					    blk_t block);
-extern int ext2fs_fast_test_block_bitmap(ext2fs_block_bitmap bitmap,
-					 blk_t block);
+خارجی خالی ext2fs_fast_mark_بلاک_bitmap(ext2fs_بلاک_bitmap bitmap,
+					  blk_t بلاک);
+خارجی خالی ext2fs_fast_unmark_بلاک_bitmap(ext2fs_بلاک_bitmap bitmap,
+					    blk_t بلاک);
+خارجی صحیح ext2fs_fast_test_بلاک_bitmap(ext2fs_بلاک_bitmap bitmap,
+					 blk_t بلاک);
 
-extern void ext2fs_fast_mark_inode_bitmap(ext2fs_inode_bitmap bitmap,
+خارجی خالی ext2fs_fast_mark_inode_bitmap(ext2fs_inode_bitmap bitmap,
 					  ext2_ino_t inode);
-extern void ext2fs_fast_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
+خارجی خالی ext2fs_fast_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
 					    ext2_ino_t inode);
-extern int ext2fs_fast_test_inode_bitmap(ext2fs_inode_bitmap bitmap,
+خارجی صحیح ext2fs_fast_test_inode_bitmap(ext2fs_inode_bitmap bitmap,
 					 ext2_ino_t inode);
-extern blk_t ext2fs_get_block_bitmap_start(ext2fs_block_bitmap bitmap);
-extern ext2_ino_t ext2fs_get_inode_bitmap_start(ext2fs_inode_bitmap bitmap);
-extern blk_t ext2fs_get_block_bitmap_end(ext2fs_block_bitmap bitmap);
-extern ext2_ino_t ext2fs_get_inode_bitmap_end(ext2fs_inode_bitmap bitmap);
+خارجی blk_t ext2fs_get_بلاک_bitmap_آغاز(ext2fs_بلاک_bitmap bitmap);
+خارجی ext2_ino_t ext2fs_get_inode_bitmap_آغاز(ext2fs_inode_bitmap bitmap);
+خارجی blk_t ext2fs_get_بلاک_bitmap_انتہا(ext2fs_بلاک_bitmap bitmap);
+خارجی ext2_ino_t ext2fs_get_inode_bitmap_انتہا(ext2fs_inode_bitmap bitmap);
 
-extern void ext2fs_fast_mark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-						blk_t block, int num);
-extern void ext2fs_fast_unmark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-						  blk_t block, int num);
-extern int ext2fs_fast_test_block_bitmap_range(ext2fs_block_bitmap bitmap,
-					       blk_t block, int num);
-#endif
+خارجی خالی ext2fs_fast_mark_بلاک_bitmap_range(ext2fs_بلاک_bitmap bitmap,
+						blk_t بلاک, صحیح عدد);
+خارجی خالی ext2fs_fast_unmark_بلاک_bitmap_range(ext2fs_بلاک_bitmap bitmap,
+						  blk_t بلاک, صحیح عدد);
+خارجی صحیح ext2fs_fast_test_بلاک_bitmap_range(ext2fs_بلاک_bitmap bitmap,
+					       blk_t بلاک, صحیح عدد);
+#اگر_ختم
 
 /* These functions routines moved to gen_bitmap.c */
-extern void ext2fs_mark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-					   blk_t block, int num);
-extern void ext2fs_unmark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-					     blk_t block, int num);
-extern int ext2fs_test_block_bitmap_range(ext2fs_block_bitmap bitmap,
-					  blk_t block, int num);
-extern int ext2fs_test_inode_bitmap_range(ext2fs_inode_bitmap bitmap,
-					  ext2_ino_t inode, int num);
-extern int ext2fs_mark_generic_bitmap(ext2fs_generic_bitmap bitmap,
+خارجی خالی ext2fs_mark_بلاک_bitmap_range(ext2fs_بلاک_bitmap bitmap,
+					   blk_t بلاک, صحیح عدد);
+خارجی خالی ext2fs_unmark_بلاک_bitmap_range(ext2fs_بلاک_bitmap bitmap,
+					     blk_t بلاک, صحیح عدد);
+خارجی صحیح ext2fs_test_بلاک_bitmap_range(ext2fs_بلاک_bitmap bitmap,
+					  blk_t بلاک, صحیح عدد);
+خارجی صحیح ext2fs_test_inode_bitmap_range(ext2fs_inode_bitmap bitmap,
+					  ext2_ino_t inode, صحیح عدد);
+خارجی صحیح ext2fs_mark_generic_bitmap(ext2fs_generic_bitmap bitmap,
 					 __u32 bitno);
-extern int ext2fs_unmark_generic_bitmap(ext2fs_generic_bitmap bitmap,
+خارجی صحیح ext2fs_unmark_generic_bitmap(ext2fs_generic_bitmap bitmap,
 					   blk_t bitno);
-extern int ext2fs_test_generic_bitmap(ext2fs_generic_bitmap bitmap,
+خارجی صحیح ext2fs_test_generic_bitmap(ext2fs_generic_bitmap bitmap,
 				      blk_t bitno);
-extern int ext2fs_test_block_bitmap_range(ext2fs_block_bitmap bitmap,
-					  blk_t block, int num);
-extern void ext2fs_set_bitmap_padding(ext2fs_generic_bitmap map);
-extern __u32 ext2fs_get_generic_bitmap_start(ext2fs_generic_bitmap bitmap);
-extern __u32 ext2fs_get_generic_bitmap_end(ext2fs_generic_bitmap bitmap);
+خارجی صحیح ext2fs_test_بلاک_bitmap_range(ext2fs_بلاک_bitmap bitmap,
+					  blk_t بلاک, صحیح عدد);
+خارجی خالی ext2fs_سیٹ_bitmap_padding(ext2fs_generic_bitmap map);
+خارجی __u32 ext2fs_get_generic_bitmap_آغاز(ext2fs_generic_bitmap bitmap);
+خارجی __u32 ext2fs_get_generic_bitmap_انتہا(ext2fs_generic_bitmap bitmap);
 
 /* 64-bit versions */
 
-#ifdef NO_INLINE_FUNCS
-extern int ext2fs_mark_block_bitmap2(ext2fs_block_bitmap bitmap,
-				     blk64_t block);
-extern int ext2fs_unmark_block_bitmap2(ext2fs_block_bitmap bitmap,
-				       blk64_t block);
-extern int ext2fs_test_block_bitmap2(ext2fs_block_bitmap bitmap,
-				     blk64_t block);
+#اگر_تعریف_شدہ NO_INLINE_FUNCS
+خارجی صحیح ext2fs_mark_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+				     blk64_t بلاک);
+خارجی صحیح ext2fs_unmark_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+				       blk64_t بلاک);
+خارجی صحیح ext2fs_test_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+				     blk64_t بلاک);
 
-extern int ext2fs_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+خارجی صحیح ext2fs_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 				     ext2_ino_t inode);
-extern int ext2fs_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+خارجی صحیح ext2fs_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 				       ext2_ino_t inode);
-extern int ext2fs_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+خارجی صحیح ext2fs_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 				     ext2_ino_t inode);
 
-extern void ext2fs_fast_mark_block_bitmap2(ext2fs_block_bitmap bitmap,
-					   blk64_t block);
-extern void ext2fs_fast_unmark_block_bitmap2(ext2fs_block_bitmap bitmap,
-					     blk64_t block);
-extern int ext2fs_fast_test_block_bitmap2(ext2fs_block_bitmap bitmap,
-					  blk64_t block);
+خارجی خالی ext2fs_fast_mark_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+					   blk64_t بلاک);
+خارجی خالی ext2fs_fast_unmark_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+					     blk64_t بلاک);
+خارجی صحیح ext2fs_fast_test_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+					  blk64_t بلاک);
 
-extern void ext2fs_fast_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+خارجی خالی ext2fs_fast_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 					   ext2_ino_t inode);
-extern void ext2fs_fast_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+خارجی خالی ext2fs_fast_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 					    ext2_ino_t inode);
-extern int ext2fs_fast_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+خارجی صحیح ext2fs_fast_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 					  ext2_ino_t inode);
-extern errcode_t ext2fs_find_first_zero_block_bitmap2(ext2fs_block_bitmap bitmap,
-						      blk64_t start,
-						      blk64_t end,
-						      blk64_t *out);
-extern errcode_t ext2fs_find_first_zero_inode_bitmap2(ext2fs_inode_bitmap bitmap,
-						      ext2_ino_t start,
-						      ext2_ino_t end,
-						      ext2_ino_t *out);
-extern errcode_t ext2fs_find_first_set_block_bitmap2(ext2fs_block_bitmap bitmap,
-						     blk64_t start,
-						     blk64_t end,
-						     blk64_t *out);
-extern errcode_t ext2fs_find_first_set_inode_bitmap2(ext2fs_inode_bitmap bitmap,
-						      ext2_ino_t start,
-						      ext2_ino_t end,
-						      ext2_ino_t *out);
-extern blk64_t ext2fs_get_block_bitmap_start2(ext2fs_block_bitmap bitmap);
-extern ext2_ino_t ext2fs_get_inode_bitmap_start2(ext2fs_inode_bitmap bitmap);
-extern blk64_t ext2fs_get_block_bitmap_end2(ext2fs_block_bitmap bitmap);
-extern ext2_ino_t ext2fs_get_inode_bitmap_end2(ext2fs_inode_bitmap bitmap);
+خارجی errcode_t ext2fs_ڈھونڈو_پہلا_zero_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+						      blk64_t آغاز,
+						      blk64_t انتہا,
+						      blk64_t *برآمد);
+خارجی errcode_t ext2fs_ڈھونڈو_پہلا_zero_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+						      ext2_ino_t آغاز,
+						      ext2_ino_t انتہا,
+						      ext2_ino_t *برآمد);
+خارجی errcode_t ext2fs_ڈھونڈو_پہلا_سیٹ_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+						     blk64_t آغاز,
+						     blk64_t انتہا,
+						     blk64_t *برآمد);
+خارجی errcode_t ext2fs_ڈھونڈو_پہلا_سیٹ_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+						      ext2_ino_t آغاز,
+						      ext2_ino_t انتہا,
+						      ext2_ino_t *برآمد);
+خارجی blk64_t ext2fs_get_بلاک_bitmap_start2(ext2fs_بلاک_bitmap bitmap);
+خارجی ext2_ino_t ext2fs_get_inode_bitmap_start2(ext2fs_inode_bitmap bitmap);
+خارجی blk64_t ext2fs_get_بلاک_bitmap_end2(ext2fs_بلاک_bitmap bitmap);
+خارجی ext2_ino_t ext2fs_get_inode_bitmap_end2(ext2fs_inode_bitmap bitmap);
 
-extern int ext2fs_fast_test_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-						blk64_t block,
-						unsigned int num);
-extern void ext2fs_fast_mark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-						 blk64_t block,
-						 unsigned int num);
-extern void ext2fs_fast_unmark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-						   blk64_t block,
-						   unsigned int num);
-#endif
+خارجی صحیح ext2fs_fast_test_بلاک_bitmap_range2(ext2fs_بلاک_bitmap bitmap,
+						blk64_t بلاک,
+						غیرعلامتی صحیح عدد);
+خارجی خالی ext2fs_fast_mark_بلاک_bitmap_range2(ext2fs_بلاک_bitmap bitmap,
+						 blk64_t بلاک,
+						 غیرعلامتی صحیح عدد);
+خارجی خالی ext2fs_fast_unmark_بلاک_bitmap_range2(ext2fs_بلاک_bitmap bitmap,
+						   blk64_t بلاک,
+						   غیرعلامتی صحیح عدد);
+#اگر_ختم
 
 /* These routines moved to gen_bitmap64.c */
-extern void ext2fs_clear_generic_bmap(ext2fs_generic_bitmap bitmap);
-extern errcode_t ext2fs_compare_generic_bmap(errcode_t neq,
+خارجی خالی ext2fs_clear_generic_bmap(ext2fs_generic_bitmap bitmap);
+خارجی errcode_t ext2fs_compare_generic_bmap(errcode_t neq,
 					     ext2fs_generic_bitmap bm1,
 					     ext2fs_generic_bitmap bm2);
-extern void ext2fs_set_generic_bmap_padding(ext2fs_generic_bitmap bmap);
-extern int ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
+خارجی خالی ext2fs_سیٹ_generic_bmap_padding(ext2fs_generic_bitmap bmap);
+خارجی صحیح ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    blk64_t bitno);
-extern int ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
+خارجی صحیح ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				      blk64_t bitno);
-extern int ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
+خارجی صحیح ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    blk64_t bitno);
-extern int ext2fs_test_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-					   blk64_t block, unsigned int num);
-extern __u64 ext2fs_get_generic_bmap_start(ext2fs_generic_bitmap bitmap);
-extern __u64 ext2fs_get_generic_bmap_end(ext2fs_generic_bitmap bitmap);
-extern int ext2fs_test_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-					   blk64_t block, unsigned int num);
-extern void ext2fs_mark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-					    blk64_t block, unsigned int num);
-extern void ext2fs_unmark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-					      blk64_t block, unsigned int num);
-extern errcode_t ext2fs_find_first_zero_generic_bmap(ext2fs_generic_bitmap bitmap,
-						     __u64 start, __u64 end,
-						     __u64 *out);
-extern errcode_t ext2fs_find_first_set_generic_bmap(ext2fs_generic_bitmap bitmap,
-						    __u64 start, __u64 end,
-						    __u64 *out);
+خارجی صحیح ext2fs_test_بلاک_bitmap_range2(ext2fs_بلاک_bitmap bitmap,
+					   blk64_t بلاک, غیرعلامتی صحیح عدد);
+خارجی __u64 ext2fs_get_generic_bmap_آغاز(ext2fs_generic_bitmap bitmap);
+خارجی __u64 ext2fs_get_generic_bmap_انتہا(ext2fs_generic_bitmap bitmap);
+خارجی صحیح ext2fs_test_بلاک_bitmap_range2(ext2fs_بلاک_bitmap bitmap,
+					   blk64_t بلاک, غیرعلامتی صحیح عدد);
+خارجی خالی ext2fs_mark_بلاک_bitmap_range2(ext2fs_بلاک_bitmap bitmap,
+					    blk64_t بلاک, غیرعلامتی صحیح عدد);
+خارجی خالی ext2fs_unmark_بلاک_bitmap_range2(ext2fs_بلاک_bitmap bitmap,
+					      blk64_t بلاک, غیرعلامتی صحیح عدد);
+خارجی errcode_t ext2fs_ڈھونڈو_پہلا_zero_generic_bmap(ext2fs_generic_bitmap bitmap,
+						     __u64 آغاز, __u64 انتہا,
+						     __u64 *برآمد);
+خارجی errcode_t ext2fs_ڈھونڈو_پہلا_سیٹ_generic_bmap(ext2fs_generic_bitmap bitmap,
+						    __u64 آغاز, __u64 انتہا,
+						    __u64 *برآمد);
 
 /*
  * The inline routines themselves...
@@ -220,387 +220,387 @@ extern errcode_t ext2fs_find_first_set_generic_bmap(ext2fs_generic_bitmap bitmap
  * inline.c
  */
 
-#if (defined(INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
-#ifdef INCLUDE_INLINE_FUNCS
-#if (__STDC_VERSION__ >= 199901L)
-#define _INLINE_ extern inline
-#else
-#define _INLINE_ inline
-#endif
-#else /* !INCLUDE_INLINE FUNCS */
-#if (__STDC_VERSION__ >= 199901L)
-#define _INLINE_ inline
-#else /* not C99 */
-#ifdef __GNUC__
-#define _INLINE_ extern __inline__
-#else				/* For Watcom C */
-#define _INLINE_ extern inline
-#endif /* __GNUC__ */
-#endif /* __STDC_VERSION__ >= 199901L */
-#endif /* INCLUDE_INLINE_FUNCS */
+#اگر (defined(INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
+#اگر_تعریف_شدہ INCLUDE_INLINE_FUNCS
+#اگر (__STDC_VERSION__ >= 199901L)
+#تعریف_کرو _INLINE_ خارجی اندرونی
+#ورنہ
+#تعریف_کرو _INLINE_ اندرونی
+#اگر_ختم
+#ورنہ /* !INCLUDE_INLINE FUNCS */
+#اگر (__STDC_VERSION__ >= 199901L)
+#تعریف_کرو _INLINE_ اندرونی
+#ورنہ /* not C99 */
+#اگر_تعریف_شدہ __GNUC__
+#تعریف_کرو _INLINE_ خارجی __inline__
+#ورنہ				/* For Watcom C */
+#تعریف_کرو _INLINE_ خارجی اندرونی
+#اگر_ختم /* __GNUC__ */
+#اگر_ختم /* __STDC_VERSION__ >= 199901L */
+#اگر_ختم /* INCLUDE_INLINE_FUNCS */
 
 /*
  * Fast bit set/clear functions that doesn't need to return the
  * previous bit value.
  */
 
-_INLINE_ void ext2fs_fast_set_bit(unsigned int nr,void * addr)
+_INLINE_ خالی ext2fs_fast_سیٹ_ثنائی_ہندسہ(غیرعلامتی صحیح nr,خالی * addr)
 {
-	unsigned char	*ADDR = (unsigned char *) addr;
+	غیرعلامتی حرف	*ADDR = (غیرعلامتی حرف *) addr;
 
 	ADDR += nr >> 3;
-	*ADDR |= (unsigned char) (1 << (nr & 0x07));
+	*ADDR |= (غیرعلامتی حرف) (1 << (nr & 0x07));
 }
 
-_INLINE_ void ext2fs_fast_clear_bit(unsigned int nr, void * addr)
+_INLINE_ خالی ext2fs_fast_clear_ثنائی_ہندسہ(غیرعلامتی صحیح nr, خالی * addr)
 {
-	unsigned char	*ADDR = (unsigned char *) addr;
+	غیرعلامتی حرف	*ADDR = (غیرعلامتی حرف *) addr;
 
 	ADDR += nr >> 3;
-	*ADDR &= (unsigned char) ~(1 << (nr & 0x07));
+	*ADDR &= (غیرعلامتی حرف) ~(1 << (nr & 0x07));
 }
 
 
-_INLINE_ void ext2fs_fast_set_bit64(__u64 nr, void * addr)
+_INLINE_ خالی ext2fs_fast_سیٹ_bit64(__u64 nr, خالی * addr)
 {
-	unsigned char	*ADDR = (unsigned char *) addr;
+	غیرعلامتی حرف	*ADDR = (غیرعلامتی حرف *) addr;
 
 	ADDR += nr >> 3;
-	*ADDR |= (unsigned char) (1 << (nr & 0x07));
+	*ADDR |= (غیرعلامتی حرف) (1 << (nr & 0x07));
 }
 
-_INLINE_ void ext2fs_fast_clear_bit64(__u64 nr, void * addr)
+_INLINE_ خالی ext2fs_fast_clear_bit64(__u64 nr, خالی * addr)
 {
-	unsigned char	*ADDR = (unsigned char *) addr;
+	غیرعلامتی حرف	*ADDR = (غیرعلامتی حرف *) addr;
 
 	ADDR += nr >> 3;
-	*ADDR &= (unsigned char) ~(1 << (nr & 0x07));
+	*ADDR &= (غیرعلامتی حرف) ~(1 << (nr & 0x07));
 }
 
 _INLINE_ __u16 ext2fs_swab16(__u16 val)
 {
-	return (val >> 8) | (__u16) (val << 8);
+	واپس (val >> 8) | (__u16) (val << 8);
 }
 
 _INLINE_ __u32 ext2fs_swab32(__u32 val)
 {
-	return ((val>>24) | ((val>>8)&0xFF00) |
+	واپس ((val>>24) | ((val>>8)&0xFF00) |
 		((val<<8)&0xFF0000) | (val<<24));
 }
 
 _INLINE_ __u64 ext2fs_swab64(__u64 val)
 {
-	return (ext2fs_swab32((__u32) (val >> 32)) |
+	واپس (ext2fs_swab32((__u32) (val >> 32)) |
 		(((__u64)ext2fs_swab32(val & 0xFFFFFFFFUL)) << 32));
 }
 
-_INLINE_ int ext2fs_mark_block_bitmap(ext2fs_block_bitmap bitmap,
-				       blk_t block)
+_INLINE_ صحیح ext2fs_mark_بلاک_bitmap(ext2fs_بلاک_bitmap bitmap,
+				       blk_t بلاک)
 {
-	return ext2fs_mark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
-					  block);
+	واپس ext2fs_mark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+					  بلاک);
 }
 
-_INLINE_ int ext2fs_unmark_block_bitmap(ext2fs_block_bitmap bitmap,
-					 blk_t block)
+_INLINE_ صحیح ext2fs_unmark_بلاک_bitmap(ext2fs_بلاک_bitmap bitmap,
+					 blk_t بلاک)
 {
-	return ext2fs_unmark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
-					    block);
+	واپس ext2fs_unmark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+					    بلاک);
 }
 
-_INLINE_ int ext2fs_test_block_bitmap(ext2fs_block_bitmap bitmap,
-				       blk_t block)
+_INLINE_ صحیح ext2fs_test_بلاک_bitmap(ext2fs_بلاک_bitmap bitmap,
+				       blk_t بلاک)
 {
-	return ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
-					  block);
+	واپس ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+					  بلاک);
 }
 
-_INLINE_ int ext2fs_mark_inode_bitmap(ext2fs_inode_bitmap bitmap,
+_INLINE_ صحیح ext2fs_mark_inode_bitmap(ext2fs_inode_bitmap bitmap,
 				       ext2_ino_t inode)
 {
-	return ext2fs_mark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+	واپس ext2fs_mark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
 					  inode);
 }
 
-_INLINE_ int ext2fs_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
+_INLINE_ صحیح ext2fs_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
 					 ext2_ino_t inode)
 {
-	return ext2fs_unmark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+	واپس ext2fs_unmark_generic_bitmap((ext2fs_generic_bitmap) bitmap,
 				     inode);
 }
 
-_INLINE_ int ext2fs_test_inode_bitmap(ext2fs_inode_bitmap bitmap,
+_INLINE_ صحیح ext2fs_test_inode_bitmap(ext2fs_inode_bitmap bitmap,
 				       ext2_ino_t inode)
 {
-	return ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+	واپس ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
 					  inode);
 }
 
-_INLINE_ void ext2fs_fast_mark_block_bitmap(ext2fs_block_bitmap bitmap,
-					    blk_t block)
+_INLINE_ خالی ext2fs_fast_mark_بلاک_bitmap(ext2fs_بلاک_bitmap bitmap,
+					    blk_t بلاک)
 {
-	ext2fs_mark_generic_bitmap((ext2fs_generic_bitmap) bitmap, block);
+	ext2fs_mark_generic_bitmap((ext2fs_generic_bitmap) bitmap, بلاک);
 }
 
-_INLINE_ void ext2fs_fast_unmark_block_bitmap(ext2fs_block_bitmap bitmap,
-					      blk_t block)
+_INLINE_ خالی ext2fs_fast_unmark_بلاک_bitmap(ext2fs_بلاک_bitmap bitmap,
+					      blk_t بلاک)
 {
-	ext2fs_unmark_generic_bitmap((ext2fs_generic_bitmap) bitmap, block);
+	ext2fs_unmark_generic_bitmap((ext2fs_generic_bitmap) bitmap, بلاک);
 }
 
-_INLINE_ int ext2fs_fast_test_block_bitmap(ext2fs_block_bitmap bitmap,
-					    blk_t block)
+_INLINE_ صحیح ext2fs_fast_test_بلاک_bitmap(ext2fs_بلاک_bitmap bitmap,
+					    blk_t بلاک)
 {
-	return ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
-					  block);
+	واپس ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+					  بلاک);
 }
 
-_INLINE_ void ext2fs_fast_mark_inode_bitmap(ext2fs_inode_bitmap bitmap,
+_INLINE_ خالی ext2fs_fast_mark_inode_bitmap(ext2fs_inode_bitmap bitmap,
 					    ext2_ino_t inode)
 {
 	ext2fs_mark_generic_bitmap((ext2fs_generic_bitmap) bitmap, inode);
 }
 
-_INLINE_ void ext2fs_fast_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
+_INLINE_ خالی ext2fs_fast_unmark_inode_bitmap(ext2fs_inode_bitmap bitmap,
 					      ext2_ino_t inode)
 {
 	ext2fs_unmark_generic_bitmap((ext2fs_generic_bitmap) bitmap, inode);
 }
 
-_INLINE_ int ext2fs_fast_test_inode_bitmap(ext2fs_inode_bitmap bitmap,
+_INLINE_ صحیح ext2fs_fast_test_inode_bitmap(ext2fs_inode_bitmap bitmap,
 					   ext2_ino_t inode)
 {
-	return ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
+	واپس ext2fs_test_generic_bitmap((ext2fs_generic_bitmap) bitmap,
 					  inode);
 }
 
-_INLINE_ blk_t ext2fs_get_block_bitmap_start(ext2fs_block_bitmap bitmap)
+_INLINE_ blk_t ext2fs_get_بلاک_bitmap_آغاز(ext2fs_بلاک_bitmap bitmap)
 {
-	return ext2fs_get_generic_bitmap_start((ext2fs_generic_bitmap) bitmap);
+	واپس ext2fs_get_generic_bitmap_آغاز((ext2fs_generic_bitmap) bitmap);
 }
 
-_INLINE_ ext2_ino_t ext2fs_get_inode_bitmap_start(ext2fs_inode_bitmap bitmap)
+_INLINE_ ext2_ino_t ext2fs_get_inode_bitmap_آغاز(ext2fs_inode_bitmap bitmap)
 {
-	return ext2fs_get_generic_bitmap_start((ext2fs_generic_bitmap) bitmap);
+	واپس ext2fs_get_generic_bitmap_آغاز((ext2fs_generic_bitmap) bitmap);
 }
 
-_INLINE_ blk_t ext2fs_get_block_bitmap_end(ext2fs_block_bitmap bitmap)
+_INLINE_ blk_t ext2fs_get_بلاک_bitmap_انتہا(ext2fs_بلاک_bitmap bitmap)
 {
-	return ext2fs_get_generic_bitmap_end((ext2fs_generic_bitmap) bitmap);
+	واپس ext2fs_get_generic_bitmap_انتہا((ext2fs_generic_bitmap) bitmap);
 }
 
-_INLINE_ ext2_ino_t ext2fs_get_inode_bitmap_end(ext2fs_inode_bitmap bitmap)
+_INLINE_ ext2_ino_t ext2fs_get_inode_bitmap_انتہا(ext2fs_inode_bitmap bitmap)
 {
-	return ext2fs_get_generic_bitmap_end((ext2fs_generic_bitmap) bitmap);
+	واپس ext2fs_get_generic_bitmap_انتہا((ext2fs_generic_bitmap) bitmap);
 }
 
-_INLINE_ int ext2fs_fast_test_block_bitmap_range(ext2fs_block_bitmap bitmap,
-						 blk_t block, int num)
+_INLINE_ صحیح ext2fs_fast_test_بلاک_bitmap_range(ext2fs_بلاک_bitmap bitmap,
+						 blk_t بلاک, صحیح عدد)
 {
-	return ext2fs_test_block_bitmap_range(bitmap, block, num);
+	واپس ext2fs_test_بلاک_bitmap_range(bitmap, بلاک, عدد);
 }
 
-_INLINE_ void ext2fs_fast_mark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-						  blk_t block, int num)
+_INLINE_ خالی ext2fs_fast_mark_بلاک_bitmap_range(ext2fs_بلاک_bitmap bitmap,
+						  blk_t بلاک, صحیح عدد)
 {
-	ext2fs_mark_block_bitmap_range(bitmap, block, num);
+	ext2fs_mark_بلاک_bitmap_range(bitmap, بلاک, عدد);
 }
 
-_INLINE_ void ext2fs_fast_unmark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-						    blk_t block, int num)
+_INLINE_ خالی ext2fs_fast_unmark_بلاک_bitmap_range(ext2fs_بلاک_bitmap bitmap,
+						    blk_t بلاک, صحیح عدد)
 {
-	ext2fs_unmark_block_bitmap_range(bitmap, block, num);
+	ext2fs_unmark_بلاک_bitmap_range(bitmap, بلاک, عدد);
 }
 
 /* 64-bit versions */
 
-_INLINE_ int ext2fs_mark_block_bitmap2(ext2fs_block_bitmap bitmap,
-				       blk64_t block)
+_INLINE_ صحیح ext2fs_mark_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+				       blk64_t بلاک)
 {
-	return ext2fs_mark_generic_bmap((ext2fs_generic_bitmap) bitmap,
-					block);
+	واپس ext2fs_mark_generic_bmap((ext2fs_generic_bitmap) bitmap,
+					بلاک);
 }
 
-_INLINE_ int ext2fs_unmark_block_bitmap2(ext2fs_block_bitmap bitmap,
-					 blk64_t block)
+_INLINE_ صحیح ext2fs_unmark_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+					 blk64_t بلاک)
 {
-	return ext2fs_unmark_generic_bmap((ext2fs_generic_bitmap) bitmap, block);
+	واپس ext2fs_unmark_generic_bmap((ext2fs_generic_bitmap) bitmap, بلاک);
 }
 
-_INLINE_ int ext2fs_test_block_bitmap2(ext2fs_block_bitmap bitmap,
-				       blk64_t block)
+_INLINE_ صحیح ext2fs_test_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+				       blk64_t بلاک)
 {
-	return ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
-					block);
+	واپس ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
+					بلاک);
 }
 
-_INLINE_ int ext2fs_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+_INLINE_ صحیح ext2fs_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 				       ext2_ino_t inode)
 {
-	return ext2fs_mark_generic_bmap((ext2fs_generic_bitmap) bitmap,
+	واپس ext2fs_mark_generic_bmap((ext2fs_generic_bitmap) bitmap,
 					inode);
 }
 
-_INLINE_ int ext2fs_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+_INLINE_ صحیح ext2fs_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 					 ext2_ino_t inode)
 {
-	return ext2fs_unmark_generic_bmap((ext2fs_generic_bitmap) bitmap,
+	واپس ext2fs_unmark_generic_bmap((ext2fs_generic_bitmap) bitmap,
 					  inode);
 }
 
-_INLINE_ int ext2fs_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+_INLINE_ صحیح ext2fs_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 				       ext2_ino_t inode)
 {
-	return ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
+	واپس ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
 					inode);
 }
 
-_INLINE_ void ext2fs_fast_mark_block_bitmap2(ext2fs_block_bitmap bitmap,
-					     blk64_t block)
+_INLINE_ خالی ext2fs_fast_mark_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+					     blk64_t بلاک)
 {
-	ext2fs_mark_generic_bmap((ext2fs_generic_bitmap) bitmap, block);
+	ext2fs_mark_generic_bmap((ext2fs_generic_bitmap) bitmap, بلاک);
 }
 
-_INLINE_ void ext2fs_fast_unmark_block_bitmap2(ext2fs_block_bitmap bitmap,
-					       blk64_t block)
+_INLINE_ خالی ext2fs_fast_unmark_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+					       blk64_t بلاک)
 {
-	ext2fs_unmark_generic_bmap((ext2fs_generic_bitmap) bitmap, block);
+	ext2fs_unmark_generic_bmap((ext2fs_generic_bitmap) bitmap, بلاک);
 }
 
-_INLINE_ int ext2fs_fast_test_block_bitmap2(ext2fs_block_bitmap bitmap,
-					    blk64_t block)
+_INLINE_ صحیح ext2fs_fast_test_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+					    blk64_t بلاک)
 {
-	return ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
-					block);
+	واپس ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
+					بلاک);
 }
 
-_INLINE_ void ext2fs_fast_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+_INLINE_ خالی ext2fs_fast_mark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 					     ext2_ino_t inode)
 {
 	ext2fs_mark_generic_bmap((ext2fs_generic_bitmap) bitmap, inode);
 }
 
-_INLINE_ void ext2fs_fast_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+_INLINE_ خالی ext2fs_fast_unmark_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 					       ext2_ino_t inode)
 {
 	ext2fs_unmark_generic_bmap((ext2fs_generic_bitmap) bitmap, inode);
 }
 
-_INLINE_ int ext2fs_fast_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+_INLINE_ صحیح ext2fs_fast_test_inode_bitmap2(ext2fs_inode_bitmap bitmap,
 					    ext2_ino_t inode)
 {
-	return ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
+	واپس ext2fs_test_generic_bmap((ext2fs_generic_bitmap) bitmap,
 					inode);
 }
 
-_INLINE_ errcode_t ext2fs_find_first_zero_block_bitmap2(ext2fs_block_bitmap bitmap,
-							blk64_t start,
-							blk64_t end,
-							blk64_t *out)
+_INLINE_ errcode_t ext2fs_ڈھونڈو_پہلا_zero_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+							blk64_t آغاز,
+							blk64_t انتہا,
+							blk64_t *برآمد)
 {
 	__u64 o;
 	errcode_t rv;
 
-	rv = ext2fs_find_first_zero_generic_bmap((ext2fs_generic_bitmap) bitmap,
-						 start, end, &o);
-	if (!rv)
-		*out = o;
-	return rv;
+	rv = ext2fs_ڈھونڈو_پہلا_zero_generic_bmap((ext2fs_generic_bitmap) bitmap,
+						 آغاز, انتہا, &o);
+	اگر (!rv)
+		*برآمد = o;
+	واپس rv;
 }
 
-_INLINE_ errcode_t ext2fs_find_first_zero_inode_bitmap2(ext2fs_inode_bitmap bitmap,
-							ext2_ino_t start,
-							ext2_ino_t end,
-							ext2_ino_t *out)
+_INLINE_ errcode_t ext2fs_ڈھونڈو_پہلا_zero_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+							ext2_ino_t آغاز,
+							ext2_ino_t انتہا,
+							ext2_ino_t *برآمد)
 {
 	__u64 o;
 	errcode_t rv;
 
-	rv = ext2fs_find_first_zero_generic_bmap((ext2fs_generic_bitmap) bitmap,
-						 start, end, &o);
-	if (!rv)
-		*out = (ext2_ino_t) o;
-	return rv;
+	rv = ext2fs_ڈھونڈو_پہلا_zero_generic_bmap((ext2fs_generic_bitmap) bitmap,
+						 آغاز, انتہا, &o);
+	اگر (!rv)
+		*برآمد = (ext2_ino_t) o;
+	واپس rv;
 }
 
-_INLINE_ errcode_t ext2fs_find_first_set_block_bitmap2(ext2fs_block_bitmap bitmap,
-						       blk64_t start,
-						       blk64_t end,
-						       blk64_t *out)
+_INLINE_ errcode_t ext2fs_ڈھونڈو_پہلا_سیٹ_بلاک_bitmap2(ext2fs_بلاک_bitmap bitmap,
+						       blk64_t آغاز,
+						       blk64_t انتہا,
+						       blk64_t *برآمد)
 {
 	__u64 o;
 	errcode_t rv;
 
-	rv = ext2fs_find_first_set_generic_bmap((ext2fs_generic_bitmap) bitmap,
-						start, end, &o);
-	if (!rv)
-		*out = o;
-	return rv;
+	rv = ext2fs_ڈھونڈو_پہلا_سیٹ_generic_bmap((ext2fs_generic_bitmap) bitmap,
+						آغاز, انتہا, &o);
+	اگر (!rv)
+		*برآمد = o;
+	واپس rv;
 }
 
-_INLINE_ errcode_t ext2fs_find_first_set_inode_bitmap2(ext2fs_inode_bitmap bitmap,
-						       ext2_ino_t start,
-						       ext2_ino_t end,
-						       ext2_ino_t *out)
+_INLINE_ errcode_t ext2fs_ڈھونڈو_پہلا_سیٹ_inode_bitmap2(ext2fs_inode_bitmap bitmap,
+						       ext2_ino_t آغاز,
+						       ext2_ino_t انتہا,
+						       ext2_ino_t *برآمد)
 {
 	__u64 o;
 	errcode_t rv;
 
-	rv = ext2fs_find_first_set_generic_bmap((ext2fs_generic_bitmap) bitmap,
-						start, end, &o);
-	if (!rv)
-		*out = (ext2_ino_t) o;
-	return rv;
+	rv = ext2fs_ڈھونڈو_پہلا_سیٹ_generic_bmap((ext2fs_generic_bitmap) bitmap,
+						آغاز, انتہا, &o);
+	اگر (!rv)
+		*برآمد = (ext2_ino_t) o;
+	واپس rv;
 }
 
-_INLINE_ blk64_t ext2fs_get_block_bitmap_start2(ext2fs_block_bitmap bitmap)
+_INLINE_ blk64_t ext2fs_get_بلاک_bitmap_start2(ext2fs_بلاک_bitmap bitmap)
 {
-	return ext2fs_get_generic_bmap_start((ext2fs_generic_bitmap) bitmap);
+	واپس ext2fs_get_generic_bmap_آغاز((ext2fs_generic_bitmap) bitmap);
 }
 
 _INLINE_ ext2_ino_t ext2fs_get_inode_bitmap_start2(ext2fs_inode_bitmap bitmap)
 {
-	return (ext2_ino_t) ext2fs_get_generic_bmap_start((ext2fs_generic_bitmap) bitmap);
+	واپس (ext2_ino_t) ext2fs_get_generic_bmap_آغاز((ext2fs_generic_bitmap) bitmap);
 }
 
-_INLINE_ blk64_t ext2fs_get_block_bitmap_end2(ext2fs_block_bitmap bitmap)
+_INLINE_ blk64_t ext2fs_get_بلاک_bitmap_end2(ext2fs_بلاک_bitmap bitmap)
 {
-	return ext2fs_get_generic_bmap_end((ext2fs_generic_bitmap) bitmap);
+	واپس ext2fs_get_generic_bmap_انتہا((ext2fs_generic_bitmap) bitmap);
 }
 
 _INLINE_ ext2_ino_t ext2fs_get_inode_bitmap_end2(ext2fs_inode_bitmap bitmap)
 {
-	return (ext2_ino_t) ext2fs_get_generic_bmap_end((ext2fs_generic_bitmap) bitmap);
+	واپس (ext2_ino_t) ext2fs_get_generic_bmap_انتہا((ext2fs_generic_bitmap) bitmap);
 }
 
-_INLINE_ int ext2fs_fast_test_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-						  blk64_t block,
-						  unsigned int num)
+_INLINE_ صحیح ext2fs_fast_test_بلاک_bitmap_range2(ext2fs_بلاک_bitmap bitmap,
+						  blk64_t بلاک,
+						  غیرعلامتی صحیح عدد)
 {
-	return ext2fs_test_block_bitmap_range2(bitmap, block, num);
+	واپس ext2fs_test_بلاک_bitmap_range2(bitmap, بلاک, عدد);
 }
 
-_INLINE_ void ext2fs_fast_mark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-						   blk64_t block,
-						   unsigned int num)
+_INLINE_ خالی ext2fs_fast_mark_بلاک_bitmap_range2(ext2fs_بلاک_bitmap bitmap,
+						   blk64_t بلاک,
+						   غیرعلامتی صحیح عدد)
 {
-	ext2fs_mark_block_bitmap_range2(bitmap, block, num);
+	ext2fs_mark_بلاک_bitmap_range2(bitmap, بلاک, عدد);
 }
 
-_INLINE_ void ext2fs_fast_unmark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-						     blk64_t block,
-						     unsigned int num)
+_INLINE_ خالی ext2fs_fast_unmark_بلاک_bitmap_range2(ext2fs_بلاک_bitmap bitmap,
+						     blk64_t بلاک,
+						     غیرعلامتی صحیح عدد)
 {
-	ext2fs_unmark_block_bitmap_range2(bitmap, block, num);
+	ext2fs_unmark_بلاک_bitmap_range2(bitmap, بلاک, عدد);
 }
 
-#undef _INLINE_
-#endif
+#تعریف_منسوخ _INLINE_
+#اگر_ختم
 
-extern int ext2fs_set_bit(unsigned int nr,void * addr);
-extern int ext2fs_clear_bit(unsigned int nr, void * addr);
-extern int ext2fs_test_bit(unsigned int nr, const void * addr);
-extern int ext2fs_set_bit64(__u64 nr,void * addr);
-extern int ext2fs_clear_bit64(__u64 nr, void * addr);
-extern int ext2fs_test_bit64(__u64 nr, const void * addr);
-extern unsigned int ext2fs_bitcount(const void *addr, unsigned int nbytes);
+خارجی صحیح ext2fs_سیٹ_ثنائی_ہندسہ(غیرعلامتی صحیح nr,خالی * addr);
+خارجی صحیح ext2fs_clear_ثنائی_ہندسہ(غیرعلامتی صحیح nr, خالی * addr);
+خارجی صحیح ext2fs_test_ثنائی_ہندسہ(غیرعلامتی صحیح nr, ثابت خالی * addr);
+خارجی صحیح ext2fs_سیٹ_bit64(__u64 nr,خالی * addr);
+خارجی صحیح ext2fs_clear_bit64(__u64 nr, خالی * addr);
+خارجی صحیح ext2fs_test_bit64(__u64 nr, ثابت خالی * addr);
+خارجی غیرعلامتی صحیح ext2fs_bitcount(ثابت خالی *addr, غیرعلامتی صحیح nbytes);

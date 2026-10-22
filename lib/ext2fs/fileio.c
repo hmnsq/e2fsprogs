@@ -9,40 +9,40 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#شامل "config.h"
+#شامل <stdio.h>
+#شامل <string.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fs.h"
+#شامل "ext2fsP.h"
 
-struct ext2_file {
+ساخت ext2_file {
 	errcode_t		magic;
 	ext2_filsys 		fs;
 	ext2_ino_t		ino;
-	struct ext2_inode	inode;
-	int 			flags;
+	ساخت ext2_inode	inode;
+	صحیح 			flags;
 	__u64			pos;
 	blk64_t			blockno;
 	blk64_t			physblock;
-	char 			*buf;
+	حرف 			*buf;
 };
 
-struct block_entry {
+ساخت بلاک_اندراج {
 	blk64_t		physblock;
-	unsigned char 	sha[EXT2FS_SHA512_LENGTH];
+	غیرعلامتی حرف 	sha[EXT2_FS_SHA512_لمبائی];
 };
-typedef struct block_entry *block_entry_t;
+قسمتعریف ساخت بلاک_اندراج *بلاک_اندراج_t;
 
-#define BMAP_BUFFER (file->buf + fs->blocksize)
+#تعریف_کرو BMAP_بفر (file->buf + fs->blocksize)
 
 errcode_t ext2fs_file_open2(ext2_filsys fs, ext2_ino_t ino,
-			    struct ext2_inode *inode,
-			    int flags, ext2_file_t *ret)
+			    ساخت ext2_inode *inode,
+			    صحیح flags, ext2_file_t *ret)
 {
 	ext2_file_t 	file;
 	errcode_t	retval;
@@ -51,46 +51,46 @@ errcode_t ext2fs_file_open2(ext2_filsys fs, ext2_ino_t ino,
 	 * Don't let caller create or open a file for writing if the
 	 * filesystem is read-only.
 	 */
-	if ((flags & (EXT2_FILE_WRITE | EXT2_FILE_CREATE)) &&
+	اگر ((flags & (EXT2_FILE_WRITE | EXT2_FILE_CREATE)) &&
 	    !(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+		واپس EXT2_ET_RO_FILSYS;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_file), &file);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(حجم(ساخت ext2_file), &file);
+	اگر (retval)
+		واپس retval;
 
-	memset(file, 0, sizeof(struct ext2_file));
+	memset(file, 0, حجم(ساخت ext2_file));
 	file->magic = EXT2_ET_MAGIC_EXT2_FILE;
 	file->fs = fs;
 	file->ino = ino;
-	file->flags = flags & EXT2_FILE_MASK;
+	file->flags = flags & EXT2_FILE_نقاب;
 
-	if (inode) {
-		memcpy(&file->inode, inode, sizeof(struct ext2_inode));
-	} else {
+	اگر (inode) {
+		حافظہ_نقل(&file->inode, inode, حجم(ساخت ext2_inode));
+	} ورنہ {
 		retval = ext2fs_read_inode(fs, ino, &file->inode);
-		if (retval)
-			goto fail;
+		اگر (retval)
+			جاؤ fail;
 	}
 
 	retval = ext2fs_get_array(3, fs->blocksize, &file->buf);
-	if (retval)
-		goto fail;
+	اگر (retval)
+		جاؤ fail;
 
 	*ret = file;
-	return 0;
+	واپس 0;
 
 fail:
-	if (file->buf)
+	اگر (file->buf)
 		ext2fs_free_mem(&file->buf);
 	ext2fs_free_mem(&file);
-	return retval;
+	واپس retval;
 }
 
 errcode_t ext2fs_file_open(ext2_filsys fs, ext2_ino_t ino,
-			   int flags, ext2_file_t *ret)
+			   صحیح flags, ext2_file_t *ret)
 {
-	return ext2fs_file_open2(fs, ino, NULL, flags, ret);
+	واپس ext2fs_file_open2(fs, ino, تہی, flags, ret);
 }
 
 /*
@@ -98,27 +98,27 @@ errcode_t ext2fs_file_open(ext2_filsys fs, ext2_ino_t ino,
  */
 ext2_filsys ext2fs_file_get_fs(ext2_file_t file)
 {
-	if (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
-		return 0;
-	return file->fs;
+	اگر (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
+		واپس 0;
+	واپس file->fs;
 }
 
 /*
  * This function returns the pointer to the inode of a file from the structure
  */
-struct ext2_inode *ext2fs_file_get_inode(ext2_file_t file)
+ساخت ext2_inode *ext2fs_file_get_inode(ext2_file_t file)
 {
-	if (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
-		return NULL;
-	return &file->inode;
+	اگر (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
+		واپس تہی;
+	واپس &file->inode;
 }
 
 /* This function returns the inode number from the structure */
-ext2_ino_t ext2fs_file_get_inode_num(ext2_file_t file)
+ext2_ino_t ext2fs_file_get_inode_عدد(ext2_file_t file)
 {
-	if (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
-		return 0;
-	return file->ino;
+	اگر (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
+		واپس 0;
+	واپس file->ino;
 }
 
 /*
@@ -129,29 +129,29 @@ errcode_t ext2fs_file_flush(ext2_file_t file)
 {
 	errcode_t	retval;
 	ext2_filsys fs;
-	int		ret_flags;
+	صحیح		ret_flags;
 	blk64_t		dontcare;
 
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
 	fs = file->fs;
 
-	if (!(file->flags & EXT2_FILE_BUF_VALID) ||
+	اگر (!(file->flags & EXT2_FILE_BUF_VALID) ||
 	    !(file->flags & EXT2_FILE_BUF_DIRTY))
-		return 0;
+		واپس 0;
 
 	/* Is this an uninit block? */
-	if (file->physblock && file->inode.i_flags & EXT4_EXTENTS_FL) {
-		retval = ext2fs_bmap2(fs, file->ino, &file->inode, BMAP_BUFFER,
+	اگر (file->physblock && file->inode.i_flags & EXT4_EXTENTS_FL) {
+		retval = ext2fs_bmap2(fs, file->ino, &file->inode, BMAP_بفر,
 				      0, file->blockno, &ret_flags, &dontcare);
-		if (retval)
-			return retval;
-		if (ret_flags & BMAP_RET_UNINIT) {
+		اگر (retval)
+			واپس retval;
+		اگر (ret_flags & BMAP_RET_UNINIT) {
 			retval = ext2fs_bmap2(fs, file->ino, &file->inode,
-					      BMAP_BUFFER, BMAP_SET,
+					      BMAP_بفر, BMAP_سیٹ,
 					      file->blockno, 0,
 					      &file->physblock);
-			if (retval)
-				return retval;
+			اگر (retval)
+				واپس retval;
 		}
 	}
 
@@ -159,41 +159,41 @@ errcode_t ext2fs_file_flush(ext2_file_t file)
 	 * OK, the physical block hasn't been allocated yet.
 	 * Allocate it.
 	 */
-	if (!file->physblock) {
+	اگر (!file->physblock) {
 		retval = ext2fs_bmap2(fs, file->ino, &file->inode,
-				     BMAP_BUFFER, file->ino ? BMAP_ALLOC : 0,
+				     BMAP_بفر, file->ino ? BMAP_ALLOC : 0,
 				     file->blockno, 0, &file->physblock);
-		if (retval)
-			return retval;
+		اگر (retval)
+			واپس retval;
 	}
 
 	retval = io_channel_write_blk64(fs->io, file->physblock, 1, file->buf);
-	if (retval)
-		return retval;
+	اگر (retval)
+		واپس retval;
 
 	file->flags &= ~EXT2_FILE_BUF_DIRTY;
 
-	return retval;
+	واپس retval;
 }
 
 /*
  * This function synchronizes the file's block buffer and the current
  * file position, possibly invalidating block buffer if necessary
  */
-static errcode_t sync_buffer_position(ext2_file_t file)
+ساکن errcode_t sync_بفر_position(ext2_file_t file)
 {
 	blk64_t	b;
 	errcode_t	retval;
 
 	b = file->pos / file->fs->blocksize;
-	if (b != file->blockno) {
+	اگر (b != file->blockno) {
 		retval = ext2fs_file_flush(file);
-		if (retval)
-			return retval;
+		اگر (retval)
+			واپس retval;
 		file->flags &= ~EXT2_FILE_BUF_VALID;
 	}
 	file->blockno = b;
-	return 0;
+	واپس 0;
 }
 
 /*
@@ -204,33 +204,33 @@ static errcode_t sync_buffer_position(ext2_file_t file)
  * going to be replacing its entire contents anyway.  If set, then the
  * function basically only sets file->physblock and EXT2_FILE_BUF_VALID
  */
-#define DONTFILL 1
-static errcode_t load_buffer(ext2_file_t file, int dontfill)
+#تعریف_کرو DONTFILL 1
+ساکن errcode_t بھرو_بفر(ext2_file_t file, صحیح dontfill)
 {
 	ext2_filsys	fs = file->fs;
 	errcode_t	retval;
-	int		ret_flags;
+	صحیح		ret_flags;
 
-	if (!(file->flags & EXT2_FILE_BUF_VALID)) {
+	اگر (!(file->flags & EXT2_FILE_BUF_VALID)) {
 		retval = ext2fs_bmap2(fs, file->ino, &file->inode,
-				     BMAP_BUFFER, 0, file->blockno, &ret_flags,
+				     BMAP_بفر, 0, file->blockno, &ret_flags,
 				     &file->physblock);
-		if (retval)
-			return retval;
-		if (!dontfill) {
-			if (file->physblock &&
+		اگر (retval)
+			واپس retval;
+		اگر (!dontfill) {
+			اگر (file->physblock &&
 			    !(ret_flags & BMAP_RET_UNINIT)) {
 				retval = io_channel_read_blk64(fs->io,
 							       file->physblock,
 							       1, file->buf);
-				if (retval)
-					return retval;
-			} else
+				اگر (retval)
+					واپس retval;
+			} ورنہ
 				memset(file->buf, 0, fs->blocksize);
 		}
 		file->flags |= EXT2_FILE_BUF_VALID;
 	}
-	return 0;
+	واپس 0;
 }
 
 
@@ -242,165 +242,165 @@ errcode_t ext2fs_file_close(ext2_file_t file)
 
 	retval = ext2fs_file_flush(file);
 
-	if (file->buf)
+	اگر (file->buf)
 		ext2fs_free_mem(&file->buf);
 	ext2fs_free_mem(&file);
 
-	return retval;
+	واپس retval;
 }
 
 
-static errcode_t
-ext2fs_file_read_inline_data(ext2_file_t file, void *buf,
-			     unsigned int wanted, unsigned int *got)
+ساکن errcode_t
+ext2fs_file_read_inline_ڈیٹا(ext2_file_t file, خالی *buf,
+			     غیرعلامتی صحیح wanted, غیرعلامتی صحیح *got)
 {
 	ext2_filsys fs;
 	errcode_t retval = 0;
-	unsigned int count = 0;
-	uint64_t isize = EXT2_I_SIZE(&file->inode);
-	size_t size;
+	غیرعلامتی صحیح گنتی = 0;
+	uint64_t isize = EXT2_I_سائز(&file->inode);
+	size_t سائز;
 
-	if (file->pos >= isize)
-		goto out;
+	اگر (file->pos >= isize)
+		جاؤ برآمد;
 
 	fs = file->fs;
-	retval = ext2fs_inline_data_get(fs, file->ino, &file->inode,
-					file->buf, &size);
-	if (retval)
-		return retval;
+	retval = ext2fs_inline_ڈیٹا_get(fs, file->ino, &file->inode,
+					file->buf, &سائز);
+	اگر (retval)
+		واپس retval;
 
 	/*
 	 * size is the number of bytes available for inline data storage, which
 	 * means it can exceed isize.
 	 */
-	if (size > isize)
-		size = isize;
+	اگر (سائز > isize)
+		سائز = isize;
 
-	count = size - file->pos;
-	if (count > wanted)
-		count = wanted;
-	memcpy(buf, file->buf + file->pos, count);
-	file->pos += count;
-	buf = (char *) buf + count;
+	گنتی = سائز - file->pos;
+	اگر (گنتی > wanted)
+		گنتی = wanted;
+	حافظہ_نقل(buf, file->buf + file->pos, گنتی);
+	file->pos += گنتی;
+	buf = (حرف *) buf + گنتی;
 
 	/* zero-fill the rest of the buffer */
-	wanted -= count;
-	if (wanted > 0) {
+	wanted -= گنتی;
+	اگر (wanted > 0) {
 		memset(buf, 0, wanted);
 		file->pos += wanted;
-		count += wanted;
+		گنتی += wanted;
 	}
 
-out:
-	if (got)
-		*got = count;
-	return retval;
+برآمد:
+	اگر (got)
+		*got = گنتی;
+	واپس retval;
 }
 
 
-errcode_t ext2fs_file_read(ext2_file_t file, void *buf,
-			   unsigned int wanted, unsigned int *got)
+errcode_t ext2fs_file_read(ext2_file_t file, خالی *buf,
+			   غیرعلامتی صحیح wanted, غیرعلامتی صحیح *got)
 {
 	ext2_filsys	fs;
 	errcode_t	retval = 0;
-	unsigned int	start, c, count = 0;
-	__u64		left;
-	char		*ptr = (char *) buf;
+	غیرعلامتی صحیح	آغاز, c, گنتی = 0;
+	__u64		بایاں;
+	حرف		*ptr = (حرف *) buf;
 
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
 	fs = file->fs;
 
 	/* If an inode has inline data, things get complicated. */
-	if (file->inode.i_flags & EXT4_INLINE_DATA_FL)
-		return ext2fs_file_read_inline_data(file, buf, wanted, got);
+	اگر (file->inode.i_flags & EXT4_INLINE_ڈیٹا_FL)
+		واپس ext2fs_file_read_inline_ڈیٹا(file, buf, wanted, got);
 
-	while ((file->pos < EXT2_I_SIZE(&file->inode)) && (wanted > 0)) {
-		retval = sync_buffer_position(file);
-		if (retval)
-			goto fail;
-		retval = load_buffer(file, 0);
-		if (retval)
-			goto fail;
+	جب ((file->pos < EXT2_I_سائز(&file->inode)) && (wanted > 0)) {
+		retval = sync_بفر_position(file);
+		اگر (retval)
+			جاؤ fail;
+		retval = بھرو_بفر(file, 0);
+		اگر (retval)
+			جاؤ fail;
 
-		start = file->pos % fs->blocksize;
-		c = fs->blocksize - start;
-		if (c > wanted)
+		آغاز = file->pos % fs->blocksize;
+		c = fs->blocksize - آغاز;
+		اگر (c > wanted)
 			c = wanted;
-		left = EXT2_I_SIZE(&file->inode) - file->pos ;
-		if (c > left)
-			c = left;
+		بایاں = EXT2_I_سائز(&file->inode) - file->pos ;
+		اگر (c > بایاں)
+			c = بایاں;
 
-		memcpy(ptr, file->buf+start, c);
+		حافظہ_نقل(ptr, file->buf+آغاز, c);
 		file->pos += c;
 		ptr += c;
-		count += c;
+		گنتی += c;
 		wanted -= c;
 	}
 
 fail:
-	if (got)
-		*got = count;
-	return retval;
+	اگر (got)
+		*got = گنتی;
+	واپس retval;
 }
 
 
-static errcode_t
-ext2fs_file_write_inline_data(ext2_file_t file, const void *buf,
-			      unsigned int nbytes, unsigned int *written)
+ساکن errcode_t
+ext2fs_file_write_inline_ڈیٹا(ext2_file_t file, ثابت خالی *buf,
+			      غیرعلامتی صحیح nbytes, غیرعلامتی صحیح *written)
 {
 	ext2_filsys fs;
-	uint64_t old_isize = EXT2_I_SIZE(&file->inode);
+	uint64_t old_isize = EXT2_I_سائز(&file->inode);
 	uint64_t new_isize = old_isize;
 	errcode_t retval;
-	size_t size;
+	size_t سائز;
 
-	if (file->pos + nbytes > old_isize)
+	اگر (file->pos + nbytes > old_isize)
 		new_isize = file->pos + nbytes;
 
 	fs = file->fs;
-	retval = ext2fs_inline_data_get(fs, file->ino, &file->inode,
-					file->buf, &size);
-	if (retval)
-		return retval;
+	retval = ext2fs_inline_ڈیٹا_get(fs, file->ino, &file->inode,
+					file->buf, &سائز);
+	اگر (retval)
+		واپس retval;
 
 	/*
 	 * Only try to set new inline data if it won't go past the end of
 	 * @file->buf; if there's not enough space in the ondisk inode, we'll
 	 * jump out to the expand code.
 	 */
-	if (new_isize < fs->blocksize) {
-		if (file->pos > old_isize)
+	اگر (new_isize < fs->blocksize) {
+		اگر (file->pos > old_isize)
 			memset(file->buf + old_isize, 0, file->pos - old_isize);
 
-		memcpy(file->buf + file->pos, buf, nbytes);
+		حافظہ_نقل(file->buf + file->pos, buf, nbytes);
 
-		retval = ext2fs_inline_data_set(fs, file->ino, &file->inode,
+		retval = ext2fs_inline_ڈیٹا_سیٹ(fs, file->ino, &file->inode,
 						file->buf, new_isize);
-		if (retval == EXT2_ET_INLINE_DATA_NO_SPACE)
-			goto expand;
-		if (retval)
-			return retval;
+		اگر (retval == EXT2_ET_INLINE_ڈیٹا_NO_SPACE)
+			جاؤ expand;
+		اگر (retval)
+			واپس retval;
 
 		file->pos += nbytes;
 
 		/* Update inode size */
-		if (old_isize < new_isize) {
+		اگر (old_isize < new_isize) {
 			errcode_t	rc;
 
-			rc = ext2fs_file_set_size2(file, file->pos);
-			if (retval == 0)
+			rc = ext2fs_file_سیٹ_size2(file, file->pos);
+			اگر (retval == 0)
 				retval = rc;
 		}
 
-		if (written)
+		اگر (written)
 			*written = nbytes;
-		return 0;
+		واپس 0;
 	}
 
 expand:
-	retval = ext2fs_inline_data_expand(fs, file->ino);
-	if (retval)
-		return retval;
+	retval = ext2fs_inline_ڈیٹا_expand(fs, file->ino);
+	اگر (retval)
+		واپس retval;
 	/*
 	 * reload inode and return no space error
 	 *
@@ -409,285 +409,285 @@ expand:
 	 * the outside inode.
 	 */
 	retval = ext2fs_read_inode(fs, file->ino, &file->inode);
-	if (retval)
-		return retval;
-	return EXT2_ET_INLINE_DATA_NO_SPACE;
+	اگر (retval)
+		واپس retval;
+	واپس EXT2_ET_INLINE_ڈیٹا_NO_SPACE;
 }
 
 
-errcode_t ext2fs_file_write(ext2_file_t file, const void *buf,
-			    unsigned int nbytes, unsigned int *written)
+errcode_t ext2fs_file_write(ext2_file_t file, ثابت خالی *buf,
+			    غیرعلامتی صحیح nbytes, غیرعلامتی صحیح *written)
 {
 	ext2_filsys	fs;
 	errcode_t	retval = 0;
-	unsigned int	start, c, count = 0;
-	const char	*ptr = (const char *) buf;
-	block_entry_t	new_block = NULL, old_block = NULL;
-	int		bmap_flags = 0;
+	غیرعلامتی صحیح	آغاز, c, گنتی = 0;
+	ثابت حرف	*ptr = (ثابت حرف *) buf;
+	بلاک_اندراج_t	new_بلاک = تہی, old_بلاک = تہی;
+	صحیح		bmap_flags = 0;
 
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
 	fs = file->fs;
 
-	if (!(file->flags & EXT2_FILE_WRITE))
-		return EXT2_ET_FILE_RO;
+	اگر (!(file->flags & EXT2_FILE_WRITE))
+		واپس EXT2_ET_FILE_RO;
 
 	/* If an inode has inline data, things get complicated. */
-	if (file->inode.i_flags & EXT4_INLINE_DATA_FL) {
-		retval = ext2fs_file_write_inline_data(file, buf, nbytes,
+	اگر (file->inode.i_flags & EXT4_INLINE_ڈیٹا_FL) {
+		retval = ext2fs_file_write_inline_ڈیٹا(file, buf, nbytes,
 						       written);
-		if (retval != EXT2_ET_INLINE_DATA_NO_SPACE)
-			return retval;
+		اگر (retval != EXT2_ET_INLINE_ڈیٹا_NO_SPACE)
+			واپس retval;
 		/* fall through to read data from the block */
 		retval = 0;
 	}
 
-	while (nbytes > 0) {
-		retval = sync_buffer_position(file);
-		if (retval)
-			goto fail;
+	جب (nbytes > 0) {
+		retval = sync_بفر_position(file);
+		اگر (retval)
+			جاؤ fail;
 
-		start = file->pos % fs->blocksize;
-		c = fs->blocksize - start;
-		if (c > nbytes)
+		آغاز = file->pos % fs->blocksize;
+		c = fs->blocksize - آغاز;
+		اگر (c > nbytes)
 			c = nbytes;
 
 		/*
 		 * We only need to do a read-modify-update cycle if
 		 * we're doing a partial write.
 		 */
-		retval = load_buffer(file, (c == fs->blocksize));
-		if (retval)
-			goto fail;
+		retval = بھرو_بفر(file, (c == fs->blocksize));
+		اگر (retval)
+			جاؤ fail;
 
 		file->flags |= EXT2_FILE_BUF_DIRTY;
-		memcpy(file->buf+start, ptr, c);
+		حافظہ_نقل(file->buf+آغاز, ptr, c);
 
 		/*
 		 * OK, the physical block hasn't been allocated yet.
 		 * Allocate it.
 		 */
-		if (!file->physblock) {
+		اگر (!file->physblock) {
 			bmap_flags = (file->ino ? BMAP_ALLOC : 0);
-			if (fs->flags & EXT2_FLAG_SHARE_DUP) {
-				new_block = calloc(1, sizeof(*new_block));
-				if (!new_block) {
-					retval = EXT2_ET_NO_MEMORY;
-					goto fail;
+			اگر (fs->flags & EXT2_FLAG_SHARE_DUP) {
+				new_بلاک = صفر_حافظہ_دو(1, حجم(*new_بلاک));
+				اگر (!new_بلاک) {
+					retval = EXT2_ET_NO_حافظہ;
+					جاؤ fail;
 				}
-				ext2fs_sha512((const unsigned char*)file->buf,
-						fs->blocksize, new_block->sha);
-				old_block = ext2fs_hashmap_lookup(
-							fs->block_sha_map,
-							new_block->sha,
-							sizeof(new_block->sha));
+				ext2fs_sha512((ثابت غیرعلامتی حرف*)file->buf,
+						fs->blocksize, new_بلاک->sha);
+				old_بلاک = ext2fs_hashmap_lookup(
+							fs->بلاک_sha_map,
+							new_بلاک->sha,
+							حجم(new_بلاک->sha));
 			}
 
-			if (old_block) {
-				file->physblock = old_block->physblock;
-				bmap_flags |= BMAP_SET;
-				free(new_block);
-				new_block = NULL;
+			اگر (old_بلاک) {
+				file->physblock = old_بلاک->physblock;
+				bmap_flags |= BMAP_سیٹ;
+				آزاد(new_بلاک);
+				new_بلاک = تہی;
 			}
 
 			retval = ext2fs_bmap2(fs, file->ino, &file->inode,
-					      BMAP_BUFFER,
+					      BMAP_بفر,
 					      bmap_flags,
 					      file->blockno, 0,
 					      &file->physblock);
-			if (retval) {
-				free(new_block);
-				new_block = NULL;
-				goto fail;
+			اگر (retval) {
+				آزاد(new_بلاک);
+				new_بلاک = تہی;
+				جاؤ fail;
 			}
 
-			if (new_block) {
-				new_block->physblock = file->physblock;
-				int ret = ext2fs_hashmap_add(fs->block_sha_map,
-						new_block, new_block->sha,
-						sizeof(new_block->sha));
-				if (ret) {
-					retval = EXT2_ET_NO_MEMORY;
-					free(new_block);
-					goto fail;
+			اگر (new_بلاک) {
+				new_بلاک->physblock = file->physblock;
+				صحیح ret = ext2fs_hashmap_جوڑو(fs->بلاک_sha_map,
+						new_بلاک, new_بلاک->sha,
+						حجم(new_بلاک->sha));
+				اگر (ret) {
+					retval = EXT2_ET_NO_حافظہ;
+					آزاد(new_بلاک);
+					جاؤ fail;
 				}
 			}
 
-			if (bmap_flags & BMAP_SET) {
-				ext2fs_iblk_add_blocks(fs, &file->inode, 1);
+			اگر (bmap_flags & BMAP_سیٹ) {
+				ext2fs_iblk_جوڑو_بلاکیں(fs, &file->inode, 1);
 				ext2fs_write_inode(fs, file->ino, &file->inode);
 			}
 		}
 
 		file->pos += c;
 		ptr += c;
-		count += c;
+		گنتی += c;
 		nbytes -= c;
 	}
 
 fail:
 	/* Update inode size */
-	if (count != 0 && EXT2_I_SIZE(&file->inode) < file->pos) {
+	اگر (گنتی != 0 && EXT2_I_سائز(&file->inode) < file->pos) {
 		errcode_t	rc;
 
-		rc = ext2fs_file_set_size2(file, file->pos);
-		if (retval == 0)
+		rc = ext2fs_file_سیٹ_size2(file, file->pos);
+		اگر (retval == 0)
 			retval = rc;
 	}
 
-	if (written)
-		*written = count;
-	return retval;
+	اگر (written)
+		*written = گنتی;
+	واپس retval;
 }
 
-errcode_t ext2fs_file_llseek(ext2_file_t file, __u64 offset,
-			    int whence, __u64 *ret_pos)
+errcode_t ext2fs_file_llseek(ext2_file_t file, __u64 انحراف,
+			    صحیح whence, __u64 *ret_pos)
 {
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
 
-	if (whence == EXT2_SEEK_SET)
-		file->pos = offset;
-	else if (whence == EXT2_SEEK_CUR)
-		file->pos += offset;
-	else if (whence == EXT2_SEEK_END)
-		file->pos = EXT2_I_SIZE(&file->inode) + offset;
-	else
-		return EXT2_ET_INVALID_ARGUMENT;
+	اگر (whence == EXT2_SEEK_سیٹ)
+		file->pos = انحراف;
+	ورنہ اگر (whence == EXT2_SEEK_CUR)
+		file->pos += انحراف;
+	ورنہ اگر (whence == EXT2_SEEK_انتہا)
+		file->pos = EXT2_I_سائز(&file->inode) + انحراف;
+	ورنہ
+		واپس EXT2_ET_INVALID_دلیل;
 
-	if (ret_pos)
+	اگر (ret_pos)
 		*ret_pos = file->pos;
 
-	return 0;
+	واپس 0;
 }
 
-errcode_t ext2fs_file_lseek(ext2_file_t file, ext2_off_t offset,
-			    int whence, ext2_off_t *ret_pos)
+errcode_t ext2fs_file_lseek(ext2_file_t file, ext2_off_t انحراف,
+			    صحیح whence, ext2_off_t *ret_pos)
 {
 	__u64		loffset, ret_loffset = 0;
 	errcode_t	retval;
 
-	loffset = offset;
+	loffset = انحراف;
 	retval = ext2fs_file_llseek(file, loffset, whence, &ret_loffset);
-	if (ret_pos)
+	اگر (ret_pos)
 		*ret_pos = (ext2_off_t) ret_loffset;
-	return retval;
+	واپس retval;
 }
 
 
 /*
  * This function returns the size of the file, according to the inode
  */
-errcode_t ext2fs_file_get_lsize(ext2_file_t file, __u64 *ret_size)
+errcode_t ext2fs_file_get_lsize(ext2_file_t file, __u64 *ret_سائز)
 {
-	if (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
-		return EXT2_ET_MAGIC_EXT2_FILE;
-	*ret_size = EXT2_I_SIZE(&file->inode);
-	return 0;
+	اگر (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
+		واپس EXT2_ET_MAGIC_EXT2_FILE;
+	*ret_سائز = EXT2_I_سائز(&file->inode);
+	واپس 0;
 }
 
 /*
  * This function returns the size of the file, according to the inode
  */
-ext2_off_t ext2fs_file_get_size(ext2_file_t file)
+ext2_off_t ext2fs_file_get_سائز(ext2_file_t file)
 {
-	__u64	size;
+	__u64	سائز;
 
-	if (ext2fs_file_get_lsize(file, &size))
-		return 0;
-	if ((size >> 32) != 0)
-		return 0;
-	return size;
+	اگر (ext2fs_file_get_lsize(file, &سائز))
+		واپس 0;
+	اگر ((سائز >> 32) != 0)
+		واپس 0;
+	واپس سائز;
 }
 
 /* Zero the parts of the last block that are past EOF. */
-static errcode_t ext2fs_file_zero_past_offset(ext2_file_t file,
-					      ext2_off64_t offset)
+ساکن errcode_t ext2fs_file_zero_past_انحراف(ext2_file_t file,
+					      ext2_off64_t انحراف)
 {
 	ext2_filsys fs = file->fs;
-	char *b = NULL;
-	ext2_off64_t off = offset % fs->blocksize;
+	حرف *b = تہی;
+	ext2_off64_t off = انحراف % fs->blocksize;
 	blk64_t blk;
-	int ret_flags;
+	صحیح ret_flags;
 	errcode_t retval;
 
-	if (off == 0)
-		return 0;
+	اگر (off == 0)
+		واپس 0;
 
-	retval = sync_buffer_position(file);
-	if (retval)
-		return retval;
+	retval = sync_بفر_position(file);
+	اگر (retval)
+		واپس retval;
 
 	/* Is there an initialized block at the end? */
-	retval = ext2fs_bmap2(fs, file->ino, NULL, NULL, 0,
-			      offset / fs->blocksize, &ret_flags, &blk);
-	if (retval)
-		return retval;
-	if ((blk == 0) || (ret_flags & BMAP_RET_UNINIT))
-		return 0;
+	retval = ext2fs_bmap2(fs, file->ino, تہی, تہی, 0,
+			      انحراف / fs->blocksize, &ret_flags, &blk);
+	اگر (retval)
+		واپس retval;
+	اگر ((blk == 0) || (ret_flags & BMAP_RET_UNINIT))
+		واپس 0;
 
 	/* Zero to the end of the block */
 	retval = ext2fs_get_mem(fs->blocksize, &b);
-	if (retval)
-		return retval;
+	اگر (retval)
+		واپس retval;
 
 	/* Read/zero/write block */
 	retval = io_channel_read_blk64(fs->io, blk, 1, b);
-	if (retval)
-		goto out;
+	اگر (retval)
+		جاؤ برآمد;
 
 	memset(b + off, 0, fs->blocksize - off);
 
 	retval = io_channel_write_blk64(fs->io, blk, 1, b);
-	if (retval)
-		goto out;
+	اگر (retval)
+		جاؤ برآمد;
 
-out:
+برآمد:
 	ext2fs_free_mem(&b);
-	return retval;
+	واپس retval;
 }
 
 /*
  * This function sets the size of the file, truncating it if necessary
  *
  */
-errcode_t ext2fs_file_set_size2(ext2_file_t file, ext2_off64_t size)
+errcode_t ext2fs_file_سیٹ_size2(ext2_file_t file, ext2_off64_t سائز)
 {
-	ext2_off64_t	old_size;
+	ext2_off64_t	old_سائز;
 	errcode_t	retval;
-	blk64_t		old_truncate, truncate_block;
+	blk64_t		old_truncate, truncate_بلاک;
 
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
 
-	if (size && ext2fs_file_block_offset_too_big(file->fs, &file->inode,
-					(size - 1) / file->fs->blocksize))
-		return EXT2_ET_FILE_TOO_BIG;
-	truncate_block = ((size + file->fs->blocksize - 1) >>
-			  EXT2_BLOCK_SIZE_BITS(file->fs->super));
-	old_size = EXT2_I_SIZE(&file->inode);
-	old_truncate = ((old_size + file->fs->blocksize - 1) >>
-		      EXT2_BLOCK_SIZE_BITS(file->fs->super));
+	اگر (سائز && ext2fs_file_بلاک_انحراف_too_big(file->fs, &file->inode,
+					(سائز - 1) / file->fs->blocksize))
+		واپس EXT2_ET_FILE_TOO_BIG;
+	truncate_بلاک = ((سائز + file->fs->blocksize - 1) >>
+			  EXT2_بلاک_سائز_بٹ(file->fs->super));
+	old_سائز = EXT2_I_سائز(&file->inode);
+	old_truncate = ((old_سائز + file->fs->blocksize - 1) >>
+		      EXT2_بلاک_سائز_بٹ(file->fs->super));
 
-	retval = ext2fs_inode_size_set(file->fs, &file->inode, size);
-	if (retval)
-		return retval;
+	retval = ext2fs_inode_سائز_سیٹ(file->fs, &file->inode, سائز);
+	اگر (retval)
+		واپس retval;
 
-	if (file->ino) {
+	اگر (file->ino) {
 		retval = ext2fs_write_inode(file->fs, file->ino, &file->inode);
-		if (retval)
-			return retval;
+		اگر (retval)
+			واپس retval;
 	}
 
-	retval = ext2fs_file_zero_past_offset(file, size);
-	if (retval)
-		return retval;
+	retval = ext2fs_file_zero_past_انحراف(file, سائز);
+	اگر (retval)
+		واپس retval;
 
-	if (truncate_block >= old_truncate)
-		return 0;
+	اگر (truncate_بلاک >= old_truncate)
+		واپس 0;
 
-	return ext2fs_punch(file->fs, file->ino, &file->inode, 0,
-			    truncate_block, ~0ULL);
+	واپس ext2fs_punch(file->fs, file->ino, &file->inode, 0,
+			    truncate_بلاک, ~0ULL);
 }
 
-errcode_t ext2fs_file_set_size(ext2_file_t file, ext2_off_t size)
+errcode_t ext2fs_file_سیٹ_سائز(ext2_file_t file, ext2_off_t سائز)
 {
-	return ext2fs_file_set_size2(file, size);
+	واپس ext2fs_file_سیٹ_size2(file, سائز);
 }

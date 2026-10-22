@@ -9,34 +9,34 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <errno.h>
+#شامل "config.h"
+#شامل <stdio.h>
+#شامل <string.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
+#شامل <errno.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fs.h"
+#شامل "ext2fsP.h"
 
-#undef PUNCH_DEBUG
+#تعریف_منسوخ PUNCH_DEBUG
 
 /*
  * This function returns 1 if the specified block is all zeros
  */
-static int check_zero_block(char *buf, int blocksize)
+ساکن صحیح check_zero_بلاک(حرف *buf, صحیح blocksize)
 {
-	char	*cp = buf;
-	int	left = blocksize;
+	حرف	*cp = buf;
+	صحیح	بایاں = blocksize;
 
-	while (left > 0) {
-		if (*cp++)
-			return 0;
-		left--;
+	جب (بایاں > 0) {
+		اگر (*cp++)
+			واپس 0;
+		بایاں--;
 	}
-	return 1;
+	واپس 1;
 }
 
 /*
@@ -46,178 +46,178 @@ static int check_zero_block(char *buf, int blocksize)
  * each one, will recursively handle any indirect blocks and then
  * frees and deallocates the blocks.
  */
-static errcode_t ind_punch(ext2_filsys fs, struct ext2_inode *inode,
-			   char *block_buf, blk_t *p, int level,
-			   blk64_t start, blk64_t count, int max)
+ساکن errcode_t ind_punch(ext2_filsys fs, ساخت ext2_inode *inode,
+			   حرف *بلاک_buf, blk_t *p, صحیح level,
+			   blk64_t آغاز, blk64_t گنتی, صحیح max)
 {
 	errcode_t	retval;
 	blk_t		b;
-	int		i;
-	blk64_t		offset, incr;
-	const blk64_t	end = start + count;
-	int		freed = 0;
+	صحیح		i;
+	blk64_t		انحراف, incr;
+	ثابت blk64_t	انتہا = آغاز + گنتی;
+	صحیح		freed = 0;
 
-#ifdef PUNCH_DEBUG
-	printf("Entering ind_punch, level %d, start %llu, count %llu, "
-	       "max %d\n", level, start, count, max);
-#endif
-	incr = 1ULL << ((EXT2_BLOCK_SIZE_BITS(fs->super) - 2) * level);
-	for (i = 0, offset = 0; i < max; i++, p++, offset += incr) {
-		if (offset >= end)
-			break;
-		if (*p == 0 || (offset+incr) <= start)
-			continue;
+#اگر_تعریف_شدہ PUNCH_DEBUG
+	لکھو("Entering ind_punch, level %d, start %llu, count %llu, "
+	       "max %d\n", level, آغاز, گنتی, max);
+#اگر_ختم
+	incr = 1ULL << ((EXT2_بلاک_سائز_بٹ(fs->super) - 2) * level);
+	برائے (i = 0, انحراف = 0; i < max; i++, p++, انحراف += incr) {
+		اگر (انحراف >= انتہا)
+			توڑو;
+		اگر (*p == 0 || (انحراف+incr) <= آغاز)
+			جاری;
 		b = *p;
-		if (level > 0) {
+		اگر (level > 0) {
 			blk_t start2;
 			blk_t count2;
-#ifdef PUNCH_DEBUG
-			printf("Reading indirect block %u\n", b);
-#endif
-			retval = ext2fs_read_ind_block(fs, b, block_buf);
-			if (retval)
-				return retval;
-			start2 = (start > offset) ? start - offset : 0;
-			count2 = end - ((start > offset) ? start : offset);
-#ifdef PUNCH_DEBUG
-			printf("start %llu offset %llu count %llu end %llu "
-			       "incr %llu start2 %u count2 %u\n", start,
-			       offset, count, end, incr, start2, count2);
-#endif
-			retval = ind_punch(fs, inode, block_buf + fs->blocksize,
-					   (blk_t *) block_buf, level - 1,
+#اگر_تعریف_شدہ PUNCH_DEBUG
+			لکھو("Reading indirect block %u\n", b);
+#اگر_ختم
+			retval = ext2fs_read_ind_بلاک(fs, b, بلاک_buf);
+			اگر (retval)
+				واپس retval;
+			start2 = (آغاز > انحراف) ? آغاز - انحراف : 0;
+			count2 = انتہا - ((آغاز > انحراف) ? آغاز : انحراف);
+#اگر_تعریف_شدہ PUNCH_DEBUG
+			لکھو("start %llu offset %llu count %llu end %llu "
+			       "incr %llu start2 %u count2 %u\n", آغاز,
+			       انحراف, گنتی, انتہا, incr, start2, count2);
+#اگر_ختم
+			retval = ind_punch(fs, inode, بلاک_buf + fs->blocksize,
+					   (blk_t *) بلاک_buf, level - 1,
 					   start2, count2,
 					   fs->blocksize >> 2);
-			if (retval)
-				return retval;
-			retval = ext2fs_write_ind_block(fs, b, block_buf);
-			if (retval)
-				return retval;
-			if (!check_zero_block(block_buf, fs->blocksize))
-				continue;
+			اگر (retval)
+				واپس retval;
+			retval = ext2fs_write_ind_بلاک(fs, b, بلاک_buf);
+			اگر (retval)
+				واپس retval;
+			اگر (!check_zero_بلاک(بلاک_buf, fs->blocksize))
+				جاری;
 		}
-#ifdef PUNCH_DEBUG
-		printf("Freeing block %u (offset %llu)\n", b, offset);
-#endif
-		ext2fs_block_alloc_stats(fs, b, -1);
+#اگر_تعریف_شدہ PUNCH_DEBUG
+		لکھو("Freeing block %u (offset %llu)\n", b, انحراف);
+#اگر_ختم
+		ext2fs_بلاک_alloc_stats(fs, b, -1);
 		*p = 0;
 		freed++;
 	}
-#ifdef PUNCH_DEBUG
-	printf("Freed %d blocks\n", freed);
-#endif
-	return ext2fs_iblk_sub_blocks(fs, inode, freed);
+#اگر_تعریف_شدہ PUNCH_DEBUG
+	لکھو("Freed %d blocks\n", freed);
+#اگر_ختم
+	واپس ext2fs_iblk_sub_بلاکیں(fs, inode, freed);
 }
 
-#define BLK_T_MAX ((blk_t)~0ULL)
-static errcode_t ext2fs_punch_ind(ext2_filsys fs, struct ext2_inode *inode,
-				  char *block_buf, blk64_t start, blk64_t end)
+#تعریف_کرو BLK_T_MAX ((blk_t)~0ULL)
+ساکن errcode_t ext2fs_punch_ind(ext2_filsys fs, ساخت ext2_inode *inode,
+				  حرف *بلاک_buf, blk64_t آغاز, blk64_t انتہا)
 {
 	errcode_t		retval;
-	char			*buf = 0;
-	int			level;
-	int			num = EXT2_NDIR_BLOCKS;
-	blk_t			*bp = inode->i_block;
-	blk_t			addr_per_block;
-	blk64_t			max = EXT2_NDIR_BLOCKS;
-	blk_t			count;
+	حرف			*buf = 0;
+	صحیح			level;
+	صحیح			عدد = EXT2_NDIR_بلاکیں;
+	blk_t			*bp = inode->i_بلاک;
+	blk_t			addr_فی_بلاک;
+	blk64_t			max = EXT2_NDIR_بلاکیں;
+	blk_t			گنتی;
 
 	/* Check start/end don't overflow the 2^32-1 indirect block limit */
-	if (start > BLK_T_MAX)
-		return 0;
-	if (end >= BLK_T_MAX || end - start + 1 >= BLK_T_MAX)
-		count = BLK_T_MAX - start;
-	else
-		count = end - start + 1;
+	اگر (آغاز > BLK_T_MAX)
+		واپس 0;
+	اگر (انتہا >= BLK_T_MAX || انتہا - آغاز + 1 >= BLK_T_MAX)
+		گنتی = BLK_T_MAX - آغاز;
+	ورنہ
+		گنتی = انتہا - آغاز + 1;
 
-	if (!block_buf) {
+	اگر (!بلاک_buf) {
 		retval = ext2fs_get_array(3, fs->blocksize, &buf);
-		if (retval)
-			return retval;
-		block_buf = buf;
+		اگر (retval)
+			واپس retval;
+		بلاک_buf = buf;
 	}
 
-	addr_per_block = (blk_t)fs->blocksize >> 2;
+	addr_فی_بلاک = (blk_t)fs->blocksize >> 2;
 
-	for (level = 0; level < 4; level++, max *= (blk64_t)addr_per_block) {
-#ifdef PUNCH_DEBUG
-		printf("Main loop level %d, start %llu count %u "
-		       "max %llu num %d\n", level, start, count, max, num);
-#endif
-		if (start < max) {
-			retval = ind_punch(fs, inode, block_buf, bp, level,
-					   start, count, num);
-			if (retval)
-				goto errout;
-			if (count > max)
-				count -= max - start;
-			else
-				break;
-			start = 0;
-		} else
-			start -= max;
-		bp += num;
-		if (level == 0) {
-			num = 1;
+	برائے (level = 0; level < 4; level++, max *= (blk64_t)addr_فی_بلاک) {
+#اگر_تعریف_شدہ PUNCH_DEBUG
+		لکھو("Main loop level %d, start %llu count %u "
+		       "max %llu num %d\n", level, آغاز, گنتی, max, عدد);
+#اگر_ختم
+		اگر (آغاز < max) {
+			retval = ind_punch(fs, inode, بلاک_buf, bp, level,
+					   آغاز, گنتی, عدد);
+			اگر (retval)
+				جاؤ errout;
+			اگر (گنتی > max)
+				گنتی -= max - آغاز;
+			ورنہ
+				توڑو;
+			آغاز = 0;
+		} ورنہ
+			آغاز -= max;
+		bp += عدد;
+		اگر (level == 0) {
+			عدد = 1;
 			max = 1;
 		}
 	}
 	retval = 0;
 errout:
-	if (buf)
+	اگر (buf)
 		ext2fs_free_mem(&buf);
-	return retval;
+	واپس retval;
 }
-#undef BLK_T_MAX
+#تعریف_منسوخ BLK_T_MAX
 
-#ifdef PUNCH_DEBUG
+#اگر_تعریف_شدہ PUNCH_DEBUG
 
-#define dbg_printf(f, a...)  printf(f, ## a)
+#تعریف_کرو dbg_printf(f, a...)  لکھو(f, ## a)
 
-static void dbg_print_extent(char *desc, struct ext2fs_extent *extent)
+ساکن خالی dbg_print_extent(حرف *desc, ساخت ext2fs_extent *extent)
 {
-	if (desc)
-		printf("%s: ", desc);
-	printf("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
+	اگر (desc)
+		لکھو("%s: ", desc);
+	لکھو("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
 	       extent->e_lblk, extent->e_lblk + extent->e_len - 1,
 	       extent->e_len, extent->e_pblk);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_LEAF)
+	اگر (extent->e_flags & EXT2_EXTENT_FLAGS_برگ)
 		fputs("LEAF ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	اگر (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 		fputs("UNINIT ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_SECOND_VISIT)
+	اگر (extent->e_flags & EXT2_EXTENT_FLAGS_دوسرا_دورہ)
 		fputs("2ND_VISIT ", stdout);
-	if (!extent->e_flags)
+	اگر (!extent->e_flags)
 		fputs("(none)", stdout);
 	fputc('\n', stdout);
 
 }
-#else
-#define dbg_print_extent(desc, ex)	do { } while (0)
-#define dbg_printf(f, a...)		do { } while (0)
-#endif
+#ورنہ
+#تعریف_کرو dbg_print_extent(desc, ex)	کرو { } جب (0)
+#تعریف_کرو dbg_printf(f, a...)		کرو { } جب (0)
+#اگر_ختم
 
 /* Free a range of blocks, respecting cluster boundaries */
-static errcode_t punch_extent_blocks(ext2_filsys fs, ext2_ino_t ino,
-				     struct ext2_inode *inode,
-				     blk64_t lfree_start, blk64_t free_start,
-				     __u32 free_count, blk64_t *freed)
+ساکن errcode_t punch_extent_بلاکیں(ext2_filsys fs, ext2_ino_t ino,
+				     ساخت ext2_inode *inode,
+				     blk64_t lfree_آغاز, blk64_t free_آغاز,
+				     __u32 free_گنتی, blk64_t *freed)
 {
 	blk64_t		pblk;
 	__u32		freed_now = 0;
 	__u32		cluster_freed;
 	errcode_t	retval = 0;
 
-	if (free_start < fs->super->s_first_data_block ||
-	    (free_start + free_count) > ext2fs_blocks_count(fs->super))
-		return EXT2_ET_BAD_BLOCK_NUM;
+	اگر (free_آغاز < fs->super->s_پہلا_ڈیٹا_بلاک ||
+	    (free_آغاز + free_گنتی) > ext2fs_بلاکیں_گنتی(fs->super))
+		واپس EXT2_ET_BAD_بلاک_عدد;
 
 	/* No bigalloc?  Just free each block. */
-	if (EXT2FS_CLUSTER_RATIO(fs) == 1) {
-		*freed += free_count;
-		while (free_count-- > 0)
-			ext2fs_block_alloc_stats2(fs, free_start++, -1);
-		return retval;
+	اگر (EXT2_FS_CLUSTER_تناسب(fs) == 1) {
+		*freed += free_گنتی;
+		جب (free_گنتی-- > 0)
+			ext2fs_بلاک_alloc_stats2(fs, free_آغاز++, -1);
+		واپس retval;
 	}
 
 	/*
@@ -225,66 +225,66 @@ static errcode_t punch_extent_blocks(ext2_filsys fs, ext2_ino_t ino,
 	 * blocks in a logical cluster map to blocks from the same physical
 	 * cluster, and that the offsets within the [pl]clusters match.
 	 */
-	if (free_start & EXT2FS_CLUSTER_MASK(fs)) {
-		retval = ext2fs_map_cluster_block(fs, ino, inode,
-						  lfree_start, &pblk);
-		if (retval)
-			goto errout;
-		if (!pblk) {
-			ext2fs_block_alloc_stats2(fs, free_start, -1);
+	اگر (free_آغاز & EXT2_FS_CLUSTER_نقاب(fs)) {
+		retval = ext2fs_map_cluster_بلاک(fs, ino, inode,
+						  lfree_آغاز, &pblk);
+		اگر (retval)
+			جاؤ errout;
+		اگر (!pblk) {
+			ext2fs_بلاک_alloc_stats2(fs, free_آغاز, -1);
 			freed_now++;
 		}
-		cluster_freed = EXT2FS_CLUSTER_RATIO(fs) -
-			(free_start & EXT2FS_CLUSTER_MASK(fs));
-		if (cluster_freed > free_count)
-			cluster_freed = free_count;
-		free_count -= cluster_freed;
-		free_start += cluster_freed;
-		lfree_start += cluster_freed;
+		cluster_freed = EXT2_FS_CLUSTER_تناسب(fs) -
+			(free_آغاز & EXT2_FS_CLUSTER_نقاب(fs));
+		اگر (cluster_freed > free_گنتی)
+			cluster_freed = free_گنتی;
+		free_گنتی -= cluster_freed;
+		free_آغاز += cluster_freed;
+		lfree_آغاز += cluster_freed;
 	}
 
 	/* Free whole clusters from the middle of the range. */
-	while (free_count > 0 && free_count >= (unsigned) EXT2FS_CLUSTER_RATIO(fs)) {
-		ext2fs_block_alloc_stats2(fs, free_start, -1);
+	جب (free_گنتی > 0 && free_گنتی >= (غیرعلامتی) EXT2_FS_CLUSTER_تناسب(fs)) {
+		ext2fs_بلاک_alloc_stats2(fs, free_آغاز, -1);
 		freed_now++;
-		cluster_freed = EXT2FS_CLUSTER_RATIO(fs);
-		free_count -= cluster_freed;
-		free_start += cluster_freed;
-		lfree_start += cluster_freed;
+		cluster_freed = EXT2_FS_CLUSTER_تناسب(fs);
+		free_گنتی -= cluster_freed;
+		free_آغاز += cluster_freed;
+		lfree_آغاز += cluster_freed;
 	}
 
 	/* Try to free the last cluster. */
-	if (free_count > 0) {
-		retval = ext2fs_map_cluster_block(fs, ino, inode,
-						  lfree_start, &pblk);
-		if (retval)
-			goto errout;
-		if (!pblk) {
-			ext2fs_block_alloc_stats2(fs, free_start, -1);
+	اگر (free_گنتی > 0) {
+		retval = ext2fs_map_cluster_بلاک(fs, ino, inode,
+						  lfree_آغاز, &pblk);
+		اگر (retval)
+			جاؤ errout;
+		اگر (!pblk) {
+			ext2fs_بلاک_alloc_stats2(fs, free_آغاز, -1);
 			freed_now++;
 		}
 	}
 
 errout:
 	*freed += freed_now;
-	return retval;
+	واپس retval;
 }
 
-static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
-				     struct ext2_inode *inode,
-				     blk64_t start, blk64_t end)
+ساکن errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
+				     ساخت ext2_inode *inode,
+				     blk64_t آغاز, blk64_t انتہا)
 {
 	ext2_extent_handle_t	handle = 0;
-	struct ext2fs_extent	extent;
+	ساخت ext2fs_extent	extent;
 	errcode_t		retval;
-	blk64_t			free_start, next, lfree_start;
-	__u32			free_count, newlen;
+	blk64_t			free_آغاز, اگلا, lfree_آغاز;
+	__u32			free_گنتی, newlen;
 	blk64_t			freed = 0;
-	int			op;
+	صحیح			op;
 
 	retval = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (retval)
-		return retval;
+	اگر (retval)
+		واپس retval;
 	/*
 	 * Find the extent closest to the start of the punch range.  We don't
 	 * check the return value because _goto() sets the current node to the
@@ -296,80 +296,80 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 	 * there aren't any blocks mapped past this point in the file, so we're
 	 * done.
 	 */
-	ext2fs_extent_goto(handle, start);
+	ext2fs_extent_goto(handle, آغاز);
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval == EXT2_ET_NO_CURRENT_NODE) {
+	اگر (retval == EXT2_ET_NO_CURRENT_گرہ) {
 		retval = 0;
-		goto errout;
-	} else if (retval)
-		goto errout;
-	while (1) {
-		op = EXT2_EXTENT_NEXT_LEAF;
+		جاؤ errout;
+	} ورنہ اگر (retval)
+		جاؤ errout;
+	جب (1) {
+		op = EXT2_EXTENT_اگلا_برگ;
 		dbg_print_extent("main loop", &extent);
-		next = extent.e_lblk + extent.e_len;
+		اگلا = extent.e_lblk + extent.e_len;
 		dbg_printf("start %llu, end %llu, next %llu\n",
-			   (unsigned long long) start,
-			   (unsigned long long) end,
-			   (unsigned long long) next);
-		if (start <= extent.e_lblk) {
+			   (غیرعلامتی طویل طویل) آغاز,
+			   (غیرعلامتی طویل طویل) انتہا,
+			   (غیرعلامتی طویل طویل) اگلا);
+		اگر (آغاز <= extent.e_lblk) {
 			/*
 			 * Have we iterated past the end of the punch region?
 			 * If so, we can stop.
 			 */
-			if (end < extent.e_lblk)
-				break;
+			اگر (انتہا < extent.e_lblk)
+				توڑو;
 			dbg_printf("Case #%d\n", 1);
 			/* Start of deleted region before extent; 
 			   adjust beginning of extent */
-			free_start = extent.e_pblk;
-			lfree_start = extent.e_lblk;
-			if (next > end)
-				free_count = end - extent.e_lblk + 1;
-			else
-				free_count = extent.e_len;
-			extent.e_len -= free_count;
-			extent.e_lblk += free_count;
-			extent.e_pblk += free_count;
-		} else if (end >= next-1) {
+			free_آغاز = extent.e_pblk;
+			lfree_آغاز = extent.e_lblk;
+			اگر (اگلا > انتہا)
+				free_گنتی = انتہا - extent.e_lblk + 1;
+			ورنہ
+				free_گنتی = extent.e_len;
+			extent.e_len -= free_گنتی;
+			extent.e_lblk += free_گنتی;
+			extent.e_pblk += free_گنتی;
+		} ورنہ اگر (انتہا >= اگلا-1) {
 			/*
 			 * Is the punch region beyond this extent?  This can
 			 * happen if start is already inside a hole.  Try to
 			 * advance to the next extent if this is the case.
 			 */
-			if (start >= next)
-				goto next_extent;
+			اگر (آغاز >= اگلا)
+				جاؤ اگلا_extent;
 			/* End of deleted region after extent;
 			   adjust end of extent */
 			dbg_printf("Case #%d\n", 2);
-			newlen = start - extent.e_lblk;
-			free_start = extent.e_pblk + newlen;
-			lfree_start = extent.e_lblk + newlen;
-			free_count = extent.e_len - newlen;
+			newlen = آغاز - extent.e_lblk;
+			free_آغاز = extent.e_pblk + newlen;
+			lfree_آغاز = extent.e_lblk + newlen;
+			free_گنتی = extent.e_len - newlen;
 			extent.e_len = newlen;
-		} else {
-			struct ext2fs_extent	newex;
+		} ورنہ {
+			ساخت ext2fs_extent	newex;
 
 			dbg_printf("Case #%d\n", 3);
 			/* The hard case; we need to split the extent */
 			newex.e_pblk = extent.e_pblk +
-				(end + 1 - extent.e_lblk);
-			newex.e_lblk = end + 1;
-			newex.e_len = next - end - 1;
+				(انتہا + 1 - extent.e_lblk);
+			newex.e_lblk = انتہا + 1;
+			newex.e_len = اگلا - انتہا - 1;
 			newex.e_flags = extent.e_flags;
 
-			extent.e_len = start - extent.e_lblk;
-			free_start = extent.e_pblk + extent.e_len;
-			lfree_start = extent.e_lblk + extent.e_len;
-			free_count = end - start + 1;
+			extent.e_len = آغاز - extent.e_lblk;
+			free_آغاز = extent.e_pblk + extent.e_len;
+			lfree_آغاز = extent.e_lblk + extent.e_len;
+			free_گنتی = انتہا - آغاز + 1;
 
 			dbg_print_extent("inserting", &newex);
-			retval = ext2fs_extent_insert(handle,
-					EXT2_EXTENT_INSERT_AFTER, &newex);
-			if (retval)
-				goto errout;
+			retval = ext2fs_extent_داخل_کرو(handle,
+					EXT2_EXTENT_داخل_کرو_AFTER, &newex);
+			اگر (retval)
+				جاؤ errout;
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval)
-				goto errout;
+			اگر (retval)
+				جاؤ errout;
 			/*
 			 * Now pointing at inserted extent; so go back.
 			 *
@@ -377,18 +377,18 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 			 * subtlety in the comment for fix_parents().
 			 */
 			retval = ext2fs_extent_goto(handle, extent.e_lblk);
-			if (retval)
-				goto errout;
+			اگر (retval)
+				جاؤ errout;
 		} 
-		if (extent.e_len) {
+		اگر (extent.e_len) {
 			dbg_print_extent("replacing", &extent);
 			retval = ext2fs_extent_replace(handle, 0, &extent);
-			if (retval)
-				goto errout;
+			اگر (retval)
+				جاؤ errout;
 			retval = ext2fs_extent_fix_parents(handle);
-		} else {
-			struct ext2fs_extent	newex;
-			blk64_t			old_lblk, next_lblk;
+		} ورنہ {
+			ساخت ext2fs_extent	newex;
+			blk64_t			old_lblk, اگلا_lblk;
 			dbg_printf("deleting current extent%s\n", "");
 
 			/*
@@ -397,32 +397,32 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 			 */
 			retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 						   &newex);
-			if (retval)
-				goto errout;
+			اگر (retval)
+				جاؤ errout;
 			old_lblk = newex.e_lblk;
 
 			retval = ext2fs_extent_get(handle,
-						   EXT2_EXTENT_NEXT_LEAF,
+						   EXT2_EXTENT_اگلا_برگ,
 						   &newex);
-			if (retval == EXT2_ET_EXTENT_NO_NEXT)
-				next_lblk = old_lblk;
-			else if (retval)
-				goto errout;
-			else
-				next_lblk = newex.e_lblk;
+			اگر (retval == EXT2_ET_EXTENT_NO_اگلا)
+				اگلا_lblk = old_lblk;
+			ورنہ اگر (retval)
+				جاؤ errout;
+			ورنہ
+				اگلا_lblk = newex.e_lblk;
 
 			retval = ext2fs_extent_goto(handle, old_lblk);
-			if (retval)
-				goto errout;
+			اگر (retval)
+				جاؤ errout;
 
 			/* Now delete the extent. */
 			retval = ext2fs_extent_delete(handle, 0);
-			if (retval)
-				goto errout;
+			اگر (retval)
+				جاؤ errout;
 
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval && retval != EXT2_ET_NO_CURRENT_NODE)
-				goto errout;
+			اگر (retval && retval != EXT2_ET_NO_CURRENT_گرہ)
+				جاؤ errout;
 			retval = 0;
 
 			/*
@@ -430,37 +430,37 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 			 * errors, the ext2fs_extent_get down below will
 			 * capture them for us.
 			 */
-			(void)ext2fs_extent_goto(handle, next_lblk);
+			(خالی)ext2fs_extent_goto(handle, اگلا_lblk);
 			op = EXT2_EXTENT_CURRENT;
 		}
-		if (retval)
-			goto errout;
+		اگر (retval)
+			جاؤ errout;
 		dbg_printf("Free start %llu, free count = %u\n",
-		       free_start, free_count);
-		retval = punch_extent_blocks(fs, ino, inode, lfree_start,
-					     free_start, free_count, &freed);
-		if (retval)
-			goto errout;
-	next_extent:
+		       free_آغاز, free_گنتی);
+		retval = punch_extent_بلاکیں(fs, ino, inode, lfree_آغاز,
+					     free_آغاز, free_گنتی, &freed);
+		اگر (retval)
+			جاؤ errout;
+	اگلا_extent:
 		retval = ext2fs_extent_get(handle, op,
 					   &extent);
-		if (retval == EXT2_ET_EXTENT_NO_NEXT ||
-		    retval == EXT2_ET_NO_CURRENT_NODE)
-			break;
-		if (retval)
-			goto errout;
+		اگر (retval == EXT2_ET_EXTENT_NO_اگلا ||
+		    retval == EXT2_ET_NO_CURRENT_گرہ)
+			توڑو;
+		اگر (retval)
+			جاؤ errout;
 	}
 	dbg_printf("Freed %llu blocks\n", freed);
-	retval = ext2fs_iblk_sub_blocks(fs, inode, freed);
+	retval = ext2fs_iblk_sub_بلاکیں(fs, inode, freed);
 errout:
 	ext2fs_extent_free(handle);
-	return retval;
+	واپس retval;
 }
 	
-static errcode_t ext2fs_punch_inline_data(ext2_filsys fs, ext2_ino_t ino,
-					  struct ext2_inode *inode,
-					  blk64_t start,
-					  blk64_t end EXT2FS_ATTR((unused)))
+ساکن errcode_t ext2fs_punch_inline_ڈیٹا(ext2_filsys fs, ext2_ino_t ino,
+					  ساخت ext2_inode *inode,
+					  blk64_t آغاز,
+					  blk64_t انتہا EXT2FS_ATTR((غیر_مستعمل)))
 {
 	errcode_t retval;
 
@@ -470,16 +470,16 @@ static errcode_t ext2fs_punch_inline_data(ext2_filsys fs, ext2_ino_t ino,
 	 * to this we will remove all inline data in ext2fs_punch()
 	 * now.
 	 */
-	if (start > 0)
-		return 0;
+	اگر (آغاز > 0)
+		واپس 0;
 
-	memset((char *)inode->i_block, 0, EXT4_MIN_INLINE_DATA_SIZE);
-	inode->i_size = 0;
+	memset((حرف *)inode->i_بلاک, 0, EXT4_MIN_INLINE_ڈیٹا_سائز);
+	inode->i_سائز = 0;
 	retval = ext2fs_write_inode(fs, ino, inode);
-	if (retval)
-		return retval;
+	اگر (retval)
+		واپس retval;
 
-	return ext2fs_inline_data_ea_remove(fs, ino);
+	واپس ext2fs_inline_ڈیٹا_ea_remove(fs, ino);
 }
 
 /*
@@ -487,35 +487,35 @@ static errcode_t ext2fs_punch_inline_data(ext2_filsys fs, ext2_ino_t ino,
  * If end is ~0ULL, then this is effectively truncate.
  */
 errcode_t ext2fs_punch(ext2_filsys fs, ext2_ino_t ino,
-		       struct ext2_inode *inode,
-		       char *block_buf, blk64_t start,
-		       blk64_t end)
+		       ساخت ext2_inode *inode,
+		       حرف *بلاک_buf, blk64_t آغاز,
+		       blk64_t انتہا)
 {
 	errcode_t		retval;
-	struct ext2_inode	inode_buf;
+	ساخت ext2_inode	inode_buf;
 
-	if (start > end)
-		return EINVAL;
+	اگر (آغاز > انتہا)
+		واپس EINVAL;
 
 	/* Read inode structure if necessary */
-	if (!inode) {
+	اگر (!inode) {
 		retval = ext2fs_read_inode(fs, ino, &inode_buf);
-		if (retval)
-			return retval;
+		اگر (retval)
+			واپس retval;
 		inode = &inode_buf;
 	}
-	if (inode->i_flags & EXT4_INLINE_DATA_FL)
-		return ext2fs_punch_inline_data(fs, ino, inode, start, end);
-	else if (inode->i_flags & EXT4_EXTENTS_FL)
-		retval = ext2fs_punch_extent(fs, ino, inode, start, end);
-	else
-		retval = ext2fs_punch_ind(fs, inode, block_buf, start, end);
-	if (retval)
-		return retval;
+	اگر (inode->i_flags & EXT4_INLINE_ڈیٹا_FL)
+		واپس ext2fs_punch_inline_ڈیٹا(fs, ino, inode, آغاز, انتہا);
+	ورنہ اگر (inode->i_flags & EXT4_EXTENTS_FL)
+		retval = ext2fs_punch_extent(fs, ino, inode, آغاز, انتہا);
+	ورنہ
+		retval = ext2fs_punch_ind(fs, inode, بلاک_buf, آغاز, انتہا);
+	اگر (retval)
+		واپس retval;
 
-#ifdef PUNCH_DEBUG
-	printf("%u: write inode size now %lu blocks %u\n",
-		ino, EXT2_I_SIZE(inode), inode->i_blocks);
-#endif
-	return ext2fs_write_inode(fs, ino, inode);
+#اگر_تعریف_شدہ PUNCH_DEBUG
+	لکھو("%u: write inode size now %lu blocks %u\n",
+		ino, EXT2_I_سائز(inode), inode->i_بلاکیں);
+#اگر_ختم
+	واپس ext2fs_write_inode(fs, ino, inode);
 }

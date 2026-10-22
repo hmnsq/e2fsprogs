@@ -10,23 +10,23 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#شامل "config.h"
+#شامل <stdio.h>
+#شامل <string.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
+#شامل <fcntl.h>
+#شامل <time.h>
+#اگر HAVE_SYS_STAT_H
+#شامل <sys/stat.h>
+#اگر_ختم
+#اگر HAVE_SYS_TYPES_H
+#شامل <sys/types.h>
+#اگر_ختم
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fs.h"
 
 /*
  * This function reserves the superblock and block group descriptors
@@ -41,42 +41,42 @@
  *
  * See also the comment for ext2fs_super_and_bgd_loc()
  */
-int ext2fs_reserve_super_and_bgd(ext2_filsys fs,
-				 dgrp_t group,
-				 ext2fs_block_bitmap bmap)
+صحیح ext2fs_reserve_super_and_bgd(ext2_filsys fs,
+				 dgrp_t گروہ,
+				 ext2fs_بلاک_bitmap bmap)
 {
 	blk64_t	super_blk, old_desc_blk, new_desc_blk;
-	blk_t	used_blks, old_desc_blocks, num_blocks;
+	blk_t	مستعمل_blks, old_desc_بلاکیں, عدد_بلاکیں;
 
-	ext2fs_super_and_bgd_loc2(fs, group, &super_blk,
-				  &old_desc_blk, &new_desc_blk, &used_blks);
+	ext2fs_super_and_bgd_loc2(fs, گروہ, &super_blk,
+				  &old_desc_blk, &new_desc_blk, &مستعمل_blks);
 
-	if (ext2fs_has_feature_meta_bg(fs->super))
-		old_desc_blocks = fs->super->s_first_meta_bg;
-	else
-		old_desc_blocks =
-			fs->desc_blocks + fs->super->s_reserved_gdt_blocks;
+	اگر (ext2fs_has_feature_meta_bg(fs->super))
+		old_desc_بلاکیں = fs->super->s_پہلا_meta_bg;
+	ورنہ
+		old_desc_بلاکیں =
+			fs->desc_بلاکیں + fs->super->s_reserved_gdt_بلاکیں;
 
-	if (super_blk || (group == 0))
-		ext2fs_mark_block_bitmap2(bmap, super_blk);
-	if ((group == 0) && (fs->blocksize == 1024) &&
-	    EXT2FS_CLUSTER_RATIO(fs) > 1)
-		ext2fs_mark_block_bitmap2(bmap, 0);
+	اگر (super_blk || (گروہ == 0))
+		ext2fs_mark_بلاک_bitmap2(bmap, super_blk);
+	اگر ((گروہ == 0) && (fs->blocksize == 1024) &&
+	    EXT2_FS_CLUSTER_تناسب(fs) > 1)
+		ext2fs_mark_بلاک_bitmap2(bmap, 0);
 
-	if (old_desc_blk) {
-		num_blocks = old_desc_blocks;
-		if (old_desc_blk + num_blocks >= ext2fs_blocks_count(fs->super))
-			num_blocks = ext2fs_blocks_count(fs->super) -
+	اگر (old_desc_blk) {
+		عدد_بلاکیں = old_desc_بلاکیں;
+		اگر (old_desc_blk + عدد_بلاکیں >= ext2fs_بلاکیں_گنتی(fs->super))
+			عدد_بلاکیں = ext2fs_بلاکیں_گنتی(fs->super) -
 				old_desc_blk;
-		ext2fs_mark_block_bitmap_range2(bmap, old_desc_blk, num_blocks);
+		ext2fs_mark_بلاک_bitmap_range2(bmap, old_desc_blk, عدد_بلاکیں);
 	}
-	if (new_desc_blk)
-		ext2fs_mark_block_bitmap2(bmap, new_desc_blk);
+	اگر (new_desc_blk)
+		ext2fs_mark_بلاک_bitmap2(bmap, new_desc_blk);
 
-	num_blocks = ext2fs_group_blocks_count(fs, group);
-	num_blocks -= 2 + fs->inode_blocks_per_group + used_blks;
+	عدد_بلاکیں = ext2fs_گروہ_بلاکیں_گنتی(fs, گروہ);
+	عدد_بلاکیں -= 2 + fs->inode_بلاکیں_فی_گروہ + مستعمل_blks;
 
-	return num_blocks  ;
+	واپس عدد_بلاکیں  ;
 }
 
 /*
@@ -85,21 +85,21 @@ int ext2fs_reserve_super_and_bgd(ext2_filsys fs,
  * super block and group descriptors by looking up the block bitmap.
  */
 errcode_t ext2fs_reserve_super_and_bgd2(ext2_filsys fs,
-				        dgrp_t group,
-				        ext2fs_block_bitmap bmap,
-				        blk_t *desc_blocks)
+				        dgrp_t گروہ,
+				        ext2fs_بلاک_bitmap bmap,
+				        blk_t *desc_بلاکیں)
 {
-	blk64_t	num_blocks;
+	blk64_t	عدد_بلاکیں;
 	errcode_t retval = 0;
 
-	ext2fs_reserve_super_and_bgd(fs, group, bmap);
+	ext2fs_reserve_super_and_bgd(fs, گروہ, bmap);
 
-	retval = ext2fs_count_used_blocks(fs,
-					ext2fs_group_first_block2(fs, group),
-					ext2fs_group_last_block2(fs, group),
-					&num_blocks);
-	if (!retval)
-		*desc_blocks = num_blocks;
+	retval = ext2fs_گنتی_مستعمل_بلاکیں(fs,
+					ext2fs_گروہ_پہلا_block2(fs, گروہ),
+					ext2fs_گروہ_آخری_block2(fs, گروہ),
+					&عدد_بلاکیں);
+	اگر (!retval)
+		*desc_بلاکیں = عدد_بلاکیں;
 
-	return retval;
+	واپس retval;
 }

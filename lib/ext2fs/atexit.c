@@ -10,40 +10,40 @@
  * %End-Header%
  */
 
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
+#اگر_غیر_تعریف_شدہ LARGEFILE_ماخذ
+#تعریف_کرو LARGEFILE_ماخذ
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ LARGEFILE64_ماخذ
+#تعریف_کرو LARGEFILE64_ماخذ
+#اگر_ختم
 
-#include "config.h"
-#include <stdlib.h>
+#شامل "config.h"
+#شامل <stdlib.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fs.h"
+#شامل "ext2fsP.h"
 
-struct exit_data {
+ساخت exit_ڈیٹا {
 	ext2_exit_fn func;
-	void *data;
+	خالی *ڈیٹا;
 };
 
-static struct exit_data *items;
-static size_t nr_items;
+ساکن ساخت exit_ڈیٹا *اشیاء;
+ساکن size_t nr_اشیاء;
 
-static void handle_exit(void)
+ساکن خالی handle_exit(خالی)
 {
-	struct exit_data *ed;
+	ساخت exit_ڈیٹا *ed;
 
-	for (ed = items + nr_items - 1; ed >= items; ed--) {
-		if (ed->func == NULL)
-			continue;
-		ed->func(ed->data);
+	برائے (ed = اشیاء + nr_اشیاء - 1; ed >= اشیاء; ed--) {
+		اگر (ed->func == تہی)
+			جاری;
+		ed->func(ed->ڈیٹا);
 	}
 
-	ext2fs_free_mem(&items);
-	nr_items = 0;
+	ext2fs_free_mem(&اشیاء);
+	nr_اشیاء = 0;
 }
 
 /*
@@ -51,66 +51,66 @@ static void handle_exit(void)
  * If you want this to be called during a signal exit, you must capture
  * the signal and call exit() yourself!
  */
-errcode_t ext2fs_add_exit_fn(ext2_exit_fn func, void *data)
+errcode_t ext2fs_جوڑو_exit_fn(ext2_exit_fn func, خالی *ڈیٹا)
 {
-	struct exit_data *ed, *free_ed = NULL;
+	ساخت exit_ڈیٹا *ed, *free_ed = تہی;
 	size_t x;
 	errcode_t ret;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	اگر (func == تہی)
+		واپس EXT2_ET_INVALID_دلیل;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == func && ed->data == data)
-			return EXT2_ET_FILE_EXISTS;
-		if (ed->func == NULL)
+	برائے (x = 0, ed = اشیاء; x < nr_اشیاء; x++, ed++) {
+		اگر (ed->func == func && ed->ڈیٹا == ڈیٹا)
+			واپس EXT2_ET_FILE_EXISTS;
+		اگر (ed->func == تہی)
 			free_ed = ed;
 	}
 
-	if (free_ed) {
+	اگر (free_ed) {
 		free_ed->func = func;
-		free_ed->data = data;
-		return 0;
+		free_ed->ڈیٹا = ڈیٹا;
+		واپس 0;
 	}
 
-	if (nr_items == 0) {
+	اگر (nr_اشیاء == 0) {
 		ret = atexit(handle_exit);
-		if (ret)
-			return ret;
+		اگر (ret)
+			واپس ret;
 	}
 
-	ret = ext2fs_resize_mem(0, (nr_items + 1) * sizeof(struct exit_data),
-				&items);
-	if (ret)
-		return ret;
+	ret = ext2fs_resize_mem(0, (nr_اشیاء + 1) * حجم(ساخت exit_ڈیٹا),
+				&اشیاء);
+	اگر (ret)
+		واپس ret;
 
-	items[nr_items].func = func;
-	items[nr_items].data = data;
-	nr_items++;
+	اشیاء[nr_اشیاء].func = func;
+	اشیاء[nr_اشیاء].ڈیٹا = ڈیٹا;
+	nr_اشیاء++;
 
-	return 0;
+	واپس 0;
 }
 
 /* Remove a function from the exit cleanup list. */
-errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, void *data)
+errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, خالی *ڈیٹا)
 {
-	struct exit_data *ed;
+	ساخت exit_ڈیٹا *ed;
 	size_t x;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	اگر (func == تہی)
+		واپس EXT2_ET_INVALID_دلیل;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == NULL)
-			return 0;
-		if (ed->func == func && ed->data == data) {
-			size_t sz = (nr_items - (x + 1)) *
-				    sizeof(struct exit_data);
+	برائے (x = 0, ed = اشیاء; x < nr_اشیاء; x++, ed++) {
+		اگر (ed->func == تہی)
+			واپس 0;
+		اگر (ed->func == func && ed->ڈیٹا == ڈیٹا) {
+			size_t sz = (nr_اشیاء - (x + 1)) *
+				    حجم(ساخت exit_ڈیٹا);
 			memmove(ed, ed + 1, sz);
-			memset(items + nr_items - 1, 0,
-			       sizeof(struct exit_data));
+			memset(اشیاء + nr_اشیاء - 1, 0,
+			       حجم(ساخت exit_ڈیٹا));
 		}
 	}
 
-	return 0;
+	واپس 0;
 }

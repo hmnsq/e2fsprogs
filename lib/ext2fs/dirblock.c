@@ -9,105 +9,105 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <string.h>
-#include <time.h>
+#شامل "config.h"
+#شامل <stdio.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
+#شامل <string.h>
+#شامل <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fs.h"
 
-errcode_t ext2fs_read_dir_block4(ext2_filsys fs, blk64_t block,
-				 void *buf, int flags EXT2FS_ATTR((unused)),
+errcode_t ext2fs_read_dir_block4(ext2_filsys fs, blk64_t بلاک,
+				 خالی *buf, صحیح flags EXT2FS_ATTR((غیر_مستعمل)),
 				 ext2_ino_t ino)
 {
 	errcode_t	retval;
-	int		corrupt = 0;
+	صحیح		corrupt = 0;
 
-	retval = io_channel_read_blk64(fs->io, block, 1, buf);
-	if (retval)
-		return retval;
+	retval = io_channel_read_blk64(fs->io, بلاک, 1, buf);
+	اگر (retval)
+		واپس retval;
 
-	if (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
-	    !ext2fs_dir_block_csum_verify(fs, ino,
-					  (struct ext2_dir_entry *)buf))
+	اگر (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+	    !ext2fs_dir_بلاک_csum_verify(fs, ino,
+					  (ساخت ext2_dir_اندراج *)buf))
 		corrupt = 1;
 
-#ifdef WORDS_BIGENDIAN
-	retval = ext2fs_dirent_swab_in(fs, buf, flags);
-#endif
-	if (!retval && corrupt)
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
+	retval = ext2fs_dirent_swab_اندر(fs, buf, flags);
+#اگر_ختم
+	اگر (!retval && corrupt)
 		retval = EXT2_ET_DIR_CSUM_INVALID;
-	return retval;
+	واپس retval;
 }
 
-errcode_t ext2fs_read_dir_block3(ext2_filsys fs, blk64_t block,
-				 void *buf, int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_read_dir_block3(ext2_filsys fs, blk64_t بلاک,
+				 خالی *buf, صحیح flags EXT2FS_ATTR((غیر_مستعمل)))
 {
-	return ext2fs_read_dir_block4(fs, block, buf, flags, 0);
+	واپس ext2fs_read_dir_block4(fs, بلاک, buf, flags, 0);
 }
 
-errcode_t ext2fs_read_dir_block2(ext2_filsys fs, blk_t block,
-				 void *buf, int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_read_dir_block2(ext2_filsys fs, blk_t بلاک,
+				 خالی *buf, صحیح flags EXT2FS_ATTR((غیر_مستعمل)))
 {
-	return ext2fs_read_dir_block3(fs, block, buf, flags);
+	واپس ext2fs_read_dir_block3(fs, بلاک, buf, flags);
 }
 
-errcode_t ext2fs_read_dir_block(ext2_filsys fs, blk_t block,
-				 void *buf)
+errcode_t ext2fs_read_dir_بلاک(ext2_filsys fs, blk_t بلاک,
+				 خالی *buf)
 {
-	return ext2fs_read_dir_block3(fs, block, buf, 0);
+	واپس ext2fs_read_dir_block3(fs, بلاک, buf, 0);
 }
 
 
-errcode_t ext2fs_write_dir_block4(ext2_filsys fs, blk64_t block,
-				  void *inbuf, int flags EXT2FS_ATTR((unused)),
+errcode_t ext2fs_write_dir_block4(ext2_filsys fs, blk64_t بلاک,
+				  خالی *inbuf, صحیح flags EXT2FS_ATTR((غیر_مستعمل)),
 				  ext2_ino_t ino)
 {
 	errcode_t	retval;
-	char		*buf = inbuf;
+	حرف		*buf = inbuf;
 
-#ifdef WORDS_BIGENDIAN
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
-	memcpy(buf, inbuf, fs->blocksize);
-	retval = ext2fs_dirent_swab_out(fs, buf, flags);
-	if (retval)
-		return retval;
-#endif
-	retval = ext2fs_dir_block_csum_set(fs, ino,
-					   (struct ext2_dir_entry *)buf);
-	if (retval)
-		goto out;
+	اگر (retval)
+		واپس retval;
+	حافظہ_نقل(buf, inbuf, fs->blocksize);
+	retval = ext2fs_dirent_swab_برآمد(fs, buf, flags);
+	اگر (retval)
+		واپس retval;
+#اگر_ختم
+	retval = ext2fs_dir_بلاک_csum_سیٹ(fs, ino,
+					   (ساخت ext2_dir_اندراج *)buf);
+	اگر (retval)
+		جاؤ برآمد;
 
-	retval = io_channel_write_blk64(fs->io, block, 1, buf);
+	retval = io_channel_write_blk64(fs->io, بلاک, 1, buf);
 
-out:
-#ifdef WORDS_BIGENDIAN
+برآمد:
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
 	ext2fs_free_mem(&buf);
-#endif
-	return retval;
+#اگر_ختم
+	واپس retval;
 }
 
-errcode_t ext2fs_write_dir_block3(ext2_filsys fs, blk64_t block,
-				  void *inbuf, int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_write_dir_block3(ext2_filsys fs, blk64_t بلاک,
+				  خالی *inbuf, صحیح flags EXT2FS_ATTR((غیر_مستعمل)))
 {
-	return ext2fs_write_dir_block4(fs, block, inbuf, flags, 0);
+	واپس ext2fs_write_dir_block4(fs, بلاک, inbuf, flags, 0);
 }
 
-errcode_t ext2fs_write_dir_block2(ext2_filsys fs, blk_t block,
-				 void *inbuf, int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_write_dir_block2(ext2_filsys fs, blk_t بلاک,
+				 خالی *inbuf, صحیح flags EXT2FS_ATTR((غیر_مستعمل)))
 {
-	return ext2fs_write_dir_block3(fs, block, inbuf, flags);
+	واپس ext2fs_write_dir_block3(fs, بلاک, inbuf, flags);
 }
 
-errcode_t ext2fs_write_dir_block(ext2_filsys fs, blk_t block,
-				 void *inbuf)
+errcode_t ext2fs_write_dir_بلاک(ext2_filsys fs, blk_t بلاک,
+				 خالی *inbuf)
 {
-	return ext2fs_write_dir_block3(fs, block, inbuf, 0);
+	واپس ext2fs_write_dir_block3(fs, بلاک, inbuf, 0);
 }
 

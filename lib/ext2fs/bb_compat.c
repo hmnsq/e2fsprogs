@@ -9,56 +9,56 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#شامل "config.h"
+#شامل <stdio.h>
+#شامل <string.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
+#شامل <fcntl.h>
+#شامل <time.h>
+#اگر HAVE_SYS_STAT_H
+#شامل <sys/stat.h>
+#اگر_ختم
+#اگر HAVE_SYS_TYPES_H
+#شامل <sys/types.h>
+#اگر_ختم
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fsP.h"
 
-errcode_t badblocks_list_create(badblocks_list *ret, int size)
+errcode_t badblocks_list_create(badblocks_list *ret, صحیح سائز)
 {
-	return ext2fs_badblocks_list_create(ret, size);
+	واپس ext2fs_badblocks_list_create(ret, سائز);
 }
 
-void badblocks_list_free(badblocks_list bb)
+خالی badblocks_list_free(badblocks_list bb)
 {
 	ext2fs_badblocks_list_free(bb);
 }
 
-errcode_t badblocks_list_add(badblocks_list bb, blk_t blk)
+errcode_t badblocks_list_جوڑو(badblocks_list bb, blk_t blk)
 {
-	return ext2fs_badblocks_list_add(bb, blk);
+	واپس ext2fs_badblocks_list_جوڑو(bb, blk);
 }
 
-int badblocks_list_test(badblocks_list bb, blk_t blk)
+صحیح badblocks_list_test(badblocks_list bb, blk_t blk)
 {
-	return ext2fs_badblocks_list_test(bb, blk);
+	واپس ext2fs_badblocks_list_test(bb, blk);
 }
 
 errcode_t badblocks_list_iterate_begin(badblocks_list bb,
 				       badblocks_iterate *ret)
 {
-	return ext2fs_badblocks_list_iterate_begin(bb, ret);
+	واپس ext2fs_badblocks_list_iterate_begin(bb, ret);
 }
 
-int badblocks_list_iterate(badblocks_iterate iter, blk_t *blk)
+صحیح badblocks_list_iterate(badblocks_iterate iter, blk_t *blk)
 {
-	return ext2fs_badblocks_list_iterate(iter, blk);
+	واپس ext2fs_badblocks_list_iterate(iter, blk);
 }
 
-void badblocks_list_iterate_end(badblocks_iterate iter)
+خالی badblocks_list_iterate_انتہا(badblocks_iterate iter)
 {
-	ext2fs_badblocks_list_iterate_end(iter);
+	ext2fs_badblocks_list_iterate_انتہا(iter);
 }

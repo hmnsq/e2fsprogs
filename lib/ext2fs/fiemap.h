@@ -8,86 +8,86 @@
  *          Andreas Dilger <adilger@sun.com>
  */
 
-#ifndef _LINUX_FIEMAP_H
-#define _LINUX_FIEMAP_H
+#اگر_غیر_تعریف_شدہ _LINUX_FIEMAP_H
+#تعریف_کرو _LINUX_FIEMAP_H
 
-struct fiemap_extent {
+ساخت fiemap_extent {
 	__u64 fe_logical;  /* logical offset in bytes for the start of
 			    * the extent from the beginning of the file */
 	__u64 fe_physical; /* physical offset in bytes for the start
 			    * of the extent from the beginning of the disk */
-	__u64 fe_length;   /* length in bytes for this extent */
+	__u64 fe_لمبائی;   /* length in bytes for this extent */
 	__u64 fe_reserved64[2];
 	__u32 fe_flags;    /* FIEMAP_EXTENT_* flags for this extent */
 	__u32 fe_reserved[3];
 };
 
-struct fiemap {
-	__u64 fm_start;		/* logical offset (inclusive) at
+ساخت fiemap {
+	__u64 fm_آغاز;		/* logical offset (inclusive) at
 				 * which to start mapping (in) */
-	__u64 fm_length;	/* logical length of mapping which
+	__u64 fm_لمبائی;	/* logical length of mapping which
 				 * userspace wants (in) */
 	__u32 fm_flags;		/* FIEMAP_FLAG_* flags for request (in/out) */
 	__u32 fm_mapped_extents;/* number of extents that were mapped (out) */
-	__u32 fm_extent_count;  /* size of fm_extents array (in) */
+	__u32 fm_extent_گنتی;  /* size of fm_extents array (in) */
 	__u32 fm_reserved;
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-#endif
-	struct fiemap_extent fm_extents[0]; /* array of mapped extents (out) */
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic pop
-#endif
+#اگر __GNUC_PREREQ (4, 8)
+#ہدایت GCC diagnostic ڈالو
+#ہدایت GCC diagnostic ignored "-Wpedantic"
+#اگر_ختم
+	ساخت fiemap_extent fm_extents[0]; /* array of mapped extents (out) */
+#اگر __GNUC_PREREQ (4, 8)
+#ہدایت GCC diagnostic نکالو
+#اگر_ختم
 };
 
-#if defined(__linux__) && !defined(FS_IOC_FIEMAP)
-#define FS_IOC_FIEMAP	_IOWR('f', 11, struct fiemap)
-#endif
+#اگر defined(__linux__) && !defined(FS_IOC_FIEMAP)
+#تعریف_کرو FS_IOC_FIEMAP	_IOWR('f', 11, ساخت fiemap)
+#اگر_ختم
 
-#if defined(__linux__) && !defined(FS_IOC_GETSTATE)
-#define EXT4_IOC_GETSTATE		_IOW('f', 41, __u32)
-#endif
+#اگر defined(__linux__) && !defined(FS_IOC_GETSTATE)
+#تعریف_کرو EXT4_IOC_GETSTATE		_IOW('f', 41, __u32)
+#اگر_ختم
 
-#if defined(__linux__) && !defined(EXT4_IOC_GET_ES_CACHE)
-#define EXT4_IOC_GET_ES_CACHE		_IOWR('f', 42, struct fiemap)
-#endif
+#اگر defined(__linux__) && !defined(EXT4_IOC_GET_ES_CACHE)
+#تعریف_کرو EXT4_IOC_GET_ES_CACHE		_IOWR('f', 42, ساخت fiemap)
+#اگر_ختم
 
-#if defined(__linux__) && !defined(EXT4_STATE_FLAG_EXT_PRECACHED)
-#define EXT4_STATE_FLAG_EXT_PRECACHED	0x00000001
-#endif
+#اگر defined(__linux__) && !defined(EXT4_STATE_FLAG_EXT_PRECACHED)
+#تعریف_کرو EXT4_STATE_FLAG_EXT_PRECACHED	0x00000001
+#اگر_ختم
 
-#define FIEMAP_MAX_OFFSET	(~0ULL)
+#تعریف_کرو FIEMAP_MAX_انحراف	(~0ULL)
 
-#define FIEMAP_FLAG_SYNC	0x00000001 /* sync file data before map */
-#define FIEMAP_FLAG_XATTR	0x00000002 /* map extended attribute tree */
-#define FIEMAP_FLAG_CACHE	0x00000004 /* request caching of the extents */
+#تعریف_کرو FIEMAP_FLAG_SYNC	0x00000001 /* sync file data before map */
+#تعریف_کرو FIEMAP_FLAG_XATTR	0x00000002 /* map extended attribute tree */
+#تعریف_کرو FIEMAP_FLAG_CACHE	0x00000004 /* request caching of the extents */
 
-#define FIEMAP_FLAGS_COMPAT	(FIEMAP_FLAG_SYNC | FIEMAP_FLAG_XATTR)
+#تعریف_کرو FIEMAP_FLAGS_COMPAT	(FIEMAP_FLAG_SYNC | FIEMAP_FLAG_XATTR)
 
-#define FIEMAP_EXTENT_LAST		0x00000001 /* Last extent in file. */
-#define FIEMAP_EXTENT_UNKNOWN		0x00000002 /* Data location unknown. */
-#define FIEMAP_EXTENT_DELALLOC		0x00000004 /* Location still pending.
+#تعریف_کرو FIEMAP_EXTENT_آخری		0x00000001 /* Last extent in file. */
+#تعریف_کرو FIEMAP_EXTENT_UNKNOWN		0x00000002 /* Data location unknown. */
+#تعریف_کرو FIEMAP_EXTENT_DELALLOC		0x00000004 /* Location still pending.
 						    * Sets EXTENT_UNKNOWN. */
-#define FIEMAP_EXTENT_ENCODED		0x00000008 /* Data can not be read
+#تعریف_کرو FIEMAP_EXTENT_ENCODED		0x00000008 /* Data can not be read
 						    * while fs is unmounted */
-#define FIEMAP_EXTENT_DATA_ENCRYPTED	0x00000080 /* Data is encrypted by fs.
+#تعریف_کرو FIEMAP_EXTENT_ڈیٹا_ENCRYPTED	0x00000080 /* Data is encrypted by fs.
 						    * Sets EXTENT_NO_BYPASS. */
-#define FIEMAP_EXTENT_NOT_ALIGNED	0x00000100 /* Extent offsets may not be
+#تعریف_کرو FIEMAP_EXTENT_NOT_ALIGNED	0x00000100 /* Extent offsets may not be
 						    * block aligned. */
-#define FIEMAP_EXTENT_DATA_INLINE	0x00000200 /* Data mixed with metadata.
+#تعریف_کرو FIEMAP_EXTENT_ڈیٹا_INLINE	0x00000200 /* Data mixed with metadata.
 						    * Sets EXTENT_NOT_ALIGNED.*/
-#define FIEMAP_EXTENT_DATA_TAIL		0x00000400 /* Multiple files in block.
+#تعریف_کرو FIEMAP_EXTENT_ڈیٹا_دم		0x00000400 /* Multiple files in block.
 						    * Sets EXTENT_NOT_ALIGNED.*/
-#define FIEMAP_EXTENT_UNWRITTEN		0x00000800 /* Space allocated, but
+#تعریف_کرو FIEMAP_EXTENT_UNWRITTEN		0x00000800 /* Space allocated, but
 						    * no data (i.e. zero). */
-#define FIEMAP_EXTENT_MERGED		0x00001000 /* File does not natively
+#تعریف_کرو FIEMAP_EXTENT_MERGED		0x00001000 /* File does not natively
 						    * support extents. Result
 						    * merged for efficiency. */
-#define FIEMAP_EXTENT_SHARED		0x00002000 /* Space shared with other
+#تعریف_کرو FIEMAP_EXTENT_SHARED		0x00002000 /* Space shared with other
 						    * files. */
 
-#define EXT4_FIEMAP_EXTENT_HOLE		0x08000000 /* Entry in extent status
+#تعریف_کرو EXT4_FIEMAP_EXTENT_HOLE		0x08000000 /* Entry in extent status
 						      cache for a hole*/
 
-#endif /* _LINUX_FIEMAP_H */
+#اگر_ختم /* _LINUX_FIEMAP_H */

@@ -1,42 +1,42 @@
-#ifndef HASHMAP_H
+#اگر_غیر_تعریف_شدہ HASHMAP_H
 # define HASHMAP_H
 
 # include <stdlib.h>
 # include <stdint.h>
 
-#ifndef __GNUC_PREREQ
-#if defined(__GNUC__) && defined(__GNUC_MINOR__)
-#define __GNUC_PREREQ(maj, min) \
+#اگر_غیر_تعریف_شدہ __GNUC_PREREQ
+#اگر defined(__GNUC__) && defined(__GNUC_MINOR__)
+#تعریف_کرو __GNUC_PREREQ(maj, min) \
 	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
-#else
-#define __GNUC_PREREQ(maj, min) 0
-#endif
-#endif
+#ورنہ
+#تعریف_کرو __GNUC_PREREQ(maj, min) 0
+#اگر_ختم
+#اگر_ختم
 
-struct ext2fs_hashmap;
+ساخت ext2fs_hashmap;
 
-struct ext2fs_hashmap_entry {
-	void *data;
-	const void *key;
-	size_t key_len;
-	struct ext2fs_hashmap_entry *next;
-	struct ext2fs_hashmap_entry *list_next;
-	struct ext2fs_hashmap_entry *list_prev;
+ساخت ext2fs_hashmap_اندراج {
+	خالی *ڈیٹا;
+	ثابت خالی *کلید;
+	size_t کلید_len;
+	ساخت ext2fs_hashmap_اندراج *اگلا;
+	ساخت ext2fs_hashmap_اندراج *list_اگلا;
+	ساخت ext2fs_hashmap_اندراج *list_پچھلا;
 };
 
-struct ext2fs_hashmap *ext2fs_hashmap_create(
-				uint32_t(*hash_fct)(const void*, size_t),
-				void(*free_fct)(void*), size_t size);
-int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
-		       void *data, const void *key,size_t key_len);
-void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *key,
-			    size_t key_len);
-void *ext2fs_hashmap_iter_in_order(struct ext2fs_hashmap *h,
-				   struct ext2fs_hashmap_entry **it);
-void ext2fs_hashmap_del(struct ext2fs_hashmap *h,
-			struct ext2fs_hashmap_entry *e);
-void ext2fs_hashmap_free(struct ext2fs_hashmap *h);
+ساخت ext2fs_hashmap *ext2fs_hashmap_create(
+				uint32_t(*hash_fct)(ثابت خالی*, size_t),
+				خالی(*free_fct)(خالی*), size_t سائز);
+صحیح ext2fs_hashmap_جوڑو(ساخت ext2fs_hashmap *h,
+		       خالی *ڈیٹا, ثابت خالی *کلید,size_t کلید_len);
+خالی *ext2fs_hashmap_lookup(ساخت ext2fs_hashmap *h, ثابت خالی *کلید,
+			    size_t کلید_len);
+خالی *ext2fs_hashmap_iter_اندر_ترتیب(ساخت ext2fs_hashmap *h,
+				   ساخت ext2fs_hashmap_اندراج **it);
+خالی ext2fs_hashmap_del(ساخت ext2fs_hashmap *h,
+			ساخت ext2fs_hashmap_اندراج *e);
+خالی ext2fs_hashmap_free(ساخت ext2fs_hashmap *h);
 
-uint32_t ext2fs_djb2_hash(const void *str, size_t size);
+uint32_t ext2fs_djb2_hash(ثابت خالی *str, size_t سائز);
 
-#endif /* !HASHMAP_H */
+#اگر_ختم /* !HASHMAP_H */

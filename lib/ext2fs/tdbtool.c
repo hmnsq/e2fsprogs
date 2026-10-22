@@ -21,142 +21,142 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include "config.h"
-#include <errno.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <string.h>
-#include <fcntl.h>
-#include <time.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <ctype.h>
-#include <signal.h>
-#include <stdarg.h>
+#شامل "config.h"
+#شامل <errno.h>
+#شامل <stdlib.h>
+#شامل <stdio.h>
+#شامل <fcntl.h>
+#شامل <unistd.h>
+#شامل <string.h>
+#شامل <fcntl.h>
+#شامل <time.h>
+#شامل <sys/mman.h>
+#شامل <sys/stat.h>
+#شامل <sys/time.h>
+#شامل <ctype.h>
+#شامل <signal.h>
+#شامل <stdarg.h>
 
-#include "tdb.h"
+#شامل "tdb.h"
 
-static int do_command(void);
-const char *cmdname;
-char *arg1, *arg2;
+ساکن صحیح do_command(خالی);
+ثابت حرف *cmdname;
+حرف *arg1, *arg2;
 size_t arg1len, arg2len;
-int bIterate = 0;
-char *line;
-TDB_DATA iterate_kbuf;
-char cmdline[1024];
+صحیح bIterate = 0;
+حرف *سطر;
+TDB_ڈیٹا iterate_kbuf;
+حرف cmdline[1024];
 
-enum commands {
+شمار commands {
 	CMD_CREATE_TDB,
 	CMD_OPEN_TDB,
 	CMD_ERASE,
 	CMD_DUMP,
-	CMD_INSERT,
+	CMD_داخل_کرو,
 	CMD_MOVE,
 	CMD_STORE,
 	CMD_SHOW,
-	CMD_KEYS,
+	CMD_کلیدیں,
 	CMD_HEXKEYS,
 	CMD_DELETE,
 	CMD_LIST_HASH_FREE,
 	CMD_LIST_FREE,
 	CMD_INFO,
-	CMD_FIRST,
-	CMD_NEXT,
+	CMD_پہلا,
+	CMD_اگلا,
 	CMD_SYSTEM,
 	CMD_QUIT,
 	CMD_HELP
 };
 
-typedef struct {
-	const char *name;
-	enum commands cmd;
-} COMMAND_TABLE;
+قسمتعریف ساخت {
+	ثابت حرف *name;
+	شمار commands cmd;
+} COMMAND_جدول;
 
-COMMAND_TABLE cmd_table[] = {
+COMMAND_جدول cmd_جدول[] = {
 	{"create",	CMD_CREATE_TDB},
 	{"open",	CMD_OPEN_TDB},
 	{"erase",	CMD_ERASE},
 	{"dump",	CMD_DUMP},
-	{"insert",	CMD_INSERT},
+	{"insert",	CMD_داخل_کرو},
 	{"move",	CMD_MOVE},
 	{"store",	CMD_STORE},
 	{"show",	CMD_SHOW},
-	{"keys",	CMD_KEYS},
+	{"keys",	CMD_کلیدیں},
 	{"hexkeys",	CMD_HEXKEYS},
 	{"delete",	CMD_DELETE},
 	{"list",	CMD_LIST_HASH_FREE},
 	{"free",	CMD_LIST_FREE},
 	{"info",	CMD_INFO},
-	{"first",	CMD_FIRST},
-	{"1",		CMD_FIRST},
-	{"next",	CMD_NEXT},
-	{"n",		CMD_NEXT},
+	{"first",	CMD_پہلا},
+	{"1",		CMD_پہلا},
+	{"next",	CMD_اگلا},
+	{"n",		CMD_اگلا},
 	{"quit",	CMD_QUIT},
 	{"q",		CMD_QUIT},
 	{"!",		CMD_SYSTEM},
-	{NULL,		CMD_HELP}
+	{تہی,		CMD_HELP}
 };
 
 /* a tdb tool for manipulating a tdb database */
 
-static TDB_CONTEXT *tdb;
+ساکن TDB_CONTEXT *tdb;
 
-static int print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
-static int print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
-static int print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
+ساکن صحیح print_rec(TDB_CONTEXT *the_tdb, TDB_ڈیٹا کلید, TDB_ڈیٹا dbuf, خالی *state);
+ساکن صحیح print_کلید(TDB_CONTEXT *the_tdb, TDB_ڈیٹا کلید, TDB_ڈیٹا dbuf, خالی *state);
+ساکن صحیح print_hexkey(TDB_CONTEXT *the_tdb, TDB_ڈیٹا کلید, TDB_ڈیٹا dbuf, خالی *state);
 
-static void print_asc(const char *buf,int len)
+ساکن خالی print_asc(ثابت حرف *buf,صحیح len)
 {
-	int i;
+	صحیح i;
 
 	/* We're probably printing ASCII strings so don't try to display
 	   the trailing NULL character. */
 
-	if (buf[len - 1] == 0)
+	اگر (buf[len - 1] == 0)
 	        len--;
 
-	for (i=0;i<len;i++)
-		printf("%c",isprint(buf[i])?buf[i]:'.');
+	برائے (i=0;i<len;i++)
+		لکھو("%c",isprint(buf[i])?buf[i]:'.');
 }
 
-static void print_data(const char *buf,int len)
+ساکن خالی print_ڈیٹا(ثابت حرف *buf,صحیح len)
 {
-	int i=0;
-	if (len<=0) return;
-	printf("[%03X] ",i);
-	for (i=0;i<len;) {
-		printf("%02X ",(int)buf[i]);
+	صحیح i=0;
+	اگر (len<=0) واپس;
+	لکھو("[%03X] ",i);
+	برائے (i=0;i<len;) {
+		لکھو("%02X ",(صحیح)buf[i]);
 		i++;
-		if (i%8 == 0) printf(" ");
-		if (i%16 == 0) {
-			print_asc(&buf[i-16],8); printf(" ");
-			print_asc(&buf[i-8],8); printf("\n");
-			if (i<len) printf("[%03X] ",i);
+		اگر (i%8 == 0) لکھو(" ");
+		اگر (i%16 == 0) {
+			print_asc(&buf[i-16],8); لکھو(" ");
+			print_asc(&buf[i-8],8); لکھو("\n");
+			اگر (i<len) لکھو("[%03X] ",i);
 		}
 	}
-	if (i%16) {
-		int n;
+	اگر (i%16) {
+		صحیح n;
 
 		n = 16 - (i%16);
-		printf(" ");
-		if (n>8) printf(" ");
-		while (n--) printf("   ");
+		لکھو(" ");
+		اگر (n>8) لکھو(" ");
+		جب (n--) لکھو("   ");
 
 		n = i%16;
-		if (n > 8) n = 8;
-		print_asc(&buf[i-(i%16)],n); printf(" ");
+		اگر (n > 8) n = 8;
+		print_asc(&buf[i-(i%16)],n); لکھو(" ");
 		n = (i%16) - n;
-		if (n>0) print_asc(&buf[i-n],n);
-		printf("\n");
+		اگر (n>0) print_asc(&buf[i-n],n);
+		لکھو("\n");
 	}
 }
 
-static void help(void)
+ساکن خالی help(خالی)
 {
-	printf("\n"
+	لکھو("\n"
 "tdbtool: \n"
 "  create    dbname     : create a database\n"
 "  open      dbname     : open an existing database\n"
@@ -180,442 +180,442 @@ static void help(void)
 "\n");
 }
 
-static void terror(const char *why)
+ساکن خالی terror(ثابت حرف *why)
 {
-	printf("%s\n", why);
+	لکھو("%s\n", why);
 }
 
-static void create_tdb(const char *tdbname)
+ساکن خالی create_tdb(ثابت حرف *tdbname)
 {
-	if (tdb) tdb_close(tdb);
-	tdb = tdb_open(tdbname, 0, TDB_CLEAR_IF_FIRST,
+	اگر (tdb) tdb_close(tdb);
+	tdb = tdb_open(tdbname, 0, TDB_CLEAR_IF_پہلا,
 		       O_RDWR | O_CREAT | O_TRUNC, 0600);
-	if (!tdb) {
-		printf("Could not create %s: %s\n", tdbname, strerror(errno));
+	اگر (!tdb) {
+		لکھو("Could not create %s: %s\n", tdbname, strerror(errno));
 	}
 }
 
-static void open_tdb(const char *tdbname)
+ساکن خالی open_tdb(ثابت حرف *tdbname)
 {
-	if (tdb) tdb_close(tdb);
+	اگر (tdb) tdb_close(tdb);
 	tdb = tdb_open(tdbname, 0, 0, O_RDWR, 0600);
-	if (!tdb) {
-		printf("Could not open %s: %s\n", tdbname, strerror(errno));
+	اگر (!tdb) {
+		لکھو("Could not open %s: %s\n", tdbname, strerror(errno));
 	}
 }
 
-static void insert_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
+ساکن خالی داخل_کرو_tdb(حرف *keyname, size_t keylen, حرف* ڈیٹا, size_t datalen)
 {
-	TDB_DATA key, dbuf;
+	TDB_ڈیٹا کلید, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	اگر ((keyname == تہی) || (keylen == 0)) {
 		terror("need key");
-		return;
+		واپس;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
-	dbuf.dptr = (unsigned char *)data;
+	کلید.dptr = (غیرعلامتی حرف *)keyname;
+	کلید.dsize = keylen;
+	dbuf.dptr = (غیرعلامتی حرف *)ڈیٹا;
 	dbuf.dsize = datalen;
 
-	if (tdb_store(tdb, key, dbuf, TDB_INSERT) == -1) {
+	اگر (tdb_store(tdb, کلید, dbuf, TDB_داخل_کرو) == -1) {
 		terror("insert failed");
 	}
 }
 
-static void store_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
+ساکن خالی store_tdb(حرف *keyname, size_t keylen, حرف* ڈیٹا, size_t datalen)
 {
-	TDB_DATA key, dbuf;
+	TDB_ڈیٹا کلید, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	اگر ((keyname == تہی) || (keylen == 0)) {
 		terror("need key");
-		return;
+		واپس;
 	}
 
-	if ((data == NULL) || (datalen == 0)) {
+	اگر ((ڈیٹا == تہی) || (datalen == 0)) {
 		terror("need data");
-		return;
+		واپس;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
-	dbuf.dptr = (unsigned char *)data;
+	کلید.dptr = (غیرعلامتی حرف *)keyname;
+	کلید.dsize = keylen;
+	dbuf.dptr = (غیرعلامتی حرف *)ڈیٹا;
 	dbuf.dsize = datalen;
 
-	printf("Storing key:\n");
-	print_rec(tdb, key, dbuf, NULL);
+	لکھو("Storing key:\n");
+	print_rec(tdb, کلید, dbuf, تہی);
 
-	if (tdb_store(tdb, key, dbuf, TDB_REPLACE) == -1) {
+	اگر (tdb_store(tdb, کلید, dbuf, TDB_REPLACE) == -1) {
 		terror("store failed");
 	}
 }
 
-static void show_tdb(char *keyname, size_t keylen)
+ساکن خالی show_tdb(حرف *keyname, size_t keylen)
 {
-	TDB_DATA key, dbuf;
+	TDB_ڈیٹا کلید, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	اگر ((keyname == تہی) || (keylen == 0)) {
 		terror("need key");
-		return;
+		واپس;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	کلید.dptr = (غیرعلامتی حرف *)keyname;
+	کلید.dsize = keylen;
 
-	dbuf = tdb_fetch(tdb, key);
-	if (!dbuf.dptr) {
+	dbuf = tdb_fetch(tdb, کلید);
+	اگر (!dbuf.dptr) {
 	    terror("fetch failed");
-	    return;
+	    واپس;
 	}
 
-	print_rec(tdb, key, dbuf, NULL);
+	print_rec(tdb, کلید, dbuf, تہی);
 
-	free( dbuf.dptr );
+	آزاد( dbuf.dptr );
 
-	return;
+	واپس;
 }
 
-static void delete_tdb(char *keyname, size_t keylen)
+ساکن خالی delete_tdb(حرف *keyname, size_t keylen)
 {
-	TDB_DATA key;
+	TDB_ڈیٹا کلید;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	اگر ((keyname == تہی) || (keylen == 0)) {
 		terror("need key");
-		return;
+		واپس;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	کلید.dptr = (غیرعلامتی حرف *)keyname;
+	کلید.dsize = keylen;
 
-	if (tdb_delete(tdb, key) != 0) {
+	اگر (tdb_delete(tdb, کلید) != 0) {
 		terror("delete failed");
 	}
 }
 
-static void move_rec(char *keyname, size_t keylen, char* tdbname)
+ساکن خالی move_rec(حرف *keyname, size_t keylen, حرف* tdbname)
 {
-	TDB_DATA key, dbuf;
+	TDB_ڈیٹا کلید, dbuf;
 	TDB_CONTEXT *dst_tdb;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	اگر ((keyname == تہی) || (keylen == 0)) {
 		terror("need key");
-		return;
+		واپس;
 	}
 
-	if ( !tdbname ) {
+	اگر ( !tdbname ) {
 		terror("need destination tdb name");
-		return;
+		واپس;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	کلید.dptr = (غیرعلامتی حرف *)keyname;
+	کلید.dsize = keylen;
 
-	dbuf = tdb_fetch(tdb, key);
-	if (!dbuf.dptr) {
+	dbuf = tdb_fetch(tdb, کلید);
+	اگر (!dbuf.dptr) {
 		terror("fetch failed");
-		return;
+		واپس;
 	}
 
-	print_rec(tdb, key, dbuf, NULL);
+	print_rec(tdb, کلید, dbuf, تہی);
 
 	dst_tdb = tdb_open(tdbname, 0, 0, O_RDWR, 0600);
-	if ( !dst_tdb ) {
+	اگر ( !dst_tdb ) {
 		terror("unable to open destination tdb");
-		return;
+		واپس;
 	}
 
-	if ( tdb_store( dst_tdb, key, dbuf, TDB_REPLACE ) == -1 ) {
+	اگر ( tdb_store( dst_tdb, کلید, dbuf, TDB_REPLACE ) == -1 ) {
 		terror("failed to move record");
 	}
-	else
-		printf("record moved\n");
+	ورنہ
+		لکھو("record moved\n");
 
 	tdb_close( dst_tdb );
 
-	return;
+	واپس;
 }
 
-static int print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+ساکن صحیح print_rec(TDB_CONTEXT *the_tdb, TDB_ڈیٹا کلید, TDB_ڈیٹا dbuf, خالی *state)
 {
-	printf("\nkey %d bytes\n", (int)key.dsize);
-	print_asc((const char *)key.dptr, key.dsize);
-	printf("\ndata %d bytes\n", (int)dbuf.dsize);
-	print_data((const char *)dbuf.dptr, dbuf.dsize);
-	return 0;
+	لکھو("\nkey %d bytes\n", (صحیح)کلید.dsize);
+	print_asc((ثابت حرف *)کلید.dptr, کلید.dsize);
+	لکھو("\ndata %d bytes\n", (صحیح)dbuf.dsize);
+	print_ڈیٹا((ثابت حرف *)dbuf.dptr, dbuf.dsize);
+	واپس 0;
 }
 
-static int print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+ساکن صحیح print_کلید(TDB_CONTEXT *the_tdb, TDB_ڈیٹا کلید, TDB_ڈیٹا dbuf, خالی *state)
 {
-	printf("key %d bytes: ", (int)key.dsize);
-	print_asc((const char *)key.dptr, key.dsize);
-	printf("\n");
-	return 0;
+	لکھو("key %d bytes: ", (صحیح)کلید.dsize);
+	print_asc((ثابت حرف *)کلید.dptr, کلید.dsize);
+	لکھو("\n");
+	واپس 0;
 }
 
-static int print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+ساکن صحیح print_hexkey(TDB_CONTEXT *the_tdb, TDB_ڈیٹا کلید, TDB_ڈیٹا dbuf, خالی *state)
 {
-	printf("key %d bytes\n", (int)key.dsize);
-	print_data((const char *)key.dptr, key.dsize);
-	printf("\n");
-	return 0;
+	لکھو("key %d bytes\n", (صحیح)کلید.dsize);
+	print_ڈیٹا((ثابت حرف *)کلید.dptr, کلید.dsize);
+	لکھو("\n");
+	واپس 0;
 }
 
-static int total_bytes;
+ساکن صحیح کل_بائٹیں;
 
-static int traverse_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+ساکن صحیح traverse_fn(TDB_CONTEXT *the_tdb, TDB_ڈیٹا کلید, TDB_ڈیٹا dbuf, خالی *state)
 {
-	total_bytes += dbuf.dsize;
-	return 0;
+	کل_بائٹیں += dbuf.dsize;
+	واپس 0;
 }
 
-static void info_tdb(void)
+ساکن خالی info_tdb(خالی)
 {
-	int count;
-	total_bytes = 0;
-	if ((count = tdb_traverse(tdb, traverse_fn, NULL)) == -1)
-		printf("Error = %s\n", tdb_errorstr(tdb));
-	else
-		printf("%d records totalling %d bytes\n", count, total_bytes);
+	صحیح گنتی;
+	کل_بائٹیں = 0;
+	اگر ((گنتی = tdb_traverse(tdb, traverse_fn, تہی)) == -1)
+		لکھو("Error = %s\n", tdb_errorstr(tdb));
+	ورنہ
+		لکھو("%d records totalling %d bytes\n", گنتی, کل_بائٹیں);
 }
 
-static char *tdb_getline(const char *prompt)
+ساکن حرف *tdb_getline(ثابت حرف *prompt)
 {
-	static char thisline[1024];
-	char *p;
+	ساکن حرف thisline[1024];
+	حرف *p;
 	fputs(prompt, stdout);
 	thisline[0] = 0;
-	p = fgets(thisline, sizeof(thisline)-1, stdin);
-	if (p) p = strchr(p, '\n');
-	if (p) *p = 0;
-	return p?thisline:NULL;
+	p = fgets(thisline, حجم(thisline)-1, stdin);
+	اگر (p) p = strchr(p, '\n');
+	اگر (p) *p = 0;
+	واپس p?thisline:تہی;
 }
 
-static int do_delete_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf,
-                     void *state)
+ساکن صحیح do_delete_fn(TDB_CONTEXT *the_tdb, TDB_ڈیٹا کلید, TDB_ڈیٹا dbuf,
+                     خالی *state)
 {
-    return tdb_delete(the_tdb, key);
+    واپس tdb_delete(the_tdb, کلید);
 }
 
-static void first_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
+ساکن خالی پہلا_ریکارڈ(TDB_CONTEXT *the_tdb, TDB_ڈیٹا *pkey)
 {
-	TDB_DATA dbuf;
+	TDB_ڈیٹا dbuf;
 	*pkey = tdb_firstkey(the_tdb);
 
 	dbuf = tdb_fetch(the_tdb, *pkey);
-	if (!dbuf.dptr) terror("fetch failed");
-	else {
-		print_rec(the_tdb, *pkey, dbuf, NULL);
+	اگر (!dbuf.dptr) terror("fetch failed");
+	ورنہ {
+		print_rec(the_tdb, *pkey, dbuf, تہی);
 	}
 }
 
-static void next_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
+ساکن خالی اگلا_ریکارڈ(TDB_CONTEXT *the_tdb, TDB_ڈیٹا *pkey)
 {
-	TDB_DATA dbuf;
+	TDB_ڈیٹا dbuf;
 	*pkey = tdb_nextkey(the_tdb, *pkey);
 
 	dbuf = tdb_fetch(the_tdb, *pkey);
-	if (!dbuf.dptr)
+	اگر (!dbuf.dptr)
 		terror("fetch failed");
-	else
-		print_rec(the_tdb, *pkey, dbuf, NULL);
+	ورنہ
+		print_rec(the_tdb, *pkey, dbuf, تہی);
 }
 
-static int do_command(void)
+ساکن صحیح do_command(خالی)
 {
-	COMMAND_TABLE *ctp = cmd_table;
-	enum commands mycmd = CMD_HELP;
-	int cmd_len;
+	COMMAND_جدول *ctp = cmd_جدول;
+	شمار commands mycmd = CMD_HELP;
+	صحیح cmd_len;
 
-	if (cmdname && strlen(cmdname) == 0) {
-	    mycmd = CMD_NEXT;
-	} else {
-	    while (ctp->name) {
-		cmd_len = strlen(ctp->name);
-		if (strncmp(ctp->name,cmdname,cmd_len) == 0) {
+	اگر (cmdname && لڑی_لمبائی(cmdname) == 0) {
+	    mycmd = CMD_اگلا;
+	} ورنہ {
+	    جب (ctp->name) {
+		cmd_len = لڑی_لمبائی(ctp->name);
+		اگر (لڑی_موازنہ(ctp->name,cmdname,cmd_len) == 0) {
 			mycmd = ctp->cmd;
-			break;
+			توڑو;
 		}
 		ctp++;
 	    }
 	}
 
-	switch (mycmd) {
-	case CMD_CREATE_TDB:
+	انتخاب (mycmd) {
+	حالت CMD_CREATE_TDB:
             bIterate = 0;
             create_tdb(arg1);
-	    return 0;
-	case CMD_OPEN_TDB:
+	    واپس 0;
+	حالت CMD_OPEN_TDB:
             bIterate = 0;
             open_tdb(arg1);
-            return 0;
-	case CMD_SYSTEM:
+            واپس 0;
+	حالت CMD_SYSTEM:
 	    /* Shell command */
 	    system(arg1);
-	    return 0;
-	case CMD_QUIT:
-	    return 1;
-	default:
+	    واپس 0;
+	حالت CMD_QUIT:
+	    واپس 1;
+	طےشدہ:
 	    /* all the rest require a open database */
-	    if (!tdb) {
+	    اگر (!tdb) {
 		bIterate = 0;
 		terror("database not open");
 		help();
-		return 0;
+		واپس 0;
 	    }
-	    switch (mycmd) {
-	    case CMD_ERASE:
+	    انتخاب (mycmd) {
+	    حالت CMD_ERASE:
 		bIterate = 0;
-		tdb_traverse(tdb, do_delete_fn, NULL);
-		return 0;
-	    case CMD_DUMP:
+		tdb_traverse(tdb, do_delete_fn, تہی);
+		واپس 0;
+	    حالت CMD_DUMP:
 		bIterate = 0;
-		tdb_traverse(tdb, print_rec, NULL);
-		return 0;
-	    case CMD_INSERT:
+		tdb_traverse(tdb, print_rec, تہی);
+		واپس 0;
+	    حالت CMD_داخل_کرو:
 		bIterate = 0;
-		insert_tdb(arg1, arg1len,arg2,arg2len);
-		return 0;
-	    case CMD_MOVE:
+		داخل_کرو_tdb(arg1, arg1len,arg2,arg2len);
+		واپس 0;
+	    حالت CMD_MOVE:
 		bIterate = 0;
 		move_rec(arg1,arg1len,arg2);
-		return 0;
-	    case CMD_STORE:
+		واپس 0;
+	    حالت CMD_STORE:
 		bIterate = 0;
 		store_tdb(arg1,arg1len,arg2,arg2len);
-		return 0;
-	    case CMD_SHOW:
+		واپس 0;
+	    حالت CMD_SHOW:
 		bIterate = 0;
 		show_tdb(arg1, arg1len);
-		return 0;
-	    case CMD_KEYS:
-		tdb_traverse(tdb, print_key, NULL);
-		return 0;
-	    case CMD_HEXKEYS:
-		tdb_traverse(tdb, print_hexkey, NULL);
-		return 0;
-	    case CMD_DELETE:
+		واپس 0;
+	    حالت CMD_کلیدیں:
+		tdb_traverse(tdb, print_کلید, تہی);
+		واپس 0;
+	    حالت CMD_HEXKEYS:
+		tdb_traverse(tdb, print_hexkey, تہی);
+		واپس 0;
+	    حالت CMD_DELETE:
 		bIterate = 0;
 		delete_tdb(arg1,arg1len);
-		return 0;
-	    case CMD_LIST_HASH_FREE:
+		واپس 0;
+	    حالت CMD_LIST_HASH_FREE:
 		tdb_dump_all(tdb);
-		return 0;
-	    case CMD_LIST_FREE:
+		واپس 0;
+	    حالت CMD_LIST_FREE:
 		tdb_printfreelist(tdb);
-		return 0;
-	    case CMD_INFO:
+		واپس 0;
+	    حالت CMD_INFO:
 		info_tdb();
-		return 0;
-	    case CMD_FIRST:
+		واپس 0;
+	    حالت CMD_پہلا:
 		bIterate = 1;
-		first_record(tdb, &iterate_kbuf);
-		return 0;
-	    case CMD_NEXT:
-	       if (bIterate)
-		  next_record(tdb, &iterate_kbuf);
-		return 0;
-	    case CMD_HELP:
+		پہلا_ریکارڈ(tdb, &iterate_kbuf);
+		واپس 0;
+	    حالت CMD_اگلا:
+	       اگر (bIterate)
+		  اگلا_ریکارڈ(tdb, &iterate_kbuf);
+		واپس 0;
+	    حالت CMD_HELP:
 		help();
-		return 0;
-            case CMD_CREATE_TDB:
-            case CMD_OPEN_TDB:
-            case CMD_SYSTEM:
-            case CMD_QUIT:
+		واپس 0;
+            حالت CMD_CREATE_TDB:
+            حالت CMD_OPEN_TDB:
+            حالت CMD_SYSTEM:
+            حالت CMD_QUIT:
                 /*
                  * unhandled commands.  cases included here to avoid compiler
                  * warnings.
                  */
-                return 0;
+                واپس 0;
 	    }
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static char *convert_string(char *instring, size_t *sizep)
+ساکن حرف *convert_string(حرف *instring, size_t *sizep)
 {
-    size_t length = 0;
-    char *outp, *inp;
-    char temp[3];
+    size_t لمبائی = 0;
+    حرف *outp, *inp;
+    حرف عارضی[3];
 
 
     outp = inp = instring;
 
-    while (*inp) {
-	if (*inp == '\\') {
+    جب (*inp) {
+	اگر (*inp == '\\') {
 	    inp++;
-	    if (*inp && strchr("0123456789abcdefABCDEF",(int)*inp)) {
-		temp[0] = *inp++;
-		temp[1] = '\0';
-		if (*inp && strchr("0123456789abcdefABCDEF",(int)*inp)) {
-		    temp[1] = *inp++;
-		    temp[2] = '\0';
+	    اگر (*inp && strchr("0123456789abcdefABCDEF",(صحیح)*inp)) {
+		عارضی[0] = *inp++;
+		عارضی[1] = '\0';
+		اگر (*inp && strchr("0123456789abcdefABCDEF",(صحیح)*inp)) {
+		    عارضی[1] = *inp++;
+		    عارضی[2] = '\0';
 		}
-		*outp++ = (char)strtol((const char *)temp,NULL,16);
-	    } else {
+		*outp++ = (حرف)strtol((ثابت حرف *)عارضی,تہی,16);
+	    } ورنہ {
 		*outp++ = *inp++;
 	    }
-	} else {
+	} ورنہ {
 	    *outp++ = *inp++;
 	}
-	length++;
+	لمبائی++;
     }
-    *sizep = length;
-    return instring;
+    *sizep = لمبائی;
+    واپس instring;
 }
 
-int main(int argc, char *argv[])
+صحیح مین(صحیح argc, حرف *argv[])
 {
     cmdname = "";
-    arg1 = NULL;
+    arg1 = تہی;
     arg1len = 0;
-    arg2 = NULL;
+    arg2 = تہی;
     arg2len = 0;
 
-    if (argv[1]) {
+    اگر (argv[1]) {
 	cmdname = "open";
 	arg1 = argv[1];
         do_command();
 	cmdname =  "";
-	arg1 = NULL;
+	arg1 = تہی;
     }
 
-    switch (argc) {
-	case 1:
-	case 2:
+    انتخاب (argc) {
+	حالت 1:
+	حالت 2:
 	    /* Interactive mode */
-	    while ((cmdname = tdb_getline("tdb> "))) {
-		arg2 = arg1 = NULL;
-		if ((arg1 = strchr((const char *)cmdname,' ')) != NULL) {
+	    جب ((cmdname = tdb_getline("tdb> "))) {
+		arg2 = arg1 = تہی;
+		اگر ((arg1 = strchr((ثابت حرف *)cmdname,' ')) != تہی) {
 		    arg1++;
 		    arg2 = arg1;
-		    while (*arg2) {
-			if (*arg2 == ' ') {
+		    جب (*arg2) {
+			اگر (*arg2 == ' ') {
 			    *arg2++ = '\0';
-			    break;
+			    توڑو;
 			}
-			if ((*arg2++ == '\\') && (*arg2 == ' ')) {
+			اگر ((*arg2++ == '\\') && (*arg2 == ' ')) {
 			    arg2++;
 			}
 		    }
 		}
-		if (arg1) arg1 = convert_string(arg1,&arg1len);
-		if (arg2) arg2 = convert_string(arg2,&arg2len);
-		if (do_command()) break;
+		اگر (arg1) arg1 = convert_string(arg1,&arg1len);
+		اگر (arg2) arg2 = convert_string(arg2,&arg2len);
+		اگر (do_command()) توڑو;
 	    }
-	    break;
-	case 5:
+	    توڑو;
+	حالت 5:
 	    arg2 = convert_string(argv[4],&arg2len);
-	case 4:
+	حالت 4:
 	    arg1 = convert_string(argv[3],&arg1len);
-	case 3:
+	حالت 3:
 	    cmdname = argv[2];
-	default:
+	طےشدہ:
 	    do_command();
-	    break;
+	    توڑو;
     }
 
-    if (tdb) tdb_close(tdb);
+    اگر (tdb) tdb_close(tdb);
 
-    return 0;
+    واپس 0;
 }

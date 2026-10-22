@@ -10,117 +10,117 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <stdlib.h>
-#include <string.h>
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#include <dirent.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#if HAVE_SYS_MKDEV_H
-#include <sys/mkdev.h>
-#endif
-#ifdef HAVE_SYS_SYSMACROS_H
-#include <sys/sysmacros.h>
-#endif
+#شامل "config.h"
+#شامل <stdio.h>
+#شامل <string.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
+#شامل <stdlib.h>
+#شامل <string.h>
+#اگر HAVE_SYS_TYPES_H
+#شامل <sys/types.h>
+#اگر_ختم
+#اگر HAVE_SYS_STAT_H
+#شامل <sys/stat.h>
+#اگر_ختم
+#شامل <dirent.h>
+#اگر HAVE_ERRNO_H
+#شامل <errno.h>
+#اگر_ختم
+#اگر HAVE_SYS_MKDEV_H
+#شامل <sys/mkdev.h>
+#اگر_ختم
+#اگر_تعریف_شدہ HAVE_SYS_SYSMACROS_H
+#شامل <sys/sysmacros.h>
+#اگر_ختم
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fs.h"
+#شامل "ext2fsP.h"
 
-struct dir_list {
-	char	*name;
-	struct dir_list *next;
+ساخت dir_list {
+	حرف	*name;
+	ساخت dir_list *اگلا;
 };
 
 /*
  * This function adds an entry to the directory list
  */
-static void add_to_dirlist(const char *name, struct dir_list **list)
+ساکن خالی جوڑو_مقصد_dirlist(ثابت حرف *name, ساخت dir_list **list)
 {
-	struct dir_list *dp;
+	ساخت dir_list *dp;
 
-	dp = malloc(sizeof(struct dir_list));
-	if (!dp)
-		return;
-	dp->name = malloc(strlen(name)+1);
-	if (!dp->name) {
-		free(dp);
-		return;
+	dp = حافظہ_دو(حجم(ساخت dir_list));
+	اگر (!dp)
+		واپس;
+	dp->name = حافظہ_دو(لڑی_لمبائی(name)+1);
+	اگر (!dp->name) {
+		آزاد(dp);
+		واپس;
 	}
 	strcpy(dp->name, name);
-	dp->next = *list;
+	dp->اگلا = *list;
 	*list = dp;
 }
 
 /*
  * This function frees a directory list
  */
-static void free_dirlist(struct dir_list **list)
+ساکن خالی free_dirlist(ساخت dir_list **list)
 {
-	struct dir_list *dp, *next;
+	ساخت dir_list *dp, *اگلا;
 
-	for (dp = *list; dp; dp = next) {
-		next = dp->next;
-		free(dp->name);
-		free(dp);
+	برائے (dp = *list; dp; dp = اگلا) {
+		اگلا = dp->اگلا;
+		آزاد(dp->name);
+		آزاد(dp);
 	}
 	*list = 0;
 }
 
-static int scan_dir(char *dirname, dev_t device, struct dir_list **list,
-		    char **ret_path)
+ساکن صحیح جائزہ_dir(حرف *dirname, dev_t device, ساخت dir_list **list,
+		    حرف **ret_راستہ)
 {
 	DIR	*dir;
-	struct dirent *dp;
-	char	path[1024], *cp;
-	int	dirlen;
-	struct stat st;
+	ساخت dirent *dp;
+	حرف	راستہ[1024], *cp;
+	صحیح	dirlen;
+	ساخت stat st;
 
-	dirlen = strlen(dirname);
-	if ((dir = opendir(dirname)) == NULL)
-		return errno;
+	dirlen = لڑی_لمبائی(dirname);
+	اگر ((dir = opendir(dirname)) == تہی)
+		واپس errno;
 	dp = readdir(dir);
-	while (dp) {
-		if (dirlen + strlen(dp->d_name) + 2 >= sizeof(path))
-			goto skip_to_next;
-		if (dp->d_name[0] == '.' &&
+	جب (dp) {
+		اگر (dirlen + لڑی_لمبائی(dp->d_name) + 2 >= حجم(راستہ))
+			جاؤ skip_مقصد_اگلا;
+		اگر (dp->d_name[0] == '.' &&
 		    ((dp->d_name[1] == 0) ||
 		     ((dp->d_name[1] == '.') && (dp->d_name[2] == 0))))
-			goto skip_to_next;
-		sprintf(path, "%s/%s", dirname, dp->d_name);
-		if (stat(path, &st) < 0)
-			goto skip_to_next;
-		if (S_ISDIR(st.st_mode))
-			add_to_dirlist(path, list);
-		if (ext2fsP_is_disk_device(st.st_mode) &&
+			جاؤ skip_مقصد_اگلا;
+		sprintf(راستہ, "%s/%s", dirname, dp->d_name);
+		اگر (stat(راستہ, &st) < 0)
+			جاؤ skip_مقصد_اگلا;
+		اگر (S_ISDIR(st.st_منوال))
+			جوڑو_مقصد_dirlist(راستہ, list);
+		اگر (ext2fsP_is_disk_device(st.st_منوال) &&
 		    st.st_rdev == device) {
-			cp = malloc(strlen(path)+1);
-			if (!cp) {
+			cp = حافظہ_دو(لڑی_لمبائی(راستہ)+1);
+			اگر (!cp) {
 				closedir(dir);
-				return ENOMEM;
+				واپس ENOMEM;
 			}
-			strcpy(cp, path);
-			*ret_path = cp;
-			goto success;
+			strcpy(cp, راستہ);
+			*ret_راستہ = cp;
+			جاؤ success;
 		}
-	skip_to_next:
+	skip_مقصد_اگلا:
 		dp = readdir(dir);
 	}
 success:
 	closedir(dir);
-	return 0;
+	واپس 0;
 }
 
 /*
@@ -128,91 +128,91 @@ success:
  * device number.  It returns a pointer to allocated memory to the
  * pathname on success, and NULL on failure.
  */
-char *ext2fs_find_block_device(dev_t device)
+حرف *ext2fs_ڈھونڈو_بلاک_device(dev_t device)
 {
-	struct dir_list *list = 0, *new_list = 0;
-	struct dir_list *current;
-	char	*ret_path = 0;
-	int    level = 0;
+	ساخت dir_list *list = 0, *new_list = 0;
+	ساخت dir_list *current;
+	حرف	*ret_راستہ = 0;
+	صحیح    level = 0;
 
 	/*
 	 * Add the starting directories to search...
 	 */
-	add_to_dirlist("/devices", &list);
-	add_to_dirlist("/devfs", &list);
-	add_to_dirlist("/dev", &list);
+	جوڑو_مقصد_dirlist("/devices", &list);
+	جوڑو_مقصد_dirlist("/devfs", &list);
+	جوڑو_مقصد_dirlist("/dev", &list);
 
-	while (list) {
+	جب (list) {
 		current = list;
-		list = list->next;
-#ifdef DEBUG
-		printf("Scanning directory %s\n", current->name);
-#endif
-		scan_dir(current->name, device, &new_list, &ret_path);
-		free(current->name);
-		free(current);
-		if (ret_path)
-			break;
+		list = list->اگلا;
+#اگر_تعریف_شدہ DEBUG
+		لکھو("Scanning directory %s\n", current->name);
+#اگر_ختم
+		جائزہ_dir(current->name, device, &new_list, &ret_راستہ);
+		آزاد(current->name);
+		آزاد(current);
+		اگر (ret_راستہ)
+			توڑو;
 		/*
 		 * If we're done checking at this level, descend to
 		 * the next level of subdirectories. (breadth-first)
 		 */
-		if (list == 0) {
+		اگر (list == 0) {
 			list = new_list;
 			new_list = 0;
 			/* Avoid infinite loop */
-			if (++level >= EXT2FS_MAX_NESTED_LINKS)
-				break;
+			اگر (++level >= EXT2FS_MAX_NESTED_LINKS)
+				توڑو;
 		}
 	}
 	free_dirlist(&list);
 	free_dirlist(&new_list);
-	return ret_path;
+	واپس ret_راستہ;
 }
 
 
-#ifdef DEBUG
-int main(int argc, char** argv)
+#اگر_تعریف_شدہ DEBUG
+صحیح مین(صحیح argc, حرف** argv)
 {
-	char	*devname, *tmp;
-	int	major, minor;
+	حرف	*devname, *tmp;
+	صحیح	major, minor;
 	dev_t	device;
-	const char *errmsg = "Couldn't parse %s: %s\n";
+	ثابت حرف *errmsg = "Couldn't parse %s: %s\n";
 
-	if ((argc != 2) && (argc != 3)) {
+	اگر ((argc != 2) && (argc != 3)) {
 		fprintf(stderr, "Usage: %s device_number\n", argv[0]);
 		fprintf(stderr, "\t: %s major minor\n", argv[0]);
-		exit(1);
+		باہر_نکلو(1);
 	}
-	if (argc == 2) {
+	اگر (argc == 2) {
 		device = strtoul(argv[1], &tmp, 0);
-		if (*tmp) {
+		اگر (*tmp) {
 			fprintf(stderr, errmsg, "device number", argv[1]);
-			exit(1);
+			باہر_نکلو(1);
 		}
-	} else {
+	} ورنہ {
 		major = strtoul(argv[1], &tmp, 0);
-		if (*tmp) {
+		اگر (*tmp) {
 			fprintf(stderr, errmsg, "major number", argv[1]);
-			exit(1);
+			باہر_نکلو(1);
 		}
 		minor = strtoul(argv[2], &tmp, 0);
-		if (*tmp) {
+		اگر (*tmp) {
 			fprintf(stderr, errmsg, "minor number", argv[2]);
-			exit(1);
+			باہر_نکلو(1);
 		}
 		device = makedev(major, minor);
-		printf("Looking for device 0x%04x (%d:%d)\n", device,
+		لکھو("Looking for device 0x%04x (%d:%d)\n", device,
 		       major, minor);
 	}
-	devname = ext2fs_find_block_device(device);
-	if (devname) {
-		printf("Found device!  %s\n", devname);
-		free(devname);
-	} else {
-		printf("Couldn't find device.\n");
+	devname = ext2fs_ڈھونڈو_بلاک_device(device);
+	اگر (devname) {
+		لکھو("Found device!  %s\n", devname);
+		آزاد(devname);
+	} ورنہ {
+		لکھو("Couldn't find device.\n");
 	}
-	return 0;
+	واپس 0;
 }
 
-#endif
+#اگر_ختم

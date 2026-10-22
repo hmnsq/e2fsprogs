@@ -9,16 +9,16 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <time.h>
-#include <string.h>
+#شامل "config.h"
+#شامل <stdio.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
+#شامل <time.h>
+#شامل <string.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fsP.h"
 
 errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest)
 {
@@ -27,17 +27,17 @@ errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest)
 
 	EXT2_CHECK_MAGIC(src, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	retval = ext2fs_get_mem(sizeof(struct struct_ext2_filsys), &fs);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(حجم(ساخت struct_ext2_filsys), &fs);
+	اگر (retval)
+		واپس retval;
 
 	*fs = *src;
 	fs->device_name = 0;
 	fs->super = 0;
 	fs->orig_super = 0;
-	fs->group_desc = 0;
+	fs->گروہ_desc = 0;
 	fs->inode_map = 0;
-	fs->block_map = 0;
+	fs->بلاک_map = 0;
 	fs->badblocks = 0;
 	fs->dblist = 0;
 	fs->mmp_buf = 0;
@@ -45,75 +45,75 @@ errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest)
 	fs->mmp_fd = -1;
 
 	io_channel_bumpcount(fs->io);
-	if (fs->icache)
+	اگر (fs->icache)
 		fs->icache->refcount++;
 
-	retval = ext2fs_get_mem(strlen(src->device_name)+1, &fs->device_name);
-	if (retval)
-		goto errout;
+	retval = ext2fs_get_mem(لڑی_لمبائی(src->device_name)+1, &fs->device_name);
+	اگر (retval)
+		جاؤ errout;
 	strcpy(fs->device_name, src->device_name);
 
-	retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &fs->super);
-	if (retval)
-		goto errout;
-	memcpy(fs->super, src->super, SUPERBLOCK_SIZE);
+	retval = ext2fs_get_mem(SUPERBLOCK_سائز, &fs->super);
+	اگر (retval)
+		جاؤ errout;
+	حافظہ_نقل(fs->super, src->super, SUPERBLOCK_سائز);
 
-	retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &fs->orig_super);
-	if (retval)
-		goto errout;
-	memcpy(fs->orig_super, src->orig_super, SUPERBLOCK_SIZE);
+	retval = ext2fs_get_mem(SUPERBLOCK_سائز, &fs->orig_super);
+	اگر (retval)
+		جاؤ errout;
+	حافظہ_نقل(fs->orig_super, src->orig_super, SUPERBLOCK_سائز);
 
-	retval = ext2fs_get_array(fs->desc_blocks, fs->blocksize,
-				&fs->group_desc);
-	if (retval)
-		goto errout;
-	memcpy(fs->group_desc, src->group_desc,
-	       (size_t) fs->desc_blocks * fs->blocksize);
+	retval = ext2fs_get_array(fs->desc_بلاکیں, fs->blocksize,
+				&fs->گروہ_desc);
+	اگر (retval)
+		جاؤ errout;
+	حافظہ_نقل(fs->گروہ_desc, src->گروہ_desc,
+	       (size_t) fs->desc_بلاکیں * fs->blocksize);
 
-	if (src->inode_map) {
+	اگر (src->inode_map) {
 		retval = ext2fs_copy_bitmap(src->inode_map, &fs->inode_map);
-		if (retval)
-			goto errout;
+		اگر (retval)
+			جاؤ errout;
 	}
-	if (src->block_map) {
-		retval = ext2fs_copy_bitmap(src->block_map, &fs->block_map);
-		if (retval)
-			goto errout;
+	اگر (src->بلاک_map) {
+		retval = ext2fs_copy_bitmap(src->بلاک_map, &fs->بلاک_map);
+		اگر (retval)
+			جاؤ errout;
 	}
-	if (src->badblocks) {
+	اگر (src->badblocks) {
 		retval = ext2fs_badblocks_copy(src->badblocks, &fs->badblocks);
-		if (retval)
-			goto errout;
+		اگر (retval)
+			جاؤ errout;
 	}
-	if (src->dblist) {
+	اگر (src->dblist) {
 		retval = ext2fs_copy_dblist(src->dblist, &fs->dblist);
-		if (retval)
-			goto errout;
+		اگر (retval)
+			جاؤ errout;
 	}
-	if (src->mmp_buf) {
+	اگر (src->mmp_buf) {
 		retval = ext2fs_mmp_get_mem(src, &fs->mmp_buf);
-		if (retval)
-			goto errout;
-		memcpy(fs->mmp_buf, src->mmp_buf, src->blocksize);
+		اگر (retval)
+			جاؤ errout;
+		حافظہ_نقل(fs->mmp_buf, src->mmp_buf, src->blocksize);
 	}
-	if (src->mmp_fd >= 0) {
+	اگر (src->mmp_fd >= 0) {
 		fs->mmp_fd = dup(src->mmp_fd);
-		if (fs->mmp_fd < 0) {
-			retval = EXT2_ET_MMP_OPEN_DIRECT;
-			goto errout;
+		اگر (fs->mmp_fd < 0) {
+			retval = EXT2_ET_MMP_OPEN_براہ_راست;
+			جاؤ errout;
 		}
 	}
-	if (src->mmp_cmp) {
+	اگر (src->mmp_cmp) {
 		retval = ext2fs_mmp_get_mem(src, &fs->mmp_cmp);
-		if (retval)
-			goto errout;
-		memcpy(fs->mmp_cmp, src->mmp_cmp, src->blocksize);
+		اگر (retval)
+			جاؤ errout;
+		حافظہ_نقل(fs->mmp_cmp, src->mmp_cmp, src->blocksize);
 	}
 	*dest = fs;
-	return 0;
+	واپس 0;
 errout:
 	ext2fs_free(fs);
-	return retval;
+	واپس retval;
 
 }
 

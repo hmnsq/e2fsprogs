@@ -11,108 +11,108 @@
  * %End-Header%
  */
 
-#ifndef _XOPEN_SOURCE
-#define _XOPEN_SOURCE 600	/* for posix_memalign() */
-#endif
+#اگر_غیر_تعریف_شدہ XOPEN_ماخذ
+#تعریف_کرو XOPEN_ماخذ 600	/* for posix_memalign() */
+#اگر_ختم
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#if HAVE_MALLOC_H
-#include <malloc.h>
-#endif
+#شامل "config.h"
+#شامل <stdio.h>
+#شامل <string.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
+#شامل <fcntl.h>
+#شامل <time.h>
+#اگر HAVE_SYS_STAT_H
+#شامل <sys/stat.h>
+#اگر_ختم
+#اگر HAVE_SYS_TYPES_H
+#شامل <sys/types.h>
+#اگر_ختم
+#اگر HAVE_MALLOC_H
+#شامل <malloc.h>
+#اگر_ختم
 
-#include "ext2_fs.h"
-#define INCLUDE_INLINE_FUNCS
-#include "ext2fs.h"
+#شامل "ext2_fs.h"
+#تعریف_کرو INCLUDE_INLINE_FUNCS
+#شامل "ext2fs.h"
 
 /*
  * We used to define this as an inline, but since we are now using
  * autoconf-defined #ifdef's, we need to export this as a
  * library-provided function exclusively.
  */
-errcode_t ext2fs_get_memalign(unsigned long size,
-			      unsigned long align, void *ptr)
+errcode_t ext2fs_get_memalign(غیرعلامتی طویل سائز,
+			      غیرعلامتی طویل align, خالی *ptr)
 {
 	errcode_t retval = 0;
-	void **p = ptr;
+	خالی **p = ptr;
 
-	if (align < 8)
+	اگر (align < 8)
 		align = 8;
-#ifdef HAVE_POSIX_MEMALIGN
-	retval = posix_memalign(p, align, size);
-	if (retval == ENOMEM)
-		return EXT2_ET_NO_MEMORY;
-#else  /* !HAVE_POSIX_MEMALIGN */
-#ifdef HAVE_MEMALIGN
-	*p = memalign(align, size);
-	if (*p == NULL) {
-		if (errno)
-			return errno;
-		else
-			return EXT2_ET_NO_MEMORY;
+#اگر_تعریف_شدہ HAVE_POSIX_MEMALIGN
+	retval = posix_memalign(p, align, سائز);
+	اگر (retval == ENOMEM)
+		واپس EXT2_ET_NO_حافظہ;
+#ورنہ  /* !HAVE_POSIX_MEMALIGN */
+#اگر_تعریف_شدہ HAVE_MEMALIGN
+	*p = memalign(align, سائز);
+	اگر (*p == تہی) {
+		اگر (errno)
+			واپس errno;
+		ورنہ
+			واپس EXT2_ET_NO_حافظہ;
 	}
-#else  /* !HAVE_MEMALIGN */
-#ifdef HAVE_VALLOC
-	if (align > sizeof(long long))
-		*p = valloc(size);
-	else
-#endif
-		*p = malloc(size);
-	if ((uintptr_t) *p & (align - 1)) {
-		free(*p);
+#ورنہ  /* !HAVE_MEMALIGN */
+#اگر_تعریف_شدہ HAVE_VALLOC
+	اگر (align > حجم(طویل طویل))
+		*p = valloc(سائز);
+	ورنہ
+#اگر_ختم
+		*p = حافظہ_دو(سائز);
+	اگر ((uintptr_t) *p & (align - 1)) {
+		آزاد(*p);
 		*p = 0;
 	}
-	if (*p == 0)
-		return EXT2_ET_NO_MEMORY;
-#endif	/* HAVE_MEMALIGN */
-#endif	/* HAVE_POSIX_MEMALIGN */
-	return retval;
+	اگر (*p == 0)
+		واپس EXT2_ET_NO_حافظہ;
+#اگر_ختم	/* HAVE_MEMALIGN */
+#اگر_ختم	/* HAVE_POSIX_MEMALIGN */
+	واپس retval;
 }
 
-#ifdef DEBUG
-static int isaligned(void *ptr, unsigned long align)
+#اگر_تعریف_شدہ DEBUG
+ساکن صحیح isaligned(خالی *ptr, غیرعلامتی طویل align)
 {
-	return (((unsigned long) ptr & (align - 1)) == 0);
+	واپس (((غیرعلامتی طویل) ptr & (align - 1)) == 0);
 }
 
-static errcode_t test_memalign(unsigned long align)
+ساکن errcode_t test_memalign(غیرعلامتی طویل align)
 {
-	void *ptr = 0;
+	خالی *ptr = 0;
 	errcode_t retval;
 
 	retval = ext2fs_get_memalign(32, align, &ptr);
-	if (!retval && !isaligned(ptr, align))
+	اگر (!retval && !isaligned(ptr, align))
 		retval = EINVAL;
-	free(ptr);
-	printf("tst_memalign(%lu) is %s\n", align,
-	       retval ? error_message(retval) : "OK");
-	return retval;
+	آزاد(ptr);
+	لکھو("tst_memalign(%lu) is %s\n", align,
+	       retval ? error_پیغام(retval) : "OK");
+	واپس retval;
 }
 
-int main(int argc, char **argv)
+صحیح مین(صحیح argc, حرف **argv)
 {
-	int err = 0;
+	صحیح err = 0;
 
-	if (test_memalign(4))
+	اگر (test_memalign(4))
 		err++;
-	if (test_memalign(32))
+	اگر (test_memalign(32))
 		err++;
-	if (test_memalign(1024))
+	اگر (test_memalign(1024))
 		err++;
-	if (test_memalign(4096))
+	اگر (test_memalign(4096))
 		err++;
-	return err;
+	واپس err;
 }
-#endif
+#اگر_ختم

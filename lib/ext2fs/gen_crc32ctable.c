@@ -1,27 +1,27 @@
-#include <stdio.h>
-#include "crc32c_defs.h"
-#include <inttypes.h>
+#شامل <stdio.h>
+#شامل "crc32c_defs.h"
+#شامل <inttypes.h>
 
-#define ENTRIES_PER_LINE 4
+#تعریف_کرو ENTRIES_فی_سطر 4
 
-#if CRC_LE_BITS > 8
-# define LE_TABLE_ROWS (CRC_LE_BITS/8)
-# define LE_TABLE_SIZE 256
-#else
-# define LE_TABLE_ROWS 1
-# define LE_TABLE_SIZE (1 << CRC_LE_BITS)
-#endif
+#اگر چکری_جانچ_LE_بٹ > 8
+# define LE_جدول_صفیں (چکری_جانچ_LE_بٹ/8)
+# define LE_جدول_سائز 256
+#ورنہ
+# define LE_جدول_صفیں 1
+# define LE_جدول_سائز (1 << چکری_جانچ_LE_بٹ)
+#اگر_ختم
 
-#if CRC_BE_BITS > 8
-# define BE_TABLE_ROWS (CRC_BE_BITS/8)
-# define BE_TABLE_SIZE 256
-#else
-# define BE_TABLE_ROWS 1
-# define BE_TABLE_SIZE (1 << CRC_BE_BITS)
-#endif
+#اگر چکری_جانچ_BE_بٹ > 8
+# define BE_جدول_صفیں (چکری_جانچ_BE_بٹ/8)
+# define BE_جدول_سائز 256
+#ورنہ
+# define BE_جدول_صفیں 1
+# define BE_جدول_سائز (1 << چکری_جانچ_BE_بٹ)
+#اگر_ختم
 
-static uint32_t crc32table_be[BE_TABLE_ROWS][256];
-static uint32_t crc32ctable_le[LE_TABLE_ROWS][256];
+ساکن uint32_t crc32table_be[BE_جدول_صفیں][256];
+ساکن uint32_t crc32ctable_le[LE_جدول_صفیں][256];
 
 /**
  * crc32init_le() - allocate and initialize LE table data
@@ -30,23 +30,23 @@ static uint32_t crc32ctable_le[LE_TABLE_ROWS][256];
  * fact that crctable[i^j] = crctable[i] ^ crctable[j].
  *
  */
-static void crc32cinit_le(void)
+ساکن خالی crc32cinit_le(خالی)
 {
-	unsigned i, j;
-	uint32_t crc = 1;
+	غیرعلامتی i, j;
+	uint32_t چکری_جانچ = 1;
 
 	crc32ctable_le[0][0] = 0;
 
-	for (i = LE_TABLE_SIZE >> 1; i; i >>= 1) {
-		crc = (crc >> 1) ^ ((crc & 1) ? CRC32C_POLY_LE : 0);
-		for (j = 0; j < LE_TABLE_SIZE; j += 2 * i)
-			crc32ctable_le[0][i + j] = crc ^ crc32ctable_le[0][j];
+	برائے (i = LE_جدول_سائز >> 1; i; i >>= 1) {
+		چکری_جانچ = (چکری_جانچ >> 1) ^ ((چکری_جانچ & 1) ? چکری_جانچ_32_C_POLY_LE : 0);
+		برائے (j = 0; j < LE_جدول_سائز; j += 2 * i)
+			crc32ctable_le[0][i + j] = چکری_جانچ ^ crc32ctable_le[0][j];
 	}
-	for (i = 0; i < LE_TABLE_SIZE; i++) {
-		crc = crc32ctable_le[0][i];
-		for (j = 1; j < LE_TABLE_ROWS; j++) {
-			crc = crc32ctable_le[0][crc & 0xff] ^ (crc >> 8);
-			crc32ctable_le[j][i] = crc;
+	برائے (i = 0; i < LE_جدول_سائز; i++) {
+		چکری_جانچ = crc32ctable_le[0][i];
+		برائے (j = 1; j < LE_جدول_صفیں; j++) {
+			چکری_جانچ = crc32ctable_le[0][چکری_جانچ & 0xff] ^ (چکری_جانچ >> 8);
+			crc32ctable_le[j][i] = چکری_جانچ;
 		}
 	}
 }
@@ -54,64 +54,64 @@ static void crc32cinit_le(void)
 /**
  * crc32init_be() - allocate and initialize BE table data
  */
-static void crc32init_be(void)
+ساکن خالی crc32init_be(خالی)
 {
-	unsigned i, j;
-	uint32_t crc = 0x80000000;
+	غیرعلامتی i, j;
+	uint32_t چکری_جانچ = 0x80000000;
 
 	crc32table_be[0][0] = 0;
 
-	for (i = 1; i < BE_TABLE_SIZE; i <<= 1) {
-		crc = (crc << 1) ^ ((crc & 0x80000000) ? CRCPOLY_BE : 0);
-		for (j = 0; j < i; j++)
-			crc32table_be[0][i + j] = crc ^ crc32table_be[0][j];
+	برائے (i = 1; i < BE_جدول_سائز; i <<= 1) {
+		چکری_جانچ = (چکری_جانچ << 1) ^ ((چکری_جانچ & 0x80000000) ? CRCPOLY_BE : 0);
+		برائے (j = 0; j < i; j++)
+			crc32table_be[0][i + j] = چکری_جانچ ^ crc32table_be[0][j];
 	}
-	for (i = 0; i < BE_TABLE_SIZE; i++) {
-		crc = crc32table_be[0][i];
-		for (j = 1; j < BE_TABLE_ROWS; j++) {
-			crc = crc32table_be[0][(crc >> 24) & 0xff] ^ (crc << 8);
-			crc32table_be[j][i] = crc;
+	برائے (i = 0; i < BE_جدول_سائز; i++) {
+		چکری_جانچ = crc32table_be[0][i];
+		برائے (j = 1; j < BE_جدول_صفیں; j++) {
+			چکری_جانچ = crc32table_be[0][(چکری_جانچ >> 24) & 0xff] ^ (چکری_جانچ << 8);
+			crc32table_be[j][i] = چکری_جانچ;
 		}
 	}
 }
 
-static void output_table(uint32_t (*table)[256], int rows, int len, char *trans)
+ساکن خالی output_جدول(uint32_t (*جدول)[256], صحیح صفیں, صحیح len, حرف *trans)
 {
-	int i, j;
+	صحیح i, j;
 
-	for (j = 0 ; j < rows; j++) {
-		printf("{");
-		for (i = 0; i < len - 1; i++) {
-			if (i % ENTRIES_PER_LINE == 0)
-				printf("\n");
-			printf("%s(0x%8.8xL), ", trans, table[j][i]);
+	برائے (j = 0 ; j < صفیں; j++) {
+		لکھو("{");
+		برائے (i = 0; i < len - 1; i++) {
+			اگر (i % ENTRIES_فی_سطر == 0)
+				لکھو("\n");
+			لکھو("%s(0x%8.8xL), ", trans, جدول[j][i]);
 		}
-		printf("%s(0x%8.8xL)},\n", trans, table[j][len - 1]);
+		لکھو("%s(0x%8.8xL)},\n", trans, جدول[j][len - 1]);
 	}
 }
 
-int main(int argc, char **argv)
+صحیح مین(صحیح argc, حرف **argv)
 {
-	printf("/* this file is generated - do not edit */\n\n");
+	لکھو("/* this file is generated - do not edit */\n\n");
 
-	if (CRC_BE_BITS > 1) {
+	اگر (چکری_جانچ_BE_بٹ > 1) {
 		crc32init_be();
-		printf("static const uint32_t "
+		لکھو("static const uint32_t "
 		       "crc32table_be[%d][%d] = {",
-		       BE_TABLE_ROWS, BE_TABLE_SIZE);
-		output_table(crc32table_be, LE_TABLE_ROWS,
-			     BE_TABLE_SIZE, "tobe");
-		printf("};\n");
+		       BE_جدول_صفیں, BE_جدول_سائز);
+		output_جدول(crc32table_be, LE_جدول_صفیں,
+			     BE_جدول_سائز, "tobe");
+		لکھو("};\n");
 	}
-	if (CRC_LE_BITS > 1) {
+	اگر (چکری_جانچ_LE_بٹ > 1) {
 		crc32cinit_le();
-		printf("static const uint32_t "
+		لکھو("static const uint32_t "
 		       "crc32ctable_le[%d][%d] = {",
-		       LE_TABLE_ROWS, LE_TABLE_SIZE);
-		output_table(crc32ctable_le, LE_TABLE_ROWS,
-			     LE_TABLE_SIZE, "tole");
-		printf("};\n");
+		       LE_جدول_صفیں, LE_جدول_سائز);
+		output_جدول(crc32ctable_le, LE_جدول_صفیں,
+			     LE_جدول_سائز, "tole");
+		لکھو("};\n");
 	}
 
-	return 0;
+	واپس 0;
 }

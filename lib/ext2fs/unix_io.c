@@ -15,497 +15,497 @@
  * %End-Header%
  */
 
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
-#define _XOPEN_SOURCE 600
-#define _DARWIN_C_SOURCE
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#endif
+#اگر !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#تعریف_کرو XOPEN_ماخذ 600
+#تعریف_کرو DARWIN_C_ماخذ
+#اگر_غیر_تعریف_شدہ LARGEFILE_ماخذ
+#تعریف_کرو LARGEFILE_ماخذ
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ LARGEFILE64_ماخذ
+#تعریف_کرو LARGEFILE64_ماخذ
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ GNU_ماخذ
+#تعریف_کرو GNU_ماخذ
+#اگر_ختم
+#اگر_ختم
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#ifdef __linux__
-#include <sys/utsname.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
-#endif
-#ifdef HAVE_SYS_MOUNT_H
-#include <sys/mount.h>
-#endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_RESOURCE_H
-#include <sys/resource.h>
-#endif
-#if HAVE_LINUX_FALLOC_H
-#include <linux/falloc.h>
-#endif
-#ifdef HAVE_PTHREAD
-#include <pthread.h>
-#endif
-#ifdef HAVE_SYS_FILE_H
-#include <sys/file.h>
-#endif
+#شامل "config.h"
+#شامل <stdio.h>
+#شامل <string.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
+#اگر HAVE_ERRNO_H
+#شامل <errno.h>
+#اگر_ختم
+#شامل <fcntl.h>
+#شامل <time.h>
+#اگر_تعریف_شدہ __linux__
+#شامل <sys/utsname.h>
+#اگر_ختم
+#اگر HAVE_SYS_TYPES_H
+#شامل <sys/types.h>
+#اگر_ختم
+#اگر_تعریف_شدہ HAVE_SYS_IOCTL_H
+#شامل <sys/ioctl.h>
+#اگر_ختم
+#اگر_تعریف_شدہ HAVE_SYS_MOUNT_H
+#شامل <sys/mount.h>
+#اگر_ختم
+#اگر HAVE_SYS_STAT_H
+#شامل <sys/stat.h>
+#اگر_ختم
+#اگر HAVE_SYS_RESOURCE_H
+#شامل <sys/resource.h>
+#اگر_ختم
+#اگر HAVE_LINUX_FALLOC_H
+#شامل <linux/falloc.h>
+#اگر_ختم
+#اگر_تعریف_شدہ HAVE_PTHREAD
+#شامل <pthread.h>
+#اگر_ختم
+#اگر_تعریف_شدہ HAVE_SYS_FILE_H
+#شامل <sys/file.h>
+#اگر_ختم
 
-#if defined(__linux__) && defined(_IO) && !defined(BLKROGET)
-#define BLKROGET   _IO(0x12, 94) /* Get read-only status (0 = read_write).  */
-#endif
+#اگر defined(__linux__) && defined(_IO) && !defined(BLKROGET)
+#تعریف_کرو BLKROGET   _IO(0x12, 94) /* Get read-only status (0 = read_write).  */
+#اگر_ختم
 
-#undef ALIGN_DEBUG
+#تعریف_منسوخ ALIGN_DEBUG
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fs.h"
+#شامل "ext2fsP.h"
 
-static inline int find_last_bit_set(int x)
+ساکن اندرونی صحیح ڈھونڈو_آخری_ثنائی_ہندسہ_سیٹ(صحیح x)
 {
-	int r = 32;
+	صحیح r = 32;
 
-	if (!x)
-		return 0;
-	if (!(x & 0xffff0000u)) {
+	اگر (!x)
+		واپس 0;
+	اگر (!(x & 0xffff0000u)) {
 		x = (x & 0xffffu) << 16;
 		r -= 16;
 	}
-	if (!(x & 0xff000000u)) {
+	اگر (!(x & 0xff000000u)) {
 		x = (x & 0xffffffu) << 8;
 		r -= 8;
 	}
-	if (!(x & 0xf0000000u)) {
+	اگر (!(x & 0xf0000000u)) {
 		x = (x & 0xfffffffu) << 4;
 		r -= 4;
 	}
-	if (!(x & 0xc0000000u)) {
+	اگر (!(x & 0xc0000000u)) {
 		x = (x & 0x3fffffffu) << 2;
 		r -= 2;
 	}
-	if (!(x & 0x80000000u)) {
+	اگر (!(x & 0x80000000u)) {
 		r -= 1;
 	}
-	return r;
+	واپس r;
 }
 
 /* Get high bit set out of 32-bit argument, -1 if none set */
-static inline int highbit32(uint32_t v)
+ساکن اندرونی صحیح highbit32(uint32_t v)
 {
-	return find_last_bit_set(v) - 1;
+	واپس ڈھونڈو_آخری_ثنائی_ہندسہ_سیٹ(v) - 1;
 }
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#تعریف_کرو EXT2_CHECK_MAGIC(ساخت, رمز) \
+	  اگر ((ساخت)->magic != (رمز)) واپس (رمز)
 
-struct unix_cache {
-	char			*buf;
-	unsigned long long	block;
-	int			access_time;
-	unsigned		dirty:1;
-	unsigned		in_use:1;
-	unsigned		write_err:1;
+ساخت unix_cache {
+	حرف			*buf;
+	غیرعلامتی طویل طویل	بلاک;
+	صحیح			access_وقت;
+	غیرعلامتی		dirty:1;
+	غیرعلامتی		اندر_use:1;
+	غیرعلامتی		write_err:1;
 };
 
-#define DEFAULT_CACHE_SIZE 8
-#define WRITE_DIRECT_SIZE 4	/* Must be smaller than CACHE_SIZE */
-#define READ_DIRECT_SIZE 4	/* Should be smaller than CACHE_SIZE */
+#تعریف_کرو DEFAULT_CACHE_سائز 8
+#تعریف_کرو WRITE_براہ_راست_سائز 4	/* Must be smaller than CACHE_SIZE */
+#تعریف_کرو READ_براہ_راست_سائز 4	/* Should be smaller than CACHE_SIZE */
 
-struct unix_private_data {
-	int	magic;
-	int	dev;
-	int	flags;
-	int	align;
-	int	access_time;
-	int	unix_flock_flags;
-	ext2_loff_t offset;
-	struct unix_cache *cache;
-	unsigned int cache_size;
-	unsigned int cache_hash_shift;
-	void	*bounce;
-	struct struct_io_stats io_stats;
-#ifdef HAVE_PTHREAD
+ساخت unix_نجی_ڈیٹا {
+	صحیح	magic;
+	صحیح	dev;
+	صحیح	flags;
+	صحیح	align;
+	صحیح	access_وقت;
+	صحیح	unix_flock_flags;
+	ext2_loff_t انحراف;
+	ساخت unix_cache *cache;
+	غیرعلامتی صحیح cache_سائز;
+	غیرعلامتی صحیح cache_hash_سرکاؤ;
+	خالی	*bounce;
+	ساخت struct_io_stats io_stats;
+#اگر_تعریف_شدہ HAVE_PTHREAD
 	pthread_mutex_t cache_mutex;
 	pthread_mutex_t bounce_mutex;
 	pthread_mutex_t stats_mutex;
-#endif
+#اگر_ختم
 };
 
-#define IS_ALIGNED(n, align) ((((uintptr_t) n) & \
+#تعریف_کرو IS_ALIGNED(n, align) ((((uintptr_t) n) & \
 			       ((uintptr_t) ((align)-1))) == 0)
 
-typedef enum lock_kind {
+قسمتعریف شمار تالا_قسم {
 	CACHE_MTX, BOUNCE_MTX, STATS_MTX
-} kind_t;
+} قسم_t;
 
-#ifdef HAVE_PTHREAD
-static inline pthread_mutex_t *get_mutex(struct unix_private_data *data,
-					 kind_t kind)
+#اگر_تعریف_شدہ HAVE_PTHREAD
+ساکن اندرونی pthread_mutex_t *get_mutex(ساخت unix_نجی_ڈیٹا *ڈیٹا,
+					 قسم_t قسم)
 {
-	if (data->flags & IO_FLAG_THREADS) {
-		switch (kind) {
-		case CACHE_MTX:
-			return &data->cache_mutex;
-		case BOUNCE_MTX:
-			return &data->bounce_mutex;
-		case STATS_MTX:
-			return &data->stats_mutex;
+	اگر (ڈیٹا->flags & IO_FLAG_دھاگے) {
+		انتخاب (قسم) {
+		حالت CACHE_MTX:
+			واپس &ڈیٹا->cache_mutex;
+		حالت BOUNCE_MTX:
+			واپس &ڈیٹا->bounce_mutex;
+		حالت STATS_MTX:
+			واپس &ڈیٹا->stats_mutex;
 		}
 	}
-	return NULL;
+	واپس تہی;
 }
-#endif
+#اگر_ختم
 
-static inline void mutex_lock(struct unix_private_data *data, kind_t kind)
+ساکن اندرونی خالی mutex_تالا(ساخت unix_نجی_ڈیٹا *ڈیٹا, قسم_t قسم)
 {
-#ifdef HAVE_PTHREAD
-	pthread_mutex_t *mtx = get_mutex(data,kind);
+#اگر_تعریف_شدہ HAVE_PTHREAD
+	pthread_mutex_t *mtx = get_mutex(ڈیٹا,قسم);
 
-	if (mtx)
-		pthread_mutex_lock(mtx);
-#endif
+	اگر (mtx)
+		pthread_mutex_تالا(mtx);
+#اگر_ختم
 }
 
-static inline void mutex_unlock(struct unix_private_data *data, kind_t kind)
+ساکن اندرونی خالی mutex_unlock(ساخت unix_نجی_ڈیٹا *ڈیٹا, قسم_t قسم)
 {
-#ifdef HAVE_PTHREAD
-	pthread_mutex_t *mtx = get_mutex(data,kind);
+#اگر_تعریف_شدہ HAVE_PTHREAD
+	pthread_mutex_t *mtx = get_mutex(ڈیٹا,قسم);
 
-	if (mtx)
+	اگر (mtx)
 		pthread_mutex_unlock(mtx);
-#endif
+#اگر_ختم
 }
 
-static errcode_t unix_get_stats(io_channel channel, io_stats *stats)
+ساکن errcode_t unix_get_stats(io_channel channel, io_stats *stats)
 {
 	errcode_t	retval = 0;
 
-	struct unix_private_data *data;
+	ساخت unix_نجی_ڈیٹا *ڈیٹا;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ڈیٹا = (ساخت unix_نجی_ڈیٹا *) channel->نجی_ڈیٹا;
+	EXT2_CHECK_MAGIC(ڈیٹا, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (stats) {
-		mutex_lock(data, STATS_MTX);
-		*stats = &data->io_stats;
-		mutex_unlock(data, STATS_MTX);
+	اگر (stats) {
+		mutex_تالا(ڈیٹا, STATS_MTX);
+		*stats = &ڈیٹا->io_stats;
+		mutex_unlock(ڈیٹا, STATS_MTX);
 	}
 
-	return retval;
+	واپس retval;
 }
 
 /*
  * Here are the raw I/O functions
  */
-static errcode_t raw_read_blk(io_channel channel,
-			      struct unix_private_data *data,
-			      unsigned long long block,
-			      int count, void *bufv)
+ساکن errcode_t raw_read_blk(io_channel channel,
+			      ساخت unix_نجی_ڈیٹا *ڈیٹا,
+			      غیرعلامتی طویل طویل بلاک,
+			      صحیح گنتی, خالی *bufv)
 {
 	errcode_t	retval;
-	ssize_t		size;
+	ssize_t		سائز;
 	ext2_loff_t	location;
-	int		actual = 0;
-	unsigned char	*buf = bufv;
+	صحیح		actual = 0;
+	غیرعلامتی حرف	*buf = bufv;
 	ssize_t		really_read = 0;
-	unsigned long long aligned_blk;
-	int		align_size, offset;
+	غیرعلامتی طویل طویل aligned_blk;
+	صحیح		align_سائز, انحراف;
 
-	size = (count < 0) ? -count : (ext2_loff_t) count * channel->block_size;
-	mutex_lock(data, STATS_MTX);
-	data->io_stats.bytes_read += size;
-	mutex_unlock(data, STATS_MTX);
-	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
+	سائز = (گنتی < 0) ? -گنتی : (ext2_loff_t) گنتی * channel->بلاک_سائز;
+	mutex_تالا(ڈیٹا, STATS_MTX);
+	ڈیٹا->io_stats.بائٹیں_read += سائز;
+	mutex_unlock(ڈیٹا, STATS_MTX);
+	location = ((ext2_loff_t) بلاک * channel->بلاک_سائز) + ڈیٹا->انحراف;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE)
-		goto bounce_read;
+	اگر (ڈیٹا->flags & IO_FLAG_FORCE_BOUNCE)
+		جاؤ bounce_read;
 
-#ifdef HAVE_PREAD64
+#اگر_تعریف_شدہ HAVE_PREAD64
 	/* Try an aligned pread */
-	if ((channel->align == 0) ||
+	اگر ((channel->align == 0) ||
 	    (IS_ALIGNED(buf, channel->align) &&
 	     IS_ALIGNED(location, channel->align) &&
-	     IS_ALIGNED(size, channel->align))) {
-		actual = pread64(data->dev, buf, size, location);
-		if (actual == size)
-			return 0;
+	     IS_ALIGNED(سائز, channel->align))) {
+		actual = pread64(ڈیٹا->dev, buf, سائز, location);
+		اگر (actual == سائز)
+			واپس 0;
 		actual = 0;
 	}
-#elif HAVE_PREAD
+#وگرنہ_اگر HAVE_PREAD
 	/* Try an aligned pread */
-	if ((sizeof(off_t) >= sizeof(ext2_loff_t)) &&
+	اگر ((حجم(off_t) >= حجم(ext2_loff_t)) &&
 	    ((channel->align == 0) ||
 	     (IS_ALIGNED(buf, channel->align) &&
 	      IS_ALIGNED(location, channel->align) &&
-	      IS_ALIGNED(size, channel->align)))) {
-		actual = pread(data->dev, buf, size, location);
-		if (actual == size)
-			return 0;
+	      IS_ALIGNED(سائز, channel->align)))) {
+		actual = pread(ڈیٹا->dev, buf, سائز, location);
+		اگر (actual == سائز)
+			واپس 0;
 		actual = 0;
 	}
-#endif /* HAVE_PREAD */
+#اگر_ختم /* HAVE_PREAD */
 
-	if ((channel->align == 0) ||
+	اگر ((channel->align == 0) ||
 	    (IS_ALIGNED(buf, channel->align) &&
 	     IS_ALIGNED(location, channel->align) &&
-	     IS_ALIGNED(size, channel->align))) {
-		mutex_lock(data, BOUNCE_MTX);
-		if (ext2fs_llseek(data->dev, location, SEEK_SET) < 0) {
+	     IS_ALIGNED(سائز, channel->align))) {
+		mutex_تالا(ڈیٹا, BOUNCE_MTX);
+		اگر (ext2fs_llseek(ڈیٹا->dev, location, SEEK_SET) < 0) {
 			retval = errno ? errno : EXT2_ET_LLSEEK_FAILED;
-			goto error_unlock;
+			جاؤ error_unlock;
 		}
-		actual = read(data->dev, buf, size);
-		if (actual != size) {
+		actual = اقرأ(ڈیٹا->dev, buf, سائز);
+		اگر (actual != سائز) {
 		short_read:
-			if (actual < 0) {
+			اگر (actual < 0) {
 				retval = errno;
 				actual = 0;
-			} else
+			} ورنہ
 				retval = EXT2_ET_SHORT_READ;
-			goto error_unlock;
+			جاؤ error_unlock;
 		}
-		goto success_unlock;
+		جاؤ success_unlock;
 	}
 
-#ifdef ALIGN_DEBUG
-	printf("raw_read_blk: O_DIRECT fallback: %p %lu\n", buf,
-	       (unsigned long) size);
-#endif
+#اگر_تعریف_شدہ ALIGN_DEBUG
+	لکھو("raw_read_blk: O_DIRECT fallback: %p %lu\n", buf,
+	       (غیرعلامتی طویل) سائز);
+#اگر_ختم
 
 	/*
 	 * The buffer or size which we're trying to read isn't aligned
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_read:
-	if (channel->align == 0)
+	اگر (channel->align == 0)
 		channel->align = 1;
-	if ((channel->block_size > channel->align) &&
-	    (channel->block_size % channel->align) == 0)
-		align_size = channel->block_size;
-	else
-		align_size = channel->align;
-	aligned_blk = location / align_size;
-	offset = location % align_size;
+	اگر ((channel->بلاک_سائز > channel->align) &&
+	    (channel->بلاک_سائز % channel->align) == 0)
+		align_سائز = channel->بلاک_سائز;
+	ورنہ
+		align_سائز = channel->align;
+	aligned_blk = location / align_سائز;
+	انحراف = location % align_سائز;
 
-	mutex_lock(data, BOUNCE_MTX);
-	if (ext2fs_llseek(data->dev, aligned_blk * align_size, SEEK_SET) < 0) {
+	mutex_تالا(ڈیٹا, BOUNCE_MTX);
+	اگر (ext2fs_llseek(ڈیٹا->dev, aligned_blk * align_سائز, SEEK_SET) < 0) {
 		retval = errno ? errno : EXT2_ET_LLSEEK_FAILED;
-		goto error_unlock;
+		جاؤ error_unlock;
 	}
-	while (size > 0) {
-		actual = read(data->dev, data->bounce, align_size);
-		if (actual != align_size) {
+	جب (سائز > 0) {
+		actual = اقرأ(ڈیٹا->dev, ڈیٹا->bounce, align_سائز);
+		اگر (actual != align_سائز) {
 			actual = really_read;
 			buf -= really_read;
-			size += really_read;
-			goto short_read;
+			سائز += really_read;
+			جاؤ short_read;
 		}
-		if ((actual + offset) > align_size)
-			actual = align_size - offset;
-		if (actual > size)
-			actual = size;
-		memcpy(buf, (char *)data->bounce + offset, actual);
+		اگر ((actual + انحراف) > align_سائز)
+			actual = align_سائز - انحراف;
+		اگر (actual > سائز)
+			actual = سائز;
+		حافظہ_نقل(buf, (حرف *)ڈیٹا->bounce + انحراف, actual);
 
 		really_read += actual;
-		size -= actual;
+		سائز -= actual;
 		buf += actual;
-		offset = 0;
+		انحراف = 0;
 		aligned_blk++;
 	}
 success_unlock:
-	mutex_unlock(data, BOUNCE_MTX);
-	return 0;
+	mutex_unlock(ڈیٹا, BOUNCE_MTX);
+	واپس 0;
 
 error_unlock:
-	mutex_unlock(data, BOUNCE_MTX);
-	if (actual >= 0 && actual < size)
-		memset((char *) buf+actual, 0, size-actual);
-	if (channel->read_error)
-		retval = (channel->read_error)(channel, block, count, buf,
-					       size, actual, retval);
-	return retval;
+	mutex_unlock(ڈیٹا, BOUNCE_MTX);
+	اگر (actual >= 0 && actual < سائز)
+		memset((حرف *) buf+actual, 0, سائز-actual);
+	اگر (channel->read_error)
+		retval = (channel->read_error)(channel, بلاک, گنتی, buf,
+					       سائز, actual, retval);
+	واپس retval;
 }
 
-#define RAW_WRITE_NO_HANDLER	(1U << 0)
-#define RAW_WRITE_NOLOCK	(1U << 1)
+#تعریف_کرو RAW_WRITE_NO_HANDLER	(1U << 0)
+#تعریف_کرو RAW_WRITE_NOLOCK	(1U << 1)
 
-static errcode_t raw_write_blk(io_channel channel,
-			       struct unix_private_data *data,
-			       unsigned long long block,
-			       int count, const void *bufv,
-			       int flags)
+ساکن errcode_t raw_write_blk(io_channel channel,
+			       ساخت unix_نجی_ڈیٹا *ڈیٹا,
+			       غیرعلامتی طویل طویل بلاک,
+			       صحیح گنتی, ثابت خالی *bufv,
+			       صحیح flags)
 {
-	ssize_t		size;
+	ssize_t		سائز;
 	ext2_loff_t	location;
-	int		actual = 0;
+	صحیح		actual = 0;
 	errcode_t	retval;
-	const unsigned char *buf = bufv;
-	unsigned long long aligned_blk;
-	int		align_size, offset;
+	ثابت غیرعلامتی حرف *buf = bufv;
+	غیرعلامتی طویل طویل aligned_blk;
+	صحیح		align_سائز, انحراف;
 
-	if (count == 1)
-		size = channel->block_size;
-	else {
-		if (count < 0)
-			size = -count;
-		else
-			size = (ext2_loff_t) count * channel->block_size;
+	اگر (گنتی == 1)
+		سائز = channel->بلاک_سائز;
+	ورنہ {
+		اگر (گنتی < 0)
+			سائز = -گنتی;
+		ورنہ
+			سائز = (ext2_loff_t) گنتی * channel->بلاک_سائز;
 	}
-	mutex_lock(data, STATS_MTX);
-	data->io_stats.bytes_written += size;
-	mutex_unlock(data, STATS_MTX);
+	mutex_تالا(ڈیٹا, STATS_MTX);
+	ڈیٹا->io_stats.بائٹیں_written += سائز;
+	mutex_unlock(ڈیٹا, STATS_MTX);
 
-	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
+	location = ((ext2_loff_t) بلاک * channel->بلاک_سائز) + ڈیٹا->انحراف;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE)
-		goto bounce_write;
+	اگر (ڈیٹا->flags & IO_FLAG_FORCE_BOUNCE)
+		جاؤ bounce_write;
 
-#ifdef HAVE_PWRITE64
+#اگر_تعریف_شدہ HAVE_PWRITE64
 	/* Try an aligned pwrite */
-	if ((channel->align == 0) ||
+	اگر ((channel->align == 0) ||
 	    (IS_ALIGNED(buf, channel->align) &&
 	     IS_ALIGNED(location, channel->align) &&
-	     IS_ALIGNED(size, channel->align))) {
-		actual = pwrite64(data->dev, buf, size, location);
-		if (actual == size)
-			return 0;
+	     IS_ALIGNED(سائز, channel->align))) {
+		actual = pwrite64(ڈیٹا->dev, buf, سائز, location);
+		اگر (actual == سائز)
+			واپس 0;
 	}
-#elif HAVE_PWRITE
+#وگرنہ_اگر HAVE_PWRITE
 	/* Try an aligned pwrite */
-	if ((sizeof(off_t) >= sizeof(ext2_loff_t)) &&
+	اگر ((حجم(off_t) >= حجم(ext2_loff_t)) &&
 	    ((channel->align == 0) ||
 	     (IS_ALIGNED(buf, channel->align) &&
 	      IS_ALIGNED(location, channel->align) &&
-	      IS_ALIGNED(size, channel->align)))) {
-		actual = pwrite(data->dev, buf, size, location);
-		if (actual == size)
-			return 0;
+	      IS_ALIGNED(سائز, channel->align)))) {
+		actual = pwrite(ڈیٹا->dev, buf, سائز, location);
+		اگر (actual == سائز)
+			واپس 0;
 	}
-#endif /* HAVE_PWRITE */
+#اگر_ختم /* HAVE_PWRITE */
 
-	if ((channel->align == 0) ||
+	اگر ((channel->align == 0) ||
 	    (IS_ALIGNED(buf, channel->align) &&
 	     IS_ALIGNED(location, channel->align) &&
-	     IS_ALIGNED(size, channel->align))) {
-		if (!(flags & RAW_WRITE_NOLOCK))
-			mutex_lock(data, BOUNCE_MTX);
-		if (ext2fs_llseek(data->dev, location, SEEK_SET) < 0) {
+	     IS_ALIGNED(سائز, channel->align))) {
+		اگر (!(flags & RAW_WRITE_NOLOCK))
+			mutex_تالا(ڈیٹا, BOUNCE_MTX);
+		اگر (ext2fs_llseek(ڈیٹا->dev, location, SEEK_SET) < 0) {
 			retval = errno ? errno : EXT2_ET_LLSEEK_FAILED;
-			goto error_unlock;
+			جاؤ error_unlock;
 		}
-		actual = write(data->dev, buf, size);
-		if (!(flags & RAW_WRITE_NOLOCK))
-			mutex_unlock(data, BOUNCE_MTX);
-		if (actual < 0) {
+		actual = اكتب(ڈیٹا->dev, buf, سائز);
+		اگر (!(flags & RAW_WRITE_NOLOCK))
+			mutex_unlock(ڈیٹا, BOUNCE_MTX);
+		اگر (actual < 0) {
 			retval = errno;
-			goto error_out;
+			جاؤ error_برآمد;
 		}
-		if (actual != size) {
+		اگر (actual != سائز) {
 		short_write:
 			retval = EXT2_ET_SHORT_WRITE;
-			goto error_out;
+			جاؤ error_برآمد;
 		}
-		return 0;
+		واپس 0;
 	}
 
-#ifdef ALIGN_DEBUG
-	printf("raw_write_blk: O_DIRECT fallback: %p %lu\n", buf,
-	       (unsigned long) size);
-#endif
+#اگر_تعریف_شدہ ALIGN_DEBUG
+	لکھو("raw_write_blk: O_DIRECT fallback: %p %lu\n", buf,
+	       (غیرعلامتی طویل) سائز);
+#اگر_ختم
 	/*
 	 * The buffer or size which we're trying to write isn't aligned
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_write:
-	if (channel->align == 0)
+	اگر (channel->align == 0)
 		channel->align = 1;
-	if ((channel->block_size > channel->align) &&
-	    (channel->block_size % channel->align) == 0)
-		align_size = channel->block_size;
-	else
-		align_size = channel->align;
-	aligned_blk = location / align_size;
-	offset = location % align_size;
+	اگر ((channel->بلاک_سائز > channel->align) &&
+	    (channel->بلاک_سائز % channel->align) == 0)
+		align_سائز = channel->بلاک_سائز;
+	ورنہ
+		align_سائز = channel->align;
+	aligned_blk = location / align_سائز;
+	انحراف = location % align_سائز;
 
-	while (size > 0) {
-		int actual_w;
+	جب (سائز > 0) {
+		صحیح actual_w;
 
-		if (!(flags & RAW_WRITE_NOLOCK))
-			mutex_lock(data, BOUNCE_MTX);
-		if (size < align_size || offset) {
-			if (ext2fs_llseek(data->dev, aligned_blk * align_size,
+		اگر (!(flags & RAW_WRITE_NOLOCK))
+			mutex_تالا(ڈیٹا, BOUNCE_MTX);
+		اگر (سائز < align_سائز || انحراف) {
+			اگر (ext2fs_llseek(ڈیٹا->dev, aligned_blk * align_سائز,
 					  SEEK_SET) < 0) {
 				retval = errno ? errno : EXT2_ET_LLSEEK_FAILED;
-				goto error_unlock;
+				جاؤ error_unlock;
 			}
-			actual = read(data->dev, data->bounce,
-				      align_size);
-			if (actual != align_size) {
-				if (actual < 0) {
+			actual = اقرأ(ڈیٹا->dev, ڈیٹا->bounce,
+				      align_سائز);
+			اگر (actual != align_سائز) {
+				اگر (actual < 0) {
 					retval = errno;
-					goto error_unlock;
+					جاؤ error_unlock;
 				}
-				memset((char *) data->bounce + actual, 0,
-				       align_size - actual);
+				memset((حرف *) ڈیٹا->bounce + actual, 0,
+				       align_سائز - actual);
 			}
 		}
-		actual = size;
-		if ((actual + offset) > align_size)
-			actual = align_size - offset;
-		if (actual > size)
-			actual = size;
-		memcpy(((char *)data->bounce) + offset, buf, actual);
-		if (ext2fs_llseek(data->dev, aligned_blk * align_size, SEEK_SET) < 0) {
+		actual = سائز;
+		اگر ((actual + انحراف) > align_سائز)
+			actual = align_سائز - انحراف;
+		اگر (actual > سائز)
+			actual = سائز;
+		حافظہ_نقل(((حرف *)ڈیٹا->bounce) + انحراف, buf, actual);
+		اگر (ext2fs_llseek(ڈیٹا->dev, aligned_blk * align_سائز, SEEK_SET) < 0) {
 			retval = errno ? errno : EXT2_ET_LLSEEK_FAILED;
-			goto error_unlock;
+			جاؤ error_unlock;
 		}
-		actual_w = write(data->dev, data->bounce, align_size);
-		if (!(flags & RAW_WRITE_NOLOCK))
-			mutex_unlock(data, BOUNCE_MTX);
-		if (actual_w < 0) {
+		actual_w = اكتب(ڈیٹا->dev, ڈیٹا->bounce, align_سائز);
+		اگر (!(flags & RAW_WRITE_NOLOCK))
+			mutex_unlock(ڈیٹا, BOUNCE_MTX);
+		اگر (actual_w < 0) {
 			retval = errno;
-			goto error_out;
+			جاؤ error_برآمد;
 		}
-		if (actual_w != align_size)
-			goto short_write;
-		size -= actual;
+		اگر (actual_w != align_سائز)
+			جاؤ short_write;
+		سائز -= actual;
 		buf += actual;
 		location += actual;
 		aligned_blk++;
-		offset = 0;
+		انحراف = 0;
 	}
-	return 0;
+	واپس 0;
 
 error_unlock:
-	if (!(flags & RAW_WRITE_NOLOCK))
-		mutex_unlock(data, BOUNCE_MTX);
-error_out:
-	if (((flags & RAW_WRITE_NO_HANDLER) == 0) && channel->write_error)
-		retval = (channel->write_error)(channel, block, count, buf,
-						size, actual, retval);
-	return retval;
+	اگر (!(flags & RAW_WRITE_NOLOCK))
+		mutex_unlock(ڈیٹا, BOUNCE_MTX);
+error_برآمد:
+	اگر (((flags & RAW_WRITE_NO_HANDLER) == 0) && channel->write_error)
+		retval = (channel->write_error)(channel, بلاک, گنتی, buf,
+						سائز, actual, retval);
+	واپس retval;
 }
 
 
@@ -514,75 +514,75 @@ error_out:
  */
 
 /* Allocate the cache buffers */
-static errcode_t alloc_cache(io_channel channel,
-			     struct unix_private_data *data)
+ساکن errcode_t alloc_cache(io_channel channel,
+			     ساخت unix_نجی_ڈیٹا *ڈیٹا)
 {
 	errcode_t		retval;
-	struct unix_cache	*cache;
-	unsigned int		i;
+	ساخت unix_cache	*cache;
+	غیرعلامتی صحیح		i;
 
-	data->access_time = 0;
-	for (i=0, cache = data->cache; i < data->cache_size; i++, cache++) {
-		cache->block = 0;
-		cache->access_time = 0;
+	ڈیٹا->access_وقت = 0;
+	برائے (i=0, cache = ڈیٹا->cache; i < ڈیٹا->cache_سائز; i++, cache++) {
+		cache->بلاک = 0;
+		cache->access_وقت = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
-		if (cache->buf)
+		cache->اندر_use = 0;
+		اگر (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 		retval = io_channel_alloc_buf(channel, 0, &cache->buf);
-		if (retval)
-			return retval;
+		اگر (retval)
+			واپس retval;
 	}
-	if (channel->align || data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (data->bounce)
-			ext2fs_free_mem(&data->bounce);
-		retval = io_channel_alloc_buf(channel, 0, &data->bounce);
+	اگر (channel->align || ڈیٹا->flags & IO_FLAG_FORCE_BOUNCE) {
+		اگر (ڈیٹا->bounce)
+			ext2fs_free_mem(&ڈیٹا->bounce);
+		retval = io_channel_alloc_buf(channel, 0, &ڈیٹا->bounce);
 	}
-	return retval;
+	واپس retval;
 }
 
 /* Free the cache buffers */
-static void free_cache(struct unix_private_data *data)
+ساکن خالی free_cache(ساخت unix_نجی_ڈیٹا *ڈیٹا)
 {
-	struct unix_cache	*cache;
-	unsigned int		i;
+	ساخت unix_cache	*cache;
+	غیرعلامتی صحیح		i;
 
-	data->access_time = 0;
-	for (i=0, cache = data->cache; i < data->cache_size; i++, cache++) {
-		cache->block = 0;
-		cache->access_time = 0;
+	ڈیٹا->access_وقت = 0;
+	برائے (i=0, cache = ڈیٹا->cache; i < ڈیٹا->cache_سائز; i++, cache++) {
+		cache->بلاک = 0;
+		cache->access_وقت = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
-		if (cache->buf)
+		cache->اندر_use = 0;
+		اگر (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 	}
-	if (data->bounce)
-		ext2fs_free_mem(&data->bounce);
+	اگر (ڈیٹا->bounce)
+		ext2fs_free_mem(&ڈیٹا->bounce);
 }
 
-#ifndef NO_IO_CACHE
+#اگر_غیر_تعریف_شدہ NO_IO_CACHE
 
 /*  2^63 + 2^61 - 2^57 + 2^54 - 2^51 - 2^18 + 1 */
-#define GOLDEN_RATIO_PRIME	0x9e37fffffffc0001UL
-#ifndef CACHE_LINE_SIZE
+#تعریف_کرو GOLDEN_تناسب_مفرد	0x9e37fffffffc0001UL
+#اگر_غیر_تعریف_شدہ CACHE_سطر_سائز
 /* if the system didn't tell us, guess something reasonable */
-#define CACHE_LINE_SIZE		64
-#endif
+#تعریف_کرو CACHE_سطر_سائز		64
+#اگر_ختم
 
 /* buffer cache hashing function, crudely stolen from xfsprogs */
-static unsigned int
-cache_hash(struct unix_private_data *data, blk64_t blkno)
+ساکن غیرعلامتی صحیح
+cache_hash(ساخت unix_نجی_ڈیٹا *ڈیٹا, blk64_t blkno)
 {
 	uint64_t	hashval = blkno;
 	uint64_t	tmp;
 
 	/* the default cache size is small, just do a linear scan */
-	if (data->cache_size <= DEFAULT_CACHE_SIZE)
-		return 0;
+	اگر (ڈیٹا->cache_سائز <= DEFAULT_CACHE_سائز)
+		واپس 0;
 
-	tmp = hashval ^ (GOLDEN_RATIO_PRIME + hashval) / CACHE_LINE_SIZE;
-	tmp = tmp ^ ((tmp ^ GOLDEN_RATIO_PRIME) >> data->cache_hash_shift);
-	return tmp % data->cache_size;
+	tmp = hashval ^ (GOLDEN_تناسب_مفرد + hashval) / CACHE_سطر_سائز;
+	tmp = tmp ^ ((tmp ^ GOLDEN_تناسب_مفرد) >> ڈیٹا->cache_hash_سرکاؤ);
+	واپس tmp % ڈیٹا->cache_سائز;
 }
 
 /*
@@ -590,427 +590,427 @@ cache_hash(struct unix_private_data *data, blk64_t blkno)
  * eldest is a non-zero pointer, then fill in eldest with the cache
  * entry to that should be reused.
  */
-static struct unix_cache *find_cached_block(struct unix_private_data *data,
-					    unsigned long long block,
-					    struct unix_cache **eldest)
+ساکن ساخت unix_cache *ڈھونڈو_cached_بلاک(ساخت unix_نجی_ڈیٹا *ڈیٹا,
+					    غیرعلامتی طویل طویل بلاک,
+					    ساخت unix_cache **eldest)
 {
-	struct unix_cache	*cache, *unused_cache, *oldest_cache;
-	unsigned int		hash = cache_hash(data, block);
-	unsigned int		i;
+	ساخت unix_cache	*cache, *غیر_مستعمل_cache, *oldest_cache;
+	غیرعلامتی صحیح		hash = cache_hash(ڈیٹا, بلاک);
+	غیرعلامتی صحیح		i;
 
-	unused_cache = oldest_cache = 0;
+	غیر_مستعمل_cache = oldest_cache = 0;
 	/* walk [hash..] cache elements */
-	for (i = hash, cache = data->cache + hash;
-	     i < data->cache_size;
+	برائے (i = hash, cache = ڈیٹا->cache + hash;
+	     i < ڈیٹا->cache_سائز;
 	     i++, cache++) {
-		if (!cache->in_use) {
-			if (!unused_cache)
-				unused_cache = cache;
-			continue;
+		اگر (!cache->اندر_use) {
+			اگر (!غیر_مستعمل_cache)
+				غیر_مستعمل_cache = cache;
+			جاری;
 		}
-		if (cache->block == block) {
-			cache->access_time = ++data->access_time;
-			data->io_stats.cache_hits++;
-			return cache;
+		اگر (cache->بلاک == بلاک) {
+			cache->access_وقت = ++ڈیٹا->access_وقت;
+			ڈیٹا->io_stats.cache_کامیابیاں++;
+			واپس cache;
 		}
-		if (!oldest_cache ||
-		    (cache->access_time < oldest_cache->access_time))
+		اگر (!oldest_cache ||
+		    (cache->access_وقت < oldest_cache->access_وقت))
 			oldest_cache = cache;
 	}
 	/* walk [..hash] since we didnt find a good slot yet */
-	for (i = 0, cache = data->cache; i < hash; i++, cache++) {
-		if (!cache->in_use) {
-			if (!unused_cache)
-				unused_cache = cache;
-			continue;
+	برائے (i = 0, cache = ڈیٹا->cache; i < hash; i++, cache++) {
+		اگر (!cache->اندر_use) {
+			اگر (!غیر_مستعمل_cache)
+				غیر_مستعمل_cache = cache;
+			جاری;
 		}
-		if (cache->block == block) {
-			cache->access_time = ++data->access_time;
-			data->io_stats.cache_hits++;
-			return cache;
+		اگر (cache->بلاک == بلاک) {
+			cache->access_وقت = ++ڈیٹا->access_وقت;
+			ڈیٹا->io_stats.cache_کامیابیاں++;
+			واپس cache;
 		}
-		if (!oldest_cache ||
-		    (cache->access_time < oldest_cache->access_time))
+		اگر (!oldest_cache ||
+		    (cache->access_وقت < oldest_cache->access_وقت))
 			oldest_cache = cache;
 	}
-	if (eldest)
-		*eldest = (unused_cache) ? unused_cache : oldest_cache;
-	data->io_stats.cache_misses++;
-	return 0;
+	اگر (eldest)
+		*eldest = (غیر_مستعمل_cache) ? غیر_مستعمل_cache : oldest_cache;
+	ڈیٹا->io_stats.cache_ناکامیاں++;
+	واپس 0;
 }
 
 /*
  * Reuse a particular cache entry for another block.
  */
-static errcode_t reuse_cache(io_channel channel,
-		struct unix_private_data *data, struct unix_cache *cache,
-		unsigned long long block)
+ساکن errcode_t reuse_cache(io_channel channel,
+		ساخت unix_نجی_ڈیٹا *ڈیٹا, ساخت unix_cache *cache,
+		غیرعلامتی طویل طویل بلاک)
 {
-	if (cache->dirty && cache->in_use) {
+	اگر (cache->dirty && cache->اندر_use) {
 		errcode_t retval;
 
-		retval = raw_write_blk(channel, data, cache->block, 1,
+		retval = raw_write_blk(channel, ڈیٹا, cache->بلاک, 1,
 				       cache->buf, RAW_WRITE_NO_HANDLER);
-		if (retval) {
+		اگر (retval) {
 			cache->write_err = 1;
-			return retval;
+			واپس retval;
 		}
 	}
 
-	cache->in_use = 1;
+	cache->اندر_use = 1;
 	cache->dirty = 0;
 	cache->write_err = 0;
-	cache->block = block;
-	cache->access_time = ++data->access_time;
-	return 0;
+	cache->بلاک = بلاک;
+	cache->access_وقت = ++ڈیٹا->access_وقت;
+	واپس 0;
 }
 
-#define FLUSH_INVALIDATE	0x01
-#define FLUSH_NOLOCK		0x02
+#تعریف_کرو FLUSH_INVALIDATE	0x01
+#تعریف_کرو FLUSH_NOLOCK		0x02
 
 /*
  * Flush all of the blocks in the cache
  */
-static errcode_t flush_cached_blocks(io_channel channel,
-				     struct unix_private_data *data,
-				     int flags)
+ساکن errcode_t flush_cached_بلاکیں(io_channel channel,
+				     ساخت unix_نجی_ڈیٹا *ڈیٹا,
+				     صحیح flags)
 {
-	struct unix_cache	*cache;
+	ساخت unix_cache	*cache;
 	errcode_t		retval, retval2 = 0;
-	unsigned int		i;
-	int			errors_found = 0;
+	غیرعلامتی صحیح		i;
+	صحیح			errors_ملا = 0;
 
-	if ((flags & FLUSH_NOLOCK) == 0)
-		mutex_lock(data, CACHE_MTX);
-	for (i=0, cache = data->cache; i < data->cache_size; i++, cache++) {
-		if (!cache->in_use)
-			continue;
-		if (cache->dirty) {
-			int raw_flags = RAW_WRITE_NO_HANDLER;
+	اگر ((flags & FLUSH_NOLOCK) == 0)
+		mutex_تالا(ڈیٹا, CACHE_MTX);
+	برائے (i=0, cache = ڈیٹا->cache; i < ڈیٹا->cache_سائز; i++, cache++) {
+		اگر (!cache->اندر_use)
+			جاری;
+		اگر (cache->dirty) {
+			صحیح raw_flags = RAW_WRITE_NO_HANDLER;
 
-			if (flags & FLUSH_NOLOCK)
+			اگر (flags & FLUSH_NOLOCK)
 				raw_flags |= RAW_WRITE_NOLOCK;
 
-			retval = raw_write_blk(channel, data,
-					       cache->block, 1, cache->buf,
+			retval = raw_write_blk(channel, ڈیٹا,
+					       cache->بلاک, 1, cache->buf,
 					       raw_flags);
-			if (retval) {
+			اگر (retval) {
 				cache->write_err = 1;
-				errors_found = 1;
+				errors_ملا = 1;
 				retval2 = retval;
-			} else {
+			} ورنہ {
 				cache->dirty = 0;
 				cache->write_err = 0;
-				if (flags & FLUSH_INVALIDATE)
-					cache->in_use = 0;
+				اگر (flags & FLUSH_INVALIDATE)
+					cache->اندر_use = 0;
 			}
-		} else if (flags & FLUSH_INVALIDATE) {
-			cache->in_use = 0;
+		} ورنہ اگر (flags & FLUSH_INVALIDATE) {
+			cache->اندر_use = 0;
 		}
 	}
-	if ((flags & FLUSH_NOLOCK) == 0)
-		mutex_unlock(data, CACHE_MTX);
+	اگر ((flags & FLUSH_NOLOCK) == 0)
+		mutex_unlock(ڈیٹا, CACHE_MTX);
 retry:
-	while (errors_found) {
-		if ((flags & FLUSH_NOLOCK) == 0)
-			mutex_lock(data, CACHE_MTX);
-		errors_found = 0;
-		for (i=0, cache = data->cache; i < data->cache_size; i++, cache++) {
-			if (!cache->in_use || !cache->write_err)
-				continue;
-			errors_found = 1;
-			if (cache->write_err && channel->write_error) {
-				char *err_buf = NULL;
-				unsigned long long err_block = cache->block;
+	جب (errors_ملا) {
+		اگر ((flags & FLUSH_NOLOCK) == 0)
+			mutex_تالا(ڈیٹا, CACHE_MTX);
+		errors_ملا = 0;
+		برائے (i=0, cache = ڈیٹا->cache; i < ڈیٹا->cache_سائز; i++, cache++) {
+			اگر (!cache->اندر_use || !cache->write_err)
+				جاری;
+			errors_ملا = 1;
+			اگر (cache->write_err && channel->write_error) {
+				حرف *err_buf = تہی;
+				غیرعلامتی طویل طویل err_بلاک = cache->بلاک;
 
 				cache->dirty = 0;
-				cache->in_use = 0;
+				cache->اندر_use = 0;
 				cache->write_err = 0;
-				if (io_channel_alloc_buf(channel, 0,
+				اگر (io_channel_alloc_buf(channel, 0,
 							 &err_buf))
-					err_buf = NULL;
-				else
-					memcpy(err_buf, cache->buf,
-					       channel->block_size);
-				mutex_unlock(data, CACHE_MTX);
-				(channel->write_error)(channel, err_block,
-					1, err_buf, channel->block_size, -1,
+					err_buf = تہی;
+				ورنہ
+					حافظہ_نقل(err_buf, cache->buf,
+					       channel->بلاک_سائز);
+				mutex_unlock(ڈیٹا, CACHE_MTX);
+				(channel->write_error)(channel, err_بلاک,
+					1, err_buf, channel->بلاک_سائز, -1,
 					retval2);
-				if (err_buf)
+				اگر (err_buf)
 					ext2fs_free_mem(&err_buf);
-				mutex_lock(data, CACHE_MTX);
-				goto retry;
-			} else
+				mutex_تالا(ڈیٹا, CACHE_MTX);
+				جاؤ retry;
+			} ورنہ
 				cache->write_err = 0;
 		}
-		if ((flags & FLUSH_NOLOCK) == 0)
-			mutex_unlock(data, CACHE_MTX);
+		اگر ((flags & FLUSH_NOLOCK) == 0)
+			mutex_unlock(ڈیٹا, CACHE_MTX);
 	}
-	return retval2;
+	واپس retval2;
 }
 
 /* Shrink the cache buffers */
-static errcode_t shrink_cache(io_channel channel,
-			      struct unix_private_data *data,
-			      unsigned int new_size)
+ساکن errcode_t shrink_cache(io_channel channel,
+			      ساخت unix_نجی_ڈیٹا *ڈیٹا,
+			      غیرعلامتی صحیح new_سائز)
 {
-	struct unix_cache	*cache, *new_cache;
-	unsigned int		i;
+	ساخت unix_cache	*cache, *new_cache;
+	غیرعلامتی صحیح		i;
 	errcode_t		retval;
 
-	mutex_lock(data, CACHE_MTX);
+	mutex_تالا(ڈیٹا, CACHE_MTX);
 
-	retval = flush_cached_blocks(channel, data,
+	retval = flush_cached_بلاکیں(channel, ڈیٹا,
 			FLUSH_INVALIDATE | FLUSH_NOLOCK);
-	if (retval)
-		goto unlock;
+	اگر (retval)
+		جاؤ unlock;
 
-	for (i = new_size, cache = data->cache + new_size;
-	     i < data->cache_size;
+	برائے (i = new_سائز, cache = ڈیٹا->cache + new_سائز;
+	     i < ڈیٹا->cache_سائز;
 	     i++, cache++) {
-		cache->block = 0;
-		cache->access_time = 0;
+		cache->بلاک = 0;
+		cache->access_وقت = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
-		if (cache->buf)
+		cache->اندر_use = 0;
+		اگر (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 	}
 
-	new_cache = realloc(data->cache, new_size * sizeof(struct unix_cache));
-	if (!new_cache) {
-		retval = EXT2_ET_NO_MEMORY;
-		goto unlock;
+	new_cache = realloc(ڈیٹا->cache, new_سائز * حجم(ساخت unix_cache));
+	اگر (!new_cache) {
+		retval = EXT2_ET_NO_حافظہ;
+		جاؤ unlock;
 	}
 
-	data->cache = new_cache;
-	data->cache_size = new_size;
-	data->cache_hash_shift = highbit32(data->cache_size);
+	ڈیٹا->cache = new_cache;
+	ڈیٹا->cache_سائز = new_سائز;
+	ڈیٹا->cache_hash_سرکاؤ = highbit32(ڈیٹا->cache_سائز);
 
 unlock:
-	mutex_unlock(data, CACHE_MTX);
-	return retval;
+	mutex_unlock(ڈیٹا, CACHE_MTX);
+	واپس retval;
 }
 
 /* Grow the cache buffers */
-static errcode_t grow_cache(io_channel channel,
-			    struct unix_private_data *data,
-			    unsigned int new_size)
+ساکن errcode_t grow_cache(io_channel channel,
+			    ساخت unix_نجی_ڈیٹا *ڈیٹا,
+			    غیرعلامتی صحیح new_سائز)
 {
-	struct unix_cache	*cache, *new_cache;
-	unsigned int		i;
+	ساخت unix_cache	*cache, *new_cache;
+	غیرعلامتی صحیح		i;
 	errcode_t		retval;
 
-	mutex_lock(data, CACHE_MTX);
+	mutex_تالا(ڈیٹا, CACHE_MTX);
 
-	retval = flush_cached_blocks(channel, data,
+	retval = flush_cached_بلاکیں(channel, ڈیٹا,
 			FLUSH_INVALIDATE | FLUSH_NOLOCK);
-	if (retval)
-		goto unlock;
+	اگر (retval)
+		جاؤ unlock;
 
-	new_cache = realloc(data->cache, new_size * sizeof(struct unix_cache));
-	if (!new_cache) {
-		retval = EXT2_ET_NO_MEMORY;
-		goto unlock;
+	new_cache = realloc(ڈیٹا->cache, new_سائز * حجم(ساخت unix_cache));
+	اگر (!new_cache) {
+		retval = EXT2_ET_NO_حافظہ;
+		جاؤ unlock;
 	}
-	data->cache = new_cache;
+	ڈیٹا->cache = new_cache;
 
-	for (i = data->cache_size, cache = new_cache + data->cache_size;
-	     i < new_size;
+	برائے (i = ڈیٹا->cache_سائز, cache = new_cache + ڈیٹا->cache_سائز;
+	     i < new_سائز;
 	     i++, cache++) {
-		cache->block = 0;
-		cache->access_time = 0;
+		cache->بلاک = 0;
+		cache->access_وقت = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
+		cache->اندر_use = 0;
 		retval = io_channel_alloc_buf(channel, 0, &cache->buf);
-		if (retval) {
-			while (i > data->cache_size) {
+		اگر (retval) {
+			جب (i > ڈیٹا->cache_سائز) {
 				cache--; i--;
-				if (cache->buf)
+				اگر (cache->buf)
 					ext2fs_free_mem(&cache->buf);
 			}
-			goto unlock;
+			جاؤ unlock;
 		}
 	}
 
-	data->cache_size = new_size;
-	data->cache_hash_shift = highbit32(data->cache_size);
+	ڈیٹا->cache_سائز = new_سائز;
+	ڈیٹا->cache_hash_سرکاؤ = highbit32(ڈیٹا->cache_سائز);
 
 unlock:
-	mutex_unlock(data, CACHE_MTX);
-	return retval;
+	mutex_unlock(ڈیٹا, CACHE_MTX);
+	واپس retval;
 }
-#endif /* NO_IO_CACHE */
+#اگر_ختم /* NO_IO_CACHE */
 
-#ifdef __linux__
-#ifndef BLKDISCARDZEROES
-#define BLKDISCARDZEROES _IO(0x12,124)
-#endif
-#endif
+#اگر_تعریف_شدہ __linux__
+#اگر_غیر_تعریف_شدہ BLKDISCARDZEROES
+#تعریف_کرو BLKDISCARDZEROES _IO(0x12,124)
+#اگر_ختم
+#اگر_ختم
 
-int ext2fs_open_file(const char *pathname, int flags, mode_t mode)
+صحیح ext2fs_open_file(ثابت حرف *pathname, صحیح flags, mode_t منوال)
 {
-	if (mode)
-#if defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-		return open64(pathname, flags, mode);
-	else
-		return open64(pathname, flags);
-#else
-		return open(pathname, flags, mode);
-	else
-		return open(pathname, flags);
-#endif
-}
-
-int ext2fs_stat(const char *path, ext2fs_struct_stat *buf)
-{
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return stat64(path, buf);
-#else
-	return stat(path, buf);
-#endif
+	اگر (منوال)
+#اگر defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+		واپس open64(pathname, flags, منوال);
+	ورنہ
+		واپس open64(pathname, flags);
+#ورنہ
+		واپس open(pathname, flags, منوال);
+	ورنہ
+		واپس open(pathname, flags);
+#اگر_ختم
 }
 
-int ext2fs_fstat(int fd, ext2fs_struct_stat *buf)
+صحیح ext2fs_stat(ثابت حرف *راستہ, ext2fs_struct_stat *buf)
 {
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return fstat64(fd, buf);
-#else
-	return fstat(fd, buf);
-#endif
+#اگر defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	واپس stat64(راستہ, buf);
+#ورنہ
+	واپس stat(راستہ, buf);
+#اگر_ختم
 }
 
-#ifdef HAVE_SYS_FILE_H
-static errcode_t unix_funlock(io_channel channel)
+صحیح ext2fs_fstat(صحیح fd, ext2fs_struct_stat *buf)
 {
-	struct unix_private_data *data;
-	int ret;
+#اگر defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	واپس fstat64(fd, buf);
+#ورنہ
+	واپس fstat(fd, buf);
+#اگر_ختم
+}
+
+#اگر_تعریف_شدہ HAVE_SYS_FILE_H
+ساکن errcode_t unix_funlock(io_channel channel)
+{
+	ساخت unix_نجی_ڈیٹا *ڈیٹا;
+	صحیح ret;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ڈیٹا = (ساخت unix_نجی_ڈیٹا *) channel->نجی_ڈیٹا;
+	EXT2_CHECK_MAGIC(ڈیٹا, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (data->unix_flock_flags) {
-		ret = flock(data->dev, LOCK_UN);
-		if (ret)
-			return errno;
+	اگر (ڈیٹا->unix_flock_flags) {
+		ret = flock(ڈیٹا->dev, LOCK_UN);
+		اگر (ret)
+			واپس errno;
 
-		data->unix_flock_flags = 0;
+		ڈیٹا->unix_flock_flags = 0;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static errcode_t unix_flock(io_channel channel, unsigned int flock_flags)
+ساکن errcode_t unix_flock(io_channel channel, غیرعلامتی صحیح flock_flags)
 {
-	struct unix_private_data *data;
-	int unix_flock_flags = 0;
+	ساخت unix_نجی_ڈیٹا *ڈیٹا;
+	صحیح unix_flock_flags = 0;
 	errcode_t ret;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ڈیٹا = (ساخت unix_نجی_ڈیٹا *) channel->نجی_ڈیٹا;
+	EXT2_CHECK_MAGIC(ڈیٹا, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
 	ret = unix_funlock(channel);
-	if (ret)
-		return ret;
+	اگر (ret)
+		واپس ret;
 
-	if (flock_flags & IO_CHANNEL_FLOCK_EXCLUSIVE)
+	اگر (flock_flags & IO_CHANNEL_FLOCK_EXCLUSIVE)
 		unix_flock_flags |= LOCK_EX;
 
-	if (flock_flags & IO_CHANNEL_FLOCK_SHARED)
+	اگر (flock_flags & IO_CHANNEL_FLOCK_SHARED)
 		unix_flock_flags |= LOCK_SH;
 
-	if (flock_flags & IO_CHANNEL_FLOCK_TRYLOCK)
+	اگر (flock_flags & IO_CHANNEL_FLOCK_TRYLOCK)
 		unix_flock_flags |= LOCK_NB;
 
-	if (!unix_flock_flags)
-		return 0;
+	اگر (!unix_flock_flags)
+		واپس 0;
 
-	ret = flock(data->dev, unix_flock_flags);
-	if (ret < 0)
-		return errno;
+	ret = flock(ڈیٹا->dev, unix_flock_flags);
+	اگر (ret < 0)
+		واپس errno;
 
-	data->unix_flock_flags = unix_flock_flags & ~LOCK_NB;
-	return 0;
+	ڈیٹا->unix_flock_flags = unix_flock_flags & ~LOCK_NB;
+	واپس 0;
 }
-#else
-#define unix_flock		NULL
+#ورنہ
+#تعریف_کرو unix_flock		تہی
 
-static errcode_t unix_funlock(io_channel channel)
+ساکن errcode_t unix_funlock(io_channel channel)
 {
-	return 0;
+	واپس 0;
 }
-#endif /* HAVE_SYS_FILE_H */
+#اگر_ختم /* HAVE_SYS_FILE_H */
 
-static errcode_t unix_open_channel(const char *name, int fd,
-				   int flags, io_channel *channel,
+ساکن errcode_t unix_open_channel(ثابت حرف *name, صحیح fd,
+				   صحیح flags, io_channel *channel,
 				   io_manager io_mgr)
 {
-	io_channel	io = NULL;
-	struct unix_private_data *data = NULL;
+	io_channel	io = تہی;
+	ساخت unix_نجی_ڈیٹا *ڈیٹا = تہی;
 	errcode_t	retval;
 	ext2fs_struct_stat st;
-#ifdef __linux__
-	struct		utsname ut;
-#endif
+#اگر_تعریف_شدہ __linux__
+	ساخت		utsname ut;
+#اگر_ختم
 
-	if (ext2fs_safe_getenv("UNIX_IO_FORCE_BOUNCE"))
+	اگر (ext2fs_محفوظ_getenv("UNIX_IO_FORCE_BOUNCE"))
 		flags |= IO_FLAG_FORCE_BOUNCE;
 
-#ifdef __linux__
+#اگر_تعریف_شدہ __linux__
 	/*
 	 * We need to make sure any previous errors in the block
 	 * device are thrown away, sigh.
 	 */
-	(void) fsync(fd);
-#endif
+	(خالی) fsync(fd);
+#اگر_ختم
 
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	retval = ext2fs_get_mem(حجم(ساخت struct_io_channel), &io);
+	اگر (retval)
+		جاؤ cleanup;
+	memset(io, 0, حجم(ساخت struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
-	retval = ext2fs_get_mem(sizeof(struct unix_private_data), &data);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(حجم(ساخت unix_نجی_ڈیٹا), &ڈیٹا);
+	اگر (retval)
+		جاؤ cleanup;
 
 	io->manager = io_mgr;
-	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(لڑی_لمبائی(name)+1, &io->name);
+	اگر (retval)
+		جاؤ cleanup;
 
 	strcpy(io->name, name);
-	io->private_data = data;
-	io->block_size = 1024;
+	io->نجی_ڈیٹا = ڈیٹا;
+	io->بلاک_سائز = 1024;
 	io->read_error = 0;
 	io->write_error = 0;
 	io->refcount = 1;
 	io->flags = 0;
 
-	if (ext2fs_safe_getenv("UNIX_IO_NOZEROOUT"))
+	اگر (ext2fs_محفوظ_getenv("UNIX_IO_NOZEROOUT"))
 		io->flags |= CHANNEL_FLAGS_NOZEROOUT;
 
-	memset(data, 0, sizeof(struct unix_private_data));
-	data->magic = EXT2_ET_MAGIC_UNIX_IO_CHANNEL;
-	data->io_stats.num_fields = 4;
-	data->flags = flags;
-	data->dev = fd;
+	memset(ڈیٹا, 0, حجم(ساخت unix_نجی_ڈیٹا));
+	ڈیٹا->magic = EXT2_ET_MAGIC_UNIX_IO_CHANNEL;
+	ڈیٹا->io_stats.عدد_fields = 4;
+	ڈیٹا->flags = flags;
+	ڈیٹا->dev = fd;
 
-	data->cache_size = DEFAULT_CACHE_SIZE;
-	data->cache_hash_shift = highbit32(data->cache_size);
-	data->cache = calloc(DEFAULT_CACHE_SIZE, sizeof(struct unix_cache));
-	if (!data->cache) {
-		retval = EXT2_ET_NO_MEMORY;
-		goto cleanup;
+	ڈیٹا->cache_سائز = DEFAULT_CACHE_سائز;
+	ڈیٹا->cache_hash_سرکاؤ = highbit32(ڈیٹا->cache_سائز);
+	ڈیٹا->cache = صفر_حافظہ_دو(DEFAULT_CACHE_سائز, حجم(ساخت unix_cache));
+	اگر (!ڈیٹا->cache) {
+		retval = EXT2_ET_NO_حافظہ;
+		جاؤ cleanup;
 	}
 
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
-		io->align = ext2fs_get_dio_alignment(data->dev);
-#elif defined(F_NOCACHE)
-	if (flags & IO_FLAG_DIRECT_IO)
+#اگر defined(O_براہ_راست)
+	اگر (flags & IO_FLAG_براہ_راست_IO)
+		io->align = ext2fs_get_dio_alignment(ڈیٹا->dev);
+#وگرنہ_اگر defined(F_NOCACHE)
+	اگر (flags & IO_FLAG_براہ_راست_IO)
 		io->align = 4096;
-#endif
+#اگر_ختم
 
 	/*
 	 * If the device is really a block device, then set the
@@ -1019,63 +1019,63 @@ static errcode_t unix_open_channel(const char *name, int fd,
 	 * and if it succeed, subsequent read from sparse area returns
 	 * zero.
 	 */
-	if (ext2fs_fstat(data->dev, &st) == 0) {
-		if (ext2fsP_is_disk_device(st.st_mode)) {
-#ifdef BLKDISCARDZEROES
-			int zeroes = 0;
+	اگر (ext2fs_fstat(ڈیٹا->dev, &st) == 0) {
+		اگر (ext2fsP_is_disk_device(st.st_منوال)) {
+#اگر_تعریف_شدہ BLKDISCARDZEROES
+			صحیح zeroes = 0;
 
-			if (ioctl(data->dev, BLKDISCARDZEROES, &zeroes) == 0 &&
+			اگر (ioctl(ڈیٹا->dev, BLKDISCARDZEROES, &zeroes) == 0 &&
 			    zeroes)
 				io->flags |= CHANNEL_FLAGS_DISCARD_ZEROES;
-#endif
-			io->flags |= CHANNEL_FLAGS_BLOCK_DEVICE;
-		} else {
+#اگر_ختم
+			io->flags |= CHANNEL_FLAGS_بلاک_DEVICE;
+		} ورنہ {
 			io->flags |= CHANNEL_FLAGS_DISCARD_ZEROES;
 		}
 	}
 
-#if defined(__CYGWIN__)
+#اگر defined(__CYGWIN__)
 	/*
 	 * Some operating systems require that the buffers be aligned,
 	 * regardless of O_DIRECT
 	 */
-	if (!io->align)
+	اگر (!io->align)
 		io->align = 512;
-#endif
+#اگر_ختم
 
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-	if (io->flags & CHANNEL_FLAGS_BLOCK_DEVICE) {
-		int dio_align = ext2fs_get_dio_alignment(fd);
+#اگر defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+	اگر (io->flags & CHANNEL_FLAGS_بلاک_DEVICE) {
+		صحیح dio_align = ext2fs_get_dio_alignment(fd);
 
-		if (io->align < dio_align)
+		اگر (io->align < dio_align)
 			io->align = dio_align;
 	}
-#endif
+#اگر_ختم
 
-	if ((retval = alloc_cache(io, data)))
-		goto cleanup;
+	اگر ((retval = alloc_cache(io, ڈیٹا)))
+		جاؤ cleanup;
 
-#ifdef BLKROGET
-	if (flags & IO_FLAG_RW) {
-		int error;
-		int readonly = 0;
+#اگر_تعریف_شدہ BLKROGET
+	اگر (flags & IO_FLAG_RW) {
+		صحیح error;
+		صحیح readonly = 0;
 
 		/* Is the block device actually writable? */
-		error = ioctl(data->dev, BLKROGET, &readonly);
-		if (!error && readonly) {
+		error = ioctl(ڈیٹا->dev, BLKROGET, &readonly);
+		اگر (!error && readonly) {
 			retval = EPERM;
-			goto cleanup;
+			جاؤ cleanup;
 		}
 	}
-#endif
+#اگر_ختم
 
-#ifdef __linux__
-#undef RLIM_INFINITY
-#if (defined(__alpha__) || ((defined(__sparc__) || defined(__mips__)) && (SIZEOF_LONG == 4)))
-#define RLIM_INFINITY	((unsigned long)(~0UL>>1))
-#else
-#define RLIM_INFINITY  (~0UL)
-#endif
+#اگر_تعریف_شدہ __linux__
+#تعریف_منسوخ RLIM_INFINITY
+#اگر (defined(__alpha__) || ((defined(__sparc__) || defined(__mips__)) && (SIZEOF_LONG == 4)))
+#تعریف_کرو RLIM_INFINITY	((غیرعلامتی طویل)(~0UL>>1))
+#ورنہ
+#تعریف_کرو RLIM_INFINITY  (~0UL)
+#اگر_ختم
 	/*
 	 * Work around a bug in 2.4.10-2.4.18 kernels where writes to
 	 * block devices are wrongly getting hit by the filesize
@@ -1083,319 +1083,319 @@ static errcode_t unix_open_channel(const char *name, int fd,
 	 * if glibc wasn't built against 2.2 header files.  (Sigh.)
 	 *
 	 */
-	if ((flags & IO_FLAG_RW) &&
+	اگر ((flags & IO_FLAG_RW) &&
 	    (uname(&ut) == 0) &&
 	    ((ut.release[0] == '2') && (ut.release[1] == '.') &&
 	     (ut.release[2] == '4') && (ut.release[3] == '.') &&
 	     (ut.release[4] == '1') && (ut.release[5] >= '0') &&
 	     (ut.release[5] < '8')) &&
-	    (ext2fs_fstat(data->dev, &st) == 0) &&
-	    (ext2fsP_is_disk_device(st.st_mode))) {
-		struct rlimit	rlim;
+	    (ext2fs_fstat(ڈیٹا->dev, &st) == 0) &&
+	    (ext2fsP_is_disk_device(st.st_منوال))) {
+		ساخت rlimit	rlim;
 
-		rlim.rlim_cur = rlim.rlim_max = (unsigned long) RLIM_INFINITY;
+		rlim.rlim_cur = rlim.rlim_max = (غیرعلامتی طویل) RLIM_INFINITY;
 		setrlimit(RLIMIT_FSIZE, &rlim);
 		getrlimit(RLIMIT_FSIZE, &rlim);
-		if (((unsigned long) rlim.rlim_cur) <
-		    ((unsigned long) rlim.rlim_max)) {
+		اگر (((غیرعلامتی طویل) rlim.rlim_cur) <
+		    ((غیرعلامتی طویل) rlim.rlim_max)) {
 			rlim.rlim_cur = rlim.rlim_max;
 			setrlimit(RLIMIT_FSIZE, &rlim);
 		}
 	}
-#endif
-#ifdef HAVE_PTHREAD
-	if (flags & IO_FLAG_THREADS) {
-		io->flags |= CHANNEL_FLAGS_THREADS;
-		retval = pthread_mutex_init(&data->cache_mutex, NULL);
-		if (retval)
-			goto cleanup;
-		retval = pthread_mutex_init(&data->bounce_mutex, NULL);
-		if (retval) {
-			pthread_mutex_destroy(&data->cache_mutex);
-			goto cleanup;
+#اگر_ختم
+#اگر_تعریف_شدہ HAVE_PTHREAD
+	اگر (flags & IO_FLAG_دھاگے) {
+		io->flags |= CHANNEL_FLAGS_دھاگے;
+		retval = pthread_mutex_init(&ڈیٹا->cache_mutex, تہی);
+		اگر (retval)
+			جاؤ cleanup;
+		retval = pthread_mutex_init(&ڈیٹا->bounce_mutex, تہی);
+		اگر (retval) {
+			pthread_mutex_destroy(&ڈیٹا->cache_mutex);
+			جاؤ cleanup;
 		}
-		retval = pthread_mutex_init(&data->stats_mutex, NULL);
-		if (retval) {
-			pthread_mutex_destroy(&data->cache_mutex);
-			pthread_mutex_destroy(&data->bounce_mutex);
-			goto cleanup;
+		retval = pthread_mutex_init(&ڈیٹا->stats_mutex, تہی);
+		اگر (retval) {
+			pthread_mutex_destroy(&ڈیٹا->cache_mutex);
+			pthread_mutex_destroy(&ڈیٹا->bounce_mutex);
+			جاؤ cleanup;
 		}
 	}
-#endif
+#اگر_ختم
 	*channel = io;
-	return 0;
+	واپس 0;
 
 cleanup:
-	if (data) {
+	اگر (ڈیٹا) {
 		unix_funlock(io);
-		if (io->manager != unixfd_io_manager && data->dev >= 0)
-			close(data->dev);
-		if (data->cache) {
-			free_cache(data);
-			free(data->cache);
+		اگر (io->manager != unixfd_io_manager && ڈیٹا->dev >= 0)
+			close(ڈیٹا->dev);
+		اگر (ڈیٹا->cache) {
+			free_cache(ڈیٹا);
+			آزاد(ڈیٹا->cache);
 		}
-		ext2fs_free_mem(&data);
+		ext2fs_free_mem(&ڈیٹا);
 	}
-	if (io) {
-		if (io->name) {
+	اگر (io) {
+		اگر (io->name) {
 			ext2fs_free_mem(&io->name);
 		}
 		ext2fs_free_mem(&io);
 	}
-	return retval;
+	واپس retval;
 }
 
-static errcode_t unixfd_open(const char *str_fd, int flags,
+ساکن errcode_t unixfd_open(ثابت حرف *str_fd, صحیح flags,
 			     io_channel *channel)
 {
-	int fd;
-	int fd_flags;
+	صحیح fd;
+	صحیح fd_flags;
 
 	fd = atoi(str_fd);
-#if defined(HAVE_FCNTL)
+#اگر defined(HAVE_FCNTL)
 	fd_flags = fcntl(fd, F_GETFL);
-	if (fd_flags == -1)
-		return EBADF;
+	اگر (fd_flags == -1)
+		واپس EBADF;
 
 	/* O_EXCL is cleared by Linux at open and not returned by F_GETFL */
 	flags &= IO_FLAG_EXCLUSIVE;
-	if (fd_flags & O_RDWR)
+	اگر (fd_flags & O_RDWR)
 		flags |= IO_FLAG_RW;
-#if defined(O_DIRECT)
-	if (fd_flags & O_DIRECT)
-		flags |= IO_FLAG_DIRECT_IO;
-#endif
-#endif  /* HAVE_FCNTL */
+#اگر defined(O_براہ_راست)
+	اگر (fd_flags & O_براہ_راست)
+		flags |= IO_FLAG_براہ_راست_IO;
+#اگر_ختم
+#اگر_ختم  /* HAVE_FCNTL */
 
-	return unix_open_channel(str_fd, fd, flags, channel, unixfd_io_manager);
+	واپس unix_open_channel(str_fd, fd, flags, channel, unixfd_io_manager);
 }
 
-static errcode_t unix_open(const char *name, int flags,
+ساکن errcode_t unix_open(ثابت حرف *name, صحیح flags,
 			   io_channel *channel)
 {
-	int fd = -1;
-	int open_flags;
+	صحیح fd = -1;
+	صحیح open_flags;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	اگر (name == 0)
+		واپس EXT2_ET_BAD_DEVICE_NAME;
 
 	open_flags = (flags & IO_FLAG_RW) ? O_RDWR : O_RDONLY;
-	if (flags & IO_FLAG_EXCLUSIVE)
+	اگر (flags & IO_FLAG_EXCLUSIVE)
 		open_flags |= O_EXCL;
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
-		open_flags |= O_DIRECT;
-#endif
+#اگر defined(O_براہ_راست)
+	اگر (flags & IO_FLAG_براہ_راست_IO)
+		open_flags |= O_براہ_راست;
+#اگر_ختم
 	fd = ext2fs_open_file(name, open_flags, 0);
-	if (fd < 0)
-		return errno;
-#if defined(F_NOCACHE) && !defined(IO_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO) {
-		if (fcntl(fd, F_NOCACHE, 1) < 0)
-			return errno;
+	اگر (fd < 0)
+		واپس errno;
+#اگر defined(F_NOCACHE) && !defined(IO_براہ_راست)
+	اگر (flags & IO_FLAG_براہ_راست_IO) {
+		اگر (fcntl(fd, F_NOCACHE, 1) < 0)
+			واپس errno;
 	}
-#endif
-	return unix_open_channel(name, fd, flags, channel, unix_io_manager);
+#اگر_ختم
+	واپس unix_open_channel(name, fd, flags, channel, unix_io_manager);
 }
 
-static errcode_t unix_close(io_channel channel)
+ساکن errcode_t unix_close(io_channel channel)
 {
-	struct unix_private_data *data;
+	ساخت unix_نجی_ڈیٹا *ڈیٹا;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ڈیٹا = (ساخت unix_نجی_ڈیٹا *) channel->نجی_ڈیٹا;
+	EXT2_CHECK_MAGIC(ڈیٹا, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	اگر (--channel->refcount > 0)
+		واپس 0;
 
-#ifndef NO_IO_CACHE
-	retval = flush_cached_blocks(channel, data, 0);
-#endif
+#اگر_غیر_تعریف_شدہ NO_IO_CACHE
+	retval = flush_cached_بلاکیں(channel, ڈیٹا, 0);
+#اگر_ختم
 
 	unix_funlock(channel);
 
-	if (channel->manager != unixfd_io_manager && close(data->dev) < 0)
+	اگر (channel->manager != unixfd_io_manager && close(ڈیٹا->dev) < 0)
 		retval = errno;
-	free_cache(data);
-	free(data->cache);
-#ifdef HAVE_PTHREAD
-	if (data->flags & IO_FLAG_THREADS) {
-		pthread_mutex_destroy(&data->cache_mutex);
-		pthread_mutex_destroy(&data->bounce_mutex);
-		pthread_mutex_destroy(&data->stats_mutex);
+	free_cache(ڈیٹا);
+	آزاد(ڈیٹا->cache);
+#اگر_تعریف_شدہ HAVE_PTHREAD
+	اگر (ڈیٹا->flags & IO_FLAG_دھاگے) {
+		pthread_mutex_destroy(&ڈیٹا->cache_mutex);
+		pthread_mutex_destroy(&ڈیٹا->bounce_mutex);
+		pthread_mutex_destroy(&ڈیٹا->stats_mutex);
 	}
-#endif
+#اگر_ختم
 
-	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	ext2fs_free_mem(&channel->نجی_ڈیٹا);
+	اگر (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	واپس retval;
 }
 
-static errcode_t unix_set_blksize(io_channel channel, int blksize)
+ساکن errcode_t unix_سیٹ_blksize(io_channel channel, صحیح blksize)
 {
-	struct unix_private_data *data;
+	ساخت unix_نجی_ڈیٹا *ڈیٹا;
 	errcode_t		retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ڈیٹا = (ساخت unix_نجی_ڈیٹا *) channel->نجی_ڈیٹا;
+	EXT2_CHECK_MAGIC(ڈیٹا, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (channel->block_size != blksize) {
-		mutex_lock(data, CACHE_MTX);
-		mutex_lock(data, BOUNCE_MTX);
-#ifndef NO_IO_CACHE
-		if ((retval = flush_cached_blocks(channel, data, FLUSH_NOLOCK))){
-			mutex_unlock(data, BOUNCE_MTX);
-			mutex_unlock(data, CACHE_MTX);
-			return retval;
+	اگر (channel->بلاک_سائز != blksize) {
+		mutex_تالا(ڈیٹا, CACHE_MTX);
+		mutex_تالا(ڈیٹا, BOUNCE_MTX);
+#اگر_غیر_تعریف_شدہ NO_IO_CACHE
+		اگر ((retval = flush_cached_بلاکیں(channel, ڈیٹا, FLUSH_NOLOCK))){
+			mutex_unlock(ڈیٹا, BOUNCE_MTX);
+			mutex_unlock(ڈیٹا, CACHE_MTX);
+			واپس retval;
 		}
-#endif
+#اگر_ختم
 
-		channel->block_size = blksize;
-		free_cache(data);
-		retval = alloc_cache(channel, data);
-		mutex_unlock(data, BOUNCE_MTX);
-		mutex_unlock(data, CACHE_MTX);
+		channel->بلاک_سائز = blksize;
+		free_cache(ڈیٹا);
+		retval = alloc_cache(channel, ڈیٹا);
+		mutex_unlock(ڈیٹا, BOUNCE_MTX);
+		mutex_unlock(ڈیٹا, CACHE_MTX);
 	}
-	return retval;
+	واپس retval;
 }
 
-static errcode_t unix_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+ساکن errcode_t unix_read_blk64(io_channel channel, غیرعلامتی طویل طویل بلاک,
+			       صحیح گنتی, خالی *buf)
 {
-	struct unix_private_data *data;
-	struct unix_cache *cache;
+	ساخت unix_نجی_ڈیٹا *ڈیٹا;
+	ساخت unix_cache *cache;
 	errcode_t	retval;
-	char		*cp;
-	int		i, j;
+	حرف		*cp;
+	صحیح		i, j;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ڈیٹا = (ساخت unix_نجی_ڈیٹا *) channel->نجی_ڈیٹا;
+	EXT2_CHECK_MAGIC(ڈیٹا, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-#ifdef NO_IO_CACHE
-	return raw_read_blk(channel, data, block, count, buf);
-#else
-	if (data->flags & IO_FLAG_NOCACHE)
-		return raw_read_blk(channel, data, block, count, buf);
+#اگر_تعریف_شدہ NO_IO_CACHE
+	واپس raw_read_blk(channel, ڈیٹا, بلاک, گنتی, buf);
+#ورنہ
+	اگر (ڈیٹا->flags & IO_FLAG_NOCACHE)
+		واپس raw_read_blk(channel, ڈیٹا, بلاک, گنتی, buf);
 	/*
 	 * If we're doing an odd-sized read or a very large read,
 	 * flush out the cache and then do a direct read.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data, 0)))
-			return retval;
-		return raw_read_blk(channel, data, block, count, buf);
+	اگر (گنتی < 0 || گنتی > WRITE_براہ_راست_سائز) {
+		اگر ((retval = flush_cached_بلاکیں(channel, ڈیٹا, 0)))
+			واپس retval;
+		واپس raw_read_blk(channel, ڈیٹا, بلاک, گنتی, buf);
 	}
 
 	cp = buf;
-	mutex_lock(data, CACHE_MTX);
-	while (count > 0) {
+	mutex_تالا(ڈیٹا, CACHE_MTX);
+	جب (گنتی > 0) {
 		/* If it's in the cache, use it! */
-		if ((cache = find_cached_block(data, block, NULL))) {
-#ifdef DEBUG
-			printf("Using cached block %lu\n", block);
-#endif
-			memcpy(cp, cache->buf, channel->block_size);
-			count--;
-			block++;
-			cp += channel->block_size;
-			continue;
+		اگر ((cache = ڈھونڈو_cached_بلاک(ڈیٹا, بلاک, تہی))) {
+#اگر_تعریف_شدہ DEBUG
+			لکھو("Using cached block %lu\n", بلاک);
+#اگر_ختم
+			حافظہ_نقل(cp, cache->buf, channel->بلاک_سائز);
+			گنتی--;
+			بلاک++;
+			cp += channel->بلاک_سائز;
+			جاری;
 		}
 
 		/*
 		 * Find the number of uncached blocks so we can do a
 		 * single read request
 		 */
-		for (i=1; i < count; i++)
-			if (find_cached_block(data, block+i, NULL))
-				break;
-#ifdef DEBUG
-		printf("Reading %d blocks starting at %lu\n", i, block);
-#endif
-		mutex_unlock(data, CACHE_MTX);
-		if ((retval = raw_read_blk(channel, data, block, i, cp)))
-			return retval;
-		mutex_lock(data, CACHE_MTX);
+		برائے (i=1; i < گنتی; i++)
+			اگر (ڈھونڈو_cached_بلاک(ڈیٹا, بلاک+i, تہی))
+				توڑو;
+#اگر_تعریف_شدہ DEBUG
+		لکھو("Reading %d blocks starting at %lu\n", i, بلاک);
+#اگر_ختم
+		mutex_unlock(ڈیٹا, CACHE_MTX);
+		اگر ((retval = raw_read_blk(channel, ڈیٹا, بلاک, i, cp)))
+			واپس retval;
+		mutex_تالا(ڈیٹا, CACHE_MTX);
 
 		/* Save the results in the cache */
-		for (j=0; j < i; j++) {
-			if (!find_cached_block(data, block, &cache)) {
-				retval = reuse_cache(channel, data,
-						     cache, block);
-				if (retval)
-					goto call_write_handler;
-				memcpy(cache->buf, cp, channel->block_size);
+		برائے (j=0; j < i; j++) {
+			اگر (!ڈھونڈو_cached_بلاک(ڈیٹا, بلاک, &cache)) {
+				retval = reuse_cache(channel, ڈیٹا,
+						     cache, بلاک);
+				اگر (retval)
+					جاؤ call_write_handler;
+				حافظہ_نقل(cache->buf, cp, channel->بلاک_سائز);
 			}
-			count--;
-			block++;
-			cp += channel->block_size;
+			گنتی--;
+			بلاک++;
+			cp += channel->بلاک_سائز;
 		}
 	}
-	mutex_unlock(data, CACHE_MTX);
-	return 0;
+	mutex_unlock(ڈیٹا, CACHE_MTX);
+	واپس 0;
 
 call_write_handler:
-	if (cache->write_err && channel->write_error) {
-		char *err_buf = NULL;
-		unsigned long long err_block = cache->block;
+	اگر (cache->write_err && channel->write_error) {
+		حرف *err_buf = تہی;
+		غیرعلامتی طویل طویل err_بلاک = cache->بلاک;
 
 		cache->dirty = 0;
-		cache->in_use = 0;
+		cache->اندر_use = 0;
 		cache->write_err = 0;
-		if (io_channel_alloc_buf(channel, 0, &err_buf))
-			err_buf = NULL;
-		else
-			memcpy(err_buf, cache->buf, channel->block_size);
-		mutex_unlock(data, CACHE_MTX);
-		(channel->write_error)(channel, err_block, 1, err_buf,
-				       channel->block_size, -1,
+		اگر (io_channel_alloc_buf(channel, 0, &err_buf))
+			err_buf = تہی;
+		ورنہ
+			حافظہ_نقل(err_buf, cache->buf, channel->بلاک_سائز);
+		mutex_unlock(ڈیٹا, CACHE_MTX);
+		(channel->write_error)(channel, err_بلاک, 1, err_buf,
+				       channel->بلاک_سائز, -1,
 				       retval);
-		if (err_buf)
+		اگر (err_buf)
 			ext2fs_free_mem(&err_buf);
-	} else
-		mutex_unlock(data, CACHE_MTX);
-	return retval;
-#endif /* NO_IO_CACHE */
+	} ورنہ
+		mutex_unlock(ڈیٹا, CACHE_MTX);
+	واپس retval;
+#اگر_ختم /* NO_IO_CACHE */
 }
 
-static errcode_t unix_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+ساکن errcode_t unix_read_blk(io_channel channel, غیرعلامتی طویل بلاک,
+			       صحیح گنتی, خالی *buf)
 {
-	return unix_read_blk64(channel, block, count, buf);
+	واپس unix_read_blk64(channel, بلاک, گنتی, buf);
 }
 
-static errcode_t unix_write_blk64(io_channel channel, unsigned long long block,
-				int count, const void *buf)
+ساکن errcode_t unix_write_blk64(io_channel channel, غیرعلامتی طویل طویل بلاک,
+				صحیح گنتی, ثابت خالی *buf)
 {
-	struct unix_private_data *data;
-	struct unix_cache *cache, *reuse;
+	ساخت unix_نجی_ڈیٹا *ڈیٹا;
+	ساخت unix_cache *cache, *reuse;
 	errcode_t	retval = 0;
-	const char	*cp;
-	int		writethrough;
+	ثابت حرف	*cp;
+	صحیح		writethrough;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ڈیٹا = (ساخت unix_نجی_ڈیٹا *) channel->نجی_ڈیٹا;
+	EXT2_CHECK_MAGIC(ڈیٹا, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-#ifdef NO_IO_CACHE
-	return raw_write_blk(channel, data, block, count, buf, 0);
-#else
-	if (data->flags & IO_FLAG_NOCACHE)
-		return raw_write_blk(channel, data, block, count, buf, 0);
+#اگر_تعریف_شدہ NO_IO_CACHE
+	واپس raw_write_blk(channel, ڈیٹا, بلاک, گنتی, buf, 0);
+#ورنہ
+	اگر (ڈیٹا->flags & IO_FLAG_NOCACHE)
+		واپس raw_write_blk(channel, ڈیٹا, بلاک, گنتی, buf, 0);
 	/*
 	 * If we're doing an odd-sized write or a very large write,
 	 * flush out the cache completely and then do a direct write.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data,
+	اگر (گنتی < 0 || گنتی > WRITE_براہ_راست_سائز) {
+		اگر ((retval = flush_cached_بلاکیں(channel, ڈیٹا,
 						  FLUSH_INVALIDATE)))
-			return retval;
-		return raw_write_blk(channel, data, block, count, buf, 0);
+			واپس retval;
+		واپس raw_write_blk(channel, ڈیٹا, بلاک, گنتی, buf, 0);
 	}
 
 	/*
@@ -1404,251 +1404,251 @@ static errcode_t unix_write_blk64(io_channel channel, unsigned long long block,
 	 * cache with the blocks.
 	 */
 	writethrough = channel->flags & CHANNEL_FLAGS_WRITETHROUGH;
-	if (writethrough)
-		retval = raw_write_blk(channel, data, block, count, buf, 0);
+	اگر (writethrough)
+		retval = raw_write_blk(channel, ڈیٹا, بلاک, گنتی, buf, 0);
 
 	cp = buf;
-	mutex_lock(data, CACHE_MTX);
-	while (count > 0) {
-		cache = find_cached_block(data, block, &reuse);
-		if (!cache) {
+	mutex_تالا(ڈیٹا, CACHE_MTX);
+	جب (گنتی > 0) {
+		cache = ڈھونڈو_cached_بلاک(ڈیٹا, بلاک, &reuse);
+		اگر (!cache) {
 			errcode_t err;
 
 			cache = reuse;
-			err = reuse_cache(channel, data, cache, block);
-			if (err)
-				goto call_write_handler;
+			err = reuse_cache(channel, ڈیٹا, cache, بلاک);
+			اگر (err)
+				جاؤ call_write_handler;
 		}
-		if (cache->buf != cp)
-			memcpy(cache->buf, cp, channel->block_size);
+		اگر (cache->buf != cp)
+			حافظہ_نقل(cache->buf, cp, channel->بلاک_سائز);
 		cache->dirty = !writethrough;
-		count--;
-		block++;
-		cp += channel->block_size;
+		گنتی--;
+		بلاک++;
+		cp += channel->بلاک_سائز;
 	}
-	mutex_unlock(data, CACHE_MTX);
-	return retval;
+	mutex_unlock(ڈیٹا, CACHE_MTX);
+	واپس retval;
 
 call_write_handler:
-	if (cache->write_err && channel->write_error) {
-		char *err_buf = NULL;
-		unsigned long long err_block = cache->block;
+	اگر (cache->write_err && channel->write_error) {
+		حرف *err_buf = تہی;
+		غیرعلامتی طویل طویل err_بلاک = cache->بلاک;
 
 		cache->dirty = 0;
-		cache->in_use = 0;
+		cache->اندر_use = 0;
 		cache->write_err = 0;
-		if (io_channel_alloc_buf(channel, 0, &err_buf))
-			err_buf = NULL;
-		else
-			memcpy(err_buf, cache->buf, channel->block_size);
-		mutex_unlock(data, CACHE_MTX);
-		(channel->write_error)(channel, err_block, 1, err_buf,
-				       channel->block_size, -1,
+		اگر (io_channel_alloc_buf(channel, 0, &err_buf))
+			err_buf = تہی;
+		ورنہ
+			حافظہ_نقل(err_buf, cache->buf, channel->بلاک_سائز);
+		mutex_unlock(ڈیٹا, CACHE_MTX);
+		(channel->write_error)(channel, err_بلاک, 1, err_buf,
+				       channel->بلاک_سائز, -1,
 				       retval);
-		if (err_buf)
+		اگر (err_buf)
 			ext2fs_free_mem(&err_buf);
-	} else
-		mutex_unlock(data, CACHE_MTX);
-	return retval;
-#endif /* NO_IO_CACHE */
+	} ورنہ
+		mutex_unlock(ڈیٹا, CACHE_MTX);
+	واپس retval;
+#اگر_ختم /* NO_IO_CACHE */
 }
 
-static errcode_t unix_cache_readahead(io_channel channel,
-				      unsigned long long block,
-				      unsigned long long count)
+ساکن errcode_t unix_cache_readahead(io_channel channel,
+				      غیرعلامتی طویل طویل بلاک,
+				      غیرعلامتی طویل طویل گنتی)
 {
-#ifdef POSIX_FADV_WILLNEED
-	struct unix_private_data *data;
+#اگر_تعریف_شدہ POSIX_FADV_WILLNEED
+	ساخت unix_نجی_ڈیٹا *ڈیٹا;
 
-	data = (struct unix_private_data *)channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
-	return posix_fadvise(data->dev,
-			     (ext2_loff_t)block * channel->block_size + data->offset,
-			     (ext2_loff_t)count * channel->block_size,
+	ڈیٹا = (ساخت unix_نجی_ڈیٹا *)channel->نجی_ڈیٹا;
+	EXT2_CHECK_MAGIC(ڈیٹا, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	واپس posix_fadvise(ڈیٹا->dev,
+			     (ext2_loff_t)بلاک * channel->بلاک_سائز + ڈیٹا->انحراف,
+			     (ext2_loff_t)گنتی * channel->بلاک_سائز,
 			     POSIX_FADV_WILLNEED);
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+#ورنہ
+	واپس EXT2_ET_OP_NOT_SUPPORTED;
+#اگر_ختم
 }
 
-static errcode_t unix_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+ساکن errcode_t unix_write_blk(io_channel channel, غیرعلامتی طویل بلاک,
+				صحیح گنتی, ثابت خالی *buf)
 {
-	return unix_write_blk64(channel, block, count, buf);
+	واپس unix_write_blk64(channel, بلاک, گنتی, buf);
 }
 
-static errcode_t unix_write_byte(io_channel channel, unsigned long offset,
-				 int size, const void *buf)
+ساکن errcode_t unix_write_byte(io_channel channel, غیرعلامتی طویل انحراف,
+				 صحیح سائز, ثابت خالی *buf)
 {
-	struct unix_private_data *data;
+	ساخت unix_نجی_ڈیٹا *ڈیٹا;
 	errcode_t	retval = 0;
 	ssize_t		actual;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ڈیٹا = (ساخت unix_نجی_ڈیٹا *) channel->نجی_ڈیٹا;
+	EXT2_CHECK_MAGIC(ڈیٹا, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (channel->align != 0) {
-#ifdef ALIGN_DEBUG
-		printf("unix_write_byte: O_DIRECT fallback\n");
-#endif
-		return EXT2_ET_UNIMPLEMENTED;
+	اگر (channel->align != 0) {
+#اگر_تعریف_شدہ ALIGN_DEBUG
+		لکھو("unix_write_byte: O_DIRECT fallback\n");
+#اگر_ختم
+		واپس EXT2_ET_UNIMPLEMENTED;
 	}
 
-#ifndef NO_IO_CACHE
+#اگر_غیر_تعریف_شدہ NO_IO_CACHE
 	/*
 	 * Flush out the cache completely
 	 */
-	if ((retval = flush_cached_blocks(channel, data, FLUSH_INVALIDATE)))
-		return retval;
-#endif
+	اگر ((retval = flush_cached_بلاکیں(channel, ڈیٹا, FLUSH_INVALIDATE)))
+		واپس retval;
+#اگر_ختم
 
-	if (lseek(data->dev, offset + data->offset, SEEK_SET) < 0)
-		return errno;
+	اگر (lseek(ڈیٹا->dev, انحراف + ڈیٹا->انحراف, SEEK_SET) < 0)
+		واپس errno;
 
-	actual = write(data->dev, buf, size);
-	if (actual < 0)
-		return errno;
-	if (actual != size)
-		return EXT2_ET_SHORT_WRITE;
+	actual = اكتب(ڈیٹا->dev, buf, سائز);
+	اگر (actual < 0)
+		واپس errno;
+	اگر (actual != سائز)
+		واپس EXT2_ET_SHORT_WRITE;
 
-	return 0;
+	واپس 0;
 }
 
 /*
  * Flush data buffers to disk.
  */
-static errcode_t unix_flush(io_channel channel)
+ساکن errcode_t unix_flush(io_channel channel)
 {
-	struct unix_private_data *data;
+	ساخت unix_نجی_ڈیٹا *ڈیٹا;
 	errcode_t retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ڈیٹا = (ساخت unix_نجی_ڈیٹا *) channel->نجی_ڈیٹا;
+	EXT2_CHECK_MAGIC(ڈیٹا, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-#ifndef NO_IO_CACHE
-	retval = flush_cached_blocks(channel, data, 0);
-#endif
-#ifdef HAVE_FSYNC
-	if (!retval && fsync(data->dev) != 0)
-		return errno;
-#endif
-	return retval;
+#اگر_غیر_تعریف_شدہ NO_IO_CACHE
+	retval = flush_cached_بلاکیں(channel, ڈیٹا, 0);
+#اگر_ختم
+#اگر_تعریف_شدہ HAVE_FSYNC
+	اگر (!retval && fsync(ڈیٹا->dev) != 0)
+		واپس errno;
+#اگر_ختم
+	واپس retval;
 }
 
-static errcode_t unix_set_option(io_channel channel, const char *option,
-				 const char *arg)
+ساکن errcode_t unix_سیٹ_option(io_channel channel, ثابت حرف *option,
+				 ثابت حرف *arg)
 {
-	struct unix_private_data *data;
-	unsigned long long tmp;
+	ساخت unix_نجی_ڈیٹا *ڈیٹا;
+	غیرعلامتی طویل طویل tmp;
 	errcode_t retval;
-	char *end;
+	حرف *انتہا;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ڈیٹا = (ساخت unix_نجی_ڈیٹا *) channel->نجی_ڈیٹا;
+	EXT2_CHECK_MAGIC(ڈیٹا, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (!strcmp(option, "offset")) {
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
+	اگر (!strcmp(option, "offset")) {
+		اگر (!arg)
+			واپس EXT2_ET_INVALID_دلیل;
 
-		tmp = strtoull(arg, &end, 0);
-		if (*end)
-			return EXT2_ET_INVALID_ARGUMENT;
-		data->offset = tmp;
-		if (data->offset < 0)
-			return EXT2_ET_INVALID_ARGUMENT;
-		return 0;
+		tmp = strtoull(arg, &انتہا, 0);
+		اگر (*انتہا)
+			واپس EXT2_ET_INVALID_دلیل;
+		ڈیٹا->انحراف = tmp;
+		اگر (ڈیٹا->انحراف < 0)
+			واپس EXT2_ET_INVALID_دلیل;
+		واپس 0;
 	}
-	if (!strcmp(option, "cache")) {
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
-		if (!strcmp(arg, "on")) {
-			data->flags &= ~IO_FLAG_NOCACHE;
-			return 0;
+	اگر (!strcmp(option, "cache")) {
+		اگر (!arg)
+			واپس EXT2_ET_INVALID_دلیل;
+		اگر (!strcmp(arg, "on")) {
+			ڈیٹا->flags &= ~IO_FLAG_NOCACHE;
+			واپس 0;
 		}
-		if (!strcmp(arg, "off")) {
-			retval = flush_cached_blocks(channel, data, 0);
-			data->flags |= IO_FLAG_NOCACHE;
-			return retval;
+		اگر (!strcmp(arg, "off")) {
+			retval = flush_cached_بلاکیں(channel, ڈیٹا, 0);
+			ڈیٹا->flags |= IO_FLAG_NOCACHE;
+			واپس retval;
 		}
-		return EXT2_ET_INVALID_ARGUMENT;
+		واپس EXT2_ET_INVALID_دلیل;
 	}
-#ifndef NO_IO_CACHE
-	if (!strcmp(option, "cache_blocks")) {
-		unsigned long long	size;
+#اگر_غیر_تعریف_شدہ NO_IO_CACHE
+	اگر (!strcmp(option, "cache_blocks")) {
+		غیرعلامتی طویل طویل	سائز;
 
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
+		اگر (!arg)
+			واپس EXT2_ET_INVALID_دلیل;
 
 		errno = 0;
-		size = strtoll(arg, NULL, 0);
-		if (errno || size == 0 || size > INT32_MAX)
-			return EXT2_ET_INVALID_ARGUMENT;
+		سائز = strtoll(arg, تہی, 0);
+		اگر (errno || سائز == 0 || سائز > INT32_MAX)
+			واپس EXT2_ET_INVALID_دلیل;
 
-		if (data->cache_size == size)
-			return 0;
-		if (data->cache_size > size)
-			return shrink_cache(channel, data, size);
-		return grow_cache(channel, data, size);
+		اگر (ڈیٹا->cache_سائز == سائز)
+			واپس 0;
+		اگر (ڈیٹا->cache_سائز > سائز)
+			واپس shrink_cache(channel, ڈیٹا, سائز);
+		واپس grow_cache(channel, ڈیٹا, سائز);
 	}
-#endif
-	return EXT2_ET_INVALID_ARGUMENT;
+#اگر_ختم
+	واپس EXT2_ET_INVALID_دلیل;
 }
 
-#if defined(__linux__) && !defined(BLKDISCARD)
-#define BLKDISCARD		_IO(0x12,119)
-#endif
+#اگر defined(__linux__) && !defined(BLKDISCARD)
+#تعریف_کرو BLKDISCARD		_IO(0x12,119)
+#اگر_ختم
 
-static errcode_t unix_discard(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+ساکن errcode_t unix_discard(io_channel channel, غیرعلامتی طویل طویل بلاک,
+			      غیرعلامتی طویل طویل گنتی)
 {
-	struct unix_private_data *data;
-	int		ret = EOPNOTSUPP;
+	ساخت unix_نجی_ڈیٹا *ڈیٹا;
+	صحیح		ret = EOPNOTSUPP;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ڈیٹا = (ساخت unix_نجی_ڈیٹا *) channel->نجی_ڈیٹا;
+	EXT2_CHECK_MAGIC(ڈیٹا, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (channel->flags & CHANNEL_FLAGS_NODISCARD)
-		goto unimplemented;
+	اگر (channel->flags & CHANNEL_FLAGS_NODISCARD)
+		جاؤ unimplemented;
 
-	if (channel->flags & CHANNEL_FLAGS_BLOCK_DEVICE) {
-#ifdef BLKDISCARD
+	اگر (channel->flags & CHANNEL_FLAGS_بلاک_DEVICE) {
+#اگر_تعریف_شدہ BLKDISCARD
 		__u64 range[2];
 
-		range[0] = (__u64)(block) * channel->block_size + data->offset;
-		range[1] = (__u64)(count) * channel->block_size;
+		range[0] = (__u64)(بلاک) * channel->بلاک_سائز + ڈیٹا->انحراف;
+		range[1] = (__u64)(گنتی) * channel->بلاک_سائز;
 
-		ret = ioctl(data->dev, BLKDISCARD, &range);
-#else
-		goto unimplemented;
-#endif
-	} else {
-#if defined(HAVE_FALLOCATE) && defined(FALLOC_FL_PUNCH_HOLE)
+		ret = ioctl(ڈیٹا->dev, BLKDISCARD, &range);
+#ورنہ
+		جاؤ unimplemented;
+#اگر_ختم
+	} ورنہ {
+#اگر defined(HAVE_FALLOCATE) && defined(FALLOC_FL_PUNCH_HOLE)
 		/*
 		 * If we are not on block device, try to use punch hole
 		 * to reclaim free space.
 		 */
-		ret = fallocate(data->dev,
+		ret = fallocate(ڈیٹا->dev,
 				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-				(off_t)(block) * channel->block_size + data->offset,
-				(off_t)(count) * channel->block_size);
-#else
-		goto unimplemented;
-#endif
+				(off_t)(بلاک) * channel->بلاک_سائز + ڈیٹا->انحراف,
+				(off_t)(گنتی) * channel->بلاک_سائز);
+#ورنہ
+		جاؤ unimplemented;
+#اگر_ختم
 	}
-	if (ret < 0) {
-		if (errno == EOPNOTSUPP) {
+	اگر (ret < 0) {
+		اگر (errno == EOPNOTSUPP) {
 			channel->flags |= CHANNEL_FLAGS_NODISCARD;
-			goto unimplemented;
+			جاؤ unimplemented;
 		}
-		return errno;
+		واپس errno;
 	}
-	return 0;
+	واپس 0;
 unimplemented:
-	return EXT2_ET_UNIMPLEMENTED;
+	واپس EXT2_ET_UNIMPLEMENTED;
 }
 
 /*
@@ -1657,95 +1657,95 @@ unimplemented:
  * it always invalidates page cache, and libext2fs requires that reads after
  * ZERO_RANGE return zeroes.
  */
-static int __unix_zeroout(int fd, off_t offset, off_t len)
+ساکن صحیح __unix_zeroout(صحیح fd, off_t انحراف, off_t len)
 {
-	int ret = -1;
+	صحیح ret = -1;
 
-#if defined(HAVE_FALLOCATE) && defined(FALLOC_FL_ZERO_RANGE)
-	ret = fallocate(fd, FALLOC_FL_ZERO_RANGE, offset, len);
-	if (ret == 0)
-		return 0;
-#endif
-#if defined(HAVE_FALLOCATE) && defined(FALLOC_FL_PUNCH_HOLE) && defined(FALLOC_FL_KEEP_SIZE)
+#اگر defined(HAVE_FALLOCATE) && defined(FALLOC_FL_ZERO_RANGE)
+	ret = fallocate(fd, FALLOC_FL_ZERO_RANGE, انحراف, len);
+	اگر (ret == 0)
+		واپس 0;
+#اگر_ختم
+#اگر defined(HAVE_FALLOCATE) && defined(FALLOC_FL_PUNCH_HOLE) && defined(FALLOC_FL_KEEP_SIZE)
 	ret = fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-			offset,  len);
-	if (ret == 0)
-		return 0;
-#endif
+			انحراف,  len);
+	اگر (ret == 0)
+		واپس 0;
+#اگر_ختم
 	errno = EOPNOTSUPP;
-	return ret;
+	واپس ret;
 }
 
 /* parameters might not be used if OS doesn't support zeroout */
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-static errcode_t unix_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+#اگر __GNUC_PREREQ (4, 6)
+#ہدایت GCC diagnostic ڈالو
+#ہدایت GCC diagnostic ignored "-Wunused-parameter"
+#اگر_ختم
+ساکن errcode_t unix_zeroout(io_channel channel, غیرعلامتی طویل طویل بلاک,
+			      غیرعلامتی طویل طویل گنتی)
 {
-	struct unix_private_data *data;
-	int		ret;
+	ساخت unix_نجی_ڈیٹا *ڈیٹا;
+	صحیح		ret;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ڈیٹا = (ساخت unix_نجی_ڈیٹا *) channel->نجی_ڈیٹا;
+	EXT2_CHECK_MAGIC(ڈیٹا, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (!(channel->flags & CHANNEL_FLAGS_BLOCK_DEVICE)) {
+	اگر (!(channel->flags & CHANNEL_FLAGS_بلاک_DEVICE)) {
 		/* Regular file, try to use truncate/punch/zero. */
-		struct stat statbuf;
+		ساخت stat statbuf;
 
-		if (count == 0)
-			return 0;
+		اگر (گنتی == 0)
+			واپس 0;
 		/*
 		 * If we're trying to zero a range past the end of the file,
 		 * extend the file size, then truncate everything.
 		 */
-		ret = fstat(data->dev, &statbuf);
-		if (ret)
-			goto err;
-		if ((unsigned long long) statbuf.st_size <
-			(block + count) * channel->block_size + data->offset) {
-			ret = ftruncate(data->dev,
-					(block + count) * channel->block_size + data->offset);
-			if (ret)
-				goto err;
+		ret = fstat(ڈیٹا->dev, &statbuf);
+		اگر (ret)
+			جاؤ err;
+		اگر ((غیرعلامتی طویل طویل) statbuf.st_سائز <
+			(بلاک + گنتی) * channel->بلاک_سائز + ڈیٹا->انحراف) {
+			ret = ftruncate(ڈیٹا->dev,
+					(بلاک + گنتی) * channel->بلاک_سائز + ڈیٹا->انحراف);
+			اگر (ret)
+				جاؤ err;
 		}
 	}
 
-	if (channel->flags & CHANNEL_FLAGS_NOZEROOUT)
-		goto unimplemented;
+	اگر (channel->flags & CHANNEL_FLAGS_NOZEROOUT)
+		جاؤ unimplemented;
 
-	ret = __unix_zeroout(data->dev,
-			(off_t)(block) * channel->block_size + data->offset,
-			(off_t)(count) * channel->block_size);
+	ret = __unix_zeroout(ڈیٹا->dev,
+			(off_t)(بلاک) * channel->بلاک_سائز + ڈیٹا->انحراف,
+			(off_t)(گنتی) * channel->بلاک_سائز);
 err:
-	if (ret < 0) {
-		if (errno == EOPNOTSUPP) {
+	اگر (ret < 0) {
+		اگر (errno == EOPNOTSUPP) {
 			channel->flags |= CHANNEL_FLAGS_NOZEROOUT;
-			goto unimplemented;
+			جاؤ unimplemented;
 		}
-		return errno;
+		واپس errno;
 	}
-	return 0;
+	واپس 0;
 unimplemented:
-	return EXT2_ET_UNIMPLEMENTED;
+	واپس EXT2_ET_UNIMPLEMENTED;
 }
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
-#endif
+#اگر __GNUC_PREREQ (4, 6)
+#ہدایت GCC diagnostic نکالو
+#اگر_ختم
 
-static struct struct_io_manager struct_unix_manager = {
+ساکن ساخت struct_io_manager struct_unix_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Unix I/O Manager",
 	.open		= unix_open,
 	.close		= unix_close,
-	.set_blksize	= unix_set_blksize,
+	.سیٹ_blksize	= unix_سیٹ_blksize,
 	.read_blk	= unix_read_blk,
 	.write_blk	= unix_write_blk,
 	.flush		= unix_flush,
 	.write_byte	= unix_write_byte,
-	.set_option	= unix_set_option,
+	.سیٹ_option	= unix_سیٹ_option,
 	.get_stats	= unix_get_stats,
 	.read_blk64	= unix_read_blk64,
 	.write_blk64	= unix_write_blk64,
@@ -1757,17 +1757,17 @@ static struct struct_io_manager struct_unix_manager = {
 
 io_manager unix_io_manager = &struct_unix_manager;
 
-static struct struct_io_manager struct_unixfd_manager = {
+ساکن ساخت struct_io_manager struct_unixfd_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Unix fd I/O Manager",
 	.open		= unixfd_open,
 	.close		= unix_close,
-	.set_blksize	= unix_set_blksize,
+	.سیٹ_blksize	= unix_سیٹ_blksize,
 	.read_blk	= unix_read_blk,
 	.write_blk	= unix_write_blk,
 	.flush		= unix_flush,
 	.write_byte	= unix_write_byte,
-	.set_option	= unix_set_option,
+	.سیٹ_option	= unix_سیٹ_option,
 	.get_stats	= unix_get_stats,
 	.read_blk64	= unix_read_blk64,
 	.write_blk64	= unix_write_blk64,

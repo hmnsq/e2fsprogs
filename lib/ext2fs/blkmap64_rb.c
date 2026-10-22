@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#if HAVE_LINUX_TYPES_H
-#include <linux/types.h>
-#endif
+#شامل "config.h"
+#شامل <stdio.h>
+#شامل <string.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
+#شامل <fcntl.h>
+#شامل <time.h>
+#اگر HAVE_SYS_STAT_H
+#شامل <sys/stat.h>
+#اگر_ختم
+#اگر HAVE_SYS_TYPES_H
+#شامل <sys/types.h>
+#اگر_ختم
+#اگر HAVE_LINUX_TYPES_H
+#شامل <linux/types.h>
+#اگر_ختم
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
-#include "bmap64.h"
-#include "rbtree.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fsP.h"
+#شامل "bmap64.h"
+#شامل "rbtree.h"
 
-#include <limits.h>
+#شامل <limits.h>
 
-struct bmap_rb_extent {
-	struct rb_node node;
-	__u64 start;
-	__u64 count;
+ساخت bmap_rb_extent {
+	ساخت rb_گرہ گرہ;
+	__u64 آغاز;
+	__u64 گنتی;
 };
 
-struct ext2fs_rb_private {
-	struct rb_root root;
-	struct bmap_rb_extent *wcursor;
-	struct bmap_rb_extent *rcursor;
-	struct bmap_rb_extent *rcursor_next;
-#ifdef ENABLE_BMAP_STATS_OPS
-	__u64 mark_hit;
-	__u64 test_hit;
-#endif
+ساخت ext2fs_rb_نجی {
+	ساخت rb_جڑ جڑ;
+	ساخت bmap_rb_extent *wcursor;
+	ساخت bmap_rb_extent *rcursor;
+	ساخت bmap_rb_extent *rcursor_اگلا;
+#اگر_تعریف_شدہ ENABLE_BMAP_STATS_OPS
+	__u64 mark_کامیابی;
+	__u64 test_کامیابی;
+#اگر_ختم
 };
 
-inline static struct bmap_rb_extent *node_to_extent(struct rb_node *node)
+اندرونی ساکن ساخت bmap_rb_extent *گرہ_مقصد_extent(ساخت rb_گرہ *گرہ)
 {
 	/*
 	 * This depends on the fact the struct rb_node is at the
@@ -59,925 +59,925 @@ inline static struct bmap_rb_extent *node_to_extent(struct rb_node *node)
 	 * instead of the ext2fs_rb_entry macro because it causes gcc
 	 * -Wall to generate a huge amount of noise.
 	 */
-	return (struct bmap_rb_extent *) node;
+	واپس (ساخت bmap_rb_extent *) گرہ;
 }
 
-static int rb_insert_extent(__u64 start, __u64 count,
-			    struct ext2fs_rb_private *);
-static void rb_get_new_extent(struct bmap_rb_extent **, __u64, __u64);
+ساکن صحیح rb_داخل_کرو_extent(__u64 آغاز, __u64 گنتی,
+			    ساخت ext2fs_rb_نجی *);
+ساکن خالی rb_get_new_extent(ساخت bmap_rb_extent **, __u64, __u64);
 
 /* #define DEBUG_RB */
 
-#ifdef DEBUG_RB
-static void print_tree(struct rb_root *root)
+#اگر_تعریف_شدہ DEBUG_RB
+ساکن خالی print_درخت(ساخت rb_جڑ *جڑ)
 {
-	struct rb_node *node = NULL;
-	struct bmap_rb_extent *ext;
+	ساخت rb_گرہ *گرہ = تہی;
+	ساخت bmap_rb_extent *ext;
 
 	fprintf(stderr, "\t\t\t=================================\n");
-	node = ext2fs_rb_first(root);
-	for (node = ext2fs_rb_first(root); node != NULL; 
-	     node = ext2fs_rb_next(node)) {
-		ext = node_to_extent(node);
+	گرہ = ext2fs_rb_پہلا(جڑ);
+	برائے (گرہ = ext2fs_rb_پہلا(جڑ); گرہ != تہی; 
+	     گرہ = ext2fs_rb_اگلا(گرہ)) {
+		ext = گرہ_مقصد_extent(گرہ);
 		fprintf(stderr, "\t\t\t--> (%llu -> %llu)\n",
-			(unsigned long long) ext->start,
-			(unsigned long long) ext->start + ext->count);
+			(غیرعلامتی طویل طویل) ext->آغاز,
+			(غیرعلامتی طویل طویل) ext->آغاز + ext->گنتی);
 	}
 	fprintf(stderr, "\t\t\t=================================\n");
 }
 
-static void check_tree(struct rb_root *root, const char *msg)
+ساکن خالی check_درخت(ساخت rb_جڑ *جڑ, ثابت حرف *پیغام)
 {
-	struct rb_node *node;
-	struct bmap_rb_extent *ext, *old = NULL;
+	ساخت rb_گرہ *گرہ;
+	ساخت bmap_rb_extent *ext, *old = تہی;
 
-	for (node = ext2fs_rb_first(root); node;
-	     node = ext2fs_rb_next(node)) {
-		ext = node_to_extent(node);
-		if (ext->count == 0) {
+	برائے (گرہ = ext2fs_rb_پہلا(جڑ); گرہ;
+	     گرہ = ext2fs_rb_اگلا(گرہ)) {
+		ext = گرہ_مقصد_extent(گرہ);
+		اگر (ext->گنتی == 0) {
 			fprintf(stderr, "Tree Error: count is zero\n");
 			fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
-				(unsigned long long) ext->start,
-				(unsigned long long) ext->start + ext->count,
-				(unsigned long long) ext->count);
-			goto err_out;
+				(غیرعلامتی طویل طویل) ext->آغاز,
+				(غیرعلامتی طویل طویل) ext->آغاز + ext->گنتی,
+				(غیرعلامتی طویل طویل) ext->گنتی);
+			جاؤ err_برآمد;
 		}
-		if (ext->start + ext->count < ext->start) {
+		اگر (ext->آغاز + ext->گنتی < ext->آغاز) {
 			fprintf(stderr,
 				"Tree Error: start or count is crazy\n");
 			fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
-				(unsigned long long) ext->start,
-				(unsigned long long) ext->start + ext->count,
-				(unsigned long long) ext->count);
-			goto err_out;
+				(غیرعلامتی طویل طویل) ext->آغاز,
+				(غیرعلامتی طویل طویل) ext->آغاز + ext->گنتی,
+				(غیرعلامتی طویل طویل) ext->گنتی);
+			جاؤ err_برآمد;
 		}
 
-		if (old) {
-			if (old->start > ext->start) {
+		اگر (old) {
+			اگر (old->آغاز > ext->آغاز) {
 				fprintf(stderr, "Tree Error: start is crazy\n");
 				fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
-					(unsigned long long) old->start,
-					(unsigned long long) old->start + old->count,
-					(unsigned long long) old->count);
+					(غیرعلامتی طویل طویل) old->آغاز,
+					(غیرعلامتی طویل طویل) old->آغاز + old->گنتی,
+					(غیرعلامتی طویل طویل) old->گنتی);
 				fprintf(stderr,
 					"extent next: %llu -> %llu (%llu)\n",
-					(unsigned long long) ext->start,
-					(unsigned long long) ext->start + ext->count,
-					(unsigned long long) ext->count);
-				goto err_out;
+					(غیرعلامتی طویل طویل) ext->آغاز,
+					(غیرعلامتی طویل طویل) ext->آغاز + ext->گنتی,
+					(غیرعلامتی طویل طویل) ext->گنتی);
+				جاؤ err_برآمد;
 			}
-			if ((old->start + old->count) >= ext->start) {
+			اگر ((old->آغاز + old->گنتی) >= ext->آغاز) {
 				fprintf(stderr,
 					"Tree Error: extent is crazy\n");
 				fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
-					(unsigned long long) old->start,
-					(unsigned long long) old->start + old->count,
-					(unsigned long long) old->count);
+					(غیرعلامتی طویل طویل) old->آغاز,
+					(غیرعلامتی طویل طویل) old->آغاز + old->گنتی,
+					(غیرعلامتی طویل طویل) old->گنتی);
 				fprintf(stderr,
 					"extent next: %llu -> %llu (%llu)\n",
-					(unsigned long long) ext->start,
-					(unsigned long long) ext->start + ext->count,
-					(unsigned long long) ext->count);
-				goto err_out;
+					(غیرعلامتی طویل طویل) ext->آغاز,
+					(غیرعلامتی طویل طویل) ext->آغاز + ext->گنتی,
+					(غیرعلامتی طویل طویل) ext->گنتی);
+				جاؤ err_برآمد;
 			}
 		}
 		old = ext;
 	}
-	return;
+	واپس;
 
-err_out:
-	fprintf(stderr, "%s\n", msg);
-	print_tree(root);
-	exit(1);
+err_برآمد:
+	fprintf(stderr, "%s\n", پیغام);
+	print_درخت(جڑ);
+	باہر_نکلو(1);
 }
-#else
-#define check_tree(root, msg) do {} while (0)
-#define print_tree(root) do {} while (0)
-#endif
+#ورنہ
+#تعریف_کرو check_درخت(جڑ, پیغام) کرو {} جب (0)
+#تعریف_کرو print_درخت(جڑ) کرو {} جب (0)
+#اگر_ختم
 
-static void rb_get_new_extent(struct bmap_rb_extent **ext, __u64 start,
-			     __u64 count)
+ساکن خالی rb_get_new_extent(ساخت bmap_rb_extent **ext, __u64 آغاز,
+			     __u64 گنتی)
 {
-	struct bmap_rb_extent *new_ext;
-	int retval;
+	ساخت bmap_rb_extent *new_ext;
+	صحیح retval;
 
-	retval = ext2fs_get_mem(sizeof (struct bmap_rb_extent),
+	retval = ext2fs_get_mem(حجم (ساخت bmap_rb_extent),
 				&new_ext);
-	if (retval)
+	اگر (retval)
 		abort();
 
-	new_ext->start = start;
-	new_ext->count = count;
+	new_ext->آغاز = آغاز;
+	new_ext->گنتی = گنتی;
 	*ext = new_ext;
 }
 
-inline
-static void rb_free_extent(struct ext2fs_rb_private *bp,
-			   struct bmap_rb_extent *ext)
+اندرونی
+ساکن خالی rb_free_extent(ساخت ext2fs_rb_نجی *bp,
+			   ساخت bmap_rb_extent *ext)
 {
-	if (bp->wcursor == ext)
-		bp->wcursor = NULL;
-	if (bp->rcursor == ext)
-		bp->rcursor = NULL;
-	if (bp->rcursor_next == ext)
-		bp->rcursor_next = NULL;
+	اگر (bp->wcursor == ext)
+		bp->wcursor = تہی;
+	اگر (bp->rcursor == ext)
+		bp->rcursor = تہی;
+	اگر (bp->rcursor_اگلا == ext)
+		bp->rcursor_اگلا = تہی;
 	ext2fs_free_mem(&ext);
 }
 
-static errcode_t rb_alloc_private_data (ext2fs_generic_bitmap_64 bitmap)
+ساکن errcode_t rb_alloc_نجی_ڈیٹا (ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
+	ساخت ext2fs_rb_نجی *bp;
 	errcode_t	retval;
 
-	retval = ext2fs_get_mem(sizeof (struct ext2fs_rb_private), &bp);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(حجم (ساخت ext2fs_rb_نجی), &bp);
+	اگر (retval)
+		واپس retval;
 
-	bp->root = RB_ROOT;
-	bp->rcursor = NULL;
-	bp->rcursor_next = NULL;
-	bp->wcursor = NULL;
+	bp->جڑ = RB_جڑ;
+	bp->rcursor = تہی;
+	bp->rcursor_اگلا = تہی;
+	bp->wcursor = تہی;
 
-#ifdef ENABLE_BMAP_STATS_OPS
-	bp->test_hit = 0;
-	bp->mark_hit = 0;
-#endif
+#اگر_تعریف_شدہ ENABLE_BMAP_STATS_OPS
+	bp->test_کامیابی = 0;
+	bp->mark_کامیابی = 0;
+#اگر_ختم
 
-	bitmap->private = (void *) bp;
-	return 0;
+	bitmap->نجی = (خالی *) bp;
+	واپس 0;
 }
 
-static errcode_t rb_new_bmap(ext2_filsys fs EXT2FS_ATTR((unused)),
+ساکن errcode_t rb_new_bmap(ext2_filsys fs EXT2FS_ATTR((غیر_مستعمل)),
 			     ext2fs_generic_bitmap_64 bitmap)
 {
 	errcode_t	retval;
 
-	retval = rb_alloc_private_data (bitmap);
-	if (retval)
-		return retval;
+	retval = rb_alloc_نجی_ڈیٹا (bitmap);
+	اگر (retval)
+		واپس retval;
 
-	return 0;
+	واپس 0;
 }
 
-static void rb_free_tree(struct rb_root *root)
+ساکن خالی rb_free_درخت(ساخت rb_جڑ *جڑ)
 {
-	struct bmap_rb_extent *ext;
-	struct rb_node *node, *next;
+	ساخت bmap_rb_extent *ext;
+	ساخت rb_گرہ *گرہ, *اگلا;
 
-	for (node = ext2fs_rb_first(root); node; node = next) {
-		next = ext2fs_rb_next(node);
-		ext = node_to_extent(node);
-		ext2fs_rb_erase(node, root);
+	برائے (گرہ = ext2fs_rb_پہلا(جڑ); گرہ; گرہ = اگلا) {
+		اگلا = ext2fs_rb_اگلا(گرہ);
+		ext = گرہ_مقصد_extent(گرہ);
+		ext2fs_rb_erase(گرہ, جڑ);
 		ext2fs_free_mem(&ext);
 	}
 }
 
-static void rb_free_bmap(ext2fs_generic_bitmap_64 bitmap)
+ساکن خالی rb_free_bmap(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
+	ساخت ext2fs_rb_نجی *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ساخت ext2fs_rb_نجی *) bitmap->نجی;
 
-	rb_free_tree(&bp->root);
+	rb_free_درخت(&bp->جڑ);
 	ext2fs_free_mem(&bp);
 	bp = 0;
 }
 
-static errcode_t rb_copy_bmap(ext2fs_generic_bitmap_64 src,
+ساکن errcode_t rb_copy_bmap(ext2fs_generic_bitmap_64 src,
 			      ext2fs_generic_bitmap_64 dest)
 {
-	struct ext2fs_rb_private *src_bp, *dest_bp;
-	struct bmap_rb_extent *src_ext, *dest_ext;
-	struct rb_node *dest_node, *src_node, *dest_last, **n;
+	ساخت ext2fs_rb_نجی *src_bp, *dest_bp;
+	ساخت bmap_rb_extent *src_ext, *dest_ext;
+	ساخت rb_گرہ *dest_گرہ, *src_گرہ, *dest_آخری, **n;
 	errcode_t retval = 0;
 
-	retval = rb_alloc_private_data (dest);
-	if (retval)
-		return retval;
+	retval = rb_alloc_نجی_ڈیٹا (dest);
+	اگر (retval)
+		واپس retval;
 
-	src_bp = (struct ext2fs_rb_private *) src->private;
-	dest_bp = (struct ext2fs_rb_private *) dest->private;
-	src_bp->rcursor = NULL;
-	dest_bp->rcursor = NULL;
+	src_bp = (ساخت ext2fs_rb_نجی *) src->نجی;
+	dest_bp = (ساخت ext2fs_rb_نجی *) dest->نجی;
+	src_bp->rcursor = تہی;
+	dest_bp->rcursor = تہی;
 
-	src_node = ext2fs_rb_first(&src_bp->root);
-	while (src_node) {
-		src_ext = node_to_extent(src_node);
-		retval = ext2fs_get_mem(sizeof (struct bmap_rb_extent),
+	src_گرہ = ext2fs_rb_پہلا(&src_bp->جڑ);
+	جب (src_گرہ) {
+		src_ext = گرہ_مقصد_extent(src_گرہ);
+		retval = ext2fs_get_mem(حجم (ساخت bmap_rb_extent),
 					&dest_ext);
-		if (retval)
-			break;
+		اگر (retval)
+			توڑو;
 
-		memcpy(dest_ext, src_ext, sizeof(struct bmap_rb_extent));
+		حافظہ_نقل(dest_ext, src_ext, حجم(ساخت bmap_rb_extent));
 
-		dest_node = &dest_ext->node;
-		n = &dest_bp->root.rb_node;
+		dest_گرہ = &dest_ext->گرہ;
+		n = &dest_bp->جڑ.rb_گرہ;
 
-		dest_last = NULL;
-		if (*n) {
-			dest_last = ext2fs_rb_last(&dest_bp->root);
-			n = &(dest_last)->rb_right;
+		dest_آخری = تہی;
+		اگر (*n) {
+			dest_آخری = ext2fs_rb_آخری(&dest_bp->جڑ);
+			n = &(dest_آخری)->rb_دایاں;
 		}
 
-		ext2fs_rb_link_node(dest_node, dest_last, n);
-		ext2fs_rb_insert_color(dest_node, &dest_bp->root);
+		ext2fs_rb_link_گرہ(dest_گرہ, dest_آخری, n);
+		ext2fs_rb_داخل_کرو_color(dest_گرہ, &dest_bp->جڑ);
 
-		src_node = ext2fs_rb_next(src_node);
+		src_گرہ = ext2fs_rb_اگلا(src_گرہ);
 	}
 
-	return retval;
+	واپس retval;
 }
 
-static void rb_truncate(__u64 new_max, struct rb_root *root)
+ساکن خالی rb_truncate(__u64 new_max, ساخت rb_جڑ *جڑ)
 {
-	struct bmap_rb_extent *ext;
-	struct rb_node *node;
+	ساخت bmap_rb_extent *ext;
+	ساخت rb_گرہ *گرہ;
 
-	node = ext2fs_rb_last(root);
-	while (node) {
-		ext = node_to_extent(node);
+	گرہ = ext2fs_rb_آخری(جڑ);
+	جب (گرہ) {
+		ext = گرہ_مقصد_extent(گرہ);
 
-		if ((ext->start + ext->count - 1) <= new_max)
-			break;
-		else if (ext->start > new_max) {
-			ext2fs_rb_erase(node, root);
+		اگر ((ext->آغاز + ext->گنتی - 1) <= new_max)
+			توڑو;
+		ورنہ اگر (ext->آغاز > new_max) {
+			ext2fs_rb_erase(گرہ, جڑ);
 			ext2fs_free_mem(&ext);
-			node = ext2fs_rb_last(root);
-			continue;
-		} else
-			ext->count = new_max - ext->start + 1;
+			گرہ = ext2fs_rb_آخری(جڑ);
+			جاری;
+		} ورنہ
+			ext->گنتی = new_max - ext->آغاز + 1;
 	}
 }
 
-static errcode_t rb_resize_bmap(ext2fs_generic_bitmap_64 bmap,
-				__u64 new_end, __u64 new_real_end)
+ساکن errcode_t rb_resize_bmap(ext2fs_generic_bitmap_64 bmap,
+				__u64 new_انتہا, __u64 new_real_انتہا)
 {
-	struct ext2fs_rb_private *bp;
+	ساخت ext2fs_rb_نجی *bp;
 
-	bp = (struct ext2fs_rb_private *) bmap->private;
-	bp->rcursor = NULL;
-	bp->wcursor = NULL;
+	bp = (ساخت ext2fs_rb_نجی *) bmap->نجی;
+	bp->rcursor = تہی;
+	bp->wcursor = تہی;
 
-	rb_truncate(((new_end < bmap->end) ? new_end : bmap->end) - bmap->start,
-		    &bp->root);
+	rb_truncate(((new_انتہا < bmap->انتہا) ? new_انتہا : bmap->انتہا) - bmap->آغاز,
+		    &bp->جڑ);
 
-	bmap->end = new_end;
-	bmap->real_end = new_real_end;
+	bmap->انتہا = new_انتہا;
+	bmap->real_انتہا = new_real_انتہا;
 
-	if (bmap->end < bmap->real_end)
-		rb_insert_extent(bmap->end + 1 - bmap->start,
-				 bmap->real_end - bmap->end, bp);
-	return 0;
+	اگر (bmap->انتہا < bmap->real_انتہا)
+		rb_داخل_کرو_extent(bmap->انتہا + 1 - bmap->آغاز,
+				 bmap->real_انتہا - bmap->انتہا, bp);
+	واپس 0;
 
 }
 
-inline static int
-rb_test_bit(struct ext2fs_rb_private *bp, __u64 bit)
+اندرونی ساکن صحیح
+rb_test_ثنائی_ہندسہ(ساخت ext2fs_rb_نجی *bp, __u64 ثنائی_ہندسہ)
 {
-	struct bmap_rb_extent *rcursor, *next_ext = NULL;
-	struct rb_node *parent = NULL, *next;
-	struct rb_node **n = &bp->root.rb_node;
-	struct bmap_rb_extent *ext;
+	ساخت bmap_rb_extent *rcursor, *اگلا_ext = تہی;
+	ساخت rb_گرہ *والد = تہی, *اگلا;
+	ساخت rb_گرہ **n = &bp->جڑ.rb_گرہ;
+	ساخت bmap_rb_extent *ext;
 
 	rcursor = bp->rcursor;
-	if (!rcursor)
-		goto search_tree;
+	اگر (!rcursor)
+		جاؤ تلاش_درخت;
 
-	if (bit >= rcursor->start && bit < rcursor->start + rcursor->count) {
-#ifdef ENABLE_BMAP_STATS_OPS
-		bp->test_hit++;
-#endif
-		return 1;
+	اگر (ثنائی_ہندسہ >= rcursor->آغاز && ثنائی_ہندسہ < rcursor->آغاز + rcursor->گنتی) {
+#اگر_تعریف_شدہ ENABLE_BMAP_STATS_OPS
+		bp->test_کامیابی++;
+#اگر_ختم
+		واپس 1;
 	}
 
-	next_ext = bp->rcursor_next;
-	if (!next_ext) {
-		next = ext2fs_rb_next(&rcursor->node);
-		if (next)
-			next_ext = node_to_extent(next);
-		bp->rcursor_next = next_ext;
+	اگلا_ext = bp->rcursor_اگلا;
+	اگر (!اگلا_ext) {
+		اگلا = ext2fs_rb_اگلا(&rcursor->گرہ);
+		اگر (اگلا)
+			اگلا_ext = گرہ_مقصد_extent(اگلا);
+		bp->rcursor_اگلا = اگلا_ext;
 	}
-	if (next_ext) {
-		if ((bit >= rcursor->start + rcursor->count) &&
-		    (bit < next_ext->start)) {
-#ifdef BMAP_STATS_OPS
-			bp->test_hit++;
-#endif
-			return 0;
+	اگر (اگلا_ext) {
+		اگر ((ثنائی_ہندسہ >= rcursor->آغاز + rcursor->گنتی) &&
+		    (ثنائی_ہندسہ < اگلا_ext->آغاز)) {
+#اگر_تعریف_شدہ BMAP_STATS_OPS
+			bp->test_کامیابی++;
+#اگر_ختم
+			واپس 0;
 		}
 	}
-	bp->rcursor = NULL;
-	bp->rcursor_next = NULL;
+	bp->rcursor = تہی;
+	bp->rcursor_اگلا = تہی;
 
 	rcursor = bp->wcursor;
-	if (!rcursor)
-		goto search_tree;
+	اگر (!rcursor)
+		جاؤ تلاش_درخت;
 
-	if (bit >= rcursor->start && bit < rcursor->start + rcursor->count)
-		return 1;
+	اگر (ثنائی_ہندسہ >= rcursor->آغاز && ثنائی_ہندسہ < rcursor->آغاز + rcursor->گنتی)
+		واپس 1;
 
-search_tree:
+تلاش_درخت:
 
-	while (*n) {
-		parent = *n;
-		ext = node_to_extent(parent);
-		if (bit < ext->start)
-			n = &(*n)->rb_left;
-		else if (bit >= (ext->start + ext->count))
-			n = &(*n)->rb_right;
-		else {
+	جب (*n) {
+		والد = *n;
+		ext = گرہ_مقصد_extent(والد);
+		اگر (ثنائی_ہندسہ < ext->آغاز)
+			n = &(*n)->rb_بایاں;
+		ورنہ اگر (ثنائی_ہندسہ >= (ext->آغاز + ext->گنتی))
+			n = &(*n)->rb_دایاں;
+		ورنہ {
 			bp->rcursor = ext;
-			bp->rcursor_next = NULL;
-			return 1;
+			bp->rcursor_اگلا = تہی;
+			واپس 1;
 		}
 	}
-	return 0;
+	واپس 0;
 }
 
-static int rb_insert_extent(__u64 start, __u64 count,
-			    struct ext2fs_rb_private *bp)
+ساکن صحیح rb_داخل_کرو_extent(__u64 آغاز, __u64 گنتی,
+			    ساخت ext2fs_rb_نجی *bp)
 {
-	struct rb_root *root = &bp->root;
-	struct rb_node *parent = NULL, **n = &root->rb_node;
-	struct rb_node *new_node, *node, *next;
-	struct bmap_rb_extent *new_ext;
-	struct bmap_rb_extent *ext;
-	int retval = 0;
+	ساخت rb_جڑ *جڑ = &bp->جڑ;
+	ساخت rb_گرہ *والد = تہی, **n = &جڑ->rb_گرہ;
+	ساخت rb_گرہ *new_گرہ, *گرہ, *اگلا;
+	ساخت bmap_rb_extent *new_ext;
+	ساخت bmap_rb_extent *ext;
+	صحیح retval = 0;
 
-	if (count == 0)
-		return 0;
+	اگر (گنتی == 0)
+		واپس 0;
 
-	bp->rcursor_next = NULL;
+	bp->rcursor_اگلا = تہی;
 	ext = bp->wcursor;
-	if (ext) {
-		if (start >= ext->start &&
-		    start <= (ext->start + ext->count)) {
-#ifdef ENABLE_BMAP_STATS_OPS
-			bp->mark_hit++;
-#endif
-			goto got_extent;
+	اگر (ext) {
+		اگر (آغاز >= ext->آغاز &&
+		    آغاز <= (ext->آغاز + ext->گنتی)) {
+#اگر_تعریف_شدہ ENABLE_BMAP_STATS_OPS
+			bp->mark_کامیابی++;
+#اگر_ختم
+			جاؤ got_extent;
 		}
 	}
 
-	while (*n) {
-		parent = *n;
-		ext = node_to_extent(parent);
+	جب (*n) {
+		والد = *n;
+		ext = گرہ_مقصد_extent(والد);
 
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start > (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else {
+		اگر (آغاز < ext->آغاز) {
+			n = &(*n)->rb_بایاں;
+		} ورنہ اگر (آغاز > (ext->آغاز + ext->گنتی)) {
+			n = &(*n)->rb_دایاں;
+		} ورنہ {
 got_extent:
-			if ((start + count) <= (ext->start + ext->count))
-				return 1;
+			اگر ((آغاز + گنتی) <= (ext->آغاز + ext->گنتی))
+				واپس 1;
 
-			if ((ext->start + ext->count) == start)
+			اگر ((ext->آغاز + ext->گنتی) == آغاز)
 				retval = 0;
-			else
+			ورنہ
 				retval = 1;
 
-			count += (start - ext->start);
-			start = ext->start;
+			گنتی += (آغاز - ext->آغاز);
+			آغاز = ext->آغاز;
 			new_ext = ext;
-			new_node = &ext->node;
+			new_گرہ = &ext->گرہ;
 
-			goto skip_insert;
+			جاؤ skip_داخل_کرو;
 		}
 	}
 
-	rb_get_new_extent(&new_ext, start, count);
+	rb_get_new_extent(&new_ext, آغاز, گنتی);
 
-	new_node = &new_ext->node;
-	ext2fs_rb_link_node(new_node, parent, n);
-	ext2fs_rb_insert_color(new_node, root);
+	new_گرہ = &new_ext->گرہ;
+	ext2fs_rb_link_گرہ(new_گرہ, والد, n);
+	ext2fs_rb_داخل_کرو_color(new_گرہ, جڑ);
 	bp->wcursor = new_ext;
 
-	node = ext2fs_rb_prev(new_node);
-	if (node) {
-		ext = node_to_extent(node);
-		if ((ext->start + ext->count) == start) {
-			start = ext->start;
-			count += ext->count;
-			ext2fs_rb_erase(node, root);
+	گرہ = ext2fs_rb_پچھلا(new_گرہ);
+	اگر (گرہ) {
+		ext = گرہ_مقصد_extent(گرہ);
+		اگر ((ext->آغاز + ext->گنتی) == آغاز) {
+			آغاز = ext->آغاز;
+			گنتی += ext->گنتی;
+			ext2fs_rb_erase(گرہ, جڑ);
 			rb_free_extent(bp, ext);
 		}
 	}
 
-skip_insert:
+skip_داخل_کرو:
 	/* See if we can merge extent to the right */
-	for (node = ext2fs_rb_next(new_node); node != NULL; node = next) {
-		next = ext2fs_rb_next(node);
-		ext = node_to_extent(node);
+	برائے (گرہ = ext2fs_rb_اگلا(new_گرہ); گرہ != تہی; گرہ = اگلا) {
+		اگلا = ext2fs_rb_اگلا(گرہ);
+		ext = گرہ_مقصد_extent(گرہ);
 
-		if ((ext->start + ext->count) <= start)
-			continue;
+		اگر ((ext->آغاز + ext->گنتی) <= آغاز)
+			جاری;
 
 		/* No more merging */
-		if ((start + count) < ext->start)
-			break;
+		اگر ((آغاز + گنتی) < ext->آغاز)
+			توڑو;
 
 		/* ext is embedded in new_ext interval */
-		if ((start + count) >= (ext->start + ext->count)) {
-			ext2fs_rb_erase(node, root);
+		اگر ((آغاز + گنتی) >= (ext->آغاز + ext->گنتی)) {
+			ext2fs_rb_erase(گرہ, جڑ);
 			rb_free_extent(bp, ext);
-			continue;
-		} else {
+			جاری;
+		} ورنہ {
 		/* merge ext with new_ext */
-			count += ((ext->start + ext->count) -
-				  (start + count));
-			ext2fs_rb_erase(node, root);
+			گنتی += ((ext->آغاز + ext->گنتی) -
+				  (آغاز + گنتی));
+			ext2fs_rb_erase(گرہ, جڑ);
 			rb_free_extent(bp, ext);
-			break;
+			توڑو;
 		}
 	}
 
-	new_ext->start = start;
-	new_ext->count = count;
+	new_ext->آغاز = آغاز;
+	new_ext->گنتی = گنتی;
 
-	return retval;
+	واپس retval;
 }
 
-static int rb_remove_extent(__u64 start, __u64 count,
-			    struct ext2fs_rb_private *bp)
+ساکن صحیح rb_remove_extent(__u64 آغاز, __u64 گنتی,
+			    ساخت ext2fs_rb_نجی *bp)
 {
-	struct rb_root *root = &bp->root;
-	struct rb_node *parent = NULL, **n = &root->rb_node;
-	struct rb_node *node;
-	struct bmap_rb_extent *ext;
-	__u64 new_start, new_count;
-	int retval = 0;
+	ساخت rb_جڑ *جڑ = &bp->جڑ;
+	ساخت rb_گرہ *والد = تہی, **n = &جڑ->rb_گرہ;
+	ساخت rb_گرہ *گرہ;
+	ساخت bmap_rb_extent *ext;
+	__u64 new_آغاز, new_گنتی;
+	صحیح retval = 0;
 
-	if (ext2fs_rb_empty_root(root))
-		return 0;
+	اگر (ext2fs_rb_خالی_خانے_جڑ(جڑ))
+		واپس 0;
 
-	while (*n) {
-		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-			continue;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-			continue;
+	جب (*n) {
+		والد = *n;
+		ext = گرہ_مقصد_extent(والد);
+		اگر (آغاز < ext->آغاز) {
+			n = &(*n)->rb_بایاں;
+			جاری;
+		} ورنہ اگر (آغاز >= (ext->آغاز + ext->گنتی)) {
+			n = &(*n)->rb_دایاں;
+			جاری;
 		}
 
-		if ((start > ext->start) &&
-		    (start + count) < (ext->start + ext->count)) {
+		اگر ((آغاز > ext->آغاز) &&
+		    (آغاز + گنتی) < (ext->آغاز + ext->گنتی)) {
 			/* We have to split extent into two */
-			new_start = start + count;
-			new_count = (ext->start + ext->count) - new_start;
+			new_آغاز = آغاز + گنتی;
+			new_گنتی = (ext->آغاز + ext->گنتی) - new_آغاز;
 
-			ext->count = start - ext->start;
+			ext->گنتی = آغاز - ext->آغاز;
 
-			rb_insert_extent(new_start, new_count, bp);
-			return 1;
+			rb_داخل_کرو_extent(new_آغاز, new_گنتی, bp);
+			واپس 1;
 		}
 
-		if ((start + count) >= (ext->start + ext->count)) {
-			ext->count = start - ext->start;
+		اگر ((آغاز + گنتی) >= (ext->آغاز + ext->گنتی)) {
+			ext->گنتی = آغاز - ext->آغاز;
 			retval = 1;
 		}
 
-		if (0 == ext->count) {
-			parent = ext2fs_rb_next(&ext->node);
-			ext2fs_rb_erase(&ext->node, root);
+		اگر (0 == ext->گنتی) {
+			والد = ext2fs_rb_اگلا(&ext->گرہ);
+			ext2fs_rb_erase(&ext->گرہ, جڑ);
 			rb_free_extent(bp, ext);
-			break;
+			توڑو;
 		}
 
-		if (start == ext->start) {
-			ext->start += count;
-			ext->count -= count;
-			return 1;
+		اگر (آغاز == ext->آغاز) {
+			ext->آغاز += گنتی;
+			ext->گنتی -= گنتی;
+			واپس 1;
 		}
 	}
 
 	/* See if we should delete or truncate extent on the right */
-	for (; parent != NULL; parent = node) {
-		node = ext2fs_rb_next(parent);
-		ext = node_to_extent(parent);
-		if ((ext->start + ext->count) <= start)
-			continue;
+	برائے (; والد != تہی; والد = گرہ) {
+		گرہ = ext2fs_rb_اگلا(والد);
+		ext = گرہ_مقصد_extent(والد);
+		اگر ((ext->آغاز + ext->گنتی) <= آغاز)
+			جاری;
 
 		/* No more extents to be removed/truncated */
-		if ((start + count) < ext->start)
-			break;
+		اگر ((آغاز + گنتی) < ext->آغاز)
+			توڑو;
 
 		/* The entire extent is within the region to be removed */
-		if ((start + count) >= (ext->start + ext->count)) {
-			ext2fs_rb_erase(parent, root);
+		اگر ((آغاز + گنتی) >= (ext->آغاز + ext->گنتی)) {
+			ext2fs_rb_erase(والد, جڑ);
 			rb_free_extent(bp, ext);
 			retval = 1;
-			continue;
-		} else {
+			جاری;
+		} ورنہ {
 			/* modify the last extent in region to be removed */
-			ext->count -= ((start + count) - ext->start);
-			ext->start = start + count;
+			ext->گنتی -= ((آغاز + گنتی) - ext->آغاز);
+			ext->آغاز = آغاز + گنتی;
 			retval = 1;
-			break;
+			توڑو;
 		}
 	}
 
-	return retval;
+	واپس retval;
 }
 
-static int rb_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+ساکن صحیح rb_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	struct ext2fs_rb_private *bp;
-	int retval;
+	ساخت ext2fs_rb_نجی *bp;
+	صحیح retval;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	arg -= bitmap->start;
+	bp = (ساخت ext2fs_rb_نجی *) bitmap->نجی;
+	arg -= bitmap->آغاز;
 
-	retval = rb_insert_extent(arg, 1, bp);
-	check_tree(&bp->root, __func__);
-	return retval;
+	retval = rb_داخل_کرو_extent(arg, 1, bp);
+	check_درخت(&bp->جڑ, __func__);
+	واپس retval;
 }
 
-static int rb_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+ساکن صحیح rb_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	struct ext2fs_rb_private *bp;
-	int retval;
+	ساخت ext2fs_rb_نجی *bp;
+	صحیح retval;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	arg -= bitmap->start;
+	bp = (ساخت ext2fs_rb_نجی *) bitmap->نجی;
+	arg -= bitmap->آغاز;
 
 	retval = rb_remove_extent(arg, 1, bp);
-	check_tree(&bp->root, __func__);
+	check_درخت(&bp->جڑ, __func__);
 
-	return retval;
+	واپس retval;
 }
 
-inline
-static int rb_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+اندرونی
+ساکن صحیح rb_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	struct ext2fs_rb_private *bp;
+	ساخت ext2fs_rb_نجی *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	arg -= bitmap->start;
+	bp = (ساخت ext2fs_rb_نجی *) bitmap->نجی;
+	arg -= bitmap->آغاز;
 
-	return rb_test_bit(bp, arg);
+	واپس rb_test_ثنائی_ہندسہ(bp, arg);
 }
 
-static void rb_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				unsigned int num)
+ساکن خالی rb_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				غیرعلامتی صحیح عدد)
 {
-	struct ext2fs_rb_private *bp;
+	ساخت ext2fs_rb_نجی *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	arg -= bitmap->start;
+	bp = (ساخت ext2fs_rb_نجی *) bitmap->نجی;
+	arg -= bitmap->آغاز;
 
-	rb_insert_extent(arg, num, bp);
-	check_tree(&bp->root, __func__);
+	rb_داخل_کرو_extent(arg, عدد, bp);
+	check_درخت(&bp->جڑ, __func__);
 }
 
-static void rb_unmark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				  unsigned int num)
+ساکن خالی rb_unmark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				  غیرعلامتی صحیح عدد)
 {
-	struct ext2fs_rb_private *bp;
+	ساخت ext2fs_rb_نجی *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	arg -= bitmap->start;
+	bp = (ساخت ext2fs_rb_نجی *) bitmap->نجی;
+	arg -= bitmap->آغاز;
 
-	rb_remove_extent(arg, num, bp);
-	check_tree(&bp->root, __func__);
+	rb_remove_extent(arg, عدد, bp);
+	check_درخت(&bp->جڑ, __func__);
 }
 
-static int rb_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, unsigned int len)
+ساکن صحیح rb_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 آغاز, غیرعلامتی صحیح len)
 {
-	struct rb_node *parent = NULL, **n;
-	struct rb_node *node, *next;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
-	int retval = 1;
+	ساخت rb_گرہ *والد = تہی, **n;
+	ساخت rb_گرہ *گرہ, *اگلا;
+	ساخت ext2fs_rb_نجی *bp;
+	ساخت bmap_rb_extent *ext;
+	صحیح retval = 1;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
-	start -= bitmap->start;
+	bp = (ساخت ext2fs_rb_نجی *) bitmap->نجی;
+	n = &bp->جڑ.rb_گرہ;
+	آغاز -= bitmap->آغاز;
 
-	if (len == 0 || ext2fs_rb_empty_root(&bp->root))
-		return 1;
+	اگر (len == 0 || ext2fs_rb_خالی_خانے_جڑ(&bp->جڑ))
+		واپس 1;
 
 	/*
 	 * If we find nothing, we should examine whole extent, but
 	 * when we find match, the extent is not clean, thus be return
 	 * false.
 	 */
-	while (*n) {
-		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else {
+	جب (*n) {
+		والد = *n;
+		ext = گرہ_مقصد_extent(والد);
+		اگر (آغاز < ext->آغاز) {
+			n = &(*n)->rb_بایاں;
+		} ورنہ اگر (آغاز >= (ext->آغاز + ext->گنتی)) {
+			n = &(*n)->rb_دایاں;
+		} ورنہ {
 			/*
 			 * We found extent int the tree -> extent is not
 			 * clean
 			 */
-			return 0;
+			واپس 0;
 		}
 	}
 
-	node = parent;
-	while (node) {
-		next = ext2fs_rb_next(node);
-		ext = node_to_extent(node);
-		node = next;
+	گرہ = والد;
+	جب (گرہ) {
+		اگلا = ext2fs_rb_اگلا(گرہ);
+		ext = گرہ_مقصد_extent(گرہ);
+		گرہ = اگلا;
 
-		if ((ext->start + ext->count) <= start)
-			continue;
+		اگر ((ext->آغاز + ext->گنتی) <= آغاز)
+			جاری;
 
 		/* No more merging */
-		if ((start + len) <= ext->start)
-			break;
+		اگر ((آغاز + len) <= ext->آغاز)
+			توڑو;
 
 		retval = 0;
-		break;
+		توڑو;
 	}
-	return retval;
+	واپس retval;
 }
 
-static errcode_t rb_set_bmap_range(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, size_t num, void *in)
+ساکن errcode_t rb_سیٹ_bmap_range(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 آغاز, size_t عدد, خالی *اندر)
 {
-	struct ext2fs_rb_private *bp;
-	unsigned char *cp = in;
+	ساخت ext2fs_rb_نجی *bp;
+	غیرعلامتی حرف *cp = اندر;
 	size_t i;
-	int first_set = -1;
+	صحیح پہلا_سیٹ = -1;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ساخت ext2fs_rb_نجی *) bitmap->نجی;
 
-	for (i = 0; i < num; i++) {
-		if ((i & 7) == 0) {
-			unsigned char c = cp[i/8];
-			if (c == 0xFF) {
-				if (first_set == -1)
-					first_set = i;
+	برائے (i = 0; i < عدد; i++) {
+		اگر ((i & 7) == 0) {
+			غیرعلامتی حرف c = cp[i/8];
+			اگر (c == 0xFF) {
+				اگر (پہلا_سیٹ == -1)
+					پہلا_سیٹ = i;
 				i += 7;
-				continue;
+				جاری;
 			}
-			if ((c == 0x00) && (first_set == -1)) {
+			اگر ((c == 0x00) && (پہلا_سیٹ == -1)) {
 				i += 7;
-				continue;
+				جاری;
 			}
 		}
-		if (ext2fs_test_bit(i, in)) {
-			if (first_set == -1)
-				first_set = i;
-			continue;
+		اگر (ext2fs_test_ثنائی_ہندسہ(i, اندر)) {
+			اگر (پہلا_سیٹ == -1)
+				پہلا_سیٹ = i;
+			جاری;
 		}
-		if (first_set == -1)
-			continue;
+		اگر (پہلا_سیٹ == -1)
+			جاری;
 
-		rb_insert_extent(start + first_set - bitmap->start,
-				 i - first_set, bp);
-		check_tree(&bp->root, __func__);
-		first_set = -1;
+		rb_داخل_کرو_extent(آغاز + پہلا_سیٹ - bitmap->آغاز,
+				 i - پہلا_سیٹ, bp);
+		check_درخت(&bp->جڑ, __func__);
+		پہلا_سیٹ = -1;
 	}
-	if (first_set != -1) {
-		rb_insert_extent(start + first_set - bitmap->start,
-				 num - first_set, bp);
-		check_tree(&bp->root, __func__);
+	اگر (پہلا_سیٹ != -1) {
+		rb_داخل_کرو_extent(آغاز + پہلا_سیٹ - bitmap->آغاز,
+				 عدد - پہلا_سیٹ, bp);
+		check_درخت(&bp->جڑ, __func__);
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static errcode_t rb_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, size_t num, void *out)
+ساکن errcode_t rb_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 آغاز, size_t عدد, خالی *برآمد)
 {
 
-	struct rb_node *parent = NULL, *next, **n;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
-	__u64 count, pos;
+	ساخت rb_گرہ *والد = تہی, *اگلا, **n;
+	ساخت ext2fs_rb_نجی *bp;
+	ساخت bmap_rb_extent *ext;
+	__u64 گنتی, pos;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
-	start -= bitmap->start;
+	bp = (ساخت ext2fs_rb_نجی *) bitmap->نجی;
+	n = &bp->جڑ.rb_گرہ;
+	آغاز -= bitmap->آغاز;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return 0;
+	اگر (ext2fs_rb_خالی_خانے_جڑ(&bp->جڑ))
+		واپس 0;
 
-	while (*n) {
-		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else
-			break;
+	جب (*n) {
+		والد = *n;
+		ext = گرہ_مقصد_extent(والد);
+		اگر (آغاز < ext->آغاز) {
+			n = &(*n)->rb_بایاں;
+		} ورنہ اگر (آغاز >= (ext->آغاز + ext->گنتی)) {
+			n = &(*n)->rb_دایاں;
+		} ورنہ
+			توڑو;
 	}
 
-	memset(out, 0, (num + 7) >> 3);
+	memset(برآمد, 0, (عدد + 7) >> 3);
 
-	for (; parent != NULL; parent = next) {
-		next = ext2fs_rb_next(parent);
-		ext = node_to_extent(parent);
+	برائے (; والد != تہی; والد = اگلا) {
+		اگلا = ext2fs_rb_اگلا(والد);
+		ext = گرہ_مقصد_extent(والد);
 
-		pos = ext->start;
-		count = ext->count;
-		if (pos >= start + num)
-			break;
-		if (pos < start) {
-			if (pos + count <  start)
-				continue;
-			count -= start - pos;
-			pos = start;
+		pos = ext->آغاز;
+		گنتی = ext->گنتی;
+		اگر (pos >= آغاز + عدد)
+			توڑو;
+		اگر (pos < آغاز) {
+			اگر (pos + گنتی <  آغاز)
+				جاری;
+			گنتی -= آغاز - pos;
+			pos = آغاز;
 		}
-		if (pos + count > start + num)
-			count = start + num - pos;
+		اگر (pos + گنتی > آغاز + عدد)
+			گنتی = آغاز + عدد - pos;
 
-		while (count > 0) {
-			if ((count >= 8) &&
-			    ((pos - start) % 8) == 0) {
-				int nbytes = count >> 3;
-				int offset = (pos - start) >> 3;
+		جب (گنتی > 0) {
+			اگر ((گنتی >= 8) &&
+			    ((pos - آغاز) % 8) == 0) {
+				صحیح nbytes = گنتی >> 3;
+				صحیح انحراف = (pos - آغاز) >> 3;
 
-				memset(((char *) out) + offset, 0xFF, nbytes);
+				memset(((حرف *) برآمد) + انحراف, 0xFF, nbytes);
 				pos += nbytes << 3;
-				count -= nbytes << 3;
-				continue;
+				گنتی -= nbytes << 3;
+				جاری;
 			}
-			ext2fs_fast_set_bit64((pos - start), out);
+			ext2fs_fast_سیٹ_bit64((pos - آغاز), برآمد);
 			pos++;
-			count--;
+			گنتی--;
 		}
 	}
-	return 0;
+	واپس 0;
 }
 
-static void rb_clear_bmap(ext2fs_generic_bitmap_64 bitmap)
+ساکن خالی rb_clear_bmap(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
+	ساخت ext2fs_rb_نجی *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ساخت ext2fs_rb_نجی *) bitmap->نجی;
 
-	rb_free_tree(&bp->root);
-	bp->rcursor = NULL;
-	bp->rcursor_next = NULL;
-	bp->wcursor = NULL;
-	check_tree(&bp->root, __func__);
+	rb_free_درخت(&bp->جڑ);
+	bp->rcursor = تہی;
+	bp->rcursor_اگلا = تہی;
+	bp->wcursor = تہی;
+	check_درخت(&bp->جڑ, __func__);
 }
 
-static errcode_t rb_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
-				   __u64 start, __u64 end, __u64 *out)
+ساکن errcode_t rb_ڈھونڈو_پہلا_zero(ext2fs_generic_bitmap_64 bitmap,
+				   __u64 آغاز, __u64 انتہا, __u64 *برآمد)
 {
-	struct rb_node *parent = NULL, **n;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
+	ساخت rb_گرہ *والد = تہی, **n;
+	ساخت ext2fs_rb_نجی *bp;
+	ساخت bmap_rb_extent *ext;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
-	start -= bitmap->start;
-	end -= bitmap->start;
+	bp = (ساخت ext2fs_rb_نجی *) bitmap->نجی;
+	n = &bp->جڑ.rb_گرہ;
+	آغاز -= bitmap->آغاز;
+	انتہا -= bitmap->آغاز;
 
-	if (start > end)
-		return EINVAL;
+	اگر (آغاز > انتہا)
+		واپس EINVAL;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return ENOENT;
+	اگر (ext2fs_rb_خالی_خانے_جڑ(&bp->جڑ))
+		واپس ENOENT;
 
-	while (*n) {
-		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else if (ext->start + ext->count <= end) {
-			*out = ext->start + ext->count + bitmap->start;
-			return 0;
-		} else
-			return ENOENT;
+	جب (*n) {
+		والد = *n;
+		ext = گرہ_مقصد_extent(والد);
+		اگر (آغاز < ext->آغاز) {
+			n = &(*n)->rb_بایاں;
+		} ورنہ اگر (آغاز >= (ext->آغاز + ext->گنتی)) {
+			n = &(*n)->rb_دایاں;
+		} ورنہ اگر (ext->آغاز + ext->گنتی <= انتہا) {
+			*برآمد = ext->آغاز + ext->گنتی + bitmap->آغاز;
+			واپس 0;
+		} ورنہ
+			واپس ENOENT;
 	}
 
-	*out = start + bitmap->start;
-	return 0;
+	*برآمد = آغاز + bitmap->آغاز;
+	واپس 0;
 }
 
-static errcode_t rb_find_first_set(ext2fs_generic_bitmap_64 bitmap,
-				   __u64 start, __u64 end, __u64 *out)
+ساکن errcode_t rb_ڈھونڈو_پہلا_سیٹ(ext2fs_generic_bitmap_64 bitmap,
+				   __u64 آغاز, __u64 انتہا, __u64 *برآمد)
 {
-	struct rb_node *parent = NULL, **n;
-	struct rb_node *node;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
+	ساخت rb_گرہ *والد = تہی, **n;
+	ساخت rb_گرہ *گرہ;
+	ساخت ext2fs_rb_نجی *bp;
+	ساخت bmap_rb_extent *ext;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
-	start -= bitmap->start;
-	end -= bitmap->start;
+	bp = (ساخت ext2fs_rb_نجی *) bitmap->نجی;
+	n = &bp->جڑ.rb_گرہ;
+	آغاز -= bitmap->آغاز;
+	انتہا -= bitmap->آغاز;
 
-	if (start > end)
-		return EINVAL;
+	اگر (آغاز > انتہا)
+		واپس EINVAL;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return ENOENT;
+	اگر (ext2fs_rb_خالی_خانے_جڑ(&bp->جڑ))
+		واپس ENOENT;
 
-	while (*n) {
-		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else {
+	جب (*n) {
+		والد = *n;
+		ext = گرہ_مقصد_extent(والد);
+		اگر (آغاز < ext->آغاز) {
+			n = &(*n)->rb_بایاں;
+		} ورنہ اگر (آغاز >= (ext->آغاز + ext->گنتی)) {
+			n = &(*n)->rb_دایاں;
+		} ورنہ {
 			/* The start bit is set */
-			*out = start + bitmap->start;
-			return 0;
+			*برآمد = آغاز + bitmap->آغاز;
+			واپس 0;
 		}
 	}
 
-	node = parent;
-	ext = node_to_extent(node);
-	if (ext->start < start) {
-		node = ext2fs_rb_next(node);
-		if (node == NULL)
-			return ENOENT;
-		ext = node_to_extent(node);
+	گرہ = والد;
+	ext = گرہ_مقصد_extent(گرہ);
+	اگر (ext->آغاز < آغاز) {
+		گرہ = ext2fs_rb_اگلا(گرہ);
+		اگر (گرہ == تہی)
+			واپس ENOENT;
+		ext = گرہ_مقصد_extent(گرہ);
 	}
-	if (ext->start <= end) {
-		*out = ext->start + bitmap->start;
-		return 0;
+	اگر (ext->آغاز <= انتہا) {
+		*برآمد = ext->آغاز + bitmap->آغاز;
+		واپس 0;
 	}
-	return ENOENT;
+	واپس ENOENT;
 }
 
-#ifdef ENABLE_BMAP_STATS
-static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap)
+#اگر_تعریف_شدہ ENABLE_BMAP_STATS
+ساکن خالی rb_print_stats(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
-	struct rb_node *node = NULL;
-	struct bmap_rb_extent *ext;
-	__u64 count = 0;
-	__u64 max_size = 0;
-	__u64 min_size = ULONG_MAX;
-	__u64 size = 0, avg_size = 0;
-	double eff;
-#ifdef ENABLE_BMAP_STATS_OPS
+	ساخت ext2fs_rb_نجی *bp;
+	ساخت rb_گرہ *گرہ = تہی;
+	ساخت bmap_rb_extent *ext;
+	__u64 گنتی = 0;
+	__u64 max_سائز = 0;
+	__u64 min_سائز = ULONG_MAX;
+	__u64 سائز = 0, avg_سائز = 0;
+	دوہرا eff;
+#اگر_تعریف_شدہ ENABLE_BMAP_STATS_OPS
 	__u64 mark_all, test_all;
-	double m_hit = 0.0, t_hit = 0.0;
-#endif
+	دوہرا m_کامیابی = 0.0, t_کامیابی = 0.0;
+#اگر_ختم
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ساخت ext2fs_rb_نجی *) bitmap->نجی;
 
-	for (node = ext2fs_rb_first(&bp->root); node != NULL;
-	     node = ext2fs_rb_next(node)) {
-		ext = node_to_extent(node);
-		count++;
-		if (ext->count > max_size)
-			max_size = ext->count;
-		if (ext->count < min_size)
-			min_size = ext->count;
-		size += ext->count;
+	برائے (گرہ = ext2fs_rb_پہلا(&bp->جڑ); گرہ != تہی;
+	     گرہ = ext2fs_rb_اگلا(گرہ)) {
+		ext = گرہ_مقصد_extent(گرہ);
+		گنتی++;
+		اگر (ext->گنتی > max_سائز)
+			max_سائز = ext->گنتی;
+		اگر (ext->گنتی < min_سائز)
+			min_سائز = ext->گنتی;
+		سائز += ext->گنتی;
 	}
 
-	if (count)
-		avg_size = size / count;
-	if (min_size == ULONG_MAX)
-		min_size = 0;
-	eff = (double)((count * sizeof(struct bmap_rb_extent)) << 3) /
-	      (bitmap->real_end - bitmap->start);
-#ifdef ENABLE_BMAP_STATS_OPS
-	mark_all = bitmap->stats.mark_count + bitmap->stats.mark_ext_count;
-	test_all = bitmap->stats.test_count + bitmap->stats.test_ext_count;
-	if (mark_all)
-		m_hit = ((double)bp->mark_hit / mark_all) * 100;
-	if (test_all)
-		t_hit = ((double)bp->test_hit / test_all) * 100;
+	اگر (گنتی)
+		avg_سائز = سائز / گنتی;
+	اگر (min_سائز == ULONG_MAX)
+		min_سائز = 0;
+	eff = (دوہرا)((گنتی * حجم(ساخت bmap_rb_extent)) << 3) /
+	      (bitmap->real_انتہا - bitmap->آغاز);
+#اگر_تعریف_شدہ ENABLE_BMAP_STATS_OPS
+	mark_all = bitmap->stats.mark_گنتی + bitmap->stats.mark_ext_گنتی;
+	test_all = bitmap->stats.test_گنتی + bitmap->stats.test_ext_گنتی;
+	اگر (mark_all)
+		m_کامیابی = ((دوہرا)bp->mark_کامیابی / mark_all) * 100;
+	اگر (test_all)
+		t_کامیابی = ((دوہرا)bp->test_کامیابی / test_all) * 100;
 
 	fprintf(stderr, "%16llu cache hits on test (%.2f%%)\n"
 		"%16llu cache hits on mark (%.2f%%)\n",
-		bp->test_hit, t_hit, bp->mark_hit, m_hit);
-#endif
+		bp->test_کامیابی, t_کامیابی, bp->mark_کامیابی, m_کامیابی);
+#اگر_ختم
 	fprintf(stderr, "%16llu extents (%llu bytes)\n",
-		(unsigned long long) count, (unsigned long long)
-		((count * sizeof(struct bmap_rb_extent)) +
-		 sizeof(struct ext2fs_rb_private)));
+		(غیرعلامتی طویل طویل) گنتی, (غیرعلامتی طویل طویل)
+		((گنتی * حجم(ساخت bmap_rb_extent)) +
+		 حجم(ساخت ext2fs_rb_نجی)));
  	fprintf(stderr, "%16llu bits minimum size\n",
-		(unsigned long long) min_size);
+		(غیرعلامتی طویل طویل) min_سائز);
 	fprintf(stderr, "%16llu bits maximum size\n"
 		"%16llu bits average size\n",
-		(unsigned long long) max_size, (unsigned long long) avg_size);
+		(غیرعلامتی طویل طویل) max_سائز, (غیرعلامتی طویل طویل) avg_سائز);
 	fprintf(stderr, "%16llu bits set in bitmap (out of %llu)\n",
-		(unsigned long long) size,
-		(unsigned long long) bitmap->real_end - bitmap->start);
+		(غیرعلامتی طویل طویل) سائز,
+		(غیرعلامتی طویل طویل) bitmap->real_انتہا - bitmap->آغاز);
 	fprintf(stderr,
 		"%16.4lf memory / bitmap bit memory ratio (bitarray = 1)\n",
 		eff);
 }
-#else
-static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap EXT2FS_ATTR((unused)))
+#ورنہ
+ساکن خالی rb_print_stats(ext2fs_generic_bitmap_64 bitmap EXT2FS_ATTR((غیر_مستعمل)))
 {
 }
-#endif
+#اگر_ختم
 
-struct ext2_bitmap_ops ext2fs_blkmap64_rbtree = {
+ساخت ext2_bitmap_ops ext2fs_blkmap64_rbtree = {
 	.type = EXT2FS_BMAP64_RBTREE,
 	.new_bmap = rb_new_bmap,
 	.free_bmap = rb_free_bmap,
@@ -989,10 +989,10 @@ struct ext2_bitmap_ops ext2fs_blkmap64_rbtree = {
 	.test_clear_bmap_extent = rb_test_clear_bmap_extent,
 	.mark_bmap_extent = rb_mark_bmap_extent,
 	.unmark_bmap_extent = rb_unmark_bmap_extent,
-	.set_bmap_range = rb_set_bmap_range,
+	.سیٹ_bmap_range = rb_سیٹ_bmap_range,
 	.get_bmap_range = rb_get_bmap_range,
 	.clear_bmap = rb_clear_bmap,
 	.print_stats = rb_print_stats,
-	.find_first_zero = rb_find_first_zero,
-	.find_first_set = rb_find_first_set,
+	.ڈھونڈو_پہلا_zero = rb_ڈھونڈو_پہلا_zero,
+	.ڈھونڈو_پہلا_سیٹ = rb_ڈھونڈو_پہلا_سیٹ,
 };

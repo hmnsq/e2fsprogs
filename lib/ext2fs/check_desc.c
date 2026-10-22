@@ -9,96 +9,96 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#شامل "config.h"
+#شامل <stdio.h>
+#شامل <string.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
+#شامل <fcntl.h>
+#شامل <time.h>
+#اگر HAVE_SYS_STAT_H
+#شامل <sys/stat.h>
+#اگر_ختم
+#اگر HAVE_SYS_TYPES_H
+#شامل <sys/types.h>
+#اگر_ختم
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fs.h"
 
 /*
  * This routine sanity checks the group descriptors
  */
 errcode_t ext2fs_check_desc(ext2_filsys fs)
 {
-	ext2fs_block_bitmap bmap;
+	ext2fs_بلاک_bitmap bmap;
 	errcode_t retval;
 	dgrp_t i;
-	blk64_t first_block = fs->super->s_first_data_block;
-	blk64_t last_block = ext2fs_blocks_count(fs->super)-1;
+	blk64_t پہلا_بلاک = fs->super->s_پہلا_ڈیٹا_بلاک;
+	blk64_t آخری_بلاک = ext2fs_بلاکیں_گنتی(fs->super)-1;
 	blk64_t blk, b;
-	unsigned int j;
+	غیرعلامتی صحیح j;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (EXT2_DESC_SIZE(fs->super) & (EXT2_DESC_SIZE(fs->super) - 1))
-		return EXT2_ET_BAD_DESC_SIZE;
+	اگر (EXT2_DESC_سائز(fs->super) & (EXT2_DESC_سائز(fs->super) - 1))
+		واپس EXT2_ET_BAD_DESC_سائز;
 
 	retval = ext2fs_allocate_subcluster_bitmap(fs, "check_desc map", &bmap);
-	if (retval)
-		return retval;
+	اگر (retval)
+		واپس retval;
 
-	for (i = 0; i < fs->group_desc_count; i++)
+	برائے (i = 0; i < fs->گروہ_desc_گنتی; i++)
 		ext2fs_reserve_super_and_bgd(fs, i, bmap);
 
-	for (i = 0; i < fs->group_desc_count; i++) {
-		if (!ext2fs_has_feature_flex_bg(fs->super)) {
-			first_block = ext2fs_group_first_block2(fs, i);
-			last_block = ext2fs_group_last_block2(fs, i);
+	برائے (i = 0; i < fs->گروہ_desc_گنتی; i++) {
+		اگر (!ext2fs_has_feature_flex_bg(fs->super)) {
+			پہلا_بلاک = ext2fs_گروہ_پہلا_block2(fs, i);
+			آخری_بلاک = ext2fs_گروہ_آخری_block2(fs, i);
 		}
 
 		/*
 		 * Check to make sure the block bitmap for group is sane
 		 */
-		blk = ext2fs_block_bitmap_loc(fs, i);
-		if (blk < first_block || blk > last_block ||
-		    ext2fs_test_block_bitmap2(bmap, blk)) {
-			retval = EXT2_ET_GDESC_BAD_BLOCK_MAP;
-			goto errout;
+		blk = ext2fs_بلاک_bitmap_loc(fs, i);
+		اگر (blk < پہلا_بلاک || blk > آخری_بلاک ||
+		    ext2fs_test_بلاک_bitmap2(bmap, blk)) {
+			retval = EXT2_ET_GDESC_BAD_بلاک_MAP;
+			جاؤ errout;
 		}
-		ext2fs_mark_block_bitmap2(bmap, blk);
+		ext2fs_mark_بلاک_bitmap2(bmap, blk);
 
 		/*
 		 * Check to make sure the inode bitmap for group is sane
 		 */
 		blk = ext2fs_inode_bitmap_loc(fs, i);
-		if (blk < first_block || blk > last_block ||
-		    ext2fs_test_block_bitmap2(bmap, blk)) {
+		اگر (blk < پہلا_بلاک || blk > آخری_بلاک ||
+		    ext2fs_test_بلاک_bitmap2(bmap, blk)) {
 			retval = EXT2_ET_GDESC_BAD_INODE_MAP;
-			goto errout;
+			جاؤ errout;
 		}
-		ext2fs_mark_block_bitmap2(bmap, blk);
+		ext2fs_mark_بلاک_bitmap2(bmap, blk);
 
 		/*
 		 * Check to make sure the inode table for group is sane
 		 */
-		blk = ext2fs_inode_table_loc(fs, i);
-		if (blk < first_block ||
-		    ((blk + fs->inode_blocks_per_group - 1) > last_block)) {
-			retval = EXT2_ET_GDESC_BAD_INODE_TABLE;
-			goto errout;
+		blk = ext2fs_inode_جدول_loc(fs, i);
+		اگر (blk < پہلا_بلاک ||
+		    ((blk + fs->inode_بلاکیں_فی_گروہ - 1) > آخری_بلاک)) {
+			retval = EXT2_ET_GDESC_BAD_INODE_جدول;
+			جاؤ errout;
 		}
-		for (j = 0, b = blk; j < fs->inode_blocks_per_group;
+		برائے (j = 0, b = blk; j < fs->inode_بلاکیں_فی_گروہ;
 		     j++, b++) {
-			if (ext2fs_test_block_bitmap2(bmap, b)) {
-				retval = EXT2_ET_GDESC_BAD_INODE_TABLE;
-				goto errout;
+			اگر (ext2fs_test_بلاک_bitmap2(bmap, b)) {
+				retval = EXT2_ET_GDESC_BAD_INODE_جدول;
+				جاؤ errout;
 			}
-			ext2fs_mark_block_bitmap2(bmap, b);
+			ext2fs_mark_بلاک_bitmap2(bmap, b);
 		}
 	}
 errout:
-	ext2fs_free_block_bitmap(bmap);
-	return retval;
+	ext2fs_free_بلاک_bitmap(bmap);
+	واپس retval;
 }

@@ -9,370 +9,370 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#شامل "config.h"
+#شامل <stdio.h>
+#شامل <string.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fs.h"
 
-struct block_context {
+ساخت بلاک_context {
 	ext2_filsys	fs;
-	int (*func)(ext2_filsys	fs,
+	صحیح (*func)(ext2_filsys	fs,
 		    blk64_t	*blocknr,
 		    e2_blkcnt_t	bcount,
 		    blk64_t	ref_blk,
-		    int		ref_offset,
-		    void	*priv_data);
+		    صحیح		ref_انحراف,
+		    خالی	*priv_ڈیٹا);
 	e2_blkcnt_t	bcount;
-	int		bsize;
-	int		flags;
+	صحیح		bsize;
+	صحیح		flags;
 	errcode_t	errcode;
-	char	*ind_buf;
-	char	*dind_buf;
-	char	*tind_buf;
-	void	*priv_data;
+	حرف	*ind_buf;
+	حرف	*dind_buf;
+	حرف	*tind_buf;
+	خالی	*priv_ڈیٹا;
 };
 
-#define check_for_ro_violation_return(ctx, ret)				\
-	do {								\
-		if (((ctx)->flags & BLOCK_FLAG_READ_ONLY) &&		\
-		    ((ret) & BLOCK_CHANGED)) {				\
-			(ctx)->errcode = EXT2_ET_RO_BLOCK_ITERATE;	\
-			ret |= BLOCK_ABORT | BLOCK_ERROR;		\
-			return ret;					\
+#تعریف_کرو check_for_ro_violation_return(ctx, ret)				\
+	کرو {								\
+		اگر (((ctx)->flags & بلاک_FLAG_READ_ONLY) &&		\
+		    ((ret) & بلاک_بدلا)) {				\
+			(ctx)->errcode = EXT2_ET_RO_بلاک_ITERATE;	\
+			ret |= بلاک_ABORT | بلاک_ERROR;		\
+			واپس ret;					\
 		}							\
-	} while (0)
+	} جب (0)
 
-#define check_for_ro_violation_goto(ctx, ret, label)			\
-	do {								\
-		if (((ctx)->flags & BLOCK_FLAG_READ_ONLY) &&		\
-		    ((ret) & BLOCK_CHANGED)) {				\
-			(ctx)->errcode = EXT2_ET_RO_BLOCK_ITERATE;	\
-			ret |= BLOCK_ABORT | BLOCK_ERROR;		\
-			goto label;					\
+#تعریف_کرو check_for_ro_violation_goto(ctx, ret, label)			\
+	کرو {								\
+		اگر (((ctx)->flags & بلاک_FLAG_READ_ONLY) &&		\
+		    ((ret) & بلاک_بدلا)) {				\
+			(ctx)->errcode = EXT2_ET_RO_بلاک_ITERATE;	\
+			ret |= بلاک_ABORT | بلاک_ERROR;		\
+			جاؤ label;					\
 		}							\
-	} while (0)
+	} جب (0)
 
-static int block_iterate_ind(blk_t *ind_block, blk_t ref_block,
-			     int ref_offset, struct block_context *ctx)
+ساکن صحیح بلاک_iterate_ind(blk_t *ind_بلاک, blk_t ref_بلاک,
+			     صحیح ref_انحراف, ساخت بلاک_context *ctx)
 {
-	int	ret = 0, changed = 0;
-	int	i, flags, limit, offset;
-	blk_t	*block_nr;
+	صحیح	ret = 0, بدلا = 0;
+	صحیح	i, flags, حد_بندی, انحراف;
+	blk_t	*بلاک_nr;
 	blk64_t	blk64;
 
-	limit = ctx->fs->blocksize >> 2;
-	if (!(ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
-	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY)) {
-		blk64 = *ind_block;
+	حد_بندی = ctx->fs->blocksize >> 2;
+	اگر (!(ctx->flags & بلاک_FLAG_گہرائی_TRAVERSE) &&
+	    !(ctx->flags & بلاک_FLAG_ڈیٹا_ONLY)) {
+		blk64 = *ind_بلاک;
 		ret = (*ctx->func)(ctx->fs, &blk64,
-				   BLOCK_COUNT_IND, ref_block,
-				   ref_offset, ctx->priv_data);
-		*ind_block = blk64;
+				   بلاک_گنتی_IND, ref_بلاک,
+				   ref_انحراف, ctx->priv_ڈیٹا);
+		*ind_بلاک = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	if (!*ind_block || (ret & BLOCK_ABORT)) {
-		ctx->bcount += limit;
-		return ret;
+	اگر (!*ind_بلاک || (ret & بلاک_ABORT)) {
+		ctx->bcount += حد_بندی;
+		واپس ret;
 	}
-	if (*ind_block >= ext2fs_blocks_count(ctx->fs->super) ||
-	    *ind_block < ctx->fs->super->s_first_data_block) {
-		ctx->errcode = EXT2_ET_BAD_IND_BLOCK;
-		ret |= BLOCK_ERROR;
-		return ret;
+	اگر (*ind_بلاک >= ext2fs_بلاکیں_گنتی(ctx->fs->super) ||
+	    *ind_بلاک < ctx->fs->super->s_پہلا_ڈیٹا_بلاک) {
+		ctx->errcode = EXT2_ET_BAD_IND_بلاک;
+		ret |= بلاک_ERROR;
+		واپس ret;
 	}
-	ctx->errcode = ext2fs_read_ind_block(ctx->fs, *ind_block,
+	ctx->errcode = ext2fs_read_ind_بلاک(ctx->fs, *ind_بلاک,
 					     ctx->ind_buf);
-	if (ctx->errcode) {
-		ret |= BLOCK_ERROR;
-		return ret;
+	اگر (ctx->errcode) {
+		ret |= بلاک_ERROR;
+		واپس ret;
 	}
 
-	block_nr = (blk_t *) ctx->ind_buf;
-	offset = 0;
-	if (ctx->flags & BLOCK_FLAG_APPEND) {
-		for (i = 0; i < limit; i++, ctx->bcount++, block_nr++) {
-			blk64 = *block_nr;
+	بلاک_nr = (blk_t *) ctx->ind_buf;
+	انحراف = 0;
+	اگر (ctx->flags & بلاک_FLAG_APPEND) {
+		برائے (i = 0; i < حد_بندی; i++, ctx->bcount++, بلاک_nr++) {
+			blk64 = *بلاک_nr;
 			flags = (*ctx->func)(ctx->fs, &blk64, ctx->bcount,
-					     *ind_block, offset,
-					     ctx->priv_data);
-			*block_nr = blk64;
-			changed	|= flags;
-			if (flags & BLOCK_ABORT) {
-				ret |= BLOCK_ABORT;
-				break;
+					     *ind_بلاک, انحراف,
+					     ctx->priv_ڈیٹا);
+			*بلاک_nr = blk64;
+			بدلا	|= flags;
+			اگر (flags & بلاک_ABORT) {
+				ret |= بلاک_ABORT;
+				توڑو;
 			}
-			offset += sizeof(blk_t);
+			انحراف += حجم(blk_t);
 		}
-	} else {
-		for (i = 0; i < limit; i++, ctx->bcount++, block_nr++) {
-			if (*block_nr == 0)
-				goto skip_sparse;
-			blk64 = *block_nr;
+	} ورنہ {
+		برائے (i = 0; i < حد_بندی; i++, ctx->bcount++, بلاک_nr++) {
+			اگر (*بلاک_nr == 0)
+				جاؤ skip_sparse;
+			blk64 = *بلاک_nr;
 			flags = (*ctx->func)(ctx->fs, &blk64, ctx->bcount,
-					     *ind_block, offset,
-					     ctx->priv_data);
-			*block_nr = blk64;
-			changed	|= flags;
-			if (flags & BLOCK_ABORT) {
-				ret |= BLOCK_ABORT;
-				break;
+					     *ind_بلاک, انحراف,
+					     ctx->priv_ڈیٹا);
+			*بلاک_nr = blk64;
+			بدلا	|= flags;
+			اگر (flags & بلاک_ABORT) {
+				ret |= بلاک_ABORT;
+				توڑو;
 			}
 		skip_sparse:
-			offset += sizeof(blk_t);
+			انحراف += حجم(blk_t);
 		}
 	}
-	check_for_ro_violation_return(ctx, changed);
-	if (changed & BLOCK_CHANGED) {
-		ctx->errcode = ext2fs_write_ind_block(ctx->fs, *ind_block,
+	check_for_ro_violation_return(ctx, بدلا);
+	اگر (بدلا & بلاک_بدلا) {
+		ctx->errcode = ext2fs_write_ind_بلاک(ctx->fs, *ind_بلاک,
 						      ctx->ind_buf);
-		if (ctx->errcode)
-			ret |= BLOCK_ERROR | BLOCK_ABORT;
+		اگر (ctx->errcode)
+			ret |= بلاک_ERROR | بلاک_ABORT;
 	}
-	if ((ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
-	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY) &&
-	    !(ret & BLOCK_ABORT)) {
-		blk64 = *ind_block;
+	اگر ((ctx->flags & بلاک_FLAG_گہرائی_TRAVERSE) &&
+	    !(ctx->flags & بلاک_FLAG_ڈیٹا_ONLY) &&
+	    !(ret & بلاک_ABORT)) {
+		blk64 = *ind_بلاک;
 		ret |= (*ctx->func)(ctx->fs, &blk64,
-				    BLOCK_COUNT_IND, ref_block,
-				    ref_offset, ctx->priv_data);
-		*ind_block = blk64;
+				    بلاک_گنتی_IND, ref_بلاک,
+				    ref_انحراف, ctx->priv_ڈیٹا);
+		*ind_بلاک = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	return ret;
+	واپس ret;
 }
 
-static int block_iterate_dind(blk_t *dind_block, blk_t ref_block,
-			      int ref_offset, struct block_context *ctx)
+ساکن صحیح بلاک_iterate_dind(blk_t *dind_بلاک, blk_t ref_بلاک,
+			      صحیح ref_انحراف, ساخت بلاک_context *ctx)
 {
-	int	ret = 0, changed = 0;
-	int	i, flags, limit, offset;
-	blk_t	*block_nr;
+	صحیح	ret = 0, بدلا = 0;
+	صحیح	i, flags, حد_بندی, انحراف;
+	blk_t	*بلاک_nr;
 	blk64_t	blk64;
 
-	limit = ctx->fs->blocksize >> 2;
-	if (!(ctx->flags & (BLOCK_FLAG_DEPTH_TRAVERSE |
-			    BLOCK_FLAG_DATA_ONLY))) {
-		blk64 = *dind_block;
+	حد_بندی = ctx->fs->blocksize >> 2;
+	اگر (!(ctx->flags & (بلاک_FLAG_گہرائی_TRAVERSE |
+			    بلاک_FLAG_ڈیٹا_ONLY))) {
+		blk64 = *dind_بلاک;
 		ret = (*ctx->func)(ctx->fs, &blk64,
-				   BLOCK_COUNT_DIND, ref_block,
-				   ref_offset, ctx->priv_data);
-		*dind_block = blk64;
+				   بلاک_گنتی_DIND, ref_بلاک,
+				   ref_انحراف, ctx->priv_ڈیٹا);
+		*dind_بلاک = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	if (!*dind_block || (ret & BLOCK_ABORT)) {
-		ctx->bcount += limit*limit;
-		return ret;
+	اگر (!*dind_بلاک || (ret & بلاک_ABORT)) {
+		ctx->bcount += حد_بندی*حد_بندی;
+		واپس ret;
 	}
-	if (*dind_block >= ext2fs_blocks_count(ctx->fs->super) ||
-	    *dind_block < ctx->fs->super->s_first_data_block) {
-		ctx->errcode = EXT2_ET_BAD_DIND_BLOCK;
-		ret |= BLOCK_ERROR;
-		return ret;
+	اگر (*dind_بلاک >= ext2fs_بلاکیں_گنتی(ctx->fs->super) ||
+	    *dind_بلاک < ctx->fs->super->s_پہلا_ڈیٹا_بلاک) {
+		ctx->errcode = EXT2_ET_BAD_DIND_بلاک;
+		ret |= بلاک_ERROR;
+		واپس ret;
 	}
-	ctx->errcode = ext2fs_read_ind_block(ctx->fs, *dind_block,
+	ctx->errcode = ext2fs_read_ind_بلاک(ctx->fs, *dind_بلاک,
 					     ctx->dind_buf);
-	if (ctx->errcode) {
-		ret |= BLOCK_ERROR;
-		return ret;
+	اگر (ctx->errcode) {
+		ret |= بلاک_ERROR;
+		واپس ret;
 	}
 
-	block_nr = (blk_t *) ctx->dind_buf;
-	offset = 0;
-	if (ctx->flags & BLOCK_FLAG_APPEND) {
-		for (i = 0; i < limit; i++, block_nr++) {
-			flags = block_iterate_ind(block_nr,
-						  *dind_block, offset,
+	بلاک_nr = (blk_t *) ctx->dind_buf;
+	انحراف = 0;
+	اگر (ctx->flags & بلاک_FLAG_APPEND) {
+		برائے (i = 0; i < حد_بندی; i++, بلاک_nr++) {
+			flags = بلاک_iterate_ind(بلاک_nr,
+						  *dind_بلاک, انحراف,
 						  ctx);
-			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
-				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+			بدلا |= flags;
+			اگر (flags & (بلاک_ABORT | بلاک_ERROR)) {
+				ret |= flags & (بلاک_ABORT | بلاک_ERROR);
+				توڑو;
 			}
-			offset += sizeof(blk_t);
+			انحراف += حجم(blk_t);
 		}
-	} else {
-		for (i = 0; i < limit; i++, block_nr++) {
-			if (*block_nr == 0) {
-				ctx->bcount += limit;
-				continue;
+	} ورنہ {
+		برائے (i = 0; i < حد_بندی; i++, بلاک_nr++) {
+			اگر (*بلاک_nr == 0) {
+				ctx->bcount += حد_بندی;
+				جاری;
 			}
-			flags = block_iterate_ind(block_nr,
-						  *dind_block, offset,
+			flags = بلاک_iterate_ind(بلاک_nr,
+						  *dind_بلاک, انحراف,
 						  ctx);
-			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
-				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+			بدلا |= flags;
+			اگر (flags & (بلاک_ABORT | بلاک_ERROR)) {
+				ret |= flags & (بلاک_ABORT | بلاک_ERROR);
+				توڑو;
 			}
-			offset += sizeof(blk_t);
+			انحراف += حجم(blk_t);
 		}
 	}
-	check_for_ro_violation_return(ctx, changed);
-	if (changed & BLOCK_CHANGED) {
-		ctx->errcode = ext2fs_write_ind_block(ctx->fs, *dind_block,
+	check_for_ro_violation_return(ctx, بدلا);
+	اگر (بدلا & بلاک_بدلا) {
+		ctx->errcode = ext2fs_write_ind_بلاک(ctx->fs, *dind_بلاک,
 						      ctx->dind_buf);
-		if (ctx->errcode)
-			ret |= BLOCK_ERROR | BLOCK_ABORT;
+		اگر (ctx->errcode)
+			ret |= بلاک_ERROR | بلاک_ABORT;
 	}
-	if ((ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
-	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY) &&
-	    !(ret & BLOCK_ABORT)) {
-		blk64 = *dind_block;
+	اگر ((ctx->flags & بلاک_FLAG_گہرائی_TRAVERSE) &&
+	    !(ctx->flags & بلاک_FLAG_ڈیٹا_ONLY) &&
+	    !(ret & بلاک_ABORT)) {
+		blk64 = *dind_بلاک;
 		ret |= (*ctx->func)(ctx->fs, &blk64,
-				    BLOCK_COUNT_DIND, ref_block,
-				    ref_offset, ctx->priv_data);
-		*dind_block = blk64;
+				    بلاک_گنتی_DIND, ref_بلاک,
+				    ref_انحراف, ctx->priv_ڈیٹا);
+		*dind_بلاک = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	return ret;
+	واپس ret;
 }
 
-static int block_iterate_tind(blk_t *tind_block, blk_t ref_block,
-			      int ref_offset, struct block_context *ctx)
+ساکن صحیح بلاک_iterate_tind(blk_t *tind_بلاک, blk_t ref_بلاک,
+			      صحیح ref_انحراف, ساخت بلاک_context *ctx)
 {
-	int	ret = 0, changed = 0;
-	int	i, flags, limit, offset;
-	blk_t	*block_nr;
+	صحیح	ret = 0, بدلا = 0;
+	صحیح	i, flags, حد_بندی, انحراف;
+	blk_t	*بلاک_nr;
 	blk64_t	blk64;
 
-	limit = ctx->fs->blocksize >> 2;
-	if (!(ctx->flags & (BLOCK_FLAG_DEPTH_TRAVERSE |
-			    BLOCK_FLAG_DATA_ONLY))) {
-		blk64 = *tind_block;
+	حد_بندی = ctx->fs->blocksize >> 2;
+	اگر (!(ctx->flags & (بلاک_FLAG_گہرائی_TRAVERSE |
+			    بلاک_FLAG_ڈیٹا_ONLY))) {
+		blk64 = *tind_بلاک;
 		ret = (*ctx->func)(ctx->fs, &blk64,
-				   BLOCK_COUNT_TIND, ref_block,
-				   ref_offset, ctx->priv_data);
-		*tind_block = blk64;
+				   بلاک_گنتی_TIND, ref_بلاک,
+				   ref_انحراف, ctx->priv_ڈیٹا);
+		*tind_بلاک = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	if (!*tind_block || (ret & BLOCK_ABORT)) {
-		ctx->bcount += ((unsigned long long) limit)*limit*limit;
-		return ret;
+	اگر (!*tind_بلاک || (ret & بلاک_ABORT)) {
+		ctx->bcount += ((غیرعلامتی طویل طویل) حد_بندی)*حد_بندی*حد_بندی;
+		واپس ret;
 	}
-	if (*tind_block >= ext2fs_blocks_count(ctx->fs->super) ||
-	    *tind_block < ctx->fs->super->s_first_data_block) {
-		ctx->errcode = EXT2_ET_BAD_TIND_BLOCK;
-		ret |= BLOCK_ERROR;
-		return ret;
+	اگر (*tind_بلاک >= ext2fs_بلاکیں_گنتی(ctx->fs->super) ||
+	    *tind_بلاک < ctx->fs->super->s_پہلا_ڈیٹا_بلاک) {
+		ctx->errcode = EXT2_ET_BAD_TIND_بلاک;
+		ret |= بلاک_ERROR;
+		واپس ret;
 	}
-	ctx->errcode = ext2fs_read_ind_block(ctx->fs, *tind_block,
+	ctx->errcode = ext2fs_read_ind_بلاک(ctx->fs, *tind_بلاک,
 					     ctx->tind_buf);
-	if (ctx->errcode) {
-		ret |= BLOCK_ERROR;
-		return ret;
+	اگر (ctx->errcode) {
+		ret |= بلاک_ERROR;
+		واپس ret;
 	}
 
-	block_nr = (blk_t *) ctx->tind_buf;
-	offset = 0;
-	if (ctx->flags & BLOCK_FLAG_APPEND) {
-		for (i = 0; i < limit; i++, block_nr++) {
-			flags = block_iterate_dind(block_nr,
-						   *tind_block,
-						   offset, ctx);
-			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
-				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+	بلاک_nr = (blk_t *) ctx->tind_buf;
+	انحراف = 0;
+	اگر (ctx->flags & بلاک_FLAG_APPEND) {
+		برائے (i = 0; i < حد_بندی; i++, بلاک_nr++) {
+			flags = بلاک_iterate_dind(بلاک_nr,
+						   *tind_بلاک,
+						   انحراف, ctx);
+			بدلا |= flags;
+			اگر (flags & (بلاک_ABORT | بلاک_ERROR)) {
+				ret |= flags & (بلاک_ABORT | بلاک_ERROR);
+				توڑو;
 			}
-			offset += sizeof(blk_t);
+			انحراف += حجم(blk_t);
 		}
-	} else {
-		for (i = 0; i < limit; i++, block_nr++) {
-			if (*block_nr == 0) {
-				ctx->bcount += limit*limit;
-				continue;
+	} ورنہ {
+		برائے (i = 0; i < حد_بندی; i++, بلاک_nr++) {
+			اگر (*بلاک_nr == 0) {
+				ctx->bcount += حد_بندی*حد_بندی;
+				جاری;
 			}
-			flags = block_iterate_dind(block_nr,
-						   *tind_block,
-						   offset, ctx);
-			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
-				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+			flags = بلاک_iterate_dind(بلاک_nr,
+						   *tind_بلاک,
+						   انحراف, ctx);
+			بدلا |= flags;
+			اگر (flags & (بلاک_ABORT | بلاک_ERROR)) {
+				ret |= flags & (بلاک_ABORT | بلاک_ERROR);
+				توڑو;
 			}
-			offset += sizeof(blk_t);
+			انحراف += حجم(blk_t);
 		}
 	}
-	check_for_ro_violation_return(ctx, changed);
-	if (changed & BLOCK_CHANGED) {
-		ctx->errcode = ext2fs_write_ind_block(ctx->fs, *tind_block,
+	check_for_ro_violation_return(ctx, بدلا);
+	اگر (بدلا & بلاک_بدلا) {
+		ctx->errcode = ext2fs_write_ind_بلاک(ctx->fs, *tind_بلاک,
 						      ctx->tind_buf);
-		if (ctx->errcode)
-			ret |= BLOCK_ERROR | BLOCK_ABORT;
+		اگر (ctx->errcode)
+			ret |= بلاک_ERROR | بلاک_ABORT;
 	}
-	if ((ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
-	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY) &&
-	    !(ret & BLOCK_ABORT)) {
-		blk64 = *tind_block;
+	اگر ((ctx->flags & بلاک_FLAG_گہرائی_TRAVERSE) &&
+	    !(ctx->flags & بلاک_FLAG_ڈیٹا_ONLY) &&
+	    !(ret & بلاک_ABORT)) {
+		blk64 = *tind_بلاک;
 		ret |= (*ctx->func)(ctx->fs, &blk64,
-				    BLOCK_COUNT_TIND, ref_block,
-				    ref_offset, ctx->priv_data);
-		*tind_block = blk64;
+				    بلاک_گنتی_TIND, ref_بلاک,
+				    ref_انحراف, ctx->priv_ڈیٹا);
+		*tind_بلاک = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	return ret;
+	واپس ret;
 }
 
-errcode_t ext2fs_block_iterate3(ext2_filsys fs,
+errcode_t ext2fs_بلاک_iterate3(ext2_filsys fs,
 				ext2_ino_t ino,
-				int	flags,
-				char *block_buf,
-				int (*func)(ext2_filsys fs,
+				صحیح	flags,
+				حرف *بلاک_buf,
+				صحیح (*func)(ext2_filsys fs,
 					    blk64_t	*blocknr,
 					    e2_blkcnt_t	blockcnt,
 					    blk64_t	ref_blk,
-					    int		ref_offset,
-					    void	*priv_data),
-				void *priv_data)
+					    صحیح		ref_انحراف,
+					    خالی	*priv_ڈیٹا),
+				خالی *priv_ڈیٹا)
 {
-	int	i;
-	int	r, ret = 0;
-	struct ext2_inode inode;
+	صحیح	i;
+	صحیح	r, ret = 0;
+	ساخت ext2_inode inode;
 	errcode_t	retval;
-	struct block_context ctx;
-	int	limit;
+	ساخت بلاک_context ctx;
+	صحیح	حد_بندی;
 	blk64_t	blk64;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	ctx.errcode = ext2fs_read_inode(fs, ino, &inode);
-	if (ctx.errcode)
-		return ctx.errcode;
+	اگر (ctx.errcode)
+		واپس ctx.errcode;
 
 	/*
 	 * An inode with inline data has no blocks over which to
 	 * iterate, so return an error code indicating this fact.
 	 */
-	if (inode.i_flags & EXT4_INLINE_DATA_FL)
-		return EXT2_ET_INLINE_DATA_CANT_ITERATE;
+	اگر (inode.i_flags & EXT4_INLINE_ڈیٹا_FL)
+		واپس EXT2_ET_INLINE_ڈیٹا_CANT_ITERATE;
 
 	/*
 	 * Check to see if we need to limit large files
 	 */
-	if (flags & BLOCK_FLAG_NO_LARGE) {
-		if (!LINUX_S_ISDIR(inode.i_mode) &&
-		    (inode.i_size_high != 0))
-			return EXT2_ET_FILE_TOO_BIG;
+	اگر (flags & بلاک_FLAG_NO_LARGE) {
+		اگر (!LINUX_S_ISDIR(inode.i_منوال) &&
+		    (inode.i_سائز_بلند != 0))
+			واپس EXT2_ET_FILE_TOO_BIG;
 	}
 
-	limit = fs->blocksize >> 2;
+	حد_بندی = fs->blocksize >> 2;
 
 	ctx.fs = fs;
 	ctx.func = func;
-	ctx.priv_data = priv_data;
+	ctx.priv_ڈیٹا = priv_ڈیٹا;
 	ctx.flags = flags;
 	ctx.bcount = 0;
-	if (block_buf) {
-		ctx.ind_buf = block_buf;
-	} else {
+	اگر (بلاک_buf) {
+		ctx.ind_buf = بلاک_buf;
+	} ورنہ {
 		retval = ext2fs_get_array(3, fs->blocksize, &ctx.ind_buf);
-		if (retval)
-			return retval;
+		اگر (retval)
+			واپس retval;
 	}
 	ctx.dind_buf = ctx.ind_buf + fs->blocksize;
 	ctx.tind_buf = ctx.dind_buf + fs->blocksize;
@@ -380,280 +380,280 @@ errcode_t ext2fs_block_iterate3(ext2_filsys fs,
 	/*
 	 * Iterate over the HURD translator block (if present)
 	 */
-	if ((fs->super->s_creator_os == EXT2_OS_HURD) &&
-	    !(flags & BLOCK_FLAG_DATA_ONLY)) {
-		if (inode.osd1.hurd1.h_i_translator) {
+	اگر ((fs->super->s_creator_os == EXT2_OS_HURD) &&
+	    !(flags & بلاک_FLAG_ڈیٹا_ONLY)) {
+		اگر (inode.osd1.hurd1.h_i_translator) {
 			blk64 = inode.osd1.hurd1.h_i_translator;
 			ret |= (*ctx.func)(fs, &blk64,
-					   BLOCK_COUNT_TRANSLATOR,
-					   0, 0, priv_data);
+					   بلاک_گنتی_TRANSLATOR,
+					   0, 0, priv_ڈیٹا);
 			inode.osd1.hurd1.h_i_translator = (blk_t) blk64;
-			if (ret & BLOCK_ABORT)
-				goto abort_exit;
+			اگر (ret & بلاک_ABORT)
+				جاؤ abort_exit;
 			check_for_ro_violation_goto(&ctx, ret, abort_exit);
 		}
 	}
 
-	if (inode.i_flags & EXT4_EXTENTS_FL) {
+	اگر (inode.i_flags & EXT4_EXTENTS_FL) {
 		ext2_extent_handle_t	handle;
-		struct ext2fs_extent	extent, next;
+		ساخت ext2fs_extent	extent, اگلا;
 		e2_blkcnt_t		blockcnt = 0;
 		blk64_t			blk, new_blk;
-		int			op = EXT2_EXTENT_ROOT;
-		int			uninit;
-		unsigned int		j;
+		صحیح			op = EXT2_EXTENT_جڑ;
+		صحیح			uninit;
+		غیرعلامتی صحیح		j;
 
 		ctx.errcode = ext2fs_extent_open2(fs, ino, &inode, &handle);
-		if (ctx.errcode)
-			goto abort_exit;
+		اگر (ctx.errcode)
+			جاؤ abort_exit;
 
-		while (1) {
-			if (op == EXT2_EXTENT_CURRENT)
+		جب (1) {
+			اگر (op == EXT2_EXTENT_CURRENT)
 				ctx.errcode = 0;
-			else
+			ورنہ
 				ctx.errcode = ext2fs_extent_get(handle, op,
 								&extent);
-			if (ctx.errcode) {
-				if (ctx.errcode != EXT2_ET_EXTENT_NO_NEXT)
-					break;
+			اگر (ctx.errcode) {
+				اگر (ctx.errcode != EXT2_ET_EXTENT_NO_اگلا)
+					توڑو;
 				ctx.errcode = 0;
-				if (!(flags & BLOCK_FLAG_APPEND))
-					break;
-			next_block_set:
+				اگر (!(flags & بلاک_FLAG_APPEND))
+					توڑو;
+			اگلا_بلاک_سیٹ:
 				blk = 0;
 				r = (*ctx.func)(fs, &blk, blockcnt,
-						0, 0, priv_data);
+						0, 0, priv_ڈیٹا);
 				ret |= r;
 				check_for_ro_violation_goto(&ctx, ret,
-							    extent_done);
-				if (r & BLOCK_CHANGED) {
+							    extent_مکمل);
+				اگر (r & بلاک_بدلا) {
 					ctx.errcode =
-						ext2fs_extent_set_bmap(handle,
+						ext2fs_extent_سیٹ_bmap(handle,
 						       (blk64_t) blockcnt++,
 						       (blk64_t) blk, 0);
-					if (ctx.errcode || (ret & BLOCK_ABORT))
-						break;
-					if (blk)
-						goto next_block_set;
+					اگر (ctx.errcode || (ret & بلاک_ABORT))
+						توڑو;
+					اگر (blk)
+						جاؤ اگلا_بلاک_سیٹ;
 				}
-				break;
+				توڑو;
 			}
 
-			op = EXT2_EXTENT_NEXT;
+			op = EXT2_EXTENT_اگلا;
 			blk = extent.e_pblk;
-			if (!(extent.e_flags & EXT2_EXTENT_FLAGS_LEAF)) {
-				if (ctx.flags & BLOCK_FLAG_DATA_ONLY)
-					continue;
-				if ((!(extent.e_flags &
-				       EXT2_EXTENT_FLAGS_SECOND_VISIT) &&
-				     !(ctx.flags & BLOCK_FLAG_DEPTH_TRAVERSE)) ||
+			اگر (!(extent.e_flags & EXT2_EXTENT_FLAGS_برگ)) {
+				اگر (ctx.flags & بلاک_FLAG_ڈیٹا_ONLY)
+					جاری;
+				اگر ((!(extent.e_flags &
+				       EXT2_EXTENT_FLAGS_دوسرا_دورہ) &&
+				     !(ctx.flags & بلاک_FLAG_گہرائی_TRAVERSE)) ||
 				    ((extent.e_flags &
-				      EXT2_EXTENT_FLAGS_SECOND_VISIT) &&
-				     (ctx.flags & BLOCK_FLAG_DEPTH_TRAVERSE))) {
+				      EXT2_EXTENT_FLAGS_دوسرا_دورہ) &&
+				     (ctx.flags & بلاک_FLAG_گہرائی_TRAVERSE))) {
 					ret |= (*ctx.func)(fs, &blk,
-							   -1, 0, 0, priv_data);
-					if (ret & BLOCK_CHANGED) {
+							   -1, 0, 0, priv_ڈیٹا);
+					اگر (ret & بلاک_بدلا) {
 						extent.e_pblk = blk;
 						ctx.errcode =
 				ext2fs_extent_replace(handle, 0, &extent);
-						if (ctx.errcode)
-							break;
+						اگر (ctx.errcode)
+							توڑو;
 					}
-					if (ret & BLOCK_ABORT)
-						break;
+					اگر (ret & بلاک_ABORT)
+						توڑو;
 				}
-				continue;
+				جاری;
 			}
 			uninit = 0;
-			if (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-				uninit = EXT2_EXTENT_SET_BMAP_UNINIT;
+			اگر (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+				uninit = EXT2_EXTENT_سیٹ_BMAP_UNINIT;
 
 			/* 
 			 * Get the next extent before we start messing
 			 * with the current extent
 			 */
-			retval = ext2fs_extent_get(handle, op, &next);
+			retval = ext2fs_extent_get(handle, op, &اگلا);
 
-#if 0
-			printf("lblk %llu pblk %llu len %d blockcnt %llu\n",
+#اگر 0
+			لکھو("lblk %llu pblk %llu len %d blockcnt %llu\n",
 			       extent.e_lblk, extent.e_pblk,
 			       extent.e_len, blockcnt);
-#endif
-			if (extent.e_lblk + extent.e_len <= (blk64_t) blockcnt)
-				continue;
-			if (extent.e_lblk > (blk64_t) blockcnt)
+#اگر_ختم
+			اگر (extent.e_lblk + extent.e_len <= (blk64_t) blockcnt)
+				جاری;
+			اگر (extent.e_lblk > (blk64_t) blockcnt)
 				blockcnt = extent.e_lblk;
 			j = blockcnt - extent.e_lblk;
 			blk += j;
-			for (blockcnt = extent.e_lblk, j = 0;
+			برائے (blockcnt = extent.e_lblk, j = 0;
 			     j < extent.e_len;
 			     blk++, blockcnt++, j++) {
 				new_blk = blk;
 				r = (*ctx.func)(fs, &new_blk, blockcnt,
-						0, 0, priv_data);
+						0, 0, priv_ڈیٹا);
 				ret |= r;
 				check_for_ro_violation_goto(&ctx, ret,
-							    extent_done);
-				if (r & BLOCK_CHANGED) {
+							    extent_مکمل);
+				اگر (r & بلاک_بدلا) {
 					ctx.errcode =
-						ext2fs_extent_set_bmap(handle,
+						ext2fs_extent_سیٹ_bmap(handle,
 						       (blk64_t) blockcnt,
 						       new_blk, uninit);
-					if (ctx.errcode)
-						goto extent_done;
+					اگر (ctx.errcode)
+						جاؤ extent_مکمل;
 				}
-				if (ret & BLOCK_ABORT)
-					goto extent_done;
+				اگر (ret & بلاک_ABORT)
+					جاؤ extent_مکمل;
 			}
-			if (retval == 0) {
-				extent = next;
+			اگر (retval == 0) {
+				extent = اگلا;
 				op = EXT2_EXTENT_CURRENT;
 			}
 		}
 
-	extent_done:
+	extent_مکمل:
 		ext2fs_extent_free(handle);
-		ret |= BLOCK_ERROR; /* ctx.errcode is always valid here */
-		goto errout;
+		ret |= بلاک_ERROR; /* ctx.errcode is always valid here */
+		جاؤ errout;
 	}
 
 	/*
 	 * Iterate over normal data blocks
 	 */
-	for (i = 0; i < EXT2_NDIR_BLOCKS ; i++, ctx.bcount++) {
-		if (inode.i_block[i] || (flags & BLOCK_FLAG_APPEND)) {
-			blk64 = inode.i_block[i];
+	برائے (i = 0; i < EXT2_NDIR_بلاکیں ; i++, ctx.bcount++) {
+		اگر (inode.i_بلاک[i] || (flags & بلاک_FLAG_APPEND)) {
+			blk64 = inode.i_بلاک[i];
 			ret |= (*ctx.func)(fs, &blk64, ctx.bcount, 0, i, 
-					   priv_data);
-			inode.i_block[i] = (blk_t) blk64;
-			if (ret & BLOCK_ABORT)
-				goto abort_exit;
+					   priv_ڈیٹا);
+			inode.i_بلاک[i] = (blk_t) blk64;
+			اگر (ret & بلاک_ABORT)
+				جاؤ abort_exit;
 		}
 	}
 	check_for_ro_violation_goto(&ctx, ret, abort_exit);
-	if (inode.i_block[EXT2_IND_BLOCK] || (flags & BLOCK_FLAG_APPEND)) {
-		ret |= block_iterate_ind(&inode.i_block[EXT2_IND_BLOCK], 
-					 0, EXT2_IND_BLOCK, &ctx);
-		if (ret & BLOCK_ABORT)
-			goto abort_exit;
-	} else
-		ctx.bcount += limit;
-	if (inode.i_block[EXT2_DIND_BLOCK] || (flags & BLOCK_FLAG_APPEND)) {
-		ret |= block_iterate_dind(&inode.i_block[EXT2_DIND_BLOCK],
-					  0, EXT2_DIND_BLOCK, &ctx);
-		if (ret & BLOCK_ABORT)
-			goto abort_exit;
-	} else
-		ctx.bcount += limit * limit;
-	if (inode.i_block[EXT2_TIND_BLOCK] || (flags & BLOCK_FLAG_APPEND)) {
-		ret |= block_iterate_tind(&inode.i_block[EXT2_TIND_BLOCK],
-					  0, EXT2_TIND_BLOCK, &ctx);
-		if (ret & BLOCK_ABORT)
-			goto abort_exit;
+	اگر (inode.i_بلاک[EXT2_IND_بلاک] || (flags & بلاک_FLAG_APPEND)) {
+		ret |= بلاک_iterate_ind(&inode.i_بلاک[EXT2_IND_بلاک], 
+					 0, EXT2_IND_بلاک, &ctx);
+		اگر (ret & بلاک_ABORT)
+			جاؤ abort_exit;
+	} ورنہ
+		ctx.bcount += حد_بندی;
+	اگر (inode.i_بلاک[EXT2_DIND_بلاک] || (flags & بلاک_FLAG_APPEND)) {
+		ret |= بلاک_iterate_dind(&inode.i_بلاک[EXT2_DIND_بلاک],
+					  0, EXT2_DIND_بلاک, &ctx);
+		اگر (ret & بلاک_ABORT)
+			جاؤ abort_exit;
+	} ورنہ
+		ctx.bcount += حد_بندی * حد_بندی;
+	اگر (inode.i_بلاک[EXT2_TIND_بلاک] || (flags & بلاک_FLAG_APPEND)) {
+		ret |= بلاک_iterate_tind(&inode.i_بلاک[EXT2_TIND_بلاک],
+					  0, EXT2_TIND_بلاک, &ctx);
+		اگر (ret & بلاک_ABORT)
+			جاؤ abort_exit;
 	}
 
 abort_exit:
-	if (ret & BLOCK_CHANGED) {
+	اگر (ret & بلاک_بدلا) {
 		retval = ext2fs_write_inode(fs, ino, &inode);
-		if (retval) {
-			ret |= BLOCK_ERROR;
+		اگر (retval) {
+			ret |= بلاک_ERROR;
 			ctx.errcode = retval;
 		}
 	}
 errout:
-	if (!block_buf)
+	اگر (!بلاک_buf)
 		ext2fs_free_mem(&ctx.ind_buf);
 
-	return (ret & BLOCK_ERROR) ? ctx.errcode : 0;
+	واپس (ret & بلاک_ERROR) ? ctx.errcode : 0;
 }
 
 /*
  * Emulate the old ext2fs_block_iterate function!
  */
 
-struct xlate64 {
-	int (*func)(ext2_filsys fs,
+ساخت xlate64 {
+	صحیح (*func)(ext2_filsys fs,
 		    blk_t	*blocknr,
 		    e2_blkcnt_t	blockcnt,
 		    blk_t	ref_blk,
-		    int		ref_offset,
-		    void	*priv_data);
-	void *real_private;
+		    صحیح		ref_انحراف,
+		    خالی	*priv_ڈیٹا);
+	خالی *real_نجی;
 };
 
-static int xlate64_func(ext2_filsys fs, blk64_t	*blocknr,
+ساکن صحیح xlate64_func(ext2_filsys fs, blk64_t	*blocknr,
 			e2_blkcnt_t blockcnt, blk64_t ref_blk,
-			int ref_offset, void *priv_data)
+			صحیح ref_انحراف, خالی *priv_ڈیٹا)
 {
-	struct xlate64 *xl = (struct xlate64 *) priv_data;
-	int		ret;
+	ساخت xlate64 *xl = (ساخت xlate64 *) priv_ڈیٹا;
+	صحیح		ret;
 	blk_t		block32 = *blocknr;
 	
-	ret = (*xl->func)(fs, &block32, blockcnt, (blk_t) ref_blk, ref_offset,
-			     xl->real_private);
+	ret = (*xl->func)(fs, &block32, blockcnt, (blk_t) ref_blk, ref_انحراف,
+			     xl->real_نجی);
 	*blocknr = block32;
-	return ret;
+	واپس ret;
 }
 
-errcode_t ext2fs_block_iterate2(ext2_filsys fs,
+errcode_t ext2fs_بلاک_iterate2(ext2_filsys fs,
 				ext2_ino_t ino,
-				int	flags,
-				char *block_buf,
-				int (*func)(ext2_filsys fs,
+				صحیح	flags,
+				حرف *بلاک_buf,
+				صحیح (*func)(ext2_filsys fs,
 					    blk_t	*blocknr,
 					    e2_blkcnt_t	blockcnt,
 					    blk_t	ref_blk,
-					    int		ref_offset,
-					    void	*priv_data),
-				void *priv_data)
+					    صحیح		ref_انحراف,
+					    خالی	*priv_ڈیٹا),
+				خالی *priv_ڈیٹا)
 {
-	struct xlate64 xl;
+	ساخت xlate64 xl;
 
-	xl.real_private = priv_data;
+	xl.real_نجی = priv_ڈیٹا;
 	xl.func = func;
 
-	return ext2fs_block_iterate3(fs, ino, flags, block_buf, 
+	واپس ext2fs_بلاک_iterate3(fs, ino, flags, بلاک_buf, 
 				     xlate64_func, &xl);
 }
 
 
-struct xlate {
-	int (*func)(ext2_filsys	fs,
+ساخت xlate {
+	صحیح (*func)(ext2_filsys	fs,
 		    blk_t	*blocknr,
-		    int		bcount,
-		    void	*priv_data);
-	void *real_private;
+		    صحیح		bcount,
+		    خالی	*priv_ڈیٹا);
+	خالی *real_نجی;
 };
 
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-static int xlate_func(ext2_filsys fs, blk_t *blocknr, e2_blkcnt_t blockcnt,
-		      blk_t ref_block EXT2FS_ATTR((unused)),
-		      int ref_offset EXT2FS_ATTR((unused)),
-		      void *priv_data)
+#اگر_تعریف_شدہ __TURBOC__
+ #ہدایت argsused
+#اگر_ختم
+ساکن صحیح xlate_func(ext2_filsys fs, blk_t *blocknr, e2_blkcnt_t blockcnt,
+		      blk_t ref_بلاک EXT2FS_ATTR((غیر_مستعمل)),
+		      صحیح ref_انحراف EXT2FS_ATTR((غیر_مستعمل)),
+		      خالی *priv_ڈیٹا)
 {
-	struct xlate *xl = (struct xlate *) priv_data;
+	ساخت xlate *xl = (ساخت xlate *) priv_ڈیٹا;
 
-	return (*xl->func)(fs, blocknr, (int) blockcnt, xl->real_private);
+	واپس (*xl->func)(fs, blocknr, (صحیح) blockcnt, xl->real_نجی);
 }
 
-errcode_t ext2fs_block_iterate(ext2_filsys fs,
+errcode_t ext2fs_بلاک_iterate(ext2_filsys fs,
 			       ext2_ino_t ino,
-			       int	flags,
-			       char *block_buf,
-			       int (*func)(ext2_filsys fs,
+			       صحیح	flags,
+			       حرف *بلاک_buf,
+			       صحیح (*func)(ext2_filsys fs,
 					   blk_t	*blocknr,
-					   int	blockcnt,
-					   void	*priv_data),
-			       void *priv_data)
+					   صحیح	blockcnt,
+					   خالی	*priv_ڈیٹا),
+			       خالی *priv_ڈیٹا)
 {
-	struct xlate xl;
+	ساخت xlate xl;
 
-	xl.real_private = priv_data;
+	xl.real_نجی = priv_ڈیٹا;
 	xl.func = func;
 
-	return ext2fs_block_iterate2(fs, ino, BLOCK_FLAG_NO_LARGE | flags,
-				     block_buf, xlate_func, &xl);
+	واپس ext2fs_بلاک_iterate2(fs, ino, بلاک_FLAG_NO_LARGE | flags,
+				     بلاک_buf, xlate_func, &xl);
 }
 

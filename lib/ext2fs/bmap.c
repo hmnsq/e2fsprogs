@@ -9,146 +9,146 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <errno.h>
+#شامل "config.h"
+#شامل <stdio.h>
+#شامل <string.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
+#شامل <errno.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fsP.h"
 
-#if defined(__GNUC__) && !defined(NO_INLINE_FUNCS)
-#define _BMAP_INLINE_	__inline__
-#else
-#define _BMAP_INLINE_
-#endif
+#اگر defined(__GNUC__) && !defined(NO_INLINE_FUNCS)
+#تعریف_کرو _BMAP_INLINE_	__inline__
+#ورنہ
+#تعریف_کرو _BMAP_INLINE_
+#اگر_ختم
 
-extern errcode_t ext2fs_bmap(ext2_filsys fs, ext2_ino_t ino,
-			     struct ext2_inode *inode,
-			     char *block_buf, int bmap_flags,
-			     blk_t block, blk_t *phys_blk);
+خارجی errcode_t ext2fs_bmap(ext2_filsys fs, ext2_ino_t ino,
+			     ساخت ext2_inode *inode,
+			     حرف *بلاک_buf, صحیح bmap_flags,
+			     blk_t بلاک, blk_t *phys_blk);
 
-#define inode_bmap(inode, nr) ((inode)->i_block[(nr)])
+#تعریف_کرو inode_bmap(inode, nr) ((inode)->i_بلاک[(nr)])
 
-static _BMAP_INLINE_ errcode_t block_ind_bmap(ext2_filsys fs, int flags,
-					      blk_t ind, char *block_buf,
-					      int *blocks_alloc,
+ساکن _BMAP_INLINE_ errcode_t بلاک_ind_bmap(ext2_filsys fs, صحیح flags,
+					      blk_t ind, حرف *بلاک_buf,
+					      صحیح *بلاکیں_alloc,
 					      blk_t nr, blk_t *ret_blk)
 {
 	errcode_t	retval;
 	blk_t		b;
 
-	if (!ind) {
-		if (flags & BMAP_SET)
-			return EXT2_ET_SET_BMAP_NO_IND;
+	اگر (!ind) {
+		اگر (flags & BMAP_سیٹ)
+			واپس EXT2_ET_سیٹ_BMAP_NO_IND;
 		*ret_blk = 0;
-		return 0;
+		واپس 0;
 	}
-	retval = io_channel_read_blk(fs->io, ind, 1, block_buf);
-	if (retval)
-		return retval;
+	retval = io_channel_read_blk(fs->io, ind, 1, بلاک_buf);
+	اگر (retval)
+		واپس retval;
 
-	if (flags & BMAP_SET) {
+	اگر (flags & BMAP_سیٹ) {
 		b = *ret_blk;
-#ifdef WORDS_BIGENDIAN
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
 		b = ext2fs_swab32(b);
-#endif
-		((blk_t *) block_buf)[nr] = b;
-		return io_channel_write_blk(fs->io, ind, 1, block_buf);
+#اگر_ختم
+		((blk_t *) بلاک_buf)[nr] = b;
+		واپس io_channel_write_blk(fs->io, ind, 1, بلاک_buf);
 	}
 
-	b = ((blk_t *) block_buf)[nr];
+	b = ((blk_t *) بلاک_buf)[nr];
 
-#ifdef WORDS_BIGENDIAN
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
 	b = ext2fs_swab32(b);
-#endif
+#اگر_ختم
 
-	if (!b && (flags & BMAP_ALLOC)) {
-		b = nr ? ext2fs_le32_to_cpu(((blk_t *)block_buf)[nr - 1]) : ind;
-		retval = ext2fs_alloc_block(fs, b,
-					    block_buf + fs->blocksize, &b);
-		if (retval)
-			return retval;
+	اگر (!b && (flags & BMAP_ALLOC)) {
+		b = nr ? ext2fs_le32_مقصد_cpu(((blk_t *)بلاک_buf)[nr - 1]) : ind;
+		retval = ext2fs_alloc_بلاک(fs, b,
+					    بلاک_buf + fs->blocksize, &b);
+		اگر (retval)
+			واپس retval;
 
-#ifdef WORDS_BIGENDIAN
-		((blk_t *) block_buf)[nr] = ext2fs_swab32(b);
-#else
-		((blk_t *) block_buf)[nr] = b;
-#endif
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
+		((blk_t *) بلاک_buf)[nr] = ext2fs_swab32(b);
+#ورنہ
+		((blk_t *) بلاک_buf)[nr] = b;
+#اگر_ختم
 
-		retval = io_channel_write_blk(fs->io, ind, 1, block_buf);
-		if (retval)
-			return retval;
+		retval = io_channel_write_blk(fs->io, ind, 1, بلاک_buf);
+		اگر (retval)
+			واپس retval;
 
-		(*blocks_alloc)++;
+		(*بلاکیں_alloc)++;
 	}
 
 	*ret_blk = b;
-	return 0;
+	واپس 0;
 }
 
-static _BMAP_INLINE_ errcode_t block_dind_bmap(ext2_filsys fs, int flags,
-					       blk_t dind, char *block_buf,
-					       int *blocks_alloc,
+ساکن _BMAP_INLINE_ errcode_t بلاک_dind_bmap(ext2_filsys fs, صحیح flags,
+					       blk_t dind, حرف *بلاک_buf,
+					       صحیح *بلاکیں_alloc,
 					       blk_t nr, blk_t *ret_blk)
 {
 	blk_t		b = 0;
 	errcode_t	retval;
-	blk_t		addr_per_block;
+	blk_t		addr_فی_بلاک;
 
-	addr_per_block = (blk_t) fs->blocksize >> 2;
+	addr_فی_بلاک = (blk_t) fs->blocksize >> 2;
 
-	retval = block_ind_bmap(fs, flags & ~BMAP_SET, dind, block_buf,
-				blocks_alloc, nr / addr_per_block, &b);
-	if (retval)
-		return retval;
-	retval = block_ind_bmap(fs, flags, b, block_buf, blocks_alloc,
-				nr % addr_per_block, ret_blk);
-	return retval;
+	retval = بلاک_ind_bmap(fs, flags & ~BMAP_سیٹ, dind, بلاک_buf,
+				بلاکیں_alloc, nr / addr_فی_بلاک, &b);
+	اگر (retval)
+		واپس retval;
+	retval = بلاک_ind_bmap(fs, flags, b, بلاک_buf, بلاکیں_alloc,
+				nr % addr_فی_بلاک, ret_blk);
+	واپس retval;
 }
 
-static _BMAP_INLINE_ errcode_t block_tind_bmap(ext2_filsys fs, int flags,
-					       blk_t tind, char *block_buf,
-					       int *blocks_alloc,
+ساکن _BMAP_INLINE_ errcode_t بلاک_tind_bmap(ext2_filsys fs, صحیح flags,
+					       blk_t tind, حرف *بلاک_buf,
+					       صحیح *بلاکیں_alloc,
 					       blk_t nr, blk_t *ret_blk)
 {
 	blk_t		b = 0;
 	errcode_t	retval;
-	blk_t		addr_per_block;
+	blk_t		addr_فی_بلاک;
 
-	addr_per_block = (blk_t) fs->blocksize >> 2;
+	addr_فی_بلاک = (blk_t) fs->blocksize >> 2;
 
-	retval = block_dind_bmap(fs, flags & ~BMAP_SET, tind, block_buf,
-				 blocks_alloc, nr / addr_per_block, &b);
-	if (retval)
-		return retval;
-	retval = block_ind_bmap(fs, flags, b, block_buf, blocks_alloc,
-				nr % addr_per_block, ret_blk);
-	return retval;
+	retval = بلاک_dind_bmap(fs, flags & ~BMAP_سیٹ, tind, بلاک_buf,
+				 بلاکیں_alloc, nr / addr_فی_بلاک, &b);
+	اگر (retval)
+		واپس retval;
+	retval = بلاک_ind_bmap(fs, flags, b, بلاک_buf, بلاکیں_alloc,
+				nr % addr_فی_بلاک, ret_blk);
+	واپس retval;
 }
 
-static errcode_t extent_bmap(ext2_filsys fs, ext2_ino_t ino,
-			     struct ext2_inode *inode,
+ساکن errcode_t extent_bmap(ext2_filsys fs, ext2_ino_t ino,
+			     ساخت ext2_inode *inode,
 			     ext2_extent_handle_t handle,
-			     char *block_buf, int bmap_flags, blk64_t block,
-			     int *ret_flags, int *blocks_alloc,
+			     حرف *بلاک_buf, صحیح bmap_flags, blk64_t بلاک,
+			     صحیح *ret_flags, صحیح *بلاکیں_alloc,
 			     blk64_t *phys_blk);
 
-static errcode_t implied_cluster_alloc(ext2_filsys fs, ext2_ino_t ino,
-				       struct ext2_inode *inode,
+ساکن errcode_t implied_cluster_alloc(ext2_filsys fs, ext2_ino_t ino,
+				       ساخت ext2_inode *inode,
 				       ext2_extent_handle_t handle,
 				       blk64_t lblk, blk64_t *phys_blk)
 {
-	blk64_t	base_block, pblock = 0;
-	int i;
+	blk64_t	بنیاد_بلاک, pblock = 0;
+	صحیح i;
 
-	if (!ext2fs_has_feature_bigalloc(fs->super))
-		return 0;
+	اگر (!ext2fs_has_feature_bigalloc(fs->super))
+		واپس 0;
 
-	base_block = lblk & ~EXT2FS_CLUSTER_MASK(fs);
+	بنیاد_بلاک = lblk & ~EXT2_FS_CLUSTER_نقاب(fs);
 	/*
 	 * Except for the logical block (lblk) that was passed in, search all
 	 * blocks in this logical cluster for a mapping to a physical cluster.
@@ -158,23 +158,23 @@ static errcode_t implied_cluster_alloc(ext2_filsys fs, ext2_ino_t ino,
 	 * The old code wouldn't even look if (block % cluster_ratio) == 0;
 	 * this is incorrect if we're allocating blocks in reverse order.
 	 */
-	for (i = 0; i < EXT2FS_CLUSTER_RATIO(fs); i++) {
-		if (base_block + i == lblk)
-			continue;
+	برائے (i = 0; i < EXT2_FS_CLUSTER_تناسب(fs); i++) {
+		اگر (بنیاد_بلاک + i == lblk)
+			جاری;
 		extent_bmap(fs, ino, inode, handle, 0, 0,
-			    base_block + i, 0, 0, &pblock);
-		if (pblock)
-			break;
+			    بنیاد_بلاک + i, 0, 0, &pblock);
+		اگر (pblock)
+			توڑو;
 	}
-	if (pblock == 0)
-		return 0;
-	*phys_blk = pblock - i + (lblk - base_block);
-	return 0;
+	اگر (pblock == 0)
+		واپس 0;
+	*phys_blk = pblock - i + (lblk - بنیاد_بلاک);
+	واپس 0;
 }
 
 /* Try to map a logical block to an already-allocated physical cluster. */
-errcode_t ext2fs_map_cluster_block(ext2_filsys fs, ext2_ino_t ino,
-				   struct ext2_inode *inode, blk64_t lblk,
+errcode_t ext2fs_map_cluster_بلاک(ext2_filsys fs, ext2_ino_t ino,
+				   ساخت ext2_inode *inode, blk64_t lblk,
 				   blk64_t *pblk)
 {
 	ext2_extent_handle_t handle;
@@ -182,318 +182,318 @@ errcode_t ext2fs_map_cluster_block(ext2_filsys fs, ext2_ino_t ino,
 
 	/* Need bigalloc and extents to be enabled */
 	*pblk = 0;
-	if (!ext2fs_has_feature_bigalloc(fs->super) ||
+	اگر (!ext2fs_has_feature_bigalloc(fs->super) ||
 	    !(inode->i_flags & EXT4_EXTENTS_FL))
-		return 0;
+		واپس 0;
 
 	retval = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (retval)
-		goto out;
+	اگر (retval)
+		جاؤ برآمد;
 
 	retval = implied_cluster_alloc(fs, ino, inode, handle, lblk, pblk);
-	if (retval)
-		goto out2;
+	اگر (retval)
+		جاؤ out2;
 
 out2:
 	ext2fs_extent_free(handle);
-out:
-	return retval;
+برآمد:
+	واپس retval;
 }
 
-static errcode_t extent_bmap(ext2_filsys fs, ext2_ino_t ino,
-			     struct ext2_inode *inode,
+ساکن errcode_t extent_bmap(ext2_filsys fs, ext2_ino_t ino,
+			     ساخت ext2_inode *inode,
 			     ext2_extent_handle_t handle,
-			     char *block_buf, int bmap_flags, blk64_t block,
-			     int *ret_flags, int *blocks_alloc,
+			     حرف *بلاک_buf, صحیح bmap_flags, blk64_t بلاک,
+			     صحیح *ret_flags, صحیح *بلاکیں_alloc,
 			     blk64_t *phys_blk)
 {
-	struct blk_alloc_ctx	alloc_ctx;
-	struct ext2fs_extent	extent;
-	unsigned int		offset;
+	ساخت blk_alloc_ctx	alloc_ctx;
+	ساخت ext2fs_extent	extent;
+	غیرعلامتی صحیح		انحراف;
 	errcode_t		retval = 0;
 	blk64_t			blk64 = 0;
-	int			alloc = 0;
-	int			set_flags;
+	صحیح			alloc = 0;
+	صحیح			سیٹ_flags;
 
-	set_flags = bmap_flags & BMAP_UNINIT ? EXT2_EXTENT_SET_BMAP_UNINIT : 0;
+	سیٹ_flags = bmap_flags & BMAP_UNINIT ? EXT2_EXTENT_سیٹ_BMAP_UNINIT : 0;
 
-	if (bmap_flags & BMAP_SET) {
-		retval = ext2fs_extent_set_bmap(handle, block,
-						*phys_blk, set_flags);
-		return retval;
+	اگر (bmap_flags & BMAP_سیٹ) {
+		retval = ext2fs_extent_سیٹ_bmap(handle, بلاک,
+						*phys_blk, سیٹ_flags);
+		واپس retval;
 	}
-	retval = ext2fs_extent_goto(handle, block);
-	if (retval) {
+	retval = ext2fs_extent_goto(handle, بلاک);
+	اگر (retval) {
 		/* If the extent is not found, return phys_blk = 0 */
-		if (retval == EXT2_ET_EXTENT_NOT_FOUND) {
-			extent.e_lblk = block;
-			goto got_block;
+		اگر (retval == EXT2_ET_EXTENT_NOT_ملا) {
+			extent.e_lblk = بلاک;
+			جاؤ got_بلاک;
 		}
-		return retval;
+		واپس retval;
 	}
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
-		return retval;
-	offset = block - extent.e_lblk;
-	if (block >= extent.e_lblk && (offset <= extent.e_len)) {
-		*phys_blk = extent.e_pblk + offset;
-		if (ret_flags && extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	اگر (retval)
+		واپس retval;
+	انحراف = بلاک - extent.e_lblk;
+	اگر (بلاک >= extent.e_lblk && (انحراف <= extent.e_len)) {
+		*phys_blk = extent.e_pblk + انحراف;
+		اگر (ret_flags && extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 			*ret_flags |= BMAP_RET_UNINIT;
 	}
-got_block:
-	if ((*phys_blk == 0) && (bmap_flags & BMAP_ALLOC)) {
-		implied_cluster_alloc(fs, ino, inode, handle, block, &blk64);
-		if (blk64)
-			goto set_extent;
-		retval = extent_bmap(fs, ino, inode, handle, block_buf,
-				     0, block-1, 0, blocks_alloc, &blk64);
-		if (retval)
-			blk64 = ext2fs_find_inode_goal(fs, ino, inode, block);
+got_بلاک:
+	اگر ((*phys_blk == 0) && (bmap_flags & BMAP_ALLOC)) {
+		implied_cluster_alloc(fs, ino, inode, handle, بلاک, &blk64);
+		اگر (blk64)
+			جاؤ سیٹ_extent;
+		retval = extent_bmap(fs, ino, inode, handle, بلاک_buf,
+				     0, بلاک-1, 0, بلاکیں_alloc, &blk64);
+		اگر (retval)
+			blk64 = ext2fs_ڈھونڈو_inode_goal(fs, ino, inode, بلاک);
 		alloc_ctx.ino = ino;
 		alloc_ctx.inode = inode;
 		alloc_ctx.lblk = extent.e_lblk;
-		alloc_ctx.flags = BLOCK_ALLOC_DATA;
-		retval = ext2fs_alloc_block3(fs, blk64, block_buf, &blk64,
+		alloc_ctx.flags = بلاک_ALLOC_ڈیٹا;
+		retval = ext2fs_alloc_block3(fs, blk64, بلاک_buf, &blk64,
 					     &alloc_ctx);
-		if (retval)
-			return retval;
-		blk64 &= ~EXT2FS_CLUSTER_MASK(fs);
-		blk64 += EXT2FS_CLUSTER_MASK(fs) & block;
+		اگر (retval)
+			واپس retval;
+		blk64 &= ~EXT2_FS_CLUSTER_نقاب(fs);
+		blk64 += EXT2_FS_CLUSTER_نقاب(fs) & بلاک;
 		alloc++;
-	set_extent:
-		retval = ext2fs_extent_set_bmap(handle, block,
-						blk64, set_flags);
-		if (retval) {
-			ext2fs_block_alloc_stats2(fs, blk64, -1);
-			return retval;
+	سیٹ_extent:
+		retval = ext2fs_extent_سیٹ_bmap(handle, بلاک,
+						blk64, سیٹ_flags);
+		اگر (retval) {
+			ext2fs_بلاک_alloc_stats2(fs, blk64, -1);
+			واپس retval;
 		}
 		/* Update inode after setting extent */
 		retval = ext2fs_read_inode(fs, ino, inode);
-		if (retval)
-			return retval;
-		*blocks_alloc += alloc;
+		اگر (retval)
+			واپس retval;
+		*بلاکیں_alloc += alloc;
 		*phys_blk = blk64;
 	}
-	return 0;
+	واپس 0;
 }
 
-int ext2fs_file_block_offset_too_big(ext2_filsys fs,
-				     struct ext2_inode *inode,
-				     blk64_t offset)
+صحیح ext2fs_file_بلاک_انحراف_too_big(ext2_filsys fs,
+				     ساخت ext2_inode *inode,
+				     blk64_t انحراف)
 {
-	blk64_t addr_per_block, max_map_block;
+	blk64_t addr_فی_بلاک, max_map_بلاک;
 
 	/* Kernel seems to cut us off at 4294967294 blocks */
-	if (offset >= (1ULL << 32) - 1)
-		return 1;
+	اگر (انحراف >= (1ULL << 32) - 1)
+		واپس 1;
 
-	if (inode->i_flags & EXT4_EXTENTS_FL)
-		return 0;
+	اگر (inode->i_flags & EXT4_EXTENTS_FL)
+		واپس 0;
 
-	addr_per_block = fs->blocksize >> 2;
-	max_map_block = addr_per_block;
-	max_map_block += addr_per_block * addr_per_block;
-	max_map_block += addr_per_block * addr_per_block * addr_per_block;
-	max_map_block += 12;
+	addr_فی_بلاک = fs->blocksize >> 2;
+	max_map_بلاک = addr_فی_بلاک;
+	max_map_بلاک += addr_فی_بلاک * addr_فی_بلاک;
+	max_map_بلاک += addr_فی_بلاک * addr_فی_بلاک * addr_فی_بلاک;
+	max_map_بلاک += 12;
 
-	return offset >= max_map_block;
+	واپس انحراف >= max_map_بلاک;
 }
 
-errcode_t ext2fs_bmap2(ext2_filsys fs, ext2_ino_t ino, struct ext2_inode *inode,
-		       char *block_buf, int bmap_flags, blk64_t block,
-		       int *ret_flags, blk64_t *phys_blk)
+errcode_t ext2fs_bmap2(ext2_filsys fs, ext2_ino_t ino, ساخت ext2_inode *inode,
+		       حرف *بلاک_buf, صحیح bmap_flags, blk64_t بلاک,
+		       صحیح *ret_flags, blk64_t *phys_blk)
 {
-	struct ext2_inode inode_buf;
+	ساخت ext2_inode inode_buf;
 	ext2_extent_handle_t handle = 0;
-	blk_t addr_per_block;
+	blk_t addr_فی_بلاک;
 	blk_t	b, blk32;
 	blk64_t b64;
-	char	*buf = 0;
+	حرف	*buf = 0;
 	errcode_t	retval = 0;
-	int		blocks_alloc = 0, inode_dirty = 0;
-	struct blk_alloc_ctx alloc_ctx = {
+	صحیح		بلاکیں_alloc = 0, inode_dirty = 0;
+	ساخت blk_alloc_ctx alloc_ctx = {
 		.ino	= ino,
 		.inode	= inode,
 		.lblk	= 0,
-		.flags	= BLOCK_ALLOC_DATA,
+		.flags	= بلاک_ALLOC_ڈیٹا,
 	};
 
-	if (!(bmap_flags & BMAP_SET))
+	اگر (!(bmap_flags & BMAP_سیٹ))
 		*phys_blk = 0;
 
-	if (ret_flags)
+	اگر (ret_flags)
 		*ret_flags = 0;
 
 	/* Read inode structure if necessary */
-	if (!inode) {
+	اگر (!inode) {
 		retval = ext2fs_read_inode(fs, ino, &inode_buf);
-		if (retval)
-			return retval;
+		اگر (retval)
+			واپس retval;
 		inode = &inode_buf;
 	}
-	addr_per_block = (blk_t) fs->blocksize >> 2;
+	addr_فی_بلاک = (blk_t) fs->blocksize >> 2;
 
-	if (ext2fs_file_block_offset_too_big(fs, inode, block))
-		return EXT2_ET_FILE_TOO_BIG;
+	اگر (ext2fs_file_بلاک_انحراف_too_big(fs, inode, بلاک))
+		واپس EXT2_ET_FILE_TOO_BIG;
 
 	/*
 	 * If an inode has inline data, that means that it doesn't have
 	 * any blocks and we shouldn't map any blocks for it.
 	 */
-	if (inode->i_flags & EXT4_INLINE_DATA_FL)
-		return EXT2_ET_INLINE_DATA_NO_BLOCK;
+	اگر (inode->i_flags & EXT4_INLINE_ڈیٹا_FL)
+		واپس EXT2_ET_INLINE_ڈیٹا_NO_بلاک;
 
-	if (!block_buf) {
+	اگر (!بلاک_buf) {
 		retval = ext2fs_get_array(2, fs->blocksize, &buf);
-		if (retval)
-			return retval;
-		block_buf = buf;
+		اگر (retval)
+			واپس retval;
+		بلاک_buf = buf;
 	}
 
-	if (inode->i_flags & EXT4_EXTENTS_FL) {
+	اگر (inode->i_flags & EXT4_EXTENTS_FL) {
 		retval = ext2fs_extent_open2(fs, ino, inode, &handle);
-		if (retval)
-			goto done;
-		retval = extent_bmap(fs, ino, inode, handle, block_buf,
-				     bmap_flags, block, ret_flags,
-				     &blocks_alloc, phys_blk);
-		goto done;
+		اگر (retval)
+			جاؤ مکمل;
+		retval = extent_bmap(fs, ino, inode, handle, بلاک_buf,
+				     bmap_flags, بلاک, ret_flags,
+				     &بلاکیں_alloc, phys_blk);
+		جاؤ مکمل;
 	}
 
-	if (block < EXT2_NDIR_BLOCKS) {
-		if (bmap_flags & BMAP_SET) {
+	اگر (بلاک < EXT2_NDIR_بلاکیں) {
+		اگر (bmap_flags & BMAP_سیٹ) {
 			b = *phys_blk;
-			inode_bmap(inode, block) = b;
+			inode_bmap(inode, بلاک) = b;
 			inode_dirty++;
-			goto done;
+			جاؤ مکمل;
 		}
 
-		*phys_blk = inode_bmap(inode, block);
-		b = block ? inode_bmap(inode, block - 1) :
-			    ext2fs_find_inode_goal(fs, ino, inode, block);
+		*phys_blk = inode_bmap(inode, بلاک);
+		b = بلاک ? inode_bmap(inode, بلاک - 1) :
+			    ext2fs_ڈھونڈو_inode_goal(fs, ino, inode, بلاک);
 
-		if ((*phys_blk == 0) && (bmap_flags & BMAP_ALLOC)) {
+		اگر ((*phys_blk == 0) && (bmap_flags & BMAP_ALLOC)) {
 			b64 = b;
-			retval = ext2fs_alloc_block3(fs, b64, block_buf, &b64,
+			retval = ext2fs_alloc_block3(fs, b64, بلاک_buf, &b64,
 						     &alloc_ctx);
 			b = b64;
-			if (retval)
-				goto done;
-			inode_bmap(inode, block) = b;
-			blocks_alloc++;
+			اگر (retval)
+				جاؤ مکمل;
+			inode_bmap(inode, بلاک) = b;
+			بلاکیں_alloc++;
 			*phys_blk = b;
 		}
-		goto done;
+		جاؤ مکمل;
 	}
 
 	/* Indirect block */
-	block -= EXT2_NDIR_BLOCKS;
+	بلاک -= EXT2_NDIR_بلاکیں;
 	blk32 = *phys_blk;
-	if (block < addr_per_block) {
-		b = inode_bmap(inode, EXT2_IND_BLOCK);
-		if (!b) {
-			if (!(bmap_flags & BMAP_ALLOC)) {
-				if (bmap_flags & BMAP_SET)
-					retval = EXT2_ET_SET_BMAP_NO_IND;
-				goto done;
+	اگر (بلاک < addr_فی_بلاک) {
+		b = inode_bmap(inode, EXT2_IND_بلاک);
+		اگر (!b) {
+			اگر (!(bmap_flags & BMAP_ALLOC)) {
+				اگر (bmap_flags & BMAP_سیٹ)
+					retval = EXT2_ET_سیٹ_BMAP_NO_IND;
+				جاؤ مکمل;
 			}
 
-			b = inode_bmap(inode, EXT2_IND_BLOCK-1);
+			b = inode_bmap(inode, EXT2_IND_بلاک-1);
 			b64 = b;
-			retval = ext2fs_alloc_block3(fs, b64, block_buf, &b64,
+			retval = ext2fs_alloc_block3(fs, b64, بلاک_buf, &b64,
 						     &alloc_ctx);
 			b = b64;
-			if (retval)
-				goto done;
-			inode_bmap(inode, EXT2_IND_BLOCK) = b;
-			blocks_alloc++;
+			اگر (retval)
+				جاؤ مکمل;
+			inode_bmap(inode, EXT2_IND_بلاک) = b;
+			بلاکیں_alloc++;
 		}
-		retval = block_ind_bmap(fs, bmap_flags, b, block_buf,
-					&blocks_alloc, block, &blk32);
-		if (retval == 0)
+		retval = بلاک_ind_bmap(fs, bmap_flags, b, بلاک_buf,
+					&بلاکیں_alloc, بلاک, &blk32);
+		اگر (retval == 0)
 			*phys_blk = blk32;
-		goto done;
+		جاؤ مکمل;
 	}
 
 	/* Doubly indirect block  */
-	block -= addr_per_block;
-	if (block < addr_per_block * addr_per_block) {
-		b = inode_bmap(inode, EXT2_DIND_BLOCK);
-		if (!b) {
-			if (!(bmap_flags & BMAP_ALLOC)) {
-				if (bmap_flags & BMAP_SET)
-					retval = EXT2_ET_SET_BMAP_NO_IND;
-				goto done;
+	بلاک -= addr_فی_بلاک;
+	اگر (بلاک < addr_فی_بلاک * addr_فی_بلاک) {
+		b = inode_bmap(inode, EXT2_DIND_بلاک);
+		اگر (!b) {
+			اگر (!(bmap_flags & BMAP_ALLOC)) {
+				اگر (bmap_flags & BMAP_سیٹ)
+					retval = EXT2_ET_سیٹ_BMAP_NO_IND;
+				جاؤ مکمل;
 			}
 
-			b = inode_bmap(inode, EXT2_IND_BLOCK);
+			b = inode_bmap(inode, EXT2_IND_بلاک);
 			b64 = b;
-			retval = ext2fs_alloc_block3(fs, b64, block_buf, &b64,
+			retval = ext2fs_alloc_block3(fs, b64, بلاک_buf, &b64,
 						     &alloc_ctx);
 			b = b64;
-			if (retval)
-				goto done;
-			inode_bmap(inode, EXT2_DIND_BLOCK) = b;
-			blocks_alloc++;
+			اگر (retval)
+				جاؤ مکمل;
+			inode_bmap(inode, EXT2_DIND_بلاک) = b;
+			بلاکیں_alloc++;
 		}
-		retval = block_dind_bmap(fs, bmap_flags, b, block_buf,
-					 &blocks_alloc, block, &blk32);
-		if (retval == 0)
+		retval = بلاک_dind_bmap(fs, bmap_flags, b, بلاک_buf,
+					 &بلاکیں_alloc, بلاک, &blk32);
+		اگر (retval == 0)
 			*phys_blk = blk32;
-		goto done;
+		جاؤ مکمل;
 	}
 
 	/* Triply indirect block */
-	block -= addr_per_block * addr_per_block;
-	b = inode_bmap(inode, EXT2_TIND_BLOCK);
-	if (!b) {
-		if (!(bmap_flags & BMAP_ALLOC)) {
-			if (bmap_flags & BMAP_SET)
-				retval = EXT2_ET_SET_BMAP_NO_IND;
-			goto done;
+	بلاک -= addr_فی_بلاک * addr_فی_بلاک;
+	b = inode_bmap(inode, EXT2_TIND_بلاک);
+	اگر (!b) {
+		اگر (!(bmap_flags & BMAP_ALLOC)) {
+			اگر (bmap_flags & BMAP_سیٹ)
+				retval = EXT2_ET_سیٹ_BMAP_NO_IND;
+			جاؤ مکمل;
 		}
 
-		b = inode_bmap(inode, EXT2_DIND_BLOCK);
+		b = inode_bmap(inode, EXT2_DIND_بلاک);
 		b64 = b;
-		retval = ext2fs_alloc_block3(fs, b64, block_buf, &b64,
+		retval = ext2fs_alloc_block3(fs, b64, بلاک_buf, &b64,
 					     &alloc_ctx);
 		b = b64;
-		if (retval)
-			goto done;
-		inode_bmap(inode, EXT2_TIND_BLOCK) = b;
-		blocks_alloc++;
+		اگر (retval)
+			جاؤ مکمل;
+		inode_bmap(inode, EXT2_TIND_بلاک) = b;
+		بلاکیں_alloc++;
 	}
-	retval = block_tind_bmap(fs, bmap_flags, b, block_buf,
-				 &blocks_alloc, block, &blk32);
-	if (retval == 0)
+	retval = بلاک_tind_bmap(fs, bmap_flags, b, بلاک_buf,
+				 &بلاکیں_alloc, بلاک, &blk32);
+	اگر (retval == 0)
 		*phys_blk = blk32;
-done:
-	if (*phys_blk && retval == 0 && (bmap_flags & BMAP_ZERO))
-		retval = ext2fs_zero_blocks2(fs, *phys_blk, 1, NULL, NULL);
-	if (buf)
+مکمل:
+	اگر (*phys_blk && retval == 0 && (bmap_flags & BMAP_ZERO))
+		retval = ext2fs_zero_blocks2(fs, *phys_blk, 1, تہی, تہی);
+	اگر (buf)
 		ext2fs_free_mem(&buf);
-	if (handle)
+	اگر (handle)
 		ext2fs_extent_free(handle);
-	if ((retval == 0) && (blocks_alloc || inode_dirty)) {
-		ext2fs_iblk_add_blocks(fs, inode, blocks_alloc);
+	اگر ((retval == 0) && (بلاکیں_alloc || inode_dirty)) {
+		ext2fs_iblk_جوڑو_بلاکیں(fs, inode, بلاکیں_alloc);
 		retval = ext2fs_write_inode(fs, ino, inode);
 	}
-	return retval;
+	واپس retval;
 }
 
-errcode_t ext2fs_bmap(ext2_filsys fs, ext2_ino_t ino, struct ext2_inode *inode,
-		      char *block_buf, int bmap_flags, blk_t block,
+errcode_t ext2fs_bmap(ext2_filsys fs, ext2_ino_t ino, ساخت ext2_inode *inode,
+		      حرف *بلاک_buf, صحیح bmap_flags, blk_t بلاک,
 		      blk_t *phys_blk)
 {
 	errcode_t ret;
 	blk64_t	ret_blk = *phys_blk;
 
-	ret = ext2fs_bmap2(fs, ino, inode, block_buf, bmap_flags, block,
+	ret = ext2fs_bmap2(fs, ino, inode, بلاک_buf, bmap_flags, بلاک,
 			    0, &ret_blk);
-	if (ret)
-		return ret;
-	if (ret_blk >= ((long long) 1 << 32))
-		return EOVERFLOW;
+	اگر (ret)
+		واپس ret;
+	اگر (ret_blk >= ((طویل طویل) 1 << 32))
+		واپس EOVERFLOW;
 	*phys_blk = ret_blk;
-	return 0;
+	واپس 0;
 }

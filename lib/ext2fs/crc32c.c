@@ -28,120 +28,120 @@
  * This source code is licensed under the GNU General Public License,
  * Version 2.  See the file COPYING for more details.
  */
-#include "config.h"
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#define min(x, y)		((x) > (y) ? (y) : (x))
-#define __ALIGN_KERNEL_MASK(x, mask)	(((x) + (mask)) & ~(mask))
-#define __ALIGN_KERNEL(x, a)	__ALIGN_KERNEL_MASK(x, (__typeof__(x))(a) - 1)
-#define ALIGN(x, a)		__ALIGN_KERNEL((x), (a))
-#define PTR_ALIGN(p, a)		((__typeof__(p))ALIGN((unsigned long)(p), (a)))
-#include "crc32c_defs.h"
+#شامل "config.h"
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <stdio.h>
+#تعریف_کرو min(x, y)		((x) > (y) ? (y) : (x))
+#تعریف_کرو __ALIGN_KERNEL_MASK(x, نقاب)	(((x) + (نقاب)) & ~(نقاب))
+#تعریف_کرو __ALIGN_KERNEL(x, a)	__ALIGN_KERNEL_MASK(x, (__typeof__(x))(a) - 1)
+#تعریف_کرو ALIGN(x, a)		__ALIGN_KERNEL((x), (a))
+#تعریف_کرو PTR_ALIGN(p, a)		((__typeof__(p))ALIGN((غیرعلامتی طویل)(p), (a)))
+#شامل "crc32c_defs.h"
 
-#include "ext2fs.h"
-#ifdef WORDS_BIGENDIAN
-#define __constant_cpu_to_le32(x) ___constant_swab32((x))
-#define __constant_cpu_to_be32(x) (x)
-#define __be32_to_cpu(x) (x)
-#define __cpu_to_be32(x) (x)
-#define __cpu_to_le32(x) (ext2fs_cpu_to_le32((x)))
-#define __le32_to_cpu(x) (ext2fs_le32_to_cpu((x)))
-#else
-#define __constant_cpu_to_le32(x) (x)
-#define __constant_cpu_to_be32(x) ___constant_swab32((x))
-#define __be32_to_cpu(x) (ext2fs_be32_to_cpu((x)))
-#define __cpu_to_be32(x) (ext2fs_cpu_to_be32((x)))
-#define __cpu_to_le32(x) (x)
-#define __le32_to_cpu(x) (x)
-#endif
+#شامل "ext2fs.h"
+#اگر_تعریف_شدہ الفاظ_BIGENDIAN
+#تعریف_کرو __constant_cpu_to_le32(x) ___constant_swab32((x))
+#تعریف_کرو __constant_cpu_to_be32(x) (x)
+#تعریف_کرو __be32_to_cpu(x) (x)
+#تعریف_کرو __cpu_to_be32(x) (x)
+#تعریف_کرو __cpu_to_le32(x) (ext2fs_cpu_مقصد_le32((x)))
+#تعریف_کرو __le32_to_cpu(x) (ext2fs_le32_مقصد_cpu((x)))
+#ورنہ
+#تعریف_کرو __constant_cpu_to_le32(x) (x)
+#تعریف_کرو __constant_cpu_to_be32(x) ___constant_swab32((x))
+#تعریف_کرو __be32_to_cpu(x) (ext2fs_be32_مقصد_cpu((x)))
+#تعریف_کرو __cpu_to_be32(x) (ext2fs_cpu_مقصد_be32((x)))
+#تعریف_کرو __cpu_to_le32(x) (x)
+#تعریف_کرو __le32_to_cpu(x) (x)
+#اگر_ختم
 
-#if CRC_LE_BITS > 8
+#اگر چکری_جانچ_LE_بٹ > 8
 # define tole(x) __constant_cpu_to_le32(x)
-#else
+#ورنہ
 # define tole(x) (x)
-#endif
+#اگر_ختم
 
-#if CRC_BE_BITS > 8
+#اگر چکری_جانچ_BE_بٹ > 8
 # define tobe(x) __constant_cpu_to_be32(x)
-#else
+#ورنہ
 # define tobe(x) (x)
-#endif
+#اگر_ختم
 
-#include "crc32c_table.h"
+#شامل "crc32c_table.h"
 
-#if CRC_LE_BITS > 8 || CRC_BE_BITS > 8
+#اگر چکری_جانچ_LE_بٹ > 8 || چکری_جانچ_BE_بٹ > 8
 
-#if CRC_LE_BITS < 64 && CRC_BE_BITS < 64
-#define CRC_INLINE inline
-#else
-#define CRC_INLINE
-#endif
+#اگر چکری_جانچ_LE_بٹ < 64 && چکری_جانچ_BE_بٹ < 64
+#تعریف_کرو چکری_جانچ_INLINE اندرونی
+#ورنہ
+#تعریف_کرو چکری_جانچ_INLINE
+#اگر_ختم
 
 /* implements slicing-by-4 or slicing-by-8 algorithm */
-static CRC_INLINE uint32_t
-crc32_body(uint32_t crc, unsigned char const *buf, size_t len,
-	   const uint32_t (*tab)[256])
+ساکن چکری_جانچ_INLINE uint32_t
+چکری_جانچ_32_body(uint32_t چکری_جانچ, غیرعلامتی حرف ثابت *buf, size_t len,
+	   ثابت uint32_t (*tab)[256])
 {
-# ifndef WORDS_BIGENDIAN
-#  define DO_CRC(x) (crc = t0[(crc ^ (x)) & 255] ^ (crc >> 8))
+# ifndef الفاظ_BIGENDIAN
+#  define DO_چکری_جانچ(x) (چکری_جانچ = t0[(چکری_جانچ ^ (x)) & 255] ^ (چکری_جانچ >> 8))
 #  define DO_CRC4 (t3[(q) & 255] ^ t2[(q >> 8) & 255] ^ \
 		   t1[(q >> 16) & 255] ^ t0[(q >> 24) & 255])
 #  define DO_CRC8 (t7[(q) & 255] ^ t6[(q >> 8) & 255] ^ \
 		   t5[(q >> 16) & 255] ^ t4[(q >> 24) & 255])
-# else
-#  define DO_CRC(x) (crc = t0[((crc >> 24) ^ (x)) & 255] ^ (crc << 8))
+# ورنہ
+#  define DO_چکری_جانچ(x) (چکری_جانچ = t0[((چکری_جانچ >> 24) ^ (x)) & 255] ^ (چکری_جانچ << 8))
 #  define DO_CRC4 (t0[(q) & 255] ^ t1[(q >> 8) & 255] ^ \
 		   t2[(q >> 16) & 255] ^ t3[(q >> 24) & 255])
 #  define DO_CRC8 (t4[(q) & 255] ^ t5[(q >> 8) & 255] ^ \
 		   t6[(q >> 16) & 255] ^ t7[(q >> 24) & 255])
 # endif
-	const uint32_t *b;
+	ثابت uint32_t *b;
 	size_t rem_len;
-	const uint32_t *t0 = tab[0], *t1 = tab[1], *t2 = tab[2], *t3 = tab[3];
-	const uint32_t *t4 = tab[4], *t5 = tab[5], *t6 = tab[6], *t7 = tab[7];
+	ثابت uint32_t *t0 = tab[0], *t1 = tab[1], *t2 = tab[2], *t3 = tab[3];
+	ثابت uint32_t *t4 = tab[4], *t5 = tab[5], *t6 = tab[6], *t7 = tab[7];
 	uint32_t q;
 
 	/* Align it */
-	if (unlikely((uintptr_t)buf & 3 && len)) {
-		do {
-			DO_CRC(*buf++);
-		} while ((--len) && ((uintptr_t)buf)&3);
+	اگر (unlikely((uintptr_t)buf & 3 && len)) {
+		کرو {
+			DO_چکری_جانچ(*buf++);
+		} جب ((--len) && ((uintptr_t)buf)&3);
 	}
 
-# if CRC_LE_BITS == 32
+# اگر چکری_جانچ_LE_بٹ == 32
 	rem_len = len & 3;
 	len = len >> 2;
-# else
+# ورنہ
 	rem_len = len & 7;
 	len = len >> 3;
 # endif
 
-	b = (const uint32_t *)buf;
-	for (--b; len; --len) {
-		q = crc ^ *++b; /* use pre increment for speed */
-# if CRC_LE_BITS == 32
-		crc = DO_CRC4;
-# else
-		crc = DO_CRC8;
+	b = (ثابت uint32_t *)buf;
+	برائے (--b; len; --len) {
+		q = چکری_جانچ ^ *++b; /* use pre increment for speed */
+# اگر چکری_جانچ_LE_بٹ == 32
+		چکری_جانچ = DO_CRC4;
+# ورنہ
+		چکری_جانچ = DO_CRC8;
 		q = *++b;
-		crc ^= DO_CRC4;
+		چکری_جانچ ^= DO_CRC4;
 # endif
 	}
 	len = rem_len;
 	/* And the last few bytes */
-	if (len) {
-		const uint8_t *p = (const uint8_t *)(b + 1) - 1;
-		do {
-			DO_CRC(*++p); /* use pre increment for speed */
-		} while (--len);
+	اگر (len) {
+		ثابت uint8_t *p = (ثابت uint8_t *)(b + 1) - 1;
+		کرو {
+			DO_چکری_جانچ(*++p); /* use pre increment for speed */
+		} جب (--len);
 	}
-	return crc;
-#undef DO_CRC
-#undef DO_CRC4
-#undef DO_CRC8
+	واپس چکری_جانچ;
+#تعریف_منسوخ DO_چکری_جانچ
+#تعریف_منسوخ DO_CRC4
+#تعریف_منسوخ DO_CRC8
 }
-#endif
+#اگر_ختم
 
 /**
  * crc32_le() - Calculate bitwise little-endian Ethernet AUTODIN II CRC32
@@ -150,48 +150,48 @@ crc32_body(uint32_t crc, unsigned char const *buf, size_t len,
  * @p: pointer to buffer over which CRC is run
  * @len: length of buffer @p
  */
-static inline uint32_t crc32_le_generic(uint32_t crc, unsigned char const *p,
-					size_t len, const uint32_t (*tab)[256],
-					uint32_t polynomial EXT2FS_ATTR((unused)))
+ساکن اندرونی uint32_t چکری_جانچ_32_le_generic(uint32_t چکری_جانچ, غیرعلامتی حرف ثابت *p,
+					size_t len, ثابت uint32_t (*tab)[256],
+					uint32_t polynomial EXT2FS_ATTR((غیر_مستعمل)))
 {
-#if CRC_LE_BITS == 1
-	int i;
-	while (len--) {
-		crc ^= *p++;
-		for (i = 0; i < 8; i++)
-			crc = (crc >> 1) ^ ((crc & 1) ? polynomial : 0);
+#اگر چکری_جانچ_LE_بٹ == 1
+	صحیح i;
+	جب (len--) {
+		چکری_جانچ ^= *p++;
+		برائے (i = 0; i < 8; i++)
+			چکری_جانچ = (چکری_جانچ >> 1) ^ ((چکری_جانچ & 1) ? polynomial : 0);
 	}
-# elif CRC_LE_BITS == 2
-	while (len--) {
-		crc ^= *p++;
-		crc = (crc >> 2) ^ tab[0][crc & 3];
-		crc = (crc >> 2) ^ tab[0][crc & 3];
-		crc = (crc >> 2) ^ tab[0][crc & 3];
-		crc = (crc >> 2) ^ tab[0][crc & 3];
+# elif چکری_جانچ_LE_بٹ == 2
+	جب (len--) {
+		چکری_جانچ ^= *p++;
+		چکری_جانچ = (چکری_جانچ >> 2) ^ tab[0][چکری_جانچ & 3];
+		چکری_جانچ = (چکری_جانچ >> 2) ^ tab[0][چکری_جانچ & 3];
+		چکری_جانچ = (چکری_جانچ >> 2) ^ tab[0][چکری_جانچ & 3];
+		چکری_جانچ = (چکری_جانچ >> 2) ^ tab[0][چکری_جانچ & 3];
 	}
-# elif CRC_LE_BITS == 4
-	while (len--) {
-		crc ^= *p++;
-		crc = (crc >> 4) ^ tab[0][crc & 15];
-		crc = (crc >> 4) ^ tab[0][crc & 15];
+# elif چکری_جانچ_LE_بٹ == 4
+	جب (len--) {
+		چکری_جانچ ^= *p++;
+		چکری_جانچ = (چکری_جانچ >> 4) ^ tab[0][چکری_جانچ & 15];
+		چکری_جانچ = (چکری_جانچ >> 4) ^ tab[0][چکری_جانچ & 15];
 	}
-# elif CRC_LE_BITS == 8
+# elif چکری_جانچ_LE_بٹ == 8
 	/* aka Sarwate algorithm */
-	while (len--) {
-		crc ^= *p++;
-		crc = (crc >> 8) ^ tab[0][crc & 255];
+	جب (len--) {
+		چکری_جانچ ^= *p++;
+		چکری_جانچ = (چکری_جانچ >> 8) ^ tab[0][چکری_جانچ & 255];
 	}
-# else
-	crc = __cpu_to_le32(crc);
-	crc = crc32_body(crc, p, len, tab);
-	crc = __le32_to_cpu(crc);
-#endif
-	return crc;
+# ورنہ
+	چکری_جانچ = __cpu_to_le32(چکری_جانچ);
+	چکری_جانچ = چکری_جانچ_32_body(چکری_جانچ, p, len, tab);
+	چکری_جانچ = __le32_to_cpu(چکری_جانچ);
+#اگر_ختم
+	واپس چکری_جانچ;
 }
 
-uint32_t ext2fs_crc32c_le(uint32_t crc, unsigned char const *p, size_t len)
+uint32_t ext2fs_crc32c_le(uint32_t چکری_جانچ, غیرعلامتی حرف ثابت *p, size_t len)
 {
-	return crc32_le_generic(crc, p, len, crc32ctable_le, CRC32C_POLY_LE);
+	واپس چکری_جانچ_32_le_generic(چکری_جانچ, p, len, crc32ctable_le, چکری_جانچ_32_C_POLY_LE);
 }
 
 /**
@@ -201,53 +201,53 @@ uint32_t ext2fs_crc32c_le(uint32_t crc, unsigned char const *p, size_t len)
  * @p: pointer to buffer over which CRC is run
  * @len: length of buffer @p
  */
-static inline uint32_t crc32_be_generic(uint32_t crc, unsigned char const *p,
-					size_t len, const uint32_t (*tab)[256],
-					uint32_t polynomial EXT2FS_ATTR((unused)))
+ساکن اندرونی uint32_t چکری_جانچ_32_be_generic(uint32_t چکری_جانچ, غیرعلامتی حرف ثابت *p,
+					size_t len, ثابت uint32_t (*tab)[256],
+					uint32_t polynomial EXT2FS_ATTR((غیر_مستعمل)))
 {
-#if CRC_BE_BITS == 1
-	int i;
-	while (len--) {
-		crc ^= *p++ << 24;
-		for (i = 0; i < 8; i++)
-			crc =
-			    (crc << 1) ^ ((crc & 0x80000000) ? polynomial :
+#اگر چکری_جانچ_BE_بٹ == 1
+	صحیح i;
+	جب (len--) {
+		چکری_جانچ ^= *p++ << 24;
+		برائے (i = 0; i < 8; i++)
+			چکری_جانچ =
+			    (چکری_جانچ << 1) ^ ((چکری_جانچ & 0x80000000) ? polynomial :
 					  0);
 	}
-# elif CRC_BE_BITS == 2
-	while (len--) {
-		crc ^= *p++ << 24;
-		crc = (crc << 2) ^ tab[0][crc >> 30];
-		crc = (crc << 2) ^ tab[0][crc >> 30];
-		crc = (crc << 2) ^ tab[0][crc >> 30];
-		crc = (crc << 2) ^ tab[0][crc >> 30];
+# elif چکری_جانچ_BE_بٹ == 2
+	جب (len--) {
+		چکری_جانچ ^= *p++ << 24;
+		چکری_جانچ = (چکری_جانچ << 2) ^ tab[0][چکری_جانچ >> 30];
+		چکری_جانچ = (چکری_جانچ << 2) ^ tab[0][چکری_جانچ >> 30];
+		چکری_جانچ = (چکری_جانچ << 2) ^ tab[0][چکری_جانچ >> 30];
+		چکری_جانچ = (چکری_جانچ << 2) ^ tab[0][چکری_جانچ >> 30];
 	}
-# elif CRC_BE_BITS == 4
-	while (len--) {
-		crc ^= *p++ << 24;
-		crc = (crc << 4) ^ tab[0][crc >> 28];
-		crc = (crc << 4) ^ tab[0][crc >> 28];
+# elif چکری_جانچ_BE_بٹ == 4
+	جب (len--) {
+		چکری_جانچ ^= *p++ << 24;
+		چکری_جانچ = (چکری_جانچ << 4) ^ tab[0][چکری_جانچ >> 28];
+		چکری_جانچ = (چکری_جانچ << 4) ^ tab[0][چکری_جانچ >> 28];
 	}
-# elif CRC_BE_BITS == 8
-	while (len--) {
-		crc ^= *p++ << 24;
-		crc = (crc << 8) ^ tab[0][crc >> 24];
+# elif چکری_جانچ_BE_بٹ == 8
+	جب (len--) {
+		چکری_جانچ ^= *p++ << 24;
+		چکری_جانچ = (چکری_جانچ << 8) ^ tab[0][چکری_جانچ >> 24];
 	}
-# else
-	crc = __cpu_to_be32(crc);
-	crc = crc32_body(crc, p, len, tab);
-	crc = __be32_to_cpu(crc);
+# ورنہ
+	چکری_جانچ = __cpu_to_be32(چکری_جانچ);
+	چکری_جانچ = چکری_جانچ_32_body(چکری_جانچ, p, len, tab);
+	چکری_جانچ = __be32_to_cpu(چکری_جانچ);
 # endif
-	return crc;
+	واپس چکری_جانچ;
 }
 
-uint32_t ext2fs_crc32_be(uint32_t crc, unsigned char const *p, size_t len)
+uint32_t ext2fs_چکری_جانچ_32_be(uint32_t چکری_جانچ, غیرعلامتی حرف ثابت *p, size_t len)
 {
-	return crc32_be_generic(crc, p, len, crc32table_be, CRCPOLY_BE);
+	واپس چکری_جانچ_32_be_generic(چکری_جانچ, p, len, crc32table_be, CRCPOLY_BE);
 }
 
-#ifdef UNITTEST
-static uint8_t test_buf[] = {
+#اگر_تعریف_شدہ UNITTEST
+ساکن uint8_t test_buf[] = {
 	0xd9, 0xd7, 0x6a, 0x13, 0x3a, 0xb1, 0x05, 0x48,
 	0xda, 0xad, 0x14, 0xbd, 0x03, 0x3a, 0x58, 0x5e,
 	0x6e, 0xd1, 0x56, 0xc9, 0x2e, 0xc4, 0xcb, 0x6b,
@@ -762,12 +762,12 @@ static uint8_t test_buf[] = {
 	0x02, 0x21, 0x16, 0x8f, 0x0f, 0xdf, 0xa5, 0xf0,
 };
 
-static struct crc_test {
-	uint32_t crc;		/* random starting crc */
-	uint32_t start;		/* random offset in buf */
-	uint32_t length;	/* random length of test */
+ساکن ساخت چکری_جانچ_test {
+	uint32_t چکری_جانچ;		/* random starting crc */
+	uint32_t آغاز;		/* random offset in buf */
+	uint32_t لمبائی;	/* random length of test */
 	uint32_t crc32c_le;	/* expected crc32c_le result */
-	uint32_t crc32_be;	/* expected crc32_be result */
+	uint32_t چکری_جانچ_32_be;	/* expected crc32_be result */
 } test[] = {
 	{0xffffffff, 0x00000000, 0x00001000, 0x13934bef, 0xd8ddcdc3},
 	{0xfe7328ea, 0x00000763, 0x00000717, 0xed2c0d70, 0xc863aef8},
@@ -900,39 +900,39 @@ static struct crc_test {
 	{0, 0, 0, 0, 0},
 };
 
-static int test_crc32c(void)
+ساکن صحیح test_crc32c(خالی)
 {
-	struct crc_test *t = test;
-	int failures = 0;
+	ساخت چکری_جانچ_test *t = test;
+	صحیح failures = 0;
 
-	while (t->length) {
+	جب (t->لمبائی) {
 		uint32_t be, le;
-		le = ext2fs_crc32c_le(t->crc, test_buf + t->start, t->length);
-		be = ext2fs_crc32_be(t->crc, test_buf + t->start, t->length);
-		if (le != t->crc32c_le) {
-			printf("Test %d LE fails, %x != %x\n",
-			       (int) (t - test), le, t->crc32c_le);
+		le = ext2fs_crc32c_le(t->چکری_جانچ, test_buf + t->آغاز, t->لمبائی);
+		be = ext2fs_چکری_جانچ_32_be(t->چکری_جانچ, test_buf + t->آغاز, t->لمبائی);
+		اگر (le != t->crc32c_le) {
+			لکھو("Test %d LE fails, %x != %x\n",
+			       (صحیح) (t - test), le, t->crc32c_le);
 			failures++;
 		}
-		if (be != t->crc32_be) {
-			printf("Test %d BE fails, %x != %x\n",
-			       (int) (t - test), be, t->crc32_be);
+		اگر (be != t->چکری_جانچ_32_be) {
+			لکھو("Test %d BE fails, %x != %x\n",
+			       (صحیح) (t - test), be, t->چکری_جانچ_32_be);
 			failures++;
 		}
 		t++;
 	}
 
-	return failures;
+	واپس failures;
 }
 
-int main(int argc, char *argv[])
+صحیح مین(صحیح argc, حرف *argv[])
 {
-	int ret;
+	صحیح ret;
 
 	ret = test_crc32c();
-	if (!ret)
-		printf("No failures.\n");
+	اگر (!ret)
+		لکھو("No failures.\n");
 
-	return ret;
+	واپس ret;
 }
-#endif /* UNITTEST */
+#اگر_ختم /* UNITTEST */

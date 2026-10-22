@@ -9,49 +9,49 @@
  * General Public License, version 2.
  * %End-Header%
  */
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
-#define _XOPEN_SOURCE 600
-#define _DARWIN_C_SOURCE
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#endif
+#اگر !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#تعریف_کرو XOPEN_ماخذ 600
+#تعریف_کرو DARWIN_C_ماخذ
+#اگر_غیر_تعریف_شدہ GNU_ماخذ
+#تعریف_کرو GNU_ماخذ
+#اگر_ختم
+#اگر_ختم
 
-#include "config.h"
-#include <stdlib.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef HAVE_SYS_PRCTL_H
-#include <sys/prctl.h>
-#else
-#define PR_GET_DUMPABLE 3
-#endif
-#if (!defined(HAVE_PRCTL) && defined(linux))
-#include <sys/syscall.h>
-#endif
+#شامل "config.h"
+#شامل <stdlib.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
+#اگر_ختم
+#اگر_تعریف_شدہ HAVE_SYS_PRCTL_H
+#شامل <sys/prctl.h>
+#ورنہ
+#تعریف_کرو PR_GET_DUMPABLE 3
+#اگر_ختم
+#اگر (!defined(HAVE_PRCTL) && defined(linux))
+#شامل <sys/syscall.h>
+#اگر_ختم
 
-#include "ext2fs.h"
+#شامل "ext2fs.h"
 
-char *ext2fs_safe_getenv(const char *arg)
+حرف *ext2fs_محفوظ_getenv(ثابت حرف *arg)
 {
-	if ((getuid() != geteuid()) || (getgid() != getegid()))
-		return NULL;
-#ifdef HAVE_PRCTL
-	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#else
-#if (defined(linux) && defined(SYS_prctl))
-	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#endif
-#endif
+	اگر ((getuid() != geteuid()) || (getgid() != getegid()))
+		واپس تہی;
+#اگر_تعریف_شدہ HAVE_PRCTL
+	اگر (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		واپس تہی;
+#ورنہ
+#اگر (defined(linux) && defined(SYS_prctl))
+	اگر (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		واپس تہی;
+#اگر_ختم
+#اگر_ختم
 
-#if defined(HAVE_SECURE_GETENV)
-	return secure_getenv(arg);
-#elif defined(HAVE___SECURE_GETENV)
-	return __secure_getenv(arg);
-#else
-	return getenv(arg);
-#endif
+#اگر defined(HAVE_SECURE_GETENV)
+	واپس secure_getenv(arg);
+#وگرنہ_اگر defined(HAVE___SECURE_GETENV)
+	واپس __secure_getenv(arg);
+#ورنہ
+	واپس getenv(arg);
+#اگر_ختم
 }
