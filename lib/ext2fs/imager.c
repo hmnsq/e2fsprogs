@@ -13,45 +13,45 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#إذا HAVE_ERRNO_H
+#ضمن <errno.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#ضمن <fcntl.h>
+#ضمن <time.h>
+#إذا HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
 #ifndef HAVE_TYPE_SSIZE_T
-typedef int ssize_t;
+تعريفنوع صحيح ssize_t;
 #endif
 
 /*
  * This function returns 1 if the specified block is all zeros
  */
-static int check_zero_block(char *buf, int blocksize)
+ساكن صحيح check_zero_block(حرف *buf, صحيح blocksize)
 {
-	char	*cp = buf;
-	int	left = blocksize;
+	حرف	*cp = buf;
+	صحيح	چەپ = blocksize;
 
-	while (left > 0) {
-		if (*cp++)
-			return 0;
-		left--;
+	طالما (چەپ > 0) {
+		إذا (*cp++)
+			أرجع 0;
+		چەپ--;
 	}
-	return 1;
+	أرجع 1;
 }
 
 /*
@@ -59,78 +59,78 @@ static int check_zero_block(char *buf, int blocksize)
  */
 #define BUF_BLOCKS	32
 
-errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_inode_write(ext2_filsys fs, صحيح fd, صحيح flags)
 {
 	dgrp_t		group;
-	ssize_t		left, c, d;
-	char		*buf, *cp;
+	ssize_t		چەپ, c, d;
+	حرف		*buf, *cp;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 	ext2_loff_t	r;
 
 	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	إذا (!buf)
+		أرجع ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
+	لكل (group = 0; group < fs->group_desc_ژماردن; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
+		إذا (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
-			goto errout;
+			اذهب errout;
 		}
-		left = fs->inode_blocks_per_group;
-		if ((blk < fs->super->s_first_data_block) ||
-		    (blk + left - 1 >= ext2fs_blocks_count(fs->super))) {
+		چەپ = fs->inode_blocks_per_group;
+		إذا ((blk < fs->super->s_first_data_block) ||
+		    (blk + چەپ - 1 >= ext2fs_blocks_ژماردن(fs->super))) {
 			retval = EXT2_ET_GDESC_BAD_INODE_TABLE;
-			goto errout;
+			اذهب errout;
 		}
-		while (left) {
+		طالما (چەپ) {
 			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
+			إذا (c > چەپ)
+				c = چەپ;
 			retval = io_channel_read_blk64(fs->io, blk, c, buf);
-			if (retval)
-				goto errout;
+			إذا (retval)
+				اذهب errout;
 			cp = buf;
-			while (c) {
-				if (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
+			طالما (c) {
+				إذا (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
 					d = c;
-					goto skip_sparse;
+					اذهب skip_sparse;
 				}
 				/* Skip zero blocks */
-				if (check_zero_block(cp, fs->blocksize)) {
+				إذا (check_zero_block(cp, fs->blocksize)) {
 					c--;
 					blk++;
-					left--;
+					چەپ--;
 					cp += fs->blocksize;
 					r = ext2fs_llseek(fd, fs->blocksize,
 							  SEEK_CUR);
-					if (r < 0) {
+					إذا (r < 0) {
 						retval = errno;
-						goto errout;
+						اذهب errout;
 					}
-					continue;
+					استمر;
 				}
 				/* Find non-zero blocks */
-				for (d = 1; d < c; d++) {
-					if (check_zero_block(cp +
+				لكل (d = 1; d < c; d++) {
+					إذا (check_zero_block(cp +
 							     d * fs->blocksize,
 							     fs->blocksize))
-						break;
+						اكسر;
 				}
 			skip_sparse:
-				actual = write(fd, cp, d * fs->blocksize);
-				if (actual == -1) {
+				actual = اكتب(fd, cp, d * fs->blocksize);
+				إذا (actual == -1) {
 					retval = errno;
-					goto errout;
+					اذهب errout;
 				}
-				if (actual != d * fs->blocksize) {
+				إذا (actual != d * fs->blocksize) {
 					retval = EXT2_ET_SHORT_WRITE;
-					goto errout;
+					اذهب errout;
 				}
 				blk += d;
-				left -= d;
+				چەپ -= d;
 				cp += d * fs->blocksize;
 				c -= d;
 			}
@@ -139,89 +139,89 @@ errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	حرر(buf);
+	أرجع retval;
 }
 
 /*
  * Read in the inode table and stuff it into place
  */
-errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_inode_read(ext2_filsys fs, صحيح fd,
+				  صحيح flags EXT2FS_ATTR((unused)))
 {
 	dgrp_t		group;
-	ssize_t		c, left;
-	char		*buf;
+	ssize_t		c, چەپ;
+	حرف		*buf;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 
 	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	إذا (!buf)
+		أرجع ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
+	لكل (group = 0; group < fs->group_desc_ژماردن; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
+		إذا (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
-			goto errout;
+			اذهب errout;
 		}
-		left = fs->inode_blocks_per_group;
-		while (left) {
+		چەپ = fs->inode_blocks_per_group;
+		طالما (چەپ) {
 			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
-			actual = read(fd, buf, fs->blocksize * c);
-			if (actual == -1) {
+			إذا (c > چەپ)
+				c = چەپ;
+			actual = اقرأ(fd, buf, fs->blocksize * c);
+			إذا (actual == -1) {
 				retval = errno;
-				goto errout;
+				اذهب errout;
 			}
-			if (actual != fs->blocksize * c) {
+			إذا (actual != fs->blocksize * c) {
 				retval = EXT2_ET_SHORT_READ;
-				goto errout;
+				اذهب errout;
 			}
 			retval = io_channel_write_blk64(fs->io, blk, c, buf);
-			if (retval)
-				goto errout;
+			إذا (retval)
+				اذهب errout;
 
 			blk += c;
-			left -= c;
+			چەپ -= c;
 		}
 	}
 	retval = ext2fs_flush_icache(fs);
 
 errout:
-	free(buf);
-	return retval;
+	حرر(buf);
+	أرجع retval;
 }
 
 /*
  * Write out superblock and group descriptors
  */
-errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
-				   int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_write(ext2_filsys fs, صحيح fd,
+				   صحيح flags EXT2FS_ATTR((unused)))
 {
-	char		*buf, *cp;
+	حرف		*buf, *cp;
 	ssize_t		actual;
 	errcode_t	retval;
-#ifdef WORDS_BIGENDIAN
-	unsigned int	groups_per_block;
-	struct		ext2_group_desc *gdp;
-	int		j;
+#ifdef وشەکان_BIGENDIAN
+	unsigned صحيح	groups_per_block;
+	بنية		ext2_group_desc *gdp;
+	صحيح		j;
 #endif
 
-	if (fs->group_desc == NULL)
-		return EXT2_ET_NO_GDESC;
+	إذا (fs->group_desc == عدم)
+		أرجع EXT2_ET_NO_GDESC;
 
 	buf = malloc(fs->blocksize);
-	if (!buf)
-		return ENOMEM;
+	إذا (!buf)
+		أرجع ENOMEM;
 
 	/*
 	 * Write out the superblock
 	 */
 	memset(buf, 0, fs->blocksize);
-#ifdef WORDS_BIGENDIAN
+#ifdef وشەکان_BIGENDIAN
 	/*
 	 * We're writing out superblock so let's convert
 	 * it to little endian and then back if needed
@@ -229,92 +229,92 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 	ext2fs_swap_super(fs->super);
 	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
 	ext2fs_swap_super(fs->super);
-#else
+#وإلا
 	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
 #endif
-	actual = write(fd, buf, fs->blocksize);
-	if (actual == -1) {
+	actual = اكتب(fd, buf, fs->blocksize);
+	إذا (actual == -1) {
 		retval = errno;
-		goto errout;
+		اذهب errout;
 	}
-	if (actual != (ssize_t) fs->blocksize) {
+	إذا (actual != (ssize_t) fs->blocksize) {
 		retval = EXT2_ET_SHORT_WRITE;
-		goto errout;
+		اذهب errout;
 	}
 
 	/*
 	 * Now write out the block group descriptors
 	 */
 
-	cp = (char *) fs->group_desc;
+	cp = (حرف *) fs->group_desc;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef وشەکان_BIGENDIAN
 	/*
 	 * Convert group descriptors to little endian and back
 	 * if needed
 	 */
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
+	لكل (j=0; j < groups_per_block*fs->desc_blocks; j++) {
 		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
+		إذا (gdp)
 			ext2fs_swap_group_desc2(fs, gdp);
 	}
 #endif
 
-	actual = write(fd, cp, (ssize_t)fs->blocksize * fs->desc_blocks);
+	actual = اكتب(fd, cp, (ssize_t)fs->blocksize * fs->desc_blocks);
 
 
-#ifdef WORDS_BIGENDIAN
+#ifdef وشەکان_BIGENDIAN
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
+	لكل (j=0; j < groups_per_block*fs->desc_blocks; j++) {
 		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
+		إذا (gdp)
 			ext2fs_swap_group_desc2(fs, gdp);
 	}
 #endif
 
-	if (actual == -1) {
+	إذا (actual == -1) {
 		retval = errno;
-		goto errout;
+		اذهب errout;
 	}
-	if (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
+	إذا (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
 		retval = EXT2_ET_SHORT_WRITE;
-		goto errout;
+		اذهب errout;
 	}
 
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	حرر(buf);
+	أرجع retval;
 }
 
 /*
  * Read the superblock and group descriptors and overwrite them.
  */
-errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_read(ext2_filsys fs, صحيح fd,
+				  صحيح flags EXT2FS_ATTR((unused)))
 {
-	char		*buf;
+	حرف		*buf;
 	ssize_t		actual, size;
 	errcode_t	retval;
 
 	size = (ssize_t)fs->blocksize * (fs->desc_blocks + 1);
 	buf = malloc(size);
-	if (!buf)
-		return ENOMEM;
+	إذا (!buf)
+		أرجع ENOMEM;
 
 	/*
 	 * Read it all in.
 	 */
-	actual = read(fd, buf, size);
-	if (actual == -1) {
+	actual = اقرأ(fd, buf, size);
+	إذا (actual == -1) {
 		retval = errno;
-		goto errout;
+		اذهب errout;
 	}
-	if (actual != size) {
+	إذا (actual != size) {
 		retval = EXT2_ET_SHORT_READ;
-		goto errout;
+		اذهب errout;
 	}
 
 	/*
@@ -328,143 +328,143 @@ errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	حرر(buf);
+	أرجع retval;
 }
 
 /*
  * Write the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, صحيح fd, صحيح flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	ssize_t			actual;
 	size_t			c;
 	__u64			itr, cnt, size, total_size;
-	char			buf[1024];
+	حرف			buf[1024];
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	إذا (flags & IMAGER_FLAG_INODEMAP) {
+		إذا (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			إذا (retval)
+				أرجع retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
+			fs->group_desc_ژماردن;
 		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
+	} وإلا {
+		إذا (!fs->block_map) {
 			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+			إذا (retval)
+				أرجع retval;
 		}
 		bmap = fs->block_map;
 		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super, fs->group_desc_count);
+		cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super, fs->group_desc_ژماردن);
 		size = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
 	}
-	total_size = size * fs->group_desc_count;
+	total_size = size * fs->group_desc_ژماردن;
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
+	طالما (cnt > 0) {
+		size = حجم(buf);
+		إذا (size > (cnt >> 3))
 			size = (cnt >> 3);
-		if (size == 0)
-			break;
+		إذا (size == 0)
+			اكسر;
 
 		retval = ext2fs_get_generic_bmap_range(bmap, itr,
 						       size << 3, buf);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 
-		actual = write(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		actual = اكتب(fd, buf, size);
+		إذا (actual == -1)
+			أرجع errno;
+		إذا (actual != (صحيح) size)
+			أرجع EXT2_ET_SHORT_READ;
 
 		itr += size << 3;
 		cnt -= size << 3;
 	}
 
 	size = total_size % fs->blocksize;
-	memset(buf, 0, sizeof(buf));
-	if (size) {
+	memset(buf, 0, حجم(buf));
+	إذا (size) {
 		size = fs->blocksize - size;
-		while (size) {
+		طالما (size) {
 			c = size;
-			if (c > (int) sizeof(buf))
-				c = sizeof(buf);
-			actual = write(fd, buf, c);
-			if (actual < 0)
-				return errno;
-			if ((size_t) actual != c)
-				return EXT2_ET_SHORT_WRITE;
+			إذا (c > (صحيح) حجم(buf))
+				c = حجم(buf);
+			actual = اكتب(fd, buf, c);
+			إذا (actual < 0)
+				أرجع errno;
+			إذا ((size_t) actual != c)
+				أرجع EXT2_ET_SHORT_WRITE;
 			size -= c;
 		}
 	}
-	return 0;
+	أرجع 0;
 }
 
 
 /*
  * Read the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, صحيح fd, صحيح flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	__u64			itr, cnt;
-	char			buf[1024];
-	unsigned int		size;
+	حرف			buf[1024];
+	unsigned صحيح		size;
 	ssize_t			actual;
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	إذا (flags & IMAGER_FLAG_INODEMAP) {
+		إذا (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			إذا (retval)
+				أرجع retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
+			fs->group_desc_ژماردن;
 		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
+	} وإلا {
+		إذا (!fs->block_map) {
 			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+			إذا (retval)
+				أرجع retval;
 		}
 		bmap = fs->block_map;
 		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_BLOCKS(fs->super, fs->group_desc_count);
+		cnt = EXT2_GROUPS_TO_BLOCKS(fs->super, fs->group_desc_ژماردن);
 		size = EXT2_BLOCKS_PER_GROUP(fs->super) / 8;
 	}
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
+	طالما (cnt > 0) {
+		size = حجم(buf);
+		إذا (size > (cnt >> 3))
 			size = (cnt >> 3);
-		if (size == 0)
-			break;
+		إذا (size == 0)
+			اكسر;
 
-		actual = read(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		actual = اقرأ(fd, buf, size);
+		إذا (actual == -1)
+			أرجع errno;
+		إذا (actual != (صحيح) size)
+			أرجع EXT2_ET_SHORT_READ;
 
 		retval = ext2fs_set_generic_bmap_range(bmap, itr,
 						       size << 3, buf);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 
 		itr += size << 3;
 		cnt -= size << 3;
 	}
-	return 0;
+	أرجع 0;
 }

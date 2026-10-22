@@ -17,33 +17,33 @@
 #define _LARGEFILE64_SOURCE
 #endif
 
-#include "config.h"
-#include <stdlib.h>
+#ضمن "config.h"
+#ضمن <stdlib.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
+#ضمن "ext2fsP.h"
 
-struct exit_data {
+بنية exit_data {
 	ext2_exit_fn func;
-	void *data;
+	فراغ *data;
 };
 
-static struct exit_data *items;
-static size_t nr_items;
+ساكن بنية exit_data *کاڵاکان;
+ساكن size_t nr_کاڵاکان;
 
-static void handle_exit(void)
+ساكن فراغ handle_exit(فراغ)
 {
-	struct exit_data *ed;
+	بنية exit_data *ed;
 
-	for (ed = items + nr_items - 1; ed >= items; ed--) {
-		if (ed->func == NULL)
-			continue;
+	لكل (ed = کاڵاکان + nr_کاڵاکان - 1; ed >= کاڵاکان; ed--) {
+		إذا (ed->func == عدم)
+			استمر;
 		ed->func(ed->data);
 	}
 
-	ext2fs_free_mem(&items);
-	nr_items = 0;
+	ext2fs_free_mem(&کاڵاکان);
+	nr_کاڵاکان = 0;
 }
 
 /*
@@ -51,66 +51,66 @@ static void handle_exit(void)
  * If you want this to be called during a signal exit, you must capture
  * the signal and call exit() yourself!
  */
-errcode_t ext2fs_add_exit_fn(ext2_exit_fn func, void *data)
+errcode_t ext2fs_add_exit_fn(ext2_exit_fn func, فراغ *data)
 {
-	struct exit_data *ed, *free_ed = NULL;
+	بنية exit_data *ed, *free_ed = عدم;
 	size_t x;
 	errcode_t ret;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	إذا (func == عدم)
+		أرجع EXT2_ET_INVALID_ARGUMENT;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == func && ed->data == data)
-			return EXT2_ET_FILE_EXISTS;
-		if (ed->func == NULL)
+	لكل (x = 0, ed = کاڵاکان; x < nr_کاڵاکان; x++, ed++) {
+		إذا (ed->func == func && ed->data == data)
+			أرجع EXT2_ET_FILE_EXISTS;
+		إذا (ed->func == عدم)
 			free_ed = ed;
 	}
 
-	if (free_ed) {
+	إذا (free_ed) {
 		free_ed->func = func;
 		free_ed->data = data;
-		return 0;
+		أرجع 0;
 	}
 
-	if (nr_items == 0) {
+	إذا (nr_کاڵاکان == 0) {
 		ret = atexit(handle_exit);
-		if (ret)
-			return ret;
+		إذا (ret)
+			أرجع ret;
 	}
 
-	ret = ext2fs_resize_mem(0, (nr_items + 1) * sizeof(struct exit_data),
-				&items);
-	if (ret)
-		return ret;
+	ret = ext2fs_resize_mem(0, (nr_کاڵاکان + 1) * حجم(بنية exit_data),
+				&کاڵاکان);
+	إذا (ret)
+		أرجع ret;
 
-	items[nr_items].func = func;
-	items[nr_items].data = data;
-	nr_items++;
+	کاڵاکان[nr_کاڵاکان].func = func;
+	کاڵاکان[nr_کاڵاکان].data = data;
+	nr_کاڵاکان++;
 
-	return 0;
+	أرجع 0;
 }
 
 /* Remove a function from the exit cleanup list. */
-errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, void *data)
+errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, فراغ *data)
 {
-	struct exit_data *ed;
+	بنية exit_data *ed;
 	size_t x;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	إذا (func == عدم)
+		أرجع EXT2_ET_INVALID_ARGUMENT;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == NULL)
-			return 0;
-		if (ed->func == func && ed->data == data) {
-			size_t sz = (nr_items - (x + 1)) *
-				    sizeof(struct exit_data);
+	لكل (x = 0, ed = کاڵاکان; x < nr_کاڵاکان; x++, ed++) {
+		إذا (ed->func == عدم)
+			أرجع 0;
+		إذا (ed->func == func && ed->data == data) {
+			size_t sz = (nr_کاڵاکان - (x + 1)) *
+				    حجم(بنية exit_data);
 			memmove(ed, ed + 1, sz);
-			memset(items + nr_items - 1, 0,
-			       sizeof(struct exit_data));
+			memset(کاڵاکان + nr_کاڵاکان - 1, 0,
+			       حجم(بنية exit_data));
 		}
 	}
 
-	return 0;
+	أرجع 0;
 }

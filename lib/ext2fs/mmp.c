@@ -16,56 +16,56 @@
 #define _DEFAULT_SOURCE	/* since glibc 2.20 _SVID_SOURCE is deprecated */
 #endif
 
-#include "config.h"
+#ضمن "config.h"
 
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
 #endif
-#include <sys/time.h>
+#ضمن <sys/time.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#ضمن <sys/types.h>
+#ضمن <sys/stat.h>
+#ضمن <fcntl.h>
 
-#include "ext2fs/ext2_fs.h"
-#include "ext2fs/ext2fs.h"
+#ضمن "ext2fs/ext2_fs.h"
+#ضمن "ext2fs/ext2fs.h"
 
 #ifndef O_DIRECT
 #define O_DIRECT 0
 #endif
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
+#إذا __GNUC_PREREQ (4, 6)
+#pragma GCC diagnostic پاڵنان
 #ifndef CONFIG_MMP
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 #endif
 
-errcode_t ext2fs_mmp_get_mem(ext2_filsys fs, void **ptr)
+errcode_t ext2fs_mmp_get_mem(ext2_filsys fs, فراغ **ptr)
 {
-	int align = ext2fs_get_dio_alignment(fs->mmp_fd);
+	صحيح align = ext2fs_get_dio_alignment(fs->mmp_fd);
 
-	return ext2fs_get_memalign(fs->blocksize, align, ptr);
+	أرجع ext2fs_get_memalign(fs->blocksize, align, ptr);
 }
 
-errcode_t ext2fs_mmp_read(ext2_filsys fs, blk64_t mmp_blk, void *buf)
+errcode_t ext2fs_mmp_read(ext2_filsys fs, blk64_t mmp_blk, فراغ *buf)
 {
 #ifdef CONFIG_MMP
-	struct mmp_struct *mmp_cmp;
+	بنية mmp_struct *mmp_cmp;
 	errcode_t retval = 0;
 
-	if ((mmp_blk <= fs->super->s_first_data_block) ||
-	    (mmp_blk >= ext2fs_blocks_count(fs->super)))
-		return EXT2_ET_MMP_BAD_BLOCK;
+	إذا ((mmp_blk <= fs->super->s_first_data_block) ||
+	    (mmp_blk >= ext2fs_blocks_ژماردن(fs->super)))
+		أرجع EXT2_ET_MMP_BAD_BLOCK;
 
 	/* ext2fs_open() reserves fd0,1,2 to avoid stdio collision, so checking
 	 * mmp_fd <= 0 is OK to validate that the fd is valid.  This opens its
 	 * own fd to read the MMP block to ensure that it is using O_DIRECT,
 	 * regardless of how the io_manager is doing reads, to avoid caching of
 	 * the MMP block by the io_manager or the VM.  It needs to be fresh. */
-	if (fs->mmp_fd <= 0) {
-		struct stat st;
-		int flags = O_RDONLY | O_DIRECT;
+	إذا (fs->mmp_fd <= 0) {
+		بنية stat st;
+		صحيح flags = O_RDONLY | O_DIRECT;
 
 		/*
 		 * There is no reason for using O_DIRECT if we're working with
@@ -73,96 +73,96 @@ errcode_t ext2fs_mmp_read(ext2_filsys fs, blk64_t mmp_blk, void *buf)
 		 * alignment when the device of the host file system has sector
 		 * size larger than blocksize of the fs we're working with.
 		 */
-		if (stat(fs->device_name, &st) == 0 &&
+		إذا (stat(fs->device_name, &st) == 0 &&
 		    S_ISREG(st.st_mode))
 			flags &= ~O_DIRECT;
 
 		fs->mmp_fd = open(fs->device_name, flags);
-		if (fs->mmp_fd < 0) {
+		إذا (fs->mmp_fd < 0) {
 			retval = EXT2_ET_MMP_OPEN_DIRECT;
-			goto out;
+			اذهب out;
 		}
 	}
 
-	if (fs->mmp_cmp == NULL) {
+	إذا (fs->mmp_cmp == عدم) {
 		retval = ext2fs_mmp_get_mem(fs, &fs->mmp_cmp);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 	}
 
-	if ((blk64_t) ext2fs_llseek(fs->mmp_fd, mmp_blk * fs->blocksize,
+	إذا ((blk64_t) ext2fs_llseek(fs->mmp_fd, mmp_blk * fs->blocksize,
 				    SEEK_SET) !=
 	    mmp_blk * fs->blocksize) {
 		retval = EXT2_ET_LLSEEK_FAILED;
-		goto out;
+		اذهب out;
 	}
 
-	if (read(fs->mmp_fd, fs->mmp_cmp, fs->blocksize) != fs->blocksize) {
+	إذا (اقرأ(fs->mmp_fd, fs->mmp_cmp, fs->blocksize) != fs->blocksize) {
 		retval = EXT2_ET_SHORT_READ;
-		goto out;
+		اذهب out;
 	}
 
 	mmp_cmp = fs->mmp_cmp;
 
-	if (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+	إذا (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
 	    !ext2fs_mmp_csum_verify(fs, mmp_cmp))
 		retval = EXT2_ET_MMP_CSUM_INVALID;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef وشەکان_BIGENDIAN
 	ext2fs_swap_mmp(mmp_cmp);
 #endif
 
-	if (buf != NULL && buf != fs->mmp_cmp)
+	إذا (buf != عدم && buf != fs->mmp_cmp)
 		memcpy(buf, fs->mmp_cmp, fs->blocksize);
 
-	if (mmp_cmp->mmp_magic != EXT4_MMP_MAGIC) {
+	إذا (mmp_cmp->mmp_magic != EXT4_MMP_MAGIC) {
 		retval = EXT2_ET_MMP_MAGIC_INVALID;
-		goto out;
+		اذهب out;
 	}
 
 out:
-	return retval;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
+	أرجع retval;
+#وإلا
+	أرجع EXT2_ET_OP_NOT_SUPPORTED;
 #endif
 }
 
-errcode_t ext2fs_mmp_write(ext2_filsys fs, blk64_t mmp_blk, void *buf)
+errcode_t ext2fs_mmp_write(ext2_filsys fs, blk64_t mmp_blk, فراغ *buf)
 {
 #ifdef CONFIG_MMP
-	struct mmp_struct *mmp_s = buf;
-	struct timeval tv;
+	بنية mmp_struct *mmp_s = buf;
+	بنية timeval tv;
 	errcode_t retval = 0;
 
 	gettimeofday(&tv, 0);
 	mmp_s->mmp_time = tv.tv_sec;
 	fs->mmp_last_written = tv.tv_sec;
 
-	if (fs->super->s_mmp_block < fs->super->s_first_data_block ||
-	    fs->super->s_mmp_block > ext2fs_blocks_count(fs->super))
-		return EXT2_ET_MMP_BAD_BLOCK;
+	إذا (fs->super->s_mmp_block < fs->super->s_first_data_block ||
+	    fs->super->s_mmp_block > ext2fs_blocks_ژماردن(fs->super))
+		أرجع EXT2_ET_MMP_BAD_BLOCK;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef وشەکان_BIGENDIAN
 	ext2fs_swap_mmp(mmp_s);
 #endif
 
 	retval = ext2fs_mmp_csum_set(fs, mmp_s);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
 	/* I was tempted to make this use O_DIRECT and the mmp_fd, but
 	 * this caused no end of grief, while leaving it as-is works. */
-	retval = io_channel_write_blk64(fs->io, mmp_blk, -(int)sizeof(struct mmp_struct), buf);
+	retval = io_channel_write_blk64(fs->io, mmp_blk, -(صحيح)حجم(بنية mmp_struct), buf);
 
-#ifdef WORDS_BIGENDIAN
+#ifdef وشەکان_BIGENDIAN
 	ext2fs_swap_mmp(mmp_s);
 #endif
 
 	/* Make sure the block gets to disk quickly */
 	io_channel_flush(fs->io);
-	return retval;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
+	أرجع retval;
+#وإلا
+	أرجع EXT2_ET_OP_NOT_SUPPORTED;
 #endif
 }
 
@@ -171,11 +171,11 @@ errcode_t ext2fs_mmp_write(ext2_filsys fs, blk64_t mmp_blk, void *buf)
 #define rand()		random()
 #endif
 
-unsigned ext2fs_mmp_new_seq(void)
+unsigned ext2fs_mmp_new_seq(فراغ)
 {
 #ifdef CONFIG_MMP
 	unsigned new_seq;
-	struct timeval tv;
+	بنية timeval tv;
 	unsigned long pid = getpid();
 
 	gettimeofday(&tv, 0);
@@ -184,29 +184,29 @@ unsigned ext2fs_mmp_new_seq(void)
 
 	gettimeofday(&tv, 0);
 	/* Crank the random number generator a few times */
-	for (new_seq = (tv.tv_sec ^ tv.tv_usec) & 0x1F; new_seq > 0; new_seq--)
+	لكل (new_seq = (tv.tv_sec ^ tv.tv_usec) & 0x1F; new_seq > 0; new_seq--)
 		rand();
 
-	do {
+	افعل {
 		new_seq = rand();
-	} while (new_seq > EXT4_MMP_SEQ_MAX);
+	} طالما (new_seq > EXT4_MMP_SEQ_MAX);
 
-	return new_seq;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
+	أرجع new_seq;
+#وإلا
+	أرجع EXT2_ET_OP_NOT_SUPPORTED;
 #endif
 }
 
 #ifdef CONFIG_MMP
-static errcode_t ext2fs_mmp_reset(ext2_filsys fs)
+ساكن errcode_t ext2fs_mmp_reset(ext2_filsys fs)
 {
-	struct mmp_struct *mmp_s = NULL;
+	بنية mmp_struct *mmp_s = عدم;
 	errcode_t retval = 0;
 
-	if (fs->mmp_buf == NULL) {
+	إذا (fs->mmp_buf == عدم) {
 		retval = ext2fs_mmp_get_mem(fs, &fs->mmp_buf);
-		if (retval)
-			goto out;
+		إذا (retval)
+			اذهب out;
 	}
 
 	memset(fs->mmp_buf, 0, fs->blocksize);
@@ -216,26 +216,26 @@ static errcode_t ext2fs_mmp_reset(ext2_filsys fs)
 	mmp_s->mmp_seq = EXT4_MMP_SEQ_CLEAN;
 	mmp_s->mmp_time = 0;
 #ifdef HAVE_GETHOSTNAME
-	gethostname((char *) mmp_s->mmp_nodename, sizeof(mmp_s->mmp_nodename));
-#else
+	gethostname((حرف *) mmp_s->mmp_nodename, حجم(mmp_s->mmp_nodename));
+#وإلا
 	mmp_s->mmp_nodename[0] = '\0';
 #endif
-	strncpy((char *) mmp_s->mmp_bdevname, fs->device_name,
-		sizeof(mmp_s->mmp_bdevname));
+	strncpy((حرف *) mmp_s->mmp_bdevname, fs->device_name,
+		حجم(mmp_s->mmp_bdevname));
 
 	mmp_s->mmp_check_interval = fs->super->s_mmp_update_interval;
-	if (mmp_s->mmp_check_interval < EXT4_MMP_MIN_CHECK_INTERVAL)
+	إذا (mmp_s->mmp_check_interval < EXT4_MMP_MIN_CHECK_INTERVAL)
 		mmp_s->mmp_check_interval = EXT4_MMP_MIN_CHECK_INTERVAL;
 
 	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_block, fs->mmp_buf);
 out:
-	return retval;
+	أرجع retval;
 }
 #endif
 
 errcode_t ext2fs_mmp_update(ext2_filsys fs)
 {
-	return ext2fs_mmp_update2(fs, 0);
+	أرجع ext2fs_mmp_update2(fs, 0);
 }
 
 errcode_t ext2fs_mmp_clear(ext2_filsys fs)
@@ -243,50 +243,50 @@ errcode_t ext2fs_mmp_clear(ext2_filsys fs)
 #ifdef CONFIG_MMP
 	errcode_t retval = 0;
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	إذا (!(fs->flags & EXT2_FLAG_RW))
+		أرجع EXT2_ET_RO_FILSYS;
 
 	retval = ext2fs_mmp_reset(fs);
 
-	return retval;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
+	أرجع retval;
+#وإلا
+	أرجع EXT2_ET_OP_NOT_SUPPORTED;
 #endif
 }
 
 errcode_t ext2fs_mmp_init(ext2_filsys fs)
 {
 #ifdef CONFIG_MMP
-	struct ext2_super_block *sb = fs->super;
+	بنية ext2_super_block *sb = fs->super;
 	blk64_t mmp_block;
 	errcode_t retval;
 
-	if (sb->s_mmp_update_interval == 0)
+	إذا (sb->s_mmp_update_interval == 0)
 		sb->s_mmp_update_interval = EXT4_MMP_UPDATE_INTERVAL;
 	/* This is probably excessively large, but who knows? */
-	else if (sb->s_mmp_update_interval > EXT4_MMP_MAX_UPDATE_INTERVAL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	وإلا إذا (sb->s_mmp_update_interval > EXT4_MMP_MAX_UPDATE_INTERVAL)
+		أرجع EXT2_ET_INVALID_ARGUMENT;
 
-	if (fs->mmp_buf == NULL) {
+	إذا (fs->mmp_buf == عدم) {
 		retval = ext2fs_mmp_get_mem(fs, &fs->mmp_buf);
-		if (retval)
-			goto out;
+		إذا (retval)
+			اذهب out;
 	}
 
 	retval = ext2fs_alloc_block2(fs, 0, fs->mmp_buf, &mmp_block);
-	if (retval)
-		goto out;
+	إذا (retval)
+		اذهب out;
 
 	sb->s_mmp_block = mmp_block;
 
 	retval = ext2fs_mmp_reset(fs);
-	if (retval)
-		goto out;
+	إذا (retval)
+		اذهب out;
 
 out:
-	return retval;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
+	أرجع retval;
+#وإلا
+	أرجع EXT2_ET_OP_NOT_SUPPORTED;
 #endif
 }
 
@@ -300,97 +300,97 @@ out:
 errcode_t ext2fs_mmp_start(ext2_filsys fs)
 {
 #ifdef CONFIG_MMP
-	struct mmp_struct *mmp_s;
+	بنية mmp_struct *mmp_s;
 	unsigned seq;
-	unsigned int mmp_check_interval;
+	unsigned صحيح mmp_check_interval;
 	errcode_t retval = 0;
 
-	if (fs->mmp_buf == NULL) {
+	إذا (fs->mmp_buf == عدم) {
 		retval = ext2fs_mmp_get_mem(fs, &fs->mmp_buf);
-		if (retval)
-			goto mmp_error;
+		إذا (retval)
+			اذهب mmp_error;
 	}
 
 	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, fs->mmp_buf);
-	if (retval)
-		goto mmp_error;
+	إذا (retval)
+		اذهب mmp_error;
 
 	mmp_s = fs->mmp_buf;
 
 	mmp_check_interval = fs->super->s_mmp_update_interval;
-	if (mmp_check_interval < EXT4_MMP_MIN_CHECK_INTERVAL)
+	إذا (mmp_check_interval < EXT4_MMP_MIN_CHECK_INTERVAL)
 		mmp_check_interval = EXT4_MMP_MIN_CHECK_INTERVAL;
 
 	seq = mmp_s->mmp_seq;
-	if (seq == EXT4_MMP_SEQ_CLEAN)
-		goto clean_seq;
-	if (seq == EXT4_MMP_SEQ_FSCK) {
+	إذا (seq == EXT4_MMP_SEQ_CLEAN)
+		اذهب clean_seq;
+	إذا (seq == EXT4_MMP_SEQ_FSCK) {
 		retval = EXT2_ET_MMP_FSCK_ON;
-		goto mmp_error;
+		اذهب mmp_error;
 	}
 
-	if (seq > EXT4_MMP_SEQ_FSCK) {
+	إذا (seq > EXT4_MMP_SEQ_FSCK) {
 		retval = EXT2_ET_MMP_UNKNOWN_SEQ;
-		goto mmp_error;
+		اذهب mmp_error;
 	}
 
 	/*
 	 * If check_interval in MMP block is larger, use that instead of
 	 * check_interval from the superblock.
 	 */
-	if (mmp_s->mmp_check_interval > mmp_check_interval)
+	إذا (mmp_s->mmp_check_interval > mmp_check_interval)
 		mmp_check_interval = mmp_s->mmp_check_interval;
 
 	sleep(min(mmp_check_interval * 2 + 1, mmp_check_interval + 60));
 
 	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, fs->mmp_buf);
-	if (retval)
-		goto mmp_error;
+	إذا (retval)
+		اذهب mmp_error;
 
-	if (seq != mmp_s->mmp_seq) {
+	إذا (seq != mmp_s->mmp_seq) {
 		retval = EXT2_ET_MMP_FAILED;
-		goto mmp_error;
+		اذهب mmp_error;
 	}
 
 clean_seq:
-	if (!(fs->flags & EXT2_FLAG_RW))
-		goto mmp_error;
+	إذا (!(fs->flags & EXT2_FLAG_RW))
+		اذهب mmp_error;
 
 	mmp_s->mmp_seq = seq = ext2fs_mmp_new_seq();
 #ifdef HAVE_GETHOSTNAME
-	gethostname((char *) mmp_s->mmp_nodename, sizeof(mmp_s->mmp_nodename));
-#else
-	strcpy((char *) mmp_s->mmp_nodename, "unknown host");
+	gethostname((حرف *) mmp_s->mmp_nodename, حجم(mmp_s->mmp_nodename));
+#وإلا
+	strcpy((حرف *) mmp_s->mmp_nodename, "unknown host");
 #endif
-	strncpy((char *) mmp_s->mmp_bdevname, fs->device_name,
-		sizeof(mmp_s->mmp_bdevname));
+	strncpy((حرف *) mmp_s->mmp_bdevname, fs->device_name,
+		حجم(mmp_s->mmp_bdevname));
 
 	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_block, fs->mmp_buf);
-	if (retval)
-		goto mmp_error;
+	إذا (retval)
+		اذهب mmp_error;
 
 	sleep(min(2 * mmp_check_interval + 1, mmp_check_interval + 60));
 
 	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, fs->mmp_buf);
-	if (retval)
-		goto mmp_error;
+	إذا (retval)
+		اذهب mmp_error;
 
-	if (seq != mmp_s->mmp_seq) {
+	إذا (seq != mmp_s->mmp_seq) {
 		retval = EXT2_ET_MMP_FAILED;
-		goto mmp_error;
+		اذهب mmp_error;
 	}
 
 	mmp_s->mmp_seq = EXT4_MMP_SEQ_FSCK;
 	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_block, fs->mmp_buf);
-	if (retval)
-		goto mmp_error;
+	إذا (retval)
+		اذهب mmp_error;
 
-	return 0;
+	أرجع 0;
 
 mmp_error:
-	return retval;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
+	أرجع retval;
+#وإلا
+	أرجع EXT2_ET_OP_NOT_SUPPORTED;
 #endif
 }
 
@@ -403,42 +403,42 @@ mmp_error:
 errcode_t ext2fs_mmp_stop(ext2_filsys fs)
 {
 #ifdef CONFIG_MMP
-	struct mmp_struct *mmp, *mmp_cmp;
+	بنية mmp_struct *mmp, *mmp_cmp;
 	errcode_t retval = 0;
 
-	if (!ext2fs_has_feature_mmp(fs->super) ||
+	إذا (!ext2fs_has_feature_mmp(fs->super) ||
 	    !(fs->flags & EXT2_FLAG_RW) || (fs->flags & EXT2_FLAG_SKIP_MMP) ||
-	    (fs->mmp_buf == NULL) || (fs->mmp_cmp == NULL))
-		goto mmp_error;
+	    (fs->mmp_buf == عدم) || (fs->mmp_cmp == عدم))
+		اذهب mmp_error;
 
-	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, NULL);
-	if (retval)
-		goto mmp_error;
+	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, عدم);
+	إذا (retval)
+		اذهب mmp_error;
 
 	/* Check if the MMP block is not changed. */
 	mmp = fs->mmp_buf;
 	mmp_cmp = fs->mmp_cmp;
-	if (memcmp(mmp, mmp_cmp, sizeof(*mmp_cmp))) {
+	إذا (memcmp(mmp, mmp_cmp, حجم(*mmp_cmp))) {
 		retval = EXT2_ET_MMP_CHANGE_ABORT;
-		goto mmp_error;
+		اذهب mmp_error;
 	}
 
 	mmp_cmp->mmp_seq = EXT4_MMP_SEQ_CLEAN;
 	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_block, fs->mmp_cmp);
 
 mmp_error:
-	if (fs->mmp_fd > 0) {
+	إذا (fs->mmp_fd > 0) {
 		close(fs->mmp_fd);
 		fs->mmp_fd = -1;
 	}
 
-	return retval;
-#else
-	if (!ext2fs_has_feature_mmp(fs->super) ||
+	أرجع retval;
+#وإلا
+	إذا (!ext2fs_has_feature_mmp(fs->super) ||
 	    !(fs->flags & EXT2_FLAG_RW) || (fs->flags & EXT2_FLAG_SKIP_MMP))
-		return 0;
+		أرجع 0;
 
-	return EXT2_ET_OP_NOT_SUPPORTED;
+	أرجع EXT2_ET_OP_NOT_SUPPORTED;
 #endif
 }
 
@@ -447,52 +447,52 @@ mmp_error:
 /*
  * Update the on-disk mmp buffer, after checking that it hasn't been changed.
  */
-errcode_t ext2fs_mmp_update2(ext2_filsys fs, int immediately)
+errcode_t ext2fs_mmp_update2(ext2_filsys fs, صحيح immediately)
 {
 #ifdef CONFIG_MMP
-	struct mmp_struct *mmp, *mmp_cmp;
-	struct timeval tv;
+	بنية mmp_struct *mmp, *mmp_cmp;
+	بنية timeval tv;
 	errcode_t retval = 0;
 
-	if (!ext2fs_has_feature_mmp(fs->super) ||
+	إذا (!ext2fs_has_feature_mmp(fs->super) ||
 	    !(fs->flags & EXT2_FLAG_RW) || (fs->flags & EXT2_FLAG_SKIP_MMP))
-		return 0;
+		أرجع 0;
 
 	gettimeofday(&tv, 0);
-	if (!immediately &&
+	إذا (!immediately &&
 	    tv.tv_sec - fs->mmp_last_written < EXT2_MIN_MMP_UPDATE_INTERVAL)
-		return 0;
+		أرجع 0;
 
-	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, NULL);
-	if (retval)
-		goto mmp_error;
+	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, عدم);
+	إذا (retval)
+		اذهب mmp_error;
 
 	mmp = fs->mmp_buf;
 	mmp_cmp = fs->mmp_cmp;
 
-	if (memcmp(mmp, mmp_cmp, sizeof(*mmp_cmp)))
-		return EXT2_ET_MMP_CHANGE_ABORT;
+	إذا (memcmp(mmp, mmp_cmp, حجم(*mmp_cmp)))
+		أرجع EXT2_ET_MMP_CHANGE_ABORT;
 
 	/*
 	 * Believe it or not, ext2fs_mmp_read actually overwrites fs->mmp_cmp
 	 * and leaves fs->mmp_buf untouched.  Hence we copy mmp_cmp into
 	 * mmp_buf, update mmp_buf, and write mmp_buf out to disk.
 	 */
-	memcpy(mmp, mmp_cmp, sizeof(*mmp_cmp));
+	memcpy(mmp, mmp_cmp, حجم(*mmp_cmp));
 	mmp->mmp_time = tv.tv_sec;
 	mmp->mmp_seq = EXT4_MMP_SEQ_FSCK;
 	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_block, fs->mmp_buf);
 
 mmp_error:
-	return retval;
-#else
-	if (!ext2fs_has_feature_mmp(fs->super) ||
+	أرجع retval;
+#وإلا
+	إذا (!ext2fs_has_feature_mmp(fs->super) ||
 	    !(fs->flags & EXT2_FLAG_RW) || (fs->flags & EXT2_FLAG_SKIP_MMP))
-		return 0;
+		أرجع 0;
 
-	return EXT2_ET_OP_NOT_SUPPORTED;
+	أرجع EXT2_ET_OP_NOT_SUPPORTED;
 #endif
 }
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
+#إذا __GNUC_PREREQ (4, 6)
+#pragma GCC diagnostic دەرهێنان
 #endif
