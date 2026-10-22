@@ -10,24 +10,24 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
-#endif
-#if HAVE_SYS_MOUNT_H
-#include <sys/param.h>
-#include <sys/mount.h>		/* This may define BLKFLSBUF */
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#إذا HAVE_ERRNO_H
+#ضمن <errno.h>
+#جے_انت
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جے_انت
+#إذا HAVE_SYS_IOCTL_H
+#ضمن <sys/ioctl.h>
+#جے_انت
+#إذا HAVE_SYS_MOUNT_H
+#ضمن <sys/param.h>
+#ضمن <sys/mount.h>		/* This may define BLKFLSBUF */
+#جے_انت
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
 /*
  * For Linux, define BLKFLSBUF and FDFLUSH if necessary, since
@@ -36,21 +36,21 @@
  * BLKFLSBUF in sys/mount.h, but FDFLUSH still doesn't seem to be
  * defined anywhere portable.)  Until then....
  */
-#ifdef __linux__
-#ifndef BLKFLSBUF
-#define BLKFLSBUF	_IO(0x12,97)	/* flush buffer cache */
-#endif
-#ifndef FDFLUSH
-#define FDFLUSH		_IO(2,0x4b)	/* flush floppy disk */
-#endif
-#endif
+#جے_تعریف_شدہ __linux__
+#جے_بنا_تعریف BLKFLSBUF
+#تعریف_کرو BLKFLSBUF	_IO(0x12,97)	/* flush buffer cache */
+#جے_انت
+#جے_بنا_تعریف FDFLUSH
+#تعریف_کرو FDFLUSH		_IO(2,0x4b)	/* flush floppy disk */
+#جے_انت
+#جے_انت
 
 /*
  * This function will sync a device/file, and optionally attempt to
  * flush the buffer cache.  The latter is basically only useful for
  * system benchmarks and for torturing systems in burn-in tests.  :)
  */
-errcode_t ext2fs_sync_device(int fd, int flushb)
+errcode_t ext2fs_sync_device(صحيح fd, صحيح flushb)
 {
 	/*
 	 * We always sync the device in case we're running on old
@@ -58,31 +58,31 @@ errcode_t ext2fs_sync_device(int fd, int flushb)
 	 * still is a race condition for those kernels, but this
 	 * reduces it greatly.)
 	 */
-#if defined(HAVE_FSYNC)
-	if (fsync (fd) == -1)
-		return errno;
-#endif
+#إذا defined(HAVE_FSYNC)
+	إذا (fsync (fd) == -1)
+		أرجع errno;
+#جے_انت
 
-	if (flushb) {
+	إذا (flushb) {
 		errcode_t	retval = 0;
 
-#ifdef BLKFLSBUF
-		if (ioctl (fd, BLKFLSBUF, 0) == 0)
-			return 0;
+#جے_تعریف_شدہ BLKFLSBUF
+		إذا (ioctl (fd, BLKFLSBUF, 0) == 0)
+			أرجع 0;
 		retval = errno;
-#elif defined(__linux__)
+#وإلاإذا defined(__linux__)
 #warning BLKFLSBUF not defined
-#endif
-#ifdef FDFLUSH
+#جے_انت
+#جے_تعریف_شدہ FDFLUSH
 		/* In case this is a floppy */
-		if (ioctl(fd, FDFLUSH, 0) == 0)
-			return 0;
-		if (retval == 0)
+		إذا (ioctl(fd, FDFLUSH, 0) == 0)
+			أرجع 0;
+		إذا (retval == 0)
 			retval = errno;
-#elif defined(__linux__)
+#وإلاإذا defined(__linux__)
 #warning FDFLUSH not defined
-#endif
-		return retval;
+#جے_انت
+		أرجع retval;
 	}
-	return 0;
+	أرجع 0;
 }

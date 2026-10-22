@@ -10,24 +10,24 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جے_انت
+#ضمن <fcntl.h>
+#ضمن <time.h>
+#إذا HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
+#جے_انت
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#جے_انت
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
+#ضمن "ext2fsP.h"
 
 /*
  * This routine searches for free blocks that can allocate a full
@@ -35,244 +35,244 @@
  * block number with a correct offset were the bitmaps and inode
  * tables can be allocated continuously and in order.
  */
-static blk64_t flexbg_offset(ext2_filsys fs, dgrp_t group, blk64_t start_blk,
-			     ext2fs_block_bitmap bmap, int rem_grp,
-			     int elem_size)
+ساكن blk64_t flexbg_وتھ(ext2_filsys fs, dgrp_t گروہ, blk64_t شروع_blk,
+			     ext2fs_بلاک_bitmap bmap, صحيح rem_grp,
+			     صحيح elem_ناپ)
 {
-	int		flexbg, flexbg_size, size;
-	blk64_t		last_blk, first_free = 0;
-	dgrp_t	       	last_grp;
+	صحيح		flexbg, flexbg_ناپ, ناپ;
+	blk64_t		آخری_blk, پہلا_free = 0;
+	dgrp_t	       	آخری_grp;
 
-	flexbg_size = 1U << fs->super->s_log_groups_per_flex;
-	flexbg = group / flexbg_size;
-	size = rem_grp * elem_size;
+	flexbg_ناپ = 1U << fs->super->s_log_groups_فی_flex;
+	flexbg = گروہ / flexbg_ناپ;
+	ناپ = rem_grp * elem_ناپ;
 
-	if (size > (int) (fs->super->s_blocks_per_group / 4))
-		size = (int) fs->super->s_blocks_per_group / 4;
+	إذا (ناپ > (صحيح) (fs->super->s_بلاکاں_فی_گروہ / 4))
+		ناپ = (صحيح) fs->super->s_بلاکاں_فی_گروہ / 4;
 
 	/*
 	 * Don't do a long search if the previous block search is still valid,
 	 * but skip minor obstructions such as group descriptor backups.
 	 */
-	if (start_blk && start_blk < ext2fs_blocks_count(fs->super) &&
-	    ext2fs_get_free_blocks2(fs, start_blk, start_blk + size, elem_size,
-				    bmap, &first_free) == 0)
-		return first_free;
+	إذا (شروع_blk && شروع_blk < ext2fs_بلاکاں_گنتی(fs->super) &&
+	    ext2fs_get_free_blocks2(fs, شروع_blk, شروع_blk + ناپ, elem_ناپ,
+				    bmap, &پہلا_free) == 0)
+		أرجع پہلا_free;
 
-	start_blk = ext2fs_group_first_block2(fs, flexbg_size * flexbg);
-	last_grp = group | (flexbg_size - 1);
-	if (last_grp > fs->group_desc_count-1)
-		last_grp = fs->group_desc_count-1;
-	last_blk = ext2fs_group_last_block2(fs, last_grp);
+	شروع_blk = ext2fs_گروہ_پہلا_block2(fs, flexbg_ناپ * flexbg);
+	آخری_grp = گروہ | (flexbg_ناپ - 1);
+	إذا (آخری_grp > fs->گروہ_desc_گنتی-1)
+		آخری_grp = fs->گروہ_desc_گنتی-1;
+	آخری_blk = ext2fs_گروہ_آخری_block2(fs, آخری_grp);
 
 	/* Find the first available block */
-	if (ext2fs_get_free_blocks2(fs, start_blk, last_blk, size,
-				    bmap, &first_free) == 0)
-		return first_free;
+	إذا (ext2fs_get_free_blocks2(fs, شروع_blk, آخری_blk, ناپ,
+				    bmap, &پہلا_free) == 0)
+		أرجع پہلا_free;
 
-	if (ext2fs_get_free_blocks2(fs, start_blk, last_blk, elem_size,
-				   bmap, &first_free) == 0)
-		return first_free;
+	إذا (ext2fs_get_free_blocks2(fs, شروع_blk, آخری_blk, elem_ناپ,
+				   bmap, &پہلا_free) == 0)
+		أرجع پہلا_free;
 
-	if (ext2fs_get_free_blocks2(fs, 0, last_blk, elem_size, bmap,
-				    &first_free) == 0)
-		return first_free;
+	إذا (ext2fs_get_free_blocks2(fs, 0, آخری_blk, elem_ناپ, bmap,
+				    &پہلا_free) == 0)
+		أرجع پہلا_free;
 
-	return first_free;
+	أرجع پہلا_free;
 }
 
-errcode_t ext2fs_allocate_group_table(ext2_filsys fs, dgrp_t group,
-				      ext2fs_block_bitmap bmap)
+errcode_t ext2fs_allocate_گروہ_جدول(ext2_filsys fs, dgrp_t گروہ,
+				      ext2fs_بلاک_bitmap bmap)
 {
 	errcode_t	retval;
-	blk64_t		group_blk, start_blk, last_blk, new_blk;
-	dgrp_t		last_grp = 0;
-	int		rem_grps = 0, flexbg_size = 0, table_offset = 0;
+	blk64_t		گروہ_blk, شروع_blk, آخری_blk, new_blk;
+	dgrp_t		آخری_grp = 0;
+	صحيح		rem_grps = 0, flexbg_ناپ = 0, جدول_وتھ = 0;
 
-	group_blk = ext2fs_group_first_block2(fs, group);
-	last_blk = ext2fs_group_last_block2(fs, group);
+	گروہ_blk = ext2fs_گروہ_پہلا_block2(fs, گروہ);
+	آخری_blk = ext2fs_گروہ_آخری_block2(fs, گروہ);
 
-	if (!bmap)
-		bmap = fs->block_map;
+	إذا (!bmap)
+		bmap = fs->بلاک_map;
 
-	if (ext2fs_has_feature_flex_bg(fs->super) &&
-	    fs->super->s_log_groups_per_flex) {
-		flexbg_size = 1U << fs->super->s_log_groups_per_flex;
-		last_grp = group | (flexbg_size - 1);
-		if (last_grp > fs->group_desc_count-1)
-			last_grp = fs->group_desc_count-1;
-		rem_grps = last_grp - group + 1;
+	إذا (ext2fs_has_feature_flex_bg(fs->super) &&
+	    fs->super->s_log_groups_فی_flex) {
+		flexbg_ناپ = 1U << fs->super->s_log_groups_فی_flex;
+		آخری_grp = گروہ | (flexbg_ناپ - 1);
+		إذا (آخری_grp > fs->گروہ_desc_گنتی-1)
+			آخری_grp = fs->گروہ_desc_گنتی-1;
+		rem_grps = آخری_grp - گروہ + 1;
 	}
 
 	/*
 	 * Allocate the block and inode bitmaps, if necessary
 	 */
-	if (fs->stride && !flexbg_size) {
-		retval = ext2fs_get_free_blocks2(fs, group_blk, last_blk,
-						 1, bmap, &start_blk);
-		if (retval)
-			return retval;
-		start_blk += fs->inode_blocks_per_group;
-		start_blk += ((fs->stride * group) %
-			      (last_blk - start_blk + 1));
-		if (start_blk >= last_blk)
-			start_blk = group_blk;
-	} else
-		start_blk = group_blk;
+	إذا (fs->stride && !flexbg_ناپ) {
+		retval = ext2fs_get_free_blocks2(fs, گروہ_blk, آخری_blk,
+						 1, bmap, &شروع_blk);
+		إذا (retval)
+			أرجع retval;
+		شروع_blk += fs->inode_بلاکاں_فی_گروہ;
+		شروع_blk += ((fs->stride * گروہ) %
+			      (آخری_blk - شروع_blk + 1));
+		إذا (شروع_blk >= آخری_blk)
+			شروع_blk = گروہ_blk;
+	} وإلا
+		شروع_blk = گروہ_blk;
 
-	if (flexbg_size) {
-		blk64_t prev_block = 0;
+	إذا (flexbg_ناپ) {
+		blk64_t prev_بلاک = 0;
 
-		table_offset = flexbg_size;
-		if (group % flexbg_size)
-			prev_block = ext2fs_block_bitmap_loc(fs, group - 1) + 1;
-		else if (last_grp == fs->group_desc_count-1) {
+		جدول_وتھ = flexbg_ناپ;
+		إذا (گروہ % flexbg_ناپ)
+			prev_بلاک = ext2fs_بلاک_bitmap_loc(fs, گروہ - 1) + 1;
+		وإلا إذا (آخری_grp == fs->گروہ_desc_گنتی-1) {
 			/*
 			 * If we are allocating for the last flex_bg
 			 * keep the metadata tables contiguous
 			 */
-			table_offset = last_grp & (flexbg_size - 1);
-			if (table_offset == 0)
-				table_offset = flexbg_size;
-			else
-				table_offset++;
+			جدول_وتھ = آخری_grp & (flexbg_ناپ - 1);
+			إذا (جدول_وتھ == 0)
+				جدول_وتھ = flexbg_ناپ;
+			وإلا
+				جدول_وتھ++;
 		}
 		/* FIXME: Take backup group descriptor blocks into account
 		 * if the flexbg allocations will grow to overlap them... */
-		start_blk = flexbg_offset(fs, group, prev_block, bmap,
+		شروع_blk = flexbg_وتھ(fs, گروہ, prev_بلاک, bmap,
 					  rem_grps, 1);
-		last_blk = ext2fs_group_last_block2(fs, last_grp);
+		آخری_blk = ext2fs_گروہ_آخری_block2(fs, آخری_grp);
 	}
 
-	if (!ext2fs_block_bitmap_loc(fs, group)) {
-		retval = ext2fs_get_free_blocks2(fs, start_blk, last_blk,
+	إذا (!ext2fs_بلاک_bitmap_loc(fs, گروہ)) {
+		retval = ext2fs_get_free_blocks2(fs, شروع_blk, آخری_blk,
 						 1, bmap, &new_blk);
-		if (retval == EXT2_ET_BLOCK_ALLOC_FAIL)
-			retval = ext2fs_get_free_blocks2(fs, group_blk,
-					last_blk, 1, bmap, &new_blk);
-		if (retval)
-			return retval;
-		ext2fs_mark_block_bitmap2(bmap, new_blk);
-		ext2fs_block_bitmap_loc_set(fs, group, new_blk);
-		if (flexbg_size) {
-			dgrp_t gr = ext2fs_group_of_blk2(fs, new_blk);
-			ext2fs_bg_free_blocks_count_set(fs, gr, ext2fs_bg_free_blocks_count(fs, gr) - 1);
-			ext2fs_free_blocks_count_add(fs->super, -1);
-			ext2fs_bg_flags_clear(fs, gr, EXT2_BG_BLOCK_UNINIT);
-			ext2fs_group_desc_csum_set(fs, gr);
+		إذا (retval == EXT2_ET_بلاک_ALLOC_FAIL)
+			retval = ext2fs_get_free_blocks2(fs, گروہ_blk,
+					آخری_blk, 1, bmap, &new_blk);
+		إذا (retval)
+			أرجع retval;
+		ext2fs_mark_بلاک_bitmap2(bmap, new_blk);
+		ext2fs_بلاک_bitmap_loc_سیٹ(fs, گروہ, new_blk);
+		إذا (flexbg_ناپ) {
+			dgrp_t gr = ext2fs_گروہ_دا_blk2(fs, new_blk);
+			ext2fs_bg_free_بلاکاں_گنتی_سیٹ(fs, gr, ext2fs_bg_free_بلاکاں_گنتی(fs, gr) - 1);
+			ext2fs_free_بلاکاں_گنتی_جوڑو(fs->super, -1);
+			ext2fs_bg_flags_clear(fs, gr, EXT2_BG_بلاک_UNINIT);
+			ext2fs_گروہ_desc_csum_سیٹ(fs, gr);
 		}
 	}
 
-	if (flexbg_size) {
-		blk64_t prev_block = 0;
-		if (group % flexbg_size)
-			prev_block = ext2fs_inode_bitmap_loc(fs, group - 1) + 1;
-		else
-			prev_block = ext2fs_block_bitmap_loc(fs, group) +
-				table_offset;
+	إذا (flexbg_ناپ) {
+		blk64_t prev_بلاک = 0;
+		إذا (گروہ % flexbg_ناپ)
+			prev_بلاک = ext2fs_inode_bitmap_loc(fs, گروہ - 1) + 1;
+		وإلا
+			prev_بلاک = ext2fs_بلاک_bitmap_loc(fs, گروہ) +
+				جدول_وتھ;
 		/* FIXME: Take backup group descriptor blocks into account
 		 * if the flexbg allocations will grow to overlap them... */
-		start_blk = flexbg_offset(fs, group, prev_block, bmap,
+		شروع_blk = flexbg_وتھ(fs, گروہ, prev_بلاک, bmap,
 					  rem_grps, 1);
-		last_blk = ext2fs_group_last_block2(fs, last_grp);
+		آخری_blk = ext2fs_گروہ_آخری_block2(fs, آخری_grp);
 	}
 
-	if (!ext2fs_inode_bitmap_loc(fs, group)) {
-		retval = ext2fs_get_free_blocks2(fs, start_blk, last_blk,
+	إذا (!ext2fs_inode_bitmap_loc(fs, گروہ)) {
+		retval = ext2fs_get_free_blocks2(fs, شروع_blk, آخری_blk,
 						 1, bmap, &new_blk);
-		if (retval == EXT2_ET_BLOCK_ALLOC_FAIL)
-			retval = ext2fs_get_free_blocks2(fs, group_blk,
-					 last_blk, 1, bmap, &new_blk);
-		if (retval)
-			return retval;
-		ext2fs_mark_block_bitmap2(bmap, new_blk);
-		ext2fs_inode_bitmap_loc_set(fs, group, new_blk);
-		if (flexbg_size) {
-			dgrp_t gr = ext2fs_group_of_blk2(fs, new_blk);
-			ext2fs_bg_free_blocks_count_set(fs, gr, ext2fs_bg_free_blocks_count(fs, gr) - 1);
-			ext2fs_free_blocks_count_add(fs->super, -1);
-			ext2fs_bg_flags_clear(fs, gr, EXT2_BG_BLOCK_UNINIT);
-			ext2fs_group_desc_csum_set(fs, gr);
+		إذا (retval == EXT2_ET_بلاک_ALLOC_FAIL)
+			retval = ext2fs_get_free_blocks2(fs, گروہ_blk,
+					 آخری_blk, 1, bmap, &new_blk);
+		إذا (retval)
+			أرجع retval;
+		ext2fs_mark_بلاک_bitmap2(bmap, new_blk);
+		ext2fs_inode_bitmap_loc_سیٹ(fs, گروہ, new_blk);
+		إذا (flexbg_ناپ) {
+			dgrp_t gr = ext2fs_گروہ_دا_blk2(fs, new_blk);
+			ext2fs_bg_free_بلاکاں_گنتی_سیٹ(fs, gr, ext2fs_bg_free_بلاکاں_گنتی(fs, gr) - 1);
+			ext2fs_free_بلاکاں_گنتی_جوڑو(fs->super, -1);
+			ext2fs_bg_flags_clear(fs, gr, EXT2_BG_بلاک_UNINIT);
+			ext2fs_گروہ_desc_csum_سیٹ(fs, gr);
 		}
 	}
 
 	/*
 	 * Allocate the inode table
 	 */
-	if (flexbg_size) {
-		blk64_t prev_block = 0;
+	إذا (flexbg_ناپ) {
+		blk64_t prev_بلاک = 0;
 
-		if (group % flexbg_size)
-			prev_block = ext2fs_inode_table_loc(fs, group - 1) +
-				fs->inode_blocks_per_group;
-		else
-			prev_block = ext2fs_inode_bitmap_loc(fs, group) +
-				table_offset;
+		إذا (گروہ % flexbg_ناپ)
+			prev_بلاک = ext2fs_inode_جدول_loc(fs, گروہ - 1) +
+				fs->inode_بلاکاں_فی_گروہ;
+		وإلا
+			prev_بلاک = ext2fs_inode_bitmap_loc(fs, گروہ) +
+				جدول_وتھ;
 
 		/* FIXME: Take backup group descriptor blocks into account
 		 * if the flexbg allocations will grow to overlap them... */
-		group_blk = flexbg_offset(fs, group, prev_block, bmap,
-					  rem_grps, fs->inode_blocks_per_group);
-		last_blk = ext2fs_group_last_block2(fs, last_grp);
+		گروہ_blk = flexbg_وتھ(fs, گروہ, prev_بلاک, bmap,
+					  rem_grps, fs->inode_بلاکاں_فی_گروہ);
+		آخری_blk = ext2fs_گروہ_آخری_block2(fs, آخری_grp);
 	}
 
-	if (!ext2fs_inode_table_loc(fs, group)) {
-		retval = ext2fs_get_free_blocks2(fs, group_blk, last_blk,
-						fs->inode_blocks_per_group,
+	إذا (!ext2fs_inode_جدول_loc(fs, گروہ)) {
+		retval = ext2fs_get_free_blocks2(fs, گروہ_blk, آخری_blk,
+						fs->inode_بلاکاں_فی_گروہ,
 						bmap, &new_blk);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 
-		ext2fs_mark_block_bitmap_range2(bmap,
-			new_blk, fs->inode_blocks_per_group);
-		if (flexbg_size) {
-			blk64_t num, blk;
-			num = fs->inode_blocks_per_group;
+		ext2fs_mark_بلاک_bitmap_range2(bmap,
+			new_blk, fs->inode_بلاکاں_فی_گروہ);
+		إذا (flexbg_ناپ) {
+			blk64_t عدد, blk;
+			عدد = fs->inode_بلاکاں_فی_گروہ;
 			blk = new_blk;
-			while (num) {
-				int gr = ext2fs_group_of_blk2(fs, blk);
-				last_blk = ext2fs_group_last_block2(fs, gr);
-				blk64_t n = num;
+			طالما (عدد) {
+				صحيح gr = ext2fs_گروہ_دا_blk2(fs, blk);
+				آخری_blk = ext2fs_گروہ_آخری_block2(fs, gr);
+				blk64_t n = عدد;
 
-				if (blk + num > last_blk)
-					n = last_blk - blk + 1;
+				إذا (blk + عدد > آخری_blk)
+					n = آخری_blk - blk + 1;
 
-				ext2fs_bg_free_blocks_count_set(fs, gr,
-					ext2fs_bg_free_blocks_count(fs, gr) -
-					n/EXT2FS_CLUSTER_RATIO(fs));
+				ext2fs_bg_free_بلاکاں_گنتی_سیٹ(fs, gr,
+					ext2fs_bg_free_بلاکاں_گنتی(fs, gr) -
+					n/EXT2_FS_CLUSTER_تناسب(fs));
 				ext2fs_bg_flags_clear(fs, gr,
-					EXT2_BG_BLOCK_UNINIT);
-				ext2fs_group_desc_csum_set(fs, gr);
-				ext2fs_free_blocks_count_add(fs->super, -n);
+					EXT2_BG_بلاک_UNINIT);
+				ext2fs_گروہ_desc_csum_سیٹ(fs, gr);
+				ext2fs_free_بلاکاں_گنتی_جوڑو(fs->super, -n);
 				blk += n;
-				num -= n;
+				عدد -= n;
 			}
 		}
-		ext2fs_inode_table_loc_set(fs, group, new_blk);
+		ext2fs_inode_جدول_loc_سیٹ(fs, گروہ, new_blk);
 	}
-	ext2fs_group_desc_csum_set(fs, group);
-	return 0;
+	ext2fs_گروہ_desc_csum_سیٹ(fs, گروہ);
+	أرجع 0;
 }
 
 errcode_t ext2fs_allocate_tables(ext2_filsys fs)
 {
 	errcode_t	retval;
 	dgrp_t		i;
-	struct ext2fs_numeric_progress_struct progress;
+	بنية ext2fs_numeric_ترقی_struct ترقی;
 
-	if (fs->progress_ops && fs->progress_ops->init)
-		(fs->progress_ops->init)(fs, &progress, NULL,
-					 fs->group_desc_count);
+	إذا (fs->ترقی_ops && fs->ترقی_ops->init)
+		(fs->ترقی_ops->init)(fs, &ترقی, عدم,
+					 fs->گروہ_desc_گنتی);
 
-	for (i = 0; i < fs->group_desc_count; i++) {
-		if (fs->progress_ops && fs->progress_ops->update)
-			(fs->progress_ops->update)(fs, &progress, i);
-		retval = ext2fs_allocate_group_table(fs, i, fs->block_map);
-		if (retval)
-			return retval;
+	لكل (i = 0; i < fs->گروہ_desc_گنتی; i++) {
+		إذا (fs->ترقی_ops && fs->ترقی_ops->update)
+			(fs->ترقی_ops->update)(fs, &ترقی, i);
+		retval = ext2fs_allocate_گروہ_جدول(fs, i, fs->بلاک_map);
+		إذا (retval)
+			أرجع retval;
 	}
-	if (fs->progress_ops && fs->progress_ops->close)
-		(fs->progress_ops->close)(fs, &progress, NULL);
-	return 0;
+	إذا (fs->ترقی_ops && fs->ترقی_ops->close)
+		(fs->ترقی_ops->close)(fs, &ترقی, عدم);
+	أرجع 0;
 }
 

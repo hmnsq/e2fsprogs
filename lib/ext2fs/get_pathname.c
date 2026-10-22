@@ -21,151 +21,151 @@
  *
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جے_انت
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
-struct get_pathname_struct {
-	ext2_ino_t	search_ino;
-	ext2_ino_t	parent;
-	char		*name;
+بنية get_pathname_struct {
+	ext2_ino_t	تلاش_ino;
+	ext2_ino_t	ماپا;
+	حرف		*name;
 	errcode_t	errcode;
 };
 
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-static int get_pathname_proc(struct ext2_dir_entry *dirent,
-			     int	offset EXT2FS_ATTR((unused)),
-			     int	blocksize EXT2FS_ATTR((unused)),
-			     char	*buf EXT2FS_ATTR((unused)),
-			     void	*priv_data)
+#جے_تعریف_شدہ __TURBOC__
+ #ہدایت argsused
+#جے_انت
+ساكن صحيح get_pathname_proc(بنية ext2_dir_اندراج *dirent,
+			     صحيح	وتھ EXT2FS_ATTR((بن_ورتیا)),
+			     صحيح	blocksize EXT2FS_ATTR((بن_ورتیا)),
+			     حرف	*buf EXT2FS_ATTR((بن_ورتیا)),
+			     فراغ	*priv_انکڑے)
 {
-	struct get_pathname_struct	*gp;
+	بنية get_pathname_struct	*gp;
 	errcode_t			retval;
-	int name_len = ext2fs_dirent_name_len(dirent);
+	صحيح name_len = ext2fs_dirent_name_len(dirent);
 
-	gp = (struct get_pathname_struct *) priv_data;
+	gp = (بنية get_pathname_struct *) priv_انکڑے;
 
-	if ((name_len == 2) && !strncmp(dirent->name, "..", 2))
-		gp->parent = dirent->inode;
-	if (dirent->inode == gp->search_ino) {
+	إذا ((name_len == 2) && !لڑی_مقابلہ(dirent->name, "..", 2))
+		gp->ماپا = dirent->inode;
+	إذا (dirent->inode == gp->تلاش_ino) {
 		retval = ext2fs_get_mem(name_len + 1, &gp->name);
-		if (retval) {
+		إذا (retval) {
 			gp->errcode = retval;
-			return DIRENT_ABORT;
+			أرجع DIRENT_ABORT;
 		}
 		strncpy(gp->name, dirent->name, name_len);
 		gp->name[name_len] = '\0';
-		return DIRENT_ABORT;
+		أرجع DIRENT_ABORT;
 	}
-	return 0;
+	أرجع 0;
 }
 
-static errcode_t ext2fs_get_pathname_int(ext2_filsys fs, ext2_ino_t dir,
-					 ext2_ino_t ino, int maxdepth,
-					 char *buf, char **name)
+ساكن errcode_t ext2fs_get_pathname_int(ext2_filsys fs, ext2_ino_t dir,
+					 ext2_ino_t ino, صحيح maxdepth,
+					 حرف *buf, حرف **name)
 {
-	struct get_pathname_struct gp;
-	char	*parent_name = 0, *ret;
+	بنية get_pathname_struct gp;
+	حرف	*ماپا_name = 0, *ret;
 	errcode_t	retval;
 
-	if (dir == ino) {
+	إذا (dir == ino) {
 		retval = ext2fs_get_mem(2, name);
-		if (retval)
-			return retval;
-		strcpy(*name, (dir == EXT2_ROOT_INO) ? "/" : ".");
-		return 0;
+		إذا (retval)
+			أرجع retval;
+		strcpy(*name, (dir == EXT2_جڑ_INO) ? "/" : ".");
+		أرجع 0;
 	}
 
-	if (!dir || (maxdepth < 0)) {
+	إذا (!dir || (maxdepth < 0)) {
 		retval = ext2fs_get_mem(4, name);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 		strcpy(*name, "...");
-		return 0;
+		أرجع 0;
 	}
 
-	gp.search_ino = ino;
-	gp.parent = 0;
+	gp.تلاش_ino = ino;
+	gp.ماپا = 0;
 	gp.name = 0;
 	gp.errcode = 0;
 
 	retval = ext2fs_dir_iterate(fs, dir, 0, buf, get_pathname_proc, &gp);
-	if (retval == EXT2_ET_NO_DIRECTORY) {
-		char tmp[32];
+	إذا (retval == EXT2_ET_NO_DIRECTORY) {
+		حرف tmp[32];
 
-		if (ino)
-			snprintf(tmp, sizeof(tmp), "<%u>/<%u>", dir, ino);
-		else
-			snprintf(tmp, sizeof(tmp), "<%u>", dir);
-		retval = ext2fs_get_mem(strlen(tmp)+1, name);
-		if (retval)
-			goto cleanup;
+		إذا (ino)
+			snprintf(tmp, حجم(tmp), "<%u>/<%u>", dir, ino);
+		وإلا
+			snprintf(tmp, حجم(tmp), "<%u>", dir);
+		retval = ext2fs_get_mem(لڑی_لمبائی(tmp)+1, name);
+		إذا (retval)
+			اذهب cleanup;
 		strcpy(*name, tmp);
-		return 0;
-	} else if (retval)
-		goto cleanup;
-	if (gp.errcode) {
+		أرجع 0;
+	} وإلا إذا (retval)
+		اذهب cleanup;
+	إذا (gp.errcode) {
 		retval = gp.errcode;
-		goto cleanup;
+		اذهب cleanup;
 	}
 
-	retval = ext2fs_get_pathname_int(fs, gp.parent, dir, maxdepth-1,
-					 buf, &parent_name);
-	if (retval)
-		goto cleanup;
-	if (!ino) {
-		*name = parent_name;
-		return 0;
+	retval = ext2fs_get_pathname_int(fs, gp.ماپا, dir, maxdepth-1,
+					 buf, &ماپا_name);
+	إذا (retval)
+		اذهب cleanup;
+	إذا (!ino) {
+		*name = ماپا_name;
+		أرجع 0;
 	}
 
-	if (gp.name)
-		retval = ext2fs_get_mem(strlen(parent_name)+strlen(gp.name)+2,
+	إذا (gp.name)
+		retval = ext2fs_get_mem(لڑی_لمبائی(ماپا_name)+لڑی_لمبائی(gp.name)+2,
 					&ret);
-	else
-		retval = ext2fs_get_mem(strlen(parent_name)+5, &ret);
-	if (retval)
-		goto cleanup;
+	وإلا
+		retval = ext2fs_get_mem(لڑی_لمبائی(ماپا_name)+5, &ret);
+	إذا (retval)
+		اذهب cleanup;
 
 	ret[0] = 0;
-	if (parent_name[1])
-		strcat(ret, parent_name);
+	إذا (ماپا_name[1])
+		strcat(ret, ماپا_name);
 	strcat(ret, "/");
-	if (gp.name)
+	إذا (gp.name)
 		strcat(ret, gp.name);
-	else
+	وإلا
 		strcat(ret, "???");
 	*name = ret;
 	retval = 0;
 
 cleanup:
-	ext2fs_free_mem(&parent_name);
+	ext2fs_free_mem(&ماپا_name);
 	ext2fs_free_mem(&gp.name);
-	return retval;
+	أرجع retval;
 }
 
 errcode_t ext2fs_get_pathname(ext2_filsys fs, ext2_ino_t dir, ext2_ino_t ino,
-			      char **name)
+			      حرف **name)
 {
-	char	*buf;
+	حرف	*buf;
 	errcode_t	retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
-	if (dir == ino)
+	إذا (retval)
+		أرجع retval;
+	إذا (dir == ino)
 		ino = 0;
 	retval = ext2fs_get_pathname_int(fs, dir, ino, 32, buf, name);
 	ext2fs_free_mem(&buf);
-	return retval;
+	أرجع retval;
 
 }

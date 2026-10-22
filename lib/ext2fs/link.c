@@ -9,215 +9,215 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جے_انت
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
+#ضمن "ext2fsP.h"
 
-#define EXT2_DX_ROOT_OFF 24
+#تعریف_کرو EXT2_DX_جڑ_OFF 24
 
-struct dx_frame {
-	void *buf;
+بنية dx_چوکھٹا {
+	فراغ *buf;
 	blk64_t pblock;
-	struct ext2_dx_countlimit *head;
-	struct ext2_dx_entry *entries;
-	struct ext2_dx_entry *at;
+	بنية ext2_dx_countlimit *سر;
+	بنية ext2_dx_اندراج *entries;
+	بنية ext2_dx_اندراج *at;
 };
 
-struct dx_lookup_info {
-	const char *name;
-	int namelen;
-	int hash_alg;
+بنية dx_lookup_info {
+	ثابت حرف *name;
+	صحيح namelen;
+	صحيح hash_alg;
 	__u32 hash;
-	unsigned levels;
-	struct dx_frame frames[EXT4_HTREE_LEVEL];
+	بنانشانی پدھراں;
+	بنية dx_چوکھٹا چوکھٹے[EXT4_HTREE_LEVEL];
 };
 
-static errcode_t alloc_dx_frame(ext2_filsys fs, struct dx_frame *frame)
+ساكن errcode_t alloc_dx_چوکھٹا(ext2_filsys fs, بنية dx_چوکھٹا *چوکھٹا)
 {
-	return ext2fs_get_mem(fs->blocksize, &frame->buf);
+	أرجع ext2fs_get_mem(fs->blocksize, &چوکھٹا->buf);
 }
 
-static void dx_release(struct dx_lookup_info *info)
+ساكن فراغ dx_release(بنية dx_lookup_info *info)
 {
-	unsigned level;
+	بنانشانی level;
 
-	for (level = 0; level < info->levels; level++) {
-		if (info->frames[level].buf == NULL)
-			break;
-		ext2fs_free_mem(&(info->frames[level].buf));
+	لكل (level = 0; level < info->پدھراں; level++) {
+		إذا (info->چوکھٹے[level].buf == عدم)
+			اكسر;
+		ext2fs_free_mem(&(info->چوکھٹے[level].buf));
 	}
-	info->levels = 0;
+	info->پدھراں = 0;
 }
 
-static void dx_search_entry(struct dx_frame *frame, int count, __u32 hash)
+ساكن فراغ dx_تلاش_اندراج(بنية dx_چوکھٹا *چوکھٹا, صحيح گنتی, __u32 hash)
 {
-	struct ext2_dx_entry *p, *q, *m;
+	بنية ext2_dx_اندراج *p, *q, *m;
 
-	p = frame->entries + 1;
-	q = frame->entries + count - 1;
-	while (p <= q) {
+	p = چوکھٹا->entries + 1;
+	q = چوکھٹا->entries + گنتی - 1;
+	طالما (p <= q) {
 		m = p + (q - p) / 2;
-		if (ext2fs_le32_to_cpu(m->hash) > hash)
+		إذا (ext2fs_le32_منزل_cpu(m->hash) > hash)
 			q = m - 1;
-		else
+		وإلا
 			p = m + 1;
 	}
-	frame->at = p - 1;
+	چوکھٹا->at = p - 1;
 }
 
-static errcode_t load_logical_dir_block(ext2_filsys fs, ext2_ino_t dir,
-					struct ext2_inode *diri, blk64_t block,
-					blk64_t *pblk, void *buf)
+ساكن errcode_t لدو_logical_dir_بلاک(ext2_filsys fs, ext2_ino_t dir,
+					بنية ext2_inode *diri, blk64_t بلاک,
+					blk64_t *pblk, فراغ *buf)
 {
 	errcode_t errcode;
-	int ret_flags;
+	صحيح ret_flags;
 
-	errcode = ext2fs_bmap2(fs, dir, diri, NULL, 0, block, &ret_flags,
+	errcode = ext2fs_bmap2(fs, dir, diri, عدم, 0, بلاک, &ret_flags,
 			       pblk);
-	if (errcode)
-		return errcode;
-	if (ret_flags & BMAP_RET_UNINIT)
-		return EXT2_ET_DIR_CORRUPTED;
-	return ext2fs_read_dir_block4(fs, *pblk, buf, 0, dir);
+	إذا (errcode)
+		أرجع errcode;
+	إذا (ret_flags & BMAP_RET_UNINIT)
+		أرجع EXT2_ET_DIR_CORRUPTED;
+	أرجع ext2fs_read_dir_block4(fs, *pblk, buf, 0, dir);
 }
 
-static errcode_t dx_lookup(ext2_filsys fs, ext2_ino_t dir,
-			   struct ext2_inode *diri, struct dx_lookup_info *info)
+ساكن errcode_t dx_lookup(ext2_filsys fs, ext2_ino_t dir,
+			   بنية ext2_inode *diri, بنية dx_lookup_info *info)
 {
-	struct ext2_dx_root_info *root;
+	بنية ext2_dx_جڑ_info *جڑ;
 	errcode_t errcode;
-	int level = 0;
-	int count, limit;
-	int hash_alg;
-	int hash_flags = diri->i_flags & EXT4_CASEFOLD_FL;
+	صحيح level = 0;
+	صحيح گنتی, حد_بندی;
+	صحيح hash_alg;
+	صحيح hash_flags = diri->i_flags & EXT4_CASEFOLD_FL;
 	__u32 minor_hash;
-	struct dx_frame *frame;
+	بنية dx_چوکھٹا *چوکھٹا;
 
-	errcode = alloc_dx_frame(fs, &(info->frames[0]));
-	if (errcode)
-		return errcode;
-	info->levels = 1;
+	errcode = alloc_dx_چوکھٹا(fs, &(info->چوکھٹے[0]));
+	إذا (errcode)
+		أرجع errcode;
+	info->پدھراں = 1;
 
-	errcode = load_logical_dir_block(fs, dir, diri, 0,
-					 &(info->frames[0].pblock),
-					 info->frames[0].buf);
-	if (errcode)
-		goto out_err;
-	root = (struct ext2_dx_root_info *) ((char *)info->frames[0].buf +
-					     EXT2_DX_ROOT_OFF);
-	hash_alg = root->hash_version;
-	if (hash_alg != EXT2_HASH_TEA && hash_alg != EXT2_HASH_HALF_MD4 &&
+	errcode = لدو_logical_dir_بلاک(fs, dir, diri, 0,
+					 &(info->چوکھٹے[0].pblock),
+					 info->چوکھٹے[0].buf);
+	إذا (errcode)
+		اذهب باہرلا_err;
+	جڑ = (بنية ext2_dx_جڑ_info *) ((حرف *)info->چوکھٹے[0].buf +
+					     EXT2_DX_جڑ_OFF);
+	hash_alg = جڑ->hash_نسخہ;
+	إذا (hash_alg != EXT2_HASH_TEA && hash_alg != EXT2_HASH_HALF_MD4 &&
 	    hash_alg != EXT2_HASH_LEGACY) {
 		errcode = EXT2_ET_DIRHASH_UNSUPP;
-		goto out_err;
+		اذهب باہرلا_err;
 	}
-	if (hash_alg <= EXT2_HASH_TEA &&
+	إذا (hash_alg <= EXT2_HASH_TEA &&
 	    fs->super->s_flags & EXT2_FLAGS_UNSIGNED_HASH)
 		hash_alg += 3;
-	if (root->indirect_levels >= ext2_dir_htree_level(fs)) {
+	إذا (جڑ->اسدھا_پدھراں >= ext2_dir_htree_level(fs)) {
 		errcode = EXT2_ET_DIR_CORRUPTED;
-		goto out_err;
+		اذهب باہرلا_err;
 	}
 	info->hash_alg = hash_alg;
 
 	errcode = ext2fs_dirhash2(hash_alg, info->name, info->namelen,
 				  fs->encoding, hash_flags,
-				  fs->super->s_hash_seed, &info->hash,
+				  fs->super->s_hash_بیج, &info->hash,
 				  &minor_hash);
-	if (errcode)
-		goto out_err;
+	إذا (errcode)
+		اذهب باہرلا_err;
 
-	for (level = 0; level <= root->indirect_levels; level++) {
-		frame = &(info->frames[level]);
-		if (level > 0) {
-			errcode = alloc_dx_frame(fs, frame);
-			if (errcode)
-				goto out_err;
-			info->levels++;
+	لكل (level = 0; level <= جڑ->اسدھا_پدھراں; level++) {
+		چوکھٹا = &(info->چوکھٹے[level]);
+		إذا (level > 0) {
+			errcode = alloc_dx_چوکھٹا(fs, چوکھٹا);
+			إذا (errcode)
+				اذهب باہرلا_err;
+			info->پدھراں++;
 
-			errcode = load_logical_dir_block(fs, dir, diri,
-				ext2fs_le32_to_cpu(info->frames[level-1].at->block) & 0x0fffffff,
-				&(frame->pblock), frame->buf);
-			if (errcode)
-				goto out_err;
+			errcode = لدو_logical_dir_بلاک(fs, dir, diri,
+				ext2fs_le32_منزل_cpu(info->چوکھٹے[level-1].at->بلاک) & 0x0fffffff,
+				&(چوکھٹا->pblock), چوکھٹا->buf);
+			إذا (errcode)
+				اذهب باہرلا_err;
 		}
-		errcode = ext2fs_get_dx_countlimit(fs, frame->buf,
-						   &(frame->head), NULL);
-		if (errcode)
-			goto out_err;
-		count = ext2fs_le16_to_cpu(frame->head->count);
-		limit = ext2fs_le16_to_cpu(frame->head->limit);
-		frame->entries = (struct ext2_dx_entry *)(frame->head);
-		if (!count || count > limit) {
+		errcode = ext2fs_get_dx_countlimit(fs, چوکھٹا->buf,
+						   &(چوکھٹا->سر), عدم);
+		إذا (errcode)
+			اذهب باہرلا_err;
+		گنتی = ext2fs_le16_منزل_cpu(چوکھٹا->سر->گنتی);
+		حد_بندی = ext2fs_le16_منزل_cpu(چوکھٹا->سر->حد_بندی);
+		چوکھٹا->entries = (بنية ext2_dx_اندراج *)(چوکھٹا->سر);
+		إذا (!گنتی || گنتی > حد_بندی) {
 			errcode = EXT2_ET_DIR_CORRUPTED;
-			goto out_err;
+			اذهب باہرلا_err;
 		}
 
-		dx_search_entry(frame, count, info->hash);
+		dx_تلاش_اندراج(چوکھٹا, گنتی, info->hash);
 	}
-	return 0;
-out_err:
+	أرجع 0;
+باہرلا_err:
 	dx_release(info);
-	return errcode;
+	أرجع errcode;
 }
 
-struct link_struct  {
+بنية link_struct  {
 	ext2_filsys	fs;
-	const char	*name;
-	int		namelen;
+	ثابت حرف	*name;
+	صحيح		namelen;
 	ext2_ino_t	inode;
-	int		flags;
-	int		done;
-	unsigned int	blocksize;
+	صحيح		flags;
+	صحيح		پورا;
+	بنانشانی صحيح	blocksize;
 	errcode_t	err;
-	struct ext2_super_block *sb;
+	بنية ext2_super_بلاک *sb;
 };
 
-static int link_proc(ext2_ino_t dir EXT2FS_ATTR((unused)),
-		     int entru EXT2FS_ATTR((unused)),
-		     struct ext2_dir_entry *dirent,
-		     int	offset,
-		     int	blocksize,
-		     char	*buf,
-		     void	*priv_data)
+ساكن صحيح link_proc(ext2_ino_t dir EXT2FS_ATTR((بن_ورتیا)),
+		     صحيح entru EXT2FS_ATTR((بن_ورتیا)),
+		     بنية ext2_dir_اندراج *dirent,
+		     صحيح	وتھ,
+		     صحيح	blocksize,
+		     حرف	*buf,
+		     فراغ	*priv_انکڑے)
 {
-	struct link_struct *ls = (struct link_struct *) priv_data;
-	struct ext2_dir_entry *next;
-	unsigned int rec_len, min_rec_len, curr_rec_len;
-	int ret = 0;
-	int csum_size = 0;
+	بنية link_struct *ls = (بنية link_struct *) priv_انکڑے;
+	بنية ext2_dir_اندراج *اگلا;
+	بنانشانی صحيح rec_len, min_rec_len, curr_rec_len;
+	صحيح ret = 0;
+	صحيح csum_ناپ = 0;
 
-	if (ls->done)
-		return DIRENT_ABORT;
+	إذا (ls->پورا)
+		أرجع DIRENT_ABORT;
 
 	rec_len = EXT2_DIR_REC_LEN(ls->namelen);
 
 	ls->err = ext2fs_get_rec_len(ls->fs, dirent, &curr_rec_len);
-	if (ls->err)
-		return DIRENT_ABORT;
+	إذا (ls->err)
+		أرجع DIRENT_ABORT;
 
-	if (ext2fs_has_feature_metadata_csum(ls->fs->super))
-		csum_size = sizeof(struct ext2_dir_entry_tail);
+	إذا (ext2fs_has_feature_metadata_csum(ls->fs->super))
+		csum_ناپ = حجم(بنية ext2_dir_اندراج_پوچھ);
 	/*
 	 * See if the following directory entry (if any) is unused;
 	 * if so, absorb it into this one.
 	 */
-	next = (struct ext2_dir_entry *) (buf + offset + curr_rec_len);
-	if ((offset + (int) curr_rec_len < blocksize - (8 + csum_size)) &&
-	    (next->inode == 0) &&
-	    (offset + (int) curr_rec_len + (int) next->rec_len <= blocksize)) {
-		curr_rec_len += next->rec_len;
-		ls->err = ext2fs_set_rec_len(ls->fs, curr_rec_len, dirent);
-		if (ls->err)
-			return DIRENT_ABORT;
-		ret = DIRENT_CHANGED;
+	اگلا = (بنية ext2_dir_اندراج *) (buf + وتھ + curr_rec_len);
+	إذا ((وتھ + (صحيح) curr_rec_len < blocksize - (8 + csum_ناپ)) &&
+	    (اگلا->inode == 0) &&
+	    (وتھ + (صحيح) curr_rec_len + (صحيح) اگلا->rec_len <= blocksize)) {
+		curr_rec_len += اگلا->rec_len;
+		ls->err = ext2fs_سیٹ_rec_len(ls->fs, curr_rec_len, dirent);
+		إذا (ls->err)
+			أرجع DIRENT_ABORT;
+		ret = DIRENT_بدلیا;
 	}
 
 	/*
@@ -225,381 +225,381 @@ static int link_proc(ext2_ino_t dir EXT2FS_ATTR((unused)),
 	 * directory entry to make room for the new name.  If so,
 	 * truncate it and return.
 	 */
-	if (dirent->inode) {
+	إذا (dirent->inode) {
 		min_rec_len = EXT2_DIR_REC_LEN(ext2fs_dirent_name_len(dirent));
-		if (curr_rec_len < (min_rec_len + rec_len))
-			return ret;
+		إذا (curr_rec_len < (min_rec_len + rec_len))
+			أرجع ret;
 		rec_len = curr_rec_len - min_rec_len;
-		ls->err = ext2fs_set_rec_len(ls->fs, min_rec_len, dirent);
-		if (ls->err)
-			return DIRENT_ABORT;
-		next = (struct ext2_dir_entry *) (buf + offset +
+		ls->err = ext2fs_سیٹ_rec_len(ls->fs, min_rec_len, dirent);
+		إذا (ls->err)
+			أرجع DIRENT_ABORT;
+		اگلا = (بنية ext2_dir_اندراج *) (buf + وتھ +
 						  dirent->rec_len);
-		next->inode = 0;
-		ext2fs_dirent_set_name_len(next, 0);
-		ext2fs_dirent_set_file_type(next, 0);
-		ls->err = ext2fs_set_rec_len(ls->fs, rec_len, next);
-		if (ls->err)
-			return DIRENT_ABORT;
-		return DIRENT_CHANGED;
+		اگلا->inode = 0;
+		ext2fs_dirent_سیٹ_name_len(اگلا, 0);
+		ext2fs_dirent_سیٹ_file_type(اگلا, 0);
+		ls->err = ext2fs_سیٹ_rec_len(ls->fs, rec_len, اگلا);
+		إذا (ls->err)
+			أرجع DIRENT_ABORT;
+		أرجع DIRENT_بدلیا;
 	}
 
 	/*
 	 * If we get this far, then the directory entry is not used.
 	 * See if we can fit the request entry in.  If so, do it.
 	 */
-	if (curr_rec_len < rec_len)
-		return ret;
+	إذا (curr_rec_len < rec_len)
+		أرجع ret;
 	dirent->inode = ls->inode;
-	ext2fs_dirent_set_name_len(dirent, ls->namelen);
+	ext2fs_dirent_سیٹ_name_len(dirent, ls->namelen);
 	strncpy(dirent->name, ls->name, ls->namelen);
-	if (ext2fs_has_feature_filetype(ls->sb))
-		ext2fs_dirent_set_file_type(dirent,
-					    ls->flags & EXT2FS_LINK_FT_MASK);
+	إذا (ext2fs_has_feature_filetype(ls->sb))
+		ext2fs_dirent_سیٹ_file_type(dirent,
+					    ls->flags & EXT2_FS_LINK_FT_نقاب);
 
-	ls->done++;
-	return DIRENT_ABORT|DIRENT_CHANGED;
+	ls->پورا++;
+	أرجع DIRENT_ABORT|DIRENT_بدلیا;
 }
 
-static errcode_t add_dirent_to_buf(ext2_filsys fs, e2_blkcnt_t blockcnt,
-				   char *buf, ext2_ino_t dir,
-				   struct ext2_inode *diri, const char *name,
-				   ext2_ino_t ino, int flags, blk64_t *pblkp)
+ساكن errcode_t جوڑو_dirent_منزل_buf(ext2_filsys fs, e2_blkcnt_t blockcnt,
+				   حرف *buf, ext2_ino_t dir,
+				   بنية ext2_inode *diri, ثابت حرف *name,
+				   ext2_ino_t ino, صحيح flags, blk64_t *pblkp)
 {
-	struct dir_context ctx;
-	struct link_struct ls;
+	بنية dir_context ctx;
+	بنية link_struct ls;
 	errcode_t retval;
 
-	retval = load_logical_dir_block(fs, dir, diri, blockcnt, pblkp, buf);
-	if (retval)
-		return retval;
+	retval = لدو_logical_dir_بلاک(fs, dir, diri, blockcnt, pblkp, buf);
+	إذا (retval)
+		أرجع retval;
 	ctx.errcode = 0;
 	ctx.func = link_proc;
 	ctx.dir = dir;
-	ctx.flags = DIRENT_FLAG_INCLUDE_EMPTY;
+	ctx.flags = DIRENT_FLAG_INCLUDE_خالی_تھاواں;
 	ctx.buf = buf;
-	ctx.priv_data = &ls;
+	ctx.priv_انکڑے = &ls;
 
 	ls.fs = fs;
 	ls.name = name;
-	ls.namelen = strlen(name);
+	ls.namelen = لڑی_لمبائی(name);
 	ls.inode = ino;
 	ls.flags = flags;
-	ls.done = 0;
+	ls.پورا = 0;
 	ls.sb = fs->super;
 	ls.blocksize = fs->blocksize;
 	ls.err = 0;
 
-	ext2fs_process_dir_block(fs, pblkp, blockcnt, 0, 0, &ctx);
-	if (ctx.errcode)
-		return ctx.errcode;
-	if (ls.err)
-		return ls.err;
-	if (!ls.done)
-		return EXT2_ET_DIR_NO_SPACE;
-	return 0;
+	ext2fs_process_dir_بلاک(fs, pblkp, blockcnt, 0, 0, &ctx);
+	إذا (ctx.errcode)
+		أرجع ctx.errcode;
+	إذا (ls.err)
+		أرجع ls.err;
+	إذا (!ls.پورا)
+		أرجع EXT2_ET_DIR_NO_SPACE;
+	أرجع 0;
 }
 
-struct dx_hash_map {
+بنية dx_hash_map {
 	__u32 hash;
-	int size;
-	int off;
+	صحيح ناپ;
+	صحيح off;
 };
 
-static EXT2_QSORT_TYPE dx_hash_map_cmp(const void *ap, const void *bp)
+ساكن EXT2_QSORT_TYPE dx_hash_map_cmp(ثابت فراغ *ap, ثابت فراغ *bp)
 {
-	const struct dx_hash_map *a = ap, *b = bp;
+	ثابت بنية dx_hash_map *a = ap, *b = bp;
 
-	if (a->hash < b->hash)
-		return -1;
-	if (a->hash > b->hash)
-		return 1;
-	return 0;
+	إذا (a->hash < b->hash)
+		أرجع -1;
+	إذا (a->hash > b->hash)
+		أرجع 1;
+	أرجع 0;
 }
 
-static errcode_t dx_move_dirents(ext2_filsys fs, struct dx_hash_map *map,
-				 int count, void *from, void *to)
+ساكن errcode_t dx_move_dirents(ext2_filsys fs, بنية dx_hash_map *map,
+				 صحيح گنتی, فراغ *from, فراغ *منزل)
 {
-	struct ext2_dir_entry *de;
-	int i;
-	int rec_len = 0;
+	بنية ext2_dir_اندراج *de;
+	صحيح i;
+	صحيح rec_len = 0;
 	errcode_t retval;
-	int csum_size = 0;
-	void *base = to;
+	صحيح csum_ناپ = 0;
+	فراغ *ادھار = منزل;
 
-	if (ext2fs_has_feature_metadata_csum(fs->super))
-		csum_size = sizeof(struct ext2_dir_entry_tail);
+	إذا (ext2fs_has_feature_metadata_csum(fs->super))
+		csum_ناپ = حجم(بنية ext2_dir_اندراج_پوچھ);
 
-	for (i = 0; i < count; i++) {
-		de = (struct ext2_dir_entry *) ((char *)from + map[i].off);
+	لكل (i = 0; i < گنتی; i++) {
+		de = (بنية ext2_dir_اندراج *) ((حرف *)from + map[i].off);
 		rec_len = EXT2_DIR_REC_LEN(ext2fs_dirent_name_len(de));
-		memcpy(to, de, rec_len);
-		retval = ext2fs_set_rec_len(fs, rec_len, to);
-		if (retval)
-			return retval;
-		to = (char *)to + rec_len;
+		حافظہ_نقل(منزل, de, rec_len);
+		retval = ext2fs_سیٹ_rec_len(fs, rec_len, منزل);
+		إذا (retval)
+			أرجع retval;
+		منزل = (حرف *)منزل + rec_len;
 	}
 	/*
 	 * Update rec_len of the last dir entry to stretch to the end of block
 	 */
-	to = (char *)to - rec_len;
-	rec_len = fs->blocksize - ((char *)to - (char *)base) - csum_size;
-	retval = ext2fs_set_rec_len(fs, rec_len, to);
-	if (retval)
-		return retval;
-	if (csum_size)
-		ext2fs_initialize_dirent_tail(fs,
-				EXT2_DIRENT_TAIL(base, fs->blocksize));
-	return 0;
+	منزل = (حرف *)منزل - rec_len;
+	rec_len = fs->blocksize - ((حرف *)منزل - (حرف *)ادھار) - csum_ناپ;
+	retval = ext2fs_سیٹ_rec_len(fs, rec_len, منزل);
+	إذا (retval)
+		أرجع retval;
+	إذا (csum_ناپ)
+		ext2fs_initialize_dirent_پوچھ(fs,
+				EXT2_DIRENT_پوچھ(ادھار, fs->blocksize));
+	أرجع 0;
 }
 
-static errcode_t dx_insert_entry(ext2_filsys fs, ext2_ino_t dir,
-				 struct dx_lookup_info *info, int level,
+ساكن errcode_t dx_داخل_کرو_اندراج(ext2_filsys fs, ext2_ino_t dir,
+				 بنية dx_lookup_info *info, صحيح level,
 				 __u32 hash, blk64_t lblk)
 {
-	int pcount;
-	struct ext2_dx_entry *top, *new;
+	صحيح pcount;
+	بنية ext2_dx_اندراج *چوٹی, *new;
 
-	pcount = ext2fs_le16_to_cpu(info->frames[level].head->count);
-	top = info->frames[level].entries + pcount;
-	new = info->frames[level].at + 1;
-	memmove(new + 1, new, (char *)top - (char *)new);
-	new->hash = ext2fs_cpu_to_le32(hash);
-	new->block = ext2fs_cpu_to_le32(lblk);
-	info->frames[level].head->count = ext2fs_cpu_to_le16(pcount + 1);
-	return ext2fs_write_dir_block4(fs, info->frames[level].pblock,
-				       info->frames[level].buf, 0, dir);
+	pcount = ext2fs_le16_منزل_cpu(info->چوکھٹے[level].سر->گنتی);
+	چوٹی = info->چوکھٹے[level].entries + pcount;
+	new = info->چوکھٹے[level].at + 1;
+	memmove(new + 1, new, (حرف *)چوٹی - (حرف *)new);
+	new->hash = ext2fs_cpu_منزل_le32(hash);
+	new->بلاک = ext2fs_cpu_منزل_le32(lblk);
+	info->چوکھٹے[level].سر->گنتی = ext2fs_cpu_منزل_le16(pcount + 1);
+	أرجع ext2fs_write_dir_block4(fs, info->چوکھٹے[level].pblock,
+				       info->چوکھٹے[level].buf, 0, dir);
 }
 
-static errcode_t dx_split_leaf(ext2_filsys fs, ext2_ino_t dir,
-			       struct ext2_inode *diri,
-			       struct dx_lookup_info *info, void *buf,
-			       blk64_t leaf_pblk, blk64_t new_lblk,
+ساكن errcode_t dx_ونڈو_پتی(ext2_filsys fs, ext2_ino_t dir,
+			       بنية ext2_inode *diri,
+			       بنية dx_lookup_info *info, فراغ *buf,
+			       blk64_t پتی_pblk, blk64_t new_lblk,
 			       blk64_t new_pblk)
 {
-	int hash_flags = diri->i_flags & EXT4_CASEFOLD_FL;
-	struct ext2_dir_entry *de;
-	void *buf2;
+	صحيح hash_flags = diri->i_flags & EXT4_CASEFOLD_FL;
+	بنية ext2_dir_اندراج *de;
+	فراغ *buf2;
 	errcode_t retval = 0;
-	unsigned int rec_len;
-	unsigned int offset, move_size;
-	int i, count = 0;
-	struct dx_hash_map *map;
-	int continued;
+	بنانشانی صحيح rec_len;
+	بنانشانی صحيح وتھ, move_ناپ;
+	صحيح i, گنتی = 0;
+	بنية dx_hash_map *map;
+	صحيح continued;
 	__u32 minor_hash;
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf2);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 	retval = ext2fs_get_array(fs->blocksize / 12,
-				  sizeof(struct dx_hash_map), &map);
-	if (retval) {
+				  حجم(بنية dx_hash_map), &map);
+	إذا (retval) {
 		ext2fs_free_mem(&buf2);
-		return retval;
+		أرجع retval;
 	}
-	for (offset = 0; offset < fs->blocksize; offset += rec_len) {
-		de = (struct ext2_dir_entry *) ((char *)buf + offset);
+	لكل (وتھ = 0; وتھ < fs->blocksize; وتھ += rec_len) {
+		de = (بنية ext2_dir_اندراج *) ((حرف *)buf + وتھ);
 		retval = ext2fs_get_rec_len(fs, de, &rec_len);
-		if (retval)
-			goto out;
-		if (ext2fs_dirent_name_len(de) > 0 && de->inode) {
-			map[count].off = offset;
-			map[count].size = rec_len;
+		إذا (retval)
+			اذهب باہرلا;
+		إذا (ext2fs_dirent_name_len(de) > 0 && de->inode) {
+			map[گنتی].off = وتھ;
+			map[گنتی].ناپ = rec_len;
 			retval = ext2fs_dirhash2(info->hash_alg, de->name,
 					ext2fs_dirent_name_len(de),
 					fs->encoding, hash_flags,
-					fs->super->s_hash_seed,
-					&(map[count].hash),
+					fs->super->s_hash_بیج,
+					&(map[گنتی].hash),
 					&minor_hash);
-			if (retval)
-				goto out;
-			count++;
+			إذا (retval)
+				اذهب باہرلا;
+			گنتی++;
 		}
 	}
-	qsort(map, count, sizeof(struct dx_hash_map), dx_hash_map_cmp);
-	move_size = 0;
+	qsort(map, گنتی, حجم(بنية dx_hash_map), dx_hash_map_cmp);
+	move_ناپ = 0;
 	/* Find place to split block */
-	for (i = count - 1; i >= 0; i--) {
-		if (move_size + map[i].size / 2 > fs->blocksize / 2)
-			break;
-		move_size += map[i].size;
+	لكل (i = گنتی - 1; i >= 0; i--) {
+		إذا (move_ناپ + map[i].ناپ / 2 > fs->blocksize / 2)
+			اكسر;
+		move_ناپ += map[i].ناپ;
 	}
 	/* Let i be the first entry to move */
 	i++;
 	/* Move selected directory entries to new block */
-	retval = dx_move_dirents(fs, map + i, count - i, buf, buf2);
-	if (retval)
-		goto out;
+	retval = dx_move_dirents(fs, map + i, گنتی - i, buf, buf2);
+	إذا (retval)
+		اذهب باہرلا;
 	retval = ext2fs_write_dir_block4(fs, new_pblk, buf2, 0, dir);
-	if (retval)
-		goto out;
+	إذا (retval)
+		اذهب باہرلا;
 	/* Repack remaining entries in the old block */
 	retval = dx_move_dirents(fs, map, i, buf, buf2);
-	if (retval)
-		goto out;
-	retval = ext2fs_write_dir_block4(fs, leaf_pblk, buf2, 0, dir);
-	if (retval)
-		goto out;
+	إذا (retval)
+		اذهب باہرلا;
+	retval = ext2fs_write_dir_block4(fs, پتی_pblk, buf2, 0, dir);
+	إذا (retval)
+		اذهب باہرلا;
 	/* Update parent node */
 	continued = map[i].hash == map[i-1].hash;
-	retval = dx_insert_entry(fs, dir, info, info->levels - 1,
+	retval = dx_داخل_کرو_اندراج(fs, dir, info, info->پدھراں - 1,
 				 map[i].hash + continued, new_lblk);
-out:
+باہرلا:
 	ext2fs_free_mem(&buf2);
 	ext2fs_free_mem(&map);
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t dx_grow_tree(ext2_filsys fs, ext2_ino_t dir,
-			      struct ext2_inode *diri,
-			      struct dx_lookup_info *info, void *buf,
-			      blk64_t leaf_pblk)
+ساكن errcode_t dx_grow_درخت(ext2_filsys fs, ext2_ino_t dir,
+			      بنية ext2_inode *diri,
+			      بنية dx_lookup_info *info, فراغ *buf,
+			      blk64_t پتی_pblk)
 {
-	int i;
+	صحيح i;
 	errcode_t retval;
-	ext2_off64_t size = EXT2_I_SIZE(diri);
+	ext2_off64_t ناپ = EXT2_I_ناپ(diri);
 	blk64_t lblk, pblk;
-	struct ext2_dir_entry *de;
-	struct ext2_dx_countlimit *head;
-	int csum_size = 0;
-	int count;
+	بنية ext2_dir_اندراج *de;
+	بنية ext2_dx_countlimit *سر;
+	صحيح csum_ناپ = 0;
+	صحيح گنتی;
 
-	if (ext2fs_has_feature_metadata_csum(fs->super))
-		csum_size = sizeof(struct ext2_dx_tail);
+	إذا (ext2fs_has_feature_metadata_csum(fs->super))
+		csum_ناپ = حجم(بنية ext2_dx_پوچھ);
 
 	/* Find level which can accommodate new child */
-	for (i = info->levels - 1; i >= 0; i--)
-		if (ext2fs_le16_to_cpu(info->frames[i].head->count) <
-		    ext2fs_le16_to_cpu(info->frames[i].head->limit))
-			break;
+	لكل (i = info->پدھراں - 1; i >= 0; i--)
+		إذا (ext2fs_le16_منزل_cpu(info->چوکھٹے[i].سر->گنتی) <
+		    ext2fs_le16_منزل_cpu(info->چوکھٹے[i].سر->حد_بندی))
+			اكسر;
 	/* Need to grow tree depth? */
-	if (i < 0 && info->levels >= ext2_dir_htree_level(fs))
-		return EXT2_ET_DIR_NO_SPACE;
-	lblk = size / fs->blocksize;
-	size += fs->blocksize;
-	retval = ext2fs_inode_size_set(fs, diri, size);
-	if (retval)
-		return retval;
+	إذا (i < 0 && info->پدھراں >= ext2_dir_htree_level(fs))
+		أرجع EXT2_ET_DIR_NO_SPACE;
+	lblk = ناپ / fs->blocksize;
+	ناپ += fs->blocksize;
+	retval = ext2fs_inode_ناپ_سیٹ(fs, diri, ناپ);
+	إذا (retval)
+		أرجع retval;
 	retval = ext2fs_fallocate(fs,
-			EXT2_FALLOCATE_FORCE_INIT | EXT2_FALLOCATE_ZERO_BLOCKS,
+			EXT2_FALLOCATE_FORCE_INIT | EXT2_FALLOCATE_ZERO_بلاکاں,
 			dir, diri, 0, lblk, 1);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 	retval = ext2fs_write_inode(fs, dir, diri);
-	if (retval)
-		return retval;
-	retval = ext2fs_bmap2(fs, dir, diri, NULL, 0, lblk, NULL, &pblk);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
+	retval = ext2fs_bmap2(fs, dir, diri, عدم, 0, lblk, عدم, &pblk);
+	إذا (retval)
+		أرجع retval;
 	/* Only leaf addition needed? */
-	if (i == (int)info->levels - 1)
-		return dx_split_leaf(fs, dir, diri, info, buf, leaf_pblk,
+	إذا (i == (صحيح)info->پدھراں - 1)
+		أرجع dx_ونڈو_پتی(fs, dir, diri, info, buf, پتی_pblk,
 				     lblk, pblk);
 
 	de = buf;
 	de->inode = 0;
-	ext2fs_dirent_set_name_len(de, 0);
-	ext2fs_dirent_set_file_type(de, 0);
-	retval = ext2fs_set_rec_len(fs, fs->blocksize, de);
-	if (retval)
-		return retval;
-	head = (struct ext2_dx_countlimit *) ((char *)buf + 8);
-	count = ext2fs_le16_to_cpu(info->frames[i+1].head->count);
+	ext2fs_dirent_سیٹ_name_len(de, 0);
+	ext2fs_dirent_سیٹ_file_type(de, 0);
+	retval = ext2fs_سیٹ_rec_len(fs, fs->blocksize, de);
+	إذا (retval)
+		أرجع retval;
+	سر = (بنية ext2_dx_countlimit *) ((حرف *)buf + 8);
+	گنتی = ext2fs_le16_منزل_cpu(info->چوکھٹے[i+1].سر->گنتی);
 	/* Growing tree depth? */
-	if (i < 0) {
-		struct ext2_dx_root_info *root;
+	إذا (i < 0) {
+		بنية ext2_dx_جڑ_info *جڑ;
 
-		memcpy(head, info->frames[0].entries,
-		       count * sizeof(struct ext2_dx_entry));
-		head->limit = ext2fs_cpu_to_le16(
-				(fs->blocksize - (8 + csum_size)) /
-				sizeof(struct ext2_dx_entry));
+		حافظہ_نقل(سر, info->چوکھٹے[0].entries,
+		       گنتی * حجم(بنية ext2_dx_اندراج));
+		سر->حد_بندی = ext2fs_cpu_منزل_le16(
+				(fs->blocksize - (8 + csum_ناپ)) /
+				حجم(بنية ext2_dx_اندراج));
 		/* head->count gets set by memcpy above to correct value */
 
 		/* Now update tree root */
-		info->frames[0].head->count = ext2fs_cpu_to_le16(1);
-		info->frames[0].entries[0].block = ext2fs_cpu_to_le32(lblk);
-		root = (struct ext2_dx_root_info *)
-			((char *)info->frames[0].buf + EXT2_DX_ROOT_OFF);
-		root->indirect_levels++;
-	} else {
+		info->چوکھٹے[0].سر->گنتی = ext2fs_cpu_منزل_le16(1);
+		info->چوکھٹے[0].entries[0].بلاک = ext2fs_cpu_منزل_le32(lblk);
+		جڑ = (بنية ext2_dx_جڑ_info *)
+			((حرف *)info->چوکھٹے[0].buf + EXT2_DX_جڑ_OFF);
+		جڑ->اسدھا_پدھراں++;
+	} وإلا {
 		/* Splitting internal node in two */
-		int count1 = count / 2;
-		int count2 = count - count1;
-		__u32 split_hash = ext2fs_le32_to_cpu(info->frames[i+1].entries[count1].hash);
+		صحيح count1 = گنتی / 2;
+		صحيح count2 = گنتی - count1;
+		__u32 ونڈو_hash = ext2fs_le32_منزل_cpu(info->چوکھٹے[i+1].entries[count1].hash);
 
-		memcpy(head, info->frames[i+1].entries + count1,
-		       count2 * sizeof(struct ext2_dx_entry));
-		head->count = ext2fs_cpu_to_le16(count2);
-		head->limit = ext2fs_cpu_to_le16(
-				(fs->blocksize - (8 + csum_size)) /
-				sizeof(struct ext2_dx_entry));
-		info->frames[i+1].head->count = ext2fs_cpu_to_le16(count1);
+		حافظہ_نقل(سر, info->چوکھٹے[i+1].entries + count1,
+		       count2 * حجم(بنية ext2_dx_اندراج));
+		سر->گنتی = ext2fs_cpu_منزل_le16(count2);
+		سر->حد_بندی = ext2fs_cpu_منزل_le16(
+				(fs->blocksize - (8 + csum_ناپ)) /
+				حجم(بنية ext2_dx_اندراج));
+		info->چوکھٹے[i+1].سر->گنتی = ext2fs_cpu_منزل_le16(count1);
 
 		/* Update parent node */
-		retval = dx_insert_entry(fs, dir, info, i, split_hash, lblk);
-		if (retval)
-			return retval;
+		retval = dx_داخل_کرو_اندراج(fs, dir, info, i, ونڈو_hash, lblk);
+		إذا (retval)
+			أرجع retval;
 
 	}
 	/* Writeout split block / updated root */
-	retval = ext2fs_write_dir_block4(fs, info->frames[i+1].pblock,
-					 info->frames[i+1].buf, 0, dir);
-	if (retval)
-		return retval;
+	retval = ext2fs_write_dir_block4(fs, info->چوکھٹے[i+1].pblock,
+					 info->چوکھٹے[i+1].buf, 0, dir);
+	إذا (retval)
+		أرجع retval;
 	/* Writeout new tree block */
 	retval = ext2fs_write_dir_block4(fs, pblk, buf, 0, dir);
-	if (retval)
-		return retval;
-	return 0;
+	إذا (retval)
+		أرجع retval;
+	أرجع 0;
 }
 
-static errcode_t dx_link(ext2_filsys fs, ext2_ino_t dir,
-			 struct ext2_inode *diri, const char *name,
-			 ext2_ino_t ino, int flags)
+ساكن errcode_t dx_link(ext2_filsys fs, ext2_ino_t dir,
+			 بنية ext2_inode *diri, ثابت حرف *name,
+			 ext2_ino_t ino, صحيح flags)
 {
-	struct dx_lookup_info dx_info;
+	بنية dx_lookup_info dx_info;
 	errcode_t retval;
-	void *blockbuf;
-	unsigned restart = 0;
-	blk64_t leaf_pblk;
+	فراغ *blockbuf;
+	بنانشانی restart = 0;
+	blk64_t پتی_pblk;
 
 	retval = ext2fs_get_mem(fs->blocksize, &blockbuf);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
 	dx_info.name = name;
-	dx_info.namelen = strlen(name);
+	dx_info.namelen = لڑی_لمبائی(name);
 again:
 	retval = dx_lookup(fs, dir, diri, &dx_info);
-	if (retval)
-		goto free_buf;
+	إذا (retval)
+		اذهب free_buf;
 
-	retval = add_dirent_to_buf(fs,
-		ext2fs_le32_to_cpu(dx_info.frames[dx_info.levels-1].at->block) & 0x0fffffff,
-		blockbuf, dir, diri, name, ino, flags, &leaf_pblk);
+	retval = جوڑو_dirent_منزل_buf(fs,
+		ext2fs_le32_منزل_cpu(dx_info.چوکھٹے[dx_info.پدھراں-1].at->بلاک) & 0x0fffffff,
+		blockbuf, dir, diri, name, ino, flags, &پتی_pblk);
 	/*
 	 * Success or error other than ENOSPC...? We are done. We may need upto
 	 * two tries to add entry. One to split htree node and another to add
 	 * new leaf block.
 	 */
-	if (restart >= dx_info.levels || retval != EXT2_ET_DIR_NO_SPACE)
-		goto free_frames;
-	retval = dx_grow_tree(fs, dir, diri, &dx_info, blockbuf, leaf_pblk);
-	if (retval)
-		goto free_frames;
+	إذا (restart >= dx_info.پدھراں || retval != EXT2_ET_DIR_NO_SPACE)
+		اذهب free_چوکھٹے;
+	retval = dx_grow_درخت(fs, dir, diri, &dx_info, blockbuf, پتی_pblk);
+	إذا (retval)
+		اذهب free_چوکھٹے;
 	/* Restart everything now that the tree is larger */
 	restart++;
 	dx_release(&dx_info);
-	goto again;
-free_frames:
+	اذهب again;
+free_چوکھٹے:
 	dx_release(&dx_info);
 free_buf:
 	ext2fs_free_mem(&blockbuf);
-	return retval;
+	أرجع retval;
 }
 
-struct fake_dirent
+بنية fake_dirent
 {
 	__le32 inode;
 	__le16 rec_len;
@@ -613,95 +613,95 @@ struct fake_dirent
  * hash version mod 4 should never be 0.  Sincerely, the paranoia department.
  */
 
-struct dx_root
+بنية dx_جڑ
 {
-	struct fake_dirent dot;
-	char dot_name[4];
-	struct fake_dirent dotdot;
-	char dotdot_name[4];
-	struct ext2_dx_root_info info;
-	struct ext2_dx_entry entries[];
+	بنية fake_dirent dot;
+	حرف dot_name[4];
+	بنية fake_dirent dotdot;
+	حرف dotdot_name[4];
+	بنية ext2_dx_جڑ_info info;
+	بنية ext2_dx_اندراج entries[];
 };
 
-static int check_dx_root(ext2_filsys fs, ext2_ino_t ino, struct dx_root *root)
+ساكن صحيح check_dx_جڑ(ext2_filsys fs, ext2_ino_t ino, بنية dx_جڑ *جڑ)
 {
-	struct fake_dirent *fde;
-	char *error_msg;
-	unsigned int rlen;
-	char *blockend = (char *)root + fs->blocksize;
+	بنية fake_dirent *fde;
+	حرف *error_پیغام;
+	بنانشانی صحيح rlen;
+	حرف *blockend = (حرف *)جڑ + fs->blocksize;
 
-	fde = &root->dot;
-	if (fde->name_len != 1) {
-		error_msg = "invalid name_len for '.'";
-		goto corrupted;
+	fde = &جڑ->dot;
+	إذا (fde->name_len != 1) {
+		error_پیغام = "invalid name_len for '.'";
+		اذهب corrupted;
 	}
-	if (strncmp(root->dot_name, ".", fde->name_len)) {
-		error_msg = "invalid name for '.'";
-		goto corrupted;
-	}
-
-	ext2fs_get_rec_len(fs, (struct ext2_dir_entry *)fde, &rlen);
-	if ((char *)fde + rlen >= blockend) {
-		error_msg = "invalid rec_len for '.'";
-		goto corrupted;
+	إذا (لڑی_مقابلہ(جڑ->dot_name, ".", fde->name_len)) {
+		error_پیغام = "invalid name for '.'";
+		اذهب corrupted;
 	}
 
-	fde = &root->dotdot;
-	if (fde->name_len != 2) {
-		error_msg = "invalid name_len for '..'";
-		goto corrupted;
-	}
-	if (strncmp(root->dotdot_name, "..", fde->name_len)) {
-		error_msg = "invalid name for '..'";
-		goto corrupted;
-	}
-	ext2fs_get_rec_len(fs, (struct ext2_dir_entry *)fde, &rlen);
-	if ((char *)fde + rlen >= blockend) {
-		error_msg = "invalid rec_len for '..'";
-		goto corrupted;
+	ext2fs_get_rec_len(fs, (بنية ext2_dir_اندراج *)fde, &rlen);
+	إذا ((حرف *)fde + rlen >= blockend) {
+		error_پیغام = "invalid rec_len for '.'";
+		اذهب corrupted;
 	}
 
-	return 1;
+	fde = &جڑ->dotdot;
+	إذا (fde->name_len != 2) {
+		error_پیغام = "invalid name_len for '..'";
+		اذهب corrupted;
+	}
+	إذا (لڑی_مقابلہ(جڑ->dotdot_name, "..", fde->name_len)) {
+		error_پیغام = "invalid name for '..'";
+		اذهب corrupted;
+	}
+	ext2fs_get_rec_len(fs, (بنية ext2_dir_اندراج *)fde, &rlen);
+	إذا ((حرف *)fde + rlen >= blockend) {
+		error_پیغام = "invalid rec_len for '..'";
+		اذهب corrupted;
+	}
+
+	أرجع 1;
 
 corrupted:
 	fprintf(stderr, "Corrupt dir %u: %s, running e2fsck is recommended\n",
-			 ino, error_msg);
-	return 0;
+			 ino, error_پیغام);
+	أرجع 0;
 }
 
-static inline struct ext2_dir_entry *
-ext2fs_next_entry(ext2_filsys fs, struct ext2_dir_entry *p)
+ساكن مضمن بنية ext2_dir_اندراج *
+ext2fs_اگلا_اندراج(ext2_filsys fs, بنية ext2_dir_اندراج *p)
 {
-	unsigned int rlen;
+	بنانشانی صحيح rlen;
 
 	ext2fs_get_rec_len(fs, p, &rlen);
-	return (struct ext2_dir_entry *)((char *)p + rlen);
+	أرجع (بنية ext2_dir_اندراج *)((حرف *)p + rlen);
 }
 
-static inline void dx_set_block(struct ext2_dx_entry *entry, unsigned value)
+ساكن مضمن فراغ dx_سیٹ_بلاک(بنية ext2_dx_اندراج *اندراج, بنانشانی قدر)
 {
-	entry->block = ext2fs_cpu_to_le32(value);
+	اندراج->بلاک = ext2fs_cpu_منزل_le32(قدر);
 }
 
-static inline void dx_set_count(struct ext2_dx_entry *entries, unsigned value)
+ساكن مضمن فراغ dx_سیٹ_گنتی(بنية ext2_dx_اندراج *entries, بنانشانی قدر)
 {
-	((struct ext2_dx_countlimit *) entries)->count = ext2fs_cpu_to_le16(value);
+	((بنية ext2_dx_countlimit *) entries)->گنتی = ext2fs_cpu_منزل_le16(قدر);
 }
 
-static inline void dx_set_limit(struct ext2_dx_entry *entries, unsigned value)
+ساكن مضمن فراغ dx_سیٹ_حد_بندی(بنية ext2_dx_اندراج *entries, بنانشانی قدر)
 {
-	((struct ext2_dx_countlimit *) entries)->limit = ext2fs_cpu_to_le16(value);
+	((بنية ext2_dx_countlimit *) entries)->حد_بندی = ext2fs_cpu_منزل_le16(قدر);
 }
 
-static inline unsigned dx_root_limit(ext2_filsys fs, unsigned infosize)
+ساكن مضمن بنانشانی dx_جڑ_حد_بندی(ext2_filsys fs, بنانشانی infosize)
 {
-	unsigned int entry_space = fs->blocksize -
+	بنانشانی صحيح اندراج_space = fs->blocksize -
 			ext2fs_dir_rec_len(1, 0) -
 			ext2fs_dir_rec_len(2, 0) - infosize;
 
-	if (ext2fs_has_feature_metadata_csum(fs->super))
-		entry_space -= sizeof(struct ext2_dx_tail);
-	return entry_space / sizeof(struct ext2_dx_entry);
+	إذا (ext2fs_has_feature_metadata_csum(fs->super))
+		اندراج_space -= حجم(بنية ext2_dx_پوچھ);
+	أرجع اندراج_space / حجم(بنية ext2_dx_اندراج);
 }
 
 /*
@@ -709,222 +709,222 @@ static inline unsigned dx_root_limit(ext2_filsys fs, unsigned infosize)
  * directory, and adds the dentry to the indexed directory.  Returns 0 if the
  * index was not created; EAGAIN if it was; or an errcode_t on error.
  */
-static errcode_t try_make_indexed_dir(ext2_filsys fs, ext2_ino_t dir,
-				      const char *name, ext2_ino_t ino,
-				      int flags)
+ساكن errcode_t try_make_اشاریہ_دار_dir(ext2_filsys fs, ext2_ino_t dir,
+				      ثابت حرف *name, ext2_ino_t ino,
+				      صحيح flags)
 {
-	struct ext2_inode inode;
-	char *buf0, *buf1, *top;
-	struct dx_root *root;
-	struct ext2_dx_entry *entries;
-	struct fake_dirent *fde;
-	struct ext2_dir_entry *de, *de2;
+	بنية ext2_inode inode;
+	حرف *buf0, *buf1, *چوٹی;
+	بنية dx_جڑ *جڑ;
+	بنية ext2_dx_اندراج *entries;
+	بنية fake_dirent *fde;
+	بنية ext2_dir_اندراج *de, *de2;
 	blk64_t pblk0, pblk1;
-	unsigned int len;
-	const unsigned int blocksize = fs->blocksize;
-	int csum_size = 0;
+	بنانشانی صحيح len;
+	ثابت بنانشانی صحيح blocksize = fs->blocksize;
+	صحيح csum_ناپ = 0;
 	errcode_t retval;
 
 	retval = ext2fs_read_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-	if (inode.i_size > fs->blocksize || (inode.i_flags & EXT2_INDEX_FL))
-		return 0;
+	إذا (inode.i_ناپ > fs->blocksize || (inode.i_flags & EXT2_اشاریہ_FL))
+		أرجع 0;
 
-	if (ext2fs_has_feature_metadata_csum(fs->super))
-		csum_size = sizeof(struct ext2_dir_entry_tail);
+	إذا (ext2fs_has_feature_metadata_csum(fs->super))
+		csum_ناپ = حجم(بنية ext2_dir_اندراج_پوچھ);
 
 	retval = ext2fs_get_mem(blocksize, &buf0);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
 	retval = ext2fs_get_mem(blocksize, &buf1);
-	if (retval)
-		goto out_buf0;
+	إذا (retval)
+		اذهب باہرلا_buf0;
 
-	retval = ext2fs_bmap2(fs, dir, &inode, NULL, 0, 0, NULL, &pblk0);
-	if (retval)
-		goto out_buf1;
+	retval = ext2fs_bmap2(fs, dir, &inode, عدم, 0, 0, عدم, &pblk0);
+	إذا (retval)
+		اذهب باہرلا_buf1;
 
 	retval = ext2fs_read_dir_block4(fs, pblk0, buf0, 0, dir);
-	if (retval)
-		goto out_buf1;
+	إذا (retval)
+		اذهب باہرلا_buf1;
 
-	root = (struct dx_root *)buf0;
-	if (!check_dx_root(fs, dir, root)) {
+	جڑ = (بنية dx_جڑ *)buf0;
+	إذا (!check_dx_جڑ(fs, dir, جڑ)) {
 		retval = EXT2_ET_DIR_CORRUPTED;
-		goto out_buf1;
+		اذهب باہرلا_buf1;
 	}
 
 	/* The 0th block becomes the root, move the dirents out */
-	fde = &root->dotdot;
-	de = ext2fs_next_entry(fs, (struct ext2_dir_entry *)fde);
-	len = ((char *) root) + (blocksize - csum_size) - (char *) de;
+	fde = &جڑ->dotdot;
+	de = ext2fs_اگلا_اندراج(fs, (بنية ext2_dir_اندراج *)fde);
+	len = ((حرف *) جڑ) + (blocksize - csum_ناپ) - (حرف *) de;
 
 	/* Allocate new block for the 0th block's dirents */
-	retval = ext2fs_bmap2(fs, dir, &inode, NULL, BMAP_ALLOC | BMAP_ZERO, 1,
-			      NULL, &pblk1);
-	if (retval)
-		goto out_buf1;
+	retval = ext2fs_bmap2(fs, dir, &inode, عدم, BMAP_ALLOC | BMAP_ZERO, 1,
+			      عدم, &pblk1);
+	إذا (retval)
+		اذهب باہرلا_buf1;
 
-	memcpy(buf1, de, len);
+	حافظہ_نقل(buf1, de, len);
 	memset(de, 0, len); /* wipe old data */
 
-	de = (struct ext2_dir_entry *)buf1;
-	top = buf1 + len;
-	while ((char *)(de2 = ext2fs_next_entry(fs, de)) < top) {
-#if 0
-		if (ext4_check_dir_entry(dir, NULL, de, bh2, buf1, len,
-					(char *)de - buf1)) {
+	de = (بنية ext2_dir_اندراج *)buf1;
+	چوٹی = buf1 + len;
+	طالما ((حرف *)(de2 = ext2fs_اگلا_اندراج(fs, de)) < چوٹی) {
+#إذا 0
+		إذا (ext4_check_dir_اندراج(dir, عدم, de, bh2, buf1, len,
+					(حرف *)de - buf1)) {
 			retval = EXT2_ET_DIR_CORRUPTED;
-			goto out_buf1;
+			اذهب باہرلا_buf1;
 		}
-#endif
+#جے_انت
 		de = de2;
 	}
-	retval = ext2fs_set_rec_len(fs,
-			buf1 + (blocksize - csum_size) - (char *) de, de);
-	if (retval)
-		goto out_buf1;
+	retval = ext2fs_سیٹ_rec_len(fs,
+			buf1 + (blocksize - csum_ناپ) - (حرف *) de, de);
+	إذا (retval)
+		اذهب باہرلا_buf1;
 
-	if (csum_size)
-		ext2fs_initialize_dirent_tail(fs,
-				EXT2_DIRENT_TAIL(buf1, fs->blocksize));
+	إذا (csum_ناپ)
+		ext2fs_initialize_dirent_پوچھ(fs,
+				EXT2_DIRENT_پوچھ(buf1, fs->blocksize));
 
 	/* Initialize the root; the dot dirents already exist */
-	de = (struct ext2_dir_entry *) (&root->dotdot);
-	retval = ext2fs_set_rec_len(fs, blocksize - ext2fs_dir_rec_len(2, 0),
+	de = (بنية ext2_dir_اندراج *) (&جڑ->dotdot);
+	retval = ext2fs_سیٹ_rec_len(fs, blocksize - ext2fs_dir_rec_len(2, 0),
 				    de);
-	memset (&root->info, 0, sizeof(root->info));
-	root->info.info_length = sizeof(root->info);
-	if (ext4_hash_in_dirent(&inode))
-		root->info.hash_version = EXT2_HASH_SIPHASH;
-	else
-		root->info.hash_version = fs->super->s_def_hash_version;
+	memset (&جڑ->info, 0, حجم(جڑ->info));
+	جڑ->info.info_لمائی = حجم(جڑ->info);
+	إذا (ext4_hash_وچ_dirent(&inode))
+		جڑ->info.hash_نسخہ = EXT2_HASH_SIPHASH;
+	وإلا
+		جڑ->info.hash_نسخہ = fs->super->s_def_hash_نسخہ;
 
-	entries = root->entries;
-	dx_set_block(entries, 1);
-	dx_set_count(entries, 1);
-	dx_set_limit(entries, dx_root_limit(fs, sizeof(root->info)));
+	entries = جڑ->entries;
+	dx_سیٹ_بلاک(entries, 1);
+	dx_سیٹ_گنتی(entries, 1);
+	dx_سیٹ_حد_بندی(entries, dx_جڑ_حد_بندی(fs, حجم(جڑ->info)));
 
 	retval = ext2fs_write_dir_block4(fs, pblk1, buf1, 0, dir);
-	if (retval)
-		goto out_buf1;
+	إذا (retval)
+		اذهب باہرلا_buf1;
 
 	retval = ext2fs_write_dir_block4(fs, pblk0, buf0, 0, dir);
-	if (retval)
-		goto out_buf1;
+	إذا (retval)
+		اذهب باہرلا_buf1;
 
-	inode.i_flags |= EXT2_INDEX_FL;
-	inode.i_size += fs->blocksize;
+	inode.i_flags |= EXT2_اشاریہ_FL;
+	inode.i_ناپ += fs->blocksize;
 	retval = ext2fs_write_inode(fs, dir, &inode);
-	if (retval)
-		goto out_buf1;
+	إذا (retval)
+		اذهب باہرلا_buf1;
 
 	retval = EAGAIN;
-out_buf1:
+باہرلا_buf1:
 	ext2fs_free_mem(&buf1);
-out_buf0:
+باہرلا_buf0:
 	ext2fs_free_mem(&buf0);
-	return retval;
+	أرجع retval;
 }
 
 /*
  * Note: the low 3 bits of the flags field are used as the directory
  * entry filetype.
  */
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-errcode_t ext2fs_link(ext2_filsys fs, ext2_ino_t dir, const char *name,
-		      ext2_ino_t ino, int flags)
+#جے_تعریف_شدہ __TURBOC__
+ #ہدایت argsused
+#جے_انت
+errcode_t ext2fs_link(ext2_filsys fs, ext2_ino_t dir, ثابت حرف *name,
+		      ext2_ino_t ino, صحيح flags)
 {
 	errcode_t		retval;
-	struct link_struct	ls;
-	struct ext2_inode	inode;
+	بنية link_struct	ls;
+	بنية ext2_inode	inode;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	إذا (!(fs->flags & EXT2_FLAG_RW))
+		أرجع EXT2_ET_RO_FILSYS;
 
 retry:
-	if ((retval = ext2fs_read_inode(fs, dir, &inode)) != 0)
-		return retval;
+	إذا ((retval = ext2fs_read_inode(fs, dir, &inode)) != 0)
+		أرجع retval;
 
-	if (inode.i_flags & EXT2_INDEX_FL)
-		return dx_link(fs, dir, &inode, name, ino, flags);
+	إذا (inode.i_flags & EXT2_اشاریہ_FL)
+		أرجع dx_link(fs, dir, &inode, name, ino, flags);
 
 	ls.fs = fs;
 	ls.name = name;
-	ls.namelen = name ? strlen(name) : 0;
+	ls.namelen = name ? لڑی_لمبائی(name) : 0;
 	ls.inode = ino;
 	ls.flags = flags;
-	ls.done = 0;
+	ls.پورا = 0;
 	ls.sb = fs->super;
 	ls.blocksize = fs->blocksize;
 	ls.err = 0;
 
-	if ((flags & EXT2FS_LINK_APPEND) &&
-	    !(inode.i_flags & EXT4_INLINE_DATA_FL)) {
+	إذا ((flags & EXT2FS_LINK_APPEND) &&
+	    !(inode.i_flags & EXT4_INLINE_انکڑے_FL)) {
 		blk64_t		lblk, pblk = 0;
-		struct dir_context ctx;
+		بنية dir_context ctx;
 
-		lblk = (inode.i_size / fs->blocksize) - 1;
-		retval = ext2fs_bmap2(fs, dir, &inode, NULL, 0, lblk,
-				      NULL, &pblk);
-		if (retval)
-			return retval;
+		lblk = (inode.i_ناپ / fs->blocksize) - 1;
+		retval = ext2fs_bmap2(fs, dir, &inode, عدم, 0, lblk,
+				      عدم, &pblk);
+		إذا (retval)
+			أرجع retval;
 
 		ctx.dir = dir;
-		ctx.flags = DIRENT_FLAG_INCLUDE_EMPTY;
+		ctx.flags = DIRENT_FLAG_INCLUDE_خالی_تھاواں;
 		ctx.func = link_proc;
-		ctx.priv_data = &ls;
+		ctx.priv_انکڑے = &ls;
 		ctx.errcode = 0;
 		retval = ext2fs_get_mem(fs->blocksize, &ctx.buf);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 
-		ext2fs_process_dir_block(fs, &pblk, lblk, 0, 0, &ctx);
+		ext2fs_process_dir_بلاک(fs, &pblk, lblk, 0, 0, &ctx);
 		retval = ctx.errcode;
 		ext2fs_free_mem(&ctx.buf);
-	} else {
+	} وإلا {
 		retval = ext2fs_dir_iterate2(fs, dir,
-					     DIRENT_FLAG_INCLUDE_EMPTY,
-					     NULL, link_proc, &ls);
+					     DIRENT_FLAG_INCLUDE_خالی_تھاواں,
+					     عدم, link_proc, &ls);
 	}
-	if (retval)
-		return retval;
-	if (ls.err)
-		return ls.err;
+	إذا (retval)
+		أرجع retval;
+	إذا (ls.err)
+		أرجع ls.err;
 
-	if (!ls.done) {
-		if (!(flags & EXT2FS_LINK_EXPAND))
-			return EXT2_ET_DIR_NO_SPACE;
+	إذا (!ls.پورا) {
+		إذا (!(flags & EXT2FS_LINK_EXPAND))
+			أرجع EXT2_ET_DIR_NO_SPACE;
 
-		if (ext2fs_has_feature_dir_index(fs->super)) {
-			retval = try_make_indexed_dir(fs, dir, name, ino,
+		إذا (ext2fs_has_feature_dir_اشاریہ(fs->super)) {
+			retval = try_make_اشاریہ_دار_dir(fs, dir, name, ino,
 						      flags);
-			if (retval == EAGAIN)
-				goto retry;
-			if (retval)
-				return retval;
+			إذا (retval == EAGAIN)
+				اذهب retry;
+			إذا (retval)
+				أرجع retval;
 		}
 
 		retval = ext2fs_expand_dir(fs, dir);
-		if (retval)
-			return retval;
-		goto retry;
+		إذا (retval)
+			أرجع retval;
+		اذهب retry;
 	}
-	return 0;
+	أرجع 0;
 }
 
 /* Does this directory have an htree index? */
-int ext2fs_dir_is_dx(ext2_filsys fs, const struct ext2_inode *inode)
+صحيح ext2fs_dir_is_dx(ext2_filsys fs, ثابت بنية ext2_inode *inode)
 {
-	return ext2fs_has_feature_dir_index(fs->super) &&
-		S_ISDIR(inode->i_mode) && (inode->i_flags & EXT2_INDEX_FL);
+	أرجع ext2fs_has_feature_dir_اشاریہ(fs->super) &&
+		S_ISDIR(inode->i_منوال) && (inode->i_flags & EXT2_اشاریہ_FL);
 }
 
 /*
@@ -938,33 +938,33 @@ int ext2fs_dir_is_dx(ext2_filsys fs, const struct ext2_inode *inode)
  * for checking S_ISDIR(inode) (since the INODE_INDEX feature will not be set
  * on regular files) and to avoid creating huge/slow non-HTREE directories.
  */
-void ext2fs_inc_nlink(ext2_filsys fs, struct ext2_inode *inode)
+فراغ ext2fs_inc_nlink(ext2_filsys fs, بنية ext2_inode *inode)
 {
-	inode->i_links_count++;
+	inode->i_links_گنتی++;
 
-	if (ext2fs_dir_is_dx(fs, inode) &&
-	    (inode->i_links_count > EXT2_LINK_MAX || inode->i_links_count == 2))
-		inode->i_links_count = 1;
+	إذا (ext2fs_dir_is_dx(fs, inode) &&
+	    (inode->i_links_گنتی > EXT2_LINK_MAX || inode->i_links_گنتی == 2))
+		inode->i_links_گنتی = 1;
 }
 
 /*
  * If a directory had nlink == 1, then we should let it be 1. This indicates
  * directory has >EXT2_LINK_MAX subdirs.
  */
-void ext2fs_dec_nlink(struct ext2_inode *inode)
+فراغ ext2fs_dec_nlink(بنية ext2_inode *inode)
 {
-	if (!S_ISDIR(inode->i_mode) || inode->i_links_count > 2)
-		inode->i_links_count--;
+	إذا (!S_ISDIR(inode->i_منوال) || inode->i_links_گنتی > 2)
+		inode->i_links_گنتی--;
 }
 
-int ext2fs_dir_link_max(ext2_filsys fs, struct ext2_inode_large *inode)
+صحيح ext2fs_dir_link_max(ext2_filsys fs, بنية ext2_inode_large *inode)
 {
-	return inode->i_links_count >= EXT2_LINK_MAX &&
+	أرجع inode->i_links_گنتی >= EXT2_LINK_MAX &&
 	       !(ext2fs_dir_is_dx(fs, EXT2_INODE(inode)) &&
 		 ext2fs_has_feature_dir_nlink(fs->super));
 }
 
-int ext2fs_dir_link_empty(struct ext2_inode *inode)
+صحيح ext2fs_dir_link_خالی_تھاواں(بنية ext2_inode *inode)
 {
-	return inode->i_links_count == 2 || inode->i_links_count == 1;
+	أرجع inode->i_links_گنتی == 2 || inode->i_links_گنتی == 1;
 }

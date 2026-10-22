@@ -11,15 +11,15 @@
  */
 
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#include "ext2fs.h"
+#ضمن "config.h"
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#جے_انت
+#ضمن "ext2fs.h"
 
 /* the K array */
-#define CONST64(n) n
-static const __u64 K[80] = {
+#تعریف_کرو CONST64(n) n
+ساكن ثابت __u64 K[80] = {
 	CONST64(0x428a2f98d728ae22), CONST64(0x7137449123ef65cd),
 	CONST64(0xb5c0fbcfec4d3b2f), CONST64(0xe9b5dba58189dbbc),
 	CONST64(0x3956c25bf348b538), CONST64(0x59f111f1b605d019),
@@ -61,32 +61,32 @@ static const __u64 K[80] = {
 	CONST64(0x4cc5d4becb3e42b6), CONST64(0x597f299cfc657e2a),
 	CONST64(0x5fcb6fab3ad6faec), CONST64(0x6c44198c4a475817)
 };
-#define Ch(x,y,z)       (z ^ (x & (y ^ z)))
-#define Maj(x,y,z)      (((x | y) & z) | (x & y))
-#define S(x, n)         ROR64c(x, n)
-#define R(x, n)         (((x)&CONST64(0xFFFFFFFFFFFFFFFF))>>((__u64)n))
-#define Sigma0(x)       (S(x, 28) ^ S(x, 34) ^ S(x, 39))
-#define Sigma1(x)       (S(x, 14) ^ S(x, 18) ^ S(x, 41))
-#define Gamma0(x)       (S(x, 1) ^ S(x, 8) ^ R(x, 7))
-#define Gamma1(x)       (S(x, 19) ^ S(x, 61) ^ R(x, 6))
-#define RND(a,b,c,d,e,f,g,h,i)\
+#تعریف_کرو Ch(x,y,z)       (z ^ (x & (y ^ z)))
+#تعریف_کرو Maj(x,y,z)      (((x | y) & z) | (x & y))
+#تعریف_کرو S(x, n)         ROR64c(x, n)
+#تعریف_کرو R(x, n)         (((x)&CONST64(0xFFFFFFFFFFFFFFFF))>>((__u64)n))
+#تعریف_کرو Sigma0(x)       (S(x, 28) ^ S(x, 34) ^ S(x, 39))
+#تعریف_کرو Sigma1(x)       (S(x, 14) ^ S(x, 18) ^ S(x, 41))
+#تعریف_کرو Gamma0(x)       (S(x, 1) ^ S(x, 8) ^ R(x, 7))
+#تعریف_کرو Gamma1(x)       (S(x, 19) ^ S(x, 61) ^ R(x, 6))
+#تعریف_کرو RND(a,b,c,d,e,f,g,h,i)\
 		t0 = h + Sigma1(e) + Ch(e, f, g) + K[i] + W[i];\
 		t1 = Sigma0(a) + Maj(a, b, c);\
 		d += t0;\
 		h  = t0 + t1;
-#define STORE64H(x, y) \
-	do { \
-		(y)[0] = (unsigned char)(((x)>>56)&255);\
-		(y)[1] = (unsigned char)(((x)>>48)&255);\
-		(y)[2] = (unsigned char)(((x)>>40)&255);\
-		(y)[3] = (unsigned char)(((x)>>32)&255);\
-		(y)[4] = (unsigned char)(((x)>>24)&255);\
-		(y)[5] = (unsigned char)(((x)>>16)&255);\
-		(y)[6] = (unsigned char)(((x)>>8)&255);\
-		(y)[7] = (unsigned char)((x)&255); } while(0)
+#تعریف_کرو STORE64H(x, y) \
+	افعل { \
+		(y)[0] = (بنانشانی حرف)(((x)>>56)&255);\
+		(y)[1] = (بنانشانی حرف)(((x)>>48)&255);\
+		(y)[2] = (بنانشانی حرف)(((x)>>40)&255);\
+		(y)[3] = (بنانشانی حرف)(((x)>>32)&255);\
+		(y)[4] = (بنانشانی حرف)(((x)>>24)&255);\
+		(y)[5] = (بنانشانی حرف)(((x)>>16)&255);\
+		(y)[6] = (بنانشانی حرف)(((x)>>8)&255);\
+		(y)[7] = (بنانشانی حرف)((x)&255); } طالما(0)
 
-#define LOAD64H(x, y)\
-	do {x = \
+#تعریف_کرو LOAD64H(x, y)\
+	افعل {x = \
 		(((__u64)((y)[0] & 255)) << 56) |\
 		(((__u64)((y)[1] & 255)) << 48) |\
 		(((__u64)((y)[2] & 255)) << 40) |\
@@ -95,45 +95,45 @@ static const __u64 K[80] = {
 		(((__u64)((y)[5] & 255)) << 16) |\
 		(((__u64)((y)[6] & 255)) << 8) |\
 		(((__u64)((y)[7] & 255)));\
-	} while(0)
+	} طالما(0)
 
-#define ROR64c(x, y) \
+#تعریف_کرو ROR64c(x, y) \
     ( ((((x)&CONST64(0xFFFFFFFFFFFFFFFF))>>((__u64)(y)&CONST64(63))) | \
       ((x)<<((__u64)(64-((y)&CONST64(63)))))) & CONST64(0xFFFFFFFFFFFFFFFF))
 
-struct sha512_state {
-	__u64  length, state[8];
-	unsigned long curlen;
-	unsigned char buf[128];
+بنية sha512_state {
+	__u64  لمائی, state[8];
+	بنانشانی لما curlen;
+	بنانشانی حرف buf[128];
 };
 
 /* This is a highly simplified version from libtomcrypt */
-struct hash_state {
-	struct sha512_state sha512;
+بنية hash_state {
+	بنية sha512_state sha512;
 };
 
-static void sha512_compress(struct hash_state * md, const unsigned char *buf)
+ساكن فراغ sha512_compress(بنية hash_state * md, ثابت بنانشانی حرف *buf)
 {
 	__u64 S[8], W[80], t0, t1;
-	int i;
+	صحيح i;
 
 	/* copy state into S */
-	for (i = 0; i < 8; i++) {
+	لكل (i = 0; i < 8; i++) {
 		S[i] = md->sha512.state[i];
 	}
 
 	/* copy the state into 1024-bits into W[0..15] */
-	for (i = 0; i < 16; i++) {
+	لكل (i = 0; i < 16; i++) {
 		LOAD64H(W[i], buf + (8*i));
 	}
 
 	/* fill W[16..79] */
-	for (i = 16; i < 80; i++) {
+	لكل (i = 16; i < 80; i++) {
 		W[i] = Gamma1(W[i - 2]) + W[i - 7] +
 			Gamma0(W[i - 15]) + W[i - 16];
 	}
 
-	for (i = 0; i < 80; i += 8) {
+	لكل (i = 0; i < 80; i += 8) {
 		RND(S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7],i+0);
 		RND(S[7],S[0],S[1],S[2],S[3],S[4],S[5],S[6],i+1);
 		RND(S[6],S[7],S[0],S[1],S[2],S[3],S[4],S[5],i+2);
@@ -145,15 +145,15 @@ static void sha512_compress(struct hash_state * md, const unsigned char *buf)
 	}
 
 	 /* feedback */
-	for (i = 0; i < 8; i++) {
+	لكل (i = 0; i < 8; i++) {
 		md->sha512.state[i] = md->sha512.state[i] + S[i];
 	}
 }
 
-static void sha512_init(struct hash_state * md)
+ساكن فراغ sha512_init(بنية hash_state * md)
 {
 	md->sha512.curlen = 0;
-	md->sha512.length = 0;
+	md->sha512.لمائی = 0;
 	md->sha512.state[0] = CONST64(0x6a09e667f3bcc908);
 	md->sha512.state[1] = CONST64(0xbb67ae8584caa73b);
 	md->sha512.state[2] = CONST64(0x3c6ef372fe94f82b);
@@ -164,22 +164,22 @@ static void sha512_init(struct hash_state * md)
 	md->sha512.state[7] = CONST64(0x5be0cd19137e2179);
 }
 
-static void sha512_done(struct hash_state * md, unsigned char *out)
+ساكن فراغ sha512_پورا(بنية hash_state * md, بنانشانی حرف *باہرلا)
 {
-	int i;
+	صحيح i;
 
 	/* increase the length of the message */
-	md->sha512.length += md->sha512.curlen * CONST64(8);
+	md->sha512.لمائی += md->sha512.curlen * CONST64(8);
 
 	/* append the '1' bit */
-	md->sha512.buf[md->sha512.curlen++] = (unsigned char)0x80;
+	md->sha512.buf[md->sha512.curlen++] = (بنانشانی حرف)0x80;
 
 	/* if the length is currently above 112 bytes we append zeros then
 	 * compress. Then we can fall back to padding zeros and length encoding
 	 * like normal. */
-	if (md->sha512.curlen > 112) {
-		while (md->sha512.curlen < 128) {
-			md->sha512.buf[md->sha512.curlen++] = (unsigned char)0;
+	إذا (md->sha512.curlen > 112) {
+		طالما (md->sha512.curlen < 128) {
+			md->sha512.buf[md->sha512.curlen++] = (بنانشانی حرف)0;
 		}
 		sha512_compress(md, md->sha512.buf);
 		md->sha512.curlen = 0;
@@ -187,64 +187,64 @@ static void sha512_done(struct hash_state * md, unsigned char *out)
 
 	/* pad up to 120 bytes of zeroes note: that from 112 to 120 is the 64 MSB
 	 * of the length. We assume that you won't hash > 2^64 bits of data. */
-	while (md->sha512.curlen < 120) {
-		md->sha512.buf[md->sha512.curlen++] = (unsigned char)0;
+	طالما (md->sha512.curlen < 120) {
+		md->sha512.buf[md->sha512.curlen++] = (بنانشانی حرف)0;
 	}
 
 	/* store length */
-	STORE64H(md->sha512.length, md->sha512.buf + 120);
+	STORE64H(md->sha512.لمائی, md->sha512.buf + 120);
 	sha512_compress(md, md->sha512.buf);
 
 	/* copy output */
-	for (i = 0; i < 8; i++) {
-		STORE64H(md->sha512.state[i], out+(8 * i));
+	لكل (i = 0; i < 8; i++) {
+		STORE64H(md->sha512.state[i], باہرلا+(8 * i));
 	}
 }
 
-#define MIN(x, y) ( ((x)<(y))?(x):(y) )
-#define SHA512_BLOCKSIZE 128
-static void sha512_process(struct hash_state * md,
-			   const unsigned char *in,
-			   unsigned long inlen)
+#تعریف_کرو MIN(x, y) ( ((x)<(y))?(x):(y) )
+#تعریف_کرو SHA512_BLOCKSIZE 128
+ساكن فراغ sha512_process(بنية hash_state * md,
+			   ثابت بنانشانی حرف *وچ,
+			   بنانشانی لما inlen)
 {
-	unsigned long n;
+	بنانشانی لما n;
 
-	while (inlen > 0) {
-		if (md->sha512.curlen == 0 && inlen >= SHA512_BLOCKSIZE) {
-			sha512_compress(md, in);
-			md->sha512.length += SHA512_BLOCKSIZE * 8;
-			in += SHA512_BLOCKSIZE;
+	طالما (inlen > 0) {
+		إذا (md->sha512.curlen == 0 && inlen >= SHA512_BLOCKSIZE) {
+			sha512_compress(md, وچ);
+			md->sha512.لمائی += SHA512_BLOCKSIZE * 8;
+			وچ += SHA512_BLOCKSIZE;
 			inlen -= SHA512_BLOCKSIZE;
-		} else {
+		} وإلا {
 			n = MIN(inlen, (SHA512_BLOCKSIZE - md->sha512.curlen));
-			memcpy(md->sha512.buf + md->sha512.curlen,
-			       in, (size_t)n);
+			حافظہ_نقل(md->sha512.buf + md->sha512.curlen,
+			       وچ, (size_t)n);
 			md->sha512.curlen += n;
-			in += n;
+			وچ += n;
 			inlen -= n;
-			if (md->sha512.curlen == SHA512_BLOCKSIZE) {
+			إذا (md->sha512.curlen == SHA512_BLOCKSIZE) {
 				sha512_compress(md, md->sha512.buf);
-				md->sha512.length += SHA512_BLOCKSIZE * 8;
+				md->sha512.لمائی += SHA512_BLOCKSIZE * 8;
 				md->sha512.curlen = 0;
 			}
 		}
 	}
 }
 
-void ext2fs_sha512(const unsigned char *in, unsigned long in_size,
-		   unsigned char out[EXT2FS_SHA512_LENGTH])
+فراغ ext2fs_sha512(ثابت بنانشانی حرف *وچ, بنانشانی لما وچ_ناپ,
+		   بنانشانی حرف باہرلا[EXT2_FS_SHA512_لمائی])
 {
-	struct hash_state md;
+	بنية hash_state md;
 
 	sha512_init(&md);
-	sha512_process(&md, in, in_size);
-	sha512_done(&md, out);
+	sha512_process(&md, وچ, وچ_ناپ);
+	sha512_پورا(&md, باہرلا);
 }
 
-#ifdef UNITTEST
-static const struct {
-	char *msg;
-	unsigned char hash[64];
+#جے_تعریف_شدہ UNITTEST
+ساكن ثابت بنية {
+	حرف *پیغام;
+	بنانشانی حرف hash[64];
 } tests[] = {
 	{ "",
 	  { 0xcf, 0x83, 0xe1, 0x35, 0x7e, 0xef, 0xb8, 0xbd,
@@ -278,25 +278,25 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+صحيح مکھ(صحيح argc, حرف **argv)
 {
-	int i;
-	int errors = 0;
-	unsigned char tmp[64];
+	صحيح i;
+	صحيح errors = 0;
+	بنانشانی حرف tmp[64];
 
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
-		unsigned char *msg = (unsigned char *) tests[i].msg;
-		int len = strlen(tests[i].msg);
+	لكل (i = 0; i < (صحيح)(حجم(tests) / حجم(tests[0])); i++) {
+		بنانشانی حرف *پیغام = (بنانشانی حرف *) tests[i].پیغام;
+		صحيح len = لڑی_لمبائی(tests[i].پیغام);
 
-		ext2fs_sha512(msg, len, tmp);
-		printf("SHA512 test message %d: ", i);
-		if (memcmp(tmp, tests[i].hash, 64) != 0) {
-			printf("FAILED\n");
+		ext2fs_sha512(پیغام, len, tmp);
+		لکھو("SHA512 test message %d: ", i);
+		إذا (memcmp(tmp, tests[i].hash, 64) != 0) {
+			لکھو("FAILED\n");
 			errors++;
-		} else
-			printf("OK\n");
+		} وإلا
+			لکھو("OK\n");
 	}
-	return errors;
+	أرجع errors;
 }
 
-#endif /* UNITTEST */
+#جے_انت /* UNITTEST */

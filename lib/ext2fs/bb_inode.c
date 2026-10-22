@@ -13,42 +13,42 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جے_انت
+#ضمن <fcntl.h>
+#إذا HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
+#جے_انت
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#جے_انت
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fsP.h"
 
-struct set_badblock_record {
+بنية سیٹ_badblock_ریکارڈ {
 	ext2_badblocks_iterate	bb_iter;
-	int		bad_block_count;
-	blk_t		*ind_blocks;
-	int		max_ind_blocks;
-	int		ind_blocks_size;
-	int		ind_blocks_ptr;
-	char		*block_buf;
+	صحيح		bad_بلاک_گنتی;
+	blk_t		*ind_بلاکاں;
+	صحيح		max_ind_بلاکاں;
+	صحيح		ind_بلاکاں_ناپ;
+	صحيح		ind_بلاکاں_ptr;
+	حرف		*بلاک_buf;
 	errcode_t	err;
 };
 
-static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+ساكن صحيح سیٹ_bad_بلاک_proc(ext2_filsys fs, blk_t *بلاک_nr,
 			      e2_blkcnt_t blockcnt,
-			      blk_t ref_block, int ref_offset,
-			      void *priv_data);
-static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+			      blk_t ref_بلاک, صحيح ref_وتھ,
+			      فراغ *priv_انکڑے);
+ساكن صحيح clear_bad_بلاک_proc(ext2_filsys fs, blk_t *بلاک_nr,
 				e2_blkcnt_t blockcnt,
-				blk_t ref_block, int ref_offset,
-				void *priv_data);
+				blk_t ref_بلاک, صحيح ref_وتھ,
+				فراغ *priv_انکڑے);
 
 /*
  * Given a bad blocks bitmap, update the bad blocks inode to reflect
@@ -57,39 +57,39 @@ static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 {
 	errcode_t			retval;
-	struct set_badblock_record	rec;
-	struct ext2_inode		inode;
+	بنية سیٹ_badblock_ریکارڈ	rec;
+	بنية ext2_inode		inode;
 	time_t				now;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!fs->block_map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
+	إذا (!fs->بلاک_map)
+		أرجع EXT2_ET_NO_بلاک_BITMAP;
 
-	memset(&rec, 0, sizeof(rec));
-	rec.max_ind_blocks = 10;
-	retval = ext2fs_get_array(rec.max_ind_blocks, sizeof(blk_t),
-				&rec.ind_blocks);
-	if (retval)
-		return retval;
-	memset(rec.ind_blocks, 0, rec.max_ind_blocks * sizeof(blk_t));
-	retval = ext2fs_get_mem(fs->blocksize, &rec.block_buf);
-	if (retval)
-		goto cleanup;
-	memset(rec.block_buf, 0, fs->blocksize);
+	memset(&rec, 0, حجم(rec));
+	rec.max_ind_بلاکاں = 10;
+	retval = ext2fs_get_array(rec.max_ind_بلاکاں, حجم(blk_t),
+				&rec.ind_بلاکاں);
+	إذا (retval)
+		أرجع retval;
+	memset(rec.ind_بلاکاں, 0, rec.max_ind_بلاکاں * حجم(blk_t));
+	retval = ext2fs_get_mem(fs->blocksize, &rec.بلاک_buf);
+	إذا (retval)
+		اذهب cleanup;
+	memset(rec.بلاک_buf, 0, fs->blocksize);
 	rec.err = 0;
 
 	/*
 	 * First clear the old bad blocks (while saving the indirect blocks)
 	 */
-	retval = ext2fs_block_iterate2(fs, EXT2_BAD_INO,
-				       BLOCK_FLAG_DEPTH_TRAVERSE, 0,
-				       clear_bad_block_proc, &rec);
-	if (retval)
-		goto cleanup;
-	if (rec.err) {
+	retval = ext2fs_بلاک_iterate2(fs, EXT2_BAD_INO,
+				       بلاک_FLAG_ڈونگھائی_TRAVERSE, 0,
+				       clear_bad_بلاک_proc, &rec);
+	إذا (retval)
+		اذهب cleanup;
+	إذا (rec.err) {
 		retval = rec.err;
-		goto cleanup;
+		اذهب cleanup;
 	}
 
 	/*
@@ -99,20 +99,20 @@ errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 	 * block from being used as an indirect block for the bad
 	 * block inode (!).
 	 */
-	if (bb_list) {
+	إذا (bb_list) {
 		retval = ext2fs_badblocks_list_iterate_begin(bb_list,
 							     &rec.bb_iter);
-		if (retval)
-			goto cleanup;
-		retval = ext2fs_block_iterate2(fs, EXT2_BAD_INO,
-					       BLOCK_FLAG_APPEND, 0,
-					       set_bad_block_proc, &rec);
-		ext2fs_badblocks_list_iterate_end(rec.bb_iter);
-		if (retval)
-			goto cleanup;
-		if (rec.err) {
+		إذا (retval)
+			اذهب cleanup;
+		retval = ext2fs_بلاک_iterate2(fs, EXT2_BAD_INO,
+					       بلاک_FLAG_APPEND, 0,
+					       سیٹ_bad_بلاک_proc, &rec);
+		ext2fs_badblocks_list_iterate_سرا(rec.bb_iter);
+		إذا (retval)
+			اذهب cleanup;
+		إذا (rec.err) {
 			retval = rec.err;
-			goto cleanup;
+			اذهب cleanup;
 		}
 	}
 
@@ -121,28 +121,28 @@ errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 	 * field.
 	 */
 	retval = ext2fs_read_inode(fs, EXT2_BAD_INO, &inode);
-	if (retval)
-		goto cleanup;
+	إذا (retval)
+		اذهب cleanup;
 
-	now = ext2fsP_get_time(fs);
-	ext2fs_inode_xtime_set(&inode, i_atime, now);
-	if (!ext2fs_inode_xtime_get(&inode, i_ctime))
-		ext2fs_inode_xtime_set(&inode, i_ctime, now);
-	ext2fs_inode_xtime_set(&inode, i_mtime, now);
-	ext2fs_iblk_set(fs, &inode, rec.bad_block_count);
-	retval = ext2fs_inode_size_set(fs, &inode,
-				       rec.bad_block_count * fs->blocksize);
-	if (retval)
-		goto cleanup;
+	now = ext2fs_P_get_ویلا(fs);
+	ext2fs_inode_xtime_سیٹ(&inode, i_atime, now);
+	إذا (!ext2fs_inode_xtime_get(&inode, i_ctime))
+		ext2fs_inode_xtime_سیٹ(&inode, i_ctime, now);
+	ext2fs_inode_xtime_سیٹ(&inode, i_mtime, now);
+	ext2fs_iblk_سیٹ(fs, &inode, rec.bad_بلاک_گنتی);
+	retval = ext2fs_inode_ناپ_سیٹ(fs, &inode,
+				       rec.bad_بلاک_گنتی * fs->blocksize);
+	إذا (retval)
+		اذهب cleanup;
 
 	retval = ext2fs_write_inode(fs, EXT2_BAD_INO, &inode);
-	if (retval)
-		goto cleanup;
+	إذا (retval)
+		اذهب cleanup;
 
 cleanup:
-	ext2fs_free_mem(&rec.ind_blocks);
-	ext2fs_free_mem(&rec.block_buf);
-	return retval;
+	ext2fs_free_mem(&rec.ind_بلاکاں);
+	ext2fs_free_mem(&rec.بلاک_buf);
+	أرجع retval;
 }
 
 /*
@@ -151,55 +151,55 @@ cleanup:
  * Clear the bad blocks in the bad block inode, while saving the
  * indirect blocks.
  */
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+#جے_تعریف_شدہ __TURBOC__
+ #ہدایت argsused
+#جے_انت
+ساكن صحيح clear_bad_بلاک_proc(ext2_filsys fs, blk_t *بلاک_nr,
 				e2_blkcnt_t blockcnt,
-				blk_t ref_block EXT2FS_ATTR((unused)),
-				int ref_offset EXT2FS_ATTR((unused)),
-				void *priv_data)
+				blk_t ref_بلاک EXT2FS_ATTR((بن_ورتیا)),
+				صحيح ref_وتھ EXT2FS_ATTR((بن_ورتیا)),
+				فراغ *priv_انکڑے)
 {
-	struct set_badblock_record *rec = (struct set_badblock_record *)
-		priv_data;
+	بنية سیٹ_badblock_ریکارڈ *rec = (بنية سیٹ_badblock_ریکارڈ *)
+		priv_انکڑے;
 	errcode_t	retval;
-	unsigned long 	old_size;
+	بنانشانی لما 	old_ناپ;
 
-	if (!*block_nr)
-		return 0;
+	إذا (!*بلاک_nr)
+		أرجع 0;
 
 	/*
 	 * If the block number is outrageous, clear it and ignore it.
 	 */
-	if (*block_nr >= ext2fs_blocks_count(fs->super) ||
-	    *block_nr < fs->super->s_first_data_block) {
-		*block_nr = 0;
-		return BLOCK_CHANGED;
+	إذا (*بلاک_nr >= ext2fs_بلاکاں_گنتی(fs->super) ||
+	    *بلاک_nr < fs->super->s_پہلا_انکڑے_بلاک) {
+		*بلاک_nr = 0;
+		أرجع بلاک_بدلیا;
 	}
 
-	if (blockcnt < 0) {
-		if (rec->ind_blocks_size >= rec->max_ind_blocks) {
-			old_size = rec->max_ind_blocks * sizeof(blk_t);
-			rec->max_ind_blocks += 10;
-			retval = ext2fs_resize_mem(old_size,
-				   rec->max_ind_blocks * sizeof(blk_t),
-				   &rec->ind_blocks);
-			if (retval) {
-				rec->max_ind_blocks -= 10;
+	إذا (blockcnt < 0) {
+		إذا (rec->ind_بلاکاں_ناپ >= rec->max_ind_بلاکاں) {
+			old_ناپ = rec->max_ind_بلاکاں * حجم(blk_t);
+			rec->max_ind_بلاکاں += 10;
+			retval = ext2fs_resize_mem(old_ناپ,
+				   rec->max_ind_بلاکاں * حجم(blk_t),
+				   &rec->ind_بلاکاں);
+			إذا (retval) {
+				rec->max_ind_بلاکاں -= 10;
 				rec->err = retval;
-				return BLOCK_ABORT;
+				أرجع بلاک_ABORT;
 			}
 		}
-		rec->ind_blocks[rec->ind_blocks_size++] = *block_nr;
+		rec->ind_بلاکاں[rec->ind_بلاکاں_ناپ++] = *بلاک_nr;
 	}
 
 	/*
 	 * Mark the block as unused, and update accounting information
 	 */
-	ext2fs_block_alloc_stats2(fs, *block_nr, -1);
+	ext2fs_بلاک_alloc_stats2(fs, *بلاک_nr, -1);
 
-	*block_nr = 0;
-	return BLOCK_CHANGED;
+	*بلاک_nr = 0;
+	أرجع بلاک_بدلیا;
 }
 
 
@@ -208,28 +208,28 @@ static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
  *
  * Set the block list in the bad block inode, using the supplied bitmap.
  */
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+#جے_تعریف_شدہ __TURBOC__
+ #ہدایت argsused
+#جے_انت
+ساكن صحيح سیٹ_bad_بلاک_proc(ext2_filsys fs, blk_t *بلاک_nr,
 			      e2_blkcnt_t blockcnt,
-			      blk_t ref_block EXT2FS_ATTR((unused)),
-			      int ref_offset EXT2FS_ATTR((unused)),
-			      void *priv_data)
+			      blk_t ref_بلاک EXT2FS_ATTR((بن_ورتیا)),
+			      صحيح ref_وتھ EXT2FS_ATTR((بن_ورتیا)),
+			      فراغ *priv_انکڑے)
 {
-	struct set_badblock_record *rec = (struct set_badblock_record *)
-		priv_data;
+	بنية سیٹ_badblock_ریکارڈ *rec = (بنية سیٹ_badblock_ریکارڈ *)
+		priv_انکڑے;
 	errcode_t	retval;
 	blk_t		blk;
 
-	if (blockcnt >= 0) {
+	إذا (blockcnt >= 0) {
 		/*
 		 * Get the next bad block.
 		 */
-		if (!ext2fs_badblocks_list_iterate(rec->bb_iter, &blk))
-			return BLOCK_ABORT;
-		rec->bad_block_count++;
-	} else {
+		إذا (!ext2fs_badblocks_list_iterate(rec->bb_iter, &blk))
+			أرجع بلاک_ABORT;
+		rec->bad_بلاک_گنتی++;
+	} وإلا {
 		/*
 		 * An indirect block; fetch a block from the
 		 * previously used indirect block list.  The block
@@ -238,31 +238,31 @@ static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 		 * a new one.
 		 */
 	retry:
-		if (rec->ind_blocks_ptr < rec->ind_blocks_size) {
-			blk = rec->ind_blocks[rec->ind_blocks_ptr++];
-			if (ext2fs_test_block_bitmap2(fs->block_map, blk))
-				goto retry;
-		} else {
-			retval = ext2fs_new_block(fs, 0, 0, &blk);
-			if (retval) {
+		إذا (rec->ind_بلاکاں_ptr < rec->ind_بلاکاں_ناپ) {
+			blk = rec->ind_بلاکاں[rec->ind_بلاکاں_ptr++];
+			إذا (ext2fs_test_بلاک_bitmap2(fs->بلاک_map, blk))
+				اذهب retry;
+		} وإلا {
+			retval = ext2fs_new_بلاک(fs, 0, 0, &blk);
+			إذا (retval) {
 				rec->err = retval;
-				return BLOCK_ABORT;
+				أرجع بلاک_ABORT;
 			}
 		}
-		retval = io_channel_write_blk64(fs->io, blk, 1, rec->block_buf);
-		if (retval) {
+		retval = io_channel_write_blk64(fs->io, blk, 1, rec->بلاک_buf);
+		إذا (retval) {
 			rec->err = retval;
-			return BLOCK_ABORT;
+			أرجع بلاک_ABORT;
 		}
 	}
 
 	/*
 	 * Update block counts
 	 */
-	ext2fs_block_alloc_stats2(fs, blk, +1);
+	ext2fs_بلاک_alloc_stats2(fs, blk, +1);
 
-	*block_nr = blk;
-	return BLOCK_CHANGED;
+	*بلاک_nr = blk;
+	أرجع بلاک_بدلیا;
 }
 
 

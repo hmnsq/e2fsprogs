@@ -11,62 +11,62 @@
  * %End-Header%
  */
 
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
+#جے_بنا_تعریف LARGEFILE_سروت
+#تعریف_کرو LARGEFILE_سروت
+#جے_انت
+#جے_بنا_تعریف LARGEFILE64_سروت
+#تعریف_کرو LARGEFILE64_سروت
+#جے_انت
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#ifdef __linux__
-#include <sys/utsname.h>
-#endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#if HAVE_SYS_RESOURCE_H
-#include <sys/resource.h>
-#endif
-#include <limits.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جے_انت
+#إذا HAVE_ERRNO_H
+#ضمن <errno.h>
+#جے_انت
+#ضمن <fcntl.h>
+#ضمن <time.h>
+#جے_تعریف_شدہ __linux__
+#ضمن <sys/utsname.h>
+#جے_انت
+#إذا HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
+#جے_انت
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#جے_انت
+#إذا HAVE_SYS_RESOURCE_H
+#ضمن <sys/resource.h>
+#جے_انت
+#ضمن <limits.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
+#ضمن "ext2fsP.h"
 
-#ifdef __GNUC__
-#define ATTR(x) __attribute__(x)
-#else
-#define ATTR(x)
-#endif
+#جے_تعریف_شدہ __GNUC__
+#تعریف_کرو ATTR(x) __attribute__(x)
+#وإلا
+#تعریف_کرو ATTR(x)
+#جے_انت
 
-#undef DEBUG
+#تعریف_رد DEBUG
 
-#ifdef DEBUG
-# define dbg_printf(f, a...)  do {printf(f, ## a); fflush(stdout); } while (0)
-#else
+#جے_تعریف_شدہ DEBUG
+# define dbg_printf(f, a...)  افعل {لکھو(f, ## a); fflush(stdout); } طالما (0)
+#وإلا
 # define dbg_printf(f, a...)
-#endif
+#جے_انت
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#تعریف_کرو EXT2_CHECK_MAGIC(بنية, کوڈ) \
+	  إذا ((بنية)->magic != (کوڈ)) أرجع (کوڈ)
 /*
  * Undo file format: The file is cut up into undo_header.block_size blocks.
  * The first block contains the header.
@@ -77,305 +77,305 @@
  * (Note that there are pointers to the first key block and the sb, so this
  * order isn't strictly necessary.)
  */
-#define E2UNDO_MAGIC "E2UNDO02"
-#define KEYBLOCK_MAGIC 0xCADECADE
+#تعریف_کرو E2UNDO_MAGIC "E2UNDO02"
+#تعریف_کرو KEYBLOCK_MAGIC 0xCADECADE
 
-#define E2UNDO_STATE_FINISHED	0x1	/* undo file is complete */
+#تعریف_کرو E2_UNDO_STATE_مکمل	0x1	/* undo file is complete */
 
-#define E2UNDO_MIN_BLOCK_SIZE	1024	/* undo blocks are no less than 1KB */
-#define E2UNDO_MAX_BLOCK_SIZE	1048576	/* undo blocks are no more than 1MB */
+#تعریف_کرو E2_UNDO_MIN_بلاک_ناپ	1024	/* undo blocks are no less than 1KB */
+#تعریف_کرو E2_UNDO_MAX_بلاک_ناپ	1048576	/* undo blocks are no more than 1MB */
 
-struct undo_header {
-	char magic[8];		/* "E2UNDO02" */
-	__le64 num_keys;	/* how many keys? */
-	__le64 super_offset;	/* where in the file is the superblock copy? */
-	__le64 key_offset;	/* where do the key/data block chunks start? */
-	__le32 block_size;	/* block size of the undo file */
-	__le32 fs_block_size;	/* block size of the target device */
-	__le32 sb_crc;		/* crc32c of the superblock */
+بنية undo_سرخی {
+	حرف magic[8];		/* "E2UNDO02" */
+	__le64 عدد_کلیدیں;	/* how many keys? */
+	__le64 super_وتھ;	/* where in the file is the superblock copy? */
+	__le64 کلید_وتھ;	/* where do the key/data block chunks start? */
+	__le32 بلاک_ناپ;	/* block size of the undo file */
+	__le32 fs_بلاک_ناپ;	/* block size of the target device */
+	__le32 sb_چکری_جانچ;		/* crc32c of the superblock */
 	__le32 state;		/* e2undo state flags */
 	__le32 f_compat;	/* compatible features */
 	__le32 f_incompat;	/* incompatible features (none so far) */
 	__le32 f_rocompat;	/* ro compatible features (none so far) */
 	__le32 pad32;		/* padding for fs_offset */
-	__le64 fs_offset;	/* filesystem offset */
+	__le64 fs_وتھ;	/* filesystem offset */
 	__u8 padding[436];	/* padding */
-	__le32 header_crc;	/* crc32c of this header (but not this field) */
+	__le32 سرخی_چکری_جانچ;	/* crc32c of this header (but not this field) */
 };
 
-#define E2UNDO_MAX_EXTENT_BLOCKS	512	/* max extent size, in blocks */
+#تعریف_کرو E2_UNDO_MAX_EXTENT_بلاکاں	512	/* max extent size, in blocks */
 
-struct undo_key {
+بنية undo_کلید {
 	__le64 fsblk;		/* where in the fs does the block go */
-	__le32 blk_crc;		/* crc32c of the block */
-	__le32 size;		/* how many bytes in this block? */
+	__le32 blk_چکری_جانچ;		/* crc32c of the block */
+	__le32 ناپ;		/* how many bytes in this block? */
 };
 
-struct undo_key_block {
+بنية undo_کلید_بلاک {
 	__le32 magic;		/* KEYBLOCK_MAGIC number */
-	__le32 crc;		/* block checksum */
+	__le32 چکری_جانچ;		/* block checksum */
 	__le64 reserved;	/* zero */
 
-#if __STDC_VERSION__ >= 199901L
-	struct undo_key keys[];		/* keys, which come immediately after */
-#else
-	struct undo_key keys[0];	/* keys, which come immediately after */
-#endif
+#إذا __STDC_VERSION__ >= 199901L
+	بنية undo_کلید کلیدیں[];		/* keys, which come immediately after */
+#وإلا
+	بنية undo_کلید کلیدیں[0];	/* keys, which come immediately after */
+#جے_انت
 };
 
-struct undo_private_data {
-	int	magic;
+بنية undo_نجی_انکڑے {
+	صحيح	magic;
 
 	/* the undo file io channel */
 	io_channel undo_file;
-	blk64_t undo_blk_num;			/* next free block */
-	blk64_t key_blk_num;			/* current key block location */
-	blk64_t super_blk_num;			/* superblock location */
-	blk64_t first_key_blk;			/* first key block location */
-	struct undo_key_block *keyb;
-	size_t num_keys, keys_in_block;
+	blk64_t undo_blk_عدد;			/* next free block */
+	blk64_t کلید_blk_عدد;			/* current key block location */
+	blk64_t super_blk_عدد;			/* superblock location */
+	blk64_t پہلا_کلید_blk;			/* first key block location */
+	بنية undo_کلید_بلاک *keyb;
+	size_t عدد_کلیدیں, کلیدیں_وچ_بلاک;
 
 	/* The backing io channel */
 	io_channel real;
 
-	unsigned long long tdb_data_size;
-	int tdb_written;
+	بنانشانی لما لما tdb_انکڑے_ناپ;
+	صحيح tdb_written;
 
 	/* to support offset in unix I/O manager */
-	ext2_loff_t offset;
+	ext2_loff_t وتھ;
 
-	ext2fs_block_bitmap written_block_map;
-	struct struct_ext2_filsys fake_fs;
-	char *tdb_file;
-	struct undo_header hdr;
+	ext2fs_بلاک_bitmap written_بلاک_map;
+	بنية struct_ext2_filsys fake_fs;
+	حرف *tdb_file;
+	بنية undo_سرخی hdr;
 };
-#define KEYS_PER_BLOCK(d) (((d)->tdb_data_size / sizeof(struct undo_key)) - 1)
+#تعریف_کرو کلیدیں_فی_بلاک(d) (((d)->tdb_انکڑے_ناپ / حجم(بنية undo_کلید)) - 1)
 
-#define E2UNDO_FEATURE_COMPAT_FS_OFFSET 0x1	/* the filesystem offset */
+#تعریف_کرو E2_UNDO_FEATURE_COMPAT_FS_وتھ 0x1	/* the filesystem offset */
 
-static inline void e2undo_set_feature_fs_offset(struct undo_header *header) {
-	header->f_compat |= ext2fs_le32_to_cpu(E2UNDO_FEATURE_COMPAT_FS_OFFSET);
+ساكن مضمن فراغ e2undo_سیٹ_feature_fs_وتھ(بنية undo_سرخی *سرخی) {
+	سرخی->f_compat |= ext2fs_le32_منزل_cpu(E2_UNDO_FEATURE_COMPAT_FS_وتھ);
 }
 
-static inline void e2undo_clear_feature_fs_offset(struct undo_header *header) {
-	header->f_compat &= ~ext2fs_le32_to_cpu(E2UNDO_FEATURE_COMPAT_FS_OFFSET);
+ساكن مضمن فراغ e2undo_clear_feature_fs_وتھ(بنية undo_سرخی *سرخی) {
+	سرخی->f_compat &= ~ext2fs_le32_منزل_cpu(E2_UNDO_FEATURE_COMPAT_FS_وتھ);
 }
 
-static io_manager undo_io_backing_manager;
-static char *tdb_file;
-static int actual_size;
+ساكن io_manager undo_io_backing_manager;
+ساكن حرف *tdb_file;
+ساكن صحيح actual_ناپ;
 
-errcode_t set_undo_io_backing_manager(io_manager manager)
+errcode_t سیٹ_undo_io_backing_manager(io_manager manager)
 {
 	/*
 	 * We may want to do some validation later
 	 */
 	undo_io_backing_manager = manager;
-	return 0;
+	أرجع 0;
 }
 
-errcode_t set_undo_io_backup_file(char *file_name)
+errcode_t سیٹ_undo_io_backup_file(حرف *file_name)
 {
 	tdb_file = strdup(file_name);
 
-	if (tdb_file == NULL) {
-		return EXT2_ET_NO_MEMORY;
+	إذا (tdb_file == عدم) {
+		أرجع EXT2_ET_NO_حافظہ;
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-static errcode_t write_undo_indexes(struct undo_private_data *data, int flush)
+ساكن errcode_t write_undo_indexes(بنية undo_نجی_انکڑے *انکڑے, صحيح flush)
 {
 	errcode_t retval;
-	struct ext2_super_block super;
+	بنية ext2_super_بلاک super;
 	io_channel channel;
-	int block_size;
-	__u32 sb_crc, hdr_crc;
+	صحيح بلاک_ناپ;
+	__u32 sb_چکری_جانچ, hdr_چکری_جانچ;
 
 	/* Spit out a key block, if there's any data */
-	if (data->keys_in_block) {
-		data->keyb->magic = ext2fs_cpu_to_le32(KEYBLOCK_MAGIC);
-		data->keyb->crc = 0;
-		data->keyb->crc = ext2fs_cpu_to_le32(
+	إذا (انکڑے->کلیدیں_وچ_بلاک) {
+		انکڑے->keyb->magic = ext2fs_cpu_منزل_le32(KEYBLOCK_MAGIC);
+		انکڑے->keyb->چکری_جانچ = 0;
+		انکڑے->keyb->چکری_جانچ = ext2fs_cpu_منزل_le32(
 					 ext2fs_crc32c_le(~0,
-					 (unsigned char *)data->keyb,
-					 data->tdb_data_size));
-		dbg_printf("Writing keyblock to blk %llu\n", data->key_blk_num);
-		retval = io_channel_write_blk64(data->undo_file,
-						data->key_blk_num,
-						1, data->keyb);
-		if (retval)
-			return retval;
+					 (بنانشانی حرف *)انکڑے->keyb,
+					 انکڑے->tdb_انکڑے_ناپ));
+		dbg_printf("Writing keyblock to blk %llu\n", انکڑے->کلید_blk_عدد);
+		retval = io_channel_write_blk64(انکڑے->undo_file,
+						انکڑے->کلید_blk_عدد,
+						1, انکڑے->keyb);
+		إذا (retval)
+			أرجع retval;
 		/* Move on to the next key block if it's full. */
-		if (data->keys_in_block == KEYS_PER_BLOCK(data)) {
-			memset(data->keyb, 0, data->tdb_data_size);
-			data->keys_in_block = 0;
-			data->key_blk_num = data->undo_blk_num;
-			data->undo_blk_num++;
+		إذا (انکڑے->کلیدیں_وچ_بلاک == کلیدیں_فی_بلاک(انکڑے)) {
+			memset(انکڑے->keyb, 0, انکڑے->tdb_انکڑے_ناپ);
+			انکڑے->کلیدیں_وچ_بلاک = 0;
+			انکڑے->کلید_blk_عدد = انکڑے->undo_blk_عدد;
+			انکڑے->undo_blk_عدد++;
 		}
 	}
 
 	/* Prepare superblock for write */
-	channel = data->real;
-	block_size = channel->block_size;
+	channel = انکڑے->real;
+	بلاک_ناپ = channel->بلاک_ناپ;
 
-	io_channel_set_blksize(channel, SUPERBLOCK_OFFSET);
-	retval = io_channel_read_blk64(channel, 1, -SUPERBLOCK_SIZE, &super);
-	if (retval)
-		goto err_out;
-	sb_crc = ext2fs_crc32c_le(~0, (unsigned char *)&super, SUPERBLOCK_SIZE);
+	io_channel_سیٹ_blksize(channel, SUPERBLOCK_وتھ);
+	retval = io_channel_read_blk64(channel, 1, -SUPERBLOCK_ناپ, &super);
+	إذا (retval)
+		اذهب err_باہرلا;
+	sb_چکری_جانچ = ext2fs_crc32c_le(~0, (بنانشانی حرف *)&super, SUPERBLOCK_ناپ);
 	super.s_magic = ~super.s_magic;
 
 	/* Write the undo header to disk. */
-	memcpy(data->hdr.magic, E2UNDO_MAGIC, sizeof(data->hdr.magic));
-	data->hdr.num_keys = ext2fs_cpu_to_le64(data->num_keys);
-	data->hdr.super_offset = ext2fs_cpu_to_le64(data->super_blk_num);
-	data->hdr.key_offset = ext2fs_cpu_to_le64(data->first_key_blk);
-	data->hdr.fs_block_size = ext2fs_cpu_to_le32(block_size);
-	data->hdr.sb_crc = ext2fs_cpu_to_le32(sb_crc);
-	data->hdr.fs_offset = ext2fs_cpu_to_le64(data->offset);
-	if (data->offset)
-		e2undo_set_feature_fs_offset(&data->hdr);
-	else
-		e2undo_clear_feature_fs_offset(&data->hdr);
-	hdr_crc = ext2fs_crc32c_le(~0, (unsigned char *)&data->hdr,
-				   sizeof(data->hdr) -
-				   sizeof(data->hdr.header_crc));
-	data->hdr.header_crc = ext2fs_cpu_to_le32(hdr_crc);
-	retval = io_channel_write_blk64(data->undo_file, 0,
-					-(int)sizeof(data->hdr),
-					&data->hdr);
-	if (retval)
-		goto err_out;
+	حافظہ_نقل(انکڑے->hdr.magic, E2UNDO_MAGIC, حجم(انکڑے->hdr.magic));
+	انکڑے->hdr.عدد_کلیدیں = ext2fs_cpu_منزل_le64(انکڑے->عدد_کلیدیں);
+	انکڑے->hdr.super_وتھ = ext2fs_cpu_منزل_le64(انکڑے->super_blk_عدد);
+	انکڑے->hdr.کلید_وتھ = ext2fs_cpu_منزل_le64(انکڑے->پہلا_کلید_blk);
+	انکڑے->hdr.fs_بلاک_ناپ = ext2fs_cpu_منزل_le32(بلاک_ناپ);
+	انکڑے->hdr.sb_چکری_جانچ = ext2fs_cpu_منزل_le32(sb_چکری_جانچ);
+	انکڑے->hdr.fs_وتھ = ext2fs_cpu_منزل_le64(انکڑے->وتھ);
+	إذا (انکڑے->وتھ)
+		e2undo_سیٹ_feature_fs_وتھ(&انکڑے->hdr);
+	وإلا
+		e2undo_clear_feature_fs_وتھ(&انکڑے->hdr);
+	hdr_چکری_جانچ = ext2fs_crc32c_le(~0, (بنانشانی حرف *)&انکڑے->hdr,
+				   حجم(انکڑے->hdr) -
+				   حجم(انکڑے->hdr.سرخی_چکری_جانچ));
+	انکڑے->hdr.سرخی_چکری_جانچ = ext2fs_cpu_منزل_le32(hdr_چکری_جانچ);
+	retval = io_channel_write_blk64(انکڑے->undo_file, 0,
+					-(صحيح)حجم(انکڑے->hdr),
+					&انکڑے->hdr);
+	إذا (retval)
+		اذهب err_باہرلا;
 
 	/*
 	 * Record the entire superblock (in FS byte order) so that we can't
 	 * apply e2undo files to the wrong FS or out of order.
 	 */
-	dbg_printf("Writing superblock to block %llu\n", data->super_blk_num);
-	retval = io_channel_write_blk64(data->undo_file, data->super_blk_num,
-					-SUPERBLOCK_SIZE, &super);
-	if (retval)
-		goto err_out;
+	dbg_printf("Writing superblock to block %llu\n", انکڑے->super_blk_عدد);
+	retval = io_channel_write_blk64(انکڑے->undo_file, انکڑے->super_blk_عدد,
+					-SUPERBLOCK_ناپ, &super);
+	إذا (retval)
+		اذهب err_باہرلا;
 
-	if (flush)
-		retval = io_channel_flush(data->undo_file);
-err_out:
-	io_channel_set_blksize(channel, block_size);
-	return retval;
+	إذا (flush)
+		retval = io_channel_flush(انکڑے->undo_file);
+err_باہرلا:
+	io_channel_سیٹ_blksize(channel, بلاک_ناپ);
+	أرجع retval;
 }
 
-static errcode_t undo_setup_tdb(struct undo_private_data *data)
+ساكن errcode_t undo_تیاری_tdb(بنية undo_نجی_انکڑے *انکڑے)
 {
-	int i;
+	صحيح i;
 	errcode_t retval;
 
-	if (data->tdb_written == 1)
-		return 0;
+	إذا (انکڑے->tdb_written == 1)
+		أرجع 0;
 
-	data->tdb_written = 1;
+	انکڑے->tdb_written = 1;
 
 	/* Make a bitmap to track what we've written */
-	memset(&data->fake_fs, 0, sizeof(data->fake_fs));
-	data->fake_fs.blocksize = data->tdb_data_size;
-	retval = ext2fs_alloc_generic_bmap(&data->fake_fs,
-				EXT2_ET_MAGIC_BLOCK_BITMAP64,
+	memset(&انکڑے->fake_fs, 0, حجم(انکڑے->fake_fs));
+	انکڑے->fake_fs.blocksize = انکڑے->tdb_انکڑے_ناپ;
+	retval = ext2fs_alloc_generic_bmap(&انکڑے->fake_fs,
+				EXT2_ET_MAGIC_بلاک_BITMAP64,
 				EXT2FS_BMAP64_RBTREE,
 				0, ~1ULL, ~1ULL,
-				"undo block map", &data->written_block_map);
-	if (retval)
-		return retval;
+				"undo block map", &انکڑے->written_بلاک_map);
+	إذا (retval)
+		أرجع retval;
 
 	/* Allocate key block */
-	retval = ext2fs_get_mem(data->tdb_data_size, &data->keyb);
-	if (retval)
-		return retval;
-	data->key_blk_num = data->first_key_blk;
+	retval = ext2fs_get_mem(انکڑے->tdb_انکڑے_ناپ, &انکڑے->keyb);
+	إذا (retval)
+		أرجع retval;
+	انکڑے->کلید_blk_عدد = انکڑے->پہلا_کلید_blk;
 
 	/* Record block size */
-	dbg_printf("Undo block size %llu\n", data->tdb_data_size);
-	dbg_printf("Keys per block %llu\n", KEYS_PER_BLOCK(data));
-	data->hdr.block_size = ext2fs_cpu_to_le32(data->tdb_data_size);
-	io_channel_set_blksize(data->undo_file, data->tdb_data_size);
+	dbg_printf("Undo block size %llu\n", انکڑے->tdb_انکڑے_ناپ);
+	dbg_printf("Keys per block %llu\n", کلیدیں_فی_بلاک(انکڑے));
+	انکڑے->hdr.بلاک_ناپ = ext2fs_cpu_منزل_le32(انکڑے->tdb_انکڑے_ناپ);
+	io_channel_سیٹ_blksize(انکڑے->undo_file, انکڑے->tdb_انکڑے_ناپ);
 
 	/* Ensure that we have space for header blocks */
-	for (i = 0; i <= 2; i++) {
-		retval = io_channel_read_blk64(data->undo_file, i, 1,
-					       data->keyb);
-		if (retval)
-			memset(data->keyb, 0, data->tdb_data_size);
-		retval = io_channel_write_blk64(data->undo_file, i, 1,
-						data->keyb);
-		if (retval)
-			return retval;
-		retval = io_channel_flush(data->undo_file);
-		if (retval)
-			return retval;
+	لكل (i = 0; i <= 2; i++) {
+		retval = io_channel_read_blk64(انکڑے->undo_file, i, 1,
+					       انکڑے->keyb);
+		إذا (retval)
+			memset(انکڑے->keyb, 0, انکڑے->tdb_انکڑے_ناپ);
+		retval = io_channel_write_blk64(انکڑے->undo_file, i, 1,
+						انکڑے->keyb);
+		إذا (retval)
+			أرجع retval;
+		retval = io_channel_flush(انکڑے->undo_file);
+		إذا (retval)
+			أرجع retval;
 	}
-	memset(data->keyb, 0, data->tdb_data_size);
-	return 0;
+	memset(انکڑے->keyb, 0, انکڑے->tdb_انکڑے_ناپ);
+	أرجع 0;
 }
 
-static errcode_t undo_write_tdb(io_channel channel,
-				unsigned long long block, int count)
+ساكن errcode_t undo_write_tdb(io_channel channel,
+				بنانشانی لما لما بلاک, صحيح گنتی)
 
 {
-	int size, sz;
-	unsigned long long block_num, backing_blk_num;
+	صحيح ناپ, sz;
+	بنانشانی لما لما بلاک_عدد, backing_blk_عدد;
 	errcode_t retval = 0;
-	ext2_loff_t offset;
-	struct undo_private_data *data;
-	unsigned char *read_ptr;
-	unsigned long long end_block;
-	unsigned long long data_size;
-	struct undo_key *key;
-	__u32 blk_crc;
+	ext2_loff_t وتھ;
+	بنية undo_نجی_انکڑے *انکڑے;
+	بنانشانی حرف *read_ptr;
+	بنانشانی لما لما سرا_بلاک;
+	بنانشانی لما لما انکڑے_ناپ;
+	بنية undo_کلید *کلید;
+	__u32 blk_چکری_جانچ;
 
-	data = (struct undo_private_data *) channel->private_data;
+	انکڑے = (بنية undo_نجی_انکڑے *) channel->نجی_انکڑے;
 
-	if (data->undo_file == NULL) {
+	إذا (انکڑے->undo_file == عدم) {
 		/*
 		 * Transaction database not initialized
 		 */
-		return 0;
+		أرجع 0;
 	}
 
-	if (count == 1)
-		size = channel->block_size;
-	else {
-		if (count < 0)
-			size = -count;
-		else
-			size = count * channel->block_size;
+	إذا (گنتی == 1)
+		ناپ = channel->بلاک_ناپ;
+	وإلا {
+		إذا (گنتی < 0)
+			ناپ = -گنتی;
+		وإلا
+			ناپ = گنتی * channel->بلاک_ناپ;
 	}
 
-	retval = undo_setup_tdb(data);
-	if (retval)
-		return retval;
+	retval = undo_تیاری_tdb(انکڑے);
+	إذا (retval)
+		أرجع retval;
 	/*
 	 * Data is stored in tdb database as blocks of tdb_data_size size
 	 * This helps in efficient lookup further.
 	 *
 	 * We divide the disk to blocks of tdb_data_size.
 	 */
-	offset = (block * channel->block_size) + data->offset ;
-	block_num = offset / data->tdb_data_size;
-	end_block = (offset + size - 1) / data->tdb_data_size;
+	وتھ = (بلاک * channel->بلاک_ناپ) + انکڑے->وتھ ;
+	بلاک_عدد = وتھ / انکڑے->tdb_انکڑے_ناپ;
+	سرا_بلاک = (وتھ + ناپ - 1) / انکڑے->tdb_انکڑے_ناپ;
 
-	while (block_num <= end_block) {
+	طالما (بلاک_عدد <= سرا_بلاک) {
 		__u32 keysz;
 
 		/*
 		 * Check if we have the record already
 		 */
-		if (ext2fs_test_block_bitmap2(data->written_block_map,
-						   block_num)) {
+		إذا (ext2fs_test_بلاک_bitmap2(انکڑے->written_بلاک_map,
+						   بلاک_عدد)) {
 			/* Try the next block */
-			block_num++;
-			continue;
+			بلاک_عدد++;
+			استمر;
 		}
-		ext2fs_mark_block_bitmap2(data->written_block_map, block_num);
+		ext2fs_mark_بلاک_bitmap2(انکڑے->written_بلاک_map, بلاک_عدد);
 
 		/*
 		 * Read one block using the backing I/O manager
@@ -384,156 +384,156 @@ static errcode_t undo_write_tdb(io_channel channel,
 		 * Also we need to recalculate the block number with respect
 		 * to the backing I/O manager.
 		 */
-		offset = block_num * data->tdb_data_size +
-				(data->offset % data->tdb_data_size);
-		backing_blk_num = (offset - data->offset) / channel->block_size;
+		وتھ = بلاک_عدد * انکڑے->tdb_انکڑے_ناپ +
+				(انکڑے->وتھ % انکڑے->tdb_انکڑے_ناپ);
+		backing_blk_عدد = (وتھ - انکڑے->وتھ) / channel->بلاک_ناپ;
 
-		retval = ext2fs_get_mem(data->tdb_data_size, &read_ptr);
-		if (retval) {
-			return retval;
+		retval = ext2fs_get_mem(انکڑے->tdb_انکڑے_ناپ, &read_ptr);
+		إذا (retval) {
+			أرجع retval;
 		}
 
-		memset(read_ptr, 0, data->tdb_data_size);
-		actual_size = 0;
-		if ((data->tdb_data_size % channel->block_size) == 0)
-			sz = data->tdb_data_size / channel->block_size;
-		else
-			sz = -data->tdb_data_size;
-		retval = io_channel_read_blk64(data->real, backing_blk_num,
+		memset(read_ptr, 0, انکڑے->tdb_انکڑے_ناپ);
+		actual_ناپ = 0;
+		إذا ((انکڑے->tdb_انکڑے_ناپ % channel->بلاک_ناپ) == 0)
+			sz = انکڑے->tdb_انکڑے_ناپ / channel->بلاک_ناپ;
+		وإلا
+			sz = -انکڑے->tdb_انکڑے_ناپ;
+		retval = io_channel_read_blk64(انکڑے->real, backing_blk_عدد,
 					     sz, read_ptr);
-		if (retval) {
-			if (retval != EXT2_ET_SHORT_READ) {
-				free(read_ptr);
-				return retval;
+		إذا (retval) {
+			إذا (retval != EXT2_ET_SHORT_READ) {
+				حرر(read_ptr);
+				أرجع retval;
 			}
 			/*
 			 * short read so update the record size
 			 * accordingly
 			 */
-			data_size = actual_size;
-		} else {
-			data_size = data->tdb_data_size;
+			انکڑے_ناپ = actual_ناپ;
+		} وإلا {
+			انکڑے_ناپ = انکڑے->tdb_انکڑے_ناپ;
 		}
-		if (data_size == 0) {
-			free(read_ptr);
-			block_num++;
-			continue;
+		إذا (انکڑے_ناپ == 0) {
+			حرر(read_ptr);
+			بلاک_عدد++;
+			استمر;
 		}
 		dbg_printf("Read %llu bytes from FS block %llu (blk=%llu cnt=%llu)\n",
-		       data_size, backing_blk_num, block, data->tdb_data_size);
-		if ((data_size % data->undo_file->block_size) == 0)
-			sz = data_size / data->undo_file->block_size;
-		else
-			sz = -data_size;;
+		       انکڑے_ناپ, backing_blk_عدد, بلاک, انکڑے->tdb_انکڑے_ناپ);
+		إذا ((انکڑے_ناپ % انکڑے->undo_file->بلاک_ناپ) == 0)
+			sz = انکڑے_ناپ / انکڑے->undo_file->بلاک_ناپ;
+		وإلا
+			sz = -انکڑے_ناپ;;
 		/* extend this key? */
-		if (data->keys_in_block) {
-			key = data->keyb->keys + data->keys_in_block - 1;
-			keysz = ext2fs_le32_to_cpu(key->size);
-		} else {
-			key = NULL;
+		إذا (انکڑے->کلیدیں_وچ_بلاک) {
+			کلید = انکڑے->keyb->کلیدیں + انکڑے->کلیدیں_وچ_بلاک - 1;
+			keysz = ext2fs_le32_منزل_cpu(کلید->ناپ);
+		} وإلا {
+			کلید = عدم;
 			keysz = 0;
 		}
-		if (key != NULL &&
-		    (ext2fs_le64_to_cpu(key->fsblk) * channel->block_size +
-		     channel->block_size - 1 +
-		     keysz) / channel->block_size == backing_blk_num &&
-		    E2UNDO_MAX_EXTENT_BLOCKS * data->tdb_data_size >
-		    keysz + data_size) {
-			blk_crc = ext2fs_le32_to_cpu(key->blk_crc);
-			blk_crc = ext2fs_crc32c_le(blk_crc, read_ptr, data_size);
-			key->blk_crc = ext2fs_cpu_to_le32(blk_crc);
-			key->size = ext2fs_cpu_to_le32(keysz + data_size);
-		} else {
-			data->num_keys++;
-			key = data->keyb->keys + data->keys_in_block;
-			data->keys_in_block++;
-			key->fsblk = ext2fs_cpu_to_le64(backing_blk_num);
-			blk_crc = ext2fs_crc32c_le(~0, read_ptr, data_size);
-			key->blk_crc = ext2fs_cpu_to_le32(blk_crc);
-			key->size = ext2fs_cpu_to_le32(data_size);
+		إذا (کلید != عدم &&
+		    (ext2fs_le64_منزل_cpu(کلید->fsblk) * channel->بلاک_ناپ +
+		     channel->بلاک_ناپ - 1 +
+		     keysz) / channel->بلاک_ناپ == backing_blk_عدد &&
+		    E2_UNDO_MAX_EXTENT_بلاکاں * انکڑے->tdb_انکڑے_ناپ >
+		    keysz + انکڑے_ناپ) {
+			blk_چکری_جانچ = ext2fs_le32_منزل_cpu(کلید->blk_چکری_جانچ);
+			blk_چکری_جانچ = ext2fs_crc32c_le(blk_چکری_جانچ, read_ptr, انکڑے_ناپ);
+			کلید->blk_چکری_جانچ = ext2fs_cpu_منزل_le32(blk_چکری_جانچ);
+			کلید->ناپ = ext2fs_cpu_منزل_le32(keysz + انکڑے_ناپ);
+		} وإلا {
+			انکڑے->عدد_کلیدیں++;
+			کلید = انکڑے->keyb->کلیدیں + انکڑے->کلیدیں_وچ_بلاک;
+			انکڑے->کلیدیں_وچ_بلاک++;
+			کلید->fsblk = ext2fs_cpu_منزل_le64(backing_blk_عدد);
+			blk_چکری_جانچ = ext2fs_crc32c_le(~0, read_ptr, انکڑے_ناپ);
+			کلید->blk_چکری_جانچ = ext2fs_cpu_منزل_le32(blk_چکری_جانچ);
+			کلید->ناپ = ext2fs_cpu_منزل_le32(انکڑے_ناپ);
 		}
 		dbg_printf("Writing block %llu to offset %llu size %d key %zu\n",
-		       block_num,
-		       data->undo_blk_num,
-		       sz, data->num_keys - 1);
-		retval = io_channel_write_blk64(data->undo_file,
-					data->undo_blk_num, sz, read_ptr);
-		if (retval) {
-			free(read_ptr);
-			return retval;
+		       بلاک_عدد,
+		       انکڑے->undo_blk_عدد,
+		       sz, انکڑے->عدد_کلیدیں - 1);
+		retval = io_channel_write_blk64(انکڑے->undo_file,
+					انکڑے->undo_blk_عدد, sz, read_ptr);
+		إذا (retval) {
+			حرر(read_ptr);
+			أرجع retval;
 		}
-		data->undo_blk_num++;
-		free(read_ptr);
+		انکڑے->undo_blk_عدد++;
+		حرر(read_ptr);
 
 		/* Write out the key block */
-		retval = write_undo_indexes(data, 0);
-		if (retval)
-			return retval;
+		retval = write_undo_indexes(انکڑے, 0);
+		إذا (retval)
+			أرجع retval;
 
 		/* Next block */
-		block_num++;
+		بلاک_عدد++;
 	}
 
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t undo_io_read_error(io_channel channel ATTR((unused)),
-				    unsigned long block ATTR((unused)),
-				    int count ATTR((unused)),
-				    void *data ATTR((unused)),
-				    size_t size ATTR((unused)),
-				    int actual,
-				    errcode_t error ATTR((unused)))
+ساكن errcode_t undo_io_read_error(io_channel channel ATTR((بن_ورتیا)),
+				    بنانشانی لما بلاک ATTR((بن_ورتیا)),
+				    صحيح گنتی ATTR((بن_ورتیا)),
+				    فراغ *انکڑے ATTR((بن_ورتیا)),
+				    size_t ناپ ATTR((بن_ورتیا)),
+				    صحيح actual,
+				    errcode_t error ATTR((بن_ورتیا)))
 {
-	actual_size = actual;
-	return error;
+	actual_ناپ = actual;
+	أرجع error;
 }
 
-static void undo_err_handler_init(io_channel channel)
+ساكن فراغ undo_err_handler_init(io_channel channel)
 {
 	channel->read_error = undo_io_read_error;
 }
 
-static int check_filesystem(struct undo_header *hdr, io_channel undo_file,
-			    unsigned int blocksize, blk64_t super_block,
+ساكن صحيح check_filesystem(بنية undo_سرخی *hdr, io_channel undo_file,
+			    بنانشانی صحيح blocksize, blk64_t super_بلاک,
 			    io_channel channel)
 {
-	struct ext2_super_block super, *sb;
-	char *buf;
-	__u32 sb_crc;
+	بنية ext2_super_بلاک super, *sb;
+	حرف *buf;
+	__u32 sb_چکری_جانچ;
 	errcode_t retval;
 
-	io_channel_set_blksize(channel, SUPERBLOCK_OFFSET);
-	retval = io_channel_read_blk64(channel, 1, -SUPERBLOCK_SIZE, &super);
-	if (retval)
-		return retval;
+	io_channel_سیٹ_blksize(channel, SUPERBLOCK_وتھ);
+	retval = io_channel_read_blk64(channel, 1, -SUPERBLOCK_ناپ, &super);
+	إذا (retval)
+		أرجع retval;
 
 	/*
 	 * Compare the FS and the undo file superblock so that we don't
 	 * append to something that doesn't match this FS.
 	 */
 	retval = ext2fs_get_mem(blocksize, &buf);
-	if (retval)
-		return retval;
-	retval = io_channel_read_blk64(undo_file, super_block,
-				       -SUPERBLOCK_SIZE, buf);
-	if (retval)
-		goto out;
-	sb = (struct ext2_super_block *)buf;
+	إذا (retval)
+		أرجع retval;
+	retval = io_channel_read_blk64(undo_file, super_بلاک,
+				       -SUPERBLOCK_ناپ, buf);
+	إذا (retval)
+		اذهب باہرلا;
+	sb = (بنية ext2_super_بلاک *)buf;
 	sb->s_magic = ~sb->s_magic;
-	if (memcmp(&super, buf, sizeof(super))) {
+	إذا (memcmp(&super, buf, حجم(super))) {
 		retval = -1;
-		goto out;
+		اذهب باہرلا;
 	}
-	sb_crc = ext2fs_crc32c_le(~0, (unsigned char *)buf, SUPERBLOCK_SIZE);
-	if (ext2fs_le32_to_cpu(hdr->sb_crc) != sb_crc) {
+	sb_چکری_جانچ = ext2fs_crc32c_le(~0, (بنانشانی حرف *)buf, SUPERBLOCK_ناپ);
+	إذا (ext2fs_le32_منزل_cpu(hdr->sb_چکری_جانچ) != sb_چکری_جانچ) {
 		retval = -1;
-		goto out;
+		اذهب باہرلا;
 	}
 
-out:
+باہرلا:
 	ext2fs_free_mem(&buf);
-	return retval;
+	أرجع retval;
 }
 
 /*
@@ -542,561 +542,561 @@ out:
  * part of an FS upgrade instead of having to create multiple files and
  * then apply them in correct order.
  */
-static errcode_t try_reopen_undo_file(int undo_fd,
-				      struct undo_private_data *data)
+ساكن errcode_t try_reopen_undo_file(صحيح undo_fd,
+				      بنية undo_نجی_انکڑے *انکڑے)
 {
-	struct undo_header hdr;
-	struct undo_key *dkey;
+	بنية undo_سرخی hdr;
+	بنية undo_کلید *dkey;
 	ext2fs_struct_stat statbuf;
-	unsigned int blocksize, fs_blocksize;
-	blk64_t super_block, lblk;
-	size_t num_keys, keys_per_block, i;
-	__u32 hdr_crc, key_crc;
+	بنانشانی صحيح blocksize, fs_blocksize;
+	blk64_t super_بلاک, lblk;
+	size_t عدد_کلیدیں, کلیدیں_فی_بلاک_2, i;
+	__u32 hdr_چکری_جانچ, کلید_چکری_جانچ;
 	errcode_t retval;
 
 	/* Zero size already? */
 	retval = ext2fs_fstat(undo_fd, &statbuf);
-	if (retval)
-		goto bad_file;
-	if (statbuf.st_size == 0)
-		goto out;
+	إذا (retval)
+		اذهب bad_file;
+	إذا (statbuf.st_ناپ == 0)
+		اذهب باہرلا;
 
 	/* check the file header */
-	retval = io_channel_read_blk64(data->undo_file, 0, -(int)sizeof(hdr),
+	retval = io_channel_read_blk64(انکڑے->undo_file, 0, -(صحيح)حجم(hdr),
 				       &hdr);
-	if (retval)
-		goto bad_file;
+	إذا (retval)
+		اذهب bad_file;
 
-	if (memcmp(hdr.magic, E2UNDO_MAGIC,
-		    sizeof(hdr.magic)))
-		goto bad_file;
-	hdr_crc = ext2fs_crc32c_le(~0, (unsigned char *)&hdr,
-				   sizeof(struct undo_header) -
-				   sizeof(__u32));
-	if (ext2fs_le32_to_cpu(hdr.header_crc) != hdr_crc)
-		goto bad_file;
-	blocksize = ext2fs_le32_to_cpu(hdr.block_size);
-	fs_blocksize = ext2fs_le32_to_cpu(hdr.fs_block_size);
-	if (blocksize > E2UNDO_MAX_BLOCK_SIZE ||
-	    blocksize < E2UNDO_MIN_BLOCK_SIZE ||
+	إذا (memcmp(hdr.magic, E2UNDO_MAGIC,
+		    حجم(hdr.magic)))
+		اذهب bad_file;
+	hdr_چکری_جانچ = ext2fs_crc32c_le(~0, (بنانشانی حرف *)&hdr,
+				   حجم(بنية undo_سرخی) -
+				   حجم(__u32));
+	إذا (ext2fs_le32_منزل_cpu(hdr.سرخی_چکری_جانچ) != hdr_چکری_جانچ)
+		اذهب bad_file;
+	blocksize = ext2fs_le32_منزل_cpu(hdr.بلاک_ناپ);
+	fs_blocksize = ext2fs_le32_منزل_cpu(hdr.fs_بلاک_ناپ);
+	إذا (blocksize > E2_UNDO_MAX_بلاک_ناپ ||
+	    blocksize < E2_UNDO_MIN_بلاک_ناپ ||
 	    !blocksize || !fs_blocksize)
-		goto bad_file;
-	super_block = ext2fs_le64_to_cpu(hdr.super_offset);
-	num_keys = ext2fs_le64_to_cpu(hdr.num_keys);
-	io_channel_set_blksize(data->undo_file, blocksize);
+		اذهب bad_file;
+	super_بلاک = ext2fs_le64_منزل_cpu(hdr.super_وتھ);
+	عدد_کلیدیں = ext2fs_le64_منزل_cpu(hdr.عدد_کلیدیں);
+	io_channel_سیٹ_blksize(انکڑے->undo_file, blocksize);
 	/*
 	 * Do not compare hdr.f_compat with the available compatible
 	 * features set, because a "missing" compatible feature should
 	 * not cause any problems.
 	 */
-	if (hdr.f_incompat || hdr.f_rocompat)
-		goto bad_file;
+	إذا (hdr.f_incompat || hdr.f_rocompat)
+		اذهب bad_file;
 
 	/* Superblock matches this FS? */
-	if (check_filesystem(&hdr, data->undo_file, blocksize, super_block,
-			     data->real) != 0) {
+	إذا (check_filesystem(&hdr, انکڑے->undo_file, blocksize, super_بلاک,
+			     انکڑے->real) != 0) {
 		retval = EXT2_ET_UNDO_FILE_WRONG;
-		goto out;
+		اذهب باہرلا;
 	}
 
 	/* Try to set ourselves up */
-	data->tdb_data_size = blocksize;
-	retval = undo_setup_tdb(data);
-	if (retval)
-		goto bad_file;
-	data->num_keys = num_keys;
-	data->super_blk_num = super_block;
-	data->first_key_blk = ext2fs_le64_to_cpu(hdr.key_offset);
+	انکڑے->tdb_انکڑے_ناپ = blocksize;
+	retval = undo_تیاری_tdb(انکڑے);
+	إذا (retval)
+		اذهب bad_file;
+	انکڑے->عدد_کلیدیں = عدد_کلیدیں;
+	انکڑے->super_blk_عدد = super_بلاک;
+	انکڑے->پہلا_کلید_blk = ext2fs_le64_منزل_cpu(hdr.کلید_وتھ);
 
 	/* load the written block map */
-	keys_per_block = KEYS_PER_BLOCK(data);
-	lblk = data->first_key_blk;
+	کلیدیں_فی_بلاک_2 = کلیدیں_فی_بلاک(انکڑے);
+	lblk = انکڑے->پہلا_کلید_blk;
 	dbg_printf("nr_keys=%lu, kpb=%zu, blksz=%u\n",
-		   num_keys, keys_per_block, blocksize);
-	for (i = 0; i < num_keys; i += keys_per_block) {
+		   عدد_کلیدیں, کلیدیں_فی_بلاک_2, blocksize);
+	لكل (i = 0; i < عدد_کلیدیں; i += کلیدیں_فی_بلاک_2) {
 		size_t j, max_j;
-		__le32 crc;
+		__le32 چکری_جانچ;
 
-		data->key_blk_num = lblk;
-		retval = io_channel_read_blk64(data->undo_file,
-					       lblk, 1, data->keyb);
-		if (retval)
-			goto bad_key_replay;
+		انکڑے->کلید_blk_عدد = lblk;
+		retval = io_channel_read_blk64(انکڑے->undo_file,
+					       lblk, 1, انکڑے->keyb);
+		إذا (retval)
+			اذهب bad_کلید_replay;
 
 		/* check keys */
-		if (ext2fs_le32_to_cpu(data->keyb->magic) != KEYBLOCK_MAGIC) {
+		إذا (ext2fs_le32_منزل_cpu(انکڑے->keyb->magic) != KEYBLOCK_MAGIC) {
 			retval = EXT2_ET_UNDO_FILE_CORRUPT;
-			goto bad_key_replay;
+			اذهب bad_کلید_replay;
 		}
-		crc = data->keyb->crc;
-		data->keyb->crc = 0;
-		key_crc = ext2fs_crc32c_le(~0, (unsigned char *)data->keyb,
+		چکری_جانچ = انکڑے->keyb->چکری_جانچ;
+		انکڑے->keyb->چکری_جانچ = 0;
+		کلید_چکری_جانچ = ext2fs_crc32c_le(~0, (بنانشانی حرف *)انکڑے->keyb,
 					   blocksize);
-		if (ext2fs_le32_to_cpu(crc) != key_crc) {
+		إذا (ext2fs_le32_منزل_cpu(چکری_جانچ) != کلید_چکری_جانچ) {
 			retval = EXT2_ET_UNDO_FILE_CORRUPT;
-			goto bad_key_replay;
+			اذهب bad_کلید_replay;
 		}
 
 		/* load keys from key block */
 		lblk++;
-		max_j = data->num_keys - i;
-		if (max_j > keys_per_block)
-			max_j = keys_per_block;
-		for (j = 0, dkey = data->keyb->keys;
+		max_j = انکڑے->عدد_کلیدیں - i;
+		إذا (max_j > کلیدیں_فی_بلاک_2)
+			max_j = کلیدیں_فی_بلاک_2;
+		لكل (j = 0, dkey = انکڑے->keyb->کلیدیں;
 		     j < max_j;
 		     j++, dkey++) {
-			blk64_t fsblk = ext2fs_le64_to_cpu(dkey->fsblk);
+			blk64_t fsblk = ext2fs_le64_منزل_cpu(dkey->fsblk);
 			blk64_t undo_blk = fsblk * fs_blocksize / blocksize;
-			size_t size = ext2fs_le32_to_cpu(dkey->size);
+			size_t ناپ = ext2fs_le32_منزل_cpu(dkey->ناپ);
 
-			ext2fs_mark_block_bitmap_range2(data->written_block_map,
+			ext2fs_mark_بلاک_bitmap_range2(انکڑے->written_بلاک_map,
 					 undo_blk,
-					(size + blocksize - 1) / blocksize);
-			lblk += (size + blocksize - 1) / blocksize;
-			data->undo_blk_num = lblk;
-			data->keys_in_block = j + 1;
+					(ناپ + blocksize - 1) / blocksize);
+			lblk += (ناپ + blocksize - 1) / blocksize;
+			انکڑے->undo_blk_عدد = lblk;
+			انکڑے->کلیدیں_وچ_بلاک = j + 1;
 		}
 	}
 	dbg_printf("Reopen undo, keyblk=%llu undoblk=%llu nrkeys=%zu kib=%zu\n",
-		   data->key_blk_num, data->undo_blk_num, data->num_keys,
-		   data->keys_in_block);
+		   انکڑے->کلید_blk_عدد, انکڑے->undo_blk_عدد, انکڑے->عدد_کلیدیں,
+		   انکڑے->کلیدیں_وچ_بلاک);
 
-	data->hdr.state = hdr.state & ~E2UNDO_STATE_FINISHED;
-	data->hdr.f_compat = hdr.f_compat;
-	data->hdr.f_incompat = hdr.f_incompat;
-	data->hdr.f_rocompat = hdr.f_rocompat;
-	return retval;
+	انکڑے->hdr.state = hdr.state & ~E2_UNDO_STATE_مکمل;
+	انکڑے->hdr.f_compat = hdr.f_compat;
+	انکڑے->hdr.f_incompat = hdr.f_incompat;
+	انکڑے->hdr.f_rocompat = hdr.f_rocompat;
+	أرجع retval;
 
-bad_key_replay:
-	data->key_blk_num = data->undo_blk_num = 0;
-	data->keys_in_block = 0;
-	ext2fs_free_mem(&data->keyb);
-	ext2fs_free_generic_bitmap(data->written_block_map);
-	data->tdb_written = 0;
-	goto out;
+bad_کلید_replay:
+	انکڑے->کلید_blk_عدد = انکڑے->undo_blk_عدد = 0;
+	انکڑے->کلیدیں_وچ_بلاک = 0;
+	ext2fs_free_mem(&انکڑے->keyb);
+	ext2fs_free_generic_bitmap(انکڑے->written_بلاک_map);
+	انکڑے->tdb_written = 0;
+	اذهب باہرلا;
 bad_file:
 	retval = EXT2_ET_UNDO_FILE_CORRUPT;
-out:
-	return retval;
+باہرلا:
+	أرجع retval;
 }
 
-static void undo_atexit(void *p)
+ساكن فراغ undo_atexit(فراغ *p)
 {
-	struct undo_private_data *data = p;
+	بنية undo_نجی_انکڑے *انکڑے = p;
 	errcode_t err;
 
-	err = write_undo_indexes(data, 1);
-	io_channel_close(data->undo_file);
+	err = write_undo_indexes(انکڑے, 1);
+	io_channel_close(انکڑے->undo_file);
 
-	com_err(data->tdb_file, err, "while force-closing undo file");
+	com_err(انکڑے->tdb_file, err, "while force-closing undo file");
 }
 
-static errcode_t undo_open(const char *name, int flags, io_channel *channel)
+ساكن errcode_t undo_open(ثابت حرف *name, صحيح flags, io_channel *channel)
 {
-	io_channel	io = NULL;
-	struct undo_private_data *data = NULL;
-	int		undo_fd = -1;
+	io_channel	io = عدم;
+	بنية undo_نجی_انکڑے *انکڑے = عدم;
+	صحيح		undo_fd = -1;
 	errcode_t	retval;
 
 	/* We don't support multi-threading, at least for now */
-	flags &= ~IO_FLAG_THREADS;
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	flags &= ~IO_FLAG_دھاگے;
+	إذا (name == 0)
+		أرجع EXT2_ET_BAD_DEVICE_NAME;
+	retval = ext2fs_get_mem(حجم(بنية struct_io_channel), &io);
+	إذا (retval)
+		اذهب cleanup;
+	memset(io, 0, حجم(بنية struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
-	retval = ext2fs_get_mem(sizeof(struct undo_private_data), &data);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(حجم(بنية undo_نجی_انکڑے), &انکڑے);
+	إذا (retval)
+		اذهب cleanup;
 
 	io->manager = undo_io_manager;
-	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(لڑی_لمبائی(name)+1, &io->name);
+	إذا (retval)
+		اذهب cleanup;
 
 	strcpy(io->name, name);
-	io->private_data = data;
-	io->block_size = 1024;
+	io->نجی_انکڑے = انکڑے;
+	io->بلاک_ناپ = 1024;
 	io->read_error = 0;
 	io->write_error = 0;
 	io->refcount = 1;
 
-	memset(data, 0, sizeof(struct undo_private_data));
-	data->magic = EXT2_ET_MAGIC_UNIX_IO_CHANNEL;
-	data->super_blk_num = 1;
-	data->first_key_blk = 2;
-	data->undo_blk_num = 3;
+	memset(انکڑے, 0, حجم(بنية undo_نجی_انکڑے));
+	انکڑے->magic = EXT2_ET_MAGIC_UNIX_IO_CHANNEL;
+	انکڑے->super_blk_عدد = 1;
+	انکڑے->پہلا_کلید_blk = 2;
+	انکڑے->undo_blk_عدد = 3;
 
-	if (undo_io_backing_manager) {
+	إذا (undo_io_backing_manager) {
 		retval = undo_io_backing_manager->open(name, flags,
-						       &data->real);
-		if (retval)
-			goto cleanup;
+						       &انکڑے->real);
+		إذا (retval)
+			اذهب cleanup;
 
-		data->tdb_file = strdup(tdb_file);
-		if (data->tdb_file == NULL)
-			goto cleanup;
-		undo_fd = ext2fs_open_file(data->tdb_file, O_RDWR | O_CREAT,
+		انکڑے->tdb_file = strdup(tdb_file);
+		إذا (انکڑے->tdb_file == عدم)
+			اذهب cleanup;
+		undo_fd = ext2fs_open_file(انکڑے->tdb_file, O_RDWR | O_CREAT,
 					   0600);
-		if (undo_fd < 0)
-			goto cleanup;
+		إذا (undo_fd < 0)
+			اذهب cleanup;
 
-		retval = undo_io_backing_manager->open(data->tdb_file,
+		retval = undo_io_backing_manager->open(انکڑے->tdb_file,
 						       IO_FLAG_RW,
-						       &data->undo_file);
-		if (retval)
-			goto cleanup;
-	} else {
-		data->real = NULL;
-		data->undo_file = NULL;
+						       &انکڑے->undo_file);
+		إذا (retval)
+			اذهب cleanup;
+	} وإلا {
+		انکڑے->real = عدم;
+		انکڑے->undo_file = عدم;
 	}
 
-	if (data->real)
+	إذا (انکڑے->real)
 		io->flags = (io->flags & ~CHANNEL_FLAGS_DISCARD_ZEROES) |
-			    (data->real->flags & CHANNEL_FLAGS_DISCARD_ZEROES);
+			    (انکڑے->real->flags & CHANNEL_FLAGS_DISCARD_ZEROES);
 
 	/*
 	 * setup err handler for read so that we know
 	 * when the backing manager fails do short read
 	 */
-	if (data->real)
-		undo_err_handler_init(data->real);
+	إذا (انکڑے->real)
+		undo_err_handler_init(انکڑے->real);
 
-	if (data->undo_file) {
-		retval = try_reopen_undo_file(undo_fd, data);
-		if (retval)
-			goto cleanup;
+	إذا (انکڑے->undo_file) {
+		retval = try_reopen_undo_file(undo_fd, انکڑے);
+		إذا (retval)
+			اذهب cleanup;
 	}
-	retval = ext2fs_add_exit_fn(undo_atexit, data);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_جوڑو_exit_fn(undo_atexit, انکڑے);
+	إذا (retval)
+		اذهب cleanup;
 
 	*channel = io;
-	if (undo_fd >= 0)
+	إذا (undo_fd >= 0)
 		close(undo_fd);
-	return retval;
+	أرجع retval;
 
 cleanup:
-	ext2fs_remove_exit_fn(undo_atexit, data);
-	if (undo_fd >= 0)
+	ext2fs_remove_exit_fn(undo_atexit, انکڑے);
+	إذا (undo_fd >= 0)
 		close(undo_fd);
-	if (data && data->undo_file)
-		io_channel_close(data->undo_file);
-	if (data && data->tdb_file)
-		free(data->tdb_file);
-	if (data && data->real)
-		io_channel_close(data->real);
-	if (data)
-		ext2fs_free_mem(&data);
-	if (io && io->name)
+	إذا (انکڑے && انکڑے->undo_file)
+		io_channel_close(انکڑے->undo_file);
+	إذا (انکڑے && انکڑے->tdb_file)
+		حرر(انکڑے->tdb_file);
+	إذا (انکڑے && انکڑے->real)
+		io_channel_close(انکڑے->real);
+	إذا (انکڑے)
+		ext2fs_free_mem(&انکڑے);
+	إذا (io && io->name)
 		ext2fs_free_mem(&io->name);
-	if (io)
+	إذا (io)
 		ext2fs_free_mem(&io);
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t undo_close(io_channel channel)
+ساكن errcode_t undo_close(io_channel channel)
 {
-	struct undo_private_data *data;
+	بنية undo_نجی_انکڑے *انکڑے;
 	errcode_t	err, retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct undo_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	انکڑے = (بنية undo_نجی_انکڑے *) channel->نجی_انکڑے;
+	EXT2_CHECK_MAGIC(انکڑے, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	إذا (--channel->refcount > 0)
+		أرجع 0;
 	/* Before closing write the file system identity */
-	if (!ext2fs_safe_getenv("UNDO_IO_SIMULATE_UNFINISHED"))
-		data->hdr.state = ext2fs_cpu_to_le32(E2UNDO_STATE_FINISHED);
-	err = write_undo_indexes(data, 1);
-	ext2fs_remove_exit_fn(undo_atexit, data);
-	if (data->real)
-		retval = io_channel_close(data->real);
-	if (data->tdb_file)
-		free(data->tdb_file);
-	if (data->undo_file)
-		io_channel_close(data->undo_file);
-	ext2fs_free_mem(&data->keyb);
-	if (data->written_block_map)
-		ext2fs_free_generic_bitmap(data->written_block_map);
-	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	إذا (!ext2fs_محفوظ_getenv("UNDO_IO_SIMULATE_UNFINISHED"))
+		انکڑے->hdr.state = ext2fs_cpu_منزل_le32(E2_UNDO_STATE_مکمل);
+	err = write_undo_indexes(انکڑے, 1);
+	ext2fs_remove_exit_fn(undo_atexit, انکڑے);
+	إذا (انکڑے->real)
+		retval = io_channel_close(انکڑے->real);
+	إذا (انکڑے->tdb_file)
+		حرر(انکڑے->tdb_file);
+	إذا (انکڑے->undo_file)
+		io_channel_close(انکڑے->undo_file);
+	ext2fs_free_mem(&انکڑے->keyb);
+	إذا (انکڑے->written_بلاک_map)
+		ext2fs_free_generic_bitmap(انکڑے->written_بلاک_map);
+	ext2fs_free_mem(&channel->نجی_انکڑے);
+	إذا (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
 
-	if (err)
-		return err;
-	return retval;
+	إذا (err)
+		أرجع err;
+	أرجع retval;
 }
 
-static errcode_t undo_set_blksize(io_channel channel, int blksize)
+ساكن errcode_t undo_سیٹ_blksize(io_channel channel, صحيح blksize)
 {
-	struct undo_private_data *data;
+	بنية undo_نجی_انکڑے *انکڑے;
 	errcode_t		retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct undo_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	انکڑے = (بنية undo_نجی_انکڑے *) channel->نجی_انکڑے;
+	EXT2_CHECK_MAGIC(انکڑے, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (blksize > E2UNDO_MAX_BLOCK_SIZE || blksize < E2UNDO_MIN_BLOCK_SIZE)
-		return EXT2_ET_INVALID_ARGUMENT;
+	إذا (blksize > E2_UNDO_MAX_بلاک_ناپ || blksize < E2_UNDO_MIN_بلاک_ناپ)
+		أرجع EXT2_ET_INVALID_دلیل;
 
-	if (data->real)
-		retval = io_channel_set_blksize(data->real, blksize);
+	إذا (انکڑے->real)
+		retval = io_channel_سیٹ_blksize(انکڑے->real, blksize);
 	/*
 	 * Set the block size used for tdb
 	 */
-	if (!data->tdb_data_size || !data->tdb_written)
-		data->tdb_data_size = blksize;
-	channel->block_size = blksize;
-	return retval;
+	إذا (!انکڑے->tdb_انکڑے_ناپ || !انکڑے->tdb_written)
+		انکڑے->tdb_انکڑے_ناپ = blksize;
+	channel->بلاک_ناپ = blksize;
+	أرجع retval;
 }
 
-static errcode_t undo_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+ساكن errcode_t undo_read_blk64(io_channel channel, بنانشانی لما لما بلاک,
+			       صحيح گنتی, فراغ *buf)
 {
 	errcode_t	retval = 0;
-	struct undo_private_data *data;
+	بنية undo_نجی_انکڑے *انکڑے;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct undo_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	انکڑے = (بنية undo_نجی_انکڑے *) channel->نجی_انکڑے;
+	EXT2_CHECK_MAGIC(انکڑے, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_read_blk64(data->real, block, count, buf);
+	إذا (انکڑے->real)
+		retval = io_channel_read_blk64(انکڑے->real, بلاک, گنتی, buf);
 
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t undo_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+ساكن errcode_t undo_read_blk(io_channel channel, بنانشانی لما بلاک,
+			       صحيح گنتی, فراغ *buf)
 {
-	return undo_read_blk64(channel, block, count, buf);
+	أرجع undo_read_blk64(channel, بلاک, گنتی, buf);
 }
 
-static errcode_t undo_write_blk64(io_channel channel, unsigned long long block,
-				int count, const void *buf)
+ساكن errcode_t undo_write_blk64(io_channel channel, بنانشانی لما لما بلاک,
+				صحيح گنتی, ثابت فراغ *buf)
 {
-	struct undo_private_data *data;
+	بنية undo_نجی_انکڑے *انکڑے;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct undo_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	انکڑے = (بنية undo_نجی_انکڑے *) channel->نجی_انکڑے;
+	EXT2_CHECK_MAGIC(انکڑے, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 	/*
 	 * First write the existing content into database
 	 */
-	retval = undo_write_tdb(channel, block, count);
-	if (retval)
-		 return retval;
-	if (data->real)
-		retval = io_channel_write_blk64(data->real, block, count, buf);
+	retval = undo_write_tdb(channel, بلاک, گنتی);
+	إذا (retval)
+		 أرجع retval;
+	إذا (انکڑے->real)
+		retval = io_channel_write_blk64(انکڑے->real, بلاک, گنتی, buf);
 
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t undo_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+ساكن errcode_t undo_write_blk(io_channel channel, بنانشانی لما بلاک,
+				صحيح گنتی, ثابت فراغ *buf)
 {
-	return undo_write_blk64(channel, block, count, buf);
+	أرجع undo_write_blk64(channel, بلاک, گنتی, buf);
 }
 
-static errcode_t undo_write_byte(io_channel channel, unsigned long offset,
-				 int size, const void *buf)
+ساكن errcode_t undo_write_byte(io_channel channel, بنانشانی لما وتھ,
+				 صحيح ناپ, ثابت فراغ *buf)
 {
-	struct undo_private_data *data;
+	بنية undo_نجی_انکڑے *انکڑے;
 	errcode_t	retval = 0;
 	ext2_loff_t	location;
-	unsigned long blk_num, count;;
+	بنانشانی لما blk_عدد, گنتی;;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct undo_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	انکڑے = (بنية undo_نجی_انکڑے *) channel->نجی_انکڑے;
+	EXT2_CHECK_MAGIC(انکڑے, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	location = offset + data->offset;
-	blk_num = location/channel->block_size;
+	location = وتھ + انکڑے->وتھ;
+	blk_عدد = location/channel->بلاک_ناپ;
 	/*
 	 * the size specified may spread across multiple blocks
 	 * also make sure we account for the fact that block start
 	 * offset for tdb is different from the backing I/O manager
 	 * due to possible different block size
 	 */
-	count = (size + (location % channel->block_size) +
-			channel->block_size  -1)/channel->block_size;
-	retval = undo_write_tdb(channel, blk_num, count);
-	if (retval)
-		return retval;
-	if (data->real && data->real->manager->write_byte)
-		retval = io_channel_write_byte(data->real, offset, size, buf);
+	گنتی = (ناپ + (location % channel->بلاک_ناپ) +
+			channel->بلاک_ناپ  -1)/channel->بلاک_ناپ;
+	retval = undo_write_tdb(channel, blk_عدد, گنتی);
+	إذا (retval)
+		أرجع retval;
+	إذا (انکڑے->real && انکڑے->real->manager->write_byte)
+		retval = io_channel_write_byte(انکڑے->real, وتھ, ناپ, buf);
 
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t undo_discard(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+ساكن errcode_t undo_discard(io_channel channel, بنانشانی لما لما بلاک,
+			      بنانشانی لما لما گنتی)
 {
-	struct undo_private_data *data;
+	بنية undo_نجی_انکڑے *انکڑے;
 	errcode_t	retval = 0;
-	int icount;
+	صحيح icount;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct undo_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	انکڑے = (بنية undo_نجی_انکڑے *) channel->نجی_انکڑے;
+	EXT2_CHECK_MAGIC(انکڑے, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (count > INT_MAX)
-		return EXT2_ET_UNIMPLEMENTED;
-	icount = count;
+	إذا (گنتی > ودھ_توں_ودھ_عدد)
+		أرجع EXT2_ET_UNIMPLEMENTED;
+	icount = گنتی;
 
 	/*
 	 * First write the existing content into database
 	 */
-	retval = undo_write_tdb(channel, block, icount);
-	if (retval)
-		return retval;
-	if (data->real)
-		retval = io_channel_discard(data->real, block, count);
+	retval = undo_write_tdb(channel, بلاک, icount);
+	إذا (retval)
+		أرجع retval;
+	إذا (انکڑے->real)
+		retval = io_channel_discard(انکڑے->real, بلاک, گنتی);
 
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t undo_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+ساكن errcode_t undo_zeroout(io_channel channel, بنانشانی لما لما بلاک,
+			      بنانشانی لما لما گنتی)
 {
-	struct undo_private_data *data;
+	بنية undo_نجی_انکڑے *انکڑے;
 	errcode_t	retval = 0;
-	int icount;
+	صحيح icount;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct undo_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	انکڑے = (بنية undo_نجی_انکڑے *) channel->نجی_انکڑے;
+	EXT2_CHECK_MAGIC(انکڑے, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (count > INT_MAX)
-		return EXT2_ET_UNIMPLEMENTED;
-	icount = count;
+	إذا (گنتی > ودھ_توں_ودھ_عدد)
+		أرجع EXT2_ET_UNIMPLEMENTED;
+	icount = گنتی;
 
 	/*
 	 * First write the existing content into database
 	 */
-	retval = undo_write_tdb(channel, block, icount);
-	if (retval)
-		return retval;
-	if (data->real)
-		retval = io_channel_zeroout(data->real, block, count);
+	retval = undo_write_tdb(channel, بلاک, icount);
+	إذا (retval)
+		أرجع retval;
+	إذا (انکڑے->real)
+		retval = io_channel_zeroout(انکڑے->real, بلاک, گنتی);
 
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t undo_cache_readahead(io_channel channel,
-				      unsigned long long block,
-				      unsigned long long count)
+ساكن errcode_t undo_cache_readahead(io_channel channel,
+				      بنانشانی لما لما بلاک,
+				      بنانشانی لما لما گنتی)
 {
-	struct undo_private_data *data;
+	بنية undo_نجی_انکڑے *انکڑے;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct undo_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	انکڑے = (بنية undo_نجی_انکڑے *) channel->نجی_انکڑے;
+	EXT2_CHECK_MAGIC(انکڑے, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_cache_readahead(data->real, block, count);
+	إذا (انکڑے->real)
+		retval = io_channel_cache_readahead(انکڑے->real, بلاک, گنتی);
 
-	return retval;
+	أرجع retval;
 }
 
 /*
  * Flush data buffers to disk.
  */
-static errcode_t undo_flush(io_channel channel)
+ساكن errcode_t undo_flush(io_channel channel)
 {
 	errcode_t	retval = 0;
-	struct undo_private_data *data;
+	بنية undo_نجی_انکڑے *انکڑے;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct undo_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	انکڑے = (بنية undo_نجی_انکڑے *) channel->نجی_انکڑے;
+	EXT2_CHECK_MAGIC(انکڑے, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_flush(data->real);
+	إذا (انکڑے->real)
+		retval = io_channel_flush(انکڑے->real);
 
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t undo_set_option(io_channel channel, const char *option,
-				 const char *arg)
+ساكن errcode_t undo_سیٹ_option(io_channel channel, ثابت حرف *option,
+				 ثابت حرف *arg)
 {
 	errcode_t	retval = 0;
-	struct undo_private_data *data;
-	unsigned long tmp;
-	char *end;
+	بنية undo_نجی_انکڑے *انکڑے;
+	بنانشانی لما tmp;
+	حرف *سرا;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct undo_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	انکڑے = (بنية undo_نجی_انکڑے *) channel->نجی_انکڑے;
+	EXT2_CHECK_MAGIC(انکڑے, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (!strcmp(option, "tdb_data_size")) {
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
+	إذا (!strcmp(option, "tdb_data_size")) {
+		إذا (!arg)
+			أرجع EXT2_ET_INVALID_دلیل;
 
-		tmp = strtoul(arg, &end, 0);
-		if (*end)
-			return EXT2_ET_INVALID_ARGUMENT;
-		if (tmp > E2UNDO_MAX_BLOCK_SIZE || tmp < E2UNDO_MIN_BLOCK_SIZE)
-			return EXT2_ET_INVALID_ARGUMENT;
-		if (!data->tdb_data_size || !data->tdb_written) {
-			data->tdb_written = -1;
-			data->tdb_data_size = tmp;
+		tmp = strtoul(arg, &سرا, 0);
+		إذا (*سرا)
+			أرجع EXT2_ET_INVALID_دلیل;
+		إذا (tmp > E2_UNDO_MAX_بلاک_ناپ || tmp < E2_UNDO_MIN_بلاک_ناپ)
+			أرجع EXT2_ET_INVALID_دلیل;
+		إذا (!انکڑے->tdb_انکڑے_ناپ || !انکڑے->tdb_written) {
+			انکڑے->tdb_written = -1;
+			انکڑے->tdb_انکڑے_ناپ = tmp;
 		}
-		return 0;
+		أرجع 0;
 	}
 	/*
 	 * Need to support offset option to work with
 	 * Unix I/O manager
 	 */
-	if (data->real && data->real->manager->set_option) {
-		retval = data->real->manager->set_option(data->real,
+	إذا (انکڑے->real && انکڑے->real->manager->سیٹ_option) {
+		retval = انکڑے->real->manager->سیٹ_option(انکڑے->real,
 							option, arg);
 	}
-	if (!retval && !strcmp(option, "offset")) {
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
+	إذا (!retval && !strcmp(option, "offset")) {
+		إذا (!arg)
+			أرجع EXT2_ET_INVALID_دلیل;
 
-		tmp = strtoul(arg, &end, 0);
-		if (*end)
-			return EXT2_ET_INVALID_ARGUMENT;
-		data->offset = tmp;
+		tmp = strtoul(arg, &سرا, 0);
+		إذا (*سرا)
+			أرجع EXT2_ET_INVALID_دلیل;
+		انکڑے->وتھ = tmp;
 	}
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t undo_get_stats(io_channel channel, io_stats *stats)
+ساكن errcode_t undo_get_stats(io_channel channel, io_stats *stats)
 {
 	errcode_t	retval = 0;
-	struct undo_private_data *data;
+	بنية undo_نجی_انکڑے *انکڑے;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct undo_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	انکڑے = (بنية undo_نجی_انکڑے *) channel->نجی_انکڑے;
+	EXT2_CHECK_MAGIC(انکڑے, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (data->real)
-		retval = (data->real->manager->get_stats)(data->real, stats);
+	إذا (انکڑے->real)
+		retval = (انکڑے->real->manager->get_stats)(انکڑے->real, stats);
 
-	return retval;
+	أرجع retval;
 }
 
-static struct struct_io_manager struct_undo_manager = {
+ساكن بنية struct_io_manager struct_undo_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Undo I/O Manager",
 	.open		= undo_open,
 	.close		= undo_close,
-	.set_blksize	= undo_set_blksize,
+	.سیٹ_blksize	= undo_سیٹ_blksize,
 	.read_blk	= undo_read_blk,
 	.write_blk	= undo_write_blk,
 	.flush		= undo_flush,
 	.write_byte	= undo_write_byte,
-	.set_option	= undo_set_option,
+	.سیٹ_option	= undo_سیٹ_option,
 	.get_stats	= undo_get_stats,
 	.read_blk64	= undo_read_blk64,
 	.write_blk64	= undo_write_blk64,

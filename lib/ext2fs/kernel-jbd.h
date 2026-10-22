@@ -13,59 +13,59 @@
  * filesystem journaling support.
  */
 
-#ifndef _LINUX_JBD_H
-#define _LINUX_JBD_H
+#جے_بنا_تعریف _LINUX_JBD_H
+#تعریف_کرو _LINUX_JBD_H
 
-#include "jfs_compat.h"
-#define JFS_DEBUG
-#define jfs_debug jbd_debug
+#ضمن "jfs_compat.h"
+#تعریف_کرو JFS_DEBUG
+#تعریف_کرو jfs_debug jbd_debug
 
-#ifndef __GNUC__
-#define __FUNCTION__ ""
-#endif
+#جے_بنا_تعریف __GNUC__
+#تعریف_کرو __FUNCTION__ ""
+#جے_انت
 
-#define journal_oom_retry 0
+#تعریف_کرو journal_oom_retry 0
 
-#ifdef CONFIG_JBD_DEBUG
+#جے_تعریف_شدہ CONFIG_JBD_DEBUG
 /*
  * Define JBD_EXPENSIVE_CHECKING to enable more expensive internal
  * consistency checks.  By default we don't do this unless
  * CONFIG_JBD_DEBUG is on.
  */
-#define JBD_EXPENSIVE_CHECKING
-extern int journal_enable_debug;
-#else
-#define journal_enable_debug (-1)
-#endif /* !CONFIG_JBD_DEBUG */
+#تعریف_کرو JBD_EXPENSIVE_CHECKING
+خارجي صحيح journal_enable_debug;
+#وإلا
+#تعریف_کرو journal_enable_debug (-1)
+#جے_انت /* !CONFIG_JBD_DEBUG */
 
-#ifdef __STDC__
-#define jbd_debug(n, f, a...)						\
-	do {								\
-		if ((n) <= journal_enable_debug) {			\
+#جے_تعریف_شدہ __STDC__
+#تعریف_کرو jbd_debug(n, f, a...)						\
+	افعل {								\
+		إذا ((n) <= journal_enable_debug) {			\
 			printk (KERN_DEBUG "(%s, %d): %s: ",		\
 				__FILE__, __LINE__, __FUNCTION__);	\
 		  	printk (f, ## a);				\
 		}							\
-	} while (0)
-#else
-#define jbd_debug(x)		/* AIX doesn't do STDC */
-#endif /* !__STDC__ */
+	} طالما (0)
+#وإلا
+#تعریف_کرو jbd_debug(x)		/* AIX doesn't do STDC */
+#جے_انت /* !__STDC__ */
 
-extern void * __jbd_kmalloc (char *where, size_t size, int flags, int retry);
-#define jbd_kmalloc(size, flags) \
-	__jbd_kmalloc(__FUNCTION__, (size), (flags), journal_oom_retry)
-#define jbd_rep_kmalloc(size, flags) \
-	__jbd_kmalloc(__FUNCTION__, (size), (flags), 1)
+خارجي فراغ * __jbd_kmalloc (حرف *where, size_t ناپ, صحيح flags, صحيح retry);
+#تعریف_کرو jbd_kmalloc(ناپ, flags) \
+	__jbd_kmalloc(__FUNCTION__, (ناپ), (flags), journal_oom_retry)
+#تعریف_کرو jbd_rep_kmalloc(ناپ, flags) \
+	__jbd_kmalloc(__FUNCTION__, (ناپ), (flags), 1)
 
-#define JBD2_MIN_JOURNAL_BLOCKS 1024
-#define JBD2_MAX_JOURNAL_BLOCKS (JBD2_MIN_JOURNAL_BLOCKS * 10000)
-#define JBD2_DEFAULT_FAST_COMMIT_BLOCKS 256
+#تعریف_کرو JBD2_MIN_JOURNAL_بلاکاں 1024
+#تعریف_کرو JBD2_MAX_JOURNAL_بلاکاں (JBD2_MIN_JOURNAL_بلاکاں * 10000)
+#تعریف_کرو JBD2_DEFAULT_FAST_COMMIT_بلاکاں 256
 
 /*
  * Internal structures used by the logging mechanism:
  */
 
-#define JBD2_MAGIC_NUMBER 0xc03b3998U /* The first 4 bytes of /dev/random! */
+#تعریف_کرو JBD2_MAGIC_نمبر 0xc03b3998U /* The first 4 bytes of /dev/random! */
 
 /*
  * On-disk structures
@@ -75,34 +75,34 @@ extern void * __jbd_kmalloc (char *where, size_t size, int flags, int retry);
  * Descriptor block types:
  */
 
-#define JBD2_DESCRIPTOR_BLOCK	1
-#define JBD2_COMMIT_BLOCK	2
-#define JBD2_SUPERBLOCK_V1	3
-#define JBD2_SUPERBLOCK_V2	4
-#define JBD2_REVOKE_BLOCK	5
-#define JBD2_FC_BLOCK		6
+#تعریف_کرو JBD2_DESCRIPTOR_بلاک	1
+#تعریف_کرو JBD2_COMMIT_بلاک	2
+#تعریف_کرو JBD2_SUPERBLOCK_V1	3
+#تعریف_کرو JBD2_SUPERBLOCK_V2	4
+#تعریف_کرو JBD2_REVOKE_بلاک	5
+#تعریف_کرو JBD2_FC_بلاک		6
 
 /*
  * Standard header for all descriptor blocks:
  */
-typedef struct journal_header_s
+تعريفنوع بنية journal_سرخی_s
 {
 	__be32		h_magic;
 	__be32		h_blocktype;
 	__be32		h_sequence;
-} journal_header_t;
+} journal_سرخی_t;
 
 /*
  * Checksum types.
  */
-#define JBD2_CRC32_CHKSUM   1
-#define JBD2_MD5_CHKSUM     2
-#define JBD2_SHA1_CHKSUM    3
-#define JBD2_CRC32C_CHKSUM  4
+#تعریف_کرو JBD2_چکری_جانچ_32_CHKSUM   1
+#تعریف_کرو JBD2_MD5_CHKSUM     2
+#تعریف_کرو JBD2_SHA1_CHKSUM    3
+#تعریف_کرو JBD2_چکری_جانچ_32_C_CHKSUM  4
 
-#define JBD2_CRC32_CHKSUM_SIZE 4
+#تعریف_کرو JBD2_چکری_جانچ_32_CHKSUM_ناپ 4
 
-#define JBD2_CHECKSUM_BYTES (32 / sizeof(__u32))
+#تعریف_کرو JBD2_CHECKSUM_بائٹاں (32 / حجم(__u32))
 /*
  * Commit block header for storing transactional checksums:
  *
@@ -121,14 +121,14 @@ typedef struct journal_header_s
  *
  * Checksum v1, v2, and v3 are mutually exclusive features.
  */
-struct commit_header {
+بنية commit_سرخی {
 	__be32		h_magic;
 	__be32		h_blocktype;
 	__be32		h_sequence;
-	unsigned char	h_chksum_type;
-	unsigned char	h_chksum_size;
-	unsigned char	h_padding[2];
-	__be32		h_chksum[JBD2_CHECKSUM_BYTES];
+	بنانشانی حرف	h_chksum_type;
+	بنانشانی حرف	h_chksum_ناپ;
+	بنانشانی حرف	h_padding[2];
+	__be32		h_chksum[JBD2_CHECKSUM_بائٹاں];
 	__be64		h_commit_sec;
 	__be32		h_commit_nsec;
 };
@@ -136,24 +136,24 @@ struct commit_header {
 /*
  * The block tag: used to describe a single buffer in the journal
  */
-typedef struct journal_block_tag3_s
+تعريفنوع بنية journal_بلاک_tag3_s
 {
 	__be32		t_blocknr;	/* The on-disk block number */
 	__be32		t_flags;	/* See below */
-	__be32		t_blocknr_high; /* most-significant high 32bits. */
+	__be32		t_blocknr_بلند; /* most-significant high 32bits. */
 	__be32		t_checksum;	/* crc32c(uuid+seq+block) */
-} journal_block_tag3_t;
+} journal_بلاک_tag3_t;
 
-typedef struct journal_block_tag_s
+تعريفنوع بنية journal_بلاک_ٹیگ_s
 {
 	__be32		t_blocknr;	/* The on-disk block number */
 	__be16		t_checksum;	/* truncated crc32c(uuid+seq+block) */
 	__be16		t_flags;	/* See below */
-	__be32		t_blocknr_high; /* most-significant high 32bits. */
-} journal_block_tag_t;
+	__be32		t_blocknr_بلند; /* most-significant high 32bits. */
+} journal_بلاک_ٹیگ_t;
 
 /* Tail of descriptor or revoke block, for checksumming */
-struct jbd2_journal_block_tail {
+بنية jbd2_journal_بلاک_پوچھ {
 	__be32		t_checksum;
 };
 
@@ -161,40 +161,40 @@ struct jbd2_journal_block_tail {
  * The revoke descriptor: used on disk to describe a series of blocks to
  * be revoked from the log
  */
-typedef struct journal_revoke_header_s
+تعريفنوع بنية journal_revoke_سرخی_s
 {
-	journal_header_t r_header;
-	__be32		 r_count;	/* Count of bytes used in the block */
-} jbd2_journal_revoke_header_t;
+	journal_سرخی_t r_سرخی;
+	__be32		 r_گنتی;	/* Count of bytes used in the block */
+} jbd2_journal_revoke_سرخی_t;
 
 /* Definitions for the journal tag flags word: */
-#define JBD2_FLAG_ESCAPE		1	/* on-disk block is escaped */
-#define JBD2_FLAG_SAME_UUID	2	/* block has same uuid as previous */
-#define JBD2_FLAG_DELETED	4	/* block deleted by this transaction */
-#define JBD2_FLAG_LAST_TAG	8	/* last tag in this descriptor block */
+#تعریف_کرو JBD2_FLAG_ESCAPE		1	/* on-disk block is escaped */
+#تعریف_کرو JBD2_FLAG_SAME_UUID	2	/* block has same uuid as previous */
+#تعریف_کرو JBD2_FLAG_DELETED	4	/* block deleted by this transaction */
+#تعریف_کرو JBD2_FLAG_آخری_ٹیگ	8	/* last tag in this descriptor block */
 
 
-#define UUID_SIZE 16
-#define JBD2_USERS_MAX 48
-#define JBD2_USERS_SIZE (UUID_SIZE * JBD2_USERS_MAX)
+#تعریف_کرو UUID_ناپ 16
+#تعریف_کرو JBD2_USERS_MAX 48
+#تعریف_کرو JBD2_USERS_ناپ (UUID_ناپ * JBD2_USERS_MAX)
 /*
  * The journal superblock.  All fields are in big-endian byte order.
  */
-typedef struct journal_superblock_s
+تعريفنوع بنية journal_superblock_s
 {
 /* 0x0000 */
-	journal_header_t s_header;
+	journal_سرخی_t s_سرخی;
 
 /* 0x000C */
 	/* Static information describing the journal */
 	__be32	s_blocksize;		/* journal device blocksize */
 	__be32	s_maxlen;		/* total blocks in journal file */
-	__be32	s_first;		/* first block of log information */
+	__be32	s_پہلا;		/* first block of log information */
 
 /* 0x0018 */
 	/* Dynamic information describing the current state of the log */
 	__be32	s_sequence;		/* first commit ID expected in log */
-	__be32	s_start;		/* blocknr of start of log */
+	__be32	s_شروع;		/* blocknr of start of log */
 
 /* 0x0020 */
 	/* Error value, as set by journal_abort(). */
@@ -215,243 +215,243 @@ typedef struct journal_superblock_s
 
 /* 0x0048 */
 	__be32	s_max_transaction;	/* Limit of journal blocks per trans.*/
-	__be32	s_max_trans_data;	/* Limit of data blocks per trans. */
+	__be32	s_max_trans_انکڑے;	/* Limit of data blocks per trans. */
 
 /* 0x0050 */
 	__u8	s_checksum_type;	/* checksum type */
 	__u8	s_padding2[3];
 /* 0x0054 */
-	__be32	s_num_fc_blks;		/* Number of fast commit blocks */
+	__be32	s_عدد_fc_blks;		/* Number of fast commit blocks */
 /* 0x0058 */
 	__be32	s_padding[41];
 	__be32	s_checksum;		/* crc32c(superblock) */
 
 /* 0x0100 */
-	__u8	s_users[JBD2_USERS_SIZE];		/* ids of all fs'es sharing the log */
+	__u8	s_users[JBD2_USERS_ناپ];		/* ids of all fs'es sharing the log */
 
 /* 0x0400 */
 } journal_superblock_t;
 
-#define JBD2_HAS_COMPAT_FEATURE(j,mask)					\
-	((j)->j_format_version >= 2 &&					\
-	 ((j)->j_superblock->s_feature_compat & ext2fs_cpu_to_be32((mask))))
-#define JBD2_HAS_RO_COMPAT_FEATURE(j,mask)				\
-	((j)->j_format_version >= 2 &&					\
-	 ((j)->j_superblock->s_feature_ro_compat & ext2fs_cpu_to_be32((mask))))
-#define JBD2_HAS_INCOMPAT_FEATURE(j,mask)				\
-	((j)->j_format_version >= 2 &&					\
-	 ((j)->j_superblock->s_feature_incompat & ext2fs_cpu_to_be32((mask))))
+#تعریف_کرو JBD2_HAS_COMPAT_FEATURE(j,نقاب)					\
+	((j)->j_format_نسخہ >= 2 &&					\
+	 ((j)->j_superblock->s_feature_compat & ext2fs_cpu_منزل_be32((نقاب))))
+#تعریف_کرو JBD2_HAS_RO_COMPAT_FEATURE(j,نقاب)				\
+	((j)->j_format_نسخہ >= 2 &&					\
+	 ((j)->j_superblock->s_feature_ro_compat & ext2fs_cpu_منزل_be32((نقاب))))
+#تعریف_کرو JBD2_HAS_INCOMPAT_FEATURE(j,نقاب)				\
+	((j)->j_format_نسخہ >= 2 &&					\
+	 ((j)->j_superblock->s_feature_incompat & ext2fs_cpu_منزل_be32((نقاب))))
 
-#define JBD2_FEATURE_COMPAT_CHECKSUM		0x00000001
+#تعریف_کرو JBD2_FEATURE_COMPAT_CHECKSUM		0x00000001
 
-#define JBD2_FEATURE_INCOMPAT_REVOKE		0x00000001
-#define JBD2_FEATURE_INCOMPAT_64BIT		0x00000002
-#define JBD2_FEATURE_INCOMPAT_ASYNC_COMMIT	0x00000004
-#define JBD2_FEATURE_INCOMPAT_CSUM_V2		0x00000008
-#define JBD2_FEATURE_INCOMPAT_CSUM_V3		0x00000010
-#define JBD2_FEATURE_INCOMPAT_FAST_COMMIT	0x00000020
+#تعریف_کرو JBD2_FEATURE_INCOMPAT_REVOKE		0x00000001
+#تعریف_کرو JBD2_FEATURE_INCOMPAT_64_ثنائی_ہندسہ		0x00000002
+#تعریف_کرو JBD2_FEATURE_INCOMPAT_ASYNC_COMMIT	0x00000004
+#تعریف_کرو JBD2_FEATURE_INCOMPAT_CSUM_V2		0x00000008
+#تعریف_کرو JBD2_FEATURE_INCOMPAT_CSUM_V3		0x00000010
+#تعریف_کرو JBD2_FEATURE_INCOMPAT_FAST_COMMIT	0x00000020
 
 /* Features known to this kernel version: */
-#define JBD2_KNOWN_COMPAT_FEATURES	0
-#define JBD2_KNOWN_ROCOMPAT_FEATURES	0
-#define JBD2_KNOWN_INCOMPAT_FEATURES	(JBD2_FEATURE_INCOMPAT_REVOKE|\
+#تعریف_کرو JBD2_معلوم_COMPAT_FEATURES	0
+#تعریف_کرو JBD2_معلوم_ROCOMPAT_FEATURES	0
+#تعریف_کرو JBD2_معلوم_INCOMPAT_FEATURES	(JBD2_FEATURE_INCOMPAT_REVOKE|\
 					 JBD2_FEATURE_INCOMPAT_ASYNC_COMMIT| \
-					 JBD2_FEATURE_INCOMPAT_64BIT|\
+					 JBD2_FEATURE_INCOMPAT_64_ثنائی_ہندسہ|\
 					 JBD2_FEATURE_INCOMPAT_CSUM_V2|	\
 					 JBD2_FEATURE_INCOMPAT_CSUM_V3 | \
 					 JBD2_FEATURE_INCOMPAT_FAST_COMMIT)
 
-#ifdef NO_INLINE_FUNCS
-extern size_t journal_tag_bytes(journal_t *journal);
-extern int jbd2_journal_has_csum_v2or3(journal_t *journal);
-extern int jbd2_journal_get_num_fc_blks(journal_superblock_t *jsb);
-extern int tid_gt(tid_t x, tid_t y) EXT2FS_ATTR((unused));
-extern int tid_geq(tid_t x, tid_t y) EXT2FS_ATTR((unused));
-#endif
+#جے_تعریف_شدہ NO_INLINE_FUNCS
+خارجي size_t journal_ٹیگ_بائٹاں(journal_t *journal);
+خارجي صحيح jbd2_journal_has_csum_v2or3(journal_t *journal);
+خارجي صحيح jbd2_journal_get_عدد_fc_blks(journal_superblock_t *jsb);
+خارجي صحيح tid_gt(tid_t x, tid_t y) EXT2FS_ATTR((بن_ورتیا));
+خارجي صحيح tid_geq(tid_t x, tid_t y) EXT2FS_ATTR((بن_ورتیا));
+#جے_انت
 
-#if (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
-#ifdef E2FSCK_INCLUDE_INLINE_FUNCS
-#if (__STDC_VERSION__ >= 199901L)
-#define _INLINE_ extern inline
-#else
-#define _INLINE_ inline
-#endif
-#else /* !E2FSCK_INCLUDE_INLINE FUNCS */
-#if (__STDC_VERSION__ >= 199901L)
-#define _INLINE_ inline
-#else /* not C99 */
-#ifdef __GNUC__
-#define _INLINE_ extern __inline__
-#else				/* For Watcom C */
-#define _INLINE_ extern inline
-#endif /* __GNUC__ */
-#endif /* __STDC_VERSION__ >= 199901L */
-#endif /* INCLUDE_INLINE_FUNCS */
+#إذا (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
+#جے_تعریف_شدہ E2FSCK_INCLUDE_INLINE_FUNCS
+#إذا (__STDC_VERSION__ >= 199901L)
+#تعریف_کرو _INLINE_ خارجي مضمن
+#وإلا
+#تعریف_کرو _INLINE_ مضمن
+#جے_انت
+#وإلا /* !E2FSCK_INCLUDE_INLINE FUNCS */
+#إذا (__STDC_VERSION__ >= 199901L)
+#تعریف_کرو _INLINE_ مضمن
+#وإلا /* not C99 */
+#جے_تعریف_شدہ __GNUC__
+#تعریف_کرو _INLINE_ خارجي __inline__
+#وإلا				/* For Watcom C */
+#تعریف_کرو _INLINE_ خارجي مضمن
+#جے_انت /* __GNUC__ */
+#جے_انت /* __STDC_VERSION__ >= 199901L */
+#جے_انت /* INCLUDE_INLINE_FUNCS */
 
 /* journal feature predicate functions */
-#define JBD2_FEATURE_COMPAT_FUNCS(name, flagname) \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j); \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j) \
+#تعریف_کرو JBD2_FEATURE_COMPAT_FUNCS(name, flagname) \
+_INLINE_ صحيح jbd2_has_feature_##name(journal_t *j); \
+_INLINE_ صحيح jbd2_has_feature_##name(journal_t *j) \
 { \
-	return ((j)->j_format_version >= 2 && \
+	أرجع ((j)->j_format_نسخہ >= 2 && \
 		((j)->j_superblock->s_feature_compat & \
-		 ext2fs_cpu_to_be32(JBD2_FEATURE_COMPAT_##flagname)) != 0); \
+		 ext2fs_cpu_منزل_be32(JBD2_FEATURE_COMPAT_##flagname)) != 0); \
 } \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j) \
+_INLINE_ فراغ jbd2_سیٹ_feature##name(journal_t *j); \
+_INLINE_ فراغ jbd2_سیٹ_feature##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_compat |= \
-		ext2fs_cpu_to_be32(JBD2_FEATURE_COMPAT_##flagname); \
+		ext2fs_cpu_منزل_be32(JBD2_FEATURE_COMPAT_##flagname); \
 } \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j) \
+_INLINE_ فراغ jbd2_clear_feature_##name(journal_t *j); \
+_INLINE_ فراغ jbd2_clear_feature_##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_compat &= \
-		~ext2fs_cpu_to_be32(JBD2_FEATURE_COMPAT_##flagname); \
+		~ext2fs_cpu_منزل_be32(JBD2_FEATURE_COMPAT_##flagname); \
 }
 
-#define JBD2_FEATURE_RO_COMPAT_FUNCS(name, flagname) \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j);	\
-_INLINE_ int jbd2_has_feature_##name(journal_t *j) \
+#تعریف_کرو JBD2_FEATURE_RO_COMPAT_FUNCS(name, flagname) \
+_INLINE_ صحيح jbd2_has_feature_##name(journal_t *j);	\
+_INLINE_ صحيح jbd2_has_feature_##name(journal_t *j) \
 { \
-	return ((j)->j_format_version >= 2 && \
+	أرجع ((j)->j_format_نسخہ >= 2 && \
 		((j)->j_superblock->s_feature_ro_compat & \
-		 ext2fs_cpu_to_be32(JBD2_FEATURE_RO_COMPAT_##flagname)) != 0); \
+		 ext2fs_cpu_منزل_be32(JBD2_FEATURE_RO_COMPAT_##flagname)) != 0); \
 } \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j) \
+_INLINE_ فراغ jbd2_سیٹ_feature##name(journal_t *j); \
+_INLINE_ فراغ jbd2_سیٹ_feature##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_ro_compat |= \
-		ext2fs_cpu_to_be32(JBD2_FEATURE_RO_COMPAT_##flagname); \
+		ext2fs_cpu_منزل_be32(JBD2_FEATURE_RO_COMPAT_##flagname); \
 } \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j) \
+_INLINE_ فراغ jbd2_clear_feature_##name(journal_t *j); \
+_INLINE_ فراغ jbd2_clear_feature_##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_ro_compat &= \
-		~ext2fs_cpu_to_be32(JBD2_FEATURE_RO_COMPAT_##flagname); \
+		~ext2fs_cpu_منزل_be32(JBD2_FEATURE_RO_COMPAT_##flagname); \
 }
 
-#define JBD2_FEATURE_INCOMPAT_FUNCS(name, flagname) \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j); \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j) \
+#تعریف_کرو JBD2_FEATURE_INCOMPAT_FUNCS(name, flagname) \
+_INLINE_ صحيح jbd2_has_feature_##name(journal_t *j); \
+_INLINE_ صحيح jbd2_has_feature_##name(journal_t *j) \
 { \
-	return ((j)->j_format_version >= 2 && \
+	أرجع ((j)->j_format_نسخہ >= 2 && \
 		((j)->j_superblock->s_feature_incompat & \
-		 ext2fs_cpu_to_be32(JBD2_FEATURE_INCOMPAT_##flagname)) != 0); \
+		 ext2fs_cpu_منزل_be32(JBD2_FEATURE_INCOMPAT_##flagname)) != 0); \
 } \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j) \
+_INLINE_ فراغ jbd2_سیٹ_feature##name(journal_t *j); \
+_INLINE_ فراغ jbd2_سیٹ_feature##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_incompat |= \
-		ext2fs_cpu_to_be32(JBD2_FEATURE_INCOMPAT_##flagname); \
+		ext2fs_cpu_منزل_be32(JBD2_FEATURE_INCOMPAT_##flagname); \
 } \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j) \
+_INLINE_ فراغ jbd2_clear_feature_##name(journal_t *j); \
+_INLINE_ فراغ jbd2_clear_feature_##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_incompat &= \
-		~ext2fs_cpu_to_be32(JBD2_FEATURE_INCOMPAT_##flagname); \
+		~ext2fs_cpu_منزل_be32(JBD2_FEATURE_INCOMPAT_##flagname); \
 }
 
-#else
-#define JBD2_FEATURE_COMPAT_FUNCS(name, flagname) \
-extern int jbd2_has_feature_##name(journal_t *j); \
-extern void jbd2_set_feature_##name(journal_t *j); \
-extern void jbd2_clear_feature_##name(journal_t *j);
+#وإلا
+#تعریف_کرو JBD2_FEATURE_COMPAT_FUNCS(name, flagname) \
+خارجي صحيح jbd2_has_feature_##name(journal_t *j); \
+خارجي فراغ jbd2_سیٹ_feature##name(journal_t *j); \
+خارجي فراغ jbd2_clear_feature_##name(journal_t *j);
 
-#define JBD2_FEATURE_RO_COMPAT_FUNCS(name, flagname) \
-extern int jbd2_has_feature_##name(journal_t *j); \
-extern void jbd2_set_feature_##name(journal_t *j); \
-extern void jbd2_clear_feature_##name(journal_t *j);
+#تعریف_کرو JBD2_FEATURE_RO_COMPAT_FUNCS(name, flagname) \
+خارجي صحيح jbd2_has_feature_##name(journal_t *j); \
+خارجي فراغ jbd2_سیٹ_feature##name(journal_t *j); \
+خارجي فراغ jbd2_clear_feature_##name(journal_t *j);
 
-#define JBD2_FEATURE_INCOMPAT_FUNCS(name, flagname) \
-extern int jbd2_has_feature_##name(journal_t *j); \
-extern void jbd2_set_feature_##name(journal_t *j); \
-extern void jbd2_clear_feature_##name(journal_t *j);
+#تعریف_کرو JBD2_FEATURE_INCOMPAT_FUNCS(name, flagname) \
+خارجي صحيح jbd2_has_feature_##name(journal_t *j); \
+خارجي فراغ jbd2_سیٹ_feature##name(journal_t *j); \
+خارجي فراغ jbd2_clear_feature_##name(journal_t *j);
 
-#endif /* (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS)) */
+#جے_انت /* (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS)) */
 
 JBD2_FEATURE_COMPAT_FUNCS(checksum,		CHECKSUM)
 
 JBD2_FEATURE_INCOMPAT_FUNCS(revoke,		REVOKE)
-JBD2_FEATURE_INCOMPAT_FUNCS(64bit,		64BIT)
+JBD2_FEATURE_INCOMPAT_FUNCS(64ثنائی_ہندسہ,		64ثنائی_ہندسہ_2)
 JBD2_FEATURE_INCOMPAT_FUNCS(async_commit,	ASYNC_COMMIT)
 JBD2_FEATURE_INCOMPAT_FUNCS(csum2,		CSUM_V2)
 JBD2_FEATURE_INCOMPAT_FUNCS(csum3,		CSUM_V3)
 JBD2_FEATURE_INCOMPAT_FUNCS(fast_commit,	FAST_COMMIT)
 
-#if (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
+#إذا (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
 /*
  * helper functions to deal with 32 or 64bit block numbers.
  */
-_INLINE_ size_t journal_tag_bytes(journal_t *journal)
+_INLINE_ size_t journal_ٹیگ_بائٹاں(journal_t *journal)
 {
 	size_t sz;
 
-	if (jbd2_has_feature_csum3(journal))
-		return sizeof(journal_block_tag3_t);
+	إذا (jbd2_has_feature_csum3(journal))
+		أرجع حجم(journal_بلاک_tag3_t);
 
-	sz = sizeof(journal_block_tag_t);
+	sz = حجم(journal_بلاک_ٹیگ_t);
 
-	if (jbd2_has_feature_csum2(journal))
-		sz += sizeof(__u16);
+	إذا (jbd2_has_feature_csum2(journal))
+		sz += حجم(__u16);
 
-	if (jbd2_has_feature_64bit(journal))
-		return sz;
+	إذا (jbd2_has_feature_64bit(journal))
+		أرجع sz;
 
-	return sz - sizeof(__u32);
+	أرجع sz - حجم(__u32);
 }
 
-_INLINE_ int jbd2_journal_has_csum_v2or3(journal_t *journal)
+_INLINE_ صحيح jbd2_journal_has_csum_v2or3(journal_t *journal)
 {
-	if (jbd2_has_feature_csum2(journal) || jbd2_has_feature_csum3(journal))
-		return 1;
+	إذا (jbd2_has_feature_csum2(journal) || jbd2_has_feature_csum3(journal))
+		أرجع 1;
 
-	return 0;
+	أرجع 0;
 }
 
-_INLINE_ int jbd2_journal_get_num_fc_blks(journal_superblock_t *jsb)
+_INLINE_ صحيح jbd2_journal_get_عدد_fc_blks(journal_superblock_t *jsb)
 {
-	int num_fc_blocks = be32_to_cpu(jsb->s_num_fc_blks);
+	صحيح عدد_fc_بلاکاں = be32_منزل_cpu(jsb->s_عدد_fc_blks);
 
-	return num_fc_blocks ? num_fc_blocks : JBD2_DEFAULT_FAST_COMMIT_BLOCKS;
+	أرجع عدد_fc_بلاکاں ? عدد_fc_بلاکاں : JBD2_DEFAULT_FAST_COMMIT_بلاکاں;
 }
 
 /* Comparison functions for transaction IDs: perform comparisons using
  * modulo arithmetic so that they work over sequence number wraps. */
 
-_INLINE_ int tid_gt(tid_t x, tid_t y)
+_INLINE_ صحيح tid_gt(tid_t x, tid_t y)
 {
-	int difference = (x - y);
-	return (difference > 0);
+	صحيح difference = (x - y);
+	أرجع (difference > 0);
 }
 
-_INLINE_ int tid_geq(tid_t x, tid_t y)
+_INLINE_ صحيح tid_geq(tid_t x, tid_t y)
 {
-	int difference = (x - y);
-	return (difference >= 0);
+	صحيح difference = (x - y);
+	أرجع (difference >= 0);
 }
-#endif /* (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS)) */
+#جے_انت /* (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS)) */
 
-#undef _INLINE_
+#تعریف_رد _INLINE_
 
-extern int journal_blocks_per_page(struct inode *inode);
+خارجي صحيح journal_بلاکاں_فی_ورقہ(بنية inode *inode);
 
 /*
  * Definitions which augment the buffer_head layer
  */
 
 /* journaling buffer types */
-#define BJ_None		0	/* Not journaled */
-#define BJ_SyncData	1	/* Normal data: flush before commit */
-#define BJ_AsyncData	2	/* writepage data: wait on it before commit */
-#define BJ_Metadata	3	/* Normal journaled metadata */
-#define BJ_Forget	4	/* Buffer superseded by this transaction */
-#define BJ_IO		5	/* Buffer is for temporary IO use */
-#define BJ_Shadow	6	/* Buffer contents being shadowed to the log */
-#define BJ_LogCtl	7	/* Buffer contains log descriptors */
-#define BJ_Reserved	8	/* Buffer is reserved for access by journal */
-#define BJ_Types	9
+#تعریف_کرو BJ_None		0	/* Not journaled */
+#تعریف_کرو BJ_Sync_انکڑے	1	/* Normal data: flush before commit */
+#تعریف_کرو BJ_Async_انکڑے	2	/* writepage data: wait on it before commit */
+#تعریف_کرو BJ_Metadata	3	/* Normal journaled metadata */
+#تعریف_کرو BJ_Forget	4	/* Buffer superseded by this transaction */
+#تعریف_کرو BJ_IO		5	/* Buffer is for temporary IO use */
+#تعریف_کرو BJ_Shadow	6	/* Buffer contents being shadowed to the log */
+#تعریف_کرو BJ_LogCtl	7	/* Buffer contains log descriptors */
+#تعریف_کرو BJ_Reserved	8	/* Buffer is reserved for access by journal */
+#تعریف_کرو BJ_Types	9
 
-extern int jbd_blocks_per_page(struct inode *inode);
+خارجي صحيح jbd_بلاکاں_فی_ورقہ(بنية inode *inode);
 
-#endif	/* _LINUX_JBD_H */
+#جے_انت	/* _LINUX_JBD_H */

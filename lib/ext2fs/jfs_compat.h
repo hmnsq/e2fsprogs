@@ -1,114 +1,114 @@
 
-#ifndef _JFS_COMPAT_H
-#define _JFS_COMPAT_H
+#جے_بنا_تعریف _JFS_COMPAT_H
+#تعریف_کرو _JFS_COMPAT_H
 
-#include "support/list.h"
-#include <errno.h>
-#ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
-#include <arpa/inet.h>
-#include <stdbool.h>
+#ضمن "support/list.h"
+#ضمن <errno.h>
+#جے_تعریف_شدہ HAVE_NETINET_وچ_H
+#ضمن <netinet/in.h>
+#جے_انت
+#ضمن <arpa/inet.h>
+#ضمن <stdbool.h>
 
-#define printk printf
-#define KERN_ERR ""
-#define KERN_DEBUG ""
+#تعریف_کرو printk لکھو
+#تعریف_کرو KERN_ERR ""
+#تعریف_کرو KERN_DEBUG ""
 
-#define REQ_OP_READ 0
-#define REQ_OP_WRITE 1
+#تعریف_کرو REQ_OP_READ 0
+#تعریف_کرو REQ_OP_WRITE 1
 
-#define cpu_to_le16(x)	ext2fs_cpu_to_le16(x)
-#define cpu_to_be16(x)	ext2fs_cpu_to_be16(x)
-#define cpu_to_le32(x)	ext2fs_cpu_to_le32(x)
-#define cpu_to_be32(x)	ext2fs_cpu_to_be32(x)
-#define cpu_to_le64(x)	ext2fs_cpu_to_le64(x)
-#define cpu_to_be64(x)	ext2fs_cpu_to_be64(x)
+#تعریف_کرو cpu_منزل_le16(x)	ext2fs_cpu_منزل_le16(x)
+#تعریف_کرو cpu_منزل_be16(x)	ext2fs_cpu_منزل_be16(x)
+#تعریف_کرو cpu_منزل_le32(x)	ext2fs_cpu_منزل_le32(x)
+#تعریف_کرو cpu_منزل_be32(x)	ext2fs_cpu_منزل_be32(x)
+#تعریف_کرو cpu_منزل_le64(x)	ext2fs_cpu_منزل_le64(x)
+#تعریف_کرو cpu_منزل_be64(x)	ext2fs_cpu_منزل_be64(x)
 
-#define le16_to_cpu(x)	ext2fs_le16_to_cpu(x)
-#define be16_to_cpu(x)	ext2fs_be16_to_cpu(x)
-#define le32_to_cpu(x)	ext2fs_le32_to_cpu(x)
-#define be32_to_cpu(x)	ext2fs_be32_to_cpu(x)
-#define le64_to_cpu(x)	ext2fs_le64_to_cpu(x)
-#define be64_to_cpu(x)	ext2fs_be64_to_cpu(x)
+#تعریف_کرو le16_منزل_cpu(x)	ext2fs_le16_منزل_cpu(x)
+#تعریف_کرو be16_منزل_cpu(x)	ext2fs_be16_منزل_cpu(x)
+#تعریف_کرو le32_منزل_cpu(x)	ext2fs_le32_منزل_cpu(x)
+#تعریف_کرو be32_منزل_cpu(x)	ext2fs_be32_منزل_cpu(x)
+#تعریف_کرو le64_منزل_cpu(x)	ext2fs_le64_منزل_cpu(x)
+#تعریف_کرو be64_منزل_cpu(x)	ext2fs_be64_منزل_cpu(x)
 
-typedef unsigned int tid_t;
-typedef struct journal_s journal_t;
-typedef struct kdev_s *kdev_t;
+تعريفنوع بنانشانی صحيح tid_t;
+تعريفنوع بنية journal_s journal_t;
+تعريفنوع بنية kdev_s *kdev_t;
 
-struct buffer_head;
-struct inode;
+بنية بفر_سر;
+بنية inode;
 
-typedef unsigned int gfp_t;
-#define GFP_KERNEL	0
-#define GFP_NOFS	0
-#define __GFP_NOFAIL	0
-#define JBD2_TAG_SIZE32	JBD_TAG_SIZE32
-#define JBD2_BARRIER	0
-typedef __u64 u64;
-#define put_bh(x)	brelse(x)
+تعريفنوع بنانشانی صحيح gfp_t;
+#تعریف_کرو GFP_KERNEL	0
+#تعریف_کرو GFP_NOFS	0
+#تعریف_کرو __GFP_NOFAIL	0
+#تعریف_کرو JBD2_ٹیگ_SIZE32	JBD_ٹیگ_SIZE32
+#تعریف_کرو JBD2_BARRIER	0
+تعريفنوع __u64 u64;
+#تعریف_کرو put_bh(x)	brelse(x)
 
-#define crc32_be(x, y, z)	ext2fs_crc32_be((x), (y), (z))
-#define spin_lock_init(x)
-#define spin_lock(x)
-#define spin_unlock(x)
-#define SLAB_HWCACHE_ALIGN	0
-#define SLAB_TEMPORARY		0
-#define KMEM_CACHE(__struct, __flags) kmem_cache_create(#__struct,\
-                sizeof(struct __struct), __alignof__(struct __struct),\
-                (__flags), NULL)
+#تعریف_کرو چکری_جانچ_32_be(x, y, z)	ext2fs_چکری_جانچ_32_be((x), (y), (z))
+#تعریف_کرو spin_جندرا_init(x)
+#تعریف_کرو spin_جندرا(x)
+#تعریف_کرو spin_unlock(x)
+#تعریف_کرو SLAB_HWCACHE_ALIGN	0
+#تعریف_کرو SLAB_TEMPORARY		0
+#تعریف_کرو KMEM_CACHE(__struct, __flags) kmem_cache_create(#__struct,\
+                حجم(بنية __struct), __alignof__(بنية __struct),\
+                (__flags), عدم)
 
-#define blkdev_issue_flush(kdev)	sync_blockdev(kdev)
-#define is_power_of_2(x)		((x) != 0 && (((x) & ((x) - 1)) == 0))
-#define roundup_power_of_two(n)		(1UL << (ext2fs_log2_u32((n) - 1) + 1))
-#define pr_emerg(fmt)
-#define pr_err(...)
+#تعریف_کرو blkdev_issue_flush(kdev)	sync_blockdev(kdev)
+#تعریف_کرو is_power_دا_2(x)		((x) != 0 && (((x) & ((x) - 1)) == 0))
+#تعریف_کرو roundup_power_دا_two(n)		(1UL << (ext2fs_log2_u32((n) - 1) + 1))
+#تعریف_کرو pr_emerg(fmt)
+#تعریف_کرو pr_err(...)
 
-enum passtype {PASS_SCAN, PASS_REVOKE, PASS_REPLAY};
+تعداد passtype {PASS_جانچ, PASS_REVOKE, PASS_REPLAY};
 
-#define JBD2_FC_REPLAY_STOP		0
-#define JBD2_FC_REPLAY_CONTINUE		1
+#تعریف_کرو JBD2_FC_REPLAY_STOP		0
+#تعریف_کرو JBD2_FC_REPLAY_CONTINUE		1
 
-struct journal_s
+بنية journal_s
 {
-	unsigned long		j_flags;
-	int			j_errno;
-	struct buffer_head *	j_sb_buffer;
-	struct journal_superblock_s *j_superblock;
-	int			j_format_version;
-	unsigned long		j_head;
-	unsigned long		j_tail;
-	unsigned long		j_fc_first;
-	unsigned long		j_fc_off;
-	unsigned long		j_fc_last;
-	unsigned long		j_free;
-	unsigned long		j_first, j_last;
+	بنانشانی لما		j_flags;
+	صحيح			j_errno;
+	بنية بفر_سر *	j_sb_بفر;
+	بنية journal_superblock_s *j_superblock;
+	صحيح			j_format_نسخہ;
+	بنانشانی لما		j_سر;
+	بنانشانی لما		j_پوچھ;
+	بنانشانی لما		j_fc_پہلا;
+	بنانشانی لما		j_fc_off;
+	بنانشانی لما		j_fc_آخری;
+	بنانشانی لما		j_free;
+	بنانشانی لما		j_پہلا, j_آخری;
 	kdev_t			j_dev;
 	kdev_t			j_fs_dev;
-	int			j_blocksize;
-	unsigned int		j_blk_offset;
-	unsigned int		j_total_len;
-	struct inode *		j_inode;
-	tid_t			j_tail_sequence;
+	صحيح			j_blocksize;
+	بنانشانی صحيح		j_blk_وتھ;
+	بنانشانی صحيح		j_کل_len;
+	بنية inode *		j_inode;
+	tid_t			j_پوچھ_sequence;
 	tid_t			j_transaction_sequence;
 	__u8			j_uuid[16];
-	struct jbd2_revoke_table_s *j_revoke;
-	struct jbd2_revoke_table_s *j_revoke_table[2];
+	بنية jbd2_revoke_جدول_s *j_revoke;
+	بنية jbd2_revoke_جدول_s *j_revoke_جدول[2];
 	tid_t			j_failed_commit;
-	__u32			j_csum_seed;
-	int (*j_fc_replay_callback)(struct journal_s *journal,
-				    struct buffer_head *bh,
-				    enum passtype pass, int off,
+	__u32			j_csum_بیج;
+	صحيح (*j_fc_replay_callback)(بنية journal_s *journal,
+				    بنية بفر_سر *bh,
+				    تعداد passtype pass, صحيح off,
 				    tid_t expected_tid);
 
 };
 
-#define is_journal_abort(x) 0
+#تعریف_کرو is_journal_abort(x) 0
 
-#define BUFFER_TRACE(bh, info)	do {} while (0)
+#تعریف_کرو بفر_TRACE(bh, info)	افعل {} طالما (0)
 
 /* Need this so we can compile with configure --enable-gcc-wall */
-#ifdef NO_INLINE_FUNCS
-#define inline
-#endif
+#جے_تعریف_شدہ NO_INLINE_FUNCS
+#تعریف_کرو مضمن
+#جے_انت
 
-#endif /* _JFS_COMPAT_H */
+#جے_انت /* _JFS_COMPAT_H */

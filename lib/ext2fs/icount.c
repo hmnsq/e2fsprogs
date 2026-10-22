@@ -9,19 +9,19 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <string.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
+#ضمن "config.h"
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جے_انت
+#ضمن <string.h>
+#ضمن <stdio.h>
+#ضمن <sys/stat.h>
+#ضمن <fcntl.h>
+#ضمن <errno.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "tdb.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
+#ضمن "tdb.h"
 
 /*
  * The data storage strategy used by icount relies on the observation
@@ -42,25 +42,25 @@
  * particular inode is on the sorted list already.
  */
 
-struct ext2_icount_el {
+بنية ext2_icount_el {
 	ext2_ino_t	ino;
-	__u32		count;
+	__u32		گنتی;
 };
 
-struct ext2_icount {
+بنية ext2_icount {
 	errcode_t		magic;
 	ext2fs_inode_bitmap	single;
-	ext2fs_inode_bitmap	multiple;
-	ext2_ino_t		count;
-	ext2_ino_t		size;
-	ext2_ino_t		num_inodes;
+	ext2fs_inode_bitmap	مضرب;
+	ext2_ino_t		گنتی;
+	ext2_ino_t		ناپ;
+	ext2_ino_t		عدد_inodes;
 	ext2_ino_t		cursor;
-	struct ext2_icount_el	*list;
-	struct ext2_icount_el	*last_lookup;
-#ifdef CONFIG_TDB
-	char			*tdb_fn;
+	بنية ext2_icount_el	*list;
+	بنية ext2_icount_el	*آخری_lookup;
+#جے_تعریف_شدہ CONFIG_TDB
+	حرف			*tdb_fn;
 	TDB_CONTEXT		*tdb;
-#endif
+#جے_انت
 	__u16			*fullmap;
 };
 
@@ -71,159 +71,159 @@ struct ext2_icount {
  * the time we only care if the number is bigger than 65,000 or not.
  * So use the following translation function to return a 16-bit count.
  */
-#define icount_16_xlate(x) (((x) > 65500) ? 65500 : (x))
+#تعریف_کرو icount_16_xlate(x) (((x) > 65500) ? 65500 : (x))
 
-void ext2fs_free_icount(ext2_icount_t icount)
+فراغ ext2fs_free_icount(ext2_icount_t icount)
 {
-	if (!icount)
-		return;
+	إذا (!icount)
+		أرجع;
 
 	icount->magic = 0;
-	if (icount->list)
+	إذا (icount->list)
 		ext2fs_free_mem(&icount->list);
-	if (icount->single)
+	إذا (icount->single)
 		ext2fs_free_inode_bitmap(icount->single);
-	if (icount->multiple)
-		ext2fs_free_inode_bitmap(icount->multiple);
-#ifdef CONFIG_TDB
-	if (icount->tdb)
+	إذا (icount->مضرب)
+		ext2fs_free_inode_bitmap(icount->مضرب);
+#جے_تعریف_شدہ CONFIG_TDB
+	إذا (icount->tdb)
 		tdb_close(icount->tdb);
-	if (icount->tdb_fn) {
-		(void) unlink(icount->tdb_fn);
-		free(icount->tdb_fn);
+	إذا (icount->tdb_fn) {
+		(فراغ) unlink(icount->tdb_fn);
+		حرر(icount->tdb_fn);
 	}
-#endif
+#جے_انت
 
-	if (icount->fullmap)
+	إذا (icount->fullmap)
 		ext2fs_free_mem(&icount->fullmap);
 
 	ext2fs_free_mem(&icount);
 }
 
-static errcode_t alloc_icount(ext2_filsys fs, int flags, ext2_icount_t *ret)
+ساكن errcode_t alloc_icount(ext2_filsys fs, صحيح flags, ext2_icount_t *ret)
 {
 	ext2_icount_t	icount;
 	errcode_t	retval;
 
 	*ret = 0;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_icount), &icount);
-	if (retval)
-		return retval;
-	memset(icount, 0, sizeof(struct ext2_icount));
+	retval = ext2fs_get_mem(حجم(بنية ext2_icount), &icount);
+	إذا (retval)
+		أرجع retval;
+	memset(icount, 0, حجم(بنية ext2_icount));
 	icount->magic = EXT2_ET_MAGIC_ICOUNT;
-	icount->num_inodes = fs->super->s_inodes_count;
+	icount->عدد_inodes = fs->super->s_inodes_گنتی;
 
-	if ((flags & EXT2_ICOUNT_OPT_FULLMAP) &&
+	إذا ((flags & EXT2_ICOUNT_OPT_FULLMAP) &&
 	    (flags & EXT2_ICOUNT_OPT_INCREMENT)) {
-		unsigned sz = sizeof(*icount->fullmap) * icount->num_inodes;
+		بنانشانی sz = حجم(*icount->fullmap) * icount->عدد_inodes;
 
 		retval = ext2fs_get_mem(sz, &icount->fullmap);
 		/* If we can't allocate, fall back */
-		if (!retval) {
+		إذا (!retval) {
 			memset(icount->fullmap, 0, sz);
 			*ret = icount;
-			return 0;
+			أرجع 0;
 		}
 	}
 
 	retval = ext2fs_allocate_inode_bitmap(fs, "icount", &icount->single);
-	if (retval)
-		goto errout;
+	إذا (retval)
+		اذهب errout;
 
-	if (flags & EXT2_ICOUNT_OPT_INCREMENT) {
+	إذا (flags & EXT2_ICOUNT_OPT_INCREMENT) {
 		retval = ext2fs_allocate_inode_bitmap(fs, "icount_inc",
-						      &icount->multiple);
-		if (retval)
-			goto errout;
-	} else
-		icount->multiple = 0;
+						      &icount->مضرب);
+		إذا (retval)
+			اذهب errout;
+	} وإلا
+		icount->مضرب = 0;
 
 	*ret = icount;
-	return 0;
+	أرجع 0;
 
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
+	أرجع(retval);
 }
 
-#ifdef CONFIG_TDB
-struct uuid {
-	__u32	time_low;
-	__u16	time_mid;
-	__u16	time_hi_and_version;
+#جے_تعریف_شدہ CONFIG_TDB
+بنية uuid {
+	__u32	ویلا_کم;
+	__u16	ویلا_mid;
+	__u16	ویلا_hi_and_نسخہ;
 	__u16	clock_seq;
-	__u8	node[6];
+	__u8	گرہ[6];
 };
 
-static void unpack_uuid(void *in, struct uuid *uu)
+ساكن فراغ unpack_uuid(فراغ *وچ, بنية uuid *uu)
 {
-	__u8	*ptr = in;
+	__u8	*ptr = وچ;
 	__u32	tmp;
 
 	tmp = *ptr++;
 	tmp = (tmp << 8) | *ptr++;
 	tmp = (tmp << 8) | *ptr++;
 	tmp = (tmp << 8) | *ptr++;
-	uu->time_low = tmp;
+	uu->ویلا_کم = tmp;
 
 	tmp = *ptr++;
 	tmp = (tmp << 8) | *ptr++;
-	uu->time_mid = tmp;
+	uu->ویلا_mid = tmp;
 
 	tmp = *ptr++;
 	tmp = (tmp << 8) | *ptr++;
-	uu->time_hi_and_version = tmp;
+	uu->ویلا_hi_and_نسخہ = tmp;
 
 	tmp = *ptr++;
 	tmp = (tmp << 8) | *ptr++;
 	uu->clock_seq = tmp;
 
-	memcpy(uu->node, ptr, 6);
+	حافظہ_نقل(uu->گرہ, ptr, 6);
 }
 
-static void uuid_unparse(void *uu, char *out)
+ساكن فراغ uuid_unparse(فراغ *uu, حرف *باہرلا)
 {
-	struct uuid uuid;
+	بنية uuid uuid;
 
 	unpack_uuid(uu, &uuid);
-	sprintf(out,
+	sprintf(باہرلا,
 		"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-		uuid.time_low, uuid.time_mid, uuid.time_hi_and_version,
+		uuid.ویلا_کم, uuid.ویلا_mid, uuid.ویلا_hi_and_نسخہ,
 		uuid.clock_seq >> 8, uuid.clock_seq & 0xFF,
-		uuid.node[0], uuid.node[1], uuid.node[2],
-		uuid.node[3], uuid.node[4], uuid.node[5]);
+		uuid.گرہ[0], uuid.گرہ[1], uuid.گرہ[2],
+		uuid.گرہ[3], uuid.گرہ[4], uuid.گرہ[5]);
 }
-#endif
+#جے_انت
 
-errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2FS_NO_TDB_UNUSED,
-				   char *tdb_dir EXT2FS_NO_TDB_UNUSED,
-				   int flags EXT2FS_NO_TDB_UNUSED,
-				   ext2_icount_t *ret EXT2FS_NO_TDB_UNUSED)
+errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2_FS_NO_TDB_بن_ورتیا,
+				   حرف *tdb_dir EXT2_FS_NO_TDB_بن_ورتیا,
+				   صحيح flags EXT2_FS_NO_TDB_بن_ورتیا,
+				   ext2_icount_t *ret EXT2_FS_NO_TDB_بن_ورتیا)
 {
-#ifdef CONFIG_TDB
+#جے_تعریف_شدہ CONFIG_TDB
 	ext2_icount_t	icount;
 	errcode_t	retval;
-	char 		*fn, uuid[40];
-	ext2_ino_t	num_inodes;
+	حرف 		*fn, uuid[40];
+	ext2_ino_t	عدد_inodes;
 	mode_t		save_umask;
-	int		fd;
+	صحيح		fd;
 
 	retval = alloc_icount(fs, flags,  &icount);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-	retval = ext2fs_get_mem(strlen(tdb_dir) + 64, &fn);
-	if (retval)
-		goto errout;
+	retval = ext2fs_get_mem(لڑی_لمبائی(tdb_dir) + 64, &fn);
+	إذا (retval)
+		اذهب errout;
 	uuid_unparse(fs->super->s_uuid, uuid);
 	sprintf(fn, "%s/%s-icount-XXXXXX", tdb_dir, uuid);
 	save_umask = umask(077);
 	fd = mkstemp(fn);
-	if (fd < 0) {
+	إذا (fd < 0) {
 		retval = errno;
 		ext2fs_free_mem(&fn);
-		goto errout;
+		اذهب errout;
 	}
 	icount->tdb_fn = fn;
 	umask(save_umask);
@@ -235,72 +235,72 @@ errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2FS_NO_TDB_UNUSED,
 	 * which case the number of inodes in use approaches the ideal
 	 * value.
 	 */
-	num_inodes = fs->super->s_inodes_count - fs->super->s_free_inodes_count;
+	عدد_inodes = fs->super->s_inodes_گنتی - fs->super->s_free_inodes_گنتی;
 
-	icount->tdb = tdb_open(fn, num_inodes, TDB_NOLOCK | TDB_NOSYNC,
+	icount->tdb = tdb_open(fn, عدد_inodes, TDB_NOLOCK | TDB_NOSYNC,
 			       O_RDWR | O_CREAT | O_TRUNC, 0600);
 	close(fd);
-	if (icount->tdb == NULL) {
+	إذا (icount->tdb == عدم) {
 		retval = errno;
-		goto errout;
+		اذهب errout;
 	}
 	*ret = icount;
-	return 0;
+	أرجع 0;
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
-#else
-	return EXT2_ET_UNIMPLEMENTED;
-#endif
+	أرجع(retval);
+#وإلا
+	أرجع EXT2_ET_UNIMPLEMENTED;
+#جے_انت
 }
 
-errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
+errcode_t ext2fs_create_icount2(ext2_filsys fs, صحيح flags, بنانشانی صحيح ناپ,
 				ext2_icount_t hint, ext2_icount_t *ret)
 {
 	ext2_icount_t	icount;
 	errcode_t	retval;
-	size_t		bytes;
+	size_t		بائٹاں;
 	ext2_ino_t	i;
 
-	if (hint) {
+	إذا (hint) {
 		EXT2_CHECK_MAGIC(hint, EXT2_ET_MAGIC_ICOUNT);
-		if (hint->size > size)
-			size = (size_t) hint->size;
+		إذا (hint->ناپ > ناپ)
+			ناپ = (size_t) hint->ناپ;
 	}
 
 	retval = alloc_icount(fs, flags, &icount);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-	if (icount->fullmap)
-		goto successout;
+	إذا (icount->fullmap)
+		اذهب successout;
 
-	if (size) {
-		icount->size = size;
-	} else {
+	إذا (ناپ) {
+		icount->ناپ = ناپ;
+	} وإلا {
 		/*
 		 * Figure out how many special case inode counts we will
 		 * have.  We know we will need one for each directory;
 		 * we also need to reserve some extra room for file links
 		 */
-		retval = ext2fs_get_num_dirs(fs, &icount->size);
-		if (retval)
-			goto errout;
-		icount->size += fs->super->s_inodes_count / 50;
+		retval = ext2fs_get_عدد_dirs(fs, &icount->ناپ);
+		إذا (retval)
+			اذهب errout;
+		icount->ناپ += fs->super->s_inodes_گنتی / 50;
 	}
 
-	bytes = (size_t) (icount->size * sizeof(struct ext2_icount_el));
-#if 0
-	printf("Icount allocated %u entries, %d bytes.\n",
-	       icount->size, bytes);
-#endif
-	retval = ext2fs_get_array(icount->size, sizeof(struct ext2_icount_el),
+	بائٹاں = (size_t) (icount->ناپ * حجم(بنية ext2_icount_el));
+#إذا 0
+	لکھو("Icount allocated %u entries, %d bytes.\n",
+	       icount->ناپ, بائٹاں);
+#جے_انت
+	retval = ext2fs_get_array(icount->ناپ, حجم(بنية ext2_icount_el),
 			 &icount->list);
-	if (retval)
-		goto errout;
-	memset(icount->list, 0, bytes);
+	إذا (retval)
+		اذهب errout;
+	memset(icount->list, 0, بائٹاں);
 
-	icount->count = 0;
+	icount->گنتی = 0;
 	icount->cursor = 0;
 
 	/*
@@ -308,76 +308,76 @@ errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
 	 * found in the hint icount (since those are ones which will
 	 * likely need to be in the sorted list this time around).
 	 */
-	if (hint) {
-		for (i=0; i < hint->count; i++)
+	إذا (hint) {
+		لكل (i=0; i < hint->گنتی; i++)
 			icount->list[i].ino = hint->list[i].ino;
-		icount->count = hint->count;
+		icount->گنتی = hint->گنتی;
 	}
 
 successout:
 	*ret = icount;
-	return 0;
+	أرجع 0;
 
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
+	أرجع(retval);
 }
 
-errcode_t ext2fs_create_icount(ext2_filsys fs, int flags,
-			       unsigned int size,
+errcode_t ext2fs_create_icount(ext2_filsys fs, صحيح flags,
+			       بنانشانی صحيح ناپ,
 			       ext2_icount_t *ret)
 {
-	return ext2fs_create_icount2(fs, flags, size, 0, ret);
+	أرجع ext2fs_create_icount2(fs, flags, ناپ, 0, ret);
 }
 
 /*
  * insert_icount_el() --- Insert a new entry into the sorted list at a
  * 	specified position.
  */
-static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
-					    ext2_ino_t ino, int pos)
+ساكن بنية ext2_icount_el *داخل_کرو_icount_el(ext2_icount_t icount,
+					    ext2_ino_t ino, صحيح pos)
 {
-	struct ext2_icount_el 	*el;
+	بنية ext2_icount_el 	*el;
 	errcode_t		retval;
-	ext2_ino_t		new_size = 0;
-	int			num;
+	ext2_ino_t		new_ناپ = 0;
+	صحيح			عدد;
 
-	if (icount->last_lookup && icount->last_lookup->ino == ino)
-		return icount->last_lookup;
+	إذا (icount->آخری_lookup && icount->آخری_lookup->ino == ino)
+		أرجع icount->آخری_lookup;
 
-	if (icount->count >= icount->size) {
-		if (icount->count) {
-			new_size = icount->list[(unsigned)icount->count-1].ino;
-			new_size = (ext2_ino_t) (icount->count *
-				((float) icount->num_inodes / new_size));
+	إذا (icount->گنتی >= icount->ناپ) {
+		إذا (icount->گنتی) {
+			new_ناپ = icount->list[(بنانشانی)icount->گنتی-1].ino;
+			new_ناپ = (ext2_ino_t) (icount->گنتی *
+				((عائم) icount->عدد_inodes / new_ناپ));
 		}
-		if (new_size < (icount->size + 100))
-			new_size = icount->size + 100;
-#if 0
-		printf("Reallocating icount %u entries...\n", new_size);
-#endif
-		retval = ext2fs_resize_mem((size_t) icount->size *
-					   sizeof(struct ext2_icount_el),
-					   (size_t) new_size *
-					   sizeof(struct ext2_icount_el),
+		إذا (new_ناپ < (icount->ناپ + 100))
+			new_ناپ = icount->ناپ + 100;
+#إذا 0
+		لکھو("Reallocating icount %u entries...\n", new_ناپ);
+#جے_انت
+		retval = ext2fs_resize_mem((size_t) icount->ناپ *
+					   حجم(بنية ext2_icount_el),
+					   (size_t) new_ناپ *
+					   حجم(بنية ext2_icount_el),
 					   &icount->list);
-		if (retval)
-			return 0;
-		icount->size = new_size;
+		إذا (retval)
+			أرجع 0;
+		icount->ناپ = new_ناپ;
 	}
-	num = (int) icount->count - pos;
-	if (num < 0)
-		return 0;	/* should never happen */
-	if (num) {
+	عدد = (صحيح) icount->گنتی - pos;
+	إذا (عدد < 0)
+		أرجع 0;	/* should never happen */
+	إذا (عدد) {
 		memmove(&icount->list[pos+1], &icount->list[pos],
-			sizeof(struct ext2_icount_el) * num);
+			حجم(بنية ext2_icount_el) * عدد);
 	}
-	icount->count++;
+	icount->گنتی++;
 	el = &icount->list[pos];
-	el->count = 0;
+	el->گنتی = 0;
 	el->ino = ino;
-	icount->last_lookup = el;
-	return el;
+	icount->آخری_lookup = el;
+	أرجع el;
 }
 
 /*
@@ -385,145 +385,145 @@ static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
  * 	information in the sorted list.  If the create flag is set,
  * 	and we can't find an entry, create one in the sorted list.
  */
-static struct ext2_icount_el *get_icount_el(ext2_icount_t icount,
-					    ext2_ino_t ino, int create)
+ساكن بنية ext2_icount_el *get_icount_el(ext2_icount_t icount,
+					    ext2_ino_t ino, صحيح create)
 {
-	int	low, high, mid;
+	صحيح	کم, بلند, mid;
 
-	if (!icount || !icount->list)
-		return 0;
+	إذا (!icount || !icount->list)
+		أرجع 0;
 
-	if (create && ((icount->count == 0) ||
-		       (ino > icount->list[(unsigned)icount->count-1].ino))) {
-		return insert_icount_el(icount, ino, (unsigned) icount->count);
+	إذا (create && ((icount->گنتی == 0) ||
+		       (ino > icount->list[(بنانشانی)icount->گنتی-1].ino))) {
+		أرجع داخل_کرو_icount_el(icount, ino, (بنانشانی) icount->گنتی);
 	}
-	if (icount->count == 0)
-		return 0;
+	إذا (icount->گنتی == 0)
+		أرجع 0;
 
-	if (icount->cursor >= icount->count)
+	إذا (icount->cursor >= icount->گنتی)
 		icount->cursor = 0;
-	if (ino == icount->list[icount->cursor].ino)
-		return &icount->list[icount->cursor++];
-#if 0
-	printf("Non-cursor get_icount_el: %u\n", ino);
-#endif
-	low = 0;
-	high = (int) icount->count-1;
-	while (low <= high) {
-		mid = ((unsigned)low + (unsigned)high) >> 1;
-		if (ino == icount->list[mid].ino) {
+	إذا (ino == icount->list[icount->cursor].ino)
+		أرجع &icount->list[icount->cursor++];
+#إذا 0
+	لکھو("Non-cursor get_icount_el: %u\n", ino);
+#جے_انت
+	کم = 0;
+	بلند = (صحيح) icount->گنتی-1;
+	طالما (کم <= بلند) {
+		mid = ((بنانشانی)کم + (بنانشانی)بلند) >> 1;
+		إذا (ino == icount->list[mid].ino) {
 			icount->cursor = mid+1;
-			return &icount->list[mid];
+			أرجع &icount->list[mid];
 		}
-		if (ino < icount->list[mid].ino)
-			high = mid-1;
-		else
-			low = mid+1;
+		إذا (ino < icount->list[mid].ino)
+			بلند = mid-1;
+		وإلا
+			کم = mid+1;
 	}
 	/*
 	 * If we need to create a new entry, it should be right at
 	 * low (where high will be left at low-1).
 	 */
-	if (create)
-		return insert_icount_el(icount, ino, low);
-	return 0;
+	إذا (create)
+		أرجع داخل_کرو_icount_el(icount, ino, کم);
+	أرجع 0;
 }
 
-static errcode_t set_inode_count(ext2_icount_t icount, ext2_ino_t ino,
-				 __u32 count)
+ساكن errcode_t سیٹ_inode_گنتی(ext2_icount_t icount, ext2_ino_t ino,
+				 __u32 گنتی)
 {
-	struct ext2_icount_el 	*el;
-#ifdef CONFIG_TDB
-	TDB_DATA key, data;
+	بنية ext2_icount_el 	*el;
+#جے_تعریف_شدہ CONFIG_TDB
+	TDB_انکڑے کلید, انکڑے;
 
-	if (icount->tdb) {
-		key.dptr = (unsigned char *) &ino;
-		key.dsize = sizeof(ext2_ino_t);
-		data.dptr = (unsigned char *) &count;
-		data.dsize = sizeof(__u32);
-		if (count) {
-			if (tdb_store(icount->tdb, key, data, TDB_REPLACE))
-				return tdb_error(icount->tdb) +
+	إذا (icount->tdb) {
+		کلید.dptr = (بنانشانی حرف *) &ino;
+		کلید.dsize = حجم(ext2_ino_t);
+		انکڑے.dptr = (بنانشانی حرف *) &گنتی;
+		انکڑے.dsize = حجم(__u32);
+		إذا (گنتی) {
+			إذا (tdb_store(icount->tdb, کلید, انکڑے, TDB_REPLACE))
+				أرجع tdb_error(icount->tdb) +
 					EXT2_ET_TDB_SUCCESS;
-		} else {
-			if (tdb_delete(icount->tdb, key))
-				return tdb_error(icount->tdb) +
+		} وإلا {
+			إذا (tdb_delete(icount->tdb, کلید))
+				أرجع tdb_error(icount->tdb) +
 					EXT2_ET_TDB_SUCCESS;
 		}
-		return 0;
+		أرجع 0;
 	}
-#endif
-	if (icount->fullmap) {
-		icount->fullmap[ino] = icount_16_xlate(count);
-		return 0;
+#جے_انت
+	إذا (icount->fullmap) {
+		icount->fullmap[ino] = icount_16_xlate(گنتی);
+		أرجع 0;
 	}
 
 	el = get_icount_el(icount, ino, 1);
-	if (!el)
-		return EXT2_ET_NO_MEMORY;
+	إذا (!el)
+		أرجع EXT2_ET_NO_حافظہ;
 
-	el->count = count;
-	return 0;
+	el->گنتی = گنتی;
+	أرجع 0;
 }
 
-static errcode_t get_inode_count(ext2_icount_t icount, ext2_ino_t ino,
-				 __u32 *count)
+ساكن errcode_t get_inode_گنتی(ext2_icount_t icount, ext2_ino_t ino,
+				 __u32 *گنتی)
 {
-	struct ext2_icount_el 	*el;
-#ifdef CONFIG_TDB
-	TDB_DATA key, data;
+	بنية ext2_icount_el 	*el;
+#جے_تعریف_شدہ CONFIG_TDB
+	TDB_انکڑے کلید, انکڑے;
 
-	if (icount->tdb) {
-		key.dptr = (unsigned char *) &ino;
-		key.dsize = sizeof(ext2_ino_t);
+	إذا (icount->tdb) {
+		کلید.dptr = (بنانشانی حرف *) &ino;
+		کلید.dsize = حجم(ext2_ino_t);
 
-		data = tdb_fetch(icount->tdb, key);
-		if (data.dptr == NULL) {
-			*count = 0;
-			return tdb_error(icount->tdb) + EXT2_ET_TDB_SUCCESS;
+		انکڑے = tdb_fetch(icount->tdb, کلید);
+		إذا (انکڑے.dptr == عدم) {
+			*گنتی = 0;
+			أرجع tdb_error(icount->tdb) + EXT2_ET_TDB_SUCCESS;
 		}
 
-		*count = *((__u32 *) data.dptr);
-		free(data.dptr);
-		return 0;
+		*گنتی = *((__u32 *) انکڑے.dptr);
+		حرر(انکڑے.dptr);
+		أرجع 0;
 	}
-#endif
-	if (icount->fullmap) {
-		*count = icount->fullmap[ino];
-		return 0;
+#جے_انت
+	إذا (icount->fullmap) {
+		*گنتی = icount->fullmap[ino];
+		أرجع 0;
 	}
 
 	el = get_icount_el(icount, ino, 0);
-	if (!el) {
-		*count = 0;
-		return ENOENT;
+	إذا (!el) {
+		*گنتی = 0;
+		أرجع ENOENT;
 	}
 
-	*count = el->count;
-	return 0;
+	*گنتی = el->گنتی;
+	أرجع 0;
 }
 
-errcode_t ext2fs_icount_validate(ext2_icount_t icount, FILE *out)
+errcode_t ext2fs_icount_validate(ext2_icount_t icount, FILE *باہرلا)
 {
 	errcode_t	ret = 0;
-	unsigned int	i;
-	const char *bad = "bad icount";
+	بنانشانی صحيح	i;
+	ثابت حرف *bad = "bad icount";
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->count > icount->size) {
-		fprintf(out, "%s: count > size\n", bad);
-		return EXT2_ET_INVALID_ARGUMENT;
+	إذا (icount->گنتی > icount->ناپ) {
+		fprintf(باہرلا, "%s: count > size\n", bad);
+		أرجع EXT2_ET_INVALID_دلیل;
 	}
-	for (i=1; i < icount->count; i++) {
-		if (icount->list[i-1].ino >= icount->list[i].ino) {
-			fprintf(out, "%s: list[%d].ino=%u, list[%d].ino=%u\n",
+	لكل (i=1; i < icount->گنتی; i++) {
+		إذا (icount->list[i-1].ino >= icount->list[i].ino) {
+			fprintf(باہرلا, "%s: list[%d].ino=%u, list[%d].ino=%u\n",
 				bad, i-1, icount->list[i-1].ino,
 				i, icount->list[i].ino);
-			ret = EXT2_ET_INVALID_ARGUMENT;
+			ret = EXT2_ET_INVALID_دلیل;
 		}
 	}
-	return ret;
+	أرجع ret;
 }
 
 errcode_t ext2fs_icount_fetch(ext2_icount_t icount, ext2_ino_t ino, __u16 *ret)
@@ -531,203 +531,203 @@ errcode_t ext2fs_icount_fetch(ext2_icount_t icount, ext2_ino_t ino, __u16 *ret)
 	__u32	val;
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	إذا (!ino || (ino > icount->عدد_inodes))
+		أرجع EXT2_ET_INVALID_دلیل;
 
-	if (!icount->fullmap) {
-		if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	إذا (!icount->fullmap) {
+		إذا (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 			*ret = 1;
-			return 0;
+			أرجع 0;
 		}
-		if (icount->multiple &&
-			!ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
+		إذا (icount->مضرب &&
+			!ext2fs_test_inode_bitmap2(icount->مضرب, ino)) {
 			*ret = 0;
-			return 0;
+			أرجع 0;
 		}
 	}
-	get_inode_count(icount, ino, &val);
+	get_inode_گنتی(icount, ino, &val);
 	*ret = icount_16_xlate(val);
-	return 0;
+	أرجع 0;
 }
 
 errcode_t ext2fs_icount_increment(ext2_icount_t icount, ext2_ino_t ino,
 				  __u16 *ret)
 {
-	__u32			curr_value;
+	__u32			curr_قدر;
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	إذا (!ino || (ino > icount->عدد_inodes))
+		أرجع EXT2_ET_INVALID_دلیل;
 
-	if (icount->fullmap) {
-		curr_value = icount_16_xlate(icount->fullmap[ino] + 1);
-		icount->fullmap[ino] = curr_value;
-	} else if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	إذا (icount->fullmap) {
+		curr_قدر = icount_16_xlate(icount->fullmap[ino] + 1);
+		icount->fullmap[ino] = curr_قدر;
+	} وإلا إذا (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 		/*
 		 * If the existing count is 1, then we know there is
 		 * no entry in the list.
 		 */
-		if (set_inode_count(icount, ino, 2))
-			return EXT2_ET_NO_MEMORY;
-		curr_value = 2;
+		إذا (سیٹ_inode_گنتی(icount, ino, 2))
+			أرجع EXT2_ET_NO_حافظہ;
+		curr_قدر = 2;
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-	} else if (icount->multiple) {
+	} وإلا إذا (icount->مضرب) {
 		/*
 		 * The count is either zero or greater than 1; if the
 		 * inode is set in icount->multiple, then there should
 		 * be an entry in the list, so we need to fix it.
 		 */
-		if (ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
-			get_inode_count(icount, ino, &curr_value);
-			curr_value++;
-			if (set_inode_count(icount, ino, curr_value))
-				return EXT2_ET_NO_MEMORY;
-		} else {
+		إذا (ext2fs_test_inode_bitmap2(icount->مضرب, ino)) {
+			get_inode_گنتی(icount, ino, &curr_قدر);
+			curr_قدر++;
+			إذا (سیٹ_inode_گنتی(icount, ino, curr_قدر))
+				أرجع EXT2_ET_NO_حافظہ;
+		} وإلا {
 			/*
 			 * The count was zero; mark the single bitmap
 			 * and return.
 			 */
 			ext2fs_mark_inode_bitmap2(icount->single, ino);
-			if (ret)
+			إذا (ret)
 				*ret = 1;
-			return 0;
+			أرجع 0;
 		}
-	} else {
+	} وإلا {
 		/*
 		 * The count is either zero or greater than 1; try to
 		 * find an entry in the list to determine which.
 		 */
-		get_inode_count(icount, ino, &curr_value);
-		curr_value++;
-		if (set_inode_count(icount, ino, curr_value))
-			return EXT2_ET_NO_MEMORY;
+		get_inode_گنتی(icount, ino, &curr_قدر);
+		curr_قدر++;
+		إذا (سیٹ_inode_گنتی(icount, ino, curr_قدر))
+			أرجع EXT2_ET_NO_حافظہ;
 	}
-	if (icount->multiple)
-		ext2fs_mark_inode_bitmap2(icount->multiple, ino);
-	if (ret)
-		*ret = icount_16_xlate(curr_value);
-	return 0;
+	إذا (icount->مضرب)
+		ext2fs_mark_inode_bitmap2(icount->مضرب, ino);
+	إذا (ret)
+		*ret = icount_16_xlate(curr_قدر);
+	أرجع 0;
 }
 
 errcode_t ext2fs_icount_decrement(ext2_icount_t icount, ext2_ino_t ino,
 				  __u16 *ret)
 {
-	__u32			curr_value;
+	__u32			curr_قدر;
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	إذا (!ino || (ino > icount->عدد_inodes))
+		أرجع EXT2_ET_INVALID_دلیل;
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->fullmap) {
-		if (!icount->fullmap[ino])
-			return EXT2_ET_INVALID_ARGUMENT;
+	إذا (icount->fullmap) {
+		إذا (!icount->fullmap[ino])
+			أرجع EXT2_ET_INVALID_دلیل;
 
-		curr_value = --icount->fullmap[ino];
-		if (ret)
-			*ret = icount_16_xlate(curr_value);
-		return 0;
+		curr_قدر = --icount->fullmap[ino];
+		إذا (ret)
+			*ret = icount_16_xlate(curr_قدر);
+		أرجع 0;
 	}
 
-	if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	إذا (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple)
-			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		else {
-			set_inode_count(icount, ino, 0);
+		إذا (icount->مضرب)
+			ext2fs_unmark_inode_bitmap2(icount->مضرب, ino);
+		وإلا {
+			سیٹ_inode_گنتی(icount, ino, 0);
 		}
-		if (ret)
+		إذا (ret)
 			*ret = 0;
-		return 0;
+		أرجع 0;
 	}
 
-	if (icount->multiple &&
-	    !ext2fs_test_inode_bitmap2(icount->multiple, ino))
-		return EXT2_ET_INVALID_ARGUMENT;
+	إذا (icount->مضرب &&
+	    !ext2fs_test_inode_bitmap2(icount->مضرب, ino))
+		أرجع EXT2_ET_INVALID_دلیل;
 
-	get_inode_count(icount, ino, &curr_value);
-	if (!curr_value)
-		return EXT2_ET_INVALID_ARGUMENT;
-	curr_value--;
-	if (set_inode_count(icount, ino, curr_value))
-		return EXT2_ET_NO_MEMORY;
+	get_inode_گنتی(icount, ino, &curr_قدر);
+	إذا (!curr_قدر)
+		أرجع EXT2_ET_INVALID_دلیل;
+	curr_قدر--;
+	إذا (سیٹ_inode_گنتی(icount, ino, curr_قدر))
+		أرجع EXT2_ET_NO_حافظہ;
 
-	if (curr_value == 1)
+	إذا (curr_قدر == 1)
 		ext2fs_mark_inode_bitmap2(icount->single, ino);
-	if ((curr_value == 0) && icount->multiple)
-		ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
+	إذا ((curr_قدر == 0) && icount->مضرب)
+		ext2fs_unmark_inode_bitmap2(icount->مضرب, ino);
 
-	if (ret)
-		*ret = icount_16_xlate(curr_value);
-	return 0;
+	إذا (ret)
+		*ret = icount_16_xlate(curr_قدر);
+	أرجع 0;
 }
 
 errcode_t ext2fs_icount_store(ext2_icount_t icount, ext2_ino_t ino,
-			      __u16 count)
+			      __u16 گنتی)
 {
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	إذا (!ino || (ino > icount->عدد_inodes))
+		أرجع EXT2_ET_INVALID_دلیل;
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->fullmap)
-		return set_inode_count(icount, ino, count);
+	إذا (icount->fullmap)
+		أرجع سیٹ_inode_گنتی(icount, ino, گنتی);
 
-	if (count == 1) {
+	إذا (گنتی == 1) {
 		ext2fs_mark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple)
-			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		return 0;
+		إذا (icount->مضرب)
+			ext2fs_unmark_inode_bitmap2(icount->مضرب, ino);
+		أرجع 0;
 	}
-	if (count == 0) {
+	إذا (گنتی == 0) {
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple) {
+		إذا (icount->مضرب) {
 			/*
 			 * If the icount->multiple bitmap is enabled,
 			 * we can just clear both bitmaps and we're done
 			 */
-			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		} else
-			set_inode_count(icount, ino, 0);
-		return 0;
+			ext2fs_unmark_inode_bitmap2(icount->مضرب, ino);
+		} وإلا
+			سیٹ_inode_گنتی(icount, ino, 0);
+		أرجع 0;
 	}
 
-	if (set_inode_count(icount, ino, count))
-		return EXT2_ET_NO_MEMORY;
+	إذا (سیٹ_inode_گنتی(icount, ino, گنتی))
+		أرجع EXT2_ET_NO_حافظہ;
 	ext2fs_unmark_inode_bitmap2(icount->single, ino);
-	if (icount->multiple)
-		ext2fs_mark_inode_bitmap2(icount->multiple, ino);
-	return 0;
+	إذا (icount->مضرب)
+		ext2fs_mark_inode_bitmap2(icount->مضرب, ino);
+	أرجع 0;
 }
 
-ext2_ino_t ext2fs_get_icount_size(ext2_icount_t icount)
+ext2_ino_t ext2fs_get_icount_ناپ(ext2_icount_t icount)
 {
-	if (!icount || icount->magic != EXT2_ET_MAGIC_ICOUNT)
-		return 0;
+	إذا (!icount || icount->magic != EXT2_ET_MAGIC_ICOUNT)
+		أرجع 0;
 
-	return icount->size;
+	أرجع icount->ناپ;
 }
 
-#ifdef DEBUG
+#جے_تعریف_شدہ DEBUG
 
 ext2_filsys	test_fs;
 ext2_icount_t	icount;
 
-#define EXIT		0x00
-#define FETCH		0x01
-#define STORE		0x02
-#define INCREMENT	0x03
-#define DECREMENT	0x04
+#تعریف_کرو EXIT		0x00
+#تعریف_کرو FETCH		0x01
+#تعریف_کرو STORE		0x02
+#تعریف_کرو INCREMENT	0x03
+#تعریف_کرو DECREMENT	0x04
 
-struct test_program {
-	int		cmd;
+بنية test_پروگرام {
+	صحيح		cmd;
 	ext2_ino_t	ino;
 	__u16		arg;
 	__u16		expected;
 };
 
-struct test_program prog[] = {
+بنية test_پروگرام prog[] = {
 	{ STORE, 42, 42, 42 },
 	{ STORE, 1,  1, 1 },
 	{ STORE, 2,  2, 2 },
@@ -753,7 +753,7 @@ struct test_program prog[] = {
 	{ EXIT, 0, 0, 0 }
 };
 
-struct test_program extended[] = {
+بنية test_پروگرام extended[] = {
 	{ STORE, 1,  1, 1 },
 	{ STORE, 2,  2, 2 },
 	{ STORE, 3,  3, 3 },
@@ -790,132 +790,132 @@ struct test_program extended[] = {
 /*
  * Setup the variables for doing the inode scan test.
  */
-static void setup(void)
+ساكن فراغ تیاری(فراغ)
 {
 	errcode_t	retval;
-	struct ext2_super_block param;
+	بنية ext2_super_بلاک param;
 
-	initialize_ext2_error_table();
+	initialize_ext2_error_جدول();
 
-	memset(&param, 0, sizeof(param));
-	ext2fs_blocks_count_set(&param, 12000);
+	memset(&param, 0, حجم(param));
+	ext2fs_بلاکاں_گنتی_سیٹ(&param, 12000);
 
-	retval = ext2fs_initialize("test fs", EXT2_FLAG_64BITS, &param,
+	retval = ext2fs_initialize("test fs", EXT2_FLAG_64_بٹ, &param,
 				   test_io_manager, &test_fs);
-	if (retval) {
+	إذا (retval) {
 		com_err("setup", retval,
 			"while initializing filesystem");
-		exit(1);
+		باہر_نکلو(1);
 	}
 	retval = ext2fs_allocate_tables(test_fs);
-	if (retval) {
+	إذا (retval) {
 		com_err("setup", retval,
 			"while allocating tables for test filesystem");
-		exit(1);
+		باہر_نکلو(1);
 	}
 }
 
-int run_test(int flags, int size, char *dir, struct test_program *prog)
+صحيح لگاتار_test(صحيح flags, صحيح ناپ, حرف *dir, بنية test_پروگرام *prog)
 {
 	errcode_t	retval;
 	ext2_icount_t	icount;
-	struct test_program *pc;
-	__u16		result;
-	int		problem = 0;
+	بنية test_پروگرام *pc;
+	__u16		نتیجہ;
+	صحيح		problem = 0;
 
-	if (dir) {
-#ifdef CONFIG_TDB
+	إذا (dir) {
+#جے_تعریف_شدہ CONFIG_TDB
 		retval = ext2fs_create_icount_tdb(test_fs, dir,
 						  flags, &icount);
-		if (retval) {
+		إذا (retval) {
 			com_err("run_test", retval,
 				"while creating icount using tdb");
-			exit(1);
+			باہر_نکلو(1);
 		}
-#else
-		printf("Skipped\n");
-		return 0;
-#endif
-	} else {
-		retval = ext2fs_create_icount2(test_fs, flags, size, 0,
+#وإلا
+		لکھو("Skipped\n");
+		أرجع 0;
+#جے_انت
+	} وإلا {
+		retval = ext2fs_create_icount2(test_fs, flags, ناپ, 0,
 					       &icount);
-		if (retval) {
+		إذا (retval) {
 			com_err("run_test", retval, "while creating icount");
-			exit(1);
+			باہر_نکلو(1);
 		}
 	}
-	for (pc = prog; pc->cmd != EXIT; pc++) {
-		switch (pc->cmd) {
-		case FETCH:
-			printf("icount_fetch(%u) = ", pc->ino);
-			break;
-		case STORE:
+	لكل (pc = prog; pc->cmd != EXIT; pc++) {
+		بدل (pc->cmd) {
+		حالة FETCH:
+			لکھو("icount_fetch(%u) = ", pc->ino);
+			اكسر;
+		حالة STORE:
 			retval = ext2fs_icount_store(icount, pc->ino, pc->arg);
-			if (retval) {
+			إذا (retval) {
 				com_err("run_test", retval,
 					"while calling icount_store");
-				exit(1);
+				باہر_نکلو(1);
 			}
-			printf("icount_store(%u, %u) = ", pc->ino, pc->arg);
-			break;
-		case INCREMENT:
+			لکھو("icount_store(%u, %u) = ", pc->ino, pc->arg);
+			اكسر;
+		حالة INCREMENT:
 			retval = ext2fs_icount_increment(icount, pc->ino, 0);
-			if (retval) {
+			إذا (retval) {
 				com_err("run_test", retval,
 					"while calling icount_increment");
-				exit(1);
+				باہر_نکلو(1);
 			}
-			printf("icount_increment(%u) = ", pc->ino);
-			break;
-		case DECREMENT:
+			لکھو("icount_increment(%u) = ", pc->ino);
+			اكسر;
+		حالة DECREMENT:
 			retval = ext2fs_icount_decrement(icount, pc->ino, 0);
-			if (retval) {
+			إذا (retval) {
 				com_err("run_test", retval,
 					"while calling icount_decrement");
-				exit(1);
+				باہر_نکلو(1);
 			}
-			printf("icount_decrement(%u) = ", pc->ino);
-			break;
+			لکھو("icount_decrement(%u) = ", pc->ino);
+			اكسر;
 		}
-		retval = ext2fs_icount_fetch(icount, pc->ino, &result);
-		if (retval) {
+		retval = ext2fs_icount_fetch(icount, pc->ino, &نتیجہ);
+		إذا (retval) {
 			com_err("run_test", retval,
 				"while calling icount_fetch");
-			exit(1);
+			باہر_نکلو(1);
 		}
-		printf("%u (%s)\n", result, (result == pc->expected) ?
+		لکھو("%u (%s)\n", نتیجہ, (نتیجہ == pc->expected) ?
 		       "OK" : "NOT OK");
-		if (result != pc->expected)
+		إذا (نتیجہ != pc->expected)
 			problem++;
 	}
-	printf("icount size is %u\n", ext2fs_get_icount_size(icount));
+	لکھو("icount size is %u\n", ext2fs_get_icount_ناپ(icount));
 	retval = ext2fs_icount_validate(icount, stdout);
-	if (retval) {
+	إذا (retval) {
 		com_err("run_test", retval, "while calling icount_validate");
-		exit(1);
+		باہر_نکلو(1);
 	}
 	ext2fs_free_icount(icount);
-	return problem;
+	أرجع problem;
 }
 
 
-int main(int argc, char **argv)
+صحيح مکھ(صحيح argc, حرف **argv)
 {
-	int failed = 0;
+	صحيح failed = 0;
 
-	setup();
-	printf("Standard icount run:\n");
-	failed += run_test(0, 0, 0, prog);
-	printf("\nMultiple bitmap test:\n");
-	failed += run_test(EXT2_ICOUNT_OPT_INCREMENT, 0, 0, prog);
-	printf("\nResizing icount:\n");
-	failed += run_test(0, 3, 0, extended);
-	printf("\nStandard icount run with tdb:\n");
-	failed += run_test(0, 0, ".", prog);
-	printf("\nMultiple bitmap test with tdb:\n");
-	failed += run_test(EXT2_ICOUNT_OPT_INCREMENT, 0, ".", prog);
-	if (failed)
-		printf("FAILED!\n");
-	return failed;
+	تیاری();
+	لکھو("Standard icount run:\n");
+	failed += لگاتار_test(0, 0, 0, prog);
+	لکھو("\nMultiple bitmap test:\n");
+	failed += لگاتار_test(EXT2_ICOUNT_OPT_INCREMENT, 0, 0, prog);
+	لکھو("\nResizing icount:\n");
+	failed += لگاتار_test(0, 3, 0, extended);
+	لکھو("\nStandard icount run with tdb:\n");
+	failed += لگاتار_test(0, 0, ".", prog);
+	لکھو("\nMultiple bitmap test with tdb:\n");
+	failed += لگاتار_test(EXT2_ICOUNT_OPT_INCREMENT, 0, ".", prog);
+	إذا (failed)
+		لکھو("FAILED!\n");
+	أرجع failed;
 }
-#endif
+#جے_انت

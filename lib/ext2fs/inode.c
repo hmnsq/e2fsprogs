@@ -9,54 +9,54 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جے_انت
+#إذا HAVE_ERRNO_H
+#ضمن <errno.h>
+#جے_انت
+#ضمن <time.h>
+#إذا HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
+#جے_انت
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#جے_انت
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
-#include "e2image.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fsP.h"
+#ضمن "e2image.h"
 
-#define IBLOCK_STATUS_CSUMS_OK	1
-#define IBLOCK_STATUS_INSANE	2
-#define SCAN_BLOCK_STATUS(scan)	((scan)->temp_buffer + (scan)->inode_size)
+#تعریف_کرو IBLOCK_حالت_CSUMS_OK	1
+#تعریف_کرو IBLOCK_حالت_INSANE	2
+#تعریف_کرو جانچ_بلاک_حالت(جانچ)	((جانچ)->عارضی_بفر + (جانچ)->inode_ناپ)
 
-struct ext2_struct_inode_scan {
+بنية ext2_struct_inode_جانچ {
 	errcode_t		magic;
 	ext2_filsys		fs;
 	ext2_ino_t		current_inode;
-	blk64_t			current_block;
-	dgrp_t			current_group;
-	ext2_ino_t		inodes_left;
-	blk_t			blocks_left;
-	dgrp_t			groups_left;
-	blk_t			inode_buffer_blocks;
-	char *			inode_buffer;
-	int			inode_size;
-	char *			ptr;
-	int			bytes_left;
-	char			*temp_buffer;
-	errcode_t		(*done_group)(ext2_filsys fs,
-					      ext2_inode_scan scan,
-					      dgrp_t group,
-					      void * priv_data);
-	void *			done_group_data;
-	int			bad_block_ptr;
-	int			scan_flags;
-	int			reserved[6];
+	blk64_t			current_بلاک;
+	dgrp_t			current_گروہ;
+	ext2_ino_t		inodes_بایاں;
+	blk_t			بلاکاں_بایاں;
+	dgrp_t			groups_بایاں;
+	blk_t			inode_بفر_بلاکاں;
+	حرف *			inode_بفر;
+	صحيح			inode_ناپ;
+	حرف *			ptr;
+	صحيح			بائٹاں_بایاں;
+	حرف			*عارضی_بفر;
+	errcode_t		(*پورا_گروہ)(ext2_filsys fs,
+					      ext2_inode_جانچ جانچ,
+					      dgrp_t گروہ,
+					      فراغ * priv_انکڑے);
+	فراغ *			پورا_گروہ_انکڑے;
+	صحيح			bad_بلاک_ptr;
+	صحيح			جانچ_flags;
+	صحيح			reserved[6];
 };
 
 /*
@@ -64,259 +64,259 @@ struct ext2_struct_inode_scan {
  */
 errcode_t ext2fs_flush_icache(ext2_filsys fs)
 {
-	unsigned	i;
+	بنانشانی	i;
 
-	if (!fs->icache)
-		return 0;
+	إذا (!fs->icache)
+		أرجع 0;
 
-	for (i=0; i < fs->icache->cache_size; i++)
+	لكل (i=0; i < fs->icache->cache_ناپ; i++)
 		fs->icache->cache[i].ino = 0;
 
-	fs->icache->buffer_blk = 0;
-	return 0;
+	fs->icache->بفر_blk = 0;
+	أرجع 0;
 }
 
 /*
  * Free the inode cache structure
  */
-void ext2fs_free_inode_cache(struct ext2_inode_cache *icache)
+فراغ ext2fs_free_inode_cache(بنية ext2_inode_cache *icache)
 {
-	unsigned i;
+	بنانشانی i;
 
-	if (--icache->refcount)
-		return;
-	if (icache->buffer)
-		ext2fs_free_mem(&icache->buffer);
-	for (i = 0; i < icache->cache_size; i++)
+	إذا (--icache->refcount)
+		أرجع;
+	إذا (icache->بفر)
+		ext2fs_free_mem(&icache->بفر);
+	لكل (i = 0; i < icache->cache_ناپ; i++)
 		ext2fs_free_mem(&icache->cache[i].inode);
-	if (icache->cache)
+	إذا (icache->cache)
 		ext2fs_free_mem(&icache->cache);
-	icache->buffer_blk = 0;
+	icache->بفر_blk = 0;
 	ext2fs_free_mem(&icache);
 }
 
-errcode_t ext2fs_create_inode_cache(ext2_filsys fs, unsigned int cache_size)
+errcode_t ext2fs_create_inode_cache(ext2_filsys fs, بنانشانی صحيح cache_ناپ)
 {
-	unsigned	i;
+	بنانشانی	i;
 	errcode_t	retval;
 
-	if (fs->icache)
-		return 0;
-	retval = ext2fs_get_mem(sizeof(struct ext2_inode_cache), &fs->icache);
-	if (retval)
-		return retval;
+	إذا (fs->icache)
+		أرجع 0;
+	retval = ext2fs_get_mem(حجم(بنية ext2_inode_cache), &fs->icache);
+	إذا (retval)
+		أرجع retval;
 
-	memset(fs->icache, 0, sizeof(struct ext2_inode_cache));
-	retval = ext2fs_get_mem(fs->blocksize, &fs->icache->buffer);
-	if (retval)
-		goto errout;
+	memset(fs->icache, 0, حجم(بنية ext2_inode_cache));
+	retval = ext2fs_get_mem(fs->blocksize, &fs->icache->بفر);
+	إذا (retval)
+		اذهب errout;
 
-	fs->icache->buffer_blk = 0;
-	fs->icache->cache_last = -1;
-	fs->icache->cache_size = cache_size;
+	fs->icache->بفر_blk = 0;
+	fs->icache->cache_آخری = -1;
+	fs->icache->cache_ناپ = cache_ناپ;
 	fs->icache->refcount = 1;
-	retval = ext2fs_get_array(fs->icache->cache_size,
-				  sizeof(struct ext2_inode_cache_ent),
+	retval = ext2fs_get_array(fs->icache->cache_ناپ,
+				  حجم(بنية ext2_inode_cache_ent),
 				  &fs->icache->cache);
-	if (retval)
-		goto errout;
+	إذا (retval)
+		اذهب errout;
 
-	for (i = 0; i < fs->icache->cache_size; i++) {
-		retval = ext2fs_get_mem(EXT2_INODE_SIZE(fs->super),
+	لكل (i = 0; i < fs->icache->cache_ناپ; i++) {
+		retval = ext2fs_get_mem(EXT2_INODE_ناپ(fs->super),
 					&fs->icache->cache[i].inode);
-		if (retval)
-			goto errout;
+		إذا (retval)
+			اذهب errout;
 	}
 
 	ext2fs_flush_icache(fs);
-	return 0;
+	أرجع 0;
 errout:
 	ext2fs_free_inode_cache(fs->icache);
 	fs->icache = 0;
-	return retval;
+	أرجع retval;
 }
 
-errcode_t ext2fs_open_inode_scan(ext2_filsys fs, int buffer_blocks,
-				 ext2_inode_scan *ret_scan)
+errcode_t ext2fs_open_inode_جانچ(ext2_filsys fs, صحيح بفر_بلاکاں,
+				 ext2_inode_جانچ *ret_جانچ)
 {
-	ext2_inode_scan	scan;
+	ext2_inode_جانچ	جانچ;
 	errcode_t	retval;
-	errcode_t (*save_get_blocks)(ext2_filsys f, ext2_ino_t ino, blk_t *blocks);
+	errcode_t (*save_get_بلاکاں)(ext2_filsys f, ext2_ino_t ino, blk_t *بلاکاں);
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (ext2fs_has_feature_journal_dev(fs->super))
-		return EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
+	إذا (ext2fs_has_feature_journal_dev(fs->super))
+		أرجع EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
 
-	if (fs->blocksize < 1024)
-		return EXT2_FILSYS_CORRUPTED; /* Should never happen */
+	إذا (fs->blocksize < 1024)
+		أرجع EXT2_FILSYS_CORRUPTED; /* Should never happen */
 
 	/*
 	 * If fs->badblocks isn't set, then set it --- since the inode
 	 * scanning functions require it.
 	 */
-	if (fs->badblocks == 0) {
+	إذا (fs->badblocks == 0) {
 		/*
 		 * Temporarily save fs->get_blocks and set it to zero,
 		 * for compatibility with old e2fsck's.
 		 */
-		save_get_blocks = fs->get_blocks;
-		fs->get_blocks = 0;
+		save_get_بلاکاں = fs->get_بلاکاں;
+		fs->get_بلاکاں = 0;
 		retval = ext2fs_read_bb_inode(fs, &fs->badblocks);
-		if (retval && fs->badblocks) {
+		إذا (retval && fs->badblocks) {
 			ext2fs_badblocks_list_free(fs->badblocks);
 			fs->badblocks = 0;
 		}
-		fs->get_blocks = save_get_blocks;
+		fs->get_بلاکاں = save_get_بلاکاں;
 	}
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_struct_inode_scan), &scan);
-	if (retval)
-		return retval;
-	memset(scan, 0, sizeof(struct ext2_struct_inode_scan));
+	retval = ext2fs_get_mem(حجم(بنية ext2_struct_inode_جانچ), &جانچ);
+	إذا (retval)
+		أرجع retval;
+	memset(جانچ, 0, حجم(بنية ext2_struct_inode_جانچ));
 
-	scan->magic = EXT2_ET_MAGIC_INODE_SCAN;
-	scan->fs = fs;
-	scan->inode_size = EXT2_INODE_SIZE(fs->super);
-	scan->bytes_left = 0;
-	scan->current_group = 0;
-	scan->groups_left = fs->group_desc_count - 1;
-	scan->inode_buffer_blocks = buffer_blocks ? buffer_blocks :
-				    EXT2_INODE_SCAN_DEFAULT_BUFFER_BLOCKS;
-	scan->current_block = ext2fs_inode_table_loc(scan->fs,
-						     scan->current_group);
-	if (scan->current_block &&
-	    ((scan->current_block < fs->super->s_first_data_block) ||
-	     (scan->current_block + fs->inode_blocks_per_group - 1 >=
-	      ext2fs_blocks_count(fs->super)))) {
-		ext2fs_free_mem(&scan);
-		return EXT2_ET_GDESC_BAD_INODE_TABLE;
+	جانچ->magic = EXT2_ET_MAGIC_INODE_جانچ;
+	جانچ->fs = fs;
+	جانچ->inode_ناپ = EXT2_INODE_ناپ(fs->super);
+	جانچ->بائٹاں_بایاں = 0;
+	جانچ->current_گروہ = 0;
+	جانچ->groups_بایاں = fs->گروہ_desc_گنتی - 1;
+	جانچ->inode_بفر_بلاکاں = بفر_بلاکاں ? بفر_بلاکاں :
+				    EXT2_INODE_جانچ_DEFAULT_بفر_بلاکاں;
+	جانچ->current_بلاک = ext2fs_inode_جدول_loc(جانچ->fs,
+						     جانچ->current_گروہ);
+	إذا (جانچ->current_بلاک &&
+	    ((جانچ->current_بلاک < fs->super->s_پہلا_انکڑے_بلاک) ||
+	     (جانچ->current_بلاک + fs->inode_بلاکاں_فی_گروہ - 1 >=
+	      ext2fs_بلاکاں_گنتی(fs->super)))) {
+		ext2fs_free_mem(&جانچ);
+		أرجع EXT2_ET_GDESC_BAD_INODE_جدول;
 	}
 
-	scan->inodes_left = EXT2_INODES_PER_GROUP(scan->fs->super);
-	scan->blocks_left = scan->fs->inode_blocks_per_group;
-	if (ext2fs_has_group_desc_csum(fs)) {
-		__u32 unused = ext2fs_bg_itable_unused(fs, scan->current_group);
-		if (scan->inodes_left > unused)
-			scan->inodes_left -= unused;
-		else
-			scan->inodes_left = 0;
-		scan->blocks_left =
-			(scan->inodes_left +
-			 (fs->blocksize / scan->inode_size - 1)) *
-			scan->inode_size / fs->blocksize;
+	جانچ->inodes_بایاں = EXT2_INODES_فی_گروہ(جانچ->fs->super);
+	جانچ->بلاکاں_بایاں = جانچ->fs->inode_بلاکاں_فی_گروہ;
+	إذا (ext2fs_has_گروہ_desc_csum(fs)) {
+		__u32 بن_ورتیا = ext2fs_bg_itable_بن_ورتیا(fs, جانچ->current_گروہ);
+		إذا (جانچ->inodes_بایاں > بن_ورتیا)
+			جانچ->inodes_بایاں -= بن_ورتیا;
+		وإلا
+			جانچ->inodes_بایاں = 0;
+		جانچ->بلاکاں_بایاں =
+			(جانچ->inodes_بایاں +
+			 (fs->blocksize / جانچ->inode_ناپ - 1)) *
+			جانچ->inode_ناپ / fs->blocksize;
 	}
-	retval = io_channel_alloc_buf(fs->io, scan->inode_buffer_blocks,
-				      &scan->inode_buffer);
-	scan->done_group = 0;
-	scan->done_group_data = 0;
-	scan->bad_block_ptr = 0;
-	if (retval) {
-		ext2fs_free_mem(&scan);
-		return retval;
+	retval = io_channel_alloc_buf(fs->io, جانچ->inode_بفر_بلاکاں,
+				      &جانچ->inode_بفر);
+	جانچ->پورا_گروہ = 0;
+	جانچ->پورا_گروہ_انکڑے = 0;
+	جانچ->bad_بلاک_ptr = 0;
+	إذا (retval) {
+		ext2fs_free_mem(&جانچ);
+		أرجع retval;
 	}
-	retval = ext2fs_get_mem(scan->inode_size + scan->inode_buffer_blocks,
-				&scan->temp_buffer);
-	if (retval) {
-		ext2fs_free_mem(&scan->inode_buffer);
-		ext2fs_free_mem(&scan);
-		return retval;
+	retval = ext2fs_get_mem(جانچ->inode_ناپ + جانچ->inode_بفر_بلاکاں,
+				&جانچ->عارضی_بفر);
+	إذا (retval) {
+		ext2fs_free_mem(&جانچ->inode_بفر);
+		ext2fs_free_mem(&جانچ);
+		أرجع retval;
 	}
-	memset(SCAN_BLOCK_STATUS(scan), 0, scan->inode_buffer_blocks);
-	if (scan->fs->badblocks && scan->fs->badblocks->num)
-		scan->scan_flags |= EXT2_SF_CHK_BADBLOCKS;
-	if (ext2fs_has_group_desc_csum(fs))
-		scan->scan_flags |= EXT2_SF_DO_LAZY;
-	*ret_scan = scan;
-	return 0;
+	memset(جانچ_بلاک_حالت(جانچ), 0, جانچ->inode_بفر_بلاکاں);
+	إذا (جانچ->fs->badblocks && جانچ->fs->badblocks->عدد)
+		جانچ->جانچ_flags |= EXT2_SF_CHK_BADBLOCKS;
+	إذا (ext2fs_has_گروہ_desc_csum(fs))
+		جانچ->جانچ_flags |= EXT2_SF_DO_LAZY;
+	*ret_جانچ = جانچ;
+	أرجع 0;
 }
 
-void ext2fs_close_inode_scan(ext2_inode_scan scan)
+فراغ ext2fs_close_inode_جانچ(ext2_inode_جانچ جانچ)
 {
-	if (!scan || (scan->magic != EXT2_ET_MAGIC_INODE_SCAN))
-		return;
+	إذا (!جانچ || (جانچ->magic != EXT2_ET_MAGIC_INODE_جانچ))
+		أرجع;
 
-	ext2fs_free_mem(&scan->inode_buffer);
-	scan->inode_buffer = NULL;
-	ext2fs_free_mem(&scan->temp_buffer);
-	scan->temp_buffer = NULL;
-	ext2fs_free_mem(&scan);
-	return;
+	ext2fs_free_mem(&جانچ->inode_بفر);
+	جانچ->inode_بفر = عدم;
+	ext2fs_free_mem(&جانچ->عارضی_بفر);
+	جانچ->عارضی_بفر = عدم;
+	ext2fs_free_mem(&جانچ);
+	أرجع;
 }
 
-void ext2fs_set_inode_callback(ext2_inode_scan scan,
-			       errcode_t (*done_group)(ext2_filsys fs,
-						       ext2_inode_scan scan,
-						       dgrp_t group,
-						       void * priv_data),
-			       void *done_group_data)
+فراغ ext2fs_سیٹ_inode_callback(ext2_inode_جانچ جانچ,
+			       errcode_t (*پورا_گروہ)(ext2_filsys fs,
+						       ext2_inode_جانچ جانچ,
+						       dgrp_t گروہ,
+						       فراغ * priv_انکڑے),
+			       فراغ *پورا_گروہ_انکڑے)
 {
-	if (!scan || (scan->magic != EXT2_ET_MAGIC_INODE_SCAN))
-		return;
+	إذا (!جانچ || (جانچ->magic != EXT2_ET_MAGIC_INODE_جانچ))
+		أرجع;
 
-	scan->done_group = done_group;
-	scan->done_group_data = done_group_data;
+	جانچ->پورا_گروہ = پورا_گروہ;
+	جانچ->پورا_گروہ_انکڑے = پورا_گروہ_انکڑے;
 }
 
-int ext2fs_inode_scan_flags(ext2_inode_scan scan, int set_flags,
-			    int clear_flags)
+صحيح ext2fs_inode_جانچ_flags(ext2_inode_جانچ جانچ, صحيح سیٹ_flags,
+			    صحيح clear_flags)
 {
-	int	old_flags;
+	صحيح	old_flags;
 
-	if (!scan || (scan->magic != EXT2_ET_MAGIC_INODE_SCAN))
-		return 0;
+	إذا (!جانچ || (جانچ->magic != EXT2_ET_MAGIC_INODE_جانچ))
+		أرجع 0;
 
-	old_flags = scan->scan_flags;
-	scan->scan_flags &= ~clear_flags;
-	scan->scan_flags |= set_flags;
-	return old_flags;
+	old_flags = جانچ->جانچ_flags;
+	جانچ->جانچ_flags &= ~clear_flags;
+	جانچ->جانچ_flags |= سیٹ_flags;
+	أرجع old_flags;
 }
 
 /*
  * This function is called by ext2fs_get_next_inode when it needs to
  * get ready to read in a new blockgroup.
  */
-static errcode_t get_next_blockgroup(ext2_inode_scan scan)
+ساكن errcode_t get_اگلا_blockgroup(ext2_inode_جانچ جانچ)
 {
-	ext2_filsys fs = scan->fs;
+	ext2_filsys fs = جانچ->fs;
 
-	scan->current_group++;
-	scan->groups_left--;
+	جانچ->current_گروہ++;
+	جانچ->groups_بایاں--;
 
-	scan->current_block = ext2fs_inode_table_loc(scan->fs,
-						     scan->current_group);
-	scan->current_inode = scan->current_group *
-		EXT2_INODES_PER_GROUP(fs->super);
+	جانچ->current_بلاک = ext2fs_inode_جدول_loc(جانچ->fs,
+						     جانچ->current_گروہ);
+	جانچ->current_inode = جانچ->current_گروہ *
+		EXT2_INODES_فی_گروہ(fs->super);
 
-	scan->bytes_left = 0;
-	scan->inodes_left = EXT2_INODES_PER_GROUP(fs->super);
-	scan->blocks_left = fs->inode_blocks_per_group;
-	if (ext2fs_has_group_desc_csum(fs)) {
-		__u32 unused = ext2fs_bg_itable_unused(fs, scan->current_group);
-		if (scan->inodes_left > unused)
-			scan->inodes_left -= unused;
-		else
-			scan->inodes_left = 0;
-		scan->blocks_left =
-			(scan->inodes_left +
-			 (fs->blocksize / scan->inode_size - 1)) *
-			scan->inode_size / fs->blocksize;
+	جانچ->بائٹاں_بایاں = 0;
+	جانچ->inodes_بایاں = EXT2_INODES_فی_گروہ(fs->super);
+	جانچ->بلاکاں_بایاں = fs->inode_بلاکاں_فی_گروہ;
+	إذا (ext2fs_has_گروہ_desc_csum(fs)) {
+		__u32 بن_ورتیا = ext2fs_bg_itable_بن_ورتیا(fs, جانچ->current_گروہ);
+		إذا (جانچ->inodes_بایاں > بن_ورتیا)
+			جانچ->inodes_بایاں -= بن_ورتیا;
+		وإلا
+			جانچ->inodes_بایاں = 0;
+		جانچ->بلاکاں_بایاں =
+			(جانچ->inodes_بایاں +
+			 (fs->blocksize / جانچ->inode_ناپ - 1)) *
+			جانچ->inode_ناپ / fs->blocksize;
 	}
-	if (scan->current_block &&
-	    ((scan->current_block < fs->super->s_first_data_block) ||
-	     (scan->current_block + fs->inode_blocks_per_group - 1 >=
-	      ext2fs_blocks_count(fs->super))))
-		return EXT2_ET_GDESC_BAD_INODE_TABLE;
-	return 0;
+	إذا (جانچ->current_بلاک &&
+	    ((جانچ->current_بلاک < fs->super->s_پہلا_انکڑے_بلاک) ||
+	     (جانچ->current_بلاک + fs->inode_بلاکاں_فی_گروہ - 1 >=
+	      ext2fs_بلاکاں_گنتی(fs->super))))
+		أرجع EXT2_ET_GDESC_BAD_INODE_جدول;
+	أرجع 0;
 }
 
-errcode_t ext2fs_inode_scan_goto_blockgroup(ext2_inode_scan scan,
-					    int	group)
+errcode_t ext2fs_inode_جانچ_goto_blockgroup(ext2_inode_جانچ جانچ,
+					    صحيح	گروہ)
 {
-	scan->current_group = group - 1;
-	scan->groups_left = scan->fs->group_desc_count - group;
-	scan->bad_block_ptr = 0;
-	return get_next_blockgroup(scan);
+	جانچ->current_گروہ = گروہ - 1;
+	جانچ->groups_بایاں = جانچ->fs->گروہ_desc_گنتی - گروہ;
+	جانچ->bad_بلاک_ptr = 0;
+	أرجع get_اگلا_blockgroup(جانچ);
 }
 
 /*
@@ -326,23 +326,23 @@ errcode_t ext2fs_inode_scan_goto_blockgroup(ext2_inode_scan scan,
  * This function assumes that badblocks_list->list is sorted in
  * increasing order.
  */
-static errcode_t check_for_inode_bad_blocks(ext2_inode_scan scan,
-					    blk64_t *num_blocks)
+ساكن errcode_t check_for_inode_bad_بلاکاں(ext2_inode_جانچ جانچ,
+					    blk64_t *عدد_بلاکاں)
 {
-	blk64_t	blk = scan->current_block;
-	badblocks_list	bb = scan->fs->badblocks;
+	blk64_t	blk = جانچ->current_بلاک;
+	badblocks_list	bb = جانچ->fs->badblocks;
 
 	/*
 	 * If the inode table is missing, then obviously there are no
 	 * bad blocks.  :-)
 	 */
-	if (blk == 0)
-		return 0;
+	إذا (blk == 0)
+		أرجع 0;
 
 	/* Make sure bad_block_ptr is still valid */
-	if (scan->bad_block_ptr >= bb->num) {
-		scan->scan_flags &= ~EXT2_SF_CHK_BADBLOCKS;
-		return 0;
+	إذا (جانچ->bad_بلاک_ptr >= bb->عدد) {
+		جانچ->جانچ_flags &= ~EXT2_SF_CHK_BADBLOCKS;
+		أرجع 0;
 	}
 
 	/*
@@ -351,10 +351,10 @@ static errcode_t check_for_inode_bad_blocks(ext2_inode_scan scan,
 	 * is no longer the case.  If we run out of bad blocks, then
 	 * we don't need to do any more checking!
 	 */
-	while (blk > bb->list[scan->bad_block_ptr]) {
-		if (++scan->bad_block_ptr >= bb->num) {
-			scan->scan_flags &= ~EXT2_SF_CHK_BADBLOCKS;
-			return 0;
+	طالما (blk > bb->list[جانچ->bad_بلاک_ptr]) {
+		إذا (++جانچ->bad_بلاک_ptr >= bb->عدد) {
+			جانچ->جانچ_flags &= ~EXT2_SF_CHK_BADBLOCKS;
+			أرجع 0;
 		}
 	}
 
@@ -366,12 +366,12 @@ static errcode_t check_for_inode_bad_blocks(ext2_inode_scan scan,
 	 * expense of a huge expense of code complexity, and for an
 	 * uncommon case at that.)
 	 */
-	if (blk == bb->list[scan->bad_block_ptr]) {
-		scan->scan_flags |= EXT2_SF_BAD_INODE_BLK;
-		*num_blocks = 1;
-		if (++scan->bad_block_ptr >= bb->num)
-			scan->scan_flags &= ~EXT2_SF_CHK_BADBLOCKS;
-		return 0;
+	إذا (blk == bb->list[جانچ->bad_بلاک_ptr]) {
+		جانچ->جانچ_flags |= EXT2_SF_BAD_INODE_BLK;
+		*عدد_بلاکاں = 1;
+		إذا (++جانچ->bad_بلاک_ptr >= bb->عدد)
+			جانچ->جانچ_flags &= ~EXT2_SF_CHK_BADBLOCKS;
+		أرجع 0;
 	}
 
 	/*
@@ -380,49 +380,49 @@ static errcode_t check_for_inode_bad_blocks(ext2_inode_scan scan,
 	 * don't read in the bad block.  (Then the next block to read
 	 * will be the bad block, which is handled in the above case.)
 	 */
-	if ((blk + *num_blocks) > bb->list[scan->bad_block_ptr])
-		*num_blocks = (int) (bb->list[scan->bad_block_ptr] - blk);
+	إذا ((blk + *عدد_بلاکاں) > bb->list[جانچ->bad_بلاک_ptr])
+		*عدد_بلاکاں = (صحيح) (bb->list[جانچ->bad_بلاک_ptr] - blk);
 
-	return 0;
+	أرجع 0;
 }
 
-static int block_map_looks_insane(ext2_filsys fs,
-				  struct ext2_inode_large *inode)
+ساكن صحيح بلاک_map_looks_insane(ext2_filsys fs,
+				  بنية ext2_inode_large *inode)
 {
-	unsigned int i, bad;
+	بنانشانی صحيح i, bad;
 
 	/* We're only interested in block mapped files, dirs, and symlinks */
-	if ((inode->i_flags & EXT4_INLINE_DATA_FL) ||
+	إذا ((inode->i_flags & EXT4_INLINE_انکڑے_FL) ||
 	    (inode->i_flags & EXT4_EXTENTS_FL))
-		return 0;
-	if (!LINUX_S_ISREG(inode->i_mode) &&
-	    !LINUX_S_ISLNK(inode->i_mode) &&
-	    !LINUX_S_ISDIR(inode->i_mode))
-		return 0;
-	if (LINUX_S_ISLNK(inode->i_mode) &&
-	    EXT2_I_SIZE(inode) <= sizeof(inode->i_block))
-		return 0;
+		أرجع 0;
+	إذا (!LINUX_S_ISREG(inode->i_منوال) &&
+	    !LINUX_S_ISLNK(inode->i_منوال) &&
+	    !LINUX_S_ISDIR(inode->i_منوال))
+		أرجع 0;
+	إذا (LINUX_S_ISLNK(inode->i_منوال) &&
+	    EXT2_I_ناپ(inode) <= حجم(inode->i_بلاک))
+		أرجع 0;
 
 	/* Unused inodes probably aren't insane */
-	if (inode->i_links_count == 0)
-		return 0;
+	إذا (inode->i_links_گنتی == 0)
+		أرجع 0;
 
 	/* See if more than half the block maps are insane */
-	for (i = 0, bad = 0; i < EXT2_N_BLOCKS; i++)
-		if (inode->i_block[i] != 0 &&
-		    (inode->i_block[i] < fs->super->s_first_data_block ||
-		     inode->i_block[i] >= ext2fs_blocks_count(fs->super)))
+	لكل (i = 0, bad = 0; i < EXT2_N_بلاکاں; i++)
+		إذا (inode->i_بلاک[i] != 0 &&
+		    (inode->i_بلاک[i] < fs->super->s_پہلا_انکڑے_بلاک ||
+		     inode->i_بلاک[i] >= ext2fs_بلاکاں_گنتی(fs->super)))
 			bad++;
-	return bad > EXT2_N_BLOCKS / 2;
+	أرجع bad > EXT2_N_بلاکاں / 2;
 }
 
-static int extent_head_looks_insane(struct ext2_inode_large *inode)
+ساكن صحيح extent_سر_looks_insane(بنية ext2_inode_large *inode)
 {
-	if (!(inode->i_flags & EXT4_EXTENTS_FL) ||
-	    ext2fs_extent_header_verify(inode->i_block,
-					sizeof(inode->i_block)) == 0)
-		return 0;
-	return 1;
+	إذا (!(inode->i_flags & EXT4_EXTENTS_FL) ||
+	    ext2fs_extent_سرخی_verify(inode->i_بلاک,
+					حجم(inode->i_بلاک)) == 0)
+		أرجع 0;
+	أرجع 1;
 }
 
 /*
@@ -430,99 +430,99 @@ static int extent_head_looks_insane(struct ext2_inode_large *inode)
  * find here -- currently, we can observe that all checksums are ok; more
  * than half the inodes are insane; or no conclusions at all.
  */
-static void check_inode_block_sanity(ext2_inode_scan scan, blk64_t num_blocks)
+ساكن فراغ check_inode_بلاک_sanity(ext2_inode_جانچ جانچ, blk64_t عدد_بلاکاں)
 {
-	ext2_ino_t	ino, inodes_to_scan;
-	unsigned int	badness, checksum_failures;
-	unsigned int	inodes_in_buf, inodes_per_block;
-	char		*p;
-	struct ext2_inode_large *inode;
-	char		*block_status;
-	unsigned int	blk, bad_csum;
+	ext2_ino_t	ino, inodes_منزل_جانچ;
+	بنانشانی صحيح	badness, checksum_failures;
+	بنانشانی صحيح	inodes_وچ_buf, inodes_فی_بلاک;
+	حرف		*p;
+	بنية ext2_inode_large *inode;
+	حرف		*بلاک_حالت;
+	بنانشانی صحيح	blk, bad_csum;
 
-	if (!(scan->scan_flags & EXT2_SF_WARN_GARBAGE_INODES))
-		return;
+	إذا (!(جانچ->جانچ_flags & EXT2_SF_WARN_GARBAGE_INODES))
+		أرجع;
 
-	inodes_to_scan = scan->inodes_left;
-	inodes_in_buf = num_blocks * scan->fs->blocksize / scan->inode_size;
-	if (inodes_to_scan > inodes_in_buf)
-		inodes_to_scan = inodes_in_buf;
+	inodes_منزل_جانچ = جانچ->inodes_بایاں;
+	inodes_وچ_buf = عدد_بلاکاں * جانچ->fs->blocksize / جانچ->inode_ناپ;
+	إذا (inodes_منزل_جانچ > inodes_وچ_buf)
+		inodes_منزل_جانچ = inodes_وچ_buf;
 
-	p = (char *) scan->inode_buffer;
-	ino = scan->current_inode + 1;
+	p = (حرف *) جانچ->inode_بفر;
+	ino = جانچ->current_inode + 1;
 	checksum_failures = badness = 0;
-	block_status = SCAN_BLOCK_STATUS(scan);
-	memset(block_status, 0, scan->inode_buffer_blocks);
-	inodes_per_block = EXT2_INODES_PER_BLOCK(scan->fs->super);
+	بلاک_حالت = جانچ_بلاک_حالت(جانچ);
+	memset(بلاک_حالت, 0, جانچ->inode_بفر_بلاکاں);
+	inodes_فی_بلاک = EXT2_INODES_فی_بلاک(جانچ->fs->super);
 
-	if (inodes_per_block < 2)
-		return;
+	إذا (inodes_فی_بلاک < 2)
+		أرجع;
 
-#ifdef WORDS_BIGENDIAN
-	if (ext2fs_get_mem(EXT2_INODE_SIZE(scan->fs->super), &inode))
-		return;
-#endif
+#جے_تعریف_شدہ الفاظ_BIGENDIAN
+	إذا (ext2fs_get_mem(EXT2_INODE_ناپ(جانچ->fs->super), &inode))
+		أرجع;
+#جے_انت
 
-	while (inodes_to_scan > 0) {
-		blk = (p - (char *)scan->inode_buffer) / scan->fs->blocksize;
-		bad_csum = ext2fs_inode_csum_verify(scan->fs, ino,
-				(struct ext2_inode_large *) p) == 0;
+	طالما (inodes_منزل_جانچ > 0) {
+		blk = (p - (حرف *)جانچ->inode_بفر) / جانچ->fs->blocksize;
+		bad_csum = ext2fs_inode_csum_verify(جانچ->fs, ino,
+				(بنية ext2_inode_large *) p) == 0;
 
-#ifdef WORDS_BIGENDIAN
-		ext2fs_swap_inode_full(scan->fs,
-			       (struct ext2_inode_large *) inode,
-			       (struct ext2_inode_large *) p,
-			       0, EXT2_INODE_SIZE(scan->fs->super));
-#else
-		inode = (struct ext2_inode_large *) p;
-#endif
+#جے_تعریف_شدہ الفاظ_BIGENDIAN
+		ext2fs_وٹاندرا_inode_بھریا(جانچ->fs,
+			       (بنية ext2_inode_large *) inode,
+			       (بنية ext2_inode_large *) p,
+			       0, EXT2_INODE_ناپ(جانچ->fs->super));
+#وإلا
+		inode = (بنية ext2_inode_large *) p;
+#جے_انت
 
 		/* Is this inode insane? */
-		if (bad_csum) {
+		إذا (bad_csum) {
 			checksum_failures++;
 			badness++;
-		} else if (extent_head_looks_insane(inode) ||
-			   block_map_looks_insane(scan->fs, inode))
+		} وإلا إذا (extent_سر_looks_insane(inode) ||
+			   بلاک_map_looks_insane(جانچ->fs, inode))
 			badness++;
 
 		/* If more than half are insane, declare the whole block bad */
-		if (badness > inodes_per_block / 2) {
-			unsigned int ino_adj;
+		إذا (badness > inodes_فی_بلاک / 2) {
+			بنانشانی صحيح ino_adj;
 
-			block_status[blk] |= IBLOCK_STATUS_INSANE;
-			ino_adj = inodes_per_block -
-						((ino - 1) % inodes_per_block);
-			if (ino_adj > inodes_to_scan)
-				ino_adj = inodes_to_scan;
-			inodes_to_scan -= ino_adj;
-			p += scan->inode_size * ino_adj;
+			بلاک_حالت[blk] |= IBLOCK_حالت_INSANE;
+			ino_adj = inodes_فی_بلاک -
+						((ino - 1) % inodes_فی_بلاک);
+			إذا (ino_adj > inodes_منزل_جانچ)
+				ino_adj = inodes_منزل_جانچ;
+			inodes_منزل_جانچ -= ino_adj;
+			p += جانچ->inode_ناپ * ino_adj;
 			ino += ino_adj;
 			checksum_failures = badness = 0;
-			continue;
+			استمر;
 		}
 
-		if ((ino % inodes_per_block) == 0) {
-			if (checksum_failures == 0)
-				block_status[blk] |= IBLOCK_STATUS_CSUMS_OK;
+		إذا ((ino % inodes_فی_بلاک) == 0) {
+			إذا (checksum_failures == 0)
+				بلاک_حالت[blk] |= IBLOCK_حالت_CSUMS_OK;
 			checksum_failures = badness = 0;
 		}
-		inodes_to_scan--;
-		p += scan->inode_size;
+		inodes_منزل_جانچ--;
+		p += جانچ->inode_ناپ;
 		ino++;
 	};
 
-#ifdef WORDS_BIGENDIAN
+#جے_تعریف_شدہ الفاظ_BIGENDIAN
 	ext2fs_free_mem(&inode);
-#endif
+#جے_انت
 }
 
 /*
  * This function is called by ext2fs_get_next_inode when it needs to
  * read in more blocks from the current blockgroup's inode table.
  */
-static errcode_t get_next_blocks(ext2_inode_scan scan)
+ساكن errcode_t get_اگلا_بلاکاں(ext2_inode_جانچ جانچ)
 {
-	blk64_t		num_blocks;
+	blk64_t		عدد_بلاکاں;
 	errcode_t	retval;
 
 	/*
@@ -530,123 +530,123 @@ static errcode_t get_next_blocks(ext2_inode_scan scan)
 	 * inode_buffer_blocks, and perhaps less if there aren't that
 	 * many blocks left to read.
 	 */
-	num_blocks = scan->inode_buffer_blocks;
-	if (num_blocks > scan->blocks_left)
-		num_blocks = scan->blocks_left;
+	عدد_بلاکاں = جانچ->inode_بفر_بلاکاں;
+	إذا (عدد_بلاکاں > جانچ->بلاکاں_بایاں)
+		عدد_بلاکاں = جانچ->بلاکاں_بایاں;
 
 	/*
 	 * If the past block "read" was a bad block, then mark the
 	 * left-over extra bytes as also being bad.
 	 */
-	if (scan->scan_flags & EXT2_SF_BAD_INODE_BLK) {
-		if (scan->bytes_left)
-			scan->scan_flags |= EXT2_SF_BAD_EXTRA_BYTES;
-		scan->scan_flags &= ~EXT2_SF_BAD_INODE_BLK;
+	إذا (جانچ->جانچ_flags & EXT2_SF_BAD_INODE_BLK) {
+		إذا (جانچ->بائٹاں_بایاں)
+			جانچ->جانچ_flags |= EXT2_SF_BAD_EXTRA_بائٹاں;
+		جانچ->جانچ_flags &= ~EXT2_SF_BAD_INODE_BLK;
 	}
 
 	/*
 	 * Do inode bad block processing, if necessary.
 	 */
-	if (scan->scan_flags & EXT2_SF_CHK_BADBLOCKS) {
-		retval = check_for_inode_bad_blocks(scan, &num_blocks);
-		if (retval)
-			return retval;
+	إذا (جانچ->جانچ_flags & EXT2_SF_CHK_BADBLOCKS) {
+		retval = check_for_inode_bad_بلاکاں(جانچ, &عدد_بلاکاں);
+		إذا (retval)
+			أرجع retval;
 	}
 
-	if ((scan->scan_flags & EXT2_SF_BAD_INODE_BLK) ||
-	    (scan->current_block == 0)) {
-		memset(scan->inode_buffer, 0,
-		       (size_t) num_blocks * scan->fs->blocksize);
-	} else {
-		retval = io_channel_read_blk64(scan->fs->io,
-					     scan->current_block,
-					     (int) num_blocks,
-					     scan->inode_buffer);
-		if (retval)
-			return EXT2_ET_NEXT_INODE_READ;
+	إذا ((جانچ->جانچ_flags & EXT2_SF_BAD_INODE_BLK) ||
+	    (جانچ->current_بلاک == 0)) {
+		memset(جانچ->inode_بفر, 0,
+		       (size_t) عدد_بلاکاں * جانچ->fs->blocksize);
+	} وإلا {
+		retval = io_channel_read_blk64(جانچ->fs->io,
+					     جانچ->current_بلاک,
+					     (صحيح) عدد_بلاکاں,
+					     جانچ->inode_بفر);
+		إذا (retval)
+			أرجع EXT2_ET_اگلا_INODE_READ;
 	}
-	check_inode_block_sanity(scan, num_blocks);
+	check_inode_بلاک_sanity(جانچ, عدد_بلاکاں);
 
-	scan->ptr = scan->inode_buffer;
-	scan->bytes_left = num_blocks * scan->fs->blocksize;
+	جانچ->ptr = جانچ->inode_بفر;
+	جانچ->بائٹاں_بایاں = عدد_بلاکاں * جانچ->fs->blocksize;
 
-	scan->blocks_left -= num_blocks;
-	if (scan->current_block)
-		scan->current_block += num_blocks;
+	جانچ->بلاکاں_بایاں -= عدد_بلاکاں;
+	إذا (جانچ->current_بلاک)
+		جانچ->current_بلاک += عدد_بلاکاں;
 
-	return 0;
+	أرجع 0;
 }
 
-#if 0
+#إذا 0
 /*
  * Returns 1 if the entire inode_buffer has a non-zero size and
  * contains all zeros.  (Not just deleted inodes, since that means
  * that part of the inode table was used at one point; we want all
  * zeros, which means that the inode table is pristine.)
  */
-static inline int is_empty_scan(ext2_inode_scan scan)
+ساكن مضمن صحيح is_خالی_تھاواں_جانچ(ext2_inode_جانچ جانچ)
 {
-	int	i;
+	صحيح	i;
 
-	if (scan->bytes_left == 0)
-		return 0;
+	إذا (جانچ->بائٹاں_بایاں == 0)
+		أرجع 0;
 
-	for (i=0; i < scan->bytes_left; i++)
-		if (scan->ptr[i])
-			return 0;
-	return 1;
+	لكل (i=0; i < جانچ->بائٹاں_بایاں; i++)
+		إذا (جانچ->ptr[i])
+			أرجع 0;
+	أرجع 1;
 }
-#endif
+#جے_انت
 
-errcode_t ext2fs_get_next_inode_full(ext2_inode_scan scan, ext2_ino_t *ino,
-				     struct ext2_inode *inode, int bufsize)
+errcode_t ext2fs_get_اگلا_inode_بھریا(ext2_inode_جانچ جانچ, ext2_ino_t *ino,
+				     بنية ext2_inode *inode, صحيح bufsize)
 {
 	errcode_t	retval;
-	int		extra_bytes = 0;
-	int		length;
-	struct ext2_inode_large	*iptr = (struct ext2_inode_large *)inode;
-	char		*iblock_status;
-	unsigned int	iblk;
+	صحيح		extra_بائٹاں = 0;
+	صحيح		لمائی;
+	بنية ext2_inode_large	*iptr = (بنية ext2_inode_large *)inode;
+	حرف		*iblock_حالت;
+	بنانشانی صحيح	iblk;
 
-	EXT2_CHECK_MAGIC(scan, EXT2_ET_MAGIC_INODE_SCAN);
-	length = EXT2_INODE_SIZE(scan->fs->super);
-	iblock_status = SCAN_BLOCK_STATUS(scan);
+	EXT2_CHECK_MAGIC(جانچ, EXT2_ET_MAGIC_INODE_جانچ);
+	لمائی = EXT2_INODE_ناپ(جانچ->fs->super);
+	iblock_حالت = جانچ_بلاک_حالت(جانچ);
 
 	/*
 	 * Do we need to start reading a new block group?
 	 */
-	if (scan->inodes_left <= 0) {
-	force_new_group:
-		if (scan->done_group) {
-			retval = (scan->done_group)
-				(scan->fs, scan, scan->current_group,
-				 scan->done_group_data);
-			if (retval)
-				return retval;
+	إذا (جانچ->inodes_بایاں <= 0) {
+	force_new_گروہ:
+		إذا (جانچ->پورا_گروہ) {
+			retval = (جانچ->پورا_گروہ)
+				(جانچ->fs, جانچ, جانچ->current_گروہ,
+				 جانچ->پورا_گروہ_انکڑے);
+			إذا (retval)
+				أرجع retval;
 		}
-		if (scan->groups_left <= 0) {
+		إذا (جانچ->groups_بایاں <= 0) {
 			*ino = 0;
-			return 0;
+			أرجع 0;
 		}
-		retval = get_next_blockgroup(scan);
-		if (retval)
-			return retval;
+		retval = get_اگلا_blockgroup(جانچ);
+		إذا (retval)
+			أرجع retval;
 	}
 	/*
 	 * These checks are done outside the above if statement so
 	 * they can be done for block group #0.
 	 */
-	if ((scan->scan_flags & EXT2_SF_DO_LAZY) &&
-	    (ext2fs_bg_flags_test(scan->fs, scan->current_group, EXT2_BG_INODE_UNINIT)
+	إذا ((جانچ->جانچ_flags & EXT2_SF_DO_LAZY) &&
+	    (ext2fs_bg_flags_test(جانچ->fs, جانچ->current_گروہ, EXT2_BG_INODE_UNINIT)
 	     ))
-		goto force_new_group;
-	if (scan->inodes_left == 0)
-		goto force_new_group;
-	if (scan->current_block == 0) {
-		if (scan->scan_flags & EXT2_SF_SKIP_MISSING_ITABLE) {
-			goto force_new_group;
-		} else
-			return EXT2_ET_MISSING_INODE_TABLE;
+		اذهب force_new_گروہ;
+	إذا (جانچ->inodes_بایاں == 0)
+		اذهب force_new_گروہ;
+	إذا (جانچ->current_بلاک == 0) {
+		إذا (جانچ->جانچ_flags & EXT2_SF_SKIP_MISSING_ITABLE) {
+			اذهب force_new_گروہ;
+		} وإلا
+			أرجع EXT2_ET_MISSING_INODE_جدول;
 	}
 
 
@@ -654,381 +654,381 @@ errcode_t ext2fs_get_next_inode_full(ext2_inode_scan scan, ext2_ino_t *ino,
 	 * Have we run out of space in the inode buffer?  If so, we
 	 * need to read in more blocks.
 	 */
-	if (scan->bytes_left < scan->inode_size) {
-		if (scan->bytes_left)
-			memcpy(scan->temp_buffer, scan->ptr, scan->bytes_left);
-		extra_bytes = scan->bytes_left;
+	إذا (جانچ->بائٹاں_بایاں < جانچ->inode_ناپ) {
+		إذا (جانچ->بائٹاں_بایاں)
+			حافظہ_نقل(جانچ->عارضی_بفر, جانچ->ptr, جانچ->بائٹاں_بایاں);
+		extra_بائٹاں = جانچ->بائٹاں_بایاں;
 
-		retval = get_next_blocks(scan);
-		if (retval)
-			return retval;
-#if 0
+		retval = get_اگلا_بلاکاں(جانچ);
+		إذا (retval)
+			أرجع retval;
+#إذا 0
 		/*
 		 * XXX test  Need check for used inode somehow.
 		 * (Note: this is hard.)
 		 */
-		if (is_empty_scan(scan))
-			goto force_new_group;
-#endif
+		إذا (is_خالی_تھاواں_جانچ(جانچ))
+			اذهب force_new_گروہ;
+#جے_انت
 	}
 
-	if (bufsize < length) {
-		retval = ext2fs_get_mem(length, &iptr);
-		if (retval)
-			return retval;
+	إذا (bufsize < لمائی) {
+		retval = ext2fs_get_mem(لمائی, &iptr);
+		إذا (retval)
+			أرجع retval;
 	}
 
 	retval = 0;
-	iblk = scan->current_inode % EXT2_INODES_PER_GROUP(scan->fs->super) /
-				EXT2_INODES_PER_BLOCK(scan->fs->super) %
-				scan->inode_buffer_blocks;
-	if (extra_bytes) {
-		memcpy(scan->temp_buffer+extra_bytes, scan->ptr,
-		       scan->inode_size - extra_bytes);
-		scan->ptr += scan->inode_size - extra_bytes;
-		scan->bytes_left -= scan->inode_size - extra_bytes;
+	iblk = جانچ->current_inode % EXT2_INODES_فی_گروہ(جانچ->fs->super) /
+				EXT2_INODES_فی_بلاک(جانچ->fs->super) %
+				جانچ->inode_بفر_بلاکاں;
+	إذا (extra_بائٹاں) {
+		حافظہ_نقل(جانچ->عارضی_بفر+extra_بائٹاں, جانچ->ptr,
+		       جانچ->inode_ناپ - extra_بائٹاں);
+		جانچ->ptr += جانچ->inode_ناپ - extra_بائٹاں;
+		جانچ->بائٹاں_بایاں -= جانچ->inode_ناپ - extra_بائٹاں;
 
 		/* Verify the inode checksum. */
-		if (!(iblock_status[iblk] & IBLOCK_STATUS_CSUMS_OK) &&
-		    !(scan->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
-		    !ext2fs_inode_csum_verify(scan->fs, scan->current_inode + 1,
-				(struct ext2_inode_large *)scan->temp_buffer))
+		إذا (!(iblock_حالت[iblk] & IBLOCK_حالت_CSUMS_OK) &&
+		    !(جانچ->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+		    !ext2fs_inode_csum_verify(جانچ->fs, جانچ->current_inode + 1,
+				(بنية ext2_inode_large *)جانچ->عارضی_بفر))
 			retval = EXT2_ET_INODE_CSUM_INVALID;
 
-#ifdef WORDS_BIGENDIAN
-		memset(iptr, 0, length);
-		ext2fs_swap_inode_full(scan->fs,
-			       (struct ext2_inode_large *) iptr,
-			       (struct ext2_inode_large *) scan->temp_buffer,
-			       0, length);
-#else
-		memcpy(iptr, scan->temp_buffer, length);
-#endif
-		if (scan->scan_flags & EXT2_SF_BAD_EXTRA_BYTES)
-			retval = EXT2_ET_BAD_BLOCK_IN_INODE_TABLE;
-		scan->scan_flags &= ~EXT2_SF_BAD_EXTRA_BYTES;
-	} else {
+#جے_تعریف_شدہ الفاظ_BIGENDIAN
+		memset(iptr, 0, لمائی);
+		ext2fs_وٹاندرا_inode_بھریا(جانچ->fs,
+			       (بنية ext2_inode_large *) iptr,
+			       (بنية ext2_inode_large *) جانچ->عارضی_بفر,
+			       0, لمائی);
+#وإلا
+		حافظہ_نقل(iptr, جانچ->عارضی_بفر, لمائی);
+#جے_انت
+		إذا (جانچ->جانچ_flags & EXT2_SF_BAD_EXTRA_بائٹاں)
+			retval = EXT2_ET_BAD_بلاک_وچ_INODE_جدول;
+		جانچ->جانچ_flags &= ~EXT2_SF_BAD_EXTRA_بائٹاں;
+	} وإلا {
 		/* Verify the inode checksum. */
-		if (!(iblock_status[iblk] & IBLOCK_STATUS_CSUMS_OK) &&
-		    !(scan->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
-		    !ext2fs_inode_csum_verify(scan->fs, scan->current_inode + 1,
-				(struct ext2_inode_large *)scan->ptr))
+		إذا (!(iblock_حالت[iblk] & IBLOCK_حالت_CSUMS_OK) &&
+		    !(جانچ->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+		    !ext2fs_inode_csum_verify(جانچ->fs, جانچ->current_inode + 1,
+				(بنية ext2_inode_large *)جانچ->ptr))
 			retval = EXT2_ET_INODE_CSUM_INVALID;
 
-#ifdef WORDS_BIGENDIAN
-		memset(iptr, 0, length);
-		ext2fs_swap_inode_full(scan->fs,
-				(struct ext2_inode_large *) iptr,
-				(struct ext2_inode_large *) scan->ptr,
-				0, length);
-#else
-		memcpy(iptr, scan->ptr, length);
-#endif
-		scan->ptr += scan->inode_size;
-		scan->bytes_left -= scan->inode_size;
-		if (scan->scan_flags & EXT2_SF_BAD_INODE_BLK)
-			retval = EXT2_ET_BAD_BLOCK_IN_INODE_TABLE;
+#جے_تعریف_شدہ الفاظ_BIGENDIAN
+		memset(iptr, 0, لمائی);
+		ext2fs_وٹاندرا_inode_بھریا(جانچ->fs,
+				(بنية ext2_inode_large *) iptr,
+				(بنية ext2_inode_large *) جانچ->ptr,
+				0, لمائی);
+#وإلا
+		حافظہ_نقل(iptr, جانچ->ptr, لمائی);
+#جے_انت
+		جانچ->ptr += جانچ->inode_ناپ;
+		جانچ->بائٹاں_بایاں -= جانچ->inode_ناپ;
+		إذا (جانچ->جانچ_flags & EXT2_SF_BAD_INODE_BLK)
+			retval = EXT2_ET_BAD_بلاک_وچ_INODE_جدول;
 	}
-	if ((iblock_status[iblk] & IBLOCK_STATUS_INSANE) &&
+	إذا ((iblock_حالت[iblk] & IBLOCK_حالت_INSANE) &&
 	    (retval == 0 || retval == EXT2_ET_INODE_CSUM_INVALID))
 		retval = EXT2_ET_INODE_IS_GARBAGE;
 
-	scan->inodes_left--;
-	scan->current_inode++;
-	*ino = scan->current_inode;
-	if (iptr != (struct ext2_inode_large *)inode) {
-		memcpy(inode, iptr, bufsize);
+	جانچ->inodes_بایاں--;
+	جانچ->current_inode++;
+	*ino = جانچ->current_inode;
+	إذا (iptr != (بنية ext2_inode_large *)inode) {
+		حافظہ_نقل(inode, iptr, bufsize);
 		ext2fs_free_mem(&iptr);
 	}
-	return retval;
+	أرجع retval;
 }
 
-errcode_t ext2fs_get_next_inode(ext2_inode_scan scan, ext2_ino_t *ino,
-				struct ext2_inode *inode)
+errcode_t ext2fs_get_اگلا_inode(ext2_inode_جانچ جانچ, ext2_ino_t *ino,
+				بنية ext2_inode *inode)
 {
-	return ext2fs_get_next_inode_full(scan, ino, inode,
-						sizeof(struct ext2_inode));
+	أرجع ext2fs_get_اگلا_inode_بھریا(جانچ, ino, inode,
+						حجم(بنية ext2_inode));
 }
 
 /*
  * Functions to read and write a single inode.
  */
 errcode_t ext2fs_read_inode2(ext2_filsys fs, ext2_ino_t ino,
-			     struct ext2_inode * inode, int bufsize,
-			     int flags)
+			     بنية ext2_inode * inode, صحيح bufsize,
+			     صحيح flags)
 {
-	blk64_t		block_nr;
-	dgrp_t		group;
-	unsigned long 	block, offset;
-	char 		*ptr;
+	blk64_t		بلاک_nr;
+	dgrp_t		گروہ;
+	بنانشانی لما 	بلاک, وتھ;
+	حرف 		*ptr;
 	errcode_t	retval;
-	unsigned	i;
-	int		clen, inodes_per_block;
+	بنانشانی	i;
+	صحيح		clen, inodes_فی_بلاک;
 	io_channel	io;
-	int		length = EXT2_INODE_SIZE(fs->super);
-	struct ext2_inode_large	*iptr;
-	int		cache_slot, fail_csum;
+	صحيح		لمائی = EXT2_INODE_ناپ(fs->super);
+	بنية ext2_inode_large	*iptr;
+	صحيح		cache_تھاں, fail_csum;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (ext2fs_has_feature_journal_dev(fs->super))
-		return EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
+	إذا (ext2fs_has_feature_journal_dev(fs->super))
+		أرجع EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
 
-	if (fs->blocksize < 1024)
-		return EXT2_FILSYS_CORRUPTED; /* Should never happen */
+	إذا (fs->blocksize < 1024)
+		أرجع EXT2_FILSYS_CORRUPTED; /* Should never happen */
 
 	/* Check to see if user has an override function */
-	if (fs->read_inode &&
-	    ((bufsize == sizeof(struct ext2_inode)) ||
-	     (EXT2_INODE_SIZE(fs->super) == sizeof(struct ext2_inode)))) {
+	إذا (fs->read_inode &&
+	    ((bufsize == حجم(بنية ext2_inode)) ||
+	     (EXT2_INODE_ناپ(fs->super) == حجم(بنية ext2_inode)))) {
 		retval = (fs->read_inode)(fs, ino, inode);
-		if (retval != EXT2_ET_CALLBACK_NOTHANDLED)
-			return retval;
+		إذا (retval != EXT2_ET_CALLBACK_NOTHANDLED)
+			أرجع retval;
 	}
-	if ((ino == 0) || (ino > fs->super->s_inodes_count))
-		return EXT2_ET_BAD_INODE_NUM;
+	إذا ((ino == 0) || (ino > fs->super->s_inodes_گنتی))
+		أرجع EXT2_ET_BAD_INODE_عدد;
 	/* Create inode cache if not present */
-	if (!fs->icache) {
+	إذا (!fs->icache) {
 		retval = ext2fs_create_inode_cache(fs, 4);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 	}
 	/* Check to see if it's in the inode cache */
-	for (i = 0; i < fs->icache->cache_size; i++) {
-		if (fs->icache->cache[i].ino == ino) {
-			memcpy(inode, fs->icache->cache[i].inode,
-			       (bufsize > length) ? length : bufsize);
-			return 0;
+	لكل (i = 0; i < fs->icache->cache_ناپ; i++) {
+		إذا (fs->icache->cache[i].ino == ino) {
+			حافظہ_نقل(inode, fs->icache->cache[i].inode,
+			       (bufsize > لمائی) ? لمائی : bufsize);
+			أرجع 0;
 		}
 	}
-	if (fs->flags & EXT2_FLAG_IMAGE_FILE) {
-		inodes_per_block = fs->blocksize / EXT2_INODE_SIZE(fs->super);
-		block_nr = ext2fs_le32_to_cpu(fs->image_header->offset_inode) / fs->blocksize;
-		block_nr += (ino - 1) / inodes_per_block;
-		offset = ((ino - 1) % inodes_per_block) *
-			EXT2_INODE_SIZE(fs->super);
+	إذا (fs->flags & EXT2_FLAG_IMAGE_FILE) {
+		inodes_فی_بلاک = fs->blocksize / EXT2_INODE_ناپ(fs->super);
+		بلاک_nr = ext2fs_le32_منزل_cpu(fs->image_سرخی->وتھ_inode) / fs->blocksize;
+		بلاک_nr += (ino - 1) / inodes_فی_بلاک;
+		وتھ = ((ino - 1) % inodes_فی_بلاک) *
+			EXT2_INODE_ناپ(fs->super);
 		io = fs->image_io;
-	} else {
-		group = (ino - 1) / EXT2_INODES_PER_GROUP(fs->super);
-		if (group > fs->group_desc_count)
-			return EXT2_ET_BAD_INODE_NUM;
-		offset = ((ino - 1) % EXT2_INODES_PER_GROUP(fs->super)) *
-			EXT2_INODE_SIZE(fs->super);
-		block = offset >> EXT2_BLOCK_SIZE_BITS(fs->super);
-		block_nr = ext2fs_inode_table_loc(fs, group);
-		if (!block_nr)
-			return EXT2_ET_MISSING_INODE_TABLE;
-		if ((block_nr < fs->super->s_first_data_block) ||
-		    (block_nr + fs->inode_blocks_per_group - 1 >=
-		     ext2fs_blocks_count(fs->super)))
-			return EXT2_ET_GDESC_BAD_INODE_TABLE;
-		block_nr += block;
+	} وإلا {
+		گروہ = (ino - 1) / EXT2_INODES_فی_گروہ(fs->super);
+		إذا (گروہ > fs->گروہ_desc_گنتی)
+			أرجع EXT2_ET_BAD_INODE_عدد;
+		وتھ = ((ino - 1) % EXT2_INODES_فی_گروہ(fs->super)) *
+			EXT2_INODE_ناپ(fs->super);
+		بلاک = وتھ >> EXT2_بلاک_ناپ_بٹ(fs->super);
+		بلاک_nr = ext2fs_inode_جدول_loc(fs, گروہ);
+		إذا (!بلاک_nr)
+			أرجع EXT2_ET_MISSING_INODE_جدول;
+		إذا ((بلاک_nr < fs->super->s_پہلا_انکڑے_بلاک) ||
+		    (بلاک_nr + fs->inode_بلاکاں_فی_گروہ - 1 >=
+		     ext2fs_بلاکاں_گنتی(fs->super)))
+			أرجع EXT2_ET_GDESC_BAD_INODE_جدول;
+		بلاک_nr += بلاک;
 		io = fs->io;
 	}
-	offset &= (EXT2_BLOCK_SIZE(fs->super) - 1);
+	وتھ &= (EXT2_بلاک_ناپ(fs->super) - 1);
 
-	cache_slot = (fs->icache->cache_last + 1) % fs->icache->cache_size;
-	iptr = (struct ext2_inode_large *)fs->icache->cache[cache_slot].inode;
+	cache_تھاں = (fs->icache->cache_آخری + 1) % fs->icache->cache_ناپ;
+	iptr = (بنية ext2_inode_large *)fs->icache->cache[cache_تھاں].inode;
 
-	ptr = (char *) iptr;
-	while (length) {
-		clen = length;
-		if ((offset + length) > fs->blocksize)
-			clen = fs->blocksize - offset;
+	ptr = (حرف *) iptr;
+	طالما (لمائی) {
+		clen = لمائی;
+		إذا ((وتھ + لمائی) > fs->blocksize)
+			clen = fs->blocksize - وتھ;
 
-		if (block_nr != fs->icache->buffer_blk) {
-			retval = io_channel_read_blk64(io, block_nr, 1,
-						     fs->icache->buffer);
-			if (retval)
-				return retval;
-			fs->icache->buffer_blk = block_nr;
+		إذا (بلاک_nr != fs->icache->بفر_blk) {
+			retval = io_channel_read_blk64(io, بلاک_nr, 1,
+						     fs->icache->بفر);
+			إذا (retval)
+				أرجع retval;
+			fs->icache->بفر_blk = بلاک_nr;
 		}
 
-		memcpy(ptr, ((char *) fs->icache->buffer) + (unsigned) offset,
+		حافظہ_نقل(ptr, ((حرف *) fs->icache->بفر) + (بنانشانی) وتھ,
 		       clen);
 
-		offset = 0;
-		length -= clen;
+		وتھ = 0;
+		لمائی -= clen;
 		ptr += clen;
-		block_nr++;
+		بلاک_nr++;
 	}
-	length = EXT2_INODE_SIZE(fs->super);
+	لمائی = EXT2_INODE_ناپ(fs->super);
 
 	/* Verify the inode checksum. */
 	fail_csum = !ext2fs_inode_csum_verify(fs, ino, iptr);
 
-#ifdef WORDS_BIGENDIAN
-	ext2fs_swap_inode_full(fs, (struct ext2_inode_large *) iptr,
-			       (struct ext2_inode_large *) iptr,
-			       0, length);
-#endif
+#جے_تعریف_شدہ الفاظ_BIGENDIAN
+	ext2fs_وٹاندرا_inode_بھریا(fs, (بنية ext2_inode_large *) iptr,
+			       (بنية ext2_inode_large *) iptr,
+			       0, لمائی);
+#جے_انت
 
 	/* Update the inode cache bookkeeping */
-	if (!fail_csum) {
-		fs->icache->cache_last = cache_slot;
-		fs->icache->cache[cache_slot].ino = ino;
+	إذا (!fail_csum) {
+		fs->icache->cache_آخری = cache_تھاں;
+		fs->icache->cache[cache_تھاں].ino = ino;
 	}
-	memcpy(inode, iptr, (bufsize > length) ? length : bufsize);
+	حافظہ_نقل(inode, iptr, (bufsize > لمائی) ? لمائی : bufsize);
 
-	if (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+	إذا (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
 	    !(flags & READ_INODE_NOCSUM) && fail_csum)
-		return EXT2_ET_INODE_CSUM_INVALID;
+		أرجع EXT2_ET_INODE_CSUM_INVALID;
 
-	return 0;
+	أرجع 0;
 }
 
-errcode_t ext2fs_read_inode_full(ext2_filsys fs, ext2_ino_t ino,
-				 struct ext2_inode * inode, int bufsize)
+errcode_t ext2fs_read_inode_بھریا(ext2_filsys fs, ext2_ino_t ino,
+				 بنية ext2_inode * inode, صحيح bufsize)
 {
-	return ext2fs_read_inode2(fs, ino, inode, bufsize, 0);
+	أرجع ext2fs_read_inode2(fs, ino, inode, bufsize, 0);
 }
 
 errcode_t ext2fs_read_inode(ext2_filsys fs, ext2_ino_t ino,
-			    struct ext2_inode * inode)
+			    بنية ext2_inode * inode)
 {
-	return ext2fs_read_inode2(fs, ino, inode,
-				  sizeof(struct ext2_inode), 0);
+	أرجع ext2fs_read_inode2(fs, ino, inode,
+				  حجم(بنية ext2_inode), 0);
 }
 
 errcode_t ext2fs_write_inode2(ext2_filsys fs, ext2_ino_t ino,
-			      struct ext2_inode * inode, int bufsize,
-			      int flags)
+			      بنية ext2_inode * inode, صحيح bufsize,
+			      صحيح flags)
 {
-	blk64_t block_nr;
-	dgrp_t group;
-	unsigned long block, offset;
+	blk64_t بلاک_nr;
+	dgrp_t گروہ;
+	بنانشانی لما بلاک, وتھ;
 	errcode_t retval = 0;
-	struct ext2_inode_large *w_inode;
-	char *ptr;
-	unsigned i;
-	int clen;
-	int length = EXT2_INODE_SIZE(fs->super);
+	بنية ext2_inode_large *w_inode;
+	حرف *ptr;
+	بنانشانی i;
+	صحيح clen;
+	صحيح لمائی = EXT2_INODE_ناپ(fs->super);
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (ext2fs_has_feature_journal_dev(fs->super))
-		return EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
+	إذا (ext2fs_has_feature_journal_dev(fs->super))
+		أرجع EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
 
 	/* Check to see if user provided an override function */
-	if (fs->write_inode) {
+	إذا (fs->write_inode) {
 		retval = (fs->write_inode)(fs, ino, inode);
-		if (retval != EXT2_ET_CALLBACK_NOTHANDLED)
-			return retval;
+		إذا (retval != EXT2_ET_CALLBACK_NOTHANDLED)
+			أرجع retval;
 	}
 
-	if ((ino == 0) || (ino > fs->super->s_inodes_count))
-		return EXT2_ET_BAD_INODE_NUM;
+	إذا ((ino == 0) || (ino > fs->super->s_inodes_گنتی))
+		أرجع EXT2_ET_BAD_INODE_عدد;
 
 	/* Prepare our shadow buffer for read/modify/byteswap/write */
-	retval = ext2fs_get_mem(length, &w_inode);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(لمائی, &w_inode);
+	إذا (retval)
+		أرجع retval;
 
-	if (bufsize < length) {
+	إذا (bufsize < لمائی) {
 		retval = ext2fs_read_inode2(fs, ino,
-					    (struct ext2_inode *)w_inode,
-					    length, READ_INODE_NOCSUM);
-		if (retval)
-			goto errout;
+					    (بنية ext2_inode *)w_inode,
+					    لمائی, READ_INODE_NOCSUM);
+		إذا (retval)
+			اذهب errout;
 	}
 
 	/* Check to see if the inode cache needs to be updated */
-	if (fs->icache) {
-		for (i=0; i < fs->icache->cache_size; i++) {
-			if (fs->icache->cache[i].ino == ino) {
-				memcpy(fs->icache->cache[i].inode, inode,
-				       (bufsize > length) ? length : bufsize);
-				break;
+	إذا (fs->icache) {
+		لكل (i=0; i < fs->icache->cache_ناپ; i++) {
+			إذا (fs->icache->cache[i].ino == ino) {
+				حافظہ_نقل(fs->icache->cache[i].inode, inode,
+				       (bufsize > لمائی) ? لمائی : bufsize);
+				اكسر;
 			}
 		}
-	} else {
+	} وإلا {
 		retval = ext2fs_create_inode_cache(fs, 4);
-		if (retval)
-			goto errout;
+		إذا (retval)
+			اذهب errout;
 	}
-	memcpy(w_inode, inode, (bufsize > length) ? length : bufsize);
+	حافظہ_نقل(w_inode, inode, (bufsize > لمائی) ? لمائی : bufsize);
 
-	if (!(fs->flags & EXT2_FLAG_RW)) {
+	إذا (!(fs->flags & EXT2_FLAG_RW)) {
 		retval = EXT2_ET_RO_FILSYS;
-		goto errout;
+		اذهب errout;
 	}
 
-#ifdef WORDS_BIGENDIAN
-	ext2fs_swap_inode_full(fs, w_inode, w_inode, 1, length);
-#endif
+#جے_تعریف_شدہ الفاظ_BIGENDIAN
+	ext2fs_وٹاندرا_inode_بھریا(fs, w_inode, w_inode, 1, لمائی);
+#جے_انت
 
-	if ((flags & WRITE_INODE_NOCSUM) == 0) {
-		retval = ext2fs_inode_csum_set(fs, ino, w_inode);
-		if (retval)
-			goto errout;
+	إذا ((flags & WRITE_INODE_NOCSUM) == 0) {
+		retval = ext2fs_inode_csum_سیٹ(fs, ino, w_inode);
+		إذا (retval)
+			اذهب errout;
 	}
 
-	group = (ino - 1) / EXT2_INODES_PER_GROUP(fs->super);
-	offset = ((ino - 1) % EXT2_INODES_PER_GROUP(fs->super)) *
-		EXT2_INODE_SIZE(fs->super);
-	block = offset >> EXT2_BLOCK_SIZE_BITS(fs->super);
-	block_nr = ext2fs_inode_table_loc(fs, (unsigned) group);
-	if (!block_nr) {
-		retval = EXT2_ET_MISSING_INODE_TABLE;
-		goto errout;
+	گروہ = (ino - 1) / EXT2_INODES_فی_گروہ(fs->super);
+	وتھ = ((ino - 1) % EXT2_INODES_فی_گروہ(fs->super)) *
+		EXT2_INODE_ناپ(fs->super);
+	بلاک = وتھ >> EXT2_بلاک_ناپ_بٹ(fs->super);
+	بلاک_nr = ext2fs_inode_جدول_loc(fs, (بنانشانی) گروہ);
+	إذا (!بلاک_nr) {
+		retval = EXT2_ET_MISSING_INODE_جدول;
+		اذهب errout;
 	}
-	if ((block_nr < fs->super->s_first_data_block) ||
-	    (block_nr + fs->inode_blocks_per_group - 1 >=
-	     ext2fs_blocks_count(fs->super))) {
-		retval = EXT2_ET_GDESC_BAD_INODE_TABLE;
-		goto errout;
+	إذا ((بلاک_nr < fs->super->s_پہلا_انکڑے_بلاک) ||
+	    (بلاک_nr + fs->inode_بلاکاں_فی_گروہ - 1 >=
+	     ext2fs_بلاکاں_گنتی(fs->super))) {
+		retval = EXT2_ET_GDESC_BAD_INODE_جدول;
+		اذهب errout;
 	}
-	block_nr += block;
+	بلاک_nr += بلاک;
 
-	offset &= (EXT2_BLOCK_SIZE(fs->super) - 1);
+	وتھ &= (EXT2_بلاک_ناپ(fs->super) - 1);
 
-	ptr = (char *) w_inode;
+	ptr = (حرف *) w_inode;
 
-	while (length) {
-		clen = length;
-		if ((offset + length) > fs->blocksize)
-			clen = fs->blocksize - offset;
+	طالما (لمائی) {
+		clen = لمائی;
+		إذا ((وتھ + لمائی) > fs->blocksize)
+			clen = fs->blocksize - وتھ;
 
-		if (fs->icache->buffer_blk != block_nr) {
-			retval = io_channel_read_blk64(fs->io, block_nr, 1,
-						     fs->icache->buffer);
-			if (retval)
-				goto errout;
-			fs->icache->buffer_blk = block_nr;
+		إذا (fs->icache->بفر_blk != بلاک_nr) {
+			retval = io_channel_read_blk64(fs->io, بلاک_nr, 1,
+						     fs->icache->بفر);
+			إذا (retval)
+				اذهب errout;
+			fs->icache->بفر_blk = بلاک_nr;
 		}
 
 
-		memcpy((char *) fs->icache->buffer + (unsigned) offset,
+		حافظہ_نقل((حرف *) fs->icache->بفر + (بنانشانی) وتھ,
 		       ptr, clen);
 
-		retval = io_channel_write_blk64(fs->io, block_nr, 1,
-					      fs->icache->buffer);
-		if (retval)
-			goto errout;
+		retval = io_channel_write_blk64(fs->io, بلاک_nr, 1,
+					      fs->icache->بفر);
+		إذا (retval)
+			اذهب errout;
 
-		offset = 0;
+		وتھ = 0;
 		ptr += clen;
-		length -= clen;
-		block_nr++;
+		لمائی -= clen;
+		بلاک_nr++;
 	}
 
-	fs->flags |= EXT2_FLAG_CHANGED;
+	fs->flags |= EXT2_FLAG_بدلیا;
 errout:
 	ext2fs_free_mem(&w_inode);
-	return retval;
+	أرجع retval;
 }
 
-errcode_t ext2fs_write_inode_full(ext2_filsys fs, ext2_ino_t ino,
-				  struct ext2_inode * inode, int bufsize)
+errcode_t ext2fs_write_inode_بھریا(ext2_filsys fs, ext2_ino_t ino,
+				  بنية ext2_inode * inode, صحيح bufsize)
 {
-	return ext2fs_write_inode2(fs, ino, inode, bufsize, 0);
+	أرجع ext2fs_write_inode2(fs, ino, inode, bufsize, 0);
 }
 
 errcode_t ext2fs_write_inode(ext2_filsys fs, ext2_ino_t ino,
-			     struct ext2_inode *inode)
+			     بنية ext2_inode *inode)
 {
-	return ext2fs_write_inode2(fs, ino, inode,
-				   sizeof(struct ext2_inode), 0);
+	أرجع ext2fs_write_inode2(fs, ino, inode,
+				   حجم(بنية ext2_inode), 0);
 }
 
 /*
@@ -1036,87 +1036,87 @@ errcode_t ext2fs_write_inode(ext2_filsys fs, ext2_ino_t ino,
  * sure that extra part of large inodes is initialized properly.
  */
 errcode_t ext2fs_write_new_inode(ext2_filsys fs, ext2_ino_t ino,
-				 struct ext2_inode *inode)
+				 بنية ext2_inode *inode)
 {
-	struct ext2_inode	*buf;
-	int			size = EXT2_INODE_SIZE(fs->super);
-	struct ext2_inode_large	*large_inode;
+	بنية ext2_inode	*buf;
+	صحيح			ناپ = EXT2_INODE_ناپ(fs->super);
+	بنية ext2_inode_large	*large_inode;
 	errcode_t		retval;
-	time_t			t = ext2fsP_get_time(fs);
+	time_t			t = ext2fs_P_get_ویلا(fs);
 
-	if (!ext2fs_inode_xtime_get(inode, i_atime))
-		ext2fs_inode_xtime_set(inode, i_atime, t);
-	if (!ext2fs_inode_xtime_get(inode, i_ctime))
-		ext2fs_inode_xtime_set(inode, i_ctime, t);
-	if (!ext2fs_inode_xtime_get(inode, i_mtime))
-		ext2fs_inode_xtime_set(inode, i_mtime, t);
+	إذا (!ext2fs_inode_xtime_get(inode, i_atime))
+		ext2fs_inode_xtime_سیٹ(inode, i_atime, t);
+	إذا (!ext2fs_inode_xtime_get(inode, i_ctime))
+		ext2fs_inode_xtime_سیٹ(inode, i_ctime, t);
+	إذا (!ext2fs_inode_xtime_get(inode, i_mtime))
+		ext2fs_inode_xtime_سیٹ(inode, i_mtime, t);
 
-	if (size == sizeof(struct ext2_inode))
-		return ext2fs_write_inode_full(fs, ino, inode,
-					       sizeof(struct ext2_inode));
+	إذا (ناپ == حجم(بنية ext2_inode))
+		أرجع ext2fs_write_inode_بھریا(fs, ino, inode,
+					       حجم(بنية ext2_inode));
 
-	buf = malloc(size);
-	if (!buf)
-		return ENOMEM;
+	buf = حافظہ_دیو(ناپ);
+	إذا (!buf)
+		أرجع ENOMEM;
 
-	memset(buf, 0, size);
+	memset(buf, 0, ناپ);
 	*buf = *inode;
 
-	large_inode = (struct ext2_inode_large *) buf;
-	large_inode->i_extra_isize = sizeof(struct ext2_inode_large) -
-		EXT2_GOOD_OLD_INODE_SIZE;
-	if (!large_inode->i_crtime)
+	large_inode = (بنية ext2_inode_large *) buf;
+	large_inode->i_extra_isize = حجم(بنية ext2_inode_large) -
+		EXT2_GOOD_OLD_INODE_ناپ;
+	إذا (!large_inode->i_crtime)
 		large_inode->i_crtime = t;
 
-	retval = ext2fs_write_inode_full(fs, ino, buf, size);
-	free(buf);
-	return retval;
+	retval = ext2fs_write_inode_بھریا(fs, ino, buf, ناپ);
+	حرر(buf);
+	أرجع retval;
 }
 
 
-errcode_t ext2fs_get_blocks(ext2_filsys fs, ext2_ino_t ino, blk_t *blocks)
+errcode_t ext2fs_get_بلاکاں(ext2_filsys fs, ext2_ino_t ino, blk_t *بلاکاں)
 {
-	struct ext2_inode	inode;
-	int			i;
+	بنية ext2_inode	inode;
+	صحيح			i;
 	errcode_t		retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (ino > fs->super->s_inodes_count)
-		return EXT2_ET_BAD_INODE_NUM;
+	إذا (ino > fs->super->s_inodes_گنتی)
+		أرجع EXT2_ET_BAD_INODE_عدد;
 
-	if (fs->get_blocks) {
-		if (!(*fs->get_blocks)(fs, ino, blocks))
-			return 0;
+	إذا (fs->get_بلاکاں) {
+		إذا (!(*fs->get_بلاکاں)(fs, ino, بلاکاں))
+			أرجع 0;
 	}
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
-		return retval;
-	for (i=0; i < EXT2_N_BLOCKS; i++)
-		blocks[i] = inode.i_block[i];
-	return 0;
+	إذا (retval)
+		أرجع retval;
+	لكل (i=0; i < EXT2_N_بلاکاں; i++)
+		بلاکاں[i] = inode.i_بلاک[i];
+	أرجع 0;
 }
 
 errcode_t ext2fs_check_directory(ext2_filsys fs, ext2_ino_t ino)
 {
-	struct	ext2_inode	inode;
+	بنية	ext2_inode	inode;
 	errcode_t		retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (ino > fs->super->s_inodes_count)
-		return EXT2_ET_BAD_INODE_NUM;
+	إذا (ino > fs->super->s_inodes_گنتی)
+		أرجع EXT2_ET_BAD_INODE_عدد;
 
-	if (fs->check_directory) {
+	إذا (fs->check_directory) {
 		retval = (fs->check_directory)(fs, ino);
-		if (retval != EXT2_ET_CALLBACK_NOTHANDLED)
-			return retval;
+		إذا (retval != EXT2_ET_CALLBACK_NOTHANDLED)
+			أرجع retval;
 	}
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
-		return retval;
-	if (!LINUX_S_ISDIR(inode.i_mode))
-		return EXT2_ET_NO_DIRECTORY;
-	return 0;
+	إذا (retval)
+		أرجع retval;
+	إذا (!LINUX_S_ISDIR(inode.i_منوال))
+		أرجع EXT2_ET_NO_DIRECTORY;
+	أرجع 0;
 }
 

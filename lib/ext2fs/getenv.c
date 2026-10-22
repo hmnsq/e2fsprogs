@@ -9,49 +9,49 @@
  * General Public License, version 2.
  * %End-Header%
  */
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
-#define _XOPEN_SOURCE 600
-#define _DARWIN_C_SOURCE
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#endif
+#إذا !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#تعریف_کرو XOPEN_سروت 600
+#تعریف_کرو DARWIN_C_سروت
+#جے_بنا_تعریف GNU_سروت
+#تعریف_کرو GNU_سروت
+#جے_انت
+#جے_انت
 
-#include "config.h"
-#include <stdlib.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef HAVE_SYS_PRCTL_H
-#include <sys/prctl.h>
-#else
-#define PR_GET_DUMPABLE 3
-#endif
-#if (!defined(HAVE_PRCTL) && defined(linux))
-#include <sys/syscall.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdlib.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جے_انت
+#جے_تعریف_شدہ HAVE_SYS_PRCTL_H
+#ضمن <sys/prctl.h>
+#وإلا
+#تعریف_کرو PR_GET_DUMPABLE 3
+#جے_انت
+#إذا (!defined(HAVE_PRCTL) && defined(linux))
+#ضمن <sys/syscall.h>
+#جے_انت
 
-#include "ext2fs.h"
+#ضمن "ext2fs.h"
 
-char *ext2fs_safe_getenv(const char *arg)
+حرف *ext2fs_محفوظ_getenv(ثابت حرف *arg)
 {
-	if ((getuid() != geteuid()) || (getgid() != getegid()))
-		return NULL;
-#ifdef HAVE_PRCTL
-	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#else
-#if (defined(linux) && defined(SYS_prctl))
-	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#endif
-#endif
+	إذا ((getuid() != geteuid()) || (getgid() != getegid()))
+		أرجع عدم;
+#جے_تعریف_شدہ HAVE_PRCTL
+	إذا (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		أرجع عدم;
+#وإلا
+#إذا (defined(linux) && defined(SYS_prctl))
+	إذا (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		أرجع عدم;
+#جے_انت
+#جے_انت
 
-#if defined(HAVE_SECURE_GETENV)
-	return secure_getenv(arg);
-#elif defined(HAVE___SECURE_GETENV)
-	return __secure_getenv(arg);
-#else
-	return getenv(arg);
-#endif
+#إذا defined(HAVE_SECURE_GETENV)
+	أرجع secure_getenv(arg);
+#وإلاإذا defined(HAVE___SECURE_GETENV)
+	أرجع __secure_getenv(arg);
+#وإلا
+	أرجع getenv(arg);
+#جے_انت
 }

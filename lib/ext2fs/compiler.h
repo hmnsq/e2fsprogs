@@ -1,26 +1,26 @@
-#ifndef _EXT2FS_COMPILER_H
-#define _EXT2FS_COMPILER_H
+#جے_بنا_تعریف _EXT2FS_COMPILER_H
+#تعریف_کرو _EXT2FS_COMPILER_H
 
-#include <stddef.h>
+#ضمن <stddef.h>
 
-#ifdef __GNUC__
+#جے_تعریف_شدہ __GNUC__
 
-#ifndef __GNUC_PREREQ
-#if defined(__GNUC__) && defined(__GNUC_MINOR__)
-#define __GNUC_PREREQ(maj, min) \
+#جے_بنا_تعریف __GNUC_PREREQ
+#إذا defined(__GNUC__) && defined(__GNUC_MINOR__)
+#تعریف_کرو __GNUC_PREREQ(maj, min) \
 	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
-#else
-#define __GNUC_PREREQ(maj, min) 0
-#endif
-#endif
+#وإلا
+#تعریف_کرو __GNUC_PREREQ(maj, min) 0
+#جے_انت
+#جے_انت
 
-#define container_of(ptr, type, member) ({				\
+#تعریف_کرو container_دا(ptr, type, member) ({				\
 	__typeof__( ((type *)0)->member ) *__mptr = (ptr);	\
-	(type *)( (char *)__mptr - offsetof(type,member) );})
-#else
-#define container_of(ptr, type, member)				\
-	((type *)((char *)(ptr) - offsetof(type, member)))
-#endif
+	(type *)( (حرف *)__mptr - offsetof(type,member) );})
+#وإلا
+#تعریف_کرو container_دا(ptr, type, member)				\
+	((type *)((حرف *)(ptr) - offsetof(type, member)))
+#جے_انت
 
 
-#endif /* _EXT2FS_COMPILER_H */
+#جے_انت /* _EXT2FS_COMPILER_H */
