@@ -27,7 +27,7 @@
  * Little-endian CRC computation.  Used with serial bit streams sent
  * lsbit-first.  Be sure to use cpu_to_le32() to append the computed CRC.
  */
-#if CRC_LE_BITS > 64 || CRC_LE_BITS < 1 || CRC_LE_BITS == 16 || \
+#જો CRC_LE_BITS > 64 || CRC_LE_BITS < 1 || CRC_LE_BITS == 16 || \
 	CRC_LE_BITS & CRC_LE_BITS-1
 # error "CRC_LE_BITS must be one of {1, 2, 4, 8, 32, 64}"
 #endif
@@ -36,7 +36,7 @@
  * Big-endian CRC computation.  Used with serial bit streams sent
  * msbit-first.  Be sure to use cpu_to_be32() to append the computed CRC.
  */
-#if CRC_BE_BITS > 64 || CRC_BE_BITS < 1 || CRC_BE_BITS == 16 || \
+#જો CRC_BE_BITS > 64 || CRC_BE_BITS < 1 || CRC_BE_BITS == 16 || \
 	CRC_BE_BITS & CRC_BE_BITS-1
 # error "CRC_BE_BITS must be one of {1, 2, 4, 8, 32, 64}"
 #endif
@@ -50,10 +50,10 @@
 		(((uint32_t)(x) & (uint32_t)0xff000000UL) >> 24)))
 
 
-#if (__GNUC__ >= 3)
+#જો (__GNUC__ >= 3)
 #define likely(x)	__builtin_expect(!!(x), 1)
 #define unlikely(x)	__builtin_expect(!!(x), 0)
-#else
+#નહીંતર
 #define likely(x)	(x)
 #define unlikely(x)	(x)
 #endif

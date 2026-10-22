@@ -9,79 +9,79 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#અન્તર્ભાવ "config.h"
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <string.h>
+#જો HAVE_UNISTD_H
+#અન્તર્ભાવ <unistd.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#અન્તર્ભાવ "ext2_fs.h"
+#અન્તર્ભાવ "ext2fs.h"
 
-struct link_struct  {
-	const char	*name;
-	int		namelen;
+સંરચના link_struct  {
+	અચલ અક્ષર	*name;
+	પૂર્ણાંક		namelen;
 	ext2_ino_t	inode;
-	int		flags;
-	struct ext2_dir_entry *prev;
-	int		done;
+	પૂર્ણાંક		flags;
+	સંરચના ext2_dir_entry *prev;
+	પૂર્ણાંક		done;
 };
 
 #ifdef __TURBOC__
  #pragma argsused
 #endif
-static int unlink_proc(struct ext2_dir_entry *dirent,
-		     int	offset,
-		     int	blocksize EXT2FS_ATTR((unused)),
-		     char	*buf EXT2FS_ATTR((unused)),
-		     void	*priv_data)
+સ્થિર પૂર્ણાંક unlink_proc(સંરચના ext2_dir_entry *dirent,
+		     પૂર્ણાંક	offset,
+		     પૂર્ણાંક	blocksize EXT2FS_ATTR((unused)),
+		     અક્ષર	*buf EXT2FS_ATTR((unused)),
+		     શૂન્ય	*priv_data)
 {
-	struct link_struct *ls = (struct link_struct *) priv_data;
-	struct ext2_dir_entry *prev;
+	સંરચના link_struct *ls = (સંરચના link_struct *) priv_data;
+	સંરચના ext2_dir_entry *prev;
 
 	prev = ls->prev;
 	ls->prev = dirent;
 
-	if (ls->name) {
-		if (ext2fs_dirent_name_len(dirent) != ls->namelen)
-			return 0;
-		if (strncmp(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
-			return 0;
+	જો (ls->name) {
+		જો (ext2fs_dirent_name_len(dirent) != ls->namelen)
+			પાછા 0;
+		જો (strncmp(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
+			પાછા 0;
 	}
-	if (!(ls->flags & EXT2FS_UNLINK_FORCE) && ls->inode) {
-		if (dirent->inode != ls->inode)
-			return 0;
-	} else {
-		if (!dirent->inode)
-			return 0;
+	જો (!(ls->flags & EXT2FS_UNLINK_FORCE) && ls->inode) {
+		જો (dirent->inode != ls->inode)
+			પાછા 0;
+	} નહીંતર {
+		જો (!dirent->inode)
+			પાછા 0;
 	}
 
-	if (offset)
+	જો (offset)
 		prev->rec_len += dirent->rec_len;
-	else
+	નહીંતર
 		dirent->inode = 0;
 	ls->done++;
-	return DIRENT_ABORT|DIRENT_CHANGED;
+	પાછા DIRENT_ABORT|DIRENT_CHANGED;
 }
 
 #ifdef __TURBOC__
  #pragma argsused
 #endif
 errcode_t ext2fs_unlink(ext2_filsys fs, ext2_ino_t dir,
-			const char *name, ext2_ino_t ino,
-			int flags)
+			અચલ અક્ષર *name, ext2_ino_t ino,
+			પૂર્ણાંક flags)
 {
 	errcode_t	retval;
-	struct link_struct ls;
+	સંરચના link_struct ls;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!name && !ino)
-		return EXT2_ET_INVALID_ARGUMENT;
+	જો (!name && !ino)
+		પાછા EXT2_ET_INVALID_ARGUMENT;
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	જો (!(fs->flags & EXT2_FLAG_RW))
+		પાછા EXT2_ET_RO_FILSYS;
 
 	ls.name = name;
 	ls.namelen = name ? strlen(name) : 0;
@@ -92,9 +92,9 @@ errcode_t ext2fs_unlink(ext2_filsys fs, ext2_ino_t dir,
 
 	retval = ext2fs_dir_iterate(fs, dir, DIRENT_FLAG_INCLUDE_EMPTY,
 				    0, unlink_proc, &ls);
-	if (retval)
-		return retval;
+	જો (retval)
+		પાછા retval;
 
-	return (ls.done) ? 0 : EXT2_ET_DIR_NO_SPACE;
+	પાછા (ls.done) ? 0 : EXT2_ET_DIR_NO_SPACE;
 }
 

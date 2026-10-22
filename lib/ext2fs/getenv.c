@@ -9,7 +9,7 @@
  * General Public License, version 2.
  * %End-Header%
  */
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#જો !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
 #define _XOPEN_SOURCE 600
 #define _DARWIN_C_SOURCE
 #ifndef _GNU_SOURCE
@@ -17,41 +17,41 @@
 #endif
 #endif
 
-#include "config.h"
-#include <stdlib.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#અન્તર્ભાવ "config.h"
+#અન્તર્ભાવ <stdlib.h>
+#જો HAVE_UNISTD_H
+#અન્તર્ભાવ <unistd.h>
 #endif
 #ifdef HAVE_SYS_PRCTL_H
-#include <sys/prctl.h>
-#else
+#અન્તર્ભાવ <sys/prctl.h>
+#નહીંતર
 #define PR_GET_DUMPABLE 3
 #endif
-#if (!defined(HAVE_PRCTL) && defined(linux))
-#include <sys/syscall.h>
+#જો (!defined(HAVE_PRCTL) && defined(linux))
+#અન્તર્ભાવ <sys/syscall.h>
 #endif
 
-#include "ext2fs.h"
+#અન્તર્ભાવ "ext2fs.h"
 
-char *ext2fs_safe_getenv(const char *arg)
+અક્ષર *ext2fs_safe_getenv(અચલ અક્ષર *arg)
 {
-	if ((getuid() != geteuid()) || (getgid() != getegid()))
-		return NULL;
+	જો ((getuid() != geteuid()) || (getgid() != getegid()))
+		પાછા ખાલી;
 #ifdef HAVE_PRCTL
-	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#else
-#if (defined(linux) && defined(SYS_prctl))
-	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
+	જો (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		પાછા ખાલી;
+#નહીંતર
+#જો (defined(linux) && defined(SYS_prctl))
+	જો (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		પાછા ખાલી;
 #endif
 #endif
 
-#if defined(HAVE_SECURE_GETENV)
-	return secure_getenv(arg);
-#elif defined(HAVE___SECURE_GETENV)
-	return __secure_getenv(arg);
-#else
-	return getenv(arg);
+#જો defined(HAVE_SECURE_GETENV)
+	પાછા secure_getenv(arg);
+#અથવાજો defined(HAVE___SECURE_GETENV)
+	પાછા __secure_getenv(arg);
+#નહીંતર
+	પાછા getenv(arg);
 #endif
 }

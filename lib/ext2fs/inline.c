@@ -15,27 +15,27 @@
 #define _XOPEN_SOURCE 600	/* for posix_memalign() */
 #endif
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#અન્તર્ભાવ "config.h"
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <string.h>
+#જો HAVE_UNISTD_H
+#અન્તર્ભાવ <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#અન્તર્ભાવ <fcntl.h>
+#અન્તર્ભાવ <time.h>
+#જો HAVE_SYS_STAT_H
+#અન્તર્ભાવ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#જો HAVE_SYS_TYPES_H
+#અન્તર્ભાવ <sys/types.h>
 #endif
-#if HAVE_MALLOC_H
-#include <malloc.h>
+#જો HAVE_MALLOC_H
+#અન્તર્ભાવ <malloc.h>
 #endif
 
-#include "ext2_fs.h"
+#અન્તર્ભાવ "ext2_fs.h"
 #define INCLUDE_INLINE_FUNCS
-#include "ext2fs.h"
+#અન્તર્ભાવ "ext2fs.h"
 
 /*
  * We used to define this as an inline, but since we are now using
@@ -43,76 +43,76 @@
  * library-provided function exclusively.
  */
 errcode_t ext2fs_get_memalign(unsigned long size,
-			      unsigned long align, void *ptr)
+			      unsigned long align, શૂન્ય *ptr)
 {
 	errcode_t retval = 0;
-	void **p = ptr;
+	શૂન્ય **p = ptr;
 
-	if (align < 8)
+	જો (align < 8)
 		align = 8;
 #ifdef HAVE_POSIX_MEMALIGN
 	retval = posix_memalign(p, align, size);
-	if (retval == ENOMEM)
-		return EXT2_ET_NO_MEMORY;
-#else  /* !HAVE_POSIX_MEMALIGN */
+	જો (retval == ENOMEM)
+		પાછા EXT2_ET_NO_MEMORY;
+#નહીંતર  /* !HAVE_POSIX_MEMALIGN */
 #ifdef HAVE_MEMALIGN
 	*p = memalign(align, size);
-	if (*p == NULL) {
-		if (errno)
-			return errno;
-		else
-			return EXT2_ET_NO_MEMORY;
+	જો (*p == ખાલી) {
+		જો (errno)
+			પાછા errno;
+		નહીંતર
+			પાછા EXT2_ET_NO_MEMORY;
 	}
-#else  /* !HAVE_MEMALIGN */
+#નહીંતર  /* !HAVE_MEMALIGN */
 #ifdef HAVE_VALLOC
-	if (align > sizeof(long long))
+	જો (align > કદ(long long))
 		*p = valloc(size);
-	else
+	નહીંતર
 #endif
 		*p = malloc(size);
-	if ((uintptr_t) *p & (align - 1)) {
-		free(*p);
+	જો ((uintptr_t) *p & (align - 1)) {
+		મુક્ત(*p);
 		*p = 0;
 	}
-	if (*p == 0)
-		return EXT2_ET_NO_MEMORY;
+	જો (*p == 0)
+		પાછા EXT2_ET_NO_MEMORY;
 #endif	/* HAVE_MEMALIGN */
 #endif	/* HAVE_POSIX_MEMALIGN */
-	return retval;
+	પાછા retval;
 }
 
 #ifdef DEBUG
-static int isaligned(void *ptr, unsigned long align)
+સ્થિર પૂર્ણાંક isaligned(શૂન્ય *ptr, unsigned long align)
 {
-	return (((unsigned long) ptr & (align - 1)) == 0);
+	પાછા (((unsigned long) ptr & (align - 1)) == 0);
 }
 
-static errcode_t test_memalign(unsigned long align)
+સ્થિર errcode_t test_memalign(unsigned long align)
 {
-	void *ptr = 0;
+	શૂન્ય *ptr = 0;
 	errcode_t retval;
 
 	retval = ext2fs_get_memalign(32, align, &ptr);
-	if (!retval && !isaligned(ptr, align))
+	જો (!retval && !isaligned(ptr, align))
 		retval = EINVAL;
-	free(ptr);
+	મુક્ત(ptr);
 	printf("tst_memalign(%lu) is %s\n", align,
 	       retval ? error_message(retval) : "OK");
-	return retval;
+	પાછા retval;
 }
 
-int main(int argc, char **argv)
+પૂર્ણાંક મુખ્ય(પૂર્ણાંક argc, અક્ષર **argv)
 {
-	int err = 0;
+	પૂર્ણાંક err = 0;
 
-	if (test_memalign(4))
+	જો (test_memalign(4))
 		err++;
-	if (test_memalign(32))
+	જો (test_memalign(32))
 		err++;
-	if (test_memalign(1024))
+	જો (test_memalign(1024))
 		err++;
-	if (test_memalign(4096))
+	જો (test_memalign(4096))
 		err++;
-	return err;
+	પાછા err;
 }
 #endif

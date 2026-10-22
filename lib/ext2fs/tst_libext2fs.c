@@ -2,71 +2,71 @@
  * tst_libext2fs.c
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#અન્તર્ભાવ "config.h"
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <string.h>
+#જો HAVE_UNISTD_H
+#અન્તર્ભાવ <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#જો HAVE_ERRNO_H
+#અન્તર્ભાવ <errno.h>
 #endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#જો HAVE_SYS_STAT_H
+#અન્તર્ભાવ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#જો HAVE_SYS_TYPES_H
+#અન્તર્ભાવ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#અન્તર્ભાવ "ext2_fs.h"
+#અન્તર્ભાવ "ext2fsP.h"
 
-#include "ss/ss.h"
-#include "debugfs.h"
+#અન્તર્ભાવ "ss/ss.h"
+#અન્તર્ભાવ "debugfs.h"
 
 /*
  * Hook in new commands into debugfs
  * Override debugfs's prompt
  */
-const char *debug_prog_name = "tst_libext2fs";
-extern ss_request_table libext2fs_cmds;
+અચલ અક્ષર *debug_prog_name = "tst_libext2fs";
+બાહ્ય ss_request_table libext2fs_cmds;
 ss_request_table *extra_cmds = &libext2fs_cmds;
 
-static int print_blocks_proc(ext2_filsys fs EXT2FS_ATTR((unused)),
+સ્થિર પૂર્ણાંક print_blocks_proc(ext2_filsys fs EXT2FS_ATTR((unused)),
 			     blk64_t *blocknr, e2_blkcnt_t blockcnt,
-			     blk64_t ref_block, int ref_offset,
-			     void *private EXT2FS_ATTR((unused)))
+			     blk64_t ref_block, પૂર્ણાંક ref_offset,
+			     શૂન્ય *ખાનગી EXT2FS_ATTR((unused)))
 {
 	printf("%6lld %8llu (%d %llu)\n", (long long) blockcnt,
 	       (unsigned long long) *blocknr, ref_offset,
 	       (unsigned long long) ref_block);
-	return 0;
+	પાછા 0;
 }
 
 
-void do_block_iterate(int argc, char **argv, int sci_idx EXT2FS_ATTR((unused)),
-		      void *infop EXT2FS_ATTR((unused)))
+શૂન્ય do_block_iterate(પૂર્ણાંક argc, અક્ષર **argv, પૂર્ણાંક sci_idx EXT2FS_ATTR((unused)),
+		      શૂન્ય *infop EXT2FS_ATTR((unused)))
 {
-	const char	*usage = "block_iterate <file> <flags";
+	અચલ અક્ષર	*usage = "block_iterate <file> <flags";
 	ext2_ino_t	ino;
-	int		err = 0;
-	int		flags = 0;
+	પૂર્ણાંક		err = 0;
+	પૂર્ણાંક		flags = 0;
 
-	if (common_args_process(argc, argv, 2, 3, argv[0], usage, 0))
-		return;
+	જો (common_args_process(argc, argv, 2, 3, argv[0], usage, 0))
+		પાછા;
 
 	ino = string_to_inode(argv[1]);
-	if (!ino)
-		return;
+	જો (!ino)
+		પાછા;
 
-	if (argc > 2) {
+	જો (argc > 2) {
 		flags = parse_ulong(argv[2], argv[0], "flags", &err);
-		if (err)
-			return;
+		જો (err)
+			પાછા;
 	}
 	flags |= BLOCK_FLAG_READ_ONLY;
 
-	ext2fs_block_iterate3(current_fs, ino, flags, NULL,
-			      print_blocks_proc, NULL);
+	ext2fs_block_iterate3(current_fs, ino, flags, ખાલી,
+			      print_blocks_proc, ખાલી);
 	putc('\n', stdout);
 }

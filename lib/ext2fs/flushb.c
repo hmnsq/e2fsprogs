@@ -10,24 +10,24 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
+#અન્તર્ભાવ "config.h"
+#અન્તર્ભાવ <stdio.h>
+#જો HAVE_ERRNO_H
+#અન્તર્ભાવ <errno.h>
 #endif
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#જો HAVE_UNISTD_H
+#અન્તર્ભાવ <unistd.h>
 #endif
-#if HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
+#જો HAVE_SYS_IOCTL_H
+#અન્તર્ભાવ <sys/ioctl.h>
 #endif
-#if HAVE_SYS_MOUNT_H
-#include <sys/param.h>
-#include <sys/mount.h>		/* This may define BLKFLSBUF */
+#જો HAVE_SYS_MOUNT_H
+#અન્તર્ભાવ <sys/param.h>
+#અન્તર્ભાવ <sys/mount.h>		/* This may define BLKFLSBUF */
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#અન્તર્ભાવ "ext2_fs.h"
+#અન્તર્ભાવ "ext2fs.h"
 
 /*
  * For Linux, define BLKFLSBUF and FDFLUSH if necessary, since
@@ -50,7 +50,7 @@
  * flush the buffer cache.  The latter is basically only useful for
  * system benchmarks and for torturing systems in burn-in tests.  :)
  */
-errcode_t ext2fs_sync_device(int fd, int flushb)
+errcode_t ext2fs_sync_device(પૂર્ણાંક fd, પૂર્ણાંક flushb)
 {
 	/*
 	 * We always sync the device in case we're running on old
@@ -58,31 +58,31 @@ errcode_t ext2fs_sync_device(int fd, int flushb)
 	 * still is a race condition for those kernels, but this
 	 * reduces it greatly.)
 	 */
-#if defined(HAVE_FSYNC)
-	if (fsync (fd) == -1)
-		return errno;
+#જો defined(HAVE_FSYNC)
+	જો (fsync (fd) == -1)
+		પાછા errno;
 #endif
 
-	if (flushb) {
+	જો (flushb) {
 		errcode_t	retval = 0;
 
 #ifdef BLKFLSBUF
-		if (ioctl (fd, BLKFLSBUF, 0) == 0)
-			return 0;
+		જો (ioctl (fd, BLKFLSBUF, 0) == 0)
+			પાછા 0;
 		retval = errno;
-#elif defined(__linux__)
+#અથવાજો defined(__linux__)
 #warning BLKFLSBUF not defined
 #endif
 #ifdef FDFLUSH
 		/* In case this is a floppy */
-		if (ioctl(fd, FDFLUSH, 0) == 0)
-			return 0;
-		if (retval == 0)
+		જો (ioctl(fd, FDFLUSH, 0) == 0)
+			પાછા 0;
+		જો (retval == 0)
 			retval = errno;
-#elif defined(__linux__)
+#અથવાજો defined(__linux__)
 #warning FDFLUSH not defined
 #endif
-		return retval;
+		પાછા retval;
 	}
-	return 0;
+	પાછા 0;
 }

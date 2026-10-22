@@ -9,83 +9,83 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#અન્તર્ભાવ "config.h"
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <string.h>
+#જો HAVE_UNISTD_H
+#અન્તર્ભાવ <unistd.h>
 #endif
 
 /* #define NAMEI_DEBUG */
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#અન્તર્ભાવ "ext2_fs.h"
+#અન્તર્ભાવ "ext2fs.h"
+#અન્તર્ભાવ "ext2fsP.h"
 
-static errcode_t open_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t base,
-			    const char *pathname, size_t pathlen, int follow,
-			    int link_count, char *buf, ext2_ino_t *res_inode);
+સ્થિર errcode_t open_namei(ext2_filsys fs, ext2_ino_t મૂળ, ext2_ino_t base,
+			    અચલ અક્ષર *pathname, size_t pathlen, પૂર્ણાંક follow,
+			    પૂર્ણાંક link_ગણતરી, અક્ષર *buf, ext2_ino_t *res_inode);
 
-static errcode_t follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
-			     ext2_ino_t inode, int link_count,
-			     char *buf, ext2_ino_t *res_inode)
+સ્થિર errcode_t follow_link(ext2_filsys fs, ext2_ino_t મૂળ, ext2_ino_t dir,
+			     ext2_ino_t inode, પૂર્ણાંક link_ગણતરી,
+			     અક્ષર *buf, ext2_ino_t *res_inode)
 {
-	char *pathname;
-	char *buffer = 0;
+	અક્ષર *pathname;
+	અક્ષર *buffer = 0;
 	errcode_t retval;
-	struct ext2_inode ei;
+	સંરચના ext2_inode ei;
 	blk64_t blk;
 
 #ifdef NAMEI_DEBUG
 	printf("follow_link: root=%lu, dir=%lu, inode=%lu, lc=%d\n",
-	       root, dir, inode, link_count);
+	       મૂળ, dir, inode, link_ગણતરી);
 
 #endif
 	retval = ext2fs_read_inode (fs, inode, &ei);
-	if (retval) return retval;
-	if (!LINUX_S_ISLNK (ei.i_mode)) {
+	જો (retval) પાછા retval;
+	જો (!LINUX_S_ISLNK (ei.i_mode)) {
 		*res_inode = inode;
-		return 0;
+		પાછા 0;
 	}
-	if (link_count++ >= EXT2FS_MAX_NESTED_LINKS)
-		return EXT2_ET_SYMLINK_LOOP;
+	જો (link_ગણતરી++ >= EXT2FS_MAX_NESTED_LINKS)
+		પાછા EXT2_ET_SYMLINK_LOOP;
 
-	if (ext2fs_is_fast_symlink(&ei))
-		pathname = (char *)&(ei.i_block[0]);
-	else if (ei.i_flags & EXT4_INLINE_DATA_FL) {
+	જો (ext2fs_is_fast_symlink(&ei))
+		pathname = (અક્ષર *)&(ei.i_block[0]);
+	નહીંતર જો (ei.i_flags & EXT4_INLINE_DATA_FL) {
 		retval = ext2fs_get_memzero(ei.i_size, &buffer);
-		if (retval)
-			return retval;
+		જો (retval)
+			પાછા retval;
 
 		retval = ext2fs_inline_data_get(fs, inode,
-						&ei, buffer, NULL);
-		if (retval) {
+						&ei, buffer, ખાલી);
+		જો (retval) {
 			ext2fs_free_mem(&buffer);
-			return retval;
+			પાછા retval;
 		}
 		pathname = buffer;
-	} else {
-		retval = ext2fs_bmap2(fs, inode, &ei, NULL, 0, 0, NULL, &blk);
-		if (retval)
-			return retval;
+	} નહીંતર {
+		retval = ext2fs_bmap2(fs, inode, &ei, ખાલી, 0, 0, ખાલી, &blk);
+		જો (retval)
+			પાછા retval;
 
 		retval = ext2fs_get_mem(fs->blocksize, &buffer);
-		if (retval)
-			return retval;
+		જો (retval)
+			પાછા retval;
 
 		retval = io_channel_read_blk64(fs->io, blk, 1, buffer);
-		if (retval) {
+		જો (retval) {
 			ext2fs_free_mem(&buffer);
-			return retval;
+			પાછા retval;
 		}
 		pathname = buffer;
 	}
 
-	retval = open_namei(fs, root, dir, pathname, ei.i_size, 1,
-			    link_count, buf, res_inode);
-	if (buffer)
+	retval = open_namei(fs, મૂળ, dir, pathname, ei.i_size, 1,
+			    link_ગણતરી, buf, res_inode);
+	જો (buffer)
 		ext2fs_free_mem(&buffer);
-	return retval;
+	પાછા retval;
 }
 
 /*
@@ -94,134 +94,134 @@ static errcode_t follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
  * containing directory, and a pointer to the filename of the file
  * (pointing into the pathname) and the length of the filename.
  */
-static errcode_t dir_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
-			   const char *pathname, int pathlen,
-			   int link_count, char *buf,
-			   const char **name, int *namelen,
+સ્થિર errcode_t dir_namei(ext2_filsys fs, ext2_ino_t મૂળ, ext2_ino_t dir,
+			   અચલ અક્ષર *pathname, પૂર્ણાંક pathlen,
+			   પૂર્ણાંક link_ગણતરી, અક્ષર *buf,
+			   અચલ અક્ષર **name, પૂર્ણાંક *namelen,
 			   ext2_ino_t *res_inode)
 {
-	char c;
-	const char *thisname;
-	int len;
+	અક્ષર c;
+	અચલ અક્ષર *thisname;
+	પૂર્ણાંક len;
 	ext2_ino_t inode;
 	errcode_t retval;
 
-	if ((c = *pathname) == '/') {
-        	dir = root;
+	જો ((c = *pathname) == '/') {
+        	dir = મૂળ;
 		pathname++;
 		pathlen--;
 	}
-	while (1) {
+	જ્યારે (1) {
         	thisname = pathname;
-		for (len=0; --pathlen >= 0;len++) {
+		માટે (len=0; --pathlen >= 0;len++) {
 			c = *(pathname++);
-			if (c == '/')
-				break;
+			જો (c == '/')
+				તોડો;
 		}
-		if (pathlen < 0)
-			break;
+		જો (pathlen < 0)
+			તોડો;
 		retval = ext2fs_lookup (fs, dir, thisname, len, buf, &inode);
-		if (retval) return retval;
-        	retval = follow_link (fs, root, dir, inode,
-				      link_count, buf, &dir);
-        	if (retval) return retval;
+		જો (retval) પાછા retval;
+        	retval = follow_link (fs, મૂળ, dir, inode,
+				      link_ગણતરી, buf, &dir);
+        	જો (retval) પાછા retval;
     	}
 	*name = thisname;
 	*namelen = len;
 	*res_inode = dir;
-	return 0;
+	પાછા 0;
 }
 
-static errcode_t open_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t base,
-			    const char *pathname, size_t pathlen, int follow,
-			    int link_count, char *buf, ext2_ino_t *res_inode)
+સ્થિર errcode_t open_namei(ext2_filsys fs, ext2_ino_t મૂળ, ext2_ino_t base,
+			    અચલ અક્ષર *pathname, size_t pathlen, પૂર્ણાંક follow,
+			    પૂર્ણાંક link_ગણતરી, અક્ષર *buf, ext2_ino_t *res_inode)
 {
-	const char *base_name;
-	int namelen;
+	અચલ અક્ષર *base_name;
+	પૂર્ણાંક namelen;
 	ext2_ino_t dir, inode;
 	errcode_t retval;
 
 #ifdef NAMEI_DEBUG
 	printf("open_namei: root=%lu, dir=%lu, path=%.*s, lc=%d\n",
-	       root, base, pathlen, pathname, link_count);
+	       મૂળ, base, pathlen, pathname, link_ગણતરી);
 #endif
-	retval = dir_namei(fs, root, base, pathname, pathlen,
-			   link_count, buf, &base_name, &namelen, &dir);
-	if (retval) return retval;
-	if (!namelen) {                     /* special case: '/usr/' etc */
+	retval = dir_namei(fs, મૂળ, base, pathname, pathlen,
+			   link_ગણતરી, buf, &base_name, &namelen, &dir);
+	જો (retval) પાછા retval;
+	જો (!namelen) {                     /* special case: '/usr/' etc */
 		*res_inode=dir;
-		return 0;
+		પાછા 0;
 	}
 	retval = ext2fs_lookup (fs, dir, base_name, namelen, buf, &inode);
-	if (retval)
-		return retval;
-	if (follow) {
-		retval = follow_link(fs, root, dir, inode, link_count,
+	જો (retval)
+		પાછા retval;
+	જો (follow) {
+		retval = follow_link(fs, મૂળ, dir, inode, link_ગણતરી,
 				     buf, &inode);
-		if (retval)
-			return retval;
+		જો (retval)
+			પાછા retval;
 	}
 #ifdef NAMEI_DEBUG
 	printf("open_namei: (link_count=%d) returns %lu\n",
-	       link_count, inode);
+	       link_ગણતરી, inode);
 #endif
 	*res_inode = inode;
-	return 0;
+	પાછા 0;
 }
 
-errcode_t ext2fs_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
-		       const char *name, ext2_ino_t *inode)
+errcode_t ext2fs_namei(ext2_filsys fs, ext2_ino_t મૂળ, ext2_ino_t cwd,
+		       અચલ અક્ષર *name, ext2_ino_t *inode)
 {
-	char *buf;
+	અક્ષર *buf;
 	errcode_t retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
+	જો (retval)
+		પાછા retval;
 
-	retval = open_namei(fs, root, cwd, name, strlen(name), 0, 0,
+	retval = open_namei(fs, મૂળ, cwd, name, strlen(name), 0, 0,
 			    buf, inode);
 
 	ext2fs_free_mem(&buf);
-	return retval;
+	પાછા retval;
 }
 
-errcode_t ext2fs_namei_follow(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
-			      const char *name, ext2_ino_t *inode)
+errcode_t ext2fs_namei_follow(ext2_filsys fs, ext2_ino_t મૂળ, ext2_ino_t cwd,
+			      અચલ અક્ષર *name, ext2_ino_t *inode)
 {
-	char *buf;
+	અક્ષર *buf;
 	errcode_t retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
+	જો (retval)
+		પાછા retval;
 
-	retval = open_namei(fs, root, cwd, name, strlen(name), 1, 0,
+	retval = open_namei(fs, મૂળ, cwd, name, strlen(name), 1, 0,
 			    buf, inode);
 
 	ext2fs_free_mem(&buf);
-	return retval;
+	પાછા retval;
 }
 
-errcode_t ext2fs_follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
+errcode_t ext2fs_follow_link(ext2_filsys fs, ext2_ino_t મૂળ, ext2_ino_t cwd,
 			ext2_ino_t inode, ext2_ino_t *res_inode)
 {
-	char *buf;
+	અક્ષર *buf;
 	errcode_t retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
+	જો (retval)
+		પાછા retval;
 
-	retval = follow_link(fs, root, cwd, inode, 0, buf, res_inode);
+	retval = follow_link(fs, મૂળ, cwd, inode, 0, buf, res_inode);
 
 	ext2fs_free_mem(&buf);
-	return retval;
+	પાછા retval;
 }
 
