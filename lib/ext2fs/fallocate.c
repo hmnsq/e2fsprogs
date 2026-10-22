@@ -9,23 +9,23 @@
  * %End-Header%
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#define min(a, b) ((a) < (b) ? (a) : (b))
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
+#నిర్వచించు min(a, b) ((a) < (b) ? (a) : (b))
 
-#undef DEBUG
+#నిర్వచనం_రద్దు DEBUG
 
-#ifdef DEBUG
-# define dbg_printf(f, a...)  do {printf(f, ## a); fflush(stdout); } while (0)
-#else
+#నిర్వచితమైతే DEBUG
+# define dbg_printf(f, a...)  చేయి {రాయి(f, ## a); fflush(stdout); } అయితే (0)
+#లేకపోతే
 # define dbg_printf(f, a...)
-#endif
+#అయితే_ముగింపు
 
 /*
  * Extent-based fallocate code.
@@ -58,395 +58,395 @@
  * At the end, update i_blocks and i_size appropriately.
  */
 
-static void dbg_print_extent(const char *desc EXT2FS_ATTR((unused)),
-		const struct ext2fs_extent *extent EXT2FS_ATTR((unused)))
+స్థిర శూన్య dbg_print_extent(స్థిరరాశి అక్షరం *desc EXT2FS_ATTR((వాడని)),
+		స్థిరరాశి నిర్మాణం ext2fs_extent *extent EXT2FS_ATTR((వాడని)))
 {
-#ifdef DEBUG
-	if (desc)
-		printf("%s: ", desc);
-	printf("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
+#నిర్వచితమైతే DEBUG
+	ఒకవేళ (desc)
+		రాయి("%s: ", desc);
+	రాయి("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
 	       extent->e_lblk, extent->e_lblk + extent->e_len - 1,
 	       extent->e_len, extent->e_pblk);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_LEAF)
+	ఒకవేళ (extent->e_flags & EXT2_EXTENT_FLAGS_ఆకు)
 		fputs("LEAF ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	ఒకవేళ (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 		fputs("UNINIT ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_SECOND_VISIT)
+	ఒకవేళ (extent->e_flags & EXT2_EXTENT_FLAGS_రెండవ_సందర్శించు)
 		fputs("2ND_VISIT ", stdout);
-	if (!extent->e_flags)
+	ఒకవేళ (!extent->e_flags)
 		fputs("(none)", stdout);
 	fputc('\n', stdout);
 	fflush(stdout);
-#endif
+#అయితే_ముగింపు
 }
 
-static errcode_t claim_range(ext2_filsys fs, struct ext2_inode *inode,
+స్థిర errcode_t claim_range(ext2_filsys fs, నిర్మాణం ext2_inode *inode,
 			     blk64_t blk, blk64_t len)
 {
 	blk64_t	clusters;
 
-	clusters = (len + EXT2FS_CLUSTER_RATIO(fs) - 1) /
-		   EXT2FS_CLUSTER_RATIO(fs);
-	ext2fs_block_alloc_stats_range(fs, blk,
-			clusters * EXT2FS_CLUSTER_RATIO(fs), +1);
-	return ext2fs_iblk_add_blocks(fs, inode, clusters);
+	clusters = (len + EXT2_FS_CLUSTER_నిష్పత్తి(fs) - 1) /
+		   EXT2_FS_CLUSTER_నిష్పత్తి(fs);
+	ext2fs_ఖండం_alloc_stats_range(fs, blk,
+			clusters * EXT2_FS_CLUSTER_నిష్పత్తి(fs), +1);
+	తిరిగి ext2fs_iblk_కూడు_ఖండాలు(fs, inode, clusters);
 }
 
-static errcode_t ext_falloc_helper(ext2_filsys fs,
-				   int flags,
+స్థిర errcode_t ext_falloc_helper(ext2_filsys fs,
+				   పూర్ణాంకం flags,
 				   ext2_ino_t ino,
-				   struct ext2_inode *inode,
+				   నిర్మాణం ext2_inode *inode,
 				   ext2_extent_handle_t handle,
-				   struct ext2fs_extent *left_ext,
-				   struct ext2fs_extent *right_ext,
-				   blk64_t range_start, blk64_t range_len,
+				   నిర్మాణం ext2fs_extent *ఎడమ_ext,
+				   నిర్మాణం ext2fs_extent *కుడి_ext,
+				   blk64_t range_ప్రారంభం, blk64_t range_len,
 				   blk64_t alloc_goal)
 {
-	struct ext2fs_extent	newex, ex;
-	int			op;
+	నిర్మాణం ext2fs_extent	newex, ex;
+	పూర్ణాంకం			op;
 	blk64_t			fillable, pblk, plen, x, y;
 	blk64_t			eof_blk = 0, cluster_fill = 0;
 	errcode_t		err;
 	blk_t			max_extent_len, max_uninit_len, max_init_len;
 
-#ifdef DEBUG
-	printf("%s: ", __func__);
-	if (left_ext)
-		printf("left_ext=%llu--%llu, ", left_ext->e_lblk,
-		       left_ext->e_lblk + left_ext->e_len - 1);
-	if (right_ext)
-		printf("right_ext=%llu--%llu, ", right_ext->e_lblk,
-		       right_ext->e_lblk + right_ext->e_len - 1);
-	printf("start=%llu len=%llu, goal=%llu\n", range_start, range_len,
+#నిర్వచితమైతే DEBUG
+	రాయి("%s: ", __func__);
+	ఒకవేళ (ఎడమ_ext)
+		రాయి("left_ext=%llu--%llu, ", ఎడమ_ext->e_lblk,
+		       ఎడమ_ext->e_lblk + ఎడమ_ext->e_len - 1);
+	ఒకవేళ (కుడి_ext)
+		రాయి("right_ext=%llu--%llu, ", కుడి_ext->e_lblk,
+		       కుడి_ext->e_lblk + కుడి_ext->e_len - 1);
+	రాయి("start=%llu len=%llu, goal=%llu\n", range_ప్రారంభం, range_len,
 	       alloc_goal);
 	fflush(stdout);
-#endif
+#అయితే_ముగింపు
 	/* Can't create initialized extents past EOF? */
-	if (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF))
-		eof_blk = EXT2_I_SIZE(inode) / fs->blocksize;
+	ఒకవేళ (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF))
+		eof_blk = EXT2_I_కొలత(inode) / fs->blocksize;
 
 	/* The allocation goal must be as far into a cluster as range_start. */
-	alloc_goal = (alloc_goal & ~EXT2FS_CLUSTER_MASK(fs)) |
-		     (range_start & EXT2FS_CLUSTER_MASK(fs));
+	alloc_goal = (alloc_goal & ~EXT2_FS_CLUSTER_ముసుగు(fs)) |
+		     (range_ప్రారంభం & EXT2_FS_CLUSTER_ముసుగు(fs));
 
-	max_uninit_len = EXT_UNINIT_MAX_LEN & ~EXT2FS_CLUSTER_MASK(fs);
-	max_init_len = EXT_INIT_MAX_LEN & ~EXT2FS_CLUSTER_MASK(fs);
+	max_uninit_len = EXT_UNINIT_MAX_LEN & ~EXT2_FS_CLUSTER_ముసుగు(fs);
+	max_init_len = EXT_INIT_MAX_LEN & ~EXT2_FS_CLUSTER_ముసుగు(fs);
 
 	/* We must lengthen the left extent to the end of the cluster */
-	if (left_ext && EXT2FS_CLUSTER_RATIO(fs) > 1) {
+	ఒకవేళ (ఎడమ_ext && EXT2_FS_CLUSTER_నిష్పత్తి(fs) > 1) {
 		/* How many more blocks can be attached to left_ext? */
-		if (left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-			fillable = max_uninit_len - left_ext->e_len;
-		else
-			fillable = max_init_len - left_ext->e_len;
+		ఒకవేళ (ఎడమ_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+			fillable = max_uninit_len - ఎడమ_ext->e_len;
+		లేకపోతే
+			fillable = max_init_len - ఎడమ_ext->e_len;
 
-		if (fillable > range_len)
+		ఒకవేళ (fillable > range_len)
 			fillable = range_len;
-		if (fillable == 0)
-			goto expand_right;
+		ఒకవేళ (fillable == 0)
+			వెళ్ళు expand_కుడి;
 
 		/*
 		 * If range_start isn't on a cluster boundary, try an
 		 * implied cluster allocation for left_ext.
 		 */
-		cluster_fill = EXT2FS_CLUSTER_RATIO(fs) -
-			       (range_start & EXT2FS_CLUSTER_MASK(fs));
-		cluster_fill &= EXT2FS_CLUSTER_MASK(fs);
-		if (cluster_fill == 0)
-			goto expand_right;
+		cluster_fill = EXT2_FS_CLUSTER_నిష్పత్తి(fs) -
+			       (range_ప్రారంభం & EXT2_FS_CLUSTER_ముసుగు(fs));
+		cluster_fill &= EXT2_FS_CLUSTER_ముసుగు(fs);
+		ఒకవేళ (cluster_fill == 0)
+			వెళ్ళు expand_కుడి;
 
-		if (cluster_fill > fillable)
+		ఒకవేళ (cluster_fill > fillable)
 			cluster_fill = fillable;
 
 		/* Don't expand an initialized left_ext beyond EOF */
-		if (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF)) {
-			x = left_ext->e_lblk + left_ext->e_len - 1;
+		ఒకవేళ (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF)) {
+			x = ఎడమ_ext->e_lblk + ఎడమ_ext->e_len - 1;
 			dbg_printf("%s: lend=%llu newlend=%llu eofblk=%llu\n",
 				   __func__, x, x + cluster_fill, eof_blk);
-			if (eof_blk >= x && eof_blk <= x + cluster_fill)
+			ఒకవేళ (eof_blk >= x && eof_blk <= x + cluster_fill)
 				cluster_fill = eof_blk - x;
-			if (cluster_fill == 0)
-				goto expand_right;
+			ఒకవేళ (cluster_fill == 0)
+				వెళ్ళు expand_కుడి;
 		}
 
-		err = ext2fs_extent_goto(handle, left_ext->e_lblk);
-		if (err)
-			goto expand_right;
-		left_ext->e_len += cluster_fill;
-		range_start += cluster_fill;
+		err = ext2fs_extent_goto(handle, ఎడమ_ext->e_lblk);
+		ఒకవేళ (err)
+			వెళ్ళు expand_కుడి;
+		ఎడమ_ext->e_len += cluster_fill;
+		range_ప్రారంభం += cluster_fill;
 		range_len -= cluster_fill;
 		alloc_goal += cluster_fill;
 
-		dbg_print_extent("ext_falloc clus left+", left_ext);
-		err = ext2fs_extent_replace(handle, 0, left_ext);
-		if (err)
-			goto out;
+		dbg_print_extent("ext_falloc clus left+", ఎడమ_ext);
+		err = ext2fs_extent_replace(handle, 0, ఎడమ_ext);
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 
 		/* Zero blocks */
-		if (!(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) {
-			err = ext2fs_zero_blocks2(fs, left_ext->e_pblk +
-						  left_ext->e_len -
+		ఒకవేళ (!(ఎడమ_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) {
+			err = ext2fs_zero_blocks2(fs, ఎడమ_ext->e_pblk +
+						  ఎడమ_ext->e_len -
 						  cluster_fill, cluster_fill,
-						  NULL, NULL);
-			if (err)
-				goto out;
+						  ఖాళీ, ఖాళీ);
+			ఒకవేళ (err)
+				వెళ్ళు బహిర్గతం;
 		}
 	}
 
-expand_right:
+expand_కుడి:
 	/* We must lengthen the right extent to the beginning of the cluster */
-	if (right_ext && EXT2FS_CLUSTER_RATIO(fs) > 1) {
+	ఒకవేళ (కుడి_ext && EXT2_FS_CLUSTER_నిష్పత్తి(fs) > 1) {
 		/* How much can we attach to right_ext? */
-		if (right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-			fillable = max_uninit_len - right_ext->e_len;
-		else
-			fillable = max_init_len - right_ext->e_len;
+		ఒకవేళ (కుడి_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+			fillable = max_uninit_len - కుడి_ext->e_len;
+		లేకపోతే
+			fillable = max_init_len - కుడి_ext->e_len;
 
-		if (fillable > range_len)
+		ఒకవేళ (fillable > range_len)
 			fillable = range_len;
-		if (fillable == 0)
-			goto try_merge;
+		ఒకవేళ (fillable == 0)
+			వెళ్ళు try_విలీనం;
 
 		/*
 		 * If range_end isn't on a cluster boundary, try an implied
 		 * cluster allocation for right_ext.
 		 */
-		cluster_fill = right_ext->e_lblk & EXT2FS_CLUSTER_MASK(fs);
-		if (cluster_fill == 0)
-			goto try_merge;
+		cluster_fill = కుడి_ext->e_lblk & EXT2_FS_CLUSTER_ముసుగు(fs);
+		ఒకవేళ (cluster_fill == 0)
+			వెళ్ళు try_విలీనం;
 
-		err = ext2fs_extent_goto(handle, right_ext->e_lblk);
-		if (err)
-			goto out;
+		err = ext2fs_extent_goto(handle, కుడి_ext->e_lblk);
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 
-		if (cluster_fill > fillable)
+		ఒకవేళ (cluster_fill > fillable)
 			cluster_fill = fillable;
-		right_ext->e_lblk -= cluster_fill;
-		right_ext->e_pblk -= cluster_fill;
-		right_ext->e_len += cluster_fill;
+		కుడి_ext->e_lblk -= cluster_fill;
+		కుడి_ext->e_pblk -= cluster_fill;
+		కుడి_ext->e_len += cluster_fill;
 		range_len -= cluster_fill;
 
-		dbg_print_extent("ext_falloc clus right+", right_ext);
-		err = ext2fs_extent_replace(handle, 0, right_ext);
-		if (err)
-			goto out;
+		dbg_print_extent("ext_falloc clus right+", కుడి_ext);
+		err = ext2fs_extent_replace(handle, 0, కుడి_ext);
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 
 		/* Zero blocks if necessary */
-		if (!(right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) {
-			err = ext2fs_zero_blocks2(fs, right_ext->e_pblk,
-						  cluster_fill, NULL, NULL);
-			if (err)
-				goto out;
+		ఒకవేళ (!(కుడి_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) {
+			err = ext2fs_zero_blocks2(fs, కుడి_ext->e_pblk,
+						  cluster_fill, ఖాళీ, ఖాళీ);
+			ఒకవేళ (err)
+				వెళ్ళు బహిర్గతం;
 		}
 	}
 
-try_merge:
+try_విలీనం:
 	/* Merge both extents together, perhaps? */
-	if (left_ext && right_ext) {
+	ఒకవేళ (ఎడమ_ext && కుడి_ext) {
 		/* Are the two extents mergeable? */
-		if ((left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) !=
-		    (right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT))
-			goto try_left;
+		ఒకవేళ ((ఎడమ_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) !=
+		    (కుడి_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT))
+			వెళ్ళు try_ఎడమ;
 
 		/* User requires init/uninit but extent is uninit/init. */
-		if (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
-		     (left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
+		ఒకవేళ (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
+		     (ఎడమ_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
 		    ((flags & EXT2_FALLOCATE_FORCE_UNINIT) &&
-		     !(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
-			goto try_left;
+		     !(ఎడమ_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
+			వెళ్ళు try_ఎడమ;
 
 		/*
 		 * Skip initialized extent unless user wants to zero blocks
 		 * or requires init extent.
 		 */
-		if (!(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
-		    (!(flags & EXT2_FALLOCATE_ZERO_BLOCKS) ||
+		ఒకవేళ (!(ఎడమ_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		    (!(flags & EXT2_FALLOCATE_ZERO_ఖండాలు) ||
 		     !(flags & EXT2_FALLOCATE_FORCE_INIT)))
-			goto try_left;
+			వెళ్ళు try_ఎడమ;
 
 		/* Will it even fit? */
-		x = left_ext->e_len + range_len + right_ext->e_len;
-		if (x > (left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT ?
+		x = ఎడమ_ext->e_len + range_len + కుడి_ext->e_len;
+		ఒకవేళ (x > (ఎడమ_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT ?
 				max_uninit_len : max_init_len))
-			goto try_left;
+			వెళ్ళు try_ఎడమ;
 
 		/* Would they even be physically contiguous if merged? */
-		if (left_ext->e_pblk + left_ext->e_len + range_len !=
-				right_ext->e_pblk)
-			goto try_left;
+		ఒకవేళ (ఎడమ_ext->e_pblk + ఎడమ_ext->e_len + range_len !=
+				కుడి_ext->e_pblk)
+			వెళ్ళు try_ఎడమ;
 
-		err = ext2fs_extent_goto(handle, left_ext->e_lblk);
-		if (err)
-			goto try_left;
+		err = ext2fs_extent_goto(handle, ఎడమ_ext->e_lblk);
+		ఒకవేళ (err)
+			వెళ్ళు try_ఎడమ;
 
 		/* Allocate blocks */
-		y = left_ext->e_pblk + left_ext->e_len;
+		y = ఎడమ_ext->e_pblk + ఎడమ_ext->e_len;
 		err = ext2fs_new_range(fs, EXT2_NEWRANGE_FIXED_GOAL |
-				       EXT2_NEWRANGE_MIN_LENGTH, y,
-				       right_ext->e_pblk - y + 1, NULL,
+				       EXT2_NEWRANGE_MIN_నిడివి, y,
+				       కుడి_ext->e_pblk - y + 1, ఖాళీ,
 				       &pblk, &plen);
-		if (err)
-			goto try_left;
-		if (pblk + plen != right_ext->e_pblk)
-			goto try_left;
+		ఒకవేళ (err)
+			వెళ్ళు try_ఎడమ;
+		ఒకవేళ (pblk + plen != కుడి_ext->e_pblk)
+			వెళ్ళు try_ఎడమ;
 		err = claim_range(fs, inode, pblk, plen);
-		if (err)
-			goto out;
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 
 		/* Modify extents */
-		left_ext->e_len = x;
-		dbg_print_extent("ext_falloc merge", left_ext);
-		err = ext2fs_extent_replace(handle, 0, left_ext);
-		if (err)
-			goto out;
+		ఎడమ_ext->e_len = x;
+		dbg_print_extent("ext_falloc merge", ఎడమ_ext);
+		err = ext2fs_extent_replace(handle, 0, ఎడమ_ext);
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
-		err = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT_LEAF, &newex);
-		if (err)
-			goto out;
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
+		err = ext2fs_extent_get(handle, EXT2_EXTENT_తదుపరి_ఆకు, &newex);
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 		err = ext2fs_extent_delete(handle, 0);
-		if (err)
-			goto out;
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
-		*right_ext = *left_ext;
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
+		*కుడి_ext = *ఎడమ_ext;
 
 		/* Zero blocks */
-		if (!(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
-		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
-			err = ext2fs_zero_blocks2(fs, range_start, range_len,
-						  NULL, NULL);
-			if (err)
-				goto out;
+		ఒకవేళ (!(ఎడమ_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		    (flags & EXT2_FALLOCATE_ZERO_ఖండాలు)) {
+			err = ext2fs_zero_blocks2(fs, range_ప్రారంభం, range_len,
+						  ఖాళీ, ఖాళీ);
+			ఒకవేళ (err)
+				వెళ్ళు బహిర్గతం;
 		}
 
-		return 0;
+		తిరిగి 0;
 	}
 
-try_left:
+try_ఎడమ:
 	/* Extend the left extent */
-	if (left_ext) {
+	ఒకవేళ (ఎడమ_ext) {
 		/* How many more blocks can be attached to left_ext? */
-		if (left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-			fillable = max_uninit_len - left_ext->e_len;
-		else if (flags & EXT2_FALLOCATE_ZERO_BLOCKS)
-			fillable = max_init_len - left_ext->e_len;
-		else
+		ఒకవేళ (ఎడమ_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+			fillable = max_uninit_len - ఎడమ_ext->e_len;
+		లేకపోతే ఒకవేళ (flags & EXT2_FALLOCATE_ZERO_ఖండాలు)
+			fillable = max_init_len - ఎడమ_ext->e_len;
+		లేకపోతే
 			fillable = 0;
 
 		/* User requires init/uninit but extent is uninit/init. */
-		if (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
-		     (left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
+		ఒకవేళ (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
+		     (ఎడమ_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
 		    ((flags & EXT2_FALLOCATE_FORCE_UNINIT) &&
-		     !(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
-			goto try_right;
+		     !(ఎడమ_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
+			వెళ్ళు try_కుడి;
 
-		if (fillable > range_len)
+		ఒకవేళ (fillable > range_len)
 			fillable = range_len;
 
 		/* Don't expand an initialized left_ext beyond EOF */
-		x = left_ext->e_lblk + left_ext->e_len - 1;
-		if (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF)) {
+		x = ఎడమ_ext->e_lblk + ఎడమ_ext->e_len - 1;
+		ఒకవేళ (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF)) {
 			dbg_printf("%s: lend=%llu newlend=%llu eofblk=%llu\n",
 				   __func__, x, x + fillable, eof_blk);
-			if (eof_blk >= x && eof_blk <= x + fillable)
+			ఒకవేళ (eof_blk >= x && eof_blk <= x + fillable)
 				fillable = eof_blk - x;
 		}
 
-		if (fillable == 0)
-			goto try_right;
+		ఒకవేళ (fillable == 0)
+			వెళ్ళు try_కుడి;
 
 		/* Test if the right edge of the range is already mapped? */
-		if (EXT2FS_CLUSTER_RATIO(fs) > 1) {
-			err = ext2fs_map_cluster_block(fs, ino, inode,
+		ఒకవేళ (EXT2_FS_CLUSTER_నిష్పత్తి(fs) > 1) {
+			err = ext2fs_map_cluster_ఖండం(fs, ino, inode,
 					x + fillable, &pblk);
-			if (err)
-				goto out;
-			if (pblk)
+			ఒకవేళ (err)
+				వెళ్ళు బహిర్గతం;
+			ఒకవేళ (pblk)
 				fillable -= 1 + ((x + fillable)
-						 & EXT2FS_CLUSTER_MASK(fs));
-			if (fillable == 0)
-				goto try_right;
+						 & EXT2_FS_CLUSTER_ముసుగు(fs));
+			ఒకవేళ (fillable == 0)
+				వెళ్ళు try_కుడి;
 		}
 
 		/* Allocate range of blocks */
-		x = left_ext->e_pblk + left_ext->e_len;
+		x = ఎడమ_ext->e_pblk + ఎడమ_ext->e_len;
 		err = ext2fs_new_range(fs, EXT2_NEWRANGE_FIXED_GOAL |
-				EXT2_NEWRANGE_MIN_LENGTH,
-				x, fillable, NULL, &pblk, &plen);
-		if (err)
-			goto try_right;
+				EXT2_NEWRANGE_MIN_నిడివి,
+				x, fillable, ఖాళీ, &pblk, &plen);
+		ఒకవేళ (err)
+			వెళ్ళు try_కుడి;
 		err = claim_range(fs, inode, pblk, plen);
-		if (err)
-			goto out;
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 
 		/* Modify left_ext */
-		err = ext2fs_extent_goto(handle, left_ext->e_lblk);
-		if (err)
-			goto out;
-		range_start += plen;
+		err = ext2fs_extent_goto(handle, ఎడమ_ext->e_lblk);
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
+		range_ప్రారంభం += plen;
 		range_len -= plen;
-		left_ext->e_len += plen;
-		dbg_print_extent("ext_falloc left+", left_ext);
-		err = ext2fs_extent_replace(handle, 0, left_ext);
-		if (err)
-			goto out;
+		ఎడమ_ext->e_len += plen;
+		dbg_print_extent("ext_falloc left+", ఎడమ_ext);
+		err = ext2fs_extent_replace(handle, 0, ఎడమ_ext);
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 
 		/* Zero blocks if necessary */
-		if (!(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
-		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
-			err = ext2fs_zero_blocks2(fs, pblk, plen, NULL, NULL);
-			if (err)
-				goto out;
+		ఒకవేళ (!(ఎడమ_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		    (flags & EXT2_FALLOCATE_ZERO_ఖండాలు)) {
+			err = ext2fs_zero_blocks2(fs, pblk, plen, ఖాళీ, ఖాళీ);
+			ఒకవేళ (err)
+				వెళ్ళు బహిర్గతం;
 		}
 	}
 
-try_right:
+try_కుడి:
 	/* Extend the right extent */
-	if (right_ext) {
+	ఒకవేళ (కుడి_ext) {
 		/* How much can we attach to right_ext? */
-		if (right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-			fillable = max_uninit_len - right_ext->e_len;
-		else if (flags & EXT2_FALLOCATE_ZERO_BLOCKS)
-			fillable = max_init_len - right_ext->e_len;
-		else
+		ఒకవేళ (కుడి_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+			fillable = max_uninit_len - కుడి_ext->e_len;
+		లేకపోతే ఒకవేళ (flags & EXT2_FALLOCATE_ZERO_ఖండాలు)
+			fillable = max_init_len - కుడి_ext->e_len;
+		లేకపోతే
 			fillable = 0;
 
 		/* User requires init/uninit but extent is uninit/init. */
-		if (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
-		     (right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
+		ఒకవేళ (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
+		     (కుడి_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
 		    ((flags & EXT2_FALLOCATE_FORCE_UNINIT) &&
-		     !(right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
-			goto try_anywhere;
+		     !(కుడి_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
+			వెళ్ళు try_anywhere;
 
-		if (fillable > range_len)
+		ఒకవేళ (fillable > range_len)
 			fillable = range_len;
-		if (fillable == 0)
-			goto try_anywhere;
+		ఒకవేళ (fillable == 0)
+			వెళ్ళు try_anywhere;
 
 		/* Test if the left edge of the range is already mapped? */
-		if (EXT2FS_CLUSTER_RATIO(fs) > 1) {
-			err = ext2fs_map_cluster_block(fs, ino, inode,
-					right_ext->e_lblk - fillable, &pblk);
-			if (err)
-				goto out;
-			if (pblk)
-				fillable -= EXT2FS_CLUSTER_RATIO(fs) -
-						((right_ext->e_lblk - fillable)
-						 & EXT2FS_CLUSTER_MASK(fs));
-			if (fillable == 0)
-				goto try_anywhere;
+		ఒకవేళ (EXT2_FS_CLUSTER_నిష్పత్తి(fs) > 1) {
+			err = ext2fs_map_cluster_ఖండం(fs, ino, inode,
+					కుడి_ext->e_lblk - fillable, &pblk);
+			ఒకవేళ (err)
+				వెళ్ళు బహిర్గతం;
+			ఒకవేళ (pblk)
+				fillable -= EXT2_FS_CLUSTER_నిష్పత్తి(fs) -
+						((కుడి_ext->e_lblk - fillable)
+						 & EXT2_FS_CLUSTER_ముసుగు(fs));
+			ఒకవేళ (fillable == 0)
+				వెళ్ళు try_anywhere;
 		}
 
 		/*
@@ -456,58 +456,58 @@ try_right:
 		 * unavailable.
 		 */
 		err = ext2fs_new_range(fs, EXT2_NEWRANGE_FIXED_GOAL |
-				EXT2_NEWRANGE_MIN_LENGTH,
-				right_ext->e_pblk - fillable,
-				fillable, NULL, &pblk, &plen);
-		if (err)
-			goto try_anywhere;
+				EXT2_NEWRANGE_MIN_నిడివి,
+				కుడి_ext->e_pblk - fillable,
+				fillable, ఖాళీ, &pblk, &plen);
+		ఒకవేళ (err)
+			వెళ్ళు try_anywhere;
 		err = claim_range(fs, inode,
-			      pblk & ~EXT2FS_CLUSTER_MASK(fs),
-			      plen + (pblk & EXT2FS_CLUSTER_MASK(fs)));
-		if (err)
-			goto out;
+			      pblk & ~EXT2_FS_CLUSTER_ముసుగు(fs),
+			      plen + (pblk & EXT2_FS_CLUSTER_ముసుగు(fs)));
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 
 		/* Modify right_ext */
-		err = ext2fs_extent_goto(handle, right_ext->e_lblk);
-		if (err)
-			goto out;
+		err = ext2fs_extent_goto(handle, కుడి_ext->e_lblk);
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 		range_len -= plen;
-		right_ext->e_lblk -= plen;
-		right_ext->e_pblk -= plen;
-		right_ext->e_len += plen;
-		dbg_print_extent("ext_falloc right+", right_ext);
-		err = ext2fs_extent_replace(handle, 0, right_ext);
-		if (err)
-			goto out;
+		కుడి_ext->e_lblk -= plen;
+		కుడి_ext->e_pblk -= plen;
+		కుడి_ext->e_len += plen;
+		dbg_print_extent("ext_falloc right+", కుడి_ext);
+		err = ext2fs_extent_replace(handle, 0, కుడి_ext);
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 
 		/* Zero blocks if necessary */
-		if (!(right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
-		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
+		ఒకవేళ (!(కుడి_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		    (flags & EXT2_FALLOCATE_ZERO_ఖండాలు)) {
 			err = ext2fs_zero_blocks2(fs, pblk,
-					plen + cluster_fill, NULL, NULL);
-			if (err)
-				goto out;
+					plen + cluster_fill, ఖాళీ, ఖాళీ);
+			ఒకవేళ (err)
+				వెళ్ళు బహిర్గతం;
 		}
 	}
 
 try_anywhere:
 	/* Try implied cluster alloc on the left and right ends */
-	if (range_len > 0 && (range_start & EXT2FS_CLUSTER_MASK(fs))) {
-		cluster_fill = EXT2FS_CLUSTER_RATIO(fs) -
-			       (range_start & EXT2FS_CLUSTER_MASK(fs));
-		cluster_fill &= EXT2FS_CLUSTER_MASK(fs);
-		if (cluster_fill > range_len)
+	ఒకవేళ (range_len > 0 && (range_ప్రారంభం & EXT2_FS_CLUSTER_ముసుగు(fs))) {
+		cluster_fill = EXT2_FS_CLUSTER_నిష్పత్తి(fs) -
+			       (range_ప్రారంభం & EXT2_FS_CLUSTER_ముసుగు(fs));
+		cluster_fill &= EXT2_FS_CLUSTER_ముసుగు(fs);
+		ఒకవేళ (cluster_fill > range_len)
 			cluster_fill = range_len;
-		newex.e_lblk = range_start;
-		err = ext2fs_map_cluster_block(fs, ino, inode, newex.e_lblk,
+		newex.e_lblk = range_ప్రారంభం;
+		err = ext2fs_map_cluster_ఖండం(fs, ino, inode, newex.e_lblk,
 					       &pblk);
-		if (err)
-			goto out;
-		if (pblk == 0)
-			goto try_right_implied;
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
+		ఒకవేళ (pblk == 0)
+			వెళ్ళు try_కుడి_implied;
 		newex.e_pblk = pblk;
 		newex.e_len = cluster_fill;
 		newex.e_flags = (flags & EXT2_FALLOCATE_FORCE_INIT ? 0 :
@@ -516,50 +516,50 @@ try_anywhere:
 		ext2fs_extent_goto(handle, newex.e_lblk);
 		err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					&ex);
-		if (err == EXT2_ET_NO_CURRENT_NODE)
+		ఒకవేళ (err == EXT2_ET_NO_CURRENT_కణుపు)
 			ex.e_lblk = 0;
-		else if (err)
-			goto out;
+		లేకపోతే ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 
-		if (ex.e_lblk > newex.e_lblk)
+		ఒకవేళ (ex.e_lblk > newex.e_lblk)
 			op = 0; /* insert before */
-		else
-			op = EXT2_EXTENT_INSERT_AFTER;
+		లేకపోతే
+			op = EXT2_EXTENT_చొప్పించు_AFTER;
 		dbg_printf("%s: inserting %s lblk %llu newex=%llu\n",
 			   __func__, op ? "after" : "before", ex.e_lblk,
 			   newex.e_lblk);
-		err = ext2fs_extent_insert(handle, op, &newex);
-		if (err)
-			goto out;
+		err = ext2fs_extent_చొప్పించు(handle, op, &newex);
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 
-		if (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
-		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
+		ఒకవేళ (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		    (flags & EXT2_FALLOCATE_ZERO_ఖండాలు)) {
 			err = ext2fs_zero_blocks2(fs, newex.e_pblk,
-						  newex.e_len, NULL, NULL);
-			if (err)
-				goto out;
+						  newex.e_len, ఖాళీ, ఖాళీ);
+			ఒకవేళ (err)
+				వెళ్ళు బహిర్గతం;
 		}
 
-		range_start += cluster_fill;
+		range_ప్రారంభం += cluster_fill;
 		range_len -= cluster_fill;
 	}
 
-try_right_implied:
-	y = range_start + range_len;
-	if (range_len > 0 && (y & EXT2FS_CLUSTER_MASK(fs))) {
-		cluster_fill = y & EXT2FS_CLUSTER_MASK(fs);
-		if (cluster_fill > range_len)
+try_కుడి_implied:
+	y = range_ప్రారంభం + range_len;
+	ఒకవేళ (range_len > 0 && (y & EXT2_FS_CLUSTER_ముసుగు(fs))) {
+		cluster_fill = y & EXT2_FS_CLUSTER_ముసుగు(fs);
+		ఒకవేళ (cluster_fill > range_len)
 			cluster_fill = range_len;
-		newex.e_lblk = y & ~EXT2FS_CLUSTER_MASK(fs);
-		err = ext2fs_map_cluster_block(fs, ino, inode, newex.e_lblk,
+		newex.e_lblk = y & ~EXT2_FS_CLUSTER_ముసుగు(fs);
+		err = ext2fs_map_cluster_ఖండం(fs, ino, inode, newex.e_lblk,
 					       &pblk);
-		if (err)
-			goto out;
-		if (pblk == 0)
-			goto no_implied;
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
+		ఒకవేళ (pblk == 0)
+			వెళ్ళు no_implied;
 		newex.e_pblk = pblk;
 		newex.e_len = cluster_fill;
 		newex.e_flags = (flags & EXT2_FALLOCATE_FORCE_INIT ? 0 :
@@ -568,61 +568,61 @@ try_right_implied:
 		ext2fs_extent_goto(handle, newex.e_lblk);
 		err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					&ex);
-		if (err == EXT2_ET_NO_CURRENT_NODE)
+		ఒకవేళ (err == EXT2_ET_NO_CURRENT_కణుపు)
 			ex.e_lblk = 0;
-		else if (err)
-			goto out;
+		లేకపోతే ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 
-		if (ex.e_lblk > newex.e_lblk)
+		ఒకవేళ (ex.e_lblk > newex.e_lblk)
 			op = 0; /* insert before */
-		else
-			op = EXT2_EXTENT_INSERT_AFTER;
+		లేకపోతే
+			op = EXT2_EXTENT_చొప్పించు_AFTER;
 		dbg_printf("%s: inserting %s lblk %llu newex=%llu\n",
 			   __func__, op ? "after" : "before", ex.e_lblk,
 			   newex.e_lblk);
-		err = ext2fs_extent_insert(handle, op, &newex);
-		if (err)
-			goto out;
+		err = ext2fs_extent_చొప్పించు(handle, op, &newex);
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 
-		if (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
-		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
+		ఒకవేళ (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		    (flags & EXT2_FALLOCATE_ZERO_ఖండాలు)) {
 			err = ext2fs_zero_blocks2(fs, newex.e_pblk,
-						  newex.e_len, NULL, NULL);
-			if (err)
-				goto out;
+						  newex.e_len, ఖాళీ, ఖాళీ);
+			ఒకవేళ (err)
+				వెళ్ళు బహిర్గతం;
 		}
 
 		range_len -= cluster_fill;
 	}
 
 no_implied:
-	if (range_len == 0)
-		return 0;
+	ఒకవేళ (range_len == 0)
+		తిరిగి 0;
 
-	newex.e_lblk = range_start;
-	if (flags & EXT2_FALLOCATE_FORCE_INIT) {
+	newex.e_lblk = range_ప్రారంభం;
+	ఒకవేళ (flags & EXT2_FALLOCATE_FORCE_INIT) {
 		max_extent_len = max_init_len;
 		newex.e_flags = 0;
-	} else {
+	} లేకపోతే {
 		max_extent_len = max_uninit_len;
 		newex.e_flags = EXT2_EXTENT_FLAGS_UNINIT;
 	}
 	pblk = alloc_goal;
 	y = range_len;
-	for (x = 0; x < y;) {
-		cluster_fill = newex.e_lblk & EXT2FS_CLUSTER_MASK(fs);
+	కొరకు (x = 0; x < y;) {
+		cluster_fill = newex.e_lblk & EXT2_FS_CLUSTER_ముసుగు(fs);
 		fillable = min(range_len + cluster_fill, max_extent_len);
-		err = ext2fs_new_range(fs, 0, pblk & ~EXT2FS_CLUSTER_MASK(fs),
+		err = ext2fs_new_range(fs, 0, pblk & ~EXT2_FS_CLUSTER_ముసుగు(fs),
 				       fillable,
-				       NULL, &pblk, &plen);
-		if (err)
-			goto out;
+				       ఖాళీ, &pblk, &plen);
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 		err = claim_range(fs, inode, pblk, plen);
-		if (err)
-			goto out;
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 
 		/* Create extent */
 		newex.e_pblk = pblk + cluster_fill;
@@ -631,30 +631,30 @@ no_implied:
 		ext2fs_extent_goto(handle, newex.e_lblk);
 		err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					&ex);
-		if (err == EXT2_ET_NO_CURRENT_NODE)
+		ఒకవేళ (err == EXT2_ET_NO_CURRENT_కణుపు)
 			ex.e_lblk = 0;
-		else if (err)
-			goto out;
+		లేకపోతే ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 
-		if (ex.e_lblk > newex.e_lblk)
+		ఒకవేళ (ex.e_lblk > newex.e_lblk)
 			op = 0; /* insert before */
-		else
-			op = EXT2_EXTENT_INSERT_AFTER;
+		లేకపోతే
+			op = EXT2_EXTENT_చొప్పించు_AFTER;
 		dbg_printf("%s: inserting %s lblk %llu newex=%llu\n",
 			   __func__, op ? "after" : "before", ex.e_lblk,
 			   newex.e_lblk);
-		err = ext2fs_extent_insert(handle, op, &newex);
-		if (err)
-			goto out;
+		err = ext2fs_extent_చొప్పించు(handle, op, &newex);
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		ఒకవేళ (err)
+			వెళ్ళు బహిర్గతం;
 
-		if (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
-		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
-			err = ext2fs_zero_blocks2(fs, pblk, plen, NULL, NULL);
-			if (err)
-				goto out;
+		ఒకవేళ (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		    (flags & EXT2_FALLOCATE_ZERO_ఖండాలు)) {
+			err = ext2fs_zero_blocks2(fs, pblk, plen, ఖాళీ, ఖాళీ);
+			ఒకవేళ (err)
+				వెళ్ళు బహిర్గతం;
 		}
 
 		/* Update variables at end of loop */
@@ -662,29 +662,29 @@ no_implied:
 		range_len -= plen - cluster_fill;
 		newex.e_lblk += plen - cluster_fill;
 		pblk += plen - cluster_fill;
-		if (pblk >= ext2fs_blocks_count(fs->super))
-			pblk = fs->super->s_first_data_block;
+		ఒకవేళ (pblk >= ext2fs_ఖండాలు_లెక్క(fs->super))
+			pblk = fs->super->s_మొదటి_దత్తాంశం_ఖండం;
 	}
 
-out:
-	return err;
+బహిర్గతం:
+	తిరిగి err;
 }
 
-static errcode_t extent_fallocate(ext2_filsys fs, int flags, ext2_ino_t ino,
-				      struct ext2_inode *inode, blk64_t goal,
-				      blk64_t start, blk64_t len)
+స్థిర errcode_t extent_fallocate(ext2_filsys fs, పూర్ణాంకం flags, ext2_ino_t ino,
+				      నిర్మాణం ext2_inode *inode, blk64_t goal,
+				      blk64_t ప్రారంభం, blk64_t len)
 {
 	ext2_extent_handle_t	handle;
-	struct ext2fs_extent	left_extent, right_extent;
-	struct ext2fs_extent	*left_adjacent, *right_adjacent;
+	నిర్మాణం ext2fs_extent	ఎడమ_extent, కుడి_extent;
+	నిర్మాణం ext2fs_extent	*ఎడమ_adjacent, *కుడి_adjacent;
 	errcode_t		err;
-	blk64_t			range_start, range_end = 0, end, next;
-	blk64_t			count, goal_distance;
+	blk64_t			range_ప్రారంభం, range_చివర = 0, చివర, తదుపరి;
+	blk64_t			లెక్క, goal_దూరం;
 
-	end = start + len - 1;
+	చివర = ప్రారంభం + len - 1;
 	err = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (err)
-		return err;
+	ఒకవేళ (err)
+		తిరిగి err;
 
 	/*
 	 * Find the extent closest to the start of the alloc range.  We don't
@@ -694,100 +694,100 @@ static errcode_t extent_fallocate(ext2_filsys fs, int flags, ext2_ino_t ino,
 	 * if there was a real error reading the extent tree.  In that case,
 	 * _get() will error out.
 	 */
-start_again:
-	ext2fs_extent_goto(handle, start);
-	err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &left_extent);
-	if (err == EXT2_ET_NO_CURRENT_NODE) {
-		blk64_t max_blocks = ext2fs_blocks_count(fs->super);
+ప్రారంభం_again:
+	ext2fs_extent_goto(handle, ప్రారంభం);
+	err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &ఎడమ_extent);
+	ఒకవేళ (err == EXT2_ET_NO_CURRENT_కణుపు) {
+		blk64_t max_ఖండాలు = ext2fs_ఖండాలు_లెక్క(fs->super);
 
-		if (goal == ~0ULL)
-			goal = ext2fs_find_inode_goal(fs, ino, inode, start);
-		err = ext2fs_find_first_zero_block_bitmap2(fs->block_map,
-						goal, max_blocks - 1, &goal);
-		goal += start;
-		err = ext_falloc_helper(fs, flags, ino, inode, handle, NULL,
-					NULL, start, len, goal);
-		goto errout;
-	} else if (err)
-		goto errout;
+		ఒకవేళ (goal == ~0ULL)
+			goal = ext2fs_కనుగొను_inode_goal(fs, ino, inode, ప్రారంభం);
+		err = ext2fs_కనుగొను_మొదటి_zero_ఖండం_bitmap2(fs->ఖండం_map,
+						goal, max_ఖండాలు - 1, &goal);
+		goal += ప్రారంభం;
+		err = ext_falloc_helper(fs, flags, ino, inode, handle, ఖాళీ,
+					ఖాళీ, ప్రారంభం, len, goal);
+		వెళ్ళు errout;
+	} లేకపోతే ఒకవేళ (err)
+		వెళ్ళు errout;
 
-	dbg_print_extent("ext_falloc initial", &left_extent);
-	next = left_extent.e_lblk + left_extent.e_len;
-	if (left_extent.e_lblk > start) {
+	dbg_print_extent("ext_falloc initial", &ఎడమ_extent);
+	తదుపరి = ఎడమ_extent.e_lblk + ఎడమ_extent.e_len;
+	ఒకవేళ (ఎడమ_extent.e_lblk > ప్రారంభం) {
 		/* The nearest extent we found was beyond start??? */
-		goal = left_extent.e_pblk - (left_extent.e_lblk - start);
-		err = ext_falloc_helper(fs, flags, ino, inode, handle, NULL,
-					&left_extent, start,
-					min(len, left_extent.e_lblk - start),
+		goal = ఎడమ_extent.e_pblk - (ఎడమ_extent.e_lblk - ప్రారంభం);
+		err = ext_falloc_helper(fs, flags, ino, inode, handle, ఖాళీ,
+					&ఎడమ_extent, ప్రారంభం,
+					min(len, ఎడమ_extent.e_lblk - ప్రారంభం),
 					goal);
-		if (err)
-			goto errout;
+		ఒకవేళ (err)
+			వెళ్ళు errout;
 
-		goto start_again;
-	} else if (next >= start) {
-		range_start = next;
-		left_adjacent = &left_extent;
-	} else {
-		range_start = start;
-		left_adjacent = NULL;
+		వెళ్ళు ప్రారంభం_again;
+	} లేకపోతే ఒకవేళ (తదుపరి >= ప్రారంభం) {
+		range_ప్రారంభం = తదుపరి;
+		ఎడమ_adjacent = &ఎడమ_extent;
+	} లేకపోతే {
+		range_ప్రారంభం = ప్రారంభం;
+		ఎడమ_adjacent = ఖాళీ;
 	}
-	goal = left_extent.e_pblk + (range_start - left_extent.e_lblk);
+	goal = ఎడమ_extent.e_pblk + (range_ప్రారంభం - ఎడమ_extent.e_lblk);
 
-	do {
-		err = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT_LEAF,
-					   &right_extent);
+	చేయి {
+		err = ext2fs_extent_get(handle, EXT2_EXTENT_తదుపరి_ఆకు,
+					   &కుడి_extent);
 		dbg_printf("%s: ino=%d get next =%d\n", __func__, ino,
-			   (int)err);
-		dbg_print_extent("ext_falloc next", &right_extent);
+			   (పూర్ణాంకం)err);
+		dbg_print_extent("ext_falloc next", &కుడి_extent);
 		/* Stop if we've seen this extent before */
-		if (!err && right_extent.e_lblk <= left_extent.e_lblk)
-			err = EXT2_ET_EXTENT_NO_NEXT;
+		ఒకవేళ (!err && కుడి_extent.e_lblk <= ఎడమ_extent.e_lblk)
+			err = EXT2_ET_EXTENT_NO_తదుపరి;
 
-		if (err && err != EXT2_ET_EXTENT_NO_NEXT)
-			goto errout;
-		if (err == EXT2_ET_EXTENT_NO_NEXT ||
-		    right_extent.e_lblk > end + 1) {
-			range_end = end;
-			right_adjacent = NULL;
-		} else {
+		ఒకవేళ (err && err != EXT2_ET_EXTENT_NO_తదుపరి)
+			వెళ్ళు errout;
+		ఒకవేళ (err == EXT2_ET_EXTENT_NO_తదుపరి ||
+		    కుడి_extent.e_lblk > చివర + 1) {
+			range_చివర = చివర;
+			కుడి_adjacent = ఖాళీ;
+		} లేకపోతే {
 			/* Handle right_extent.e_lblk <= end */
-			range_end = right_extent.e_lblk - 1;
-			right_adjacent = &right_extent;
+			range_చివర = కుడి_extent.e_lblk - 1;
+			కుడి_adjacent = &కుడి_extent;
 		}
-		goal_distance = range_start - next;
-		if (err != EXT2_ET_EXTENT_NO_NEXT &&
-		    goal_distance > (range_end - right_extent.e_lblk))
-			goal = right_extent.e_pblk -
-					(right_extent.e_lblk - range_start);
+		goal_దూరం = range_ప్రారంభం - తదుపరి;
+		ఒకవేళ (err != EXT2_ET_EXTENT_NO_తదుపరి &&
+		    goal_దూరం > (range_చివర - కుడి_extent.e_lblk))
+			goal = కుడి_extent.e_pblk -
+					(కుడి_extent.e_lblk - range_ప్రారంభం);
 
 		dbg_printf("%s: ino=%d rstart=%llu rend=%llu\n", __func__, ino,
-			   range_start, range_end);
+			   range_ప్రారంభం, range_చివర);
 		err = 0;
-		if (range_start <= range_end) {
-			count = range_end - range_start + 1;
+		ఒకవేళ (range_ప్రారంభం <= range_చివర) {
+			లెక్క = range_చివర - range_ప్రారంభం + 1;
 			err = ext_falloc_helper(fs, flags, ino, inode, handle,
-						left_adjacent, right_adjacent,
-						range_start, count, goal);
-			if (err)
-				goto errout;
+						ఎడమ_adjacent, కుడి_adjacent,
+						range_ప్రారంభం, లెక్క, goal);
+			ఒకవేళ (err)
+				వెళ్ళు errout;
 		}
 
-		if (range_end == end)
-			break;
+		ఒకవేళ (range_చివర == చివర)
+			ఆపు;
 
-		err = ext2fs_extent_goto(handle, right_extent.e_lblk);
-		if (err)
-			goto errout;
-		next = right_extent.e_lblk + right_extent.e_len;
-		left_extent = right_extent;
-		left_adjacent = &left_extent;
-		range_start = next;
-		goal = left_extent.e_pblk + (range_start - left_extent.e_lblk);
-	} while (range_end < end);
+		err = ext2fs_extent_goto(handle, కుడి_extent.e_lblk);
+		ఒకవేళ (err)
+			వెళ్ళు errout;
+		తదుపరి = కుడి_extent.e_lblk + కుడి_extent.e_len;
+		ఎడమ_extent = కుడి_extent;
+		ఎడమ_adjacent = &ఎడమ_extent;
+		range_ప్రారంభం = తదుపరి;
+		goal = ఎడమ_extent.e_pblk + (range_ప్రారంభం - ఎడమ_extent.e_lblk);
+	} అయితే (range_చివర < చివర);
 
 errout:
 	ext2fs_extent_free(handle);
-	return err;
+	తిరిగి err;
 }
 
 /*
@@ -806,74 +806,74 @@ errout:
  * If neither FORCE_INIT nor FORCE_UNINIT are specified, this function will
  * try to expand any extents it finds, zeroing blocks as necessary.
  */
-errcode_t ext2fs_fallocate(ext2_filsys fs, int flags, ext2_ino_t ino,
-			   struct ext2_inode *inode, blk64_t goal,
-			   blk64_t start, blk64_t len)
+errcode_t ext2fs_fallocate(ext2_filsys fs, పూర్ణాంకం flags, ext2_ino_t ino,
+			   నిర్మాణం ext2_inode *inode, blk64_t goal,
+			   blk64_t ప్రారంభం, blk64_t len)
 {
-	struct ext2_inode	inode_buf;
-	blk64_t			blk, x, zero_blk, last = 0;
-	int			zero_len = 0;
+	నిర్మాణం ext2_inode	inode_buf;
+	blk64_t			blk, x, zero_blk, చివరి = 0;
+	పూర్ణాంకం			zero_len = 0;
 	errcode_t		err;
 
-	if (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
+	ఒకవేళ (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
 	    (flags & EXT2_FALLOCATE_FORCE_UNINIT)) ||
 	   (flags & ~EXT2_FALLOCATE_ALL_FLAGS))
-		return EXT2_ET_INVALID_ARGUMENT;
+		తిరిగి EXT2_ET_INVALID_వాదం;
 
-	if (len > ext2fs_blocks_count(fs->super))
-		return EXT2_ET_BLOCK_ALLOC_FAIL;
-	else if (len == 0)
-		return 0;
+	ఒకవేళ (len > ext2fs_ఖండాలు_లెక్క(fs->super))
+		తిరిగి EXT2_ET_ఖండం_ALLOC_FAIL;
+	లేకపోతే ఒకవేళ (len == 0)
+		తిరిగి 0;
 
 	/* Read inode structure if necessary */
-	if (!inode) {
+	ఒకవేళ (!inode) {
 		err = ext2fs_read_inode(fs, ino, &inode_buf);
-		if (err)
-			return err;
+		ఒకవేళ (err)
+			తిరిగి err;
 		inode = &inode_buf;
 	}
 	dbg_printf("%s: ino=%d start=%llu len=%llu goal=%llu\n", __func__, ino,
-		   start, len, goal);
+		   ప్రారంభం, len, goal);
 
-	if (inode->i_flags & EXT4_EXTENTS_FL) {
-		err = extent_fallocate(fs, flags, ino, inode, goal, start, len);
-		goto out;
+	ఒకవేళ (inode->i_flags & EXT4_EXTENTS_FL) {
+		err = extent_fallocate(fs, flags, ino, inode, goal, ప్రారంభం, len);
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* XXX: Allocate a bunch of blocks the slow way */
-	for (blk = start; blk < start + len; blk++) {
-		err = ext2fs_bmap2(fs, ino, inode, NULL, 0, blk, 0, &x);
-		if (err)
-			return err;
-		if (x)
-			continue;
+	కొరకు (blk = ప్రారంభం; blk < ప్రారంభం + len; blk++) {
+		err = ext2fs_bmap2(fs, ino, inode, ఖాళీ, 0, blk, 0, &x);
+		ఒకవేళ (err)
+			తిరిగి err;
+		ఒకవేళ (x)
+			కొనసాగు;
 
-		err = ext2fs_bmap2(fs, ino, inode, NULL, BMAP_ALLOC,
+		err = ext2fs_bmap2(fs, ino, inode, ఖాళీ, BMAP_ALLOC,
 				   blk, 0, &x);
-		if (err)
-			goto errout;
-		if ((zero_len && (x != last+1)) ||
+		ఒకవేళ (err)
+			వెళ్ళు errout;
+		ఒకవేళ ((zero_len && (x != చివరి+1)) ||
 		    (zero_len >= 65536)) {
 			err = ext2fs_zero_blocks2(fs, zero_blk, zero_len,
-						  NULL, NULL);
+						  ఖాళీ, ఖాళీ);
 			zero_len = 0;
-			if (err)
-				goto errout;
+			ఒకవేళ (err)
+				వెళ్ళు errout;
 		}
-		if (zero_len == 0) {
+		ఒకవేళ (zero_len == 0) {
 			zero_blk = x;
 			zero_len = 1;
-		} else {
+		} లేకపోతే {
 			zero_len++;
 		}
-		last = x;
+		చివరి = x;
 	}
 
-out:
-	if (inode == &inode_buf)
+బహిర్గతం:
+	ఒకవేళ (inode == &inode_buf)
 		ext2fs_write_inode(fs, ino, inode);
 errout:
-	if (zero_len)
-		ext2fs_zero_blocks2(fs, zero_blk, zero_len, NULL, NULL);
-	return err;
+	ఒకవేళ (zero_len)
+		ext2fs_zero_blocks2(fs, zero_blk, zero_len, ఖాళీ, ఖాళీ);
+	తిరిగి err;
 }

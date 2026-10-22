@@ -2,61 +2,61 @@
  * Ext4's on-disk acl format.  From linux/fs/ext4/acl.h
  */
 
-#define EXT4_ACL_VERSION        0x0001
+#నిర్వచించు EXT4_ACL_సంస్కరణ        0x0001
 
 /* 23.2.5 acl_tag_t values */
 
-#define ACL_UNDEFINED_TAG	(0x00)
-#define ACL_USER_OBJ		(0x01)
-#define ACL_USER		(0x02)
-#define ACL_GROUP_OBJ		(0x04)
-#define ACL_GROUP		(0x08)
-#define ACL_MASK		(0x10)
-#define ACL_OTHER		(0x20)
+#నిర్వచించు ACL_UNDEFINED_ట్యాగ్	(0x00)
+#నిర్వచించు ACL_USER_OBJ		(0x01)
+#నిర్వచించు ACL_USER		(0x02)
+#నిర్వచించు ACL_సమూహం_OBJ		(0x04)
+#నిర్వచించు ACL_సమూహం		(0x08)
+#నిర్వచించు ACL_ముసుగు		(0x10)
+#నిర్వచించు ACL_OTHER		(0x20)
 
 /* 23.3.6 acl_type_t values */
 
-#define ACL_TYPE_ACCESS		(0x8000)
-#define ACL_TYPE_DEFAULT	(0x4000)
+#నిర్వచించు ACL_TYPE_ACCESS		(0x8000)
+#నిర్వచించు ACL_TYPE_DEFAULT	(0x4000)
 
 /* 23.2.7 ACL qualifier constants */
 
-#define ACL_UNDEFINED_ID	((id_t)-1)
+#నిర్వచించు ACL_UNDEFINED_ID	((id_t)-1)
 
-typedef struct {
-        __le16          e_tag;
+రకనిర్వచనం నిర్మాణం {
+        __le16          e_ట్యాగ్;
         __le16          e_perm;
         __le32          e_id;
- } ext4_acl_entry;
+ } ext4_acl_నమోదు;
  
-typedef struct {
-        __le16          e_tag;
+రకనిర్వచనం నిర్మాణం {
+        __le16          e_ట్యాగ్;
         __le16          e_perm;
-} ext4_acl_entry_short;
+} ext4_acl_నమోదు_short;
 
-typedef struct {
-         __le32          a_version;
-} ext4_acl_header;
+రకనిర్వచనం నిర్మాణం {
+         __le32          a_సంస్కరణ;
+} ext4_acl_శీర్షిక;
 
 
 /* Supported ACL a_version fields */
- #define POSIX_ACL_XATTR_VERSION 0x0002
+ #నిర్వచించు POSIX_ACL_XATTR_సంస్కరణ 0x0002
 
-typedef struct {
-        __le16                  e_tag;
+రకనిర్వచనం నిర్మాణం {
+        __le16                  e_ట్యాగ్;
         __le16                  e_perm;
         __le32                  e_id;
-} posix_acl_xattr_entry;
+} posix_acl_xattr_నమోదు;
 
-typedef struct {
-        __le32                  a_version;
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-#endif
-        posix_acl_xattr_entry   a_entries[0];
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic pop
-#endif
-} posix_acl_xattr_header;
+రకనిర్వచనం నిర్మాణం {
+        __le32                  a_సంస్కరణ;
+#ఒకవేళ __GNUC_PREREQ (4, 8)
+#సూచన GCC diagnostic నెట్టు
+#సూచన GCC diagnostic ignored "-Wpedantic"
+#అయితే_ముగింపు
+        posix_acl_xattr_నమోదు   a_entries[0];
+#ఒకవేళ __GNUC_PREREQ (4, 8)
+#సూచన GCC diagnostic తీయి
+#అయితే_ముగింపు
+} posix_acl_xattr_శీర్షిక;
 

@@ -9,80 +9,80 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <string.h>
-#include <time.h>
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fsP.h"
 
-static int db_dir_proc(ext2_filsys fs, struct ext2_db_entry2 *db_info,
-		       void *priv_data);
+స్థిర పూర్ణాంకం db_dir_proc(ext2_filsys fs, నిర్మాణం ext2_db_entry2 *db_info,
+		       శూన్య *priv_దత్తాంశం);
 
 errcode_t ext2fs_dblist_dir_iterate(ext2_dblist dblist,
-				    int	flags,
-				    char	*block_buf,
-				    int (*func)(ext2_ino_t dir,
-						int	entry,
-						struct ext2_dir_entry *dirent,
-						int	offset,
-						int	blocksize,
-						char	*buf,
-						void	*priv_data),
-				    void *priv_data)
+				    పూర్ణాంకం	flags,
+				    అక్షరం	*ఖండం_buf,
+				    పూర్ణాంకం (*func)(ext2_ino_t dir,
+						పూర్ణాంకం	నమోదు_2,
+						నిర్మాణం ext2_dir_నమోదు *dirent,
+						పూర్ణాంకం	స్థానభ్రంశం,
+						పూర్ణాంకం	blocksize,
+						అక్షరం	*buf,
+						శూన్య	*priv_దత్తాంశం),
+				    శూన్య *priv_దత్తాంశం)
 {
 	errcode_t		retval;
-	struct dir_context	ctx;
+	నిర్మాణం dir_context	ctx;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
 	ctx.dir = 0;
 	ctx.flags = flags;
-	if (block_buf)
-		ctx.buf = block_buf;
-	else {
+	ఒకవేళ (ఖండం_buf)
+		ctx.buf = ఖండం_buf;
+	లేకపోతే {
 		retval = ext2fs_get_mem(dblist->fs->blocksize, &ctx.buf);
-		if (retval)
-			return retval;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 	}
 	ctx.func = func;
-	ctx.priv_data = priv_data;
+	ctx.priv_దత్తాంశం = priv_దత్తాంశం;
 	ctx.errcode = 0;
 
 	retval = ext2fs_dblist_iterate2(dblist, db_dir_proc, &ctx);
 
-	if (!block_buf)
+	ఒకవేళ (!ఖండం_buf)
 		ext2fs_free_mem(&ctx.buf);
-	if (retval)
-		return retval;
-	return ctx.errcode;
+	ఒకవేళ (retval)
+		తిరిగి retval;
+	తిరిగి ctx.errcode;
 }
 
-static int db_dir_proc(ext2_filsys fs, struct ext2_db_entry2 *db_info,
-		       void *priv_data)
+స్థిర పూర్ణాంకం db_dir_proc(ext2_filsys fs, నిర్మాణం ext2_db_entry2 *db_info,
+		       శూన్య *priv_దత్తాంశం)
 {
-	struct ext2_inode	inode;
-	struct dir_context	*ctx;
-	int			ret;
+	నిర్మాణం ext2_inode	inode;
+	నిర్మాణం dir_context	*ctx;
+	పూర్ణాంకం			ret;
 
-	ctx = (struct dir_context *) priv_data;
+	ctx = (నిర్మాణం dir_context *) priv_దత్తాంశం;
 	ctx->dir = db_info->ino;
 	ctx->errcode = 0;
 
 	ctx->errcode = ext2fs_read_inode(fs, ctx->dir, &inode);
-	if (ctx->errcode)
-		return DBLIST_ABORT;
-	if (inode.i_flags & EXT4_INLINE_DATA_FL)
-		ret = ext2fs_inline_data_dir_iterate(fs, ctx->dir, ctx);
-	else
-		ret = ext2fs_process_dir_block(fs, &db_info->blk,
+	ఒకవేళ (ctx->errcode)
+		తిరిగి DBLIST_ABORT;
+	ఒకవేళ (inode.i_flags & EXT4_INLINE_దత్తాంశం_FL)
+		ret = ext2fs_inline_దత్తాంశం_dir_iterate(fs, ctx->dir, ctx);
+	లేకపోతే
+		ret = ext2fs_process_dir_ఖండం(fs, &db_info->blk,
 					       db_info->blockcnt, 0, 0,
-					       priv_data);
-	if ((ret & BLOCK_ABORT) && !ctx->errcode)
-		return DBLIST_ABORT;
-	return 0;
+					       priv_దత్తాంశం);
+	ఒకవేళ ((ret & ఖండం_ABORT) && !ctx->errcode)
+		తిరిగి DBLIST_ABORT;
+	తిరిగి 0;
 }

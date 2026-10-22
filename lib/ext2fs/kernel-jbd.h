@@ -13,59 +13,59 @@
  * filesystem journaling support.
  */
 
-#ifndef _LINUX_JBD_H
-#define _LINUX_JBD_H
+#నిర్వచితం_కాకపోతే _LINUX_JBD_H
+#నిర్వచించు _LINUX_JBD_H
 
-#include "jfs_compat.h"
-#define JFS_DEBUG
-#define jfs_debug jbd_debug
+#అన్తర్భావ "jfs_compat.h"
+#నిర్వచించు JFS_DEBUG
+#నిర్వచించు jfs_debug jbd_debug
 
-#ifndef __GNUC__
-#define __FUNCTION__ ""
-#endif
+#నిర్వచితం_కాకపోతే __GNUC__
+#నిర్వచించు __FUNCTION__ ""
+#అయితే_ముగింపు
 
-#define journal_oom_retry 0
+#నిర్వచించు journal_oom_retry 0
 
-#ifdef CONFIG_JBD_DEBUG
+#నిర్వచితమైతే CONFIG_JBD_DEBUG
 /*
  * Define JBD_EXPENSIVE_CHECKING to enable more expensive internal
  * consistency checks.  By default we don't do this unless
  * CONFIG_JBD_DEBUG is on.
  */
-#define JBD_EXPENSIVE_CHECKING
-extern int journal_enable_debug;
-#else
-#define journal_enable_debug (-1)
-#endif /* !CONFIG_JBD_DEBUG */
+#నిర్వచించు JBD_EXPENSIVE_CHECKING
+బాహ్య పూర్ణాంకం journal_enable_debug;
+#లేకపోతే
+#నిర్వచించు journal_enable_debug (-1)
+#అయితే_ముగింపు /* !CONFIG_JBD_DEBUG */
 
-#ifdef __STDC__
-#define jbd_debug(n, f, a...)						\
-	do {								\
-		if ((n) <= journal_enable_debug) {			\
+#నిర్వచితమైతే __STDC__
+#నిర్వచించు jbd_debug(n, f, a...)						\
+	చేయి {								\
+		ఒకవేళ ((n) <= journal_enable_debug) {			\
 			printk (KERN_DEBUG "(%s, %d): %s: ",		\
 				__FILE__, __LINE__, __FUNCTION__);	\
 		  	printk (f, ## a);				\
 		}							\
-	} while (0)
-#else
-#define jbd_debug(x)		/* AIX doesn't do STDC */
-#endif /* !__STDC__ */
+	} అయితే (0)
+#లేకపోతే
+#నిర్వచించు jbd_debug(x)		/* AIX doesn't do STDC */
+#అయితే_ముగింపు /* !__STDC__ */
 
-extern void * __jbd_kmalloc (char *where, size_t size, int flags, int retry);
-#define jbd_kmalloc(size, flags) \
-	__jbd_kmalloc(__FUNCTION__, (size), (flags), journal_oom_retry)
-#define jbd_rep_kmalloc(size, flags) \
-	__jbd_kmalloc(__FUNCTION__, (size), (flags), 1)
+బాహ్య శూన్య * __jbd_kmalloc (అక్షరం *where, size_t కొలత, పూర్ణాంకం flags, పూర్ణాంకం retry);
+#నిర్వచించు jbd_kmalloc(కొలత, flags) \
+	__jbd_kmalloc(__FUNCTION__, (కొలత), (flags), journal_oom_retry)
+#నిర్వచించు jbd_rep_kmalloc(కొలత, flags) \
+	__jbd_kmalloc(__FUNCTION__, (కొలత), (flags), 1)
 
-#define JBD2_MIN_JOURNAL_BLOCKS 1024
-#define JBD2_MAX_JOURNAL_BLOCKS (JBD2_MIN_JOURNAL_BLOCKS * 10000)
-#define JBD2_DEFAULT_FAST_COMMIT_BLOCKS 256
+#నిర్వచించు JBD2_MIN_JOURNAL_ఖండాలు 1024
+#నిర్వచించు JBD2_MAX_JOURNAL_ఖండాలు (JBD2_MIN_JOURNAL_ఖండాలు * 10000)
+#నిర్వచించు JBD2_DEFAULT_FAST_COMMIT_ఖండాలు 256
 
 /*
  * Internal structures used by the logging mechanism:
  */
 
-#define JBD2_MAGIC_NUMBER 0xc03b3998U /* The first 4 bytes of /dev/random! */
+#నిర్వచించు JBD2_MAGIC_సంఖ్య 0xc03b3998U /* The first 4 bytes of /dev/random! */
 
 /*
  * On-disk structures
@@ -75,34 +75,34 @@ extern void * __jbd_kmalloc (char *where, size_t size, int flags, int retry);
  * Descriptor block types:
  */
 
-#define JBD2_DESCRIPTOR_BLOCK	1
-#define JBD2_COMMIT_BLOCK	2
-#define JBD2_SUPERBLOCK_V1	3
-#define JBD2_SUPERBLOCK_V2	4
-#define JBD2_REVOKE_BLOCK	5
-#define JBD2_FC_BLOCK		6
+#నిర్వచించు JBD2_DESCRIPTOR_ఖండం	1
+#నిర్వచించు JBD2_COMMIT_ఖండం	2
+#నిర్వచించు JBD2_SUPERBLOCK_V1	3
+#నిర్వచించు JBD2_SUPERBLOCK_V2	4
+#నిర్వచించు JBD2_REVOKE_ఖండం	5
+#నిర్వచించు JBD2_FC_ఖండం		6
 
 /*
  * Standard header for all descriptor blocks:
  */
-typedef struct journal_header_s
+రకనిర్వచనం నిర్మాణం journal_శీర్షిక_s
 {
 	__be32		h_magic;
 	__be32		h_blocktype;
 	__be32		h_sequence;
-} journal_header_t;
+} journal_శీర్షిక_t;
 
 /*
  * Checksum types.
  */
-#define JBD2_CRC32_CHKSUM   1
-#define JBD2_MD5_CHKSUM     2
-#define JBD2_SHA1_CHKSUM    3
-#define JBD2_CRC32C_CHKSUM  4
+#నిర్వచించు JBD2_చక్రీయ_తనిఖీ_32_CHKSUM   1
+#నిర్వచించు JBD2_MD5_CHKSUM     2
+#నిర్వచించు JBD2_SHA1_CHKSUM    3
+#నిర్వచించు JBD2_చక్రీయ_తనిఖీ_32_C_CHKSUM  4
 
-#define JBD2_CRC32_CHKSUM_SIZE 4
+#నిర్వచించు JBD2_చక్రీయ_తనిఖీ_32_CHKSUM_కొలత 4
 
-#define JBD2_CHECKSUM_BYTES (32 / sizeof(__u32))
+#నిర్వచించు JBD2_CHECKSUM_బైట్లు (32 / పరిమాణం(__u32))
 /*
  * Commit block header for storing transactional checksums:
  *
@@ -121,14 +121,14 @@ typedef struct journal_header_s
  *
  * Checksum v1, v2, and v3 are mutually exclusive features.
  */
-struct commit_header {
+నిర్మాణం commit_శీర్షిక {
 	__be32		h_magic;
 	__be32		h_blocktype;
 	__be32		h_sequence;
-	unsigned char	h_chksum_type;
-	unsigned char	h_chksum_size;
-	unsigned char	h_padding[2];
-	__be32		h_chksum[JBD2_CHECKSUM_BYTES];
+	గుర్తులేని అక్షరం	h_chksum_type;
+	గుర్తులేని అక్షరం	h_chksum_కొలత;
+	గుర్తులేని అక్షరం	h_padding[2];
+	__be32		h_chksum[JBD2_CHECKSUM_బైట్లు];
 	__be64		h_commit_sec;
 	__be32		h_commit_nsec;
 };
@@ -136,24 +136,24 @@ struct commit_header {
 /*
  * The block tag: used to describe a single buffer in the journal
  */
-typedef struct journal_block_tag3_s
+రకనిర్వచనం నిర్మాణం journal_ఖండం_tag3_s
 {
 	__be32		t_blocknr;	/* The on-disk block number */
 	__be32		t_flags;	/* See below */
-	__be32		t_blocknr_high; /* most-significant high 32bits. */
+	__be32		t_blocknr_ఎగువ; /* most-significant high 32bits. */
 	__be32		t_checksum;	/* crc32c(uuid+seq+block) */
-} journal_block_tag3_t;
+} journal_ఖండం_tag3_t;
 
-typedef struct journal_block_tag_s
+రకనిర్వచనం నిర్మాణం journal_ఖండం_ట్యాగ్_s
 {
 	__be32		t_blocknr;	/* The on-disk block number */
 	__be16		t_checksum;	/* truncated crc32c(uuid+seq+block) */
 	__be16		t_flags;	/* See below */
-	__be32		t_blocknr_high; /* most-significant high 32bits. */
-} journal_block_tag_t;
+	__be32		t_blocknr_ఎగువ; /* most-significant high 32bits. */
+} journal_ఖండం_ట్యాగ్_t;
 
 /* Tail of descriptor or revoke block, for checksumming */
-struct jbd2_journal_block_tail {
+నిర్మాణం jbd2_journal_ఖండం_తోక {
 	__be32		t_checksum;
 };
 
@@ -161,40 +161,40 @@ struct jbd2_journal_block_tail {
  * The revoke descriptor: used on disk to describe a series of blocks to
  * be revoked from the log
  */
-typedef struct journal_revoke_header_s
+రకనిర్వచనం నిర్మాణం journal_revoke_శీర్షిక_s
 {
-	journal_header_t r_header;
-	__be32		 r_count;	/* Count of bytes used in the block */
-} jbd2_journal_revoke_header_t;
+	journal_శీర్షిక_t r_శీర్షిక;
+	__be32		 r_లెక్క;	/* Count of bytes used in the block */
+} jbd2_journal_revoke_శీర్షిక_t;
 
 /* Definitions for the journal tag flags word: */
-#define JBD2_FLAG_ESCAPE		1	/* on-disk block is escaped */
-#define JBD2_FLAG_SAME_UUID	2	/* block has same uuid as previous */
-#define JBD2_FLAG_DELETED	4	/* block deleted by this transaction */
-#define JBD2_FLAG_LAST_TAG	8	/* last tag in this descriptor block */
+#నిర్వచించు JBD2_FLAG_ESCAPE		1	/* on-disk block is escaped */
+#నిర్వచించు JBD2_FLAG_SAME_UUID	2	/* block has same uuid as previous */
+#నిర్వచించు JBD2_FLAG_DELETED	4	/* block deleted by this transaction */
+#నిర్వచించు JBD2_FLAG_చివరి_ట్యాగ్	8	/* last tag in this descriptor block */
 
 
-#define UUID_SIZE 16
-#define JBD2_USERS_MAX 48
-#define JBD2_USERS_SIZE (UUID_SIZE * JBD2_USERS_MAX)
+#నిర్వచించు UUID_కొలత 16
+#నిర్వచించు JBD2_USERS_MAX 48
+#నిర్వచించు JBD2_USERS_కొలత (UUID_కొలత * JBD2_USERS_MAX)
 /*
  * The journal superblock.  All fields are in big-endian byte order.
  */
-typedef struct journal_superblock_s
+రకనిర్వచనం నిర్మాణం journal_superblock_s
 {
 /* 0x0000 */
-	journal_header_t s_header;
+	journal_శీర్షిక_t s_శీర్షిక;
 
 /* 0x000C */
 	/* Static information describing the journal */
 	__be32	s_blocksize;		/* journal device blocksize */
 	__be32	s_maxlen;		/* total blocks in journal file */
-	__be32	s_first;		/* first block of log information */
+	__be32	s_మొదటి;		/* first block of log information */
 
 /* 0x0018 */
 	/* Dynamic information describing the current state of the log */
 	__be32	s_sequence;		/* first commit ID expected in log */
-	__be32	s_start;		/* blocknr of start of log */
+	__be32	s_ప్రారంభం;		/* blocknr of start of log */
 
 /* 0x0020 */
 	/* Error value, as set by journal_abort(). */
@@ -215,243 +215,243 @@ typedef struct journal_superblock_s
 
 /* 0x0048 */
 	__be32	s_max_transaction;	/* Limit of journal blocks per trans.*/
-	__be32	s_max_trans_data;	/* Limit of data blocks per trans. */
+	__be32	s_max_trans_దత్తాంశం;	/* Limit of data blocks per trans. */
 
 /* 0x0050 */
 	__u8	s_checksum_type;	/* checksum type */
 	__u8	s_padding2[3];
 /* 0x0054 */
-	__be32	s_num_fc_blks;		/* Number of fast commit blocks */
+	__be32	s_అంకె_fc_blks;		/* Number of fast commit blocks */
 /* 0x0058 */
 	__be32	s_padding[41];
 	__be32	s_checksum;		/* crc32c(superblock) */
 
 /* 0x0100 */
-	__u8	s_users[JBD2_USERS_SIZE];		/* ids of all fs'es sharing the log */
+	__u8	s_users[JBD2_USERS_కొలత];		/* ids of all fs'es sharing the log */
 
 /* 0x0400 */
 } journal_superblock_t;
 
-#define JBD2_HAS_COMPAT_FEATURE(j,mask)					\
-	((j)->j_format_version >= 2 &&					\
-	 ((j)->j_superblock->s_feature_compat & ext2fs_cpu_to_be32((mask))))
-#define JBD2_HAS_RO_COMPAT_FEATURE(j,mask)				\
-	((j)->j_format_version >= 2 &&					\
-	 ((j)->j_superblock->s_feature_ro_compat & ext2fs_cpu_to_be32((mask))))
-#define JBD2_HAS_INCOMPAT_FEATURE(j,mask)				\
-	((j)->j_format_version >= 2 &&					\
-	 ((j)->j_superblock->s_feature_incompat & ext2fs_cpu_to_be32((mask))))
+#నిర్వచించు JBD2_HAS_COMPAT_FEATURE(j,ముసుగు)					\
+	((j)->j_format_సంస్కరణ >= 2 &&					\
+	 ((j)->j_superblock->s_feature_compat & ext2fs_cpu_గమ్యం_be32((ముసుగు))))
+#నిర్వచించు JBD2_HAS_RO_COMPAT_FEATURE(j,ముసుగు)				\
+	((j)->j_format_సంస్కరణ >= 2 &&					\
+	 ((j)->j_superblock->s_feature_ro_compat & ext2fs_cpu_గమ్యం_be32((ముసుగు))))
+#నిర్వచించు JBD2_HAS_INCOMPAT_FEATURE(j,ముసుగు)				\
+	((j)->j_format_సంస్కరణ >= 2 &&					\
+	 ((j)->j_superblock->s_feature_incompat & ext2fs_cpu_గమ్యం_be32((ముసుగు))))
 
-#define JBD2_FEATURE_COMPAT_CHECKSUM		0x00000001
+#నిర్వచించు JBD2_FEATURE_COMPAT_CHECKSUM		0x00000001
 
-#define JBD2_FEATURE_INCOMPAT_REVOKE		0x00000001
-#define JBD2_FEATURE_INCOMPAT_64BIT		0x00000002
-#define JBD2_FEATURE_INCOMPAT_ASYNC_COMMIT	0x00000004
-#define JBD2_FEATURE_INCOMPAT_CSUM_V2		0x00000008
-#define JBD2_FEATURE_INCOMPAT_CSUM_V3		0x00000010
-#define JBD2_FEATURE_INCOMPAT_FAST_COMMIT	0x00000020
+#నిర్వచించు JBD2_FEATURE_INCOMPAT_REVOKE		0x00000001
+#నిర్వచించు JBD2_FEATURE_INCOMPAT_64_బిట్టు		0x00000002
+#నిర్వచించు JBD2_FEATURE_INCOMPAT_ASYNC_COMMIT	0x00000004
+#నిర్వచించు JBD2_FEATURE_INCOMPAT_CSUM_V2		0x00000008
+#నిర్వచించు JBD2_FEATURE_INCOMPAT_CSUM_V3		0x00000010
+#నిర్వచించు JBD2_FEATURE_INCOMPAT_FAST_COMMIT	0x00000020
 
 /* Features known to this kernel version: */
-#define JBD2_KNOWN_COMPAT_FEATURES	0
-#define JBD2_KNOWN_ROCOMPAT_FEATURES	0
-#define JBD2_KNOWN_INCOMPAT_FEATURES	(JBD2_FEATURE_INCOMPAT_REVOKE|\
+#నిర్వచించు JBD2_తెలిసిన_COMPAT_FEATURES	0
+#నిర్వచించు JBD2_తెలిసిన_ROCOMPAT_FEATURES	0
+#నిర్వచించు JBD2_తెలిసిన_INCOMPAT_FEATURES	(JBD2_FEATURE_INCOMPAT_REVOKE|\
 					 JBD2_FEATURE_INCOMPAT_ASYNC_COMMIT| \
-					 JBD2_FEATURE_INCOMPAT_64BIT|\
+					 JBD2_FEATURE_INCOMPAT_64_బిట్టు|\
 					 JBD2_FEATURE_INCOMPAT_CSUM_V2|	\
 					 JBD2_FEATURE_INCOMPAT_CSUM_V3 | \
 					 JBD2_FEATURE_INCOMPAT_FAST_COMMIT)
 
-#ifdef NO_INLINE_FUNCS
-extern size_t journal_tag_bytes(journal_t *journal);
-extern int jbd2_journal_has_csum_v2or3(journal_t *journal);
-extern int jbd2_journal_get_num_fc_blks(journal_superblock_t *jsb);
-extern int tid_gt(tid_t x, tid_t y) EXT2FS_ATTR((unused));
-extern int tid_geq(tid_t x, tid_t y) EXT2FS_ATTR((unused));
-#endif
+#నిర్వచితమైతే NO_INLINE_FUNCS
+బాహ్య size_t journal_ట్యాగ్_బైట్లు(journal_t *journal);
+బాహ్య పూర్ణాంకం jbd2_journal_has_csum_v2or3(journal_t *journal);
+బాహ్య పూర్ణాంకం jbd2_journal_get_అంకె_fc_blks(journal_superblock_t *jsb);
+బాహ్య పూర్ణాంకం tid_gt(tid_t x, tid_t y) EXT2FS_ATTR((వాడని));
+బాహ్య పూర్ణాంకం tid_geq(tid_t x, tid_t y) EXT2FS_ATTR((వాడని));
+#అయితే_ముగింపు
 
-#if (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
-#ifdef E2FSCK_INCLUDE_INLINE_FUNCS
-#if (__STDC_VERSION__ >= 199901L)
-#define _INLINE_ extern inline
-#else
-#define _INLINE_ inline
-#endif
-#else /* !E2FSCK_INCLUDE_INLINE FUNCS */
-#if (__STDC_VERSION__ >= 199901L)
-#define _INLINE_ inline
-#else /* not C99 */
-#ifdef __GNUC__
-#define _INLINE_ extern __inline__
-#else				/* For Watcom C */
-#define _INLINE_ extern inline
-#endif /* __GNUC__ */
-#endif /* __STDC_VERSION__ >= 199901L */
-#endif /* INCLUDE_INLINE_FUNCS */
+#ఒకవేళ (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
+#నిర్వచితమైతే E2FSCK_INCLUDE_INLINE_FUNCS
+#ఒకవేళ (__STDC_VERSION__ >= 199901L)
+#నిర్వచించు _INLINE_ బాహ్య అంతఃవరుస
+#లేకపోతే
+#నిర్వచించు _INLINE_ అంతఃవరుస
+#అయితే_ముగింపు
+#లేకపోతే /* !E2FSCK_INCLUDE_INLINE FUNCS */
+#ఒకవేళ (__STDC_VERSION__ >= 199901L)
+#నిర్వచించు _INLINE_ అంతఃవరుస
+#లేకపోతే /* not C99 */
+#నిర్వచితమైతే __GNUC__
+#నిర్వచించు _INLINE_ బాహ్య __inline__
+#లేకపోతే				/* For Watcom C */
+#నిర్వచించు _INLINE_ బాహ్య అంతఃవరుస
+#అయితే_ముగింపు /* __GNUC__ */
+#అయితే_ముగింపు /* __STDC_VERSION__ >= 199901L */
+#అయితే_ముగింపు /* INCLUDE_INLINE_FUNCS */
 
 /* journal feature predicate functions */
-#define JBD2_FEATURE_COMPAT_FUNCS(name, flagname) \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j); \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j) \
+#నిర్వచించు JBD2_FEATURE_COMPAT_FUNCS(name, flagname) \
+_INLINE_ పూర్ణాంకం jbd2_has_feature_##name(journal_t *j); \
+_INLINE_ పూర్ణాంకం jbd2_has_feature_##name(journal_t *j) \
 { \
-	return ((j)->j_format_version >= 2 && \
+	తిరిగి ((j)->j_format_సంస్కరణ >= 2 && \
 		((j)->j_superblock->s_feature_compat & \
-		 ext2fs_cpu_to_be32(JBD2_FEATURE_COMPAT_##flagname)) != 0); \
+		 ext2fs_cpu_గమ్యం_be32(JBD2_FEATURE_COMPAT_##flagname)) != 0); \
 } \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j) \
+_INLINE_ శూన్య jbd2_సమితి_feature##name(journal_t *j); \
+_INLINE_ శూన్య jbd2_సమితి_feature##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_compat |= \
-		ext2fs_cpu_to_be32(JBD2_FEATURE_COMPAT_##flagname); \
+		ext2fs_cpu_గమ్యం_be32(JBD2_FEATURE_COMPAT_##flagname); \
 } \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j) \
+_INLINE_ శూన్య jbd2_clear_feature_##name(journal_t *j); \
+_INLINE_ శూన్య jbd2_clear_feature_##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_compat &= \
-		~ext2fs_cpu_to_be32(JBD2_FEATURE_COMPAT_##flagname); \
+		~ext2fs_cpu_గమ్యం_be32(JBD2_FEATURE_COMPAT_##flagname); \
 }
 
-#define JBD2_FEATURE_RO_COMPAT_FUNCS(name, flagname) \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j);	\
-_INLINE_ int jbd2_has_feature_##name(journal_t *j) \
+#నిర్వచించు JBD2_FEATURE_RO_COMPAT_FUNCS(name, flagname) \
+_INLINE_ పూర్ణాంకం jbd2_has_feature_##name(journal_t *j);	\
+_INLINE_ పూర్ణాంకం jbd2_has_feature_##name(journal_t *j) \
 { \
-	return ((j)->j_format_version >= 2 && \
+	తిరిగి ((j)->j_format_సంస్కరణ >= 2 && \
 		((j)->j_superblock->s_feature_ro_compat & \
-		 ext2fs_cpu_to_be32(JBD2_FEATURE_RO_COMPAT_##flagname)) != 0); \
+		 ext2fs_cpu_గమ్యం_be32(JBD2_FEATURE_RO_COMPAT_##flagname)) != 0); \
 } \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j) \
+_INLINE_ శూన్య jbd2_సమితి_feature##name(journal_t *j); \
+_INLINE_ శూన్య jbd2_సమితి_feature##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_ro_compat |= \
-		ext2fs_cpu_to_be32(JBD2_FEATURE_RO_COMPAT_##flagname); \
+		ext2fs_cpu_గమ్యం_be32(JBD2_FEATURE_RO_COMPAT_##flagname); \
 } \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j) \
+_INLINE_ శూన్య jbd2_clear_feature_##name(journal_t *j); \
+_INLINE_ శూన్య jbd2_clear_feature_##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_ro_compat &= \
-		~ext2fs_cpu_to_be32(JBD2_FEATURE_RO_COMPAT_##flagname); \
+		~ext2fs_cpu_గమ్యం_be32(JBD2_FEATURE_RO_COMPAT_##flagname); \
 }
 
-#define JBD2_FEATURE_INCOMPAT_FUNCS(name, flagname) \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j); \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j) \
+#నిర్వచించు JBD2_FEATURE_INCOMPAT_FUNCS(name, flagname) \
+_INLINE_ పూర్ణాంకం jbd2_has_feature_##name(journal_t *j); \
+_INLINE_ పూర్ణాంకం jbd2_has_feature_##name(journal_t *j) \
 { \
-	return ((j)->j_format_version >= 2 && \
+	తిరిగి ((j)->j_format_సంస్కరణ >= 2 && \
 		((j)->j_superblock->s_feature_incompat & \
-		 ext2fs_cpu_to_be32(JBD2_FEATURE_INCOMPAT_##flagname)) != 0); \
+		 ext2fs_cpu_గమ్యం_be32(JBD2_FEATURE_INCOMPAT_##flagname)) != 0); \
 } \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j) \
+_INLINE_ శూన్య jbd2_సమితి_feature##name(journal_t *j); \
+_INLINE_ శూన్య jbd2_సమితి_feature##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_incompat |= \
-		ext2fs_cpu_to_be32(JBD2_FEATURE_INCOMPAT_##flagname); \
+		ext2fs_cpu_గమ్యం_be32(JBD2_FEATURE_INCOMPAT_##flagname); \
 } \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j) \
+_INLINE_ శూన్య jbd2_clear_feature_##name(journal_t *j); \
+_INLINE_ శూన్య jbd2_clear_feature_##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_incompat &= \
-		~ext2fs_cpu_to_be32(JBD2_FEATURE_INCOMPAT_##flagname); \
+		~ext2fs_cpu_గమ్యం_be32(JBD2_FEATURE_INCOMPAT_##flagname); \
 }
 
-#else
-#define JBD2_FEATURE_COMPAT_FUNCS(name, flagname) \
-extern int jbd2_has_feature_##name(journal_t *j); \
-extern void jbd2_set_feature_##name(journal_t *j); \
-extern void jbd2_clear_feature_##name(journal_t *j);
+#లేకపోతే
+#నిర్వచించు JBD2_FEATURE_COMPAT_FUNCS(name, flagname) \
+బాహ్య పూర్ణాంకం jbd2_has_feature_##name(journal_t *j); \
+బాహ్య శూన్య jbd2_సమితి_feature##name(journal_t *j); \
+బాహ్య శూన్య jbd2_clear_feature_##name(journal_t *j);
 
-#define JBD2_FEATURE_RO_COMPAT_FUNCS(name, flagname) \
-extern int jbd2_has_feature_##name(journal_t *j); \
-extern void jbd2_set_feature_##name(journal_t *j); \
-extern void jbd2_clear_feature_##name(journal_t *j);
+#నిర్వచించు JBD2_FEATURE_RO_COMPAT_FUNCS(name, flagname) \
+బాహ్య పూర్ణాంకం jbd2_has_feature_##name(journal_t *j); \
+బాహ్య శూన్య jbd2_సమితి_feature##name(journal_t *j); \
+బాహ్య శూన్య jbd2_clear_feature_##name(journal_t *j);
 
-#define JBD2_FEATURE_INCOMPAT_FUNCS(name, flagname) \
-extern int jbd2_has_feature_##name(journal_t *j); \
-extern void jbd2_set_feature_##name(journal_t *j); \
-extern void jbd2_clear_feature_##name(journal_t *j);
+#నిర్వచించు JBD2_FEATURE_INCOMPAT_FUNCS(name, flagname) \
+బాహ్య పూర్ణాంకం jbd2_has_feature_##name(journal_t *j); \
+బాహ్య శూన్య jbd2_సమితి_feature##name(journal_t *j); \
+బాహ్య శూన్య jbd2_clear_feature_##name(journal_t *j);
 
-#endif /* (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS)) */
+#అయితే_ముగింపు /* (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS)) */
 
 JBD2_FEATURE_COMPAT_FUNCS(checksum,		CHECKSUM)
 
 JBD2_FEATURE_INCOMPAT_FUNCS(revoke,		REVOKE)
-JBD2_FEATURE_INCOMPAT_FUNCS(64bit,		64BIT)
+JBD2_FEATURE_INCOMPAT_FUNCS(64బిట్టు,		64బిట్టు_2)
 JBD2_FEATURE_INCOMPAT_FUNCS(async_commit,	ASYNC_COMMIT)
 JBD2_FEATURE_INCOMPAT_FUNCS(csum2,		CSUM_V2)
 JBD2_FEATURE_INCOMPAT_FUNCS(csum3,		CSUM_V3)
 JBD2_FEATURE_INCOMPAT_FUNCS(fast_commit,	FAST_COMMIT)
 
-#if (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
+#ఒకవేళ (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
 /*
  * helper functions to deal with 32 or 64bit block numbers.
  */
-_INLINE_ size_t journal_tag_bytes(journal_t *journal)
+_INLINE_ size_t journal_ట్యాగ్_బైట్లు(journal_t *journal)
 {
 	size_t sz;
 
-	if (jbd2_has_feature_csum3(journal))
-		return sizeof(journal_block_tag3_t);
+	ఒకవేళ (jbd2_has_feature_csum3(journal))
+		తిరిగి పరిమాణం(journal_ఖండం_tag3_t);
 
-	sz = sizeof(journal_block_tag_t);
+	sz = పరిమాణం(journal_ఖండం_ట్యాగ్_t);
 
-	if (jbd2_has_feature_csum2(journal))
-		sz += sizeof(__u16);
+	ఒకవేళ (jbd2_has_feature_csum2(journal))
+		sz += పరిమాణం(__u16);
 
-	if (jbd2_has_feature_64bit(journal))
-		return sz;
+	ఒకవేళ (jbd2_has_feature_64bit(journal))
+		తిరిగి sz;
 
-	return sz - sizeof(__u32);
+	తిరిగి sz - పరిమాణం(__u32);
 }
 
-_INLINE_ int jbd2_journal_has_csum_v2or3(journal_t *journal)
+_INLINE_ పూర్ణాంకం jbd2_journal_has_csum_v2or3(journal_t *journal)
 {
-	if (jbd2_has_feature_csum2(journal) || jbd2_has_feature_csum3(journal))
-		return 1;
+	ఒకవేళ (jbd2_has_feature_csum2(journal) || jbd2_has_feature_csum3(journal))
+		తిరిగి 1;
 
-	return 0;
+	తిరిగి 0;
 }
 
-_INLINE_ int jbd2_journal_get_num_fc_blks(journal_superblock_t *jsb)
+_INLINE_ పూర్ణాంకం jbd2_journal_get_అంకె_fc_blks(journal_superblock_t *jsb)
 {
-	int num_fc_blocks = be32_to_cpu(jsb->s_num_fc_blks);
+	పూర్ణాంకం అంకె_fc_ఖండాలు = be32_గమ్యం_cpu(jsb->s_అంకె_fc_blks);
 
-	return num_fc_blocks ? num_fc_blocks : JBD2_DEFAULT_FAST_COMMIT_BLOCKS;
+	తిరిగి అంకె_fc_ఖండాలు ? అంకె_fc_ఖండాలు : JBD2_DEFAULT_FAST_COMMIT_ఖండాలు;
 }
 
 /* Comparison functions for transaction IDs: perform comparisons using
  * modulo arithmetic so that they work over sequence number wraps. */
 
-_INLINE_ int tid_gt(tid_t x, tid_t y)
+_INLINE_ పూర్ణాంకం tid_gt(tid_t x, tid_t y)
 {
-	int difference = (x - y);
-	return (difference > 0);
+	పూర్ణాంకం difference = (x - y);
+	తిరిగి (difference > 0);
 }
 
-_INLINE_ int tid_geq(tid_t x, tid_t y)
+_INLINE_ పూర్ణాంకం tid_geq(tid_t x, tid_t y)
 {
-	int difference = (x - y);
-	return (difference >= 0);
+	పూర్ణాంకం difference = (x - y);
+	తిరిగి (difference >= 0);
 }
-#endif /* (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS)) */
+#అయితే_ముగింపు /* (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS)) */
 
-#undef _INLINE_
+#నిర్వచనం_రద్దు _INLINE_
 
-extern int journal_blocks_per_page(struct inode *inode);
+బాహ్య పూర్ణాంకం journal_ఖండాలు_చొప్పున_పుట(నిర్మాణం inode *inode);
 
 /*
  * Definitions which augment the buffer_head layer
  */
 
 /* journaling buffer types */
-#define BJ_None		0	/* Not journaled */
-#define BJ_SyncData	1	/* Normal data: flush before commit */
-#define BJ_AsyncData	2	/* writepage data: wait on it before commit */
-#define BJ_Metadata	3	/* Normal journaled metadata */
-#define BJ_Forget	4	/* Buffer superseded by this transaction */
-#define BJ_IO		5	/* Buffer is for temporary IO use */
-#define BJ_Shadow	6	/* Buffer contents being shadowed to the log */
-#define BJ_LogCtl	7	/* Buffer contains log descriptors */
-#define BJ_Reserved	8	/* Buffer is reserved for access by journal */
-#define BJ_Types	9
+#నిర్వచించు BJ_None		0	/* Not journaled */
+#నిర్వచించు BJ_Sync_దత్తాంశం	1	/* Normal data: flush before commit */
+#నిర్వచించు BJ_Async_దత్తాంశం	2	/* writepage data: wait on it before commit */
+#నిర్వచించు BJ_Metadata	3	/* Normal journaled metadata */
+#నిర్వచించు BJ_Forget	4	/* Buffer superseded by this transaction */
+#నిర్వచించు BJ_IO		5	/* Buffer is for temporary IO use */
+#నిర్వచించు BJ_Shadow	6	/* Buffer contents being shadowed to the log */
+#నిర్వచించు BJ_LogCtl	7	/* Buffer contains log descriptors */
+#నిర్వచించు BJ_Reserved	8	/* Buffer is reserved for access by journal */
+#నిర్వచించు BJ_Types	9
 
-extern int jbd_blocks_per_page(struct inode *inode);
+బాహ్య పూర్ణాంకం jbd_ఖండాలు_చొప్పున_పుట(నిర్మాణం inode *inode);
 
-#endif	/* _LINUX_JBD_H */
+#అయితే_ముగింపు	/* _LINUX_JBD_H */

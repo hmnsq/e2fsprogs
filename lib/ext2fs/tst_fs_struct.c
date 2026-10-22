@@ -9,73 +9,73 @@
  * %End-Header%
  */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "ext2fs.h"
+#అన్తర్భావ "ext2fs.h"
 
-struct struct_ext2_filsys fs;
+నిర్మాణం struct_ext2_filsys fs;
 
-#ifndef offsetof
-#define offsetof(type, member)  __builtin_offsetof (type, member)
-#endif
-#define check_field(x) cur_offset = do_field(#x, sizeof(fs.x),		\
-					offsetof(struct struct_ext2_filsys, x), \
-					cur_offset)
+#నిర్వచితం_కాకపోతే offsetof
+#నిర్వచించు offsetof(type, member)  __builtin_offsetof (type, member)
+#అయితే_ముగింపు
+#నిర్వచించు check_క్షేత్రం(x) cur_స్థానభ్రంశం = do_క్షేత్రం(#x, పరిమాణం(fs.x),		\
+					offsetof(నిర్మాణం struct_ext2_filsys, x), \
+					cur_స్థానభ్రంశం)
 
-static int do_field(const char *field, size_t size, int offset, int cur_offset)
+స్థిర పూర్ణాంకం do_క్షేత్రం(స్థిరరాశి అక్షరం *క్షేత్రం, size_t కొలత, పూర్ణాంకం స్థానభ్రంశం, పూర్ణాంకం cur_స్థానభ్రంశం)
 {
-	if (offset != cur_offset) {
-		printf("\t(padding %d bytes?)\n", offset - cur_offset);
+	ఒకవేళ (స్థానభ్రంశం != cur_స్థానభ్రంశం) {
+		రాయి("\t(padding %d bytes?)\n", స్థానభ్రంశం - cur_స్థానభ్రంశం);
 	}
-	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	రాయి("%8d %-30s %3u\n", స్థానభ్రంశం, క్షేత్రం, (గుర్తులేని) కొలత);
+	తిరిగి స్థానభ్రంశం + కొలత;
 }
 
-int main(int argc, char **argv)
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#ఒకవేళ (__GNUC__ >= 4)
+	పూర్ణాంకం cur_స్థానభ్రంశం = 0;
 
-	printf("%8s %-30s %3s\n", "offset", "field", "size");
-	check_field(magic);
-	check_field(io);
-	check_field(flags);
-	check_field(device_name);
-	check_field(super);
-	check_field(blocksize);
-	check_field(fragsize);
-	check_field(group_desc_count);
-	check_field(desc_blocks);
-	check_field(group_desc);
-	check_field(inode_blocks_per_group);
-	check_field(inode_map);
-	check_field(block_map);
-	check_field(get_blocks);
-	check_field(check_directory);
-	check_field(write_bitmaps);
-	check_field(read_inode);
-	check_field(write_inode);
-	check_field(badblocks);
-	check_field(dblist);
-	check_field(stride);
-	check_field(orig_super);
-	check_field(image_header);
-	check_field(umask);
-	check_field(now);
-	check_field(cluster_ratio_bits);
-	check_field(reserved);
-	check_field(priv_data);
-	check_field(icache);
-	check_field(image_io);
-	check_field(get_alloc_block);
-	check_field(block_alloc_stats);
-	check_field(mmp_buf);
-	check_field(mmp_cmp);
-	check_field(mmp_fd);
-	check_field(mmp_last_written);
-	printf("Ending offset is %d\n\n", cur_offset);
-#endif
-	exit(0);
+	రాయి("%8s %-30s %3s\n", "offset", "field", "size");
+	check_క్షేత్రం(magic);
+	check_క్షేత్రం(io);
+	check_క్షేత్రం(flags);
+	check_క్షేత్రం(device_name);
+	check_క్షేత్రం(super);
+	check_క్షేత్రం(blocksize);
+	check_క్షేత్రం(fragsize);
+	check_క్షేత్రం(సమూహం_desc_లెక్క);
+	check_క్షేత్రం(desc_ఖండాలు);
+	check_క్షేత్రం(సమూహం_desc);
+	check_క్షేత్రం(inode_ఖండాలు_చొప్పున_సమూహం);
+	check_క్షేత్రం(inode_map);
+	check_క్షేత్రం(ఖండం_map);
+	check_క్షేత్రం(get_ఖండాలు);
+	check_క్షేత్రం(check_directory);
+	check_క్షేత్రం(write_bitmaps);
+	check_క్షేత్రం(read_inode);
+	check_క్షేత్రం(write_inode);
+	check_క్షేత్రం(badblocks);
+	check_క్షేత్రం(dblist);
+	check_క్షేత్రం(stride);
+	check_క్షేత్రం(orig_super);
+	check_క్షేత్రం(image_శీర్షిక);
+	check_క్షేత్రం(umask);
+	check_క్షేత్రం(now);
+	check_క్షేత్రం(cluster_నిష్పత్తి_బిట్లు);
+	check_క్షేత్రం(reserved);
+	check_క్షేత్రం(priv_దత్తాంశం);
+	check_క్షేత్రం(icache);
+	check_క్షేత్రం(image_io);
+	check_క్షేత్రం(get_alloc_ఖండం);
+	check_క్షేత్రం(ఖండం_alloc_stats);
+	check_క్షేత్రం(mmp_buf);
+	check_క్షేత్రం(mmp_cmp);
+	check_క్షేత్రం(mmp_fd);
+	check_క్షేత్రం(mmp_చివరి_written);
+	రాయి("Ending offset is %d\n\n", cur_స్థానభ్రంశం);
+#అయితే_ముగింపు
+	నిష్క్రమించు(0);
 }

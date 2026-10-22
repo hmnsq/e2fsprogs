@@ -10,142 +10,142 @@
  * %End-Header%
  */
 
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
+#నిర్వచితం_కాకపోతే LARGEFILE_ఆధారం
+#నిర్వచించు LARGEFILE_ఆధారం
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే LARGEFILE64_ఆధారం
+#నిర్వచించు LARGEFILE64_ఆధారం
+#అయితే_ముగింపు
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <fcntl.h>
-#ifdef HAVE_SYS_DISK_H
-#include <sys/disk.h>
-#endif
-#ifdef HAVE_LINUX_FD_H
-#include <sys/ioctl.h>
-#include <linux/fd.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_ERRNO_H
+#అన్తర్భావ <errno.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <fcntl.h>
+#నిర్వచితమైతే HAVE_SYS_DISK_H
+#అన్తర్భావ <sys/disk.h>
+#అయితే_ముగింపు
+#నిర్వచితమైతే HAVE_LINUX_FD_H
+#అన్తర్భావ <sys/ioctl.h>
+#అన్తర్భావ <linux/fd.h>
+#అయితే_ముగింపు
 
-#if defined(__linux__) && defined(_IO)
-#if !defined(BLKSSZGET)
-#define BLKSSZGET  _IO(0x12,104)/* get block device sector size */
-#endif
-#if !defined(BLKPBSZGET)
-#define BLKPBSZGET _IO(0x12,123)/* get block physical sector size */
-#endif
-#endif
+#ఒకవేళ defined(__linux__) && defined(_IO)
+#ఒకవేళ !defined(BLKSSZGET)
+#నిర్వచించు BLKSSZGET  _IO(0x12,104)/* get block device sector size */
+#అయితే_ముగింపు
+#ఒకవేళ !defined(BLKPBSZGET)
+#నిర్వచించు BLKPBSZGET _IO(0x12,123)/* get block physical sector size */
+#అయితే_ముగింపు
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
 /*
  * Returns the logical sector size of a device
  */
-errcode_t ext2fs_get_device_sectsize(const char *file, int *sectsize)
+errcode_t ext2fs_get_device_sectsize(స్థిరరాశి అక్షరం *file, పూర్ణాంకం *sectsize)
 {
-#ifdef _WIN32
+#నిర్వచితమైతే _WIN32
 	*sectsize = 512; // just guessing
-	return 0;
-#else // not _WIN32
+	తిరిగి 0;
+#లేకపోతే // not _WIN32
 
-	int	fd;
+	పూర్ణాంకం	fd;
 
 	fd = ext2fs_open_file(file, O_RDONLY, 0);
-	if (fd < 0)
-		return errno;
+	ఒకవేళ (fd < 0)
+		తిరిగి errno;
 
-#ifdef BLKSSZGET
-	if (ioctl(fd, BLKSSZGET, sectsize) >= 0) {
+#నిర్వచితమైతే BLKSSZGET
+	ఒకవేళ (ioctl(fd, BLKSSZGET, sectsize) >= 0) {
 		close(fd);
-		return 0;
+		తిరిగి 0;
 	}
-#endif
-#ifdef DIOCGSECTORSIZE
-	if (ioctl(fd, DIOCGSECTORSIZE, sectsize) >= 0) {
+#అయితే_ముగింపు
+#నిర్వచితమైతే DIOCGSECTORSIZE
+	ఒకవేళ (ioctl(fd, DIOCGSECTORSIZE, sectsize) >= 0) {
 		close(fd);
-		return 0;
+		తిరిగి 0;
 	}
-#endif
+#అయితే_ముగింపు
 	*sectsize = 0;
 	close(fd);
-	return 0;
+	తిరిగి 0;
 
-#endif // ifdef _WIN32
+#అయితే_ముగింపు // ifdef _WIN32
 }
 
 /*
  * Return desired alignment for direct I/O
  */
-int ext2fs_get_dio_alignment(int fd)
+పూర్ణాంకం ext2fs_get_dio_alignment(పూర్ణాంకం fd)
 {
-	int align = 0;
+	పూర్ణాంకం align = 0;
 
-#ifdef BLKSSZGET
-	if (ioctl(fd, BLKSSZGET, &align) < 0)
+#నిర్వచితమైతే BLKSSZGET
+	ఒకవేళ (ioctl(fd, BLKSSZGET, &align) < 0)
 		align = 0;
-#endif
-#ifdef DIOCGSECTORSIZE
-	if (align <= 0 &&
+#అయితే_ముగింపు
+#నిర్వచితమైతే DIOCGSECTORSIZE
+	ఒకవేళ (align <= 0 &&
 	    ioctl(fd, DIOCGSECTORSIZE, &align) < 0)
 		align = 0;
-#endif
+#అయితే_ముగింపు
 
-#ifdef _SC_PAGESIZE
-	if (align <= 0)
+#నిర్వచితమైతే _SC_PAGESIZE
+	ఒకవేళ (align <= 0)
 		align = sysconf(_SC_PAGESIZE);
-#endif
-#ifdef HAVE_GETPAGESIZE
-	if (align <= 0)
+#అయితే_ముగింపు
+#నిర్వచితమైతే HAVE_GETPAGESIZE
+	ఒకవేళ (align <= 0)
 		align = getpagesize();
-#endif
-	if (align <= 0)
+#అయితే_ముగింపు
+	ఒకవేళ (align <= 0)
 		align = 4096;
 
-	return align;
+	తిరిగి align;
 }
 
 /*
  * Returns the physical sector size of a device
  */
-errcode_t ext2fs_get_device_phys_sectsize(const char *file, int *sectsize)
+errcode_t ext2fs_get_device_phys_sectsize(స్థిరరాశి అక్షరం *file, పూర్ణాంకం *sectsize)
 {
-#ifdef _WIN32
+#నిర్వచితమైతే _WIN32
 
-	return ext2fs_get_device_sectsize(file, sectsize);
+	తిరిగి ext2fs_get_device_sectsize(file, sectsize);
 
-#else // not _WIN32
+#లేకపోతే // not _WIN32
 
-	int	fd;
+	పూర్ణాంకం	fd;
 
 	fd = ext2fs_open_file(file, O_RDONLY, 0);
-	if (fd < 0)
-		return errno;
+	ఒకవేళ (fd < 0)
+		తిరిగి errno;
 
-#ifdef BLKPBSZGET
-	if (ioctl(fd, BLKPBSZGET, sectsize) >= 0) {
+#నిర్వచితమైతే BLKPBSZGET
+	ఒకవేళ (ioctl(fd, BLKPBSZGET, sectsize) >= 0) {
 		close(fd);
-		return 0;
+		తిరిగి 0;
 	}
-#endif
-#ifdef DIOCGSECTORSIZE
+#అయితే_ముగింపు
+#నిర్వచితమైతే DIOCGSECTORSIZE
 	/* This isn't really the physical sector size, but FreeBSD
 	 * doesn't seem to have this concept. */
-	if (ioctl(fd, DIOCGSECTORSIZE, sectsize) >= 0) {
+	ఒకవేళ (ioctl(fd, DIOCGSECTORSIZE, sectsize) >= 0) {
 		close(fd);
-		return 0;
+		తిరిగి 0;
 	}
-#endif
+#అయితే_ముగింపు
 	*sectsize = 0;
 	close(fd);
-	return 0;
+	తిరిగి 0;
 
-#endif // ifdef _WIN32
+#అయితే_ముగింపు // ifdef _WIN32
 }

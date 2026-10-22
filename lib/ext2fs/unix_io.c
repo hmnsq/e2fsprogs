@@ -15,497 +15,497 @@
  * %End-Header%
  */
 
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
-#define _XOPEN_SOURCE 600
-#define _DARWIN_C_SOURCE
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#endif
+#ఒకవేళ !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#నిర్వచించు XOPEN_ఆధారం 600
+#నిర్వచించు DARWIN_C_ఆధారం
+#నిర్వచితం_కాకపోతే LARGEFILE_ఆధారం
+#నిర్వచించు LARGEFILE_ఆధారం
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే LARGEFILE64_ఆధారం
+#నిర్వచించు LARGEFILE64_ఆధారం
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే GNU_ఆధారం
+#నిర్వచించు GNU_ఆధారం
+#అయితే_ముగింపు
+#అయితే_ముగింపు
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#ifdef __linux__
-#include <sys/utsname.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
-#endif
-#ifdef HAVE_SYS_MOUNT_H
-#include <sys/mount.h>
-#endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_RESOURCE_H
-#include <sys/resource.h>
-#endif
-#if HAVE_LINUX_FALLOC_H
-#include <linux/falloc.h>
-#endif
-#ifdef HAVE_PTHREAD
-#include <pthread.h>
-#endif
-#ifdef HAVE_SYS_FILE_H
-#include <sys/file.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_ERRNO_H
+#అన్తర్భావ <errno.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <time.h>
+#నిర్వచితమైతే __linux__
+#అన్తర్భావ <sys/utsname.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
+#నిర్వచితమైతే HAVE_SYS_IOCTL_H
+#అన్తర్భావ <sys/ioctl.h>
+#అయితే_ముగింపు
+#నిర్వచితమైతే HAVE_SYS_MOUNT_H
+#అన్తర్భావ <sys/mount.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_STAT_H
+#అన్తర్భావ <sys/stat.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_RESOURCE_H
+#అన్తర్భావ <sys/resource.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_LINUX_FALLOC_H
+#అన్తర్భావ <linux/falloc.h>
+#అయితే_ముగింపు
+#నిర్వచితమైతే HAVE_PTHREAD
+#అన్తర్భావ <pthread.h>
+#అయితే_ముగింపు
+#నిర్వచితమైతే HAVE_SYS_FILE_H
+#అన్తర్భావ <sys/file.h>
+#అయితే_ముగింపు
 
-#if defined(__linux__) && defined(_IO) && !defined(BLKROGET)
-#define BLKROGET   _IO(0x12, 94) /* Get read-only status (0 = read_write).  */
-#endif
+#ఒకవేళ defined(__linux__) && defined(_IO) && !defined(BLKROGET)
+#నిర్వచించు BLKROGET   _IO(0x12, 94) /* Get read-only status (0 = read_write).  */
+#అయితే_ముగింపు
 
-#undef ALIGN_DEBUG
+#నిర్వచనం_రద్దు ALIGN_DEBUG
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
+#అన్తర్భావ "ext2fsP.h"
 
-static inline int find_last_bit_set(int x)
+స్థిర అంతఃవరుస పూర్ణాంకం కనుగొను_చివరి_బిట్టు_సమితి(పూర్ణాంకం x)
 {
-	int r = 32;
+	పూర్ణాంకం r = 32;
 
-	if (!x)
-		return 0;
-	if (!(x & 0xffff0000u)) {
+	ఒకవేళ (!x)
+		తిరిగి 0;
+	ఒకవేళ (!(x & 0xffff0000u)) {
 		x = (x & 0xffffu) << 16;
 		r -= 16;
 	}
-	if (!(x & 0xff000000u)) {
+	ఒకవేళ (!(x & 0xff000000u)) {
 		x = (x & 0xffffffu) << 8;
 		r -= 8;
 	}
-	if (!(x & 0xf0000000u)) {
+	ఒకవేళ (!(x & 0xf0000000u)) {
 		x = (x & 0xfffffffu) << 4;
 		r -= 4;
 	}
-	if (!(x & 0xc0000000u)) {
+	ఒకవేళ (!(x & 0xc0000000u)) {
 		x = (x & 0x3fffffffu) << 2;
 		r -= 2;
 	}
-	if (!(x & 0x80000000u)) {
+	ఒకవేళ (!(x & 0x80000000u)) {
 		r -= 1;
 	}
-	return r;
+	తిరిగి r;
 }
 
 /* Get high bit set out of 32-bit argument, -1 if none set */
-static inline int highbit32(uint32_t v)
+స్థిర అంతఃవరుస పూర్ణాంకం highbit32(uint32_t v)
 {
-	return find_last_bit_set(v) - 1;
+	తిరిగి కనుగొను_చివరి_బిట్టు_సమితి(v) - 1;
 }
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#నిర్వచించు EXT2_CHECK_MAGIC(నిర్మాణం, సంకేతం_2) \
+	  ఒకవేళ ((నిర్మాణం)->magic != (సంకేతం_2)) తిరిగి (సంకేతం_2)
 
-struct unix_cache {
-	char			*buf;
-	unsigned long long	block;
-	int			access_time;
-	unsigned		dirty:1;
-	unsigned		in_use:1;
-	unsigned		write_err:1;
+నిర్మాణం unix_cache {
+	అక్షరం			*buf;
+	గుర్తులేని దీర్ఘ దీర్ఘ	ఖండం;
+	పూర్ణాంకం			access_సమయం;
+	గుర్తులేని		dirty:1;
+	గుర్తులేని		లోపల_use:1;
+	గుర్తులేని		write_err:1;
 };
 
-#define DEFAULT_CACHE_SIZE 8
-#define WRITE_DIRECT_SIZE 4	/* Must be smaller than CACHE_SIZE */
-#define READ_DIRECT_SIZE 4	/* Should be smaller than CACHE_SIZE */
+#నిర్వచించు DEFAULT_CACHE_కొలత 8
+#నిర్వచించు WRITE_ప్రత్యక్ష_కొలత 4	/* Must be smaller than CACHE_SIZE */
+#నిర్వచించు READ_ప్రత్యక్ష_కొలత 4	/* Should be smaller than CACHE_SIZE */
 
-struct unix_private_data {
-	int	magic;
-	int	dev;
-	int	flags;
-	int	align;
-	int	access_time;
-	int	unix_flock_flags;
-	ext2_loff_t offset;
-	struct unix_cache *cache;
-	unsigned int cache_size;
-	unsigned int cache_hash_shift;
-	void	*bounce;
-	struct struct_io_stats io_stats;
-#ifdef HAVE_PTHREAD
+నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం {
+	పూర్ణాంకం	magic;
+	పూర్ణాంకం	dev;
+	పూర్ణాంకం	flags;
+	పూర్ణాంకం	align;
+	పూర్ణాంకం	access_సమయం;
+	పూర్ణాంకం	unix_flock_flags;
+	ext2_loff_t స్థానభ్రంశం;
+	నిర్మాణం unix_cache *cache;
+	గుర్తులేని పూర్ణాంకం cache_కొలత;
+	గుర్తులేని పూర్ణాంకం cache_hash_జరుపు;
+	శూన్య	*bounce;
+	నిర్మాణం struct_io_stats io_stats;
+#నిర్వచితమైతే HAVE_PTHREAD
 	pthread_mutex_t cache_mutex;
 	pthread_mutex_t bounce_mutex;
 	pthread_mutex_t stats_mutex;
-#endif
+#అయితే_ముగింపు
 };
 
-#define IS_ALIGNED(n, align) ((((uintptr_t) n) & \
+#నిర్వచించు IS_ALIGNED(n, align) ((((uintptr_t) n) & \
 			       ((uintptr_t) ((align)-1))) == 0)
 
-typedef enum lock_kind {
+రకనిర్వచనం గణన తాళం_రకం {
 	CACHE_MTX, BOUNCE_MTX, STATS_MTX
-} kind_t;
+} రకం_t;
 
-#ifdef HAVE_PTHREAD
-static inline pthread_mutex_t *get_mutex(struct unix_private_data *data,
-					 kind_t kind)
+#నిర్వచితమైతే HAVE_PTHREAD
+స్థిర అంతఃవరుస pthread_mutex_t *get_mutex(నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం,
+					 రకం_t రకం)
 {
-	if (data->flags & IO_FLAG_THREADS) {
-		switch (kind) {
-		case CACHE_MTX:
-			return &data->cache_mutex;
-		case BOUNCE_MTX:
-			return &data->bounce_mutex;
-		case STATS_MTX:
-			return &data->stats_mutex;
+	ఒకవేళ (దత్తాంశం->flags & IO_FLAG_దారాలు) {
+		ఎంపిక (రకం) {
+		స్థితి CACHE_MTX:
+			తిరిగి &దత్తాంశం->cache_mutex;
+		స్థితి BOUNCE_MTX:
+			తిరిగి &దత్తాంశం->bounce_mutex;
+		స్థితి STATS_MTX:
+			తిరిగి &దత్తాంశం->stats_mutex;
 		}
 	}
-	return NULL;
+	తిరిగి ఖాళీ;
 }
-#endif
+#అయితే_ముగింపు
 
-static inline void mutex_lock(struct unix_private_data *data, kind_t kind)
+స్థిర అంతఃవరుస శూన్య mutex_తాళం(నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం, రకం_t రకం)
 {
-#ifdef HAVE_PTHREAD
-	pthread_mutex_t *mtx = get_mutex(data,kind);
+#నిర్వచితమైతే HAVE_PTHREAD
+	pthread_mutex_t *mtx = get_mutex(దత్తాంశం,రకం);
 
-	if (mtx)
-		pthread_mutex_lock(mtx);
-#endif
+	ఒకవేళ (mtx)
+		pthread_mutex_తాళం(mtx);
+#అయితే_ముగింపు
 }
 
-static inline void mutex_unlock(struct unix_private_data *data, kind_t kind)
+స్థిర అంతఃవరుస శూన్య mutex_unlock(నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం, రకం_t రకం)
 {
-#ifdef HAVE_PTHREAD
-	pthread_mutex_t *mtx = get_mutex(data,kind);
+#నిర్వచితమైతే HAVE_PTHREAD
+	pthread_mutex_t *mtx = get_mutex(దత్తాంశం,రకం);
 
-	if (mtx)
+	ఒకవేళ (mtx)
 		pthread_mutex_unlock(mtx);
-#endif
+#అయితే_ముగింపు
 }
 
-static errcode_t unix_get_stats(io_channel channel, io_stats *stats)
+స్థిర errcode_t unix_get_stats(io_channel channel, io_stats *stats)
 {
 	errcode_t	retval = 0;
 
-	struct unix_private_data *data;
+	నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (stats) {
-		mutex_lock(data, STATS_MTX);
-		*stats = &data->io_stats;
-		mutex_unlock(data, STATS_MTX);
+	ఒకవేళ (stats) {
+		mutex_తాళం(దత్తాంశం, STATS_MTX);
+		*stats = &దత్తాంశం->io_stats;
+		mutex_unlock(దత్తాంశం, STATS_MTX);
 	}
 
-	return retval;
+	తిరిగి retval;
 }
 
 /*
  * Here are the raw I/O functions
  */
-static errcode_t raw_read_blk(io_channel channel,
-			      struct unix_private_data *data,
-			      unsigned long long block,
-			      int count, void *bufv)
+స్థిర errcode_t raw_read_blk(io_channel channel,
+			      నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం,
+			      గుర్తులేని దీర్ఘ దీర్ఘ ఖండం,
+			      పూర్ణాంకం లెక్క, శూన్య *bufv)
 {
 	errcode_t	retval;
-	ssize_t		size;
+	ssize_t		కొలత;
 	ext2_loff_t	location;
-	int		actual = 0;
-	unsigned char	*buf = bufv;
+	పూర్ణాంకం		actual = 0;
+	గుర్తులేని అక్షరం	*buf = bufv;
 	ssize_t		really_read = 0;
-	unsigned long long aligned_blk;
-	int		align_size, offset;
+	గుర్తులేని దీర్ఘ దీర్ఘ aligned_blk;
+	పూర్ణాంకం		align_కొలత, స్థానభ్రంశం;
 
-	size = (count < 0) ? -count : (ext2_loff_t) count * channel->block_size;
-	mutex_lock(data, STATS_MTX);
-	data->io_stats.bytes_read += size;
-	mutex_unlock(data, STATS_MTX);
-	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
+	కొలత = (లెక్క < 0) ? -లెక్క : (ext2_loff_t) లెక్క * channel->ఖండం_కొలత;
+	mutex_తాళం(దత్తాంశం, STATS_MTX);
+	దత్తాంశం->io_stats.బైట్లు_read += కొలత;
+	mutex_unlock(దత్తాంశం, STATS_MTX);
+	location = ((ext2_loff_t) ఖండం * channel->ఖండం_కొలత) + దత్తాంశం->స్థానభ్రంశం;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE)
-		goto bounce_read;
+	ఒకవేళ (దత్తాంశం->flags & IO_FLAG_FORCE_BOUNCE)
+		వెళ్ళు bounce_read;
 
-#ifdef HAVE_PREAD64
+#నిర్వచితమైతే HAVE_PREAD64
 	/* Try an aligned pread */
-	if ((channel->align == 0) ||
+	ఒకవేళ ((channel->align == 0) ||
 	    (IS_ALIGNED(buf, channel->align) &&
 	     IS_ALIGNED(location, channel->align) &&
-	     IS_ALIGNED(size, channel->align))) {
-		actual = pread64(data->dev, buf, size, location);
-		if (actual == size)
-			return 0;
+	     IS_ALIGNED(కొలత, channel->align))) {
+		actual = pread64(దత్తాంశం->dev, buf, కొలత, location);
+		ఒకవేళ (actual == కొలత)
+			తిరిగి 0;
 		actual = 0;
 	}
-#elif HAVE_PREAD
+#లేదావేళ HAVE_PREAD
 	/* Try an aligned pread */
-	if ((sizeof(off_t) >= sizeof(ext2_loff_t)) &&
+	ఒకవేళ ((పరిమాణం(off_t) >= పరిమాణం(ext2_loff_t)) &&
 	    ((channel->align == 0) ||
 	     (IS_ALIGNED(buf, channel->align) &&
 	      IS_ALIGNED(location, channel->align) &&
-	      IS_ALIGNED(size, channel->align)))) {
-		actual = pread(data->dev, buf, size, location);
-		if (actual == size)
-			return 0;
+	      IS_ALIGNED(కొలత, channel->align)))) {
+		actual = pread(దత్తాంశం->dev, buf, కొలత, location);
+		ఒకవేళ (actual == కొలత)
+			తిరిగి 0;
 		actual = 0;
 	}
-#endif /* HAVE_PREAD */
+#అయితే_ముగింపు /* HAVE_PREAD */
 
-	if ((channel->align == 0) ||
+	ఒకవేళ ((channel->align == 0) ||
 	    (IS_ALIGNED(buf, channel->align) &&
 	     IS_ALIGNED(location, channel->align) &&
-	     IS_ALIGNED(size, channel->align))) {
-		mutex_lock(data, BOUNCE_MTX);
-		if (ext2fs_llseek(data->dev, location, SEEK_SET) < 0) {
+	     IS_ALIGNED(కొలత, channel->align))) {
+		mutex_తాళం(దత్తాంశం, BOUNCE_MTX);
+		ఒకవేళ (ext2fs_llseek(దత్తాంశం->dev, location, SEEK_SET) < 0) {
 			retval = errno ? errno : EXT2_ET_LLSEEK_FAILED;
-			goto error_unlock;
+			వెళ్ళు error_unlock;
 		}
-		actual = read(data->dev, buf, size);
-		if (actual != size) {
+		actual = పఠ(దత్తాంశం->dev, buf, కొలత);
+		ఒకవేళ (actual != కొలత) {
 		short_read:
-			if (actual < 0) {
+			ఒకవేళ (actual < 0) {
 				retval = errno;
 				actual = 0;
-			} else
+			} లేకపోతే
 				retval = EXT2_ET_SHORT_READ;
-			goto error_unlock;
+			వెళ్ళు error_unlock;
 		}
-		goto success_unlock;
+		వెళ్ళు success_unlock;
 	}
 
-#ifdef ALIGN_DEBUG
-	printf("raw_read_blk: O_DIRECT fallback: %p %lu\n", buf,
-	       (unsigned long) size);
-#endif
+#నిర్వచితమైతే ALIGN_DEBUG
+	రాయి("raw_read_blk: O_DIRECT fallback: %p %lu\n", buf,
+	       (గుర్తులేని దీర్ఘ) కొలత);
+#అయితే_ముగింపు
 
 	/*
 	 * The buffer or size which we're trying to read isn't aligned
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_read:
-	if (channel->align == 0)
+	ఒకవేళ (channel->align == 0)
 		channel->align = 1;
-	if ((channel->block_size > channel->align) &&
-	    (channel->block_size % channel->align) == 0)
-		align_size = channel->block_size;
-	else
-		align_size = channel->align;
-	aligned_blk = location / align_size;
-	offset = location % align_size;
+	ఒకవేళ ((channel->ఖండం_కొలత > channel->align) &&
+	    (channel->ఖండం_కొలత % channel->align) == 0)
+		align_కొలత = channel->ఖండం_కొలత;
+	లేకపోతే
+		align_కొలత = channel->align;
+	aligned_blk = location / align_కొలత;
+	స్థానభ్రంశం = location % align_కొలత;
 
-	mutex_lock(data, BOUNCE_MTX);
-	if (ext2fs_llseek(data->dev, aligned_blk * align_size, SEEK_SET) < 0) {
+	mutex_తాళం(దత్తాంశం, BOUNCE_MTX);
+	ఒకవేళ (ext2fs_llseek(దత్తాంశం->dev, aligned_blk * align_కొలత, SEEK_SET) < 0) {
 		retval = errno ? errno : EXT2_ET_LLSEEK_FAILED;
-		goto error_unlock;
+		వెళ్ళు error_unlock;
 	}
-	while (size > 0) {
-		actual = read(data->dev, data->bounce, align_size);
-		if (actual != align_size) {
+	అయితే (కొలత > 0) {
+		actual = పఠ(దత్తాంశం->dev, దత్తాంశం->bounce, align_కొలత);
+		ఒకవేళ (actual != align_కొలత) {
 			actual = really_read;
 			buf -= really_read;
-			size += really_read;
-			goto short_read;
+			కొలత += really_read;
+			వెళ్ళు short_read;
 		}
-		if ((actual + offset) > align_size)
-			actual = align_size - offset;
-		if (actual > size)
-			actual = size;
-		memcpy(buf, (char *)data->bounce + offset, actual);
+		ఒకవేళ ((actual + స్థానభ్రంశం) > align_కొలత)
+			actual = align_కొలత - స్థానభ్రంశం;
+		ఒకవేళ (actual > కొలత)
+			actual = కొలత;
+		జ్ఞాపకం_నకలు(buf, (అక్షరం *)దత్తాంశం->bounce + స్థానభ్రంశం, actual);
 
 		really_read += actual;
-		size -= actual;
+		కొలత -= actual;
 		buf += actual;
-		offset = 0;
+		స్థానభ్రంశం = 0;
 		aligned_blk++;
 	}
 success_unlock:
-	mutex_unlock(data, BOUNCE_MTX);
-	return 0;
+	mutex_unlock(దత్తాంశం, BOUNCE_MTX);
+	తిరిగి 0;
 
 error_unlock:
-	mutex_unlock(data, BOUNCE_MTX);
-	if (actual >= 0 && actual < size)
-		memset((char *) buf+actual, 0, size-actual);
-	if (channel->read_error)
-		retval = (channel->read_error)(channel, block, count, buf,
-					       size, actual, retval);
-	return retval;
+	mutex_unlock(దత్తాంశం, BOUNCE_MTX);
+	ఒకవేళ (actual >= 0 && actual < కొలత)
+		memset((అక్షరం *) buf+actual, 0, కొలత-actual);
+	ఒకవేళ (channel->read_error)
+		retval = (channel->read_error)(channel, ఖండం, లెక్క, buf,
+					       కొలత, actual, retval);
+	తిరిగి retval;
 }
 
-#define RAW_WRITE_NO_HANDLER	(1U << 0)
-#define RAW_WRITE_NOLOCK	(1U << 1)
+#నిర్వచించు RAW_WRITE_NO_HANDLER	(1U << 0)
+#నిర్వచించు RAW_WRITE_NOLOCK	(1U << 1)
 
-static errcode_t raw_write_blk(io_channel channel,
-			       struct unix_private_data *data,
-			       unsigned long long block,
-			       int count, const void *bufv,
-			       int flags)
+స్థిర errcode_t raw_write_blk(io_channel channel,
+			       నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం,
+			       గుర్తులేని దీర్ఘ దీర్ఘ ఖండం,
+			       పూర్ణాంకం లెక్క, స్థిరరాశి శూన్య *bufv,
+			       పూర్ణాంకం flags)
 {
-	ssize_t		size;
+	ssize_t		కొలత;
 	ext2_loff_t	location;
-	int		actual = 0;
+	పూర్ణాంకం		actual = 0;
 	errcode_t	retval;
-	const unsigned char *buf = bufv;
-	unsigned long long aligned_blk;
-	int		align_size, offset;
+	స్థిరరాశి గుర్తులేని అక్షరం *buf = bufv;
+	గుర్తులేని దీర్ఘ దీర్ఘ aligned_blk;
+	పూర్ణాంకం		align_కొలత, స్థానభ్రంశం;
 
-	if (count == 1)
-		size = channel->block_size;
-	else {
-		if (count < 0)
-			size = -count;
-		else
-			size = (ext2_loff_t) count * channel->block_size;
+	ఒకవేళ (లెక్క == 1)
+		కొలత = channel->ఖండం_కొలత;
+	లేకపోతే {
+		ఒకవేళ (లెక్క < 0)
+			కొలత = -లెక్క;
+		లేకపోతే
+			కొలత = (ext2_loff_t) లెక్క * channel->ఖండం_కొలత;
 	}
-	mutex_lock(data, STATS_MTX);
-	data->io_stats.bytes_written += size;
-	mutex_unlock(data, STATS_MTX);
+	mutex_తాళం(దత్తాంశం, STATS_MTX);
+	దత్తాంశం->io_stats.బైట్లు_written += కొలత;
+	mutex_unlock(దత్తాంశం, STATS_MTX);
 
-	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
+	location = ((ext2_loff_t) ఖండం * channel->ఖండం_కొలత) + దత్తాంశం->స్థానభ్రంశం;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE)
-		goto bounce_write;
+	ఒకవేళ (దత్తాంశం->flags & IO_FLAG_FORCE_BOUNCE)
+		వెళ్ళు bounce_write;
 
-#ifdef HAVE_PWRITE64
+#నిర్వచితమైతే HAVE_PWRITE64
 	/* Try an aligned pwrite */
-	if ((channel->align == 0) ||
+	ఒకవేళ ((channel->align == 0) ||
 	    (IS_ALIGNED(buf, channel->align) &&
 	     IS_ALIGNED(location, channel->align) &&
-	     IS_ALIGNED(size, channel->align))) {
-		actual = pwrite64(data->dev, buf, size, location);
-		if (actual == size)
-			return 0;
+	     IS_ALIGNED(కొలత, channel->align))) {
+		actual = pwrite64(దత్తాంశం->dev, buf, కొలత, location);
+		ఒకవేళ (actual == కొలత)
+			తిరిగి 0;
 	}
-#elif HAVE_PWRITE
+#లేదావేళ HAVE_PWRITE
 	/* Try an aligned pwrite */
-	if ((sizeof(off_t) >= sizeof(ext2_loff_t)) &&
+	ఒకవేళ ((పరిమాణం(off_t) >= పరిమాణం(ext2_loff_t)) &&
 	    ((channel->align == 0) ||
 	     (IS_ALIGNED(buf, channel->align) &&
 	      IS_ALIGNED(location, channel->align) &&
-	      IS_ALIGNED(size, channel->align)))) {
-		actual = pwrite(data->dev, buf, size, location);
-		if (actual == size)
-			return 0;
+	      IS_ALIGNED(కొలత, channel->align)))) {
+		actual = pwrite(దత్తాంశం->dev, buf, కొలత, location);
+		ఒకవేళ (actual == కొలత)
+			తిరిగి 0;
 	}
-#endif /* HAVE_PWRITE */
+#అయితే_ముగింపు /* HAVE_PWRITE */
 
-	if ((channel->align == 0) ||
+	ఒకవేళ ((channel->align == 0) ||
 	    (IS_ALIGNED(buf, channel->align) &&
 	     IS_ALIGNED(location, channel->align) &&
-	     IS_ALIGNED(size, channel->align))) {
-		if (!(flags & RAW_WRITE_NOLOCK))
-			mutex_lock(data, BOUNCE_MTX);
-		if (ext2fs_llseek(data->dev, location, SEEK_SET) < 0) {
+	     IS_ALIGNED(కొలత, channel->align))) {
+		ఒకవేళ (!(flags & RAW_WRITE_NOLOCK))
+			mutex_తాళం(దత్తాంశం, BOUNCE_MTX);
+		ఒకవేళ (ext2fs_llseek(దత్తాంశం->dev, location, SEEK_SET) < 0) {
 			retval = errno ? errno : EXT2_ET_LLSEEK_FAILED;
-			goto error_unlock;
+			వెళ్ళు error_unlock;
 		}
-		actual = write(data->dev, buf, size);
-		if (!(flags & RAW_WRITE_NOLOCK))
-			mutex_unlock(data, BOUNCE_MTX);
-		if (actual < 0) {
+		actual = లిఖ(దత్తాంశం->dev, buf, కొలత);
+		ఒకవేళ (!(flags & RAW_WRITE_NOLOCK))
+			mutex_unlock(దత్తాంశం, BOUNCE_MTX);
+		ఒకవేళ (actual < 0) {
 			retval = errno;
-			goto error_out;
+			వెళ్ళు error_బహిర్గతం;
 		}
-		if (actual != size) {
+		ఒకవేళ (actual != కొలత) {
 		short_write:
 			retval = EXT2_ET_SHORT_WRITE;
-			goto error_out;
+			వెళ్ళు error_బహిర్గతం;
 		}
-		return 0;
+		తిరిగి 0;
 	}
 
-#ifdef ALIGN_DEBUG
-	printf("raw_write_blk: O_DIRECT fallback: %p %lu\n", buf,
-	       (unsigned long) size);
-#endif
+#నిర్వచితమైతే ALIGN_DEBUG
+	రాయి("raw_write_blk: O_DIRECT fallback: %p %lu\n", buf,
+	       (గుర్తులేని దీర్ఘ) కొలత);
+#అయితే_ముగింపు
 	/*
 	 * The buffer or size which we're trying to write isn't aligned
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_write:
-	if (channel->align == 0)
+	ఒకవేళ (channel->align == 0)
 		channel->align = 1;
-	if ((channel->block_size > channel->align) &&
-	    (channel->block_size % channel->align) == 0)
-		align_size = channel->block_size;
-	else
-		align_size = channel->align;
-	aligned_blk = location / align_size;
-	offset = location % align_size;
+	ఒకవేళ ((channel->ఖండం_కొలత > channel->align) &&
+	    (channel->ఖండం_కొలత % channel->align) == 0)
+		align_కొలత = channel->ఖండం_కొలత;
+	లేకపోతే
+		align_కొలత = channel->align;
+	aligned_blk = location / align_కొలత;
+	స్థానభ్రంశం = location % align_కొలత;
 
-	while (size > 0) {
-		int actual_w;
+	అయితే (కొలత > 0) {
+		పూర్ణాంకం actual_w;
 
-		if (!(flags & RAW_WRITE_NOLOCK))
-			mutex_lock(data, BOUNCE_MTX);
-		if (size < align_size || offset) {
-			if (ext2fs_llseek(data->dev, aligned_blk * align_size,
+		ఒకవేళ (!(flags & RAW_WRITE_NOLOCK))
+			mutex_తాళం(దత్తాంశం, BOUNCE_MTX);
+		ఒకవేళ (కొలత < align_కొలత || స్థానభ్రంశం) {
+			ఒకవేళ (ext2fs_llseek(దత్తాంశం->dev, aligned_blk * align_కొలత,
 					  SEEK_SET) < 0) {
 				retval = errno ? errno : EXT2_ET_LLSEEK_FAILED;
-				goto error_unlock;
+				వెళ్ళు error_unlock;
 			}
-			actual = read(data->dev, data->bounce,
-				      align_size);
-			if (actual != align_size) {
-				if (actual < 0) {
+			actual = పఠ(దత్తాంశం->dev, దత్తాంశం->bounce,
+				      align_కొలత);
+			ఒకవేళ (actual != align_కొలత) {
+				ఒకవేళ (actual < 0) {
 					retval = errno;
-					goto error_unlock;
+					వెళ్ళు error_unlock;
 				}
-				memset((char *) data->bounce + actual, 0,
-				       align_size - actual);
+				memset((అక్షరం *) దత్తాంశం->bounce + actual, 0,
+				       align_కొలత - actual);
 			}
 		}
-		actual = size;
-		if ((actual + offset) > align_size)
-			actual = align_size - offset;
-		if (actual > size)
-			actual = size;
-		memcpy(((char *)data->bounce) + offset, buf, actual);
-		if (ext2fs_llseek(data->dev, aligned_blk * align_size, SEEK_SET) < 0) {
+		actual = కొలత;
+		ఒకవేళ ((actual + స్థానభ్రంశం) > align_కొలత)
+			actual = align_కొలత - స్థానభ్రంశం;
+		ఒకవేళ (actual > కొలత)
+			actual = కొలత;
+		జ్ఞాపకం_నకలు(((అక్షరం *)దత్తాంశం->bounce) + స్థానభ్రంశం, buf, actual);
+		ఒకవేళ (ext2fs_llseek(దత్తాంశం->dev, aligned_blk * align_కొలత, SEEK_SET) < 0) {
 			retval = errno ? errno : EXT2_ET_LLSEEK_FAILED;
-			goto error_unlock;
+			వెళ్ళు error_unlock;
 		}
-		actual_w = write(data->dev, data->bounce, align_size);
-		if (!(flags & RAW_WRITE_NOLOCK))
-			mutex_unlock(data, BOUNCE_MTX);
-		if (actual_w < 0) {
+		actual_w = లిఖ(దత్తాంశం->dev, దత్తాంశం->bounce, align_కొలత);
+		ఒకవేళ (!(flags & RAW_WRITE_NOLOCK))
+			mutex_unlock(దత్తాంశం, BOUNCE_MTX);
+		ఒకవేళ (actual_w < 0) {
 			retval = errno;
-			goto error_out;
+			వెళ్ళు error_బహిర్గతం;
 		}
-		if (actual_w != align_size)
-			goto short_write;
-		size -= actual;
+		ఒకవేళ (actual_w != align_కొలత)
+			వెళ్ళు short_write;
+		కొలత -= actual;
 		buf += actual;
 		location += actual;
 		aligned_blk++;
-		offset = 0;
+		స్థానభ్రంశం = 0;
 	}
-	return 0;
+	తిరిగి 0;
 
 error_unlock:
-	if (!(flags & RAW_WRITE_NOLOCK))
-		mutex_unlock(data, BOUNCE_MTX);
-error_out:
-	if (((flags & RAW_WRITE_NO_HANDLER) == 0) && channel->write_error)
-		retval = (channel->write_error)(channel, block, count, buf,
-						size, actual, retval);
-	return retval;
+	ఒకవేళ (!(flags & RAW_WRITE_NOLOCK))
+		mutex_unlock(దత్తాంశం, BOUNCE_MTX);
+error_బహిర్గతం:
+	ఒకవేళ (((flags & RAW_WRITE_NO_HANDLER) == 0) && channel->write_error)
+		retval = (channel->write_error)(channel, ఖండం, లెక్క, buf,
+						కొలత, actual, retval);
+	తిరిగి retval;
 }
 
 
@@ -514,75 +514,75 @@ error_out:
  */
 
 /* Allocate the cache buffers */
-static errcode_t alloc_cache(io_channel channel,
-			     struct unix_private_data *data)
+స్థిర errcode_t alloc_cache(io_channel channel,
+			     నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం)
 {
 	errcode_t		retval;
-	struct unix_cache	*cache;
-	unsigned int		i;
+	నిర్మాణం unix_cache	*cache;
+	గుర్తులేని పూర్ణాంకం		i;
 
-	data->access_time = 0;
-	for (i=0, cache = data->cache; i < data->cache_size; i++, cache++) {
-		cache->block = 0;
-		cache->access_time = 0;
+	దత్తాంశం->access_సమయం = 0;
+	కొరకు (i=0, cache = దత్తాంశం->cache; i < దత్తాంశం->cache_కొలత; i++, cache++) {
+		cache->ఖండం = 0;
+		cache->access_సమయం = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
-		if (cache->buf)
+		cache->లోపల_use = 0;
+		ఒకవేళ (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 		retval = io_channel_alloc_buf(channel, 0, &cache->buf);
-		if (retval)
-			return retval;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 	}
-	if (channel->align || data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (data->bounce)
-			ext2fs_free_mem(&data->bounce);
-		retval = io_channel_alloc_buf(channel, 0, &data->bounce);
+	ఒకవేళ (channel->align || దత్తాంశం->flags & IO_FLAG_FORCE_BOUNCE) {
+		ఒకవేళ (దత్తాంశం->bounce)
+			ext2fs_free_mem(&దత్తాంశం->bounce);
+		retval = io_channel_alloc_buf(channel, 0, &దత్తాంశం->bounce);
 	}
-	return retval;
+	తిరిగి retval;
 }
 
 /* Free the cache buffers */
-static void free_cache(struct unix_private_data *data)
+స్థిర శూన్య free_cache(నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం)
 {
-	struct unix_cache	*cache;
-	unsigned int		i;
+	నిర్మాణం unix_cache	*cache;
+	గుర్తులేని పూర్ణాంకం		i;
 
-	data->access_time = 0;
-	for (i=0, cache = data->cache; i < data->cache_size; i++, cache++) {
-		cache->block = 0;
-		cache->access_time = 0;
+	దత్తాంశం->access_సమయం = 0;
+	కొరకు (i=0, cache = దత్తాంశం->cache; i < దత్తాంశం->cache_కొలత; i++, cache++) {
+		cache->ఖండం = 0;
+		cache->access_సమయం = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
-		if (cache->buf)
+		cache->లోపల_use = 0;
+		ఒకవేళ (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 	}
-	if (data->bounce)
-		ext2fs_free_mem(&data->bounce);
+	ఒకవేళ (దత్తాంశం->bounce)
+		ext2fs_free_mem(&దత్తాంశం->bounce);
 }
 
-#ifndef NO_IO_CACHE
+#నిర్వచితం_కాకపోతే NO_IO_CACHE
 
 /*  2^63 + 2^61 - 2^57 + 2^54 - 2^51 - 2^18 + 1 */
-#define GOLDEN_RATIO_PRIME	0x9e37fffffffc0001UL
-#ifndef CACHE_LINE_SIZE
+#నిర్వచించు GOLDEN_నిష్పత్తి_ప్రధానసంఖ్య	0x9e37fffffffc0001UL
+#నిర్వచితం_కాకపోతే CACHE_పంక్తి_కొలత
 /* if the system didn't tell us, guess something reasonable */
-#define CACHE_LINE_SIZE		64
-#endif
+#నిర్వచించు CACHE_పంక్తి_కొలత		64
+#అయితే_ముగింపు
 
 /* buffer cache hashing function, crudely stolen from xfsprogs */
-static unsigned int
-cache_hash(struct unix_private_data *data, blk64_t blkno)
+స్థిర గుర్తులేని పూర్ణాంకం
+cache_hash(నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం, blk64_t blkno)
 {
 	uint64_t	hashval = blkno;
 	uint64_t	tmp;
 
 	/* the default cache size is small, just do a linear scan */
-	if (data->cache_size <= DEFAULT_CACHE_SIZE)
-		return 0;
+	ఒకవేళ (దత్తాంశం->cache_కొలత <= DEFAULT_CACHE_కొలత)
+		తిరిగి 0;
 
-	tmp = hashval ^ (GOLDEN_RATIO_PRIME + hashval) / CACHE_LINE_SIZE;
-	tmp = tmp ^ ((tmp ^ GOLDEN_RATIO_PRIME) >> data->cache_hash_shift);
-	return tmp % data->cache_size;
+	tmp = hashval ^ (GOLDEN_నిష్పత్తి_ప్రధానసంఖ్య + hashval) / CACHE_పంక్తి_కొలత;
+	tmp = tmp ^ ((tmp ^ GOLDEN_నిష్పత్తి_ప్రధానసంఖ్య) >> దత్తాంశం->cache_hash_జరుపు);
+	తిరిగి tmp % దత్తాంశం->cache_కొలత;
 }
 
 /*
@@ -590,427 +590,427 @@ cache_hash(struct unix_private_data *data, blk64_t blkno)
  * eldest is a non-zero pointer, then fill in eldest with the cache
  * entry to that should be reused.
  */
-static struct unix_cache *find_cached_block(struct unix_private_data *data,
-					    unsigned long long block,
-					    struct unix_cache **eldest)
+స్థిర నిర్మాణం unix_cache *కనుగొను_cached_ఖండం(నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం,
+					    గుర్తులేని దీర్ఘ దీర్ఘ ఖండం,
+					    నిర్మాణం unix_cache **eldest)
 {
-	struct unix_cache	*cache, *unused_cache, *oldest_cache;
-	unsigned int		hash = cache_hash(data, block);
-	unsigned int		i;
+	నిర్మాణం unix_cache	*cache, *వాడని_cache, *oldest_cache;
+	గుర్తులేని పూర్ణాంకం		hash = cache_hash(దత్తాంశం, ఖండం);
+	గుర్తులేని పూర్ణాంకం		i;
 
-	unused_cache = oldest_cache = 0;
+	వాడని_cache = oldest_cache = 0;
 	/* walk [hash..] cache elements */
-	for (i = hash, cache = data->cache + hash;
-	     i < data->cache_size;
+	కొరకు (i = hash, cache = దత్తాంశం->cache + hash;
+	     i < దత్తాంశం->cache_కొలత;
 	     i++, cache++) {
-		if (!cache->in_use) {
-			if (!unused_cache)
-				unused_cache = cache;
-			continue;
+		ఒకవేళ (!cache->లోపల_use) {
+			ఒకవేళ (!వాడని_cache)
+				వాడని_cache = cache;
+			కొనసాగు;
 		}
-		if (cache->block == block) {
-			cache->access_time = ++data->access_time;
-			data->io_stats.cache_hits++;
-			return cache;
+		ఒకవేళ (cache->ఖండం == ఖండం) {
+			cache->access_సమయం = ++దత్తాంశం->access_సమయం;
+			దత్తాంశం->io_stats.cache_తగిలినవి++;
+			తిరిగి cache;
 		}
-		if (!oldest_cache ||
-		    (cache->access_time < oldest_cache->access_time))
+		ఒకవేళ (!oldest_cache ||
+		    (cache->access_సమయం < oldest_cache->access_సమయం))
 			oldest_cache = cache;
 	}
 	/* walk [..hash] since we didnt find a good slot yet */
-	for (i = 0, cache = data->cache; i < hash; i++, cache++) {
-		if (!cache->in_use) {
-			if (!unused_cache)
-				unused_cache = cache;
-			continue;
+	కొరకు (i = 0, cache = దత్తాంశం->cache; i < hash; i++, cache++) {
+		ఒకవేళ (!cache->లోపల_use) {
+			ఒకవేళ (!వాడని_cache)
+				వాడని_cache = cache;
+			కొనసాగు;
 		}
-		if (cache->block == block) {
-			cache->access_time = ++data->access_time;
-			data->io_stats.cache_hits++;
-			return cache;
+		ఒకవేళ (cache->ఖండం == ఖండం) {
+			cache->access_సమయం = ++దత్తాంశం->access_సమయం;
+			దత్తాంశం->io_stats.cache_తగిలినవి++;
+			తిరిగి cache;
 		}
-		if (!oldest_cache ||
-		    (cache->access_time < oldest_cache->access_time))
+		ఒకవేళ (!oldest_cache ||
+		    (cache->access_సమయం < oldest_cache->access_సమయం))
 			oldest_cache = cache;
 	}
-	if (eldest)
-		*eldest = (unused_cache) ? unused_cache : oldest_cache;
-	data->io_stats.cache_misses++;
-	return 0;
+	ఒకవేళ (eldest)
+		*eldest = (వాడని_cache) ? వాడని_cache : oldest_cache;
+	దత్తాంశం->io_stats.cache_తప్పినవి++;
+	తిరిగి 0;
 }
 
 /*
  * Reuse a particular cache entry for another block.
  */
-static errcode_t reuse_cache(io_channel channel,
-		struct unix_private_data *data, struct unix_cache *cache,
-		unsigned long long block)
+స్థిర errcode_t reuse_cache(io_channel channel,
+		నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం, నిర్మాణం unix_cache *cache,
+		గుర్తులేని దీర్ఘ దీర్ఘ ఖండం)
 {
-	if (cache->dirty && cache->in_use) {
+	ఒకవేళ (cache->dirty && cache->లోపల_use) {
 		errcode_t retval;
 
-		retval = raw_write_blk(channel, data, cache->block, 1,
+		retval = raw_write_blk(channel, దత్తాంశం, cache->ఖండం, 1,
 				       cache->buf, RAW_WRITE_NO_HANDLER);
-		if (retval) {
+		ఒకవేళ (retval) {
 			cache->write_err = 1;
-			return retval;
+			తిరిగి retval;
 		}
 	}
 
-	cache->in_use = 1;
+	cache->లోపల_use = 1;
 	cache->dirty = 0;
 	cache->write_err = 0;
-	cache->block = block;
-	cache->access_time = ++data->access_time;
-	return 0;
+	cache->ఖండం = ఖండం;
+	cache->access_సమయం = ++దత్తాంశం->access_సమయం;
+	తిరిగి 0;
 }
 
-#define FLUSH_INVALIDATE	0x01
-#define FLUSH_NOLOCK		0x02
+#నిర్వచించు FLUSH_INVALIDATE	0x01
+#నిర్వచించు FLUSH_NOLOCK		0x02
 
 /*
  * Flush all of the blocks in the cache
  */
-static errcode_t flush_cached_blocks(io_channel channel,
-				     struct unix_private_data *data,
-				     int flags)
+స్థిర errcode_t flush_cached_ఖండాలు(io_channel channel,
+				     నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం,
+				     పూర్ణాంకం flags)
 {
-	struct unix_cache	*cache;
+	నిర్మాణం unix_cache	*cache;
 	errcode_t		retval, retval2 = 0;
-	unsigned int		i;
-	int			errors_found = 0;
+	గుర్తులేని పూర్ణాంకం		i;
+	పూర్ణాంకం			errors_దొరికింది = 0;
 
-	if ((flags & FLUSH_NOLOCK) == 0)
-		mutex_lock(data, CACHE_MTX);
-	for (i=0, cache = data->cache; i < data->cache_size; i++, cache++) {
-		if (!cache->in_use)
-			continue;
-		if (cache->dirty) {
-			int raw_flags = RAW_WRITE_NO_HANDLER;
+	ఒకవేళ ((flags & FLUSH_NOLOCK) == 0)
+		mutex_తాళం(దత్తాంశం, CACHE_MTX);
+	కొరకు (i=0, cache = దత్తాంశం->cache; i < దత్తాంశం->cache_కొలత; i++, cache++) {
+		ఒకవేళ (!cache->లోపల_use)
+			కొనసాగు;
+		ఒకవేళ (cache->dirty) {
+			పూర్ణాంకం raw_flags = RAW_WRITE_NO_HANDLER;
 
-			if (flags & FLUSH_NOLOCK)
+			ఒకవేళ (flags & FLUSH_NOLOCK)
 				raw_flags |= RAW_WRITE_NOLOCK;
 
-			retval = raw_write_blk(channel, data,
-					       cache->block, 1, cache->buf,
+			retval = raw_write_blk(channel, దత్తాంశం,
+					       cache->ఖండం, 1, cache->buf,
 					       raw_flags);
-			if (retval) {
+			ఒకవేళ (retval) {
 				cache->write_err = 1;
-				errors_found = 1;
+				errors_దొరికింది = 1;
 				retval2 = retval;
-			} else {
+			} లేకపోతే {
 				cache->dirty = 0;
 				cache->write_err = 0;
-				if (flags & FLUSH_INVALIDATE)
-					cache->in_use = 0;
+				ఒకవేళ (flags & FLUSH_INVALIDATE)
+					cache->లోపల_use = 0;
 			}
-		} else if (flags & FLUSH_INVALIDATE) {
-			cache->in_use = 0;
+		} లేకపోతే ఒకవేళ (flags & FLUSH_INVALIDATE) {
+			cache->లోపల_use = 0;
 		}
 	}
-	if ((flags & FLUSH_NOLOCK) == 0)
-		mutex_unlock(data, CACHE_MTX);
+	ఒకవేళ ((flags & FLUSH_NOLOCK) == 0)
+		mutex_unlock(దత్తాంశం, CACHE_MTX);
 retry:
-	while (errors_found) {
-		if ((flags & FLUSH_NOLOCK) == 0)
-			mutex_lock(data, CACHE_MTX);
-		errors_found = 0;
-		for (i=0, cache = data->cache; i < data->cache_size; i++, cache++) {
-			if (!cache->in_use || !cache->write_err)
-				continue;
-			errors_found = 1;
-			if (cache->write_err && channel->write_error) {
-				char *err_buf = NULL;
-				unsigned long long err_block = cache->block;
+	అయితే (errors_దొరికింది) {
+		ఒకవేళ ((flags & FLUSH_NOLOCK) == 0)
+			mutex_తాళం(దత్తాంశం, CACHE_MTX);
+		errors_దొరికింది = 0;
+		కొరకు (i=0, cache = దత్తాంశం->cache; i < దత్తాంశం->cache_కొలత; i++, cache++) {
+			ఒకవేళ (!cache->లోపల_use || !cache->write_err)
+				కొనసాగు;
+			errors_దొరికింది = 1;
+			ఒకవేళ (cache->write_err && channel->write_error) {
+				అక్షరం *err_buf = ఖాళీ;
+				గుర్తులేని దీర్ఘ దీర్ఘ err_ఖండం = cache->ఖండం;
 
 				cache->dirty = 0;
-				cache->in_use = 0;
+				cache->లోపల_use = 0;
 				cache->write_err = 0;
-				if (io_channel_alloc_buf(channel, 0,
+				ఒకవేళ (io_channel_alloc_buf(channel, 0,
 							 &err_buf))
-					err_buf = NULL;
-				else
-					memcpy(err_buf, cache->buf,
-					       channel->block_size);
-				mutex_unlock(data, CACHE_MTX);
-				(channel->write_error)(channel, err_block,
-					1, err_buf, channel->block_size, -1,
+					err_buf = ఖాళీ;
+				లేకపోతే
+					జ్ఞాపకం_నకలు(err_buf, cache->buf,
+					       channel->ఖండం_కొలత);
+				mutex_unlock(దత్తాంశం, CACHE_MTX);
+				(channel->write_error)(channel, err_ఖండం,
+					1, err_buf, channel->ఖండం_కొలత, -1,
 					retval2);
-				if (err_buf)
+				ఒకవేళ (err_buf)
 					ext2fs_free_mem(&err_buf);
-				mutex_lock(data, CACHE_MTX);
-				goto retry;
-			} else
+				mutex_తాళం(దత్తాంశం, CACHE_MTX);
+				వెళ్ళు retry;
+			} లేకపోతే
 				cache->write_err = 0;
 		}
-		if ((flags & FLUSH_NOLOCK) == 0)
-			mutex_unlock(data, CACHE_MTX);
+		ఒకవేళ ((flags & FLUSH_NOLOCK) == 0)
+			mutex_unlock(దత్తాంశం, CACHE_MTX);
 	}
-	return retval2;
+	తిరిగి retval2;
 }
 
 /* Shrink the cache buffers */
-static errcode_t shrink_cache(io_channel channel,
-			      struct unix_private_data *data,
-			      unsigned int new_size)
+స్థిర errcode_t shrink_cache(io_channel channel,
+			      నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం,
+			      గుర్తులేని పూర్ణాంకం new_కొలత)
 {
-	struct unix_cache	*cache, *new_cache;
-	unsigned int		i;
+	నిర్మాణం unix_cache	*cache, *new_cache;
+	గుర్తులేని పూర్ణాంకం		i;
 	errcode_t		retval;
 
-	mutex_lock(data, CACHE_MTX);
+	mutex_తాళం(దత్తాంశం, CACHE_MTX);
 
-	retval = flush_cached_blocks(channel, data,
+	retval = flush_cached_ఖండాలు(channel, దత్తాంశం,
 			FLUSH_INVALIDATE | FLUSH_NOLOCK);
-	if (retval)
-		goto unlock;
+	ఒకవేళ (retval)
+		వెళ్ళు unlock;
 
-	for (i = new_size, cache = data->cache + new_size;
-	     i < data->cache_size;
+	కొరకు (i = new_కొలత, cache = దత్తాంశం->cache + new_కొలత;
+	     i < దత్తాంశం->cache_కొలత;
 	     i++, cache++) {
-		cache->block = 0;
-		cache->access_time = 0;
+		cache->ఖండం = 0;
+		cache->access_సమయం = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
-		if (cache->buf)
+		cache->లోపల_use = 0;
+		ఒకవేళ (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 	}
 
-	new_cache = realloc(data->cache, new_size * sizeof(struct unix_cache));
-	if (!new_cache) {
-		retval = EXT2_ET_NO_MEMORY;
-		goto unlock;
+	new_cache = realloc(దత్తాంశం->cache, new_కొలత * పరిమాణం(నిర్మాణం unix_cache));
+	ఒకవేళ (!new_cache) {
+		retval = EXT2_ET_NO_జ్ఞాపకం;
+		వెళ్ళు unlock;
 	}
 
-	data->cache = new_cache;
-	data->cache_size = new_size;
-	data->cache_hash_shift = highbit32(data->cache_size);
+	దత్తాంశం->cache = new_cache;
+	దత్తాంశం->cache_కొలత = new_కొలత;
+	దత్తాంశం->cache_hash_జరుపు = highbit32(దత్తాంశం->cache_కొలత);
 
 unlock:
-	mutex_unlock(data, CACHE_MTX);
-	return retval;
+	mutex_unlock(దత్తాంశం, CACHE_MTX);
+	తిరిగి retval;
 }
 
 /* Grow the cache buffers */
-static errcode_t grow_cache(io_channel channel,
-			    struct unix_private_data *data,
-			    unsigned int new_size)
+స్థిర errcode_t grow_cache(io_channel channel,
+			    నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం,
+			    గుర్తులేని పూర్ణాంకం new_కొలత)
 {
-	struct unix_cache	*cache, *new_cache;
-	unsigned int		i;
+	నిర్మాణం unix_cache	*cache, *new_cache;
+	గుర్తులేని పూర్ణాంకం		i;
 	errcode_t		retval;
 
-	mutex_lock(data, CACHE_MTX);
+	mutex_తాళం(దత్తాంశం, CACHE_MTX);
 
-	retval = flush_cached_blocks(channel, data,
+	retval = flush_cached_ఖండాలు(channel, దత్తాంశం,
 			FLUSH_INVALIDATE | FLUSH_NOLOCK);
-	if (retval)
-		goto unlock;
+	ఒకవేళ (retval)
+		వెళ్ళు unlock;
 
-	new_cache = realloc(data->cache, new_size * sizeof(struct unix_cache));
-	if (!new_cache) {
-		retval = EXT2_ET_NO_MEMORY;
-		goto unlock;
+	new_cache = realloc(దత్తాంశం->cache, new_కొలత * పరిమాణం(నిర్మాణం unix_cache));
+	ఒకవేళ (!new_cache) {
+		retval = EXT2_ET_NO_జ్ఞాపకం;
+		వెళ్ళు unlock;
 	}
-	data->cache = new_cache;
+	దత్తాంశం->cache = new_cache;
 
-	for (i = data->cache_size, cache = new_cache + data->cache_size;
-	     i < new_size;
+	కొరకు (i = దత్తాంశం->cache_కొలత, cache = new_cache + దత్తాంశం->cache_కొలత;
+	     i < new_కొలత;
 	     i++, cache++) {
-		cache->block = 0;
-		cache->access_time = 0;
+		cache->ఖండం = 0;
+		cache->access_సమయం = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
+		cache->లోపల_use = 0;
 		retval = io_channel_alloc_buf(channel, 0, &cache->buf);
-		if (retval) {
-			while (i > data->cache_size) {
+		ఒకవేళ (retval) {
+			అయితే (i > దత్తాంశం->cache_కొలత) {
 				cache--; i--;
-				if (cache->buf)
+				ఒకవేళ (cache->buf)
 					ext2fs_free_mem(&cache->buf);
 			}
-			goto unlock;
+			వెళ్ళు unlock;
 		}
 	}
 
-	data->cache_size = new_size;
-	data->cache_hash_shift = highbit32(data->cache_size);
+	దత్తాంశం->cache_కొలత = new_కొలత;
+	దత్తాంశం->cache_hash_జరుపు = highbit32(దత్తాంశం->cache_కొలత);
 
 unlock:
-	mutex_unlock(data, CACHE_MTX);
-	return retval;
+	mutex_unlock(దత్తాంశం, CACHE_MTX);
+	తిరిగి retval;
 }
-#endif /* NO_IO_CACHE */
+#అయితే_ముగింపు /* NO_IO_CACHE */
 
-#ifdef __linux__
-#ifndef BLKDISCARDZEROES
-#define BLKDISCARDZEROES _IO(0x12,124)
-#endif
-#endif
+#నిర్వచితమైతే __linux__
+#నిర్వచితం_కాకపోతే BLKDISCARDZEROES
+#నిర్వచించు BLKDISCARDZEROES _IO(0x12,124)
+#అయితే_ముగింపు
+#అయితే_ముగింపు
 
-int ext2fs_open_file(const char *pathname, int flags, mode_t mode)
+పూర్ణాంకం ext2fs_open_file(స్థిరరాశి అక్షరం *pathname, పూర్ణాంకం flags, mode_t బహుళకం)
 {
-	if (mode)
-#if defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-		return open64(pathname, flags, mode);
-	else
-		return open64(pathname, flags);
-#else
-		return open(pathname, flags, mode);
-	else
-		return open(pathname, flags);
-#endif
-}
-
-int ext2fs_stat(const char *path, ext2fs_struct_stat *buf)
-{
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return stat64(path, buf);
-#else
-	return stat(path, buf);
-#endif
+	ఒకవేళ (బహుళకం)
+#ఒకవేళ defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+		తిరిగి open64(pathname, flags, బహుళకం);
+	లేకపోతే
+		తిరిగి open64(pathname, flags);
+#లేకపోతే
+		తిరిగి open(pathname, flags, బహుళకం);
+	లేకపోతే
+		తిరిగి open(pathname, flags);
+#అయితే_ముగింపు
 }
 
-int ext2fs_fstat(int fd, ext2fs_struct_stat *buf)
+పూర్ణాంకం ext2fs_stat(స్థిరరాశి అక్షరం *మార్గం, ext2fs_struct_stat *buf)
 {
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return fstat64(fd, buf);
-#else
-	return fstat(fd, buf);
-#endif
+#ఒకవేళ defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	తిరిగి stat64(మార్గం, buf);
+#లేకపోతే
+	తిరిగి stat(మార్గం, buf);
+#అయితే_ముగింపు
 }
 
-#ifdef HAVE_SYS_FILE_H
-static errcode_t unix_funlock(io_channel channel)
+పూర్ణాంకం ext2fs_fstat(పూర్ణాంకం fd, ext2fs_struct_stat *buf)
 {
-	struct unix_private_data *data;
-	int ret;
+#ఒకవేళ defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	తిరిగి fstat64(fd, buf);
+#లేకపోతే
+	తిరిగి fstat(fd, buf);
+#అయితే_ముగింపు
+}
+
+#నిర్వచితమైతే HAVE_SYS_FILE_H
+స్థిర errcode_t unix_funlock(io_channel channel)
+{
+	నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
+	పూర్ణాంకం ret;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (data->unix_flock_flags) {
-		ret = flock(data->dev, LOCK_UN);
-		if (ret)
-			return errno;
+	ఒకవేళ (దత్తాంశం->unix_flock_flags) {
+		ret = flock(దత్తాంశం->dev, LOCK_UN);
+		ఒకవేళ (ret)
+			తిరిగి errno;
 
-		data->unix_flock_flags = 0;
+		దత్తాంశం->unix_flock_flags = 0;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-static errcode_t unix_flock(io_channel channel, unsigned int flock_flags)
+స్థిర errcode_t unix_flock(io_channel channel, గుర్తులేని పూర్ణాంకం flock_flags)
 {
-	struct unix_private_data *data;
-	int unix_flock_flags = 0;
+	నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
+	పూర్ణాంకం unix_flock_flags = 0;
 	errcode_t ret;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
 	ret = unix_funlock(channel);
-	if (ret)
-		return ret;
+	ఒకవేళ (ret)
+		తిరిగి ret;
 
-	if (flock_flags & IO_CHANNEL_FLOCK_EXCLUSIVE)
+	ఒకవేళ (flock_flags & IO_CHANNEL_FLOCK_EXCLUSIVE)
 		unix_flock_flags |= LOCK_EX;
 
-	if (flock_flags & IO_CHANNEL_FLOCK_SHARED)
+	ఒకవేళ (flock_flags & IO_CHANNEL_FLOCK_SHARED)
 		unix_flock_flags |= LOCK_SH;
 
-	if (flock_flags & IO_CHANNEL_FLOCK_TRYLOCK)
+	ఒకవేళ (flock_flags & IO_CHANNEL_FLOCK_TRYLOCK)
 		unix_flock_flags |= LOCK_NB;
 
-	if (!unix_flock_flags)
-		return 0;
+	ఒకవేళ (!unix_flock_flags)
+		తిరిగి 0;
 
-	ret = flock(data->dev, unix_flock_flags);
-	if (ret < 0)
-		return errno;
+	ret = flock(దత్తాంశం->dev, unix_flock_flags);
+	ఒకవేళ (ret < 0)
+		తిరిగి errno;
 
-	data->unix_flock_flags = unix_flock_flags & ~LOCK_NB;
-	return 0;
+	దత్తాంశం->unix_flock_flags = unix_flock_flags & ~LOCK_NB;
+	తిరిగి 0;
 }
-#else
-#define unix_flock		NULL
+#లేకపోతే
+#నిర్వచించు unix_flock		ఖాళీ
 
-static errcode_t unix_funlock(io_channel channel)
+స్థిర errcode_t unix_funlock(io_channel channel)
 {
-	return 0;
+	తిరిగి 0;
 }
-#endif /* HAVE_SYS_FILE_H */
+#అయితే_ముగింపు /* HAVE_SYS_FILE_H */
 
-static errcode_t unix_open_channel(const char *name, int fd,
-				   int flags, io_channel *channel,
+స్థిర errcode_t unix_open_channel(స్థిరరాశి అక్షరం *name, పూర్ణాంకం fd,
+				   పూర్ణాంకం flags, io_channel *channel,
 				   io_manager io_mgr)
 {
-	io_channel	io = NULL;
-	struct unix_private_data *data = NULL;
+	io_channel	io = ఖాళీ;
+	నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం = ఖాళీ;
 	errcode_t	retval;
 	ext2fs_struct_stat st;
-#ifdef __linux__
-	struct		utsname ut;
-#endif
+#నిర్వచితమైతే __linux__
+	నిర్మాణం		utsname ut;
+#అయితే_ముగింపు
 
-	if (ext2fs_safe_getenv("UNIX_IO_FORCE_BOUNCE"))
+	ఒకవేళ (ext2fs_సురక్షిత_getenv("UNIX_IO_FORCE_BOUNCE"))
 		flags |= IO_FLAG_FORCE_BOUNCE;
 
-#ifdef __linux__
+#నిర్వచితమైతే __linux__
 	/*
 	 * We need to make sure any previous errors in the block
 	 * device are thrown away, sigh.
 	 */
-	(void) fsync(fd);
-#endif
+	(శూన్య) fsync(fd);
+#అయితే_ముగింపు
 
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	retval = ext2fs_get_mem(పరిమాణం(నిర్మాణం struct_io_channel), &io);
+	ఒకవేళ (retval)
+		వెళ్ళు cleanup;
+	memset(io, 0, పరిమాణం(నిర్మాణం struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
-	retval = ext2fs_get_mem(sizeof(struct unix_private_data), &data);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(పరిమాణం(నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం), &దత్తాంశం);
+	ఒకవేళ (retval)
+		వెళ్ళు cleanup;
 
 	io->manager = io_mgr;
-	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(అక్షరశ్రేణి_పొడవు(name)+1, &io->name);
+	ఒకవేళ (retval)
+		వెళ్ళు cleanup;
 
 	strcpy(io->name, name);
-	io->private_data = data;
-	io->block_size = 1024;
+	io->వ్యక్తిగత_దత్తాంశం = దత్తాంశం;
+	io->ఖండం_కొలత = 1024;
 	io->read_error = 0;
 	io->write_error = 0;
 	io->refcount = 1;
 	io->flags = 0;
 
-	if (ext2fs_safe_getenv("UNIX_IO_NOZEROOUT"))
+	ఒకవేళ (ext2fs_సురక్షిత_getenv("UNIX_IO_NOZEROOUT"))
 		io->flags |= CHANNEL_FLAGS_NOZEROOUT;
 
-	memset(data, 0, sizeof(struct unix_private_data));
-	data->magic = EXT2_ET_MAGIC_UNIX_IO_CHANNEL;
-	data->io_stats.num_fields = 4;
-	data->flags = flags;
-	data->dev = fd;
+	memset(దత్తాంశం, 0, పరిమాణం(నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం));
+	దత్తాంశం->magic = EXT2_ET_MAGIC_UNIX_IO_CHANNEL;
+	దత్తాంశం->io_stats.అంకె_fields = 4;
+	దత్తాంశం->flags = flags;
+	దత్తాంశం->dev = fd;
 
-	data->cache_size = DEFAULT_CACHE_SIZE;
-	data->cache_hash_shift = highbit32(data->cache_size);
-	data->cache = calloc(DEFAULT_CACHE_SIZE, sizeof(struct unix_cache));
-	if (!data->cache) {
-		retval = EXT2_ET_NO_MEMORY;
-		goto cleanup;
+	దత్తాంశం->cache_కొలత = DEFAULT_CACHE_కొలత;
+	దత్తాంశం->cache_hash_జరుపు = highbit32(దత్తాంశం->cache_కొలత);
+	దత్తాంశం->cache = సున్నా_జ్ఞాపకం_ఇవ్వు(DEFAULT_CACHE_కొలత, పరిమాణం(నిర్మాణం unix_cache));
+	ఒకవేళ (!దత్తాంశం->cache) {
+		retval = EXT2_ET_NO_జ్ఞాపకం;
+		వెళ్ళు cleanup;
 	}
 
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
-		io->align = ext2fs_get_dio_alignment(data->dev);
-#elif defined(F_NOCACHE)
-	if (flags & IO_FLAG_DIRECT_IO)
+#ఒకవేళ defined(O_ప్రత్యక్ష)
+	ఒకవేళ (flags & IO_FLAG_ప్రత్యక్ష_IO)
+		io->align = ext2fs_get_dio_alignment(దత్తాంశం->dev);
+#లేదావేళ defined(F_NOCACHE)
+	ఒకవేళ (flags & IO_FLAG_ప్రత్యక్ష_IO)
 		io->align = 4096;
-#endif
+#అయితే_ముగింపు
 
 	/*
 	 * If the device is really a block device, then set the
@@ -1019,63 +1019,63 @@ static errcode_t unix_open_channel(const char *name, int fd,
 	 * and if it succeed, subsequent read from sparse area returns
 	 * zero.
 	 */
-	if (ext2fs_fstat(data->dev, &st) == 0) {
-		if (ext2fsP_is_disk_device(st.st_mode)) {
-#ifdef BLKDISCARDZEROES
-			int zeroes = 0;
+	ఒకవేళ (ext2fs_fstat(దత్తాంశం->dev, &st) == 0) {
+		ఒకవేళ (ext2fsP_is_disk_device(st.st_బహుళకం)) {
+#నిర్వచితమైతే BLKDISCARDZEROES
+			పూర్ణాంకం zeroes = 0;
 
-			if (ioctl(data->dev, BLKDISCARDZEROES, &zeroes) == 0 &&
+			ఒకవేళ (ioctl(దత్తాంశం->dev, BLKDISCARDZEROES, &zeroes) == 0 &&
 			    zeroes)
 				io->flags |= CHANNEL_FLAGS_DISCARD_ZEROES;
-#endif
-			io->flags |= CHANNEL_FLAGS_BLOCK_DEVICE;
-		} else {
+#అయితే_ముగింపు
+			io->flags |= CHANNEL_FLAGS_ఖండం_DEVICE;
+		} లేకపోతే {
 			io->flags |= CHANNEL_FLAGS_DISCARD_ZEROES;
 		}
 	}
 
-#if defined(__CYGWIN__)
+#ఒకవేళ defined(__CYGWIN__)
 	/*
 	 * Some operating systems require that the buffers be aligned,
 	 * regardless of O_DIRECT
 	 */
-	if (!io->align)
+	ఒకవేళ (!io->align)
 		io->align = 512;
-#endif
+#అయితే_ముగింపు
 
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-	if (io->flags & CHANNEL_FLAGS_BLOCK_DEVICE) {
-		int dio_align = ext2fs_get_dio_alignment(fd);
+#ఒకవేళ defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+	ఒకవేళ (io->flags & CHANNEL_FLAGS_ఖండం_DEVICE) {
+		పూర్ణాంకం dio_align = ext2fs_get_dio_alignment(fd);
 
-		if (io->align < dio_align)
+		ఒకవేళ (io->align < dio_align)
 			io->align = dio_align;
 	}
-#endif
+#అయితే_ముగింపు
 
-	if ((retval = alloc_cache(io, data)))
-		goto cleanup;
+	ఒకవేళ ((retval = alloc_cache(io, దత్తాంశం)))
+		వెళ్ళు cleanup;
 
-#ifdef BLKROGET
-	if (flags & IO_FLAG_RW) {
-		int error;
-		int readonly = 0;
+#నిర్వచితమైతే BLKROGET
+	ఒకవేళ (flags & IO_FLAG_RW) {
+		పూర్ణాంకం error;
+		పూర్ణాంకం readonly = 0;
 
 		/* Is the block device actually writable? */
-		error = ioctl(data->dev, BLKROGET, &readonly);
-		if (!error && readonly) {
+		error = ioctl(దత్తాంశం->dev, BLKROGET, &readonly);
+		ఒకవేళ (!error && readonly) {
 			retval = EPERM;
-			goto cleanup;
+			వెళ్ళు cleanup;
 		}
 	}
-#endif
+#అయితే_ముగింపు
 
-#ifdef __linux__
-#undef RLIM_INFINITY
-#if (defined(__alpha__) || ((defined(__sparc__) || defined(__mips__)) && (SIZEOF_LONG == 4)))
-#define RLIM_INFINITY	((unsigned long)(~0UL>>1))
-#else
-#define RLIM_INFINITY  (~0UL)
-#endif
+#నిర్వచితమైతే __linux__
+#నిర్వచనం_రద్దు RLIM_INFINITY
+#ఒకవేళ (defined(__alpha__) || ((defined(__sparc__) || defined(__mips__)) && (SIZEOF_LONG == 4)))
+#నిర్వచించు RLIM_INFINITY	((గుర్తులేని దీర్ఘ)(~0UL>>1))
+#లేకపోతే
+#నిర్వచించు RLIM_INFINITY  (~0UL)
+#అయితే_ముగింపు
 	/*
 	 * Work around a bug in 2.4.10-2.4.18 kernels where writes to
 	 * block devices are wrongly getting hit by the filesize
@@ -1083,319 +1083,319 @@ static errcode_t unix_open_channel(const char *name, int fd,
 	 * if glibc wasn't built against 2.2 header files.  (Sigh.)
 	 *
 	 */
-	if ((flags & IO_FLAG_RW) &&
+	ఒకవేళ ((flags & IO_FLAG_RW) &&
 	    (uname(&ut) == 0) &&
 	    ((ut.release[0] == '2') && (ut.release[1] == '.') &&
 	     (ut.release[2] == '4') && (ut.release[3] == '.') &&
 	     (ut.release[4] == '1') && (ut.release[5] >= '0') &&
 	     (ut.release[5] < '8')) &&
-	    (ext2fs_fstat(data->dev, &st) == 0) &&
-	    (ext2fsP_is_disk_device(st.st_mode))) {
-		struct rlimit	rlim;
+	    (ext2fs_fstat(దత్తాంశం->dev, &st) == 0) &&
+	    (ext2fsP_is_disk_device(st.st_బహుళకం))) {
+		నిర్మాణం rlimit	rlim;
 
-		rlim.rlim_cur = rlim.rlim_max = (unsigned long) RLIM_INFINITY;
+		rlim.rlim_cur = rlim.rlim_max = (గుర్తులేని దీర్ఘ) RLIM_INFINITY;
 		setrlimit(RLIMIT_FSIZE, &rlim);
 		getrlimit(RLIMIT_FSIZE, &rlim);
-		if (((unsigned long) rlim.rlim_cur) <
-		    ((unsigned long) rlim.rlim_max)) {
+		ఒకవేళ (((గుర్తులేని దీర్ఘ) rlim.rlim_cur) <
+		    ((గుర్తులేని దీర్ఘ) rlim.rlim_max)) {
 			rlim.rlim_cur = rlim.rlim_max;
 			setrlimit(RLIMIT_FSIZE, &rlim);
 		}
 	}
-#endif
-#ifdef HAVE_PTHREAD
-	if (flags & IO_FLAG_THREADS) {
-		io->flags |= CHANNEL_FLAGS_THREADS;
-		retval = pthread_mutex_init(&data->cache_mutex, NULL);
-		if (retval)
-			goto cleanup;
-		retval = pthread_mutex_init(&data->bounce_mutex, NULL);
-		if (retval) {
-			pthread_mutex_destroy(&data->cache_mutex);
-			goto cleanup;
+#అయితే_ముగింపు
+#నిర్వచితమైతే HAVE_PTHREAD
+	ఒకవేళ (flags & IO_FLAG_దారాలు) {
+		io->flags |= CHANNEL_FLAGS_దారాలు;
+		retval = pthread_mutex_init(&దత్తాంశం->cache_mutex, ఖాళీ);
+		ఒకవేళ (retval)
+			వెళ్ళు cleanup;
+		retval = pthread_mutex_init(&దత్తాంశం->bounce_mutex, ఖాళీ);
+		ఒకవేళ (retval) {
+			pthread_mutex_destroy(&దత్తాంశం->cache_mutex);
+			వెళ్ళు cleanup;
 		}
-		retval = pthread_mutex_init(&data->stats_mutex, NULL);
-		if (retval) {
-			pthread_mutex_destroy(&data->cache_mutex);
-			pthread_mutex_destroy(&data->bounce_mutex);
-			goto cleanup;
+		retval = pthread_mutex_init(&దత్తాంశం->stats_mutex, ఖాళీ);
+		ఒకవేళ (retval) {
+			pthread_mutex_destroy(&దత్తాంశం->cache_mutex);
+			pthread_mutex_destroy(&దత్తాంశం->bounce_mutex);
+			వెళ్ళు cleanup;
 		}
 	}
-#endif
+#అయితే_ముగింపు
 	*channel = io;
-	return 0;
+	తిరిగి 0;
 
 cleanup:
-	if (data) {
+	ఒకవేళ (దత్తాంశం) {
 		unix_funlock(io);
-		if (io->manager != unixfd_io_manager && data->dev >= 0)
-			close(data->dev);
-		if (data->cache) {
-			free_cache(data);
-			free(data->cache);
+		ఒకవేళ (io->manager != unixfd_io_manager && దత్తాంశం->dev >= 0)
+			close(దత్తాంశం->dev);
+		ఒకవేళ (దత్తాంశం->cache) {
+			free_cache(దత్తాంశం);
+			విడుదల(దత్తాంశం->cache);
 		}
-		ext2fs_free_mem(&data);
+		ext2fs_free_mem(&దత్తాంశం);
 	}
-	if (io) {
-		if (io->name) {
+	ఒకవేళ (io) {
+		ఒకవేళ (io->name) {
 			ext2fs_free_mem(&io->name);
 		}
 		ext2fs_free_mem(&io);
 	}
-	return retval;
+	తిరిగి retval;
 }
 
-static errcode_t unixfd_open(const char *str_fd, int flags,
+స్థిర errcode_t unixfd_open(స్థిరరాశి అక్షరం *str_fd, పూర్ణాంకం flags,
 			     io_channel *channel)
 {
-	int fd;
-	int fd_flags;
+	పూర్ణాంకం fd;
+	పూర్ణాంకం fd_flags;
 
 	fd = atoi(str_fd);
-#if defined(HAVE_FCNTL)
+#ఒకవేళ defined(HAVE_FCNTL)
 	fd_flags = fcntl(fd, F_GETFL);
-	if (fd_flags == -1)
-		return EBADF;
+	ఒకవేళ (fd_flags == -1)
+		తిరిగి EBADF;
 
 	/* O_EXCL is cleared by Linux at open and not returned by F_GETFL */
 	flags &= IO_FLAG_EXCLUSIVE;
-	if (fd_flags & O_RDWR)
+	ఒకవేళ (fd_flags & O_RDWR)
 		flags |= IO_FLAG_RW;
-#if defined(O_DIRECT)
-	if (fd_flags & O_DIRECT)
-		flags |= IO_FLAG_DIRECT_IO;
-#endif
-#endif  /* HAVE_FCNTL */
+#ఒకవేళ defined(O_ప్రత్యక్ష)
+	ఒకవేళ (fd_flags & O_ప్రత్యక్ష)
+		flags |= IO_FLAG_ప్రత్యక్ష_IO;
+#అయితే_ముగింపు
+#అయితే_ముగింపు  /* HAVE_FCNTL */
 
-	return unix_open_channel(str_fd, fd, flags, channel, unixfd_io_manager);
+	తిరిగి unix_open_channel(str_fd, fd, flags, channel, unixfd_io_manager);
 }
 
-static errcode_t unix_open(const char *name, int flags,
+స్థిర errcode_t unix_open(స్థిరరాశి అక్షరం *name, పూర్ణాంకం flags,
 			   io_channel *channel)
 {
-	int fd = -1;
-	int open_flags;
+	పూర్ణాంకం fd = -1;
+	పూర్ణాంకం open_flags;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	ఒకవేళ (name == 0)
+		తిరిగి EXT2_ET_BAD_DEVICE_NAME;
 
 	open_flags = (flags & IO_FLAG_RW) ? O_RDWR : O_RDONLY;
-	if (flags & IO_FLAG_EXCLUSIVE)
+	ఒకవేళ (flags & IO_FLAG_EXCLUSIVE)
 		open_flags |= O_EXCL;
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
-		open_flags |= O_DIRECT;
-#endif
+#ఒకవేళ defined(O_ప్రత్యక్ష)
+	ఒకవేళ (flags & IO_FLAG_ప్రత్యక్ష_IO)
+		open_flags |= O_ప్రత్యక్ష;
+#అయితే_ముగింపు
 	fd = ext2fs_open_file(name, open_flags, 0);
-	if (fd < 0)
-		return errno;
-#if defined(F_NOCACHE) && !defined(IO_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO) {
-		if (fcntl(fd, F_NOCACHE, 1) < 0)
-			return errno;
+	ఒకవేళ (fd < 0)
+		తిరిగి errno;
+#ఒకవేళ defined(F_NOCACHE) && !defined(IO_ప్రత్యక్ష)
+	ఒకవేళ (flags & IO_FLAG_ప్రత్యక్ష_IO) {
+		ఒకవేళ (fcntl(fd, F_NOCACHE, 1) < 0)
+			తిరిగి errno;
 	}
-#endif
-	return unix_open_channel(name, fd, flags, channel, unix_io_manager);
+#అయితే_ముగింపు
+	తిరిగి unix_open_channel(name, fd, flags, channel, unix_io_manager);
 }
 
-static errcode_t unix_close(io_channel channel)
+స్థిర errcode_t unix_close(io_channel channel)
 {
-	struct unix_private_data *data;
+	నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	ఒకవేళ (--channel->refcount > 0)
+		తిరిగి 0;
 
-#ifndef NO_IO_CACHE
-	retval = flush_cached_blocks(channel, data, 0);
-#endif
+#నిర్వచితం_కాకపోతే NO_IO_CACHE
+	retval = flush_cached_ఖండాలు(channel, దత్తాంశం, 0);
+#అయితే_ముగింపు
 
 	unix_funlock(channel);
 
-	if (channel->manager != unixfd_io_manager && close(data->dev) < 0)
+	ఒకవేళ (channel->manager != unixfd_io_manager && close(దత్తాంశం->dev) < 0)
 		retval = errno;
-	free_cache(data);
-	free(data->cache);
-#ifdef HAVE_PTHREAD
-	if (data->flags & IO_FLAG_THREADS) {
-		pthread_mutex_destroy(&data->cache_mutex);
-		pthread_mutex_destroy(&data->bounce_mutex);
-		pthread_mutex_destroy(&data->stats_mutex);
+	free_cache(దత్తాంశం);
+	విడుదల(దత్తాంశం->cache);
+#నిర్వచితమైతే HAVE_PTHREAD
+	ఒకవేళ (దత్తాంశం->flags & IO_FLAG_దారాలు) {
+		pthread_mutex_destroy(&దత్తాంశం->cache_mutex);
+		pthread_mutex_destroy(&దత్తాంశం->bounce_mutex);
+		pthread_mutex_destroy(&దత్తాంశం->stats_mutex);
 	}
-#endif
+#అయితే_ముగింపు
 
-	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	ext2fs_free_mem(&channel->వ్యక్తిగత_దత్తాంశం);
+	ఒకవేళ (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	తిరిగి retval;
 }
 
-static errcode_t unix_set_blksize(io_channel channel, int blksize)
+స్థిర errcode_t unix_సమితి_blksize(io_channel channel, పూర్ణాంకం blksize)
 {
-	struct unix_private_data *data;
+	నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t		retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (channel->block_size != blksize) {
-		mutex_lock(data, CACHE_MTX);
-		mutex_lock(data, BOUNCE_MTX);
-#ifndef NO_IO_CACHE
-		if ((retval = flush_cached_blocks(channel, data, FLUSH_NOLOCK))){
-			mutex_unlock(data, BOUNCE_MTX);
-			mutex_unlock(data, CACHE_MTX);
-			return retval;
+	ఒకవేళ (channel->ఖండం_కొలత != blksize) {
+		mutex_తాళం(దత్తాంశం, CACHE_MTX);
+		mutex_తాళం(దత్తాంశం, BOUNCE_MTX);
+#నిర్వచితం_కాకపోతే NO_IO_CACHE
+		ఒకవేళ ((retval = flush_cached_ఖండాలు(channel, దత్తాంశం, FLUSH_NOLOCK))){
+			mutex_unlock(దత్తాంశం, BOUNCE_MTX);
+			mutex_unlock(దత్తాంశం, CACHE_MTX);
+			తిరిగి retval;
 		}
-#endif
+#అయితే_ముగింపు
 
-		channel->block_size = blksize;
-		free_cache(data);
-		retval = alloc_cache(channel, data);
-		mutex_unlock(data, BOUNCE_MTX);
-		mutex_unlock(data, CACHE_MTX);
+		channel->ఖండం_కొలత = blksize;
+		free_cache(దత్తాంశం);
+		retval = alloc_cache(channel, దత్తాంశం);
+		mutex_unlock(దత్తాంశం, BOUNCE_MTX);
+		mutex_unlock(దత్తాంశం, CACHE_MTX);
 	}
-	return retval;
+	తిరిగి retval;
 }
 
-static errcode_t unix_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+స్థిర errcode_t unix_read_blk64(io_channel channel, గుర్తులేని దీర్ఘ దీర్ఘ ఖండం,
+			       పూర్ణాంకం లెక్క, శూన్య *buf)
 {
-	struct unix_private_data *data;
-	struct unix_cache *cache;
+	నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
+	నిర్మాణం unix_cache *cache;
 	errcode_t	retval;
-	char		*cp;
-	int		i, j;
+	అక్షరం		*cp;
+	పూర్ణాంకం		i, j;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-#ifdef NO_IO_CACHE
-	return raw_read_blk(channel, data, block, count, buf);
-#else
-	if (data->flags & IO_FLAG_NOCACHE)
-		return raw_read_blk(channel, data, block, count, buf);
+#నిర్వచితమైతే NO_IO_CACHE
+	తిరిగి raw_read_blk(channel, దత్తాంశం, ఖండం, లెక్క, buf);
+#లేకపోతే
+	ఒకవేళ (దత్తాంశం->flags & IO_FLAG_NOCACHE)
+		తిరిగి raw_read_blk(channel, దత్తాంశం, ఖండం, లెక్క, buf);
 	/*
 	 * If we're doing an odd-sized read or a very large read,
 	 * flush out the cache and then do a direct read.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data, 0)))
-			return retval;
-		return raw_read_blk(channel, data, block, count, buf);
+	ఒకవేళ (లెక్క < 0 || లెక్క > WRITE_ప్రత్యక్ష_కొలత) {
+		ఒకవేళ ((retval = flush_cached_ఖండాలు(channel, దత్తాంశం, 0)))
+			తిరిగి retval;
+		తిరిగి raw_read_blk(channel, దత్తాంశం, ఖండం, లెక్క, buf);
 	}
 
 	cp = buf;
-	mutex_lock(data, CACHE_MTX);
-	while (count > 0) {
+	mutex_తాళం(దత్తాంశం, CACHE_MTX);
+	అయితే (లెక్క > 0) {
 		/* If it's in the cache, use it! */
-		if ((cache = find_cached_block(data, block, NULL))) {
-#ifdef DEBUG
-			printf("Using cached block %lu\n", block);
-#endif
-			memcpy(cp, cache->buf, channel->block_size);
-			count--;
-			block++;
-			cp += channel->block_size;
-			continue;
+		ఒకవేళ ((cache = కనుగొను_cached_ఖండం(దత్తాంశం, ఖండం, ఖాళీ))) {
+#నిర్వచితమైతే DEBUG
+			రాయి("Using cached block %lu\n", ఖండం);
+#అయితే_ముగింపు
+			జ్ఞాపకం_నకలు(cp, cache->buf, channel->ఖండం_కొలత);
+			లెక్క--;
+			ఖండం++;
+			cp += channel->ఖండం_కొలత;
+			కొనసాగు;
 		}
 
 		/*
 		 * Find the number of uncached blocks so we can do a
 		 * single read request
 		 */
-		for (i=1; i < count; i++)
-			if (find_cached_block(data, block+i, NULL))
-				break;
-#ifdef DEBUG
-		printf("Reading %d blocks starting at %lu\n", i, block);
-#endif
-		mutex_unlock(data, CACHE_MTX);
-		if ((retval = raw_read_blk(channel, data, block, i, cp)))
-			return retval;
-		mutex_lock(data, CACHE_MTX);
+		కొరకు (i=1; i < లెక్క; i++)
+			ఒకవేళ (కనుగొను_cached_ఖండం(దత్తాంశం, ఖండం+i, ఖాళీ))
+				ఆపు;
+#నిర్వచితమైతే DEBUG
+		రాయి("Reading %d blocks starting at %lu\n", i, ఖండం);
+#అయితే_ముగింపు
+		mutex_unlock(దత్తాంశం, CACHE_MTX);
+		ఒకవేళ ((retval = raw_read_blk(channel, దత్తాంశం, ఖండం, i, cp)))
+			తిరిగి retval;
+		mutex_తాళం(దత్తాంశం, CACHE_MTX);
 
 		/* Save the results in the cache */
-		for (j=0; j < i; j++) {
-			if (!find_cached_block(data, block, &cache)) {
-				retval = reuse_cache(channel, data,
-						     cache, block);
-				if (retval)
-					goto call_write_handler;
-				memcpy(cache->buf, cp, channel->block_size);
+		కొరకు (j=0; j < i; j++) {
+			ఒకవేళ (!కనుగొను_cached_ఖండం(దత్తాంశం, ఖండం, &cache)) {
+				retval = reuse_cache(channel, దత్తాంశం,
+						     cache, ఖండం);
+				ఒకవేళ (retval)
+					వెళ్ళు call_write_handler;
+				జ్ఞాపకం_నకలు(cache->buf, cp, channel->ఖండం_కొలత);
 			}
-			count--;
-			block++;
-			cp += channel->block_size;
+			లెక్క--;
+			ఖండం++;
+			cp += channel->ఖండం_కొలత;
 		}
 	}
-	mutex_unlock(data, CACHE_MTX);
-	return 0;
+	mutex_unlock(దత్తాంశం, CACHE_MTX);
+	తిరిగి 0;
 
 call_write_handler:
-	if (cache->write_err && channel->write_error) {
-		char *err_buf = NULL;
-		unsigned long long err_block = cache->block;
+	ఒకవేళ (cache->write_err && channel->write_error) {
+		అక్షరం *err_buf = ఖాళీ;
+		గుర్తులేని దీర్ఘ దీర్ఘ err_ఖండం = cache->ఖండం;
 
 		cache->dirty = 0;
-		cache->in_use = 0;
+		cache->లోపల_use = 0;
 		cache->write_err = 0;
-		if (io_channel_alloc_buf(channel, 0, &err_buf))
-			err_buf = NULL;
-		else
-			memcpy(err_buf, cache->buf, channel->block_size);
-		mutex_unlock(data, CACHE_MTX);
-		(channel->write_error)(channel, err_block, 1, err_buf,
-				       channel->block_size, -1,
+		ఒకవేళ (io_channel_alloc_buf(channel, 0, &err_buf))
+			err_buf = ఖాళీ;
+		లేకపోతే
+			జ్ఞాపకం_నకలు(err_buf, cache->buf, channel->ఖండం_కొలత);
+		mutex_unlock(దత్తాంశం, CACHE_MTX);
+		(channel->write_error)(channel, err_ఖండం, 1, err_buf,
+				       channel->ఖండం_కొలత, -1,
 				       retval);
-		if (err_buf)
+		ఒకవేళ (err_buf)
 			ext2fs_free_mem(&err_buf);
-	} else
-		mutex_unlock(data, CACHE_MTX);
-	return retval;
-#endif /* NO_IO_CACHE */
+	} లేకపోతే
+		mutex_unlock(దత్తాంశం, CACHE_MTX);
+	తిరిగి retval;
+#అయితే_ముగింపు /* NO_IO_CACHE */
 }
 
-static errcode_t unix_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+స్థిర errcode_t unix_read_blk(io_channel channel, గుర్తులేని దీర్ఘ ఖండం,
+			       పూర్ణాంకం లెక్క, శూన్య *buf)
 {
-	return unix_read_blk64(channel, block, count, buf);
+	తిరిగి unix_read_blk64(channel, ఖండం, లెక్క, buf);
 }
 
-static errcode_t unix_write_blk64(io_channel channel, unsigned long long block,
-				int count, const void *buf)
+స్థిర errcode_t unix_write_blk64(io_channel channel, గుర్తులేని దీర్ఘ దీర్ఘ ఖండం,
+				పూర్ణాంకం లెక్క, స్థిరరాశి శూన్య *buf)
 {
-	struct unix_private_data *data;
-	struct unix_cache *cache, *reuse;
+	నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
+	నిర్మాణం unix_cache *cache, *reuse;
 	errcode_t	retval = 0;
-	const char	*cp;
-	int		writethrough;
+	స్థిరరాశి అక్షరం	*cp;
+	పూర్ణాంకం		writethrough;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-#ifdef NO_IO_CACHE
-	return raw_write_blk(channel, data, block, count, buf, 0);
-#else
-	if (data->flags & IO_FLAG_NOCACHE)
-		return raw_write_blk(channel, data, block, count, buf, 0);
+#నిర్వచితమైతే NO_IO_CACHE
+	తిరిగి raw_write_blk(channel, దత్తాంశం, ఖండం, లెక్క, buf, 0);
+#లేకపోతే
+	ఒకవేళ (దత్తాంశం->flags & IO_FLAG_NOCACHE)
+		తిరిగి raw_write_blk(channel, దత్తాంశం, ఖండం, లెక్క, buf, 0);
 	/*
 	 * If we're doing an odd-sized write or a very large write,
 	 * flush out the cache completely and then do a direct write.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data,
+	ఒకవేళ (లెక్క < 0 || లెక్క > WRITE_ప్రత్యక్ష_కొలత) {
+		ఒకవేళ ((retval = flush_cached_ఖండాలు(channel, దత్తాంశం,
 						  FLUSH_INVALIDATE)))
-			return retval;
-		return raw_write_blk(channel, data, block, count, buf, 0);
+			తిరిగి retval;
+		తిరిగి raw_write_blk(channel, దత్తాంశం, ఖండం, లెక్క, buf, 0);
 	}
 
 	/*
@@ -1404,251 +1404,251 @@ static errcode_t unix_write_blk64(io_channel channel, unsigned long long block,
 	 * cache with the blocks.
 	 */
 	writethrough = channel->flags & CHANNEL_FLAGS_WRITETHROUGH;
-	if (writethrough)
-		retval = raw_write_blk(channel, data, block, count, buf, 0);
+	ఒకవేళ (writethrough)
+		retval = raw_write_blk(channel, దత్తాంశం, ఖండం, లెక్క, buf, 0);
 
 	cp = buf;
-	mutex_lock(data, CACHE_MTX);
-	while (count > 0) {
-		cache = find_cached_block(data, block, &reuse);
-		if (!cache) {
+	mutex_తాళం(దత్తాంశం, CACHE_MTX);
+	అయితే (లెక్క > 0) {
+		cache = కనుగొను_cached_ఖండం(దత్తాంశం, ఖండం, &reuse);
+		ఒకవేళ (!cache) {
 			errcode_t err;
 
 			cache = reuse;
-			err = reuse_cache(channel, data, cache, block);
-			if (err)
-				goto call_write_handler;
+			err = reuse_cache(channel, దత్తాంశం, cache, ఖండం);
+			ఒకవేళ (err)
+				వెళ్ళు call_write_handler;
 		}
-		if (cache->buf != cp)
-			memcpy(cache->buf, cp, channel->block_size);
+		ఒకవేళ (cache->buf != cp)
+			జ్ఞాపకం_నకలు(cache->buf, cp, channel->ఖండం_కొలత);
 		cache->dirty = !writethrough;
-		count--;
-		block++;
-		cp += channel->block_size;
+		లెక్క--;
+		ఖండం++;
+		cp += channel->ఖండం_కొలత;
 	}
-	mutex_unlock(data, CACHE_MTX);
-	return retval;
+	mutex_unlock(దత్తాంశం, CACHE_MTX);
+	తిరిగి retval;
 
 call_write_handler:
-	if (cache->write_err && channel->write_error) {
-		char *err_buf = NULL;
-		unsigned long long err_block = cache->block;
+	ఒకవేళ (cache->write_err && channel->write_error) {
+		అక్షరం *err_buf = ఖాళీ;
+		గుర్తులేని దీర్ఘ దీర్ఘ err_ఖండం = cache->ఖండం;
 
 		cache->dirty = 0;
-		cache->in_use = 0;
+		cache->లోపల_use = 0;
 		cache->write_err = 0;
-		if (io_channel_alloc_buf(channel, 0, &err_buf))
-			err_buf = NULL;
-		else
-			memcpy(err_buf, cache->buf, channel->block_size);
-		mutex_unlock(data, CACHE_MTX);
-		(channel->write_error)(channel, err_block, 1, err_buf,
-				       channel->block_size, -1,
+		ఒకవేళ (io_channel_alloc_buf(channel, 0, &err_buf))
+			err_buf = ఖాళీ;
+		లేకపోతే
+			జ్ఞాపకం_నకలు(err_buf, cache->buf, channel->ఖండం_కొలత);
+		mutex_unlock(దత్తాంశం, CACHE_MTX);
+		(channel->write_error)(channel, err_ఖండం, 1, err_buf,
+				       channel->ఖండం_కొలత, -1,
 				       retval);
-		if (err_buf)
+		ఒకవేళ (err_buf)
 			ext2fs_free_mem(&err_buf);
-	} else
-		mutex_unlock(data, CACHE_MTX);
-	return retval;
-#endif /* NO_IO_CACHE */
+	} లేకపోతే
+		mutex_unlock(దత్తాంశం, CACHE_MTX);
+	తిరిగి retval;
+#అయితే_ముగింపు /* NO_IO_CACHE */
 }
 
-static errcode_t unix_cache_readahead(io_channel channel,
-				      unsigned long long block,
-				      unsigned long long count)
+స్థిర errcode_t unix_cache_readahead(io_channel channel,
+				      గుర్తులేని దీర్ఘ దీర్ఘ ఖండం,
+				      గుర్తులేని దీర్ఘ దీర్ఘ లెక్క)
 {
-#ifdef POSIX_FADV_WILLNEED
-	struct unix_private_data *data;
+#నిర్వచితమైతే POSIX_FADV_WILLNEED
+	నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 
-	data = (struct unix_private_data *)channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
-	return posix_fadvise(data->dev,
-			     (ext2_loff_t)block * channel->block_size + data->offset,
-			     (ext2_loff_t)count * channel->block_size,
+	దత్తాంశం = (నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *)channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	తిరిగి posix_fadvise(దత్తాంశం->dev,
+			     (ext2_loff_t)ఖండం * channel->ఖండం_కొలత + దత్తాంశం->స్థానభ్రంశం,
+			     (ext2_loff_t)లెక్క * channel->ఖండం_కొలత,
 			     POSIX_FADV_WILLNEED);
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+#లేకపోతే
+	తిరిగి EXT2_ET_OP_NOT_SUPPORTED;
+#అయితే_ముగింపు
 }
 
-static errcode_t unix_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+స్థిర errcode_t unix_write_blk(io_channel channel, గుర్తులేని దీర్ఘ ఖండం,
+				పూర్ణాంకం లెక్క, స్థిరరాశి శూన్య *buf)
 {
-	return unix_write_blk64(channel, block, count, buf);
+	తిరిగి unix_write_blk64(channel, ఖండం, లెక్క, buf);
 }
 
-static errcode_t unix_write_byte(io_channel channel, unsigned long offset,
-				 int size, const void *buf)
+స్థిర errcode_t unix_write_byte(io_channel channel, గుర్తులేని దీర్ఘ స్థానభ్రంశం,
+				 పూర్ణాంకం కొలత, స్థిరరాశి శూన్య *buf)
 {
-	struct unix_private_data *data;
+	నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 	ssize_t		actual;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (channel->align != 0) {
-#ifdef ALIGN_DEBUG
-		printf("unix_write_byte: O_DIRECT fallback\n");
-#endif
-		return EXT2_ET_UNIMPLEMENTED;
+	ఒకవేళ (channel->align != 0) {
+#నిర్వచితమైతే ALIGN_DEBUG
+		రాయి("unix_write_byte: O_DIRECT fallback\n");
+#అయితే_ముగింపు
+		తిరిగి EXT2_ET_UNIMPLEMENTED;
 	}
 
-#ifndef NO_IO_CACHE
+#నిర్వచితం_కాకపోతే NO_IO_CACHE
 	/*
 	 * Flush out the cache completely
 	 */
-	if ((retval = flush_cached_blocks(channel, data, FLUSH_INVALIDATE)))
-		return retval;
-#endif
+	ఒకవేళ ((retval = flush_cached_ఖండాలు(channel, దత్తాంశం, FLUSH_INVALIDATE)))
+		తిరిగి retval;
+#అయితే_ముగింపు
 
-	if (lseek(data->dev, offset + data->offset, SEEK_SET) < 0)
-		return errno;
+	ఒకవేళ (lseek(దత్తాంశం->dev, స్థానభ్రంశం + దత్తాంశం->స్థానభ్రంశం, SEEK_SET) < 0)
+		తిరిగి errno;
 
-	actual = write(data->dev, buf, size);
-	if (actual < 0)
-		return errno;
-	if (actual != size)
-		return EXT2_ET_SHORT_WRITE;
+	actual = లిఖ(దత్తాంశం->dev, buf, కొలత);
+	ఒకవేళ (actual < 0)
+		తిరిగి errno;
+	ఒకవేళ (actual != కొలత)
+		తిరిగి EXT2_ET_SHORT_WRITE;
 
-	return 0;
+	తిరిగి 0;
 }
 
 /*
  * Flush data buffers to disk.
  */
-static errcode_t unix_flush(io_channel channel)
+స్థిర errcode_t unix_flush(io_channel channel)
 {
-	struct unix_private_data *data;
+	నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-#ifndef NO_IO_CACHE
-	retval = flush_cached_blocks(channel, data, 0);
-#endif
-#ifdef HAVE_FSYNC
-	if (!retval && fsync(data->dev) != 0)
-		return errno;
-#endif
-	return retval;
+#నిర్వచితం_కాకపోతే NO_IO_CACHE
+	retval = flush_cached_ఖండాలు(channel, దత్తాంశం, 0);
+#అయితే_ముగింపు
+#నిర్వచితమైతే HAVE_FSYNC
+	ఒకవేళ (!retval && fsync(దత్తాంశం->dev) != 0)
+		తిరిగి errno;
+#అయితే_ముగింపు
+	తిరిగి retval;
 }
 
-static errcode_t unix_set_option(io_channel channel, const char *option,
-				 const char *arg)
+స్థిర errcode_t unix_సమితి_option(io_channel channel, స్థిరరాశి అక్షరం *option,
+				 స్థిరరాశి అక్షరం *arg)
 {
-	struct unix_private_data *data;
-	unsigned long long tmp;
+	నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
+	గుర్తులేని దీర్ఘ దీర్ఘ tmp;
 	errcode_t retval;
-	char *end;
+	అక్షరం *చివర;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (!strcmp(option, "offset")) {
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
+	ఒకవేళ (!strcmp(option, "offset")) {
+		ఒకవేళ (!arg)
+			తిరిగి EXT2_ET_INVALID_వాదం;
 
-		tmp = strtoull(arg, &end, 0);
-		if (*end)
-			return EXT2_ET_INVALID_ARGUMENT;
-		data->offset = tmp;
-		if (data->offset < 0)
-			return EXT2_ET_INVALID_ARGUMENT;
-		return 0;
+		tmp = strtoull(arg, &చివర, 0);
+		ఒకవేళ (*చివర)
+			తిరిగి EXT2_ET_INVALID_వాదం;
+		దత్తాంశం->స్థానభ్రంశం = tmp;
+		ఒకవేళ (దత్తాంశం->స్థానభ్రంశం < 0)
+			తిరిగి EXT2_ET_INVALID_వాదం;
+		తిరిగి 0;
 	}
-	if (!strcmp(option, "cache")) {
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
-		if (!strcmp(arg, "on")) {
-			data->flags &= ~IO_FLAG_NOCACHE;
-			return 0;
+	ఒకవేళ (!strcmp(option, "cache")) {
+		ఒకవేళ (!arg)
+			తిరిగి EXT2_ET_INVALID_వాదం;
+		ఒకవేళ (!strcmp(arg, "on")) {
+			దత్తాంశం->flags &= ~IO_FLAG_NOCACHE;
+			తిరిగి 0;
 		}
-		if (!strcmp(arg, "off")) {
-			retval = flush_cached_blocks(channel, data, 0);
-			data->flags |= IO_FLAG_NOCACHE;
-			return retval;
+		ఒకవేళ (!strcmp(arg, "off")) {
+			retval = flush_cached_ఖండాలు(channel, దత్తాంశం, 0);
+			దత్తాంశం->flags |= IO_FLAG_NOCACHE;
+			తిరిగి retval;
 		}
-		return EXT2_ET_INVALID_ARGUMENT;
+		తిరిగి EXT2_ET_INVALID_వాదం;
 	}
-#ifndef NO_IO_CACHE
-	if (!strcmp(option, "cache_blocks")) {
-		unsigned long long	size;
+#నిర్వచితం_కాకపోతే NO_IO_CACHE
+	ఒకవేళ (!strcmp(option, "cache_blocks")) {
+		గుర్తులేని దీర్ఘ దీర్ఘ	కొలత;
 
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
+		ఒకవేళ (!arg)
+			తిరిగి EXT2_ET_INVALID_వాదం;
 
 		errno = 0;
-		size = strtoll(arg, NULL, 0);
-		if (errno || size == 0 || size > INT32_MAX)
-			return EXT2_ET_INVALID_ARGUMENT;
+		కొలత = strtoll(arg, ఖాళీ, 0);
+		ఒకవేళ (errno || కొలత == 0 || కొలత > INT32_MAX)
+			తిరిగి EXT2_ET_INVALID_వాదం;
 
-		if (data->cache_size == size)
-			return 0;
-		if (data->cache_size > size)
-			return shrink_cache(channel, data, size);
-		return grow_cache(channel, data, size);
+		ఒకవేళ (దత్తాంశం->cache_కొలత == కొలత)
+			తిరిగి 0;
+		ఒకవేళ (దత్తాంశం->cache_కొలత > కొలత)
+			తిరిగి shrink_cache(channel, దత్తాంశం, కొలత);
+		తిరిగి grow_cache(channel, దత్తాంశం, కొలత);
 	}
-#endif
-	return EXT2_ET_INVALID_ARGUMENT;
+#అయితే_ముగింపు
+	తిరిగి EXT2_ET_INVALID_వాదం;
 }
 
-#if defined(__linux__) && !defined(BLKDISCARD)
-#define BLKDISCARD		_IO(0x12,119)
-#endif
+#ఒకవేళ defined(__linux__) && !defined(BLKDISCARD)
+#నిర్వచించు BLKDISCARD		_IO(0x12,119)
+#అయితే_ముగింపు
 
-static errcode_t unix_discard(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+స్థిర errcode_t unix_discard(io_channel channel, గుర్తులేని దీర్ఘ దీర్ఘ ఖండం,
+			      గుర్తులేని దీర్ఘ దీర్ఘ లెక్క)
 {
-	struct unix_private_data *data;
-	int		ret = EOPNOTSUPP;
+	నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
+	పూర్ణాంకం		ret = EOPNOTSUPP;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (channel->flags & CHANNEL_FLAGS_NODISCARD)
-		goto unimplemented;
+	ఒకవేళ (channel->flags & CHANNEL_FLAGS_NODISCARD)
+		వెళ్ళు unimplemented;
 
-	if (channel->flags & CHANNEL_FLAGS_BLOCK_DEVICE) {
-#ifdef BLKDISCARD
+	ఒకవేళ (channel->flags & CHANNEL_FLAGS_ఖండం_DEVICE) {
+#నిర్వచితమైతే BLKDISCARD
 		__u64 range[2];
 
-		range[0] = (__u64)(block) * channel->block_size + data->offset;
-		range[1] = (__u64)(count) * channel->block_size;
+		range[0] = (__u64)(ఖండం) * channel->ఖండం_కొలత + దత్తాంశం->స్థానభ్రంశం;
+		range[1] = (__u64)(లెక్క) * channel->ఖండం_కొలత;
 
-		ret = ioctl(data->dev, BLKDISCARD, &range);
-#else
-		goto unimplemented;
-#endif
-	} else {
-#if defined(HAVE_FALLOCATE) && defined(FALLOC_FL_PUNCH_HOLE)
+		ret = ioctl(దత్తాంశం->dev, BLKDISCARD, &range);
+#లేకపోతే
+		వెళ్ళు unimplemented;
+#అయితే_ముగింపు
+	} లేకపోతే {
+#ఒకవేళ defined(HAVE_FALLOCATE) && defined(FALLOC_FL_PUNCH_HOLE)
 		/*
 		 * If we are not on block device, try to use punch hole
 		 * to reclaim free space.
 		 */
-		ret = fallocate(data->dev,
+		ret = fallocate(దత్తాంశం->dev,
 				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-				(off_t)(block) * channel->block_size + data->offset,
-				(off_t)(count) * channel->block_size);
-#else
-		goto unimplemented;
-#endif
+				(off_t)(ఖండం) * channel->ఖండం_కొలత + దత్తాంశం->స్థానభ్రంశం,
+				(off_t)(లెక్క) * channel->ఖండం_కొలత);
+#లేకపోతే
+		వెళ్ళు unimplemented;
+#అయితే_ముగింపు
 	}
-	if (ret < 0) {
-		if (errno == EOPNOTSUPP) {
+	ఒకవేళ (ret < 0) {
+		ఒకవేళ (errno == EOPNOTSUPP) {
 			channel->flags |= CHANNEL_FLAGS_NODISCARD;
-			goto unimplemented;
+			వెళ్ళు unimplemented;
 		}
-		return errno;
+		తిరిగి errno;
 	}
-	return 0;
+	తిరిగి 0;
 unimplemented:
-	return EXT2_ET_UNIMPLEMENTED;
+	తిరిగి EXT2_ET_UNIMPLEMENTED;
 }
 
 /*
@@ -1657,95 +1657,95 @@ unimplemented:
  * it always invalidates page cache, and libext2fs requires that reads after
  * ZERO_RANGE return zeroes.
  */
-static int __unix_zeroout(int fd, off_t offset, off_t len)
+స్థిర పూర్ణాంకం __unix_zeroout(పూర్ణాంకం fd, off_t స్థానభ్రంశం, off_t len)
 {
-	int ret = -1;
+	పూర్ణాంకం ret = -1;
 
-#if defined(HAVE_FALLOCATE) && defined(FALLOC_FL_ZERO_RANGE)
-	ret = fallocate(fd, FALLOC_FL_ZERO_RANGE, offset, len);
-	if (ret == 0)
-		return 0;
-#endif
-#if defined(HAVE_FALLOCATE) && defined(FALLOC_FL_PUNCH_HOLE) && defined(FALLOC_FL_KEEP_SIZE)
+#ఒకవేళ defined(HAVE_FALLOCATE) && defined(FALLOC_FL_ZERO_RANGE)
+	ret = fallocate(fd, FALLOC_FL_ZERO_RANGE, స్థానభ్రంశం, len);
+	ఒకవేళ (ret == 0)
+		తిరిగి 0;
+#అయితే_ముగింపు
+#ఒకవేళ defined(HAVE_FALLOCATE) && defined(FALLOC_FL_PUNCH_HOLE) && defined(FALLOC_FL_KEEP_SIZE)
 	ret = fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-			offset,  len);
-	if (ret == 0)
-		return 0;
-#endif
+			స్థానభ్రంశం,  len);
+	ఒకవేళ (ret == 0)
+		తిరిగి 0;
+#అయితే_ముగింపు
 	errno = EOPNOTSUPP;
-	return ret;
+	తిరిగి ret;
 }
 
 /* parameters might not be used if OS doesn't support zeroout */
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-static errcode_t unix_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+#ఒకవేళ __GNUC_PREREQ (4, 6)
+#సూచన GCC diagnostic నెట్టు
+#సూచన GCC diagnostic ignored "-Wunused-parameter"
+#అయితే_ముగింపు
+స్థిర errcode_t unix_zeroout(io_channel channel, గుర్తులేని దీర్ఘ దీర్ఘ ఖండం,
+			      గుర్తులేని దీర్ఘ దీర్ఘ లెక్క)
 {
-	struct unix_private_data *data;
-	int		ret;
+	నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
+	పూర్ణాంకం		ret;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం unix_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (!(channel->flags & CHANNEL_FLAGS_BLOCK_DEVICE)) {
+	ఒకవేళ (!(channel->flags & CHANNEL_FLAGS_ఖండం_DEVICE)) {
 		/* Regular file, try to use truncate/punch/zero. */
-		struct stat statbuf;
+		నిర్మాణం stat statbuf;
 
-		if (count == 0)
-			return 0;
+		ఒకవేళ (లెక్క == 0)
+			తిరిగి 0;
 		/*
 		 * If we're trying to zero a range past the end of the file,
 		 * extend the file size, then truncate everything.
 		 */
-		ret = fstat(data->dev, &statbuf);
-		if (ret)
-			goto err;
-		if ((unsigned long long) statbuf.st_size <
-			(block + count) * channel->block_size + data->offset) {
-			ret = ftruncate(data->dev,
-					(block + count) * channel->block_size + data->offset);
-			if (ret)
-				goto err;
+		ret = fstat(దత్తాంశం->dev, &statbuf);
+		ఒకవేళ (ret)
+			వెళ్ళు err;
+		ఒకవేళ ((గుర్తులేని దీర్ఘ దీర్ఘ) statbuf.st_కొలత <
+			(ఖండం + లెక్క) * channel->ఖండం_కొలత + దత్తాంశం->స్థానభ్రంశం) {
+			ret = ftruncate(దత్తాంశం->dev,
+					(ఖండం + లెక్క) * channel->ఖండం_కొలత + దత్తాంశం->స్థానభ్రంశం);
+			ఒకవేళ (ret)
+				వెళ్ళు err;
 		}
 	}
 
-	if (channel->flags & CHANNEL_FLAGS_NOZEROOUT)
-		goto unimplemented;
+	ఒకవేళ (channel->flags & CHANNEL_FLAGS_NOZEROOUT)
+		వెళ్ళు unimplemented;
 
-	ret = __unix_zeroout(data->dev,
-			(off_t)(block) * channel->block_size + data->offset,
-			(off_t)(count) * channel->block_size);
+	ret = __unix_zeroout(దత్తాంశం->dev,
+			(off_t)(ఖండం) * channel->ఖండం_కొలత + దత్తాంశం->స్థానభ్రంశం,
+			(off_t)(లెక్క) * channel->ఖండం_కొలత);
 err:
-	if (ret < 0) {
-		if (errno == EOPNOTSUPP) {
+	ఒకవేళ (ret < 0) {
+		ఒకవేళ (errno == EOPNOTSUPP) {
 			channel->flags |= CHANNEL_FLAGS_NOZEROOUT;
-			goto unimplemented;
+			వెళ్ళు unimplemented;
 		}
-		return errno;
+		తిరిగి errno;
 	}
-	return 0;
+	తిరిగి 0;
 unimplemented:
-	return EXT2_ET_UNIMPLEMENTED;
+	తిరిగి EXT2_ET_UNIMPLEMENTED;
 }
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
-#endif
+#ఒకవేళ __GNUC_PREREQ (4, 6)
+#సూచన GCC diagnostic తీయి
+#అయితే_ముగింపు
 
-static struct struct_io_manager struct_unix_manager = {
+స్థిర నిర్మాణం struct_io_manager struct_unix_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Unix I/O Manager",
 	.open		= unix_open,
 	.close		= unix_close,
-	.set_blksize	= unix_set_blksize,
+	.సమితి_blksize	= unix_సమితి_blksize,
 	.read_blk	= unix_read_blk,
 	.write_blk	= unix_write_blk,
 	.flush		= unix_flush,
 	.write_byte	= unix_write_byte,
-	.set_option	= unix_set_option,
+	.సమితి_option	= unix_సమితి_option,
 	.get_stats	= unix_get_stats,
 	.read_blk64	= unix_read_blk64,
 	.write_blk64	= unix_write_blk64,
@@ -1757,17 +1757,17 @@ static struct struct_io_manager struct_unix_manager = {
 
 io_manager unix_io_manager = &struct_unix_manager;
 
-static struct struct_io_manager struct_unixfd_manager = {
+స్థిర నిర్మాణం struct_io_manager struct_unixfd_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Unix fd I/O Manager",
 	.open		= unixfd_open,
 	.close		= unix_close,
-	.set_blksize	= unix_set_blksize,
+	.సమితి_blksize	= unix_సమితి_blksize,
 	.read_blk	= unix_read_blk,
 	.write_blk	= unix_write_blk,
 	.flush		= unix_flush,
 	.write_byte	= unix_write_byte,
-	.set_option	= unix_set_option,
+	.సమితి_option	= unix_సమితి_option,
 	.get_stats	= unix_get_stats,
 	.read_blk64	= unix_read_blk64,
 	.write_blk64	= unix_write_blk64,

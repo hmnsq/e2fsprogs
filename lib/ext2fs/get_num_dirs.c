@@ -9,42 +9,42 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <string.h>
-#include <time.h>
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fsP.h"
 
 /*
  * Returns the number of directories in the filesystem as reported by
  * the group descriptors.  Of course, the group descriptors could be
  * wrong!
  */
-errcode_t ext2fs_get_num_dirs(ext2_filsys fs, ext2_ino_t *ret_num_dirs)
+errcode_t ext2fs_get_అంకె_dirs(ext2_filsys fs, ext2_ino_t *ret_అంకె_dirs)
 {
 	dgrp_t	i;
-	ext2_ino_t	num_dirs, max_dirs;
+	ext2_ino_t	అంకె_dirs, max_dirs;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	num_dirs = 0;
-	max_dirs = fs->super->s_inodes_per_group;
-	for (i = 0; i < fs->group_desc_count; i++) {
-		if (ext2fs_bg_used_dirs_count(fs, i) > max_dirs)
-			num_dirs += max_dirs / 8;
-		else
-			num_dirs += ext2fs_bg_used_dirs_count(fs, i);
+	అంకె_dirs = 0;
+	max_dirs = fs->super->s_inodes_చొప్పున_సమూహం;
+	కొరకు (i = 0; i < fs->సమూహం_desc_లెక్క; i++) {
+		ఒకవేళ (ext2fs_bg_వాడిన_dirs_లెక్క(fs, i) > max_dirs)
+			అంకె_dirs += max_dirs / 8;
+		లేకపోతే
+			అంకె_dirs += ext2fs_bg_వాడిన_dirs_లెక్క(fs, i);
 	}
-	if (num_dirs > fs->super->s_inodes_count)
-		num_dirs = fs->super->s_inodes_count;
+	ఒకవేళ (అంకె_dirs > fs->super->s_inodes_లెక్క)
+		అంకె_dirs = fs->super->s_inodes_లెక్క;
 
-	*ret_num_dirs = num_dirs;
+	*ret_అంకె_dirs = అంకె_dirs;
 
-	return 0;
+	తిరిగి 0;
 }
 

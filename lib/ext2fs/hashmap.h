@@ -1,42 +1,42 @@
-#ifndef HASHMAP_H
+#నిర్వచితం_కాకపోతే HASHMAP_H
 # define HASHMAP_H
 
 # include <stdlib.h>
 # include <stdint.h>
 
-#ifndef __GNUC_PREREQ
-#if defined(__GNUC__) && defined(__GNUC_MINOR__)
-#define __GNUC_PREREQ(maj, min) \
+#నిర్వచితం_కాకపోతే __GNUC_PREREQ
+#ఒకవేళ defined(__GNUC__) && defined(__GNUC_MINOR__)
+#నిర్వచించు __GNUC_PREREQ(maj, min) \
 	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
-#else
-#define __GNUC_PREREQ(maj, min) 0
-#endif
-#endif
+#లేకపోతే
+#నిర్వచించు __GNUC_PREREQ(maj, min) 0
+#అయితే_ముగింపు
+#అయితే_ముగింపు
 
-struct ext2fs_hashmap;
+నిర్మాణం ext2fs_hashmap;
 
-struct ext2fs_hashmap_entry {
-	void *data;
-	const void *key;
-	size_t key_len;
-	struct ext2fs_hashmap_entry *next;
-	struct ext2fs_hashmap_entry *list_next;
-	struct ext2fs_hashmap_entry *list_prev;
+నిర్మాణం ext2fs_hashmap_నమోదు {
+	శూన్య *దత్తాంశం;
+	స్థిరరాశి శూన్య *కీలకం;
+	size_t కీలకం_len;
+	నిర్మాణం ext2fs_hashmap_నమోదు *తదుపరి;
+	నిర్మాణం ext2fs_hashmap_నమోదు *list_తదుపరి;
+	నిర్మాణం ext2fs_hashmap_నమోదు *list_prev;
 };
 
-struct ext2fs_hashmap *ext2fs_hashmap_create(
-				uint32_t(*hash_fct)(const void*, size_t),
-				void(*free_fct)(void*), size_t size);
-int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
-		       void *data, const void *key,size_t key_len);
-void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *key,
-			    size_t key_len);
-void *ext2fs_hashmap_iter_in_order(struct ext2fs_hashmap *h,
-				   struct ext2fs_hashmap_entry **it);
-void ext2fs_hashmap_del(struct ext2fs_hashmap *h,
-			struct ext2fs_hashmap_entry *e);
-void ext2fs_hashmap_free(struct ext2fs_hashmap *h);
+నిర్మాణం ext2fs_hashmap *ext2fs_hashmap_create(
+				uint32_t(*hash_fct)(స్థిరరాశి శూన్య*, size_t),
+				శూన్య(*free_fct)(శూన్య*), size_t కొలత);
+పూర్ణాంకం ext2fs_hashmap_కూడు(నిర్మాణం ext2fs_hashmap *h,
+		       శూన్య *దత్తాంశం, స్థిరరాశి శూన్య *కీలకం,size_t కీలకం_len);
+శూన్య *ext2fs_hashmap_lookup(నిర్మాణం ext2fs_hashmap *h, స్థిరరాశి శూన్య *కీలకం,
+			    size_t కీలకం_len);
+శూన్య *ext2fs_hashmap_iter_లోపల_క్రమం(నిర్మాణం ext2fs_hashmap *h,
+				   నిర్మాణం ext2fs_hashmap_నమోదు **it);
+శూన్య ext2fs_hashmap_del(నిర్మాణం ext2fs_hashmap *h,
+			నిర్మాణం ext2fs_hashmap_నమోదు *e);
+శూన్య ext2fs_hashmap_free(నిర్మాణం ext2fs_hashmap *h);
 
-uint32_t ext2fs_djb2_hash(const void *str, size_t size);
+uint32_t ext2fs_djb2_hash(స్థిరరాశి శూన్య *str, size_t కొలత);
 
-#endif /* !HASHMAP_H */
+#అయితే_ముగింపు /* !HASHMAP_H */

@@ -10,24 +10,24 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
-#endif
-#if HAVE_SYS_MOUNT_H
-#include <sys/param.h>
-#include <sys/mount.h>		/* This may define BLKFLSBUF */
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#ఒకవేళ HAVE_ERRNO_H
+#అన్తర్భావ <errno.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_IOCTL_H
+#అన్తర్భావ <sys/ioctl.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_MOUNT_H
+#అన్తర్భావ <sys/param.h>
+#అన్తర్భావ <sys/mount.h>		/* This may define BLKFLSBUF */
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
 /*
  * For Linux, define BLKFLSBUF and FDFLUSH if necessary, since
@@ -36,21 +36,21 @@
  * BLKFLSBUF in sys/mount.h, but FDFLUSH still doesn't seem to be
  * defined anywhere portable.)  Until then....
  */
-#ifdef __linux__
-#ifndef BLKFLSBUF
-#define BLKFLSBUF	_IO(0x12,97)	/* flush buffer cache */
-#endif
-#ifndef FDFLUSH
-#define FDFLUSH		_IO(2,0x4b)	/* flush floppy disk */
-#endif
-#endif
+#నిర్వచితమైతే __linux__
+#నిర్వచితం_కాకపోతే BLKFLSBUF
+#నిర్వచించు BLKFLSBUF	_IO(0x12,97)	/* flush buffer cache */
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే FDFLUSH
+#నిర్వచించు FDFLUSH		_IO(2,0x4b)	/* flush floppy disk */
+#అయితే_ముగింపు
+#అయితే_ముగింపు
 
 /*
  * This function will sync a device/file, and optionally attempt to
  * flush the buffer cache.  The latter is basically only useful for
  * system benchmarks and for torturing systems in burn-in tests.  :)
  */
-errcode_t ext2fs_sync_device(int fd, int flushb)
+errcode_t ext2fs_sync_device(పూర్ణాంకం fd, పూర్ణాంకం flushb)
 {
 	/*
 	 * We always sync the device in case we're running on old
@@ -58,31 +58,31 @@ errcode_t ext2fs_sync_device(int fd, int flushb)
 	 * still is a race condition for those kernels, but this
 	 * reduces it greatly.)
 	 */
-#if defined(HAVE_FSYNC)
-	if (fsync (fd) == -1)
-		return errno;
-#endif
+#ఒకవేళ defined(HAVE_FSYNC)
+	ఒకవేళ (fsync (fd) == -1)
+		తిరిగి errno;
+#అయితే_ముగింపు
 
-	if (flushb) {
+	ఒకవేళ (flushb) {
 		errcode_t	retval = 0;
 
-#ifdef BLKFLSBUF
-		if (ioctl (fd, BLKFLSBUF, 0) == 0)
-			return 0;
+#నిర్వచితమైతే BLKFLSBUF
+		ఒకవేళ (ioctl (fd, BLKFLSBUF, 0) == 0)
+			తిరిగి 0;
 		retval = errno;
-#elif defined(__linux__)
+#లేదావేళ defined(__linux__)
 #warning BLKFLSBUF not defined
-#endif
-#ifdef FDFLUSH
+#అయితే_ముగింపు
+#నిర్వచితమైతే FDFLUSH
 		/* In case this is a floppy */
-		if (ioctl(fd, FDFLUSH, 0) == 0)
-			return 0;
-		if (retval == 0)
+		ఒకవేళ (ioctl(fd, FDFLUSH, 0) == 0)
+			తిరిగి 0;
+		ఒకవేళ (retval == 0)
 			retval = errno;
-#elif defined(__linux__)
+#లేదావేళ defined(__linux__)
 #warning FDFLUSH not defined
-#endif
-		return retval;
+#అయితే_ముగింపు
+		తిరిగి retval;
 	}
-	return 0;
+	తిరిగి 0;
 }

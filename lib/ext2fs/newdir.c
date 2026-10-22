@@ -9,118 +9,118 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
-#ifndef EXT2_FT_DIR
-#define EXT2_FT_DIR		2
-#endif
+#నిర్వచితం_కాకపోతే EXT2_FT_DIR
+#నిర్వచించు EXT2_FT_DIR		2
+#అయితే_ముగింపు
 
 /*
  * Create new directory block
  */
-errcode_t ext2fs_new_dir_block(ext2_filsys fs, ext2_ino_t dir_ino,
-			       ext2_ino_t parent_ino, char **block)
+errcode_t ext2fs_new_dir_ఖండం(ext2_filsys fs, ext2_ino_t dir_ino,
+			       ext2_ino_t మాతృ_ino, అక్షరం **ఖండం)
 {
-	struct ext2_dir_entry 	*dir = NULL;
+	నిర్మాణం ext2_dir_నమోదు 	*dir = ఖాళీ;
 	errcode_t		retval;
-	char			*buf;
-	int			rec_len;
-	int			filetype = 0;
-	struct ext2_dir_entry_tail	*t;
-	int			csum_size = 0;
+	అక్షరం			*buf;
+	పూర్ణాంకం			rec_len;
+	పూర్ణాంకం			filetype = 0;
+	నిర్మాణం ext2_dir_నమోదు_తోక	*t;
+	పూర్ణాంకం			csum_కొలత = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 	memset(buf, 0, fs->blocksize);
-	dir = (struct ext2_dir_entry *) buf;
+	dir = (నిర్మాణం ext2_dir_నమోదు *) buf;
 
-	if (ext2fs_has_feature_metadata_csum(fs->super))
-		csum_size = sizeof(struct ext2_dir_entry_tail);
+	ఒకవేళ (ext2fs_has_feature_metadata_csum(fs->super))
+		csum_కొలత = పరిమాణం(నిర్మాణం ext2_dir_నమోదు_తోక);
 
-	retval = ext2fs_set_rec_len(fs, fs->blocksize - csum_size, dir);
-	if (retval) {
+	retval = ext2fs_సమితి_rec_len(fs, fs->blocksize - csum_కొలత, dir);
+	ఒకవేళ (retval) {
 		ext2fs_free_mem(&buf);
-		return retval;
+		తిరిగి retval;
 	}
 
-	if (dir_ino) {
-		if (ext2fs_has_feature_filetype(fs->super))
+	ఒకవేళ (dir_ino) {
+		ఒకవేళ (ext2fs_has_feature_filetype(fs->super))
 			filetype = EXT2_FT_DIR;
 		/*
 		 * Set up entry for '.'
 		 */
 		dir->inode = dir_ino;
-		ext2fs_dirent_set_name_len(dir, 1);
-		ext2fs_dirent_set_file_type(dir, filetype);
+		ext2fs_dirent_సమితి_name_len(dir, 1);
+		ext2fs_dirent_సమితి_file_type(dir, filetype);
 		dir->name[0] = '.';
-		rec_len = (fs->blocksize - csum_size) - EXT2_DIR_REC_LEN(1);
+		rec_len = (fs->blocksize - csum_కొలత) - EXT2_DIR_REC_LEN(1);
 		dir->rec_len = EXT2_DIR_REC_LEN(1);
 
 		/*
 		 * Set up entry for '..'
 		 */
-		dir = (struct ext2_dir_entry *) (buf + dir->rec_len);
-		retval = ext2fs_set_rec_len(fs, rec_len, dir);
-		if (retval) {
+		dir = (నిర్మాణం ext2_dir_నమోదు *) (buf + dir->rec_len);
+		retval = ext2fs_సమితి_rec_len(fs, rec_len, dir);
+		ఒకవేళ (retval) {
 			ext2fs_free_mem(&buf);
-			return retval;
+			తిరిగి retval;
 		}
-		dir->inode = parent_ino;
-		ext2fs_dirent_set_name_len(dir, 2);
-		ext2fs_dirent_set_file_type(dir, filetype);
+		dir->inode = మాతృ_ino;
+		ext2fs_dirent_సమితి_name_len(dir, 2);
+		ext2fs_dirent_సమితి_file_type(dir, filetype);
 		dir->name[0] = '.';
 		dir->name[1] = '.';
 
 	}
 
-	if (csum_size) {
-		t = EXT2_DIRENT_TAIL(buf, fs->blocksize);
-		ext2fs_initialize_dirent_tail(fs, t);
+	ఒకవేళ (csum_కొలత) {
+		t = EXT2_DIRENT_తోక(buf, fs->blocksize);
+		ext2fs_initialize_dirent_తోక(fs, t);
 	}
-	*block = buf;
-	return 0;
+	*ఖండం = buf;
+	తిరిగి 0;
 }
 
 /*
  * Create new directory on inline data
  */
-errcode_t ext2fs_new_dir_inline_data(ext2_filsys fs,
-				     ext2_ino_t dir_ino EXT2FS_ATTR((unused)),
-				     ext2_ino_t parent_ino, __u32 *iblock)
+errcode_t ext2fs_new_dir_inline_దత్తాంశం(ext2_filsys fs,
+				     ext2_ino_t dir_ino EXT2FS_ATTR((వాడని)),
+				     ext2_ino_t మాతృ_ino, __u32 *iblock)
 {
-	struct ext2_dir_entry 	*dir = NULL;
+	నిర్మాణం ext2_dir_నమోదు 	*dir = ఖాళీ;
 	errcode_t		retval;
-	int			rec_len;
+	పూర్ణాంకం			rec_len;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	iblock[0] = ext2fs_cpu_to_le32(parent_ino);
+	iblock[0] = ext2fs_cpu_గమ్యం_le32(మాతృ_ino);
 
-	dir = (struct ext2_dir_entry *)((char *)iblock +
-					EXT4_INLINE_DATA_DOTDOT_SIZE);
+	dir = (నిర్మాణం ext2_dir_నమోదు *)((అక్షరం *)iblock +
+					EXT4_INLINE_దత్తాంశం_DOTDOT_కొలత);
 	dir->inode = 0;
-	rec_len = EXT4_MIN_INLINE_DATA_SIZE - EXT4_INLINE_DATA_DOTDOT_SIZE;
-	retval = ext2fs_set_rec_len(fs, rec_len, dir);
-	if (retval)
-		goto errout;
+	rec_len = EXT4_MIN_INLINE_దత్తాంశం_కొలత - EXT4_INLINE_దత్తాంశం_DOTDOT_కొలత;
+	retval = ext2fs_సమితి_rec_len(fs, rec_len, dir);
+	ఒకవేళ (retval)
+		వెళ్ళు errout;
 
-#ifdef WORDS_BIGENDIAN
-	retval = ext2fs_dirent_swab_out2(fs, (char *)dir, rec_len, 0);
-	if (retval)
-		goto errout;
-#endif
+#నిర్వచితమైతే పదాలు_BIGENDIAN
+	retval = ext2fs_dirent_swab_out2(fs, (అక్షరం *)dir, rec_len, 0);
+	ఒకవేళ (retval)
+		వెళ్ళు errout;
+#అయితే_ముగింపు
 
 errout:
-	return retval;
+	తిరిగి retval;
 }

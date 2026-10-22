@@ -9,100 +9,100 @@
  * %End-Header%
  */
 
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
+#నిర్వచితం_కాకపోతే LARGEFILE_ఆధారం
+#నిర్వచించు LARGEFILE_ఆధారం
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే LARGEFILE64_ఆధారం
+#నిర్వచించు LARGEFILE64_ఆధారం
+#అయితే_ముగింపు
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#అన్తర్భావ "config.h"
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
 
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef __MSDOS__
-#include <io.h>
-#endif
-#include "et/com_err.h"
-#include "ext2fs/ext2_io.h"
+#ఒకవేళ HAVE_ERRNO_H
+#అన్తర్భావ <errno.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#నిర్వచితమైతే __MSDOS__
+#అన్తర్భావ <io.h>
+#అయితే_ముగింపు
+#అన్తర్భావ "et/com_err.h"
+#అన్తర్భావ "ext2fs/ext2_io.h"
 
-#ifdef __linux__
+#నిర్వచితమైతే __linux__
 
-#include <sys/syscall.h>
+#అన్తర్భావ <sys/syscall.h>
 
-static ext2_loff_t my_llseek (int fd, ext2_loff_t offset, int origin)
+స్థిర ext2_loff_t my_llseek (పూర్ణాంకం fd, ext2_loff_t స్థానభ్రంశం, పూర్ణాంకం origin)
 {
-#if SIZEOF_OFF_T >= 8
-	return lseek(fd, offset, origin);
-#elif HAVE_LSEEK64_PROTOTYPE
-	return lseek64(fd, offset, origin);
-#elif HAVE_LLSEEK_PROTOTYPE
-	return llseek(fd, offset, origin);
-#elif defined(__NR__llseek)
-	loff_t result;
-	int retval;
+#ఒకవేళ SIZEOF_OFF_T >= 8
+	తిరిగి lseek(fd, స్థానభ్రంశం, origin);
+#లేదావేళ HAVE_LSEEK64_PROTOTYPE
+	తిరిగి lseek64(fd, స్థానభ్రంశం, origin);
+#లేదావేళ HAVE_LLSEEK_PROTOTYPE
+	తిరిగి llseek(fd, స్థానభ్రంశం, origin);
+#లేదావేళ defined(__NR__llseek)
+	loff_t ఫలితం;
+	పూర్ణాంకం retval;
 	retval = syscall(__NR__llseek, fd,
-		(unsigned long)(offset >> 32),
-		(unsigned long)(offset & 0xffffffff),
-		&result, origin);
-	return (retval == -1 ? retval : result);
-#else
+		(గుర్తులేని దీర్ఘ)(స్థానభ్రంశం >> 32),
+		(గుర్తులేని దీర్ఘ)(స్థానభ్రంశం & 0xffffffff),
+		&ఫలితం, origin);
+	తిరిగి (retval == -1 ? retval : ఫలితం);
+#లేకపోతే
 	errno = ENOSYS;
-	return -1;
-#endif
+	తిరిగి -1;
+#అయితే_ముగింపు
 }
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (పూర్ణాంకం fd, ext2_loff_t స్థానభ్రంశం, పూర్ణాంకం origin)
 {
-	ext2_loff_t result;
-	static int do_compat = 0;
+	ext2_loff_t ఫలితం;
+	స్థిర పూర్ణాంకం do_compat = 0;
 
-	if (do_compat)
-		goto fallback;
+	ఒకవేళ (do_compat)
+		వెళ్ళు fallback;
 
-	result = my_llseek (fd, offset, origin);
-	if (result == -1 && errno == ENOSYS) {
+	ఫలితం = my_llseek (fd, స్థానభ్రంశం, origin);
+	ఒకవేళ (ఫలితం == -1 && errno == ENOSYS) {
 		/*
 		 * Just in case this code runs on top of an old kernel
 		 * which does not support the llseek system call
 		 */
 		do_compat++;
 	fallback:
-		if (offset < ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))
-			return lseek(fd, (off_t) offset, origin);
+		ఒకవేళ (స్థానభ్రంశం < ((ext2_loff_t) 1 << ((పరిమాణం(off_t)*8) -1)))
+			తిరిగి lseek(fd, (off_t) స్థానభ్రంశం, origin);
 		errno = EINVAL;
-		return -1;
+		తిరిగి -1;
 	}
-	return result;
+	తిరిగి ఫలితం;
 }
 
-#else /* !linux */
+#లేకపోతే /* !linux */
 
-#ifndef EINVAL
-#define EINVAL EXT2_ET_INVALID_ARGUMENT
-#endif
+#నిర్వచితం_కాకపోతే EINVAL
+#నిర్వచించు EINVAL EXT2_ET_INVALID_వాదం
+#అయితే_ముగింపు
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (పూర్ణాంకం fd, ext2_loff_t స్థానభ్రంశం, పూర్ణాంకం origin)
 {
-#if defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
-	return lseek64 (fd, offset, origin);
-#else
-	if ((sizeof(off_t) < sizeof(ext2_loff_t)) &&
-	    (offset >= ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))) {
+#ఒకవేళ defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
+	తిరిగి lseek64 (fd, స్థానభ్రంశం, origin);
+#లేకపోతే
+	ఒకవేళ ((పరిమాణం(off_t) < పరిమాణం(ext2_loff_t)) &&
+	    (స్థానభ్రంశం >= ((ext2_loff_t) 1 << ((పరిమాణం(off_t)*8) -1)))) {
 		errno = EINVAL;
-		return -1;
+		తిరిగి -1;
 	}
-	return lseek (fd, (off_t) offset, origin);
-#endif
+	తిరిగి lseek (fd, (off_t) స్థానభ్రంశం, origin);
+#అయితే_ముగింపు
 }
 
-#endif 	/* linux */
+#అయితే_ముగింపు 	/* linux */
 
 

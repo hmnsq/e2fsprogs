@@ -9,135 +9,135 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
+#అన్తర్భావ "ext2fsP.h"
 
-struct expand_dir_struct {
-	int		done;
-	int		newblocks;
+నిర్మాణం expand_dir_struct {
+	పూర్ణాంకం		పూర్తి;
+	పూర్ణాంకం		newblocks;
 	blk64_t		goal;
 	errcode_t	err;
 	ext2_ino_t	dir;
 };
 
-static int expand_dir_proc(ext2_filsys	fs,
+స్థిర పూర్ణాంకం expand_dir_proc(ext2_filsys	fs,
 			   blk64_t	*blocknr,
 			   e2_blkcnt_t	blockcnt,
-			   blk64_t	ref_block EXT2FS_ATTR((unused)),
-			   int		ref_offset EXT2FS_ATTR((unused)),
-			   void		*priv_data)
+			   blk64_t	ref_ఖండం EXT2FS_ATTR((వాడని)),
+			   పూర్ణాంకం		ref_స్థానభ్రంశం EXT2FS_ATTR((వాడని)),
+			   శూన్య		*priv_దత్తాంశం)
 {
-	struct expand_dir_struct *es = (struct expand_dir_struct *) priv_data;
+	నిర్మాణం expand_dir_struct *es = (నిర్మాణం expand_dir_struct *) priv_దత్తాంశం;
 	blk64_t	new_blk;
-	char		*block;
+	అక్షరం		*ఖండం;
 	errcode_t	retval;
 
-	if (*blocknr) {
-		if (blockcnt >= 0)
+	ఒకవేళ (*blocknr) {
+		ఒకవేళ (blockcnt >= 0)
 			es->goal = *blocknr;
-		return 0;
+		తిరిగి 0;
 	}
-	if (blockcnt &&
+	ఒకవేళ (blockcnt &&
 	    (EXT2FS_B2C(fs, es->goal) == EXT2FS_B2C(fs, es->goal+1)))
 		new_blk = es->goal+1;
-	else {
-		es->goal &= ~EXT2FS_CLUSTER_MASK(fs);
+	లేకపోతే {
+		es->goal &= ~EXT2_FS_CLUSTER_ముసుగు(fs);
 		retval = ext2fs_new_block2(fs, es->goal, 0, &new_blk);
-		if (retval) {
+		ఒకవేళ (retval) {
 			es->err = retval;
-			return BLOCK_ABORT;
+			తిరిగి ఖండం_ABORT;
 		}
 		es->newblocks++;
-		ext2fs_block_alloc_stats2(fs, new_blk, +1);
+		ext2fs_ఖండం_alloc_stats2(fs, new_blk, +1);
 	}
-	if (blockcnt > 0) {
-		retval = ext2fs_new_dir_block(fs, 0, 0, &block);
-		if (retval) {
+	ఒకవేళ (blockcnt > 0) {
+		retval = ext2fs_new_dir_ఖండం(fs, 0, 0, &ఖండం);
+		ఒకవేళ (retval) {
 			es->err = retval;
-			return BLOCK_ABORT;
+			తిరిగి ఖండం_ABORT;
 		}
-		es->done = 1;
-		retval = ext2fs_write_dir_block4(fs, new_blk, block, 0,
+		es->పూర్తి = 1;
+		retval = ext2fs_write_dir_block4(fs, new_blk, ఖండం, 0,
 						 es->dir);
-		ext2fs_free_mem(&block);
-	} else
-		retval = ext2fs_zero_blocks2(fs, new_blk, 1, NULL, NULL);
-	if (blockcnt >= 0)
+		ext2fs_free_mem(&ఖండం);
+	} లేకపోతే
+		retval = ext2fs_zero_blocks2(fs, new_blk, 1, ఖాళీ, ఖాళీ);
+	ఒకవేళ (blockcnt >= 0)
 		es->goal = new_blk;
-	if (retval) {
+	ఒకవేళ (retval) {
 		es->err = retval;
-		return BLOCK_ABORT;
+		తిరిగి ఖండం_ABORT;
 	}
 	*blocknr = new_blk;
 
-	if (es->done)
-		return (BLOCK_CHANGED | BLOCK_ABORT);
-	else
-		return BLOCK_CHANGED;
+	ఒకవేళ (es->పూర్తి)
+		తిరిగి (ఖండం_మారింది | ఖండం_ABORT);
+	లేకపోతే
+		తిరిగి ఖండం_మారింది;
 }
 
 errcode_t ext2fs_expand_dir(ext2_filsys fs, ext2_ino_t dir)
 {
 	errcode_t	retval;
-	struct expand_dir_struct es;
-	struct ext2_inode	inode;
+	నిర్మాణం expand_dir_struct es;
+	నిర్మాణం ext2_inode	inode;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ఒకవేళ (!(fs->flags & EXT2_FLAG_RW))
+		తిరిగి EXT2_ET_RO_FILSYS;
 
-	if (!fs->block_map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
+	ఒకవేళ (!fs->ఖండం_map)
+		తిరిగి EXT2_ET_NO_ఖండం_BITMAP;
 
 	retval = ext2fs_check_directory(fs, dir);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
 	retval = ext2fs_read_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
-	es.done = 0;
+	es.పూర్తి = 0;
 	es.err = 0;
-	es.goal = ext2fs_find_inode_goal(fs, dir, &inode, 0);
+	es.goal = ext2fs_కనుగొను_inode_goal(fs, dir, &inode, 0);
 	es.newblocks = 0;
 	es.dir = dir;
 
-	retval = ext2fs_block_iterate3(fs, dir, BLOCK_FLAG_APPEND,
+	retval = ext2fs_ఖండం_iterate3(fs, dir, ఖండం_FLAG_APPEND,
 				       0, expand_dir_proc, &es);
-	if (retval == EXT2_ET_INLINE_DATA_CANT_ITERATE)
-		return ext2fs_inline_data_expand(fs, dir);
+	ఒకవేళ (retval == EXT2_ET_INLINE_దత్తాంశం_CANT_ITERATE)
+		తిరిగి ext2fs_inline_దత్తాంశం_expand(fs, dir);
 
-	if (es.err)
-		return es.err;
-	if (!es.done)
-		return EXT2_ET_EXPAND_DIR_ERR;
+	ఒకవేళ (es.err)
+		తిరిగి es.err;
+	ఒకవేళ (!es.పూర్తి)
+		తిరిగి EXT2_ET_EXPAND_DIR_ERR;
 
 	/*
 	 * Update the size and block count fields in the inode.
 	 */
 	retval = ext2fs_read_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
-	retval = ext2fs_inode_size_set(fs, &inode,
-				       EXT2_I_SIZE(&inode) + fs->blocksize);
-	if (retval)
-		return retval;
-	ext2fs_iblk_add_blocks(fs, &inode, es.newblocks);
+	retval = ext2fs_inode_కొలత_సమితి(fs, &inode,
+				       EXT2_I_కొలత(&inode) + fs->blocksize);
+	ఒకవేళ (retval)
+		తిరిగి retval;
+	ext2fs_iblk_కూడు_ఖండాలు(fs, &inode, es.newblocks);
 
 	retval = ext2fs_write_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
-	return 0;
+	తిరిగి 0;
 }

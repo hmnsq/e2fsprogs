@@ -11,108 +11,108 @@
  * %End-Header%
  */
 
-#ifndef _XOPEN_SOURCE
-#define _XOPEN_SOURCE 600	/* for posix_memalign() */
-#endif
+#నిర్వచితం_కాకపోతే XOPEN_ఆధారం
+#నిర్వచించు XOPEN_ఆధారం 600	/* for posix_memalign() */
+#అయితే_ముగింపు
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#if HAVE_MALLOC_H
-#include <malloc.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <time.h>
+#ఒకవేళ HAVE_SYS_STAT_H
+#అన్తర్భావ <sys/stat.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_MALLOC_H
+#అన్తర్భావ <malloc.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#define INCLUDE_INLINE_FUNCS
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#నిర్వచించు INCLUDE_INLINE_FUNCS
+#అన్తర్భావ "ext2fs.h"
 
 /*
  * We used to define this as an inline, but since we are now using
  * autoconf-defined #ifdef's, we need to export this as a
  * library-provided function exclusively.
  */
-errcode_t ext2fs_get_memalign(unsigned long size,
-			      unsigned long align, void *ptr)
+errcode_t ext2fs_get_memalign(గుర్తులేని దీర్ఘ కొలత,
+			      గుర్తులేని దీర్ఘ align, శూన్య *ptr)
 {
 	errcode_t retval = 0;
-	void **p = ptr;
+	శూన్య **p = ptr;
 
-	if (align < 8)
+	ఒకవేళ (align < 8)
 		align = 8;
-#ifdef HAVE_POSIX_MEMALIGN
-	retval = posix_memalign(p, align, size);
-	if (retval == ENOMEM)
-		return EXT2_ET_NO_MEMORY;
-#else  /* !HAVE_POSIX_MEMALIGN */
-#ifdef HAVE_MEMALIGN
-	*p = memalign(align, size);
-	if (*p == NULL) {
-		if (errno)
-			return errno;
-		else
-			return EXT2_ET_NO_MEMORY;
+#నిర్వచితమైతే HAVE_POSIX_MEMALIGN
+	retval = posix_memalign(p, align, కొలత);
+	ఒకవేళ (retval == ENOMEM)
+		తిరిగి EXT2_ET_NO_జ్ఞాపకం;
+#లేకపోతే  /* !HAVE_POSIX_MEMALIGN */
+#నిర్వచితమైతే HAVE_MEMALIGN
+	*p = memalign(align, కొలత);
+	ఒకవేళ (*p == ఖాళీ) {
+		ఒకవేళ (errno)
+			తిరిగి errno;
+		లేకపోతే
+			తిరిగి EXT2_ET_NO_జ్ఞాపకం;
 	}
-#else  /* !HAVE_MEMALIGN */
-#ifdef HAVE_VALLOC
-	if (align > sizeof(long long))
-		*p = valloc(size);
-	else
-#endif
-		*p = malloc(size);
-	if ((uintptr_t) *p & (align - 1)) {
-		free(*p);
+#లేకపోతే  /* !HAVE_MEMALIGN */
+#నిర్వచితమైతే HAVE_VALLOC
+	ఒకవేళ (align > పరిమాణం(దీర్ఘ దీర్ఘ))
+		*p = valloc(కొలత);
+	లేకపోతే
+#అయితే_ముగింపు
+		*p = జ్ఞాపకం_ఇవ్వు(కొలత);
+	ఒకవేళ ((uintptr_t) *p & (align - 1)) {
+		విడుదల(*p);
 		*p = 0;
 	}
-	if (*p == 0)
-		return EXT2_ET_NO_MEMORY;
-#endif	/* HAVE_MEMALIGN */
-#endif	/* HAVE_POSIX_MEMALIGN */
-	return retval;
+	ఒకవేళ (*p == 0)
+		తిరిగి EXT2_ET_NO_జ్ఞాపకం;
+#అయితే_ముగింపు	/* HAVE_MEMALIGN */
+#అయితే_ముగింపు	/* HAVE_POSIX_MEMALIGN */
+	తిరిగి retval;
 }
 
-#ifdef DEBUG
-static int isaligned(void *ptr, unsigned long align)
+#నిర్వచితమైతే DEBUG
+స్థిర పూర్ణాంకం isaligned(శూన్య *ptr, గుర్తులేని దీర్ఘ align)
 {
-	return (((unsigned long) ptr & (align - 1)) == 0);
+	తిరిగి (((గుర్తులేని దీర్ఘ) ptr & (align - 1)) == 0);
 }
 
-static errcode_t test_memalign(unsigned long align)
+స్థిర errcode_t test_memalign(గుర్తులేని దీర్ఘ align)
 {
-	void *ptr = 0;
+	శూన్య *ptr = 0;
 	errcode_t retval;
 
 	retval = ext2fs_get_memalign(32, align, &ptr);
-	if (!retval && !isaligned(ptr, align))
+	ఒకవేళ (!retval && !isaligned(ptr, align))
 		retval = EINVAL;
-	free(ptr);
-	printf("tst_memalign(%lu) is %s\n", align,
-	       retval ? error_message(retval) : "OK");
-	return retval;
+	విడుదల(ptr);
+	రాయి("tst_memalign(%lu) is %s\n", align,
+	       retval ? error_సందేశం(retval) : "OK");
+	తిరిగి retval;
 }
 
-int main(int argc, char **argv)
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	int err = 0;
+	పూర్ణాంకం err = 0;
 
-	if (test_memalign(4))
+	ఒకవేళ (test_memalign(4))
 		err++;
-	if (test_memalign(32))
+	ఒకవేళ (test_memalign(32))
 		err++;
-	if (test_memalign(1024))
+	ఒకవేళ (test_memalign(1024))
 		err++;
-	if (test_memalign(4096))
+	ఒకవేళ (test_memalign(4096))
 		err++;
-	return err;
+	తిరిగి err;
 }
-#endif
+#అయితే_ముగింపు

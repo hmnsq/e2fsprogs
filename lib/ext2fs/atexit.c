@@ -10,40 +10,40 @@
  * %End-Header%
  */
 
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
+#నిర్వచితం_కాకపోతే LARGEFILE_ఆధారం
+#నిర్వచించు LARGEFILE_ఆధారం
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే LARGEFILE64_ఆధారం
+#నిర్వచించు LARGEFILE64_ఆధారం
+#అయితే_ముగింపు
 
-#include "config.h"
-#include <stdlib.h>
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdlib.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
+#అన్తర్భావ "ext2fsP.h"
 
-struct exit_data {
+నిర్మాణం exit_దత్తాంశం {
 	ext2_exit_fn func;
-	void *data;
+	శూన్య *దత్తాంశం;
 };
 
-static struct exit_data *items;
-static size_t nr_items;
+స్థిర నిర్మాణం exit_దత్తాంశం *వస్తువులు;
+స్థిర size_t nr_వస్తువులు;
 
-static void handle_exit(void)
+స్థిర శూన్య handle_exit(శూన్య)
 {
-	struct exit_data *ed;
+	నిర్మాణం exit_దత్తాంశం *ed;
 
-	for (ed = items + nr_items - 1; ed >= items; ed--) {
-		if (ed->func == NULL)
-			continue;
-		ed->func(ed->data);
+	కొరకు (ed = వస్తువులు + nr_వస్తువులు - 1; ed >= వస్తువులు; ed--) {
+		ఒకవేళ (ed->func == ఖాళీ)
+			కొనసాగు;
+		ed->func(ed->దత్తాంశం);
 	}
 
-	ext2fs_free_mem(&items);
-	nr_items = 0;
+	ext2fs_free_mem(&వస్తువులు);
+	nr_వస్తువులు = 0;
 }
 
 /*
@@ -51,66 +51,66 @@ static void handle_exit(void)
  * If you want this to be called during a signal exit, you must capture
  * the signal and call exit() yourself!
  */
-errcode_t ext2fs_add_exit_fn(ext2_exit_fn func, void *data)
+errcode_t ext2fs_కూడు_exit_fn(ext2_exit_fn func, శూన్య *దత్తాంశం)
 {
-	struct exit_data *ed, *free_ed = NULL;
+	నిర్మాణం exit_దత్తాంశం *ed, *free_ed = ఖాళీ;
 	size_t x;
 	errcode_t ret;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ఒకవేళ (func == ఖాళీ)
+		తిరిగి EXT2_ET_INVALID_వాదం;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == func && ed->data == data)
-			return EXT2_ET_FILE_EXISTS;
-		if (ed->func == NULL)
+	కొరకు (x = 0, ed = వస్తువులు; x < nr_వస్తువులు; x++, ed++) {
+		ఒకవేళ (ed->func == func && ed->దత్తాంశం == దత్తాంశం)
+			తిరిగి EXT2_ET_FILE_EXISTS;
+		ఒకవేళ (ed->func == ఖాళీ)
 			free_ed = ed;
 	}
 
-	if (free_ed) {
+	ఒకవేళ (free_ed) {
 		free_ed->func = func;
-		free_ed->data = data;
-		return 0;
+		free_ed->దత్తాంశం = దత్తాంశం;
+		తిరిగి 0;
 	}
 
-	if (nr_items == 0) {
+	ఒకవేళ (nr_వస్తువులు == 0) {
 		ret = atexit(handle_exit);
-		if (ret)
-			return ret;
+		ఒకవేళ (ret)
+			తిరిగి ret;
 	}
 
-	ret = ext2fs_resize_mem(0, (nr_items + 1) * sizeof(struct exit_data),
-				&items);
-	if (ret)
-		return ret;
+	ret = ext2fs_resize_mem(0, (nr_వస్తువులు + 1) * పరిమాణం(నిర్మాణం exit_దత్తాంశం),
+				&వస్తువులు);
+	ఒకవేళ (ret)
+		తిరిగి ret;
 
-	items[nr_items].func = func;
-	items[nr_items].data = data;
-	nr_items++;
+	వస్తువులు[nr_వస్తువులు].func = func;
+	వస్తువులు[nr_వస్తువులు].దత్తాంశం = దత్తాంశం;
+	nr_వస్తువులు++;
 
-	return 0;
+	తిరిగి 0;
 }
 
 /* Remove a function from the exit cleanup list. */
-errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, void *data)
+errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, శూన్య *దత్తాంశం)
 {
-	struct exit_data *ed;
+	నిర్మాణం exit_దత్తాంశం *ed;
 	size_t x;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ఒకవేళ (func == ఖాళీ)
+		తిరిగి EXT2_ET_INVALID_వాదం;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == NULL)
-			return 0;
-		if (ed->func == func && ed->data == data) {
-			size_t sz = (nr_items - (x + 1)) *
-				    sizeof(struct exit_data);
+	కొరకు (x = 0, ed = వస్తువులు; x < nr_వస్తువులు; x++, ed++) {
+		ఒకవేళ (ed->func == ఖాళీ)
+			తిరిగి 0;
+		ఒకవేళ (ed->func == func && ed->దత్తాంశం == దత్తాంశం) {
+			size_t sz = (nr_వస్తువులు - (x + 1)) *
+				    పరిమాణం(నిర్మాణం exit_దత్తాంశం);
 			memmove(ed, ed + 1, sz);
-			memset(items + nr_items - 1, 0,
-			       sizeof(struct exit_data));
+			memset(వస్తువులు + nr_వస్తువులు - 1, 0,
+			       పరిమాణం(నిర్మాణం exit_దత్తాంశం));
 		}
 	}
 
-	return 0;
+	తిరిగి 0;
 }

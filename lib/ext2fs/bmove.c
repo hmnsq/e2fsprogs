@@ -10,158 +10,158 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#if HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_సమయం_H
+#అన్తర్భావ <sys/time.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fsP.h"
 
-struct process_block_struct {
+నిర్మాణం process_ఖండం_struct {
 	ext2_ino_t		ino;
-	struct ext2_inode *	inode;
-	ext2fs_block_bitmap	reserve;
-	ext2fs_block_bitmap	alloc_map;
+	నిర్మాణం ext2_inode *	inode;
+	ext2fs_ఖండం_bitmap	reserve;
+	ext2fs_ఖండం_bitmap	alloc_map;
 	errcode_t		error;
-	char			*buf;
-	int			add_dir;
-	int			flags;
+	అక్షరం			*buf;
+	పూర్ణాంకం			కూడు_dir;
+	పూర్ణాంకం			flags;
 };
 
-static int process_block(ext2_filsys fs, blk64_t *block_nr,
-			 e2_blkcnt_t blockcnt, blk64_t ref_block,
-			 int ref_offset, void *priv_data)
+స్థిర పూర్ణాంకం process_ఖండం(ext2_filsys fs, blk64_t *ఖండం_nr,
+			 e2_blkcnt_t blockcnt, blk64_t ref_ఖండం,
+			 పూర్ణాంకం ref_స్థానభ్రంశం, శూన్య *priv_దత్తాంశం)
 {
-	struct process_block_struct *pb;
+	నిర్మాణం process_ఖండం_struct *pb;
 	errcode_t	retval;
-	int		ret;
-	blk64_t		block, orig;
+	పూర్ణాంకం		ret;
+	blk64_t		ఖండం, orig;
 
-	pb = (struct process_block_struct *) priv_data;
-	block = orig = *block_nr;
+	pb = (నిర్మాణం process_ఖండం_struct *) priv_దత్తాంశం;
+	ఖండం = orig = *ఖండం_nr;
 	ret = 0;
 
 	/*
 	 * Let's see if this is one which we need to relocate
 	 */
-	if (ext2fs_test_block_bitmap2(pb->reserve, block)) {
-		do {
-			if (++block >= ext2fs_blocks_count(fs->super))
-				block = fs->super->s_first_data_block;
-			if (block == orig) {
-				pb->error = EXT2_ET_BLOCK_ALLOC_FAIL;
-				return BLOCK_ABORT;
+	ఒకవేళ (ext2fs_test_ఖండం_bitmap2(pb->reserve, ఖండం)) {
+		చేయి {
+			ఒకవేళ (++ఖండం >= ext2fs_ఖండాలు_లెక్క(fs->super))
+				ఖండం = fs->super->s_మొదటి_దత్తాంశం_ఖండం;
+			ఒకవేళ (ఖండం == orig) {
+				pb->error = EXT2_ET_ఖండం_ALLOC_FAIL;
+				తిరిగి ఖండం_ABORT;
 			}
-		} while (ext2fs_test_block_bitmap2(pb->reserve, block) ||
-			 ext2fs_test_block_bitmap2(pb->alloc_map, block));
+		} అయితే (ext2fs_test_ఖండం_bitmap2(pb->reserve, ఖండం) ||
+			 ext2fs_test_ఖండం_bitmap2(pb->alloc_map, ఖండం));
 
 		retval = io_channel_read_blk64(fs->io, orig, 1, pb->buf);
-		if (retval) {
+		ఒకవేళ (retval) {
 			pb->error = retval;
-			return BLOCK_ABORT;
+			తిరిగి ఖండం_ABORT;
 		}
-		retval = io_channel_write_blk64(fs->io, block, 1, pb->buf);
-		if (retval) {
+		retval = io_channel_write_blk64(fs->io, ఖండం, 1, pb->buf);
+		ఒకవేళ (retval) {
 			pb->error = retval;
-			return BLOCK_ABORT;
+			తిరిగి ఖండం_ABORT;
 		}
-		*block_nr = block;
-		ext2fs_mark_block_bitmap2(pb->alloc_map, block);
-		ret = BLOCK_CHANGED;
-		if (pb->flags & EXT2_BMOVE_DEBUG)
-			printf("ino=%u, blockcnt=%lld, %llu->%llu\n",
-			       (unsigned) pb->ino, blockcnt, 
-			       (unsigned long long) orig,
-			       (unsigned long long) block);
+		*ఖండం_nr = ఖండం;
+		ext2fs_mark_ఖండం_bitmap2(pb->alloc_map, ఖండం);
+		ret = ఖండం_మారింది;
+		ఒకవేళ (pb->flags & EXT2_BMOVE_DEBUG)
+			రాయి("ino=%u, blockcnt=%lld, %llu->%llu\n",
+			       (గుర్తులేని) pb->ino, blockcnt, 
+			       (గుర్తులేని దీర్ఘ దీర్ఘ) orig,
+			       (గుర్తులేని దీర్ఘ దీర్ఘ) ఖండం);
 	}
-	if (pb->add_dir) {
-		retval = ext2fs_add_dir_block2(fs->dblist, pb->ino,
-					       block, blockcnt);
-		if (retval) {
+	ఒకవేళ (pb->కూడు_dir) {
+		retval = ext2fs_కూడు_dir_block2(fs->dblist, pb->ino,
+					       ఖండం, blockcnt);
+		ఒకవేళ (retval) {
 			pb->error = retval;
-			ret |= BLOCK_ABORT;
+			ret |= ఖండం_ABORT;
 		}
 	}
-	return ret;
+	తిరిగి ret;
 }
 
-errcode_t ext2fs_move_blocks(ext2_filsys fs,
-			     ext2fs_block_bitmap reserve,
-			     ext2fs_block_bitmap alloc_map,
-			     int flags)
+errcode_t ext2fs_move_ఖండాలు(ext2_filsys fs,
+			     ext2fs_ఖండం_bitmap reserve,
+			     ext2fs_ఖండం_bitmap alloc_map,
+			     పూర్ణాంకం flags)
 {
 	ext2_ino_t	ino;
-	struct ext2_inode inode;
+	నిర్మాణం ext2_inode inode;
 	errcode_t	retval;
-	struct process_block_struct pb;
-	ext2_inode_scan	scan;
-	char		*block_buf;
+	నిర్మాణం process_ఖండం_struct pb;
+	ext2_inode_పరిశీలన	పరిశీలన;
+	అక్షరం		*ఖండం_buf;
 
-	retval = ext2fs_open_inode_scan(fs, 0, &scan);
-	if (retval)
-		return retval;
+	retval = ext2fs_open_inode_పరిశీలన(fs, 0, &పరిశీలన);
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
 	pb.reserve = reserve;
 	pb.error = 0;
-	pb.alloc_map = alloc_map ? alloc_map : fs->block_map;
+	pb.alloc_map = alloc_map ? alloc_map : fs->ఖండం_map;
 	pb.flags = flags;
 
-	retval = ext2fs_get_array(4, fs->blocksize, &block_buf);
-	if (retval)
-		return retval;
-	pb.buf = block_buf + fs->blocksize * 3;
+	retval = ext2fs_get_array(4, fs->blocksize, &ఖండం_buf);
+	ఒకవేళ (retval)
+		తిరిగి retval;
+	pb.buf = ఖండం_buf + fs->blocksize * 3;
 
 	/*
 	 * If GET_DBLIST is set in the flags field, then we should
 	 * gather directory block information while we're doing the
 	 * block move.
 	 */
-	if (flags & EXT2_BMOVE_GET_DBLIST) {
-		if (fs->dblist) {
+	ఒకవేళ (flags & EXT2_BMOVE_GET_DBLIST) {
+		ఒకవేళ (fs->dblist) {
 			ext2fs_free_dblist(fs->dblist);
-			fs->dblist = NULL;
+			fs->dblist = ఖాళీ;
 		}
 		retval = ext2fs_init_dblist(fs, 0);
-		if (retval)
-			return retval;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 	}
 
-	retval = ext2fs_get_next_inode(scan, &ino, &inode);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_తదుపరి_inode(పరిశీలన, &ino, &inode);
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
-	while (ino) {
-		if ((inode.i_links_count == 0) ||
+	అయితే (ino) {
+		ఒకవేళ ((inode.i_links_లెక్క == 0) ||
 		    !ext2fs_inode_has_valid_blocks2(fs, &inode))
-			goto next;
+			వెళ్ళు తదుపరి;
 
 		pb.ino = ino;
 		pb.inode = &inode;
 
-		pb.add_dir = (LINUX_S_ISDIR(inode.i_mode) &&
+		pb.కూడు_dir = (LINUX_S_ISDIR(inode.i_బహుళకం) &&
 			      flags & EXT2_BMOVE_GET_DBLIST);
 
-		retval = ext2fs_block_iterate3(fs, ino, 0, block_buf,
-					       process_block, &pb);
-		if (retval)
-			return retval;
-		if (pb.error)
-			return pb.error;
+		retval = ext2fs_ఖండం_iterate3(fs, ino, 0, ఖండం_buf,
+					       process_ఖండం, &pb);
+		ఒకవేళ (retval)
+			తిరిగి retval;
+		ఒకవేళ (pb.error)
+			తిరిగి pb.error;
 
-	next:
-		retval = ext2fs_get_next_inode(scan, &ino, &inode);
-		if (retval == EXT2_ET_BAD_BLOCK_IN_INODE_TABLE)
-			goto next;
+	తదుపరి:
+		retval = ext2fs_get_తదుపరి_inode(పరిశీలన, &ino, &inode);
+		ఒకవేళ (retval == EXT2_ET_BAD_ఖండం_లోపల_INODE_పట్టిక)
+			వెళ్ళు తదుపరి;
 	}
-	return 0;
+	తిరిగి 0;
 }
 

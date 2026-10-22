@@ -9,47 +9,47 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <time.h>
-#include <string.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_SYS_STAT_H
+#అన్తర్భావ <sys/stat.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
-#define min(a, b) ((a) < (b) ? (a) : (b))
+#నిర్వచించు min(a, b) ((a) < (b) ? (a) : (b))
 
-#undef DEBUG
+#నిర్వచనం_రద్దు DEBUG
 
-#ifdef DEBUG
-# define dbg_printf(f, a...)  do {printf(f, ## a); fflush(stdout); } while (0)
-#else
+#నిర్వచితమైతే DEBUG
+# define dbg_printf(f, a...)  చేయి {రాయి(f, ## a); fflush(stdout); } అయితే (0)
+#లేకపోతే
 # define dbg_printf(f, a...)
-#endif
+#అయితే_ముగింపు
 
 /*
  * Clear the uninit block bitmap flag if necessary
  */
-void ext2fs_clear_block_uninit(ext2_filsys fs, dgrp_t group)
+శూన్య ext2fs_clear_ఖండం_uninit(ext2_filsys fs, dgrp_t సమూహం)
 {
-	if (group >= fs->group_desc_count ||
-	    !ext2fs_has_group_desc_csum(fs) ||
-	    !(ext2fs_bg_flags_test(fs, group, EXT2_BG_BLOCK_UNINIT)))
-		return;
+	ఒకవేళ (సమూహం >= fs->సమూహం_desc_లెక్క ||
+	    !ext2fs_has_సమూహం_desc_csum(fs) ||
+	    !(ext2fs_bg_flags_test(fs, సమూహం, EXT2_BG_ఖండం_UNINIT)))
+		తిరిగి;
 
 	/* uninit block bitmaps are now initialized in read_bitmaps() */
 
-	ext2fs_bg_flags_clear(fs, group, EXT2_BG_BLOCK_UNINIT);
-	ext2fs_group_desc_csum_set(fs, group);
+	ext2fs_bg_flags_clear(fs, సమూహం, EXT2_BG_ఖండం_UNINIT);
+	ext2fs_సమూహం_desc_csum_సమితి(fs, సమూహం);
 	ext2fs_mark_super_dirty(fs);
 	ext2fs_mark_bb_dirty(fs);
 }
@@ -57,24 +57,24 @@ void ext2fs_clear_block_uninit(ext2_filsys fs, dgrp_t group)
 /*
  * Check for uninit inode bitmaps and deal with them appropriately
  */
-static void check_inode_uninit(ext2_filsys fs, ext2fs_inode_bitmap map,
-			  dgrp_t group)
+స్థిర శూన్య check_inode_uninit(ext2_filsys fs, ext2fs_inode_bitmap map,
+			  dgrp_t సమూహం)
 {
 	ext2_ino_t	i, ino;
 
-	if (group >= fs->group_desc_count ||
-	    !ext2fs_has_group_desc_csum(fs) ||
-	    !(ext2fs_bg_flags_test(fs, group, EXT2_BG_INODE_UNINIT)))
-		return;
+	ఒకవేళ (సమూహం >= fs->సమూహం_desc_లెక్క ||
+	    !ext2fs_has_సమూహం_desc_csum(fs) ||
+	    !(ext2fs_bg_flags_test(fs, సమూహం, EXT2_BG_INODE_UNINIT)))
+		తిరిగి;
 
-	ino = (group * fs->super->s_inodes_per_group) + 1;
-	for (i=0; i < fs->super->s_inodes_per_group; i++, ino++)
+	ino = (సమూహం * fs->super->s_inodes_చొప్పున_సమూహం) + 1;
+	కొరకు (i=0; i < fs->super->s_inodes_చొప్పున_సమూహం; i++, ino++)
 		ext2fs_fast_unmark_inode_bitmap2(map, ino);
 
-	ext2fs_bg_flags_clear(fs, group, EXT2_BG_INODE_UNINIT);
+	ext2fs_bg_flags_clear(fs, సమూహం, EXT2_BG_INODE_UNINIT);
 	/* Mimics what the kernel does */
-	ext2fs_bg_flags_clear(fs, group, EXT2_BG_BLOCK_UNINIT);
-	ext2fs_group_desc_csum_set(fs, group);
+	ext2fs_bg_flags_clear(fs, సమూహం, EXT2_BG_ఖండం_UNINIT);
+	ext2fs_సమూహం_desc_csum_సమితి(fs, సమూహం);
 	ext2fs_mark_ib_dirty(fs);
 	ext2fs_mark_super_dirty(fs);
 }
@@ -86,58 +86,58 @@ static void check_inode_uninit(ext2_filsys fs, ext2fs_inode_bitmap map,
  * Should have a special policy for directories.
  */
 errcode_t ext2fs_new_inode(ext2_filsys fs, ext2_ino_t dir,
-			   int mode EXT2FS_ATTR((unused)),
+			   పూర్ణాంకం బహుళకం EXT2FS_ATTR((వాడని)),
 			   ext2fs_inode_bitmap map, ext2_ino_t *ret)
 {
-	ext2_ino_t	start_inode = 0;
-	ext2_ino_t	i, ino_in_group, upto, first_zero;
+	ext2_ino_t	ప్రారంభం_inode = 0;
+	ext2_ino_t	i, ino_లోపల_సమూహం, upto, మొదటి_zero;
 	errcode_t	retval;
-	dgrp_t		group;
+	dgrp_t		సమూహం;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!map)
+	ఒకవేళ (!map)
 		map = fs->inode_map;
-	if (!map)
-		return EXT2_ET_NO_INODE_BITMAP;
+	ఒకవేళ (!map)
+		తిరిగి EXT2_ET_NO_INODE_BITMAP;
 
-	if (dir > 0) {
-		group = (dir - 1) / EXT2_INODES_PER_GROUP(fs->super);
-		start_inode = (group * EXT2_INODES_PER_GROUP(fs->super)) + 1;
+	ఒకవేళ (dir > 0) {
+		సమూహం = (dir - 1) / EXT2_INODES_చొప్పున_సమూహం(fs->super);
+		ప్రారంభం_inode = (సమూహం * EXT2_INODES_చొప్పున_సమూహం(fs->super)) + 1;
 	}
-	if (start_inode < EXT2_FIRST_INODE(fs->super))
-		start_inode = EXT2_FIRST_INODE(fs->super);
-	if (start_inode > fs->super->s_inodes_count)
-		return EXT2_ET_INODE_ALLOC_FAIL;
-	i = start_inode;
-	do {
-		ino_in_group = (i - 1) % EXT2_INODES_PER_GROUP(fs->super);
-		group = (i - 1) / EXT2_INODES_PER_GROUP(fs->super);
+	ఒకవేళ (ప్రారంభం_inode < EXT2_మొదటి_INODE(fs->super))
+		ప్రారంభం_inode = EXT2_మొదటి_INODE(fs->super);
+	ఒకవేళ (ప్రారంభం_inode > fs->super->s_inodes_లెక్క)
+		తిరిగి EXT2_ET_INODE_ALLOC_FAIL;
+	i = ప్రారంభం_inode;
+	చేయి {
+		ino_లోపల_సమూహం = (i - 1) % EXT2_INODES_చొప్పున_సమూహం(fs->super);
+		సమూహం = (i - 1) / EXT2_INODES_చొప్పున_సమూహం(fs->super);
 
-		check_inode_uninit(fs, map, group);
-		upto = i + (EXT2_INODES_PER_GROUP(fs->super) - ino_in_group);
-		if (i < start_inode && upto >= start_inode)
-			upto = start_inode - 1;
-		if (upto > fs->super->s_inodes_count)
-			upto = fs->super->s_inodes_count;
+		check_inode_uninit(fs, map, సమూహం);
+		upto = i + (EXT2_INODES_చొప్పున_సమూహం(fs->super) - ino_లోపల_సమూహం);
+		ఒకవేళ (i < ప్రారంభం_inode && upto >= ప్రారంభం_inode)
+			upto = ప్రారంభం_inode - 1;
+		ఒకవేళ (upto > fs->super->s_inodes_లెక్క)
+			upto = fs->super->s_inodes_లెక్క;
 
-		retval = ext2fs_find_first_zero_inode_bitmap2(map, i, upto,
-							      &first_zero);
-		if (retval == 0) {
-			i = first_zero;
-			break;
+		retval = ext2fs_కనుగొను_మొదటి_zero_inode_bitmap2(map, i, upto,
+							      &మొదటి_zero);
+		ఒకవేళ (retval == 0) {
+			i = మొదటి_zero;
+			ఆపు;
 		}
-		if (retval != ENOENT)
-			return EXT2_ET_INODE_ALLOC_FAIL;
+		ఒకవేళ (retval != ENOENT)
+			తిరిగి EXT2_ET_INODE_ALLOC_FAIL;
 		i = upto + 1;
-		if (i > fs->super->s_inodes_count)
-			i = EXT2_FIRST_INODE(fs->super);
-	} while (i != start_inode);
+		ఒకవేళ (i > fs->super->s_inodes_లెక్క)
+			i = EXT2_మొదటి_INODE(fs->super);
+	} అయితే (i != ప్రారంభం_inode);
 
-	if (ext2fs_test_inode_bitmap2(map, i))
-		return EXT2_ET_INODE_ALLOC_FAIL;
+	ఒకవేళ (ext2fs_test_inode_bitmap2(map, i))
+		తిరిగి EXT2_ET_INODE_ALLOC_FAIL;
 	*ret = i;
-	return 0;
+	తిరిగి 0;
 }
 
 /*
@@ -145,189 +145,189 @@ errcode_t ext2fs_new_inode(ext2_filsys fs, ext2_ino_t dir,
  * goal.  Should put in a smarter one someday....
  */
 errcode_t ext2fs_new_block3(ext2_filsys fs, blk64_t goal,
-			    ext2fs_block_bitmap map, blk64_t *ret,
-			    struct blk_alloc_ctx *ctx)
+			    ext2fs_ఖండం_bitmap map, blk64_t *ret,
+			    నిర్మాణం blk_alloc_ctx *ctx)
 {
 	errcode_t retval;
 	blk64_t	b = 0;
 	errcode_t (*gab)(ext2_filsys fs, blk64_t goal, blk64_t *ret);
 	errcode_t (*gab2)(ext2_filsys, blk64_t, blk64_t *,
-			  struct blk_alloc_ctx *);
+			  నిర్మాణం blk_alloc_ctx *);
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!map) {
+	ఒకవేళ (!map) {
 		/*
 		 * In case there are clients out there whose get_alloc_block
 		 * handlers call ext2fs_new_block2 with a NULL block map,
 		 * temporarily swap out the function pointer so that we don't
 		 * end up in an infinite loop.
 		 */
-		if (fs->get_alloc_block2) {
+		ఒకవేళ (fs->get_alloc_block2) {
 			gab2 = fs->get_alloc_block2;
-			fs->get_alloc_block2 = NULL;
+			fs->get_alloc_block2 = ఖాళీ;
 			retval = gab2(fs, goal, &b, ctx);
 			fs->get_alloc_block2 = gab2;
-			goto allocated;
-		} else if (fs->get_alloc_block) {
-			gab = fs->get_alloc_block;
-			fs->get_alloc_block = NULL;
+			వెళ్ళు allocated;
+		} లేకపోతే ఒకవేళ (fs->get_alloc_ఖండం) {
+			gab = fs->get_alloc_ఖండం;
+			fs->get_alloc_ఖండం = ఖాళీ;
 			retval = gab(fs, goal, &b);
-			fs->get_alloc_block = gab;
-			goto allocated;
+			fs->get_alloc_ఖండం = gab;
+			వెళ్ళు allocated;
 		}
 	}
-	if (!map)
-		map = fs->block_map;
-	if (!map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
-	if (!goal || (goal >= ext2fs_blocks_count(fs->super)))
-		goal = fs->super->s_first_data_block;
-	goal &= ~EXT2FS_CLUSTER_MASK(fs);
+	ఒకవేళ (!map)
+		map = fs->ఖండం_map;
+	ఒకవేళ (!map)
+		తిరిగి EXT2_ET_NO_ఖండం_BITMAP;
+	ఒకవేళ (!goal || (goal >= ext2fs_ఖండాలు_లెక్క(fs->super)))
+		goal = fs->super->s_మొదటి_దత్తాంశం_ఖండం;
+	goal &= ~EXT2_FS_CLUSTER_ముసుగు(fs);
 
-	retval = ext2fs_find_first_zero_block_bitmap2(map,
-			goal, ext2fs_blocks_count(fs->super) - 1, &b);
-	if ((retval == ENOENT) && (goal != fs->super->s_first_data_block))
-		retval = ext2fs_find_first_zero_block_bitmap2(map,
-			fs->super->s_first_data_block, goal - 1, &b);
+	retval = ext2fs_కనుగొను_మొదటి_zero_ఖండం_bitmap2(map,
+			goal, ext2fs_ఖండాలు_లెక్క(fs->super) - 1, &b);
+	ఒకవేళ ((retval == ENOENT) && (goal != fs->super->s_మొదటి_దత్తాంశం_ఖండం))
+		retval = ext2fs_కనుగొను_మొదటి_zero_ఖండం_bitmap2(map,
+			fs->super->s_మొదటి_దత్తాంశం_ఖండం, goal - 1, &b);
 allocated:
-	if (retval == ENOENT)
-		return EXT2_ET_BLOCK_ALLOC_FAIL;
-	if (retval)
-		return retval;
+	ఒకవేళ (retval == ENOENT)
+		తిరిగి EXT2_ET_ఖండం_ALLOC_FAIL;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
-	ext2fs_clear_block_uninit(fs, ext2fs_group_of_blk2(fs, b));
+	ext2fs_clear_ఖండం_uninit(fs, ext2fs_సమూహం_యొక్క_blk2(fs, b));
 	*ret = b;
-	return 0;
+	తిరిగి 0;
 }
 
 errcode_t ext2fs_new_block2(ext2_filsys fs, blk64_t goal,
-			   ext2fs_block_bitmap map, blk64_t *ret)
+			   ext2fs_ఖండం_bitmap map, blk64_t *ret)
 {
-	return ext2fs_new_block3(fs, goal, map, ret, NULL);
+	తిరిగి ext2fs_new_block3(fs, goal, map, ret, ఖాళీ);
 }
 
-errcode_t ext2fs_new_block(ext2_filsys fs, blk_t goal,
-			   ext2fs_block_bitmap map, blk_t *ret)
+errcode_t ext2fs_new_ఖండం(ext2_filsys fs, blk_t goal,
+			   ext2fs_ఖండం_bitmap map, blk_t *ret)
 {
 	errcode_t retval;
 	blk64_t val;
 	retval = ext2fs_new_block2(fs, goal, map, &val);
-	if (!retval)
+	ఒకవేళ (!retval)
 		*ret = (blk_t) val;
-	return retval;
+	తిరిగి retval;
 }
 
 /*
  * This function zeros out the allocated block, and updates all of the
  * appropriate filesystem records.
  */
-errcode_t ext2fs_alloc_block3(ext2_filsys fs, blk64_t goal, char *block_buf,
-			      blk64_t *ret, struct blk_alloc_ctx *ctx)
+errcode_t ext2fs_alloc_block3(ext2_filsys fs, blk64_t goal, అక్షరం *ఖండం_buf,
+			      blk64_t *ret, నిర్మాణం blk_alloc_ctx *ctx)
 {
 	errcode_t	retval;
-	blk64_t		block;
+	blk64_t		ఖండం;
 
-	if (fs->get_alloc_block2) {
-		retval = (fs->get_alloc_block2)(fs, goal, &block, ctx);
-		if (retval)
-			goto fail;
-	} else if (fs->get_alloc_block) {
-		retval = (fs->get_alloc_block)(fs, goal, &block);
-		if (retval)
-			goto fail;
-	} else {
-		if (!fs->block_map) {
-			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				goto fail;
+	ఒకవేళ (fs->get_alloc_block2) {
+		retval = (fs->get_alloc_block2)(fs, goal, &ఖండం, ctx);
+		ఒకవేళ (retval)
+			వెళ్ళు fail;
+	} లేకపోతే ఒకవేళ (fs->get_alloc_ఖండం) {
+		retval = (fs->get_alloc_ఖండం)(fs, goal, &ఖండం);
+		ఒకవేళ (retval)
+			వెళ్ళు fail;
+	} లేకపోతే {
+		ఒకవేళ (!fs->ఖండం_map) {
+			retval = ext2fs_read_ఖండం_bitmap(fs);
+			ఒకవేళ (retval)
+				వెళ్ళు fail;
 		}
 
-		retval = ext2fs_new_block3(fs, goal, 0, &block, ctx);
-		if (retval)
-			goto fail;
+		retval = ext2fs_new_block3(fs, goal, 0, &ఖండం, ctx);
+		ఒకవేళ (retval)
+			వెళ్ళు fail;
 	}
 
-	if (block_buf) {
-		memset(block_buf, 0, fs->blocksize);
-		retval = io_channel_write_blk64(fs->io, block, 1, block_buf);
-	} else
-		retval = ext2fs_zero_blocks2(fs, block, 1, NULL, NULL);
-	if (retval)
-		goto fail;
+	ఒకవేళ (ఖండం_buf) {
+		memset(ఖండం_buf, 0, fs->blocksize);
+		retval = io_channel_write_blk64(fs->io, ఖండం, 1, ఖండం_buf);
+	} లేకపోతే
+		retval = ext2fs_zero_blocks2(fs, ఖండం, 1, ఖాళీ, ఖాళీ);
+	ఒకవేళ (retval)
+		వెళ్ళు fail;
 
-	ext2fs_block_alloc_stats2(fs, block, +1);
-	*ret = block;
+	ext2fs_ఖండం_alloc_stats2(fs, ఖండం, +1);
+	*ret = ఖండం;
 
 fail:
-	return retval;
+	తిరిగి retval;
 }
 
 errcode_t ext2fs_alloc_block2(ext2_filsys fs, blk64_t goal,
-			     char *block_buf, blk64_t *ret)
+			     అక్షరం *ఖండం_buf, blk64_t *ret)
 {
-	return ext2fs_alloc_block3(fs, goal, block_buf, ret, NULL);
+	తిరిగి ext2fs_alloc_block3(fs, goal, ఖండం_buf, ret, ఖాళీ);
 }
 
-errcode_t ext2fs_alloc_block(ext2_filsys fs, blk_t goal,
-			     char *block_buf, blk_t *ret)
+errcode_t ext2fs_alloc_ఖండం(ext2_filsys fs, blk_t goal,
+			     అక్షరం *ఖండం_buf, blk_t *ret)
 {
 	errcode_t retval;
 	blk64_t ret64, goal64 = goal;
-	retval = ext2fs_alloc_block3(fs, goal64, block_buf, &ret64, NULL);
-	if (!retval)
+	retval = ext2fs_alloc_block3(fs, goal64, ఖండం_buf, &ret64, ఖాళీ);
+	ఒకవేళ (!retval)
 		*ret = (blk_t)ret64;
-        return retval;
+        తిరిగి retval;
 }
 
-errcode_t ext2fs_get_free_blocks2(ext2_filsys fs, blk64_t start, blk64_t finish,
-				 int num, ext2fs_block_bitmap map, blk64_t *ret)
+errcode_t ext2fs_get_free_blocks2(ext2_filsys fs, blk64_t ప్రారంభం, blk64_t ముగింపు,
+				 పూర్ణాంకం అంకె, ext2fs_ఖండం_bitmap map, blk64_t *ret)
 {
-	blk64_t	b = start;
-	int	c_ratio;
+	blk64_t	b = ప్రారంభం;
+	పూర్ణాంకం	c_నిష్పత్తి;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!map)
-		map = fs->block_map;
-	if (!map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
-	if (!b)
-		b = fs->super->s_first_data_block;
-	if (!finish)
-		finish = start;
-	if (!num)
-		num = 1;
-	c_ratio = 1 << ext2fs_get_bitmap_granularity(map);
-	b &= ~(c_ratio - 1);
-	finish &= ~(c_ratio -1);
-	do {
-		if (b + num - 1 >= ext2fs_blocks_count(fs->super)) {
-			if (finish > start)
-				return EXT2_ET_BLOCK_ALLOC_FAIL;
-			b = fs->super->s_first_data_block;
+	ఒకవేళ (!map)
+		map = fs->ఖండం_map;
+	ఒకవేళ (!map)
+		తిరిగి EXT2_ET_NO_ఖండం_BITMAP;
+	ఒకవేళ (!b)
+		b = fs->super->s_మొదటి_దత్తాంశం_ఖండం;
+	ఒకవేళ (!ముగింపు)
+		ముగింపు = ప్రారంభం;
+	ఒకవేళ (!అంకె)
+		అంకె = 1;
+	c_నిష్పత్తి = 1 << ext2fs_get_bitmap_granularity(map);
+	b &= ~(c_నిష్పత్తి - 1);
+	ముగింపు &= ~(c_నిష్పత్తి -1);
+	చేయి {
+		ఒకవేళ (b + అంకె - 1 >= ext2fs_ఖండాలు_లెక్క(fs->super)) {
+			ఒకవేళ (ముగింపు > ప్రారంభం)
+				తిరిగి EXT2_ET_ఖండం_ALLOC_FAIL;
+			b = fs->super->s_మొదటి_దత్తాంశం_ఖండం;
 		}
-		if (ext2fs_fast_test_block_bitmap_range2(map, b, num)) {
+		ఒకవేళ (ext2fs_fast_test_ఖండం_bitmap_range2(map, b, అంకె)) {
 			*ret = b;
-			return 0;
+			తిరిగి 0;
 		}
-		b += c_ratio;
-	} while (b != finish);
-	return EXT2_ET_BLOCK_ALLOC_FAIL;
+		b += c_నిష్పత్తి;
+	} అయితే (b != ముగింపు);
+	తిరిగి EXT2_ET_ఖండం_ALLOC_FAIL;
 }
 
-errcode_t ext2fs_get_free_blocks(ext2_filsys fs, blk_t start, blk_t finish,
-				 int num, ext2fs_block_bitmap map, blk_t *ret)
+errcode_t ext2fs_get_free_ఖండాలు(ext2_filsys fs, blk_t ప్రారంభం, blk_t ముగింపు,
+				 పూర్ణాంకం అంకె, ext2fs_ఖండం_bitmap map, blk_t *ret)
 {
 	errcode_t retval;
 	blk64_t val;
-	retval = ext2fs_get_free_blocks2(fs, start, finish, num, map, &val);
-	if(!retval)
+	retval = ext2fs_get_free_blocks2(fs, ప్రారంభం, ముగింపు, అంకె, map, &val);
+	ఒకవేళ(!retval)
 		*ret = (blk_t) val;
-	return retval;
+	తిరిగి retval;
 }
 
-void ext2fs_set_alloc_block_callback(ext2_filsys fs,
+శూన్య ext2fs_సమితి_alloc_ఖండం_callback(ext2_filsys fs,
 				     errcode_t (*func)(ext2_filsys fs,
 						       blk64_t goal,
 						       blk64_t *ret),
@@ -335,56 +335,56 @@ void ext2fs_set_alloc_block_callback(ext2_filsys fs,
 						       blk64_t goal,
 						       blk64_t *ret))
 {
-	if (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
-		return;
+	ఒకవేళ (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
+		తిరిగి;
 
-	if (old)
-		*old = fs->get_alloc_block;
+	ఒకవేళ (old)
+		*old = fs->get_alloc_ఖండం;
 
-	fs->get_alloc_block = func;
+	fs->get_alloc_ఖండం = func;
 }
 
-blk64_t ext2fs_find_inode_goal(ext2_filsys fs, ext2_ino_t ino,
-			       struct ext2_inode *inode, blk64_t lblk)
+blk64_t ext2fs_కనుగొను_inode_goal(ext2_filsys fs, ext2_ino_t ino,
+			       నిర్మాణం ext2_inode *inode, blk64_t lblk)
 {
-	dgrp_t			group;
+	dgrp_t			సమూహం;
 	__u8			log_flex;
-	struct ext2fs_extent	extent;
-	ext2_extent_handle_t	handle = NULL;
+	నిర్మాణం ext2fs_extent	extent;
+	ext2_extent_handle_t	handle = ఖాళీ;
 	errcode_t		err;
 
 	/* Make sure data stored in inode->i_block is neither fast symlink nor
 	 * inline data.
 	 */
-	if (inode == NULL || ext2fs_is_fast_symlink(inode) ||
-	    inode->i_flags & EXT4_INLINE_DATA_FL)
-		goto no_blocks;
+	ఒకవేళ (inode == ఖాళీ || ext2fs_is_fast_symlink(inode) ||
+	    inode->i_flags & EXT4_INLINE_దత్తాంశం_FL)
+		వెళ్ళు no_ఖండాలు;
 
-	if (inode->i_flags & EXT4_EXTENTS_FL) {
+	ఒకవేళ (inode->i_flags & EXT4_EXTENTS_FL) {
 		err = ext2fs_extent_open2(fs, ino, inode, &handle);
-		if (err)
-			goto no_blocks;
+		ఒకవేళ (err)
+			వెళ్ళు no_ఖండాలు;
 		err = ext2fs_extent_goto2(handle, 0, lblk);
-		if (err)
-			goto no_blocks;
+		ఒకవేళ (err)
+			వెళ్ళు no_ఖండాలు;
 		err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-		if (err)
-			goto no_blocks;
+		ఒకవేళ (err)
+			వెళ్ళు no_ఖండాలు;
 		ext2fs_extent_free(handle);
-		return extent.e_pblk + (lblk - extent.e_lblk);
+		తిరిగి extent.e_pblk + (lblk - extent.e_lblk);
 	}
 
 	/* block mapped file; see if block zero is mapped? */
-	if (inode->i_block[0])
-		return inode->i_block[0];
+	ఒకవేళ (inode->i_ఖండం[0])
+		తిరిగి inode->i_ఖండం[0];
 
-no_blocks:
+no_ఖండాలు:
 	ext2fs_extent_free(handle);
-	log_flex = fs->super->s_log_groups_per_flex;
-	group = ext2fs_group_of_ino(fs, ino);
-	if (log_flex)
-		group = group & ~((1 << (log_flex)) - 1);
-	return ext2fs_group_first_block2(fs, group);
+	log_flex = fs->super->s_log_groups_చొప్పున_flex;
+	సమూహం = ext2fs_సమూహం_యొక్క_ino(fs, ino);
+	ఒకవేళ (log_flex)
+		సమూహం = సమూహం & ~((1 << (log_flex)) - 1);
+	తిరిగి ext2fs_సమూహం_మొదటి_block2(fs, సమూహం);
 }
 
 /*
@@ -401,24 +401,24 @@ no_blocks:
  *
  * This function can return a range that is longer than what was requested.
  */
-errcode_t ext2fs_new_range(ext2_filsys fs, int flags, blk64_t goal,
-			   blk64_t len, ext2fs_block_bitmap map, blk64_t *pblk,
+errcode_t ext2fs_new_range(ext2_filsys fs, పూర్ణాంకం flags, blk64_t goal,
+			   blk64_t len, ext2fs_ఖండం_bitmap map, blk64_t *pblk,
 			   blk64_t *plen)
 {
 	errcode_t retval;
-	blk64_t start, end, b;
-	int looped = 0;
-	blk64_t max_blocks = ext2fs_blocks_count(fs->super);
-	errcode_t (*nrf)(ext2_filsys fs, int flags, blk64_t goal,
+	blk64_t ప్రారంభం, చివర, b;
+	పూర్ణాంకం looped = 0;
+	blk64_t max_ఖండాలు = ext2fs_ఖండాలు_లెక్క(fs->super);
+	errcode_t (*nrf)(ext2_filsys fs, పూర్ణాంకం flags, blk64_t goal,
 			 blk64_t len, blk64_t *pblk, blk64_t *plen);
 
 	dbg_printf("%s: flags=0x%x goal=%llu len=%llu\n", __func__, flags,
 		   goal, len);
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
-	if (len == 0 || (flags & ~EXT2_NEWRANGE_ALL_FLAGS))
-		return EXT2_ET_INVALID_ARGUMENT;
+	ఒకవేళ (len == 0 || (flags & ~EXT2_NEWRANGE_ALL_FLAGS))
+		తిరిగి EXT2_ET_INVALID_వాదం;
 
-	if (!map && fs->new_range) {
+	ఒకవేళ (!map && fs->new_range) {
 		/*
 		 * In case there are clients out there whose new_range
 		 * handlers call ext2fs_new_range with a NULL block map,
@@ -426,129 +426,129 @@ errcode_t ext2fs_new_range(ext2_filsys fs, int flags, blk64_t goal,
 		 * end up in an infinite loop.
 		 */
 		nrf = fs->new_range;
-		fs->new_range = NULL;
+		fs->new_range = ఖాళీ;
 		retval = nrf(fs, flags, goal, len, pblk, plen);
 		fs->new_range = nrf;
-		if (retval)
-			return retval;
-		start = *pblk;
-		end = *pblk + *plen;
-		goto allocated;
+		ఒకవేళ (retval)
+			తిరిగి retval;
+		ప్రారంభం = *pblk;
+		చివర = *pblk + *plen;
+		వెళ్ళు allocated;
 	}
-	if (!map)
-		map = fs->block_map;
-	if (!map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
-	if (!goal || goal >= ext2fs_blocks_count(fs->super))
-		goal = fs->super->s_first_data_block;
+	ఒకవేళ (!map)
+		map = fs->ఖండం_map;
+	ఒకవేళ (!map)
+		తిరిగి EXT2_ET_NO_ఖండం_BITMAP;
+	ఒకవేళ (!goal || goal >= ext2fs_ఖండాలు_లెక్క(fs->super))
+		goal = fs->super->s_మొదటి_దత్తాంశం_ఖండం;
 
-	start = goal;
-	while (!looped || start <= goal) {
-		retval = ext2fs_find_first_zero_block_bitmap2(map, start,
-							      max_blocks - 1,
-							      &start);
-		if (retval == ENOENT) {
+	ప్రారంభం = goal;
+	అయితే (!looped || ప్రారంభం <= goal) {
+		retval = ext2fs_కనుగొను_మొదటి_zero_ఖండం_bitmap2(map, ప్రారంభం,
+							      max_ఖండాలు - 1,
+							      &ప్రారంభం);
+		ఒకవేళ (retval == ENOENT) {
 			/*
 			 * If there are no free blocks beyond the starting
 			 * point, try scanning the whole filesystem, unless the
 			 * user told us only to allocate from _goal_, or if
 			 * we're already scanning the whole filesystem.
 			 */
-			if (flags & EXT2_NEWRANGE_FIXED_GOAL ||
-			    start == fs->super->s_first_data_block)
-				goto fail;
-			start = fs->super->s_first_data_block;
-			continue;
-		} else if (retval)
-			goto errout;
+			ఒకవేళ (flags & EXT2_NEWRANGE_FIXED_GOAL ||
+			    ప్రారంభం == fs->super->s_మొదటి_దత్తాంశం_ఖండం)
+				వెళ్ళు fail;
+			ప్రారంభం = fs->super->s_మొదటి_దత్తాంశం_ఖండం;
+			కొనసాగు;
+		} లేకపోతే ఒకవేళ (retval)
+			వెళ్ళు errout;
 
-		if (flags & EXT2_NEWRANGE_FIXED_GOAL && start != goal)
-			goto fail;
+		ఒకవేళ (flags & EXT2_NEWRANGE_FIXED_GOAL && ప్రారంభం != goal)
+			వెళ్ళు fail;
 
-		b = min(start + len - 1, max_blocks - 1);
-		retval =  ext2fs_find_first_set_block_bitmap2(map, start, b,
-							      &end);
-		if (retval == ENOENT)
-			end = b + 1;
-		else if (retval)
-			goto errout;
+		b = min(ప్రారంభం + len - 1, max_ఖండాలు - 1);
+		retval =  ext2fs_కనుగొను_మొదటి_సమితి_ఖండం_bitmap2(map, ప్రారంభం, b,
+							      &చివర);
+		ఒకవేళ (retval == ENOENT)
+			చివర = b + 1;
+		లేకపోతే ఒకవేళ (retval)
+			వెళ్ళు errout;
 
-		if (!(flags & EXT2_NEWRANGE_MIN_LENGTH) ||
-		    (end - start) >= len) {
+		ఒకవేళ (!(flags & EXT2_NEWRANGE_MIN_నిడివి) ||
+		    (చివర - ప్రారంభం) >= len) {
 			/* Success! */
-			*pblk = start;
-			*plen = end - start;
+			*pblk = ప్రారంభం;
+			*plen = చివర - ప్రారంభం;
 			dbg_printf("%s: new_range goal=%llu--%llu "
 				   "blk=%llu--%llu %llu\n",
 				   __func__, goal, goal + len - 1,
 				   *pblk, *pblk + *plen - 1, *plen);
 allocated:
-			for (b = start; b < end;
-			     b += fs->super->s_blocks_per_group)
-				ext2fs_clear_block_uninit(fs,
-						ext2fs_group_of_blk2(fs, b));
-			return 0;
+			కొరకు (b = ప్రారంభం; b < చివర;
+			     b += fs->super->s_ఖండాలు_చొప్పున_సమూహం)
+				ext2fs_clear_ఖండం_uninit(fs,
+						ext2fs_సమూహం_యొక్క_blk2(fs, b));
+			తిరిగి 0;
 		}
 
-		if (flags & EXT2_NEWRANGE_FIXED_GOAL)
-			goto fail;
-		start = end;
-		if (start >= max_blocks) {
-			if (looped)
-				goto fail;
+		ఒకవేళ (flags & EXT2_NEWRANGE_FIXED_GOAL)
+			వెళ్ళు fail;
+		ప్రారంభం = చివర;
+		ఒకవేళ (ప్రారంభం >= max_ఖండాలు) {
+			ఒకవేళ (looped)
+				వెళ్ళు fail;
 			looped = 1;
-			start = fs->super->s_first_data_block;
+			ప్రారంభం = fs->super->s_మొదటి_దత్తాంశం_ఖండం;
 		}
 	}
 
 fail:
-	retval = EXT2_ET_BLOCK_ALLOC_FAIL;
+	retval = EXT2_ET_ఖండం_ALLOC_FAIL;
 errout:
-	return retval;
+	తిరిగి retval;
 }
 
-void ext2fs_set_new_range_callback(ext2_filsys fs,
-	errcode_t (*func)(ext2_filsys fs, int flags, blk64_t goal,
+శూన్య ext2fs_సమితి_new_range_callback(ext2_filsys fs,
+	errcode_t (*func)(ext2_filsys fs, పూర్ణాంకం flags, blk64_t goal,
 			       blk64_t len, blk64_t *pblk, blk64_t *plen),
-	errcode_t (**old)(ext2_filsys fs, int flags, blk64_t goal,
+	errcode_t (**old)(ext2_filsys fs, పూర్ణాంకం flags, blk64_t goal,
 			       blk64_t len, blk64_t *pblk, blk64_t *plen))
 {
-	if (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
-		return;
+	ఒకవేళ (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
+		తిరిగి;
 
-	if (old)
+	ఒకవేళ (old)
 		*old = fs->new_range;
 
 	fs->new_range = func;
 }
 
-errcode_t ext2fs_alloc_range(ext2_filsys fs, int flags, blk64_t goal,
+errcode_t ext2fs_alloc_range(ext2_filsys fs, పూర్ణాంకం flags, blk64_t goal,
 			     blk_t len, blk64_t *ret)
 {
-	int newr_flags = EXT2_NEWRANGE_MIN_LENGTH;
+	పూర్ణాంకం newr_flags = EXT2_NEWRANGE_MIN_నిడివి;
 	errcode_t retval;
 	blk64_t plen;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
-	if (len == 0 || (flags & ~EXT2_ALLOCRANGE_ALL_FLAGS))
-		return EXT2_ET_INVALID_ARGUMENT;
+	ఒకవేళ (len == 0 || (flags & ~EXT2_ALLOCRANGE_ALL_FLAGS))
+		తిరిగి EXT2_ET_INVALID_వాదం;
 
-	if (flags & EXT2_ALLOCRANGE_FIXED_GOAL)
+	ఒకవేళ (flags & EXT2_ALLOCRANGE_FIXED_GOAL)
 		newr_flags |= EXT2_NEWRANGE_FIXED_GOAL;
 
-	retval = ext2fs_new_range(fs, newr_flags, goal, len, NULL, ret, &plen);
-	if (retval)
-		return retval;
+	retval = ext2fs_new_range(fs, newr_flags, goal, len, ఖాళీ, ret, &plen);
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
-	if (plen < len)
-		return EXT2_ET_BLOCK_ALLOC_FAIL;
+	ఒకవేళ (plen < len)
+		తిరిగి EXT2_ET_ఖండం_ALLOC_FAIL;
 
-	if (flags & EXT2_ALLOCRANGE_ZERO_BLOCKS) {
-		retval = ext2fs_zero_blocks2(fs, *ret, len, NULL, NULL);
-		if (retval)
-			return retval;
+	ఒకవేళ (flags & EXT2_ALLOCRANGE_ZERO_ఖండాలు) {
+		retval = ext2fs_zero_blocks2(fs, *ret, len, ఖాళీ, ఖాళీ);
+		ఒకవేళ (retval)
+			తిరిగి retval;
 	}
 
-	ext2fs_block_alloc_stats_range(fs, *ret, len, +1);
-	return retval;
+	ext2fs_ఖండం_alloc_stats_range(fs, *ret, len, +1);
+	తిరిగి retval;
 }

@@ -9,49 +9,49 @@
  * General Public License, version 2.
  * %End-Header%
  */
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
-#define _XOPEN_SOURCE 600
-#define _DARWIN_C_SOURCE
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#endif
+#ఒకవేళ !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#నిర్వచించు XOPEN_ఆధారం 600
+#నిర్వచించు DARWIN_C_ఆధారం
+#నిర్వచితం_కాకపోతే GNU_ఆధారం
+#నిర్వచించు GNU_ఆధారం
+#అయితే_ముగింపు
+#అయితే_ముగింపు
 
-#include "config.h"
-#include <stdlib.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef HAVE_SYS_PRCTL_H
-#include <sys/prctl.h>
-#else
-#define PR_GET_DUMPABLE 3
-#endif
-#if (!defined(HAVE_PRCTL) && defined(linux))
-#include <sys/syscall.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdlib.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#నిర్వచితమైతే HAVE_SYS_PRCTL_H
+#అన్తర్భావ <sys/prctl.h>
+#లేకపోతే
+#నిర్వచించు PR_GET_DUMPABLE 3
+#అయితే_ముగింపు
+#ఒకవేళ (!defined(HAVE_PRCTL) && defined(linux))
+#అన్తర్భావ <sys/syscall.h>
+#అయితే_ముగింపు
 
-#include "ext2fs.h"
+#అన్తర్భావ "ext2fs.h"
 
-char *ext2fs_safe_getenv(const char *arg)
+అక్షరం *ext2fs_సురక్షిత_getenv(స్థిరరాశి అక్షరం *arg)
 {
-	if ((getuid() != geteuid()) || (getgid() != getegid()))
-		return NULL;
-#ifdef HAVE_PRCTL
-	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#else
-#if (defined(linux) && defined(SYS_prctl))
-	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#endif
-#endif
+	ఒకవేళ ((getuid() != geteuid()) || (getgid() != getegid()))
+		తిరిగి ఖాళీ;
+#నిర్వచితమైతే HAVE_PRCTL
+	ఒకవేళ (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		తిరిగి ఖాళీ;
+#లేకపోతే
+#ఒకవేళ (defined(linux) && defined(SYS_prctl))
+	ఒకవేళ (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		తిరిగి ఖాళీ;
+#అయితే_ముగింపు
+#అయితే_ముగింపు
 
-#if defined(HAVE_SECURE_GETENV)
-	return secure_getenv(arg);
-#elif defined(HAVE___SECURE_GETENV)
-	return __secure_getenv(arg);
-#else
-	return getenv(arg);
-#endif
+#ఒకవేళ defined(HAVE_SECURE_GETENV)
+	తిరిగి secure_getenv(arg);
+#లేదావేళ defined(HAVE___SECURE_GETENV)
+	తిరిగి __secure_getenv(arg);
+#లేకపోతే
+	తిరిగి getenv(arg);
+#అయితే_ముగింపు
 }

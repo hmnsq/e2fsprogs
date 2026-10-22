@@ -9,30 +9,30 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <string.h>
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <string.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fsP.h"
 
-#define EXT4_MAX_ORPHAN_FILE_BLOCKS 512
+#నిర్వచించు EXT4_MAX_ORPHAN_FILE_ఖండాలు 512
 
 errcode_t ext2fs_truncate_orphan_file(ext2_filsys fs)
 {
-	struct ext2_inode inode;
+	నిర్మాణం ext2_inode inode;
 	errcode_t err;
 	ext2_ino_t ino = fs->super->s_orphan_file_inum;
 
 	err = ext2fs_read_inode(fs, ino, &inode);
-	if (err)
-		return err;
+	ఒకవేళ (err)
+		తిరిగి err;
 
-	err = ext2fs_punch(fs, ino, &inode, NULL, 0, ~0ULL);
-	if (err)
-		return err;
+	err = ext2fs_punch(fs, ino, &inode, ఖాళీ, 0, ~0ULL);
+	ఒకవేళ (err)
+		తిరిగి err;
 
 	fs->flags &= ~EXT2_FLAG_SUPER_ONLY;
-	memset(&inode, 0, sizeof(struct ext2_inode));
+	memset(&inode, 0, పరిమాణం(నిర్మాణం ext2_inode));
 	err = ext2fs_write_inode(fs, ino, &inode);
 
 	ext2fs_clear_feature_orphan_file(fs->super);
@@ -41,182 +41,182 @@ errcode_t ext2fs_truncate_orphan_file(ext2_filsys fs)
 	/* Need to update group descriptors as well */
 	fs->flags &= ~EXT2_FLAG_SUPER_ONLY;
 
-	return err;
+	తిరిగి err;
 }
 
-__u32 ext2fs_do_orphan_file_block_csum(ext2_filsys fs, ext2_ino_t ino,
-				       __u32 gen, blk64_t blk, char *buf)
+__u32 ext2fs_do_orphan_file_ఖండం_csum(ext2_filsys fs, ext2_ino_t ino,
+				       __u32 gen, blk64_t blk, అక్షరం *buf)
 {
-	int inodes_per_ob = ext2fs_inodes_per_orphan_block(fs);
-	__u32 crc;
+	పూర్ణాంకం inodes_చొప్పున_ob = ext2fs_inodes_చొప్పున_orphan_ఖండం(fs);
+	__u32 చక్రీయ_తనిఖీ;
 
-	ino = ext2fs_cpu_to_le32(ino);
-	gen = ext2fs_cpu_to_le32(gen);
-	blk = ext2fs_cpu_to_le64(blk);
-	crc = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)&ino,
-			       sizeof(ino));
-	crc = ext2fs_crc32c_le(crc, (unsigned char *)&gen, sizeof(gen));
-	crc = ext2fs_crc32c_le(crc, (unsigned char *)&blk, sizeof(blk));
-	crc = ext2fs_crc32c_le(crc, (unsigned char *)buf,
-				inodes_per_ob * sizeof(__u32));
+	ino = ext2fs_cpu_గమ్యం_le32(ino);
+	gen = ext2fs_cpu_గమ్యం_le32(gen);
+	blk = ext2fs_cpu_గమ్యం_le64(blk);
+	చక్రీయ_తనిఖీ = ext2fs_crc32c_le(fs->csum_విత్తనం, (గుర్తులేని అక్షరం *)&ino,
+			       పరిమాణం(ino));
+	చక్రీయ_తనిఖీ = ext2fs_crc32c_le(చక్రీయ_తనిఖీ, (గుర్తులేని అక్షరం *)&gen, పరిమాణం(gen));
+	చక్రీయ_తనిఖీ = ext2fs_crc32c_le(చక్రీయ_తనిఖీ, (గుర్తులేని అక్షరం *)&blk, పరిమాణం(blk));
+	చక్రీయ_తనిఖీ = ext2fs_crc32c_le(చక్రీయ_తనిఖీ, (గుర్తులేని అక్షరం *)buf,
+				inodes_చొప్పున_ob * పరిమాణం(__u32));
 
-	return crc;
+	తిరిగి చక్రీయ_తనిఖీ;
 }
 
-struct mkorphan_info {
-	char *buf;
-	char *zerobuf;
-	blk_t num_blocks;
-	blk_t alloc_blocks;
-	blk64_t last_blk;
+నిర్మాణం mkorphan_info {
+	అక్షరం *buf;
+	అక్షరం *zerobuf;
+	blk_t అంకె_ఖండాలు;
+	blk_t alloc_ఖండాలు;
+	blk64_t చివరి_blk;
 	errcode_t err;
 	ext2_ino_t ino;
 	__u32 generation;
 };
 
-static int mkorphan_proc(ext2_filsys	fs,
+స్థిర పూర్ణాంకం mkorphan_proc(ext2_filsys	fs,
 			 blk64_t	*blocknr,
 			 e2_blkcnt_t	blockcnt,
-			 blk64_t	ref_block EXT2FS_ATTR((unused)),
-			 int		ref_offset EXT2FS_ATTR((unused)),
-			 void		*priv_data)
+			 blk64_t	ref_ఖండం EXT2FS_ATTR((వాడని)),
+			 పూర్ణాంకం		ref_స్థానభ్రంశం EXT2FS_ATTR((వాడని)),
+			 శూన్య		*priv_దత్తాంశం)
 {
-	struct mkorphan_info *oi = (struct mkorphan_info *)priv_data;
+	నిర్మాణం mkorphan_info *oi = (నిర్మాణం mkorphan_info *)priv_దత్తాంశం;
 	blk64_t new_blk;
 	errcode_t err;
 
 	/* Can we just continue in currently allocated cluster? */
-	if (blockcnt &&
-	    EXT2FS_B2C(fs, oi->last_blk) == EXT2FS_B2C(fs, oi->last_blk + 1)) {
-		new_blk = oi->last_blk + 1;
-	} else {
-		err = ext2fs_new_block2(fs, oi->last_blk, 0, &new_blk);
-		if (err) {
+	ఒకవేళ (blockcnt &&
+	    EXT2FS_B2C(fs, oi->చివరి_blk) == EXT2FS_B2C(fs, oi->చివరి_blk + 1)) {
+		new_blk = oi->చివరి_blk + 1;
+	} లేకపోతే {
+		err = ext2fs_new_block2(fs, oi->చివరి_blk, 0, &new_blk);
+		ఒకవేళ (err) {
 			oi->err = err;
-			return BLOCK_ABORT;
+			తిరిగి ఖండం_ABORT;
 		}
-		ext2fs_block_alloc_stats2(fs, new_blk, +1);
-		oi->alloc_blocks++;
+		ext2fs_ఖండం_alloc_stats2(fs, new_blk, +1);
+		oi->alloc_ఖండాలు++;
 	}
-	if (blockcnt >= 0) {
-		if (ext2fs_has_feature_metadata_csum(fs->super)) {
-			struct ext4_orphan_block_tail *tail;
+	ఒకవేళ (blockcnt >= 0) {
+		ఒకవేళ (ext2fs_has_feature_metadata_csum(fs->super)) {
+			నిర్మాణం ext4_orphan_ఖండం_తోక *తోక;
 
-			tail = ext2fs_orphan_block_tail(fs, oi->buf);
-			tail->ob_checksum =
-		ext2fs_cpu_to_le32(ext2fs_do_orphan_file_block_csum(fs,
+			తోక = ext2fs_orphan_ఖండం_తోక(fs, oi->buf);
+			తోక->ob_checksum =
+		ext2fs_cpu_గమ్యం_le32(ext2fs_do_orphan_file_ఖండం_csum(fs,
 				    oi->ino, oi->generation, new_blk, oi->buf));
 		}
 		err = io_channel_write_blk64(fs->io, new_blk, 1, oi->buf);
-	} else	/* zerobuf is used to initialize new indirect blocks... */
+	} లేకపోతే	/* zerobuf is used to initialize new indirect blocks... */
 		err = io_channel_write_blk64(fs->io, new_blk, 1, oi->zerobuf);
-	if (err) {
+	ఒకవేళ (err) {
 		oi->err = err;
-		return BLOCK_ABORT;
+		తిరిగి ఖండం_ABORT;
 	}
-	oi->last_blk = new_blk;
+	oi->చివరి_blk = new_blk;
 	*blocknr = new_blk;
-	if (blockcnt >= 0 && --oi->num_blocks == 0)
-		return BLOCK_CHANGED | BLOCK_ABORT;
-	return BLOCK_CHANGED;
+	ఒకవేళ (blockcnt >= 0 && --oi->అంకె_ఖండాలు == 0)
+		తిరిగి ఖండం_మారింది | ఖండం_ABORT;
+	తిరిగి ఖండం_మారింది;
 }
 
-errcode_t ext2fs_create_orphan_file(ext2_filsys fs, blk_t num_blocks)
+errcode_t ext2fs_create_orphan_file(ext2_filsys fs, blk_t అంకె_ఖండాలు)
 {
-	struct ext2_inode inode;
+	నిర్మాణం ext2_inode inode;
 	ext2_ino_t ino = fs->super->s_orphan_file_inum;
 	errcode_t err;
-	char *buf = NULL, *zerobuf = NULL;
-	struct mkorphan_info oi;
-	struct ext4_orphan_block_tail *ob_tail;
+	అక్షరం *buf = ఖాళీ, *zerobuf = ఖాళీ;
+	నిర్మాణం mkorphan_info oi;
+	నిర్మాణం ext4_orphan_ఖండం_తోక *ob_తోక;
 	time_t now;
 
-	if (num_blocks > EXT4_MAX_ORPHAN_FILE_BLOCKS)
-		num_blocks = EXT4_MAX_ORPHAN_FILE_BLOCKS;
+	ఒకవేళ (అంకె_ఖండాలు > EXT4_MAX_ORPHAN_FILE_ఖండాలు)
+		అంకె_ఖండాలు = EXT4_MAX_ORPHAN_FILE_ఖండాలు;
 
-	if (ino) {
+	ఒకవేళ (ino) {
 		err = ext2fs_read_inode(fs, ino, &inode);
-		if (err)
-			return err;
-		if (EXT2_I_SIZE(&inode)) {
+		ఒకవేళ (err)
+			తిరిగి err;
+		ఒకవేళ (EXT2_I_కొలత(&inode)) {
 			err = ext2fs_truncate_orphan_file(fs);
-			if (err)
-				return err;
+			ఒకవేళ (err)
+				తిరిగి err;
 		}
-	} else {
-		err = ext2fs_new_inode(fs, EXT2_ROOT_INO, LINUX_S_IFREG | 0600,
+	} లేకపోతే {
+		err = ext2fs_new_inode(fs, EXT2_మూలం_INO, LINUX_S_IFREG | 0600,
 				       0, &ino);
-		if (err)
-			return err;
+		ఒకవేళ (err)
+			తిరిగి err;
 		ext2fs_inode_alloc_stats2(fs, ino, +1, 0);
 	}
 
-	memset(&inode, 0, sizeof(struct ext2_inode));
-	if (ext2fs_has_feature_extents(fs->super)) {
+	memset(&inode, 0, పరిమాణం(నిర్మాణం ext2_inode));
+	ఒకవేళ (ext2fs_has_feature_extents(fs->super)) {
 		inode.i_flags |= EXT4_EXTENTS_FL;
 		err = ext2fs_write_inode(fs, ino, &inode);
-		if (err)
-			return err;
+		ఒకవేళ (err)
+			తిరిగి err;
 	}
 
 	err = ext2fs_get_mem(fs->blocksize, &buf);
-	if (err)
-		return err;
+	ఒకవేళ (err)
+		తిరిగి err;
 	err = ext2fs_get_mem(fs->blocksize, &zerobuf);
-	if (err)
-		goto out;
+	ఒకవేళ (err)
+		వెళ్ళు బహిర్గతం;
 	memset(buf, 0, fs->blocksize);
 	memset(zerobuf, 0, fs->blocksize);
-	ob_tail = ext2fs_orphan_block_tail(fs, buf);
-	ob_tail->ob_magic = ext2fs_cpu_to_le32(EXT4_ORPHAN_BLOCK_MAGIC);
-	oi.num_blocks = num_blocks;
-	oi.alloc_blocks = 0;
-	oi.last_blk = 0;
+	ob_తోక = ext2fs_orphan_ఖండం_తోక(fs, buf);
+	ob_తోక->ob_magic = ext2fs_cpu_గమ్యం_le32(EXT4_ORPHAN_ఖండం_MAGIC);
+	oi.అంకె_ఖండాలు = అంకె_ఖండాలు;
+	oi.alloc_ఖండాలు = 0;
+	oi.చివరి_blk = 0;
 	oi.generation = inode.i_generation;
 	oi.ino = ino;
 	oi.buf = buf;
 	oi.zerobuf = zerobuf;
 	oi.err = 0;
-	err = ext2fs_block_iterate3(fs, ino, BLOCK_FLAG_APPEND,
+	err = ext2fs_ఖండం_iterate3(fs, ino, ఖండం_FLAG_APPEND,
 				    0, mkorphan_proc, &oi);
-	if (err)
-		goto out;
-	if (oi.err) {
+	ఒకవేళ (err)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ (oi.err) {
 		err = oi.err;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Reread inode after blocks were allocated */
 	err = ext2fs_read_inode(fs, ino, &inode);
-	if (err)
-		goto out;
-	ext2fs_iblk_set(fs, &inode, 0);
-	now = ext2fsP_get_time(fs);
-	ext2fs_inode_xtime_set(&inode, i_atime, now);
-	ext2fs_inode_xtime_set(&inode, i_ctime, now);
-	ext2fs_inode_xtime_set(&inode, i_mtime, now);
-	inode.i_links_count = 1;
-	inode.i_mode = LINUX_S_IFREG | 0600;
-	ext2fs_iblk_add_blocks(fs, &inode, oi.alloc_blocks);
-	err = ext2fs_inode_size_set(fs, &inode,
-			(unsigned long long)fs->blocksize * num_blocks);
-	if (err)
-		goto out;
+	ఒకవేళ (err)
+		వెళ్ళు బహిర్గతం;
+	ext2fs_iblk_సమితి(fs, &inode, 0);
+	now = ext2fs_P_get_సమయం(fs);
+	ext2fs_inode_xtime_సమితి(&inode, i_atime, now);
+	ext2fs_inode_xtime_సమితి(&inode, i_ctime, now);
+	ext2fs_inode_xtime_సమితి(&inode, i_mtime, now);
+	inode.i_links_లెక్క = 1;
+	inode.i_బహుళకం = LINUX_S_IFREG | 0600;
+	ext2fs_iblk_కూడు_ఖండాలు(fs, &inode, oi.alloc_ఖండాలు);
+	err = ext2fs_inode_కొలత_సమితి(fs, &inode,
+			(గుర్తులేని దీర్ఘ దీర్ఘ)fs->blocksize * అంకె_ఖండాలు);
+	ఒకవేళ (err)
+		వెళ్ళు బహిర్గతం;
 	err = ext2fs_write_new_inode(fs, ino, &inode);
-	if (err)
-		goto out;
+	ఒకవేళ (err)
+		వెళ్ళు బహిర్గతం;
 
 	fs->super->s_orphan_file_inum = ino;
-	ext2fs_set_feature_orphan_file(fs->super);
+	ext2fs_సమితి_feature_orphan_file(fs->super);
 	ext2fs_mark_super_dirty(fs);
 	/* Need to update group descriptors as well */
 	fs->flags &= ~EXT2_FLAG_SUPER_ONLY;
-out:
-	if (buf)
+బహిర్గతం:
+	ఒకవేళ (buf)
 		ext2fs_free_mem(&buf);
-	if (zerobuf)
+	ఒకవేళ (zerobuf)
 		ext2fs_free_mem(&zerobuf);
-	return err;
+	తిరిగి err;
 }
 
 /*
@@ -224,63 +224,63 @@ out:
  * between 32 and 512 filesystem blocks and not more than 1/4096 of the
  * filesystem unless it is really small.
  */
-e2_blkcnt_t ext2fs_default_orphan_file_blocks(ext2_filsys fs)
+e2_blkcnt_t ext2fs_default_orphan_file_ఖండాలు(ext2_filsys fs)
 {
-	__u64 num_blocks = ext2fs_blocks_count(fs->super);
+	__u64 అంకె_ఖండాలు = ext2fs_ఖండాలు_లెక్క(fs->super);
 	e2_blkcnt_t blks = 512;
 
-	if (num_blocks < 128 * 1024)
+	ఒకవేళ (అంకె_ఖండాలు < 128 * 1024)
 		blks = 32;
-	else if (num_blocks < 2 * 1024 * 1024)
-		blks = num_blocks / 4096;
-	return (blks + EXT2FS_CLUSTER_MASK(fs)) & ~EXT2FS_CLUSTER_MASK(fs);
+	లేకపోతే ఒకవేళ (అంకె_ఖండాలు < 2 * 1024 * 1024)
+		blks = అంకె_ఖండాలు / 4096;
+	తిరిగి (blks + EXT2_FS_CLUSTER_ముసుగు(fs)) & ~EXT2_FS_CLUSTER_ముసుగు(fs);
 }
 
-static errcode_t ext2fs_orphan_file_block_csum(ext2_filsys fs, ext2_ino_t ino,
-					       blk64_t blk, char *buf,
+స్థిర errcode_t ext2fs_orphan_file_ఖండం_csum(ext2_filsys fs, ext2_ino_t ino,
+					       blk64_t blk, అక్షరం *buf,
 					       __u32 *crcp)
 {
-	struct ext2_inode inode;
+	నిర్మాణం ext2_inode inode;
 	errcode_t retval;
 
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
-		return retval;
-	*crcp = ext2fs_do_orphan_file_block_csum(fs, ino, inode.i_generation,
+	ఒకవేళ (retval)
+		తిరిగి retval;
+	*crcp = ext2fs_do_orphan_file_ఖండం_csum(fs, ino, inode.i_generation,
 						 blk, buf);
-	return 0;
+	తిరిగి 0;
 }
 
-errcode_t ext2fs_orphan_file_block_csum_set(ext2_filsys fs, ext2_ino_t ino,
-					    blk64_t blk, char *buf)
+errcode_t ext2fs_orphan_file_ఖండం_csum_సమితి(ext2_filsys fs, ext2_ino_t ino,
+					    blk64_t blk, అక్షరం *buf)
 {
-	struct ext4_orphan_block_tail *tail;
+	నిర్మాణం ext4_orphan_ఖండం_తోక *తోక;
 	errcode_t ret;
-	__u32 crc = 0;
+	__u32 చక్రీయ_తనిఖీ = 0;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 0;
+	ఒకవేళ (!ext2fs_has_feature_metadata_csum(fs->super))
+		తిరిగి 0;
 
-	tail = ext2fs_orphan_block_tail(fs, buf);
-	ret = ext2fs_orphan_file_block_csum(fs, ino, blk, buf, &crc);
-	if (ret)
-		return 0;
-	tail->ob_checksum = ext2fs_cpu_to_le32(crc);
-	return ret;
+	తోక = ext2fs_orphan_ఖండం_తోక(fs, buf);
+	ret = ext2fs_orphan_file_ఖండం_csum(fs, ino, blk, buf, &చక్రీయ_తనిఖీ);
+	ఒకవేళ (ret)
+		తిరిగి 0;
+	తోక->ob_checksum = ext2fs_cpu_గమ్యం_le32(చక్రీయ_తనిఖీ);
+	తిరిగి ret;
 }
 
-int ext2fs_orphan_file_block_csum_verify(ext2_filsys fs, ext2_ino_t ino,
-					 blk64_t blk, char *buf)
+పూర్ణాంకం ext2fs_orphan_file_ఖండం_csum_verify(ext2_filsys fs, ext2_ino_t ino,
+					 blk64_t blk, అక్షరం *buf)
 {
-	struct ext4_orphan_block_tail *tail;
-	__u32 crc;
+	నిర్మాణం ext4_orphan_ఖండం_తోక *తోక;
+	__u32 చక్రీయ_తనిఖీ;
 	errcode_t retval;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
-	retval = ext2fs_orphan_file_block_csum(fs, ino, blk, buf, &crc);
-	if (retval)
-		return 0;
-	tail = ext2fs_orphan_block_tail(fs, buf);
-	return ext2fs_le32_to_cpu(tail->ob_checksum) == crc;
+	ఒకవేళ (!ext2fs_has_feature_metadata_csum(fs->super))
+		తిరిగి 1;
+	retval = ext2fs_orphan_file_ఖండం_csum(fs, ino, blk, buf, &చక్రీయ_తనిఖీ);
+	ఒకవేళ (retval)
+		తిరిగి 0;
+	తోక = ext2fs_orphan_ఖండం_తోక(fs, buf);
+	తిరిగి ext2fs_le32_గమ్యం_cpu(తోక->ob_checksum) == చక్రీయ_తనిఖీ;
 }

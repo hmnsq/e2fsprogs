@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
+#అన్తర్భావ "config.h"
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <ctype.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
-#include "../../version.h"
+#అన్తర్భావ "../../version.h"
 
-static const char *lib_version = E2FSPROGS_VERSION;
-static const char *lib_date = E2FSPROGS_DATE;
+స్థిర స్థిరరాశి అక్షరం *lib_సంస్కరణ = E2_FSPROGS_సంస్కరణ;
+స్థిర స్థిరరాశి అక్షరం *lib_date = E2FSPROGS_DATE;
 
-int ext2fs_parse_version_string(const char *ver_string)
+పూర్ణాంకం ext2fs_parse_సంస్కరణ_string(స్థిరరాశి అక్షరం *ver_string)
 {
-	const char *cp;
-	int version = 0, dot_count = 0;
+	స్థిరరాశి అక్షరం *cp;
+	పూర్ణాంకం సంస్కరణ = 0, dot_లెక్క = 0;
 
-	for (cp = ver_string; *cp; cp++) {
-		if (*cp == '.') {
-			if (dot_count++)
-				break;
-			else
-				continue;
+	కొరకు (cp = ver_string; *cp; cp++) {
+		ఒకవేళ (*cp == '.') {
+			ఒకవేళ (dot_లెక్క++)
+				ఆపు;
+			లేకపోతే
+				కొనసాగు;
 		}
-		if (!isdigit(*cp))
-			break;
-		version = (version * 10) + (*cp - '0');
+		ఒకవేళ (!అంకెనా(*cp))
+			ఆపు;
+		సంస్కరణ = (సంస్కరణ * 10) + (*cp - '0');
 	}
-	return version;
+	తిరిగి సంస్కరణ;
 }
 
 
-int ext2fs_get_library_version(const char **ver_string,
-			       const char **date_string)
+పూర్ణాంకం ext2fs_get_library_సంస్కరణ(స్థిరరాశి అక్షరం **ver_string,
+			       స్థిరరాశి అక్షరం **date_string)
 {
-	if (ver_string)
-		*ver_string = lib_version;
-	if (date_string)
+	ఒకవేళ (ver_string)
+		*ver_string = lib_సంస్కరణ;
+	ఒకవేళ (date_string)
 		*date_string = lib_date;
 
-	return ext2fs_parse_version_string(lib_version);
+	తిరిగి ext2fs_parse_సంస్కరణ_string(lib_సంస్కరణ);
 }

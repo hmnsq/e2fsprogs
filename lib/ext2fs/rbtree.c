@@ -20,307 +20,307 @@
   linux/lib/rbtree.c
 */
 
-#include "rbtree.h"
+#అన్తర్భావ "rbtree.h"
 
-static void __rb_rotate_left(struct rb_node *node, struct rb_root *root)
+స్థిర శూన్య __rb_rotate_left(నిర్మాణం rb_కణుపు *కణుపు, నిర్మాణం rb_మూలం *మూలం)
 {
-	struct rb_node *right = node->rb_right;
-	struct rb_node *parent = ext2fs_rb_parent(node);
+	నిర్మాణం rb_కణుపు *కుడి = కణుపు->rb_కుడి;
+	నిర్మాణం rb_కణుపు *మాతృ = ext2fs_rb_మాతృ(కణుపు);
 
-	if ((node->rb_right = right->rb_left))
-		ext2fs_rb_set_parent(right->rb_left, node);
-	right->rb_left = node;
+	ఒకవేళ ((కణుపు->rb_కుడి = కుడి->rb_ఎడమ))
+		ext2fs_rb_సమితి_మాతృ(కుడి->rb_ఎడమ, కణుపు);
+	కుడి->rb_ఎడమ = కణుపు;
 
-	ext2fs_rb_set_parent(right, parent);
+	ext2fs_rb_సమితి_మాతృ(కుడి, మాతృ);
 
-	if (parent)
+	ఒకవేళ (మాతృ)
 	{
-		if (node == parent->rb_left)
-			parent->rb_left = right;
-		else
-			parent->rb_right = right;
+		ఒకవేళ (కణుపు == మాతృ->rb_ఎడమ)
+			మాతృ->rb_ఎడమ = కుడి;
+		లేకపోతే
+			మాతృ->rb_కుడి = కుడి;
 	}
-	else
-		root->rb_node = right;
-	ext2fs_rb_set_parent(node, right);
+	లేకపోతే
+		మూలం->rb_కణుపు = కుడి;
+	ext2fs_rb_సమితి_మాతృ(కణుపు, కుడి);
 }
 
-static void __rb_rotate_right(struct rb_node *node, struct rb_root *root)
+స్థిర శూన్య __rb_rotate_right(నిర్మాణం rb_కణుపు *కణుపు, నిర్మాణం rb_మూలం *మూలం)
 {
-	struct rb_node *left = node->rb_left;
-	struct rb_node *parent = ext2fs_rb_parent(node);
+	నిర్మాణం rb_కణుపు *ఎడమ = కణుపు->rb_ఎడమ;
+	నిర్మాణం rb_కణుపు *మాతృ = ext2fs_rb_మాతృ(కణుపు);
 
-	if ((node->rb_left = left->rb_right))
-		ext2fs_rb_set_parent(left->rb_right, node);
-	left->rb_right = node;
+	ఒకవేళ ((కణుపు->rb_ఎడమ = ఎడమ->rb_కుడి))
+		ext2fs_rb_సమితి_మాతృ(ఎడమ->rb_కుడి, కణుపు);
+	ఎడమ->rb_కుడి = కణుపు;
 
-	ext2fs_rb_set_parent(left, parent);
+	ext2fs_rb_సమితి_మాతృ(ఎడమ, మాతృ);
 
-	if (parent)
+	ఒకవేళ (మాతృ)
 	{
-		if (node == parent->rb_right)
-			parent->rb_right = left;
-		else
-			parent->rb_left = left;
+		ఒకవేళ (కణుపు == మాతృ->rb_కుడి)
+			మాతృ->rb_కుడి = ఎడమ;
+		లేకపోతే
+			మాతృ->rb_ఎడమ = ఎడమ;
 	}
-	else
-		root->rb_node = left;
-	ext2fs_rb_set_parent(node, left);
+	లేకపోతే
+		మూలం->rb_కణుపు = ఎడమ;
+	ext2fs_rb_సమితి_మాతృ(కణుపు, ఎడమ);
 }
 
-void ext2fs_rb_insert_color(struct rb_node *node, struct rb_root *root)
+శూన్య ext2fs_rb_చొప్పించు_color(నిర్మాణం rb_కణుపు *కణుపు, నిర్మాణం rb_మూలం *మూలం)
 {
-	struct rb_node *parent, *gparent;
+	నిర్మాణం rb_కణుపు *మాతృ, *gparent;
 
-	while ((parent = ext2fs_rb_parent(node)) && ext2fs_rb_is_red(parent))
+	అయితే ((మాతృ = ext2fs_rb_మాతృ(కణుపు)) && ext2fs_rb_is_red(మాతృ))
 	{
-		gparent = ext2fs_rb_parent(parent);
+		gparent = ext2fs_rb_మాతృ(మాతృ);
 
-		if (parent == gparent->rb_left)
+		ఒకవేళ (మాతృ == gparent->rb_ఎడమ)
 		{
 			{
-				register struct rb_node *uncle = gparent->rb_right;
-				if (uncle && ext2fs_rb_is_red(uncle))
+				నమోదు నిర్మాణం rb_కణుపు *uncle = gparent->rb_కుడి;
+				ఒకవేళ (uncle && ext2fs_rb_is_red(uncle))
 				{
-					ext2fs_rb_set_black(uncle);
-					ext2fs_rb_set_black(parent);
-					ext2fs_rb_set_red(gparent);
-					node = gparent;
-					continue;
+					ext2fs_rb_సమితి_black(uncle);
+					ext2fs_rb_సమితి_black(మాతృ);
+					ext2fs_rb_సమితి_red(gparent);
+					కణుపు = gparent;
+					కొనసాగు;
 				}
 			}
 
-			if (parent->rb_right == node)
+			ఒకవేళ (మాతృ->rb_కుడి == కణుపు)
 			{
-				register struct rb_node *tmp;
-				__rb_rotate_left(parent, root);
-				tmp = parent;
-				parent = node;
-				node = tmp;
+				నమోదు నిర్మాణం rb_కణుపు *tmp;
+				__rb_rotate_left(మాతృ, మూలం);
+				tmp = మాతృ;
+				మాతృ = కణుపు;
+				కణుపు = tmp;
 			}
 
-			ext2fs_rb_set_black(parent);
-			ext2fs_rb_set_red(gparent);
-			__rb_rotate_right(gparent, root);
-		} else {
+			ext2fs_rb_సమితి_black(మాతృ);
+			ext2fs_rb_సమితి_red(gparent);
+			__rb_rotate_right(gparent, మూలం);
+		} లేకపోతే {
 			{
-				register struct rb_node *uncle = gparent->rb_left;
-				if (uncle && ext2fs_rb_is_red(uncle))
+				నమోదు నిర్మాణం rb_కణుపు *uncle = gparent->rb_ఎడమ;
+				ఒకవేళ (uncle && ext2fs_rb_is_red(uncle))
 				{
-					ext2fs_rb_set_black(uncle);
-					ext2fs_rb_set_black(parent);
-					ext2fs_rb_set_red(gparent);
-					node = gparent;
-					continue;
+					ext2fs_rb_సమితి_black(uncle);
+					ext2fs_rb_సమితి_black(మాతృ);
+					ext2fs_rb_సమితి_red(gparent);
+					కణుపు = gparent;
+					కొనసాగు;
 				}
 			}
 
-			if (parent->rb_left == node)
+			ఒకవేళ (మాతృ->rb_ఎడమ == కణుపు)
 			{
-				register struct rb_node *tmp;
-				__rb_rotate_right(parent, root);
-				tmp = parent;
-				parent = node;
-				node = tmp;
+				నమోదు నిర్మాణం rb_కణుపు *tmp;
+				__rb_rotate_right(మాతృ, మూలం);
+				tmp = మాతృ;
+				మాతృ = కణుపు;
+				కణుపు = tmp;
 			}
 
-			ext2fs_rb_set_black(parent);
-			ext2fs_rb_set_red(gparent);
-			__rb_rotate_left(gparent, root);
+			ext2fs_rb_సమితి_black(మాతృ);
+			ext2fs_rb_సమితి_red(gparent);
+			__rb_rotate_left(gparent, మూలం);
 		}
 	}
 
-	ext2fs_rb_set_black(root->rb_node);
+	ext2fs_rb_సమితి_black(మూలం->rb_కణుపు);
 }
 
-static void __rb_erase_color(struct rb_node *node, struct rb_node *parent,
-			     struct rb_root *root)
+స్థిర శూన్య __rb_erase_color(నిర్మాణం rb_కణుపు *కణుపు, నిర్మాణం rb_కణుపు *మాతృ,
+			     నిర్మాణం rb_మూలం *మూలం)
 {
-	struct rb_node *other;
+	నిర్మాణం rb_కణుపు *other;
 
-	while ((!node || ext2fs_rb_is_black(node)) && node != root->rb_node)
+	అయితే ((!కణుపు || ext2fs_rb_is_black(కణుపు)) && కణుపు != మూలం->rb_కణుపు)
 	{
-		if (parent->rb_left == node)
+		ఒకవేళ (మాతృ->rb_ఎడమ == కణుపు)
 		{
-			other = parent->rb_right;
-			if (ext2fs_rb_is_red(other))
+			other = మాతృ->rb_కుడి;
+			ఒకవేళ (ext2fs_rb_is_red(other))
 			{
-				ext2fs_rb_set_black(other);
-				ext2fs_rb_set_red(parent);
-				__rb_rotate_left(parent, root);
-				other = parent->rb_right;
+				ext2fs_rb_సమితి_black(other);
+				ext2fs_rb_సమితి_red(మాతృ);
+				__rb_rotate_left(మాతృ, మూలం);
+				other = మాతృ->rb_కుడి;
 			}
-			if ((!other->rb_left || ext2fs_rb_is_black(other->rb_left)) &&
-			    (!other->rb_right || ext2fs_rb_is_black(other->rb_right)))
+			ఒకవేళ ((!other->rb_ఎడమ || ext2fs_rb_is_black(other->rb_ఎడమ)) &&
+			    (!other->rb_కుడి || ext2fs_rb_is_black(other->rb_కుడి)))
 			{
-				ext2fs_rb_set_red(other);
-				node = parent;
-				parent = ext2fs_rb_parent(node);
+				ext2fs_rb_సమితి_red(other);
+				కణుపు = మాతృ;
+				మాతృ = ext2fs_rb_మాతృ(కణుపు);
 			}
-			else
+			లేకపోతే
 			{
-				if (!other->rb_right || ext2fs_rb_is_black(other->rb_right))
+				ఒకవేళ (!other->rb_కుడి || ext2fs_rb_is_black(other->rb_కుడి))
 				{
-					ext2fs_rb_set_black(other->rb_left);
-					ext2fs_rb_set_red(other);
-					__rb_rotate_right(other, root);
-					other = parent->rb_right;
+					ext2fs_rb_సమితి_black(other->rb_ఎడమ);
+					ext2fs_rb_సమితి_red(other);
+					__rb_rotate_right(other, మూలం);
+					other = మాతృ->rb_కుడి;
 				}
-				ext2fs_rb_set_color(other, ext2fs_rb_color(parent));
-				ext2fs_rb_set_black(parent);
-				ext2fs_rb_set_black(other->rb_right);
-				__rb_rotate_left(parent, root);
-				node = root->rb_node;
-				break;
+				ext2fs_rb_సమితి_color(other, ext2fs_rb_color(మాతృ));
+				ext2fs_rb_సమితి_black(మాతృ);
+				ext2fs_rb_సమితి_black(other->rb_కుడి);
+				__rb_rotate_left(మాతృ, మూలం);
+				కణుపు = మూలం->rb_కణుపు;
+				ఆపు;
 			}
 		}
-		else
+		లేకపోతే
 		{
-			other = parent->rb_left;
-			if (ext2fs_rb_is_red(other))
+			other = మాతృ->rb_ఎడమ;
+			ఒకవేళ (ext2fs_rb_is_red(other))
 			{
-				ext2fs_rb_set_black(other);
-				ext2fs_rb_set_red(parent);
-				__rb_rotate_right(parent, root);
-				other = parent->rb_left;
+				ext2fs_rb_సమితి_black(other);
+				ext2fs_rb_సమితి_red(మాతృ);
+				__rb_rotate_right(మాతృ, మూలం);
+				other = మాతృ->rb_ఎడమ;
 			}
-			if ((!other->rb_left || ext2fs_rb_is_black(other->rb_left)) &&
-			    (!other->rb_right || ext2fs_rb_is_black(other->rb_right)))
+			ఒకవేళ ((!other->rb_ఎడమ || ext2fs_rb_is_black(other->rb_ఎడమ)) &&
+			    (!other->rb_కుడి || ext2fs_rb_is_black(other->rb_కుడి)))
 			{
-				ext2fs_rb_set_red(other);
-				node = parent;
-				parent = ext2fs_rb_parent(node);
+				ext2fs_rb_సమితి_red(other);
+				కణుపు = మాతృ;
+				మాతృ = ext2fs_rb_మాతృ(కణుపు);
 			}
-			else
+			లేకపోతే
 			{
-				if (!other->rb_left || ext2fs_rb_is_black(other->rb_left))
+				ఒకవేళ (!other->rb_ఎడమ || ext2fs_rb_is_black(other->rb_ఎడమ))
 				{
-					ext2fs_rb_set_black(other->rb_right);
-					ext2fs_rb_set_red(other);
-					__rb_rotate_left(other, root);
-					other = parent->rb_left;
+					ext2fs_rb_సమితి_black(other->rb_కుడి);
+					ext2fs_rb_సమితి_red(other);
+					__rb_rotate_left(other, మూలం);
+					other = మాతృ->rb_ఎడమ;
 				}
-				ext2fs_rb_set_color(other, ext2fs_rb_color(parent));
-				ext2fs_rb_set_black(parent);
-				ext2fs_rb_set_black(other->rb_left);
-				__rb_rotate_right(parent, root);
-				node = root->rb_node;
-				break;
+				ext2fs_rb_సమితి_color(other, ext2fs_rb_color(మాతృ));
+				ext2fs_rb_సమితి_black(మాతృ);
+				ext2fs_rb_సమితి_black(other->rb_ఎడమ);
+				__rb_rotate_right(మాతృ, మూలం);
+				కణుపు = మూలం->rb_కణుపు;
+				ఆపు;
 			}
 		}
 	}
-	if (node)
-		ext2fs_rb_set_black(node);
+	ఒకవేళ (కణుపు)
+		ext2fs_rb_సమితి_black(కణుపు);
 }
 
-void ext2fs_rb_erase(struct rb_node *node, struct rb_root *root)
+శూన్య ext2fs_rb_erase(నిర్మాణం rb_కణుపు *కణుపు, నిర్మాణం rb_మూలం *మూలం)
 {
-	struct rb_node *child, *parent;
-	int color;
+	నిర్మాణం rb_కణుపు *బిడ్డ, *మాతృ;
+	పూర్ణాంకం color;
 
-	if (!node->rb_left)
-		child = node->rb_right;
-	else if (!node->rb_right)
-		child = node->rb_left;
-	else
+	ఒకవేళ (!కణుపు->rb_ఎడమ)
+		బిడ్డ = కణుపు->rb_కుడి;
+	లేకపోతే ఒకవేళ (!కణుపు->rb_కుడి)
+		బిడ్డ = కణుపు->rb_ఎడమ;
+	లేకపోతే
 	{
-		struct rb_node *old = node, *left;
+		నిర్మాణం rb_కణుపు *old = కణుపు, *ఎడమ;
 
-		node = node->rb_right;
-		while ((left = node->rb_left) != NULL)
-			node = left;
+		కణుపు = కణుపు->rb_కుడి;
+		అయితే ((ఎడమ = కణుపు->rb_ఎడమ) != ఖాళీ)
+			కణుపు = ఎడమ;
 
-		if (ext2fs_rb_parent(old)) {
-			if (ext2fs_rb_parent(old)->rb_left == old)
-				ext2fs_rb_parent(old)->rb_left = node;
-			else
-				ext2fs_rb_parent(old)->rb_right = node;
-		} else
-			root->rb_node = node;
+		ఒకవేళ (ext2fs_rb_మాతృ(old)) {
+			ఒకవేళ (ext2fs_rb_మాతృ(old)->rb_ఎడమ == old)
+				ext2fs_rb_మాతృ(old)->rb_ఎడమ = కణుపు;
+			లేకపోతే
+				ext2fs_rb_మాతృ(old)->rb_కుడి = కణుపు;
+		} లేకపోతే
+			మూలం->rb_కణుపు = కణుపు;
 
-		child = node->rb_right;
-		parent = ext2fs_rb_parent(node);
-		color = ext2fs_rb_color(node);
+		బిడ్డ = కణుపు->rb_కుడి;
+		మాతృ = ext2fs_rb_మాతృ(కణుపు);
+		color = ext2fs_rb_color(కణుపు);
 
-		if (parent == old) {
-			parent = node;
-		} else {
-			if (child)
-				ext2fs_rb_set_parent(child, parent);
-			parent->rb_left = child;
+		ఒకవేళ (మాతృ == old) {
+			మాతృ = కణుపు;
+		} లేకపోతే {
+			ఒకవేళ (బిడ్డ)
+				ext2fs_rb_సమితి_మాతృ(బిడ్డ, మాతృ);
+			మాతృ->rb_ఎడమ = బిడ్డ;
 
-			node->rb_right = old->rb_right;
-			ext2fs_rb_set_parent(old->rb_right, node);
+			కణుపు->rb_కుడి = old->rb_కుడి;
+			ext2fs_rb_సమితి_మాతృ(old->rb_కుడి, కణుపు);
 		}
 
-		node->rb_parent_color = old->rb_parent_color;
-		node->rb_left = old->rb_left;
-		ext2fs_rb_set_parent(old->rb_left, node);
+		కణుపు->rb_మాతృ_color = old->rb_మాతృ_color;
+		కణుపు->rb_ఎడమ = old->rb_ఎడమ;
+		ext2fs_rb_సమితి_మాతృ(old->rb_ఎడమ, కణుపు);
 
-		goto color;
+		వెళ్ళు color;
 	}
 
-	parent = ext2fs_rb_parent(node);
-	color = ext2fs_rb_color(node);
+	మాతృ = ext2fs_rb_మాతృ(కణుపు);
+	color = ext2fs_rb_color(కణుపు);
 
-	if (child)
-		ext2fs_rb_set_parent(child, parent);
-	if (parent)
+	ఒకవేళ (బిడ్డ)
+		ext2fs_rb_సమితి_మాతృ(బిడ్డ, మాతృ);
+	ఒకవేళ (మాతృ)
 	{
-		if (parent->rb_left == node)
-			parent->rb_left = child;
-		else
-			parent->rb_right = child;
+		ఒకవేళ (మాతృ->rb_ఎడమ == కణుపు)
+			మాతృ->rb_ఎడమ = బిడ్డ;
+		లేకపోతే
+			మాతృ->rb_కుడి = బిడ్డ;
 	}
-	else
-		root->rb_node = child;
+	లేకపోతే
+		మూలం->rb_కణుపు = బిడ్డ;
 
  color:
-	if (color == RB_BLACK)
-		__rb_erase_color(child, parent, root);
+	ఒకవేళ (color == RB_BLACK)
+		__rb_erase_color(బిడ్డ, మాతృ, మూలం);
 }
 
 /*
  * This function returns the first node (in sort order) of the tree.
  */
-struct rb_node *ext2fs_rb_first(const struct rb_root *root)
+నిర్మాణం rb_కణుపు *ext2fs_rb_మొదటి(స్థిరరాశి నిర్మాణం rb_మూలం *మూలం)
 {
-	struct rb_node	*n;
+	నిర్మాణం rb_కణుపు	*n;
 
-	n = root->rb_node;
-	if (!n)
-		return NULL;
-	while (n->rb_left)
-		n = n->rb_left;
-	return n;
+	n = మూలం->rb_కణుపు;
+	ఒకవేళ (!n)
+		తిరిగి ఖాళీ;
+	అయితే (n->rb_ఎడమ)
+		n = n->rb_ఎడమ;
+	తిరిగి n;
 }
 
-struct rb_node *ext2fs_rb_last(const struct rb_root *root)
+నిర్మాణం rb_కణుపు *ext2fs_rb_చివరి(స్థిరరాశి నిర్మాణం rb_మూలం *మూలం)
 {
-	struct rb_node	*n;
+	నిర్మాణం rb_కణుపు	*n;
 
-	n = root->rb_node;
-	if (!n)
-		return NULL;
-	while (n->rb_right)
-		n = n->rb_right;
-	return n;
+	n = మూలం->rb_కణుపు;
+	ఒకవేళ (!n)
+		తిరిగి ఖాళీ;
+	అయితే (n->rb_కుడి)
+		n = n->rb_కుడి;
+	తిరిగి n;
 }
 
-struct rb_node *ext2fs_rb_next(struct rb_node *node)
+నిర్మాణం rb_కణుపు *ext2fs_rb_తదుపరి(నిర్మాణం rb_కణుపు *కణుపు)
 {
-	struct rb_node *parent;
+	నిర్మాణం rb_కణుపు *మాతృ;
 
-	if (ext2fs_rb_parent(node) == node)
-		return NULL;
+	ఒకవేళ (ext2fs_rb_మాతృ(కణుపు) == కణుపు)
+		తిరిగి ఖాళీ;
 
 	/* If we have a right-hand child, go down and then left as far
 	   as we can. */
-	if (node->rb_right) {
-		node = node->rb_right;
-		while (node->rb_left)
-			node=node->rb_left;
-		return (struct rb_node *)node;
+	ఒకవేళ (కణుపు->rb_కుడి) {
+		కణుపు = కణుపు->rb_కుడి;
+		అయితే (కణుపు->rb_ఎడమ)
+			కణుపు=కణుపు->rb_ఎడమ;
+		తిరిగి (నిర్మాణం rb_కణుపు *)కణుపు;
 	}
 
 	/* No right-hand children.  Everything down and left is
@@ -329,54 +329,54 @@ struct rb_node *ext2fs_rb_next(struct rb_node *node)
 	   ancestor is a right-hand child of its parent, keep going
 	   up. First time it's a left-hand child of its parent, said
 	   parent is our 'next' node. */
-	while ((parent = ext2fs_rb_parent(node)) && node == parent->rb_right)
-		node = parent;
+	అయితే ((మాతృ = ext2fs_rb_మాతృ(కణుపు)) && కణుపు == మాతృ->rb_కుడి)
+		కణుపు = మాతృ;
 
-	return parent;
+	తిరిగి మాతృ;
 }
 
-struct rb_node *ext2fs_rb_prev(struct rb_node *node)
+నిర్మాణం rb_కణుపు *ext2fs_rb_prev(నిర్మాణం rb_కణుపు *కణుపు)
 {
-	struct rb_node *parent;
+	నిర్మాణం rb_కణుపు *మాతృ;
 
-	if (ext2fs_rb_parent(node) == node)
-		return NULL;
+	ఒకవేళ (ext2fs_rb_మాతృ(కణుపు) == కణుపు)
+		తిరిగి ఖాళీ;
 
 	/* If we have a left-hand child, go down and then right as far
 	   as we can. */
-	if (node->rb_left) {
-		node = node->rb_left;
-		while (node->rb_right)
-			node=node->rb_right;
-		return (struct rb_node *)node;
+	ఒకవేళ (కణుపు->rb_ఎడమ) {
+		కణుపు = కణుపు->rb_ఎడమ;
+		అయితే (కణుపు->rb_కుడి)
+			కణుపు=కణుపు->rb_కుడి;
+		తిరిగి (నిర్మాణం rb_కణుపు *)కణుపు;
 	}
 
 	/* No left-hand children. Go up till we find an ancestor which
 	   is a right-hand child of its parent */
-	while ((parent = ext2fs_rb_parent(node)) && node == parent->rb_left)
-		node = parent;
+	అయితే ((మాతృ = ext2fs_rb_మాతృ(కణుపు)) && కణుపు == మాతృ->rb_ఎడమ)
+		కణుపు = మాతృ;
 
-	return parent;
+	తిరిగి మాతృ;
 }
 
-void ext2fs_rb_replace_node(struct rb_node *victim, struct rb_node *new,
-			  struct rb_root *root)
+శూన్య ext2fs_rb_replace_కణుపు(నిర్మాణం rb_కణుపు *victim, నిర్మాణం rb_కణుపు *new,
+			  నిర్మాణం rb_మూలం *మూలం)
 {
-	struct rb_node *parent = ext2fs_rb_parent(victim);
+	నిర్మాణం rb_కణుపు *మాతృ = ext2fs_rb_మాతృ(victim);
 
 	/* Set the surrounding nodes to point to the replacement */
-	if (parent) {
-		if (victim == parent->rb_left)
-			parent->rb_left = new;
-		else
-			parent->rb_right = new;
-	} else {
-		root->rb_node = new;
+	ఒకవేళ (మాతృ) {
+		ఒకవేళ (victim == మాతృ->rb_ఎడమ)
+			మాతృ->rb_ఎడమ = new;
+		లేకపోతే
+			మాతృ->rb_కుడి = new;
+	} లేకపోతే {
+		మూలం->rb_కణుపు = new;
 	}
-	if (victim->rb_left)
-		ext2fs_rb_set_parent(victim->rb_left, new);
-	if (victim->rb_right)
-		ext2fs_rb_set_parent(victim->rb_right, new);
+	ఒకవేళ (victim->rb_ఎడమ)
+		ext2fs_rb_సమితి_మాతృ(victim->rb_ఎడమ, new);
+	ఒకవేళ (victim->rb_కుడి)
+		ext2fs_rb_సమితి_మాతృ(victim->rb_కుడి, new);
 
 	/* Copy the pointers/colour from the victim to the replacement */
 	*new = *victim;

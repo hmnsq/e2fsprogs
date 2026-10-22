@@ -9,27 +9,27 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_ERRNO_H
+#అన్తర్భావ <errno.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_STAT_H
+#అన్తర్భావ <sys/stat.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
-#include "e2image.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fsP.h"
+#అన్తర్భావ "e2image.h"
 
-#undef DEBUG
+#నిర్వచనం_రద్దు DEBUG
 
 /*
  * Definitions to be dropped in lib/ext2fs/ext2fs.h
@@ -39,35 +39,35 @@
  * Private definitions
  */
 
-struct extent_path {
-	char		*buf;
-	int		entries;
-	int		max_entries;
-	int		left;
-	int		visit_num;
-	int		flags;
-	blk64_t		end_blk;
+నిర్మాణం extent_మార్గం {
+	అక్షరం		*buf;
+	పూర్ణాంకం		entries;
+	పూర్ణాంకం		max_entries;
+	పూర్ణాంకం		ఎడమ;
+	పూర్ణాంకం		సందర్శించు_అంకె;
+	పూర్ణాంకం		flags;
+	blk64_t		చివర_blk;
 	blk64_t		blk;
-	void		*curr;
+	శూన్య		*curr;
 };
 
 
-struct ext2_extent_handle {
+నిర్మాణం ext2_extent_handle {
 	errcode_t		magic;
 	ext2_filsys		fs;
 	ext2_ino_t 		ino;
-	struct ext2_inode	*inode;
-	struct ext2_inode	inodebuf;
-	int			type;
-	int			level;
-	int			max_depth;
-	int			max_paths;
-	struct extent_path	*path;
+	నిర్మాణం ext2_inode	*inode;
+	నిర్మాణం ext2_inode	inodebuf;
+	పూర్ణాంకం			type;
+	పూర్ణాంకం			level;
+	పూర్ణాంకం			max_లోతు;
+	పూర్ణాంకం			max_paths;
+	నిర్మాణం extent_మార్గం	*మార్గం;
 };
 
-struct ext2_extent_path {
+నిర్మాణం ext2_extent_మార్గం {
 	errcode_t		magic;
-	int			leaf_height;
+	పూర్ణాంకం			ఆకు_ఎత్తు;
 	blk64_t			lblk;
 };
 
@@ -75,136 +75,136 @@ struct ext2_extent_path {
  *  Useful Debugging stuff
  */
 
-#ifdef DEBUG
-static void dbg_show_header(struct ext3_extent_header *eh)
+#నిర్వచితమైతే DEBUG
+స్థిర శూన్య dbg_show_శీర్షిక(నిర్మాణం ext3_extent_శీర్షిక *eh)
 {
-	printf("header: magic=%x entries=%u max=%u depth=%u generation=%u\n",
-			ext2fs_le16_to_cpu(eh->eh_magic),
-			ext2fs_le16_to_cpu(eh->eh_entries),
-			ext2fs_le16_to_cpu(eh->eh_max),
-			ext2fs_le16_to_cpu(eh->eh_depth),
-			ext2fs_le32_to_cpu(eh->eh_generation));
+	రాయి("header: magic=%x entries=%u max=%u depth=%u generation=%u\n",
+			ext2fs_le16_గమ్యం_cpu(eh->eh_magic),
+			ext2fs_le16_గమ్యం_cpu(eh->eh_entries),
+			ext2fs_le16_గమ్యం_cpu(eh->eh_max),
+			ext2fs_le16_గమ్యం_cpu(eh->eh_లోతు),
+			ext2fs_le32_గమ్యం_cpu(eh->eh_generation));
 }
 
-static void dbg_show_index(struct ext3_extent_idx *ix)
+స్థిర శూన్య dbg_show_సూచీ(నిర్మాణం ext3_extent_idx *ix)
 {
-	printf("index: block=%u leaf=%u leaf_hi=%u unused=%u\n",
-			ext2fs_le32_to_cpu(ix->ei_block),
-			ext2fs_le32_to_cpu(ix->ei_leaf),
-			ext2fs_le16_to_cpu(ix->ei_leaf_hi),
-			ext2fs_le16_to_cpu(ix->ei_unused));
+	రాయి("index: block=%u leaf=%u leaf_hi=%u unused=%u\n",
+			ext2fs_le32_గమ్యం_cpu(ix->ei_ఖండం),
+			ext2fs_le32_గమ్యం_cpu(ix->ei_ఆకు),
+			ext2fs_le16_గమ్యం_cpu(ix->ei_ఆకు_hi),
+			ext2fs_le16_గమ్యం_cpu(ix->ei_వాడని));
 }
 
-static void dbg_show_extent(struct ext3_extent *ex)
+స్థిర శూన్య dbg_show_extent(నిర్మాణం ext3_extent *ex)
 {
-	printf("extent: block=%u-%u len=%u start=%u start_hi=%u\n",
-			ext2fs_le32_to_cpu(ex->ee_block),
-			ext2fs_le32_to_cpu(ex->ee_block) +
-			ext2fs_le16_to_cpu(ex->ee_len) - 1,
-			ext2fs_le16_to_cpu(ex->ee_len),
-			ext2fs_le32_to_cpu(ex->ee_start),
-			ext2fs_le16_to_cpu(ex->ee_start_hi));
+	రాయి("extent: block=%u-%u len=%u start=%u start_hi=%u\n",
+			ext2fs_le32_గమ్యం_cpu(ex->ee_ఖండం),
+			ext2fs_le32_గమ్యం_cpu(ex->ee_ఖండం) +
+			ext2fs_le16_గమ్యం_cpu(ex->ee_len) - 1,
+			ext2fs_le16_గమ్యం_cpu(ex->ee_len),
+			ext2fs_le32_గమ్యం_cpu(ex->ee_ప్రారంభం),
+			ext2fs_le16_గమ్యం_cpu(ex->ee_ప్రారంభం_hi));
 }
 
-static void dbg_print_extent(char *desc, struct ext2fs_extent *extent)
+స్థిర శూన్య dbg_print_extent(అక్షరం *desc, నిర్మాణం ext2fs_extent *extent)
 {
-	if (desc)
-		printf("%s: ", desc);
-	printf("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
+	ఒకవేళ (desc)
+		రాయి("%s: ", desc);
+	రాయి("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
 	       extent->e_lblk, extent->e_lblk + extent->e_len - 1,
 	       extent->e_len, extent->e_pblk);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_LEAF)
+	ఒకవేళ (extent->e_flags & EXT2_EXTENT_FLAGS_ఆకు)
 		fputs("LEAF ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	ఒకవేళ (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 		fputs("UNINIT ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_SECOND_VISIT)
+	ఒకవేళ (extent->e_flags & EXT2_EXTENT_FLAGS_రెండవ_సందర్శించు)
 		fputs("2ND_VISIT ", stdout);
-	if (!extent->e_flags)
+	ఒకవేళ (!extent->e_flags)
 		fputs("(none)", stdout);
 	fputc('\n', stdout);
 
 }
 
-static void dump_path(const char *tag, struct ext2_extent_handle *handle,
-		      struct extent_path *path)
+స్థిర శూన్య dump_మార్గం(స్థిరరాశి అక్షరం *ట్యాగ్, నిర్మాణం ext2_extent_handle *handle,
+		      నిర్మాణం extent_మార్గం *మార్గం)
 {
-	struct extent_path *ppp = path;
-	printf("%s: level=%d\n", tag, handle->level);
+	నిర్మాణం extent_మార్గం *ppp = మార్గం;
+	రాయి("%s: level=%d\n", ట్యాగ్, handle->level);
 
-	do {
-		printf("%s: path=%ld buf=%p entries=%d max_entries=%d left=%d "
+	చేయి {
+		రాయి("%s: path=%ld buf=%p entries=%d max_entries=%d left=%d "
 		       "visit_num=%d flags=0x%x end_blk=%llu curr=%p(%ld)\n",
-		       tag, (ppp - handle->path), ppp->buf, ppp->entries,
-		       ppp->max_entries, ppp->left, ppp->visit_num, ppp->flags,
-		       ppp->end_blk, ppp->curr, ppp->curr - (void *)ppp->buf);
-		printf("  ");
-		dbg_show_header((struct ext3_extent_header *)ppp->buf);
-		if (ppp->curr) {
-			printf("  ");
-			dbg_show_index(ppp->curr);
-			printf("  ");
+		       ట్యాగ్, (ppp - handle->మార్గం), ppp->buf, ppp->entries,
+		       ppp->max_entries, ppp->ఎడమ, ppp->సందర్శించు_అంకె, ppp->flags,
+		       ppp->చివర_blk, ppp->curr, ppp->curr - (శూన్య *)ppp->buf);
+		రాయి("  ");
+		dbg_show_శీర్షిక((నిర్మాణం ext3_extent_శీర్షిక *)ppp->buf);
+		ఒకవేళ (ppp->curr) {
+			రాయి("  ");
+			dbg_show_సూచీ(ppp->curr);
+			రాయి("  ");
 			dbg_show_extent(ppp->curr);
 		}
 		ppp--;
-	} while (ppp >= handle->path);
+	} అయితే (ppp >= handle->మార్గం);
 	fflush(stdout);
 
-	return;
+	తిరిగి;
 }
 
-#else
-#define dbg_show_header(eh) do { } while (0)
-#define dbg_show_index(ix) do { } while (0)
-#define dbg_show_extent(ex) do { } while (0)
-#define dbg_print_extent(desc, ex) do { } while (0)
-#define dump_path(tag, handle, path) do { } while (0)
-#endif
+#లేకపోతే
+#నిర్వచించు dbg_show_శీర్షిక(eh) చేయి { } అయితే (0)
+#నిర్వచించు dbg_show_సూచీ(ix) చేయి { } అయితే (0)
+#నిర్వచించు dbg_show_extent(ex) చేయి { } అయితే (0)
+#నిర్వచించు dbg_print_extent(desc, ex) చేయి { } అయితే (0)
+#నిర్వచించు dump_మార్గం(ట్యాగ్, handle, మార్గం) చేయి { } అయితే (0)
+#అయితే_ముగింపు
 
 /*
  * Verify the extent header as being sane
  */
-errcode_t ext2fs_extent_header_verify(void *ptr, int size)
+errcode_t ext2fs_extent_శీర్షిక_verify(శూన్య *ptr, పూర్ణాంకం కొలత)
 {
-	int eh_max, entry_size;
-	struct ext3_extent_header *eh = ptr;
+	పూర్ణాంకం eh_max, నమోదు_కొలత;
+	నిర్మాణం ext3_extent_శీర్షిక *eh = ptr;
 
-	dbg_show_header(eh);
-	if (ext2fs_le16_to_cpu(eh->eh_magic) != EXT3_EXT_MAGIC)
-		return EXT2_ET_EXTENT_HEADER_BAD;
-	if (ext2fs_le16_to_cpu(eh->eh_entries) > ext2fs_le16_to_cpu(eh->eh_max))
-		return EXT2_ET_EXTENT_HEADER_BAD;
-	if (eh->eh_depth == 0)
-		entry_size = sizeof(struct ext3_extent);
-	else
-		entry_size = sizeof(struct ext3_extent_idx);
+	dbg_show_శీర్షిక(eh);
+	ఒకవేళ (ext2fs_le16_గమ్యం_cpu(eh->eh_magic) != EXT3_EXT_MAGIC)
+		తిరిగి EXT2_ET_EXTENT_శీర్షిక_BAD;
+	ఒకవేళ (ext2fs_le16_గమ్యం_cpu(eh->eh_entries) > ext2fs_le16_గమ్యం_cpu(eh->eh_max))
+		తిరిగి EXT2_ET_EXTENT_శీర్షిక_BAD;
+	ఒకవేళ (eh->eh_లోతు == 0)
+		నమోదు_కొలత = పరిమాణం(నిర్మాణం ext3_extent);
+	లేకపోతే
+		నమోదు_కొలత = పరిమాణం(నిర్మాణం ext3_extent_idx);
 
-	eh_max = (size - sizeof(*eh)) / entry_size;
+	eh_max = (కొలత - పరిమాణం(*eh)) / నమోదు_కొలత;
 	/* Allow two extent-sized items at the end of the block, for
 	 * ext4_extent_tail with checksum in the future. */
-	if ((ext2fs_le16_to_cpu(eh->eh_max) > eh_max) ||
-	    (ext2fs_le16_to_cpu(eh->eh_max) < (eh_max - 2)))
-		return EXT2_ET_EXTENT_HEADER_BAD;
+	ఒకవేళ ((ext2fs_le16_గమ్యం_cpu(eh->eh_max) > eh_max) ||
+	    (ext2fs_le16_గమ్యం_cpu(eh->eh_max) < (eh_max - 2)))
+		తిరిగి EXT2_ET_EXTENT_శీర్షిక_BAD;
 
-	return 0;
+	తిరిగి 0;
 }
 
 
 /*
  * Begin functions to handle an inode's extent information
  */
-void ext2fs_extent_free(ext2_extent_handle_t handle)
+శూన్య ext2fs_extent_free(ext2_extent_handle_t handle)
 {
-	int			i;
+	పూర్ణాంకం			i;
 
-	if (!handle)
-		return;
+	ఒకవేళ (!handle)
+		తిరిగి;
 
-	if (handle->path) {
-		for (i = 1; i < handle->max_paths; i++) {
-			if (handle->path[i].buf)
-				ext2fs_free_mem(&handle->path[i].buf);
+	ఒకవేళ (handle->మార్గం) {
+		కొరకు (i = 1; i < handle->max_paths; i++) {
+			ఒకవేళ (handle->మార్గం[i].buf)
+				ext2fs_free_mem(&handle->మార్గం[i].buf);
 		}
-		ext2fs_free_mem(&handle->path);
+		ext2fs_free_mem(&handle->మార్గం);
 	}
 	ext2fs_free_mem(&handle);
 }
@@ -212,92 +212,92 @@ void ext2fs_extent_free(ext2_extent_handle_t handle)
 errcode_t ext2fs_extent_open(ext2_filsys fs, ext2_ino_t ino,
 				    ext2_extent_handle_t *ret_handle)
 {
-	return ext2fs_extent_open2(fs, ino, NULL, ret_handle);
+	తిరిగి ext2fs_extent_open2(fs, ino, ఖాళీ, ret_handle);
 }
 
 errcode_t ext2fs_extent_open2(ext2_filsys fs, ext2_ino_t ino,
-				    struct ext2_inode *inode,
+				    నిర్మాణం ext2_inode *inode,
 				    ext2_extent_handle_t *ret_handle)
 {
-	struct ext2_extent_handle	*handle;
+	నిర్మాణం ext2_extent_handle	*handle;
 	errcode_t			retval;
-	int				i;
-	struct ext3_extent_header	*eh;
+	పూర్ణాంకం				i;
+	నిర్మాణం ext3_extent_శీర్షిక	*eh;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!inode)
-		if ((ino == 0) || (ino > fs->super->s_inodes_count))
-			return EXT2_ET_BAD_INODE_NUM;
+	ఒకవేళ (!inode)
+		ఒకవేళ ((ino == 0) || (ino > fs->super->s_inodes_లెక్క))
+			తిరిగి EXT2_ET_BAD_INODE_అంకె;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_extent_handle), &handle);
-	if (retval)
-		return retval;
-	memset(handle, 0, sizeof(struct ext2_extent_handle));
+	retval = ext2fs_get_mem(పరిమాణం(నిర్మాణం ext2_extent_handle), &handle);
+	ఒకవేళ (retval)
+		తిరిగి retval;
+	memset(handle, 0, పరిమాణం(నిర్మాణం ext2_extent_handle));
 
 	handle->ino = ino;
 	handle->fs = fs;
 
-	if (inode) {
+	ఒకవేళ (inode) {
 		handle->inode = inode;
-	} else {
+	} లేకపోతే {
 		handle->inode = &handle->inodebuf;
 		retval = ext2fs_read_inode(fs, ino, handle->inode);
-		if (retval)
-			goto errout;
+		ఒకవేళ (retval)
+			వెళ్ళు errout;
 	}
 
-	eh = (struct ext3_extent_header *) &handle->inode->i_block[0];
+	eh = (నిర్మాణం ext3_extent_శీర్షిక *) &handle->inode->i_ఖండం[0];
 
-	for (i=0; i < EXT2_N_BLOCKS; i++)
-		if (handle->inode->i_block[i])
-			break;
-	if (i >= EXT2_N_BLOCKS) {
-		eh->eh_magic = ext2fs_cpu_to_le16(EXT3_EXT_MAGIC);
-		eh->eh_depth = 0;
+	కొరకు (i=0; i < EXT2_N_ఖండాలు; i++)
+		ఒకవేళ (handle->inode->i_ఖండం[i])
+			ఆపు;
+	ఒకవేళ (i >= EXT2_N_ఖండాలు) {
+		eh->eh_magic = ext2fs_cpu_గమ్యం_le16(EXT3_EXT_MAGIC);
+		eh->eh_లోతు = 0;
 		eh->eh_entries = 0;
-		i = (sizeof(handle->inode->i_block) - sizeof(*eh)) /
-			sizeof(struct ext3_extent);
-		eh->eh_max = ext2fs_cpu_to_le16(i);
+		i = (పరిమాణం(handle->inode->i_ఖండం) - పరిమాణం(*eh)) /
+			పరిమాణం(నిర్మాణం ext3_extent);
+		eh->eh_max = ext2fs_cpu_గమ్యం_le16(i);
 		handle->inode->i_flags |= EXT4_EXTENTS_FL;
 	}
 
-	if (!(handle->inode->i_flags & EXT4_EXTENTS_FL)) {
+	ఒకవేళ (!(handle->inode->i_flags & EXT4_EXTENTS_FL)) {
 		retval = EXT2_ET_INODE_NOT_EXTENT;
-		goto errout;
+		వెళ్ళు errout;
 	}
 
-	retval = ext2fs_extent_header_verify(eh, sizeof(handle->inode->i_block));
-	if (retval)
-		goto errout;
+	retval = ext2fs_extent_శీర్షిక_verify(eh, పరిమాణం(handle->inode->i_ఖండం));
+	ఒకవేళ (retval)
+		వెళ్ళు errout;
 
-	handle->max_depth = ext2fs_le16_to_cpu(eh->eh_depth);
-	handle->type = ext2fs_le16_to_cpu(eh->eh_magic);
+	handle->max_లోతు = ext2fs_le16_గమ్యం_cpu(eh->eh_లోతు);
+	handle->type = ext2fs_le16_గమ్యం_cpu(eh->eh_magic);
 
-	handle->max_paths = handle->max_depth + 1;
+	handle->max_paths = handle->max_లోతు + 1;
 	retval = ext2fs_get_memzero(handle->max_paths *
-				    sizeof(struct extent_path),
-				    &handle->path);
-	handle->path[0].buf = (char *) handle->inode->i_block;
+				    పరిమాణం(నిర్మాణం extent_మార్గం),
+				    &handle->మార్గం);
+	handle->మార్గం[0].buf = (అక్షరం *) handle->inode->i_ఖండం;
 
-	handle->path[0].left = handle->path[0].entries =
-		ext2fs_le16_to_cpu(eh->eh_entries);
-	handle->path[0].max_entries = ext2fs_le16_to_cpu(eh->eh_max);
-	handle->path[0].curr = 0;
-	handle->path[0].end_blk =
-		(EXT2_I_SIZE(handle->inode) + fs->blocksize - 1) >>
-		 EXT2_BLOCK_SIZE_BITS(fs->super);
-	handle->path[0].blk = 0;
-	handle->path[0].visit_num = 1;
+	handle->మార్గం[0].ఎడమ = handle->మార్గం[0].entries =
+		ext2fs_le16_గమ్యం_cpu(eh->eh_entries);
+	handle->మార్గం[0].max_entries = ext2fs_le16_గమ్యం_cpu(eh->eh_max);
+	handle->మార్గం[0].curr = 0;
+	handle->మార్గం[0].చివర_blk =
+		(EXT2_I_కొలత(handle->inode) + fs->blocksize - 1) >>
+		 EXT2_ఖండం_కొలత_బిట్లు(fs->super);
+	handle->మార్గం[0].blk = 0;
+	handle->మార్గం[0].సందర్శించు_అంకె = 1;
 	handle->level = 0;
 	handle->magic = EXT2_ET_MAGIC_EXTENT_HANDLE;
 
 	*ret_handle = handle;
-	return 0;
+	తిరిగి 0;
 
 errout:
 	ext2fs_extent_free(handle);
-	return retval;
+	తిరిగి retval;
 }
 
 /*
@@ -305,354 +305,354 @@ errout:
  * extent tree and then returning the current extent
  */
 errcode_t ext2fs_extent_get(ext2_extent_handle_t handle,
-			    int flags, struct ext2fs_extent *extent)
+			    పూర్ణాంకం flags, నిర్మాణం ext2fs_extent *extent)
 {
-	struct extent_path	*path, *newpath, *tp;
-	struct ext3_extent_header	*eh;
-	struct ext3_extent_idx		*ix = 0;
-	struct ext3_extent		*ex;
+	నిర్మాణం extent_మార్గం	*మార్గం, *newpath, *tp;
+	నిర్మాణం ext3_extent_శీర్షిక	*eh;
+	నిర్మాణం ext3_extent_idx		*ix = 0;
+	నిర్మాణం ext3_extent		*ex;
 	errcode_t			retval;
 	blk64_t				blk;
-	blk64_t				end_blk;
-	int				orig_op, op, l;
-	int				failed_csum = 0;
+	blk64_t				చివర_blk;
+	పూర్ణాంకం				orig_op, op, l;
+	పూర్ణాంకం				failed_csum = 0;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ఒకవేళ (!handle->మార్గం)
+		తిరిగి EXT2_ET_NO_CURRENT_కణుపు;
 
-	orig_op = op = flags & EXT2_EXTENT_MOVE_MASK;
+	orig_op = op = flags & EXT2_EXTENT_MOVE_ముసుగు;
 
 retry:
-	path = handle->path + handle->level;
-	if ((orig_op == EXT2_EXTENT_NEXT) ||
-	    (orig_op == EXT2_EXTENT_NEXT_LEAF)) {
-		if (handle->level < handle->max_depth) {
+	మార్గం = handle->మార్గం + handle->level;
+	ఒకవేళ ((orig_op == EXT2_EXTENT_తదుపరి) ||
+	    (orig_op == EXT2_EXTENT_తదుపరి_ఆకు)) {
+		ఒకవేళ (handle->level < handle->max_లోతు) {
 			/* interior node */
-			if (path->visit_num == 0) {
-				path->visit_num++;
-				op = EXT2_EXTENT_DOWN;
-			} else if (path->left > 0)
-				op = EXT2_EXTENT_NEXT_SIB;
-			else if (handle->level > 0)
-				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_NEXT;
-		} else {
+			ఒకవేళ (మార్గం->సందర్శించు_అంకె == 0) {
+				మార్గం->సందర్శించు_అంకె++;
+				op = EXT2_EXTENT_కిందికి;
+			} లేకపోతే ఒకవేళ (మార్గం->ఎడమ > 0)
+				op = EXT2_EXTENT_తదుపరి_SIB;
+			లేకపోతే ఒకవేళ (handle->level > 0)
+				op = EXT2_EXTENT_పైకి;
+			లేకపోతే
+				తిరిగి EXT2_ET_EXTENT_NO_తదుపరి;
+		} లేకపోతే {
 			/* leaf node */
-			if (path->left > 0)
-				op = EXT2_EXTENT_NEXT_SIB;
-			else if (handle->level > 0)
-				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_NEXT;
+			ఒకవేళ (మార్గం->ఎడమ > 0)
+				op = EXT2_EXTENT_తదుపరి_SIB;
+			లేకపోతే ఒకవేళ (handle->level > 0)
+				op = EXT2_EXTENT_పైకి;
+			లేకపోతే
+				తిరిగి EXT2_ET_EXTENT_NO_తదుపరి;
 		}
-		if (op != EXT2_EXTENT_NEXT_SIB) {
-#ifdef DEBUG_GET_EXTENT
-			printf("<<<< OP = %s\n",
-			       (op == EXT2_EXTENT_DOWN) ? "down" :
-			       ((op == EXT2_EXTENT_UP) ? "up" : "unknown"));
-#endif
+		ఒకవేళ (op != EXT2_EXTENT_తదుపరి_SIB) {
+#నిర్వచితమైతే DEBUG_GET_EXTENT
+			రాయి("<<<< OP = %s\n",
+			       (op == EXT2_EXTENT_కిందికి) ? "down" :
+			       ((op == EXT2_EXTENT_పైకి) ? "up" : "unknown"));
+#అయితే_ముగింపు
 		}
 	}
 
-	if ((orig_op == EXT2_EXTENT_PREV) ||
-	    (orig_op == EXT2_EXTENT_PREV_LEAF)) {
-		if (handle->level < handle->max_depth) {
+	ఒకవేళ ((orig_op == EXT2_EXTENT_PREV) ||
+	    (orig_op == EXT2_EXTENT_PREV_ఆకు)) {
+		ఒకవేళ (handle->level < handle->max_లోతు) {
 			/* interior node */
-			if (path->visit_num > 0 ) {
+			ఒకవేళ (మార్గం->సందర్శించు_అంకె > 0 ) {
 				/* path->visit_num = 0; */
-				op = EXT2_EXTENT_DOWN_AND_LAST;
-			} else if (path->left < path->entries-1)
+				op = EXT2_EXTENT_కిందికి_AND_చివరి;
+			} లేకపోతే ఒకవేళ (మార్గం->ఎడమ < మార్గం->entries-1)
 				op = EXT2_EXTENT_PREV_SIB;
-			else if (handle->level > 0)
-				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_PREV;
-		} else {
+			లేకపోతే ఒకవేళ (handle->level > 0)
+				op = EXT2_EXTENT_పైకి;
+			లేకపోతే
+				తిరిగి EXT2_ET_EXTENT_NO_PREV;
+		} లేకపోతే {
 			/* leaf node */
-			if (path->left < path->entries-1)
+			ఒకవేళ (మార్గం->ఎడమ < మార్గం->entries-1)
 				op = EXT2_EXTENT_PREV_SIB;
-			else if (handle->level > 0)
-				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_PREV;
+			లేకపోతే ఒకవేళ (handle->level > 0)
+				op = EXT2_EXTENT_పైకి;
+			లేకపోతే
+				తిరిగి EXT2_ET_EXTENT_NO_PREV;
 		}
-		if (op != EXT2_EXTENT_PREV_SIB) {
-#ifdef DEBUG_GET_EXTENT
-			printf("<<<< OP = %s\n",
-			       (op == EXT2_EXTENT_DOWN_AND_LAST) ? "down/last" :
-			       ((op == EXT2_EXTENT_UP) ? "up" : "unknown"));
-#endif
+		ఒకవేళ (op != EXT2_EXTENT_PREV_SIB) {
+#నిర్వచితమైతే DEBUG_GET_EXTENT
+			రాయి("<<<< OP = %s\n",
+			       (op == EXT2_EXTENT_కిందికి_AND_చివరి) ? "down/last" :
+			       ((op == EXT2_EXTENT_పైకి) ? "up" : "unknown"));
+#అయితే_ముగింపు
 		}
 	}
 
-	if (orig_op == EXT2_EXTENT_LAST_LEAF) {
-		if ((handle->level < handle->max_depth) &&
-		    (path->left == 0))
-			op = EXT2_EXTENT_DOWN;
-		else
-			op = EXT2_EXTENT_LAST_SIB;
-#ifdef DEBUG_GET_EXTENT
-		printf("<<<< OP = %s\n",
-			   (op == EXT2_EXTENT_DOWN) ? "down" : "last_sib");
-#endif
+	ఒకవేళ (orig_op == EXT2_EXTENT_చివరి_ఆకు) {
+		ఒకవేళ ((handle->level < handle->max_లోతు) &&
+		    (మార్గం->ఎడమ == 0))
+			op = EXT2_EXTENT_కిందికి;
+		లేకపోతే
+			op = EXT2_EXTENT_చివరి_SIB;
+#నిర్వచితమైతే DEBUG_GET_EXTENT
+		రాయి("<<<< OP = %s\n",
+			   (op == EXT2_EXTENT_కిందికి) ? "down" : "last_sib");
+#అయితే_ముగింపు
 	}
 
-	switch (op) {
-	case EXT2_EXTENT_CURRENT:
-		ix = path->curr;
-		break;
-	case EXT2_EXTENT_ROOT:
+	ఎంపిక (op) {
+	స్థితి EXT2_EXTENT_CURRENT:
+		ix = మార్గం->curr;
+		ఆపు;
+	స్థితి EXT2_EXTENT_మూలం:
 		handle->level = 0;
-		path = handle->path + handle->level;
+		మార్గం = handle->మార్గం + handle->level;
 		/* fallthrough */
-	case EXT2_EXTENT_FIRST_SIB:
-		path->left = path->entries;
-		path->curr = 0;
+	స్థితి EXT2_EXTENT_మొదటి_SIB:
+		మార్గం->ఎడమ = మార్గం->entries;
+		మార్గం->curr = 0;
 		/* fallthrough */
-	case EXT2_EXTENT_NEXT_SIB:
-		if (path->left <= 0)
-			return EXT2_ET_EXTENT_NO_NEXT;
-		if (path->curr) {
-			ix = path->curr;
+	స్థితి EXT2_EXTENT_తదుపరి_SIB:
+		ఒకవేళ (మార్గం->ఎడమ <= 0)
+			తిరిగి EXT2_ET_EXTENT_NO_తదుపరి;
+		ఒకవేళ (మార్గం->curr) {
+			ix = మార్గం->curr;
 			ix++;
-		} else {
-			eh = (struct ext3_extent_header *) path->buf;
-			ix = EXT_FIRST_INDEX(eh);
+		} లేకపోతే {
+			eh = (నిర్మాణం ext3_extent_శీర్షిక *) మార్గం->buf;
+			ix = EXT_మొదటి_సూచీ(eh);
 		}
-		path->left--;
-		path->curr = ix;
-		path->visit_num = 0;
-		break;
-	case EXT2_EXTENT_PREV_SIB:
-		if (!path->curr ||
-		    path->left+1 >= path->entries)
-			return EXT2_ET_EXTENT_NO_PREV;
-		ix = path->curr;
+		మార్గం->ఎడమ--;
+		మార్గం->curr = ix;
+		మార్గం->సందర్శించు_అంకె = 0;
+		ఆపు;
+	స్థితి EXT2_EXTENT_PREV_SIB:
+		ఒకవేళ (!మార్గం->curr ||
+		    మార్గం->ఎడమ+1 >= మార్గం->entries)
+			తిరిగి EXT2_ET_EXTENT_NO_PREV;
+		ix = మార్గం->curr;
 		ix--;
-		path->curr = ix;
-		path->left++;
-		if (handle->level < handle->max_depth)
-			path->visit_num = 1;
-		break;
-	case EXT2_EXTENT_LAST_SIB:
-		eh = (struct ext3_extent_header *) path->buf;
-		path->curr = EXT_LAST_EXTENT(eh);
-		ix = path->curr;
-		path->left = 0;
-		path->visit_num = 0;
-		break;
-	case EXT2_EXTENT_UP:
-		if (handle->level <= 0)
-			return EXT2_ET_EXTENT_NO_UP;
+		మార్గం->curr = ix;
+		మార్గం->ఎడమ++;
+		ఒకవేళ (handle->level < handle->max_లోతు)
+			మార్గం->సందర్శించు_అంకె = 1;
+		ఆపు;
+	స్థితి EXT2_EXTENT_చివరి_SIB:
+		eh = (నిర్మాణం ext3_extent_శీర్షిక *) మార్గం->buf;
+		మార్గం->curr = EXT_చివరి_EXTENT(eh);
+		ix = మార్గం->curr;
+		మార్గం->ఎడమ = 0;
+		మార్గం->సందర్శించు_అంకె = 0;
+		ఆపు;
+	స్థితి EXT2_EXTENT_పైకి:
+		ఒకవేళ (handle->level <= 0)
+			తిరిగి EXT2_ET_EXTENT_NO_పైకి;
 		handle->level--;
-		path--;
-		ix = path->curr;
-		if ((orig_op == EXT2_EXTENT_PREV) ||
-		    (orig_op == EXT2_EXTENT_PREV_LEAF))
-			path->visit_num = 0;
-		break;
-	case EXT2_EXTENT_DOWN:
-	case EXT2_EXTENT_DOWN_AND_LAST:
-		if (!path->curr ||(handle->level >= handle->max_depth))
-			return EXT2_ET_EXTENT_NO_DOWN;
+		మార్గం--;
+		ix = మార్గం->curr;
+		ఒకవేళ ((orig_op == EXT2_EXTENT_PREV) ||
+		    (orig_op == EXT2_EXTENT_PREV_ఆకు))
+			మార్గం->సందర్శించు_అంకె = 0;
+		ఆపు;
+	స్థితి EXT2_EXTENT_కిందికి:
+	స్థితి EXT2_EXTENT_కిందికి_AND_చివరి:
+		ఒకవేళ (!మార్గం->curr ||(handle->level >= handle->max_లోతు))
+			తిరిగి EXT2_ET_EXTENT_NO_కిందికి;
 
-		ix = path->curr;
-		newpath = path + 1;
-		if (!newpath->buf) {
+		ix = మార్గం->curr;
+		newpath = మార్గం + 1;
+		ఒకవేళ (!newpath->buf) {
 			retval = ext2fs_get_mem(handle->fs->blocksize,
 						&newpath->buf);
-			if (retval)
-				return retval;
+			ఒకవేళ (retval)
+				తిరిగి retval;
 		}
-		blk = ext2fs_le32_to_cpu(ix->ei_leaf) +
-			((__u64) ext2fs_le16_to_cpu(ix->ei_leaf_hi) << 32);
-		for (l = handle->level, tp = path; l > 0; l--, tp--) {
-			if (blk == tp->blk)
-				return EXT2_ET_EXTENT_CYCLE;
+		blk = ext2fs_le32_గమ్యం_cpu(ix->ei_ఆకు) +
+			((__u64) ext2fs_le16_గమ్యం_cpu(ix->ei_ఆకు_hi) << 32);
+		కొరకు (l = handle->level, tp = మార్గం; l > 0; l--, tp--) {
+			ఒకవేళ (blk == tp->blk)
+				తిరిగి EXT2_ET_EXTENT_చక్రం;
 		}
 		newpath->blk = blk;
-		if ((handle->fs->flags & EXT2_FLAG_IMAGE_FILE) &&
+		ఒకవేళ ((handle->fs->flags & EXT2_FLAG_IMAGE_FILE) &&
 		    (handle->fs->io != handle->fs->image_io))
 			memset(newpath->buf, 0, handle->fs->blocksize);
-		else {
+		లేకపోతే {
 			retval = io_channel_read_blk64(handle->fs->io,
 						     blk, 1, newpath->buf);
-			if (retval)
-				return retval;
+			ఒకవేళ (retval)
+				తిరిగి retval;
 		}
 		handle->level++;
 
-		eh = (struct ext3_extent_header *) newpath->buf;
+		eh = (నిర్మాణం ext3_extent_శీర్షిక *) newpath->buf;
 
-		retval = ext2fs_extent_header_verify(eh, handle->fs->blocksize);
-		if (retval) {
+		retval = ext2fs_extent_శీర్షిక_verify(eh, handle->fs->blocksize);
+		ఒకవేళ (retval) {
 			handle->level--;
-			return retval;
+			తిరిగి retval;
 		}
 
-		if (!(handle->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
-		    !ext2fs_extent_block_csum_verify(handle->fs, handle->ino,
+		ఒకవేళ (!(handle->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+		    !ext2fs_extent_ఖండం_csum_verify(handle->fs, handle->ino,
 						     eh))
 			failed_csum = 1;
 
-		newpath->left = newpath->entries =
-			ext2fs_le16_to_cpu(eh->eh_entries);
-		newpath->max_entries = ext2fs_le16_to_cpu(eh->eh_max);
+		newpath->ఎడమ = newpath->entries =
+			ext2fs_le16_గమ్యం_cpu(eh->eh_entries);
+		newpath->max_entries = ext2fs_le16_గమ్యం_cpu(eh->eh_max);
 
 		/* Make sure there is at least one extent present */
-		if (newpath->left <= 0)
-			return EXT2_ET_EXTENT_NO_DOWN;
+		ఒకవేళ (newpath->ఎడమ <= 0)
+			తిరిగి EXT2_ET_EXTENT_NO_కిందికి;
 
-		if (path->left > 0) {
+		ఒకవేళ (మార్గం->ఎడమ > 0) {
 			ix++;
-			newpath->end_blk = ext2fs_le32_to_cpu(ix->ei_block);
-		} else
-			newpath->end_blk = path->end_blk;
+			newpath->చివర_blk = ext2fs_le32_గమ్యం_cpu(ix->ei_ఖండం);
+		} లేకపోతే
+			newpath->చివర_blk = మార్గం->చివర_blk;
 
-		path = newpath;
-		if (op == EXT2_EXTENT_DOWN) {
-			ix = EXT_FIRST_INDEX((struct ext3_extent_header *) eh);
-			path->curr = ix;
-			path->left = path->entries - 1;
-			path->visit_num = 0;
-		} else {
-			ix = EXT_LAST_INDEX((struct ext3_extent_header *) eh);
-			path->curr = ix;
-			path->left = 0;
-			if (handle->level < handle->max_depth)
-				path->visit_num = 1;
+		మార్గం = newpath;
+		ఒకవేళ (op == EXT2_EXTENT_కిందికి) {
+			ix = EXT_మొదటి_సూచీ((నిర్మాణం ext3_extent_శీర్షిక *) eh);
+			మార్గం->curr = ix;
+			మార్గం->ఎడమ = మార్గం->entries - 1;
+			మార్గం->సందర్శించు_అంకె = 0;
+		} లేకపోతే {
+			ix = EXT_చివరి_సూచీ((నిర్మాణం ext3_extent_శీర్షిక *) eh);
+			మార్గం->curr = ix;
+			మార్గం->ఎడమ = 0;
+			ఒకవేళ (handle->level < handle->max_లోతు)
+				మార్గం->సందర్శించు_అంకె = 1;
 		}
-#ifdef DEBUG_GET_EXTENT
-		printf("Down to level %d/%d, end_blk=%llu\n",
-			   handle->level, handle->max_depth,
-			   path->end_blk);
-#endif
-		break;
-	default:
-		return EXT2_ET_OP_NOT_SUPPORTED;
+#నిర్వచితమైతే DEBUG_GET_EXTENT
+		రాయి("Down to level %d/%d, end_blk=%llu\n",
+			   handle->level, handle->max_లోతు,
+			   మార్గం->చివర_blk);
+#అయితే_ముగింపు
+		ఆపు;
+	అప్రమేయ:
+		తిరిగి EXT2_ET_OP_NOT_SUPPORTED;
 	}
 
-	if (!ix)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ఒకవేళ (!ix)
+		తిరిగి EXT2_ET_NO_CURRENT_కణుపు;
 
 	extent->e_flags = 0;
-#ifdef DEBUG_GET_EXTENT
-	printf("(Left %d)\n", path->left);
-#endif
+#నిర్వచితమైతే DEBUG_GET_EXTENT
+	రాయి("(Left %d)\n", మార్గం->ఎడమ);
+#అయితే_ముగింపు
 
-	if (handle->level == handle->max_depth) {
-		ex = (struct ext3_extent *) ix;
+	ఒకవేళ (handle->level == handle->max_లోతు) {
+		ex = (నిర్మాణం ext3_extent *) ix;
 
-		extent->e_pblk = ext2fs_le32_to_cpu(ex->ee_start) +
-			((__u64) ext2fs_le16_to_cpu(ex->ee_start_hi) << 32);
-		extent->e_lblk = ext2fs_le32_to_cpu(ex->ee_block);
-		extent->e_len = ext2fs_le16_to_cpu(ex->ee_len);
-		extent->e_flags |= EXT2_EXTENT_FLAGS_LEAF;
-		if (extent->e_len > EXT_INIT_MAX_LEN) {
+		extent->e_pblk = ext2fs_le32_గమ్యం_cpu(ex->ee_ప్రారంభం) +
+			((__u64) ext2fs_le16_గమ్యం_cpu(ex->ee_ప్రారంభం_hi) << 32);
+		extent->e_lblk = ext2fs_le32_గమ్యం_cpu(ex->ee_ఖండం);
+		extent->e_len = ext2fs_le16_గమ్యం_cpu(ex->ee_len);
+		extent->e_flags |= EXT2_EXTENT_FLAGS_ఆకు;
+		ఒకవేళ (extent->e_len > EXT_INIT_MAX_LEN) {
 			extent->e_len -= EXT_INIT_MAX_LEN;
 			extent->e_flags |= EXT2_EXTENT_FLAGS_UNINIT;
 		}
-	} else {
-		extent->e_pblk = ext2fs_le32_to_cpu(ix->ei_leaf) +
-			((__u64) ext2fs_le16_to_cpu(ix->ei_leaf_hi) << 32);
-		extent->e_lblk = ext2fs_le32_to_cpu(ix->ei_block);
-		if (path->left > 0) {
+	} లేకపోతే {
+		extent->e_pblk = ext2fs_le32_గమ్యం_cpu(ix->ei_ఆకు) +
+			((__u64) ext2fs_le16_గమ్యం_cpu(ix->ei_ఆకు_hi) << 32);
+		extent->e_lblk = ext2fs_le32_గమ్యం_cpu(ix->ei_ఖండం);
+		ఒకవేళ (మార్గం->ఎడమ > 0) {
 			ix++;
-			end_blk = ext2fs_le32_to_cpu(ix->ei_block);
-		} else
-			end_blk = path->end_blk;
+			చివర_blk = ext2fs_le32_గమ్యం_cpu(ix->ei_ఖండం);
+		} లేకపోతే
+			చివర_blk = మార్గం->చివర_blk;
 
-		extent->e_len = end_blk - extent->e_lblk;
+		extent->e_len = చివర_blk - extent->e_lblk;
 	}
-	if (path->visit_num)
-		extent->e_flags |= EXT2_EXTENT_FLAGS_SECOND_VISIT;
+	ఒకవేళ (మార్గం->సందర్శించు_అంకె)
+		extent->e_flags |= EXT2_EXTENT_FLAGS_రెండవ_సందర్శించు;
 
-	if (((orig_op == EXT2_EXTENT_NEXT_LEAF) ||
-	     (orig_op == EXT2_EXTENT_PREV_LEAF)) &&
-	    (handle->level != handle->max_depth))
-		goto retry;
+	ఒకవేళ (((orig_op == EXT2_EXTENT_తదుపరి_ఆకు) ||
+	     (orig_op == EXT2_EXTENT_PREV_ఆకు)) &&
+	    (handle->level != handle->max_లోతు))
+		వెళ్ళు retry;
 
-	if ((orig_op == EXT2_EXTENT_LAST_LEAF) &&
-	    ((handle->level != handle->max_depth) ||
-	     (path->left != 0)))
-		goto retry;
+	ఒకవేళ ((orig_op == EXT2_EXTENT_చివరి_ఆకు) &&
+	    ((handle->level != handle->max_లోతు) ||
+	     (మార్గం->ఎడమ != 0)))
+		వెళ్ళు retry;
 
-	if (failed_csum)
-		return EXT2_ET_EXTENT_CSUM_INVALID;
+	ఒకవేళ (failed_csum)
+		తిరిగి EXT2_ET_EXTENT_CSUM_INVALID;
 
-	return 0;
+	తిరిగి 0;
 }
 
-static errcode_t update_path(ext2_extent_handle_t handle)
+స్థిర errcode_t update_మార్గం(ext2_extent_handle_t handle)
 {
 	blk64_t				blk;
 	errcode_t			retval;
-	struct ext3_extent_idx		*ix;
-	struct ext3_extent_header	*eh;
+	నిర్మాణం ext3_extent_idx		*ix;
+	నిర్మాణం ext3_extent_శీర్షిక	*eh;
 
-	if (handle->level == 0) {
+	ఒకవేళ (handle->level == 0) {
 		retval = ext2fs_write_inode(handle->fs, handle->ino,
 					    handle->inode);
-	} else {
-		ix = handle->path[handle->level - 1].curr;
-		blk = ext2fs_le32_to_cpu(ix->ei_leaf) +
-			((__u64) ext2fs_le16_to_cpu(ix->ei_leaf_hi) << 32);
+	} లేకపోతే {
+		ix = handle->మార్గం[handle->level - 1].curr;
+		blk = ext2fs_le32_గమ్యం_cpu(ix->ei_ఆకు) +
+			((__u64) ext2fs_le16_గమ్యం_cpu(ix->ei_ఆకు_hi) << 32);
 
 		/* then update the checksum */
-		eh = (struct ext3_extent_header *)
-				handle->path[handle->level].buf;
-		retval = ext2fs_extent_block_csum_set(handle->fs, handle->ino,
+		eh = (నిర్మాణం ext3_extent_శీర్షిక *)
+				handle->మార్గం[handle->level].buf;
+		retval = ext2fs_extent_ఖండం_csum_సమితి(handle->fs, handle->ino,
 						      eh);
-		if (retval)
-			return retval;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 
 		retval = io_channel_write_blk64(handle->fs->io,
-				      blk, 1, handle->path[handle->level].buf);
+				      blk, 1, handle->మార్గం[handle->level].buf);
 	}
-	return retval;
+	తిరిగి retval;
 }
 
-#if 0
-errcode_t ext2fs_extent_save_path(ext2_extent_handle_t handle,
-				  ext2_extent_path_t *ret_path)
+#ఒకవేళ 0
+errcode_t ext2fs_extent_save_మార్గం(ext2_extent_handle_t handle,
+				  ext2_extent_మార్గం_t *ret_మార్గం)
 {
-	ext2_extent_path_t	save_path;
-	struct ext2fs_extent	extent;
-	struct ext2_extent_info	info;
+	ext2_extent_మార్గం_t	save_మార్గం;
+	నిర్మాణం ext2fs_extent	extent;
+	నిర్మాణం ext2_extent_info	info;
 	errcode_t		retval;
 
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
 	retval = ext2fs_extent_get_info(handle, &info);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_extent_path), &save_path);
-	if (retval)
-		return retval;
-	memset(save_path, 0, sizeof(struct ext2_extent_path));
+	retval = ext2fs_get_mem(పరిమాణం(నిర్మాణం ext2_extent_మార్గం), &save_మార్గం);
+	ఒకవేళ (retval)
+		తిరిగి retval;
+	memset(save_మార్గం, 0, పరిమాణం(నిర్మాణం ext2_extent_మార్గం));
 
-	save_path->magic = EXT2_ET_MAGIC_EXTENT_PATH;
-	save_path->leaf_height = info.max_depth - info.curr_level - 1;
-	save_path->lblk = extent.e_lblk;
+	save_మార్గం->magic = EXT2_ET_MAGIC_EXTENT_మార్గం;
+	save_మార్గం->ఆకు_ఎత్తు = info.max_లోతు - info.curr_level - 1;
+	save_మార్గం->lblk = extent.e_lblk;
 
-	*ret_path = save_path;
-	return 0;
+	*ret_మార్గం = save_మార్గం;
+	తిరిగి 0;
 }
 
-errcode_t ext2fs_extent_free_path(ext2_extent_path_t path)
+errcode_t ext2fs_extent_free_మార్గం(ext2_extent_మార్గం_t మార్గం)
 {
-	EXT2_CHECK_MAGIC(path, EXT2_ET_MAGIC_EXTENT_PATH);
+	EXT2_CHECK_MAGIC(మార్గం, EXT2_ET_MAGIC_EXTENT_మార్గం);
 
-	ext2fs_free_mem(&path);
-	return 0;
+	ext2fs_free_mem(&మార్గం);
+	తిరిగి 0;
 }
-#endif
+#అయితే_ముగింపు
 
 /*
  * Go to the node at leaf_level which contains logical block blk.
@@ -664,96 +664,96 @@ errcode_t ext2fs_extent_free_path(ext2_extent_path_t path)
  * extent before blk.
  */
 errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
-			      int leaf_level, blk64_t blk)
+			      పూర్ణాంకం ఆకు_level, blk64_t blk)
 {
-	struct ext2fs_extent	extent;
+	నిర్మాణం ext2fs_extent	extent;
 	errcode_t		retval;
 
-	retval = ext2fs_extent_get(handle, EXT2_EXTENT_ROOT, &extent);
-	if (retval) {
-		if (retval == EXT2_ET_EXTENT_NO_NEXT)
-			retval = EXT2_ET_EXTENT_NOT_FOUND;
-		return retval;
+	retval = ext2fs_extent_get(handle, EXT2_EXTENT_మూలం, &extent);
+	ఒకవేళ (retval) {
+		ఒకవేళ (retval == EXT2_ET_EXTENT_NO_తదుపరి)
+			retval = EXT2_ET_EXTENT_NOT_దొరికింది;
+		తిరిగి retval;
 	}
 
-	if (leaf_level > handle->max_depth) {
-#ifdef DEBUG
-		printf("leaf level %d greater than tree depth %d\n",
-			leaf_level, handle->max_depth);
-#endif
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	ఒకవేళ (ఆకు_level > handle->max_లోతు) {
+#నిర్వచితమైతే DEBUG
+		రాయి("leaf level %d greater than tree depth %d\n",
+			ఆకు_level, handle->max_లోతు);
+#అయితే_ముగింపు
+		తిరిగి EXT2_ET_OP_NOT_SUPPORTED;
 	}
 
-#ifdef DEBUG
-	printf("goto extent ino %u, level %d, %llu\n", handle->ino,
-	       leaf_level, blk);
-#endif
+#నిర్వచితమైతే DEBUG
+	రాయి("goto extent ino %u, level %d, %llu\n", handle->ino,
+	       ఆకు_level, blk);
+#అయితే_ముగింపు
 
-#ifdef DEBUG_GOTO_EXTENTS
+#నిర్వచితమైతే DEBUG_GOTO_EXTENTS
 	dbg_print_extent("root", &extent);
-#endif
-	while (1) {
-		if (handle->max_depth - handle->level == leaf_level) {
+#అయితే_ముగింపు
+	అయితే (1) {
+		ఒకవేళ (handle->max_లోతు - handle->level == ఆకు_level) {
 			/* block is in this &extent */
-			if ((blk >= extent.e_lblk) &&
+			ఒకవేళ ((blk >= extent.e_lblk) &&
 			    (blk < extent.e_lblk + extent.e_len))
-				return 0;
-			if (blk < extent.e_lblk) {
+				తిరిగి 0;
+			ఒకవేళ (blk < extent.e_lblk) {
 				retval = ext2fs_extent_get(handle,
 							   EXT2_EXTENT_PREV_SIB,
 							   &extent);
-				return EXT2_ET_EXTENT_NOT_FOUND;
+				తిరిగి EXT2_ET_EXTENT_NOT_దొరికింది;
 			}
 			retval = ext2fs_extent_get(handle,
-						   EXT2_EXTENT_NEXT_SIB,
+						   EXT2_EXTENT_తదుపరి_SIB,
 						   &extent);
-			if (retval == EXT2_ET_EXTENT_NO_NEXT)
-				return EXT2_ET_EXTENT_NOT_FOUND;
-			if (retval)
-				return retval;
-			continue;
+			ఒకవేళ (retval == EXT2_ET_EXTENT_NO_తదుపరి)
+				తిరిగి EXT2_ET_EXTENT_NOT_దొరికింది;
+			ఒకవేళ (retval)
+				తిరిగి retval;
+			కొనసాగు;
 		}
 
-		retval = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT_SIB,
+		retval = ext2fs_extent_get(handle, EXT2_EXTENT_తదుపరి_SIB,
 					   &extent);
-		if (retval == EXT2_ET_EXTENT_NO_NEXT)
-			goto go_down;
-		if (retval)
-			return retval;
+		ఒకవేళ (retval == EXT2_ET_EXTENT_NO_తదుపరి)
+			వెళ్ళు go_కిందికి;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 
-#ifdef DEBUG_GOTO_EXTENTS
+#నిర్వచితమైతే DEBUG_GOTO_EXTENTS
 		dbg_print_extent("next", &extent);
-#endif
-		if (blk == extent.e_lblk)
-			goto go_down;
-		if (blk > extent.e_lblk)
-			continue;
+#అయితే_ముగింపు
+		ఒకవేళ (blk == extent.e_lblk)
+			వెళ్ళు go_కిందికి;
+		ఒకవేళ (blk > extent.e_lblk)
+			కొనసాగు;
 
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_PREV_SIB,
 					   &extent);
-		if (retval)
-			return retval;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 
-#ifdef DEBUG_GOTO_EXTENTS
+#నిర్వచితమైతే DEBUG_GOTO_EXTENTS
 		dbg_print_extent("prev", &extent);
-#endif
+#అయితే_ముగింపు
 
-	go_down:
-		retval = ext2fs_extent_get(handle, EXT2_EXTENT_DOWN,
+	go_కిందికి:
+		retval = ext2fs_extent_get(handle, EXT2_EXTENT_కిందికి,
 					   &extent);
-		if (retval)
-			return retval;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 
-#ifdef DEBUG_GOTO_EXTENTS
+#నిర్వచితమైతే DEBUG_GOTO_EXTENTS
 		dbg_print_extent("down", &extent);
-#endif
+#అయితే_ముగింపు
 	}
 }
 
 errcode_t ext2fs_extent_goto(ext2_extent_handle_t handle,
 			     blk64_t blk)
 {
-	return ext2fs_extent_goto2(handle, 0, blk);
+	తిరిగి ext2fs_extent_goto2(handle, 0, blk);
 }
 
 /*
@@ -774,128 +774,128 @@ errcode_t ext2fs_extent_goto(ext2_extent_handle_t handle,
  */
 errcode_t ext2fs_extent_fix_parents(ext2_extent_handle_t handle)
 {
-	int				retval = 0;
-	int				orig_height;
-	blk64_t				start;
-	struct extent_path		*path;
-	struct ext2fs_extent		extent;
-	struct ext2_extent_info		info;
+	పూర్ణాంకం				retval = 0;
+	పూర్ణాంకం				orig_ఎత్తు;
+	blk64_t				ప్రారంభం;
+	నిర్మాణం extent_మార్గం		*మార్గం;
+	నిర్మాణం ext2fs_extent		extent;
+	నిర్మాణం ext2_extent_info		info;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ఒకవేళ (!(handle->fs->flags & EXT2_FLAG_RW))
+		తిరిగి EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ఒకవేళ (!handle->మార్గం)
+		తిరిగి EXT2_ET_NO_CURRENT_కణుపు;
 
-	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	మార్గం = handle->మార్గం + handle->level;
+	ఒకవేళ (!మార్గం->curr)
+		తిరిగి EXT2_ET_NO_CURRENT_కణుపు;
 
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
-		goto done;
+	ఒకవేళ (retval)
+		వెళ్ళు పూర్తి;
 
 	/* modified node's start block */
-	start = extent.e_lblk;
+	ప్రారంభం = extent.e_lblk;
 
-	if ((retval = ext2fs_extent_get_info(handle, &info)))
-		return retval;
-	orig_height = info.max_depth - info.curr_level;
+	ఒకవేళ ((retval = ext2fs_extent_get_info(handle, &info)))
+		తిరిగి retval;
+	orig_ఎత్తు = info.max_లోతు - info.curr_level;
 
 	/* traverse up until index not first, or startblk matches, or top */
-	while (handle->level > 0 &&
-	       (path->left == path->entries - 1)) {
-		retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP, &extent);
-		if (retval)
-			goto done;
-		if (extent.e_lblk == start)
-			break;
-		path = handle->path + handle->level;
-		extent.e_len += (extent.e_lblk - start);
-		extent.e_lblk = start;
+	అయితే (handle->level > 0 &&
+	       (మార్గం->ఎడమ == మార్గం->entries - 1)) {
+		retval = ext2fs_extent_get(handle, EXT2_EXTENT_పైకి, &extent);
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
+		ఒకవేళ (extent.e_lblk == ప్రారంభం)
+			ఆపు;
+		మార్గం = handle->మార్గం + handle->level;
+		extent.e_len += (extent.e_lblk - ప్రారంభం);
+		extent.e_lblk = ప్రారంభం;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
-			goto done;
-		update_path(handle);
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
+		update_మార్గం(handle);
 	}
 
 	/* put handle back to where we started */
-	retval = ext2fs_extent_goto2(handle, orig_height, start);
-done:
-	return retval;
+	retval = ext2fs_extent_goto2(handle, orig_ఎత్తు, ప్రారంభం);
+పూర్తి:
+	తిరిగి retval;
 }
 
 errcode_t ext2fs_extent_replace(ext2_extent_handle_t handle,
-				int flags EXT2FS_ATTR((unused)),
-				struct ext2fs_extent *extent)
+				పూర్ణాంకం flags EXT2FS_ATTR((వాడని)),
+				నిర్మాణం ext2fs_extent *extent)
 {
-	struct extent_path		*path;
-	struct ext3_extent_idx		*ix;
-	struct ext3_extent		*ex;
+	నిర్మాణం extent_మార్గం		*మార్గం;
+	నిర్మాణం ext3_extent_idx		*ix;
+	నిర్మాణం ext3_extent		*ex;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ఒకవేళ (!(handle->fs->flags & EXT2_FLAG_RW))
+		తిరిగి EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ఒకవేళ (!handle->మార్గం)
+		తిరిగి EXT2_ET_NO_CURRENT_కణుపు;
 
-	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	మార్గం = handle->మార్గం + handle->level;
+	ఒకవేళ (!మార్గం->curr)
+		తిరిగి EXT2_ET_NO_CURRENT_కణుపు;
 
-#ifdef DEBUG
-	printf("extent replace: %u ", handle->ino);
+#నిర్వచితమైతే DEBUG
+	రాయి("extent replace: %u ", handle->ino);
 	dbg_print_extent(0, extent);
-#endif
+#అయితే_ముగింపు
 
-	if (handle->level == handle->max_depth) {
-		ex = path->curr;
+	ఒకవేళ (handle->level == handle->max_లోతు) {
+		ex = మార్గం->curr;
 
-		ex->ee_block = ext2fs_cpu_to_le32(extent->e_lblk);
-		ex->ee_start = ext2fs_cpu_to_le32(extent->e_pblk & 0xFFFFFFFF);
-		ex->ee_start_hi = ext2fs_cpu_to_le16(extent->e_pblk >> 32);
-		if (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT) {
-			if (extent->e_len > EXT_UNINIT_MAX_LEN)
-				return EXT2_ET_EXTENT_INVALID_LENGTH;
-			ex->ee_len = ext2fs_cpu_to_le16(extent->e_len +
+		ex->ee_ఖండం = ext2fs_cpu_గమ్యం_le32(extent->e_lblk);
+		ex->ee_ప్రారంభం = ext2fs_cpu_గమ్యం_le32(extent->e_pblk & 0xFFFFFFFF);
+		ex->ee_ప్రారంభం_hi = ext2fs_cpu_గమ్యం_le16(extent->e_pblk >> 32);
+		ఒకవేళ (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT) {
+			ఒకవేళ (extent->e_len > EXT_UNINIT_MAX_LEN)
+				తిరిగి EXT2_ET_EXTENT_INVALID_నిడివి;
+			ex->ee_len = ext2fs_cpu_గమ్యం_le16(extent->e_len +
 							EXT_INIT_MAX_LEN);
-		} else {
-			if (extent->e_len > EXT_INIT_MAX_LEN)
-				return EXT2_ET_EXTENT_INVALID_LENGTH;
-			ex->ee_len = ext2fs_cpu_to_le16(extent->e_len);
+		} లేకపోతే {
+			ఒకవేళ (extent->e_len > EXT_INIT_MAX_LEN)
+				తిరిగి EXT2_ET_EXTENT_INVALID_నిడివి;
+			ex->ee_len = ext2fs_cpu_గమ్యం_le16(extent->e_len);
 		}
-	} else {
-		ix = path->curr;
+	} లేకపోతే {
+		ix = మార్గం->curr;
 
-		ix->ei_leaf = ext2fs_cpu_to_le32(extent->e_pblk & 0xFFFFFFFF);
-		ix->ei_leaf_hi = ext2fs_cpu_to_le16(extent->e_pblk >> 32);
-		ix->ei_block = ext2fs_cpu_to_le32(extent->e_lblk);
-		ix->ei_unused = 0;
+		ix->ei_ఆకు = ext2fs_cpu_గమ్యం_le32(extent->e_pblk & 0xFFFFFFFF);
+		ix->ei_ఆకు_hi = ext2fs_cpu_గమ్యం_le16(extent->e_pblk >> 32);
+		ix->ei_ఖండం = ext2fs_cpu_గమ్యం_le32(extent->e_lblk);
+		ix->ei_వాడని = 0;
 	}
-	update_path(handle);
-	return 0;
+	update_మార్గం(handle);
+	తిరిగి 0;
 }
 
-static int splitting_at_eof(struct ext2_extent_handle *handle,
-			    struct extent_path *path)
+స్థిర పూర్ణాంకం splitting_at_eof(నిర్మాణం ext2_extent_handle *handle,
+			    నిర్మాణం extent_మార్గం *మార్గం)
 {
-	struct extent_path *ppp = path;
-	dump_path(__func__, handle, path);
+	నిర్మాణం extent_మార్గం *ppp = మార్గం;
+	dump_మార్గం(__func__, handle, మార్గం);
 
-	if (handle->level == 0)
-		return 0;
+	ఒకవేళ (handle->level == 0)
+		తిరిగి 0;
 
-	do {
-		if (ppp->left)
-			return 0;
+	చేయి {
+		ఒకవేళ (ppp->ఎడమ)
+			తిరిగి 0;
 		ppp--;
-	} while (ppp >= handle->path);
+	} అయితే (ppp >= handle->మార్గం);
 
-	return 1;
+	తిరిగి 1;
 }
 
 /*
@@ -903,95 +903,95 @@ static int splitting_at_eof(struct ext2_extent_handle *handle,
  *
  * handle will be left pointing at original record.
  */
-static errcode_t extent_node_split(ext2_extent_handle_t handle,
-				   int expand_allowed)
+స్థిర errcode_t extent_కణుపు_విభజించు(ext2_extent_handle_t handle,
+				   పూర్ణాంకం expand_allowed)
 {
 	errcode_t			retval = 0;
-	blk64_t				new_node_pblk;
-	blk64_t				new_node_start;
+	blk64_t				new_కణుపు_pblk;
+	blk64_t				new_కణుపు_ప్రారంభం;
 	blk64_t				orig_lblk;
 	blk64_t				goal_blk = 0;
-	int				orig_height;
-	char				*block_buf = NULL;
-	struct ext2fs_extent		extent;
-	struct extent_path		*path, *newpath = 0;
-	struct ext3_extent_header	*eh, *neweh;
-	int				tocopy;
-	int				new_root = 0;
-	struct ext2_extent_info		info;
-	int				no_balance;
+	పూర్ణాంకం				orig_ఎత్తు;
+	అక్షరం				*ఖండం_buf = ఖాళీ;
+	నిర్మాణం ext2fs_extent		extent;
+	నిర్మాణం extent_మార్గం		*మార్గం, *newpath = 0;
+	నిర్మాణం ext3_extent_శీర్షిక	*eh, *neweh;
+	పూర్ణాంకం				tocopy;
+	పూర్ణాంకం				new_మూలం = 0;
+	నిర్మాణం ext2_extent_info		info;
+	పూర్ణాంకం				no_balance;
 
 	/* basic sanity */
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ఒకవేళ (!(handle->fs->flags & EXT2_FLAG_RW))
+		తిరిగి EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ఒకవేళ (!handle->మార్గం)
+		తిరిగి EXT2_ET_NO_CURRENT_కణుపు;
 
-#ifdef DEBUG
-	printf("splitting node at level %d\n", handle->level);
-#endif
+#నిర్వచితమైతే DEBUG
+	రాయి("splitting node at level %d\n", handle->level);
+#అయితే_ముగింపు
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
-		goto done;
+	ఒకవేళ (retval)
+		వెళ్ళు పూర్తి;
 
 	retval = ext2fs_extent_get_info(handle, &info);
-	if (retval)
-		goto done;
+	ఒకవేళ (retval)
+		వెళ్ళు పూర్తి;
 
 	/* save the position we were originally splitting... */
-	orig_height = info.max_depth - info.curr_level;
+	orig_ఎత్తు = info.max_లోతు - info.curr_level;
 	orig_lblk = extent.e_lblk;
 
 	/* Try to put the index block before the first extent */
-	path = handle->path + handle->level;
-	eh = (struct ext3_extent_header *) path->buf;
-	if (handle->level == handle->max_depth) {
-		struct ext3_extent	*ex;
+	మార్గం = handle->మార్గం + handle->level;
+	eh = (నిర్మాణం ext3_extent_శీర్షిక *) మార్గం->buf;
+	ఒకవేళ (handle->level == handle->max_లోతు) {
+		నిర్మాణం ext3_extent	*ex;
 
-		ex = EXT_FIRST_EXTENT(eh);
-		goal_blk = ext2fs_le32_to_cpu(ex->ee_start) +
-			((__u64) ext2fs_le16_to_cpu(ex->ee_start_hi) << 32);
-	} else {
-		struct ext3_extent_idx	*ix;
+		ex = EXT_మొదటి_EXTENT(eh);
+		goal_blk = ext2fs_le32_గమ్యం_cpu(ex->ee_ప్రారంభం) +
+			((__u64) ext2fs_le16_గమ్యం_cpu(ex->ee_ప్రారంభం_hi) << 32);
+	} లేకపోతే {
+		నిర్మాణం ext3_extent_idx	*ix;
 
-		ix = EXT_FIRST_INDEX(eh);
-		goal_blk = ext2fs_le32_to_cpu(ix->ei_leaf) +
-			((__u64) ext2fs_le16_to_cpu(ix->ei_leaf_hi) << 32);
+		ix = EXT_మొదటి_సూచీ(eh);
+		goal_blk = ext2fs_le32_గమ్యం_cpu(ix->ei_ఆకు) +
+			((__u64) ext2fs_le16_గమ్యం_cpu(ix->ei_ఆకు_hi) << 32);
 	}
-	goal_blk -= EXT2FS_CLUSTER_RATIO(handle->fs);
-	goal_blk &= ~EXT2FS_CLUSTER_MASK(handle->fs);
+	goal_blk -= EXT2_FS_CLUSTER_నిష్పత్తి(handle->fs);
+	goal_blk &= ~EXT2_FS_CLUSTER_ముసుగు(handle->fs);
 
 	/* Is there room in the parent for a new entry? */
-	if (handle->level &&
-			(handle->path[handle->level - 1].entries >=
-			 handle->path[handle->level - 1].max_entries)) {
+	ఒకవేళ (handle->level &&
+			(handle->మార్గం[handle->level - 1].entries >=
+			 handle->మార్గం[handle->level - 1].max_entries)) {
 
-#ifdef DEBUG
-		printf("parent level %d full; splitting it too\n",
+#నిర్వచితమైతే DEBUG
+		రాయి("parent level %d full; splitting it too\n",
 							handle->level - 1);
-#endif
+#అయితే_ముగింపు
 		/* split the parent */
-		retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP, &extent);
-		if (retval)
-			goto done;
+		retval = ext2fs_extent_get(handle, EXT2_EXTENT_పైకి, &extent);
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
 
-		retval = extent_node_split(handle, expand_allowed);
-		if (retval)
-			goto done;
+		retval = extent_కణుపు_విభజించు(handle, expand_allowed);
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
 
 		/* get handle back to our original split position */
-		retval = ext2fs_extent_goto2(handle, orig_height, orig_lblk);
-		if (retval)
-			goto done;
+		retval = ext2fs_extent_goto2(handle, orig_ఎత్తు, orig_lblk);
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
 	}
 
 	/* At this point, parent should have room for this split */
-	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	మార్గం = handle->మార్గం + handle->level;
+	ఒకవేళ (!మార్గం->curr)
+		తిరిగి EXT2_ET_NO_CURRENT_కణుపు;
 
 	/*
 	 * Normally, we try to split a full node in half.  This doesn't turn
@@ -999,246 +999,246 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 	 * then we're stuck with a tree of half-full extent blocks.  This of
 	 * course doesn't apply to the root level.
 	 */
-	no_balance = expand_allowed ? splitting_at_eof(handle, path) : 0;
+	no_balance = expand_allowed ? splitting_at_eof(handle, మార్గం) : 0;
 
 	/* extent header of the current node we'll split */
-	eh = (struct ext3_extent_header *)path->buf;
+	eh = (నిర్మాణం ext3_extent_శీర్షిక *)మార్గం->buf;
 
 	/* splitting root level means moving them all out */
-	if (handle->level == 0) {
-		new_root = 1;
-		tocopy = ext2fs_le16_to_cpu(eh->eh_entries);
+	ఒకవేళ (handle->level == 0) {
+		new_మూలం = 1;
+		tocopy = ext2fs_le16_గమ్యం_cpu(eh->eh_entries);
 		retval = ext2fs_get_memzero((handle->max_paths + 1) *
-					    sizeof(struct extent_path),
+					    పరిమాణం(నిర్మాణం extent_మార్గం),
 					    &newpath);
-		if (retval)
-			goto done;
-	} else {
-		if (no_balance)
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
+	} లేకపోతే {
+		ఒకవేళ (no_balance)
 			tocopy = 1;
-		else
-			tocopy = ext2fs_le16_to_cpu(eh->eh_entries) / 2;
+		లేకపోతే
+			tocopy = ext2fs_le16_గమ్యం_cpu(eh->eh_entries) / 2;
 	}
 
-#ifdef DEBUG
-	printf("will copy out %d of %d entries at level %d\n",
-				tocopy, ext2fs_le16_to_cpu(eh->eh_entries),
+#నిర్వచితమైతే DEBUG
+	రాయి("will copy out %d of %d entries at level %d\n",
+				tocopy, ext2fs_le16_గమ్యం_cpu(eh->eh_entries),
 				handle->level);
-#endif
+#అయితే_ముగింపు
 
-	if (!tocopy && !no_balance) {
-#ifdef DEBUG
-		printf("Nothing to copy to new block!\n");
-#endif
-		retval = EXT2_ET_CANT_SPLIT_EXTENT;
-		goto done;
+	ఒకవేళ (!tocopy && !no_balance) {
+#నిర్వచితమైతే DEBUG
+		రాయి("Nothing to copy to new block!\n");
+#అయితే_ముగింపు
+		retval = EXT2_ET_CANT_విభజించు_EXTENT;
+		వెళ్ళు పూర్తి;
 	}
 
 	/* first we need a new block, or can do nothing. */
-	block_buf = malloc(handle->fs->blocksize);
-	if (!block_buf) {
+	ఖండం_buf = జ్ఞాపకం_ఇవ్వు(handle->fs->blocksize);
+	ఒకవేళ (!ఖండం_buf) {
 		retval = ENOMEM;
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
-	if (!goal_blk)
-		goal_blk = ext2fs_find_inode_goal(handle->fs, handle->ino,
+	ఒకవేళ (!goal_blk)
+		goal_blk = ext2fs_కనుగొను_inode_goal(handle->fs, handle->ino,
 						  handle->inode, 0);
-	retval = ext2fs_alloc_block2(handle->fs, goal_blk, block_buf,
-				    &new_node_pblk);
-	if (retval)
-		goto done;
+	retval = ext2fs_alloc_block2(handle->fs, goal_blk, ఖండం_buf,
+				    &new_కణుపు_pblk);
+	ఒకవేళ (retval)
+		వెళ్ళు పూర్తి;
 
-#ifdef DEBUG
-	printf("will copy to new node at block %lu\n",
-	       (unsigned long) new_node_pblk);
-#endif
+#నిర్వచితమైతే DEBUG
+	రాయి("will copy to new node at block %lu\n",
+	       (గుర్తులేని దీర్ఘ) new_కణుపు_pblk);
+#అయితే_ముగింపు
 
 	/* Copy data into new block buffer */
 	/* First the header for the new block... */
-	neweh = (struct ext3_extent_header *) block_buf;
-	memcpy(neweh, eh, sizeof(struct ext3_extent_header));
-	neweh->eh_entries = ext2fs_cpu_to_le16(tocopy);
-	neweh->eh_max = ext2fs_cpu_to_le16((handle->fs->blocksize -
-			 sizeof(struct ext3_extent_header)) /
-				sizeof(struct ext3_extent));
+	neweh = (నిర్మాణం ext3_extent_శీర్షిక *) ఖండం_buf;
+	జ్ఞాపకం_నకలు(neweh, eh, పరిమాణం(నిర్మాణం ext3_extent_శీర్షిక));
+	neweh->eh_entries = ext2fs_cpu_గమ్యం_le16(tocopy);
+	neweh->eh_max = ext2fs_cpu_గమ్యం_le16((handle->fs->blocksize -
+			 పరిమాణం(నిర్మాణం ext3_extent_శీర్షిక)) /
+				పరిమాణం(నిర్మాణం ext3_extent));
 
 	/* then the entries for the new block... */
-	memcpy(EXT_FIRST_INDEX(neweh),
-		EXT_FIRST_INDEX(eh) +
-			(ext2fs_le16_to_cpu(eh->eh_entries) - tocopy),
-		sizeof(struct ext3_extent_idx) * tocopy);
+	జ్ఞాపకం_నకలు(EXT_మొదటి_సూచీ(neweh),
+		EXT_మొదటి_సూచీ(eh) +
+			(ext2fs_le16_గమ్యం_cpu(eh->eh_entries) - tocopy),
+		పరిమాణం(నిర్మాణం ext3_extent_idx) * tocopy);
 
-	new_node_start = ext2fs_le32_to_cpu(EXT_FIRST_INDEX(neweh)->ei_block);
+	new_కణుపు_ప్రారంభం = ext2fs_le32_గమ్యం_cpu(EXT_మొదటి_సూచీ(neweh)->ei_ఖండం);
 
 	/* then update the checksum */
-	retval = ext2fs_extent_block_csum_set(handle->fs, handle->ino, neweh);
-	if (retval)
-		goto done;
+	retval = ext2fs_extent_ఖండం_csum_సమితి(handle->fs, handle->ino, neweh);
+	ఒకవేళ (retval)
+		వెళ్ళు పూర్తి;
 
 	/* ...and write the new node block out to disk. */
-	retval = io_channel_write_blk64(handle->fs->io, new_node_pblk, 1,
-					block_buf);
+	retval = io_channel_write_blk64(handle->fs->io, new_కణుపు_pblk, 1,
+					ఖండం_buf);
 
-	if (retval)
-		goto done;
+	ఒకవేళ (retval)
+		వెళ్ళు పూర్తి;
 
 	/* OK! we've created the new node; now adjust the tree */
 
 	/* current path now has fewer active entries, we copied some out */
-	if (handle->level == 0) {
-		memcpy(newpath, path,
-		       sizeof(struct extent_path) * handle->max_paths);
-		handle->path = newpath;
-		newpath = path;
-		path = handle->path;
-		path->entries = 1;
-		path->left = path->max_entries - 1;
-		handle->max_depth++;
+	ఒకవేళ (handle->level == 0) {
+		జ్ఞాపకం_నకలు(newpath, మార్గం,
+		       పరిమాణం(నిర్మాణం extent_మార్గం) * handle->max_paths);
+		handle->మార్గం = newpath;
+		newpath = మార్గం;
+		మార్గం = handle->మార్గం;
+		మార్గం->entries = 1;
+		మార్గం->ఎడమ = మార్గం->max_entries - 1;
+		handle->max_లోతు++;
 		handle->max_paths++;
-		eh->eh_depth = ext2fs_cpu_to_le16(handle->max_depth);
-	} else {
-		path->entries -= tocopy;
-		path->left -= tocopy;
+		eh->eh_లోతు = ext2fs_cpu_గమ్యం_le16(handle->max_లోతు);
+	} లేకపోతే {
+		మార్గం->entries -= tocopy;
+		మార్గం->ఎడమ -= tocopy;
 	}
 
-	eh->eh_entries = ext2fs_cpu_to_le16(path->entries);
+	eh->eh_entries = ext2fs_cpu_గమ్యం_le16(మార్గం->entries);
 	/* this writes out the node, incl. the modified header */
-	retval = update_path(handle);
-	if (retval)
-		goto done;
+	retval = update_మార్గం(handle);
+	ఒకవేళ (retval)
+		వెళ్ళు పూర్తి;
 
 	/* now go up and insert/replace index for new node we created */
-	if (new_root) {
-		retval = ext2fs_extent_get(handle, EXT2_EXTENT_FIRST_SIB, &extent);
-		if (retval)
-			goto done;
+	ఒకవేళ (new_మూలం) {
+		retval = ext2fs_extent_get(handle, EXT2_EXTENT_మొదటి_SIB, &extent);
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
 
-		extent.e_lblk = new_node_start;
-		extent.e_pblk = new_node_pblk;
-		extent.e_len = handle->path[0].end_blk - extent.e_lblk;
+		extent.e_lblk = new_కణుపు_ప్రారంభం;
+		extent.e_pblk = new_కణుపు_pblk;
+		extent.e_len = handle->మార్గం[0].చివర_blk - extent.e_lblk;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
-			goto done;
-	} else {
-		__u32 new_node_length;
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
+	} లేకపోతే {
+		__u32 new_కణుపు_నిడివి;
 
-		retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP, &extent);
+		retval = ext2fs_extent_get(handle, EXT2_EXTENT_పైకి, &extent);
 		/* will insert after this one; it's length is shorter now */
-		new_node_length = new_node_start - extent.e_lblk;
-		extent.e_len -= new_node_length;
+		new_కణుపు_నిడివి = new_కణుపు_ప్రారంభం - extent.e_lblk;
+		extent.e_len -= new_కణుపు_నిడివి;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
-			goto done;
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
 
 		/* now set up the new extent and insert it */
-		extent.e_lblk = new_node_start;
-		extent.e_pblk = new_node_pblk;
-		extent.e_len = new_node_length;
-		retval = ext2fs_extent_insert(handle, EXT2_EXTENT_INSERT_AFTER, &extent);
-		if (retval)
-			goto done;
+		extent.e_lblk = new_కణుపు_ప్రారంభం;
+		extent.e_pblk = new_కణుపు_pblk;
+		extent.e_len = new_కణుపు_నిడివి;
+		retval = ext2fs_extent_చొప్పించు(handle, EXT2_EXTENT_చొప్పించు_AFTER, &extent);
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
 	}
 
 	/* get handle back to our original position */
-	retval = ext2fs_extent_goto2(handle, orig_height, orig_lblk);
-	if (retval)
-		goto done;
+	retval = ext2fs_extent_goto2(handle, orig_ఎత్తు, orig_lblk);
+	ఒకవేళ (retval)
+		వెళ్ళు పూర్తి;
 
 	/* new node hooked in, so update inode block count (do this here?) */
-	ext2fs_iblk_add_blocks(handle->fs, handle->inode, 1);
+	ext2fs_iblk_కూడు_ఖండాలు(handle->fs, handle->inode, 1);
 	retval = ext2fs_write_inode(handle->fs, handle->ino,
 				    handle->inode);
-	if (retval)
-		goto done;
+	ఒకవేళ (retval)
+		వెళ్ళు పూర్తి;
 
-done:
-	if (newpath)
+పూర్తి:
+	ఒకవేళ (newpath)
 		ext2fs_free_mem(&newpath);
-	free(block_buf);
+	విడుదల(ఖండం_buf);
 
-	return retval;
+	తిరిగి retval;
 }
 
-errcode_t ext2fs_extent_node_split(ext2_extent_handle_t handle)
+errcode_t ext2fs_extent_కణుపు_విభజించు(ext2_extent_handle_t handle)
 {
-	return extent_node_split(handle, 0);
+	తిరిగి extent_కణుపు_విభజించు(handle, 0);
 }
 
-errcode_t ext2fs_extent_insert(ext2_extent_handle_t handle, int flags,
-				      struct ext2fs_extent *extent)
+errcode_t ext2fs_extent_చొప్పించు(ext2_extent_handle_t handle, పూర్ణాంకం flags,
+				      నిర్మాణం ext2fs_extent *extent)
 {
-	struct extent_path		*path;
-	struct ext3_extent_idx		*ix;
-	struct ext3_extent_header	*eh;
+	నిర్మాణం extent_మార్గం		*మార్గం;
+	నిర్మాణం ext3_extent_idx		*ix;
+	నిర్మాణం ext3_extent_శీర్షిక	*eh;
 	errcode_t			retval;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ఒకవేళ (!(handle->fs->flags & EXT2_FLAG_RW))
+		తిరిగి EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ఒకవేళ (!handle->మార్గం)
+		తిరిగి EXT2_ET_NO_CURRENT_కణుపు;
 
-#ifdef DEBUG
-	printf("extent insert: %u ", handle->ino);
+#నిర్వచితమైతే DEBUG
+	రాయి("extent insert: %u ", handle->ino);
 	dbg_print_extent(0, extent);
-#endif
+#అయితే_ముగింపు
 
-	path = handle->path + handle->level;
+	మార్గం = handle->మార్గం + handle->level;
 
-	if (path->entries >= path->max_entries) {
-		if (flags & EXT2_EXTENT_INSERT_NOSPLIT) {
-			return EXT2_ET_CANT_INSERT_EXTENT;
-		} else {
-#ifdef DEBUG
-			printf("node full (level %d) - splitting\n",
+	ఒకవేళ (మార్గం->entries >= మార్గం->max_entries) {
+		ఒకవేళ (flags & EXT2_EXTENT_చొప్పించు_NOSPLIT) {
+			తిరిగి EXT2_ET_CANT_చొప్పించు_EXTENT;
+		} లేకపోతే {
+#నిర్వచితమైతే DEBUG
+			రాయి("node full (level %d) - splitting\n",
 				   handle->level);
-#endif
-			retval = extent_node_split(handle, 1);
-			if (retval)
-				return retval;
-			path = handle->path + handle->level;
+#అయితే_ముగింపు
+			retval = extent_కణుపు_విభజించు(handle, 1);
+			ఒకవేళ (retval)
+				తిరిగి retval;
+			మార్గం = handle->మార్గం + handle->level;
 		}
 	}
 
-	eh = (struct ext3_extent_header *) path->buf;
-	if (path->curr) {
-		ix = path->curr;
-		if (flags & EXT2_EXTENT_INSERT_AFTER) {
+	eh = (నిర్మాణం ext3_extent_శీర్షిక *) మార్గం->buf;
+	ఒకవేళ (మార్గం->curr) {
+		ix = మార్గం->curr;
+		ఒకవేళ (flags & EXT2_EXTENT_చొప్పించు_AFTER) {
 			ix++;
-			path->left--;
+			మార్గం->ఎడమ--;
 		}
-	} else {
-		ix = EXT_FIRST_INDEX(eh);
-		path->left = -1;
+	} లేకపోతే {
+		ix = EXT_మొదటి_సూచీ(eh);
+		మార్గం->ఎడమ = -1;
 	}
 
-	path->curr = ix;
+	మార్గం->curr = ix;
 
-	if (path->left >= 0)
+	ఒకవేళ (మార్గం->ఎడమ >= 0)
 		memmove(ix + 1, ix,
-			(path->left+1) * sizeof(struct ext3_extent_idx));
-	path->left++;
-	path->entries++;
+			(మార్గం->ఎడమ+1) * పరిమాణం(నిర్మాణం ext3_extent_idx));
+	మార్గం->ఎడమ++;
+	మార్గం->entries++;
 
-	eh = (struct ext3_extent_header *) path->buf;
-	eh->eh_entries = ext2fs_cpu_to_le16(path->entries);
+	eh = (నిర్మాణం ext3_extent_శీర్షిక *) మార్గం->buf;
+	eh->eh_entries = ext2fs_cpu_గమ్యం_le16(మార్గం->entries);
 
 	retval = ext2fs_extent_replace(handle, 0, extent);
-	if (retval)
-		goto errout;
+	ఒకవేళ (retval)
+		వెళ్ళు errout;
 
-	retval = update_path(handle);
-	if (retval)
-		goto errout;
+	retval = update_మార్గం(handle);
+	ఒకవేళ (retval)
+		వెళ్ళు errout;
 
-	return 0;
+	తిరిగి 0;
 
 errout:
 	ext2fs_extent_delete(handle, 0);
-	return retval;
+	తిరిగి retval;
 }
 
 /*
@@ -1263,87 +1263,87 @@ errout:
  * We really need extent adding to be smart about merging.
  */
 
-errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
-				 blk64_t logical, blk64_t physical, int flags)
+errcode_t ext2fs_extent_సమితి_bmap(ext2_extent_handle_t handle,
+				 blk64_t logical, blk64_t physical, పూర్ణాంకం flags)
 {
 	errcode_t		ec, retval = 0;
-	int			mapped = 1; /* logical is mapped? */
-	int			orig_height;
-	int			extent_uninit = 0;
-	int			prev_uninit = 0;
-	int			next_uninit = 0;
-	int			new_uninit = 0;
-	int			max_len = EXT_INIT_MAX_LEN;
-	int			has_prev, has_next;
+	పూర్ణాంకం			mapped = 1; /* logical is mapped? */
+	పూర్ణాంకం			orig_ఎత్తు;
+	పూర్ణాంకం			extent_uninit = 0;
+	పూర్ణాంకం			prev_uninit = 0;
+	పూర్ణాంకం			తదుపరి_uninit = 0;
+	పూర్ణాంకం			new_uninit = 0;
+	పూర్ణాంకం			max_len = EXT_INIT_MAX_LEN;
+	పూర్ణాంకం			has_prev, has_తదుపరి;
 	blk64_t			orig_lblk;
-	struct extent_path	*path;
-	struct ext2fs_extent	extent, next_extent, prev_extent;
-	struct ext2fs_extent	newextent;
-	struct ext2_extent_info	info;
+	నిర్మాణం extent_మార్గం	*మార్గం;
+	నిర్మాణం ext2fs_extent	extent, తదుపరి_extent, prev_extent;
+	నిర్మాణం ext2fs_extent	newextent;
+	నిర్మాణం ext2_extent_info	info;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-#ifdef DEBUG
-	printf("set_bmap ino %u log %lld phys %lld flags %d\n",
+#నిర్వచితమైతే DEBUG
+	రాయి("set_bmap ino %u log %lld phys %lld flags %d\n",
 	       handle->ino, logical, physical, flags);
-#endif
+#అయితే_ముగింపు
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ఒకవేళ (!(handle->fs->flags & EXT2_FLAG_RW))
+		తిరిగి EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ఒకవేళ (!handle->మార్గం)
+		తిరిగి EXT2_ET_NO_CURRENT_కణుపు;
 
-	path = handle->path + handle->level;
+	మార్గం = handle->మార్గం + handle->level;
 
-	if (flags & EXT2_EXTENT_SET_BMAP_UNINIT) {
+	ఒకవేళ (flags & EXT2_EXTENT_సమితి_BMAP_UNINIT) {
 		new_uninit = 1;
 		max_len = EXT_UNINIT_MAX_LEN;
 	}
 
 	/* if (re)mapping, set up new extent to insert */
-	if (physical) {
+	ఒకవేళ (physical) {
 		newextent.e_len = 1;
 		newextent.e_pblk = physical;
 		newextent.e_lblk = logical;
-		newextent.e_flags = EXT2_EXTENT_FLAGS_LEAF;
-		if (new_uninit)
+		newextent.e_flags = EXT2_EXTENT_FLAGS_ఆకు;
+		ఒకవేళ (new_uninit)
 			newextent.e_flags |= EXT2_EXTENT_FLAGS_UNINIT;
 	}
 
 	/* special case if the extent tree is completely empty */
-	if ((handle->max_depth == 0) && (path->entries == 0)) {
-		retval = ext2fs_extent_insert(handle, 0, &newextent);
-		return retval;
+	ఒకవేళ ((handle->max_లోతు == 0) && (మార్గం->entries == 0)) {
+		retval = ext2fs_extent_చొప్పించు(handle, 0, &newextent);
+		తిరిగి retval;
 	}
 
 	/* save our original location in the extent tree */
-	if ((retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
+	ఒకవేళ ((retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					&extent))) {
-		if (retval != EXT2_ET_NO_CURRENT_NODE)
-			return retval;
-		memset(&extent, 0, sizeof(extent));
+		ఒకవేళ (retval != EXT2_ET_NO_CURRENT_కణుపు)
+			తిరిగి retval;
+		memset(&extent, 0, పరిమాణం(extent));
 	}
-	if ((retval = ext2fs_extent_get_info(handle, &info)))
-		return retval;
-	orig_height = info.max_depth - info.curr_level;
+	ఒకవేళ ((retval = ext2fs_extent_get_info(handle, &info)))
+		తిరిగి retval;
+	orig_ఎత్తు = info.max_లోతు - info.curr_level;
 	orig_lblk = extent.e_lblk;
 
 	/* go to the logical spot we want to (re/un)map */
 	retval = ext2fs_extent_goto(handle, logical);
-	if (retval) {
-		if (retval == EXT2_ET_EXTENT_NOT_FOUND) {
+	ఒకవేళ (retval) {
+		ఒకవేళ (retval == EXT2_ET_EXTENT_NOT_దొరికింది) {
 			retval = 0;
 			mapped = 0;
-			if (!physical) {
-#ifdef DEBUG
-				printf("block %llu already unmapped\n",
+			ఒకవేళ (!physical) {
+#నిర్వచితమైతే DEBUG
+				రాయి("block %llu already unmapped\n",
 					logical);
-#endif
-				goto done;
+#అయితే_ముగింపు
+				వెళ్ళు పూర్తి;
 			}
-		} else
-			goto done;
+		} లేకపోతే
+			వెళ్ళు పూర్తి;
 	}
 
 	/*
@@ -1353,161 +1353,161 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 	 * Get the previous and next leaf extents, if they are present.
 	 */
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
-		goto done;
-	if (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	ఒకవేళ (retval)
+		వెళ్ళు పూర్తి;
+	ఒకవేళ (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 		extent_uninit = 1;
-	retval = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT_LEAF, &next_extent);
-	if (retval) {
-		has_next = 0;
-		if (retval != EXT2_ET_EXTENT_NO_NEXT)
-			goto done;
-	} else {
+	retval = ext2fs_extent_get(handle, EXT2_EXTENT_తదుపరి_ఆకు, &తదుపరి_extent);
+	ఒకవేళ (retval) {
+		has_తదుపరి = 0;
+		ఒకవేళ (retval != EXT2_ET_EXTENT_NO_తదుపరి)
+			వెళ్ళు పూర్తి;
+	} లేకపోతే {
 		dbg_print_extent("set_bmap: next_extent",
-				 &next_extent);
-		has_next = 1;
-		if (next_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-			next_uninit = 1;
+				 &తదుపరి_extent);
+		has_తదుపరి = 1;
+		ఒకవేళ (తదుపరి_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+			తదుపరి_uninit = 1;
 	}
 	retval = ext2fs_extent_goto(handle, logical);
-	if (retval && retval != EXT2_ET_EXTENT_NOT_FOUND)
-		goto done;
-	retval = ext2fs_extent_get(handle, EXT2_EXTENT_PREV_LEAF, &prev_extent);
-	if (retval) {
+	ఒకవేళ (retval && retval != EXT2_ET_EXTENT_NOT_దొరికింది)
+		వెళ్ళు పూర్తి;
+	retval = ext2fs_extent_get(handle, EXT2_EXTENT_PREV_ఆకు, &prev_extent);
+	ఒకవేళ (retval) {
 		has_prev = 0;
-		if (retval != EXT2_ET_EXTENT_NO_PREV)
-			goto done;
-	} else {
+		ఒకవేళ (retval != EXT2_ET_EXTENT_NO_PREV)
+			వెళ్ళు పూర్తి;
+	} లేకపోతే {
 		has_prev = 1;
 		dbg_print_extent("set_bmap: prev_extent",
 				 &prev_extent);
-		if (prev_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+		ఒకవేళ (prev_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 			prev_uninit = 1;
 	}
 	retval = ext2fs_extent_goto(handle, logical);
-	if (retval && retval != EXT2_ET_EXTENT_NOT_FOUND)
-		goto done;
+	ఒకవేళ (retval && retval != EXT2_ET_EXTENT_NOT_దొరికింది)
+		వెళ్ళు పూర్తి;
 
 	/* check if already pointing to the requested physical */
-	if (mapped && (new_uninit == extent_uninit) &&
+	ఒకవేళ (mapped && (new_uninit == extent_uninit) &&
 	    (extent.e_pblk + (logical - extent.e_lblk) == physical)) {
-#ifdef DEBUG
-		printf("physical block (at %llu) unchanged\n", logical);
-#endif
-		goto done;
+#నిర్వచితమైతే DEBUG
+		రాయి("physical block (at %llu) unchanged\n", logical);
+#అయితే_ముగింపు
+		వెళ్ళు పూర్తి;
 	}
 
-	if (!mapped) {
-#ifdef DEBUG
-		printf("mapping unmapped logical block %llu\n", logical);
-#endif
-		if ((logical == extent.e_lblk + extent.e_len) &&
+	ఒకవేళ (!mapped) {
+#నిర్వచితమైతే DEBUG
+		రాయి("mapping unmapped logical block %llu\n", logical);
+#అయితే_ముగింపు
+		ఒకవేళ ((logical == extent.e_lblk + extent.e_len) &&
 		    (physical == extent.e_pblk + extent.e_len) &&
 		    (new_uninit == extent_uninit) &&
-		    ((int) extent.e_len < max_len-1)) {
+		    ((పూర్ణాంకం) extent.e_len < max_len-1)) {
 			extent.e_len++;
 			retval = ext2fs_extent_replace(handle, 0, &extent);
-		} else if ((logical == extent.e_lblk - 1) &&
+		} లేకపోతే ఒకవేళ ((logical == extent.e_lblk - 1) &&
 			   (physical == extent.e_pblk - 1) &&
 			   (new_uninit == extent_uninit) &&
-			   ((int) extent.e_len < max_len - 1)) {
+			   ((పూర్ణాంకం) extent.e_len < max_len - 1)) {
 			extent.e_len++;
 			extent.e_lblk--;
 			extent.e_pblk--;
 			retval = ext2fs_extent_replace(handle, 0, &extent);
-		} else if (has_next &&
-			   (logical == next_extent.e_lblk - 1) &&
-			   (physical == next_extent.e_pblk - 1) &&
-			   (new_uninit == next_uninit) &&
-			   ((int) next_extent.e_len < max_len - 1)) {
+		} లేకపోతే ఒకవేళ (has_తదుపరి &&
+			   (logical == తదుపరి_extent.e_lblk - 1) &&
+			   (physical == తదుపరి_extent.e_pblk - 1) &&
+			   (new_uninit == తదుపరి_uninit) &&
+			   ((పూర్ణాంకం) తదుపరి_extent.e_len < max_len - 1)) {
 			retval = ext2fs_extent_get(handle,
-						   EXT2_EXTENT_NEXT_LEAF,
-						   &next_extent);
-			if (retval)
-				goto done;
-			next_extent.e_len++;
-			next_extent.e_lblk--;
-			next_extent.e_pblk--;
-			retval = ext2fs_extent_replace(handle, 0, &next_extent);
-		} else if (logical < extent.e_lblk)
-			retval = ext2fs_extent_insert(handle, 0, &newextent);
-		else
-			retval = ext2fs_extent_insert(handle,
-				      EXT2_EXTENT_INSERT_AFTER, &newextent);
-		if (retval)
-			goto done;
+						   EXT2_EXTENT_తదుపరి_ఆకు,
+						   &తదుపరి_extent);
+			ఒకవేళ (retval)
+				వెళ్ళు పూర్తి;
+			తదుపరి_extent.e_len++;
+			తదుపరి_extent.e_lblk--;
+			తదుపరి_extent.e_pblk--;
+			retval = ext2fs_extent_replace(handle, 0, &తదుపరి_extent);
+		} లేకపోతే ఒకవేళ (logical < extent.e_lblk)
+			retval = ext2fs_extent_చొప్పించు(handle, 0, &newextent);
+		లేకపోతే
+			retval = ext2fs_extent_చొప్పించు(handle,
+				      EXT2_EXTENT_చొప్పించు_AFTER, &newextent);
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
 		retval = ext2fs_extent_fix_parents(handle);
-		if (retval)
-			goto done;
-	} else if ((logical == extent.e_lblk) && (extent.e_len == 1))  {
-#ifdef DEBUG
-		printf("(re/un)mapping only block in extent\n");
-#endif
-		if (physical) {
-			if (has_prev &&
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
+	} లేకపోతే ఒకవేళ ((logical == extent.e_lblk) && (extent.e_len == 1))  {
+#నిర్వచితమైతే DEBUG
+		రాయి("(re/un)mapping only block in extent\n");
+#అయితే_ముగింపు
+		ఒకవేళ (physical) {
+			ఒకవేళ (has_prev &&
 			    (logical == (prev_extent.e_lblk +
 					 prev_extent.e_len)) &&
 			    (physical == (prev_extent.e_pblk +
 					  prev_extent.e_len)) &&
 			    (new_uninit == prev_uninit) &&
-			    ((int) prev_extent.e_len < max_len-1)) {
+			    ((పూర్ణాంకం) prev_extent.e_len < max_len-1)) {
 				retval = ext2fs_extent_get(handle,
-					EXT2_EXTENT_PREV_LEAF, &prev_extent);
-				if (retval)
-					goto done;
+					EXT2_EXTENT_PREV_ఆకు, &prev_extent);
+				ఒకవేళ (retval)
+					వెళ్ళు పూర్తి;
 				prev_extent.e_len++;
 				retval = ext2fs_extent_replace(handle, 0,
 							       &prev_extent);
 				retval = ext2fs_extent_get(handle,
-							   EXT2_EXTENT_NEXT_LEAF,
+							   EXT2_EXTENT_తదుపరి_ఆకు,
 							   &extent);
-				if (retval)
-					goto done;
-				goto delete_node;
+				ఒకవేళ (retval)
+					వెళ్ళు పూర్తి;
+				వెళ్ళు delete_కణుపు;
 
-			} else
+			} లేకపోతే
 				retval = ext2fs_extent_replace(handle, 0, &newextent);
-		} else {
-		delete_node:
+		} లేకపోతే {
+		delete_కణుపు:
 			retval = ext2fs_extent_delete(handle, 0);
-			if (retval)
-				goto done;
+			ఒకవేళ (retval)
+				వెళ్ళు పూర్తి;
 			ec = ext2fs_extent_fix_parents(handle);
-			if (ec != EXT2_ET_NO_CURRENT_NODE)
+			ఒకవేళ (ec != EXT2_ET_NO_CURRENT_కణుపు)
 				retval = ec;
 		}
 
-		if (retval)
-			goto done;
-	} else if (logical == extent.e_lblk + extent.e_len - 1)  {
-#ifdef DEBUG
-		printf("(re/un)mapping last block in extent\n");
-#endif
-		if (physical) {
-			if (has_next &&
-			    (logical == (next_extent.e_lblk - 1)) &&
-			    (physical == (next_extent.e_pblk - 1)) &&
-			    (new_uninit == next_uninit) &&
-			    ((int) next_extent.e_len < max_len - 1)) {
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
+	} లేకపోతే ఒకవేళ (logical == extent.e_lblk + extent.e_len - 1)  {
+#నిర్వచితమైతే DEBUG
+		రాయి("(re/un)mapping last block in extent\n");
+#అయితే_ముగింపు
+		ఒకవేళ (physical) {
+			ఒకవేళ (has_తదుపరి &&
+			    (logical == (తదుపరి_extent.e_lblk - 1)) &&
+			    (physical == (తదుపరి_extent.e_pblk - 1)) &&
+			    (new_uninit == తదుపరి_uninit) &&
+			    ((పూర్ణాంకం) తదుపరి_extent.e_len < max_len - 1)) {
 				retval = ext2fs_extent_get(handle,
-					EXT2_EXTENT_NEXT_LEAF, &next_extent);
-				if (retval)
-					goto done;
-				next_extent.e_len++;
-				next_extent.e_lblk--;
-				next_extent.e_pblk--;
+					EXT2_EXTENT_తదుపరి_ఆకు, &తదుపరి_extent);
+				ఒకవేళ (retval)
+					వెళ్ళు పూర్తి;
+				తదుపరి_extent.e_len++;
+				తదుపరి_extent.e_lblk--;
+				తదుపరి_extent.e_pblk--;
 				retval = ext2fs_extent_replace(handle, 0,
-							       &next_extent);
-				if (retval)
-					goto done;
-			} else
-				retval = ext2fs_extent_insert(handle,
-				      EXT2_EXTENT_INSERT_AFTER, &newextent);
-			if (retval)
-				goto done;
+							       &తదుపరి_extent);
+				ఒకవేళ (retval)
+					వెళ్ళు పూర్తి;
+			} లేకపోతే
+				retval = ext2fs_extent_చొప్పించు(handle,
+				      EXT2_EXTENT_చొప్పించు_AFTER, &newextent);
+			ఒకవేళ (retval)
+				వెళ్ళు పూర్తి;
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval)
-				goto done;
+			ఒకవేళ (retval)
+				వెళ్ళు పూర్తి;
 			/*
 			 * Now pointing at inserted extent; move back to prev.
 			 *
@@ -1515,375 +1515,375 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 			 * subtlety in the comment for fix_parents().
 			 */
 			retval = ext2fs_extent_goto(handle, logical);
-			if (retval)
-				goto done;
+			ఒకవేళ (retval)
+				వెళ్ళు పూర్తి;
 			retval = ext2fs_extent_get(handle,
 						   EXT2_EXTENT_CURRENT,
 						   &extent);
-			if (retval)
-				goto done;
+			ఒకవేళ (retval)
+				వెళ్ళు పూర్తి;
 		}
 		extent.e_len--;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
-			goto done;
-	} else if (logical == extent.e_lblk) {
-#ifdef DEBUG
-		printf("(re/un)mapping first block in extent\n");
-#endif
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
+	} లేకపోతే ఒకవేళ (logical == extent.e_lblk) {
+#నిర్వచితమైతే DEBUG
+		రాయి("(re/un)mapping first block in extent\n");
+#అయితే_ముగింపు
 		extent.e_pblk++;
 		extent.e_lblk++;
 		extent.e_len--;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
-			goto done;
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
 		retval = ext2fs_extent_fix_parents(handle);
-		if (retval)
-			goto done;
-		if (physical) {
-			if (has_prev &&
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
+		ఒకవేళ (physical) {
+			ఒకవేళ (has_prev &&
 			    (logical == (prev_extent.e_lblk +
 					 prev_extent.e_len)) &&
 			    (physical == (prev_extent.e_pblk +
 					  prev_extent.e_len)) &&
 			    (new_uninit == prev_uninit) &&
-			    ((int) prev_extent.e_len < max_len-1)) {
+			    ((పూర్ణాంకం) prev_extent.e_len < max_len-1)) {
 				retval = ext2fs_extent_get(handle, 
-					EXT2_EXTENT_PREV_LEAF, &prev_extent);
-				if (retval)
-					goto done;
+					EXT2_EXTENT_PREV_ఆకు, &prev_extent);
+				ఒకవేళ (retval)
+					వెళ్ళు పూర్తి;
 				prev_extent.e_len++;
 				retval = ext2fs_extent_replace(handle, 0,
 							       &prev_extent);
-			} else
-				retval = ext2fs_extent_insert(handle,
+			} లేకపోతే
+				retval = ext2fs_extent_చొప్పించు(handle,
 							      0, &newextent);
-			if (retval)
-				goto done;
+			ఒకవేళ (retval)
+				వెళ్ళు పూర్తి;
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval)
-				goto done;
+			ఒకవేళ (retval)
+				వెళ్ళు పూర్తి;
 			retval = ext2fs_extent_get(handle,
-						   EXT2_EXTENT_NEXT_LEAF,
+						   EXT2_EXTENT_తదుపరి_ఆకు,
 						   &extent);
-			if (retval)
-				goto done;
+			ఒకవేళ (retval)
+				వెళ్ళు పూర్తి;
 		}
-	} else {
-		__u32	save_length;
+	} లేకపోతే {
+		__u32	save_నిడివి;
 		blk64_t	save_lblk;
-		struct ext2fs_extent save_extent;
+		నిర్మాణం ext2fs_extent save_extent;
 		errcode_t r2;
 
-#ifdef DEBUG
-		printf("(re/un)mapping in middle of extent\n");
-#endif
+#నిర్వచితమైతే DEBUG
+		రాయి("(re/un)mapping in middle of extent\n");
+#అయితే_ముగింపు
 		/* need to split this extent; later */
 		save_lblk = extent.e_lblk;
-		save_length = extent.e_len;
+		save_నిడివి = extent.e_len;
 		save_extent = extent;
 
 		/* shorten pre-split extent */
 		extent.e_len = (logical - extent.e_lblk);
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
-			goto done;
+		ఒకవేళ (retval)
+			వెళ్ళు పూర్తి;
 		/* insert our new extent, if any */
-		if (physical) {
+		ఒకవేళ (physical) {
 			/* insert new extent after current */
-			retval = ext2fs_extent_insert(handle,
-					EXT2_EXTENT_INSERT_AFTER, &newextent);
-			if (retval) {
+			retval = ext2fs_extent_చొప్పించు(handle,
+					EXT2_EXTENT_చొప్పించు_AFTER, &newextent);
+			ఒకవేళ (retval) {
 				r2 = ext2fs_extent_goto(handle, save_lblk);
-				if (r2 == 0)
-					(void)ext2fs_extent_replace(handle, 0,
+				ఒకవేళ (r2 == 0)
+					(శూన్య)ext2fs_extent_replace(handle, 0,
 							      &save_extent);
-				goto done;
+				వెళ్ళు పూర్తి;
 			}
 		}
 		/* add post-split extent */
 		extent.e_pblk += extent.e_len + 1;
 		extent.e_lblk += extent.e_len + 1;
-		extent.e_len = save_length - extent.e_len - 1;
-		retval = ext2fs_extent_insert(handle,
-				EXT2_EXTENT_INSERT_AFTER, &extent);
-		if (retval) {
-			if (physical) {
+		extent.e_len = save_నిడివి - extent.e_len - 1;
+		retval = ext2fs_extent_చొప్పించు(handle,
+				EXT2_EXTENT_చొప్పించు_AFTER, &extent);
+		ఒకవేళ (retval) {
+			ఒకవేళ (physical) {
 				r2 = ext2fs_extent_goto(handle,
 							newextent.e_lblk);
-				if (r2 == 0)
-					(void)ext2fs_extent_delete(handle, 0);
+				ఒకవేళ (r2 == 0)
+					(శూన్య)ext2fs_extent_delete(handle, 0);
 			}
 			r2 = ext2fs_extent_goto(handle, save_lblk);
-			if (r2 == 0)
-				(void)ext2fs_extent_replace(handle, 0,
+			ఒకవేళ (r2 == 0)
+				(శూన్య)ext2fs_extent_replace(handle, 0,
 							    &save_extent);
-			goto done;
+			వెళ్ళు పూర్తి;
 		}
 	}
 
-done:
+పూర్తి:
 	/* get handle back to its position */
-	if (orig_height > handle->max_depth)
-		orig_height = handle->max_depth; /* In case we shortened the tree */
-	ext2fs_extent_goto2(handle, orig_height, orig_lblk);
-	return retval;
+	ఒకవేళ (orig_ఎత్తు > handle->max_లోతు)
+		orig_ఎత్తు = handle->max_లోతు; /* In case we shortened the tree */
+	ext2fs_extent_goto2(handle, orig_ఎత్తు, orig_lblk);
+	తిరిగి retval;
 }
 
-errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, int flags)
+errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, పూర్ణాంకం flags)
 {
-	struct extent_path		*path;
-	char 				*cp;
-	struct ext3_extent_header	*eh;
+	నిర్మాణం extent_మార్గం		*మార్గం;
+	అక్షరం 				*cp;
+	నిర్మాణం ext3_extent_శీర్షిక	*eh;
 	errcode_t			retval = 0;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ఒకవేళ (!(handle->fs->flags & EXT2_FLAG_RW))
+		తిరిగి EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	ఒకవేళ (!handle->మార్గం)
+		తిరిగి EXT2_ET_NO_CURRENT_కణుపు;
 
-#ifdef DEBUG
+#నిర్వచితమైతే DEBUG
 	{
-		struct ext2fs_extent	extent;
+		నిర్మాణం ext2fs_extent	extent;
 
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					   &extent);
-		if (retval == 0) {
-			printf("extent delete %u ", handle->ino);
+		ఒకవేళ (retval == 0) {
+			రాయి("extent delete %u ", handle->ino);
 			dbg_print_extent(0, &extent);
 		}
 	}
-#endif
+#అయితే_ముగింపు
 
-	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	మార్గం = handle->మార్గం + handle->level;
+	ఒకవేళ (!మార్గం->curr)
+		తిరిగి EXT2_ET_NO_CURRENT_కణుపు;
 
-	cp = path->curr;
+	cp = మార్గం->curr;
 
 	/* Sanity check before memmove() */
-	if (path->left < 0)
-		return EXT2_ET_EXTENT_LEAF_BAD;
+	ఒకవేళ (మార్గం->ఎడమ < 0)
+		తిరిగి EXT2_ET_EXTENT_ఆకు_BAD;
 
-	if (path->left) {
-		memmove(cp, cp + sizeof(struct ext3_extent_idx),
-			path->left * sizeof(struct ext3_extent_idx));
-		path->left--;
-	} else {
-		struct ext3_extent_idx	*ix = path->curr;
+	ఒకవేళ (మార్గం->ఎడమ) {
+		memmove(cp, cp + పరిమాణం(నిర్మాణం ext3_extent_idx),
+			మార్గం->ఎడమ * పరిమాణం(నిర్మాణం ext3_extent_idx));
+		మార్గం->ఎడమ--;
+	} లేకపోతే {
+		నిర్మాణం ext3_extent_idx	*ix = మార్గం->curr;
 		ix--;
-		path->curr = ix;
+		మార్గం->curr = ix;
 	}
-	if (--path->entries == 0)
-		path->curr = 0;
+	ఒకవేళ (--మార్గం->entries == 0)
+		మార్గం->curr = 0;
 
 	/* if non-root node has no entries left, remove it & parent ptr to it */
-	if (path->entries == 0 && handle->level) {
-		if (!(flags & EXT2_EXTENT_DELETE_KEEP_EMPTY)) {
-			struct ext2fs_extent	extent;
+	ఒకవేళ (మార్గం->entries == 0 && handle->level) {
+		ఒకవేళ (!(flags & EXT2_EXTENT_DELETE_KEEP_ఖాళీలు)) {
+			నిర్మాణం ext2fs_extent	extent;
 
-			retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP,
+			retval = ext2fs_extent_get(handle, EXT2_EXTENT_పైకి,
 								&extent);
-			if (retval)
-				return retval;
+			ఒకవేళ (retval)
+				తిరిగి retval;
 
 			retval = ext2fs_extent_delete(handle, flags);
-			handle->inode->i_blocks -=
+			handle->inode->i_ఖండాలు -=
 				(handle->fs->blocksize *
-				 EXT2FS_CLUSTER_RATIO(handle->fs)) / 512;
+				 EXT2_FS_CLUSTER_నిష్పత్తి(handle->fs)) / 512;
 			retval = ext2fs_write_inode(handle->fs, handle->ino,
 						    handle->inode);
-			ext2fs_block_alloc_stats2(handle->fs,
+			ext2fs_ఖండం_alloc_stats2(handle->fs,
 						  extent.e_pblk, -1);
 		}
-	} else {
-		eh = (struct ext3_extent_header *) path->buf;
-		eh->eh_entries = ext2fs_cpu_to_le16(path->entries);
-		if ((path->entries == 0) && (handle->level == 0)) {
-			eh->eh_depth = 0;
-			handle->max_depth = 0;
+	} లేకపోతే {
+		eh = (నిర్మాణం ext3_extent_శీర్షిక *) మార్గం->buf;
+		eh->eh_entries = ext2fs_cpu_గమ్యం_le16(మార్గం->entries);
+		ఒకవేళ ((మార్గం->entries == 0) && (handle->level == 0)) {
+			eh->eh_లోతు = 0;
+			handle->max_లోతు = 0;
 		}
-		retval = update_path(handle);
+		retval = update_మార్గం(handle);
 	}
-	return retval;
+	తిరిగి retval;
 }
 
 errcode_t ext2fs_extent_get_info(ext2_extent_handle_t handle,
-				 struct ext2_extent_info *info)
+				 నిర్మాణం ext2_extent_info *info)
 {
-	struct extent_path		*path;
+	నిర్మాణం extent_మార్గం		*మార్గం;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	memset(info, 0, sizeof(struct ext2_extent_info));
+	memset(info, 0, పరిమాణం(నిర్మాణం ext2_extent_info));
 
-	path = handle->path + handle->level;
-	if (path) {
-		if (path->curr)
-			info->curr_entry = ((char *) path->curr - path->buf) /
-				sizeof(struct ext3_extent_idx);
-		else
-			info->curr_entry = 0;
-		info->num_entries = path->entries;
-		info->max_entries = path->max_entries;
-		info->bytes_avail = (path->max_entries - path->entries) *
-			sizeof(struct ext3_extent);
+	మార్గం = handle->మార్గం + handle->level;
+	ఒకవేళ (మార్గం) {
+		ఒకవేళ (మార్గం->curr)
+			info->curr_నమోదు = ((అక్షరం *) మార్గం->curr - మార్గం->buf) /
+				పరిమాణం(నిర్మాణం ext3_extent_idx);
+		లేకపోతే
+			info->curr_నమోదు = 0;
+		info->అంకె_entries = మార్గం->entries;
+		info->max_entries = మార్గం->max_entries;
+		info->బైట్లు_avail = (మార్గం->max_entries - మార్గం->entries) *
+			పరిమాణం(నిర్మాణం ext3_extent);
 	}
 
 	info->curr_level = handle->level;
-	info->max_depth = handle->max_depth;
+	info->max_లోతు = handle->max_లోతు;
 	info->max_lblk = EXT_MAX_EXTENT_LBLK;
 	info->max_pblk = EXT_MAX_EXTENT_PBLK;
 	info->max_len = EXT_INIT_MAX_LEN;
 	info->max_uninit_len = EXT_UNINIT_MAX_LEN;
 
-	return 0;
+	తిరిగి 0;
 }
 
-size_t ext2fs_max_extent_depth(ext2_extent_handle_t handle)
+size_t ext2fs_max_extent_లోతు(ext2_extent_handle_t handle)
 {
-	size_t iblock_sz = sizeof(((struct ext2_inode *)NULL)->i_block);
-	size_t iblock_extents = (iblock_sz - sizeof(struct ext3_extent_header)) /
-				sizeof(struct ext3_extent);
-	size_t extents_per_block = (handle->fs->blocksize -
-				    sizeof(struct ext3_extent_header)) /
-				   sizeof(struct ext3_extent);
-	static unsigned int last_blocksize = 0;
-	static size_t last_result = 0;
+	size_t iblock_sz = పరిమాణం(((నిర్మాణం ext2_inode *)ఖాళీ)->i_ఖండం);
+	size_t iblock_extents = (iblock_sz - పరిమాణం(నిర్మాణం ext3_extent_శీర్షిక)) /
+				పరిమాణం(నిర్మాణం ext3_extent);
+	size_t extents_చొప్పున_ఖండం = (handle->fs->blocksize -
+				    పరిమాణం(నిర్మాణం ext3_extent_శీర్షిక)) /
+				   పరిమాణం(నిర్మాణం ext3_extent);
+	స్థిర గుర్తులేని పూర్ణాంకం చివరి_blocksize = 0;
+	స్థిర size_t చివరి_ఫలితం = 0;
 
-	if (last_blocksize && last_blocksize == handle->fs->blocksize)
-		return last_result;
+	ఒకవేళ (చివరి_blocksize && చివరి_blocksize == handle->fs->blocksize)
+		తిరిగి చివరి_ఫలితం;
 
-	last_result = 1 + ((ext2fs_log2_u64(EXT_MAX_EXTENT_LBLK) -
+	చివరి_ఫలితం = 1 + ((ext2fs_log2_u64(EXT_MAX_EXTENT_LBLK) -
 			    ext2fs_log2_u64(iblock_extents)) /
-			   ext2fs_log2_u32(extents_per_block));
-	last_blocksize = handle->fs->blocksize;
-	return last_result;
+			   ext2fs_log2_u32(extents_చొప్పున_ఖండం));
+	చివరి_blocksize = handle->fs->blocksize;
+	తిరిగి చివరి_ఫలితం;
 }
 
 errcode_t ext2fs_fix_extents_checksums(ext2_filsys fs, ext2_ino_t ino,
-				       struct ext2_inode *inode)
+				       నిర్మాణం ext2_inode *inode)
 {
 	ext2_extent_handle_t	handle;
-	struct ext2fs_extent	extent;
+	నిర్మాణం ext2fs_extent	extent;
 	errcode_t		errcode;
-	int    			save_flags = fs->flags;
+	పూర్ణాంకం    			save_flags = fs->flags;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super) ||
+	ఒకవేళ (!ext2fs_has_feature_metadata_csum(fs->super) ||
 	    (inode && !(inode->i_flags & EXT4_EXTENTS_FL)))
-		return 0;
+		తిరిగి 0;
 
 	errcode = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (errcode) {
-		if (errcode == EXT2_ET_INODE_NOT_EXTENT)
+	ఒకవేళ (errcode) {
+		ఒకవేళ (errcode == EXT2_ET_INODE_NOT_EXTENT)
 			errcode = 0;
-		return errcode;
+		తిరిగి errcode;
 	}
 
 	fs->flags &= ~EXT2_FLAG_IGNORE_CSUM_ERRORS;
-	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_ROOT, &extent);
-	if (errcode)
-		goto out;
+	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_మూలం, &extent);
+	ఒకవేళ (errcode)
+		వెళ్ళు బహిర్గతం;
 
-	do {
+	చేయి {
 		/* Skip to the end of a block of leaf nodes */
-		if (extent.e_flags & EXT2_EXTENT_FLAGS_LEAF) {
+		ఒకవేళ (extent.e_flags & EXT2_EXTENT_FLAGS_ఆకు) {
 			errcode = ext2fs_extent_get(handle,
-						    EXT2_EXTENT_LAST_SIB,
+						    EXT2_EXTENT_చివరి_SIB,
 						    &extent);
-			if (errcode)
-				break;
+			ఒకవేళ (errcode)
+				ఆపు;
 		}
 
-		errcode = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT, &extent);
-		if (errcode == EXT2_ET_EXTENT_CSUM_INVALID)
-			errcode = update_path(handle);
-	} while (errcode == 0);
+		errcode = ext2fs_extent_get(handle, EXT2_EXTENT_తదుపరి, &extent);
+		ఒకవేళ (errcode == EXT2_ET_EXTENT_CSUM_INVALID)
+			errcode = update_మార్గం(handle);
+	} అయితే (errcode == 0);
 
-out:
+బహిర్గతం:
 	/* Ok if we run off the end */
-	if (errcode == EXT2_ET_EXTENT_NO_NEXT)
+	ఒకవేళ (errcode == EXT2_ET_EXTENT_NO_తదుపరి)
 		errcode = 0;
 	ext2fs_extent_free(handle);
 	fs->flags = save_flags;
-	return errcode;
+	తిరిగి errcode;
 }
 
-errcode_t ext2fs_decode_extent(struct ext2fs_extent *to, void *addr, int len)
+errcode_t ext2fs_decode_extent(నిర్మాణం ext2fs_extent *గమ్యం, శూన్య *addr, పూర్ణాంకం len)
 {
-	struct ext3_extent *from = (struct ext3_extent *)addr;
+	నిర్మాణం ext3_extent *from = (నిర్మాణం ext3_extent *)addr;
 
-	if (len != sizeof(struct ext3_extent))
-		return EXT2_ET_INVALID_ARGUMENT;
+	ఒకవేళ (len != పరిమాణం(నిర్మాణం ext3_extent))
+		తిరిగి EXT2_ET_INVALID_వాదం;
 
-	to->e_pblk = ext2fs_le32_to_cpu(from->ee_start) +
-		((__u64) ext2fs_le16_to_cpu(from->ee_start_hi)
+	గమ్యం->e_pblk = ext2fs_le32_గమ్యం_cpu(from->ee_ప్రారంభం) +
+		((__u64) ext2fs_le16_గమ్యం_cpu(from->ee_ప్రారంభం_hi)
 			<< 32);
-	to->e_lblk = ext2fs_le32_to_cpu(from->ee_block);
-	to->e_len = ext2fs_le16_to_cpu(from->ee_len);
-	to->e_flags = EXT2_EXTENT_FLAGS_LEAF;
-	if (to->e_len > EXT_INIT_MAX_LEN) {
-		to->e_len -= EXT_INIT_MAX_LEN;
-		to->e_flags |= EXT2_EXTENT_FLAGS_UNINIT;
+	గమ్యం->e_lblk = ext2fs_le32_గమ్యం_cpu(from->ee_ఖండం);
+	గమ్యం->e_len = ext2fs_le16_గమ్యం_cpu(from->ee_len);
+	గమ్యం->e_flags = EXT2_EXTENT_FLAGS_ఆకు;
+	ఒకవేళ (గమ్యం->e_len > EXT_INIT_MAX_LEN) {
+		గమ్యం->e_len -= EXT_INIT_MAX_LEN;
+		గమ్యం->e_flags |= EXT2_EXTENT_FLAGS_UNINIT;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-errcode_t ext2fs_count_blocks(ext2_filsys fs, ext2_ino_t ino,
-			      struct ext2_inode *inode, blk64_t *ret_count)
+errcode_t ext2fs_లెక్క_ఖండాలు(ext2_filsys fs, ext2_ino_t ino,
+			      నిర్మాణం ext2_inode *inode, blk64_t *ret_లెక్క)
 {
-	ext2_extent_handle_t	handle = NULL;
-	struct ext2fs_extent	extent;
+	ext2_extent_handle_t	handle = ఖాళీ;
+	నిర్మాణం ext2fs_extent	extent;
 	errcode_t		errcode;
-	int			i;
+	పూర్ణాంకం			i;
 	blk64_t			blkcount = 0;
 	blk64_t			*intermediate_nodes;
 
 	errcode = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (errcode)
-		goto out;
+	ఒకవేళ (errcode)
+		వెళ్ళు బహిర్గతం;
 
-	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_ROOT, &extent);
-	if (errcode)
-		goto out;
+	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_మూలం, &extent);
+	ఒకవేళ (errcode)
+		వెళ్ళు బహిర్గతం;
 
-	errcode = ext2fs_get_array(handle->max_depth, sizeof(blk64_t),
+	errcode = ext2fs_get_array(handle->max_లోతు, పరిమాణం(blk64_t),
 				   &intermediate_nodes);
-	if (errcode)
-		goto out;
+	ఒకవేళ (errcode)
+		వెళ్ళు బహిర్గతం;
 
 	blkcount = handle->level;
-	while (!errcode) {
-		if (extent.e_flags & EXT2_EXTENT_FLAGS_LEAF) {
+	అయితే (!errcode) {
+		ఒకవేళ (extent.e_flags & EXT2_EXTENT_FLAGS_ఆకు) {
 			blkcount += extent.e_len;
-			for (i = 0; i < handle->level; i++) {
-				if (intermediate_nodes[i] !=
-					handle->path[i].end_blk) {
+			కొరకు (i = 0; i < handle->level; i++) {
+				ఒకవేళ (intermediate_nodes[i] !=
+					handle->మార్గం[i].చివర_blk) {
 					blkcount++;
 					intermediate_nodes[i] =
-						handle->path[i].end_blk;
+						handle->మార్గం[i].చివర_blk;
 				}
 			}
 		}
-		errcode = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT, &extent);
+		errcode = ext2fs_extent_get(handle, EXT2_EXTENT_తదుపరి, &extent);
 	}
 	ext2fs_free_mem(&intermediate_nodes);
-out:
-	*ret_count = blkcount;
+బహిర్గతం:
+	*ret_లెక్క = blkcount;
 	ext2fs_extent_free(handle);
 
-	return 0;
+	తిరిగి 0;
 }
 
-#ifdef DEBUG
+#నిర్వచితమైతే DEBUG
 /*
  * Override debugfs's prompt
  */
-const char *debug_prog_name = "tst_extents";
+స్థిరరాశి అక్షరం *debug_prog_name = "tst_extents";
 
-#endif
+#అయితే_ముగింపు
 

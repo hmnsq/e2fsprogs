@@ -12,188 +12,188 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_ERRNO_H
+#అన్తర్భావ <errno.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "brel.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
+#అన్తర్భావ "brel.h"
 
-static errcode_t bma_put(ext2_brel brel, blk64_t old,
-			struct ext2_block_relocate_entry *ent);
-static errcode_t bma_get(ext2_brel brel, blk64_t old,
-			struct ext2_block_relocate_entry *ent);
-static errcode_t bma_start_iter(ext2_brel brel);
-static errcode_t bma_next(ext2_brel brel, blk64_t *old,
-			 struct ext2_block_relocate_entry *ent);
-static errcode_t bma_move(ext2_brel brel, blk64_t old, blk64_t new);
-static errcode_t bma_delete(ext2_brel brel, blk64_t old);
-static errcode_t bma_free(ext2_brel brel);
+స్థిర errcode_t bma_put(ext2_brel brel, blk64_t old,
+			నిర్మాణం ext2_ఖండం_relocate_నమోదు *ent);
+స్థిర errcode_t bma_get(ext2_brel brel, blk64_t old,
+			నిర్మాణం ext2_ఖండం_relocate_నమోదు *ent);
+స్థిర errcode_t bma_ప్రారంభం_iter(ext2_brel brel);
+స్థిర errcode_t bma_తదుపరి(ext2_brel brel, blk64_t *old,
+			 నిర్మాణం ext2_ఖండం_relocate_నమోదు *ent);
+స్థిర errcode_t bma_move(ext2_brel brel, blk64_t old, blk64_t new);
+స్థిర errcode_t bma_delete(ext2_brel brel, blk64_t old);
+స్థిర errcode_t bma_free(ext2_brel brel);
 
-struct brel_ma {
+నిర్మాణం brel_ma {
 	__u32 magic;
-	blk64_t max_block;
-	struct ext2_block_relocate_entry *entries;
+	blk64_t max_ఖండం;
+	నిర్మాణం ext2_ఖండం_relocate_నమోదు *entries;
 };
 
-errcode_t ext2fs_brel_memarray_create(char *name, blk64_t max_block,
+errcode_t ext2fs_brel_memarray_create(అక్షరం *name, blk64_t max_ఖండం,
 				      ext2_brel *new_brel)
 {
 	ext2_brel		brel = 0;
 	errcode_t	retval;
-	struct brel_ma 	*ma = 0;
-	size_t		size;
+	నిర్మాణం brel_ma 	*ma = 0;
+	size_t		కొలత;
 
 	*new_brel = 0;
 
 	/*
 	 * Allocate memory structures
 	 */
-	retval = ext2fs_get_mem(sizeof(struct ext2_block_relocation_table),
+	retval = ext2fs_get_mem(పరిమాణం(నిర్మాణం ext2_ఖండం_relocation_పట్టిక),
 				&brel);
-	if (retval)
-		goto errout;
-	memset(brel, 0, sizeof(struct ext2_block_relocation_table));
+	ఒకవేళ (retval)
+		వెళ్ళు errout;
+	memset(brel, 0, పరిమాణం(నిర్మాణం ext2_ఖండం_relocation_పట్టిక));
 
-	retval = ext2fs_get_mem(strlen(name)+1, &brel->name);
-	if (retval)
-		goto errout;
+	retval = ext2fs_get_mem(అక్షరశ్రేణి_పొడవు(name)+1, &brel->name);
+	ఒకవేళ (retval)
+		వెళ్ళు errout;
 	strcpy(brel->name, name);
 
-	retval = ext2fs_get_mem(sizeof(struct brel_ma), &ma);
-	if (retval)
-		goto errout;
-	memset(ma, 0, sizeof(struct brel_ma));
-	brel->priv_data = ma;
+	retval = ext2fs_get_mem(పరిమాణం(నిర్మాణం brel_ma), &ma);
+	ఒకవేళ (retval)
+		వెళ్ళు errout;
+	memset(ma, 0, పరిమాణం(నిర్మాణం brel_ma));
+	brel->priv_దత్తాంశం = ma;
 
-	size = (size_t) (sizeof(struct ext2_block_relocate_entry) *
-			 (max_block+1));
-	retval = ext2fs_get_array(max_block+1,
-		sizeof(struct ext2_block_relocate_entry), &ma->entries);
-	if (retval)
-		goto errout;
-	memset(ma->entries, 0, size);
-	ma->max_block = max_block;
+	కొలత = (size_t) (పరిమాణం(నిర్మాణం ext2_ఖండం_relocate_నమోదు) *
+			 (max_ఖండం+1));
+	retval = ext2fs_get_array(max_ఖండం+1,
+		పరిమాణం(నిర్మాణం ext2_ఖండం_relocate_నమోదు), &ma->entries);
+	ఒకవేళ (retval)
+		వెళ్ళు errout;
+	memset(ma->entries, 0, కొలత);
+	ma->max_ఖండం = max_ఖండం;
 
 	/*
 	 * Fill in the brel data structure
 	 */
 	brel->put = bma_put;
 	brel->get = bma_get;
-	brel->start_iter = bma_start_iter;
-	brel->next = bma_next;
+	brel->ప్రారంభం_iter = bma_ప్రారంభం_iter;
+	brel->తదుపరి = bma_తదుపరి;
 	brel->move = bma_move;
 	brel->delete = bma_delete;
-	brel->free = bma_free;
+	brel->విడుదల = bma_free;
 
 	*new_brel = brel;
-	return 0;
+	తిరిగి 0;
 
 errout:
 	bma_free(brel);
-	return retval;
+	తిరిగి retval;
 }
 
-static errcode_t bma_put(ext2_brel brel, blk64_t old,
-			struct ext2_block_relocate_entry *ent)
+స్థిర errcode_t bma_put(ext2_brel brel, blk64_t old,
+			నిర్మాణం ext2_ఖండం_relocate_నమోదు *ent)
 {
-	struct brel_ma 	*ma;
+	నిర్మాణం brel_ma 	*ma;
 
-	ma = brel->priv_data;
-	if (old > ma->max_block)
-		return EXT2_ET_INVALID_ARGUMENT;
-	ma->entries[(unsigned)old] = *ent;
-	return 0;
+	ma = brel->priv_దత్తాంశం;
+	ఒకవేళ (old > ma->max_ఖండం)
+		తిరిగి EXT2_ET_INVALID_వాదం;
+	ma->entries[(గుర్తులేని)old] = *ent;
+	తిరిగి 0;
 }
 
-static errcode_t bma_get(ext2_brel brel, blk64_t old,
-			struct ext2_block_relocate_entry *ent)
+స్థిర errcode_t bma_get(ext2_brel brel, blk64_t old,
+			నిర్మాణం ext2_ఖండం_relocate_నమోదు *ent)
 {
-	struct brel_ma 	*ma;
+	నిర్మాణం brel_ma 	*ma;
 
-	ma = brel->priv_data;
-	if (old > ma->max_block)
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned)old].new == 0)
-		return ENOENT;
+	ma = brel->priv_దత్తాంశం;
+	ఒకవేళ (old > ma->max_ఖండం)
+		తిరిగి EXT2_ET_INVALID_వాదం;
+	ఒకవేళ (ma->entries[(గుర్తులేని)old].new == 0)
+		తిరిగి ENOENT;
 	*ent = ma->entries[old];
-	return 0;
+	తిరిగి 0;
 }
 
-static errcode_t bma_start_iter(ext2_brel brel)
+స్థిర errcode_t bma_ప్రారంభం_iter(ext2_brel brel)
 {
 	brel->current = 0;
-	return 0;
+	తిరిగి 0;
 }
 
-static errcode_t bma_next(ext2_brel brel, blk64_t *old,
-			  struct ext2_block_relocate_entry *ent)
+స్థిర errcode_t bma_తదుపరి(ext2_brel brel, blk64_t *old,
+			  నిర్మాణం ext2_ఖండం_relocate_నమోదు *ent)
 {
-	struct brel_ma 	*ma;
+	నిర్మాణం brel_ma 	*ma;
 
-	ma = brel->priv_data;
-	while (++brel->current < ma->max_block) {
-		if (ma->entries[(unsigned)brel->current].new == 0)
-			continue;
+	ma = brel->priv_దత్తాంశం;
+	అయితే (++brel->current < ma->max_ఖండం) {
+		ఒకవేళ (ma->entries[(గుర్తులేని)brel->current].new == 0)
+			కొనసాగు;
 		*old = brel->current;
-		*ent = ma->entries[(unsigned)brel->current];
-		return 0;
+		*ent = ma->entries[(గుర్తులేని)brel->current];
+		తిరిగి 0;
 	}
 	*old = 0;
-	return 0;
+	తిరిగి 0;
 }
 
-static errcode_t bma_move(ext2_brel brel, blk64_t old, blk64_t new)
+స్థిర errcode_t bma_move(ext2_brel brel, blk64_t old, blk64_t new)
 {
-	struct brel_ma 	*ma;
+	నిర్మాణం brel_ma 	*ma;
 
-	ma = brel->priv_data;
-	if ((old > ma->max_block) || (new > ma->max_block))
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned)old].new == 0)
-		return ENOENT;
-	ma->entries[(unsigned)new] = ma->entries[old];
-	ma->entries[(unsigned)old].new = 0;
-	return 0;
+	ma = brel->priv_దత్తాంశం;
+	ఒకవేళ ((old > ma->max_ఖండం) || (new > ma->max_ఖండం))
+		తిరిగి EXT2_ET_INVALID_వాదం;
+	ఒకవేళ (ma->entries[(గుర్తులేని)old].new == 0)
+		తిరిగి ENOENT;
+	ma->entries[(గుర్తులేని)new] = ma->entries[old];
+	ma->entries[(గుర్తులేని)old].new = 0;
+	తిరిగి 0;
 }
 
-static errcode_t bma_delete(ext2_brel brel, blk64_t old)
+స్థిర errcode_t bma_delete(ext2_brel brel, blk64_t old)
 {
-	struct brel_ma 	*ma;
+	నిర్మాణం brel_ma 	*ma;
 
-	ma = brel->priv_data;
-	if (old > ma->max_block)
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned)old].new == 0)
-		return ENOENT;
-	ma->entries[(unsigned)old].new = 0;
-	return 0;
+	ma = brel->priv_దత్తాంశం;
+	ఒకవేళ (old > ma->max_ఖండం)
+		తిరిగి EXT2_ET_INVALID_వాదం;
+	ఒకవేళ (ma->entries[(గుర్తులేని)old].new == 0)
+		తిరిగి ENOENT;
+	ma->entries[(గుర్తులేని)old].new = 0;
+	తిరిగి 0;
 }
 
-static errcode_t bma_free(ext2_brel brel)
+స్థిర errcode_t bma_free(ext2_brel brel)
 {
-	struct brel_ma 	*ma;
+	నిర్మాణం brel_ma 	*ma;
 
-	if (!brel)
-		return 0;
+	ఒకవేళ (!brel)
+		తిరిగి 0;
 
-	ma = brel->priv_data;
+	ma = brel->priv_దత్తాంశం;
 
-	if (ma) {
-		if (ma->entries)
+	ఒకవేళ (ma) {
+		ఒకవేళ (ma->entries)
 			ext2fs_free_mem(&ma->entries);
 		ext2fs_free_mem(&ma);
 	}
-	if (brel->name)
+	ఒకవేళ (brel->name)
 		ext2fs_free_mem(&brel->name);
 	ext2fs_free_mem(&brel);
-	return 0;
+	తిరిగి 0;
 }

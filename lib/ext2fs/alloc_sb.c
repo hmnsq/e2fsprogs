@@ -10,23 +10,23 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <time.h>
+#ఒకవేళ HAVE_SYS_STAT_H
+#అన్తర్భావ <sys/stat.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
 /*
  * This function reserves the superblock and block group descriptors
@@ -41,42 +41,42 @@
  *
  * See also the comment for ext2fs_super_and_bgd_loc()
  */
-int ext2fs_reserve_super_and_bgd(ext2_filsys fs,
-				 dgrp_t group,
-				 ext2fs_block_bitmap bmap)
+పూర్ణాంకం ext2fs_reserve_super_and_bgd(ext2_filsys fs,
+				 dgrp_t సమూహం,
+				 ext2fs_ఖండం_bitmap bmap)
 {
 	blk64_t	super_blk, old_desc_blk, new_desc_blk;
-	blk_t	used_blks, old_desc_blocks, num_blocks;
+	blk_t	వాడిన_blks, old_desc_ఖండాలు, అంకె_ఖండాలు;
 
-	ext2fs_super_and_bgd_loc2(fs, group, &super_blk,
-				  &old_desc_blk, &new_desc_blk, &used_blks);
+	ext2fs_super_and_bgd_loc2(fs, సమూహం, &super_blk,
+				  &old_desc_blk, &new_desc_blk, &వాడిన_blks);
 
-	if (ext2fs_has_feature_meta_bg(fs->super))
-		old_desc_blocks = fs->super->s_first_meta_bg;
-	else
-		old_desc_blocks =
-			fs->desc_blocks + fs->super->s_reserved_gdt_blocks;
+	ఒకవేళ (ext2fs_has_feature_meta_bg(fs->super))
+		old_desc_ఖండాలు = fs->super->s_మొదటి_meta_bg;
+	లేకపోతే
+		old_desc_ఖండాలు =
+			fs->desc_ఖండాలు + fs->super->s_reserved_gdt_ఖండాలు;
 
-	if (super_blk || (group == 0))
-		ext2fs_mark_block_bitmap2(bmap, super_blk);
-	if ((group == 0) && (fs->blocksize == 1024) &&
-	    EXT2FS_CLUSTER_RATIO(fs) > 1)
-		ext2fs_mark_block_bitmap2(bmap, 0);
+	ఒకవేళ (super_blk || (సమూహం == 0))
+		ext2fs_mark_ఖండం_bitmap2(bmap, super_blk);
+	ఒకవేళ ((సమూహం == 0) && (fs->blocksize == 1024) &&
+	    EXT2_FS_CLUSTER_నిష్పత్తి(fs) > 1)
+		ext2fs_mark_ఖండం_bitmap2(bmap, 0);
 
-	if (old_desc_blk) {
-		num_blocks = old_desc_blocks;
-		if (old_desc_blk + num_blocks >= ext2fs_blocks_count(fs->super))
-			num_blocks = ext2fs_blocks_count(fs->super) -
+	ఒకవేళ (old_desc_blk) {
+		అంకె_ఖండాలు = old_desc_ఖండాలు;
+		ఒకవేళ (old_desc_blk + అంకె_ఖండాలు >= ext2fs_ఖండాలు_లెక్క(fs->super))
+			అంకె_ఖండాలు = ext2fs_ఖండాలు_లెక్క(fs->super) -
 				old_desc_blk;
-		ext2fs_mark_block_bitmap_range2(bmap, old_desc_blk, num_blocks);
+		ext2fs_mark_ఖండం_bitmap_range2(bmap, old_desc_blk, అంకె_ఖండాలు);
 	}
-	if (new_desc_blk)
-		ext2fs_mark_block_bitmap2(bmap, new_desc_blk);
+	ఒకవేళ (new_desc_blk)
+		ext2fs_mark_ఖండం_bitmap2(bmap, new_desc_blk);
 
-	num_blocks = ext2fs_group_blocks_count(fs, group);
-	num_blocks -= 2 + fs->inode_blocks_per_group + used_blks;
+	అంకె_ఖండాలు = ext2fs_సమూహం_ఖండాలు_లెక్క(fs, సమూహం);
+	అంకె_ఖండాలు -= 2 + fs->inode_ఖండాలు_చొప్పున_సమూహం + వాడిన_blks;
 
-	return num_blocks  ;
+	తిరిగి అంకె_ఖండాలు  ;
 }
 
 /*
@@ -85,21 +85,21 @@ int ext2fs_reserve_super_and_bgd(ext2_filsys fs,
  * super block and group descriptors by looking up the block bitmap.
  */
 errcode_t ext2fs_reserve_super_and_bgd2(ext2_filsys fs,
-				        dgrp_t group,
-				        ext2fs_block_bitmap bmap,
-				        blk_t *desc_blocks)
+				        dgrp_t సమూహం,
+				        ext2fs_ఖండం_bitmap bmap,
+				        blk_t *desc_ఖండాలు)
 {
-	blk64_t	num_blocks;
+	blk64_t	అంకె_ఖండాలు;
 	errcode_t retval = 0;
 
-	ext2fs_reserve_super_and_bgd(fs, group, bmap);
+	ext2fs_reserve_super_and_bgd(fs, సమూహం, bmap);
 
-	retval = ext2fs_count_used_blocks(fs,
-					ext2fs_group_first_block2(fs, group),
-					ext2fs_group_last_block2(fs, group),
-					&num_blocks);
-	if (!retval)
-		*desc_blocks = num_blocks;
+	retval = ext2fs_లెక్క_వాడిన_ఖండాలు(fs,
+					ext2fs_సమూహం_మొదటి_block2(fs, సమూహం),
+					ext2fs_సమూహం_చివరి_block2(fs, సమూహం),
+					&అంకె_ఖండాలు);
+	ఒకవేళ (!retval)
+		*desc_ఖండాలు = అంకె_ఖండాలు;
 
-	return retval;
+	తిరిగి retval;
 }

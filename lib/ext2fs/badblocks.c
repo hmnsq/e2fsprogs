@@ -9,68 +9,68 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <time.h>
+#ఒకవేళ HAVE_SYS_STAT_H
+#అన్తర్భావ <sys/stat.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fsP.h"
 
 /*
  * Helper function for making a badblocks list
  */
-static errcode_t make_u32_list(int size, int num, __u32 *list,
+స్థిర errcode_t make_u32_list(పూర్ణాంకం కొలత, పూర్ణాంకం అంకె, __u32 *list,
 			       ext2_u32_list *ret)
 {
 	ext2_u32_list	bb;
 	errcode_t	retval;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_struct_u32_list), &bb);
-	if (retval)
-		return retval;
-	memset(bb, 0, sizeof(struct ext2_struct_u32_list));
+	retval = ext2fs_get_mem(పరిమాణం(నిర్మాణం ext2_struct_u32_list), &bb);
+	ఒకవేళ (retval)
+		తిరిగి retval;
+	memset(bb, 0, పరిమాణం(నిర్మాణం ext2_struct_u32_list));
 	bb->magic = EXT2_ET_MAGIC_BADBLOCKS_LIST;
-	bb->size = size ? size : 10;
-	bb->num = num;
-	retval = ext2fs_get_array(bb->size, sizeof(blk_t), &bb->list);
-	if (retval) {
+	bb->కొలత = కొలత ? కొలత : 10;
+	bb->అంకె = అంకె;
+	retval = ext2fs_get_array(bb->కొలత, పరిమాణం(blk_t), &bb->list);
+	ఒకవేళ (retval) {
 		ext2fs_free_mem(&bb);
-		return retval;
+		తిరిగి retval;
 	}
-	if (list)
-		memcpy(bb->list, list, bb->size * sizeof(blk_t));
-	else
-		memset(bb->list, 0, bb->size * sizeof(blk_t));
+	ఒకవేళ (list)
+		జ్ఞాపకం_నకలు(bb->list, list, bb->కొలత * పరిమాణం(blk_t));
+	లేకపోతే
+		memset(bb->list, 0, bb->కొలత * పరిమాణం(blk_t));
 	*ret = bb;
-	return 0;
+	తిరిగి 0;
 }
 
 
 /*
  * This procedure creates an empty u32 list.
  */
-errcode_t ext2fs_u32_list_create(ext2_u32_list *ret, int size)
+errcode_t ext2fs_u32_list_create(ext2_u32_list *ret, పూర్ణాంకం కొలత)
 {
-	return make_u32_list(size, 0, 0, ret);
+	తిరిగి make_u32_list(కొలత, 0, 0, ret);
 }
 
 /*
  * This procedure creates an empty badblocks list.
  */
-errcode_t ext2fs_badblocks_list_create(ext2_badblocks_list *ret, int size)
+errcode_t ext2fs_badblocks_list_create(ext2_badblocks_list *ret, పూర్ణాంకం కొలత)
 {
-	return make_u32_list(size, 0, 0, (ext2_badblocks_list *) ret);
+	తిరిగి make_u32_list(కొలత, 0, 0, (ext2_badblocks_list *) ret);
 }
 
 
@@ -81,17 +81,17 @@ errcode_t ext2fs_u32_copy(ext2_u32_list src, ext2_u32_list *dest)
 {
 	errcode_t	retval;
 
-	retval = make_u32_list(src->size, src->num, src->list, dest);
-	if (retval)
-		return retval;
+	retval = make_u32_list(src->కొలత, src->అంకె, src->list, dest);
+	ఒకవేళ (retval)
+		తిరిగి retval;
 	(*dest)->badblocks_flags = src->badblocks_flags;
-	return 0;
+	తిరిగి 0;
 }
 
 errcode_t ext2fs_badblocks_copy(ext2_badblocks_list src,
 				ext2_badblocks_list *dest)
 {
-	return ext2fs_u32_copy((ext2_u32_list) src,
+	తిరిగి ext2fs_u32_copy((ext2_u32_list) src,
 			       (ext2_u32_list *) dest);
 }
 
@@ -105,131 +105,131 @@ errcode_t ext2fs_badblocks_copy(ext2_badblocks_list src,
 /*
  * This procedure adds an item to a tracking list (e.g. badblocks or casefold).
  */
-errcode_t ext2fs_u32_list_add(ext2_u32_list bb, __u32 blk)
+errcode_t ext2fs_u32_list_కూడు(ext2_u32_list bb, __u32 blk)
 {
 	errcode_t	retval;
-	int		i, j;
-	unsigned long	old_size;
+	పూర్ణాంకం		i, j;
+	గుర్తులేని దీర్ఘ	old_కొలత;
 
 	EXT2_CHECK_MAGIC(bb, EXT2_ET_MAGIC_BADBLOCKS_LIST);
 
-	if (bb->num >= bb->size) {
-		old_size = bb->size * sizeof(__u32);
-		bb->size += 100;
-		retval = ext2fs_resize_mem(old_size, bb->size * sizeof(__u32),
+	ఒకవేళ (bb->అంకె >= bb->కొలత) {
+		old_కొలత = bb->కొలత * పరిమాణం(__u32);
+		bb->కొలత += 100;
+		retval = ext2fs_resize_mem(old_కొలత, bb->కొలత * పరిమాణం(__u32),
 					   &bb->list);
-		if (retval) {
-			bb->size -= 100;
-			return retval;
+		ఒకవేళ (retval) {
+			bb->కొలత -= 100;
+			తిరిగి retval;
 		}
 	}
 
 	/*
 	 * Add special case code for appending to the end of the list
 	 */
-	i = bb->num-1;
-	if ((bb->num != 0) && (bb->list[i] == blk))
-		return 0;
-	if ((bb->num == 0) || (bb->list[i] < blk)) {
-		bb->list[bb->num++] = blk;
-		return 0;
+	i = bb->అంకె-1;
+	ఒకవేళ ((bb->అంకె != 0) && (bb->list[i] == blk))
+		తిరిగి 0;
+	ఒకవేళ ((bb->అంకె == 0) || (bb->list[i] < blk)) {
+		bb->list[bb->అంకె++] = blk;
+		తిరిగి 0;
 	}
 
-	j = bb->num;
-	for (i=0; i < bb->num; i++) {
-		if (bb->list[i] == blk)
-			return 0;
-		if (bb->list[i] > blk) {
+	j = bb->అంకె;
+	కొరకు (i=0; i < bb->అంకె; i++) {
+		ఒకవేళ (bb->list[i] == blk)
+			తిరిగి 0;
+		ఒకవేళ (bb->list[i] > blk) {
 			j = i;
-			break;
+			ఆపు;
 		}
 	}
-	for (i=bb->num; i > j; i--)
+	కొరకు (i=bb->అంకె; i > j; i--)
 		bb->list[i] = bb->list[i-1];
 	bb->list[j] = blk;
-	bb->num++;
-	return 0;
+	bb->అంకె++;
+	తిరిగి 0;
 }
 
-errcode_t ext2fs_badblocks_list_add(ext2_badblocks_list bb, blk_t blk)
+errcode_t ext2fs_badblocks_list_కూడు(ext2_badblocks_list bb, blk_t blk)
 {
-	return ext2fs_u32_list_add((ext2_u32_list) bb, (__u32) blk);
+	తిరిగి ext2fs_u32_list_కూడు((ext2_u32_list) bb, (__u32) blk);
 }
 
 /*
  * This procedure finds a particular block is on a badblocks
  * list.
  */
-int ext2fs_u32_list_find(ext2_u32_list bb, __u32 blk)
+పూర్ణాంకం ext2fs_u32_list_కనుగొను(ext2_u32_list bb, __u32 blk)
 {
-	int	low, high, mid;
+	పూర్ణాంకం	దిగువ, ఎగువ, mid;
 
-	if (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
-		return -1;
+	ఒకవేళ (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
+		తిరిగి -1;
 
-	if (bb->num == 0)
-		return -1;
+	ఒకవేళ (bb->అంకె == 0)
+		తిరిగి -1;
 
-	low = 0;
-	high = bb->num-1;
-	if (blk == bb->list[low])
-		return low;
-	if (blk == bb->list[high])
-		return high;
+	దిగువ = 0;
+	ఎగువ = bb->అంకె-1;
+	ఒకవేళ (blk == bb->list[దిగువ])
+		తిరిగి దిగువ;
+	ఒకవేళ (blk == bb->list[ఎగువ])
+		తిరిగి ఎగువ;
 
-	while (low < high) {
-		mid = ((unsigned)low + (unsigned)high)/2;
-		if (mid == low || mid == high)
-			break;
-		if (blk == bb->list[mid])
-			return mid;
-		if (blk < bb->list[mid])
-			high = mid;
-		else
-			low = mid;
+	అయితే (దిగువ < ఎగువ) {
+		mid = ((గుర్తులేని)దిగువ + (గుర్తులేని)ఎగువ)/2;
+		ఒకవేళ (mid == దిగువ || mid == ఎగువ)
+			ఆపు;
+		ఒకవేళ (blk == bb->list[mid])
+			తిరిగి mid;
+		ఒకవేళ (blk < bb->list[mid])
+			ఎగువ = mid;
+		లేకపోతే
+			దిగువ = mid;
 	}
-	return -1;
+	తిరిగి -1;
 }
 
 /*
  * This procedure tests to see if a particular block is on a badblocks
  * list.
  */
-int ext2fs_u32_list_test(ext2_u32_list bb, __u32 blk)
+పూర్ణాంకం ext2fs_u32_list_test(ext2_u32_list bb, __u32 blk)
 {
-	if (ext2fs_u32_list_find(bb, blk) < 0)
-		return 0;
-	else
-		return 1;
+	ఒకవేళ (ext2fs_u32_list_కనుగొను(bb, blk) < 0)
+		తిరిగి 0;
+	లేకపోతే
+		తిరిగి 1;
 }
 
-int ext2fs_badblocks_list_test(ext2_badblocks_list bb, blk_t blk)
+పూర్ణాంకం ext2fs_badblocks_list_test(ext2_badblocks_list bb, blk_t blk)
 {
-	return ext2fs_u32_list_test((ext2_u32_list) bb, (__u32) blk);
+	తిరిగి ext2fs_u32_list_test((ext2_u32_list) bb, (__u32) blk);
 }
 
 
 /*
  * Remove a block from the badblock list
  */
-int ext2fs_u32_list_del(ext2_u32_list bb, __u32 blk)
+పూర్ణాంకం ext2fs_u32_list_del(ext2_u32_list bb, __u32 blk)
 {
-	int	remloc, i;
+	పూర్ణాంకం	remloc, i;
 
-	if (bb->num == 0)
-		return -1;
+	ఒకవేళ (bb->అంకె == 0)
+		తిరిగి -1;
 
-	remloc = ext2fs_u32_list_find(bb, blk);
-	if (remloc < 0)
-		return -1;
+	remloc = ext2fs_u32_list_కనుగొను(bb, blk);
+	ఒకవేళ (remloc < 0)
+		తిరిగి -1;
 
-	for (i = remloc ; i < bb->num-1; i++)
+	కొరకు (i = remloc ; i < bb->అంకె-1; i++)
 		bb->list[i] = bb->list[i+1];
-	bb->num--;
-	return 0;
+	bb->అంకె--;
+	తిరిగి 0;
 }
 
-void ext2fs_badblocks_list_del(ext2_u32_list bb, __u32 blk)
+శూన్య ext2fs_badblocks_list_del(ext2_u32_list bb, __u32 blk)
 {
 	ext2fs_u32_list_del(bb, blk);
 }
@@ -242,87 +242,87 @@ errcode_t ext2fs_u32_list_iterate_begin(ext2_u32_list bb,
 
 	EXT2_CHECK_MAGIC(bb, EXT2_ET_MAGIC_BADBLOCKS_LIST);
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_struct_u32_iterate), &iter);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(పరిమాణం(నిర్మాణం ext2_struct_u32_iterate), &iter);
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
 	iter->magic = EXT2_ET_MAGIC_BADBLOCKS_ITERATE;
 	iter->bb = bb;
 	iter->ptr = 0;
 	*ret = iter;
-	return 0;
+	తిరిగి 0;
 }
 
 errcode_t ext2fs_badblocks_list_iterate_begin(ext2_badblocks_list bb,
 					      ext2_badblocks_iterate *ret)
 {
-	return ext2fs_u32_list_iterate_begin((ext2_u32_list) bb,
+	తిరిగి ext2fs_u32_list_iterate_begin((ext2_u32_list) bb,
 					      (ext2_u32_iterate *) ret);
 }
 
 
-int ext2fs_u32_list_iterate(ext2_u32_iterate iter, __u32 *blk)
+పూర్ణాంకం ext2fs_u32_list_iterate(ext2_u32_iterate iter, __u32 *blk)
 {
 	ext2_u32_list	bb;
 
-	if (iter->magic != EXT2_ET_MAGIC_BADBLOCKS_ITERATE)
-		return 0;
+	ఒకవేళ (iter->magic != EXT2_ET_MAGIC_BADBLOCKS_ITERATE)
+		తిరిగి 0;
 
 	bb = iter->bb;
 
-	if (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
-		return 0;
+	ఒకవేళ (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
+		తిరిగి 0;
 
-	if (iter->ptr < bb->num) {
+	ఒకవేళ (iter->ptr < bb->అంకె) {
 		*blk = bb->list[iter->ptr++];
-		return 1;
+		తిరిగి 1;
 	}
 	*blk = 0;
-	return 0;
+	తిరిగి 0;
 }
 
-int ext2fs_badblocks_list_iterate(ext2_badblocks_iterate iter, blk_t *blk)
+పూర్ణాంకం ext2fs_badblocks_list_iterate(ext2_badblocks_iterate iter, blk_t *blk)
 {
-	return ext2fs_u32_list_iterate((ext2_u32_iterate) iter,
+	తిరిగి ext2fs_u32_list_iterate((ext2_u32_iterate) iter,
 				       (__u32 *) blk);
 }
 
 
-void ext2fs_u32_list_iterate_end(ext2_u32_iterate iter)
+శూన్య ext2fs_u32_list_iterate_చివర(ext2_u32_iterate iter)
 {
-	if (!iter || (iter->magic != EXT2_ET_MAGIC_BADBLOCKS_ITERATE))
-		return;
+	ఒకవేళ (!iter || (iter->magic != EXT2_ET_MAGIC_BADBLOCKS_ITERATE))
+		తిరిగి;
 
 	iter->bb = 0;
 	ext2fs_free_mem(&iter);
 }
 
-void ext2fs_badblocks_list_iterate_end(ext2_badblocks_iterate iter)
+శూన్య ext2fs_badblocks_list_iterate_చివర(ext2_badblocks_iterate iter)
 {
-	ext2fs_u32_list_iterate_end((ext2_u32_iterate) iter);
+	ext2fs_u32_list_iterate_చివర((ext2_u32_iterate) iter);
 }
 
 
-int ext2fs_u32_list_equal(ext2_u32_list bb1, ext2_u32_list bb2)
+పూర్ణాంకం ext2fs_u32_list_equal(ext2_u32_list bb1, ext2_u32_list bb2)
 {
 	EXT2_CHECK_MAGIC(bb1, EXT2_ET_MAGIC_BADBLOCKS_LIST);
 	EXT2_CHECK_MAGIC(bb2, EXT2_ET_MAGIC_BADBLOCKS_LIST);
 
-	if (bb1->num != bb2->num)
-		return 0;
+	ఒకవేళ (bb1->అంకె != bb2->అంకె)
+		తిరిగి 0;
 
-	if (memcmp(bb1->list, bb2->list, bb1->num * sizeof(blk_t)) != 0)
-		return 0;
-	return 1;
+	ఒకవేళ (memcmp(bb1->list, bb2->list, bb1->అంకె * పరిమాణం(blk_t)) != 0)
+		తిరిగి 0;
+	తిరిగి 1;
 }
 
-int ext2fs_badblocks_equal(ext2_badblocks_list bb1, ext2_badblocks_list bb2)
+పూర్ణాంకం ext2fs_badblocks_equal(ext2_badblocks_list bb1, ext2_badblocks_list bb2)
 {
-	return ext2fs_u32_list_equal((ext2_u32_list) bb1,
+	తిరిగి ext2fs_u32_list_equal((ext2_u32_list) bb1,
 				     (ext2_u32_list) bb2);
 }
 
-int ext2fs_u32_list_count(ext2_u32_list bb)
+పూర్ణాంకం ext2fs_u32_list_లెక్క(ext2_u32_list bb)
 {
-	return bb->num;
+	తిరిగి bb->అంకె;
 }

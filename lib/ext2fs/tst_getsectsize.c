@@ -9,55 +9,55 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <sys/types.h>
+#ఒకవేళ HAVE_ERRNO_H
+#అన్తర్భావ <errno.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
-int main(int argc, char **argv)
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	int	lsectsize, psectsize;
-	int	retval;
-	int	fd;
+	పూర్ణాంకం	lsectsize, psectsize;
+	పూర్ణాంకం	retval;
+	పూర్ణాంకం	fd;
 
-	if (argc < 2) {
+	ఒకవేళ (argc < 2) {
 		fprintf(stderr, "Usage: %s device\n", argv[0]);
-		exit(1);
+		నిష్క్రమించు(1);
 	}
 
 	retval = ext2fs_get_device_sectsize(argv[1], &lsectsize);
-	if (retval) {
+	ఒకవేళ (retval) {
 		com_err(argv[0], retval,
 			"while calling ext2fs_get_device_sectsize");
-		exit(1);
+		నిష్క్రమించు(1);
 	}
 	retval = ext2fs_get_device_phys_sectsize(argv[1], &psectsize);
-	if (retval) {
+	ఒకవేళ (retval) {
 		com_err(argv[0], retval,
 			"while calling ext2fs_get_device_phys_sectsize");
-		exit(1);
+		నిష్క్రమించు(1);
 	}
-	printf("Device %s has logical/physical sector size of %d/%d.\n",
+	రాయి("Device %s has logical/physical sector size of %d/%d.\n",
 	       argv[1], lsectsize, psectsize);
 	fd = open(argv[1], O_RDONLY);
-	if (fd < 0) {
+	ఒకవేళ (fd < 0) {
 		perror("open");
-		exit(1);
+		నిష్క్రమించు(1);
 	}
-	printf("The device's DIO alignment is %d\n",
+	రాయి("The device's DIO alignment is %d\n",
 	       ext2fs_get_dio_alignment(fd));
 	close(fd);
-	exit(0);
+	నిష్క్రమించు(0);
 }

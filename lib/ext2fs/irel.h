@@ -9,75 +9,75 @@
  * %End-Header%
  */
 
-struct ext2_inode_reference {
-	blk64_t	block;
-	__u16 offset;
+నిర్మాణం ext2_inode_reference {
+	blk64_t	ఖండం;
+	__u16 స్థానభ్రంశం;
 };
 
-struct ext2_inode_relocate_entry {
+నిర్మాణం ext2_inode_relocate_నమోదు {
 	ext2_ino_t	new;
 	ext2_ino_t	orig;
 	__u16		flags;
 	__u16		max_refs;
 };
 
-typedef struct ext2_inode_relocation_table *ext2_irel;
+రకనిర్వచనం నిర్మాణం ext2_inode_relocation_పట్టిక *ext2_irel;
 
-struct ext2_inode_relocation_table {
+నిర్మాణం ext2_inode_relocation_పట్టిక {
 	__u32	magic;
-	char	*name;
+	అక్షరం	*name;
 	ext2_ino_t	current;
-	void	*priv_data;
+	శూన్య	*priv_దత్తాంశం;
 
 	/*
 	 * Add an inode relocation entry.
 	 */
 	errcode_t (*put)(ext2_irel irel, ext2_ino_t old,
-			      struct ext2_inode_relocate_entry *ent);
+			      నిర్మాణం ext2_inode_relocate_నమోదు *ent);
 	/*
 	 * Get an inode relocation entry.
 	 */
 	errcode_t (*get)(ext2_irel irel, ext2_ino_t old,
-			      struct ext2_inode_relocate_entry *ent);
+			      నిర్మాణం ext2_inode_relocate_నమోదు *ent);
 
 	/*
 	 * Get an inode relocation entry by its original inode number
 	 */
 	errcode_t (*get_by_orig)(ext2_irel irel, ext2_ino_t orig, ext2_ino_t *old,
-				 struct ext2_inode_relocate_entry *ent);
+				 నిర్మాణం ext2_inode_relocate_నమోదు *ent);
 
 	/*
 	 * Initialize for iterating over the inode relocation entries.
 	 */
-	errcode_t (*start_iter)(ext2_irel irel);
+	errcode_t (*ప్రారంభం_iter)(ext2_irel irel);
 
 	/*
 	 * The iterator function for the inode relocation entries.
 	 * Returns an inode number of 0 when out of entries.
 	 */
-	errcode_t (*next)(ext2_irel irel, ext2_ino_t *old,
-			  struct ext2_inode_relocate_entry *ent);
+	errcode_t (*తదుపరి)(ext2_irel irel, ext2_ino_t *old,
+			  నిర్మాణం ext2_inode_relocate_నమోదు *ent);
 
 	/*
 	 * Add an inode reference (i.e., note the fact that a
 	 * particular block/offset contains a reference to an inode)
 	 */
-	errcode_t (*add_ref)(ext2_irel irel, ext2_ino_t ino,
-			     struct ext2_inode_reference *ref);
+	errcode_t (*కూడు_ref)(ext2_irel irel, ext2_ino_t ino,
+			     నిర్మాణం ext2_inode_reference *ref);
 
 	/*
 	 * Initialize for iterating over the inode references for a
 	 * particular inode.
 	 */
-	errcode_t (*start_iter_ref)(ext2_irel irel, ext2_ino_t ino);
+	errcode_t (*ప్రారంభం_iter_ref)(ext2_irel irel, ext2_ino_t ino);
 
 	/*
 	 * The iterator function for the inode references for an
 	 * inode.  The references for only one inode can be iterator
 	 * over at a time, as the iterator state is stored in ext2_irel.
 	 */
-	errcode_t (*next_ref)(ext2_irel irel,
-			      struct ext2_inode_reference *ref);
+	errcode_t (*తదుపరి_ref)(ext2_irel irel,
+			      నిర్మాణం ext2_inode_reference *ref);
 
 	/*
 	 * Move the inode relocation table from one inode number to
@@ -94,21 +94,21 @@ struct ext2_inode_relocation_table {
 	/*
 	 * Free the inode relocation table.
 	 */
-	errcode_t (*free)(ext2_irel irel);
+	errcode_t (*విడుదల)(ext2_irel irel);
 };
 
-errcode_t ext2fs_irel_memarray_create(char *name, ext2_ino_t max_inode,
+errcode_t ext2fs_irel_memarray_create(అక్షరం *name, ext2_ino_t max_inode,
 				    ext2_irel *irel);
 
-#define ext2fs_irel_put(irel, old, ent) ((irel)->put((irel), old, ent))
-#define ext2fs_irel_get(irel, old, ent) ((irel)->get((irel), old, ent))
-#define ext2fs_irel_get_by_orig(irel, orig, old, ent) \
+#నిర్వచించు ext2fs_irel_put(irel, old, ent) ((irel)->put((irel), old, ent))
+#నిర్వచించు ext2fs_irel_get(irel, old, ent) ((irel)->get((irel), old, ent))
+#నిర్వచించు ext2fs_irel_get_by_orig(irel, orig, old, ent) \
 			((irel)->get_by_orig((irel), orig, old, ent))
-#define ext2fs_irel_start_iter(irel) ((irel)->start_iter((irel)))
-#define ext2fs_irel_next(irel, old, ent) ((irel)->next((irel), old, ent))
-#define ext2fs_irel_add_ref(irel, ino, ref) ((irel)->add_ref((irel), ino, ref))
-#define ext2fs_irel_start_iter_ref(irel, ino) ((irel)->start_iter_ref((irel), ino))
-#define ext2fs_irel_next_ref(irel, ref) ((irel)->next_ref((irel), ref))
-#define ext2fs_irel_move(irel, old, new) ((irel)->move((irel), old, new))
-#define ext2fs_irel_delete(irel, old) ((irel)->delete((irel), old))
-#define ext2fs_irel_free(irel) ((irel)->free((irel)))
+#నిర్వచించు ext2fs_irel_ప్రారంభం_iter(irel) ((irel)->ప్రారంభం_iter((irel)))
+#నిర్వచించు ext2fs_irel_తదుపరి(irel, old, ent) ((irel)->తదుపరి((irel), old, ent))
+#నిర్వచించు ext2fs_irel_కూడు_ref(irel, ino, ref) ((irel)->కూడు_ref((irel), ino, ref))
+#నిర్వచించు ext2fs_irel_ప్రారంభం_iter_ref(irel, ino) ((irel)->ప్రారంభం_iter_ref((irel), ino))
+#నిర్వచించు ext2fs_irel_తదుపరి_ref(irel, ref) ((irel)->తదుపరి_ref((irel), ref))
+#నిర్వచించు ext2fs_irel_move(irel, old, new) ((irel)->move((irel), old, new))
+#నిర్వచించు ext2fs_irel_delete(irel, old) ((irel)->delete((irel), old))
+#నిర్వచించు ext2fs_irel_free(irel) ((irel)->విడుదల((irel)))

@@ -10,51 +10,51 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <time.h>
+#ఒకవేళ HAVE_SYS_STAT_H
+#అన్తర్భావ <sys/stat.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
-#ifndef HAVE_STRNLEN
+#నిర్వచితం_కాకపోతే HAVE_STRNLEN
 /*
  * Incredibly, libc5 doesn't appear to have strnlen.  So we have to
  * provide our own.
  */
-static int my_strnlen(const char * s, int count)
+స్థిర పూర్ణాంకం my_strnlen(స్థిరరాశి అక్షరం * s, పూర్ణాంకం లెక్క)
 {
-	const char *cp = s;
+	స్థిరరాశి అక్షరం *cp = s;
 
-	while (count-- && *cp)
+	అయితే (లెక్క-- && *cp)
 		cp++;
-	return cp - s;
+	తిరిగి cp - s;
 }
-#define strnlen(str, x) my_strnlen((str),(x))
-#endif
+#నిర్వచించు strnlen(str, x) my_strnlen((str),(x))
+#అయితే_ముగింపు
 
-errcode_t ext2fs_symlink(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t ino,
-			 const char *name, const char *target)
+errcode_t ext2fs_symlink(ext2_filsys fs, ext2_ino_t మాతృ, ext2_ino_t ino,
+			 స్థిరరాశి అక్షరం *name, స్థిరరాశి అక్షరం *లక్ష్యం)
 {
 	errcode_t		retval;
-	struct ext2_inode	inode;
+	నిర్మాణం ext2_inode	inode;
 	ext2_ino_t		scratch_ino;
 	blk64_t			blk;
-	int			fastlink, inlinelink;
-	unsigned int		target_len;
-	char			*block_buf = 0;
-	int			drop_refcount = 0;
+	పూర్ణాంకం			fastlink, inlinelink;
+	గుర్తులేని పూర్ణాంకం		లక్ష్యం_len;
+	అక్షరం			*ఖండం_buf = 0;
+	పూర్ణాంకం			drop_refcount = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
@@ -62,76 +62,76 @@ errcode_t ext2fs_symlink(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t ino,
 	 * The Linux kernel doesn't allow for links longer than a block
 	 * (counting the NUL terminator)
 	 */
-	target_len = strnlen(target, fs->blocksize + 1);
-	if (target_len >= fs->blocksize) {
-		retval = EXT2_ET_INVALID_ARGUMENT;
-		goto cleanup;
+	లక్ష్యం_len = strnlen(లక్ష్యం, fs->blocksize + 1);
+	ఒకవేళ (లక్ష్యం_len >= fs->blocksize) {
+		retval = EXT2_ET_INVALID_వాదం;
+		వెళ్ళు cleanup;
 	}
 
 	/*
 	 * Allocate a data block for slow links
 	 */
-	retval = ext2fs_get_mem(fs->blocksize, &block_buf);
-	if (retval)
-		goto cleanup;
-	memset(block_buf, 0, fs->blocksize);
-	strncpy(block_buf, target, fs->blocksize);
+	retval = ext2fs_get_mem(fs->blocksize, &ఖండం_buf);
+	ఒకవేళ (retval)
+		వెళ్ళు cleanup;
+	memset(ఖండం_buf, 0, fs->blocksize);
+	strncpy(ఖండం_buf, లక్ష్యం, fs->blocksize);
 
-	memset(&inode, 0, sizeof(struct ext2_inode));
-	fastlink = (target_len < sizeof(inode.i_block));
-	if (!fastlink) {
-		retval = ext2fs_new_block2(fs, ext2fs_find_inode_goal(fs, ino,
+	memset(&inode, 0, పరిమాణం(నిర్మాణం ext2_inode));
+	fastlink = (లక్ష్యం_len < పరిమాణం(inode.i_ఖండం));
+	ఒకవేళ (!fastlink) {
+		retval = ext2fs_new_block2(fs, ext2fs_కనుగొను_inode_goal(fs, ino,
 								      &inode,
 								      0),
-					   NULL, &blk);
-		if (retval)
-			goto cleanup;
+					   ఖాళీ, &blk);
+		ఒకవేళ (retval)
+			వెళ్ళు cleanup;
 	}
 
 	/*
 	 * Allocate an inode, if necessary
 	 */
-	if (!ino) {
-		retval = ext2fs_new_inode(fs, parent, LINUX_S_IFLNK | 0755,
+	ఒకవేళ (!ino) {
+		retval = ext2fs_new_inode(fs, మాతృ, LINUX_S_IFLNK | 0755,
 					  0, &ino);
-		if (retval)
-			goto cleanup;
+		ఒకవేళ (retval)
+			వెళ్ళు cleanup;
 	}
 
 	/*
 	 * Create the inode structure....
 	 */
-	inode.i_mode = LINUX_S_IFLNK | 0777;
+	inode.i_బహుళకం = LINUX_S_IFLNK | 0777;
 	inode.i_uid = inode.i_gid = 0;
-	inode.i_links_count = 1;
-	ext2fs_inode_size_set(fs, &inode, target_len);
+	inode.i_links_లెక్క = 1;
+	ext2fs_inode_కొలత_సమితి(fs, &inode, లక్ష్యం_len);
 	/* The time fields are set by ext2fs_write_new_inode() */
 
-	inlinelink = !fastlink && ext2fs_has_feature_inline_data(fs->super);
-	if (fastlink) {
+	inlinelink = !fastlink && ext2fs_has_feature_inline_దత్తాంశం(fs->super);
+	ఒకవేళ (fastlink) {
 		/* Fast symlinks, target stored in inode */
-		strcpy((char *)&inode.i_block, target);
-	} else if (inlinelink) {
+		strcpy((అక్షరం *)&inode.i_ఖండం, లక్ష్యం);
+	} లేకపోతే ఒకవేళ (inlinelink) {
 		/* Try inserting an inline data symlink */
-		inode.i_flags |= EXT4_INLINE_DATA_FL;
+		inode.i_flags |= EXT4_INLINE_దత్తాంశం_FL;
 		retval = ext2fs_write_new_inode(fs, ino, &inode);
-		if (retval)
-			goto cleanup;
-		retval = ext2fs_inline_data_set(fs, ino, &inode, block_buf,
-						target_len);
-		if (retval) {
-			inode.i_flags &= ~EXT4_INLINE_DATA_FL;
+		ఒకవేళ (retval)
+			వెళ్ళు cleanup;
+		retval = ext2fs_inline_దత్తాంశం_సమితి(fs, ino, &inode, ఖండం_buf,
+						లక్ష్యం_len);
+		ఒకవేళ (retval) {
+			inode.i_flags &= ~EXT4_INLINE_దత్తాంశం_FL;
 			inlinelink = 0;
-			goto need_block;
+			వెళ్ళు need_ఖండం;
 		}
 		retval = ext2fs_read_inode(fs, ino, &inode);
-		if (retval)
-			goto cleanup;
-	} else {
-need_block:
+		ఒకవేళ (retval)
+			వెళ్ళు cleanup;
+	} లేకపోతే {
+need_ఖండం:
 		/* Slow symlinks, target stored in the first block */
-		ext2fs_iblk_set(fs, &inode, 1);
-		if (ext2fs_has_feature_extents(fs->super)) {
+		ext2fs_iblk_సమితి(fs, &inode, 1);
+		ఒకవేళ (ext2fs_has_feature_extents(fs->super)) {
 			/*
 			 * The extent bmap is setup after the inode and block
 			 * have been written out below.
@@ -145,59 +145,59 @@ need_block:
 	 * number is assigned by write_new_inode, which means that the
 	 * operations using ino must come after it.
 	 */
-	if (inlinelink)
+	ఒకవేళ (inlinelink)
 		retval = ext2fs_write_inode(fs, ino, &inode);
-	else
+	లేకపోతే
 		retval = ext2fs_write_new_inode(fs, ino, &inode);
-	if (retval)
-		goto cleanup;
+	ఒకవేళ (retval)
+		వెళ్ళు cleanup;
 
-	if (!fastlink && !inlinelink) {
-		retval = ext2fs_bmap2(fs, ino, &inode, NULL, BMAP_SET, 0, NULL,
+	ఒకవేళ (!fastlink && !inlinelink) {
+		retval = ext2fs_bmap2(fs, ino, &inode, ఖాళీ, BMAP_సమితి, 0, ఖాళీ,
 				      &blk);
-		if (retval)
-			goto cleanup;
+		ఒకవేళ (retval)
+			వెళ్ళు cleanup;
 
-		retval = io_channel_write_blk64(fs->io, blk, 1, block_buf);
-		if (retval)
-			goto cleanup;
+		retval = io_channel_write_blk64(fs->io, blk, 1, ఖండం_buf);
+		ఒకవేళ (retval)
+			వెళ్ళు cleanup;
 	}
 
 	/*
 	 * Update accounting....
 	 */
-	if (!fastlink && !inlinelink)
-		ext2fs_block_alloc_stats2(fs, blk, +1);
+	ఒకవేళ (!fastlink && !inlinelink)
+		ext2fs_ఖండం_alloc_stats2(fs, blk, +1);
 	ext2fs_inode_alloc_stats2(fs, ino, +1, 0);
 	drop_refcount = 1;
 
 	/*
 	 * Link the symlink into the filesystem hierarchy
 	 */
-	if (name) {
-		retval = ext2fs_lookup(fs, parent, name, strlen(name), 0,
+	ఒకవేళ (name) {
+		retval = ext2fs_lookup(fs, మాతృ, name, అక్షరశ్రేణి_పొడవు(name), 0,
 				       &scratch_ino);
-		if (!retval) {
+		ఒకవేళ (!retval) {
 			retval = EXT2_ET_FILE_EXISTS;
-			goto cleanup;
+			వెళ్ళు cleanup;
 		}
-		if (retval != EXT2_ET_FILE_NOT_FOUND)
-			goto cleanup;
-		retval = ext2fs_link(fs, parent, name, ino, EXT2_FT_SYMLINK);
-		if (retval)
-			goto cleanup;
+		ఒకవేళ (retval != EXT2_ET_FILE_NOT_దొరికింది)
+			వెళ్ళు cleanup;
+		retval = ext2fs_link(fs, మాతృ, name, ino, EXT2_FT_SYMLINK);
+		ఒకవేళ (retval)
+			వెళ్ళు cleanup;
 	}
 	drop_refcount = 0;
 
 cleanup:
-	if (block_buf)
-		ext2fs_free_mem(&block_buf);
-	if (drop_refcount) {
-		if (!fastlink && !inlinelink)
-			ext2fs_block_alloc_stats2(fs, blk, -1);
+	ఒకవేళ (ఖండం_buf)
+		ext2fs_free_mem(&ఖండం_buf);
+	ఒకవేళ (drop_refcount) {
+		ఒకవేళ (!fastlink && !inlinelink)
+			ext2fs_ఖండం_alloc_stats2(fs, blk, -1);
 		ext2fs_inode_alloc_stats2(fs, ino, -1, 0);
 	}
-	return retval;
+	తిరిగి retval;
 }
 
 /*
@@ -205,8 +205,8 @@ cleanup:
  *
  * A fast symlink has its symlink data stored in inode->i_block.
  */
-int ext2fs_is_fast_symlink(struct ext2_inode *inode)
+పూర్ణాంకం ext2fs_is_fast_symlink(నిర్మాణం ext2_inode *inode)
 {
-	return LINUX_S_ISLNK(inode->i_mode) && EXT2_I_SIZE(inode) &&
-	       EXT2_I_SIZE(inode) < sizeof(inode->i_block);
+	తిరిగి LINUX_S_ISLNK(inode->i_బహుళకం) && EXT2_I_కొలత(inode) &&
+	       EXT2_I_కొలత(inode) < పరిమాణం(inode->i_ఖండం);
 }

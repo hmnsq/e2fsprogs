@@ -10,28 +10,28 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#include <errno.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <errno.h>
+#ఒకవేళ HAVE_SYS_STAT_H
+#అన్తర్భావ <sys/stat.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
+#నిర్వచితమైతే HAVE_SYS_సమయం_H
+#అన్తర్భావ <sys/time.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
-#include "bmap64.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fsP.h"
+#అన్తర్భావ "bmap64.h"
 
 /*
  * Design of 64-bit bitmaps
@@ -68,204 +68,204 @@
  * e2fsck can request an encoding which is optimized for that.
  */
 
-static void warn_bitmap(ext2fs_generic_bitmap_64 bitmap,
-			int code, __u64 arg)
+స్థిర శూన్య warn_bitmap(ext2fs_generic_bitmap_64 bitmap,
+			పూర్ణాంకం సంకేతం_2, __u64 arg)
 {
-#ifndef OMIT_COM_ERR
-	if (bitmap->description)
-		com_err(0, bitmap->base_error_code+code,
-			"#%llu for %s", (unsigned long long) arg,
+#నిర్వచితం_కాకపోతే OMIT_COM_ERR
+	ఒకవేళ (bitmap->description)
+		com_err(0, bitmap->పునాది_error_సంకేతం+సంకేతం_2,
+			"#%llu for %s", (గుర్తులేని దీర్ఘ దీర్ఘ) arg,
 			bitmap->description);
-	else
-		com_err(0, bitmap->base_error_code + code, "#%llu",
-			(unsigned long long) arg);
-#endif
+	లేకపోతే
+		com_err(0, bitmap->పునాది_error_సంకేతం + సంకేతం_2, "#%llu",
+			(గుర్తులేని దీర్ఘ దీర్ఘ) arg);
+#అయితే_ముగింపు
 }
 
-#ifdef ENABLE_BMAP_STATS_OPS
-#define INC_STAT(map, name) map->stats.name
-#else
-#define INC_STAT(map, name) ;;
-#endif
+#నిర్వచితమైతే ENABLE_BMAP_STATS_OPS
+#నిర్వచించు INC_STAT(map, name) map->stats.name
+#లేకపోతే
+#నిర్వచించు INC_STAT(map, name) ;;
+#అయితే_ముగింపు
 
 
 errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
-				    int type, __u64 start, __u64 end,
-				    __u64 real_end,
-				    const char *descr,
+				    పూర్ణాంకం type, __u64 ప్రారంభం, __u64 చివర,
+				    __u64 real_చివర,
+				    స్థిరరాశి అక్షరం *descr,
 				    ext2fs_generic_bitmap *ret)
 {
 	ext2fs_generic_bitmap_64 bitmap;
-	struct ext2_bitmap_ops	*ops;
-	ext2_ino_t num_dirs;
+	నిర్మాణం ext2_bitmap_ops	*ops;
+	ext2_ino_t అంకె_dirs;
 	errcode_t retval;
 
-	if (!type)
+	ఒకవేళ (!type)
 		type = EXT2FS_BMAP64_BITARRAY;
 
-	switch (type) {
-	case EXT2FS_BMAP64_BITARRAY:
+	ఎంపిక (type) {
+	స్థితి EXT2FS_BMAP64_BITARRAY:
 		ops = &ext2fs_blkmap64_bitarray;
-		break;
-	case EXT2FS_BMAP64_RBTREE:
+		ఆపు;
+	స్థితి EXT2FS_BMAP64_RBTREE:
 		ops = &ext2fs_blkmap64_rbtree;
-		break;
-	case EXT2FS_BMAP64_AUTODIR:
-		retval = ext2fs_get_num_dirs(fs, &num_dirs);
-		if (retval || num_dirs > (fs->super->s_inodes_count / 320))
+		ఆపు;
+	స్థితి EXT2FS_BMAP64_AUTODIR:
+		retval = ext2fs_get_అంకె_dirs(fs, &అంకె_dirs);
+		ఒకవేళ (retval || అంకె_dirs > (fs->super->s_inodes_లెక్క / 320))
 			ops = &ext2fs_blkmap64_bitarray;
-		else
+		లేకపోతే
 			ops = &ext2fs_blkmap64_rbtree;
-		break;
-	default:
-		return EINVAL;
+		ఆపు;
+	అప్రమేయ:
+		తిరిగి EINVAL;
 	}
 
-	retval = ext2fs_get_memzero(sizeof(struct ext2fs_struct_generic_bitmap_64),
+	retval = ext2fs_get_memzero(పరిమాణం(నిర్మాణం ext2fs_struct_generic_bitmap_64),
 				    &bitmap);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
-#ifdef ENABLE_BMAP_STATS
-	if (gettimeofday(&bitmap->stats.created,
-			 (struct timezone *) NULL) == -1) {
+#నిర్వచితమైతే ENABLE_BMAP_STATS
+	ఒకవేళ (gettimeofday(&bitmap->stats.created,
+			 (నిర్మాణం timezone *) ఖాళీ) == -1) {
 		perror("gettimeofday");
 		ext2fs_free_mem(&bitmap);
-		return 1;
+		తిరిగి 1;
 	}
 	bitmap->stats.type = type;
-#endif
+#అయితే_ముగింపు
 
 	/* XXX factor out, repeated in copy_bmap */
 	bitmap->magic = magic;
 	bitmap->fs = fs;
-	bitmap->start = start;
-	bitmap->end = end;
-	bitmap->real_end = real_end;
+	bitmap->ప్రారంభం = ప్రారంభం;
+	bitmap->చివర = చివర;
+	bitmap->real_చివర = real_చివర;
 	bitmap->bitmap_ops = ops;
-	bitmap->cluster_bits = 0;
-	switch (magic) {
-	case EXT2_ET_MAGIC_INODE_BITMAP64:
-		bitmap->base_error_code = EXT2_ET_BAD_INODE_MARK;
-		break;
-	case EXT2_ET_MAGIC_BLOCK_BITMAP64:
-		bitmap->base_error_code = EXT2_ET_BAD_BLOCK_MARK;
-		bitmap->cluster_bits = fs->cluster_ratio_bits;
-		break;
-	default:
-		bitmap->base_error_code = EXT2_ET_BAD_GENERIC_MARK;
+	bitmap->cluster_బిట్లు = 0;
+	ఎంపిక (magic) {
+	స్థితి EXT2_ET_MAGIC_INODE_BITMAP64:
+		bitmap->పునాది_error_సంకేతం = EXT2_ET_BAD_INODE_MARK;
+		ఆపు;
+	స్థితి EXT2_ET_MAGIC_ఖండం_BITMAP64:
+		bitmap->పునాది_error_సంకేతం = EXT2_ET_BAD_ఖండం_MARK;
+		bitmap->cluster_బిట్లు = fs->cluster_నిష్పత్తి_బిట్లు;
+		ఆపు;
+	అప్రమేయ:
+		bitmap->పునాది_error_సంకేతం = EXT2_ET_BAD_GENERIC_MARK;
 	}
-	if (descr) {
-		retval = ext2fs_get_mem(strlen(descr)+1, &bitmap->description);
-		if (retval) {
+	ఒకవేళ (descr) {
+		retval = ext2fs_get_mem(అక్షరశ్రేణి_పొడవు(descr)+1, &bitmap->description);
+		ఒకవేళ (retval) {
 			ext2fs_free_mem(&bitmap);
-			return retval;
+			తిరిగి retval;
 		}
 		strcpy(bitmap->description, descr);
-	} else
+	} లేకపోతే
 		bitmap->description = 0;
 
 	retval = bitmap->bitmap_ops->new_bmap(fs, bitmap);
-	if (retval) {
+	ఒకవేళ (retval) {
 		ext2fs_free_mem(&bitmap->description);
 		ext2fs_free_mem(&bitmap);
-		return retval;
+		తిరిగి retval;
 	}
 
 	*ret = (ext2fs_generic_bitmap) bitmap;
-	return 0;
+	తిరిగి 0;
 }
 
-#ifdef ENABLE_BMAP_STATS
-static void ext2fs_print_bmap_statistics(ext2fs_generic_bitmap_64 bitmap)
+#నిర్వచితమైతే ENABLE_BMAP_STATS
+స్థిర శూన్య ext2fs_print_bmap_statistics(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2_bmap_statistics *stats = &bitmap->stats;
-#ifdef ENABLE_BMAP_STATS_OPS
-	float mark_seq_perc = 0.0, test_seq_perc = 0.0;
-	float mark_back_perc = 0.0, test_back_perc = 0.0;
-	struct timeval now;
-	double inuse;
+	నిర్మాణం ext2_bmap_statistics *stats = &bitmap->stats;
+#నిర్వచితమైతే ENABLE_BMAP_STATS_OPS
+	దశాంశం mark_seq_perc = 0.0, test_seq_perc = 0.0;
+	దశాంశం mark_వెనుక_perc = 0.0, test_వెనుక_perc = 0.0;
+	నిర్మాణం timeval now;
+	ద్విగుణ inuse;
 
-	if (stats->test_count) {
-		test_seq_perc = ((float)stats->test_seq /
-				 stats->test_count) * 100;
-		test_back_perc = ((float)stats->test_back /
-				  stats->test_count) * 100;
+	ఒకవేళ (stats->test_లెక్క) {
+		test_seq_perc = ((దశాంశం)stats->test_seq /
+				 stats->test_లెక్క) * 100;
+		test_వెనుక_perc = ((దశాంశం)stats->test_వెనుక /
+				  stats->test_లెక్క) * 100;
 	}
 
-	if (stats->mark_count) {
-		mark_seq_perc = ((float)stats->mark_seq /
-				 stats->mark_count) * 100;
-		mark_back_perc = ((float)stats->mark_back /
-				  stats->mark_count) * 100;
+	ఒకవేళ (stats->mark_లెక్క) {
+		mark_seq_perc = ((దశాంశం)stats->mark_seq /
+				 stats->mark_లెక్క) * 100;
+		mark_వెనుక_perc = ((దశాంశం)stats->mark_వెనుక /
+				  stats->mark_లెక్క) * 100;
 	}
 
-	if (gettimeofday(&now, (struct timezone *) NULL) == -1) {
+	ఒకవేళ (gettimeofday(&now, (నిర్మాణం timezone *) ఖాళీ) == -1) {
 		perror("gettimeofday");
-		return;
+		తిరిగి;
 	}
 
-	inuse = (double) now.tv_sec + \
-		(((double) now.tv_usec) * 0.000001);
-	inuse -= (double) stats->created.tv_sec + \
-		(((double) stats->created.tv_usec) * 0.000001);
-#endif /* ENABLE_BMAP_STATS_OPS */
+	inuse = (ద్విగుణ) now.tv_sec + \
+		(((ద్విగుణ) now.tv_usec) * 0.000001);
+	inuse -= (ద్విగుణ) stats->created.tv_sec + \
+		(((ద్విగుణ) stats->created.tv_usec) * 0.000001);
+#అయితే_ముగింపు /* ENABLE_BMAP_STATS_OPS */
 
 	fprintf(stderr, "\n[+] %s bitmap (type %d)\n", bitmap->description,
 		stats->type);
 	fprintf(stderr, "=================================================\n");
-#ifdef ENABLE_BMAP_STATS_OPS
+#నిర్వచితమైతే ENABLE_BMAP_STATS_OPS
 	fprintf(stderr, "%16llu bits long\n",
-		bitmap->real_end - bitmap->start);
+		bitmap->real_చివర - bitmap->ప్రారంభం);
 	fprintf(stderr, "%16lu copy_bmap\n%16lu resize_bmap\n",
-		stats->copy_count, stats->resize_count);
+		stats->copy_లెక్క, stats->resize_లెక్క);
 	fprintf(stderr, "%16lu mark bmap\n%16lu unmark_bmap\n",
-		stats->mark_count, stats->unmark_count);
+		stats->mark_లెక్క, stats->unmark_లెక్క);
 	fprintf(stderr, "%16lu test_bmap\n%16lu mark_bmap_extent\n",
-		stats->test_count, stats->mark_ext_count);
+		stats->test_లెక్క, stats->mark_ext_లెక్క);
 	fprintf(stderr, "%16lu unmark_bmap_extent\n"
 		"%16lu test_clear_bmap_extent\n",
-		stats->unmark_ext_count, stats->test_ext_count);
+		stats->unmark_ext_లెక్క, stats->test_ext_లెక్క);
 	fprintf(stderr, "%16lu set_bmap_range\n%16lu set_bmap_range\n",
-		stats->set_range_count, stats->get_range_count);
+		stats->సమితి_range_లెక్క, stats->get_range_లెక్క);
 	fprintf(stderr, "%16lu clear_bmap\n%16lu contiguous bit test (%.2f%%)\n",
-		stats->clear_count, stats->test_seq, test_seq_perc);
+		stats->clear_లెక్క, stats->test_seq, test_seq_perc);
 	fprintf(stderr, "%16lu contiguous bit mark (%.2f%%)\n"
 		"%16llu bits tested backwards (%.2f%%)\n",
 		stats->mark_seq, mark_seq_perc,
-		stats->test_back, test_back_perc);
+		stats->test_వెనుక, test_వెనుక_perc);
 	fprintf(stderr, "%16llu bits marked backwards (%.2f%%)\n"
 		"%16.2f seconds in use\n",
-		stats->mark_back, mark_back_perc, inuse);
-#endif /* ENABLE_BMAP_STATS_OPS */
+		stats->mark_వెనుక, mark_వెనుక_perc, inuse);
+#అయితే_ముగింపు /* ENABLE_BMAP_STATS_OPS */
 }
-#endif
+#అయితే_ముగింపు
 
-void ext2fs_free_generic_bmap(ext2fs_generic_bitmap gen_bmap)
+శూన్య ext2fs_free_generic_bmap(ext2fs_generic_bitmap gen_bmap)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
 
-	if (!bmap)
-		return;
+	ఒకవేళ (!bmap)
+		తిరిగి;
 
-	if (EXT2FS_IS_32_BITMAP(bmap)) {
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bmap)) {
 		ext2fs_free_generic_bitmap(gen_bmap);
-		return;
+		తిరిగి;
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bmap))
-		return;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bmap))
+		తిరిగి;
 
-#ifdef ENABLE_BMAP_STATS
-	if (ext2fs_safe_getenv("E2FSPROGS_BITMAP_STATS")) {
+#నిర్వచితమైతే ENABLE_BMAP_STATS
+	ఒకవేళ (ext2fs_సురక్షిత_getenv("E2FSPROGS_BITMAP_STATS")) {
 		ext2fs_print_bmap_statistics(bmap);
 		bmap->bitmap_ops->print_stats(bmap);
 	}
-#endif
+#అయితే_ముగింపు
 
 	bmap->bitmap_ops->free_bmap(bmap);
 
-	if (bmap->description) {
+	ఒకవేళ (bmap->description) {
 		ext2fs_free_mem(&bmap->description);
 		bmap->description = 0;
 	}
@@ -277,55 +277,55 @@ errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap gen_src,
 				   ext2fs_generic_bitmap *dest)
 {
 	ext2fs_generic_bitmap_64 src = (ext2fs_generic_bitmap_64) gen_src;
-	char *descr, *new_descr;
+	అక్షరం *descr, *new_descr;
 	ext2fs_generic_bitmap_64 new_bmap;
 	errcode_t retval;
 
-	if (!src)
-		return EINVAL;
+	ఒకవేళ (!src)
+		తిరిగి EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(src))
-		return ext2fs_copy_generic_bitmap(gen_src, dest);
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(src))
+		తిరిగి ext2fs_copy_generic_bitmap(gen_src, dest);
 
-	if (!EXT2FS_IS_64_BITMAP(src))
-		return EINVAL;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(src))
+		తిరిగి EINVAL;
 
 	/* Allocate a new bitmap struct */
-	retval = ext2fs_get_memzero(sizeof(struct ext2fs_struct_generic_bitmap_64),
+	retval = ext2fs_get_memzero(పరిమాణం(నిర్మాణం ext2fs_struct_generic_bitmap_64),
 				    &new_bmap);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
 
-#ifdef ENABLE_BMAP_STATS_OPS
-	src->stats.copy_count++;
-#endif
-#ifdef ENABLE_BMAP_STATS
-	if (gettimeofday(&new_bmap->stats.created,
-			 (struct timezone *) NULL) == -1) {
+#నిర్వచితమైతే ENABLE_BMAP_STATS_OPS
+	src->stats.copy_లెక్క++;
+#అయితే_ముగింపు
+#నిర్వచితమైతే ENABLE_BMAP_STATS
+	ఒకవేళ (gettimeofday(&new_bmap->stats.created,
+			 (నిర్మాణం timezone *) ఖాళీ) == -1) {
 		perror("gettimeofday");
 		ext2fs_free_mem(&new_bmap);
-		return 1;
+		తిరిగి 1;
 	}
 	new_bmap->stats.type = src->stats.type;
-#endif
+#అయితే_ముగింపు
 
 	/* Copy all the high-level parts over */
 	new_bmap->magic = src->magic;
 	new_bmap->fs = src->fs;
-	new_bmap->start = src->start;
-	new_bmap->end = src->end;
-	new_bmap->real_end = src->real_end;
+	new_bmap->ప్రారంభం = src->ప్రారంభం;
+	new_bmap->చివర = src->చివర;
+	new_bmap->real_చివర = src->real_చివర;
 	new_bmap->bitmap_ops = src->bitmap_ops;
-	new_bmap->base_error_code = src->base_error_code;
-	new_bmap->cluster_bits = src->cluster_bits;
+	new_bmap->పునాది_error_సంకేతం = src->పునాది_error_సంకేతం;
+	new_bmap->cluster_బిట్లు = src->cluster_బిట్లు;
 
 	descr = src->description;
-	if (descr) {
-		retval = ext2fs_get_mem(strlen(descr)+10, &new_descr);
-		if (retval) {
+	ఒకవేళ (descr) {
+		retval = ext2fs_get_mem(అక్షరశ్రేణి_పొడవు(descr)+10, &new_descr);
+		ఒకవేళ (retval) {
 			ext2fs_free_mem(&new_bmap);
-			return retval;
+			తిరిగి retval;
 		}
 		strcpy(new_descr, "copy of ");
 		strcat(new_descr, descr);
@@ -333,273 +333,273 @@ errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap gen_src,
 	}
 
 	retval = src->bitmap_ops->copy_bmap(src, new_bmap);
-	if (retval) {
+	ఒకవేళ (retval) {
 		ext2fs_free_mem(&new_bmap->description);
 		ext2fs_free_mem(&new_bmap);
-		return retval;
+		తిరిగి retval;
 	}
 
 	*dest = (ext2fs_generic_bitmap) new_bmap;
 
-	return 0;
+	తిరిగి 0;
 }
 
 errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap gen_bmap,
-				     __u64 new_end,
-				     __u64 new_real_end)
+				     __u64 new_చివర,
+				     __u64 new_real_చివర)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
 
-	if (!bmap)
-		return EINVAL;
+	ఒకవేళ (!bmap)
+		తిరిగి EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bmap))
-		return ext2fs_resize_generic_bitmap(gen_bmap->magic, new_end,
-						    new_real_end, gen_bmap);
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bmap))
+		తిరిగి ext2fs_resize_generic_bitmap(gen_bmap->magic, new_చివర,
+						    new_real_చివర, gen_bmap);
 
-	if (!EXT2FS_IS_64_BITMAP(bmap))
-		return EINVAL;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bmap))
+		తిరిగి EINVAL;
 
-	INC_STAT(bmap, resize_count);
+	INC_STAT(bmap, resize_లెక్క);
 
-	return bmap->bitmap_ops->resize_bmap(bmap, new_end, new_real_end);
+	తిరిగి bmap->bitmap_ops->resize_bmap(bmap, new_చివర, new_real_చివర);
 }
 
-errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap gen_bitmap,
+errcode_t ext2fs_fudge_generic_bmap_చివర(ext2fs_generic_bitmap gen_bitmap,
 					errcode_t neq,
-					__u64 end, __u64 *oend)
+					__u64 చివర, __u64 *oend)
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
 
-	if (!bitmap)
-		return EINVAL;
+	ఒకవేళ (!bitmap)
+		తిరిగి EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap)) {
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bitmap)) {
 		ext2_ino_t tmp_oend;
-		int retval;
+		పూర్ణాంకం retval;
 
-		retval = ext2fs_fudge_generic_bitmap_end(gen_bitmap,
+		retval = ext2fs_fudge_generic_bitmap_చివర(gen_bitmap,
 							 bitmap->magic,
-							 neq, end, &tmp_oend);
-		if (oend)
+							 neq, చివర, &tmp_oend);
+		ఒకవేళ (oend)
 			*oend = tmp_oend;
-		return retval;
+		తిరిగి retval;
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return EINVAL;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bitmap))
+		తిరిగి EINVAL;
 
-	if (end > bitmap->real_end)
-		return neq;
-	if (oend)
-		*oend = bitmap->end;
-	bitmap->end = end;
-	return 0;
+	ఒకవేళ (చివర > bitmap->real_చివర)
+		తిరిగి neq;
+	ఒకవేళ (oend)
+		*oend = bitmap->చివర;
+	bitmap->చివర = చివర;
+	తిరిగి 0;
 }
 
-__u64 ext2fs_get_generic_bmap_start(ext2fs_generic_bitmap gen_bitmap)
+__u64 ext2fs_get_generic_bmap_ప్రారంభం(ext2fs_generic_bitmap gen_bitmap)
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
 
-	if (!bitmap)
-		return EINVAL;
+	ఒకవేళ (!bitmap)
+		తిరిగి EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap))
-		return ext2fs_get_generic_bitmap_start(gen_bitmap);
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bitmap))
+		తిరిగి ext2fs_get_generic_bitmap_ప్రారంభం(gen_bitmap);
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return EINVAL;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bitmap))
+		తిరిగి EINVAL;
 
-	return bitmap->start;
+	తిరిగి bitmap->ప్రారంభం;
 }
 
-__u64 ext2fs_get_generic_bmap_end(ext2fs_generic_bitmap gen_bitmap)
+__u64 ext2fs_get_generic_bmap_చివర(ext2fs_generic_bitmap gen_bitmap)
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
 
-	if (!bitmap)
-		return EINVAL;
+	ఒకవేళ (!bitmap)
+		తిరిగి EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap))
-		return ext2fs_get_generic_bitmap_end(gen_bitmap);
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bitmap))
+		తిరిగి ext2fs_get_generic_bitmap_చివర(gen_bitmap);
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return EINVAL;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bitmap))
+		తిరిగి EINVAL;
 
-	return bitmap->end;
+	తిరిగి bitmap->చివర;
 }
 
-void ext2fs_clear_generic_bmap(ext2fs_generic_bitmap gen_bitmap)
+శూన్య ext2fs_clear_generic_bmap(ext2fs_generic_bitmap gen_bitmap)
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap))
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bitmap))
 		ext2fs_clear_generic_bitmap(gen_bitmap);
-	else
+	లేకపోతే
 		bitmap->bitmap_ops->clear_bmap(bitmap);
 }
 
-int ext2fs_mark_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
+పూర్ణాంకం ext2fs_mark_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
 			     __u64 arg)
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
 
-	if (!bitmap)
-		return 0;
+	ఒకవేళ (!bitmap)
+		తిరిగి 0;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap)) {
-		if (arg & ~0xffffffffULL) {
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bitmap)) {
+		ఒకవేళ (arg & ~0xffffffffULL) {
 			ext2fs_warn_bitmap2(gen_bitmap,
 					    EXT2FS_MARK_ERROR, 0xffffffff);
-			return 0;
+			తిరిగి 0;
 		}
-		return ext2fs_mark_generic_bitmap(gen_bitmap, arg);
+		తిరిగి ext2fs_mark_generic_bitmap(gen_bitmap, arg);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return 0;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bitmap))
+		తిరిగి 0;
 
-	arg >>= bitmap->cluster_bits;
+	arg >>= bitmap->cluster_బిట్లు;
 
-#ifdef ENABLE_BMAP_STATS_OPS
-	if (arg == bitmap->stats.last_marked + 1)
+#నిర్వచితమైతే ENABLE_BMAP_STATS_OPS
+	ఒకవేళ (arg == bitmap->stats.చివరి_marked + 1)
 		bitmap->stats.mark_seq++;
-	if (arg < bitmap->stats.last_marked)
-		bitmap->stats.mark_back++;
-	bitmap->stats.last_marked = arg;
-	bitmap->stats.mark_count++;
-#endif
+	ఒకవేళ (arg < bitmap->stats.చివరి_marked)
+		bitmap->stats.mark_వెనుక++;
+	bitmap->stats.చివరి_marked = arg;
+	bitmap->stats.mark_లెక్క++;
+#అయితే_ముగింపు
 
-	if ((arg < bitmap->start) || (arg > bitmap->end)) {
+	ఒకవేళ ((arg < bitmap->ప్రారంభం) || (arg > bitmap->చివర)) {
 		warn_bitmap(bitmap, EXT2FS_MARK_ERROR, arg);
-		return 0;
+		తిరిగి 0;
 	}
 
-	return bitmap->bitmap_ops->mark_bmap(bitmap, arg);
+	తిరిగి bitmap->bitmap_ops->mark_bmap(bitmap, arg);
 }
 
-int ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
+పూర్ణాంకం ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
 			       __u64 arg)
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
 
-	if (!bitmap)
-		return 0;
+	ఒకవేళ (!bitmap)
+		తిరిగి 0;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap)) {
-		if (arg & ~0xffffffffULL) {
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bitmap)) {
+		ఒకవేళ (arg & ~0xffffffffULL) {
 			ext2fs_warn_bitmap2(gen_bitmap, EXT2FS_UNMARK_ERROR,
 					    0xffffffff);
-			return 0;
+			తిరిగి 0;
 		}
-		return ext2fs_unmark_generic_bitmap(gen_bitmap, arg);
+		తిరిగి ext2fs_unmark_generic_bitmap(gen_bitmap, arg);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return 0;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bitmap))
+		తిరిగి 0;
 
-	arg >>= bitmap->cluster_bits;
+	arg >>= bitmap->cluster_బిట్లు;
 
-	INC_STAT(bitmap, unmark_count);
+	INC_STAT(bitmap, unmark_లెక్క);
 
-	if ((arg < bitmap->start) || (arg > bitmap->end)) {
+	ఒకవేళ ((arg < bitmap->ప్రారంభం) || (arg > bitmap->చివర)) {
 		warn_bitmap(bitmap, EXT2FS_UNMARK_ERROR, arg);
-		return 0;
+		తిరిగి 0;
 	}
 
-	return bitmap->bitmap_ops->unmark_bmap(bitmap, arg);
+	తిరిగి bitmap->bitmap_ops->unmark_bmap(bitmap, arg);
 }
 
-int ext2fs_test_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
+పూర్ణాంకం ext2fs_test_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
 			     __u64 arg)
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
-	if (!bitmap)
-		return 0;
+	ఒకవేళ (!bitmap)
+		తిరిగి 0;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap)) {
-		if (arg & ~0xffffffffULL) {
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bitmap)) {
+		ఒకవేళ (arg & ~0xffffffffULL) {
 			ext2fs_warn_bitmap2(gen_bitmap, EXT2FS_TEST_ERROR,
 					    0xffffffff);
-			return 0;
+			తిరిగి 0;
 		}
-		return ext2fs_test_generic_bitmap(gen_bitmap, arg);
+		తిరిగి ext2fs_test_generic_bitmap(gen_bitmap, arg);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return 0;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bitmap))
+		తిరిగి 0;
 
-	arg >>= bitmap->cluster_bits;
+	arg >>= bitmap->cluster_బిట్లు;
 
-#ifdef ENABLE_BMAP_STATS_OPS
-	bitmap->stats.test_count++;
-	if (arg == bitmap->stats.last_tested + 1)
+#నిర్వచితమైతే ENABLE_BMAP_STATS_OPS
+	bitmap->stats.test_లెక్క++;
+	ఒకవేళ (arg == bitmap->stats.చివరి_tested + 1)
 		bitmap->stats.test_seq++;
-	if (arg < bitmap->stats.last_tested)
-		bitmap->stats.test_back++;
-	bitmap->stats.last_tested = arg;
-#endif
+	ఒకవేళ (arg < bitmap->stats.చివరి_tested)
+		bitmap->stats.test_వెనుక++;
+	bitmap->stats.చివరి_tested = arg;
+#అయితే_ముగింపు
 
-	if ((arg < bitmap->start) || (arg > bitmap->end)) {
+	ఒకవేళ ((arg < bitmap->ప్రారంభం) || (arg > bitmap->చివర)) {
 		warn_bitmap(bitmap, EXT2FS_TEST_ERROR, arg);
-		return 0;
+		తిరిగి 0;
 	}
 
-	return bitmap->bitmap_ops->test_bmap(bitmap, arg);
+	తిరిగి bitmap->bitmap_ops->test_bmap(bitmap, arg);
 }
 
-errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap gen_bmap,
-					__u64 start, unsigned int num,
-					void *in)
+errcode_t ext2fs_సమితి_generic_bmap_range(ext2fs_generic_bitmap gen_bmap,
+					__u64 ప్రారంభం, గుర్తులేని పూర్ణాంకం అంకె,
+					శూన్య *లోపల)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
 
-	if (!bmap)
-		return EINVAL;
+	ఒకవేళ (!bmap)
+		తిరిగి EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bmap)) {
-		if ((start+num-1) & ~0xffffffffULL) {
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bmap)) {
+		ఒకవేళ ((ప్రారంభం+అంకె-1) & ~0xffffffffULL) {
 			ext2fs_warn_bitmap2(gen_bmap, EXT2FS_UNMARK_ERROR,
 					    0xffffffff);
-			return EINVAL;
+			తిరిగి EINVAL;
 		}
-		return ext2fs_set_generic_bitmap_range(gen_bmap, bmap->magic,
-						       start, num, in);
+		తిరిగి ext2fs_సమితి_generic_bitmap_range(gen_bmap, bmap->magic,
+						       ప్రారంభం, అంకె, లోపల);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bmap))
-		return EINVAL;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bmap))
+		తిరిగి EINVAL;
 
-	INC_STAT(bmap, set_range_count);
+	INC_STAT(bmap, సమితి_range_లెక్క);
 
-	return bmap->bitmap_ops->set_bmap_range(bmap, start, num, in);
+	తిరిగి bmap->bitmap_ops->సమితి_bmap_range(bmap, ప్రారంభం, అంకె, లోపల);
 }
 
 errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap gen_bmap,
-					__u64 start, unsigned int num,
-					void *out)
+					__u64 ప్రారంభం, గుర్తులేని పూర్ణాంకం అంకె,
+					శూన్య *బహిర్గతం)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
 
-	if (!bmap)
-		return EINVAL;
+	ఒకవేళ (!bmap)
+		తిరిగి EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bmap)) {
-		if ((start+num-1) & ~0xffffffffULL) {
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bmap)) {
+		ఒకవేళ ((ప్రారంభం+అంకె-1) & ~0xffffffffULL) {
 			ext2fs_warn_bitmap2(gen_bmap,
 					    EXT2FS_UNMARK_ERROR, 0xffffffff);
-			return EINVAL;
+			తిరిగి EINVAL;
 		}
-		return ext2fs_get_generic_bitmap_range(gen_bmap, bmap->magic,
-						       start, num, out);
+		తిరిగి ext2fs_get_generic_bitmap_range(gen_bmap, bmap->magic,
+						       ప్రారంభం, అంకె, బహిర్గతం);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bmap))
-		return EINVAL;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bmap))
+		తిరిగి EINVAL;
 
-	INC_STAT(bmap, get_range_count);
+	INC_STAT(bmap, get_range_లెక్క);
 
-	return bmap->bitmap_ops->get_bmap_range(bmap, start, num, out);
+	తిరిగి bmap->bitmap_ops->get_bmap_range(bmap, ప్రారంభం, అంకె, బహిర్గతం);
 }
 
 errcode_t ext2fs_compare_generic_bmap(errcode_t neq,
@@ -610,385 +610,385 @@ errcode_t ext2fs_compare_generic_bmap(errcode_t neq,
 	ext2fs_generic_bitmap_64 bm2 = (ext2fs_generic_bitmap_64) gen_bm2;
 	blk64_t	i;
 
-	if (!bm1 || !bm2)
-		return EINVAL;
-	if (bm1->magic != bm2->magic)
-		return EINVAL;
+	ఒకవేళ (!bm1 || !bm2)
+		తిరిగి EINVAL;
+	ఒకవేళ (bm1->magic != bm2->magic)
+		తిరిగి EINVAL;
 
 	/* Now we know both bitmaps have the same magic */
-	if (EXT2FS_IS_32_BITMAP(bm1))
-		return ext2fs_compare_generic_bitmap(bm1->magic, neq,
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bm1))
+		తిరిగి ext2fs_compare_generic_bitmap(bm1->magic, neq,
 						     gen_bm1, gen_bm2);
 
-	if (!EXT2FS_IS_64_BITMAP(bm1))
-		return EINVAL;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bm1))
+		తిరిగి EINVAL;
 
-	if ((bm1->start != bm2->start) ||
-	    (bm1->end != bm2->end))
-		return neq;
+	ఒకవేళ ((bm1->ప్రారంభం != bm2->ప్రారంభం) ||
+	    (bm1->చివర != bm2->చివర))
+		తిరిగి neq;
 
-	for (i = bm1->start; i < bm1->end; i++) {
-		int ret1, ret2;
+	కొరకు (i = bm1->ప్రారంభం; i < bm1->చివర; i++) {
+		పూర్ణాంకం ret1, ret2;
 		ret1 = !!ext2fs_test_generic_bmap(gen_bm1, i);
 		ret2 = !!ext2fs_test_generic_bmap(gen_bm2, i);
-		if (ret1 != ret2) {
-			return neq;
+		ఒకవేళ (ret1 != ret2) {
+			తిరిగి neq;
 		}
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-void ext2fs_set_generic_bmap_padding(ext2fs_generic_bitmap gen_bmap)
+శూన్య ext2fs_సమితి_generic_bmap_padding(ext2fs_generic_bitmap gen_bmap)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
-	__u64	start, num;
+	__u64	ప్రారంభం, అంకె;
 
-	if (EXT2FS_IS_32_BITMAP(bmap)) {
-		ext2fs_set_generic_bitmap_padding(gen_bmap);
-		return;
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bmap)) {
+		ext2fs_సమితి_generic_bitmap_padding(gen_bmap);
+		తిరిగి;
 	}
 
-	start = bmap->end + 1;
-	num = bmap->real_end - bmap->end;
-	bmap->bitmap_ops->mark_bmap_extent(bmap, start, num);
+	ప్రారంభం = bmap->చివర + 1;
+	అంకె = bmap->real_చివర - bmap->చివర;
+	bmap->bitmap_ops->mark_bmap_extent(bmap, ప్రారంభం, అంకె);
 	/* XXX ought to warn on error */
 }
 
-int ext2fs_test_block_bitmap_range2(ext2fs_block_bitmap gen_bmap,
-				    blk64_t block, unsigned int num)
+పూర్ణాంకం ext2fs_test_ఖండం_bitmap_range2(ext2fs_ఖండం_bitmap gen_bmap,
+				    blk64_t ఖండం, గుర్తులేని పూర్ణాంకం అంకె)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
-	__u64	end = block + num;
+	__u64	చివర = ఖండం + అంకె;
 
-	if (!bmap)
-		return EINVAL;
+	ఒకవేళ (!bmap)
+		తిరిగి EINVAL;
 
-	if (num == 1)
-		return !ext2fs_test_generic_bmap((ext2fs_generic_bitmap)
-						 bmap, block);
+	ఒకవేళ (అంకె == 1)
+		తిరిగి !ext2fs_test_generic_bmap((ext2fs_generic_bitmap)
+						 bmap, ఖండం);
 
-	if (EXT2FS_IS_32_BITMAP(bmap)) {
-		if ((block & ~0xffffffffULL) ||
-		    ((block+num-1) & ~0xffffffffULL)) {
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bmap)) {
+		ఒకవేళ ((ఖండం & ~0xffffffffULL) ||
+		    ((ఖండం+అంకె-1) & ~0xffffffffULL)) {
 			ext2fs_warn_bitmap2((ext2fs_generic_bitmap) bmap,
 					    EXT2FS_UNMARK_ERROR, 0xffffffff);
-			return EINVAL;
+			తిరిగి EINVAL;
 		}
-		return ext2fs_test_block_bitmap_range(
-			(ext2fs_generic_bitmap) bmap, block, num);
+		తిరిగి ext2fs_test_ఖండం_bitmap_range(
+			(ext2fs_generic_bitmap) bmap, ఖండం, అంకె);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bmap))
-		return EINVAL;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bmap))
+		తిరిగి EINVAL;
 
-	INC_STAT(bmap, test_ext_count);
+	INC_STAT(bmap, test_ext_లెక్క);
 
 	/* convert to clusters if necessary */
-	block >>= bmap->cluster_bits;
-	end += (1ULL << bmap->cluster_bits) - 1;
-	end >>= bmap->cluster_bits;
-	num = end - block;
+	ఖండం >>= bmap->cluster_బిట్లు;
+	చివర += (1ULL << bmap->cluster_బిట్లు) - 1;
+	చివర >>= bmap->cluster_బిట్లు;
+	అంకె = చివర - ఖండం;
 
-	if ((block < bmap->start) || (block > bmap->end) ||
-	    (block+num-1 > bmap->end)) {
-		ext2fs_warn_bitmap(EXT2_ET_BAD_BLOCK_TEST, block,
+	ఒకవేళ ((ఖండం < bmap->ప్రారంభం) || (ఖండం > bmap->చివర) ||
+	    (ఖండం+అంకె-1 > bmap->చివర)) {
+		ext2fs_warn_bitmap(EXT2_ET_BAD_ఖండం_TEST, ఖండం,
 				   bmap->description);
-		return EINVAL;
+		తిరిగి EINVAL;
 	}
 
-	return bmap->bitmap_ops->test_clear_bmap_extent(bmap, block, num);
+	తిరిగి bmap->bitmap_ops->test_clear_bmap_extent(bmap, ఖండం, అంకె);
 }
 
-void ext2fs_mark_block_bitmap_range2(ext2fs_block_bitmap gen_bmap,
-				     blk64_t block, unsigned int num)
+శూన్య ext2fs_mark_ఖండం_bitmap_range2(ext2fs_ఖండం_bitmap gen_bmap,
+				     blk64_t ఖండం, గుర్తులేని పూర్ణాంకం అంకె)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
-	__u64	end = block + num;
+	__u64	చివర = ఖండం + అంకె;
 
-	if (!bmap)
-		return;
+	ఒకవేళ (!bmap)
+		తిరిగి;
 
-	if (EXT2FS_IS_32_BITMAP(bmap)) {
-		if ((block & ~0xffffffffULL) ||
-		    ((block+num-1) & ~0xffffffffULL)) {
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bmap)) {
+		ఒకవేళ ((ఖండం & ~0xffffffffULL) ||
+		    ((ఖండం+అంకె-1) & ~0xffffffffULL)) {
 			ext2fs_warn_bitmap2((ext2fs_generic_bitmap) bmap,
 					    EXT2FS_UNMARK_ERROR, 0xffffffff);
-			return;
+			తిరిగి;
 		}
-		ext2fs_mark_block_bitmap_range((ext2fs_generic_bitmap) bmap,
-					       block, num);
+		ext2fs_mark_ఖండం_bitmap_range((ext2fs_generic_bitmap) bmap,
+					       ఖండం, అంకె);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bmap))
-		return;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bmap))
+		తిరిగి;
 
-	INC_STAT(bmap, mark_ext_count);
+	INC_STAT(bmap, mark_ext_లెక్క);
 
 	/* convert to clusters if necessary */
-	block >>= bmap->cluster_bits;
-	end += (1ULL << bmap->cluster_bits) - 1;
-	end >>= bmap->cluster_bits;
-	num = end - block;
+	ఖండం >>= bmap->cluster_బిట్లు;
+	చివర += (1ULL << bmap->cluster_బిట్లు) - 1;
+	చివర >>= bmap->cluster_బిట్లు;
+	అంకె = చివర - ఖండం;
 
-	if ((block < bmap->start) || (block > bmap->end) ||
-	    (block+num-1 > bmap->end)) {
-		ext2fs_warn_bitmap(EXT2_ET_BAD_BLOCK_MARK, block,
+	ఒకవేళ ((ఖండం < bmap->ప్రారంభం) || (ఖండం > bmap->చివర) ||
+	    (ఖండం+అంకె-1 > bmap->చివర)) {
+		ext2fs_warn_bitmap(EXT2_ET_BAD_ఖండం_MARK, ఖండం,
 				   bmap->description);
-		return;
+		తిరిగి;
 	}
 
-	bmap->bitmap_ops->mark_bmap_extent(bmap, block, num);
+	bmap->bitmap_ops->mark_bmap_extent(bmap, ఖండం, అంకె);
 }
 
-void ext2fs_unmark_block_bitmap_range2(ext2fs_block_bitmap gen_bmap,
-				       blk64_t block, unsigned int num)
+శూన్య ext2fs_unmark_ఖండం_bitmap_range2(ext2fs_ఖండం_bitmap gen_bmap,
+				       blk64_t ఖండం, గుర్తులేని పూర్ణాంకం అంకె)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
-	__u64	end = block + num;
+	__u64	చివర = ఖండం + అంకె;
 
-	if (!bmap)
-		return;
+	ఒకవేళ (!bmap)
+		తిరిగి;
 
-	if (EXT2FS_IS_32_BITMAP(bmap)) {
-		if ((block & ~0xffffffffULL) ||
-		    ((block+num-1) & ~0xffffffffULL)) {
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bmap)) {
+		ఒకవేళ ((ఖండం & ~0xffffffffULL) ||
+		    ((ఖండం+అంకె-1) & ~0xffffffffULL)) {
 			ext2fs_warn_bitmap2((ext2fs_generic_bitmap) bmap,
 					    EXT2FS_UNMARK_ERROR, 0xffffffff);
-			return;
+			తిరిగి;
 		}
-		ext2fs_unmark_block_bitmap_range((ext2fs_generic_bitmap) bmap,
-						 block, num);
+		ext2fs_unmark_ఖండం_bitmap_range((ext2fs_generic_bitmap) bmap,
+						 ఖండం, అంకె);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bmap))
-		return;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bmap))
+		తిరిగి;
 
-	INC_STAT(bmap, unmark_ext_count);
+	INC_STAT(bmap, unmark_ext_లెక్క);
 
 	/* convert to clusters if necessary */
-	block >>= bmap->cluster_bits;
-	end += (1ULL << bmap->cluster_bits) - 1;
-	end >>= bmap->cluster_bits;
-	num = end - block;
+	ఖండం >>= bmap->cluster_బిట్లు;
+	చివర += (1ULL << bmap->cluster_బిట్లు) - 1;
+	చివర >>= bmap->cluster_బిట్లు;
+	అంకె = చివర - ఖండం;
 
-	if ((block < bmap->start) || (block > bmap->end) ||
-	    (block+num-1 > bmap->end)) {
-		ext2fs_warn_bitmap(EXT2_ET_BAD_BLOCK_UNMARK, block,
+	ఒకవేళ ((ఖండం < bmap->ప్రారంభం) || (ఖండం > bmap->చివర) ||
+	    (ఖండం+అంకె-1 > bmap->చివర)) {
+		ext2fs_warn_bitmap(EXT2_ET_BAD_ఖండం_UNMARK, ఖండం,
 				   bmap->description);
-		return;
+		తిరిగి;
 	}
 
-	bmap->bitmap_ops->unmark_bmap_extent(bmap, block, num);
+	bmap->bitmap_ops->unmark_bmap_extent(bmap, ఖండం, అంకె);
 }
 
-void ext2fs_warn_bitmap32(ext2fs_generic_bitmap gen_bitmap, const char *func)
+శూన్య ext2fs_warn_bitmap32(ext2fs_generic_bitmap gen_bitmap, స్థిరరాశి అక్షరం *func)
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
 
-#ifndef OMIT_COM_ERR
-	if (bitmap && bitmap->description)
+#నిర్వచితం_కాకపోతే OMIT_COM_ERR
+	ఒకవేళ (bitmap && bitmap->description)
 		com_err(0, EXT2_ET_MAGIC_GENERIC_BITMAP,
 			"called %s with 64-bit bitmap for %s", func,
 			bitmap->description);
-	else
+	లేకపోతే
 		com_err(0, EXT2_ET_MAGIC_GENERIC_BITMAP,
 			"called %s with 64-bit bitmap", func);
-#endif
+#అయితే_ముగింపు
 }
 
 errcode_t ext2fs_convert_subcluster_bitmap(ext2_filsys fs,
-					   ext2fs_block_bitmap *bitmap)
+					   ext2fs_ఖండం_bitmap *bitmap)
 {
 	ext2fs_generic_bitmap_64 bmap, cmap;
-	ext2fs_block_bitmap	gen_bmap = *bitmap, gen_cmap;
+	ext2fs_ఖండం_bitmap	gen_bmap = *bitmap, gen_cmap;
 	errcode_t		retval;
-	blk64_t			i, next, b_end, c_end;
+	blk64_t			i, తదుపరి, b_చివర, c_చివర;
 
 	bmap = (ext2fs_generic_bitmap_64) gen_bmap;
-	if (fs->cluster_ratio_bits == ext2fs_get_bitmap_granularity(gen_bmap))
-		return 0;	/* Nothing to do */
+	ఒకవేళ (fs->cluster_నిష్పత్తి_బిట్లు == ext2fs_get_bitmap_granularity(gen_bmap))
+		తిరిగి 0;	/* Nothing to do */
 
-	retval = ext2fs_allocate_block_bitmap(fs, "converted cluster bitmap",
+	retval = ext2fs_allocate_ఖండం_bitmap(fs, "converted cluster bitmap",
 					      &gen_cmap);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
 	cmap = (ext2fs_generic_bitmap_64) gen_cmap;
-	i = bmap->start;
-	b_end = bmap->end;
-	bmap->end = bmap->real_end;
-	c_end = cmap->end;
-	cmap->end = cmap->real_end;
-	while (i < bmap->real_end) {
-		retval = ext2fs_find_first_set_block_bitmap2(gen_bmap,
-						i, bmap->real_end, &next);
-		if (retval)
-			break;
-		ext2fs_mark_block_bitmap2(gen_cmap, next);
-		i = EXT2FS_C2B(fs, EXT2FS_B2C(fs, next) + 1);
+	i = bmap->ప్రారంభం;
+	b_చివర = bmap->చివర;
+	bmap->చివర = bmap->real_చివర;
+	c_చివర = cmap->చివర;
+	cmap->చివర = cmap->real_చివర;
+	అయితే (i < bmap->real_చివర) {
+		retval = ext2fs_కనుగొను_మొదటి_సమితి_ఖండం_bitmap2(gen_bmap,
+						i, bmap->real_చివర, &తదుపరి);
+		ఒకవేళ (retval)
+			ఆపు;
+		ext2fs_mark_ఖండం_bitmap2(gen_cmap, తదుపరి);
+		i = EXT2FS_C2B(fs, EXT2FS_B2C(fs, తదుపరి) + 1);
 	}
-	bmap->end = b_end;
-	cmap->end = c_end;
-	ext2fs_free_block_bitmap(gen_bmap);
-	*bitmap = (ext2fs_block_bitmap) cmap;
-	return 0;
+	bmap->చివర = b_చివర;
+	cmap->చివర = c_చివర;
+	ext2fs_free_ఖండం_bitmap(gen_bmap);
+	*bitmap = (ext2fs_ఖండం_bitmap) cmap;
+	తిరిగి 0;
 }
 
-errcode_t ext2fs_find_first_zero_generic_bmap(ext2fs_generic_bitmap bitmap,
-					      __u64 start, __u64 end, __u64 *out)
+errcode_t ext2fs_కనుగొను_మొదటి_zero_generic_bmap(ext2fs_generic_bitmap bitmap,
+					      __u64 ప్రారంభం, __u64 చివర, __u64 *బహిర్గతం)
 {
 	ext2fs_generic_bitmap_64 bmap64 = (ext2fs_generic_bitmap_64) bitmap;
 	__u64 cstart, cend, cout;
 	errcode_t retval;
 
-	if (!bitmap)
-		return EINVAL;
+	ఒకవేళ (!bitmap)
+		తిరిగి EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap)) {
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bitmap)) {
 		blk_t blk = 0;
 
-		if (((start) & ~0xffffffffULL) ||
-		    ((end) & ~0xffffffffULL)) {
-			ext2fs_warn_bitmap2(bitmap, EXT2FS_TEST_ERROR, start);
-			return EINVAL;
+		ఒకవేళ (((ప్రారంభం) & ~0xffffffffULL) ||
+		    ((చివర) & ~0xffffffffULL)) {
+			ext2fs_warn_bitmap2(bitmap, EXT2FS_TEST_ERROR, ప్రారంభం);
+			తిరిగి EINVAL;
 		}
 
-		retval = ext2fs_find_first_zero_generic_bitmap(bitmap, start,
-							       end, &blk);
-		if (retval == 0)
-			*out = blk;
-		return retval;
+		retval = ext2fs_కనుగొను_మొదటి_zero_generic_bitmap(bitmap, ప్రారంభం,
+							       చివర, &blk);
+		ఒకవేళ (retval == 0)
+			*బహిర్గతం = blk;
+		తిరిగి retval;
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return EINVAL;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bitmap))
+		తిరిగి EINVAL;
 
-	cstart = start >> bmap64->cluster_bits;
-	cend = end >> bmap64->cluster_bits;
+	cstart = ప్రారంభం >> bmap64->cluster_బిట్లు;
+	cend = చివర >> bmap64->cluster_బిట్లు;
 
-	if (cstart < bmap64->start || cend > bmap64->end || start > end) {
-		warn_bitmap(bmap64, EXT2FS_TEST_ERROR, start);
-		return EINVAL;
+	ఒకవేళ (cstart < bmap64->ప్రారంభం || cend > bmap64->చివర || ప్రారంభం > చివర) {
+		warn_bitmap(bmap64, EXT2FS_TEST_ERROR, ప్రారంభం);
+		తిరిగి EINVAL;
 	}
 
-	if (bmap64->bitmap_ops->find_first_zero) {
-		retval = bmap64->bitmap_ops->find_first_zero(bmap64, cstart,
+	ఒకవేళ (bmap64->bitmap_ops->కనుగొను_మొదటి_zero) {
+		retval = bmap64->bitmap_ops->కనుగొను_మొదటి_zero(bmap64, cstart,
 							     cend, &cout);
-		if (retval)
-			return retval;
-	found:
-		cout <<= bmap64->cluster_bits;
-		*out = (cout >= start) ? cout : start;
-		return 0;
+		ఒకవేళ (retval)
+			తిరిగి retval;
+	దొరికింది:
+		cout <<= bmap64->cluster_బిట్లు;
+		*బహిర్గతం = (cout >= ప్రారంభం) ? cout : ప్రారంభం;
+		తిరిగి 0;
 	}
 
-	for (cout = cstart; cout <= cend; cout++)
-		if (!bmap64->bitmap_ops->test_bmap(bmap64, cout))
-			goto found;
+	కొరకు (cout = cstart; cout <= cend; cout++)
+		ఒకవేళ (!bmap64->bitmap_ops->test_bmap(bmap64, cout))
+			వెళ్ళు దొరికింది;
 
-	return ENOENT;
+	తిరిగి ENOENT;
 }
 
-errcode_t ext2fs_find_first_set_generic_bmap(ext2fs_generic_bitmap bitmap,
-					     __u64 start, __u64 end, __u64 *out)
+errcode_t ext2fs_కనుగొను_మొదటి_సమితి_generic_bmap(ext2fs_generic_bitmap bitmap,
+					     __u64 ప్రారంభం, __u64 చివర, __u64 *బహిర్గతం)
 {
 	ext2fs_generic_bitmap_64 bmap64 = (ext2fs_generic_bitmap_64) bitmap;
 	__u64 cstart, cend, cout;
 	errcode_t retval;
 
-	if (!bitmap)
-		return EINVAL;
+	ఒకవేళ (!bitmap)
+		తిరిగి EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap)) {
+	ఒకవేళ (EXT2FS_IS_32_BITMAP(bitmap)) {
 		blk_t blk = 0;
 
-		if (((start) & ~0xffffffffULL) ||
-		    ((end) & ~0xffffffffULL)) {
-			ext2fs_warn_bitmap2(bitmap, EXT2FS_TEST_ERROR, start);
-			return EINVAL;
+		ఒకవేళ (((ప్రారంభం) & ~0xffffffffULL) ||
+		    ((చివర) & ~0xffffffffULL)) {
+			ext2fs_warn_bitmap2(bitmap, EXT2FS_TEST_ERROR, ప్రారంభం);
+			తిరిగి EINVAL;
 		}
 
-		retval = ext2fs_find_first_set_generic_bitmap(bitmap, start,
-							      end, &blk);
-		if (retval == 0)
-			*out = blk;
-		return retval;
+		retval = ext2fs_కనుగొను_మొదటి_సమితి_generic_bitmap(bitmap, ప్రారంభం,
+							      చివర, &blk);
+		ఒకవేళ (retval == 0)
+			*బహిర్గతం = blk;
+		తిరిగి retval;
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return EINVAL;
+	ఒకవేళ (!EXT2FS_IS_64_BITMAP(bitmap))
+		తిరిగి EINVAL;
 
-	cstart = start >> bmap64->cluster_bits;
-	cend = end >> bmap64->cluster_bits;
+	cstart = ప్రారంభం >> bmap64->cluster_బిట్లు;
+	cend = చివర >> bmap64->cluster_బిట్లు;
 
-	if (cstart < bmap64->start || cend > bmap64->end || start > end) {
-		warn_bitmap(bmap64, EXT2FS_TEST_ERROR, start);
-		return EINVAL;
+	ఒకవేళ (cstart < bmap64->ప్రారంభం || cend > bmap64->చివర || ప్రారంభం > చివర) {
+		warn_bitmap(bmap64, EXT2FS_TEST_ERROR, ప్రారంభం);
+		తిరిగి EINVAL;
 	}
 
-	if (bmap64->bitmap_ops->find_first_set) {
-		retval = bmap64->bitmap_ops->find_first_set(bmap64, cstart,
+	ఒకవేళ (bmap64->bitmap_ops->కనుగొను_మొదటి_సమితి) {
+		retval = bmap64->bitmap_ops->కనుగొను_మొదటి_సమితి(bmap64, cstart,
 							    cend, &cout);
-		if (retval)
-			return retval;
-	found:
-		cout <<= bmap64->cluster_bits;
-		*out = (cout >= start) ? cout : start;
-		return 0;
+		ఒకవేళ (retval)
+			తిరిగి retval;
+	దొరికింది:
+		cout <<= bmap64->cluster_బిట్లు;
+		*బహిర్గతం = (cout >= ప్రారంభం) ? cout : ప్రారంభం;
+		తిరిగి 0;
 	}
 
-	for (cout = cstart; cout <= cend; cout++)
-		if (bmap64->bitmap_ops->test_bmap(bmap64, cout))
-			goto found;
+	కొరకు (cout = cstart; cout <= cend; cout++)
+		ఒకవేళ (bmap64->bitmap_ops->test_bmap(bmap64, cout))
+			వెళ్ళు దొరికింది;
 
-	return ENOENT;
+	తిరిగి ENOENT;
 }
 
-errcode_t ext2fs_count_used_blocks(ext2_filsys fs, blk64_t start,
-				   blk64_t end, blk64_t *out)
+errcode_t ext2fs_లెక్క_వాడిన_ఖండాలు(ext2_filsys fs, blk64_t ప్రారంభం,
+				   blk64_t చివర, blk64_t *బహిర్గతం)
 {
-	blk64_t		next;
-	blk64_t		tot_set = 0;
+	blk64_t		తదుపరి;
+	blk64_t		tot_సమితి = 0;
 	errcode_t	retval = 0;
 
-	while (start < end) {
-		retval = ext2fs_find_first_set_block_bitmap2(fs->block_map,
-							start, end, &next);
-		if (retval) {
-			if (retval == ENOENT)
+	అయితే (ప్రారంభం < చివర) {
+		retval = ext2fs_కనుగొను_మొదటి_సమితి_ఖండం_bitmap2(fs->ఖండం_map,
+							ప్రారంభం, చివర, &తదుపరి);
+		ఒకవేళ (retval) {
+			ఒకవేళ (retval == ENOENT)
 				retval = 0;
-			break;
+			ఆపు;
 		}
-		start = next;
+		ప్రారంభం = తదుపరి;
 
-		retval = ext2fs_find_first_zero_block_bitmap2(fs->block_map,
-							start, end, &next);
-		if (retval == 0) {
-			tot_set += next - start;
-			start  = next + 1;
-		} else if (retval == ENOENT) {
+		retval = ext2fs_కనుగొను_మొదటి_zero_ఖండం_bitmap2(fs->ఖండం_map,
+							ప్రారంభం, చివర, &తదుపరి);
+		ఒకవేళ (retval == 0) {
+			tot_సమితి += తదుపరి - ప్రారంభం;
+			ప్రారంభం  = తదుపరి + 1;
+		} లేకపోతే ఒకవేళ (retval == ENOENT) {
 			retval = 0;
-			tot_set += end - start + 1;
-			break;
-		} else
-			break;
+			tot_సమితి += చివర - ప్రారంభం + 1;
+			ఆపు;
+		} లేకపోతే
+			ఆపు;
 	}
 
-	if (!retval)
-		*out = tot_set;
-	return retval;
+	ఒకవేళ (!retval)
+		*బహిర్గతం = tot_సమితి;
+	తిరిగి retval;
 }
 
-errcode_t ext2fs_count_used_clusters(ext2_filsys fs, blk64_t start,
-				     blk64_t end, blk64_t *out)
+errcode_t ext2fs_లెక్క_వాడిన_clusters(ext2_filsys fs, blk64_t ప్రారంభం,
+				     blk64_t చివర, blk64_t *బహిర్గతం)
 {
-	blk64_t		tot_set = 0;
+	blk64_t		tot_సమితి = 0;
 	errcode_t	retval = 0;
 
-	retval = ext2fs_count_used_blocks(fs, start, end, &tot_set);
+	retval = ext2fs_లెక్క_వాడిన_ఖండాలు(fs, ప్రారంభం, చివర, &tot_సమితి);
 
-	if (!retval)
-		*out = EXT2FS_NUM_B2C(fs, tot_set);
-	return retval;
+	ఒకవేళ (!retval)
+		*బహిర్గతం = EXT2_FS_అంకె_B2_C(fs, tot_సమితి);
+	తిరిగి retval;
 }

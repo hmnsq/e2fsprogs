@@ -29,157 +29,157 @@ Last Changed Date: 2007-06-22 13:36:10 -0400 (Fri, 22 Jun 2007)
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-#ifdef CONFIG_STAND_ALONE
-#define HAVE_MMAP
-#define HAVE_STRDUP
-#define HAVE_SYS_MMAN_H
-#define HAVE_UTIME_H
-#define HAVE_UTIME
-#endif
-#ifndef __FreeBSD__
-#define _XOPEN_SOURCE 600
-#endif
+#నిర్వచితమైతే CONFIG_STAND_ALONE
+#నిర్వచించు HAVE_MMAP
+#నిర్వచించు HAVE_STRDUP
+#నిర్వచించు HAVE_SYS_MMAN_H
+#నిర్వచించు HAVE_UTIME_H
+#నిర్వచించు HAVE_UTIME
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే __FreeBSD__
+#నిర్వచించు XOPEN_ఆధారం 600
+#అయితే_ముగింపు
 
-#include "config.h"
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <errno.h>
-#include <string.h>
-#ifdef HAVE_SYS_SELECT_H
-#include <sys/select.h>
-#endif
-#include <sys/time.h>
-#include <sys/types.h>
-#include <time.h>
-#ifdef HAVE_UTIME_H
-#include <utime.h>
-#endif
-#include <sys/stat.h>
-#include <sys/file.h>
-#include <fcntl.h>
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <string.h>
+#నిర్వచితమైతే HAVE_SYS_SELECT_H
+#అన్తర్భావ <sys/select.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <sys/time.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <time.h>
+#నిర్వచితమైతే HAVE_UTIME_H
+#అన్తర్భావ <utime.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <sys/file.h>
+#అన్తర్భావ <fcntl.h>
 
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
-#endif
+#నిర్వచితమైతే HAVE_SYS_MMAN_H
+#అన్తర్భావ <sys/mman.h>
+#అయితే_ముగింపు
 
-#ifdef __GNUC__
-#define EXT2FS_ATTR(x) __attribute__(x)
-#else
-#define EXT2FS_ATTR(x)
-#endif
+#నిర్వచితమైతే __GNUC__
+#నిర్వచించు EXT2FS_ATTR(x) __attribute__(x)
+#లేకపోతే
+#నిర్వచించు EXT2FS_ATTR(x)
+#అయితే_ముగింపు
 
-#ifndef MAP_FILE
-#define MAP_FILE 0
-#endif
+#నిర్వచితం_కాకపోతే MAP_FILE
+#నిర్వచించు MAP_FILE 0
+#అయితే_ముగింపు
 
-#ifndef MAP_FAILED
-#define MAP_FAILED ((void *)-1)
-#endif
+#నిర్వచితం_కాకపోతే MAP_FAILED
+#నిర్వచించు MAP_FAILED ((శూన్య *)-1)
+#అయితే_ముగింపు
 
-#ifndef HAVE_STRDUP
-#define strdup rep_strdup
-static char *rep_strdup(const char *s)
+#నిర్వచితం_కాకపోతే HAVE_STRDUP
+#నిర్వచించు strdup rep_strdup
+స్థిర అక్షరం *rep_strdup(స్థిరరాశి అక్షరం *s)
 {
-	char *ret;
-	int length;
+	అక్షరం *ret;
+	పూర్ణాంకం నిడివి;
 
-	if (!s)
-		return NULL;
-	length = strlen(s);
-	ret = malloc(length + 1);
-	if (ret) {
-		strncpy(ret, s, length);
-		ret[length] = '\0';
+	ఒకవేళ (!s)
+		తిరిగి ఖాళీ;
+	నిడివి = అక్షరశ్రేణి_పొడవు(s);
+	ret = జ్ఞాపకం_ఇవ్వు(నిడివి + 1);
+	ఒకవేళ (ret) {
+		strncpy(ret, s, నిడివి);
+		ret[నిడివి] = '\0';
 	}
-	return ret;
+	తిరిగి ret;
 }
-#endif
+#అయితే_ముగింపు
 
-#ifndef PRINTF_ATTRIBUTE
-#if (__GNUC__ >= 3) && (__GNUC_MINOR__ >= 1 )
+#నిర్వచితం_కాకపోతే PRINTF_ATTRIBUTE
+#ఒకవేళ (__GNUC__ >= 3) && (__GNUC_MINOR__ >= 1 )
 /** Use gcc attribute to check printf fns.  a1 is the 1-based index of
  * the parameter containing the format, and a2 the index of the first
  * argument. Note that some gcc 2.x versions don't handle this
  * properly **/
-#define PRINTF_ATTRIBUTE(a1, a2) __attribute__ ((format (__printf__, a1, a2)))
-#else
-#define PRINTF_ATTRIBUTE(a1, a2)
-#endif
-#endif
+#నిర్వచించు PRINTF_ATTRIBUTE(a1, a2) __attribute__ ((format (__printf__, a1, a2)))
+#లేకపోతే
+#నిర్వచించు PRINTF_ATTRIBUTE(a1, a2)
+#అయితే_ముగింపు
+#అయితే_ముగింపు
 
-#if defined __STDC__ && defined __STDC_VERSION__ && __STDC_VERSION__ <= 201710L
-typedef int bool;
-#endif
+#ఒకవేళ defined __STDC__ && defined __STDC_VERSION__ && __STDC_VERSION__ <= 201710L
+రకనిర్వచనం పూర్ణాంకం bool;
+#అయితే_ముగింపు
 
-#include "tdb.h"
+#అన్తర్భావ "tdb.h"
 
-static TDB_DATA tdb_null;
+స్థిర TDB_దత్తాంశం tdb_null;
 
-#ifndef u32
-#define u32 unsigned
-#endif
+#నిర్వచితం_కాకపోతే u32
+#నిర్వచించు u32 గుర్తులేని
+#అయితే_ముగింపు
 
-typedef u32 tdb_len_t;
-typedef u32 tdb_off_t;
+రకనిర్వచనం u32 tdb_len_t;
+రకనిర్వచనం u32 tdb_off_t;
 
-#ifndef offsetof
-#define offsetof(t,f) ((unsigned int)&((t *)0)->f)
-#endif
+#నిర్వచితం_కాకపోతే offsetof
+#నిర్వచించు offsetof(t,f) ((గుర్తులేని పూర్ణాంకం)&((t *)0)->f)
+#అయితే_ముగింపు
 
-#define TDB_MAGIC_FOOD "TDB file\n"
-#define TDB_VERSION (0x26011967 + 6)
-#define TDB_MAGIC (0x26011999U)
-#define TDB_FREE_MAGIC (~TDB_MAGIC)
-#define TDB_DEAD_MAGIC (0xFEE1DEAD)
-#define TDB_RECOVERY_MAGIC (0xf53bc0e7U)
-#define TDB_ALIGNMENT 4
-#define MIN_REC_SIZE (2*sizeof(struct list_struct) + TDB_ALIGNMENT)
-#define DEFAULT_HASH_SIZE 131
-#define FREELIST_TOP (sizeof(struct tdb_header))
-#define TDB_ALIGN(x,a) (((x) + (a)-1) & ~((a)-1))
-#define TDB_BYTEREV(x) (((((x)&0xff)<<24)|((x)&0xFF00)<<8)|(((x)>>8)&0xFF00)|((x)>>24))
-#define TDB_DEAD(r) ((r)->magic == TDB_DEAD_MAGIC)
-#define TDB_BAD_MAGIC(r) ((r)->magic != TDB_MAGIC && !TDB_DEAD(r))
-#define TDB_HASH_TOP(hash) (FREELIST_TOP + (BUCKET(hash)+1)*sizeof(tdb_off_t))
-#define TDB_HASHTABLE_SIZE(tdb) ((tdb->header.hash_size+1)*sizeof(tdb_off_t))
-#define TDB_DATA_START(hash_size) TDB_HASH_TOP(hash_size-1)
-#define TDB_RECOVERY_HEAD offsetof(struct tdb_header, recovery_start)
-#define TDB_SEQNUM_OFS    offsetof(struct tdb_header, sequence_number)
-#define TDB_PAD_BYTE 0x42
-#define TDB_PAD_U32  0x42424242
+#నిర్వచించు TDB_MAGIC_FOOD "TDB file\n"
+#నిర్వచించు TDB_సంస్కరణ (0x26011967 + 6)
+#నిర్వచించు TDB_MAGIC (0x26011999U)
+#నిర్వచించు TDB_FREE_MAGIC (~TDB_MAGIC)
+#నిర్వచించు TDB_DEAD_MAGIC (0xFEE1DEAD)
+#నిర్వచించు TDB_RECOVERY_MAGIC (0xf53bc0e7U)
+#నిర్వచించు TDB_ALIGNMENT 4
+#నిర్వచించు MIN_REC_కొలత (2*పరిమాణం(నిర్మాణం list_struct) + TDB_ALIGNMENT)
+#నిర్వచించు DEFAULT_HASH_కొలత 131
+#నిర్వచించు FREELIST_శిఖరం (పరిమాణం(నిర్మాణం tdb_శీర్షిక))
+#నిర్వచించు TDB_ALIGN(x,a) (((x) + (a)-1) & ~((a)-1))
+#నిర్వచించు TDB_BYTEREV(x) (((((x)&0xff)<<24)|((x)&0xFF00)<<8)|(((x)>>8)&0xFF00)|((x)>>24))
+#నిర్వచించు TDB_DEAD(r) ((r)->magic == TDB_DEAD_MAGIC)
+#నిర్వచించు TDB_BAD_MAGIC(r) ((r)->magic != TDB_MAGIC && !TDB_DEAD(r))
+#నిర్వచించు TDB_HASH_శిఖరం(hash) (FREELIST_శిఖరం + (పాత్ర(hash)+1)*పరిమాణం(tdb_off_t))
+#నిర్వచించు TDB_HASHTABLE_కొలత(tdb) ((tdb->శీర్షిక.hash_కొలత+1)*పరిమాణం(tdb_off_t))
+#నిర్వచించు TDB_దత్తాంశం_ప్రారంభం(hash_కొలత) TDB_HASH_శిఖరం(hash_కొలత-1)
+#నిర్వచించు TDB_RECOVERY_తల offsetof(నిర్మాణం tdb_శీర్షిక, recovery_ప్రారంభం)
+#నిర్వచించు TDB_SEQNUM_OFS    offsetof(నిర్మాణం tdb_శీర్షిక, sequence_సంఖ్య)
+#నిర్వచించు TDB_PAD_BYTE 0x42
+#నిర్వచించు TDB_PAD_U32  0x42424242
 
 /* NB assumes there is a local variable called "tdb" that is the
  * current context, also takes doubly-parenthesized print-style
  * argument. */
-#define TDB_LOG(x) tdb->log.log_fn x
+#నిర్వచించు TDB_LOG(x) tdb->సంవర్గమానం.log_fn x
 
 /* lock offsets */
-#define GLOBAL_LOCK      0
-#define ACTIVE_LOCK      4
-#define TRANSACTION_LOCK 8
+#నిర్వచించు GLOBAL_తాళం      0
+#నిర్వచించు చురుకైన_తాళం      4
+#నిర్వచించు TRANSACTION_తాళం 8
 
 /* free memory if the pointer is valid and zero the pointer */
-#ifndef SAFE_FREE
-#define SAFE_FREE(x) do { if ((x) != NULL) {free(x); (x)=NULL;} } while(0)
-#endif
+#నిర్వచితం_కాకపోతే సురక్షిత_FREE
+#నిర్వచించు సురక్షిత_FREE(x) చేయి { ఒకవేళ ((x) != ఖాళీ) {విడుదల(x); (x)=ఖాళీ;} } అయితే(0)
+#అయితే_ముగింపు
 
-#define BUCKET(hash) ((hash) % tdb->header.hash_size)
+#నిర్వచించు పాత్ర(hash) ((hash) % tdb->శీర్షిక.hash_కొలత)
 
-#define DOCONV() (tdb->flags & TDB_CONVERT)
-#define CONVERT(x) (DOCONV() ? tdb_convert(&x, sizeof(x)) : &x)
+#నిర్వచించు DOCONV() (tdb->flags & TDB_CONVERT)
+#నిర్వచించు CONVERT(x) (DOCONV() ? tdb_convert(&x, పరిమాణం(x)) : &x)
 
 
 /* the body of the database is made of one list_struct for the free space
    plus a separate data list for each hash value */
-struct list_struct {
-	tdb_off_t next; /* offset of the next record in the list */
+నిర్మాణం list_struct {
+	tdb_off_t తదుపరి; /* offset of the next record in the list */
 	tdb_len_t rec_len; /* total byte length of record */
-	tdb_len_t key_len; /* byte length of key */
-	tdb_len_t data_len; /* byte length of data */
-	u32 full_hash; /* the full 32 bit hash of the key */
+	tdb_len_t కీలకం_len; /* byte length of key */
+	tdb_len_t దత్తాంశం_len; /* byte length of data */
+	u32 నిండిన_hash; /* the full 32 bit hash of the key */
 	u32 magic;   /* try to catch errors */
 	/* the following union is implied:
 		union {
@@ -195,122 +195,122 @@ struct list_struct {
 
 
 /* this is stored at the front of every database */
-struct tdb_header {
-	char magic_food[32]; /* for /etc/magic */
-	u32 version; /* version of the code */
-	u32 hash_size; /* number of hash entries */
+నిర్మాణం tdb_శీర్షిక {
+	అక్షరం magic_food[32]; /* for /etc/magic */
+	u32 సంస్కరణ; /* version of the code */
+	u32 hash_కొలత; /* number of hash entries */
 	tdb_off_t rwlocks; /* obsolete - kept to detect old formats */
-	tdb_off_t recovery_start; /* offset of transaction recovery region */
-	tdb_off_t sequence_number; /* used when TDB_SEQNUM is set */
+	tdb_off_t recovery_ప్రారంభం; /* offset of transaction recovery region */
+	tdb_off_t sequence_సంఖ్య; /* used when TDB_SEQNUM is set */
 	tdb_off_t reserved[29];
 };
 
-struct tdb_lock_type {
-	int list;
-	u32 count;
+నిర్మాణం tdb_తాళం_type {
+	పూర్ణాంకం list;
+	u32 లెక్క;
 	u32 ltype;
 };
 
-struct tdb_traverse_lock {
-	struct tdb_traverse_lock *next;
+నిర్మాణం tdb_traverse_తాళం {
+	నిర్మాణం tdb_traverse_తాళం *తదుపరి;
 	u32 off;
 	u32 hash;
-	int lock_rw;
+	పూర్ణాంకం తాళం_rw;
 };
 
 
-struct tdb_methods {
-	int (*tdb_read)(struct tdb_context *, tdb_off_t , void *, tdb_len_t , int );
-	int (*tdb_write)(struct tdb_context *, tdb_off_t, const void *, tdb_len_t);
-	void (*next_hash_chain)(struct tdb_context *, u32 *);
-	int (*tdb_oob)(struct tdb_context *, tdb_off_t , int );
-	int (*tdb_expand_file)(struct tdb_context *, tdb_off_t , tdb_off_t );
-	int (*tdb_brlock)(struct tdb_context *, tdb_off_t , int, int, int, size_t);
+నిర్మాణం tdb_methods {
+	పూర్ణాంకం (*tdb_read)(నిర్మాణం tdb_context *, tdb_off_t , శూన్య *, tdb_len_t , పూర్ణాంకం );
+	పూర్ణాంకం (*tdb_write)(నిర్మాణం tdb_context *, tdb_off_t, స్థిరరాశి శూన్య *, tdb_len_t);
+	శూన్య (*తదుపరి_hash_chain)(నిర్మాణం tdb_context *, u32 *);
+	పూర్ణాంకం (*tdb_oob)(నిర్మాణం tdb_context *, tdb_off_t , పూర్ణాంకం );
+	పూర్ణాంకం (*tdb_expand_file)(నిర్మాణం tdb_context *, tdb_off_t , tdb_off_t );
+	పూర్ణాంకం (*tdb_brlock)(నిర్మాణం tdb_context *, tdb_off_t , పూర్ణాంకం, పూర్ణాంకం, పూర్ణాంకం, size_t);
 };
 
-struct tdb_context {
-	char *name; /* the name of the database */
-	void *map_ptr; /* where it is currently mapped */
-	int fd; /* open file descriptor for the database */
-	tdb_len_t map_size; /* how much space has been mapped */
-	int read_only; /* opened read-only */
-	int traverse_read; /* read-only traversal */
-	struct tdb_lock_type global_lock;
-	int num_lockrecs;
-	struct tdb_lock_type *lockrecs; /* only real locks, all with count>0 */
-	enum TDB_ERROR ecode; /* error code for last tdb error */
-	struct tdb_header header; /* a cached copy of the header */
+నిర్మాణం tdb_context {
+	అక్షరం *name; /* the name of the database */
+	శూన్య *map_ptr; /* where it is currently mapped */
+	పూర్ణాంకం fd; /* open file descriptor for the database */
+	tdb_len_t map_కొలత; /* how much space has been mapped */
+	పూర్ణాంకం read_only; /* opened read-only */
+	పూర్ణాంకం traverse_read; /* read-only traversal */
+	నిర్మాణం tdb_తాళం_type global_తాళం;
+	పూర్ణాంకం అంకె_lockrecs;
+	నిర్మాణం tdb_తాళం_type *lockrecs; /* only real locks, all with count>0 */
+	గణన TDB_ERROR ecode; /* error code for last tdb error */
+	నిర్మాణం tdb_శీర్షిక శీర్షిక; /* a cached copy of the header */
 	u32 flags; /* the flags passed to tdb_open */
-	struct tdb_traverse_lock travlocks; /* current traversal locks */
-	struct tdb_context *next; /* all tdbs to avoid multiple opens */
+	నిర్మాణం tdb_traverse_తాళం travlocks; /* current traversal locks */
+	నిర్మాణం tdb_context *తదుపరి; /* all tdbs to avoid multiple opens */
 	dev_t device;	/* uniquely identifies this tdb */
 	ino_t inode;	/* uniquely identifies this tdb */
-	struct tdb_logging_context log;
-	unsigned int (*hash_fn)(TDB_DATA *key);
-	int open_flags; /* flags used in the open - needed by reopen */
-	unsigned int num_locks; /* number of chain locks held */
-	const struct tdb_methods *methods;
-	struct tdb_transaction *transaction;
-	int page_size;
-	int max_dead_records;
-	bool have_transaction_lock;
-	tdb_len_t real_map_size; /* how much space has been mapped */
+	నిర్మాణం tdb_logging_context సంవర్గమానం;
+	గుర్తులేని పూర్ణాంకం (*hash_fn)(TDB_దత్తాంశం *కీలకం);
+	పూర్ణాంకం open_flags; /* flags used in the open - needed by reopen */
+	గుర్తులేని పూర్ణాంకం అంకె_locks; /* number of chain locks held */
+	స్థిరరాశి నిర్మాణం tdb_methods *methods;
+	నిర్మాణం tdb_transaction *transaction;
+	పూర్ణాంకం పుట_కొలత;
+	పూర్ణాంకం max_dead_రికార్డులు;
+	bool have_transaction_తాళం;
+	tdb_len_t real_map_కొలత; /* how much space has been mapped */
 };
 
 
 /*
   internal prototypes
 */
-static int tdb_munmap(struct tdb_context *tdb);
-static void tdb_mmap(struct tdb_context *tdb);
-static int tdb_lock(struct tdb_context *tdb, int list, int ltype);
-int tdb_lock_nonblock(struct tdb_context *tdb, int list, int ltype);
-static int tdb_unlock(struct tdb_context *tdb, int list, int ltype);
-static int tdb_brlock(struct tdb_context *tdb, tdb_off_t offset, int rw_type, int lck_type, int probe, size_t len);
-static int tdb_transaction_lock(struct tdb_context *tdb, int ltype);
-static int tdb_transaction_unlock(struct tdb_context *tdb);
-static int tdb_brlock_upgrade(struct tdb_context *tdb, tdb_off_t offset, size_t len);
-static int tdb_write_lock_record(struct tdb_context *tdb, tdb_off_t off);
-static int tdb_write_unlock_record(struct tdb_context *tdb, tdb_off_t off);
-static int tdb_ofs_read(struct tdb_context *tdb, tdb_off_t offset, tdb_off_t *d);
-static int tdb_ofs_write(struct tdb_context *tdb, tdb_off_t offset, tdb_off_t *d);
-static void *tdb_convert(void *buf, u32 size);
-static int tdb_free(struct tdb_context *tdb, tdb_off_t offset, struct list_struct *rec);
-static tdb_off_t tdb_allocate(struct tdb_context *tdb, tdb_len_t length, struct list_struct *rec);
-static int tdb_ofs_read(struct tdb_context *tdb, tdb_off_t offset, tdb_off_t *d);
-static int tdb_ofs_write(struct tdb_context *tdb, tdb_off_t offset, tdb_off_t *d);
-static int tdb_lock_record(struct tdb_context *tdb, tdb_off_t off);
-static int tdb_unlock_record(struct tdb_context *tdb, tdb_off_t off);
-static int tdb_rec_read(struct tdb_context *tdb, tdb_off_t offset, struct list_struct *rec);
-static int tdb_rec_write(struct tdb_context *tdb, tdb_off_t offset, struct list_struct *rec);
-static int tdb_do_delete(struct tdb_context *tdb, tdb_off_t rec_ptr, struct list_struct *rec);
-static unsigned char *tdb_alloc_read(struct tdb_context *tdb, tdb_off_t offset, tdb_len_t len);
-static int tdb_parse_data(struct tdb_context *tdb, TDB_DATA key,
-		   tdb_off_t offset, tdb_len_t len,
-		   int (*parser)(TDB_DATA key, TDB_DATA data,
-				 void *private_data),
-		   void *private_data);
-static tdb_off_t tdb_find_lock_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash, int locktype,
-			   struct list_struct *rec);
-static void tdb_io_init(struct tdb_context *tdb);
-static int tdb_expand(struct tdb_context *tdb, tdb_off_t size);
-static int tdb_rec_free_read(struct tdb_context *tdb, tdb_off_t off,
-		      struct list_struct *rec);
+స్థిర పూర్ణాంకం tdb_munmap(నిర్మాణం tdb_context *tdb);
+స్థిర శూన్య tdb_mmap(నిర్మాణం tdb_context *tdb);
+స్థిర పూర్ణాంకం tdb_తాళం(నిర్మాణం tdb_context *tdb, పూర్ణాంకం list, పూర్ణాంకం ltype);
+పూర్ణాంకం tdb_తాళం_nonblock(నిర్మాణం tdb_context *tdb, పూర్ణాంకం list, పూర్ణాంకం ltype);
+స్థిర పూర్ణాంకం tdb_unlock(నిర్మాణం tdb_context *tdb, పూర్ణాంకం list, పూర్ణాంకం ltype);
+స్థిర పూర్ణాంకం tdb_brlock(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, పూర్ణాంకం rw_type, పూర్ణాంకం lck_type, పూర్ణాంకం probe, size_t len);
+స్థిర పూర్ణాంకం tdb_transaction_తాళం(నిర్మాణం tdb_context *tdb, పూర్ణాంకం ltype);
+స్థిర పూర్ణాంకం tdb_transaction_unlock(నిర్మాణం tdb_context *tdb);
+స్థిర పూర్ణాంకం tdb_brlock_upgrade(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, size_t len);
+స్థిర పూర్ణాంకం tdb_write_తాళం_రికార్డు(నిర్మాణం tdb_context *tdb, tdb_off_t off);
+స్థిర పూర్ణాంకం tdb_write_unlock_రికార్డు(నిర్మాణం tdb_context *tdb, tdb_off_t off);
+స్థిర పూర్ణాంకం tdb_ofs_read(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, tdb_off_t *d);
+స్థిర పూర్ణాంకం tdb_ofs_write(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, tdb_off_t *d);
+స్థిర శూన్య *tdb_convert(శూన్య *buf, u32 కొలత);
+స్థిర పూర్ణాంకం tdb_free(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, నిర్మాణం list_struct *rec);
+స్థిర tdb_off_t tdb_allocate(నిర్మాణం tdb_context *tdb, tdb_len_t నిడివి, నిర్మాణం list_struct *rec);
+స్థిర పూర్ణాంకం tdb_ofs_read(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, tdb_off_t *d);
+స్థిర పూర్ణాంకం tdb_ofs_write(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, tdb_off_t *d);
+స్థిర పూర్ణాంకం tdb_తాళం_రికార్డు(నిర్మాణం tdb_context *tdb, tdb_off_t off);
+స్థిర పూర్ణాంకం tdb_unlock_రికార్డు(నిర్మాణం tdb_context *tdb, tdb_off_t off);
+స్థిర పూర్ణాంకం tdb_rec_read(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, నిర్మాణం list_struct *rec);
+స్థిర పూర్ణాంకం tdb_rec_write(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, నిర్మాణం list_struct *rec);
+స్థిర పూర్ణాంకం tdb_do_delete(నిర్మాణం tdb_context *tdb, tdb_off_t rec_ptr, నిర్మాణం list_struct *rec);
+స్థిర గుర్తులేని అక్షరం *tdb_alloc_read(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, tdb_len_t len);
+స్థిర పూర్ణాంకం tdb_parse_దత్తాంశం(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం,
+		   tdb_off_t స్థానభ్రంశం, tdb_len_t len,
+		   పూర్ణాంకం (*parser)(TDB_దత్తాంశం కీలకం, TDB_దత్తాంశం దత్తాంశం,
+				 శూన్య *వ్యక్తిగత_దత్తాంశం),
+		   శూన్య *వ్యక్తిగత_దత్తాంశం);
+స్థిర tdb_off_t tdb_కనుగొను_తాళం_hash(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం, u32 hash, పూర్ణాంకం locktype,
+			   నిర్మాణం list_struct *rec);
+స్థిర శూన్య tdb_io_init(నిర్మాణం tdb_context *tdb);
+స్థిర పూర్ణాంకం tdb_expand(నిర్మాణం tdb_context *tdb, tdb_off_t కొలత);
+స్థిర పూర్ణాంకం tdb_rec_free_read(నిర్మాణం tdb_context *tdb, tdb_off_t off,
+		      నిర్మాణం list_struct *rec);
 
 
 /* file: error.c */
 
-enum TDB_ERROR tdb_error(struct tdb_context *tdb)
+గణన TDB_ERROR tdb_error(నిర్మాణం tdb_context *tdb)
 {
-	return tdb->ecode;
+	తిరిగి tdb->ecode;
 }
 
-static struct tdb_errname {
-	enum TDB_ERROR ecode; const char *estring;
+స్థిర నిర్మాణం tdb_errname {
+	గణన TDB_ERROR ecode; స్థిరరాశి అక్షరం *estring;
 } emap[] = { {TDB_SUCCESS, "Success"},
 	     {TDB_ERR_CORRUPT, "Corrupt database"},
 	     {TDB_ERR_IO, "IO Error"},
-	     {TDB_ERR_LOCK, "Locking error"},
+	     {TDB_ERR_తాళం, "Locking error"},
 	     {TDB_ERR_OOM, "Out of memory"},
 	     {TDB_ERR_EXISTS, "Record exists"},
 	     {TDB_ERR_NOLOCK, "Lock exists on other keys"},
@@ -319,18 +319,18 @@ static struct tdb_errname {
 	     {TDB_ERR_RDONLY, "write not permitted"} };
 
 /* Error string for the last tdb error */
-const char *tdb_errorstr(struct tdb_context *tdb)
+స్థిరరాశి అక్షరం *tdb_errorstr(నిర్మాణం tdb_context *tdb)
 {
 	u32 i;
-	for (i = 0; i < sizeof(emap) / sizeof(struct tdb_errname); i++)
-		if (tdb->ecode == emap[i].ecode)
-			return emap[i].estring;
-	return "Invalid error code";
+	కొరకు (i = 0; i < పరిమాణం(emap) / పరిమాణం(నిర్మాణం tdb_errname); i++)
+		ఒకవేళ (tdb->ecode == emap[i].ecode)
+			తిరిగి emap[i].estring;
+	తిరిగి "Invalid error code";
 }
 
 /* file: lock.c */
 
-#define TDB_MARK_LOCK 0x80000000
+#నిర్వచించు TDB_MARK_తాళం 0x80000000
 
 /* a byte range locking function - return 0 on success
    this functions locks/unlocks 1 byte at the specified offset.
@@ -340,44 +340,44 @@ const char *tdb_errorstr(struct tdb_context *tdb)
 
    note that a len of zero means lock to end of file
 */
-int tdb_brlock(struct tdb_context *tdb, tdb_off_t offset,
-	       int rw_type, int lck_type, int probe, size_t len)
+పూర్ణాంకం tdb_brlock(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం,
+	       పూర్ణాంకం rw_type, పూర్ణాంకం lck_type, పూర్ణాంకం probe, size_t len)
 {
-	struct flock fl;
-	int ret;
+	నిర్మాణం flock fl;
+	పూర్ణాంకం ret;
 
-	if (tdb->flags & TDB_NOLOCK) {
-		return 0;
+	ఒకవేళ (tdb->flags & TDB_NOLOCK) {
+		తిరిగి 0;
 	}
 
-	if ((rw_type == F_WRLCK) && (tdb->read_only || tdb->traverse_read)) {
+	ఒకవేళ ((rw_type == F_WRLCK) && (tdb->read_only || tdb->traverse_read)) {
 		tdb->ecode = TDB_ERR_RDONLY;
-		return -1;
+		తిరిగి -1;
 	}
 
 	fl.l_type = rw_type;
 	fl.l_whence = SEEK_SET;
-	fl.l_start = offset;
+	fl.l_ప్రారంభం = స్థానభ్రంశం;
 	fl.l_len = len;
 	fl.l_pid = 0;
 
-	do {
+	చేయి {
 		ret = fcntl(tdb->fd,lck_type,&fl);
-	} while (ret == -1 && errno == EINTR);
+	} అయితే (ret == -1 && errno == EINTR);
 
-	if (ret == -1) {
+	ఒకవేళ (ret == -1) {
 		/* Generic lock error. errno set by fcntl.
 		 * EAGAIN is an expected return from non-blocking
 		 * locks. */
-		if (!probe && lck_type != F_SETLK) {
+		ఒకవేళ (!probe && lck_type != F_SETLK) {
 			/* Ensure error code is set for log fun to examine. */
-			tdb->ecode = TDB_ERR_LOCK;
+			tdb->ecode = TDB_ERR_తాళం;
 			TDB_LOG((tdb, TDB_DEBUG_TRACE,"tdb_brlock failed (fd=%d) at offset %d rw_type=%d lck_type=%d len=%d\n",
-				 tdb->fd, offset, rw_type, lck_type, (int)len));
+				 tdb->fd, స్థానభ్రంశం, rw_type, lck_type, (పూర్ణాంకం)len));
 		}
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+		తిరిగి TDB_ERRCODE(TDB_ERR_తాళం, -1);
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 
@@ -387,57 +387,57 @@ int tdb_brlock(struct tdb_context *tdb, tdb_off_t offset,
   deadlock detection and claim a deadlock when progress can be
   made. For those OSes we may loop for a while.
 */
-int tdb_brlock_upgrade(struct tdb_context *tdb, tdb_off_t offset, size_t len)
+పూర్ణాంకం tdb_brlock_upgrade(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, size_t len)
 {
-	int count = 1000;
-	while (count--) {
-		struct timeval tv;
-		if (tdb_brlock(tdb, offset, F_WRLCK, F_SETLKW, 1, len) == 0) {
-			return 0;
+	పూర్ణాంకం లెక్క = 1000;
+	అయితే (లెక్క--) {
+		నిర్మాణం timeval tv;
+		ఒకవేళ (tdb_brlock(tdb, స్థానభ్రంశం, F_WRLCK, F_SETLKW, 1, len) == 0) {
+			తిరిగి 0;
 		}
-		if (errno != EDEADLK) {
-			break;
+		ఒకవేళ (errno != EDEADLK) {
+			ఆపు;
 		}
 		/* sleep for as short a time as we can - more portable than usleep() */
 		tv.tv_sec = 0;
 		tv.tv_usec = 1;
-		select(0, NULL, NULL, NULL, &tv);
+		select(0, ఖాళీ, ఖాళీ, ఖాళీ, &tv);
 	}
-	TDB_LOG((tdb, TDB_DEBUG_TRACE,"tdb_brlock_upgrade failed at offset %d\n", offset));
-	return -1;
+	TDB_LOG((tdb, TDB_DEBUG_TRACE,"tdb_brlock_upgrade failed at offset %d\n", స్థానభ్రంశం));
+	తిరిగి -1;
 }
 
 
 /* lock a list in the database. list -1 is the alloc list */
-static int _tdb_lock(struct tdb_context *tdb, int list, int ltype, int op)
+స్థిర పూర్ణాంకం tdb_తాళం_2(నిర్మాణం tdb_context *tdb, పూర్ణాంకం list, పూర్ణాంకం ltype, పూర్ణాంకం op)
 {
-	struct tdb_lock_type *new_lck;
-	int i;
-	bool mark_lock = ((ltype & TDB_MARK_LOCK) == TDB_MARK_LOCK);
+	నిర్మాణం tdb_తాళం_type *new_lck;
+	పూర్ణాంకం i;
+	bool mark_తాళం = ((ltype & TDB_MARK_తాళం) == TDB_MARK_తాళం);
 
-	ltype &= ~TDB_MARK_LOCK;
+	ltype &= ~TDB_MARK_తాళం;
 
 	/* a global lock allows us to avoid per chain locks */
-	if (tdb->global_lock.count &&
-	    ((u32)ltype == tdb->global_lock.ltype || ltype == F_RDLCK)) {
-		return 0;
+	ఒకవేళ (tdb->global_తాళం.లెక్క &&
+	    ((u32)ltype == tdb->global_తాళం.ltype || ltype == F_RDLCK)) {
+		తిరిగి 0;
 	}
 
-	if (tdb->global_lock.count) {
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+	ఒకవేళ (tdb->global_తాళం.లెక్క) {
+		తిరిగి TDB_ERRCODE(TDB_ERR_తాళం, -1);
 	}
 
-	if (list < -1 || list >= (int)tdb->header.hash_size) {
+	ఒకవేళ (list < -1 || list >= (పూర్ణాంకం)tdb->శీర్షిక.hash_కొలత) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR,"tdb_lock: invalid list %d for ltype=%d\n",
 			   list, ltype));
-		return -1;
+		తిరిగి -1;
 	}
-	if (tdb->flags & TDB_NOLOCK)
-		return 0;
+	ఒకవేళ (tdb->flags & TDB_NOLOCK)
+		తిరిగి 0;
 
-	for (i=0; i<tdb->num_lockrecs; i++) {
-		if (tdb->lockrecs[i].list == list) {
-			if (tdb->lockrecs[i].count == 0) {
+	కొరకు (i=0; i<tdb->అంకె_lockrecs; i++) {
+		ఒకవేళ (tdb->lockrecs[i].list == list) {
+			ఒకవేళ (tdb->lockrecs[i].లెక్క == 0) {
 				/*
 				 * Can't happen, see tdb_unlock(). It should
 				 * be an assert.
@@ -449,103 +449,103 @@ static int _tdb_lock(struct tdb_context *tdb, int list, int ltype, int op)
 			 * Just increment the in-memory struct, posix locks
 			 * don't stack.
 			 */
-			tdb->lockrecs[i].count++;
-			return 0;
+			tdb->lockrecs[i].లెక్క++;
+			తిరిగి 0;
 		}
 	}
 
-	new_lck = (struct tdb_lock_type *)realloc(
+	new_lck = (నిర్మాణం tdb_తాళం_type *)realloc(
 		tdb->lockrecs,
-		sizeof(*tdb->lockrecs) * (tdb->num_lockrecs+1));
-	if (new_lck == NULL) {
+		పరిమాణం(*tdb->lockrecs) * (tdb->అంకె_lockrecs+1));
+	ఒకవేళ (new_lck == ఖాళీ) {
 		errno = ENOMEM;
-		return -1;
+		తిరిగి -1;
 	}
 	tdb->lockrecs = new_lck;
 
 	/* Since fcntl locks don't nest, we do a lock for the first one,
 	   and simply bump the count for future ones */
-	if (!mark_lock &&
-	    tdb->methods->tdb_brlock(tdb,FREELIST_TOP+4*list, ltype, op,
+	ఒకవేళ (!mark_తాళం &&
+	    tdb->methods->tdb_brlock(tdb,FREELIST_శిఖరం+4*list, ltype, op,
 				     0, 1)) {
-		return -1;
+		తిరిగి -1;
 	}
 
-	tdb->num_locks++;
+	tdb->అంకె_locks++;
 
-	tdb->lockrecs[tdb->num_lockrecs].list = list;
-	tdb->lockrecs[tdb->num_lockrecs].count = 1;
-	tdb->lockrecs[tdb->num_lockrecs].ltype = ltype;
-	tdb->num_lockrecs += 1;
+	tdb->lockrecs[tdb->అంకె_lockrecs].list = list;
+	tdb->lockrecs[tdb->అంకె_lockrecs].లెక్క = 1;
+	tdb->lockrecs[tdb->అంకె_lockrecs].ltype = ltype;
+	tdb->అంకె_lockrecs += 1;
 
-	return 0;
+	తిరిగి 0;
 }
 
 /* lock a list in the database. list -1 is the alloc list */
-int tdb_lock(struct tdb_context *tdb, int list, int ltype)
+పూర్ణాంకం tdb_తాళం(నిర్మాణం tdb_context *tdb, పూర్ణాంకం list, పూర్ణాంకం ltype)
 {
-	int ret;
-	ret = _tdb_lock(tdb, list, ltype, F_SETLKW);
-	if (ret) {
+	పూర్ణాంకం ret;
+	ret = tdb_తాళం_2(tdb, list, ltype, F_SETLKW);
+	ఒకవేళ (ret) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_lock failed on list %d "
 			 "ltype=%d (%s)\n",  list, ltype, strerror(errno)));
 	}
-	return ret;
+	తిరిగి ret;
 }
 
 /* lock a list in the database. list -1 is the alloc list. non-blocking lock */
-int tdb_lock_nonblock(struct tdb_context *tdb, int list, int ltype)
+పూర్ణాంకం tdb_తాళం_nonblock(నిర్మాణం tdb_context *tdb, పూర్ణాంకం list, పూర్ణాంకం ltype)
 {
-	return _tdb_lock(tdb, list, ltype, F_SETLK);
+	తిరిగి tdb_తాళం_2(tdb, list, ltype, F_SETLK);
 }
 
 
 /* unlock the database: returns void because it's too late for errors. */
 	/* changed to return int it may be interesting to know there
 	   has been an error  --simo */
-int tdb_unlock(struct tdb_context *tdb, int list, int ltype)
+పూర్ణాంకం tdb_unlock(నిర్మాణం tdb_context *tdb, పూర్ణాంకం list, పూర్ణాంకం ltype)
 {
-	int ret = -1;
-	int i;
-	struct tdb_lock_type *lck = NULL;
-	bool mark_lock = ((ltype & TDB_MARK_LOCK) == TDB_MARK_LOCK);
+	పూర్ణాంకం ret = -1;
+	పూర్ణాంకం i;
+	నిర్మాణం tdb_తాళం_type *lck = ఖాళీ;
+	bool mark_తాళం = ((ltype & TDB_MARK_తాళం) == TDB_MARK_తాళం);
 
-	ltype &= ~TDB_MARK_LOCK;
+	ltype &= ~TDB_MARK_తాళం;
 
 	/* a global lock allows us to avoid per chain locks */
-	if (tdb->global_lock.count &&
-	    ((u32)ltype == tdb->global_lock.ltype || ltype == F_RDLCK)) {
-		return 0;
+	ఒకవేళ (tdb->global_తాళం.లెక్క &&
+	    ((u32)ltype == tdb->global_తాళం.ltype || ltype == F_RDLCK)) {
+		తిరిగి 0;
 	}
 
-	if (tdb->global_lock.count) {
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+	ఒకవేళ (tdb->global_తాళం.లెక్క) {
+		తిరిగి TDB_ERRCODE(TDB_ERR_తాళం, -1);
 	}
 
-	if (tdb->flags & TDB_NOLOCK)
-		return 0;
+	ఒకవేళ (tdb->flags & TDB_NOLOCK)
+		తిరిగి 0;
 
 	/* Sanity checks */
-	if (list < -1 || list >= (int)tdb->header.hash_size) {
-		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_unlock: list %d invalid (%d)\n", list, tdb->header.hash_size));
-		return ret;
+	ఒకవేళ (list < -1 || list >= (పూర్ణాంకం)tdb->శీర్షిక.hash_కొలత) {
+		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_unlock: list %d invalid (%d)\n", list, tdb->శీర్షిక.hash_కొలత));
+		తిరిగి ret;
 	}
 
-	for (i=0; i<tdb->num_lockrecs; i++) {
-		if (tdb->lockrecs[i].list == list) {
+	కొరకు (i=0; i<tdb->అంకె_lockrecs; i++) {
+		ఒకవేళ (tdb->lockrecs[i].list == list) {
 			lck = &tdb->lockrecs[i];
-			break;
+			ఆపు;
 		}
 	}
 
-	if ((lck == NULL) || (lck->count == 0)) {
+	ఒకవేళ ((lck == ఖాళీ) || (lck->లెక్క == 0)) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_unlock: count is 0\n"));
-		return -1;
+		తిరిగి -1;
 	}
 
-	if (lck->count > 1) {
-		lck->count--;
-		return 0;
+	ఒకవేళ (lck->లెక్క > 1) {
+		lck->లెక్క--;
+		తిరిగి 0;
 	}
 
 	/*
@@ -555,249 +555,249 @@ int tdb_unlock(struct tdb_context *tdb, int list, int ltype)
 	 * anyway.
 	 */
 
-	if (mark_lock) {
+	ఒకవేళ (mark_తాళం) {
 		ret = 0;
-	} else {
-		ret = tdb->methods->tdb_brlock(tdb, FREELIST_TOP+4*list, F_UNLCK,
+	} లేకపోతే {
+		ret = tdb->methods->tdb_brlock(tdb, FREELIST_శిఖరం+4*list, F_UNLCK,
 					       F_SETLKW, 0, 1);
 	}
-	tdb->num_locks--;
+	tdb->అంకె_locks--;
 
 	/*
 	 * Shrink the array by overwriting the element just unlocked with the
 	 * last array element.
 	 */
 
-	if (tdb->num_lockrecs > 1) {
-		*lck = tdb->lockrecs[tdb->num_lockrecs-1];
+	ఒకవేళ (tdb->అంకె_lockrecs > 1) {
+		*lck = tdb->lockrecs[tdb->అంకె_lockrecs-1];
 	}
-	tdb->num_lockrecs -= 1;
+	tdb->అంకె_lockrecs -= 1;
 
 	/*
 	 * We don't bother with realloc when the array shrinks, but if we have
 	 * a completely idle tdb we should get rid of the locked array.
 	 */
 
-	if (tdb->num_lockrecs == 0) {
-		SAFE_FREE(tdb->lockrecs);
+	ఒకవేళ (tdb->అంకె_lockrecs == 0) {
+		సురక్షిత_FREE(tdb->lockrecs);
 	}
 
-	if (ret)
+	ఒకవేళ (ret)
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_unlock: An error occurred unlocking!\n"));
-	return ret;
+	తిరిగి ret;
 }
 
 /*
   get the transaction lock
  */
-int tdb_transaction_lock(struct tdb_context *tdb, int ltype)
+పూర్ణాంకం tdb_transaction_తాళం(నిర్మాణం tdb_context *tdb, పూర్ణాంకం ltype)
 {
-	if (tdb->have_transaction_lock || tdb->global_lock.count) {
-		return 0;
+	ఒకవేళ (tdb->have_transaction_తాళం || tdb->global_తాళం.లెక్క) {
+		తిరిగి 0;
 	}
-	if (tdb->methods->tdb_brlock(tdb, TRANSACTION_LOCK, ltype,
+	ఒకవేళ (tdb->methods->tdb_brlock(tdb, TRANSACTION_తాళం, ltype,
 				     F_SETLKW, 0, 1) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_lock: failed to get transaction lock\n"));
-		tdb->ecode = TDB_ERR_LOCK;
-		return -1;
+		tdb->ecode = TDB_ERR_తాళం;
+		తిరిగి -1;
 	}
-	tdb->have_transaction_lock = 1;
-	return 0;
+	tdb->have_transaction_తాళం = 1;
+	తిరిగి 0;
 }
 
 /*
   release the transaction lock
  */
-int tdb_transaction_unlock(struct tdb_context *tdb)
+పూర్ణాంకం tdb_transaction_unlock(నిర్మాణం tdb_context *tdb)
 {
-	int ret;
-	if (!tdb->have_transaction_lock) {
-		return 0;
+	పూర్ణాంకం ret;
+	ఒకవేళ (!tdb->have_transaction_తాళం) {
+		తిరిగి 0;
 	}
-	ret = tdb->methods->tdb_brlock(tdb, TRANSACTION_LOCK, F_UNLCK, F_SETLKW, 0, 1);
-	if (ret == 0) {
-		tdb->have_transaction_lock = 0;
+	ret = tdb->methods->tdb_brlock(tdb, TRANSACTION_తాళం, F_UNLCK, F_SETLKW, 0, 1);
+	ఒకవేళ (ret == 0) {
+		tdb->have_transaction_తాళం = 0;
 	}
-	return ret;
+	తిరిగి ret;
 }
 
 
 
 
 /* lock/unlock entire database */
-static int _tdb_lockall(struct tdb_context *tdb, int ltype, int op)
+స్థిర పూర్ణాంకం _tdb_lockall(నిర్మాణం tdb_context *tdb, పూర్ణాంకం ltype, పూర్ణాంకం op)
 {
-	bool mark_lock = ((ltype & TDB_MARK_LOCK) == TDB_MARK_LOCK);
+	bool mark_తాళం = ((ltype & TDB_MARK_తాళం) == TDB_MARK_తాళం);
 
-	ltype &= ~TDB_MARK_LOCK;
+	ltype &= ~TDB_MARK_తాళం;
 
 	/* There are no locks on read-only dbs */
-	if (tdb->read_only || tdb->traverse_read)
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+	ఒకవేళ (tdb->read_only || tdb->traverse_read)
+		తిరిగి TDB_ERRCODE(TDB_ERR_తాళం, -1);
 
-	if (tdb->global_lock.count && tdb->global_lock.ltype == (u32)ltype) {
-		tdb->global_lock.count++;
-		return 0;
+	ఒకవేళ (tdb->global_తాళం.లెక్క && tdb->global_తాళం.ltype == (u32)ltype) {
+		tdb->global_తాళం.లెక్క++;
+		తిరిగి 0;
 	}
 
-	if (tdb->global_lock.count) {
+	ఒకవేళ (tdb->global_తాళం.లెక్క) {
 		/* a global lock of a different type exists */
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+		తిరిగి TDB_ERRCODE(TDB_ERR_తాళం, -1);
 	}
 
-	if (tdb->num_locks != 0) {
+	ఒకవేళ (tdb->అంకె_locks != 0) {
 		/* can't combine global and chain locks */
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+		తిరిగి TDB_ERRCODE(TDB_ERR_తాళం, -1);
 	}
 
-	if (!mark_lock &&
-	    tdb->methods->tdb_brlock(tdb, FREELIST_TOP, ltype, op,
-				     0, 4*tdb->header.hash_size)) {
-		if (op == F_SETLKW) {
+	ఒకవేళ (!mark_తాళం &&
+	    tdb->methods->tdb_brlock(tdb, FREELIST_శిఖరం, ltype, op,
+				     0, 4*tdb->శీర్షిక.hash_కొలత)) {
+		ఒకవేళ (op == F_SETLKW) {
 			TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_lockall failed (%s)\n", strerror(errno)));
 		}
-		return -1;
+		తిరిగి -1;
 	}
 
-	tdb->global_lock.count = 1;
-	tdb->global_lock.ltype = ltype;
+	tdb->global_తాళం.లెక్క = 1;
+	tdb->global_తాళం.ltype = ltype;
 
-	return 0;
+	తిరిగి 0;
 }
 
 
 
 /* unlock entire db */
-static int _tdb_unlockall(struct tdb_context *tdb, int ltype)
+స్థిర పూర్ణాంకం _tdb_unlockall(నిర్మాణం tdb_context *tdb, పూర్ణాంకం ltype)
 {
-	bool mark_lock = ((ltype & TDB_MARK_LOCK) == TDB_MARK_LOCK);
+	bool mark_తాళం = ((ltype & TDB_MARK_తాళం) == TDB_MARK_తాళం);
 
-	ltype &= ~TDB_MARK_LOCK;
+	ltype &= ~TDB_MARK_తాళం;
 
 	/* There are no locks on read-only dbs */
-	if (tdb->read_only || tdb->traverse_read) {
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+	ఒకవేళ (tdb->read_only || tdb->traverse_read) {
+		తిరిగి TDB_ERRCODE(TDB_ERR_తాళం, -1);
 	}
 
-	if (tdb->global_lock.ltype != (u32)ltype ||
-	    tdb->global_lock.count == 0) {
-		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
+	ఒకవేళ (tdb->global_తాళం.ltype != (u32)ltype ||
+	    tdb->global_తాళం.లెక్క == 0) {
+		తిరిగి TDB_ERRCODE(TDB_ERR_తాళం, -1);
 	}
 
-	if (tdb->global_lock.count > 1) {
-		tdb->global_lock.count--;
-		return 0;
+	ఒకవేళ (tdb->global_తాళం.లెక్క > 1) {
+		tdb->global_తాళం.లెక్క--;
+		తిరిగి 0;
 	}
 
-	if (!mark_lock &&
-	    tdb->methods->tdb_brlock(tdb, FREELIST_TOP, F_UNLCK, F_SETLKW,
-				     0, 4*tdb->header.hash_size)) {
+	ఒకవేళ (!mark_తాళం &&
+	    tdb->methods->tdb_brlock(tdb, FREELIST_శిఖరం, F_UNLCK, F_SETLKW,
+				     0, 4*tdb->శీర్షిక.hash_కొలత)) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_unlockall failed (%s)\n", strerror(errno)));
-		return -1;
+		తిరిగి -1;
 	}
 
-	tdb->global_lock.count = 0;
-	tdb->global_lock.ltype = 0;
+	tdb->global_తాళం.లెక్క = 0;
+	tdb->global_తాళం.ltype = 0;
 
-	return 0;
+	తిరిగి 0;
 }
 
 /* lock entire database with write lock */
-int tdb_lockall(struct tdb_context *tdb)
+పూర్ణాంకం tdb_lockall(నిర్మాణం tdb_context *tdb)
 {
-	return _tdb_lockall(tdb, F_WRLCK, F_SETLKW);
+	తిరిగి _tdb_lockall(tdb, F_WRLCK, F_SETLKW);
 }
 
 /* lock entire database with write lock - mark only */
-int tdb_lockall_mark(struct tdb_context *tdb)
+పూర్ణాంకం tdb_lockall_mark(నిర్మాణం tdb_context *tdb)
 {
-	return _tdb_lockall(tdb, F_WRLCK | TDB_MARK_LOCK, F_SETLKW);
+	తిరిగి _tdb_lockall(tdb, F_WRLCK | TDB_MARK_తాళం, F_SETLKW);
 }
 
 /* unlock entire database with write lock - unmark only */
-int tdb_lockall_unmark(struct tdb_context *tdb)
+పూర్ణాంకం tdb_lockall_unmark(నిర్మాణం tdb_context *tdb)
 {
-	return _tdb_unlockall(tdb, F_WRLCK | TDB_MARK_LOCK);
+	తిరిగి _tdb_unlockall(tdb, F_WRLCK | TDB_MARK_తాళం);
 }
 
 /* lock entire database with write lock - nonblocking variant */
-int tdb_lockall_nonblock(struct tdb_context *tdb)
+పూర్ణాంకం tdb_lockall_nonblock(నిర్మాణం tdb_context *tdb)
 {
-	return _tdb_lockall(tdb, F_WRLCK, F_SETLK);
+	తిరిగి _tdb_lockall(tdb, F_WRLCK, F_SETLK);
 }
 
 /* unlock entire database with write lock */
-int tdb_unlockall(struct tdb_context *tdb)
+పూర్ణాంకం tdb_unlockall(నిర్మాణం tdb_context *tdb)
 {
-	return _tdb_unlockall(tdb, F_WRLCK);
+	తిరిగి _tdb_unlockall(tdb, F_WRLCK);
 }
 
 /* lock entire database with read lock */
-int tdb_lockall_read(struct tdb_context *tdb)
+పూర్ణాంకం tdb_lockall_read(నిర్మాణం tdb_context *tdb)
 {
-	return _tdb_lockall(tdb, F_RDLCK, F_SETLKW);
+	తిరిగి _tdb_lockall(tdb, F_RDLCK, F_SETLKW);
 }
 
 /* lock entire database with read lock - nonblock variant */
-int tdb_lockall_read_nonblock(struct tdb_context *tdb)
+పూర్ణాంకం tdb_lockall_read_nonblock(నిర్మాణం tdb_context *tdb)
 {
-	return _tdb_lockall(tdb, F_RDLCK, F_SETLK);
+	తిరిగి _tdb_lockall(tdb, F_RDLCK, F_SETLK);
 }
 
 /* unlock entire database with read lock */
-int tdb_unlockall_read(struct tdb_context *tdb)
+పూర్ణాంకం tdb_unlockall_read(నిర్మాణం tdb_context *tdb)
 {
-	return _tdb_unlockall(tdb, F_RDLCK);
+	తిరిగి _tdb_unlockall(tdb, F_RDLCK);
 }
 
 /* lock/unlock one hash chain. This is meant to be used to reduce
    contention - it cannot guarantee how many records will be locked */
-int tdb_chainlock(struct tdb_context *tdb, TDB_DATA key)
+పూర్ణాంకం tdb_chainlock(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం)
 {
-	return tdb_lock(tdb, BUCKET(tdb->hash_fn(&key)), F_WRLCK);
+	తిరిగి tdb_తాళం(tdb, పాత్ర(tdb->hash_fn(&కీలకం)), F_WRLCK);
 }
 
 /* lock/unlock one hash chain, non-blocking. This is meant to be used
    to reduce contention - it cannot guarantee how many records will be
    locked */
-int tdb_chainlock_nonblock(struct tdb_context *tdb, TDB_DATA key)
+పూర్ణాంకం tdb_chainlock_nonblock(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం)
 {
-	return tdb_lock_nonblock(tdb, BUCKET(tdb->hash_fn(&key)), F_WRLCK);
+	తిరిగి tdb_తాళం_nonblock(tdb, పాత్ర(tdb->hash_fn(&కీలకం)), F_WRLCK);
 }
 
 /* mark a chain as locked without actually locking it. Warning! use with great caution! */
-int tdb_chainlock_mark(struct tdb_context *tdb, TDB_DATA key)
+పూర్ణాంకం tdb_chainlock_mark(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం)
 {
-	return tdb_lock(tdb, BUCKET(tdb->hash_fn(&key)), F_WRLCK | TDB_MARK_LOCK);
+	తిరిగి tdb_తాళం(tdb, పాత్ర(tdb->hash_fn(&కీలకం)), F_WRLCK | TDB_MARK_తాళం);
 }
 
 /* unmark a chain as locked without actually locking it. Warning! use with great caution! */
-int tdb_chainlock_unmark(struct tdb_context *tdb, TDB_DATA key)
+పూర్ణాంకం tdb_chainlock_unmark(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం)
 {
-	return tdb_unlock(tdb, BUCKET(tdb->hash_fn(&key)), F_WRLCK | TDB_MARK_LOCK);
+	తిరిగి tdb_unlock(tdb, పాత్ర(tdb->hash_fn(&కీలకం)), F_WRLCK | TDB_MARK_తాళం);
 }
 
-int tdb_chainunlock(struct tdb_context *tdb, TDB_DATA key)
+పూర్ణాంకం tdb_chainunlock(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం)
 {
-	return tdb_unlock(tdb, BUCKET(tdb->hash_fn(&key)), F_WRLCK);
+	తిరిగి tdb_unlock(tdb, పాత్ర(tdb->hash_fn(&కీలకం)), F_WRLCK);
 }
 
-int tdb_chainlock_read(struct tdb_context *tdb, TDB_DATA key)
+పూర్ణాంకం tdb_chainlock_read(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం)
 {
-	return tdb_lock(tdb, BUCKET(tdb->hash_fn(&key)), F_RDLCK);
+	తిరిగి tdb_తాళం(tdb, పాత్ర(tdb->hash_fn(&కీలకం)), F_RDLCK);
 }
 
-int tdb_chainunlock_read(struct tdb_context *tdb, TDB_DATA key)
+పూర్ణాంకం tdb_chainunlock_read(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం)
 {
-	return tdb_unlock(tdb, BUCKET(tdb->hash_fn(&key)), F_RDLCK);
+	తిరిగి tdb_unlock(tdb, పాత్ర(tdb->hash_fn(&కీలకం)), F_RDLCK);
 }
 
 
 
 /* record lock stops delete underneath */
-int tdb_lock_record(struct tdb_context *tdb, tdb_off_t off)
+పూర్ణాంకం tdb_తాళం_రికార్డు(నిర్మాణం tdb_context *tdb, tdb_off_t off)
 {
-	return off ? tdb->methods->tdb_brlock(tdb, off, F_RDLCK, F_SETLKW, 0, 1) : 0;
+	తిరిగి off ? tdb->methods->tdb_brlock(tdb, off, F_RDLCK, F_SETLKW, 0, 1) : 0;
 }
 
 /*
@@ -805,36 +805,36 @@ int tdb_lock_record(struct tdb_context *tdb, tdb_off_t off)
   Note this is meant to be F_SETLK, *not* F_SETLKW, as it's not
   an error to fail to get the lock here.
 */
-int tdb_write_lock_record(struct tdb_context *tdb, tdb_off_t off)
+పూర్ణాంకం tdb_write_తాళం_రికార్డు(నిర్మాణం tdb_context *tdb, tdb_off_t off)
 {
-	struct tdb_traverse_lock *i;
-	for (i = &tdb->travlocks; i; i = i->next)
-		if (i->off == off)
-			return -1;
-	return tdb->methods->tdb_brlock(tdb, off, F_WRLCK, F_SETLK, 1, 1);
+	నిర్మాణం tdb_traverse_తాళం *i;
+	కొరకు (i = &tdb->travlocks; i; i = i->తదుపరి)
+		ఒకవేళ (i->off == off)
+			తిరిగి -1;
+	తిరిగి tdb->methods->tdb_brlock(tdb, off, F_WRLCK, F_SETLK, 1, 1);
 }
 
 /*
   Note this is meant to be F_SETLK, *not* F_SETLKW, as it's not
   an error to fail to get the lock here.
 */
-int tdb_write_unlock_record(struct tdb_context *tdb, tdb_off_t off)
+పూర్ణాంకం tdb_write_unlock_రికార్డు(నిర్మాణం tdb_context *tdb, tdb_off_t off)
 {
-	return tdb->methods->tdb_brlock(tdb, off, F_UNLCK, F_SETLK, 0, 1);
+	తిరిగి tdb->methods->tdb_brlock(tdb, off, F_UNLCK, F_SETLK, 0, 1);
 }
 
 /* fcntl locks don't stack: avoid unlocking someone else's */
-int tdb_unlock_record(struct tdb_context *tdb, tdb_off_t off)
+పూర్ణాంకం tdb_unlock_రికార్డు(నిర్మాణం tdb_context *tdb, tdb_off_t off)
 {
-	struct tdb_traverse_lock *i;
-	u32 count = 0;
+	నిర్మాణం tdb_traverse_తాళం *i;
+	u32 లెక్క = 0;
 
-	if (off == 0)
-		return 0;
-	for (i = &tdb->travlocks; i; i = i->next)
-		if (i->off == off)
-			count++;
-	return (count == 1 ? tdb->methods->tdb_brlock(tdb, off, F_UNLCK, F_SETLKW, 0, 1) : 0);
+	ఒకవేళ (off == 0)
+		తిరిగి 0;
+	కొరకు (i = &tdb->travlocks; i; i = i->తదుపరి)
+		ఒకవేళ (i->off == off)
+			లెక్క++;
+	తిరిగి (లెక్క == 1 ? tdb->methods->tdb_brlock(tdb, off, F_UNLCK, F_SETLKW, 0, 1) : 0);
 }
 
 /* file: io.c */
@@ -844,107 +844,107 @@ int tdb_unlock_record(struct tdb_context *tdb, tdb_off_t off)
    if necessary
    note that "len" is the minimum length needed for the db
 */
-static int tdb_oob(struct tdb_context *tdb, tdb_off_t len, int probe)
+స్థిర పూర్ణాంకం tdb_oob(నిర్మాణం tdb_context *tdb, tdb_off_t len, పూర్ణాంకం probe)
 {
-	struct stat st;
-	if (len <= tdb->map_size)
-		return 0;
-	if (tdb->flags & TDB_INTERNAL) {
-		if (!probe) {
+	నిర్మాణం stat st;
+	ఒకవేళ (len <= tdb->map_కొలత)
+		తిరిగి 0;
+	ఒకవేళ (tdb->flags & TDB_అంతర్గత) {
+		ఒకవేళ (!probe) {
 			/* Ensure ecode is set for log fn. */
 			tdb->ecode = TDB_ERR_IO;
 			TDB_LOG((tdb, TDB_DEBUG_FATAL,"tdb_oob len %d beyond internal malloc size %d\n",
-				 (int)len, (int)tdb->map_size));
+				 (పూర్ణాంకం)len, (పూర్ణాంకం)tdb->map_కొలత));
 		}
-		return TDB_ERRCODE(TDB_ERR_IO, -1);
+		తిరిగి TDB_ERRCODE(TDB_ERR_IO, -1);
 	}
 
-	if (fstat(tdb->fd, &st) == -1) {
-		return TDB_ERRCODE(TDB_ERR_IO, -1);
+	ఒకవేళ (fstat(tdb->fd, &st) == -1) {
+		తిరిగి TDB_ERRCODE(TDB_ERR_IO, -1);
 	}
 
-	if (st.st_size < (off_t)len) {
-		if (!probe) {
+	ఒకవేళ (st.st_కొలత < (off_t)len) {
+		ఒకవేళ (!probe) {
 			/* Ensure ecode is set for log fn. */
 			tdb->ecode = TDB_ERR_IO;
 			TDB_LOG((tdb, TDB_DEBUG_FATAL,"tdb_oob len %d beyond eof at %d\n",
-				 (int)len, (int)st.st_size));
+				 (పూర్ణాంకం)len, (పూర్ణాంకం)st.st_కొలత));
 		}
-		return TDB_ERRCODE(TDB_ERR_IO, -1);
+		తిరిగి TDB_ERRCODE(TDB_ERR_IO, -1);
 	}
 
 	/* Unmap, update size, remap */
-	if (tdb_munmap(tdb) == -1)
-		return TDB_ERRCODE(TDB_ERR_IO, -1);
-	tdb->map_size = st.st_size;
+	ఒకవేళ (tdb_munmap(tdb) == -1)
+		తిరిగి TDB_ERRCODE(TDB_ERR_IO, -1);
+	tdb->map_కొలత = st.st_కొలత;
 	tdb_mmap(tdb);
-	return 0;
+	తిరిగి 0;
 }
 
 /* write a lump of data at a specified offset */
-static int tdb_write(struct tdb_context *tdb, tdb_off_t off,
-		     const void *buf, tdb_len_t len)
+స్థిర పూర్ణాంకం tdb_write(నిర్మాణం tdb_context *tdb, tdb_off_t off,
+		     స్థిరరాశి శూన్య *buf, tdb_len_t len)
 {
-	if (len == 0) {
-		return 0;
+	ఒకవేళ (len == 0) {
+		తిరిగి 0;
 	}
 
-	if (tdb->read_only || tdb->traverse_read) {
+	ఒకవేళ (tdb->read_only || tdb->traverse_read) {
 		tdb->ecode = TDB_ERR_RDONLY;
-		return -1;
+		తిరిగి -1;
 	}
 
-	if (tdb->methods->tdb_oob(tdb, off + len, 0) != 0)
-		return -1;
+	ఒకవేళ (tdb->methods->tdb_oob(tdb, off + len, 0) != 0)
+		తిరిగి -1;
 
-	if (tdb->map_ptr) {
-		memcpy(off + (char *)tdb->map_ptr, buf, len);
-	} else if (pwrite(tdb->fd, buf, len, off) != (ssize_t)len) {
+	ఒకవేళ (tdb->map_ptr) {
+		జ్ఞాపకం_నకలు(off + (అక్షరం *)tdb->map_ptr, buf, len);
+	} లేకపోతే ఒకవేళ (pwrite(tdb->fd, buf, len, off) != (ssize_t)len) {
 		/* Ensure ecode is set for log fn. */
 		tdb->ecode = TDB_ERR_IO;
 		TDB_LOG((tdb, TDB_DEBUG_FATAL,"tdb_write failed at %d len=%d (%s)\n",
 			   off, len, strerror(errno)));
-		return TDB_ERRCODE(TDB_ERR_IO, -1);
+		తిరిగి TDB_ERRCODE(TDB_ERR_IO, -1);
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 /* Endian conversion: we only ever deal with 4 byte quantities */
-void *tdb_convert(void *buf, u32 size)
+శూన్య *tdb_convert(శూన్య *buf, u32 కొలత)
 {
 	u32 i, *p = (u32 *)buf;
-	for (i = 0; i < size / 4; i++)
+	కొరకు (i = 0; i < కొలత / 4; i++)
 		p[i] = TDB_BYTEREV(p[i]);
-	return buf;
+	తిరిగి buf;
 }
 
 
 /* read a lump of data at a specified offset, maybe convert */
-static int tdb_read(struct tdb_context *tdb, tdb_off_t off, void *buf,
-		    tdb_len_t len, int cv)
+స్థిర పూర్ణాంకం tdb_read(నిర్మాణం tdb_context *tdb, tdb_off_t off, శూన్య *buf,
+		    tdb_len_t len, పూర్ణాంకం cv)
 {
-	if (tdb->methods->tdb_oob(tdb, off + len, 0) != 0) {
-		return -1;
+	ఒకవేళ (tdb->methods->tdb_oob(tdb, off + len, 0) != 0) {
+		తిరిగి -1;
 	}
 
-	if (tdb->map_ptr) {
-		memcpy(buf, off + (char *)tdb->map_ptr, len);
-	} else {
+	ఒకవేళ (tdb->map_ptr) {
+		జ్ఞాపకం_నకలు(buf, off + (అక్షరం *)tdb->map_ptr, len);
+	} లేకపోతే {
 		ssize_t ret = pread(tdb->fd, buf, len, off);
-		if (ret != (ssize_t)len) {
+		ఒకవేళ (ret != (ssize_t)len) {
 			/* Ensure ecode is set for log fn. */
 			tdb->ecode = TDB_ERR_IO;
 			TDB_LOG((tdb, TDB_DEBUG_FATAL,"tdb_read failed at %d "
 				 "len=%d ret=%d (%s) map_size=%d\n",
-				 (int)off, (int)len, (int)ret, strerror(errno),
-				 (int)tdb->map_size));
-			return TDB_ERRCODE(TDB_ERR_IO, -1);
+				 (పూర్ణాంకం)off, (పూర్ణాంకం)len, (పూర్ణాంకం)ret, strerror(errno),
+				 (పూర్ణాంకం)tdb->map_కొలత));
+			తిరిగి TDB_ERRCODE(TDB_ERR_IO, -1);
 		}
 	}
-	if (cv) {
+	ఒకవేళ (cv) {
 		tdb_convert(buf, len);
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 
@@ -953,20 +953,20 @@ static int tdb_read(struct tdb_context *tdb, tdb_off_t off, void *buf,
   do an unlocked scan of the hash table heads to find the next non-zero head. The value
   will then be confirmed with the lock held
 */
-static void tdb_next_hash_chain(struct tdb_context *tdb, u32 *chain)
+స్థిర శూన్య tdb_తదుపరి_hash_chain(నిర్మాణం tdb_context *tdb, u32 *chain)
 {
 	u32 h = *chain;
-	if (tdb->map_ptr) {
-		for (;h < tdb->header.hash_size;h++) {
-			if (0 != *(u32 *)(TDB_HASH_TOP(h) + (unsigned char *)tdb->map_ptr)) {
-				break;
+	ఒకవేళ (tdb->map_ptr) {
+		కొరకు (;h < tdb->శీర్షిక.hash_కొలత;h++) {
+			ఒకవేళ (0 != *(u32 *)(TDB_HASH_శిఖరం(h) + (గుర్తులేని అక్షరం *)tdb->map_ptr)) {
+				ఆపు;
 			}
 		}
-	} else {
+	} లేకపోతే {
 		u32 off=0;
-		for (;h < tdb->header.hash_size;h++) {
-			if (tdb_ofs_read(tdb, TDB_HASH_TOP(h), &off) != 0 || off != 0) {
-				break;
+		కొరకు (;h < tdb->శీర్షిక.hash_కొలత;h++) {
+			ఒకవేళ (tdb_ofs_read(tdb, TDB_HASH_శిఖరం(h), &off) != 0 || off != 0) {
+				ఆపు;
 			}
 		}
 	}
@@ -974,31 +974,31 @@ static void tdb_next_hash_chain(struct tdb_context *tdb, u32 *chain)
 }
 
 
-int tdb_munmap(struct tdb_context *tdb)
+పూర్ణాంకం tdb_munmap(నిర్మాణం tdb_context *tdb)
 {
-	if (tdb->flags & TDB_INTERNAL)
-		return 0;
+	ఒకవేళ (tdb->flags & TDB_అంతర్గత)
+		తిరిగి 0;
 
-#ifdef HAVE_MMAP
-	if (tdb->map_ptr) {
-		int ret = munmap(tdb->map_ptr, tdb->real_map_size);
-		if (ret != 0)
-			return ret;
-		tdb->real_map_size = 0;
+#నిర్వచితమైతే HAVE_MMAP
+	ఒకవేళ (tdb->map_ptr) {
+		పూర్ణాంకం ret = munmap(tdb->map_ptr, tdb->real_map_కొలత);
+		ఒకవేళ (ret != 0)
+			తిరిగి ret;
+		tdb->real_map_కొలత = 0;
 	}
-#endif
-	tdb->map_ptr = NULL;
-	return 0;
+#అయితే_ముగింపు
+	tdb->map_ptr = ఖాళీ;
+	తిరిగి 0;
 }
 
-void tdb_mmap(struct tdb_context *tdb)
+శూన్య tdb_mmap(నిర్మాణం tdb_context *tdb)
 {
-	if (tdb->flags & TDB_INTERNAL)
-		return;
+	ఒకవేళ (tdb->flags & TDB_అంతర్గత)
+		తిరిగి;
 
-#ifdef HAVE_MMAP
-	if (!(tdb->flags & TDB_NOMMAP)) {
-		tdb->map_ptr = mmap(NULL, tdb->map_size,
+#నిర్వచితమైతే HAVE_MMAP
+	ఒకవేళ (!(tdb->flags & TDB_NOMMAP)) {
+		tdb->map_ptr = mmap(ఖాళీ, tdb->map_కొలత,
 				    PROT_READ|(tdb->read_only? 0:PROT_WRITE),
 				    MAP_SHARED|MAP_FILE, tdb->fd, 0);
 
@@ -1006,80 +1006,80 @@ void tdb_mmap(struct tdb_context *tdb)
 		 * NB. When mmap fails it returns MAP_FAILED *NOT* NULL !!!!
 		 */
 
-		if (tdb->map_ptr == MAP_FAILED) {
-			tdb->real_map_size = 0;
-			tdb->map_ptr = NULL;
+		ఒకవేళ (tdb->map_ptr == MAP_FAILED) {
+			tdb->real_map_కొలత = 0;
+			tdb->map_ptr = ఖాళీ;
 			TDB_LOG((tdb, TDB_DEBUG_WARNING, "tdb_mmap failed for size %d (%s)\n",
-				 tdb->map_size, strerror(errno)));
+				 tdb->map_కొలత, strerror(errno)));
 		}
-		tdb->real_map_size = tdb->map_size;
-	} else {
-		tdb->map_ptr = NULL;
+		tdb->real_map_కొలత = tdb->map_కొలత;
+	} లేకపోతే {
+		tdb->map_ptr = ఖాళీ;
 	}
-#else
-	tdb->map_ptr = NULL;
-#endif
+#లేకపోతే
+	tdb->map_ptr = ఖాళీ;
+#అయితే_ముగింపు
 }
 
 /* expand a file.  we prefer to use ftruncate, as that is what posix
   says to use for mmap expansion */
-static int tdb_expand_file(struct tdb_context *tdb, tdb_off_t size, tdb_off_t addition)
+స్థిర పూర్ణాంకం tdb_expand_file(నిర్మాణం tdb_context *tdb, tdb_off_t కొలత, tdb_off_t addition)
 {
-	char buf[1024];
+	అక్షరం buf[1024];
 
-	if (tdb->read_only || tdb->traverse_read) {
+	ఒకవేళ (tdb->read_only || tdb->traverse_read) {
 		tdb->ecode = TDB_ERR_RDONLY;
-		return -1;
+		తిరిగి -1;
 	}
 
-	if (ftruncate(tdb->fd, size+addition) == -1) {
-		char b = 0;
-		if (pwrite(tdb->fd,  &b, 1, (size+addition) - 1) != 1) {
+	ఒకవేళ (ftruncate(tdb->fd, కొలత+addition) == -1) {
+		అక్షరం b = 0;
+		ఒకవేళ (pwrite(tdb->fd,  &b, 1, (కొలత+addition) - 1) != 1) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "expand_file to %d failed (%s)\n",
-				 size+addition, strerror(errno)));
-			return -1;
+				 కొలత+addition, strerror(errno)));
+			తిరిగి -1;
 		}
 	}
 
 	/* now fill the file with something. This ensures that the
 	   file isn't sparse, which would be very bad if we ran out of
 	   disk. This must be done with write, not via mmap */
-	memset(buf, TDB_PAD_BYTE, sizeof(buf));
-	while (addition) {
-		int n = addition>sizeof(buf)?sizeof(buf):addition;
-		int ret = pwrite(tdb->fd, buf, n, size);
-		if (ret != n) {
+	memset(buf, TDB_PAD_BYTE, పరిమాణం(buf));
+	అయితే (addition) {
+		పూర్ణాంకం n = addition>పరిమాణం(buf)?పరిమాణం(buf):addition;
+		పూర్ణాంకం ret = pwrite(tdb->fd, buf, n, కొలత);
+		ఒకవేళ (ret != n) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "expand_file write of %d failed (%s)\n",
 				   n, strerror(errno)));
-			return -1;
+			తిరిగి -1;
 		}
 		addition -= n;
-		size += n;
+		కొలత += n;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 
 /* expand the database at least size bytes by expanding the underlying
    file and doing the mmap again if necessary */
-int tdb_expand(struct tdb_context *tdb, tdb_off_t size)
+పూర్ణాంకం tdb_expand(నిర్మాణం tdb_context *tdb, tdb_off_t కొలత)
 {
-	struct list_struct rec;
-	tdb_off_t offset;
+	నిర్మాణం list_struct rec;
+	tdb_off_t స్థానభ్రంశం;
 
-	if (tdb_lock(tdb, -1, F_WRLCK) == -1) {
+	ఒకవేళ (tdb_తాళం(tdb, -1, F_WRLCK) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "lock failed in tdb_expand\n"));
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* must know about any previous expansions by another process */
-	tdb->methods->tdb_oob(tdb, tdb->map_size + 1, 1);
+	tdb->methods->tdb_oob(tdb, tdb->map_కొలత + 1, 1);
 
 	/* always make room for at least 10 more records, and round
            the database up to a multiple of the page size */
-	size = TDB_ALIGN(tdb->map_size + size*10, tdb->page_size) - tdb->map_size;
+	కొలత = TDB_ALIGN(tdb->map_కొలత + కొలత*10, tdb->పుట_కొలత) - tdb->map_కొలత;
 
-	if (!(tdb->flags & TDB_INTERNAL))
+	ఒకవేళ (!(tdb->flags & TDB_అంతర్గత))
 		tdb_munmap(tdb);
 
 	/*
@@ -1089,22 +1089,22 @@ int tdb_expand(struct tdb_context *tdb, tdb_off_t size)
 	 */
 
 	/* expand the file itself */
-	if (!(tdb->flags & TDB_INTERNAL)) {
-		if (tdb->methods->tdb_expand_file(tdb, tdb->map_size, size) != 0)
-			goto fail;
+	ఒకవేళ (!(tdb->flags & TDB_అంతర్గత)) {
+		ఒకవేళ (tdb->methods->tdb_expand_file(tdb, tdb->map_కొలత, కొలత) != 0)
+			వెళ్ళు fail;
 	}
 
-	tdb->map_size += size;
+	tdb->map_కొలత += కొలత;
 
-	if (tdb->flags & TDB_INTERNAL) {
-		char *new_map_ptr = (char *)realloc(tdb->map_ptr,
-						    tdb->map_size);
-		if (!new_map_ptr) {
-			tdb->map_size -= size;
-			goto fail;
+	ఒకవేళ (tdb->flags & TDB_అంతర్గత) {
+		అక్షరం *new_map_ptr = (అక్షరం *)realloc(tdb->map_ptr,
+						    tdb->map_కొలత);
+		ఒకవేళ (!new_map_ptr) {
+			tdb->map_కొలత -= కొలత;
+			వెళ్ళు fail;
 		}
 		tdb->map_ptr = new_map_ptr;
-	} else {
+	} లేకపోతే {
 		/*
 		 * We must ensure the file is remapped before adding the space
 		 * to ensure consistency with systems like OpenBSD where
@@ -1116,116 +1116,116 @@ int tdb_expand(struct tdb_context *tdb, tdb_off_t size)
 	}
 
 	/* form a new freelist record */
-	memset(&rec,'\0',sizeof(rec));
-	rec.rec_len = size - sizeof(rec);
+	memset(&rec,'\0',పరిమాణం(rec));
+	rec.rec_len = కొలత - పరిమాణం(rec);
 
 	/* link it into the free list */
-	offset = tdb->map_size - size;
-	if (tdb_free(tdb, offset, &rec) == -1)
-		goto fail;
+	స్థానభ్రంశం = tdb->map_కొలత - కొలత;
+	ఒకవేళ (tdb_free(tdb, స్థానభ్రంశం, &rec) == -1)
+		వెళ్ళు fail;
 
 	tdb_unlock(tdb, -1, F_WRLCK);
-	return 0;
+	తిరిగి 0;
  fail:
 	tdb_unlock(tdb, -1, F_WRLCK);
-	return -1;
+	తిరిగి -1;
 }
 
 /* read/write a tdb_off_t */
-int tdb_ofs_read(struct tdb_context *tdb, tdb_off_t offset, tdb_off_t *d)
+పూర్ణాంకం tdb_ofs_read(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, tdb_off_t *d)
 {
-	return tdb->methods->tdb_read(tdb, offset, (char*)d, sizeof(*d), DOCONV());
+	తిరిగి tdb->methods->tdb_read(tdb, స్థానభ్రంశం, (అక్షరం*)d, పరిమాణం(*d), DOCONV());
 }
 
-int tdb_ofs_write(struct tdb_context *tdb, tdb_off_t offset, tdb_off_t *d)
+పూర్ణాంకం tdb_ofs_write(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, tdb_off_t *d)
 {
 	tdb_off_t off = *d;
-	return tdb->methods->tdb_write(tdb, offset, CONVERT(off), sizeof(*d));
+	తిరిగి tdb->methods->tdb_write(tdb, స్థానభ్రంశం, CONVERT(off), పరిమాణం(*d));
 }
 
 
 /* read a lump of data, allocating the space for it */
-unsigned char *tdb_alloc_read(struct tdb_context *tdb, tdb_off_t offset, tdb_len_t len)
+గుర్తులేని అక్షరం *tdb_alloc_read(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, tdb_len_t len)
 {
-	unsigned char *buf;
+	గుర్తులేని అక్షరం *buf;
 
 	/* some systems don't like zero length malloc */
-	if (len == 0) {
+	ఒకవేళ (len == 0) {
 		len = 1;
 	}
 
-	if (!(buf = (unsigned char *)malloc(len))) {
+	ఒకవేళ (!(buf = (గుర్తులేని అక్షరం *)జ్ఞాపకం_ఇవ్వు(len))) {
 		/* Ensure ecode is set for log fn. */
 		tdb->ecode = TDB_ERR_OOM;
 		TDB_LOG((tdb, TDB_DEBUG_ERROR,"tdb_alloc_read malloc failed len=%d (%s)\n",
 			   len, strerror(errno)));
-		return TDB_ERRCODE(TDB_ERR_OOM, buf);
+		తిరిగి TDB_ERRCODE(TDB_ERR_OOM, buf);
 	}
-	if (tdb->methods->tdb_read(tdb, offset, buf, len, 0) == -1) {
-		SAFE_FREE(buf);
-		return NULL;
+	ఒకవేళ (tdb->methods->tdb_read(tdb, స్థానభ్రంశం, buf, len, 0) == -1) {
+		సురక్షిత_FREE(buf);
+		తిరిగి ఖాళీ;
 	}
-	return buf;
+	తిరిగి buf;
 }
 
 /* Give a piece of tdb data to a parser */
 
-int tdb_parse_data(struct tdb_context *tdb, TDB_DATA key,
-		   tdb_off_t offset, tdb_len_t len,
-		   int (*parser)(TDB_DATA key, TDB_DATA data,
-				 void *private_data),
-		   void *private_data)
+పూర్ణాంకం tdb_parse_దత్తాంశం(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం,
+		   tdb_off_t స్థానభ్రంశం, tdb_len_t len,
+		   పూర్ణాంకం (*parser)(TDB_దత్తాంశం కీలకం, TDB_దత్తాంశం దత్తాంశం,
+				 శూన్య *వ్యక్తిగత_దత్తాంశం),
+		   శూన్య *వ్యక్తిగత_దత్తాంశం)
 {
-	TDB_DATA data;
-	int result;
+	TDB_దత్తాంశం దత్తాంశం;
+	పూర్ణాంకం ఫలితం;
 
-	data.dsize = len;
+	దత్తాంశం.dsize = len;
 
-	if ((tdb->transaction == NULL) && (tdb->map_ptr != NULL)) {
+	ఒకవేళ ((tdb->transaction == ఖాళీ) && (tdb->map_ptr != ఖాళీ)) {
 		/*
 		 * Optimize by avoiding the malloc/memcpy/free, point the
 		 * parser directly at the mmap area.
 		 */
-		if (tdb->methods->tdb_oob(tdb, offset+len, 0) != 0) {
-			return -1;
+		ఒకవేళ (tdb->methods->tdb_oob(tdb, స్థానభ్రంశం+len, 0) != 0) {
+			తిరిగి -1;
 		}
-		data.dptr = offset + (unsigned char *)tdb->map_ptr;
-		return parser(key, data, private_data);
+		దత్తాంశం.dptr = స్థానభ్రంశం + (గుర్తులేని అక్షరం *)tdb->map_ptr;
+		తిరిగి parser(కీలకం, దత్తాంశం, వ్యక్తిగత_దత్తాంశం);
 	}
 
-	if (!(data.dptr = tdb_alloc_read(tdb, offset, len))) {
-		return -1;
+	ఒకవేళ (!(దత్తాంశం.dptr = tdb_alloc_read(tdb, స్థానభ్రంశం, len))) {
+		తిరిగి -1;
 	}
 
-	result = parser(key, data, private_data);
-	free(data.dptr);
-	return result;
+	ఫలితం = parser(కీలకం, దత్తాంశం, వ్యక్తిగత_దత్తాంశం);
+	విడుదల(దత్తాంశం.dptr);
+	తిరిగి ఫలితం;
 }
 
 /* read/write a record */
-int tdb_rec_read(struct tdb_context *tdb, tdb_off_t offset, struct list_struct *rec)
+పూర్ణాంకం tdb_rec_read(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, నిర్మాణం list_struct *rec)
 {
-	if (tdb->methods->tdb_read(tdb, offset, rec, sizeof(*rec),DOCONV()) == -1)
-		return -1;
-	if (TDB_BAD_MAGIC(rec)) {
+	ఒకవేళ (tdb->methods->tdb_read(tdb, స్థానభ్రంశం, rec, పరిమాణం(*rec),DOCONV()) == -1)
+		తిరిగి -1;
+	ఒకవేళ (TDB_BAD_MAGIC(rec)) {
 		/* Ensure ecode is set for log fn. */
 		tdb->ecode = TDB_ERR_CORRUPT;
-		TDB_LOG((tdb, TDB_DEBUG_FATAL,"tdb_rec_read bad magic 0x%x at offset=%d\n", rec->magic, offset));
-		return TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
+		TDB_LOG((tdb, TDB_DEBUG_FATAL,"tdb_rec_read bad magic 0x%x at offset=%d\n", rec->magic, స్థానభ్రంశం));
+		తిరిగి TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
 	}
-	return tdb->methods->tdb_oob(tdb, rec->next+sizeof(*rec), 0);
+	తిరిగి tdb->methods->tdb_oob(tdb, rec->తదుపరి+పరిమాణం(*rec), 0);
 }
 
-int tdb_rec_write(struct tdb_context *tdb, tdb_off_t offset, struct list_struct *rec)
+పూర్ణాంకం tdb_rec_write(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, నిర్మాణం list_struct *rec)
 {
-	struct list_struct r = *rec;
-	return tdb->methods->tdb_write(tdb, offset, CONVERT(r), sizeof(r));
+	నిర్మాణం list_struct r = *rec;
+	తిరిగి tdb->methods->tdb_write(tdb, స్థానభ్రంశం, CONVERT(r), పరిమాణం(r));
 }
 
-static const struct tdb_methods io_methods = {
+స్థిర స్థిరరాశి నిర్మాణం tdb_methods io_methods = {
 	tdb_read,
 	tdb_write,
-	tdb_next_hash_chain,
+	tdb_తదుపరి_hash_chain,
 	tdb_oob,
 	tdb_expand_file,
 	tdb_brlock
@@ -1234,7 +1234,7 @@ static const struct tdb_methods io_methods = {
 /*
   initialise the default methods table
 */
-void tdb_io_init(struct tdb_context *tdb)
+శూన్య tdb_io_init(నిర్మాణం tdb_context *tdb)
 {
 	tdb->methods = &io_methods;
 }
@@ -1303,43 +1303,43 @@ void tdb_io_init(struct tdb_context *tdb)
 
 */
 
-struct tdb_transaction_el {
-	struct tdb_transaction_el *next, *prev;
-	tdb_off_t offset;
-	tdb_len_t length;
-	unsigned char *data;
+నిర్మాణం tdb_transaction_el {
+	నిర్మాణం tdb_transaction_el *తదుపరి, *prev;
+	tdb_off_t స్థానభ్రంశం;
+	tdb_len_t నిడివి;
+	గుర్తులేని అక్షరం *దత్తాంశం;
 };
 
 /*
   hold the context of any current transaction
 */
-struct tdb_transaction {
+నిర్మాణం tdb_transaction {
 	/* we keep a mirrored copy of the tdb hash heads here so
 	   tdb_next_hash_chain() can operate efficiently */
 	u32 *hash_heads;
 
 	/* the original io methods - used to do IOs to the real db */
-	const struct tdb_methods *io_methods;
+	స్థిరరాశి నిర్మాణం tdb_methods *io_methods;
 
 	/* the list of transaction elements. We use a doubly linked
 	   list with a last pointer to allow us to keep the list
 	   ordered, with first element at the front of the list. It
 	   needs to be doubly linked as the read/write traversals need
 	   to be backwards, while the commit needs to be forwards */
-	struct tdb_transaction_el *elements, *elements_last;
+	నిర్మాణం tdb_transaction_el *elements, *elements_చివరి;
 
 	/* non-zero when an internal transaction error has
 	   occurred. All write operations will then fail until the
 	   transaction is ended */
-	int transaction_error;
+	పూర్ణాంకం transaction_error;
 
 	/* when inside a transaction we need to keep track of any
 	   nested tdb_transaction_start() calls, as these are allowed,
 	   but don't create a new transaction */
-	int nesting;
+	పూర్ణాంకం nesting;
 
 	/* old file size before transaction */
-	tdb_len_t old_map_size;
+	tdb_len_t old_map_కొలత;
 };
 
 
@@ -1347,198 +1347,198 @@ struct tdb_transaction {
   read while in a transaction. We need to check first if the data is in our list
   of transaction elements, then if not do a real read
 */
-static int transaction_read(struct tdb_context *tdb, tdb_off_t off, void *buf,
-			    tdb_len_t len, int cv)
+స్థిర పూర్ణాంకం transaction_read(నిర్మాణం tdb_context *tdb, tdb_off_t off, శూన్య *buf,
+			    tdb_len_t len, పూర్ణాంకం cv)
 {
-	struct tdb_transaction_el *el;
+	నిర్మాణం tdb_transaction_el *el;
 
 	/* we need to walk the list backwards to get the most recent data */
-	for (el=tdb->transaction->elements_last;el;el=el->prev) {
+	కొరకు (el=tdb->transaction->elements_చివరి;el;el=el->prev) {
 		tdb_len_t partial;
 
-		if (off+len <= el->offset) {
-			continue;
+		ఒకవేళ (off+len <= el->స్థానభ్రంశం) {
+			కొనసాగు;
 		}
-		if (off >= el->offset + el->length) {
-			continue;
+		ఒకవేళ (off >= el->స్థానభ్రంశం + el->నిడివి) {
+			కొనసాగు;
 		}
 
 		/* an overlapping read - needs to be split into up to
 		   2 reads and a memcpy */
-		if (off < el->offset) {
-			partial = el->offset - off;
-			if (transaction_read(tdb, off, buf, partial, cv) != 0) {
-				goto fail;
+		ఒకవేళ (off < el->స్థానభ్రంశం) {
+			partial = el->స్థానభ్రంశం - off;
+			ఒకవేళ (transaction_read(tdb, off, buf, partial, cv) != 0) {
+				వెళ్ళు fail;
 			}
 			len -= partial;
 			off += partial;
-			buf = (void *)(partial + (char *)buf);
+			buf = (శూన్య *)(partial + (అక్షరం *)buf);
 		}
-		if (off + len <= el->offset + el->length) {
+		ఒకవేళ (off + len <= el->స్థానభ్రంశం + el->నిడివి) {
 			partial = len;
-		} else {
-			partial = el->offset + el->length - off;
+		} లేకపోతే {
+			partial = el->స్థానభ్రంశం + el->నిడివి - off;
 		}
-		memcpy(buf, el->data + (off - el->offset), partial);
-		if (cv) {
+		జ్ఞాపకం_నకలు(buf, el->దత్తాంశం + (off - el->స్థానభ్రంశం), partial);
+		ఒకవేళ (cv) {
 			tdb_convert(buf, len);
 		}
 		len -= partial;
 		off += partial;
-		buf = (void *)(partial + (char *)buf);
+		buf = (శూన్య *)(partial + (అక్షరం *)buf);
 
-		if (len != 0 && transaction_read(tdb, off, buf, len, cv) != 0) {
-			goto fail;
+		ఒకవేళ (len != 0 && transaction_read(tdb, off, buf, len, cv) != 0) {
+			వెళ్ళు fail;
 		}
 
-		return 0;
+		తిరిగి 0;
 	}
 
 	/* its not in the transaction elements - do a real read */
-	return tdb->transaction->io_methods->tdb_read(tdb, off, buf, len, cv);
+	తిరిగి tdb->transaction->io_methods->tdb_read(tdb, off, buf, len, cv);
 
 fail:
 	TDB_LOG((tdb, TDB_DEBUG_FATAL, "transaction_read: failed at off=%d len=%d\n", off, len));
 	tdb->ecode = TDB_ERR_IO;
 	tdb->transaction->transaction_error = 1;
-	return -1;
+	తిరిగి -1;
 }
 
 
 /*
   write while in a transaction
 */
-static int transaction_write(struct tdb_context *tdb, tdb_off_t off,
-			     const void *buf, tdb_len_t len)
+స్థిర పూర్ణాంకం transaction_write(నిర్మాణం tdb_context *tdb, tdb_off_t off,
+			     స్థిరరాశి శూన్య *buf, tdb_len_t len)
 {
-	struct tdb_transaction_el *el, *best_el=NULL;
+	నిర్మాణం tdb_transaction_el *el, *ఉత్తమ_el=ఖాళీ;
 
-	if (len == 0) {
-		return 0;
+	ఒకవేళ (len == 0) {
+		తిరిగి 0;
 	}
 
 	/* if the write is to a hash head, then update the transaction
 	   hash heads */
-	if (len == sizeof(tdb_off_t) && off >= FREELIST_TOP &&
-	    off < FREELIST_TOP+TDB_HASHTABLE_SIZE(tdb)) {
-		u32 chain = (off-FREELIST_TOP) / sizeof(tdb_off_t);
-		memcpy(&tdb->transaction->hash_heads[chain], buf, len);
+	ఒకవేళ (len == పరిమాణం(tdb_off_t) && off >= FREELIST_శిఖరం &&
+	    off < FREELIST_శిఖరం+TDB_HASHTABLE_కొలత(tdb)) {
+		u32 chain = (off-FREELIST_శిఖరం) / పరిమాణం(tdb_off_t);
+		జ్ఞాపకం_నకలు(&tdb->transaction->hash_heads[chain], buf, len);
 	}
 
 	/* first see if we can replace an existing entry */
-	for (el=tdb->transaction->elements_last;el;el=el->prev) {
+	కొరకు (el=tdb->transaction->elements_చివరి;el;el=el->prev) {
 		tdb_len_t partial;
 
-		if (best_el == NULL && off == el->offset+el->length) {
-			best_el = el;
+		ఒకవేళ (ఉత్తమ_el == ఖాళీ && off == el->స్థానభ్రంశం+el->నిడివి) {
+			ఉత్తమ_el = el;
 		}
 
-		if (off+len <= el->offset) {
-			continue;
+		ఒకవేళ (off+len <= el->స్థానభ్రంశం) {
+			కొనసాగు;
 		}
-		if (off >= el->offset + el->length) {
-			continue;
+		ఒకవేళ (off >= el->స్థానభ్రంశం + el->నిడివి) {
+			కొనసాగు;
 		}
 
 		/* an overlapping write - needs to be split into up to
 		   2 writes and a memcpy */
-		if (off < el->offset) {
-			partial = el->offset - off;
-			if (transaction_write(tdb, off, buf, partial) != 0) {
-				goto fail;
+		ఒకవేళ (off < el->స్థానభ్రంశం) {
+			partial = el->స్థానభ్రంశం - off;
+			ఒకవేళ (transaction_write(tdb, off, buf, partial) != 0) {
+				వెళ్ళు fail;
 			}
 			len -= partial;
 			off += partial;
-			buf = (const void *)(partial + (const char *)buf);
+			buf = (స్థిరరాశి శూన్య *)(partial + (స్థిరరాశి అక్షరం *)buf);
 		}
-		if (off + len <= el->offset + el->length) {
+		ఒకవేళ (off + len <= el->స్థానభ్రంశం + el->నిడివి) {
 			partial = len;
-		} else {
-			partial = el->offset + el->length - off;
+		} లేకపోతే {
+			partial = el->స్థానభ్రంశం + el->నిడివి - off;
 		}
-		memcpy(el->data + (off - el->offset), buf, partial);
+		జ్ఞాపకం_నకలు(el->దత్తాంశం + (off - el->స్థానభ్రంశం), buf, partial);
 		len -= partial;
 		off += partial;
-		buf = (const void *)(partial + (const char *)buf);
+		buf = (స్థిరరాశి శూన్య *)(partial + (స్థిరరాశి అక్షరం *)buf);
 
-		if (len != 0 && transaction_write(tdb, off, buf, len) != 0) {
-			goto fail;
+		ఒకవేళ (len != 0 && transaction_write(tdb, off, buf, len) != 0) {
+			వెళ్ళు fail;
 		}
 
-		return 0;
+		తిరిగి 0;
 	}
 
 	/* see if we can append the new entry to an existing entry */
-	if (best_el && best_el->offset + best_el->length == off &&
-	    (off+len < tdb->transaction->old_map_size ||
-	     off > tdb->transaction->old_map_size)) {
-		unsigned char *data = best_el->data;
-		el = best_el;
-		el->data = (unsigned char *)realloc(el->data,
-						    el->length + len);
-		if (el->data == NULL) {
+	ఒకవేళ (ఉత్తమ_el && ఉత్తమ_el->స్థానభ్రంశం + ఉత్తమ_el->నిడివి == off &&
+	    (off+len < tdb->transaction->old_map_కొలత ||
+	     off > tdb->transaction->old_map_కొలత)) {
+		గుర్తులేని అక్షరం *దత్తాంశం = ఉత్తమ_el->దత్తాంశం;
+		el = ఉత్తమ_el;
+		el->దత్తాంశం = (గుర్తులేని అక్షరం *)realloc(el->దత్తాంశం,
+						    el->నిడివి + len);
+		ఒకవేళ (el->దత్తాంశం == ఖాళీ) {
 			tdb->ecode = TDB_ERR_OOM;
 			tdb->transaction->transaction_error = 1;
-			el->data = data;
-			return -1;
+			el->దత్తాంశం = దత్తాంశం;
+			తిరిగి -1;
 		}
-		if (buf) {
-			memcpy(el->data + el->length, buf, len);
-		} else {
-			memset(el->data + el->length, TDB_PAD_BYTE, len);
+		ఒకవేళ (buf) {
+			జ్ఞాపకం_నకలు(el->దత్తాంశం + el->నిడివి, buf, len);
+		} లేకపోతే {
+			memset(el->దత్తాంశం + el->నిడివి, TDB_PAD_BYTE, len);
 		}
-		el->length += len;
-		return 0;
+		el->నిడివి += len;
+		తిరిగి 0;
 	}
 
 	/* add a new entry at the end of the list */
-	el = (struct tdb_transaction_el *)malloc(sizeof(*el));
-	if (el == NULL) {
+	el = (నిర్మాణం tdb_transaction_el *)జ్ఞాపకం_ఇవ్వు(పరిమాణం(*el));
+	ఒకవేళ (el == ఖాళీ) {
 		tdb->ecode = TDB_ERR_OOM;
 		tdb->transaction->transaction_error = 1;
-		return -1;
+		తిరిగి -1;
 	}
-	el->next = NULL;
-	el->prev = tdb->transaction->elements_last;
-	el->offset = off;
-	el->length = len;
-	el->data = (unsigned char *)malloc(len);
-	if (el->data == NULL) {
-		free(el);
+	el->తదుపరి = ఖాళీ;
+	el->prev = tdb->transaction->elements_చివరి;
+	el->స్థానభ్రంశం = off;
+	el->నిడివి = len;
+	el->దత్తాంశం = (గుర్తులేని అక్షరం *)జ్ఞాపకం_ఇవ్వు(len);
+	ఒకవేళ (el->దత్తాంశం == ఖాళీ) {
+		విడుదల(el);
 		tdb->ecode = TDB_ERR_OOM;
 		tdb->transaction->transaction_error = 1;
-		return -1;
+		తిరిగి -1;
 	}
-	if (buf) {
-		memcpy(el->data, buf, len);
-	} else {
-		memset(el->data, TDB_PAD_BYTE, len);
+	ఒకవేళ (buf) {
+		జ్ఞాపకం_నకలు(el->దత్తాంశం, buf, len);
+	} లేకపోతే {
+		memset(el->దత్తాంశం, TDB_PAD_BYTE, len);
 	}
-	if (el->prev) {
-		el->prev->next = el;
-	} else {
+	ఒకవేళ (el->prev) {
+		el->prev->తదుపరి = el;
+	} లేకపోతే {
 		tdb->transaction->elements = el;
 	}
-	tdb->transaction->elements_last = el;
-	return 0;
+	tdb->transaction->elements_చివరి = el;
+	తిరిగి 0;
 
 fail:
 	TDB_LOG((tdb, TDB_DEBUG_FATAL, "transaction_write: failed at off=%d len=%d\n", off, len));
 	tdb->ecode = TDB_ERR_IO;
 	tdb->transaction->transaction_error = 1;
-	return -1;
+	తిరిగి -1;
 }
 
 /*
   accelerated hash chain head search, using the cached hash heads
 */
-static void transaction_next_hash_chain(struct tdb_context *tdb, u32 *chain)
+స్థిర శూన్య transaction_తదుపరి_hash_chain(నిర్మాణం tdb_context *tdb, u32 *chain)
 {
 	u32 h = *chain;
-	for (;h < tdb->header.hash_size;h++) {
+	కొరకు (;h < tdb->శీర్షిక.hash_కొలత;h++) {
 		/* the +1 takes account of the freelist */
-		if (0 != tdb->transaction->hash_heads[h+1]) {
-			break;
+		ఒకవేళ (0 != tdb->transaction->hash_heads[h+1]) {
+			ఆపు;
 		}
 	}
 	(*chain) = h;
@@ -1547,47 +1547,47 @@ static void transaction_next_hash_chain(struct tdb_context *tdb, u32 *chain)
 /*
   out of bounds check during a transaction
 */
-static int transaction_oob(struct tdb_context *tdb, tdb_off_t len,
-			   int probe EXT2FS_ATTR((unused)))
+స్థిర పూర్ణాంకం transaction_oob(నిర్మాణం tdb_context *tdb, tdb_off_t len,
+			   పూర్ణాంకం probe EXT2FS_ATTR((వాడని)))
 {
-	if (len <= tdb->map_size) {
-		return 0;
+	ఒకవేళ (len <= tdb->map_కొలత) {
+		తిరిగి 0;
 	}
-	return TDB_ERRCODE(TDB_ERR_IO, -1);
+	తిరిగి TDB_ERRCODE(TDB_ERR_IO, -1);
 }
 
 /*
   transaction version of tdb_expand().
 */
-static int transaction_expand_file(struct tdb_context *tdb, tdb_off_t size,
+స్థిర పూర్ణాంకం transaction_expand_file(నిర్మాణం tdb_context *tdb, tdb_off_t కొలత,
 				   tdb_off_t addition)
 {
 	/* add a write to the transaction elements, so subsequent
 	   reads see the zero data */
-	if (transaction_write(tdb, size, NULL, addition) != 0) {
-		return -1;
+	ఒకవేళ (transaction_write(tdb, కొలత, ఖాళీ, addition) != 0) {
+		తిరిగి -1;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
 /*
   brlock during a transaction - ignore them
 */
-static int transaction_brlock(struct tdb_context *tdb EXT2FS_ATTR((unused)),
-			      tdb_off_t offset EXT2FS_ATTR((unused)),
-			      int rw_type EXT2FS_ATTR((unused)),
-			      int lck_type EXT2FS_ATTR((unused)),
-			      int probe EXT2FS_ATTR((unused)),
-			      size_t len EXT2FS_ATTR((unused)))
+స్థిర పూర్ణాంకం transaction_brlock(నిర్మాణం tdb_context *tdb EXT2FS_ATTR((వాడని)),
+			      tdb_off_t స్థానభ్రంశం EXT2FS_ATTR((వాడని)),
+			      పూర్ణాంకం rw_type EXT2FS_ATTR((వాడని)),
+			      పూర్ణాంకం lck_type EXT2FS_ATTR((వాడని)),
+			      పూర్ణాంకం probe EXT2FS_ATTR((వాడని)),
+			      size_t len EXT2FS_ATTR((వాడని)))
 {
-	return 0;
+	తిరిగి 0;
 }
 
-static const struct tdb_methods transaction_methods = {
+స్థిర స్థిరరాశి నిర్మాణం tdb_methods transaction_methods = {
 	transaction_read,
 	transaction_write,
-	transaction_next_hash_chain,
+	transaction_తదుపరి_hash_chain,
 	transaction_oob,
 	transaction_expand_file,
 	transaction_brlock
@@ -1598,83 +1598,83 @@ static const struct tdb_methods transaction_methods = {
   start a tdb transaction. No token is returned, as only a single
   transaction is allowed to be pending per tdb_context
 */
-int tdb_transaction_start(struct tdb_context *tdb)
+పూర్ణాంకం tdb_transaction_ప్రారంభం(నిర్మాణం tdb_context *tdb)
 {
 	/* some sanity checks */
-	if (tdb->read_only || (tdb->flags & TDB_INTERNAL) || tdb->traverse_read) {
+	ఒకవేళ (tdb->read_only || (tdb->flags & TDB_అంతర్గత) || tdb->traverse_read) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_start: cannot start a transaction on a read-only or internal db\n"));
 		tdb->ecode = TDB_ERR_EINVAL;
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* cope with nested tdb_transaction_start() calls */
-	if (tdb->transaction != NULL) {
+	ఒకవేళ (tdb->transaction != ఖాళీ) {
 		tdb->transaction->nesting++;
 		TDB_LOG((tdb, TDB_DEBUG_TRACE, "tdb_transaction_start: nesting %d\n",
 			 tdb->transaction->nesting));
-		return 0;
+		తిరిగి 0;
 	}
 
-	if (tdb->num_locks != 0 || tdb->global_lock.count) {
+	ఒకవేళ (tdb->అంకె_locks != 0 || tdb->global_తాళం.లెక్క) {
 		/* the caller must not have any locks when starting a
 		   transaction as otherwise we'll be screwed by lack
 		   of nested locks in posix */
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_start: cannot start a transaction with locks held\n"));
-		tdb->ecode = TDB_ERR_LOCK;
-		return -1;
+		tdb->ecode = TDB_ERR_తాళం;
+		తిరిగి -1;
 	}
 
-	if (tdb->travlocks.next != NULL) {
+	ఒకవేళ (tdb->travlocks.తదుపరి != ఖాళీ) {
 		/* you cannot use transactions inside a traverse (although you can use
 		   traverse inside a transaction) as otherwise you can end up with
 		   deadlock */
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_start: cannot start a transaction within a traverse\n"));
-		tdb->ecode = TDB_ERR_LOCK;
-		return -1;
+		tdb->ecode = TDB_ERR_తాళం;
+		తిరిగి -1;
 	}
 
-	tdb->transaction = (struct tdb_transaction *)
-		calloc(sizeof(struct tdb_transaction), 1);
-	if (tdb->transaction == NULL) {
+	tdb->transaction = (నిర్మాణం tdb_transaction *)
+		సున్నా_జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం tdb_transaction), 1);
+	ఒకవేళ (tdb->transaction == ఖాళీ) {
 		tdb->ecode = TDB_ERR_OOM;
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* get the transaction write lock. This is a blocking lock. As
 	   discussed with Volker, there are a number of ways we could
 	   make this async, which we will probably do in the future */
-	if (tdb_transaction_lock(tdb, F_WRLCK) == -1) {
-		SAFE_FREE(tdb->transaction);
-		return -1;
+	ఒకవేళ (tdb_transaction_తాళం(tdb, F_WRLCK) == -1) {
+		సురక్షిత_FREE(tdb->transaction);
+		తిరిగి -1;
 	}
 
 	/* get a read lock from the freelist to the end of file. This
 	   is upgraded to a write lock during the commit */
-	if (tdb_brlock(tdb, FREELIST_TOP, F_RDLCK, F_SETLKW, 0, 0) == -1) {
+	ఒకవేళ (tdb_brlock(tdb, FREELIST_శిఖరం, F_RDLCK, F_SETLKW, 0, 0) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_start: failed to get hash locks\n"));
-		tdb->ecode = TDB_ERR_LOCK;
-		goto fail;
+		tdb->ecode = TDB_ERR_తాళం;
+		వెళ్ళు fail;
 	}
 
 	/* setup a copy of the hash table heads so the hash scan in
 	   traverse can be fast */
 	tdb->transaction->hash_heads = (u32 *)
-		calloc(tdb->header.hash_size+1, sizeof(u32));
-	if (tdb->transaction->hash_heads == NULL) {
+		సున్నా_జ్ఞాపకం_ఇవ్వు(tdb->శీర్షిక.hash_కొలత+1, పరిమాణం(u32));
+	ఒకవేళ (tdb->transaction->hash_heads == ఖాళీ) {
 		tdb->ecode = TDB_ERR_OOM;
-		goto fail;
+		వెళ్ళు fail;
 	}
-	if (tdb->methods->tdb_read(tdb, FREELIST_TOP, tdb->transaction->hash_heads,
-				   TDB_HASHTABLE_SIZE(tdb), 0) != 0) {
+	ఒకవేళ (tdb->methods->tdb_read(tdb, FREELIST_శిఖరం, tdb->transaction->hash_heads,
+				   TDB_HASHTABLE_కొలత(tdb), 0) != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_start: failed to read hash heads\n"));
 		tdb->ecode = TDB_ERR_IO;
-		goto fail;
+		వెళ్ళు fail;
 	}
 
 	/* make sure we know about any file expansions already done by
 	   anyone else */
-	tdb->methods->tdb_oob(tdb, tdb->map_size + 1, 1);
-	tdb->transaction->old_map_size = tdb->map_size;
+	tdb->methods->tdb_oob(tdb, tdb->map_కొలత + 1, 1);
+	tdb->transaction->old_map_కొలత = tdb->map_కొలత;
 
 	/* finally hook the io methods, replacing them with
 	   transaction specific methods */
@@ -1683,158 +1683,158 @@ int tdb_transaction_start(struct tdb_context *tdb)
 
 	/* by calling this transaction write here, we ensure that we don't grow the
 	   transaction linked list due to hash table updates */
-	if (transaction_write(tdb, FREELIST_TOP, tdb->transaction->hash_heads,
-			      TDB_HASHTABLE_SIZE(tdb)) != 0) {
+	ఒకవేళ (transaction_write(tdb, FREELIST_శిఖరం, tdb->transaction->hash_heads,
+			      TDB_HASHTABLE_కొలత(tdb)) != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_start: failed to prime hash table\n"));
 		tdb->ecode = TDB_ERR_IO;
 		tdb->methods = tdb->transaction->io_methods;
-		goto fail;
+		వెళ్ళు fail;
 	}
 
-	return 0;
+	తిరిగి 0;
 
 fail:
-	tdb_brlock(tdb, FREELIST_TOP, F_UNLCK, F_SETLKW, 0, 0);
+	tdb_brlock(tdb, FREELIST_శిఖరం, F_UNLCK, F_SETLKW, 0, 0);
 	tdb_transaction_unlock(tdb);
-	SAFE_FREE(tdb->transaction->hash_heads);
-	SAFE_FREE(tdb->transaction);
-	return -1;
+	సురక్షిత_FREE(tdb->transaction->hash_heads);
+	సురక్షిత_FREE(tdb->transaction);
+	తిరిగి -1;
 }
 
 
 /*
   cancel the current transaction
 */
-int tdb_transaction_cancel(struct tdb_context *tdb)
+పూర్ణాంకం tdb_transaction_cancel(నిర్మాణం tdb_context *tdb)
 {
-	if (tdb->transaction == NULL) {
+	ఒకవేళ (tdb->transaction == ఖాళీ) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_cancel: no transaction\n"));
-		return -1;
+		తిరిగి -1;
 	}
 
-	if (tdb->transaction->nesting != 0) {
+	ఒకవేళ (tdb->transaction->nesting != 0) {
 		tdb->transaction->transaction_error = 1;
 		tdb->transaction->nesting--;
-		return 0;
+		తిరిగి 0;
 	}
 
-	tdb->map_size = tdb->transaction->old_map_size;
+	tdb->map_కొలత = tdb->transaction->old_map_కొలత;
 
 	/* free all the transaction elements */
-	while (tdb->transaction->elements) {
-		struct tdb_transaction_el *el = tdb->transaction->elements;
-		tdb->transaction->elements = el->next;
-		free(el->data);
-		free(el);
+	అయితే (tdb->transaction->elements) {
+		నిర్మాణం tdb_transaction_el *el = tdb->transaction->elements;
+		tdb->transaction->elements = el->తదుపరి;
+		విడుదల(el->దత్తాంశం);
+		విడుదల(el);
 	}
 
 	/* remove any global lock created during the transaction */
-	if (tdb->global_lock.count != 0) {
-		tdb_brlock(tdb, FREELIST_TOP, F_UNLCK, F_SETLKW, 0, 4*tdb->header.hash_size);
-		tdb->global_lock.count = 0;
+	ఒకవేళ (tdb->global_తాళం.లెక్క != 0) {
+		tdb_brlock(tdb, FREELIST_శిఖరం, F_UNLCK, F_SETLKW, 0, 4*tdb->శీర్షిక.hash_కొలత);
+		tdb->global_తాళం.లెక్క = 0;
 	}
 
 	/* remove any locks created during the transaction */
-	if (tdb->num_locks != 0) {
-		int i;
-		for (i=0;i<tdb->num_lockrecs;i++) {
-			tdb_brlock(tdb,FREELIST_TOP+4*tdb->lockrecs[i].list,
+	ఒకవేళ (tdb->అంకె_locks != 0) {
+		పూర్ణాంకం i;
+		కొరకు (i=0;i<tdb->అంకె_lockrecs;i++) {
+			tdb_brlock(tdb,FREELIST_శిఖరం+4*tdb->lockrecs[i].list,
 				   F_UNLCK,F_SETLKW, 0, 1);
 		}
-		tdb->num_locks = 0;
-		tdb->num_lockrecs = 0;
-		SAFE_FREE(tdb->lockrecs);
+		tdb->అంకె_locks = 0;
+		tdb->అంకె_lockrecs = 0;
+		సురక్షిత_FREE(tdb->lockrecs);
 	}
 
 	/* restore the normal io methods */
 	tdb->methods = tdb->transaction->io_methods;
 
-	tdb_brlock(tdb, FREELIST_TOP, F_UNLCK, F_SETLKW, 0, 0);
+	tdb_brlock(tdb, FREELIST_శిఖరం, F_UNLCK, F_SETLKW, 0, 0);
 	tdb_transaction_unlock(tdb);
-	SAFE_FREE(tdb->transaction->hash_heads);
-	SAFE_FREE(tdb->transaction);
+	సురక్షిత_FREE(tdb->transaction->hash_heads);
+	సురక్షిత_FREE(tdb->transaction);
 
-	return 0;
+	తిరిగి 0;
 }
 
 /*
   sync to disk
 */
-static int transaction_sync(struct tdb_context *tdb, tdb_off_t offset, tdb_len_t length)
+స్థిర పూర్ణాంకం transaction_sync(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, tdb_len_t నిడివి)
 {
-	if (fsync(tdb->fd) != 0) {
+	ఒకవేళ (fsync(tdb->fd) != 0) {
 		tdb->ecode = TDB_ERR_IO;
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction: fsync failed\n"));
-		return -1;
+		తిరిగి -1;
 	}
-#if defined(HAVE_MSYNC) && defined(MS_SYNC)
-	if (tdb->map_ptr) {
-		tdb_off_t moffset = offset & ~(tdb->page_size-1);
-		if (msync(moffset + (char *)tdb->map_ptr,
-			  length + (offset - moffset), MS_SYNC) != 0) {
+#ఒకవేళ defined(HAVE_MSYNC) && defined(MS_SYNC)
+	ఒకవేళ (tdb->map_ptr) {
+		tdb_off_t moffset = స్థానభ్రంశం & ~(tdb->పుట_కొలత-1);
+		ఒకవేళ (msync(moffset + (అక్షరం *)tdb->map_ptr,
+			  నిడివి + (స్థానభ్రంశం - moffset), MS_SYNC) != 0) {
 			tdb->ecode = TDB_ERR_IO;
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction: msync failed - %s\n",
 				 strerror(errno)));
-			return -1;
+			తిరిగి -1;
 		}
 	}
-#endif
-	return 0;
+#అయితే_ముగింపు
+	తిరిగి 0;
 }
 
 
 /*
   work out how much space the linearised recovery data will consume
 */
-static tdb_len_t tdb_recovery_size(struct tdb_context *tdb)
+స్థిర tdb_len_t tdb_recovery_కొలత(నిర్మాణం tdb_context *tdb)
 {
-	struct tdb_transaction_el *el;
-	tdb_len_t recovery_size = 0;
+	నిర్మాణం tdb_transaction_el *el;
+	tdb_len_t recovery_కొలత = 0;
 
-	recovery_size = sizeof(u32);
-	for (el=tdb->transaction->elements;el;el=el->next) {
-		if (el->offset >= tdb->transaction->old_map_size) {
-			continue;
+	recovery_కొలత = పరిమాణం(u32);
+	కొరకు (el=tdb->transaction->elements;el;el=el->తదుపరి) {
+		ఒకవేళ (el->స్థానభ్రంశం >= tdb->transaction->old_map_కొలత) {
+			కొనసాగు;
 		}
-		recovery_size += 2*sizeof(tdb_off_t) + el->length;
+		recovery_కొలత += 2*పరిమాణం(tdb_off_t) + el->నిడివి;
 	}
 
-	return recovery_size;
+	తిరిగి recovery_కొలత;
 }
 
 /*
   allocate the recovery area, or use an existing recovery area if it is
   large enough
 */
-static int tdb_recovery_allocate(struct tdb_context *tdb,
-				 tdb_len_t *recovery_size,
-				 tdb_off_t *recovery_offset,
-				 tdb_len_t *recovery_max_size)
+స్థిర పూర్ణాంకం tdb_recovery_allocate(నిర్మాణం tdb_context *tdb,
+				 tdb_len_t *recovery_కొలత,
+				 tdb_off_t *recovery_స్థానభ్రంశం,
+				 tdb_len_t *recovery_max_కొలత)
 {
-	struct list_struct rec;
-	const struct tdb_methods *methods = tdb->transaction->io_methods;
-	tdb_off_t recovery_head;
+	నిర్మాణం list_struct rec;
+	స్థిరరాశి నిర్మాణం tdb_methods *methods = tdb->transaction->io_methods;
+	tdb_off_t recovery_తల;
 
-	if (tdb_ofs_read(tdb, TDB_RECOVERY_HEAD, &recovery_head) == -1) {
+	ఒకవేళ (tdb_ofs_read(tdb, TDB_RECOVERY_తల, &recovery_తల) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_recovery_allocate: failed to read recovery head\n"));
-		return -1;
+		తిరిగి -1;
 	}
 
 	rec.rec_len = 0;
 
-	if (recovery_head != 0 &&
-	    methods->tdb_read(tdb, recovery_head, &rec, sizeof(rec), DOCONV()) == -1) {
+	ఒకవేళ (recovery_తల != 0 &&
+	    methods->tdb_read(tdb, recovery_తల, &rec, పరిమాణం(rec), DOCONV()) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_recovery_allocate: failed to read recovery record\n"));
-		return -1;
+		తిరిగి -1;
 	}
 
-	*recovery_size = tdb_recovery_size(tdb);
+	*recovery_కొలత = tdb_recovery_కొలత(tdb);
 
-	if (recovery_head != 0 && *recovery_size <= rec.rec_len) {
+	ఒకవేళ (recovery_తల != 0 && *recovery_కొలత <= rec.rec_len) {
 		/* it fits in the existing area */
-		*recovery_max_size = rec.rec_len;
-		*recovery_offset = recovery_head;
-		return 0;
+		*recovery_max_కొలత = rec.rec_len;
+		*recovery_స్థానభ్రంశం = recovery_తల;
+		తిరిగి 0;
 	}
 
 	/* we need to free up the old recovery area, then allocate a
@@ -1842,247 +1842,247 @@ static int tdb_recovery_allocate(struct tdb_context *tdb,
 	   tdb_allocate() to allocate the new one as that might return
 	   us an area that is being currently used (as of the start of
 	   the transaction) */
-	if (recovery_head != 0) {
-		if (tdb_free(tdb, recovery_head, &rec) == -1) {
+	ఒకవేళ (recovery_తల != 0) {
+		ఒకవేళ (tdb_free(tdb, recovery_తల, &rec) == -1) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_recovery_allocate: failed to free previous recovery area\n"));
-			return -1;
+			తిరిగి -1;
 		}
 	}
 
 	/* the tdb_free() call might have increased the recovery size */
-	*recovery_size = tdb_recovery_size(tdb);
+	*recovery_కొలత = tdb_recovery_కొలత(tdb);
 
 	/* round up to a multiple of page size */
-	*recovery_max_size = TDB_ALIGN(sizeof(rec) + *recovery_size, tdb->page_size) - sizeof(rec);
-	*recovery_offset = tdb->map_size;
-	recovery_head = *recovery_offset;
+	*recovery_max_కొలత = TDB_ALIGN(పరిమాణం(rec) + *recovery_కొలత, tdb->పుట_కొలత) - పరిమాణం(rec);
+	*recovery_స్థానభ్రంశం = tdb->map_కొలత;
+	recovery_తల = *recovery_స్థానభ్రంశం;
 
-	if (methods->tdb_expand_file(tdb, tdb->transaction->old_map_size,
-				     (tdb->map_size - tdb->transaction->old_map_size) +
-				     sizeof(rec) + *recovery_max_size) == -1) {
+	ఒకవేళ (methods->tdb_expand_file(tdb, tdb->transaction->old_map_కొలత,
+				     (tdb->map_కొలత - tdb->transaction->old_map_కొలత) +
+				     పరిమాణం(rec) + *recovery_max_కొలత) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_recovery_allocate: failed to create recovery area\n"));
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* remap the file (if using mmap) */
-	methods->tdb_oob(tdb, tdb->map_size + 1, 1);
+	methods->tdb_oob(tdb, tdb->map_కొలత + 1, 1);
 
 	/* we have to reset the old map size so that we don't try to expand the file
 	   again in the transaction commit, which would destroy the recovery area */
-	tdb->transaction->old_map_size = tdb->map_size;
+	tdb->transaction->old_map_కొలత = tdb->map_కొలత;
 
 	/* write the recovery header offset and sync - we can sync without a race here
 	   as the magic ptr in the recovery record has not been set */
-	CONVERT(recovery_head);
-	if (methods->tdb_write(tdb, TDB_RECOVERY_HEAD,
-			       &recovery_head, sizeof(tdb_off_t)) == -1) {
+	CONVERT(recovery_తల);
+	ఒకవేళ (methods->tdb_write(tdb, TDB_RECOVERY_తల,
+			       &recovery_తల, పరిమాణం(tdb_off_t)) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_recovery_allocate: failed to write recovery head\n"));
-		return -1;
+		తిరిగి -1;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
 
 /*
   setup the recovery data that will be used on a crash during commit
 */
-static int transaction_setup_recovery(struct tdb_context *tdb,
-				      tdb_off_t *magic_offset)
+స్థిర పూర్ణాంకం transaction_అమరిక_recovery(నిర్మాణం tdb_context *tdb,
+				      tdb_off_t *magic_స్థానభ్రంశం)
 {
-	struct tdb_transaction_el *el;
-	tdb_len_t recovery_size;
-	unsigned char *data, *p;
-	const struct tdb_methods *methods = tdb->transaction->io_methods;
-	struct list_struct *rec;
-	tdb_off_t recovery_offset, recovery_max_size;
-	tdb_off_t old_map_size = tdb->transaction->old_map_size;
+	నిర్మాణం tdb_transaction_el *el;
+	tdb_len_t recovery_కొలత;
+	గుర్తులేని అక్షరం *దత్తాంశం, *p;
+	స్థిరరాశి నిర్మాణం tdb_methods *methods = tdb->transaction->io_methods;
+	నిర్మాణం list_struct *rec;
+	tdb_off_t recovery_స్థానభ్రంశం, recovery_max_కొలత;
+	tdb_off_t old_map_కొలత = tdb->transaction->old_map_కొలత;
 	u32 magic, tailer;
 
 	/*
 	  check that the recovery area has enough space
 	*/
-	if (tdb_recovery_allocate(tdb, &recovery_size,
-				  &recovery_offset, &recovery_max_size) == -1) {
-		return -1;
+	ఒకవేళ (tdb_recovery_allocate(tdb, &recovery_కొలత,
+				  &recovery_స్థానభ్రంశం, &recovery_max_కొలత) == -1) {
+		తిరిగి -1;
 	}
 
-	data = (unsigned char *)malloc(recovery_size + sizeof(*rec));
-	if (data == NULL) {
+	దత్తాంశం = (గుర్తులేని అక్షరం *)జ్ఞాపకం_ఇవ్వు(recovery_కొలత + పరిమాణం(*rec));
+	ఒకవేళ (దత్తాంశం == ఖాళీ) {
 		tdb->ecode = TDB_ERR_OOM;
-		return -1;
+		తిరిగి -1;
 	}
 
-	rec = (struct list_struct *)data;
-	memset(rec, 0, sizeof(*rec));
+	rec = (నిర్మాణం list_struct *)దత్తాంశం;
+	memset(rec, 0, పరిమాణం(*rec));
 
 	rec->magic    = 0;
-	rec->data_len = recovery_size;
-	rec->rec_len  = recovery_max_size;
-	rec->key_len  = old_map_size;
+	rec->దత్తాంశం_len = recovery_కొలత;
+	rec->rec_len  = recovery_max_కొలత;
+	rec->కీలకం_len  = old_map_కొలత;
 	CONVERT(rec);
 
 	/* build the recovery data into a single blob to allow us to do a single
 	   large write, which should be more efficient */
-	p = data + sizeof(*rec);
-	for (el=tdb->transaction->elements;el;el=el->next) {
-		if (el->offset >= old_map_size) {
-			continue;
+	p = దత్తాంశం + పరిమాణం(*rec);
+	కొరకు (el=tdb->transaction->elements;el;el=el->తదుపరి) {
+		ఒకవేళ (el->స్థానభ్రంశం >= old_map_కొలత) {
+			కొనసాగు;
 		}
-		if (el->offset + el->length > tdb->transaction->old_map_size) {
+		ఒకవేళ (el->స్థానభ్రంశం + el->నిడివి > tdb->transaction->old_map_కొలత) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_setup_recovery: transaction data over new region boundary\n"));
-			free(data);
+			విడుదల(దత్తాంశం);
 			tdb->ecode = TDB_ERR_CORRUPT;
-			return -1;
+			తిరిగి -1;
 		}
-		memcpy(p, &el->offset, 4);
-		memcpy(p+4, &el->length, 4);
-		if (DOCONV()) {
+		జ్ఞాపకం_నకలు(p, &el->స్థానభ్రంశం, 4);
+		జ్ఞాపకం_నకలు(p+4, &el->నిడివి, 4);
+		ఒకవేళ (DOCONV()) {
 			tdb_convert(p, 8);
 		}
 		/* the recovery area contains the old data, not the
 		   new data, so we have to call the original tdb_read
 		   method to get it */
-		if (methods->tdb_read(tdb, el->offset, p + 8, el->length, 0) != 0) {
-			free(data);
+		ఒకవేళ (methods->tdb_read(tdb, el->స్థానభ్రంశం, p + 8, el->నిడివి, 0) != 0) {
+			విడుదల(దత్తాంశం);
 			tdb->ecode = TDB_ERR_IO;
-			return -1;
+			తిరిగి -1;
 		}
-		p += 8 + el->length;
+		p += 8 + el->నిడివి;
 	}
 
 	/* and the tailer */
-	tailer = sizeof(*rec) + recovery_max_size;
-	memcpy(p, &tailer, 4);
+	tailer = పరిమాణం(*rec) + recovery_max_కొలత;
+	జ్ఞాపకం_నకలు(p, &tailer, 4);
 	CONVERT(p);
 
 	/* write the recovery data to the recovery area */
-	if (methods->tdb_write(tdb, recovery_offset, data, sizeof(*rec) + recovery_size) == -1) {
+	ఒకవేళ (methods->tdb_write(tdb, recovery_స్థానభ్రంశం, దత్తాంశం, పరిమాణం(*rec) + recovery_కొలత) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_setup_recovery: failed to write recovery data\n"));
-		free(data);
+		విడుదల(దత్తాంశం);
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* as we don't have ordered writes, we have to sync the recovery
 	   data before we update the magic to indicate that the recovery
 	   data is present */
-	if (transaction_sync(tdb, recovery_offset, sizeof(*rec) + recovery_size) == -1) {
-		free(data);
-		return -1;
+	ఒకవేళ (transaction_sync(tdb, recovery_స్థానభ్రంశం, పరిమాణం(*rec) + recovery_కొలత) == -1) {
+		విడుదల(దత్తాంశం);
+		తిరిగి -1;
 	}
 
-	free(data);
+	విడుదల(దత్తాంశం);
 
 	magic = TDB_RECOVERY_MAGIC;
 	CONVERT(magic);
 
-	*magic_offset = recovery_offset + offsetof(struct list_struct, magic);
+	*magic_స్థానభ్రంశం = recovery_స్థానభ్రంశం + offsetof(నిర్మాణం list_struct, magic);
 
-	if (methods->tdb_write(tdb, *magic_offset, &magic, sizeof(magic)) == -1) {
+	ఒకవేళ (methods->tdb_write(tdb, *magic_స్థానభ్రంశం, &magic, పరిమాణం(magic)) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_setup_recovery: failed to write recovery magic\n"));
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* ensure the recovery magic marker is on disk */
-	if (transaction_sync(tdb, *magic_offset, sizeof(magic)) == -1) {
-		return -1;
+	ఒకవేళ (transaction_sync(tdb, *magic_స్థానభ్రంశం, పరిమాణం(magic)) == -1) {
+		తిరిగి -1;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
 /*
   commit the current transaction
 */
-int tdb_transaction_commit(struct tdb_context *tdb)
+పూర్ణాంకం tdb_transaction_commit(నిర్మాణం tdb_context *tdb)
 {
-	const struct tdb_methods *methods;
-	tdb_off_t magic_offset = 0;
+	స్థిరరాశి నిర్మాణం tdb_methods *methods;
+	tdb_off_t magic_స్థానభ్రంశం = 0;
 	u32 zero = 0;
 
-	if (tdb->transaction == NULL) {
+	ఒకవేళ (tdb->transaction == ఖాళీ) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_commit: no transaction\n"));
-		return -1;
+		తిరిగి -1;
 	}
 
-	if (tdb->transaction->transaction_error) {
+	ఒకవేళ (tdb->transaction->transaction_error) {
 		tdb->ecode = TDB_ERR_IO;
 		tdb_transaction_cancel(tdb);
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_commit: transaction error pending\n"));
-		return -1;
+		తిరిగి -1;
 	}
 
-	if (tdb->transaction->nesting != 0) {
+	ఒకవేళ (tdb->transaction->nesting != 0) {
 		tdb->transaction->nesting--;
-		return 0;
+		తిరిగి 0;
 	}
 
 	/* check for a null transaction */
-	if (tdb->transaction->elements == NULL) {
+	ఒకవేళ (tdb->transaction->elements == ఖాళీ) {
 		tdb_transaction_cancel(tdb);
-		return 0;
+		తిరిగి 0;
 	}
 
 	methods = tdb->transaction->io_methods;
 
 	/* if there are any locks pending then the caller has not
 	   nested their locks properly, so fail the transaction */
-	if (tdb->num_locks || tdb->global_lock.count) {
-		tdb->ecode = TDB_ERR_LOCK;
+	ఒకవేళ (tdb->అంకె_locks || tdb->global_తాళం.లెక్క) {
+		tdb->ecode = TDB_ERR_తాళం;
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_commit: locks pending on commit\n"));
 		tdb_transaction_cancel(tdb);
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* upgrade the main transaction lock region to a write lock */
-	if (tdb_brlock_upgrade(tdb, FREELIST_TOP, 0) == -1) {
+	ఒకవేళ (tdb_brlock_upgrade(tdb, FREELIST_శిఖరం, 0) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_start: failed to upgrade hash locks\n"));
-		tdb->ecode = TDB_ERR_LOCK;
+		tdb->ecode = TDB_ERR_తాళం;
 		tdb_transaction_cancel(tdb);
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* get the global lock - this prevents new users attaching to the database
 	   during the commit */
-	if (tdb_brlock(tdb, GLOBAL_LOCK, F_WRLCK, F_SETLKW, 0, 1) == -1) {
+	ఒకవేళ (tdb_brlock(tdb, GLOBAL_తాళం, F_WRLCK, F_SETLKW, 0, 1) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_transaction_commit: failed to get global lock\n"));
-		tdb->ecode = TDB_ERR_LOCK;
+		tdb->ecode = TDB_ERR_తాళం;
 		tdb_transaction_cancel(tdb);
-		return -1;
+		తిరిగి -1;
 	}
 
-	if (!(tdb->flags & TDB_NOSYNC)) {
+	ఒకవేళ (!(tdb->flags & TDB_NOSYNC)) {
 		/* write the recovery data to the end of the file */
-		if (transaction_setup_recovery(tdb, &magic_offset) == -1) {
+		ఒకవేళ (transaction_అమరిక_recovery(tdb, &magic_స్థానభ్రంశం) == -1) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_commit: failed to setup recovery data\n"));
-			tdb_brlock(tdb, GLOBAL_LOCK, F_UNLCK, F_SETLKW, 0, 1);
+			tdb_brlock(tdb, GLOBAL_తాళం, F_UNLCK, F_SETLKW, 0, 1);
 			tdb_transaction_cancel(tdb);
-			return -1;
+			తిరిగి -1;
 		}
 	}
 
 	/* expand the file to the new size if needed */
-	if (tdb->map_size != tdb->transaction->old_map_size) {
-		if (methods->tdb_expand_file(tdb, tdb->transaction->old_map_size,
-					     tdb->map_size -
-					     tdb->transaction->old_map_size) == -1) {
+	ఒకవేళ (tdb->map_కొలత != tdb->transaction->old_map_కొలత) {
+		ఒకవేళ (methods->tdb_expand_file(tdb, tdb->transaction->old_map_కొలత,
+					     tdb->map_కొలత -
+					     tdb->transaction->old_map_కొలత) == -1) {
 			tdb->ecode = TDB_ERR_IO;
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_commit: expansion failed\n"));
-			tdb_brlock(tdb, GLOBAL_LOCK, F_UNLCK, F_SETLKW, 0, 1);
+			tdb_brlock(tdb, GLOBAL_తాళం, F_UNLCK, F_SETLKW, 0, 1);
 			tdb_transaction_cancel(tdb);
-			return -1;
+			తిరిగి -1;
 		}
-		tdb->map_size = tdb->transaction->old_map_size;
-		methods->tdb_oob(tdb, tdb->map_size + 1, 1);
+		tdb->map_కొలత = tdb->transaction->old_map_కొలత;
+		methods->tdb_oob(tdb, tdb->map_కొలత + 1, 1);
 	}
 
 	/* perform all the writes */
-	while (tdb->transaction->elements) {
-		struct tdb_transaction_el *el = tdb->transaction->elements;
+	అయితే (tdb->transaction->elements) {
+		నిర్మాణం tdb_transaction_el *el = tdb->transaction->elements;
 
-		if (methods->tdb_write(tdb, el->offset, el->data, el->length) == -1) {
+		ఒకవేళ (methods->tdb_write(tdb, el->స్థానభ్రంశం, el->దత్తాంశం, el->నిడివి) == -1) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_commit: write failed during commit\n"));
 
 			/* we've overwritten part of the data and
@@ -2092,35 +2092,35 @@ int tdb_transaction_commit(struct tdb_context *tdb)
 			tdb_transaction_recover(tdb);
 
 			tdb_transaction_cancel(tdb);
-			tdb_brlock(tdb, GLOBAL_LOCK, F_UNLCK, F_SETLKW, 0, 1);
+			tdb_brlock(tdb, GLOBAL_తాళం, F_UNLCK, F_SETLKW, 0, 1);
 
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_commit: write failed\n"));
-			return -1;
+			తిరిగి -1;
 		}
-		tdb->transaction->elements = el->next;
-		free(el->data);
-		free(el);
+		tdb->transaction->elements = el->తదుపరి;
+		విడుదల(el->దత్తాంశం);
+		విడుదల(el);
 	}
 
-	if (!(tdb->flags & TDB_NOSYNC)) {
+	ఒకవేళ (!(tdb->flags & TDB_NOSYNC)) {
 		/* ensure the new data is on disk */
-		if (transaction_sync(tdb, 0, tdb->map_size) == -1) {
-			return -1;
+		ఒకవేళ (transaction_sync(tdb, 0, tdb->map_కొలత) == -1) {
+			తిరిగి -1;
 		}
 
 		/* remove the recovery marker */
-		if (methods->tdb_write(tdb, magic_offset, &zero, 4) == -1) {
+		ఒకవేళ (methods->tdb_write(tdb, magic_స్థానభ్రంశం, &zero, 4) == -1) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_commit: failed to remove recovery magic\n"));
-			return -1;
+			తిరిగి -1;
 		}
 
 		/* ensure the recovery marker has been removed on disk */
-		if (transaction_sync(tdb, magic_offset, 4) == -1) {
-			return -1;
+		ఒకవేళ (transaction_sync(tdb, magic_స్థానభ్రంశం, 4) == -1) {
+			తిరిగి -1;
 		}
 	}
 
-	tdb_brlock(tdb, GLOBAL_LOCK, F_UNLCK, F_SETLKW, 0, 1);
+	tdb_brlock(tdb, GLOBAL_తాళం, F_UNLCK, F_SETLKW, 0, 1);
 
 	/*
 	  TODO: maybe write to some dummy hdr field, or write to magic
@@ -2133,14 +2133,14 @@ int tdb_transaction_commit(struct tdb_context *tdb)
 	   not be backed up (as tdb rounding to block sizes means that
 	   file size changes are quite rare too). The following forces
 	   mtime changes when a transaction completes */
-#ifdef HAVE_UTIME
-	utime(tdb->name, NULL);
-#endif
+#నిర్వచితమైతే HAVE_UTIME
+	utime(tdb->name, ఖాళీ);
+#అయితే_ముగింపు
 
 	/* use a transaction cancel to free memory and remove the
 	   transaction locks */
 	tdb_transaction_cancel(tdb);
-	return 0;
+	తిరిగి 0;
 }
 
 
@@ -2149,290 +2149,290 @@ int tdb_transaction_commit(struct tdb_context *tdb)
   database write access already established (including the global
   lock to prevent new processes attaching)
 */
-int tdb_transaction_recover(struct tdb_context *tdb)
+పూర్ణాంకం tdb_transaction_recover(నిర్మాణం tdb_context *tdb)
 {
-	tdb_off_t recovery_head, recovery_eof;
-	unsigned char *data, *p;
+	tdb_off_t recovery_తల, recovery_eof;
+	గుర్తులేని అక్షరం *దత్తాంశం, *p;
 	u32 zero = 0;
-	struct list_struct rec;
+	నిర్మాణం list_struct rec;
 
 	/* find the recovery area */
-	if (tdb_ofs_read(tdb, TDB_RECOVERY_HEAD, &recovery_head) == -1) {
+	ఒకవేళ (tdb_ofs_read(tdb, TDB_RECOVERY_తల, &recovery_తల) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to read recovery head\n"));
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		తిరిగి -1;
 	}
 
-	if (recovery_head == 0) {
+	ఒకవేళ (recovery_తల == 0) {
 		/* we have never allocated a recovery record */
-		return 0;
+		తిరిగి 0;
 	}
 
 	/* read the recovery record */
-	if (tdb->methods->tdb_read(tdb, recovery_head, &rec,
-				   sizeof(rec), DOCONV()) == -1) {
+	ఒకవేళ (tdb->methods->tdb_read(tdb, recovery_తల, &rec,
+				   పరిమాణం(rec), DOCONV()) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to read recovery record\n"));
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		తిరిగి -1;
 	}
 
-	if (rec.magic != TDB_RECOVERY_MAGIC) {
+	ఒకవేళ (rec.magic != TDB_RECOVERY_MAGIC) {
 		/* there is no valid recovery data */
-		return 0;
+		తిరిగి 0;
 	}
 
-	if (tdb->read_only) {
+	ఒకవేళ (tdb->read_only) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: attempt to recover read only database\n"));
 		tdb->ecode = TDB_ERR_CORRUPT;
-		return -1;
+		తిరిగి -1;
 	}
 
-	recovery_eof = rec.key_len;
+	recovery_eof = rec.కీలకం_len;
 
-	data = (unsigned char *)malloc(rec.data_len);
-	if (data == NULL) {
+	దత్తాంశం = (గుర్తులేని అక్షరం *)జ్ఞాపకం_ఇవ్వు(rec.దత్తాంశం_len);
+	ఒకవేళ (దత్తాంశం == ఖాళీ) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to allocate recovery data\n"));
 		tdb->ecode = TDB_ERR_OOM;
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* read the full recovery data */
-	if (tdb->methods->tdb_read(tdb, recovery_head + sizeof(rec), data,
-				   rec.data_len, 0) == -1) {
+	ఒకవేళ (tdb->methods->tdb_read(tdb, recovery_తల + పరిమాణం(rec), దత్తాంశం,
+				   rec.దత్తాంశం_len, 0) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to read recovery data\n"));
 		tdb->ecode = TDB_ERR_IO;
-		free(data);
-		return -1;
+		విడుదల(దత్తాంశం);
+		తిరిగి -1;
 	}
 
 	/* recover the file data */
-	p = data;
-	while (p+8 < data + rec.data_len) {
+	p = దత్తాంశం;
+	అయితే (p+8 < దత్తాంశం + rec.దత్తాంశం_len) {
 		u32 ofs, len;
-		if (DOCONV()) {
+		ఒకవేళ (DOCONV()) {
 			tdb_convert(p, 8);
 		}
-		memcpy(&ofs, p, 4);
-		memcpy(&len, p+4, 4);
+		జ్ఞాపకం_నకలు(&ofs, p, 4);
+		జ్ఞాపకం_నకలు(&len, p+4, 4);
 
-		if (tdb->methods->tdb_write(tdb, ofs, p+8, len) == -1) {
-			free(data);
+		ఒకవేళ (tdb->methods->tdb_write(tdb, ofs, p+8, len) == -1) {
+			విడుదల(దత్తాంశం);
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to recover %d bytes at offset %d\n", len, ofs));
 			tdb->ecode = TDB_ERR_IO;
-			return -1;
+			తిరిగి -1;
 		}
 		p += 8 + len;
 	}
 
-	free(data);
+	విడుదల(దత్తాంశం);
 
-	if (transaction_sync(tdb, 0, tdb->map_size) == -1) {
+	ఒకవేళ (transaction_sync(tdb, 0, tdb->map_కొలత) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to sync recovery\n"));
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* if the recovery area is after the recovered eof then remove it */
-	if (recovery_eof <= recovery_head) {
-		if (tdb_ofs_write(tdb, TDB_RECOVERY_HEAD, &zero) == -1) {
+	ఒకవేళ (recovery_eof <= recovery_తల) {
+		ఒకవేళ (tdb_ofs_write(tdb, TDB_RECOVERY_తల, &zero) == -1) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to remove recovery head\n"));
 			tdb->ecode = TDB_ERR_IO;
-			return -1;
+			తిరిగి -1;
 		}
 	}
 
 	/* remove the recovery magic */
-	if (tdb_ofs_write(tdb, recovery_head + offsetof(struct list_struct, magic),
+	ఒకవేళ (tdb_ofs_write(tdb, recovery_తల + offsetof(నిర్మాణం list_struct, magic),
 			  &zero) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to remove recovery magic\n"));
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* reduce the file size to the old size */
 	tdb_munmap(tdb);
-	if (ftruncate(tdb->fd, recovery_eof) != 0) {
+	ఒకవేళ (ftruncate(tdb->fd, recovery_eof) != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to reduce to recovery size\n"));
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		తిరిగి -1;
 	}
-	tdb->map_size = recovery_eof;
+	tdb->map_కొలత = recovery_eof;
 	tdb_mmap(tdb);
 
-	if (transaction_sync(tdb, 0, recovery_eof) == -1) {
+	ఒకవేళ (transaction_sync(tdb, 0, recovery_eof) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_transaction_recover: failed to sync2 recovery\n"));
 		tdb->ecode = TDB_ERR_IO;
-		return -1;
+		తిరిగి -1;
 	}
 
 	TDB_LOG((tdb, TDB_DEBUG_TRACE, "tdb_transaction_recover: recovered %d byte database\n",
 		 recovery_eof));
 
 	/* all done */
-	return 0;
+	తిరిగి 0;
 }
 
 /* file: freelist.c */
 
 /* read a freelist record and check for simple errors */
-static int tdb_rec_free_read(struct tdb_context *tdb, tdb_off_t off, struct list_struct *rec)
+స్థిర పూర్ణాంకం tdb_rec_free_read(నిర్మాణం tdb_context *tdb, tdb_off_t off, నిర్మాణం list_struct *rec)
 {
-	if (tdb->methods->tdb_read(tdb, off, rec, sizeof(*rec),DOCONV()) == -1)
-		return -1;
+	ఒకవేళ (tdb->methods->tdb_read(tdb, off, rec, పరిమాణం(*rec),DOCONV()) == -1)
+		తిరిగి -1;
 
-	if (rec->magic == TDB_MAGIC) {
+	ఒకవేళ (rec->magic == TDB_MAGIC) {
 		/* this happens when a app is showdown while deleting a record - we should
 		   not completely fail when this happens */
 		TDB_LOG((tdb, TDB_DEBUG_WARNING, "tdb_rec_free_read non-free magic 0x%x at offset=%d - fixing\n",
 			 rec->magic, off));
 		rec->magic = TDB_FREE_MAGIC;
-		if (tdb->methods->tdb_write(tdb, off, rec, sizeof(*rec)) == -1)
-			return -1;
+		ఒకవేళ (tdb->methods->tdb_write(tdb, off, rec, పరిమాణం(*rec)) == -1)
+			తిరిగి -1;
 	}
 
-	if (rec->magic != TDB_FREE_MAGIC) {
+	ఒకవేళ (rec->magic != TDB_FREE_MAGIC) {
 		/* Ensure ecode is set for log fn. */
 		tdb->ecode = TDB_ERR_CORRUPT;
 		TDB_LOG((tdb, TDB_DEBUG_WARNING, "tdb_rec_free_read bad magic 0x%x at offset=%d\n",
 			   rec->magic, off));
-		return TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
+		తిరిగి TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
 	}
-	if (tdb->methods->tdb_oob(tdb, rec->next+sizeof(*rec), 0) != 0)
-		return -1;
-	return 0;
+	ఒకవేళ (tdb->methods->tdb_oob(tdb, rec->తదుపరి+పరిమాణం(*rec), 0) != 0)
+		తిరిగి -1;
+	తిరిగి 0;
 }
 
 
 
 /* Remove an element from the freelist.  Must have alloc lock. */
-static int remove_from_freelist(struct tdb_context *tdb, tdb_off_t off, tdb_off_t next)
+స్థిర పూర్ణాంకం remove_from_freelist(నిర్మాణం tdb_context *tdb, tdb_off_t off, tdb_off_t తదుపరి)
 {
-	tdb_off_t last_ptr, i;
+	tdb_off_t చివరి_ptr, i;
 
 	/* read in the freelist top */
-	last_ptr = FREELIST_TOP;
-	while (tdb_ofs_read(tdb, last_ptr, &i) != -1 && i != 0) {
-		if (i == off) {
+	చివరి_ptr = FREELIST_శిఖరం;
+	అయితే (tdb_ofs_read(tdb, చివరి_ptr, &i) != -1 && i != 0) {
+		ఒకవేళ (i == off) {
 			/* We've found it! */
-			return tdb_ofs_write(tdb, last_ptr, &next);
+			తిరిగి tdb_ofs_write(tdb, చివరి_ptr, &తదుపరి);
 		}
 		/* Follow chain (next offset is at start of record) */
-		last_ptr = i;
+		చివరి_ptr = i;
 	}
 	TDB_LOG((tdb, TDB_DEBUG_FATAL,"remove_from_freelist: not on list at off=%d\n", off));
-	return TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
+	తిరిగి TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
 }
 
 
 /* update a record tailer (must hold allocation lock) */
-static int update_tailer(struct tdb_context *tdb, tdb_off_t offset,
-			 const struct list_struct *rec)
+స్థిర పూర్ణాంకం update_tailer(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం,
+			 స్థిరరాశి నిర్మాణం list_struct *rec)
 {
 	tdb_off_t totalsize;
 
 	/* Offset of tailer from record header */
-	totalsize = sizeof(*rec) + rec->rec_len;
-	return tdb_ofs_write(tdb, offset + totalsize - sizeof(tdb_off_t),
+	totalsize = పరిమాణం(*rec) + rec->rec_len;
+	తిరిగి tdb_ofs_write(tdb, స్థానభ్రంశం + totalsize - పరిమాణం(tdb_off_t),
 			 &totalsize);
 }
 
 /* Add an element into the freelist. Merge adjacent records if
    necessary. */
-int tdb_free(struct tdb_context *tdb, tdb_off_t offset, struct list_struct *rec)
+పూర్ణాంకం tdb_free(నిర్మాణం tdb_context *tdb, tdb_off_t స్థానభ్రంశం, నిర్మాణం list_struct *rec)
 {
-	tdb_off_t right, left;
+	tdb_off_t కుడి, ఎడమ;
 
 	/* Allocation and tailer lock */
-	if (tdb_lock(tdb, -1, F_WRLCK) != 0)
-		return -1;
+	ఒకవేళ (tdb_తాళం(tdb, -1, F_WRLCK) != 0)
+		తిరిగి -1;
 
 	/* set an initial tailer, so if we fail we don't leave a bogus record */
-	if (update_tailer(tdb, offset, rec) != 0) {
+	ఒకవేళ (update_tailer(tdb, స్థానభ్రంశం, rec) != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: update_tailer failed!\n"));
-		goto fail;
+		వెళ్ళు fail;
 	}
 
 	/* Look right first (I'm an Australian, dammit) */
-	right = offset + sizeof(*rec) + rec->rec_len;
-	if (right + sizeof(*rec) <= tdb->map_size) {
-		struct list_struct r;
+	కుడి = స్థానభ్రంశం + పరిమాణం(*rec) + rec->rec_len;
+	ఒకవేళ (కుడి + పరిమాణం(*rec) <= tdb->map_కొలత) {
+		నిర్మాణం list_struct r;
 
-		if (tdb->methods->tdb_read(tdb, right, &r, sizeof(r), DOCONV()) == -1) {
-			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: right read failed at %u\n", right));
-			goto left;
+		ఒకవేళ (tdb->methods->tdb_read(tdb, కుడి, &r, పరిమాణం(r), DOCONV()) == -1) {
+			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: right read failed at %u\n", కుడి));
+			వెళ్ళు ఎడమ;
 		}
 
 		/* If it's free, expand to include it. */
-		if (r.magic == TDB_FREE_MAGIC) {
-			if (remove_from_freelist(tdb, right, r.next) == -1) {
-				TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: right free failed at %u\n", right));
-				goto left;
+		ఒకవేళ (r.magic == TDB_FREE_MAGIC) {
+			ఒకవేళ (remove_from_freelist(tdb, కుడి, r.తదుపరి) == -1) {
+				TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: right free failed at %u\n", కుడి));
+				వెళ్ళు ఎడమ;
 			}
-			rec->rec_len += sizeof(r) + r.rec_len;
+			rec->rec_len += పరిమాణం(r) + r.rec_len;
 		}
 	}
 
-left:
+ఎడమ:
 	/* Look left */
-	left = offset - sizeof(tdb_off_t);
-	if (left > TDB_DATA_START(tdb->header.hash_size)) {
-		struct list_struct l;
+	ఎడమ = స్థానభ్రంశం - పరిమాణం(tdb_off_t);
+	ఒకవేళ (ఎడమ > TDB_దత్తాంశం_ప్రారంభం(tdb->శీర్షిక.hash_కొలత)) {
+		నిర్మాణం list_struct l;
 		tdb_off_t leftsize;
 
 		/* Read in tailer and jump back to header */
-		if (tdb_ofs_read(tdb, left, &leftsize) == -1) {
-			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: left offset read failed at %u\n", left));
-			goto update;
+		ఒకవేళ (tdb_ofs_read(tdb, ఎడమ, &leftsize) == -1) {
+			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: left offset read failed at %u\n", ఎడమ));
+			వెళ్ళు update;
 		}
 
 		/* it could be uninitialised data */
-		if (leftsize == 0 || leftsize == TDB_PAD_U32) {
-			goto update;
+		ఒకవేళ (leftsize == 0 || leftsize == TDB_PAD_U32) {
+			వెళ్ళు update;
 		}
 
-		left = offset - leftsize;
+		ఎడమ = స్థానభ్రంశం - leftsize;
 
 		/* Now read in record */
-		if (tdb->methods->tdb_read(tdb, left, &l, sizeof(l), DOCONV()) == -1) {
-			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: left read failed at %u (%u)\n", left, leftsize));
-			goto update;
+		ఒకవేళ (tdb->methods->tdb_read(tdb, ఎడమ, &l, పరిమాణం(l), DOCONV()) == -1) {
+			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: left read failed at %u (%u)\n", ఎడమ, leftsize));
+			వెళ్ళు update;
 		}
 
 		/* If it's free, expand to include it. */
-		if (l.magic == TDB_FREE_MAGIC) {
-			if (remove_from_freelist(tdb, left, l.next) == -1) {
-				TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: left free failed at %u\n", left));
-				goto update;
-			} else {
-				offset = left;
+		ఒకవేళ (l.magic == TDB_FREE_MAGIC) {
+			ఒకవేళ (remove_from_freelist(tdb, ఎడమ, l.తదుపరి) == -1) {
+				TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: left free failed at %u\n", ఎడమ));
+				వెళ్ళు update;
+			} లేకపోతే {
+				స్థానభ్రంశం = ఎడమ;
 				rec->rec_len += leftsize;
 			}
 		}
 	}
 
 update:
-	if (update_tailer(tdb, offset, rec) == -1) {
-		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: update_tailer failed at %u\n", offset));
-		goto fail;
+	ఒకవేళ (update_tailer(tdb, స్థానభ్రంశం, rec) == -1) {
+		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free: update_tailer failed at %u\n", స్థానభ్రంశం));
+		వెళ్ళు fail;
 	}
 
 	/* Now, prepend to free list */
 	rec->magic = TDB_FREE_MAGIC;
 
-	if (tdb_ofs_read(tdb, FREELIST_TOP, &rec->next) == -1 ||
-	    tdb_rec_write(tdb, offset, rec) == -1 ||
-	    tdb_ofs_write(tdb, FREELIST_TOP, &offset) == -1) {
-		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free record write failed at offset=%d\n", offset));
-		goto fail;
+	ఒకవేళ (tdb_ofs_read(tdb, FREELIST_శిఖరం, &rec->తదుపరి) == -1 ||
+	    tdb_rec_write(tdb, స్థానభ్రంశం, rec) == -1 ||
+	    tdb_ofs_write(tdb, FREELIST_శిఖరం, &స్థానభ్రంశం) == -1) {
+		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_free record write failed at offset=%d\n", స్థానభ్రంశం));
+		వెళ్ళు fail;
 	}
 
 	/* And we're done. */
 	tdb_unlock(tdb, -1, F_WRLCK);
-	return 0;
+	తిరిగి 0;
 
  fail:
 	tdb_unlock(tdb, -1, F_WRLCK);
-	return -1;
+	తిరిగి -1;
 }
 
 
@@ -2440,32 +2440,32 @@ update:
    the core of tdb_allocate - called when we have decided which
    free list entry to use
  */
-static tdb_off_t tdb_allocate_ofs(struct tdb_context *tdb, tdb_len_t length, tdb_off_t rec_ptr,
-				struct list_struct *rec, tdb_off_t last_ptr)
+స్థిర tdb_off_t tdb_allocate_ofs(నిర్మాణం tdb_context *tdb, tdb_len_t నిడివి, tdb_off_t rec_ptr,
+				నిర్మాణం list_struct *rec, tdb_off_t చివరి_ptr)
 {
-	struct list_struct newrec;
+	నిర్మాణం list_struct newrec;
 	tdb_off_t newrec_ptr;
 
-	memset(&newrec, '\0', sizeof(newrec));
+	memset(&newrec, '\0', పరిమాణం(newrec));
 
 	/* found it - now possibly split it up  */
-	if (rec->rec_len > length + MIN_REC_SIZE) {
+	ఒకవేళ (rec->rec_len > నిడివి + MIN_REC_కొలత) {
 		/* Length of left piece */
-		length = TDB_ALIGN(length, TDB_ALIGNMENT);
+		నిడివి = TDB_ALIGN(నిడివి, TDB_ALIGNMENT);
 
 		/* Right piece to go on free list */
-		newrec.rec_len = rec->rec_len - (sizeof(*rec) + length);
-		newrec_ptr = rec_ptr + sizeof(*rec) + length;
+		newrec.rec_len = rec->rec_len - (పరిమాణం(*rec) + నిడివి);
+		newrec_ptr = rec_ptr + పరిమాణం(*rec) + నిడివి;
 
 		/* And left record is shortened */
-		rec->rec_len = length;
-	} else {
+		rec->rec_len = నిడివి;
+	} లేకపోతే {
 		newrec_ptr = 0;
 	}
 
 	/* Remove allocated record from the free list */
-	if (tdb_ofs_write(tdb, last_ptr, &rec->next) == -1) {
-		return 0;
+	ఒకవేళ (tdb_ofs_write(tdb, చివరి_ptr, &rec->తదుపరి) == -1) {
+		తిరిగి 0;
 	}
 
 	/* Update header: do this before we drop alloc
@@ -2473,26 +2473,26 @@ static tdb_off_t tdb_allocate_ofs(struct tdb_context *tdb, tdb_len_t length, tdb
 	   merge with us, thinking we're free.
 	   (Thanks Jeremy Allison). */
 	rec->magic = TDB_MAGIC;
-	if (tdb_rec_write(tdb, rec_ptr, rec) == -1) {
-		return 0;
+	ఒకవేళ (tdb_rec_write(tdb, rec_ptr, rec) == -1) {
+		తిరిగి 0;
 	}
 
 	/* Did we create new block? */
-	if (newrec_ptr) {
+	ఒకవేళ (newrec_ptr) {
 		/* Update allocated record tailer (we
 		   shortened it). */
-		if (update_tailer(tdb, rec_ptr, rec) == -1) {
-			return 0;
+		ఒకవేళ (update_tailer(tdb, rec_ptr, rec) == -1) {
+			తిరిగి 0;
 		}
 
 		/* Free new record */
-		if (tdb_free(tdb, newrec_ptr, &newrec) == -1) {
-			return 0;
+		ఒకవేళ (tdb_free(tdb, newrec_ptr, &newrec) == -1) {
+			తిరిగి 0;
 		}
 	}
 
 	/* all done - return the new record offset */
-	return rec_ptr;
+	తిరిగి rec_ptr;
 }
 
 /* allocate some space from the free list. The offset returned points
@@ -2501,29 +2501,29 @@ static tdb_off_t tdb_allocate_ofs(struct tdb_context *tdb, tdb_len_t length, tdb
 
    0 is returned if the space could not be allocated
  */
-tdb_off_t tdb_allocate(struct tdb_context *tdb, tdb_len_t length, struct list_struct *rec)
+tdb_off_t tdb_allocate(నిర్మాణం tdb_context *tdb, tdb_len_t నిడివి, నిర్మాణం list_struct *rec)
 {
-	tdb_off_t rec_ptr, last_ptr, newrec_ptr;
-	struct {
-		tdb_off_t rec_ptr, last_ptr;
+	tdb_off_t rec_ptr, చివరి_ptr, newrec_ptr;
+	నిర్మాణం {
+		tdb_off_t rec_ptr, చివరి_ptr;
 		tdb_len_t rec_len;
 	} bestfit;
 
-	if (tdb_lock(tdb, -1, F_WRLCK) == -1)
-		return 0;
+	ఒకవేళ (tdb_తాళం(tdb, -1, F_WRLCK) == -1)
+		తిరిగి 0;
 
 	/* Extra bytes required for tailer */
-	length += sizeof(tdb_off_t);
+	నిడివి += పరిమాణం(tdb_off_t);
 
  again:
-	last_ptr = FREELIST_TOP;
+	చివరి_ptr = FREELIST_శిఖరం;
 
 	/* read in the freelist top */
-	if (tdb_ofs_read(tdb, FREELIST_TOP, &rec_ptr) == -1)
-		goto fail;
+	ఒకవేళ (tdb_ofs_read(tdb, FREELIST_శిఖరం, &rec_ptr) == -1)
+		వెళ్ళు fail;
 
 	bestfit.rec_ptr = 0;
-	bestfit.last_ptr = 0;
+	bestfit.చివరి_ptr = 0;
 	bestfit.rec_len = 0;
 
 	/*
@@ -2531,48 +2531,48 @@ tdb_off_t tdb_allocate(struct tdb_context *tdb, tdb_len_t length, struct list_st
 	   a first fit strategy, but it suffered from massive fragmentation
 	   issues when faced with a slowly increasing record size.
 	 */
-	while (rec_ptr) {
-		if (tdb_rec_free_read(tdb, rec_ptr, rec) == -1) {
-			goto fail;
+	అయితే (rec_ptr) {
+		ఒకవేళ (tdb_rec_free_read(tdb, rec_ptr, rec) == -1) {
+			వెళ్ళు fail;
 		}
 
-		if (rec->rec_len >= length) {
-			if (bestfit.rec_ptr == 0 ||
+		ఒకవేళ (rec->rec_len >= నిడివి) {
+			ఒకవేళ (bestfit.rec_ptr == 0 ||
 			    rec->rec_len < bestfit.rec_len) {
 				bestfit.rec_len = rec->rec_len;
 				bestfit.rec_ptr = rec_ptr;
-				bestfit.last_ptr = last_ptr;
+				bestfit.చివరి_ptr = చివరి_ptr;
 				/* consider a fit to be good enough if
 				   we aren't wasting more than half
 				   the space */
-				if (bestfit.rec_len < 2*length) {
-					break;
+				ఒకవేళ (bestfit.rec_len < 2*నిడివి) {
+					ఆపు;
 				}
 			}
 		}
 
 		/* move to the next record */
-		last_ptr = rec_ptr;
-		rec_ptr = rec->next;
+		చివరి_ptr = rec_ptr;
+		rec_ptr = rec->తదుపరి;
 	}
 
-	if (bestfit.rec_ptr != 0) {
-		if (tdb_rec_free_read(tdb, bestfit.rec_ptr, rec) == -1) {
-			goto fail;
+	ఒకవేళ (bestfit.rec_ptr != 0) {
+		ఒకవేళ (tdb_rec_free_read(tdb, bestfit.rec_ptr, rec) == -1) {
+			వెళ్ళు fail;
 		}
 
-		newrec_ptr = tdb_allocate_ofs(tdb, length, bestfit.rec_ptr, rec, bestfit.last_ptr);
+		newrec_ptr = tdb_allocate_ofs(tdb, నిడివి, bestfit.rec_ptr, rec, bestfit.చివరి_ptr);
 		tdb_unlock(tdb, -1, F_WRLCK);
-		return newrec_ptr;
+		తిరిగి newrec_ptr;
 	}
 
 	/* we didn't find enough space. See if we can expand the
 	   database and if we can then try again */
-	if (tdb_expand(tdb, length + sizeof(*rec)) == 0)
-		goto again;
+	ఒకవేళ (tdb_expand(tdb, నిడివి + పరిమాణం(*rec)) == 0)
+		వెళ్ళు again;
  fail:
 	tdb_unlock(tdb, -1, F_WRLCK);
-	return 0;
+	తిరిగి 0;
 }
 
 /* file: freelistcheck.c */
@@ -2585,67 +2585,67 @@ tdb_off_t tdb_allocate(struct tdb_context *tdb, tdb_len_t length, struct list_st
    data structure implementation :-).
  */
 
-static int seen_insert(struct tdb_context *mem_tdb, tdb_off_t rec_ptr)
+స్థిర పూర్ణాంకం చూసిన_చొప్పించు(నిర్మాణం tdb_context *mem_tdb, tdb_off_t rec_ptr)
 {
-	TDB_DATA key, data;
+	TDB_దత్తాంశం కీలకం, దత్తాంశం;
 
-	memset(&data, '\0', sizeof(data));
-	key.dptr = (unsigned char *)&rec_ptr;
-	key.dsize = sizeof(rec_ptr);
-	return tdb_store(mem_tdb, key, data, TDB_INSERT);
+	memset(&దత్తాంశం, '\0', పరిమాణం(దత్తాంశం));
+	కీలకం.dptr = (గుర్తులేని అక్షరం *)&rec_ptr;
+	కీలకం.dsize = పరిమాణం(rec_ptr);
+	తిరిగి tdb_store(mem_tdb, కీలకం, దత్తాంశం, TDB_చొప్పించు);
 }
 
-int tdb_validate_freelist(struct tdb_context *tdb, int *pnum_entries)
+పూర్ణాంకం tdb_validate_freelist(నిర్మాణం tdb_context *tdb, పూర్ణాంకం *pnum_entries)
 {
-	struct tdb_context *mem_tdb = NULL;
-	struct list_struct rec;
-	tdb_off_t rec_ptr, last_ptr;
-	int ret = -1;
+	నిర్మాణం tdb_context *mem_tdb = ఖాళీ;
+	నిర్మాణం list_struct rec;
+	tdb_off_t rec_ptr, చివరి_ptr;
+	పూర్ణాంకం ret = -1;
 
 	*pnum_entries = 0;
 
-	mem_tdb = tdb_open("flval", tdb->header.hash_size,
-				TDB_INTERNAL, O_RDWR, 0600);
-	if (!mem_tdb) {
-		return -1;
+	mem_tdb = tdb_open("flval", tdb->శీర్షిక.hash_కొలత,
+				TDB_అంతర్గత, O_RDWR, 0600);
+	ఒకవేళ (!mem_tdb) {
+		తిరిగి -1;
 	}
 
-	if (tdb_lock(tdb, -1, F_WRLCK) == -1) {
+	ఒకవేళ (tdb_తాళం(tdb, -1, F_WRLCK) == -1) {
 		tdb_close(mem_tdb);
-		return 0;
+		తిరిగి 0;
 	}
 
-	last_ptr = FREELIST_TOP;
+	చివరి_ptr = FREELIST_శిఖరం;
 
 	/* Store the FREELIST_TOP record. */
-	if (seen_insert(mem_tdb, last_ptr) == -1) {
+	ఒకవేళ (చూసిన_చొప్పించు(mem_tdb, చివరి_ptr) == -1) {
 		ret = TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
-		goto fail;
+		వెళ్ళు fail;
 	}
 
 	/* read in the freelist top */
-	if (tdb_ofs_read(tdb, FREELIST_TOP, &rec_ptr) == -1) {
-		goto fail;
+	ఒకవేళ (tdb_ofs_read(tdb, FREELIST_శిఖరం, &rec_ptr) == -1) {
+		వెళ్ళు fail;
 	}
 
-	while (rec_ptr) {
+	అయితే (rec_ptr) {
 
 		/* If we can't store this record (we've seen it
 		   before) then the free list has a loop and must
 		   be corrupt. */
 
-		if (seen_insert(mem_tdb, rec_ptr)) {
+		ఒకవేళ (చూసిన_చొప్పించు(mem_tdb, rec_ptr)) {
 			ret = TDB_ERRCODE(TDB_ERR_CORRUPT, -1);
-			goto fail;
+			వెళ్ళు fail;
 		}
 
-		if (tdb_rec_free_read(tdb, rec_ptr, &rec) == -1) {
-			goto fail;
+		ఒకవేళ (tdb_rec_free_read(tdb, rec_ptr, &rec) == -1) {
+			వెళ్ళు fail;
 		}
 
 		/* move to the next record */
-		last_ptr = rec_ptr;
-		rec_ptr = rec.next;
+		చివరి_ptr = rec_ptr;
+		rec_ptr = rec.తదుపరి;
 		*pnum_entries += 1;
 	}
 
@@ -2655,20 +2655,20 @@ int tdb_validate_freelist(struct tdb_context *tdb, int *pnum_entries)
 
 	tdb_close(mem_tdb);
 	tdb_unlock(tdb, -1, F_WRLCK);
-	return ret;
+	తిరిగి ret;
 }
 
 /* file: traverse.c */
 
 /* Uses traverse lock: 0 = finish, -1 = error, other = record offset */
-static int tdb_next_lock(struct tdb_context *tdb, struct tdb_traverse_lock *tlock,
-			 struct list_struct *rec)
+స్థిర పూర్ణాంకం tdb_తదుపరి_తాళం(నిర్మాణం tdb_context *tdb, నిర్మాణం tdb_traverse_తాళం *tlock,
+			 నిర్మాణం list_struct *rec)
 {
-	int want_next = (tlock->off != 0);
+	పూర్ణాంకం want_తదుపరి = (tlock->off != 0);
 
 	/* Lock each chain from the start one. */
-	for (; tlock->hash < tdb->header.hash_size; tlock->hash++) {
-		if (!tlock->off && tlock->hash != 0) {
+	కొరకు (; tlock->hash < tdb->శీర్షిక.hash_కొలత; tlock->hash++) {
+		ఒకవేళ (!tlock->off && tlock->hash != 0) {
 			/* this is an optimisation for the common case where
 			   the hash chain is empty, which is particularly
 			   common for the use of tdb with ldb, where large
@@ -2697,70 +2697,70 @@ static int tdb_next_lock(struct tdb_context *tdb, struct tdb_traverse_lock *tloc
 			   factor of around 80 in speed on a linux 2.6.x
 			   system (testing using ldbtest).
 			*/
-			tdb->methods->next_hash_chain(tdb, &tlock->hash);
-			if (tlock->hash == tdb->header.hash_size) {
-				continue;
+			tdb->methods->తదుపరి_hash_chain(tdb, &tlock->hash);
+			ఒకవేళ (tlock->hash == tdb->శీర్షిక.hash_కొలత) {
+				కొనసాగు;
 			}
 		}
 
-		if (tdb_lock(tdb, tlock->hash, tlock->lock_rw) == -1)
-			return -1;
+		ఒకవేళ (tdb_తాళం(tdb, tlock->hash, tlock->తాళం_rw) == -1)
+			తిరిగి -1;
 
 		/* No previous record?  Start at top of chain. */
-		if (!tlock->off) {
-			if (tdb_ofs_read(tdb, TDB_HASH_TOP(tlock->hash),
+		ఒకవేళ (!tlock->off) {
+			ఒకవేళ (tdb_ofs_read(tdb, TDB_HASH_శిఖరం(tlock->hash),
 				     &tlock->off) == -1)
-				goto fail;
-		} else {
+				వెళ్ళు fail;
+		} లేకపోతే {
 			/* Otherwise unlock the previous record. */
-			if (tdb_unlock_record(tdb, tlock->off) != 0)
-				goto fail;
+			ఒకవేళ (tdb_unlock_రికార్డు(tdb, tlock->off) != 0)
+				వెళ్ళు fail;
 		}
 
-		if (want_next) {
+		ఒకవేళ (want_తదుపరి) {
 			/* We have offset of old record: grab next */
-			if (tdb_rec_read(tdb, tlock->off, rec) == -1)
-				goto fail;
-			tlock->off = rec->next;
+			ఒకవేళ (tdb_rec_read(tdb, tlock->off, rec) == -1)
+				వెళ్ళు fail;
+			tlock->off = rec->తదుపరి;
 		}
 
 		/* Iterate through chain */
-		while( tlock->off) {
+		అయితే( tlock->off) {
 			tdb_off_t current;
-			if (tdb_rec_read(tdb, tlock->off, rec) == -1)
-				goto fail;
+			ఒకవేళ (tdb_rec_read(tdb, tlock->off, rec) == -1)
+				వెళ్ళు fail;
 
 			/* Detect infinite loops. From "Shlomi Yaakobovich" <Shlomi@exanet.com>. */
-			if (tlock->off == rec->next) {
+			ఒకవేళ (tlock->off == rec->తదుపరి) {
 				TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_next_lock: loop detected.\n"));
-				goto fail;
+				వెళ్ళు fail;
 			}
 
-			if (!TDB_DEAD(rec)) {
+			ఒకవేళ (!TDB_DEAD(rec)) {
 				/* Woohoo: we found one! */
-				if (tdb_lock_record(tdb, tlock->off) != 0)
-					goto fail;
-				return tlock->off;
+				ఒకవేళ (tdb_తాళం_రికార్డు(tdb, tlock->off) != 0)
+					వెళ్ళు fail;
+				తిరిగి tlock->off;
 			}
 
 			/* Try to clean dead ones from old traverses */
 			current = tlock->off;
-			tlock->off = rec->next;
-			if (!(tdb->read_only || tdb->traverse_read) &&
+			tlock->off = rec->తదుపరి;
+			ఒకవేళ (!(tdb->read_only || tdb->traverse_read) &&
 			    tdb_do_delete(tdb, current, rec) != 0)
-				goto fail;
+				వెళ్ళు fail;
 		}
-		tdb_unlock(tdb, tlock->hash, tlock->lock_rw);
-		want_next = 0;
+		tdb_unlock(tdb, tlock->hash, tlock->తాళం_rw);
+		want_తదుపరి = 0;
 	}
 	/* We finished iteration without finding anything */
-	return TDB_ERRCODE(TDB_SUCCESS, 0);
+	తిరిగి TDB_ERRCODE(TDB_SUCCESS, 0);
 
  fail:
 	tlock->off = 0;
-	if (tdb_unlock(tdb, tlock->hash, tlock->lock_rw) != 0)
+	ఒకవేళ (tdb_unlock(tdb, tlock->hash, tlock->తాళం_rw) != 0)
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_next_lock: On error unlock failed!\n"));
-	return -1;
+	తిరిగి -1;
 }
 
 /* traverse the entire database - calling fn(tdb, key, data) on each element.
@@ -2768,310 +2768,310 @@ static int tdb_next_lock(struct tdb_context *tdb, struct tdb_traverse_lock *tloc
    if fn is NULL then it is not called
    a non-zero return value from fn() indicates that the traversal should stop
   */
-static int tdb_traverse_internal(struct tdb_context *tdb,
-				 tdb_traverse_func fn, void *private_data,
-				 struct tdb_traverse_lock *tl)
+స్థిర పూర్ణాంకం tdb_traverse_అంతర్గత(నిర్మాణం tdb_context *tdb,
+				 tdb_traverse_func fn, శూన్య *వ్యక్తిగత_దత్తాంశం,
+				 నిర్మాణం tdb_traverse_తాళం *tl)
 {
-	TDB_DATA key, dbuf;
-	struct list_struct rec;
-	int ret, count = 0;
+	TDB_దత్తాంశం కీలకం, dbuf;
+	నిర్మాణం list_struct rec;
+	పూర్ణాంకం ret, లెక్క = 0;
 
 	/* This was in the initialization, above, but the IRIX compiler
 	 * did not like it.  crh
 	 */
-	tl->next = tdb->travlocks.next;
+	tl->తదుపరి = tdb->travlocks.తదుపరి;
 
 	/* fcntl locks don't stack: beware traverse inside traverse */
-	tdb->travlocks.next = tl;
+	tdb->travlocks.తదుపరి = tl;
 
 	/* tdb_next_lock places locks on the record returned, and its chain */
-	while ((ret = tdb_next_lock(tdb, tl, &rec)) > 0) {
-		count++;
+	అయితే ((ret = tdb_తదుపరి_తాళం(tdb, tl, &rec)) > 0) {
+		లెక్క++;
 		/* now read the full record */
-		key.dptr = tdb_alloc_read(tdb, tl->off + sizeof(rec),
-					  rec.key_len + rec.data_len);
-		if (!key.dptr) {
+		కీలకం.dptr = tdb_alloc_read(tdb, tl->off + పరిమాణం(rec),
+					  rec.కీలకం_len + rec.దత్తాంశం_len);
+		ఒకవేళ (!కీలకం.dptr) {
 			ret = -1;
-			if (tdb_unlock(tdb, tl->hash, tl->lock_rw) != 0)
-				goto out;
-			if (tdb_unlock_record(tdb, tl->off) != 0)
+			ఒకవేళ (tdb_unlock(tdb, tl->hash, tl->తాళం_rw) != 0)
+				వెళ్ళు బహిర్గతం;
+			ఒకవేళ (tdb_unlock_రికార్డు(tdb, tl->off) != 0)
 				TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_traverse: key.dptr == NULL and unlock_record failed!\n"));
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		key.dsize = rec.key_len;
-		dbuf.dptr = key.dptr + rec.key_len;
-		dbuf.dsize = rec.data_len;
+		కీలకం.dsize = rec.కీలకం_len;
+		dbuf.dptr = కీలకం.dptr + rec.కీలకం_len;
+		dbuf.dsize = rec.దత్తాంశం_len;
 
 		/* Drop chain lock, call out */
-		if (tdb_unlock(tdb, tl->hash, tl->lock_rw) != 0) {
+		ఒకవేళ (tdb_unlock(tdb, tl->hash, tl->తాళం_rw) != 0) {
 			ret = -1;
-			SAFE_FREE(key.dptr);
-			goto out;
+			సురక్షిత_FREE(కీలకం.dptr);
+			వెళ్ళు బహిర్గతం;
 		}
-		if (fn && fn(tdb, key, dbuf, private_data)) {
+		ఒకవేళ (fn && fn(tdb, కీలకం, dbuf, వ్యక్తిగత_దత్తాంశం)) {
 			/* They want us to terminate traversal */
-			ret = count;
-			if (tdb_unlock_record(tdb, tl->off) != 0) {
+			ret = లెక్క;
+			ఒకవేళ (tdb_unlock_రికార్డు(tdb, tl->off) != 0) {
 				TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_traverse: unlock_record failed!\n"));;
 				ret = -1;
 			}
-			SAFE_FREE(key.dptr);
-			goto out;
+			సురక్షిత_FREE(కీలకం.dptr);
+			వెళ్ళు బహిర్గతం;
 		}
-		SAFE_FREE(key.dptr);
+		సురక్షిత_FREE(కీలకం.dptr);
 	}
-out:
-	tdb->travlocks.next = tl->next;
-	if (ret < 0)
-		return -1;
-	else
-		return count;
+బహిర్గతం:
+	tdb->travlocks.తదుపరి = tl->తదుపరి;
+	ఒకవేళ (ret < 0)
+		తిరిగి -1;
+	లేకపోతే
+		తిరిగి లెక్క;
 }
 
 
 /*
   a write style traverse - temporarily marks the db read only
 */
-int tdb_traverse_read(struct tdb_context *tdb,
-		      tdb_traverse_func fn, void *private_data)
+పూర్ణాంకం tdb_traverse_read(నిర్మాణం tdb_context *tdb,
+		      tdb_traverse_func fn, శూన్య *వ్యక్తిగత_దత్తాంశం)
 {
-	struct tdb_traverse_lock tl = { NULL, 0, 0, F_RDLCK };
-	int ret;
+	నిర్మాణం tdb_traverse_తాళం tl = { ఖాళీ, 0, 0, F_RDLCK };
+	పూర్ణాంకం ret;
 
 	/* we need to get a read lock on the transaction lock here to
 	   cope with the lock ordering semantics of solaris10 */
-	if (tdb_transaction_lock(tdb, F_RDLCK)) {
-		return -1;
+	ఒకవేళ (tdb_transaction_తాళం(tdb, F_RDLCK)) {
+		తిరిగి -1;
 	}
 
 	tdb->traverse_read++;
-	ret = tdb_traverse_internal(tdb, fn, private_data, &tl);
+	ret = tdb_traverse_అంతర్గత(tdb, fn, వ్యక్తిగత_దత్తాంశం, &tl);
 	tdb->traverse_read--;
 
 	tdb_transaction_unlock(tdb);
 
-	return ret;
+	తిరిగి ret;
 }
 
 /*
   a write style traverse - needs to get the transaction lock to
   prevent deadlocks
 */
-int tdb_traverse(struct tdb_context *tdb,
-		 tdb_traverse_func fn, void *private_data)
+పూర్ణాంకం tdb_traverse(నిర్మాణం tdb_context *tdb,
+		 tdb_traverse_func fn, శూన్య *వ్యక్తిగత_దత్తాంశం)
 {
-	struct tdb_traverse_lock tl = { NULL, 0, 0, F_WRLCK };
-	int ret;
+	నిర్మాణం tdb_traverse_తాళం tl = { ఖాళీ, 0, 0, F_WRLCK };
+	పూర్ణాంకం ret;
 
-	if (tdb->read_only || tdb->traverse_read) {
-		return tdb_traverse_read(tdb, fn, private_data);
+	ఒకవేళ (tdb->read_only || tdb->traverse_read) {
+		తిరిగి tdb_traverse_read(tdb, fn, వ్యక్తిగత_దత్తాంశం);
 	}
 
-	if (tdb_transaction_lock(tdb, F_WRLCK)) {
-		return -1;
+	ఒకవేళ (tdb_transaction_తాళం(tdb, F_WRLCK)) {
+		తిరిగి -1;
 	}
 
-	ret = tdb_traverse_internal(tdb, fn, private_data, &tl);
+	ret = tdb_traverse_అంతర్గత(tdb, fn, వ్యక్తిగత_దత్తాంశం, &tl);
 
 	tdb_transaction_unlock(tdb);
 
-	return ret;
+	తిరిగి ret;
 }
 
 
 /* find the first entry in the database and return its key */
-TDB_DATA tdb_firstkey(struct tdb_context *tdb)
+TDB_దత్తాంశం tdb_firstkey(నిర్మాణం tdb_context *tdb)
 {
-	TDB_DATA key;
-	struct list_struct rec;
+	TDB_దత్తాంశం కీలకం;
+	నిర్మాణం list_struct rec;
 
 	/* release any old lock */
-	if (tdb_unlock_record(tdb, tdb->travlocks.off) != 0)
-		return tdb_null;
+	ఒకవేళ (tdb_unlock_రికార్డు(tdb, tdb->travlocks.off) != 0)
+		తిరిగి tdb_null;
 	tdb->travlocks.off = tdb->travlocks.hash = 0;
-	tdb->travlocks.lock_rw = F_RDLCK;
+	tdb->travlocks.తాళం_rw = F_RDLCK;
 
 	/* Grab first record: locks chain and returned record. */
-	if (tdb_next_lock(tdb, &tdb->travlocks, &rec) <= 0)
-		return tdb_null;
+	ఒకవేళ (tdb_తదుపరి_తాళం(tdb, &tdb->travlocks, &rec) <= 0)
+		తిరిగి tdb_null;
 	/* now read the key */
-	key.dsize = rec.key_len;
-	key.dptr =tdb_alloc_read(tdb,tdb->travlocks.off+sizeof(rec),key.dsize);
+	కీలకం.dsize = rec.కీలకం_len;
+	కీలకం.dptr =tdb_alloc_read(tdb,tdb->travlocks.off+పరిమాణం(rec),కీలకం.dsize);
 
 	/* Unlock the hash chain of the record we just read. */
-	if (tdb_unlock(tdb, tdb->travlocks.hash, tdb->travlocks.lock_rw) != 0)
+	ఒకవేళ (tdb_unlock(tdb, tdb->travlocks.hash, tdb->travlocks.తాళం_rw) != 0)
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_firstkey: error occurred while tdb_unlocking!\n"));
-	return key;
+	తిరిగి కీలకం;
 }
 
 /* find the next entry in the database, returning its key */
-TDB_DATA tdb_nextkey(struct tdb_context *tdb, TDB_DATA oldkey)
+TDB_దత్తాంశం tdb_nextkey(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం oldkey)
 {
 	u32 oldhash;
-	TDB_DATA key = tdb_null;
-	struct list_struct rec;
-	unsigned char *k = NULL;
+	TDB_దత్తాంశం కీలకం = tdb_null;
+	నిర్మాణం list_struct rec;
+	గుర్తులేని అక్షరం *k = ఖాళీ;
 
 	/* Is locked key the old key?  If so, traverse will be reliable. */
-	if (tdb->travlocks.off) {
-		if (tdb_lock(tdb,tdb->travlocks.hash,tdb->travlocks.lock_rw))
-			return tdb_null;
-		if (tdb_rec_read(tdb, tdb->travlocks.off, &rec) == -1
-		    || !(k = tdb_alloc_read(tdb,tdb->travlocks.off+sizeof(rec),
-					    rec.key_len))
+	ఒకవేళ (tdb->travlocks.off) {
+		ఒకవేళ (tdb_తాళం(tdb,tdb->travlocks.hash,tdb->travlocks.తాళం_rw))
+			తిరిగి tdb_null;
+		ఒకవేళ (tdb_rec_read(tdb, tdb->travlocks.off, &rec) == -1
+		    || !(k = tdb_alloc_read(tdb,tdb->travlocks.off+పరిమాణం(rec),
+					    rec.కీలకం_len))
 		    || memcmp(k, oldkey.dptr, oldkey.dsize) != 0) {
 			/* No, it wasn't: unlock it and start from scratch */
-			if (tdb_unlock_record(tdb, tdb->travlocks.off) != 0) {
-				SAFE_FREE(k);
-				return tdb_null;
+			ఒకవేళ (tdb_unlock_రికార్డు(tdb, tdb->travlocks.off) != 0) {
+				సురక్షిత_FREE(k);
+				తిరిగి tdb_null;
 			}
-			if (tdb_unlock(tdb, tdb->travlocks.hash, tdb->travlocks.lock_rw) != 0) {
-				SAFE_FREE(k);
-				return tdb_null;
+			ఒకవేళ (tdb_unlock(tdb, tdb->travlocks.hash, tdb->travlocks.తాళం_rw) != 0) {
+				సురక్షిత_FREE(k);
+				తిరిగి tdb_null;
 			}
 			tdb->travlocks.off = 0;
 		}
 
-		SAFE_FREE(k);
+		సురక్షిత_FREE(k);
 	}
 
-	if (!tdb->travlocks.off) {
+	ఒకవేళ (!tdb->travlocks.off) {
 		/* No previous element: do normal find, and lock record */
-		tdb->travlocks.off = tdb_find_lock_hash(tdb, oldkey, tdb->hash_fn(&oldkey), tdb->travlocks.lock_rw, &rec);
-		if (!tdb->travlocks.off)
-			return tdb_null;
-		tdb->travlocks.hash = BUCKET(rec.full_hash);
-		if (tdb_lock_record(tdb, tdb->travlocks.off) != 0) {
+		tdb->travlocks.off = tdb_కనుగొను_తాళం_hash(tdb, oldkey, tdb->hash_fn(&oldkey), tdb->travlocks.తాళం_rw, &rec);
+		ఒకవేళ (!tdb->travlocks.off)
+			తిరిగి tdb_null;
+		tdb->travlocks.hash = పాత్ర(rec.నిండిన_hash);
+		ఒకవేళ (tdb_తాళం_రికార్డు(tdb, tdb->travlocks.off) != 0) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_nextkey: lock_record failed (%s)!\n", strerror(errno)));
-			return tdb_null;
+			తిరిగి tdb_null;
 		}
 	}
 	oldhash = tdb->travlocks.hash;
 
 	/* Grab next record: locks chain and returned record,
 	   unlocks old record */
-	if (tdb_next_lock(tdb, &tdb->travlocks, &rec) > 0) {
-		key.dsize = rec.key_len;
-		key.dptr = tdb_alloc_read(tdb, tdb->travlocks.off+sizeof(rec),
-					  key.dsize);
+	ఒకవేళ (tdb_తదుపరి_తాళం(tdb, &tdb->travlocks, &rec) > 0) {
+		కీలకం.dsize = rec.కీలకం_len;
+		కీలకం.dptr = tdb_alloc_read(tdb, tdb->travlocks.off+పరిమాణం(rec),
+					  కీలకం.dsize);
 		/* Unlock the chain of this new record */
-		if (tdb_unlock(tdb, tdb->travlocks.hash, tdb->travlocks.lock_rw) != 0)
+		ఒకవేళ (tdb_unlock(tdb, tdb->travlocks.hash, tdb->travlocks.తాళం_rw) != 0)
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_nextkey: WARNING tdb_unlock failed!\n"));
 	}
 	/* Unlock the chain of old record */
-	if (tdb_unlock(tdb, BUCKET(oldhash), tdb->travlocks.lock_rw) != 0)
+	ఒకవేళ (tdb_unlock(tdb, పాత్ర(oldhash), tdb->travlocks.తాళం_rw) != 0)
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_nextkey: WARNING tdb_unlock failed!\n"));
-	return key;
+	తిరిగి కీలకం;
 }
 
 /* file: dump.c */
 
-static tdb_off_t tdb_dump_record(struct tdb_context *tdb, int hash,
-				 tdb_off_t offset)
+స్థిర tdb_off_t tdb_dump_రికార్డు(నిర్మాణం tdb_context *tdb, పూర్ణాంకం hash,
+				 tdb_off_t స్థానభ్రంశం)
 {
-	struct list_struct rec;
+	నిర్మాణం list_struct rec;
 	tdb_off_t tailer_ofs, tailer;
 
-	if (tdb->methods->tdb_read(tdb, offset, (char *)&rec,
-				   sizeof(rec), DOCONV()) == -1) {
-		printf("ERROR: failed to read record at %u\n", offset);
-		return 0;
+	ఒకవేళ (tdb->methods->tdb_read(tdb, స్థానభ్రంశం, (అక్షరం *)&rec,
+				   పరిమాణం(rec), DOCONV()) == -1) {
+		రాయి("ERROR: failed to read record at %u\n", స్థానభ్రంశం);
+		తిరిగి 0;
 	}
 
-	printf(" rec: hash=%d offset=0x%08x next=0x%08x rec_len=%d "
+	రాయి(" rec: hash=%d offset=0x%08x next=0x%08x rec_len=%d "
 	       "key_len=%d data_len=%d full_hash=0x%x magic=0x%x\n",
-	       hash, offset, rec.next, rec.rec_len, rec.key_len, rec.data_len,
-	       rec.full_hash, rec.magic);
+	       hash, స్థానభ్రంశం, rec.తదుపరి, rec.rec_len, rec.కీలకం_len, rec.దత్తాంశం_len,
+	       rec.నిండిన_hash, rec.magic);
 
-	tailer_ofs = offset + sizeof(rec) + rec.rec_len - sizeof(tdb_off_t);
+	tailer_ofs = స్థానభ్రంశం + పరిమాణం(rec) + rec.rec_len - పరిమాణం(tdb_off_t);
 
-	if (tdb_ofs_read(tdb, tailer_ofs, &tailer) == -1) {
-		printf("ERROR: failed to read tailer at %u\n", tailer_ofs);
-		return rec.next;
+	ఒకవేళ (tdb_ofs_read(tdb, tailer_ofs, &tailer) == -1) {
+		రాయి("ERROR: failed to read tailer at %u\n", tailer_ofs);
+		తిరిగి rec.తదుపరి;
 	}
 
-	if (tailer != rec.rec_len + sizeof(rec)) {
-		printf("ERROR: tailer does not match record! tailer=%u totalsize=%u\n",
-				(unsigned int)tailer, (unsigned int)(rec.rec_len + sizeof(rec)));
+	ఒకవేళ (tailer != rec.rec_len + పరిమాణం(rec)) {
+		రాయి("ERROR: tailer does not match record! tailer=%u totalsize=%u\n",
+				(గుర్తులేని పూర్ణాంకం)tailer, (గుర్తులేని పూర్ణాంకం)(rec.rec_len + పరిమాణం(rec)));
 	}
-	return rec.next;
+	తిరిగి rec.తదుపరి;
 }
 
-static int tdb_dump_chain(struct tdb_context *tdb, int i)
+స్థిర పూర్ణాంకం tdb_dump_chain(నిర్మాణం tdb_context *tdb, పూర్ణాంకం i)
 {
-	tdb_off_t rec_ptr, top;
+	tdb_off_t rec_ptr, శిఖరం;
 
-	top = TDB_HASH_TOP(i);
+	శిఖరం = TDB_HASH_శిఖరం(i);
 
-	if (tdb_lock(tdb, i, F_WRLCK) != 0)
-		return -1;
+	ఒకవేళ (tdb_తాళం(tdb, i, F_WRLCK) != 0)
+		తిరిగి -1;
 
-	if (tdb_ofs_read(tdb, top, &rec_ptr) == -1)
-		return tdb_unlock(tdb, i, F_WRLCK);
+	ఒకవేళ (tdb_ofs_read(tdb, శిఖరం, &rec_ptr) == -1)
+		తిరిగి tdb_unlock(tdb, i, F_WRLCK);
 
-	if (rec_ptr)
-		printf("hash=%d\n", i);
+	ఒకవేళ (rec_ptr)
+		రాయి("hash=%d\n", i);
 
-	while (rec_ptr) {
-		rec_ptr = tdb_dump_record(tdb, i, rec_ptr);
+	అయితే (rec_ptr) {
+		rec_ptr = tdb_dump_రికార్డు(tdb, i, rec_ptr);
 	}
 
-	return tdb_unlock(tdb, i, F_WRLCK);
+	తిరిగి tdb_unlock(tdb, i, F_WRLCK);
 }
 
-void tdb_dump_all(struct tdb_context *tdb)
+శూన్య tdb_dump_all(నిర్మాణం tdb_context *tdb)
 {
-	int i;
-	for (i = 0; i < (int)tdb->header.hash_size; i++) {
+	పూర్ణాంకం i;
+	కొరకు (i = 0; i < (పూర్ణాంకం)tdb->శీర్షిక.hash_కొలత; i++) {
 		tdb_dump_chain(tdb, i);
 	}
-	printf("freelist:\n");
+	రాయి("freelist:\n");
 	tdb_dump_chain(tdb, -1);
 }
 
-int tdb_printfreelist(struct tdb_context *tdb)
+పూర్ణాంకం tdb_printfreelist(నిర్మాణం tdb_context *tdb)
 {
-	int ret;
-	long total_free = 0;
-	tdb_off_t offset, rec_ptr;
-	struct list_struct rec;
+	పూర్ణాంకం ret;
+	దీర్ఘ మొత్తం_free = 0;
+	tdb_off_t స్థానభ్రంశం, rec_ptr;
+	నిర్మాణం list_struct rec;
 
-	if ((ret = tdb_lock(tdb, -1, F_WRLCK)) != 0)
-		return ret;
+	ఒకవేళ ((ret = tdb_తాళం(tdb, -1, F_WRLCK)) != 0)
+		తిరిగి ret;
 
-	offset = FREELIST_TOP;
+	స్థానభ్రంశం = FREELIST_శిఖరం;
 
 	/* read in the freelist top */
-	if (tdb_ofs_read(tdb, offset, &rec_ptr) == -1) {
+	ఒకవేళ (tdb_ofs_read(tdb, స్థానభ్రంశం, &rec_ptr) == -1) {
 		tdb_unlock(tdb, -1, F_WRLCK);
-		return 0;
+		తిరిగి 0;
 	}
 
-	printf("freelist top=[0x%08x]\n", rec_ptr );
-	while (rec_ptr) {
-		if (tdb->methods->tdb_read(tdb, rec_ptr, (char *)&rec,
-					   sizeof(rec), DOCONV()) == -1) {
+	రాయి("freelist top=[0x%08x]\n", rec_ptr );
+	అయితే (rec_ptr) {
+		ఒకవేళ (tdb->methods->tdb_read(tdb, rec_ptr, (అక్షరం *)&rec,
+					   పరిమాణం(rec), DOCONV()) == -1) {
 			tdb_unlock(tdb, -1, F_WRLCK);
-			return -1;
+			తిరిగి -1;
 		}
 
-		if (rec.magic != TDB_FREE_MAGIC) {
-			printf("bad magic 0x%08x in free list\n", rec.magic);
+		ఒకవేళ (rec.magic != TDB_FREE_MAGIC) {
+			రాయి("bad magic 0x%08x in free list\n", rec.magic);
 			tdb_unlock(tdb, -1, F_WRLCK);
-			return -1;
+			తిరిగి -1;
 		}
 
-		printf("entry offset=[0x%08x], rec.rec_len = [0x%08x (%d)] (end = 0x%08x)\n",
+		రాయి("entry offset=[0x%08x], rec.rec_len = [0x%08x (%d)] (end = 0x%08x)\n",
 		       rec_ptr, rec.rec_len, rec.rec_len, rec_ptr + rec.rec_len);
-		total_free += rec.rec_len;
+		మొత్తం_free += rec.rec_len;
 
 		/* move to the next record */
-		rec_ptr = rec.next;
+		rec_ptr = rec.తదుపరి;
 	}
-	printf("total rec_len = [0x%08x (%d)]\n", (int)total_free,
-               (int)total_free);
+	రాయి("total rec_len = [0x%08x (%d)]\n", (పూర్ణాంకం)మొత్తం_free,
+               (పూర్ణాంకం)మొత్తం_free);
 
-	return tdb_unlock(tdb, -1, F_WRLCK);
+	తిరిగి tdb_unlock(tdb, -1, F_WRLCK);
 }
 
 /* file: tdb.c */
@@ -3080,35 +3080,35 @@ int tdb_printfreelist(struct tdb_context *tdb)
   non-blocking increment of the tdb sequence number if the tdb has been opened using
   the TDB_SEQNUM flag
 */
-void tdb_increment_seqnum_nonblock(struct tdb_context *tdb)
+శూన్య tdb_increment_seqnum_nonblock(నిర్మాణం tdb_context *tdb)
 {
 	tdb_off_t seqnum=0;
 
-	if (!(tdb->flags & TDB_SEQNUM)) {
-		return;
+	ఒకవేళ (!(tdb->flags & TDB_SEQNUM)) {
+		తిరిగి;
 	}
 
 	/* we ignore errors from this, as we have no sane way of
 	   dealing with them.
 	*/
-	if (tdb_ofs_read(tdb, TDB_SEQNUM_OFS, &seqnum) == -1)
-		return;
+	ఒకవేళ (tdb_ofs_read(tdb, TDB_SEQNUM_OFS, &seqnum) == -1)
+		తిరిగి;
 	seqnum++;
-	(void) tdb_ofs_write(tdb, TDB_SEQNUM_OFS, &seqnum);
+	(శూన్య) tdb_ofs_write(tdb, TDB_SEQNUM_OFS, &seqnum);
 }
 
 /*
   increment the tdb sequence number if the tdb has been opened using
   the TDB_SEQNUM flag
 */
-static void tdb_increment_seqnum(struct tdb_context *tdb)
+స్థిర శూన్య tdb_increment_seqnum(నిర్మాణం tdb_context *tdb)
 {
-	if (!(tdb->flags & TDB_SEQNUM)) {
-		return;
+	ఒకవేళ (!(tdb->flags & TDB_SEQNUM)) {
+		తిరిగి;
 	}
 
-	if (tdb_brlock(tdb, TDB_SEQNUM_OFS, F_WRLCK, F_SETLKW, 1, 1) != 0) {
-		return;
+	ఒకవేళ (tdb_brlock(tdb, TDB_SEQNUM_OFS, F_WRLCK, F_SETLKW, 1, 1) != 0) {
+		తిరిగి;
 	}
 
 	tdb_increment_seqnum_nonblock(tdb);
@@ -3116,51 +3116,51 @@ static void tdb_increment_seqnum(struct tdb_context *tdb)
 	tdb_brlock(tdb, TDB_SEQNUM_OFS, F_UNLCK, F_SETLKW, 1, 1);
 }
 
-static int tdb_key_compare(TDB_DATA key, TDB_DATA data,
-			   void *private_data EXT2FS_ATTR((unused)))
+స్థిర పూర్ణాంకం tdb_కీలకం_compare(TDB_దత్తాంశం కీలకం, TDB_దత్తాంశం దత్తాంశం,
+			   శూన్య *వ్యక్తిగత_దత్తాంశం EXT2FS_ATTR((వాడని)))
 {
-	return memcmp(data.dptr, key.dptr, data.dsize);
+	తిరిగి memcmp(దత్తాంశం.dptr, కీలకం.dptr, దత్తాంశం.dsize);
 }
 
 /* Returns 0 on fail.  On success, return offset of record, and fills
    in rec */
-static tdb_off_t tdb_find(struct tdb_context *tdb, TDB_DATA key, u32 hash,
-			struct list_struct *r)
+స్థిర tdb_off_t tdb_కనుగొను(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం, u32 hash,
+			నిర్మాణం list_struct *r)
 {
 	tdb_off_t rec_ptr;
 
 	/* read in the hash top */
-	if (tdb_ofs_read(tdb, TDB_HASH_TOP(hash), &rec_ptr) == -1)
-		return 0;
+	ఒకవేళ (tdb_ofs_read(tdb, TDB_HASH_శిఖరం(hash), &rec_ptr) == -1)
+		తిరిగి 0;
 
 	/* keep looking until we find the right record */
-	while (rec_ptr) {
-		if (tdb_rec_read(tdb, rec_ptr, r) == -1)
-			return 0;
+	అయితే (rec_ptr) {
+		ఒకవేళ (tdb_rec_read(tdb, rec_ptr, r) == -1)
+			తిరిగి 0;
 
-		if (!TDB_DEAD(r) && hash==r->full_hash
-		    && key.dsize==r->key_len
-		    && tdb_parse_data(tdb, key, rec_ptr + sizeof(*r),
-				      r->key_len, tdb_key_compare,
-				      NULL) == 0) {
-			return rec_ptr;
+		ఒకవేళ (!TDB_DEAD(r) && hash==r->నిండిన_hash
+		    && కీలకం.dsize==r->కీలకం_len
+		    && tdb_parse_దత్తాంశం(tdb, కీలకం, rec_ptr + పరిమాణం(*r),
+				      r->కీలకం_len, tdb_కీలకం_compare,
+				      ఖాళీ) == 0) {
+			తిరిగి rec_ptr;
 		}
-		rec_ptr = r->next;
+		rec_ptr = r->తదుపరి;
 	}
-	return TDB_ERRCODE(TDB_ERR_NOEXIST, 0);
+	తిరిగి TDB_ERRCODE(TDB_ERR_NOEXIST, 0);
 }
 
 /* As tdb_find, but if you succeed, keep the lock */
-tdb_off_t tdb_find_lock_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash, int locktype,
-			   struct list_struct *rec)
+tdb_off_t tdb_కనుగొను_తాళం_hash(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం, u32 hash, పూర్ణాంకం locktype,
+			   నిర్మాణం list_struct *rec)
 {
 	u32 rec_ptr;
 
-	if (tdb_lock(tdb, BUCKET(hash), locktype) == -1)
-		return 0;
-	if (!(rec_ptr = tdb_find(tdb, key, hash, rec)))
-		tdb_unlock(tdb, BUCKET(hash), locktype);
-	return rec_ptr;
+	ఒకవేళ (tdb_తాళం(tdb, పాత్ర(hash), locktype) == -1)
+		తిరిగి 0;
+	ఒకవేళ (!(rec_ptr = tdb_కనుగొను(tdb, కీలకం, hash, rec)))
+		tdb_unlock(tdb, పాత్ర(hash), locktype);
+	తిరిగి rec_ptr;
 }
 
 
@@ -3168,32 +3168,32 @@ tdb_off_t tdb_find_lock_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash, in
    is <= the old data size and the key exists.
    on failure return -1.
 */
-static int tdb_update_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash, TDB_DATA dbuf)
+స్థిర పూర్ణాంకం tdb_update_hash(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం, u32 hash, TDB_దత్తాంశం dbuf)
 {
-	struct list_struct rec;
+	నిర్మాణం list_struct rec;
 	tdb_off_t rec_ptr;
 
 	/* find entry */
-	if (!(rec_ptr = tdb_find(tdb, key, hash, &rec)))
-		return -1;
+	ఒకవేళ (!(rec_ptr = tdb_కనుగొను(tdb, కీలకం, hash, &rec)))
+		తిరిగి -1;
 
 	/* must be long enough key, data and tailer */
-	if (rec.rec_len < key.dsize + dbuf.dsize + sizeof(tdb_off_t)) {
+	ఒకవేళ (rec.rec_len < కీలకం.dsize + dbuf.dsize + పరిమాణం(tdb_off_t)) {
 		tdb->ecode = TDB_SUCCESS; /* Not really an error */
-		return -1;
+		తిరిగి -1;
 	}
 
-	if (tdb->methods->tdb_write(tdb, rec_ptr + sizeof(rec) + rec.key_len,
+	ఒకవేళ (tdb->methods->tdb_write(tdb, rec_ptr + పరిమాణం(rec) + rec.కీలకం_len,
 		      dbuf.dptr, dbuf.dsize) == -1)
-		return -1;
+		తిరిగి -1;
 
-	if (dbuf.dsize != rec.data_len) {
+	ఒకవేళ (dbuf.dsize != rec.దత్తాంశం_len) {
 		/* update size */
-		rec.data_len = dbuf.dsize;
-		return tdb_rec_write(tdb, rec_ptr, &rec);
+		rec.దత్తాంశం_len = dbuf.dsize;
+		తిరిగి tdb_rec_write(tdb, rec_ptr, &rec);
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
 /* find an entry in the database given a key */
@@ -3202,23 +3202,23 @@ static int tdb_update_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash, TDB_
  * then the TDB_DATA will have zero length but
  * a non-zero pointer
  */
-TDB_DATA tdb_fetch(struct tdb_context *tdb, TDB_DATA key)
+TDB_దత్తాంశం tdb_fetch(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం)
 {
 	tdb_off_t rec_ptr;
-	struct list_struct rec;
-	TDB_DATA ret;
+	నిర్మాణం list_struct rec;
+	TDB_దత్తాంశం ret;
 	u32 hash;
 
 	/* find which hash bucket it is in */
-	hash = tdb->hash_fn(&key);
-	if (!(rec_ptr = tdb_find_lock_hash(tdb,key,hash,F_RDLCK,&rec)))
-		return tdb_null;
+	hash = tdb->hash_fn(&కీలకం);
+	ఒకవేళ (!(rec_ptr = tdb_కనుగొను_తాళం_hash(tdb,కీలకం,hash,F_RDLCK,&rec)))
+		తిరిగి tdb_null;
 
-	ret.dptr = tdb_alloc_read(tdb, rec_ptr + sizeof(rec) + rec.key_len,
-				  rec.data_len);
-	ret.dsize = rec.data_len;
-	tdb_unlock(tdb, BUCKET(rec.full_hash), F_RDLCK);
-	return ret;
+	ret.dptr = tdb_alloc_read(tdb, rec_ptr + పరిమాణం(rec) + rec.కీలకం_len,
+				  rec.దత్తాంశం_len);
+	ret.dsize = rec.దత్తాంశం_len;
+	tdb_unlock(tdb, పాత్ర(rec.నిండిన_hash), F_RDLCK);
+	తిరిగి ret;
 }
 
 /*
@@ -3237,29 +3237,29 @@ TDB_DATA tdb_fetch(struct tdb_context *tdb, TDB_DATA key)
  * the tdb records, ldb indexes being one example.
  */
 
-int tdb_parse_record(struct tdb_context *tdb, TDB_DATA key,
-		     int (*parser)(TDB_DATA key, TDB_DATA data,
-				   void *private_data),
-		     void *private_data)
+పూర్ణాంకం tdb_parse_రికార్డు(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం,
+		     పూర్ణాంకం (*parser)(TDB_దత్తాంశం కీలకం, TDB_దత్తాంశం దత్తాంశం,
+				   శూన్య *వ్యక్తిగత_దత్తాంశం),
+		     శూన్య *వ్యక్తిగత_దత్తాంశం)
 {
 	tdb_off_t rec_ptr;
-	struct list_struct rec;
-	int ret;
+	నిర్మాణం list_struct rec;
+	పూర్ణాంకం ret;
 	u32 hash;
 
 	/* find which hash bucket it is in */
-	hash = tdb->hash_fn(&key);
+	hash = tdb->hash_fn(&కీలకం);
 
-	if (!(rec_ptr = tdb_find_lock_hash(tdb,key,hash,F_RDLCK,&rec))) {
-		return TDB_ERRCODE(TDB_ERR_NOEXIST, 0);
+	ఒకవేళ (!(rec_ptr = tdb_కనుగొను_తాళం_hash(tdb,కీలకం,hash,F_RDLCK,&rec))) {
+		తిరిగి TDB_ERRCODE(TDB_ERR_NOEXIST, 0);
 	}
 
-	ret = tdb_parse_data(tdb, key, rec_ptr + sizeof(rec) + rec.key_len,
-			     rec.data_len, parser, private_data);
+	ret = tdb_parse_దత్తాంశం(tdb, కీలకం, rec_ptr + పరిమాణం(rec) + rec.కీలకం_len,
+			     rec.దత్తాంశం_len, parser, వ్యక్తిగత_దత్తాంశం);
 
-	tdb_unlock(tdb, BUCKET(rec.full_hash), F_RDLCK);
+	tdb_unlock(tdb, పాత్ర(rec.నిండిన_hash), F_RDLCK);
 
-	return ret;
+	తిరిగి ret;
 }
 
 /* check if an entry in the database exists
@@ -3268,135 +3268,135 @@ int tdb_parse_record(struct tdb_context *tdb, TDB_DATA key,
    this doesn't match the conventions in the rest of this module, but is
    compatible with gdbm
 */
-static int tdb_exists_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash)
+స్థిర పూర్ణాంకం tdb_exists_hash(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం, u32 hash)
 {
-	struct list_struct rec;
+	నిర్మాణం list_struct rec;
 
-	if (tdb_find_lock_hash(tdb, key, hash, F_RDLCK, &rec) == 0)
-		return 0;
-	tdb_unlock(tdb, BUCKET(rec.full_hash), F_RDLCK);
-	return 1;
+	ఒకవేళ (tdb_కనుగొను_తాళం_hash(tdb, కీలకం, hash, F_RDLCK, &rec) == 0)
+		తిరిగి 0;
+	tdb_unlock(tdb, పాత్ర(rec.నిండిన_hash), F_RDLCK);
+	తిరిగి 1;
 }
 
-int tdb_exists(struct tdb_context *tdb, TDB_DATA key)
+పూర్ణాంకం tdb_exists(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం)
 {
-	u32 hash = tdb->hash_fn(&key);
-	return tdb_exists_hash(tdb, key, hash);
+	u32 hash = tdb->hash_fn(&కీలకం);
+	తిరిగి tdb_exists_hash(tdb, కీలకం, hash);
 }
 
 /* actually delete an entry in the database given the offset */
-int tdb_do_delete(struct tdb_context *tdb, tdb_off_t rec_ptr, struct list_struct*rec)
+పూర్ణాంకం tdb_do_delete(నిర్మాణం tdb_context *tdb, tdb_off_t rec_ptr, నిర్మాణం list_struct*rec)
 {
-	tdb_off_t last_ptr, i;
-	struct list_struct lastrec;
+	tdb_off_t చివరి_ptr, i;
+	నిర్మాణం list_struct lastrec;
 
-	if (tdb->read_only || tdb->traverse_read) return -1;
+	ఒకవేళ (tdb->read_only || tdb->traverse_read) తిరిగి -1;
 
-	if (tdb_write_lock_record(tdb, rec_ptr) == -1) {
+	ఒకవేళ (tdb_write_తాళం_రికార్డు(tdb, rec_ptr) == -1) {
 		/* Someone traversing here: mark it as dead */
 		rec->magic = TDB_DEAD_MAGIC;
-		return tdb_rec_write(tdb, rec_ptr, rec);
+		తిరిగి tdb_rec_write(tdb, rec_ptr, rec);
 	}
-	if (tdb_write_unlock_record(tdb, rec_ptr) != 0)
-		return -1;
+	ఒకవేళ (tdb_write_unlock_రికార్డు(tdb, rec_ptr) != 0)
+		తిరిగి -1;
 
 	/* find previous record in hash chain */
-	if (tdb_ofs_read(tdb, TDB_HASH_TOP(rec->full_hash), &i) == -1)
-		return -1;
-	for (last_ptr = 0; i != rec_ptr; last_ptr = i, i = lastrec.next)
-		if (tdb_rec_read(tdb, i, &lastrec) == -1)
-			return -1;
+	ఒకవేళ (tdb_ofs_read(tdb, TDB_HASH_శిఖరం(rec->నిండిన_hash), &i) == -1)
+		తిరిగి -1;
+	కొరకు (చివరి_ptr = 0; i != rec_ptr; చివరి_ptr = i, i = lastrec.తదుపరి)
+		ఒకవేళ (tdb_rec_read(tdb, i, &lastrec) == -1)
+			తిరిగి -1;
 
 	/* unlink it: next ptr is at start of record. */
-	if (last_ptr == 0)
-		last_ptr = TDB_HASH_TOP(rec->full_hash);
-	if (tdb_ofs_write(tdb, last_ptr, &rec->next) == -1)
-		return -1;
+	ఒకవేళ (చివరి_ptr == 0)
+		చివరి_ptr = TDB_HASH_శిఖరం(rec->నిండిన_hash);
+	ఒకవేళ (tdb_ofs_write(tdb, చివరి_ptr, &rec->తదుపరి) == -1)
+		తిరిగి -1;
 
 	/* recover the space */
-	if (tdb_free(tdb, rec_ptr, rec) == -1)
-		return -1;
-	return 0;
+	ఒకవేళ (tdb_free(tdb, rec_ptr, rec) == -1)
+		తిరిగి -1;
+	తిరిగి 0;
 }
 
-static int tdb_count_dead(struct tdb_context *tdb, u32 hash)
+స్థిర పూర్ణాంకం tdb_లెక్క_dead(నిర్మాణం tdb_context *tdb, u32 hash)
 {
-	int res = 0;
+	పూర్ణాంకం res = 0;
 	tdb_off_t rec_ptr;
-	struct list_struct rec;
+	నిర్మాణం list_struct rec;
 
 	/* read in the hash top */
-	if (tdb_ofs_read(tdb, TDB_HASH_TOP(hash), &rec_ptr) == -1)
-		return 0;
+	ఒకవేళ (tdb_ofs_read(tdb, TDB_HASH_శిఖరం(hash), &rec_ptr) == -1)
+		తిరిగి 0;
 
-	while (rec_ptr) {
-		if (tdb_rec_read(tdb, rec_ptr, &rec) == -1)
-			return 0;
+	అయితే (rec_ptr) {
+		ఒకవేళ (tdb_rec_read(tdb, rec_ptr, &rec) == -1)
+			తిరిగి 0;
 
-		if (rec.magic == TDB_DEAD_MAGIC) {
+		ఒకవేళ (rec.magic == TDB_DEAD_MAGIC) {
 			res += 1;
 		}
-		rec_ptr = rec.next;
+		rec_ptr = rec.తదుపరి;
 	}
-	return res;
+	తిరిగి res;
 }
 
 /*
  * Purge all DEAD records from a hash chain
  */
-static int tdb_purge_dead(struct tdb_context *tdb, u32 hash)
+స్థిర పూర్ణాంకం tdb_purge_dead(నిర్మాణం tdb_context *tdb, u32 hash)
 {
-	int res = -1;
-	struct list_struct rec;
+	పూర్ణాంకం res = -1;
+	నిర్మాణం list_struct rec;
 	tdb_off_t rec_ptr;
 
-	if (tdb_lock(tdb, -1, F_WRLCK) == -1) {
-		return -1;
+	ఒకవేళ (tdb_తాళం(tdb, -1, F_WRLCK) == -1) {
+		తిరిగి -1;
 	}
 
 	/* read in the hash top */
-	if (tdb_ofs_read(tdb, TDB_HASH_TOP(hash), &rec_ptr) == -1)
-		goto fail;
+	ఒకవేళ (tdb_ofs_read(tdb, TDB_HASH_శిఖరం(hash), &rec_ptr) == -1)
+		వెళ్ళు fail;
 
-	while (rec_ptr) {
-		tdb_off_t next;
+	అయితే (rec_ptr) {
+		tdb_off_t తదుపరి;
 
-		if (tdb_rec_read(tdb, rec_ptr, &rec) == -1) {
-			goto fail;
+		ఒకవేళ (tdb_rec_read(tdb, rec_ptr, &rec) == -1) {
+			వెళ్ళు fail;
 		}
 
-		next = rec.next;
+		తదుపరి = rec.తదుపరి;
 
-		if (rec.magic == TDB_DEAD_MAGIC
+		ఒకవేళ (rec.magic == TDB_DEAD_MAGIC
 		    && tdb_do_delete(tdb, rec_ptr, &rec) == -1) {
-			goto fail;
+			వెళ్ళు fail;
 		}
-		rec_ptr = next;
+		rec_ptr = తదుపరి;
 	}
 	res = 0;
  fail:
 	tdb_unlock(tdb, -1, F_WRLCK);
-	return res;
+	తిరిగి res;
 }
 
 /* delete an entry in the database given a key */
-static int tdb_delete_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash)
+స్థిర పూర్ణాంకం tdb_delete_hash(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం, u32 hash)
 {
 	tdb_off_t rec_ptr;
-	struct list_struct rec;
-	int ret;
+	నిర్మాణం list_struct rec;
+	పూర్ణాంకం ret;
 
-	if (tdb->max_dead_records != 0) {
+	ఒకవేళ (tdb->max_dead_రికార్డులు != 0) {
 
 		/*
 		 * Allow for some dead records per hash chain, mainly for
 		 * tdb's with a very high create/delete rate like locking.tdb.
 		 */
 
-		if (tdb_lock(tdb, BUCKET(hash), F_WRLCK) == -1)
-			return -1;
+		ఒకవేళ (tdb_తాళం(tdb, పాత్ర(hash), F_WRLCK) == -1)
+			తిరిగి -1;
 
-		if (tdb_count_dead(tdb, hash) >= tdb->max_dead_records) {
+		ఒకవేళ (tdb_లెక్క_dead(tdb, hash) >= tdb->max_dead_రికార్డులు) {
 			/*
 			 * Don't let the per-chain freelist grow too large,
 			 * delete all existing dead records
@@ -3404,9 +3404,9 @@ static int tdb_delete_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash)
 			tdb_purge_dead(tdb, hash);
 		}
 
-		if (!(rec_ptr = tdb_find(tdb, key, hash, &rec))) {
-			tdb_unlock(tdb, BUCKET(hash), F_WRLCK);
-			return -1;
+		ఒకవేళ (!(rec_ptr = tdb_కనుగొను(tdb, కీలకం, hash, &rec))) {
+			tdb_unlock(tdb, పాత్ర(hash), F_WRLCK);
+			తిరిగి -1;
 		}
 
 		/*
@@ -3415,56 +3415,56 @@ static int tdb_delete_hash(struct tdb_context *tdb, TDB_DATA key, u32 hash)
 		rec.magic = TDB_DEAD_MAGIC;
 		ret = tdb_rec_write(tdb, rec_ptr, &rec);
 	}
-	else {
-		if (!(rec_ptr = tdb_find_lock_hash(tdb, key, hash, F_WRLCK,
+	లేకపోతే {
+		ఒకవేళ (!(rec_ptr = tdb_కనుగొను_తాళం_hash(tdb, కీలకం, hash, F_WRLCK,
 						   &rec)))
-			return -1;
+			తిరిగి -1;
 
 		ret = tdb_do_delete(tdb, rec_ptr, &rec);
 	}
 
-	if (ret == 0) {
+	ఒకవేళ (ret == 0) {
 		tdb_increment_seqnum(tdb);
 	}
 
-	if (tdb_unlock(tdb, BUCKET(rec.full_hash), F_WRLCK) != 0)
+	ఒకవేళ (tdb_unlock(tdb, పాత్ర(rec.నిండిన_hash), F_WRLCK) != 0)
 		TDB_LOG((tdb, TDB_DEBUG_WARNING, "tdb_delete: WARNING tdb_unlock failed!\n"));
-	return ret;
+	తిరిగి ret;
 }
 
-int tdb_delete(struct tdb_context *tdb, TDB_DATA key)
+పూర్ణాంకం tdb_delete(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం)
 {
-	u32 hash = tdb->hash_fn(&key);
-	return tdb_delete_hash(tdb, key, hash);
+	u32 hash = tdb->hash_fn(&కీలకం);
+	తిరిగి tdb_delete_hash(tdb, కీలకం, hash);
 }
 
 /*
  * See if we have a dead record around with enough space
  */
-static tdb_off_t tdb_find_dead(struct tdb_context *tdb, u32 hash,
-			       struct list_struct *r, tdb_len_t length)
+స్థిర tdb_off_t tdb_కనుగొను_dead(నిర్మాణం tdb_context *tdb, u32 hash,
+			       నిర్మాణం list_struct *r, tdb_len_t నిడివి)
 {
 	tdb_off_t rec_ptr;
 
 	/* read in the hash top */
-	if (tdb_ofs_read(tdb, TDB_HASH_TOP(hash), &rec_ptr) == -1)
-		return 0;
+	ఒకవేళ (tdb_ofs_read(tdb, TDB_HASH_శిఖరం(hash), &rec_ptr) == -1)
+		తిరిగి 0;
 
 	/* keep looking until we find the right record */
-	while (rec_ptr) {
-		if (tdb_rec_read(tdb, rec_ptr, r) == -1)
-			return 0;
+	అయితే (rec_ptr) {
+		ఒకవేళ (tdb_rec_read(tdb, rec_ptr, r) == -1)
+			తిరిగి 0;
 
-		if (TDB_DEAD(r) && r->rec_len >= length) {
+		ఒకవేళ (TDB_DEAD(r) && r->rec_len >= నిడివి) {
 			/*
 			 * First fit for simple coding, TODO: change to best
 			 * fit
 			 */
-			return rec_ptr;
+			తిరిగి rec_ptr;
 		}
-		rec_ptr = r->next;
+		rec_ptr = r->తదుపరి;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 /* store an element in the database, replacing any existing element
@@ -3472,40 +3472,40 @@ static tdb_off_t tdb_find_dead(struct tdb_context *tdb, u32 hash,
 
    return 0 on success, -1 on failure
 */
-int tdb_store(struct tdb_context *tdb, TDB_DATA key, TDB_DATA dbuf, int flag)
+పూర్ణాంకం tdb_store(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం, TDB_దత్తాంశం dbuf, పూర్ణాంకం flag)
 {
-	struct list_struct rec;
+	నిర్మాణం list_struct rec;
 	u32 hash;
 	tdb_off_t rec_ptr;
-	char *p = NULL;
-	int ret = -1;
+	అక్షరం *p = ఖాళీ;
+	పూర్ణాంకం ret = -1;
 
-	if (tdb->read_only || tdb->traverse_read) {
+	ఒకవేళ (tdb->read_only || tdb->traverse_read) {
 		tdb->ecode = TDB_ERR_RDONLY;
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* find which hash bucket it is in */
-	hash = tdb->hash_fn(&key);
-	if (tdb_lock(tdb, BUCKET(hash), F_WRLCK) == -1)
-		return -1;
+	hash = tdb->hash_fn(&కీలకం);
+	ఒకవేళ (tdb_తాళం(tdb, పాత్ర(hash), F_WRLCK) == -1)
+		తిరిగి -1;
 
 	/* check for it existing, on insert. */
-	if (flag == TDB_INSERT) {
-		if (tdb_exists_hash(tdb, key, hash)) {
+	ఒకవేళ (flag == TDB_చొప్పించు) {
+		ఒకవేళ (tdb_exists_hash(tdb, కీలకం, hash)) {
 			tdb->ecode = TDB_ERR_EXISTS;
-			goto fail;
+			వెళ్ళు fail;
 		}
-	} else {
+	} లేకపోతే {
 		/* first try in-place update, on modify or replace. */
-		if (tdb_update_hash(tdb, key, hash, dbuf) == 0) {
-			goto done;
+		ఒకవేళ (tdb_update_hash(tdb, కీలకం, hash, dbuf) == 0) {
+			వెళ్ళు పూర్తి;
 		}
-		if (tdb->ecode == TDB_ERR_NOEXIST &&
+		ఒకవేళ (tdb->ecode == TDB_ERR_NOEXIST &&
 		    flag == TDB_MODIFY) {
 			/* if the record doesn't exist and we are in TDB_MODIFY mode then
 			 we should fail the store */
-			goto fail;
+			వెళ్ళు fail;
 		}
 	}
 	/* reset the error code potentially set by the tdb_update() */
@@ -3514,44 +3514,44 @@ int tdb_store(struct tdb_context *tdb, TDB_DATA key, TDB_DATA dbuf, int flag)
 	/* delete any existing record - if it doesn't exist we don't
            care.  Doing this first reduces fragmentation, and avoids
            coalescing with `allocated' block before it's updated. */
-	if (flag != TDB_INSERT)
-		tdb_delete_hash(tdb, key, hash);
+	ఒకవేళ (flag != TDB_చొప్పించు)
+		tdb_delete_hash(tdb, కీలకం, hash);
 
 	/* Copy key+value *before* allocating free space in case malloc
 	   fails and we are left with a dead spot in the tdb. */
 
-	if (!(p = (char *)malloc(key.dsize + dbuf.dsize))) {
+	ఒకవేళ (!(p = (అక్షరం *)జ్ఞాపకం_ఇవ్వు(కీలకం.dsize + dbuf.dsize))) {
 		tdb->ecode = TDB_ERR_OOM;
-		goto fail;
+		వెళ్ళు fail;
 	}
 
-	memcpy(p, key.dptr, key.dsize);
-	if (dbuf.dsize)
-		memcpy(p+key.dsize, dbuf.dptr, dbuf.dsize);
+	జ్ఞాపకం_నకలు(p, కీలకం.dptr, కీలకం.dsize);
+	ఒకవేళ (dbuf.dsize)
+		జ్ఞాపకం_నకలు(p+కీలకం.dsize, dbuf.dptr, dbuf.dsize);
 
-	if (tdb->max_dead_records != 0) {
+	ఒకవేళ (tdb->max_dead_రికార్డులు != 0) {
 		/*
 		 * Allow for some dead records per hash chain, look if we can
 		 * find one that can hold the new record. We need enough space
 		 * for key, data and tailer. If we find one, we don't have to
 		 * consult the central freelist.
 		 */
-		rec_ptr = tdb_find_dead(
+		rec_ptr = tdb_కనుగొను_dead(
 			tdb, hash, &rec,
-			key.dsize + dbuf.dsize + sizeof(tdb_off_t));
+			కీలకం.dsize + dbuf.dsize + పరిమాణం(tdb_off_t));
 
-		if (rec_ptr != 0) {
-			rec.key_len = key.dsize;
-			rec.data_len = dbuf.dsize;
-			rec.full_hash = hash;
+		ఒకవేళ (rec_ptr != 0) {
+			rec.కీలకం_len = కీలకం.dsize;
+			rec.దత్తాంశం_len = dbuf.dsize;
+			rec.నిండిన_hash = hash;
 			rec.magic = TDB_MAGIC;
-			if (tdb_rec_write(tdb, rec_ptr, &rec) == -1
+			ఒకవేళ (tdb_rec_write(tdb, rec_ptr, &rec) == -1
 			    || tdb->methods->tdb_write(
-				    tdb, rec_ptr + sizeof(rec),
-				    p, key.dsize + dbuf.dsize) == -1) {
-				goto fail;
+				    tdb, rec_ptr + పరిమాణం(rec),
+				    p, కీలకం.dsize + dbuf.dsize) == -1) {
+				వెళ్ళు fail;
 			}
-			goto done;
+			వెళ్ళు పూర్తి;
 		}
 	}
 
@@ -3561,94 +3561,94 @@ int tdb_store(struct tdb_context *tdb, TDB_DATA key, TDB_DATA dbuf, int flag)
 	 * the hash chain under the freelist lock.
 	 */
 
-	if (tdb_lock(tdb, -1, F_WRLCK) == -1) {
-		goto fail;
+	ఒకవేళ (tdb_తాళం(tdb, -1, F_WRLCK) == -1) {
+		వెళ్ళు fail;
 	}
 
-	if ((tdb->max_dead_records != 0)
+	ఒకవేళ ((tdb->max_dead_రికార్డులు != 0)
 	    && (tdb_purge_dead(tdb, hash) == -1)) {
 		tdb_unlock(tdb, -1, F_WRLCK);
-		goto fail;
+		వెళ్ళు fail;
 	}
 
 	/* we have to allocate some space */
-	rec_ptr = tdb_allocate(tdb, key.dsize + dbuf.dsize, &rec);
+	rec_ptr = tdb_allocate(tdb, కీలకం.dsize + dbuf.dsize, &rec);
 
 	tdb_unlock(tdb, -1, F_WRLCK);
 
-	if (rec_ptr == 0) {
-		goto fail;
+	ఒకవేళ (rec_ptr == 0) {
+		వెళ్ళు fail;
 	}
 
 	/* Read hash top into next ptr */
-	if (tdb_ofs_read(tdb, TDB_HASH_TOP(hash), &rec.next) == -1)
-		goto fail;
+	ఒకవేళ (tdb_ofs_read(tdb, TDB_HASH_శిఖరం(hash), &rec.తదుపరి) == -1)
+		వెళ్ళు fail;
 
-	rec.key_len = key.dsize;
-	rec.data_len = dbuf.dsize;
-	rec.full_hash = hash;
+	rec.కీలకం_len = కీలకం.dsize;
+	rec.దత్తాంశం_len = dbuf.dsize;
+	rec.నిండిన_hash = hash;
 	rec.magic = TDB_MAGIC;
 
 	/* write out and point the top of the hash chain at it */
-	if (tdb_rec_write(tdb, rec_ptr, &rec) == -1
-	    || tdb->methods->tdb_write(tdb, rec_ptr+sizeof(rec), p, key.dsize+dbuf.dsize)==-1
-	    || tdb_ofs_write(tdb, TDB_HASH_TOP(hash), &rec_ptr) == -1) {
+	ఒకవేళ (tdb_rec_write(tdb, rec_ptr, &rec) == -1
+	    || tdb->methods->tdb_write(tdb, rec_ptr+పరిమాణం(rec), p, కీలకం.dsize+dbuf.dsize)==-1
+	    || tdb_ofs_write(tdb, TDB_HASH_శిఖరం(hash), &rec_ptr) == -1) {
 		/* Need to tdb_unallocate() here */
-		goto fail;
+		వెళ్ళు fail;
 	}
 
- done:
+ పూర్తి:
 	ret = 0;
  fail:
-	if (ret == 0) {
+	ఒకవేళ (ret == 0) {
 		tdb_increment_seqnum(tdb);
 	}
 
-	SAFE_FREE(p);
-	tdb_unlock(tdb, BUCKET(hash), F_WRLCK);
-	return ret;
+	సురక్షిత_FREE(p);
+	tdb_unlock(tdb, పాత్ర(hash), F_WRLCK);
+	తిరిగి ret;
 }
 
 
 /* Append to an entry. Create if not exist. */
-int tdb_append(struct tdb_context *tdb, TDB_DATA key, TDB_DATA new_dbuf)
+పూర్ణాంకం tdb_append(నిర్మాణం tdb_context *tdb, TDB_దత్తాంశం కీలకం, TDB_దత్తాంశం new_dbuf)
 {
 	u32 hash;
-	TDB_DATA dbuf;
-	int ret = -1;
+	TDB_దత్తాంశం dbuf;
+	పూర్ణాంకం ret = -1;
 
 	/* find which hash bucket it is in */
-	hash = tdb->hash_fn(&key);
-	if (tdb_lock(tdb, BUCKET(hash), F_WRLCK) == -1)
-		return -1;
+	hash = tdb->hash_fn(&కీలకం);
+	ఒకవేళ (tdb_తాళం(tdb, పాత్ర(hash), F_WRLCK) == -1)
+		తిరిగి -1;
 
-	dbuf = tdb_fetch(tdb, key);
+	dbuf = tdb_fetch(tdb, కీలకం);
 
-	if (dbuf.dptr == NULL) {
-		dbuf.dptr = (unsigned char *)malloc(new_dbuf.dsize);
-	} else {
-		unsigned char *new_dptr = (unsigned char *)realloc(dbuf.dptr,
+	ఒకవేళ (dbuf.dptr == ఖాళీ) {
+		dbuf.dptr = (గుర్తులేని అక్షరం *)జ్ఞాపకం_ఇవ్వు(new_dbuf.dsize);
+	} లేకపోతే {
+		గుర్తులేని అక్షరం *new_dptr = (గుర్తులేని అక్షరం *)realloc(dbuf.dptr,
 						     dbuf.dsize + new_dbuf.dsize);
-		if (new_dptr == NULL) {
-			free(dbuf.dptr);
+		ఒకవేళ (new_dptr == ఖాళీ) {
+			విడుదల(dbuf.dptr);
 		}
 		dbuf.dptr = new_dptr;
 	}
 
-	if (dbuf.dptr == NULL) {
+	ఒకవేళ (dbuf.dptr == ఖాళీ) {
 		tdb->ecode = TDB_ERR_OOM;
-		goto failed;
+		వెళ్ళు failed;
 	}
 
-	memcpy(dbuf.dptr + dbuf.dsize, new_dbuf.dptr, new_dbuf.dsize);
+	జ్ఞాపకం_నకలు(dbuf.dptr + dbuf.dsize, new_dbuf.dptr, new_dbuf.dsize);
 	dbuf.dsize += new_dbuf.dsize;
 
-	ret = tdb_store(tdb, key, dbuf, 0);
+	ret = tdb_store(tdb, కీలకం, dbuf, 0);
 
 failed:
-	tdb_unlock(tdb, BUCKET(hash), F_WRLCK);
-	SAFE_FREE(dbuf.dptr);
-	return ret;
+	tdb_unlock(tdb, పాత్ర(hash), F_WRLCK);
+	సురక్షిత_FREE(dbuf.dptr);
+	తిరిగి ret;
 }
 
 
@@ -3656,9 +3656,9 @@ failed:
   return the name of the current tdb file
   useful for external logging functions
 */
-const char *tdb_name(struct tdb_context *tdb)
+స్థిరరాశి అక్షరం *tdb_name(నిర్మాణం tdb_context *tdb)
 {
-	return tdb->name;
+	తిరిగి tdb->name;
 }
 
 /*
@@ -3666,18 +3666,18 @@ const char *tdb_name(struct tdb_context *tdb)
   useful for external routines that want to check the device/inode
   of the fd
 */
-int tdb_fd(struct tdb_context *tdb)
+పూర్ణాంకం tdb_fd(నిర్మాణం tdb_context *tdb)
 {
-	return tdb->fd;
+	తిరిగి tdb->fd;
 }
 
 /*
   return the current logging function
   useful for external tdb routines that wish to log tdb errors
 */
-tdb_log_func tdb_log_fn(struct tdb_context *tdb)
+tdb_log_func tdb_log_fn(నిర్మాణం tdb_context *tdb)
 {
-	return tdb->log.log_fn;
+	తిరిగి tdb->సంవర్గమానం.log_fn;
 }
 
 
@@ -3691,35 +3691,35 @@ tdb_log_func tdb_log_fn(struct tdb_context *tdb)
   The aim of this sequence number is to allow for a very lightweight
   test of a possible tdb change.
 */
-int tdb_get_seqnum(struct tdb_context *tdb)
+పూర్ణాంకం tdb_get_seqnum(నిర్మాణం tdb_context *tdb)
 {
 	tdb_off_t seqnum=0;
 
-	if (tdb_ofs_read(tdb, TDB_SEQNUM_OFS, &seqnum) == -1)
-		return 0;
-	return seqnum;
+	ఒకవేళ (tdb_ofs_read(tdb, TDB_SEQNUM_OFS, &seqnum) == -1)
+		తిరిగి 0;
+	తిరిగి seqnum;
 }
 
-int tdb_hash_size(struct tdb_context *tdb)
+పూర్ణాంకం tdb_hash_కొలత(నిర్మాణం tdb_context *tdb)
 {
-	return tdb->header.hash_size;
+	తిరిగి tdb->శీర్షిక.hash_కొలత;
 }
 
-size_t tdb_map_size(struct tdb_context *tdb)
+size_t tdb_map_కొలత(నిర్మాణం tdb_context *tdb)
 {
-	return tdb->map_size;
+	తిరిగి tdb->map_కొలత;
 }
 
-int tdb_get_flags(struct tdb_context *tdb)
+పూర్ణాంకం tdb_get_flags(నిర్మాణం tdb_context *tdb)
 {
-	return tdb->flags;
+	తిరిగి tdb->flags;
 }
 
 
 /*
   enable sequence number handling on an open tdb
 */
-void tdb_enable_seqnum(struct tdb_context *tdb)
+శూన్య tdb_enable_seqnum(నిర్మాణం tdb_context *tdb)
 {
 	tdb->flags |= TDB_SEQNUM;
 }
@@ -3727,81 +3727,81 @@ void tdb_enable_seqnum(struct tdb_context *tdb)
 /* file: open.c */
 
 /* all contexts, to ensure no double-opens (fcntl locks don't nest!) */
-static struct tdb_context *tdbs = NULL;
+స్థిర నిర్మాణం tdb_context *tdbs = ఖాళీ;
 
 
 /* This is from a hash algorithm suggested by Rogier Wolff */
-static unsigned int default_tdb_hash(TDB_DATA *key)
+స్థిర గుర్తులేని పూర్ణాంకం default_tdb_hash(TDB_దత్తాంశం *కీలకం)
 {
-	u32 value;	/* Used to compute the hash value.  */
+	u32 విలువ;	/* Used to compute the hash value.  */
 	u32   i;	/* Used to cycle through random values. */
 
 	/* Set the initial value from the key size. */
-	for (value = 0, i=0; i < key->dsize; i++)
-		value = value * 256 + key->dptr[i] + (value >> 24) * 241;
+	కొరకు (విలువ = 0, i=0; i < కీలకం->dsize; i++)
+		విలువ = విలువ * 256 + కీలకం->dptr[i] + (విలువ >> 24) * 241;
 
-	return value;
+	తిరిగి విలువ;
 }
 
 
 /* initialise a new database with a specified hash size */
-static int tdb_new_database(struct tdb_context *tdb, int hash_size)
+స్థిర పూర్ణాంకం tdb_new_database(నిర్మాణం tdb_context *tdb, పూర్ణాంకం hash_కొలత)
 {
-	struct tdb_header *newdb;
-	int size, ret = -1;
+	నిర్మాణం tdb_శీర్షిక *newdb;
+	పూర్ణాంకం కొలత, ret = -1;
 
 	/* We make it up in memory, then write it out if not internal */
-	size = sizeof(struct tdb_header) + (hash_size+1)*sizeof(tdb_off_t);
-	if (!(newdb = (struct tdb_header *)calloc(size, 1)))
-		return TDB_ERRCODE(TDB_ERR_OOM, -1);
+	కొలత = పరిమాణం(నిర్మాణం tdb_శీర్షిక) + (hash_కొలత+1)*పరిమాణం(tdb_off_t);
+	ఒకవేళ (!(newdb = (నిర్మాణం tdb_శీర్షిక *)సున్నా_జ్ఞాపకం_ఇవ్వు(కొలత, 1)))
+		తిరిగి TDB_ERRCODE(TDB_ERR_OOM, -1);
 
 	/* Fill in the header */
-	newdb->version = TDB_VERSION;
-	newdb->hash_size = hash_size;
-	if (tdb->flags & TDB_INTERNAL) {
-		tdb->map_size = size;
-		tdb->map_ptr = (char *)newdb;
-		memcpy(&tdb->header, newdb, sizeof(tdb->header));
+	newdb->సంస్కరణ = TDB_సంస్కరణ;
+	newdb->hash_కొలత = hash_కొలత;
+	ఒకవేళ (tdb->flags & TDB_అంతర్గత) {
+		tdb->map_కొలత = కొలత;
+		tdb->map_ptr = (అక్షరం *)newdb;
+		జ్ఞాపకం_నకలు(&tdb->శీర్షిక, newdb, పరిమాణం(tdb->శీర్షిక));
 		/* Convert the `ondisk' version if asked. */
 		CONVERT(*newdb);
-		return 0;
+		తిరిగి 0;
 	}
-	if (lseek(tdb->fd, 0, SEEK_SET) == -1)
-		goto fail;
+	ఒకవేళ (lseek(tdb->fd, 0, SEEK_SET) == -1)
+		వెళ్ళు fail;
 
-	if (ftruncate(tdb->fd, 0) == -1)
-		goto fail;
+	ఒకవేళ (ftruncate(tdb->fd, 0) == -1)
+		వెళ్ళు fail;
 
 	/* This creates an endian-converted header, as if read from disk */
 	CONVERT(*newdb);
-	memcpy(&tdb->header, newdb, sizeof(tdb->header));
+	జ్ఞాపకం_నకలు(&tdb->శీర్షిక, newdb, పరిమాణం(tdb->శీర్షిక));
 	/* Don't endian-convert the magic food! */
-	memcpy(newdb->magic_food, TDB_MAGIC_FOOD, strlen(TDB_MAGIC_FOOD)+1);
-	if (write(tdb->fd, newdb, size) != size) {
+	జ్ఞాపకం_నకలు(newdb->magic_food, TDB_MAGIC_FOOD, అక్షరశ్రేణి_పొడవు(TDB_MAGIC_FOOD)+1);
+	ఒకవేళ (లిఖ(tdb->fd, newdb, కొలత) != కొలత) {
 		ret = -1;
-	} else {
+	} లేకపోతే {
 		ret = 0;
 	}
 
   fail:
-	SAFE_FREE(newdb);
-	return ret;
+	సురక్షిత_FREE(newdb);
+	తిరిగి ret;
 }
 
 
 
-static int tdb_already_open(dev_t device,
+స్థిర పూర్ణాంకం tdb_already_open(dev_t device,
 			    ino_t ino)
 {
-	struct tdb_context *i;
+	నిర్మాణం tdb_context *i;
 
-	for (i = tdbs; i; i = i->next) {
-		if (i->device == device && i->inode == ino) {
-			return 1;
+	కొరకు (i = tdbs; i; i = i->తదుపరి) {
+		ఒకవేళ (i->device == device && i->inode == ino) {
+			తిరిగి 1;
 		}
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
 /* open the database, creating it if necessary
@@ -3814,164 +3814,164 @@ static int tdb_already_open(dev_t device,
    try to call tdb_error or tdb_errname, just do strerror(errno).
 
    @param name may be NULL for internal databases. */
-struct tdb_context *tdb_open(const char *name, int hash_size, int tdb_flags,
-		      int open_flags, mode_t mode)
+నిర్మాణం tdb_context *tdb_open(స్థిరరాశి అక్షరం *name, పూర్ణాంకం hash_కొలత, పూర్ణాంకం tdb_flags,
+		      పూర్ణాంకం open_flags, mode_t బహుళకం)
 {
-	return tdb_open_ex(name, hash_size, tdb_flags, open_flags, mode, NULL, NULL);
+	తిరిగి tdb_open_ex(name, hash_కొలత, tdb_flags, open_flags, బహుళకం, ఖాళీ, ఖాళీ);
 }
 
 /* a default logging function */
-static void null_log_fn(struct tdb_context *tdb, enum tdb_debug_level level, const char *fmt, ...) PRINTF_ATTRIBUTE(3, 4);
-static void null_log_fn(struct tdb_context *tdb EXT2FS_ATTR((unused)),
-			enum tdb_debug_level level EXT2FS_ATTR((unused)),
-			const char *fmt EXT2FS_ATTR((unused)), ...)
+స్థిర శూన్య null_log_fn(నిర్మాణం tdb_context *tdb, గణన tdb_debug_level level, స్థిరరాశి అక్షరం *fmt, ...) PRINTF_ATTRIBUTE(3, 4);
+స్థిర శూన్య null_log_fn(నిర్మాణం tdb_context *tdb EXT2FS_ATTR((వాడని)),
+			గణన tdb_debug_level level EXT2FS_ATTR((వాడని)),
+			స్థిరరాశి అక్షరం *fmt EXT2FS_ATTR((వాడని)), ...)
 {
 }
 
 
-struct tdb_context *tdb_open_ex(const char *name, int hash_size, int tdb_flags,
-				int open_flags, mode_t mode,
-				const struct tdb_logging_context *log_ctx,
+నిర్మాణం tdb_context *tdb_open_ex(స్థిరరాశి అక్షరం *name, పూర్ణాంకం hash_కొలత, పూర్ణాంకం tdb_flags,
+				పూర్ణాంకం open_flags, mode_t బహుళకం,
+				స్థిరరాశి నిర్మాణం tdb_logging_context *log_ctx,
 				tdb_hash_func hash_fn)
 {
-	struct tdb_context *tdb;
-	struct stat st;
-	int rev = 0, locked = 0;
-	unsigned char *vp;
+	నిర్మాణం tdb_context *tdb;
+	నిర్మాణం stat st;
+	పూర్ణాంకం rev = 0, locked = 0;
+	గుర్తులేని అక్షరం *vp;
 	u32 vertest;
 
-	if (!(tdb = (struct tdb_context *)calloc(1, sizeof *tdb))) {
+	ఒకవేళ (!(tdb = (నిర్మాణం tdb_context *)సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం *tdb))) {
 		/* Can't log this */
 		errno = ENOMEM;
-		goto fail;
+		వెళ్ళు fail;
 	}
 	tdb_io_init(tdb);
 	tdb->fd = -1;
-	tdb->name = NULL;
-	tdb->map_ptr = NULL;
+	tdb->name = ఖాళీ;
+	tdb->map_ptr = ఖాళీ;
 	tdb->flags = tdb_flags;
 	tdb->open_flags = open_flags;
-	if (log_ctx) {
-		tdb->log = *log_ctx;
-	} else {
-		tdb->log.log_fn = null_log_fn;
-		tdb->log.log_private = NULL;
+	ఒకవేళ (log_ctx) {
+		tdb->సంవర్గమానం = *log_ctx;
+	} లేకపోతే {
+		tdb->సంవర్గమానం.log_fn = null_log_fn;
+		tdb->సంవర్గమానం.log_వ్యక్తిగత = ఖాళీ;
 	}
 	tdb->hash_fn = hash_fn ? hash_fn : default_tdb_hash;
 
 	/* cache the page size */
-	tdb->page_size = sysconf(_SC_PAGESIZE);
-	if (tdb->page_size <= 0) {
-		tdb->page_size = 0x2000;
+	tdb->పుట_కొలత = sysconf(_SC_PAGESIZE);
+	ఒకవేళ (tdb->పుట_కొలత <= 0) {
+		tdb->పుట_కొలత = 0x2000;
 	}
 
-	if ((open_flags & O_ACCMODE) == O_WRONLY) {
+	ఒకవేళ ((open_flags & O_ACCMODE) == O_WRONLY) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_open_ex: can't open tdb %s write-only\n",
 			 name));
 		errno = EINVAL;
-		goto fail;
+		వెళ్ళు fail;
 	}
 
-	if (hash_size == 0)
-		hash_size = DEFAULT_HASH_SIZE;
-	if ((open_flags & O_ACCMODE) == O_RDONLY) {
+	ఒకవేళ (hash_కొలత == 0)
+		hash_కొలత = DEFAULT_HASH_కొలత;
+	ఒకవేళ ((open_flags & O_ACCMODE) == O_RDONLY) {
 		tdb->read_only = 1;
 		/* read only databases don't do locking or clear if first */
 		tdb->flags |= TDB_NOLOCK;
-		tdb->flags &= ~TDB_CLEAR_IF_FIRST;
+		tdb->flags &= ~TDB_CLEAR_IF_మొదటి;
 	}
 
 	/* internal databases don't mmap or lock, and start off cleared */
-	if (tdb->flags & TDB_INTERNAL) {
+	ఒకవేళ (tdb->flags & TDB_అంతర్గత) {
 		tdb->flags |= (TDB_NOLOCK | TDB_NOMMAP);
-		tdb->flags &= ~TDB_CLEAR_IF_FIRST;
-		if (tdb_new_database(tdb, hash_size) != 0) {
+		tdb->flags &= ~TDB_CLEAR_IF_మొదటి;
+		ఒకవేళ (tdb_new_database(tdb, hash_కొలత) != 0) {
 			TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_open_ex: tdb_new_database failed!"));
-			goto fail;
+			వెళ్ళు fail;
 		}
-		goto internal;
+		వెళ్ళు అంతర్గత;
 	}
 
-	if ((tdb->fd = open(name, open_flags, mode)) == -1) {
+	ఒకవేళ ((tdb->fd = open(name, open_flags, బహుళకం)) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_WARNING, "tdb_open_ex: could not open file %s: %s\n",
 			 name, strerror(errno)));
-		goto fail;	/* errno set by open(2) */
+		వెళ్ళు fail;	/* errno set by open(2) */
 	}
 
 	/* ensure there is only one process initialising at once */
-	if (tdb->methods->tdb_brlock(tdb, GLOBAL_LOCK, F_WRLCK, F_SETLKW, 0, 1) == -1) {
+	ఒకవేళ (tdb->methods->tdb_brlock(tdb, GLOBAL_తాళం, F_WRLCK, F_SETLKW, 0, 1) == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_open_ex: failed to get global lock on %s: %s\n",
 			 name, strerror(errno)));
-		goto fail;	/* errno set by tdb_brlock */
+		వెళ్ళు fail;	/* errno set by tdb_brlock */
 	}
 
 	/* we need to zero database if we are the only one with it open */
-	if ((tdb_flags & TDB_CLEAR_IF_FIRST) &&
-	    (locked = (tdb->methods->tdb_brlock(tdb, ACTIVE_LOCK, F_WRLCK, F_SETLK, 0, 1) == 0))) {
+	ఒకవేళ ((tdb_flags & TDB_CLEAR_IF_మొదటి) &&
+	    (locked = (tdb->methods->tdb_brlock(tdb, చురుకైన_తాళం, F_WRLCK, F_SETLK, 0, 1) == 0))) {
 		open_flags |= O_CREAT;
-		if (ftruncate(tdb->fd, 0) == -1) {
+		ఒకవేళ (ftruncate(tdb->fd, 0) == -1) {
 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_open_ex: "
 				 "failed to truncate %s: %s\n",
 				 name, strerror(errno)));
-			goto fail; /* errno set by ftruncate */
+			వెళ్ళు fail; /* errno set by ftruncate */
 		}
 	}
 
-	if (read(tdb->fd, &tdb->header, sizeof(tdb->header)) != sizeof(tdb->header)
-	    || memcmp(tdb->header.magic_food, TDB_MAGIC_FOOD,
-		      sizeof(TDB_MAGIC_FOOD)) != 0
-	    || (tdb->header.version != TDB_VERSION
-		&& !(rev = (tdb->header.version==TDB_BYTEREV(TDB_VERSION))))) {
+	ఒకవేళ (పఠ(tdb->fd, &tdb->శీర్షిక, పరిమాణం(tdb->శీర్షిక)) != పరిమాణం(tdb->శీర్షిక)
+	    || memcmp(tdb->శీర్షిక.magic_food, TDB_MAGIC_FOOD,
+		      పరిమాణం(TDB_MAGIC_FOOD)) != 0
+	    || (tdb->శీర్షిక.సంస్కరణ != TDB_సంస్కరణ
+		&& !(rev = (tdb->శీర్షిక.సంస్కరణ==TDB_BYTEREV(TDB_సంస్కరణ))))) {
 		/* its not a valid database - possibly initialise it */
-		if (!(open_flags & O_CREAT) || tdb_new_database(tdb, hash_size) == -1) {
+		ఒకవేళ (!(open_flags & O_CREAT) || tdb_new_database(tdb, hash_కొలత) == -1) {
 			errno = EIO; /* ie bad format or something */
-			goto fail;
+			వెళ్ళు fail;
 		}
 		rev = (tdb->flags & TDB_CONVERT);
 	}
-	vp = (unsigned char *)&tdb->header.version;
+	vp = (గుర్తులేని అక్షరం *)&tdb->శీర్షిక.సంస్కరణ;
 	vertest = (((u32)vp[0]) << 24) | (((u32)vp[1]) << 16) |
 		  (((u32)vp[2]) << 8) | (u32)vp[3];
-	tdb->flags |= (vertest==TDB_VERSION) ? TDB_BIGENDIAN : 0;
-	if (!rev)
+	tdb->flags |= (vertest==TDB_సంస్కరణ) ? TDB_BIGENDIAN : 0;
+	ఒకవేళ (!rev)
 		tdb->flags &= ~TDB_CONVERT;
-	else {
+	లేకపోతే {
 		tdb->flags |= TDB_CONVERT;
-		tdb_convert(&tdb->header, sizeof(tdb->header));
+		tdb_convert(&tdb->శీర్షిక, పరిమాణం(tdb->శీర్షిక));
 	}
-	if (fstat(tdb->fd, &st) == -1)
-		goto fail;
+	ఒకవేళ (fstat(tdb->fd, &st) == -1)
+		వెళ్ళు fail;
 
-	if (tdb->header.rwlocks != 0) {
+	ఒకవేళ (tdb->శీర్షిక.rwlocks != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_open_ex: spinlocks no longer supported\n"));
-		goto fail;
+		వెళ్ళు fail;
 	}
 
 	/* Is it already in the open list?  If so, fail. */
-	if (tdb_already_open(st.st_dev, st.st_ino)) {
+	ఒకవేళ (tdb_already_open(st.st_dev, st.st_ino)) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_open_ex: "
 			 "%s (%d,%d) is already open in this process\n",
-			 name, (int)st.st_dev, (int)st.st_ino));
+			 name, (పూర్ణాంకం)st.st_dev, (పూర్ణాంకం)st.st_ino));
 		errno = EBUSY;
-		goto fail;
+		వెళ్ళు fail;
 	}
 
-	if (!(tdb->name = (char *)strdup(name))) {
+	ఒకవేళ (!(tdb->name = (అక్షరం *)strdup(name))) {
 		errno = ENOMEM;
-		goto fail;
+		వెళ్ళు fail;
 	}
 
-	tdb->map_size = st.st_size;
+	tdb->map_కొలత = st.st_కొలత;
 	tdb->device = st.st_dev;
 	tdb->inode = st.st_ino;
-	tdb->max_dead_records = 0;
+	tdb->max_dead_రికార్డులు = 0;
 	tdb_mmap(tdb);
-	if (locked) {
-		if (tdb->methods->tdb_brlock(tdb, ACTIVE_LOCK, F_UNLCK, F_SETLK, 0, 1) == -1) {
+	ఒకవేళ (locked) {
+		ఒకవేళ (tdb->methods->tdb_brlock(tdb, చురుకైన_తాళం, F_UNLCK, F_SETLK, 0, 1) == -1) {
 			TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_open_ex: "
 				 "failed to take ACTIVE_LOCK on %s: %s\n",
 				 name, strerror(errno)));
-			goto fail;
+			వెళ్ళు fail;
 		}
 
 	}
@@ -3980,46 +3980,46 @@ struct tdb_context *tdb_open_ex(const char *name, int hash_size, int tdb_flags,
 	   we didn't get the initial exclusive lock as we need to let all other
 	   users know we're using it. */
 
-	if (tdb_flags & TDB_CLEAR_IF_FIRST) {
+	ఒకవేళ (tdb_flags & TDB_CLEAR_IF_మొదటి) {
 		/* leave this lock in place to indicate it's in use */
-		if (tdb->methods->tdb_brlock(tdb, ACTIVE_LOCK, F_RDLCK, F_SETLKW, 0, 1) == -1)
-			goto fail;
+		ఒకవేళ (tdb->methods->tdb_brlock(tdb, చురుకైన_తాళం, F_RDLCK, F_SETLKW, 0, 1) == -1)
+			వెళ్ళు fail;
 	}
 
 	/* if needed, run recovery */
-	if (tdb_transaction_recover(tdb) == -1) {
-		goto fail;
+	ఒకవేళ (tdb_transaction_recover(tdb) == -1) {
+		వెళ్ళు fail;
 	}
 
- internal:
+ అంతర్గత:
 	/* Internal (memory-only) databases skip all the code above to
 	 * do with disk files, and resume here by releasing their
 	 * global lock and hooking into the active list. */
-	if (tdb->methods->tdb_brlock(tdb, GLOBAL_LOCK, F_UNLCK, F_SETLKW, 0, 1) == -1)
-		goto fail;
-	tdb->next = tdbs;
+	ఒకవేళ (tdb->methods->tdb_brlock(tdb, GLOBAL_తాళం, F_UNLCK, F_SETLKW, 0, 1) == -1)
+		వెళ్ళు fail;
+	tdb->తదుపరి = tdbs;
 	tdbs = tdb;
-	return tdb;
+	తిరిగి tdb;
 
  fail:
-	{ int save_errno = errno;
+	{ పూర్ణాంకం save_errno = errno;
 
-	if (!tdb)
-		return NULL;
+	ఒకవేళ (!tdb)
+		తిరిగి ఖాళీ;
 
-	if (tdb->map_ptr) {
-		if (tdb->flags & TDB_INTERNAL)
-			SAFE_FREE(tdb->map_ptr);
-		else
+	ఒకవేళ (tdb->map_ptr) {
+		ఒకవేళ (tdb->flags & TDB_అంతర్గత)
+			సురక్షిత_FREE(tdb->map_ptr);
+		లేకపోతే
 			tdb_munmap(tdb);
 	}
-	SAFE_FREE(tdb->name);
-	if (tdb->fd != -1)
-		if (close(tdb->fd) != 0)
+	సురక్షిత_FREE(tdb->name);
+	ఒకవేళ (tdb->fd != -1)
+		ఒకవేళ (close(tdb->fd) != 0)
 			TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_open_ex: failed to close tdb->fd on error!\n"));
-	SAFE_FREE(tdb);
+	సురక్షిత_FREE(tdb);
 	errno = save_errno;
-	return NULL;
+	తిరిగి ఖాళీ;
 	}
 }
 
@@ -4027,9 +4027,9 @@ struct tdb_context *tdb_open_ex(const char *name, int hash_size, int tdb_flags,
  * Set the maximum number of dead records per hash chain
  */
 
-void tdb_set_max_dead(struct tdb_context *tdb, int max_dead)
+శూన్య tdb_సమితి_max_dead(నిర్మాణం tdb_context *tdb, పూర్ణాంకం max_dead)
 {
-	tdb->max_dead_records = max_dead;
+	tdb->max_dead_రికార్డులు = max_dead;
 }
 
 /**
@@ -4037,111 +4037,111 @@ void tdb_set_max_dead(struct tdb_context *tdb, int max_dead)
  *
  * @returns -1 for error; 0 for success.
  **/
-int tdb_close(struct tdb_context *tdb)
+పూర్ణాంకం tdb_close(నిర్మాణం tdb_context *tdb)
 {
-	struct tdb_context **i;
-	int ret = 0;
+	నిర్మాణం tdb_context **i;
+	పూర్ణాంకం ret = 0;
 
-	if (tdb->transaction) {
+	ఒకవేళ (tdb->transaction) {
 		tdb_transaction_cancel(tdb);
 	}
 
-	if (tdb->map_ptr) {
-		if (tdb->flags & TDB_INTERNAL)
-			SAFE_FREE(tdb->map_ptr);
-		else
+	ఒకవేళ (tdb->map_ptr) {
+		ఒకవేళ (tdb->flags & TDB_అంతర్గత)
+			సురక్షిత_FREE(tdb->map_ptr);
+		లేకపోతే
 			tdb_munmap(tdb);
 	}
-	SAFE_FREE(tdb->name);
-	if (tdb->fd != -1)
+	సురక్షిత_FREE(tdb->name);
+	ఒకవేళ (tdb->fd != -1)
 		ret = close(tdb->fd);
-	SAFE_FREE(tdb->lockrecs);
+	సురక్షిత_FREE(tdb->lockrecs);
 
 	/* Remove from contexts list */
-	for (i = &tdbs; *i; i = &(*i)->next) {
-		if (*i == tdb) {
-			*i = tdb->next;
-			break;
+	కొరకు (i = &tdbs; *i; i = &(*i)->తదుపరి) {
+		ఒకవేళ (*i == tdb) {
+			*i = tdb->తదుపరి;
+			ఆపు;
 		}
 	}
 
-	memset(tdb, 0, sizeof(*tdb));
-	SAFE_FREE(tdb);
+	memset(tdb, 0, పరిమాణం(*tdb));
+	సురక్షిత_FREE(tdb);
 
-	return ret;
+	తిరిగి ret;
 }
 
 /* register a logging function */
-void tdb_set_logging_function(struct tdb_context *tdb,
-                              const struct tdb_logging_context *log_ctx)
+శూన్య tdb_సమితి_logging_function(నిర్మాణం tdb_context *tdb,
+                              స్థిరరాశి నిర్మాణం tdb_logging_context *log_ctx)
 {
-        tdb->log = *log_ctx;
+        tdb->సంవర్గమానం = *log_ctx;
 }
 
-void *tdb_get_logging_private(struct tdb_context *tdb)
+శూన్య *tdb_get_logging_వ్యక్తిగత(నిర్మాణం tdb_context *tdb)
 {
-	return tdb->log.log_private;
+	తిరిగి tdb->సంవర్గమానం.log_వ్యక్తిగత;
 }
 
 /* reopen a tdb - this can be used after a fork to ensure that we have an independent
    seek pointer from our parent and to re-establish locks */
-int tdb_reopen(struct tdb_context *tdb)
+పూర్ణాంకం tdb_reopen(నిర్మాణం tdb_context *tdb)
 {
-	struct stat st;
+	నిర్మాణం stat st;
 
-	if (tdb->flags & TDB_INTERNAL) {
-		return 0; /* Nothing to do. */
+	ఒకవేళ (tdb->flags & TDB_అంతర్గత) {
+		తిరిగి 0; /* Nothing to do. */
 	}
 
-	if (tdb->num_locks != 0 || tdb->global_lock.count) {
+	ఒకవేళ (tdb->అంకె_locks != 0 || tdb->global_తాళం.లెక్క) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_reopen: reopen not allowed with locks held\n"));
-		goto fail;
+		వెళ్ళు fail;
 	}
 
-	if (tdb->transaction != 0) {
+	ఒకవేళ (tdb->transaction != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_ERROR, "tdb_reopen: reopen not allowed inside a transaction\n"));
-		goto fail;
+		వెళ్ళు fail;
 	}
 
-	if (tdb_munmap(tdb) != 0) {
+	ఒకవేళ (tdb_munmap(tdb) != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_reopen: munmap failed (%s)\n", strerror(errno)));
-		goto fail;
+		వెళ్ళు fail;
 	}
-	if (close(tdb->fd) != 0)
+	ఒకవేళ (close(tdb->fd) != 0)
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_reopen: WARNING closing tdb->fd failed!\n"));
 	tdb->fd = open(tdb->name, tdb->open_flags & ~(O_CREAT|O_TRUNC), 0);
-	if (tdb->fd == -1) {
+	ఒకవేళ (tdb->fd == -1) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_reopen: open failed (%s)\n", strerror(errno)));
-		goto fail;
+		వెళ్ళు fail;
 	}
-	if ((tdb->flags & TDB_CLEAR_IF_FIRST) &&
-	    (tdb->methods->tdb_brlock(tdb, ACTIVE_LOCK, F_RDLCK, F_SETLKW, 0, 1) == -1)) {
+	ఒకవేళ ((tdb->flags & TDB_CLEAR_IF_మొదటి) &&
+	    (tdb->methods->tdb_brlock(tdb, చురుకైన_తాళం, F_RDLCK, F_SETLKW, 0, 1) == -1)) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_reopen: failed to obtain active lock\n"));
-		goto fail;
+		వెళ్ళు fail;
 	}
-	if (fstat(tdb->fd, &st) != 0) {
+	ఒకవేళ (fstat(tdb->fd, &st) != 0) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_reopen: fstat failed (%s)\n", strerror(errno)));
-		goto fail;
+		వెళ్ళు fail;
 	}
-	if (st.st_ino != tdb->inode || st.st_dev != tdb->device) {
+	ఒకవేళ (st.st_ino != tdb->inode || st.st_dev != tdb->device) {
 		TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_reopen: file dev/inode has changed!\n"));
-		goto fail;
+		వెళ్ళు fail;
 	}
 	tdb_mmap(tdb);
 
-	return 0;
+	తిరిగి 0;
 
 fail:
 	tdb_close(tdb);
-	return -1;
+	తిరిగి -1;
 }
 
 /* reopen all tdb's */
-int tdb_reopen_all(int parent_longlived)
+పూర్ణాంకం tdb_reopen_all(పూర్ణాంకం మాతృ_longlived)
 {
-	struct tdb_context *tdb;
+	నిర్మాణం tdb_context *tdb;
 
-	for (tdb=tdbs; tdb; tdb = tdb->next) {
+	కొరకు (tdb=tdbs; tdb; tdb = tdb->తదుపరి) {
 		/*
 		 * If the parent is longlived (ie. a
 		 * parent daemon architecture), we know
@@ -4153,24 +4153,24 @@ int tdb_reopen_all(int parent_longlived)
 		 * keep POSIX locks as a non-scalable data
 		 * structure in the kernel.
 		 */
-		if (parent_longlived) {
+		ఒకవేళ (మాతృ_longlived) {
 			/* Ensure no clear-if-first. */
-			tdb->flags &= ~TDB_CLEAR_IF_FIRST;
+			tdb->flags &= ~TDB_CLEAR_IF_మొదటి;
 		}
 
-		if (tdb_reopen(tdb) != 0)
-			return -1;
+		ఒకవేళ (tdb_reopen(tdb) != 0)
+			తిరిగి -1;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
 /**
  * Flush a database file from the page cache.
  **/
-int tdb_flush(struct tdb_context *tdb)
+పూర్ణాంకం tdb_flush(నిర్మాణం tdb_context *tdb)
 {
-	if (tdb->fd != -1)
-		return fsync(tdb->fd);
-	return 0;
+	ఒకవేళ (tdb->fd != -1)
+		తిరిగి fsync(tdb->fd);
+	తిరిగి 0;
 }

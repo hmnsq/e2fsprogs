@@ -9,92 +9,92 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
-struct link_struct  {
-	const char	*name;
-	int		namelen;
+నిర్మాణం link_struct  {
+	స్థిరరాశి అక్షరం	*name;
+	పూర్ణాంకం		namelen;
 	ext2_ino_t	inode;
-	int		flags;
-	struct ext2_dir_entry *prev;
-	int		done;
+	పూర్ణాంకం		flags;
+	నిర్మాణం ext2_dir_నమోదు *prev;
+	పూర్ణాంకం		పూర్తి;
 };
 
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-static int unlink_proc(struct ext2_dir_entry *dirent,
-		     int	offset,
-		     int	blocksize EXT2FS_ATTR((unused)),
-		     char	*buf EXT2FS_ATTR((unused)),
-		     void	*priv_data)
+#నిర్వచితమైతే __TURBOC__
+ #సూచన argsused
+#అయితే_ముగింపు
+స్థిర పూర్ణాంకం unlink_proc(నిర్మాణం ext2_dir_నమోదు *dirent,
+		     పూర్ణాంకం	స్థానభ్రంశం,
+		     పూర్ణాంకం	blocksize EXT2FS_ATTR((వాడని)),
+		     అక్షరం	*buf EXT2FS_ATTR((వాడని)),
+		     శూన్య	*priv_దత్తాంశం)
 {
-	struct link_struct *ls = (struct link_struct *) priv_data;
-	struct ext2_dir_entry *prev;
+	నిర్మాణం link_struct *ls = (నిర్మాణం link_struct *) priv_దత్తాంశం;
+	నిర్మాణం ext2_dir_నమోదు *prev;
 
 	prev = ls->prev;
 	ls->prev = dirent;
 
-	if (ls->name) {
-		if (ext2fs_dirent_name_len(dirent) != ls->namelen)
-			return 0;
-		if (strncmp(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
-			return 0;
+	ఒకవేళ (ls->name) {
+		ఒకవేళ (ext2fs_dirent_name_len(dirent) != ls->namelen)
+			తిరిగి 0;
+		ఒకవేళ (అక్షరశ్రేణి_పోలిక(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
+			తిరిగి 0;
 	}
-	if (!(ls->flags & EXT2FS_UNLINK_FORCE) && ls->inode) {
-		if (dirent->inode != ls->inode)
-			return 0;
-	} else {
-		if (!dirent->inode)
-			return 0;
+	ఒకవేళ (!(ls->flags & EXT2FS_UNLINK_FORCE) && ls->inode) {
+		ఒకవేళ (dirent->inode != ls->inode)
+			తిరిగి 0;
+	} లేకపోతే {
+		ఒకవేళ (!dirent->inode)
+			తిరిగి 0;
 	}
 
-	if (offset)
+	ఒకవేళ (స్థానభ్రంశం)
 		prev->rec_len += dirent->rec_len;
-	else
+	లేకపోతే
 		dirent->inode = 0;
-	ls->done++;
-	return DIRENT_ABORT|DIRENT_CHANGED;
+	ls->పూర్తి++;
+	తిరిగి DIRENT_ABORT|DIRENT_మారింది;
 }
 
-#ifdef __TURBOC__
- #pragma argsused
-#endif
+#నిర్వచితమైతే __TURBOC__
+ #సూచన argsused
+#అయితే_ముగింపు
 errcode_t ext2fs_unlink(ext2_filsys fs, ext2_ino_t dir,
-			const char *name, ext2_ino_t ino,
-			int flags)
+			స్థిరరాశి అక్షరం *name, ext2_ino_t ino,
+			పూర్ణాంకం flags)
 {
 	errcode_t	retval;
-	struct link_struct ls;
+	నిర్మాణం link_struct ls;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!name && !ino)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ఒకవేళ (!name && !ino)
+		తిరిగి EXT2_ET_INVALID_వాదం;
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ఒకవేళ (!(fs->flags & EXT2_FLAG_RW))
+		తిరిగి EXT2_ET_RO_FILSYS;
 
 	ls.name = name;
-	ls.namelen = name ? strlen(name) : 0;
+	ls.namelen = name ? అక్షరశ్రేణి_పొడవు(name) : 0;
 	ls.inode = ino;
 	ls.flags = flags;
-	ls.done = 0;
+	ls.పూర్తి = 0;
 	ls.prev = 0;
 
-	retval = ext2fs_dir_iterate(fs, dir, DIRENT_FLAG_INCLUDE_EMPTY,
+	retval = ext2fs_dir_iterate(fs, dir, DIRENT_FLAG_INCLUDE_ఖాళీలు,
 				    0, unlink_proc, &ls);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
-	return (ls.done) ? 0 : EXT2_ET_DIR_NO_SPACE;
+	తిరిగి (ls.పూర్తి) ? 0 : EXT2_ET_DIR_NO_SPACE;
 }
 

@@ -9,16 +9,16 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <time.h>
-#include <string.h>
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <string.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fsP.h"
 
 errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest)
 {
@@ -27,17 +27,17 @@ errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest)
 
 	EXT2_CHECK_MAGIC(src, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	retval = ext2fs_get_mem(sizeof(struct struct_ext2_filsys), &fs);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(పరిమాణం(నిర్మాణం struct_ext2_filsys), &fs);
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
 	*fs = *src;
 	fs->device_name = 0;
 	fs->super = 0;
 	fs->orig_super = 0;
-	fs->group_desc = 0;
+	fs->సమూహం_desc = 0;
 	fs->inode_map = 0;
-	fs->block_map = 0;
+	fs->ఖండం_map = 0;
 	fs->badblocks = 0;
 	fs->dblist = 0;
 	fs->mmp_buf = 0;
@@ -45,75 +45,75 @@ errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest)
 	fs->mmp_fd = -1;
 
 	io_channel_bumpcount(fs->io);
-	if (fs->icache)
+	ఒకవేళ (fs->icache)
 		fs->icache->refcount++;
 
-	retval = ext2fs_get_mem(strlen(src->device_name)+1, &fs->device_name);
-	if (retval)
-		goto errout;
+	retval = ext2fs_get_mem(అక్షరశ్రేణి_పొడవు(src->device_name)+1, &fs->device_name);
+	ఒకవేళ (retval)
+		వెళ్ళు errout;
 	strcpy(fs->device_name, src->device_name);
 
-	retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &fs->super);
-	if (retval)
-		goto errout;
-	memcpy(fs->super, src->super, SUPERBLOCK_SIZE);
+	retval = ext2fs_get_mem(SUPERBLOCK_కొలత, &fs->super);
+	ఒకవేళ (retval)
+		వెళ్ళు errout;
+	జ్ఞాపకం_నకలు(fs->super, src->super, SUPERBLOCK_కొలత);
 
-	retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &fs->orig_super);
-	if (retval)
-		goto errout;
-	memcpy(fs->orig_super, src->orig_super, SUPERBLOCK_SIZE);
+	retval = ext2fs_get_mem(SUPERBLOCK_కొలత, &fs->orig_super);
+	ఒకవేళ (retval)
+		వెళ్ళు errout;
+	జ్ఞాపకం_నకలు(fs->orig_super, src->orig_super, SUPERBLOCK_కొలత);
 
-	retval = ext2fs_get_array(fs->desc_blocks, fs->blocksize,
-				&fs->group_desc);
-	if (retval)
-		goto errout;
-	memcpy(fs->group_desc, src->group_desc,
-	       (size_t) fs->desc_blocks * fs->blocksize);
+	retval = ext2fs_get_array(fs->desc_ఖండాలు, fs->blocksize,
+				&fs->సమూహం_desc);
+	ఒకవేళ (retval)
+		వెళ్ళు errout;
+	జ్ఞాపకం_నకలు(fs->సమూహం_desc, src->సమూహం_desc,
+	       (size_t) fs->desc_ఖండాలు * fs->blocksize);
 
-	if (src->inode_map) {
+	ఒకవేళ (src->inode_map) {
 		retval = ext2fs_copy_bitmap(src->inode_map, &fs->inode_map);
-		if (retval)
-			goto errout;
+		ఒకవేళ (retval)
+			వెళ్ళు errout;
 	}
-	if (src->block_map) {
-		retval = ext2fs_copy_bitmap(src->block_map, &fs->block_map);
-		if (retval)
-			goto errout;
+	ఒకవేళ (src->ఖండం_map) {
+		retval = ext2fs_copy_bitmap(src->ఖండం_map, &fs->ఖండం_map);
+		ఒకవేళ (retval)
+			వెళ్ళు errout;
 	}
-	if (src->badblocks) {
+	ఒకవేళ (src->badblocks) {
 		retval = ext2fs_badblocks_copy(src->badblocks, &fs->badblocks);
-		if (retval)
-			goto errout;
+		ఒకవేళ (retval)
+			వెళ్ళు errout;
 	}
-	if (src->dblist) {
+	ఒకవేళ (src->dblist) {
 		retval = ext2fs_copy_dblist(src->dblist, &fs->dblist);
-		if (retval)
-			goto errout;
+		ఒకవేళ (retval)
+			వెళ్ళు errout;
 	}
-	if (src->mmp_buf) {
+	ఒకవేళ (src->mmp_buf) {
 		retval = ext2fs_mmp_get_mem(src, &fs->mmp_buf);
-		if (retval)
-			goto errout;
-		memcpy(fs->mmp_buf, src->mmp_buf, src->blocksize);
+		ఒకవేళ (retval)
+			వెళ్ళు errout;
+		జ్ఞాపకం_నకలు(fs->mmp_buf, src->mmp_buf, src->blocksize);
 	}
-	if (src->mmp_fd >= 0) {
+	ఒకవేళ (src->mmp_fd >= 0) {
 		fs->mmp_fd = dup(src->mmp_fd);
-		if (fs->mmp_fd < 0) {
-			retval = EXT2_ET_MMP_OPEN_DIRECT;
-			goto errout;
+		ఒకవేళ (fs->mmp_fd < 0) {
+			retval = EXT2_ET_MMP_OPEN_ప్రత్యక్ష;
+			వెళ్ళు errout;
 		}
 	}
-	if (src->mmp_cmp) {
+	ఒకవేళ (src->mmp_cmp) {
 		retval = ext2fs_mmp_get_mem(src, &fs->mmp_cmp);
-		if (retval)
-			goto errout;
-		memcpy(fs->mmp_cmp, src->mmp_cmp, src->blocksize);
+		ఒకవేళ (retval)
+			వెళ్ళు errout;
+		జ్ఞాపకం_నకలు(fs->mmp_cmp, src->mmp_cmp, src->blocksize);
 	}
 	*dest = fs;
-	return 0;
+	తిరిగి 0;
 errout:
 	ext2fs_free(fs);
-	return retval;
+	తిరిగి retval;
 
 }
 

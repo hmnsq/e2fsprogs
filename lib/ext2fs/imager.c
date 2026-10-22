@@ -13,124 +13,124 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_ERRNO_H
+#అన్తర్భావ <errno.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <time.h>
+#ఒకవేళ HAVE_SYS_STAT_H
+#అన్తర్భావ <sys/stat.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
-#ifndef HAVE_TYPE_SSIZE_T
-typedef int ssize_t;
-#endif
+#నిర్వచితం_కాకపోతే HAVE_TYPE_SSIZE_T
+రకనిర్వచనం పూర్ణాంకం ssize_t;
+#అయితే_ముగింపు
 
 /*
  * This function returns 1 if the specified block is all zeros
  */
-static int check_zero_block(char *buf, int blocksize)
+స్థిర పూర్ణాంకం check_zero_ఖండం(అక్షరం *buf, పూర్ణాంకం blocksize)
 {
-	char	*cp = buf;
-	int	left = blocksize;
+	అక్షరం	*cp = buf;
+	పూర్ణాంకం	ఎడమ = blocksize;
 
-	while (left > 0) {
-		if (*cp++)
-			return 0;
-		left--;
+	అయితే (ఎడమ > 0) {
+		ఒకవేళ (*cp++)
+			తిరిగి 0;
+		ఎడమ--;
 	}
-	return 1;
+	తిరిగి 1;
 }
 
 /*
  * Write the inode table out as a single block.
  */
-#define BUF_BLOCKS	32
+#నిర్వచించు BUF_ఖండాలు	32
 
-errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_inode_write(ext2_filsys fs, పూర్ణాంకం fd, పూర్ణాంకం flags)
 {
-	dgrp_t		group;
-	ssize_t		left, c, d;
-	char		*buf, *cp;
+	dgrp_t		సమూహం;
+	ssize_t		ఎడమ, c, d;
+	అక్షరం		*buf, *cp;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 	ext2_loff_t	r;
 
-	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	buf = జ్ఞాపకం_ఇవ్వు(fs->blocksize * BUF_ఖండాలు);
+	ఒకవేళ (!buf)
+		తిరిగి ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
-		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
-			retval = EXT2_ET_MISSING_INODE_TABLE;
-			goto errout;
+	కొరకు (సమూహం = 0; సమూహం < fs->సమూహం_desc_లెక్క; సమూహం++) {
+		blk = ext2fs_inode_పట్టిక_loc(fs, సమూహం);
+		ఒకవేళ (!blk) {
+			retval = EXT2_ET_MISSING_INODE_పట్టిక;
+			వెళ్ళు errout;
 		}
-		left = fs->inode_blocks_per_group;
-		if ((blk < fs->super->s_first_data_block) ||
-		    (blk + left - 1 >= ext2fs_blocks_count(fs->super))) {
-			retval = EXT2_ET_GDESC_BAD_INODE_TABLE;
-			goto errout;
+		ఎడమ = fs->inode_ఖండాలు_చొప్పున_సమూహం;
+		ఒకవేళ ((blk < fs->super->s_మొదటి_దత్తాంశం_ఖండం) ||
+		    (blk + ఎడమ - 1 >= ext2fs_ఖండాలు_లెక్క(fs->super))) {
+			retval = EXT2_ET_GDESC_BAD_INODE_పట్టిక;
+			వెళ్ళు errout;
 		}
-		while (left) {
-			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
+		అయితే (ఎడమ) {
+			c = BUF_ఖండాలు;
+			ఒకవేళ (c > ఎడమ)
+				c = ఎడమ;
 			retval = io_channel_read_blk64(fs->io, blk, c, buf);
-			if (retval)
-				goto errout;
+			ఒకవేళ (retval)
+				వెళ్ళు errout;
 			cp = buf;
-			while (c) {
-				if (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
+			అయితే (c) {
+				ఒకవేళ (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
 					d = c;
-					goto skip_sparse;
+					వెళ్ళు skip_sparse;
 				}
 				/* Skip zero blocks */
-				if (check_zero_block(cp, fs->blocksize)) {
+				ఒకవేళ (check_zero_ఖండం(cp, fs->blocksize)) {
 					c--;
 					blk++;
-					left--;
+					ఎడమ--;
 					cp += fs->blocksize;
 					r = ext2fs_llseek(fd, fs->blocksize,
 							  SEEK_CUR);
-					if (r < 0) {
+					ఒకవేళ (r < 0) {
 						retval = errno;
-						goto errout;
+						వెళ్ళు errout;
 					}
-					continue;
+					కొనసాగు;
 				}
 				/* Find non-zero blocks */
-				for (d = 1; d < c; d++) {
-					if (check_zero_block(cp +
+				కొరకు (d = 1; d < c; d++) {
+					ఒకవేళ (check_zero_ఖండం(cp +
 							     d * fs->blocksize,
 							     fs->blocksize))
-						break;
+						ఆపు;
 				}
 			skip_sparse:
-				actual = write(fd, cp, d * fs->blocksize);
-				if (actual == -1) {
+				actual = లిఖ(fd, cp, d * fs->blocksize);
+				ఒకవేళ (actual == -1) {
 					retval = errno;
-					goto errout;
+					వెళ్ళు errout;
 				}
-				if (actual != d * fs->blocksize) {
+				ఒకవేళ (actual != d * fs->blocksize) {
 					retval = EXT2_ET_SHORT_WRITE;
-					goto errout;
+					వెళ్ళు errout;
 				}
 				blk += d;
-				left -= d;
+				ఎడమ -= d;
 				cp += d * fs->blocksize;
 				c -= d;
 			}
@@ -139,332 +139,332 @@ errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	విడుదల(buf);
+	తిరిగి retval;
 }
 
 /*
  * Read in the inode table and stuff it into place
  */
-errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_inode_read(ext2_filsys fs, పూర్ణాంకం fd,
+				  పూర్ణాంకం flags EXT2FS_ATTR((వాడని)))
 {
-	dgrp_t		group;
-	ssize_t		c, left;
-	char		*buf;
+	dgrp_t		సమూహం;
+	ssize_t		c, ఎడమ;
+	అక్షరం		*buf;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 
-	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	buf = జ్ఞాపకం_ఇవ్వు(fs->blocksize * BUF_ఖండాలు);
+	ఒకవేళ (!buf)
+		తిరిగి ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
-		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
-			retval = EXT2_ET_MISSING_INODE_TABLE;
-			goto errout;
+	కొరకు (సమూహం = 0; సమూహం < fs->సమూహం_desc_లెక్క; సమూహం++) {
+		blk = ext2fs_inode_పట్టిక_loc(fs, సమూహం);
+		ఒకవేళ (!blk) {
+			retval = EXT2_ET_MISSING_INODE_పట్టిక;
+			వెళ్ళు errout;
 		}
-		left = fs->inode_blocks_per_group;
-		while (left) {
-			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
-			actual = read(fd, buf, fs->blocksize * c);
-			if (actual == -1) {
+		ఎడమ = fs->inode_ఖండాలు_చొప్పున_సమూహం;
+		అయితే (ఎడమ) {
+			c = BUF_ఖండాలు;
+			ఒకవేళ (c > ఎడమ)
+				c = ఎడమ;
+			actual = పఠ(fd, buf, fs->blocksize * c);
+			ఒకవేళ (actual == -1) {
 				retval = errno;
-				goto errout;
+				వెళ్ళు errout;
 			}
-			if (actual != fs->blocksize * c) {
+			ఒకవేళ (actual != fs->blocksize * c) {
 				retval = EXT2_ET_SHORT_READ;
-				goto errout;
+				వెళ్ళు errout;
 			}
 			retval = io_channel_write_blk64(fs->io, blk, c, buf);
-			if (retval)
-				goto errout;
+			ఒకవేళ (retval)
+				వెళ్ళు errout;
 
 			blk += c;
-			left -= c;
+			ఎడమ -= c;
 		}
 	}
 	retval = ext2fs_flush_icache(fs);
 
 errout:
-	free(buf);
-	return retval;
+	విడుదల(buf);
+	తిరిగి retval;
 }
 
 /*
  * Write out superblock and group descriptors
  */
-errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
-				   int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_write(ext2_filsys fs, పూర్ణాంకం fd,
+				   పూర్ణాంకం flags EXT2FS_ATTR((వాడని)))
 {
-	char		*buf, *cp;
+	అక్షరం		*buf, *cp;
 	ssize_t		actual;
 	errcode_t	retval;
-#ifdef WORDS_BIGENDIAN
-	unsigned int	groups_per_block;
-	struct		ext2_group_desc *gdp;
-	int		j;
-#endif
+#నిర్వచితమైతే పదాలు_BIGENDIAN
+	గుర్తులేని పూర్ణాంకం	groups_చొప్పున_ఖండం;
+	నిర్మాణం		ext2_సమూహం_desc *gdp;
+	పూర్ణాంకం		j;
+#అయితే_ముగింపు
 
-	if (fs->group_desc == NULL)
-		return EXT2_ET_NO_GDESC;
+	ఒకవేళ (fs->సమూహం_desc == ఖాళీ)
+		తిరిగి EXT2_ET_NO_GDESC;
 
-	buf = malloc(fs->blocksize);
-	if (!buf)
-		return ENOMEM;
+	buf = జ్ఞాపకం_ఇవ్వు(fs->blocksize);
+	ఒకవేళ (!buf)
+		తిరిగి ENOMEM;
 
 	/*
 	 * Write out the superblock
 	 */
 	memset(buf, 0, fs->blocksize);
-#ifdef WORDS_BIGENDIAN
+#నిర్వచితమైతే పదాలు_BIGENDIAN
 	/*
 	 * We're writing out superblock so let's convert
 	 * it to little endian and then back if needed
 	 */
-	ext2fs_swap_super(fs->super);
-	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
-	ext2fs_swap_super(fs->super);
-#else
-	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
-#endif
-	actual = write(fd, buf, fs->blocksize);
-	if (actual == -1) {
+	ext2fs_మార్పిడి_super(fs->super);
+	జ్ఞాపకం_నకలు(buf, fs->super, SUPERBLOCK_కొలత);
+	ext2fs_మార్పిడి_super(fs->super);
+#లేకపోతే
+	జ్ఞాపకం_నకలు(buf, fs->super, SUPERBLOCK_కొలత);
+#అయితే_ముగింపు
+	actual = లిఖ(fd, buf, fs->blocksize);
+	ఒకవేళ (actual == -1) {
 		retval = errno;
-		goto errout;
+		వెళ్ళు errout;
 	}
-	if (actual != (ssize_t) fs->blocksize) {
+	ఒకవేళ (actual != (ssize_t) fs->blocksize) {
 		retval = EXT2_ET_SHORT_WRITE;
-		goto errout;
+		వెళ్ళు errout;
 	}
 
 	/*
 	 * Now write out the block group descriptors
 	 */
 
-	cp = (char *) fs->group_desc;
+	cp = (అక్షరం *) fs->సమూహం_desc;
 
-#ifdef WORDS_BIGENDIAN
+#నిర్వచితమైతే పదాలు_BIGENDIAN
 	/*
 	 * Convert group descriptors to little endian and back
 	 * if needed
 	 */
-	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
-		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
-			ext2fs_swap_group_desc2(fs, gdp);
+	groups_చొప్పున_ఖండం = EXT2_DESC_చొప్పున_ఖండం(fs->super);
+	కొరకు (j=0; j < groups_చొప్పున_ఖండం*fs->desc_ఖండాలు; j++) {
+		gdp = ext2fs_సమూహం_desc(fs, fs->సమూహం_desc, j);
+		ఒకవేళ (gdp)
+			ext2fs_మార్పిడి_సమూహం_desc2(fs, gdp);
 	}
-#endif
+#అయితే_ముగింపు
 
-	actual = write(fd, cp, (ssize_t)fs->blocksize * fs->desc_blocks);
+	actual = లిఖ(fd, cp, (ssize_t)fs->blocksize * fs->desc_ఖండాలు);
 
 
-#ifdef WORDS_BIGENDIAN
-	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
-		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
-			ext2fs_swap_group_desc2(fs, gdp);
+#నిర్వచితమైతే పదాలు_BIGENDIAN
+	groups_చొప్పున_ఖండం = EXT2_DESC_చొప్పున_ఖండం(fs->super);
+	కొరకు (j=0; j < groups_చొప్పున_ఖండం*fs->desc_ఖండాలు; j++) {
+		gdp = ext2fs_సమూహం_desc(fs, fs->సమూహం_desc, j);
+		ఒకవేళ (gdp)
+			ext2fs_మార్పిడి_సమూహం_desc2(fs, gdp);
 	}
-#endif
+#అయితే_ముగింపు
 
-	if (actual == -1) {
+	ఒకవేళ (actual == -1) {
 		retval = errno;
-		goto errout;
+		వెళ్ళు errout;
 	}
-	if (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
+	ఒకవేళ (actual != (ssize_t)(fs->blocksize * fs->desc_ఖండాలు)) {
 		retval = EXT2_ET_SHORT_WRITE;
-		goto errout;
+		వెళ్ళు errout;
 	}
 
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	విడుదల(buf);
+	తిరిగి retval;
 }
 
 /*
  * Read the superblock and group descriptors and overwrite them.
  */
-errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_read(ext2_filsys fs, పూర్ణాంకం fd,
+				  పూర్ణాంకం flags EXT2FS_ATTR((వాడని)))
 {
-	char		*buf;
-	ssize_t		actual, size;
+	అక్షరం		*buf;
+	ssize_t		actual, కొలత;
 	errcode_t	retval;
 
-	size = (ssize_t)fs->blocksize * (fs->desc_blocks + 1);
-	buf = malloc(size);
-	if (!buf)
-		return ENOMEM;
+	కొలత = (ssize_t)fs->blocksize * (fs->desc_ఖండాలు + 1);
+	buf = జ్ఞాపకం_ఇవ్వు(కొలత);
+	ఒకవేళ (!buf)
+		తిరిగి ENOMEM;
 
 	/*
 	 * Read it all in.
 	 */
-	actual = read(fd, buf, size);
-	if (actual == -1) {
+	actual = పఠ(fd, buf, కొలత);
+	ఒకవేళ (actual == -1) {
 		retval = errno;
-		goto errout;
+		వెళ్ళు errout;
 	}
-	if (actual != size) {
+	ఒకవేళ (actual != కొలత) {
 		retval = EXT2_ET_SHORT_READ;
-		goto errout;
+		వెళ్ళు errout;
 	}
 
 	/*
 	 * Now copy in the superblock and group descriptors
 	 */
-	memcpy(fs->super, buf, SUPERBLOCK_SIZE);
+	జ్ఞాపకం_నకలు(fs->super, buf, SUPERBLOCK_కొలత);
 
-	memcpy(fs->group_desc, buf + fs->blocksize,
-	       (ssize_t)fs->blocksize * fs->desc_blocks);
+	జ్ఞాపకం_నకలు(fs->సమూహం_desc, buf + fs->blocksize,
+	       (ssize_t)fs->blocksize * fs->desc_ఖండాలు);
 
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	విడుదల(buf);
+	తిరిగి retval;
 }
 
 /*
  * Write the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, పూర్ణాంకం fd, పూర్ణాంకం flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	ssize_t			actual;
 	size_t			c;
-	__u64			itr, cnt, size, total_size;
-	char			buf[1024];
+	__u64			itr, cnt, కొలత, మొత్తం_కొలత;
+	అక్షరం			buf[1024];
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	ఒకవేళ (flags & IMAGER_FLAG_INODEMAP) {
+		ఒకవేళ (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			ఒకవేళ (retval)
+				తిరిగి retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
-		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
-		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
-			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+		cnt = (__u64)EXT2_INODES_చొప్పున_సమూహం(fs->super) *
+			fs->సమూహం_desc_లెక్క;
+		కొలత = (EXT2_INODES_చొప్పున_సమూహం(fs->super) / 8);
+	} లేకపోతే {
+		ఒకవేళ (!fs->ఖండం_map) {
+			retval = ext2fs_read_ఖండం_bitmap(fs);
+			ఒకవేళ (retval)
+				తిరిగి retval;
 		}
-		bmap = fs->block_map;
-		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super, fs->group_desc_count);
-		size = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
+		bmap = fs->ఖండం_map;
+		itr = fs->super->s_మొదటి_దత్తాంశం_ఖండం;
+		cnt = EXT2_GROUPS_గమ్యం_CLUSTERS(fs->super, fs->సమూహం_desc_లెక్క);
+		కొలత = EXT2_CLUSTERS_చొప్పున_సమూహం(fs->super) / 8;
 	}
-	total_size = size * fs->group_desc_count;
+	మొత్తం_కొలత = కొలత * fs->సమూహం_desc_లెక్క;
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
-			size = (cnt >> 3);
-		if (size == 0)
-			break;
+	అయితే (cnt > 0) {
+		కొలత = పరిమాణం(buf);
+		ఒకవేళ (కొలత > (cnt >> 3))
+			కొలత = (cnt >> 3);
+		ఒకవేళ (కొలత == 0)
+			ఆపు;
 
 		retval = ext2fs_get_generic_bmap_range(bmap, itr,
-						       size << 3, buf);
-		if (retval)
-			return retval;
+						       కొలత << 3, buf);
+		ఒకవేళ (retval)
+			తిరిగి retval;
 
-		actual = write(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		actual = లిఖ(fd, buf, కొలత);
+		ఒకవేళ (actual == -1)
+			తిరిగి errno;
+		ఒకవేళ (actual != (పూర్ణాంకం) కొలత)
+			తిరిగి EXT2_ET_SHORT_READ;
 
-		itr += size << 3;
-		cnt -= size << 3;
+		itr += కొలత << 3;
+		cnt -= కొలత << 3;
 	}
 
-	size = total_size % fs->blocksize;
-	memset(buf, 0, sizeof(buf));
-	if (size) {
-		size = fs->blocksize - size;
-		while (size) {
-			c = size;
-			if (c > (int) sizeof(buf))
-				c = sizeof(buf);
-			actual = write(fd, buf, c);
-			if (actual < 0)
-				return errno;
-			if ((size_t) actual != c)
-				return EXT2_ET_SHORT_WRITE;
-			size -= c;
+	కొలత = మొత్తం_కొలత % fs->blocksize;
+	memset(buf, 0, పరిమాణం(buf));
+	ఒకవేళ (కొలత) {
+		కొలత = fs->blocksize - కొలత;
+		అయితే (కొలత) {
+			c = కొలత;
+			ఒకవేళ (c > (పూర్ణాంకం) పరిమాణం(buf))
+				c = పరిమాణం(buf);
+			actual = లిఖ(fd, buf, c);
+			ఒకవేళ (actual < 0)
+				తిరిగి errno;
+			ఒకవేళ ((size_t) actual != c)
+				తిరిగి EXT2_ET_SHORT_WRITE;
+			కొలత -= c;
 		}
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 
 /*
  * Read the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, పూర్ణాంకం fd, పూర్ణాంకం flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	__u64			itr, cnt;
-	char			buf[1024];
-	unsigned int		size;
+	అక్షరం			buf[1024];
+	గుర్తులేని పూర్ణాంకం		కొలత;
 	ssize_t			actual;
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	ఒకవేళ (flags & IMAGER_FLAG_INODEMAP) {
+		ఒకవేళ (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			ఒకవేళ (retval)
+				తిరిగి retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
-		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
-		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
-			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+		cnt = (__u64)EXT2_INODES_చొప్పున_సమూహం(fs->super) *
+			fs->సమూహం_desc_లెక్క;
+		కొలత = (EXT2_INODES_చొప్పున_సమూహం(fs->super) / 8);
+	} లేకపోతే {
+		ఒకవేళ (!fs->ఖండం_map) {
+			retval = ext2fs_read_ఖండం_bitmap(fs);
+			ఒకవేళ (retval)
+				తిరిగి retval;
 		}
-		bmap = fs->block_map;
-		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_BLOCKS(fs->super, fs->group_desc_count);
-		size = EXT2_BLOCKS_PER_GROUP(fs->super) / 8;
+		bmap = fs->ఖండం_map;
+		itr = fs->super->s_మొదటి_దత్తాంశం_ఖండం;
+		cnt = EXT2_GROUPS_గమ్యం_ఖండాలు(fs->super, fs->సమూహం_desc_లెక్క);
+		కొలత = EXT2_ఖండాలు_చొప్పున_సమూహం(fs->super) / 8;
 	}
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
-			size = (cnt >> 3);
-		if (size == 0)
-			break;
+	అయితే (cnt > 0) {
+		కొలత = పరిమాణం(buf);
+		ఒకవేళ (కొలత > (cnt >> 3))
+			కొలత = (cnt >> 3);
+		ఒకవేళ (కొలత == 0)
+			ఆపు;
 
-		actual = read(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		actual = పఠ(fd, buf, కొలత);
+		ఒకవేళ (actual == -1)
+			తిరిగి errno;
+		ఒకవేళ (actual != (పూర్ణాంకం) కొలత)
+			తిరిగి EXT2_ET_SHORT_READ;
 
-		retval = ext2fs_set_generic_bmap_range(bmap, itr,
-						       size << 3, buf);
-		if (retval)
-			return retval;
+		retval = ext2fs_సమితి_generic_bmap_range(bmap, itr,
+						       కొలత << 3, buf);
+		ఒకవేళ (retval)
+			తిరిగి retval;
 
-		itr += size << 3;
-		cnt -= size << 3;
+		itr += కొలత << 3;
+		cnt -= కొలత << 3;
 	}
-	return 0;
+	తిరిగి 0;
 }

@@ -9,34 +9,34 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <errno.h>
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <errno.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
+#అన్తర్భావ "ext2fsP.h"
 
-#undef PUNCH_DEBUG
+#నిర్వచనం_రద్దు PUNCH_DEBUG
 
 /*
  * This function returns 1 if the specified block is all zeros
  */
-static int check_zero_block(char *buf, int blocksize)
+స్థిర పూర్ణాంకం check_zero_ఖండం(అక్షరం *buf, పూర్ణాంకం blocksize)
 {
-	char	*cp = buf;
-	int	left = blocksize;
+	అక్షరం	*cp = buf;
+	పూర్ణాంకం	ఎడమ = blocksize;
 
-	while (left > 0) {
-		if (*cp++)
-			return 0;
-		left--;
+	అయితే (ఎడమ > 0) {
+		ఒకవేళ (*cp++)
+			తిరిగి 0;
+		ఎడమ--;
 	}
-	return 1;
+	తిరిగి 1;
 }
 
 /*
@@ -46,178 +46,178 @@ static int check_zero_block(char *buf, int blocksize)
  * each one, will recursively handle any indirect blocks and then
  * frees and deallocates the blocks.
  */
-static errcode_t ind_punch(ext2_filsys fs, struct ext2_inode *inode,
-			   char *block_buf, blk_t *p, int level,
-			   blk64_t start, blk64_t count, int max)
+స్థిర errcode_t ind_punch(ext2_filsys fs, నిర్మాణం ext2_inode *inode,
+			   అక్షరం *ఖండం_buf, blk_t *p, పూర్ణాంకం level,
+			   blk64_t ప్రారంభం, blk64_t లెక్క, పూర్ణాంకం max)
 {
 	errcode_t	retval;
 	blk_t		b;
-	int		i;
-	blk64_t		offset, incr;
-	const blk64_t	end = start + count;
-	int		freed = 0;
+	పూర్ణాంకం		i;
+	blk64_t		స్థానభ్రంశం, incr;
+	స్థిరరాశి blk64_t	చివర = ప్రారంభం + లెక్క;
+	పూర్ణాంకం		freed = 0;
 
-#ifdef PUNCH_DEBUG
-	printf("Entering ind_punch, level %d, start %llu, count %llu, "
-	       "max %d\n", level, start, count, max);
-#endif
-	incr = 1ULL << ((EXT2_BLOCK_SIZE_BITS(fs->super) - 2) * level);
-	for (i = 0, offset = 0; i < max; i++, p++, offset += incr) {
-		if (offset >= end)
-			break;
-		if (*p == 0 || (offset+incr) <= start)
-			continue;
+#నిర్వచితమైతే PUNCH_DEBUG
+	రాయి("Entering ind_punch, level %d, start %llu, count %llu, "
+	       "max %d\n", level, ప్రారంభం, లెక్క, max);
+#అయితే_ముగింపు
+	incr = 1ULL << ((EXT2_ఖండం_కొలత_బిట్లు(fs->super) - 2) * level);
+	కొరకు (i = 0, స్థానభ్రంశం = 0; i < max; i++, p++, స్థానభ్రంశం += incr) {
+		ఒకవేళ (స్థానభ్రంశం >= చివర)
+			ఆపు;
+		ఒకవేళ (*p == 0 || (స్థానభ్రంశం+incr) <= ప్రారంభం)
+			కొనసాగు;
 		b = *p;
-		if (level > 0) {
+		ఒకవేళ (level > 0) {
 			blk_t start2;
 			blk_t count2;
-#ifdef PUNCH_DEBUG
-			printf("Reading indirect block %u\n", b);
-#endif
-			retval = ext2fs_read_ind_block(fs, b, block_buf);
-			if (retval)
-				return retval;
-			start2 = (start > offset) ? start - offset : 0;
-			count2 = end - ((start > offset) ? start : offset);
-#ifdef PUNCH_DEBUG
-			printf("start %llu offset %llu count %llu end %llu "
-			       "incr %llu start2 %u count2 %u\n", start,
-			       offset, count, end, incr, start2, count2);
-#endif
-			retval = ind_punch(fs, inode, block_buf + fs->blocksize,
-					   (blk_t *) block_buf, level - 1,
+#నిర్వచితమైతే PUNCH_DEBUG
+			రాయి("Reading indirect block %u\n", b);
+#అయితే_ముగింపు
+			retval = ext2fs_read_ind_ఖండం(fs, b, ఖండం_buf);
+			ఒకవేళ (retval)
+				తిరిగి retval;
+			start2 = (ప్రారంభం > స్థానభ్రంశం) ? ప్రారంభం - స్థానభ్రంశం : 0;
+			count2 = చివర - ((ప్రారంభం > స్థానభ్రంశం) ? ప్రారంభం : స్థానభ్రంశం);
+#నిర్వచితమైతే PUNCH_DEBUG
+			రాయి("start %llu offset %llu count %llu end %llu "
+			       "incr %llu start2 %u count2 %u\n", ప్రారంభం,
+			       స్థానభ్రంశం, లెక్క, చివర, incr, start2, count2);
+#అయితే_ముగింపు
+			retval = ind_punch(fs, inode, ఖండం_buf + fs->blocksize,
+					   (blk_t *) ఖండం_buf, level - 1,
 					   start2, count2,
 					   fs->blocksize >> 2);
-			if (retval)
-				return retval;
-			retval = ext2fs_write_ind_block(fs, b, block_buf);
-			if (retval)
-				return retval;
-			if (!check_zero_block(block_buf, fs->blocksize))
-				continue;
+			ఒకవేళ (retval)
+				తిరిగి retval;
+			retval = ext2fs_write_ind_ఖండం(fs, b, ఖండం_buf);
+			ఒకవేళ (retval)
+				తిరిగి retval;
+			ఒకవేళ (!check_zero_ఖండం(ఖండం_buf, fs->blocksize))
+				కొనసాగు;
 		}
-#ifdef PUNCH_DEBUG
-		printf("Freeing block %u (offset %llu)\n", b, offset);
-#endif
-		ext2fs_block_alloc_stats(fs, b, -1);
+#నిర్వచితమైతే PUNCH_DEBUG
+		రాయి("Freeing block %u (offset %llu)\n", b, స్థానభ్రంశం);
+#అయితే_ముగింపు
+		ext2fs_ఖండం_alloc_stats(fs, b, -1);
 		*p = 0;
 		freed++;
 	}
-#ifdef PUNCH_DEBUG
-	printf("Freed %d blocks\n", freed);
-#endif
-	return ext2fs_iblk_sub_blocks(fs, inode, freed);
+#నిర్వచితమైతే PUNCH_DEBUG
+	రాయి("Freed %d blocks\n", freed);
+#అయితే_ముగింపు
+	తిరిగి ext2fs_iblk_sub_ఖండాలు(fs, inode, freed);
 }
 
-#define BLK_T_MAX ((blk_t)~0ULL)
-static errcode_t ext2fs_punch_ind(ext2_filsys fs, struct ext2_inode *inode,
-				  char *block_buf, blk64_t start, blk64_t end)
+#నిర్వచించు BLK_T_MAX ((blk_t)~0ULL)
+స్థిర errcode_t ext2fs_punch_ind(ext2_filsys fs, నిర్మాణం ext2_inode *inode,
+				  అక్షరం *ఖండం_buf, blk64_t ప్రారంభం, blk64_t చివర)
 {
 	errcode_t		retval;
-	char			*buf = 0;
-	int			level;
-	int			num = EXT2_NDIR_BLOCKS;
-	blk_t			*bp = inode->i_block;
-	blk_t			addr_per_block;
-	blk64_t			max = EXT2_NDIR_BLOCKS;
-	blk_t			count;
+	అక్షరం			*buf = 0;
+	పూర్ణాంకం			level;
+	పూర్ణాంకం			అంకె = EXT2_NDIR_ఖండాలు;
+	blk_t			*bp = inode->i_ఖండం;
+	blk_t			addr_చొప్పున_ఖండం;
+	blk64_t			max = EXT2_NDIR_ఖండాలు;
+	blk_t			లెక్క;
 
 	/* Check start/end don't overflow the 2^32-1 indirect block limit */
-	if (start > BLK_T_MAX)
-		return 0;
-	if (end >= BLK_T_MAX || end - start + 1 >= BLK_T_MAX)
-		count = BLK_T_MAX - start;
-	else
-		count = end - start + 1;
+	ఒకవేళ (ప్రారంభం > BLK_T_MAX)
+		తిరిగి 0;
+	ఒకవేళ (చివర >= BLK_T_MAX || చివర - ప్రారంభం + 1 >= BLK_T_MAX)
+		లెక్క = BLK_T_MAX - ప్రారంభం;
+	లేకపోతే
+		లెక్క = చివర - ప్రారంభం + 1;
 
-	if (!block_buf) {
+	ఒకవేళ (!ఖండం_buf) {
 		retval = ext2fs_get_array(3, fs->blocksize, &buf);
-		if (retval)
-			return retval;
-		block_buf = buf;
+		ఒకవేళ (retval)
+			తిరిగి retval;
+		ఖండం_buf = buf;
 	}
 
-	addr_per_block = (blk_t)fs->blocksize >> 2;
+	addr_చొప్పున_ఖండం = (blk_t)fs->blocksize >> 2;
 
-	for (level = 0; level < 4; level++, max *= (blk64_t)addr_per_block) {
-#ifdef PUNCH_DEBUG
-		printf("Main loop level %d, start %llu count %u "
-		       "max %llu num %d\n", level, start, count, max, num);
-#endif
-		if (start < max) {
-			retval = ind_punch(fs, inode, block_buf, bp, level,
-					   start, count, num);
-			if (retval)
-				goto errout;
-			if (count > max)
-				count -= max - start;
-			else
-				break;
-			start = 0;
-		} else
-			start -= max;
-		bp += num;
-		if (level == 0) {
-			num = 1;
+	కొరకు (level = 0; level < 4; level++, max *= (blk64_t)addr_చొప్పున_ఖండం) {
+#నిర్వచితమైతే PUNCH_DEBUG
+		రాయి("Main loop level %d, start %llu count %u "
+		       "max %llu num %d\n", level, ప్రారంభం, లెక్క, max, అంకె);
+#అయితే_ముగింపు
+		ఒకవేళ (ప్రారంభం < max) {
+			retval = ind_punch(fs, inode, ఖండం_buf, bp, level,
+					   ప్రారంభం, లెక్క, అంకె);
+			ఒకవేళ (retval)
+				వెళ్ళు errout;
+			ఒకవేళ (లెక్క > max)
+				లెక్క -= max - ప్రారంభం;
+			లేకపోతే
+				ఆపు;
+			ప్రారంభం = 0;
+		} లేకపోతే
+			ప్రారంభం -= max;
+		bp += అంకె;
+		ఒకవేళ (level == 0) {
+			అంకె = 1;
 			max = 1;
 		}
 	}
 	retval = 0;
 errout:
-	if (buf)
+	ఒకవేళ (buf)
 		ext2fs_free_mem(&buf);
-	return retval;
+	తిరిగి retval;
 }
-#undef BLK_T_MAX
+#నిర్వచనం_రద్దు BLK_T_MAX
 
-#ifdef PUNCH_DEBUG
+#నిర్వచితమైతే PUNCH_DEBUG
 
-#define dbg_printf(f, a...)  printf(f, ## a)
+#నిర్వచించు dbg_printf(f, a...)  రాయి(f, ## a)
 
-static void dbg_print_extent(char *desc, struct ext2fs_extent *extent)
+స్థిర శూన్య dbg_print_extent(అక్షరం *desc, నిర్మాణం ext2fs_extent *extent)
 {
-	if (desc)
-		printf("%s: ", desc);
-	printf("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
+	ఒకవేళ (desc)
+		రాయి("%s: ", desc);
+	రాయి("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
 	       extent->e_lblk, extent->e_lblk + extent->e_len - 1,
 	       extent->e_len, extent->e_pblk);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_LEAF)
+	ఒకవేళ (extent->e_flags & EXT2_EXTENT_FLAGS_ఆకు)
 		fputs("LEAF ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	ఒకవేళ (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 		fputs("UNINIT ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_SECOND_VISIT)
+	ఒకవేళ (extent->e_flags & EXT2_EXTENT_FLAGS_రెండవ_సందర్శించు)
 		fputs("2ND_VISIT ", stdout);
-	if (!extent->e_flags)
+	ఒకవేళ (!extent->e_flags)
 		fputs("(none)", stdout);
 	fputc('\n', stdout);
 
 }
-#else
-#define dbg_print_extent(desc, ex)	do { } while (0)
-#define dbg_printf(f, a...)		do { } while (0)
-#endif
+#లేకపోతే
+#నిర్వచించు dbg_print_extent(desc, ex)	చేయి { } అయితే (0)
+#నిర్వచించు dbg_printf(f, a...)		చేయి { } అయితే (0)
+#అయితే_ముగింపు
 
 /* Free a range of blocks, respecting cluster boundaries */
-static errcode_t punch_extent_blocks(ext2_filsys fs, ext2_ino_t ino,
-				     struct ext2_inode *inode,
-				     blk64_t lfree_start, blk64_t free_start,
-				     __u32 free_count, blk64_t *freed)
+స్థిర errcode_t punch_extent_ఖండాలు(ext2_filsys fs, ext2_ino_t ino,
+				     నిర్మాణం ext2_inode *inode,
+				     blk64_t lfree_ప్రారంభం, blk64_t free_ప్రారంభం,
+				     __u32 free_లెక్క, blk64_t *freed)
 {
 	blk64_t		pblk;
 	__u32		freed_now = 0;
 	__u32		cluster_freed;
 	errcode_t	retval = 0;
 
-	if (free_start < fs->super->s_first_data_block ||
-	    (free_start + free_count) > ext2fs_blocks_count(fs->super))
-		return EXT2_ET_BAD_BLOCK_NUM;
+	ఒకవేళ (free_ప్రారంభం < fs->super->s_మొదటి_దత్తాంశం_ఖండం ||
+	    (free_ప్రారంభం + free_లెక్క) > ext2fs_ఖండాలు_లెక్క(fs->super))
+		తిరిగి EXT2_ET_BAD_ఖండం_అంకె;
 
 	/* No bigalloc?  Just free each block. */
-	if (EXT2FS_CLUSTER_RATIO(fs) == 1) {
-		*freed += free_count;
-		while (free_count-- > 0)
-			ext2fs_block_alloc_stats2(fs, free_start++, -1);
-		return retval;
+	ఒకవేళ (EXT2_FS_CLUSTER_నిష్పత్తి(fs) == 1) {
+		*freed += free_లెక్క;
+		అయితే (free_లెక్క-- > 0)
+			ext2fs_ఖండం_alloc_stats2(fs, free_ప్రారంభం++, -1);
+		తిరిగి retval;
 	}
 
 	/*
@@ -225,66 +225,66 @@ static errcode_t punch_extent_blocks(ext2_filsys fs, ext2_ino_t ino,
 	 * blocks in a logical cluster map to blocks from the same physical
 	 * cluster, and that the offsets within the [pl]clusters match.
 	 */
-	if (free_start & EXT2FS_CLUSTER_MASK(fs)) {
-		retval = ext2fs_map_cluster_block(fs, ino, inode,
-						  lfree_start, &pblk);
-		if (retval)
-			goto errout;
-		if (!pblk) {
-			ext2fs_block_alloc_stats2(fs, free_start, -1);
+	ఒకవేళ (free_ప్రారంభం & EXT2_FS_CLUSTER_ముసుగు(fs)) {
+		retval = ext2fs_map_cluster_ఖండం(fs, ino, inode,
+						  lfree_ప్రారంభం, &pblk);
+		ఒకవేళ (retval)
+			వెళ్ళు errout;
+		ఒకవేళ (!pblk) {
+			ext2fs_ఖండం_alloc_stats2(fs, free_ప్రారంభం, -1);
 			freed_now++;
 		}
-		cluster_freed = EXT2FS_CLUSTER_RATIO(fs) -
-			(free_start & EXT2FS_CLUSTER_MASK(fs));
-		if (cluster_freed > free_count)
-			cluster_freed = free_count;
-		free_count -= cluster_freed;
-		free_start += cluster_freed;
-		lfree_start += cluster_freed;
+		cluster_freed = EXT2_FS_CLUSTER_నిష్పత్తి(fs) -
+			(free_ప్రారంభం & EXT2_FS_CLUSTER_ముసుగు(fs));
+		ఒకవేళ (cluster_freed > free_లెక్క)
+			cluster_freed = free_లెక్క;
+		free_లెక్క -= cluster_freed;
+		free_ప్రారంభం += cluster_freed;
+		lfree_ప్రారంభం += cluster_freed;
 	}
 
 	/* Free whole clusters from the middle of the range. */
-	while (free_count > 0 && free_count >= (unsigned) EXT2FS_CLUSTER_RATIO(fs)) {
-		ext2fs_block_alloc_stats2(fs, free_start, -1);
+	అయితే (free_లెక్క > 0 && free_లెక్క >= (గుర్తులేని) EXT2_FS_CLUSTER_నిష్పత్తి(fs)) {
+		ext2fs_ఖండం_alloc_stats2(fs, free_ప్రారంభం, -1);
 		freed_now++;
-		cluster_freed = EXT2FS_CLUSTER_RATIO(fs);
-		free_count -= cluster_freed;
-		free_start += cluster_freed;
-		lfree_start += cluster_freed;
+		cluster_freed = EXT2_FS_CLUSTER_నిష్పత్తి(fs);
+		free_లెక్క -= cluster_freed;
+		free_ప్రారంభం += cluster_freed;
+		lfree_ప్రారంభం += cluster_freed;
 	}
 
 	/* Try to free the last cluster. */
-	if (free_count > 0) {
-		retval = ext2fs_map_cluster_block(fs, ino, inode,
-						  lfree_start, &pblk);
-		if (retval)
-			goto errout;
-		if (!pblk) {
-			ext2fs_block_alloc_stats2(fs, free_start, -1);
+	ఒకవేళ (free_లెక్క > 0) {
+		retval = ext2fs_map_cluster_ఖండం(fs, ino, inode,
+						  lfree_ప్రారంభం, &pblk);
+		ఒకవేళ (retval)
+			వెళ్ళు errout;
+		ఒకవేళ (!pblk) {
+			ext2fs_ఖండం_alloc_stats2(fs, free_ప్రారంభం, -1);
 			freed_now++;
 		}
 	}
 
 errout:
 	*freed += freed_now;
-	return retval;
+	తిరిగి retval;
 }
 
-static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
-				     struct ext2_inode *inode,
-				     blk64_t start, blk64_t end)
+స్థిర errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
+				     నిర్మాణం ext2_inode *inode,
+				     blk64_t ప్రారంభం, blk64_t చివర)
 {
 	ext2_extent_handle_t	handle = 0;
-	struct ext2fs_extent	extent;
+	నిర్మాణం ext2fs_extent	extent;
 	errcode_t		retval;
-	blk64_t			free_start, next, lfree_start;
-	__u32			free_count, newlen;
+	blk64_t			free_ప్రారంభం, తదుపరి, lfree_ప్రారంభం;
+	__u32			free_లెక్క, newlen;
 	blk64_t			freed = 0;
-	int			op;
+	పూర్ణాంకం			op;
 
 	retval = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 	/*
 	 * Find the extent closest to the start of the punch range.  We don't
 	 * check the return value because _goto() sets the current node to the
@@ -296,80 +296,80 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 	 * there aren't any blocks mapped past this point in the file, so we're
 	 * done.
 	 */
-	ext2fs_extent_goto(handle, start);
+	ext2fs_extent_goto(handle, ప్రారంభం);
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval == EXT2_ET_NO_CURRENT_NODE) {
+	ఒకవేళ (retval == EXT2_ET_NO_CURRENT_కణుపు) {
 		retval = 0;
-		goto errout;
-	} else if (retval)
-		goto errout;
-	while (1) {
-		op = EXT2_EXTENT_NEXT_LEAF;
+		వెళ్ళు errout;
+	} లేకపోతే ఒకవేళ (retval)
+		వెళ్ళు errout;
+	అయితే (1) {
+		op = EXT2_EXTENT_తదుపరి_ఆకు;
 		dbg_print_extent("main loop", &extent);
-		next = extent.e_lblk + extent.e_len;
+		తదుపరి = extent.e_lblk + extent.e_len;
 		dbg_printf("start %llu, end %llu, next %llu\n",
-			   (unsigned long long) start,
-			   (unsigned long long) end,
-			   (unsigned long long) next);
-		if (start <= extent.e_lblk) {
+			   (గుర్తులేని దీర్ఘ దీర్ఘ) ప్రారంభం,
+			   (గుర్తులేని దీర్ఘ దీర్ఘ) చివర,
+			   (గుర్తులేని దీర్ఘ దీర్ఘ) తదుపరి);
+		ఒకవేళ (ప్రారంభం <= extent.e_lblk) {
 			/*
 			 * Have we iterated past the end of the punch region?
 			 * If so, we can stop.
 			 */
-			if (end < extent.e_lblk)
-				break;
+			ఒకవేళ (చివర < extent.e_lblk)
+				ఆపు;
 			dbg_printf("Case #%d\n", 1);
 			/* Start of deleted region before extent; 
 			   adjust beginning of extent */
-			free_start = extent.e_pblk;
-			lfree_start = extent.e_lblk;
-			if (next > end)
-				free_count = end - extent.e_lblk + 1;
-			else
-				free_count = extent.e_len;
-			extent.e_len -= free_count;
-			extent.e_lblk += free_count;
-			extent.e_pblk += free_count;
-		} else if (end >= next-1) {
+			free_ప్రారంభం = extent.e_pblk;
+			lfree_ప్రారంభం = extent.e_lblk;
+			ఒకవేళ (తదుపరి > చివర)
+				free_లెక్క = చివర - extent.e_lblk + 1;
+			లేకపోతే
+				free_లెక్క = extent.e_len;
+			extent.e_len -= free_లెక్క;
+			extent.e_lblk += free_లెక్క;
+			extent.e_pblk += free_లెక్క;
+		} లేకపోతే ఒకవేళ (చివర >= తదుపరి-1) {
 			/*
 			 * Is the punch region beyond this extent?  This can
 			 * happen if start is already inside a hole.  Try to
 			 * advance to the next extent if this is the case.
 			 */
-			if (start >= next)
-				goto next_extent;
+			ఒకవేళ (ప్రారంభం >= తదుపరి)
+				వెళ్ళు తదుపరి_extent;
 			/* End of deleted region after extent;
 			   adjust end of extent */
 			dbg_printf("Case #%d\n", 2);
-			newlen = start - extent.e_lblk;
-			free_start = extent.e_pblk + newlen;
-			lfree_start = extent.e_lblk + newlen;
-			free_count = extent.e_len - newlen;
+			newlen = ప్రారంభం - extent.e_lblk;
+			free_ప్రారంభం = extent.e_pblk + newlen;
+			lfree_ప్రారంభం = extent.e_lblk + newlen;
+			free_లెక్క = extent.e_len - newlen;
 			extent.e_len = newlen;
-		} else {
-			struct ext2fs_extent	newex;
+		} లేకపోతే {
+			నిర్మాణం ext2fs_extent	newex;
 
 			dbg_printf("Case #%d\n", 3);
 			/* The hard case; we need to split the extent */
 			newex.e_pblk = extent.e_pblk +
-				(end + 1 - extent.e_lblk);
-			newex.e_lblk = end + 1;
-			newex.e_len = next - end - 1;
+				(చివర + 1 - extent.e_lblk);
+			newex.e_lblk = చివర + 1;
+			newex.e_len = తదుపరి - చివర - 1;
 			newex.e_flags = extent.e_flags;
 
-			extent.e_len = start - extent.e_lblk;
-			free_start = extent.e_pblk + extent.e_len;
-			lfree_start = extent.e_lblk + extent.e_len;
-			free_count = end - start + 1;
+			extent.e_len = ప్రారంభం - extent.e_lblk;
+			free_ప్రారంభం = extent.e_pblk + extent.e_len;
+			lfree_ప్రారంభం = extent.e_lblk + extent.e_len;
+			free_లెక్క = చివర - ప్రారంభం + 1;
 
 			dbg_print_extent("inserting", &newex);
-			retval = ext2fs_extent_insert(handle,
-					EXT2_EXTENT_INSERT_AFTER, &newex);
-			if (retval)
-				goto errout;
+			retval = ext2fs_extent_చొప్పించు(handle,
+					EXT2_EXTENT_చొప్పించు_AFTER, &newex);
+			ఒకవేళ (retval)
+				వెళ్ళు errout;
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval)
-				goto errout;
+			ఒకవేళ (retval)
+				వెళ్ళు errout;
 			/*
 			 * Now pointing at inserted extent; so go back.
 			 *
@@ -377,18 +377,18 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 			 * subtlety in the comment for fix_parents().
 			 */
 			retval = ext2fs_extent_goto(handle, extent.e_lblk);
-			if (retval)
-				goto errout;
+			ఒకవేళ (retval)
+				వెళ్ళు errout;
 		} 
-		if (extent.e_len) {
+		ఒకవేళ (extent.e_len) {
 			dbg_print_extent("replacing", &extent);
 			retval = ext2fs_extent_replace(handle, 0, &extent);
-			if (retval)
-				goto errout;
+			ఒకవేళ (retval)
+				వెళ్ళు errout;
 			retval = ext2fs_extent_fix_parents(handle);
-		} else {
-			struct ext2fs_extent	newex;
-			blk64_t			old_lblk, next_lblk;
+		} లేకపోతే {
+			నిర్మాణం ext2fs_extent	newex;
+			blk64_t			old_lblk, తదుపరి_lblk;
 			dbg_printf("deleting current extent%s\n", "");
 
 			/*
@@ -397,32 +397,32 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 			 */
 			retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 						   &newex);
-			if (retval)
-				goto errout;
+			ఒకవేళ (retval)
+				వెళ్ళు errout;
 			old_lblk = newex.e_lblk;
 
 			retval = ext2fs_extent_get(handle,
-						   EXT2_EXTENT_NEXT_LEAF,
+						   EXT2_EXTENT_తదుపరి_ఆకు,
 						   &newex);
-			if (retval == EXT2_ET_EXTENT_NO_NEXT)
-				next_lblk = old_lblk;
-			else if (retval)
-				goto errout;
-			else
-				next_lblk = newex.e_lblk;
+			ఒకవేళ (retval == EXT2_ET_EXTENT_NO_తదుపరి)
+				తదుపరి_lblk = old_lblk;
+			లేకపోతే ఒకవేళ (retval)
+				వెళ్ళు errout;
+			లేకపోతే
+				తదుపరి_lblk = newex.e_lblk;
 
 			retval = ext2fs_extent_goto(handle, old_lblk);
-			if (retval)
-				goto errout;
+			ఒకవేళ (retval)
+				వెళ్ళు errout;
 
 			/* Now delete the extent. */
 			retval = ext2fs_extent_delete(handle, 0);
-			if (retval)
-				goto errout;
+			ఒకవేళ (retval)
+				వెళ్ళు errout;
 
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval && retval != EXT2_ET_NO_CURRENT_NODE)
-				goto errout;
+			ఒకవేళ (retval && retval != EXT2_ET_NO_CURRENT_కణుపు)
+				వెళ్ళు errout;
 			retval = 0;
 
 			/*
@@ -430,37 +430,37 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 			 * errors, the ext2fs_extent_get down below will
 			 * capture them for us.
 			 */
-			(void)ext2fs_extent_goto(handle, next_lblk);
+			(శూన్య)ext2fs_extent_goto(handle, తదుపరి_lblk);
 			op = EXT2_EXTENT_CURRENT;
 		}
-		if (retval)
-			goto errout;
+		ఒకవేళ (retval)
+			వెళ్ళు errout;
 		dbg_printf("Free start %llu, free count = %u\n",
-		       free_start, free_count);
-		retval = punch_extent_blocks(fs, ino, inode, lfree_start,
-					     free_start, free_count, &freed);
-		if (retval)
-			goto errout;
-	next_extent:
+		       free_ప్రారంభం, free_లెక్క);
+		retval = punch_extent_ఖండాలు(fs, ino, inode, lfree_ప్రారంభం,
+					     free_ప్రారంభం, free_లెక్క, &freed);
+		ఒకవేళ (retval)
+			వెళ్ళు errout;
+	తదుపరి_extent:
 		retval = ext2fs_extent_get(handle, op,
 					   &extent);
-		if (retval == EXT2_ET_EXTENT_NO_NEXT ||
-		    retval == EXT2_ET_NO_CURRENT_NODE)
-			break;
-		if (retval)
-			goto errout;
+		ఒకవేళ (retval == EXT2_ET_EXTENT_NO_తదుపరి ||
+		    retval == EXT2_ET_NO_CURRENT_కణుపు)
+			ఆపు;
+		ఒకవేళ (retval)
+			వెళ్ళు errout;
 	}
 	dbg_printf("Freed %llu blocks\n", freed);
-	retval = ext2fs_iblk_sub_blocks(fs, inode, freed);
+	retval = ext2fs_iblk_sub_ఖండాలు(fs, inode, freed);
 errout:
 	ext2fs_extent_free(handle);
-	return retval;
+	తిరిగి retval;
 }
 	
-static errcode_t ext2fs_punch_inline_data(ext2_filsys fs, ext2_ino_t ino,
-					  struct ext2_inode *inode,
-					  blk64_t start,
-					  blk64_t end EXT2FS_ATTR((unused)))
+స్థిర errcode_t ext2fs_punch_inline_దత్తాంశం(ext2_filsys fs, ext2_ino_t ino,
+					  నిర్మాణం ext2_inode *inode,
+					  blk64_t ప్రారంభం,
+					  blk64_t చివర EXT2FS_ATTR((వాడని)))
 {
 	errcode_t retval;
 
@@ -470,16 +470,16 @@ static errcode_t ext2fs_punch_inline_data(ext2_filsys fs, ext2_ino_t ino,
 	 * to this we will remove all inline data in ext2fs_punch()
 	 * now.
 	 */
-	if (start > 0)
-		return 0;
+	ఒకవేళ (ప్రారంభం > 0)
+		తిరిగి 0;
 
-	memset((char *)inode->i_block, 0, EXT4_MIN_INLINE_DATA_SIZE);
-	inode->i_size = 0;
+	memset((అక్షరం *)inode->i_ఖండం, 0, EXT4_MIN_INLINE_దత్తాంశం_కొలత);
+	inode->i_కొలత = 0;
 	retval = ext2fs_write_inode(fs, ino, inode);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
-	return ext2fs_inline_data_ea_remove(fs, ino);
+	తిరిగి ext2fs_inline_దత్తాంశం_ea_remove(fs, ino);
 }
 
 /*
@@ -487,35 +487,35 @@ static errcode_t ext2fs_punch_inline_data(ext2_filsys fs, ext2_ino_t ino,
  * If end is ~0ULL, then this is effectively truncate.
  */
 errcode_t ext2fs_punch(ext2_filsys fs, ext2_ino_t ino,
-		       struct ext2_inode *inode,
-		       char *block_buf, blk64_t start,
-		       blk64_t end)
+		       నిర్మాణం ext2_inode *inode,
+		       అక్షరం *ఖండం_buf, blk64_t ప్రారంభం,
+		       blk64_t చివర)
 {
 	errcode_t		retval;
-	struct ext2_inode	inode_buf;
+	నిర్మాణం ext2_inode	inode_buf;
 
-	if (start > end)
-		return EINVAL;
+	ఒకవేళ (ప్రారంభం > చివర)
+		తిరిగి EINVAL;
 
 	/* Read inode structure if necessary */
-	if (!inode) {
+	ఒకవేళ (!inode) {
 		retval = ext2fs_read_inode(fs, ino, &inode_buf);
-		if (retval)
-			return retval;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 		inode = &inode_buf;
 	}
-	if (inode->i_flags & EXT4_INLINE_DATA_FL)
-		return ext2fs_punch_inline_data(fs, ino, inode, start, end);
-	else if (inode->i_flags & EXT4_EXTENTS_FL)
-		retval = ext2fs_punch_extent(fs, ino, inode, start, end);
-	else
-		retval = ext2fs_punch_ind(fs, inode, block_buf, start, end);
-	if (retval)
-		return retval;
+	ఒకవేళ (inode->i_flags & EXT4_INLINE_దత్తాంశం_FL)
+		తిరిగి ext2fs_punch_inline_దత్తాంశం(fs, ino, inode, ప్రారంభం, చివర);
+	లేకపోతే ఒకవేళ (inode->i_flags & EXT4_EXTENTS_FL)
+		retval = ext2fs_punch_extent(fs, ino, inode, ప్రారంభం, చివర);
+	లేకపోతే
+		retval = ext2fs_punch_ind(fs, inode, ఖండం_buf, ప్రారంభం, చివర);
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
-#ifdef PUNCH_DEBUG
-	printf("%u: write inode size now %lu blocks %u\n",
-		ino, EXT2_I_SIZE(inode), inode->i_blocks);
-#endif
-	return ext2fs_write_inode(fs, ino, inode);
+#నిర్వచితమైతే PUNCH_DEBUG
+	రాయి("%u: write inode size now %lu blocks %u\n",
+		ino, EXT2_I_కొలత(inode), inode->i_ఖండాలు);
+#అయితే_ముగింపు
+	తిరిగి ext2fs_write_inode(fs, ino, inode);
 }

@@ -1,109 +1,109 @@
-#include "hashmap.h"
-#include <string.h>
+#అన్తర్భావ "hashmap.h"
+#అన్తర్భావ <string.h>
 
-struct ext2fs_hashmap {
-	uint32_t size;
-	uint32_t(*hash)(const void *key, size_t len);
-	void(*free)(void*);
-	struct ext2fs_hashmap_entry *first;
-	struct ext2fs_hashmap_entry *last;
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-#endif
-	struct ext2fs_hashmap_entry *entries[0];
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic pop
-#endif
+నిర్మాణం ext2fs_hashmap {
+	uint32_t కొలత;
+	uint32_t(*hash)(స్థిరరాశి శూన్య *కీలకం, size_t len);
+	శూన్య(*విడుదల)(శూన్య*);
+	నిర్మాణం ext2fs_hashmap_నమోదు *మొదటి;
+	నిర్మాణం ext2fs_hashmap_నమోదు *చివరి;
+#ఒకవేళ __GNUC_PREREQ (4, 8)
+#సూచన GCC diagnostic నెట్టు
+#సూచన GCC diagnostic ignored "-Wpedantic"
+#అయితే_ముగింపు
+	నిర్మాణం ext2fs_hashmap_నమోదు *entries[0];
+#ఒకవేళ __GNUC_PREREQ (4, 8)
+#సూచన GCC diagnostic తీయి
+#అయితే_ముగింపు
 };
 
-uint32_t ext2fs_djb2_hash(const void *str, size_t size)
+uint32_t ext2fs_djb2_hash(స్థిరరాశి శూన్య *str, size_t కొలత)
 {
-	int c;
-	const char *s = str;
+	పూర్ణాంకం c;
+	స్థిరరాశి అక్షరం *s = str;
 	uint32_t hash = 5381;
 
-	while (size-- > 0) {
+	అయితే (కొలత-- > 0) {
 		c = *s++;
 		hash = ((hash << 5) + hash) + c;
 	}
-	return hash;
+	తిరిగి hash;
 }
 
-struct ext2fs_hashmap *ext2fs_hashmap_create(
-				uint32_t(*hash_fct)(const void*, size_t),
-				void(*free_fct)(void*), size_t size)
+నిర్మాణం ext2fs_hashmap *ext2fs_hashmap_create(
+				uint32_t(*hash_fct)(స్థిరరాశి శూన్య*, size_t),
+				శూన్య(*free_fct)(శూన్య*), size_t కొలత)
 {
-	struct ext2fs_hashmap *h = calloc(1, sizeof(struct ext2fs_hashmap) +
-				sizeof(struct ext2fs_hashmap_entry) * size);
-	if (!h)
-		return NULL;
+	నిర్మాణం ext2fs_hashmap *h = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం ext2fs_hashmap) +
+				పరిమాణం(నిర్మాణం ext2fs_hashmap_నమోదు) * కొలత);
+	ఒకవేళ (!h)
+		తిరిగి ఖాళీ;
 
-	h->size = size;
-	h->free = free_fct;
+	h->కొలత = కొలత;
+	h->విడుదల = free_fct;
 	h->hash = hash_fct;
-	h->first = h->last = NULL;
-	return h;
+	h->మొదటి = h->చివరి = ఖాళీ;
+	తిరిగి h;
 }
 
-int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
-		       void *data, const void *key, size_t key_len)
+పూర్ణాంకం ext2fs_hashmap_కూడు(నిర్మాణం ext2fs_hashmap *h,
+		       శూన్య *దత్తాంశం, స్థిరరాశి శూన్య *కీలకం, size_t కీలకం_len)
 {
-	uint32_t hash = h->hash(key, key_len) % h->size;
-	struct ext2fs_hashmap_entry *e = malloc(sizeof(*e));
+	uint32_t hash = h->hash(కీలకం, కీలకం_len) % h->కొలత;
+	నిర్మాణం ext2fs_hashmap_నమోదు *e = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*e));
 
-	if (!e)
-		return -1;
+	ఒకవేళ (!e)
+		తిరిగి -1;
 
-	e->data = data;
-	e->key = key;
-	e->key_len = key_len;
-	e->next = h->entries[hash];
+	e->దత్తాంశం = దత్తాంశం;
+	e->కీలకం = కీలకం;
+	e->కీలకం_len = కీలకం_len;
+	e->తదుపరి = h->entries[hash];
 	h->entries[hash] = e;
 
-	e->list_prev = NULL;
-	e->list_next = h->first;
-	if (h->first)
-		h->first->list_prev = e;
-	h->first = e;
-	if (!h->last)
-		h->last = e;
+	e->list_prev = ఖాళీ;
+	e->list_తదుపరి = h->మొదటి;
+	ఒకవేళ (h->మొదటి)
+		h->మొదటి->list_prev = e;
+	h->మొదటి = e;
+	ఒకవేళ (!h->చివరి)
+		h->చివరి = e;
 
-	return 0;
+	తిరిగి 0;
 }
 
-void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *key,
-			    size_t key_len)
+శూన్య *ext2fs_hashmap_lookup(నిర్మాణం ext2fs_hashmap *h, స్థిరరాశి శూన్య *కీలకం,
+			    size_t కీలకం_len)
 {
-	struct ext2fs_hashmap_entry *iter;
-	uint32_t hash = h->hash(key, key_len) % h->size;
+	నిర్మాణం ext2fs_hashmap_నమోదు *iter;
+	uint32_t hash = h->hash(కీలకం, కీలకం_len) % h->కొలత;
 
-	for (iter = h->entries[hash]; iter; iter = iter->next)
-		if (iter->key_len == key_len && !memcmp(iter->key, key, key_len))
-			return iter->data;
-	return NULL;
+	కొరకు (iter = h->entries[hash]; iter; iter = iter->తదుపరి)
+		ఒకవేళ (iter->కీలకం_len == కీలకం_len && !memcmp(iter->కీలకం, కీలకం, కీలకం_len))
+			తిరిగి iter->దత్తాంశం;
+	తిరిగి ఖాళీ;
 }
 
-void *ext2fs_hashmap_iter_in_order(struct ext2fs_hashmap *h,
-				   struct ext2fs_hashmap_entry **it)
+శూన్య *ext2fs_hashmap_iter_లోపల_క్రమం(నిర్మాణం ext2fs_hashmap *h,
+				   నిర్మాణం ext2fs_hashmap_నమోదు **it)
 {
-	*it = *it ? (*it)->list_next : h->first;
-	return *it ? (*it)->data : NULL;
+	*it = *it ? (*it)->list_తదుపరి : h->మొదటి;
+	తిరిగి *it ? (*it)->దత్తాంశం : ఖాళీ;
 }
 
-void ext2fs_hashmap_free(struct ext2fs_hashmap *h)
+శూన్య ext2fs_hashmap_free(నిర్మాణం ext2fs_hashmap *h)
 {
 	size_t	i;
 
-	for (i = 0; i < h->size; ++i) {
-		struct ext2fs_hashmap_entry *it = h->entries[i];
-		while (it) {
-			struct ext2fs_hashmap_entry *tmp = it->next;
-			if (h->free)
-				h->free(it->data);
-			free(it);
+	కొరకు (i = 0; i < h->కొలత; ++i) {
+		నిర్మాణం ext2fs_hashmap_నమోదు *it = h->entries[i];
+		అయితే (it) {
+			నిర్మాణం ext2fs_hashmap_నమోదు *tmp = it->తదుపరి;
+			ఒకవేళ (h->విడుదల)
+				h->విడుదల(it->దత్తాంశం);
+			విడుదల(it);
 			it = tmp;
 		}
 	}
-	free(h);
+	విడుదల(h);
 }

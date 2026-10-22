@@ -10,14 +10,14 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
 /*
  * C language bitmap functions written by Theodore Ts'o, 9/26/92.
@@ -25,124 +25,124 @@
  * systems, as well as non-32 bit systems.
  */
 
-int ext2fs_set_bit(unsigned int nr,void * addr)
+పూర్ణాంకం ext2fs_సమితి_బిట్టు(గుర్తులేని పూర్ణాంకం nr,శూన్య * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	పూర్ణాంకం		ముసుగు, retval;
+	గుర్తులేని అక్షరం	*ADDR = (గుర్తులేని అక్షరం *) addr;
 
 	ADDR += nr >> 3;
-	mask = 1 << (nr & 0x07);
-	retval = mask & *ADDR;
-	*ADDR |= mask;
-	return retval;
+	ముసుగు = 1 << (nr & 0x07);
+	retval = ముసుగు & *ADDR;
+	*ADDR |= ముసుగు;
+	తిరిగి retval;
 }
 
-int ext2fs_clear_bit(unsigned int nr, void * addr)
+పూర్ణాంకం ext2fs_clear_బిట్టు(గుర్తులేని పూర్ణాంకం nr, శూన్య * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	పూర్ణాంకం		ముసుగు, retval;
+	గుర్తులేని అక్షరం	*ADDR = (గుర్తులేని అక్షరం *) addr;
 
 	ADDR += nr >> 3;
-	mask = 1 << (nr & 0x07);
-	retval = mask & *ADDR;
-	*ADDR &= ~mask;
-	return retval;
+	ముసుగు = 1 << (nr & 0x07);
+	retval = ముసుగు & *ADDR;
+	*ADDR &= ~ముసుగు;
+	తిరిగి retval;
 }
 
-int ext2fs_test_bit(unsigned int nr, const void * addr)
+పూర్ణాంకం ext2fs_test_బిట్టు(గుర్తులేని పూర్ణాంకం nr, స్థిరరాశి శూన్య * addr)
 {
-	int			mask;
-	const unsigned char	*ADDR = (const unsigned char *) addr;
+	పూర్ణాంకం			ముసుగు;
+	స్థిరరాశి గుర్తులేని అక్షరం	*ADDR = (స్థిరరాశి గుర్తులేని అక్షరం *) addr;
 
 	ADDR += nr >> 3;
-	mask = 1 << (nr & 0x07);
-	return (mask & *ADDR);
+	ముసుగు = 1 << (nr & 0x07);
+	తిరిగి (ముసుగు & *ADDR);
 }
 
-void ext2fs_warn_bitmap(errcode_t errcode, unsigned long arg,
-			const char *description)
+శూన్య ext2fs_warn_bitmap(errcode_t errcode, గుర్తులేని దీర్ఘ arg,
+			స్థిరరాశి అక్షరం *description)
 {
-#ifndef OMIT_COM_ERR
-	if (description)
+#నిర్వచితం_కాకపోతే OMIT_COM_ERR
+	ఒకవేళ (description)
 		com_err(0, errcode, "#%lu for %s", arg, description);
-	else
+	లేకపోతే
 		com_err(0, errcode, "#%lu", arg);
-#endif
+#అయితే_ముగింపు
 }
 
 /* Bitmap functions that take a 64-bit offset */
 
-int ext2fs_set_bit64(__u64 nr, void * addr)
+పూర్ణాంకం ext2fs_సమితి_bit64(__u64 nr, శూన్య * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	పూర్ణాంకం		ముసుగు, retval;
+	గుర్తులేని అక్షరం	*ADDR = (గుర్తులేని అక్షరం *) addr;
 
 	ADDR += nr >> 3;
-	mask = 1 << (nr & 0x07);
-	retval = mask & *ADDR;
-	*ADDR |= mask;
-	return retval;
+	ముసుగు = 1 << (nr & 0x07);
+	retval = ముసుగు & *ADDR;
+	*ADDR |= ముసుగు;
+	తిరిగి retval;
 }
 
-int ext2fs_clear_bit64(__u64 nr, void * addr)
+పూర్ణాంకం ext2fs_clear_bit64(__u64 nr, శూన్య * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	పూర్ణాంకం		ముసుగు, retval;
+	గుర్తులేని అక్షరం	*ADDR = (గుర్తులేని అక్షరం *) addr;
 
 	ADDR += nr >> 3;
-	mask = 1 << (nr & 0x07);
-	retval = mask & *ADDR;
-	*ADDR &= ~mask;
-	return retval;
+	ముసుగు = 1 << (nr & 0x07);
+	retval = ముసుగు & *ADDR;
+	*ADDR &= ~ముసుగు;
+	తిరిగి retval;
 }
 
-int ext2fs_test_bit64(__u64 nr, const void * addr)
+పూర్ణాంకం ext2fs_test_bit64(__u64 nr, స్థిరరాశి శూన్య * addr)
 {
-	int			mask;
-	const unsigned char	*ADDR = (const unsigned char *) addr;
+	పూర్ణాంకం			ముసుగు;
+	స్థిరరాశి గుర్తులేని అక్షరం	*ADDR = (స్థిరరాశి గుర్తులేని అక్షరం *) addr;
 
 	ADDR += nr >> 3;
-	mask = 1 << (nr & 0x07);
-	return (mask & *ADDR);
+	ముసుగు = 1 << (nr & 0x07);
+	తిరిగి (ముసుగు & *ADDR);
 }
 
-static unsigned int popcount8(unsigned int w)
+స్థిర గుర్తులేని పూర్ణాంకం popcount8(గుర్తులేని పూర్ణాంకం w)
 {
-	unsigned int res = w - ((w >> 1) & 0x55);
+	గుర్తులేని పూర్ణాంకం res = w - ((w >> 1) & 0x55);
 	res = (res & 0x33) + ((res >> 2) & 0x33);
-	return (res + (res >> 4)) & 0x0F;
+	తిరిగి (res + (res >> 4)) & 0x0F;
 }
 
-static unsigned int popcount32(unsigned int w)
+స్థిర గుర్తులేని పూర్ణాంకం popcount32(గుర్తులేని పూర్ణాంకం w)
 {
-	unsigned int res = w - ((w >> 1) & 0x55555555);
+	గుర్తులేని పూర్ణాంకం res = w - ((w >> 1) & 0x55555555);
 	res = (res & 0x33333333) + ((res >> 2) & 0x33333333);
 	res = (res + (res >> 4)) & 0x0F0F0F0F;
 	res = res + (res >> 8);
-	return (res + (res >> 16)) & 0x000000FF;
+	తిరిగి (res + (res >> 16)) & 0x000000FF;
 }
 
-unsigned int ext2fs_bitcount(const void *addr, unsigned int nbytes)
+గుర్తులేని పూర్ణాంకం ext2fs_bitcount(స్థిరరాశి శూన్య *addr, గుర్తులేని పూర్ణాంకం nbytes)
 {
-	const unsigned char *cp = addr;
-	const __u32 *p;
-	unsigned int res = 0;
+	స్థిరరాశి గుర్తులేని అక్షరం *cp = addr;
+	స్థిరరాశి __u32 *p;
+	గుర్తులేని పూర్ణాంకం res = 0;
 
-	while (((((uintptr_t) cp) & 3) != 0) && (nbytes > 0)) {
+	అయితే (((((uintptr_t) cp) & 3) != 0) && (nbytes > 0)) {
 		res += popcount8(*cp++);
 		nbytes--;
 	}
-	p = (const __u32 *) cp;
+	p = (స్థిరరాశి __u32 *) cp;
 
-	while (nbytes > 4) {
+	అయితే (nbytes > 4) {
 		res += popcount32(*p++);
 		nbytes -= 4;
 	}
-	cp = (const unsigned char *) p;
+	cp = (స్థిరరాశి గుర్తులేని అక్షరం *) p;
 
-	while (nbytes > 0) {
+	అయితే (nbytes > 0) {
 		res += popcount8(*cp++);
 		nbytes--;
 	}
-	return res;
+	తిరిగి res;
 }

@@ -21,151 +21,151 @@
  *
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
-struct get_pathname_struct {
-	ext2_ino_t	search_ino;
-	ext2_ino_t	parent;
-	char		*name;
+నిర్మాణం get_pathname_struct {
+	ext2_ino_t	శోధన_ino;
+	ext2_ino_t	మాతృ;
+	అక్షరం		*name;
 	errcode_t	errcode;
 };
 
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-static int get_pathname_proc(struct ext2_dir_entry *dirent,
-			     int	offset EXT2FS_ATTR((unused)),
-			     int	blocksize EXT2FS_ATTR((unused)),
-			     char	*buf EXT2FS_ATTR((unused)),
-			     void	*priv_data)
+#నిర్వచితమైతే __TURBOC__
+ #సూచన argsused
+#అయితే_ముగింపు
+స్థిర పూర్ణాంకం get_pathname_proc(నిర్మాణం ext2_dir_నమోదు *dirent,
+			     పూర్ణాంకం	స్థానభ్రంశం EXT2FS_ATTR((వాడని)),
+			     పూర్ణాంకం	blocksize EXT2FS_ATTR((వాడని)),
+			     అక్షరం	*buf EXT2FS_ATTR((వాడని)),
+			     శూన్య	*priv_దత్తాంశం)
 {
-	struct get_pathname_struct	*gp;
+	నిర్మాణం get_pathname_struct	*gp;
 	errcode_t			retval;
-	int name_len = ext2fs_dirent_name_len(dirent);
+	పూర్ణాంకం name_len = ext2fs_dirent_name_len(dirent);
 
-	gp = (struct get_pathname_struct *) priv_data;
+	gp = (నిర్మాణం get_pathname_struct *) priv_దత్తాంశం;
 
-	if ((name_len == 2) && !strncmp(dirent->name, "..", 2))
-		gp->parent = dirent->inode;
-	if (dirent->inode == gp->search_ino) {
+	ఒకవేళ ((name_len == 2) && !అక్షరశ్రేణి_పోలిక(dirent->name, "..", 2))
+		gp->మాతృ = dirent->inode;
+	ఒకవేళ (dirent->inode == gp->శోధన_ino) {
 		retval = ext2fs_get_mem(name_len + 1, &gp->name);
-		if (retval) {
+		ఒకవేళ (retval) {
 			gp->errcode = retval;
-			return DIRENT_ABORT;
+			తిరిగి DIRENT_ABORT;
 		}
 		strncpy(gp->name, dirent->name, name_len);
 		gp->name[name_len] = '\0';
-		return DIRENT_ABORT;
+		తిరిగి DIRENT_ABORT;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-static errcode_t ext2fs_get_pathname_int(ext2_filsys fs, ext2_ino_t dir,
-					 ext2_ino_t ino, int maxdepth,
-					 char *buf, char **name)
+స్థిర errcode_t ext2fs_get_pathname_int(ext2_filsys fs, ext2_ino_t dir,
+					 ext2_ino_t ino, పూర్ణాంకం maxdepth,
+					 అక్షరం *buf, అక్షరం **name)
 {
-	struct get_pathname_struct gp;
-	char	*parent_name = 0, *ret;
+	నిర్మాణం get_pathname_struct gp;
+	అక్షరం	*మాతృ_name = 0, *ret;
 	errcode_t	retval;
 
-	if (dir == ino) {
+	ఒకవేళ (dir == ino) {
 		retval = ext2fs_get_mem(2, name);
-		if (retval)
-			return retval;
-		strcpy(*name, (dir == EXT2_ROOT_INO) ? "/" : ".");
-		return 0;
+		ఒకవేళ (retval)
+			తిరిగి retval;
+		strcpy(*name, (dir == EXT2_మూలం_INO) ? "/" : ".");
+		తిరిగి 0;
 	}
 
-	if (!dir || (maxdepth < 0)) {
+	ఒకవేళ (!dir || (maxdepth < 0)) {
 		retval = ext2fs_get_mem(4, name);
-		if (retval)
-			return retval;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 		strcpy(*name, "...");
-		return 0;
+		తిరిగి 0;
 	}
 
-	gp.search_ino = ino;
-	gp.parent = 0;
+	gp.శోధన_ino = ino;
+	gp.మాతృ = 0;
 	gp.name = 0;
 	gp.errcode = 0;
 
 	retval = ext2fs_dir_iterate(fs, dir, 0, buf, get_pathname_proc, &gp);
-	if (retval == EXT2_ET_NO_DIRECTORY) {
-		char tmp[32];
+	ఒకవేళ (retval == EXT2_ET_NO_DIRECTORY) {
+		అక్షరం tmp[32];
 
-		if (ino)
-			snprintf(tmp, sizeof(tmp), "<%u>/<%u>", dir, ino);
-		else
-			snprintf(tmp, sizeof(tmp), "<%u>", dir);
-		retval = ext2fs_get_mem(strlen(tmp)+1, name);
-		if (retval)
-			goto cleanup;
+		ఒకవేళ (ino)
+			snprintf(tmp, పరిమాణం(tmp), "<%u>/<%u>", dir, ino);
+		లేకపోతే
+			snprintf(tmp, పరిమాణం(tmp), "<%u>", dir);
+		retval = ext2fs_get_mem(అక్షరశ్రేణి_పొడవు(tmp)+1, name);
+		ఒకవేళ (retval)
+			వెళ్ళు cleanup;
 		strcpy(*name, tmp);
-		return 0;
-	} else if (retval)
-		goto cleanup;
-	if (gp.errcode) {
+		తిరిగి 0;
+	} లేకపోతే ఒకవేళ (retval)
+		వెళ్ళు cleanup;
+	ఒకవేళ (gp.errcode) {
 		retval = gp.errcode;
-		goto cleanup;
+		వెళ్ళు cleanup;
 	}
 
-	retval = ext2fs_get_pathname_int(fs, gp.parent, dir, maxdepth-1,
-					 buf, &parent_name);
-	if (retval)
-		goto cleanup;
-	if (!ino) {
-		*name = parent_name;
-		return 0;
+	retval = ext2fs_get_pathname_int(fs, gp.మాతృ, dir, maxdepth-1,
+					 buf, &మాతృ_name);
+	ఒకవేళ (retval)
+		వెళ్ళు cleanup;
+	ఒకవేళ (!ino) {
+		*name = మాతృ_name;
+		తిరిగి 0;
 	}
 
-	if (gp.name)
-		retval = ext2fs_get_mem(strlen(parent_name)+strlen(gp.name)+2,
+	ఒకవేళ (gp.name)
+		retval = ext2fs_get_mem(అక్షరశ్రేణి_పొడవు(మాతృ_name)+అక్షరశ్రేణి_పొడవు(gp.name)+2,
 					&ret);
-	else
-		retval = ext2fs_get_mem(strlen(parent_name)+5, &ret);
-	if (retval)
-		goto cleanup;
+	లేకపోతే
+		retval = ext2fs_get_mem(అక్షరశ్రేణి_పొడవు(మాతృ_name)+5, &ret);
+	ఒకవేళ (retval)
+		వెళ్ళు cleanup;
 
 	ret[0] = 0;
-	if (parent_name[1])
-		strcat(ret, parent_name);
+	ఒకవేళ (మాతృ_name[1])
+		strcat(ret, మాతృ_name);
 	strcat(ret, "/");
-	if (gp.name)
+	ఒకవేళ (gp.name)
 		strcat(ret, gp.name);
-	else
+	లేకపోతే
 		strcat(ret, "???");
 	*name = ret;
 	retval = 0;
 
 cleanup:
-	ext2fs_free_mem(&parent_name);
+	ext2fs_free_mem(&మాతృ_name);
 	ext2fs_free_mem(&gp.name);
-	return retval;
+	తిరిగి retval;
 }
 
 errcode_t ext2fs_get_pathname(ext2_filsys fs, ext2_ino_t dir, ext2_ino_t ino,
-			      char **name)
+			      అక్షరం **name)
 {
-	char	*buf;
+	అక్షరం	*buf;
 	errcode_t	retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
-	if (dir == ino)
+	ఒకవేళ (retval)
+		తిరిగి retval;
+	ఒకవేళ (dir == ino)
 		ino = 0;
 	retval = ext2fs_get_pathname_int(fs, dir, ino, 32, buf, name);
 	ext2fs_free_mem(&buf);
-	return retval;
+	తిరిగి retval;
 
 }

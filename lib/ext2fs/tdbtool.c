@@ -21,142 +21,142 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include "config.h"
-#include <errno.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <string.h>
-#include <fcntl.h>
-#include <time.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <ctype.h>
-#include <signal.h>
-#include <stdarg.h>
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <sys/mman.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <sys/time.h>
+#అన్తర్భావ <ctype.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stdarg.h>
 
-#include "tdb.h"
+#అన్తర్భావ "tdb.h"
 
-static int do_command(void);
-const char *cmdname;
-char *arg1, *arg2;
+స్థిర పూర్ణాంకం do_command(శూన్య);
+స్థిరరాశి అక్షరం *cmdname;
+అక్షరం *arg1, *arg2;
 size_t arg1len, arg2len;
-int bIterate = 0;
-char *line;
-TDB_DATA iterate_kbuf;
-char cmdline[1024];
+పూర్ణాంకం bIterate = 0;
+అక్షరం *పంక్తి;
+TDB_దత్తాంశం iterate_kbuf;
+అక్షరం cmdline[1024];
 
-enum commands {
+గణన commands {
 	CMD_CREATE_TDB,
 	CMD_OPEN_TDB,
 	CMD_ERASE,
 	CMD_DUMP,
-	CMD_INSERT,
+	CMD_చొప్పించు,
 	CMD_MOVE,
 	CMD_STORE,
 	CMD_SHOW,
-	CMD_KEYS,
+	CMD_కీలకాలు,
 	CMD_HEXKEYS,
 	CMD_DELETE,
 	CMD_LIST_HASH_FREE,
 	CMD_LIST_FREE,
 	CMD_INFO,
-	CMD_FIRST,
-	CMD_NEXT,
+	CMD_మొదటి,
+	CMD_తదుపరి,
 	CMD_SYSTEM,
 	CMD_QUIT,
 	CMD_HELP
 };
 
-typedef struct {
-	const char *name;
-	enum commands cmd;
-} COMMAND_TABLE;
+రకనిర్వచనం నిర్మాణం {
+	స్థిరరాశి అక్షరం *name;
+	గణన commands cmd;
+} COMMAND_పట్టిక;
 
-COMMAND_TABLE cmd_table[] = {
+COMMAND_పట్టిక cmd_పట్టిక[] = {
 	{"create",	CMD_CREATE_TDB},
 	{"open",	CMD_OPEN_TDB},
 	{"erase",	CMD_ERASE},
 	{"dump",	CMD_DUMP},
-	{"insert",	CMD_INSERT},
+	{"insert",	CMD_చొప్పించు},
 	{"move",	CMD_MOVE},
 	{"store",	CMD_STORE},
 	{"show",	CMD_SHOW},
-	{"keys",	CMD_KEYS},
+	{"keys",	CMD_కీలకాలు},
 	{"hexkeys",	CMD_HEXKEYS},
 	{"delete",	CMD_DELETE},
 	{"list",	CMD_LIST_HASH_FREE},
 	{"free",	CMD_LIST_FREE},
 	{"info",	CMD_INFO},
-	{"first",	CMD_FIRST},
-	{"1",		CMD_FIRST},
-	{"next",	CMD_NEXT},
-	{"n",		CMD_NEXT},
+	{"first",	CMD_మొదటి},
+	{"1",		CMD_మొదటి},
+	{"next",	CMD_తదుపరి},
+	{"n",		CMD_తదుపరి},
 	{"quit",	CMD_QUIT},
 	{"q",		CMD_QUIT},
 	{"!",		CMD_SYSTEM},
-	{NULL,		CMD_HELP}
+	{ఖాళీ,		CMD_HELP}
 };
 
 /* a tdb tool for manipulating a tdb database */
 
-static TDB_CONTEXT *tdb;
+స్థిర TDB_CONTEXT *tdb;
 
-static int print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
-static int print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
-static int print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
+స్థిర పూర్ణాంకం print_rec(TDB_CONTEXT *the_tdb, TDB_దత్తాంశం కీలకం, TDB_దత్తాంశం dbuf, శూన్య *state);
+స్థిర పూర్ణాంకం print_కీలకం(TDB_CONTEXT *the_tdb, TDB_దత్తాంశం కీలకం, TDB_దత్తాంశం dbuf, శూన్య *state);
+స్థిర పూర్ణాంకం print_hexkey(TDB_CONTEXT *the_tdb, TDB_దత్తాంశం కీలకం, TDB_దత్తాంశం dbuf, శూన్య *state);
 
-static void print_asc(const char *buf,int len)
+స్థిర శూన్య print_asc(స్థిరరాశి అక్షరం *buf,పూర్ణాంకం len)
 {
-	int i;
+	పూర్ణాంకం i;
 
 	/* We're probably printing ASCII strings so don't try to display
 	   the trailing NULL character. */
 
-	if (buf[len - 1] == 0)
+	ఒకవేళ (buf[len - 1] == 0)
 	        len--;
 
-	for (i=0;i<len;i++)
-		printf("%c",isprint(buf[i])?buf[i]:'.');
+	కొరకు (i=0;i<len;i++)
+		రాయి("%c",isprint(buf[i])?buf[i]:'.');
 }
 
-static void print_data(const char *buf,int len)
+స్థిర శూన్య print_దత్తాంశం(స్థిరరాశి అక్షరం *buf,పూర్ణాంకం len)
 {
-	int i=0;
-	if (len<=0) return;
-	printf("[%03X] ",i);
-	for (i=0;i<len;) {
-		printf("%02X ",(int)buf[i]);
+	పూర్ణాంకం i=0;
+	ఒకవేళ (len<=0) తిరిగి;
+	రాయి("[%03X] ",i);
+	కొరకు (i=0;i<len;) {
+		రాయి("%02X ",(పూర్ణాంకం)buf[i]);
 		i++;
-		if (i%8 == 0) printf(" ");
-		if (i%16 == 0) {
-			print_asc(&buf[i-16],8); printf(" ");
-			print_asc(&buf[i-8],8); printf("\n");
-			if (i<len) printf("[%03X] ",i);
+		ఒకవేళ (i%8 == 0) రాయి(" ");
+		ఒకవేళ (i%16 == 0) {
+			print_asc(&buf[i-16],8); రాయి(" ");
+			print_asc(&buf[i-8],8); రాయి("\n");
+			ఒకవేళ (i<len) రాయి("[%03X] ",i);
 		}
 	}
-	if (i%16) {
-		int n;
+	ఒకవేళ (i%16) {
+		పూర్ణాంకం n;
 
 		n = 16 - (i%16);
-		printf(" ");
-		if (n>8) printf(" ");
-		while (n--) printf("   ");
+		రాయి(" ");
+		ఒకవేళ (n>8) రాయి(" ");
+		అయితే (n--) రాయి("   ");
 
 		n = i%16;
-		if (n > 8) n = 8;
-		print_asc(&buf[i-(i%16)],n); printf(" ");
+		ఒకవేళ (n > 8) n = 8;
+		print_asc(&buf[i-(i%16)],n); రాయి(" ");
 		n = (i%16) - n;
-		if (n>0) print_asc(&buf[i-n],n);
-		printf("\n");
+		ఒకవేళ (n>0) print_asc(&buf[i-n],n);
+		రాయి("\n");
 	}
 }
 
-static void help(void)
+స్థిర శూన్య help(శూన్య)
 {
-	printf("\n"
+	రాయి("\n"
 "tdbtool: \n"
 "  create    dbname     : create a database\n"
 "  open      dbname     : open an existing database\n"
@@ -180,442 +180,442 @@ static void help(void)
 "\n");
 }
 
-static void terror(const char *why)
+స్థిర శూన్య terror(స్థిరరాశి అక్షరం *why)
 {
-	printf("%s\n", why);
+	రాయి("%s\n", why);
 }
 
-static void create_tdb(const char *tdbname)
+స్థిర శూన్య create_tdb(స్థిరరాశి అక్షరం *tdbname)
 {
-	if (tdb) tdb_close(tdb);
-	tdb = tdb_open(tdbname, 0, TDB_CLEAR_IF_FIRST,
+	ఒకవేళ (tdb) tdb_close(tdb);
+	tdb = tdb_open(tdbname, 0, TDB_CLEAR_IF_మొదటి,
 		       O_RDWR | O_CREAT | O_TRUNC, 0600);
-	if (!tdb) {
-		printf("Could not create %s: %s\n", tdbname, strerror(errno));
+	ఒకవేళ (!tdb) {
+		రాయి("Could not create %s: %s\n", tdbname, strerror(errno));
 	}
 }
 
-static void open_tdb(const char *tdbname)
+స్థిర శూన్య open_tdb(స్థిరరాశి అక్షరం *tdbname)
 {
-	if (tdb) tdb_close(tdb);
+	ఒకవేళ (tdb) tdb_close(tdb);
 	tdb = tdb_open(tdbname, 0, 0, O_RDWR, 0600);
-	if (!tdb) {
-		printf("Could not open %s: %s\n", tdbname, strerror(errno));
+	ఒకవేళ (!tdb) {
+		రాయి("Could not open %s: %s\n", tdbname, strerror(errno));
 	}
 }
 
-static void insert_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
+స్థిర శూన్య చొప్పించు_tdb(అక్షరం *keyname, size_t keylen, అక్షరం* దత్తాంశం, size_t datalen)
 {
-	TDB_DATA key, dbuf;
+	TDB_దత్తాంశం కీలకం, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	ఒకవేళ ((keyname == ఖాళీ) || (keylen == 0)) {
 		terror("need key");
-		return;
+		తిరిగి;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
-	dbuf.dptr = (unsigned char *)data;
+	కీలకం.dptr = (గుర్తులేని అక్షరం *)keyname;
+	కీలకం.dsize = keylen;
+	dbuf.dptr = (గుర్తులేని అక్షరం *)దత్తాంశం;
 	dbuf.dsize = datalen;
 
-	if (tdb_store(tdb, key, dbuf, TDB_INSERT) == -1) {
+	ఒకవేళ (tdb_store(tdb, కీలకం, dbuf, TDB_చొప్పించు) == -1) {
 		terror("insert failed");
 	}
 }
 
-static void store_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
+స్థిర శూన్య store_tdb(అక్షరం *keyname, size_t keylen, అక్షరం* దత్తాంశం, size_t datalen)
 {
-	TDB_DATA key, dbuf;
+	TDB_దత్తాంశం కీలకం, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	ఒకవేళ ((keyname == ఖాళీ) || (keylen == 0)) {
 		terror("need key");
-		return;
+		తిరిగి;
 	}
 
-	if ((data == NULL) || (datalen == 0)) {
+	ఒకవేళ ((దత్తాంశం == ఖాళీ) || (datalen == 0)) {
 		terror("need data");
-		return;
+		తిరిగి;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
-	dbuf.dptr = (unsigned char *)data;
+	కీలకం.dptr = (గుర్తులేని అక్షరం *)keyname;
+	కీలకం.dsize = keylen;
+	dbuf.dptr = (గుర్తులేని అక్షరం *)దత్తాంశం;
 	dbuf.dsize = datalen;
 
-	printf("Storing key:\n");
-	print_rec(tdb, key, dbuf, NULL);
+	రాయి("Storing key:\n");
+	print_rec(tdb, కీలకం, dbuf, ఖాళీ);
 
-	if (tdb_store(tdb, key, dbuf, TDB_REPLACE) == -1) {
+	ఒకవేళ (tdb_store(tdb, కీలకం, dbuf, TDB_REPLACE) == -1) {
 		terror("store failed");
 	}
 }
 
-static void show_tdb(char *keyname, size_t keylen)
+స్థిర శూన్య show_tdb(అక్షరం *keyname, size_t keylen)
 {
-	TDB_DATA key, dbuf;
+	TDB_దత్తాంశం కీలకం, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	ఒకవేళ ((keyname == ఖాళీ) || (keylen == 0)) {
 		terror("need key");
-		return;
+		తిరిగి;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	కీలకం.dptr = (గుర్తులేని అక్షరం *)keyname;
+	కీలకం.dsize = keylen;
 
-	dbuf = tdb_fetch(tdb, key);
-	if (!dbuf.dptr) {
+	dbuf = tdb_fetch(tdb, కీలకం);
+	ఒకవేళ (!dbuf.dptr) {
 	    terror("fetch failed");
-	    return;
+	    తిరిగి;
 	}
 
-	print_rec(tdb, key, dbuf, NULL);
+	print_rec(tdb, కీలకం, dbuf, ఖాళీ);
 
-	free( dbuf.dptr );
+	విడుదల( dbuf.dptr );
 
-	return;
+	తిరిగి;
 }
 
-static void delete_tdb(char *keyname, size_t keylen)
+స్థిర శూన్య delete_tdb(అక్షరం *keyname, size_t keylen)
 {
-	TDB_DATA key;
+	TDB_దత్తాంశం కీలకం;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	ఒకవేళ ((keyname == ఖాళీ) || (keylen == 0)) {
 		terror("need key");
-		return;
+		తిరిగి;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	కీలకం.dptr = (గుర్తులేని అక్షరం *)keyname;
+	కీలకం.dsize = keylen;
 
-	if (tdb_delete(tdb, key) != 0) {
+	ఒకవేళ (tdb_delete(tdb, కీలకం) != 0) {
 		terror("delete failed");
 	}
 }
 
-static void move_rec(char *keyname, size_t keylen, char* tdbname)
+స్థిర శూన్య move_rec(అక్షరం *keyname, size_t keylen, అక్షరం* tdbname)
 {
-	TDB_DATA key, dbuf;
+	TDB_దత్తాంశం కీలకం, dbuf;
 	TDB_CONTEXT *dst_tdb;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	ఒకవేళ ((keyname == ఖాళీ) || (keylen == 0)) {
 		terror("need key");
-		return;
+		తిరిగి;
 	}
 
-	if ( !tdbname ) {
+	ఒకవేళ ( !tdbname ) {
 		terror("need destination tdb name");
-		return;
+		తిరిగి;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	కీలకం.dptr = (గుర్తులేని అక్షరం *)keyname;
+	కీలకం.dsize = keylen;
 
-	dbuf = tdb_fetch(tdb, key);
-	if (!dbuf.dptr) {
+	dbuf = tdb_fetch(tdb, కీలకం);
+	ఒకవేళ (!dbuf.dptr) {
 		terror("fetch failed");
-		return;
+		తిరిగి;
 	}
 
-	print_rec(tdb, key, dbuf, NULL);
+	print_rec(tdb, కీలకం, dbuf, ఖాళీ);
 
 	dst_tdb = tdb_open(tdbname, 0, 0, O_RDWR, 0600);
-	if ( !dst_tdb ) {
+	ఒకవేళ ( !dst_tdb ) {
 		terror("unable to open destination tdb");
-		return;
+		తిరిగి;
 	}
 
-	if ( tdb_store( dst_tdb, key, dbuf, TDB_REPLACE ) == -1 ) {
+	ఒకవేళ ( tdb_store( dst_tdb, కీలకం, dbuf, TDB_REPLACE ) == -1 ) {
 		terror("failed to move record");
 	}
-	else
-		printf("record moved\n");
+	లేకపోతే
+		రాయి("record moved\n");
 
 	tdb_close( dst_tdb );
 
-	return;
+	తిరిగి;
 }
 
-static int print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+స్థిర పూర్ణాంకం print_rec(TDB_CONTEXT *the_tdb, TDB_దత్తాంశం కీలకం, TDB_దత్తాంశం dbuf, శూన్య *state)
 {
-	printf("\nkey %d bytes\n", (int)key.dsize);
-	print_asc((const char *)key.dptr, key.dsize);
-	printf("\ndata %d bytes\n", (int)dbuf.dsize);
-	print_data((const char *)dbuf.dptr, dbuf.dsize);
-	return 0;
+	రాయి("\nkey %d bytes\n", (పూర్ణాంకం)కీలకం.dsize);
+	print_asc((స్థిరరాశి అక్షరం *)కీలకం.dptr, కీలకం.dsize);
+	రాయి("\ndata %d bytes\n", (పూర్ణాంకం)dbuf.dsize);
+	print_దత్తాంశం((స్థిరరాశి అక్షరం *)dbuf.dptr, dbuf.dsize);
+	తిరిగి 0;
 }
 
-static int print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+స్థిర పూర్ణాంకం print_కీలకం(TDB_CONTEXT *the_tdb, TDB_దత్తాంశం కీలకం, TDB_దత్తాంశం dbuf, శూన్య *state)
 {
-	printf("key %d bytes: ", (int)key.dsize);
-	print_asc((const char *)key.dptr, key.dsize);
-	printf("\n");
-	return 0;
+	రాయి("key %d bytes: ", (పూర్ణాంకం)కీలకం.dsize);
+	print_asc((స్థిరరాశి అక్షరం *)కీలకం.dptr, కీలకం.dsize);
+	రాయి("\n");
+	తిరిగి 0;
 }
 
-static int print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+స్థిర పూర్ణాంకం print_hexkey(TDB_CONTEXT *the_tdb, TDB_దత్తాంశం కీలకం, TDB_దత్తాంశం dbuf, శూన్య *state)
 {
-	printf("key %d bytes\n", (int)key.dsize);
-	print_data((const char *)key.dptr, key.dsize);
-	printf("\n");
-	return 0;
+	రాయి("key %d bytes\n", (పూర్ణాంకం)కీలకం.dsize);
+	print_దత్తాంశం((స్థిరరాశి అక్షరం *)కీలకం.dptr, కీలకం.dsize);
+	రాయి("\n");
+	తిరిగి 0;
 }
 
-static int total_bytes;
+స్థిర పూర్ణాంకం మొత్తం_బైట్లు;
 
-static int traverse_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+స్థిర పూర్ణాంకం traverse_fn(TDB_CONTEXT *the_tdb, TDB_దత్తాంశం కీలకం, TDB_దత్తాంశం dbuf, శూన్య *state)
 {
-	total_bytes += dbuf.dsize;
-	return 0;
+	మొత్తం_బైట్లు += dbuf.dsize;
+	తిరిగి 0;
 }
 
-static void info_tdb(void)
+స్థిర శూన్య info_tdb(శూన్య)
 {
-	int count;
-	total_bytes = 0;
-	if ((count = tdb_traverse(tdb, traverse_fn, NULL)) == -1)
-		printf("Error = %s\n", tdb_errorstr(tdb));
-	else
-		printf("%d records totalling %d bytes\n", count, total_bytes);
+	పూర్ణాంకం లెక్క;
+	మొత్తం_బైట్లు = 0;
+	ఒకవేళ ((లెక్క = tdb_traverse(tdb, traverse_fn, ఖాళీ)) == -1)
+		రాయి("Error = %s\n", tdb_errorstr(tdb));
+	లేకపోతే
+		రాయి("%d records totalling %d bytes\n", లెక్క, మొత్తం_బైట్లు);
 }
 
-static char *tdb_getline(const char *prompt)
+స్థిర అక్షరం *tdb_getline(స్థిరరాశి అక్షరం *prompt)
 {
-	static char thisline[1024];
-	char *p;
+	స్థిర అక్షరం thisline[1024];
+	అక్షరం *p;
 	fputs(prompt, stdout);
 	thisline[0] = 0;
-	p = fgets(thisline, sizeof(thisline)-1, stdin);
-	if (p) p = strchr(p, '\n');
-	if (p) *p = 0;
-	return p?thisline:NULL;
+	p = fgets(thisline, పరిమాణం(thisline)-1, stdin);
+	ఒకవేళ (p) p = strchr(p, '\n');
+	ఒకవేళ (p) *p = 0;
+	తిరిగి p?thisline:ఖాళీ;
 }
 
-static int do_delete_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf,
-                     void *state)
+స్థిర పూర్ణాంకం do_delete_fn(TDB_CONTEXT *the_tdb, TDB_దత్తాంశం కీలకం, TDB_దత్తాంశం dbuf,
+                     శూన్య *state)
 {
-    return tdb_delete(the_tdb, key);
+    తిరిగి tdb_delete(the_tdb, కీలకం);
 }
 
-static void first_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
+స్థిర శూన్య మొదటి_రికార్డు(TDB_CONTEXT *the_tdb, TDB_దత్తాంశం *pkey)
 {
-	TDB_DATA dbuf;
+	TDB_దత్తాంశం dbuf;
 	*pkey = tdb_firstkey(the_tdb);
 
 	dbuf = tdb_fetch(the_tdb, *pkey);
-	if (!dbuf.dptr) terror("fetch failed");
-	else {
-		print_rec(the_tdb, *pkey, dbuf, NULL);
+	ఒకవేళ (!dbuf.dptr) terror("fetch failed");
+	లేకపోతే {
+		print_rec(the_tdb, *pkey, dbuf, ఖాళీ);
 	}
 }
 
-static void next_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
+స్థిర శూన్య తదుపరి_రికార్డు(TDB_CONTEXT *the_tdb, TDB_దత్తాంశం *pkey)
 {
-	TDB_DATA dbuf;
+	TDB_దత్తాంశం dbuf;
 	*pkey = tdb_nextkey(the_tdb, *pkey);
 
 	dbuf = tdb_fetch(the_tdb, *pkey);
-	if (!dbuf.dptr)
+	ఒకవేళ (!dbuf.dptr)
 		terror("fetch failed");
-	else
-		print_rec(the_tdb, *pkey, dbuf, NULL);
+	లేకపోతే
+		print_rec(the_tdb, *pkey, dbuf, ఖాళీ);
 }
 
-static int do_command(void)
+స్థిర పూర్ణాంకం do_command(శూన్య)
 {
-	COMMAND_TABLE *ctp = cmd_table;
-	enum commands mycmd = CMD_HELP;
-	int cmd_len;
+	COMMAND_పట్టిక *ctp = cmd_పట్టిక;
+	గణన commands mycmd = CMD_HELP;
+	పూర్ణాంకం cmd_len;
 
-	if (cmdname && strlen(cmdname) == 0) {
-	    mycmd = CMD_NEXT;
-	} else {
-	    while (ctp->name) {
-		cmd_len = strlen(ctp->name);
-		if (strncmp(ctp->name,cmdname,cmd_len) == 0) {
+	ఒకవేళ (cmdname && అక్షరశ్రేణి_పొడవు(cmdname) == 0) {
+	    mycmd = CMD_తదుపరి;
+	} లేకపోతే {
+	    అయితే (ctp->name) {
+		cmd_len = అక్షరశ్రేణి_పొడవు(ctp->name);
+		ఒకవేళ (అక్షరశ్రేణి_పోలిక(ctp->name,cmdname,cmd_len) == 0) {
 			mycmd = ctp->cmd;
-			break;
+			ఆపు;
 		}
 		ctp++;
 	    }
 	}
 
-	switch (mycmd) {
-	case CMD_CREATE_TDB:
+	ఎంపిక (mycmd) {
+	స్థితి CMD_CREATE_TDB:
             bIterate = 0;
             create_tdb(arg1);
-	    return 0;
-	case CMD_OPEN_TDB:
+	    తిరిగి 0;
+	స్థితి CMD_OPEN_TDB:
             bIterate = 0;
             open_tdb(arg1);
-            return 0;
-	case CMD_SYSTEM:
+            తిరిగి 0;
+	స్థితి CMD_SYSTEM:
 	    /* Shell command */
 	    system(arg1);
-	    return 0;
-	case CMD_QUIT:
-	    return 1;
-	default:
+	    తిరిగి 0;
+	స్థితి CMD_QUIT:
+	    తిరిగి 1;
+	అప్రమేయ:
 	    /* all the rest require a open database */
-	    if (!tdb) {
+	    ఒకవేళ (!tdb) {
 		bIterate = 0;
 		terror("database not open");
 		help();
-		return 0;
+		తిరిగి 0;
 	    }
-	    switch (mycmd) {
-	    case CMD_ERASE:
+	    ఎంపిక (mycmd) {
+	    స్థితి CMD_ERASE:
 		bIterate = 0;
-		tdb_traverse(tdb, do_delete_fn, NULL);
-		return 0;
-	    case CMD_DUMP:
+		tdb_traverse(tdb, do_delete_fn, ఖాళీ);
+		తిరిగి 0;
+	    స్థితి CMD_DUMP:
 		bIterate = 0;
-		tdb_traverse(tdb, print_rec, NULL);
-		return 0;
-	    case CMD_INSERT:
+		tdb_traverse(tdb, print_rec, ఖాళీ);
+		తిరిగి 0;
+	    స్థితి CMD_చొప్పించు:
 		bIterate = 0;
-		insert_tdb(arg1, arg1len,arg2,arg2len);
-		return 0;
-	    case CMD_MOVE:
+		చొప్పించు_tdb(arg1, arg1len,arg2,arg2len);
+		తిరిగి 0;
+	    స్థితి CMD_MOVE:
 		bIterate = 0;
 		move_rec(arg1,arg1len,arg2);
-		return 0;
-	    case CMD_STORE:
+		తిరిగి 0;
+	    స్థితి CMD_STORE:
 		bIterate = 0;
 		store_tdb(arg1,arg1len,arg2,arg2len);
-		return 0;
-	    case CMD_SHOW:
+		తిరిగి 0;
+	    స్థితి CMD_SHOW:
 		bIterate = 0;
 		show_tdb(arg1, arg1len);
-		return 0;
-	    case CMD_KEYS:
-		tdb_traverse(tdb, print_key, NULL);
-		return 0;
-	    case CMD_HEXKEYS:
-		tdb_traverse(tdb, print_hexkey, NULL);
-		return 0;
-	    case CMD_DELETE:
+		తిరిగి 0;
+	    స్థితి CMD_కీలకాలు:
+		tdb_traverse(tdb, print_కీలకం, ఖాళీ);
+		తిరిగి 0;
+	    స్థితి CMD_HEXKEYS:
+		tdb_traverse(tdb, print_hexkey, ఖాళీ);
+		తిరిగి 0;
+	    స్థితి CMD_DELETE:
 		bIterate = 0;
 		delete_tdb(arg1,arg1len);
-		return 0;
-	    case CMD_LIST_HASH_FREE:
+		తిరిగి 0;
+	    స్థితి CMD_LIST_HASH_FREE:
 		tdb_dump_all(tdb);
-		return 0;
-	    case CMD_LIST_FREE:
+		తిరిగి 0;
+	    స్థితి CMD_LIST_FREE:
 		tdb_printfreelist(tdb);
-		return 0;
-	    case CMD_INFO:
+		తిరిగి 0;
+	    స్థితి CMD_INFO:
 		info_tdb();
-		return 0;
-	    case CMD_FIRST:
+		తిరిగి 0;
+	    స్థితి CMD_మొదటి:
 		bIterate = 1;
-		first_record(tdb, &iterate_kbuf);
-		return 0;
-	    case CMD_NEXT:
-	       if (bIterate)
-		  next_record(tdb, &iterate_kbuf);
-		return 0;
-	    case CMD_HELP:
+		మొదటి_రికార్డు(tdb, &iterate_kbuf);
+		తిరిగి 0;
+	    స్థితి CMD_తదుపరి:
+	       ఒకవేళ (bIterate)
+		  తదుపరి_రికార్డు(tdb, &iterate_kbuf);
+		తిరిగి 0;
+	    స్థితి CMD_HELP:
 		help();
-		return 0;
-            case CMD_CREATE_TDB:
-            case CMD_OPEN_TDB:
-            case CMD_SYSTEM:
-            case CMD_QUIT:
+		తిరిగి 0;
+            స్థితి CMD_CREATE_TDB:
+            స్థితి CMD_OPEN_TDB:
+            స్థితి CMD_SYSTEM:
+            స్థితి CMD_QUIT:
                 /*
                  * unhandled commands.  cases included here to avoid compiler
                  * warnings.
                  */
-                return 0;
+                తిరిగి 0;
 	    }
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-static char *convert_string(char *instring, size_t *sizep)
+స్థిర అక్షరం *convert_string(అక్షరం *instring, size_t *sizep)
 {
-    size_t length = 0;
-    char *outp, *inp;
-    char temp[3];
+    size_t నిడివి = 0;
+    అక్షరం *outp, *inp;
+    అక్షరం తాత్కాలిక[3];
 
 
     outp = inp = instring;
 
-    while (*inp) {
-	if (*inp == '\\') {
+    అయితే (*inp) {
+	ఒకవేళ (*inp == '\\') {
 	    inp++;
-	    if (*inp && strchr("0123456789abcdefABCDEF",(int)*inp)) {
-		temp[0] = *inp++;
-		temp[1] = '\0';
-		if (*inp && strchr("0123456789abcdefABCDEF",(int)*inp)) {
-		    temp[1] = *inp++;
-		    temp[2] = '\0';
+	    ఒకవేళ (*inp && strchr("0123456789abcdefABCDEF",(పూర్ణాంకం)*inp)) {
+		తాత్కాలిక[0] = *inp++;
+		తాత్కాలిక[1] = '\0';
+		ఒకవేళ (*inp && strchr("0123456789abcdefABCDEF",(పూర్ణాంకం)*inp)) {
+		    తాత్కాలిక[1] = *inp++;
+		    తాత్కాలిక[2] = '\0';
 		}
-		*outp++ = (char)strtol((const char *)temp,NULL,16);
-	    } else {
+		*outp++ = (అక్షరం)strtol((స్థిరరాశి అక్షరం *)తాత్కాలిక,ఖాళీ,16);
+	    } లేకపోతే {
 		*outp++ = *inp++;
 	    }
-	} else {
+	} లేకపోతే {
 	    *outp++ = *inp++;
 	}
-	length++;
+	నిడివి++;
     }
-    *sizep = length;
-    return instring;
+    *sizep = నిడివి;
+    తిరిగి instring;
 }
 
-int main(int argc, char *argv[])
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం *argv[])
 {
     cmdname = "";
-    arg1 = NULL;
+    arg1 = ఖాళీ;
     arg1len = 0;
-    arg2 = NULL;
+    arg2 = ఖాళీ;
     arg2len = 0;
 
-    if (argv[1]) {
+    ఒకవేళ (argv[1]) {
 	cmdname = "open";
 	arg1 = argv[1];
         do_command();
 	cmdname =  "";
-	arg1 = NULL;
+	arg1 = ఖాళీ;
     }
 
-    switch (argc) {
-	case 1:
-	case 2:
+    ఎంపిక (argc) {
+	స్థితి 1:
+	స్థితి 2:
 	    /* Interactive mode */
-	    while ((cmdname = tdb_getline("tdb> "))) {
-		arg2 = arg1 = NULL;
-		if ((arg1 = strchr((const char *)cmdname,' ')) != NULL) {
+	    అయితే ((cmdname = tdb_getline("tdb> "))) {
+		arg2 = arg1 = ఖాళీ;
+		ఒకవేళ ((arg1 = strchr((స్థిరరాశి అక్షరం *)cmdname,' ')) != ఖాళీ) {
 		    arg1++;
 		    arg2 = arg1;
-		    while (*arg2) {
-			if (*arg2 == ' ') {
+		    అయితే (*arg2) {
+			ఒకవేళ (*arg2 == ' ') {
 			    *arg2++ = '\0';
-			    break;
+			    ఆపు;
 			}
-			if ((*arg2++ == '\\') && (*arg2 == ' ')) {
+			ఒకవేళ ((*arg2++ == '\\') && (*arg2 == ' ')) {
 			    arg2++;
 			}
 		    }
 		}
-		if (arg1) arg1 = convert_string(arg1,&arg1len);
-		if (arg2) arg2 = convert_string(arg2,&arg2len);
-		if (do_command()) break;
+		ఒకవేళ (arg1) arg1 = convert_string(arg1,&arg1len);
+		ఒకవేళ (arg2) arg2 = convert_string(arg2,&arg2len);
+		ఒకవేళ (do_command()) ఆపు;
 	    }
-	    break;
-	case 5:
+	    ఆపు;
+	స్థితి 5:
 	    arg2 = convert_string(argv[4],&arg2len);
-	case 4:
+	స్థితి 4:
 	    arg1 = convert_string(argv[3],&arg1len);
-	case 3:
+	స్థితి 3:
 	    cmdname = argv[2];
-	default:
+	అప్రమేయ:
 	    do_command();
-	    break;
+	    ఆపు;
     }
 
-    if (tdb) tdb_close(tdb);
+    ఒకవేళ (tdb) tdb_close(tdb);
 
-    return 0;
+    తిరిగి 0;
 }

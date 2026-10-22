@@ -17,25 +17,25 @@
  * version here to such that hashes will match that implementation.
  */
 
-#ifndef UTF8NORM_H
-#define UTF8NORM_H
+#నిర్వచితం_కాకపోతే UTF8NORM_H
+#నిర్వచించు UTF8NORM_H
 
-#include <stdint.h>
-#include <unistd.h>
-#include <string.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <string.h>
 
 /* Encoding a unicode version number as a single unsigned int. */
-#define UNICODE_MAJ_SHIFT		(16)
-#define UNICODE_MIN_SHIFT		(8)
+#నిర్వచించు UNICODE_MAJ_జరుపు		(16)
+#నిర్వచించు UNICODE_MIN_జరుపు		(8)
 
-#define UNICODE_AGE(MAJ, MIN, REV)			\
-	(((unsigned int)(MAJ) << UNICODE_MAJ_SHIFT) |	\
-	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
-	 ((unsigned int)(REV)))
+#నిర్వచించు UNICODE_AGE(MAJ, MIN, REV)			\
+	(((గుర్తులేని పూర్ణాంకం)(MAJ) << UNICODE_MAJ_జరుపు) |	\
+	 ((గుర్తులేని పూర్ణాంకం)(MIN) << UNICODE_MIN_జరుపు) |	\
+	 ((గుర్తులేని పూర్ణాంకం)(REV)))
 
 /* Highest unicode version supported by the data tables. */
-extern int utf8version_is_supported(uint8_t maj, uint8_t min, uint8_t rev);
-extern int utf8version_latest(void);
+బాహ్య పూర్ణాంకం utf8version_is_supported(uint8_t maj, uint8_t min, uint8_t rev);
+బాహ్య పూర్ణాంకం utf8version_latest(శూన్య);
 
 /*
  * Look for the correct const struct utf8data for a unicode version.
@@ -52,24 +52,24 @@ extern int utf8version_latest(void);
  *  - Remove any Default_Ignorable_Code_Point.
  *  - Apply a full casefold (C + F).
  */
-extern const struct utf8data *utf8nfdi(unsigned int maxage);
-extern const struct utf8data *utf8nfdicf(unsigned int maxage);
+బాహ్య స్థిరరాశి నిర్మాణం utf8data *utf8nfdi(గుర్తులేని పూర్ణాంకం maxage);
+బాహ్య స్థిరరాశి నిర్మాణం utf8data *utf8nfdicf(గుర్తులేని పూర్ణాంకం maxage);
 
 /*
  * Determine the maximum age of any unicode character in the string.
  * Returns 0 if only unassigned code points are present.
  * Returns -1 if the input is not valid UTF-8.
  */
-extern int utf8agemax(const struct utf8data *data, const char *s);
-extern int utf8nagemax(const struct utf8data *data, const char *s, size_t len);
+బాహ్య పూర్ణాంకం utf8agemax(స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం, స్థిరరాశి అక్షరం *s);
+బాహ్య పూర్ణాంకం utf8nagemax(స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం, స్థిరరాశి అక్షరం *s, size_t len);
 
 /*
  * Determine the minimum age of any unicode character in the string.
  * Returns 0 if any unassigned code points are present.
  * Returns -1 if the input is not valid UTF-8.
  */
-extern int utf8agemin(const struct utf8data *data, const char *s);
-extern int utf8nagemin(const struct utf8data *data, const char *s, size_t len);
+బాహ్య పూర్ణాంకం utf8agemin(స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం, స్థిరరాశి అక్షరం *s);
+బాహ్య పూర్ణాంకం utf8nagemin(స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం, స్థిరరాశి అక్షరం *s, size_t len);
 
 /*
  * Determine the length of the normalized from of the string,
@@ -77,26 +77,26 @@ extern int utf8nagemin(const struct utf8data *data, const char *s, size_t len);
  * Returns 0 if only ignorable code points are present.
  * Returns -1 if the input is not valid UTF-8.
  */
-extern ssize_t utf8len(const struct utf8data *data, const char *s);
-extern ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len);
+బాహ్య ssize_t utf8len(స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం, స్థిరరాశి అక్షరం *s);
+బాహ్య ssize_t utf8nlen(స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం, స్థిరరాశి అక్షరం *s, size_t len);
 
 /* Needed in struct utf8cursor below. */
-#define UTF8HANGULLEAF	(12)
+#నిర్వచించు UTF8HANGULLEAF	(12)
 
 /*
  * Cursor structure used by the normalizer.
  */
-struct utf8cursor {
-	const struct utf8data	*data;
-	const char	*s;
-	const char	*p;
-	const char	*ss;
-	const char	*sp;
-	unsigned int	len;
-	unsigned int	slen;
-	short int	ccc;
-	short int	nccc;
-	unsigned char	hangul[UTF8HANGULLEAF];
+నిర్మాణం utf8cursor {
+	స్థిరరాశి నిర్మాణం utf8data	*దత్తాంశం;
+	స్థిరరాశి అక్షరం	*s;
+	స్థిరరాశి అక్షరం	*p;
+	స్థిరరాశి అక్షరం	*ss;
+	స్థిరరాశి అక్షరం	*sp;
+	గుర్తులేని పూర్ణాంకం	len;
+	గుర్తులేని పూర్ణాంకం	slen;
+	పొట్టి పూర్ణాంకం	ccc;
+	పొట్టి పూర్ణాంకం	nccc;
+	గుర్తులేని అక్షరం	hangul[UTF8HANGULLEAF];
 };
 
 /*
@@ -104,10 +104,10 @@ struct utf8cursor {
  * Returns 0 on success.
  * Returns -1 on failure.
  */
-extern int utf8cursor(struct utf8cursor *u8c, const struct utf8data *data,
-		      const char *s);
-extern int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
-		       const char *s, size_t len);
+బాహ్య పూర్ణాంకం utf8cursor(నిర్మాణం utf8cursor *u8c, స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం,
+		      స్థిరరాశి అక్షరం *s);
+బాహ్య పూర్ణాంకం utf8ncursor(నిర్మాణం utf8cursor *u8c, స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం,
+		       స్థిరరాశి అక్షరం *s, size_t len);
 
 /*
  * Get the next byte in the normalization.
@@ -115,6 +115,6 @@ extern int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
  * Returns 0 when the end of the normalization is reached.
  * Returns -1 if the string being normalized is not valid UTF-8.
  */
-extern int utf8byte(struct utf8cursor *u8c);
+బాహ్య పూర్ణాంకం utf8byte(నిర్మాణం utf8cursor *u8c);
 
-#endif /* UTF8NORM_H */
+#అయితే_ముగింపు /* UTF8NORM_H */

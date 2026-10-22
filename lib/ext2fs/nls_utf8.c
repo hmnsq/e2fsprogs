@@ -20,43 +20,43 @@
  * implementation.
  */
 
-#include "config.h"
-#include <stdint.h>
-#include <unistd.h>
-#include <string.h>
-#include <limits.h>
-#include <errno.h>
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <errno.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
+#అన్తర్భావ "ext2fsP.h"
 
 /* Encoding a unicode version number as a single unsigned int. */
-#define UNICODE_MAJ_SHIFT		(16)
-#define UNICODE_MIN_SHIFT		(8)
+#నిర్వచించు UNICODE_MAJ_జరుపు		(16)
+#నిర్వచించు UNICODE_MIN_జరుపు		(8)
 
-#define UNICODE_AGE(MAJ, MIN, REV)			\
-	(((unsigned int)(MAJ) << UNICODE_MAJ_SHIFT) |	\
-	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
-	 ((unsigned int)(REV)))
+#నిర్వచించు UNICODE_AGE(MAJ, MIN, REV)			\
+	(((గుర్తులేని పూర్ణాంకం)(MAJ) << UNICODE_MAJ_జరుపు) |	\
+	 ((గుర్తులేని పూర్ణాంకం)(MIN) << UNICODE_MIN_జరుపు) |	\
+	 ((గుర్తులేని పూర్ణాంకం)(REV)))
 
 /* Needed in struct utf8cursor below. */
-#define UTF8HANGULLEAF	(12)
+#నిర్వచించు UTF8HANGULLEAF	(12)
 
 /*
  * Cursor structure used by the normalizer.
  */
-struct utf8cursor {
-	const struct utf8data	*data;
-	const char	*s;
-	const char	*p;
-	const char	*ss;
-	const char	*sp;
-	unsigned int	len;
-	unsigned int	slen;
-	short int	ccc;
-	short int	nccc;
-	unsigned char	hangul[UTF8HANGULLEAF];
+నిర్మాణం utf8cursor {
+	స్థిరరాశి నిర్మాణం utf8data	*దత్తాంశం;
+	స్థిరరాశి అక్షరం	*s;
+	స్థిరరాశి అక్షరం	*p;
+	స్థిరరాశి అక్షరం	*ss;
+	స్థిరరాశి అక్షరం	*sp;
+	గుర్తులేని పూర్ణాంకం	len;
+	గుర్తులేని పూర్ణాంకం	slen;
+	పొట్టి పూర్ణాంకం	ccc;
+	పొట్టి పూర్ణాంకం	nccc;
+	గుర్తులేని అక్షరం	hangul[UTF8HANGULLEAF];
 };
 
 /*
@@ -78,40 +78,40 @@ struct utf8cursor {
 // extern int utf8byte(struct utf8cursor *u8c);
 
 
-struct utf8data {
-	unsigned int maxage;
-	unsigned int offset;
+నిర్మాణం utf8data {
+	గుర్తులేని పూర్ణాంకం maxage;
+	గుర్తులేని పూర్ణాంకం స్థానభ్రంశం;
 };
 
-#define __INCLUDED_FROM_UTF8NORM_C__
-#include "utf8data.h"
-#undef __INCLUDED_FROM_UTF8NORM_C__
+#నిర్వచించు __INCLUDED_FROM_UTF8NORM_C__
+#అన్తర్భావ "utf8data.h"
+#నిర్వచనం_రద్దు __INCLUDED_FROM_UTF8NORM_C__
 
-#define ARRAY_SIZE(array)			\
-        (sizeof(array) / sizeof(array[0]))
+#నిర్వచించు ARRAY_కొలత(array)			\
+        (పరిమాణం(array) / పరిమాణం(array[0]))
 
-#if 0
+#ఒకవేళ 0
 /* Highest unicode version supported by the data tables. */
-static int utf8version_is_supported(uint8_t maj, uint8_t min, uint8_t rev)
+స్థిర పూర్ణాంకం utf8version_is_supported(uint8_t maj, uint8_t min, uint8_t rev)
 {
-	int i = ARRAY_SIZE(utf8agetab) - 1;
-	unsigned int sb_utf8version = UNICODE_AGE(maj, min, rev);
+	పూర్ణాంకం i = ARRAY_కొలత(utf8agetab) - 1;
+	గుర్తులేని పూర్ణాంకం sb_utf8version = UNICODE_AGE(maj, min, rev);
 
-	while (i >= 0 && utf8agetab[i] != 0) {
-		if (sb_utf8version == utf8agetab[i])
-			return 1;
+	అయితే (i >= 0 && utf8agetab[i] != 0) {
+		ఒకవేళ (sb_utf8version == utf8agetab[i])
+			తిరిగి 1;
 		i--;
 	}
-	return 0;
+	తిరిగి 0;
 }
-#endif
+#అయితే_ముగింపు
 
-#if 0
-static int utf8version_latest(void)
+#ఒకవేళ 0
+స్థిర పూర్ణాంకం utf8version_latest(శూన్య)
 {
-	return utf8vers;
+	తిరిగి utf8vers;
 }
-#endif
+#అయితే_ముగింపు
 
 /*
  * UTF-8 valid ranges.
@@ -166,20 +166,20 @@ static int utf8version_latest(void)
  * Assumes the input points to the first byte of a valid UTF-8
  * sequence.
  */
-static inline int utf8clen(const char *s)
+స్థిర అంతఃవరుస పూర్ణాంకం utf8clen(స్థిరరాశి అక్షరం *s)
 {
-	unsigned char c = *s;
+	గుర్తులేని అక్షరం c = *s;
 
-	return 1 + (c >= 0xC0) + (c >= 0xE0) + (c >= 0xF0);
+	తిరిగి 1 + (c >= 0xC0) + (c >= 0xE0) + (c >= 0xF0);
 }
 
 /*
  * Decode a 3-byte UTF-8 sequence.
  */
-static unsigned int
-utf8decode3(const char *str)
+స్థిర గుర్తులేని పూర్ణాంకం
+utf8decode3(స్థిరరాశి అక్షరం *str)
 {
-	unsigned int		uc;
+	గుర్తులేని పూర్ణాంకం		uc;
 
 	uc = *str++ & 0x0F;
 	uc <<= 6;
@@ -187,14 +187,14 @@ utf8decode3(const char *str)
 	uc <<= 6;
 	uc |= *str++ & 0x3F;
 
-	return uc;
+	తిరిగి uc;
 }
 
 /*
  * Encode a 3-byte UTF-8 sequence.
  */
-static int
-utf8encode3(char *str, unsigned int val)
+స్థిర పూర్ణాంకం
+utf8encode3(అక్షరం *str, గుర్తులేని పూర్ణాంకం val)
 {
 	str[2] = (val & 0x3F) | 0x80;
 	val >>= 6;
@@ -202,7 +202,7 @@ utf8encode3(char *str, unsigned int val)
 	val >>= 6;
 	str[0] = val | 0xE0;
 
-	return 3;
+	తిరిగి 3;
 }
 
 /*
@@ -229,15 +229,15 @@ utf8encode3(char *str, unsigned int val)
  * NEXTBYTE set, and moreover those nodes always have a righthand
  * descendant.
  */
-typedef const unsigned char utf8trie_t;
-#define BITNUM		0x07
-#define NEXTBYTE	0x08
-#define OFFLEN		0x30
-#define OFFLEN_SHIFT	4
-#define RIGHTPATH	0x40
-#define TRIENODE	0x80
-#define RIGHTNODE	0x40
-#define LEFTNODE	0x80
+రకనిర్వచనం స్థిరరాశి గుర్తులేని అక్షరం utf8trie_t;
+#నిర్వచించు BITNUM		0x07
+#నిర్వచించు NEXTBYTE	0x08
+#నిర్వచించు OFFLEN		0x30
+#నిర్వచించు OFFLEN_జరుపు	4
+#నిర్వచించు RIGHTPATH	0x40
+#నిర్వచించు TRIENODE	0x80
+#నిర్వచించు RIGHTNODE	0x40
+#నిర్వచించు LEFTNODE	0x80
 
 /*
  * utf8leaf_t
@@ -276,21 +276,21 @@ typedef const unsigned char utf8trie_t;
  * ranges" comment above, and only for those sequences.  Therefore a
  * lookup in the trie can be used to validate the UTF-8 input.
  */
-typedef const unsigned char utf8leaf_t;
+రకనిర్వచనం స్థిరరాశి గుర్తులేని అక్షరం utf8leaf_t;
 
-#define LEAF_GEN(LEAF)	((LEAF)[0])
-#define LEAF_CCC(LEAF)	((LEAF)[1])
-#define LEAF_STR(LEAF)	((const char *)((LEAF) + 2))
+#నిర్వచించు ఆకు_GEN(ఆకు)	((ఆకు)[0])
+#నిర్వచించు ఆకు_CCC(ఆకు)	((ఆకు)[1])
+#నిర్వచించు ఆకు_STR(ఆకు)	((స్థిరరాశి అక్షరం *)((ఆకు) + 2))
 
-#define MINCCC		(0)
-#define MAXCCC		(254)
-#define STOPPER		(0)
-#define	DECOMPOSE	(255)
+#నిర్వచించు MINCCC		(0)
+#నిర్వచించు MAXCCC		(254)
+#నిర్వచించు STOPPER		(0)
+#నిర్వచించు	DECOMPOSE	(255)
 
 /* Marker for hangul syllable decomposition. */
-#define HANGUL		((char)(255))
+#నిర్వచించు HANGUL		((అక్షరం)(255))
 /* Size of the synthesized leaf used for Hangul syllable decomposition. */
-#define UTF8HANGULLEAF	(12)
+#నిర్వచించు UTF8HANGULLEAF	(12)
 
 /*
  * Hangul decomposition (algorithm from Section 3.12 of Unicode 6.3.0)
@@ -338,25 +338,25 @@ typedef const unsigned char utf8leaf_t;
  */
 
 /* Constants */
-#define SB	(0xAC00)
-#define LB	(0x1100)
-#define VB	(0x1161)
-#define TB	(0x11A7)
-#define LC	(19)
-#define VC	(21)
-#define TC	(28)
-#define NC	(VC * TC)
-#define SC	(LC * NC)
+#నిర్వచించు SB	(0xAC00)
+#నిర్వచించు LB	(0x1100)
+#నిర్వచించు VB	(0x1161)
+#నిర్వచించు TB	(0x11A7)
+#నిర్వచించు LC	(19)
+#నిర్వచించు VC	(21)
+#నిర్వచించు TC	(28)
+#నిర్వచించు NC	(VC * TC)
+#నిర్వచించు SC	(LC * NC)
 
 /* Algorithmic decomposition of hangul syllable. */
-static utf8leaf_t *
-utf8hangul(const char *str, unsigned char *hangul)
+స్థిర utf8leaf_t *
+utf8hangul(స్థిరరాశి అక్షరం *str, గుర్తులేని అక్షరం *hangul)
 {
-	unsigned int	si;
-	unsigned int	li;
-	unsigned int	vi;
-	unsigned int	ti;
-	unsigned char	*h;
+	గుర్తులేని పూర్ణాంకం	si;
+	గుర్తులేని పూర్ణాంకం	li;
+	గుర్తులేని పూర్ణాంకం	vi;
+	గుర్తులేని పూర్ణాంకం	ti;
+	గుర్తులేని అక్షరం	*h;
 
 	/* Calculate the SI, LI, VI, and TI values. */
 	si = utf8decode3(str) - SB;
@@ -366,24 +366,24 @@ utf8hangul(const char *str, unsigned char *hangul)
 
 	/* Fill in base of leaf. */
 	h = hangul;
-	LEAF_GEN(h) = 2;
-	LEAF_CCC(h) = DECOMPOSE;
+	ఆకు_GEN(h) = 2;
+	ఆకు_CCC(h) = DECOMPOSE;
 	h += 2;
 
 	/* Add LPart, a 3-byte UTF-8 sequence. */
-	h += utf8encode3((char *)h, li + LB);
+	h += utf8encode3((అక్షరం *)h, li + LB);
 
 	/* Add VPart, a 3-byte UTF-8 sequence. */
-	h += utf8encode3((char *)h, vi + VB);
+	h += utf8encode3((అక్షరం *)h, vi + VB);
 
 	/* Add TPart if required, also a 3-byte UTF-8 sequence. */
-	if (ti)
-		h += utf8encode3((char *)h, ti + TB);
+	ఒకవేళ (ti)
+		h += utf8encode3((అక్షరం *)h, ti + TB);
 
 	/* Terminate string. */
 	h[0] = '\0';
 
-	return hangul;
+	తిరిగి hangul;
 }
 
 /*
@@ -394,61 +394,61 @@ utf8hangul(const char *str, unsigned char *hangul)
  * is well-formed and corresponds to a known unicode code point.  The
  * shorthand for this will be "is valid UTF-8 unicode".
  */
-static utf8leaf_t *utf8nlookup(const struct utf8data *data,
-			       unsigned char *hangul, const char *s, size_t len)
+స్థిర utf8leaf_t *utf8nlookup(స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం,
+			       గుర్తులేని అక్షరం *hangul, స్థిరరాశి అక్షరం *s, size_t len)
 {
 	utf8trie_t	*trie;
-	int		offlen;
-	int		offset;
-	int		mask;
-	int		node;
+	పూర్ణాంకం		offlen;
+	పూర్ణాంకం		స్థానభ్రంశం;
+	పూర్ణాంకం		ముసుగు;
+	పూర్ణాంకం		కణుపు;
 
-	if (!data)
-		return NULL;
-	if (len == 0)
-		return NULL;
+	ఒకవేళ (!దత్తాంశం)
+		తిరిగి ఖాళీ;
+	ఒకవేళ (len == 0)
+		తిరిగి ఖాళీ;
 
-	trie = utf8data + data->offset;
-	node = 1;
-	while (node) {
-		offlen = (*trie & OFFLEN) >> OFFLEN_SHIFT;
-		if (*trie & NEXTBYTE) {
-			if (--len == 0)
-				return NULL;
+	trie = utf8data + దత్తాంశం->స్థానభ్రంశం;
+	కణుపు = 1;
+	అయితే (కణుపు) {
+		offlen = (*trie & OFFLEN) >> OFFLEN_జరుపు;
+		ఒకవేళ (*trie & NEXTBYTE) {
+			ఒకవేళ (--len == 0)
+				తిరిగి ఖాళీ;
 			s++;
 		}
-		mask = 1 << (*trie & BITNUM);
-		if (*s & mask) {
+		ముసుగు = 1 << (*trie & BITNUM);
+		ఒకవేళ (*s & ముసుగు) {
 			/* Right leg */
-			if (offlen) {
+			ఒకవేళ (offlen) {
 				/* Right node at offset of trie */
-				node = (*trie & RIGHTNODE);
-				offset = trie[offlen];
-				while (--offlen) {
-					offset <<= 8;
-					offset |= trie[offlen];
+				కణుపు = (*trie & RIGHTNODE);
+				స్థానభ్రంశం = trie[offlen];
+				అయితే (--offlen) {
+					స్థానభ్రంశం <<= 8;
+					స్థానభ్రంశం |= trie[offlen];
 				}
-				trie += offset;
-			} else if (*trie & RIGHTPATH) {
+				trie += స్థానభ్రంశం;
+			} లేకపోతే ఒకవేళ (*trie & RIGHTPATH) {
 				/* Right node after this node */
-				node = (*trie & TRIENODE);
+				కణుపు = (*trie & TRIENODE);
 				trie++;
-			} else {
+			} లేకపోతే {
 				/* No right node. */
-				return NULL;
+				తిరిగి ఖాళీ;
 			}
-		} else {
+		} లేకపోతే {
 			/* Left leg */
-			if (offlen) {
+			ఒకవేళ (offlen) {
 				/* Left node after this node. */
-				node = (*trie & LEFTNODE);
+				కణుపు = (*trie & LEFTNODE);
 				trie += offlen + 1;
-			} else if (*trie & RIGHTPATH) {
+			} లేకపోతే ఒకవేళ (*trie & RIGHTPATH) {
 				/* No left node. */
-				return NULL;
-			} else {
+				తిరిగి ఖాళీ;
+			} లేకపోతే {
 				/* Left node after this node */
-				node = (*trie & TRIENODE);
+				కణుపు = (*trie & TRIENODE);
 				trie++;
 			}
 		}
@@ -459,9 +459,9 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
 	 * always 3 bytes long, so s has been advanced twice, and the
 	 * start of the sequence is at s-2.
 	 */
-	if (LEAF_CCC(trie) == DECOMPOSE && LEAF_STR(trie)[0] == HANGUL)
+	ఒకవేళ (ఆకు_CCC(trie) == DECOMPOSE && ఆకు_STR(trie)[0] == HANGUL)
 		trie = utf8hangul(s - 2, hangul);
-	return trie;
+	తిరిగి trie;
 }
 
 /*
@@ -470,189 +470,189 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
  *
  * Forwards to utf8nlookup().
  */
-static utf8leaf_t *utf8lookup(const struct utf8data *data,
-			      unsigned char *hangul, const char *s)
+స్థిర utf8leaf_t *utf8lookup(స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం,
+			      గుర్తులేని అక్షరం *hangul, స్థిరరాశి అక్షరం *s)
 {
-	return utf8nlookup(data, hangul, s, (size_t)-1);
+	తిరిగి utf8nlookup(దత్తాంశం, hangul, s, (size_t)-1);
 }
 
-#if 0
+#ఒకవేళ 0
 /*
  * Maximum age of any character in s.
  * Return -1 if s is not valid UTF-8 unicode.
  * Return 0 if only non-assigned code points are used.
  */
-static int utf8agemax(const struct utf8data *data, const char *s)
+స్థిర పూర్ణాంకం utf8agemax(స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం, స్థిరరాశి అక్షరం *s)
 {
-	utf8leaf_t	*leaf;
-	int		age = 0;
-	int		leaf_age;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	utf8leaf_t	*ఆకు_2;
+	పూర్ణాంకం		age = 0;
+	పూర్ణాంకం		ఆకు_age;
+	గుర్తులేని అక్షరం	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
+	ఒకవేళ (!దత్తాంశం)
+		తిరిగి -1;
 
-	while (*s) {
-		leaf = utf8lookup(data, hangul, s);
-		if (!leaf)
-			return -1;
+	అయితే (*s) {
+		ఆకు_2 = utf8lookup(దత్తాంశం, hangul, s);
+		ఒకవేళ (!ఆకు_2)
+			తిరిగి -1;
 
-		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age > age)
-			age = leaf_age;
+		ఆకు_age = utf8agetab[ఆకు_GEN(ఆకు_2)];
+		ఒకవేళ (ఆకు_age <= దత్తాంశం->maxage && ఆకు_age > age)
+			age = ఆకు_age;
 		s += utf8clen(s);
 	}
-	return age;
+	తిరిగి age;
 }
-#endif
+#అయితే_ముగింపు
 
-#if 0
+#ఒకవేళ 0
 /*
  * Minimum age of any character in s.
  * Return -1 if s is not valid UTF-8 unicode.
  * Return 0 if non-assigned code points are used.
  */
-static int utf8agemin(const struct utf8data *data, const char *s)
+స్థిర పూర్ణాంకం utf8agemin(స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం, స్థిరరాశి అక్షరం *s)
 {
-	utf8leaf_t	*leaf;
-	int		age;
-	int		leaf_age;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	utf8leaf_t	*ఆకు_2;
+	పూర్ణాంకం		age;
+	పూర్ణాంకం		ఆకు_age;
+	గుర్తులేని అక్షరం	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	age = data->maxage;
-	while (*s) {
-		leaf = utf8lookup(data, hangul, s);
-		if (!leaf)
-			return -1;
-		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age < age)
-			age = leaf_age;
+	ఒకవేళ (!దత్తాంశం)
+		తిరిగి -1;
+	age = దత్తాంశం->maxage;
+	అయితే (*s) {
+		ఆకు_2 = utf8lookup(దత్తాంశం, hangul, s);
+		ఒకవేళ (!ఆకు_2)
+			తిరిగి -1;
+		ఆకు_age = utf8agetab[ఆకు_GEN(ఆకు_2)];
+		ఒకవేళ (ఆకు_age <= దత్తాంశం->maxage && ఆకు_age < age)
+			age = ఆకు_age;
 		s += utf8clen(s);
 	}
-	return age;
+	తిరిగి age;
 }
-#endif
+#అయితే_ముగింపు
 
-#if 0
+#ఒకవేళ 0
 /*
  * Maximum age of any character in s, touch at most len bytes.
  * Return -1 if s is not valid UTF-8 unicode.
  */
-static int utf8nagemax(const struct utf8data *data, const char *s, size_t len)
+స్థిర పూర్ణాంకం utf8nagemax(స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం, స్థిరరాశి అక్షరం *s, size_t len)
 {
-	utf8leaf_t	*leaf;
-	int		age = 0;
-	int		leaf_age;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	utf8leaf_t	*ఆకు_2;
+	పూర్ణాంకం		age = 0;
+	పూర్ణాంకం		ఆకు_age;
+	గుర్తులేని అక్షరం	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
+	ఒకవేళ (!దత్తాంశం)
+		తిరిగి -1;
 
-	while (len && *s) {
-		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf)
-			return -1;
-		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age > age)
-			age = leaf_age;
+	అయితే (len && *s) {
+		ఆకు_2 = utf8nlookup(దత్తాంశం, hangul, s, len);
+		ఒకవేళ (!ఆకు_2)
+			తిరిగి -1;
+		ఆకు_age = utf8agetab[ఆకు_GEN(ఆకు_2)];
+		ఒకవేళ (ఆకు_age <= దత్తాంశం->maxage && ఆకు_age > age)
+			age = ఆకు_age;
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return age;
+	తిరిగి age;
 }
-#endif
+#అయితే_ముగింపు
 
-#if 0
+#ఒకవేళ 0
 /*
  * Maximum age of any character in s, touch at most len bytes.
  * Return -1 if s is not valid UTF-8 unicode.
  */
-static int utf8nagemin(const struct utf8data *data, const char *s, size_t len)
+స్థిర పూర్ణాంకం utf8nagemin(స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం, స్థిరరాశి అక్షరం *s, size_t len)
 {
-	utf8leaf_t	*leaf;
-	int		leaf_age;
-	int		age;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	utf8leaf_t	*ఆకు_2;
+	పూర్ణాంకం		ఆకు_age;
+	పూర్ణాంకం		age;
+	గుర్తులేని అక్షరం	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	age = data->maxage;
-	while (len && *s) {
-		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf)
-			return -1;
-		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age < age)
-			age = leaf_age;
+	ఒకవేళ (!దత్తాంశం)
+		తిరిగి -1;
+	age = దత్తాంశం->maxage;
+	అయితే (len && *s) {
+		ఆకు_2 = utf8nlookup(దత్తాంశం, hangul, s, len);
+		ఒకవేళ (!ఆకు_2)
+			తిరిగి -1;
+		ఆకు_age = utf8agetab[ఆకు_GEN(ఆకు_2)];
+		ఒకవేళ (ఆకు_age <= దత్తాంశం->maxage && ఆకు_age < age)
+			age = ఆకు_age;
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return age;
+	తిరిగి age;
 }
-#endif
+#అయితే_ముగింపు
 
-#if 0
+#ఒకవేళ 0
 /*
  * Length of the normalization of s.
  * Return -1 if s is not valid UTF-8 unicode.
  *
  * A string of Default_Ignorable_Code_Point has length 0.
  */
-static ssize_t utf8len(const struct utf8data *data, const char *s)
+స్థిర ssize_t utf8len(స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం, స్థిరరాశి అక్షరం *s)
 {
-	utf8leaf_t	*leaf;
+	utf8leaf_t	*ఆకు_2;
 	size_t		ret = 0;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	గుర్తులేని అక్షరం	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	while (*s) {
-		leaf = utf8lookup(data, hangul, s);
-		if (!leaf)
-			return -1;
-		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
+	ఒకవేళ (!దత్తాంశం)
+		తిరిగి -1;
+	అయితే (*s) {
+		ఆకు_2 = utf8lookup(దత్తాంశం, hangul, s);
+		ఒకవేళ (!ఆకు_2)
+			తిరిగి -1;
+		ఒకవేళ (utf8agetab[ఆకు_GEN(ఆకు_2)] > దత్తాంశం->maxage)
 			ret += utf8clen(s);
-		else if (LEAF_CCC(leaf) == DECOMPOSE)
-			ret += strlen(LEAF_STR(leaf));
-		else
+		లేకపోతే ఒకవేళ (ఆకు_CCC(ఆకు_2) == DECOMPOSE)
+			ret += అక్షరశ్రేణి_పొడవు(ఆకు_STR(ఆకు_2));
+		లేకపోతే
 			ret += utf8clen(s);
 		s += utf8clen(s);
 	}
-	return ret;
+	తిరిగి ret;
 }
-#endif
+#అయితే_ముగింపు
 
-#if 0
+#ఒకవేళ 0
 /*
  * Length of the normalization of s, touch at most len bytes.
  * Return -1 if s is not valid UTF-8 unicode.
  */
-static ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len)
+స్థిర ssize_t utf8nlen(స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం, స్థిరరాశి అక్షరం *s, size_t len)
 {
-	utf8leaf_t	*leaf;
+	utf8leaf_t	*ఆకు_2;
 	size_t		ret = 0;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	గుర్తులేని అక్షరం	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	while (len && *s) {
-		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf)
-			return -1;
-		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
+	ఒకవేళ (!దత్తాంశం)
+		తిరిగి -1;
+	అయితే (len && *s) {
+		ఆకు_2 = utf8nlookup(దత్తాంశం, hangul, s, len);
+		ఒకవేళ (!ఆకు_2)
+			తిరిగి -1;
+		ఒకవేళ (utf8agetab[ఆకు_GEN(ఆకు_2)] > దత్తాంశం->maxage)
 			ret += utf8clen(s);
-		else if (LEAF_CCC(leaf) == DECOMPOSE)
-			ret += strlen(LEAF_STR(leaf));
-		else
+		లేకపోతే ఒకవేళ (ఆకు_CCC(ఆకు_2) == DECOMPOSE)
+			ret += అక్షరశ్రేణి_పొడవు(ఆకు_STR(ఆకు_2));
+		లేకపోతే
 			ret += utf8clen(s);
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return ret;
+	తిరిగి ret;
 }
-#endif
+#అయితే_ముగింపు
 
 /*
  * Set up an utf8cursor for use by utf8byte().
@@ -664,32 +664,32 @@ static ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len)
  *
  * Returns -1 on error, 0 on success.
  */
-static int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
-		const char *s, size_t len)
+స్థిర పూర్ణాంకం utf8ncursor(నిర్మాణం utf8cursor *u8c, స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం,
+		స్థిరరాశి అక్షరం *s, size_t len)
 {
-	if (!data)
-		return -1;
-	if (!s)
-		return -1;
-	u8c->data = data;
+	ఒకవేళ (!దత్తాంశం)
+		తిరిగి -1;
+	ఒకవేళ (!s)
+		తిరిగి -1;
+	u8c->దత్తాంశం = దత్తాంశం;
 	u8c->s = s;
-	u8c->p = NULL;
-	u8c->ss = NULL;
-	u8c->sp = NULL;
+	u8c->p = ఖాళీ;
+	u8c->ss = ఖాళీ;
+	u8c->sp = ఖాళీ;
 	u8c->len = len;
 	u8c->slen = 0;
 	u8c->ccc = STOPPER;
 	u8c->nccc = STOPPER;
 	/* Check we didn't clobber the maximum length. */
-	if (u8c->len != len)
-		return -1;
+	ఒకవేళ (u8c->len != len)
+		తిరిగి -1;
 	/* The first byte of s may not be an utf8 continuation. */
-	if (len > 0 && (*s & 0xC0) == 0x80)
-		return -1;
-	return 0;
+	ఒకవేళ (len > 0 && (*s & 0xC0) == 0x80)
+		తిరిగి -1;
+	తిరిగి 0;
 }
 
-#if 0
+#ఒకవేళ 0
 /*
  * Set up an utf8cursor for use by utf8byte().
  *
@@ -699,12 +699,12 @@ static int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
  *
  * Returns -1 on error, 0 on success.
  */
-static int utf8cursor(struct utf8cursor *u8c, const struct utf8data *data,
-	       const char *s)
+స్థిర పూర్ణాంకం utf8cursor(నిర్మాణం utf8cursor *u8c, స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం,
+	       స్థిరరాశి అక్షరం *s)
 {
-	return utf8ncursor(u8c, data, s, (unsigned int)-1);
+	తిరిగి utf8ncursor(u8c, దత్తాంశం, s, (గుర్తులేని పూర్ణాంకం)-1);
 }
-#endif
+#అయితే_ముగింపు
 
 /*
  * Get one byte from the normalized form of the string described by u8c.
@@ -733,87 +733,87 @@ static int utf8cursor(struct utf8cursor *u8c, const struct utf8data *data,
  *  u8c->ss != NULL -> this is a repeating scan.
  *  u8c->ccc == -1   -> this is the first scan of a repeating scan.
  */
-static int utf8byte(struct utf8cursor *u8c)
+స్థిర పూర్ణాంకం utf8byte(నిర్మాణం utf8cursor *u8c)
 {
-	utf8leaf_t *leaf;
-	int ccc;
+	utf8leaf_t *ఆకు_2;
+	పూర్ణాంకం ccc;
 
-	for (;;) {
+	కొరకు (;;) {
 		/* Check for the end of a decomposed character. */
-		if (u8c->p && *u8c->s == '\0') {
+		ఒకవేళ (u8c->p && *u8c->s == '\0') {
 			u8c->s = u8c->p;
-			u8c->p = NULL;
+			u8c->p = ఖాళీ;
 		}
 
 		/* Check for end-of-string. */
-		if (!u8c->p && (u8c->len == 0 || *u8c->s == '\0')) {
+		ఒకవేళ (!u8c->p && (u8c->len == 0 || *u8c->s == '\0')) {
 			/* There is no next byte. */
-			if (u8c->ccc == STOPPER)
-				return 0;
+			ఒకవేళ (u8c->ccc == STOPPER)
+				తిరిగి 0;
 			/* End-of-string during a scan counts as a stopper. */
 			ccc = STOPPER;
-			goto ccc_mismatch;
-		} else if ((*u8c->s & 0xC0) == 0x80) {
+			వెళ్ళు ccc_mismatch;
+		} లేకపోతే ఒకవేళ ((*u8c->s & 0xC0) == 0x80) {
 			/* This is a continuation of the current character. */
-			if (!u8c->p)
+			ఒకవేళ (!u8c->p)
 				u8c->len--;
-			return (unsigned char)*u8c->s++;
+			తిరిగి (గుర్తులేని అక్షరం)*u8c->s++;
 		}
 
 		/* Look up the data for the current character. */
-		if (u8c->p) {
-			leaf = utf8lookup(u8c->data, u8c->hangul, u8c->s);
-		} else {
-			leaf = utf8nlookup(u8c->data, u8c->hangul,
+		ఒకవేళ (u8c->p) {
+			ఆకు_2 = utf8lookup(u8c->దత్తాంశం, u8c->hangul, u8c->s);
+		} లేకపోతే {
+			ఆకు_2 = utf8nlookup(u8c->దత్తాంశం, u8c->hangul,
 					   u8c->s, u8c->len);
 		}
 
 		/* No leaf found implies that the input is a binary blob. */
-		if (!leaf)
-			return -1;
+		ఒకవేళ (!ఆకు_2)
+			తిరిగి -1;
 
-		ccc = LEAF_CCC(leaf);
+		ccc = ఆకు_CCC(ఆకు_2);
 		/* Characters that are too new have CCC 0. */
-		if (utf8agetab[LEAF_GEN(leaf)] > u8c->data->maxage) {
+		ఒకవేళ (utf8agetab[ఆకు_GEN(ఆకు_2)] > u8c->దత్తాంశం->maxage) {
 			ccc = STOPPER;
-		} else if (ccc == DECOMPOSE) {
+		} లేకపోతే ఒకవేళ (ccc == DECOMPOSE) {
 			u8c->len -= utf8clen(u8c->s);
 			u8c->p = u8c->s + utf8clen(u8c->s);
-			u8c->s = LEAF_STR(leaf);
+			u8c->s = ఆకు_STR(ఆకు_2);
 			/* Empty decomposition implies CCC 0. */
-			if (*u8c->s == '\0') {
-				if (u8c->ccc == STOPPER)
-					continue;
+			ఒకవేళ (*u8c->s == '\0') {
+				ఒకవేళ (u8c->ccc == STOPPER)
+					కొనసాగు;
 				ccc = STOPPER;
-				goto ccc_mismatch;
+				వెళ్ళు ccc_mismatch;
 			}
 
-			leaf = utf8lookup(u8c->data, u8c->hangul, u8c->s);
-			if (!leaf)
-				return -1;
-			ccc = LEAF_CCC(leaf);
+			ఆకు_2 = utf8lookup(u8c->దత్తాంశం, u8c->hangul, u8c->s);
+			ఒకవేళ (!ఆకు_2)
+				తిరిగి -1;
+			ccc = ఆకు_CCC(ఆకు_2);
 		}
 
 		/*
 		 * If this is not a stopper, then see if it updates
 		 * the next canonical class to be emitted.
 		 */
-		if (ccc != STOPPER && u8c->ccc < ccc && ccc < u8c->nccc)
+		ఒకవేళ (ccc != STOPPER && u8c->ccc < ccc && ccc < u8c->nccc)
 			u8c->nccc = ccc;
 
 		/*
 		 * Return the current byte if this is the current
 		 * combining class.
 		 */
-		if (ccc == u8c->ccc) {
-			if (!u8c->p)
+		ఒకవేళ (ccc == u8c->ccc) {
+			ఒకవేళ (!u8c->p)
 				u8c->len--;
-			return (unsigned char)*u8c->s++;
+			తిరిగి (గుర్తులేని అక్షరం)*u8c->s++;
 		}
 
 		/* Current combining class mismatch. */
 ccc_mismatch:
-		if (u8c->nccc == STOPPER) {
+		ఒకవేళ (u8c->nccc == STOPPER) {
 			/*
 			 * Scan forward for the first canonical class
 			 * to be emitted.  Save the position from
@@ -824,33 +824,33 @@ ccc_mismatch:
 			u8c->sp = u8c->p;
 			u8c->ss = u8c->s;
 			u8c->slen = u8c->len;
-			if (!u8c->p)
+			ఒకవేళ (!u8c->p)
 				u8c->len -= utf8clen(u8c->s);
 			u8c->s += utf8clen(u8c->s);
-		} else if (ccc != STOPPER) {
+		} లేకపోతే ఒకవేళ (ccc != STOPPER) {
 			/* Not a stopper, and not the ccc we're emitting. */
-			if (!u8c->p)
+			ఒకవేళ (!u8c->p)
 				u8c->len -= utf8clen(u8c->s);
 			u8c->s += utf8clen(u8c->s);
-		} else if (u8c->nccc != MAXCCC + 1) {
+		} లేకపోతే ఒకవేళ (u8c->nccc != MAXCCC + 1) {
 			/* At a stopper, restart for next ccc. */
 			u8c->ccc = u8c->nccc;
 			u8c->nccc = MAXCCC + 1;
 			u8c->s = u8c->ss;
 			u8c->p = u8c->sp;
 			u8c->len = u8c->slen;
-		} else {
+		} లేకపోతే {
 			/* All done, proceed from here. */
 			u8c->ccc = STOPPER;
 			u8c->nccc = STOPPER;
-			u8c->sp = NULL;
-			u8c->ss = NULL;
+			u8c->sp = ఖాళీ;
+			u8c->ss = ఖాళీ;
 			u8c->slen = 0;
 		}
 	}
 }
 
-#if 0
+#ఒకవేళ 0
 /*
  * Look for the correct const struct utf8data for a unicode version.
  * Returns NULL if the version requested is too new.
@@ -866,135 +866,135 @@ ccc_mismatch:
  *  - Remove any Default_Ignorable_Code_Point.
  *  - Apply a full casefold (C + F).
  */
-static const struct utf8data *utf8nfdi(unsigned int maxage)
+స్థిర స్థిరరాశి నిర్మాణం utf8data *utf8nfdi(గుర్తులేని పూర్ణాంకం maxage)
 {
-	int i = ARRAY_SIZE(utf8nfdidata) - 1;
+	పూర్ణాంకం i = ARRAY_కొలత(utf8nfdidata) - 1;
 
-	while (maxage < utf8nfdidata[i].maxage)
+	అయితే (maxage < utf8nfdidata[i].maxage)
 		i--;
-	if (maxage > utf8nfdidata[i].maxage)
-		return NULL;
-	return &utf8nfdidata[i];
+	ఒకవేళ (maxage > utf8nfdidata[i].maxage)
+		తిరిగి ఖాళీ;
+	తిరిగి &utf8nfdidata[i];
 }
-#endif
+#అయితే_ముగింపు
 
-static const struct utf8data *utf8nfdicf(unsigned int maxage)
+స్థిర స్థిరరాశి నిర్మాణం utf8data *utf8nfdicf(గుర్తులేని పూర్ణాంకం maxage)
 {
-	int i = ARRAY_SIZE(utf8nfdicfdata) - 1;
+	పూర్ణాంకం i = ARRAY_కొలత(utf8nfdicfdata) - 1;
 
-	while (maxage < utf8nfdicfdata[i].maxage)
+	అయితే (maxage < utf8nfdicfdata[i].maxage)
 		i--;
-	if (maxage > utf8nfdicfdata[i].maxage)
-		return NULL;
-	return &utf8nfdicfdata[i];
+	ఒకవేళ (maxage > utf8nfdicfdata[i].maxage)
+		తిరిగి ఖాళీ;
+	తిరిగి &utf8nfdicfdata[i];
 }
 
-static int utf8_casefold(const struct ext2fs_nls_table *table,
-			  const unsigned char *str, size_t len,
-			  unsigned char *dest, size_t dlen)
+స్థిర పూర్ణాంకం utf8_casefold(స్థిరరాశి నిర్మాణం ext2fs_nls_పట్టిక *పట్టిక,
+			  స్థిరరాశి గుర్తులేని అక్షరం *str, size_t len,
+			  గుర్తులేని అక్షరం *dest, size_t dlen)
 {
-	const struct utf8data *data = utf8nfdicf(table->version);
-	struct utf8cursor cur;
+	స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం = utf8nfdicf(పట్టిక->సంస్కరణ);
+	నిర్మాణం utf8cursor cur;
 	size_t nlen = 0;
 
-	if (utf8ncursor(&cur, data, (const char *) str, len) < 0)
-		goto invalid_seq;
+	ఒకవేళ (utf8ncursor(&cur, దత్తాంశం, (స్థిరరాశి అక్షరం *) str, len) < 0)
+		వెళ్ళు invalid_seq;
 
-	for (nlen = 0; nlen < dlen; nlen++) {
-		int c = utf8byte(&cur);
+	కొరకు (nlen = 0; nlen < dlen; nlen++) {
+		పూర్ణాంకం c = utf8byte(&cur);
 
 		dest[nlen] = c;
-		if (!c)
-			return nlen;
-		if (c == -1)
-			break;
+		ఒకవేళ (!c)
+			తిరిగి nlen;
+		ఒకవేళ (c == -1)
+			ఆపు;
 	}
 
-	return -ENAMETOOLONG;
+	తిరిగి -ENAMETOOLONG;
 
 invalid_seq:
-	if (dlen < len)
-		return -ENAMETOOLONG;
+	ఒకవేళ (dlen < len)
+		తిరిగి -ENAMETOOLONG;
 
 	/* Signal invalid sequence */
-	return -EINVAL;
+	తిరిగి -EINVAL;
 }
 
-static int utf8_validate(const struct ext2fs_nls_table *table,
-			 char *s, size_t len, char **pos)
+స్థిర పూర్ణాంకం utf8_validate(స్థిరరాశి నిర్మాణం ext2fs_nls_పట్టిక *పట్టిక,
+			 అక్షరం *s, size_t len, అక్షరం **pos)
 {
-	const struct utf8data *data = utf8nfdicf(table->version);
-	utf8leaf_t	*leaf;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం = utf8nfdicf(పట్టిక->సంస్కరణ);
+	utf8leaf_t	*ఆకు_2;
+	గుర్తులేని అక్షరం	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	while (len && *s) {
-		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf) {
+	ఒకవేళ (!దత్తాంశం)
+		తిరిగి -1;
+	అయితే (len && *s) {
+		ఆకు_2 = utf8nlookup(దత్తాంశం, hangul, s, len);
+		ఒకవేళ (!ఆకు_2) {
 			*pos = s;
-			return 1;
+			తిరిగి 1;
 		}
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-static int utf8_casefold_cmp(const struct ext2fs_nls_table *table,
-			     const unsigned char *str1, size_t len1,
-			     const unsigned char *str2, size_t len2)
+స్థిర పూర్ణాంకం utf8_casefold_cmp(స్థిరరాశి నిర్మాణం ext2fs_nls_పట్టిక *పట్టిక,
+			     స్థిరరాశి గుర్తులేని అక్షరం *str1, size_t len1,
+			     స్థిరరాశి గుర్తులేని అక్షరం *str2, size_t len2)
 {
-	const struct utf8data *data = utf8nfdicf(table->version);
-	int c1, c2;
-	struct utf8cursor cur1, cur2;
+	స్థిరరాశి నిర్మాణం utf8data *దత్తాంశం = utf8nfdicf(పట్టిక->సంస్కరణ);
+	పూర్ణాంకం c1, c2;
+	నిర్మాణం utf8cursor cur1, cur2;
 
-	if (utf8ncursor(&cur1, data, (const char *) str1, len1) < 0)
-		return -1;
-	if (utf8ncursor(&cur2, data, (const char *) str2, len2) < 0)
-		return -1;
+	ఒకవేళ (utf8ncursor(&cur1, దత్తాంశం, (స్థిరరాశి అక్షరం *) str1, len1) < 0)
+		తిరిగి -1;
+	ఒకవేళ (utf8ncursor(&cur2, దత్తాంశం, (స్థిరరాశి అక్షరం *) str2, len2) < 0)
+		తిరిగి -1;
 
-	do {
+	చేయి {
 		c1 = utf8byte(&cur1);
 		c2 = utf8byte(&cur2);
 
-		if (c1 < 0 || c2 < 0)
-			return -1;
-		if (c1 != c2)
-			return c1 - c2;
-	} while (c1);
+		ఒకవేళ (c1 < 0 || c2 < 0)
+			తిరిగి -1;
+		ఒకవేళ (c1 != c2)
+			తిరిగి c1 - c2;
+	} అయితే (c1);
 
-	return 0;
+	తిరిగి 0;
 }
 
-static const struct ext2fs_nls_ops utf8_ops = {
+స్థిర స్థిరరాశి నిర్మాణం ext2fs_nls_ops utf8_ops = {
 	.casefold = utf8_casefold,
 	.validate = utf8_validate,
 	.casefold_cmp = utf8_casefold_cmp,
 };
 
-static const struct ext2fs_nls_table nls_utf8 = {
+స్థిర స్థిరరాశి నిర్మాణం ext2fs_nls_పట్టిక nls_utf8 = {
 	.ops = &utf8_ops,
-	.version = UNICODE_AGE(12, 1, 0),
+	.సంస్కరణ = UNICODE_AGE(12, 1, 0),
 };
 
-const struct ext2fs_nls_table *ext2fs_load_nls_table(int encoding)
+స్థిరరాశి నిర్మాణం ext2fs_nls_పట్టిక *ext2fs_ఎక్కించు_nls_పట్టిక(పూర్ణాంకం encoding)
 {
-	if (encoding == EXT4_ENC_UTF8_12_1)
-		return &nls_utf8;
+	ఒకవేళ (encoding == EXT4_ENC_UTF8_12_1)
+		తిరిగి &nls_utf8;
 
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
-int ext2fs_check_encoded_name(const struct ext2fs_nls_table *table,
-			      char *name, size_t len, char **pos)
+పూర్ణాంకం ext2fs_check_encoded_name(స్థిరరాశి నిర్మాణం ext2fs_nls_పట్టిక *పట్టిక,
+			      అక్షరం *name, size_t len, అక్షరం **pos)
 {
-	return table->ops->validate(table, name, len, pos);
+	తిరిగి పట్టిక->ops->validate(పట్టిక, name, len, pos);
 }
 
-int ext2fs_casefold_cmp(const struct ext2fs_nls_table *table,
-			const unsigned char *str1, size_t len1,
-			const unsigned char *str2, size_t len2)
+పూర్ణాంకం ext2fs_casefold_cmp(స్థిరరాశి నిర్మాణం ext2fs_nls_పట్టిక *పట్టిక,
+			స్థిరరాశి గుర్తులేని అక్షరం *str1, size_t len1,
+			స్థిరరాశి గుర్తులేని అక్షరం *str2, size_t len2)
 {
-	return table->ops->casefold_cmp(table, str1, len1, str2, len2);
+	తిరిగి పట్టిక->ops->casefold_cmp(పట్టిక, str1, len1, str2, len2);
 }

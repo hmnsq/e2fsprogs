@@ -10,117 +10,117 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <stdlib.h>
-#include <string.h>
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#include <dirent.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#if HAVE_SYS_MKDEV_H
-#include <sys/mkdev.h>
-#endif
-#ifdef HAVE_SYS_SYSMACROS_H
-#include <sys/sysmacros.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_STAT_H
+#అన్తర్భావ <sys/stat.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <dirent.h>
+#ఒకవేళ HAVE_ERRNO_H
+#అన్తర్భావ <errno.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_MKDEV_H
+#అన్తర్భావ <sys/mkdev.h>
+#అయితే_ముగింపు
+#నిర్వచితమైతే HAVE_SYS_SYSMACROS_H
+#అన్తర్భావ <sys/sysmacros.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
+#అన్తర్భావ "ext2fsP.h"
 
-struct dir_list {
-	char	*name;
-	struct dir_list *next;
+నిర్మాణం dir_list {
+	అక్షరం	*name;
+	నిర్మాణం dir_list *తదుపరి;
 };
 
 /*
  * This function adds an entry to the directory list
  */
-static void add_to_dirlist(const char *name, struct dir_list **list)
+స్థిర శూన్య కూడు_గమ్యం_dirlist(స్థిరరాశి అక్షరం *name, నిర్మాణం dir_list **list)
 {
-	struct dir_list *dp;
+	నిర్మాణం dir_list *dp;
 
-	dp = malloc(sizeof(struct dir_list));
-	if (!dp)
-		return;
-	dp->name = malloc(strlen(name)+1);
-	if (!dp->name) {
-		free(dp);
-		return;
+	dp = జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం dir_list));
+	ఒకవేళ (!dp)
+		తిరిగి;
+	dp->name = జ్ఞాపకం_ఇవ్వు(అక్షరశ్రేణి_పొడవు(name)+1);
+	ఒకవేళ (!dp->name) {
+		విడుదల(dp);
+		తిరిగి;
 	}
 	strcpy(dp->name, name);
-	dp->next = *list;
+	dp->తదుపరి = *list;
 	*list = dp;
 }
 
 /*
  * This function frees a directory list
  */
-static void free_dirlist(struct dir_list **list)
+స్థిర శూన్య free_dirlist(నిర్మాణం dir_list **list)
 {
-	struct dir_list *dp, *next;
+	నిర్మాణం dir_list *dp, *తదుపరి;
 
-	for (dp = *list; dp; dp = next) {
-		next = dp->next;
-		free(dp->name);
-		free(dp);
+	కొరకు (dp = *list; dp; dp = తదుపరి) {
+		తదుపరి = dp->తదుపరి;
+		విడుదల(dp->name);
+		విడుదల(dp);
 	}
 	*list = 0;
 }
 
-static int scan_dir(char *dirname, dev_t device, struct dir_list **list,
-		    char **ret_path)
+స్థిర పూర్ణాంకం పరిశీలన_dir(అక్షరం *dirname, dev_t device, నిర్మాణం dir_list **list,
+		    అక్షరం **ret_మార్గం)
 {
 	DIR	*dir;
-	struct dirent *dp;
-	char	path[1024], *cp;
-	int	dirlen;
-	struct stat st;
+	నిర్మాణం dirent *dp;
+	అక్షరం	మార్గం[1024], *cp;
+	పూర్ణాంకం	dirlen;
+	నిర్మాణం stat st;
 
-	dirlen = strlen(dirname);
-	if ((dir = opendir(dirname)) == NULL)
-		return errno;
+	dirlen = అక్షరశ్రేణి_పొడవు(dirname);
+	ఒకవేళ ((dir = opendir(dirname)) == ఖాళీ)
+		తిరిగి errno;
 	dp = readdir(dir);
-	while (dp) {
-		if (dirlen + strlen(dp->d_name) + 2 >= sizeof(path))
-			goto skip_to_next;
-		if (dp->d_name[0] == '.' &&
+	అయితే (dp) {
+		ఒకవేళ (dirlen + అక్షరశ్రేణి_పొడవు(dp->d_name) + 2 >= పరిమాణం(మార్గం))
+			వెళ్ళు skip_గమ్యం_తదుపరి;
+		ఒకవేళ (dp->d_name[0] == '.' &&
 		    ((dp->d_name[1] == 0) ||
 		     ((dp->d_name[1] == '.') && (dp->d_name[2] == 0))))
-			goto skip_to_next;
-		sprintf(path, "%s/%s", dirname, dp->d_name);
-		if (stat(path, &st) < 0)
-			goto skip_to_next;
-		if (S_ISDIR(st.st_mode))
-			add_to_dirlist(path, list);
-		if (ext2fsP_is_disk_device(st.st_mode) &&
+			వెళ్ళు skip_గమ్యం_తదుపరి;
+		sprintf(మార్గం, "%s/%s", dirname, dp->d_name);
+		ఒకవేళ (stat(మార్గం, &st) < 0)
+			వెళ్ళు skip_గమ్యం_తదుపరి;
+		ఒకవేళ (S_ISDIR(st.st_బహుళకం))
+			కూడు_గమ్యం_dirlist(మార్గం, list);
+		ఒకవేళ (ext2fsP_is_disk_device(st.st_బహుళకం) &&
 		    st.st_rdev == device) {
-			cp = malloc(strlen(path)+1);
-			if (!cp) {
+			cp = జ్ఞాపకం_ఇవ్వు(అక్షరశ్రేణి_పొడవు(మార్గం)+1);
+			ఒకవేళ (!cp) {
 				closedir(dir);
-				return ENOMEM;
+				తిరిగి ENOMEM;
 			}
-			strcpy(cp, path);
-			*ret_path = cp;
-			goto success;
+			strcpy(cp, మార్గం);
+			*ret_మార్గం = cp;
+			వెళ్ళు success;
 		}
-	skip_to_next:
+	skip_గమ్యం_తదుపరి:
 		dp = readdir(dir);
 	}
 success:
 	closedir(dir);
-	return 0;
+	తిరిగి 0;
 }
 
 /*
@@ -128,91 +128,91 @@ success:
  * device number.  It returns a pointer to allocated memory to the
  * pathname on success, and NULL on failure.
  */
-char *ext2fs_find_block_device(dev_t device)
+అక్షరం *ext2fs_కనుగొను_ఖండం_device(dev_t device)
 {
-	struct dir_list *list = 0, *new_list = 0;
-	struct dir_list *current;
-	char	*ret_path = 0;
-	int    level = 0;
+	నిర్మాణం dir_list *list = 0, *new_list = 0;
+	నిర్మాణం dir_list *current;
+	అక్షరం	*ret_మార్గం = 0;
+	పూర్ణాంకం    level = 0;
 
 	/*
 	 * Add the starting directories to search...
 	 */
-	add_to_dirlist("/devices", &list);
-	add_to_dirlist("/devfs", &list);
-	add_to_dirlist("/dev", &list);
+	కూడు_గమ్యం_dirlist("/devices", &list);
+	కూడు_గమ్యం_dirlist("/devfs", &list);
+	కూడు_గమ్యం_dirlist("/dev", &list);
 
-	while (list) {
+	అయితే (list) {
 		current = list;
-		list = list->next;
-#ifdef DEBUG
-		printf("Scanning directory %s\n", current->name);
-#endif
-		scan_dir(current->name, device, &new_list, &ret_path);
-		free(current->name);
-		free(current);
-		if (ret_path)
-			break;
+		list = list->తదుపరి;
+#నిర్వచితమైతే DEBUG
+		రాయి("Scanning directory %s\n", current->name);
+#అయితే_ముగింపు
+		పరిశీలన_dir(current->name, device, &new_list, &ret_మార్గం);
+		విడుదల(current->name);
+		విడుదల(current);
+		ఒకవేళ (ret_మార్గం)
+			ఆపు;
 		/*
 		 * If we're done checking at this level, descend to
 		 * the next level of subdirectories. (breadth-first)
 		 */
-		if (list == 0) {
+		ఒకవేళ (list == 0) {
 			list = new_list;
 			new_list = 0;
 			/* Avoid infinite loop */
-			if (++level >= EXT2FS_MAX_NESTED_LINKS)
-				break;
+			ఒకవేళ (++level >= EXT2FS_MAX_NESTED_LINKS)
+				ఆపు;
 		}
 	}
 	free_dirlist(&list);
 	free_dirlist(&new_list);
-	return ret_path;
+	తిరిగి ret_మార్గం;
 }
 
 
-#ifdef DEBUG
-int main(int argc, char** argv)
+#నిర్వచితమైతే DEBUG
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం** argv)
 {
-	char	*devname, *tmp;
-	int	major, minor;
+	అక్షరం	*devname, *tmp;
+	పూర్ణాంకం	major, minor;
 	dev_t	device;
-	const char *errmsg = "Couldn't parse %s: %s\n";
+	స్థిరరాశి అక్షరం *errmsg = "Couldn't parse %s: %s\n";
 
-	if ((argc != 2) && (argc != 3)) {
+	ఒకవేళ ((argc != 2) && (argc != 3)) {
 		fprintf(stderr, "Usage: %s device_number\n", argv[0]);
 		fprintf(stderr, "\t: %s major minor\n", argv[0]);
-		exit(1);
+		నిష్క్రమించు(1);
 	}
-	if (argc == 2) {
+	ఒకవేళ (argc == 2) {
 		device = strtoul(argv[1], &tmp, 0);
-		if (*tmp) {
+		ఒకవేళ (*tmp) {
 			fprintf(stderr, errmsg, "device number", argv[1]);
-			exit(1);
+			నిష్క్రమించు(1);
 		}
-	} else {
+	} లేకపోతే {
 		major = strtoul(argv[1], &tmp, 0);
-		if (*tmp) {
+		ఒకవేళ (*tmp) {
 			fprintf(stderr, errmsg, "major number", argv[1]);
-			exit(1);
+			నిష్క్రమించు(1);
 		}
 		minor = strtoul(argv[2], &tmp, 0);
-		if (*tmp) {
+		ఒకవేళ (*tmp) {
 			fprintf(stderr, errmsg, "minor number", argv[2]);
-			exit(1);
+			నిష్క్రమించు(1);
 		}
 		device = makedev(major, minor);
-		printf("Looking for device 0x%04x (%d:%d)\n", device,
+		రాయి("Looking for device 0x%04x (%d:%d)\n", device,
 		       major, minor);
 	}
-	devname = ext2fs_find_block_device(device);
-	if (devname) {
-		printf("Found device!  %s\n", devname);
-		free(devname);
-	} else {
-		printf("Couldn't find device.\n");
+	devname = ext2fs_కనుగొను_ఖండం_device(device);
+	ఒకవేళ (devname) {
+		రాయి("Found device!  %s\n", devname);
+		విడుదల(devname);
+	} లేకపోతే {
+		రాయి("Couldn't find device.\n");
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-#endif
+#అయితే_ముగింపు

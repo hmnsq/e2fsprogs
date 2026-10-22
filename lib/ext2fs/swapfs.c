@@ -9,38 +9,38 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <string.h>
-#include <time.h>
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
-#include <ext2fs/ext2_ext_attr.h>
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
+#అన్తర్భావ "ext2fsP.h"
+#అన్తర్భావ <ext2fs/ext2_ext_attr.h>
 
-void ext2fs_swap_super(struct ext2_super_block * sb)
+శూన్య ext2fs_మార్పిడి_super(నిర్మాణం ext2_super_ఖండం * sb)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	sb->s_inodes_count = ext2fs_swab32(sb->s_inodes_count);
-	sb->s_blocks_count = ext2fs_swab32(sb->s_blocks_count);
-	sb->s_r_blocks_count = ext2fs_swab32(sb->s_r_blocks_count);
-	sb->s_free_blocks_count = ext2fs_swab32(sb->s_free_blocks_count);
-	sb->s_free_inodes_count = ext2fs_swab32(sb->s_free_inodes_count);
-	sb->s_first_data_block = ext2fs_swab32(sb->s_first_data_block);
-	sb->s_log_block_size = ext2fs_swab32(sb->s_log_block_size);
-	sb->s_log_cluster_size = ext2fs_swab32(sb->s_log_cluster_size);
-	sb->s_blocks_per_group = ext2fs_swab32(sb->s_blocks_per_group);
-	sb->s_clusters_per_group = ext2fs_swab32(sb->s_clusters_per_group);
-	sb->s_inodes_per_group = ext2fs_swab32(sb->s_inodes_per_group);
+	sb->s_inodes_లెక్క = ext2fs_swab32(sb->s_inodes_లెక్క);
+	sb->s_ఖండాలు_లెక్క = ext2fs_swab32(sb->s_ఖండాలు_లెక్క);
+	sb->s_r_ఖండాలు_లెక్క = ext2fs_swab32(sb->s_r_ఖండాలు_లెక్క);
+	sb->s_free_ఖండాలు_లెక్క = ext2fs_swab32(sb->s_free_ఖండాలు_లెక్క);
+	sb->s_free_inodes_లెక్క = ext2fs_swab32(sb->s_free_inodes_లెక్క);
+	sb->s_మొదటి_దత్తాంశం_ఖండం = ext2fs_swab32(sb->s_మొదటి_దత్తాంశం_ఖండం);
+	sb->s_log_ఖండం_కొలత = ext2fs_swab32(sb->s_log_ఖండం_కొలత);
+	sb->s_log_cluster_కొలత = ext2fs_swab32(sb->s_log_cluster_కొలత);
+	sb->s_ఖండాలు_చొప్పున_సమూహం = ext2fs_swab32(sb->s_ఖండాలు_చొప్పున_సమూహం);
+	sb->s_clusters_చొప్పున_సమూహం = ext2fs_swab32(sb->s_clusters_చొప్పున_సమూహం);
+	sb->s_inodes_చొప్పున_సమూహం = ext2fs_swab32(sb->s_inodes_చొప్పున_సమూహం);
 	sb->s_mtime = ext2fs_swab32(sb->s_mtime);
 	sb->s_wtime = ext2fs_swab32(sb->s_wtime);
-	sb->s_mnt_count = ext2fs_swab16(sb->s_mnt_count);
-	sb->s_max_mnt_count = ext2fs_swab16(sb->s_max_mnt_count);
+	sb->s_mnt_లెక్క = ext2fs_swab16(sb->s_mnt_లెక్క);
+	sb->s_max_mnt_లెక్క = ext2fs_swab16(sb->s_max_mnt_లెక్క);
 	sb->s_magic = ext2fs_swab16(sb->s_magic);
 	sb->s_state = ext2fs_swab16(sb->s_state);
 	sb->s_errors = ext2fs_swab16(sb->s_errors);
@@ -51,9 +51,9 @@ void ext2fs_swap_super(struct ext2_super_block * sb)
 	sb->s_rev_level = ext2fs_swab32(sb->s_rev_level);
 	sb->s_def_resuid = ext2fs_swab16(sb->s_def_resuid);
 	sb->s_def_resgid = ext2fs_swab16(sb->s_def_resgid);
-	sb->s_first_ino = ext2fs_swab32(sb->s_first_ino);
-	sb->s_inode_size = ext2fs_swab16(sb->s_inode_size);
-	sb->s_block_group_nr = ext2fs_swab16(sb->s_block_group_nr);
+	sb->s_మొదటి_ino = ext2fs_swab32(sb->s_మొదటి_ino);
+	sb->s_inode_కొలత = ext2fs_swab16(sb->s_inode_కొలత);
+	sb->s_ఖండం_సమూహం_nr = ext2fs_swab16(sb->s_ఖండం_సమూహం_nr);
 	sb->s_feature_compat = ext2fs_swab32(sb->s_feature_compat);
 	sb->s_feature_incompat = ext2fs_swab32(sb->s_feature_incompat);
 	sb->s_feature_ro_compat = ext2fs_swab32(sb->s_feature_ro_compat);
@@ -63,41 +63,41 @@ void ext2fs_swap_super(struct ext2_super_block * sb)
 	sb->s_algorithm_usage_bitmap = ext2fs_swab32(sb->s_algorithm_usage_bitmap);
 	/* sb->s_prealloc_blocks is __u8 and does not need swabbing */
 	/* sb->s_prealloc_dir_blocks is __u8 and does not need swabbing */
-	sb->s_reserved_gdt_blocks = ext2fs_swab16(sb->s_reserved_gdt_blocks);
+	sb->s_reserved_gdt_ఖండాలు = ext2fs_swab16(sb->s_reserved_gdt_ఖండాలు);
 	/* sb->s_journal_uuid is __u8 and does not need swabbing */
 	sb->s_journal_inum = ext2fs_swab32(sb->s_journal_inum);
 	sb->s_journal_dev = ext2fs_swab32(sb->s_journal_dev);
-	sb->s_last_orphan = ext2fs_swab32(sb->s_last_orphan);
-	for (i = 0; i < 4; i++)
-		sb->s_hash_seed[i] = ext2fs_swab32(sb->s_hash_seed[i]);
+	sb->s_చివరి_orphan = ext2fs_swab32(sb->s_చివరి_orphan);
+	కొరకు (i = 0; i < 4; i++)
+		sb->s_hash_విత్తనం[i] = ext2fs_swab32(sb->s_hash_విత్తనం[i]);
 	/* sb->s_def_hash_version is __u8 and does not need swabbing */
 	/* sb->s_jnl_backup_type is __u8 and does not need swabbing */
-	sb->s_desc_size = ext2fs_swab16(sb->s_desc_size);
+	sb->s_desc_కొలత = ext2fs_swab16(sb->s_desc_కొలత);
 	sb->s_default_mount_opts = ext2fs_swab32(sb->s_default_mount_opts);
-	sb->s_first_meta_bg = ext2fs_swab32(sb->s_first_meta_bg);
-	sb->s_mkfs_time = ext2fs_swab32(sb->s_mkfs_time);
+	sb->s_మొదటి_meta_bg = ext2fs_swab32(sb->s_మొదటి_meta_bg);
+	sb->s_mkfs_సమయం = ext2fs_swab32(sb->s_mkfs_సమయం);
 	/* if journal backup is for a valid extent-based journal... */
-	if (ext2fs_extent_header_verify(sb->s_jnl_blocks,
-					sizeof(sb->s_jnl_blocks)) == 0) {
+	ఒకవేళ (ext2fs_extent_శీర్షిక_verify(sb->s_jnl_ఖండాలు,
+					పరిమాణం(sb->s_jnl_ఖండాలు)) == 0) {
 		/* ... swap only the journal i_size and i_size_high,
 		 * and the extent data is not swapped on read */
 		i = 15;
-	} else {
+	} లేకపోతే {
 		/* direct/indirect journal: swap it all */
 		i = 0;
 	}
-	for (; i < 17; i++)
-		sb->s_jnl_blocks[i] = ext2fs_swab32(sb->s_jnl_blocks[i]);
-	sb->s_blocks_count_hi = ext2fs_swab32(sb->s_blocks_count_hi);
-	sb->s_r_blocks_count_hi = ext2fs_swab32(sb->s_r_blocks_count_hi);
-	sb->s_free_blocks_hi = ext2fs_swab32(sb->s_free_blocks_hi);
+	కొరకు (; i < 17; i++)
+		sb->s_jnl_ఖండాలు[i] = ext2fs_swab32(sb->s_jnl_ఖండాలు[i]);
+	sb->s_ఖండాలు_లెక్క_hi = ext2fs_swab32(sb->s_ఖండాలు_లెక్క_hi);
+	sb->s_r_ఖండాలు_లెక్క_hi = ext2fs_swab32(sb->s_r_ఖండాలు_లెక్క_hi);
+	sb->s_free_ఖండాలు_hi = ext2fs_swab32(sb->s_free_ఖండాలు_hi);
 	sb->s_min_extra_isize = ext2fs_swab16(sb->s_min_extra_isize);
 	sb->s_want_extra_isize = ext2fs_swab16(sb->s_want_extra_isize);
 	sb->s_flags = ext2fs_swab32(sb->s_flags);
 	sb->s_raid_stride = ext2fs_swab16(sb->s_raid_stride);
 	sb->s_mmp_update_interval = ext2fs_swab16(sb->s_mmp_update_interval);
-	sb->s_mmp_block = ext2fs_swab64(sb->s_mmp_block);
-	sb->s_raid_stripe_width = ext2fs_swab32(sb->s_raid_stripe_width);
+	sb->s_mmp_ఖండం = ext2fs_swab64(sb->s_mmp_ఖండం);
+	sb->s_raid_stripe_వెడల్పు = ext2fs_swab32(sb->s_raid_stripe_వెడల్పు);
 	/* sb->s_log_groups_per_flex is __u8 and does not need swabbing */
 	/* sb->s_checksum_type is __u8 and does not need swabbing */
 	/* sb->s_encryption_level is __u8 and does not need swabbing */
@@ -105,17 +105,17 @@ void ext2fs_swap_super(struct ext2_super_block * sb)
 	sb->s_kbytes_written = ext2fs_swab64(sb->s_kbytes_written);
 	sb->s_snapshot_inum = ext2fs_swab32(sb->s_snapshot_inum);
 	sb->s_snapshot_id = ext2fs_swab32(sb->s_snapshot_id);
-	sb->s_snapshot_r_blocks_count =
-		ext2fs_swab64(sb->s_snapshot_r_blocks_count);
+	sb->s_snapshot_r_ఖండాలు_లెక్క =
+		ext2fs_swab64(sb->s_snapshot_r_ఖండాలు_లెక్క);
 	sb->s_snapshot_list = ext2fs_swab32(sb->s_snapshot_list);
-	sb->s_error_count = ext2fs_swab32(sb->s_error_count);
-	sb->s_first_error_time = ext2fs_swab32(sb->s_first_error_time);
-	sb->s_first_error_ino = ext2fs_swab32(sb->s_first_error_ino);
-	sb->s_first_error_block = ext2fs_swab64(sb->s_first_error_block);
+	sb->s_error_లెక్క = ext2fs_swab32(sb->s_error_లెక్క);
+	sb->s_మొదటి_error_సమయం = ext2fs_swab32(sb->s_మొదటి_error_సమయం);
+	sb->s_మొదటి_error_ino = ext2fs_swab32(sb->s_మొదటి_error_ino);
+	sb->s_మొదటి_error_ఖండం = ext2fs_swab64(sb->s_మొదటి_error_ఖండం);
 	/* sb->s_first_error_func is __u8 and does not need swabbing */
-	sb->s_last_error_time = ext2fs_swab32(sb->s_last_error_time);
-	sb->s_last_error_ino = ext2fs_swab32(sb->s_last_error_ino);
-	sb->s_last_error_block = ext2fs_swab64(sb->s_last_error_block);
+	sb->s_చివరి_error_సమయం = ext2fs_swab32(sb->s_చివరి_error_సమయం);
+	sb->s_చివరి_error_ino = ext2fs_swab32(sb->s_చివరి_error_ino);
+	sb->s_చివరి_error_ఖండం = ext2fs_swab64(sb->s_చివరి_error_ఖండం);
 	/* sb->s_last_error_func is __u8 and does not need swabbing */
 	/* sb->s_mount_opts is __u8 and does not need swabbing */
 	sb->s_usr_quota_inum = ext2fs_swab32(sb->s_usr_quota_inum);
@@ -127,126 +127,126 @@ void ext2fs_swap_super(struct ext2_super_block * sb)
 	/* sb->s_encrypt_pw_salt is __u8 and does not need swabbing */
 	sb->s_lpf_ino = ext2fs_swab32(sb->s_lpf_ino);
 	sb->s_prj_quota_inum = ext2fs_swab32(sb->s_prj_quota_inum);
-	sb->s_checksum_seed = ext2fs_swab32(sb->s_checksum_seed);
+	sb->s_checksum_విత్తనం = ext2fs_swab32(sb->s_checksum_విత్తనం);
 	/* s_*_time_hi are __u8 and does not need swabbing */
 	sb->s_encoding = ext2fs_swab16(sb->s_encoding);
 	sb->s_encoding_flags = ext2fs_swab16(sb->s_encoding_flags);
 	sb->s_orphan_file_inum = ext2fs_swab32(sb->s_orphan_file_inum);
 	/* catch when new fields are used from s_reserved */
-	EXT2FS_BUILD_BUG_ON(sizeof(sb->s_reserved) != 94 * sizeof(__le32));
+	EXT2FS_BUILD_BUG_ON(పరిమాణం(sb->s_reserved) != 94 * పరిమాణం(__le32));
 	sb->s_checksum = ext2fs_swab32(sb->s_checksum);
 }
 
-void ext2fs_swap_group_desc2(ext2_filsys fs, struct ext2_group_desc *gdp)
+శూన్య ext2fs_మార్పిడి_సమూహం_desc2(ext2_filsys fs, నిర్మాణం ext2_సమూహం_desc *gdp)
 {
-	struct ext4_group_desc *gdp4 = (struct ext4_group_desc *)gdp;
+	నిర్మాణం ext4_సమూహం_desc *gdp4 = (నిర్మాణం ext4_సమూహం_desc *)gdp;
 
 	/* Do the 32-bit parts first */
-	gdp->bg_block_bitmap = ext2fs_swab32(gdp->bg_block_bitmap);
+	gdp->bg_ఖండం_bitmap = ext2fs_swab32(gdp->bg_ఖండం_bitmap);
 	gdp->bg_inode_bitmap = ext2fs_swab32(gdp->bg_inode_bitmap);
-	gdp->bg_inode_table = ext2fs_swab32(gdp->bg_inode_table);
-	gdp->bg_free_blocks_count = ext2fs_swab16(gdp->bg_free_blocks_count);
-	gdp->bg_free_inodes_count = ext2fs_swab16(gdp->bg_free_inodes_count);
-	gdp->bg_used_dirs_count = ext2fs_swab16(gdp->bg_used_dirs_count);
+	gdp->bg_inode_పట్టిక = ext2fs_swab32(gdp->bg_inode_పట్టిక);
+	gdp->bg_free_ఖండాలు_లెక్క = ext2fs_swab16(gdp->bg_free_ఖండాలు_లెక్క);
+	gdp->bg_free_inodes_లెక్క = ext2fs_swab16(gdp->bg_free_inodes_లెక్క);
+	gdp->bg_వాడిన_dirs_లెక్క = ext2fs_swab16(gdp->bg_వాడిన_dirs_లెక్క);
 	gdp->bg_flags = ext2fs_swab16(gdp->bg_flags);
 	gdp->bg_exclude_bitmap_lo = ext2fs_swab32(gdp->bg_exclude_bitmap_lo);
-	gdp->bg_block_bitmap_csum_lo =
-		ext2fs_swab16(gdp->bg_block_bitmap_csum_lo);
+	gdp->bg_ఖండం_bitmap_csum_lo =
+		ext2fs_swab16(gdp->bg_ఖండం_bitmap_csum_lo);
 	gdp->bg_inode_bitmap_csum_lo =
 		ext2fs_swab16(gdp->bg_inode_bitmap_csum_lo);
-	gdp->bg_itable_unused = ext2fs_swab16(gdp->bg_itable_unused);
+	gdp->bg_itable_వాడని = ext2fs_swab16(gdp->bg_itable_వాడని);
 	gdp->bg_checksum = ext2fs_swab16(gdp->bg_checksum);
 	/* If we're 32-bit, we're done */
-	if (fs == NULL || EXT2_DESC_SIZE(fs->super) < EXT2_MIN_DESC_SIZE_64BIT)
-		return;
+	ఒకవేళ (fs == ఖాళీ || EXT2_DESC_కొలత(fs->super) < EXT2_MIN_DESC_కొలత_64_బిట్టు)
+		తిరిగి;
 
 	/* Swap the 64-bit parts */
-	gdp4->bg_block_bitmap_hi = ext2fs_swab32(gdp4->bg_block_bitmap_hi);
+	gdp4->bg_ఖండం_bitmap_hi = ext2fs_swab32(gdp4->bg_ఖండం_bitmap_hi);
 	gdp4->bg_inode_bitmap_hi = ext2fs_swab32(gdp4->bg_inode_bitmap_hi);
-	gdp4->bg_inode_table_hi = ext2fs_swab32(gdp4->bg_inode_table_hi);
-	gdp4->bg_free_blocks_count_hi =
-		ext2fs_swab16(gdp4->bg_free_blocks_count_hi);
-	gdp4->bg_free_inodes_count_hi =
-		ext2fs_swab16(gdp4->bg_free_inodes_count_hi);
-	gdp4->bg_used_dirs_count_hi =
-		ext2fs_swab16(gdp4->bg_used_dirs_count_hi);
-	gdp4->bg_itable_unused_hi = ext2fs_swab16(gdp4->bg_itable_unused_hi);
+	gdp4->bg_inode_పట్టిక_hi = ext2fs_swab32(gdp4->bg_inode_పట్టిక_hi);
+	gdp4->bg_free_ఖండాలు_లెక్క_hi =
+		ext2fs_swab16(gdp4->bg_free_ఖండాలు_లెక్క_hi);
+	gdp4->bg_free_inodes_లెక్క_hi =
+		ext2fs_swab16(gdp4->bg_free_inodes_లెక్క_hi);
+	gdp4->bg_వాడిన_dirs_లెక్క_hi =
+		ext2fs_swab16(gdp4->bg_వాడిన_dirs_లెక్క_hi);
+	gdp4->bg_itable_వాడని_hi = ext2fs_swab16(gdp4->bg_itable_వాడని_hi);
 	gdp4->bg_exclude_bitmap_hi = ext2fs_swab16(gdp4->bg_exclude_bitmap_hi);
-	gdp4->bg_block_bitmap_csum_hi =
-		ext2fs_swab16(gdp4->bg_block_bitmap_csum_hi);
+	gdp4->bg_ఖండం_bitmap_csum_hi =
+		ext2fs_swab16(gdp4->bg_ఖండం_bitmap_csum_hi);
 	gdp4->bg_inode_bitmap_csum_hi =
 		ext2fs_swab16(gdp4->bg_inode_bitmap_csum_hi);
-	EXT2FS_BUILD_BUG_ON(sizeof(gdp4->bg_reserved) != sizeof(__u32));
+	EXT2FS_BUILD_BUG_ON(పరిమాణం(gdp4->bg_reserved) != పరిమాణం(__u32));
 }
 
-void ext2fs_swap_group_desc(struct ext2_group_desc *gdp)
+శూన్య ext2fs_మార్పిడి_సమూహం_desc(నిర్మాణం ext2_సమూహం_desc *gdp)
 {
-	ext2fs_swap_group_desc2(0, gdp);
+	ext2fs_మార్పిడి_సమూహం_desc2(0, gdp);
 }
 
 
-void ext2fs_swap_ext_attr_header(struct ext2_ext_attr_header *to_header,
-				 struct ext2_ext_attr_header *from_header)
+శూన్య ext2fs_మార్పిడి_ext_attr_శీర్షిక(నిర్మాణం ext2_ext_attr_శీర్షిక *గమ్యం_శీర్షిక,
+				 నిర్మాణం ext2_ext_attr_శీర్షిక *from_శీర్షిక)
 {
-	int n;
+	పూర్ణాంకం n;
 
-	to_header->h_magic    = ext2fs_swab32(from_header->h_magic);
-	to_header->h_blocks   = ext2fs_swab32(from_header->h_blocks);
-	to_header->h_refcount = ext2fs_swab32(from_header->h_refcount);
-	to_header->h_hash     = ext2fs_swab32(from_header->h_hash);
-	to_header->h_checksum = ext2fs_swab32(from_header->h_checksum);
-	for (n = 0; n < 3; n++)
-		to_header->h_reserved[n] =
-			ext2fs_swab32(from_header->h_reserved[n]);
+	గమ్యం_శీర్షిక->h_magic    = ext2fs_swab32(from_శీర్షిక->h_magic);
+	గమ్యం_శీర్షిక->h_ఖండాలు   = ext2fs_swab32(from_శీర్షిక->h_ఖండాలు);
+	గమ్యం_శీర్షిక->h_refcount = ext2fs_swab32(from_శీర్షిక->h_refcount);
+	గమ్యం_శీర్షిక->h_hash     = ext2fs_swab32(from_శీర్షిక->h_hash);
+	గమ్యం_శీర్షిక->h_checksum = ext2fs_swab32(from_శీర్షిక->h_checksum);
+	కొరకు (n = 0; n < 3; n++)
+		గమ్యం_శీర్షిక->h_reserved[n] =
+			ext2fs_swab32(from_శీర్షిక->h_reserved[n]);
 }
 
-void ext2fs_swap_ext_attr_entry(struct ext2_ext_attr_entry *to_entry,
-				struct ext2_ext_attr_entry *from_entry)
+శూన్య ext2fs_మార్పిడి_ext_attr_నమోదు(నిర్మాణం ext2_ext_attr_నమోదు *గమ్యం_నమోదు,
+				నిర్మాణం ext2_ext_attr_నమోదు *from_నమోదు)
 {
-	to_entry->e_value_offs  = ext2fs_swab16(from_entry->e_value_offs);
-	to_entry->e_value_inum  = ext2fs_swab32(from_entry->e_value_inum);
-	to_entry->e_value_size  = ext2fs_swab32(from_entry->e_value_size);
-	to_entry->e_hash	= ext2fs_swab32(from_entry->e_hash);
+	గమ్యం_నమోదు->e_విలువ_offs  = ext2fs_swab16(from_నమోదు->e_విలువ_offs);
+	గమ్యం_నమోదు->e_విలువ_inum  = ext2fs_swab32(from_నమోదు->e_విలువ_inum);
+	గమ్యం_నమోదు->e_విలువ_కొలత  = ext2fs_swab32(from_నమోదు->e_విలువ_కొలత);
+	గమ్యం_నమోదు->e_hash	= ext2fs_swab32(from_నమోదు->e_hash);
 }
 
-void ext2fs_swap_ext_attr(char *to, char *from, int bufsize, int has_header)
+శూన్య ext2fs_మార్పిడి_ext_attr(అక్షరం *గమ్యం, అక్షరం *from, పూర్ణాంకం bufsize, పూర్ణాంకం has_శీర్షిక)
 {
-	struct ext2_ext_attr_header *from_header =
-		(struct ext2_ext_attr_header *)from;
-	struct ext2_ext_attr_header *to_header =
-		(struct ext2_ext_attr_header *)to;
-	struct ext2_ext_attr_entry *from_entry, *to_entry;
-	char *from_end = (char *)from_header + bufsize;
+	నిర్మాణం ext2_ext_attr_శీర్షిక *from_శీర్షిక =
+		(నిర్మాణం ext2_ext_attr_శీర్షిక *)from;
+	నిర్మాణం ext2_ext_attr_శీర్షిక *గమ్యం_శీర్షిక =
+		(నిర్మాణం ext2_ext_attr_శీర్షిక *)గమ్యం;
+	నిర్మాణం ext2_ext_attr_నమోదు *from_నమోదు, *గమ్యం_నమోదు;
+	అక్షరం *from_చివర = (అక్షరం *)from_శీర్షిక + bufsize;
 
-	if (to_header != from_header)
-		memcpy(to_header, from_header, bufsize);
+	ఒకవేళ (గమ్యం_శీర్షిక != from_శీర్షిక)
+		జ్ఞాపకం_నకలు(గమ్యం_శీర్షిక, from_శీర్షిక, bufsize);
 
-	if (has_header) {
-		ext2fs_swap_ext_attr_header(to_header, from_header);
+	ఒకవేళ (has_శీర్షిక) {
+		ext2fs_మార్పిడి_ext_attr_శీర్షిక(గమ్యం_శీర్షిక, from_శీర్షిక);
 
-		from_entry = (struct ext2_ext_attr_entry *)(from_header+1);
-		to_entry   = (struct ext2_ext_attr_entry *)(to_header+1);
-	} else {
-		from_entry = (struct ext2_ext_attr_entry *)from_header;
-		to_entry   = (struct ext2_ext_attr_entry *)to_header;
+		from_నమోదు = (నిర్మాణం ext2_ext_attr_నమోదు *)(from_శీర్షిక+1);
+		గమ్యం_నమోదు   = (నిర్మాణం ext2_ext_attr_నమోదు *)(గమ్యం_శీర్షిక+1);
+	} లేకపోతే {
+		from_నమోదు = (నిర్మాణం ext2_ext_attr_నమోదు *)from_శీర్షిక;
+		గమ్యం_నమోదు   = (నిర్మాణం ext2_ext_attr_నమోదు *)గమ్యం_శీర్షిక;
 	}
 
-	while ((char *)from_entry < from_end &&
-	       (char *)EXT2_EXT_ATTR_NEXT(from_entry) <= from_end &&
-	       *(__u32 *)from_entry) {
-		ext2fs_swap_ext_attr_entry(to_entry, from_entry);
-		from_entry = EXT2_EXT_ATTR_NEXT(from_entry);
-		to_entry   = EXT2_EXT_ATTR_NEXT(to_entry);
+	అయితే ((అక్షరం *)from_నమోదు < from_చివర &&
+	       (అక్షరం *)EXT2_EXT_ATTR_తదుపరి(from_నమోదు) <= from_చివర &&
+	       *(__u32 *)from_నమోదు) {
+		ext2fs_మార్పిడి_ext_attr_నమోదు(గమ్యం_నమోదు, from_నమోదు);
+		from_నమోదు = EXT2_EXT_ATTR_తదుపరి(from_నమోదు);
+		గమ్యం_నమోదు   = EXT2_EXT_ATTR_తదుపరి(గమ్యం_నమోదు);
 	}
 }
 
-void ext2fs_swap_inode_full(ext2_filsys fs, struct ext2_inode_large *t,
-			    struct ext2_inode_large *f, int hostorder,
-			    int bufsize)
+శూన్య ext2fs_మార్పిడి_inode_నిండిన(ext2_filsys fs, నిర్మాణం ext2_inode_large *t,
+			    నిర్మాణం ext2_inode_large *f, పూర్ణాంకం hostorder,
+			    పూర్ణాంకం bufsize)
 {
-	unsigned i, extra_isize, attr_magic;
-	int has_extents = 0, has_inline_data = 0, islnk = 0, fast_symlink = 0;
-	unsigned int inode_size;
+	గుర్తులేని i, extra_isize, attr_magic;
+	పూర్ణాంకం has_extents = 0, has_inline_దత్తాంశం = 0, islnk = 0, fast_symlink = 0;
+	గుర్తులేని పూర్ణాంకం inode_కొలత;
 	__u32 *eaf, *eat;
 
 	/*
@@ -254,238 +254,238 @@ void ext2fs_swap_inode_full(ext2_filsys fs, struct ext2_inode_large *t,
 	 * if (hostorder) condition is executed before swab calls and
 	 * if (!hostorder) afterwards.
 	 */
-	if (hostorder) {
-		islnk = LINUX_S_ISLNK(f->i_mode);
+	ఒకవేళ (hostorder) {
+		islnk = LINUX_S_ISLNK(f->i_బహుళకం);
 		fast_symlink = ext2fs_is_fast_symlink(EXT2_INODE(f));
 		has_extents = (f->i_flags & EXT4_EXTENTS_FL) != 0;
-		has_inline_data = (f->i_flags & EXT4_INLINE_DATA_FL) != 0;
+		has_inline_దత్తాంశం = (f->i_flags & EXT4_INLINE_దత్తాంశం_FL) != 0;
 	}
 
-	t->i_mode = ext2fs_swab16(f->i_mode);
+	t->i_బహుళకం = ext2fs_swab16(f->i_బహుళకం);
 	t->i_uid = ext2fs_swab16(f->i_uid);
-	t->i_size = ext2fs_swab32(f->i_size);
+	t->i_కొలత = ext2fs_swab32(f->i_కొలత);
 	t->i_atime = ext2fs_swab32(f->i_atime);
 	t->i_ctime = ext2fs_swab32(f->i_ctime);
 	t->i_mtime = ext2fs_swab32(f->i_mtime);
 	t->i_dtime = ext2fs_swab32(f->i_dtime);
 	t->i_gid = ext2fs_swab16(f->i_gid);
-	t->i_links_count = ext2fs_swab16(f->i_links_count);
+	t->i_links_లెక్క = ext2fs_swab16(f->i_links_లెక్క);
 	t->i_file_acl = ext2fs_swab32(f->i_file_acl);
-	t->i_blocks = ext2fs_swab32(f->i_blocks);
+	t->i_ఖండాలు = ext2fs_swab32(f->i_ఖండాలు);
 	t->i_flags = ext2fs_swab32(f->i_flags);
-	t->i_size_high = ext2fs_swab32(f->i_size_high);
+	t->i_కొలత_ఎగువ = ext2fs_swab32(f->i_కొలత_ఎగువ);
 
-	if (!hostorder) {
-		islnk = LINUX_S_ISLNK(t->i_mode);
+	ఒకవేళ (!hostorder) {
+		islnk = LINUX_S_ISLNK(t->i_బహుళకం);
 		fast_symlink = ext2fs_is_fast_symlink(EXT2_INODE(t));
 		has_extents = (t->i_flags & EXT4_EXTENTS_FL) != 0;
-		has_inline_data = (t->i_flags & EXT4_INLINE_DATA_FL) != 0;
+		has_inline_దత్తాంశం = (t->i_flags & EXT4_INLINE_దత్తాంశం_FL) != 0;
 	}
 
 	/*
 	 * Extent data and inline data are swapped on access, not here
 	 */
-	if (!has_extents && !has_inline_data && (!islnk || !fast_symlink)) {
-		for (i = 0; i < EXT2_N_BLOCKS; i++)
-			t->i_block[i] = ext2fs_swab32(f->i_block[i]);
-	} else if (t != f) {
-		for (i = 0; i < EXT2_N_BLOCKS; i++)
-			t->i_block[i] = f->i_block[i];
+	ఒకవేళ (!has_extents && !has_inline_దత్తాంశం && (!islnk || !fast_symlink)) {
+		కొరకు (i = 0; i < EXT2_N_ఖండాలు; i++)
+			t->i_ఖండం[i] = ext2fs_swab32(f->i_ఖండం[i]);
+	} లేకపోతే ఒకవేళ (t != f) {
+		కొరకు (i = 0; i < EXT2_N_ఖండాలు; i++)
+			t->i_ఖండం[i] = f->i_ఖండం[i];
 	}
 	t->i_generation = ext2fs_swab32(f->i_generation);
 	t->i_faddr = ext2fs_swab32(f->i_faddr);
 
-	switch (fs->super->s_creator_os) {
-	case EXT2_OS_LINUX:
-		t->osd1.linux1.l_i_version =
-			ext2fs_swab32(f->osd1.linux1.l_i_version);
-		t->osd2.linux2.l_i_blocks_hi =
-			ext2fs_swab16(f->osd2.linux2.l_i_blocks_hi);
-		t->osd2.linux2.l_i_file_acl_high =
-			ext2fs_swab16(f->osd2.linux2.l_i_file_acl_high);
-		t->osd2.linux2.l_i_uid_high =
-		  ext2fs_swab16 (f->osd2.linux2.l_i_uid_high);
-		t->osd2.linux2.l_i_gid_high =
-		  ext2fs_swab16 (f->osd2.linux2.l_i_gid_high);
+	ఎంపిక (fs->super->s_creator_os) {
+	స్థితి EXT2_OS_LINUX:
+		t->osd1.linux1.l_i_సంస్కరణ =
+			ext2fs_swab32(f->osd1.linux1.l_i_సంస్కరణ);
+		t->osd2.linux2.l_i_ఖండాలు_hi =
+			ext2fs_swab16(f->osd2.linux2.l_i_ఖండాలు_hi);
+		t->osd2.linux2.l_i_file_acl_ఎగువ =
+			ext2fs_swab16(f->osd2.linux2.l_i_file_acl_ఎగువ);
+		t->osd2.linux2.l_i_uid_ఎగువ =
+		  ext2fs_swab16 (f->osd2.linux2.l_i_uid_ఎగువ);
+		t->osd2.linux2.l_i_gid_ఎగువ =
+		  ext2fs_swab16 (f->osd2.linux2.l_i_gid_ఎగువ);
 		t->osd2.linux2.l_i_checksum_lo =
 			ext2fs_swab16(f->osd2.linux2.l_i_checksum_lo);
-		break;
-	case EXT2_OS_HURD:
+		ఆపు;
+	స్థితి EXT2_OS_HURD:
 		t->osd1.hurd1.h_i_translator =
 		  ext2fs_swab32 (f->osd1.hurd1.h_i_translator);
 		t->osd2.hurd2.h_i_frag = f->osd2.hurd2.h_i_frag;
 		t->osd2.hurd2.h_i_fsize = f->osd2.hurd2.h_i_fsize;
-		t->osd2.hurd2.h_i_mode_high =
-		  ext2fs_swab16 (f->osd2.hurd2.h_i_mode_high);
-		t->osd2.hurd2.h_i_uid_high =
-		  ext2fs_swab16 (f->osd2.hurd2.h_i_uid_high);
-		t->osd2.hurd2.h_i_gid_high =
-		  ext2fs_swab16 (f->osd2.hurd2.h_i_gid_high);
+		t->osd2.hurd2.h_i_బహుళకం_ఎగువ =
+		  ext2fs_swab16 (f->osd2.hurd2.h_i_బహుళకం_ఎగువ);
+		t->osd2.hurd2.h_i_uid_ఎగువ =
+		  ext2fs_swab16 (f->osd2.hurd2.h_i_uid_ఎగువ);
+		t->osd2.hurd2.h_i_gid_ఎగువ =
+		  ext2fs_swab16 (f->osd2.hurd2.h_i_gid_ఎగువ);
 		t->osd2.hurd2.h_i_author =
 		  ext2fs_swab32 (f->osd2.hurd2.h_i_author);
-		break;
-	default:
-		break;
+		ఆపు;
+	అప్రమేయ:
+		ఆపు;
 	}
 
-	if (bufsize < (int) (sizeof(struct ext2_inode) + sizeof(__u16)))
-		return; /* no i_extra_isize field */
+	ఒకవేళ (bufsize < (పూర్ణాంకం) (పరిమాణం(నిర్మాణం ext2_inode) + పరిమాణం(__u16)))
+		తిరిగి; /* no i_extra_isize field */
 
-	if (hostorder)
+	ఒకవేళ (hostorder)
 		extra_isize = f->i_extra_isize;
 	t->i_extra_isize = ext2fs_swab16(f->i_extra_isize);
-	if (!hostorder)
+	ఒకవేళ (!hostorder)
 		extra_isize = t->i_extra_isize;
-	if (extra_isize > EXT2_INODE_SIZE(fs->super) -
-				sizeof(struct ext2_inode)) {
+	ఒకవేళ (extra_isize > EXT2_INODE_కొలత(fs->super) -
+				పరిమాణం(నిర్మాణం ext2_inode)) {
 		/* this is error case: i_extra_size is too large */
-		return;
+		తిరిగి;
 	}
-	if (extra_isize & 3)
-		return;		/* Illegal inode extra_isize */
+	ఒకవేళ (extra_isize & 3)
+		తిరిగి;		/* Illegal inode extra_isize */
 
-	inode_size = EXT2_GOOD_OLD_INODE_SIZE + extra_isize;
-	if (ext2fs_inode_includes(inode_size, i_checksum_hi))
+	inode_కొలత = EXT2_GOOD_OLD_INODE_కొలత + extra_isize;
+	ఒకవేళ (ext2fs_inode_includes(inode_కొలత, i_checksum_hi))
 		t->i_checksum_hi = ext2fs_swab16(f->i_checksum_hi);
-	if (ext2fs_inode_includes(inode_size, i_ctime_extra))
+	ఒకవేళ (ext2fs_inode_includes(inode_కొలత, i_ctime_extra))
 		t->i_ctime_extra = ext2fs_swab32(f->i_ctime_extra);
-	if (ext2fs_inode_includes(inode_size, i_mtime_extra))
+	ఒకవేళ (ext2fs_inode_includes(inode_కొలత, i_mtime_extra))
 		t->i_mtime_extra = ext2fs_swab32(f->i_mtime_extra);
-	if (ext2fs_inode_includes(inode_size, i_atime_extra))
+	ఒకవేళ (ext2fs_inode_includes(inode_కొలత, i_atime_extra))
 		t->i_atime_extra = ext2fs_swab32(f->i_atime_extra);
-	if (ext2fs_inode_includes(inode_size, i_crtime))
+	ఒకవేళ (ext2fs_inode_includes(inode_కొలత, i_crtime))
 		t->i_crtime = ext2fs_swab32(f->i_crtime);
-	if (ext2fs_inode_includes(inode_size, i_crtime_extra))
+	ఒకవేళ (ext2fs_inode_includes(inode_కొలత, i_crtime_extra))
 		t->i_crtime_extra = ext2fs_swab32(f->i_crtime_extra);
-	if (ext2fs_inode_includes(inode_size, i_version_hi))
-		t->i_version_hi = ext2fs_swab32(f->i_version_hi);
-	if (ext2fs_inode_includes(inode_size, i_projid))
+	ఒకవేళ (ext2fs_inode_includes(inode_కొలత, i_సంస్కరణ_hi))
+		t->i_సంస్కరణ_hi = ext2fs_swab32(f->i_సంస్కరణ_hi);
+	ఒకవేళ (ext2fs_inode_includes(inode_కొలత, i_projid))
                 t->i_projid = ext2fs_swab32(f->i_projid);
 	/* catch new static fields added after i_projid */
-	EXT2FS_BUILD_BUG_ON(sizeof(struct ext2_inode_large) != 160);
+	EXT2FS_BUILD_BUG_ON(పరిమాణం(నిర్మాణం ext2_inode_large) != 160);
 
-	i = sizeof(struct ext2_inode) + extra_isize + sizeof(__u32);
-	if (bufsize < (int) i)
-		return; /* no space for EA magic */
+	i = పరిమాణం(నిర్మాణం ext2_inode) + extra_isize + పరిమాణం(__u32);
+	ఒకవేళ (bufsize < (పూర్ణాంకం) i)
+		తిరిగి; /* no space for EA magic */
 
-	eaf = (__u32 *) (((char *) f) + sizeof(struct ext2_inode) +
+	eaf = (__u32 *) (((అక్షరం *) f) + పరిమాణం(నిర్మాణం ext2_inode) +
 					extra_isize);
 
 	attr_magic = *eaf;
-	if (!hostorder)
+	ఒకవేళ (!hostorder)
 		attr_magic = ext2fs_swab32(attr_magic);
 
-	if (attr_magic != EXT2_EXT_ATTR_MAGIC)
-		return; /* it seems no magic here */
+	ఒకవేళ (attr_magic != EXT2_EXT_ATTR_MAGIC)
+		తిరిగి; /* it seems no magic here */
 
-	eat = (__u32 *) (((char *) t) + sizeof(struct ext2_inode) +
+	eat = (__u32 *) (((అక్షరం *) t) + పరిమాణం(నిర్మాణం ext2_inode) +
 					extra_isize);
 	*eat = ext2fs_swab32(*eaf);
 
 	/* convert EA(s) */
-	ext2fs_swap_ext_attr((char *) (eat + 1), (char *) (eaf + 1),
-			     bufsize - sizeof(struct ext2_inode) -
-			     extra_isize - sizeof(__u32), 0);
+	ext2fs_మార్పిడి_ext_attr((అక్షరం *) (eat + 1), (అక్షరం *) (eaf + 1),
+			     bufsize - పరిమాణం(నిర్మాణం ext2_inode) -
+			     extra_isize - పరిమాణం(__u32), 0);
 
 }
 
-void ext2fs_swap_inode(ext2_filsys fs, struct ext2_inode *t,
-		       struct ext2_inode *f, int hostorder)
+శూన్య ext2fs_మార్పిడి_inode(ext2_filsys fs, నిర్మాణం ext2_inode *t,
+		       నిర్మాణం ext2_inode *f, పూర్ణాంకం hostorder)
 {
-	ext2fs_swap_inode_full(fs, (struct ext2_inode_large *) t,
-				(struct ext2_inode_large *) f, hostorder,
-				sizeof(struct ext2_inode));
+	ext2fs_మార్పిడి_inode_నిండిన(fs, (నిర్మాణం ext2_inode_large *) t,
+				(నిర్మాణం ext2_inode_large *) f, hostorder,
+				పరిమాణం(నిర్మాణం ext2_inode));
 }
 
-void ext2fs_swap_mmp(struct mmp_struct *mmp)
+శూన్య ext2fs_మార్పిడి_mmp(నిర్మాణం mmp_struct *mmp)
 {
 	mmp->mmp_magic = ext2fs_swab32(mmp->mmp_magic);
 	mmp->mmp_seq = ext2fs_swab32(mmp->mmp_seq);
-	mmp->mmp_time = ext2fs_swab64(mmp->mmp_time);
+	mmp->mmp_సమయం = ext2fs_swab64(mmp->mmp_సమయం);
 	mmp->mmp_check_interval = ext2fs_swab16(mmp->mmp_check_interval);
 	mmp->mmp_checksum = ext2fs_swab32(mmp->mmp_checksum);
 }
 
-errcode_t ext2fs_dirent_swab_in(ext2_filsys fs, char *buf, int flags)
+errcode_t ext2fs_dirent_swab_లోపల(ext2_filsys fs, అక్షరం *buf, పూర్ణాంకం flags)
 {
-	return ext2fs_dirent_swab_in2(fs, buf, fs->blocksize, flags);
+	తిరిగి ext2fs_dirent_swab_in2(fs, buf, fs->blocksize, flags);
 }
 
-errcode_t ext2fs_dirent_swab_in2(ext2_filsys fs, char *buf,
-				 size_t size, int flags)
+errcode_t ext2fs_dirent_swab_in2(ext2_filsys fs, అక్షరం *buf,
+				 size_t కొలత, పూర్ణాంకం flags)
 {
 	errcode_t	retval;
-	char		*p, *end;
-	struct ext2_dir_entry *dirent;
-	unsigned int	name_len, rec_len, left;
+	అక్షరం		*p, *చివర;
+	నిర్మాణం ext2_dir_నమోదు *dirent;
+	గుర్తులేని పూర్ణాంకం	name_len, rec_len, ఎడమ;
 
-	p = (char *) buf;
-	end = (char *) buf + size;
-	left = size;
-	while (p < end-8) {
-		dirent = (struct ext2_dir_entry *) p;
+	p = (అక్షరం *) buf;
+	చివర = (అక్షరం *) buf + కొలత;
+	ఎడమ = కొలత;
+	అయితే (p < చివర-8) {
+		dirent = (నిర్మాణం ext2_dir_నమోదు *) p;
 		dirent->inode = ext2fs_swab32(dirent->inode);
 		dirent->rec_len = ext2fs_swab16(dirent->rec_len);
 		dirent->name_len = ext2fs_swab16(dirent->name_len);
 		name_len = dirent->name_len;
-		if (flags & EXT2_DIRBLOCK_V2_STRUCT)
+		ఒకవేళ (flags & EXT2_DIRBLOCK_V2_STRUCT)
 			dirent->name_len = ext2fs_swab16(dirent->name_len);
 		retval = ext2fs_get_rec_len(fs, dirent, &rec_len);
-		if (retval)
-			return retval;
-		if ((rec_len < 8) || (rec_len % 4)) {
+		ఒకవేళ (retval)
+			తిరిగి retval;
+		ఒకవేళ ((rec_len < 8) || (rec_len % 4)) {
 			rec_len = 8;
-			if (!(fs->flags & EXT2_FLAG_IGNORE_SWAP_DIRENT))
-				return EXT2_ET_DIR_CORRUPTED;
-		} else if (((name_len & 0xFF) + 8) > rec_len)
-			if (!(fs->flags & EXT2_FLAG_IGNORE_SWAP_DIRENT))
-				return EXT2_ET_DIR_CORRUPTED;
-		if (rec_len > left)
-			if (!(fs->flags & EXT2_FLAG_IGNORE_SWAP_DIRENT))
-				return EXT2_ET_DIR_CORRUPTED;
-		left -= rec_len;
+			ఒకవేళ (!(fs->flags & EXT2_FLAG_IGNORE_మార్పిడి_DIRENT))
+				తిరిగి EXT2_ET_DIR_CORRUPTED;
+		} లేకపోతే ఒకవేళ (((name_len & 0xFF) + 8) > rec_len)
+			ఒకవేళ (!(fs->flags & EXT2_FLAG_IGNORE_మార్పిడి_DIRENT))
+				తిరిగి EXT2_ET_DIR_CORRUPTED;
+		ఒకవేళ (rec_len > ఎడమ)
+			ఒకవేళ (!(fs->flags & EXT2_FLAG_IGNORE_మార్పిడి_DIRENT))
+				తిరిగి EXT2_ET_DIR_CORRUPTED;
+		ఎడమ -= rec_len;
 		p += rec_len;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-errcode_t ext2fs_dirent_swab_out(ext2_filsys fs, char *buf, int flags)
+errcode_t ext2fs_dirent_swab_బహిర్గతం(ext2_filsys fs, అక్షరం *buf, పూర్ణాంకం flags)
 {
-	return ext2fs_dirent_swab_out2(fs, buf, fs->blocksize, flags);
+	తిరిగి ext2fs_dirent_swab_out2(fs, buf, fs->blocksize, flags);
 }
 
-errcode_t ext2fs_dirent_swab_out2(ext2_filsys fs, char *buf,
-				  size_t size, int flags)
+errcode_t ext2fs_dirent_swab_out2(ext2_filsys fs, అక్షరం *buf,
+				  size_t కొలత, పూర్ణాంకం flags)
 {
 	errcode_t	retval;
-	char		*p, *end;
-	unsigned int	rec_len;
-	struct ext2_dir_entry *dirent;
+	అక్షరం		*p, *చివర;
+	గుర్తులేని పూర్ణాంకం	rec_len;
+	నిర్మాణం ext2_dir_నమోదు *dirent;
 
 	p = buf;
-	end = buf + size;
-	while (p < end) {
-		dirent = (struct ext2_dir_entry *) p;
+	చివర = buf + కొలత;
+	అయితే (p < చివర) {
+		dirent = (నిర్మాణం ext2_dir_నమోదు *) p;
 		retval = ext2fs_get_rec_len(fs, dirent, &rec_len);
-		if (retval)
-			return retval;
-		if ((rec_len < 8) ||
+		ఒకవేళ (retval)
+			తిరిగి retval;
+		ఒకవేళ ((rec_len < 8) ||
 		    (rec_len % 4)) {
 			ext2fs_free_mem(&buf);
-			return EXT2_ET_DIR_CORRUPTED;
+			తిరిగి EXT2_ET_DIR_CORRUPTED;
 		}
 		p += rec_len;
 		dirent->inode = ext2fs_swab32(dirent->inode);
 		dirent->rec_len = ext2fs_swab16(dirent->rec_len);
 		dirent->name_len = ext2fs_swab16(dirent->name_len);
-		if (rec_len > size)
-			return EXT2_ET_DIR_CORRUPTED;
-		size -= rec_len;
+		ఒకవేళ (rec_len > కొలత)
+			తిరిగి EXT2_ET_DIR_CORRUPTED;
+		కొలత -= rec_len;
 
-		if (flags & EXT2_DIRBLOCK_V2_STRUCT)
+		ఒకవేళ (flags & EXT2_DIRBLOCK_V2_STRUCT)
 			dirent->name_len = ext2fs_swab16(dirent->name_len);
 	}
 
-	return 0;
+	తిరిగి 0;
 }

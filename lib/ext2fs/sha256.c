@@ -11,13 +11,13 @@
  */
 
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#include "ext2fs.h"
+#అన్తర్భావ "config.h"
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
+#అన్తర్భావ "ext2fs.h"
 
-static const __u32 K[64] = {
+స్థిర స్థిరరాశి __u32 K[64] = {
     0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL, 0x3956c25bUL,
     0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL, 0xd807aa98UL, 0x12835b01UL,
     0x243185beUL, 0x550c7dc3UL, 0x72be5d74UL, 0x80deb1feUL, 0x9bdc06a7UL,
@@ -34,92 +34,92 @@ static const __u32 K[64] = {
 };
 
 /* Various logical functions */
-#define Ch(x,y,z)       (z ^ (x & (y ^ z)))
-#define Maj(x,y,z)      (((x | y) & z) | (x & y)) 
-#define S(x, n)         RORc((x),(n))
-#define R(x, n)         (((x)&0xFFFFFFFFUL)>>(n))
-#define Sigma0(x)       (S(x, 2) ^ S(x, 13) ^ S(x, 22))
-#define Sigma1(x)       (S(x, 6) ^ S(x, 11) ^ S(x, 25))
-#define Gamma0(x)       (S(x, 7) ^ S(x, 18) ^ R(x, 3))
-#define Gamma1(x)       (S(x, 17) ^ S(x, 19) ^ R(x, 10))
-#define RORc(x, y) ( ((((__u32)(x)&0xFFFFFFFFUL)>>(__u32)((y)&31)) | ((__u32)(x)<<(__u32)(32-((y)&31)))) & 0xFFFFFFFFUL)
+#నిర్వచించు Ch(x,y,z)       (z ^ (x & (y ^ z)))
+#నిర్వచించు Maj(x,y,z)      (((x | y) & z) | (x & y)) 
+#నిర్వచించు S(x, n)         RORc((x),(n))
+#నిర్వచించు R(x, n)         (((x)&0xFFFFFFFFUL)>>(n))
+#నిర్వచించు Sigma0(x)       (S(x, 2) ^ S(x, 13) ^ S(x, 22))
+#నిర్వచించు Sigma1(x)       (S(x, 6) ^ S(x, 11) ^ S(x, 25))
+#నిర్వచించు Gamma0(x)       (S(x, 7) ^ S(x, 18) ^ R(x, 3))
+#నిర్వచించు Gamma1(x)       (S(x, 17) ^ S(x, 19) ^ R(x, 10))
+#నిర్వచించు RORc(x, y) ( ((((__u32)(x)&0xFFFFFFFFUL)>>(__u32)((y)&31)) | ((__u32)(x)<<(__u32)(32-((y)&31)))) & 0xFFFFFFFFUL)
 
-#define RND(a,b,c,d,e,f,g,h,i)                         \
+#నిర్వచించు RND(a,b,c,d,e,f,g,h,i)                         \
      t0 = h + Sigma1(e) + Ch(e, f, g) + K[i] + W[i];   \
      t1 = Sigma0(a) + Maj(a, b, c);                    \
      d += t0;                                          \
      h  = t0 + t1;
 
-#define STORE64H(x, y) \
-	do { \
-		(y)[0] = (unsigned char)(((x)>>56)&255);\
-		(y)[1] = (unsigned char)(((x)>>48)&255);\
-		(y)[2] = (unsigned char)(((x)>>40)&255);\
-		(y)[3] = (unsigned char)(((x)>>32)&255);\
-		(y)[4] = (unsigned char)(((x)>>24)&255);\
-		(y)[5] = (unsigned char)(((x)>>16)&255);\
-		(y)[6] = (unsigned char)(((x)>>8)&255);\
-		(y)[7] = (unsigned char)((x)&255); } while(0)
+#నిర్వచించు STORE64H(x, y) \
+	చేయి { \
+		(y)[0] = (గుర్తులేని అక్షరం)(((x)>>56)&255);\
+		(y)[1] = (గుర్తులేని అక్షరం)(((x)>>48)&255);\
+		(y)[2] = (గుర్తులేని అక్షరం)(((x)>>40)&255);\
+		(y)[3] = (గుర్తులేని అక్షరం)(((x)>>32)&255);\
+		(y)[4] = (గుర్తులేని అక్షరం)(((x)>>24)&255);\
+		(y)[5] = (గుర్తులేని అక్షరం)(((x)>>16)&255);\
+		(y)[6] = (గుర్తులేని అక్షరం)(((x)>>8)&255);\
+		(y)[7] = (గుర్తులేని అక్షరం)((x)&255); } అయితే(0)
 
-#define STORE32H(x, y)                                                                     \
-  do { (y)[0] = (unsigned char)(((x)>>24)&255); (y)[1] = (unsigned char)(((x)>>16)&255);   \
-       (y)[2] = (unsigned char)(((x)>>8)&255); (y)[3] = (unsigned char)((x)&255); } while(0)
+#నిర్వచించు STORE32H(x, y)                                                                     \
+  చేయి { (y)[0] = (గుర్తులేని అక్షరం)(((x)>>24)&255); (y)[1] = (గుర్తులేని అక్షరం)(((x)>>16)&255);   \
+       (y)[2] = (గుర్తులేని అక్షరం)(((x)>>8)&255); (y)[3] = (గుర్తులేని అక్షరం)((x)&255); } అయితే(0)
 
-#define LOAD32H(x, y)                            \
-  do { x = ((__u32)((y)[0] & 255)<<24) | \
+#నిర్వచించు LOAD32H(x, y)                            \
+  చేయి { x = ((__u32)((y)[0] & 255)<<24) | \
            ((__u32)((y)[1] & 255)<<16) | \
            ((__u32)((y)[2] & 255)<<8)  | \
-           ((__u32)((y)[3] & 255)); } while(0)
+           ((__u32)((y)[3] & 255)); } అయితే(0)
 
-struct sha256_state {
-    __u64 length;
+నిర్మాణం sha256_state {
+    __u64 నిడివి;
     __u32 state[8], curlen;
-    unsigned char buf[64];
+    గుర్తులేని అక్షరం buf[64];
 };
 
 /* This is a highly simplified version from libtomcrypt */
-struct hash_state {
-	struct sha256_state sha256;
+నిర్మాణం hash_state {
+	నిర్మాణం sha256_state sha256;
 };
 
-static void sha256_compress(struct hash_state * md, const unsigned char *buf)
+స్థిర శూన్య sha256_compress(నిర్మాణం hash_state * md, స్థిరరాశి గుర్తులేని అక్షరం *buf)
 {
     __u32 S[8], W[64], t0, t1;
     __u32 t;
-    int i;
+    పూర్ణాంకం i;
 
     /* copy state into S */
-    for (i = 0; i < 8; i++) {
+    కొరకు (i = 0; i < 8; i++) {
         S[i] = md->sha256.state[i];
     }
 
     /* copy the state into 512-bits into W[0..15] */
-    for (i = 0; i < 16; i++) {
+    కొరకు (i = 0; i < 16; i++) {
         LOAD32H(W[i], buf + (4*i));
     }
 
     /* fill W[16..63] */
-    for (i = 16; i < 64; i++) {
+    కొరకు (i = 16; i < 64; i++) {
         W[i] = Gamma1(W[i - 2]) + W[i - 7] + Gamma0(W[i - 15]) + W[i - 16];
     }        
 
     /* Compress */
-     for (i = 0; i < 64; ++i) {
+     కొరకు (i = 0; i < 64; ++i) {
          RND(S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7],i);
          t = S[7]; S[7] = S[6]; S[6] = S[5]; S[5] = S[4]; 
          S[4] = S[3]; S[3] = S[2]; S[2] = S[1]; S[1] = S[0]; S[0] = t;
      }  
 
     /* feedback */
-    for (i = 0; i < 8; i++) {
+    కొరకు (i = 0; i < 8; i++) {
         md->sha256.state[i] = md->sha256.state[i] + S[i];
     }
 }
 
-static void sha256_init(struct hash_state * md)
+స్థిర శూన్య sha256_init(నిర్మాణం hash_state * md)
 {
     md->sha256.curlen = 0;
-    md->sha256.length = 0;
+    md->sha256.నిడివి = 0;
     md->sha256.state[0] = 0x6A09E667UL;
     md->sha256.state[1] = 0xBB67AE85UL;
     md->sha256.state[2] = 0x3C6EF372UL;
@@ -130,27 +130,27 @@ static void sha256_init(struct hash_state * md)
     md->sha256.state[7] = 0x5BE0CD19UL;
 }
 
-#define MIN(x, y) ( ((x)<(y))?(x):(y) )
-#define SHA256_BLOCKSIZE 64
-static void sha256_process(struct hash_state * md, const unsigned char *in, unsigned long inlen)
+#నిర్వచించు MIN(x, y) ( ((x)<(y))?(x):(y) )
+#నిర్వచించు SHA256_BLOCKSIZE 64
+స్థిర శూన్య sha256_process(నిర్మాణం hash_state * md, స్థిరరాశి గుర్తులేని అక్షరం *లోపల, గుర్తులేని దీర్ఘ inlen)
 {
-    unsigned long n;
+    గుర్తులేని దీర్ఘ n;
 
-    while (inlen > 0) {
-	    if (md->sha256.curlen == 0 && inlen >= SHA256_BLOCKSIZE) {
-		    sha256_compress(md, in);
-		    md->sha256.length += SHA256_BLOCKSIZE * 8;
-		    in += SHA256_BLOCKSIZE;
+    అయితే (inlen > 0) {
+	    ఒకవేళ (md->sha256.curlen == 0 && inlen >= SHA256_BLOCKSIZE) {
+		    sha256_compress(md, లోపల);
+		    md->sha256.నిడివి += SHA256_BLOCKSIZE * 8;
+		    లోపల += SHA256_BLOCKSIZE;
 		    inlen -= SHA256_BLOCKSIZE;
-	    } else {
+	    } లేకపోతే {
 		    n = MIN(inlen, (SHA256_BLOCKSIZE - md->sha256.curlen));
-		    memcpy(md->sha256.buf + md->sha256.curlen, in, (size_t)n);
+		    జ్ఞాపకం_నకలు(md->sha256.buf + md->sha256.curlen, లోపల, (size_t)n);
 		    md->sha256.curlen += n;
-		    in += n;
+		    లోపల += n;
 		    inlen -= n;
-		    if (md->sha256.curlen == SHA256_BLOCKSIZE) {
+		    ఒకవేళ (md->sha256.curlen == SHA256_BLOCKSIZE) {
 			    sha256_compress(md, md->sha256.buf);
-			    md->sha256.length += 8*SHA256_BLOCKSIZE;
+			    md->sha256.నిడివి += 8*SHA256_BLOCKSIZE;
 			    md->sha256.curlen = 0;
 		    }
 	    }
@@ -158,57 +158,57 @@ static void sha256_process(struct hash_state * md, const unsigned char *in, unsi
 }
 
 
-static void sha256_done(struct hash_state * md, unsigned char *out)
+స్థిర శూన్య sha256_పూర్తి(నిర్మాణం hash_state * md, గుర్తులేని అక్షరం *బహిర్గతం)
 {
-    int i;
+    పూర్ణాంకం i;
 
     /* increase the length of the message */
-    md->sha256.length += md->sha256.curlen * 8;
+    md->sha256.నిడివి += md->sha256.curlen * 8;
 
     /* append the '1' bit */
-    md->sha256.buf[md->sha256.curlen++] = (unsigned char)0x80;
+    md->sha256.buf[md->sha256.curlen++] = (గుర్తులేని అక్షరం)0x80;
 
     /* if the length is currently above 56 bytes we append zeros
      * then compress.  Then we can fall back to padding zeros and length
      * encoding like normal.
      */
-    if (md->sha256.curlen > 56) {
-        while (md->sha256.curlen < 64) {
-            md->sha256.buf[md->sha256.curlen++] = (unsigned char)0;
+    ఒకవేళ (md->sha256.curlen > 56) {
+        అయితే (md->sha256.curlen < 64) {
+            md->sha256.buf[md->sha256.curlen++] = (గుర్తులేని అక్షరం)0;
         }
         sha256_compress(md, md->sha256.buf);
         md->sha256.curlen = 0;
     }
 
     /* pad up to 56 bytes of zeroes */
-    while (md->sha256.curlen < 56) {
-        md->sha256.buf[md->sha256.curlen++] = (unsigned char)0;
+    అయితే (md->sha256.curlen < 56) {
+        md->sha256.buf[md->sha256.curlen++] = (గుర్తులేని అక్షరం)0;
     }
 
     /* store length */
-    STORE64H(md->sha256.length, md->sha256.buf+56);
+    STORE64H(md->sha256.నిడివి, md->sha256.buf+56);
     sha256_compress(md, md->sha256.buf);
 
     /* copy output */
-    for (i = 0; i < 8; i++) {
-        STORE32H(md->sha256.state[i], out+(4*i));
+    కొరకు (i = 0; i < 8; i++) {
+        STORE32H(md->sha256.state[i], బహిర్గతం+(4*i));
     }
 }
 
-void ext2fs_sha256(const unsigned char *in, unsigned long in_size,
-		   unsigned char out[EXT2FS_SHA256_LENGTH])
+శూన్య ext2fs_sha256(స్థిరరాశి గుర్తులేని అక్షరం *లోపల, గుర్తులేని దీర్ఘ లోపల_కొలత,
+		   గుర్తులేని అక్షరం బహిర్గతం[EXT2_FS_SHA256_నిడివి])
 {
-	struct hash_state md;
+	నిర్మాణం hash_state md;
 
 	sha256_init(&md);
-	sha256_process(&md, in, in_size);
-	sha256_done(&md, out);
+	sha256_process(&md, లోపల, లోపల_కొలత);
+	sha256_పూర్తి(&md, బహిర్గతం);
 }
 
-#ifdef UNITTEST
-static const struct {
-	char *msg;
-	unsigned char hash[32];
+#నిర్వచితమైతే UNITTEST
+స్థిర స్థిరరాశి నిర్మాణం {
+	అక్షరం *సందేశం;
+	గుర్తులేని అక్షరం hash[32];
 } tests[] = {
 	{ "",
 	  { 0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14,
@@ -230,25 +230,25 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	int i;
-	int errors = 0;
-	unsigned char tmp[32];
+	పూర్ణాంకం i;
+	పూర్ణాంకం errors = 0;
+	గుర్తులేని అక్షరం tmp[32];
 
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
-		unsigned char *msg = (unsigned char *) tests[i].msg;
-		int len = strlen(tests[i].msg);
+	కొరకు (i = 0; i < (పూర్ణాంకం)(పరిమాణం(tests) / పరిమాణం(tests[0])); i++) {
+		గుర్తులేని అక్షరం *సందేశం = (గుర్తులేని అక్షరం *) tests[i].సందేశం;
+		పూర్ణాంకం len = అక్షరశ్రేణి_పొడవు(tests[i].సందేశం);
 
-		ext2fs_sha256(msg, len, tmp);
-		printf("SHA256 test message %d: ", i);
-		if (memcmp(tmp, tests[i].hash, 32) != 0) {
-			printf("FAILED\n");
+		ext2fs_sha256(సందేశం, len, tmp);
+		రాయి("SHA256 test message %d: ", i);
+		ఒకవేళ (memcmp(tmp, tests[i].hash, 32) != 0) {
+			రాయి("FAILED\n");
 			errors++;
-		} else
-			printf("OK\n");
+		} లేకపోతే
+			రాయి("OK\n");
 	}
-	return errors;
+	తిరిగి errors;
 }
 
-#endif /* UNITTEST */
+#అయితే_ముగింపు /* UNITTEST */

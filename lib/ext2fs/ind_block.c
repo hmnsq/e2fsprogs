@@ -10,58 +10,58 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
-errcode_t ext2fs_read_ind_block(ext2_filsys fs, blk_t blk, void *buf)
+errcode_t ext2fs_read_ind_ఖండం(ext2_filsys fs, blk_t blk, శూన్య *buf)
 {
 	errcode_t	retval;
-#ifdef WORDS_BIGENDIAN
-	blk_t		*block_nr;
-	int		i;
-	int		limit = fs->blocksize >> 2;
-#endif
+#నిర్వచితమైతే పదాలు_BIGENDIAN
+	blk_t		*ఖండం_nr;
+	పూర్ణాంకం		i;
+	పూర్ణాంకం		హద్దు = fs->blocksize >> 2;
+#అయితే_ముగింపు
 
-	if ((fs->flags & EXT2_FLAG_IMAGE_FILE) &&
+	ఒకవేళ ((fs->flags & EXT2_FLAG_IMAGE_FILE) &&
 	    (fs->io != fs->image_io))
 		memset(buf, 0, fs->blocksize);
-	else {
+	లేకపోతే {
 		retval = io_channel_read_blk(fs->io, blk, 1, buf);
-		if (retval)
-			return retval;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 	}
-#ifdef WORDS_BIGENDIAN
-	block_nr = (blk_t *) buf;
-	for (i = 0; i < limit; i++, block_nr++)
-		*block_nr = ext2fs_swab32(*block_nr);
-#endif
-	return 0;
+#నిర్వచితమైతే పదాలు_BIGENDIAN
+	ఖండం_nr = (blk_t *) buf;
+	కొరకు (i = 0; i < హద్దు; i++, ఖండం_nr++)
+		*ఖండం_nr = ext2fs_swab32(*ఖండం_nr);
+#అయితే_ముగింపు
+	తిరిగి 0;
 }
 
-errcode_t ext2fs_write_ind_block(ext2_filsys fs, blk_t blk, void *buf)
+errcode_t ext2fs_write_ind_ఖండం(ext2_filsys fs, blk_t blk, శూన్య *buf)
 {
-#ifdef WORDS_BIGENDIAN
-	blk_t		*block_nr;
-	int		i;
-	int		limit = fs->blocksize >> 2;
-#endif
+#నిర్వచితమైతే పదాలు_BIGENDIAN
+	blk_t		*ఖండం_nr;
+	పూర్ణాంకం		i;
+	పూర్ణాంకం		హద్దు = fs->blocksize >> 2;
+#అయితే_ముగింపు
 
-	if (fs->flags & EXT2_FLAG_IMAGE_FILE)
-		return 0;
+	ఒకవేళ (fs->flags & EXT2_FLAG_IMAGE_FILE)
+		తిరిగి 0;
 
-#ifdef WORDS_BIGENDIAN
-	block_nr = (blk_t *) buf;
-	for (i = 0; i < limit; i++, block_nr++)
-		*block_nr = ext2fs_swab32(*block_nr);
-#endif
-	return io_channel_write_blk(fs->io, blk, 1, buf);
+#నిర్వచితమైతే పదాలు_BIGENDIAN
+	ఖండం_nr = (blk_t *) buf;
+	కొరకు (i = 0; i < హద్దు; i++, ఖండం_nr++)
+		*ఖండం_nr = ext2fs_swab32(*ఖండం_nr);
+#అయితే_ముగింపు
+	తిరిగి io_channel_write_blk(fs->io, blk, 1, buf);
 }
 
 

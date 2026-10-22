@@ -9,22 +9,22 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <sys/types.h>
+#ఒకవేళ HAVE_ERRNO_H
+#అన్తర్భావ <errno.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
 __u16 test1[] = {
 	0x0001, 0x0100,
@@ -45,49 +45,49 @@ __u32 test2[] = {
 	0x00000000, 0x00000000
 	};
 
-int main(int argc, char **argv)
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	int	i;
-	int	errors = 0;
+	పూర్ణాంకం	i;
+	పూర్ణాంకం	errors = 0;
 
-	printf("Testing ext2fs_swab16\n");
+	రాయి("Testing ext2fs_swab16\n");
 	i=0;
-	do {
-		printf("swab16(0x%04x) = 0x%04x\n", test1[i],
+	చేయి {
+		రాయి("swab16(0x%04x) = 0x%04x\n", test1[i],
 		       ext2fs_swab16(test1[i]));
-		if (ext2fs_swab16(test1[i]) != test1[i+1]) {
-			printf("Error!!!   %04x != %04x\n",
+		ఒకవేళ (ext2fs_swab16(test1[i]) != test1[i+1]) {
+			రాయి("Error!!!   %04x != %04x\n",
 			       ext2fs_swab16(test1[i]), test1[i+1]);
 			errors++;
 		}
-		if (ext2fs_swab16(test1[i+1]) != test1[i]) {
-			printf("Error!!!   %04x != %04x\n",
+		ఒకవేళ (ext2fs_swab16(test1[i+1]) != test1[i]) {
+			రాయి("Error!!!   %04x != %04x\n",
 			       ext2fs_swab16(test1[i+1]), test1[i]);
 			errors++;
 		}
 		i += 2;
-	} while (test1[i] != 0);
+	} అయితే (test1[i] != 0);
 
-	printf("Testing ext2fs_swab32\n");
+	రాయి("Testing ext2fs_swab32\n");
 	i = 0;
-	do {
-		printf("swab32(0x%08x) = 0x%08x\n", test2[i],
+	చేయి {
+		రాయి("swab32(0x%08x) = 0x%08x\n", test2[i],
 		       ext2fs_swab32(test2[i]));
-		if (ext2fs_swab32(test2[i]) != test2[i+1]) {
-			printf("Error!!!   %04x != %04x\n",
+		ఒకవేళ (ext2fs_swab32(test2[i]) != test2[i+1]) {
+			రాయి("Error!!!   %04x != %04x\n",
 			       ext2fs_swab32(test2[i]), test2[i+1]);
 			errors++;
 		}
-		if (ext2fs_swab32(test2[i+1]) != test2[i]) {
-			printf("Error!!!   %04x != %04x\n",
+		ఒకవేళ (ext2fs_swab32(test2[i+1]) != test2[i]) {
+			రాయి("Error!!!   %04x != %04x\n",
 			       ext2fs_swab32(test2[i+1]), test2[i]);
 			errors++;
 		}
 		i += 2;
-	} while (test2[i] != 0);
+	} అయితే (test2[i] != 0);
 
-	if (!errors)
-		printf("No errors found in the byteswap implementation!\n");
+	ఒకవేళ (!errors)
+		రాయి("No errors found in the byteswap implementation!\n");
 
-	return errors;
+	తిరిగి errors;
 }

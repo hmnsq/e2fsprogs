@@ -9,44 +9,44 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <time.h>
+#ఒకవేళ HAVE_SYS_STAT_H
+#అన్తర్భావ <sys/stat.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#నిర్వచించు EXT2_CHECK_MAGIC(నిర్మాణం, సంకేతం_2) \
+	  ఒకవేళ ((నిర్మాణం)->magic != (సంకేతం_2)) తిరిగి (సంకేతం_2)
 
-struct test_private_data {
-	int	magic;
+నిర్మాణం test_వ్యక్తిగత_దత్తాంశం {
+	పూర్ణాంకం	magic;
 	io_channel real;
-	int flags;
+	పూర్ణాంకం flags;
 	FILE *outfile;
-	unsigned long block;
-	int read_abort_count, write_abort_count;
-	void (*read_blk)(unsigned long block, int count, errcode_t err);
-	void (*write_blk)(unsigned long block, int count, errcode_t err);
-	void (*set_blksize)(int blksize, errcode_t err);
-	void (*write_byte)(unsigned long block, int count, errcode_t err);
-	void (*read_blk64)(unsigned long long block, int count, errcode_t err);
-	void (*write_blk64)(unsigned long long block, int count, errcode_t err);
+	గుర్తులేని దీర్ఘ ఖండం;
+	పూర్ణాంకం read_abort_లెక్క, write_abort_లెక్క;
+	శూన్య (*read_blk)(గుర్తులేని దీర్ఘ ఖండం, పూర్ణాంకం లెక్క, errcode_t err);
+	శూన్య (*write_blk)(గుర్తులేని దీర్ఘ ఖండం, పూర్ణాంకం లెక్క, errcode_t err);
+	శూన్య (*సమితి_blksize)(పూర్ణాంకం blksize, errcode_t err);
+	శూన్య (*write_byte)(గుర్తులేని దీర్ఘ ఖండం, పూర్ణాంకం లెక్క, errcode_t err);
+	శూన్య (*read_blk64)(గుర్తులేని దీర్ఘ దీర్ఘ ఖండం, పూర్ణాంకం లెక్క, errcode_t err);
+	శూన్య (*write_blk64)(గుర్తులేని దీర్ఘ దీర్ఘ ఖండం, పూర్ణాంకం లెక్క, errcode_t err);
 };
 
 /*
@@ -54,47 +54,47 @@ struct test_private_data {
  * necessary *before* calling test_open
  */
 io_manager test_io_backing_manager = 0;
-void (*test_io_cb_read_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
-void (*test_io_cb_write_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
-void (*test_io_cb_read_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
-void (*test_io_cb_write_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
-void (*test_io_cb_set_blksize)
-	(int blksize, errcode_t err) = 0;
-void (*test_io_cb_write_byte)
-	(unsigned long block, int count, errcode_t err) = 0;
+శూన్య (*test_io_cb_read_blk)
+	(గుర్తులేని దీర్ఘ ఖండం, పూర్ణాంకం లెక్క, errcode_t err) = 0;
+శూన్య (*test_io_cb_write_blk)
+	(గుర్తులేని దీర్ఘ ఖండం, పూర్ణాంకం లెక్క, errcode_t err) = 0;
+శూన్య (*test_io_cb_read_blk64)
+	(గుర్తులేని దీర్ఘ దీర్ఘ ఖండం, పూర్ణాంకం లెక్క, errcode_t err) = 0;
+శూన్య (*test_io_cb_write_blk64)
+	(గుర్తులేని దీర్ఘ దీర్ఘ ఖండం, పూర్ణాంకం లెక్క, errcode_t err) = 0;
+శూన్య (*test_io_cb_సమితి_blksize)
+	(పూర్ణాంకం blksize, errcode_t err) = 0;
+శూన్య (*test_io_cb_write_byte)
+	(గుర్తులేని దీర్ఘ ఖండం, పూర్ణాంకం లెక్క, errcode_t err) = 0;
 
 /*
  * Test flags
  */
-#define TEST_FLAG_READ			0x01
-#define TEST_FLAG_WRITE			0x02
-#define TEST_FLAG_SET_BLKSIZE		0x04
-#define TEST_FLAG_FLUSH			0x08
-#define TEST_FLAG_DUMP			0x10
-#define TEST_FLAG_SET_OPTION		0x20
-#define TEST_FLAG_DISCARD		0x40
-#define TEST_FLAG_READAHEAD		0x80
-#define TEST_FLAG_ZEROOUT		0x100
+#నిర్వచించు TEST_FLAG_READ			0x01
+#నిర్వచించు TEST_FLAG_WRITE			0x02
+#నిర్వచించు TEST_FLAG_సమితి_BLKSIZE		0x04
+#నిర్వచించు TEST_FLAG_FLUSH			0x08
+#నిర్వచించు TEST_FLAG_DUMP			0x10
+#నిర్వచించు TEST_FLAG_సమితి_OPTION		0x20
+#నిర్వచించు TEST_FLAG_DISCARD		0x40
+#నిర్వచించు TEST_FLAG_READAHEAD		0x80
+#నిర్వచించు TEST_FLAG_ZEROOUT		0x100
 
-static void test_dump_block(io_channel channel,
-			    struct test_private_data *data,
-			    unsigned long block, const void *buf)
+స్థిర శూన్య test_dump_ఖండం(io_channel channel,
+			    నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *దత్తాంశం,
+			    గుర్తులేని దీర్ఘ ఖండం, స్థిరరాశి శూన్య *buf)
 {
-	const unsigned char *cp;
-	FILE *f = data->outfile;
-	int	i;
-	unsigned long	cksum = 0;
+	స్థిరరాశి గుర్తులేని అక్షరం *cp;
+	FILE *f = దత్తాంశం->outfile;
+	పూర్ణాంకం	i;
+	గుర్తులేని దీర్ఘ	cksum = 0;
 
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
+	కొరకు (i=0, cp = buf; i < channel->ఖండం_కొలత; i++, cp++) {
 		cksum += *cp;
 	}
-	fprintf(f, "Contents of block %lu, checksum %08lu: \n", block, cksum);
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
-		if ((i % 16) == 0)
+	fprintf(f, "Contents of block %lu, checksum %08lu: \n", ఖండం, cksum);
+	కొరకు (i=0, cp = buf; i < channel->ఖండం_కొలత; i++, cp++) {
+		ఒకవేళ ((i % 16) == 0)
 			fprintf(f, "%04x: ", i);
 		fprintf(f, "%02x%c", *cp, ((i % 16) == 15) ? '\n' : ' ');
 	}
@@ -103,416 +103,416 @@ static void test_dump_block(io_channel channel,
 /*
  * Flush data buffers to disk.
  */
-static errcode_t test_flush(io_channel channel)
+స్థిర errcode_t test_flush(io_channel channel)
 {
-	struct test_private_data	*data;
+	నిర్మాణం test_వ్యక్తిగత_దత్తాంశం	*దత్తాంశం;
 	errcode_t			retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *)channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *)channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_flush(data->real);
+	ఒకవేళ (దత్తాంశం->real)
+		retval = io_channel_flush(దత్తాంశం->real);
 
-	if (data->flags & TEST_FLAG_FLUSH)
-		fprintf(data->outfile, "Test_io: flush() returned %s\n",
-			retval ? error_message(retval) : "OK");
+	ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_FLUSH)
+		fprintf(దత్తాంశం->outfile, "Test_io: flush() returned %s\n",
+			retval ? error_సందేశం(retval) : "OK");
 
-	return retval;
+	తిరిగి retval;
 }
 
-static void test_abort(io_channel channel, unsigned long block)
+స్థిర శూన్య test_abort(io_channel channel, గుర్తులేని దీర్ఘ ఖండం)
 {
-	struct test_private_data *data;
+	నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	FILE *f;
 
-	data = (struct test_private_data *) channel->private_data;
-	f = data->outfile;
+	దత్తాంశం = (నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	f = దత్తాంశం->outfile;
 	test_flush(channel);
 
-	fprintf(f, "Aborting due to I/O to block %lu\n", block);
+	fprintf(f, "Aborting due to I/O to block %lu\n", ఖండం);
 	fflush(f);
 	abort();
 }
 
-static errcode_t test_open(const char *name, int flags, io_channel *channel)
+స్థిర errcode_t test_open(స్థిరరాశి అక్షరం *name, పూర్ణాంకం flags, io_channel *channel)
 {
-	io_channel	io = NULL;
-	struct test_private_data *data = NULL;
+	io_channel	io = ఖాళీ;
+	నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *దత్తాంశం = ఖాళీ;
 	errcode_t	retval;
-	char		*value;
+	అక్షరం		*విలువ;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	ఒకవేళ (name == 0)
+		తిరిగి EXT2_ET_BAD_DEVICE_NAME;
+	retval = ext2fs_get_mem(పరిమాణం(నిర్మాణం struct_io_channel), &io);
+	ఒకవేళ (retval)
+		వెళ్ళు cleanup;
+	memset(io, 0, పరిమాణం(నిర్మాణం struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
-	retval = ext2fs_get_mem(sizeof(struct test_private_data), &data);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(పరిమాణం(నిర్మాణం test_వ్యక్తిగత_దత్తాంశం), &దత్తాంశం);
+	ఒకవేళ (retval)
+		వెళ్ళు cleanup;
 	io->manager = test_io_manager;
-	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(అక్షరశ్రేణి_పొడవు(name)+1, &io->name);
+	ఒకవేళ (retval)
+		వెళ్ళు cleanup;
 
 	strcpy(io->name, name);
-	io->private_data = data;
-	io->block_size = 1024;
+	io->వ్యక్తిగత_దత్తాంశం = దత్తాంశం;
+	io->ఖండం_కొలత = 1024;
 	io->read_error = 0;
 	io->write_error = 0;
 	io->refcount = 1;
 	io->flags = 0;
 
-	memset(data, 0, sizeof(struct test_private_data));
-	data->magic = EXT2_ET_MAGIC_TEST_IO_CHANNEL;
-	if (test_io_backing_manager) {
+	memset(దత్తాంశం, 0, పరిమాణం(నిర్మాణం test_వ్యక్తిగత_దత్తాంశం));
+	దత్తాంశం->magic = EXT2_ET_MAGIC_TEST_IO_CHANNEL;
+	ఒకవేళ (test_io_backing_manager) {
 		retval = test_io_backing_manager->open(name, flags,
-						       &data->real);
-		if (retval)
-			goto cleanup;
-	} else {
-		data->real = 0;
+						       &దత్తాంశం->real);
+		ఒకవేళ (retval)
+			వెళ్ళు cleanup;
+	} లేకపోతే {
+		దత్తాంశం->real = 0;
 	}
-	data->read_blk =	test_io_cb_read_blk;
-	data->write_blk =	test_io_cb_write_blk;
-	data->set_blksize =	test_io_cb_set_blksize;
-	data->write_byte =	test_io_cb_write_byte;
-	data->read_blk64 =	test_io_cb_read_blk64;
-	data->write_blk64 =	test_io_cb_write_blk64;
+	దత్తాంశం->read_blk =	test_io_cb_read_blk;
+	దత్తాంశం->write_blk =	test_io_cb_write_blk;
+	దత్తాంశం->సమితి_blksize =	test_io_cb_సమితి_blksize;
+	దత్తాంశం->write_byte =	test_io_cb_write_byte;
+	దత్తాంశం->read_blk64 =	test_io_cb_read_blk64;
+	దత్తాంశం->write_blk64 =	test_io_cb_write_blk64;
 
-	data->outfile = NULL;
-	if ((value = ext2fs_safe_getenv("TEST_IO_LOGFILE")) != NULL)
-		data->outfile = fopen(value, "w");
-	if (!data->outfile)
-		data->outfile = stderr;
+	దత్తాంశం->outfile = ఖాళీ;
+	ఒకవేళ ((విలువ = ext2fs_సురక్షిత_getenv("TEST_IO_LOGFILE")) != ఖాళీ)
+		దత్తాంశం->outfile = fopen(విలువ, "w");
+	ఒకవేళ (!దత్తాంశం->outfile)
+		దత్తాంశం->outfile = stderr;
 
-	data->flags = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_FLAGS")) != NULL)
-		data->flags = strtoul(value, NULL, 0);
+	దత్తాంశం->flags = 0;
+	ఒకవేళ ((విలువ = ext2fs_సురక్షిత_getenv("TEST_IO_FLAGS")) != ఖాళీ)
+		దత్తాంశం->flags = strtoul(విలువ, ఖాళీ, 0);
 
-	data->block = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_BLOCK")) != NULL)
-		data->block = strtoul(value, NULL, 0);
+	దత్తాంశం->ఖండం = 0;
+	ఒకవేళ ((విలువ = ext2fs_సురక్షిత_getenv("TEST_IO_BLOCK")) != ఖాళీ)
+		దత్తాంశం->ఖండం = strtoul(విలువ, ఖాళీ, 0);
 
-	data->read_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_READ_ABORT")) != NULL)
-		data->read_abort_count = strtoul(value, NULL, 0);
+	దత్తాంశం->read_abort_లెక్క = 0;
+	ఒకవేళ ((విలువ = ext2fs_సురక్షిత_getenv("TEST_IO_READ_ABORT")) != ఖాళీ)
+		దత్తాంశం->read_abort_లెక్క = strtoul(విలువ, ఖాళీ, 0);
 
-	data->write_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_WRITE_ABORT")) != NULL)
-		data->write_abort_count = strtoul(value, NULL, 0);
+	దత్తాంశం->write_abort_లెక్క = 0;
+	ఒకవేళ ((విలువ = ext2fs_సురక్షిత_getenv("TEST_IO_WRITE_ABORT")) != ఖాళీ)
+		దత్తాంశం->write_abort_లెక్క = strtoul(విలువ, ఖాళీ, 0);
 
-	if (data->real) {
-		io->align = data->real->align;
-		if (data->real->flags & CHANNEL_FLAGS_THREADS)
-			io->flags |= CHANNEL_FLAGS_THREADS;
+	ఒకవేళ (దత్తాంశం->real) {
+		io->align = దత్తాంశం->real->align;
+		ఒకవేళ (దత్తాంశం->real->flags & CHANNEL_FLAGS_దారాలు)
+			io->flags |= CHANNEL_FLAGS_దారాలు;
 	}
 
 	*channel = io;
-	return 0;
+	తిరిగి 0;
 
 cleanup:
-	if (io && io->name)
+	ఒకవేళ (io && io->name)
 		ext2fs_free_mem(&io->name);
-	if (io)
+	ఒకవేళ (io)
 		ext2fs_free_mem(&io);
-	if (data)
-		ext2fs_free_mem(&data);
-	return retval;
+	ఒకవేళ (దత్తాంశం)
+		ext2fs_free_mem(&దత్తాంశం);
+	తిరిగి retval;
 }
 
-static errcode_t test_close(io_channel channel)
+స్థిర errcode_t test_close(io_channel channel)
 {
-	struct test_private_data *data;
+	నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	ఒకవేళ (--channel->refcount > 0)
+		తిరిగి 0;
 
-	if (data->real)
-		retval = io_channel_close(data->real);
+	ఒకవేళ (దత్తాంశం->real)
+		retval = io_channel_close(దత్తాంశం->real);
 
-	if (data->outfile && data->outfile != stderr)
-		fclose(data->outfile);
+	ఒకవేళ (దత్తాంశం->outfile && దత్తాంశం->outfile != stderr)
+		fclose(దత్తాంశం->outfile);
 
-	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	ext2fs_free_mem(&channel->వ్యక్తిగత_దత్తాంశం);
+	ఒకవేళ (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	తిరిగి retval;
 }
 
-static errcode_t test_set_blksize(io_channel channel, int blksize)
+స్థిర errcode_t test_సమితి_blksize(io_channel channel, పూర్ణాంకం blksize)
 {
-	struct test_private_data *data;
+	నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real) {
-		retval = io_channel_set_blksize(data->real, blksize);
-		channel->align = data->real->align;
+	ఒకవేళ (దత్తాంశం->real) {
+		retval = io_channel_సమితి_blksize(దత్తాంశం->real, blksize);
+		channel->align = దత్తాంశం->real->align;
 	}
-	if (data->set_blksize)
-		data->set_blksize(blksize, retval);
-	if (data->flags & TEST_FLAG_SET_BLKSIZE)
-		fprintf(data->outfile,
+	ఒకవేళ (దత్తాంశం->సమితి_blksize)
+		దత్తాంశం->సమితి_blksize(blksize, retval);
+	ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_సమితి_BLKSIZE)
+		fprintf(దత్తాంశం->outfile,
 			"Test_io: set_blksize(%d) returned %s\n",
-			blksize, retval ? error_message(retval) : "OK");
-	channel->block_size = blksize;
-	return retval;
+			blksize, retval ? error_సందేశం(retval) : "OK");
+	channel->ఖండం_కొలత = blksize;
+	తిరిగి retval;
 }
 
 
-static errcode_t test_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+స్థిర errcode_t test_read_blk(io_channel channel, గుర్తులేని దీర్ఘ ఖండం,
+			       పూర్ణాంకం లెక్క, శూన్య *buf)
 {
-	struct test_private_data *data;
+	నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_read_blk(data->real, block, count, buf);
-	if (data->read_blk)
-		data->read_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
-		fprintf(data->outfile,
+	ఒకవేళ (దత్తాంశం->real)
+		retval = io_channel_read_blk(దత్తాంశం->real, ఖండం, లెక్క, buf);
+	ఒకవేళ (దత్తాంశం->read_blk)
+		దత్తాంశం->read_blk(ఖండం, లెక్క, retval);
+	ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_READ)
+		fprintf(దత్తాంశం->outfile,
 			"Test_io: read_blk(%lu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
-			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
-			test_abort(channel, block);
+			ఖండం, లెక్క, retval ? error_సందేశం(retval) : "OK");
+	ఒకవేళ (దత్తాంశం->ఖండం && దత్తాంశం->ఖండం == ఖండం) {
+		ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_DUMP)
+			test_dump_ఖండం(channel, దత్తాంశం, ఖండం, buf);
+		ఒకవేళ (--దత్తాంశం->read_abort_లెక్క == 0)
+			test_abort(channel, ఖండం);
 	}
-	return retval;
+	తిరిగి retval;
 }
 
-static errcode_t test_write_blk(io_channel channel, unsigned long block,
-			       int count, const void *buf)
+స్థిర errcode_t test_write_blk(io_channel channel, గుర్తులేని దీర్ఘ ఖండం,
+			       పూర్ణాంకం లెక్క, స్థిరరాశి శూన్య *buf)
 {
-	struct test_private_data *data;
+	నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_write_blk(data->real, block, count, buf);
-	if (data->write_blk)
-		data->write_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
-		fprintf(data->outfile,
+	ఒకవేళ (దత్తాంశం->real)
+		retval = io_channel_write_blk(దత్తాంశం->real, ఖండం, లెక్క, buf);
+	ఒకవేళ (దత్తాంశం->write_blk)
+		దత్తాంశం->write_blk(ఖండం, లెక్క, retval);
+	ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_WRITE)
+		fprintf(దత్తాంశం->outfile,
 			"Test_io: write_blk(%lu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
-			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
-			test_abort(channel, block);
+			ఖండం, లెక్క, retval ? error_సందేశం(retval) : "OK");
+	ఒకవేళ (దత్తాంశం->ఖండం && దత్తాంశం->ఖండం == ఖండం) {
+		ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_DUMP)
+			test_dump_ఖండం(channel, దత్తాంశం, ఖండం, buf);
+		ఒకవేళ (--దత్తాంశం->write_abort_లెక్క == 0)
+			test_abort(channel, ఖండం);
 	}
-	return retval;
+	తిరిగి retval;
 }
 
-static errcode_t test_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+స్థిర errcode_t test_read_blk64(io_channel channel, గుర్తులేని దీర్ఘ దీర్ఘ ఖండం,
+			       పూర్ణాంకం లెక్క, శూన్య *buf)
 {
-	struct test_private_data *data;
+	నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_read_blk64(data->real, block, count, buf);
-	if (data->read_blk64)
-		data->read_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
-		fprintf(data->outfile,
+	ఒకవేళ (దత్తాంశం->real)
+		retval = io_channel_read_blk64(దత్తాంశం->real, ఖండం, లెక్క, buf);
+	ఒకవేళ (దత్తాంశం->read_blk64)
+		దత్తాంశం->read_blk64(ఖండం, లెక్క, retval);
+	ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_READ)
+		fprintf(దత్తాంశం->outfile,
 			"Test_io: read_blk64(%llu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
-			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
-			test_abort(channel, block);
+			ఖండం, లెక్క, retval ? error_సందేశం(retval) : "OK");
+	ఒకవేళ (దత్తాంశం->ఖండం && దత్తాంశం->ఖండం == ఖండం) {
+		ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_DUMP)
+			test_dump_ఖండం(channel, దత్తాంశం, ఖండం, buf);
+		ఒకవేళ (--దత్తాంశం->read_abort_లెక్క == 0)
+			test_abort(channel, ఖండం);
 	}
-	return retval;
+	తిరిగి retval;
 }
 
-static errcode_t test_write_blk64(io_channel channel, unsigned long long block,
-			       int count, const void *buf)
+స్థిర errcode_t test_write_blk64(io_channel channel, గుర్తులేని దీర్ఘ దీర్ఘ ఖండం,
+			       పూర్ణాంకం లెక్క, స్థిరరాశి శూన్య *buf)
 {
-	struct test_private_data *data;
+	నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_write_blk64(data->real, block, count, buf);
-	if (data->write_blk64)
-		data->write_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
-		fprintf(data->outfile,
+	ఒకవేళ (దత్తాంశం->real)
+		retval = io_channel_write_blk64(దత్తాంశం->real, ఖండం, లెక్క, buf);
+	ఒకవేళ (దత్తాంశం->write_blk64)
+		దత్తాంశం->write_blk64(ఖండం, లెక్క, retval);
+	ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_WRITE)
+		fprintf(దత్తాంశం->outfile,
 			"Test_io: write_blk64(%llu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
-			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
-			test_abort(channel, block);
+			ఖండం, లెక్క, retval ? error_సందేశం(retval) : "OK");
+	ఒకవేళ (దత్తాంశం->ఖండం && దత్తాంశం->ఖండం == ఖండం) {
+		ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_DUMP)
+			test_dump_ఖండం(channel, దత్తాంశం, ఖండం, buf);
+		ఒకవేళ (--దత్తాంశం->write_abort_లెక్క == 0)
+			test_abort(channel, ఖండం);
 	}
-	return retval;
+	తిరిగి retval;
 }
 
-static errcode_t test_write_byte(io_channel channel, unsigned long offset,
-			       int count, const void *buf)
+స్థిర errcode_t test_write_byte(io_channel channel, గుర్తులేని దీర్ఘ స్థానభ్రంశం,
+			       పూర్ణాంకం లెక్క, స్థిరరాశి శూన్య *buf)
 {
-	struct test_private_data *data;
+	నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->write_byte)
-		retval = io_channel_write_byte(data->real, offset, count, buf);
-	if (data->write_byte)
-		data->write_byte(offset, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
-		fprintf(data->outfile,
+	ఒకవేళ (దత్తాంశం->real && దత్తాంశం->real->manager->write_byte)
+		retval = io_channel_write_byte(దత్తాంశం->real, స్థానభ్రంశం, లెక్క, buf);
+	ఒకవేళ (దత్తాంశం->write_byte)
+		దత్తాంశం->write_byte(స్థానభ్రంశం, లెక్క, retval);
+	ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_WRITE)
+		fprintf(దత్తాంశం->outfile,
 			"Test_io: write_byte(%lu, %d) returned %s\n",
-			offset, count, retval ? error_message(retval) : "OK");
-	return retval;
+			స్థానభ్రంశం, లెక్క, retval ? error_సందేశం(retval) : "OK");
+	తిరిగి retval;
 }
 
-static errcode_t test_set_option(io_channel channel, const char *option,
-				 const char *arg)
+స్థిర errcode_t test_సమితి_option(io_channel channel, స్థిరరాశి అక్షరం *option,
+				 స్థిరరాశి అక్షరం *arg)
 {
-	struct test_private_data *data;
+	నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 
-	if (data->flags & TEST_FLAG_SET_OPTION)
-		fprintf(data->outfile, "Test_io: set_option(%s, %s) ",
+	ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_సమితి_OPTION)
+		fprintf(దత్తాంశం->outfile, "Test_io: set_option(%s, %s) ",
 			option, arg);
-	if (data->real && data->real->manager->set_option) {
-		retval = (data->real->manager->set_option)(data->real,
+	ఒకవేళ (దత్తాంశం->real && దత్తాంశం->real->manager->సమితి_option) {
+		retval = (దత్తాంశం->real->manager->సమితి_option)(దత్తాంశం->real,
 							   option, arg);
-		if (data->flags & TEST_FLAG_SET_OPTION)
-			fprintf(data->outfile, "returned %s\n",
-				retval ? error_message(retval) : "OK");
-	} else {
-		if (data->flags & TEST_FLAG_SET_OPTION)
-			fprintf(data->outfile, "not implemented\n");
+		ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_సమితి_OPTION)
+			fprintf(దత్తాంశం->outfile, "returned %s\n",
+				retval ? error_సందేశం(retval) : "OK");
+	} లేకపోతే {
+		ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_సమితి_OPTION)
+			fprintf(దత్తాంశం->outfile, "not implemented\n");
 	}
-	return retval;
+	తిరిగి retval;
 }
 
-static errcode_t test_get_stats(io_channel channel, io_stats *stats)
+స్థిర errcode_t test_get_stats(io_channel channel, io_stats *stats)
 {
-	struct test_private_data *data;
+	నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->get_stats) {
-		retval = (data->real->manager->get_stats)(data->real, stats);
+	ఒకవేళ (దత్తాంశం->real && దత్తాంశం->real->manager->get_stats) {
+		retval = (దత్తాంశం->real->manager->get_stats)(దత్తాంశం->real, stats);
 	}
-	return retval;
+	తిరిగి retval;
 }
 
-static errcode_t test_discard(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+స్థిర errcode_t test_discard(io_channel channel, గుర్తులేని దీర్ఘ దీర్ఘ ఖండం,
+			      గుర్తులేని దీర్ఘ దీర్ఘ లెక్క)
 {
-	struct test_private_data *data;
+	నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_discard(data->real, block, count);
-	if (data->flags & TEST_FLAG_DISCARD)
-		fprintf(data->outfile,
+	ఒకవేళ (దత్తాంశం->real)
+		retval = io_channel_discard(దత్తాంశం->real, ఖండం, లెక్క);
+	ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_DISCARD)
+		fprintf(దత్తాంశం->outfile,
 			"Test_io: discard(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			ఖండం, లెక్క, retval ? error_సందేశం(retval) : "OK");
+	తిరిగి retval;
 }
 
-static errcode_t test_cache_readahead(io_channel channel,
-				      unsigned long long block,
-				      unsigned long long count)
+స్థిర errcode_t test_cache_readahead(io_channel channel,
+				      గుర్తులేని దీర్ఘ దీర్ఘ ఖండం,
+				      గుర్తులేని దీర్ఘ దీర్ఘ లెక్క)
 {
-	struct test_private_data *data;
+	నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_cache_readahead(data->real, block, count);
-	if (data->flags & TEST_FLAG_READAHEAD)
-		fprintf(data->outfile,
+	ఒకవేళ (దత్తాంశం->real)
+		retval = io_channel_cache_readahead(దత్తాంశం->real, ఖండం, లెక్క);
+	ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_READAHEAD)
+		fprintf(దత్తాంశం->outfile,
 			"Test_io: readahead(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			ఖండం, లెక్క, retval ? error_సందేశం(retval) : "OK");
+	తిరిగి retval;
 }
 
-static errcode_t test_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+స్థిర errcode_t test_zeroout(io_channel channel, గుర్తులేని దీర్ఘ దీర్ఘ ఖండం,
+			      గుర్తులేని దీర్ఘ దీర్ఘ లెక్క)
 {
-	struct test_private_data *data;
+	నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం test_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_zeroout(data->real, block, count);
-	if (data->flags & TEST_FLAG_ZEROOUT)
-		fprintf(data->outfile,
+	ఒకవేళ (దత్తాంశం->real)
+		retval = io_channel_zeroout(దత్తాంశం->real, ఖండం, లెక్క);
+	ఒకవేళ (దత్తాంశం->flags & TEST_FLAG_ZEROOUT)
+		fprintf(దత్తాంశం->outfile,
 			"Test_io: zeroout(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			ఖండం, లెక్క, retval ? error_సందేశం(retval) : "OK");
+	తిరిగి retval;
 }
 
-static struct struct_io_manager struct_test_manager = {
+స్థిర నిర్మాణం struct_io_manager struct_test_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Test I/O Manager",
 	.open		= test_open,
 	.close		= test_close,
-	.set_blksize	= test_set_blksize,
+	.సమితి_blksize	= test_సమితి_blksize,
 	.read_blk	= test_read_blk,
 	.write_blk	= test_write_blk,
 	.flush		= test_flush,
 	.write_byte	= test_write_byte,
-	.set_option	= test_set_option,
+	.సమితి_option	= test_సమితి_option,
 	.get_stats	= test_get_stats,
 	.read_blk64	= test_read_blk64,
 	.write_blk64	= test_write_blk64,

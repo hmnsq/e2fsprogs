@@ -9,153 +9,153 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "ext2_fs.h"
+#అన్తర్భావ "ext2_fs.h"
 
-#define sb_struct ext2_super_block
-#define sb_struct_name "ext2_super_block"
+#నిర్వచించు sb_struct ext2_super_ఖండం
+#నిర్వచించు sb_struct_name "ext2_super_block"
 
-struct sb_struct sb;
+నిర్మాణం sb_struct sb;
 
-#ifndef offsetof
-#define offsetof(type, member)  __builtin_offsetof (type, member)
-#endif
+#నిర్వచితం_కాకపోతే offsetof
+#నిర్వచించు offsetof(type, member)  __builtin_offsetof (type, member)
+#అయితే_ముగింపు
 
-#define check_field(x, s) cur_offset = do_field(#x, s, sizeof(sb.x),	       \
-						offsetof(struct sb_struct, x), \
-						cur_offset)
+#నిర్వచించు check_క్షేత్రం(x, s) cur_స్థానభ్రంశం = do_క్షేత్రం(#x, s, పరిమాణం(sb.x),	       \
+						offsetof(నిర్మాణం sb_struct, x), \
+						cur_స్థానభ్రంశం)
 
-static int do_field(const char *field, unsigned size, unsigned cur_size,
-		    unsigned offset, unsigned cur_offset)
+స్థిర పూర్ణాంకం do_క్షేత్రం(స్థిరరాశి అక్షరం *క్షేత్రం, గుర్తులేని కొలత, గుర్తులేని cur_కొలత,
+		    గుర్తులేని స్థానభ్రంశం, గుర్తులేని cur_స్థానభ్రంశం)
 {
-	if (size != cur_size) {
-		printf("error: %s size %u should be %u\n",
-		       field, cur_size, size);
-		exit(1);
+	ఒకవేళ (కొలత != cur_కొలత) {
+		రాయి("error: %s size %u should be %u\n",
+		       క్షేత్రం, cur_కొలత, కొలత);
+		నిష్క్రమించు(1);
 	}
-	if (offset != cur_offset) {
-		printf("error: %s offset %u should be %u\n",
-		       field, cur_offset, offset);
-		exit(1);
+	ఒకవేళ (స్థానభ్రంశం != cur_స్థానభ్రంశం) {
+		రాయి("error: %s offset %u should be %u\n",
+		       క్షేత్రం, cur_స్థానభ్రంశం, స్థానభ్రంశం);
+		నిష్క్రమించు(1);
 	}
-	printf("%8d %-30s %3u\n", offset, field, size);
-	return offset + size;
+	రాయి("%8d %-30s %3u\n", స్థానభ్రంశం, క్షేత్రం, కొలత);
+	తిరిగి స్థానభ్రంశం + కొలత;
 }
 
-int main(int argc, char **argv)
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#ఒకవేళ (__GNUC__ >= 4)
+	పూర్ణాంకం cur_స్థానభ్రంశం = 0;
 
-	printf("%8s %-30s %3s\n", "offset", "field", "size");
-	check_field(s_inodes_count, 4);
-	check_field(s_blocks_count, 4);
-	check_field(s_r_blocks_count, 4);
-	check_field(s_free_blocks_count, 4);
-	check_field(s_free_inodes_count, 4);
-	check_field(s_first_data_block, 4);
-	check_field(s_log_block_size, 4);
-	check_field(s_log_cluster_size, 4);
-	check_field(s_blocks_per_group, 4);
-	check_field(s_clusters_per_group, 4);
-	check_field(s_inodes_per_group, 4);
-	check_field(s_mtime, 4);
-	check_field(s_wtime, 4);
-	check_field(s_mnt_count, 2);
-	check_field(s_max_mnt_count, 2);
-	check_field(s_magic, 2);
-	check_field(s_state, 2);
-	check_field(s_errors, 2);
-	check_field(s_minor_rev_level, 2);
-	check_field(s_lastcheck, 4);
-	check_field(s_checkinterval, 4);
-	check_field(s_creator_os, 4);
-	check_field(s_rev_level, 4);
-	check_field(s_def_resuid, 2);
-	check_field(s_def_resgid, 2);
-	check_field(s_first_ino, 4);
-	check_field(s_inode_size, 2);
-	check_field(s_block_group_nr, 2);
-	check_field(s_feature_compat, 4);
-	check_field(s_feature_incompat, 4);
-	check_field(s_feature_ro_compat, 4);
-	check_field(s_uuid, 16);
-	check_field(s_volume_name, 16);
-	check_field(s_last_mounted, 64);
-	check_field(s_algorithm_usage_bitmap, 4);
-	check_field(s_prealloc_blocks, 1);
-	check_field(s_prealloc_dir_blocks, 1);
-	check_field(s_reserved_gdt_blocks, 2);
-	check_field(s_journal_uuid, 16);
-	check_field(s_journal_inum, 4);
-	check_field(s_journal_dev, 4);
-	check_field(s_last_orphan, 4);
-	check_field(s_hash_seed, 4 * 4);
-	check_field(s_def_hash_version, 1);
-	check_field(s_jnl_backup_type, 1);
-	check_field(s_desc_size, 2);
-	check_field(s_default_mount_opts, 4);
-	check_field(s_first_meta_bg, 4);
-	check_field(s_mkfs_time, 4);
-	check_field(s_jnl_blocks, 17 * 4);
-	check_field(s_blocks_count_hi, 4);
-	check_field(s_r_blocks_count_hi, 4);
-	check_field(s_free_blocks_hi, 4);
-	check_field(s_min_extra_isize, 2);
-	check_field(s_want_extra_isize, 2);
-	check_field(s_flags, 4);
-	check_field(s_raid_stride, 2);
-	check_field(s_mmp_update_interval, 2);
-	check_field(s_mmp_block, 8);
-	check_field(s_raid_stripe_width, 4);
-	check_field(s_log_groups_per_flex, 1);
-	check_field(s_checksum_type, 1);
-	check_field(s_encryption_level, 1);
-	check_field(s_reserved_pad, 1);
-	check_field(s_kbytes_written, 8);
-	check_field(s_snapshot_inum, 4);
-	check_field(s_snapshot_id, 4);
-	check_field(s_snapshot_r_blocks_count, 8);
-	check_field(s_snapshot_list, 4);
-	check_field(s_error_count, 4);
-	check_field(s_first_error_time, 4);
-	check_field(s_first_error_ino, 4);
-	check_field(s_first_error_block, 8);
-	check_field(s_first_error_func, 32);
-	check_field(s_first_error_line, 4);
-	check_field(s_last_error_time, 4);
-	check_field(s_last_error_ino, 4);
-	check_field(s_last_error_line, 4);
-	check_field(s_last_error_block, 8);
-	check_field(s_last_error_func, 32);
-	check_field(s_mount_opts, 64);
-	check_field(s_usr_quota_inum, 4);
-	check_field(s_grp_quota_inum, 4);
-	check_field(s_overhead_clusters, 4);
-	check_field(s_backup_bgs, 8);
-	check_field(s_encrypt_algos, 4);
-	check_field(s_encrypt_pw_salt, 16);
-	check_field(s_lpf_ino, 4);
-	check_field(s_prj_quota_inum, 4);
-	check_field(s_checksum_seed, 4);
-	check_field(s_wtime_hi, 1);
-	check_field(s_mtime_hi, 1);
-	check_field(s_mkfs_time_hi, 1);
-	check_field(s_lastcheck_hi, 1);
-	check_field(s_first_error_time_hi, 1);
-	check_field(s_last_error_time_hi, 1);
-	check_field(s_first_error_errcode, 1);
-	check_field(s_last_error_errcode, 1);
-	check_field(s_encoding, 2);
-	check_field(s_encoding_flags, 2);
-	check_field(s_orphan_file_inum, 4);
-	check_field(s_reserved, 94 * 4);
-	check_field(s_checksum, 4);
-	do_field("Superblock end", 0, 0, cur_offset, 1024);
-#endif
-	return 0;
+	రాయి("%8s %-30s %3s\n", "offset", "field", "size");
+	check_క్షేత్రం(s_inodes_లెక్క, 4);
+	check_క్షేత్రం(s_ఖండాలు_లెక్క, 4);
+	check_క్షేత్రం(s_r_ఖండాలు_లెక్క, 4);
+	check_క్షేత్రం(s_free_ఖండాలు_లెక్క, 4);
+	check_క్షేత్రం(s_free_inodes_లెక్క, 4);
+	check_క్షేత్రం(s_మొదటి_దత్తాంశం_ఖండం, 4);
+	check_క్షేత్రం(s_log_ఖండం_కొలత, 4);
+	check_క్షేత్రం(s_log_cluster_కొలత, 4);
+	check_క్షేత్రం(s_ఖండాలు_చొప్పున_సమూహం, 4);
+	check_క్షేత్రం(s_clusters_చొప్పున_సమూహం, 4);
+	check_క్షేత్రం(s_inodes_చొప్పున_సమూహం, 4);
+	check_క్షేత్రం(s_mtime, 4);
+	check_క్షేత్రం(s_wtime, 4);
+	check_క్షేత్రం(s_mnt_లెక్క, 2);
+	check_క్షేత్రం(s_max_mnt_లెక్క, 2);
+	check_క్షేత్రం(s_magic, 2);
+	check_క్షేత్రం(s_state, 2);
+	check_క్షేత్రం(s_errors, 2);
+	check_క్షేత్రం(s_minor_rev_level, 2);
+	check_క్షేత్రం(s_lastcheck, 4);
+	check_క్షేత్రం(s_checkinterval, 4);
+	check_క్షేత్రం(s_creator_os, 4);
+	check_క్షేత్రం(s_rev_level, 4);
+	check_క్షేత్రం(s_def_resuid, 2);
+	check_క్షేత్రం(s_def_resgid, 2);
+	check_క్షేత్రం(s_మొదటి_ino, 4);
+	check_క్షేత్రం(s_inode_కొలత, 2);
+	check_క్షేత్రం(s_ఖండం_సమూహం_nr, 2);
+	check_క్షేత్రం(s_feature_compat, 4);
+	check_క్షేత్రం(s_feature_incompat, 4);
+	check_క్షేత్రం(s_feature_ro_compat, 4);
+	check_క్షేత్రం(s_uuid, 16);
+	check_క్షేత్రం(s_volume_name, 16);
+	check_క్షేత్రం(s_చివరి_mounted, 64);
+	check_క్షేత్రం(s_algorithm_usage_bitmap, 4);
+	check_క్షేత్రం(s_prealloc_ఖండాలు, 1);
+	check_క్షేత్రం(s_prealloc_dir_ఖండాలు, 1);
+	check_క్షేత్రం(s_reserved_gdt_ఖండాలు, 2);
+	check_క్షేత్రం(s_journal_uuid, 16);
+	check_క్షేత్రం(s_journal_inum, 4);
+	check_క్షేత్రం(s_journal_dev, 4);
+	check_క్షేత్రం(s_చివరి_orphan, 4);
+	check_క్షేత్రం(s_hash_విత్తనం, 4 * 4);
+	check_క్షేత్రం(s_def_hash_సంస్కరణ, 1);
+	check_క్షేత్రం(s_jnl_backup_type, 1);
+	check_క్షేత్రం(s_desc_కొలత, 2);
+	check_క్షేత్రం(s_default_mount_opts, 4);
+	check_క్షేత్రం(s_మొదటి_meta_bg, 4);
+	check_క్షేత్రం(s_mkfs_సమయం, 4);
+	check_క్షేత్రం(s_jnl_ఖండాలు, 17 * 4);
+	check_క్షేత్రం(s_ఖండాలు_లెక్క_hi, 4);
+	check_క్షేత్రం(s_r_ఖండాలు_లెక్క_hi, 4);
+	check_క్షేత్రం(s_free_ఖండాలు_hi, 4);
+	check_క్షేత్రం(s_min_extra_isize, 2);
+	check_క్షేత్రం(s_want_extra_isize, 2);
+	check_క్షేత్రం(s_flags, 4);
+	check_క్షేత్రం(s_raid_stride, 2);
+	check_క్షేత్రం(s_mmp_update_interval, 2);
+	check_క్షేత్రం(s_mmp_ఖండం, 8);
+	check_క్షేత్రం(s_raid_stripe_వెడల్పు, 4);
+	check_క్షేత్రం(s_log_groups_చొప్పున_flex, 1);
+	check_క్షేత్రం(s_checksum_type, 1);
+	check_క్షేత్రం(s_encryption_level, 1);
+	check_క్షేత్రం(s_reserved_pad, 1);
+	check_క్షేత్రం(s_kbytes_written, 8);
+	check_క్షేత్రం(s_snapshot_inum, 4);
+	check_క్షేత్రం(s_snapshot_id, 4);
+	check_క్షేత్రం(s_snapshot_r_ఖండాలు_లెక్క, 8);
+	check_క్షేత్రం(s_snapshot_list, 4);
+	check_క్షేత్రం(s_error_లెక్క, 4);
+	check_క్షేత్రం(s_మొదటి_error_సమయం, 4);
+	check_క్షేత్రం(s_మొదటి_error_ino, 4);
+	check_క్షేత్రం(s_మొదటి_error_ఖండం, 8);
+	check_క్షేత్రం(s_మొదటి_error_func, 32);
+	check_క్షేత్రం(s_మొదటి_error_పంక్తి, 4);
+	check_క్షేత్రం(s_చివరి_error_సమయం, 4);
+	check_క్షేత్రం(s_చివరి_error_ino, 4);
+	check_క్షేత్రం(s_చివరి_error_పంక్తి, 4);
+	check_క్షేత్రం(s_చివరి_error_ఖండం, 8);
+	check_క్షేత్రం(s_చివరి_error_func, 32);
+	check_క్షేత్రం(s_mount_opts, 64);
+	check_క్షేత్రం(s_usr_quota_inum, 4);
+	check_క్షేత్రం(s_grp_quota_inum, 4);
+	check_క్షేత్రం(s_overhead_clusters, 4);
+	check_క్షేత్రం(s_backup_bgs, 8);
+	check_క్షేత్రం(s_encrypt_algos, 4);
+	check_క్షేత్రం(s_encrypt_pw_salt, 16);
+	check_క్షేత్రం(s_lpf_ino, 4);
+	check_క్షేత్రం(s_prj_quota_inum, 4);
+	check_క్షేత్రం(s_checksum_విత్తనం, 4);
+	check_క్షేత్రం(s_wtime_hi, 1);
+	check_క్షేత్రం(s_mtime_hi, 1);
+	check_క్షేత్రం(s_mkfs_సమయం_hi, 1);
+	check_క్షేత్రం(s_lastcheck_hi, 1);
+	check_క్షేత్రం(s_మొదటి_error_సమయం_hi, 1);
+	check_క్షేత్రం(s_చివరి_error_సమయం_hi, 1);
+	check_క్షేత్రం(s_మొదటి_error_errcode, 1);
+	check_క్షేత్రం(s_చివరి_error_errcode, 1);
+	check_క్షేత్రం(s_encoding, 2);
+	check_క్షేత్రం(s_encoding_flags, 2);
+	check_క్షేత్రం(s_orphan_file_inum, 4);
+	check_క్షేత్రం(s_reserved, 94 * 4);
+	check_క్షేత్రం(s_checksum, 4);
+	do_క్షేత్రం("Superblock end", 0, 0, cur_స్థానభ్రంశం, 1024);
+#అయితే_ముగింపు
+	తిరిగి 0;
 }

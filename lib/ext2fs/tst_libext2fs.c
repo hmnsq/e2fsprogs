@@ -2,71 +2,71 @@
  * tst_libext2fs.c
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_ERRNO_H
+#అన్తర్భావ <errno.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_STAT_H
+#అన్తర్భావ <sys/stat.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_SYS_TYPES_H
+#అన్తర్భావ <sys/types.h>
+#అయితే_ముగింపు
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fsP.h"
 
-#include "ss/ss.h"
-#include "debugfs.h"
+#అన్తర్భావ "ss/ss.h"
+#అన్తర్భావ "debugfs.h"
 
 /*
  * Hook in new commands into debugfs
  * Override debugfs's prompt
  */
-const char *debug_prog_name = "tst_libext2fs";
-extern ss_request_table libext2fs_cmds;
-ss_request_table *extra_cmds = &libext2fs_cmds;
+స్థిరరాశి అక్షరం *debug_prog_name = "tst_libext2fs";
+బాహ్య ss_request_పట్టిక libext2fs_cmds;
+ss_request_పట్టిక *extra_cmds = &libext2fs_cmds;
 
-static int print_blocks_proc(ext2_filsys fs EXT2FS_ATTR((unused)),
+స్థిర పూర్ణాంకం print_ఖండాలు_proc(ext2_filsys fs EXT2FS_ATTR((వాడని)),
 			     blk64_t *blocknr, e2_blkcnt_t blockcnt,
-			     blk64_t ref_block, int ref_offset,
-			     void *private EXT2FS_ATTR((unused)))
+			     blk64_t ref_ఖండం, పూర్ణాంకం ref_స్థానభ్రంశం,
+			     శూన్య *అంతరంగ EXT2FS_ATTR((వాడని)))
 {
-	printf("%6lld %8llu (%d %llu)\n", (long long) blockcnt,
-	       (unsigned long long) *blocknr, ref_offset,
-	       (unsigned long long) ref_block);
-	return 0;
+	రాయి("%6lld %8llu (%d %llu)\n", (దీర్ఘ దీర్ఘ) blockcnt,
+	       (గుర్తులేని దీర్ఘ దీర్ఘ) *blocknr, ref_స్థానభ్రంశం,
+	       (గుర్తులేని దీర్ఘ దీర్ఘ) ref_ఖండం);
+	తిరిగి 0;
 }
 
 
-void do_block_iterate(int argc, char **argv, int sci_idx EXT2FS_ATTR((unused)),
-		      void *infop EXT2FS_ATTR((unused)))
+శూన్య do_ఖండం_iterate(పూర్ణాంకం argc, అక్షరం **argv, పూర్ణాంకం sci_idx EXT2FS_ATTR((వాడని)),
+		      శూన్య *infop EXT2FS_ATTR((వాడని)))
 {
-	const char	*usage = "block_iterate <file> <flags";
+	స్థిరరాశి అక్షరం	*usage = "block_iterate <file> <flags";
 	ext2_ino_t	ino;
-	int		err = 0;
-	int		flags = 0;
+	పూర్ణాంకం		err = 0;
+	పూర్ణాంకం		flags = 0;
 
-	if (common_args_process(argc, argv, 2, 3, argv[0], usage, 0))
-		return;
+	ఒకవేళ (common_వాదనలు_process(argc, argv, 2, 3, argv[0], usage, 0))
+		తిరిగి;
 
-	ino = string_to_inode(argv[1]);
-	if (!ino)
-		return;
+	ino = string_గమ్యం_inode(argv[1]);
+	ఒకవేళ (!ino)
+		తిరిగి;
 
-	if (argc > 2) {
+	ఒకవేళ (argc > 2) {
 		flags = parse_ulong(argv[2], argv[0], "flags", &err);
-		if (err)
-			return;
+		ఒకవేళ (err)
+			తిరిగి;
 	}
-	flags |= BLOCK_FLAG_READ_ONLY;
+	flags |= ఖండం_FLAG_READ_ONLY;
 
-	ext2fs_block_iterate3(current_fs, ino, flags, NULL,
-			      print_blocks_proc, NULL);
+	ext2fs_ఖండం_iterate3(current_fs, ino, flags, ఖాళీ,
+			      print_ఖండాలు_proc, ఖాళీ);
 	putc('\n', stdout);
 }

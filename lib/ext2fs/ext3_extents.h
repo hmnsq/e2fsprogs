@@ -8,8 +8,8 @@
  * %End-Header%
  */
 
-#ifndef _LINUX_EXT3_EXTENTS
-#define _LINUX_EXT3_EXTENTS
+#నిర్వచితం_కాకపోతే _LINUX_EXT3_EXTENTS
+#నిర్వచించు _LINUX_EXT3_EXTENTS
 
 /*
  * ext3_inode has i_block array (total 60 bytes)
@@ -25,7 +25,7 @@
  * covers all valid ext4 block sizes.  Therefore, this tail structure can be
  * crammed into the end of the block without having to rebalance the tree.
  */
-struct ext3_extent_tail {
+నిర్మాణం ext3_extent_తోక {
 	__le32	et_checksum;	/* crc32c(uuid+inum+extent_block) */
 };
 
@@ -33,50 +33,50 @@ struct ext3_extent_tail {
  * this is extent on-disk structure
  * it's used at the bottom of the tree
  */
-struct ext3_extent {
-	__le32	ee_block;	/* first logical block extent covers */
+నిర్మాణం ext3_extent {
+	__le32	ee_ఖండం;	/* first logical block extent covers */
 	__le16	ee_len;		/* number of blocks covered by extent */
-	__le16	ee_start_hi;	/* high 16 bits of physical block */
-	__le32	ee_start;	/* low 32 bigs of physical block */
+	__le16	ee_ప్రారంభం_hi;	/* high 16 bits of physical block */
+	__le32	ee_ప్రారంభం;	/* low 32 bigs of physical block */
 };
 
 /*
  * this is index on-disk structure
  * it's used at all the levels, but the bottom
  */
-struct ext3_extent_idx {
-	__le32	ei_block;	/* index covers logical blocks from 'block' */
-	__le32	ei_leaf;	/* pointer to the physical block of the next *
+నిర్మాణం ext3_extent_idx {
+	__le32	ei_ఖండం;	/* index covers logical blocks from 'block' */
+	__le32	ei_ఆకు;	/* pointer to the physical block of the next *
 				 * level. leaf or next index could bet here */
-	__le16	ei_leaf_hi;	/* high 16 bits of physical block */
-	__le16	ei_unused;
+	__le16	ei_ఆకు_hi;	/* high 16 bits of physical block */
+	__le16	ei_వాడని;
 };
 
 /*
  * each block (leaves and indexes), even inode-stored has header
  */
-struct ext3_extent_header {
+నిర్మాణం ext3_extent_శీర్షిక {
 	__le16	eh_magic;	/* probably will support different formats */
 	__le16	eh_entries;	/* number of valid entries */
 	__le16	eh_max;		/* capacity of store in entries */
-	__le16	eh_depth;	/* has tree real underlying blocks? */
+	__le16	eh_లోతు;	/* has tree real underlying blocks? */
 	__le32	eh_generation;	/* generation of the tree */
 };
 
-#define EXT3_EXT_MAGIC		0xf30a
+#నిర్వచించు EXT3_EXT_MAGIC		0xf30a
 
 /*
  * array of ext3_ext_path contains path to some extent
  * creation/lookup routines use it for traversal/splitting/etc
  * truncate uses it to simulate recursive walking
  */
-struct ext3_ext_path {
-	__u32				p_block;
-	__u16				p_depth;
-	struct ext3_extent		*p_ext;
-	struct ext3_extent_idx		*p_idx;
-	struct ext3_extent_header	*p_hdr;
-	struct buffer_head		*p_bh;
+నిర్మాణం ext3_ext_మార్గం {
+	__u32				p_ఖండం;
+	__u16				p_లోతు;
+	నిర్మాణం ext3_extent		*p_ext;
+	నిర్మాణం ext3_extent_idx		*p_idx;
+	నిర్మాణం ext3_extent_శీర్షిక	*p_hdr;
+	నిర్మాణం బఫరు_తల		*p_bh;
 };
 
 /*
@@ -96,32 +96,32 @@ struct ext3_ext_path {
  * Hence, the maximum number of blocks we can have in an *initialized*
  * extent is 2^15 (32768) and in an *uninitialized* extent is 2^15-1 (32767).
  */
-#define EXT_INIT_MAX_LEN	(1UL << 15)
-#define EXT_UNINIT_MAX_LEN	(EXT_INIT_MAX_LEN - 1)
-#define EXT_MAX_EXTENT_LBLK	(((__u64) 1 << 32) - 1)
-#define EXT_MAX_EXTENT_PBLK	(((__u64) 1 << 48) - 1)
+#నిర్వచించు EXT_INIT_MAX_LEN	(1UL << 15)
+#నిర్వచించు EXT_UNINIT_MAX_LEN	(EXT_INIT_MAX_LEN - 1)
+#నిర్వచించు EXT_MAX_EXTENT_LBLK	(((__u64) 1 << 32) - 1)
+#నిర్వచించు EXT_MAX_EXTENT_PBLK	(((__u64) 1 << 48) - 1)
 
-#define EXT_FIRST_EXTENT(__hdr__) \
-	((struct ext3_extent *) (((char *) (__hdr__)) +		\
-				 sizeof(struct ext3_extent_header)))
-#define EXT_FIRST_INDEX(__hdr__) \
-	((struct ext3_extent_idx *) (((char *) (__hdr__)) +	\
-				     sizeof(struct ext3_extent_header)))
-#define EXT_HAS_FREE_INDEX(__path__) \
-	(ext2fs_le16_to_cpu((__path__)->p_hdr->eh_entries) < \
-	 ext2fs_le16_to_cpu((__path__)->p_hdr->eh_max))
-#define EXT_LAST_EXTENT(__hdr__) \
-	(EXT_FIRST_EXTENT((__hdr__)) + \
-	ext2fs_le16_to_cpu((__hdr__)->eh_entries) - 1)
-#define EXT_LAST_INDEX(__hdr__) \
-	(EXT_FIRST_INDEX((__hdr__)) + \
-	ext2fs_le16_to_cpu((__hdr__)->eh_entries) - 1)
-#define EXT_MAX_EXTENT(__hdr__) \
-	(EXT_FIRST_EXTENT((__hdr__)) + \
-	ext2fs_le16_to_cpu((__hdr__)->eh_max) - 1)
-#define EXT_MAX_INDEX(__hdr__) \
-	(EXT_FIRST_INDEX((__hdr__)) + \
-	ext2fs_le16_to_cpu((__hdr__)->eh_max) - 1)
+#నిర్వచించు EXT_మొదటి_EXTENT(__hdr__) \
+	((నిర్మాణం ext3_extent *) (((అక్షరం *) (__hdr__)) +		\
+				 పరిమాణం(నిర్మాణం ext3_extent_శీర్షిక)))
+#నిర్వచించు EXT_మొదటి_సూచీ(__hdr__) \
+	((నిర్మాణం ext3_extent_idx *) (((అక్షరం *) (__hdr__)) +	\
+				     పరిమాణం(నిర్మాణం ext3_extent_శీర్షిక)))
+#నిర్వచించు EXT_HAS_FREE_సూచీ(__path__) \
+	(ext2fs_le16_గమ్యం_cpu((__path__)->p_hdr->eh_entries) < \
+	 ext2fs_le16_గమ్యం_cpu((__path__)->p_hdr->eh_max))
+#నిర్వచించు EXT_చివరి_EXTENT(__hdr__) \
+	(EXT_మొదటి_EXTENT((__hdr__)) + \
+	ext2fs_le16_గమ్యం_cpu((__hdr__)->eh_entries) - 1)
+#నిర్వచించు EXT_చివరి_సూచీ(__hdr__) \
+	(EXT_మొదటి_సూచీ((__hdr__)) + \
+	ext2fs_le16_గమ్యం_cpu((__hdr__)->eh_entries) - 1)
+#నిర్వచించు EXT_MAX_EXTENT(__hdr__) \
+	(EXT_మొదటి_EXTENT((__hdr__)) + \
+	ext2fs_le16_గమ్యం_cpu((__hdr__)->eh_max) - 1)
+#నిర్వచించు EXT_MAX_సూచీ(__hdr__) \
+	(EXT_మొదటి_సూచీ((__hdr__)) + \
+	ext2fs_le16_గమ్యం_cpu((__hdr__)->eh_max) - 1)
 
-#endif /* _LINUX_EXT3_EXTENTS */
+#అయితే_ముగింపు /* _LINUX_EXT3_EXTENTS */
 

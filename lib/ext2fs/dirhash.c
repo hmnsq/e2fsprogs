@@ -11,18 +11,18 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#include <limits.h>
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <limits.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
+#అన్తర్భావ "ext2fsP.h"
 
-#ifndef PATH_MAX
-#define PATH_MAX 4096
-#endif
+#నిర్వచితం_కాకపోతే PATH_MAX
+#నిర్వచించు PATH_MAX 4096
+#అయితే_ముగింపు
 
 /*
  * Keyed 32-bit hash function using TEA in a Davis-Meyer function
@@ -35,29 +35,29 @@
  *
  * This code is made available under the terms of the GPL
  */
-#define DELTA 0x9E3779B9
+#నిర్వచించు DELTA 0x9E3779B9
 
-static void TEA_transform(__u32 buf[4], __u32 const in[])
+స్థిర శూన్య TEA_transform(__u32 buf[4], __u32 స్థిరరాశి లోపల[])
 {
-	__u32	sum = 0;
+	__u32	కూడిక = 0;
 	__u32	b0 = buf[0], b1 = buf[1];
-	__u32	a = in[0], b = in[1], c = in[2], d = in[3];
-	int	n = 16;
+	__u32	a = లోపల[0], b = లోపల[1], c = లోపల[2], d = లోపల[3];
+	పూర్ణాంకం	n = 16;
 
-	do {
-		sum += DELTA;
-		b0 += ((b1 << 4)+a) ^ (b1+sum) ^ ((b1 >> 5)+b);
-		b1 += ((b0 << 4)+c) ^ (b0+sum) ^ ((b0 >> 5)+d);
-	} while(--n);
+	చేయి {
+		కూడిక += DELTA;
+		b0 += ((b1 << 4)+a) ^ (b1+కూడిక) ^ ((b1 >> 5)+b);
+		b1 += ((b0 << 4)+c) ^ (b0+కూడిక) ^ ((b0 >> 5)+d);
+	} అయితే(--n);
 
 	buf[0] += b0;
 	buf[1] += b1;
 }
 
 /* F, G and H are basic MD4 functions: selection, majority, parity */
-#define F(x, y, z) ((z) ^ ((x) & ((y) ^ (z))))
-#define G(x, y, z) (((x) & (y)) + (((x) ^ (y)) & (z)))
-#define H(x, y, z) ((x) ^ (y) ^ (z))
+#నిర్వచించు F(x, y, z) ((z) ^ ((x) & ((y) ^ (z))))
+#నిర్వచించు G(x, y, z) (((x) & (y)) + (((x) ^ (y)) & (z)))
+#నిర్వచించు H(x, y, z) ((x) ^ (y) ^ (z))
 
 /*
  * The generic round function.  The application is so specific that
@@ -65,48 +65,48 @@ static void TEA_transform(__u32 buf[4], __u32 const in[])
  * good macro practice, in favor of extra legibility.
  * Rotation is separate from addition to prevent recomputation
  */
-#define ROUND(f, a, b, c, d, x, s)	\
+#నిర్వచించు విడత(f, a, b, c, d, x, s)	\
 	(a += f(b, c, d) + x, a = (a << s) | (a >> (32-s)))
-#define K1 0
-#define K2 013240474631UL
-#define K3 015666365641UL
+#నిర్వచించు K1 0
+#నిర్వచించు K2 013240474631UL
+#నిర్వచించు K3 015666365641UL
 
 /*
  * Basic cut-down MD4 transform.  Returns only 32 bits of result.
  */
-static void halfMD4Transform (__u32 buf[4], __u32 const in[])
+స్థిర శూన్య halfMD4Transform (__u32 buf[4], __u32 స్థిరరాశి లోపల[])
 {
 	__u32	a = buf[0], b = buf[1], c = buf[2], d = buf[3];
 
 	/* Round 1 */
-	ROUND(F, a, b, c, d, in[0] + K1,  3);
-	ROUND(F, d, a, b, c, in[1] + K1,  7);
-	ROUND(F, c, d, a, b, in[2] + K1, 11);
-	ROUND(F, b, c, d, a, in[3] + K1, 19);
-	ROUND(F, a, b, c, d, in[4] + K1,  3);
-	ROUND(F, d, a, b, c, in[5] + K1,  7);
-	ROUND(F, c, d, a, b, in[6] + K1, 11);
-	ROUND(F, b, c, d, a, in[7] + K1, 19);
+	విడత(F, a, b, c, d, లోపల[0] + K1,  3);
+	విడత(F, d, a, b, c, లోపల[1] + K1,  7);
+	విడత(F, c, d, a, b, లోపల[2] + K1, 11);
+	విడత(F, b, c, d, a, లోపల[3] + K1, 19);
+	విడత(F, a, b, c, d, లోపల[4] + K1,  3);
+	విడత(F, d, a, b, c, లోపల[5] + K1,  7);
+	విడత(F, c, d, a, b, లోపల[6] + K1, 11);
+	విడత(F, b, c, d, a, లోపల[7] + K1, 19);
 
 	/* Round 2 */
-	ROUND(G, a, b, c, d, in[1] + K2,  3);
-	ROUND(G, d, a, b, c, in[3] + K2,  5);
-	ROUND(G, c, d, a, b, in[5] + K2,  9);
-	ROUND(G, b, c, d, a, in[7] + K2, 13);
-	ROUND(G, a, b, c, d, in[0] + K2,  3);
-	ROUND(G, d, a, b, c, in[2] + K2,  5);
-	ROUND(G, c, d, a, b, in[4] + K2,  9);
-	ROUND(G, b, c, d, a, in[6] + K2, 13);
+	విడత(G, a, b, c, d, లోపల[1] + K2,  3);
+	విడత(G, d, a, b, c, లోపల[3] + K2,  5);
+	విడత(G, c, d, a, b, లోపల[5] + K2,  9);
+	విడత(G, b, c, d, a, లోపల[7] + K2, 13);
+	విడత(G, a, b, c, d, లోపల[0] + K2,  3);
+	విడత(G, d, a, b, c, లోపల[2] + K2,  5);
+	విడత(G, c, d, a, b, లోపల[4] + K2,  9);
+	విడత(G, b, c, d, a, లోపల[6] + K2, 13);
 
 	/* Round 3 */
-	ROUND(H, a, b, c, d, in[3] + K3,  3);
-	ROUND(H, d, a, b, c, in[7] + K3,  9);
-	ROUND(H, c, d, a, b, in[2] + K3, 11);
-	ROUND(H, b, c, d, a, in[6] + K3, 15);
-	ROUND(H, a, b, c, d, in[1] + K3,  3);
-	ROUND(H, d, a, b, c, in[5] + K3,  9);
-	ROUND(H, c, d, a, b, in[0] + K3, 11);
-	ROUND(H, b, c, d, a, in[4] + K3, 15);
+	విడత(H, a, b, c, d, లోపల[3] + K3,  3);
+	విడత(H, d, a, b, c, లోపల[7] + K3,  9);
+	విడత(H, c, d, a, b, లోపల[2] + K3, 11);
+	విడత(H, b, c, d, a, లోపల[6] + K3, 15);
+	విడత(H, a, b, c, d, లోపల[1] + K3,  3);
+	విడత(H, d, a, b, c, లోపల[5] + K3,  9);
+	విడత(H, c, d, a, b, లోపల[0] + K3, 11);
+	విడత(H, b, c, d, a, లోపల[4] + K3, 15);
 
 	buf[0] += a;
 	buf[1] += b;
@@ -114,67 +114,67 @@ static void halfMD4Transform (__u32 buf[4], __u32 const in[])
 	buf[3] += d;
 }
 
-#undef ROUND
-#undef F
-#undef G
-#undef H
-#undef K1
-#undef K2
-#undef K3
+#నిర్వచనం_రద్దు విడత
+#నిర్వచనం_రద్దు F
+#నిర్వచనం_రద్దు G
+#నిర్వచనం_రద్దు H
+#నిర్వచనం_రద్దు K1
+#నిర్వచనం_రద్దు K2
+#నిర్వచనం_రద్దు K3
 
 /* The old legacy hash */
-static ext2_dirhash_t dx_hack_hash (const char *name, int len,
-				    int unsigned_flag)
+స్థిర ext2_dirhash_t dx_hack_hash (స్థిరరాశి అక్షరం *name, పూర్ణాంకం len,
+				    పూర్ణాంకం unsigned_flag)
 {
 	__u32 hash, hash0 = 0x12a3fe2d, hash1 = 0x37abe8f9;
-	const unsigned char *ucp = (const unsigned char *) name;
-	const signed char *scp = (const signed char *) name;
-	int c;
+	స్థిరరాశి గుర్తులేని అక్షరం *ucp = (స్థిరరాశి గుర్తులేని అక్షరం *) name;
+	స్థిరరాశి గుర్తుగల అక్షరం *scp = (స్థిరరాశి గుర్తుగల అక్షరం *) name;
+	పూర్ణాంకం c;
 
-	while (len--) {
-		if (unsigned_flag)
-			c = (int) *ucp++;
-		else
-			c = (int) *scp++;
+	అయితే (len--) {
+		ఒకవేళ (unsigned_flag)
+			c = (పూర్ణాంకం) *ucp++;
+		లేకపోతే
+			c = (పూర్ణాంకం) *scp++;
 		hash = hash1 + (hash0 ^ (c * 7152373));
 
-		if (hash & 0x80000000) hash -= 0x7fffffff;
+		ఒకవేళ (hash & 0x80000000) hash -= 0x7fffffff;
 		hash1 = hash0;
 		hash0 = hash;
 	}
-	return (hash0 << 1);
+	తిరిగి (hash0 << 1);
 }
 
-static void str2hashbuf(const char *msg, int len, __u32 *buf, int num,
-			int unsigned_flag)
+స్థిర శూన్య str2hashbuf(స్థిరరాశి అక్షరం *సందేశం, పూర్ణాంకం len, __u32 *buf, పూర్ణాంకం అంకె,
+			పూర్ణాంకం unsigned_flag)
 {
 	__u32	pad, val;
-	int	i, c;
-	const unsigned char *ucp = (const unsigned char *) msg;
-	const signed char *scp = (const signed char *) msg;
+	పూర్ణాంకం	i, c;
+	స్థిరరాశి గుర్తులేని అక్షరం *ucp = (స్థిరరాశి గుర్తులేని అక్షరం *) సందేశం;
+	స్థిరరాశి గుర్తుగల అక్షరం *scp = (స్థిరరాశి గుర్తుగల అక్షరం *) సందేశం;
 
 	pad = (__u32)len | ((__u32)len << 8);
 	pad |= pad << 16;
 
 	val = pad;
-	if (len > num*4)
-		len = num * 4;
-	for (i=0; i < len; i++) {
-		if (unsigned_flag)
-			c = (int) ucp[i];
-		else
-			c = (int) scp[i];
+	ఒకవేళ (len > అంకె*4)
+		len = అంకె * 4;
+	కొరకు (i=0; i < len; i++) {
+		ఒకవేళ (unsigned_flag)
+			c = (పూర్ణాంకం) ucp[i];
+		లేకపోతే
+			c = (పూర్ణాంకం) scp[i];
 
 		val = c + (val << 8);
-		if ((i % 4) == 3) {
+		ఒకవేళ ((i % 4) == 3) {
 			*buf++ = val;
 			val = pad;
-			num--;
+			అంకె--;
 		}
 	}
-	if (--num >= 0)
+	ఒకవేళ (--అంకె >= 0)
 		*buf++ = val;
-	while (--num >= 0)
+	అయితే (--అంకె >= 0)
 		*buf++ = pad;
 }
 
@@ -196,17 +196,17 @@ static void str2hashbuf(const char *msg, int len, __u32 *buf, int num,
  * ext2fs_dirhash2.
  *
  */
-errcode_t ext2fs_dirhash(int version, const char *name, int len,
-			 const __u32 *seed,
+errcode_t ext2fs_dirhash(పూర్ణాంకం సంస్కరణ, స్థిరరాశి అక్షరం *name, పూర్ణాంకం len,
+			 స్థిరరాశి __u32 *విత్తనం,
 			 ext2_dirhash_t *ret_hash,
 			 ext2_dirhash_t *ret_minor_hash)
 {
 	__u32	hash;
 	__u32	minor_hash = 0;
-	const char	*p;
-	int		i;
-	__u32 		in[8], buf[4];
-	int		unsigned_flag = 0;
+	స్థిరరాశి అక్షరం	*p;
+	పూర్ణాంకం		i;
+	__u32 		లోపల[8], buf[4];
+	పూర్ణాంకం		unsigned_flag = 0;
 
 	/* Initialize the default seed for the hash checksum functions */
 	buf[0] = 0x67452301;
@@ -215,58 +215,58 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 	buf[3] = 0x10325476;
 
 	/* Check to see if the seed is all zero's */
-	if (seed) {
-		for (i=0; i < 4; i++) {
-			if (seed[i])
-				break;
+	ఒకవేళ (విత్తనం) {
+		కొరకు (i=0; i < 4; i++) {
+			ఒకవేళ (విత్తనం[i])
+				ఆపు;
 		}
-		if (i < 4)
-			memcpy(buf, seed, sizeof(buf));
+		ఒకవేళ (i < 4)
+			జ్ఞాపకం_నకలు(buf, విత్తనం, పరిమాణం(buf));
 	}
 
-	switch (version) {
-	case EXT2_HASH_LEGACY_UNSIGNED:
+	ఎంపిక (సంస్కరణ) {
+	స్థితి EXT2_HASH_LEGACY_UNSIGNED:
 		unsigned_flag++;
 		/* fallthrough */
-	case EXT2_HASH_LEGACY:
+	స్థితి EXT2_HASH_LEGACY:
 		hash = dx_hack_hash(name, len, unsigned_flag);
-		break;
-	case EXT2_HASH_HALF_MD4_UNSIGNED:
+		ఆపు;
+	స్థితి EXT2_HASH_HALF_MD4_UNSIGNED:
 		unsigned_flag++;
 		/* fallthrough */
-	case EXT2_HASH_HALF_MD4:
+	స్థితి EXT2_HASH_HALF_MD4:
 		p = name;
-		while (len > 0) {
-			str2hashbuf(p, len, in, 8, unsigned_flag);
-			halfMD4Transform(buf, in);
+		అయితే (len > 0) {
+			str2hashbuf(p, len, లోపల, 8, unsigned_flag);
+			halfMD4Transform(buf, లోపల);
 			len -= 32;
 			p += 32;
 		}
 		minor_hash = buf[2];
 		hash = buf[1];
-		break;
-	case EXT2_HASH_TEA_UNSIGNED:
+		ఆపు;
+	స్థితి EXT2_HASH_TEA_UNSIGNED:
 		unsigned_flag++;
 		/* fallthrough */
-	case EXT2_HASH_TEA:
+	స్థితి EXT2_HASH_TEA:
 		p = name;
-		while (len > 0) {
-			str2hashbuf(p, len, in, 4, unsigned_flag);
-			TEA_transform(buf, in);
+		అయితే (len > 0) {
+			str2hashbuf(p, len, లోపల, 4, unsigned_flag);
+			TEA_transform(buf, లోపల);
 			len -= 16;
 			p += 16;
 		}
 		hash = buf[0];
 		minor_hash = buf[1];
-		break;
-	default:
+		ఆపు;
+	అప్రమేయ:
 		*ret_hash = 0;
-		return EXT2_ET_DIRHASH_UNSUPP;
+		తిరిగి EXT2_ET_DIRHASH_UNSUPP;
 	}
 	*ret_hash = hash & ~1;
-	if (ret_minor_hash)
+	ఒకవేళ (ret_minor_hash)
 		*ret_minor_hash = minor_hash;
-	return 0;
+	తిరిగి 0;
 }
 
 /*
@@ -275,33 +275,33 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
  * encoding support based on the nls_table and the flags. Check
  * ext2fs_dirhash for documentation on the input and output parameters.
  */
-errcode_t ext2fs_dirhash2(int version, const char *name, int len,
-			  const struct ext2fs_nls_table *charset,
-			  int hash_flags, const __u32 *seed,
+errcode_t ext2fs_dirhash2(పూర్ణాంకం సంస్కరణ, స్థిరరాశి అక్షరం *name, పూర్ణాంకం len,
+			  స్థిరరాశి నిర్మాణం ext2fs_nls_పట్టిక *charset,
+			  పూర్ణాంకం hash_flags, స్థిరరాశి __u32 *విత్తనం,
 			  ext2_dirhash_t *ret_hash,
 			  ext2_dirhash_t *ret_minor_hash)
 {
 	errcode_t r;
-	int dlen;
+	పూర్ణాంకం dlen;
 
-	if (len && charset && (hash_flags & EXT4_CASEFOLD_FL)) {
-		char buff[PATH_MAX];
+	ఒకవేళ (len && charset && (hash_flags & EXT4_CASEFOLD_FL)) {
+		అక్షరం buff[PATH_MAX];
 
 		dlen = charset->ops->casefold(charset,
-			      (const unsigned char *) name, len,
-			      (unsigned char *) buff, sizeof(buff));
-		if (dlen < 0) {
-			if (dlen == -EINVAL)
-				goto opaque_seq;
+			      (స్థిరరాశి గుర్తులేని అక్షరం *) name, len,
+			      (గుర్తులేని అక్షరం *) buff, పరిమాణం(buff));
+		ఒకవేళ (dlen < 0) {
+			ఒకవేళ (dlen == -EINVAL)
+				వెళ్ళు opaque_seq;
 
-			return dlen;
+			తిరిగి dlen;
 		}
-		r = ext2fs_dirhash(version, buff, dlen, seed, ret_hash,
+		r = ext2fs_dirhash(సంస్కరణ, buff, dlen, విత్తనం, ret_hash,
 				   ret_minor_hash);
-		return r;
+		తిరిగి r;
 	}
 
 opaque_seq:
-	return ext2fs_dirhash(version, name, len, seed, ret_hash,
+	తిరిగి ext2fs_dirhash(సంస్కరణ, name, len, విత్తనం, ret_hash,
 			      ret_minor_hash);
 }

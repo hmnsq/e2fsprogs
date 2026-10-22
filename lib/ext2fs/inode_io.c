@@ -10,64 +10,64 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <time.h>
+#అన్తర్భావ "config.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#ఒకవేళ HAVE_UNISTD_H
+#అన్తర్భావ <unistd.h>
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_ERRNO_H
+#అన్తర్భావ <errno.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#అన్తర్భావ "ext2_fs.h"
+#అన్తర్భావ "ext2fs.h"
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#నిర్వచించు EXT2_CHECK_MAGIC(నిర్మాణం, సంకేతం_2) \
+	  ఒకవేళ ((నిర్మాణం)->magic != (సంకేతం_2)) తిరిగి (సంకేతం_2)
 
-struct inode_private_data {
-	int				magic;
-	char				name[32];
+నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం {
+	పూర్ణాంకం				magic;
+	అక్షరం				name[32];
 	ext2_file_t			file;
 	ext2_filsys			fs;
 	ext2_ino_t 			ino;
-	struct ext2_inode		inode;
-	int				flags;
-	struct inode_private_data	*next;
+	నిర్మాణం ext2_inode		inode;
+	పూర్ణాంకం				flags;
+	నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం	*తదుపరి;
 };
 
-#define CHANNEL_HAS_INODE	0x8000
+#నిర్వచించు CHANNEL_HAS_INODE	0x8000
 
-static struct inode_private_data *top_intern;
-static int ino_unique = 0;
+స్థిర నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం *శిఖరం_intern;
+స్థిర పూర్ణాంకం ino_unique = 0;
 
-static errcode_t inode_open(const char *name, int flags, io_channel *channel);
-static errcode_t inode_close(io_channel channel);
-static errcode_t inode_set_blksize(io_channel channel, int blksize);
-static errcode_t inode_read_blk(io_channel channel, unsigned long block,
-			       int count, void *data);
-static errcode_t inode_write_blk(io_channel channel, unsigned long block,
-				int count, const void *data);
-static errcode_t inode_flush(io_channel channel);
-static errcode_t inode_write_byte(io_channel channel, unsigned long offset,
-				int size, const void *data);
-static errcode_t inode_read_blk64(io_channel channel,
-				unsigned long long block, int count, void *data);
-static errcode_t inode_write_blk64(io_channel channel,
-				unsigned long long block, int count, const void *data);
+స్థిర errcode_t inode_open(స్థిరరాశి అక్షరం *name, పూర్ణాంకం flags, io_channel *channel);
+స్థిర errcode_t inode_close(io_channel channel);
+స్థిర errcode_t inode_సమితి_blksize(io_channel channel, పూర్ణాంకం blksize);
+స్థిర errcode_t inode_read_blk(io_channel channel, గుర్తులేని దీర్ఘ ఖండం,
+			       పూర్ణాంకం లెక్క, శూన్య *దత్తాంశం);
+స్థిర errcode_t inode_write_blk(io_channel channel, గుర్తులేని దీర్ఘ ఖండం,
+				పూర్ణాంకం లెక్క, స్థిరరాశి శూన్య *దత్తాంశం);
+స్థిర errcode_t inode_flush(io_channel channel);
+స్థిర errcode_t inode_write_byte(io_channel channel, గుర్తులేని దీర్ఘ స్థానభ్రంశం,
+				పూర్ణాంకం కొలత, స్థిరరాశి శూన్య *దత్తాంశం);
+స్థిర errcode_t inode_read_blk64(io_channel channel,
+				గుర్తులేని దీర్ఘ దీర్ఘ ఖండం, పూర్ణాంకం లెక్క, శూన్య *దత్తాంశం);
+స్థిర errcode_t inode_write_blk64(io_channel channel,
+				గుర్తులేని దీర్ఘ దీర్ఘ ఖండం, పూర్ణాంకం లెక్క, స్థిరరాశి శూన్య *దత్తాంశం);
 
-static struct struct_io_manager struct_inode_manager = {
+స్థిర నిర్మాణం struct_io_manager struct_inode_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Inode I/O Manager",
 	.open		= inode_open,
 	.close		= inode_close,
-	.set_blksize	= inode_set_blksize,
+	.సమితి_blksize	= inode_సమితి_blksize,
 	.read_blk	= inode_read_blk,
 	.write_blk	= inode_write_blk,
 	.flush		= inode_flush,
@@ -79,212 +79,212 @@ static struct struct_io_manager struct_inode_manager = {
 io_manager inode_io_manager = &struct_inode_manager;
 
 errcode_t ext2fs_inode_io_intern2(ext2_filsys fs, ext2_ino_t ino,
-				  struct ext2_inode *inode,
-				  char **name)
+				  నిర్మాణం ext2_inode *inode,
+				  అక్షరం **name)
 {
-	struct inode_private_data 	*data;
+	నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం 	*దత్తాంశం;
 	errcode_t			retval;
 
-	if ((retval = ext2fs_get_mem(sizeof(struct inode_private_data),
-				     &data)))
-		return retval;
-	data->magic = EXT2_ET_MAGIC_INODE_IO_CHANNEL;
-	sprintf(data->name, "%u:%d", ino, ino_unique++);
-	data->file = 0;
-	data->fs = fs;
-	data->ino = ino;
-	data->flags = 0;
-	if (inode) {
-		memcpy(&data->inode, inode, sizeof(struct ext2_inode));
-		data->flags |= CHANNEL_HAS_INODE;
+	ఒకవేళ ((retval = ext2fs_get_mem(పరిమాణం(నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం),
+				     &దత్తాంశం)))
+		తిరిగి retval;
+	దత్తాంశం->magic = EXT2_ET_MAGIC_INODE_IO_CHANNEL;
+	sprintf(దత్తాంశం->name, "%u:%d", ino, ino_unique++);
+	దత్తాంశం->file = 0;
+	దత్తాంశం->fs = fs;
+	దత్తాంశం->ino = ino;
+	దత్తాంశం->flags = 0;
+	ఒకవేళ (inode) {
+		జ్ఞాపకం_నకలు(&దత్తాంశం->inode, inode, పరిమాణం(నిర్మాణం ext2_inode));
+		దత్తాంశం->flags |= CHANNEL_HAS_INODE;
 	}
-	data->next = top_intern;
-	top_intern = data;
-	*name = data->name;
-	return 0;
+	దత్తాంశం->తదుపరి = శిఖరం_intern;
+	శిఖరం_intern = దత్తాంశం;
+	*name = దత్తాంశం->name;
+	తిరిగి 0;
 }
 
 errcode_t ext2fs_inode_io_intern(ext2_filsys fs, ext2_ino_t ino,
-				 char **name)
+				 అక్షరం **name)
 {
-	return ext2fs_inode_io_intern2(fs, ino, NULL, name);
+	తిరిగి ext2fs_inode_io_intern2(fs, ino, ఖాళీ, name);
 }
 
 
-static errcode_t inode_open(const char *name, int flags, io_channel *channel)
+స్థిర errcode_t inode_open(స్థిరరాశి అక్షరం *name, పూర్ణాంకం flags, io_channel *channel)
 {
-	io_channel	io = NULL;
-	struct inode_private_data *prev, *data = NULL;
+	io_channel	io = ఖాళీ;
+	నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం *prev, *దత్తాంశం = ఖాళీ;
 	errcode_t	retval;
-	int		open_flags;
+	పూర్ణాంకం		open_flags;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	ఒకవేళ (name == 0)
+		తిరిగి EXT2_ET_BAD_DEVICE_NAME;
 
-	for (data = top_intern, prev = NULL; data;
-	     prev = data, data = data->next)
-		if (strcmp(name, data->name) == 0)
-			break;
-	if (!data)
-		return ENOENT;
-	if (prev)
-		prev->next = data->next;
-	else
-		top_intern = data->next;
+	కొరకు (దత్తాంశం = శిఖరం_intern, prev = ఖాళీ; దత్తాంశం;
+	     prev = దత్తాంశం, దత్తాంశం = దత్తాంశం->తదుపరి)
+		ఒకవేళ (strcmp(name, దత్తాంశం->name) == 0)
+			ఆపు;
+	ఒకవేళ (!దత్తాంశం)
+		తిరిగి ENOENT;
+	ఒకవేళ (prev)
+		prev->తదుపరి = దత్తాంశం->తదుపరి;
+	లేకపోతే
+		శిఖరం_intern = దత్తాంశం->తదుపరి;
 
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	retval = ext2fs_get_mem(పరిమాణం(నిర్మాణం struct_io_channel), &io);
+	ఒకవేళ (retval)
+		వెళ్ళు cleanup;
+	memset(io, 0, పరిమాణం(నిర్మాణం struct_io_channel));
 
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
 	io->manager = inode_io_manager;
-	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(అక్షరశ్రేణి_పొడవు(name)+1, &io->name);
+	ఒకవేళ (retval)
+		వెళ్ళు cleanup;
 
 	strcpy(io->name, name);
-	io->private_data = data;
-	io->block_size = 1024;
+	io->వ్యక్తిగత_దత్తాంశం = దత్తాంశం;
+	io->ఖండం_కొలత = 1024;
 	io->read_error = 0;
 	io->write_error = 0;
 	io->refcount = 1;
 
 	open_flags = (flags & IO_FLAG_RW) ? EXT2_FILE_WRITE : 0;
-	retval = ext2fs_file_open2(data->fs, data->ino,
-				   (data->flags & CHANNEL_HAS_INODE) ?
-				   &data->inode : 0, open_flags,
-				   &data->file);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_file_open2(దత్తాంశం->fs, దత్తాంశం->ino,
+				   (దత్తాంశం->flags & CHANNEL_HAS_INODE) ?
+				   &దత్తాంశం->inode : 0, open_flags,
+				   &దత్తాంశం->file);
+	ఒకవేళ (retval)
+		వెళ్ళు cleanup;
 
 	*channel = io;
-	return 0;
+	తిరిగి 0;
 
 cleanup:
-	if (io && io->name)
+	ఒకవేళ (io && io->name)
 		ext2fs_free_mem(&io->name);
-	if (data)
-		ext2fs_free_mem(&data);
-	if (io)
+	ఒకవేళ (దత్తాంశం)
+		ext2fs_free_mem(&దత్తాంశం);
+	ఒకవేళ (io)
 		ext2fs_free_mem(&io);
-	return retval;
+	తిరిగి retval;
 }
 
-static errcode_t inode_close(io_channel channel)
+స్థిర errcode_t inode_close(io_channel channel)
 {
-	struct inode_private_data *data;
+	నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	ఒకవేళ (--channel->refcount > 0)
+		తిరిగి 0;
 
-	retval = ext2fs_file_close(data->file);
+	retval = ext2fs_file_close(దత్తాంశం->file);
 
-	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	ext2fs_free_mem(&channel->వ్యక్తిగత_దత్తాంశం);
+	ఒకవేళ (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	తిరిగి retval;
 }
 
-static errcode_t inode_set_blksize(io_channel channel, int blksize)
+స్థిర errcode_t inode_సమితి_blksize(io_channel channel, పూర్ణాంకం blksize)
 {
-	struct inode_private_data *data;
+	నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	channel->block_size = blksize;
-	return 0;
+	channel->ఖండం_కొలత = blksize;
+	తిరిగి 0;
 }
 
 
-static errcode_t inode_read_blk64(io_channel channel,
-				unsigned long long block, int count, void *buf)
+స్థిర errcode_t inode_read_blk64(io_channel channel,
+				గుర్తులేని దీర్ఘ దీర్ఘ ఖండం, పూర్ణాంకం లెక్క, శూన్య *buf)
 {
-	struct inode_private_data *data;
+	నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if ((retval = ext2fs_file_llseek(data->file,
-				(ext2_off64_t)(block * channel->block_size),
-				EXT2_SEEK_SET, 0)))
-		return retval;
+	ఒకవేళ ((retval = ext2fs_file_llseek(దత్తాంశం->file,
+				(ext2_off64_t)(ఖండం * channel->ఖండం_కొలత),
+				EXT2_SEEK_సమితి, 0)))
+		తిరిగి retval;
 
-	count = (count < 0) ? -count : (count * channel->block_size);
+	లెక్క = (లెక్క < 0) ? -లెక్క : (లెక్క * channel->ఖండం_కొలత);
 
-	return ext2fs_file_read(data->file, buf, count, 0);
+	తిరిగి ext2fs_file_read(దత్తాంశం->file, buf, లెక్క, 0);
 }
 
-static errcode_t inode_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+స్థిర errcode_t inode_read_blk(io_channel channel, గుర్తులేని దీర్ఘ ఖండం,
+			       పూర్ణాంకం లెక్క, శూన్య *buf)
 {
-	return inode_read_blk64(channel, block, count, buf);
+	తిరిగి inode_read_blk64(channel, ఖండం, లెక్క, buf);
 }
 
-static errcode_t inode_write_blk64(io_channel channel,
-				unsigned long long block, int count, const void *buf)
+స్థిర errcode_t inode_write_blk64(io_channel channel,
+				గుర్తులేని దీర్ఘ దీర్ఘ ఖండం, పూర్ణాంకం లెక్క, స్థిరరాశి శూన్య *buf)
 {
-	struct inode_private_data *data;
+	నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if ((retval = ext2fs_file_llseek(data->file,
-				(ext2_off64_t) (block * channel->block_size),
-				EXT2_SEEK_SET, 0)))
-		return retval;
+	ఒకవేళ ((retval = ext2fs_file_llseek(దత్తాంశం->file,
+				(ext2_off64_t) (ఖండం * channel->ఖండం_కొలత),
+				EXT2_SEEK_సమితి, 0)))
+		తిరిగి retval;
 
-	count = (count < 0) ? -count : (count * channel->block_size);
+	లెక్క = (లెక్క < 0) ? -లెక్క : (లెక్క * channel->ఖండం_కొలత);
 
-	return ext2fs_file_write(data->file, buf, count, 0);
+	తిరిగి ext2fs_file_write(దత్తాంశం->file, buf, లెక్క, 0);
 }
 
-static errcode_t inode_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+స్థిర errcode_t inode_write_blk(io_channel channel, గుర్తులేని దీర్ఘ ఖండం,
+				పూర్ణాంకం లెక్క, స్థిరరాశి శూన్య *buf)
 {
-	return inode_write_blk64(channel, block, count, buf);
+	తిరిగి inode_write_blk64(channel, ఖండం, లెక్క, buf);
 }
 
-static errcode_t inode_write_byte(io_channel channel, unsigned long offset,
-				 int size, const void *buf)
+స్థిర errcode_t inode_write_byte(io_channel channel, గుర్తులేని దీర్ఘ స్థానభ్రంశం,
+				 పూర్ణాంకం కొలత, స్థిరరాశి శూన్య *buf)
 {
-	struct inode_private_data *data;
+	నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if ((retval = ext2fs_file_lseek(data->file, offset,
-					EXT2_SEEK_SET, 0)))
-		return retval;
+	ఒకవేళ ((retval = ext2fs_file_lseek(దత్తాంశం->file, స్థానభ్రంశం,
+					EXT2_SEEK_సమితి, 0)))
+		తిరిగి retval;
 
-	return ext2fs_file_write(data->file, buf, size, 0);
+	తిరిగి ext2fs_file_write(దత్తాంశం->file, buf, కొలత, 0);
 }
 
 /*
  * Flush data buffers to disk.
  */
-static errcode_t inode_flush(io_channel channel)
+స్థిర errcode_t inode_flush(io_channel channel)
 {
-	struct inode_private_data *data;
+	నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం *దత్తాంశం;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
+	దత్తాంశం = (నిర్మాణం inode_వ్యక్తిగత_దత్తాంశం *) channel->వ్యక్తిగత_దత్తాంశం;
+	EXT2_CHECK_MAGIC(దత్తాంశం, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	return ext2fs_file_flush(data->file);
+	తిరిగి ext2fs_file_flush(దత్తాంశం->file);
 }
 
