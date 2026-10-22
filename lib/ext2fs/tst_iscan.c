@@ -9,22 +9,22 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <time.h>
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव <sys/types.h>
+#यदि HAVE_ERRNO_H
+#अन्तर्भाव <errno.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
 
 blk64_t test_vec[] = { 8, 12, 24, 34, 43, 44, 100, 0 };
 
@@ -33,25 +33,25 @@ ext2fs_block_bitmap bad_block_map, touched_map;
 ext2fs_inode_bitmap bad_inode_map;
 badblocks_list	test_badblocks;
 
-int first_no_comma = 1;
-int failed = 0;
+पूर्णाङ्क first_no_comma = 1;
+पूर्णाङ्क failed = 0;
 
-static void iscan_test_read_blk64(unsigned long long block, int count, errcode_t err)
+स्थिर शून्य iscan_test_read_blk64(unsigned long long block, पूर्णाङ्क गिनती, errcode_t err)
 {
-	int	i;
+	पूर्णाङ्क	i;
 
-	if (first_no_comma)
+	यदि (first_no_comma)
 		first_no_comma = 0;
-	else
+	अन्यथा
 		printf(", ");
 
-	if (count > 1)
-		printf("%llu-%llu", block, block+count-1);
-	else
+	यदि (गिनती > 1)
+		printf("%llu-%llu", block, block+गिनती-1);
+	अन्यथा
 		printf("%llu", block);
 
-	for (i=0; i < count; i++, block++) {
-		if (ext2fs_test_block_bitmap2(touched_map, block)) {
+	प्रति (i=0; i < गिनती; i++, block++) {
+		यदि (ext2fs_test_block_bitmap2(touched_map, block)) {
 			printf("\nDuplicate block?!? --- %llu\n", block);
 			failed++;
 			first_no_comma = 1;
@@ -60,24 +60,24 @@ static void iscan_test_read_blk64(unsigned long long block, int count, errcode_t
 	}
 }
 
-static void iscan_test_read_blk(unsigned long block, int count, errcode_t err)
+स्थिर शून्य iscan_test_read_blk(unsigned long block, पूर्णाङ्क गिनती, errcode_t err)
 {
-	iscan_test_read_blk64(block, count, err);
+	iscan_test_read_blk64(block, गिनती, err);
 }
 
 /*
  * Setup the variables for doing the inode scan test.
  */
-static void setup(void)
+स्थिर शून्य setup(शून्य)
 {
 	errcode_t	retval;
-	int		i;
-	struct ext2_super_block param;
+	पूर्णाङ्क		i;
+	संरचना ext2_super_block param;
 
 	initialize_ext2_error_table();
 
-	memset(&param, 0, sizeof(param));
-	ext2fs_blocks_count_set(&param, 12000);
+	memset(&param, 0, परिमाण(param));
+	ext2fs_blocks_गिनती_set(&param, 12000);
 
 
 	test_io_cb_read_blk = iscan_test_read_blk;
@@ -85,47 +85,47 @@ static void setup(void)
 
 	retval = ext2fs_initialize("test fs", EXT2_FLAG_64BITS, &param,
 				   test_io_manager, &test_fs);
-	if (retval) {
+	यदि (retval) {
 		com_err("setup", retval,
 			"While initializing filesystem");
 		exit(1);
 	}
 	retval = ext2fs_allocate_tables(test_fs);
-	if (retval) {
+	यदि (retval) {
 		com_err("setup", retval,
 			"While allocating tables for test filesystem");
 		exit(1);
 	}
 	retval = ext2fs_allocate_block_bitmap(test_fs, "bad block map",
 					      &bad_block_map);
-	if (retval) {
+	यदि (retval) {
 		com_err("setup", retval,
 			"While allocating bad_block bitmap");
 		exit(1);
 	}
 	retval = ext2fs_allocate_block_bitmap(test_fs, "touched map",
 					      &touched_map);
-	if (retval) {
+	यदि (retval) {
 		com_err("setup", retval,
 			"While allocating touched block bitmap");
 		exit(1);
 	}
 	retval = ext2fs_allocate_inode_bitmap(test_fs, "bad inode map",
 					      &bad_inode_map);
-	if (retval) {
+	यदि (retval) {
 		com_err("setup", retval,
 			"While allocating bad inode bitmap");
 		exit(1);
 	}
 
 	retval = ext2fs_badblocks_list_create(&test_badblocks, 5);
-	if (retval) {
+	यदि (retval) {
 		com_err("setup", retval, "while creating badblocks list");
 		exit(1);
 	}
-	for (i=0; test_vec[i]; i++) {
+	प्रति (i=0; test_vec[i]; i++) {
 		retval = ext2fs_badblocks_list_add(test_badblocks, test_vec[i]);
-		if (retval) {
+		यदि (retval) {
 			com_err("setup", retval,
 				"while adding test vector %d", i);
 			exit(1);
@@ -138,31 +138,31 @@ static void setup(void)
 /*
  * Iterate using inode_scan
  */
-static void iterate(void)
+स्थिर शून्य iterate(शून्य)
 {
-	struct ext2_inode inode;
+	संरचना ext2_inode inode;
 	ext2_inode_scan	scan;
 	errcode_t	retval;
 	ext2_ino_t	ino;
 
 	retval = ext2fs_open_inode_scan(test_fs, 8, &scan);
-	if (retval) {
+	यदि (retval) {
 		com_err("iterate", retval, "While opening inode scan");
 		exit(1);
 	}
 	printf("Reading blocks: ");
 	retval = ext2fs_get_next_inode(scan, &ino, &inode);
-	if (retval) {
+	यदि (retval) {
 		com_err("iterate", retval, "while reading first inode");
 		exit(1);
 	}
-	while (ino) {
+	यावत् (ino) {
 		retval = ext2fs_get_next_inode(scan, &ino, &inode);
-		if (retval == EXT2_ET_BAD_BLOCK_IN_INODE_TABLE) {
+		यदि (retval == EXT2_ET_BAD_BLOCK_IN_INODE_TABLE) {
 			ext2fs_mark_inode_bitmap2(bad_inode_map, ino);
-			continue;
+			अनुवर्त;
 		}
-		if (retval) {
+		यदि (retval) {
 			com_err("iterate", retval,
 				"while getting next inode");
 			exit(1);
@@ -175,13 +175,13 @@ static void iterate(void)
 /*
  * Verify the touched map
  */
-static void check_map(void)
+स्थिर शून्य check_map(शून्य)
 {
-	int	i, j, first=1;
+	पूर्णाङ्क	i, j, first=1;
 	blk64_t	blk;
 
-	for (i=0; test_vec[i]; i++) {
-		if (ext2fs_test_block_bitmap2(touched_map, test_vec[i])) {
+	प्रति (i=0; test_vec[i]; i++) {
+		यदि (ext2fs_test_block_bitmap2(touched_map, test_vec[i])) {
 			printf("Bad block was touched --- %llu\n",
 			       (unsigned long long) test_vec[i]);
 			failed++;
@@ -189,11 +189,11 @@ static void check_map(void)
 		}
 		ext2fs_mark_block_bitmap2(touched_map, test_vec[i]);
 	}
-	for (i = 0; i < test_fs->group_desc_count; i++) {
-		for (j=0, blk = ext2fs_inode_table_loc(test_fs, i);
+	प्रति (i = 0; i < test_fs->group_desc_गिनती; i++) {
+		प्रति (j=0, blk = ext2fs_inode_table_loc(test_fs, i);
 		     j < test_fs->inode_blocks_per_group;
 		     j++, blk++) {
-			if (!ext2fs_test_block_bitmap2(touched_map, blk) &&
+			यदि (!ext2fs_test_block_bitmap2(touched_map, blk) &&
 			    !ext2fs_test_block_bitmap2(bad_block_map, blk)) {
 				printf("Missing block --- %llu\n",
 				       (unsigned long long) blk);
@@ -202,11 +202,11 @@ static void check_map(void)
 		}
 	}
 	printf("Bad inodes: ");
-	for (i=1; i <= test_fs->super->s_inodes_count; i++) {
-		if (ext2fs_test_inode_bitmap2(bad_inode_map, i)) {
-			if (first)
+	प्रति (i=1; i <= test_fs->super->s_inodes_गिनती; i++) {
+		यदि (ext2fs_test_inode_bitmap2(bad_inode_map, i)) {
+			यदि (first)
 				first = 0;
-			else
+			अन्यथा
 				printf(", ");
 			printf("%u", i);
 		}
@@ -215,13 +215,13 @@ static void check_map(void)
 }
 
 
-int main(int argc, char **argv)
+पूर्णाङ्क main(पूर्णाङ्क argc, वर्ण **argv)
 {
 	setup();
 	iterate();
 	check_map();
-	if (!failed)
+	यदि (!failed)
 		printf("Inode scan tested OK!\n");
-	return failed;
+	प्रत्यागम failed;
 }
 
