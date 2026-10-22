@@ -16,18 +16,18 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#만약 HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_ERRNO_H
+#만약 HAVE_ERRNO_H
 #include <errno.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#만약 HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#만약 HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -35,23 +35,23 @@
 #include "ext2fs.h"
 
 #ifndef HAVE_TYPE_SSIZE_T
-typedef int ssize_t;
+typedef 정수 ssize_t;
 #endif
 
 /*
  * This function returns 1 if the specified block is all zeros
  */
-static int check_zero_block(char *buf, int blocksize)
+static 정수 check_zero_block(char *buf, 정수 blocksize)
 {
 	char	*cp = buf;
-	int	left = blocksize;
+	정수	left = blocksize;
 
-	while (left > 0) {
-		if (*cp++)
-			return 0;
+	동안 (left > 0) {
+		만약 (*cp++)
+			반환 0;
 		left--;
 	}
-	return 1;
+	반환 1;
 }
 
 /*
@@ -59,7 +59,7 @@ static int check_zero_block(char *buf, int blocksize)
  */
 #define BUF_BLOCKS	32
 
-errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_inode_write(ext2_filsys fs, 정수 fd, 정수 flags)
 {
 	dgrp_t		group;
 	ssize_t		left, c, d;
@@ -70,62 +70,62 @@ errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
 	ext2_loff_t	r;
 
 	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	만약 (!buf)
+		반환 ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
+	위해 (group = 0; group < fs->group_desc_count; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
+		만약 (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
 			goto errout;
 		}
 		left = fs->inode_blocks_per_group;
-		if ((blk < fs->super->s_first_data_block) ||
+		만약 ((blk < fs->super->s_first_data_block) ||
 		    (blk + left - 1 >= ext2fs_blocks_count(fs->super))) {
 			retval = EXT2_ET_GDESC_BAD_INODE_TABLE;
 			goto errout;
 		}
-		while (left) {
+		동안 (left) {
 			c = BUF_BLOCKS;
-			if (c > left)
+			만약 (c > left)
 				c = left;
 			retval = io_channel_read_blk64(fs->io, blk, c, buf);
-			if (retval)
+			만약 (retval)
 				goto errout;
 			cp = buf;
-			while (c) {
-				if (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
+			동안 (c) {
+				만약 (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
 					d = c;
 					goto skip_sparse;
 				}
 				/* Skip zero blocks */
-				if (check_zero_block(cp, fs->blocksize)) {
+				만약 (check_zero_block(cp, fs->blocksize)) {
 					c--;
 					blk++;
 					left--;
 					cp += fs->blocksize;
 					r = ext2fs_llseek(fd, fs->blocksize,
 							  SEEK_CUR);
-					if (r < 0) {
+					만약 (r < 0) {
 						retval = errno;
 						goto errout;
 					}
 					continue;
 				}
 				/* Find non-zero blocks */
-				for (d = 1; d < c; d++) {
-					if (check_zero_block(cp +
+				위해 (d = 1; d < c; d++) {
+					만약 (check_zero_block(cp +
 							     d * fs->blocksize,
 							     fs->blocksize))
 						break;
 				}
 			skip_sparse:
 				actual = write(fd, cp, d * fs->blocksize);
-				if (actual == -1) {
+				만약 (actual == -1) {
 					retval = errno;
 					goto errout;
 				}
-				if (actual != d * fs->blocksize) {
+				만약 (actual != d * fs->blocksize) {
 					retval = EXT2_ET_SHORT_WRITE;
 					goto errout;
 				}
@@ -140,14 +140,14 @@ errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
 
 errout:
 	free(buf);
-	return retval;
+	반환 retval;
 }
 
 /*
  * Read in the inode table and stuff it into place
  */
-errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_inode_read(ext2_filsys fs, 정수 fd,
+				  정수 flags EXT2FS_ATTR((unused)))
 {
 	dgrp_t		group;
 	ssize_t		c, left;
@@ -157,31 +157,31 @@ errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd,
 	errcode_t	retval;
 
 	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	만약 (!buf)
+		반환 ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
+	위해 (group = 0; group < fs->group_desc_count; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
+		만약 (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
 			goto errout;
 		}
 		left = fs->inode_blocks_per_group;
-		while (left) {
+		동안 (left) {
 			c = BUF_BLOCKS;
-			if (c > left)
+			만약 (c > left)
 				c = left;
 			actual = read(fd, buf, fs->blocksize * c);
-			if (actual == -1) {
+			만약 (actual == -1) {
 				retval = errno;
 				goto errout;
 			}
-			if (actual != fs->blocksize * c) {
+			만약 (actual != fs->blocksize * c) {
 				retval = EXT2_ET_SHORT_READ;
 				goto errout;
 			}
 			retval = io_channel_write_blk64(fs->io, blk, c, buf);
-			if (retval)
+			만약 (retval)
 				goto errout;
 
 			blk += c;
@@ -192,30 +192,30 @@ errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd,
 
 errout:
 	free(buf);
-	return retval;
+	반환 retval;
 }
 
 /*
  * Write out superblock and group descriptors
  */
-errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
-				   int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_write(ext2_filsys fs, 정수 fd,
+				   정수 flags EXT2FS_ATTR((unused)))
 {
 	char		*buf, *cp;
 	ssize_t		actual;
 	errcode_t	retval;
 #ifdef WORDS_BIGENDIAN
-	unsigned int	groups_per_block;
+	unsigned 정수	groups_per_block;
 	struct		ext2_group_desc *gdp;
-	int		j;
+	정수		j;
 #endif
 
-	if (fs->group_desc == NULL)
-		return EXT2_ET_NO_GDESC;
+	만약 (fs->group_desc == NULL)
+		반환 EXT2_ET_NO_GDESC;
 
 	buf = malloc(fs->blocksize);
-	if (!buf)
-		return ENOMEM;
+	만약 (!buf)
+		반환 ENOMEM;
 
 	/*
 	 * Write out the superblock
@@ -229,15 +229,15 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 	ext2fs_swap_super(fs->super);
 	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
 	ext2fs_swap_super(fs->super);
-#else
+#아니면
 	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
 #endif
 	actual = write(fd, buf, fs->blocksize);
-	if (actual == -1) {
+	만약 (actual == -1) {
 		retval = errno;
 		goto errout;
 	}
-	if (actual != (ssize_t) fs->blocksize) {
+	만약 (actual != (ssize_t) fs->blocksize) {
 		retval = EXT2_ET_SHORT_WRITE;
 		goto errout;
 	}
@@ -254,9 +254,9 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 	 * if needed
 	 */
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
+	위해 (j=0; j < groups_per_block*fs->desc_blocks; j++) {
 		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
+		만약 (gdp)
 			ext2fs_swap_group_desc2(fs, gdp);
 	}
 #endif
@@ -266,18 +266,18 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 
 #ifdef WORDS_BIGENDIAN
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
+	위해 (j=0; j < groups_per_block*fs->desc_blocks; j++) {
 		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
+		만약 (gdp)
 			ext2fs_swap_group_desc2(fs, gdp);
 	}
 #endif
 
-	if (actual == -1) {
+	만약 (actual == -1) {
 		retval = errno;
 		goto errout;
 	}
-	if (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
+	만약 (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
 		retval = EXT2_ET_SHORT_WRITE;
 		goto errout;
 	}
@@ -286,14 +286,14 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 
 errout:
 	free(buf);
-	return retval;
+	반환 retval;
 }
 
 /*
  * Read the superblock and group descriptors and overwrite them.
  */
-errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_read(ext2_filsys fs, 정수 fd,
+				  정수 flags EXT2FS_ATTR((unused)))
 {
 	char		*buf;
 	ssize_t		actual, size;
@@ -301,18 +301,18 @@ errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
 
 	size = (ssize_t)fs->blocksize * (fs->desc_blocks + 1);
 	buf = malloc(size);
-	if (!buf)
-		return ENOMEM;
+	만약 (!buf)
+		반환 ENOMEM;
 
 	/*
 	 * Read it all in.
 	 */
 	actual = read(fd, buf, size);
-	if (actual == -1) {
+	만약 (actual == -1) {
 		retval = errno;
 		goto errout;
 	}
-	if (actual != size) {
+	만약 (actual != size) {
 		retval = EXT2_ET_SHORT_READ;
 		goto errout;
 	}
@@ -329,13 +329,13 @@ errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
 
 errout:
 	free(buf);
-	return retval;
+	반환 retval;
 }
 
 /*
  * Write the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, 정수 fd, 정수 flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
@@ -344,22 +344,22 @@ errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags)
 	__u64			itr, cnt, size, total_size;
 	char			buf[1024];
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	만약 (flags & IMAGER_FLAG_INODEMAP) {
+		만약 (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			만약 (retval)
+				반환 retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
 			fs->group_desc_count;
 		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
+	} 아니면 {
+		만약 (!fs->block_map) {
 			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+			만약 (retval)
+				반환 retval;
 		}
 		bmap = fs->block_map;
 		itr = fs->super->s_first_data_block;
@@ -368,23 +368,23 @@ errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags)
 	}
 	total_size = size * fs->group_desc_count;
 
-	while (cnt > 0) {
+	동안 (cnt > 0) {
 		size = sizeof(buf);
-		if (size > (cnt >> 3))
+		만약 (size > (cnt >> 3))
 			size = (cnt >> 3);
-		if (size == 0)
+		만약 (size == 0)
 			break;
 
 		retval = ext2fs_get_generic_bmap_range(bmap, itr,
 						       size << 3, buf);
-		if (retval)
-			return retval;
+		만약 (retval)
+			반환 retval;
 
 		actual = write(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		만약 (actual == -1)
+			반환 errno;
+		만약 (actual != (정수) size)
+			반환 EXT2_ET_SHORT_READ;
 
 		itr += size << 3;
 		cnt -= size << 3;
@@ -392,52 +392,52 @@ errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags)
 
 	size = total_size % fs->blocksize;
 	memset(buf, 0, sizeof(buf));
-	if (size) {
+	만약 (size) {
 		size = fs->blocksize - size;
-		while (size) {
+		동안 (size) {
 			c = size;
-			if (c > (int) sizeof(buf))
+			만약 (c > (정수) sizeof(buf))
 				c = sizeof(buf);
 			actual = write(fd, buf, c);
-			if (actual < 0)
-				return errno;
-			if ((size_t) actual != c)
-				return EXT2_ET_SHORT_WRITE;
+			만약 (actual < 0)
+				반환 errno;
+			만약 ((size_t) actual != c)
+				반환 EXT2_ET_SHORT_WRITE;
 			size -= c;
 		}
 	}
-	return 0;
+	반환 0;
 }
 
 
 /*
  * Read the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, 정수 fd, 정수 flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	__u64			itr, cnt;
 	char			buf[1024];
-	unsigned int		size;
+	unsigned 정수		size;
 	ssize_t			actual;
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	만약 (flags & IMAGER_FLAG_INODEMAP) {
+		만약 (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			만약 (retval)
+				반환 retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
 			fs->group_desc_count;
 		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
+	} 아니면 {
+		만약 (!fs->block_map) {
 			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+			만약 (retval)
+				반환 retval;
 		}
 		bmap = fs->block_map;
 		itr = fs->super->s_first_data_block;
@@ -445,26 +445,26 @@ errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, int fd, int flags)
 		size = EXT2_BLOCKS_PER_GROUP(fs->super) / 8;
 	}
 
-	while (cnt > 0) {
+	동안 (cnt > 0) {
 		size = sizeof(buf);
-		if (size > (cnt >> 3))
+		만약 (size > (cnt >> 3))
 			size = (cnt >> 3);
-		if (size == 0)
+		만약 (size == 0)
 			break;
 
 		actual = read(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		만약 (actual == -1)
+			반환 errno;
+		만약 (actual != (정수) size)
+			반환 EXT2_ET_SHORT_READ;
 
 		retval = ext2fs_set_generic_bmap_range(bmap, itr,
 						       size << 3, buf);
-		if (retval)
-			return retval;
+		만약 (retval)
+			반환 retval;
 
 		itr += size << 3;
 		cnt -= size << 3;
 	}
-	return 0;
+	반환 0;
 }

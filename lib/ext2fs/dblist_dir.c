@@ -11,7 +11,7 @@
 
 #include "config.h"
 #include <stdio.h>
-#if HAVE_UNISTD_H
+#만약 HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <string.h>
@@ -20,17 +20,17 @@
 #include "ext2_fs.h"
 #include "ext2fsP.h"
 
-static int db_dir_proc(ext2_filsys fs, struct ext2_db_entry2 *db_info,
+static 정수 db_dir_proc(ext2_filsys fs, struct ext2_db_entry2 *db_info,
 		       void *priv_data);
 
 errcode_t ext2fs_dblist_dir_iterate(ext2_dblist dblist,
-				    int	flags,
+				    정수	flags,
 				    char	*block_buf,
-				    int (*func)(ext2_ino_t dir,
-						int	entry,
+				    정수 (*func)(ext2_ino_t dir,
+						정수	entry,
 						struct ext2_dir_entry *dirent,
-						int	offset,
-						int	blocksize,
+						정수	offset,
+						정수	blocksize,
 						char	*buf,
 						void	*priv_data),
 				    void *priv_data)
@@ -42,12 +42,12 @@ errcode_t ext2fs_dblist_dir_iterate(ext2_dblist dblist,
 
 	ctx.dir = 0;
 	ctx.flags = flags;
-	if (block_buf)
+	만약 (block_buf)
 		ctx.buf = block_buf;
-	else {
+	아니면 {
 		retval = ext2fs_get_mem(dblist->fs->blocksize, &ctx.buf);
-		if (retval)
-			return retval;
+		만약 (retval)
+			반환 retval;
 	}
 	ctx.func = func;
 	ctx.priv_data = priv_data;
@@ -55,34 +55,34 @@ errcode_t ext2fs_dblist_dir_iterate(ext2_dblist dblist,
 
 	retval = ext2fs_dblist_iterate2(dblist, db_dir_proc, &ctx);
 
-	if (!block_buf)
+	만약 (!block_buf)
 		ext2fs_free_mem(&ctx.buf);
-	if (retval)
-		return retval;
-	return ctx.errcode;
+	만약 (retval)
+		반환 retval;
+	반환 ctx.errcode;
 }
 
-static int db_dir_proc(ext2_filsys fs, struct ext2_db_entry2 *db_info,
+static 정수 db_dir_proc(ext2_filsys fs, struct ext2_db_entry2 *db_info,
 		       void *priv_data)
 {
 	struct ext2_inode	inode;
 	struct dir_context	*ctx;
-	int			ret;
+	정수			ret;
 
 	ctx = (struct dir_context *) priv_data;
 	ctx->dir = db_info->ino;
 	ctx->errcode = 0;
 
 	ctx->errcode = ext2fs_read_inode(fs, ctx->dir, &inode);
-	if (ctx->errcode)
-		return DBLIST_ABORT;
-	if (inode.i_flags & EXT4_INLINE_DATA_FL)
+	만약 (ctx->errcode)
+		반환 DBLIST_ABORT;
+	만약 (inode.i_flags & EXT4_INLINE_DATA_FL)
 		ret = ext2fs_inline_data_dir_iterate(fs, ctx->dir, ctx);
-	else
+	아니면
 		ret = ext2fs_process_dir_block(fs, &db_info->blk,
 					       db_info->blockcnt, 0, 0,
 					       priv_data);
-	if ((ret & BLOCK_ABORT) && !ctx->errcode)
-		return DBLIST_ABORT;
-	return 0;
+	만약 ((ret & BLOCK_ABORT) && !ctx->errcode)
+		반환 DBLIST_ABORT;
+	반환 0;
 }

@@ -13,22 +13,22 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#만약 HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <stdlib.h>
 #include <string.h>
-#if HAVE_SYS_TYPES_H
+#만약 HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#if HAVE_SYS_STAT_H
+#만약 HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
 #include <dirent.h>
-#if HAVE_ERRNO_H
+#만약 HAVE_ERRNO_H
 #include <errno.h>
 #endif
-#if HAVE_SYS_MKDEV_H
+#만약 HAVE_SYS_MKDEV_H
 #include <sys/mkdev.h>
 #endif
 #ifdef HAVE_SYS_SYSMACROS_H
@@ -52,12 +52,12 @@ static void add_to_dirlist(const char *name, struct dir_list **list)
 	struct dir_list *dp;
 
 	dp = malloc(sizeof(struct dir_list));
-	if (!dp)
-		return;
+	만약 (!dp)
+		반환;
 	dp->name = malloc(strlen(name)+1);
-	if (!dp->name) {
+	만약 (!dp->name) {
 		free(dp);
-		return;
+		반환;
 	}
 	strcpy(dp->name, name);
 	dp->next = *list;
@@ -71,7 +71,7 @@ static void free_dirlist(struct dir_list **list)
 {
 	struct dir_list *dp, *next;
 
-	for (dp = *list; dp; dp = next) {
+	위해 (dp = *list; dp; dp = next) {
 		next = dp->next;
 		free(dp->name);
 		free(dp);
@@ -79,37 +79,37 @@ static void free_dirlist(struct dir_list **list)
 	*list = 0;
 }
 
-static int scan_dir(char *dirname, dev_t device, struct dir_list **list,
+static 정수 scan_dir(char *dirname, dev_t device, struct dir_list **list,
 		    char **ret_path)
 {
 	DIR	*dir;
 	struct dirent *dp;
 	char	path[1024], *cp;
-	int	dirlen;
+	정수	dirlen;
 	struct stat st;
 
 	dirlen = strlen(dirname);
-	if ((dir = opendir(dirname)) == NULL)
-		return errno;
+	만약 ((dir = opendir(dirname)) == NULL)
+		반환 errno;
 	dp = readdir(dir);
-	while (dp) {
-		if (dirlen + strlen(dp->d_name) + 2 >= sizeof(path))
+	동안 (dp) {
+		만약 (dirlen + strlen(dp->d_name) + 2 >= sizeof(path))
 			goto skip_to_next;
-		if (dp->d_name[0] == '.' &&
+		만약 (dp->d_name[0] == '.' &&
 		    ((dp->d_name[1] == 0) ||
 		     ((dp->d_name[1] == '.') && (dp->d_name[2] == 0))))
 			goto skip_to_next;
 		sprintf(path, "%s/%s", dirname, dp->d_name);
-		if (stat(path, &st) < 0)
+		만약 (stat(path, &st) < 0)
 			goto skip_to_next;
-		if (S_ISDIR(st.st_mode))
+		만약 (S_ISDIR(st.st_mode))
 			add_to_dirlist(path, list);
-		if (ext2fsP_is_disk_device(st.st_mode) &&
+		만약 (ext2fsP_is_disk_device(st.st_mode) &&
 		    st.st_rdev == device) {
 			cp = malloc(strlen(path)+1);
-			if (!cp) {
+			만약 (!cp) {
 				closedir(dir);
-				return ENOMEM;
+				반환 ENOMEM;
 			}
 			strcpy(cp, path);
 			*ret_path = cp;
@@ -120,7 +120,7 @@ static int scan_dir(char *dirname, dev_t device, struct dir_list **list,
 	}
 success:
 	closedir(dir);
-	return 0;
+	반환 0;
 }
 
 /*
@@ -133,7 +133,7 @@ char *ext2fs_find_block_device(dev_t device)
 	struct dir_list *list = 0, *new_list = 0;
 	struct dir_list *current;
 	char	*ret_path = 0;
-	int    level = 0;
+	정수    level = 0;
 
 	/*
 	 * Add the starting directories to search...
@@ -142,7 +142,7 @@ char *ext2fs_find_block_device(dev_t device)
 	add_to_dirlist("/devfs", &list);
 	add_to_dirlist("/dev", &list);
 
-	while (list) {
+	동안 (list) {
 		current = list;
 		list = list->next;
 #ifdef DEBUG
@@ -151,53 +151,53 @@ char *ext2fs_find_block_device(dev_t device)
 		scan_dir(current->name, device, &new_list, &ret_path);
 		free(current->name);
 		free(current);
-		if (ret_path)
+		만약 (ret_path)
 			break;
 		/*
 		 * If we're done checking at this level, descend to
 		 * the next level of subdirectories. (breadth-first)
 		 */
-		if (list == 0) {
+		만약 (list == 0) {
 			list = new_list;
 			new_list = 0;
 			/* Avoid infinite loop */
-			if (++level >= EXT2FS_MAX_NESTED_LINKS)
+			만약 (++level >= EXT2FS_MAX_NESTED_LINKS)
 				break;
 		}
 	}
 	free_dirlist(&list);
 	free_dirlist(&new_list);
-	return ret_path;
+	반환 ret_path;
 }
 
 
 #ifdef DEBUG
-int main(int argc, char** argv)
+정수 main(정수 argc, char** argv)
 {
 	char	*devname, *tmp;
-	int	major, minor;
+	정수	major, minor;
 	dev_t	device;
 	const char *errmsg = "Couldn't parse %s: %s\n";
 
-	if ((argc != 2) && (argc != 3)) {
+	만약 ((argc != 2) && (argc != 3)) {
 		fprintf(stderr, "Usage: %s device_number\n", argv[0]);
 		fprintf(stderr, "\t: %s major minor\n", argv[0]);
 		exit(1);
 	}
-	if (argc == 2) {
+	만약 (argc == 2) {
 		device = strtoul(argv[1], &tmp, 0);
-		if (*tmp) {
+		만약 (*tmp) {
 			fprintf(stderr, errmsg, "device number", argv[1]);
 			exit(1);
 		}
-	} else {
+	} 아니면 {
 		major = strtoul(argv[1], &tmp, 0);
-		if (*tmp) {
+		만약 (*tmp) {
 			fprintf(stderr, errmsg, "major number", argv[1]);
 			exit(1);
 		}
 		minor = strtoul(argv[2], &tmp, 0);
-		if (*tmp) {
+		만약 (*tmp) {
 			fprintf(stderr, errmsg, "minor number", argv[2]);
 			exit(1);
 		}
@@ -206,13 +206,13 @@ int main(int argc, char** argv)
 		       major, minor);
 	}
 	devname = ext2fs_find_block_device(device);
-	if (devname) {
+	만약 (devname) {
 		printf("Found device!  %s\n", devname);
 		free(devname);
-	} else {
+	} 아니면 {
 		printf("Couldn't find device.\n");
 	}
-	return 0;
+	반환 0;
 }
 
 #endif

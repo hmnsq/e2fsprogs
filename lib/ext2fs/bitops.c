@@ -12,7 +12,7 @@
 
 #include "config.h"
 #include <stdio.h>
-#if HAVE_SYS_TYPES_H
+#만약 HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -25,124 +25,124 @@
  * systems, as well as non-32 bit systems.
  */
 
-int ext2fs_set_bit(unsigned int nr,void * addr)
+정수 ext2fs_set_bit(unsigned 정수 nr,void * addr)
 {
-	int		mask, retval;
+	정수		mask, retval;
 	unsigned char	*ADDR = (unsigned char *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR |= mask;
-	return retval;
+	반환 retval;
 }
 
-int ext2fs_clear_bit(unsigned int nr, void * addr)
+정수 ext2fs_clear_bit(unsigned 정수 nr, void * addr)
 {
-	int		mask, retval;
+	정수		mask, retval;
 	unsigned char	*ADDR = (unsigned char *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR &= ~mask;
-	return retval;
+	반환 retval;
 }
 
-int ext2fs_test_bit(unsigned int nr, const void * addr)
+정수 ext2fs_test_bit(unsigned 정수 nr, const void * addr)
 {
-	int			mask;
+	정수			mask;
 	const unsigned char	*ADDR = (const unsigned char *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
-	return (mask & *ADDR);
+	반환 (mask & *ADDR);
 }
 
 void ext2fs_warn_bitmap(errcode_t errcode, unsigned long arg,
 			const char *description)
 {
 #ifndef OMIT_COM_ERR
-	if (description)
+	만약 (description)
 		com_err(0, errcode, "#%lu for %s", arg, description);
-	else
+	아니면
 		com_err(0, errcode, "#%lu", arg);
 #endif
 }
 
 /* Bitmap functions that take a 64-bit offset */
 
-int ext2fs_set_bit64(__u64 nr, void * addr)
+정수 ext2fs_set_bit64(__u64 nr, void * addr)
 {
-	int		mask, retval;
+	정수		mask, retval;
 	unsigned char	*ADDR = (unsigned char *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR |= mask;
-	return retval;
+	반환 retval;
 }
 
-int ext2fs_clear_bit64(__u64 nr, void * addr)
+정수 ext2fs_clear_bit64(__u64 nr, void * addr)
 {
-	int		mask, retval;
+	정수		mask, retval;
 	unsigned char	*ADDR = (unsigned char *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR &= ~mask;
-	return retval;
+	반환 retval;
 }
 
-int ext2fs_test_bit64(__u64 nr, const void * addr)
+정수 ext2fs_test_bit64(__u64 nr, const void * addr)
 {
-	int			mask;
+	정수			mask;
 	const unsigned char	*ADDR = (const unsigned char *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
-	return (mask & *ADDR);
+	반환 (mask & *ADDR);
 }
 
-static unsigned int popcount8(unsigned int w)
+static unsigned 정수 popcount8(unsigned 정수 w)
 {
-	unsigned int res = w - ((w >> 1) & 0x55);
+	unsigned 정수 res = w - ((w >> 1) & 0x55);
 	res = (res & 0x33) + ((res >> 2) & 0x33);
-	return (res + (res >> 4)) & 0x0F;
+	반환 (res + (res >> 4)) & 0x0F;
 }
 
-static unsigned int popcount32(unsigned int w)
+static unsigned 정수 popcount32(unsigned 정수 w)
 {
-	unsigned int res = w - ((w >> 1) & 0x55555555);
+	unsigned 정수 res = w - ((w >> 1) & 0x55555555);
 	res = (res & 0x33333333) + ((res >> 2) & 0x33333333);
 	res = (res + (res >> 4)) & 0x0F0F0F0F;
 	res = res + (res >> 8);
-	return (res + (res >> 16)) & 0x000000FF;
+	반환 (res + (res >> 16)) & 0x000000FF;
 }
 
-unsigned int ext2fs_bitcount(const void *addr, unsigned int nbytes)
+unsigned 정수 ext2fs_bitcount(const void *addr, unsigned 정수 nbytes)
 {
 	const unsigned char *cp = addr;
 	const __u32 *p;
-	unsigned int res = 0;
+	unsigned 정수 res = 0;
 
-	while (((((uintptr_t) cp) & 3) != 0) && (nbytes > 0)) {
+	동안 (((((uintptr_t) cp) & 3) != 0) && (nbytes > 0)) {
 		res += popcount8(*cp++);
 		nbytes--;
 	}
 	p = (const __u32 *) cp;
 
-	while (nbytes > 4) {
+	동안 (nbytes > 4) {
 		res += popcount32(*p++);
 		nbytes -= 4;
 	}
 	cp = (const unsigned char *) p;
 
-	while (nbytes > 0) {
+	동안 (nbytes > 0) {
 		res += popcount8(*cp++);
 		nbytes--;
 	}
-	return res;
+	반환 res;
 }

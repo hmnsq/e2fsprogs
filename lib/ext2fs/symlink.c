@@ -13,15 +13,15 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#만약 HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#만약 HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#만약 HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -33,13 +33,13 @@
  * Incredibly, libc5 doesn't appear to have strnlen.  So we have to
  * provide our own.
  */
-static int my_strnlen(const char * s, int count)
+static 정수 my_strnlen(const char * s, 정수 count)
 {
 	const char *cp = s;
 
-	while (count-- && *cp)
+	동안 (count-- && *cp)
 		cp++;
-	return cp - s;
+	반환 cp - s;
 }
 #define strnlen(str, x) my_strnlen((str),(x))
 #endif
@@ -51,10 +51,10 @@ errcode_t ext2fs_symlink(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t ino,
 	struct ext2_inode	inode;
 	ext2_ino_t		scratch_ino;
 	blk64_t			blk;
-	int			fastlink, inlinelink;
-	unsigned int		target_len;
+	정수			fastlink, inlinelink;
+	unsigned 정수		target_len;
 	char			*block_buf = 0;
-	int			drop_refcount = 0;
+	정수			drop_refcount = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
@@ -63,7 +63,7 @@ errcode_t ext2fs_symlink(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t ino,
 	 * (counting the NUL terminator)
 	 */
 	target_len = strnlen(target, fs->blocksize + 1);
-	if (target_len >= fs->blocksize) {
+	만약 (target_len >= fs->blocksize) {
 		retval = EXT2_ET_INVALID_ARGUMENT;
 		goto cleanup;
 	}
@@ -72,29 +72,29 @@ errcode_t ext2fs_symlink(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t ino,
 	 * Allocate a data block for slow links
 	 */
 	retval = ext2fs_get_mem(fs->blocksize, &block_buf);
-	if (retval)
+	만약 (retval)
 		goto cleanup;
 	memset(block_buf, 0, fs->blocksize);
 	strncpy(block_buf, target, fs->blocksize);
 
 	memset(&inode, 0, sizeof(struct ext2_inode));
 	fastlink = (target_len < sizeof(inode.i_block));
-	if (!fastlink) {
+	만약 (!fastlink) {
 		retval = ext2fs_new_block2(fs, ext2fs_find_inode_goal(fs, ino,
 								      &inode,
 								      0),
 					   NULL, &blk);
-		if (retval)
+		만약 (retval)
 			goto cleanup;
 	}
 
 	/*
 	 * Allocate an inode, if necessary
 	 */
-	if (!ino) {
+	만약 (!ino) {
 		retval = ext2fs_new_inode(fs, parent, LINUX_S_IFLNK | 0755,
 					  0, &ino);
-		if (retval)
+		만약 (retval)
 			goto cleanup;
 	}
 
@@ -108,30 +108,30 @@ errcode_t ext2fs_symlink(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t ino,
 	/* The time fields are set by ext2fs_write_new_inode() */
 
 	inlinelink = !fastlink && ext2fs_has_feature_inline_data(fs->super);
-	if (fastlink) {
+	만약 (fastlink) {
 		/* Fast symlinks, target stored in inode */
 		strcpy((char *)&inode.i_block, target);
-	} else if (inlinelink) {
+	} 아니면 만약 (inlinelink) {
 		/* Try inserting an inline data symlink */
 		inode.i_flags |= EXT4_INLINE_DATA_FL;
 		retval = ext2fs_write_new_inode(fs, ino, &inode);
-		if (retval)
+		만약 (retval)
 			goto cleanup;
 		retval = ext2fs_inline_data_set(fs, ino, &inode, block_buf,
 						target_len);
-		if (retval) {
+		만약 (retval) {
 			inode.i_flags &= ~EXT4_INLINE_DATA_FL;
 			inlinelink = 0;
 			goto need_block;
 		}
 		retval = ext2fs_read_inode(fs, ino, &inode);
-		if (retval)
+		만약 (retval)
 			goto cleanup;
-	} else {
+	} 아니면 {
 need_block:
 		/* Slow symlinks, target stored in the first block */
 		ext2fs_iblk_set(fs, &inode, 1);
-		if (ext2fs_has_feature_extents(fs->super)) {
+		만약 (ext2fs_has_feature_extents(fs->super)) {
 			/*
 			 * The extent bmap is setup after the inode and block
 			 * have been written out below.
@@ -145,28 +145,28 @@ need_block:
 	 * number is assigned by write_new_inode, which means that the
 	 * operations using ino must come after it.
 	 */
-	if (inlinelink)
+	만약 (inlinelink)
 		retval = ext2fs_write_inode(fs, ino, &inode);
-	else
+	아니면
 		retval = ext2fs_write_new_inode(fs, ino, &inode);
-	if (retval)
+	만약 (retval)
 		goto cleanup;
 
-	if (!fastlink && !inlinelink) {
+	만약 (!fastlink && !inlinelink) {
 		retval = ext2fs_bmap2(fs, ino, &inode, NULL, BMAP_SET, 0, NULL,
 				      &blk);
-		if (retval)
+		만약 (retval)
 			goto cleanup;
 
 		retval = io_channel_write_blk64(fs->io, blk, 1, block_buf);
-		if (retval)
+		만약 (retval)
 			goto cleanup;
 	}
 
 	/*
 	 * Update accounting....
 	 */
-	if (!fastlink && !inlinelink)
+	만약 (!fastlink && !inlinelink)
 		ext2fs_block_alloc_stats2(fs, blk, +1);
 	ext2fs_inode_alloc_stats2(fs, ino, +1, 0);
 	drop_refcount = 1;
@@ -174,30 +174,30 @@ need_block:
 	/*
 	 * Link the symlink into the filesystem hierarchy
 	 */
-	if (name) {
+	만약 (name) {
 		retval = ext2fs_lookup(fs, parent, name, strlen(name), 0,
 				       &scratch_ino);
-		if (!retval) {
+		만약 (!retval) {
 			retval = EXT2_ET_FILE_EXISTS;
 			goto cleanup;
 		}
-		if (retval != EXT2_ET_FILE_NOT_FOUND)
+		만약 (retval != EXT2_ET_FILE_NOT_FOUND)
 			goto cleanup;
 		retval = ext2fs_link(fs, parent, name, ino, EXT2_FT_SYMLINK);
-		if (retval)
+		만약 (retval)
 			goto cleanup;
 	}
 	drop_refcount = 0;
 
 cleanup:
-	if (block_buf)
+	만약 (block_buf)
 		ext2fs_free_mem(&block_buf);
-	if (drop_refcount) {
-		if (!fastlink && !inlinelink)
+	만약 (drop_refcount) {
+		만약 (!fastlink && !inlinelink)
 			ext2fs_block_alloc_stats2(fs, blk, -1);
 		ext2fs_inode_alloc_stats2(fs, ino, -1, 0);
 	}
-	return retval;
+	반환 retval;
 }
 
 /*
@@ -205,8 +205,8 @@ cleanup:
  *
  * A fast symlink has its symlink data stored in inode->i_block.
  */
-int ext2fs_is_fast_symlink(struct ext2_inode *inode)
+정수 ext2fs_is_fast_symlink(struct ext2_inode *inode)
 {
-	return LINUX_S_ISLNK(inode->i_mode) && EXT2_I_SIZE(inode) &&
+	반환 LINUX_S_ISLNK(inode->i_mode) && EXT2_I_SIZE(inode) &&
 	       EXT2_I_SIZE(inode) < sizeof(inode->i_block);
 }

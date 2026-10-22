@@ -10,7 +10,7 @@
  */
 
 #include "config.h"
-#if HAVE_UNISTD_H
+#만약 HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <string.h>
@@ -25,33 +25,33 @@
 static const char *lib_version = E2FSPROGS_VERSION;
 static const char *lib_date = E2FSPROGS_DATE;
 
-int ext2fs_parse_version_string(const char *ver_string)
+정수 ext2fs_parse_version_string(const char *ver_string)
 {
 	const char *cp;
-	int version = 0, dot_count = 0;
+	정수 version = 0, dot_count = 0;
 
-	for (cp = ver_string; *cp; cp++) {
-		if (*cp == '.') {
-			if (dot_count++)
+	위해 (cp = ver_string; *cp; cp++) {
+		만약 (*cp == '.') {
+			만약 (dot_count++)
 				break;
-			else
+			아니면
 				continue;
 		}
-		if (!isdigit(*cp))
+		만약 (!isdigit(*cp))
 			break;
 		version = (version * 10) + (*cp - '0');
 	}
-	return version;
+	반환 version;
 }
 
 
-int ext2fs_get_library_version(const char **ver_string,
+정수 ext2fs_get_library_version(const char **ver_string,
 			       const char **date_string)
 {
-	if (ver_string)
+	만약 (ver_string)
 		*ver_string = lib_version;
-	if (date_string)
+	만약 (date_string)
 		*date_string = lib_date;
 
-	return ext2fs_parse_version_string(lib_version);
+	반환 ext2fs_parse_version_string(lib_version);
 }

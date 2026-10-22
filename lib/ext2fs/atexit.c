@@ -36,8 +36,8 @@ static void handle_exit(void)
 {
 	struct exit_data *ed;
 
-	for (ed = items + nr_items - 1; ed >= items; ed--) {
-		if (ed->func == NULL)
+	위해 (ed = items + nr_items - 1; ed >= items; ed--) {
+		만약 (ed->func == NULL)
 			continue;
 		ed->func(ed->data);
 	}
@@ -57,38 +57,38 @@ errcode_t ext2fs_add_exit_fn(ext2_exit_fn func, void *data)
 	size_t x;
 	errcode_t ret;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	만약 (func == NULL)
+		반환 EXT2_ET_INVALID_ARGUMENT;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == func && ed->data == data)
-			return EXT2_ET_FILE_EXISTS;
-		if (ed->func == NULL)
+	위해 (x = 0, ed = items; x < nr_items; x++, ed++) {
+		만약 (ed->func == func && ed->data == data)
+			반환 EXT2_ET_FILE_EXISTS;
+		만약 (ed->func == NULL)
 			free_ed = ed;
 	}
 
-	if (free_ed) {
+	만약 (free_ed) {
 		free_ed->func = func;
 		free_ed->data = data;
-		return 0;
+		반환 0;
 	}
 
-	if (nr_items == 0) {
+	만약 (nr_items == 0) {
 		ret = atexit(handle_exit);
-		if (ret)
-			return ret;
+		만약 (ret)
+			반환 ret;
 	}
 
 	ret = ext2fs_resize_mem(0, (nr_items + 1) * sizeof(struct exit_data),
 				&items);
-	if (ret)
-		return ret;
+	만약 (ret)
+		반환 ret;
 
 	items[nr_items].func = func;
 	items[nr_items].data = data;
 	nr_items++;
 
-	return 0;
+	반환 0;
 }
 
 /* Remove a function from the exit cleanup list. */
@@ -97,13 +97,13 @@ errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, void *data)
 	struct exit_data *ed;
 	size_t x;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	만약 (func == NULL)
+		반환 EXT2_ET_INVALID_ARGUMENT;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == NULL)
-			return 0;
-		if (ed->func == func && ed->data == data) {
+	위해 (x = 0, ed = items; x < nr_items; x++, ed++) {
+		만약 (ed->func == NULL)
+			반환 0;
+		만약 (ed->func == func && ed->data == data) {
 			size_t sz = (nr_items - (x + 1)) *
 				    sizeof(struct exit_data);
 			memmove(ed, ed + 1, sz);
@@ -112,5 +112,5 @@ errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, void *data)
 		}
 	}
 
-	return 0;
+	반환 0;
 }

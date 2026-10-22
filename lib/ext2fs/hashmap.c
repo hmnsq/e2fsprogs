@@ -7,27 +7,27 @@ struct ext2fs_hashmap {
 	void(*free)(void*);
 	struct ext2fs_hashmap_entry *first;
 	struct ext2fs_hashmap_entry *last;
-#if __GNUC_PREREQ (4, 8)
+#만약 __GNUC_PREREQ (4, 8)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #endif
 	struct ext2fs_hashmap_entry *entries[0];
-#if __GNUC_PREREQ (4, 8)
+#만약 __GNUC_PREREQ (4, 8)
 #pragma GCC diagnostic pop
 #endif
 };
 
 uint32_t ext2fs_djb2_hash(const void *str, size_t size)
 {
-	int c;
+	정수 c;
 	const char *s = str;
 	uint32_t hash = 5381;
 
-	while (size-- > 0) {
+	동안 (size-- > 0) {
 		c = *s++;
 		hash = ((hash << 5) + hash) + c;
 	}
-	return hash;
+	반환 hash;
 }
 
 struct ext2fs_hashmap *ext2fs_hashmap_create(
@@ -36,24 +36,24 @@ struct ext2fs_hashmap *ext2fs_hashmap_create(
 {
 	struct ext2fs_hashmap *h = calloc(1, sizeof(struct ext2fs_hashmap) +
 				sizeof(struct ext2fs_hashmap_entry) * size);
-	if (!h)
-		return NULL;
+	만약 (!h)
+		반환 NULL;
 
 	h->size = size;
 	h->free = free_fct;
 	h->hash = hash_fct;
 	h->first = h->last = NULL;
-	return h;
+	반환 h;
 }
 
-int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
+정수 ext2fs_hashmap_add(struct ext2fs_hashmap *h,
 		       void *data, const void *key, size_t key_len)
 {
 	uint32_t hash = h->hash(key, key_len) % h->size;
 	struct ext2fs_hashmap_entry *e = malloc(sizeof(*e));
 
-	if (!e)
-		return -1;
+	만약 (!e)
+		반환 -1;
 
 	e->data = data;
 	e->key = key;
@@ -63,13 +63,13 @@ int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
 
 	e->list_prev = NULL;
 	e->list_next = h->first;
-	if (h->first)
+	만약 (h->first)
 		h->first->list_prev = e;
 	h->first = e;
-	if (!h->last)
+	만약 (!h->last)
 		h->last = e;
 
-	return 0;
+	반환 0;
 }
 
 void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *key,
@@ -78,28 +78,28 @@ void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *key,
 	struct ext2fs_hashmap_entry *iter;
 	uint32_t hash = h->hash(key, key_len) % h->size;
 
-	for (iter = h->entries[hash]; iter; iter = iter->next)
-		if (iter->key_len == key_len && !memcmp(iter->key, key, key_len))
-			return iter->data;
-	return NULL;
+	위해 (iter = h->entries[hash]; iter; iter = iter->next)
+		만약 (iter->key_len == key_len && !memcmp(iter->key, key, key_len))
+			반환 iter->data;
+	반환 NULL;
 }
 
 void *ext2fs_hashmap_iter_in_order(struct ext2fs_hashmap *h,
 				   struct ext2fs_hashmap_entry **it)
 {
 	*it = *it ? (*it)->list_next : h->first;
-	return *it ? (*it)->data : NULL;
+	반환 *it ? (*it)->data : NULL;
 }
 
 void ext2fs_hashmap_free(struct ext2fs_hashmap *h)
 {
 	size_t	i;
 
-	for (i = 0; i < h->size; ++i) {
+	위해 (i = 0; i < h->size; ++i) {
 		struct ext2fs_hashmap_entry *it = h->entries[i];
-		while (it) {
+		동안 (it) {
 			struct ext2fs_hashmap_entry *tmp = it->next;
-			if (h->free)
+			만약 (h->free)
 				h->free(it->data);
 			free(it);
 			it = tmp;

@@ -42,13 +42,13 @@ static void TEA_transform(__u32 buf[4], __u32 const in[])
 	__u32	sum = 0;
 	__u32	b0 = buf[0], b1 = buf[1];
 	__u32	a = in[0], b = in[1], c = in[2], d = in[3];
-	int	n = 16;
+	정수	n = 16;
 
 	do {
 		sum += DELTA;
 		b0 += ((b1 << 4)+a) ^ (b1+sum) ^ ((b1 >> 5)+b);
 		b1 += ((b0 << 4)+c) ^ (b0+sum) ^ ((b0 >> 5)+d);
-	} while(--n);
+	} 동안(--n);
 
 	buf[0] += b0;
 	buf[1] += b1;
@@ -123,33 +123,33 @@ static void halfMD4Transform (__u32 buf[4], __u32 const in[])
 #undef K3
 
 /* The old legacy hash */
-static ext2_dirhash_t dx_hack_hash (const char *name, int len,
-				    int unsigned_flag)
+static ext2_dirhash_t dx_hack_hash (const char *name, 정수 len,
+				    정수 unsigned_flag)
 {
 	__u32 hash, hash0 = 0x12a3fe2d, hash1 = 0x37abe8f9;
 	const unsigned char *ucp = (const unsigned char *) name;
 	const signed char *scp = (const signed char *) name;
-	int c;
+	정수 c;
 
-	while (len--) {
-		if (unsigned_flag)
-			c = (int) *ucp++;
-		else
-			c = (int) *scp++;
+	동안 (len--) {
+		만약 (unsigned_flag)
+			c = (정수) *ucp++;
+		아니면
+			c = (정수) *scp++;
 		hash = hash1 + (hash0 ^ (c * 7152373));
 
-		if (hash & 0x80000000) hash -= 0x7fffffff;
+		만약 (hash & 0x80000000) hash -= 0x7fffffff;
 		hash1 = hash0;
 		hash0 = hash;
 	}
-	return (hash0 << 1);
+	반환 (hash0 << 1);
 }
 
-static void str2hashbuf(const char *msg, int len, __u32 *buf, int num,
-			int unsigned_flag)
+static void str2hashbuf(const char *msg, 정수 len, __u32 *buf, 정수 num,
+			정수 unsigned_flag)
 {
 	__u32	pad, val;
-	int	i, c;
+	정수	i, c;
 	const unsigned char *ucp = (const unsigned char *) msg;
 	const signed char *scp = (const signed char *) msg;
 
@@ -157,24 +157,24 @@ static void str2hashbuf(const char *msg, int len, __u32 *buf, int num,
 	pad |= pad << 16;
 
 	val = pad;
-	if (len > num*4)
+	만약 (len > num*4)
 		len = num * 4;
-	for (i=0; i < len; i++) {
-		if (unsigned_flag)
-			c = (int) ucp[i];
-		else
-			c = (int) scp[i];
+	위해 (i=0; i < len; i++) {
+		만약 (unsigned_flag)
+			c = (정수) ucp[i];
+		아니면
+			c = (정수) scp[i];
 
 		val = c + (val << 8);
-		if ((i % 4) == 3) {
+		만약 ((i % 4) == 3) {
 			*buf++ = val;
 			val = pad;
 			num--;
 		}
 	}
-	if (--num >= 0)
+	만약 (--num >= 0)
 		*buf++ = val;
-	while (--num >= 0)
+	동안 (--num >= 0)
 		*buf++ = pad;
 }
 
@@ -196,7 +196,7 @@ static void str2hashbuf(const char *msg, int len, __u32 *buf, int num,
  * ext2fs_dirhash2.
  *
  */
-errcode_t ext2fs_dirhash(int version, const char *name, int len,
+errcode_t ext2fs_dirhash(정수 version, const char *name, 정수 len,
 			 const __u32 *seed,
 			 ext2_dirhash_t *ret_hash,
 			 ext2_dirhash_t *ret_minor_hash)
@@ -204,9 +204,9 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 	__u32	hash;
 	__u32	minor_hash = 0;
 	const char	*p;
-	int		i;
+	정수		i;
 	__u32 		in[8], buf[4];
-	int		unsigned_flag = 0;
+	정수		unsigned_flag = 0;
 
 	/* Initialize the default seed for the hash checksum functions */
 	buf[0] = 0x67452301;
@@ -215,12 +215,12 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 	buf[3] = 0x10325476;
 
 	/* Check to see if the seed is all zero's */
-	if (seed) {
-		for (i=0; i < 4; i++) {
-			if (seed[i])
+	만약 (seed) {
+		위해 (i=0; i < 4; i++) {
+			만약 (seed[i])
 				break;
 		}
-		if (i < 4)
+		만약 (i < 4)
 			memcpy(buf, seed, sizeof(buf));
 	}
 
@@ -236,7 +236,7 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 		/* fallthrough */
 	case EXT2_HASH_HALF_MD4:
 		p = name;
-		while (len > 0) {
+		동안 (len > 0) {
 			str2hashbuf(p, len, in, 8, unsigned_flag);
 			halfMD4Transform(buf, in);
 			len -= 32;
@@ -250,7 +250,7 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 		/* fallthrough */
 	case EXT2_HASH_TEA:
 		p = name;
-		while (len > 0) {
+		동안 (len > 0) {
 			str2hashbuf(p, len, in, 4, unsigned_flag);
 			TEA_transform(buf, in);
 			len -= 16;
@@ -261,12 +261,12 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 		break;
 	default:
 		*ret_hash = 0;
-		return EXT2_ET_DIRHASH_UNSUPP;
+		반환 EXT2_ET_DIRHASH_UNSUPP;
 	}
 	*ret_hash = hash & ~1;
-	if (ret_minor_hash)
+	만약 (ret_minor_hash)
 		*ret_minor_hash = minor_hash;
-	return 0;
+	반환 0;
 }
 
 /*
@@ -275,33 +275,33 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
  * encoding support based on the nls_table and the flags. Check
  * ext2fs_dirhash for documentation on the input and output parameters.
  */
-errcode_t ext2fs_dirhash2(int version, const char *name, int len,
+errcode_t ext2fs_dirhash2(정수 version, const char *name, 정수 len,
 			  const struct ext2fs_nls_table *charset,
-			  int hash_flags, const __u32 *seed,
+			  정수 hash_flags, const __u32 *seed,
 			  ext2_dirhash_t *ret_hash,
 			  ext2_dirhash_t *ret_minor_hash)
 {
 	errcode_t r;
-	int dlen;
+	정수 dlen;
 
-	if (len && charset && (hash_flags & EXT4_CASEFOLD_FL)) {
+	만약 (len && charset && (hash_flags & EXT4_CASEFOLD_FL)) {
 		char buff[PATH_MAX];
 
 		dlen = charset->ops->casefold(charset,
 			      (const unsigned char *) name, len,
 			      (unsigned char *) buff, sizeof(buff));
-		if (dlen < 0) {
-			if (dlen == -EINVAL)
+		만약 (dlen < 0) {
+			만약 (dlen == -EINVAL)
 				goto opaque_seq;
 
-			return dlen;
+			반환 dlen;
 		}
 		r = ext2fs_dirhash(version, buff, dlen, seed, ret_hash,
 				   ret_minor_hash);
-		return r;
+		반환 r;
 	}
 
 opaque_seq:
-	return ext2fs_dirhash(version, name, len, seed, ret_hash,
+	반환 ext2fs_dirhash(version, name, len, seed, ret_hash,
 			      ret_minor_hash);
 }
