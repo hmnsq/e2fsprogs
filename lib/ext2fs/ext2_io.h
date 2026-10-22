@@ -12,23 +12,23 @@
 #ifndef _EXT2FS_EXT2_IO_H
 #define _EXT2FS_EXT2_IO_H
 
-#include <ext2fs/ext2_types.h>
+#شامل <ext2fs/ext2_types.h>
 
 /*
  * ext2_loff_t is defined here since unix_io.c needs it.
  */
-#if defined(__GNUC__) || defined(HAS_LONG_LONG)
-typedef long long	ext2_loff_t;
-#else
-typedef long		ext2_loff_t;
+#اگر defined(__GNUC__) || defined(HAS_LONG_LONG)
+تعریفنوع long long	ext2_loff_t;
+#وگرنه
+تعریفنوع long		ext2_loff_t;
 #endif
 
 /* llseek.c */
-ext2_loff_t ext2fs_llseek (int, ext2_loff_t, int);
+ext2_loff_t ext2fs_llseek (صحیح, ext2_loff_t, صحیح);
 
-typedef struct struct_io_manager *io_manager;
-typedef struct struct_io_channel *io_channel;
-typedef struct struct_io_stats *io_stats;
+تعریفنوع ساختار struct_io_manager *io_manager;
+تعریفنوع ساختار struct_io_channel *io_channel;
+تعریفنوع ساختار struct_io_stats *io_stats;
 
 #define CHANNEL_FLAGS_WRITETHROUGH	0x01
 #define CHANNEL_FLAGS_DISCARD_ZEROES	0x02
@@ -39,70 +39,70 @@ typedef struct struct_io_stats *io_stats;
 
 #define io_channel_discard_zeroes_data(i) (i->flags & CHANNEL_FLAGS_DISCARD_ZEROES)
 
-struct struct_io_channel {
+ساختار struct_io_channel {
 	errcode_t	magic;
 	io_manager	manager;
-	char		*name;
-	int		block_size;
+	نویسه		*name;
+	صحیح		block_size;
 	errcode_t	(*read_error)(io_channel channel,
 				      unsigned long block,
-				      int count,
-				      void *data,
+				      صحیح شمار,
+				      تهی *data,
 				      size_t size,
-				      int actual_bytes_read,
+				      صحیح actual_bytes_read,
 				      errcode_t	error);
 	errcode_t	(*write_error)(io_channel channel,
 				       unsigned long block,
-				       int count,
-				       const void *data,
+				       صحیح شمار,
+				       ثابت تهی *data,
 				       size_t size,
-				       int actual_bytes_written,
+				       صحیح actual_bytes_written,
 				       errcode_t error);
-	int		refcount;
-	unsigned int	flags;
+	صحیح		refcount;
+	unsigned صحیح	flags;
 	long		reserved[14];
-	void		*private_data;
-	void		*app_data;
-	int		align;
+	تهی		*private_data;
+	تهی		*app_data;
+	صحیح		align;
 };
 
-struct struct_io_stats {
-	int			num_fields;
-	int			reserved;
+ساختار struct_io_stats {
+	صحیح			رقم_fields;
+	صحیح			reserved;
 	unsigned long long	bytes_read;
 	unsigned long long	bytes_written;
 	unsigned long long	cache_hits;
 	unsigned long long	cache_misses;
 };
 
-struct struct_io_manager {
+ساختار struct_io_manager {
 	errcode_t magic;
-	const char *name;
-	errcode_t (*open)(const char *name, int flags, io_channel *channel);
+	ثابت نویسه *name;
+	errcode_t (*open)(ثابت نویسه *name, صحیح flags, io_channel *channel);
 	errcode_t (*close)(io_channel channel);
-	errcode_t (*set_blksize)(io_channel channel, int blksize);
+	errcode_t (*set_blksize)(io_channel channel, صحیح blksize);
 	errcode_t (*read_blk)(io_channel channel, unsigned long block,
-			      int count, void *data);
+			      صحیح شمار, تهی *data);
 	errcode_t (*write_blk)(io_channel channel, unsigned long block,
-			       int count, const void *data);
+			       صحیح شمار, ثابت تهی *data);
 	errcode_t (*flush)(io_channel channel);
 	errcode_t (*write_byte)(io_channel channel, unsigned long offset,
-				int count, const void *data);
-	errcode_t (*set_option)(io_channel channel, const char *option,
-				const char *arg);
+				صحیح شمار, ثابت تهی *data);
+	errcode_t (*set_option)(io_channel channel, ثابت نویسه *option,
+				ثابت نویسه *arg);
 	errcode_t (*get_stats)(io_channel channel, io_stats *io_stats);
 	errcode_t (*read_blk64)(io_channel channel, unsigned long long block,
-					int count, void *data);
+					صحیح شمار, تهی *data);
 	errcode_t (*write_blk64)(io_channel channel, unsigned long long block,
-					int count, const void *data);
+					صحیح شمار, ثابت تهی *data);
 	errcode_t (*discard)(io_channel channel, unsigned long long block,
-			     unsigned long long count);
+			     unsigned long long شمار);
 	errcode_t (*cache_readahead)(io_channel channel,
 				     unsigned long long block,
-				     unsigned long long count);
+				     unsigned long long شمار);
 	errcode_t (*zeroout)(io_channel channel, unsigned long long block,
-			     unsigned long long count);
-	errcode_t (*flock)(io_channel channel, unsigned int flock_flags);
+			     unsigned long long شمار);
+	errcode_t (*flock)(io_channel channel, unsigned صحیح flock_flags);
 	long	reserved[13];
 };
 
@@ -131,63 +131,63 @@ struct struct_io_manager {
 #define io_channel_bumpcount(c)		((c)->refcount++)
 
 /* io_manager.c */
-extern errcode_t io_channel_set_options(io_channel channel,
-					const char *options);
-extern errcode_t io_channel_write_byte(io_channel channel,
+بیرونی errcode_t io_channel_set_options(io_channel channel,
+					ثابت نویسه *options);
+بیرونی errcode_t io_channel_write_byte(io_channel channel,
 				       unsigned long offset,
-				       int count, const void *data);
-extern errcode_t io_channel_read_blk64(io_channel channel,
+				       صحیح شمار, ثابت تهی *data);
+بیرونی errcode_t io_channel_read_blk64(io_channel channel,
 				       unsigned long long block,
-				       int count, void *data);
-extern errcode_t io_channel_write_blk64(io_channel channel,
+				       صحیح شمار, تهی *data);
+بیرونی errcode_t io_channel_write_blk64(io_channel channel,
 					unsigned long long block,
-					int count, const void *data);
-extern errcode_t io_channel_discard(io_channel channel,
+					صحیح شمار, ثابت تهی *data);
+بیرونی errcode_t io_channel_discard(io_channel channel,
 				    unsigned long long block,
-				    unsigned long long count);
-extern errcode_t io_channel_zeroout(io_channel channel,
+				    unsigned long long شمار);
+بیرونی errcode_t io_channel_zeroout(io_channel channel,
 				    unsigned long long block,
-				    unsigned long long count);
-extern errcode_t io_channel_alloc_buf(io_channel channel,
-				      int count, void *ptr);
-extern errcode_t io_channel_cache_readahead(io_channel io,
+				    unsigned long long شمار);
+بیرونی errcode_t io_channel_alloc_buf(io_channel channel,
+				      صحیح شمار, تهی *ptr);
+بیرونی errcode_t io_channel_cache_readahead(io_channel io,
 					    unsigned long long block,
-					    unsigned long long count);
-extern errcode_t io_channel_flock(io_channel io, unsigned int flock_flags);
-extern errcode_t io_channel_funlock(io_channel io);
+					    unsigned long long شمار);
+بیرونی errcode_t io_channel_flock(io_channel io, unsigned صحیح flock_flags);
+بیرونی errcode_t io_channel_funlock(io_channel io);
 
 #ifdef _WIN32
 /* windows_io.c */
-extern io_manager windows_io_manager;
+بیرونی io_manager windows_io_manager;
 #define default_io_manager windows_io_manager
-#else
+#وگرنه
 /* unix_io.c */
-extern io_manager unix_io_manager;
-extern io_manager unixfd_io_manager;
+بیرونی io_manager unix_io_manager;
+بیرونی io_manager unixfd_io_manager;
 #define default_io_manager unix_io_manager
 #endif
 
 /* sparse_io.c */
-extern io_manager sparse_io_manager;
-extern io_manager sparsefd_io_manager;
+بیرونی io_manager sparse_io_manager;
+بیرونی io_manager sparsefd_io_manager;
 
 /* undo_io.c */
-extern io_manager undo_io_manager;
-extern errcode_t set_undo_io_backing_manager(io_manager manager);
-extern errcode_t set_undo_io_backup_file(char *file_name);
+بیرونی io_manager undo_io_manager;
+بیرونی errcode_t set_undo_io_backing_manager(io_manager manager);
+بیرونی errcode_t set_undo_io_backup_file(نویسه *file_name);
 
 /* test_io.c */
-extern io_manager test_io_manager, test_io_backing_manager;
-extern void (*test_io_cb_read_blk)
-	(unsigned long block, int count, errcode_t err);
-extern void (*test_io_cb_write_blk)
-	(unsigned long block, int count, errcode_t err);
-extern void (*test_io_cb_read_blk64)
-	(unsigned long long block, int count, errcode_t err);
-extern void (*test_io_cb_write_blk64)
-	(unsigned long long block, int count, errcode_t err);
-extern void (*test_io_cb_set_blksize)
-	(int blksize, errcode_t err);
+بیرونی io_manager test_io_manager, test_io_backing_manager;
+بیرونی تهی (*test_io_cb_read_blk)
+	(unsigned long block, صحیح شمار, errcode_t err);
+بیرونی تهی (*test_io_cb_write_blk)
+	(unsigned long block, صحیح شمار, errcode_t err);
+بیرونی تهی (*test_io_cb_read_blk64)
+	(unsigned long long block, صحیح شمار, errcode_t err);
+بیرونی تهی (*test_io_cb_write_blk64)
+	(unsigned long long block, صحیح شمار, errcode_t err);
+بیرونی تهی (*test_io_cb_set_blksize)
+	(صحیح blksize, errcode_t err);
 
 #endif /* _EXT2FS_EXT2_IO_H */
 

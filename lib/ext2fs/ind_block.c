@@ -10,58 +10,58 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#شامل "config.h"
+#شامل <stdio.h>
+#شامل <string.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#شامل "ext2_fs.h"
+#شامل "ext2fs.h"
 
-errcode_t ext2fs_read_ind_block(ext2_filsys fs, blk_t blk, void *buf)
+errcode_t ext2fs_read_ind_block(ext2_filsys fs, blk_t blk, تهی *buf)
 {
 	errcode_t	retval;
-#ifdef WORDS_BIGENDIAN
+#ifdef واژگان_BIGENDIAN
 	blk_t		*block_nr;
-	int		i;
-	int		limit = fs->blocksize >> 2;
+	صحیح		i;
+	صحیح		limit = fs->blocksize >> 2;
 #endif
 
-	if ((fs->flags & EXT2_FLAG_IMAGE_FILE) &&
+	اگر ((fs->flags & EXT2_FLAG_IMAGE_FILE) &&
 	    (fs->io != fs->image_io))
 		memset(buf, 0, fs->blocksize);
-	else {
+	وگرنه {
 		retval = io_channel_read_blk(fs->io, blk, 1, buf);
-		if (retval)
-			return retval;
+		اگر (retval)
+			بازگشت retval;
 	}
-#ifdef WORDS_BIGENDIAN
+#ifdef واژگان_BIGENDIAN
 	block_nr = (blk_t *) buf;
-	for (i = 0; i < limit; i++, block_nr++)
+	برای (i = 0; i < limit; i++, block_nr++)
 		*block_nr = ext2fs_swab32(*block_nr);
 #endif
-	return 0;
+	بازگشت 0;
 }
 
-errcode_t ext2fs_write_ind_block(ext2_filsys fs, blk_t blk, void *buf)
+errcode_t ext2fs_write_ind_block(ext2_filsys fs, blk_t blk, تهی *buf)
 {
-#ifdef WORDS_BIGENDIAN
+#ifdef واژگان_BIGENDIAN
 	blk_t		*block_nr;
-	int		i;
-	int		limit = fs->blocksize >> 2;
+	صحیح		i;
+	صحیح		limit = fs->blocksize >> 2;
 #endif
 
-	if (fs->flags & EXT2_FLAG_IMAGE_FILE)
-		return 0;
+	اگر (fs->flags & EXT2_FLAG_IMAGE_FILE)
+		بازگشت 0;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef واژگان_BIGENDIAN
 	block_nr = (blk_t *) buf;
-	for (i = 0; i < limit; i++, block_nr++)
+	برای (i = 0; i < limit; i++, block_nr++)
 		*block_nr = ext2fs_swab32(*block_nr);
 #endif
-	return io_channel_write_blk(fs->io, blk, 1, buf);
+	بازگشت io_channel_write_blk(fs->io, blk, 1, buf);
 }
 
 

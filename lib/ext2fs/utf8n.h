@@ -20,22 +20,22 @@
 #ifndef UTF8NORM_H
 #define UTF8NORM_H
 
-#include <stdint.h>
-#include <unistd.h>
-#include <string.h>
+#شامل <stdint.h>
+#شامل <unistd.h>
+#شامل <string.h>
 
 /* Encoding a unicode version number as a single unsigned int. */
 #define UNICODE_MAJ_SHIFT		(16)
 #define UNICODE_MIN_SHIFT		(8)
 
 #define UNICODE_AGE(MAJ, MIN, REV)			\
-	(((unsigned int)(MAJ) << UNICODE_MAJ_SHIFT) |	\
-	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
-	 ((unsigned int)(REV)))
+	(((unsigned صحیح)(MAJ) << UNICODE_MAJ_SHIFT) |	\
+	 ((unsigned صحیح)(MIN) << UNICODE_MIN_SHIFT) |	\
+	 ((unsigned صحیح)(REV)))
 
 /* Highest unicode version supported by the data tables. */
-extern int utf8version_is_supported(uint8_t maj, uint8_t min, uint8_t rev);
-extern int utf8version_latest(void);
+بیرونی صحیح utf8version_is_supported(uint8_t maj, uint8_t min, uint8_t rev);
+بیرونی صحیح utf8version_latest(تهی);
 
 /*
  * Look for the correct const struct utf8data for a unicode version.
@@ -52,24 +52,24 @@ extern int utf8version_latest(void);
  *  - Remove any Default_Ignorable_Code_Point.
  *  - Apply a full casefold (C + F).
  */
-extern const struct utf8data *utf8nfdi(unsigned int maxage);
-extern const struct utf8data *utf8nfdicf(unsigned int maxage);
+بیرونی ثابت ساختار utf8data *utf8nfdi(unsigned صحیح maxage);
+بیرونی ثابت ساختار utf8data *utf8nfdicf(unsigned صحیح maxage);
 
 /*
  * Determine the maximum age of any unicode character in the string.
  * Returns 0 if only unassigned code points are present.
  * Returns -1 if the input is not valid UTF-8.
  */
-extern int utf8agemax(const struct utf8data *data, const char *s);
-extern int utf8nagemax(const struct utf8data *data, const char *s, size_t len);
+بیرونی صحیح utf8agemax(ثابت ساختار utf8data *data, ثابت نویسه *s);
+بیرونی صحیح utf8nagemax(ثابت ساختار utf8data *data, ثابت نویسه *s, size_t len);
 
 /*
  * Determine the minimum age of any unicode character in the string.
  * Returns 0 if any unassigned code points are present.
  * Returns -1 if the input is not valid UTF-8.
  */
-extern int utf8agemin(const struct utf8data *data, const char *s);
-extern int utf8nagemin(const struct utf8data *data, const char *s, size_t len);
+بیرونی صحیح utf8agemin(ثابت ساختار utf8data *data, ثابت نویسه *s);
+بیرونی صحیح utf8nagemin(ثابت ساختار utf8data *data, ثابت نویسه *s, size_t len);
 
 /*
  * Determine the length of the normalized from of the string,
@@ -77,8 +77,8 @@ extern int utf8nagemin(const struct utf8data *data, const char *s, size_t len);
  * Returns 0 if only ignorable code points are present.
  * Returns -1 if the input is not valid UTF-8.
  */
-extern ssize_t utf8len(const struct utf8data *data, const char *s);
-extern ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len);
+بیرونی ssize_t utf8len(ثابت ساختار utf8data *data, ثابت نویسه *s);
+بیرونی ssize_t utf8nlen(ثابت ساختار utf8data *data, ثابت نویسه *s, size_t len);
 
 /* Needed in struct utf8cursor below. */
 #define UTF8HANGULLEAF	(12)
@@ -86,17 +86,17 @@ extern ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len);
 /*
  * Cursor structure used by the normalizer.
  */
-struct utf8cursor {
-	const struct utf8data	*data;
-	const char	*s;
-	const char	*p;
-	const char	*ss;
-	const char	*sp;
-	unsigned int	len;
-	unsigned int	slen;
-	short int	ccc;
-	short int	nccc;
-	unsigned char	hangul[UTF8HANGULLEAF];
+ساختار utf8cursor {
+	ثابت ساختار utf8data	*data;
+	ثابت نویسه	*s;
+	ثابت نویسه	*p;
+	ثابت نویسه	*ss;
+	ثابت نویسه	*sp;
+	unsigned صحیح	len;
+	unsigned صحیح	slen;
+	short صحیح	ccc;
+	short صحیح	nccc;
+	unsigned نویسه	hangul[UTF8HANGULLEAF];
 };
 
 /*
@@ -104,10 +104,10 @@ struct utf8cursor {
  * Returns 0 on success.
  * Returns -1 on failure.
  */
-extern int utf8cursor(struct utf8cursor *u8c, const struct utf8data *data,
-		      const char *s);
-extern int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
-		       const char *s, size_t len);
+بیرونی صحیح utf8cursor(ساختار utf8cursor *u8c, ثابت ساختار utf8data *data,
+		      ثابت نویسه *s);
+بیرونی صحیح utf8ncursor(ساختار utf8cursor *u8c, ثابت ساختار utf8data *data,
+		       ثابت نویسه *s, size_t len);
 
 /*
  * Get the next byte in the normalization.
@@ -115,6 +115,6 @@ extern int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
  * Returns 0 when the end of the normalization is reached.
  * Returns -1 if the string being normalized is not valid UTF-8.
  */
-extern int utf8byte(struct utf8cursor *u8c);
+بیرونی صحیح utf8byte(ساختار utf8cursor *u8c);
 
 #endif /* UTF8NORM_H */

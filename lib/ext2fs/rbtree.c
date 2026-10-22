@@ -20,307 +20,307 @@
   linux/lib/rbtree.c
 */
 
-#include "rbtree.h"
+#شامل "rbtree.h"
 
-static void __rb_rotate_left(struct rb_node *node, struct rb_root *root)
+ایستا تهی __rb_rotate_left(ساختار rb_گره *گره, ساختار rb_ریشه *ریشه)
 {
-	struct rb_node *right = node->rb_right;
-	struct rb_node *parent = ext2fs_rb_parent(node);
+	ساختار rb_گره *راست = گره->rb_راست;
+	ساختار rb_گره *parent = ext2fs_rb_parent(گره);
 
-	if ((node->rb_right = right->rb_left))
-		ext2fs_rb_set_parent(right->rb_left, node);
-	right->rb_left = node;
+	اگر ((گره->rb_راست = راست->rb_چپ))
+		ext2fs_rb_set_parent(راست->rb_چپ, گره);
+	راست->rb_چپ = گره;
 
-	ext2fs_rb_set_parent(right, parent);
+	ext2fs_rb_set_parent(راست, parent);
 
-	if (parent)
+	اگر (parent)
 	{
-		if (node == parent->rb_left)
-			parent->rb_left = right;
-		else
-			parent->rb_right = right;
+		اگر (گره == parent->rb_چپ)
+			parent->rb_چپ = راست;
+		وگرنه
+			parent->rb_راست = راست;
 	}
-	else
-		root->rb_node = right;
-	ext2fs_rb_set_parent(node, right);
+	وگرنه
+		ریشه->rb_گره = راست;
+	ext2fs_rb_set_parent(گره, راست);
 }
 
-static void __rb_rotate_right(struct rb_node *node, struct rb_root *root)
+ایستا تهی __rb_rotate_right(ساختار rb_گره *گره, ساختار rb_ریشه *ریشه)
 {
-	struct rb_node *left = node->rb_left;
-	struct rb_node *parent = ext2fs_rb_parent(node);
+	ساختار rb_گره *چپ = گره->rb_چپ;
+	ساختار rb_گره *parent = ext2fs_rb_parent(گره);
 
-	if ((node->rb_left = left->rb_right))
-		ext2fs_rb_set_parent(left->rb_right, node);
-	left->rb_right = node;
+	اگر ((گره->rb_چپ = چپ->rb_راست))
+		ext2fs_rb_set_parent(چپ->rb_راست, گره);
+	چپ->rb_راست = گره;
 
-	ext2fs_rb_set_parent(left, parent);
+	ext2fs_rb_set_parent(چپ, parent);
 
-	if (parent)
+	اگر (parent)
 	{
-		if (node == parent->rb_right)
-			parent->rb_right = left;
-		else
-			parent->rb_left = left;
+		اگر (گره == parent->rb_راست)
+			parent->rb_راست = چپ;
+		وگرنه
+			parent->rb_چپ = چپ;
 	}
-	else
-		root->rb_node = left;
-	ext2fs_rb_set_parent(node, left);
+	وگرنه
+		ریشه->rb_گره = چپ;
+	ext2fs_rb_set_parent(گره, چپ);
 }
 
-void ext2fs_rb_insert_color(struct rb_node *node, struct rb_root *root)
+تهی ext2fs_rb_درج_color(ساختار rb_گره *گره, ساختار rb_ریشه *ریشه)
 {
-	struct rb_node *parent, *gparent;
+	ساختار rb_گره *parent, *gparent;
 
-	while ((parent = ext2fs_rb_parent(node)) && ext2fs_rb_is_red(parent))
+	وقتی ((parent = ext2fs_rb_parent(گره)) && ext2fs_rb_is_red(parent))
 	{
 		gparent = ext2fs_rb_parent(parent);
 
-		if (parent == gparent->rb_left)
+		اگر (parent == gparent->rb_چپ)
 		{
 			{
-				register struct rb_node *uncle = gparent->rb_right;
-				if (uncle && ext2fs_rb_is_red(uncle))
+				ثبات ساختار rb_گره *uncle = gparent->rb_راست;
+				اگر (uncle && ext2fs_rb_is_red(uncle))
 				{
 					ext2fs_rb_set_black(uncle);
 					ext2fs_rb_set_black(parent);
 					ext2fs_rb_set_red(gparent);
-					node = gparent;
-					continue;
+					گره = gparent;
+					ادامه;
 				}
 			}
 
-			if (parent->rb_right == node)
+			اگر (parent->rb_راست == گره)
 			{
-				register struct rb_node *tmp;
-				__rb_rotate_left(parent, root);
+				ثبات ساختار rb_گره *tmp;
+				__rb_rotate_left(parent, ریشه);
 				tmp = parent;
-				parent = node;
-				node = tmp;
+				parent = گره;
+				گره = tmp;
 			}
 
 			ext2fs_rb_set_black(parent);
 			ext2fs_rb_set_red(gparent);
-			__rb_rotate_right(gparent, root);
-		} else {
+			__rb_rotate_right(gparent, ریشه);
+		} وگرنه {
 			{
-				register struct rb_node *uncle = gparent->rb_left;
-				if (uncle && ext2fs_rb_is_red(uncle))
+				ثبات ساختار rb_گره *uncle = gparent->rb_چپ;
+				اگر (uncle && ext2fs_rb_is_red(uncle))
 				{
 					ext2fs_rb_set_black(uncle);
 					ext2fs_rb_set_black(parent);
 					ext2fs_rb_set_red(gparent);
-					node = gparent;
-					continue;
+					گره = gparent;
+					ادامه;
 				}
 			}
 
-			if (parent->rb_left == node)
+			اگر (parent->rb_چپ == گره)
 			{
-				register struct rb_node *tmp;
-				__rb_rotate_right(parent, root);
+				ثبات ساختار rb_گره *tmp;
+				__rb_rotate_right(parent, ریشه);
 				tmp = parent;
-				parent = node;
-				node = tmp;
+				parent = گره;
+				گره = tmp;
 			}
 
 			ext2fs_rb_set_black(parent);
 			ext2fs_rb_set_red(gparent);
-			__rb_rotate_left(gparent, root);
+			__rb_rotate_left(gparent, ریشه);
 		}
 	}
 
-	ext2fs_rb_set_black(root->rb_node);
+	ext2fs_rb_set_black(ریشه->rb_گره);
 }
 
-static void __rb_erase_color(struct rb_node *node, struct rb_node *parent,
-			     struct rb_root *root)
+ایستا تهی __rb_erase_color(ساختار rb_گره *گره, ساختار rb_گره *parent,
+			     ساختار rb_ریشه *ریشه)
 {
-	struct rb_node *other;
+	ساختار rb_گره *other;
 
-	while ((!node || ext2fs_rb_is_black(node)) && node != root->rb_node)
+	وقتی ((!گره || ext2fs_rb_is_black(گره)) && گره != ریشه->rb_گره)
 	{
-		if (parent->rb_left == node)
+		اگر (parent->rb_چپ == گره)
 		{
-			other = parent->rb_right;
-			if (ext2fs_rb_is_red(other))
+			other = parent->rb_راست;
+			اگر (ext2fs_rb_is_red(other))
 			{
 				ext2fs_rb_set_black(other);
 				ext2fs_rb_set_red(parent);
-				__rb_rotate_left(parent, root);
-				other = parent->rb_right;
+				__rb_rotate_left(parent, ریشه);
+				other = parent->rb_راست;
 			}
-			if ((!other->rb_left || ext2fs_rb_is_black(other->rb_left)) &&
-			    (!other->rb_right || ext2fs_rb_is_black(other->rb_right)))
+			اگر ((!other->rb_چپ || ext2fs_rb_is_black(other->rb_چپ)) &&
+			    (!other->rb_راست || ext2fs_rb_is_black(other->rb_راست)))
 			{
 				ext2fs_rb_set_red(other);
-				node = parent;
-				parent = ext2fs_rb_parent(node);
+				گره = parent;
+				parent = ext2fs_rb_parent(گره);
 			}
-			else
+			وگرنه
 			{
-				if (!other->rb_right || ext2fs_rb_is_black(other->rb_right))
+				اگر (!other->rb_راست || ext2fs_rb_is_black(other->rb_راست))
 				{
-					ext2fs_rb_set_black(other->rb_left);
+					ext2fs_rb_set_black(other->rb_چپ);
 					ext2fs_rb_set_red(other);
-					__rb_rotate_right(other, root);
-					other = parent->rb_right;
+					__rb_rotate_right(other, ریشه);
+					other = parent->rb_راست;
 				}
 				ext2fs_rb_set_color(other, ext2fs_rb_color(parent));
 				ext2fs_rb_set_black(parent);
-				ext2fs_rb_set_black(other->rb_right);
-				__rb_rotate_left(parent, root);
-				node = root->rb_node;
-				break;
+				ext2fs_rb_set_black(other->rb_راست);
+				__rb_rotate_left(parent, ریشه);
+				گره = ریشه->rb_گره;
+				بشکن;
 			}
 		}
-		else
+		وگرنه
 		{
-			other = parent->rb_left;
-			if (ext2fs_rb_is_red(other))
+			other = parent->rb_چپ;
+			اگر (ext2fs_rb_is_red(other))
 			{
 				ext2fs_rb_set_black(other);
 				ext2fs_rb_set_red(parent);
-				__rb_rotate_right(parent, root);
-				other = parent->rb_left;
+				__rb_rotate_right(parent, ریشه);
+				other = parent->rb_چپ;
 			}
-			if ((!other->rb_left || ext2fs_rb_is_black(other->rb_left)) &&
-			    (!other->rb_right || ext2fs_rb_is_black(other->rb_right)))
+			اگر ((!other->rb_چپ || ext2fs_rb_is_black(other->rb_چپ)) &&
+			    (!other->rb_راست || ext2fs_rb_is_black(other->rb_راست)))
 			{
 				ext2fs_rb_set_red(other);
-				node = parent;
-				parent = ext2fs_rb_parent(node);
+				گره = parent;
+				parent = ext2fs_rb_parent(گره);
 			}
-			else
+			وگرنه
 			{
-				if (!other->rb_left || ext2fs_rb_is_black(other->rb_left))
+				اگر (!other->rb_چپ || ext2fs_rb_is_black(other->rb_چپ))
 				{
-					ext2fs_rb_set_black(other->rb_right);
+					ext2fs_rb_set_black(other->rb_راست);
 					ext2fs_rb_set_red(other);
-					__rb_rotate_left(other, root);
-					other = parent->rb_left;
+					__rb_rotate_left(other, ریشه);
+					other = parent->rb_چپ;
 				}
 				ext2fs_rb_set_color(other, ext2fs_rb_color(parent));
 				ext2fs_rb_set_black(parent);
-				ext2fs_rb_set_black(other->rb_left);
-				__rb_rotate_right(parent, root);
-				node = root->rb_node;
-				break;
+				ext2fs_rb_set_black(other->rb_چپ);
+				__rb_rotate_right(parent, ریشه);
+				گره = ریشه->rb_گره;
+				بشکن;
 			}
 		}
 	}
-	if (node)
-		ext2fs_rb_set_black(node);
+	اگر (گره)
+		ext2fs_rb_set_black(گره);
 }
 
-void ext2fs_rb_erase(struct rb_node *node, struct rb_root *root)
+تهی ext2fs_rb_erase(ساختار rb_گره *گره, ساختار rb_ریشه *ریشه)
 {
-	struct rb_node *child, *parent;
-	int color;
+	ساختار rb_گره *child, *parent;
+	صحیح color;
 
-	if (!node->rb_left)
-		child = node->rb_right;
-	else if (!node->rb_right)
-		child = node->rb_left;
-	else
+	اگر (!گره->rb_چپ)
+		child = گره->rb_راست;
+	وگرنه اگر (!گره->rb_راست)
+		child = گره->rb_چپ;
+	وگرنه
 	{
-		struct rb_node *old = node, *left;
+		ساختار rb_گره *old = گره, *چپ;
 
-		node = node->rb_right;
-		while ((left = node->rb_left) != NULL)
-			node = left;
+		گره = گره->rb_راست;
+		وقتی ((چپ = گره->rb_چپ) != پوچ)
+			گره = چپ;
 
-		if (ext2fs_rb_parent(old)) {
-			if (ext2fs_rb_parent(old)->rb_left == old)
-				ext2fs_rb_parent(old)->rb_left = node;
-			else
-				ext2fs_rb_parent(old)->rb_right = node;
-		} else
-			root->rb_node = node;
+		اگر (ext2fs_rb_parent(old)) {
+			اگر (ext2fs_rb_parent(old)->rb_چپ == old)
+				ext2fs_rb_parent(old)->rb_چپ = گره;
+			وگرنه
+				ext2fs_rb_parent(old)->rb_راست = گره;
+		} وگرنه
+			ریشه->rb_گره = گره;
 
-		child = node->rb_right;
-		parent = ext2fs_rb_parent(node);
-		color = ext2fs_rb_color(node);
+		child = گره->rb_راست;
+		parent = ext2fs_rb_parent(گره);
+		color = ext2fs_rb_color(گره);
 
-		if (parent == old) {
-			parent = node;
-		} else {
-			if (child)
+		اگر (parent == old) {
+			parent = گره;
+		} وگرنه {
+			اگر (child)
 				ext2fs_rb_set_parent(child, parent);
-			parent->rb_left = child;
+			parent->rb_چپ = child;
 
-			node->rb_right = old->rb_right;
-			ext2fs_rb_set_parent(old->rb_right, node);
+			گره->rb_راست = old->rb_راست;
+			ext2fs_rb_set_parent(old->rb_راست, گره);
 		}
 
-		node->rb_parent_color = old->rb_parent_color;
-		node->rb_left = old->rb_left;
-		ext2fs_rb_set_parent(old->rb_left, node);
+		گره->rb_parent_color = old->rb_parent_color;
+		گره->rb_چپ = old->rb_چپ;
+		ext2fs_rb_set_parent(old->rb_چپ, گره);
 
-		goto color;
+		برو color;
 	}
 
-	parent = ext2fs_rb_parent(node);
-	color = ext2fs_rb_color(node);
+	parent = ext2fs_rb_parent(گره);
+	color = ext2fs_rb_color(گره);
 
-	if (child)
+	اگر (child)
 		ext2fs_rb_set_parent(child, parent);
-	if (parent)
+	اگر (parent)
 	{
-		if (parent->rb_left == node)
-			parent->rb_left = child;
-		else
-			parent->rb_right = child;
+		اگر (parent->rb_چپ == گره)
+			parent->rb_چپ = child;
+		وگرنه
+			parent->rb_راست = child;
 	}
-	else
-		root->rb_node = child;
+	وگرنه
+		ریشه->rb_گره = child;
 
  color:
-	if (color == RB_BLACK)
-		__rb_erase_color(child, parent, root);
+	اگر (color == RB_BLACK)
+		__rb_erase_color(child, parent, ریشه);
 }
 
 /*
  * This function returns the first node (in sort order) of the tree.
  */
-struct rb_node *ext2fs_rb_first(const struct rb_root *root)
+ساختار rb_گره *ext2fs_rb_first(ثابت ساختار rb_ریشه *ریشه)
 {
-	struct rb_node	*n;
+	ساختار rb_گره	*n;
 
-	n = root->rb_node;
-	if (!n)
-		return NULL;
-	while (n->rb_left)
-		n = n->rb_left;
-	return n;
+	n = ریشه->rb_گره;
+	اگر (!n)
+		بازگشت پوچ;
+	وقتی (n->rb_چپ)
+		n = n->rb_چپ;
+	بازگشت n;
 }
 
-struct rb_node *ext2fs_rb_last(const struct rb_root *root)
+ساختار rb_گره *ext2fs_rb_last(ثابت ساختار rb_ریشه *ریشه)
 {
-	struct rb_node	*n;
+	ساختار rb_گره	*n;
 
-	n = root->rb_node;
-	if (!n)
-		return NULL;
-	while (n->rb_right)
-		n = n->rb_right;
-	return n;
+	n = ریشه->rb_گره;
+	اگر (!n)
+		بازگشت پوچ;
+	وقتی (n->rb_راست)
+		n = n->rb_راست;
+	بازگشت n;
 }
 
-struct rb_node *ext2fs_rb_next(struct rb_node *node)
+ساختار rb_گره *ext2fs_rb_next(ساختار rb_گره *گره)
 {
-	struct rb_node *parent;
+	ساختار rb_گره *parent;
 
-	if (ext2fs_rb_parent(node) == node)
-		return NULL;
+	اگر (ext2fs_rb_parent(گره) == گره)
+		بازگشت پوچ;
 
 	/* If we have a right-hand child, go down and then left as far
 	   as we can. */
-	if (node->rb_right) {
-		node = node->rb_right;
-		while (node->rb_left)
-			node=node->rb_left;
-		return (struct rb_node *)node;
+	اگر (گره->rb_راست) {
+		گره = گره->rb_راست;
+		وقتی (گره->rb_چپ)
+			گره=گره->rb_چپ;
+		بازگشت (ساختار rb_گره *)گره;
 	}
 
 	/* No right-hand children.  Everything down and left is
@@ -329,54 +329,54 @@ struct rb_node *ext2fs_rb_next(struct rb_node *node)
 	   ancestor is a right-hand child of its parent, keep going
 	   up. First time it's a left-hand child of its parent, said
 	   parent is our 'next' node. */
-	while ((parent = ext2fs_rb_parent(node)) && node == parent->rb_right)
-		node = parent;
+	وقتی ((parent = ext2fs_rb_parent(گره)) && گره == parent->rb_راست)
+		گره = parent;
 
-	return parent;
+	بازگشت parent;
 }
 
-struct rb_node *ext2fs_rb_prev(struct rb_node *node)
+ساختار rb_گره *ext2fs_rb_prev(ساختار rb_گره *گره)
 {
-	struct rb_node *parent;
+	ساختار rb_گره *parent;
 
-	if (ext2fs_rb_parent(node) == node)
-		return NULL;
+	اگر (ext2fs_rb_parent(گره) == گره)
+		بازگشت پوچ;
 
 	/* If we have a left-hand child, go down and then right as far
 	   as we can. */
-	if (node->rb_left) {
-		node = node->rb_left;
-		while (node->rb_right)
-			node=node->rb_right;
-		return (struct rb_node *)node;
+	اگر (گره->rb_چپ) {
+		گره = گره->rb_چپ;
+		وقتی (گره->rb_راست)
+			گره=گره->rb_راست;
+		بازگشت (ساختار rb_گره *)گره;
 	}
 
 	/* No left-hand children. Go up till we find an ancestor which
 	   is a right-hand child of its parent */
-	while ((parent = ext2fs_rb_parent(node)) && node == parent->rb_left)
-		node = parent;
+	وقتی ((parent = ext2fs_rb_parent(گره)) && گره == parent->rb_چپ)
+		گره = parent;
 
-	return parent;
+	بازگشت parent;
 }
 
-void ext2fs_rb_replace_node(struct rb_node *victim, struct rb_node *new,
-			  struct rb_root *root)
+تهی ext2fs_rb_replace_گره(ساختار rb_گره *victim, ساختار rb_گره *new,
+			  ساختار rb_ریشه *ریشه)
 {
-	struct rb_node *parent = ext2fs_rb_parent(victim);
+	ساختار rb_گره *parent = ext2fs_rb_parent(victim);
 
 	/* Set the surrounding nodes to point to the replacement */
-	if (parent) {
-		if (victim == parent->rb_left)
-			parent->rb_left = new;
-		else
-			parent->rb_right = new;
-	} else {
-		root->rb_node = new;
+	اگر (parent) {
+		اگر (victim == parent->rb_چپ)
+			parent->rb_چپ = new;
+		وگرنه
+			parent->rb_راست = new;
+	} وگرنه {
+		ریشه->rb_گره = new;
 	}
-	if (victim->rb_left)
-		ext2fs_rb_set_parent(victim->rb_left, new);
-	if (victim->rb_right)
-		ext2fs_rb_set_parent(victim->rb_right, new);
+	اگر (victim->rb_چپ)
+		ext2fs_rb_set_parent(victim->rb_چپ, new);
+	اگر (victim->rb_راست)
+		ext2fs_rb_set_parent(victim->rb_راست, new);
 
 	/* Copy the pointers/colour from the victim to the replacement */
 	*new = *victim;

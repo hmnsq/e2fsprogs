@@ -9,89 +9,89 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#شامل "config.h"
+#شامل <stdio.h>
+#شامل <string.h>
+#شامل <assert.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#اگر HAVE_ERRNO_H
+#شامل <errno.h>
 #endif
-#include <fcntl.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#شامل <fcntl.h>
+#اگر HAVE_SYS_STAT_H
+#شامل <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#اگر HAVE_SYS_TYPES_H
+#شامل <sys/types.h>
 #endif
-#if HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
+#اگر HAVE_SYS_IOCTL_H
+#شامل <sys/ioctl.h>
 #endif
-#if HAVE_NETINET_IN_H
-#include <netinet/in.h>
+#اگر HAVE_NETINET_IN_H
+#شامل <netinet/in.h>
 #endif
 
-#include "ext2_fs.h"
-#include "e2p/e2p.h"
-#include "ext2fsP.h"
+#شامل "ext2_fs.h"
+#شامل "e2p/e2p.h"
+#شامل "ext2fsP.h"
 
-#include "kernel-jbd.h"
+#شامل "kernel-jbd.h"
 
 /*
  * This function automatically sets up the journal superblock and
  * returns it as an allocated block.
  */
 errcode_t ext2fs_create_journal_superblock2(ext2_filsys fs,
-					   struct ext2fs_journal_params *jparams,
-					   int flags, char **ret_jsb)
+					   ساختار ext2fs_journal_params *jparams,
+					   صحیح flags, نویسه **ret_jsb)
 {
 	errcode_t		retval;
 	journal_superblock_t	*jsb;
 
-	if (jparams->num_journal_blocks < JBD2_MIN_JOURNAL_BLOCKS)
-		return EXT2_ET_JOURNAL_TOO_SMALL;
+	اگر (jparams->رقم_journal_blocks < JBD2_MIN_JOURNAL_BLOCKS)
+		بازگشت EXT2_ET_JOURNAL_TOO_SMALL;
 
-	if ((retval = ext2fs_get_mem(fs->blocksize, &jsb)))
-		return retval;
+	اگر ((retval = ext2fs_get_mem(fs->blocksize, &jsb)))
+		بازگشت retval;
 
 	memset (jsb, 0, fs->blocksize);
 
-	jsb->s_header.h_magic = htonl(JBD2_MAGIC_NUMBER);
-	if (flags & EXT2_MKJOURNAL_V1_SUPER)
+	jsb->s_header.h_magic = htonl(JBD2_MAGIC_عدد);
+	اگر (flags & EXT2_MKJOURNAL_V1_SUPER)
 		jsb->s_header.h_blocktype = htonl(JBD2_SUPERBLOCK_V1);
-	else
+	وگرنه
 		jsb->s_header.h_blocktype = htonl(JBD2_SUPERBLOCK_V2);
 	jsb->s_blocksize = htonl(fs->blocksize);
-	jsb->s_maxlen = htonl(jparams->num_journal_blocks + jparams->num_fc_blocks);
+	jsb->s_maxlen = htonl(jparams->رقم_journal_blocks + jparams->رقم_fc_blocks);
 	jsb->s_nr_users = htonl(1);
 	jsb->s_first = htonl(1);
 	jsb->s_sequence = htonl(1);
-	jsb->s_num_fc_blks = htonl(jparams->num_fc_blocks);
-	memcpy(jsb->s_uuid, fs->super->s_uuid, sizeof(fs->super->s_uuid));
+	jsb->s_رقم_fc_blks = htonl(jparams->رقم_fc_blocks);
+	memcpy(jsb->s_uuid, fs->super->s_uuid, اندازه(fs->super->s_uuid));
 	/*
 	 * If we're creating an external journal device, we need to
 	 * adjust these fields.
 	 */
-	if (ext2fs_has_feature_journal_dev(fs->super)) {
+	اگر (ext2fs_has_feature_journal_dev(fs->super)) {
 		jsb->s_nr_users = 0;
 		jsb->s_first = htonl(ext2fs_journal_sb_start(fs->blocksize) + 1);
 	}
 
-	*ret_jsb = (char *) jsb;
-	return 0;
+	*ret_jsb = (نویسه *) jsb;
+	بازگشت 0;
 }
 
-errcode_t ext2fs_create_journal_superblock(ext2_filsys fs, __u32 num_blocks,
-					int flags, char **ret_sb)
+errcode_t ext2fs_create_journal_superblock(ext2_filsys fs, __u32 رقم_blocks,
+					صحیح flags, نویسه **ret_sb)
 {
-	struct ext2fs_journal_params jparams;
+	ساختار ext2fs_journal_params jparams;
 
-	jparams.num_journal_blocks = num_blocks;
-	jparams.num_fc_blocks = 0;
+	jparams.رقم_journal_blocks = رقم_blocks;
+	jparams.رقم_fc_blocks = 0;
 
-	return ext2fs_create_journal_superblock2(fs, &jparams, flags, ret_sb);
+	بازگشت ext2fs_create_journal_superblock2(fs, &jparams, flags, ret_sb);
 }
 
 /*
@@ -99,47 +99,47 @@ errcode_t ext2fs_create_journal_superblock(ext2_filsys fs, __u32 num_blocks,
  * for creating external journals and creating journals on live
  * filesystems.
  */
-static errcode_t write_journal_file(ext2_filsys fs, char *filename,
-				    struct ext2fs_journal_params *jparams,
-				    int flags)
+ایستا errcode_t write_journal_file(ext2_filsys fs, نویسه *filename,
+				    ساختار ext2fs_journal_params *jparams,
+				    صحیح flags)
 {
 	errcode_t	retval;
-	char		*buf = 0;
-	int		fd, ret_size;
+	نویسه		*buf = 0;
+	صحیح		fd, ret_size;
 	blk_t		i;
 
-	if ((retval = ext2fs_create_journal_superblock2(fs, jparams, flags,
+	اگر ((retval = ext2fs_create_journal_superblock2(fs, jparams, flags,
 						       &buf)))
-		return retval;
+		بازگشت retval;
 
 	/* Open the device or journal file */
-	if ((fd = open(filename, O_WRONLY)) < 0) {
+	اگر ((fd = open(filename, O_WRONLY)) < 0) {
 		retval = errno;
-		goto errfree;
+		برو errfree;
 	}
 
 	/* Write the superblock out */
 	retval = EXT2_ET_SHORT_WRITE;
-	ret_size = write(fd, buf, fs->blocksize);
-	if (ret_size < 0) {
+	ret_size = اكتب(fd, buf, fs->blocksize);
+	اگر (ret_size < 0) {
 		retval = errno;
-		goto errout;
+		برو errout;
 	}
-	if (ret_size != (int) fs->blocksize)
-		goto errout;
+	اگر (ret_size != (صحیح) fs->blocksize)
+		برو errout;
 	memset(buf, 0, fs->blocksize);
 
-	if (flags & EXT2_MKJOURNAL_LAZYINIT)
-		goto success;
+	اگر (flags & EXT2_MKJOURNAL_LAZYINIT)
+		برو success;
 
-	for (i = 1; i < jparams->num_journal_blocks + jparams->num_fc_blocks; i++) {
-		ret_size = write(fd, buf, fs->blocksize);
-		if (ret_size < 0) {
+	برای (i = 1; i < jparams->رقم_journal_blocks + jparams->رقم_fc_blocks; i++) {
+		ret_size = اكتب(fd, buf, fs->blocksize);
+		اگر (ret_size < 0) {
 			retval = errno;
-			goto errout;
+			برو errout;
 		}
-		if (ret_size != (int) fs->blocksize)
-			goto errout;
+		اگر (ret_size != (صحیح) fs->blocksize)
+			برو errout;
 	}
 
 success:
@@ -148,7 +148,7 @@ errout:
 	close(fd);
 errfree:
 	ext2fs_free_mem(&buf);
-	return retval;
+	بازگشت retval;
 }
 
 /*
@@ -161,83 +161,83 @@ errfree:
  * attempt to free the static zeroizing buffer.  (This is to keep
  * programs that check for memory leaks happy.)
  */
-#define MAX_STRIDE_LENGTH (4194304 / (int) fs->blocksize)
-errcode_t ext2fs_zero_blocks2(ext2_filsys fs, blk64_t blk, int num,
-			      blk64_t *ret_blk, int *ret_count)
+#define MAX_STRIDE_LENGTH (4194304 / (صحیح) fs->blocksize)
+errcode_t ext2fs_zero_blocks2(ext2_filsys fs, blk64_t blk, صحیح رقم,
+			      blk64_t *ret_blk, صحیح *ret_شمار)
 {
-	int		j, count;
-	static void	*buf;
-	static int	stride_length;
+	صحیح		j, شمار;
+	ایستا تهی	*buf;
+	ایستا صحیح	stride_length;
 	errcode_t	retval;
 
 	/* If fs is null, clean up the static buffer and return */
-	if (!fs) {
-		if (buf) {
-			free(buf);
+	اگر (!fs) {
+		اگر (buf) {
+			آزاد(buf);
 			buf = 0;
 			stride_length = 0;
 		}
-		return 0;
+		بازگشت 0;
 	}
 
 	/* Deal with zeroing less than 1 block */
-	if (num <= 0)
-		return 0;
+	اگر (رقم <= 0)
+		بازگشت 0;
 
 	/* Try a zero out command, if supported */
-	retval = io_channel_zeroout(fs->io, blk, num);
-	if (retval == 0)
-		return 0;
+	retval = io_channel_zeroout(fs->io, blk, رقم);
+	اگر (retval == 0)
+		بازگشت 0;
 
 	/* Allocate the zeroizing buffer if necessary */
-	if (num > stride_length && stride_length < MAX_STRIDE_LENGTH) {
-		void *p;
-		int new_stride = num;
+	اگر (رقم > stride_length && stride_length < MAX_STRIDE_LENGTH) {
+		تهی *p;
+		صحیح new_stride = رقم;
 
-		if (new_stride > MAX_STRIDE_LENGTH)
+		اگر (new_stride > MAX_STRIDE_LENGTH)
 			new_stride = MAX_STRIDE_LENGTH;
 		p = realloc(buf, fs->blocksize * new_stride);
-		if (!p)
-			return EXT2_ET_NO_MEMORY;
+		اگر (!p)
+			بازگشت EXT2_ET_NO_MEMORY;
 		buf = p;
 		stride_length = new_stride;
 		memset(buf, 0, fs->blocksize * stride_length);
 	}
 	/* OK, do the write loop */
 	j=0;
-	while (j < num) {
-		if (blk % stride_length) {
-			count = stride_length - (blk % stride_length);
-			if (count > (num - j))
-				count = num - j;
-		} else {
-			count = num - j;
-			if (count > stride_length)
-				count = stride_length;
+	وقتی (j < رقم) {
+		اگر (blk % stride_length) {
+			شمار = stride_length - (blk % stride_length);
+			اگر (شمار > (رقم - j))
+				شمار = رقم - j;
+		} وگرنه {
+			شمار = رقم - j;
+			اگر (شمار > stride_length)
+				شمار = stride_length;
 		}
-		retval = io_channel_write_blk64(fs->io, blk, count, buf);
-		if (retval) {
-			if (ret_count)
-				*ret_count = count;
-			if (ret_blk)
+		retval = io_channel_write_blk64(fs->io, blk, شمار, buf);
+		اگر (retval) {
+			اگر (ret_شمار)
+				*ret_شمار = شمار;
+			اگر (ret_blk)
 				*ret_blk = blk;
-			return retval;
+			بازگشت retval;
 		}
-		j += count; blk += count;
+		j += شمار; blk += شمار;
 	}
-	return 0;
+	بازگشت 0;
 }
 
-errcode_t ext2fs_zero_blocks(ext2_filsys fs, blk_t blk, int num,
-			     blk_t *ret_blk, int *ret_count)
+errcode_t ext2fs_zero_blocks(ext2_filsys fs, blk_t blk, صحیح رقم,
+			     blk_t *ret_blk, صحیح *ret_شمار)
 {
 	blk64_t ret_blk2;
 	errcode_t retval;
 
-	retval = ext2fs_zero_blocks2(fs, blk, num, &ret_blk2, ret_count);
-	if (retval)
+	retval = ext2fs_zero_blocks2(fs, blk, رقم, &ret_blk2, ret_شمار);
+	اگر (retval)
 		*ret_blk = (blk_t) ret_blk2;
-	return retval;
+	بازگشت retval;
 }
 
 /*
@@ -245,108 +245,108 @@ errcode_t ext2fs_zero_blocks(ext2_filsys fs, blk_t blk, int num,
  * filesystem.  Pick a group that has the largest number of free
  * blocks.
  */
-static blk64_t get_midpoint_journal_block(ext2_filsys fs)
+ایستا blk64_t get_midpoint_journal_block(ext2_filsys fs)
 {
 	dgrp_t	group, start, end, i, log_flex;
 
-	group = ext2fs_group_of_blk2(fs, (ext2fs_blocks_count(fs->super) -
+	group = ext2fs_group_of_blk2(fs, (ext2fs_blocks_شمار(fs->super) -
 					 fs->super->s_first_data_block) / 2);
 	log_flex = 1U << fs->super->s_log_groups_per_flex;
-	if (fs->super->s_log_groups_per_flex && (group > log_flex)) {
+	اگر (fs->super->s_log_groups_per_flex && (group > log_flex)) {
 		group = group & ~(log_flex - 1);
-		while ((group < fs->group_desc_count) &&
-		       ext2fs_bg_free_blocks_count(fs, group) == 0)
+		وقتی ((group < fs->group_desc_شمار) &&
+		       ext2fs_bg_free_blocks_شمار(fs, group) == 0)
 			group++;
-		if (group == fs->group_desc_count)
+		اگر (group == fs->group_desc_شمار)
 			group = 0;
 		start = group;
-	} else
+	} وگرنه
 		start = (group > 0) ? group-1 : group;
-	end = ((group+1) < fs->group_desc_count) ? group+1 : group;
+	end = ((group+1) < fs->group_desc_شمار) ? group+1 : group;
 	group = start;
-	for (i = start + 1; i <= end; i++)
-		if (ext2fs_bg_free_blocks_count(fs, i) >
-		    ext2fs_bg_free_blocks_count(fs, group))
+	برای (i = start + 1; i <= end; i++)
+		اگر (ext2fs_bg_free_blocks_شمار(fs, i) >
+		    ext2fs_bg_free_blocks_شمار(fs, group))
 			group = i;
-	return ext2fs_group_first_block2(fs, group);
+	بازگشت ext2fs_group_first_block2(fs, group);
 }
 
 /*
  * This function creates a journal using direct I/O routines.
  */
-static errcode_t write_journal_inode(ext2_filsys fs, ext2_ino_t journal_ino,
-				     struct ext2fs_journal_params *jparams,
-				     blk64_t goal, int flags)
+ایستا errcode_t write_journal_inode(ext2_filsys fs, ext2_ino_t journal_ino,
+				     ساختار ext2fs_journal_params *jparams,
+				     blk64_t goal, صحیح flags)
 {
-	char			*buf;
+	نویسه			*buf;
 	errcode_t		retval;
-	struct ext2_inode	inode;
+	ساختار ext2_inode	inode;
 	unsigned long long	inode_size;
-	int			falloc_flags = EXT2_FALLOCATE_FORCE_INIT;
+	صحیح			falloc_flags = EXT2_FALLOCATE_FORCE_INIT;
 	blk64_t			zblk;
 	time_t			now;
 
-	if ((retval = ext2fs_create_journal_superblock2(fs, jparams, flags,
+	اگر ((retval = ext2fs_create_journal_superblock2(fs, jparams, flags,
 						       &buf)))
-		return retval;
+		بازگشت retval;
 
-	if ((retval = ext2fs_read_bitmaps(fs)))
-		goto out2;
+	اگر ((retval = ext2fs_read_bitmaps(fs)))
+		برو out2;
 
-	if ((retval = ext2fs_read_inode(fs, journal_ino, &inode)))
-		goto out2;
+	اگر ((retval = ext2fs_read_inode(fs, journal_ino, &inode)))
+		برو out2;
 
-	if (inode.i_blocks > 0) {
+	اگر (inode.i_blocks > 0) {
 		retval = EEXIST;
-		goto out2;
+		برو out2;
 	}
 
-	if (goal == ~0ULL)
+	اگر (goal == ~0ULL)
 		goal = get_midpoint_journal_block(fs);
 
-	if (ext2fs_has_feature_extents(fs->super))
+	اگر (ext2fs_has_feature_extents(fs->super))
 		inode.i_flags |= EXT4_EXTENTS_FL;
 
-	if (!(flags & EXT2_MKJOURNAL_LAZYINIT))
+	اگر (!(flags & EXT2_MKJOURNAL_LAZYINIT))
 		falloc_flags |= EXT2_FALLOCATE_ZERO_BLOCKS;
 
 	inode_size = (unsigned long long)fs->blocksize *
-			(jparams->num_journal_blocks + jparams->num_fc_blocks);
+			(jparams->رقم_journal_blocks + jparams->رقم_fc_blocks);
 	now = ext2fsP_get_time(fs);
 	ext2fs_inode_xtime_set(&inode, i_mtime, now);
 	ext2fs_inode_xtime_set(&inode, i_ctime, now);
-	inode.i_links_count = 1;
+	inode.i_links_شمار = 1;
 	inode.i_mode = LINUX_S_IFREG | 0600;
 	retval = ext2fs_inode_size_set(fs, &inode, inode_size);
-	if (retval)
-		goto out2;
+	اگر (retval)
+		برو out2;
 
 	retval = ext2fs_fallocate(fs, falloc_flags, journal_ino,
 				  &inode, goal, 0,
-				  jparams->num_journal_blocks + jparams->num_fc_blocks);
-	if (retval)
-		goto out2;
+				  jparams->رقم_journal_blocks + jparams->رقم_fc_blocks);
+	اگر (retval)
+		برو out2;
 
-	if ((retval = ext2fs_write_new_inode(fs, journal_ino, &inode)))
-		goto out2;
+	اگر ((retval = ext2fs_write_new_inode(fs, journal_ino, &inode)))
+		برو out2;
 
-	retval = ext2fs_bmap2(fs, journal_ino, &inode, NULL, 0, 0, NULL, &zblk);
-	if (retval)
-		goto out2;
+	retval = ext2fs_bmap2(fs, journal_ino, &inode, پوچ, 0, 0, پوچ, &zblk);
+	اگر (retval)
+		برو out2;
 
 	retval = io_channel_write_blk64(fs->io, zblk, 1, buf);
-	if (retval)
-		goto out2;
+	اگر (retval)
+		برو out2;
 
 	memcpy(fs->super->s_jnl_blocks, inode.i_block, EXT2_N_BLOCKS*4);
-	fs->super->s_jnl_blocks[15] = inode.i_size_high;
+	fs->super->s_jnl_blocks[15] = inode.i_size_بالا;
 	fs->super->s_jnl_blocks[16] = inode.i_size;
 	fs->super->s_jnl_backup_type = EXT3_JNL_BACKUP_BLOCKS;
 	ext2fs_mark_super_dirty(fs);
 
 out2:
 	ext2fs_free_mem(&buf);
-	return retval;
+	بازگشت retval;
 }
 
 /*
@@ -356,69 +356,69 @@ out2:
  *
  * n.b. comments assume 4k blocks
  */
-int ext2fs_default_journal_size(__u64 num_blocks)
+صحیح ext2fs_default_journal_size(__u64 رقم_blocks)
 {
-	if (num_blocks < 2048)
-		return -1;
-	if (num_blocks < 32768)		/* 128 MB */
-		return (1024);			/* 4 MB */
-	if (num_blocks < 256*1024)	/* 1 GB */
-		return (4096);			/* 16 MB */
-	if (num_blocks < 512*1024)	/* 2 GB */
-		return (8192);			/* 32 MB */
-	if (num_blocks < 4096*1024)	/* 16 GB */
-		return (16384);			/* 64 MB */
-	if (num_blocks < 8192*1024)	/* 32 GB */
-		return (32768);			/* 128 MB */
-	if (num_blocks < 16384*1024)	/* 64 GB */
-		return (65536);			/* 256 MB */
-	if (num_blocks < 32768*1024)	/* 128 GB */
-		return (131072);		/* 512 MB */
-	return 262144;				/* 1 GB */
+	اگر (رقم_blocks < 2048)
+		بازگشت -1;
+	اگر (رقم_blocks < 32768)		/* 128 MB */
+		بازگشت (1024);			/* 4 MB */
+	اگر (رقم_blocks < 256*1024)	/* 1 GB */
+		بازگشت (4096);			/* 16 MB */
+	اگر (رقم_blocks < 512*1024)	/* 2 GB */
+		بازگشت (8192);			/* 32 MB */
+	اگر (رقم_blocks < 4096*1024)	/* 16 GB */
+		بازگشت (16384);			/* 64 MB */
+	اگر (رقم_blocks < 8192*1024)	/* 32 GB */
+		بازگشت (32768);			/* 128 MB */
+	اگر (رقم_blocks < 16384*1024)	/* 64 GB */
+		بازگشت (65536);			/* 256 MB */
+	اگر (رقم_blocks < 32768*1024)	/* 128 GB */
+		بازگشت (131072);		/* 512 MB */
+	بازگشت 262144;				/* 1 GB */
 }
 
-errcode_t ext2fs_get_journal_params(struct ext2fs_journal_params *params,
+errcode_t ext2fs_get_journal_params(ساختار ext2fs_journal_params *params,
 		ext2_filsys fs)
 {
 	blk_t total_blks;
-	int ret;
+	صحیح ret;
 
-	memset(params, 0, sizeof(*params));
-	if (ext2fs_has_feature_journal_dev(fs->super)) {
-		total_blks = ext2fs_blocks_count(fs->super);
-		if (total_blks < JBD2_MIN_JOURNAL_BLOCKS)
-			return EXT2_ET_JOURNAL_TOO_SMALL;
+	memset(params, 0, اندازه(*params));
+	اگر (ext2fs_has_feature_journal_dev(fs->super)) {
+		total_blks = ext2fs_blocks_شمار(fs->super);
+		اگر (total_blks < JBD2_MIN_JOURNAL_BLOCKS)
+			بازگشت EXT2_ET_JOURNAL_TOO_SMALL;
 
-		if (!ext2fs_has_feature_fast_commit(fs->super)) {
-			params->num_journal_blocks = total_blks;
-			params->num_fc_blocks = 0;
-			return 0;
+		اگر (!ext2fs_has_feature_fast_commit(fs->super)) {
+			params->رقم_journal_blocks = total_blks;
+			params->رقم_fc_blocks = 0;
+			بازگشت 0;
 		}
-		params->num_journal_blocks = ext2fs_blocks_count(fs->super) *
+		params->رقم_journal_blocks = ext2fs_blocks_شمار(fs->super) *
 				EXT2_JOURNAL_TO_FC_BLKS_RATIO /
 				(EXT2_JOURNAL_TO_FC_BLKS_RATIO + 1);
-		if (JBD2_MIN_JOURNAL_BLOCKS > params->num_journal_blocks)
-			params->num_journal_blocks = JBD2_MIN_JOURNAL_BLOCKS;
-		params->num_fc_blocks = total_blks - params->num_journal_blocks;
-		return 0;
+		اگر (JBD2_MIN_JOURNAL_BLOCKS > params->رقم_journal_blocks)
+			params->رقم_journal_blocks = JBD2_MIN_JOURNAL_BLOCKS;
+		params->رقم_fc_blocks = total_blks - params->رقم_journal_blocks;
+		بازگشت 0;
 	}
 
-	ret = ext2fs_default_journal_size(ext2fs_blocks_count(fs->super));
-	if (ret < 0)
-		return EXT2_ET_JOURNAL_TOO_SMALL;
+	ret = ext2fs_default_journal_size(ext2fs_blocks_شمار(fs->super));
+	اگر (ret < 0)
+		بازگشت EXT2_ET_JOURNAL_TOO_SMALL;
 
-	params->num_journal_blocks = ret;
-	if (ext2fs_has_feature_fast_commit(fs->super))
-		params->num_fc_blocks = params->num_journal_blocks /
+	params->رقم_journal_blocks = ret;
+	اگر (ext2fs_has_feature_fast_commit(fs->super))
+		params->رقم_fc_blocks = params->رقم_journal_blocks /
 			EXT2_JOURNAL_TO_FC_BLKS_RATIO;
-	return 0;
+	بازگشت 0;
 }
 
-int ext2fs_journal_sb_start(int blocksize)
+صحیح ext2fs_journal_sb_start(صحیح blocksize)
 {
-	if (blocksize == EXT2_MIN_BLOCK_SIZE)
-		return 2;
-	return 1;
+	اگر (blocksize == EXT2_MIN_BLOCK_SIZE)
+		بازگشت 2;
+	بازگشت 1;
 }
 
 /*
@@ -426,63 +426,63 @@ int ext2fs_journal_sb_start(int blocksize)
  */
 errcode_t ext2fs_add_journal_device(ext2_filsys fs, ext2_filsys journal_dev)
 {
-	struct stat	st;
+	ساختار stat	st;
 	errcode_t	retval;
-	char		buf[SUPERBLOCK_SIZE];
+	نویسه		buf[SUPERBLOCK_SIZE];
 	journal_superblock_t	*jsb;
-	int		start;
+	صحیح		start;
 	__u32		i, nr_users;
 
 	/* Make sure the device exists and is a block device */
-	if (stat(journal_dev->device_name, &st) < 0)
-		return errno;
+	اگر (stat(journal_dev->device_name, &st) < 0)
+		بازگشت errno;
 
-	if (!S_ISBLK(st.st_mode))
-		return EXT2_ET_JOURNAL_NOT_BLOCK; /* Must be a block device */
+	اگر (!S_ISBLK(st.st_mode))
+		بازگشت EXT2_ET_JOURNAL_NOT_BLOCK; /* Must be a block device */
 
 	/* Get the journal superblock */
 	start = ext2fs_journal_sb_start(journal_dev->blocksize);
-	if ((retval = io_channel_read_blk64(journal_dev->io, start,
+	اگر ((retval = io_channel_read_blk64(journal_dev->io, start,
 					    -SUPERBLOCK_SIZE,
 					    buf)))
-		return retval;
+		بازگشت retval;
 
 	jsb = (journal_superblock_t *) buf;
-	if ((jsb->s_header.h_magic != (unsigned) ntohl(JBD2_MAGIC_NUMBER)) ||
+	اگر ((jsb->s_header.h_magic != (unsigned) ntohl(JBD2_MAGIC_عدد)) ||
 	    (jsb->s_header.h_blocktype != (unsigned) ntohl(JBD2_SUPERBLOCK_V2)))
-		return EXT2_ET_NO_JOURNAL_SB;
+		بازگشت EXT2_ET_NO_JOURNAL_SB;
 
-	if (ntohl(jsb->s_blocksize) != (unsigned long) fs->blocksize)
-		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	اگر (ntohl(jsb->s_blocksize) != (unsigned long) fs->blocksize)
+		بازگشت EXT2_ET_UNEXPECTED_BLOCK_SIZE;
 
 	/* Check and see if this filesystem has already been added */
 	nr_users = ntohl(jsb->s_nr_users);
-	if (nr_users > JBD2_USERS_MAX)
-		return EXT2_ET_CORRUPT_JOURNAL_SB;
-	for (i=0; i < nr_users; i++) {
-		if (memcmp(fs->super->s_uuid,
+	اگر (nr_users > JBD2_USERS_MAX)
+		بازگشت EXT2_ET_CORRUPT_JOURNAL_SB;
+	برای (i=0; i < nr_users; i++) {
+		اگر (memcmp(fs->super->s_uuid,
 			   &jsb->s_users[i*16], 16) == 0)
-			break;
+			بشکن;
 	}
-	if (i >= nr_users) {
+	اگر (i >= nr_users) {
 		memcpy(&jsb->s_users[nr_users*16],
 		       fs->super->s_uuid, 16);
 		jsb->s_nr_users = htonl(nr_users+1);
 	}
 
 	/* Writeback the journal superblock */
-	if ((retval = io_channel_write_blk64(journal_dev->io, start,
+	اگر ((retval = io_channel_write_blk64(journal_dev->io, start,
 					    -SUPERBLOCK_SIZE, buf)))
-		return retval;
+		بازگشت retval;
 
 	fs->super->s_journal_inum = 0;
 	fs->super->s_journal_dev = st.st_rdev;
 	memcpy(fs->super->s_journal_uuid, jsb->s_uuid,
-	       sizeof(fs->super->s_journal_uuid));
-	memset(fs->super->s_jnl_blocks, 0, sizeof(fs->super->s_jnl_blocks));
+	       اندازه(fs->super->s_journal_uuid));
+	memset(fs->super->s_jnl_blocks, 0, اندازه(fs->super->s_jnl_blocks));
 	ext2fs_set_feature_journal(fs->super);
 	ext2fs_mark_super_dirty(fs);
-	return 0;
+	بازگشت 0;
 }
 
 /*
@@ -490,26 +490,26 @@ errcode_t ext2fs_add_journal_device(ext2_filsys fs, ext2_filsys journal_dev)
  * POSIX routines if the filesystem is mounted, or using direct I/O
  * functions if it is not.
  */
-errcode_t ext2fs_add_journal_inode3(ext2_filsys fs, struct ext2fs_journal_params *jparams,
-				    blk64_t goal, int flags)
+errcode_t ext2fs_add_journal_inode3(ext2_filsys fs, ساختار ext2fs_journal_params *jparams,
+				    blk64_t goal, صحیح flags)
 {
 	errcode_t		retval;
 	ext2_ino_t		journal_ino;
-	struct stat		st;
-	char			jfile[1024];
-	int			mount_flags;
-	int			fd = -1;
+	ساختار stat		st;
+	نویسه			jfile[1024];
+	صحیح			mount_flags;
+	صحیح			fd = -1;
 
-	if (flags & EXT2_MKJOURNAL_NO_MNT_CHECK)
+	اگر (flags & EXT2_MKJOURNAL_NO_MNT_CHECK)
 		mount_flags = 0;
-	else if ((retval = ext2fs_check_mount_point(fs->device_name,
+	وگرنه اگر ((retval = ext2fs_check_mount_point(fs->device_name,
 						    &mount_flags,
-						    jfile, sizeof(jfile)-10)))
-		return retval;
+						    jfile, اندازه(jfile)-10)))
+		بازگشت retval;
 
-	if (mount_flags & EXT2_MF_MOUNTED) {
-#if HAVE_EXT2_IOCTLS
-		int f = 0;
+	اگر (mount_flags & EXT2_MF_MOUNTED) {
+#اگر HAVE_EXT2_IOCTLS
+		صحیح f = 0;
 #endif
 		strcat(jfile, "/.journal");
 
@@ -517,23 +517,23 @@ errcode_t ext2fs_add_journal_inode3(ext2_filsys fs, struct ext2fs_journal_params
 		 * If .../.journal already exists, make sure any
 		 * immutable or append-only flags are cleared.
 		 */
-#if defined(HAVE_CHFLAGS) && defined(UF_NODUMP)
-		(void) chflags (jfile, 0);
-#else
-#if HAVE_EXT2_IOCTLS
+#اگر defined(HAVE_CHFLAGS) && defined(UF_NODUMP)
+		(تهی) chflags (jfile, 0);
+#وگرنه
+#اگر HAVE_EXT2_IOCTLS
 		fd = open(jfile, O_RDONLY);
-		if (fd >= 0) {
+		اگر (fd >= 0) {
 			retval = ioctl(fd, EXT2_IOC_SETFLAGS, &f);
 			close(fd);
-			if (retval)
-				return errno;
+			اگر (retval)
+				بازگشت errno;
 		}
 #endif
 #endif
 
 		/* Create the journal file */
-		if ((fd = open(jfile, O_CREAT|O_WRONLY, 0600)) < 0)
-			return errno;
+		اگر ((fd = open(jfile, O_CREAT|O_WRONLY, 0600)) < 0)
+			بازگشت errno;
 
 		/* Note that we can't do lazy journal initialization for mounted
 		 * filesystems, since the zero writing is also allocating the
@@ -542,91 +542,91 @@ errcode_t ext2fs_add_journal_inode3(ext2_filsys fs, struct ext2fs_journal_params
 		 * filesystems is extremely rare these days...  Ignore it. */
 		flags &= ~EXT2_MKJOURNAL_LAZYINIT;
 
-		if ((retval = write_journal_file(fs, jfile, jparams, flags)))
-			goto errout;
+		اگر ((retval = write_journal_file(fs, jfile, jparams, flags)))
+			برو errout;
 
 		/* Get inode number of the journal file */
-		if (fstat(fd, &st) < 0) {
+		اگر (fstat(fd, &st) < 0) {
 			retval = errno;
-			goto errout;
+			برو errout;
 		}
 
-#if defined(HAVE_CHFLAGS) && defined(UF_NODUMP)
+#اگر defined(HAVE_CHFLAGS) && defined(UF_NODUMP)
 		retval = fchflags (fd, UF_NODUMP|UF_IMMUTABLE);
-#else
-#if HAVE_EXT2_IOCTLS
-		if (ioctl(fd, EXT2_IOC_GETFLAGS, &f) < 0) {
+#وگرنه
+#اگر HAVE_EXT2_IOCTLS
+		اگر (ioctl(fd, EXT2_IOC_GETFLAGS, &f) < 0) {
 			retval = errno;
-			goto errout;
+			برو errout;
 		}
 		f |= EXT2_NODUMP_FL | EXT2_IMMUTABLE_FL;
 		retval = ioctl(fd, EXT2_IOC_SETFLAGS, &f);
 #endif
 #endif
-		if (retval) {
+		اگر (retval) {
 			retval = errno;
-			goto errout;
+			برو errout;
 		}
 
-		if (close(fd) < 0) {
+		اگر (close(fd) < 0) {
 			retval = errno;
 			fd = -1;
-			goto errout;
+			برو errout;
 		}
 		journal_ino = st.st_ino;
 		memset(fs->super->s_jnl_blocks, 0,
-		       sizeof(fs->super->s_jnl_blocks));
-	} else {
-		if ((mount_flags & EXT2_MF_BUSY) &&
+		       اندازه(fs->super->s_jnl_blocks));
+	} وگرنه {
+		اگر ((mount_flags & EXT2_MF_BUSY) &&
 		    !(fs->flags & EXT2_FLAG_EXCLUSIVE)) {
 			retval = EBUSY;
-			goto errout;
+			برو errout;
 		}
 		journal_ino = EXT2_JOURNAL_INO;
-		if ((retval = write_journal_inode(fs, journal_ino,
+		اگر ((retval = write_journal_inode(fs, journal_ino,
 						  jparams, goal, flags)))
-			return retval;
+			بازگشت retval;
 	}
 
 	fs->super->s_journal_inum = journal_ino;
 	fs->super->s_journal_dev = 0;
 	memset(fs->super->s_journal_uuid, 0,
-	       sizeof(fs->super->s_journal_uuid));
+	       اندازه(fs->super->s_journal_uuid));
 	ext2fs_set_feature_journal(fs->super);
 
 	ext2fs_mark_super_dirty(fs);
-	return 0;
+	بازگشت 0;
 errout:
-	if (fd >= 0)
+	اگر (fd >= 0)
 		close(fd);
-	return retval;
+	بازگشت retval;
 }
 
-errcode_t ext2fs_add_journal_inode2(ext2_filsys fs, blk_t num_blocks,
-				    blk64_t goal, int flags)
+errcode_t ext2fs_add_journal_inode2(ext2_filsys fs, blk_t رقم_blocks,
+				    blk64_t goal, صحیح flags)
 {
-	struct ext2fs_journal_params jparams;
+	ساختار ext2fs_journal_params jparams;
 
-	jparams.num_journal_blocks = num_blocks;
-	jparams.num_fc_blocks = 0;
+	jparams.رقم_journal_blocks = رقم_blocks;
+	jparams.رقم_fc_blocks = 0;
 
-	return ext2fs_add_journal_inode3(fs, &jparams, goal, flags);
+	بازگشت ext2fs_add_journal_inode3(fs, &jparams, goal, flags);
 }
 
-errcode_t ext2fs_add_journal_inode(ext2_filsys fs, blk_t num_blocks, int flags)
+errcode_t ext2fs_add_journal_inode(ext2_filsys fs, blk_t رقم_blocks, صحیح flags)
 {
-	return ext2fs_add_journal_inode2(fs, num_blocks, ~0ULL, flags);
+	بازگشت ext2fs_add_journal_inode2(fs, رقم_blocks, ~0ULL, flags);
 }
 
 
 #ifdef DEBUG
-main(int argc, char **argv)
+اصلی(صحیح argc, نویسه **argv)
 {
 	errcode_t	retval;
-	char		*device_name;
+	نویسه		*device_name;
 	ext2_filsys	fs;
 
-	if (argc < 2) {
+	اگر (argc < 2) {
 		fprintf(stderr, "Usage: %s filesystem\n", argv[0]);
 		exit(1);
 	}
@@ -634,19 +634,19 @@ main(int argc, char **argv)
 
 	retval = ext2fs_open (device_name, EXT2_FLAG_RW, 0, 0,
 			      unix_io_manager, &fs);
-	if (retval) {
+	اگر (retval) {
 		com_err(argv[0], retval, "while opening %s", device_name);
 		exit(1);
 	}
 
 	retval = ext2fs_add_journal_inode(fs, JBD2_MIN_JOURNAL_BLOCKS, 0);
-	if (retval) {
+	اگر (retval) {
 		com_err(argv[0], retval, "while adding journal to %s",
 			device_name);
 		exit(1);
 	}
 	retval = ext2fs_flush(fs);
-	if (retval) {
+	اگر (retval) {
 		printf("Warning, had trouble writing out superblocks.\n");
 	}
 	ext2fs_close_free(&fs);

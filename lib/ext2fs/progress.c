@@ -10,24 +10,24 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#شامل "config.h"
+#شامل "ext2fs.h"
+#شامل "ext2fsP.h"
 
-#include <time.h>
+#شامل <time.h>
 
-static char spaces[80], backspaces[80];
-static time_t last_update;
+ایستا نویسه spaces[80], backspaces[80];
+ایستا time_t last_update;
 
-struct ext2fs_progress_ops ext2fs_numeric_progress_ops = {
+ساختار ext2fs_progress_ops ext2fs_numeric_progress_ops = {
 	.init		= ext2fs_numeric_progress_init,
 	.update		= ext2fs_numeric_progress_update,
 	.close		= ext2fs_numeric_progress_close,
 };
 
-void ext2fs_numeric_progress_init(ext2_filsys fs,
-				  struct ext2fs_numeric_progress_struct * progress,
-				  const char *label, __u64 max)
+تهی ext2fs_numeric_progress_init(ext2_filsys fs,
+				  ساختار ext2fs_numeric_progress_struct * progress,
+				  ثابت نویسه *label, __u64 max)
 {
 	/*
 	 * The PRINT_PROGRESS flag turns on or off ALL
@@ -35,16 +35,16 @@ void ext2fs_numeric_progress_init(ext2_filsys fs,
 	 * environment variable prints the start and end messages but
 	 * not the numeric countdown in the middle.
 	 */
-	if (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
-		return;
+	اگر (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
+		بازگشت;
 
-	memset(spaces, ' ', sizeof(spaces)-1);
-	spaces[sizeof(spaces)-1] = 0;
-	memset(backspaces, '\b', sizeof(backspaces)-1);
-	backspaces[sizeof(backspaces)-1] = 0;
+	memset(spaces, ' ', اندازه(spaces)-1);
+	spaces[اندازه(spaces)-1] = 0;
+	memset(backspaces, '\b', اندازه(backspaces)-1);
+	backspaces[اندازه(backspaces)-1] = 0;
 
-	memset(progress, 0, sizeof(*progress));
-	if (ext2fs_safe_getenv("E2FSPROGS_SKIP_PROGRESS"))
+	memset(progress, 0, اندازه(*progress));
+	اگر (ext2fs_safe_getenv("E2FSPROGS_SKIP_PROGRESS"))
 		progress->skip_progress++;
 
 
@@ -54,26 +54,26 @@ void ext2fs_numeric_progress_init(ext2_filsys fs,
 	progress->max = max;
 	progress->log_max = ext2fs_log10_u64(max) + 1;
 
-	if (label) {
+	اگر (label) {
 		fputs(label, stdout);
 		fflush(stdout);
 	}
 	last_update = 0;
 }
 
-void ext2fs_numeric_progress_update(ext2_filsys fs,
-				    struct ext2fs_numeric_progress_struct * progress,
+تهی ext2fs_numeric_progress_update(ext2_filsys fs,
+				    ساختار ext2fs_numeric_progress_struct * progress,
 				    __u64 val)
 {
 	time_t now;
 
-	if (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
-		return;
-	if (progress->skip_progress)
-		return;
+	اگر (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
+		بازگشت;
+	اگر (progress->skip_progress)
+		بازگشت;
 	now = time(0);
-	if (now == last_update)
-		return;
+	اگر (now == last_update)
+		بازگشت;
 	last_update = now;
 
 	printf("%*llu/%*llu", progress->log_max, (unsigned long long) val,
@@ -81,14 +81,14 @@ void ext2fs_numeric_progress_update(ext2_filsys fs,
 	fprintf(stdout, "%.*s", (2*progress->log_max)+1, backspaces);
 }
 
-void ext2fs_numeric_progress_close(ext2_filsys fs,
-				   struct ext2fs_numeric_progress_struct * progress,
-				   const char *message)
+تهی ext2fs_numeric_progress_close(ext2_filsys fs,
+				   ساختار ext2fs_numeric_progress_struct * progress,
+				   ثابت نویسه *message)
 {
-	if (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
-		return;
+	اگر (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
+		بازگشت;
 	fprintf(stdout, "%.*s", (2*progress->log_max)+1, spaces);
 	fprintf(stdout, "%.*s", (2*progress->log_max)+1, backspaces);
-	if (message)
+	اگر (message)
 		fputs(message, stdout);
 }

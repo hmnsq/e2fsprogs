@@ -9,34 +9,34 @@
  * %End-Header%
  */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#شامل <stdio.h>
+#شامل <unistd.h>
+#شامل <stdlib.h>
 
-#include "ext2fs.h"
+#شامل "ext2fs.h"
 
-struct struct_ext2_filsys fs;
+ساختار struct_ext2_filsys fs;
 
 #ifndef offsetof
 #define offsetof(type, member)  __builtin_offsetof (type, member)
 #endif
-#define check_field(x) cur_offset = do_field(#x, sizeof(fs.x),		\
-					offsetof(struct struct_ext2_filsys, x), \
+#define check_field(x) cur_offset = do_field(#x, اندازه(fs.x),		\
+					offsetof(ساختار struct_ext2_filsys, x), \
 					cur_offset)
 
-static int do_field(const char *field, size_t size, int offset, int cur_offset)
+ایستا صحیح do_field(ثابت نویسه *field, size_t size, صحیح offset, صحیح cur_offset)
 {
-	if (offset != cur_offset) {
+	اگر (offset != cur_offset) {
 		printf("\t(padding %d bytes?)\n", offset - cur_offset);
 	}
 	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	بازگشت offset + size;
 }
 
-int main(int argc, char **argv)
+صحیح اصلی(صحیح argc, نویسه **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#اگر (__GNUC__ >= 4)
+	صحیح cur_offset = 0;
 
 	printf("%8s %-30s %3s\n", "offset", "field", "size");
 	check_field(magic);
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	check_field(super);
 	check_field(blocksize);
 	check_field(fragsize);
-	check_field(group_desc_count);
+	check_field(group_desc_شمار);
 	check_field(desc_blocks);
 	check_field(group_desc);
 	check_field(inode_blocks_per_group);

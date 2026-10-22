@@ -9,7 +9,7 @@
  * General Public License, version 2.
  * %End-Header%
  */
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#اگر !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
 #define _XOPEN_SOURCE 600
 #define _DARWIN_C_SOURCE
 #ifndef _GNU_SOURCE
@@ -17,41 +17,41 @@
 #endif
 #endif
 
-#include "config.h"
-#include <stdlib.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#شامل "config.h"
+#شامل <stdlib.h>
+#اگر HAVE_UNISTD_H
+#شامل <unistd.h>
 #endif
 #ifdef HAVE_SYS_PRCTL_H
-#include <sys/prctl.h>
-#else
+#شامل <sys/prctl.h>
+#وگرنه
 #define PR_GET_DUMPABLE 3
 #endif
-#if (!defined(HAVE_PRCTL) && defined(linux))
-#include <sys/syscall.h>
+#اگر (!defined(HAVE_PRCTL) && defined(linux))
+#شامل <sys/syscall.h>
 #endif
 
-#include "ext2fs.h"
+#شامل "ext2fs.h"
 
-char *ext2fs_safe_getenv(const char *arg)
+نویسه *ext2fs_safe_getenv(ثابت نویسه *arg)
 {
-	if ((getuid() != geteuid()) || (getgid() != getegid()))
-		return NULL;
+	اگر ((getuid() != geteuid()) || (getgid() != getegid()))
+		بازگشت پوچ;
 #ifdef HAVE_PRCTL
-	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#else
-#if (defined(linux) && defined(SYS_prctl))
-	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
+	اگر (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		بازگشت پوچ;
+#وگرنه
+#اگر (defined(linux) && defined(SYS_prctl))
+	اگر (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		بازگشت پوچ;
 #endif
 #endif
 
-#if defined(HAVE_SECURE_GETENV)
-	return secure_getenv(arg);
-#elif defined(HAVE___SECURE_GETENV)
-	return __secure_getenv(arg);
-#else
-	return getenv(arg);
+#اگر defined(HAVE_SECURE_GETENV)
+	بازگشت secure_getenv(arg);
+#وگرنهاگر defined(HAVE___SECURE_GETENV)
+	بازگشت __secure_getenv(arg);
+#وگرنه
+	بازگشت getenv(arg);
 #endif
 }
