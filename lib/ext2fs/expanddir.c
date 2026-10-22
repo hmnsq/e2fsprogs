@@ -9,102 +9,102 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#सचे HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
+#अन्तर्भाव "ext2fsP.h"
 
-struct expand_dir_struct {
-	int		done;
-	int		newblocks;
+संरचना expand_dir_struct {
+	पूर्णाङ्क		done;
+	पूर्णाङ्क		newblocks;
 	blk64_t		goal;
 	errcode_t	err;
 	ext2_ino_t	dir;
 };
 
-static int expand_dir_proc(ext2_filsys	fs,
+स्थिर पूर्णाङ्क expand_dir_proc(ext2_filsys	fs,
 			   blk64_t	*blocknr,
 			   e2_blkcnt_t	blockcnt,
 			   blk64_t	ref_block EXT2FS_ATTR((unused)),
-			   int		ref_offset EXT2FS_ATTR((unused)),
-			   void		*priv_data)
+			   पूर्णाङ्क		ref_offset EXT2FS_ATTR((unused)),
+			   शून्य		*priv_data)
 {
-	struct expand_dir_struct *es = (struct expand_dir_struct *) priv_data;
+	संरचना expand_dir_struct *es = (संरचना expand_dir_struct *) priv_data;
 	blk64_t	new_blk;
-	char		*block;
+	वर्ण		*block;
 	errcode_t	retval;
 
-	if (*blocknr) {
-		if (blockcnt >= 0)
+	सचे (*blocknr) {
+		सचे (blockcnt >= 0)
 			es->goal = *blocknr;
-		return 0;
+		पटिनिवत्त 0;
 	}
-	if (blockcnt &&
+	सचे (blockcnt &&
 	    (EXT2FS_B2C(fs, es->goal) == EXT2FS_B2C(fs, es->goal+1)))
 		new_blk = es->goal+1;
-	else {
+	अञ्ञथा {
 		es->goal &= ~EXT2FS_CLUSTER_MASK(fs);
 		retval = ext2fs_new_block2(fs, es->goal, 0, &new_blk);
-		if (retval) {
+		सचे (retval) {
 			es->err = retval;
-			return BLOCK_ABORT;
+			पटिनिवत्त BLOCK_ABORT;
 		}
 		es->newblocks++;
 		ext2fs_block_alloc_stats2(fs, new_blk, +1);
 	}
-	if (blockcnt > 0) {
+	सचे (blockcnt > 0) {
 		retval = ext2fs_new_dir_block(fs, 0, 0, &block);
-		if (retval) {
+		सचे (retval) {
 			es->err = retval;
-			return BLOCK_ABORT;
+			पटिनिवत्त BLOCK_ABORT;
 		}
 		es->done = 1;
 		retval = ext2fs_write_dir_block4(fs, new_blk, block, 0,
 						 es->dir);
 		ext2fs_free_mem(&block);
-	} else
-		retval = ext2fs_zero_blocks2(fs, new_blk, 1, NULL, NULL);
-	if (blockcnt >= 0)
+	} अञ्ञथा
+		retval = ext2fs_zero_blocks2(fs, new_blk, 1, रिक्त, रिक्त);
+	सचे (blockcnt >= 0)
 		es->goal = new_blk;
-	if (retval) {
+	सचे (retval) {
 		es->err = retval;
-		return BLOCK_ABORT;
+		पटिनिवत्त BLOCK_ABORT;
 	}
 	*blocknr = new_blk;
 
-	if (es->done)
-		return (BLOCK_CHANGED | BLOCK_ABORT);
-	else
-		return BLOCK_CHANGED;
+	सचे (es->done)
+		पटिनिवत्त (BLOCK_CHANGED | BLOCK_ABORT);
+	अञ्ञथा
+		पटिनिवत्त BLOCK_CHANGED;
 }
 
 errcode_t ext2fs_expand_dir(ext2_filsys fs, ext2_ino_t dir)
 {
 	errcode_t	retval;
-	struct expand_dir_struct es;
-	struct ext2_inode	inode;
+	संरचना expand_dir_struct es;
+	संरचना ext2_inode	inode;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	सचे (!(fs->flags & EXT2_FLAG_RW))
+		पटिनिवत्त EXT2_ET_RO_FILSYS;
 
-	if (!fs->block_map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
+	सचे (!fs->block_map)
+		पटिनिवत्त EXT2_ET_NO_BLOCK_BITMAP;
 
 	retval = ext2fs_check_directory(fs, dir);
-	if (retval)
-		return retval;
+	सचे (retval)
+		पटिनिवत्त retval;
 
 	retval = ext2fs_read_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	सचे (retval)
+		पटिनिवत्त retval;
 
 	es.done = 0;
 	es.err = 0;
@@ -114,30 +114,30 @@ errcode_t ext2fs_expand_dir(ext2_filsys fs, ext2_ino_t dir)
 
 	retval = ext2fs_block_iterate3(fs, dir, BLOCK_FLAG_APPEND,
 				       0, expand_dir_proc, &es);
-	if (retval == EXT2_ET_INLINE_DATA_CANT_ITERATE)
-		return ext2fs_inline_data_expand(fs, dir);
+	सचे (retval == EXT2_ET_INLINE_DATA_CANT_ITERATE)
+		पटिनिवत्त ext2fs_inline_data_expand(fs, dir);
 
-	if (es.err)
-		return es.err;
-	if (!es.done)
-		return EXT2_ET_EXPAND_DIR_ERR;
+	सचे (es.err)
+		पटिनिवत्त es.err;
+	सचे (!es.done)
+		पटिनिवत्त EXT2_ET_EXPAND_DIR_ERR;
 
 	/*
 	 * Update the size and block count fields in the inode.
 	 */
 	retval = ext2fs_read_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	सचे (retval)
+		पटिनिवत्त retval;
 
 	retval = ext2fs_inode_size_set(fs, &inode,
 				       EXT2_I_SIZE(&inode) + fs->blocksize);
-	if (retval)
-		return retval;
+	सचे (retval)
+		पटिनिवत्त retval;
 	ext2fs_iblk_add_blocks(fs, &inode, es.newblocks);
 
 	retval = ext2fs_write_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	सचे (retval)
+		पटिनिवत्त retval;
 
-	return 0;
+	पटिनिवत्त 0;
 }
