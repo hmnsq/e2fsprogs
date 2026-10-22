@@ -12,7 +12,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#якщо HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
@@ -32,30 +32,30 @@ errcode_t ext2fs_new_dir_block(ext2_filsys fs, ext2_ino_t dir_ino,
 	struct ext2_dir_entry 	*dir = NULL;
 	errcode_t		retval;
 	char			*buf;
-	int			rec_len;
-	int			filetype = 0;
+	ціле			rec_len;
+	ціле			filetype = 0;
 	struct ext2_dir_entry_tail	*t;
-	int			csum_size = 0;
+	ціле			csum_size = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
+	якщо (retval)
+		повернути retval;
 	memset(buf, 0, fs->blocksize);
 	dir = (struct ext2_dir_entry *) buf;
 
-	if (ext2fs_has_feature_metadata_csum(fs->super))
+	якщо (ext2fs_has_feature_metadata_csum(fs->super))
 		csum_size = sizeof(struct ext2_dir_entry_tail);
 
 	retval = ext2fs_set_rec_len(fs, fs->blocksize - csum_size, dir);
-	if (retval) {
+	якщо (retval) {
 		ext2fs_free_mem(&buf);
-		return retval;
+		повернути retval;
 	}
 
-	if (dir_ino) {
-		if (ext2fs_has_feature_filetype(fs->super))
+	якщо (dir_ino) {
+		якщо (ext2fs_has_feature_filetype(fs->super))
 			filetype = EXT2_FT_DIR;
 		/*
 		 * Set up entry for '.'
@@ -72,9 +72,9 @@ errcode_t ext2fs_new_dir_block(ext2_filsys fs, ext2_ino_t dir_ino,
 		 */
 		dir = (struct ext2_dir_entry *) (buf + dir->rec_len);
 		retval = ext2fs_set_rec_len(fs, rec_len, dir);
-		if (retval) {
+		якщо (retval) {
 			ext2fs_free_mem(&buf);
-			return retval;
+			повернути retval;
 		}
 		dir->inode = parent_ino;
 		ext2fs_dirent_set_name_len(dir, 2);
@@ -84,12 +84,12 @@ errcode_t ext2fs_new_dir_block(ext2_filsys fs, ext2_ino_t dir_ino,
 
 	}
 
-	if (csum_size) {
+	якщо (csum_size) {
 		t = EXT2_DIRENT_TAIL(buf, fs->blocksize);
 		ext2fs_initialize_dirent_tail(fs, t);
 	}
 	*block = buf;
-	return 0;
+	повернути 0;
 }
 
 /*
@@ -101,7 +101,7 @@ errcode_t ext2fs_new_dir_inline_data(ext2_filsys fs,
 {
 	struct ext2_dir_entry 	*dir = NULL;
 	errcode_t		retval;
-	int			rec_len;
+	ціле			rec_len;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
@@ -112,15 +112,15 @@ errcode_t ext2fs_new_dir_inline_data(ext2_filsys fs,
 	dir->inode = 0;
 	rec_len = EXT4_MIN_INLINE_DATA_SIZE - EXT4_INLINE_DATA_DOTDOT_SIZE;
 	retval = ext2fs_set_rec_len(fs, rec_len, dir);
-	if (retval)
+	якщо (retval)
 		goto errout;
 
 #ifdef WORDS_BIGENDIAN
 	retval = ext2fs_dirent_swab_out2(fs, (char *)dir, rec_len, 0);
-	if (retval)
+	якщо (retval)
 		goto errout;
 #endif
 
 errout:
-	return retval;
+	повернути retval;
 }

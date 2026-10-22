@@ -12,7 +12,7 @@
 
 
 #include "config.h"
-#if HAVE_SYS_TYPES_H
+#якщо HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 #include "ext2fs.h"
@@ -83,7 +83,7 @@ static const __u64 K[80] = {
 		(y)[4] = (unsigned char)(((x)>>24)&255);\
 		(y)[5] = (unsigned char)(((x)>>16)&255);\
 		(y)[6] = (unsigned char)(((x)>>8)&255);\
-		(y)[7] = (unsigned char)((x)&255); } while(0)
+		(y)[7] = (unsigned char)((x)&255); } поки(0)
 
 #define LOAD64H(x, y)\
 	do {x = \
@@ -95,7 +95,7 @@ static const __u64 K[80] = {
 		(((__u64)((y)[5] & 255)) << 16) |\
 		(((__u64)((y)[6] & 255)) << 8) |\
 		(((__u64)((y)[7] & 255)));\
-	} while(0)
+	} поки(0)
 
 #define ROR64c(x, y) \
     ( ((((x)&CONST64(0xFFFFFFFFFFFFFFFF))>>((__u64)(y)&CONST64(63))) | \
@@ -115,25 +115,25 @@ struct hash_state {
 static void sha512_compress(struct hash_state * md, const unsigned char *buf)
 {
 	__u64 S[8], W[80], t0, t1;
-	int i;
+	ціле i;
 
 	/* copy state into S */
-	for (i = 0; i < 8; i++) {
+	для (i = 0; i < 8; i++) {
 		S[i] = md->sha512.state[i];
 	}
 
 	/* copy the state into 1024-bits into W[0..15] */
-	for (i = 0; i < 16; i++) {
+	для (i = 0; i < 16; i++) {
 		LOAD64H(W[i], buf + (8*i));
 	}
 
 	/* fill W[16..79] */
-	for (i = 16; i < 80; i++) {
+	для (i = 16; i < 80; i++) {
 		W[i] = Gamma1(W[i - 2]) + W[i - 7] +
 			Gamma0(W[i - 15]) + W[i - 16];
 	}
 
-	for (i = 0; i < 80; i += 8) {
+	для (i = 0; i < 80; i += 8) {
 		RND(S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7],i+0);
 		RND(S[7],S[0],S[1],S[2],S[3],S[4],S[5],S[6],i+1);
 		RND(S[6],S[7],S[0],S[1],S[2],S[3],S[4],S[5],i+2);
@@ -145,7 +145,7 @@ static void sha512_compress(struct hash_state * md, const unsigned char *buf)
 	}
 
 	 /* feedback */
-	for (i = 0; i < 8; i++) {
+	для (i = 0; i < 8; i++) {
 		md->sha512.state[i] = md->sha512.state[i] + S[i];
 	}
 }
@@ -166,7 +166,7 @@ static void sha512_init(struct hash_state * md)
 
 static void sha512_done(struct hash_state * md, unsigned char *out)
 {
-	int i;
+	ціле i;
 
 	/* increase the length of the message */
 	md->sha512.length += md->sha512.curlen * CONST64(8);
@@ -177,8 +177,8 @@ static void sha512_done(struct hash_state * md, unsigned char *out)
 	/* if the length is currently above 112 bytes we append zeros then
 	 * compress. Then we can fall back to padding zeros and length encoding
 	 * like normal. */
-	if (md->sha512.curlen > 112) {
-		while (md->sha512.curlen < 128) {
+	якщо (md->sha512.curlen > 112) {
+		поки (md->sha512.curlen < 128) {
 			md->sha512.buf[md->sha512.curlen++] = (unsigned char)0;
 		}
 		sha512_compress(md, md->sha512.buf);
@@ -187,7 +187,7 @@ static void sha512_done(struct hash_state * md, unsigned char *out)
 
 	/* pad up to 120 bytes of zeroes note: that from 112 to 120 is the 64 MSB
 	 * of the length. We assume that you won't hash > 2^64 bits of data. */
-	while (md->sha512.curlen < 120) {
+	поки (md->sha512.curlen < 120) {
 		md->sha512.buf[md->sha512.curlen++] = (unsigned char)0;
 	}
 
@@ -196,7 +196,7 @@ static void sha512_done(struct hash_state * md, unsigned char *out)
 	sha512_compress(md, md->sha512.buf);
 
 	/* copy output */
-	for (i = 0; i < 8; i++) {
+	для (i = 0; i < 8; i++) {
 		STORE64H(md->sha512.state[i], out+(8 * i));
 	}
 }
@@ -209,20 +209,20 @@ static void sha512_process(struct hash_state * md,
 {
 	unsigned long n;
 
-	while (inlen > 0) {
-		if (md->sha512.curlen == 0 && inlen >= SHA512_BLOCKSIZE) {
+	поки (inlen > 0) {
+		якщо (md->sha512.curlen == 0 && inlen >= SHA512_BLOCKSIZE) {
 			sha512_compress(md, in);
 			md->sha512.length += SHA512_BLOCKSIZE * 8;
 			in += SHA512_BLOCKSIZE;
 			inlen -= SHA512_BLOCKSIZE;
-		} else {
+		} інакше {
 			n = MIN(inlen, (SHA512_BLOCKSIZE - md->sha512.curlen));
 			memcpy(md->sha512.buf + md->sha512.curlen,
 			       in, (size_t)n);
 			md->sha512.curlen += n;
 			in += n;
 			inlen -= n;
-			if (md->sha512.curlen == SHA512_BLOCKSIZE) {
+			якщо (md->sha512.curlen == SHA512_BLOCKSIZE) {
 				sha512_compress(md, md->sha512.buf);
 				md->sha512.length += SHA512_BLOCKSIZE * 8;
 				md->sha512.curlen = 0;
@@ -278,25 +278,25 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+ціле main(ціле argc, char **argv)
 {
-	int i;
-	int errors = 0;
+	ціле i;
+	ціле errors = 0;
 	unsigned char tmp[64];
 
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
+	для (i = 0; i < (ціле)(sizeof(tests) / sizeof(tests[0])); i++) {
 		unsigned char *msg = (unsigned char *) tests[i].msg;
-		int len = strlen(tests[i].msg);
+		ціле len = strlen(tests[i].msg);
 
 		ext2fs_sha512(msg, len, tmp);
 		printf("SHA512 test message %d: ", i);
-		if (memcmp(tmp, tests[i].hash, 64) != 0) {
+		якщо (memcmp(tmp, tests[i].hash, 64) != 0) {
 			printf("FAILED\n");
 			errors++;
-		} else
+		} інакше
 			printf("OK\n");
 	}
-	return errors;
+	повернути errors;
 }
 
 #endif /* UNITTEST */

@@ -6,7 +6,7 @@
  */
 
 #include "config.h"
-#if HAVE_SYS_TYPES_H
+#якщо HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 #include <ext2fs/ext2_types.h>
@@ -57,11 +57,11 @@ static __u16 const crc16_table[256] = {
  * @param len     number of bytes in the buffer
  * @return        the updated CRC value
  */
-crc16_t ext2fs_crc16(crc16_t crc, const void *buffer, unsigned int len)
+crc16_t ext2fs_crc16(crc16_t crc, const void *buffer, unsigned ціле len)
 {
 	const unsigned char *cp = buffer;
 
-	while (len--)
+	поки (len--)
 		/*
 		 * for an unknown reason, PPC treats __u16 as signed
 		 * and keeps doing sign extension on the value.
@@ -70,5 +70,5 @@ crc16_t ext2fs_crc16(crc16_t crc, const void *buffer, unsigned int len)
 		 */
 		crc = (((crc >> 8) & 0xffU) ^
 		       crc16_table[(crc ^ *cp++) & 0xffU]) & 0x0000ffffU;
-	return crc;
+	повернути crc;
 }

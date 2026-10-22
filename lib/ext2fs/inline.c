@@ -18,18 +18,18 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#якщо HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#якщо HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#якщо HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#if HAVE_MALLOC_H
+#якщо HAVE_MALLOC_H
 #include <malloc.h>
 #endif
 
@@ -48,43 +48,43 @@ errcode_t ext2fs_get_memalign(unsigned long size,
 	errcode_t retval = 0;
 	void **p = ptr;
 
-	if (align < 8)
+	якщо (align < 8)
 		align = 8;
 #ifdef HAVE_POSIX_MEMALIGN
 	retval = posix_memalign(p, align, size);
-	if (retval == ENOMEM)
-		return EXT2_ET_NO_MEMORY;
-#else  /* !HAVE_POSIX_MEMALIGN */
+	якщо (retval == ENOMEM)
+		повернути EXT2_ET_NO_MEMORY;
+#інакше  /* !HAVE_POSIX_MEMALIGN */
 #ifdef HAVE_MEMALIGN
 	*p = memalign(align, size);
-	if (*p == NULL) {
-		if (errno)
-			return errno;
-		else
-			return EXT2_ET_NO_MEMORY;
+	якщо (*p == NULL) {
+		якщо (errno)
+			повернути errno;
+		інакше
+			повернути EXT2_ET_NO_MEMORY;
 	}
-#else  /* !HAVE_MEMALIGN */
+#інакше  /* !HAVE_MEMALIGN */
 #ifdef HAVE_VALLOC
-	if (align > sizeof(long long))
+	якщо (align > sizeof(long long))
 		*p = valloc(size);
-	else
+	інакше
 #endif
 		*p = malloc(size);
-	if ((uintptr_t) *p & (align - 1)) {
+	якщо ((uintptr_t) *p & (align - 1)) {
 		free(*p);
 		*p = 0;
 	}
-	if (*p == 0)
-		return EXT2_ET_NO_MEMORY;
+	якщо (*p == 0)
+		повернути EXT2_ET_NO_MEMORY;
 #endif	/* HAVE_MEMALIGN */
 #endif	/* HAVE_POSIX_MEMALIGN */
-	return retval;
+	повернути retval;
 }
 
 #ifdef DEBUG
-static int isaligned(void *ptr, unsigned long align)
+static ціле isaligned(void *ptr, unsigned long align)
 {
-	return (((unsigned long) ptr & (align - 1)) == 0);
+	повернути (((unsigned long) ptr & (align - 1)) == 0);
 }
 
 static errcode_t test_memalign(unsigned long align)
@@ -93,26 +93,26 @@ static errcode_t test_memalign(unsigned long align)
 	errcode_t retval;
 
 	retval = ext2fs_get_memalign(32, align, &ptr);
-	if (!retval && !isaligned(ptr, align))
+	якщо (!retval && !isaligned(ptr, align))
 		retval = EINVAL;
 	free(ptr);
 	printf("tst_memalign(%lu) is %s\n", align,
 	       retval ? error_message(retval) : "OK");
-	return retval;
+	повернути retval;
 }
 
-int main(int argc, char **argv)
+ціле main(ціле argc, char **argv)
 {
-	int err = 0;
+	ціле err = 0;
 
-	if (test_memalign(4))
+	якщо (test_memalign(4))
 		err++;
-	if (test_memalign(32))
+	якщо (test_memalign(32))
 		err++;
-	if (test_memalign(1024))
+	якщо (test_memalign(1024))
 		err++;
-	if (test_memalign(4096))
+	якщо (test_memalign(4096))
 		err++;
-	return err;
+	повернути err;
 }
 #endif

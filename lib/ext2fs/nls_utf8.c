@@ -36,9 +36,9 @@
 #define UNICODE_MIN_SHIFT		(8)
 
 #define UNICODE_AGE(MAJ, MIN, REV)			\
-	(((unsigned int)(MAJ) << UNICODE_MAJ_SHIFT) |	\
-	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
-	 ((unsigned int)(REV)))
+	(((unsigned ціле)(MAJ) << UNICODE_MAJ_SHIFT) |	\
+	 ((unsigned ціле)(MIN) << UNICODE_MIN_SHIFT) |	\
+	 ((unsigned ціле)(REV)))
 
 /* Needed in struct utf8cursor below. */
 #define UTF8HANGULLEAF	(12)
@@ -52,10 +52,10 @@ struct utf8cursor {
 	const char	*p;
 	const char	*ss;
 	const char	*sp;
-	unsigned int	len;
-	unsigned int	slen;
-	short int	ccc;
-	short int	nccc;
+	unsigned ціле	len;
+	unsigned ціле	slen;
+	short ціле	ccc;
+	short ціле	nccc;
 	unsigned char	hangul[UTF8HANGULLEAF];
 };
 
@@ -79,8 +79,8 @@ struct utf8cursor {
 
 
 struct utf8data {
-	unsigned int maxage;
-	unsigned int offset;
+	unsigned ціле maxage;
+	unsigned ціле offset;
 };
 
 #define __INCLUDED_FROM_UTF8NORM_C__
@@ -90,26 +90,26 @@ struct utf8data {
 #define ARRAY_SIZE(array)			\
         (sizeof(array) / sizeof(array[0]))
 
-#if 0
+#якщо 0
 /* Highest unicode version supported by the data tables. */
-static int utf8version_is_supported(uint8_t maj, uint8_t min, uint8_t rev)
+static ціле utf8version_is_supported(uint8_t maj, uint8_t min, uint8_t rev)
 {
-	int i = ARRAY_SIZE(utf8agetab) - 1;
-	unsigned int sb_utf8version = UNICODE_AGE(maj, min, rev);
+	ціле i = ARRAY_SIZE(utf8agetab) - 1;
+	unsigned ціле sb_utf8version = UNICODE_AGE(maj, min, rev);
 
-	while (i >= 0 && utf8agetab[i] != 0) {
-		if (sb_utf8version == utf8agetab[i])
-			return 1;
+	поки (i >= 0 && utf8agetab[i] != 0) {
+		якщо (sb_utf8version == utf8agetab[i])
+			повернути 1;
 		i--;
 	}
-	return 0;
+	повернути 0;
 }
 #endif
 
-#if 0
-static int utf8version_latest(void)
+#якщо 0
+static ціле utf8version_latest(void)
 {
-	return utf8vers;
+	повернути utf8vers;
 }
 #endif
 
@@ -166,20 +166,20 @@ static int utf8version_latest(void)
  * Assumes the input points to the first byte of a valid UTF-8
  * sequence.
  */
-static inline int utf8clen(const char *s)
+static inline ціле utf8clen(const char *s)
 {
 	unsigned char c = *s;
 
-	return 1 + (c >= 0xC0) + (c >= 0xE0) + (c >= 0xF0);
+	повернути 1 + (c >= 0xC0) + (c >= 0xE0) + (c >= 0xF0);
 }
 
 /*
  * Decode a 3-byte UTF-8 sequence.
  */
-static unsigned int
+static unsigned ціле
 utf8decode3(const char *str)
 {
-	unsigned int		uc;
+	unsigned ціле		uc;
 
 	uc = *str++ & 0x0F;
 	uc <<= 6;
@@ -187,14 +187,14 @@ utf8decode3(const char *str)
 	uc <<= 6;
 	uc |= *str++ & 0x3F;
 
-	return uc;
+	повернути uc;
 }
 
 /*
  * Encode a 3-byte UTF-8 sequence.
  */
-static int
-utf8encode3(char *str, unsigned int val)
+static ціле
+utf8encode3(char *str, unsigned ціле val)
 {
 	str[2] = (val & 0x3F) | 0x80;
 	val >>= 6;
@@ -202,7 +202,7 @@ utf8encode3(char *str, unsigned int val)
 	val >>= 6;
 	str[0] = val | 0xE0;
 
-	return 3;
+	повернути 3;
 }
 
 /*
@@ -352,10 +352,10 @@ typedef const unsigned char utf8leaf_t;
 static utf8leaf_t *
 utf8hangul(const char *str, unsigned char *hangul)
 {
-	unsigned int	si;
-	unsigned int	li;
-	unsigned int	vi;
-	unsigned int	ti;
+	unsigned ціле	si;
+	unsigned ціле	li;
+	unsigned ціле	vi;
+	unsigned ціле	ti;
 	unsigned char	*h;
 
 	/* Calculate the SI, LI, VI, and TI values. */
@@ -377,13 +377,13 @@ utf8hangul(const char *str, unsigned char *hangul)
 	h += utf8encode3((char *)h, vi + VB);
 
 	/* Add TPart if required, also a 3-byte UTF-8 sequence. */
-	if (ti)
+	якщо (ti)
 		h += utf8encode3((char *)h, ti + TB);
 
 	/* Terminate string. */
 	h[0] = '\0';
 
-	return hangul;
+	повернути hangul;
 }
 
 /*
@@ -398,55 +398,55 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
 			       unsigned char *hangul, const char *s, size_t len)
 {
 	utf8trie_t	*trie;
-	int		offlen;
-	int		offset;
-	int		mask;
-	int		node;
+	ціле		offlen;
+	ціле		offset;
+	ціле		mask;
+	ціле		node;
 
-	if (!data)
-		return NULL;
-	if (len == 0)
-		return NULL;
+	якщо (!data)
+		повернути NULL;
+	якщо (len == 0)
+		повернути NULL;
 
 	trie = utf8data + data->offset;
 	node = 1;
-	while (node) {
+	поки (node) {
 		offlen = (*trie & OFFLEN) >> OFFLEN_SHIFT;
-		if (*trie & NEXTBYTE) {
-			if (--len == 0)
-				return NULL;
+		якщо (*trie & NEXTBYTE) {
+			якщо (--len == 0)
+				повернути NULL;
 			s++;
 		}
 		mask = 1 << (*trie & BITNUM);
-		if (*s & mask) {
+		якщо (*s & mask) {
 			/* Right leg */
-			if (offlen) {
+			якщо (offlen) {
 				/* Right node at offset of trie */
 				node = (*trie & RIGHTNODE);
 				offset = trie[offlen];
-				while (--offlen) {
+				поки (--offlen) {
 					offset <<= 8;
 					offset |= trie[offlen];
 				}
 				trie += offset;
-			} else if (*trie & RIGHTPATH) {
+			} інакше якщо (*trie & RIGHTPATH) {
 				/* Right node after this node */
 				node = (*trie & TRIENODE);
 				trie++;
-			} else {
+			} інакше {
 				/* No right node. */
-				return NULL;
+				повернути NULL;
 			}
-		} else {
+		} інакше {
 			/* Left leg */
-			if (offlen) {
+			якщо (offlen) {
 				/* Left node after this node. */
 				node = (*trie & LEFTNODE);
 				trie += offlen + 1;
-			} else if (*trie & RIGHTPATH) {
+			} інакше якщо (*trie & RIGHTPATH) {
 				/* No left node. */
-				return NULL;
-			} else {
+				повернути NULL;
+			} інакше {
 				/* Left node after this node */
 				node = (*trie & TRIENODE);
 				trie++;
@@ -459,9 +459,9 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
 	 * always 3 bytes long, so s has been advanced twice, and the
 	 * start of the sequence is at s-2.
 	 */
-	if (LEAF_CCC(trie) == DECOMPOSE && LEAF_STR(trie)[0] == HANGUL)
+	якщо (LEAF_CCC(trie) == DECOMPOSE && LEAF_STR(trie)[0] == HANGUL)
 		trie = utf8hangul(s - 2, hangul);
-	return trie;
+	повернути trie;
 }
 
 /*
@@ -473,127 +473,127 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
 static utf8leaf_t *utf8lookup(const struct utf8data *data,
 			      unsigned char *hangul, const char *s)
 {
-	return utf8nlookup(data, hangul, s, (size_t)-1);
+	повернути utf8nlookup(data, hangul, s, (size_t)-1);
 }
 
-#if 0
+#якщо 0
 /*
  * Maximum age of any character in s.
  * Return -1 if s is not valid UTF-8 unicode.
  * Return 0 if only non-assigned code points are used.
  */
-static int utf8agemax(const struct utf8data *data, const char *s)
+static ціле utf8agemax(const struct utf8data *data, const char *s)
 {
 	utf8leaf_t	*leaf;
-	int		age = 0;
-	int		leaf_age;
+	ціле		age = 0;
+	ціле		leaf_age;
 	unsigned char	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
+	якщо (!data)
+		повернути -1;
 
-	while (*s) {
+	поки (*s) {
 		leaf = utf8lookup(data, hangul, s);
-		if (!leaf)
-			return -1;
+		якщо (!leaf)
+			повернути -1;
 
 		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age > age)
+		якщо (leaf_age <= data->maxage && leaf_age > age)
 			age = leaf_age;
 		s += utf8clen(s);
 	}
-	return age;
+	повернути age;
 }
 #endif
 
-#if 0
+#якщо 0
 /*
  * Minimum age of any character in s.
  * Return -1 if s is not valid UTF-8 unicode.
  * Return 0 if non-assigned code points are used.
  */
-static int utf8agemin(const struct utf8data *data, const char *s)
+static ціле utf8agemin(const struct utf8data *data, const char *s)
 {
 	utf8leaf_t	*leaf;
-	int		age;
-	int		leaf_age;
+	ціле		age;
+	ціле		leaf_age;
 	unsigned char	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
+	якщо (!data)
+		повернути -1;
 	age = data->maxage;
-	while (*s) {
+	поки (*s) {
 		leaf = utf8lookup(data, hangul, s);
-		if (!leaf)
-			return -1;
+		якщо (!leaf)
+			повернути -1;
 		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age < age)
+		якщо (leaf_age <= data->maxage && leaf_age < age)
 			age = leaf_age;
 		s += utf8clen(s);
 	}
-	return age;
+	повернути age;
 }
 #endif
 
-#if 0
+#якщо 0
 /*
  * Maximum age of any character in s, touch at most len bytes.
  * Return -1 if s is not valid UTF-8 unicode.
  */
-static int utf8nagemax(const struct utf8data *data, const char *s, size_t len)
+static ціле utf8nagemax(const struct utf8data *data, const char *s, size_t len)
 {
 	utf8leaf_t	*leaf;
-	int		age = 0;
-	int		leaf_age;
+	ціле		age = 0;
+	ціле		leaf_age;
 	unsigned char	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
+	якщо (!data)
+		повернути -1;
 
-	while (len && *s) {
+	поки (len && *s) {
 		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf)
-			return -1;
+		якщо (!leaf)
+			повернути -1;
 		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age > age)
+		якщо (leaf_age <= data->maxage && leaf_age > age)
 			age = leaf_age;
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return age;
+	повернути age;
 }
 #endif
 
-#if 0
+#якщо 0
 /*
  * Maximum age of any character in s, touch at most len bytes.
  * Return -1 if s is not valid UTF-8 unicode.
  */
-static int utf8nagemin(const struct utf8data *data, const char *s, size_t len)
+static ціле utf8nagemin(const struct utf8data *data, const char *s, size_t len)
 {
 	utf8leaf_t	*leaf;
-	int		leaf_age;
-	int		age;
+	ціле		leaf_age;
+	ціле		age;
 	unsigned char	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
+	якщо (!data)
+		повернути -1;
 	age = data->maxage;
-	while (len && *s) {
+	поки (len && *s) {
 		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf)
-			return -1;
+		якщо (!leaf)
+			повернути -1;
 		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age < age)
+		якщо (leaf_age <= data->maxage && leaf_age < age)
 			age = leaf_age;
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return age;
+	повернути age;
 }
 #endif
 
-#if 0
+#якщо 0
 /*
  * Length of the normalization of s.
  * Return -1 if s is not valid UTF-8 unicode.
@@ -606,25 +606,25 @@ static ssize_t utf8len(const struct utf8data *data, const char *s)
 	size_t		ret = 0;
 	unsigned char	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	while (*s) {
+	якщо (!data)
+		повернути -1;
+	поки (*s) {
 		leaf = utf8lookup(data, hangul, s);
-		if (!leaf)
-			return -1;
-		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
+		якщо (!leaf)
+			повернути -1;
+		якщо (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
 			ret += utf8clen(s);
-		else if (LEAF_CCC(leaf) == DECOMPOSE)
+		інакше якщо (LEAF_CCC(leaf) == DECOMPOSE)
 			ret += strlen(LEAF_STR(leaf));
-		else
+		інакше
 			ret += utf8clen(s);
 		s += utf8clen(s);
 	}
-	return ret;
+	повернути ret;
 }
 #endif
 
-#if 0
+#якщо 0
 /*
  * Length of the normalization of s, touch at most len bytes.
  * Return -1 if s is not valid UTF-8 unicode.
@@ -635,22 +635,22 @@ static ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len)
 	size_t		ret = 0;
 	unsigned char	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	while (len && *s) {
+	якщо (!data)
+		повернути -1;
+	поки (len && *s) {
 		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf)
-			return -1;
-		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
+		якщо (!leaf)
+			повернути -1;
+		якщо (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
 			ret += utf8clen(s);
-		else if (LEAF_CCC(leaf) == DECOMPOSE)
+		інакше якщо (LEAF_CCC(leaf) == DECOMPOSE)
 			ret += strlen(LEAF_STR(leaf));
-		else
+		інакше
 			ret += utf8clen(s);
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return ret;
+	повернути ret;
 }
 #endif
 
@@ -664,13 +664,13 @@ static ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len)
  *
  * Returns -1 on error, 0 on success.
  */
-static int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
+static ціле utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
 		const char *s, size_t len)
 {
-	if (!data)
-		return -1;
-	if (!s)
-		return -1;
+	якщо (!data)
+		повернути -1;
+	якщо (!s)
+		повернути -1;
 	u8c->data = data;
 	u8c->s = s;
 	u8c->p = NULL;
@@ -681,15 +681,15 @@ static int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
 	u8c->ccc = STOPPER;
 	u8c->nccc = STOPPER;
 	/* Check we didn't clobber the maximum length. */
-	if (u8c->len != len)
-		return -1;
+	якщо (u8c->len != len)
+		повернути -1;
 	/* The first byte of s may not be an utf8 continuation. */
-	if (len > 0 && (*s & 0xC0) == 0x80)
-		return -1;
-	return 0;
+	якщо (len > 0 && (*s & 0xC0) == 0x80)
+		повернути -1;
+	повернути 0;
 }
 
-#if 0
+#якщо 0
 /*
  * Set up an utf8cursor for use by utf8byte().
  *
@@ -699,10 +699,10 @@ static int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
  *
  * Returns -1 on error, 0 on success.
  */
-static int utf8cursor(struct utf8cursor *u8c, const struct utf8data *data,
+static ціле utf8cursor(struct utf8cursor *u8c, const struct utf8data *data,
 	       const char *s)
 {
-	return utf8ncursor(u8c, data, s, (unsigned int)-1);
+	повернути utf8ncursor(u8c, data, s, (unsigned ціле)-1);
 }
 #endif
 
@@ -733,64 +733,64 @@ static int utf8cursor(struct utf8cursor *u8c, const struct utf8data *data,
  *  u8c->ss != NULL -> this is a repeating scan.
  *  u8c->ccc == -1   -> this is the first scan of a repeating scan.
  */
-static int utf8byte(struct utf8cursor *u8c)
+static ціле utf8byte(struct utf8cursor *u8c)
 {
 	utf8leaf_t *leaf;
-	int ccc;
+	ціле ccc;
 
-	for (;;) {
+	для (;;) {
 		/* Check for the end of a decomposed character. */
-		if (u8c->p && *u8c->s == '\0') {
+		якщо (u8c->p && *u8c->s == '\0') {
 			u8c->s = u8c->p;
 			u8c->p = NULL;
 		}
 
 		/* Check for end-of-string. */
-		if (!u8c->p && (u8c->len == 0 || *u8c->s == '\0')) {
+		якщо (!u8c->p && (u8c->len == 0 || *u8c->s == '\0')) {
 			/* There is no next byte. */
-			if (u8c->ccc == STOPPER)
-				return 0;
+			якщо (u8c->ccc == STOPPER)
+				повернути 0;
 			/* End-of-string during a scan counts as a stopper. */
 			ccc = STOPPER;
 			goto ccc_mismatch;
-		} else if ((*u8c->s & 0xC0) == 0x80) {
+		} інакше якщо ((*u8c->s & 0xC0) == 0x80) {
 			/* This is a continuation of the current character. */
-			if (!u8c->p)
+			якщо (!u8c->p)
 				u8c->len--;
-			return (unsigned char)*u8c->s++;
+			повернути (unsigned char)*u8c->s++;
 		}
 
 		/* Look up the data for the current character. */
-		if (u8c->p) {
+		якщо (u8c->p) {
 			leaf = utf8lookup(u8c->data, u8c->hangul, u8c->s);
-		} else {
+		} інакше {
 			leaf = utf8nlookup(u8c->data, u8c->hangul,
 					   u8c->s, u8c->len);
 		}
 
 		/* No leaf found implies that the input is a binary blob. */
-		if (!leaf)
-			return -1;
+		якщо (!leaf)
+			повернути -1;
 
 		ccc = LEAF_CCC(leaf);
 		/* Characters that are too new have CCC 0. */
-		if (utf8agetab[LEAF_GEN(leaf)] > u8c->data->maxage) {
+		якщо (utf8agetab[LEAF_GEN(leaf)] > u8c->data->maxage) {
 			ccc = STOPPER;
-		} else if (ccc == DECOMPOSE) {
+		} інакше якщо (ccc == DECOMPOSE) {
 			u8c->len -= utf8clen(u8c->s);
 			u8c->p = u8c->s + utf8clen(u8c->s);
 			u8c->s = LEAF_STR(leaf);
 			/* Empty decomposition implies CCC 0. */
-			if (*u8c->s == '\0') {
-				if (u8c->ccc == STOPPER)
+			якщо (*u8c->s == '\0') {
+				якщо (u8c->ccc == STOPPER)
 					continue;
 				ccc = STOPPER;
 				goto ccc_mismatch;
 			}
 
 			leaf = utf8lookup(u8c->data, u8c->hangul, u8c->s);
-			if (!leaf)
-				return -1;
+			якщо (!leaf)
+				повернути -1;
 			ccc = LEAF_CCC(leaf);
 		}
 
@@ -798,22 +798,22 @@ static int utf8byte(struct utf8cursor *u8c)
 		 * If this is not a stopper, then see if it updates
 		 * the next canonical class to be emitted.
 		 */
-		if (ccc != STOPPER && u8c->ccc < ccc && ccc < u8c->nccc)
+		якщо (ccc != STOPPER && u8c->ccc < ccc && ccc < u8c->nccc)
 			u8c->nccc = ccc;
 
 		/*
 		 * Return the current byte if this is the current
 		 * combining class.
 		 */
-		if (ccc == u8c->ccc) {
-			if (!u8c->p)
+		якщо (ccc == u8c->ccc) {
+			якщо (!u8c->p)
 				u8c->len--;
-			return (unsigned char)*u8c->s++;
+			повернути (unsigned char)*u8c->s++;
 		}
 
 		/* Current combining class mismatch. */
 ccc_mismatch:
-		if (u8c->nccc == STOPPER) {
+		якщо (u8c->nccc == STOPPER) {
 			/*
 			 * Scan forward for the first canonical class
 			 * to be emitted.  Save the position from
@@ -824,22 +824,22 @@ ccc_mismatch:
 			u8c->sp = u8c->p;
 			u8c->ss = u8c->s;
 			u8c->slen = u8c->len;
-			if (!u8c->p)
+			якщо (!u8c->p)
 				u8c->len -= utf8clen(u8c->s);
 			u8c->s += utf8clen(u8c->s);
-		} else if (ccc != STOPPER) {
+		} інакше якщо (ccc != STOPPER) {
 			/* Not a stopper, and not the ccc we're emitting. */
-			if (!u8c->p)
+			якщо (!u8c->p)
 				u8c->len -= utf8clen(u8c->s);
 			u8c->s += utf8clen(u8c->s);
-		} else if (u8c->nccc != MAXCCC + 1) {
+		} інакше якщо (u8c->nccc != MAXCCC + 1) {
 			/* At a stopper, restart for next ccc. */
 			u8c->ccc = u8c->nccc;
 			u8c->nccc = MAXCCC + 1;
 			u8c->s = u8c->ss;
 			u8c->p = u8c->sp;
 			u8c->len = u8c->slen;
-		} else {
+		} інакше {
 			/* All done, proceed from here. */
 			u8c->ccc = STOPPER;
 			u8c->nccc = STOPPER;
@@ -850,7 +850,7 @@ ccc_mismatch:
 	}
 }
 
-#if 0
+#якщо 0
 /*
  * Look for the correct const struct utf8data for a unicode version.
  * Returns NULL if the version requested is too new.
@@ -866,30 +866,30 @@ ccc_mismatch:
  *  - Remove any Default_Ignorable_Code_Point.
  *  - Apply a full casefold (C + F).
  */
-static const struct utf8data *utf8nfdi(unsigned int maxage)
+static const struct utf8data *utf8nfdi(unsigned ціле maxage)
 {
-	int i = ARRAY_SIZE(utf8nfdidata) - 1;
+	ціле i = ARRAY_SIZE(utf8nfdidata) - 1;
 
-	while (maxage < utf8nfdidata[i].maxage)
+	поки (maxage < utf8nfdidata[i].maxage)
 		i--;
-	if (maxage > utf8nfdidata[i].maxage)
-		return NULL;
-	return &utf8nfdidata[i];
+	якщо (maxage > utf8nfdidata[i].maxage)
+		повернути NULL;
+	повернути &utf8nfdidata[i];
 }
 #endif
 
-static const struct utf8data *utf8nfdicf(unsigned int maxage)
+static const struct utf8data *utf8nfdicf(unsigned ціле maxage)
 {
-	int i = ARRAY_SIZE(utf8nfdicfdata) - 1;
+	ціле i = ARRAY_SIZE(utf8nfdicfdata) - 1;
 
-	while (maxage < utf8nfdicfdata[i].maxage)
+	поки (maxage < utf8nfdicfdata[i].maxage)
 		i--;
-	if (maxage > utf8nfdicfdata[i].maxage)
-		return NULL;
-	return &utf8nfdicfdata[i];
+	якщо (maxage > utf8nfdicfdata[i].maxage)
+		повернути NULL;
+	повернути &utf8nfdicfdata[i];
 }
 
-static int utf8_casefold(const struct ext2fs_nls_table *table,
+static ціле utf8_casefold(const struct ext2fs_nls_table *table,
 			  const unsigned char *str, size_t len,
 			  unsigned char *dest, size_t dlen)
 {
@@ -897,74 +897,74 @@ static int utf8_casefold(const struct ext2fs_nls_table *table,
 	struct utf8cursor cur;
 	size_t nlen = 0;
 
-	if (utf8ncursor(&cur, data, (const char *) str, len) < 0)
+	якщо (utf8ncursor(&cur, data, (const char *) str, len) < 0)
 		goto invalid_seq;
 
-	for (nlen = 0; nlen < dlen; nlen++) {
-		int c = utf8byte(&cur);
+	для (nlen = 0; nlen < dlen; nlen++) {
+		ціле c = utf8byte(&cur);
 
 		dest[nlen] = c;
-		if (!c)
-			return nlen;
-		if (c == -1)
+		якщо (!c)
+			повернути nlen;
+		якщо (c == -1)
 			break;
 	}
 
-	return -ENAMETOOLONG;
+	повернути -ENAMETOOLONG;
 
 invalid_seq:
-	if (dlen < len)
-		return -ENAMETOOLONG;
+	якщо (dlen < len)
+		повернути -ENAMETOOLONG;
 
 	/* Signal invalid sequence */
-	return -EINVAL;
+	повернути -EINVAL;
 }
 
-static int utf8_validate(const struct ext2fs_nls_table *table,
+static ціле utf8_validate(const struct ext2fs_nls_table *table,
 			 char *s, size_t len, char **pos)
 {
 	const struct utf8data *data = utf8nfdicf(table->version);
 	utf8leaf_t	*leaf;
 	unsigned char	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	while (len && *s) {
+	якщо (!data)
+		повернути -1;
+	поки (len && *s) {
 		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf) {
+		якщо (!leaf) {
 			*pos = s;
-			return 1;
+			повернути 1;
 		}
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return 0;
+	повернути 0;
 }
 
-static int utf8_casefold_cmp(const struct ext2fs_nls_table *table,
+static ціле utf8_casefold_cmp(const struct ext2fs_nls_table *table,
 			     const unsigned char *str1, size_t len1,
 			     const unsigned char *str2, size_t len2)
 {
 	const struct utf8data *data = utf8nfdicf(table->version);
-	int c1, c2;
+	ціле c1, c2;
 	struct utf8cursor cur1, cur2;
 
-	if (utf8ncursor(&cur1, data, (const char *) str1, len1) < 0)
-		return -1;
-	if (utf8ncursor(&cur2, data, (const char *) str2, len2) < 0)
-		return -1;
+	якщо (utf8ncursor(&cur1, data, (const char *) str1, len1) < 0)
+		повернути -1;
+	якщо (utf8ncursor(&cur2, data, (const char *) str2, len2) < 0)
+		повернути -1;
 
 	do {
 		c1 = utf8byte(&cur1);
 		c2 = utf8byte(&cur2);
 
-		if (c1 < 0 || c2 < 0)
-			return -1;
-		if (c1 != c2)
-			return c1 - c2;
-	} while (c1);
+		якщо (c1 < 0 || c2 < 0)
+			повернути -1;
+		якщо (c1 != c2)
+			повернути c1 - c2;
+	} поки (c1);
 
-	return 0;
+	повернути 0;
 }
 
 static const struct ext2fs_nls_ops utf8_ops = {
@@ -978,23 +978,23 @@ static const struct ext2fs_nls_table nls_utf8 = {
 	.version = UNICODE_AGE(12, 1, 0),
 };
 
-const struct ext2fs_nls_table *ext2fs_load_nls_table(int encoding)
+const struct ext2fs_nls_table *ext2fs_load_nls_table(ціле encoding)
 {
-	if (encoding == EXT4_ENC_UTF8_12_1)
-		return &nls_utf8;
+	якщо (encoding == EXT4_ENC_UTF8_12_1)
+		повернути &nls_utf8;
 
-	return NULL;
+	повернути NULL;
 }
 
-int ext2fs_check_encoded_name(const struct ext2fs_nls_table *table,
+ціле ext2fs_check_encoded_name(const struct ext2fs_nls_table *table,
 			      char *name, size_t len, char **pos)
 {
-	return table->ops->validate(table, name, len, pos);
+	повернути table->ops->validate(table, name, len, pos);
 }
 
-int ext2fs_casefold_cmp(const struct ext2fs_nls_table *table,
+ціле ext2fs_casefold_cmp(const struct ext2fs_nls_table *table,
 			const unsigned char *str1, size_t len1,
 			const unsigned char *str2, size_t len2)
 {
-	return table->ops->casefold_cmp(table, str1, len1, str2, len2);
+	повернути table->ops->casefold_cmp(table, str1, len1, str2, len2);
 }

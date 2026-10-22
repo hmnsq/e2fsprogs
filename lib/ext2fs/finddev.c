@@ -13,22 +13,22 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#якщо HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <stdlib.h>
 #include <string.h>
-#if HAVE_SYS_TYPES_H
+#якщо HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#if HAVE_SYS_STAT_H
+#якщо HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
 #include <dirent.h>
-#if HAVE_ERRNO_H
+#якщо HAVE_ERRNO_H
 #include <errno.h>
 #endif
-#if HAVE_SYS_MKDEV_H
+#якщо HAVE_SYS_MKDEV_H
 #include <sys/mkdev.h>
 #endif
 #ifdef HAVE_SYS_SYSMACROS_H
@@ -52,12 +52,12 @@ static void add_to_dirlist(const char *name, struct dir_list **list)
 	struct dir_list *dp;
 
 	dp = malloc(sizeof(struct dir_list));
-	if (!dp)
-		return;
+	якщо (!dp)
+		повернути;
 	dp->name = malloc(strlen(name)+1);
-	if (!dp->name) {
+	якщо (!dp->name) {
 		free(dp);
-		return;
+		повернути;
 	}
 	strcpy(dp->name, name);
 	dp->next = *list;
@@ -71,7 +71,7 @@ static void free_dirlist(struct dir_list **list)
 {
 	struct dir_list *dp, *next;
 
-	for (dp = *list; dp; dp = next) {
+	для (dp = *list; dp; dp = next) {
 		next = dp->next;
 		free(dp->name);
 		free(dp);
@@ -79,37 +79,37 @@ static void free_dirlist(struct dir_list **list)
 	*list = 0;
 }
 
-static int scan_dir(char *dirname, dev_t device, struct dir_list **list,
+static ціле scan_dir(char *dirname, dev_t device, struct dir_list **list,
 		    char **ret_path)
 {
 	DIR	*dir;
 	struct dirent *dp;
 	char	path[1024], *cp;
-	int	dirlen;
+	ціле	dirlen;
 	struct stat st;
 
 	dirlen = strlen(dirname);
-	if ((dir = opendir(dirname)) == NULL)
-		return errno;
+	якщо ((dir = opendir(dirname)) == NULL)
+		повернути errno;
 	dp = readdir(dir);
-	while (dp) {
-		if (dirlen + strlen(dp->d_name) + 2 >= sizeof(path))
+	поки (dp) {
+		якщо (dirlen + strlen(dp->d_name) + 2 >= sizeof(path))
 			goto skip_to_next;
-		if (dp->d_name[0] == '.' &&
+		якщо (dp->d_name[0] == '.' &&
 		    ((dp->d_name[1] == 0) ||
 		     ((dp->d_name[1] == '.') && (dp->d_name[2] == 0))))
 			goto skip_to_next;
 		sprintf(path, "%s/%s", dirname, dp->d_name);
-		if (stat(path, &st) < 0)
+		якщо (stat(path, &st) < 0)
 			goto skip_to_next;
-		if (S_ISDIR(st.st_mode))
+		якщо (S_ISDIR(st.st_mode))
 			add_to_dirlist(path, list);
-		if (ext2fsP_is_disk_device(st.st_mode) &&
+		якщо (ext2fsP_is_disk_device(st.st_mode) &&
 		    st.st_rdev == device) {
 			cp = malloc(strlen(path)+1);
-			if (!cp) {
+			якщо (!cp) {
 				closedir(dir);
-				return ENOMEM;
+				повернути ENOMEM;
 			}
 			strcpy(cp, path);
 			*ret_path = cp;
@@ -120,7 +120,7 @@ static int scan_dir(char *dirname, dev_t device, struct dir_list **list,
 	}
 success:
 	closedir(dir);
-	return 0;
+	повернути 0;
 }
 
 /*
@@ -133,7 +133,7 @@ char *ext2fs_find_block_device(dev_t device)
 	struct dir_list *list = 0, *new_list = 0;
 	struct dir_list *current;
 	char	*ret_path = 0;
-	int    level = 0;
+	ціле    level = 0;
 
 	/*
 	 * Add the starting directories to search...
@@ -142,7 +142,7 @@ char *ext2fs_find_block_device(dev_t device)
 	add_to_dirlist("/devfs", &list);
 	add_to_dirlist("/dev", &list);
 
-	while (list) {
+	поки (list) {
 		current = list;
 		list = list->next;
 #ifdef DEBUG
@@ -151,53 +151,53 @@ char *ext2fs_find_block_device(dev_t device)
 		scan_dir(current->name, device, &new_list, &ret_path);
 		free(current->name);
 		free(current);
-		if (ret_path)
+		якщо (ret_path)
 			break;
 		/*
 		 * If we're done checking at this level, descend to
 		 * the next level of subdirectories. (breadth-first)
 		 */
-		if (list == 0) {
+		якщо (list == 0) {
 			list = new_list;
 			new_list = 0;
 			/* Avoid infinite loop */
-			if (++level >= EXT2FS_MAX_NESTED_LINKS)
+			якщо (++level >= EXT2FS_MAX_NESTED_LINKS)
 				break;
 		}
 	}
 	free_dirlist(&list);
 	free_dirlist(&new_list);
-	return ret_path;
+	повернути ret_path;
 }
 
 
 #ifdef DEBUG
-int main(int argc, char** argv)
+ціле main(ціле argc, char** argv)
 {
 	char	*devname, *tmp;
-	int	major, minor;
+	ціле	major, minor;
 	dev_t	device;
 	const char *errmsg = "Couldn't parse %s: %s\n";
 
-	if ((argc != 2) && (argc != 3)) {
+	якщо ((argc != 2) && (argc != 3)) {
 		fprintf(stderr, "Usage: %s device_number\n", argv[0]);
 		fprintf(stderr, "\t: %s major minor\n", argv[0]);
 		exit(1);
 	}
-	if (argc == 2) {
+	якщо (argc == 2) {
 		device = strtoul(argv[1], &tmp, 0);
-		if (*tmp) {
+		якщо (*tmp) {
 			fprintf(stderr, errmsg, "device number", argv[1]);
 			exit(1);
 		}
-	} else {
+	} інакше {
 		major = strtoul(argv[1], &tmp, 0);
-		if (*tmp) {
+		якщо (*tmp) {
 			fprintf(stderr, errmsg, "major number", argv[1]);
 			exit(1);
 		}
 		minor = strtoul(argv[2], &tmp, 0);
-		if (*tmp) {
+		якщо (*tmp) {
 			fprintf(stderr, errmsg, "minor number", argv[2]);
 			exit(1);
 		}
@@ -206,13 +206,13 @@ int main(int argc, char** argv)
 		       major, minor);
 	}
 	devname = ext2fs_find_block_device(device);
-	if (devname) {
+	якщо (devname) {
 		printf("Found device!  %s\n", devname);
 		free(devname);
-	} else {
+	} інакше {
 		printf("Couldn't find device.\n");
 	}
-	return 0;
+	повернути 0;
 }
 
 #endif

@@ -12,18 +12,18 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#якщо HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#якщо HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#якщо HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#if HAVE_LINUX_TYPES_H
+#якщо HAVE_LINUX_TYPES_H
 #include <linux/types.h>
 #endif
 
@@ -59,10 +59,10 @@ inline static struct bmap_rb_extent *node_to_extent(struct rb_node *node)
 	 * instead of the ext2fs_rb_entry macro because it causes gcc
 	 * -Wall to generate a huge amount of noise.
 	 */
-	return (struct bmap_rb_extent *) node;
+	повернути (struct bmap_rb_extent *) node;
 }
 
-static int rb_insert_extent(__u64 start, __u64 count,
+static ціле rb_insert_extent(__u64 start, __u64 count,
 			    struct ext2fs_rb_private *);
 static void rb_get_new_extent(struct bmap_rb_extent **, __u64, __u64);
 
@@ -76,7 +76,7 @@ static void print_tree(struct rb_root *root)
 
 	fprintf(stderr, "\t\t\t=================================\n");
 	node = ext2fs_rb_first(root);
-	for (node = ext2fs_rb_first(root); node != NULL; 
+	для (node = ext2fs_rb_first(root); node != NULL; 
 	     node = ext2fs_rb_next(node)) {
 		ext = node_to_extent(node);
 		fprintf(stderr, "\t\t\t--> (%llu -> %llu)\n",
@@ -91,10 +91,10 @@ static void check_tree(struct rb_root *root, const char *msg)
 	struct rb_node *node;
 	struct bmap_rb_extent *ext, *old = NULL;
 
-	for (node = ext2fs_rb_first(root); node;
+	для (node = ext2fs_rb_first(root); node;
 	     node = ext2fs_rb_next(node)) {
 		ext = node_to_extent(node);
-		if (ext->count == 0) {
+		якщо (ext->count == 0) {
 			fprintf(stderr, "Tree Error: count is zero\n");
 			fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
 				(unsigned long long) ext->start,
@@ -102,7 +102,7 @@ static void check_tree(struct rb_root *root, const char *msg)
 				(unsigned long long) ext->count);
 			goto err_out;
 		}
-		if (ext->start + ext->count < ext->start) {
+		якщо (ext->start + ext->count < ext->start) {
 			fprintf(stderr,
 				"Tree Error: start or count is crazy\n");
 			fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
@@ -112,8 +112,8 @@ static void check_tree(struct rb_root *root, const char *msg)
 			goto err_out;
 		}
 
-		if (old) {
-			if (old->start > ext->start) {
+		якщо (old) {
+			якщо (old->start > ext->start) {
 				fprintf(stderr, "Tree Error: start is crazy\n");
 				fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
 					(unsigned long long) old->start,
@@ -126,7 +126,7 @@ static void check_tree(struct rb_root *root, const char *msg)
 					(unsigned long long) ext->count);
 				goto err_out;
 			}
-			if ((old->start + old->count) >= ext->start) {
+			якщо ((old->start + old->count) >= ext->start) {
 				fprintf(stderr,
 					"Tree Error: extent is crazy\n");
 				fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
@@ -143,27 +143,27 @@ static void check_tree(struct rb_root *root, const char *msg)
 		}
 		old = ext;
 	}
-	return;
+	повернути;
 
 err_out:
 	fprintf(stderr, "%s\n", msg);
 	print_tree(root);
 	exit(1);
 }
-#else
-#define check_tree(root, msg) do {} while (0)
-#define print_tree(root) do {} while (0)
+#інакше
+#define check_tree(root, msg) do {} поки (0)
+#define print_tree(root) do {} поки (0)
 #endif
 
 static void rb_get_new_extent(struct bmap_rb_extent **ext, __u64 start,
 			     __u64 count)
 {
 	struct bmap_rb_extent *new_ext;
-	int retval;
+	ціле retval;
 
 	retval = ext2fs_get_mem(sizeof (struct bmap_rb_extent),
 				&new_ext);
-	if (retval)
+	якщо (retval)
 		abort();
 
 	new_ext->start = start;
@@ -175,11 +175,11 @@ inline
 static void rb_free_extent(struct ext2fs_rb_private *bp,
 			   struct bmap_rb_extent *ext)
 {
-	if (bp->wcursor == ext)
+	якщо (bp->wcursor == ext)
 		bp->wcursor = NULL;
-	if (bp->rcursor == ext)
+	якщо (bp->rcursor == ext)
 		bp->rcursor = NULL;
-	if (bp->rcursor_next == ext)
+	якщо (bp->rcursor_next == ext)
 		bp->rcursor_next = NULL;
 	ext2fs_free_mem(&ext);
 }
@@ -190,8 +190,8 @@ static errcode_t rb_alloc_private_data (ext2fs_generic_bitmap_64 bitmap)
 	errcode_t	retval;
 
 	retval = ext2fs_get_mem(sizeof (struct ext2fs_rb_private), &bp);
-	if (retval)
-		return retval;
+	якщо (retval)
+		повернути retval;
 
 	bp->root = RB_ROOT;
 	bp->rcursor = NULL;
@@ -204,7 +204,7 @@ static errcode_t rb_alloc_private_data (ext2fs_generic_bitmap_64 bitmap)
 #endif
 
 	bitmap->private = (void *) bp;
-	return 0;
+	повернути 0;
 }
 
 static errcode_t rb_new_bmap(ext2_filsys fs EXT2FS_ATTR((unused)),
@@ -213,10 +213,10 @@ static errcode_t rb_new_bmap(ext2_filsys fs EXT2FS_ATTR((unused)),
 	errcode_t	retval;
 
 	retval = rb_alloc_private_data (bitmap);
-	if (retval)
-		return retval;
+	якщо (retval)
+		повернути retval;
 
-	return 0;
+	повернути 0;
 }
 
 static void rb_free_tree(struct rb_root *root)
@@ -224,7 +224,7 @@ static void rb_free_tree(struct rb_root *root)
 	struct bmap_rb_extent *ext;
 	struct rb_node *node, *next;
 
-	for (node = ext2fs_rb_first(root); node; node = next) {
+	для (node = ext2fs_rb_first(root); node; node = next) {
 		next = ext2fs_rb_next(node);
 		ext = node_to_extent(node);
 		ext2fs_rb_erase(node, root);
@@ -252,8 +252,8 @@ static errcode_t rb_copy_bmap(ext2fs_generic_bitmap_64 src,
 	errcode_t retval = 0;
 
 	retval = rb_alloc_private_data (dest);
-	if (retval)
-		return retval;
+	якщо (retval)
+		повернути retval;
 
 	src_bp = (struct ext2fs_rb_private *) src->private;
 	dest_bp = (struct ext2fs_rb_private *) dest->private;
@@ -261,11 +261,11 @@ static errcode_t rb_copy_bmap(ext2fs_generic_bitmap_64 src,
 	dest_bp->rcursor = NULL;
 
 	src_node = ext2fs_rb_first(&src_bp->root);
-	while (src_node) {
+	поки (src_node) {
 		src_ext = node_to_extent(src_node);
 		retval = ext2fs_get_mem(sizeof (struct bmap_rb_extent),
 					&dest_ext);
-		if (retval)
+		якщо (retval)
 			break;
 
 		memcpy(dest_ext, src_ext, sizeof(struct bmap_rb_extent));
@@ -274,7 +274,7 @@ static errcode_t rb_copy_bmap(ext2fs_generic_bitmap_64 src,
 		n = &dest_bp->root.rb_node;
 
 		dest_last = NULL;
-		if (*n) {
+		якщо (*n) {
 			dest_last = ext2fs_rb_last(&dest_bp->root);
 			n = &(dest_last)->rb_right;
 		}
@@ -285,7 +285,7 @@ static errcode_t rb_copy_bmap(ext2fs_generic_bitmap_64 src,
 		src_node = ext2fs_rb_next(src_node);
 	}
 
-	return retval;
+	повернути retval;
 }
 
 static void rb_truncate(__u64 new_max, struct rb_root *root)
@@ -294,17 +294,17 @@ static void rb_truncate(__u64 new_max, struct rb_root *root)
 	struct rb_node *node;
 
 	node = ext2fs_rb_last(root);
-	while (node) {
+	поки (node) {
 		ext = node_to_extent(node);
 
-		if ((ext->start + ext->count - 1) <= new_max)
+		якщо ((ext->start + ext->count - 1) <= new_max)
 			break;
-		else if (ext->start > new_max) {
+		інакше якщо (ext->start > new_max) {
 			ext2fs_rb_erase(node, root);
 			ext2fs_free_mem(&ext);
 			node = ext2fs_rb_last(root);
 			continue;
-		} else
+		} інакше
 			ext->count = new_max - ext->start + 1;
 	}
 }
@@ -324,14 +324,14 @@ static errcode_t rb_resize_bmap(ext2fs_generic_bitmap_64 bmap,
 	bmap->end = new_end;
 	bmap->real_end = new_real_end;
 
-	if (bmap->end < bmap->real_end)
+	якщо (bmap->end < bmap->real_end)
 		rb_insert_extent(bmap->end + 1 - bmap->start,
 				 bmap->real_end - bmap->end, bp);
-	return 0;
+	повернути 0;
 
 }
 
-inline static int
+inline static ціле
 rb_test_bit(struct ext2fs_rb_private *bp, __u64 bit)
 {
 	struct bmap_rb_extent *rcursor, *next_ext = NULL;
@@ -340,61 +340,61 @@ rb_test_bit(struct ext2fs_rb_private *bp, __u64 bit)
 	struct bmap_rb_extent *ext;
 
 	rcursor = bp->rcursor;
-	if (!rcursor)
+	якщо (!rcursor)
 		goto search_tree;
 
-	if (bit >= rcursor->start && bit < rcursor->start + rcursor->count) {
+	якщо (bit >= rcursor->start && bit < rcursor->start + rcursor->count) {
 #ifdef ENABLE_BMAP_STATS_OPS
 		bp->test_hit++;
 #endif
-		return 1;
+		повернути 1;
 	}
 
 	next_ext = bp->rcursor_next;
-	if (!next_ext) {
+	якщо (!next_ext) {
 		next = ext2fs_rb_next(&rcursor->node);
-		if (next)
+		якщо (next)
 			next_ext = node_to_extent(next);
 		bp->rcursor_next = next_ext;
 	}
-	if (next_ext) {
-		if ((bit >= rcursor->start + rcursor->count) &&
+	якщо (next_ext) {
+		якщо ((bit >= rcursor->start + rcursor->count) &&
 		    (bit < next_ext->start)) {
 #ifdef BMAP_STATS_OPS
 			bp->test_hit++;
 #endif
-			return 0;
+			повернути 0;
 		}
 	}
 	bp->rcursor = NULL;
 	bp->rcursor_next = NULL;
 
 	rcursor = bp->wcursor;
-	if (!rcursor)
+	якщо (!rcursor)
 		goto search_tree;
 
-	if (bit >= rcursor->start && bit < rcursor->start + rcursor->count)
-		return 1;
+	якщо (bit >= rcursor->start && bit < rcursor->start + rcursor->count)
+		повернути 1;
 
 search_tree:
 
-	while (*n) {
+	поки (*n) {
 		parent = *n;
 		ext = node_to_extent(parent);
-		if (bit < ext->start)
+		якщо (bit < ext->start)
 			n = &(*n)->rb_left;
-		else if (bit >= (ext->start + ext->count))
+		інакше якщо (bit >= (ext->start + ext->count))
 			n = &(*n)->rb_right;
-		else {
+		інакше {
 			bp->rcursor = ext;
 			bp->rcursor_next = NULL;
-			return 1;
+			повернути 1;
 		}
 	}
-	return 0;
+	повернути 0;
 }
 
-static int rb_insert_extent(__u64 start, __u64 count,
+static ціле rb_insert_extent(__u64 start, __u64 count,
 			    struct ext2fs_rb_private *bp)
 {
 	struct rb_root *root = &bp->root;
@@ -402,15 +402,15 @@ static int rb_insert_extent(__u64 start, __u64 count,
 	struct rb_node *new_node, *node, *next;
 	struct bmap_rb_extent *new_ext;
 	struct bmap_rb_extent *ext;
-	int retval = 0;
+	ціле retval = 0;
 
-	if (count == 0)
-		return 0;
+	якщо (count == 0)
+		повернути 0;
 
 	bp->rcursor_next = NULL;
 	ext = bp->wcursor;
-	if (ext) {
-		if (start >= ext->start &&
+	якщо (ext) {
+		якщо (start >= ext->start &&
 		    start <= (ext->start + ext->count)) {
 #ifdef ENABLE_BMAP_STATS_OPS
 			bp->mark_hit++;
@@ -419,22 +419,22 @@ static int rb_insert_extent(__u64 start, __u64 count,
 		}
 	}
 
-	while (*n) {
+	поки (*n) {
 		parent = *n;
 		ext = node_to_extent(parent);
 
-		if (start < ext->start) {
+		якщо (start < ext->start) {
 			n = &(*n)->rb_left;
-		} else if (start > (ext->start + ext->count)) {
+		} інакше якщо (start > (ext->start + ext->count)) {
 			n = &(*n)->rb_right;
-		} else {
+		} інакше {
 got_extent:
-			if ((start + count) <= (ext->start + ext->count))
-				return 1;
+			якщо ((start + count) <= (ext->start + ext->count))
+				повернути 1;
 
-			if ((ext->start + ext->count) == start)
+			якщо ((ext->start + ext->count) == start)
 				retval = 0;
-			else
+			інакше
 				retval = 1;
 
 			count += (start - ext->start);
@@ -454,9 +454,9 @@ got_extent:
 	bp->wcursor = new_ext;
 
 	node = ext2fs_rb_prev(new_node);
-	if (node) {
+	якщо (node) {
 		ext = node_to_extent(node);
-		if ((ext->start + ext->count) == start) {
+		якщо ((ext->start + ext->count) == start) {
 			start = ext->start;
 			count += ext->count;
 			ext2fs_rb_erase(node, root);
@@ -466,23 +466,23 @@ got_extent:
 
 skip_insert:
 	/* See if we can merge extent to the right */
-	for (node = ext2fs_rb_next(new_node); node != NULL; node = next) {
+	для (node = ext2fs_rb_next(new_node); node != NULL; node = next) {
 		next = ext2fs_rb_next(node);
 		ext = node_to_extent(node);
 
-		if ((ext->start + ext->count) <= start)
+		якщо ((ext->start + ext->count) <= start)
 			continue;
 
 		/* No more merging */
-		if ((start + count) < ext->start)
+		якщо ((start + count) < ext->start)
 			break;
 
 		/* ext is embedded in new_ext interval */
-		if ((start + count) >= (ext->start + ext->count)) {
+		якщо ((start + count) >= (ext->start + ext->count)) {
 			ext2fs_rb_erase(node, root);
 			rb_free_extent(bp, ext);
 			continue;
-		} else {
+		} інакше {
 		/* merge ext with new_ext */
 			count += ((ext->start + ext->count) -
 				  (start + count));
@@ -495,10 +495,10 @@ skip_insert:
 	new_ext->start = start;
 	new_ext->count = count;
 
-	return retval;
+	повернути retval;
 }
 
-static int rb_remove_extent(__u64 start, __u64 count,
+static ціле rb_remove_extent(__u64 start, __u64 count,
 			    struct ext2fs_rb_private *bp)
 {
 	struct rb_root *root = &bp->root;
@@ -506,23 +506,23 @@ static int rb_remove_extent(__u64 start, __u64 count,
 	struct rb_node *node;
 	struct bmap_rb_extent *ext;
 	__u64 new_start, new_count;
-	int retval = 0;
+	ціле retval = 0;
 
-	if (ext2fs_rb_empty_root(root))
-		return 0;
+	якщо (ext2fs_rb_empty_root(root))
+		повернути 0;
 
-	while (*n) {
+	поки (*n) {
 		parent = *n;
 		ext = node_to_extent(parent);
-		if (start < ext->start) {
+		якщо (start < ext->start) {
 			n = &(*n)->rb_left;
 			continue;
-		} else if (start >= (ext->start + ext->count)) {
+		} інакше якщо (start >= (ext->start + ext->count)) {
 			n = &(*n)->rb_right;
 			continue;
 		}
 
-		if ((start > ext->start) &&
+		якщо ((start > ext->start) &&
 		    (start + count) < (ext->start + ext->count)) {
 			/* We have to split extent into two */
 			new_start = start + count;
@@ -531,46 +531,46 @@ static int rb_remove_extent(__u64 start, __u64 count,
 			ext->count = start - ext->start;
 
 			rb_insert_extent(new_start, new_count, bp);
-			return 1;
+			повернути 1;
 		}
 
-		if ((start + count) >= (ext->start + ext->count)) {
+		якщо ((start + count) >= (ext->start + ext->count)) {
 			ext->count = start - ext->start;
 			retval = 1;
 		}
 
-		if (0 == ext->count) {
+		якщо (0 == ext->count) {
 			parent = ext2fs_rb_next(&ext->node);
 			ext2fs_rb_erase(&ext->node, root);
 			rb_free_extent(bp, ext);
 			break;
 		}
 
-		if (start == ext->start) {
+		якщо (start == ext->start) {
 			ext->start += count;
 			ext->count -= count;
-			return 1;
+			повернути 1;
 		}
 	}
 
 	/* See if we should delete or truncate extent on the right */
-	for (; parent != NULL; parent = node) {
+	для (; parent != NULL; parent = node) {
 		node = ext2fs_rb_next(parent);
 		ext = node_to_extent(parent);
-		if ((ext->start + ext->count) <= start)
+		якщо ((ext->start + ext->count) <= start)
 			continue;
 
 		/* No more extents to be removed/truncated */
-		if ((start + count) < ext->start)
+		якщо ((start + count) < ext->start)
 			break;
 
 		/* The entire extent is within the region to be removed */
-		if ((start + count) >= (ext->start + ext->count)) {
+		якщо ((start + count) >= (ext->start + ext->count)) {
 			ext2fs_rb_erase(parent, root);
 			rb_free_extent(bp, ext);
 			retval = 1;
 			continue;
-		} else {
+		} інакше {
 			/* modify the last extent in region to be removed */
 			ext->count -= ((start + count) - ext->start);
 			ext->start = start + count;
@@ -579,26 +579,26 @@ static int rb_remove_extent(__u64 start, __u64 count,
 		}
 	}
 
-	return retval;
+	повернути retval;
 }
 
-static int rb_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+static ціле rb_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
 	struct ext2fs_rb_private *bp;
-	int retval;
+	ціле retval;
 
 	bp = (struct ext2fs_rb_private *) bitmap->private;
 	arg -= bitmap->start;
 
 	retval = rb_insert_extent(arg, 1, bp);
 	check_tree(&bp->root, __func__);
-	return retval;
+	повернути retval;
 }
 
-static int rb_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+static ціле rb_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
 	struct ext2fs_rb_private *bp;
-	int retval;
+	ціле retval;
 
 	bp = (struct ext2fs_rb_private *) bitmap->private;
 	arg -= bitmap->start;
@@ -606,22 +606,22 @@ static int rb_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 	retval = rb_remove_extent(arg, 1, bp);
 	check_tree(&bp->root, __func__);
 
-	return retval;
+	повернути retval;
 }
 
 inline
-static int rb_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+static ціле rb_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
 	struct ext2fs_rb_private *bp;
 
 	bp = (struct ext2fs_rb_private *) bitmap->private;
 	arg -= bitmap->start;
 
-	return rb_test_bit(bp, arg);
+	повернути rb_test_bit(bp, arg);
 }
 
 static void rb_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				unsigned int num)
+				unsigned ціле num)
 {
 	struct ext2fs_rb_private *bp;
 
@@ -633,7 +633,7 @@ static void rb_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
 }
 
 static void rb_unmark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				  unsigned int num)
+				  unsigned ціле num)
 {
 	struct ext2fs_rb_private *bp;
 
@@ -644,60 +644,60 @@ static void rb_unmark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
 	check_tree(&bp->root, __func__);
 }
 
-static int rb_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, unsigned int len)
+static ціле rb_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 start, unsigned ціле len)
 {
 	struct rb_node *parent = NULL, **n;
 	struct rb_node *node, *next;
 	struct ext2fs_rb_private *bp;
 	struct bmap_rb_extent *ext;
-	int retval = 1;
+	ціле retval = 1;
 
 	bp = (struct ext2fs_rb_private *) bitmap->private;
 	n = &bp->root.rb_node;
 	start -= bitmap->start;
 
-	if (len == 0 || ext2fs_rb_empty_root(&bp->root))
-		return 1;
+	якщо (len == 0 || ext2fs_rb_empty_root(&bp->root))
+		повернути 1;
 
 	/*
 	 * If we find nothing, we should examine whole extent, but
 	 * when we find match, the extent is not clean, thus be return
 	 * false.
 	 */
-	while (*n) {
+	поки (*n) {
 		parent = *n;
 		ext = node_to_extent(parent);
-		if (start < ext->start) {
+		якщо (start < ext->start) {
 			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
+		} інакше якщо (start >= (ext->start + ext->count)) {
 			n = &(*n)->rb_right;
-		} else {
+		} інакше {
 			/*
 			 * We found extent int the tree -> extent is not
 			 * clean
 			 */
-			return 0;
+			повернути 0;
 		}
 	}
 
 	node = parent;
-	while (node) {
+	поки (node) {
 		next = ext2fs_rb_next(node);
 		ext = node_to_extent(node);
 		node = next;
 
-		if ((ext->start + ext->count) <= start)
+		якщо ((ext->start + ext->count) <= start)
 			continue;
 
 		/* No more merging */
-		if ((start + len) <= ext->start)
+		якщо ((start + len) <= ext->start)
 			break;
 
 		retval = 0;
 		break;
 	}
-	return retval;
+	повернути retval;
 }
 
 static errcode_t rb_set_bmap_range(ext2fs_generic_bitmap_64 bitmap,
@@ -706,30 +706,30 @@ static errcode_t rb_set_bmap_range(ext2fs_generic_bitmap_64 bitmap,
 	struct ext2fs_rb_private *bp;
 	unsigned char *cp = in;
 	size_t i;
-	int first_set = -1;
+	ціле first_set = -1;
 
 	bp = (struct ext2fs_rb_private *) bitmap->private;
 
-	for (i = 0; i < num; i++) {
-		if ((i & 7) == 0) {
+	для (i = 0; i < num; i++) {
+		якщо ((i & 7) == 0) {
 			unsigned char c = cp[i/8];
-			if (c == 0xFF) {
-				if (first_set == -1)
+			якщо (c == 0xFF) {
+				якщо (first_set == -1)
 					first_set = i;
 				i += 7;
 				continue;
 			}
-			if ((c == 0x00) && (first_set == -1)) {
+			якщо ((c == 0x00) && (first_set == -1)) {
 				i += 7;
 				continue;
 			}
 		}
-		if (ext2fs_test_bit(i, in)) {
-			if (first_set == -1)
+		якщо (ext2fs_test_bit(i, in)) {
+			якщо (first_set == -1)
 				first_set = i;
 			continue;
 		}
-		if (first_set == -1)
+		якщо (first_set == -1)
 			continue;
 
 		rb_insert_extent(start + first_set - bitmap->start,
@@ -737,13 +737,13 @@ static errcode_t rb_set_bmap_range(ext2fs_generic_bitmap_64 bitmap,
 		check_tree(&bp->root, __func__);
 		first_set = -1;
 	}
-	if (first_set != -1) {
+	якщо (first_set != -1) {
 		rb_insert_extent(start + first_set - bitmap->start,
 				 num - first_set, bp);
 		check_tree(&bp->root, __func__);
 	}
 
-	return 0;
+	повернути 0;
 }
 
 static errcode_t rb_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
@@ -759,44 +759,44 @@ static errcode_t rb_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
 	n = &bp->root.rb_node;
 	start -= bitmap->start;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return 0;
+	якщо (ext2fs_rb_empty_root(&bp->root))
+		повернути 0;
 
-	while (*n) {
+	поки (*n) {
 		parent = *n;
 		ext = node_to_extent(parent);
-		if (start < ext->start) {
+		якщо (start < ext->start) {
 			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
+		} інакше якщо (start >= (ext->start + ext->count)) {
 			n = &(*n)->rb_right;
-		} else
+		} інакше
 			break;
 	}
 
 	memset(out, 0, (num + 7) >> 3);
 
-	for (; parent != NULL; parent = next) {
+	для (; parent != NULL; parent = next) {
 		next = ext2fs_rb_next(parent);
 		ext = node_to_extent(parent);
 
 		pos = ext->start;
 		count = ext->count;
-		if (pos >= start + num)
+		якщо (pos >= start + num)
 			break;
-		if (pos < start) {
-			if (pos + count <  start)
+		якщо (pos < start) {
+			якщо (pos + count <  start)
 				continue;
 			count -= start - pos;
 			pos = start;
 		}
-		if (pos + count > start + num)
+		якщо (pos + count > start + num)
 			count = start + num - pos;
 
-		while (count > 0) {
-			if ((count >= 8) &&
+		поки (count > 0) {
+			якщо ((count >= 8) &&
 			    ((pos - start) % 8) == 0) {
-				int nbytes = count >> 3;
-				int offset = (pos - start) >> 3;
+				ціле nbytes = count >> 3;
+				ціле offset = (pos - start) >> 3;
 
 				memset(((char *) out) + offset, 0xFF, nbytes);
 				pos += nbytes << 3;
@@ -808,7 +808,7 @@ static errcode_t rb_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
 			count--;
 		}
 	}
-	return 0;
+	повернути 0;
 }
 
 static void rb_clear_bmap(ext2fs_generic_bitmap_64 bitmap)
@@ -836,28 +836,28 @@ static errcode_t rb_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
 	start -= bitmap->start;
 	end -= bitmap->start;
 
-	if (start > end)
-		return EINVAL;
+	якщо (start > end)
+		повернути EINVAL;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return ENOENT;
+	якщо (ext2fs_rb_empty_root(&bp->root))
+		повернути ENOENT;
 
-	while (*n) {
+	поки (*n) {
 		parent = *n;
 		ext = node_to_extent(parent);
-		if (start < ext->start) {
+		якщо (start < ext->start) {
 			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
+		} інакше якщо (start >= (ext->start + ext->count)) {
 			n = &(*n)->rb_right;
-		} else if (ext->start + ext->count <= end) {
+		} інакше якщо (ext->start + ext->count <= end) {
 			*out = ext->start + ext->count + bitmap->start;
-			return 0;
-		} else
-			return ENOENT;
+			повернути 0;
+		} інакше
+			повернути ENOENT;
 	}
 
 	*out = start + bitmap->start;
-	return 0;
+	повернути 0;
 }
 
 static errcode_t rb_find_first_set(ext2fs_generic_bitmap_64 bitmap,
@@ -873,39 +873,39 @@ static errcode_t rb_find_first_set(ext2fs_generic_bitmap_64 bitmap,
 	start -= bitmap->start;
 	end -= bitmap->start;
 
-	if (start > end)
-		return EINVAL;
+	якщо (start > end)
+		повернути EINVAL;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return ENOENT;
+	якщо (ext2fs_rb_empty_root(&bp->root))
+		повернути ENOENT;
 
-	while (*n) {
+	поки (*n) {
 		parent = *n;
 		ext = node_to_extent(parent);
-		if (start < ext->start) {
+		якщо (start < ext->start) {
 			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
+		} інакше якщо (start >= (ext->start + ext->count)) {
 			n = &(*n)->rb_right;
-		} else {
+		} інакше {
 			/* The start bit is set */
 			*out = start + bitmap->start;
-			return 0;
+			повернути 0;
 		}
 	}
 
 	node = parent;
 	ext = node_to_extent(node);
-	if (ext->start < start) {
+	якщо (ext->start < start) {
 		node = ext2fs_rb_next(node);
-		if (node == NULL)
-			return ENOENT;
+		якщо (node == NULL)
+			повернути ENOENT;
 		ext = node_to_extent(node);
 	}
-	if (ext->start <= end) {
+	якщо (ext->start <= end) {
 		*out = ext->start + bitmap->start;
-		return 0;
+		повернути 0;
 	}
-	return ENOENT;
+	повернути ENOENT;
 }
 
 #ifdef ENABLE_BMAP_STATS
@@ -926,29 +926,29 @@ static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap)
 
 	bp = (struct ext2fs_rb_private *) bitmap->private;
 
-	for (node = ext2fs_rb_first(&bp->root); node != NULL;
+	для (node = ext2fs_rb_first(&bp->root); node != NULL;
 	     node = ext2fs_rb_next(node)) {
 		ext = node_to_extent(node);
 		count++;
-		if (ext->count > max_size)
+		якщо (ext->count > max_size)
 			max_size = ext->count;
-		if (ext->count < min_size)
+		якщо (ext->count < min_size)
 			min_size = ext->count;
 		size += ext->count;
 	}
 
-	if (count)
+	якщо (count)
 		avg_size = size / count;
-	if (min_size == ULONG_MAX)
+	якщо (min_size == ULONG_MAX)
 		min_size = 0;
 	eff = (double)((count * sizeof(struct bmap_rb_extent)) << 3) /
 	      (bitmap->real_end - bitmap->start);
 #ifdef ENABLE_BMAP_STATS_OPS
 	mark_all = bitmap->stats.mark_count + bitmap->stats.mark_ext_count;
 	test_all = bitmap->stats.test_count + bitmap->stats.test_ext_count;
-	if (mark_all)
+	якщо (mark_all)
 		m_hit = ((double)bp->mark_hit / mark_all) * 100;
-	if (test_all)
+	якщо (test_all)
 		t_hit = ((double)bp->test_hit / test_all) * 100;
 
 	fprintf(stderr, "%16llu cache hits on test (%.2f%%)\n"
@@ -971,7 +971,7 @@ static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap)
 		"%16.4lf memory / bitmap bit memory ratio (bitarray = 1)\n",
 		eff);
 }
-#else
+#інакше
 static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap EXT2FS_ATTR((unused)))
 {
 }

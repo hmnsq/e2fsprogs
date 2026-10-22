@@ -10,7 +10,7 @@
  */
 
 #include "config.h"
-#if HAVE_UNISTD_H
+#якщо HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <string.h>
@@ -25,33 +25,33 @@
 static const char *lib_version = E2FSPROGS_VERSION;
 static const char *lib_date = E2FSPROGS_DATE;
 
-int ext2fs_parse_version_string(const char *ver_string)
+ціле ext2fs_parse_version_string(const char *ver_string)
 {
 	const char *cp;
-	int version = 0, dot_count = 0;
+	ціле version = 0, dot_count = 0;
 
-	for (cp = ver_string; *cp; cp++) {
-		if (*cp == '.') {
-			if (dot_count++)
+	для (cp = ver_string; *cp; cp++) {
+		якщо (*cp == '.') {
+			якщо (dot_count++)
 				break;
-			else
+			інакше
 				continue;
 		}
-		if (!isdigit(*cp))
+		якщо (!isdigit(*cp))
 			break;
 		version = (version * 10) + (*cp - '0');
 	}
-	return version;
+	повернути version;
 }
 
 
-int ext2fs_get_library_version(const char **ver_string,
+ціле ext2fs_get_library_version(const char **ver_string,
 			       const char **date_string)
 {
-	if (ver_string)
+	якщо (ver_string)
 		*ver_string = lib_version;
-	if (date_string)
+	якщо (date_string)
 		*date_string = lib_date;
 
-	return ext2fs_parse_version_string(lib_version);
+	повернути ext2fs_parse_version_string(lib_version);
 }

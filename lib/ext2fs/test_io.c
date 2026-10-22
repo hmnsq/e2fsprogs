@@ -12,15 +12,15 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#якщо HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#якщо HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#якщо HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -32,21 +32,21 @@
  */
 
 #define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+	  якщо ((struct)->magic != (code)) повернути (code)
 
 struct test_private_data {
-	int	magic;
+	ціле	magic;
 	io_channel real;
-	int flags;
+	ціле flags;
 	FILE *outfile;
 	unsigned long block;
-	int read_abort_count, write_abort_count;
-	void (*read_blk)(unsigned long block, int count, errcode_t err);
-	void (*write_blk)(unsigned long block, int count, errcode_t err);
-	void (*set_blksize)(int blksize, errcode_t err);
-	void (*write_byte)(unsigned long block, int count, errcode_t err);
-	void (*read_blk64)(unsigned long long block, int count, errcode_t err);
-	void (*write_blk64)(unsigned long long block, int count, errcode_t err);
+	ціле read_abort_count, write_abort_count;
+	void (*read_blk)(unsigned long block, ціле count, errcode_t err);
+	void (*write_blk)(unsigned long block, ціле count, errcode_t err);
+	void (*set_blksize)(ціле blksize, errcode_t err);
+	void (*write_byte)(unsigned long block, ціле count, errcode_t err);
+	void (*read_blk64)(unsigned long long block, ціле count, errcode_t err);
+	void (*write_blk64)(unsigned long long block, ціле count, errcode_t err);
 };
 
 /*
@@ -55,17 +55,17 @@ struct test_private_data {
  */
 io_manager test_io_backing_manager = 0;
 void (*test_io_cb_read_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
+	(unsigned long block, ціле count, errcode_t err) = 0;
 void (*test_io_cb_write_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
+	(unsigned long block, ціле count, errcode_t err) = 0;
 void (*test_io_cb_read_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
+	(unsigned long long block, ціле count, errcode_t err) = 0;
 void (*test_io_cb_write_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
+	(unsigned long long block, ціле count, errcode_t err) = 0;
 void (*test_io_cb_set_blksize)
-	(int blksize, errcode_t err) = 0;
+	(ціле blksize, errcode_t err) = 0;
 void (*test_io_cb_write_byte)
-	(unsigned long block, int count, errcode_t err) = 0;
+	(unsigned long block, ціле count, errcode_t err) = 0;
 
 /*
  * Test flags
@@ -86,15 +86,15 @@ static void test_dump_block(io_channel channel,
 {
 	const unsigned char *cp;
 	FILE *f = data->outfile;
-	int	i;
+	ціле	i;
 	unsigned long	cksum = 0;
 
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
+	для (i=0, cp = buf; i < channel->block_size; i++, cp++) {
 		cksum += *cp;
 	}
 	fprintf(f, "Contents of block %lu, checksum %08lu: \n", block, cksum);
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
-		if ((i % 16) == 0)
+	для (i=0, cp = buf; i < channel->block_size; i++, cp++) {
+		якщо ((i % 16) == 0)
 			fprintf(f, "%04x: ", i);
 		fprintf(f, "%02x%c", *cp, ((i % 16) == 15) ? '\n' : ' ');
 	}
@@ -112,14 +112,14 @@ static errcode_t test_flush(io_channel channel)
 	data = (struct test_private_data *)channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	якщо (data->real)
 		retval = io_channel_flush(data->real);
 
-	if (data->flags & TEST_FLAG_FLUSH)
+	якщо (data->flags & TEST_FLAG_FLUSH)
 		fprintf(data->outfile, "Test_io: flush() returned %s\n",
 			retval ? error_message(retval) : "OK");
 
-	return retval;
+	повернути retval;
 }
 
 static void test_abort(io_channel channel, unsigned long block)
@@ -136,26 +136,26 @@ static void test_abort(io_channel channel, unsigned long block)
 	abort();
 }
 
-static errcode_t test_open(const char *name, int flags, io_channel *channel)
+static errcode_t test_open(const char *name, ціле flags, io_channel *channel)
 {
 	io_channel	io = NULL;
 	struct test_private_data *data = NULL;
 	errcode_t	retval;
 	char		*value;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	якщо (name == 0)
+		повернути EXT2_ET_BAD_DEVICE_NAME;
 	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
+	якщо (retval)
 		goto cleanup;
 	memset(io, 0, sizeof(struct struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
 	retval = ext2fs_get_mem(sizeof(struct test_private_data), &data);
-	if (retval)
+	якщо (retval)
 		goto cleanup;
 	io->manager = test_io_manager;
 	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
+	якщо (retval)
 		goto cleanup;
 
 	strcpy(io->name, name);
@@ -168,12 +168,12 @@ static errcode_t test_open(const char *name, int flags, io_channel *channel)
 
 	memset(data, 0, sizeof(struct test_private_data));
 	data->magic = EXT2_ET_MAGIC_TEST_IO_CHANNEL;
-	if (test_io_backing_manager) {
+	якщо (test_io_backing_manager) {
 		retval = test_io_backing_manager->open(name, flags,
 						       &data->real);
-		if (retval)
+		якщо (retval)
 			goto cleanup;
-	} else {
+	} інакше {
 		data->real = 0;
 	}
 	data->read_blk =	test_io_cb_read_blk;
@@ -184,44 +184,44 @@ static errcode_t test_open(const char *name, int flags, io_channel *channel)
 	data->write_blk64 =	test_io_cb_write_blk64;
 
 	data->outfile = NULL;
-	if ((value = ext2fs_safe_getenv("TEST_IO_LOGFILE")) != NULL)
+	якщо ((value = ext2fs_safe_getenv("TEST_IO_LOGFILE")) != NULL)
 		data->outfile = fopen(value, "w");
-	if (!data->outfile)
+	якщо (!data->outfile)
 		data->outfile = stderr;
 
 	data->flags = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_FLAGS")) != NULL)
+	якщо ((value = ext2fs_safe_getenv("TEST_IO_FLAGS")) != NULL)
 		data->flags = strtoul(value, NULL, 0);
 
 	data->block = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_BLOCK")) != NULL)
+	якщо ((value = ext2fs_safe_getenv("TEST_IO_BLOCK")) != NULL)
 		data->block = strtoul(value, NULL, 0);
 
 	data->read_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_READ_ABORT")) != NULL)
+	якщо ((value = ext2fs_safe_getenv("TEST_IO_READ_ABORT")) != NULL)
 		data->read_abort_count = strtoul(value, NULL, 0);
 
 	data->write_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_WRITE_ABORT")) != NULL)
+	якщо ((value = ext2fs_safe_getenv("TEST_IO_WRITE_ABORT")) != NULL)
 		data->write_abort_count = strtoul(value, NULL, 0);
 
-	if (data->real) {
+	якщо (data->real) {
 		io->align = data->real->align;
-		if (data->real->flags & CHANNEL_FLAGS_THREADS)
+		якщо (data->real->flags & CHANNEL_FLAGS_THREADS)
 			io->flags |= CHANNEL_FLAGS_THREADS;
 	}
 
 	*channel = io;
-	return 0;
+	повернути 0;
 
 cleanup:
-	if (io && io->name)
+	якщо (io && io->name)
 		ext2fs_free_mem(&io->name);
-	if (io)
+	якщо (io)
 		ext2fs_free_mem(&io);
-	if (data)
+	якщо (data)
 		ext2fs_free_mem(&data);
-	return retval;
+	повернути retval;
 }
 
 static errcode_t test_close(io_channel channel)
@@ -233,23 +233,23 @@ static errcode_t test_close(io_channel channel)
 	data = (struct test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	якщо (--channel->refcount > 0)
+		повернути 0;
 
-	if (data->real)
+	якщо (data->real)
 		retval = io_channel_close(data->real);
 
-	if (data->outfile && data->outfile != stderr)
+	якщо (data->outfile && data->outfile != stderr)
 		fclose(data->outfile);
 
 	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	якщо (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	повернути retval;
 }
 
-static errcode_t test_set_blksize(io_channel channel, int blksize)
+static errcode_t test_set_blksize(io_channel channel, ціле blksize)
 {
 	struct test_private_data *data;
 	errcode_t	retval = 0;
@@ -258,23 +258,23 @@ static errcode_t test_set_blksize(io_channel channel, int blksize)
 	data = (struct test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real) {
+	якщо (data->real) {
 		retval = io_channel_set_blksize(data->real, blksize);
 		channel->align = data->real->align;
 	}
-	if (data->set_blksize)
+	якщо (data->set_blksize)
 		data->set_blksize(blksize, retval);
-	if (data->flags & TEST_FLAG_SET_BLKSIZE)
+	якщо (data->flags & TEST_FLAG_SET_BLKSIZE)
 		fprintf(data->outfile,
 			"Test_io: set_blksize(%d) returned %s\n",
 			blksize, retval ? error_message(retval) : "OK");
 	channel->block_size = blksize;
-	return retval;
+	повернути retval;
 }
 
 
 static errcode_t test_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+			       ціле count, void *buf)
 {
 	struct test_private_data *data;
 	errcode_t	retval = 0;
@@ -283,25 +283,25 @@ static errcode_t test_read_blk(io_channel channel, unsigned long block,
 	data = (struct test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	якщо (data->real)
 		retval = io_channel_read_blk(data->real, block, count, buf);
-	if (data->read_blk)
+	якщо (data->read_blk)
 		data->read_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
+	якщо (data->flags & TEST_FLAG_READ)
 		fprintf(data->outfile,
 			"Test_io: read_blk(%lu, %d) returned %s\n",
 			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+	якщо (data->block && data->block == block) {
+		якщо (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
+		якщо (--data->read_abort_count == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	повернути retval;
 }
 
 static errcode_t test_write_blk(io_channel channel, unsigned long block,
-			       int count, const void *buf)
+			       ціле count, const void *buf)
 {
 	struct test_private_data *data;
 	errcode_t	retval = 0;
@@ -310,25 +310,25 @@ static errcode_t test_write_blk(io_channel channel, unsigned long block,
 	data = (struct test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	якщо (data->real)
 		retval = io_channel_write_blk(data->real, block, count, buf);
-	if (data->write_blk)
+	якщо (data->write_blk)
 		data->write_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
+	якщо (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_blk(%lu, %d) returned %s\n",
 			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+	якщо (data->block && data->block == block) {
+		якщо (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
+		якщо (--data->write_abort_count == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	повернути retval;
 }
 
 static errcode_t test_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+			       ціле count, void *buf)
 {
 	struct test_private_data *data;
 	errcode_t	retval = 0;
@@ -337,25 +337,25 @@ static errcode_t test_read_blk64(io_channel channel, unsigned long long block,
 	data = (struct test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	якщо (data->real)
 		retval = io_channel_read_blk64(data->real, block, count, buf);
-	if (data->read_blk64)
+	якщо (data->read_blk64)
 		data->read_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
+	якщо (data->flags & TEST_FLAG_READ)
 		fprintf(data->outfile,
 			"Test_io: read_blk64(%llu, %d) returned %s\n",
 			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+	якщо (data->block && data->block == block) {
+		якщо (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
+		якщо (--data->read_abort_count == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	повернути retval;
 }
 
 static errcode_t test_write_blk64(io_channel channel, unsigned long long block,
-			       int count, const void *buf)
+			       ціле count, const void *buf)
 {
 	struct test_private_data *data;
 	errcode_t	retval = 0;
@@ -364,25 +364,25 @@ static errcode_t test_write_blk64(io_channel channel, unsigned long long block,
 	data = (struct test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	якщо (data->real)
 		retval = io_channel_write_blk64(data->real, block, count, buf);
-	if (data->write_blk64)
+	якщо (data->write_blk64)
 		data->write_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
+	якщо (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_blk64(%llu, %d) returned %s\n",
 			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+	якщо (data->block && data->block == block) {
+		якщо (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
+		якщо (--data->write_abort_count == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	повернути retval;
 }
 
 static errcode_t test_write_byte(io_channel channel, unsigned long offset,
-			       int count, const void *buf)
+			       ціле count, const void *buf)
 {
 	struct test_private_data *data;
 	errcode_t	retval = 0;
@@ -391,15 +391,15 @@ static errcode_t test_write_byte(io_channel channel, unsigned long offset,
 	data = (struct test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->write_byte)
+	якщо (data->real && data->real->manager->write_byte)
 		retval = io_channel_write_byte(data->real, offset, count, buf);
-	if (data->write_byte)
+	якщо (data->write_byte)
 		data->write_byte(offset, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
+	якщо (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_byte(%lu, %d) returned %s\n",
 			offset, count, retval ? error_message(retval) : "OK");
-	return retval;
+	повернути retval;
 }
 
 static errcode_t test_set_option(io_channel channel, const char *option,
@@ -413,20 +413,20 @@ static errcode_t test_set_option(io_channel channel, const char *option,
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 
-	if (data->flags & TEST_FLAG_SET_OPTION)
+	якщо (data->flags & TEST_FLAG_SET_OPTION)
 		fprintf(data->outfile, "Test_io: set_option(%s, %s) ",
 			option, arg);
-	if (data->real && data->real->manager->set_option) {
+	якщо (data->real && data->real->manager->set_option) {
 		retval = (data->real->manager->set_option)(data->real,
 							   option, arg);
-		if (data->flags & TEST_FLAG_SET_OPTION)
+		якщо (data->flags & TEST_FLAG_SET_OPTION)
 			fprintf(data->outfile, "returned %s\n",
 				retval ? error_message(retval) : "OK");
-	} else {
-		if (data->flags & TEST_FLAG_SET_OPTION)
+	} інакше {
+		якщо (data->flags & TEST_FLAG_SET_OPTION)
 			fprintf(data->outfile, "not implemented\n");
 	}
-	return retval;
+	повернути retval;
 }
 
 static errcode_t test_get_stats(io_channel channel, io_stats *stats)
@@ -438,10 +438,10 @@ static errcode_t test_get_stats(io_channel channel, io_stats *stats)
 	data = (struct test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->get_stats) {
+	якщо (data->real && data->real->manager->get_stats) {
 		retval = (data->real->manager->get_stats)(data->real, stats);
 	}
-	return retval;
+	повернути retval;
 }
 
 static errcode_t test_discard(io_channel channel, unsigned long long block,
@@ -454,13 +454,13 @@ static errcode_t test_discard(io_channel channel, unsigned long long block,
 	data = (struct test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	якщо (data->real)
 		retval = io_channel_discard(data->real, block, count);
-	if (data->flags & TEST_FLAG_DISCARD)
+	якщо (data->flags & TEST_FLAG_DISCARD)
 		fprintf(data->outfile,
 			"Test_io: discard(%llu, %llu) returned %s\n",
 			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+	повернути retval;
 }
 
 static errcode_t test_cache_readahead(io_channel channel,
@@ -474,13 +474,13 @@ static errcode_t test_cache_readahead(io_channel channel,
 	data = (struct test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	якщо (data->real)
 		retval = io_channel_cache_readahead(data->real, block, count);
-	if (data->flags & TEST_FLAG_READAHEAD)
+	якщо (data->flags & TEST_FLAG_READAHEAD)
 		fprintf(data->outfile,
 			"Test_io: readahead(%llu, %llu) returned %s\n",
 			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+	повернути retval;
 }
 
 static errcode_t test_zeroout(io_channel channel, unsigned long long block,
@@ -493,13 +493,13 @@ static errcode_t test_zeroout(io_channel channel, unsigned long long block,
 	data = (struct test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	якщо (data->real)
 		retval = io_channel_zeroout(data->real, block, count);
-	if (data->flags & TEST_FLAG_ZEROOUT)
+	якщо (data->flags & TEST_FLAG_ZEROOUT)
 		fprintf(data->outfile,
 			"Test_io: zeroout(%llu, %llu) returned %s\n",
 			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+	повернути retval;
 }
 
 static struct struct_io_manager struct_test_manager = {

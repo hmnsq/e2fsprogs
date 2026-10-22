@@ -26,27 +26,27 @@ struct ext2_inode_large inode;
 					offsetof(struct ext2_inode_large, x),  \
 					cur_offset)
 
-static int do_field(const char *field, unsigned size, unsigned cur_size,
+static ціле do_field(const char *field, unsigned size, unsigned cur_size,
 		    unsigned offset, unsigned cur_offset)
 {
-	if (size != cur_size) {
+	якщо (size != cur_size) {
 		printf("error: %s size %u should be %u\n",
 		       field, cur_size, size);
 		exit(1);
 	}
-	if (offset != cur_offset) {
+	якщо (offset != cur_offset) {
 		printf("error: %s offset %u should be %u\n",
 		       field, cur_offset, offset);
 		exit(1);
 	}
 	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	повернути offset + size;
 }
 
-int main(int argc, char **argv)
+ціле main(ціле argc, char **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#якщо (__GNUC__ >= 4)
+	ціле cur_offset = 0;
 
 	printf("%8s %-30s %3s\n", "offset", "field", "size");
 	check_field(i_mode, 2);
@@ -85,5 +85,5 @@ int main(int argc, char **argv)
 	/* This size will change as new fields are added */
 	do_field("Large inode end", 0, 0, cur_offset, sizeof(inode));
 #endif
-	return 0;
+	повернути 0;
 }

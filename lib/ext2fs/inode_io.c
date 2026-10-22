@@ -13,10 +13,10 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#якщо HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_ERRNO_H
+#якщо HAVE_ERRNO_H
 #include <errno.h>
 #endif
 #include <time.h>
@@ -29,38 +29,38 @@
  */
 
 #define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+	  якщо ((struct)->magic != (code)) повернути (code)
 
 struct inode_private_data {
-	int				magic;
+	ціле				magic;
 	char				name[32];
 	ext2_file_t			file;
 	ext2_filsys			fs;
 	ext2_ino_t 			ino;
 	struct ext2_inode		inode;
-	int				flags;
+	ціле				flags;
 	struct inode_private_data	*next;
 };
 
 #define CHANNEL_HAS_INODE	0x8000
 
 static struct inode_private_data *top_intern;
-static int ino_unique = 0;
+static ціле ino_unique = 0;
 
-static errcode_t inode_open(const char *name, int flags, io_channel *channel);
+static errcode_t inode_open(const char *name, ціле flags, io_channel *channel);
 static errcode_t inode_close(io_channel channel);
-static errcode_t inode_set_blksize(io_channel channel, int blksize);
+static errcode_t inode_set_blksize(io_channel channel, ціле blksize);
 static errcode_t inode_read_blk(io_channel channel, unsigned long block,
-			       int count, void *data);
+			       ціле count, void *data);
 static errcode_t inode_write_blk(io_channel channel, unsigned long block,
-				int count, const void *data);
+				ціле count, const void *data);
 static errcode_t inode_flush(io_channel channel);
 static errcode_t inode_write_byte(io_channel channel, unsigned long offset,
-				int size, const void *data);
+				ціле size, const void *data);
 static errcode_t inode_read_blk64(io_channel channel,
-				unsigned long long block, int count, void *data);
+				unsigned long long block, ціле count, void *data);
 static errcode_t inode_write_blk64(io_channel channel,
-				unsigned long long block, int count, const void *data);
+				unsigned long long block, ціле count, const void *data);
 
 static struct struct_io_manager struct_inode_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
@@ -85,62 +85,62 @@ errcode_t ext2fs_inode_io_intern2(ext2_filsys fs, ext2_ino_t ino,
 	struct inode_private_data 	*data;
 	errcode_t			retval;
 
-	if ((retval = ext2fs_get_mem(sizeof(struct inode_private_data),
+	якщо ((retval = ext2fs_get_mem(sizeof(struct inode_private_data),
 				     &data)))
-		return retval;
+		повернути retval;
 	data->magic = EXT2_ET_MAGIC_INODE_IO_CHANNEL;
 	sprintf(data->name, "%u:%d", ino, ino_unique++);
 	data->file = 0;
 	data->fs = fs;
 	data->ino = ino;
 	data->flags = 0;
-	if (inode) {
+	якщо (inode) {
 		memcpy(&data->inode, inode, sizeof(struct ext2_inode));
 		data->flags |= CHANNEL_HAS_INODE;
 	}
 	data->next = top_intern;
 	top_intern = data;
 	*name = data->name;
-	return 0;
+	повернути 0;
 }
 
 errcode_t ext2fs_inode_io_intern(ext2_filsys fs, ext2_ino_t ino,
 				 char **name)
 {
-	return ext2fs_inode_io_intern2(fs, ino, NULL, name);
+	повернути ext2fs_inode_io_intern2(fs, ino, NULL, name);
 }
 
 
-static errcode_t inode_open(const char *name, int flags, io_channel *channel)
+static errcode_t inode_open(const char *name, ціле flags, io_channel *channel)
 {
 	io_channel	io = NULL;
 	struct inode_private_data *prev, *data = NULL;
 	errcode_t	retval;
-	int		open_flags;
+	ціле		open_flags;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	якщо (name == 0)
+		повернути EXT2_ET_BAD_DEVICE_NAME;
 
-	for (data = top_intern, prev = NULL; data;
+	для (data = top_intern, prev = NULL; data;
 	     prev = data, data = data->next)
-		if (strcmp(name, data->name) == 0)
+		якщо (strcmp(name, data->name) == 0)
 			break;
-	if (!data)
-		return ENOENT;
-	if (prev)
+	якщо (!data)
+		повернути ENOENT;
+	якщо (prev)
 		prev->next = data->next;
-	else
+	інакше
 		top_intern = data->next;
 
 	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
+	якщо (retval)
 		goto cleanup;
 	memset(io, 0, sizeof(struct struct_io_channel));
 
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
 	io->manager = inode_io_manager;
 	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
+	якщо (retval)
 		goto cleanup;
 
 	strcpy(io->name, name);
@@ -155,20 +155,20 @@ static errcode_t inode_open(const char *name, int flags, io_channel *channel)
 				   (data->flags & CHANNEL_HAS_INODE) ?
 				   &data->inode : 0, open_flags,
 				   &data->file);
-	if (retval)
+	якщо (retval)
 		goto cleanup;
 
 	*channel = io;
-	return 0;
+	повернути 0;
 
 cleanup:
-	if (io && io->name)
+	якщо (io && io->name)
 		ext2fs_free_mem(&io->name);
-	if (data)
+	якщо (data)
 		ext2fs_free_mem(&data);
-	if (io)
+	якщо (io)
 		ext2fs_free_mem(&io);
-	return retval;
+	повернути retval;
 }
 
 static errcode_t inode_close(io_channel channel)
@@ -180,19 +180,19 @@ static errcode_t inode_close(io_channel channel)
 	data = (struct inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	якщо (--channel->refcount > 0)
+		повернути 0;
 
 	retval = ext2fs_file_close(data->file);
 
 	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	якщо (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	повернути retval;
 }
 
-static errcode_t inode_set_blksize(io_channel channel, int blksize)
+static errcode_t inode_set_blksize(io_channel channel, ціле blksize)
 {
 	struct inode_private_data *data;
 
@@ -201,12 +201,12 @@ static errcode_t inode_set_blksize(io_channel channel, int blksize)
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
 	channel->block_size = blksize;
-	return 0;
+	повернути 0;
 }
 
 
 static errcode_t inode_read_blk64(io_channel channel,
-				unsigned long long block, int count, void *buf)
+				unsigned long long block, ціле count, void *buf)
 {
 	struct inode_private_data *data;
 	errcode_t	retval;
@@ -215,24 +215,24 @@ static errcode_t inode_read_blk64(io_channel channel,
 	data = (struct inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if ((retval = ext2fs_file_llseek(data->file,
+	якщо ((retval = ext2fs_file_llseek(data->file,
 				(ext2_off64_t)(block * channel->block_size),
 				EXT2_SEEK_SET, 0)))
-		return retval;
+		повернути retval;
 
 	count = (count < 0) ? -count : (count * channel->block_size);
 
-	return ext2fs_file_read(data->file, buf, count, 0);
+	повернути ext2fs_file_read(data->file, buf, count, 0);
 }
 
 static errcode_t inode_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+			       ціле count, void *buf)
 {
-	return inode_read_blk64(channel, block, count, buf);
+	повернути inode_read_blk64(channel, block, count, buf);
 }
 
 static errcode_t inode_write_blk64(io_channel channel,
-				unsigned long long block, int count, const void *buf)
+				unsigned long long block, ціле count, const void *buf)
 {
 	struct inode_private_data *data;
 	errcode_t	retval;
@@ -241,24 +241,24 @@ static errcode_t inode_write_blk64(io_channel channel,
 	data = (struct inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if ((retval = ext2fs_file_llseek(data->file,
+	якщо ((retval = ext2fs_file_llseek(data->file,
 				(ext2_off64_t) (block * channel->block_size),
 				EXT2_SEEK_SET, 0)))
-		return retval;
+		повернути retval;
 
 	count = (count < 0) ? -count : (count * channel->block_size);
 
-	return ext2fs_file_write(data->file, buf, count, 0);
+	повернути ext2fs_file_write(data->file, buf, count, 0);
 }
 
 static errcode_t inode_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+				ціле count, const void *buf)
 {
-	return inode_write_blk64(channel, block, count, buf);
+	повернути inode_write_blk64(channel, block, count, buf);
 }
 
 static errcode_t inode_write_byte(io_channel channel, unsigned long offset,
-				 int size, const void *buf)
+				 ціле size, const void *buf)
 {
 	struct inode_private_data *data;
 	errcode_t	retval = 0;
@@ -267,11 +267,11 @@ static errcode_t inode_write_byte(io_channel channel, unsigned long offset,
 	data = (struct inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if ((retval = ext2fs_file_lseek(data->file, offset,
+	якщо ((retval = ext2fs_file_lseek(data->file, offset,
 					EXT2_SEEK_SET, 0)))
-		return retval;
+		повернути retval;
 
-	return ext2fs_file_write(data->file, buf, size, 0);
+	повернути ext2fs_file_write(data->file, buf, size, 0);
 }
 
 /*
@@ -285,6 +285,6 @@ static errcode_t inode_flush(io_channel channel)
 	data = (struct inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	return ext2fs_file_flush(data->file);
+	повернути ext2fs_file_flush(data->file);
 }
 

@@ -3,9 +3,9 @@
 #error Only nls_utf8-norm.c should include this file.
 #endif
 
-static const unsigned int utf8vers = 0xc0100;
+static const unsigned ціле utf8vers = 0xc0100;
 
-static const unsigned int utf8agetab[] = {
+static const unsigned ціле utf8agetab[] = {
 	0,
 	0x10100,
 	0x20000,
