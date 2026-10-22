@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ضمن "config.h"
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
 #endif
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
+#ضمن <string.h>
+#ضمن <stdio.h>
+#ضمن <ctype.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
-#include "../../version.h"
+#ضمن "../../version.h"
 
-static const char *lib_version = E2FSPROGS_VERSION;
-static const char *lib_date = E2FSPROGS_DATE;
+ساكن ثابت حرف *lib_version = E2FSPROGS_VERSION;
+ساكن ثابت حرف *lib_date = E2FSPROGS_DATE;
 
-int ext2fs_parse_version_string(const char *ver_string)
+صحيح ext2fs_parse_version_string(ثابت حرف *ver_string)
 {
-	const char *cp;
-	int version = 0, dot_count = 0;
+	ثابت حرف *cp;
+	صحيح version = 0, dot_تعداد = 0;
 
-	for (cp = ver_string; *cp; cp++) {
-		if (*cp == '.') {
-			if (dot_count++)
-				break;
-			else
-				continue;
+	لكل (cp = ver_string; *cp; cp++) {
+		إذا (*cp == '.') {
+			إذا (dot_تعداد++)
+				اكسر;
+			وإلا
+				استمر;
 		}
-		if (!isdigit(*cp))
-			break;
+		إذا (!isdigit(*cp))
+			اكسر;
 		version = (version * 10) + (*cp - '0');
 	}
-	return version;
+	إرجاع version;
 }
 
 
-int ext2fs_get_library_version(const char **ver_string,
-			       const char **date_string)
+صحيح ext2fs_get_library_version(ثابت حرف **ver_string,
+			       ثابت حرف **date_string)
 {
-	if (ver_string)
+	إذا (ver_string)
 		*ver_string = lib_version;
-	if (date_string)
+	إذا (date_string)
 		*date_string = lib_date;
 
-	return ext2fs_parse_version_string(lib_version);
+	إرجاع ext2fs_parse_version_string(lib_version);
 }

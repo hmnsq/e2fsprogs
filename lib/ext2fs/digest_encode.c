@@ -14,13 +14,13 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#ضمن "config.h"
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
 #endif
-#include "ext2fs.h"
+#ضمن "ext2fs.h"
 
-static const char *lookup_table =
+ساكن ثابت حرف *lookup_table =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
 
 /**
@@ -29,56 +29,56 @@ static const char *lookup_table =
  * Encodes the input digest using characters from the set [a-zA-Z0-9_+].
  * The encoded string is roughly 4/3 times the size of the input string.
  */
-int ext2fs_digest_encode(const char *src, int len, char *dst)
+صحيح ext2fs_digest_encode(ثابت حرف *src, صحيح len, حرف *dst)
 {
-	int i = 0, bits = 0, ac = 0;
-	char *cp = dst;
+	صحيح i = 0, bits = 0, ac = 0;
+	حرف *cp = dst;
 
-	while (i < len) {
-		ac += (((unsigned char) src[i]) << bits);
+	بينما (i < len) {
+		ac += (((unsigned حرف) src[i]) << bits);
 		bits += 8;
-		do {
+		افعل {
 			*cp++ = lookup_table[ac & 0x3f];
 			ac >>= 6;
 			bits -= 6;
-		} while (bits >= 6);
+		} بينما (bits >= 6);
 		i++;
 	}
-	if (bits)
+	إذا (bits)
 		*cp++ = lookup_table[ac & 0x3f];
-	return cp - dst;
+	إرجاع cp - dst;
 }
 
-int ext2fs_digest_decode(const char *src, int len, char *dst)
+صحيح ext2fs_digest_decode(ثابت حرف *src, صحيح len, حرف *dst)
 {
-	int i = 0, bits = 0, ac = 0;
-	const char *p;
-	char *cp = dst;
+	صحيح i = 0, bits = 0, ac = 0;
+	ثابت حرف *p;
+	حرف *cp = dst;
 
-	while (i < len) {
+	بينما (i < len) {
 		p = strchr(lookup_table, src[i]);
-		if (p == NULL || src[i] == 0)
-			return -1;
+		إذا (p == عدم || src[i] == 0)
+			إرجاع -1;
 		ac += (p - lookup_table) << bits;
 		bits += 6;
-		if (bits >= 8) {
+		إذا (bits >= 8) {
 			*cp++ = ac & 0xff;
 			ac >>= 8;
 			bits -= 8;
 		}
 		i++;
 	}
-	if (ac)
-		return -1;
-	return cp - dst;
+	إذا (ac)
+		إرجاع -1;
+	إرجاع cp - dst;
 }
 
 
 #ifdef UNITTEST
-static const struct {
-	unsigned char d[32];
-	unsigned int len;
-	const char *ed;
+ساكن ثابت بنية {
+	unsigned حرف d[32];
+	unsigned صحيح len;
+	ثابت حرف *ed;
 } tests[] = {
 	{ { 0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14,
 	    0x9a, 0xfb, 0xf4, 0xc8, 0x99, 0x6f, 0xb9, 0x24,
@@ -124,64 +124,64 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+صحيح الرئيسية(صحيح argc, حرف **argv)
 {
-	int i, ret, len;
-	int errors = 0;
-	char tmp[1024], tmp2[1024];
+	صحيح i, ret, len;
+	صحيح errors = 0;
+	حرف tmp[1024], tmp2[1024];
 
-	if (argc == 3 && !strcmp(argv[1], "encode")) {
-		memset(tmp, 0, sizeof(tmp));
+	إذا (argc == 3 && !strcmp(argv[1], "encode")) {
+		memset(tmp, 0, حجم(tmp));
 		ext2fs_digest_encode(argv[2], strlen(argv[2]), tmp);
 		puts(tmp);
 		exit(0);
 	}
-	if (argc == 3 && !strcmp(argv[1], "decode")) {
-		memset(tmp, 0, sizeof(tmp));
+	إذا (argc == 3 && !strcmp(argv[1], "decode")) {
+		memset(tmp, 0, حجم(tmp));
 		ret = ext2fs_digest_decode(argv[2], strlen(argv[2]), tmp);
 		puts(tmp);
 		fprintf(stderr, "returned %d\n", ret);
 		exit(0);
 	}
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
-		memset(tmp, 0, sizeof(tmp));
-		ret = ext2fs_digest_encode((const char *) tests[i].d,
+	لكل (i = 0; i < (صحيح)(حجم(tests) / حجم(tests[0])); i++) {
+		memset(tmp, 0, حجم(tmp));
+		ret = ext2fs_digest_encode((ثابت حرف *) tests[i].d,
 					   tests[i].len, tmp);
 		len = strlen(tmp);
 		printf("Test Digest %d (returned %d): ", i, ret);
-		if (ret != len) {
+		إذا (ret != len) {
 			printf("FAILED returned %d, string length was %d\n",
 			       ret, len);
 			errors++;
-			continue;
-		} else if (strcmp(tmp, tests[i].ed) != 0) {
+			استمر;
+		} وإلا إذا (strcmp(tmp, tests[i].ed) != 0) {
 			printf("FAILED: got %s, expected %s\n", tmp,
 			       tests[i].ed);
 			errors++;
-			continue;
+			استمر;
 		}
 		ret = ext2fs_digest_decode(tmp, len, tmp2);
-		if (ret != tests[i].len) {
+		إذا (ret != tests[i].len) {
 			printf("FAILED decode returned %d, expected %d\n",
 			       ret, tests[i].len);
 			errors++;
-			continue;
+			استمر;
 		}
-		if (memcmp(tmp2, tests[i].d, ret) != 0) {
+		إذا (memcmp(tmp2, tests[i].d, ret) != 0) {
 			puts("FAILED: decode mismatched");
 			errors++;
-			continue;
+			استمر;
 		}
 		printf("OK\n");
 	}
-	for (i = 1; i < argc; i++) {
-		memset(tmp, 0, sizeof(tmp));
+	لكل (i = 1; i < argc; i++) {
+		memset(tmp, 0, حجم(tmp));
 		ret = ext2fs_digest_encode(argv[i], strlen(argv[i]), tmp);
 		len = strlen(tmp);
 		printf("Digest of '%s' is '%s' (returned %d, length %d)\n",
 		       argv[i], tmp, ret, len);
 	}
-	return errors;
+	إرجاع errors;
 }
 
 #endif /* UNITTEST */
