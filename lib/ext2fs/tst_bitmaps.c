@@ -9,78 +9,78 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
+#ضمن "config.h"
+#ضمن <unistd.h>
+#ضمن <stdlib.h>
+#ضمن <stdio.h>
 #ifdef HAVE_GETOPT_H
-#include <getopt.h>
+#ضمن <getopt.h>
 #endif
-#include <string.h>
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include "ss/ss.h"
+#ضمن <string.h>
+#ضمن <fcntl.h>
+#ضمن <time.h>
+#ضمن <sys/stat.h>
+#ضمن <sys/types.h>
+#ضمن "ss/ss.h"
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
+#ضمن "ext2fsP.h"
 
-extern ss_request_table tst_bitmaps_cmds;
+خارجي ss_request_table tst_bitmaps_cmds;
 
-static char subsystem_name[] = "tst_bitmaps";
-static char version[] = "1.0";
+ساكن حرف subsystem_name[] = "tst_bitmaps";
+ساكن حرف version[] = "1.0";
 
 ext2_filsys	test_fs;
-int		exit_status = 0;
+صحيح		exit_status = 0;
 
-static int source_file(const char *cmd_file, int sci_idx)
+ساكن صحيح source_file(ثابت حرف *cmd_file, صحيح sci_idx)
 {
 	FILE		*f;
-	char		buf[256];
-	char		*cp;
-	int		retval;
-	int 		noecho;
+	حرف		buf[256];
+	حرف		*cp;
+	صحيح		retval;
+	صحيح 		noecho;
 
-	if (strcmp(cmd_file, "-") == 0)
+	إذا (strcmp(cmd_file, "-") == 0)
 		f = stdin;
-	else {
+	وإلا {
 		f = fopen(cmd_file, "r");
-		if (!f) {
+		إذا (!f) {
 			perror(cmd_file);
 			exit(1);
 		}
 	}
 	fflush(stdout);
 	fflush(stderr);
-	setbuf(stdout, NULL);
-	setbuf(stderr, NULL);
-	while (!feof(f)) {
-		if (fgets(buf, sizeof(buf), f) == NULL)
-			break;
-		if (buf[0] == '#')
-			continue;
+	setbuf(stdout, عدم);
+	setbuf(stderr, عدم);
+	طالما (!feof(f)) {
+		إذا (fgets(buf, حجم(buf), f) == عدم)
+			اكسر;
+		إذا (buf[0] == '#')
+			استمر;
 		noecho = 0;
-		if (buf[0] == '-') {
+		إذا (buf[0] == '-') {
 			noecho = 1;
 			buf[0] = ' ';
 		}
 		cp = strchr(buf, '\n');
-		if (cp)
+		إذا (cp)
 			*cp = 0;
 		cp = strchr(buf, '\r');
-		if (cp)
+		إذا (cp)
 			*cp = 0;
-		if (!noecho)
+		إذا (!noecho)
 			printf("%s: %s\n", subsystem_name, buf);
-		retval = ss_execute_line(sci_idx, buf);
-		if (retval) {
+		retval = ss_execute_قۇر(sci_idx, buf);
+		إذا (retval) {
 			ss_perror(sci_idx, retval, buf);
 			exit_status++;
 		}
 	}
-	return exit_status;
+	أرجع exit_status;
 }
 
 
@@ -103,11 +103,11 @@ static int source_file(const char *cmd_file, int sci_idx)
  *
  * We hide the hair here.
  */
-void reset_getopt(void)
+فراغ reset_getopt(فراغ)
 {
-#if defined(__GLIBC__) || defined(__linux__)
+#إذا defined(__GLIBC__) || defined(__linux__)
 	optind = 0;
-#else
+#وإلا
 	optind = 1;
 #endif
 #ifdef HAVE_OPTRESET
@@ -119,53 +119,53 @@ void reset_getopt(void)
  * This function will convert a string to an unsigned long, printing
  * an error message if it fails, and returning success or failure in err.
  */
-unsigned long parse_ulong(const char *str, const char *cmd,
-			  const char *descr, int *err)
+unsigned long parse_ulong(ثابت حرف *str, ثابت حرف *cmd,
+			  ثابت حرف *descr, صحيح *err)
 {
-	char		*tmp;
+	حرف		*tmp;
 	unsigned long	ret;
 
 	ret = strtoul(str, &tmp, 0);
-	if (*tmp == 0) {
-		if (err)
+	إذا (*tmp == 0) {
+		إذا (err)
 			*err = 0;
-		return ret;
+		أرجع ret;
 	}
 	com_err(cmd, 0, "Bad %s - %s", descr, str);
-	if (err)
+	إذا (err)
 		*err = 1;
-	else
+	وإلا
 		exit(1);
-	return 0;
+	أرجع 0;
 }
 
 
-int check_fs_open(const char *name)
+صحيح check_fs_open(ثابت حرف *name)
 {
-	if (!test_fs) {
+	إذا (!test_fs) {
 		com_err(name, 0, "Filesystem not open");
-		return 1;
+		أرجع 1;
 	}
-	return 0;
+	أرجع 0;
 }
 
-static void setup_filesystem(const char *name,
-			     unsigned int blocks, unsigned int inodes,
-			     unsigned int type, int flags)
+ساكن فراغ setup_filesystem(ثابت حرف *name,
+			     unsigned صحيح blocks, unsigned صحيح inodes,
+			     unsigned صحيح type, صحيح flags)
 {
-	struct ext2_super_block param;
+	بنية ext2_super_block param;
 	errcode_t retval;
 
-	memset(&param, 0, sizeof(param));
-	ext2fs_blocks_count_set(&param, blocks);
-	param.s_inodes_count = inodes;
+	memset(&param, 0, حجم(param));
+	ext2fs_blocks_سانى_set(&param, blocks);
+	param.s_inodes_سانى = inodes;
 
 	retval = ext2fs_initialize("test fs", flags, &param,
 				   test_io_manager, &test_fs);
 
-	if (retval) {
+	إذا (retval) {
 		com_err(name, retval, "while initializing filesystem");
-		return;
+		أرجع;
 	}
 	test_fs->default_bitmap_type = type;
 	ext2fs_free_block_bitmap(test_fs->block_map);
@@ -174,536 +174,536 @@ static void setup_filesystem(const char *name,
 	test_fs->inode_map = 0;
 	retval = ext2fs_allocate_block_bitmap(test_fs, "block bitmap",
 					      &test_fs->block_map);
-	if (retval) {
+	إذا (retval) {
 		com_err(name, retval, "while allocating block bitmap");
-		goto errout;
+		اذهب errout;
 	}
 	retval = ext2fs_allocate_inode_bitmap(test_fs, "inode bitmap",
 					      &test_fs->inode_map);
-	if (retval) {
+	إذا (retval) {
 		com_err(name, retval, "while allocating inode bitmap");
-		goto errout;
+		اذهب errout;
 	}
-	return;
+	أرجع;
 
 errout:
 	ext2fs_close_free(&test_fs);
 }
 
-void setup_cmd(int argc, ss_argv_t argv,
-	       int sci_idx EXT2FS_ATTR((unused)),
-	       void *infop EXT2FS_ATTR((unused)))
+فراغ setup_cmd(صحيح argc, ss_argv_t argv,
+	       صحيح sci_idx EXT2FS_ATTR((unused)),
+	       فراغ *infop EXT2FS_ATTR((unused)))
 {
-	int		c, err;
-	unsigned int	blocks = 128;
-	unsigned int	inodes = 0;
-	unsigned int	type = EXT2FS_BMAP64_BITARRAY;
-	int		flags = EXT2_FLAG_64BITS;
+	صحيح		c, err;
+	unsigned صحيح	blocks = 128;
+	unsigned صحيح	inodes = 0;
+	unsigned صحيح	type = EXT2FS_BMAP64_BITARRAY;
+	صحيح		flags = EXT2_FLAG_64BITS;
 
-	if (test_fs)
+	إذا (test_fs)
 		ext2fs_close_free(&test_fs);
 
 	reset_getopt();
-	while ((c = getopt(argc, argv, "b:i:lt:")) != EOF) {
-		switch (c) {
-		case 'b':
+	طالما ((c = getopt(argc, argv, "b:i:lt:")) != EOF) {
+		بدل (c) {
+		حالة 'b':
 			blocks = parse_ulong(optarg, argv[0],
 					     "number of blocks", &err);
-			if (err)
-				return;
-			break;
-		case 'i':
+			إذا (err)
+				أرجع;
+			اكسر;
+		حالة 'i':
 			inodes = parse_ulong(optarg, argv[0],
 					     "number of blocks", &err);
-			if (err)
-				return;
-			break;
-		case 'l':	/* Legacy bitmaps */
+			إذا (err)
+				أرجع;
+			اكسر;
+		حالة 'l':	/* Legacy bitmaps */
 			flags = 0;
-			break;
-		case 't':
+			اكسر;
+		حالة 't':
 			type = parse_ulong(optarg, argv[0],
 					   "bitmap backend type", &err);
-			if (err)
-				return;
-			break;
-		default:
+			إذا (err)
+				أرجع;
+			اكسر;
+		افتراضي:
 			fprintf(stderr, "%s: usage: setup [-b blocks] "
 				"[-i inodes] [-t type]\n", argv[0]);
-			return;
+			أرجع;
 		}
 	}
 	setup_filesystem(argv[0], blocks, inodes, type, flags);
 }
 
-void close_cmd(int argc, char **argv, int sci_idx EXT2FS_ATTR((unused)),
-	       void *infop EXT2FS_ATTR((unused)))
+فراغ close_cmd(صحيح argc, حرف **argv, صحيح sci_idx EXT2FS_ATTR((unused)),
+	       فراغ *infop EXT2FS_ATTR((unused)))
 {
-	if (check_fs_open(argv[0]))
-		return;
+	إذا (check_fs_open(argv[0]))
+		أرجع;
 
 	ext2fs_close_free(&test_fs);
 }
 
 
-void dump_bitmap(ext2fs_generic_bitmap bmap, unsigned int start, unsigned num)
+فراغ dump_bitmap(ext2fs_generic_bitmap bmap, unsigned صحيح start, unsigned رەقەم)
 {
-	unsigned char	*buf;
+	unsigned حرف	*buf;
 	errcode_t	retval;
-	int		i, len = (num - start + 7) / 8;
+	صحيح		i, len = (رەقەم - start + 7) / 8;
 
 	buf = malloc(len);
-	if (!buf) {
+	إذا (!buf) {
 		com_err("dump_bitmap", 0, "couldn't allocate buffer");
-		return;
+		أرجع;
 	}
 	memset(buf, 0, len);
-	retval = ext2fs_get_generic_bmap_range(bmap, (__u64) start, num, buf);
-	if (retval) {
+	retval = ext2fs_get_generic_bmap_range(bmap, (__u64) start, رەقەم, buf);
+	إذا (retval) {
 		com_err("dump_bitmap", retval, 
 			"while calling ext2fs_generic_bmap_range");
-		free(buf);
-		return;
+		حرر(buf);
+		أرجع;
 	}
-	for (i=0; i < len; i++)
+	لكل (i=0; i < len; i++)
 		printf("%02x", buf[i]);
 	printf("\n");
 	printf("bits set: %u\n", ext2fs_bitcount(buf, len));
-	free(buf);
+	حرر(buf);
 }
 
-void dump_inode_bitmap_cmd(int argc, ss_argv_t argv,
-			   int sci_idx EXT2FS_ATTR((unused)),
-			   void *infop EXT2FS_ATTR((unused)))
+فراغ dump_inode_bitmap_cmd(صحيح argc, ss_argv_t argv,
+			   صحيح sci_idx EXT2FS_ATTR((unused)),
+			   فراغ *infop EXT2FS_ATTR((unused)))
 {
-	if (check_fs_open(argv[0]))
-		return;
+	إذا (check_fs_open(argv[0]))
+		أرجع;
 
 	printf("inode bitmap: ");
-	dump_bitmap(test_fs->inode_map, 1, test_fs->super->s_inodes_count);
+	dump_bitmap(test_fs->inode_map, 1, test_fs->super->s_inodes_سانى);
 }
 	
-void dump_block_bitmap_cmd(int argc, ss_argv_t argv,
-			   int sci_idx EXT2FS_ATTR((unused)),
-			   void *infop EXT2FS_ATTR((unused)))
+فراغ dump_block_bitmap_cmd(صحيح argc, ss_argv_t argv,
+			   صحيح sci_idx EXT2FS_ATTR((unused)),
+			   فراغ *infop EXT2FS_ATTR((unused)))
 {
-	if (check_fs_open(argv[0]))
-		return;
+	إذا (check_fs_open(argv[0]))
+		أرجع;
 
 	printf("block bitmap: ");
 	dump_bitmap(test_fs->block_map, test_fs->super->s_first_data_block,
-		    test_fs->super->s_blocks_count);
+		    test_fs->super->s_blocks_سانى);
 }
 	
-void do_setb(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
-	     void *infop EXT2FS_ATTR((unused)))
+فراغ do_setb(صحيح argc, ss_argv_t argv,
+	     صحيح sci_idx EXT2FS_ATTR((unused)),
+	     فراغ *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int block, num;
-	int err;
-	int test_result, op_result;
+	unsigned صحيح block, رەقەم;
+	صحيح err;
+	صحيح test_result, op_result;
 
-	if (check_fs_open(argv[0]))
-		return;
+	إذا (check_fs_open(argv[0]))
+		أرجع;
 
-	if (argc != 2 && argc != 3) {
+	إذا (argc != 2 && argc != 3) {
 		com_err(argv[0], 0, "Usage: setb <block> [num]");
-		return;
+		أرجع;
 	}
 
 	block = parse_ulong(argv[1], argv[0], "block", &err);
-	if (err)
-		return;
+	إذا (err)
+		أرجع;
 
-	if (argc == 3) {
-		num = parse_ulong(argv[2], argv[0], "num", &err);
-		if (err)
-			return;
+	إذا (argc == 3) {
+		رەقەم = parse_ulong(argv[2], argv[0], "num", &err);
+		إذا (err)
+			أرجع;
 
 		ext2fs_mark_block_bitmap_range2(test_fs->block_map,
-						block, num);
-		printf("Marking blocks %u to %u\n", block, block + num - 1);
-		return;
+						block, رەقەم);
+		printf("Marking blocks %u to %u\n", block, block + رەقەم - 1);
+		أرجع;
 	}
 
 	test_result = ext2fs_test_block_bitmap2(test_fs->block_map, block);
 	op_result = ext2fs_mark_block_bitmap2(test_fs->block_map, block);
 	printf("Setting block %u, was %s before\n", block, op_result ?
 	       "set" : "clear");
-	if (!test_result != !op_result)
+	إذا (!test_result != !op_result)
 		com_err(argv[0], 0, "*ERROR* test_result different! (%d, %d)",
 			test_result, op_result);
 }
 
-void do_clearb(int argc, ss_argv_t argv,
-	       int sci_idx EXT2FS_ATTR((unused)),
-	       void *infop EXT2FS_ATTR((unused)))
+فراغ do_clearb(صحيح argc, ss_argv_t argv,
+	       صحيح sci_idx EXT2FS_ATTR((unused)),
+	       فراغ *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int block, num;
-	int err;
-	int test_result, op_result;
+	unsigned صحيح block, رەقەم;
+	صحيح err;
+	صحيح test_result, op_result;
 
-	if (check_fs_open(argv[0]))
-		return;
+	إذا (check_fs_open(argv[0]))
+		أرجع;
 
-	if (argc != 2 && argc != 3) {
+	إذا (argc != 2 && argc != 3) {
 		com_err(argv[0], 0, "Usage: clearb <block> [num]");
-		return;
+		أرجع;
 	}
 
 	block = parse_ulong(argv[1], argv[0], "block", &err);
-	if (err)
-		return;
+	إذا (err)
+		أرجع;
 
-	if (argc == 3) {
-		num = parse_ulong(argv[2], argv[0], "num", &err);
-		if (err)
-			return;
+	إذا (argc == 3) {
+		رەقەم = parse_ulong(argv[2], argv[0], "num", &err);
+		إذا (err)
+			أرجع;
 
 		ext2fs_unmark_block_bitmap_range2(test_fs->block_map,
-						block, num);
-		printf("Clearing blocks %u to %u\n", block, block + num - 1);
-		return;
+						block, رەقەم);
+		printf("Clearing blocks %u to %u\n", block, block + رەقەم - 1);
+		أرجع;
 	}
 
 	test_result = ext2fs_test_block_bitmap2(test_fs->block_map, block);
 	op_result = ext2fs_unmark_block_bitmap2(test_fs->block_map, block);
 	printf("Clearing block %u, was %s before\n", block, op_result ?
 	       "set" : "clear");
-	if (!test_result != !op_result)
+	إذا (!test_result != !op_result)
 		com_err(argv[0], 0, "*ERROR* test_result different! (%d, %d)",
 			test_result, op_result);
 }
 
-void do_testb(int argc, ss_argv_t argv,
-	      int sci_idx EXT2FS_ATTR((unused)),
-	      void *infop EXT2FS_ATTR((unused)))
+فراغ do_testb(صحيح argc, ss_argv_t argv,
+	      صحيح sci_idx EXT2FS_ATTR((unused)),
+	      فراغ *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int block, num;
-	int err;
-	int test_result;
+	unsigned صحيح block, رەقەم;
+	صحيح err;
+	صحيح test_result;
 
-	if (check_fs_open(argv[0]))
-		return;
+	إذا (check_fs_open(argv[0]))
+		أرجع;
 
-	if (argc != 2 && argc != 3) {
+	إذا (argc != 2 && argc != 3) {
 		com_err(argv[0], 0, "Usage: testb <block> [num]");
-		return;
+		أرجع;
 	}
 
 	block = parse_ulong(argv[1], argv[0], "block", &err);
-	if (err)
-		return;
+	إذا (err)
+		أرجع;
 
-	if (argc == 3) {
-		num = parse_ulong(argv[2], argv[0], "num", &err);
-		if (err)
-			return;
+	إذا (argc == 3) {
+		رەقەم = parse_ulong(argv[2], argv[0], "num", &err);
+		إذا (err)
+			أرجع;
 
 		test_result =
 			ext2fs_test_block_bitmap_range2(test_fs->block_map,
-							block, num);
+							block, رەقەم);
 		printf("Blocks %u to %u are %sall clear.\n",
-		       block, block + num - 1, test_result ? "" : "NOT ");
-		return;
+		       block, block + رەقەم - 1, test_result ? "" : "NOT ");
+		أرجع;
 	}
 
 	test_result = ext2fs_test_block_bitmap2(test_fs->block_map, block);
 	printf("Block %u is %s\n", block, test_result ? "set" : "clear");
 }
 
-void do_ffzb(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
-	     void *infop EXT2FS_ATTR((unused)))
+فراغ do_ffzb(صحيح argc, ss_argv_t argv,
+	     صحيح sci_idx EXT2FS_ATTR((unused)),
+	     فراغ *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int start, end;
-	int err;
+	unsigned صحيح start, end;
+	صحيح err;
 	errcode_t retval;
 	blk64_t out;
 
-	if (check_fs_open(argv[0]))
-		return;
+	إذا (check_fs_open(argv[0]))
+		أرجع;
 
-	if (argc != 3 && argc != 3) {
+	إذا (argc != 3 && argc != 3) {
 		com_err(argv[0], 0, "Usage: ffzb <start> <end>");
-		return;
+		أرجع;
 	}
 
 	start = parse_ulong(argv[1], argv[0], "start", &err);
-	if (err)
-		return;
+	إذا (err)
+		أرجع;
 
 	end = parse_ulong(argv[2], argv[0], "end", &err);
-	if (err)
-		return;
+	إذا (err)
+		أرجع;
 
 	retval = ext2fs_find_first_zero_block_bitmap2(test_fs->block_map,
 						      start, end, &out);
-	if (retval) {
+	إذا (retval) {
 		printf("ext2fs_find_first_zero_block_bitmap2() returned %s\n",
 		       error_message(retval));
-		return;
+		أرجع;
 	}
 	printf("First unmarked block is %llu\n", (unsigned long long) out);
 }
 
-void do_ffsb(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
-	     void *infop EXT2FS_ATTR((unused)))
+فراغ do_ffsb(صحيح argc, ss_argv_t argv,
+	     صحيح sci_idx EXT2FS_ATTR((unused)),
+	     فراغ *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int start, end;
-	int err;
+	unsigned صحيح start, end;
+	صحيح err;
 	errcode_t retval;
 	blk64_t out;
 
-	if (check_fs_open(argv[0]))
-		return;
+	إذا (check_fs_open(argv[0]))
+		أرجع;
 
-	if (argc != 3 && argc != 3) {
+	إذا (argc != 3 && argc != 3) {
 		com_err(argv[0], 0, "Usage: ffsb <start> <end>");
-		return;
+		أرجع;
 	}
 
 	start = parse_ulong(argv[1], argv[0], "start", &err);
-	if (err)
-		return;
+	إذا (err)
+		أرجع;
 
 	end = parse_ulong(argv[2], argv[0], "end", &err);
-	if (err)
-		return;
+	إذا (err)
+		أرجع;
 
 	retval = ext2fs_find_first_set_block_bitmap2(test_fs->block_map,
 						      start, end, &out);
-	if (retval) {
+	إذا (retval) {
 		printf("ext2fs_find_first_set_block_bitmap2() returned %s\n",
 		       error_message(retval));
-		return;
+		أرجع;
 	}
 	printf("First marked block is %llu\n", (unsigned long long) out);
 }
 
 
-void do_zerob(int argc, ss_argv_t argv,
-	      int sci_idx EXT2FS_ATTR((unused)),
-	      void *infop EXT2FS_ATTR((unused)))
+فراغ do_zerob(صحيح argc, ss_argv_t argv,
+	      صحيح sci_idx EXT2FS_ATTR((unused)),
+	      فراغ *infop EXT2FS_ATTR((unused)))
 {
-	if (check_fs_open(argv[0]))
-		return;
+	إذا (check_fs_open(argv[0]))
+		أرجع;
 
 	printf("Clearing block bitmap.\n");
 	ext2fs_clear_block_bitmap(test_fs->block_map);
 }
 
-void do_seti(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
-	     void *infop EXT2FS_ATTR((unused)))
+فراغ do_seti(صحيح argc, ss_argv_t argv,
+	     صحيح sci_idx EXT2FS_ATTR((unused)),
+	     فراغ *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int inode;
-	int err;
-	int test_result, op_result;
+	unsigned صحيح inode;
+	صحيح err;
+	صحيح test_result, op_result;
 
-	if (check_fs_open(argv[0]))
-		return;
+	إذا (check_fs_open(argv[0]))
+		أرجع;
 
-	if (argc != 2) {
+	إذا (argc != 2) {
 		com_err(argv[0], 0, "Usage: seti <inode>");
-		return;
+		أرجع;
 	}
 
 	inode = parse_ulong(argv[1], argv[0], "inode", &err);
-	if (err)
-		return;
+	إذا (err)
+		أرجع;
 
 	test_result = ext2fs_test_inode_bitmap2(test_fs->inode_map, inode);
 	op_result = ext2fs_mark_inode_bitmap2(test_fs->inode_map, inode);
 	printf("Setting inode %u, was %s before\n", inode, op_result ?
 	       "set" : "clear");
-	if (!test_result != !op_result) {
+	إذا (!test_result != !op_result) {
 		com_err(argv[0], 0, "*ERROR* test_result different! (%d, %d)",
 			test_result, op_result);
 		exit_status++;
 	}
 }
 
-void do_cleari(int argc, ss_argv_t argv,
-	       int sci_idx EXT2FS_ATTR((unused)),
-	       void *infop EXT2FS_ATTR((unused)))
+فراغ do_cleari(صحيح argc, ss_argv_t argv,
+	       صحيح sci_idx EXT2FS_ATTR((unused)),
+	       فراغ *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int inode;
-	int err;
-	int test_result, op_result;
+	unsigned صحيح inode;
+	صحيح err;
+	صحيح test_result, op_result;
 
-	if (check_fs_open(argv[0]))
-		return;
+	إذا (check_fs_open(argv[0]))
+		أرجع;
 
-	if (argc != 2) {
+	إذا (argc != 2) {
 		com_err(argv[0], 0, "Usage: clearb <inode>");
-		return;
+		أرجع;
 	}
 
 	inode = parse_ulong(argv[1], argv[0], "inode", &err);
-	if (err)
-		return;
+	إذا (err)
+		أرجع;
 
 	test_result = ext2fs_test_inode_bitmap2(test_fs->inode_map, inode);
 	op_result = ext2fs_unmark_inode_bitmap2(test_fs->inode_map, inode);
 	printf("Clearing inode %u, was %s before\n", inode, op_result ?
 	       "set" : "clear");
-	if (!test_result != !op_result) {
+	إذا (!test_result != !op_result) {
 		com_err(argv[0], 0, "*ERROR* test_result different! (%d, %d)",
 			test_result, op_result);
 		exit_status++;
 	}
 }
 
-void do_testi(int argc, ss_argv_t argv,
-	      int sci_idx EXT2FS_ATTR((unused)),
-	      void *infop EXT2FS_ATTR((unused)))
+فراغ do_testi(صحيح argc, ss_argv_t argv,
+	      صحيح sci_idx EXT2FS_ATTR((unused)),
+	      فراغ *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int inode;
-	int err;
-	int test_result;
+	unsigned صحيح inode;
+	صحيح err;
+	صحيح test_result;
 
-	if (check_fs_open(argv[0]))
-		return;
+	إذا (check_fs_open(argv[0]))
+		أرجع;
 
-	if (argc != 2) {
+	إذا (argc != 2) {
 		com_err(argv[0], 0, "Usage: testb <inode>");
-		return;
+		أرجع;
 	}
 
 	inode = parse_ulong(argv[1], argv[0], "inode", &err);
-	if (err)
-		return;
+	إذا (err)
+		أرجع;
 
 	test_result = ext2fs_test_inode_bitmap2(test_fs->inode_map, inode);
 	printf("Inode %u is %s\n", inode, test_result ? "set" : "clear");
 }
 
-void do_ffzi(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
-	     void *infop EXT2FS_ATTR((unused)))
+فراغ do_ffzi(صحيح argc, ss_argv_t argv,
+	     صحيح sci_idx EXT2FS_ATTR((unused)),
+	     فراغ *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int start, end;
-	int err;
+	unsigned صحيح start, end;
+	صحيح err;
 	errcode_t retval;
 	ext2_ino_t out;
 
-	if (check_fs_open(argv[0]))
-		return;
+	إذا (check_fs_open(argv[0]))
+		أرجع;
 
-	if (argc != 3 && argc != 3) {
+	إذا (argc != 3 && argc != 3) {
 		com_err(argv[0], 0, "Usage: ffzi <start> <end>");
-		return;
+		أرجع;
 	}
 
 	start = parse_ulong(argv[1], argv[0], "start", &err);
-	if (err)
-		return;
+	إذا (err)
+		أرجع;
 
 	end = parse_ulong(argv[2], argv[0], "end", &err);
-	if (err)
-		return;
+	إذا (err)
+		أرجع;
 
 	retval = ext2fs_find_first_zero_inode_bitmap2(test_fs->inode_map,
 						      start, end, &out);
-	if (retval) {
+	إذا (retval) {
 		printf("ext2fs_find_first_zero_inode_bitmap2() returned %s\n",
 		       error_message(retval));
-		return;
+		أرجع;
 	}
 	printf("First unmarked inode is %u\n", out);
 }
 
-void do_ffsi(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
-	     void *infop EXT2FS_ATTR((unused)))
+فراغ do_ffsi(صحيح argc, ss_argv_t argv,
+	     صحيح sci_idx EXT2FS_ATTR((unused)),
+	     فراغ *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int start, end;
-	int err;
+	unsigned صحيح start, end;
+	صحيح err;
 	errcode_t retval;
 	ext2_ino_t out;
 
-	if (check_fs_open(argv[0]))
-		return;
+	إذا (check_fs_open(argv[0]))
+		أرجع;
 
-	if (argc != 3 && argc != 3) {
+	إذا (argc != 3 && argc != 3) {
 		com_err(argv[0], 0, "Usage: ffsi <start> <end>");
-		return;
+		أرجع;
 	}
 
 	start = parse_ulong(argv[1], argv[0], "start", &err);
-	if (err)
-		return;
+	إذا (err)
+		أرجع;
 
 	end = parse_ulong(argv[2], argv[0], "end", &err);
-	if (err)
-		return;
+	إذا (err)
+		أرجع;
 
 	retval = ext2fs_find_first_set_inode_bitmap2(test_fs->inode_map,
 						     start, end, &out);
-	if (retval) {
+	إذا (retval) {
 		printf("ext2fs_find_first_set_inode_bitmap2() returned %s\n",
 		       error_message(retval));
-		return;
+		أرجع;
 	}
 	printf("First marked inode is %u\n", out);
 }
 
-void do_zeroi(int argc, ss_argv_t argv,
-	      int sci_idx EXT2FS_ATTR((unused)),
-	      void *infop EXT2FS_ATTR((unused)))
+فراغ do_zeroi(صحيح argc, ss_argv_t argv,
+	      صحيح sci_idx EXT2FS_ATTR((unused)),
+	      فراغ *infop EXT2FS_ATTR((unused)))
 {
-	if (check_fs_open(argv[0]))
-		return;
+	إذا (check_fs_open(argv[0]))
+		أرجع;
 
 	printf("Clearing inode bitmap.\n");
 	ext2fs_clear_inode_bitmap(test_fs->inode_map);
 }
 
-int main(int argc, char **argv)
+صحيح main(صحيح argc, حرف **argv)
 {
-	unsigned int	blocks = 128;
-	unsigned int	inodes = 0;
-	unsigned int	type = EXT2FS_BMAP64_BITARRAY;
-	int		c, err, code;
-	char		*request = (char *)NULL;
-	char		*cmd_file = 0;
-	int		sci_idx;
-	int		flags = EXT2_FLAG_64BITS;
+	unsigned صحيح	blocks = 128;
+	unsigned صحيح	inodes = 0;
+	unsigned صحيح	type = EXT2FS_BMAP64_BITARRAY;
+	صحيح		c, err, code;
+	حرف		*request = (حرف *)عدم;
+	حرف		*cmd_file = 0;
+	صحيح		sci_idx;
+	صحيح		flags = EXT2_FLAG_64BITS;
 
 	add_error_table(&et_ss_error_table);
 	add_error_table(&et_ext2_error_table);
-	while ((c = getopt (argc, argv, "b:i:lt:R:f:")) != EOF) {
-		switch (c) {
-		case 'b':
+	طالما ((c = getopt (argc, argv, "b:i:lt:R:f:")) != EOF) {
+		بدل (c) {
+		حالة 'b':
 			blocks = parse_ulong(optarg, argv[0],
 					     "number of blocks", &err);
-			if (err)
+			إذا (err)
 				exit(1);
-			break;
-		case 'i':
+			اكسر;
+		حالة 'i':
 			inodes = parse_ulong(optarg, argv[0],
 					     "number of blocks", &err);
-			if (err)
+			إذا (err)
 				exit(1);
-			break;
-		case 'l':	/* Legacy bitmaps */
+			اكسر;
+		حالة 'l':	/* Legacy bitmaps */
 			flags = 0;
-			break;
-		case 't':
+			اكسر;
+		حالة 't':
 			type = parse_ulong(optarg, argv[0],
 					   "bitmap backend type", &err);
-			if (err)
+			إذا (err)
 				exit(1);
-			break;
-		case 'R':
+			اكسر;
+		حالة 'R':
 			request = optarg;
-			break;
-		case 'f':
+			اكسر;
+		حالة 'f':
 			cmd_file = optarg;
-			break;
-		default:
+			اكسر;
+		افتراضي:
 			com_err(argv[0], 0, "Usage: %s [-R request] "
 				"[-f cmd_file]", subsystem_name);
 			exit(1);
@@ -711,14 +711,14 @@ int main(int argc, char **argv)
 	}
 
 	sci_idx = ss_create_invocation(subsystem_name, version,
-				       (char *)NULL, &tst_bitmaps_cmds, &code);
-	if (code) {
+				       (حرف *)عدم, &tst_bitmaps_cmds, &code);
+	إذا (code) {
 		ss_perror(sci_idx, code, "creating invocation");
 		exit(1);
 	}
 
-	(void) ss_add_request_table (sci_idx, &ss_std_requests, 1, &code);
-	if (code) {
+	(فراغ) ss_add_request_table (sci_idx, &ss_std_requests, 1, &code);
+	إذا (code) {
 		ss_perror(sci_idx, code, "adding standard requests");
 		exit (1);
 	}
@@ -728,15 +728,15 @@ int main(int argc, char **argv)
 
 	setup_filesystem(argv[0], blocks, inodes, type, flags);
 
-	if (request) {
-		code = ss_execute_line(sci_idx, request);
-		if (code) {
+	إذا (request) {
+		code = ss_execute_قۇر(sci_idx, request);
+		إذا (code) {
 			ss_perror(sci_idx, code, request);
 			exit_status++;
 		}
-	} else if (cmd_file) {
+	} وإلا إذا (cmd_file) {
 		exit_status = source_file(cmd_file, sci_idx);
-	} else {
+	} وإلا {
 		ss_listen(sci_idx);
 	}
 
