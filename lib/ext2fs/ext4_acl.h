@@ -2,61 +2,61 @@
  * Ext4's on-disk acl format.  From linux/fs/ext4/acl.h
  */
 
-#define EXT4_ACL_VERSION        0x0001
+#परिभाषय EXT4_ACL_संस्करणम्        0x0001
 
 /* 23.2.5 acl_tag_t values */
 
-#define ACL_UNDEFINED_TAG	(0x00)
-#define ACL_USER_OBJ		(0x01)
-#define ACL_USER		(0x02)
-#define ACL_GROUP_OBJ		(0x04)
-#define ACL_GROUP		(0x08)
-#define ACL_MASK		(0x10)
-#define ACL_OTHER		(0x20)
+#परिभाषय ACL_UNDEFINED_चिह्नकम्	(0x00)
+#परिभाषय ACL_USER_OBJ		(0x01)
+#परिभाषय ACL_USER		(0x02)
+#परिभाषय ACL_गणः_OBJ		(0x04)
+#परिभाषय ACL_गणः		(0x08)
+#परिभाषय ACL_आवरणम्		(0x10)
+#परिभाषय ACL_OTHER		(0x20)
 
 /* 23.3.6 acl_type_t values */
 
-#define ACL_TYPE_ACCESS		(0x8000)
-#define ACL_TYPE_DEFAULT	(0x4000)
+#परिभाषय ACL_TYPE_ACCESS		(0x8000)
+#परिभाषय ACL_TYPE_DEFAULT	(0x4000)
 
 /* 23.2.7 ACL qualifier constants */
 
-#define ACL_UNDEFINED_ID	((id_t)-1)
+#परिभाषय ACL_UNDEFINED_ID	((id_t)-1)
 
-typedef struct {
-        __le16          e_tag;
+प्रकारनिर्देश संरचना {
+        __le16          e_चिह्नकम्;
         __le16          e_perm;
         __le32          e_id;
- } ext4_acl_entry;
+ } ext4_acl_प्रविष्टिः;
  
-typedef struct {
-        __le16          e_tag;
+प्रकारनिर्देश संरचना {
+        __le16          e_चिह्नकम्;
         __le16          e_perm;
-} ext4_acl_entry_short;
+} ext4_acl_प्रविष्टिः_short;
 
-typedef struct {
-         __le32          a_version;
-} ext4_acl_header;
+प्रकारनिर्देश संरचना {
+         __le32          a_संस्करणम्;
+} ext4_acl_शीर्षकम्;
 
 
 /* Supported ACL a_version fields */
- #define POSIX_ACL_XATTR_VERSION 0x0002
+ #परिभाषय POSIX_ACL_XATTR_संस्करणम् 0x0002
 
-typedef struct {
-        __le16                  e_tag;
+प्रकारनिर्देश संरचना {
+        __le16                  e_चिह्नकम्;
         __le16                  e_perm;
         __le32                  e_id;
-} posix_acl_xattr_entry;
+} posix_acl_xattr_प्रविष्टिः;
 
-typedef struct {
-        __le32                  a_version;
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-#endif
-        posix_acl_xattr_entry   a_entries[0];
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic pop
-#endif
-} posix_acl_xattr_header;
+प्रकारनिर्देश संरचना {
+        __le32                  a_संस्करणम्;
+#यदि __GNUC_PREREQ (4, 8)
+#निर्देशः GCC diagnostic प्रक्षिप
+#निर्देशः GCC diagnostic ignored "-Wpedantic"
+#यदि_अन्तः
+        posix_acl_xattr_प्रविष्टिः   a_entries[0];
+#यदि __GNUC_PREREQ (4, 8)
+#निर्देशः GCC diagnostic निष्कासय
+#यदि_अन्तः
+} posix_acl_xattr_शीर्षकम्;
 

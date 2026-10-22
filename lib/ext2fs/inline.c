@@ -11,108 +11,108 @@
  * %End-Header%
  */
 
-#ifndef _XOPEN_SOURCE
-#define _XOPEN_SOURCE 600	/* for posix_memalign() */
-#endif
+#यदि_अपरिभाषितम् _XOPEN_SOURCE
+#परिभाषय _XOPEN_SOURCE 600	/* for posix_memalign() */
+#यदि_अन्तः
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#if HAVE_MALLOC_H
-#include <malloc.h>
-#endif
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
+#यदि_अन्तः
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <time.h>
+#यदि HAVE_SYS_STAT_H
+#अन्तर्भाव <sys/stat.h>
+#यदि_अन्तः
+#यदि HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
+#यदि_अन्तः
+#यदि HAVE_MALLOC_H
+#अन्तर्भाव <malloc.h>
+#यदि_अन्तः
 
-#include "ext2_fs.h"
-#define INCLUDE_INLINE_FUNCS
-#include "ext2fs.h"
+#अन्तर्भाव "ext2_fs.h"
+#परिभाषय INCLUDE_INLINE_FUNCS
+#अन्तर्भाव "ext2fs.h"
 
 /*
  * We used to define this as an inline, but since we are now using
  * autoconf-defined #ifdef's, we need to export this as a
  * library-provided function exclusively.
  */
-errcode_t ext2fs_get_memalign(unsigned long size,
-			      unsigned long align, void *ptr)
+errcode_t ext2fs_get_memalign(अचिह्नित दीर्घ आकार,
+			      अचिह्नित दीर्घ align, शून्य *ptr)
 {
 	errcode_t retval = 0;
-	void **p = ptr;
+	शून्य **p = ptr;
 
-	if (align < 8)
+	यदि (align < 8)
 		align = 8;
-#ifdef HAVE_POSIX_MEMALIGN
-	retval = posix_memalign(p, align, size);
-	if (retval == ENOMEM)
-		return EXT2_ET_NO_MEMORY;
-#else  /* !HAVE_POSIX_MEMALIGN */
-#ifdef HAVE_MEMALIGN
-	*p = memalign(align, size);
-	if (*p == NULL) {
-		if (errno)
-			return errno;
-		else
-			return EXT2_ET_NO_MEMORY;
+#यदि_परिभाषितम् HAVE_POSIX_MEMALIGN
+	retval = posix_memalign(p, align, आकार);
+	यदि (retval == ENOMEM)
+		प्रत्यागम EXT2_ET_NO_स्मृतिः;
+#अन्यथा  /* !HAVE_POSIX_MEMALIGN */
+#यदि_परिभाषितम् HAVE_MEMALIGN
+	*p = memalign(align, आकार);
+	यदि (*p == रिक्त) {
+		यदि (errno)
+			प्रत्यागम errno;
+		अन्यथा
+			प्रत्यागम EXT2_ET_NO_स्मृतिः;
 	}
-#else  /* !HAVE_MEMALIGN */
-#ifdef HAVE_VALLOC
-	if (align > sizeof(long long))
-		*p = valloc(size);
-	else
-#endif
-		*p = malloc(size);
-	if ((uintptr_t) *p & (align - 1)) {
-		free(*p);
+#अन्यथा  /* !HAVE_MEMALIGN */
+#यदि_परिभाषितम् HAVE_VALLOC
+	यदि (align > परिमाण(दीर्घ दीर्घ))
+		*p = valloc(आकार);
+	अन्यथा
+#यदि_अन्तः
+		*p = स्मृतिं_देहि(आकार);
+	यदि ((uintptr_t) *p & (align - 1)) {
+		मुक्त(*p);
 		*p = 0;
 	}
-	if (*p == 0)
-		return EXT2_ET_NO_MEMORY;
-#endif	/* HAVE_MEMALIGN */
-#endif	/* HAVE_POSIX_MEMALIGN */
-	return retval;
+	यदि (*p == 0)
+		प्रत्यागम EXT2_ET_NO_स्मृतिः;
+#यदि_अन्तः	/* HAVE_MEMALIGN */
+#यदि_अन्तः	/* HAVE_POSIX_MEMALIGN */
+	प्रत्यागम retval;
 }
 
-#ifdef DEBUG
-static int isaligned(void *ptr, unsigned long align)
+#यदि_परिभाषितम् DEBUG
+स्थिर पूर्णाङ्क isaligned(शून्य *ptr, अचिह्नित दीर्घ align)
 {
-	return (((unsigned long) ptr & (align - 1)) == 0);
+	प्रत्यागम (((अचिह्नित दीर्घ) ptr & (align - 1)) == 0);
 }
 
-static errcode_t test_memalign(unsigned long align)
+स्थिर errcode_t test_memalign(अचिह्नित दीर्घ align)
 {
-	void *ptr = 0;
+	शून्य *ptr = 0;
 	errcode_t retval;
 
 	retval = ext2fs_get_memalign(32, align, &ptr);
-	if (!retval && !isaligned(ptr, align))
+	यदि (!retval && !isaligned(ptr, align))
 		retval = EINVAL;
-	free(ptr);
-	printf("tst_memalign(%lu) is %s\n", align,
-	       retval ? error_message(retval) : "OK");
-	return retval;
+	मुक्त(ptr);
+	प्रारूप_लिख("tst_memalign(%lu) is %s\n", align,
+	       retval ? error_सन्देशः(retval) : "OK");
+	प्रत्यागम retval;
 }
 
-int main(int argc, char **argv)
+पूर्णाङ्क मुख्यम्(पूर्णाङ्क argc, वर्ण **argv)
 {
-	int err = 0;
+	पूर्णाङ्क err = 0;
 
-	if (test_memalign(4))
+	यदि (test_memalign(4))
 		err++;
-	if (test_memalign(32))
+	यदि (test_memalign(32))
 		err++;
-	if (test_memalign(1024))
+	यदि (test_memalign(1024))
 		err++;
-	if (test_memalign(4096))
+	यदि (test_memalign(4096))
 		err++;
-	return err;
+	प्रत्यागम err;
 }
-#endif
+#यदि_अन्तः

@@ -9,16 +9,16 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <time.h>
-#include <string.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
+#यदि_अन्तः
+#अन्तर्भाव <time.h>
+#अन्तर्भाव <string.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fsP.h"
 
 errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest)
 {
@@ -27,17 +27,17 @@ errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest)
 
 	EXT2_CHECK_MAGIC(src, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	retval = ext2fs_get_mem(sizeof(struct struct_ext2_filsys), &fs);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(परिमाण(संरचना struct_ext2_filsys), &fs);
+	यदि (retval)
+		प्रत्यागम retval;
 
 	*fs = *src;
 	fs->device_name = 0;
 	fs->super = 0;
 	fs->orig_super = 0;
-	fs->group_desc = 0;
+	fs->गणः_desc = 0;
 	fs->inode_map = 0;
-	fs->block_map = 0;
+	fs->खण्डम्_map = 0;
 	fs->badblocks = 0;
 	fs->dblist = 0;
 	fs->mmp_buf = 0;
@@ -45,75 +45,75 @@ errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest)
 	fs->mmp_fd = -1;
 
 	io_channel_bumpcount(fs->io);
-	if (fs->icache)
+	यदि (fs->icache)
 		fs->icache->refcount++;
 
-	retval = ext2fs_get_mem(strlen(src->device_name)+1, &fs->device_name);
-	if (retval)
-		goto errout;
-	strcpy(fs->device_name, src->device_name);
+	retval = ext2fs_get_mem(वाक्यदैर्घ्यम्(src->device_name)+1, &fs->device_name);
+	यदि (retval)
+		गच्छ errout;
+	वाक्यं_प्रतिलिख(fs->device_name, src->device_name);
 
-	retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &fs->super);
-	if (retval)
-		goto errout;
-	memcpy(fs->super, src->super, SUPERBLOCK_SIZE);
+	retval = ext2fs_get_mem(SUPERBLOCK_आकार, &fs->super);
+	यदि (retval)
+		गच्छ errout;
+	स्मृतिं_प्रतिलिख(fs->super, src->super, SUPERBLOCK_आकार);
 
-	retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &fs->orig_super);
-	if (retval)
-		goto errout;
-	memcpy(fs->orig_super, src->orig_super, SUPERBLOCK_SIZE);
+	retval = ext2fs_get_mem(SUPERBLOCK_आकार, &fs->orig_super);
+	यदि (retval)
+		गच्छ errout;
+	स्मृतिं_प्रतिलिख(fs->orig_super, src->orig_super, SUPERBLOCK_आकार);
 
-	retval = ext2fs_get_array(fs->desc_blocks, fs->blocksize,
-				&fs->group_desc);
-	if (retval)
-		goto errout;
-	memcpy(fs->group_desc, src->group_desc,
-	       (size_t) fs->desc_blocks * fs->blocksize);
+	retval = ext2fs_get_array(fs->desc_खण्डानि, fs->blocksize,
+				&fs->गणः_desc);
+	यदि (retval)
+		गच्छ errout;
+	स्मृतिं_प्रतिलिख(fs->गणः_desc, src->गणः_desc,
+	       (size_t) fs->desc_खण्डानि * fs->blocksize);
 
-	if (src->inode_map) {
+	यदि (src->inode_map) {
 		retval = ext2fs_copy_bitmap(src->inode_map, &fs->inode_map);
-		if (retval)
-			goto errout;
+		यदि (retval)
+			गच्छ errout;
 	}
-	if (src->block_map) {
-		retval = ext2fs_copy_bitmap(src->block_map, &fs->block_map);
-		if (retval)
-			goto errout;
+	यदि (src->खण्डम्_map) {
+		retval = ext2fs_copy_bitmap(src->खण्डम्_map, &fs->खण्डम्_map);
+		यदि (retval)
+			गच्छ errout;
 	}
-	if (src->badblocks) {
+	यदि (src->badblocks) {
 		retval = ext2fs_badblocks_copy(src->badblocks, &fs->badblocks);
-		if (retval)
-			goto errout;
+		यदि (retval)
+			गच्छ errout;
 	}
-	if (src->dblist) {
+	यदि (src->dblist) {
 		retval = ext2fs_copy_dblist(src->dblist, &fs->dblist);
-		if (retval)
-			goto errout;
+		यदि (retval)
+			गच्छ errout;
 	}
-	if (src->mmp_buf) {
+	यदि (src->mmp_buf) {
 		retval = ext2fs_mmp_get_mem(src, &fs->mmp_buf);
-		if (retval)
-			goto errout;
-		memcpy(fs->mmp_buf, src->mmp_buf, src->blocksize);
+		यदि (retval)
+			गच्छ errout;
+		स्मृतिं_प्रतिलिख(fs->mmp_buf, src->mmp_buf, src->blocksize);
 	}
-	if (src->mmp_fd >= 0) {
+	यदि (src->mmp_fd >= 0) {
 		fs->mmp_fd = dup(src->mmp_fd);
-		if (fs->mmp_fd < 0) {
-			retval = EXT2_ET_MMP_OPEN_DIRECT;
-			goto errout;
+		यदि (fs->mmp_fd < 0) {
+			retval = EXT2_ET_MMP_OPEN_प्रत्यक्षम्;
+			गच्छ errout;
 		}
 	}
-	if (src->mmp_cmp) {
+	यदि (src->mmp_cmp) {
 		retval = ext2fs_mmp_get_mem(src, &fs->mmp_cmp);
-		if (retval)
-			goto errout;
-		memcpy(fs->mmp_cmp, src->mmp_cmp, src->blocksize);
+		यदि (retval)
+			गच्छ errout;
+		स्मृतिं_प्रतिलिख(fs->mmp_cmp, src->mmp_cmp, src->blocksize);
 	}
 	*dest = fs;
-	return 0;
+	प्रत्यागम 0;
 errout:
 	ext2fs_free(fs);
-	return retval;
+	प्रत्यागम retval;
 
 }
 

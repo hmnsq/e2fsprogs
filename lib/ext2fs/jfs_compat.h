@@ -1,114 +1,114 @@
 
-#ifndef _JFS_COMPAT_H
-#define _JFS_COMPAT_H
+#यदि_अपरिभाषितम् _JFS_COMPAT_H
+#परिभाषय _JFS_COMPAT_H
 
-#include "support/list.h"
-#include <errno.h>
-#ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
-#include <arpa/inet.h>
-#include <stdbool.h>
+#अन्तर्भाव "support/list.h"
+#अन्तर्भाव <errno.h>
+#यदि_परिभाषितम् HAVE_NETINET_अन्तर्_H
+#अन्तर्भाव <netinet/in.h>
+#यदि_अन्तः
+#अन्तर्भाव <arpa/inet.h>
+#अन्तर्भाव <stdbool.h>
 
-#define printk printf
-#define KERN_ERR ""
-#define KERN_DEBUG ""
+#परिभाषय printk प्रारूप_लिख
+#परिभाषय KERN_ERR ""
+#परिभाषय KERN_DEBUG ""
 
-#define REQ_OP_READ 0
-#define REQ_OP_WRITE 1
+#परिभाषय REQ_OP_READ 0
+#परिभाषय REQ_OP_WRITE 1
 
-#define cpu_to_le16(x)	ext2fs_cpu_to_le16(x)
-#define cpu_to_be16(x)	ext2fs_cpu_to_be16(x)
-#define cpu_to_le32(x)	ext2fs_cpu_to_le32(x)
-#define cpu_to_be32(x)	ext2fs_cpu_to_be32(x)
-#define cpu_to_le64(x)	ext2fs_cpu_to_le64(x)
-#define cpu_to_be64(x)	ext2fs_cpu_to_be64(x)
+#परिभाषय cpu_गन्तव्यम्_le16(x)	ext2fs_cpu_गन्तव्यम्_le16(x)
+#परिभाषय cpu_गन्तव्यम्_be16(x)	ext2fs_cpu_गन्तव्यम्_be16(x)
+#परिभाषय cpu_गन्तव्यम्_le32(x)	ext2fs_cpu_गन्तव्यम्_le32(x)
+#परिभाषय cpu_गन्तव्यम्_be32(x)	ext2fs_cpu_गन्तव्यम्_be32(x)
+#परिभाषय cpu_गन्तव्यम्_le64(x)	ext2fs_cpu_गन्तव्यम्_le64(x)
+#परिभाषय cpu_गन्तव्यम्_be64(x)	ext2fs_cpu_गन्तव्यम्_be64(x)
 
-#define le16_to_cpu(x)	ext2fs_le16_to_cpu(x)
-#define be16_to_cpu(x)	ext2fs_be16_to_cpu(x)
-#define le32_to_cpu(x)	ext2fs_le32_to_cpu(x)
-#define be32_to_cpu(x)	ext2fs_be32_to_cpu(x)
-#define le64_to_cpu(x)	ext2fs_le64_to_cpu(x)
-#define be64_to_cpu(x)	ext2fs_be64_to_cpu(x)
+#परिभाषय le16_गन्तव्यम्_cpu(x)	ext2fs_le16_गन्तव्यम्_cpu(x)
+#परिभाषय be16_गन्तव्यम्_cpu(x)	ext2fs_be16_गन्तव्यम्_cpu(x)
+#परिभाषय le32_गन्तव्यम्_cpu(x)	ext2fs_le32_गन्तव्यम्_cpu(x)
+#परिभाषय be32_गन्तव्यम्_cpu(x)	ext2fs_be32_गन्तव्यम्_cpu(x)
+#परिभाषय le64_गन्तव्यम्_cpu(x)	ext2fs_le64_गन्तव्यम्_cpu(x)
+#परिभाषय be64_गन्तव्यम्_cpu(x)	ext2fs_be64_गन्तव्यम्_cpu(x)
 
-typedef unsigned int tid_t;
-typedef struct journal_s journal_t;
-typedef struct kdev_s *kdev_t;
+प्रकारनिर्देश अचिह्नित पूर्णाङ्क tid_t;
+प्रकारनिर्देश संरचना journal_s journal_t;
+प्रकारनिर्देश संरचना kdev_s *kdev_t;
 
-struct buffer_head;
-struct inode;
+संरचना बफर_शीर्ष;
+संरचना inode;
 
-typedef unsigned int gfp_t;
-#define GFP_KERNEL	0
-#define GFP_NOFS	0
-#define __GFP_NOFAIL	0
-#define JBD2_TAG_SIZE32	JBD_TAG_SIZE32
-#define JBD2_BARRIER	0
-typedef __u64 u64;
-#define put_bh(x)	brelse(x)
+प्रकारनिर्देश अचिह्नित पूर्णाङ्क gfp_t;
+#परिभाषय GFP_KERNEL	0
+#परिभाषय GFP_NOFS	0
+#परिभाषय __GFP_NOFAIL	0
+#परिभाषय JBD2_चिह्नकम्_SIZE32	JBD_चिह्नकम्_SIZE32
+#परिभाषय JBD2_BARRIER	0
+प्रकारनिर्देश __u64 u64;
+#परिभाषय put_bh(x)	brelse(x)
 
-#define crc32_be(x, y, z)	ext2fs_crc32_be((x), (y), (z))
-#define spin_lock_init(x)
-#define spin_lock(x)
-#define spin_unlock(x)
-#define SLAB_HWCACHE_ALIGN	0
-#define SLAB_TEMPORARY		0
-#define KMEM_CACHE(__struct, __flags) kmem_cache_create(#__struct,\
-                sizeof(struct __struct), __alignof__(struct __struct),\
-                (__flags), NULL)
+#परिभाषय चक्रीयपरीक्षा_32_be(x, y, z)	ext2fs_चक्रीयपरीक्षा_32_be((x), (y), (z))
+#परिभाषय spin_तालकम्_init(x)
+#परिभाषय spin_तालकम्(x)
+#परिभाषय spin_unlock(x)
+#परिभाषय SLAB_HWCACHE_ALIGN	0
+#परिभाषय SLAB_TEMPORARY		0
+#परिभाषय KMEM_CACHE(__struct, __flags) kmem_cache_create(#__struct,\
+                परिमाण(संरचना __struct), __alignof__(संरचना __struct),\
+                (__flags), रिक्त)
 
-#define blkdev_issue_flush(kdev)	sync_blockdev(kdev)
-#define is_power_of_2(x)		((x) != 0 && (((x) & ((x) - 1)) == 0))
-#define roundup_power_of_two(n)		(1UL << (ext2fs_log2_u32((n) - 1) + 1))
-#define pr_emerg(fmt)
-#define pr_err(...)
+#परिभाषय blkdev_issue_flush(kdev)	sync_blockdev(kdev)
+#परिभाषय is_power_सम्बन्धि_2(x)		((x) != 0 && (((x) & ((x) - 1)) == 0))
+#परिभाषय roundup_power_सम्बन्धि_two(n)		(1UL << (ext2fs_log2_u32((n) - 1) + 1))
+#परिभाषय pr_emerg(fmt)
+#परिभाषय pr_err(...)
 
-enum passtype {PASS_SCAN, PASS_REVOKE, PASS_REPLAY};
+गणना passtype {PASS_अवलोकनम्, PASS_REVOKE, PASS_REPLAY};
 
-#define JBD2_FC_REPLAY_STOP		0
-#define JBD2_FC_REPLAY_CONTINUE		1
+#परिभाषय JBD2_FC_REPLAY_STOP		0
+#परिभाषय JBD2_FC_REPLAY_CONTINUE		1
 
-struct journal_s
+संरचना journal_s
 {
-	unsigned long		j_flags;
-	int			j_errno;
-	struct buffer_head *	j_sb_buffer;
-	struct journal_superblock_s *j_superblock;
-	int			j_format_version;
-	unsigned long		j_head;
-	unsigned long		j_tail;
-	unsigned long		j_fc_first;
-	unsigned long		j_fc_off;
-	unsigned long		j_fc_last;
-	unsigned long		j_free;
-	unsigned long		j_first, j_last;
+	अचिह्नित दीर्घ		j_flags;
+	पूर्णाङ्क			j_errno;
+	संरचना बफर_शीर्ष *	j_sb_बफर;
+	संरचना journal_superblock_s *j_superblock;
+	पूर्णाङ्क			j_format_संस्करणम्;
+	अचिह्नित दीर्घ		j_शीर्ष;
+	अचिह्नित दीर्घ		j_पुच्छ;
+	अचिह्नित दीर्घ		j_fc_first;
+	अचिह्नित दीर्घ		j_fc_off;
+	अचिह्नित दीर्घ		j_fc_चरमः;
+	अचिह्नित दीर्घ		j_free;
+	अचिह्नित दीर्घ		j_first, j_चरमः;
 	kdev_t			j_dev;
 	kdev_t			j_fs_dev;
-	int			j_blocksize;
-	unsigned int		j_blk_offset;
-	unsigned int		j_total_len;
-	struct inode *		j_inode;
-	tid_t			j_tail_sequence;
+	पूर्णाङ्क			j_blocksize;
+	अचिह्नित पूर्णाङ्क		j_blk_विस्थापनम्;
+	अचिह्नित पूर्णाङ्क		j_योग_len;
+	संरचना inode *		j_inode;
+	tid_t			j_पुच्छ_sequence;
 	tid_t			j_transaction_sequence;
 	__u8			j_uuid[16];
-	struct jbd2_revoke_table_s *j_revoke;
-	struct jbd2_revoke_table_s *j_revoke_table[2];
+	संरचना jbd2_revoke_सारणी_s *j_revoke;
+	संरचना jbd2_revoke_सारणी_s *j_revoke_सारणी[2];
 	tid_t			j_failed_commit;
-	__u32			j_csum_seed;
-	int (*j_fc_replay_callback)(struct journal_s *journal,
-				    struct buffer_head *bh,
-				    enum passtype pass, int off,
+	__u32			j_csum_बीजम्;
+	पूर्णाङ्क (*j_fc_replay_callback)(संरचना journal_s *journal,
+				    संरचना बफर_शीर्ष *bh,
+				    गणना passtype pass, पूर्णाङ्क off,
 				    tid_t expected_tid);
 
 };
 
-#define is_journal_abort(x) 0
+#परिभाषय is_journal_abort(x) 0
 
-#define BUFFER_TRACE(bh, info)	do {} while (0)
+#परिभाषय बफर_TRACE(bh, info)	कुरु {} यावत् (0)
 
 /* Need this so we can compile with configure --enable-gcc-wall */
-#ifdef NO_INLINE_FUNCS
-#define inline
-#endif
+#यदि_परिभाषितम् NO_INLINE_FUNCS
+#परिभाषय अन्तःस्थ
+#यदि_अन्तः
 
-#endif /* _JFS_COMPAT_H */
+#यदि_अन्तः /* _JFS_COMPAT_H */

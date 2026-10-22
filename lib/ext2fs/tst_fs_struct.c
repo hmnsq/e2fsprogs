@@ -9,73 +9,73 @@
  * %End-Header%
  */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <stdlib.h>
 
-#include "ext2fs.h"
+#अन्तर्भाव "ext2fs.h"
 
-struct struct_ext2_filsys fs;
+संरचना struct_ext2_filsys fs;
 
-#ifndef offsetof
-#define offsetof(type, member)  __builtin_offsetof (type, member)
-#endif
-#define check_field(x) cur_offset = do_field(#x, sizeof(fs.x),		\
-					offsetof(struct struct_ext2_filsys, x), \
-					cur_offset)
+#यदि_अपरिभाषितम् offsetof
+#परिभाषय offsetof(type, member)  __builtin_offsetof (type, member)
+#यदि_अन्तः
+#परिभाषय check_क्षेत्रम्(x) cur_विस्थापनम् = do_क्षेत्रम्(#x, परिमाण(fs.x),		\
+					offsetof(संरचना struct_ext2_filsys, x), \
+					cur_विस्थापनम्)
 
-static int do_field(const char *field, size_t size, int offset, int cur_offset)
+स्थिर पूर्णाङ्क do_क्षेत्रम्(ध्रुव वर्ण *क्षेत्रम्, size_t आकार, पूर्णाङ्क विस्थापनम्, पूर्णाङ्क cur_विस्थापनम्)
 {
-	if (offset != cur_offset) {
-		printf("\t(padding %d bytes?)\n", offset - cur_offset);
+	यदि (विस्थापनम् != cur_विस्थापनम्) {
+		प्रारूप_लिख("\t(padding %d bytes?)\n", विस्थापनम् - cur_विस्थापनम्);
 	}
-	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	प्रारूप_लिख("%8d %-30s %3u\n", विस्थापनम्, क्षेत्रम्, (अचिह्नित) आकार);
+	प्रत्यागम विस्थापनम् + आकार;
 }
 
-int main(int argc, char **argv)
+पूर्णाङ्क मुख्यम्(पूर्णाङ्क argc, वर्ण **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#यदि (__GNUC__ >= 4)
+	पूर्णाङ्क cur_विस्थापनम् = 0;
 
-	printf("%8s %-30s %3s\n", "offset", "field", "size");
-	check_field(magic);
-	check_field(io);
-	check_field(flags);
-	check_field(device_name);
-	check_field(super);
-	check_field(blocksize);
-	check_field(fragsize);
-	check_field(group_desc_count);
-	check_field(desc_blocks);
-	check_field(group_desc);
-	check_field(inode_blocks_per_group);
-	check_field(inode_map);
-	check_field(block_map);
-	check_field(get_blocks);
-	check_field(check_directory);
-	check_field(write_bitmaps);
-	check_field(read_inode);
-	check_field(write_inode);
-	check_field(badblocks);
-	check_field(dblist);
-	check_field(stride);
-	check_field(orig_super);
-	check_field(image_header);
-	check_field(umask);
-	check_field(now);
-	check_field(cluster_ratio_bits);
-	check_field(reserved);
-	check_field(priv_data);
-	check_field(icache);
-	check_field(image_io);
-	check_field(get_alloc_block);
-	check_field(block_alloc_stats);
-	check_field(mmp_buf);
-	check_field(mmp_cmp);
-	check_field(mmp_fd);
-	check_field(mmp_last_written);
-	printf("Ending offset is %d\n\n", cur_offset);
-#endif
-	exit(0);
+	प्रारूप_लिख("%8s %-30s %3s\n", "offset", "field", "size");
+	check_क्षेत्रम्(magic);
+	check_क्षेत्रम्(io);
+	check_क्षेत्रम्(flags);
+	check_क्षेत्रम्(device_name);
+	check_क्षेत्रम्(super);
+	check_क्षेत्रम्(blocksize);
+	check_क्षेत्रम्(fragsize);
+	check_क्षेत्रम्(गणः_desc_गणनम्);
+	check_क्षेत्रम्(desc_खण्डानि);
+	check_क्षेत्रम्(गणः_desc);
+	check_क्षेत्रम्(inode_खण्डानि_प्रत्येकम्_गणः);
+	check_क्षेत्रम्(inode_map);
+	check_क्षेत्रम्(खण्डम्_map);
+	check_क्षेत्रम्(get_खण्डानि);
+	check_क्षेत्रम्(check_directory);
+	check_क्षेत्रम्(write_bitmaps);
+	check_क्षेत्रम्(read_inode);
+	check_क्षेत्रम्(write_inode);
+	check_क्षेत्रम्(badblocks);
+	check_क्षेत्रम्(dblist);
+	check_क्षेत्रम्(stride);
+	check_क्षेत्रम्(orig_super);
+	check_क्षेत्रम्(image_शीर्षकम्);
+	check_क्षेत्रम्(umask);
+	check_क्षेत्रम्(now);
+	check_क्षेत्रम्(cluster_अनुपातः_द्वयङ्काः);
+	check_क्षेत्रम्(reserved);
+	check_क्षेत्रम्(priv_दत्त);
+	check_क्षेत्रम्(icache);
+	check_क्षेत्रम्(image_io);
+	check_क्षेत्रम्(get_alloc_खण्डम्);
+	check_क्षेत्रम्(खण्डम्_alloc_stats);
+	check_क्षेत्रम्(mmp_buf);
+	check_क्षेत्रम्(mmp_cmp);
+	check_क्षेत्रम्(mmp_fd);
+	check_क्षेत्रम्(mmp_चरमः_written);
+	प्रारूप_लिख("Ending offset is %d\n\n", cur_विस्थापनम्);
+#यदि_अन्तः
+	निर्गच्छ(0);
 }

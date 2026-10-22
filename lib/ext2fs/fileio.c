@@ -9,40 +9,40 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
+#यदि_अन्तः
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
+#अन्तर्भाव "ext2fsP.h"
 
-struct ext2_file {
+संरचना ext2_file {
 	errcode_t		magic;
 	ext2_filsys 		fs;
 	ext2_ino_t		ino;
-	struct ext2_inode	inode;
-	int 			flags;
+	संरचना ext2_inode	inode;
+	पूर्णाङ्क 			flags;
 	__u64			pos;
 	blk64_t			blockno;
 	blk64_t			physblock;
-	char 			*buf;
+	वर्ण 			*buf;
 };
 
-struct block_entry {
+संरचना खण्डम्_प्रविष्टिः {
 	blk64_t		physblock;
-	unsigned char 	sha[EXT2FS_SHA512_LENGTH];
+	अचिह्नित वर्ण 	sha[EXT2_FS_SHA512_दीर्घता];
 };
-typedef struct block_entry *block_entry_t;
+प्रकारनिर्देश संरचना खण्डम्_प्रविष्टिः *खण्डम्_प्रविष्टिः_t;
 
-#define BMAP_BUFFER (file->buf + fs->blocksize)
+#परिभाषय BMAP_बफर (file->buf + fs->blocksize)
 
 errcode_t ext2fs_file_open2(ext2_filsys fs, ext2_ino_t ino,
-			    struct ext2_inode *inode,
-			    int flags, ext2_file_t *ret)
+			    संरचना ext2_inode *inode,
+			    पूर्णाङ्क flags, ext2_file_t *ret)
 {
 	ext2_file_t 	file;
 	errcode_t	retval;
@@ -51,46 +51,46 @@ errcode_t ext2fs_file_open2(ext2_filsys fs, ext2_ino_t ino,
 	 * Don't let caller create or open a file for writing if the
 	 * filesystem is read-only.
 	 */
-	if ((flags & (EXT2_FILE_WRITE | EXT2_FILE_CREATE)) &&
+	यदि ((flags & (EXT2_FILE_WRITE | EXT2_FILE_CREATE)) &&
 	    !(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+		प्रत्यागम EXT2_ET_RO_FILSYS;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_file), &file);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(परिमाण(संरचना ext2_file), &file);
+	यदि (retval)
+		प्रत्यागम retval;
 
-	memset(file, 0, sizeof(struct ext2_file));
+	स्मृतिं_पूरय(file, 0, परिमाण(संरचना ext2_file));
 	file->magic = EXT2_ET_MAGIC_EXT2_FILE;
 	file->fs = fs;
 	file->ino = ino;
-	file->flags = flags & EXT2_FILE_MASK;
+	file->flags = flags & EXT2_FILE_आवरणम्;
 
-	if (inode) {
-		memcpy(&file->inode, inode, sizeof(struct ext2_inode));
-	} else {
+	यदि (inode) {
+		स्मृतिं_प्रतिलिख(&file->inode, inode, परिमाण(संरचना ext2_inode));
+	} अन्यथा {
 		retval = ext2fs_read_inode(fs, ino, &file->inode);
-		if (retval)
-			goto fail;
+		यदि (retval)
+			गच्छ fail;
 	}
 
 	retval = ext2fs_get_array(3, fs->blocksize, &file->buf);
-	if (retval)
-		goto fail;
+	यदि (retval)
+		गच्छ fail;
 
 	*ret = file;
-	return 0;
+	प्रत्यागम 0;
 
 fail:
-	if (file->buf)
+	यदि (file->buf)
 		ext2fs_free_mem(&file->buf);
 	ext2fs_free_mem(&file);
-	return retval;
+	प्रत्यागम retval;
 }
 
 errcode_t ext2fs_file_open(ext2_filsys fs, ext2_ino_t ino,
-			   int flags, ext2_file_t *ret)
+			   पूर्णाङ्क flags, ext2_file_t *ret)
 {
-	return ext2fs_file_open2(fs, ino, NULL, flags, ret);
+	प्रत्यागम ext2fs_file_open2(fs, ino, रिक्त, flags, ret);
 }
 
 /*
@@ -98,27 +98,27 @@ errcode_t ext2fs_file_open(ext2_filsys fs, ext2_ino_t ino,
  */
 ext2_filsys ext2fs_file_get_fs(ext2_file_t file)
 {
-	if (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
-		return 0;
-	return file->fs;
+	यदि (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
+		प्रत्यागम 0;
+	प्रत्यागम file->fs;
 }
 
 /*
  * This function returns the pointer to the inode of a file from the structure
  */
-struct ext2_inode *ext2fs_file_get_inode(ext2_file_t file)
+संरचना ext2_inode *ext2fs_file_get_inode(ext2_file_t file)
 {
-	if (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
-		return NULL;
-	return &file->inode;
+	यदि (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
+		प्रत्यागम रिक्त;
+	प्रत्यागम &file->inode;
 }
 
 /* This function returns the inode number from the structure */
-ext2_ino_t ext2fs_file_get_inode_num(ext2_file_t file)
+ext2_ino_t ext2fs_file_get_inode_अङ्कः(ext2_file_t file)
 {
-	if (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
-		return 0;
-	return file->ino;
+	यदि (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
+		प्रत्यागम 0;
+	प्रत्यागम file->ino;
 }
 
 /*
@@ -129,29 +129,29 @@ errcode_t ext2fs_file_flush(ext2_file_t file)
 {
 	errcode_t	retval;
 	ext2_filsys fs;
-	int		ret_flags;
+	पूर्णाङ्क		ret_flags;
 	blk64_t		dontcare;
 
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
 	fs = file->fs;
 
-	if (!(file->flags & EXT2_FILE_BUF_VALID) ||
+	यदि (!(file->flags & EXT2_FILE_BUF_VALID) ||
 	    !(file->flags & EXT2_FILE_BUF_DIRTY))
-		return 0;
+		प्रत्यागम 0;
 
 	/* Is this an uninit block? */
-	if (file->physblock && file->inode.i_flags & EXT4_EXTENTS_FL) {
-		retval = ext2fs_bmap2(fs, file->ino, &file->inode, BMAP_BUFFER,
+	यदि (file->physblock && file->inode.i_flags & EXT4_EXTENTS_FL) {
+		retval = ext2fs_bmap2(fs, file->ino, &file->inode, BMAP_बफर,
 				      0, file->blockno, &ret_flags, &dontcare);
-		if (retval)
-			return retval;
-		if (ret_flags & BMAP_RET_UNINIT) {
+		यदि (retval)
+			प्रत्यागम retval;
+		यदि (ret_flags & BMAP_RET_UNINIT) {
 			retval = ext2fs_bmap2(fs, file->ino, &file->inode,
-					      BMAP_BUFFER, BMAP_SET,
+					      BMAP_बफर, BMAP_समुच्चयः,
 					      file->blockno, 0,
 					      &file->physblock);
-			if (retval)
-				return retval;
+			यदि (retval)
+				प्रत्यागम retval;
 		}
 	}
 
@@ -159,41 +159,41 @@ errcode_t ext2fs_file_flush(ext2_file_t file)
 	 * OK, the physical block hasn't been allocated yet.
 	 * Allocate it.
 	 */
-	if (!file->physblock) {
+	यदि (!file->physblock) {
 		retval = ext2fs_bmap2(fs, file->ino, &file->inode,
-				     BMAP_BUFFER, file->ino ? BMAP_ALLOC : 0,
+				     BMAP_बफर, file->ino ? BMAP_ALLOC : 0,
 				     file->blockno, 0, &file->physblock);
-		if (retval)
-			return retval;
+		यदि (retval)
+			प्रत्यागम retval;
 	}
 
 	retval = io_channel_write_blk64(fs->io, file->physblock, 1, file->buf);
-	if (retval)
-		return retval;
+	यदि (retval)
+		प्रत्यागम retval;
 
 	file->flags &= ~EXT2_FILE_BUF_DIRTY;
 
-	return retval;
+	प्रत्यागम retval;
 }
 
 /*
  * This function synchronizes the file's block buffer and the current
  * file position, possibly invalidating block buffer if necessary
  */
-static errcode_t sync_buffer_position(ext2_file_t file)
+स्थिर errcode_t sync_बफर_position(ext2_file_t file)
 {
 	blk64_t	b;
 	errcode_t	retval;
 
 	b = file->pos / file->fs->blocksize;
-	if (b != file->blockno) {
+	यदि (b != file->blockno) {
 		retval = ext2fs_file_flush(file);
-		if (retval)
-			return retval;
+		यदि (retval)
+			प्रत्यागम retval;
 		file->flags &= ~EXT2_FILE_BUF_VALID;
 	}
 	file->blockno = b;
-	return 0;
+	प्रत्यागम 0;
 }
 
 /*
@@ -204,33 +204,33 @@ static errcode_t sync_buffer_position(ext2_file_t file)
  * going to be replacing its entire contents anyway.  If set, then the
  * function basically only sets file->physblock and EXT2_FILE_BUF_VALID
  */
-#define DONTFILL 1
-static errcode_t load_buffer(ext2_file_t file, int dontfill)
+#परिभाषय DONTFILL 1
+स्थिर errcode_t आरोपय_बफर(ext2_file_t file, पूर्णाङ्क dontfill)
 {
 	ext2_filsys	fs = file->fs;
 	errcode_t	retval;
-	int		ret_flags;
+	पूर्णाङ्क		ret_flags;
 
-	if (!(file->flags & EXT2_FILE_BUF_VALID)) {
+	यदि (!(file->flags & EXT2_FILE_BUF_VALID)) {
 		retval = ext2fs_bmap2(fs, file->ino, &file->inode,
-				     BMAP_BUFFER, 0, file->blockno, &ret_flags,
+				     BMAP_बफर, 0, file->blockno, &ret_flags,
 				     &file->physblock);
-		if (retval)
-			return retval;
-		if (!dontfill) {
-			if (file->physblock &&
+		यदि (retval)
+			प्रत्यागम retval;
+		यदि (!dontfill) {
+			यदि (file->physblock &&
 			    !(ret_flags & BMAP_RET_UNINIT)) {
 				retval = io_channel_read_blk64(fs->io,
 							       file->physblock,
 							       1, file->buf);
-				if (retval)
-					return retval;
-			} else
-				memset(file->buf, 0, fs->blocksize);
+				यदि (retval)
+					प्रत्यागम retval;
+			} अन्यथा
+				स्मृतिं_पूरय(file->buf, 0, fs->blocksize);
 		}
 		file->flags |= EXT2_FILE_BUF_VALID;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
 
@@ -242,165 +242,165 @@ errcode_t ext2fs_file_close(ext2_file_t file)
 
 	retval = ext2fs_file_flush(file);
 
-	if (file->buf)
+	यदि (file->buf)
 		ext2fs_free_mem(&file->buf);
 	ext2fs_free_mem(&file);
 
-	return retval;
+	प्रत्यागम retval;
 }
 
 
-static errcode_t
-ext2fs_file_read_inline_data(ext2_file_t file, void *buf,
-			     unsigned int wanted, unsigned int *got)
+स्थिर errcode_t
+ext2fs_file_read_inline_दत्त(ext2_file_t file, शून्य *buf,
+			     अचिह्नित पूर्णाङ्क wanted, अचिह्नित पूर्णाङ्क *got)
 {
 	ext2_filsys fs;
 	errcode_t retval = 0;
-	unsigned int count = 0;
-	uint64_t isize = EXT2_I_SIZE(&file->inode);
-	size_t size;
+	अचिह्नित पूर्णाङ्क गणनम् = 0;
+	uint64_t isize = EXT2_I_आकार(&file->inode);
+	size_t आकार;
 
-	if (file->pos >= isize)
-		goto out;
+	यदि (file->pos >= isize)
+		गच्छ बहिर्गमनम्;
 
 	fs = file->fs;
-	retval = ext2fs_inline_data_get(fs, file->ino, &file->inode,
-					file->buf, &size);
-	if (retval)
-		return retval;
+	retval = ext2fs_inline_दत्त_get(fs, file->ino, &file->inode,
+					file->buf, &आकार);
+	यदि (retval)
+		प्रत्यागम retval;
 
 	/*
 	 * size is the number of bytes available for inline data storage, which
 	 * means it can exceed isize.
 	 */
-	if (size > isize)
-		size = isize;
+	यदि (आकार > isize)
+		आकार = isize;
 
-	count = size - file->pos;
-	if (count > wanted)
-		count = wanted;
-	memcpy(buf, file->buf + file->pos, count);
-	file->pos += count;
-	buf = (char *) buf + count;
+	गणनम् = आकार - file->pos;
+	यदि (गणनम् > wanted)
+		गणनम् = wanted;
+	स्मृतिं_प्रतिलिख(buf, file->buf + file->pos, गणनम्);
+	file->pos += गणनम्;
+	buf = (वर्ण *) buf + गणनम्;
 
 	/* zero-fill the rest of the buffer */
-	wanted -= count;
-	if (wanted > 0) {
-		memset(buf, 0, wanted);
+	wanted -= गणनम्;
+	यदि (wanted > 0) {
+		स्मृतिं_पूरय(buf, 0, wanted);
 		file->pos += wanted;
-		count += wanted;
+		गणनम् += wanted;
 	}
 
-out:
-	if (got)
-		*got = count;
-	return retval;
+बहिर्गमनम्:
+	यदि (got)
+		*got = गणनम्;
+	प्रत्यागम retval;
 }
 
 
-errcode_t ext2fs_file_read(ext2_file_t file, void *buf,
-			   unsigned int wanted, unsigned int *got)
+errcode_t ext2fs_file_read(ext2_file_t file, शून्य *buf,
+			   अचिह्नित पूर्णाङ्क wanted, अचिह्नित पूर्णाङ्क *got)
 {
 	ext2_filsys	fs;
 	errcode_t	retval = 0;
-	unsigned int	start, c, count = 0;
-	__u64		left;
-	char		*ptr = (char *) buf;
+	अचिह्नित पूर्णाङ्क	start, c, गणनम् = 0;
+	__u64		वामः;
+	वर्ण		*ptr = (वर्ण *) buf;
 
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
 	fs = file->fs;
 
 	/* If an inode has inline data, things get complicated. */
-	if (file->inode.i_flags & EXT4_INLINE_DATA_FL)
-		return ext2fs_file_read_inline_data(file, buf, wanted, got);
+	यदि (file->inode.i_flags & EXT4_INLINE_दत्त_FL)
+		प्रत्यागम ext2fs_file_read_inline_दत्त(file, buf, wanted, got);
 
-	while ((file->pos < EXT2_I_SIZE(&file->inode)) && (wanted > 0)) {
-		retval = sync_buffer_position(file);
-		if (retval)
-			goto fail;
-		retval = load_buffer(file, 0);
-		if (retval)
-			goto fail;
+	यावत् ((file->pos < EXT2_I_आकार(&file->inode)) && (wanted > 0)) {
+		retval = sync_बफर_position(file);
+		यदि (retval)
+			गच्छ fail;
+		retval = आरोपय_बफर(file, 0);
+		यदि (retval)
+			गच्छ fail;
 
 		start = file->pos % fs->blocksize;
 		c = fs->blocksize - start;
-		if (c > wanted)
+		यदि (c > wanted)
 			c = wanted;
-		left = EXT2_I_SIZE(&file->inode) - file->pos ;
-		if (c > left)
-			c = left;
+		वामः = EXT2_I_आकार(&file->inode) - file->pos ;
+		यदि (c > वामः)
+			c = वामः;
 
-		memcpy(ptr, file->buf+start, c);
+		स्मृतिं_प्रतिलिख(ptr, file->buf+start, c);
 		file->pos += c;
 		ptr += c;
-		count += c;
+		गणनम् += c;
 		wanted -= c;
 	}
 
 fail:
-	if (got)
-		*got = count;
-	return retval;
+	यदि (got)
+		*got = गणनम्;
+	प्रत्यागम retval;
 }
 
 
-static errcode_t
-ext2fs_file_write_inline_data(ext2_file_t file, const void *buf,
-			      unsigned int nbytes, unsigned int *written)
+स्थिर errcode_t
+ext2fs_file_write_inline_दत्त(ext2_file_t file, ध्रुव शून्य *buf,
+			      अचिह्नित पूर्णाङ्क nbytes, अचिह्नित पूर्णाङ्क *written)
 {
 	ext2_filsys fs;
-	uint64_t old_isize = EXT2_I_SIZE(&file->inode);
+	uint64_t old_isize = EXT2_I_आकार(&file->inode);
 	uint64_t new_isize = old_isize;
 	errcode_t retval;
-	size_t size;
+	size_t आकार;
 
-	if (file->pos + nbytes > old_isize)
+	यदि (file->pos + nbytes > old_isize)
 		new_isize = file->pos + nbytes;
 
 	fs = file->fs;
-	retval = ext2fs_inline_data_get(fs, file->ino, &file->inode,
-					file->buf, &size);
-	if (retval)
-		return retval;
+	retval = ext2fs_inline_दत्त_get(fs, file->ino, &file->inode,
+					file->buf, &आकार);
+	यदि (retval)
+		प्रत्यागम retval;
 
 	/*
 	 * Only try to set new inline data if it won't go past the end of
 	 * @file->buf; if there's not enough space in the ondisk inode, we'll
 	 * jump out to the expand code.
 	 */
-	if (new_isize < fs->blocksize) {
-		if (file->pos > old_isize)
-			memset(file->buf + old_isize, 0, file->pos - old_isize);
+	यदि (new_isize < fs->blocksize) {
+		यदि (file->pos > old_isize)
+			स्मृतिं_पूरय(file->buf + old_isize, 0, file->pos - old_isize);
 
-		memcpy(file->buf + file->pos, buf, nbytes);
+		स्मृतिं_प्रतिलिख(file->buf + file->pos, buf, nbytes);
 
-		retval = ext2fs_inline_data_set(fs, file->ino, &file->inode,
+		retval = ext2fs_inline_दत्त_समुच्चयः(fs, file->ino, &file->inode,
 						file->buf, new_isize);
-		if (retval == EXT2_ET_INLINE_DATA_NO_SPACE)
-			goto expand;
-		if (retval)
-			return retval;
+		यदि (retval == EXT2_ET_INLINE_दत्त_NO_SPACE)
+			गच्छ expand;
+		यदि (retval)
+			प्रत्यागम retval;
 
 		file->pos += nbytes;
 
 		/* Update inode size */
-		if (old_isize < new_isize) {
+		यदि (old_isize < new_isize) {
 			errcode_t	rc;
 
-			rc = ext2fs_file_set_size2(file, file->pos);
-			if (retval == 0)
+			rc = ext2fs_file_समुच्चयः_size2(file, file->pos);
+			यदि (retval == 0)
 				retval = rc;
 		}
 
-		if (written)
+		यदि (written)
 			*written = nbytes;
-		return 0;
+		प्रत्यागम 0;
 	}
 
 expand:
-	retval = ext2fs_inline_data_expand(fs, file->ino);
-	if (retval)
-		return retval;
+	retval = ext2fs_inline_दत्त_expand(fs, file->ino);
+	यदि (retval)
+		प्रत्यागम retval;
 	/*
 	 * reload inode and return no space error
 	 *
@@ -409,285 +409,285 @@ expand:
 	 * the outside inode.
 	 */
 	retval = ext2fs_read_inode(fs, file->ino, &file->inode);
-	if (retval)
-		return retval;
-	return EXT2_ET_INLINE_DATA_NO_SPACE;
+	यदि (retval)
+		प्रत्यागम retval;
+	प्रत्यागम EXT2_ET_INLINE_दत्त_NO_SPACE;
 }
 
 
-errcode_t ext2fs_file_write(ext2_file_t file, const void *buf,
-			    unsigned int nbytes, unsigned int *written)
+errcode_t ext2fs_file_write(ext2_file_t file, ध्रुव शून्य *buf,
+			    अचिह्नित पूर्णाङ्क nbytes, अचिह्नित पूर्णाङ्क *written)
 {
 	ext2_filsys	fs;
 	errcode_t	retval = 0;
-	unsigned int	start, c, count = 0;
-	const char	*ptr = (const char *) buf;
-	block_entry_t	new_block = NULL, old_block = NULL;
-	int		bmap_flags = 0;
+	अचिह्नित पूर्णाङ्क	start, c, गणनम् = 0;
+	ध्रुव वर्ण	*ptr = (ध्रुव वर्ण *) buf;
+	खण्डम्_प्रविष्टिः_t	new_खण्डम् = रिक्त, old_खण्डम् = रिक्त;
+	पूर्णाङ्क		bmap_flags = 0;
 
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
 	fs = file->fs;
 
-	if (!(file->flags & EXT2_FILE_WRITE))
-		return EXT2_ET_FILE_RO;
+	यदि (!(file->flags & EXT2_FILE_WRITE))
+		प्रत्यागम EXT2_ET_FILE_RO;
 
 	/* If an inode has inline data, things get complicated. */
-	if (file->inode.i_flags & EXT4_INLINE_DATA_FL) {
-		retval = ext2fs_file_write_inline_data(file, buf, nbytes,
+	यदि (file->inode.i_flags & EXT4_INLINE_दत्त_FL) {
+		retval = ext2fs_file_write_inline_दत्त(file, buf, nbytes,
 						       written);
-		if (retval != EXT2_ET_INLINE_DATA_NO_SPACE)
-			return retval;
+		यदि (retval != EXT2_ET_INLINE_दत्त_NO_SPACE)
+			प्रत्यागम retval;
 		/* fall through to read data from the block */
 		retval = 0;
 	}
 
-	while (nbytes > 0) {
-		retval = sync_buffer_position(file);
-		if (retval)
-			goto fail;
+	यावत् (nbytes > 0) {
+		retval = sync_बफर_position(file);
+		यदि (retval)
+			गच्छ fail;
 
 		start = file->pos % fs->blocksize;
 		c = fs->blocksize - start;
-		if (c > nbytes)
+		यदि (c > nbytes)
 			c = nbytes;
 
 		/*
 		 * We only need to do a read-modify-update cycle if
 		 * we're doing a partial write.
 		 */
-		retval = load_buffer(file, (c == fs->blocksize));
-		if (retval)
-			goto fail;
+		retval = आरोपय_बफर(file, (c == fs->blocksize));
+		यदि (retval)
+			गच्छ fail;
 
 		file->flags |= EXT2_FILE_BUF_DIRTY;
-		memcpy(file->buf+start, ptr, c);
+		स्मृतिं_प्रतिलिख(file->buf+start, ptr, c);
 
 		/*
 		 * OK, the physical block hasn't been allocated yet.
 		 * Allocate it.
 		 */
-		if (!file->physblock) {
+		यदि (!file->physblock) {
 			bmap_flags = (file->ino ? BMAP_ALLOC : 0);
-			if (fs->flags & EXT2_FLAG_SHARE_DUP) {
-				new_block = calloc(1, sizeof(*new_block));
-				if (!new_block) {
-					retval = EXT2_ET_NO_MEMORY;
-					goto fail;
+			यदि (fs->flags & EXT2_FLAG_SHARE_DUP) {
+				new_खण्डम् = शून्यस्मृतिं_देहि(1, परिमाण(*new_खण्डम्));
+				यदि (!new_खण्डम्) {
+					retval = EXT2_ET_NO_स्मृतिः;
+					गच्छ fail;
 				}
-				ext2fs_sha512((const unsigned char*)file->buf,
-						fs->blocksize, new_block->sha);
-				old_block = ext2fs_hashmap_lookup(
-							fs->block_sha_map,
-							new_block->sha,
-							sizeof(new_block->sha));
+				ext2fs_sha512((ध्रुव अचिह्नित वर्ण*)file->buf,
+						fs->blocksize, new_खण्डम्->sha);
+				old_खण्डम् = ext2fs_hashmap_lookup(
+							fs->खण्डम्_sha_map,
+							new_खण्डम्->sha,
+							परिमाण(new_खण्डम्->sha));
 			}
 
-			if (old_block) {
-				file->physblock = old_block->physblock;
-				bmap_flags |= BMAP_SET;
-				free(new_block);
-				new_block = NULL;
+			यदि (old_खण्डम्) {
+				file->physblock = old_खण्डम्->physblock;
+				bmap_flags |= BMAP_समुच्चयः;
+				मुक्त(new_खण्डम्);
+				new_खण्डम् = रिक्त;
 			}
 
 			retval = ext2fs_bmap2(fs, file->ino, &file->inode,
-					      BMAP_BUFFER,
+					      BMAP_बफर,
 					      bmap_flags,
 					      file->blockno, 0,
 					      &file->physblock);
-			if (retval) {
-				free(new_block);
-				new_block = NULL;
-				goto fail;
+			यदि (retval) {
+				मुक्त(new_खण्डम्);
+				new_खण्डम् = रिक्त;
+				गच्छ fail;
 			}
 
-			if (new_block) {
-				new_block->physblock = file->physblock;
-				int ret = ext2fs_hashmap_add(fs->block_sha_map,
-						new_block, new_block->sha,
-						sizeof(new_block->sha));
-				if (ret) {
-					retval = EXT2_ET_NO_MEMORY;
-					free(new_block);
-					goto fail;
+			यदि (new_खण्डम्) {
+				new_खण्डम्->physblock = file->physblock;
+				पूर्णाङ्क ret = ext2fs_hashmap_सङ्कलय(fs->खण्डम्_sha_map,
+						new_खण्डम्, new_खण्डम्->sha,
+						परिमाण(new_खण्डम्->sha));
+				यदि (ret) {
+					retval = EXT2_ET_NO_स्मृतिः;
+					मुक्त(new_खण्डम्);
+					गच्छ fail;
 				}
 			}
 
-			if (bmap_flags & BMAP_SET) {
-				ext2fs_iblk_add_blocks(fs, &file->inode, 1);
+			यदि (bmap_flags & BMAP_समुच्चयः) {
+				ext2fs_iblk_सङ्कलय_खण्डानि(fs, &file->inode, 1);
 				ext2fs_write_inode(fs, file->ino, &file->inode);
 			}
 		}
 
 		file->pos += c;
 		ptr += c;
-		count += c;
+		गणनम् += c;
 		nbytes -= c;
 	}
 
 fail:
 	/* Update inode size */
-	if (count != 0 && EXT2_I_SIZE(&file->inode) < file->pos) {
+	यदि (गणनम् != 0 && EXT2_I_आकार(&file->inode) < file->pos) {
 		errcode_t	rc;
 
-		rc = ext2fs_file_set_size2(file, file->pos);
-		if (retval == 0)
+		rc = ext2fs_file_समुच्चयः_size2(file, file->pos);
+		यदि (retval == 0)
 			retval = rc;
 	}
 
-	if (written)
-		*written = count;
-	return retval;
+	यदि (written)
+		*written = गणनम्;
+	प्रत्यागम retval;
 }
 
-errcode_t ext2fs_file_llseek(ext2_file_t file, __u64 offset,
-			    int whence, __u64 *ret_pos)
+errcode_t ext2fs_file_llseek(ext2_file_t file, __u64 विस्थापनम्,
+			    पूर्णाङ्क whence, __u64 *ret_pos)
 {
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
 
-	if (whence == EXT2_SEEK_SET)
-		file->pos = offset;
-	else if (whence == EXT2_SEEK_CUR)
-		file->pos += offset;
-	else if (whence == EXT2_SEEK_END)
-		file->pos = EXT2_I_SIZE(&file->inode) + offset;
-	else
-		return EXT2_ET_INVALID_ARGUMENT;
+	यदि (whence == EXT2_SEEK_समुच्चयः)
+		file->pos = विस्थापनम्;
+	अन्यथा यदि (whence == EXT2_SEEK_CUR)
+		file->pos += विस्थापनम्;
+	अन्यथा यदि (whence == EXT2_SEEK_अन्तः)
+		file->pos = EXT2_I_आकार(&file->inode) + विस्थापनम्;
+	अन्यथा
+		प्रत्यागम EXT2_ET_INVALID_तर्कः;
 
-	if (ret_pos)
+	यदि (ret_pos)
 		*ret_pos = file->pos;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-errcode_t ext2fs_file_lseek(ext2_file_t file, ext2_off_t offset,
-			    int whence, ext2_off_t *ret_pos)
+errcode_t ext2fs_file_lseek(ext2_file_t file, ext2_off_t विस्थापनम्,
+			    पूर्णाङ्क whence, ext2_off_t *ret_pos)
 {
 	__u64		loffset, ret_loffset = 0;
 	errcode_t	retval;
 
-	loffset = offset;
+	loffset = विस्थापनम्;
 	retval = ext2fs_file_llseek(file, loffset, whence, &ret_loffset);
-	if (ret_pos)
+	यदि (ret_pos)
 		*ret_pos = (ext2_off_t) ret_loffset;
-	return retval;
+	प्रत्यागम retval;
 }
 
 
 /*
  * This function returns the size of the file, according to the inode
  */
-errcode_t ext2fs_file_get_lsize(ext2_file_t file, __u64 *ret_size)
+errcode_t ext2fs_file_get_lsize(ext2_file_t file, __u64 *ret_आकार)
 {
-	if (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
-		return EXT2_ET_MAGIC_EXT2_FILE;
-	*ret_size = EXT2_I_SIZE(&file->inode);
-	return 0;
+	यदि (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
+		प्रत्यागम EXT2_ET_MAGIC_EXT2_FILE;
+	*ret_आकार = EXT2_I_आकार(&file->inode);
+	प्रत्यागम 0;
 }
 
 /*
  * This function returns the size of the file, according to the inode
  */
-ext2_off_t ext2fs_file_get_size(ext2_file_t file)
+ext2_off_t ext2fs_file_get_आकार(ext2_file_t file)
 {
-	__u64	size;
+	__u64	आकार;
 
-	if (ext2fs_file_get_lsize(file, &size))
-		return 0;
-	if ((size >> 32) != 0)
-		return 0;
-	return size;
+	यदि (ext2fs_file_get_lsize(file, &आकार))
+		प्रत्यागम 0;
+	यदि ((आकार >> 32) != 0)
+		प्रत्यागम 0;
+	प्रत्यागम आकार;
 }
 
 /* Zero the parts of the last block that are past EOF. */
-static errcode_t ext2fs_file_zero_past_offset(ext2_file_t file,
-					      ext2_off64_t offset)
+स्थिर errcode_t ext2fs_file_zero_past_विस्थापनम्(ext2_file_t file,
+					      ext2_off64_t विस्थापनम्)
 {
 	ext2_filsys fs = file->fs;
-	char *b = NULL;
-	ext2_off64_t off = offset % fs->blocksize;
+	वर्ण *b = रिक्त;
+	ext2_off64_t off = विस्थापनम् % fs->blocksize;
 	blk64_t blk;
-	int ret_flags;
+	पूर्णाङ्क ret_flags;
 	errcode_t retval;
 
-	if (off == 0)
-		return 0;
+	यदि (off == 0)
+		प्रत्यागम 0;
 
-	retval = sync_buffer_position(file);
-	if (retval)
-		return retval;
+	retval = sync_बफर_position(file);
+	यदि (retval)
+		प्रत्यागम retval;
 
 	/* Is there an initialized block at the end? */
-	retval = ext2fs_bmap2(fs, file->ino, NULL, NULL, 0,
-			      offset / fs->blocksize, &ret_flags, &blk);
-	if (retval)
-		return retval;
-	if ((blk == 0) || (ret_flags & BMAP_RET_UNINIT))
-		return 0;
+	retval = ext2fs_bmap2(fs, file->ino, रिक्त, रिक्त, 0,
+			      विस्थापनम् / fs->blocksize, &ret_flags, &blk);
+	यदि (retval)
+		प्रत्यागम retval;
+	यदि ((blk == 0) || (ret_flags & BMAP_RET_UNINIT))
+		प्रत्यागम 0;
 
 	/* Zero to the end of the block */
 	retval = ext2fs_get_mem(fs->blocksize, &b);
-	if (retval)
-		return retval;
+	यदि (retval)
+		प्रत्यागम retval;
 
 	/* Read/zero/write block */
 	retval = io_channel_read_blk64(fs->io, blk, 1, b);
-	if (retval)
-		goto out;
+	यदि (retval)
+		गच्छ बहिर्गमनम्;
 
-	memset(b + off, 0, fs->blocksize - off);
+	स्मृतिं_पूरय(b + off, 0, fs->blocksize - off);
 
 	retval = io_channel_write_blk64(fs->io, blk, 1, b);
-	if (retval)
-		goto out;
+	यदि (retval)
+		गच्छ बहिर्गमनम्;
 
-out:
+बहिर्गमनम्:
 	ext2fs_free_mem(&b);
-	return retval;
+	प्रत्यागम retval;
 }
 
 /*
  * This function sets the size of the file, truncating it if necessary
  *
  */
-errcode_t ext2fs_file_set_size2(ext2_file_t file, ext2_off64_t size)
+errcode_t ext2fs_file_समुच्चयः_size2(ext2_file_t file, ext2_off64_t आकार)
 {
-	ext2_off64_t	old_size;
+	ext2_off64_t	old_आकार;
 	errcode_t	retval;
-	blk64_t		old_truncate, truncate_block;
+	blk64_t		old_truncate, truncate_खण्डम्;
 
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
 
-	if (size && ext2fs_file_block_offset_too_big(file->fs, &file->inode,
-					(size - 1) / file->fs->blocksize))
-		return EXT2_ET_FILE_TOO_BIG;
-	truncate_block = ((size + file->fs->blocksize - 1) >>
-			  EXT2_BLOCK_SIZE_BITS(file->fs->super));
-	old_size = EXT2_I_SIZE(&file->inode);
-	old_truncate = ((old_size + file->fs->blocksize - 1) >>
-		      EXT2_BLOCK_SIZE_BITS(file->fs->super));
+	यदि (आकार && ext2fs_file_खण्डम्_विस्थापनम्_too_big(file->fs, &file->inode,
+					(आकार - 1) / file->fs->blocksize))
+		प्रत्यागम EXT2_ET_FILE_TOO_BIG;
+	truncate_खण्डम् = ((आकार + file->fs->blocksize - 1) >>
+			  EXT2_खण्डम्_आकार_द्वयङ्काः(file->fs->super));
+	old_आकार = EXT2_I_आकार(&file->inode);
+	old_truncate = ((old_आकार + file->fs->blocksize - 1) >>
+		      EXT2_खण्डम्_आकार_द्वयङ्काः(file->fs->super));
 
-	retval = ext2fs_inode_size_set(file->fs, &file->inode, size);
-	if (retval)
-		return retval;
+	retval = ext2fs_inode_आकार_समुच्चयः(file->fs, &file->inode, आकार);
+	यदि (retval)
+		प्रत्यागम retval;
 
-	if (file->ino) {
+	यदि (file->ino) {
 		retval = ext2fs_write_inode(file->fs, file->ino, &file->inode);
-		if (retval)
-			return retval;
+		यदि (retval)
+			प्रत्यागम retval;
 	}
 
-	retval = ext2fs_file_zero_past_offset(file, size);
-	if (retval)
-		return retval;
+	retval = ext2fs_file_zero_past_विस्थापनम्(file, आकार);
+	यदि (retval)
+		प्रत्यागम retval;
 
-	if (truncate_block >= old_truncate)
-		return 0;
+	यदि (truncate_खण्डम् >= old_truncate)
+		प्रत्यागम 0;
 
-	return ext2fs_punch(file->fs, file->ino, &file->inode, 0,
-			    truncate_block, ~0ULL);
+	प्रत्यागम ext2fs_punch(file->fs, file->ino, &file->inode, 0,
+			    truncate_खण्डम्, ~0ULL);
 }
 
-errcode_t ext2fs_file_set_size(ext2_file_t file, ext2_off_t size)
+errcode_t ext2fs_file_समुच्चयः_आकार(ext2_file_t file, ext2_off_t आकार)
 {
-	return ext2fs_file_set_size2(file, size);
+	प्रत्यागम ext2fs_file_समुच्चयः_size2(file, आकार);
 }

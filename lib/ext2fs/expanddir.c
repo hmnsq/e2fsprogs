@@ -9,135 +9,135 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
+#यदि_अन्तः
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
+#अन्तर्भाव "ext2fsP.h"
 
-struct expand_dir_struct {
-	int		done;
-	int		newblocks;
+संरचना expand_dir_struct {
+	पूर्णाङ्क		समाप्तम्;
+	पूर्णाङ्क		newblocks;
 	blk64_t		goal;
 	errcode_t	err;
 	ext2_ino_t	dir;
 };
 
-static int expand_dir_proc(ext2_filsys	fs,
+स्थिर पूर्णाङ्क expand_dir_proc(ext2_filsys	fs,
 			   blk64_t	*blocknr,
 			   e2_blkcnt_t	blockcnt,
-			   blk64_t	ref_block EXT2FS_ATTR((unused)),
-			   int		ref_offset EXT2FS_ATTR((unused)),
-			   void		*priv_data)
+			   blk64_t	ref_खण्डम् EXT2FS_ATTR((अप्रयुक्तम्)),
+			   पूर्णाङ्क		ref_विस्थापनम् EXT2FS_ATTR((अप्रयुक्तम्)),
+			   शून्य		*priv_दत्त)
 {
-	struct expand_dir_struct *es = (struct expand_dir_struct *) priv_data;
+	संरचना expand_dir_struct *es = (संरचना expand_dir_struct *) priv_दत्त;
 	blk64_t	new_blk;
-	char		*block;
+	वर्ण		*खण्डम्;
 	errcode_t	retval;
 
-	if (*blocknr) {
-		if (blockcnt >= 0)
+	यदि (*blocknr) {
+		यदि (blockcnt >= 0)
 			es->goal = *blocknr;
-		return 0;
+		प्रत्यागम 0;
 	}
-	if (blockcnt &&
+	यदि (blockcnt &&
 	    (EXT2FS_B2C(fs, es->goal) == EXT2FS_B2C(fs, es->goal+1)))
 		new_blk = es->goal+1;
-	else {
-		es->goal &= ~EXT2FS_CLUSTER_MASK(fs);
+	अन्यथा {
+		es->goal &= ~EXT2_FS_CLUSTER_आवरणम्(fs);
 		retval = ext2fs_new_block2(fs, es->goal, 0, &new_blk);
-		if (retval) {
+		यदि (retval) {
 			es->err = retval;
-			return BLOCK_ABORT;
+			प्रत्यागम खण्डम्_ABORT;
 		}
 		es->newblocks++;
-		ext2fs_block_alloc_stats2(fs, new_blk, +1);
+		ext2fs_खण्डम्_alloc_stats2(fs, new_blk, +1);
 	}
-	if (blockcnt > 0) {
-		retval = ext2fs_new_dir_block(fs, 0, 0, &block);
-		if (retval) {
+	यदि (blockcnt > 0) {
+		retval = ext2fs_new_dir_खण्डम्(fs, 0, 0, &खण्डम्);
+		यदि (retval) {
 			es->err = retval;
-			return BLOCK_ABORT;
+			प्रत्यागम खण्डम्_ABORT;
 		}
-		es->done = 1;
-		retval = ext2fs_write_dir_block4(fs, new_blk, block, 0,
+		es->समाप्तम् = 1;
+		retval = ext2fs_write_dir_block4(fs, new_blk, खण्डम्, 0,
 						 es->dir);
-		ext2fs_free_mem(&block);
-	} else
-		retval = ext2fs_zero_blocks2(fs, new_blk, 1, NULL, NULL);
-	if (blockcnt >= 0)
+		ext2fs_free_mem(&खण्डम्);
+	} अन्यथा
+		retval = ext2fs_zero_blocks2(fs, new_blk, 1, रिक्त, रिक्त);
+	यदि (blockcnt >= 0)
 		es->goal = new_blk;
-	if (retval) {
+	यदि (retval) {
 		es->err = retval;
-		return BLOCK_ABORT;
+		प्रत्यागम खण्डम्_ABORT;
 	}
 	*blocknr = new_blk;
 
-	if (es->done)
-		return (BLOCK_CHANGED | BLOCK_ABORT);
-	else
-		return BLOCK_CHANGED;
+	यदि (es->समाप्तम्)
+		प्रत्यागम (खण्डम्_परिवर्तितम् | खण्डम्_ABORT);
+	अन्यथा
+		प्रत्यागम खण्डम्_परिवर्तितम्;
 }
 
 errcode_t ext2fs_expand_dir(ext2_filsys fs, ext2_ino_t dir)
 {
 	errcode_t	retval;
-	struct expand_dir_struct es;
-	struct ext2_inode	inode;
+	संरचना expand_dir_struct es;
+	संरचना ext2_inode	inode;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	यदि (!(fs->flags & EXT2_FLAG_RW))
+		प्रत्यागम EXT2_ET_RO_FILSYS;
 
-	if (!fs->block_map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
+	यदि (!fs->खण्डम्_map)
+		प्रत्यागम EXT2_ET_NO_खण्डम्_BITMAP;
 
 	retval = ext2fs_check_directory(fs, dir);
-	if (retval)
-		return retval;
+	यदि (retval)
+		प्रत्यागम retval;
 
 	retval = ext2fs_read_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	यदि (retval)
+		प्रत्यागम retval;
 
-	es.done = 0;
+	es.समाप्तम् = 0;
 	es.err = 0;
 	es.goal = ext2fs_find_inode_goal(fs, dir, &inode, 0);
 	es.newblocks = 0;
 	es.dir = dir;
 
-	retval = ext2fs_block_iterate3(fs, dir, BLOCK_FLAG_APPEND,
+	retval = ext2fs_खण्डम्_iterate3(fs, dir, खण्डम्_FLAG_APPEND,
 				       0, expand_dir_proc, &es);
-	if (retval == EXT2_ET_INLINE_DATA_CANT_ITERATE)
-		return ext2fs_inline_data_expand(fs, dir);
+	यदि (retval == EXT2_ET_INLINE_दत्त_CANT_ITERATE)
+		प्रत्यागम ext2fs_inline_दत्त_expand(fs, dir);
 
-	if (es.err)
-		return es.err;
-	if (!es.done)
-		return EXT2_ET_EXPAND_DIR_ERR;
+	यदि (es.err)
+		प्रत्यागम es.err;
+	यदि (!es.समाप्तम्)
+		प्रत्यागम EXT2_ET_EXPAND_DIR_ERR;
 
 	/*
 	 * Update the size and block count fields in the inode.
 	 */
 	retval = ext2fs_read_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	यदि (retval)
+		प्रत्यागम retval;
 
-	retval = ext2fs_inode_size_set(fs, &inode,
-				       EXT2_I_SIZE(&inode) + fs->blocksize);
-	if (retval)
-		return retval;
-	ext2fs_iblk_add_blocks(fs, &inode, es.newblocks);
+	retval = ext2fs_inode_आकार_समुच्चयः(fs, &inode,
+				       EXT2_I_आकार(&inode) + fs->blocksize);
+	यदि (retval)
+		प्रत्यागम retval;
+	ext2fs_iblk_सङ्कलय_खण्डानि(fs, &inode, es.newblocks);
 
 	retval = ext2fs_write_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	यदि (retval)
+		प्रत्यागम retval;
 
-	return 0;
+	प्रत्यागम 0;
 }

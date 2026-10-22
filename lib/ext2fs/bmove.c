@@ -10,158 +10,158 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#if HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
+#यदि_अन्तः
+#यदि HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
+#यदि_अन्तः
+#यदि HAVE_SYS_TIME_H
+#अन्तर्भाव <sys/time.h>
+#यदि_अन्तः
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fsP.h"
 
-struct process_block_struct {
+संरचना process_खण्डम्_struct {
 	ext2_ino_t		ino;
-	struct ext2_inode *	inode;
-	ext2fs_block_bitmap	reserve;
-	ext2fs_block_bitmap	alloc_map;
+	संरचना ext2_inode *	inode;
+	ext2fs_खण्डम्_bitmap	reserve;
+	ext2fs_खण्डम्_bitmap	alloc_map;
 	errcode_t		error;
-	char			*buf;
-	int			add_dir;
-	int			flags;
+	वर्ण			*buf;
+	पूर्णाङ्क			सङ्कलय_dir;
+	पूर्णाङ्क			flags;
 };
 
-static int process_block(ext2_filsys fs, blk64_t *block_nr,
-			 e2_blkcnt_t blockcnt, blk64_t ref_block,
-			 int ref_offset, void *priv_data)
+स्थिर पूर्णाङ्क process_खण्डम्(ext2_filsys fs, blk64_t *खण्डम्_nr,
+			 e2_blkcnt_t blockcnt, blk64_t ref_खण्डम्,
+			 पूर्णाङ्क ref_विस्थापनम्, शून्य *priv_दत्त)
 {
-	struct process_block_struct *pb;
+	संरचना process_खण्डम्_struct *pb;
 	errcode_t	retval;
-	int		ret;
-	blk64_t		block, orig;
+	पूर्णाङ्क		ret;
+	blk64_t		खण्डम्, orig;
 
-	pb = (struct process_block_struct *) priv_data;
-	block = orig = *block_nr;
+	pb = (संरचना process_खण्डम्_struct *) priv_दत्त;
+	खण्डम् = orig = *खण्डम्_nr;
 	ret = 0;
 
 	/*
 	 * Let's see if this is one which we need to relocate
 	 */
-	if (ext2fs_test_block_bitmap2(pb->reserve, block)) {
-		do {
-			if (++block >= ext2fs_blocks_count(fs->super))
-				block = fs->super->s_first_data_block;
-			if (block == orig) {
-				pb->error = EXT2_ET_BLOCK_ALLOC_FAIL;
-				return BLOCK_ABORT;
+	यदि (ext2fs_test_खण्डम्_bitmap2(pb->reserve, खण्डम्)) {
+		कुरु {
+			यदि (++खण्डम् >= ext2fs_खण्डानि_गणनम्(fs->super))
+				खण्डम् = fs->super->s_first_दत्त_खण्डम्;
+			यदि (खण्डम् == orig) {
+				pb->error = EXT2_ET_खण्डम्_ALLOC_FAIL;
+				प्रत्यागम खण्डम्_ABORT;
 			}
-		} while (ext2fs_test_block_bitmap2(pb->reserve, block) ||
-			 ext2fs_test_block_bitmap2(pb->alloc_map, block));
+		} यावत् (ext2fs_test_खण्डम्_bitmap2(pb->reserve, खण्डम्) ||
+			 ext2fs_test_खण्डम्_bitmap2(pb->alloc_map, खण्डम्));
 
 		retval = io_channel_read_blk64(fs->io, orig, 1, pb->buf);
-		if (retval) {
+		यदि (retval) {
 			pb->error = retval;
-			return BLOCK_ABORT;
+			प्रत्यागम खण्डम्_ABORT;
 		}
-		retval = io_channel_write_blk64(fs->io, block, 1, pb->buf);
-		if (retval) {
+		retval = io_channel_write_blk64(fs->io, खण्डम्, 1, pb->buf);
+		यदि (retval) {
 			pb->error = retval;
-			return BLOCK_ABORT;
+			प्रत्यागम खण्डम्_ABORT;
 		}
-		*block_nr = block;
-		ext2fs_mark_block_bitmap2(pb->alloc_map, block);
-		ret = BLOCK_CHANGED;
-		if (pb->flags & EXT2_BMOVE_DEBUG)
-			printf("ino=%u, blockcnt=%lld, %llu->%llu\n",
-			       (unsigned) pb->ino, blockcnt, 
-			       (unsigned long long) orig,
-			       (unsigned long long) block);
+		*खण्डम्_nr = खण्डम्;
+		ext2fs_mark_खण्डम्_bitmap2(pb->alloc_map, खण्डम्);
+		ret = खण्डम्_परिवर्तितम्;
+		यदि (pb->flags & EXT2_BMOVE_DEBUG)
+			प्रारूप_लिख("ino=%u, blockcnt=%lld, %llu->%llu\n",
+			       (अचिह्नित) pb->ino, blockcnt, 
+			       (अचिह्नित दीर्घ दीर्घ) orig,
+			       (अचिह्नित दीर्घ दीर्घ) खण्डम्);
 	}
-	if (pb->add_dir) {
-		retval = ext2fs_add_dir_block2(fs->dblist, pb->ino,
-					       block, blockcnt);
-		if (retval) {
+	यदि (pb->सङ्कलय_dir) {
+		retval = ext2fs_सङ्कलय_dir_block2(fs->dblist, pb->ino,
+					       खण्डम्, blockcnt);
+		यदि (retval) {
 			pb->error = retval;
-			ret |= BLOCK_ABORT;
+			ret |= खण्डम्_ABORT;
 		}
 	}
-	return ret;
+	प्रत्यागम ret;
 }
 
-errcode_t ext2fs_move_blocks(ext2_filsys fs,
-			     ext2fs_block_bitmap reserve,
-			     ext2fs_block_bitmap alloc_map,
-			     int flags)
+errcode_t ext2fs_move_खण्डानि(ext2_filsys fs,
+			     ext2fs_खण्डम्_bitmap reserve,
+			     ext2fs_खण्डम्_bitmap alloc_map,
+			     पूर्णाङ्क flags)
 {
 	ext2_ino_t	ino;
-	struct ext2_inode inode;
+	संरचना ext2_inode inode;
 	errcode_t	retval;
-	struct process_block_struct pb;
-	ext2_inode_scan	scan;
-	char		*block_buf;
+	संरचना process_खण्डम्_struct pb;
+	ext2_inode_अवलोकनम्	अवलोकनम्;
+	वर्ण		*खण्डम्_buf;
 
-	retval = ext2fs_open_inode_scan(fs, 0, &scan);
-	if (retval)
-		return retval;
+	retval = ext2fs_open_inode_अवलोकनम्(fs, 0, &अवलोकनम्);
+	यदि (retval)
+		प्रत्यागम retval;
 
 	pb.reserve = reserve;
 	pb.error = 0;
-	pb.alloc_map = alloc_map ? alloc_map : fs->block_map;
+	pb.alloc_map = alloc_map ? alloc_map : fs->खण्डम्_map;
 	pb.flags = flags;
 
-	retval = ext2fs_get_array(4, fs->blocksize, &block_buf);
-	if (retval)
-		return retval;
-	pb.buf = block_buf + fs->blocksize * 3;
+	retval = ext2fs_get_array(4, fs->blocksize, &खण्डम्_buf);
+	यदि (retval)
+		प्रत्यागम retval;
+	pb.buf = खण्डम्_buf + fs->blocksize * 3;
 
 	/*
 	 * If GET_DBLIST is set in the flags field, then we should
 	 * gather directory block information while we're doing the
 	 * block move.
 	 */
-	if (flags & EXT2_BMOVE_GET_DBLIST) {
-		if (fs->dblist) {
+	यदि (flags & EXT2_BMOVE_GET_DBLIST) {
+		यदि (fs->dblist) {
 			ext2fs_free_dblist(fs->dblist);
-			fs->dblist = NULL;
+			fs->dblist = रिक्त;
 		}
 		retval = ext2fs_init_dblist(fs, 0);
-		if (retval)
-			return retval;
+		यदि (retval)
+			प्रत्यागम retval;
 	}
 
-	retval = ext2fs_get_next_inode(scan, &ino, &inode);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_अग्र_inode(अवलोकनम्, &ino, &inode);
+	यदि (retval)
+		प्रत्यागम retval;
 
-	while (ino) {
-		if ((inode.i_links_count == 0) ||
+	यावत् (ino) {
+		यदि ((inode.i_links_गणनम् == 0) ||
 		    !ext2fs_inode_has_valid_blocks2(fs, &inode))
-			goto next;
+			गच्छ अग्र;
 
 		pb.ino = ino;
 		pb.inode = &inode;
 
-		pb.add_dir = (LINUX_S_ISDIR(inode.i_mode) &&
+		pb.सङ्कलय_dir = (LINUX_S_ISDIR(inode.i_बहुलकम्) &&
 			      flags & EXT2_BMOVE_GET_DBLIST);
 
-		retval = ext2fs_block_iterate3(fs, ino, 0, block_buf,
-					       process_block, &pb);
-		if (retval)
-			return retval;
-		if (pb.error)
-			return pb.error;
+		retval = ext2fs_खण्डम्_iterate3(fs, ino, 0, खण्डम्_buf,
+					       process_खण्डम्, &pb);
+		यदि (retval)
+			प्रत्यागम retval;
+		यदि (pb.error)
+			प्रत्यागम pb.error;
 
-	next:
-		retval = ext2fs_get_next_inode(scan, &ino, &inode);
-		if (retval == EXT2_ET_BAD_BLOCK_IN_INODE_TABLE)
-			goto next;
+	अग्र:
+		retval = ext2fs_get_अग्र_inode(अवलोकनम्, &ino, &inode);
+		यदि (retval == EXT2_ET_BAD_खण्डम्_अन्तर्_INODE_सारणी)
+			गच्छ अग्र;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 

@@ -13,124 +13,124 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
+#यदि_अन्तः
+#यदि HAVE_ERRNO_H
+#अन्तर्भाव <errno.h>
+#यदि_अन्तः
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <time.h>
+#यदि HAVE_SYS_STAT_H
+#अन्तर्भाव <sys/stat.h>
+#यदि_अन्तः
+#यदि HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
+#यदि_अन्तः
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
 
-#ifndef HAVE_TYPE_SSIZE_T
-typedef int ssize_t;
-#endif
+#यदि_अपरिभाषितम् HAVE_TYPE_SSIZE_T
+प्रकारनिर्देश पूर्णाङ्क ssize_t;
+#यदि_अन्तः
 
 /*
  * This function returns 1 if the specified block is all zeros
  */
-static int check_zero_block(char *buf, int blocksize)
+स्थिर पूर्णाङ्क check_zero_खण्डम्(वर्ण *buf, पूर्णाङ्क blocksize)
 {
-	char	*cp = buf;
-	int	left = blocksize;
+	वर्ण	*cp = buf;
+	पूर्णाङ्क	वामः = blocksize;
 
-	while (left > 0) {
-		if (*cp++)
-			return 0;
-		left--;
+	यावत् (वामः > 0) {
+		यदि (*cp++)
+			प्रत्यागम 0;
+		वामः--;
 	}
-	return 1;
+	प्रत्यागम 1;
 }
 
 /*
  * Write the inode table out as a single block.
  */
-#define BUF_BLOCKS	32
+#परिभाषय BUF_खण्डानि	32
 
-errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_inode_write(ext2_filsys fs, पूर्णाङ्क fd, पूर्णाङ्क flags)
 {
-	dgrp_t		group;
-	ssize_t		left, c, d;
-	char		*buf, *cp;
+	dgrp_t		गणः;
+	ssize_t		वामः, c, d;
+	वर्ण		*buf, *cp;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 	ext2_loff_t	r;
 
-	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	buf = स्मृतिं_देहि(fs->blocksize * BUF_खण्डानि);
+	यदि (!buf)
+		प्रत्यागम ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
-		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
-			retval = EXT2_ET_MISSING_INODE_TABLE;
-			goto errout;
+	प्रति (गणः = 0; गणः < fs->गणः_desc_गणनम्; गणः++) {
+		blk = ext2fs_inode_सारणी_loc(fs, गणः);
+		यदि (!blk) {
+			retval = EXT2_ET_MISSING_INODE_सारणी;
+			गच्छ errout;
 		}
-		left = fs->inode_blocks_per_group;
-		if ((blk < fs->super->s_first_data_block) ||
-		    (blk + left - 1 >= ext2fs_blocks_count(fs->super))) {
-			retval = EXT2_ET_GDESC_BAD_INODE_TABLE;
-			goto errout;
+		वामः = fs->inode_खण्डानि_प्रत्येकम्_गणः;
+		यदि ((blk < fs->super->s_first_दत्त_खण्डम्) ||
+		    (blk + वामः - 1 >= ext2fs_खण्डानि_गणनम्(fs->super))) {
+			retval = EXT2_ET_GDESC_BAD_INODE_सारणी;
+			गच्छ errout;
 		}
-		while (left) {
-			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
+		यावत् (वामः) {
+			c = BUF_खण्डानि;
+			यदि (c > वामः)
+				c = वामः;
 			retval = io_channel_read_blk64(fs->io, blk, c, buf);
-			if (retval)
-				goto errout;
+			यदि (retval)
+				गच्छ errout;
 			cp = buf;
-			while (c) {
-				if (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
+			यावत् (c) {
+				यदि (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
 					d = c;
-					goto skip_sparse;
+					गच्छ skip_sparse;
 				}
 				/* Skip zero blocks */
-				if (check_zero_block(cp, fs->blocksize)) {
+				यदि (check_zero_खण्डम्(cp, fs->blocksize)) {
 					c--;
 					blk++;
-					left--;
+					वामः--;
 					cp += fs->blocksize;
 					r = ext2fs_llseek(fd, fs->blocksize,
 							  SEEK_CUR);
-					if (r < 0) {
+					यदि (r < 0) {
 						retval = errno;
-						goto errout;
+						गच्छ errout;
 					}
-					continue;
+					अनुवर्त;
 				}
 				/* Find non-zero blocks */
-				for (d = 1; d < c; d++) {
-					if (check_zero_block(cp +
+				प्रति (d = 1; d < c; d++) {
+					यदि (check_zero_खण्डम्(cp +
 							     d * fs->blocksize,
 							     fs->blocksize))
-						break;
+						भङ्ग;
 				}
 			skip_sparse:
-				actual = write(fd, cp, d * fs->blocksize);
-				if (actual == -1) {
+				actual = लिख(fd, cp, d * fs->blocksize);
+				यदि (actual == -1) {
 					retval = errno;
-					goto errout;
+					गच्छ errout;
 				}
-				if (actual != d * fs->blocksize) {
+				यदि (actual != d * fs->blocksize) {
 					retval = EXT2_ET_SHORT_WRITE;
-					goto errout;
+					गच्छ errout;
 				}
 				blk += d;
-				left -= d;
+				वामः -= d;
 				cp += d * fs->blocksize;
 				c -= d;
 			}
@@ -139,332 +139,332 @@ errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	मुक्त(buf);
+	प्रत्यागम retval;
 }
 
 /*
  * Read in the inode table and stuff it into place
  */
-errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_inode_read(ext2_filsys fs, पूर्णाङ्क fd,
+				  पूर्णाङ्क flags EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	dgrp_t		group;
-	ssize_t		c, left;
-	char		*buf;
+	dgrp_t		गणः;
+	ssize_t		c, वामः;
+	वर्ण		*buf;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 
-	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	buf = स्मृतिं_देहि(fs->blocksize * BUF_खण्डानि);
+	यदि (!buf)
+		प्रत्यागम ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
-		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
-			retval = EXT2_ET_MISSING_INODE_TABLE;
-			goto errout;
+	प्रति (गणः = 0; गणः < fs->गणः_desc_गणनम्; गणः++) {
+		blk = ext2fs_inode_सारणी_loc(fs, गणः);
+		यदि (!blk) {
+			retval = EXT2_ET_MISSING_INODE_सारणी;
+			गच्छ errout;
 		}
-		left = fs->inode_blocks_per_group;
-		while (left) {
-			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
-			actual = read(fd, buf, fs->blocksize * c);
-			if (actual == -1) {
+		वामः = fs->inode_खण्डानि_प्रत्येकम्_गणः;
+		यावत् (वामः) {
+			c = BUF_खण्डानि;
+			यदि (c > वामः)
+				c = वामः;
+			actual = पठ(fd, buf, fs->blocksize * c);
+			यदि (actual == -1) {
 				retval = errno;
-				goto errout;
+				गच्छ errout;
 			}
-			if (actual != fs->blocksize * c) {
+			यदि (actual != fs->blocksize * c) {
 				retval = EXT2_ET_SHORT_READ;
-				goto errout;
+				गच्छ errout;
 			}
 			retval = io_channel_write_blk64(fs->io, blk, c, buf);
-			if (retval)
-				goto errout;
+			यदि (retval)
+				गच्छ errout;
 
 			blk += c;
-			left -= c;
+			वामः -= c;
 		}
 	}
 	retval = ext2fs_flush_icache(fs);
 
 errout:
-	free(buf);
-	return retval;
+	मुक्त(buf);
+	प्रत्यागम retval;
 }
 
 /*
  * Write out superblock and group descriptors
  */
-errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
-				   int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_write(ext2_filsys fs, पूर्णाङ्क fd,
+				   पूर्णाङ्क flags EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	char		*buf, *cp;
+	वर्ण		*buf, *cp;
 	ssize_t		actual;
 	errcode_t	retval;
-#ifdef WORDS_BIGENDIAN
-	unsigned int	groups_per_block;
-	struct		ext2_group_desc *gdp;
-	int		j;
-#endif
+#यदि_परिभाषितम् शब्दाः_BIGENDIAN
+	अचिह्नित पूर्णाङ्क	groups_प्रत्येकम्_खण्डम्;
+	संरचना		ext2_गणः_desc *gdp;
+	पूर्णाङ्क		j;
+#यदि_अन्तः
 
-	if (fs->group_desc == NULL)
-		return EXT2_ET_NO_GDESC;
+	यदि (fs->गणः_desc == रिक्त)
+		प्रत्यागम EXT2_ET_NO_GDESC;
 
-	buf = malloc(fs->blocksize);
-	if (!buf)
-		return ENOMEM;
+	buf = स्मृतिं_देहि(fs->blocksize);
+	यदि (!buf)
+		प्रत्यागम ENOMEM;
 
 	/*
 	 * Write out the superblock
 	 */
-	memset(buf, 0, fs->blocksize);
-#ifdef WORDS_BIGENDIAN
+	स्मृतिं_पूरय(buf, 0, fs->blocksize);
+#यदि_परिभाषितम् शब्दाः_BIGENDIAN
 	/*
 	 * We're writing out superblock so let's convert
 	 * it to little endian and then back if needed
 	 */
 	ext2fs_swap_super(fs->super);
-	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
+	स्मृतिं_प्रतिलिख(buf, fs->super, SUPERBLOCK_आकार);
 	ext2fs_swap_super(fs->super);
-#else
-	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
-#endif
-	actual = write(fd, buf, fs->blocksize);
-	if (actual == -1) {
+#अन्यथा
+	स्मृतिं_प्रतिलिख(buf, fs->super, SUPERBLOCK_आकार);
+#यदि_अन्तः
+	actual = लिख(fd, buf, fs->blocksize);
+	यदि (actual == -1) {
 		retval = errno;
-		goto errout;
+		गच्छ errout;
 	}
-	if (actual != (ssize_t) fs->blocksize) {
+	यदि (actual != (ssize_t) fs->blocksize) {
 		retval = EXT2_ET_SHORT_WRITE;
-		goto errout;
+		गच्छ errout;
 	}
 
 	/*
 	 * Now write out the block group descriptors
 	 */
 
-	cp = (char *) fs->group_desc;
+	cp = (वर्ण *) fs->गणः_desc;
 
-#ifdef WORDS_BIGENDIAN
+#यदि_परिभाषितम् शब्दाः_BIGENDIAN
 	/*
 	 * Convert group descriptors to little endian and back
 	 * if needed
 	 */
-	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
-		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
-			ext2fs_swap_group_desc2(fs, gdp);
+	groups_प्रत्येकम्_खण्डम् = EXT2_DESC_प्रत्येकम्_खण्डम्(fs->super);
+	प्रति (j=0; j < groups_प्रत्येकम्_खण्डम्*fs->desc_खण्डानि; j++) {
+		gdp = ext2fs_गणः_desc(fs, fs->गणः_desc, j);
+		यदि (gdp)
+			ext2fs_swap_गणः_desc2(fs, gdp);
 	}
-#endif
+#यदि_अन्तः
 
-	actual = write(fd, cp, (ssize_t)fs->blocksize * fs->desc_blocks);
+	actual = लिख(fd, cp, (ssize_t)fs->blocksize * fs->desc_खण्डानि);
 
 
-#ifdef WORDS_BIGENDIAN
-	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
-		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
-			ext2fs_swap_group_desc2(fs, gdp);
+#यदि_परिभाषितम् शब्दाः_BIGENDIAN
+	groups_प्रत्येकम्_खण्डम् = EXT2_DESC_प्रत्येकम्_खण्डम्(fs->super);
+	प्रति (j=0; j < groups_प्रत्येकम्_खण्डम्*fs->desc_खण्डानि; j++) {
+		gdp = ext2fs_गणः_desc(fs, fs->गणः_desc, j);
+		यदि (gdp)
+			ext2fs_swap_गणः_desc2(fs, gdp);
 	}
-#endif
+#यदि_अन्तः
 
-	if (actual == -1) {
+	यदि (actual == -1) {
 		retval = errno;
-		goto errout;
+		गच्छ errout;
 	}
-	if (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
+	यदि (actual != (ssize_t)(fs->blocksize * fs->desc_खण्डानि)) {
 		retval = EXT2_ET_SHORT_WRITE;
-		goto errout;
+		गच्छ errout;
 	}
 
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	मुक्त(buf);
+	प्रत्यागम retval;
 }
 
 /*
  * Read the superblock and group descriptors and overwrite them.
  */
-errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_read(ext2_filsys fs, पूर्णाङ्क fd,
+				  पूर्णाङ्क flags EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	char		*buf;
-	ssize_t		actual, size;
+	वर्ण		*buf;
+	ssize_t		actual, आकार;
 	errcode_t	retval;
 
-	size = (ssize_t)fs->blocksize * (fs->desc_blocks + 1);
-	buf = malloc(size);
-	if (!buf)
-		return ENOMEM;
+	आकार = (ssize_t)fs->blocksize * (fs->desc_खण्डानि + 1);
+	buf = स्मृतिं_देहि(आकार);
+	यदि (!buf)
+		प्रत्यागम ENOMEM;
 
 	/*
 	 * Read it all in.
 	 */
-	actual = read(fd, buf, size);
-	if (actual == -1) {
+	actual = पठ(fd, buf, आकार);
+	यदि (actual == -1) {
 		retval = errno;
-		goto errout;
+		गच्छ errout;
 	}
-	if (actual != size) {
+	यदि (actual != आकार) {
 		retval = EXT2_ET_SHORT_READ;
-		goto errout;
+		गच्छ errout;
 	}
 
 	/*
 	 * Now copy in the superblock and group descriptors
 	 */
-	memcpy(fs->super, buf, SUPERBLOCK_SIZE);
+	स्मृतिं_प्रतिलिख(fs->super, buf, SUPERBLOCK_आकार);
 
-	memcpy(fs->group_desc, buf + fs->blocksize,
-	       (ssize_t)fs->blocksize * fs->desc_blocks);
+	स्मृतिं_प्रतिलिख(fs->गणः_desc, buf + fs->blocksize,
+	       (ssize_t)fs->blocksize * fs->desc_खण्डानि);
 
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	मुक्त(buf);
+	प्रत्यागम retval;
 }
 
 /*
  * Write the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, पूर्णाङ्क fd, पूर्णाङ्क flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	ssize_t			actual;
 	size_t			c;
-	__u64			itr, cnt, size, total_size;
-	char			buf[1024];
+	__u64			itr, cnt, आकार, योग_आकार;
+	वर्ण			buf[1024];
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	यदि (flags & IMAGER_FLAG_INODEMAP) {
+		यदि (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			यदि (retval)
+				प्रत्यागम retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
-		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
-		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
-			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+		cnt = (__u64)EXT2_INODES_प्रत्येकम्_गणः(fs->super) *
+			fs->गणः_desc_गणनम्;
+		आकार = (EXT2_INODES_प्रत्येकम्_गणः(fs->super) / 8);
+	} अन्यथा {
+		यदि (!fs->खण्डम्_map) {
+			retval = ext2fs_read_खण्डम्_bitmap(fs);
+			यदि (retval)
+				प्रत्यागम retval;
 		}
-		bmap = fs->block_map;
-		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super, fs->group_desc_count);
-		size = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
+		bmap = fs->खण्डम्_map;
+		itr = fs->super->s_first_दत्त_खण्डम्;
+		cnt = EXT2_GROUPS_गन्तव्यम्_CLUSTERS(fs->super, fs->गणः_desc_गणनम्);
+		आकार = EXT2_CLUSTERS_प्रत्येकम्_गणः(fs->super) / 8;
 	}
-	total_size = size * fs->group_desc_count;
+	योग_आकार = आकार * fs->गणः_desc_गणनम्;
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
-			size = (cnt >> 3);
-		if (size == 0)
-			break;
+	यावत् (cnt > 0) {
+		आकार = परिमाण(buf);
+		यदि (आकार > (cnt >> 3))
+			आकार = (cnt >> 3);
+		यदि (आकार == 0)
+			भङ्ग;
 
 		retval = ext2fs_get_generic_bmap_range(bmap, itr,
-						       size << 3, buf);
-		if (retval)
-			return retval;
+						       आकार << 3, buf);
+		यदि (retval)
+			प्रत्यागम retval;
 
-		actual = write(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		actual = लिख(fd, buf, आकार);
+		यदि (actual == -1)
+			प्रत्यागम errno;
+		यदि (actual != (पूर्णाङ्क) आकार)
+			प्रत्यागम EXT2_ET_SHORT_READ;
 
-		itr += size << 3;
-		cnt -= size << 3;
+		itr += आकार << 3;
+		cnt -= आकार << 3;
 	}
 
-	size = total_size % fs->blocksize;
-	memset(buf, 0, sizeof(buf));
-	if (size) {
-		size = fs->blocksize - size;
-		while (size) {
-			c = size;
-			if (c > (int) sizeof(buf))
-				c = sizeof(buf);
-			actual = write(fd, buf, c);
-			if (actual < 0)
-				return errno;
-			if ((size_t) actual != c)
-				return EXT2_ET_SHORT_WRITE;
-			size -= c;
+	आकार = योग_आकार % fs->blocksize;
+	स्मृतिं_पूरय(buf, 0, परिमाण(buf));
+	यदि (आकार) {
+		आकार = fs->blocksize - आकार;
+		यावत् (आकार) {
+			c = आकार;
+			यदि (c > (पूर्णाङ्क) परिमाण(buf))
+				c = परिमाण(buf);
+			actual = लिख(fd, buf, c);
+			यदि (actual < 0)
+				प्रत्यागम errno;
+			यदि ((size_t) actual != c)
+				प्रत्यागम EXT2_ET_SHORT_WRITE;
+			आकार -= c;
 		}
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
 
 /*
  * Read the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, पूर्णाङ्क fd, पूर्णाङ्क flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	__u64			itr, cnt;
-	char			buf[1024];
-	unsigned int		size;
+	वर्ण			buf[1024];
+	अचिह्नित पूर्णाङ्क		आकार;
 	ssize_t			actual;
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	यदि (flags & IMAGER_FLAG_INODEMAP) {
+		यदि (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			यदि (retval)
+				प्रत्यागम retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
-		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
-		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
-			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+		cnt = (__u64)EXT2_INODES_प्रत्येकम्_गणः(fs->super) *
+			fs->गणः_desc_गणनम्;
+		आकार = (EXT2_INODES_प्रत्येकम्_गणः(fs->super) / 8);
+	} अन्यथा {
+		यदि (!fs->खण्डम्_map) {
+			retval = ext2fs_read_खण्डम्_bitmap(fs);
+			यदि (retval)
+				प्रत्यागम retval;
 		}
-		bmap = fs->block_map;
-		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_BLOCKS(fs->super, fs->group_desc_count);
-		size = EXT2_BLOCKS_PER_GROUP(fs->super) / 8;
+		bmap = fs->खण्डम्_map;
+		itr = fs->super->s_first_दत्त_खण्डम्;
+		cnt = EXT2_GROUPS_गन्तव्यम्_खण्डानि(fs->super, fs->गणः_desc_गणनम्);
+		आकार = EXT2_खण्डानि_प्रत्येकम्_गणः(fs->super) / 8;
 	}
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
-			size = (cnt >> 3);
-		if (size == 0)
-			break;
+	यावत् (cnt > 0) {
+		आकार = परिमाण(buf);
+		यदि (आकार > (cnt >> 3))
+			आकार = (cnt >> 3);
+		यदि (आकार == 0)
+			भङ्ग;
 
-		actual = read(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		actual = पठ(fd, buf, आकार);
+		यदि (actual == -1)
+			प्रत्यागम errno;
+		यदि (actual != (पूर्णाङ्क) आकार)
+			प्रत्यागम EXT2_ET_SHORT_READ;
 
-		retval = ext2fs_set_generic_bmap_range(bmap, itr,
-						       size << 3, buf);
-		if (retval)
-			return retval;
+		retval = ext2fs_समुच्चयः_generic_bmap_range(bmap, itr,
+						       आकार << 3, buf);
+		यदि (retval)
+			प्रत्यागम retval;
 
-		itr += size << 3;
-		cnt -= size << 3;
+		itr += आकार << 3;
+		cnt -= आकार << 3;
 	}
-	return 0;
+	प्रत्यागम 0;
 }

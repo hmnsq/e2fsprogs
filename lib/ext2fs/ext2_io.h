@@ -9,185 +9,185 @@
  * %End-Header%
  */
 
-#ifndef _EXT2FS_EXT2_IO_H
-#define _EXT2FS_EXT2_IO_H
+#यदि_अपरिभाषितम् _EXT2FS_EXT2_IO_H
+#परिभाषय _EXT2FS_EXT2_IO_H
 
-#include <ext2fs/ext2_types.h>
+#अन्तर्भाव <ext2fs/ext2_types.h>
 
 /*
  * ext2_loff_t is defined here since unix_io.c needs it.
  */
-#if defined(__GNUC__) || defined(HAS_LONG_LONG)
-typedef long long	ext2_loff_t;
-#else
-typedef long		ext2_loff_t;
-#endif
+#यदि defined(__GNUC__) || defined(HAS_LONG_LONG)
+प्रकारनिर्देश दीर्घ दीर्घ	ext2_loff_t;
+#अन्यथा
+प्रकारनिर्देश दीर्घ		ext2_loff_t;
+#यदि_अन्तः
 
 /* llseek.c */
-ext2_loff_t ext2fs_llseek (int, ext2_loff_t, int);
+ext2_loff_t ext2fs_llseek (पूर्णाङ्क, ext2_loff_t, पूर्णाङ्क);
 
-typedef struct struct_io_manager *io_manager;
-typedef struct struct_io_channel *io_channel;
-typedef struct struct_io_stats *io_stats;
+प्रकारनिर्देश संरचना struct_io_manager *io_manager;
+प्रकारनिर्देश संरचना struct_io_channel *io_channel;
+प्रकारनिर्देश संरचना struct_io_stats *io_stats;
 
-#define CHANNEL_FLAGS_WRITETHROUGH	0x01
-#define CHANNEL_FLAGS_DISCARD_ZEROES	0x02
-#define CHANNEL_FLAGS_BLOCK_DEVICE	0x04
-#define CHANNEL_FLAGS_THREADS		0x08
-#define CHANNEL_FLAGS_NODISCARD		0x10
-#define CHANNEL_FLAGS_NOZEROOUT		0x20
+#परिभाषय CHANNEL_FLAGS_WRITETHROUGH	0x01
+#परिभाषय CHANNEL_FLAGS_DISCARD_ZEROES	0x02
+#परिभाषय CHANNEL_FLAGS_खण्डम्_DEVICE	0x04
+#परिभाषय CHANNEL_FLAGS_तन्तवः		0x08
+#परिभाषय CHANNEL_FLAGS_NODISCARD		0x10
+#परिभाषय CHANNEL_FLAGS_NOZEROOUT		0x20
 
-#define io_channel_discard_zeroes_data(i) (i->flags & CHANNEL_FLAGS_DISCARD_ZEROES)
+#परिभाषय io_channel_discard_zeroes_दत्त(i) (i->flags & CHANNEL_FLAGS_DISCARD_ZEROES)
 
-struct struct_io_channel {
+संरचना struct_io_channel {
 	errcode_t	magic;
 	io_manager	manager;
-	char		*name;
-	int		block_size;
+	वर्ण		*name;
+	पूर्णाङ्क		खण्डम्_आकार;
 	errcode_t	(*read_error)(io_channel channel,
-				      unsigned long block,
-				      int count,
-				      void *data,
-				      size_t size,
-				      int actual_bytes_read,
+				      अचिह्नित दीर्घ खण्डम्,
+				      पूर्णाङ्क गणनम्,
+				      शून्य *दत्त,
+				      size_t आकार,
+				      पूर्णाङ्क actual_अष्टकानि_read,
 				      errcode_t	error);
 	errcode_t	(*write_error)(io_channel channel,
-				       unsigned long block,
-				       int count,
-				       const void *data,
-				       size_t size,
-				       int actual_bytes_written,
+				       अचिह्नित दीर्घ खण्डम्,
+				       पूर्णाङ्क गणनम्,
+				       ध्रुव शून्य *दत्त,
+				       size_t आकार,
+				       पूर्णाङ्क actual_अष्टकानि_written,
 				       errcode_t error);
-	int		refcount;
-	unsigned int	flags;
-	long		reserved[14];
-	void		*private_data;
-	void		*app_data;
-	int		align;
+	पूर्णाङ्क		refcount;
+	अचिह्नित पूर्णाङ्क	flags;
+	दीर्घ		reserved[14];
+	शून्य		*वैयक्तिकम्_दत्त;
+	शून्य		*app_दत्त;
+	पूर्णाङ्क		align;
 };
 
-struct struct_io_stats {
-	int			num_fields;
-	int			reserved;
-	unsigned long long	bytes_read;
-	unsigned long long	bytes_written;
-	unsigned long long	cache_hits;
-	unsigned long long	cache_misses;
+संरचना struct_io_stats {
+	पूर्णाङ्क			अङ्कः_fields;
+	पूर्णाङ्क			reserved;
+	अचिह्नित दीर्घ दीर्घ	अष्टकानि_read;
+	अचिह्नित दीर्घ दीर्घ	अष्टकानि_written;
+	अचिह्नित दीर्घ दीर्घ	cache_लब्धानि;
+	अचिह्नित दीर्घ दीर्घ	cache_अलब्धानि;
 };
 
-struct struct_io_manager {
+संरचना struct_io_manager {
 	errcode_t magic;
-	const char *name;
-	errcode_t (*open)(const char *name, int flags, io_channel *channel);
+	ध्रुव वर्ण *name;
+	errcode_t (*उद्घाटय)(ध्रुव वर्ण *name, पूर्णाङ्क flags, io_channel *channel);
 	errcode_t (*close)(io_channel channel);
-	errcode_t (*set_blksize)(io_channel channel, int blksize);
-	errcode_t (*read_blk)(io_channel channel, unsigned long block,
-			      int count, void *data);
-	errcode_t (*write_blk)(io_channel channel, unsigned long block,
-			       int count, const void *data);
+	errcode_t (*समुच्चयः_blksize)(io_channel channel, पूर्णाङ्क blksize);
+	errcode_t (*read_blk)(io_channel channel, अचिह्नित दीर्घ खण्डम्,
+			      पूर्णाङ्क गणनम्, शून्य *दत्त);
+	errcode_t (*write_blk)(io_channel channel, अचिह्नित दीर्घ खण्डम्,
+			       पूर्णाङ्क गणनम्, ध्रुव शून्य *दत्त);
 	errcode_t (*flush)(io_channel channel);
-	errcode_t (*write_byte)(io_channel channel, unsigned long offset,
-				int count, const void *data);
-	errcode_t (*set_option)(io_channel channel, const char *option,
-				const char *arg);
+	errcode_t (*write_byte)(io_channel channel, अचिह्नित दीर्घ विस्थापनम्,
+				पूर्णाङ्क गणनम्, ध्रुव शून्य *दत्त);
+	errcode_t (*समुच्चयः_option)(io_channel channel, ध्रुव वर्ण *option,
+				ध्रुव वर्ण *arg);
 	errcode_t (*get_stats)(io_channel channel, io_stats *io_stats);
-	errcode_t (*read_blk64)(io_channel channel, unsigned long long block,
-					int count, void *data);
-	errcode_t (*write_blk64)(io_channel channel, unsigned long long block,
-					int count, const void *data);
-	errcode_t (*discard)(io_channel channel, unsigned long long block,
-			     unsigned long long count);
+	errcode_t (*read_blk64)(io_channel channel, अचिह्नित दीर्घ दीर्घ खण्डम्,
+					पूर्णाङ्क गणनम्, शून्य *दत्त);
+	errcode_t (*write_blk64)(io_channel channel, अचिह्नित दीर्घ दीर्घ खण्डम्,
+					पूर्णाङ्क गणनम्, ध्रुव शून्य *दत्त);
+	errcode_t (*discard)(io_channel channel, अचिह्नित दीर्घ दीर्घ खण्डम्,
+			     अचिह्नित दीर्घ दीर्घ गणनम्);
 	errcode_t (*cache_readahead)(io_channel channel,
-				     unsigned long long block,
-				     unsigned long long count);
-	errcode_t (*zeroout)(io_channel channel, unsigned long long block,
-			     unsigned long long count);
-	errcode_t (*flock)(io_channel channel, unsigned int flock_flags);
-	long	reserved[13];
+				     अचिह्नित दीर्घ दीर्घ खण्डम्,
+				     अचिह्नित दीर्घ दीर्घ गणनम्);
+	errcode_t (*zeroout)(io_channel channel, अचिह्नित दीर्घ दीर्घ खण्डम्,
+			     अचिह्नित दीर्घ दीर्घ गणनम्);
+	errcode_t (*flock)(io_channel channel, अचिह्नित पूर्णाङ्क flock_flags);
+	दीर्घ	reserved[13];
 };
 
-#define IO_FLAG_RW		0x0001
-#define IO_FLAG_EXCLUSIVE	0x0002
-#define IO_FLAG_DIRECT_IO	0x0004
-#define IO_FLAG_FORCE_BOUNCE	0x0008
-#define IO_FLAG_THREADS		0x0010
-#define IO_FLAG_NOCACHE		0x0020
+#परिभाषय IO_FLAG_RW		0x0001
+#परिभाषय IO_FLAG_EXCLUSIVE	0x0002
+#परिभाषय IO_FLAG_प्रत्यक्षम्_IO	0x0004
+#परिभाषय IO_FLAG_FORCE_BOUNCE	0x0008
+#परिभाषय IO_FLAG_तन्तवः		0x0010
+#परिभाषय IO_FLAG_NOCACHE		0x0020
 
 /* Prevent other programs from reading or writing to underlying storage */
-#define IO_CHANNEL_FLOCK_EXCLUSIVE	0x1
+#परिभाषय IO_CHANNEL_FLOCK_EXCLUSIVE	0x1
 /* Prevent other programs from writing to underlying storage */
-#define IO_CHANNEL_FLOCK_SHARED		0x2
+#परिभाषय IO_CHANNEL_FLOCK_SHARED		0x2
 /* Return EBUSY if the lock cannot be taken immediately */
-#define IO_CHANNEL_FLOCK_TRYLOCK	0x4
+#परिभाषय IO_CHANNEL_FLOCK_TRYLOCK	0x4
 
 /*
  * Convenience functions....
  */
-#define io_channel_close(c) 		((c)->manager->close((c)))
-#define io_channel_set_blksize(c,s)	((c)->manager->set_blksize((c),s))
-#define io_channel_read_blk(c,b,n,d)	((c)->manager->read_blk((c),b,n,d))
-#define io_channel_write_blk(c,b,n,d)	((c)->manager->write_blk((c),b,n,d))
-#define io_channel_flush(c) 		((c)->manager->flush((c)))
-#define io_channel_bumpcount(c)		((c)->refcount++)
+#परिभाषय io_channel_close(c) 		((c)->manager->close((c)))
+#परिभाषय io_channel_समुच्चयः_blksize(c,s)	((c)->manager->समुच्चयः_blksize((c),s))
+#परिभाषय io_channel_read_blk(c,b,n,d)	((c)->manager->read_blk((c),b,n,d))
+#परिभाषय io_channel_write_blk(c,b,n,d)	((c)->manager->write_blk((c),b,n,d))
+#परिभाषय io_channel_flush(c) 		((c)->manager->flush((c)))
+#परिभाषय io_channel_bumpcount(c)		((c)->refcount++)
 
 /* io_manager.c */
-extern errcode_t io_channel_set_options(io_channel channel,
-					const char *options);
-extern errcode_t io_channel_write_byte(io_channel channel,
-				       unsigned long offset,
-				       int count, const void *data);
-extern errcode_t io_channel_read_blk64(io_channel channel,
-				       unsigned long long block,
-				       int count, void *data);
-extern errcode_t io_channel_write_blk64(io_channel channel,
-					unsigned long long block,
-					int count, const void *data);
-extern errcode_t io_channel_discard(io_channel channel,
-				    unsigned long long block,
-				    unsigned long long count);
-extern errcode_t io_channel_zeroout(io_channel channel,
-				    unsigned long long block,
-				    unsigned long long count);
-extern errcode_t io_channel_alloc_buf(io_channel channel,
-				      int count, void *ptr);
-extern errcode_t io_channel_cache_readahead(io_channel io,
-					    unsigned long long block,
-					    unsigned long long count);
-extern errcode_t io_channel_flock(io_channel io, unsigned int flock_flags);
-extern errcode_t io_channel_funlock(io_channel io);
+बाह्य errcode_t io_channel_समुच्चयः_options(io_channel channel,
+					ध्रुव वर्ण *options);
+बाह्य errcode_t io_channel_write_byte(io_channel channel,
+				       अचिह्नित दीर्घ विस्थापनम्,
+				       पूर्णाङ्क गणनम्, ध्रुव शून्य *दत्त);
+बाह्य errcode_t io_channel_read_blk64(io_channel channel,
+				       अचिह्नित दीर्घ दीर्घ खण्डम्,
+				       पूर्णाङ्क गणनम्, शून्य *दत्त);
+बाह्य errcode_t io_channel_write_blk64(io_channel channel,
+					अचिह्नित दीर्घ दीर्घ खण्डम्,
+					पूर्णाङ्क गणनम्, ध्रुव शून्य *दत्त);
+बाह्य errcode_t io_channel_discard(io_channel channel,
+				    अचिह्नित दीर्घ दीर्घ खण्डम्,
+				    अचिह्नित दीर्घ दीर्घ गणनम्);
+बाह्य errcode_t io_channel_zeroout(io_channel channel,
+				    अचिह्नित दीर्घ दीर्घ खण्डम्,
+				    अचिह्नित दीर्घ दीर्घ गणनम्);
+बाह्य errcode_t io_channel_alloc_buf(io_channel channel,
+				      पूर्णाङ्क गणनम्, शून्य *ptr);
+बाह्य errcode_t io_channel_cache_readahead(io_channel io,
+					    अचिह्नित दीर्घ दीर्घ खण्डम्,
+					    अचिह्नित दीर्घ दीर्घ गणनम्);
+बाह्य errcode_t io_channel_flock(io_channel io, अचिह्नित पूर्णाङ्क flock_flags);
+बाह्य errcode_t io_channel_funlock(io_channel io);
 
-#ifdef _WIN32
+#यदि_परिभाषितम् _WIN32
 /* windows_io.c */
-extern io_manager windows_io_manager;
-#define default_io_manager windows_io_manager
-#else
+बाह्य io_manager windows_io_manager;
+#परिभाषय default_io_manager windows_io_manager
+#अन्यथा
 /* unix_io.c */
-extern io_manager unix_io_manager;
-extern io_manager unixfd_io_manager;
-#define default_io_manager unix_io_manager
-#endif
+बाह्य io_manager unix_io_manager;
+बाह्य io_manager unixfd_io_manager;
+#परिभाषय default_io_manager unix_io_manager
+#यदि_अन्तः
 
 /* sparse_io.c */
-extern io_manager sparse_io_manager;
-extern io_manager sparsefd_io_manager;
+बाह्य io_manager sparse_io_manager;
+बाह्य io_manager sparsefd_io_manager;
 
 /* undo_io.c */
-extern io_manager undo_io_manager;
-extern errcode_t set_undo_io_backing_manager(io_manager manager);
-extern errcode_t set_undo_io_backup_file(char *file_name);
+बाह्य io_manager undo_io_manager;
+बाह्य errcode_t समुच्चयः_undo_io_backing_manager(io_manager manager);
+बाह्य errcode_t समुच्चयः_undo_io_backup_file(वर्ण *file_name);
 
 /* test_io.c */
-extern io_manager test_io_manager, test_io_backing_manager;
-extern void (*test_io_cb_read_blk)
-	(unsigned long block, int count, errcode_t err);
-extern void (*test_io_cb_write_blk)
-	(unsigned long block, int count, errcode_t err);
-extern void (*test_io_cb_read_blk64)
-	(unsigned long long block, int count, errcode_t err);
-extern void (*test_io_cb_write_blk64)
-	(unsigned long long block, int count, errcode_t err);
-extern void (*test_io_cb_set_blksize)
-	(int blksize, errcode_t err);
+बाह्य io_manager test_io_manager, test_io_backing_manager;
+बाह्य शून्य (*test_io_cb_read_blk)
+	(अचिह्नित दीर्घ खण्डम्, पूर्णाङ्क गणनम्, errcode_t err);
+बाह्य शून्य (*test_io_cb_write_blk)
+	(अचिह्नित दीर्घ खण्डम्, पूर्णाङ्क गणनम्, errcode_t err);
+बाह्य शून्य (*test_io_cb_read_blk64)
+	(अचिह्नित दीर्घ दीर्घ खण्डम्, पूर्णाङ्क गणनम्, errcode_t err);
+बाह्य शून्य (*test_io_cb_write_blk64)
+	(अचिह्नित दीर्घ दीर्घ खण्डम्, पूर्णाङ्क गणनम्, errcode_t err);
+बाह्य शून्य (*test_io_cb_समुच्चयः_blksize)
+	(पूर्णाङ्क blksize, errcode_t err);
 
-#endif /* _EXT2FS_EXT2_IO_H */
+#यदि_अन्तः /* _EXT2FS_EXT2_IO_H */
 

@@ -9,39 +9,39 @@
  * %End-Header%
  */
 
-struct ext2_block_relocate_entry {
+संरचना ext2_खण्डम्_relocate_प्रविष्टिः {
 	blk64_t	new;
-	__s16	offset;
+	__s16	विस्थापनम्;
 	__u16	flags;
-	union {
-		blk64_t		block_ref;
+	सङ्घ {
+		blk64_t		खण्डम्_ref;
 		ext2_ino_t	inode_ref;
 	} owner;
 };
 
-#define RELOCATE_TYPE_REF  0x0007
-#define RELOCATE_BLOCK_REF 0x0001
-#define RELOCATE_INODE_REF 0x0002
+#परिभाषय RELOCATE_TYPE_REF  0x0007
+#परिभाषय RELOCATE_खण्डम्_REF 0x0001
+#परिभाषय RELOCATE_INODE_REF 0x0002
 
-typedef struct ext2_block_relocation_table *ext2_brel;
+प्रकारनिर्देश संरचना ext2_खण्डम्_relocation_सारणी *ext2_brel;
 
-struct ext2_block_relocation_table {
+संरचना ext2_खण्डम्_relocation_सारणी {
 	__u32	magic;
-	char	*name;
+	वर्ण	*name;
 	blk64_t	current;
-	void	*priv_data;
+	शून्य	*priv_दत्त;
 
 	/*
 	 * Add a block relocation entry.
 	 */
 	errcode_t (*put)(ext2_brel brel, blk64_t old,
-			      struct ext2_block_relocate_entry *ent);
+			      संरचना ext2_खण्डम्_relocate_प्रविष्टिः *ent);
 
 	/*
 	 * Get a block relocation entry.
 	 */
 	errcode_t (*get)(ext2_brel brel, blk64_t old,
-			      struct ext2_block_relocate_entry *ent);
+			      संरचना ext2_खण्डम्_relocate_प्रविष्टिः *ent);
 
 	/*
 	 * Initialize for iterating over the block relocation entries.
@@ -52,8 +52,8 @@ struct ext2_block_relocation_table {
 	 * The iterator function for the inode relocation entries.
 	 * Returns an inode number of 0 when out of entries.
 	 */
-	errcode_t (*next)(ext2_brel brel, blk64_t *old,
-			  struct ext2_block_relocate_entry *ent);
+	errcode_t (*अग्र)(ext2_brel brel, blk64_t *old,
+			  संरचना ext2_खण्डम्_relocate_प्रविष्टिः *ent);
 
 	/*
 	 * Move the inode relocation table from one block number to
@@ -70,17 +70,17 @@ struct ext2_block_relocation_table {
 	/*
 	 * Free the block relocation table.
 	 */
-	errcode_t (*free)(ext2_brel brel);
+	errcode_t (*मुक्त)(ext2_brel brel);
 };
 
-errcode_t ext2fs_brel_memarray_create(char *name, blk64_t max_block,
+errcode_t ext2fs_brel_memarray_create(वर्ण *name, blk64_t max_खण्डम्,
 				    ext2_brel *brel);
 
-#define ext2fs_brel_put(brel, old, ent) ((brel)->put((brel), old, ent))
-#define ext2fs_brel_get(brel, old, ent) ((brel)->get((brel), old, ent))
-#define ext2fs_brel_start_iter(brel) ((brel)->start_iter((brel)))
-#define ext2fs_brel_next(brel, old, ent) ((brel)->next((brel), old, ent))
-#define ext2fs_brel_move(brel, old, new) ((brel)->move((brel), old, new))
-#define ext2fs_brel_delete(brel, old) ((brel)->delete((brel), old))
-#define ext2fs_brel_free(brel) ((brel)->free((brel)))
+#परिभाषय ext2fs_brel_put(brel, old, ent) ((brel)->put((brel), old, ent))
+#परिभाषय ext2fs_brel_get(brel, old, ent) ((brel)->get((brel), old, ent))
+#परिभाषय ext2fs_brel_start_iter(brel) ((brel)->start_iter((brel)))
+#परिभाषय ext2fs_brel_अग्र(brel, old, ent) ((brel)->अग्र((brel), old, ent))
+#परिभाषय ext2fs_brel_move(brel, old, new) ((brel)->move((brel), old, new))
+#परिभाषय ext2fs_brel_delete(brel, old) ((brel)->delete((brel), old))
+#परिभाषय ext2fs_brel_free(brel) ((brel)->मुक्त((brel)))
 

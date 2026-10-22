@@ -9,81 +9,81 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <stdlib.h>
 
-#include "ext2_fs.h"
+#अन्तर्भाव "ext2_fs.h"
 
-struct ext2_inode_large inode;
+संरचना ext2_inode_large inode;
 
-#ifndef offsetof
-#define offsetof(type, member)  __builtin_offsetof(type, member)
-#endif
+#यदि_अपरिभाषितम् offsetof
+#परिभाषय offsetof(type, member)  __builtin_offsetof(type, member)
+#यदि_अन्तः
 
-#define check_field(x, s) cur_offset = do_field(#x, s, sizeof(inode.x),	       \
-					offsetof(struct ext2_inode_large, x),  \
-					cur_offset)
+#परिभाषय check_क्षेत्रम्(x, s) cur_विस्थापनम् = do_क्षेत्रम्(#x, s, परिमाण(inode.x),	       \
+					offsetof(संरचना ext2_inode_large, x),  \
+					cur_विस्थापनम्)
 
-static int do_field(const char *field, unsigned size, unsigned cur_size,
-		    unsigned offset, unsigned cur_offset)
+स्थिर पूर्णाङ्क do_क्षेत्रम्(ध्रुव वर्ण *क्षेत्रम्, अचिह्नित आकार, अचिह्नित cur_आकार,
+		    अचिह्नित विस्थापनम्, अचिह्नित cur_विस्थापनम्)
 {
-	if (size != cur_size) {
-		printf("error: %s size %u should be %u\n",
-		       field, cur_size, size);
-		exit(1);
+	यदि (आकार != cur_आकार) {
+		प्रारूप_लिख("error: %s size %u should be %u\n",
+		       क्षेत्रम्, cur_आकार, आकार);
+		निर्गच्छ(1);
 	}
-	if (offset != cur_offset) {
-		printf("error: %s offset %u should be %u\n",
-		       field, cur_offset, offset);
-		exit(1);
+	यदि (विस्थापनम् != cur_विस्थापनम्) {
+		प्रारूप_लिख("error: %s offset %u should be %u\n",
+		       क्षेत्रम्, cur_विस्थापनम्, विस्थापनम्);
+		निर्गच्छ(1);
 	}
-	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	प्रारूप_लिख("%8d %-30s %3u\n", विस्थापनम्, क्षेत्रम्, (अचिह्नित) आकार);
+	प्रत्यागम विस्थापनम् + आकार;
 }
 
-int main(int argc, char **argv)
+पूर्णाङ्क मुख्यम्(पूर्णाङ्क argc, वर्ण **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#यदि (__GNUC__ >= 4)
+	पूर्णाङ्क cur_विस्थापनम् = 0;
 
-	printf("%8s %-30s %3s\n", "offset", "field", "size");
-	check_field(i_mode, 2);
-	check_field(i_uid, 2);
-	check_field(i_size, 4);
-	check_field(i_atime, 4);
-	check_field(i_ctime, 4);
-	check_field(i_mtime, 4);
-	check_field(i_dtime, 4);
-	check_field(i_gid, 2);
-	check_field(i_links_count, 2);
-	check_field(i_blocks, 4);
-	check_field(i_flags, 4);
-	check_field(osd1.linux1.l_i_version, 4);
-	check_field(i_block, 15 * 4);
-	check_field(i_generation, 4);
-	check_field(i_file_acl, 4);
-	check_field(i_size_high, 4);
-	check_field(i_faddr, 4);
-	check_field(osd2.linux2.l_i_blocks_hi, 2);
-	check_field(osd2.linux2.l_i_file_acl_high, 2);
-	check_field(osd2.linux2.l_i_uid_high, 2);
-	check_field(osd2.linux2.l_i_gid_high, 2);
-	check_field(osd2.linux2.l_i_checksum_lo, 2);
-	check_field(osd2.linux2.l_i_reserved, 2);
-	do_field("Small inode end", 0, 0, cur_offset, 128);
-	check_field(i_extra_isize, 2);
-	check_field(i_checksum_hi, 2);
-	check_field(i_ctime_extra, 4);
-	check_field(i_mtime_extra, 4);
-	check_field(i_atime_extra, 4);
-	check_field(i_crtime, 4);
-	check_field(i_crtime_extra, 4);
-	check_field(i_version_hi, 4);
-	check_field(i_projid, 4);
+	प्रारूप_लिख("%8s %-30s %3s\n", "offset", "field", "size");
+	check_क्षेत्रम्(i_बहुलकम्, 2);
+	check_क्षेत्रम्(i_uid, 2);
+	check_क्षेत्रम्(i_आकार, 4);
+	check_क्षेत्रम्(i_atime, 4);
+	check_क्षेत्रम्(i_ctime, 4);
+	check_क्षेत्रम्(i_mtime, 4);
+	check_क्षेत्रम्(i_dtime, 4);
+	check_क्षेत्रम्(i_gid, 2);
+	check_क्षेत्रम्(i_links_गणनम्, 2);
+	check_क्षेत्रम्(i_खण्डानि, 4);
+	check_क्षेत्रम्(i_flags, 4);
+	check_क्षेत्रम्(osd1.linux1.l_i_संस्करणम्, 4);
+	check_क्षेत्रम्(i_खण्डम्, 15 * 4);
+	check_क्षेत्रम्(i_generation, 4);
+	check_क्षेत्रम्(i_file_acl, 4);
+	check_क्षेत्रम्(i_आकार_उच्चः, 4);
+	check_क्षेत्रम्(i_faddr, 4);
+	check_क्षेत्रम्(osd2.linux2.l_i_खण्डानि_hi, 2);
+	check_क्षेत्रम्(osd2.linux2.l_i_file_acl_उच्चः, 2);
+	check_क्षेत्रम्(osd2.linux2.l_i_uid_उच्चः, 2);
+	check_क्षेत्रम्(osd2.linux2.l_i_gid_उच्चः, 2);
+	check_क्षेत्रम्(osd2.linux2.l_i_checksum_lo, 2);
+	check_क्षेत्रम्(osd2.linux2.l_i_reserved, 2);
+	do_क्षेत्रम्("Small inode end", 0, 0, cur_विस्थापनम्, 128);
+	check_क्षेत्रम्(i_extra_isize, 2);
+	check_क्षेत्रम्(i_checksum_hi, 2);
+	check_क्षेत्रम्(i_ctime_extra, 4);
+	check_क्षेत्रम्(i_mtime_extra, 4);
+	check_क्षेत्रम्(i_atime_extra, 4);
+	check_क्षेत्रम्(i_crtime, 4);
+	check_क्षेत्रम्(i_crtime_extra, 4);
+	check_क्षेत्रम्(i_संस्करणम्_hi, 4);
+	check_क्षेत्रम्(i_projid, 4);
 	/* This size will change as new fields are added */
-	do_field("Large inode end", 0, 0, cur_offset, sizeof(inode));
-#endif
-	return 0;
+	do_क्षेत्रम्("Large inode end", 0, 0, cur_विस्थापनम्, परिमाण(inode));
+#यदि_अन्तः
+	प्रत्यागम 0;
 }

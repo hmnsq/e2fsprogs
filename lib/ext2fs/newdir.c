@@ -9,118 +9,118 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
+#यदि_अन्तः
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
 
-#ifndef EXT2_FT_DIR
-#define EXT2_FT_DIR		2
-#endif
+#यदि_अपरिभाषितम् EXT2_FT_DIR
+#परिभाषय EXT2_FT_DIR		2
+#यदि_अन्तः
 
 /*
  * Create new directory block
  */
-errcode_t ext2fs_new_dir_block(ext2_filsys fs, ext2_ino_t dir_ino,
-			       ext2_ino_t parent_ino, char **block)
+errcode_t ext2fs_new_dir_खण्डम्(ext2_filsys fs, ext2_ino_t dir_ino,
+			       ext2_ino_t parent_ino, वर्ण **खण्डम्)
 {
-	struct ext2_dir_entry 	*dir = NULL;
+	संरचना ext2_dir_प्रविष्टिः 	*dir = रिक्त;
 	errcode_t		retval;
-	char			*buf;
-	int			rec_len;
-	int			filetype = 0;
-	struct ext2_dir_entry_tail	*t;
-	int			csum_size = 0;
+	वर्ण			*buf;
+	पूर्णाङ्क			rec_len;
+	पूर्णाङ्क			filetype = 0;
+	संरचना ext2_dir_प्रविष्टिः_पुच्छ	*t;
+	पूर्णाङ्क			csum_आकार = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
-	memset(buf, 0, fs->blocksize);
-	dir = (struct ext2_dir_entry *) buf;
+	यदि (retval)
+		प्रत्यागम retval;
+	स्मृतिं_पूरय(buf, 0, fs->blocksize);
+	dir = (संरचना ext2_dir_प्रविष्टिः *) buf;
 
-	if (ext2fs_has_feature_metadata_csum(fs->super))
-		csum_size = sizeof(struct ext2_dir_entry_tail);
+	यदि (ext2fs_has_feature_metadata_csum(fs->super))
+		csum_आकार = परिमाण(संरचना ext2_dir_प्रविष्टिः_पुच्छ);
 
-	retval = ext2fs_set_rec_len(fs, fs->blocksize - csum_size, dir);
-	if (retval) {
+	retval = ext2fs_समुच्चयः_rec_len(fs, fs->blocksize - csum_आकार, dir);
+	यदि (retval) {
 		ext2fs_free_mem(&buf);
-		return retval;
+		प्रत्यागम retval;
 	}
 
-	if (dir_ino) {
-		if (ext2fs_has_feature_filetype(fs->super))
+	यदि (dir_ino) {
+		यदि (ext2fs_has_feature_filetype(fs->super))
 			filetype = EXT2_FT_DIR;
 		/*
 		 * Set up entry for '.'
 		 */
 		dir->inode = dir_ino;
-		ext2fs_dirent_set_name_len(dir, 1);
-		ext2fs_dirent_set_file_type(dir, filetype);
+		ext2fs_dirent_समुच्चयः_name_len(dir, 1);
+		ext2fs_dirent_समुच्चयः_file_type(dir, filetype);
 		dir->name[0] = '.';
-		rec_len = (fs->blocksize - csum_size) - EXT2_DIR_REC_LEN(1);
+		rec_len = (fs->blocksize - csum_आकार) - EXT2_DIR_REC_LEN(1);
 		dir->rec_len = EXT2_DIR_REC_LEN(1);
 
 		/*
 		 * Set up entry for '..'
 		 */
-		dir = (struct ext2_dir_entry *) (buf + dir->rec_len);
-		retval = ext2fs_set_rec_len(fs, rec_len, dir);
-		if (retval) {
+		dir = (संरचना ext2_dir_प्रविष्टिः *) (buf + dir->rec_len);
+		retval = ext2fs_समुच्चयः_rec_len(fs, rec_len, dir);
+		यदि (retval) {
 			ext2fs_free_mem(&buf);
-			return retval;
+			प्रत्यागम retval;
 		}
 		dir->inode = parent_ino;
-		ext2fs_dirent_set_name_len(dir, 2);
-		ext2fs_dirent_set_file_type(dir, filetype);
+		ext2fs_dirent_समुच्चयः_name_len(dir, 2);
+		ext2fs_dirent_समुच्चयः_file_type(dir, filetype);
 		dir->name[0] = '.';
 		dir->name[1] = '.';
 
 	}
 
-	if (csum_size) {
-		t = EXT2_DIRENT_TAIL(buf, fs->blocksize);
-		ext2fs_initialize_dirent_tail(fs, t);
+	यदि (csum_आकार) {
+		t = EXT2_DIRENT_पुच्छ(buf, fs->blocksize);
+		ext2fs_initialize_dirent_पुच्छ(fs, t);
 	}
-	*block = buf;
-	return 0;
+	*खण्डम् = buf;
+	प्रत्यागम 0;
 }
 
 /*
  * Create new directory on inline data
  */
-errcode_t ext2fs_new_dir_inline_data(ext2_filsys fs,
-				     ext2_ino_t dir_ino EXT2FS_ATTR((unused)),
+errcode_t ext2fs_new_dir_inline_दत्त(ext2_filsys fs,
+				     ext2_ino_t dir_ino EXT2FS_ATTR((अप्रयुक्तम्)),
 				     ext2_ino_t parent_ino, __u32 *iblock)
 {
-	struct ext2_dir_entry 	*dir = NULL;
+	संरचना ext2_dir_प्रविष्टिः 	*dir = रिक्त;
 	errcode_t		retval;
-	int			rec_len;
+	पूर्णाङ्क			rec_len;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	iblock[0] = ext2fs_cpu_to_le32(parent_ino);
+	iblock[0] = ext2fs_cpu_गन्तव्यम्_le32(parent_ino);
 
-	dir = (struct ext2_dir_entry *)((char *)iblock +
-					EXT4_INLINE_DATA_DOTDOT_SIZE);
+	dir = (संरचना ext2_dir_प्रविष्टिः *)((वर्ण *)iblock +
+					EXT4_INLINE_दत्त_DOTDOT_आकार);
 	dir->inode = 0;
-	rec_len = EXT4_MIN_INLINE_DATA_SIZE - EXT4_INLINE_DATA_DOTDOT_SIZE;
-	retval = ext2fs_set_rec_len(fs, rec_len, dir);
-	if (retval)
-		goto errout;
+	rec_len = EXT4_MIN_INLINE_दत्त_आकार - EXT4_INLINE_दत्त_DOTDOT_आकार;
+	retval = ext2fs_समुच्चयः_rec_len(fs, rec_len, dir);
+	यदि (retval)
+		गच्छ errout;
 
-#ifdef WORDS_BIGENDIAN
-	retval = ext2fs_dirent_swab_out2(fs, (char *)dir, rec_len, 0);
-	if (retval)
-		goto errout;
-#endif
+#यदि_परिभाषितम् शब्दाः_BIGENDIAN
+	retval = ext2fs_dirent_swab_out2(fs, (वर्ण *)dir, rec_len, 0);
+	यदि (retval)
+		गच्छ errout;
+#यदि_अन्तः
 
 errout:
-	return retval;
+	प्रत्यागम retval;
 }

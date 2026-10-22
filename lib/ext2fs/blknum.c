@@ -11,184 +11,184 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include "ext2fs.h"
+#अन्तर्भाव "config.h"
+#अन्तर्भाव "ext2fs.h"
 
 /*
  * Return the group # of a block
  */
-dgrp_t ext2fs_group_of_blk2(ext2_filsys fs, blk64_t blk)
+dgrp_t ext2fs_गणः_सम्बन्धि_blk2(ext2_filsys fs, blk64_t blk)
 {
-	return (blk - fs->super->s_first_data_block) /
-		fs->super->s_blocks_per_group;
+	प्रत्यागम (blk - fs->super->s_first_दत्त_खण्डम्) /
+		fs->super->s_खण्डानि_प्रत्येकम्_गणः;
 }
 
 /*
  * Return the first block (inclusive) in a group
  */
-blk64_t ext2fs_group_first_block2(ext2_filsys fs, dgrp_t group)
+blk64_t ext2fs_गणः_first_block2(ext2_filsys fs, dgrp_t गणः)
 {
-	return fs->super->s_first_data_block +
-		EXT2_GROUPS_TO_BLOCKS(fs->super, group);
+	प्रत्यागम fs->super->s_first_दत्त_खण्डम् +
+		EXT2_GROUPS_गन्तव्यम्_खण्डानि(fs->super, गणः);
 }
 
 /*
  * Return the last block (inclusive) in a group
  */
-blk64_t ext2fs_group_last_block2(ext2_filsys fs, dgrp_t group)
+blk64_t ext2fs_गणः_चरमः_block2(ext2_filsys fs, dgrp_t गणः)
 {
-	return (group == fs->group_desc_count - 1 ?
-		ext2fs_blocks_count(fs->super) - 1 :
-		ext2fs_group_first_block2(fs, group) +
-			(fs->super->s_blocks_per_group - 1));
+	प्रत्यागम (गणः == fs->गणः_desc_गणनम् - 1 ?
+		ext2fs_खण्डानि_गणनम्(fs->super) - 1 :
+		ext2fs_गणः_first_block2(fs, गणः) +
+			(fs->super->s_खण्डानि_प्रत्येकम्_गणः - 1));
 }
 
 /*
  * Return the number of blocks in a group
  */
-int ext2fs_group_blocks_count(ext2_filsys fs, dgrp_t group)
+पूर्णाङ्क ext2fs_गणः_खण्डानि_गणनम्(ext2_filsys fs, dgrp_t गणः)
 {
-	int num_blocks;
+	पूर्णाङ्क अङ्कः_खण्डानि;
 
-	if (group == fs->group_desc_count - 1) {
-		num_blocks = (ext2fs_blocks_count(fs->super) -
-				fs->super->s_first_data_block) %
-			      fs->super->s_blocks_per_group;
-		if (!num_blocks)
-			num_blocks = fs->super->s_blocks_per_group;
-	} else
-		num_blocks = fs->super->s_blocks_per_group;
+	यदि (गणः == fs->गणः_desc_गणनम् - 1) {
+		अङ्कः_खण्डानि = (ext2fs_खण्डानि_गणनम्(fs->super) -
+				fs->super->s_first_दत्त_खण्डम्) %
+			      fs->super->s_खण्डानि_प्रत्येकम्_गणः;
+		यदि (!अङ्कः_खण्डानि)
+			अङ्कः_खण्डानि = fs->super->s_खण्डानि_प्रत्येकम्_गणः;
+	} अन्यथा
+		अङ्कः_खण्डानि = fs->super->s_खण्डानि_प्रत्येकम्_गणः;
 
-	return num_blocks;
+	प्रत्यागम अङ्कः_खण्डानि;
 }
 
 /*
  * Return the inode data block count
  */
-blk64_t ext2fs_inode_data_blocks2(ext2_filsys fs,
-					struct ext2_inode *inode)
+blk64_t ext2fs_inode_दत्त_blocks2(ext2_filsys fs,
+					संरचना ext2_inode *inode)
 {
-	return (inode->i_blocks |
+	प्रत्यागम (inode->i_खण्डानि |
 		(ext2fs_has_feature_huge_file(fs->super) ?
-		 (__u64) inode->osd2.linux2.l_i_blocks_hi << 32 : 0)) -
-		(inode->i_file_acl ? EXT2_CLUSTER_SIZE(fs->super) >> 9 : 0);
+		 (__u64) inode->osd2.linux2.l_i_खण्डानि_hi << 32 : 0)) -
+		(inode->i_file_acl ? EXT2_CLUSTER_आकार(fs->super) >> 9 : 0);
 }
 
 /*
  * Return the inode i_blocks count
  */
-blk64_t ext2fs_inode_i_blocks(ext2_filsys fs,
-					struct ext2_inode *inode)
+blk64_t ext2fs_inode_i_खण्डानि(ext2_filsys fs,
+					संरचना ext2_inode *inode)
 {
-	return (inode->i_blocks |
+	प्रत्यागम (inode->i_खण्डानि |
 		(ext2fs_has_feature_huge_file(fs->super) ?
-		 (__u64)inode->osd2.linux2.l_i_blocks_hi << 32 : 0));
+		 (__u64)inode->osd2.linux2.l_i_खण्डानि_hi << 32 : 0));
 }
 
 /*
  * Return the inode i_blocks in stat (512 byte) units
  */
-blk64_t ext2fs_get_stat_i_blocks(ext2_filsys fs,
-				 struct ext2_inode *inode)
+blk64_t ext2fs_get_stat_i_खण्डानि(ext2_filsys fs,
+				 संरचना ext2_inode *inode)
 {
-	blk64_t	ret = inode->i_blocks;
+	blk64_t	ret = inode->i_खण्डानि;
 
-	if (ext2fs_has_feature_huge_file(fs->super)) {
-		ret += ((long long) inode->osd2.linux2.l_i_blocks_hi) << 32;
-		if (inode->i_flags & EXT4_HUGE_FILE_FL)
+	यदि (ext2fs_has_feature_huge_file(fs->super)) {
+		ret += ((दीर्घ दीर्घ) inode->osd2.linux2.l_i_खण्डानि_hi) << 32;
+		यदि (inode->i_flags & EXT4_HUGE_FILE_FL)
 			ret *= (fs->blocksize / 512);
 	}
-	return ret;
+	प्रत्यागम ret;
 }
 
 /*
  * Return the fs block count
  */
-blk64_t ext2fs_blocks_count(struct ext2_super_block *super)
+blk64_t ext2fs_खण्डानि_गणनम्(संरचना ext2_super_खण्डम् *super)
 {
-	return super->s_blocks_count |
+	प्रत्यागम super->s_खण्डानि_गणनम् |
 		(ext2fs_has_feature_64bit(super) ?
-		(__u64) super->s_blocks_count_hi << 32 : 0);
+		(__u64) super->s_खण्डानि_गणनम्_hi << 32 : 0);
 }
 
 /*
  * Set the fs block count
  */
-void ext2fs_blocks_count_set(struct ext2_super_block *super, blk64_t blk)
+शून्य ext2fs_खण्डानि_गणनम्_समुच्चयः(संरचना ext2_super_खण्डम् *super, blk64_t blk)
 {
-	super->s_blocks_count = blk;
-	if (ext2fs_has_feature_64bit(super))
-		super->s_blocks_count_hi = (__u64) blk >> 32;
+	super->s_खण्डानि_गणनम् = blk;
+	यदि (ext2fs_has_feature_64bit(super))
+		super->s_खण्डानि_गणनम्_hi = (__u64) blk >> 32;
 }
 
 /*
  * Add to the current fs block count
  */
-void ext2fs_blocks_count_add(struct ext2_super_block *super, blk64_t blk)
+शून्य ext2fs_खण्डानि_गणनम्_सङ्कलय(संरचना ext2_super_खण्डम् *super, blk64_t blk)
 {
 	blk64_t tmp;
-	tmp = ext2fs_blocks_count(super) + blk;
-	ext2fs_blocks_count_set(super, tmp);
+	tmp = ext2fs_खण्डानि_गणनम्(super) + blk;
+	ext2fs_खण्डानि_गणनम्_समुच्चयः(super, tmp);
 }
 
 /*
  * Return the fs reserved block count
  */
-blk64_t ext2fs_r_blocks_count(struct ext2_super_block *super)
+blk64_t ext2fs_r_खण्डानि_गणनम्(संरचना ext2_super_खण्डम् *super)
 {
-	return super->s_r_blocks_count |
+	प्रत्यागम super->s_r_खण्डानि_गणनम् |
 		(ext2fs_has_feature_64bit(super) ?
-		(__u64) super->s_r_blocks_count_hi << 32 : 0);
+		(__u64) super->s_r_खण्डानि_गणनम्_hi << 32 : 0);
 }
 
 /*
  * Set the fs reserved block count
  */
-void ext2fs_r_blocks_count_set(struct ext2_super_block *super, blk64_t blk)
+शून्य ext2fs_r_खण्डानि_गणनम्_समुच्चयः(संरचना ext2_super_खण्डम् *super, blk64_t blk)
 {
-	super->s_r_blocks_count = blk;
-	if (ext2fs_has_feature_64bit(super))
-		super->s_r_blocks_count_hi = (__u64) blk >> 32;
+	super->s_r_खण्डानि_गणनम् = blk;
+	यदि (ext2fs_has_feature_64bit(super))
+		super->s_r_खण्डानि_गणनम्_hi = (__u64) blk >> 32;
 }
 
 /*
  * Add to the current reserved fs block count
  */
-void ext2fs_r_blocks_count_add(struct ext2_super_block *super, blk64_t blk)
+शून्य ext2fs_r_खण्डानि_गणनम्_सङ्कलय(संरचना ext2_super_खण्डम् *super, blk64_t blk)
 {
 	blk64_t tmp;
-	tmp = ext2fs_r_blocks_count(super) + blk;
-	ext2fs_r_blocks_count_set(super, tmp);
+	tmp = ext2fs_r_खण्डानि_गणनम्(super) + blk;
+	ext2fs_r_खण्डानि_गणनम्_समुच्चयः(super, tmp);
 }
 
 /*
  * Return the fs free block count
  */
-blk64_t ext2fs_free_blocks_count(struct ext2_super_block *super)
+blk64_t ext2fs_free_खण्डानि_गणनम्(संरचना ext2_super_खण्डम् *super)
 {
-	return super->s_free_blocks_count |
+	प्रत्यागम super->s_free_खण्डानि_गणनम् |
 		(ext2fs_has_feature_64bit(super) ?
-		(__u64) super->s_free_blocks_hi << 32 : 0);
+		(__u64) super->s_free_खण्डानि_hi << 32 : 0);
 }
 
 /*
  * Set the fs free block count
  */
-void ext2fs_free_blocks_count_set(struct ext2_super_block *super, blk64_t blk)
+शून्य ext2fs_free_खण्डानि_गणनम्_समुच्चयः(संरचना ext2_super_खण्डम् *super, blk64_t blk)
 {
-	super->s_free_blocks_count = blk;
-	if (ext2fs_has_feature_64bit(super))
-		super->s_free_blocks_hi = (__u64) blk >> 32;
+	super->s_free_खण्डानि_गणनम् = blk;
+	यदि (ext2fs_has_feature_64bit(super))
+		super->s_free_खण्डानि_hi = (__u64) blk >> 32;
 }
 
 /*
  * Add to the current free fs block count
  */
-void ext2fs_free_blocks_count_add(struct ext2_super_block *super, blk64_t blk)
+शून्य ext2fs_free_खण्डानि_गणनम्_सङ्कलय(संरचना ext2_super_खण्डम् *super, blk64_t blk)
 {
 	blk64_t tmp;
-	tmp = ext2fs_free_blocks_count(super) + blk;
-	ext2fs_free_blocks_count_set(super, tmp);
+	tmp = ext2fs_free_खण्डानि_गणनम्(super) + blk;
+	ext2fs_free_खण्डानि_गणनम्_समुच्चयः(super, tmp);
 }
 
 /*
@@ -197,121 +197,121 @@ void ext2fs_free_blocks_count_add(struct ext2_super_block *super, blk64_t blk)
  * descriptors before writing them out, as it wants to make a copy and
  * do the swap there.
  */
-struct ext2_group_desc *ext2fs_group_desc(ext2_filsys fs,
-					  struct opaque_ext2_group_desc *gdp,
-					  dgrp_t group)
+संरचना ext2_गणः_desc *ext2fs_गणः_desc(ext2_filsys fs,
+					  संरचना opaque_ext2_गणः_desc *gdp,
+					  dgrp_t गणः)
 {
-	struct ext2_group_desc *ret_gdp;
+	संरचना ext2_गणः_desc *ret_gdp;
 	errcode_t	retval;
-	static char	*buf = 0;
-	static unsigned	bufsize = 0;
+	स्थिर वर्ण	*buf = 0;
+	स्थिर अचिह्नित	bufsize = 0;
 	blk64_t		blk;
-	int		desc_size = EXT2_DESC_SIZE(fs->super) & ~7;
-	int		desc_per_blk = EXT2_DESC_PER_BLOCK(fs->super);
+	पूर्णाङ्क		desc_आकार = EXT2_DESC_आकार(fs->super) & ~7;
+	पूर्णाङ्क		desc_प्रत्येकम्_blk = EXT2_DESC_प्रत्येकम्_खण्डम्(fs->super);
 
-	if (group > fs->group_desc_count)
-		return NULL;
-	if (gdp)
-		return (struct ext2_group_desc *)((char *)gdp +
-						  group * desc_size);
+	यदि (गणः > fs->गणः_desc_गणनम्)
+		प्रत्यागम रिक्त;
+	यदि (gdp)
+		प्रत्यागम (संरचना ext2_गणः_desc *)((वर्ण *)gdp +
+						  गणः * desc_आकार);
 	/*
 	 * If fs->group_desc wasn't read in when the file system was
 	 * opened, then read it on demand here.
 	 */
-	if (bufsize < fs->blocksize)
+	यदि (bufsize < fs->blocksize)
 		ext2fs_free_mem(&buf);
-	if (!buf) {
+	यदि (!buf) {
 		retval = ext2fs_get_mem(fs->blocksize, &buf);
-		if (retval)
-			return NULL;
+		यदि (retval)
+			प्रत्यागम रिक्त;
 		bufsize = fs->blocksize;
 	}
-	blk = ext2fs_descriptor_block_loc2(fs, fs->super->s_first_data_block,
-					   group / desc_per_blk);
+	blk = ext2fs_descriptor_खण्डम्_loc2(fs, fs->super->s_first_दत्त_खण्डम्,
+					   गणः / desc_प्रत्येकम्_blk);
 	retval = io_channel_read_blk(fs->io, blk, 1, buf);
-	if (retval)
-		return NULL;
-	ret_gdp = (struct ext2_group_desc *)
-		(buf + ((group % desc_per_blk) * desc_size));
-#ifdef WORDS_BIGENDIAN
-	ext2fs_swap_group_desc2(fs, ret_gdp);
-#endif
-	return ret_gdp;
+	यदि (retval)
+		प्रत्यागम रिक्त;
+	ret_gdp = (संरचना ext2_गणः_desc *)
+		(buf + ((गणः % desc_प्रत्येकम्_blk) * desc_आकार));
+#यदि_परिभाषितम् शब्दाः_BIGENDIAN
+	ext2fs_swap_गणः_desc2(fs, ret_gdp);
+#यदि_अन्तः
+	प्रत्यागम ret_gdp;
 }
 
 /* Do the same but as an ext4 group desc for internal use here */
-static struct ext4_group_desc *ext4fs_group_desc(ext2_filsys fs,
-					  struct opaque_ext2_group_desc *gdp,
-					  dgrp_t group)
+स्थिर संरचना ext4_गणः_desc *ext4fs_गणः_desc(ext2_filsys fs,
+					  संरचना opaque_ext2_गणः_desc *gdp,
+					  dgrp_t गणः)
 {
-	return (struct ext4_group_desc *)ext2fs_group_desc(fs, gdp, group);
+	प्रत्यागम (संरचना ext4_गणः_desc *)ext2fs_गणः_desc(fs, gdp, गणः);
 }
 
 /*
  * Return the block bitmap checksum of a group
  */
-__u32 ext2fs_block_bitmap_checksum(ext2_filsys fs, dgrp_t group)
+__u32 ext2fs_खण्डम्_bitmap_checksum(ext2_filsys fs, dgrp_t गणः)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 	__u32 csum;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	csum = gdp->bg_block_bitmap_csum_lo;
-	if (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_BLOCK_BITMAP_CSUM_HI_LOCATION)
-		csum |= ((__u32)gdp->bg_block_bitmap_csum_hi << 16);
-	return csum;
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	csum = gdp->bg_खण्डम्_bitmap_csum_lo;
+	यदि (EXT2_DESC_आकार(fs->super) >= EXT4_BG_खण्डम्_BITMAP_CSUM_HI_LOCATION)
+		csum |= ((__u32)gdp->bg_खण्डम्_bitmap_csum_hi << 16);
+	प्रत्यागम csum;
 }
 
 /*
  * Return the block bitmap block of a group
  */
-blk64_t ext2fs_block_bitmap_loc(ext2_filsys fs, dgrp_t group)
+blk64_t ext2fs_खण्डम्_bitmap_loc(ext2_filsys fs, dgrp_t गणः)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_block_bitmap |
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	प्रत्यागम gdp->bg_खण्डम्_bitmap |
 		(ext2fs_has_feature_64bit(fs->super) ?
-		 (__u64)gdp->bg_block_bitmap_hi << 32 : 0);
+		 (__u64)gdp->bg_खण्डम्_bitmap_hi << 32 : 0);
 }
 
 /*
  * Set the block bitmap block of a group
  */
-void ext2fs_block_bitmap_loc_set(ext2_filsys fs, dgrp_t group, blk64_t blk)
+शून्य ext2fs_खण्डम्_bitmap_loc_समुच्चयः(ext2_filsys fs, dgrp_t गणः, blk64_t blk)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	gdp->bg_block_bitmap = blk;
-	if (ext2fs_has_feature_64bit(fs->super))
-		gdp->bg_block_bitmap_hi = (__u64) blk >> 32;
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	gdp->bg_खण्डम्_bitmap = blk;
+	यदि (ext2fs_has_feature_64bit(fs->super))
+		gdp->bg_खण्डम्_bitmap_hi = (__u64) blk >> 32;
 }
 
 /*
  * Return the inode bitmap checksum of a group
  */
-__u32 ext2fs_inode_bitmap_checksum(ext2_filsys fs, dgrp_t group)
+__u32 ext2fs_inode_bitmap_checksum(ext2_filsys fs, dgrp_t गणः)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 	__u32 csum;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
 	csum = gdp->bg_inode_bitmap_csum_lo;
-	if (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_INODE_BITMAP_CSUM_HI_END)
+	यदि (EXT2_DESC_आकार(fs->super) >= EXT4_BG_INODE_BITMAP_CSUM_HI_अन्तः)
 		csum |= ((__u32)gdp->bg_inode_bitmap_csum_hi << 16);
-	return csum;
+	प्रत्यागम csum;
 }
 
 /*
  * Return the inode bitmap block of a group
  */
-blk64_t ext2fs_inode_bitmap_loc(ext2_filsys fs, dgrp_t group)
+blk64_t ext2fs_inode_bitmap_loc(ext2_filsys fs, dgrp_t गणः)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_inode_bitmap |
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	प्रत्यागम gdp->bg_inode_bitmap |
 		(ext2fs_has_feature_64bit(fs->super) ?
 		 (__u64) gdp->bg_inode_bitmap_hi << 32 : 0);
 }
@@ -319,288 +319,288 @@ blk64_t ext2fs_inode_bitmap_loc(ext2_filsys fs, dgrp_t group)
 /*
  * Set the inode bitmap block of a group
  */
-void ext2fs_inode_bitmap_loc_set(ext2_filsys fs, dgrp_t group, blk64_t blk)
+शून्य ext2fs_inode_bitmap_loc_समुच्चयः(ext2_filsys fs, dgrp_t गणः, blk64_t blk)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
 	gdp->bg_inode_bitmap = blk;
-	if (ext2fs_has_feature_64bit(fs->super))
+	यदि (ext2fs_has_feature_64bit(fs->super))
 		gdp->bg_inode_bitmap_hi = (__u64) blk >> 32;
 }
 
 /*
  * Return the inode table block of a group
  */
-blk64_t ext2fs_inode_table_loc(ext2_filsys fs, dgrp_t group)
+blk64_t ext2fs_inode_सारणी_loc(ext2_filsys fs, dgrp_t गणः)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_inode_table |
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	प्रत्यागम gdp->bg_inode_सारणी |
 		(ext2fs_has_feature_64bit(fs->super) ?
-		 (__u64) gdp->bg_inode_table_hi << 32 : 0);
+		 (__u64) gdp->bg_inode_सारणी_hi << 32 : 0);
 }
 
 /*
  * Set the inode table block of a group
  */
-void ext2fs_inode_table_loc_set(ext2_filsys fs, dgrp_t group, blk64_t blk)
+शून्य ext2fs_inode_सारणी_loc_समुच्चयः(ext2_filsys fs, dgrp_t गणः, blk64_t blk)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	gdp->bg_inode_table = blk;
-	if (ext2fs_has_feature_64bit(fs->super))
-		gdp->bg_inode_table_hi = (__u64) blk >> 32;
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	gdp->bg_inode_सारणी = blk;
+	यदि (ext2fs_has_feature_64bit(fs->super))
+		gdp->bg_inode_सारणी_hi = (__u64) blk >> 32;
 }
 
 /*
  * Return the free blocks count of a group
  */
-__u32 ext2fs_bg_free_blocks_count(ext2_filsys fs, dgrp_t group)
+__u32 ext2fs_bg_free_खण्डानि_गणनम्(ext2_filsys fs, dgrp_t गणः)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_free_blocks_count |
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	प्रत्यागम gdp->bg_free_खण्डानि_गणनम् |
 		(ext2fs_has_feature_64bit(fs->super) ?
-		 (__u32) gdp->bg_free_blocks_count_hi << 16 : 0);
+		 (__u32) gdp->bg_free_खण्डानि_गणनम्_hi << 16 : 0);
 }
 
 /*
  * Set the free blocks count of a group
  */
-void ext2fs_bg_free_blocks_count_set(ext2_filsys fs, dgrp_t group, __u32 n)
+शून्य ext2fs_bg_free_खण्डानि_गणनम्_समुच्चयः(ext2_filsys fs, dgrp_t गणः, __u32 n)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	gdp->bg_free_blocks_count = n;
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	gdp->bg_free_खण्डानि_गणनम् = n;
 
-	if (ext2fs_has_feature_64bit(fs->super))
-		gdp->bg_free_blocks_count_hi = (__u32) n >> 16;
+	यदि (ext2fs_has_feature_64bit(fs->super))
+		gdp->bg_free_खण्डानि_गणनम्_hi = (__u32) n >> 16;
 }
 
 /*
  * Return the free inodes count of a group
  */
-__u32 ext2fs_bg_free_inodes_count(ext2_filsys fs, dgrp_t group)
+__u32 ext2fs_bg_free_inodes_गणनम्(ext2_filsys fs, dgrp_t गणः)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_free_inodes_count |
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	प्रत्यागम gdp->bg_free_inodes_गणनम् |
 		(ext2fs_has_feature_64bit(fs->super) ?
-		 (__u32) gdp->bg_free_inodes_count_hi << 16 : 0);
+		 (__u32) gdp->bg_free_inodes_गणनम्_hi << 16 : 0);
 }
 
 /*
  * Set the free inodes count of a group
  */
-void ext2fs_bg_free_inodes_count_set(ext2_filsys fs, dgrp_t group, __u32 n)
+शून्य ext2fs_bg_free_inodes_गणनम्_समुच्चयः(ext2_filsys fs, dgrp_t गणः, __u32 n)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	gdp->bg_free_inodes_count = n;
-	if (ext2fs_has_feature_64bit(fs->super))
-		gdp->bg_free_inodes_count_hi = (__u32) n >> 16;
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	gdp->bg_free_inodes_गणनम् = n;
+	यदि (ext2fs_has_feature_64bit(fs->super))
+		gdp->bg_free_inodes_गणनम्_hi = (__u32) n >> 16;
 }
 
 /*
  * Return the used dirs count of a group
  */
-__u32 ext2fs_bg_used_dirs_count(ext2_filsys fs, dgrp_t group)
+__u32 ext2fs_bg_प्रयुक्तम्_dirs_गणनम्(ext2_filsys fs, dgrp_t गणः)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_used_dirs_count |
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	प्रत्यागम gdp->bg_प्रयुक्तम्_dirs_गणनम् |
 		(ext2fs_has_feature_64bit(fs->super) ?
-		 (__u32) gdp->bg_used_dirs_count_hi << 16 : 0);
+		 (__u32) gdp->bg_प्रयुक्तम्_dirs_गणनम्_hi << 16 : 0);
 }
 
 /*
  * Set the used dirs count of a group
  */
-void ext2fs_bg_used_dirs_count_set(ext2_filsys fs, dgrp_t group, __u32 n)
+शून्य ext2fs_bg_प्रयुक्तम्_dirs_गणनम्_समुच्चयः(ext2_filsys fs, dgrp_t गणः, __u32 n)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	gdp->bg_used_dirs_count = n;
-	if (ext2fs_has_feature_64bit(fs->super))
-		gdp->bg_used_dirs_count_hi = (__u32) n >> 16;
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	gdp->bg_प्रयुक्तम्_dirs_गणनम् = n;
+	यदि (ext2fs_has_feature_64bit(fs->super))
+		gdp->bg_प्रयुक्तम्_dirs_गणनम्_hi = (__u32) n >> 16;
 }
 
 /*
  * Return the unused inodes count of a group
  */
-__u32 ext2fs_bg_itable_unused(ext2_filsys fs, dgrp_t group)
+__u32 ext2fs_bg_itable_अप्रयुक्तम्(ext2_filsys fs, dgrp_t गणः)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_itable_unused |
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	प्रत्यागम gdp->bg_itable_अप्रयुक्तम् |
 		(ext2fs_has_feature_64bit(fs->super) ?
-		 (__u32) gdp->bg_itable_unused_hi << 16 : 0);
+		 (__u32) gdp->bg_itable_अप्रयुक्तम्_hi << 16 : 0);
 }
 
 /*
  * Set the unused inodes count of a group
  */
-void ext2fs_bg_itable_unused_set(ext2_filsys fs, dgrp_t group, __u32 n)
+शून्य ext2fs_bg_itable_अप्रयुक्तम्_समुच्चयः(ext2_filsys fs, dgrp_t गणः, __u32 n)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	gdp->bg_itable_unused = n;
-	if (ext2fs_has_feature_64bit(fs->super))
-		gdp->bg_itable_unused_hi = (__u32) n >> 16;
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	gdp->bg_itable_अप्रयुक्तम् = n;
+	यदि (ext2fs_has_feature_64bit(fs->super))
+		gdp->bg_itable_अप्रयुक्तम्_hi = (__u32) n >> 16;
 }
 
 /*
  * Get the flags for this block group
  */
-__u16 ext2fs_bg_flags(ext2_filsys fs, dgrp_t group)
+__u16 ext2fs_bg_flags(ext2_filsys fs, dgrp_t गणः)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_flags;
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	प्रत्यागम gdp->bg_flags;
 }
 
 /*
  * Zero out the flags for this block group
  */
-void ext2fs_bg_flags_zap(ext2_filsys fs, dgrp_t group)
+शून्य ext2fs_bg_flags_zap(ext2_filsys fs, dgrp_t गणः)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
 	gdp->bg_flags = 0;
-	return;
+	प्रत्यागम;
 }
 
 /*
  * Get the value of a particular flag for this block group
  */
-int ext2fs_bg_flags_test(ext2_filsys fs, dgrp_t group, __u16 bg_flag)
+पूर्णाङ्क ext2fs_bg_flags_test(ext2_filsys fs, dgrp_t गणः, __u16 bg_flag)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_flags & bg_flag;
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	प्रत्यागम gdp->bg_flags & bg_flag;
 }
 
 /*
  * Set a flag or set of flags for this block group
  */
-void ext2fs_bg_flags_set(ext2_filsys fs, dgrp_t group, __u16 bg_flags)
+शून्य ext2fs_bg_flags_समुच्चयः(ext2_filsys fs, dgrp_t गणः, __u16 bg_flags)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
 	gdp->bg_flags |= bg_flags;
-	return;
+	प्रत्यागम;
 }
 
 /*
  * Clear a flag or set of flags for this block group
  */
-void ext2fs_bg_flags_clear(ext2_filsys fs, dgrp_t group, __u16 bg_flags)
+शून्य ext2fs_bg_flags_clear(ext2_filsys fs, dgrp_t गणः, __u16 bg_flags)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
 	gdp->bg_flags &= ~bg_flags;
-	return;
+	प्रत्यागम;
 }
 
 /*
  * Get the checksum for this block group
  */
-__u16 ext2fs_bg_checksum(ext2_filsys fs, dgrp_t group)
+__u16 ext2fs_bg_checksum(ext2_filsys fs, dgrp_t गणः)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_checksum;
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
+	प्रत्यागम gdp->bg_checksum;
 }
 
 /*
  * Set the checksum for this block group to a previously calculated value
  */
-void ext2fs_bg_checksum_set(ext2_filsys fs, dgrp_t group, __u16 checksum)
+शून्य ext2fs_bg_checksum_समुच्चयः(ext2_filsys fs, dgrp_t गणः, __u16 checksum)
 {
-	struct ext4_group_desc *gdp;
+	संरचना ext4_गणः_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
+	gdp = ext4fs_गणः_desc(fs, fs->गणः_desc, गणः);
 	gdp->bg_checksum = checksum;
-	return;
+	प्रत्यागम;
 }
 
 /*
  * Get the acl block of a file
  */
-blk64_t ext2fs_file_acl_block(ext2_filsys fs, const struct ext2_inode *inode)
+blk64_t ext2fs_file_acl_खण्डम्(ext2_filsys fs, ध्रुव संरचना ext2_inode *inode)
 {
 	blk64_t	blk = inode->i_file_acl;
 
-	if (fs && ext2fs_has_feature_64bit(fs->super))
-		blk |= ((__u64) inode->osd2.linux2.l_i_file_acl_high) << 32;
-	return blk;
+	यदि (fs && ext2fs_has_feature_64bit(fs->super))
+		blk |= ((__u64) inode->osd2.linux2.l_i_file_acl_उच्चः) << 32;
+	प्रत्यागम blk;
 }
 
 /*
  * Set the acl block of a file
  */
-void ext2fs_file_acl_block_set(ext2_filsys fs, struct ext2_inode *inode,
+शून्य ext2fs_file_acl_खण्डम्_समुच्चयः(ext2_filsys fs, संरचना ext2_inode *inode,
 			       blk64_t blk)
 {
 	inode->i_file_acl = blk;
-	if (fs && ext2fs_has_feature_64bit(fs->super))
-		inode->osd2.linux2.l_i_file_acl_high = (__u64) blk >> 32;
+	यदि (fs && ext2fs_has_feature_64bit(fs->super))
+		inode->osd2.linux2.l_i_file_acl_उच्चः = (__u64) blk >> 32;
 }
 
 /*
  * Set the size of the inode
  */
-errcode_t ext2fs_inode_size_set(ext2_filsys fs, struct ext2_inode *inode,
-				ext2_off64_t size)
+errcode_t ext2fs_inode_आकार_समुच्चयः(ext2_filsys fs, संरचना ext2_inode *inode,
+				ext2_off64_t आकार)
 {
-	if (size < 0)
-		return EINVAL;
+	यदि (आकार < 0)
+		प्रत्यागम EINVAL;
 
 	/* If writing a large inode, set the large_file or large_dir flag */
-	if (ext2fs_needs_large_file_feature(size)) {
-		int dirty_sb = 0;
+	यदि (ext2fs_needs_large_file_feature(आकार)) {
+		पूर्णाङ्क dirty_sb = 0;
 
-		if (LINUX_S_ISREG(inode->i_mode)) {
-			if (!ext2fs_has_feature_large_file(fs->super)) {
-				ext2fs_set_feature_large_file(fs->super);
+		यदि (LINUX_S_ISREG(inode->i_बहुलकम्)) {
+			यदि (!ext2fs_has_feature_large_file(fs->super)) {
+				ext2fs_समुच्चयः_feature_large_file(fs->super);
 				dirty_sb = 1;
 			}
-		} else if (LINUX_S_ISDIR(inode->i_mode)) {
-			if (!ext2fs_has_feature_largedir(fs->super)) {
-				ext2fs_set_feature_largedir(fs->super);
+		} अन्यथा यदि (LINUX_S_ISDIR(inode->i_बहुलकम्)) {
+			यदि (!ext2fs_has_feature_largedir(fs->super)) {
+				ext2fs_समुच्चयः_feature_largedir(fs->super);
 				dirty_sb = 1;
 			}
-		} else {
+		} अन्यथा {
 			/* Only regular files get to be larger than 4GB */
-			return EXT2_ET_FILE_TOO_BIG;
+			प्रत्यागम EXT2_ET_FILE_TOO_BIG;
 		}
-		if (dirty_sb) {
-			if (fs->super->s_rev_level == EXT2_GOOD_OLD_REV)
+		यदि (dirty_sb) {
+			यदि (fs->super->s_rev_level == EXT2_GOOD_OLD_REV)
 				ext2fs_update_dynamic_rev(fs);
 			ext2fs_mark_super_dirty(fs);
 		}
 	}
 
-	inode->i_size = size & 0xffffffff;
-	inode->i_size_high = (size >> 32);
+	inode->i_आकार = आकार & 0xffffffff;
+	inode->i_आकार_उच्चः = (आकार >> 32);
 
-	return 0;
+	प्रत्यागम 0;
 }
 

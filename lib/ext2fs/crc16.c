@@ -5,16 +5,16 @@
  * Version 2. See the file COPYING for more details.
  */
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#include <ext2fs/ext2_types.h>
+#अन्तर्भाव "config.h"
+#यदि HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
+#यदि_अन्तः
+#अन्तर्भाव <ext2fs/ext2_types.h>
 
-#include "crc16.h"
+#अन्तर्भाव "crc16.h"
 
 /** CRC table for the CRC-16. The poly is 0x8005 (x16 + x15 + x2 + 1) */
-static __u16 const crc16_table[256] = {
+स्थिर __u16 ध्रुव crc16_सारणी[256] = {
 	0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0, 0x0280, 0xC241,
 	0xC601, 0x06C0, 0x0780, 0xC741, 0x0500, 0xC5C1, 0xC481, 0x0440,
 	0xCC01, 0x0CC0, 0x0D80, 0xCD41, 0x0F00, 0xCFC1, 0xCE81, 0x0E40,
@@ -57,11 +57,11 @@ static __u16 const crc16_table[256] = {
  * @param len     number of bytes in the buffer
  * @return        the updated CRC value
  */
-crc16_t ext2fs_crc16(crc16_t crc, const void *buffer, unsigned int len)
+crc16_t ext2fs_crc16(crc16_t crc, ध्रुव शून्य *बफर, अचिह्नित पूर्णाङ्क len)
 {
-	const unsigned char *cp = buffer;
+	ध्रुव अचिह्नित वर्ण *cp = बफर;
 
-	while (len--)
+	यावत् (len--)
 		/*
 		 * for an unknown reason, PPC treats __u16 as signed
 		 * and keeps doing sign extension on the value.
@@ -69,6 +69,6 @@ crc16_t ext2fs_crc16(crc16_t crc, const void *buffer, unsigned int len)
 		 * int for holding the CRC value to avoid this.
 		 */
 		crc = (((crc >> 8) & 0xffU) ^
-		       crc16_table[(crc ^ *cp++) & 0xffU]) & 0x0000ffffU;
-	return crc;
+		       crc16_सारणी[(crc ^ *cp++) & 0xffU]) & 0x0000ffffU;
+	प्रत्यागम crc;
 }

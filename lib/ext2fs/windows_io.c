@@ -12,202 +12,202 @@
  * %End-Header%
  */
 
-#include <windows.h>
-#include <winioctl.h>
-#include <io.h>
+#अन्तर्भाव <windows.h>
+#अन्तर्भाव <winioctl.h>
+#अन्तर्भाव <io.h>
 
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
-#define _XOPEN_SOURCE 600
-#define _DARWIN_C_SOURCE
-#define _FILE_OFFSET_BITS 64
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#endif
+#यदि !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#परिभाषय _XOPEN_SOURCE 600
+#परिभाषय _DARWIN_C_SOURCE
+#परिभाषय FILE_विस्थापनम्_द्वयङ्काः 64
+#यदि_अपरिभाषितम् _LARGEFILE_SOURCE
+#परिभाषय _LARGEFILE_SOURCE
+#यदि_अन्तः
+#यदि_अपरिभाषितम् _LARGEFILE64_SOURCE
+#परिभाषय _LARGEFILE64_SOURCE
+#यदि_अन्तः
+#यदि_अपरिभाषितम् _GNU_SOURCE
+#परिभाषय _GNU_SOURCE
+#यदि_अन्तः
+#यदि_अन्तः
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#define PR_GET_DUMPABLE 3
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#include <fcntl.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
+#यदि_अन्तः
+#यदि HAVE_ERRNO_H
+#अन्तर्भाव <errno.h>
+#यदि_अन्तः
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <time.h>
+#यदि HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
+#यदि_अन्तः
+#परिभाषय PR_GET_DUMPABLE 3
+#यदि HAVE_SYS_STAT_H
+#अन्तर्भाव <sys/stat.h>
+#यदि_अन्तः
+#अन्तर्भाव <fcntl.h>
 
-#undef ALIGN_DEBUG
+#अपरिभाषय ALIGN_DEBUG
 
 //#define DEBUG
-#ifdef DEBUG
-#define TRACE(...) {\
-		    char __log[256];\
-		    snprintf(__log, sizeof(__log), __VA_ARGS__);\
-		    __log[sizeof(__log)-1] = 0;\
+#यदि_परिभाषितम् DEBUG
+#परिभाषय TRACE(...) {\
+		    वर्ण __log[256];\
+		    snprintf(__log, परिमाण(__log), __VA_ARGS__);\
+		    __log[परिमाण(__log)-1] = 0;\
 		    OutputDebugString(__log);\
 		}
-#else
-#define TRACE(...) do { } while (0);
-#endif
+#अन्यथा
+#परिभाषय TRACE(...) कुरु { } यावत् (0);
+#यदि_अन्तः
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
+#अन्तर्भाव "ext2fsP.h"
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
-#define EXT2_CHECK_MAGIC_RETURN(struct, code, ret) \
-	  if ((struct)->magic != (code)) return (ret)
+#परिभाषय EXT2_CHECK_MAGIC(संरचना, संहिता) \
+	  यदि ((संरचना)->magic != (संहिता)) प्रत्यागम (संहिता)
+#परिभाषय EXT2_CHECK_MAGIC_RETURN(संरचना, संहिता, ret) \
+	  यदि ((संरचना)->magic != (संहिता)) प्रत्यागम (ret)
 
-#define EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL  0x10ed
+#परिभाषय EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL  0x10ed
 
-struct windows_cache {
-	char			*buf;
-	unsigned long long	block;
-	int			access_time;
-	unsigned		dirty:1;
-	unsigned		in_use:1;
+संरचना windows_cache {
+	वर्ण			*buf;
+	अचिह्नित दीर्घ दीर्घ	खण्डम्;
+	पूर्णाङ्क			access_time;
+	अचिह्नित		dirty:1;
+	अचिह्नित		अन्तर्_use:1;
 };
 
-#define CACHE_SIZE 8
-#define WRITE_DIRECT_SIZE 4	/* Must be smaller than CACHE_SIZE */
-#define READ_DIRECT_SIZE 4	/* Should be smaller than CACHE_SIZE */
+#परिभाषय CACHE_आकार 8
+#परिभाषय WRITE_प्रत्यक्षम्_आकार 4	/* Must be smaller than CACHE_SIZE */
+#परिभाषय READ_प्रत्यक्षम्_आकार 4	/* Should be smaller than CACHE_SIZE */
 
-struct windows_private_data {
-	int	magic;
-	char	name[MAX_PATH];
+संरचना windows_वैयक्तिकम्_दत्त {
+	पूर्णाङ्क	magic;
+	वर्ण	name[MAX_मार्गः];
 	HANDLE	handle;
-	char	dos_device[MAX_PATH];
-	char	cf_device[MAX_PATH];
-	int	dev;
-	int	flags;
-	int	align;
-	int	access_time;
-	ext2_loff_t offset;
-	struct windows_cache cache[CACHE_SIZE];
-	void	*bounce;
-	struct struct_io_stats io_stats;
+	वर्ण	dos_device[MAX_मार्गः];
+	वर्ण	cf_device[MAX_मार्गः];
+	पूर्णाङ्क	dev;
+	पूर्णाङ्क	flags;
+	पूर्णाङ्क	align;
+	पूर्णाङ्क	access_time;
+	ext2_loff_t विस्थापनम्;
+	संरचना windows_cache cache[CACHE_आकार];
+	शून्य	*bounce;
+	संरचना struct_io_stats io_stats;
 };
 
-#define IS_ALIGNED(n, align) ((((uintptr_t) n) & \
+#परिभाषय IS_ALIGNED(n, align) ((((uintptr_t) n) & \
 			       ((uintptr_t) ((align)-1))) == 0)
 
-static int fake_dos_name_for_device(struct windows_private_data *data)
+स्थिर पूर्णाङ्क fake_dos_name_for_device(संरचना windows_वैयक्तिकम्_दत्त *दत्त)
 {
-	if (strncmp(data->name, "\\\\", 2) == 0) {
-		data->dos_device[0] = 0;
-		strcpy(data->cf_device, data->name);
-		return 0;
+	यदि (वाक्ये_तुलय(दत्त->name, "\\\\", 2) == 0) {
+		दत्त->dos_device[0] = 0;
+		वाक्यं_प्रतिलिख(दत्त->cf_device, दत्त->name);
+		प्रत्यागम 0;
 	}
 
-	_snprintf(data->dos_device, MAX_PATH, "fakedevice%lu", GetCurrentProcessId());
+	_snprintf(दत्त->dos_device, MAX_मार्गः, "fakedevice%lu", GetCurrentProcessId());
 
-	if (!DefineDosDevice(DDD_RAW_TARGET_PATH, data->dos_device, data->name))
-		return 1;
+	यदि (!DefineDosDevice(DDD_RAW_TARGET_मार्गः, दत्त->dos_device, दत्त->name))
+		प्रत्यागम 1;
 
-	_snprintf(data->cf_device, MAX_PATH, "\\\\.\\%s", data->dos_device);
-	TRACE("e2fsprogs::fake_dos_name_for_device::DefineDosDevice(\"%s\")", data->dos_device);
+	_snprintf(दत्त->cf_device, MAX_मार्गः, "\\\\.\\%s", दत्त->dos_device);
+	TRACE("e2fsprogs::fake_dos_name_for_device::DefineDosDevice(\"%s\")", दत्त->dos_device);
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static void remove_fake_dos_name(struct windows_private_data *data)
+स्थिर शून्य remove_fake_dos_name(संरचना windows_वैयक्तिकम्_दत्त *दत्त)
 {
-	if (*data->dos_device) {
-		TRACE("e2fsprogs::remove_fake_dos_name::DefineDosDevice(\"%s\")", data->dos_device);
-		DefineDosDevice(DDD_RAW_TARGET_PATH | DDD_EXACT_MATCH_ON_REMOVE | DDD_REMOVE_DEFINITION, data->dos_device, data->name);
+	यदि (*दत्त->dos_device) {
+		TRACE("e2fsprogs::remove_fake_dos_name::DefineDosDevice(\"%s\")", दत्त->dos_device);
+		DefineDosDevice(DDD_RAW_TARGET_मार्गः | DDD_EXACT_मेलनम्_ON_REMOVE | DDD_REMOVE_DEFINITION, दत्त->dos_device, दत्त->name);
 	}
 }
 
-static errcode_t windows_get_stats(io_channel channel, io_stats *stats)
+स्थिर errcode_t windows_get_stats(io_channel channel, io_stats *stats)
 {
 	errcode_t	retval = 0;
 
-	struct windows_private_data *data;
+	संरचना windows_वैयक्तिकम्_दत्त *दत्त;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	दत्त = (संरचना windows_वैयक्तिकम्_दत्त *) channel->वैयक्तिकम्_दत्त;
+	EXT2_CHECK_MAGIC(दत्त, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (stats)
-		*stats = &data->io_stats;
+	यदि (stats)
+		*stats = &दत्त->io_stats;
 
-	return retval;
+	प्रत्यागम retval;
 }
 
-static LARGE_INTEGER make_large_integer(LONGLONG value)
+स्थिर LARGE_INTEGER make_large_integer(LONGLONG मानम्)
 {
 	LARGE_INTEGER	li;
 
-	li.QuadPart = value;
-	return li;
+	li.QuadPart = मानम्;
+	प्रत्यागम li;
 }
 
 /*
  * Here are the raw I/O functions
  */
-static errcode_t raw_read_blk(io_channel channel,
-			      struct windows_private_data *data,
-			      unsigned long long block,
-			      int count, void *bufv)
+स्थिर errcode_t raw_read_blk(io_channel channel,
+			      संरचना windows_वैयक्तिकम्_दत्त *दत्त,
+			      अचिह्नित दीर्घ दीर्घ खण्डम्,
+			      पूर्णाङ्क गणनम्, शून्य *bufv)
 {
 	errcode_t	retval;
-	ssize_t	size;
+	ssize_t	आकार;
 	ext2_loff_t	location;
 	DWORD		actual = 0;
-	unsigned char	*buf = bufv;
+	अचिह्नित वर्ण	*buf = bufv;
 	ssize_t		really_read = 0;
 
-	size = (count < 0) ? -count : count * channel->block_size;
-	data->io_stats.bytes_read += size;
-	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
+	आकार = (गणनम् < 0) ? -गणनम् : गणनम् * channel->खण्डम्_आकार;
+	दत्त->io_stats.अष्टकानि_read += आकार;
+	location = ((ext2_loff_t) खण्डम् * channel->खण्डम्_आकार) + दत्त->विस्थापनम्;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
-			retval = GetLastError();
-			goto error_out;
+	यदि (दत्त->flags & IO_FLAG_FORCE_BOUNCE) {
+		यदि (!समुच्चयः_File_Pointer_Ex(दत्त->handle, make_large_integer(location), रिक्त, FILE_BEGIN)) {
+			retval = Get_चरमः_Error();
+			गच्छ error_बहिर्गमनम्;
 		}
-		goto bounce_read;
+		गच्छ bounce_read;
 	}
 
-	if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
-		retval = GetLastError();
-		goto error_out;
+	यदि (!समुच्चयः_File_Pointer_Ex(दत्त->handle, make_large_integer(location), रिक्त, FILE_BEGIN)) {
+		retval = Get_चरमः_Error();
+		गच्छ error_बहिर्गमनम्;
 	}
-	if ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
-		if (!ReadFile(data->handle, buf, size, &actual, NULL)) {
-			retval = GetLastError();
-			goto error_out;
+	यदि ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(आकार, channel->align))) {
+		यदि (!ReadFile(दत्त->handle, buf, आकार, &actual, रिक्त)) {
+			retval = Get_चरमः_Error();
+			गच्छ error_बहिर्गमनम्;
 		}
-		if (actual != size) {
+		यदि (actual != आकार) {
 	short_read:
-		if (actual < 0) {
-			retval = GetLastError();
+		यदि (actual < 0) {
+			retval = Get_चरमः_Error();
 			actual = 0;
-		} else
+		} अन्यथा
 			retval = EXT2_ET_SHORT_READ;
-		goto error_out;
+		गच्छ error_बहिर्गमनम्;
 		}
-	return 0;
+	प्रत्यागम 0;
 	}
 
 	/*
@@ -215,86 +215,86 @@ static errcode_t raw_read_blk(io_channel channel,
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_read:
-	while (size > 0) {
-		if (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
-			retval = GetLastError();
-			goto error_out;
+	यावत् (आकार > 0) {
+		यदि (!ReadFile(दत्त->handle, दत्त->bounce, channel->खण्डम्_आकार, &actual, रिक्त)) {
+			retval = Get_चरमः_Error();
+			गच्छ error_बहिर्गमनम्;
 		}
-		if (actual != channel->block_size) {
+		यदि (actual != channel->खण्डम्_आकार) {
 			actual = really_read;
 			buf -= really_read;
-			size += really_read;
-			goto short_read;
+			आकार += really_read;
+			गच्छ short_read;
 		}
-		actual = size;
-		if (size > channel->block_size)
-			actual = channel->block_size;
-		memcpy(buf, data->bounce, actual);
+		actual = आकार;
+		यदि (आकार > channel->खण्डम्_आकार)
+			actual = channel->खण्डम्_आकार;
+		स्मृतिं_प्रतिलिख(buf, दत्त->bounce, actual);
 		really_read += actual;
-		size -= actual;
+		आकार -= actual;
 		buf += actual;
 	}
-	return 0;
+	प्रत्यागम 0;
 
-error_out:
-	if (actual >= 0 && actual < size)
-		memset((char *) buf+actual, 0, size-actual);
-	if (channel->read_error)
-		retval = (channel->read_error)(channel, block, count, buf,
-					       size, actual, retval);
-	return retval;
+error_बहिर्गमनम्:
+	यदि (actual >= 0 && actual < आकार)
+		स्मृतिं_पूरय((वर्ण *) buf+actual, 0, आकार-actual);
+	यदि (channel->read_error)
+		retval = (channel->read_error)(channel, खण्डम्, गणनम्, buf,
+					       आकार, actual, retval);
+	प्रत्यागम retval;
 }
 
-static errcode_t raw_write_blk(io_channel channel,
-			       struct windows_private_data *data,
-			       unsigned long long block,
-			       int count, const void *bufv)
+स्थिर errcode_t raw_write_blk(io_channel channel,
+			       संरचना windows_वैयक्तिकम्_दत्त *दत्त,
+			       अचिह्नित दीर्घ दीर्घ खण्डम्,
+			       पूर्णाङ्क गणनम्, ध्रुव शून्य *bufv)
 {
-	ssize_t		size;
+	ssize_t		आकार;
 	ext2_loff_t	location;
 	DWORD		actual = 0;
 	errcode_t	retval;
-	const unsigned char *buf = bufv;
+	ध्रुव अचिह्नित वर्ण *buf = bufv;
 
-	if (count == 1)
-		size = channel->block_size;
-	else {
-		if (count < 0)
-			size = -count;
-		else
-			size = count * channel->block_size;
+	यदि (गणनम् == 1)
+		आकार = channel->खण्डम्_आकार;
+	अन्यथा {
+		यदि (गणनम् < 0)
+			आकार = -गणनम्;
+		अन्यथा
+			आकार = गणनम् * channel->खण्डम्_आकार;
 	}
-	data->io_stats.bytes_written += size;
+	दत्त->io_stats.अष्टकानि_written += आकार;
 
-	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
+	location = ((ext2_loff_t) खण्डम् * channel->खण्डम्_आकार) + दत्त->विस्थापनम्;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
-			retval = GetLastError();
-			goto error_out;
+	यदि (दत्त->flags & IO_FLAG_FORCE_BOUNCE) {
+		यदि (!समुच्चयः_File_Pointer_Ex(दत्त->handle, make_large_integer(location), रिक्त, FILE_BEGIN)) {
+			retval = Get_चरमः_Error();
+			गच्छ error_बहिर्गमनम्;
 		}
-	goto bounce_write;
+	गच्छ bounce_write;
 	}
 
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
-			retval = GetLastError();
-		goto error_out;
+		यदि (!समुच्चयः_File_Pointer_Ex(दत्त->handle, make_large_integer(location), रिक्त, FILE_BEGIN)) {
+			retval = Get_चरमः_Error();
+		गच्छ error_बहिर्गमनम्;
 	}
 
-	SetLastError(0);
+	समुच्चयः_चरमः_Error(0);
 
-	if ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
-		if (!WriteFile(data->handle, buf, size, &actual, NULL)) {
-			retval = GetLastError();
-			goto error_out;
+	यदि ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(आकार, channel->align))) {
+		यदि (!WriteFile(दत्त->handle, buf, आकार, &actual, रिक्त)) {
+			retval = Get_चरमः_Error();
+			गच्छ error_बहिर्गमनम्;
 		}
 
-		if (actual != size) {
+		यदि (actual != आकार) {
 		short_write:
 			retval = EXT2_ET_SHORT_WRITE;
-			goto error_out;
+			गच्छ error_बहिर्गमनम्;
 		}
-		return 0;
+		प्रत्यागम 0;
 	}
 
 	/*
@@ -302,47 +302,47 @@ static errcode_t raw_write_blk(io_channel channel,
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_write:
-	while (size > 0) {
-		if (size < channel->block_size) {
-			if (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
-				retval = GetLastError();
-				goto error_out;
+	यावत् (आकार > 0) {
+		यदि (आकार < channel->खण्डम्_आकार) {
+			यदि (!ReadFile(दत्त->handle, दत्त->bounce, channel->खण्डम्_आकार, &actual, रिक्त)) {
+				retval = Get_चरमः_Error();
+				गच्छ error_बहिर्गमनम्;
 			}
-			if (actual != channel->block_size) {
-				if (actual < 0) {
-					retval = GetLastError();
-					goto error_out;
+			यदि (actual != channel->खण्डम्_आकार) {
+				यदि (actual < 0) {
+					retval = Get_चरमः_Error();
+					गच्छ error_बहिर्गमनम्;
 				}
-				memset((char *) data->bounce + actual, 0,
-				       channel->block_size - actual);
+				स्मृतिं_पूरय((वर्ण *) दत्त->bounce + actual, 0,
+				       channel->खण्डम्_आकार - actual);
 			}
 		}
-		actual = size;
-		if (size > channel->block_size)
-			actual = channel->block_size;
-		memcpy(data->bounce, buf, actual);
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
-			retval = GetLastError();
-			goto error_out;
+		actual = आकार;
+		यदि (आकार > channel->खण्डम्_आकार)
+			actual = channel->खण्डम्_आकार;
+		स्मृतिं_प्रतिलिख(दत्त->bounce, buf, actual);
+		यदि (!समुच्चयः_File_Pointer_Ex(दत्त->handle, make_large_integer(location), रिक्त, FILE_BEGIN)) {
+			retval = Get_चरमः_Error();
+			गच्छ error_बहिर्गमनम्;
 		}
-		if (!WriteFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
-			retval = GetLastError();
-			goto error_out;
+		यदि (!WriteFile(दत्त->handle, दत्त->bounce, channel->खण्डम्_आकार, &actual, रिक्त)) {
+			retval = Get_चरमः_Error();
+			गच्छ error_बहिर्गमनम्;
 		}
 
-		if (actual != channel->block_size)
-			goto short_write;
-		size -= actual;
+		यदि (actual != channel->खण्डम्_आकार)
+			गच्छ short_write;
+		आकार -= actual;
 		buf += actual;
 		location += actual;
 	}
-	return 0;
+	प्रत्यागम 0;
 
-error_out:
-	if (channel->write_error)
-		retval = (channel->write_error)(channel, block, count, buf,
-						size, actual, retval);
-	return retval;
+error_बहिर्गमनम्:
+	यदि (channel->write_error)
+		retval = (channel->write_error)(channel, खण्डम्, गणनम्, buf,
+						आकार, actual, retval);
+	प्रत्यागम retval;
 }
 
 
@@ -351,163 +351,163 @@ error_out:
  */
 
 /* Allocate the cache buffers */
-static errcode_t alloc_cache(io_channel channel,
-			     struct windows_private_data *data)
+स्थिर errcode_t alloc_cache(io_channel channel,
+			     संरचना windows_वैयक्तिकम्_दत्त *दत्त)
 {
 	errcode_t		retval;
-	struct windows_cache	*cache;
-	int			i;
+	संरचना windows_cache	*cache;
+	पूर्णाङ्क			i;
 
-	data->access_time = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
-		cache->block = 0;
+	दत्त->access_time = 0;
+	प्रति (i=0, cache = दत्त->cache; i < CACHE_आकार; i++, cache++) {
+		cache->खण्डम् = 0;
 		cache->access_time = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
-		if (cache->buf)
+		cache->अन्तर्_use = 0;
+		यदि (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 		retval = io_channel_alloc_buf(channel, 0, &cache->buf);
-		if (retval)
-			return retval;
+		यदि (retval)
+			प्रत्यागम retval;
 	}
-	if (channel->align || data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (data->bounce)
-			ext2fs_free_mem(&data->bounce);
-		retval = io_channel_alloc_buf(channel, 0, &data->bounce);
+	यदि (channel->align || दत्त->flags & IO_FLAG_FORCE_BOUNCE) {
+		यदि (दत्त->bounce)
+			ext2fs_free_mem(&दत्त->bounce);
+		retval = io_channel_alloc_buf(channel, 0, &दत्त->bounce);
 	}
-	return retval;
+	प्रत्यागम retval;
 }
 
 /* Free the cache buffers */
-static void free_cache(struct windows_private_data *data)
+स्थिर शून्य free_cache(संरचना windows_वैयक्तिकम्_दत्त *दत्त)
 {
-	struct windows_cache    *cache;
-	int			i;
+	संरचना windows_cache    *cache;
+	पूर्णाङ्क			i;
 
-	data->access_time = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
-		cache->block = 0;
+	दत्त->access_time = 0;
+	प्रति (i=0, cache = दत्त->cache; i < CACHE_आकार; i++, cache++) {
+		cache->खण्डम् = 0;
 		cache->access_time = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
-		if (cache->buf)
+		cache->अन्तर्_use = 0;
+		यदि (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 	}
-	if (data->bounce)
-		ext2fs_free_mem(&data->bounce);
+	यदि (दत्त->bounce)
+		ext2fs_free_mem(&दत्त->bounce);
 }
 
-#ifndef NO_IO_CACHE
+#यदि_अपरिभाषितम् NO_IO_CACHE
 /*
  * Try to find a block in the cache.  If the block is not found, and
  * eldest is a non-zero pointer, then fill in eldest with the cache
  * entry to that should be reused.
  */
-static struct windows_cache *find_cached_block(struct windows_private_data *data,
-					    unsigned long long block,
-					    struct windows_cache **eldest)
+स्थिर संरचना windows_cache *find_cached_खण्डम्(संरचना windows_वैयक्तिकम्_दत्त *दत्त,
+					    अचिह्नित दीर्घ दीर्घ खण्डम्,
+					    संरचना windows_cache **eldest)
 {
-	struct windows_cache	*cache, *unused_cache, *oldest_cache;
-	int			i;
+	संरचना windows_cache	*cache, *अप्रयुक्तम्_cache, *oldest_cache;
+	पूर्णाङ्क			i;
 
-	unused_cache = oldest_cache = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
-		if (!cache->in_use) {
-			if (!unused_cache)
-				unused_cache = cache;
-			continue;
+	अप्रयुक्तम्_cache = oldest_cache = 0;
+	प्रति (i=0, cache = दत्त->cache; i < CACHE_आकार; i++, cache++) {
+		यदि (!cache->अन्तर्_use) {
+			यदि (!अप्रयुक्तम्_cache)
+				अप्रयुक्तम्_cache = cache;
+			अनुवर्त;
 		}
-		if (cache->block == block) {
-			cache->access_time = ++data->access_time;
-			return cache;
+		यदि (cache->खण्डम् == खण्डम्) {
+			cache->access_time = ++दत्त->access_time;
+			प्रत्यागम cache;
 		}
-		if (!oldest_cache ||
+		यदि (!oldest_cache ||
 		   (cache->access_time < oldest_cache->access_time))
 			oldest_cache = cache;
 	}
-	if (eldest)
-		*eldest = (unused_cache) ? unused_cache : oldest_cache;
-	return 0;
+	यदि (eldest)
+		*eldest = (अप्रयुक्तम्_cache) ? अप्रयुक्तम्_cache : oldest_cache;
+	प्रत्यागम 0;
 }
 
 /*
  * Reuse a particular cache entry for another block.
  */
-static void reuse_cache(io_channel channel, struct windows_private_data *data,
-		 struct windows_cache *cache, unsigned long long block)
+स्थिर शून्य reuse_cache(io_channel channel, संरचना windows_वैयक्तिकम्_दत्त *दत्त,
+		 संरचना windows_cache *cache, अचिह्नित दीर्घ दीर्घ खण्डम्)
 {
-	if (cache->dirty && cache->in_use)
-		raw_write_blk(channel, data, cache->block, 1, cache->buf);
+	यदि (cache->dirty && cache->अन्तर्_use)
+		raw_write_blk(channel, दत्त, cache->खण्डम्, 1, cache->buf);
 
-	cache->in_use = 1;
+	cache->अन्तर्_use = 1;
 	cache->dirty = 0;
-	cache->block = block;
-	cache->access_time = ++data->access_time;
+	cache->खण्डम् = खण्डम्;
+	cache->access_time = ++दत्त->access_time;
 }
 
 /*
  * Flush all of the blocks in the cache
  */
-static errcode_t flush_cached_blocks(io_channel channel,
-				     struct windows_private_data *data,
-				     int invalidate)
+स्थिर errcode_t flush_cached_खण्डानि(io_channel channel,
+				     संरचना windows_वैयक्तिकम्_दत्त *दत्त,
+				     पूर्णाङ्क invalidate)
 {
-	struct windows_cache	*cache;
+	संरचना windows_cache	*cache;
 	errcode_t	retval, retval2;
-	int			i;
+	पूर्णाङ्क			i;
 
 	retval2 = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
-		if (!cache->in_use)
-			continue;
+	प्रति (i=0, cache = दत्त->cache; i < CACHE_आकार; i++, cache++) {
+		यदि (!cache->अन्तर्_use)
+			अनुवर्त;
 
-		if (invalidate)
-			cache->in_use = 0;
+		यदि (invalidate)
+			cache->अन्तर्_use = 0;
 
-		if (!cache->dirty)
-			continue;
+		यदि (!cache->dirty)
+			अनुवर्त;
 
-		retval = raw_write_blk(channel, data,
-				       cache->block, 1, cache->buf);
-		if (retval)
+		retval = raw_write_blk(channel, दत्त,
+				       cache->खण्डम्, 1, cache->buf);
+		यदि (retval)
 			retval2 = retval;
-		else
+		अन्यथा
 			cache->dirty = 0;
 	}
-	return retval2;
+	प्रत्यागम retval2;
 }
-#endif /* NO_IO_CACHE */
+#यदि_अन्तः /* NO_IO_CACHE */
 
-static errcode_t windows_open_channel(struct windows_private_data *data,
-				   int flags, io_channel *channel,
+स्थिर errcode_t windows_open_channel(संरचना windows_वैयक्तिकम्_दत्त *दत्त,
+				   पूर्णाङ्क flags, io_channel *channel,
 				   io_manager io_mgr)
 {
-	io_channel	io = NULL;
+	io_channel	io = रिक्त;
 	errcode_t	retval;
 	ext2fs_struct_stat st;
 
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	retval = ext2fs_get_mem(परिमाण(संरचना struct_io_channel), &io);
+	यदि (retval)
+		गच्छ cleanup;
+	स्मृतिं_पूरय(io, 0, परिमाण(संरचना struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
 
 	io->manager = io_mgr;
-	retval = ext2fs_get_mem(strlen(data->name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(वाक्यदैर्घ्यम्(दत्त->name)+1, &io->name);
+	यदि (retval)
+		गच्छ cleanup;
 
-	strcpy(io->name, data->name);
-	io->private_data = data;
-	io->block_size = 1024;
+	वाक्यं_प्रतिलिख(io->name, दत्त->name);
+	io->वैयक्तिकम्_दत्त = दत्त;
+	io->खण्डम्_आकार = 1024;
 	io->read_error = 0;
 	io->write_error = 0;
 	io->refcount = 1;
 
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
-		io->align = ext2fs_get_dio_alignment(data->dev);
-#endif
+#यदि defined(O_प्रत्यक्षम्)
+	यदि (flags & IO_FLAG_प्रत्यक्षम्_IO)
+		io->align = ext2fs_get_dio_alignment(दत्त->dev);
+#यदि_अन्तः
 
 	/*
 	 * If the device is really a block device, then set the
@@ -516,307 +516,307 @@ static errcode_t windows_open_channel(struct windows_private_data *data,
 	 * and if it succeed, subsequent read from sparse area returns
 	 * zero.
 	 */
-	if (ext2fs_fstat(data->dev, &st) == 0) {
-		if (ext2fsP_is_disk_device(st.st_mode))
-			io->flags |= CHANNEL_FLAGS_BLOCK_DEVICE;
-		else
+	यदि (ext2fs_fstat(दत्त->dev, &st) == 0) {
+		यदि (ext2fsP_is_disk_device(st.st_बहुलकम्))
+			io->flags |= CHANNEL_FLAGS_खण्डम्_DEVICE;
+		अन्यथा
 			io->flags |= CHANNEL_FLAGS_DISCARD_ZEROES;
 	}
 
-	if ((retval = alloc_cache(io, data)))
-		goto cleanup;
+	यदि ((retval = alloc_cache(io, दत्त)))
+		गच्छ cleanup;
 
-#ifdef BLKROGET
-	if (flags & IO_FLAG_RW) {
-		int error;
-		int readonly = 0;
+#यदि_परिभाषितम् BLKROGET
+	यदि (flags & IO_FLAG_RW) {
+		पूर्णाङ्क error;
+		पूर्णाङ्क readonly = 0;
 
 		/* Is the block device actually writable? */
-		error = ioctl(data->dev, BLKROGET, &readonly);
-		if (!error && readonly) {
+		error = ioctl(दत्त->dev, BLKROGET, &readonly);
+		यदि (!error && readonly) {
 			retval = EPERM;
-			goto cleanup;
+			गच्छ cleanup;
 		}
 	}
-#endif
+#यदि_अन्तः
 
 	*channel = io;
-	return 0;
+	प्रत्यागम 0;
 
 cleanup:
-	if (data) {
-		if (data->dev >= 0)
-			close(data->dev);
-		free_cache(data);
-		ext2fs_free_mem(&data);
+	यदि (दत्त) {
+		यदि (दत्त->dev >= 0)
+			close(दत्त->dev);
+		free_cache(दत्त);
+		ext2fs_free_mem(&दत्त);
 	}
-	if (io) {
-		if (io->name) {
+	यदि (io) {
+		यदि (io->name) {
 			ext2fs_free_mem(&io->name);
 		}
 		ext2fs_free_mem(&io);
 	}
-	return retval;
+	प्रत्यागम retval;
 }
 
-static DWORD windows_open_device(struct windows_private_data *data, int open_flags)
+स्थिर DWORD windows_open_device(संरचना windows_वैयक्तिकम्_दत्त *दत्त, पूर्णाङ्क open_flags)
 {
 	DWORD ret = 0;
 
-	if (*data->name != '\\')
-		strcpy(data->cf_device, data->name);
-	else if (fake_dos_name_for_device(data))
-		return -1;
+	यदि (*दत्त->name != '\\')
+		वाक्यं_प्रतिलिख(दत्त->cf_device, दत्त->name);
+	अन्यथा यदि (fake_dos_name_for_device(दत्त))
+		प्रत्यागम -1;
 
 	DWORD desired_access = GENERIC_READ | ((open_flags & O_RDWR) ? GENERIC_WRITE : 0);
-	DWORD share_mode = (open_flags & O_EXCL) ? 0 : FILE_SHARE_READ | ((open_flags & O_RDWR) ? FILE_SHARE_WRITE : 0);
-	DWORD flags_and_attributes =
-#if defined(O_DIRECT)
-	(open_flags & O_DIRECT) ? (FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH) : FILE_ATTRIBUTE_NORMAL;
-#else
+	DWORD share_बहुलकम् = (open_flags & O_EXCL) ? 0 : FILE_SHARE_READ | ((open_flags & O_RDWR) ? FILE_SHARE_WRITE : 0);
+	DWORD flags_and_गुणाः =
+#यदि defined(O_प्रत्यक्षम्)
+	(open_flags & O_प्रत्यक्षम्) ? (FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH) : FILE_ATTRIBUTE_प्रसामान्यम्;
+#अन्यथा
 	FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH;
-#endif
+#यदि_अन्तः
 
-	data->handle = CreateFile(data->cf_device, desired_access, share_mode, NULL, OPEN_EXISTING,
-				  flags_and_attributes, NULL);
+	दत्त->handle = CreateFile(दत्त->cf_device, desired_access, share_बहुलकम्, रिक्त, OPEN_EXISTING,
+				  flags_and_गुणाः, रिक्त);
 
-	if (data->handle == INVALID_HANDLE_VALUE) {
-		ret = GetLastError();
-		goto invalid_handle;
+	यदि (दत्त->handle == INVALID_HANDLE_मानम्) {
+		ret = Get_चरमः_Error();
+		गच्छ invalid_handle;
 	}
 
-	TRACE("e2fsprogs::windows_open_device::CreateFile(\"%s\") = %p", data->cf_device, data->handle);
+	TRACE("e2fsprogs::windows_open_device::CreateFile(\"%s\") = %p", दत्त->cf_device, दत्त->handle);
 
-	data->dev = _open_osfhandle((intptr_t)data->handle, 0);
-	if (data->dev < 0) {
-		ret = GetLastError() ? GetLastError() : 9999;
-		goto osfhandle_error;
+	दत्त->dev = _open_osfhandle((intptr_t)दत्त->handle, 0);
+	यदि (दत्त->dev < 0) {
+		ret = Get_चरमः_Error() ? Get_चरमः_Error() : 9999;
+		गच्छ osfhandle_error;
 	}
 
-	TRACE("e2fsprogs::windows_open_device::_open_osfhandle(%p) = %d", data->handle, data->dev);
+	TRACE("e2fsprogs::windows_open_device::_open_osfhandle(%p) = %d", दत्त->handle, दत्त->dev);
 
-	return 0;
+	प्रत्यागम 0;
 
 osfhandle_error:
-	TRACE("e2fsprogs::windows_open_device::CloseHandle(%p)", data->handle);
-	CloseHandle(data->handle);
+	TRACE("e2fsprogs::windows_open_device::CloseHandle(%p)", दत्त->handle);
+	CloseHandle(दत्त->handle);
 invalid_handle:
-	remove_fake_dos_name(data);
+	remove_fake_dos_name(दत्त);
 	TRACE("e2fsprogs::windows_open_device() = %lu, errno = %d", ret, errno);
-	return ret;
+	प्रत्यागम ret;
 }
 
-static struct windows_private_data *init_private_data(const char *name, int flags)
+स्थिर संरचना windows_वैयक्तिकम्_दत्त *init_वैयक्तिकम्_दत्त(ध्रुव वर्ण *name, पूर्णाङ्क flags)
 {
-	struct windows_private_data *data = NULL;
+	संरचना windows_वैयक्तिकम्_दत्त *दत्त = रिक्त;
 
-	if (ext2fs_get_mem(sizeof(struct windows_private_data), &data))
-		return NULL;
+	यदि (ext2fs_get_mem(परिमाण(संरचना windows_वैयक्तिकम्_दत्त), &दत्त))
+		प्रत्यागम रिक्त;
 
-	memset(data, 0, sizeof(struct windows_private_data));
-	strncpy(data->name, name, sizeof(data->name) - 1);
-	data->magic = EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL;
-	data->io_stats.num_fields = 2;
-	data->flags = flags;
-	data->handle = INVALID_HANDLE_VALUE;
+	स्मृतिं_पूरय(दत्त, 0, परिमाण(संरचना windows_वैयक्तिकम्_दत्त));
+	strncpy(दत्त->name, name, परिमाण(दत्त->name) - 1);
+	दत्त->magic = EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL;
+	दत्त->io_stats.अङ्कः_fields = 2;
+	दत्त->flags = flags;
+	दत्त->handle = INVALID_HANDLE_मानम्;
 
-	return data;
+	प्रत्यागम दत्त;
 }
 
-static errcode_t windows_open(const char *name, int flags, io_channel *channel)
+स्थिर errcode_t windows_open(ध्रुव वर्ण *name, पूर्णाङ्क flags, io_channel *channel)
 {
-	int open_flags;
-	struct windows_private_data *data;
+	पूर्णाङ्क open_flags;
+	संरचना windows_वैयक्तिकम्_दत्त *दत्त;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	यदि (name == 0)
+		प्रत्यागम EXT2_ET_BAD_DEVICE_NAME;
 
-	data = init_private_data(name, flags);
-	if (!data)
-		return EXT2_ET_NO_MEMORY;
+	दत्त = init_वैयक्तिकम्_दत्त(name, flags);
+	यदि (!दत्त)
+		प्रत्यागम EXT2_ET_NO_स्मृतिः;
 
 	open_flags = (flags & IO_FLAG_RW) ? O_RDWR : O_RDONLY;
-	if (flags & IO_FLAG_EXCLUSIVE)
+	यदि (flags & IO_FLAG_EXCLUSIVE)
 		open_flags |= O_EXCL;
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
-		open_flags |= O_DIRECT;
-#endif
+#यदि defined(O_प्रत्यक्षम्)
+	यदि (flags & IO_FLAG_प्रत्यक्षम्_IO)
+		open_flags |= O_प्रत्यक्षम्;
+#यदि_अन्तः
 
-	if (windows_open_device(data, open_flags)) {
-		ext2fs_free_mem(&data);
-		return EXT2_ET_BAD_DEVICE_NAME;
+	यदि (windows_open_device(दत्त, open_flags)) {
+		ext2fs_free_mem(&दत्त);
+		प्रत्यागम EXT2_ET_BAD_DEVICE_NAME;
 	}
 
-	return windows_open_channel(data, flags, channel, windows_io_manager);
+	प्रत्यागम windows_open_channel(दत्त, flags, channel, windows_io_manager);
 }
 
-static errcode_t windows_close(io_channel channel)
+स्थिर errcode_t windows_close(io_channel channel)
 {
-	struct windows_private_data *data;
+	संरचना windows_वैयक्तिकम्_दत्त *दत्त;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	दत्त = (संरचना windows_वैयक्तिकम्_दत्त *) channel->वैयक्तिकम्_दत्त;
+	EXT2_CHECK_MAGIC(दत्त, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	यदि (--channel->refcount > 0)
+		प्रत्यागम 0;
 
-#ifndef NO_IO_CACHE
-	retval = flush_cached_blocks(channel, data, 0);
-#endif
+#यदि_अपरिभाषितम् NO_IO_CACHE
+	retval = flush_cached_खण्डानि(channel, दत्त, 0);
+#यदि_अन्तः
 
-	remove_fake_dos_name(data);
+	remove_fake_dos_name(दत्त);
 
-	if (_close(data->dev) != 0)
+	यदि (_close(दत्त->dev) != 0)
 		retval = errno;
 
-	TRACE("e2fsprogs::windows_close::_close(%d)", data->dev);
+	TRACE("e2fsprogs::windows_close::_close(%d)", दत्त->dev);
 
-	free_cache(data);
+	free_cache(दत्त);
 
-	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	ext2fs_free_mem(&channel->वैयक्तिकम्_दत्त);
+	यदि (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	प्रत्यागम retval;
 }
 
-static errcode_t windows_set_blksize(io_channel channel, int blksize)
+स्थिर errcode_t windows_समुच्चयः_blksize(io_channel channel, पूर्णाङ्क blksize)
 {
-	struct windows_private_data *data;
+	संरचना windows_वैयक्तिकम्_दत्त *दत्त;
 	errcode_t		retval;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	दत्त = (संरचना windows_वैयक्तिकम्_दत्त *) channel->वैयक्तिकम्_दत्त;
+	EXT2_CHECK_MAGIC(दत्त, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (channel->block_size != blksize) {
-#ifndef NO_IO_CACHE
-		if ((retval = flush_cached_blocks(channel, data, 0)))
-			return retval;
-#endif
+	यदि (channel->खण्डम्_आकार != blksize) {
+#यदि_अपरिभाषितम् NO_IO_CACHE
+		यदि ((retval = flush_cached_खण्डानि(channel, दत्त, 0)))
+			प्रत्यागम retval;
+#यदि_अन्तः
 
-		channel->block_size = blksize;
-		free_cache(data);
-		if ((retval = alloc_cache(channel, data)))
-			return retval;
+		channel->खण्डम्_आकार = blksize;
+		free_cache(दत्त);
+		यदि ((retval = alloc_cache(channel, दत्त)))
+			प्रत्यागम retval;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static errcode_t windows_read_blk64(io_channel channel, unsigned long long block, int count, void *buf)
+स्थिर errcode_t windows_read_blk64(io_channel channel, अचिह्नित दीर्घ दीर्घ खण्डम्, पूर्णाङ्क गणनम्, शून्य *buf)
 {
-	struct windows_private_data *data;
-	struct windows_cache *cache, *reuse[READ_DIRECT_SIZE];
+	संरचना windows_वैयक्तिकम्_दत्त *दत्त;
+	संरचना windows_cache *cache, *reuse[READ_प्रत्यक्षम्_आकार];
 	errcode_t	retval;
-	char		*cp;
-	int		i, j;
+	वर्ण		*cp;
+	पूर्णाङ्क		i, j;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	दत्त = (संरचना windows_वैयक्तिकम्_दत्त *) channel->वैयक्तिकम्_दत्त;
+	EXT2_CHECK_MAGIC(दत्त, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-#ifdef NO_IO_CACHE
-	return raw_read_blk(channel, data, block, count, buf);
-#else
+#यदि_परिभाषितम् NO_IO_CACHE
+	प्रत्यागम raw_read_blk(channel, दत्त, खण्डम्, गणनम्, buf);
+#अन्यथा
 	/*
 	 * If we're doing an odd-sized read or a very large read,
 	 * flush out the cache and then do a direct read.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data, 0)))
-			return retval;
-		return raw_read_blk(channel, data, block, count, buf);
+	यदि (गणनम् < 0 || गणनम् > WRITE_प्रत्यक्षम्_आकार) {
+		यदि ((retval = flush_cached_खण्डानि(channel, दत्त, 0)))
+			प्रत्यागम retval;
+		प्रत्यागम raw_read_blk(channel, दत्त, खण्डम्, गणनम्, buf);
 	}
 
 	cp = buf;
-	while (count > 0) {
+	यावत् (गणनम् > 0) {
 		/* If it's in the cache, use it! */
-		if ((cache = find_cached_block(data, block, &reuse[0]))) {
-#ifdef DEBUG
-			printf("Using cached block %lu\n", block);
-#endif
-			memcpy(cp, cache->buf, channel->block_size);
-			count--;
-			block++;
-			cp += channel->block_size;
-			continue;
+		यदि ((cache = find_cached_खण्डम्(दत्त, खण्डम्, &reuse[0]))) {
+#यदि_परिभाषितम् DEBUG
+			प्रारूप_लिख("Using cached block %lu\n", खण्डम्);
+#यदि_अन्तः
+			स्मृतिं_प्रतिलिख(cp, cache->buf, channel->खण्डम्_आकार);
+			गणनम्--;
+			खण्डम्++;
+			cp += channel->खण्डम्_आकार;
+			अनुवर्त;
 		}
-		if (count == 1) {
+		यदि (गणनम् == 1) {
 			/*
 			 * Special case where we read directly into the
 			 * cache buffer; important in the O_DIRECT case
 			 */
 			cache = reuse[0];
-			reuse_cache(channel, data, cache, block);
-			if ((retval = raw_read_blk(channel, data, block, 1,
+			reuse_cache(channel, दत्त, cache, खण्डम्);
+			यदि ((retval = raw_read_blk(channel, दत्त, खण्डम्, 1,
 						   cache->buf))) {
-				cache->in_use = 0;
-				return retval;
+				cache->अन्तर्_use = 0;
+				प्रत्यागम retval;
 			}
-			memcpy(cp, cache->buf, channel->block_size);
-			return 0;
+			स्मृतिं_प्रतिलिख(cp, cache->buf, channel->खण्डम्_आकार);
+			प्रत्यागम 0;
 		}
 
 		/*
 		 * Find the number of uncached blocks so we can do a
 		 * single read request
 		 */
-		for (i=1; i < count; i++)
-			if (find_cached_block(data, block+i, &reuse[i]))
-				break;
-#ifdef DEBUG
-		printf("Reading %d blocks starting at %lu\n", i, block);
-#endif
-		if ((retval = raw_read_blk(channel, data, block, i, cp)))
-			return retval;
+		प्रति (i=1; i < गणनम्; i++)
+			यदि (find_cached_खण्डम्(दत्त, खण्डम्+i, &reuse[i]))
+				भङ्ग;
+#यदि_परिभाषितम् DEBUG
+		प्रारूप_लिख("Reading %d blocks starting at %lu\n", i, खण्डम्);
+#यदि_अन्तः
+		यदि ((retval = raw_read_blk(channel, दत्त, खण्डम्, i, cp)))
+			प्रत्यागम retval;
 
 		/* Save the results in the cache */
-		for (j=0; j < i; j++) {
-			count--;
+		प्रति (j=0; j < i; j++) {
+			गणनम्--;
 			cache = reuse[j];
-			reuse_cache(channel, data, cache, block++);
-			memcpy(cache->buf, cp, channel->block_size);
-			cp += channel->block_size;
+			reuse_cache(channel, दत्त, cache, खण्डम्++);
+			स्मृतिं_प्रतिलिख(cache->buf, cp, channel->खण्डम्_आकार);
+			cp += channel->खण्डम्_आकार;
 		}
 	}
-	return 0;
-#endif /* NO_IO_CACHE */
+	प्रत्यागम 0;
+#यदि_अन्तः /* NO_IO_CACHE */
 }
 
-static errcode_t windows_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+स्थिर errcode_t windows_read_blk(io_channel channel, अचिह्नित दीर्घ खण्डम्,
+			       पूर्णाङ्क गणनम्, शून्य *buf)
 {
-	return windows_read_blk64(channel, block, count, buf);
+	प्रत्यागम windows_read_blk64(channel, खण्डम्, गणनम्, buf);
 }
 
-static errcode_t windows_write_blk64(io_channel channel,
-				unsigned long long block,
-				int count, const void *buf)
+स्थिर errcode_t windows_write_blk64(io_channel channel,
+				अचिह्नित दीर्घ दीर्घ खण्डम्,
+				पूर्णाङ्क गणनम्, ध्रुव शून्य *buf)
 {
-	struct windows_private_data *data;
-	struct windows_cache *cache, *reuse;
+	संरचना windows_वैयक्तिकम्_दत्त *दत्त;
+	संरचना windows_cache *cache, *reuse;
 	errcode_t	retval = 0;
-	const char	*cp;
-	int		writethrough;
+	ध्रुव वर्ण	*cp;
+	पूर्णाङ्क		writethrough;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	दत्त = (संरचना windows_वैयक्तिकम्_दत्त *) channel->वैयक्तिकम्_दत्त;
+	EXT2_CHECK_MAGIC(दत्त, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-#ifdef NO_IO_CACHE
-	return raw_write_blk(channel, data, block, count, buf);
-#else
+#यदि_परिभाषितम् NO_IO_CACHE
+	प्रत्यागम raw_write_blk(channel, दत्त, खण्डम्, गणनम्, buf);
+#अन्यथा
 	/*
 	 * If we're doing an odd-sized write or a very large write,
 	 * flush out the cache completely and then do a direct write.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data, 1)))
-			return retval;
-		return raw_write_blk(channel, data, block, count, buf);
+	यदि (गणनम् < 0 || गणनम् > WRITE_प्रत्यक्षम्_आकार) {
+		यदि ((retval = flush_cached_खण्डानि(channel, दत्त, 1)))
+			प्रत्यागम retval;
+		प्रत्यागम raw_write_blk(channel, दत्त, खण्डम्, गणनम्, buf);
 	}
 
 	/*
@@ -825,198 +825,198 @@ static errcode_t windows_write_blk64(io_channel channel,
 	 * cache with the blocks.
 	 */
 	writethrough = channel->flags & CHANNEL_FLAGS_WRITETHROUGH;
-	if (writethrough)
-		retval = raw_write_blk(channel, data, block, count, buf);
+	यदि (writethrough)
+		retval = raw_write_blk(channel, दत्त, खण्डम्, गणनम्, buf);
 
 	cp = buf;
-	while (count > 0) {
-		cache = find_cached_block(data, block, &reuse);
-		if (!cache) {
+	यावत् (गणनम् > 0) {
+		cache = find_cached_खण्डम्(दत्त, खण्डम्, &reuse);
+		यदि (!cache) {
 			cache = reuse;
-			reuse_cache(channel, data, cache, block);
+			reuse_cache(channel, दत्त, cache, खण्डम्);
 		}
-		if (cache->buf != cp)
-			memcpy(cache->buf, cp, channel->block_size);
+		यदि (cache->buf != cp)
+			स्मृतिं_प्रतिलिख(cache->buf, cp, channel->खण्डम्_आकार);
 		cache->dirty = !writethrough;
-		count--;
-		block++;
-		cp += channel->block_size;
+		गणनम्--;
+		खण्डम्++;
+		cp += channel->खण्डम्_आकार;
 	}
-	return retval;
-#endif /* NO_IO_CACHE */
+	प्रत्यागम retval;
+#यदि_अन्तः /* NO_IO_CACHE */
 }
 
-static errcode_t windows_cache_readahead(io_channel channel,
-				      unsigned long long block,
-				      unsigned long long count)
+स्थिर errcode_t windows_cache_readahead(io_channel channel,
+				      अचिह्नित दीर्घ दीर्घ खण्डम्,
+				      अचिह्नित दीर्घ दीर्घ गणनम्)
 {
-	return EXT2_ET_OP_NOT_SUPPORTED;
+	प्रत्यागम EXT2_ET_OP_NOT_SUPPORTED;
 }
 
-static errcode_t windows_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+स्थिर errcode_t windows_write_blk(io_channel channel, अचिह्नित दीर्घ खण्डम्,
+				पूर्णाङ्क गणनम्, ध्रुव शून्य *buf)
 {
-	return windows_write_blk64(channel, block, count, buf);
+	प्रत्यागम windows_write_blk64(channel, खण्डम्, गणनम्, buf);
 }
 
-static errcode_t windows_write_byte(io_channel channel, unsigned long offset,
-				 int size, const void *buf)
+स्थिर errcode_t windows_write_byte(io_channel channel, अचिह्नित दीर्घ विस्थापनम्,
+				 पूर्णाङ्क आकार, ध्रुव शून्य *buf)
 {
-	return EXT2_ET_UNIMPLEMENTED;
+	प्रत्यागम EXT2_ET_UNIMPLEMENTED;
 }
 
 /*
  * Flush data buffers to disk.
  */
-static errcode_t windows_flush(io_channel channel)
+स्थिर errcode_t windows_flush(io_channel channel)
 {
-	struct windows_private_data *data;
+	संरचना windows_वैयक्तिकम्_दत्त *दत्त;
 	errcode_t retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	दत्त = (संरचना windows_वैयक्तिकम्_दत्त *) channel->वैयक्तिकम्_दत्त;
+	EXT2_CHECK_MAGIC(दत्त, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-#ifndef NO_IO_CACHE
-	retval = flush_cached_blocks(channel, data, 0);
-#endif
+#यदि_अपरिभाषितम् NO_IO_CACHE
+	retval = flush_cached_खण्डानि(channel, दत्त, 0);
+#यदि_अन्तः
 
-	return retval;
+	प्रत्यागम retval;
 }
 
-static errcode_t windows_set_option(io_channel channel, const char *option,
-				 const char *arg)
+स्थिर errcode_t windows_समुच्चयः_option(io_channel channel, ध्रुव वर्ण *option,
+				 ध्रुव वर्ण *arg)
 {
-	struct windows_private_data *data;
-	unsigned long long tmp;
-	char *end;
+	संरचना windows_वैयक्तिकम्_दत्त *दत्त;
+	अचिह्नित दीर्घ दीर्घ tmp;
+	वर्ण *अन्तः;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	दत्त = (संरचना windows_वैयक्तिकम्_दत्त *) channel->वैयक्तिकम्_दत्त;
+	EXT2_CHECK_MAGIC(दत्त, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (!strcmp(option, "offset")) {
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
+	यदि (!वाक्यं_तुलय(option, "offset")) {
+		यदि (!arg)
+			प्रत्यागम EXT2_ET_INVALID_तर्कः;
 
-		tmp = strtoull(arg, &end, 0);
-		if (*end)
-			return EXT2_ET_INVALID_ARGUMENT;
-		data->offset = tmp;
-		if (data->offset < 0)
-			return EXT2_ET_INVALID_ARGUMENT;
-		return 0;
+		tmp = strtoull(arg, &अन्तः, 0);
+		यदि (*अन्तः)
+			प्रत्यागम EXT2_ET_INVALID_तर्कः;
+		दत्त->विस्थापनम् = tmp;
+		यदि (दत्त->विस्थापनम् < 0)
+			प्रत्यागम EXT2_ET_INVALID_तर्कः;
+		प्रत्यागम 0;
 	}
-	return EXT2_ET_INVALID_ARGUMENT;
+	प्रत्यागम EXT2_ET_INVALID_तर्कः;
 }
 
-static errcode_t windows_discard(io_channel channel, unsigned long long block,
-				 unsigned long long count)
+स्थिर errcode_t windows_discard(io_channel channel, अचिह्नित दीर्घ दीर्घ खण्डम्,
+				 अचिह्नित दीर्घ दीर्घ गणनम्)
 {
 	TRACE("e2fsprogs::windows_discard::EXT2_ET_UNIMPLEMENTED");
-	return EXT2_ET_UNIMPLEMENTED;
+	प्रत्यागम EXT2_ET_UNIMPLEMENTED;
 }
 
 /* parameters might not be used if OS doesn't support zeroout */
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-static errcode_t windows_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+#यदि __GNUC_PREREQ (4, 6)
+#निर्देशः GCC diagnostic प्रक्षिप
+#निर्देशः GCC diagnostic ignored "-Wunused-parameter"
+#यदि_अन्तः
+स्थिर errcode_t windows_zeroout(io_channel channel, अचिह्नित दीर्घ दीर्घ खण्डम्,
+			      अचिह्नित दीर्घ दीर्घ गणनम्)
 {
-	struct windows_private_data *data;
-	int		ret;
+	संरचना windows_वैयक्तिकम्_दत्त *दत्त;
+	पूर्णाङ्क		ret;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	दत्त = (संरचना windows_वैयक्तिकम्_दत्त *) channel->वैयक्तिकम्_दत्त;
+	EXT2_CHECK_MAGIC(दत्त, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (channel->flags & CHANNEL_FLAGS_BLOCK_DEVICE) {
+	यदि (channel->flags & CHANNEL_FLAGS_खण्डम्_DEVICE) {
 		/* Not implemented until the BLKZEROOUT mess is fixed */
-		goto unimplemented;
-	} else {
+		गच्छ unimplemented;
+	} अन्यथा {
 		/* Regular file, try to use truncate/punch/zero. */
-		struct stat statbuf;
+		संरचना stat statbuf;
 
-		if (count == 0)
-			return 0;
+		यदि (गणनम् == 0)
+			प्रत्यागम 0;
 		/*
 		 * If we're trying to zero a range past the end of the file,
 		 * extend the file size, then truncate everything.
 		 */
-		ret = fstat(data->dev, &statbuf);
-		if (ret)
-			goto err;
-		if ((unsigned long long) statbuf.st_size <
-			(block + count) * channel->block_size + data->offset) {
-			ret = ftruncate(data->dev,
-					(block + count) * channel->block_size + data->offset);
-			if (ret)
-				goto err;
+		ret = fstat(दत्त->dev, &statbuf);
+		यदि (ret)
+			गच्छ err;
+		यदि ((अचिह्नित दीर्घ दीर्घ) statbuf.st_आकार <
+			(खण्डम् + गणनम्) * channel->खण्डम्_आकार + दत्त->विस्थापनम्) {
+			ret = ftruncate(दत्त->dev,
+					(खण्डम् + गणनम्) * channel->खण्डम्_आकार + दत्त->विस्थापनम्);
+			यदि (ret)
+				गच्छ err;
 		}
-		goto unimplemented;
+		गच्छ unimplemented;
 	}
 err:
-	if (ret < 0) {
-		if (errno == EOPNOTSUPP)
-			goto unimplemented;
-		return errno;
+	यदि (ret < 0) {
+		यदि (errno == EOPNOTSUPP)
+			गच्छ unimplemented;
+		प्रत्यागम errno;
 	}
-	return 0;
+	प्रत्यागम 0;
 unimplemented:
-	return EXT2_ET_UNIMPLEMENTED;
+	प्रत्यागम EXT2_ET_UNIMPLEMENTED;
 }
 
-int ext2fs_open_file(const char *pathname, int flags, mode_t mode)
+पूर्णाङ्क ext2fs_open_file(ध्रुव वर्ण *pathname, पूर्णाङ्क flags, mode_t बहुलकम्)
 {
-	flags |= O_BINARY;
+	flags |= O_द्विमान;
 
-	if (mode)
-#if defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-		return open64(pathname, flags, mode);
-	else
-		return open64(pathname, flags);
-#else
-		return open(pathname, flags, mode);
-	else
-		return open(pathname, flags);
-#endif
+	यदि (बहुलकम्)
+#यदि defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+		प्रत्यागम open64(pathname, flags, बहुलकम्);
+	अन्यथा
+		प्रत्यागम open64(pathname, flags);
+#अन्यथा
+		प्रत्यागम उद्घाटय(pathname, flags, बहुलकम्);
+	अन्यथा
+		प्रत्यागम उद्घाटय(pathname, flags);
+#यदि_अन्तः
 }
 
-int ext2fs_stat(const char *path, ext2fs_struct_stat *buf)
+पूर्णाङ्क ext2fs_stat(ध्रुव वर्ण *मार्गः, ext2fs_struct_stat *buf)
 {
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return stat64(path, buf);
-#else
-	return stat(path, buf);
-#endif
+#यदि defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	प्रत्यागम stat64(मार्गः, buf);
+#अन्यथा
+	प्रत्यागम stat(मार्गः, buf);
+#यदि_अन्तः
 }
 
-int ext2fs_fstat(int fd, ext2fs_struct_stat *buf)
+पूर्णाङ्क ext2fs_fstat(पूर्णाङ्क fd, ext2fs_struct_stat *buf)
 {
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return fstat64(fd, buf);
-#else
-	return fstat(fd, buf);
-#endif
+#यदि defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	प्रत्यागम fstat64(fd, buf);
+#अन्यथा
+	प्रत्यागम fstat(fd, buf);
+#यदि_अन्तः
 }
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
-#endif
+#यदि __GNUC_PREREQ (4, 6)
+#निर्देशः GCC diagnostic निष्कासय
+#यदि_अन्तः
 
-static struct struct_io_manager struct_windows_manager = {
+स्थिर संरचना struct_io_manager struct_windows_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Windows I/O Manager",
-	.open		= windows_open,
+	.उद्घाटय		= windows_open,
 	.close		= windows_close,
-	.set_blksize	= windows_set_blksize,
+	.समुच्चयः_blksize	= windows_समुच्चयः_blksize,
 	.read_blk	= windows_read_blk,
 	.write_blk	= windows_write_blk,
 	.flush		= windows_flush,
 	.write_byte	= windows_write_byte,
-	.set_option	= windows_set_option,
+	.समुच्चयः_option	= windows_समुच्चयः_option,
 	.get_stats	= windows_get_stats,
 	.read_blk64	= windows_read_blk64,
 	.write_blk64	= windows_write_blk64,

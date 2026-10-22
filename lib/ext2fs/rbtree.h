@@ -91,93 +91,93 @@ static inline struct page * rb_insert_page_cache(struct inode * inode,
 -----------------------------------------------------------------------
 */
 
-#ifndef	_LINUX_RBTREE_H
-#define	_LINUX_RBTREE_H
+#यदि_अपरिभाषितम्	_LINUX_RBTREE_H
+#परिभाषय	_LINUX_RBTREE_H
 
-#include <stdlib.h>
-#include <stdint.h>
-#include "compiler.h"
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव "compiler.h"
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-function"
-#endif
+#यदि __GNUC_PREREQ (4, 6)
+#निर्देशः GCC diagnostic प्रक्षिप
+#निर्देशः GCC diagnostic ignored "-Wunused-function"
+#यदि_अन्तः
 
-struct rb_node
+संरचना rb_ग्रन्थिः
 {
 	uintptr_t  rb_parent_color;
-#define	RB_RED		0
-#define	RB_BLACK	1
-	struct rb_node *rb_right;
-	struct rb_node *rb_left;
-} __attribute__((aligned(sizeof(long))));
+#परिभाषय	RB_RED		0
+#परिभाषय	RB_BLACK	1
+	संरचना rb_ग्रन्थिः *rb_दक्षिणः;
+	संरचना rb_ग्रन्थिः *rb_वामः;
+} __attribute__((aligned(परिमाण(दीर्घ))));
     /* The alignment might seem pointless, but allegedly CRIS needs it */
 
-struct rb_root
+संरचना rb_मूलम्
 {
-	struct rb_node *rb_node;
+	संरचना rb_ग्रन्थिः *rb_ग्रन्थिः;
 };
 
 
-#define ext2fs_rb_parent(r)   ((struct rb_node *)((r)->rb_parent_color & ~3))
-#define ext2fs_rb_color(r)   ((r)->rb_parent_color & 1)
-#define ext2fs_rb_is_red(r)   (!ext2fs_rb_color(r))
-#define ext2fs_rb_is_black(r) ext2fs_rb_color(r)
-#define ext2fs_rb_set_red(r)  do { (r)->rb_parent_color &= ~1; } while (0)
-#define ext2fs_rb_set_black(r)  do { (r)->rb_parent_color |= 1; } while (0)
+#परिभाषय ext2fs_rb_parent(r)   ((संरचना rb_ग्रन्थिः *)((r)->rb_parent_color & ~3))
+#परिभाषय ext2fs_rb_color(r)   ((r)->rb_parent_color & 1)
+#परिभाषय ext2fs_rb_is_red(r)   (!ext2fs_rb_color(r))
+#परिभाषय ext2fs_rb_is_black(r) ext2fs_rb_color(r)
+#परिभाषय ext2fs_rb_समुच्चयः_red(r)  कुरु { (r)->rb_parent_color &= ~1; } यावत् (0)
+#परिभाषय ext2fs_rb_समुच्चयः_black(r)  कुरु { (r)->rb_parent_color |= 1; } यावत् (0)
 
-static inline void ext2fs_rb_set_parent(struct rb_node *rb, struct rb_node *p)
+स्थिर अन्तःस्थ शून्य ext2fs_rb_समुच्चयः_parent(संरचना rb_ग्रन्थिः *rb, संरचना rb_ग्रन्थिः *p)
 {
 	rb->rb_parent_color = (rb->rb_parent_color & 3) | (uintptr_t)p;
 }
-static inline void ext2fs_rb_set_color(struct rb_node *rb, int color)
+स्थिर अन्तःस्थ शून्य ext2fs_rb_समुच्चयः_color(संरचना rb_ग्रन्थिः *rb, पूर्णाङ्क color)
 {
 	rb->rb_parent_color = (rb->rb_parent_color & ~1) | color;
 }
 
-#define RB_ROOT	(struct rb_root) { NULL, }
-#define	ext2fs_rb_entry(ptr, type, member) container_of(ptr, type, member)
+#परिभाषय RB_मूलम्	(संरचना rb_मूलम्) { रिक्त, }
+#परिभाषय	ext2fs_rb_प्रविष्टिः(ptr, type, member) container_सम्बन्धि(ptr, type, member)
 
-static inline int ext2fs_rb_empty_root(struct rb_root *root)
+स्थिर अन्तःस्थ पूर्णाङ्क ext2fs_rb_रिक्तानि_मूलम्(संरचना rb_मूलम् *मूलम्)
 {
-	return root->rb_node == NULL;
+	प्रत्यागम मूलम्->rb_ग्रन्थिः == रिक्त;
 }
 
-static inline int ext2fs_rb_empty_node(struct rb_node *node)
+स्थिर अन्तःस्थ पूर्णाङ्क ext2fs_rb_रिक्तानि_ग्रन्थिः(संरचना rb_ग्रन्थिः *ग्रन्थिः)
 {
-	return ext2fs_rb_parent(node) == node;
+	प्रत्यागम ext2fs_rb_parent(ग्रन्थिः) == ग्रन्थिः;
 }
 
-static inline void ext2fs_rb_clear_node(struct rb_node *node)
+स्थिर अन्तःस्थ शून्य ext2fs_rb_clear_ग्रन्थिः(संरचना rb_ग्रन्थिः *ग्रन्थिः)
 {
-	ext2fs_rb_set_parent(node, node);
+	ext2fs_rb_समुच्चयः_parent(ग्रन्थिः, ग्रन्थिः);
 }
 
-extern void ext2fs_rb_insert_color(struct rb_node *, struct rb_root *);
-extern void ext2fs_rb_erase(struct rb_node *, struct rb_root *);
+बाह्य शून्य ext2fs_rb_निवेशय_color(संरचना rb_ग्रन्थिः *, संरचना rb_मूलम् *);
+बाह्य शून्य ext2fs_rb_erase(संरचना rb_ग्रन्थिः *, संरचना rb_मूलम् *);
 
 /* Find logical next and previous nodes in a tree */
-extern struct rb_node *ext2fs_rb_next(struct rb_node *);
-extern struct rb_node *ext2fs_rb_prev(struct rb_node *);
-extern struct rb_node *ext2fs_rb_first(const struct rb_root *);
-extern struct rb_node *ext2fs_rb_last(const struct rb_root *);
+बाह्य संरचना rb_ग्रन्थिः *ext2fs_rb_अग्र(संरचना rb_ग्रन्थिः *);
+बाह्य संरचना rb_ग्रन्थिः *ext2fs_rb_पूर्व(संरचना rb_ग्रन्थिः *);
+बाह्य संरचना rb_ग्रन्थिः *ext2fs_rb_first(ध्रुव संरचना rb_मूलम् *);
+बाह्य संरचना rb_ग्रन्थिः *ext2fs_rb_चरमः(ध्रुव संरचना rb_मूलम् *);
 
 /* Fast replacement of a single node without remove/rebalance/add/rebalance */
-extern void ext2fs_rb_replace_node(struct rb_node *victim, struct rb_node *new_,
-				 struct rb_root *root);
+बाह्य शून्य ext2fs_rb_replace_ग्रन्थिः(संरचना rb_ग्रन्थिः *victim, संरचना rb_ग्रन्थिः *new_,
+				 संरचना rb_मूलम् *मूलम्);
 
-static inline void ext2fs_rb_link_node(struct rb_node * node,
-				     struct rb_node * parent,
-				     struct rb_node ** rb_link)
+स्थिर अन्तःस्थ शून्य ext2fs_rb_link_ग्रन्थिः(संरचना rb_ग्रन्थिः * ग्रन्थिः,
+				     संरचना rb_ग्रन्थिः * parent,
+				     संरचना rb_ग्रन्थिः ** rb_link)
 {
-	node->rb_parent_color = (uintptr_t)parent;
-	node->rb_left = node->rb_right = NULL;
+	ग्रन्थिः->rb_parent_color = (uintptr_t)parent;
+	ग्रन्थिः->rb_वामः = ग्रन्थिः->rb_दक्षिणः = रिक्त;
 
-	*rb_link = node;
+	*rb_link = ग्रन्थिः;
 }
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
-#endif
+#यदि __GNUC_PREREQ (4, 6)
+#निर्देशः GCC diagnostic निष्कासय
+#यदि_अन्तः
 
-#endif	/* _LINUX_RBTREE_H */
+#यदि_अन्तः	/* _LINUX_RBTREE_H */

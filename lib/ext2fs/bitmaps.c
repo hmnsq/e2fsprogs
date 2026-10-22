@@ -10,32 +10,32 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
+#यदि_अन्तः
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <time.h>
+#यदि HAVE_SYS_STAT_H
+#अन्तर्भाव <sys/stat.h>
+#यदि_अन्तः
+#यदि HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
+#यदि_अन्तः
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
-#include "bmap64.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
+#अन्तर्भाव "ext2fsP.h"
+#अन्तर्भाव "bmap64.h"
 
-void ext2fs_free_inode_bitmap(ext2fs_inode_bitmap bitmap)
+शून्य ext2fs_free_inode_bitmap(ext2fs_inode_bitmap bitmap)
 {
 	ext2fs_free_generic_bmap(bitmap);
 }
 
-void ext2fs_free_block_bitmap(ext2fs_block_bitmap bitmap)
+शून्य ext2fs_free_खण्डम्_bitmap(ext2fs_खण्डम्_bitmap bitmap)
 {
 	ext2fs_free_generic_bmap(bitmap);
 }
@@ -43,78 +43,78 @@ void ext2fs_free_block_bitmap(ext2fs_block_bitmap bitmap)
 errcode_t ext2fs_copy_bitmap(ext2fs_generic_bitmap src,
 			     ext2fs_generic_bitmap *dest)
 {
-	return (ext2fs_copy_generic_bmap(src, dest));
+	प्रत्यागम (ext2fs_copy_generic_bmap(src, dest));
 }
-void ext2fs_set_bitmap_padding(ext2fs_generic_bitmap map)
+शून्य ext2fs_समुच्चयः_bitmap_padding(ext2fs_generic_bitmap map)
 {
-	ext2fs_set_generic_bmap_padding(map);
+	ext2fs_समुच्चयः_generic_bmap_padding(map);
 }
 
 errcode_t ext2fs_allocate_inode_bitmap(ext2_filsys fs,
-				       const char *descr,
+				       ध्रुव वर्ण *descr,
 				       ext2fs_inode_bitmap *ret)
 {
-	__u64		start, end, real_end;
+	__u64		start, अन्तः, real_अन्तः;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (ext2fs_has_feature_journal_dev(fs->super))
-		return EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
+	यदि (ext2fs_has_feature_journal_dev(fs->super))
+		प्रत्यागम EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
 
 	fs->write_bitmaps = ext2fs_write_bitmaps;
 
 	start = 1;
-	end = fs->super->s_inodes_count;
-	real_end = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-		fs->group_desc_count;
+	अन्तः = fs->super->s_inodes_गणनम्;
+	real_अन्तः = (__u64)EXT2_INODES_प्रत्येकम्_गणः(fs->super) *
+		fs->गणः_desc_गणनम्;
 
 	/* Are we permitted to use new-style bitmaps? */
-	if (fs->flags & EXT2_FLAG_64BITS)
-		return (ext2fs_alloc_generic_bmap(fs,
+	यदि (fs->flags & EXT2_FLAG_64_द्वयङ्काः)
+		प्रत्यागम (ext2fs_alloc_generic_bmap(fs,
 				EXT2_ET_MAGIC_INODE_BITMAP64,
 				fs->default_bitmap_type,
-				start, end, real_end, descr, ret));
+				start, अन्तः, real_अन्तः, descr, ret));
 
 	/* Otherwise, check to see if the file system is small enough
 	 * to use old-style 32-bit bitmaps */
-	if ((end > ~0U) || (real_end > ~0U))
-		return EXT2_ET_CANT_USE_LEGACY_BITMAPS;
+	यदि ((अन्तः > ~0U) || (real_अन्तः > ~0U))
+		प्रत्यागम EXT2_ET_CANT_USE_LEGACY_BITMAPS;
 
-	return (ext2fs_make_generic_bitmap(EXT2_ET_MAGIC_INODE_BITMAP, fs,
-					 start, end, real_end,
+	प्रत्यागम (ext2fs_make_generic_bitmap(EXT2_ET_MAGIC_INODE_BITMAP, fs,
+					 start, अन्तः, real_अन्तः,
 					 descr, 0,
 					 (ext2fs_generic_bitmap *) ret));
 }
 
-errcode_t ext2fs_allocate_block_bitmap(ext2_filsys fs,
-				       const char *descr,
-				       ext2fs_block_bitmap *ret)
+errcode_t ext2fs_allocate_खण्डम्_bitmap(ext2_filsys fs,
+				       ध्रुव वर्ण *descr,
+				       ext2fs_खण्डम्_bitmap *ret)
 {
-	__u64		start, end, real_end;
+	__u64		start, अन्तः, real_अन्तः;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (ext2fs_has_feature_journal_dev(fs->super))
-		return EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
+	यदि (ext2fs_has_feature_journal_dev(fs->super))
+		प्रत्यागम EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
 
 	fs->write_bitmaps = ext2fs_write_bitmaps;
 
-	start = EXT2FS_B2C(fs, fs->super->s_first_data_block);
-	end = EXT2FS_B2C(fs, ext2fs_blocks_count(fs->super)-1);
-	real_end = ((__u64) EXT2_CLUSTERS_PER_GROUP(fs->super)
-		    * (__u64) fs->group_desc_count)-1 + start;
+	start = EXT2FS_B2C(fs, fs->super->s_first_दत्त_खण्डम्);
+	अन्तः = EXT2FS_B2C(fs, ext2fs_खण्डानि_गणनम्(fs->super)-1);
+	real_अन्तः = ((__u64) EXT2_CLUSTERS_प्रत्येकम्_गणः(fs->super)
+		    * (__u64) fs->गणः_desc_गणनम्)-1 + start;
 
-	if (fs->flags & EXT2_FLAG_64BITS)
-		return (ext2fs_alloc_generic_bmap(fs,
-				EXT2_ET_MAGIC_BLOCK_BITMAP64,
+	यदि (fs->flags & EXT2_FLAG_64_द्वयङ्काः)
+		प्रत्यागम (ext2fs_alloc_generic_bmap(fs,
+				EXT2_ET_MAGIC_खण्डम्_BITMAP64,
 				fs->default_bitmap_type,
-				start, end, real_end, descr, ret));
+				start, अन्तः, real_अन्तः, descr, ret));
 
-	if ((end > ~0U) || (real_end > ~0U))
-		return EXT2_ET_CANT_USE_LEGACY_BITMAPS;
+	यदि ((अन्तः > ~0U) || (real_अन्तः > ~0U))
+		प्रत्यागम EXT2_ET_CANT_USE_LEGACY_BITMAPS;
 
-	return (ext2fs_make_generic_bitmap(EXT2_ET_MAGIC_BLOCK_BITMAP, fs,
-					   start, end, real_end,
+	प्रत्यागम (ext2fs_make_generic_bitmap(EXT2_ET_MAGIC_खण्डम्_BITMAP, fs,
+					   start, अन्तः, real_अन्तः,
 					   descr, 0,
 					   (ext2fs_generic_bitmap *) ret));
 }
@@ -127,194 +127,194 @@ errcode_t ext2fs_allocate_block_bitmap(ext2_filsys fs,
  * allocation of the file system metadata blocks.
  */
 errcode_t ext2fs_allocate_subcluster_bitmap(ext2_filsys fs,
-					    const char *descr,
-					    ext2fs_block_bitmap *ret)
+					    ध्रुव वर्ण *descr,
+					    ext2fs_खण्डम्_bitmap *ret)
 {
-	__u64			start, end, real_end;
+	__u64			start, अन्तः, real_अन्तः;
 	ext2fs_generic_bitmap	bmap;
 	ext2fs_generic_bitmap_64 bmap64;
 	errcode_t		retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (ext2fs_has_feature_journal_dev(fs->super))
-		return EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
+	यदि (ext2fs_has_feature_journal_dev(fs->super))
+		प्रत्यागम EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
 
 	fs->write_bitmaps = ext2fs_write_bitmaps;
 
-	if (!fs->cluster_ratio_bits)
-		return ext2fs_allocate_block_bitmap(fs, descr, ret);
+	यदि (!fs->cluster_अनुपातः_द्वयङ्काः)
+		प्रत्यागम ext2fs_allocate_खण्डम्_bitmap(fs, descr, ret);
 
-	if ((fs->flags & EXT2_FLAG_64BITS) == 0)
-		return EXT2_ET_CANT_USE_LEGACY_BITMAPS;
+	यदि ((fs->flags & EXT2_FLAG_64_द्वयङ्काः) == 0)
+		प्रत्यागम EXT2_ET_CANT_USE_LEGACY_BITMAPS;
 
-	start = fs->super->s_first_data_block;
-	end = ext2fs_blocks_count(fs->super)-1;
-	real_end = ((__u64) EXT2_BLOCKS_PER_GROUP(fs->super)
-		    * (__u64) fs->group_desc_count)-1 + start;
+	start = fs->super->s_first_दत्त_खण्डम्;
+	अन्तः = ext2fs_खण्डानि_गणनम्(fs->super)-1;
+	real_अन्तः = ((__u64) EXT2_खण्डानि_प्रत्येकम्_गणः(fs->super)
+		    * (__u64) fs->गणः_desc_गणनम्)-1 + start;
 
-	retval = ext2fs_alloc_generic_bmap(fs, EXT2_ET_MAGIC_BLOCK_BITMAP64,
+	retval = ext2fs_alloc_generic_bmap(fs, EXT2_ET_MAGIC_खण्डम्_BITMAP64,
 					   fs->default_bitmap_type, start,
-					   end, real_end, descr, &bmap);
-	if (retval)
-		return retval;
+					   अन्तः, real_अन्तः, descr, &bmap);
+	यदि (retval)
+		प्रत्यागम retval;
 	bmap64 = (ext2fs_generic_bitmap_64) bmap;
-	bmap64->cluster_bits = 0;
+	bmap64->cluster_द्वयङ्काः = 0;
 	*ret = bmap;
-	return 0;
+	प्रत्यागम 0;
 }
 
-int ext2fs_get_bitmap_granularity(ext2fs_block_bitmap bitmap)
+पूर्णाङ्क ext2fs_get_bitmap_granularity(ext2fs_खण्डम्_bitmap bitmap)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) bitmap;
 
-	if (!EXT2FS_IS_64_BITMAP(bmap))
-		return 0;
+	यदि (!EXT2FS_IS_64_BITMAP(bmap))
+		प्रत्यागम 0;
 
-	return bmap->cluster_bits;
+	प्रत्यागम bmap->cluster_द्वयङ्काः;
 }
 
-errcode_t ext2fs_fudge_inode_bitmap_end(ext2fs_inode_bitmap bitmap,
-					ext2_ino_t end, ext2_ino_t *oend)
+errcode_t ext2fs_fudge_inode_bitmap_अन्तः(ext2fs_inode_bitmap bitmap,
+					ext2_ino_t अन्तः, ext2_ino_t *oend)
 {
 	__u64 tmp_oend;
-	int retval;
+	पूर्णाङ्क retval;
 
-	retval = ext2fs_fudge_generic_bmap_end((ext2fs_generic_bitmap) bitmap,
-					       EXT2_ET_FUDGE_INODE_BITMAP_END,
-					       end, &tmp_oend);
-	if (oend)
+	retval = ext2fs_fudge_generic_bmap_अन्तः((ext2fs_generic_bitmap) bitmap,
+					       EXT2_ET_FUDGE_INODE_BITMAP_अन्तः,
+					       अन्तः, &tmp_oend);
+	यदि (oend)
 		*oend = tmp_oend;
-	return retval;
+	प्रत्यागम retval;
 }
 
-errcode_t ext2fs_fudge_block_bitmap_end(ext2fs_block_bitmap bitmap,
-					blk_t end, blk_t *oend)
+errcode_t ext2fs_fudge_खण्डम्_bitmap_अन्तः(ext2fs_खण्डम्_bitmap bitmap,
+					blk_t अन्तः, blk_t *oend)
 {
-	return (ext2fs_fudge_generic_bitmap_end(bitmap,
-						EXT2_ET_MAGIC_BLOCK_BITMAP,
-						EXT2_ET_FUDGE_BLOCK_BITMAP_END,
-						end, oend));
+	प्रत्यागम (ext2fs_fudge_generic_bitmap_अन्तः(bitmap,
+						EXT2_ET_MAGIC_खण्डम्_BITMAP,
+						EXT2_ET_FUDGE_खण्डम्_BITMAP_अन्तः,
+						अन्तः, oend));
 }
 
-errcode_t ext2fs_fudge_block_bitmap_end2(ext2fs_block_bitmap bitmap,
-					 blk64_t end, blk64_t *oend)
+errcode_t ext2fs_fudge_खण्डम्_bitmap_end2(ext2fs_खण्डम्_bitmap bitmap,
+					 blk64_t अन्तः, blk64_t *oend)
 {
-	return (ext2fs_fudge_generic_bmap_end(bitmap,
-					      EXT2_ET_FUDGE_BLOCK_BITMAP_END,
-					      end, oend));
+	प्रत्यागम (ext2fs_fudge_generic_bmap_अन्तः(bitmap,
+					      EXT2_ET_FUDGE_खण्डम्_BITMAP_अन्तः,
+					      अन्तः, oend));
 }
 
-void ext2fs_clear_inode_bitmap(ext2fs_inode_bitmap bitmap)
-{
-	ext2fs_clear_generic_bmap(bitmap);
-}
-
-void ext2fs_clear_block_bitmap(ext2fs_block_bitmap bitmap)
+शून्य ext2fs_clear_inode_bitmap(ext2fs_inode_bitmap bitmap)
 {
 	ext2fs_clear_generic_bmap(bitmap);
 }
 
-errcode_t ext2fs_resize_inode_bitmap(__u32 new_end, __u32 new_real_end,
+शून्य ext2fs_clear_खण्डम्_bitmap(ext2fs_खण्डम्_bitmap bitmap)
+{
+	ext2fs_clear_generic_bmap(bitmap);
+}
+
+errcode_t ext2fs_resize_inode_bitmap(__u32 new_अन्तः, __u32 new_real_अन्तः,
 				     ext2fs_inode_bitmap bmap)
 {
-	return (ext2fs_resize_generic_bitmap(EXT2_ET_MAGIC_INODE_BITMAP,
-					     new_end, new_real_end, bmap));
+	प्रत्यागम (ext2fs_resize_generic_bitmap(EXT2_ET_MAGIC_INODE_BITMAP,
+					     new_अन्तः, new_real_अन्तः, bmap));
 }
 
-errcode_t ext2fs_resize_inode_bitmap2(__u64 new_end, __u64 new_real_end,
+errcode_t ext2fs_resize_inode_bitmap2(__u64 new_अन्तः, __u64 new_real_अन्तः,
 				      ext2fs_inode_bitmap bmap)
 {
-	return (ext2fs_resize_generic_bmap(bmap, new_end, new_real_end));
+	प्रत्यागम (ext2fs_resize_generic_bmap(bmap, new_अन्तः, new_real_अन्तः));
 }
 
-errcode_t ext2fs_resize_block_bitmap(__u32 new_end, __u32 new_real_end,
-				     ext2fs_block_bitmap bmap)
+errcode_t ext2fs_resize_खण्डम्_bitmap(__u32 new_अन्तः, __u32 new_real_अन्तः,
+				     ext2fs_खण्डम्_bitmap bmap)
 {
-	return (ext2fs_resize_generic_bitmap(EXT2_ET_MAGIC_BLOCK_BITMAP,
-					     new_end, new_real_end, bmap));
+	प्रत्यागम (ext2fs_resize_generic_bitmap(EXT2_ET_MAGIC_खण्डम्_BITMAP,
+					     new_अन्तः, new_real_अन्तः, bmap));
 }
 
-errcode_t ext2fs_resize_block_bitmap2(__u64 new_end, __u64 new_real_end,
-				      ext2fs_block_bitmap bmap)
+errcode_t ext2fs_resize_खण्डम्_bitmap2(__u64 new_अन्तः, __u64 new_real_अन्तः,
+				      ext2fs_खण्डम्_bitmap bmap)
 {
-	return (ext2fs_resize_generic_bmap(bmap, new_end, new_real_end));
+	प्रत्यागम (ext2fs_resize_generic_bmap(bmap, new_अन्तः, new_real_अन्तः));
 }
 
-errcode_t ext2fs_compare_block_bitmap(ext2fs_block_bitmap bm1,
-				      ext2fs_block_bitmap bm2)
+errcode_t ext2fs_compare_खण्डम्_bitmap(ext2fs_खण्डम्_bitmap bm1,
+				      ext2fs_खण्डम्_bitmap bm2)
 {
-	return (ext2fs_compare_generic_bmap(EXT2_ET_NEQ_BLOCK_BITMAP,
+	प्रत्यागम (ext2fs_compare_generic_bmap(EXT2_ET_NEQ_खण्डम्_BITMAP,
 					    bm1, bm2));
 }
 
 errcode_t ext2fs_compare_inode_bitmap(ext2fs_inode_bitmap bm1,
 				      ext2fs_inode_bitmap bm2)
 {
-	return (ext2fs_compare_generic_bmap(EXT2_ET_NEQ_INODE_BITMAP,
+	प्रत्यागम (ext2fs_compare_generic_bmap(EXT2_ET_NEQ_INODE_BITMAP,
 					    bm1, bm2));
 }
 
-errcode_t ext2fs_set_inode_bitmap_range(ext2fs_inode_bitmap bmap,
-					ext2_ino_t start, unsigned int num,
-					void *in)
+errcode_t ext2fs_समुच्चयः_inode_bitmap_range(ext2fs_inode_bitmap bmap,
+					ext2_ino_t start, अचिह्नित पूर्णाङ्क अङ्कः,
+					शून्य *अन्तर्)
 {
-	return (ext2fs_set_generic_bitmap_range(bmap,
+	प्रत्यागम (ext2fs_समुच्चयः_generic_bitmap_range(bmap,
 						EXT2_ET_MAGIC_INODE_BITMAP,
-						start, num, in));
+						start, अङ्कः, अन्तर्));
 }
 
-errcode_t ext2fs_set_inode_bitmap_range2(ext2fs_inode_bitmap bmap,
-					 __u64 start, size_t num,
-					 void *in)
+errcode_t ext2fs_समुच्चयः_inode_bitmap_range2(ext2fs_inode_bitmap bmap,
+					 __u64 start, size_t अङ्कः,
+					 शून्य *अन्तर्)
 {
-	return (ext2fs_set_generic_bmap_range(bmap, start, num, in));
+	प्रत्यागम (ext2fs_समुच्चयः_generic_bmap_range(bmap, start, अङ्कः, अन्तर्));
 }
 
 errcode_t ext2fs_get_inode_bitmap_range(ext2fs_inode_bitmap bmap,
-					ext2_ino_t start, unsigned int num,
-					void *out)
+					ext2_ino_t start, अचिह्नित पूर्णाङ्क अङ्कः,
+					शून्य *बहिर्गमनम्)
 {
-	return (ext2fs_get_generic_bitmap_range(bmap,
+	प्रत्यागम (ext2fs_get_generic_bitmap_range(bmap,
 						EXT2_ET_MAGIC_INODE_BITMAP,
-						start, num, out));
+						start, अङ्कः, बहिर्गमनम्));
 }
 
 errcode_t ext2fs_get_inode_bitmap_range2(ext2fs_inode_bitmap bmap,
-					 __u64 start, size_t num,
-					 void *out)
+					 __u64 start, size_t अङ्कः,
+					 शून्य *बहिर्गमनम्)
 {
-	return (ext2fs_get_generic_bmap_range(bmap, start, num, out));
+	प्रत्यागम (ext2fs_get_generic_bmap_range(bmap, start, अङ्कः, बहिर्गमनम्));
 }
 
-errcode_t ext2fs_set_block_bitmap_range(ext2fs_block_bitmap bmap,
-					blk_t start, unsigned int num,
-					void *in)
+errcode_t ext2fs_समुच्चयः_खण्डम्_bitmap_range(ext2fs_खण्डम्_bitmap bmap,
+					blk_t start, अचिह्नित पूर्णाङ्क अङ्कः,
+					शून्य *अन्तर्)
 {
-	return (ext2fs_set_generic_bitmap_range(bmap,
-						EXT2_ET_MAGIC_BLOCK_BITMAP,
-						start, num, in));
+	प्रत्यागम (ext2fs_समुच्चयः_generic_bitmap_range(bmap,
+						EXT2_ET_MAGIC_खण्डम्_BITMAP,
+						start, अङ्कः, अन्तर्));
 }
 
-errcode_t ext2fs_set_block_bitmap_range2(ext2fs_block_bitmap bmap,
-					 blk64_t start, size_t num,
-					 void *in)
+errcode_t ext2fs_समुच्चयः_खण्डम्_bitmap_range2(ext2fs_खण्डम्_bitmap bmap,
+					 blk64_t start, size_t अङ्कः,
+					 शून्य *अन्तर्)
 {
-	return (ext2fs_set_generic_bmap_range(bmap, start, num, in));
+	प्रत्यागम (ext2fs_समुच्चयः_generic_bmap_range(bmap, start, अङ्कः, अन्तर्));
 }
 
-errcode_t ext2fs_get_block_bitmap_range(ext2fs_block_bitmap bmap,
-					blk_t start, unsigned int num,
-					void *out)
+errcode_t ext2fs_get_खण्डम्_bitmap_range(ext2fs_खण्डम्_bitmap bmap,
+					blk_t start, अचिह्नित पूर्णाङ्क अङ्कः,
+					शून्य *बहिर्गमनम्)
 {
-	return (ext2fs_get_generic_bitmap_range(bmap,
-						EXT2_ET_MAGIC_BLOCK_BITMAP,
-						start, num, out));
+	प्रत्यागम (ext2fs_get_generic_bitmap_range(bmap,
+						EXT2_ET_MAGIC_खण्डम्_BITMAP,
+						start, अङ्कः, बहिर्गमनम्));
 }
 
-errcode_t ext2fs_get_block_bitmap_range2(ext2fs_block_bitmap bmap,
-					 blk64_t start, size_t num,
-					 void *out)
+errcode_t ext2fs_get_खण्डम्_bitmap_range2(ext2fs_खण्डम्_bitmap bmap,
+					 blk64_t start, size_t अङ्कः,
+					 शून्य *बहिर्गमनम्)
 {
-	return (ext2fs_get_generic_bmap_range(bmap, start, num, out));
+	प्रत्यागम (ext2fs_get_generic_bmap_range(bmap, start, अङ्कः, बहिर्गमनम्));
 }

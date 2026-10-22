@@ -9,78 +9,78 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#ifdef HAVE_GETOPT_H
-#include <getopt.h>
-#endif
-#include <string.h>
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include "ss/ss.h"
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
+#यदि_परिभाषितम् HAVE_GETOPT_H
+#अन्तर्भाव <getopt.h>
+#यदि_अन्तः
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <time.h>
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव "ss/ss.h"
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
+#अन्तर्भाव "ext2fsP.h"
 
-extern ss_request_table tst_bitmaps_cmds;
+बाह्य ss_request_सारणी tst_bitmaps_cmds;
 
-static char subsystem_name[] = "tst_bitmaps";
-static char version[] = "1.0";
+स्थिर वर्ण subsystem_name[] = "tst_bitmaps";
+स्थिर वर्ण संस्करणम्[] = "1.0";
 
 ext2_filsys	test_fs;
-int		exit_status = 0;
+पूर्णाङ्क		exit_स्थितिः = 0;
 
-static int source_file(const char *cmd_file, int sci_idx)
+स्थिर पूर्णाङ्क source_file(ध्रुव वर्ण *cmd_file, पूर्णाङ्क sci_idx)
 {
 	FILE		*f;
-	char		buf[256];
-	char		*cp;
-	int		retval;
-	int 		noecho;
+	वर्ण		buf[256];
+	वर्ण		*cp;
+	पूर्णाङ्क		retval;
+	पूर्णाङ्क 		noecho;
 
-	if (strcmp(cmd_file, "-") == 0)
+	यदि (वाक्यं_तुलय(cmd_file, "-") == 0)
 		f = stdin;
-	else {
+	अन्यथा {
 		f = fopen(cmd_file, "r");
-		if (!f) {
+		यदि (!f) {
 			perror(cmd_file);
-			exit(1);
+			निर्गच्छ(1);
 		}
 	}
 	fflush(stdout);
 	fflush(stderr);
-	setbuf(stdout, NULL);
-	setbuf(stderr, NULL);
-	while (!feof(f)) {
-		if (fgets(buf, sizeof(buf), f) == NULL)
-			break;
-		if (buf[0] == '#')
-			continue;
+	setbuf(stdout, रिक्त);
+	setbuf(stderr, रिक्त);
+	यावत् (!feof(f)) {
+		यदि (fgets(buf, परिमाण(buf), f) == रिक्त)
+			भङ्ग;
+		यदि (buf[0] == '#')
+			अनुवर्त;
 		noecho = 0;
-		if (buf[0] == '-') {
+		यदि (buf[0] == '-') {
 			noecho = 1;
 			buf[0] = ' ';
 		}
 		cp = strchr(buf, '\n');
-		if (cp)
+		यदि (cp)
 			*cp = 0;
 		cp = strchr(buf, '\r');
-		if (cp)
+		यदि (cp)
 			*cp = 0;
-		if (!noecho)
-			printf("%s: %s\n", subsystem_name, buf);
-		retval = ss_execute_line(sci_idx, buf);
-		if (retval) {
+		यदि (!noecho)
+			प्रारूप_लिख("%s: %s\n", subsystem_name, buf);
+		retval = ss_execute_पङ्क्तिः(sci_idx, buf);
+		यदि (retval) {
 			ss_perror(sci_idx, retval, buf);
-			exit_status++;
+			exit_स्थितिः++;
 		}
 	}
-	return exit_status;
+	प्रत्यागम exit_स्थितिः;
 }
 
 
@@ -103,643 +103,643 @@ static int source_file(const char *cmd_file, int sci_idx)
  *
  * We hide the hair here.
  */
-void reset_getopt(void)
+शून्य reset_getopt(शून्य)
 {
-#if defined(__GLIBC__) || defined(__linux__)
+#यदि defined(__GLIBC__) || defined(__linux__)
 	optind = 0;
-#else
+#अन्यथा
 	optind = 1;
-#endif
-#ifdef HAVE_OPTRESET
+#यदि_अन्तः
+#यदि_परिभाषितम् HAVE_OPTRESET
 	optreset = 1;		/* Makes BSD getopt happy */
-#endif
+#यदि_अन्तः
 }
 
 /*
  * This function will convert a string to an unsigned long, printing
  * an error message if it fails, and returning success or failure in err.
  */
-unsigned long parse_ulong(const char *str, const char *cmd,
-			  const char *descr, int *err)
+अचिह्नित दीर्घ parse_ulong(ध्रुव वर्ण *str, ध्रुव वर्ण *cmd,
+			  ध्रुव वर्ण *descr, पूर्णाङ्क *err)
 {
-	char		*tmp;
-	unsigned long	ret;
+	वर्ण		*tmp;
+	अचिह्नित दीर्घ	ret;
 
 	ret = strtoul(str, &tmp, 0);
-	if (*tmp == 0) {
-		if (err)
+	यदि (*tmp == 0) {
+		यदि (err)
 			*err = 0;
-		return ret;
+		प्रत्यागम ret;
 	}
 	com_err(cmd, 0, "Bad %s - %s", descr, str);
-	if (err)
+	यदि (err)
 		*err = 1;
-	else
-		exit(1);
-	return 0;
+	अन्यथा
+		निर्गच्छ(1);
+	प्रत्यागम 0;
 }
 
 
-int check_fs_open(const char *name)
+पूर्णाङ्क check_fs_open(ध्रुव वर्ण *name)
 {
-	if (!test_fs) {
+	यदि (!test_fs) {
 		com_err(name, 0, "Filesystem not open");
-		return 1;
+		प्रत्यागम 1;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static void setup_filesystem(const char *name,
-			     unsigned int blocks, unsigned int inodes,
-			     unsigned int type, int flags)
+स्थिर शून्य सज्जता_filesystem(ध्रुव वर्ण *name,
+			     अचिह्नित पूर्णाङ्क खण्डानि, अचिह्नित पूर्णाङ्क inodes,
+			     अचिह्नित पूर्णाङ्क type, पूर्णाङ्क flags)
 {
-	struct ext2_super_block param;
+	संरचना ext2_super_खण्डम् param;
 	errcode_t retval;
 
-	memset(&param, 0, sizeof(param));
-	ext2fs_blocks_count_set(&param, blocks);
-	param.s_inodes_count = inodes;
+	स्मृतिं_पूरय(&param, 0, परिमाण(param));
+	ext2fs_खण्डानि_गणनम्_समुच्चयः(&param, खण्डानि);
+	param.s_inodes_गणनम् = inodes;
 
 	retval = ext2fs_initialize("test fs", flags, &param,
 				   test_io_manager, &test_fs);
 
-	if (retval) {
+	यदि (retval) {
 		com_err(name, retval, "while initializing filesystem");
-		return;
+		प्रत्यागम;
 	}
 	test_fs->default_bitmap_type = type;
-	ext2fs_free_block_bitmap(test_fs->block_map);
-	test_fs->block_map = 0;
+	ext2fs_free_खण्डम्_bitmap(test_fs->खण्डम्_map);
+	test_fs->खण्डम्_map = 0;
 	ext2fs_free_inode_bitmap(test_fs->inode_map);
 	test_fs->inode_map = 0;
-	retval = ext2fs_allocate_block_bitmap(test_fs, "block bitmap",
-					      &test_fs->block_map);
-	if (retval) {
+	retval = ext2fs_allocate_खण्डम्_bitmap(test_fs, "block bitmap",
+					      &test_fs->खण्डम्_map);
+	यदि (retval) {
 		com_err(name, retval, "while allocating block bitmap");
-		goto errout;
+		गच्छ errout;
 	}
 	retval = ext2fs_allocate_inode_bitmap(test_fs, "inode bitmap",
 					      &test_fs->inode_map);
-	if (retval) {
+	यदि (retval) {
 		com_err(name, retval, "while allocating inode bitmap");
-		goto errout;
+		गच्छ errout;
 	}
-	return;
+	प्रत्यागम;
 
 errout:
 	ext2fs_close_free(&test_fs);
 }
 
-void setup_cmd(int argc, ss_argv_t argv,
-	       int sci_idx EXT2FS_ATTR((unused)),
-	       void *infop EXT2FS_ATTR((unused)))
+शून्य सज्जता_cmd(पूर्णाङ्क argc, ss_argv_t argv,
+	       पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+	       शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	int		c, err;
-	unsigned int	blocks = 128;
-	unsigned int	inodes = 0;
-	unsigned int	type = EXT2FS_BMAP64_BITARRAY;
-	int		flags = EXT2_FLAG_64BITS;
+	पूर्णाङ्क		c, err;
+	अचिह्नित पूर्णाङ्क	खण्डानि = 128;
+	अचिह्नित पूर्णाङ्क	inodes = 0;
+	अचिह्नित पूर्णाङ्क	type = EXT2FS_BMAP64_BITARRAY;
+	पूर्णाङ्क		flags = EXT2_FLAG_64_द्वयङ्काः;
 
-	if (test_fs)
+	यदि (test_fs)
 		ext2fs_close_free(&test_fs);
 
 	reset_getopt();
-	while ((c = getopt(argc, argv, "b:i:lt:")) != EOF) {
-		switch (c) {
-		case 'b':
-			blocks = parse_ulong(optarg, argv[0],
+	यावत् ((c = getopt(argc, argv, "b:i:lt:")) != EOF) {
+		विकल्प (c) {
+		पक्ष 'b':
+			खण्डानि = parse_ulong(optarg, argv[0],
 					     "number of blocks", &err);
-			if (err)
-				return;
-			break;
-		case 'i':
+			यदि (err)
+				प्रत्यागम;
+			भङ्ग;
+		पक्ष 'i':
 			inodes = parse_ulong(optarg, argv[0],
 					     "number of blocks", &err);
-			if (err)
-				return;
-			break;
-		case 'l':	/* Legacy bitmaps */
+			यदि (err)
+				प्रत्यागम;
+			भङ्ग;
+		पक्ष 'l':	/* Legacy bitmaps */
 			flags = 0;
-			break;
-		case 't':
+			भङ्ग;
+		पक्ष 't':
 			type = parse_ulong(optarg, argv[0],
 					   "bitmap backend type", &err);
-			if (err)
-				return;
-			break;
-		default:
+			यदि (err)
+				प्रत्यागम;
+			भङ्ग;
+		स्वभाव:
 			fprintf(stderr, "%s: usage: setup [-b blocks] "
 				"[-i inodes] [-t type]\n", argv[0]);
-			return;
+			प्रत्यागम;
 		}
 	}
-	setup_filesystem(argv[0], blocks, inodes, type, flags);
+	सज्जता_filesystem(argv[0], खण्डानि, inodes, type, flags);
 }
 
-void close_cmd(int argc, char **argv, int sci_idx EXT2FS_ATTR((unused)),
-	       void *infop EXT2FS_ATTR((unused)))
+शून्य close_cmd(पूर्णाङ्क argc, वर्ण **argv, पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+	       शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	if (check_fs_open(argv[0]))
-		return;
+	यदि (check_fs_open(argv[0]))
+		प्रत्यागम;
 
 	ext2fs_close_free(&test_fs);
 }
 
 
-void dump_bitmap(ext2fs_generic_bitmap bmap, unsigned int start, unsigned num)
+शून्य dump_bitmap(ext2fs_generic_bitmap bmap, अचिह्नित पूर्णाङ्क start, अचिह्नित अङ्कः)
 {
-	unsigned char	*buf;
+	अचिह्नित वर्ण	*buf;
 	errcode_t	retval;
-	int		i, len = (num - start + 7) / 8;
+	पूर्णाङ्क		i, len = (अङ्कः - start + 7) / 8;
 
-	buf = malloc(len);
-	if (!buf) {
+	buf = स्मृतिं_देहि(len);
+	यदि (!buf) {
 		com_err("dump_bitmap", 0, "couldn't allocate buffer");
-		return;
+		प्रत्यागम;
 	}
-	memset(buf, 0, len);
-	retval = ext2fs_get_generic_bmap_range(bmap, (__u64) start, num, buf);
-	if (retval) {
+	स्मृतिं_पूरय(buf, 0, len);
+	retval = ext2fs_get_generic_bmap_range(bmap, (__u64) start, अङ्कः, buf);
+	यदि (retval) {
 		com_err("dump_bitmap", retval, 
 			"while calling ext2fs_generic_bmap_range");
-		free(buf);
-		return;
+		मुक्त(buf);
+		प्रत्यागम;
 	}
-	for (i=0; i < len; i++)
-		printf("%02x", buf[i]);
-	printf("\n");
-	printf("bits set: %u\n", ext2fs_bitcount(buf, len));
-	free(buf);
+	प्रति (i=0; i < len; i++)
+		प्रारूप_लिख("%02x", buf[i]);
+	प्रारूप_लिख("\n");
+	प्रारूप_लिख("bits set: %u\n", ext2fs_bitcount(buf, len));
+	मुक्त(buf);
 }
 
-void dump_inode_bitmap_cmd(int argc, ss_argv_t argv,
-			   int sci_idx EXT2FS_ATTR((unused)),
-			   void *infop EXT2FS_ATTR((unused)))
+शून्य dump_inode_bitmap_cmd(पूर्णाङ्क argc, ss_argv_t argv,
+			   पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+			   शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	if (check_fs_open(argv[0]))
-		return;
+	यदि (check_fs_open(argv[0]))
+		प्रत्यागम;
 
-	printf("inode bitmap: ");
-	dump_bitmap(test_fs->inode_map, 1, test_fs->super->s_inodes_count);
-}
-	
-void dump_block_bitmap_cmd(int argc, ss_argv_t argv,
-			   int sci_idx EXT2FS_ATTR((unused)),
-			   void *infop EXT2FS_ATTR((unused)))
-{
-	if (check_fs_open(argv[0]))
-		return;
-
-	printf("block bitmap: ");
-	dump_bitmap(test_fs->block_map, test_fs->super->s_first_data_block,
-		    test_fs->super->s_blocks_count);
+	प्रारूप_लिख("inode bitmap: ");
+	dump_bitmap(test_fs->inode_map, 1, test_fs->super->s_inodes_गणनम्);
 }
 	
-void do_setb(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
-	     void *infop EXT2FS_ATTR((unused)))
+शून्य dump_खण्डम्_bitmap_cmd(पूर्णाङ्क argc, ss_argv_t argv,
+			   पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+			   शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	unsigned int block, num;
-	int err;
-	int test_result, op_result;
+	यदि (check_fs_open(argv[0]))
+		प्रत्यागम;
 
-	if (check_fs_open(argv[0]))
-		return;
+	प्रारूप_लिख("block bitmap: ");
+	dump_bitmap(test_fs->खण्डम्_map, test_fs->super->s_first_दत्त_खण्डम्,
+		    test_fs->super->s_खण्डानि_गणनम्);
+}
+	
+शून्य do_setb(पूर्णाङ्क argc, ss_argv_t argv,
+	     पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+	     शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
+{
+	अचिह्नित पूर्णाङ्क खण्डम्, अङ्कः;
+	पूर्णाङ्क err;
+	पूर्णाङ्क test_परिणाम, op_परिणाम;
 
-	if (argc != 2 && argc != 3) {
+	यदि (check_fs_open(argv[0]))
+		प्रत्यागम;
+
+	यदि (argc != 2 && argc != 3) {
 		com_err(argv[0], 0, "Usage: setb <block> [num]");
-		return;
+		प्रत्यागम;
 	}
 
-	block = parse_ulong(argv[1], argv[0], "block", &err);
-	if (err)
-		return;
+	खण्डम् = parse_ulong(argv[1], argv[0], "block", &err);
+	यदि (err)
+		प्रत्यागम;
 
-	if (argc == 3) {
-		num = parse_ulong(argv[2], argv[0], "num", &err);
-		if (err)
-			return;
+	यदि (argc == 3) {
+		अङ्कः = parse_ulong(argv[2], argv[0], "num", &err);
+		यदि (err)
+			प्रत्यागम;
 
-		ext2fs_mark_block_bitmap_range2(test_fs->block_map,
-						block, num);
-		printf("Marking blocks %u to %u\n", block, block + num - 1);
-		return;
+		ext2fs_mark_खण्डम्_bitmap_range2(test_fs->खण्डम्_map,
+						खण्डम्, अङ्कः);
+		प्रारूप_लिख("Marking blocks %u to %u\n", खण्डम्, खण्डम् + अङ्कः - 1);
+		प्रत्यागम;
 	}
 
-	test_result = ext2fs_test_block_bitmap2(test_fs->block_map, block);
-	op_result = ext2fs_mark_block_bitmap2(test_fs->block_map, block);
-	printf("Setting block %u, was %s before\n", block, op_result ?
+	test_परिणाम = ext2fs_test_खण्डम्_bitmap2(test_fs->खण्डम्_map, खण्डम्);
+	op_परिणाम = ext2fs_mark_खण्डम्_bitmap2(test_fs->खण्डम्_map, खण्डम्);
+	प्रारूप_लिख("Setting block %u, was %s before\n", खण्डम्, op_परिणाम ?
 	       "set" : "clear");
-	if (!test_result != !op_result)
+	यदि (!test_परिणाम != !op_परिणाम)
 		com_err(argv[0], 0, "*ERROR* test_result different! (%d, %d)",
-			test_result, op_result);
+			test_परिणाम, op_परिणाम);
 }
 
-void do_clearb(int argc, ss_argv_t argv,
-	       int sci_idx EXT2FS_ATTR((unused)),
-	       void *infop EXT2FS_ATTR((unused)))
+शून्य do_clearb(पूर्णाङ्क argc, ss_argv_t argv,
+	       पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+	       शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	unsigned int block, num;
-	int err;
-	int test_result, op_result;
+	अचिह्नित पूर्णाङ्क खण्डम्, अङ्कः;
+	पूर्णाङ्क err;
+	पूर्णाङ्क test_परिणाम, op_परिणाम;
 
-	if (check_fs_open(argv[0]))
-		return;
+	यदि (check_fs_open(argv[0]))
+		प्रत्यागम;
 
-	if (argc != 2 && argc != 3) {
+	यदि (argc != 2 && argc != 3) {
 		com_err(argv[0], 0, "Usage: clearb <block> [num]");
-		return;
+		प्रत्यागम;
 	}
 
-	block = parse_ulong(argv[1], argv[0], "block", &err);
-	if (err)
-		return;
+	खण्डम् = parse_ulong(argv[1], argv[0], "block", &err);
+	यदि (err)
+		प्रत्यागम;
 
-	if (argc == 3) {
-		num = parse_ulong(argv[2], argv[0], "num", &err);
-		if (err)
-			return;
+	यदि (argc == 3) {
+		अङ्कः = parse_ulong(argv[2], argv[0], "num", &err);
+		यदि (err)
+			प्रत्यागम;
 
-		ext2fs_unmark_block_bitmap_range2(test_fs->block_map,
-						block, num);
-		printf("Clearing blocks %u to %u\n", block, block + num - 1);
-		return;
+		ext2fs_unmark_खण्डम्_bitmap_range2(test_fs->खण्डम्_map,
+						खण्डम्, अङ्कः);
+		प्रारूप_लिख("Clearing blocks %u to %u\n", खण्डम्, खण्डम् + अङ्कः - 1);
+		प्रत्यागम;
 	}
 
-	test_result = ext2fs_test_block_bitmap2(test_fs->block_map, block);
-	op_result = ext2fs_unmark_block_bitmap2(test_fs->block_map, block);
-	printf("Clearing block %u, was %s before\n", block, op_result ?
+	test_परिणाम = ext2fs_test_खण्डम्_bitmap2(test_fs->खण्डम्_map, खण्डम्);
+	op_परिणाम = ext2fs_unmark_खण्डम्_bitmap2(test_fs->खण्डम्_map, खण्डम्);
+	प्रारूप_लिख("Clearing block %u, was %s before\n", खण्डम्, op_परिणाम ?
 	       "set" : "clear");
-	if (!test_result != !op_result)
+	यदि (!test_परिणाम != !op_परिणाम)
 		com_err(argv[0], 0, "*ERROR* test_result different! (%d, %d)",
-			test_result, op_result);
+			test_परिणाम, op_परिणाम);
 }
 
-void do_testb(int argc, ss_argv_t argv,
-	      int sci_idx EXT2FS_ATTR((unused)),
-	      void *infop EXT2FS_ATTR((unused)))
+शून्य do_testb(पूर्णाङ्क argc, ss_argv_t argv,
+	      पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+	      शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	unsigned int block, num;
-	int err;
-	int test_result;
+	अचिह्नित पूर्णाङ्क खण्डम्, अङ्कः;
+	पूर्णाङ्क err;
+	पूर्णाङ्क test_परिणाम;
 
-	if (check_fs_open(argv[0]))
-		return;
+	यदि (check_fs_open(argv[0]))
+		प्रत्यागम;
 
-	if (argc != 2 && argc != 3) {
+	यदि (argc != 2 && argc != 3) {
 		com_err(argv[0], 0, "Usage: testb <block> [num]");
-		return;
+		प्रत्यागम;
 	}
 
-	block = parse_ulong(argv[1], argv[0], "block", &err);
-	if (err)
-		return;
+	खण्डम् = parse_ulong(argv[1], argv[0], "block", &err);
+	यदि (err)
+		प्रत्यागम;
 
-	if (argc == 3) {
-		num = parse_ulong(argv[2], argv[0], "num", &err);
-		if (err)
-			return;
+	यदि (argc == 3) {
+		अङ्कः = parse_ulong(argv[2], argv[0], "num", &err);
+		यदि (err)
+			प्रत्यागम;
 
-		test_result =
-			ext2fs_test_block_bitmap_range2(test_fs->block_map,
-							block, num);
-		printf("Blocks %u to %u are %sall clear.\n",
-		       block, block + num - 1, test_result ? "" : "NOT ");
-		return;
+		test_परिणाम =
+			ext2fs_test_खण्डम्_bitmap_range2(test_fs->खण्डम्_map,
+							खण्डम्, अङ्कः);
+		प्रारूप_लिख("Blocks %u to %u are %sall clear.\n",
+		       खण्डम्, खण्डम् + अङ्कः - 1, test_परिणाम ? "" : "NOT ");
+		प्रत्यागम;
 	}
 
-	test_result = ext2fs_test_block_bitmap2(test_fs->block_map, block);
-	printf("Block %u is %s\n", block, test_result ? "set" : "clear");
+	test_परिणाम = ext2fs_test_खण्डम्_bitmap2(test_fs->खण्डम्_map, खण्डम्);
+	प्रारूप_लिख("Block %u is %s\n", खण्डम्, test_परिणाम ? "set" : "clear");
 }
 
-void do_ffzb(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
-	     void *infop EXT2FS_ATTR((unused)))
+शून्य do_ffzb(पूर्णाङ्क argc, ss_argv_t argv,
+	     पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+	     शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	unsigned int start, end;
-	int err;
+	अचिह्नित पूर्णाङ्क start, अन्तः;
+	पूर्णाङ्क err;
 	errcode_t retval;
-	blk64_t out;
+	blk64_t बहिर्गमनम्;
 
-	if (check_fs_open(argv[0]))
-		return;
+	यदि (check_fs_open(argv[0]))
+		प्रत्यागम;
 
-	if (argc != 3 && argc != 3) {
+	यदि (argc != 3 && argc != 3) {
 		com_err(argv[0], 0, "Usage: ffzb <start> <end>");
-		return;
+		प्रत्यागम;
 	}
 
 	start = parse_ulong(argv[1], argv[0], "start", &err);
-	if (err)
-		return;
+	यदि (err)
+		प्रत्यागम;
 
-	end = parse_ulong(argv[2], argv[0], "end", &err);
-	if (err)
-		return;
+	अन्तः = parse_ulong(argv[2], argv[0], "end", &err);
+	यदि (err)
+		प्रत्यागम;
 
-	retval = ext2fs_find_first_zero_block_bitmap2(test_fs->block_map,
-						      start, end, &out);
-	if (retval) {
-		printf("ext2fs_find_first_zero_block_bitmap2() returned %s\n",
-		       error_message(retval));
-		return;
+	retval = ext2fs_find_first_zero_खण्डम्_bitmap2(test_fs->खण्डम्_map,
+						      start, अन्तः, &बहिर्गमनम्);
+	यदि (retval) {
+		प्रारूप_लिख("ext2fs_find_first_zero_block_bitmap2() returned %s\n",
+		       error_सन्देशः(retval));
+		प्रत्यागम;
 	}
-	printf("First unmarked block is %llu\n", (unsigned long long) out);
+	प्रारूप_लिख("First unmarked block is %llu\n", (अचिह्नित दीर्घ दीर्घ) बहिर्गमनम्);
 }
 
-void do_ffsb(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
-	     void *infop EXT2FS_ATTR((unused)))
+शून्य do_ffsb(पूर्णाङ्क argc, ss_argv_t argv,
+	     पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+	     शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	unsigned int start, end;
-	int err;
+	अचिह्नित पूर्णाङ्क start, अन्तः;
+	पूर्णाङ्क err;
 	errcode_t retval;
-	blk64_t out;
+	blk64_t बहिर्गमनम्;
 
-	if (check_fs_open(argv[0]))
-		return;
+	यदि (check_fs_open(argv[0]))
+		प्रत्यागम;
 
-	if (argc != 3 && argc != 3) {
+	यदि (argc != 3 && argc != 3) {
 		com_err(argv[0], 0, "Usage: ffsb <start> <end>");
-		return;
+		प्रत्यागम;
 	}
 
 	start = parse_ulong(argv[1], argv[0], "start", &err);
-	if (err)
-		return;
+	यदि (err)
+		प्रत्यागम;
 
-	end = parse_ulong(argv[2], argv[0], "end", &err);
-	if (err)
-		return;
+	अन्तः = parse_ulong(argv[2], argv[0], "end", &err);
+	यदि (err)
+		प्रत्यागम;
 
-	retval = ext2fs_find_first_set_block_bitmap2(test_fs->block_map,
-						      start, end, &out);
-	if (retval) {
-		printf("ext2fs_find_first_set_block_bitmap2() returned %s\n",
-		       error_message(retval));
-		return;
+	retval = ext2fs_find_first_समुच्चयः_खण्डम्_bitmap2(test_fs->खण्डम्_map,
+						      start, अन्तः, &बहिर्गमनम्);
+	यदि (retval) {
+		प्रारूप_लिख("ext2fs_find_first_set_block_bitmap2() returned %s\n",
+		       error_सन्देशः(retval));
+		प्रत्यागम;
 	}
-	printf("First marked block is %llu\n", (unsigned long long) out);
+	प्रारूप_लिख("First marked block is %llu\n", (अचिह्नित दीर्घ दीर्घ) बहिर्गमनम्);
 }
 
 
-void do_zerob(int argc, ss_argv_t argv,
-	      int sci_idx EXT2FS_ATTR((unused)),
-	      void *infop EXT2FS_ATTR((unused)))
+शून्य do_zerob(पूर्णाङ्क argc, ss_argv_t argv,
+	      पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+	      शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	if (check_fs_open(argv[0]))
-		return;
+	यदि (check_fs_open(argv[0]))
+		प्रत्यागम;
 
-	printf("Clearing block bitmap.\n");
-	ext2fs_clear_block_bitmap(test_fs->block_map);
+	प्रारूप_लिख("Clearing block bitmap.\n");
+	ext2fs_clear_खण्डम्_bitmap(test_fs->खण्डम्_map);
 }
 
-void do_seti(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
-	     void *infop EXT2FS_ATTR((unused)))
+शून्य do_seti(पूर्णाङ्क argc, ss_argv_t argv,
+	     पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+	     शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	unsigned int inode;
-	int err;
-	int test_result, op_result;
+	अचिह्नित पूर्णाङ्क inode;
+	पूर्णाङ्क err;
+	पूर्णाङ्क test_परिणाम, op_परिणाम;
 
-	if (check_fs_open(argv[0]))
-		return;
+	यदि (check_fs_open(argv[0]))
+		प्रत्यागम;
 
-	if (argc != 2) {
+	यदि (argc != 2) {
 		com_err(argv[0], 0, "Usage: seti <inode>");
-		return;
+		प्रत्यागम;
 	}
 
 	inode = parse_ulong(argv[1], argv[0], "inode", &err);
-	if (err)
-		return;
+	यदि (err)
+		प्रत्यागम;
 
-	test_result = ext2fs_test_inode_bitmap2(test_fs->inode_map, inode);
-	op_result = ext2fs_mark_inode_bitmap2(test_fs->inode_map, inode);
-	printf("Setting inode %u, was %s before\n", inode, op_result ?
+	test_परिणाम = ext2fs_test_inode_bitmap2(test_fs->inode_map, inode);
+	op_परिणाम = ext2fs_mark_inode_bitmap2(test_fs->inode_map, inode);
+	प्रारूप_लिख("Setting inode %u, was %s before\n", inode, op_परिणाम ?
 	       "set" : "clear");
-	if (!test_result != !op_result) {
+	यदि (!test_परिणाम != !op_परिणाम) {
 		com_err(argv[0], 0, "*ERROR* test_result different! (%d, %d)",
-			test_result, op_result);
-		exit_status++;
+			test_परिणाम, op_परिणाम);
+		exit_स्थितिः++;
 	}
 }
 
-void do_cleari(int argc, ss_argv_t argv,
-	       int sci_idx EXT2FS_ATTR((unused)),
-	       void *infop EXT2FS_ATTR((unused)))
+शून्य do_cleari(पूर्णाङ्क argc, ss_argv_t argv,
+	       पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+	       शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	unsigned int inode;
-	int err;
-	int test_result, op_result;
+	अचिह्नित पूर्णाङ्क inode;
+	पूर्णाङ्क err;
+	पूर्णाङ्क test_परिणाम, op_परिणाम;
 
-	if (check_fs_open(argv[0]))
-		return;
+	यदि (check_fs_open(argv[0]))
+		प्रत्यागम;
 
-	if (argc != 2) {
+	यदि (argc != 2) {
 		com_err(argv[0], 0, "Usage: clearb <inode>");
-		return;
+		प्रत्यागम;
 	}
 
 	inode = parse_ulong(argv[1], argv[0], "inode", &err);
-	if (err)
-		return;
+	यदि (err)
+		प्रत्यागम;
 
-	test_result = ext2fs_test_inode_bitmap2(test_fs->inode_map, inode);
-	op_result = ext2fs_unmark_inode_bitmap2(test_fs->inode_map, inode);
-	printf("Clearing inode %u, was %s before\n", inode, op_result ?
+	test_परिणाम = ext2fs_test_inode_bitmap2(test_fs->inode_map, inode);
+	op_परिणाम = ext2fs_unmark_inode_bitmap2(test_fs->inode_map, inode);
+	प्रारूप_लिख("Clearing inode %u, was %s before\n", inode, op_परिणाम ?
 	       "set" : "clear");
-	if (!test_result != !op_result) {
+	यदि (!test_परिणाम != !op_परिणाम) {
 		com_err(argv[0], 0, "*ERROR* test_result different! (%d, %d)",
-			test_result, op_result);
-		exit_status++;
+			test_परिणाम, op_परिणाम);
+		exit_स्थितिः++;
 	}
 }
 
-void do_testi(int argc, ss_argv_t argv,
-	      int sci_idx EXT2FS_ATTR((unused)),
-	      void *infop EXT2FS_ATTR((unused)))
+शून्य do_testi(पूर्णाङ्क argc, ss_argv_t argv,
+	      पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+	      शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	unsigned int inode;
-	int err;
-	int test_result;
+	अचिह्नित पूर्णाङ्क inode;
+	पूर्णाङ्क err;
+	पूर्णाङ्क test_परिणाम;
 
-	if (check_fs_open(argv[0]))
-		return;
+	यदि (check_fs_open(argv[0]))
+		प्रत्यागम;
 
-	if (argc != 2) {
+	यदि (argc != 2) {
 		com_err(argv[0], 0, "Usage: testb <inode>");
-		return;
+		प्रत्यागम;
 	}
 
 	inode = parse_ulong(argv[1], argv[0], "inode", &err);
-	if (err)
-		return;
+	यदि (err)
+		प्रत्यागम;
 
-	test_result = ext2fs_test_inode_bitmap2(test_fs->inode_map, inode);
-	printf("Inode %u is %s\n", inode, test_result ? "set" : "clear");
+	test_परिणाम = ext2fs_test_inode_bitmap2(test_fs->inode_map, inode);
+	प्रारूप_लिख("Inode %u is %s\n", inode, test_परिणाम ? "set" : "clear");
 }
 
-void do_ffzi(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
-	     void *infop EXT2FS_ATTR((unused)))
+शून्य do_ffzi(पूर्णाङ्क argc, ss_argv_t argv,
+	     पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+	     शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	unsigned int start, end;
-	int err;
+	अचिह्नित पूर्णाङ्क start, अन्तः;
+	पूर्णाङ्क err;
 	errcode_t retval;
-	ext2_ino_t out;
+	ext2_ino_t बहिर्गमनम्;
 
-	if (check_fs_open(argv[0]))
-		return;
+	यदि (check_fs_open(argv[0]))
+		प्रत्यागम;
 
-	if (argc != 3 && argc != 3) {
+	यदि (argc != 3 && argc != 3) {
 		com_err(argv[0], 0, "Usage: ffzi <start> <end>");
-		return;
+		प्रत्यागम;
 	}
 
 	start = parse_ulong(argv[1], argv[0], "start", &err);
-	if (err)
-		return;
+	यदि (err)
+		प्रत्यागम;
 
-	end = parse_ulong(argv[2], argv[0], "end", &err);
-	if (err)
-		return;
+	अन्तः = parse_ulong(argv[2], argv[0], "end", &err);
+	यदि (err)
+		प्रत्यागम;
 
 	retval = ext2fs_find_first_zero_inode_bitmap2(test_fs->inode_map,
-						      start, end, &out);
-	if (retval) {
-		printf("ext2fs_find_first_zero_inode_bitmap2() returned %s\n",
-		       error_message(retval));
-		return;
+						      start, अन्तः, &बहिर्गमनम्);
+	यदि (retval) {
+		प्रारूप_लिख("ext2fs_find_first_zero_inode_bitmap2() returned %s\n",
+		       error_सन्देशः(retval));
+		प्रत्यागम;
 	}
-	printf("First unmarked inode is %u\n", out);
+	प्रारूप_लिख("First unmarked inode is %u\n", बहिर्गमनम्);
 }
 
-void do_ffsi(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
-	     void *infop EXT2FS_ATTR((unused)))
+शून्य do_ffsi(पूर्णाङ्क argc, ss_argv_t argv,
+	     पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+	     शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	unsigned int start, end;
-	int err;
+	अचिह्नित पूर्णाङ्क start, अन्तः;
+	पूर्णाङ्क err;
 	errcode_t retval;
-	ext2_ino_t out;
+	ext2_ino_t बहिर्गमनम्;
 
-	if (check_fs_open(argv[0]))
-		return;
+	यदि (check_fs_open(argv[0]))
+		प्रत्यागम;
 
-	if (argc != 3 && argc != 3) {
+	यदि (argc != 3 && argc != 3) {
 		com_err(argv[0], 0, "Usage: ffsi <start> <end>");
-		return;
+		प्रत्यागम;
 	}
 
 	start = parse_ulong(argv[1], argv[0], "start", &err);
-	if (err)
-		return;
+	यदि (err)
+		प्रत्यागम;
 
-	end = parse_ulong(argv[2], argv[0], "end", &err);
-	if (err)
-		return;
+	अन्तः = parse_ulong(argv[2], argv[0], "end", &err);
+	यदि (err)
+		प्रत्यागम;
 
-	retval = ext2fs_find_first_set_inode_bitmap2(test_fs->inode_map,
-						     start, end, &out);
-	if (retval) {
-		printf("ext2fs_find_first_set_inode_bitmap2() returned %s\n",
-		       error_message(retval));
-		return;
+	retval = ext2fs_find_first_समुच्चयः_inode_bitmap2(test_fs->inode_map,
+						     start, अन्तः, &बहिर्गमनम्);
+	यदि (retval) {
+		प्रारूप_लिख("ext2fs_find_first_set_inode_bitmap2() returned %s\n",
+		       error_सन्देशः(retval));
+		प्रत्यागम;
 	}
-	printf("First marked inode is %u\n", out);
+	प्रारूप_लिख("First marked inode is %u\n", बहिर्गमनम्);
 }
 
-void do_zeroi(int argc, ss_argv_t argv,
-	      int sci_idx EXT2FS_ATTR((unused)),
-	      void *infop EXT2FS_ATTR((unused)))
+शून्य do_zeroi(पूर्णाङ्क argc, ss_argv_t argv,
+	      पूर्णाङ्क sci_idx EXT2FS_ATTR((अप्रयुक्तम्)),
+	      शून्य *infop EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	if (check_fs_open(argv[0]))
-		return;
+	यदि (check_fs_open(argv[0]))
+		प्रत्यागम;
 
-	printf("Clearing inode bitmap.\n");
+	प्रारूप_लिख("Clearing inode bitmap.\n");
 	ext2fs_clear_inode_bitmap(test_fs->inode_map);
 }
 
-int main(int argc, char **argv)
+पूर्णाङ्क मुख्यम्(पूर्णाङ्क argc, वर्ण **argv)
 {
-	unsigned int	blocks = 128;
-	unsigned int	inodes = 0;
-	unsigned int	type = EXT2FS_BMAP64_BITARRAY;
-	int		c, err, code;
-	char		*request = (char *)NULL;
-	char		*cmd_file = 0;
-	int		sci_idx;
-	int		flags = EXT2_FLAG_64BITS;
+	अचिह्नित पूर्णाङ्क	खण्डानि = 128;
+	अचिह्नित पूर्णाङ्क	inodes = 0;
+	अचिह्नित पूर्णाङ्क	type = EXT2FS_BMAP64_BITARRAY;
+	पूर्णाङ्क		c, err, संहिता;
+	वर्ण		*request = (वर्ण *)रिक्त;
+	वर्ण		*cmd_file = 0;
+	पूर्णाङ्क		sci_idx;
+	पूर्णाङ्क		flags = EXT2_FLAG_64_द्वयङ्काः;
 
-	add_error_table(&et_ss_error_table);
-	add_error_table(&et_ext2_error_table);
-	while ((c = getopt (argc, argv, "b:i:lt:R:f:")) != EOF) {
-		switch (c) {
-		case 'b':
-			blocks = parse_ulong(optarg, argv[0],
+	सङ्कलय_error_सारणी(&et_ss_error_सारणी);
+	सङ्कलय_error_सारणी(&et_ext2_error_सारणी);
+	यावत् ((c = getopt (argc, argv, "b:i:lt:R:f:")) != EOF) {
+		विकल्प (c) {
+		पक्ष 'b':
+			खण्डानि = parse_ulong(optarg, argv[0],
 					     "number of blocks", &err);
-			if (err)
-				exit(1);
-			break;
-		case 'i':
+			यदि (err)
+				निर्गच्छ(1);
+			भङ्ग;
+		पक्ष 'i':
 			inodes = parse_ulong(optarg, argv[0],
 					     "number of blocks", &err);
-			if (err)
-				exit(1);
-			break;
-		case 'l':	/* Legacy bitmaps */
+			यदि (err)
+				निर्गच्छ(1);
+			भङ्ग;
+		पक्ष 'l':	/* Legacy bitmaps */
 			flags = 0;
-			break;
-		case 't':
+			भङ्ग;
+		पक्ष 't':
 			type = parse_ulong(optarg, argv[0],
 					   "bitmap backend type", &err);
-			if (err)
-				exit(1);
-			break;
-		case 'R':
+			यदि (err)
+				निर्गच्छ(1);
+			भङ्ग;
+		पक्ष 'R':
 			request = optarg;
-			break;
-		case 'f':
+			भङ्ग;
+		पक्ष 'f':
 			cmd_file = optarg;
-			break;
-		default:
+			भङ्ग;
+		स्वभाव:
 			com_err(argv[0], 0, "Usage: %s [-R request] "
 				"[-f cmd_file]", subsystem_name);
-			exit(1);
+			निर्गच्छ(1);
 		}
 	}
 
-	sci_idx = ss_create_invocation(subsystem_name, version,
-				       (char *)NULL, &tst_bitmaps_cmds, &code);
-	if (code) {
-		ss_perror(sci_idx, code, "creating invocation");
-		exit(1);
+	sci_idx = ss_create_invocation(subsystem_name, संस्करणम्,
+				       (वर्ण *)रिक्त, &tst_bitmaps_cmds, &संहिता);
+	यदि (संहिता) {
+		ss_perror(sci_idx, संहिता, "creating invocation");
+		निर्गच्छ(1);
 	}
 
-	(void) ss_add_request_table (sci_idx, &ss_std_requests, 1, &code);
-	if (code) {
-		ss_perror(sci_idx, code, "adding standard requests");
-		exit (1);
+	(शून्य) ss_सङ्कलय_request_सारणी (sci_idx, &ss_std_अनुरोधाः, 1, &संहिता);
+	यदि (संहिता) {
+		ss_perror(sci_idx, संहिता, "adding standard requests");
+		निर्गच्छ (1);
 	}
 
-	printf("%s %s.  Type '?' for a list of commands.\n\n",
-	       subsystem_name, version);
+	प्रारूप_लिख("%s %s.  Type '?' for a list of commands.\n\n",
+	       subsystem_name, संस्करणम्);
 
-	setup_filesystem(argv[0], blocks, inodes, type, flags);
+	सज्जता_filesystem(argv[0], खण्डानि, inodes, type, flags);
 
-	if (request) {
-		code = ss_execute_line(sci_idx, request);
-		if (code) {
-			ss_perror(sci_idx, code, request);
-			exit_status++;
+	यदि (request) {
+		संहिता = ss_execute_पङ्क्तिः(sci_idx, request);
+		यदि (संहिता) {
+			ss_perror(sci_idx, संहिता, request);
+			exit_स्थितिः++;
 		}
-	} else if (cmd_file) {
-		exit_status = source_file(cmd_file, sci_idx);
-	} else {
+	} अन्यथा यदि (cmd_file) {
+		exit_स्थितिः = source_file(cmd_file, sci_idx);
+	} अन्यथा {
 		ss_listen(sci_idx);
 	}
 
-	exit(exit_status);
+	निर्गच्छ(exit_स्थितिः);
 }
 

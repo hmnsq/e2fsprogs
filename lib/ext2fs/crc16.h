@@ -12,15 +12,15 @@
  * Version 2. See the file COPYING for more details.
  */
 
-#ifndef __CRC16_H
-#define __CRC16_H
+#यदि_अपरिभाषितम् __CRC16_H
+#परिभाषय __CRC16_H
 
 /* for an unknown reason, PPC treats __u16 as signed and keeps doing sign
  * extension on the value.  Instead, use only the low 16 bits of an
  * unsigned int for holding the CRC value to avoid this.
  */
-typedef unsigned int crc16_t;
+प्रकारनिर्देश अचिह्नित पूर्णाङ्क crc16_t;
 
-extern crc16_t ext2fs_crc16(crc16_t crc, const void *buffer, unsigned int len);
+बाह्य crc16_t ext2fs_crc16(crc16_t crc, ध्रुव शून्य *बफर, अचिह्नित पूर्णाङ्क len);
 
-#endif /* __CRC16_H */
+#यदि_अन्तः /* __CRC16_H */

@@ -9,39 +9,39 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
+#यदि_अन्तः
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <time.h>
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव <sys/types.h>
+#यदि HAVE_ERRNO_H
+#अन्तर्भाव <errno.h>
+#यदि_अन्तः
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
 
-int main(int argc, const char *argv[])
+पूर्णाङ्क मुख्यम्(पूर्णाङ्क argc, ध्रुव वर्ण *argv[])
 {
 	errcode_t	retval;
-	blk64_t		blocks;
+	blk64_t		खण्डानि;
 
-	if (argc < 2) {
+	यदि (argc < 2) {
 		fprintf(stderr, "%s device\n", argv[0]);
-		exit(1);
+		निर्गच्छ(1);
 	}
-	add_error_table(&et_ext2_error_table);
-	retval = ext2fs_get_device_size2(argv[1], 1024, &blocks);
-	if (retval) {
+	सङ्कलय_error_सारणी(&et_ext2_error_सारणी);
+	retval = ext2fs_get_device_size2(argv[1], 1024, &खण्डानि);
+	यदि (retval) {
 		com_err(argv[0], retval, "while getting device size");
-		exit(1);
+		निर्गच्छ(1);
 	}
-	printf("%s is device has %llu blocks.\n", argv[1],
-	       (unsigned long long) blocks);
-	return 0;
+	प्रारूप_लिख("%s is device has %llu blocks.\n", argv[1],
+	       (अचिह्नित दीर्घ दीर्घ) खण्डानि);
+	प्रत्यागम 0;
 }

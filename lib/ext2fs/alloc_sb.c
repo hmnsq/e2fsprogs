@@ -10,23 +10,23 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
+#यदि_अन्तः
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <time.h>
+#यदि HAVE_SYS_STAT_H
+#अन्तर्भाव <sys/stat.h>
+#यदि_अन्तः
+#यदि HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
+#यदि_अन्तः
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
 
 /*
  * This function reserves the superblock and block group descriptors
@@ -41,42 +41,42 @@
  *
  * See also the comment for ext2fs_super_and_bgd_loc()
  */
-int ext2fs_reserve_super_and_bgd(ext2_filsys fs,
-				 dgrp_t group,
-				 ext2fs_block_bitmap bmap)
+पूर्णाङ्क ext2fs_reserve_super_and_bgd(ext2_filsys fs,
+				 dgrp_t गणः,
+				 ext2fs_खण्डम्_bitmap bmap)
 {
 	blk64_t	super_blk, old_desc_blk, new_desc_blk;
-	blk_t	used_blks, old_desc_blocks, num_blocks;
+	blk_t	प्रयुक्तम्_blks, old_desc_खण्डानि, अङ्कः_खण्डानि;
 
-	ext2fs_super_and_bgd_loc2(fs, group, &super_blk,
-				  &old_desc_blk, &new_desc_blk, &used_blks);
+	ext2fs_super_and_bgd_loc2(fs, गणः, &super_blk,
+				  &old_desc_blk, &new_desc_blk, &प्रयुक्तम्_blks);
 
-	if (ext2fs_has_feature_meta_bg(fs->super))
-		old_desc_blocks = fs->super->s_first_meta_bg;
-	else
-		old_desc_blocks =
-			fs->desc_blocks + fs->super->s_reserved_gdt_blocks;
+	यदि (ext2fs_has_feature_meta_bg(fs->super))
+		old_desc_खण्डानि = fs->super->s_first_meta_bg;
+	अन्यथा
+		old_desc_खण्डानि =
+			fs->desc_खण्डानि + fs->super->s_reserved_gdt_खण्डानि;
 
-	if (super_blk || (group == 0))
-		ext2fs_mark_block_bitmap2(bmap, super_blk);
-	if ((group == 0) && (fs->blocksize == 1024) &&
-	    EXT2FS_CLUSTER_RATIO(fs) > 1)
-		ext2fs_mark_block_bitmap2(bmap, 0);
+	यदि (super_blk || (गणः == 0))
+		ext2fs_mark_खण्डम्_bitmap2(bmap, super_blk);
+	यदि ((गणः == 0) && (fs->blocksize == 1024) &&
+	    EXT2_FS_CLUSTER_अनुपातः(fs) > 1)
+		ext2fs_mark_खण्डम्_bitmap2(bmap, 0);
 
-	if (old_desc_blk) {
-		num_blocks = old_desc_blocks;
-		if (old_desc_blk + num_blocks >= ext2fs_blocks_count(fs->super))
-			num_blocks = ext2fs_blocks_count(fs->super) -
+	यदि (old_desc_blk) {
+		अङ्कः_खण्डानि = old_desc_खण्डानि;
+		यदि (old_desc_blk + अङ्कः_खण्डानि >= ext2fs_खण्डानि_गणनम्(fs->super))
+			अङ्कः_खण्डानि = ext2fs_खण्डानि_गणनम्(fs->super) -
 				old_desc_blk;
-		ext2fs_mark_block_bitmap_range2(bmap, old_desc_blk, num_blocks);
+		ext2fs_mark_खण्डम्_bitmap_range2(bmap, old_desc_blk, अङ्कः_खण्डानि);
 	}
-	if (new_desc_blk)
-		ext2fs_mark_block_bitmap2(bmap, new_desc_blk);
+	यदि (new_desc_blk)
+		ext2fs_mark_खण्डम्_bitmap2(bmap, new_desc_blk);
 
-	num_blocks = ext2fs_group_blocks_count(fs, group);
-	num_blocks -= 2 + fs->inode_blocks_per_group + used_blks;
+	अङ्कः_खण्डानि = ext2fs_गणः_खण्डानि_गणनम्(fs, गणः);
+	अङ्कः_खण्डानि -= 2 + fs->inode_खण्डानि_प्रत्येकम्_गणः + प्रयुक्तम्_blks;
 
-	return num_blocks  ;
+	प्रत्यागम अङ्कः_खण्डानि  ;
 }
 
 /*
@@ -85,21 +85,21 @@ int ext2fs_reserve_super_and_bgd(ext2_filsys fs,
  * super block and group descriptors by looking up the block bitmap.
  */
 errcode_t ext2fs_reserve_super_and_bgd2(ext2_filsys fs,
-				        dgrp_t group,
-				        ext2fs_block_bitmap bmap,
-				        blk_t *desc_blocks)
+				        dgrp_t गणः,
+				        ext2fs_खण्डम्_bitmap bmap,
+				        blk_t *desc_खण्डानि)
 {
-	blk64_t	num_blocks;
+	blk64_t	अङ्कः_खण्डानि;
 	errcode_t retval = 0;
 
-	ext2fs_reserve_super_and_bgd(fs, group, bmap);
+	ext2fs_reserve_super_and_bgd(fs, गणः, bmap);
 
-	retval = ext2fs_count_used_blocks(fs,
-					ext2fs_group_first_block2(fs, group),
-					ext2fs_group_last_block2(fs, group),
-					&num_blocks);
-	if (!retval)
-		*desc_blocks = num_blocks;
+	retval = ext2fs_गणनम्_प्रयुक्तम्_खण्डानि(fs,
+					ext2fs_गणः_first_block2(fs, गणः),
+					ext2fs_गणः_चरमः_block2(fs, गणः),
+					&अङ्कः_खण्डानि);
+	यदि (!retval)
+		*desc_खण्डानि = अङ्कः_खण्डानि;
 
-	return retval;
+	प्रत्यागम retval;
 }

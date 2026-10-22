@@ -9,674 +9,674 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_PTHREAD_H
-#include <pthread.h>
-#endif
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
+#यदि_अन्तः
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <time.h>
+#यदि_परिभाषितम् HAVE_SYS_STAT_H
+#अन्तर्भाव <sys/stat.h>
+#यदि_अन्तः
+#यदि_परिभाषितम् HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
+#यदि_अन्तः
+#यदि_परिभाषितम् HAVE_PTHREAD_H
+#अन्तर्भाव <pthread.h>
+#यदि_अन्तः
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "e2image.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
+#अन्तर्भाव "e2image.h"
 
-#ifdef HAVE_PTHREAD
-typedef pthread_mutex_t mutex_t;
+#यदि_परिभाषितम् HAVE_PTHREAD
+प्रकारनिर्देश pthread_mutex_t mutex_t;
 
-static void unix_pthread_mutex_lock(mutex_t *mutex)
+स्थिर शून्य unix_pthread_mutex_तालकम्(mutex_t *mutex)
 {
-	if (mutex)
-		pthread_mutex_lock(mutex);
+	यदि (mutex)
+		pthread_mutex_तालकम्(mutex);
 }
-static void unix_pthread_mutex_unlock(mutex_t *mutex)
+स्थिर शून्य unix_pthread_mutex_unlock(mutex_t *mutex)
 {
-	if (mutex)
+	यदि (mutex)
 		pthread_mutex_unlock(mutex);
 }
-#else
-typedef int mutex_t;
-#define unix_pthread_mutex_lock(mutex_t) do {} while (0)
-#define unix_pthread_mutex_unlock(mutex_t) do {} while (0)
-#endif
+#अन्यथा
+प्रकारनिर्देश पूर्णाङ्क mutex_t;
+#परिभाषय unix_pthread_mutex_तालकम्(mutex_t) कुरु {} यावत् (0)
+#परिभाषय unix_pthread_mutex_unlock(mutex_t) कुरु {} यावत् (0)
+#यदि_अन्तः
 
-static errcode_t write_bitmaps(ext2_filsys fs, int do_inode, int do_block)
+स्थिर errcode_t write_bitmaps(ext2_filsys fs, पूर्णाङ्क do_inode, पूर्णाङ्क do_खण्डम्)
 {
 	dgrp_t 		i;
-	unsigned int	j;
-	int		block_nbytes, inode_nbytes;
-	unsigned int	nbits;
+	अचिह्नित पूर्णाङ्क	j;
+	पूर्णाङ्क		खण्डम्_nbytes, inode_nbytes;
+	अचिह्नित पूर्णाङ्क	nbits;
 	errcode_t	retval;
-	char		*block_buf = NULL, *inode_buf = NULL;
-	int		csum_flag;
+	वर्ण		*खण्डम्_buf = रिक्त, *inode_buf = रिक्त;
+	पूर्णाङ्क		csum_flag;
 	blk64_t		blk;
-	blk64_t		blk_itr = EXT2FS_B2C(fs, fs->super->s_first_data_block);
+	blk64_t		blk_itr = EXT2FS_B2C(fs, fs->super->s_first_दत्त_खण्डम्);
 	ext2_ino_t	ino_itr = 1;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	यदि (!(fs->flags & EXT2_FLAG_RW))
+		प्रत्यागम EXT2_ET_RO_FILSYS;
 
-	csum_flag = ext2fs_has_group_desc_csum(fs);
+	csum_flag = ext2fs_has_गणः_desc_csum(fs);
 
-	inode_nbytes = block_nbytes = 0;
-	if (do_block) {
-		block_nbytes = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
-		retval = io_channel_alloc_buf(fs->io, 0, &block_buf);
-		if (retval)
-			goto errout;
-		memset(block_buf, 0xff, fs->blocksize);
+	inode_nbytes = खण्डम्_nbytes = 0;
+	यदि (do_खण्डम्) {
+		खण्डम्_nbytes = EXT2_CLUSTERS_प्रत्येकम्_गणः(fs->super) / 8;
+		retval = io_channel_alloc_buf(fs->io, 0, &खण्डम्_buf);
+		यदि (retval)
+			गच्छ errout;
+		स्मृतिं_पूरय(खण्डम्_buf, 0xff, fs->blocksize);
 	}
-	if (do_inode) {
+	यदि (do_inode) {
 		inode_nbytes = (size_t)
-			((EXT2_INODES_PER_GROUP(fs->super)+7) / 8);
+			((EXT2_INODES_प्रत्येकम्_गणः(fs->super)+7) / 8);
 		retval = io_channel_alloc_buf(fs->io, 0, &inode_buf);
-		if (retval)
-			goto errout;
-		memset(inode_buf, 0xff, fs->blocksize);
+		यदि (retval)
+			गच्छ errout;
+		स्मृतिं_पूरय(inode_buf, 0xff, fs->blocksize);
 	}
 
-	for (i = 0; i < fs->group_desc_count; i++) {
-		if (!do_block)
-			goto skip_block_bitmap;
+	प्रति (i = 0; i < fs->गणः_desc_गणनम्; i++) {
+		यदि (!do_खण्डम्)
+			गच्छ skip_खण्डम्_bitmap;
 
-		if (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_BLOCK_UNINIT)
+		यदि (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_खण्डम्_UNINIT)
 		    )
-			goto skip_this_block_bitmap;
+			गच्छ skip_this_खण्डम्_bitmap;
 
-		retval = ext2fs_get_block_bitmap_range2(fs->block_map,
-				blk_itr, block_nbytes << 3, block_buf);
-		if (retval)
-			goto errout;
+		retval = ext2fs_get_खण्डम्_bitmap_range2(fs->खण्डम्_map,
+				blk_itr, खण्डम्_nbytes << 3, खण्डम्_buf);
+		यदि (retval)
+			गच्छ errout;
 
-		if (i == fs->group_desc_count - 1) {
+		यदि (i == fs->गणः_desc_गणनम् - 1) {
 			/* Force bitmap padding for the last group */
-			nbits = EXT2FS_NUM_B2C(fs,
-				((ext2fs_blocks_count(fs->super)
-				  - (__u64) fs->super->s_first_data_block)
-				 % (__u64) EXT2_BLOCKS_PER_GROUP(fs->super)));
-			if (nbits)
-				for (j = nbits; j < fs->blocksize * 8; j++)
-					ext2fs_set_bit(j, block_buf);
+			nbits = EXT2_FS_अङ्कः_B2_C(fs,
+				((ext2fs_खण्डानि_गणनम्(fs->super)
+				  - (__u64) fs->super->s_first_दत्त_खण्डम्)
+				 % (__u64) EXT2_खण्डानि_प्रत्येकम्_गणः(fs->super)));
+			यदि (nbits)
+				प्रति (j = nbits; j < fs->blocksize * 8; j++)
+					ext2fs_समुच्चयः_bit(j, खण्डम्_buf);
 		}
 
-		retval = ext2fs_block_bitmap_csum_set(fs, i, block_buf,
-						      block_nbytes);
-		if (retval)
-			return retval;
-		ext2fs_group_desc_csum_set(fs, i);
+		retval = ext2fs_खण्डम्_bitmap_csum_समुच्चयः(fs, i, खण्डम्_buf,
+						      खण्डम्_nbytes);
+		यदि (retval)
+			प्रत्यागम retval;
+		ext2fs_गणः_desc_csum_समुच्चयः(fs, i);
 		fs->flags |= EXT2_FLAG_DIRTY;
 
-		blk = ext2fs_block_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super)) {
+		blk = ext2fs_खण्डम्_bitmap_loc(fs, i);
+		यदि (blk && blk < ext2fs_खण्डानि_गणनम्(fs->super)) {
 			retval = io_channel_write_blk64(fs->io, blk, 1,
-							block_buf);
-			if (retval) {
-				retval = EXT2_ET_BLOCK_BITMAP_WRITE;
-				goto errout;
+							खण्डम्_buf);
+			यदि (retval) {
+				retval = EXT2_ET_खण्डम्_BITMAP_WRITE;
+				गच्छ errout;
 			}
 		}
-	skip_this_block_bitmap:
-		blk_itr += block_nbytes << 3;
-	skip_block_bitmap:
+	skip_this_खण्डम्_bitmap:
+		blk_itr += खण्डम्_nbytes << 3;
+	skip_खण्डम्_bitmap:
 
-		if (!do_inode)
-			continue;
+		यदि (!do_inode)
+			अनुवर्त;
 
-		if (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_INODE_UNINIT)
+		यदि (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_INODE_UNINIT)
 		    )
-			goto skip_this_inode_bitmap;
+			गच्छ skip_this_inode_bitmap;
 
 		retval = ext2fs_get_inode_bitmap_range2(fs->inode_map,
 				ino_itr, inode_nbytes << 3, inode_buf);
-		if (retval)
-			goto errout;
+		यदि (retval)
+			गच्छ errout;
 
-		retval = ext2fs_inode_bitmap_csum_set(fs, i, inode_buf,
+		retval = ext2fs_inode_bitmap_csum_समुच्चयः(fs, i, inode_buf,
 						      inode_nbytes);
-		if (retval)
-			goto errout;
-		ext2fs_group_desc_csum_set(fs, i);
+		यदि (retval)
+			गच्छ errout;
+		ext2fs_गणः_desc_csum_समुच्चयः(fs, i);
 		fs->flags |= EXT2_FLAG_DIRTY;
 
 		blk = ext2fs_inode_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super)) {
+		यदि (blk && blk < ext2fs_खण्डानि_गणनम्(fs->super)) {
 			retval = io_channel_write_blk64(fs->io, blk, 1,
 						      inode_buf);
-			if (retval) {
+			यदि (retval) {
 				retval = EXT2_ET_INODE_BITMAP_WRITE;
-				goto errout;
+				गच्छ errout;
 			}
 		}
 	skip_this_inode_bitmap:
 		ino_itr += inode_nbytes << 3;
 
 	}
-	if (do_block) {
+	यदि (do_खण्डम्) {
 		fs->flags &= ~EXT2_FLAG_BB_DIRTY;
-		ext2fs_free_mem(&block_buf);
+		ext2fs_free_mem(&खण्डम्_buf);
 	}
-	if (do_inode) {
+	यदि (do_inode) {
 		fs->flags &= ~EXT2_FLAG_IB_DIRTY;
 		ext2fs_free_mem(&inode_buf);
 	}
-	return 0;
+	प्रत्यागम 0;
 errout:
-	if (inode_buf)
+	यदि (inode_buf)
 		ext2fs_free_mem(&inode_buf);
-	if (block_buf)
-		ext2fs_free_mem(&block_buf);
-	return retval;
+	यदि (खण्डम्_buf)
+		ext2fs_free_mem(&खण्डम्_buf);
+	प्रत्यागम retval;
 }
 
-static errcode_t mark_uninit_bg_group_blocks(ext2_filsys fs)
+स्थिर errcode_t mark_uninit_bg_गणः_खण्डानि(ext2_filsys fs)
 {
 	dgrp_t			i;
 	blk64_t			blk;
-	ext2fs_block_bitmap	bmap = fs->block_map;
+	ext2fs_खण्डम्_bitmap	bmap = fs->खण्डम्_map;
 
-	for (i = 0; i < fs->group_desc_count; i++) {
-		if (!ext2fs_bg_flags_test(fs, i, EXT2_BG_BLOCK_UNINIT))
-			continue;
+	प्रति (i = 0; i < fs->गणः_desc_गणनम्; i++) {
+		यदि (!ext2fs_bg_flags_test(fs, i, EXT2_BG_खण्डम्_UNINIT))
+			अनुवर्त;
 
 		ext2fs_reserve_super_and_bgd(fs, i, bmap);
 
 		/*
 		 * Mark the blocks used for the inode table
 		 */
-		blk = ext2fs_inode_table_loc(fs, i);
-		if (blk)
-			ext2fs_mark_block_bitmap_range2(bmap, blk,
-						fs->inode_blocks_per_group);
+		blk = ext2fs_inode_सारणी_loc(fs, i);
+		यदि (blk)
+			ext2fs_mark_खण्डम्_bitmap_range2(bmap, blk,
+						fs->inode_खण्डानि_प्रत्येकम्_गणः);
 
 		/*
 		 * Mark block used for the block bitmap
 		 */
-		blk = ext2fs_block_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super))
-			ext2fs_mark_block_bitmap2(bmap, blk);
+		blk = ext2fs_खण्डम्_bitmap_loc(fs, i);
+		यदि (blk && blk < ext2fs_खण्डानि_गणनम्(fs->super))
+			ext2fs_mark_खण्डम्_bitmap2(bmap, blk);
 
 		/*
 		 * Mark block used for the inode bitmap
 		 */
 		blk = ext2fs_inode_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super))
-			ext2fs_mark_block_bitmap2(bmap, blk);
+		यदि (blk && blk < ext2fs_खण्डानि_गणनम्(fs->super))
+			ext2fs_mark_खण्डम्_bitmap2(bmap, blk);
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int bitmap_tail_verify(unsigned char *bitmap, int first, int last)
+स्थिर पूर्णाङ्क bitmap_पुच्छ_verify(अचिह्नित वर्ण *bitmap, पूर्णाङ्क first, पूर्णाङ्क चरमः)
 {
-	int i;
+	पूर्णाङ्क i;
 
-	for (i = first; i <= last; i++)
-		if (bitmap[i] != 0xff)
-			return 0;
-	return 1;
+	प्रति (i = first; i <= चरमः; i++)
+		यदि (bitmap[i] != 0xff)
+			प्रत्यागम 0;
+	प्रत्यागम 1;
 }
 
-static errcode_t read_bitmaps_range_prepare(ext2_filsys fs, int flags)
+स्थिर errcode_t read_bitmaps_range_prepare(ext2_filsys fs, पूर्णाङ्क flags)
 {
 	errcode_t retval;
-	int block_nbytes = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
-	int inode_nbytes = EXT2_INODES_PER_GROUP(fs->super) / 8;
-	char *buf;
+	पूर्णाङ्क खण्डम्_nbytes = EXT2_CLUSTERS_प्रत्येकम्_गणः(fs->super) / 8;
+	पूर्णाङ्क inode_nbytes = EXT2_INODES_प्रत्येकम्_गणः(fs->super) / 8;
+	वर्ण *buf;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if ((block_nbytes > (int) fs->blocksize) ||
-	    (inode_nbytes > (int) fs->blocksize))
-		return EXT2_ET_CORRUPT_SUPERBLOCK;
+	यदि ((खण्डम्_nbytes > (पूर्णाङ्क) fs->blocksize) ||
+	    (inode_nbytes > (पूर्णाङ्क) fs->blocksize))
+		प्रत्यागम EXT2_ET_CORRUPT_SUPERBLOCK;
 
 	fs->write_bitmaps = ext2fs_write_bitmaps;
 
-	retval = ext2fs_get_mem(strlen(fs->device_name) + 80, &buf);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(वाक्यदैर्घ्यम्(fs->device_name) + 80, &buf);
+	यदि (retval)
+		प्रत्यागम retval;
 
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		if (fs->block_map)
-			ext2fs_free_block_bitmap(fs->block_map);
-		strcpy(buf, "block bitmap for ");
-		strcat(buf, fs->device_name);
-		retval = ext2fs_allocate_block_bitmap(fs, buf, &fs->block_map);
-		if (retval)
-			goto cleanup;
+	यदि (flags & EXT2_FS_BITMAPS_खण्डम्) {
+		यदि (fs->खण्डम्_map)
+			ext2fs_free_खण्डम्_bitmap(fs->खण्डम्_map);
+		वाक्यं_प्रतिलिख(buf, "block bitmap for ");
+		वाक्यं_योजय(buf, fs->device_name);
+		retval = ext2fs_allocate_खण्डम्_bitmap(fs, buf, &fs->खण्डम्_map);
+		यदि (retval)
+			गच्छ cleanup;
 	}
 
-	if (flags & EXT2FS_BITMAPS_INODE) {
-		if (fs->inode_map)
+	यदि (flags & EXT2FS_BITMAPS_INODE) {
+		यदि (fs->inode_map)
 			ext2fs_free_inode_bitmap(fs->inode_map);
-		strcpy(buf, "inode bitmap for ");
-		strcat(buf, fs->device_name);
+		वाक्यं_प्रतिलिख(buf, "inode bitmap for ");
+		वाक्यं_योजय(buf, fs->device_name);
 		retval = ext2fs_allocate_inode_bitmap(fs, buf, &fs->inode_map);
-		if (retval)
-			goto cleanup;
+		यदि (retval)
+			गच्छ cleanup;
 	}
 	ext2fs_free_mem(&buf);
-	return retval;
+	प्रत्यागम retval;
 
 cleanup:
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		ext2fs_free_block_bitmap(fs->block_map);
-		fs->block_map = 0;
+	यदि (flags & EXT2_FS_BITMAPS_खण्डम्) {
+		ext2fs_free_खण्डम्_bitmap(fs->खण्डम्_map);
+		fs->खण्डम्_map = 0;
 	}
-	if (flags & EXT2FS_BITMAPS_INODE) {
+	यदि (flags & EXT2FS_BITMAPS_INODE) {
 		ext2fs_free_inode_bitmap(fs->inode_map);
 		fs->inode_map = 0;
 	}
 	ext2fs_free_mem(&buf);
-	return retval;
+	प्रत्यागम retval;
 }
 
-static errcode_t read_bitmaps_range_start(ext2_filsys fs, int flags,
-					  dgrp_t start, dgrp_t end,
+स्थिर errcode_t read_bitmaps_range_start(ext2_filsys fs, पूर्णाङ्क flags,
+					  dgrp_t start, dgrp_t अन्तः,
 					  mutex_t *mutex,
-					  int *tail_flags)
+					  पूर्णाङ्क *पुच्छ_flags)
 {
 	dgrp_t i;
-	char *block_bitmap = 0, *inode_bitmap = 0;
+	वर्ण *खण्डम्_bitmap = 0, *inode_bitmap = 0;
 	errcode_t retval = 0;
-	int block_nbytes = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
-	int inode_nbytes = EXT2_INODES_PER_GROUP(fs->super) / 8;
-	int csum_flag;
-	unsigned int	cnt;
+	पूर्णाङ्क खण्डम्_nbytes = EXT2_CLUSTERS_प्रत्येकम्_गणः(fs->super) / 8;
+	पूर्णाङ्क inode_nbytes = EXT2_INODES_प्रत्येकम्_गणः(fs->super) / 8;
+	पूर्णाङ्क csum_flag;
+	अचिह्नित पूर्णाङ्क	cnt;
 	blk64_t	blk;
-	blk64_t	blk_itr = EXT2FS_B2C(fs, fs->super->s_first_data_block);
+	blk64_t	blk_itr = EXT2FS_B2C(fs, fs->super->s_first_दत्त_खण्डम्);
 	blk64_t   blk_cnt;
 	ext2_ino_t ino_itr = 1;
 	ext2_ino_t ino_cnt;
 
-	csum_flag = ext2fs_has_group_desc_csum(fs);
+	csum_flag = ext2fs_has_गणः_desc_csum(fs);
 
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		retval = io_channel_alloc_buf(fs->io, 0, &block_bitmap);
-		if (retval)
-			goto cleanup;
-	} else {
-		block_nbytes = 0;
+	यदि (flags & EXT2_FS_BITMAPS_खण्डम्) {
+		retval = io_channel_alloc_buf(fs->io, 0, &खण्डम्_bitmap);
+		यदि (retval)
+			गच्छ cleanup;
+	} अन्यथा {
+		खण्डम्_nbytes = 0;
 	}
 
-	if (flags & EXT2FS_BITMAPS_INODE) {
+	यदि (flags & EXT2FS_BITMAPS_INODE) {
 		retval = io_channel_alloc_buf(fs->io, 0, &inode_bitmap);
-		if (retval)
-			goto cleanup;
-	} else {
+		यदि (retval)
+			गच्छ cleanup;
+	} अन्यथा {
 		inode_nbytes = 0;
 	}
 
 	/* io should be null */
-	if (fs->flags & EXT2_FLAG_IMAGE_FILE) {
-		blk = (ext2fs_le32_to_cpu(fs->image_header->offset_inodemap) / fs->blocksize);
-		ino_cnt = fs->super->s_inodes_count;
-		while (inode_bitmap && ino_cnt > 0) {
+	यदि (fs->flags & EXT2_FLAG_IMAGE_FILE) {
+		blk = (ext2fs_le32_गन्तव्यम्_cpu(fs->image_शीर्षकम्->विस्थापनम्_inodemap) / fs->blocksize);
+		ino_cnt = fs->super->s_inodes_गणनम्;
+		यावत् (inode_bitmap && ino_cnt > 0) {
 			retval = io_channel_read_blk64(fs->image_io, blk++,
 						     1, inode_bitmap);
-			if (retval)
-				goto cleanup;
+			यदि (retval)
+				गच्छ cleanup;
 			cnt = fs->blocksize << 3;
-			if (cnt > ino_cnt)
+			यदि (cnt > ino_cnt)
 				cnt = ino_cnt;
-			retval = ext2fs_set_inode_bitmap_range2(fs->inode_map,
+			retval = ext2fs_समुच्चयः_inode_bitmap_range2(fs->inode_map,
 					       ino_itr, cnt, inode_bitmap);
-			if (retval)
-				goto cleanup;
+			यदि (retval)
+				गच्छ cleanup;
 			ino_itr += cnt;
 			ino_cnt -= cnt;
 		}
-		blk = (ext2fs_le32_to_cpu(fs->image_header->offset_blockmap) /
+		blk = (ext2fs_le32_गन्तव्यम्_cpu(fs->image_शीर्षकम्->विस्थापनम्_blockmap) /
 		       fs->blocksize);
-		blk_cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super,
-						  fs->group_desc_count);
-		while (block_bitmap && blk_cnt > 0) {
+		blk_cnt = EXT2_GROUPS_गन्तव्यम्_CLUSTERS(fs->super,
+						  fs->गणः_desc_गणनम्);
+		यावत् (खण्डम्_bitmap && blk_cnt > 0) {
 			retval = io_channel_read_blk64(fs->image_io, blk++,
-						     1, block_bitmap);
-			if (retval)
-				goto cleanup;
+						     1, खण्डम्_bitmap);
+			यदि (retval)
+				गच्छ cleanup;
 			cnt = fs->blocksize << 3;
-			if (cnt > blk_cnt)
+			यदि (cnt > blk_cnt)
 				cnt = blk_cnt;
-			retval = ext2fs_set_block_bitmap_range2(fs->block_map,
-				       blk_itr, cnt, block_bitmap);
-			if (retval)
-				goto cleanup;
+			retval = ext2fs_समुच्चयः_खण्डम्_bitmap_range2(fs->खण्डम्_map,
+				       blk_itr, cnt, खण्डम्_bitmap);
+			यदि (retval)
+				गच्छ cleanup;
 			blk_itr += cnt;
 			blk_cnt -= cnt;
 		}
-		goto cleanup;
+		गच्छ cleanup;
 	}
 
-	blk_itr += ((blk64_t)start * (block_nbytes << 3));
+	blk_itr += ((blk64_t)start * (खण्डम्_nbytes << 3));
 	ino_itr += ((blk64_t)start * (inode_nbytes << 3));
-	for (i = start; i <= end; i++) {
-		if (block_bitmap) {
-			blk = ext2fs_block_bitmap_loc(fs, i);
-			if ((csum_flag &&
-			     ext2fs_bg_flags_test(fs, i, EXT2_BG_BLOCK_UNINIT) &&
-			     ext2fs_group_desc_csum_verify(fs, i)) ||
-			    (blk >= ext2fs_blocks_count(fs->super)))
+	प्रति (i = start; i <= अन्तः; i++) {
+		यदि (खण्डम्_bitmap) {
+			blk = ext2fs_खण्डम्_bitmap_loc(fs, i);
+			यदि ((csum_flag &&
+			     ext2fs_bg_flags_test(fs, i, EXT2_BG_खण्डम्_UNINIT) &&
+			     ext2fs_गणः_desc_csum_verify(fs, i)) ||
+			    (blk >= ext2fs_खण्डानि_गणनम्(fs->super)))
 				blk = 0;
-			if (blk) {
+			यदि (blk) {
 				retval = io_channel_read_blk64(fs->io, blk,
-							       1, block_bitmap);
-				if (retval) {
-					retval = EXT2_ET_BLOCK_BITMAP_READ;
-					goto cleanup;
+							       1, खण्डम्_bitmap);
+				यदि (retval) {
+					retval = EXT2_ET_खण्डम्_BITMAP_READ;
+					गच्छ cleanup;
 				}
 				/* verify block bitmap checksum */
-				if (!(fs->flags &
+				यदि (!(fs->flags &
 				      EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
-				    !ext2fs_block_bitmap_csum_verify(fs, i,
-						block_bitmap, block_nbytes)) {
+				    !ext2fs_खण्डम्_bitmap_csum_verify(fs, i,
+						खण्डम्_bitmap, खण्डम्_nbytes)) {
 					retval =
-					EXT2_ET_BLOCK_BITMAP_CSUM_INVALID;
-					goto cleanup;
+					EXT2_ET_खण्डम्_BITMAP_CSUM_INVALID;
+					गच्छ cleanup;
 				}
-				if (!bitmap_tail_verify((unsigned char *) block_bitmap,
-							block_nbytes, fs->blocksize - 1))
-					*tail_flags |= EXT2_FLAG_BBITMAP_TAIL_PROBLEM;
-			} else
-				memset(block_bitmap, 0, block_nbytes);
-			cnt = block_nbytes << 3;
-			unix_pthread_mutex_lock(mutex);
-			retval = ext2fs_set_block_bitmap_range2(fs->block_map,
-					       blk_itr, cnt, block_bitmap);
+				यदि (!bitmap_पुच्छ_verify((अचिह्नित वर्ण *) खण्डम्_bitmap,
+							खण्डम्_nbytes, fs->blocksize - 1))
+					*पुच्छ_flags |= EXT2_FLAG_BBITMAP_पुच्छ_PROBLEM;
+			} अन्यथा
+				स्मृतिं_पूरय(खण्डम्_bitmap, 0, खण्डम्_nbytes);
+			cnt = खण्डम्_nbytes << 3;
+			unix_pthread_mutex_तालकम्(mutex);
+			retval = ext2fs_समुच्चयः_खण्डम्_bitmap_range2(fs->खण्डम्_map,
+					       blk_itr, cnt, खण्डम्_bitmap);
 			unix_pthread_mutex_unlock(mutex);
-			if (retval)
-				goto cleanup;
-			blk_itr += block_nbytes << 3;
+			यदि (retval)
+				गच्छ cleanup;
+			blk_itr += खण्डम्_nbytes << 3;
 		}
-		if (inode_bitmap) {
+		यदि (inode_bitmap) {
 			blk = ext2fs_inode_bitmap_loc(fs, i);
-			if ((csum_flag &&
+			यदि ((csum_flag &&
 			     ext2fs_bg_flags_test(fs, i, EXT2_BG_INODE_UNINIT) &&
-			     ext2fs_group_desc_csum_verify(fs, i)) ||
-			    (blk >= ext2fs_blocks_count(fs->super)))
+			     ext2fs_गणः_desc_csum_verify(fs, i)) ||
+			    (blk >= ext2fs_खण्डानि_गणनम्(fs->super)))
 				blk = 0;
-			if (blk) {
+			यदि (blk) {
 				retval = io_channel_read_blk64(fs->io, blk,
 							       1, inode_bitmap);
-				if (retval) {
+				यदि (retval) {
 					retval = EXT2_ET_INODE_BITMAP_READ;
-					goto cleanup;
+					गच्छ cleanup;
 				}
 
 				/* verify inode bitmap checksum */
-				if (!(fs->flags &
+				यदि (!(fs->flags &
 				      EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
 				    !ext2fs_inode_bitmap_csum_verify(fs, i,
 						inode_bitmap, inode_nbytes)) {
 					retval =
 					EXT2_ET_INODE_BITMAP_CSUM_INVALID;
-					goto cleanup;
+					गच्छ cleanup;
 				}
-				if (!bitmap_tail_verify((unsigned char *) inode_bitmap,
+				यदि (!bitmap_पुच्छ_verify((अचिह्नित वर्ण *) inode_bitmap,
 							inode_nbytes, fs->blocksize - 1))
-					*tail_flags |= EXT2_FLAG_IBITMAP_TAIL_PROBLEM;
-			} else
-				memset(inode_bitmap, 0, inode_nbytes);
+					*पुच्छ_flags |= EXT2_FLAG_IBITMAP_पुच्छ_PROBLEM;
+			} अन्यथा
+				स्मृतिं_पूरय(inode_bitmap, 0, inode_nbytes);
 			cnt = inode_nbytes << 3;
-			unix_pthread_mutex_lock(mutex);
-			retval = ext2fs_set_inode_bitmap_range2(fs->inode_map,
+			unix_pthread_mutex_तालकम्(mutex);
+			retval = ext2fs_समुच्चयः_inode_bitmap_range2(fs->inode_map,
 					       ino_itr, cnt, inode_bitmap);
 			unix_pthread_mutex_unlock(mutex);
-			if (retval)
-				goto cleanup;
+			यदि (retval)
+				गच्छ cleanup;
 			ino_itr += inode_nbytes << 3;
 		}
 	}
 
 cleanup:
-	if (inode_bitmap)
+	यदि (inode_bitmap)
 		ext2fs_free_mem(&inode_bitmap);
-	if (block_bitmap)
-		ext2fs_free_mem(&block_bitmap);
-	return retval;
+	यदि (खण्डम्_bitmap)
+		ext2fs_free_mem(&खण्डम्_bitmap);
+	प्रत्यागम retval;
 }
 
-static errcode_t read_bitmaps_range_end(ext2_filsys fs, int flags,
-					int tail_flags)
+स्थिर errcode_t read_bitmaps_range_अन्तः(ext2_filsys fs, पूर्णाङ्क flags,
+					पूर्णाङ्क पुच्छ_flags)
 {
 	errcode_t retval;
 
 	/* Mark group blocks for any BLOCK_UNINIT groups */
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		retval = mark_uninit_bg_group_blocks(fs);
-		if (retval)
-			return retval;
-		fs->flags &= ~EXT2_FLAG_BBITMAP_TAIL_PROBLEM;
+	यदि (flags & EXT2_FS_BITMAPS_खण्डम्) {
+		retval = mark_uninit_bg_गणः_खण्डानि(fs);
+		यदि (retval)
+			प्रत्यागम retval;
+		fs->flags &= ~EXT2_FLAG_BBITMAP_पुच्छ_PROBLEM;
 	}
-	if (flags & EXT2FS_BITMAPS_INODE)
-		fs->flags &= ~EXT2_FLAG_IBITMAP_TAIL_PROBLEM;
-	fs->flags |= tail_flags;
+	यदि (flags & EXT2FS_BITMAPS_INODE)
+		fs->flags &= ~EXT2_FLAG_IBITMAP_पुच्छ_PROBLEM;
+	fs->flags |= पुच्छ_flags;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static void read_bitmaps_cleanup_on_error(ext2_filsys fs, int flags)
+स्थिर शून्य read_bitmaps_cleanup_on_error(ext2_filsys fs, पूर्णाङ्क flags)
 {
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		ext2fs_free_block_bitmap(fs->block_map);
-		fs->block_map = 0;
+	यदि (flags & EXT2_FS_BITMAPS_खण्डम्) {
+		ext2fs_free_खण्डम्_bitmap(fs->खण्डम्_map);
+		fs->खण्डम्_map = 0;
 	}
-	if (flags & EXT2FS_BITMAPS_INODE) {
+	यदि (flags & EXT2FS_BITMAPS_INODE) {
 		ext2fs_free_inode_bitmap(fs->inode_map);
 		fs->inode_map = 0;
 	}
 }
 
-static errcode_t read_bitmaps_range(ext2_filsys fs, int flags,
-				    dgrp_t start, dgrp_t end)
+स्थिर errcode_t read_bitmaps_range(ext2_filsys fs, पूर्णाङ्क flags,
+				    dgrp_t start, dgrp_t अन्तः)
 {
 	errcode_t retval;
-	int tail_flags = 0;
+	पूर्णाङ्क पुच्छ_flags = 0;
 
 	retval = read_bitmaps_range_prepare(fs, flags);
-	if (retval)
-		return retval;
+	यदि (retval)
+		प्रत्यागम retval;
 
-	retval = read_bitmaps_range_start(fs, flags, start, end,
-					  NULL, &tail_flags);
-	if (retval == 0)
-		retval = read_bitmaps_range_end(fs, flags, tail_flags);
-	if (retval)
+	retval = read_bitmaps_range_start(fs, flags, start, अन्तः,
+					  रिक्त, &पुच्छ_flags);
+	यदि (retval == 0)
+		retval = read_bitmaps_range_अन्तः(fs, flags, पुच्छ_flags);
+	यदि (retval)
 		read_bitmaps_cleanup_on_error(fs, flags);
-	return retval;
+	प्रत्यागम retval;
 }
 
-#ifdef HAVE_PTHREAD
-struct read_bitmaps_thread_info {
+#यदि_परिभाषितम् HAVE_PTHREAD
+संरचना read_bitmaps_thread_info {
 	ext2_filsys	rbt_fs;
-	int		rbt_flags;
+	पूर्णाङ्क		rbt_flags;
 	dgrp_t		rbt_grp_start;
-	dgrp_t		rbt_grp_end;
+	dgrp_t		rbt_grp_अन्तः;
 	errcode_t	rbt_retval;
 	pthread_mutex_t *rbt_mutex;
-	int		rbt_tail_flags;
+	पूर्णाङ्क		rbt_पुच्छ_flags;
 };
 
-static void *read_bitmaps_thread(void *data)
+स्थिर शून्य *read_bitmaps_thread(शून्य *दत्त)
 {
-	struct read_bitmaps_thread_info *rbt = data;
+	संरचना read_bitmaps_thread_info *rbt = दत्त;
 
 	rbt->rbt_retval = read_bitmaps_range_start(rbt->rbt_fs, rbt->rbt_flags,
-				rbt->rbt_grp_start, rbt->rbt_grp_end,
-				rbt->rbt_mutex, &rbt->rbt_tail_flags);
-	return NULL;
+				rbt->rbt_grp_start, rbt->rbt_grp_अन्तः,
+				rbt->rbt_mutex, &rbt->rbt_पुच्छ_flags);
+	प्रत्यागम रिक्त;
 }
-#endif
+#यदि_अन्तः
 
-errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, int flags, int num_threads)
+errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, पूर्णाङ्क flags, पूर्णाङ्क अङ्कः_तन्तवः)
 {
-#ifdef HAVE_PTHREAD
+#यदि_परिभाषितम् HAVE_PTHREAD
 	pthread_attr_t	attr;
-	pthread_t *thread_ids = NULL;
-	struct read_bitmaps_thread_info *thread_infos = NULL;
+	pthread_t *thread_ids = रिक्त;
+	संरचना read_bitmaps_thread_info *thread_infos = रिक्त;
 	pthread_mutex_t rbt_mutex = PTHREAD_MUTEX_INITIALIZER;
 	errcode_t retval;
 	errcode_t rc;
-	unsigned flexbg_size = 1U << fs->super->s_log_groups_per_flex;
-	dgrp_t average_group;
-	int i, tail_flags = 0;
-#endif
+	अचिह्नित flexbg_आकार = 1U << fs->super->s_log_groups_प्रत्येकम्_flex;
+	dgrp_t मध्यमानम्_गणः;
+	पूर्णाङ्क i, पुच्छ_flags = 0;
+#यदि_अन्तः
 
-	if (flags & ~EXT2FS_BITMAPS_VALID_FLAGS)
-		return EXT2_ET_INVALID_ARGUMENT;
+	यदि (flags & ~EXT2FS_BITMAPS_VALID_FLAGS)
+		प्रत्यागम EXT2_ET_INVALID_तर्कः;
 
-	if (ext2fs_has_feature_journal_dev(fs->super))
-		return EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
+	यदि (ext2fs_has_feature_journal_dev(fs->super))
+		प्रत्यागम EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
 
-	if (flags & EXT2FS_BITMAPS_WRITE)
-		return write_bitmaps(fs, flags & EXT2FS_BITMAPS_INODE,
-				     flags & EXT2FS_BITMAPS_BLOCK);
+	यदि (flags & EXT2FS_BITMAPS_WRITE)
+		प्रत्यागम write_bitmaps(fs, flags & EXT2FS_BITMAPS_INODE,
+				     flags & EXT2_FS_BITMAPS_खण्डम्);
 
-#ifdef HAVE_PTHREAD
-	if (((fs->io->flags & CHANNEL_FLAGS_THREADS) == 0) ||
-	    (num_threads == 1) || (fs->flags & EXT2_FLAG_IMAGE_FILE))
-		goto fallback;
+#यदि_परिभाषितम् HAVE_PTHREAD
+	यदि (((fs->io->flags & CHANNEL_FLAGS_तन्तवः) == 0) ||
+	    (अङ्कः_तन्तवः == 1) || (fs->flags & EXT2_FLAG_IMAGE_FILE))
+		गच्छ fallback;
 
-#if defined(HAVE_SYSCONF) && defined(_SC_NPROCESSORS_CONF)
-	if (num_threads < 0)
-		num_threads = sysconf(_SC_NPROCESSORS_CONF);
-#endif
+#यदि defined(HAVE_SYSCONF) && defined(_SC_NPROCESSORS_CONF)
+	यदि (अङ्कः_तन्तवः < 0)
+		अङ्कः_तन्तवः = sysconf(_SC_NPROCESSORS_CONF);
+#यदि_अन्तः
 	/*
 	 * Guess for now; eventually we should probably define
 	 * ext2fs_get_num_cpus() and teach it how to get this info on
 	 * MacOS, FreeBSD, etc.
 	 * ref: https://stackoverflow.com/questions/150355
 	 */
-	if (num_threads <= 0)
-		num_threads = 4;
+	यदि (अङ्कः_तन्तवः <= 0)
+		अङ्कः_तन्तवः = 4;
 
-	if ((unsigned) num_threads > fs->group_desc_count)
-		num_threads = fs->group_desc_count;
-	average_group = fs->group_desc_count / num_threads;
-	if (ext2fs_has_feature_flex_bg(fs->super)) {
-		average_group = (average_group / flexbg_size) * flexbg_size;
+	यदि ((अचिह्नित) अङ्कः_तन्तवः > fs->गणः_desc_गणनम्)
+		अङ्कः_तन्तवः = fs->गणः_desc_गणनम्;
+	मध्यमानम्_गणः = fs->गणः_desc_गणनम् / अङ्कः_तन्तवः;
+	यदि (ext2fs_has_feature_flex_bg(fs->super)) {
+		मध्यमानम्_गणः = (मध्यमानम्_गणः / flexbg_आकार) * flexbg_आकार;
 	}
-	if ((num_threads <= 1) || (average_group == 0))
-		goto fallback;
+	यदि ((अङ्कः_तन्तवः <= 1) || (मध्यमानम्_गणः == 0))
+		गच्छ fallback;
 
-	io_channel_set_options(fs->io, "cache=off");
+	io_channel_समुच्चयः_options(fs->io, "cache=off");
 	retval = pthread_attr_init(&attr);
-	if (retval)
-		return retval;
+	यदि (retval)
+		प्रत्यागम retval;
 
-	thread_ids = calloc(sizeof(pthread_t), num_threads);
-	if (!thread_ids)
-		return ENOMEM;
+	thread_ids = शून्यस्मृतिं_देहि(परिमाण(pthread_t), अङ्कः_तन्तवः);
+	यदि (!thread_ids)
+		प्रत्यागम ENOMEM;
 
-	thread_infos = calloc(sizeof(struct read_bitmaps_thread_info),
-				num_threads);
-	if (!thread_infos)
-		goto out;
+	thread_infos = शून्यस्मृतिं_देहि(परिमाण(संरचना read_bitmaps_thread_info),
+				अङ्कः_तन्तवः);
+	यदि (!thread_infos)
+		गच्छ बहिर्गमनम्;
 
 	retval = read_bitmaps_range_prepare(fs, flags);
-	if (retval)
-		goto out;
+	यदि (retval)
+		गच्छ बहिर्गमनम्;
 
 //	fprintf(stdout, "Multiple threads triggered to read bitmaps\n");
-	for (i = 0; i < num_threads; i++) {
+	प्रति (i = 0; i < अङ्कः_तन्तवः; i++) {
 		thread_infos[i].rbt_fs = fs;
 		thread_infos[i].rbt_flags = flags;
 		thread_infos[i].rbt_mutex = &rbt_mutex;
-		thread_infos[i].rbt_tail_flags = 0;
-		if (i == 0)
+		thread_infos[i].rbt_पुच्छ_flags = 0;
+		यदि (i == 0)
 			thread_infos[i].rbt_grp_start = 0;
-		else
-			thread_infos[i].rbt_grp_start = average_group * i + 1;
+		अन्यथा
+			thread_infos[i].rbt_grp_start = मध्यमानम्_गणः * i + 1;
 
-		if (i == num_threads - 1)
-			thread_infos[i].rbt_grp_end = fs->group_desc_count - 1;
-		else
-			thread_infos[i].rbt_grp_end = average_group * (i + 1);
+		यदि (i == अङ्कः_तन्तवः - 1)
+			thread_infos[i].rbt_grp_अन्तः = fs->गणः_desc_गणनम् - 1;
+		अन्यथा
+			thread_infos[i].rbt_grp_अन्तः = मध्यमानम्_गणः * (i + 1);
 		retval = pthread_create(&thread_ids[i], &attr,
 					&read_bitmaps_thread, &thread_infos[i]);
-		if (retval)
-			break;
+		यदि (retval)
+			भङ्ग;
 	}
-	for (i = 0; i < num_threads; i++) {
-		if (!thread_ids[i])
-			break;
-		rc = pthread_join(thread_ids[i], NULL);
-		if (rc && !retval)
+	प्रति (i = 0; i < अङ्कः_तन्तवः; i++) {
+		यदि (!thread_ids[i])
+			भङ्ग;
+		rc = pthread_join(thread_ids[i], रिक्त);
+		यदि (rc && !retval)
 			retval = rc;
 		rc = thread_infos[i].rbt_retval;
-		if (rc && !retval)
+		यदि (rc && !retval)
 			retval = rc;
-		tail_flags |= thread_infos[i].rbt_tail_flags;
+		पुच्छ_flags |= thread_infos[i].rbt_पुच्छ_flags;
 	}
-out:
+बहिर्गमनम्:
 	rc = pthread_attr_destroy(&attr);
-	if (rc && !retval)
+	यदि (rc && !retval)
 		retval = rc;
-	free(thread_infos);
-	free(thread_ids);
+	मुक्त(thread_infos);
+	मुक्त(thread_ids);
 
-	if (retval == 0)
-		retval = read_bitmaps_range_end(fs, flags, tail_flags);
-	if (retval)
+	यदि (retval == 0)
+		retval = read_bitmaps_range_अन्तः(fs, flags, पुच्छ_flags);
+	यदि (retval)
 		read_bitmaps_cleanup_on_error(fs, flags);
 	/* XXX should save and restore cache setting */
-	io_channel_set_options(fs->io, "cache=on");
-	return retval;
+	io_channel_समुच्चयः_options(fs->io, "cache=on");
+	प्रत्यागम retval;
 fallback:
-#endif /* HAVE_PTHREAD */
-	return read_bitmaps_range(fs, flags, 0, fs->group_desc_count - 1);
+#यदि_अन्तः /* HAVE_PTHREAD */
+	प्रत्यागम read_bitmaps_range(fs, flags, 0, fs->गणः_desc_गणनम् - 1);
 }
 
 errcode_t ext2fs_read_inode_bitmap(ext2_filsys fs)
 {
-	return ext2fs_rw_bitmaps(fs, EXT2FS_BITMAPS_INODE, -1);
+	प्रत्यागम ext2fs_rw_bitmaps(fs, EXT2FS_BITMAPS_INODE, -1);
 }
 
-errcode_t ext2fs_read_block_bitmap(ext2_filsys fs)
+errcode_t ext2fs_read_खण्डम्_bitmap(ext2_filsys fs)
 {
-	return ext2fs_rw_bitmaps(fs, EXT2FS_BITMAPS_BLOCK, -1);
+	प्रत्यागम ext2fs_rw_bitmaps(fs, EXT2_FS_BITMAPS_खण्डम्, -1);
 }
 
 errcode_t ext2fs_write_inode_bitmap(ext2_filsys fs)
 {
-	return write_bitmaps(fs, 1, 0);
+	प्रत्यागम write_bitmaps(fs, 1, 0);
 }
 
-errcode_t ext2fs_write_block_bitmap (ext2_filsys fs)
+errcode_t ext2fs_write_खण्डम्_bitmap (ext2_filsys fs)
 {
-	return write_bitmaps(fs, 0, 1);
+	प्रत्यागम write_bitmaps(fs, 0, 1);
 }
 
 errcode_t ext2fs_read_bitmaps(ext2_filsys fs)
 {
-	int flags = 0;
+	पूर्णाङ्क flags = 0;
 
-	if (!fs->inode_map)
+	यदि (!fs->inode_map)
 		flags |= EXT2FS_BITMAPS_INODE;
-	if (!fs->block_map)
-		flags |= EXT2FS_BITMAPS_BLOCK;
-	if (flags == 0)
-		return 0;
-	return ext2fs_rw_bitmaps(fs, flags, -1);
+	यदि (!fs->खण्डम्_map)
+		flags |= EXT2_FS_BITMAPS_खण्डम्;
+	यदि (flags == 0)
+		प्रत्यागम 0;
+	प्रत्यागम ext2fs_rw_bitmaps(fs, flags, -1);
 }
 
 errcode_t ext2fs_write_bitmaps(ext2_filsys fs)
 {
-	int do_inode = fs->inode_map && ext2fs_test_ib_dirty(fs);
-	int do_block = fs->block_map && ext2fs_test_bb_dirty(fs);
+	पूर्णाङ्क do_inode = fs->inode_map && ext2fs_test_ib_dirty(fs);
+	पूर्णाङ्क do_खण्डम् = fs->खण्डम्_map && ext2fs_test_bb_dirty(fs);
 
-	if (!do_inode && !do_block)
-		return 0;
+	यदि (!do_inode && !do_खण्डम्)
+		प्रत्यागम 0;
 
-	return write_bitmaps(fs, do_inode, do_block);
+	प्रत्यागम write_bitmaps(fs, do_inode, do_खण्डम्);
 }

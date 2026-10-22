@@ -1,527 +1,527 @@
-#include "config.h"
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdint.h>
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
+#यदि_अपरिभाषितम् O_द्विमान
+#परिभाषय O_द्विमान 0
+#यदि_अन्तः
 
-#if !defined(ENABLE_LIBSPARSE)
-static errcode_t sparse_open(const char *name EXT2FS_ATTR((unused)),
-			     int flags EXT2FS_ATTR((unused)),
-			     io_channel *channel EXT2FS_ATTR((unused)))
+#यदि !defined(ENABLE_LIBSPARSE)
+स्थिर errcode_t sparse_open(ध्रुव वर्ण *name EXT2FS_ATTR((अप्रयुक्तम्)),
+			     पूर्णाङ्क flags EXT2FS_ATTR((अप्रयुक्तम्)),
+			     io_channel *channel EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	return EXT2_ET_UNIMPLEMENTED;
+	प्रत्यागम EXT2_ET_UNIMPLEMENTED;
 }
-static errcode_t sparse_close(io_channel channel EXT2FS_ATTR((unused)))
+स्थिर errcode_t sparse_close(io_channel channel EXT2FS_ATTR((अप्रयुक्तम्)))
 {
-	return EXT2_ET_UNIMPLEMENTED;
+	प्रत्यागम EXT2_ET_UNIMPLEMENTED;
 }
-static struct struct_io_manager struct_sparse_manager = {
+स्थिर संरचना struct_io_manager struct_sparse_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse I/O Manager",
-	.open			= sparse_open,
+	.उद्घाटय			= sparse_open,
 	.close			= sparse_close,
 };
-static struct struct_io_manager struct_sparsefd_manager = {
+स्थिर संरचना struct_io_manager struct_sparsefd_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse fd I/O Manager",
-	.open			= sparse_open,
+	.उद्घाटय			= sparse_open,
 	.close			= sparse_close,
 };
-#else
-#include <sparse/sparse.h>
+#अन्यथा
+#अन्तर्भाव <sparse/sparse.h>
 
-struct sparse_map {
-	int			fd;
-	char			**blocks;
-	int			block_size;
-	uint64_t		blocks_count;
-	char			*file;
-	struct sparse_file	*sparse_file;
+संरचना sparse_map {
+	पूर्णाङ्क			fd;
+	वर्ण			**खण्डानि;
+	पूर्णाङ्क			खण्डम्_आकार;
+	uint64_t		खण्डानि_गणनम्;
+	वर्ण			*file;
+	संरचना sparse_file	*sparse_file;
 	io_channel		channel;
 };
 
-struct sparse_io_params {
-	int			fd;
-	char			*file;
-	uint64_t		blocks_count;
-	unsigned int		block_size;
+संरचना sparse_io_params {
+	पूर्णाङ्क			fd;
+	वर्ण			*file;
+	uint64_t		खण्डानि_गणनम्;
+	अचिह्नित पूर्णाङ्क		खण्डम्_आकार;
 };
 
-static errcode_t sparse_write_blk(io_channel channel, unsigned long block,
-				  int count, const void *buf);
+स्थिर errcode_t sparse_write_blk(io_channel channel, अचिह्नित दीर्घ खण्डम्,
+				  पूर्णाङ्क गणनम्, ध्रुव शून्य *buf);
 
-static void free_sparse_blocks(struct sparse_map *sm)
+स्थिर शून्य free_sparse_खण्डानि(संरचना sparse_map *sm)
 {
 	uint64_t i;
 
-	for (i = 0; i < sm->blocks_count; ++i)
-		free(sm->blocks[i]);
-	free(sm->blocks);
-	sm->blocks = NULL;
+	प्रति (i = 0; i < sm->खण्डानि_गणनम्; ++i)
+		मुक्त(sm->खण्डानि[i]);
+	मुक्त(sm->खण्डानि);
+	sm->खण्डानि = रिक्त;
 }
 
-static int sparse_import_segment(void *priv, const void *data, size_t len,
-				 unsigned int block, unsigned int nr_blocks)
+स्थिर पूर्णाङ्क sparse_import_segment(शून्य *priv, ध्रुव शून्य *दत्त, size_t len,
+				 अचिह्नित पूर्णाङ्क खण्डम्, अचिह्नित पूर्णाङ्क nr_खण्डानि)
 {
-	struct sparse_map *sm = priv;
+	संरचना sparse_map *sm = priv;
 
 	/* Ignore chunk headers, only write the data */
-	if (!nr_blocks || len % sm->block_size)
-		return 0;
+	यदि (!nr_खण्डानि || len % sm->खण्डम्_आकार)
+		प्रत्यागम 0;
 
-	return sparse_write_blk(sm->channel, block, nr_blocks, data);
+	प्रत्यागम sparse_write_blk(sm->channel, खण्डम्, nr_खण्डानि, दत्त);
 }
 
-static errcode_t io_manager_import_sparse(struct sparse_io_params *params,
-					  struct sparse_map *sm, io_channel io)
+स्थिर errcode_t io_manager_import_sparse(संरचना sparse_io_params *params,
+					  संरचना sparse_map *sm, io_channel io)
 {
-	int fd;
+	पूर्णाङ्क fd;
 	errcode_t retval;
-	struct sparse_file *sparse_file;
+	संरचना sparse_file *sparse_file;
 
-	if (params->fd < 0) {
-		fd = open(params->file, O_RDONLY);
-		if (fd < 0) {
+	यदि (params->fd < 0) {
+		fd = उद्घाटय(params->file, O_RDONLY);
+		यदि (fd < 0) {
 			retval = -1;
-			goto err_open;
+			गच्छ err_open;
 		}
-	} else
+	} अन्यथा
 		fd = params->fd;
 	sparse_file = sparse_file_import(fd, false, false);
-	if (!sparse_file) {
+	यदि (!sparse_file) {
 		retval = -1;
-		goto err_sparse;
+		गच्छ err_sparse;
 	}
 
-	sm->block_size = sparse_file_block_size(sparse_file);
-	sm->blocks_count = (sparse_file_len(sparse_file, 0, 0) - 1)
-				/ sm->block_size + 1;
-	sm->blocks = calloc(sm->blocks_count, sizeof(char*));
-	if (!sm->blocks) {
+	sm->खण्डम्_आकार = sparse_file_खण्डम्_आकार(sparse_file);
+	sm->खण्डानि_गणनम् = (sparse_file_len(sparse_file, 0, 0) - 1)
+				/ sm->खण्डम्_आकार + 1;
+	sm->खण्डानि = शून्यस्मृतिं_देहि(sm->खण्डानि_गणनम्, परिमाण(वर्ण*));
+	यदि (!sm->खण्डानि) {
 		retval = -1;
-		goto err_alloc;
+		गच्छ err_alloc;
 	}
-	io->block_size = sm->block_size;
+	io->खण्डम्_आकार = sm->खण्डम्_आकार;
 
 	retval = sparse_file_foreach_chunk(sparse_file, true, false,
 					   sparse_import_segment, sm);
 
-	if (retval)
-		free_sparse_blocks(sm);
+	यदि (retval)
+		free_sparse_खण्डानि(sm);
 err_alloc:
 	sparse_file_destroy(sparse_file);
 err_sparse:
 	close(fd);
 err_open:
-	return retval;
+	प्रत्यागम retval;
 }
 
-static errcode_t io_manager_configure(struct sparse_io_params *params,
-				      int flags, io_channel io)
+स्थिर errcode_t io_manager_configure(संरचना sparse_io_params *params,
+				      पूर्णाङ्क flags, io_channel io)
 {
 	errcode_t retval;
-	uint64_t img_size;
-	struct sparse_map *sm = calloc(1, sizeof(*sm));
-	if (!sm)
-		return EXT2_ET_NO_MEMORY;
+	uint64_t img_आकार;
+	संरचना sparse_map *sm = शून्यस्मृतिं_देहि(1, परिमाण(*sm));
+	यदि (!sm)
+		प्रत्यागम EXT2_ET_NO_स्मृतिः;
 
 	sm->file = params->file;
 	sm->channel = io;
-	io->private_data = sm;
+	io->वैयक्तिकम्_दत्त = sm;
 	retval = io_manager_import_sparse(params, sm, io);
-	if (retval) {
-		if (!params->block_size || !params->blocks_count) {
+	यदि (retval) {
+		यदि (!params->खण्डम्_आकार || !params->खण्डानि_गणनम्) {
 			retval = EINVAL;
-			goto err_params;
+			गच्छ err_params;
 		}
-		sm->block_size = params->block_size;
-		sm->blocks_count = params->blocks_count;
-		sm->blocks = calloc(params->blocks_count, sizeof(void*));
-		if (!sm->blocks) {
-			retval = EXT2_ET_NO_MEMORY;
-			goto err_alloc;
+		sm->खण्डम्_आकार = params->खण्डम्_आकार;
+		sm->खण्डानि_गणनम् = params->खण्डानि_गणनम्;
+		sm->खण्डानि = शून्यस्मृतिं_देहि(params->खण्डानि_गणनम्, परिमाण(शून्य*));
+		यदि (!sm->खण्डानि) {
+			retval = EXT2_ET_NO_स्मृतिः;
+			गच्छ err_alloc;
 		}
 	}
-	io->block_size = sm->block_size;
-	img_size = (uint64_t)sm->block_size * sm->blocks_count;
+	io->खण्डम्_आकार = sm->खण्डम्_आकार;
+	img_आकार = (uint64_t)sm->खण्डम्_आकार * sm->खण्डानि_गणनम्;
 
-	if (flags & IO_FLAG_RW) {
-		sm->sparse_file = sparse_file_new(sm->block_size, img_size);
-		if (!sm->sparse_file) {
-			retval = EXT2_ET_NO_MEMORY;
-			goto err_alloc;
+	यदि (flags & IO_FLAG_RW) {
+		sm->sparse_file = sparse_file_new(sm->खण्डम्_आकार, img_आकार);
+		यदि (!sm->sparse_file) {
+			retval = EXT2_ET_NO_स्मृतिः;
+			गच्छ err_alloc;
 		}
-		if (params->fd < 0) {
-			sm->fd = open(params->file, O_CREAT | O_RDWR | O_TRUNC | O_BINARY,
+		यदि (params->fd < 0) {
+			sm->fd = उद्घाटय(params->file, O_CREAT | O_RDWR | O_TRUNC | O_द्विमान,
 				      0644);
-			if (sm->fd < 0) {
+			यदि (sm->fd < 0) {
 				retval = errno;
-				goto err_open;
+				गच्छ err_open;
 			}
-		} else
+		} अन्यथा
 			sm->fd = params->fd;
-	} else {
+	} अन्यथा {
 		sm->fd = -1;
-		sm->sparse_file = NULL;
+		sm->sparse_file = रिक्त;
 	}
-	return 0;
+	प्रत्यागम 0;
 
 err_open:
 	sparse_file_destroy(sm->sparse_file);
 err_alloc:
-	free_sparse_blocks(sm);
+	free_sparse_खण्डानि(sm);
 err_params:
-	free(sm);
-	return retval;
+	मुक्त(sm);
+	प्रत्यागम retval;
 }
 
-static errcode_t sparse_open_channel(struct sparse_io_params *sparse_params,
-				     int flags, io_channel *channel)
+स्थिर errcode_t sparse_open_channel(संरचना sparse_io_params *sparse_params,
+				     पूर्णाङ्क flags, io_channel *channel)
 {
 	errcode_t retval;
 	io_channel io;
 
-	io = calloc(1, sizeof(struct struct_io_channel));
+	io = शून्यस्मृतिं_देहि(1, परिमाण(संरचना struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
-	io->block_size = 0;
+	io->खण्डम्_आकार = 0;
 	io->refcount = 1;
 
 	retval = io_manager_configure(sparse_params, flags, io);
-	if (retval) {
-		free(io);
-		return retval;
+	यदि (retval) {
+		मुक्त(io);
+		प्रत्यागम retval;
 	}
 
 	*channel = io;
-	return 0;
+	प्रत्यागम 0;
 }
 
-static errcode_t read_sparse_argv(const char *name, bool is_fd,
-				  struct sparse_io_params *sparse_params)
+स्थिर errcode_t read_sparse_argv(ध्रुव वर्ण *name, bool is_fd,
+				  संरचना sparse_io_params *sparse_params)
 {
-	int ret;
+	पूर्णाङ्क ret;
 	sparse_params->fd = -1;
-	sparse_params->block_size = 0;
-	sparse_params->blocks_count = 0;
+	sparse_params->खण्डम्_आकार = 0;
+	sparse_params->खण्डानि_गणनम् = 0;
 
-	sparse_params->file = malloc(strlen(name) + 1);
-	if (!sparse_params->file) {
-		fprintf(stderr, "failed to alloc %zu\n", strlen(name) + 1);
-		return EXT2_ET_NO_MEMORY;
+	sparse_params->file = स्मृतिं_देहि(वाक्यदैर्घ्यम्(name) + 1);
+	यदि (!sparse_params->file) {
+		fprintf(stderr, "failed to alloc %zu\n", वाक्यदैर्घ्यम्(name) + 1);
+		प्रत्यागम EXT2_ET_NO_स्मृतिः;
 	}
 
-	if (is_fd) {
-		ret = sscanf(name, "(%d):%llu:%u", &sparse_params->fd,
-			     (unsigned long long *)&sparse_params->blocks_count,
-			     &sparse_params->block_size);
-	} else {
-		ret = sscanf(name, "(%[^)])%*[:]%llu%*[:]%u", sparse_params->file,
-			     (unsigned long long *)&sparse_params->blocks_count,
-			     &sparse_params->block_size);
+	यदि (is_fd) {
+		ret = वाक्यात्_पठ(name, "(%d):%llu:%u", &sparse_params->fd,
+			     (अचिह्नित दीर्घ दीर्घ *)&sparse_params->खण्डानि_गणनम्,
+			     &sparse_params->खण्डम्_आकार);
+	} अन्यथा {
+		ret = वाक्यात्_पठ(name, "(%[^)])%*[:]%llu%*[:]%u", sparse_params->file,
+			     (अचिह्नित दीर्घ दीर्घ *)&sparse_params->खण्डानि_गणनम्,
+			     &sparse_params->खण्डम्_आकार);
 	}
 
-	if (ret < 1) {
-		free(sparse_params->file);
-		return EINVAL;
+	यदि (ret < 1) {
+		मुक्त(sparse_params->file);
+		प्रत्यागम EINVAL;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static errcode_t sparse_open(const char *name, int flags, io_channel *channel)
+स्थिर errcode_t sparse_open(ध्रुव वर्ण *name, पूर्णाङ्क flags, io_channel *channel)
 {
 	errcode_t retval;
-	struct sparse_io_params sparse_params;
+	संरचना sparse_io_params sparse_params;
 
 	retval = read_sparse_argv(name, false, &sparse_params);
-	if (retval)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	यदि (retval)
+		प्रत्यागम EXT2_ET_BAD_DEVICE_NAME;
 
 	retval = sparse_open_channel(&sparse_params, flags, channel);
-	if (retval)
-		return retval;
+	यदि (retval)
+		प्रत्यागम retval;
 	(*channel)->manager = sparse_io_manager;
 
-	return retval;
+	प्रत्यागम retval;
 }
 
-static errcode_t sparsefd_open(const char *name, int flags, io_channel *channel)
+स्थिर errcode_t sparsefd_open(ध्रुव वर्ण *name, पूर्णाङ्क flags, io_channel *channel)
 {
 	errcode_t retval;
-	struct sparse_io_params sparse_params;
+	संरचना sparse_io_params sparse_params;
 
 	retval = read_sparse_argv(name, true, &sparse_params);
-	if (retval)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	यदि (retval)
+		प्रत्यागम EXT2_ET_BAD_DEVICE_NAME;
 
 	retval = sparse_open_channel(&sparse_params, flags, channel);
-	if (retval)
-		return retval;
+	यदि (retval)
+		प्रत्यागम retval;
 	(*channel)->manager = sparsefd_io_manager;
 
-	return retval;
+	प्रत्यागम retval;
 }
 
-static errcode_t sparse_merge_blocks(struct sparse_map *sm, uint64_t start,
-					uint64_t num)
+स्थिर errcode_t sparse_merge_खण्डानि(संरचना sparse_map *sm, uint64_t start,
+					uint64_t अङ्कः)
 {
-	char *buf;
+	वर्ण *buf;
 	uint64_t i;
-	unsigned int block_size = sm->block_size;
+	अचिह्नित पूर्णाङ्क खण्डम्_आकार = sm->खण्डम्_आकार;
 	errcode_t retval = 0;
 
-	buf = calloc(num, block_size);
-	if (!buf) {
+	buf = शून्यस्मृतिं_देहि(अङ्कः, खण्डम्_आकार);
+	यदि (!buf) {
 		fprintf(stderr, "failed to alloc %llu\n",
-			(unsigned long long)num * block_size);
-		return EXT2_ET_NO_MEMORY;
+			(अचिह्नित दीर्घ दीर्घ)अङ्कः * खण्डम्_आकार);
+		प्रत्यागम EXT2_ET_NO_स्मृतिः;
 	}
 
-	for (i = 0; i < num; i++) {
-		memcpy(buf + i * block_size, sm->blocks[start + i] , block_size);
-		free(sm->blocks[start + i]);
-		sm->blocks[start + i] = NULL;
+	प्रति (i = 0; i < अङ्कः; i++) {
+		स्मृतिं_प्रतिलिख(buf + i * खण्डम्_आकार, sm->खण्डानि[start + i] , खण्डम्_आकार);
+		मुक्त(sm->खण्डानि[start + i]);
+		sm->खण्डानि[start + i] = रिक्त;
 	}
 
 	/* free_sparse_blocks will release this buf. */
-	sm->blocks[start] = buf;
+	sm->खण्डानि[start] = buf;
 
-	retval = sparse_file_add_data(sm->sparse_file, sm->blocks[start],
-					block_size * num, start);
+	retval = sparse_file_सङ्कलय_दत्त(sm->sparse_file, sm->खण्डानि[start],
+					खण्डम्_आकार * अङ्कः, start);
 
-	return retval;
+	प्रत्यागम retval;
 }
 
-static errcode_t sparse_close_channel(io_channel channel)
+स्थिर errcode_t sparse_close_channel(io_channel channel)
 {
 	uint64_t i;
 	errcode_t retval = 0;
-	struct sparse_map *sm = channel->private_data;
+	संरचना sparse_map *sm = channel->वैयक्तिकम्_दत्त;
 
-	if (sm->sparse_file) {
-		int64_t chunk_start = (sm->blocks[0] == NULL) ? -1 : 0;
-		for (i = 0; i < sm->blocks_count; ++i) {
-			if (!sm->blocks[i] && chunk_start != -1) {
-				retval = sparse_merge_blocks(sm, chunk_start, i - chunk_start);
+	यदि (sm->sparse_file) {
+		int64_t chunk_start = (sm->खण्डानि[0] == रिक्त) ? -1 : 0;
+		प्रति (i = 0; i < sm->खण्डानि_गणनम्; ++i) {
+			यदि (!sm->खण्डानि[i] && chunk_start != -1) {
+				retval = sparse_merge_खण्डानि(sm, chunk_start, i - chunk_start);
 				chunk_start = -1;
-			} else if (sm->blocks[i] && chunk_start == -1) {
+			} अन्यथा यदि (sm->खण्डानि[i] && chunk_start == -1) {
 				chunk_start = i;
 			}
-			if (retval)
-				goto ret;
+			यदि (retval)
+				गच्छ ret;
 		}
-		if (chunk_start != -1) {
-			retval = sparse_merge_blocks(sm, chunk_start,
-							sm->blocks_count - chunk_start);
-			if (retval)
-				goto ret;
+		यदि (chunk_start != -1) {
+			retval = sparse_merge_खण्डानि(sm, chunk_start,
+							sm->खण्डानि_गणनम् - chunk_start);
+			यदि (retval)
+				गच्छ ret;
 		}
 		retval = sparse_file_write(sm->sparse_file, sm->fd,
 					   /*gzip*/0, /*sparse*/1, /*crc*/0);
 	}
 
 ret:
-	if (sm->sparse_file)
+	यदि (sm->sparse_file)
 		sparse_file_destroy(sm->sparse_file);
-	free_sparse_blocks(sm);
-	free(sm->file);
-	free(sm);
-	free(channel);
-	return retval;
+	free_sparse_खण्डानि(sm);
+	मुक्त(sm->file);
+	मुक्त(sm);
+	मुक्त(channel);
+	प्रत्यागम retval;
 }
 
-static errcode_t sparse_close(io_channel channel)
+स्थिर errcode_t sparse_close(io_channel channel)
 {
 	errcode_t retval;
-	struct sparse_map *sm = channel->private_data;
-	int fd = sm->fd;
+	संरचना sparse_map *sm = channel->वैयक्तिकम्_दत्त;
+	पूर्णाङ्क fd = sm->fd;
 
 	retval = sparse_close_channel(channel);
-	if (fd >= 0)
+	यदि (fd >= 0)
 		close(fd);
 
-	return retval;
+	प्रत्यागम retval;
 }
 
-static errcode_t sparse_set_blksize(io_channel channel, int blksize)
+स्थिर errcode_t sparse_समुच्चयः_blksize(io_channel channel, पूर्णाङ्क blksize)
 {
-	channel->block_size = blksize;
-	return 0;
+	channel->खण्डम्_आकार = blksize;
+	प्रत्यागम 0;
 }
 
-static blk64_t block_to_sparse_block(blk64_t block, blk64_t *offset,
-			       io_channel channel, struct sparse_map *sm)
+स्थिर blk64_t खण्डम्_गन्तव्यम्_sparse_खण्डम्(blk64_t खण्डम्, blk64_t *विस्थापनम्,
+			       io_channel channel, संरचना sparse_map *sm)
 {
-	int ratio;
-	blk64_t ret = block;
+	पूर्णाङ्क अनुपातः;
+	blk64_t ret = खण्डम्;
 
-	ratio = sm->block_size / channel->block_size;
-	ret /= ratio;
-	*offset = (block % ratio) * channel->block_size;
+	अनुपातः = sm->खण्डम्_आकार / channel->खण्डम्_आकार;
+	ret /= अनुपातः;
+	*विस्थापनम् = (खण्डम् % अनुपातः) * channel->खण्डम्_आकार;
 
-	return ret;
+	प्रत्यागम ret;
 }
 
-static errcode_t check_block_size(io_channel channel, struct sparse_map *sm)
+स्थिर errcode_t check_खण्डम्_आकार(io_channel channel, संरचना sparse_map *sm)
 {
-	if (sm->block_size >= channel->block_size)
-		return 0;
-	return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	यदि (sm->खण्डम्_आकार >= channel->खण्डम्_आकार)
+		प्रत्यागम 0;
+	प्रत्यागम EXT2_ET_UNEXPECTED_खण्डम्_आकार;
 }
 
-static errcode_t sparse_read_blk64(io_channel channel, blk64_t block,
-				   int count, void *buf)
+स्थिर errcode_t sparse_read_blk64(io_channel channel, blk64_t खण्डम्,
+				   पूर्णाङ्क गणनम्, शून्य *buf)
 {
-	int i;
-	char *out = buf;
-	blk64_t offset = 0, cur_block;
-	struct sparse_map *sm = channel->private_data;
+	पूर्णाङ्क i;
+	वर्ण *बहिर्गमनम् = buf;
+	blk64_t विस्थापनम् = 0, cur_खण्डम्;
+	संरचना sparse_map *sm = channel->वैयक्तिकम्_दत्त;
 
-	if (check_block_size(channel, sm))
-		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	यदि (check_खण्डम्_आकार(channel, sm))
+		प्रत्यागम EXT2_ET_UNEXPECTED_खण्डम्_आकार;
 
-	if (count < 0) { //partial read
-		count = -count;
-		cur_block = block_to_sparse_block(block, &offset, channel, sm);
-		if (sm->blocks[cur_block])
-			memcpy(out, (sm->blocks[cur_block]) + offset, count);
-		else
-			memset(out, 0, count);
-	} else {
-		for (i = 0; i < count; ++i) {
-			cur_block = block_to_sparse_block(block + i, &offset,
+	यदि (गणनम् < 0) { //partial read
+		गणनम् = -गणनम्;
+		cur_खण्डम् = खण्डम्_गन्तव्यम्_sparse_खण्डम्(खण्डम्, &विस्थापनम्, channel, sm);
+		यदि (sm->खण्डानि[cur_खण्डम्])
+			स्मृतिं_प्रतिलिख(बहिर्गमनम्, (sm->खण्डानि[cur_खण्डम्]) + विस्थापनम्, गणनम्);
+		अन्यथा
+			स्मृतिं_पूरय(बहिर्गमनम्, 0, गणनम्);
+	} अन्यथा {
+		प्रति (i = 0; i < गणनम्; ++i) {
+			cur_खण्डम् = खण्डम्_गन्तव्यम्_sparse_खण्डम्(खण्डम् + i, &विस्थापनम्,
 						    channel, sm);
-			if (sm->blocks[cur_block])
-				memcpy(out + (i * channel->block_size),
-				       sm->blocks[cur_block] + offset,
-				       channel->block_size);
-			else if (sm->blocks)
-				memset(out + (i * channel->block_size), 0,
-				       channel->block_size);
+			यदि (sm->खण्डानि[cur_खण्डम्])
+				स्मृतिं_प्रतिलिख(बहिर्गमनम् + (i * channel->खण्डम्_आकार),
+				       sm->खण्डानि[cur_खण्डम्] + विस्थापनम्,
+				       channel->खण्डम्_आकार);
+			अन्यथा यदि (sm->खण्डानि)
+				स्मृतिं_पूरय(बहिर्गमनम् + (i * channel->खण्डम्_आकार), 0,
+				       channel->खण्डम्_आकार);
 		}
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static errcode_t sparse_read_blk(io_channel channel, unsigned long block,
-				 int count, void *buf)
+स्थिर errcode_t sparse_read_blk(io_channel channel, अचिह्नित दीर्घ खण्डम्,
+				 पूर्णाङ्क गणनम्, शून्य *buf)
 {
-	return sparse_read_blk64(channel, block, count, buf);
+	प्रत्यागम sparse_read_blk64(channel, खण्डम्, गणनम्, buf);
 }
 
-static errcode_t sparse_write_blk64(io_channel channel, blk64_t block,
-				    int count, const void *buf)
+स्थिर errcode_t sparse_write_blk64(io_channel channel, blk64_t खण्डम्,
+				    पूर्णाङ्क गणनम्, ध्रुव शून्य *buf)
 {
-	int i;
-	blk64_t offset = 0, cur_block;
-	const char *in = buf;
-	struct sparse_map *sm = channel->private_data;
+	पूर्णाङ्क i;
+	blk64_t विस्थापनम् = 0, cur_खण्डम्;
+	ध्रुव वर्ण *अन्तर् = buf;
+	संरचना sparse_map *sm = channel->वैयक्तिकम्_दत्त;
 
-	if (check_block_size(channel, sm))
-		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	यदि (check_खण्डम्_आकार(channel, sm))
+		प्रत्यागम EXT2_ET_UNEXPECTED_खण्डम्_आकार;
 
-	if (count < 0) { //partial write
-		count = -count;
-		cur_block = block_to_sparse_block(block, &offset, channel,
+	यदि (गणनम् < 0) { //partial write
+		गणनम् = -गणनम्;
+		cur_खण्डम् = खण्डम्_गन्तव्यम्_sparse_खण्डम्(खण्डम्, &विस्थापनम्, channel,
 						  sm);
-		if (!sm->blocks[cur_block]) {
-			sm->blocks[cur_block] = calloc(1, sm->block_size);
-			if (!sm->blocks[cur_block])
-				return EXT2_ET_NO_MEMORY;
+		यदि (!sm->खण्डानि[cur_खण्डम्]) {
+			sm->खण्डानि[cur_खण्डम्] = शून्यस्मृतिं_देहि(1, sm->खण्डम्_आकार);
+			यदि (!sm->खण्डानि[cur_खण्डम्])
+				प्रत्यागम EXT2_ET_NO_स्मृतिः;
 		}
-		memcpy(sm->blocks[cur_block] + offset, in, count);
-	} else {
-		for (i = 0; i < count; ++i) {
-			if (block + i >= sm->blocks_count)
-				return 0;
-			cur_block = block_to_sparse_block(block + i, &offset,
+		स्मृतिं_प्रतिलिख(sm->खण्डानि[cur_खण्डम्] + विस्थापनम्, अन्तर्, गणनम्);
+	} अन्यथा {
+		प्रति (i = 0; i < गणनम्; ++i) {
+			यदि (खण्डम् + i >= sm->खण्डानि_गणनम्)
+				प्रत्यागम 0;
+			cur_खण्डम् = खण्डम्_गन्तव्यम्_sparse_खण्डम्(खण्डम् + i, &विस्थापनम्,
 						    channel, sm);
-			if (!sm->blocks[cur_block]) {
-				sm->blocks[cur_block] =
-					calloc(1, sm->block_size);
-				if (!sm->blocks[cur_block])
-					return EXT2_ET_NO_MEMORY;
+			यदि (!sm->खण्डानि[cur_खण्डम्]) {
+				sm->खण्डानि[cur_खण्डम्] =
+					शून्यस्मृतिं_देहि(1, sm->खण्डम्_आकार);
+				यदि (!sm->खण्डानि[cur_खण्डम्])
+					प्रत्यागम EXT2_ET_NO_स्मृतिः;
 			}
-			memcpy(sm->blocks[cur_block] + offset,
-			       in + (i * channel->block_size),
-			       channel->block_size);
+			स्मृतिं_प्रतिलिख(sm->खण्डानि[cur_खण्डम्] + विस्थापनम्,
+			       अन्तर् + (i * channel->खण्डम्_आकार),
+			       channel->खण्डम्_आकार);
 		}
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static errcode_t sparse_write_blk(io_channel channel, unsigned long block,
-				  int count, const void *buf)
+स्थिर errcode_t sparse_write_blk(io_channel channel, अचिह्नित दीर्घ खण्डम्,
+				  पूर्णाङ्क गणनम्, ध्रुव शून्य *buf)
 {
-	return sparse_write_blk64(channel, block, count, buf);
+	प्रत्यागम sparse_write_blk64(channel, खण्डम्, गणनम्, buf);
 }
 
-static errcode_t sparse_discard(io_channel channel __attribute__((unused)),
-				blk64_t blk, unsigned long long count)
+स्थिर errcode_t sparse_discard(io_channel channel __attribute__((अप्रयुक्तम्)),
+				blk64_t blk, अचिह्नित दीर्घ दीर्घ गणनम्)
 {
-	blk64_t cur_block, offset;
-	struct sparse_map *sm = channel->private_data;
+	blk64_t cur_खण्डम्, विस्थापनम्;
+	संरचना sparse_map *sm = channel->वैयक्तिकम्_दत्त;
 
-	if (check_block_size(channel, sm))
-		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	यदि (check_खण्डम्_आकार(channel, sm))
+		प्रत्यागम EXT2_ET_UNEXPECTED_खण्डम्_आकार;
 
-	for (unsigned long long i = 0; i < count; ++i) {
-		if (blk + i >= sm->blocks_count)
-			return 0;
-		cur_block = block_to_sparse_block(blk + i, &offset, channel,
+	प्रति (अचिह्नित दीर्घ दीर्घ i = 0; i < गणनम्; ++i) {
+		यदि (blk + i >= sm->खण्डानि_गणनम्)
+			प्रत्यागम 0;
+		cur_खण्डम् = खण्डम्_गन्तव्यम्_sparse_खण्डम्(blk + i, &विस्थापनम्, channel,
 						  sm);
-		if (!sm->blocks[cur_block])
-			continue;
-		free(sm->blocks[cur_block]);
-		sm->blocks[cur_block] = NULL;
+		यदि (!sm->खण्डानि[cur_खण्डम्])
+			अनुवर्त;
+		मुक्त(sm->खण्डानि[cur_खण्डम्]);
+		sm->खण्डानि[cur_खण्डम्] = रिक्त;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static errcode_t sparse_zeroout(io_channel channel, blk64_t blk,
-				unsigned long long count)
+स्थिर errcode_t sparse_zeroout(io_channel channel, blk64_t blk,
+				अचिह्नित दीर्घ दीर्घ गणनम्)
 {
-	return sparse_discard(channel, blk, count);
+	प्रत्यागम sparse_discard(channel, blk, गणनम्);
 }
 
-static errcode_t sparse_flush(io_channel channel __attribute__((unused)))
+स्थिर errcode_t sparse_flush(io_channel channel __attribute__((अप्रयुक्तम्)))
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-static errcode_t sparse_set_option(io_channel channel __attribute__((unused)),
-                                   const char *option __attribute__((unused)),
-                                   const char *arg __attribute__((unused)))
+स्थिर errcode_t sparse_समुच्चयः_option(io_channel channel __attribute__((अप्रयुक्तम्)),
+                                   ध्रुव वर्ण *option __attribute__((अप्रयुक्तम्)),
+                                   ध्रुव वर्ण *arg __attribute__((अप्रयुक्तम्)))
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-static errcode_t sparse_cache_readahead(
-			io_channel channel __attribute__((unused)),
-			blk64_t blk __attribute__((unused)),
-			unsigned long long count __attribute__((unused)))
+स्थिर errcode_t sparse_cache_readahead(
+			io_channel channel __attribute__((अप्रयुक्तम्)),
+			blk64_t blk __attribute__((अप्रयुक्तम्)),
+			अचिह्नित दीर्घ दीर्घ गणनम् __attribute__((अप्रयुक्तम्)))
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-static struct struct_io_manager struct_sparse_manager = {
+स्थिर संरचना struct_io_manager struct_sparse_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse I/O Manager",
-	.open			= sparse_open,
+	.उद्घाटय			= sparse_open,
 	.close			= sparse_close,
-	.set_blksize		= sparse_set_blksize,
+	.समुच्चयः_blksize		= sparse_समुच्चयः_blksize,
 	.read_blk		= sparse_read_blk,
 	.write_blk		= sparse_write_blk,
 	.flush			= sparse_flush,
-	.write_byte		= NULL,
-	.set_option		= sparse_set_option,
-	.get_stats		= NULL,
+	.write_byte		= रिक्त,
+	.समुच्चयः_option		= sparse_समुच्चयः_option,
+	.get_stats		= रिक्त,
 	.read_blk64		= sparse_read_blk64,
 	.write_blk64		= sparse_write_blk64,
 	.discard		= sparse_discard,
@@ -529,18 +529,18 @@ static struct struct_io_manager struct_sparse_manager = {
 	.zeroout		= sparse_zeroout,
 };
 
-static struct struct_io_manager struct_sparsefd_manager = {
+स्थिर संरचना struct_io_manager struct_sparsefd_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse fd I/O Manager",
-	.open			= sparsefd_open,
+	.उद्घाटय			= sparsefd_open,
 	.close			= sparse_close,
-	.set_blksize		= sparse_set_blksize,
+	.समुच्चयः_blksize		= sparse_समुच्चयः_blksize,
 	.read_blk		= sparse_read_blk,
 	.write_blk		= sparse_write_blk,
 	.flush			= sparse_flush,
-	.write_byte		= NULL,
-	.set_option		= sparse_set_option,
-	.get_stats		= NULL,
+	.write_byte		= रिक्त,
+	.समुच्चयः_option		= sparse_समुच्चयः_option,
+	.get_stats		= रिक्त,
 	.read_blk64		= sparse_read_blk64,
 	.write_blk64		= sparse_write_blk64,
 	.discard		= sparse_discard,
@@ -548,7 +548,7 @@ static struct struct_io_manager struct_sparsefd_manager = {
 	.zeroout		= sparse_zeroout,
 };
 
-#endif
+#यदि_अन्तः
 
 io_manager sparse_io_manager = &struct_sparse_manager;
 io_manager sparsefd_io_manager = &struct_sparsefd_manager;

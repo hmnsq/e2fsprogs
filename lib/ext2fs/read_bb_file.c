@@ -9,84 +9,84 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
+#यदि_अन्तः
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <time.h>
+#यदि HAVE_SYS_STAT_H
+#अन्तर्भाव <sys/stat.h>
+#यदि_अन्तः
+#यदि HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
+#यदि_अन्तः
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
 
 /*
  * Reads a list of bad blocks from  a FILE *
  */
 errcode_t ext2fs_read_bb_FILE2(ext2_filsys fs, FILE *f,
 			       ext2_badblocks_list *bb_list,
-			       void *priv_data,
-			       void (*invalid)(ext2_filsys fs,
+			       शून्य *priv_दत्त,
+			       शून्य (*invalid)(ext2_filsys fs,
 					       blk_t blk,
-					       char *badstr,
-					       void *priv_data))
+					       वर्ण *badstr,
+					       शून्य *priv_दत्त))
 {
 	errcode_t	retval;
-	unsigned long long blockno;
-	int		count;
-	char		buf[128];
+	अचिह्नित दीर्घ दीर्घ blockno;
+	पूर्णाङ्क		गणनम्;
+	वर्ण		buf[128];
 
-	if (fs)
+	यदि (fs)
 		EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!*bb_list) {
+	यदि (!*bb_list) {
 		retval = ext2fs_badblocks_list_create(bb_list, 10);
-		if (retval)
-			return retval;
+		यदि (retval)
+			प्रत्यागम retval;
 	}
 
-	while (!feof (f)) {
-		if (fgets(buf, sizeof(buf), f) == NULL)
-			break;
-		count = sscanf(buf, "%llu", &blockno);
-		if (count <= 0)
-			continue;
+	यावत् (!feof (f)) {
+		यदि (fgets(buf, परिमाण(buf), f) == रिक्त)
+			भङ्ग;
+		गणनम् = वाक्यात्_पठ(buf, "%llu", &blockno);
+		यदि (गणनम् <= 0)
+			अनुवर्त;
 		/* Badblocks isn't going to be updated for 64bit */
-		if (blockno >> 32)
-			return EOVERFLOW;
-		if (fs &&
-		    ((blockno < fs->super->s_first_data_block) ||
-		     (blockno >= ext2fs_blocks_count(fs->super)))) {
-			if (invalid)
-				(invalid)(fs, (blk64_t) blockno, buf, priv_data);
-			continue;
+		यदि (blockno >> 32)
+			प्रत्यागम EOVERFLOW;
+		यदि (fs &&
+		    ((blockno < fs->super->s_first_दत्त_खण्डम्) ||
+		     (blockno >= ext2fs_खण्डानि_गणनम्(fs->super)))) {
+			यदि (invalid)
+				(invalid)(fs, (blk64_t) blockno, buf, priv_दत्त);
+			अनुवर्त;
 		}
-		retval = ext2fs_badblocks_list_add(*bb_list, (blk64_t) blockno);
-		if (retval)
-			return retval;
+		retval = ext2fs_badblocks_list_सङ्कलय(*bb_list, (blk64_t) blockno);
+		यदि (retval)
+			प्रत्यागम retval;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-struct compat_struct {
-	void (*invalid)(ext2_filsys, blk_t);
+संरचना compat_struct {
+	शून्य (*invalid)(ext2_filsys, blk_t);
 };
 
-static void call_compat_invalid(ext2_filsys fs, blk_t blk,
-				char *badstr EXT2FS_ATTR((unused)),
-				void *priv_data)
+स्थिर शून्य call_compat_invalid(ext2_filsys fs, blk_t blk,
+				वर्ण *badstr EXT2FS_ATTR((अप्रयुक्तम्)),
+				शून्य *priv_दत्त)
 {
-	struct compat_struct *st;
+	संरचना compat_struct *st;
 
-	st = (struct compat_struct *) priv_data;
-	if (st->invalid)
+	st = (संरचना compat_struct *) priv_दत्त;
+	यदि (st->invalid)
 		(st->invalid)(fs, blk);
 }
 
@@ -96,13 +96,13 @@ static void call_compat_invalid(ext2_filsys fs, blk_t blk,
  */
 errcode_t ext2fs_read_bb_FILE(ext2_filsys fs, FILE *f,
 			      ext2_badblocks_list *bb_list,
-			      void (*invalid)(ext2_filsys fs, blk_t blk))
+			      शून्य (*invalid)(ext2_filsys fs, blk_t blk))
 {
-	struct compat_struct st;
+	संरचना compat_struct st;
 
 	st.invalid = invalid;
 
-	return ext2fs_read_bb_FILE2(fs, f, bb_list, &st,
+	प्रत्यागम ext2fs_read_bb_FILE2(fs, f, bb_list, &st,
 				    call_compat_invalid);
 }
 

@@ -13,42 +13,42 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
+#यदि_अन्तः
+#अन्तर्भाव <fcntl.h>
+#यदि HAVE_SYS_STAT_H
+#अन्तर्भाव <sys/stat.h>
+#यदि_अन्तः
+#यदि HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
+#यदि_अन्तः
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fsP.h"
 
-struct set_badblock_record {
+संरचना समुच्चयः_badblock_लेखः {
 	ext2_badblocks_iterate	bb_iter;
-	int		bad_block_count;
-	blk_t		*ind_blocks;
-	int		max_ind_blocks;
-	int		ind_blocks_size;
-	int		ind_blocks_ptr;
-	char		*block_buf;
+	पूर्णाङ्क		bad_खण्डम्_गणनम्;
+	blk_t		*ind_खण्डानि;
+	पूर्णाङ्क		max_ind_खण्डानि;
+	पूर्णाङ्क		ind_खण्डानि_आकार;
+	पूर्णाङ्क		ind_खण्डानि_ptr;
+	वर्ण		*खण्डम्_buf;
 	errcode_t	err;
 };
 
-static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+स्थिर पूर्णाङ्क समुच्चयः_bad_खण्डम्_proc(ext2_filsys fs, blk_t *खण्डम्_nr,
 			      e2_blkcnt_t blockcnt,
-			      blk_t ref_block, int ref_offset,
-			      void *priv_data);
-static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+			      blk_t ref_खण्डम्, पूर्णाङ्क ref_विस्थापनम्,
+			      शून्य *priv_दत्त);
+स्थिर पूर्णाङ्क clear_bad_खण्डम्_proc(ext2_filsys fs, blk_t *खण्डम्_nr,
 				e2_blkcnt_t blockcnt,
-				blk_t ref_block, int ref_offset,
-				void *priv_data);
+				blk_t ref_खण्डम्, पूर्णाङ्क ref_विस्थापनम्,
+				शून्य *priv_दत्त);
 
 /*
  * Given a bad blocks bitmap, update the bad blocks inode to reflect
@@ -57,39 +57,39 @@ static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 {
 	errcode_t			retval;
-	struct set_badblock_record	rec;
-	struct ext2_inode		inode;
+	संरचना समुच्चयः_badblock_लेखः	rec;
+	संरचना ext2_inode		inode;
 	time_t				now;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!fs->block_map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
+	यदि (!fs->खण्डम्_map)
+		प्रत्यागम EXT2_ET_NO_खण्डम्_BITMAP;
 
-	memset(&rec, 0, sizeof(rec));
-	rec.max_ind_blocks = 10;
-	retval = ext2fs_get_array(rec.max_ind_blocks, sizeof(blk_t),
-				&rec.ind_blocks);
-	if (retval)
-		return retval;
-	memset(rec.ind_blocks, 0, rec.max_ind_blocks * sizeof(blk_t));
-	retval = ext2fs_get_mem(fs->blocksize, &rec.block_buf);
-	if (retval)
-		goto cleanup;
-	memset(rec.block_buf, 0, fs->blocksize);
+	स्मृतिं_पूरय(&rec, 0, परिमाण(rec));
+	rec.max_ind_खण्डानि = 10;
+	retval = ext2fs_get_array(rec.max_ind_खण्डानि, परिमाण(blk_t),
+				&rec.ind_खण्डानि);
+	यदि (retval)
+		प्रत्यागम retval;
+	स्मृतिं_पूरय(rec.ind_खण्डानि, 0, rec.max_ind_खण्डानि * परिमाण(blk_t));
+	retval = ext2fs_get_mem(fs->blocksize, &rec.खण्डम्_buf);
+	यदि (retval)
+		गच्छ cleanup;
+	स्मृतिं_पूरय(rec.खण्डम्_buf, 0, fs->blocksize);
 	rec.err = 0;
 
 	/*
 	 * First clear the old bad blocks (while saving the indirect blocks)
 	 */
-	retval = ext2fs_block_iterate2(fs, EXT2_BAD_INO,
-				       BLOCK_FLAG_DEPTH_TRAVERSE, 0,
-				       clear_bad_block_proc, &rec);
-	if (retval)
-		goto cleanup;
-	if (rec.err) {
+	retval = ext2fs_खण्डम्_iterate2(fs, EXT2_BAD_INO,
+				       खण्डम्_FLAG_गभीरता_TRAVERSE, 0,
+				       clear_bad_खण्डम्_proc, &rec);
+	यदि (retval)
+		गच्छ cleanup;
+	यदि (rec.err) {
 		retval = rec.err;
-		goto cleanup;
+		गच्छ cleanup;
 	}
 
 	/*
@@ -99,20 +99,20 @@ errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 	 * block from being used as an indirect block for the bad
 	 * block inode (!).
 	 */
-	if (bb_list) {
+	यदि (bb_list) {
 		retval = ext2fs_badblocks_list_iterate_begin(bb_list,
 							     &rec.bb_iter);
-		if (retval)
-			goto cleanup;
-		retval = ext2fs_block_iterate2(fs, EXT2_BAD_INO,
-					       BLOCK_FLAG_APPEND, 0,
-					       set_bad_block_proc, &rec);
-		ext2fs_badblocks_list_iterate_end(rec.bb_iter);
-		if (retval)
-			goto cleanup;
-		if (rec.err) {
+		यदि (retval)
+			गच्छ cleanup;
+		retval = ext2fs_खण्डम्_iterate2(fs, EXT2_BAD_INO,
+					       खण्डम्_FLAG_APPEND, 0,
+					       समुच्चयः_bad_खण्डम्_proc, &rec);
+		ext2fs_badblocks_list_iterate_अन्तः(rec.bb_iter);
+		यदि (retval)
+			गच्छ cleanup;
+		यदि (rec.err) {
 			retval = rec.err;
-			goto cleanup;
+			गच्छ cleanup;
 		}
 	}
 
@@ -121,28 +121,28 @@ errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 	 * field.
 	 */
 	retval = ext2fs_read_inode(fs, EXT2_BAD_INO, &inode);
-	if (retval)
-		goto cleanup;
+	यदि (retval)
+		गच्छ cleanup;
 
 	now = ext2fsP_get_time(fs);
-	ext2fs_inode_xtime_set(&inode, i_atime, now);
-	if (!ext2fs_inode_xtime_get(&inode, i_ctime))
-		ext2fs_inode_xtime_set(&inode, i_ctime, now);
-	ext2fs_inode_xtime_set(&inode, i_mtime, now);
-	ext2fs_iblk_set(fs, &inode, rec.bad_block_count);
-	retval = ext2fs_inode_size_set(fs, &inode,
-				       rec.bad_block_count * fs->blocksize);
-	if (retval)
-		goto cleanup;
+	ext2fs_inode_xtime_समुच्चयः(&inode, i_atime, now);
+	यदि (!ext2fs_inode_xtime_get(&inode, i_ctime))
+		ext2fs_inode_xtime_समुच्चयः(&inode, i_ctime, now);
+	ext2fs_inode_xtime_समुच्चयः(&inode, i_mtime, now);
+	ext2fs_iblk_समुच्चयः(fs, &inode, rec.bad_खण्डम्_गणनम्);
+	retval = ext2fs_inode_आकार_समुच्चयः(fs, &inode,
+				       rec.bad_खण्डम्_गणनम् * fs->blocksize);
+	यदि (retval)
+		गच्छ cleanup;
 
 	retval = ext2fs_write_inode(fs, EXT2_BAD_INO, &inode);
-	if (retval)
-		goto cleanup;
+	यदि (retval)
+		गच्छ cleanup;
 
 cleanup:
-	ext2fs_free_mem(&rec.ind_blocks);
-	ext2fs_free_mem(&rec.block_buf);
-	return retval;
+	ext2fs_free_mem(&rec.ind_खण्डानि);
+	ext2fs_free_mem(&rec.खण्डम्_buf);
+	प्रत्यागम retval;
 }
 
 /*
@@ -151,55 +151,55 @@ cleanup:
  * Clear the bad blocks in the bad block inode, while saving the
  * indirect blocks.
  */
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+#यदि_परिभाषितम् __TURBOC__
+ #निर्देशः argsused
+#यदि_अन्तः
+स्थिर पूर्णाङ्क clear_bad_खण्डम्_proc(ext2_filsys fs, blk_t *खण्डम्_nr,
 				e2_blkcnt_t blockcnt,
-				blk_t ref_block EXT2FS_ATTR((unused)),
-				int ref_offset EXT2FS_ATTR((unused)),
-				void *priv_data)
+				blk_t ref_खण्डम् EXT2FS_ATTR((अप्रयुक्तम्)),
+				पूर्णाङ्क ref_विस्थापनम् EXT2FS_ATTR((अप्रयुक्तम्)),
+				शून्य *priv_दत्त)
 {
-	struct set_badblock_record *rec = (struct set_badblock_record *)
-		priv_data;
+	संरचना समुच्चयः_badblock_लेखः *rec = (संरचना समुच्चयः_badblock_लेखः *)
+		priv_दत्त;
 	errcode_t	retval;
-	unsigned long 	old_size;
+	अचिह्नित दीर्घ 	old_आकार;
 
-	if (!*block_nr)
-		return 0;
+	यदि (!*खण्डम्_nr)
+		प्रत्यागम 0;
 
 	/*
 	 * If the block number is outrageous, clear it and ignore it.
 	 */
-	if (*block_nr >= ext2fs_blocks_count(fs->super) ||
-	    *block_nr < fs->super->s_first_data_block) {
-		*block_nr = 0;
-		return BLOCK_CHANGED;
+	यदि (*खण्डम्_nr >= ext2fs_खण्डानि_गणनम्(fs->super) ||
+	    *खण्डम्_nr < fs->super->s_first_दत्त_खण्डम्) {
+		*खण्डम्_nr = 0;
+		प्रत्यागम खण्डम्_परिवर्तितम्;
 	}
 
-	if (blockcnt < 0) {
-		if (rec->ind_blocks_size >= rec->max_ind_blocks) {
-			old_size = rec->max_ind_blocks * sizeof(blk_t);
-			rec->max_ind_blocks += 10;
-			retval = ext2fs_resize_mem(old_size,
-				   rec->max_ind_blocks * sizeof(blk_t),
-				   &rec->ind_blocks);
-			if (retval) {
-				rec->max_ind_blocks -= 10;
+	यदि (blockcnt < 0) {
+		यदि (rec->ind_खण्डानि_आकार >= rec->max_ind_खण्डानि) {
+			old_आकार = rec->max_ind_खण्डानि * परिमाण(blk_t);
+			rec->max_ind_खण्डानि += 10;
+			retval = ext2fs_resize_mem(old_आकार,
+				   rec->max_ind_खण्डानि * परिमाण(blk_t),
+				   &rec->ind_खण्डानि);
+			यदि (retval) {
+				rec->max_ind_खण्डानि -= 10;
 				rec->err = retval;
-				return BLOCK_ABORT;
+				प्रत्यागम खण्डम्_ABORT;
 			}
 		}
-		rec->ind_blocks[rec->ind_blocks_size++] = *block_nr;
+		rec->ind_खण्डानि[rec->ind_खण्डानि_आकार++] = *खण्डम्_nr;
 	}
 
 	/*
 	 * Mark the block as unused, and update accounting information
 	 */
-	ext2fs_block_alloc_stats2(fs, *block_nr, -1);
+	ext2fs_खण्डम्_alloc_stats2(fs, *खण्डम्_nr, -1);
 
-	*block_nr = 0;
-	return BLOCK_CHANGED;
+	*खण्डम्_nr = 0;
+	प्रत्यागम खण्डम्_परिवर्तितम्;
 }
 
 
@@ -208,28 +208,28 @@ static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
  *
  * Set the block list in the bad block inode, using the supplied bitmap.
  */
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+#यदि_परिभाषितम् __TURBOC__
+ #निर्देशः argsused
+#यदि_अन्तः
+स्थिर पूर्णाङ्क समुच्चयः_bad_खण्डम्_proc(ext2_filsys fs, blk_t *खण्डम्_nr,
 			      e2_blkcnt_t blockcnt,
-			      blk_t ref_block EXT2FS_ATTR((unused)),
-			      int ref_offset EXT2FS_ATTR((unused)),
-			      void *priv_data)
+			      blk_t ref_खण्डम् EXT2FS_ATTR((अप्रयुक्तम्)),
+			      पूर्णाङ्क ref_विस्थापनम् EXT2FS_ATTR((अप्रयुक्तम्)),
+			      शून्य *priv_दत्त)
 {
-	struct set_badblock_record *rec = (struct set_badblock_record *)
-		priv_data;
+	संरचना समुच्चयः_badblock_लेखः *rec = (संरचना समुच्चयः_badblock_लेखः *)
+		priv_दत्त;
 	errcode_t	retval;
 	blk_t		blk;
 
-	if (blockcnt >= 0) {
+	यदि (blockcnt >= 0) {
 		/*
 		 * Get the next bad block.
 		 */
-		if (!ext2fs_badblocks_list_iterate(rec->bb_iter, &blk))
-			return BLOCK_ABORT;
-		rec->bad_block_count++;
-	} else {
+		यदि (!ext2fs_badblocks_list_iterate(rec->bb_iter, &blk))
+			प्रत्यागम खण्डम्_ABORT;
+		rec->bad_खण्डम्_गणनम्++;
+	} अन्यथा {
 		/*
 		 * An indirect block; fetch a block from the
 		 * previously used indirect block list.  The block
@@ -238,31 +238,31 @@ static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 		 * a new one.
 		 */
 	retry:
-		if (rec->ind_blocks_ptr < rec->ind_blocks_size) {
-			blk = rec->ind_blocks[rec->ind_blocks_ptr++];
-			if (ext2fs_test_block_bitmap2(fs->block_map, blk))
-				goto retry;
-		} else {
-			retval = ext2fs_new_block(fs, 0, 0, &blk);
-			if (retval) {
+		यदि (rec->ind_खण्डानि_ptr < rec->ind_खण्डानि_आकार) {
+			blk = rec->ind_खण्डानि[rec->ind_खण्डानि_ptr++];
+			यदि (ext2fs_test_खण्डम्_bitmap2(fs->खण्डम्_map, blk))
+				गच्छ retry;
+		} अन्यथा {
+			retval = ext2fs_new_खण्डम्(fs, 0, 0, &blk);
+			यदि (retval) {
 				rec->err = retval;
-				return BLOCK_ABORT;
+				प्रत्यागम खण्डम्_ABORT;
 			}
 		}
-		retval = io_channel_write_blk64(fs->io, blk, 1, rec->block_buf);
-		if (retval) {
+		retval = io_channel_write_blk64(fs->io, blk, 1, rec->खण्डम्_buf);
+		यदि (retval) {
 			rec->err = retval;
-			return BLOCK_ABORT;
+			प्रत्यागम खण्डम्_ABORT;
 		}
 	}
 
 	/*
 	 * Update block counts
 	 */
-	ext2fs_block_alloc_stats2(fs, blk, +1);
+	ext2fs_खण्डम्_alloc_stats2(fs, blk, +1);
 
-	*block_nr = blk;
-	return BLOCK_CHANGED;
+	*खण्डम्_nr = blk;
+	प्रत्यागम खण्डम्_परिवर्तितम्;
 }
 
 

@@ -9,370 +9,370 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
+#यदि_अन्तः
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
 
-struct block_context {
+संरचना खण्डम्_context {
 	ext2_filsys	fs;
-	int (*func)(ext2_filsys	fs,
+	पूर्णाङ्क (*func)(ext2_filsys	fs,
 		    blk64_t	*blocknr,
 		    e2_blkcnt_t	bcount,
 		    blk64_t	ref_blk,
-		    int		ref_offset,
-		    void	*priv_data);
+		    पूर्णाङ्क		ref_विस्थापनम्,
+		    शून्य	*priv_दत्त);
 	e2_blkcnt_t	bcount;
-	int		bsize;
-	int		flags;
+	पूर्णाङ्क		bsize;
+	पूर्णाङ्क		flags;
 	errcode_t	errcode;
-	char	*ind_buf;
-	char	*dind_buf;
-	char	*tind_buf;
-	void	*priv_data;
+	वर्ण	*ind_buf;
+	वर्ण	*dind_buf;
+	वर्ण	*tind_buf;
+	शून्य	*priv_दत्त;
 };
 
-#define check_for_ro_violation_return(ctx, ret)				\
-	do {								\
-		if (((ctx)->flags & BLOCK_FLAG_READ_ONLY) &&		\
-		    ((ret) & BLOCK_CHANGED)) {				\
-			(ctx)->errcode = EXT2_ET_RO_BLOCK_ITERATE;	\
-			ret |= BLOCK_ABORT | BLOCK_ERROR;		\
-			return ret;					\
+#परिभाषय check_for_ro_violation_return(ctx, ret)				\
+	कुरु {								\
+		यदि (((ctx)->flags & खण्डम्_FLAG_READ_ONLY) &&		\
+		    ((ret) & खण्डम्_परिवर्तितम्)) {				\
+			(ctx)->errcode = EXT2_ET_RO_खण्डम्_ITERATE;	\
+			ret |= खण्डम्_ABORT | खण्डम्_ERROR;		\
+			प्रत्यागम ret;					\
 		}							\
-	} while (0)
+	} यावत् (0)
 
-#define check_for_ro_violation_goto(ctx, ret, label)			\
-	do {								\
-		if (((ctx)->flags & BLOCK_FLAG_READ_ONLY) &&		\
-		    ((ret) & BLOCK_CHANGED)) {				\
-			(ctx)->errcode = EXT2_ET_RO_BLOCK_ITERATE;	\
-			ret |= BLOCK_ABORT | BLOCK_ERROR;		\
-			goto label;					\
+#परिभाषय check_for_ro_violation_goto(ctx, ret, label)			\
+	कुरु {								\
+		यदि (((ctx)->flags & खण्डम्_FLAG_READ_ONLY) &&		\
+		    ((ret) & खण्डम्_परिवर्तितम्)) {				\
+			(ctx)->errcode = EXT2_ET_RO_खण्डम्_ITERATE;	\
+			ret |= खण्डम्_ABORT | खण्डम्_ERROR;		\
+			गच्छ label;					\
 		}							\
-	} while (0)
+	} यावत् (0)
 
-static int block_iterate_ind(blk_t *ind_block, blk_t ref_block,
-			     int ref_offset, struct block_context *ctx)
+स्थिर पूर्णाङ्क खण्डम्_iterate_ind(blk_t *ind_खण्डम्, blk_t ref_खण्डम्,
+			     पूर्णाङ्क ref_विस्थापनम्, संरचना खण्डम्_context *ctx)
 {
-	int	ret = 0, changed = 0;
-	int	i, flags, limit, offset;
-	blk_t	*block_nr;
+	पूर्णाङ्क	ret = 0, परिवर्तितम् = 0;
+	पूर्णाङ्क	i, flags, सीमा, विस्थापनम्;
+	blk_t	*खण्डम्_nr;
 	blk64_t	blk64;
 
-	limit = ctx->fs->blocksize >> 2;
-	if (!(ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
-	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY)) {
-		blk64 = *ind_block;
+	सीमा = ctx->fs->blocksize >> 2;
+	यदि (!(ctx->flags & खण्डम्_FLAG_गभीरता_TRAVERSE) &&
+	    !(ctx->flags & खण्डम्_FLAG_दत्त_ONLY)) {
+		blk64 = *ind_खण्डम्;
 		ret = (*ctx->func)(ctx->fs, &blk64,
-				   BLOCK_COUNT_IND, ref_block,
-				   ref_offset, ctx->priv_data);
-		*ind_block = blk64;
+				   खण्डम्_गणनम्_IND, ref_खण्डम्,
+				   ref_विस्थापनम्, ctx->priv_दत्त);
+		*ind_खण्डम् = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	if (!*ind_block || (ret & BLOCK_ABORT)) {
-		ctx->bcount += limit;
-		return ret;
+	यदि (!*ind_खण्डम् || (ret & खण्डम्_ABORT)) {
+		ctx->bcount += सीमा;
+		प्रत्यागम ret;
 	}
-	if (*ind_block >= ext2fs_blocks_count(ctx->fs->super) ||
-	    *ind_block < ctx->fs->super->s_first_data_block) {
-		ctx->errcode = EXT2_ET_BAD_IND_BLOCK;
-		ret |= BLOCK_ERROR;
-		return ret;
+	यदि (*ind_खण्डम् >= ext2fs_खण्डानि_गणनम्(ctx->fs->super) ||
+	    *ind_खण्डम् < ctx->fs->super->s_first_दत्त_खण्डम्) {
+		ctx->errcode = EXT2_ET_BAD_IND_खण्डम्;
+		ret |= खण्डम्_ERROR;
+		प्रत्यागम ret;
 	}
-	ctx->errcode = ext2fs_read_ind_block(ctx->fs, *ind_block,
+	ctx->errcode = ext2fs_read_ind_खण्डम्(ctx->fs, *ind_खण्डम्,
 					     ctx->ind_buf);
-	if (ctx->errcode) {
-		ret |= BLOCK_ERROR;
-		return ret;
+	यदि (ctx->errcode) {
+		ret |= खण्डम्_ERROR;
+		प्रत्यागम ret;
 	}
 
-	block_nr = (blk_t *) ctx->ind_buf;
-	offset = 0;
-	if (ctx->flags & BLOCK_FLAG_APPEND) {
-		for (i = 0; i < limit; i++, ctx->bcount++, block_nr++) {
-			blk64 = *block_nr;
+	खण्डम्_nr = (blk_t *) ctx->ind_buf;
+	विस्थापनम् = 0;
+	यदि (ctx->flags & खण्डम्_FLAG_APPEND) {
+		प्रति (i = 0; i < सीमा; i++, ctx->bcount++, खण्डम्_nr++) {
+			blk64 = *खण्डम्_nr;
 			flags = (*ctx->func)(ctx->fs, &blk64, ctx->bcount,
-					     *ind_block, offset,
-					     ctx->priv_data);
-			*block_nr = blk64;
-			changed	|= flags;
-			if (flags & BLOCK_ABORT) {
-				ret |= BLOCK_ABORT;
-				break;
+					     *ind_खण्डम्, विस्थापनम्,
+					     ctx->priv_दत्त);
+			*खण्डम्_nr = blk64;
+			परिवर्तितम्	|= flags;
+			यदि (flags & खण्डम्_ABORT) {
+				ret |= खण्डम्_ABORT;
+				भङ्ग;
 			}
-			offset += sizeof(blk_t);
+			विस्थापनम् += परिमाण(blk_t);
 		}
-	} else {
-		for (i = 0; i < limit; i++, ctx->bcount++, block_nr++) {
-			if (*block_nr == 0)
-				goto skip_sparse;
-			blk64 = *block_nr;
+	} अन्यथा {
+		प्रति (i = 0; i < सीमा; i++, ctx->bcount++, खण्डम्_nr++) {
+			यदि (*खण्डम्_nr == 0)
+				गच्छ skip_sparse;
+			blk64 = *खण्डम्_nr;
 			flags = (*ctx->func)(ctx->fs, &blk64, ctx->bcount,
-					     *ind_block, offset,
-					     ctx->priv_data);
-			*block_nr = blk64;
-			changed	|= flags;
-			if (flags & BLOCK_ABORT) {
-				ret |= BLOCK_ABORT;
-				break;
+					     *ind_खण्डम्, विस्थापनम्,
+					     ctx->priv_दत्त);
+			*खण्डम्_nr = blk64;
+			परिवर्तितम्	|= flags;
+			यदि (flags & खण्डम्_ABORT) {
+				ret |= खण्डम्_ABORT;
+				भङ्ग;
 			}
 		skip_sparse:
-			offset += sizeof(blk_t);
+			विस्थापनम् += परिमाण(blk_t);
 		}
 	}
-	check_for_ro_violation_return(ctx, changed);
-	if (changed & BLOCK_CHANGED) {
-		ctx->errcode = ext2fs_write_ind_block(ctx->fs, *ind_block,
+	check_for_ro_violation_return(ctx, परिवर्तितम्);
+	यदि (परिवर्तितम् & खण्डम्_परिवर्तितम्) {
+		ctx->errcode = ext2fs_write_ind_खण्डम्(ctx->fs, *ind_खण्डम्,
 						      ctx->ind_buf);
-		if (ctx->errcode)
-			ret |= BLOCK_ERROR | BLOCK_ABORT;
+		यदि (ctx->errcode)
+			ret |= खण्डम्_ERROR | खण्डम्_ABORT;
 	}
-	if ((ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
-	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY) &&
-	    !(ret & BLOCK_ABORT)) {
-		blk64 = *ind_block;
+	यदि ((ctx->flags & खण्डम्_FLAG_गभीरता_TRAVERSE) &&
+	    !(ctx->flags & खण्डम्_FLAG_दत्त_ONLY) &&
+	    !(ret & खण्डम्_ABORT)) {
+		blk64 = *ind_खण्डम्;
 		ret |= (*ctx->func)(ctx->fs, &blk64,
-				    BLOCK_COUNT_IND, ref_block,
-				    ref_offset, ctx->priv_data);
-		*ind_block = blk64;
+				    खण्डम्_गणनम्_IND, ref_खण्डम्,
+				    ref_विस्थापनम्, ctx->priv_दत्त);
+		*ind_खण्डम् = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	return ret;
+	प्रत्यागम ret;
 }
 
-static int block_iterate_dind(blk_t *dind_block, blk_t ref_block,
-			      int ref_offset, struct block_context *ctx)
+स्थिर पूर्णाङ्क खण्डम्_iterate_dind(blk_t *dind_खण्डम्, blk_t ref_खण्डम्,
+			      पूर्णाङ्क ref_विस्थापनम्, संरचना खण्डम्_context *ctx)
 {
-	int	ret = 0, changed = 0;
-	int	i, flags, limit, offset;
-	blk_t	*block_nr;
+	पूर्णाङ्क	ret = 0, परिवर्तितम् = 0;
+	पूर्णाङ्क	i, flags, सीमा, विस्थापनम्;
+	blk_t	*खण्डम्_nr;
 	blk64_t	blk64;
 
-	limit = ctx->fs->blocksize >> 2;
-	if (!(ctx->flags & (BLOCK_FLAG_DEPTH_TRAVERSE |
-			    BLOCK_FLAG_DATA_ONLY))) {
-		blk64 = *dind_block;
+	सीमा = ctx->fs->blocksize >> 2;
+	यदि (!(ctx->flags & (खण्डम्_FLAG_गभीरता_TRAVERSE |
+			    खण्डम्_FLAG_दत्त_ONLY))) {
+		blk64 = *dind_खण्डम्;
 		ret = (*ctx->func)(ctx->fs, &blk64,
-				   BLOCK_COUNT_DIND, ref_block,
-				   ref_offset, ctx->priv_data);
-		*dind_block = blk64;
+				   खण्डम्_गणनम्_DIND, ref_खण्डम्,
+				   ref_विस्थापनम्, ctx->priv_दत्त);
+		*dind_खण्डम् = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	if (!*dind_block || (ret & BLOCK_ABORT)) {
-		ctx->bcount += limit*limit;
-		return ret;
+	यदि (!*dind_खण्डम् || (ret & खण्डम्_ABORT)) {
+		ctx->bcount += सीमा*सीमा;
+		प्रत्यागम ret;
 	}
-	if (*dind_block >= ext2fs_blocks_count(ctx->fs->super) ||
-	    *dind_block < ctx->fs->super->s_first_data_block) {
-		ctx->errcode = EXT2_ET_BAD_DIND_BLOCK;
-		ret |= BLOCK_ERROR;
-		return ret;
+	यदि (*dind_खण्डम् >= ext2fs_खण्डानि_गणनम्(ctx->fs->super) ||
+	    *dind_खण्डम् < ctx->fs->super->s_first_दत्त_खण्डम्) {
+		ctx->errcode = EXT2_ET_BAD_DIND_खण्डम्;
+		ret |= खण्डम्_ERROR;
+		प्रत्यागम ret;
 	}
-	ctx->errcode = ext2fs_read_ind_block(ctx->fs, *dind_block,
+	ctx->errcode = ext2fs_read_ind_खण्डम्(ctx->fs, *dind_खण्डम्,
 					     ctx->dind_buf);
-	if (ctx->errcode) {
-		ret |= BLOCK_ERROR;
-		return ret;
+	यदि (ctx->errcode) {
+		ret |= खण्डम्_ERROR;
+		प्रत्यागम ret;
 	}
 
-	block_nr = (blk_t *) ctx->dind_buf;
-	offset = 0;
-	if (ctx->flags & BLOCK_FLAG_APPEND) {
-		for (i = 0; i < limit; i++, block_nr++) {
-			flags = block_iterate_ind(block_nr,
-						  *dind_block, offset,
+	खण्डम्_nr = (blk_t *) ctx->dind_buf;
+	विस्थापनम् = 0;
+	यदि (ctx->flags & खण्डम्_FLAG_APPEND) {
+		प्रति (i = 0; i < सीमा; i++, खण्डम्_nr++) {
+			flags = खण्डम्_iterate_ind(खण्डम्_nr,
+						  *dind_खण्डम्, विस्थापनम्,
 						  ctx);
-			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
-				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+			परिवर्तितम् |= flags;
+			यदि (flags & (खण्डम्_ABORT | खण्डम्_ERROR)) {
+				ret |= flags & (खण्डम्_ABORT | खण्डम्_ERROR);
+				भङ्ग;
 			}
-			offset += sizeof(blk_t);
+			विस्थापनम् += परिमाण(blk_t);
 		}
-	} else {
-		for (i = 0; i < limit; i++, block_nr++) {
-			if (*block_nr == 0) {
-				ctx->bcount += limit;
-				continue;
+	} अन्यथा {
+		प्रति (i = 0; i < सीमा; i++, खण्डम्_nr++) {
+			यदि (*खण्डम्_nr == 0) {
+				ctx->bcount += सीमा;
+				अनुवर्त;
 			}
-			flags = block_iterate_ind(block_nr,
-						  *dind_block, offset,
+			flags = खण्डम्_iterate_ind(खण्डम्_nr,
+						  *dind_खण्डम्, विस्थापनम्,
 						  ctx);
-			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
-				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+			परिवर्तितम् |= flags;
+			यदि (flags & (खण्डम्_ABORT | खण्डम्_ERROR)) {
+				ret |= flags & (खण्डम्_ABORT | खण्डम्_ERROR);
+				भङ्ग;
 			}
-			offset += sizeof(blk_t);
+			विस्थापनम् += परिमाण(blk_t);
 		}
 	}
-	check_for_ro_violation_return(ctx, changed);
-	if (changed & BLOCK_CHANGED) {
-		ctx->errcode = ext2fs_write_ind_block(ctx->fs, *dind_block,
+	check_for_ro_violation_return(ctx, परिवर्तितम्);
+	यदि (परिवर्तितम् & खण्डम्_परिवर्तितम्) {
+		ctx->errcode = ext2fs_write_ind_खण्डम्(ctx->fs, *dind_खण्डम्,
 						      ctx->dind_buf);
-		if (ctx->errcode)
-			ret |= BLOCK_ERROR | BLOCK_ABORT;
+		यदि (ctx->errcode)
+			ret |= खण्डम्_ERROR | खण्डम्_ABORT;
 	}
-	if ((ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
-	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY) &&
-	    !(ret & BLOCK_ABORT)) {
-		blk64 = *dind_block;
+	यदि ((ctx->flags & खण्डम्_FLAG_गभीरता_TRAVERSE) &&
+	    !(ctx->flags & खण्डम्_FLAG_दत्त_ONLY) &&
+	    !(ret & खण्डम्_ABORT)) {
+		blk64 = *dind_खण्डम्;
 		ret |= (*ctx->func)(ctx->fs, &blk64,
-				    BLOCK_COUNT_DIND, ref_block,
-				    ref_offset, ctx->priv_data);
-		*dind_block = blk64;
+				    खण्डम्_गणनम्_DIND, ref_खण्डम्,
+				    ref_विस्थापनम्, ctx->priv_दत्त);
+		*dind_खण्डम् = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	return ret;
+	प्रत्यागम ret;
 }
 
-static int block_iterate_tind(blk_t *tind_block, blk_t ref_block,
-			      int ref_offset, struct block_context *ctx)
+स्थिर पूर्णाङ्क खण्डम्_iterate_tind(blk_t *tind_खण्डम्, blk_t ref_खण्डम्,
+			      पूर्णाङ्क ref_विस्थापनम्, संरचना खण्डम्_context *ctx)
 {
-	int	ret = 0, changed = 0;
-	int	i, flags, limit, offset;
-	blk_t	*block_nr;
+	पूर्णाङ्क	ret = 0, परिवर्तितम् = 0;
+	पूर्णाङ्क	i, flags, सीमा, विस्थापनम्;
+	blk_t	*खण्डम्_nr;
 	blk64_t	blk64;
 
-	limit = ctx->fs->blocksize >> 2;
-	if (!(ctx->flags & (BLOCK_FLAG_DEPTH_TRAVERSE |
-			    BLOCK_FLAG_DATA_ONLY))) {
-		blk64 = *tind_block;
+	सीमा = ctx->fs->blocksize >> 2;
+	यदि (!(ctx->flags & (खण्डम्_FLAG_गभीरता_TRAVERSE |
+			    खण्डम्_FLAG_दत्त_ONLY))) {
+		blk64 = *tind_खण्डम्;
 		ret = (*ctx->func)(ctx->fs, &blk64,
-				   BLOCK_COUNT_TIND, ref_block,
-				   ref_offset, ctx->priv_data);
-		*tind_block = blk64;
+				   खण्डम्_गणनम्_TIND, ref_खण्डम्,
+				   ref_विस्थापनम्, ctx->priv_दत्त);
+		*tind_खण्डम् = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	if (!*tind_block || (ret & BLOCK_ABORT)) {
-		ctx->bcount += ((unsigned long long) limit)*limit*limit;
-		return ret;
+	यदि (!*tind_खण्डम् || (ret & खण्डम्_ABORT)) {
+		ctx->bcount += ((अचिह्नित दीर्घ दीर्घ) सीमा)*सीमा*सीमा;
+		प्रत्यागम ret;
 	}
-	if (*tind_block >= ext2fs_blocks_count(ctx->fs->super) ||
-	    *tind_block < ctx->fs->super->s_first_data_block) {
-		ctx->errcode = EXT2_ET_BAD_TIND_BLOCK;
-		ret |= BLOCK_ERROR;
-		return ret;
+	यदि (*tind_खण्डम् >= ext2fs_खण्डानि_गणनम्(ctx->fs->super) ||
+	    *tind_खण्डम् < ctx->fs->super->s_first_दत्त_खण्डम्) {
+		ctx->errcode = EXT2_ET_BAD_TIND_खण्डम्;
+		ret |= खण्डम्_ERROR;
+		प्रत्यागम ret;
 	}
-	ctx->errcode = ext2fs_read_ind_block(ctx->fs, *tind_block,
+	ctx->errcode = ext2fs_read_ind_खण्डम्(ctx->fs, *tind_खण्डम्,
 					     ctx->tind_buf);
-	if (ctx->errcode) {
-		ret |= BLOCK_ERROR;
-		return ret;
+	यदि (ctx->errcode) {
+		ret |= खण्डम्_ERROR;
+		प्रत्यागम ret;
 	}
 
-	block_nr = (blk_t *) ctx->tind_buf;
-	offset = 0;
-	if (ctx->flags & BLOCK_FLAG_APPEND) {
-		for (i = 0; i < limit; i++, block_nr++) {
-			flags = block_iterate_dind(block_nr,
-						   *tind_block,
-						   offset, ctx);
-			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
-				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+	खण्डम्_nr = (blk_t *) ctx->tind_buf;
+	विस्थापनम् = 0;
+	यदि (ctx->flags & खण्डम्_FLAG_APPEND) {
+		प्रति (i = 0; i < सीमा; i++, खण्डम्_nr++) {
+			flags = खण्डम्_iterate_dind(खण्डम्_nr,
+						   *tind_खण्डम्,
+						   विस्थापनम्, ctx);
+			परिवर्तितम् |= flags;
+			यदि (flags & (खण्डम्_ABORT | खण्डम्_ERROR)) {
+				ret |= flags & (खण्डम्_ABORT | खण्डम्_ERROR);
+				भङ्ग;
 			}
-			offset += sizeof(blk_t);
+			विस्थापनम् += परिमाण(blk_t);
 		}
-	} else {
-		for (i = 0; i < limit; i++, block_nr++) {
-			if (*block_nr == 0) {
-				ctx->bcount += limit*limit;
-				continue;
+	} अन्यथा {
+		प्रति (i = 0; i < सीमा; i++, खण्डम्_nr++) {
+			यदि (*खण्डम्_nr == 0) {
+				ctx->bcount += सीमा*सीमा;
+				अनुवर्त;
 			}
-			flags = block_iterate_dind(block_nr,
-						   *tind_block,
-						   offset, ctx);
-			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
-				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+			flags = खण्डम्_iterate_dind(खण्डम्_nr,
+						   *tind_खण्डम्,
+						   विस्थापनम्, ctx);
+			परिवर्तितम् |= flags;
+			यदि (flags & (खण्डम्_ABORT | खण्डम्_ERROR)) {
+				ret |= flags & (खण्डम्_ABORT | खण्डम्_ERROR);
+				भङ्ग;
 			}
-			offset += sizeof(blk_t);
+			विस्थापनम् += परिमाण(blk_t);
 		}
 	}
-	check_for_ro_violation_return(ctx, changed);
-	if (changed & BLOCK_CHANGED) {
-		ctx->errcode = ext2fs_write_ind_block(ctx->fs, *tind_block,
+	check_for_ro_violation_return(ctx, परिवर्तितम्);
+	यदि (परिवर्तितम् & खण्डम्_परिवर्तितम्) {
+		ctx->errcode = ext2fs_write_ind_खण्डम्(ctx->fs, *tind_खण्डम्,
 						      ctx->tind_buf);
-		if (ctx->errcode)
-			ret |= BLOCK_ERROR | BLOCK_ABORT;
+		यदि (ctx->errcode)
+			ret |= खण्डम्_ERROR | खण्डम्_ABORT;
 	}
-	if ((ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
-	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY) &&
-	    !(ret & BLOCK_ABORT)) {
-		blk64 = *tind_block;
+	यदि ((ctx->flags & खण्डम्_FLAG_गभीरता_TRAVERSE) &&
+	    !(ctx->flags & खण्डम्_FLAG_दत्त_ONLY) &&
+	    !(ret & खण्डम्_ABORT)) {
+		blk64 = *tind_खण्डम्;
 		ret |= (*ctx->func)(ctx->fs, &blk64,
-				    BLOCK_COUNT_TIND, ref_block,
-				    ref_offset, ctx->priv_data);
-		*tind_block = blk64;
+				    खण्डम्_गणनम्_TIND, ref_खण्डम्,
+				    ref_विस्थापनम्, ctx->priv_दत्त);
+		*tind_खण्डम् = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	return ret;
+	प्रत्यागम ret;
 }
 
-errcode_t ext2fs_block_iterate3(ext2_filsys fs,
+errcode_t ext2fs_खण्डम्_iterate3(ext2_filsys fs,
 				ext2_ino_t ino,
-				int	flags,
-				char *block_buf,
-				int (*func)(ext2_filsys fs,
+				पूर्णाङ्क	flags,
+				वर्ण *खण्डम्_buf,
+				पूर्णाङ्क (*func)(ext2_filsys fs,
 					    blk64_t	*blocknr,
 					    e2_blkcnt_t	blockcnt,
 					    blk64_t	ref_blk,
-					    int		ref_offset,
-					    void	*priv_data),
-				void *priv_data)
+					    पूर्णाङ्क		ref_विस्थापनम्,
+					    शून्य	*priv_दत्त),
+				शून्य *priv_दत्त)
 {
-	int	i;
-	int	r, ret = 0;
-	struct ext2_inode inode;
+	पूर्णाङ्क	i;
+	पूर्णाङ्क	r, ret = 0;
+	संरचना ext2_inode inode;
 	errcode_t	retval;
-	struct block_context ctx;
-	int	limit;
+	संरचना खण्डम्_context ctx;
+	पूर्णाङ्क	सीमा;
 	blk64_t	blk64;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	ctx.errcode = ext2fs_read_inode(fs, ino, &inode);
-	if (ctx.errcode)
-		return ctx.errcode;
+	यदि (ctx.errcode)
+		प्रत्यागम ctx.errcode;
 
 	/*
 	 * An inode with inline data has no blocks over which to
 	 * iterate, so return an error code indicating this fact.
 	 */
-	if (inode.i_flags & EXT4_INLINE_DATA_FL)
-		return EXT2_ET_INLINE_DATA_CANT_ITERATE;
+	यदि (inode.i_flags & EXT4_INLINE_दत्त_FL)
+		प्रत्यागम EXT2_ET_INLINE_दत्त_CANT_ITERATE;
 
 	/*
 	 * Check to see if we need to limit large files
 	 */
-	if (flags & BLOCK_FLAG_NO_LARGE) {
-		if (!LINUX_S_ISDIR(inode.i_mode) &&
-		    (inode.i_size_high != 0))
-			return EXT2_ET_FILE_TOO_BIG;
+	यदि (flags & खण्डम्_FLAG_NO_LARGE) {
+		यदि (!LINUX_S_ISDIR(inode.i_बहुलकम्) &&
+		    (inode.i_आकार_उच्चः != 0))
+			प्रत्यागम EXT2_ET_FILE_TOO_BIG;
 	}
 
-	limit = fs->blocksize >> 2;
+	सीमा = fs->blocksize >> 2;
 
 	ctx.fs = fs;
 	ctx.func = func;
-	ctx.priv_data = priv_data;
+	ctx.priv_दत्त = priv_दत्त;
 	ctx.flags = flags;
 	ctx.bcount = 0;
-	if (block_buf) {
-		ctx.ind_buf = block_buf;
-	} else {
+	यदि (खण्डम्_buf) {
+		ctx.ind_buf = खण्डम्_buf;
+	} अन्यथा {
 		retval = ext2fs_get_array(3, fs->blocksize, &ctx.ind_buf);
-		if (retval)
-			return retval;
+		यदि (retval)
+			प्रत्यागम retval;
 	}
 	ctx.dind_buf = ctx.ind_buf + fs->blocksize;
 	ctx.tind_buf = ctx.dind_buf + fs->blocksize;
@@ -380,280 +380,280 @@ errcode_t ext2fs_block_iterate3(ext2_filsys fs,
 	/*
 	 * Iterate over the HURD translator block (if present)
 	 */
-	if ((fs->super->s_creator_os == EXT2_OS_HURD) &&
-	    !(flags & BLOCK_FLAG_DATA_ONLY)) {
-		if (inode.osd1.hurd1.h_i_translator) {
+	यदि ((fs->super->s_creator_os == EXT2_OS_HURD) &&
+	    !(flags & खण्डम्_FLAG_दत्त_ONLY)) {
+		यदि (inode.osd1.hurd1.h_i_translator) {
 			blk64 = inode.osd1.hurd1.h_i_translator;
 			ret |= (*ctx.func)(fs, &blk64,
-					   BLOCK_COUNT_TRANSLATOR,
-					   0, 0, priv_data);
+					   खण्डम्_गणनम्_TRANSLATOR,
+					   0, 0, priv_दत्त);
 			inode.osd1.hurd1.h_i_translator = (blk_t) blk64;
-			if (ret & BLOCK_ABORT)
-				goto abort_exit;
+			यदि (ret & खण्डम्_ABORT)
+				गच्छ abort_exit;
 			check_for_ro_violation_goto(&ctx, ret, abort_exit);
 		}
 	}
 
-	if (inode.i_flags & EXT4_EXTENTS_FL) {
+	यदि (inode.i_flags & EXT4_EXTENTS_FL) {
 		ext2_extent_handle_t	handle;
-		struct ext2fs_extent	extent, next;
+		संरचना ext2fs_extent	extent, अग्र;
 		e2_blkcnt_t		blockcnt = 0;
 		blk64_t			blk, new_blk;
-		int			op = EXT2_EXTENT_ROOT;
-		int			uninit;
-		unsigned int		j;
+		पूर्णाङ्क			op = EXT2_EXTENT_मूलम्;
+		पूर्णाङ्क			uninit;
+		अचिह्नित पूर्णाङ्क		j;
 
 		ctx.errcode = ext2fs_extent_open2(fs, ino, &inode, &handle);
-		if (ctx.errcode)
-			goto abort_exit;
+		यदि (ctx.errcode)
+			गच्छ abort_exit;
 
-		while (1) {
-			if (op == EXT2_EXTENT_CURRENT)
+		यावत् (1) {
+			यदि (op == EXT2_EXTENT_CURRENT)
 				ctx.errcode = 0;
-			else
+			अन्यथा
 				ctx.errcode = ext2fs_extent_get(handle, op,
 								&extent);
-			if (ctx.errcode) {
-				if (ctx.errcode != EXT2_ET_EXTENT_NO_NEXT)
-					break;
+			यदि (ctx.errcode) {
+				यदि (ctx.errcode != EXT2_ET_EXTENT_NO_अग्र)
+					भङ्ग;
 				ctx.errcode = 0;
-				if (!(flags & BLOCK_FLAG_APPEND))
-					break;
-			next_block_set:
+				यदि (!(flags & खण्डम्_FLAG_APPEND))
+					भङ्ग;
+			अग्र_खण्डम्_समुच्चयः:
 				blk = 0;
 				r = (*ctx.func)(fs, &blk, blockcnt,
-						0, 0, priv_data);
+						0, 0, priv_दत्त);
 				ret |= r;
 				check_for_ro_violation_goto(&ctx, ret,
-							    extent_done);
-				if (r & BLOCK_CHANGED) {
+							    extent_समाप्तम्);
+				यदि (r & खण्डम्_परिवर्तितम्) {
 					ctx.errcode =
-						ext2fs_extent_set_bmap(handle,
+						ext2fs_extent_समुच्चयः_bmap(handle,
 						       (blk64_t) blockcnt++,
 						       (blk64_t) blk, 0);
-					if (ctx.errcode || (ret & BLOCK_ABORT))
-						break;
-					if (blk)
-						goto next_block_set;
+					यदि (ctx.errcode || (ret & खण्डम्_ABORT))
+						भङ्ग;
+					यदि (blk)
+						गच्छ अग्र_खण्डम्_समुच्चयः;
 				}
-				break;
+				भङ्ग;
 			}
 
-			op = EXT2_EXTENT_NEXT;
+			op = EXT2_EXTENT_अग्र;
 			blk = extent.e_pblk;
-			if (!(extent.e_flags & EXT2_EXTENT_FLAGS_LEAF)) {
-				if (ctx.flags & BLOCK_FLAG_DATA_ONLY)
-					continue;
-				if ((!(extent.e_flags &
-				       EXT2_EXTENT_FLAGS_SECOND_VISIT) &&
-				     !(ctx.flags & BLOCK_FLAG_DEPTH_TRAVERSE)) ||
+			यदि (!(extent.e_flags & EXT2_EXTENT_FLAGS_पर्णम्)) {
+				यदि (ctx.flags & खण्डम्_FLAG_दत्त_ONLY)
+					अनुवर्त;
+				यदि ((!(extent.e_flags &
+				       EXT2_EXTENT_FLAGS_SECOND_दर्शय) &&
+				     !(ctx.flags & खण्डम्_FLAG_गभीरता_TRAVERSE)) ||
 				    ((extent.e_flags &
-				      EXT2_EXTENT_FLAGS_SECOND_VISIT) &&
-				     (ctx.flags & BLOCK_FLAG_DEPTH_TRAVERSE))) {
+				      EXT2_EXTENT_FLAGS_SECOND_दर्शय) &&
+				     (ctx.flags & खण्डम्_FLAG_गभीरता_TRAVERSE))) {
 					ret |= (*ctx.func)(fs, &blk,
-							   -1, 0, 0, priv_data);
-					if (ret & BLOCK_CHANGED) {
+							   -1, 0, 0, priv_दत्त);
+					यदि (ret & खण्डम्_परिवर्तितम्) {
 						extent.e_pblk = blk;
 						ctx.errcode =
 				ext2fs_extent_replace(handle, 0, &extent);
-						if (ctx.errcode)
-							break;
+						यदि (ctx.errcode)
+							भङ्ग;
 					}
-					if (ret & BLOCK_ABORT)
-						break;
+					यदि (ret & खण्डम्_ABORT)
+						भङ्ग;
 				}
-				continue;
+				अनुवर्त;
 			}
 			uninit = 0;
-			if (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-				uninit = EXT2_EXTENT_SET_BMAP_UNINIT;
+			यदि (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+				uninit = EXT2_EXTENT_समुच्चयः_BMAP_UNINIT;
 
 			/* 
 			 * Get the next extent before we start messing
 			 * with the current extent
 			 */
-			retval = ext2fs_extent_get(handle, op, &next);
+			retval = ext2fs_extent_get(handle, op, &अग्र);
 
-#if 0
-			printf("lblk %llu pblk %llu len %d blockcnt %llu\n",
+#यदि 0
+			प्रारूप_लिख("lblk %llu pblk %llu len %d blockcnt %llu\n",
 			       extent.e_lblk, extent.e_pblk,
 			       extent.e_len, blockcnt);
-#endif
-			if (extent.e_lblk + extent.e_len <= (blk64_t) blockcnt)
-				continue;
-			if (extent.e_lblk > (blk64_t) blockcnt)
+#यदि_अन्तः
+			यदि (extent.e_lblk + extent.e_len <= (blk64_t) blockcnt)
+				अनुवर्त;
+			यदि (extent.e_lblk > (blk64_t) blockcnt)
 				blockcnt = extent.e_lblk;
 			j = blockcnt - extent.e_lblk;
 			blk += j;
-			for (blockcnt = extent.e_lblk, j = 0;
+			प्रति (blockcnt = extent.e_lblk, j = 0;
 			     j < extent.e_len;
 			     blk++, blockcnt++, j++) {
 				new_blk = blk;
 				r = (*ctx.func)(fs, &new_blk, blockcnt,
-						0, 0, priv_data);
+						0, 0, priv_दत्त);
 				ret |= r;
 				check_for_ro_violation_goto(&ctx, ret,
-							    extent_done);
-				if (r & BLOCK_CHANGED) {
+							    extent_समाप्तम्);
+				यदि (r & खण्डम्_परिवर्तितम्) {
 					ctx.errcode =
-						ext2fs_extent_set_bmap(handle,
+						ext2fs_extent_समुच्चयः_bmap(handle,
 						       (blk64_t) blockcnt,
 						       new_blk, uninit);
-					if (ctx.errcode)
-						goto extent_done;
+					यदि (ctx.errcode)
+						गच्छ extent_समाप्तम्;
 				}
-				if (ret & BLOCK_ABORT)
-					goto extent_done;
+				यदि (ret & खण्डम्_ABORT)
+					गच्छ extent_समाप्तम्;
 			}
-			if (retval == 0) {
-				extent = next;
+			यदि (retval == 0) {
+				extent = अग्र;
 				op = EXT2_EXTENT_CURRENT;
 			}
 		}
 
-	extent_done:
+	extent_समाप्तम्:
 		ext2fs_extent_free(handle);
-		ret |= BLOCK_ERROR; /* ctx.errcode is always valid here */
-		goto errout;
+		ret |= खण्डम्_ERROR; /* ctx.errcode is always valid here */
+		गच्छ errout;
 	}
 
 	/*
 	 * Iterate over normal data blocks
 	 */
-	for (i = 0; i < EXT2_NDIR_BLOCKS ; i++, ctx.bcount++) {
-		if (inode.i_block[i] || (flags & BLOCK_FLAG_APPEND)) {
-			blk64 = inode.i_block[i];
+	प्रति (i = 0; i < EXT2_NDIR_खण्डानि ; i++, ctx.bcount++) {
+		यदि (inode.i_खण्डम्[i] || (flags & खण्डम्_FLAG_APPEND)) {
+			blk64 = inode.i_खण्डम्[i];
 			ret |= (*ctx.func)(fs, &blk64, ctx.bcount, 0, i, 
-					   priv_data);
-			inode.i_block[i] = (blk_t) blk64;
-			if (ret & BLOCK_ABORT)
-				goto abort_exit;
+					   priv_दत्त);
+			inode.i_खण्डम्[i] = (blk_t) blk64;
+			यदि (ret & खण्डम्_ABORT)
+				गच्छ abort_exit;
 		}
 	}
 	check_for_ro_violation_goto(&ctx, ret, abort_exit);
-	if (inode.i_block[EXT2_IND_BLOCK] || (flags & BLOCK_FLAG_APPEND)) {
-		ret |= block_iterate_ind(&inode.i_block[EXT2_IND_BLOCK], 
-					 0, EXT2_IND_BLOCK, &ctx);
-		if (ret & BLOCK_ABORT)
-			goto abort_exit;
-	} else
-		ctx.bcount += limit;
-	if (inode.i_block[EXT2_DIND_BLOCK] || (flags & BLOCK_FLAG_APPEND)) {
-		ret |= block_iterate_dind(&inode.i_block[EXT2_DIND_BLOCK],
-					  0, EXT2_DIND_BLOCK, &ctx);
-		if (ret & BLOCK_ABORT)
-			goto abort_exit;
-	} else
-		ctx.bcount += limit * limit;
-	if (inode.i_block[EXT2_TIND_BLOCK] || (flags & BLOCK_FLAG_APPEND)) {
-		ret |= block_iterate_tind(&inode.i_block[EXT2_TIND_BLOCK],
-					  0, EXT2_TIND_BLOCK, &ctx);
-		if (ret & BLOCK_ABORT)
-			goto abort_exit;
+	यदि (inode.i_खण्डम्[EXT2_IND_खण्डम्] || (flags & खण्डम्_FLAG_APPEND)) {
+		ret |= खण्डम्_iterate_ind(&inode.i_खण्डम्[EXT2_IND_खण्डम्], 
+					 0, EXT2_IND_खण्डम्, &ctx);
+		यदि (ret & खण्डम्_ABORT)
+			गच्छ abort_exit;
+	} अन्यथा
+		ctx.bcount += सीमा;
+	यदि (inode.i_खण्डम्[EXT2_DIND_खण्डम्] || (flags & खण्डम्_FLAG_APPEND)) {
+		ret |= खण्डम्_iterate_dind(&inode.i_खण्डम्[EXT2_DIND_खण्डम्],
+					  0, EXT2_DIND_खण्डम्, &ctx);
+		यदि (ret & खण्डम्_ABORT)
+			गच्छ abort_exit;
+	} अन्यथा
+		ctx.bcount += सीमा * सीमा;
+	यदि (inode.i_खण्डम्[EXT2_TIND_खण्डम्] || (flags & खण्डम्_FLAG_APPEND)) {
+		ret |= खण्डम्_iterate_tind(&inode.i_खण्डम्[EXT2_TIND_खण्डम्],
+					  0, EXT2_TIND_खण्डम्, &ctx);
+		यदि (ret & खण्डम्_ABORT)
+			गच्छ abort_exit;
 	}
 
 abort_exit:
-	if (ret & BLOCK_CHANGED) {
+	यदि (ret & खण्डम्_परिवर्तितम्) {
 		retval = ext2fs_write_inode(fs, ino, &inode);
-		if (retval) {
-			ret |= BLOCK_ERROR;
+		यदि (retval) {
+			ret |= खण्डम्_ERROR;
 			ctx.errcode = retval;
 		}
 	}
 errout:
-	if (!block_buf)
+	यदि (!खण्डम्_buf)
 		ext2fs_free_mem(&ctx.ind_buf);
 
-	return (ret & BLOCK_ERROR) ? ctx.errcode : 0;
+	प्रत्यागम (ret & खण्डम्_ERROR) ? ctx.errcode : 0;
 }
 
 /*
  * Emulate the old ext2fs_block_iterate function!
  */
 
-struct xlate64 {
-	int (*func)(ext2_filsys fs,
+संरचना xlate64 {
+	पूर्णाङ्क (*func)(ext2_filsys fs,
 		    blk_t	*blocknr,
 		    e2_blkcnt_t	blockcnt,
 		    blk_t	ref_blk,
-		    int		ref_offset,
-		    void	*priv_data);
-	void *real_private;
+		    पूर्णाङ्क		ref_विस्थापनम्,
+		    शून्य	*priv_दत्त);
+	शून्य *real_वैयक्तिकम्;
 };
 
-static int xlate64_func(ext2_filsys fs, blk64_t	*blocknr,
+स्थिर पूर्णाङ्क xlate64_func(ext2_filsys fs, blk64_t	*blocknr,
 			e2_blkcnt_t blockcnt, blk64_t ref_blk,
-			int ref_offset, void *priv_data)
+			पूर्णाङ्क ref_विस्थापनम्, शून्य *priv_दत्त)
 {
-	struct xlate64 *xl = (struct xlate64 *) priv_data;
-	int		ret;
+	संरचना xlate64 *xl = (संरचना xlate64 *) priv_दत्त;
+	पूर्णाङ्क		ret;
 	blk_t		block32 = *blocknr;
 	
-	ret = (*xl->func)(fs, &block32, blockcnt, (blk_t) ref_blk, ref_offset,
-			     xl->real_private);
+	ret = (*xl->func)(fs, &block32, blockcnt, (blk_t) ref_blk, ref_विस्थापनम्,
+			     xl->real_वैयक्तिकम्);
 	*blocknr = block32;
-	return ret;
+	प्रत्यागम ret;
 }
 
-errcode_t ext2fs_block_iterate2(ext2_filsys fs,
+errcode_t ext2fs_खण्डम्_iterate2(ext2_filsys fs,
 				ext2_ino_t ino,
-				int	flags,
-				char *block_buf,
-				int (*func)(ext2_filsys fs,
+				पूर्णाङ्क	flags,
+				वर्ण *खण्डम्_buf,
+				पूर्णाङ्क (*func)(ext2_filsys fs,
 					    blk_t	*blocknr,
 					    e2_blkcnt_t	blockcnt,
 					    blk_t	ref_blk,
-					    int		ref_offset,
-					    void	*priv_data),
-				void *priv_data)
+					    पूर्णाङ्क		ref_विस्थापनम्,
+					    शून्य	*priv_दत्त),
+				शून्य *priv_दत्त)
 {
-	struct xlate64 xl;
+	संरचना xlate64 xl;
 
-	xl.real_private = priv_data;
+	xl.real_वैयक्तिकम् = priv_दत्त;
 	xl.func = func;
 
-	return ext2fs_block_iterate3(fs, ino, flags, block_buf, 
+	प्रत्यागम ext2fs_खण्डम्_iterate3(fs, ino, flags, खण्डम्_buf, 
 				     xlate64_func, &xl);
 }
 
 
-struct xlate {
-	int (*func)(ext2_filsys	fs,
+संरचना xlate {
+	पूर्णाङ्क (*func)(ext2_filsys	fs,
 		    blk_t	*blocknr,
-		    int		bcount,
-		    void	*priv_data);
-	void *real_private;
+		    पूर्णाङ्क		bcount,
+		    शून्य	*priv_दत्त);
+	शून्य *real_वैयक्तिकम्;
 };
 
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-static int xlate_func(ext2_filsys fs, blk_t *blocknr, e2_blkcnt_t blockcnt,
-		      blk_t ref_block EXT2FS_ATTR((unused)),
-		      int ref_offset EXT2FS_ATTR((unused)),
-		      void *priv_data)
+#यदि_परिभाषितम् __TURBOC__
+ #निर्देशः argsused
+#यदि_अन्तः
+स्थिर पूर्णाङ्क xlate_func(ext2_filsys fs, blk_t *blocknr, e2_blkcnt_t blockcnt,
+		      blk_t ref_खण्डम् EXT2FS_ATTR((अप्रयुक्तम्)),
+		      पूर्णाङ्क ref_विस्थापनम् EXT2FS_ATTR((अप्रयुक्तम्)),
+		      शून्य *priv_दत्त)
 {
-	struct xlate *xl = (struct xlate *) priv_data;
+	संरचना xlate *xl = (संरचना xlate *) priv_दत्त;
 
-	return (*xl->func)(fs, blocknr, (int) blockcnt, xl->real_private);
+	प्रत्यागम (*xl->func)(fs, blocknr, (पूर्णाङ्क) blockcnt, xl->real_वैयक्तिकम्);
 }
 
-errcode_t ext2fs_block_iterate(ext2_filsys fs,
+errcode_t ext2fs_खण्डम्_iterate(ext2_filsys fs,
 			       ext2_ino_t ino,
-			       int	flags,
-			       char *block_buf,
-			       int (*func)(ext2_filsys fs,
+			       पूर्णाङ्क	flags,
+			       वर्ण *खण्डम्_buf,
+			       पूर्णाङ्क (*func)(ext2_filsys fs,
 					   blk_t	*blocknr,
-					   int	blockcnt,
-					   void	*priv_data),
-			       void *priv_data)
+					   पूर्णाङ्क	blockcnt,
+					   शून्य	*priv_दत्त),
+			       शून्य *priv_दत्त)
 {
-	struct xlate xl;
+	संरचना xlate xl;
 
-	xl.real_private = priv_data;
+	xl.real_वैयक्तिकम् = priv_दत्त;
 	xl.func = func;
 
-	return ext2fs_block_iterate2(fs, ino, BLOCK_FLAG_NO_LARGE | flags,
-				     block_buf, xlate_func, &xl);
+	प्रत्यागम ext2fs_खण्डम्_iterate2(fs, ino, खण्डम्_FLAG_NO_LARGE | flags,
+				     खण्डम्_buf, xlate_func, &xl);
 }
 
