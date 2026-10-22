@@ -9,674 +9,674 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_PTHREAD_H
-#include <pthread.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#پایان_اگر
+#ضمن <fcntl.h>
+#ضمن <time.h>
+#اگر_تعریف_شده HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
+#پایان_اگر
+#اگر_تعریف_شده HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#پایان_اگر
+#اگر_تعریف_شده HAVE_PTHREAD_H
+#ضمن <pthread.h>
+#پایان_اگر
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "e2image.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
+#ضمن "e2image.h"
 
-#ifdef HAVE_PTHREAD
-typedef pthread_mutex_t mutex_t;
+#اگر_تعریف_شده HAVE_PTHREAD
+تعريفنوع pthread_mutex_t mutex_t;
 
-static void unix_pthread_mutex_lock(mutex_t *mutex)
+ساكن فراغ unix_pthread_mutex_قفل(mutex_t *mutex)
 {
-	if (mutex)
-		pthread_mutex_lock(mutex);
+	إذا (mutex)
+		pthread_mutex_قفل(mutex);
 }
-static void unix_pthread_mutex_unlock(mutex_t *mutex)
+ساكن فراغ unix_pthread_mutex_unlock(mutex_t *mutex)
 {
-	if (mutex)
+	إذا (mutex)
 		pthread_mutex_unlock(mutex);
 }
-#else
-typedef int mutex_t;
-#define unix_pthread_mutex_lock(mutex_t) do {} while (0)
-#define unix_pthread_mutex_unlock(mutex_t) do {} while (0)
-#endif
+#وإلا
+تعريفنوع صحيح mutex_t;
+#تعریف_کن unix_pthread_mutex_قفل(mutex_t) افعل {} طالما (0)
+#تعریف_کن unix_pthread_mutex_unlock(mutex_t) افعل {} طالما (0)
+#پایان_اگر
 
-static errcode_t write_bitmaps(ext2_filsys fs, int do_inode, int do_block)
+ساكن errcode_t write_bitmaps(ext2_filsys fs, صحيح do_inode, صحيح do_بلوک)
 {
 	dgrp_t 		i;
-	unsigned int	j;
-	int		block_nbytes, inode_nbytes;
-	unsigned int	nbits;
+	بیعلامت صحيح	j;
+	صحيح		بلوک_nbytes, inode_nbytes;
+	بیعلامت صحيح	nbits;
 	errcode_t	retval;
-	char		*block_buf = NULL, *inode_buf = NULL;
-	int		csum_flag;
+	حرف		*بلوک_buf = عدم, *inode_buf = عدم;
+	صحيح		csum_flag;
 	blk64_t		blk;
-	blk64_t		blk_itr = EXT2FS_B2C(fs, fs->super->s_first_data_block);
+	blk64_t		blk_itr = EXT2FS_B2C(fs, fs->super->s_اولی_داده_بلوک);
 	ext2_ino_t	ino_itr = 1;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	إذا (!(fs->flags & EXT2_FLAG_RW))
+		أرجع EXT2_ET_RO_FILSYS;
 
-	csum_flag = ext2fs_has_group_desc_csum(fs);
+	csum_flag = ext2fs_has_گروه_desc_csum(fs);
 
-	inode_nbytes = block_nbytes = 0;
-	if (do_block) {
-		block_nbytes = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
-		retval = io_channel_alloc_buf(fs->io, 0, &block_buf);
-		if (retval)
-			goto errout;
-		memset(block_buf, 0xff, fs->blocksize);
+	inode_nbytes = بلوک_nbytes = 0;
+	إذا (do_بلوک) {
+		بلوک_nbytes = EXT2_CLUSTERS_در_هر_گروه(fs->super) / 8;
+		retval = io_channel_alloc_buf(fs->io, 0, &بلوک_buf);
+		إذا (retval)
+			اذهب errout;
+		memset(بلوک_buf, 0xff, fs->blocksize);
 	}
-	if (do_inode) {
+	إذا (do_inode) {
 		inode_nbytes = (size_t)
-			((EXT2_INODES_PER_GROUP(fs->super)+7) / 8);
+			((EXT2_INODES_در_هر_گروه(fs->super)+7) / 8);
 		retval = io_channel_alloc_buf(fs->io, 0, &inode_buf);
-		if (retval)
-			goto errout;
+		إذا (retval)
+			اذهب errout;
 		memset(inode_buf, 0xff, fs->blocksize);
 	}
 
-	for (i = 0; i < fs->group_desc_count; i++) {
-		if (!do_block)
-			goto skip_block_bitmap;
+	لكل (i = 0; i < fs->گروه_desc_شمار; i++) {
+		إذا (!do_بلوک)
+			اذهب skip_بلوک_bitmap;
 
-		if (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_BLOCK_UNINIT)
+		إذا (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_بلوک_UNINIT)
 		    )
-			goto skip_this_block_bitmap;
+			اذهب skip_this_بلوک_bitmap;
 
-		retval = ext2fs_get_block_bitmap_range2(fs->block_map,
-				blk_itr, block_nbytes << 3, block_buf);
-		if (retval)
-			goto errout;
+		retval = ext2fs_get_بلوک_bitmap_range2(fs->بلوک_map,
+				blk_itr, بلوک_nbytes << 3, بلوک_buf);
+		إذا (retval)
+			اذهب errout;
 
-		if (i == fs->group_desc_count - 1) {
+		إذا (i == fs->گروه_desc_شمار - 1) {
 			/* Force bitmap padding for the last group */
-			nbits = EXT2FS_NUM_B2C(fs,
-				((ext2fs_blocks_count(fs->super)
-				  - (__u64) fs->super->s_first_data_block)
-				 % (__u64) EXT2_BLOCKS_PER_GROUP(fs->super)));
-			if (nbits)
-				for (j = nbits; j < fs->blocksize * 8; j++)
-					ext2fs_set_bit(j, block_buf);
+			nbits = EXT2_FS_رقم_B2_C(fs,
+				((ext2fs_بلوکها_شمار(fs->super)
+				  - (__u64) fs->super->s_اولی_داده_بلوک)
+				 % (__u64) EXT2_بلوکها_در_هر_گروه(fs->super)));
+			إذا (nbits)
+				لكل (j = nbits; j < fs->blocksize * 8; j++)
+					ext2fs_مجموعه_بیت(j, بلوک_buf);
 		}
 
-		retval = ext2fs_block_bitmap_csum_set(fs, i, block_buf,
-						      block_nbytes);
-		if (retval)
-			return retval;
-		ext2fs_group_desc_csum_set(fs, i);
+		retval = ext2fs_بلوک_bitmap_csum_مجموعه(fs, i, بلوک_buf,
+						      بلوک_nbytes);
+		إذا (retval)
+			أرجع retval;
+		ext2fs_گروه_desc_csum_مجموعه(fs, i);
 		fs->flags |= EXT2_FLAG_DIRTY;
 
-		blk = ext2fs_block_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super)) {
+		blk = ext2fs_بلوک_bitmap_loc(fs, i);
+		إذا (blk && blk < ext2fs_بلوکها_شمار(fs->super)) {
 			retval = io_channel_write_blk64(fs->io, blk, 1,
-							block_buf);
-			if (retval) {
-				retval = EXT2_ET_BLOCK_BITMAP_WRITE;
-				goto errout;
+							بلوک_buf);
+			إذا (retval) {
+				retval = EXT2_ET_بلوک_BITMAP_WRITE;
+				اذهب errout;
 			}
 		}
-	skip_this_block_bitmap:
-		blk_itr += block_nbytes << 3;
-	skip_block_bitmap:
+	skip_this_بلوک_bitmap:
+		blk_itr += بلوک_nbytes << 3;
+	skip_بلوک_bitmap:
 
-		if (!do_inode)
-			continue;
+		إذا (!do_inode)
+			استمر;
 
-		if (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_INODE_UNINIT)
+		إذا (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_INODE_UNINIT)
 		    )
-			goto skip_this_inode_bitmap;
+			اذهب skip_this_inode_bitmap;
 
 		retval = ext2fs_get_inode_bitmap_range2(fs->inode_map,
 				ino_itr, inode_nbytes << 3, inode_buf);
-		if (retval)
-			goto errout;
+		إذا (retval)
+			اذهب errout;
 
-		retval = ext2fs_inode_bitmap_csum_set(fs, i, inode_buf,
+		retval = ext2fs_inode_bitmap_csum_مجموعه(fs, i, inode_buf,
 						      inode_nbytes);
-		if (retval)
-			goto errout;
-		ext2fs_group_desc_csum_set(fs, i);
+		إذا (retval)
+			اذهب errout;
+		ext2fs_گروه_desc_csum_مجموعه(fs, i);
 		fs->flags |= EXT2_FLAG_DIRTY;
 
 		blk = ext2fs_inode_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super)) {
+		إذا (blk && blk < ext2fs_بلوکها_شمار(fs->super)) {
 			retval = io_channel_write_blk64(fs->io, blk, 1,
 						      inode_buf);
-			if (retval) {
+			إذا (retval) {
 				retval = EXT2_ET_INODE_BITMAP_WRITE;
-				goto errout;
+				اذهب errout;
 			}
 		}
 	skip_this_inode_bitmap:
 		ino_itr += inode_nbytes << 3;
 
 	}
-	if (do_block) {
+	إذا (do_بلوک) {
 		fs->flags &= ~EXT2_FLAG_BB_DIRTY;
-		ext2fs_free_mem(&block_buf);
+		ext2fs_free_mem(&بلوک_buf);
 	}
-	if (do_inode) {
+	إذا (do_inode) {
 		fs->flags &= ~EXT2_FLAG_IB_DIRTY;
 		ext2fs_free_mem(&inode_buf);
 	}
-	return 0;
+	أرجع 0;
 errout:
-	if (inode_buf)
+	إذا (inode_buf)
 		ext2fs_free_mem(&inode_buf);
-	if (block_buf)
-		ext2fs_free_mem(&block_buf);
-	return retval;
+	إذا (بلوک_buf)
+		ext2fs_free_mem(&بلوک_buf);
+	أرجع retval;
 }
 
-static errcode_t mark_uninit_bg_group_blocks(ext2_filsys fs)
+ساكن errcode_t mark_uninit_bg_گروه_بلوکها(ext2_filsys fs)
 {
 	dgrp_t			i;
 	blk64_t			blk;
-	ext2fs_block_bitmap	bmap = fs->block_map;
+	ext2fs_بلوک_bitmap	bmap = fs->بلوک_map;
 
-	for (i = 0; i < fs->group_desc_count; i++) {
-		if (!ext2fs_bg_flags_test(fs, i, EXT2_BG_BLOCK_UNINIT))
-			continue;
+	لكل (i = 0; i < fs->گروه_desc_شمار; i++) {
+		إذا (!ext2fs_bg_flags_test(fs, i, EXT2_BG_بلوک_UNINIT))
+			استمر;
 
 		ext2fs_reserve_super_and_bgd(fs, i, bmap);
 
 		/*
 		 * Mark the blocks used for the inode table
 		 */
-		blk = ext2fs_inode_table_loc(fs, i);
-		if (blk)
-			ext2fs_mark_block_bitmap_range2(bmap, blk,
-						fs->inode_blocks_per_group);
+		blk = ext2fs_inode_جدول_loc(fs, i);
+		إذا (blk)
+			ext2fs_mark_بلوک_bitmap_range2(bmap, blk,
+						fs->inode_بلوکها_در_هر_گروه);
 
 		/*
 		 * Mark block used for the block bitmap
 		 */
-		blk = ext2fs_block_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super))
-			ext2fs_mark_block_bitmap2(bmap, blk);
+		blk = ext2fs_بلوک_bitmap_loc(fs, i);
+		إذا (blk && blk < ext2fs_بلوکها_شمار(fs->super))
+			ext2fs_mark_بلوک_bitmap2(bmap, blk);
 
 		/*
 		 * Mark block used for the inode bitmap
 		 */
 		blk = ext2fs_inode_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super))
-			ext2fs_mark_block_bitmap2(bmap, blk);
+		إذا (blk && blk < ext2fs_بلوکها_شمار(fs->super))
+			ext2fs_mark_بلوک_bitmap2(bmap, blk);
 	}
-	return 0;
+	أرجع 0;
 }
 
-static int bitmap_tail_verify(unsigned char *bitmap, int first, int last)
+ساكن صحيح bitmap_دم_verify(بیعلامت حرف *bitmap, صحيح اولی, صحيح آخرین)
 {
-	int i;
+	صحيح i;
 
-	for (i = first; i <= last; i++)
-		if (bitmap[i] != 0xff)
-			return 0;
-	return 1;
+	لكل (i = اولی; i <= آخرین; i++)
+		إذا (bitmap[i] != 0xff)
+			أرجع 0;
+	أرجع 1;
 }
 
-static errcode_t read_bitmaps_range_prepare(ext2_filsys fs, int flags)
+ساكن errcode_t read_bitmaps_range_prepare(ext2_filsys fs, صحيح flags)
 {
 	errcode_t retval;
-	int block_nbytes = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
-	int inode_nbytes = EXT2_INODES_PER_GROUP(fs->super) / 8;
-	char *buf;
+	صحيح بلوک_nbytes = EXT2_CLUSTERS_در_هر_گروه(fs->super) / 8;
+	صحيح inode_nbytes = EXT2_INODES_در_هر_گروه(fs->super) / 8;
+	حرف *buf;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if ((block_nbytes > (int) fs->blocksize) ||
-	    (inode_nbytes > (int) fs->blocksize))
-		return EXT2_ET_CORRUPT_SUPERBLOCK;
+	إذا ((بلوک_nbytes > (صحيح) fs->blocksize) ||
+	    (inode_nbytes > (صحيح) fs->blocksize))
+		أرجع EXT2_ET_CORRUPT_SUPERBLOCK;
 
 	fs->write_bitmaps = ext2fs_write_bitmaps;
 
-	retval = ext2fs_get_mem(strlen(fs->device_name) + 80, &buf);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(طول_رشته(fs->device_name) + 80, &buf);
+	إذا (retval)
+		أرجع retval;
 
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		if (fs->block_map)
-			ext2fs_free_block_bitmap(fs->block_map);
+	إذا (flags & EXT2_FS_BITMAPS_بلوک) {
+		إذا (fs->بلوک_map)
+			ext2fs_free_بلوک_bitmap(fs->بلوک_map);
 		strcpy(buf, "block bitmap for ");
 		strcat(buf, fs->device_name);
-		retval = ext2fs_allocate_block_bitmap(fs, buf, &fs->block_map);
-		if (retval)
-			goto cleanup;
+		retval = ext2fs_allocate_بلوک_bitmap(fs, buf, &fs->بلوک_map);
+		إذا (retval)
+			اذهب cleanup;
 	}
 
-	if (flags & EXT2FS_BITMAPS_INODE) {
-		if (fs->inode_map)
+	إذا (flags & EXT2FS_BITMAPS_INODE) {
+		إذا (fs->inode_map)
 			ext2fs_free_inode_bitmap(fs->inode_map);
 		strcpy(buf, "inode bitmap for ");
 		strcat(buf, fs->device_name);
 		retval = ext2fs_allocate_inode_bitmap(fs, buf, &fs->inode_map);
-		if (retval)
-			goto cleanup;
+		إذا (retval)
+			اذهب cleanup;
 	}
 	ext2fs_free_mem(&buf);
-	return retval;
+	أرجع retval;
 
 cleanup:
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		ext2fs_free_block_bitmap(fs->block_map);
-		fs->block_map = 0;
+	إذا (flags & EXT2_FS_BITMAPS_بلوک) {
+		ext2fs_free_بلوک_bitmap(fs->بلوک_map);
+		fs->بلوک_map = 0;
 	}
-	if (flags & EXT2FS_BITMAPS_INODE) {
+	إذا (flags & EXT2FS_BITMAPS_INODE) {
 		ext2fs_free_inode_bitmap(fs->inode_map);
 		fs->inode_map = 0;
 	}
 	ext2fs_free_mem(&buf);
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t read_bitmaps_range_start(ext2_filsys fs, int flags,
-					  dgrp_t start, dgrp_t end,
+ساكن errcode_t read_bitmaps_range_شروع(ext2_filsys fs, صحيح flags,
+					  dgrp_t شروع, dgrp_t انتها,
 					  mutex_t *mutex,
-					  int *tail_flags)
+					  صحيح *دم_flags)
 {
 	dgrp_t i;
-	char *block_bitmap = 0, *inode_bitmap = 0;
+	حرف *بلوک_bitmap = 0, *inode_bitmap = 0;
 	errcode_t retval = 0;
-	int block_nbytes = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
-	int inode_nbytes = EXT2_INODES_PER_GROUP(fs->super) / 8;
-	int csum_flag;
-	unsigned int	cnt;
+	صحيح بلوک_nbytes = EXT2_CLUSTERS_در_هر_گروه(fs->super) / 8;
+	صحيح inode_nbytes = EXT2_INODES_در_هر_گروه(fs->super) / 8;
+	صحيح csum_flag;
+	بیعلامت صحيح	cnt;
 	blk64_t	blk;
-	blk64_t	blk_itr = EXT2FS_B2C(fs, fs->super->s_first_data_block);
+	blk64_t	blk_itr = EXT2FS_B2C(fs, fs->super->s_اولی_داده_بلوک);
 	blk64_t   blk_cnt;
 	ext2_ino_t ino_itr = 1;
 	ext2_ino_t ino_cnt;
 
-	csum_flag = ext2fs_has_group_desc_csum(fs);
+	csum_flag = ext2fs_has_گروه_desc_csum(fs);
 
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		retval = io_channel_alloc_buf(fs->io, 0, &block_bitmap);
-		if (retval)
-			goto cleanup;
-	} else {
-		block_nbytes = 0;
+	إذا (flags & EXT2_FS_BITMAPS_بلوک) {
+		retval = io_channel_alloc_buf(fs->io, 0, &بلوک_bitmap);
+		إذا (retval)
+			اذهب cleanup;
+	} وإلا {
+		بلوک_nbytes = 0;
 	}
 
-	if (flags & EXT2FS_BITMAPS_INODE) {
+	إذا (flags & EXT2FS_BITMAPS_INODE) {
 		retval = io_channel_alloc_buf(fs->io, 0, &inode_bitmap);
-		if (retval)
-			goto cleanup;
-	} else {
+		إذا (retval)
+			اذهب cleanup;
+	} وإلا {
 		inode_nbytes = 0;
 	}
 
 	/* io should be null */
-	if (fs->flags & EXT2_FLAG_IMAGE_FILE) {
-		blk = (ext2fs_le32_to_cpu(fs->image_header->offset_inodemap) / fs->blocksize);
-		ino_cnt = fs->super->s_inodes_count;
-		while (inode_bitmap && ino_cnt > 0) {
+	إذا (fs->flags & EXT2_FLAG_IMAGE_FILE) {
+		blk = (ext2fs_le32_مقصد_cpu(fs->image_سرآیند->جابه_جایی_inodemap) / fs->blocksize);
+		ino_cnt = fs->super->s_inodes_شمار;
+		طالما (inode_bitmap && ino_cnt > 0) {
 			retval = io_channel_read_blk64(fs->image_io, blk++,
 						     1, inode_bitmap);
-			if (retval)
-				goto cleanup;
+			إذا (retval)
+				اذهب cleanup;
 			cnt = fs->blocksize << 3;
-			if (cnt > ino_cnt)
+			إذا (cnt > ino_cnt)
 				cnt = ino_cnt;
-			retval = ext2fs_set_inode_bitmap_range2(fs->inode_map,
+			retval = ext2fs_مجموعه_inode_bitmap_range2(fs->inode_map,
 					       ino_itr, cnt, inode_bitmap);
-			if (retval)
-				goto cleanup;
+			إذا (retval)
+				اذهب cleanup;
 			ino_itr += cnt;
 			ino_cnt -= cnt;
 		}
-		blk = (ext2fs_le32_to_cpu(fs->image_header->offset_blockmap) /
+		blk = (ext2fs_le32_مقصد_cpu(fs->image_سرآیند->جابه_جایی_blockmap) /
 		       fs->blocksize);
-		blk_cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super,
-						  fs->group_desc_count);
-		while (block_bitmap && blk_cnt > 0) {
+		blk_cnt = EXT2_GROUPS_مقصد_CLUSTERS(fs->super,
+						  fs->گروه_desc_شمار);
+		طالما (بلوک_bitmap && blk_cnt > 0) {
 			retval = io_channel_read_blk64(fs->image_io, blk++,
-						     1, block_bitmap);
-			if (retval)
-				goto cleanup;
+						     1, بلوک_bitmap);
+			إذا (retval)
+				اذهب cleanup;
 			cnt = fs->blocksize << 3;
-			if (cnt > blk_cnt)
+			إذا (cnt > blk_cnt)
 				cnt = blk_cnt;
-			retval = ext2fs_set_block_bitmap_range2(fs->block_map,
-				       blk_itr, cnt, block_bitmap);
-			if (retval)
-				goto cleanup;
+			retval = ext2fs_مجموعه_بلوک_bitmap_range2(fs->بلوک_map,
+				       blk_itr, cnt, بلوک_bitmap);
+			إذا (retval)
+				اذهب cleanup;
 			blk_itr += cnt;
 			blk_cnt -= cnt;
 		}
-		goto cleanup;
+		اذهب cleanup;
 	}
 
-	blk_itr += ((blk64_t)start * (block_nbytes << 3));
-	ino_itr += ((blk64_t)start * (inode_nbytes << 3));
-	for (i = start; i <= end; i++) {
-		if (block_bitmap) {
-			blk = ext2fs_block_bitmap_loc(fs, i);
-			if ((csum_flag &&
-			     ext2fs_bg_flags_test(fs, i, EXT2_BG_BLOCK_UNINIT) &&
-			     ext2fs_group_desc_csum_verify(fs, i)) ||
-			    (blk >= ext2fs_blocks_count(fs->super)))
+	blk_itr += ((blk64_t)شروع * (بلوک_nbytes << 3));
+	ino_itr += ((blk64_t)شروع * (inode_nbytes << 3));
+	لكل (i = شروع; i <= انتها; i++) {
+		إذا (بلوک_bitmap) {
+			blk = ext2fs_بلوک_bitmap_loc(fs, i);
+			إذا ((csum_flag &&
+			     ext2fs_bg_flags_test(fs, i, EXT2_BG_بلوک_UNINIT) &&
+			     ext2fs_گروه_desc_csum_verify(fs, i)) ||
+			    (blk >= ext2fs_بلوکها_شمار(fs->super)))
 				blk = 0;
-			if (blk) {
+			إذا (blk) {
 				retval = io_channel_read_blk64(fs->io, blk,
-							       1, block_bitmap);
-				if (retval) {
-					retval = EXT2_ET_BLOCK_BITMAP_READ;
-					goto cleanup;
+							       1, بلوک_bitmap);
+				إذا (retval) {
+					retval = EXT2_ET_بلوک_BITMAP_READ;
+					اذهب cleanup;
 				}
 				/* verify block bitmap checksum */
-				if (!(fs->flags &
+				إذا (!(fs->flags &
 				      EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
-				    !ext2fs_block_bitmap_csum_verify(fs, i,
-						block_bitmap, block_nbytes)) {
+				    !ext2fs_بلوک_bitmap_csum_verify(fs, i,
+						بلوک_bitmap, بلوک_nbytes)) {
 					retval =
-					EXT2_ET_BLOCK_BITMAP_CSUM_INVALID;
-					goto cleanup;
+					EXT2_ET_بلوک_BITMAP_CSUM_INVALID;
+					اذهب cleanup;
 				}
-				if (!bitmap_tail_verify((unsigned char *) block_bitmap,
-							block_nbytes, fs->blocksize - 1))
-					*tail_flags |= EXT2_FLAG_BBITMAP_TAIL_PROBLEM;
-			} else
-				memset(block_bitmap, 0, block_nbytes);
-			cnt = block_nbytes << 3;
-			unix_pthread_mutex_lock(mutex);
-			retval = ext2fs_set_block_bitmap_range2(fs->block_map,
-					       blk_itr, cnt, block_bitmap);
+				إذا (!bitmap_دم_verify((بیعلامت حرف *) بلوک_bitmap,
+							بلوک_nbytes, fs->blocksize - 1))
+					*دم_flags |= EXT2_FLAG_BBITMAP_دم_PROBLEM;
+			} وإلا
+				memset(بلوک_bitmap, 0, بلوک_nbytes);
+			cnt = بلوک_nbytes << 3;
+			unix_pthread_mutex_قفل(mutex);
+			retval = ext2fs_مجموعه_بلوک_bitmap_range2(fs->بلوک_map,
+					       blk_itr, cnt, بلوک_bitmap);
 			unix_pthread_mutex_unlock(mutex);
-			if (retval)
-				goto cleanup;
-			blk_itr += block_nbytes << 3;
+			إذا (retval)
+				اذهب cleanup;
+			blk_itr += بلوک_nbytes << 3;
 		}
-		if (inode_bitmap) {
+		إذا (inode_bitmap) {
 			blk = ext2fs_inode_bitmap_loc(fs, i);
-			if ((csum_flag &&
+			إذا ((csum_flag &&
 			     ext2fs_bg_flags_test(fs, i, EXT2_BG_INODE_UNINIT) &&
-			     ext2fs_group_desc_csum_verify(fs, i)) ||
-			    (blk >= ext2fs_blocks_count(fs->super)))
+			     ext2fs_گروه_desc_csum_verify(fs, i)) ||
+			    (blk >= ext2fs_بلوکها_شمار(fs->super)))
 				blk = 0;
-			if (blk) {
+			إذا (blk) {
 				retval = io_channel_read_blk64(fs->io, blk,
 							       1, inode_bitmap);
-				if (retval) {
+				إذا (retval) {
 					retval = EXT2_ET_INODE_BITMAP_READ;
-					goto cleanup;
+					اذهب cleanup;
 				}
 
 				/* verify inode bitmap checksum */
-				if (!(fs->flags &
+				إذا (!(fs->flags &
 				      EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
 				    !ext2fs_inode_bitmap_csum_verify(fs, i,
 						inode_bitmap, inode_nbytes)) {
 					retval =
 					EXT2_ET_INODE_BITMAP_CSUM_INVALID;
-					goto cleanup;
+					اذهب cleanup;
 				}
-				if (!bitmap_tail_verify((unsigned char *) inode_bitmap,
+				إذا (!bitmap_دم_verify((بیعلامت حرف *) inode_bitmap,
 							inode_nbytes, fs->blocksize - 1))
-					*tail_flags |= EXT2_FLAG_IBITMAP_TAIL_PROBLEM;
-			} else
+					*دم_flags |= EXT2_FLAG_IBITMAP_دم_PROBLEM;
+			} وإلا
 				memset(inode_bitmap, 0, inode_nbytes);
 			cnt = inode_nbytes << 3;
-			unix_pthread_mutex_lock(mutex);
-			retval = ext2fs_set_inode_bitmap_range2(fs->inode_map,
+			unix_pthread_mutex_قفل(mutex);
+			retval = ext2fs_مجموعه_inode_bitmap_range2(fs->inode_map,
 					       ino_itr, cnt, inode_bitmap);
 			unix_pthread_mutex_unlock(mutex);
-			if (retval)
-				goto cleanup;
+			إذا (retval)
+				اذهب cleanup;
 			ino_itr += inode_nbytes << 3;
 		}
 	}
 
 cleanup:
-	if (inode_bitmap)
+	إذا (inode_bitmap)
 		ext2fs_free_mem(&inode_bitmap);
-	if (block_bitmap)
-		ext2fs_free_mem(&block_bitmap);
-	return retval;
+	إذا (بلوک_bitmap)
+		ext2fs_free_mem(&بلوک_bitmap);
+	أرجع retval;
 }
 
-static errcode_t read_bitmaps_range_end(ext2_filsys fs, int flags,
-					int tail_flags)
+ساكن errcode_t read_bitmaps_range_انتها(ext2_filsys fs, صحيح flags,
+					صحيح دم_flags)
 {
 	errcode_t retval;
 
 	/* Mark group blocks for any BLOCK_UNINIT groups */
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		retval = mark_uninit_bg_group_blocks(fs);
-		if (retval)
-			return retval;
-		fs->flags &= ~EXT2_FLAG_BBITMAP_TAIL_PROBLEM;
+	إذا (flags & EXT2_FS_BITMAPS_بلوک) {
+		retval = mark_uninit_bg_گروه_بلوکها(fs);
+		إذا (retval)
+			أرجع retval;
+		fs->flags &= ~EXT2_FLAG_BBITMAP_دم_PROBLEM;
 	}
-	if (flags & EXT2FS_BITMAPS_INODE)
-		fs->flags &= ~EXT2_FLAG_IBITMAP_TAIL_PROBLEM;
-	fs->flags |= tail_flags;
+	إذا (flags & EXT2FS_BITMAPS_INODE)
+		fs->flags &= ~EXT2_FLAG_IBITMAP_دم_PROBLEM;
+	fs->flags |= دم_flags;
 
-	return 0;
+	أرجع 0;
 }
 
-static void read_bitmaps_cleanup_on_error(ext2_filsys fs, int flags)
+ساكن فراغ read_bitmaps_cleanup_on_error(ext2_filsys fs, صحيح flags)
 {
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		ext2fs_free_block_bitmap(fs->block_map);
-		fs->block_map = 0;
+	إذا (flags & EXT2_FS_BITMAPS_بلوک) {
+		ext2fs_free_بلوک_bitmap(fs->بلوک_map);
+		fs->بلوک_map = 0;
 	}
-	if (flags & EXT2FS_BITMAPS_INODE) {
+	إذا (flags & EXT2FS_BITMAPS_INODE) {
 		ext2fs_free_inode_bitmap(fs->inode_map);
 		fs->inode_map = 0;
 	}
 }
 
-static errcode_t read_bitmaps_range(ext2_filsys fs, int flags,
-				    dgrp_t start, dgrp_t end)
+ساكن errcode_t read_bitmaps_range(ext2_filsys fs, صحيح flags,
+				    dgrp_t شروع, dgrp_t انتها)
 {
 	errcode_t retval;
-	int tail_flags = 0;
+	صحيح دم_flags = 0;
 
 	retval = read_bitmaps_range_prepare(fs, flags);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-	retval = read_bitmaps_range_start(fs, flags, start, end,
-					  NULL, &tail_flags);
-	if (retval == 0)
-		retval = read_bitmaps_range_end(fs, flags, tail_flags);
-	if (retval)
+	retval = read_bitmaps_range_شروع(fs, flags, شروع, انتها,
+					  عدم, &دم_flags);
+	إذا (retval == 0)
+		retval = read_bitmaps_range_انتها(fs, flags, دم_flags);
+	إذا (retval)
 		read_bitmaps_cleanup_on_error(fs, flags);
-	return retval;
+	أرجع retval;
 }
 
-#ifdef HAVE_PTHREAD
-struct read_bitmaps_thread_info {
+#اگر_تعریف_شده HAVE_PTHREAD
+بنية read_bitmaps_thread_info {
 	ext2_filsys	rbt_fs;
-	int		rbt_flags;
-	dgrp_t		rbt_grp_start;
-	dgrp_t		rbt_grp_end;
+	صحيح		rbt_flags;
+	dgrp_t		rbt_grp_شروع;
+	dgrp_t		rbt_grp_انتها;
 	errcode_t	rbt_retval;
 	pthread_mutex_t *rbt_mutex;
-	int		rbt_tail_flags;
+	صحيح		rbt_دم_flags;
 };
 
-static void *read_bitmaps_thread(void *data)
+ساكن فراغ *read_bitmaps_thread(فراغ *داده)
 {
-	struct read_bitmaps_thread_info *rbt = data;
+	بنية read_bitmaps_thread_info *rbt = داده;
 
-	rbt->rbt_retval = read_bitmaps_range_start(rbt->rbt_fs, rbt->rbt_flags,
-				rbt->rbt_grp_start, rbt->rbt_grp_end,
-				rbt->rbt_mutex, &rbt->rbt_tail_flags);
-	return NULL;
+	rbt->rbt_retval = read_bitmaps_range_شروع(rbt->rbt_fs, rbt->rbt_flags,
+				rbt->rbt_grp_شروع, rbt->rbt_grp_انتها,
+				rbt->rbt_mutex, &rbt->rbt_دم_flags);
+	أرجع عدم;
 }
-#endif
+#پایان_اگر
 
-errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, int flags, int num_threads)
+errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, صحيح flags, صحيح رقم_نخها)
 {
-#ifdef HAVE_PTHREAD
+#اگر_تعریف_شده HAVE_PTHREAD
 	pthread_attr_t	attr;
-	pthread_t *thread_ids = NULL;
-	struct read_bitmaps_thread_info *thread_infos = NULL;
+	pthread_t *thread_ids = عدم;
+	بنية read_bitmaps_thread_info *thread_infos = عدم;
 	pthread_mutex_t rbt_mutex = PTHREAD_MUTEX_INITIALIZER;
 	errcode_t retval;
 	errcode_t rc;
-	unsigned flexbg_size = 1U << fs->super->s_log_groups_per_flex;
-	dgrp_t average_group;
-	int i, tail_flags = 0;
-#endif
+	بیعلامت flexbg_اندازه = 1U << fs->super->s_log_groups_در_هر_flex;
+	dgrp_t معدل_گروه;
+	صحيح i, دم_flags = 0;
+#پایان_اگر
 
-	if (flags & ~EXT2FS_BITMAPS_VALID_FLAGS)
-		return EXT2_ET_INVALID_ARGUMENT;
+	إذا (flags & ~EXT2FS_BITMAPS_VALID_FLAGS)
+		أرجع EXT2_ET_INVALID_آرگومان;
 
-	if (ext2fs_has_feature_journal_dev(fs->super))
-		return EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
+	إذا (ext2fs_has_feature_journal_dev(fs->super))
+		أرجع EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
 
-	if (flags & EXT2FS_BITMAPS_WRITE)
-		return write_bitmaps(fs, flags & EXT2FS_BITMAPS_INODE,
-				     flags & EXT2FS_BITMAPS_BLOCK);
+	إذا (flags & EXT2FS_BITMAPS_WRITE)
+		أرجع write_bitmaps(fs, flags & EXT2FS_BITMAPS_INODE,
+				     flags & EXT2_FS_BITMAPS_بلوک);
 
-#ifdef HAVE_PTHREAD
-	if (((fs->io->flags & CHANNEL_FLAGS_THREADS) == 0) ||
-	    (num_threads == 1) || (fs->flags & EXT2_FLAG_IMAGE_FILE))
-		goto fallback;
+#اگر_تعریف_شده HAVE_PTHREAD
+	إذا (((fs->io->flags & CHANNEL_FLAGS_نخها) == 0) ||
+	    (رقم_نخها == 1) || (fs->flags & EXT2_FLAG_IMAGE_FILE))
+		اذهب fallback;
 
-#if defined(HAVE_SYSCONF) && defined(_SC_NPROCESSORS_CONF)
-	if (num_threads < 0)
-		num_threads = sysconf(_SC_NPROCESSORS_CONF);
-#endif
+#إذا defined(HAVE_SYSCONF) && defined(_SC_NPROCESSORS_CONF)
+	إذا (رقم_نخها < 0)
+		رقم_نخها = sysconf(_SC_NPROCESSORS_CONF);
+#پایان_اگر
 	/*
 	 * Guess for now; eventually we should probably define
 	 * ext2fs_get_num_cpus() and teach it how to get this info on
 	 * MacOS, FreeBSD, etc.
 	 * ref: https://stackoverflow.com/questions/150355
 	 */
-	if (num_threads <= 0)
-		num_threads = 4;
+	إذا (رقم_نخها <= 0)
+		رقم_نخها = 4;
 
-	if ((unsigned) num_threads > fs->group_desc_count)
-		num_threads = fs->group_desc_count;
-	average_group = fs->group_desc_count / num_threads;
-	if (ext2fs_has_feature_flex_bg(fs->super)) {
-		average_group = (average_group / flexbg_size) * flexbg_size;
+	إذا ((بیعلامت) رقم_نخها > fs->گروه_desc_شمار)
+		رقم_نخها = fs->گروه_desc_شمار;
+	معدل_گروه = fs->گروه_desc_شمار / رقم_نخها;
+	إذا (ext2fs_has_feature_flex_bg(fs->super)) {
+		معدل_گروه = (معدل_گروه / flexbg_اندازه) * flexbg_اندازه;
 	}
-	if ((num_threads <= 1) || (average_group == 0))
-		goto fallback;
+	إذا ((رقم_نخها <= 1) || (معدل_گروه == 0))
+		اذهب fallback;
 
-	io_channel_set_options(fs->io, "cache=off");
+	io_channel_مجموعه_options(fs->io, "cache=off");
 	retval = pthread_attr_init(&attr);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-	thread_ids = calloc(sizeof(pthread_t), num_threads);
-	if (!thread_ids)
-		return ENOMEM;
+	thread_ids = حافظه_صفر_بده(حجم(pthread_t), رقم_نخها);
+	إذا (!thread_ids)
+		أرجع ENOMEM;
 
-	thread_infos = calloc(sizeof(struct read_bitmaps_thread_info),
-				num_threads);
-	if (!thread_infos)
-		goto out;
+	thread_infos = حافظه_صفر_بده(حجم(بنية read_bitmaps_thread_info),
+				رقم_نخها);
+	إذا (!thread_infos)
+		اذهب بیرون;
 
 	retval = read_bitmaps_range_prepare(fs, flags);
-	if (retval)
-		goto out;
+	إذا (retval)
+		اذهب بیرون;
 
 //	fprintf(stdout, "Multiple threads triggered to read bitmaps\n");
-	for (i = 0; i < num_threads; i++) {
+	لكل (i = 0; i < رقم_نخها; i++) {
 		thread_infos[i].rbt_fs = fs;
 		thread_infos[i].rbt_flags = flags;
 		thread_infos[i].rbt_mutex = &rbt_mutex;
-		thread_infos[i].rbt_tail_flags = 0;
-		if (i == 0)
-			thread_infos[i].rbt_grp_start = 0;
-		else
-			thread_infos[i].rbt_grp_start = average_group * i + 1;
+		thread_infos[i].rbt_دم_flags = 0;
+		إذا (i == 0)
+			thread_infos[i].rbt_grp_شروع = 0;
+		وإلا
+			thread_infos[i].rbt_grp_شروع = معدل_گروه * i + 1;
 
-		if (i == num_threads - 1)
-			thread_infos[i].rbt_grp_end = fs->group_desc_count - 1;
-		else
-			thread_infos[i].rbt_grp_end = average_group * (i + 1);
+		إذا (i == رقم_نخها - 1)
+			thread_infos[i].rbt_grp_انتها = fs->گروه_desc_شمار - 1;
+		وإلا
+			thread_infos[i].rbt_grp_انتها = معدل_گروه * (i + 1);
 		retval = pthread_create(&thread_ids[i], &attr,
 					&read_bitmaps_thread, &thread_infos[i]);
-		if (retval)
-			break;
+		إذا (retval)
+			اكسر;
 	}
-	for (i = 0; i < num_threads; i++) {
-		if (!thread_ids[i])
-			break;
-		rc = pthread_join(thread_ids[i], NULL);
-		if (rc && !retval)
+	لكل (i = 0; i < رقم_نخها; i++) {
+		إذا (!thread_ids[i])
+			اكسر;
+		rc = pthread_join(thread_ids[i], عدم);
+		إذا (rc && !retval)
 			retval = rc;
 		rc = thread_infos[i].rbt_retval;
-		if (rc && !retval)
+		إذا (rc && !retval)
 			retval = rc;
-		tail_flags |= thread_infos[i].rbt_tail_flags;
+		دم_flags |= thread_infos[i].rbt_دم_flags;
 	}
-out:
+بیرون:
 	rc = pthread_attr_destroy(&attr);
-	if (rc && !retval)
+	إذا (rc && !retval)
 		retval = rc;
-	free(thread_infos);
-	free(thread_ids);
+	حرر(thread_infos);
+	حرر(thread_ids);
 
-	if (retval == 0)
-		retval = read_bitmaps_range_end(fs, flags, tail_flags);
-	if (retval)
+	إذا (retval == 0)
+		retval = read_bitmaps_range_انتها(fs, flags, دم_flags);
+	إذا (retval)
 		read_bitmaps_cleanup_on_error(fs, flags);
 	/* XXX should save and restore cache setting */
-	io_channel_set_options(fs->io, "cache=on");
-	return retval;
+	io_channel_مجموعه_options(fs->io, "cache=on");
+	أرجع retval;
 fallback:
-#endif /* HAVE_PTHREAD */
-	return read_bitmaps_range(fs, flags, 0, fs->group_desc_count - 1);
+#پایان_اگر /* HAVE_PTHREAD */
+	أرجع read_bitmaps_range(fs, flags, 0, fs->گروه_desc_شمار - 1);
 }
 
 errcode_t ext2fs_read_inode_bitmap(ext2_filsys fs)
 {
-	return ext2fs_rw_bitmaps(fs, EXT2FS_BITMAPS_INODE, -1);
+	أرجع ext2fs_rw_bitmaps(fs, EXT2FS_BITMAPS_INODE, -1);
 }
 
-errcode_t ext2fs_read_block_bitmap(ext2_filsys fs)
+errcode_t ext2fs_read_بلوک_bitmap(ext2_filsys fs)
 {
-	return ext2fs_rw_bitmaps(fs, EXT2FS_BITMAPS_BLOCK, -1);
+	أرجع ext2fs_rw_bitmaps(fs, EXT2_FS_BITMAPS_بلوک, -1);
 }
 
 errcode_t ext2fs_write_inode_bitmap(ext2_filsys fs)
 {
-	return write_bitmaps(fs, 1, 0);
+	أرجع write_bitmaps(fs, 1, 0);
 }
 
-errcode_t ext2fs_write_block_bitmap (ext2_filsys fs)
+errcode_t ext2fs_write_بلوک_bitmap (ext2_filsys fs)
 {
-	return write_bitmaps(fs, 0, 1);
+	أرجع write_bitmaps(fs, 0, 1);
 }
 
 errcode_t ext2fs_read_bitmaps(ext2_filsys fs)
 {
-	int flags = 0;
+	صحيح flags = 0;
 
-	if (!fs->inode_map)
+	إذا (!fs->inode_map)
 		flags |= EXT2FS_BITMAPS_INODE;
-	if (!fs->block_map)
-		flags |= EXT2FS_BITMAPS_BLOCK;
-	if (flags == 0)
-		return 0;
-	return ext2fs_rw_bitmaps(fs, flags, -1);
+	إذا (!fs->بلوک_map)
+		flags |= EXT2_FS_BITMAPS_بلوک;
+	إذا (flags == 0)
+		أرجع 0;
+	أرجع ext2fs_rw_bitmaps(fs, flags, -1);
 }
 
 errcode_t ext2fs_write_bitmaps(ext2_filsys fs)
 {
-	int do_inode = fs->inode_map && ext2fs_test_ib_dirty(fs);
-	int do_block = fs->block_map && ext2fs_test_bb_dirty(fs);
+	صحيح do_inode = fs->inode_map && ext2fs_test_ib_dirty(fs);
+	صحيح do_بلوک = fs->بلوک_map && ext2fs_test_bb_dirty(fs);
 
-	if (!do_inode && !do_block)
-		return 0;
+	إذا (!do_inode && !do_بلوک)
+		أرجع 0;
 
-	return write_bitmaps(fs, do_inode, do_block);
+	أرجع write_bitmaps(fs, do_inode, do_بلوک);
 }

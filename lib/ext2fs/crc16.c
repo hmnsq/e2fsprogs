@@ -5,16 +5,16 @@
  * Version 2. See the file COPYING for more details.
  */
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#include <ext2fs/ext2_types.h>
+#ضمن "config.h"
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#پایان_اگر
+#ضمن <ext2fs/ext2_types.h>
 
-#include "crc16.h"
+#ضمن "crc16.h"
 
 /** CRC table for the CRC-16. The poly is 0x8005 (x16 + x15 + x2 + 1) */
-static __u16 const crc16_table[256] = {
+ساكن __u16 ثابت crc16_جدول[256] = {
 	0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0, 0x0280, 0xC241,
 	0xC601, 0x06C0, 0x0780, 0xC741, 0x0500, 0xC5C1, 0xC481, 0x0440,
 	0xCC01, 0x0CC0, 0x0D80, 0xCD41, 0x0F00, 0xCFC1, 0xCE81, 0x0E40,
@@ -57,18 +57,18 @@ static __u16 const crc16_table[256] = {
  * @param len     number of bytes in the buffer
  * @return        the updated CRC value
  */
-crc16_t ext2fs_crc16(crc16_t crc, const void *buffer, unsigned int len)
+crc16_t ext2fs_crc16(crc16_t بررسی_چرخهای, ثابت فراغ *میانگیر, بیعلامت صحيح len)
 {
-	const unsigned char *cp = buffer;
+	ثابت بیعلامت حرف *cp = میانگیر;
 
-	while (len--)
+	طالما (len--)
 		/*
 		 * for an unknown reason, PPC treats __u16 as signed
 		 * and keeps doing sign extension on the value.
 		 * Instead, use only the low 16 bits of an unsigned
 		 * int for holding the CRC value to avoid this.
 		 */
-		crc = (((crc >> 8) & 0xffU) ^
-		       crc16_table[(crc ^ *cp++) & 0xffU]) & 0x0000ffffU;
-	return crc;
+		بررسی_چرخهای = (((بررسی_چرخهای >> 8) & 0xffU) ^
+		       crc16_جدول[(بررسی_چرخهای ^ *cp++) & 0xffU]) & 0x0000ffffU;
+	أرجع بررسی_چرخهای;
 }

@@ -10,58 +10,58 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#پایان_اگر
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
-errcode_t ext2fs_read_ind_block(ext2_filsys fs, blk_t blk, void *buf)
+errcode_t ext2fs_read_ind_بلوک(ext2_filsys fs, blk_t blk, فراغ *buf)
 {
 	errcode_t	retval;
-#ifdef WORDS_BIGENDIAN
-	blk_t		*block_nr;
-	int		i;
-	int		limit = fs->blocksize >> 2;
-#endif
+#اگر_تعریف_شده واژگان_BIGENDIAN
+	blk_t		*بلوک_nr;
+	صحيح		i;
+	صحيح		حد = fs->blocksize >> 2;
+#پایان_اگر
 
-	if ((fs->flags & EXT2_FLAG_IMAGE_FILE) &&
+	إذا ((fs->flags & EXT2_FLAG_IMAGE_FILE) &&
 	    (fs->io != fs->image_io))
 		memset(buf, 0, fs->blocksize);
-	else {
+	وإلا {
 		retval = io_channel_read_blk(fs->io, blk, 1, buf);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 	}
-#ifdef WORDS_BIGENDIAN
-	block_nr = (blk_t *) buf;
-	for (i = 0; i < limit; i++, block_nr++)
-		*block_nr = ext2fs_swab32(*block_nr);
-#endif
-	return 0;
+#اگر_تعریف_شده واژگان_BIGENDIAN
+	بلوک_nr = (blk_t *) buf;
+	لكل (i = 0; i < حد; i++, بلوک_nr++)
+		*بلوک_nr = ext2fs_swab32(*بلوک_nr);
+#پایان_اگر
+	أرجع 0;
 }
 
-errcode_t ext2fs_write_ind_block(ext2_filsys fs, blk_t blk, void *buf)
+errcode_t ext2fs_write_ind_بلوک(ext2_filsys fs, blk_t blk, فراغ *buf)
 {
-#ifdef WORDS_BIGENDIAN
-	blk_t		*block_nr;
-	int		i;
-	int		limit = fs->blocksize >> 2;
-#endif
+#اگر_تعریف_شده واژگان_BIGENDIAN
+	blk_t		*بلوک_nr;
+	صحيح		i;
+	صحيح		حد = fs->blocksize >> 2;
+#پایان_اگر
 
-	if (fs->flags & EXT2_FLAG_IMAGE_FILE)
-		return 0;
+	إذا (fs->flags & EXT2_FLAG_IMAGE_FILE)
+		أرجع 0;
 
-#ifdef WORDS_BIGENDIAN
-	block_nr = (blk_t *) buf;
-	for (i = 0; i < limit; i++, block_nr++)
-		*block_nr = ext2fs_swab32(*block_nr);
-#endif
-	return io_channel_write_blk(fs->io, blk, 1, buf);
+#اگر_تعریف_شده واژگان_BIGENDIAN
+	بلوک_nr = (blk_t *) buf;
+	لكل (i = 0; i < حد; i++, بلوک_nr++)
+		*بلوک_nr = ext2fs_swab32(*بلوک_nr);
+#پایان_اگر
+	أرجع io_channel_write_blk(fs->io, blk, 1, buf);
 }
 
 

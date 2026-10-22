@@ -23,262 +23,262 @@
  * %End-Header%
  */
 
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
+#اگر_تعریف_نشده LARGEFILE_منبع
+#تعریف_کن LARGEFILE_منبع
+#پایان_اگر
+#اگر_تعریف_نشده LARGEFILE64_منبع
+#تعریف_کن LARGEFILE64_منبع
+#پایان_اگر
 
-#include "config.h"
-#include <fcntl.h>
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <assert.h>
+#ضمن "config.h"
+#ضمن <fcntl.h>
+#ضمن <grp.h>
+#ضمن <pwd.h>
+#ضمن <stdio.h>
+#اگر_تعریف_شده HAVE_STDLIB_H
+#ضمن <stdlib.h>
+#پایان_اگر
+#ضمن <string.h>
+#ضمن <time.h>
+#ضمن <unistd.h>
+#ضمن <fcntl.h>
+#ضمن <errno.h>
+#ضمن <sys/stat.h>
+#ضمن <sys/types.h>
+#ضمن <assert.h>
 
-#include "ext2fs/ext2fs.h"
-#include "qcow2.h"
+#ضمن "ext2fs/ext2fs.h"
+#ضمن "qcow2.h"
 
 /* Functions for converting qcow2 image into raw image */
 
-struct ext2_qcow2_hdr *qcow2_read_header(int fd)
+بنية ext2_qcow2_hdr *qcow2_read_سرآیند(صحيح fd)
 {
-	void *buffer = NULL;
-	struct ext2_qcow2_hdr *hdr = NULL;
-	size_t size;
+	فراغ *میانگیر = عدم;
+	بنية ext2_qcow2_hdr *hdr = عدم;
+	size_t اندازه;
 	errcode_t ret;
 
-	ret = ext2fs_get_mem(sizeof(struct ext2_qcow2_hdr), &buffer);
-	if (ret)
-		return NULL;
-	memset(buffer, 0, sizeof(struct ext2_qcow2_hdr));
+	ret = ext2fs_get_mem(حجم(بنية ext2_qcow2_hdr), &میانگیر);
+	إذا (ret)
+		أرجع عدم;
+	memset(میانگیر, 0, حجم(بنية ext2_qcow2_hdr));
 
-	if (ext2fs_llseek(fd, 0, SEEK_SET < 0)) {
-		ext2fs_free_mem(&buffer);
-		return NULL;
+	إذا (ext2fs_llseek(fd, 0, SEEK_SET < 0)) {
+		ext2fs_free_mem(&میانگیر);
+		أرجع عدم;
 	}
 
-	size = read(fd, buffer, sizeof(struct ext2_qcow2_hdr));
-	if (size != sizeof(struct ext2_qcow2_hdr)) {
-		ext2fs_free_mem(&buffer);
-		return NULL;
+	اندازه = اقرأ(fd, میانگیر, حجم(بنية ext2_qcow2_hdr));
+	إذا (اندازه != حجم(بنية ext2_qcow2_hdr)) {
+		ext2fs_free_mem(&میانگیر);
+		أرجع عدم;
 	}
 
-	hdr = (struct ext2_qcow2_hdr *)(buffer);
+	hdr = (بنية ext2_qcow2_hdr *)(میانگیر);
 
-	if ((ext2fs_be32_to_cpu(hdr->magic) != QCOW_MAGIC) ||
-	    (ext2fs_be32_to_cpu(hdr->version) != 2)) {
+	إذا ((ext2fs_be32_مقصد_cpu(hdr->magic) != QCOW_MAGIC) ||
+	    (ext2fs_be32_مقصد_cpu(hdr->نسخه) != 2)) {
 		ext2fs_free_mem(&hdr);
-		return NULL;
+		أرجع عدم;
 	}
 
-	return hdr;
+	أرجع hdr;
 }
 
-static int qcow2_read_l1_table(struct ext2_qcow2_image *img)
+ساكن صحيح qcow2_read_l1_جدول(بنية ext2_qcow2_image *img)
 {
-	int fd = img->fd;
-	size_t size, l1_size = img->l1_size * sizeof(blk64_t);
-	blk64_t *table;
+	صحيح fd = img->fd;
+	size_t اندازه, l1_اندازه = img->l1_اندازه * حجم(blk64_t);
+	blk64_t *جدول;
 	errcode_t ret;
 
-	ret = ext2fs_get_memzero(l1_size, &table);
-	if (ret)
-		return ret;
+	ret = ext2fs_get_memzero(l1_اندازه, &جدول);
+	إذا (ret)
+		أرجع ret;
 
-	if (ext2fs_llseek(fd, img->l1_offset, SEEK_SET) < 0) {
-		ext2fs_free_mem(&table);
-		return errno;
+	إذا (ext2fs_llseek(fd, img->l1_جابه_جایی, SEEK_SET) < 0) {
+		ext2fs_free_mem(&جدول);
+		أرجع errno;
 	}
 
-	size = read(fd, table, l1_size);
-	if (size != l1_size) {
-		ext2fs_free_mem(&table);
-		return errno;
+	اندازه = اقرأ(fd, جدول, l1_اندازه);
+	إذا (اندازه != l1_اندازه) {
+		ext2fs_free_mem(&جدول);
+		أرجع errno;
 	}
 
-	img->l1_table = table;
+	img->l1_جدول = جدول;
 
-	return 0;
+	أرجع 0;
 }
 
-static int qcow2_read_l2_table(struct ext2_qcow2_image *img,
-			       __u64 offset, blk64_t **l2_table)
+ساكن صحيح qcow2_read_l2_جدول(بنية ext2_qcow2_image *img,
+			       __u64 جابه_جایی, blk64_t **l2_جدول)
 {
-	int fd = img->fd;
-	size_t size;
+	صحيح fd = img->fd;
+	size_t اندازه;
 
-	assert(*l2_table);
+	أكد(*l2_جدول);
 
-	if (ext2fs_llseek(fd, offset, SEEK_SET) < 0)
-		return errno;
+	إذا (ext2fs_llseek(fd, جابه_جایی, SEEK_SET) < 0)
+		أرجع errno;
 
-	size = read(fd, *l2_table, img->cluster_size);
-	if (size != img->cluster_size)
-		return errno;
+	اندازه = اقرأ(fd, *l2_جدول, img->cluster_اندازه);
+	إذا (اندازه != img->cluster_اندازه)
+		أرجع errno;
 
-	return 0;
+	أرجع 0;
 }
 
-static int qcow2_copy_data(int fdin, int fdout, __u64 off_in,
-			   __u64 off_out, void *buf, size_t count)
+ساكن صحيح qcow2_copy_داده(صحيح fdin, صحيح fdout, __u64 off_درون,
+			   __u64 off_بیرون, فراغ *buf, size_t شمار)
 {
 	ssize_t c1, c2, c;
-	void *ptr;
-	int retries = 10;
+	فراغ *ptr;
+	صحيح retries = 10;
 
-	assert(buf);
+	أكد(buf);
 
-	if (ext2fs_llseek(fdout, off_out, SEEK_SET) < 0)
-		return errno;
+	إذا (ext2fs_llseek(fdout, off_بیرون, SEEK_SET) < 0)
+		أرجع errno;
 
-	if (ext2fs_llseek(fdin, off_in, SEEK_SET) < 0)
-		return errno;
+	إذا (ext2fs_llseek(fdin, off_درون, SEEK_SET) < 0)
+		أرجع errno;
 
-	while (count > 0) {
+	طالما (شمار > 0) {
 		errno = 0;
-		c1 = read(fdin, buf, count);
-		if (c1 < 0 || ((c1 == 0) && errno))
-			return errno;
-		if (c1 == 0)
-			break; 	/* EOF */
+		c1 = اقرأ(fdin, buf, شمار);
+		إذا (c1 < 0 || ((c1 == 0) && errno))
+			أرجع errno;
+		إذا (c1 == 0)
+			اكسر; 	/* EOF */
 
-		for (ptr = buf, c = c1; c > 0; ptr += c2, c -= c2) {
+		لكل (ptr = buf, c = c1; c > 0; ptr += c2, c -= c2) {
 			errno = 0;
-			c2 = write(fdout, ptr, c1);
-			if (c2 < 0 || ((c2 == 0) && errno))
-				return errno;
-			if (c2 == 0 && --retries <= 0)
-				break; /* This should never happen...  */
+			c2 = اكتب(fdout, ptr, c1);
+			إذا (c2 < 0 || ((c2 == 0) && errno))
+				أرجع errno;
+			إذا (c2 == 0 && --retries <= 0)
+				اكسر; /* This should never happen...  */
 		}
-		count -= c1;
+		شمار -= c1;
 	}
-	return 0;
+	أرجع 0;
 }
 
 
-int qcow2_write_raw_image(int qcow2_fd, int raw_fd,
-			      struct ext2_qcow2_hdr *hdr)
+صحيح qcow2_write_raw_image(صحيح qcow2_fd, صحيح raw_fd,
+			      بنية ext2_qcow2_hdr *hdr)
 {
-	struct ext2_qcow2_image img;
+	بنية ext2_qcow2_image img;
 	errcode_t ret = 0;
-	unsigned int l1_index, l2_index;
-	__u64 offset;
-	blk64_t *l1_table, *l2_table = NULL;
-	void *copy_buf = NULL;
-	size_t size;
-	unsigned int max_l1_size;
+	بیعلامت صحيح l1_شاخص, l2_شاخص;
+	__u64 جابه_جایی;
+	blk64_t *l1_جدول, *l2_جدول = عدم;
+	فراغ *copy_buf = عدم;
+	size_t اندازه;
+	بیعلامت صحيح max_l1_اندازه;
 
-	if (hdr->crypt_method)
-		return -QCOW_ENCRYPTED;
+	إذا (hdr->crypt_روش)
+		أرجع -QCOW_ENCRYPTED;
 
 	img.fd = qcow2_fd;
 	img.hdr = hdr;
-	img.l2_cache = NULL;
-	img.l1_table = NULL;
-	img.cluster_bits = ext2fs_be32_to_cpu(hdr->cluster_bits);
-	if (img.cluster_bits < 9 || img.cluster_bits > 31)
-		return -QCOW_CORRUPTED;
-	img.cluster_size = 1 << img.cluster_bits;
-	img.l1_size = ext2fs_be32_to_cpu(hdr->l1_size);
-	img.l1_offset = ext2fs_be64_to_cpu(hdr->l1_table_offset);
-	img.l2_size = 1 << (img.cluster_bits - 3);
-	img.image_size = ext2fs_be64_to_cpu(hdr->size);
+	img.l2_cache = عدم;
+	img.l1_جدول = عدم;
+	img.cluster_بیتها = ext2fs_be32_مقصد_cpu(hdr->cluster_بیتها);
+	إذا (img.cluster_بیتها < 9 || img.cluster_بیتها > 31)
+		أرجع -QCOW_CORRUPTED;
+	img.cluster_اندازه = 1 << img.cluster_بیتها;
+	img.l1_اندازه = ext2fs_be32_مقصد_cpu(hdr->l1_اندازه);
+	img.l1_جابه_جایی = ext2fs_be64_مقصد_cpu(hdr->l1_جدول_جابه_جایی);
+	img.l2_اندازه = 1 << (img.cluster_بیتها - 3);
+	img.image_اندازه = ext2fs_be64_مقصد_cpu(hdr->اندازه);
 
-	if (img.l1_offset & (img.cluster_size - 1))
-		return -QCOW_CORRUPTED;
+	إذا (img.l1_جابه_جایی & (img.cluster_اندازه - 1))
+		أرجع -QCOW_CORRUPTED;
 
-	max_l1_size = (img.image_size >> ((2 * img.cluster_bits) - 3)) +
-		img.cluster_size;
-	if (img.l1_size > max_l1_size)
-		return -QCOW_CORRUPTED;
+	max_l1_اندازه = (img.image_اندازه >> ((2 * img.cluster_بیتها) - 3)) +
+		img.cluster_اندازه;
+	إذا (img.l1_اندازه > max_l1_اندازه)
+		أرجع -QCOW_CORRUPTED;
 
-	ret = ext2fs_get_memzero(img.cluster_size, &l2_table);
-	if (ret)
-		goto out;
+	ret = ext2fs_get_memzero(img.cluster_اندازه, &l2_جدول);
+	إذا (ret)
+		اذهب بیرون;
 
-	ret = ext2fs_get_memzero(1 << img.cluster_bits, &copy_buf);
-	if (ret)
-		goto out;
+	ret = ext2fs_get_memzero(1 << img.cluster_بیتها, &copy_buf);
+	إذا (ret)
+		اذهب بیرون;
 
-	if (ext2fs_llseek(raw_fd, 0, SEEK_SET) < 0) {
+	إذا (ext2fs_llseek(raw_fd, 0, SEEK_SET) < 0) {
 		ret = errno;
-		goto out;
+		اذهب بیرون;
 	}
 
-	ret = qcow2_read_l1_table(&img);
-	if (ret)
-		goto out;
+	ret = qcow2_read_l1_جدول(&img);
+	إذا (ret)
+		اذهب بیرون;
 
-	l1_table = img.l1_table;
+	l1_جدول = img.l1_جدول;
 	/* Walk through l1 table */
-	for (l1_index = 0; l1_index < img.l1_size; l1_index++) {
-		__u64 off_out;
+	لكل (l1_شاخص = 0; l1_شاخص < img.l1_اندازه; l1_شاخص++) {
+		__u64 off_بیرون;
 
-		offset = ext2fs_be64_to_cpu(l1_table[l1_index]) &
+		جابه_جایی = ext2fs_be64_مقصد_cpu(l1_جدول[l1_شاخص]) &
 			 ~QCOW_OFLAG_COPIED;
 
-		if ((offset > img.image_size) ||
-		    (offset <= 0))
-			continue;
+		إذا ((جابه_جایی > img.image_اندازه) ||
+		    (جابه_جایی <= 0))
+			استمر;
 
-		if (offset & QCOW_OFLAG_COMPRESSED) {
+		إذا (جابه_جایی & QCOW_OFLAG_COMPRESSED) {
 			ret = -QCOW_COMPRESSED;
-			goto out;
+			اذهب بیرون;
 		}
 
-		ret = qcow2_read_l2_table(&img, offset, &l2_table);
-		if (ret)
-			break;
+		ret = qcow2_read_l2_جدول(&img, جابه_جایی, &l2_جدول);
+		إذا (ret)
+			اكسر;
 
 		/* Walk through l2 table and copy data blocks into raw image */
-		for (l2_index = 0; l2_index < img.l2_size; l2_index++) {
-			offset = ext2fs_be64_to_cpu(l2_table[l2_index]) &
+		لكل (l2_شاخص = 0; l2_شاخص < img.l2_اندازه; l2_شاخص++) {
+			جابه_جایی = ext2fs_be64_مقصد_cpu(l2_جدول[l2_شاخص]) &
 				 ~QCOW_OFLAG_COPIED;
 
-			if (offset == 0)
-				continue;
+			إذا (جابه_جایی == 0)
+				استمر;
 
-			off_out = ((__u64)l1_index * img.l2_size) +
-				  l2_index;
-			off_out <<= img.cluster_bits;
-			ret = qcow2_copy_data(qcow2_fd, raw_fd, offset,
-					off_out, copy_buf, img.cluster_size);
-			if (ret)
-				goto out;
+			off_بیرون = ((__u64)l1_شاخص * img.l2_اندازه) +
+				  l2_شاخص;
+			off_بیرون <<= img.cluster_بیتها;
+			ret = qcow2_copy_داده(qcow2_fd, raw_fd, جابه_جایی,
+					off_بیرون, copy_buf, img.cluster_اندازه);
+			إذا (ret)
+				اذهب بیرون;
 		}
 	}
 
 	/* Resize the output image to the filesystem size */
-	if (ext2fs_llseek(raw_fd, img.image_size - 1, SEEK_SET) < 0) {
+	إذا (ext2fs_llseek(raw_fd, img.image_اندازه - 1, SEEK_SET) < 0) {
 		ret = errno;
-		goto out;
+		اذهب بیرون;
 	}
 
-	((char *)copy_buf)[0] = 0;
-	size = write(raw_fd, copy_buf, 1);
-	if (size != 1) {
+	((حرف *)copy_buf)[0] = 0;
+	اندازه = اكتب(raw_fd, copy_buf, 1);
+	إذا (اندازه != 1) {
 		ret = errno;
-		goto out;
+		اذهب بیرون;
 	}
 
-out:
-	if (copy_buf)
+بیرون:
+	إذا (copy_buf)
 		ext2fs_free_mem(&copy_buf);
-	if (img.l1_table)
-		ext2fs_free_mem(&img.l1_table);
-	if (l2_table)
-		ext2fs_free_mem(&l2_table);
-	return ret;
+	إذا (img.l1_جدول)
+		ext2fs_free_mem(&img.l1_جدول);
+	إذا (l2_جدول)
+		ext2fs_free_mem(&l2_جدول);
+	أرجع ret;
 }

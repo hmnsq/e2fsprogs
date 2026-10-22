@@ -9,73 +9,73 @@
  * %End-Header%
  */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#ضمن <stdio.h>
+#ضمن <unistd.h>
+#ضمن <stdlib.h>
 
-#include "ext2fs.h"
+#ضمن "ext2fs.h"
 
-struct struct_ext2_filsys fs;
+بنية struct_ext2_filsys fs;
 
-#ifndef offsetof
-#define offsetof(type, member)  __builtin_offsetof (type, member)
-#endif
-#define check_field(x) cur_offset = do_field(#x, sizeof(fs.x),		\
-					offsetof(struct struct_ext2_filsys, x), \
-					cur_offset)
+#اگر_تعریف_نشده offsetof
+#تعریف_کن offsetof(type, member)  __builtin_offsetof (type, member)
+#پایان_اگر
+#تعریف_کن check_فیلد(x) cur_جابه_جایی = do_فیلد(#x, حجم(fs.x),		\
+					offsetof(بنية struct_ext2_filsys, x), \
+					cur_جابه_جایی)
 
-static int do_field(const char *field, size_t size, int offset, int cur_offset)
+ساكن صحيح do_فیلد(ثابت حرف *فیلد, size_t اندازه, صحيح جابه_جایی, صحيح cur_جابه_جایی)
 {
-	if (offset != cur_offset) {
-		printf("\t(padding %d bytes?)\n", offset - cur_offset);
+	إذا (جابه_جایی != cur_جابه_جایی) {
+		چاپ_کن("\t(padding %d bytes?)\n", جابه_جایی - cur_جابه_جایی);
 	}
-	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	چاپ_کن("%8d %-30s %3u\n", جابه_جایی, فیلد, (بیعلامت) اندازه);
+	أرجع جابه_جایی + اندازه;
 }
 
-int main(int argc, char **argv)
+صحيح اصلی(صحيح argc, حرف **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#إذا (__GNUC__ >= 4)
+	صحيح cur_جابه_جایی = 0;
 
-	printf("%8s %-30s %3s\n", "offset", "field", "size");
-	check_field(magic);
-	check_field(io);
-	check_field(flags);
-	check_field(device_name);
-	check_field(super);
-	check_field(blocksize);
-	check_field(fragsize);
-	check_field(group_desc_count);
-	check_field(desc_blocks);
-	check_field(group_desc);
-	check_field(inode_blocks_per_group);
-	check_field(inode_map);
-	check_field(block_map);
-	check_field(get_blocks);
-	check_field(check_directory);
-	check_field(write_bitmaps);
-	check_field(read_inode);
-	check_field(write_inode);
-	check_field(badblocks);
-	check_field(dblist);
-	check_field(stride);
-	check_field(orig_super);
-	check_field(image_header);
-	check_field(umask);
-	check_field(now);
-	check_field(cluster_ratio_bits);
-	check_field(reserved);
-	check_field(priv_data);
-	check_field(icache);
-	check_field(image_io);
-	check_field(get_alloc_block);
-	check_field(block_alloc_stats);
-	check_field(mmp_buf);
-	check_field(mmp_cmp);
-	check_field(mmp_fd);
-	check_field(mmp_last_written);
-	printf("Ending offset is %d\n\n", cur_offset);
-#endif
-	exit(0);
+	چاپ_کن("%8s %-30s %3s\n", "offset", "field", "size");
+	check_فیلد(magic);
+	check_فیلد(io);
+	check_فیلد(flags);
+	check_فیلد(device_name);
+	check_فیلد(super);
+	check_فیلد(blocksize);
+	check_فیلد(fragsize);
+	check_فیلد(گروه_desc_شمار);
+	check_فیلد(desc_بلوکها);
+	check_فیلد(گروه_desc);
+	check_فیلد(inode_بلوکها_در_هر_گروه);
+	check_فیلد(inode_map);
+	check_فیلد(بلوک_map);
+	check_فیلد(get_بلوکها);
+	check_فیلد(check_directory);
+	check_فیلد(write_bitmaps);
+	check_فیلد(read_inode);
+	check_فیلد(write_inode);
+	check_فیلد(badblocks);
+	check_فیلد(dblist);
+	check_فیلد(stride);
+	check_فیلد(orig_super);
+	check_فیلد(image_سرآیند);
+	check_فیلد(umask);
+	check_فیلد(now);
+	check_فیلد(cluster_نسبت_بیتها);
+	check_فیلد(reserved);
+	check_فیلد(priv_داده);
+	check_فیلد(icache);
+	check_فیلد(image_io);
+	check_فیلد(get_alloc_بلوک);
+	check_فیلد(بلوک_alloc_stats);
+	check_فیلد(mmp_buf);
+	check_فیلد(mmp_cmp);
+	check_فیلد(mmp_fd);
+	check_فیلد(mmp_آخرین_written);
+	چاپ_کن("Ending offset is %d\n\n", cur_جابه_جایی);
+#پایان_اگر
+	خروج(0);
 }

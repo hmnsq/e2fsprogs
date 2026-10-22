@@ -10,64 +10,64 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <time.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#پایان_اگر
+#إذا HAVE_ERRNO_H
+#ضمن <errno.h>
+#پایان_اگر
+#ضمن <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#تعریف_کن EXT2_CHECK_MAGIC(بنية, کد) \
+	  إذا ((بنية)->magic != (کد)) أرجع (کد)
 
-struct inode_private_data {
-	int				magic;
-	char				name[32];
+بنية inode_خصوصی_داده {
+	صحيح				magic;
+	حرف				name[32];
 	ext2_file_t			file;
 	ext2_filsys			fs;
 	ext2_ino_t 			ino;
-	struct ext2_inode		inode;
-	int				flags;
-	struct inode_private_data	*next;
+	بنية ext2_inode		inode;
+	صحيح				flags;
+	بنية inode_خصوصی_داده	*بعدی;
 };
 
-#define CHANNEL_HAS_INODE	0x8000
+#تعریف_کن CHANNEL_HAS_INODE	0x8000
 
-static struct inode_private_data *top_intern;
-static int ino_unique = 0;
+ساكن بنية inode_خصوصی_داده *بالاترین_intern;
+ساكن صحيح ino_unique = 0;
 
-static errcode_t inode_open(const char *name, int flags, io_channel *channel);
-static errcode_t inode_close(io_channel channel);
-static errcode_t inode_set_blksize(io_channel channel, int blksize);
-static errcode_t inode_read_blk(io_channel channel, unsigned long block,
-			       int count, void *data);
-static errcode_t inode_write_blk(io_channel channel, unsigned long block,
-				int count, const void *data);
-static errcode_t inode_flush(io_channel channel);
-static errcode_t inode_write_byte(io_channel channel, unsigned long offset,
-				int size, const void *data);
-static errcode_t inode_read_blk64(io_channel channel,
-				unsigned long long block, int count, void *data);
-static errcode_t inode_write_blk64(io_channel channel,
-				unsigned long long block, int count, const void *data);
+ساكن errcode_t inode_open(ثابت حرف *name, صحيح flags, io_channel *channel);
+ساكن errcode_t inode_close(io_channel channel);
+ساكن errcode_t inode_مجموعه_blksize(io_channel channel, صحيح blksize);
+ساكن errcode_t inode_read_blk(io_channel channel, بیعلامت دراز بلوک,
+			       صحيح شمار, فراغ *داده);
+ساكن errcode_t inode_write_blk(io_channel channel, بیعلامت دراز بلوک,
+				صحيح شمار, ثابت فراغ *داده);
+ساكن errcode_t inode_flush(io_channel channel);
+ساكن errcode_t inode_write_byte(io_channel channel, بیعلامت دراز جابه_جایی,
+				صحيح اندازه, ثابت فراغ *داده);
+ساكن errcode_t inode_read_blk64(io_channel channel,
+				بیعلامت دراز دراز بلوک, صحيح شمار, فراغ *داده);
+ساكن errcode_t inode_write_blk64(io_channel channel,
+				بیعلامت دراز دراز بلوک, صحيح شمار, ثابت فراغ *داده);
 
-static struct struct_io_manager struct_inode_manager = {
+ساكن بنية struct_io_manager struct_inode_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Inode I/O Manager",
 	.open		= inode_open,
 	.close		= inode_close,
-	.set_blksize	= inode_set_blksize,
+	.مجموعه_blksize	= inode_مجموعه_blksize,
 	.read_blk	= inode_read_blk,
 	.write_blk	= inode_write_blk,
 	.flush		= inode_flush,
@@ -79,212 +79,212 @@ static struct struct_io_manager struct_inode_manager = {
 io_manager inode_io_manager = &struct_inode_manager;
 
 errcode_t ext2fs_inode_io_intern2(ext2_filsys fs, ext2_ino_t ino,
-				  struct ext2_inode *inode,
-				  char **name)
+				  بنية ext2_inode *inode,
+				  حرف **name)
 {
-	struct inode_private_data 	*data;
+	بنية inode_خصوصی_داده 	*داده;
 	errcode_t			retval;
 
-	if ((retval = ext2fs_get_mem(sizeof(struct inode_private_data),
-				     &data)))
-		return retval;
-	data->magic = EXT2_ET_MAGIC_INODE_IO_CHANNEL;
-	sprintf(data->name, "%u:%d", ino, ino_unique++);
-	data->file = 0;
-	data->fs = fs;
-	data->ino = ino;
-	data->flags = 0;
-	if (inode) {
-		memcpy(&data->inode, inode, sizeof(struct ext2_inode));
-		data->flags |= CHANNEL_HAS_INODE;
+	إذا ((retval = ext2fs_get_mem(حجم(بنية inode_خصوصی_داده),
+				     &داده)))
+		أرجع retval;
+	داده->magic = EXT2_ET_MAGIC_INODE_IO_CHANNEL;
+	sprintf(داده->name, "%u:%d", ino, ino_unique++);
+	داده->file = 0;
+	داده->fs = fs;
+	داده->ino = ino;
+	داده->flags = 0;
+	إذا (inode) {
+		کپی_حافظه(&داده->inode, inode, حجم(بنية ext2_inode));
+		داده->flags |= CHANNEL_HAS_INODE;
 	}
-	data->next = top_intern;
-	top_intern = data;
-	*name = data->name;
-	return 0;
+	داده->بعدی = بالاترین_intern;
+	بالاترین_intern = داده;
+	*name = داده->name;
+	أرجع 0;
 }
 
 errcode_t ext2fs_inode_io_intern(ext2_filsys fs, ext2_ino_t ino,
-				 char **name)
+				 حرف **name)
 {
-	return ext2fs_inode_io_intern2(fs, ino, NULL, name);
+	أرجع ext2fs_inode_io_intern2(fs, ino, عدم, name);
 }
 
 
-static errcode_t inode_open(const char *name, int flags, io_channel *channel)
+ساكن errcode_t inode_open(ثابت حرف *name, صحيح flags, io_channel *channel)
 {
-	io_channel	io = NULL;
-	struct inode_private_data *prev, *data = NULL;
+	io_channel	io = عدم;
+	بنية inode_خصوصی_داده *prev, *داده = عدم;
 	errcode_t	retval;
-	int		open_flags;
+	صحيح		open_flags;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	إذا (name == 0)
+		أرجع EXT2_ET_BAD_DEVICE_NAME;
 
-	for (data = top_intern, prev = NULL; data;
-	     prev = data, data = data->next)
-		if (strcmp(name, data->name) == 0)
-			break;
-	if (!data)
-		return ENOENT;
-	if (prev)
-		prev->next = data->next;
-	else
-		top_intern = data->next;
+	لكل (داده = بالاترین_intern, prev = عدم; داده;
+	     prev = داده, داده = داده->بعدی)
+		إذا (strcmp(name, داده->name) == 0)
+			اكسر;
+	إذا (!داده)
+		أرجع ENOENT;
+	إذا (prev)
+		prev->بعدی = داده->بعدی;
+	وإلا
+		بالاترین_intern = داده->بعدی;
 
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	retval = ext2fs_get_mem(حجم(بنية struct_io_channel), &io);
+	إذا (retval)
+		اذهب cleanup;
+	memset(io, 0, حجم(بنية struct_io_channel));
 
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
 	io->manager = inode_io_manager;
-	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(طول_رشته(name)+1, &io->name);
+	إذا (retval)
+		اذهب cleanup;
 
 	strcpy(io->name, name);
-	io->private_data = data;
-	io->block_size = 1024;
+	io->خصوصی_داده = داده;
+	io->بلوک_اندازه = 1024;
 	io->read_error = 0;
 	io->write_error = 0;
 	io->refcount = 1;
 
 	open_flags = (flags & IO_FLAG_RW) ? EXT2_FILE_WRITE : 0;
-	retval = ext2fs_file_open2(data->fs, data->ino,
-				   (data->flags & CHANNEL_HAS_INODE) ?
-				   &data->inode : 0, open_flags,
-				   &data->file);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_file_open2(داده->fs, داده->ino,
+				   (داده->flags & CHANNEL_HAS_INODE) ?
+				   &داده->inode : 0, open_flags,
+				   &داده->file);
+	إذا (retval)
+		اذهب cleanup;
 
 	*channel = io;
-	return 0;
+	أرجع 0;
 
 cleanup:
-	if (io && io->name)
+	إذا (io && io->name)
 		ext2fs_free_mem(&io->name);
-	if (data)
-		ext2fs_free_mem(&data);
-	if (io)
+	إذا (داده)
+		ext2fs_free_mem(&داده);
+	إذا (io)
 		ext2fs_free_mem(&io);
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t inode_close(io_channel channel)
+ساكن errcode_t inode_close(io_channel channel)
 {
-	struct inode_private_data *data;
+	بنية inode_خصوصی_داده *داده;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
+	داده = (بنية inode_خصوصی_داده *) channel->خصوصی_داده;
+	EXT2_CHECK_MAGIC(داده, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	إذا (--channel->refcount > 0)
+		أرجع 0;
 
-	retval = ext2fs_file_close(data->file);
+	retval = ext2fs_file_close(داده->file);
 
-	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	ext2fs_free_mem(&channel->خصوصی_داده);
+	إذا (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t inode_set_blksize(io_channel channel, int blksize)
+ساكن errcode_t inode_مجموعه_blksize(io_channel channel, صحيح blksize)
 {
-	struct inode_private_data *data;
+	بنية inode_خصوصی_داده *داده;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
+	داده = (بنية inode_خصوصی_داده *) channel->خصوصی_داده;
+	EXT2_CHECK_MAGIC(داده, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	channel->block_size = blksize;
-	return 0;
+	channel->بلوک_اندازه = blksize;
+	أرجع 0;
 }
 
 
-static errcode_t inode_read_blk64(io_channel channel,
-				unsigned long long block, int count, void *buf)
+ساكن errcode_t inode_read_blk64(io_channel channel,
+				بیعلامت دراز دراز بلوک, صحيح شمار, فراغ *buf)
 {
-	struct inode_private_data *data;
+	بنية inode_خصوصی_داده *داده;
 	errcode_t	retval;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
+	داده = (بنية inode_خصوصی_داده *) channel->خصوصی_داده;
+	EXT2_CHECK_MAGIC(داده, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if ((retval = ext2fs_file_llseek(data->file,
-				(ext2_off64_t)(block * channel->block_size),
-				EXT2_SEEK_SET, 0)))
-		return retval;
+	إذا ((retval = ext2fs_file_llseek(داده->file,
+				(ext2_off64_t)(بلوک * channel->بلوک_اندازه),
+				EXT2_SEEK_مجموعه, 0)))
+		أرجع retval;
 
-	count = (count < 0) ? -count : (count * channel->block_size);
+	شمار = (شمار < 0) ? -شمار : (شمار * channel->بلوک_اندازه);
 
-	return ext2fs_file_read(data->file, buf, count, 0);
+	أرجع ext2fs_file_read(داده->file, buf, شمار, 0);
 }
 
-static errcode_t inode_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+ساكن errcode_t inode_read_blk(io_channel channel, بیعلامت دراز بلوک,
+			       صحيح شمار, فراغ *buf)
 {
-	return inode_read_blk64(channel, block, count, buf);
+	أرجع inode_read_blk64(channel, بلوک, شمار, buf);
 }
 
-static errcode_t inode_write_blk64(io_channel channel,
-				unsigned long long block, int count, const void *buf)
+ساكن errcode_t inode_write_blk64(io_channel channel,
+				بیعلامت دراز دراز بلوک, صحيح شمار, ثابت فراغ *buf)
 {
-	struct inode_private_data *data;
+	بنية inode_خصوصی_داده *داده;
 	errcode_t	retval;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
+	داده = (بنية inode_خصوصی_داده *) channel->خصوصی_داده;
+	EXT2_CHECK_MAGIC(داده, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if ((retval = ext2fs_file_llseek(data->file,
-				(ext2_off64_t) (block * channel->block_size),
-				EXT2_SEEK_SET, 0)))
-		return retval;
+	إذا ((retval = ext2fs_file_llseek(داده->file,
+				(ext2_off64_t) (بلوک * channel->بلوک_اندازه),
+				EXT2_SEEK_مجموعه, 0)))
+		أرجع retval;
 
-	count = (count < 0) ? -count : (count * channel->block_size);
+	شمار = (شمار < 0) ? -شمار : (شمار * channel->بلوک_اندازه);
 
-	return ext2fs_file_write(data->file, buf, count, 0);
+	أرجع ext2fs_file_write(داده->file, buf, شمار, 0);
 }
 
-static errcode_t inode_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+ساكن errcode_t inode_write_blk(io_channel channel, بیعلامت دراز بلوک,
+				صحيح شمار, ثابت فراغ *buf)
 {
-	return inode_write_blk64(channel, block, count, buf);
+	أرجع inode_write_blk64(channel, بلوک, شمار, buf);
 }
 
-static errcode_t inode_write_byte(io_channel channel, unsigned long offset,
-				 int size, const void *buf)
+ساكن errcode_t inode_write_byte(io_channel channel, بیعلامت دراز جابه_جایی,
+				 صحيح اندازه, ثابت فراغ *buf)
 {
-	struct inode_private_data *data;
+	بنية inode_خصوصی_داده *داده;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
+	داده = (بنية inode_خصوصی_داده *) channel->خصوصی_داده;
+	EXT2_CHECK_MAGIC(داده, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if ((retval = ext2fs_file_lseek(data->file, offset,
-					EXT2_SEEK_SET, 0)))
-		return retval;
+	إذا ((retval = ext2fs_file_lseek(داده->file, جابه_جایی,
+					EXT2_SEEK_مجموعه, 0)))
+		أرجع retval;
 
-	return ext2fs_file_write(data->file, buf, size, 0);
+	أرجع ext2fs_file_write(داده->file, buf, اندازه, 0);
 }
 
 /*
  * Flush data buffers to disk.
  */
-static errcode_t inode_flush(io_channel channel)
+ساكن errcode_t inode_flush(io_channel channel)
 {
-	struct inode_private_data *data;
+	بنية inode_خصوصی_داده *داده;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
+	داده = (بنية inode_خصوصی_داده *) channel->خصوصی_داده;
+	EXT2_CHECK_MAGIC(داده, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	return ext2fs_file_flush(data->file);
+	أرجع ext2fs_file_flush(داده->file);
 }
 

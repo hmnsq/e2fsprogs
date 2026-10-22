@@ -9,81 +9,81 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <unistd.h>
+#ضمن <stdlib.h>
 
-#include "ext2_fs.h"
+#ضمن "ext2_fs.h"
 
-struct ext2_inode_large inode;
+بنية ext2_inode_large inode;
 
-#ifndef offsetof
-#define offsetof(type, member)  __builtin_offsetof(type, member)
-#endif
+#اگر_تعریف_نشده offsetof
+#تعریف_کن offsetof(type, member)  __builtin_offsetof(type, member)
+#پایان_اگر
 
-#define check_field(x, s) cur_offset = do_field(#x, s, sizeof(inode.x),	       \
-					offsetof(struct ext2_inode_large, x),  \
-					cur_offset)
+#تعریف_کن check_فیلد(x, s) cur_جابه_جایی = do_فیلد(#x, s, حجم(inode.x),	       \
+					offsetof(بنية ext2_inode_large, x),  \
+					cur_جابه_جایی)
 
-static int do_field(const char *field, unsigned size, unsigned cur_size,
-		    unsigned offset, unsigned cur_offset)
+ساكن صحيح do_فیلد(ثابت حرف *فیلد, بیعلامت اندازه, بیعلامت cur_اندازه,
+		    بیعلامت جابه_جایی, بیعلامت cur_جابه_جایی)
 {
-	if (size != cur_size) {
-		printf("error: %s size %u should be %u\n",
-		       field, cur_size, size);
-		exit(1);
+	إذا (اندازه != cur_اندازه) {
+		چاپ_کن("error: %s size %u should be %u\n",
+		       فیلد, cur_اندازه, اندازه);
+		خروج(1);
 	}
-	if (offset != cur_offset) {
-		printf("error: %s offset %u should be %u\n",
-		       field, cur_offset, offset);
-		exit(1);
+	إذا (جابه_جایی != cur_جابه_جایی) {
+		چاپ_کن("error: %s offset %u should be %u\n",
+		       فیلد, cur_جابه_جایی, جابه_جایی);
+		خروج(1);
 	}
-	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	چاپ_کن("%8d %-30s %3u\n", جابه_جایی, فیلد, (بیعلامت) اندازه);
+	أرجع جابه_جایی + اندازه;
 }
 
-int main(int argc, char **argv)
+صحيح اصلی(صحيح argc, حرف **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#إذا (__GNUC__ >= 4)
+	صحيح cur_جابه_جایی = 0;
 
-	printf("%8s %-30s %3s\n", "offset", "field", "size");
-	check_field(i_mode, 2);
-	check_field(i_uid, 2);
-	check_field(i_size, 4);
-	check_field(i_atime, 4);
-	check_field(i_ctime, 4);
-	check_field(i_mtime, 4);
-	check_field(i_dtime, 4);
-	check_field(i_gid, 2);
-	check_field(i_links_count, 2);
-	check_field(i_blocks, 4);
-	check_field(i_flags, 4);
-	check_field(osd1.linux1.l_i_version, 4);
-	check_field(i_block, 15 * 4);
-	check_field(i_generation, 4);
-	check_field(i_file_acl, 4);
-	check_field(i_size_high, 4);
-	check_field(i_faddr, 4);
-	check_field(osd2.linux2.l_i_blocks_hi, 2);
-	check_field(osd2.linux2.l_i_file_acl_high, 2);
-	check_field(osd2.linux2.l_i_uid_high, 2);
-	check_field(osd2.linux2.l_i_gid_high, 2);
-	check_field(osd2.linux2.l_i_checksum_lo, 2);
-	check_field(osd2.linux2.l_i_reserved, 2);
-	do_field("Small inode end", 0, 0, cur_offset, 128);
-	check_field(i_extra_isize, 2);
-	check_field(i_checksum_hi, 2);
-	check_field(i_ctime_extra, 4);
-	check_field(i_mtime_extra, 4);
-	check_field(i_atime_extra, 4);
-	check_field(i_crtime, 4);
-	check_field(i_crtime_extra, 4);
-	check_field(i_version_hi, 4);
-	check_field(i_projid, 4);
+	چاپ_کن("%8s %-30s %3s\n", "offset", "field", "size");
+	check_فیلد(i_نما, 2);
+	check_فیلد(i_uid, 2);
+	check_فیلد(i_اندازه, 4);
+	check_فیلد(i_atime, 4);
+	check_فیلد(i_ctime, 4);
+	check_فیلد(i_mtime, 4);
+	check_فیلد(i_dtime, 4);
+	check_فیلد(i_gid, 2);
+	check_فیلد(i_links_شمار, 2);
+	check_فیلد(i_بلوکها, 4);
+	check_فیلد(i_flags, 4);
+	check_فیلد(osd1.linux1.l_i_نسخه, 4);
+	check_فیلد(i_بلوک, 15 * 4);
+	check_فیلد(i_generation, 4);
+	check_فیلد(i_file_acl, 4);
+	check_فیلد(i_اندازه_بالا, 4);
+	check_فیلد(i_faddr, 4);
+	check_فیلد(osd2.linux2.l_i_بلوکها_hi, 2);
+	check_فیلد(osd2.linux2.l_i_file_acl_بالا, 2);
+	check_فیلد(osd2.linux2.l_i_uid_بالا, 2);
+	check_فیلد(osd2.linux2.l_i_gid_بالا, 2);
+	check_فیلد(osd2.linux2.l_i_checksum_lo, 2);
+	check_فیلد(osd2.linux2.l_i_reserved, 2);
+	do_فیلد("Small inode end", 0, 0, cur_جابه_جایی, 128);
+	check_فیلد(i_extra_isize, 2);
+	check_فیلد(i_checksum_hi, 2);
+	check_فیلد(i_ctime_extra, 4);
+	check_فیلد(i_mtime_extra, 4);
+	check_فیلد(i_atime_extra, 4);
+	check_فیلد(i_crtime, 4);
+	check_فیلد(i_crtime_extra, 4);
+	check_فیلد(i_نسخه_hi, 4);
+	check_فیلد(i_projid, 4);
 	/* This size will change as new fields are added */
-	do_field("Large inode end", 0, 0, cur_offset, sizeof(inode));
-#endif
-	return 0;
+	do_فیلد("Large inode end", 0, 0, cur_جابه_جایی, حجم(inode));
+#پایان_اگر
+	أرجع 0;
 }

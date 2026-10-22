@@ -10,142 +10,142 @@
  * %End-Header%
  */
 
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
+#اگر_تعریف_نشده LARGEFILE_منبع
+#تعریف_کن LARGEFILE_منبع
+#پایان_اگر
+#اگر_تعریف_نشده LARGEFILE64_منبع
+#تعریف_کن LARGEFILE64_منبع
+#پایان_اگر
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <fcntl.h>
-#ifdef HAVE_SYS_DISK_H
-#include <sys/disk.h>
-#endif
-#ifdef HAVE_LINUX_FD_H
-#include <sys/ioctl.h>
-#include <linux/fd.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#پایان_اگر
+#إذا HAVE_ERRNO_H
+#ضمن <errno.h>
+#پایان_اگر
+#ضمن <fcntl.h>
+#اگر_تعریف_شده HAVE_SYS_DISK_H
+#ضمن <sys/disk.h>
+#پایان_اگر
+#اگر_تعریف_شده HAVE_LINUX_FD_H
+#ضمن <sys/ioctl.h>
+#ضمن <linux/fd.h>
+#پایان_اگر
 
-#if defined(__linux__) && defined(_IO)
-#if !defined(BLKSSZGET)
-#define BLKSSZGET  _IO(0x12,104)/* get block device sector size */
-#endif
-#if !defined(BLKPBSZGET)
-#define BLKPBSZGET _IO(0x12,123)/* get block physical sector size */
-#endif
-#endif
+#إذا defined(__linux__) && defined(_IO)
+#إذا !defined(BLKSSZGET)
+#تعریف_کن BLKSSZGET  _IO(0x12,104)/* get block device sector size */
+#پایان_اگر
+#إذا !defined(BLKPBSZGET)
+#تعریف_کن BLKPBSZGET _IO(0x12,123)/* get block physical sector size */
+#پایان_اگر
+#پایان_اگر
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
 /*
  * Returns the logical sector size of a device
  */
-errcode_t ext2fs_get_device_sectsize(const char *file, int *sectsize)
+errcode_t ext2fs_get_device_sectsize(ثابت حرف *file, صحيح *sectsize)
 {
-#ifdef _WIN32
+#اگر_تعریف_شده _WIN32
 	*sectsize = 512; // just guessing
-	return 0;
-#else // not _WIN32
+	أرجع 0;
+#وإلا // not _WIN32
 
-	int	fd;
+	صحيح	fd;
 
 	fd = ext2fs_open_file(file, O_RDONLY, 0);
-	if (fd < 0)
-		return errno;
+	إذا (fd < 0)
+		أرجع errno;
 
-#ifdef BLKSSZGET
-	if (ioctl(fd, BLKSSZGET, sectsize) >= 0) {
+#اگر_تعریف_شده BLKSSZGET
+	إذا (ioctl(fd, BLKSSZGET, sectsize) >= 0) {
 		close(fd);
-		return 0;
+		أرجع 0;
 	}
-#endif
-#ifdef DIOCGSECTORSIZE
-	if (ioctl(fd, DIOCGSECTORSIZE, sectsize) >= 0) {
+#پایان_اگر
+#اگر_تعریف_شده DIOCGSECTORSIZE
+	إذا (ioctl(fd, DIOCGSECTORSIZE, sectsize) >= 0) {
 		close(fd);
-		return 0;
+		أرجع 0;
 	}
-#endif
+#پایان_اگر
 	*sectsize = 0;
 	close(fd);
-	return 0;
+	أرجع 0;
 
-#endif // ifdef _WIN32
+#پایان_اگر // ifdef _WIN32
 }
 
 /*
  * Return desired alignment for direct I/O
  */
-int ext2fs_get_dio_alignment(int fd)
+صحيح ext2fs_get_dio_alignment(صحيح fd)
 {
-	int align = 0;
+	صحيح align = 0;
 
-#ifdef BLKSSZGET
-	if (ioctl(fd, BLKSSZGET, &align) < 0)
+#اگر_تعریف_شده BLKSSZGET
+	إذا (ioctl(fd, BLKSSZGET, &align) < 0)
 		align = 0;
-#endif
-#ifdef DIOCGSECTORSIZE
-	if (align <= 0 &&
+#پایان_اگر
+#اگر_تعریف_شده DIOCGSECTORSIZE
+	إذا (align <= 0 &&
 	    ioctl(fd, DIOCGSECTORSIZE, &align) < 0)
 		align = 0;
-#endif
+#پایان_اگر
 
-#ifdef _SC_PAGESIZE
-	if (align <= 0)
+#اگر_تعریف_شده _SC_PAGESIZE
+	إذا (align <= 0)
 		align = sysconf(_SC_PAGESIZE);
-#endif
-#ifdef HAVE_GETPAGESIZE
-	if (align <= 0)
+#پایان_اگر
+#اگر_تعریف_شده HAVE_GETPAGESIZE
+	إذا (align <= 0)
 		align = getpagesize();
-#endif
-	if (align <= 0)
+#پایان_اگر
+	إذا (align <= 0)
 		align = 4096;
 
-	return align;
+	أرجع align;
 }
 
 /*
  * Returns the physical sector size of a device
  */
-errcode_t ext2fs_get_device_phys_sectsize(const char *file, int *sectsize)
+errcode_t ext2fs_get_device_phys_sectsize(ثابت حرف *file, صحيح *sectsize)
 {
-#ifdef _WIN32
+#اگر_تعریف_شده _WIN32
 
-	return ext2fs_get_device_sectsize(file, sectsize);
+	أرجع ext2fs_get_device_sectsize(file, sectsize);
 
-#else // not _WIN32
+#وإلا // not _WIN32
 
-	int	fd;
+	صحيح	fd;
 
 	fd = ext2fs_open_file(file, O_RDONLY, 0);
-	if (fd < 0)
-		return errno;
+	إذا (fd < 0)
+		أرجع errno;
 
-#ifdef BLKPBSZGET
-	if (ioctl(fd, BLKPBSZGET, sectsize) >= 0) {
+#اگر_تعریف_شده BLKPBSZGET
+	إذا (ioctl(fd, BLKPBSZGET, sectsize) >= 0) {
 		close(fd);
-		return 0;
+		أرجع 0;
 	}
-#endif
-#ifdef DIOCGSECTORSIZE
+#پایان_اگر
+#اگر_تعریف_شده DIOCGSECTORSIZE
 	/* This isn't really the physical sector size, but FreeBSD
 	 * doesn't seem to have this concept. */
-	if (ioctl(fd, DIOCGSECTORSIZE, sectsize) >= 0) {
+	إذا (ioctl(fd, DIOCGSECTORSIZE, sectsize) >= 0) {
 		close(fd);
-		return 0;
+		أرجع 0;
 	}
-#endif
+#پایان_اگر
 	*sectsize = 0;
 	close(fd);
-	return 0;
+	أرجع 0;
 
-#endif // ifdef _WIN32
+#پایان_اگر // ifdef _WIN32
 }

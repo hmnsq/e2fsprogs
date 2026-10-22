@@ -9,135 +9,135 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#پایان_اگر
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
+#ضمن "ext2fsP.h"
 
-struct expand_dir_struct {
-	int		done;
-	int		newblocks;
+بنية expand_dir_struct {
+	صحيح		انجامشده;
+	صحيح		newblocks;
 	blk64_t		goal;
 	errcode_t	err;
 	ext2_ino_t	dir;
 };
 
-static int expand_dir_proc(ext2_filsys	fs,
+ساكن صحيح expand_dir_proc(ext2_filsys	fs,
 			   blk64_t	*blocknr,
 			   e2_blkcnt_t	blockcnt,
-			   blk64_t	ref_block EXT2FS_ATTR((unused)),
-			   int		ref_offset EXT2FS_ATTR((unused)),
-			   void		*priv_data)
+			   blk64_t	ref_بلوک EXT2FS_ATTR((استفادهنشده)),
+			   صحيح		ref_جابه_جایی EXT2FS_ATTR((استفادهنشده)),
+			   فراغ		*priv_داده)
 {
-	struct expand_dir_struct *es = (struct expand_dir_struct *) priv_data;
+	بنية expand_dir_struct *es = (بنية expand_dir_struct *) priv_داده;
 	blk64_t	new_blk;
-	char		*block;
+	حرف		*بلوک;
 	errcode_t	retval;
 
-	if (*blocknr) {
-		if (blockcnt >= 0)
+	إذا (*blocknr) {
+		إذا (blockcnt >= 0)
 			es->goal = *blocknr;
-		return 0;
+		أرجع 0;
 	}
-	if (blockcnt &&
+	إذا (blockcnt &&
 	    (EXT2FS_B2C(fs, es->goal) == EXT2FS_B2C(fs, es->goal+1)))
 		new_blk = es->goal+1;
-	else {
-		es->goal &= ~EXT2FS_CLUSTER_MASK(fs);
+	وإلا {
+		es->goal &= ~EXT2_FS_CLUSTER_ماسک(fs);
 		retval = ext2fs_new_block2(fs, es->goal, 0, &new_blk);
-		if (retval) {
+		إذا (retval) {
 			es->err = retval;
-			return BLOCK_ABORT;
+			أرجع بلوک_ABORT;
 		}
 		es->newblocks++;
-		ext2fs_block_alloc_stats2(fs, new_blk, +1);
+		ext2fs_بلوک_alloc_stats2(fs, new_blk, +1);
 	}
-	if (blockcnt > 0) {
-		retval = ext2fs_new_dir_block(fs, 0, 0, &block);
-		if (retval) {
+	إذا (blockcnt > 0) {
+		retval = ext2fs_new_dir_بلوک(fs, 0, 0, &بلوک);
+		إذا (retval) {
 			es->err = retval;
-			return BLOCK_ABORT;
+			أرجع بلوک_ABORT;
 		}
-		es->done = 1;
-		retval = ext2fs_write_dir_block4(fs, new_blk, block, 0,
+		es->انجامشده = 1;
+		retval = ext2fs_write_dir_block4(fs, new_blk, بلوک, 0,
 						 es->dir);
-		ext2fs_free_mem(&block);
-	} else
-		retval = ext2fs_zero_blocks2(fs, new_blk, 1, NULL, NULL);
-	if (blockcnt >= 0)
+		ext2fs_free_mem(&بلوک);
+	} وإلا
+		retval = ext2fs_zero_blocks2(fs, new_blk, 1, عدم, عدم);
+	إذا (blockcnt >= 0)
 		es->goal = new_blk;
-	if (retval) {
+	إذا (retval) {
 		es->err = retval;
-		return BLOCK_ABORT;
+		أرجع بلوک_ABORT;
 	}
 	*blocknr = new_blk;
 
-	if (es->done)
-		return (BLOCK_CHANGED | BLOCK_ABORT);
-	else
-		return BLOCK_CHANGED;
+	إذا (es->انجامشده)
+		أرجع (بلوک_تغییریافته | بلوک_ABORT);
+	وإلا
+		أرجع بلوک_تغییریافته;
 }
 
 errcode_t ext2fs_expand_dir(ext2_filsys fs, ext2_ino_t dir)
 {
 	errcode_t	retval;
-	struct expand_dir_struct es;
-	struct ext2_inode	inode;
+	بنية expand_dir_struct es;
+	بنية ext2_inode	inode;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	إذا (!(fs->flags & EXT2_FLAG_RW))
+		أرجع EXT2_ET_RO_FILSYS;
 
-	if (!fs->block_map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
+	إذا (!fs->بلوک_map)
+		أرجع EXT2_ET_NO_بلوک_BITMAP;
 
 	retval = ext2fs_check_directory(fs, dir);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
 	retval = ext2fs_read_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-	es.done = 0;
+	es.انجامشده = 0;
 	es.err = 0;
-	es.goal = ext2fs_find_inode_goal(fs, dir, &inode, 0);
+	es.goal = ext2fs_پیدا_کن_inode_goal(fs, dir, &inode, 0);
 	es.newblocks = 0;
 	es.dir = dir;
 
-	retval = ext2fs_block_iterate3(fs, dir, BLOCK_FLAG_APPEND,
+	retval = ext2fs_بلوک_iterate3(fs, dir, بلوک_FLAG_APPEND,
 				       0, expand_dir_proc, &es);
-	if (retval == EXT2_ET_INLINE_DATA_CANT_ITERATE)
-		return ext2fs_inline_data_expand(fs, dir);
+	إذا (retval == EXT2_ET_INLINE_داده_CANT_ITERATE)
+		أرجع ext2fs_inline_داده_expand(fs, dir);
 
-	if (es.err)
-		return es.err;
-	if (!es.done)
-		return EXT2_ET_EXPAND_DIR_ERR;
+	إذا (es.err)
+		أرجع es.err;
+	إذا (!es.انجامشده)
+		أرجع EXT2_ET_EXPAND_DIR_ERR;
 
 	/*
 	 * Update the size and block count fields in the inode.
 	 */
 	retval = ext2fs_read_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-	retval = ext2fs_inode_size_set(fs, &inode,
-				       EXT2_I_SIZE(&inode) + fs->blocksize);
-	if (retval)
-		return retval;
-	ext2fs_iblk_add_blocks(fs, &inode, es.newblocks);
+	retval = ext2fs_inode_اندازه_مجموعه(fs, &inode,
+				       EXT2_I_اندازه(&inode) + fs->blocksize);
+	إذا (retval)
+		أرجع retval;
+	ext2fs_iblk_جمع_کن_بلوکها(fs, &inode, es.newblocks);
 
 	retval = ext2fs_write_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-	return 0;
+	أرجع 0;
 }

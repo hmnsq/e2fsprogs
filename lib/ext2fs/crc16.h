@@ -12,15 +12,15 @@
  * Version 2. See the file COPYING for more details.
  */
 
-#ifndef __CRC16_H
-#define __CRC16_H
+#اگر_تعریف_نشده __CRC16_H
+#تعریف_کن __CRC16_H
 
 /* for an unknown reason, PPC treats __u16 as signed and keeps doing sign
  * extension on the value.  Instead, use only the low 16 bits of an
  * unsigned int for holding the CRC value to avoid this.
  */
-typedef unsigned int crc16_t;
+تعريفنوع بیعلامت صحيح crc16_t;
 
-extern crc16_t ext2fs_crc16(crc16_t crc, const void *buffer, unsigned int len);
+خارجي crc16_t ext2fs_crc16(crc16_t بررسی_چرخهای, ثابت فراغ *میانگیر, بیعلامت صحيح len);
 
-#endif /* __CRC16_H */
+#پایان_اگر /* __CRC16_H */

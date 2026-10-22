@@ -1,27 +1,27 @@
-#include <stdio.h>
-#include "crc32c_defs.h"
-#include <inttypes.h>
+#ضمن <stdio.h>
+#ضمن "crc32c_defs.h"
+#ضمن <inttypes.h>
 
-#define ENTRIES_PER_LINE 4
+#تعریف_کن ENTRIES_در_هر_سطر 4
 
-#if CRC_LE_BITS > 8
-# define LE_TABLE_ROWS (CRC_LE_BITS/8)
-# define LE_TABLE_SIZE 256
-#else
-# define LE_TABLE_ROWS 1
-# define LE_TABLE_SIZE (1 << CRC_LE_BITS)
-#endif
+#إذا بررسی_چرخهای_LE_بیتها > 8
+# define LE_جدول_ردیفها (بررسی_چرخهای_LE_بیتها/8)
+# define LE_جدول_اندازه 256
+#وإلا
+# define LE_جدول_ردیفها 1
+# define LE_جدول_اندازه (1 << بررسی_چرخهای_LE_بیتها)
+#پایان_اگر
 
-#if CRC_BE_BITS > 8
-# define BE_TABLE_ROWS (CRC_BE_BITS/8)
-# define BE_TABLE_SIZE 256
-#else
-# define BE_TABLE_ROWS 1
-# define BE_TABLE_SIZE (1 << CRC_BE_BITS)
-#endif
+#إذا بررسی_چرخهای_BE_بیتها > 8
+# define BE_جدول_ردیفها (بررسی_چرخهای_BE_بیتها/8)
+# define BE_جدول_اندازه 256
+#وإلا
+# define BE_جدول_ردیفها 1
+# define BE_جدول_اندازه (1 << بررسی_چرخهای_BE_بیتها)
+#پایان_اگر
 
-static uint32_t crc32table_be[BE_TABLE_ROWS][256];
-static uint32_t crc32ctable_le[LE_TABLE_ROWS][256];
+ساكن uint32_t crc32table_be[BE_جدول_ردیفها][256];
+ساكن uint32_t crc32ctable_le[LE_جدول_ردیفها][256];
 
 /**
  * crc32init_le() - allocate and initialize LE table data
@@ -30,23 +30,23 @@ static uint32_t crc32ctable_le[LE_TABLE_ROWS][256];
  * fact that crctable[i^j] = crctable[i] ^ crctable[j].
  *
  */
-static void crc32cinit_le(void)
+ساكن فراغ crc32cinit_le(فراغ)
 {
-	unsigned i, j;
-	uint32_t crc = 1;
+	بیعلامت i, j;
+	uint32_t بررسی_چرخهای = 1;
 
 	crc32ctable_le[0][0] = 0;
 
-	for (i = LE_TABLE_SIZE >> 1; i; i >>= 1) {
-		crc = (crc >> 1) ^ ((crc & 1) ? CRC32C_POLY_LE : 0);
-		for (j = 0; j < LE_TABLE_SIZE; j += 2 * i)
-			crc32ctable_le[0][i + j] = crc ^ crc32ctable_le[0][j];
+	لكل (i = LE_جدول_اندازه >> 1; i; i >>= 1) {
+		بررسی_چرخهای = (بررسی_چرخهای >> 1) ^ ((بررسی_چرخهای & 1) ? بررسی_چرخهای_32_C_POLY_LE : 0);
+		لكل (j = 0; j < LE_جدول_اندازه; j += 2 * i)
+			crc32ctable_le[0][i + j] = بررسی_چرخهای ^ crc32ctable_le[0][j];
 	}
-	for (i = 0; i < LE_TABLE_SIZE; i++) {
-		crc = crc32ctable_le[0][i];
-		for (j = 1; j < LE_TABLE_ROWS; j++) {
-			crc = crc32ctable_le[0][crc & 0xff] ^ (crc >> 8);
-			crc32ctable_le[j][i] = crc;
+	لكل (i = 0; i < LE_جدول_اندازه; i++) {
+		بررسی_چرخهای = crc32ctable_le[0][i];
+		لكل (j = 1; j < LE_جدول_ردیفها; j++) {
+			بررسی_چرخهای = crc32ctable_le[0][بررسی_چرخهای & 0xff] ^ (بررسی_چرخهای >> 8);
+			crc32ctable_le[j][i] = بررسی_چرخهای;
 		}
 	}
 }
@@ -54,64 +54,64 @@ static void crc32cinit_le(void)
 /**
  * crc32init_be() - allocate and initialize BE table data
  */
-static void crc32init_be(void)
+ساكن فراغ crc32init_be(فراغ)
 {
-	unsigned i, j;
-	uint32_t crc = 0x80000000;
+	بیعلامت i, j;
+	uint32_t بررسی_چرخهای = 0x80000000;
 
 	crc32table_be[0][0] = 0;
 
-	for (i = 1; i < BE_TABLE_SIZE; i <<= 1) {
-		crc = (crc << 1) ^ ((crc & 0x80000000) ? CRCPOLY_BE : 0);
-		for (j = 0; j < i; j++)
-			crc32table_be[0][i + j] = crc ^ crc32table_be[0][j];
+	لكل (i = 1; i < BE_جدول_اندازه; i <<= 1) {
+		بررسی_چرخهای = (بررسی_چرخهای << 1) ^ ((بررسی_چرخهای & 0x80000000) ? CRCPOLY_BE : 0);
+		لكل (j = 0; j < i; j++)
+			crc32table_be[0][i + j] = بررسی_چرخهای ^ crc32table_be[0][j];
 	}
-	for (i = 0; i < BE_TABLE_SIZE; i++) {
-		crc = crc32table_be[0][i];
-		for (j = 1; j < BE_TABLE_ROWS; j++) {
-			crc = crc32table_be[0][(crc >> 24) & 0xff] ^ (crc << 8);
-			crc32table_be[j][i] = crc;
+	لكل (i = 0; i < BE_جدول_اندازه; i++) {
+		بررسی_چرخهای = crc32table_be[0][i];
+		لكل (j = 1; j < BE_جدول_ردیفها; j++) {
+			بررسی_چرخهای = crc32table_be[0][(بررسی_چرخهای >> 24) & 0xff] ^ (بررسی_چرخهای << 8);
+			crc32table_be[j][i] = بررسی_چرخهای;
 		}
 	}
 }
 
-static void output_table(uint32_t (*table)[256], int rows, int len, char *trans)
+ساكن فراغ output_جدول(uint32_t (*جدول)[256], صحيح ردیفها, صحيح len, حرف *trans)
 {
-	int i, j;
+	صحيح i, j;
 
-	for (j = 0 ; j < rows; j++) {
-		printf("{");
-		for (i = 0; i < len - 1; i++) {
-			if (i % ENTRIES_PER_LINE == 0)
-				printf("\n");
-			printf("%s(0x%8.8xL), ", trans, table[j][i]);
+	لكل (j = 0 ; j < ردیفها; j++) {
+		چاپ_کن("{");
+		لكل (i = 0; i < len - 1; i++) {
+			إذا (i % ENTRIES_در_هر_سطر == 0)
+				چاپ_کن("\n");
+			چاپ_کن("%s(0x%8.8xL), ", trans, جدول[j][i]);
 		}
-		printf("%s(0x%8.8xL)},\n", trans, table[j][len - 1]);
+		چاپ_کن("%s(0x%8.8xL)},\n", trans, جدول[j][len - 1]);
 	}
 }
 
-int main(int argc, char **argv)
+صحيح اصلی(صحيح argc, حرف **argv)
 {
-	printf("/* this file is generated - do not edit */\n\n");
+	چاپ_کن("/* this file is generated - do not edit */\n\n");
 
-	if (CRC_BE_BITS > 1) {
+	إذا (بررسی_چرخهای_BE_بیتها > 1) {
 		crc32init_be();
-		printf("static const uint32_t "
+		چاپ_کن("static const uint32_t "
 		       "crc32table_be[%d][%d] = {",
-		       BE_TABLE_ROWS, BE_TABLE_SIZE);
-		output_table(crc32table_be, LE_TABLE_ROWS,
-			     BE_TABLE_SIZE, "tobe");
-		printf("};\n");
+		       BE_جدول_ردیفها, BE_جدول_اندازه);
+		output_جدول(crc32table_be, LE_جدول_ردیفها,
+			     BE_جدول_اندازه, "tobe");
+		چاپ_کن("};\n");
 	}
-	if (CRC_LE_BITS > 1) {
+	إذا (بررسی_چرخهای_LE_بیتها > 1) {
 		crc32cinit_le();
-		printf("static const uint32_t "
+		چاپ_کن("static const uint32_t "
 		       "crc32ctable_le[%d][%d] = {",
-		       LE_TABLE_ROWS, LE_TABLE_SIZE);
-		output_table(crc32ctable_le, LE_TABLE_ROWS,
-			     LE_TABLE_SIZE, "tole");
-		printf("};\n");
+		       LE_جدول_ردیفها, LE_جدول_اندازه);
+		output_جدول(crc32ctable_le, LE_جدول_ردیفها,
+			     LE_جدول_اندازه, "tole");
+		چاپ_کن("};\n");
 	}
 
-	return 0;
+	أرجع 0;
 }
