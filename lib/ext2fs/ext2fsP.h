@@ -9,7 +9,7 @@
  * %End-Header%
  */
 
-#if HAVE_SYS_STAT_H
+#如果 HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
 
@@ -17,37 +17,37 @@
 
 #define EXT2FS_MAX_NESTED_LINKS  8
 
-static inline int ext2fsP_is_disk_device(mode_t mode)
+static inline 整数 ext2fsP_is_disk_device(mode_t mode)
 {
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-	return S_ISBLK(mode) || S_ISCHR(mode);
-#else
-	return S_ISBLK(mode);
+#如果 defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+	返回 S_ISBLK(mode) || S_ISCHR(mode);
+#否则
+	返回 S_ISBLK(mode);
 #endif
 }
 
 static inline time_t ext2fsP_get_time(ext2_filsys fs)
 {
-	if (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
-		return fs->now;
-	return time(NULL);
+	如果 (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
+		返回 fs->now;
+	返回 time(NULL);
 }
 
 /*
  * Badblocks list
  */
 struct ext2_struct_u32_list {
-	int	magic;
-	int	num;
-	int	size;
+	整数	magic;
+	整数	num;
+	整数	size;
 	__u32	*list;
-	int	badblocks_flags;
+	整数	badblocks_flags;
 };
 
 struct ext2_struct_u32_iterate {
-	int			magic;
+	整数			magic;
 	ext2_u32_list		bb;
-	int			ptr;
+	整数			ptr;
 };
 
 
@@ -55,11 +55,11 @@ struct ext2_struct_u32_iterate {
  * Directory block iterator definition
  */
 struct ext2_struct_dblist {
-	int			magic;
+	整数			magic;
 	ext2_filsys		fs;
 	unsigned long long	size;
 	unsigned long long	count;
-	int			sorted;
+	整数			sorted;
 	struct ext2_db_entry2 *	list;
 };
 
@@ -68,14 +68,14 @@ struct ext2_struct_dblist {
  */
 struct dir_context {
 	ext2_ino_t		dir;
-	int		flags;
+	整数		flags;
 	char		*buf;
-	unsigned int	buflen;
-	int (*func)(ext2_ino_t	dir,
-		    int	entry,
+	unsigned 整数	buflen;
+	整数 (*func)(ext2_ino_t	dir,
+		    整数	entry,
 		    struct ext2_dir_entry *dirent,
-		    int	offset,
-		    int	blocksize,
+		    整数	offset,
+		    整数	blocksize,
 		    char	*buf,
 		    void	*priv_data);
 	void		*priv_data;
@@ -88,9 +88,9 @@ struct dir_context {
 struct ext2_inode_cache {
 	void *				buffer;
 	blk64_t				buffer_blk;
-	int				cache_last;
-	unsigned int			cache_size;
-	int				refcount;
+	整数				cache_last;
+	unsigned 整数			cache_size;
+	整数				refcount;
 	struct ext2_inode_cache_ent	*cache;
 };
 
@@ -103,33 +103,33 @@ struct ext2_inode_cache_ent {
  * NLS definitions
  */
 struct ext2fs_nls_table {
-	int version;
+	整数 version;
 	const struct ext2fs_nls_ops *ops;
 };
 
 struct ext2fs_nls_ops {
-	int (*casefold)(const struct ext2fs_nls_table *charset,
+	整数 (*casefold)(const struct ext2fs_nls_table *charset,
 			const unsigned char *str, size_t len,
 			unsigned char *dest, size_t dlen);
-	int (*validate)(const struct ext2fs_nls_table *table,
+	整数 (*validate)(const struct ext2fs_nls_table *table,
 			char *s, size_t len, char **pos);
-	int (*casefold_cmp)(const struct ext2fs_nls_table *table,
+	整数 (*casefold_cmp)(const struct ext2fs_nls_table *table,
 			    const unsigned char *str1, size_t len1,
 			    const unsigned char *str2, size_t len2);
 };
 
 /* Function prototypes */
 
-extern int ext2fs_process_dir_block(ext2_filsys  	fs,
+extern 整数 ext2fs_process_dir_block(ext2_filsys  	fs,
 				    blk64_t		*blocknr,
 				    e2_blkcnt_t		blockcnt,
 				    blk64_t		ref_block,
-				    int			ref_offset,
+				    整数			ref_offset,
 				    void		*priv_data);
 
 extern errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino);
 extern errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino);
-extern int ext2fs_inline_data_dir_iterate(ext2_filsys fs,
+extern 整数 ext2fs_inline_data_dir_iterate(ext2_filsys fs,
 					  ext2_ino_t ino,
 					  void *priv_data);
 
@@ -137,8 +137,8 @@ extern int ext2fs_inline_data_dir_iterate(ext2_filsys fs,
 
 struct ext2fs_numeric_progress_struct {
 	__u64		max;
-	int		log_max;
-	int		skip_progress;
+	整数		log_max;
+	整数		skip_progress;
 };
 
 /*
@@ -173,7 +173,7 @@ extern void ext2fs_numeric_progress_close(ext2_filsys fs,
  */
 
 extern errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
-					   int type, __u64 start, __u64 end,
+					   整数 type, __u64 start, __u64 end,
 					   __u64 real_end,
 					   const char * description,
 					   ext2fs_generic_bitmap *bmap);
@@ -189,23 +189,23 @@ extern errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap bmap,
 extern errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap bitmap,
 					       errcode_t neq,
 					       __u64 end, __u64 *oend);
-extern int ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
+extern 整数 ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
-extern int ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
+extern 整数 ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				      __u64 arg);
-extern int ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
+extern 整数 ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
 extern errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
+					       __u64 start, unsigned 整数 num,
 					       void *in);
 extern errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
+					       __u64 start, unsigned 整数 num,
 					       void *out);
 extern void ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,const char *func);
 
-extern int ext2fs_mem_is_zero(const char *mem, size_t len);
+extern 整数 ext2fs_mem_is_zero(const char *mem, size_t len);
 
-extern int ext2fs_file_block_offset_too_big(ext2_filsys fs,
+extern 整数 ext2fs_file_block_offset_too_big(ext2_filsys fs,
 					    struct ext2_inode *inode,
 					    blk64_t offset);
 

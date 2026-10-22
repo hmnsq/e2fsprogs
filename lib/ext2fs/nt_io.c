@@ -194,7 +194,7 @@ NtDelayExecution(
 
 
 #define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+	  如果 ((struct)->magic != (code)) 返回 (code)
 
 #define EXT2_ET_MAGIC_NT_IO_CHANNEL  0x10ed
 
@@ -204,9 +204,9 @@ NtDelayExecution(
 //
 
 typedef struct _NT_PRIVATE_DATA {
-	int	   magic;
+	整数	   magic;
 	HANDLE Handle;
-	int	   Flags;
+	整数	   Flags;
 	PCHAR  Buffer;
 	__u32  BufferBlockNumber;
 	ULONG  BufferSize;
@@ -220,13 +220,13 @@ typedef struct _NT_PRIVATE_DATA {
 // Standard interface prototypes
 //
 
-static errcode_t nt_open(const char *name, int flags, io_channel *channel);
+static errcode_t nt_open(const char *name, 整数 flags, io_channel *channel);
 static errcode_t nt_close(io_channel channel);
-static errcode_t nt_set_blksize(io_channel channel, int blksize);
+static errcode_t nt_set_blksize(io_channel channel, 整数 blksize);
 static errcode_t nt_read_blk(io_channel channel, unsigned long block,
-			       int count, void *data);
+			       整数 count, void *data);
 static errcode_t nt_write_blk(io_channel channel, unsigned long block,
-				int count, const void *data);
+				整数 count, const void *data);
 static errcode_t nt_flush(io_channel channel);
 
 static struct struct_io_manager struct_nt_manager = {
@@ -246,7 +246,7 @@ static struct struct_io_manager struct_nt_manager = {
 
 io_manager nt_io_manager()
 {
-	return &struct_nt_manager;
+	返回 &struct_nt_manager;
 }
 
 
@@ -259,7 +259,7 @@ io_manager nt_io_manager()
 
 typedef struct {
 	ULONG WinError;
-	int errnocode;
+	整数 errnocode;
 }ERROR_ENTRY;
 
 static ERROR_ENTRY ErrorTable[] = {
@@ -319,17 +319,17 @@ _MapDosError (
     IN ULONG WinError
    )
 {
-	int i;
+	整数 i;
 
 	//
 	// Lookup
 	//
 
-	for (i = 0; i < (sizeof(ErrorTable)/sizeof(ErrorTable[0])); ++i)
+	为 (i = 0; i < (sizeof(ErrorTable)/sizeof(ErrorTable[0])); ++i)
 	{
-		if (WinError == ErrorTable[i].WinError)
+		如果 (WinError == ErrorTable[i].WinError)
 		{
-			return ErrorTable[i].errnocode;
+			返回 ErrorTable[i].errnocode;
 		}
 	}
 
@@ -337,19 +337,19 @@ _MapDosError (
 	// not in table. Check ranges
 	//
 
-	if ((WinError >= ERROR_WRITE_PROTECT) &&
+	如果 ((WinError >= ERROR_WRITE_PROTECT) &&
 		(WinError <= ERROR_SHARING_BUFFER_EXCEEDED))
 	{
-		return EACCES;
+		返回 EACCES;
 	}
-	else if ((WinError >= ERROR_INVALID_STARTING_CODESEG) &&
+	否则 如果 ((WinError >= ERROR_INVALID_STARTING_CODESEG) &&
 			 (WinError <= ERROR_INFLOOP_IN_RELOC_CHAIN))
 	{
-		return ENOEXEC;
+		返回 ENOEXEC;
 	}
-	else
+	否则
 	{
-		return EINVAL;
+		返回 EINVAL;
 	}
 }
 
@@ -370,7 +370,7 @@ _MapNtStatus(
     IN NTSTATUS Status
    )
 {
-	return _MapDosError(RtlNtStatusToDosError(Status));
+	返回 _MapDosError(RtlNtStatusToDosError(Status));
 }
 
 
@@ -409,9 +409,9 @@ _OpenNtName(
 
 	Status = RtlAnsiStringToUnicodeString(&UnicodeString, &AnsiString, FALSE);
 
-	if(!NT_SUCCESS(Status))
+	如果(!NT_SUCCESS(Status))
 	{
-		return Status; // Unmappable character?
+		返回 Status; // Unmappable character?
 	}
 
 	//
@@ -428,7 +428,7 @@ _OpenNtName(
 	// Try to open it in initial mode
 	//
 
-	if(ARGUMENT_PRESENT(OpenedReadonly))
+	如果(ARGUMENT_PRESENT(OpenedReadonly))
 	{
 		*OpenedReadonly = Readonly;
 	}
@@ -441,7 +441,7 @@ _OpenNtName(
 						FILE_SHARE_WRITE | FILE_SHARE_READ,
 						FILE_SYNCHRONOUS_IO_NONALERT);
 
-	if(!NT_SUCCESS(Status))
+	如果(!NT_SUCCESS(Status))
 	{
 		//
 		// Maybe was just mounted? wait 0.5 sec and retry.
@@ -463,9 +463,9 @@ _OpenNtName(
 		// Try to satisfy mode
 		//
 
-		if((STATUS_ACCESS_DENIED == Status) && !Readonly)
+		如果((STATUS_ACCESS_DENIED == Status) && !Readonly)
 		{
-			if(ARGUMENT_PRESENT(OpenedReadonly))
+			如果(ARGUMENT_PRESENT(OpenedReadonly))
 			{
 				*OpenedReadonly = TRUE;
 			}
@@ -485,7 +485,7 @@ _OpenNtName(
 	// done
 	//
 
-	return Status;
+	返回 Status;
 }
 
 
@@ -502,7 +502,7 @@ _OpenDriveLetter(
 
 	sprintf(Buffer, "\\DosDevices\\%c:", Letter);
 
-	return _OpenNtName(Buffer, ReadOnly, Handle, OpenedReadonly);
+	返回 _OpenNtName(Buffer, ReadOnly, Handle, OpenedReadonly);
 }
 
 
@@ -518,7 +518,7 @@ _FlushDrive(
 		)
 {
 	IO_STATUS_BLOCK IoStatusBlock;
-	return NtFlushBuffersFile(Handle, &IoStatusBlock);
+	返回 NtFlushBuffersFile(Handle, &IoStatusBlock);
 }
 
 
@@ -534,7 +534,7 @@ _LockDrive(
 		)
 {
 	IO_STATUS_BLOCK IoStatusBlock;
-	return NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_LOCK_VOLUME, 0, 0, 0, 0);
+	返回 NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_LOCK_VOLUME, 0, 0, 0, 0);
 }
 
 
@@ -550,7 +550,7 @@ _UnlockDrive(
 	)
 {
 	IO_STATUS_BLOCK IoStatusBlock;
-	return NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_UNLOCK_VOLUME, 0, 0, 0, 0);
+	返回 NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_UNLOCK_VOLUME, 0, 0, 0, 0);
 }
 
 static
@@ -561,7 +561,7 @@ _DismountDrive(
 	)
 {
 	IO_STATUS_BLOCK IoStatusBlock;
-	return NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_DISMOUNT_VOLUME, 0, 0, 0, 0);
+	返回 NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_DISMOUNT_VOLUME, 0, 0, 0, 0);
 }
 
 
@@ -579,7 +579,7 @@ _IsMounted(
 	IO_STATUS_BLOCK IoStatusBlock;
 	NTSTATUS Status;
 	Status = NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_IS_VOLUME_MOUNTED, 0, 0, 0, 0);
-	return (BOOLEAN)(STATUS_SUCCESS == Status);
+	返回 (BOOLEAN)(STATUS_SUCCESS == Status);
 }
 
 
@@ -590,7 +590,7 @@ _CloseDisk(
 		IN HANDLE Handle
 		)
 {
-	return NtClose(Handle);
+	返回 NtClose(Handle);
 }
 
 
@@ -607,7 +607,7 @@ _NormalizeDeviceName(
     IN PSTR NormalizedDeviceNameBuffer
    )
 {
-	int PartitionNumber = -1;
+	整数 PartitionNumber = -1;
 	UCHAR DiskNumber;
 	PSTR p;
 
@@ -616,8 +616,8 @@ _NormalizeDeviceName(
 	// Do not try to parse NT name
 	//
 
-	if('\\' == *Device)
-		return Device;
+	如果('\\' == *Device)
+		返回 Device;
 
 
 
@@ -625,7 +625,7 @@ _NormalizeDeviceName(
 	// Strip leading '/dev/' if any
 	//
 
-	if(('/' == *(Device)) &&
+	如果(('/' == *(Device)) &&
 		('d' == *(Device + 1)) &&
 		('e' == *(Device + 2)) &&
 		('v' == *(Device + 3)) &&
@@ -634,9 +634,9 @@ _NormalizeDeviceName(
 		Device += 5;
 	}
 
-	if('\0' == *Device)
+	如果('\0' == *Device)
 	{
-		return NULL;
+		返回 NULL;
 	}
 
 
@@ -644,14 +644,14 @@ _NormalizeDeviceName(
 	// forms: hda[n], fd[n]
 	//
 
-	if('d' != *(Device + 1))
+	如果('d' != *(Device + 1))
 	{
-		return NULL;
+		返回 NULL;
 	}
 
-	if('h' == *Device)
+	如果('h' == *Device)
 	{
-		if((*(Device + 2) < 'a') || (*(Device + 2) > ('a' + 9)) ||
+		如果((*(Device + 2) < 'a') || (*(Device + 2) > ('a' + 9)) ||
 		   ((*(Device + 3) != '\0') &&
 			((*(Device + 4) != '\0') ||
 			 ((*(Device + 3) < '0') || (*(Device + 3) > '9'))
@@ -659,39 +659,39 @@ _NormalizeDeviceName(
 		   )
 		  )
 		{
-			return NULL;
+			返回 NULL;
 		}
 
 		DiskNumber = (UCHAR)(*(Device + 2) - 'a');
 
-		if(*(Device + 3) != '\0')
+		如果(*(Device + 3) != '\0')
 		{
 			PartitionNumber = (*(Device + 3) - '0');
 		}
 
 	}
-	else if('f' == *Device)
+	否则 如果('f' == *Device)
 	{
 		//
 		// 3-d letter should be a digit.
 		//
 
-		if((*(Device + 3) != '\0') ||
+		如果((*(Device + 3) != '\0') ||
 		   (*(Device + 2) < '0') || (*(Device + 2) > '9'))
 		{
-			return NULL;
+			返回 NULL;
 		}
 
 		DiskNumber = (UCHAR)(*(Device + 2) - '0');
 
 	}
-	else
+	否则
 	{
 		//
 		// invalid prefix
 		//
 
-		return NULL;
+		返回 NULL;
 	}
 
 
@@ -727,7 +727,7 @@ _NormalizeDeviceName(
 	// Partition nr.
 	//
 
-	if(PartitionNumber >= 0)
+	如果(PartitionNumber >= 0)
 	{
 		strcat(NormalizedDeviceNameBuffer, "\\Partition0");
 
@@ -736,7 +736,7 @@ _NormalizeDeviceName(
 	}
 
 
-	return NormalizedDeviceNameBuffer;
+	返回 NormalizedDeviceNameBuffer;
 }
 
 
@@ -772,11 +772,11 @@ _GetDeviceSize(
 		&pi, sizeof(PARTITION_INFORMATION));
 
 
-	if(NT_SUCCESS(Status))
+	如果(NT_SUCCESS(Status))
 	{
 		*FsSize = pi.PartitionLength.QuadPart;
 	}
-	else if(STATUS_INVALID_DEVICE_REQUEST == Status)
+	否则 如果(STATUS_INVALID_DEVICE_REQUEST == Status)
 	{
 		//
 		// No partitions: get device info.
@@ -790,7 +790,7 @@ _GetDeviceSize(
 				&gi, sizeof(DISK_GEOMETRY));
 
 
-		if(NT_SUCCESS(Status))
+		如果(NT_SUCCESS(Status))
 		{
 			*FsSize =
 				gi.BytesPerSector *
@@ -821,25 +821,25 @@ _Ext2OpenDevice(
 	CHAR NormalizedDeviceName[512];
 	NTSTATUS Status;
 
-	if(NULL == Name)
+	如果(NULL == Name)
 	{
 		//
 		// Set not found
 		//
 
-		if(ARGUMENT_PRESENT(Errno))
+		如果(ARGUMENT_PRESENT(Errno))
 			*Errno = ENOENT;
 
-		return FALSE;
+		返回 FALSE;
 	}
 
 
-	if((((*Name) | 0x20) >= 'a') && (((*Name) | 0x20) <= 'z') &&
+	如果((((*Name) | 0x20) >= 'a') && (((*Name) | 0x20) <= 'z') &&
 		(':' == *(Name + 1)) && ('\0' == *(Name + 2)))
 	{
 		Status = _OpenDriveLetter(*Name, ReadOnly, Handle, OpenedReadonly);
 	}
-	else
+	否则
 	{
 		//
 		// Make name
@@ -847,16 +847,16 @@ _Ext2OpenDevice(
 
 		Name = _NormalizeDeviceName(Name, NormalizedDeviceName);
 
-		if(NULL == Name)
+		如果(NULL == Name)
 		{
 			//
 			// Set not found
 			//
 
-			if(ARGUMENT_PRESENT(Errno))
+			如果(ARGUMENT_PRESENT(Errno))
 				*Errno = ENOENT;
 
-			return FALSE;
+			返回 FALSE;
 		}
 
 		//
@@ -867,15 +867,15 @@ _Ext2OpenDevice(
 	}
 
 
-	if(!NT_SUCCESS(Status))
+	如果(!NT_SUCCESS(Status))
 	{
-		if(ARGUMENT_PRESENT(Errno))
+		如果(ARGUMENT_PRESENT(Errno))
 			*Errno = _MapNtStatus(Status);
 
-		return FALSE;
+		返回 FALSE;
 	}
 
-	return TRUE;
+	返回 TRUE;
 }
 
 
@@ -909,12 +909,12 @@ _BlockIo(
 	// perform io
 	//
 
-	if(Read)
+	如果(Read)
 	{
 		Status = NtReadFile(Handle, NULL, NULL, NULL,
 			&IoStatusBlock, Buffer, Bytes, &Offset, NULL);
 	}
-	else
+	否则
 	{
 		Status = NtWriteFile(Handle, NULL, NULL, NULL,
 			&IoStatusBlock, Buffer, Bytes, &Offset, NULL);
@@ -925,15 +925,15 @@ _BlockIo(
 	// translate error
 	//
 
-	if(NT_SUCCESS(Status))
+	如果(NT_SUCCESS(Status))
 	{
 		*Errno = 0;
-		return TRUE;
+		返回 TRUE;
 	}
 
 	*Errno = _MapNtStatus(Status);
 
-	return FALSE;
+	返回 FALSE;
 }
 
 
@@ -948,7 +948,7 @@ _RawWrite(
     OUT unsigned* Errno
    )
 {
-	return _BlockIo(Handle, Offset, Bytes, (PCHAR)Buffer, FALSE, Errno);
+	返回 _BlockIo(Handle, Offset, Bytes, (PCHAR)Buffer, FALSE, Errno);
 }
 
 __inline
@@ -961,7 +961,7 @@ _RawRead(
     OUT unsigned* Errno
    )
 {
-	return _BlockIo(Handle, Offset, Bytes, Buffer, TRUE, Errno);
+	返回 _BlockIo(Handle, Offset, Bytes, Buffer, TRUE, Errno);
 }
 
 
@@ -974,7 +974,7 @@ _SetPartType(
    )
 {
 	IO_STATUS_BLOCK IoStatusBlock;
-	return STATUS_SUCCESS == NtDeviceIoControlFile(
+	返回 STATUS_SUCCESS == NtDeviceIoControlFile(
 												   Handle, NULL, NULL, NULL, &IoStatusBlock, IOCTL_DISK_SET_PARTITION_INFO,
 												   &Type, sizeof(Type),
 												   NULL, 0);
@@ -990,16 +990,16 @@ _SetPartType(
 //
 
 errcode_t
-ext2fs_check_if_mounted(const char *file, int *mount_flags)
+ext2fs_check_if_mounted(const char *file, 整数 *mount_flags)
 {
 	HANDLE h;
 	BOOLEAN Readonly;
 
 	*mount_flags = 0;
 
-	if(!_Ext2OpenDevice(file, TRUE, &h, &Readonly, NULL))
+	如果(!_Ext2OpenDevice(file, TRUE, &h, &Readonly, NULL))
 	{
-		return 0;
+		返回 0;
 	}
 
 
@@ -1010,7 +1010,7 @@ ext2fs_check_if_mounted(const char *file, int *mount_flags)
 		_CloseDisk(h);
 	}
 
-	return 0;
+	返回 0;
 }
 
 
@@ -1024,18 +1024,18 @@ static char knowndevice[1024] = "";
 
 
 errcode_t
-ext2fs_get_device_size(const char *file, int blocksize,
+ext2fs_get_device_size(const char *file, 整数 blocksize,
 				 blk_t *retblocks)
 {
 	HANDLE h;
 	BOOLEAN Readonly;
 
-	if((0 == FsSize) || (0 != strcmp(knowndevice, file)))
+	如果((0 == FsSize) || (0 != strcmp(knowndevice, file)))
 	{
 
-		if(!_Ext2OpenDevice(file, TRUE, &h, &Readonly, NULL))
+		如果(!_Ext2OpenDevice(file, TRUE, &h, &Readonly, NULL))
 		{
-			return 0;
+			返回 0;
 		}
 
 
@@ -1056,7 +1056,7 @@ ext2fs_get_device_size(const char *file, int blocksize,
 
 	*retblocks = (blk_t)(unsigned __int64)(FsSize / blocksize);
 	UNREFERENCED_PARAMETER(file);
-	return 0;
+	返回 0;
 }
 
 
@@ -1071,7 +1071,7 @@ ext2fs_get_device_size(const char *file, int blocksize,
 
 static
 errcode_t
-nt_open(const char *name, int flags, io_channel *channel)
+nt_open(const char *name, 整数 flags, io_channel *channel)
 {
 	io_channel      io = NULL;
 	PNT_PRIVATE_DATA NtData = NULL;
@@ -1081,9 +1081,9 @@ nt_open(const char *name, int flags, io_channel *channel)
 	// Check name
 	//
 
-	if (NULL == name)
+	如果 (NULL == name)
 	{
-		return EXT2_ET_BAD_DEVICE_NAME;
+		返回 EXT2_ET_BAD_DEVICE_NAME;
 	}
 
 	__try{
@@ -1094,7 +1094,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 
 		io = (io_channel) malloc(sizeof(struct struct_io_channel));
 
-		if (NULL == io)
+		如果 (NULL == io)
 		{
 			Errno = ENOMEM;
 			__leave;
@@ -1105,7 +1105,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 
 		NtData = (PNT_PRIVATE_DATA)malloc(sizeof(NT_PRIVATE_DATA));
 
-		if (NULL == NtData)
+		如果 (NULL == NtData)
 		{
 			Errno = ENOMEM;
 			__leave;
@@ -1114,7 +1114,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 
 		io->manager = nt_io_manager();
 		io->name = malloc(strlen(name) + 1);
-		if (NULL == io->name)
+		如果 (NULL == io->name)
 		{
 			Errno = ENOMEM;
 			__leave;
@@ -1138,7 +1138,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 		NtData->BufferSize = 1024;
 		NtData->Buffer = malloc(NtData->BufferSize);
 
-		if (NULL == NtData->Buffer)
+		如果 (NULL == NtData->Buffer)
 		{
 			Errno = ENOMEM;
 			__leave;
@@ -1148,7 +1148,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 		// Open it
 		//
 
-		if(!_Ext2OpenDevice(name, (BOOLEAN)!BooleanFlagOn(flags, EXT2_FLAG_RW), &NtData->Handle, &NtData->OpenedReadonly, &Errno))
+		如果(!_Ext2OpenDevice(name, (BOOLEAN)!BooleanFlagOn(flags, EXT2_FLAG_RW), &NtData->Handle, &NtData->OpenedReadonly, &Errno))
 		{
 			__leave;
 		}
@@ -1166,7 +1166,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 		// Lock/dismount
 		//
 
-		if(!NT_SUCCESS(_LockDrive(NtData->Handle)) /*|| !NT_SUCCESS(_DismountDrive(NtData->Handle))*/)
+		如果(!NT_SUCCESS(_LockDrive(NtData->Handle)) /*|| !NT_SUCCESS(_DismountDrive(NtData->Handle))*/)
 		{
 			NtData->OpenedReadonly = TRUE;
 		}
@@ -1181,21 +1181,21 @@ nt_open(const char *name, int flags, io_channel *channel)
 	}
 	__finally{
 
-		if(0 != Errno)
+		如果(0 != Errno)
 		{
 			//
 			// Cleanup
 			//
 
-			if (NULL != io)
+			如果 (NULL != io)
 			{
 				free(io->name);
 				free(io);
 			}
 
-			if (NULL != NtData)
+			如果 (NULL != NtData)
 			{
-				if(NULL != NtData->Handle)
+				如果(NULL != NtData->Handle)
 				{
 					_UnlockDrive(NtData->Handle);
 					_CloseDisk(NtData->Handle);
@@ -1207,7 +1207,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 		}
 	}
 
-	return Errno;
+	返回 Errno;
 }
 
 
@@ -1221,26 +1221,26 @@ nt_close(io_channel channel)
 {
 	PNT_PRIVATE_DATA NtData = NULL;
 
-	if(NULL == channel)
+	如果(NULL == channel)
 	{
-		return 0;
+		返回 0;
 	}
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 	NtData = (PNT_PRIVATE_DATA) channel->private_data;
 	EXT2_CHECK_MAGIC(NtData, EXT2_ET_MAGIC_NT_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
+	如果 (--channel->refcount > 0)
 	{
-		return 0;
+		返回 0;
 	}
 
 	free(channel->name);
 	free(channel);
 
-	if (NULL != NtData)
+	如果 (NULL != NtData)
 	{
-		if(NULL != NtData->Handle)
+		如果(NULL != NtData->Handle)
 		{
 			_DismountDrive(NtData->Handle);
 			_UnlockDrive(NtData->Handle);
@@ -1251,7 +1251,7 @@ nt_close(io_channel channel)
 		free(NtData);
 	}
 
-	return 0;
+	返回 0;
 }
 
 
@@ -1262,7 +1262,7 @@ nt_close(io_channel channel)
 
 static
 errcode_t
-nt_set_blksize(io_channel channel, int blksize)
+nt_set_blksize(io_channel channel, 整数 blksize)
 {
 	PNT_PRIVATE_DATA NtData = NULL;
 
@@ -1270,7 +1270,7 @@ nt_set_blksize(io_channel channel, int blksize)
 	NtData = (PNT_PRIVATE_DATA) channel->private_data;
 	EXT2_CHECK_MAGIC(NtData, EXT2_ET_MAGIC_NT_IO_CHANNEL);
 
-	if (channel->block_size != blksize)
+	如果 (channel->block_size != blksize)
 	{
 		channel->block_size = blksize;
 
@@ -1281,14 +1281,14 @@ nt_set_blksize(io_channel channel, int blksize)
 
 		NtData->Buffer = malloc(NtData->BufferSize);
 
-		if (NULL == NtData->Buffer)
+		如果 (NULL == NtData->Buffer)
 		{
-			return ENOMEM;
+			返回 ENOMEM;
 		}
 
 	}
 
-	return 0;
+	返回 0;
 }
 
 
@@ -1299,7 +1299,7 @@ nt_set_blksize(io_channel channel, int blksize)
 static
 errcode_t
 nt_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+			       整数 count, void *buf)
 {
 	PVOID BufferToRead;
 	ULONG SizeToRead;
@@ -1316,12 +1316,12 @@ nt_read_blk(io_channel channel, unsigned long block,
 	// If it's in the cache, use it!
 	//
 
-	if ((1 == count) &&
+	如果 ((1 == count) &&
 		(block == NtData->BufferBlockNumber) &&
 		(NtData->BufferBlockNumber != 0xffffffff))
 	{
 		memcpy(buf, NtData->Buffer, channel->block_size);
-		return 0;
+		返回 0;
 	}
 
 	Size = (count < 0) ? (ULONG)(-count) : (ULONG)(count * channel->block_size);
@@ -1332,7 +1332,7 @@ nt_read_blk(io_channel channel, unsigned long block,
 	// If not fit to the block
 	//
 
-	if(Size <= NtData->BufferSize)
+	如果(Size <= NtData->BufferSize)
 	{
 		//
 		// Update the cache
@@ -1342,35 +1342,35 @@ nt_read_blk(io_channel channel, unsigned long block,
 		BufferToRead = NtData->Buffer;
 		SizeToRead = NtData->BufferSize;
 	}
-	else
+	否则
 	{
 		SizeToRead = Size;
 		BufferToRead = buf;
 		ASSERT(0 == (SizeToRead % channel->block_size));
 	}
 
-	if(!_RawRead(NtData->Handle, Offset, SizeToRead, BufferToRead, &Errno))
+	如果(!_RawRead(NtData->Handle, Offset, SizeToRead, BufferToRead, &Errno))
 	{
 
-		if (channel->read_error)
+		如果 (channel->read_error)
 		{
-			return (channel->read_error)(channel, block, count, buf,
+			返回 (channel->read_error)(channel, block, count, buf,
 					       Size, 0, Errno);
 		}
-		else
+		否则
 		{
-			return Errno;
+			返回 Errno;
 		}
 	}
 
 
-	if(BufferToRead != buf)
+	如果(BufferToRead != buf)
 	{
 		ASSERT(Size <= SizeToRead);
 		memcpy(buf, BufferToRead, Size);
 	}
 
-	return 0;
+	返回 0;
 }
 
 
@@ -1381,7 +1381,7 @@ nt_read_blk(io_channel channel, unsigned long block,
 static
 errcode_t
 nt_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+				整数 count, const void *buf)
 {
 	ULONG SizeToWrite;
 	LARGE_INTEGER Offset;
@@ -1392,24 +1392,24 @@ nt_write_blk(io_channel channel, unsigned long block,
 	NtData = (PNT_PRIVATE_DATA) channel->private_data;
 	EXT2_CHECK_MAGIC(NtData, EXT2_ET_MAGIC_NT_IO_CHANNEL);
 
-	if(NtData->OpenedReadonly)
+	如果(NtData->OpenedReadonly)
 	{
-		return EACCES;
+		返回 EACCES;
 	}
 
-	if (count == 1)
+	如果 (count == 1)
 	{
 		SizeToWrite = channel->block_size;
 	}
-	else
+	否则
 	{
 		NtData->BufferBlockNumber = 0xffffffff;
 
-		if (count < 0)
+		如果 (count < 0)
 		{
 			SizeToWrite = (ULONG)(-count);
 		}
-		else
+		否则
 		{
 			SizeToWrite = (ULONG)(count * channel->block_size);
 		}
@@ -1419,16 +1419,16 @@ nt_write_blk(io_channel channel, unsigned long block,
 	ASSERT(0 == (SizeToWrite % 512));
 	Offset.QuadPart = block * channel->block_size;
 
-	if(!_RawWrite(NtData->Handle, Offset, SizeToWrite, buf, &Errno))
+	如果(!_RawWrite(NtData->Handle, Offset, SizeToWrite, buf, &Errno))
 	{
-		if (channel->write_error)
+		如果 (channel->write_error)
 		{
-			return (channel->write_error)(channel, block, count, buf,
+			返回 (channel->write_error)(channel, block, count, buf,
 						SizeToWrite, 0, Errno);
 		}
-		else
+		否则
 		{
-			return Errno;
+			返回 Errno;
 		}
 	}
 
@@ -1437,7 +1437,7 @@ nt_write_blk(io_channel channel, unsigned long block,
 	// Stash a copy.
 	//
 
-	if(SizeToWrite >= NtData->BufferSize)
+	如果(SizeToWrite >= NtData->BufferSize)
 	{
 		NtData->BufferBlockNumber = block;
 		memcpy(NtData->Buffer, buf, NtData->BufferSize);
@@ -1445,7 +1445,7 @@ nt_write_blk(io_channel channel, unsigned long block,
 
 	NtData->Written = TRUE;
 
-	return 0;
+	返回 0;
 
 }
 
@@ -1466,9 +1466,9 @@ nt_flush(io_channel channel)
 	NtData = (PNT_PRIVATE_DATA) channel->private_data;
 	EXT2_CHECK_MAGIC(NtData, EXT2_ET_MAGIC_NT_IO_CHANNEL);
 
-	if(NtData->OpenedReadonly)
+	如果(NtData->OpenedReadonly)
 	{
-		return 0; // EACCESS;
+		返回 0; // EACCESS;
 	}
 
 
@@ -1483,12 +1483,12 @@ nt_flush(io_channel channel)
 	// Test and correct partition type.
 	//
 
-	if(NtData->Written)
+	如果(NtData->Written)
 	{
 		_SetPartType(NtData->Handle, 0x83);
 	}
 
-	return 0;
+	返回 0;
 }
 
 

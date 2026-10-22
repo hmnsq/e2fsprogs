@@ -12,7 +12,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#如果 HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
@@ -21,34 +21,34 @@
 
 struct lookup_struct  {
 	const char	*name;
-	int		len;
+	整数		len;
 	ext2_ino_t	*inode;
-	int		found;
+	整数		found;
 };
 
 #ifdef __TURBOC__
  #pragma argsused
 #endif
-static int lookup_proc(struct ext2_dir_entry *dirent,
-		       int	offset EXT2FS_ATTR((unused)),
-		       int	blocksize EXT2FS_ATTR((unused)),
+static 整数 lookup_proc(struct ext2_dir_entry *dirent,
+		       整数	offset EXT2FS_ATTR((unused)),
+		       整数	blocksize EXT2FS_ATTR((unused)),
 		       char	*buf EXT2FS_ATTR((unused)),
 		       void	*priv_data)
 {
 	struct lookup_struct *ls = (struct lookup_struct *) priv_data;
 
-	if (ls->len != ext2fs_dirent_name_len(dirent))
-		return 0;
-	if (strncmp(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
-		return 0;
+	如果 (ls->len != ext2fs_dirent_name_len(dirent))
+		返回 0;
+	如果 (strncmp(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
+		返回 0;
 	*ls->inode = dirent->inode;
 	ls->found++;
-	return DIRENT_ABORT;
+	返回 DIRENT_ABORT;
 }
 
 
 errcode_t ext2fs_lookup(ext2_filsys fs, ext2_ino_t dir, const char *name,
-			int namelen, char *buf, ext2_ino_t *inode)
+			整数 namelen, char *buf, ext2_ino_t *inode)
 {
 	errcode_t	retval;
 	struct lookup_struct ls;
@@ -61,10 +61,10 @@ errcode_t ext2fs_lookup(ext2_filsys fs, ext2_ino_t dir, const char *name,
 	ls.found = 0;
 
 	retval = ext2fs_dir_iterate(fs, dir, 0, buf, lookup_proc, &ls);
-	if (retval)
-		return retval;
+	如果 (retval)
+		返回 retval;
 
-	return (ls.found) ? 0 : EXT2_ET_FILE_NOT_FOUND;
+	返回 (ls.found) ? 0 : EXT2_ET_FILE_NOT_FOUND;
 }
 
 

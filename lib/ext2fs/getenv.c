@@ -9,7 +9,7 @@
  * General Public License, version 2.
  * %End-Header%
  */
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#如果 !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
 #define _XOPEN_SOURCE 600
 #define _DARWIN_C_SOURCE
 #ifndef _GNU_SOURCE
@@ -19,15 +19,15 @@
 
 #include "config.h"
 #include <stdlib.h>
-#if HAVE_UNISTD_H
+#如果 HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
-#else
+#否则
 #define PR_GET_DUMPABLE 3
 #endif
-#if (!defined(HAVE_PRCTL) && defined(linux))
+#如果 (!defined(HAVE_PRCTL) && defined(linux))
 #include <sys/syscall.h>
 #endif
 
@@ -35,23 +35,23 @@
 
 char *ext2fs_safe_getenv(const char *arg)
 {
-	if ((getuid() != geteuid()) || (getgid() != getegid()))
-		return NULL;
+	如果 ((getuid() != geteuid()) || (getgid() != getegid()))
+		返回 NULL;
 #ifdef HAVE_PRCTL
-	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#else
-#if (defined(linux) && defined(SYS_prctl))
-	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
+	如果 (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		返回 NULL;
+#否则
+#如果 (defined(linux) && defined(SYS_prctl))
+	如果 (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		返回 NULL;
 #endif
 #endif
 
-#if defined(HAVE_SECURE_GETENV)
-	return secure_getenv(arg);
+#如果 defined(HAVE_SECURE_GETENV)
+	返回 secure_getenv(arg);
 #elif defined(HAVE___SECURE_GETENV)
-	return __secure_getenv(arg);
-#else
-	return getenv(arg);
+	返回 __secure_getenv(arg);
+#否则
+	返回 getenv(arg);
 #endif
 }

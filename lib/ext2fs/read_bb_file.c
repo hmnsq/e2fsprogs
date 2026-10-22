@@ -12,15 +12,15 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#如果 HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#如果 HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#如果 HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -40,39 +40,39 @@ errcode_t ext2fs_read_bb_FILE2(ext2_filsys fs, FILE *f,
 {
 	errcode_t	retval;
 	unsigned long long blockno;
-	int		count;
+	整数		count;
 	char		buf[128];
 
-	if (fs)
+	如果 (fs)
 		EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!*bb_list) {
+	如果 (!*bb_list) {
 		retval = ext2fs_badblocks_list_create(bb_list, 10);
-		if (retval)
-			return retval;
+		如果 (retval)
+			返回 retval;
 	}
 
-	while (!feof (f)) {
-		if (fgets(buf, sizeof(buf), f) == NULL)
+	当 (!feof (f)) {
+		如果 (fgets(buf, sizeof(buf), f) == NULL)
 			break;
 		count = sscanf(buf, "%llu", &blockno);
-		if (count <= 0)
+		如果 (count <= 0)
 			continue;
 		/* Badblocks isn't going to be updated for 64bit */
-		if (blockno >> 32)
-			return EOVERFLOW;
-		if (fs &&
+		如果 (blockno >> 32)
+			返回 EOVERFLOW;
+		如果 (fs &&
 		    ((blockno < fs->super->s_first_data_block) ||
 		     (blockno >= ext2fs_blocks_count(fs->super)))) {
-			if (invalid)
+			如果 (invalid)
 				(invalid)(fs, (blk64_t) blockno, buf, priv_data);
 			continue;
 		}
 		retval = ext2fs_badblocks_list_add(*bb_list, (blk64_t) blockno);
-		if (retval)
-			return retval;
+		如果 (retval)
+			返回 retval;
 	}
-	return 0;
+	返回 0;
 }
 
 struct compat_struct {
@@ -86,7 +86,7 @@ static void call_compat_invalid(ext2_filsys fs, blk_t blk,
 	struct compat_struct *st;
 
 	st = (struct compat_struct *) priv_data;
-	if (st->invalid)
+	如果 (st->invalid)
 		(st->invalid)(fs, blk);
 }
 
@@ -102,7 +102,7 @@ errcode_t ext2fs_read_bb_FILE(ext2_filsys fs, FILE *f,
 
 	st.invalid = invalid;
 
-	return ext2fs_read_bb_FILE2(fs, f, bb_list, &st,
+	返回 ext2fs_read_bb_FILE2(fs, f, bb_list, &st,
 				    call_compat_invalid);
 }
 

@@ -13,10 +13,10 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#如果 HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_ERRNO_H
+#如果 HAVE_ERRNO_H
 #include <errno.h>
 #endif
 
@@ -54,7 +54,7 @@ struct irel_ma {
 	__u32 magic;
 	ext2_ino_t max_inode;
 	ext2_ino_t ref_current;
-	int   ref_iter;
+	整数   ref_iter;
 	ext2_ino_t	*orig_map;
 	struct ext2_inode_relocate_entry *entries;
 	struct inode_reference_entry *ref_entries;
@@ -75,17 +75,17 @@ errcode_t ext2fs_irel_memarray_create(char *name, ext2_ino_t max_inode,
 	 */
 	retval = ext2fs_get_mem(sizeof(struct ext2_inode_relocation_table),
 				&irel);
-	if (retval)
+	如果 (retval)
 		goto errout;
 	memset(irel, 0, sizeof(struct ext2_inode_relocation_table));
 
 	retval = ext2fs_get_mem(strlen(name)+1, &irel->name);
-	if (retval)
+	如果 (retval)
 		goto errout;
 	strcpy(irel->name, name);
 
 	retval = ext2fs_get_mem(sizeof(struct irel_ma), &ma);
-	if (retval)
+	如果 (retval)
 		goto errout;
 	memset(ma, 0, sizeof(struct irel_ma));
 	irel->priv_data = ma;
@@ -93,7 +93,7 @@ errcode_t ext2fs_irel_memarray_create(char *name, ext2_ino_t max_inode,
 	size = (size_t) (sizeof(ext2_ino_t) * (max_inode+1));
 	retval = ext2fs_get_array(max_inode+1, sizeof(ext2_ino_t),
 		&ma->orig_map);
-	if (retval)
+	如果 (retval)
 		goto errout;
 	memset(ma->orig_map, 0, size);
 
@@ -101,7 +101,7 @@ errcode_t ext2fs_irel_memarray_create(char *name, ext2_ino_t max_inode,
 			 (max_inode+1));
 	retval = ext2fs_get_array((max_inode+1,
 		sizeof(struct ext2_inode_relocate_entry), &ma->entries);
-	if (retval)
+	如果 (retval)
 		goto errout;
 	memset(ma->entries, 0, size);
 
@@ -109,7 +109,7 @@ errcode_t ext2fs_irel_memarray_create(char *name, ext2_ino_t max_inode,
 			 (max_inode+1));
 	retval = ext2fs_get_mem(max_inode+1,
 		sizeof(struct inode_reference_entry), &ma->ref_entries);
-	if (retval)
+	如果 (retval)
 		goto errout;
 	memset(ma->ref_entries, 0, size);
 	ma->max_inode = max_inode;
@@ -130,11 +130,11 @@ errcode_t ext2fs_irel_memarray_create(char *name, ext2_ino_t max_inode,
 	irel->free = ima_free;
 
 	*new_irel = irel;
-	return 0;
+	返回 0;
 
 errout:
 	ima_free(irel);
-	return retval;
+	返回 retval;
 }
 
 static errcode_t ima_put(ext2_irel irel, ext2_ino_t old,
@@ -146,35 +146,35 @@ static errcode_t ima_put(ext2_irel irel, ext2_ino_t old,
 	size_t				size, old_size;
 
 	ma = irel->priv_data;
-	if (old > ma->max_inode)
-		return EXT2_ET_INVALID_ARGUMENT;
+	如果 (old > ma->max_inode)
+		返回 EXT2_ET_INVALID_ARGUMENT;
 
 	/*
 	 * Force the orig field to the correct value; the application
 	 * program shouldn't be messing with this field.
 	 */
-	if (ma->entries[(unsigned) old].new == 0)
+	如果 (ma->entries[(unsigned) old].new == 0)
 		ent->orig = old;
-	else
+	否则
 		ent->orig = ma->entries[(unsigned) old].orig;
 
 	/*
 	 * If max_refs has changed, reallocate the refs array
 	 */
 	ref_ent = ma->ref_entries + (unsigned) old;
-	if (ref_ent->refs && ent->max_refs !=
+	如果 (ref_ent->refs && ent->max_refs !=
 	    ma->entries[(unsigned) old].max_refs) {
 		size = (sizeof(struct ext2_inode_reference) * ent->max_refs);
 		old_size = (sizeof(struct ext2_inode_reference) *
 			    ma->entries[(unsigned) old].max_refs);
 		retval = ext2fs_resize_mem(old_size, size, &ref_ent->refs);
-		if (retval)
-			return retval;
+		如果 (retval)
+			返回 retval;
 	}
 
 	ma->entries[(unsigned) old] = *ent;
 	ma->orig_map[(unsigned) ent->orig] = old;
-	return 0;
+	返回 0;
 }
 
 static errcode_t ima_get(ext2_irel irel, ext2_ino_t old,
@@ -183,12 +183,12 @@ static errcode_t ima_get(ext2_irel irel, ext2_ino_t old,
 	struct irel_ma 	*ma;
 
 	ma = irel->priv_data;
-	if (old > ma->max_inode)
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned) old].new == 0)
-		return ENOENT;
+	如果 (old > ma->max_inode)
+		返回 EXT2_ET_INVALID_ARGUMENT;
+	如果 (ma->entries[(unsigned) old].new == 0)
+		返回 ENOENT;
 	*ent = ma->entries[(unsigned) old];
-	return 0;
+	返回 0;
 }
 
 static errcode_t ima_get_by_orig(ext2_irel irel, ext2_ino_t orig, ext2_ino_t *old,
@@ -198,20 +198,20 @@ static errcode_t ima_get_by_orig(ext2_irel irel, ext2_ino_t orig, ext2_ino_t *ol
 	ext2_ino_t	ino;
 
 	ma = irel->priv_data;
-	if (orig > ma->max_inode)
-		return EXT2_ET_INVALID_ARGUMENT;
+	如果 (orig > ma->max_inode)
+		返回 EXT2_ET_INVALID_ARGUMENT;
 	ino = ma->orig_map[(unsigned) orig];
-	if (ino == 0)
-		return ENOENT;
+	如果 (ino == 0)
+		返回 ENOENT;
 	*old = ino;
 	*ent = ma->entries[(unsigned) ino];
-	return 0;
+	返回 0;
 }
 
 static errcode_t ima_start_iter(ext2_irel irel)
 {
 	irel->current = 0;
-	return 0;
+	返回 0;
 }
 
 static errcode_t ima_next(ext2_irel irel, ext2_ino_t *old,
@@ -220,15 +220,15 @@ static errcode_t ima_next(ext2_irel irel, ext2_ino_t *old,
 	struct irel_ma 	*ma;
 
 	ma = irel->priv_data;
-	while (++irel->current < ma->max_inode) {
-		if (ma->entries[(unsigned) irel->current].new == 0)
+	当 (++irel->current < ma->max_inode) {
+		如果 (ma->entries[(unsigned) irel->current].new == 0)
 			continue;
 		*old = irel->current;
 		*ent = ma->entries[(unsigned) irel->current];
-		return 0;
+		返回 0;
 	}
 	*old = 0;
-	return 0;
+	返回 0;
 }
 
 static errcode_t ima_add_ref(ext2_irel irel, ext2_ino_t ino,
@@ -241,8 +241,8 @@ static errcode_t ima_add_ref(ext2_irel irel, ext2_ino_t ino,
 	errcode_t		retval;
 
 	ma = irel->priv_data;
-	if (ino > ma->max_inode)
-		return EXT2_ET_INVALID_ARGUMENT;
+	如果 (ino > ma->max_inode)
+		返回 EXT2_ET_INVALID_ARGUMENT;
 
 	ref_ent = ma->ref_entries + (unsigned) ino;
 	ent = ma->entries + (unsigned) ino;
@@ -250,22 +250,22 @@ static errcode_t ima_add_ref(ext2_irel irel, ext2_ino_t ino,
 	/*
 	 * If the inode reference array doesn't exist, create it.
 	 */
-	if (ref_ent->refs == 0) {
+	如果 (ref_ent->refs == 0) {
 		size = (size_t) ((sizeof(struct ext2_inode_reference) *
 				  ent->max_refs));
 		retval = ext2fs_get_array(ent->max_refs,
 			sizeof(struct ext2_inode_reference), &ref_ent->refs);
-		if (retval)
-			return retval;
+		如果 (retval)
+			返回 retval;
 		memset(ref_ent->refs, 0, size);
 		ref_ent->num = 0;
 	}
 
-	if (ref_ent->num >= ent->max_refs)
-		return EXT2_ET_TOO_MANY_REFS;
+	如果 (ref_ent->num >= ent->max_refs)
+		返回 EXT2_ET_TOO_MANY_REFS;
 
 	ref_ent->refs[(unsigned) ref_ent->num++] = *ref;
-	return 0;
+	返回 0;
 }
 
 static errcode_t ima_start_iter_ref(ext2_irel irel, ext2_ino_t ino)
@@ -273,13 +273,13 @@ static errcode_t ima_start_iter_ref(ext2_irel irel, ext2_ino_t ino)
 	struct irel_ma 	*ma;
 
 	ma = irel->priv_data;
-	if (ino > ma->max_inode)
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned) ino].new == 0)
-		return ENOENT;
+	如果 (ino > ma->max_inode)
+		返回 EXT2_ET_INVALID_ARGUMENT;
+	如果 (ma->entries[(unsigned) ino].new == 0)
+		返回 ENOENT;
 	ma->ref_current = ino;
 	ma->ref_iter = 0;
-	return 0;
+	返回 0;
 }
 
 static errcode_t ima_next_ref(ext2_irel irel,
@@ -292,14 +292,14 @@ static errcode_t ima_next_ref(ext2_irel irel,
 
 	ref_ent = ma->ref_entries + ma->ref_current;
 
-	if ((ref_ent->refs == NULL) ||
+	如果 ((ref_ent->refs == NULL) ||
 	    (ma->ref_iter >= ref_ent->num)) {
 		ref->block = 0;
 		ref->offset = 0;
-		return 0;
+		返回 0;
 	}
 	*ref = ref_ent->refs[ma->ref_iter++];
-	return 0;
+	返回 0;
 }
 
 
@@ -308,13 +308,13 @@ static errcode_t ima_move(ext2_irel irel, ext2_ino_t old, ext2_ino_t new)
 	struct irel_ma 	*ma;
 
 	ma = irel->priv_data;
-	if ((old > ma->max_inode) || (new > ma->max_inode))
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned) old].new == 0)
-		return ENOENT;
+	如果 ((old > ma->max_inode) || (new > ma->max_inode))
+		返回 EXT2_ET_INVALID_ARGUMENT;
+	如果 (ma->entries[(unsigned) old].new == 0)
+		返回 ENOENT;
 
 	ma->entries[(unsigned) new] = ma->entries[(unsigned) old];
-	if (ma->ref_entries[(unsigned) new].refs)
+	如果 (ma->ref_entries[(unsigned) new].refs)
 		ext2fs_free_mem(&ma->ref_entries[(unsigned) new].refs);
 	ma->ref_entries[(unsigned) new] = ma->ref_entries[(unsigned) old];
 
@@ -323,7 +323,7 @@ static errcode_t ima_move(ext2_irel irel, ext2_ino_t old, ext2_ino_t new)
 	ma->ref_entries[(unsigned) old].refs = 0;
 
 	ma->orig_map[ma->entries[new].orig] = new;
-	return 0;
+	返回 0;
 }
 
 static errcode_t ima_delete(ext2_irel irel, ext2_ino_t old)
@@ -331,19 +331,19 @@ static errcode_t ima_delete(ext2_irel irel, ext2_ino_t old)
 	struct irel_ma 	*ma;
 
 	ma = irel->priv_data;
-	if (old > ma->max_inode)
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned) old].new == 0)
-		return ENOENT;
+	如果 (old > ma->max_inode)
+		返回 EXT2_ET_INVALID_ARGUMENT;
+	如果 (ma->entries[(unsigned) old].new == 0)
+		返回 ENOENT;
 
 	ma->entries[old].new = 0;
-	if (ma->ref_entries[(unsigned) old].refs)
+	如果 (ma->ref_entries[(unsigned) old].refs)
 		ext2fs_free_mem(&ma->ref_entries[(unsigned) old].refs);
 	ma->orig_map[ma->entries[(unsigned) old].orig] = 0;
 
 	ma->ref_entries[(unsigned) old].num = 0;
 	ma->ref_entries[(unsigned) old].refs = 0;
-	return 0;
+	返回 0;
 }
 
 static errcode_t ima_free(ext2_irel irel)
@@ -351,27 +351,27 @@ static errcode_t ima_free(ext2_irel irel)
 	struct irel_ma 	*ma;
 	ext2_ino_t	ino;
 
-	if (!irel)
-		return 0;
+	如果 (!irel)
+		返回 0;
 
 	ma = irel->priv_data;
 
-	if (ma) {
-		if (ma->orig_map)
+	如果 (ma) {
+		如果 (ma->orig_map)
 			ext2fs_free_mem(&ma->orig_map);
-		if (ma->entries)
+		如果 (ma->entries)
 			ext2fs_free_mem(&ma->entries);
-		if (ma->ref_entries) {
-			for (ino = 0; ino <= ma->max_inode; ino++) {
-				if (ma->ref_entries[(unsigned) ino].refs)
+		如果 (ma->ref_entries) {
+			为 (ino = 0; ino <= ma->max_inode; ino++) {
+				如果 (ma->ref_entries[(unsigned) ino].refs)
 					ext2fs_free_mem(&ma->ref_entries[(unsigned) ino].refs);
 			}
 			ext2fs_free_mem(&ma->ref_entries);
 		}
 		ext2fs_free_mem(&ma);
 	}
-	if (irel->name)
+	如果 (irel->name)
 		ext2fs_free_mem(&irel->name);
 	ext2fs_free_mem(&irel);
-	return 0;
+	返回 0;
 }
