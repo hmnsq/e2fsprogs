@@ -11,14 +11,14 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#include <limits.h>
+#অন্তর্ভাব "config.h"
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <limits.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#অন্তর্ভাব "ext2_fs.h"
+#অন্তর্ভাব "ext2fs.h"
+#অন্তর্ভাব "ext2fsP.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
@@ -37,18 +37,18 @@
  */
 #define DELTA 0x9E3779B9
 
-static void TEA_transform(__u32 buf[4], __u32 const in[])
+স্থির শূন্য TEA_transform(__u32 buf[4], __u32 ধ্রুব in[])
 {
 	__u32	sum = 0;
 	__u32	b0 = buf[0], b1 = buf[1];
 	__u32	a = in[0], b = in[1], c = in[2], d = in[3];
-	int	n = 16;
+	পূর্ণাঙ্ক	n = 16;
 
-	do {
+	কুরু {
 		sum += DELTA;
 		b0 += ((b1 << 4)+a) ^ (b1+sum) ^ ((b1 >> 5)+b);
 		b1 += ((b0 << 4)+c) ^ (b0+sum) ^ ((b0 >> 5)+d);
-	} while(--n);
+	} যাবত্(--n);
 
 	buf[0] += b0;
 	buf[1] += b1;
@@ -74,7 +74,7 @@ static void TEA_transform(__u32 buf[4], __u32 const in[])
 /*
  * Basic cut-down MD4 transform.  Returns only 32 bits of result.
  */
-static void halfMD4Transform (__u32 buf[4], __u32 const in[])
+স্থির শূন্য halfMD4Transform (__u32 buf[4], __u32 ধ্রুব in[])
 {
 	__u32	a = buf[0], b = buf[1], c = buf[2], d = buf[3];
 
@@ -123,58 +123,58 @@ static void halfMD4Transform (__u32 buf[4], __u32 const in[])
 #undef K3
 
 /* The old legacy hash */
-static ext2_dirhash_t dx_hack_hash (const char *name, int len,
-				    int unsigned_flag)
+স্থির ext2_dirhash_t dx_hack_hash (ধ্রুব বর্ণ *name, পূর্ণাঙ্ক len,
+				    পূর্ণাঙ্ক unsigned_flag)
 {
 	__u32 hash, hash0 = 0x12a3fe2d, hash1 = 0x37abe8f9;
-	const unsigned char *ucp = (const unsigned char *) name;
-	const signed char *scp = (const signed char *) name;
-	int c;
+	ধ্রুব unsigned বর্ণ *ucp = (ধ্রুব unsigned বর্ণ *) name;
+	ধ্রুব signed বর্ণ *scp = (ধ্রুব signed বর্ণ *) name;
+	পূর্ণাঙ্ক c;
 
-	while (len--) {
-		if (unsigned_flag)
-			c = (int) *ucp++;
-		else
-			c = (int) *scp++;
+	যাবত্ (len--) {
+		যদি (unsigned_flag)
+			c = (পূর্ণাঙ্ক) *ucp++;
+		অন্যথা
+			c = (পূর্ণাঙ্ক) *scp++;
 		hash = hash1 + (hash0 ^ (c * 7152373));
 
-		if (hash & 0x80000000) hash -= 0x7fffffff;
+		যদি (hash & 0x80000000) hash -= 0x7fffffff;
 		hash1 = hash0;
 		hash0 = hash;
 	}
-	return (hash0 << 1);
+	প্রত্যাগম (hash0 << 1);
 }
 
-static void str2hashbuf(const char *msg, int len, __u32 *buf, int num,
-			int unsigned_flag)
+স্থির শূন্য str2hashbuf(ধ্রুব বর্ণ *বার্তা, পূর্ণাঙ্ক len, __u32 *buf, পূর্ণাঙ্ক অঙ্ক,
+			পূর্ণাঙ্ক unsigned_flag)
 {
 	__u32	pad, val;
-	int	i, c;
-	const unsigned char *ucp = (const unsigned char *) msg;
-	const signed char *scp = (const signed char *) msg;
+	পূর্ণাঙ্ক	i, c;
+	ধ্রুব unsigned বর্ণ *ucp = (ধ্রুব unsigned বর্ণ *) বার্তা;
+	ধ্রুব signed বর্ণ *scp = (ধ্রুব signed বর্ণ *) বার্তা;
 
 	pad = (__u32)len | ((__u32)len << 8);
 	pad |= pad << 16;
 
 	val = pad;
-	if (len > num*4)
-		len = num * 4;
-	for (i=0; i < len; i++) {
-		if (unsigned_flag)
-			c = (int) ucp[i];
-		else
-			c = (int) scp[i];
+	যদি (len > অঙ্ক*4)
+		len = অঙ্ক * 4;
+	প্রতি (i=0; i < len; i++) {
+		যদি (unsigned_flag)
+			c = (পূর্ণাঙ্ক) ucp[i];
+		অন্যথা
+			c = (পূর্ণাঙ্ক) scp[i];
 
 		val = c + (val << 8);
-		if ((i % 4) == 3) {
+		যদি ((i % 4) == 3) {
 			*buf++ = val;
 			val = pad;
-			num--;
+			অঙ্ক--;
 		}
 	}
-	if (--num >= 0)
+	যদি (--অঙ্ক >= 0)
 		*buf++ = val;
-	while (--num >= 0)
+	যাবত্ (--অঙ্ক >= 0)
 		*buf++ = pad;
 }
 
@@ -196,17 +196,17 @@ static void str2hashbuf(const char *msg, int len, __u32 *buf, int num,
  * ext2fs_dirhash2.
  *
  */
-errcode_t ext2fs_dirhash(int version, const char *name, int len,
-			 const __u32 *seed,
+errcode_t ext2fs_dirhash(পূর্ণাঙ্ক version, ধ্রুব বর্ণ *name, পূর্ণাঙ্ক len,
+			 ধ্রুব __u32 *seed,
 			 ext2_dirhash_t *ret_hash,
 			 ext2_dirhash_t *ret_minor_hash)
 {
 	__u32	hash;
 	__u32	minor_hash = 0;
-	const char	*p;
-	int		i;
+	ধ্রুব বর্ণ	*p;
+	পূর্ণাঙ্ক		i;
 	__u32 		in[8], buf[4];
-	int		unsigned_flag = 0;
+	পূর্ণাঙ্ক		unsigned_flag = 0;
 
 	/* Initialize the default seed for the hash checksum functions */
 	buf[0] = 0x67452301;
@@ -215,28 +215,28 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 	buf[3] = 0x10325476;
 
 	/* Check to see if the seed is all zero's */
-	if (seed) {
-		for (i=0; i < 4; i++) {
-			if (seed[i])
-				break;
+	যদি (seed) {
+		প্রতি (i=0; i < 4; i++) {
+			যদি (seed[i])
+				ভঙ্গ;
 		}
-		if (i < 4)
-			memcpy(buf, seed, sizeof(buf));
+		যদি (i < 4)
+			memcpy(buf, seed, পরিমাণ(buf));
 	}
 
-	switch (version) {
-	case EXT2_HASH_LEGACY_UNSIGNED:
+	বিকল্প (version) {
+	পক্ষ EXT2_HASH_LEGACY_UNSIGNED:
 		unsigned_flag++;
 		/* fallthrough */
-	case EXT2_HASH_LEGACY:
+	পক্ষ EXT2_HASH_LEGACY:
 		hash = dx_hack_hash(name, len, unsigned_flag);
-		break;
-	case EXT2_HASH_HALF_MD4_UNSIGNED:
+		ভঙ্গ;
+	পক্ষ EXT2_HASH_HALF_MD4_UNSIGNED:
 		unsigned_flag++;
 		/* fallthrough */
-	case EXT2_HASH_HALF_MD4:
+	পক্ষ EXT2_HASH_HALF_MD4:
 		p = name;
-		while (len > 0) {
+		যাবত্ (len > 0) {
 			str2hashbuf(p, len, in, 8, unsigned_flag);
 			halfMD4Transform(buf, in);
 			len -= 32;
@@ -244,13 +244,13 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 		}
 		minor_hash = buf[2];
 		hash = buf[1];
-		break;
-	case EXT2_HASH_TEA_UNSIGNED:
+		ভঙ্গ;
+	পক্ষ EXT2_HASH_TEA_UNSIGNED:
 		unsigned_flag++;
 		/* fallthrough */
-	case EXT2_HASH_TEA:
+	পক্ষ EXT2_HASH_TEA:
 		p = name;
-		while (len > 0) {
+		যাবত্ (len > 0) {
 			str2hashbuf(p, len, in, 4, unsigned_flag);
 			TEA_transform(buf, in);
 			len -= 16;
@@ -258,15 +258,15 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 		}
 		hash = buf[0];
 		minor_hash = buf[1];
-		break;
-	default:
+		ভঙ্গ;
+	স্বভাব:
 		*ret_hash = 0;
-		return EXT2_ET_DIRHASH_UNSUPP;
+		প্রত্যাগম EXT2_ET_DIRHASH_UNSUPP;
 	}
 	*ret_hash = hash & ~1;
-	if (ret_minor_hash)
+	যদি (ret_minor_hash)
 		*ret_minor_hash = minor_hash;
-	return 0;
+	প্রত্যাগম 0;
 }
 
 /*
@@ -275,33 +275,33 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
  * encoding support based on the nls_table and the flags. Check
  * ext2fs_dirhash for documentation on the input and output parameters.
  */
-errcode_t ext2fs_dirhash2(int version, const char *name, int len,
-			  const struct ext2fs_nls_table *charset,
-			  int hash_flags, const __u32 *seed,
+errcode_t ext2fs_dirhash2(পূর্ণাঙ্ক version, ধ্রুব বর্ণ *name, পূর্ণাঙ্ক len,
+			  ধ্রুব সংরচনা ext2fs_nls_table *charset,
+			  পূর্ণাঙ্ক hash_flags, ধ্রুব __u32 *seed,
 			  ext2_dirhash_t *ret_hash,
 			  ext2_dirhash_t *ret_minor_hash)
 {
 	errcode_t r;
-	int dlen;
+	পূর্ণাঙ্ক dlen;
 
-	if (len && charset && (hash_flags & EXT4_CASEFOLD_FL)) {
-		char buff[PATH_MAX];
+	যদি (len && charset && (hash_flags & EXT4_CASEFOLD_FL)) {
+		বর্ণ buff[PATH_MAX];
 
 		dlen = charset->ops->casefold(charset,
-			      (const unsigned char *) name, len,
-			      (unsigned char *) buff, sizeof(buff));
-		if (dlen < 0) {
-			if (dlen == -EINVAL)
-				goto opaque_seq;
+			      (ধ্রুব unsigned বর্ণ *) name, len,
+			      (unsigned বর্ণ *) buff, পরিমাণ(buff));
+		যদি (dlen < 0) {
+			যদি (dlen == -EINVAL)
+				গচ্ছ opaque_seq;
 
-			return dlen;
+			প্রত্যাগম dlen;
 		}
 		r = ext2fs_dirhash(version, buff, dlen, seed, ret_hash,
 				   ret_minor_hash);
-		return r;
+		প্রত্যাগম r;
 	}
 
 opaque_seq:
-	return ext2fs_dirhash(version, name, len, seed, ret_hash,
+	প্রত্যাগম ext2fs_dirhash(version, name, len, seed, ret_hash,
 			      ret_minor_hash);
 }

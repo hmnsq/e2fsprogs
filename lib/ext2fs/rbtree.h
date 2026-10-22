@@ -94,90 +94,90 @@ static inline struct page * rb_insert_page_cache(struct inode * inode,
 #ifndef	_LINUX_RBTREE_H
 #define	_LINUX_RBTREE_H
 
-#include <stdlib.h>
-#include <stdint.h>
-#include "compiler.h"
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব "compiler.h"
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
+#যদি __GNUC_PREREQ (4, 6)
+#pragma GCC diagnostic ঠেলো
 #pragma GCC diagnostic ignored "-Wunused-function"
 #endif
 
-struct rb_node
+সংরচনা rb_গ্রন্থি
 {
 	uintptr_t  rb_parent_color;
 #define	RB_RED		0
 #define	RB_BLACK	1
-	struct rb_node *rb_right;
-	struct rb_node *rb_left;
-} __attribute__((aligned(sizeof(long))));
+	সংরচনা rb_গ্রন্থি *rb_ডান;
+	সংরচনা rb_গ্রন্থি *rb_বাম;
+} __attribute__((aligned(পরিমাণ(long))));
     /* The alignment might seem pointless, but allegedly CRIS needs it */
 
-struct rb_root
+সংরচনা rb_মূল
 {
-	struct rb_node *rb_node;
+	সংরচনা rb_গ্রন্থি *rb_গ্রন্থি;
 };
 
 
-#define ext2fs_rb_parent(r)   ((struct rb_node *)((r)->rb_parent_color & ~3))
+#define ext2fs_rb_parent(r)   ((সংরচনা rb_গ্রন্থি *)((r)->rb_parent_color & ~3))
 #define ext2fs_rb_color(r)   ((r)->rb_parent_color & 1)
 #define ext2fs_rb_is_red(r)   (!ext2fs_rb_color(r))
 #define ext2fs_rb_is_black(r) ext2fs_rb_color(r)
-#define ext2fs_rb_set_red(r)  do { (r)->rb_parent_color &= ~1; } while (0)
-#define ext2fs_rb_set_black(r)  do { (r)->rb_parent_color |= 1; } while (0)
+#define ext2fs_rb_set_red(r)  কুরু { (r)->rb_parent_color &= ~1; } যাবত্ (0)
+#define ext2fs_rb_set_black(r)  কুরু { (r)->rb_parent_color |= 1; } যাবত্ (0)
 
-static inline void ext2fs_rb_set_parent(struct rb_node *rb, struct rb_node *p)
+স্থির অন্তঃস্থ শূন্য ext2fs_rb_set_parent(সংরচনা rb_গ্রন্থি *rb, সংরচনা rb_গ্রন্থি *p)
 {
 	rb->rb_parent_color = (rb->rb_parent_color & 3) | (uintptr_t)p;
 }
-static inline void ext2fs_rb_set_color(struct rb_node *rb, int color)
+স্থির অন্তঃস্থ শূন্য ext2fs_rb_set_color(সংরচনা rb_গ্রন্থি *rb, পূর্ণাঙ্ক color)
 {
 	rb->rb_parent_color = (rb->rb_parent_color & ~1) | color;
 }
 
-#define RB_ROOT	(struct rb_root) { NULL, }
+#define RB_মূল	(সংরচনা rb_মূল) { রিক্ত, }
 #define	ext2fs_rb_entry(ptr, type, member) container_of(ptr, type, member)
 
-static inline int ext2fs_rb_empty_root(struct rb_root *root)
+স্থির অন্তঃস্থ পূর্ণাঙ্ক ext2fs_rb_empty_মূল(সংরচনা rb_মূল *মূল)
 {
-	return root->rb_node == NULL;
+	প্রত্যাগম মূল->rb_গ্রন্থি == রিক্ত;
 }
 
-static inline int ext2fs_rb_empty_node(struct rb_node *node)
+স্থির অন্তঃস্থ পূর্ণাঙ্ক ext2fs_rb_empty_গ্রন্থি(সংরচনা rb_গ্রন্থি *গ্রন্থি)
 {
-	return ext2fs_rb_parent(node) == node;
+	প্রত্যাগম ext2fs_rb_parent(গ্রন্থি) == গ্রন্থি;
 }
 
-static inline void ext2fs_rb_clear_node(struct rb_node *node)
+স্থির অন্তঃস্থ শূন্য ext2fs_rb_clear_গ্রন্থি(সংরচনা rb_গ্রন্থি *গ্রন্থি)
 {
-	ext2fs_rb_set_parent(node, node);
+	ext2fs_rb_set_parent(গ্রন্থি, গ্রন্থি);
 }
 
-extern void ext2fs_rb_insert_color(struct rb_node *, struct rb_root *);
-extern void ext2fs_rb_erase(struct rb_node *, struct rb_root *);
+বাহ্য শূন্য ext2fs_rb_ঢোকাও_color(সংরচনা rb_গ্রন্থি *, সংরচনা rb_মূল *);
+বাহ্য শূন্য ext2fs_rb_erase(সংরচনা rb_গ্রন্থি *, সংরচনা rb_মূল *);
 
 /* Find logical next and previous nodes in a tree */
-extern struct rb_node *ext2fs_rb_next(struct rb_node *);
-extern struct rb_node *ext2fs_rb_prev(struct rb_node *);
-extern struct rb_node *ext2fs_rb_first(const struct rb_root *);
-extern struct rb_node *ext2fs_rb_last(const struct rb_root *);
+বাহ্য সংরচনা rb_গ্রন্থি *ext2fs_rb_next(সংরচনা rb_গ্রন্থি *);
+বাহ্য সংরচনা rb_গ্রন্থি *ext2fs_rb_prev(সংরচনা rb_গ্রন্থি *);
+বাহ্য সংরচনা rb_গ্রন্থি *ext2fs_rb_first(ধ্রুব সংরচনা rb_মূল *);
+বাহ্য সংরচনা rb_গ্রন্থি *ext2fs_rb_last(ধ্রুব সংরচনা rb_মূল *);
 
 /* Fast replacement of a single node without remove/rebalance/add/rebalance */
-extern void ext2fs_rb_replace_node(struct rb_node *victim, struct rb_node *new_,
-				 struct rb_root *root);
+বাহ্য শূন্য ext2fs_rb_replace_গ্রন্থি(সংরচনা rb_গ্রন্থি *victim, সংরচনা rb_গ্রন্থি *new_,
+				 সংরচনা rb_মূল *মূল);
 
-static inline void ext2fs_rb_link_node(struct rb_node * node,
-				     struct rb_node * parent,
-				     struct rb_node ** rb_link)
+স্থির অন্তঃস্থ শূন্য ext2fs_rb_link_গ্রন্থি(সংরচনা rb_গ্রন্থি * গ্রন্থি,
+				     সংরচনা rb_গ্রন্থি * parent,
+				     সংরচনা rb_গ্রন্থি ** rb_link)
 {
-	node->rb_parent_color = (uintptr_t)parent;
-	node->rb_left = node->rb_right = NULL;
+	গ্রন্থি->rb_parent_color = (uintptr_t)parent;
+	গ্রন্থি->rb_বাম = গ্রন্থি->rb_ডান = রিক্ত;
 
-	*rb_link = node;
+	*rb_link = গ্রন্থি;
 }
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
+#যদি __GNUC_PREREQ (4, 6)
+#pragma GCC diagnostic বের_করো
 #endif
 
 #endif	/* _LINUX_RBTREE_H */

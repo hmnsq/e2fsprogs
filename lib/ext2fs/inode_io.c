@@ -10,59 +10,59 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#অন্তর্ভাব "config.h"
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#যদি HAVE_UNISTD_H
+#অন্তর্ভাব <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#যদি HAVE_ERRNO_H
+#অন্তর্ভাব <errno.h>
 #endif
-#include <time.h>
+#অন্তর্ভাব <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#অন্তর্ভাব "ext2_fs.h"
+#অন্তর্ভাব "ext2fs.h"
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#define EXT2_CHECK_MAGIC(সংরচনা, code) \
+	  যদি ((সংরচনা)->magic != (code)) প্রত্যাগম (code)
 
-struct inode_private_data {
-	int				magic;
-	char				name[32];
+সংরচনা inode_private_data {
+	পূর্ণাঙ্ক				magic;
+	বর্ণ				name[32];
 	ext2_file_t			file;
 	ext2_filsys			fs;
 	ext2_ino_t 			ino;
-	struct ext2_inode		inode;
-	int				flags;
-	struct inode_private_data	*next;
+	সংরচনা ext2_inode		inode;
+	পূর্ণাঙ্ক				flags;
+	সংরচনা inode_private_data	*next;
 };
 
 #define CHANNEL_HAS_INODE	0x8000
 
-static struct inode_private_data *top_intern;
-static int ino_unique = 0;
+স্থির সংরচনা inode_private_data *শীর্ষ_intern;
+স্থির পূর্ণাঙ্ক ino_unique = 0;
 
-static errcode_t inode_open(const char *name, int flags, io_channel *channel);
-static errcode_t inode_close(io_channel channel);
-static errcode_t inode_set_blksize(io_channel channel, int blksize);
-static errcode_t inode_read_blk(io_channel channel, unsigned long block,
-			       int count, void *data);
-static errcode_t inode_write_blk(io_channel channel, unsigned long block,
-				int count, const void *data);
-static errcode_t inode_flush(io_channel channel);
-static errcode_t inode_write_byte(io_channel channel, unsigned long offset,
-				int size, const void *data);
-static errcode_t inode_read_blk64(io_channel channel,
-				unsigned long long block, int count, void *data);
-static errcode_t inode_write_blk64(io_channel channel,
-				unsigned long long block, int count, const void *data);
+স্থির errcode_t inode_open(ধ্রুব বর্ণ *name, পূর্ণাঙ্ক flags, io_channel *channel);
+স্থির errcode_t inode_close(io_channel channel);
+স্থির errcode_t inode_set_blksize(io_channel channel, পূর্ণাঙ্ক blksize);
+স্থির errcode_t inode_read_blk(io_channel channel, unsigned long block,
+			       পূর্ণাঙ্ক গুনতি, শূন্য *data);
+স্থির errcode_t inode_write_blk(io_channel channel, unsigned long block,
+				পূর্ণাঙ্ক গুনতি, ধ্রুব শূন্য *data);
+স্থির errcode_t inode_flush(io_channel channel);
+স্থির errcode_t inode_write_byte(io_channel channel, unsigned long offset,
+				পূর্ণাঙ্ক size, ধ্রুব শূন্য *data);
+স্থির errcode_t inode_read_blk64(io_channel channel,
+				unsigned long long block, পূর্ণাঙ্ক গুনতি, শূন্য *data);
+স্থির errcode_t inode_write_blk64(io_channel channel,
+				unsigned long long block, পূর্ণাঙ্ক গুনতি, ধ্রুব শূন্য *data);
 
-static struct struct_io_manager struct_inode_manager = {
+স্থির সংরচনা struct_io_manager struct_inode_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Inode I/O Manager",
 	.open		= inode_open,
@@ -79,69 +79,69 @@ static struct struct_io_manager struct_inode_manager = {
 io_manager inode_io_manager = &struct_inode_manager;
 
 errcode_t ext2fs_inode_io_intern2(ext2_filsys fs, ext2_ino_t ino,
-				  struct ext2_inode *inode,
-				  char **name)
+				  সংরচনা ext2_inode *inode,
+				  বর্ণ **name)
 {
-	struct inode_private_data 	*data;
+	সংরচনা inode_private_data 	*data;
 	errcode_t			retval;
 
-	if ((retval = ext2fs_get_mem(sizeof(struct inode_private_data),
+	যদি ((retval = ext2fs_get_mem(পরিমাণ(সংরচনা inode_private_data),
 				     &data)))
-		return retval;
+		প্রত্যাগম retval;
 	data->magic = EXT2_ET_MAGIC_INODE_IO_CHANNEL;
 	sprintf(data->name, "%u:%d", ino, ino_unique++);
 	data->file = 0;
 	data->fs = fs;
 	data->ino = ino;
 	data->flags = 0;
-	if (inode) {
-		memcpy(&data->inode, inode, sizeof(struct ext2_inode));
+	যদি (inode) {
+		memcpy(&data->inode, inode, পরিমাণ(সংরচনা ext2_inode));
 		data->flags |= CHANNEL_HAS_INODE;
 	}
-	data->next = top_intern;
-	top_intern = data;
+	data->next = শীর্ষ_intern;
+	শীর্ষ_intern = data;
 	*name = data->name;
-	return 0;
+	প্রত্যাগম 0;
 }
 
 errcode_t ext2fs_inode_io_intern(ext2_filsys fs, ext2_ino_t ino,
-				 char **name)
+				 বর্ণ **name)
 {
-	return ext2fs_inode_io_intern2(fs, ino, NULL, name);
+	প্রত্যাগম ext2fs_inode_io_intern2(fs, ino, রিক্ত, name);
 }
 
 
-static errcode_t inode_open(const char *name, int flags, io_channel *channel)
+স্থির errcode_t inode_open(ধ্রুব বর্ণ *name, পূর্ণাঙ্ক flags, io_channel *channel)
 {
-	io_channel	io = NULL;
-	struct inode_private_data *prev, *data = NULL;
+	io_channel	io = রিক্ত;
+	সংরচনা inode_private_data *prev, *data = রিক্ত;
 	errcode_t	retval;
-	int		open_flags;
+	পূর্ণাঙ্ক		open_flags;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	যদি (name == 0)
+		প্রত্যাগম EXT2_ET_BAD_DEVICE_NAME;
 
-	for (data = top_intern, prev = NULL; data;
+	প্রতি (data = শীর্ষ_intern, prev = রিক্ত; data;
 	     prev = data, data = data->next)
-		if (strcmp(name, data->name) == 0)
-			break;
-	if (!data)
-		return ENOENT;
-	if (prev)
+		যদি (strcmp(name, data->name) == 0)
+			ভঙ্গ;
+	যদি (!data)
+		প্রত্যাগম ENOENT;
+	যদি (prev)
 		prev->next = data->next;
-	else
-		top_intern = data->next;
+	অন্যথা
+		শীর্ষ_intern = data->next;
 
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	retval = ext2fs_get_mem(পরিমাণ(সংরচনা struct_io_channel), &io);
+	যদি (retval)
+		গচ্ছ cleanup;
+	memset(io, 0, পরিমাণ(সংরচনা struct_io_channel));
 
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
 	io->manager = inode_io_manager;
 	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	যদি (retval)
+		গচ্ছ cleanup;
 
 	strcpy(io->name, name);
 	io->private_data = data;
@@ -155,136 +155,136 @@ static errcode_t inode_open(const char *name, int flags, io_channel *channel)
 				   (data->flags & CHANNEL_HAS_INODE) ?
 				   &data->inode : 0, open_flags,
 				   &data->file);
-	if (retval)
-		goto cleanup;
+	যদি (retval)
+		গচ্ছ cleanup;
 
 	*channel = io;
-	return 0;
+	প্রত্যাগম 0;
 
 cleanup:
-	if (io && io->name)
+	যদি (io && io->name)
 		ext2fs_free_mem(&io->name);
-	if (data)
+	যদি (data)
 		ext2fs_free_mem(&data);
-	if (io)
+	যদি (io)
 		ext2fs_free_mem(&io);
-	return retval;
+	প্রত্যাগম retval;
 }
 
-static errcode_t inode_close(io_channel channel)
+স্থির errcode_t inode_close(io_channel channel)
 {
-	struct inode_private_data *data;
+	সংরচনা inode_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
+	data = (সংরচনা inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	যদি (--channel->refcount > 0)
+		প্রত্যাগম 0;
 
 	retval = ext2fs_file_close(data->file);
 
 	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	যদি (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	প্রত্যাগম retval;
 }
 
-static errcode_t inode_set_blksize(io_channel channel, int blksize)
+স্থির errcode_t inode_set_blksize(io_channel channel, পূর্ণাঙ্ক blksize)
 {
-	struct inode_private_data *data;
+	সংরচনা inode_private_data *data;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
+	data = (সংরচনা inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
 	channel->block_size = blksize;
-	return 0;
+	প্রত্যাগম 0;
 }
 
 
-static errcode_t inode_read_blk64(io_channel channel,
-				unsigned long long block, int count, void *buf)
+স্থির errcode_t inode_read_blk64(io_channel channel,
+				unsigned long long block, পূর্ণাঙ্ক গুনতি, শূন্য *buf)
 {
-	struct inode_private_data *data;
+	সংরচনা inode_private_data *data;
 	errcode_t	retval;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
+	data = (সংরচনা inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if ((retval = ext2fs_file_llseek(data->file,
+	যদি ((retval = ext2fs_file_llseek(data->file,
 				(ext2_off64_t)(block * channel->block_size),
 				EXT2_SEEK_SET, 0)))
-		return retval;
+		প্রত্যাগম retval;
 
-	count = (count < 0) ? -count : (count * channel->block_size);
+	গুনতি = (গুনতি < 0) ? -গুনতি : (গুনতি * channel->block_size);
 
-	return ext2fs_file_read(data->file, buf, count, 0);
+	প্রত্যাগম ext2fs_file_read(data->file, buf, গুনতি, 0);
 }
 
-static errcode_t inode_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+স্থির errcode_t inode_read_blk(io_channel channel, unsigned long block,
+			       পূর্ণাঙ্ক গুনতি, শূন্য *buf)
 {
-	return inode_read_blk64(channel, block, count, buf);
+	প্রত্যাগম inode_read_blk64(channel, block, গুনতি, buf);
 }
 
-static errcode_t inode_write_blk64(io_channel channel,
-				unsigned long long block, int count, const void *buf)
+স্থির errcode_t inode_write_blk64(io_channel channel,
+				unsigned long long block, পূর্ণাঙ্ক গুনতি, ধ্রুব শূন্য *buf)
 {
-	struct inode_private_data *data;
+	সংরচনা inode_private_data *data;
 	errcode_t	retval;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
+	data = (সংরচনা inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if ((retval = ext2fs_file_llseek(data->file,
+	যদি ((retval = ext2fs_file_llseek(data->file,
 				(ext2_off64_t) (block * channel->block_size),
 				EXT2_SEEK_SET, 0)))
-		return retval;
+		প্রত্যাগম retval;
 
-	count = (count < 0) ? -count : (count * channel->block_size);
+	গুনতি = (গুনতি < 0) ? -গুনতি : (গুনতি * channel->block_size);
 
-	return ext2fs_file_write(data->file, buf, count, 0);
+	প্রত্যাগম ext2fs_file_write(data->file, buf, গুনতি, 0);
 }
 
-static errcode_t inode_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+স্থির errcode_t inode_write_blk(io_channel channel, unsigned long block,
+				পূর্ণাঙ্ক গুনতি, ধ্রুব শূন্য *buf)
 {
-	return inode_write_blk64(channel, block, count, buf);
+	প্রত্যাগম inode_write_blk64(channel, block, গুনতি, buf);
 }
 
-static errcode_t inode_write_byte(io_channel channel, unsigned long offset,
-				 int size, const void *buf)
+স্থির errcode_t inode_write_byte(io_channel channel, unsigned long offset,
+				 পূর্ণাঙ্ক size, ধ্রুব শূন্য *buf)
 {
-	struct inode_private_data *data;
+	সংরচনা inode_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
+	data = (সংরচনা inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if ((retval = ext2fs_file_lseek(data->file, offset,
+	যদি ((retval = ext2fs_file_lseek(data->file, offset,
 					EXT2_SEEK_SET, 0)))
-		return retval;
+		প্রত্যাগম retval;
 
-	return ext2fs_file_write(data->file, buf, size, 0);
+	প্রত্যাগম ext2fs_file_write(data->file, buf, size, 0);
 }
 
 /*
  * Flush data buffers to disk.
  */
-static errcode_t inode_flush(io_channel channel)
+স্থির errcode_t inode_flush(io_channel channel)
 {
-	struct inode_private_data *data;
+	সংরচনা inode_private_data *data;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
+	data = (সংরচনা inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	return ext2fs_file_flush(data->file);
+	প্রত্যাগম ext2fs_file_flush(data->file);
 }
 

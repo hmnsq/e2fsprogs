@@ -9,45 +9,45 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#অন্তর্ভাব "config.h"
+#অন্তর্ভাব <stdio.h>
+#যদি HAVE_UNISTD_H
+#অন্তর্ভাব <unistd.h>
 #endif
-#include <string.h>
-#include <time.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#অন্তর্ভাব "ext2_fs.h"
+#অন্তর্ভাব "ext2fsP.h"
 
-static int db_dir_proc(ext2_filsys fs, struct ext2_db_entry2 *db_info,
-		       void *priv_data);
+স্থির পূর্ণাঙ্ক db_dir_proc(ext2_filsys fs, সংরচনা ext2_db_entry2 *db_info,
+		       শূন্য *priv_data);
 
 errcode_t ext2fs_dblist_dir_iterate(ext2_dblist dblist,
-				    int	flags,
-				    char	*block_buf,
-				    int (*func)(ext2_ino_t dir,
-						int	entry,
-						struct ext2_dir_entry *dirent,
-						int	offset,
-						int	blocksize,
-						char	*buf,
-						void	*priv_data),
-				    void *priv_data)
+				    পূর্ণাঙ্ক	flags,
+				    বর্ণ	*block_buf,
+				    পূর্ণাঙ্ক (*func)(ext2_ino_t dir,
+						পূর্ণাঙ্ক	entry,
+						সংরচনা ext2_dir_entry *dirent,
+						পূর্ণাঙ্ক	offset,
+						পূর্ণাঙ্ক	blocksize,
+						বর্ণ	*buf,
+						শূন্য	*priv_data),
+				    শূন্য *priv_data)
 {
 	errcode_t		retval;
-	struct dir_context	ctx;
+	সংরচনা dir_context	ctx;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
 	ctx.dir = 0;
 	ctx.flags = flags;
-	if (block_buf)
+	যদি (block_buf)
 		ctx.buf = block_buf;
-	else {
+	অন্যথা {
 		retval = ext2fs_get_mem(dblist->fs->blocksize, &ctx.buf);
-		if (retval)
-			return retval;
+		যদি (retval)
+			প্রত্যাগম retval;
 	}
 	ctx.func = func;
 	ctx.priv_data = priv_data;
@@ -55,34 +55,34 @@ errcode_t ext2fs_dblist_dir_iterate(ext2_dblist dblist,
 
 	retval = ext2fs_dblist_iterate2(dblist, db_dir_proc, &ctx);
 
-	if (!block_buf)
+	যদি (!block_buf)
 		ext2fs_free_mem(&ctx.buf);
-	if (retval)
-		return retval;
-	return ctx.errcode;
+	যদি (retval)
+		প্রত্যাগম retval;
+	প্রত্যাগম ctx.errcode;
 }
 
-static int db_dir_proc(ext2_filsys fs, struct ext2_db_entry2 *db_info,
-		       void *priv_data)
+স্থির পূর্ণাঙ্ক db_dir_proc(ext2_filsys fs, সংরচনা ext2_db_entry2 *db_info,
+		       শূন্য *priv_data)
 {
-	struct ext2_inode	inode;
-	struct dir_context	*ctx;
-	int			ret;
+	সংরচনা ext2_inode	inode;
+	সংরচনা dir_context	*ctx;
+	পূর্ণাঙ্ক			ret;
 
-	ctx = (struct dir_context *) priv_data;
+	ctx = (সংরচনা dir_context *) priv_data;
 	ctx->dir = db_info->ino;
 	ctx->errcode = 0;
 
 	ctx->errcode = ext2fs_read_inode(fs, ctx->dir, &inode);
-	if (ctx->errcode)
-		return DBLIST_ABORT;
-	if (inode.i_flags & EXT4_INLINE_DATA_FL)
+	যদি (ctx->errcode)
+		প্রত্যাগম DBLIST_ABORT;
+	যদি (inode.i_flags & EXT4_INLINE_DATA_FL)
 		ret = ext2fs_inline_data_dir_iterate(fs, ctx->dir, ctx);
-	else
+	অন্যথা
 		ret = ext2fs_process_dir_block(fs, &db_info->blk,
 					       db_info->blockcnt, 0, 0,
 					       priv_data);
-	if ((ret & BLOCK_ABORT) && !ctx->errcode)
-		return DBLIST_ABORT;
-	return 0;
+	যদি ((ret & BLOCK_ABORT) && !ctx->errcode)
+		প্রত্যাগম DBLIST_ABORT;
+	প্রত্যাগম 0;
 }

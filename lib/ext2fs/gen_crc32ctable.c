@@ -1,27 +1,27 @@
-#include <stdio.h>
-#include "crc32c_defs.h"
-#include <inttypes.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব "crc32c_defs.h"
+#অন্তর্ভাব <inttypes.h>
 
-#define ENTRIES_PER_LINE 4
+#define ENTRIES_PER_সারি 4
 
-#if CRC_LE_BITS > 8
+#যদি CRC_LE_BITS > 8
 # define LE_TABLE_ROWS (CRC_LE_BITS/8)
 # define LE_TABLE_SIZE 256
-#else
+#অন্যথা
 # define LE_TABLE_ROWS 1
 # define LE_TABLE_SIZE (1 << CRC_LE_BITS)
 #endif
 
-#if CRC_BE_BITS > 8
+#যদি CRC_BE_BITS > 8
 # define BE_TABLE_ROWS (CRC_BE_BITS/8)
 # define BE_TABLE_SIZE 256
-#else
+#অন্যথা
 # define BE_TABLE_ROWS 1
 # define BE_TABLE_SIZE (1 << CRC_BE_BITS)
 #endif
 
-static uint32_t crc32table_be[BE_TABLE_ROWS][256];
-static uint32_t crc32ctable_le[LE_TABLE_ROWS][256];
+স্থির uint32_t crc32table_be[BE_TABLE_ROWS][256];
+স্থির uint32_t crc32ctable_le[LE_TABLE_ROWS][256];
 
 /**
  * crc32init_le() - allocate and initialize LE table data
@@ -30,21 +30,21 @@ static uint32_t crc32ctable_le[LE_TABLE_ROWS][256];
  * fact that crctable[i^j] = crctable[i] ^ crctable[j].
  *
  */
-static void crc32cinit_le(void)
+স্থির শূন্য crc32cinit_le(শূন্য)
 {
 	unsigned i, j;
 	uint32_t crc = 1;
 
 	crc32ctable_le[0][0] = 0;
 
-	for (i = LE_TABLE_SIZE >> 1; i; i >>= 1) {
+	প্রতি (i = LE_TABLE_SIZE >> 1; i; i >>= 1) {
 		crc = (crc >> 1) ^ ((crc & 1) ? CRC32C_POLY_LE : 0);
-		for (j = 0; j < LE_TABLE_SIZE; j += 2 * i)
+		প্রতি (j = 0; j < LE_TABLE_SIZE; j += 2 * i)
 			crc32ctable_le[0][i + j] = crc ^ crc32ctable_le[0][j];
 	}
-	for (i = 0; i < LE_TABLE_SIZE; i++) {
+	প্রতি (i = 0; i < LE_TABLE_SIZE; i++) {
 		crc = crc32ctable_le[0][i];
-		for (j = 1; j < LE_TABLE_ROWS; j++) {
+		প্রতি (j = 1; j < LE_TABLE_ROWS; j++) {
 			crc = crc32ctable_le[0][crc & 0xff] ^ (crc >> 8);
 			crc32ctable_le[j][i] = crc;
 		}
@@ -54,35 +54,35 @@ static void crc32cinit_le(void)
 /**
  * crc32init_be() - allocate and initialize BE table data
  */
-static void crc32init_be(void)
+স্থির শূন্য crc32init_be(শূন্য)
 {
 	unsigned i, j;
 	uint32_t crc = 0x80000000;
 
 	crc32table_be[0][0] = 0;
 
-	for (i = 1; i < BE_TABLE_SIZE; i <<= 1) {
+	প্রতি (i = 1; i < BE_TABLE_SIZE; i <<= 1) {
 		crc = (crc << 1) ^ ((crc & 0x80000000) ? CRCPOLY_BE : 0);
-		for (j = 0; j < i; j++)
+		প্রতি (j = 0; j < i; j++)
 			crc32table_be[0][i + j] = crc ^ crc32table_be[0][j];
 	}
-	for (i = 0; i < BE_TABLE_SIZE; i++) {
+	প্রতি (i = 0; i < BE_TABLE_SIZE; i++) {
 		crc = crc32table_be[0][i];
-		for (j = 1; j < BE_TABLE_ROWS; j++) {
+		প্রতি (j = 1; j < BE_TABLE_ROWS; j++) {
 			crc = crc32table_be[0][(crc >> 24) & 0xff] ^ (crc << 8);
 			crc32table_be[j][i] = crc;
 		}
 	}
 }
 
-static void output_table(uint32_t (*table)[256], int rows, int len, char *trans)
+স্থির শূন্য output_table(uint32_t (*table)[256], পূর্ণাঙ্ক rows, পূর্ণাঙ্ক len, বর্ণ *trans)
 {
-	int i, j;
+	পূর্ণাঙ্ক i, j;
 
-	for (j = 0 ; j < rows; j++) {
+	প্রতি (j = 0 ; j < rows; j++) {
 		printf("{");
-		for (i = 0; i < len - 1; i++) {
-			if (i % ENTRIES_PER_LINE == 0)
+		প্রতি (i = 0; i < len - 1; i++) {
+			যদি (i % ENTRIES_PER_সারি == 0)
 				printf("\n");
 			printf("%s(0x%8.8xL), ", trans, table[j][i]);
 		}
@@ -90,11 +90,11 @@ static void output_table(uint32_t (*table)[256], int rows, int len, char *trans)
 	}
 }
 
-int main(int argc, char **argv)
+পূর্ণাঙ্ক main(পূর্ণাঙ্ক argc, বর্ণ **argv)
 {
 	printf("/* this file is generated - do not edit */\n\n");
 
-	if (CRC_BE_BITS > 1) {
+	যদি (CRC_BE_BITS > 1) {
 		crc32init_be();
 		printf("static const uint32_t "
 		       "crc32table_be[%d][%d] = {",
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 			     BE_TABLE_SIZE, "tobe");
 		printf("};\n");
 	}
-	if (CRC_LE_BITS > 1) {
+	যদি (CRC_LE_BITS > 1) {
 		crc32cinit_le();
 		printf("static const uint32_t "
 		       "crc32ctable_le[%d][%d] = {",
@@ -113,5 +113,5 @@ int main(int argc, char **argv)
 		printf("};\n");
 	}
 
-	return 0;
+	প্রত্যাগম 0;
 }

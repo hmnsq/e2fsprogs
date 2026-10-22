@@ -9,44 +9,44 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#অন্তর্ভাব "config.h"
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#যদি HAVE_UNISTD_H
+#অন্তর্ভাব <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#অন্তর্ভাব <fcntl.h>
+#অন্তর্ভাব <time.h>
+#যদি HAVE_SYS_STAT_H
+#অন্তর্ভাব <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#যদি HAVE_SYS_TYPES_H
+#অন্তর্ভাব <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#অন্তর্ভাব "ext2_fs.h"
+#অন্তর্ভাব "ext2fs.h"
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#define EXT2_CHECK_MAGIC(সংরচনা, code) \
+	  যদি ((সংরচনা)->magic != (code)) প্রত্যাগম (code)
 
-struct test_private_data {
-	int	magic;
+সংরচনা test_private_data {
+	পূর্ণাঙ্ক	magic;
 	io_channel real;
-	int flags;
+	পূর্ণাঙ্ক flags;
 	FILE *outfile;
 	unsigned long block;
-	int read_abort_count, write_abort_count;
-	void (*read_blk)(unsigned long block, int count, errcode_t err);
-	void (*write_blk)(unsigned long block, int count, errcode_t err);
-	void (*set_blksize)(int blksize, errcode_t err);
-	void (*write_byte)(unsigned long block, int count, errcode_t err);
-	void (*read_blk64)(unsigned long long block, int count, errcode_t err);
-	void (*write_blk64)(unsigned long long block, int count, errcode_t err);
+	পূর্ণাঙ্ক read_abort_গুনতি, write_abort_গুনতি;
+	শূন্য (*read_blk)(unsigned long block, পূর্ণাঙ্ক গুনতি, errcode_t err);
+	শূন্য (*write_blk)(unsigned long block, পূর্ণাঙ্ক গুনতি, errcode_t err);
+	শূন্য (*set_blksize)(পূর্ণাঙ্ক blksize, errcode_t err);
+	শূন্য (*write_byte)(unsigned long block, পূর্ণাঙ্ক গুনতি, errcode_t err);
+	শূন্য (*read_blk64)(unsigned long long block, পূর্ণাঙ্ক গুনতি, errcode_t err);
+	শূন্য (*write_blk64)(unsigned long long block, পূর্ণাঙ্ক গুনতি, errcode_t err);
 };
 
 /*
@@ -54,18 +54,18 @@ struct test_private_data {
  * necessary *before* calling test_open
  */
 io_manager test_io_backing_manager = 0;
-void (*test_io_cb_read_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
-void (*test_io_cb_write_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
-void (*test_io_cb_read_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
-void (*test_io_cb_write_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
-void (*test_io_cb_set_blksize)
-	(int blksize, errcode_t err) = 0;
-void (*test_io_cb_write_byte)
-	(unsigned long block, int count, errcode_t err) = 0;
+শূন্য (*test_io_cb_read_blk)
+	(unsigned long block, পূর্ণাঙ্ক গুনতি, errcode_t err) = 0;
+শূন্য (*test_io_cb_write_blk)
+	(unsigned long block, পূর্ণাঙ্ক গুনতি, errcode_t err) = 0;
+শূন্য (*test_io_cb_read_blk64)
+	(unsigned long long block, পূর্ণাঙ্ক গুনতি, errcode_t err) = 0;
+শূন্য (*test_io_cb_write_blk64)
+	(unsigned long long block, পূর্ণাঙ্ক গুনতি, errcode_t err) = 0;
+শূন্য (*test_io_cb_set_blksize)
+	(পূর্ণাঙ্ক blksize, errcode_t err) = 0;
+শূন্য (*test_io_cb_write_byte)
+	(unsigned long block, পূর্ণাঙ্ক গুনতি, errcode_t err) = 0;
 
 /*
  * Test flags
@@ -80,21 +80,21 @@ void (*test_io_cb_write_byte)
 #define TEST_FLAG_READAHEAD		0x80
 #define TEST_FLAG_ZEROOUT		0x100
 
-static void test_dump_block(io_channel channel,
-			    struct test_private_data *data,
-			    unsigned long block, const void *buf)
+স্থির শূন্য test_dump_block(io_channel channel,
+			    সংরচনা test_private_data *data,
+			    unsigned long block, ধ্রুব শূন্য *buf)
 {
-	const unsigned char *cp;
+	ধ্রুব unsigned বর্ণ *cp;
 	FILE *f = data->outfile;
-	int	i;
+	পূর্ণাঙ্ক	i;
 	unsigned long	cksum = 0;
 
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
+	প্রতি (i=0, cp = buf; i < channel->block_size; i++, cp++) {
 		cksum += *cp;
 	}
 	fprintf(f, "Contents of block %lu, checksum %08lu: \n", block, cksum);
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
-		if ((i % 16) == 0)
+	প্রতি (i=0, cp = buf; i < channel->block_size; i++, cp++) {
+		যদি ((i % 16) == 0)
 			fprintf(f, "%04x: ", i);
 		fprintf(f, "%02x%c", *cp, ((i % 16) == 15) ? '\n' : ' ');
 	}
@@ -103,31 +103,31 @@ static void test_dump_block(io_channel channel,
 /*
  * Flush data buffers to disk.
  */
-static errcode_t test_flush(io_channel channel)
+স্থির errcode_t test_flush(io_channel channel)
 {
-	struct test_private_data	*data;
+	সংরচনা test_private_data	*data;
 	errcode_t			retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *)channel->private_data;
+	data = (সংরচনা test_private_data *)channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	যদি (data->real)
 		retval = io_channel_flush(data->real);
 
-	if (data->flags & TEST_FLAG_FLUSH)
+	যদি (data->flags & TEST_FLAG_FLUSH)
 		fprintf(data->outfile, "Test_io: flush() returned %s\n",
 			retval ? error_message(retval) : "OK");
 
-	return retval;
+	প্রত্যাগম retval;
 }
 
-static void test_abort(io_channel channel, unsigned long block)
+স্থির শূন্য test_abort(io_channel channel, unsigned long block)
 {
-	struct test_private_data *data;
+	সংরচনা test_private_data *data;
 	FILE *f;
 
-	data = (struct test_private_data *) channel->private_data;
+	data = (সংরচনা test_private_data *) channel->private_data;
 	f = data->outfile;
 	test_flush(channel);
 
@@ -136,27 +136,27 @@ static void test_abort(io_channel channel, unsigned long block)
 	abort();
 }
 
-static errcode_t test_open(const char *name, int flags, io_channel *channel)
+স্থির errcode_t test_open(ধ্রুব বর্ণ *name, পূর্ণাঙ্ক flags, io_channel *channel)
 {
-	io_channel	io = NULL;
-	struct test_private_data *data = NULL;
+	io_channel	io = রিক্ত;
+	সংরচনা test_private_data *data = রিক্ত;
 	errcode_t	retval;
-	char		*value;
+	বর্ণ		*মান;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	যদি (name == 0)
+		প্রত্যাগম EXT2_ET_BAD_DEVICE_NAME;
+	retval = ext2fs_get_mem(পরিমাণ(সংরচনা struct_io_channel), &io);
+	যদি (retval)
+		গচ্ছ cleanup;
+	memset(io, 0, পরিমাণ(সংরচনা struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
-	retval = ext2fs_get_mem(sizeof(struct test_private_data), &data);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(পরিমাণ(সংরচনা test_private_data), &data);
+	যদি (retval)
+		গচ্ছ cleanup;
 	io->manager = test_io_manager;
 	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	যদি (retval)
+		গচ্ছ cleanup;
 
 	strcpy(io->name, name);
 	io->private_data = data;
@@ -166,14 +166,14 @@ static errcode_t test_open(const char *name, int flags, io_channel *channel)
 	io->refcount = 1;
 	io->flags = 0;
 
-	memset(data, 0, sizeof(struct test_private_data));
+	memset(data, 0, পরিমাণ(সংরচনা test_private_data));
 	data->magic = EXT2_ET_MAGIC_TEST_IO_CHANNEL;
-	if (test_io_backing_manager) {
+	যদি (test_io_backing_manager) {
 		retval = test_io_backing_manager->open(name, flags,
 						       &data->real);
-		if (retval)
-			goto cleanup;
-	} else {
+		যদি (retval)
+			গচ্ছ cleanup;
+	} অন্যথা {
 		data->real = 0;
 	}
 	data->read_blk =	test_io_cb_read_blk;
@@ -183,326 +183,326 @@ static errcode_t test_open(const char *name, int flags, io_channel *channel)
 	data->read_blk64 =	test_io_cb_read_blk64;
 	data->write_blk64 =	test_io_cb_write_blk64;
 
-	data->outfile = NULL;
-	if ((value = ext2fs_safe_getenv("TEST_IO_LOGFILE")) != NULL)
-		data->outfile = fopen(value, "w");
-	if (!data->outfile)
+	data->outfile = রিক্ত;
+	যদি ((মান = ext2fs_safe_getenv("TEST_IO_LOGFILE")) != রিক্ত)
+		data->outfile = fopen(মান, "w");
+	যদি (!data->outfile)
 		data->outfile = stderr;
 
 	data->flags = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_FLAGS")) != NULL)
-		data->flags = strtoul(value, NULL, 0);
+	যদি ((মান = ext2fs_safe_getenv("TEST_IO_FLAGS")) != রিক্ত)
+		data->flags = strtoul(মান, রিক্ত, 0);
 
 	data->block = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_BLOCK")) != NULL)
-		data->block = strtoul(value, NULL, 0);
+	যদি ((মান = ext2fs_safe_getenv("TEST_IO_BLOCK")) != রিক্ত)
+		data->block = strtoul(মান, রিক্ত, 0);
 
-	data->read_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_READ_ABORT")) != NULL)
-		data->read_abort_count = strtoul(value, NULL, 0);
+	data->read_abort_গুনতি = 0;
+	যদি ((মান = ext2fs_safe_getenv("TEST_IO_READ_ABORT")) != রিক্ত)
+		data->read_abort_গুনতি = strtoul(মান, রিক্ত, 0);
 
-	data->write_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_WRITE_ABORT")) != NULL)
-		data->write_abort_count = strtoul(value, NULL, 0);
+	data->write_abort_গুনতি = 0;
+	যদি ((মান = ext2fs_safe_getenv("TEST_IO_WRITE_ABORT")) != রিক্ত)
+		data->write_abort_গুনতি = strtoul(মান, রিক্ত, 0);
 
-	if (data->real) {
+	যদি (data->real) {
 		io->align = data->real->align;
-		if (data->real->flags & CHANNEL_FLAGS_THREADS)
+		যদি (data->real->flags & CHANNEL_FLAGS_THREADS)
 			io->flags |= CHANNEL_FLAGS_THREADS;
 	}
 
 	*channel = io;
-	return 0;
+	প্রত্যাগম 0;
 
 cleanup:
-	if (io && io->name)
+	যদি (io && io->name)
 		ext2fs_free_mem(&io->name);
-	if (io)
+	যদি (io)
 		ext2fs_free_mem(&io);
-	if (data)
+	যদি (data)
 		ext2fs_free_mem(&data);
-	return retval;
+	প্রত্যাগম retval;
 }
 
-static errcode_t test_close(io_channel channel)
+স্থির errcode_t test_close(io_channel channel)
 {
-	struct test_private_data *data;
+	সংরচনা test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (সংরচনা test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	যদি (--channel->refcount > 0)
+		প্রত্যাগম 0;
 
-	if (data->real)
+	যদি (data->real)
 		retval = io_channel_close(data->real);
 
-	if (data->outfile && data->outfile != stderr)
+	যদি (data->outfile && data->outfile != stderr)
 		fclose(data->outfile);
 
 	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	যদি (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	প্রত্যাগম retval;
 }
 
-static errcode_t test_set_blksize(io_channel channel, int blksize)
+স্থির errcode_t test_set_blksize(io_channel channel, পূর্ণাঙ্ক blksize)
 {
-	struct test_private_data *data;
+	সংরচনা test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (সংরচনা test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real) {
+	যদি (data->real) {
 		retval = io_channel_set_blksize(data->real, blksize);
 		channel->align = data->real->align;
 	}
-	if (data->set_blksize)
+	যদি (data->set_blksize)
 		data->set_blksize(blksize, retval);
-	if (data->flags & TEST_FLAG_SET_BLKSIZE)
+	যদি (data->flags & TEST_FLAG_SET_BLKSIZE)
 		fprintf(data->outfile,
 			"Test_io: set_blksize(%d) returned %s\n",
 			blksize, retval ? error_message(retval) : "OK");
 	channel->block_size = blksize;
-	return retval;
+	প্রত্যাগম retval;
 }
 
 
-static errcode_t test_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+স্থির errcode_t test_read_blk(io_channel channel, unsigned long block,
+			       পূর্ণাঙ্ক গুনতি, শূন্য *buf)
 {
-	struct test_private_data *data;
+	সংরচনা test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (সংরচনা test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_read_blk(data->real, block, count, buf);
-	if (data->read_blk)
-		data->read_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
+	যদি (data->real)
+		retval = io_channel_read_blk(data->real, block, গুনতি, buf);
+	যদি (data->read_blk)
+		data->read_blk(block, গুনতি, retval);
+	যদি (data->flags & TEST_FLAG_READ)
 		fprintf(data->outfile,
 			"Test_io: read_blk(%lu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+			block, গুনতি, retval ? error_message(retval) : "OK");
+	যদি (data->block && data->block == block) {
+		যদি (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
+		যদি (--data->read_abort_গুনতি == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	প্রত্যাগম retval;
 }
 
-static errcode_t test_write_blk(io_channel channel, unsigned long block,
-			       int count, const void *buf)
+স্থির errcode_t test_write_blk(io_channel channel, unsigned long block,
+			       পূর্ণাঙ্ক গুনতি, ধ্রুব শূন্য *buf)
 {
-	struct test_private_data *data;
+	সংরচনা test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (সংরচনা test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_write_blk(data->real, block, count, buf);
-	if (data->write_blk)
-		data->write_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
+	যদি (data->real)
+		retval = io_channel_write_blk(data->real, block, গুনতি, buf);
+	যদি (data->write_blk)
+		data->write_blk(block, গুনতি, retval);
+	যদি (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_blk(%lu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+			block, গুনতি, retval ? error_message(retval) : "OK");
+	যদি (data->block && data->block == block) {
+		যদি (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
+		যদি (--data->write_abort_গুনতি == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	প্রত্যাগম retval;
 }
 
-static errcode_t test_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+স্থির errcode_t test_read_blk64(io_channel channel, unsigned long long block,
+			       পূর্ণাঙ্ক গুনতি, শূন্য *buf)
 {
-	struct test_private_data *data;
+	সংরচনা test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (সংরচনা test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_read_blk64(data->real, block, count, buf);
-	if (data->read_blk64)
-		data->read_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
+	যদি (data->real)
+		retval = io_channel_read_blk64(data->real, block, গুনতি, buf);
+	যদি (data->read_blk64)
+		data->read_blk64(block, গুনতি, retval);
+	যদি (data->flags & TEST_FLAG_READ)
 		fprintf(data->outfile,
 			"Test_io: read_blk64(%llu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+			block, গুনতি, retval ? error_message(retval) : "OK");
+	যদি (data->block && data->block == block) {
+		যদি (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
+		যদি (--data->read_abort_গুনতি == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	প্রত্যাগম retval;
 }
 
-static errcode_t test_write_blk64(io_channel channel, unsigned long long block,
-			       int count, const void *buf)
+স্থির errcode_t test_write_blk64(io_channel channel, unsigned long long block,
+			       পূর্ণাঙ্ক গুনতি, ধ্রুব শূন্য *buf)
 {
-	struct test_private_data *data;
+	সংরচনা test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (সংরচনা test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_write_blk64(data->real, block, count, buf);
-	if (data->write_blk64)
-		data->write_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
+	যদি (data->real)
+		retval = io_channel_write_blk64(data->real, block, গুনতি, buf);
+	যদি (data->write_blk64)
+		data->write_blk64(block, গুনতি, retval);
+	যদি (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_blk64(%llu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+			block, গুনতি, retval ? error_message(retval) : "OK");
+	যদি (data->block && data->block == block) {
+		যদি (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
+		যদি (--data->write_abort_গুনতি == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	প্রত্যাগম retval;
 }
 
-static errcode_t test_write_byte(io_channel channel, unsigned long offset,
-			       int count, const void *buf)
+স্থির errcode_t test_write_byte(io_channel channel, unsigned long offset,
+			       পূর্ণাঙ্ক গুনতি, ধ্রুব শূন্য *buf)
 {
-	struct test_private_data *data;
+	সংরচনা test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (সংরচনা test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->write_byte)
-		retval = io_channel_write_byte(data->real, offset, count, buf);
-	if (data->write_byte)
-		data->write_byte(offset, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
+	যদি (data->real && data->real->manager->write_byte)
+		retval = io_channel_write_byte(data->real, offset, গুনতি, buf);
+	যদি (data->write_byte)
+		data->write_byte(offset, গুনতি, retval);
+	যদি (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_byte(%lu, %d) returned %s\n",
-			offset, count, retval ? error_message(retval) : "OK");
-	return retval;
+			offset, গুনতি, retval ? error_message(retval) : "OK");
+	প্রত্যাগম retval;
 }
 
-static errcode_t test_set_option(io_channel channel, const char *option,
-				 const char *arg)
+স্থির errcode_t test_set_option(io_channel channel, ধ্রুব বর্ণ *option,
+				 ধ্রুব বর্ণ *arg)
 {
-	struct test_private_data *data;
+	সংরচনা test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (সংরচনা test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 
-	if (data->flags & TEST_FLAG_SET_OPTION)
+	যদি (data->flags & TEST_FLAG_SET_OPTION)
 		fprintf(data->outfile, "Test_io: set_option(%s, %s) ",
 			option, arg);
-	if (data->real && data->real->manager->set_option) {
+	যদি (data->real && data->real->manager->set_option) {
 		retval = (data->real->manager->set_option)(data->real,
 							   option, arg);
-		if (data->flags & TEST_FLAG_SET_OPTION)
+		যদি (data->flags & TEST_FLAG_SET_OPTION)
 			fprintf(data->outfile, "returned %s\n",
 				retval ? error_message(retval) : "OK");
-	} else {
-		if (data->flags & TEST_FLAG_SET_OPTION)
+	} অন্যথা {
+		যদি (data->flags & TEST_FLAG_SET_OPTION)
 			fprintf(data->outfile, "not implemented\n");
 	}
-	return retval;
+	প্রত্যাগম retval;
 }
 
-static errcode_t test_get_stats(io_channel channel, io_stats *stats)
+স্থির errcode_t test_get_stats(io_channel channel, io_stats *stats)
 {
-	struct test_private_data *data;
+	সংরচনা test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (সংরচনা test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->get_stats) {
+	যদি (data->real && data->real->manager->get_stats) {
 		retval = (data->real->manager->get_stats)(data->real, stats);
 	}
-	return retval;
+	প্রত্যাগম retval;
 }
 
-static errcode_t test_discard(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+স্থির errcode_t test_discard(io_channel channel, unsigned long long block,
+			      unsigned long long গুনতি)
 {
-	struct test_private_data *data;
+	সংরচনা test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (সংরচনা test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_discard(data->real, block, count);
-	if (data->flags & TEST_FLAG_DISCARD)
+	যদি (data->real)
+		retval = io_channel_discard(data->real, block, গুনতি);
+	যদি (data->flags & TEST_FLAG_DISCARD)
 		fprintf(data->outfile,
 			"Test_io: discard(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			block, গুনতি, retval ? error_message(retval) : "OK");
+	প্রত্যাগম retval;
 }
 
-static errcode_t test_cache_readahead(io_channel channel,
+স্থির errcode_t test_cache_readahead(io_channel channel,
 				      unsigned long long block,
-				      unsigned long long count)
+				      unsigned long long গুনতি)
 {
-	struct test_private_data *data;
+	সংরচনা test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (সংরচনা test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_cache_readahead(data->real, block, count);
-	if (data->flags & TEST_FLAG_READAHEAD)
+	যদি (data->real)
+		retval = io_channel_cache_readahead(data->real, block, গুনতি);
+	যদি (data->flags & TEST_FLAG_READAHEAD)
 		fprintf(data->outfile,
 			"Test_io: readahead(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			block, গুনতি, retval ? error_message(retval) : "OK");
+	প্রত্যাগম retval;
 }
 
-static errcode_t test_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+স্থির errcode_t test_zeroout(io_channel channel, unsigned long long block,
+			      unsigned long long গুনতি)
 {
-	struct test_private_data *data;
+	সংরচনা test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (সংরচনা test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_zeroout(data->real, block, count);
-	if (data->flags & TEST_FLAG_ZEROOUT)
+	যদি (data->real)
+		retval = io_channel_zeroout(data->real, block, গুনতি);
+	যদি (data->flags & TEST_FLAG_ZEROOUT)
 		fprintf(data->outfile,
 			"Test_io: zeroout(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			block, গুনতি, retval ? error_message(retval) : "OK");
+	প্রত্যাগম retval;
 }
 
-static struct struct_io_manager struct_test_manager = {
+স্থির সংরচনা struct_io_manager struct_test_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Test I/O Manager",
 	.open		= test_open,
