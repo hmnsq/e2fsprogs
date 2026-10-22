@@ -1,109 +1,109 @@
-#include "hashmap.h"
-#include <string.h>
+#அந்தர்பாவ "hashmap.h"
+#அந்தர்பாவ <string.h>
 
-struct ext2fs_hashmap {
+கட்டமைப்பு ext2fs_hashmap {
 	uint32_t size;
-	uint32_t(*hash)(const void *key, size_t len);
-	void(*free)(void*);
-	struct ext2fs_hashmap_entry *first;
-	struct ext2fs_hashmap_entry *last;
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic push
+	uint32_t(*hash)(மாறிலி வெறுமை *சாவி, size_t len);
+	வெறுமை(*விடுவி)(வெறுமை*);
+	கட்டமைப்பு ext2fs_hashmap_entry *first;
+	கட்டமைப்பு ext2fs_hashmap_entry *last;
+#எனில் __GNUC_PREREQ (4, 8)
+#pragma GCC diagnostic தள்ளு
 #pragma GCC diagnostic ignored "-Wpedantic"
 #endif
-	struct ext2fs_hashmap_entry *entries[0];
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic pop
+	கட்டமைப்பு ext2fs_hashmap_entry *entries[0];
+#எனில் __GNUC_PREREQ (4, 8)
+#pragma GCC diagnostic எடு
 #endif
 };
 
-uint32_t ext2fs_djb2_hash(const void *str, size_t size)
+uint32_t ext2fs_djb2_hash(மாறிலி வெறுமை *str, size_t size)
 {
-	int c;
-	const char *s = str;
+	முழு c;
+	மாறிலி எழுத்து *s = str;
 	uint32_t hash = 5381;
 
-	while (size-- > 0) {
+	போது (size-- > 0) {
 		c = *s++;
 		hash = ((hash << 5) + hash) + c;
 	}
-	return hash;
+	திரும்பு hash;
 }
 
-struct ext2fs_hashmap *ext2fs_hashmap_create(
-				uint32_t(*hash_fct)(const void*, size_t),
-				void(*free_fct)(void*), size_t size)
+கட்டமைப்பு ext2fs_hashmap *ext2fs_hashmap_create(
+				uint32_t(*hash_fct)(மாறிலி வெறுமை*, size_t),
+				வெறுமை(*free_fct)(வெறுமை*), size_t size)
 {
-	struct ext2fs_hashmap *h = calloc(1, sizeof(struct ext2fs_hashmap) +
-				sizeof(struct ext2fs_hashmap_entry) * size);
-	if (!h)
-		return NULL;
+	கட்டமைப்பு ext2fs_hashmap *h = calloc(1, அளவு(கட்டமைப்பு ext2fs_hashmap) +
+				அளவு(கட்டமைப்பு ext2fs_hashmap_entry) * size);
+	எனில் (!h)
+		திரும்பு வெற்று;
 
 	h->size = size;
-	h->free = free_fct;
+	h->விடுவி = free_fct;
 	h->hash = hash_fct;
-	h->first = h->last = NULL;
-	return h;
+	h->first = h->last = வெற்று;
+	திரும்பு h;
 }
 
-int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
-		       void *data, const void *key, size_t key_len)
+முழு ext2fs_hashmap_add(கட்டமைப்பு ext2fs_hashmap *h,
+		       வெறுமை *data, மாறிலி வெறுமை *சாவி, size_t சாவி_len)
 {
-	uint32_t hash = h->hash(key, key_len) % h->size;
-	struct ext2fs_hashmap_entry *e = malloc(sizeof(*e));
+	uint32_t hash = h->hash(சாவி, சாவி_len) % h->size;
+	கட்டமைப்பு ext2fs_hashmap_entry *e = malloc(அளவு(*e));
 
-	if (!e)
-		return -1;
+	எனில் (!e)
+		திரும்பு -1;
 
 	e->data = data;
-	e->key = key;
-	e->key_len = key_len;
+	e->சாவி = சாவி;
+	e->சாவி_len = சாவி_len;
 	e->next = h->entries[hash];
 	h->entries[hash] = e;
 
-	e->list_prev = NULL;
+	e->list_prev = வெற்று;
 	e->list_next = h->first;
-	if (h->first)
+	எனில் (h->first)
 		h->first->list_prev = e;
 	h->first = e;
-	if (!h->last)
+	எனில் (!h->last)
 		h->last = e;
 
-	return 0;
+	திரும்பு 0;
 }
 
-void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *key,
-			    size_t key_len)
+வெறுமை *ext2fs_hashmap_lookup(கட்டமைப்பு ext2fs_hashmap *h, மாறிலி வெறுமை *சாவி,
+			    size_t சாவி_len)
 {
-	struct ext2fs_hashmap_entry *iter;
-	uint32_t hash = h->hash(key, key_len) % h->size;
+	கட்டமைப்பு ext2fs_hashmap_entry *iter;
+	uint32_t hash = h->hash(சாவி, சாவி_len) % h->size;
 
-	for (iter = h->entries[hash]; iter; iter = iter->next)
-		if (iter->key_len == key_len && !memcmp(iter->key, key, key_len))
-			return iter->data;
-	return NULL;
+	க்கு (iter = h->entries[hash]; iter; iter = iter->next)
+		எனில் (iter->சாவி_len == சாவி_len && !memcmp(iter->சாவி, சாவி, சாவி_len))
+			திரும்பு iter->data;
+	திரும்பு வெற்று;
 }
 
-void *ext2fs_hashmap_iter_in_order(struct ext2fs_hashmap *h,
-				   struct ext2fs_hashmap_entry **it)
+வெறுமை *ext2fs_hashmap_iter_in_order(கட்டமைப்பு ext2fs_hashmap *h,
+				   கட்டமைப்பு ext2fs_hashmap_entry **it)
 {
 	*it = *it ? (*it)->list_next : h->first;
-	return *it ? (*it)->data : NULL;
+	திரும்பு *it ? (*it)->data : வெற்று;
 }
 
-void ext2fs_hashmap_free(struct ext2fs_hashmap *h)
+வெறுமை ext2fs_hashmap_free(கட்டமைப்பு ext2fs_hashmap *h)
 {
 	size_t	i;
 
-	for (i = 0; i < h->size; ++i) {
-		struct ext2fs_hashmap_entry *it = h->entries[i];
-		while (it) {
-			struct ext2fs_hashmap_entry *tmp = it->next;
-			if (h->free)
-				h->free(it->data);
-			free(it);
+	க்கு (i = 0; i < h->size; ++i) {
+		கட்டமைப்பு ext2fs_hashmap_entry *it = h->entries[i];
+		போது (it) {
+			கட்டமைப்பு ext2fs_hashmap_entry *tmp = it->next;
+			எனில் (h->விடுவி)
+				h->விடுவி(it->data);
+			விடுவி(it);
 			it = tmp;
 		}
 	}
-	free(h);
+	விடுவி(h);
 }

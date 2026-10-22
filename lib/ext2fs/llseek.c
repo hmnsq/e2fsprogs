@@ -16,90 +16,90 @@
 #define _LARGEFILE64_SOURCE
 #endif
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#அந்தர்பாவ "config.h"
+#எனில் HAVE_SYS_TYPES_H
+#அந்தர்பாவ <sys/types.h>
 #endif
 
-#if HAVE_ERRNO_H
-#include <errno.h>
+#எனில் HAVE_ERRNO_H
+#அந்தர்பாவ <errno.h>
 #endif
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#எனில் HAVE_UNISTD_H
+#அந்தர்பாவ <unistd.h>
 #endif
 #ifdef __MSDOS__
-#include <io.h>
+#அந்தர்பாவ <io.h>
 #endif
-#include "et/com_err.h"
-#include "ext2fs/ext2_io.h"
+#அந்தர்பாவ "et/com_err.h"
+#அந்தர்பாவ "ext2fs/ext2_io.h"
 
 #ifdef __linux__
 
-#include <sys/syscall.h>
+#அந்தர்பாவ <sys/syscall.h>
 
-static ext2_loff_t my_llseek (int fd, ext2_loff_t offset, int origin)
+நிலையான ext2_loff_t my_llseek (முழு fd, ext2_loff_t offset, முழு origin)
 {
-#if SIZEOF_OFF_T >= 8
-	return lseek(fd, offset, origin);
-#elif HAVE_LSEEK64_PROTOTYPE
-	return lseek64(fd, offset, origin);
-#elif HAVE_LLSEEK_PROTOTYPE
-	return llseek(fd, offset, origin);
-#elif defined(__NR__llseek)
+#எனில் SIZEOF_OFF_T >= 8
+	திரும்பு lseek(fd, offset, origin);
+#அல்லதெனில் HAVE_LSEEK64_PROTOTYPE
+	திரும்பு lseek64(fd, offset, origin);
+#அல்லதெனில் HAVE_LLSEEK_PROTOTYPE
+	திரும்பு llseek(fd, offset, origin);
+#அல்லதெனில் defined(__NR__llseek)
 	loff_t result;
-	int retval;
+	முழு retval;
 	retval = syscall(__NR__llseek, fd,
 		(unsigned long)(offset >> 32),
 		(unsigned long)(offset & 0xffffffff),
 		&result, origin);
-	return (retval == -1 ? retval : result);
-#else
+	திரும்பு (retval == -1 ? retval : result);
+#இல்லையெனில்
 	errno = ENOSYS;
-	return -1;
+	திரும்பு -1;
 #endif
 }
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (முழு fd, ext2_loff_t offset, முழு origin)
 {
 	ext2_loff_t result;
-	static int do_compat = 0;
+	நிலையான முழு do_compat = 0;
 
-	if (do_compat)
-		goto fallback;
+	எனில் (do_compat)
+		செல் fallback;
 
 	result = my_llseek (fd, offset, origin);
-	if (result == -1 && errno == ENOSYS) {
+	எனில் (result == -1 && errno == ENOSYS) {
 		/*
 		 * Just in case this code runs on top of an old kernel
 		 * which does not support the llseek system call
 		 */
 		do_compat++;
 	fallback:
-		if (offset < ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))
-			return lseek(fd, (off_t) offset, origin);
+		எனில் (offset < ((ext2_loff_t) 1 << ((அளவு(off_t)*8) -1)))
+			திரும்பு lseek(fd, (off_t) offset, origin);
 		errno = EINVAL;
-		return -1;
+		திரும்பு -1;
 	}
-	return result;
+	திரும்பு result;
 }
 
-#else /* !linux */
+#இல்லையெனில் /* !linux */
 
 #ifndef EINVAL
 #define EINVAL EXT2_ET_INVALID_ARGUMENT
 #endif
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (முழு fd, ext2_loff_t offset, முழு origin)
 {
-#if defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
-	return lseek64 (fd, offset, origin);
-#else
-	if ((sizeof(off_t) < sizeof(ext2_loff_t)) &&
-	    (offset >= ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))) {
+#எனில் defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
+	திரும்பு lseek64 (fd, offset, origin);
+#இல்லையெனில்
+	எனில் ((அளவு(off_t) < அளவு(ext2_loff_t)) &&
+	    (offset >= ((ext2_loff_t) 1 << ((அளவு(off_t)*8) -1)))) {
 		errno = EINVAL;
-		return -1;
+		திரும்பு -1;
 	}
-	return lseek (fd, (off_t) offset, origin);
+	திரும்பு lseek (fd, (off_t) offset, origin);
 #endif
 }
 

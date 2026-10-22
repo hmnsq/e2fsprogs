@@ -11,7 +11,7 @@
 #ifndef _LINUX_FIEMAP_H
 #define _LINUX_FIEMAP_H
 
-struct fiemap_extent {
+கட்டமைப்பு fiemap_extent {
 	__u64 fe_logical;  /* logical offset in bytes for the start of
 			    * the extent from the beginning of the file */
 	__u64 fe_physical; /* physical offset in bytes for the start
@@ -22,38 +22,38 @@ struct fiemap_extent {
 	__u32 fe_reserved[3];
 };
 
-struct fiemap {
+கட்டமைப்பு fiemap {
 	__u64 fm_start;		/* logical offset (inclusive) at
 				 * which to start mapping (in) */
 	__u64 fm_length;	/* logical length of mapping which
 				 * userspace wants (in) */
 	__u32 fm_flags;		/* FIEMAP_FLAG_* flags for request (in/out) */
 	__u32 fm_mapped_extents;/* number of extents that were mapped (out) */
-	__u32 fm_extent_count;  /* size of fm_extents array (in) */
+	__u32 fm_extent_மொத்தம்;  /* size of fm_extents array (in) */
 	__u32 fm_reserved;
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic push
+#எனில் __GNUC_PREREQ (4, 8)
+#pragma GCC diagnostic தள்ளு
 #pragma GCC diagnostic ignored "-Wpedantic"
 #endif
-	struct fiemap_extent fm_extents[0]; /* array of mapped extents (out) */
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic pop
+	கட்டமைப்பு fiemap_extent fm_extents[0]; /* array of mapped extents (out) */
+#எனில் __GNUC_PREREQ (4, 8)
+#pragma GCC diagnostic எடு
 #endif
 };
 
-#if defined(__linux__) && !defined(FS_IOC_FIEMAP)
-#define FS_IOC_FIEMAP	_IOWR('f', 11, struct fiemap)
+#எனில் defined(__linux__) && !defined(FS_IOC_FIEMAP)
+#define FS_IOC_FIEMAP	_IOWR('f', 11, கட்டமைப்பு fiemap)
 #endif
 
-#if defined(__linux__) && !defined(FS_IOC_GETSTATE)
+#எனில் defined(__linux__) && !defined(FS_IOC_GETSTATE)
 #define EXT4_IOC_GETSTATE		_IOW('f', 41, __u32)
 #endif
 
-#if defined(__linux__) && !defined(EXT4_IOC_GET_ES_CACHE)
-#define EXT4_IOC_GET_ES_CACHE		_IOWR('f', 42, struct fiemap)
+#எனில் defined(__linux__) && !defined(EXT4_IOC_GET_ES_CACHE)
+#define EXT4_IOC_GET_ES_CACHE		_IOWR('f', 42, கட்டமைப்பு fiemap)
 #endif
 
-#if defined(__linux__) && !defined(EXT4_STATE_FLAG_EXT_PRECACHED)
+#எனில் defined(__linux__) && !defined(EXT4_STATE_FLAG_EXT_PRECACHED)
 #define EXT4_STATE_FLAG_EXT_PRECACHED	0x00000001
 #endif
 

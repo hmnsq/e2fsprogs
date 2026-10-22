@@ -30,255 +30,255 @@
 #define _LARGEFILE64_SOURCE
 #endif
 
-#include "config.h"
-#include <fcntl.h>
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <grp.h>
+#அந்தர்பாவ <pwd.h>
+#அந்தர்பாவ <stdio.h>
 #ifdef HAVE_STDLIB_H
-#include <stdlib.h>
+#அந்தர்பாவ <stdlib.h>
 #endif
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <assert.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <time.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <sys/stat.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <assert.h>
 
-#include "ext2fs/ext2fs.h"
-#include "qcow2.h"
+#அந்தர்பாவ "ext2fs/ext2fs.h"
+#அந்தர்பாவ "qcow2.h"
 
 /* Functions for converting qcow2 image into raw image */
 
-struct ext2_qcow2_hdr *qcow2_read_header(int fd)
+கட்டமைப்பு ext2_qcow2_hdr *qcow2_read_header(முழு fd)
 {
-	void *buffer = NULL;
-	struct ext2_qcow2_hdr *hdr = NULL;
+	வெறுமை *buffer = வெற்று;
+	கட்டமைப்பு ext2_qcow2_hdr *hdr = வெற்று;
 	size_t size;
 	errcode_t ret;
 
-	ret = ext2fs_get_mem(sizeof(struct ext2_qcow2_hdr), &buffer);
-	if (ret)
-		return NULL;
-	memset(buffer, 0, sizeof(struct ext2_qcow2_hdr));
+	ret = ext2fs_get_mem(அளவு(கட்டமைப்பு ext2_qcow2_hdr), &buffer);
+	எனில் (ret)
+		திரும்பு வெற்று;
+	memset(buffer, 0, அளவு(கட்டமைப்பு ext2_qcow2_hdr));
 
-	if (ext2fs_llseek(fd, 0, SEEK_SET < 0)) {
+	எனில் (ext2fs_llseek(fd, 0, SEEK_SET < 0)) {
 		ext2fs_free_mem(&buffer);
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
-	size = read(fd, buffer, sizeof(struct ext2_qcow2_hdr));
-	if (size != sizeof(struct ext2_qcow2_hdr)) {
+	size = பட(fd, buffer, அளவு(கட்டமைப்பு ext2_qcow2_hdr));
+	எனில் (size != அளவு(கட்டமைப்பு ext2_qcow2_hdr)) {
 		ext2fs_free_mem(&buffer);
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
-	hdr = (struct ext2_qcow2_hdr *)(buffer);
+	hdr = (கட்டமைப்பு ext2_qcow2_hdr *)(buffer);
 
-	if ((ext2fs_be32_to_cpu(hdr->magic) != QCOW_MAGIC) ||
+	எனில் ((ext2fs_be32_to_cpu(hdr->magic) != QCOW_MAGIC) ||
 	    (ext2fs_be32_to_cpu(hdr->version) != 2)) {
 		ext2fs_free_mem(&hdr);
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
-	return hdr;
+	திரும்பு hdr;
 }
 
-static int qcow2_read_l1_table(struct ext2_qcow2_image *img)
+நிலையான முழு qcow2_read_l1_table(கட்டமைப்பு ext2_qcow2_image *img)
 {
-	int fd = img->fd;
-	size_t size, l1_size = img->l1_size * sizeof(blk64_t);
+	முழு fd = img->fd;
+	size_t size, l1_size = img->l1_size * அளவு(blk64_t);
 	blk64_t *table;
 	errcode_t ret;
 
 	ret = ext2fs_get_memzero(l1_size, &table);
-	if (ret)
-		return ret;
+	எனில் (ret)
+		திரும்பு ret;
 
-	if (ext2fs_llseek(fd, img->l1_offset, SEEK_SET) < 0) {
+	எனில் (ext2fs_llseek(fd, img->l1_offset, SEEK_SET) < 0) {
 		ext2fs_free_mem(&table);
-		return errno;
+		திரும்பு errno;
 	}
 
-	size = read(fd, table, l1_size);
-	if (size != l1_size) {
+	size = பட(fd, table, l1_size);
+	எனில் (size != l1_size) {
 		ext2fs_free_mem(&table);
-		return errno;
+		திரும்பு errno;
 	}
 
 	img->l1_table = table;
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int qcow2_read_l2_table(struct ext2_qcow2_image *img,
+நிலையான முழு qcow2_read_l2_table(கட்டமைப்பு ext2_qcow2_image *img,
 			       __u64 offset, blk64_t **l2_table)
 {
-	int fd = img->fd;
+	முழு fd = img->fd;
 	size_t size;
 
-	assert(*l2_table);
+	ப்ரதிஜ்ஞா(*l2_table);
 
-	if (ext2fs_llseek(fd, offset, SEEK_SET) < 0)
-		return errno;
+	எனில் (ext2fs_llseek(fd, offset, SEEK_SET) < 0)
+		திரும்பு errno;
 
-	size = read(fd, *l2_table, img->cluster_size);
-	if (size != img->cluster_size)
-		return errno;
+	size = பட(fd, *l2_table, img->cluster_size);
+	எனில் (size != img->cluster_size)
+		திரும்பு errno;
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int qcow2_copy_data(int fdin, int fdout, __u64 off_in,
-			   __u64 off_out, void *buf, size_t count)
+நிலையான முழு qcow2_copy_data(முழு fdin, முழு fdout, __u64 off_in,
+			   __u64 off_out, வெறுமை *buf, size_t மொத்தம்)
 {
 	ssize_t c1, c2, c;
-	void *ptr;
-	int retries = 10;
+	வெறுமை *ptr;
+	முழு retries = 10;
 
-	assert(buf);
+	ப்ரதிஜ்ஞா(buf);
 
-	if (ext2fs_llseek(fdout, off_out, SEEK_SET) < 0)
-		return errno;
+	எனில் (ext2fs_llseek(fdout, off_out, SEEK_SET) < 0)
+		திரும்பு errno;
 
-	if (ext2fs_llseek(fdin, off_in, SEEK_SET) < 0)
-		return errno;
+	எனில் (ext2fs_llseek(fdin, off_in, SEEK_SET) < 0)
+		திரும்பு errno;
 
-	while (count > 0) {
+	போது (மொத்தம் > 0) {
 		errno = 0;
-		c1 = read(fdin, buf, count);
-		if (c1 < 0 || ((c1 == 0) && errno))
-			return errno;
-		if (c1 == 0)
-			break; 	/* EOF */
+		c1 = பட(fdin, buf, மொத்தம்);
+		எனில் (c1 < 0 || ((c1 == 0) && errno))
+			திரும்பு errno;
+		எனில் (c1 == 0)
+			நிறுத்து; 	/* EOF */
 
-		for (ptr = buf, c = c1; c > 0; ptr += c2, c -= c2) {
+		க்கு (ptr = buf, c = c1; c > 0; ptr += c2, c -= c2) {
 			errno = 0;
-			c2 = write(fdout, ptr, c1);
-			if (c2 < 0 || ((c2 == 0) && errno))
-				return errno;
-			if (c2 == 0 && --retries <= 0)
-				break; /* This should never happen...  */
+			c2 = லிக(fdout, ptr, c1);
+			எனில் (c2 < 0 || ((c2 == 0) && errno))
+				திரும்பு errno;
+			எனில் (c2 == 0 && --retries <= 0)
+				நிறுத்து; /* This should never happen...  */
 		}
-		count -= c1;
+		மொத்தம் -= c1;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 
-int qcow2_write_raw_image(int qcow2_fd, int raw_fd,
-			      struct ext2_qcow2_hdr *hdr)
+முழு qcow2_write_raw_image(முழு qcow2_fd, முழு raw_fd,
+			      கட்டமைப்பு ext2_qcow2_hdr *hdr)
 {
-	struct ext2_qcow2_image img;
+	கட்டமைப்பு ext2_qcow2_image img;
 	errcode_t ret = 0;
-	unsigned int l1_index, l2_index;
+	unsigned முழு l1_index, l2_index;
 	__u64 offset;
-	blk64_t *l1_table, *l2_table = NULL;
-	void *copy_buf = NULL;
+	blk64_t *l1_table, *l2_table = வெற்று;
+	வெறுமை *copy_buf = வெற்று;
 	size_t size;
-	unsigned int max_l1_size;
+	unsigned முழு max_l1_size;
 
-	if (hdr->crypt_method)
-		return -QCOW_ENCRYPTED;
+	எனில் (hdr->crypt_method)
+		திரும்பு -QCOW_ENCRYPTED;
 
 	img.fd = qcow2_fd;
 	img.hdr = hdr;
-	img.l2_cache = NULL;
-	img.l1_table = NULL;
+	img.l2_cache = வெற்று;
+	img.l1_table = வெற்று;
 	img.cluster_bits = ext2fs_be32_to_cpu(hdr->cluster_bits);
-	if (img.cluster_bits < 9 || img.cluster_bits > 31)
-		return -QCOW_CORRUPTED;
+	எனில் (img.cluster_bits < 9 || img.cluster_bits > 31)
+		திரும்பு -QCOW_CORRUPTED;
 	img.cluster_size = 1 << img.cluster_bits;
 	img.l1_size = ext2fs_be32_to_cpu(hdr->l1_size);
 	img.l1_offset = ext2fs_be64_to_cpu(hdr->l1_table_offset);
 	img.l2_size = 1 << (img.cluster_bits - 3);
 	img.image_size = ext2fs_be64_to_cpu(hdr->size);
 
-	if (img.l1_offset & (img.cluster_size - 1))
-		return -QCOW_CORRUPTED;
+	எனில் (img.l1_offset & (img.cluster_size - 1))
+		திரும்பு -QCOW_CORRUPTED;
 
 	max_l1_size = (img.image_size >> ((2 * img.cluster_bits) - 3)) +
 		img.cluster_size;
-	if (img.l1_size > max_l1_size)
-		return -QCOW_CORRUPTED;
+	எனில் (img.l1_size > max_l1_size)
+		திரும்பு -QCOW_CORRUPTED;
 
 	ret = ext2fs_get_memzero(img.cluster_size, &l2_table);
-	if (ret)
-		goto out;
+	எனில் (ret)
+		செல் out;
 
 	ret = ext2fs_get_memzero(1 << img.cluster_bits, &copy_buf);
-	if (ret)
-		goto out;
+	எனில் (ret)
+		செல் out;
 
-	if (ext2fs_llseek(raw_fd, 0, SEEK_SET) < 0) {
+	எனில் (ext2fs_llseek(raw_fd, 0, SEEK_SET) < 0) {
 		ret = errno;
-		goto out;
+		செல் out;
 	}
 
 	ret = qcow2_read_l1_table(&img);
-	if (ret)
-		goto out;
+	எனில் (ret)
+		செல் out;
 
 	l1_table = img.l1_table;
 	/* Walk through l1 table */
-	for (l1_index = 0; l1_index < img.l1_size; l1_index++) {
+	க்கு (l1_index = 0; l1_index < img.l1_size; l1_index++) {
 		__u64 off_out;
 
 		offset = ext2fs_be64_to_cpu(l1_table[l1_index]) &
 			 ~QCOW_OFLAG_COPIED;
 
-		if ((offset > img.image_size) ||
+		எனில் ((offset > img.image_size) ||
 		    (offset <= 0))
-			continue;
+			தொடர்;
 
-		if (offset & QCOW_OFLAG_COMPRESSED) {
+		எனில் (offset & QCOW_OFLAG_COMPRESSED) {
 			ret = -QCOW_COMPRESSED;
-			goto out;
+			செல் out;
 		}
 
 		ret = qcow2_read_l2_table(&img, offset, &l2_table);
-		if (ret)
-			break;
+		எனில் (ret)
+			நிறுத்து;
 
 		/* Walk through l2 table and copy data blocks into raw image */
-		for (l2_index = 0; l2_index < img.l2_size; l2_index++) {
+		க்கு (l2_index = 0; l2_index < img.l2_size; l2_index++) {
 			offset = ext2fs_be64_to_cpu(l2_table[l2_index]) &
 				 ~QCOW_OFLAG_COPIED;
 
-			if (offset == 0)
-				continue;
+			எனில் (offset == 0)
+				தொடர்;
 
 			off_out = ((__u64)l1_index * img.l2_size) +
 				  l2_index;
 			off_out <<= img.cluster_bits;
 			ret = qcow2_copy_data(qcow2_fd, raw_fd, offset,
 					off_out, copy_buf, img.cluster_size);
-			if (ret)
-				goto out;
+			எனில் (ret)
+				செல் out;
 		}
 	}
 
 	/* Resize the output image to the filesystem size */
-	if (ext2fs_llseek(raw_fd, img.image_size - 1, SEEK_SET) < 0) {
+	எனில் (ext2fs_llseek(raw_fd, img.image_size - 1, SEEK_SET) < 0) {
 		ret = errno;
-		goto out;
+		செல் out;
 	}
 
-	((char *)copy_buf)[0] = 0;
-	size = write(raw_fd, copy_buf, 1);
-	if (size != 1) {
+	((எழுத்து *)copy_buf)[0] = 0;
+	size = லிக(raw_fd, copy_buf, 1);
+	எனில் (size != 1) {
 		ret = errno;
-		goto out;
+		செல் out;
 	}
 
 out:
-	if (copy_buf)
+	எனில் (copy_buf)
 		ext2fs_free_mem(&copy_buf);
-	if (img.l1_table)
+	எனில் (img.l1_table)
 		ext2fs_free_mem(&img.l1_table);
-	if (l2_table)
+	எனில் (l2_table)
 		ext2fs_free_mem(&l2_table);
-	return ret;
+	திரும்பு ret;
 }

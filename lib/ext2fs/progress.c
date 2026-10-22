@@ -10,24 +10,24 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ "ext2fs.h"
+#அந்தர்பாவ "ext2fsP.h"
 
-#include <time.h>
+#அந்தர்பாவ <time.h>
 
-static char spaces[80], backspaces[80];
-static time_t last_update;
+நிலையான எழுத்து spaces[80], backspaces[80];
+நிலையான time_t last_update;
 
-struct ext2fs_progress_ops ext2fs_numeric_progress_ops = {
+கட்டமைப்பு ext2fs_progress_ops ext2fs_numeric_progress_ops = {
 	.init		= ext2fs_numeric_progress_init,
 	.update		= ext2fs_numeric_progress_update,
 	.close		= ext2fs_numeric_progress_close,
 };
 
-void ext2fs_numeric_progress_init(ext2_filsys fs,
-				  struct ext2fs_numeric_progress_struct * progress,
-				  const char *label, __u64 max)
+வெறுமை ext2fs_numeric_progress_init(ext2_filsys fs,
+				  கட்டமைப்பு ext2fs_numeric_progress_struct * progress,
+				  மாறிலி எழுத்து *label, __u64 max)
 {
 	/*
 	 * The PRINT_PROGRESS flag turns on or off ALL
@@ -35,16 +35,16 @@ void ext2fs_numeric_progress_init(ext2_filsys fs,
 	 * environment variable prints the start and end messages but
 	 * not the numeric countdown in the middle.
 	 */
-	if (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
-		return;
+	எனில் (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
+		திரும்பு;
 
-	memset(spaces, ' ', sizeof(spaces)-1);
-	spaces[sizeof(spaces)-1] = 0;
-	memset(backspaces, '\b', sizeof(backspaces)-1);
-	backspaces[sizeof(backspaces)-1] = 0;
+	memset(spaces, ' ', அளவு(spaces)-1);
+	spaces[அளவு(spaces)-1] = 0;
+	memset(backspaces, '\b', அளவு(backspaces)-1);
+	backspaces[அளவு(backspaces)-1] = 0;
 
-	memset(progress, 0, sizeof(*progress));
-	if (ext2fs_safe_getenv("E2FSPROGS_SKIP_PROGRESS"))
+	memset(progress, 0, அளவு(*progress));
+	எனில் (ext2fs_safe_getenv("E2FSPROGS_SKIP_PROGRESS"))
 		progress->skip_progress++;
 
 
@@ -54,26 +54,26 @@ void ext2fs_numeric_progress_init(ext2_filsys fs,
 	progress->max = max;
 	progress->log_max = ext2fs_log10_u64(max) + 1;
 
-	if (label) {
+	எனில் (label) {
 		fputs(label, stdout);
 		fflush(stdout);
 	}
 	last_update = 0;
 }
 
-void ext2fs_numeric_progress_update(ext2_filsys fs,
-				    struct ext2fs_numeric_progress_struct * progress,
+வெறுமை ext2fs_numeric_progress_update(ext2_filsys fs,
+				    கட்டமைப்பு ext2fs_numeric_progress_struct * progress,
 				    __u64 val)
 {
 	time_t now;
 
-	if (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
-		return;
-	if (progress->skip_progress)
-		return;
+	எனில் (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
+		திரும்பு;
+	எனில் (progress->skip_progress)
+		திரும்பு;
 	now = time(0);
-	if (now == last_update)
-		return;
+	எனில் (now == last_update)
+		திரும்பு;
 	last_update = now;
 
 	printf("%*llu/%*llu", progress->log_max, (unsigned long long) val,
@@ -81,14 +81,14 @@ void ext2fs_numeric_progress_update(ext2_filsys fs,
 	fprintf(stdout, "%.*s", (2*progress->log_max)+1, backspaces);
 }
 
-void ext2fs_numeric_progress_close(ext2_filsys fs,
-				   struct ext2fs_numeric_progress_struct * progress,
-				   const char *message)
+வெறுமை ext2fs_numeric_progress_close(ext2_filsys fs,
+				   கட்டமைப்பு ext2fs_numeric_progress_struct * progress,
+				   மாறிலி எழுத்து *message)
 {
-	if (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
-		return;
+	எனில் (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
+		திரும்பு;
 	fprintf(stdout, "%.*s", (2*progress->log_max)+1, spaces);
 	fprintf(stdout, "%.*s", (2*progress->log_max)+1, backspaces);
-	if (message)
+	எனில் (message)
 		fputs(message, stdout);
 }

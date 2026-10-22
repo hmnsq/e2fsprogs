@@ -9,11 +9,11 @@
  * %End-Header%
  */
 
-struct ext2_block_relocate_entry {
+கட்டமைப்பு ext2_block_relocate_entry {
 	blk64_t	new;
 	__s16	offset;
 	__u16	flags;
-	union {
+	ஒன்றிப்பு {
 		blk64_t		block_ref;
 		ext2_ino_t	inode_ref;
 	} owner;
@@ -23,25 +23,25 @@ struct ext2_block_relocate_entry {
 #define RELOCATE_BLOCK_REF 0x0001
 #define RELOCATE_INODE_REF 0x0002
 
-typedef struct ext2_block_relocation_table *ext2_brel;
+வகைவரை கட்டமைப்பு ext2_block_relocation_table *ext2_brel;
 
-struct ext2_block_relocation_table {
+கட்டமைப்பு ext2_block_relocation_table {
 	__u32	magic;
-	char	*name;
+	எழுத்து	*name;
 	blk64_t	current;
-	void	*priv_data;
+	வெறுமை	*priv_data;
 
 	/*
 	 * Add a block relocation entry.
 	 */
 	errcode_t (*put)(ext2_brel brel, blk64_t old,
-			      struct ext2_block_relocate_entry *ent);
+			      கட்டமைப்பு ext2_block_relocate_entry *ent);
 
 	/*
 	 * Get a block relocation entry.
 	 */
 	errcode_t (*get)(ext2_brel brel, blk64_t old,
-			      struct ext2_block_relocate_entry *ent);
+			      கட்டமைப்பு ext2_block_relocate_entry *ent);
 
 	/*
 	 * Initialize for iterating over the block relocation entries.
@@ -53,7 +53,7 @@ struct ext2_block_relocation_table {
 	 * Returns an inode number of 0 when out of entries.
 	 */
 	errcode_t (*next)(ext2_brel brel, blk64_t *old,
-			  struct ext2_block_relocate_entry *ent);
+			  கட்டமைப்பு ext2_block_relocate_entry *ent);
 
 	/*
 	 * Move the inode relocation table from one block number to
@@ -70,10 +70,10 @@ struct ext2_block_relocation_table {
 	/*
 	 * Free the block relocation table.
 	 */
-	errcode_t (*free)(ext2_brel brel);
+	errcode_t (*விடுவி)(ext2_brel brel);
 };
 
-errcode_t ext2fs_brel_memarray_create(char *name, blk64_t max_block,
+errcode_t ext2fs_brel_memarray_create(எழுத்து *name, blk64_t max_block,
 				    ext2_brel *brel);
 
 #define ext2fs_brel_put(brel, old, ent) ((brel)->put((brel), old, ent))
@@ -82,5 +82,5 @@ errcode_t ext2fs_brel_memarray_create(char *name, blk64_t max_block,
 #define ext2fs_brel_next(brel, old, ent) ((brel)->next((brel), old, ent))
 #define ext2fs_brel_move(brel, old, new) ((brel)->move((brel), old, new))
 #define ext2fs_brel_delete(brel, old) ((brel)->delete((brel), old))
-#define ext2fs_brel_free(brel) ((brel)->free((brel)))
+#define ext2fs_brel_free(brel) ((brel)->விடுவி((brel)))
 

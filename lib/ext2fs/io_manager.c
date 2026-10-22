@@ -2,167 +2,167 @@
  * io_manager.c --- the I/O manager abstraction
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#எனில் HAVE_UNISTD_H
+#அந்தர்பாவ <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <time.h>
+#எனில் HAVE_SYS_STAT_H
+#அந்தர்பாவ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#எனில் HAVE_SYS_TYPES_H
+#அந்தர்பாவ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#அந்தர்பாவ "ext2_fs.h"
+#அந்தர்பாவ "ext2fs.h"
 
-errcode_t io_channel_set_options(io_channel channel, const char *opts)
+errcode_t io_channel_set_options(io_channel channel, மாறிலி எழுத்து *opts)
 {
 	errcode_t retval = 0;
-	char *next, *ptr, *options, *arg;
+	எழுத்து *next, *ptr, *options, *arg;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (!opts)
-		return 0;
+	எனில் (!opts)
+		திரும்பு 0;
 
-	if (!channel->manager->set_option)
-		return EXT2_ET_INVALID_ARGUMENT;
+	எனில் (!channel->manager->set_option)
+		திரும்பு EXT2_ET_INVALID_ARGUMENT;
 
 	options = malloc(strlen(opts)+1);
-	if (!options)
-		return EXT2_ET_NO_MEMORY;
+	எனில் (!options)
+		திரும்பு EXT2_ET_NO_MEMORY;
 	strcpy(options, opts);
 	ptr = options;
 
-	while (ptr && *ptr) {
+	போது (ptr && *ptr) {
 		next = strchr(ptr, '&');
-		if (next)
+		எனில் (next)
 			*next++ = 0;
 
 		arg = strchr(ptr, '=');
-		if (arg)
+		எனில் (arg)
 			*arg++ = 0;
 
 		retval = (channel->manager->set_option)(channel, ptr, arg);
-		if (retval)
-			break;
+		எனில் (retval)
+			நிறுத்து;
 		ptr = next;
 	}
-	free(options);
-	return retval;
+	விடுவி(options);
+	திரும்பு retval;
 }
 
 errcode_t io_channel_write_byte(io_channel channel, unsigned long offset,
-				int count, const void *data)
+				முழு மொத்தம், மாறிலி வெறுமை *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_byte)
-		return channel->manager->write_byte(channel, offset,
-						    count, data);
+	எனில் (channel->manager->write_byte)
+		திரும்பு channel->manager->write_byte(channel, offset,
+						    மொத்தம், data);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	திரும்பு EXT2_ET_UNIMPLEMENTED;
 }
 
 errcode_t io_channel_read_blk64(io_channel channel, unsigned long long block,
-				 int count, void *data)
+				 முழு மொத்தம், வெறுமை *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->read_blk64)
-		return (channel->manager->read_blk64)(channel, block,
-						      count, data);
+	எனில் (channel->manager->read_blk64)
+		திரும்பு (channel->manager->read_blk64)(channel, block,
+						      மொத்தம், data);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	எனில் ((block >> 32) != 0)
+		திரும்பு EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->read_blk)(channel, (unsigned long) block,
-					     count, data);
+	திரும்பு (channel->manager->read_blk)(channel, (unsigned long) block,
+					     மொத்தம், data);
 }
 
 errcode_t io_channel_write_blk64(io_channel channel, unsigned long long block,
-				 int count, const void *data)
+				 முழு மொத்தம், மாறிலி வெறுமை *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_blk64)
-		return (channel->manager->write_blk64)(channel, block,
-						       count, data);
+	எனில் (channel->manager->write_blk64)
+		திரும்பு (channel->manager->write_blk64)(channel, block,
+						       மொத்தம், data);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	எனில் ((block >> 32) != 0)
+		திரும்பு EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->write_blk)(channel, (unsigned long) block,
-					     count, data);
+	திரும்பு (channel->manager->write_blk)(channel, (unsigned long) block,
+					     மொத்தம், data);
 }
 
 errcode_t io_channel_discard(io_channel channel, unsigned long long block,
-			     unsigned long long count)
+			     unsigned long long மொத்தம்)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->discard)
-		return (channel->manager->discard)(channel, block, count);
+	எனில் (channel->manager->discard)
+		திரும்பு (channel->manager->discard)(channel, block, மொத்தம்);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	திரும்பு EXT2_ET_UNIMPLEMENTED;
 }
 
 errcode_t io_channel_zeroout(io_channel channel, unsigned long long block,
-			     unsigned long long count)
+			     unsigned long long மொத்தம்)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->zeroout)
-		return (channel->manager->zeroout)(channel, block, count);
+	எனில் (channel->manager->zeroout)
+		திரும்பு (channel->manager->zeroout)(channel, block, மொத்தம்);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	திரும்பு EXT2_ET_UNIMPLEMENTED;
 }
 
-errcode_t io_channel_alloc_buf(io_channel io, int count, void *ptr)
+errcode_t io_channel_alloc_buf(io_channel io, முழு மொத்தம், வெறுமை *ptr)
 {
 	size_t	size;
 
-	if (count == 0)
+	எனில் (மொத்தம் == 0)
 		size = io->block_size;
-	else if (count > 0)
-		size = io->block_size * count;
-	else
-		size = -count;
+	இல்லையெனில் எனில் (மொத்தம் > 0)
+		size = io->block_size * மொத்தம்;
+	இல்லையெனில்
+		size = -மொத்தம்;
 
-	if (io->align > 0) {
-		if ((unsigned) io->align > size)
+	எனில் (io->align > 0) {
+		எனில் ((unsigned) io->align > size)
 			size = io->align;
-		return ext2fs_get_memalign(size, io->align, ptr);
-	} else
-		return ext2fs_get_mem(size, ptr);
+		திரும்பு ext2fs_get_memalign(size, io->align, ptr);
+	} இல்லையெனில்
+		திரும்பு ext2fs_get_mem(size, ptr);
 }
 
 errcode_t io_channel_cache_readahead(io_channel io, unsigned long long block,
-				     unsigned long long count)
+				     unsigned long long மொத்தம்)
 {
-	if (!io->manager->cache_readahead)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	எனில் (!io->manager->cache_readahead)
+		திரும்பு EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->cache_readahead(io, block, count);
+	திரும்பு io->manager->cache_readahead(io, block, மொத்தம்);
 }
 
-errcode_t io_channel_flock(io_channel io, unsigned int flock_flags)
+errcode_t io_channel_flock(io_channel io, unsigned முழு flock_flags)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	எனில் (!io->manager->flock)
+		திரும்பு EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, flock_flags);
+	திரும்பு io->manager->flock(io, flock_flags);
 }
 
 errcode_t io_channel_funlock(io_channel io)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	எனில் (!io->manager->flock)
+		திரும்பு EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, 0);
+	திரும்பு io->manager->flock(io, 0);
 }

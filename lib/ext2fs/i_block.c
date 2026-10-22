@@ -9,82 +9,82 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ <stdio.h>
+#எனில் HAVE_UNISTD_H
+#அந்தர்பாவ <unistd.h>
 #endif
-#include <time.h>
-#include <string.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#அந்தர்பாவ <time.h>
+#அந்தர்பாவ <string.h>
+#எனில் HAVE_SYS_STAT_H
+#அந்தர்பாவ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#எனில் HAVE_SYS_TYPES_H
+#அந்தர்பாவ <sys/types.h>
 #endif
-#include <errno.h>
+#அந்தர்பாவ <errno.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#அந்தர்பாவ "ext2_fs.h"
+#அந்தர்பாவ "ext2fs.h"
 
-errcode_t ext2fs_iblk_add_blocks(ext2_filsys fs, struct ext2_inode *inode,
-				 blk64_t num_blocks)
+errcode_t ext2fs_iblk_add_blocks(ext2_filsys fs, கட்டமைப்பு ext2_inode *inode,
+				 blk64_t இலக்கம்_blocks)
 {
 	unsigned long long b = inode->i_blocks;
 
-	if (ext2fs_has_feature_huge_file(fs->super))
+	எனில் (ext2fs_has_feature_huge_file(fs->super))
 		b += ((long long) inode->osd2.linux2.l_i_blocks_hi) << 32;
 
-	if (!ext2fs_has_feature_huge_file(fs->super) ||
+	எனில் (!ext2fs_has_feature_huge_file(fs->super) ||
 	    !(inode->i_flags & EXT4_HUGE_FILE_FL))
-	    num_blocks *= fs->blocksize / 512;
-	num_blocks *= EXT2FS_CLUSTER_RATIO(fs);
+	    இலக்கம்_blocks *= fs->blocksize / 512;
+	இலக்கம்_blocks *= EXT2FS_CLUSTER_RATIO(fs);
 
-	b += num_blocks;
+	b += இலக்கம்_blocks;
 
-	if (ext2fs_has_feature_huge_file(fs->super))
+	எனில் (ext2fs_has_feature_huge_file(fs->super))
 		inode->osd2.linux2.l_i_blocks_hi = b >> 32;
-	else if (b > 0xFFFFFFFF)
-		return EOVERFLOW;
+	இல்லையெனில் எனில் (b > 0xFFFFFFFF)
+		திரும்பு EOVERFLOW;
 	inode->i_blocks = b & 0xFFFFFFFF;
-	return 0;
+	திரும்பு 0;
 }
 
-errcode_t ext2fs_iblk_sub_blocks(ext2_filsys fs, struct ext2_inode *inode,
-				 blk64_t num_blocks)
+errcode_t ext2fs_iblk_sub_blocks(ext2_filsys fs, கட்டமைப்பு ext2_inode *inode,
+				 blk64_t இலக்கம்_blocks)
 {
 	unsigned long long b = inode->i_blocks;
 
-	if (ext2fs_has_feature_huge_file(fs->super))
+	எனில் (ext2fs_has_feature_huge_file(fs->super))
 		b += ((long long) inode->osd2.linux2.l_i_blocks_hi) << 32;
 
-	if (!ext2fs_has_feature_huge_file(fs->super) ||
+	எனில் (!ext2fs_has_feature_huge_file(fs->super) ||
 	    !(inode->i_flags & EXT4_HUGE_FILE_FL))
-	    num_blocks *= fs->blocksize / 512;
-	num_blocks *= EXT2FS_CLUSTER_RATIO(fs);
+	    இலக்கம்_blocks *= fs->blocksize / 512;
+	இலக்கம்_blocks *= EXT2FS_CLUSTER_RATIO(fs);
 
-	if (num_blocks > b)
-		return EOVERFLOW;
+	எனில் (இலக்கம்_blocks > b)
+		திரும்பு EOVERFLOW;
 
-	b -= num_blocks;
+	b -= இலக்கம்_blocks;
 
-	if (ext2fs_has_feature_huge_file(fs->super))
+	எனில் (ext2fs_has_feature_huge_file(fs->super))
 		inode->osd2.linux2.l_i_blocks_hi = b >> 32;
 	inode->i_blocks = b & 0xFFFFFFFF;
-	return 0;
+	திரும்பு 0;
 }
 
-errcode_t ext2fs_iblk_set(ext2_filsys fs, struct ext2_inode *inode, blk64_t b)
+errcode_t ext2fs_iblk_set(ext2_filsys fs, கட்டமைப்பு ext2_inode *inode, blk64_t b)
 {
-	if (!ext2fs_has_feature_huge_file(fs->super) ||
+	எனில் (!ext2fs_has_feature_huge_file(fs->super) ||
 	    !(inode->i_flags & EXT4_HUGE_FILE_FL))
 		b *= fs->blocksize / 512;
 	b *= EXT2FS_CLUSTER_RATIO(fs);
 
 	inode->i_blocks = b & 0xFFFFFFFF;
-	if (ext2fs_has_feature_huge_file(fs->super))
+	எனில் (ext2fs_has_feature_huge_file(fs->super))
 		inode->osd2.linux2.l_i_blocks_hi = b >> 32;
-	else if (b >> 32)
-		return EOVERFLOW;
-	return 0;
+	இல்லையெனில் எனில் (b >> 32)
+		திரும்பு EOVERFLOW;
+	திரும்பு 0;
 }

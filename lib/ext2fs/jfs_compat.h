@@ -2,13 +2,13 @@
 #ifndef _JFS_COMPAT_H
 #define _JFS_COMPAT_H
 
-#include "support/list.h"
-#include <errno.h>
+#அந்தர்பாவ "support/list.h"
+#அந்தர்பாவ <errno.h>
 #ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
+#அந்தர்பாவ <netinet/in.h>
 #endif
-#include <arpa/inet.h>
-#include <stdbool.h>
+#அந்தர்பாவ <arpa/inet.h>
+#அந்தர்பாவ <stdbool.h>
 
 #define printk printf
 #define KERN_ERR ""
@@ -31,20 +31,20 @@
 #define le64_to_cpu(x)	ext2fs_le64_to_cpu(x)
 #define be64_to_cpu(x)	ext2fs_be64_to_cpu(x)
 
-typedef unsigned int tid_t;
-typedef struct journal_s journal_t;
-typedef struct kdev_s *kdev_t;
+வகைவரை unsigned முழு tid_t;
+வகைவரை கட்டமைப்பு journal_s journal_t;
+வகைவரை கட்டமைப்பு kdev_s *kdev_t;
 
-struct buffer_head;
-struct inode;
+கட்டமைப்பு buffer_head;
+கட்டமைப்பு inode;
 
-typedef unsigned int gfp_t;
+வகைவரை unsigned முழு gfp_t;
 #define GFP_KERNEL	0
 #define GFP_NOFS	0
 #define __GFP_NOFAIL	0
 #define JBD2_TAG_SIZE32	JBD_TAG_SIZE32
 #define JBD2_BARRIER	0
-typedef __u64 u64;
+வகைவரை __u64 u64;
 #define put_bh(x)	brelse(x)
 
 #define crc32_be(x, y, z)	ext2fs_crc32_be((x), (y), (z))
@@ -54,8 +54,8 @@ typedef __u64 u64;
 #define SLAB_HWCACHE_ALIGN	0
 #define SLAB_TEMPORARY		0
 #define KMEM_CACHE(__struct, __flags) kmem_cache_create(#__struct,\
-                sizeof(struct __struct), __alignof__(struct __struct),\
-                (__flags), NULL)
+                அளவு(கட்டமைப்பு __struct), __alignof__(கட்டமைப்பு __struct),\
+                (__flags), வெற்று)
 
 #define blkdev_issue_flush(kdev)	sync_blockdev(kdev)
 #define is_power_of_2(x)		((x) != 0 && (((x) & ((x) - 1)) == 0))
@@ -63,18 +63,18 @@ typedef __u64 u64;
 #define pr_emerg(fmt)
 #define pr_err(...)
 
-enum passtype {PASS_SCAN, PASS_REVOKE, PASS_REPLAY};
+எண்ணிக்கை passtype {PASS_SCAN, PASS_REVOKE, PASS_REPLAY};
 
 #define JBD2_FC_REPLAY_STOP		0
 #define JBD2_FC_REPLAY_CONTINUE		1
 
-struct journal_s
+கட்டமைப்பு journal_s
 {
 	unsigned long		j_flags;
-	int			j_errno;
-	struct buffer_head *	j_sb_buffer;
-	struct journal_superblock_s *j_superblock;
-	int			j_format_version;
+	முழு			j_errno;
+	கட்டமைப்பு buffer_head *	j_sb_buffer;
+	கட்டமைப்பு journal_superblock_s *j_superblock;
+	முழு			j_format_version;
 	unsigned long		j_head;
 	unsigned long		j_tail;
 	unsigned long		j_fc_first;
@@ -84,31 +84,31 @@ struct journal_s
 	unsigned long		j_first, j_last;
 	kdev_t			j_dev;
 	kdev_t			j_fs_dev;
-	int			j_blocksize;
-	unsigned int		j_blk_offset;
-	unsigned int		j_total_len;
-	struct inode *		j_inode;
+	முழு			j_blocksize;
+	unsigned முழு		j_blk_offset;
+	unsigned முழு		j_total_len;
+	கட்டமைப்பு inode *		j_inode;
 	tid_t			j_tail_sequence;
 	tid_t			j_transaction_sequence;
 	__u8			j_uuid[16];
-	struct jbd2_revoke_table_s *j_revoke;
-	struct jbd2_revoke_table_s *j_revoke_table[2];
+	கட்டமைப்பு jbd2_revoke_table_s *j_revoke;
+	கட்டமைப்பு jbd2_revoke_table_s *j_revoke_table[2];
 	tid_t			j_failed_commit;
 	__u32			j_csum_seed;
-	int (*j_fc_replay_callback)(struct journal_s *journal,
-				    struct buffer_head *bh,
-				    enum passtype pass, int off,
+	முழு (*j_fc_replay_callback)(கட்டமைப்பு journal_s *journal,
+				    கட்டமைப்பு buffer_head *bh,
+				    எண்ணிக்கை passtype pass, முழு off,
 				    tid_t expected_tid);
 
 };
 
 #define is_journal_abort(x) 0
 
-#define BUFFER_TRACE(bh, info)	do {} while (0)
+#define BUFFER_TRACE(bh, info)	செய் {} போது (0)
 
 /* Need this so we can compile with configure --enable-gcc-wall */
 #ifdef NO_INLINE_FUNCS
-#define inline
+#define உள்வரி
 #endif
 
 #endif /* _JFS_COMPAT_H */

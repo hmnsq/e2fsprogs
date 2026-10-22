@@ -9,19 +9,19 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#அந்தர்பாவ "config.h"
+#எனில் HAVE_UNISTD_H
+#அந்தர்பாவ <unistd.h>
 #endif
-#include <string.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <sys/stat.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <errno.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "tdb.h"
+#அந்தர்பாவ "ext2_fs.h"
+#அந்தர்பாவ "ext2fs.h"
+#அந்தர்பாவ "tdb.h"
 
 /*
  * The data storage strategy used by icount relies on the observation
@@ -42,23 +42,23 @@
  * particular inode is on the sorted list already.
  */
 
-struct ext2_icount_el {
+கட்டமைப்பு ext2_icount_el {
 	ext2_ino_t	ino;
-	__u32		count;
+	__u32		மொத்தம்;
 };
 
-struct ext2_icount {
+கட்டமைப்பு ext2_icount {
 	errcode_t		magic;
 	ext2fs_inode_bitmap	single;
 	ext2fs_inode_bitmap	multiple;
-	ext2_ino_t		count;
+	ext2_ino_t		மொத்தம்;
 	ext2_ino_t		size;
-	ext2_ino_t		num_inodes;
+	ext2_ino_t		இலக்கம்_inodes;
 	ext2_ino_t		cursor;
-	struct ext2_icount_el	*list;
-	struct ext2_icount_el	*last_lookup;
+	கட்டமைப்பு ext2_icount_el	*list;
+	கட்டமைப்பு ext2_icount_el	*last_lookup;
 #ifdef CONFIG_TDB
-	char			*tdb_fn;
+	எழுத்து			*tdb_fn;
 	TDB_CONTEXT		*tdb;
 #endif
 	__u16			*fullmap;
@@ -73,90 +73,90 @@ struct ext2_icount {
  */
 #define icount_16_xlate(x) (((x) > 65500) ? 65500 : (x))
 
-void ext2fs_free_icount(ext2_icount_t icount)
+வெறுமை ext2fs_free_icount(ext2_icount_t icount)
 {
-	if (!icount)
-		return;
+	எனில் (!icount)
+		திரும்பு;
 
 	icount->magic = 0;
-	if (icount->list)
+	எனில் (icount->list)
 		ext2fs_free_mem(&icount->list);
-	if (icount->single)
+	எனில் (icount->single)
 		ext2fs_free_inode_bitmap(icount->single);
-	if (icount->multiple)
+	எனில் (icount->multiple)
 		ext2fs_free_inode_bitmap(icount->multiple);
 #ifdef CONFIG_TDB
-	if (icount->tdb)
+	எனில் (icount->tdb)
 		tdb_close(icount->tdb);
-	if (icount->tdb_fn) {
-		(void) unlink(icount->tdb_fn);
-		free(icount->tdb_fn);
+	எனில் (icount->tdb_fn) {
+		(வெறுமை) unlink(icount->tdb_fn);
+		விடுவி(icount->tdb_fn);
 	}
 #endif
 
-	if (icount->fullmap)
+	எனில் (icount->fullmap)
 		ext2fs_free_mem(&icount->fullmap);
 
 	ext2fs_free_mem(&icount);
 }
 
-static errcode_t alloc_icount(ext2_filsys fs, int flags, ext2_icount_t *ret)
+நிலையான errcode_t alloc_icount(ext2_filsys fs, முழு flags, ext2_icount_t *ret)
 {
 	ext2_icount_t	icount;
 	errcode_t	retval;
 
 	*ret = 0;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_icount), &icount);
-	if (retval)
-		return retval;
-	memset(icount, 0, sizeof(struct ext2_icount));
+	retval = ext2fs_get_mem(அளவு(கட்டமைப்பு ext2_icount), &icount);
+	எனில் (retval)
+		திரும்பு retval;
+	memset(icount, 0, அளவு(கட்டமைப்பு ext2_icount));
 	icount->magic = EXT2_ET_MAGIC_ICOUNT;
-	icount->num_inodes = fs->super->s_inodes_count;
+	icount->இலக்கம்_inodes = fs->super->s_inodes_மொத்தம்;
 
-	if ((flags & EXT2_ICOUNT_OPT_FULLMAP) &&
+	எனில் ((flags & EXT2_ICOUNT_OPT_FULLMAP) &&
 	    (flags & EXT2_ICOUNT_OPT_INCREMENT)) {
-		unsigned sz = sizeof(*icount->fullmap) * icount->num_inodes;
+		unsigned sz = அளவு(*icount->fullmap) * icount->இலக்கம்_inodes;
 
 		retval = ext2fs_get_mem(sz, &icount->fullmap);
 		/* If we can't allocate, fall back */
-		if (!retval) {
+		எனில் (!retval) {
 			memset(icount->fullmap, 0, sz);
 			*ret = icount;
-			return 0;
+			திரும்பு 0;
 		}
 	}
 
 	retval = ext2fs_allocate_inode_bitmap(fs, "icount", &icount->single);
-	if (retval)
-		goto errout;
+	எனில் (retval)
+		செல் errout;
 
-	if (flags & EXT2_ICOUNT_OPT_INCREMENT) {
+	எனில் (flags & EXT2_ICOUNT_OPT_INCREMENT) {
 		retval = ext2fs_allocate_inode_bitmap(fs, "icount_inc",
 						      &icount->multiple);
-		if (retval)
-			goto errout;
-	} else
+		எனில் (retval)
+			செல் errout;
+	} இல்லையெனில்
 		icount->multiple = 0;
 
 	*ret = icount;
-	return 0;
+	திரும்பு 0;
 
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
+	திரும்பு(retval);
 }
 
 #ifdef CONFIG_TDB
-struct uuid {
-	__u32	time_low;
+கட்டமைப்பு uuid {
+	__u32	time_கீழ்;
 	__u16	time_mid;
 	__u16	time_hi_and_version;
 	__u16	clock_seq;
-	__u8	node[6];
+	__u8	முனை[6];
 };
 
-static void unpack_uuid(void *in, struct uuid *uu)
+நிலையான வெறுமை unpack_uuid(வெறுமை *in, கட்டமைப்பு uuid *uu)
 {
 	__u8	*ptr = in;
 	__u32	tmp;
@@ -165,7 +165,7 @@ static void unpack_uuid(void *in, struct uuid *uu)
 	tmp = (tmp << 8) | *ptr++;
 	tmp = (tmp << 8) | *ptr++;
 	tmp = (tmp << 8) | *ptr++;
-	uu->time_low = tmp;
+	uu->time_கீழ் = tmp;
 
 	tmp = *ptr++;
 	tmp = (tmp << 8) | *ptr++;
@@ -179,51 +179,51 @@ static void unpack_uuid(void *in, struct uuid *uu)
 	tmp = (tmp << 8) | *ptr++;
 	uu->clock_seq = tmp;
 
-	memcpy(uu->node, ptr, 6);
+	memcpy(uu->முனை, ptr, 6);
 }
 
-static void uuid_unparse(void *uu, char *out)
+நிலையான வெறுமை uuid_unparse(வெறுமை *uu, எழுத்து *out)
 {
-	struct uuid uuid;
+	கட்டமைப்பு uuid uuid;
 
 	unpack_uuid(uu, &uuid);
 	sprintf(out,
 		"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-		uuid.time_low, uuid.time_mid, uuid.time_hi_and_version,
+		uuid.time_கீழ், uuid.time_mid, uuid.time_hi_and_version,
 		uuid.clock_seq >> 8, uuid.clock_seq & 0xFF,
-		uuid.node[0], uuid.node[1], uuid.node[2],
-		uuid.node[3], uuid.node[4], uuid.node[5]);
+		uuid.முனை[0], uuid.முனை[1], uuid.முனை[2],
+		uuid.முனை[3], uuid.முனை[4], uuid.முனை[5]);
 }
 #endif
 
 errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2FS_NO_TDB_UNUSED,
-				   char *tdb_dir EXT2FS_NO_TDB_UNUSED,
-				   int flags EXT2FS_NO_TDB_UNUSED,
+				   எழுத்து *tdb_dir EXT2FS_NO_TDB_UNUSED,
+				   முழு flags EXT2FS_NO_TDB_UNUSED,
 				   ext2_icount_t *ret EXT2FS_NO_TDB_UNUSED)
 {
 #ifdef CONFIG_TDB
 	ext2_icount_t	icount;
 	errcode_t	retval;
-	char 		*fn, uuid[40];
-	ext2_ino_t	num_inodes;
+	எழுத்து 		*fn, uuid[40];
+	ext2_ino_t	இலக்கம்_inodes;
 	mode_t		save_umask;
-	int		fd;
+	முழு		fd;
 
 	retval = alloc_icount(fs, flags,  &icount);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 
 	retval = ext2fs_get_mem(strlen(tdb_dir) + 64, &fn);
-	if (retval)
-		goto errout;
+	எனில் (retval)
+		செல் errout;
 	uuid_unparse(fs->super->s_uuid, uuid);
 	sprintf(fn, "%s/%s-icount-XXXXXX", tdb_dir, uuid);
 	save_umask = umask(077);
 	fd = mkstemp(fn);
-	if (fd < 0) {
+	எனில் (fd < 0) {
 		retval = errno;
 		ext2fs_free_mem(&fn);
-		goto errout;
+		செல் errout;
 	}
 	icount->tdb_fn = fn;
 	umask(save_umask);
@@ -235,26 +235,26 @@ errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2FS_NO_TDB_UNUSED,
 	 * which case the number of inodes in use approaches the ideal
 	 * value.
 	 */
-	num_inodes = fs->super->s_inodes_count - fs->super->s_free_inodes_count;
+	இலக்கம்_inodes = fs->super->s_inodes_மொத்தம் - fs->super->s_free_inodes_மொத்தம்;
 
-	icount->tdb = tdb_open(fn, num_inodes, TDB_NOLOCK | TDB_NOSYNC,
+	icount->tdb = tdb_open(fn, இலக்கம்_inodes, TDB_NOLOCK | TDB_NOSYNC,
 			       O_RDWR | O_CREAT | O_TRUNC, 0600);
 	close(fd);
-	if (icount->tdb == NULL) {
+	எனில் (icount->tdb == வெற்று) {
 		retval = errno;
-		goto errout;
+		செல் errout;
 	}
 	*ret = icount;
-	return 0;
+	திரும்பு 0;
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
-#else
-	return EXT2_ET_UNIMPLEMENTED;
+	திரும்பு(retval);
+#இல்லையெனில்
+	திரும்பு EXT2_ET_UNIMPLEMENTED;
 #endif
 }
 
-errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
+errcode_t ext2fs_create_icount2(ext2_filsys fs, முழு flags, unsigned முழு size,
 				ext2_icount_t hint, ext2_icount_t *ret)
 {
 	ext2_icount_t	icount;
@@ -262,45 +262,45 @@ errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
 	size_t		bytes;
 	ext2_ino_t	i;
 
-	if (hint) {
+	எனில் (hint) {
 		EXT2_CHECK_MAGIC(hint, EXT2_ET_MAGIC_ICOUNT);
-		if (hint->size > size)
+		எனில் (hint->size > size)
 			size = (size_t) hint->size;
 	}
 
 	retval = alloc_icount(fs, flags, &icount);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 
-	if (icount->fullmap)
-		goto successout;
+	எனில் (icount->fullmap)
+		செல் successout;
 
-	if (size) {
+	எனில் (size) {
 		icount->size = size;
-	} else {
+	} இல்லையெனில் {
 		/*
 		 * Figure out how many special case inode counts we will
 		 * have.  We know we will need one for each directory;
 		 * we also need to reserve some extra room for file links
 		 */
-		retval = ext2fs_get_num_dirs(fs, &icount->size);
-		if (retval)
-			goto errout;
-		icount->size += fs->super->s_inodes_count / 50;
+		retval = ext2fs_get_இலக்கம்_dirs(fs, &icount->size);
+		எனில் (retval)
+			செல் errout;
+		icount->size += fs->super->s_inodes_மொத்தம் / 50;
 	}
 
-	bytes = (size_t) (icount->size * sizeof(struct ext2_icount_el));
-#if 0
+	bytes = (size_t) (icount->size * அளவு(கட்டமைப்பு ext2_icount_el));
+#எனில் 0
 	printf("Icount allocated %u entries, %d bytes.\n",
 	       icount->size, bytes);
 #endif
-	retval = ext2fs_get_array(icount->size, sizeof(struct ext2_icount_el),
+	retval = ext2fs_get_array(icount->size, அளவு(கட்டமைப்பு ext2_icount_el),
 			 &icount->list);
-	if (retval)
-		goto errout;
+	எனில் (retval)
+		செல் errout;
 	memset(icount->list, 0, bytes);
 
-	icount->count = 0;
+	icount->மொத்தம் = 0;
 	icount->cursor = 0;
 
 	/*
@@ -308,76 +308,76 @@ errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
 	 * found in the hint icount (since those are ones which will
 	 * likely need to be in the sorted list this time around).
 	 */
-	if (hint) {
-		for (i=0; i < hint->count; i++)
+	எனில் (hint) {
+		க்கு (i=0; i < hint->மொத்தம்; i++)
 			icount->list[i].ino = hint->list[i].ino;
-		icount->count = hint->count;
+		icount->மொத்தம் = hint->மொத்தம்;
 	}
 
 successout:
 	*ret = icount;
-	return 0;
+	திரும்பு 0;
 
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
+	திரும்பு(retval);
 }
 
-errcode_t ext2fs_create_icount(ext2_filsys fs, int flags,
-			       unsigned int size,
+errcode_t ext2fs_create_icount(ext2_filsys fs, முழு flags,
+			       unsigned முழு size,
 			       ext2_icount_t *ret)
 {
-	return ext2fs_create_icount2(fs, flags, size, 0, ret);
+	திரும்பு ext2fs_create_icount2(fs, flags, size, 0, ret);
 }
 
 /*
  * insert_icount_el() --- Insert a new entry into the sorted list at a
  * 	specified position.
  */
-static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
-					    ext2_ino_t ino, int pos)
+நிலையான கட்டமைப்பு ext2_icount_el *செருகு_icount_el(ext2_icount_t icount,
+					    ext2_ino_t ino, முழு pos)
 {
-	struct ext2_icount_el 	*el;
+	கட்டமைப்பு ext2_icount_el 	*el;
 	errcode_t		retval;
 	ext2_ino_t		new_size = 0;
-	int			num;
+	முழு			இலக்கம்;
 
-	if (icount->last_lookup && icount->last_lookup->ino == ino)
-		return icount->last_lookup;
+	எனில் (icount->last_lookup && icount->last_lookup->ino == ino)
+		திரும்பு icount->last_lookup;
 
-	if (icount->count >= icount->size) {
-		if (icount->count) {
-			new_size = icount->list[(unsigned)icount->count-1].ino;
-			new_size = (ext2_ino_t) (icount->count *
-				((float) icount->num_inodes / new_size));
+	எனில் (icount->மொத்தம் >= icount->size) {
+		எனில் (icount->மொத்தம்) {
+			new_size = icount->list[(unsigned)icount->மொத்தம்-1].ino;
+			new_size = (ext2_ino_t) (icount->மொத்தம் *
+				((தசம) icount->இலக்கம்_inodes / new_size));
 		}
-		if (new_size < (icount->size + 100))
+		எனில் (new_size < (icount->size + 100))
 			new_size = icount->size + 100;
-#if 0
+#எனில் 0
 		printf("Reallocating icount %u entries...\n", new_size);
 #endif
 		retval = ext2fs_resize_mem((size_t) icount->size *
-					   sizeof(struct ext2_icount_el),
+					   அளவு(கட்டமைப்பு ext2_icount_el),
 					   (size_t) new_size *
-					   sizeof(struct ext2_icount_el),
+					   அளவு(கட்டமைப்பு ext2_icount_el),
 					   &icount->list);
-		if (retval)
-			return 0;
+		எனில் (retval)
+			திரும்பு 0;
 		icount->size = new_size;
 	}
-	num = (int) icount->count - pos;
-	if (num < 0)
-		return 0;	/* should never happen */
-	if (num) {
+	இலக்கம் = (முழு) icount->மொத்தம் - pos;
+	எனில் (இலக்கம் < 0)
+		திரும்பு 0;	/* should never happen */
+	எனில் (இலக்கம்) {
 		memmove(&icount->list[pos+1], &icount->list[pos],
-			sizeof(struct ext2_icount_el) * num);
+			அளவு(கட்டமைப்பு ext2_icount_el) * இலக்கம்);
 	}
-	icount->count++;
+	icount->மொத்தம்++;
 	el = &icount->list[pos];
-	el->count = 0;
+	el->மொத்தம் = 0;
 	el->ino = ino;
 	icount->last_lookup = el;
-	return el;
+	திரும்பு el;
 }
 
 /*
@@ -385,145 +385,145 @@ static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
  * 	information in the sorted list.  If the create flag is set,
  * 	and we can't find an entry, create one in the sorted list.
  */
-static struct ext2_icount_el *get_icount_el(ext2_icount_t icount,
-					    ext2_ino_t ino, int create)
+நிலையான கட்டமைப்பு ext2_icount_el *get_icount_el(ext2_icount_t icount,
+					    ext2_ino_t ino, முழு create)
 {
-	int	low, high, mid;
+	முழு	கீழ், உயர்வு, mid;
 
-	if (!icount || !icount->list)
-		return 0;
+	எனில் (!icount || !icount->list)
+		திரும்பு 0;
 
-	if (create && ((icount->count == 0) ||
-		       (ino > icount->list[(unsigned)icount->count-1].ino))) {
-		return insert_icount_el(icount, ino, (unsigned) icount->count);
+	எனில் (create && ((icount->மொத்தம் == 0) ||
+		       (ino > icount->list[(unsigned)icount->மொத்தம்-1].ino))) {
+		திரும்பு செருகு_icount_el(icount, ino, (unsigned) icount->மொத்தம்);
 	}
-	if (icount->count == 0)
-		return 0;
+	எனில் (icount->மொத்தம் == 0)
+		திரும்பு 0;
 
-	if (icount->cursor >= icount->count)
+	எனில் (icount->cursor >= icount->மொத்தம்)
 		icount->cursor = 0;
-	if (ino == icount->list[icount->cursor].ino)
-		return &icount->list[icount->cursor++];
-#if 0
+	எனில் (ino == icount->list[icount->cursor].ino)
+		திரும்பு &icount->list[icount->cursor++];
+#எனில் 0
 	printf("Non-cursor get_icount_el: %u\n", ino);
 #endif
-	low = 0;
-	high = (int) icount->count-1;
-	while (low <= high) {
-		mid = ((unsigned)low + (unsigned)high) >> 1;
-		if (ino == icount->list[mid].ino) {
+	கீழ் = 0;
+	உயர்வு = (முழு) icount->மொத்தம்-1;
+	போது (கீழ் <= உயர்வு) {
+		mid = ((unsigned)கீழ் + (unsigned)உயர்வு) >> 1;
+		எனில் (ino == icount->list[mid].ino) {
 			icount->cursor = mid+1;
-			return &icount->list[mid];
+			திரும்பு &icount->list[mid];
 		}
-		if (ino < icount->list[mid].ino)
-			high = mid-1;
-		else
-			low = mid+1;
+		எனில் (ino < icount->list[mid].ino)
+			உயர்வு = mid-1;
+		இல்லையெனில்
+			கீழ் = mid+1;
 	}
 	/*
 	 * If we need to create a new entry, it should be right at
 	 * low (where high will be left at low-1).
 	 */
-	if (create)
-		return insert_icount_el(icount, ino, low);
-	return 0;
+	எனில் (create)
+		திரும்பு செருகு_icount_el(icount, ino, கீழ்);
+	திரும்பு 0;
 }
 
-static errcode_t set_inode_count(ext2_icount_t icount, ext2_ino_t ino,
-				 __u32 count)
+நிலையான errcode_t set_inode_மொத்தம்(ext2_icount_t icount, ext2_ino_t ino,
+				 __u32 மொத்தம்)
 {
-	struct ext2_icount_el 	*el;
+	கட்டமைப்பு ext2_icount_el 	*el;
 #ifdef CONFIG_TDB
-	TDB_DATA key, data;
+	TDB_DATA சாவி, data;
 
-	if (icount->tdb) {
-		key.dptr = (unsigned char *) &ino;
-		key.dsize = sizeof(ext2_ino_t);
-		data.dptr = (unsigned char *) &count;
-		data.dsize = sizeof(__u32);
-		if (count) {
-			if (tdb_store(icount->tdb, key, data, TDB_REPLACE))
-				return tdb_error(icount->tdb) +
+	எனில் (icount->tdb) {
+		சாவி.dptr = (unsigned எழுத்து *) &ino;
+		சாவி.dsize = அளவு(ext2_ino_t);
+		data.dptr = (unsigned எழுத்து *) &மொத்தம்;
+		data.dsize = அளவு(__u32);
+		எனில் (மொத்தம்) {
+			எனில் (tdb_store(icount->tdb, சாவி, data, TDB_REPLACE))
+				திரும்பு tdb_error(icount->tdb) +
 					EXT2_ET_TDB_SUCCESS;
-		} else {
-			if (tdb_delete(icount->tdb, key))
-				return tdb_error(icount->tdb) +
+		} இல்லையெனில் {
+			எனில் (tdb_delete(icount->tdb, சாவி))
+				திரும்பு tdb_error(icount->tdb) +
 					EXT2_ET_TDB_SUCCESS;
 		}
-		return 0;
+		திரும்பு 0;
 	}
 #endif
-	if (icount->fullmap) {
-		icount->fullmap[ino] = icount_16_xlate(count);
-		return 0;
+	எனில் (icount->fullmap) {
+		icount->fullmap[ino] = icount_16_xlate(மொத்தம்);
+		திரும்பு 0;
 	}
 
 	el = get_icount_el(icount, ino, 1);
-	if (!el)
-		return EXT2_ET_NO_MEMORY;
+	எனில் (!el)
+		திரும்பு EXT2_ET_NO_MEMORY;
 
-	el->count = count;
-	return 0;
+	el->மொத்தம் = மொத்தம்;
+	திரும்பு 0;
 }
 
-static errcode_t get_inode_count(ext2_icount_t icount, ext2_ino_t ino,
-				 __u32 *count)
+நிலையான errcode_t get_inode_மொத்தம்(ext2_icount_t icount, ext2_ino_t ino,
+				 __u32 *மொத்தம்)
 {
-	struct ext2_icount_el 	*el;
+	கட்டமைப்பு ext2_icount_el 	*el;
 #ifdef CONFIG_TDB
-	TDB_DATA key, data;
+	TDB_DATA சாவி, data;
 
-	if (icount->tdb) {
-		key.dptr = (unsigned char *) &ino;
-		key.dsize = sizeof(ext2_ino_t);
+	எனில் (icount->tdb) {
+		சாவி.dptr = (unsigned எழுத்து *) &ino;
+		சாவி.dsize = அளவு(ext2_ino_t);
 
-		data = tdb_fetch(icount->tdb, key);
-		if (data.dptr == NULL) {
-			*count = 0;
-			return tdb_error(icount->tdb) + EXT2_ET_TDB_SUCCESS;
+		data = tdb_fetch(icount->tdb, சாவி);
+		எனில் (data.dptr == வெற்று) {
+			*மொத்தம் = 0;
+			திரும்பு tdb_error(icount->tdb) + EXT2_ET_TDB_SUCCESS;
 		}
 
-		*count = *((__u32 *) data.dptr);
-		free(data.dptr);
-		return 0;
+		*மொத்தம் = *((__u32 *) data.dptr);
+		விடுவி(data.dptr);
+		திரும்பு 0;
 	}
 #endif
-	if (icount->fullmap) {
-		*count = icount->fullmap[ino];
-		return 0;
+	எனில் (icount->fullmap) {
+		*மொத்தம் = icount->fullmap[ino];
+		திரும்பு 0;
 	}
 
 	el = get_icount_el(icount, ino, 0);
-	if (!el) {
-		*count = 0;
-		return ENOENT;
+	எனில் (!el) {
+		*மொத்தம் = 0;
+		திரும்பு ENOENT;
 	}
 
-	*count = el->count;
-	return 0;
+	*மொத்தம் = el->மொத்தம்;
+	திரும்பு 0;
 }
 
 errcode_t ext2fs_icount_validate(ext2_icount_t icount, FILE *out)
 {
 	errcode_t	ret = 0;
-	unsigned int	i;
-	const char *bad = "bad icount";
+	unsigned முழு	i;
+	மாறிலி எழுத்து *bad = "bad icount";
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->count > icount->size) {
+	எனில் (icount->மொத்தம் > icount->size) {
 		fprintf(out, "%s: count > size\n", bad);
-		return EXT2_ET_INVALID_ARGUMENT;
+		திரும்பு EXT2_ET_INVALID_ARGUMENT;
 	}
-	for (i=1; i < icount->count; i++) {
-		if (icount->list[i-1].ino >= icount->list[i].ino) {
+	க்கு (i=1; i < icount->மொத்தம்; i++) {
+		எனில் (icount->list[i-1].ino >= icount->list[i].ino) {
 			fprintf(out, "%s: list[%d].ino=%u, list[%d].ino=%u\n",
 				bad, i-1, icount->list[i-1].ino,
 				i, icount->list[i].ino);
 			ret = EXT2_ET_INVALID_ARGUMENT;
 		}
 	}
-	return ret;
+	திரும்பு ret;
 }
 
 errcode_t ext2fs_icount_fetch(ext2_icount_t icount, ext2_ino_t ino, __u16 *ret)
@@ -531,182 +531,182 @@ errcode_t ext2fs_icount_fetch(ext2_icount_t icount, ext2_ino_t ino, __u16 *ret)
 	__u32	val;
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	எனில் (!ino || (ino > icount->இலக்கம்_inodes))
+		திரும்பு EXT2_ET_INVALID_ARGUMENT;
 
-	if (!icount->fullmap) {
-		if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	எனில் (!icount->fullmap) {
+		எனில் (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 			*ret = 1;
-			return 0;
+			திரும்பு 0;
 		}
-		if (icount->multiple &&
+		எனில் (icount->multiple &&
 			!ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
 			*ret = 0;
-			return 0;
+			திரும்பு 0;
 		}
 	}
-	get_inode_count(icount, ino, &val);
+	get_inode_மொத்தம்(icount, ino, &val);
 	*ret = icount_16_xlate(val);
-	return 0;
+	திரும்பு 0;
 }
 
 errcode_t ext2fs_icount_increment(ext2_icount_t icount, ext2_ino_t ino,
 				  __u16 *ret)
 {
-	__u32			curr_value;
+	__u32			curr_மதிப்பு;
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	எனில் (!ino || (ino > icount->இலக்கம்_inodes))
+		திரும்பு EXT2_ET_INVALID_ARGUMENT;
 
-	if (icount->fullmap) {
-		curr_value = icount_16_xlate(icount->fullmap[ino] + 1);
-		icount->fullmap[ino] = curr_value;
-	} else if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	எனில் (icount->fullmap) {
+		curr_மதிப்பு = icount_16_xlate(icount->fullmap[ino] + 1);
+		icount->fullmap[ino] = curr_மதிப்பு;
+	} இல்லையெனில் எனில் (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 		/*
 		 * If the existing count is 1, then we know there is
 		 * no entry in the list.
 		 */
-		if (set_inode_count(icount, ino, 2))
-			return EXT2_ET_NO_MEMORY;
-		curr_value = 2;
+		எனில் (set_inode_மொத்தம்(icount, ino, 2))
+			திரும்பு EXT2_ET_NO_MEMORY;
+		curr_மதிப்பு = 2;
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-	} else if (icount->multiple) {
+	} இல்லையெனில் எனில் (icount->multiple) {
 		/*
 		 * The count is either zero or greater than 1; if the
 		 * inode is set in icount->multiple, then there should
 		 * be an entry in the list, so we need to fix it.
 		 */
-		if (ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
-			get_inode_count(icount, ino, &curr_value);
-			curr_value++;
-			if (set_inode_count(icount, ino, curr_value))
-				return EXT2_ET_NO_MEMORY;
-		} else {
+		எனில் (ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
+			get_inode_மொத்தம்(icount, ino, &curr_மதிப்பு);
+			curr_மதிப்பு++;
+			எனில் (set_inode_மொத்தம்(icount, ino, curr_மதிப்பு))
+				திரும்பு EXT2_ET_NO_MEMORY;
+		} இல்லையெனில் {
 			/*
 			 * The count was zero; mark the single bitmap
 			 * and return.
 			 */
 			ext2fs_mark_inode_bitmap2(icount->single, ino);
-			if (ret)
+			எனில் (ret)
 				*ret = 1;
-			return 0;
+			திரும்பு 0;
 		}
-	} else {
+	} இல்லையெனில் {
 		/*
 		 * The count is either zero or greater than 1; try to
 		 * find an entry in the list to determine which.
 		 */
-		get_inode_count(icount, ino, &curr_value);
-		curr_value++;
-		if (set_inode_count(icount, ino, curr_value))
-			return EXT2_ET_NO_MEMORY;
+		get_inode_மொத்தம்(icount, ino, &curr_மதிப்பு);
+		curr_மதிப்பு++;
+		எனில் (set_inode_மொத்தம்(icount, ino, curr_மதிப்பு))
+			திரும்பு EXT2_ET_NO_MEMORY;
 	}
-	if (icount->multiple)
+	எனில் (icount->multiple)
 		ext2fs_mark_inode_bitmap2(icount->multiple, ino);
-	if (ret)
-		*ret = icount_16_xlate(curr_value);
-	return 0;
+	எனில் (ret)
+		*ret = icount_16_xlate(curr_மதிப்பு);
+	திரும்பு 0;
 }
 
 errcode_t ext2fs_icount_decrement(ext2_icount_t icount, ext2_ino_t ino,
 				  __u16 *ret)
 {
-	__u32			curr_value;
+	__u32			curr_மதிப்பு;
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	எனில் (!ino || (ino > icount->இலக்கம்_inodes))
+		திரும்பு EXT2_ET_INVALID_ARGUMENT;
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->fullmap) {
-		if (!icount->fullmap[ino])
-			return EXT2_ET_INVALID_ARGUMENT;
+	எனில் (icount->fullmap) {
+		எனில் (!icount->fullmap[ino])
+			திரும்பு EXT2_ET_INVALID_ARGUMENT;
 
-		curr_value = --icount->fullmap[ino];
-		if (ret)
-			*ret = icount_16_xlate(curr_value);
-		return 0;
+		curr_மதிப்பு = --icount->fullmap[ino];
+		எனில் (ret)
+			*ret = icount_16_xlate(curr_மதிப்பு);
+		திரும்பு 0;
 	}
 
-	if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	எனில் (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple)
+		எனில் (icount->multiple)
 			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		else {
-			set_inode_count(icount, ino, 0);
+		இல்லையெனில் {
+			set_inode_மொத்தம்(icount, ino, 0);
 		}
-		if (ret)
+		எனில் (ret)
 			*ret = 0;
-		return 0;
+		திரும்பு 0;
 	}
 
-	if (icount->multiple &&
+	எனில் (icount->multiple &&
 	    !ext2fs_test_inode_bitmap2(icount->multiple, ino))
-		return EXT2_ET_INVALID_ARGUMENT;
+		திரும்பு EXT2_ET_INVALID_ARGUMENT;
 
-	get_inode_count(icount, ino, &curr_value);
-	if (!curr_value)
-		return EXT2_ET_INVALID_ARGUMENT;
-	curr_value--;
-	if (set_inode_count(icount, ino, curr_value))
-		return EXT2_ET_NO_MEMORY;
+	get_inode_மொத்தம்(icount, ino, &curr_மதிப்பு);
+	எனில் (!curr_மதிப்பு)
+		திரும்பு EXT2_ET_INVALID_ARGUMENT;
+	curr_மதிப்பு--;
+	எனில் (set_inode_மொத்தம்(icount, ino, curr_மதிப்பு))
+		திரும்பு EXT2_ET_NO_MEMORY;
 
-	if (curr_value == 1)
+	எனில் (curr_மதிப்பு == 1)
 		ext2fs_mark_inode_bitmap2(icount->single, ino);
-	if ((curr_value == 0) && icount->multiple)
+	எனில் ((curr_மதிப்பு == 0) && icount->multiple)
 		ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
 
-	if (ret)
-		*ret = icount_16_xlate(curr_value);
-	return 0;
+	எனில் (ret)
+		*ret = icount_16_xlate(curr_மதிப்பு);
+	திரும்பு 0;
 }
 
 errcode_t ext2fs_icount_store(ext2_icount_t icount, ext2_ino_t ino,
-			      __u16 count)
+			      __u16 மொத்தம்)
 {
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	எனில் (!ino || (ino > icount->இலக்கம்_inodes))
+		திரும்பு EXT2_ET_INVALID_ARGUMENT;
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->fullmap)
-		return set_inode_count(icount, ino, count);
+	எனில் (icount->fullmap)
+		திரும்பு set_inode_மொத்தம்(icount, ino, மொத்தம்);
 
-	if (count == 1) {
+	எனில் (மொத்தம் == 1) {
 		ext2fs_mark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple)
+		எனில் (icount->multiple)
 			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		return 0;
+		திரும்பு 0;
 	}
-	if (count == 0) {
+	எனில் (மொத்தம் == 0) {
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple) {
+		எனில் (icount->multiple) {
 			/*
 			 * If the icount->multiple bitmap is enabled,
 			 * we can just clear both bitmaps and we're done
 			 */
 			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		} else
-			set_inode_count(icount, ino, 0);
-		return 0;
+		} இல்லையெனில்
+			set_inode_மொத்தம்(icount, ino, 0);
+		திரும்பு 0;
 	}
 
-	if (set_inode_count(icount, ino, count))
-		return EXT2_ET_NO_MEMORY;
+	எனில் (set_inode_மொத்தம்(icount, ino, மொத்தம்))
+		திரும்பு EXT2_ET_NO_MEMORY;
 	ext2fs_unmark_inode_bitmap2(icount->single, ino);
-	if (icount->multiple)
+	எனில் (icount->multiple)
 		ext2fs_mark_inode_bitmap2(icount->multiple, ino);
-	return 0;
+	திரும்பு 0;
 }
 
 ext2_ino_t ext2fs_get_icount_size(ext2_icount_t icount)
 {
-	if (!icount || icount->magic != EXT2_ET_MAGIC_ICOUNT)
-		return 0;
+	எனில் (!icount || icount->magic != EXT2_ET_MAGIC_ICOUNT)
+		திரும்பு 0;
 
-	return icount->size;
+	திரும்பு icount->size;
 }
 
 #ifdef DEBUG
@@ -720,14 +720,14 @@ ext2_icount_t	icount;
 #define INCREMENT	0x03
 #define DECREMENT	0x04
 
-struct test_program {
-	int		cmd;
+கட்டமைப்பு test_program {
+	முழு		cmd;
 	ext2_ino_t	ino;
 	__u16		arg;
 	__u16		expected;
 };
 
-struct test_program prog[] = {
+கட்டமைப்பு test_program prog[] = {
 	{ STORE, 42, 42, 42 },
 	{ STORE, 1,  1, 1 },
 	{ STORE, 2,  2, 2 },
@@ -753,7 +753,7 @@ struct test_program prog[] = {
 	{ EXIT, 0, 0, 0 }
 };
 
-struct test_program extended[] = {
+கட்டமைப்பு test_program extended[] = {
 	{ STORE, 1,  1, 1 },
 	{ STORE, 2,  2, 2 },
 	{ STORE, 3,  3, 3 },
@@ -790,118 +790,118 @@ struct test_program extended[] = {
 /*
  * Setup the variables for doing the inode scan test.
  */
-static void setup(void)
+நிலையான வெறுமை setup(வெறுமை)
 {
 	errcode_t	retval;
-	struct ext2_super_block param;
+	கட்டமைப்பு ext2_super_block param;
 
 	initialize_ext2_error_table();
 
-	memset(&param, 0, sizeof(param));
-	ext2fs_blocks_count_set(&param, 12000);
+	memset(&param, 0, அளவு(param));
+	ext2fs_blocks_மொத்தம்_set(&param, 12000);
 
 	retval = ext2fs_initialize("test fs", EXT2_FLAG_64BITS, &param,
 				   test_io_manager, &test_fs);
-	if (retval) {
+	எனில் (retval) {
 		com_err("setup", retval,
 			"while initializing filesystem");
 		exit(1);
 	}
 	retval = ext2fs_allocate_tables(test_fs);
-	if (retval) {
+	எனில் (retval) {
 		com_err("setup", retval,
 			"while allocating tables for test filesystem");
 		exit(1);
 	}
 }
 
-int run_test(int flags, int size, char *dir, struct test_program *prog)
+முழு run_test(முழு flags, முழு size, எழுத்து *dir, கட்டமைப்பு test_program *prog)
 {
 	errcode_t	retval;
 	ext2_icount_t	icount;
-	struct test_program *pc;
+	கட்டமைப்பு test_program *pc;
 	__u16		result;
-	int		problem = 0;
+	முழு		problem = 0;
 
-	if (dir) {
+	எனில் (dir) {
 #ifdef CONFIG_TDB
 		retval = ext2fs_create_icount_tdb(test_fs, dir,
 						  flags, &icount);
-		if (retval) {
+		எனில் (retval) {
 			com_err("run_test", retval,
 				"while creating icount using tdb");
 			exit(1);
 		}
-#else
+#இல்லையெனில்
 		printf("Skipped\n");
-		return 0;
+		திரும்பு 0;
 #endif
-	} else {
+	} இல்லையெனில் {
 		retval = ext2fs_create_icount2(test_fs, flags, size, 0,
 					       &icount);
-		if (retval) {
+		எனில் (retval) {
 			com_err("run_test", retval, "while creating icount");
 			exit(1);
 		}
 	}
-	for (pc = prog; pc->cmd != EXIT; pc++) {
-		switch (pc->cmd) {
-		case FETCH:
+	க்கு (pc = prog; pc->cmd != EXIT; pc++) {
+		தேர்வு (pc->cmd) {
+		நிலை FETCH:
 			printf("icount_fetch(%u) = ", pc->ino);
-			break;
-		case STORE:
+			நிறுத்து;
+		நிலை STORE:
 			retval = ext2fs_icount_store(icount, pc->ino, pc->arg);
-			if (retval) {
+			எனில் (retval) {
 				com_err("run_test", retval,
 					"while calling icount_store");
 				exit(1);
 			}
 			printf("icount_store(%u, %u) = ", pc->ino, pc->arg);
-			break;
-		case INCREMENT:
+			நிறுத்து;
+		நிலை INCREMENT:
 			retval = ext2fs_icount_increment(icount, pc->ino, 0);
-			if (retval) {
+			எனில் (retval) {
 				com_err("run_test", retval,
 					"while calling icount_increment");
 				exit(1);
 			}
 			printf("icount_increment(%u) = ", pc->ino);
-			break;
-		case DECREMENT:
+			நிறுத்து;
+		நிலை DECREMENT:
 			retval = ext2fs_icount_decrement(icount, pc->ino, 0);
-			if (retval) {
+			எனில் (retval) {
 				com_err("run_test", retval,
 					"while calling icount_decrement");
 				exit(1);
 			}
 			printf("icount_decrement(%u) = ", pc->ino);
-			break;
+			நிறுத்து;
 		}
 		retval = ext2fs_icount_fetch(icount, pc->ino, &result);
-		if (retval) {
+		எனில் (retval) {
 			com_err("run_test", retval,
 				"while calling icount_fetch");
 			exit(1);
 		}
 		printf("%u (%s)\n", result, (result == pc->expected) ?
 		       "OK" : "NOT OK");
-		if (result != pc->expected)
+		எனில் (result != pc->expected)
 			problem++;
 	}
 	printf("icount size is %u\n", ext2fs_get_icount_size(icount));
 	retval = ext2fs_icount_validate(icount, stdout);
-	if (retval) {
+	எனில் (retval) {
 		com_err("run_test", retval, "while calling icount_validate");
 		exit(1);
 	}
 	ext2fs_free_icount(icount);
-	return problem;
+	திரும்பு problem;
 }
 
 
-int main(int argc, char **argv)
+முழு முதன்மை(முழு argc, எழுத்து **argv)
 {
-	int failed = 0;
+	முழு failed = 0;
 
 	setup();
 	printf("Standard icount run:\n");
@@ -914,8 +914,8 @@ int main(int argc, char **argv)
 	failed += run_test(0, 0, ".", prog);
 	printf("\nMultiple bitmap test with tdb:\n");
 	failed += run_test(EXT2_ICOUNT_OPT_INCREMENT, 0, ".", prog);
-	if (failed)
+	எனில் (failed)
 		printf("FAILED!\n");
-	return failed;
+	திரும்பு failed;
 }
 #endif

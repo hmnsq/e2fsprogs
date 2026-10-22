@@ -9,44 +9,44 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#எனில் HAVE_UNISTD_H
+#அந்தர்பாவ <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <time.h>
+#எனில் HAVE_SYS_STAT_H
+#அந்தர்பாவ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#எனில் HAVE_SYS_TYPES_H
+#அந்தர்பாவ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#அந்தர்பாவ "ext2_fs.h"
+#அந்தர்பாவ "ext2fs.h"
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#define EXT2_CHECK_MAGIC(கட்டமைப்பு, code) \
+	  எனில் ((கட்டமைப்பு)->magic != (code)) திரும்பு (code)
 
-struct test_private_data {
-	int	magic;
+கட்டமைப்பு test_private_data {
+	முழு	magic;
 	io_channel real;
-	int flags;
+	முழு flags;
 	FILE *outfile;
 	unsigned long block;
-	int read_abort_count, write_abort_count;
-	void (*read_blk)(unsigned long block, int count, errcode_t err);
-	void (*write_blk)(unsigned long block, int count, errcode_t err);
-	void (*set_blksize)(int blksize, errcode_t err);
-	void (*write_byte)(unsigned long block, int count, errcode_t err);
-	void (*read_blk64)(unsigned long long block, int count, errcode_t err);
-	void (*write_blk64)(unsigned long long block, int count, errcode_t err);
+	முழு read_abort_மொத்தம், write_abort_மொத்தம்;
+	வெறுமை (*read_blk)(unsigned long block, முழு மொத்தம், errcode_t err);
+	வெறுமை (*write_blk)(unsigned long block, முழு மொத்தம், errcode_t err);
+	வெறுமை (*set_blksize)(முழு blksize, errcode_t err);
+	வெறுமை (*write_byte)(unsigned long block, முழு மொத்தம், errcode_t err);
+	வெறுமை (*read_blk64)(unsigned long long block, முழு மொத்தம், errcode_t err);
+	வெறுமை (*write_blk64)(unsigned long long block, முழு மொத்தம், errcode_t err);
 };
 
 /*
@@ -54,18 +54,18 @@ struct test_private_data {
  * necessary *before* calling test_open
  */
 io_manager test_io_backing_manager = 0;
-void (*test_io_cb_read_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
-void (*test_io_cb_write_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
-void (*test_io_cb_read_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
-void (*test_io_cb_write_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
-void (*test_io_cb_set_blksize)
-	(int blksize, errcode_t err) = 0;
-void (*test_io_cb_write_byte)
-	(unsigned long block, int count, errcode_t err) = 0;
+வெறுமை (*test_io_cb_read_blk)
+	(unsigned long block, முழு மொத்தம், errcode_t err) = 0;
+வெறுமை (*test_io_cb_write_blk)
+	(unsigned long block, முழு மொத்தம், errcode_t err) = 0;
+வெறுமை (*test_io_cb_read_blk64)
+	(unsigned long long block, முழு மொத்தம், errcode_t err) = 0;
+வெறுமை (*test_io_cb_write_blk64)
+	(unsigned long long block, முழு மொத்தம், errcode_t err) = 0;
+வெறுமை (*test_io_cb_set_blksize)
+	(முழு blksize, errcode_t err) = 0;
+வெறுமை (*test_io_cb_write_byte)
+	(unsigned long block, முழு மொத்தம், errcode_t err) = 0;
 
 /*
  * Test flags
@@ -80,21 +80,21 @@ void (*test_io_cb_write_byte)
 #define TEST_FLAG_READAHEAD		0x80
 #define TEST_FLAG_ZEROOUT		0x100
 
-static void test_dump_block(io_channel channel,
-			    struct test_private_data *data,
-			    unsigned long block, const void *buf)
+நிலையான வெறுமை test_dump_block(io_channel channel,
+			    கட்டமைப்பு test_private_data *data,
+			    unsigned long block, மாறிலி வெறுமை *buf)
 {
-	const unsigned char *cp;
+	மாறிலி unsigned எழுத்து *cp;
 	FILE *f = data->outfile;
-	int	i;
+	முழு	i;
 	unsigned long	cksum = 0;
 
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
+	க்கு (i=0, cp = buf; i < channel->block_size; i++, cp++) {
 		cksum += *cp;
 	}
 	fprintf(f, "Contents of block %lu, checksum %08lu: \n", block, cksum);
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
-		if ((i % 16) == 0)
+	க்கு (i=0, cp = buf; i < channel->block_size; i++, cp++) {
+		எனில் ((i % 16) == 0)
 			fprintf(f, "%04x: ", i);
 		fprintf(f, "%02x%c", *cp, ((i % 16) == 15) ? '\n' : ' ');
 	}
@@ -103,31 +103,31 @@ static void test_dump_block(io_channel channel,
 /*
  * Flush data buffers to disk.
  */
-static errcode_t test_flush(io_channel channel)
+நிலையான errcode_t test_flush(io_channel channel)
 {
-	struct test_private_data	*data;
+	கட்டமைப்பு test_private_data	*data;
 	errcode_t			retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *)channel->private_data;
+	data = (கட்டமைப்பு test_private_data *)channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	எனில் (data->real)
 		retval = io_channel_flush(data->real);
 
-	if (data->flags & TEST_FLAG_FLUSH)
+	எனில் (data->flags & TEST_FLAG_FLUSH)
 		fprintf(data->outfile, "Test_io: flush() returned %s\n",
 			retval ? error_message(retval) : "OK");
 
-	return retval;
+	திரும்பு retval;
 }
 
-static void test_abort(io_channel channel, unsigned long block)
+நிலையான வெறுமை test_abort(io_channel channel, unsigned long block)
 {
-	struct test_private_data *data;
+	கட்டமைப்பு test_private_data *data;
 	FILE *f;
 
-	data = (struct test_private_data *) channel->private_data;
+	data = (கட்டமைப்பு test_private_data *) channel->private_data;
 	f = data->outfile;
 	test_flush(channel);
 
@@ -136,27 +136,27 @@ static void test_abort(io_channel channel, unsigned long block)
 	abort();
 }
 
-static errcode_t test_open(const char *name, int flags, io_channel *channel)
+நிலையான errcode_t test_open(மாறிலி எழுத்து *name, முழு flags, io_channel *channel)
 {
-	io_channel	io = NULL;
-	struct test_private_data *data = NULL;
+	io_channel	io = வெற்று;
+	கட்டமைப்பு test_private_data *data = வெற்று;
 	errcode_t	retval;
-	char		*value;
+	எழுத்து		*மதிப்பு;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	எனில் (name == 0)
+		திரும்பு EXT2_ET_BAD_DEVICE_NAME;
+	retval = ext2fs_get_mem(அளவு(கட்டமைப்பு struct_io_channel), &io);
+	எனில் (retval)
+		செல் cleanup;
+	memset(io, 0, அளவு(கட்டமைப்பு struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
-	retval = ext2fs_get_mem(sizeof(struct test_private_data), &data);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(அளவு(கட்டமைப்பு test_private_data), &data);
+	எனில் (retval)
+		செல் cleanup;
 	io->manager = test_io_manager;
 	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	எனில் (retval)
+		செல் cleanup;
 
 	strcpy(io->name, name);
 	io->private_data = data;
@@ -166,14 +166,14 @@ static errcode_t test_open(const char *name, int flags, io_channel *channel)
 	io->refcount = 1;
 	io->flags = 0;
 
-	memset(data, 0, sizeof(struct test_private_data));
+	memset(data, 0, அளவு(கட்டமைப்பு test_private_data));
 	data->magic = EXT2_ET_MAGIC_TEST_IO_CHANNEL;
-	if (test_io_backing_manager) {
+	எனில் (test_io_backing_manager) {
 		retval = test_io_backing_manager->open(name, flags,
 						       &data->real);
-		if (retval)
-			goto cleanup;
-	} else {
+		எனில் (retval)
+			செல் cleanup;
+	} இல்லையெனில் {
 		data->real = 0;
 	}
 	data->read_blk =	test_io_cb_read_blk;
@@ -183,326 +183,326 @@ static errcode_t test_open(const char *name, int flags, io_channel *channel)
 	data->read_blk64 =	test_io_cb_read_blk64;
 	data->write_blk64 =	test_io_cb_write_blk64;
 
-	data->outfile = NULL;
-	if ((value = ext2fs_safe_getenv("TEST_IO_LOGFILE")) != NULL)
-		data->outfile = fopen(value, "w");
-	if (!data->outfile)
+	data->outfile = வெற்று;
+	எனில் ((மதிப்பு = ext2fs_safe_getenv("TEST_IO_LOGFILE")) != வெற்று)
+		data->outfile = fopen(மதிப்பு, "w");
+	எனில் (!data->outfile)
 		data->outfile = stderr;
 
 	data->flags = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_FLAGS")) != NULL)
-		data->flags = strtoul(value, NULL, 0);
+	எனில் ((மதிப்பு = ext2fs_safe_getenv("TEST_IO_FLAGS")) != வெற்று)
+		data->flags = strtoul(மதிப்பு, வெற்று, 0);
 
 	data->block = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_BLOCK")) != NULL)
-		data->block = strtoul(value, NULL, 0);
+	எனில் ((மதிப்பு = ext2fs_safe_getenv("TEST_IO_BLOCK")) != வெற்று)
+		data->block = strtoul(மதிப்பு, வெற்று, 0);
 
-	data->read_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_READ_ABORT")) != NULL)
-		data->read_abort_count = strtoul(value, NULL, 0);
+	data->read_abort_மொத்தம் = 0;
+	எனில் ((மதிப்பு = ext2fs_safe_getenv("TEST_IO_READ_ABORT")) != வெற்று)
+		data->read_abort_மொத்தம் = strtoul(மதிப்பு, வெற்று, 0);
 
-	data->write_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_WRITE_ABORT")) != NULL)
-		data->write_abort_count = strtoul(value, NULL, 0);
+	data->write_abort_மொத்தம் = 0;
+	எனில் ((மதிப்பு = ext2fs_safe_getenv("TEST_IO_WRITE_ABORT")) != வெற்று)
+		data->write_abort_மொத்தம் = strtoul(மதிப்பு, வெற்று, 0);
 
-	if (data->real) {
+	எனில் (data->real) {
 		io->align = data->real->align;
-		if (data->real->flags & CHANNEL_FLAGS_THREADS)
+		எனில் (data->real->flags & CHANNEL_FLAGS_THREADS)
 			io->flags |= CHANNEL_FLAGS_THREADS;
 	}
 
 	*channel = io;
-	return 0;
+	திரும்பு 0;
 
 cleanup:
-	if (io && io->name)
+	எனில் (io && io->name)
 		ext2fs_free_mem(&io->name);
-	if (io)
+	எனில் (io)
 		ext2fs_free_mem(&io);
-	if (data)
+	எனில் (data)
 		ext2fs_free_mem(&data);
-	return retval;
+	திரும்பு retval;
 }
 
-static errcode_t test_close(io_channel channel)
+நிலையான errcode_t test_close(io_channel channel)
 {
-	struct test_private_data *data;
+	கட்டமைப்பு test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (கட்டமைப்பு test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	எனில் (--channel->refcount > 0)
+		திரும்பு 0;
 
-	if (data->real)
+	எனில் (data->real)
 		retval = io_channel_close(data->real);
 
-	if (data->outfile && data->outfile != stderr)
+	எனில் (data->outfile && data->outfile != stderr)
 		fclose(data->outfile);
 
 	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	எனில் (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	திரும்பு retval;
 }
 
-static errcode_t test_set_blksize(io_channel channel, int blksize)
+நிலையான errcode_t test_set_blksize(io_channel channel, முழு blksize)
 {
-	struct test_private_data *data;
+	கட்டமைப்பு test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (கட்டமைப்பு test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real) {
+	எனில் (data->real) {
 		retval = io_channel_set_blksize(data->real, blksize);
 		channel->align = data->real->align;
 	}
-	if (data->set_blksize)
+	எனில் (data->set_blksize)
 		data->set_blksize(blksize, retval);
-	if (data->flags & TEST_FLAG_SET_BLKSIZE)
+	எனில் (data->flags & TEST_FLAG_SET_BLKSIZE)
 		fprintf(data->outfile,
 			"Test_io: set_blksize(%d) returned %s\n",
 			blksize, retval ? error_message(retval) : "OK");
 	channel->block_size = blksize;
-	return retval;
+	திரும்பு retval;
 }
 
 
-static errcode_t test_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+நிலையான errcode_t test_read_blk(io_channel channel, unsigned long block,
+			       முழு மொத்தம், வெறுமை *buf)
 {
-	struct test_private_data *data;
+	கட்டமைப்பு test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (கட்டமைப்பு test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_read_blk(data->real, block, count, buf);
-	if (data->read_blk)
-		data->read_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
+	எனில் (data->real)
+		retval = io_channel_read_blk(data->real, block, மொத்தம், buf);
+	எனில் (data->read_blk)
+		data->read_blk(block, மொத்தம், retval);
+	எனில் (data->flags & TEST_FLAG_READ)
 		fprintf(data->outfile,
 			"Test_io: read_blk(%lu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+			block, மொத்தம், retval ? error_message(retval) : "OK");
+	எனில் (data->block && data->block == block) {
+		எனில் (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
+		எனில் (--data->read_abort_மொத்தம் == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	திரும்பு retval;
 }
 
-static errcode_t test_write_blk(io_channel channel, unsigned long block,
-			       int count, const void *buf)
+நிலையான errcode_t test_write_blk(io_channel channel, unsigned long block,
+			       முழு மொத்தம், மாறிலி வெறுமை *buf)
 {
-	struct test_private_data *data;
+	கட்டமைப்பு test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (கட்டமைப்பு test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_write_blk(data->real, block, count, buf);
-	if (data->write_blk)
-		data->write_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
+	எனில் (data->real)
+		retval = io_channel_write_blk(data->real, block, மொத்தம், buf);
+	எனில் (data->write_blk)
+		data->write_blk(block, மொத்தம், retval);
+	எனில் (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_blk(%lu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+			block, மொத்தம், retval ? error_message(retval) : "OK");
+	எனில் (data->block && data->block == block) {
+		எனில் (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
+		எனில் (--data->write_abort_மொத்தம் == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	திரும்பு retval;
 }
 
-static errcode_t test_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+நிலையான errcode_t test_read_blk64(io_channel channel, unsigned long long block,
+			       முழு மொத்தம், வெறுமை *buf)
 {
-	struct test_private_data *data;
+	கட்டமைப்பு test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (கட்டமைப்பு test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_read_blk64(data->real, block, count, buf);
-	if (data->read_blk64)
-		data->read_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
+	எனில் (data->real)
+		retval = io_channel_read_blk64(data->real, block, மொத்தம், buf);
+	எனில் (data->read_blk64)
+		data->read_blk64(block, மொத்தம், retval);
+	எனில் (data->flags & TEST_FLAG_READ)
 		fprintf(data->outfile,
 			"Test_io: read_blk64(%llu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+			block, மொத்தம், retval ? error_message(retval) : "OK");
+	எனில் (data->block && data->block == block) {
+		எனில் (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
+		எனில் (--data->read_abort_மொத்தம் == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	திரும்பு retval;
 }
 
-static errcode_t test_write_blk64(io_channel channel, unsigned long long block,
-			       int count, const void *buf)
+நிலையான errcode_t test_write_blk64(io_channel channel, unsigned long long block,
+			       முழு மொத்தம், மாறிலி வெறுமை *buf)
 {
-	struct test_private_data *data;
+	கட்டமைப்பு test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (கட்டமைப்பு test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_write_blk64(data->real, block, count, buf);
-	if (data->write_blk64)
-		data->write_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
+	எனில் (data->real)
+		retval = io_channel_write_blk64(data->real, block, மொத்தம், buf);
+	எனில் (data->write_blk64)
+		data->write_blk64(block, மொத்தம், retval);
+	எனில் (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_blk64(%llu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+			block, மொத்தம், retval ? error_message(retval) : "OK");
+	எனில் (data->block && data->block == block) {
+		எனில் (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
+		எனில் (--data->write_abort_மொத்தம் == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	திரும்பு retval;
 }
 
-static errcode_t test_write_byte(io_channel channel, unsigned long offset,
-			       int count, const void *buf)
+நிலையான errcode_t test_write_byte(io_channel channel, unsigned long offset,
+			       முழு மொத்தம், மாறிலி வெறுமை *buf)
 {
-	struct test_private_data *data;
+	கட்டமைப்பு test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (கட்டமைப்பு test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->write_byte)
-		retval = io_channel_write_byte(data->real, offset, count, buf);
-	if (data->write_byte)
-		data->write_byte(offset, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
+	எனில் (data->real && data->real->manager->write_byte)
+		retval = io_channel_write_byte(data->real, offset, மொத்தம், buf);
+	எனில் (data->write_byte)
+		data->write_byte(offset, மொத்தம், retval);
+	எனில் (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_byte(%lu, %d) returned %s\n",
-			offset, count, retval ? error_message(retval) : "OK");
-	return retval;
+			offset, மொத்தம், retval ? error_message(retval) : "OK");
+	திரும்பு retval;
 }
 
-static errcode_t test_set_option(io_channel channel, const char *option,
-				 const char *arg)
+நிலையான errcode_t test_set_option(io_channel channel, மாறிலி எழுத்து *option,
+				 மாறிலி எழுத்து *arg)
 {
-	struct test_private_data *data;
+	கட்டமைப்பு test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (கட்டமைப்பு test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 
-	if (data->flags & TEST_FLAG_SET_OPTION)
+	எனில் (data->flags & TEST_FLAG_SET_OPTION)
 		fprintf(data->outfile, "Test_io: set_option(%s, %s) ",
 			option, arg);
-	if (data->real && data->real->manager->set_option) {
+	எனில் (data->real && data->real->manager->set_option) {
 		retval = (data->real->manager->set_option)(data->real,
 							   option, arg);
-		if (data->flags & TEST_FLAG_SET_OPTION)
+		எனில் (data->flags & TEST_FLAG_SET_OPTION)
 			fprintf(data->outfile, "returned %s\n",
 				retval ? error_message(retval) : "OK");
-	} else {
-		if (data->flags & TEST_FLAG_SET_OPTION)
+	} இல்லையெனில் {
+		எனில் (data->flags & TEST_FLAG_SET_OPTION)
 			fprintf(data->outfile, "not implemented\n");
 	}
-	return retval;
+	திரும்பு retval;
 }
 
-static errcode_t test_get_stats(io_channel channel, io_stats *stats)
+நிலையான errcode_t test_get_stats(io_channel channel, io_stats *stats)
 {
-	struct test_private_data *data;
+	கட்டமைப்பு test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (கட்டமைப்பு test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->get_stats) {
+	எனில் (data->real && data->real->manager->get_stats) {
 		retval = (data->real->manager->get_stats)(data->real, stats);
 	}
-	return retval;
+	திரும்பு retval;
 }
 
-static errcode_t test_discard(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+நிலையான errcode_t test_discard(io_channel channel, unsigned long long block,
+			      unsigned long long மொத்தம்)
 {
-	struct test_private_data *data;
+	கட்டமைப்பு test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (கட்டமைப்பு test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_discard(data->real, block, count);
-	if (data->flags & TEST_FLAG_DISCARD)
+	எனில் (data->real)
+		retval = io_channel_discard(data->real, block, மொத்தம்);
+	எனில் (data->flags & TEST_FLAG_DISCARD)
 		fprintf(data->outfile,
 			"Test_io: discard(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			block, மொத்தம், retval ? error_message(retval) : "OK");
+	திரும்பு retval;
 }
 
-static errcode_t test_cache_readahead(io_channel channel,
+நிலையான errcode_t test_cache_readahead(io_channel channel,
 				      unsigned long long block,
-				      unsigned long long count)
+				      unsigned long long மொத்தம்)
 {
-	struct test_private_data *data;
+	கட்டமைப்பு test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (கட்டமைப்பு test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_cache_readahead(data->real, block, count);
-	if (data->flags & TEST_FLAG_READAHEAD)
+	எனில் (data->real)
+		retval = io_channel_cache_readahead(data->real, block, மொத்தம்);
+	எனில் (data->flags & TEST_FLAG_READAHEAD)
 		fprintf(data->outfile,
 			"Test_io: readahead(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			block, மொத்தம், retval ? error_message(retval) : "OK");
+	திரும்பு retval;
 }
 
-static errcode_t test_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+நிலையான errcode_t test_zeroout(io_channel channel, unsigned long long block,
+			      unsigned long long மொத்தம்)
 {
-	struct test_private_data *data;
+	கட்டமைப்பு test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (கட்டமைப்பு test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_zeroout(data->real, block, count);
-	if (data->flags & TEST_FLAG_ZEROOUT)
+	எனில் (data->real)
+		retval = io_channel_zeroout(data->real, block, மொத்தம்);
+	எனில் (data->flags & TEST_FLAG_ZEROOUT)
 		fprintf(data->outfile,
 			"Test_io: zeroout(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			block, மொத்தம், retval ? error_message(retval) : "OK");
+	திரும்பு retval;
 }
 
-static struct struct_io_manager struct_test_manager = {
+நிலையான கட்டமைப்பு struct_io_manager struct_test_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Test I/O Manager",
 	.open		= test_open,

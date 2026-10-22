@@ -13,45 +13,45 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#எனில் HAVE_UNISTD_H
+#அந்தர்பாவ <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#எனில் HAVE_ERRNO_H
+#அந்தர்பாவ <errno.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <time.h>
+#எனில் HAVE_SYS_STAT_H
+#அந்தர்பாவ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#எனில் HAVE_SYS_TYPES_H
+#அந்தர்பாவ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#அந்தர்பாவ "ext2_fs.h"
+#அந்தர்பாவ "ext2fs.h"
 
 #ifndef HAVE_TYPE_SSIZE_T
-typedef int ssize_t;
+வகைவரை முழு ssize_t;
 #endif
 
 /*
  * This function returns 1 if the specified block is all zeros
  */
-static int check_zero_block(char *buf, int blocksize)
+நிலையான முழு check_zero_block(எழுத்து *buf, முழு blocksize)
 {
-	char	*cp = buf;
-	int	left = blocksize;
+	எழுத்து	*cp = buf;
+	முழு	இடது = blocksize;
 
-	while (left > 0) {
-		if (*cp++)
-			return 0;
-		left--;
+	போது (இடது > 0) {
+		எனில் (*cp++)
+			திரும்பு 0;
+		இடது--;
 	}
-	return 1;
+	திரும்பு 1;
 }
 
 /*
@@ -59,78 +59,78 @@ static int check_zero_block(char *buf, int blocksize)
  */
 #define BUF_BLOCKS	32
 
-errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_inode_write(ext2_filsys fs, முழு fd, முழு flags)
 {
 	dgrp_t		group;
-	ssize_t		left, c, d;
-	char		*buf, *cp;
+	ssize_t		இடது, c, d;
+	எழுத்து		*buf, *cp;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 	ext2_loff_t	r;
 
 	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	எனில் (!buf)
+		திரும்பு ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
+	க்கு (group = 0; group < fs->group_desc_மொத்தம்; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
+		எனில் (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
-			goto errout;
+			செல் errout;
 		}
-		left = fs->inode_blocks_per_group;
-		if ((blk < fs->super->s_first_data_block) ||
-		    (blk + left - 1 >= ext2fs_blocks_count(fs->super))) {
+		இடது = fs->inode_blocks_per_group;
+		எனில் ((blk < fs->super->s_first_data_block) ||
+		    (blk + இடது - 1 >= ext2fs_blocks_மொத்தம்(fs->super))) {
 			retval = EXT2_ET_GDESC_BAD_INODE_TABLE;
-			goto errout;
+			செல் errout;
 		}
-		while (left) {
+		போது (இடது) {
 			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
+			எனில் (c > இடது)
+				c = இடது;
 			retval = io_channel_read_blk64(fs->io, blk, c, buf);
-			if (retval)
-				goto errout;
+			எனில் (retval)
+				செல் errout;
 			cp = buf;
-			while (c) {
-				if (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
+			போது (c) {
+				எனில் (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
 					d = c;
-					goto skip_sparse;
+					செல் skip_sparse;
 				}
 				/* Skip zero blocks */
-				if (check_zero_block(cp, fs->blocksize)) {
+				எனில் (check_zero_block(cp, fs->blocksize)) {
 					c--;
 					blk++;
-					left--;
+					இடது--;
 					cp += fs->blocksize;
 					r = ext2fs_llseek(fd, fs->blocksize,
 							  SEEK_CUR);
-					if (r < 0) {
+					எனில் (r < 0) {
 						retval = errno;
-						goto errout;
+						செல் errout;
 					}
-					continue;
+					தொடர்;
 				}
 				/* Find non-zero blocks */
-				for (d = 1; d < c; d++) {
-					if (check_zero_block(cp +
+				க்கு (d = 1; d < c; d++) {
+					எனில் (check_zero_block(cp +
 							     d * fs->blocksize,
 							     fs->blocksize))
-						break;
+						நிறுத்து;
 				}
 			skip_sparse:
-				actual = write(fd, cp, d * fs->blocksize);
-				if (actual == -1) {
+				actual = லிக(fd, cp, d * fs->blocksize);
+				எனில் (actual == -1) {
 					retval = errno;
-					goto errout;
+					செல் errout;
 				}
-				if (actual != d * fs->blocksize) {
+				எனில் (actual != d * fs->blocksize) {
 					retval = EXT2_ET_SHORT_WRITE;
-					goto errout;
+					செல் errout;
 				}
 				blk += d;
-				left -= d;
+				இடது -= d;
 				cp += d * fs->blocksize;
 				c -= d;
 			}
@@ -139,89 +139,89 @@ errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	விடுவி(buf);
+	திரும்பு retval;
 }
 
 /*
  * Read in the inode table and stuff it into place
  */
-errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_inode_read(ext2_filsys fs, முழு fd,
+				  முழு flags EXT2FS_ATTR((unused)))
 {
 	dgrp_t		group;
-	ssize_t		c, left;
-	char		*buf;
+	ssize_t		c, இடது;
+	எழுத்து		*buf;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 
 	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	எனில் (!buf)
+		திரும்பு ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
+	க்கு (group = 0; group < fs->group_desc_மொத்தம்; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
+		எனில் (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
-			goto errout;
+			செல் errout;
 		}
-		left = fs->inode_blocks_per_group;
-		while (left) {
+		இடது = fs->inode_blocks_per_group;
+		போது (இடது) {
 			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
-			actual = read(fd, buf, fs->blocksize * c);
-			if (actual == -1) {
+			எனில் (c > இடது)
+				c = இடது;
+			actual = பட(fd, buf, fs->blocksize * c);
+			எனில் (actual == -1) {
 				retval = errno;
-				goto errout;
+				செல் errout;
 			}
-			if (actual != fs->blocksize * c) {
+			எனில் (actual != fs->blocksize * c) {
 				retval = EXT2_ET_SHORT_READ;
-				goto errout;
+				செல் errout;
 			}
 			retval = io_channel_write_blk64(fs->io, blk, c, buf);
-			if (retval)
-				goto errout;
+			எனில் (retval)
+				செல் errout;
 
 			blk += c;
-			left -= c;
+			இடது -= c;
 		}
 	}
 	retval = ext2fs_flush_icache(fs);
 
 errout:
-	free(buf);
-	return retval;
+	விடுவி(buf);
+	திரும்பு retval;
 }
 
 /*
  * Write out superblock and group descriptors
  */
-errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
-				   int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_write(ext2_filsys fs, முழு fd,
+				   முழு flags EXT2FS_ATTR((unused)))
 {
-	char		*buf, *cp;
+	எழுத்து		*buf, *cp;
 	ssize_t		actual;
 	errcode_t	retval;
-#ifdef WORDS_BIGENDIAN
-	unsigned int	groups_per_block;
-	struct		ext2_group_desc *gdp;
-	int		j;
+#ifdef சொற்கள்_BIGENDIAN
+	unsigned முழு	groups_per_block;
+	கட்டமைப்பு		ext2_group_desc *gdp;
+	முழு		j;
 #endif
 
-	if (fs->group_desc == NULL)
-		return EXT2_ET_NO_GDESC;
+	எனில் (fs->group_desc == வெற்று)
+		திரும்பு EXT2_ET_NO_GDESC;
 
 	buf = malloc(fs->blocksize);
-	if (!buf)
-		return ENOMEM;
+	எனில் (!buf)
+		திரும்பு ENOMEM;
 
 	/*
 	 * Write out the superblock
 	 */
 	memset(buf, 0, fs->blocksize);
-#ifdef WORDS_BIGENDIAN
+#ifdef சொற்கள்_BIGENDIAN
 	/*
 	 * We're writing out superblock so let's convert
 	 * it to little endian and then back if needed
@@ -229,92 +229,92 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 	ext2fs_swap_super(fs->super);
 	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
 	ext2fs_swap_super(fs->super);
-#else
+#இல்லையெனில்
 	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
 #endif
-	actual = write(fd, buf, fs->blocksize);
-	if (actual == -1) {
+	actual = லிக(fd, buf, fs->blocksize);
+	எனில் (actual == -1) {
 		retval = errno;
-		goto errout;
+		செல் errout;
 	}
-	if (actual != (ssize_t) fs->blocksize) {
+	எனில் (actual != (ssize_t) fs->blocksize) {
 		retval = EXT2_ET_SHORT_WRITE;
-		goto errout;
+		செல் errout;
 	}
 
 	/*
 	 * Now write out the block group descriptors
 	 */
 
-	cp = (char *) fs->group_desc;
+	cp = (எழுத்து *) fs->group_desc;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef சொற்கள்_BIGENDIAN
 	/*
 	 * Convert group descriptors to little endian and back
 	 * if needed
 	 */
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
+	க்கு (j=0; j < groups_per_block*fs->desc_blocks; j++) {
 		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
+		எனில் (gdp)
 			ext2fs_swap_group_desc2(fs, gdp);
 	}
 #endif
 
-	actual = write(fd, cp, (ssize_t)fs->blocksize * fs->desc_blocks);
+	actual = லிக(fd, cp, (ssize_t)fs->blocksize * fs->desc_blocks);
 
 
-#ifdef WORDS_BIGENDIAN
+#ifdef சொற்கள்_BIGENDIAN
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
+	க்கு (j=0; j < groups_per_block*fs->desc_blocks; j++) {
 		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
+		எனில் (gdp)
 			ext2fs_swap_group_desc2(fs, gdp);
 	}
 #endif
 
-	if (actual == -1) {
+	எனில் (actual == -1) {
 		retval = errno;
-		goto errout;
+		செல் errout;
 	}
-	if (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
+	எனில் (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
 		retval = EXT2_ET_SHORT_WRITE;
-		goto errout;
+		செல் errout;
 	}
 
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	விடுவி(buf);
+	திரும்பு retval;
 }
 
 /*
  * Read the superblock and group descriptors and overwrite them.
  */
-errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_read(ext2_filsys fs, முழு fd,
+				  முழு flags EXT2FS_ATTR((unused)))
 {
-	char		*buf;
+	எழுத்து		*buf;
 	ssize_t		actual, size;
 	errcode_t	retval;
 
 	size = (ssize_t)fs->blocksize * (fs->desc_blocks + 1);
 	buf = malloc(size);
-	if (!buf)
-		return ENOMEM;
+	எனில் (!buf)
+		திரும்பு ENOMEM;
 
 	/*
 	 * Read it all in.
 	 */
-	actual = read(fd, buf, size);
-	if (actual == -1) {
+	actual = பட(fd, buf, size);
+	எனில் (actual == -1) {
 		retval = errno;
-		goto errout;
+		செல் errout;
 	}
-	if (actual != size) {
+	எனில் (actual != size) {
 		retval = EXT2_ET_SHORT_READ;
-		goto errout;
+		செல் errout;
 	}
 
 	/*
@@ -328,143 +328,143 @@ errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	விடுவி(buf);
+	திரும்பு retval;
 }
 
 /*
  * Write the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, முழு fd, முழு flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	ssize_t			actual;
 	size_t			c;
 	__u64			itr, cnt, size, total_size;
-	char			buf[1024];
+	எழுத்து			buf[1024];
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	எனில் (flags & IMAGER_FLAG_INODEMAP) {
+		எனில் (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			எனில் (retval)
+				திரும்பு retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
+			fs->group_desc_மொத்தம்;
 		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
+	} இல்லையெனில் {
+		எனில் (!fs->block_map) {
 			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+			எனில் (retval)
+				திரும்பு retval;
 		}
 		bmap = fs->block_map;
 		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super, fs->group_desc_count);
+		cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super, fs->group_desc_மொத்தம்);
 		size = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
 	}
-	total_size = size * fs->group_desc_count;
+	total_size = size * fs->group_desc_மொத்தம்;
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
+	போது (cnt > 0) {
+		size = அளவு(buf);
+		எனில் (size > (cnt >> 3))
 			size = (cnt >> 3);
-		if (size == 0)
-			break;
+		எனில் (size == 0)
+			நிறுத்து;
 
 		retval = ext2fs_get_generic_bmap_range(bmap, itr,
 						       size << 3, buf);
-		if (retval)
-			return retval;
+		எனில் (retval)
+			திரும்பு retval;
 
-		actual = write(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		actual = லிக(fd, buf, size);
+		எனில் (actual == -1)
+			திரும்பு errno;
+		எனில் (actual != (முழு) size)
+			திரும்பு EXT2_ET_SHORT_READ;
 
 		itr += size << 3;
 		cnt -= size << 3;
 	}
 
 	size = total_size % fs->blocksize;
-	memset(buf, 0, sizeof(buf));
-	if (size) {
+	memset(buf, 0, அளவு(buf));
+	எனில் (size) {
 		size = fs->blocksize - size;
-		while (size) {
+		போது (size) {
 			c = size;
-			if (c > (int) sizeof(buf))
-				c = sizeof(buf);
-			actual = write(fd, buf, c);
-			if (actual < 0)
-				return errno;
-			if ((size_t) actual != c)
-				return EXT2_ET_SHORT_WRITE;
+			எனில் (c > (முழு) அளவு(buf))
+				c = அளவு(buf);
+			actual = லிக(fd, buf, c);
+			எனில் (actual < 0)
+				திரும்பு errno;
+			எனில் ((size_t) actual != c)
+				திரும்பு EXT2_ET_SHORT_WRITE;
 			size -= c;
 		}
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 
 /*
  * Read the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, முழு fd, முழு flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	__u64			itr, cnt;
-	char			buf[1024];
-	unsigned int		size;
+	எழுத்து			buf[1024];
+	unsigned முழு		size;
 	ssize_t			actual;
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	எனில் (flags & IMAGER_FLAG_INODEMAP) {
+		எனில் (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			எனில் (retval)
+				திரும்பு retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
+			fs->group_desc_மொத்தம்;
 		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
+	} இல்லையெனில் {
+		எனில் (!fs->block_map) {
 			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+			எனில் (retval)
+				திரும்பு retval;
 		}
 		bmap = fs->block_map;
 		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_BLOCKS(fs->super, fs->group_desc_count);
+		cnt = EXT2_GROUPS_TO_BLOCKS(fs->super, fs->group_desc_மொத்தம்);
 		size = EXT2_BLOCKS_PER_GROUP(fs->super) / 8;
 	}
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
+	போது (cnt > 0) {
+		size = அளவு(buf);
+		எனில் (size > (cnt >> 3))
 			size = (cnt >> 3);
-		if (size == 0)
-			break;
+		எனில் (size == 0)
+			நிறுத்து;
 
-		actual = read(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		actual = பட(fd, buf, size);
+		எனில் (actual == -1)
+			திரும்பு errno;
+		எனில் (actual != (முழு) size)
+			திரும்பு EXT2_ET_SHORT_READ;
 
 		retval = ext2fs_set_generic_bmap_range(bmap, itr,
 						       size << 3, buf);
-		if (retval)
-			return retval;
+		எனில் (retval)
+			திரும்பு retval;
 
 		itr += size << 3;
 		cnt -= size << 3;
 	}
-	return 0;
+	திரும்பு 0;
 }

@@ -20,307 +20,307 @@
   linux/lib/rbtree.c
 */
 
-#include "rbtree.h"
+#அந்தர்பாவ "rbtree.h"
 
-static void __rb_rotate_left(struct rb_node *node, struct rb_root *root)
+நிலையான வெறுமை __rb_rotate_left(கட்டமைப்பு rb_முனை *முனை, கட்டமைப்பு rb_வேர் *வேர்)
 {
-	struct rb_node *right = node->rb_right;
-	struct rb_node *parent = ext2fs_rb_parent(node);
+	கட்டமைப்பு rb_முனை *வலது = முனை->rb_வலது;
+	கட்டமைப்பு rb_முனை *parent = ext2fs_rb_parent(முனை);
 
-	if ((node->rb_right = right->rb_left))
-		ext2fs_rb_set_parent(right->rb_left, node);
-	right->rb_left = node;
+	எனில் ((முனை->rb_வலது = வலது->rb_இடது))
+		ext2fs_rb_set_parent(வலது->rb_இடது, முனை);
+	வலது->rb_இடது = முனை;
 
-	ext2fs_rb_set_parent(right, parent);
+	ext2fs_rb_set_parent(வலது, parent);
 
-	if (parent)
+	எனில் (parent)
 	{
-		if (node == parent->rb_left)
-			parent->rb_left = right;
-		else
-			parent->rb_right = right;
+		எனில் (முனை == parent->rb_இடது)
+			parent->rb_இடது = வலது;
+		இல்லையெனில்
+			parent->rb_வலது = வலது;
 	}
-	else
-		root->rb_node = right;
-	ext2fs_rb_set_parent(node, right);
+	இல்லையெனில்
+		வேர்->rb_முனை = வலது;
+	ext2fs_rb_set_parent(முனை, வலது);
 }
 
-static void __rb_rotate_right(struct rb_node *node, struct rb_root *root)
+நிலையான வெறுமை __rb_rotate_right(கட்டமைப்பு rb_முனை *முனை, கட்டமைப்பு rb_வேர் *வேர்)
 {
-	struct rb_node *left = node->rb_left;
-	struct rb_node *parent = ext2fs_rb_parent(node);
+	கட்டமைப்பு rb_முனை *இடது = முனை->rb_இடது;
+	கட்டமைப்பு rb_முனை *parent = ext2fs_rb_parent(முனை);
 
-	if ((node->rb_left = left->rb_right))
-		ext2fs_rb_set_parent(left->rb_right, node);
-	left->rb_right = node;
+	எனில் ((முனை->rb_இடது = இடது->rb_வலது))
+		ext2fs_rb_set_parent(இடது->rb_வலது, முனை);
+	இடது->rb_வலது = முனை;
 
-	ext2fs_rb_set_parent(left, parent);
+	ext2fs_rb_set_parent(இடது, parent);
 
-	if (parent)
+	எனில் (parent)
 	{
-		if (node == parent->rb_right)
-			parent->rb_right = left;
-		else
-			parent->rb_left = left;
+		எனில் (முனை == parent->rb_வலது)
+			parent->rb_வலது = இடது;
+		இல்லையெனில்
+			parent->rb_இடது = இடது;
 	}
-	else
-		root->rb_node = left;
-	ext2fs_rb_set_parent(node, left);
+	இல்லையெனில்
+		வேர்->rb_முனை = இடது;
+	ext2fs_rb_set_parent(முனை, இடது);
 }
 
-void ext2fs_rb_insert_color(struct rb_node *node, struct rb_root *root)
+வெறுமை ext2fs_rb_செருகு_color(கட்டமைப்பு rb_முனை *முனை, கட்டமைப்பு rb_வேர் *வேர்)
 {
-	struct rb_node *parent, *gparent;
+	கட்டமைப்பு rb_முனை *parent, *gparent;
 
-	while ((parent = ext2fs_rb_parent(node)) && ext2fs_rb_is_red(parent))
+	போது ((parent = ext2fs_rb_parent(முனை)) && ext2fs_rb_is_red(parent))
 	{
 		gparent = ext2fs_rb_parent(parent);
 
-		if (parent == gparent->rb_left)
+		எனில் (parent == gparent->rb_இடது)
 		{
 			{
-				register struct rb_node *uncle = gparent->rb_right;
-				if (uncle && ext2fs_rb_is_red(uncle))
+				பதிவு கட்டமைப்பு rb_முனை *uncle = gparent->rb_வலது;
+				எனில் (uncle && ext2fs_rb_is_red(uncle))
 				{
 					ext2fs_rb_set_black(uncle);
 					ext2fs_rb_set_black(parent);
 					ext2fs_rb_set_red(gparent);
-					node = gparent;
-					continue;
+					முனை = gparent;
+					தொடர்;
 				}
 			}
 
-			if (parent->rb_right == node)
+			எனில் (parent->rb_வலது == முனை)
 			{
-				register struct rb_node *tmp;
-				__rb_rotate_left(parent, root);
+				பதிவு கட்டமைப்பு rb_முனை *tmp;
+				__rb_rotate_left(parent, வேர்);
 				tmp = parent;
-				parent = node;
-				node = tmp;
+				parent = முனை;
+				முனை = tmp;
 			}
 
 			ext2fs_rb_set_black(parent);
 			ext2fs_rb_set_red(gparent);
-			__rb_rotate_right(gparent, root);
-		} else {
+			__rb_rotate_right(gparent, வேர்);
+		} இல்லையெனில் {
 			{
-				register struct rb_node *uncle = gparent->rb_left;
-				if (uncle && ext2fs_rb_is_red(uncle))
+				பதிவு கட்டமைப்பு rb_முனை *uncle = gparent->rb_இடது;
+				எனில் (uncle && ext2fs_rb_is_red(uncle))
 				{
 					ext2fs_rb_set_black(uncle);
 					ext2fs_rb_set_black(parent);
 					ext2fs_rb_set_red(gparent);
-					node = gparent;
-					continue;
+					முனை = gparent;
+					தொடர்;
 				}
 			}
 
-			if (parent->rb_left == node)
+			எனில் (parent->rb_இடது == முனை)
 			{
-				register struct rb_node *tmp;
-				__rb_rotate_right(parent, root);
+				பதிவு கட்டமைப்பு rb_முனை *tmp;
+				__rb_rotate_right(parent, வேர்);
 				tmp = parent;
-				parent = node;
-				node = tmp;
+				parent = முனை;
+				முனை = tmp;
 			}
 
 			ext2fs_rb_set_black(parent);
 			ext2fs_rb_set_red(gparent);
-			__rb_rotate_left(gparent, root);
+			__rb_rotate_left(gparent, வேர்);
 		}
 	}
 
-	ext2fs_rb_set_black(root->rb_node);
+	ext2fs_rb_set_black(வேர்->rb_முனை);
 }
 
-static void __rb_erase_color(struct rb_node *node, struct rb_node *parent,
-			     struct rb_root *root)
+நிலையான வெறுமை __rb_erase_color(கட்டமைப்பு rb_முனை *முனை, கட்டமைப்பு rb_முனை *parent,
+			     கட்டமைப்பு rb_வேர் *வேர்)
 {
-	struct rb_node *other;
+	கட்டமைப்பு rb_முனை *other;
 
-	while ((!node || ext2fs_rb_is_black(node)) && node != root->rb_node)
+	போது ((!முனை || ext2fs_rb_is_black(முனை)) && முனை != வேர்->rb_முனை)
 	{
-		if (parent->rb_left == node)
+		எனில் (parent->rb_இடது == முனை)
 		{
-			other = parent->rb_right;
-			if (ext2fs_rb_is_red(other))
+			other = parent->rb_வலது;
+			எனில் (ext2fs_rb_is_red(other))
 			{
 				ext2fs_rb_set_black(other);
 				ext2fs_rb_set_red(parent);
-				__rb_rotate_left(parent, root);
-				other = parent->rb_right;
+				__rb_rotate_left(parent, வேர்);
+				other = parent->rb_வலது;
 			}
-			if ((!other->rb_left || ext2fs_rb_is_black(other->rb_left)) &&
-			    (!other->rb_right || ext2fs_rb_is_black(other->rb_right)))
+			எனில் ((!other->rb_இடது || ext2fs_rb_is_black(other->rb_இடது)) &&
+			    (!other->rb_வலது || ext2fs_rb_is_black(other->rb_வலது)))
 			{
 				ext2fs_rb_set_red(other);
-				node = parent;
-				parent = ext2fs_rb_parent(node);
+				முனை = parent;
+				parent = ext2fs_rb_parent(முனை);
 			}
-			else
+			இல்லையெனில்
 			{
-				if (!other->rb_right || ext2fs_rb_is_black(other->rb_right))
+				எனில் (!other->rb_வலது || ext2fs_rb_is_black(other->rb_வலது))
 				{
-					ext2fs_rb_set_black(other->rb_left);
+					ext2fs_rb_set_black(other->rb_இடது);
 					ext2fs_rb_set_red(other);
-					__rb_rotate_right(other, root);
-					other = parent->rb_right;
+					__rb_rotate_right(other, வேர்);
+					other = parent->rb_வலது;
 				}
 				ext2fs_rb_set_color(other, ext2fs_rb_color(parent));
 				ext2fs_rb_set_black(parent);
-				ext2fs_rb_set_black(other->rb_right);
-				__rb_rotate_left(parent, root);
-				node = root->rb_node;
-				break;
+				ext2fs_rb_set_black(other->rb_வலது);
+				__rb_rotate_left(parent, வேர்);
+				முனை = வேர்->rb_முனை;
+				நிறுத்து;
 			}
 		}
-		else
+		இல்லையெனில்
 		{
-			other = parent->rb_left;
-			if (ext2fs_rb_is_red(other))
+			other = parent->rb_இடது;
+			எனில் (ext2fs_rb_is_red(other))
 			{
 				ext2fs_rb_set_black(other);
 				ext2fs_rb_set_red(parent);
-				__rb_rotate_right(parent, root);
-				other = parent->rb_left;
+				__rb_rotate_right(parent, வேர்);
+				other = parent->rb_இடது;
 			}
-			if ((!other->rb_left || ext2fs_rb_is_black(other->rb_left)) &&
-			    (!other->rb_right || ext2fs_rb_is_black(other->rb_right)))
+			எனில் ((!other->rb_இடது || ext2fs_rb_is_black(other->rb_இடது)) &&
+			    (!other->rb_வலது || ext2fs_rb_is_black(other->rb_வலது)))
 			{
 				ext2fs_rb_set_red(other);
-				node = parent;
-				parent = ext2fs_rb_parent(node);
+				முனை = parent;
+				parent = ext2fs_rb_parent(முனை);
 			}
-			else
+			இல்லையெனில்
 			{
-				if (!other->rb_left || ext2fs_rb_is_black(other->rb_left))
+				எனில் (!other->rb_இடது || ext2fs_rb_is_black(other->rb_இடது))
 				{
-					ext2fs_rb_set_black(other->rb_right);
+					ext2fs_rb_set_black(other->rb_வலது);
 					ext2fs_rb_set_red(other);
-					__rb_rotate_left(other, root);
-					other = parent->rb_left;
+					__rb_rotate_left(other, வேர்);
+					other = parent->rb_இடது;
 				}
 				ext2fs_rb_set_color(other, ext2fs_rb_color(parent));
 				ext2fs_rb_set_black(parent);
-				ext2fs_rb_set_black(other->rb_left);
-				__rb_rotate_right(parent, root);
-				node = root->rb_node;
-				break;
+				ext2fs_rb_set_black(other->rb_இடது);
+				__rb_rotate_right(parent, வேர்);
+				முனை = வேர்->rb_முனை;
+				நிறுத்து;
 			}
 		}
 	}
-	if (node)
-		ext2fs_rb_set_black(node);
+	எனில் (முனை)
+		ext2fs_rb_set_black(முனை);
 }
 
-void ext2fs_rb_erase(struct rb_node *node, struct rb_root *root)
+வெறுமை ext2fs_rb_erase(கட்டமைப்பு rb_முனை *முனை, கட்டமைப்பு rb_வேர் *வேர்)
 {
-	struct rb_node *child, *parent;
-	int color;
+	கட்டமைப்பு rb_முனை *child, *parent;
+	முழு color;
 
-	if (!node->rb_left)
-		child = node->rb_right;
-	else if (!node->rb_right)
-		child = node->rb_left;
-	else
+	எனில் (!முனை->rb_இடது)
+		child = முனை->rb_வலது;
+	இல்லையெனில் எனில் (!முனை->rb_வலது)
+		child = முனை->rb_இடது;
+	இல்லையெனில்
 	{
-		struct rb_node *old = node, *left;
+		கட்டமைப்பு rb_முனை *old = முனை, *இடது;
 
-		node = node->rb_right;
-		while ((left = node->rb_left) != NULL)
-			node = left;
+		முனை = முனை->rb_வலது;
+		போது ((இடது = முனை->rb_இடது) != வெற்று)
+			முனை = இடது;
 
-		if (ext2fs_rb_parent(old)) {
-			if (ext2fs_rb_parent(old)->rb_left == old)
-				ext2fs_rb_parent(old)->rb_left = node;
-			else
-				ext2fs_rb_parent(old)->rb_right = node;
-		} else
-			root->rb_node = node;
+		எனில் (ext2fs_rb_parent(old)) {
+			எனில் (ext2fs_rb_parent(old)->rb_இடது == old)
+				ext2fs_rb_parent(old)->rb_இடது = முனை;
+			இல்லையெனில்
+				ext2fs_rb_parent(old)->rb_வலது = முனை;
+		} இல்லையெனில்
+			வேர்->rb_முனை = முனை;
 
-		child = node->rb_right;
-		parent = ext2fs_rb_parent(node);
-		color = ext2fs_rb_color(node);
+		child = முனை->rb_வலது;
+		parent = ext2fs_rb_parent(முனை);
+		color = ext2fs_rb_color(முனை);
 
-		if (parent == old) {
-			parent = node;
-		} else {
-			if (child)
+		எனில் (parent == old) {
+			parent = முனை;
+		} இல்லையெனில் {
+			எனில் (child)
 				ext2fs_rb_set_parent(child, parent);
-			parent->rb_left = child;
+			parent->rb_இடது = child;
 
-			node->rb_right = old->rb_right;
-			ext2fs_rb_set_parent(old->rb_right, node);
+			முனை->rb_வலது = old->rb_வலது;
+			ext2fs_rb_set_parent(old->rb_வலது, முனை);
 		}
 
-		node->rb_parent_color = old->rb_parent_color;
-		node->rb_left = old->rb_left;
-		ext2fs_rb_set_parent(old->rb_left, node);
+		முனை->rb_parent_color = old->rb_parent_color;
+		முனை->rb_இடது = old->rb_இடது;
+		ext2fs_rb_set_parent(old->rb_இடது, முனை);
 
-		goto color;
+		செல் color;
 	}
 
-	parent = ext2fs_rb_parent(node);
-	color = ext2fs_rb_color(node);
+	parent = ext2fs_rb_parent(முனை);
+	color = ext2fs_rb_color(முனை);
 
-	if (child)
+	எனில் (child)
 		ext2fs_rb_set_parent(child, parent);
-	if (parent)
+	எனில் (parent)
 	{
-		if (parent->rb_left == node)
-			parent->rb_left = child;
-		else
-			parent->rb_right = child;
+		எனில் (parent->rb_இடது == முனை)
+			parent->rb_இடது = child;
+		இல்லையெனில்
+			parent->rb_வலது = child;
 	}
-	else
-		root->rb_node = child;
+	இல்லையெனில்
+		வேர்->rb_முனை = child;
 
  color:
-	if (color == RB_BLACK)
-		__rb_erase_color(child, parent, root);
+	எனில் (color == RB_BLACK)
+		__rb_erase_color(child, parent, வேர்);
 }
 
 /*
  * This function returns the first node (in sort order) of the tree.
  */
-struct rb_node *ext2fs_rb_first(const struct rb_root *root)
+கட்டமைப்பு rb_முனை *ext2fs_rb_first(மாறிலி கட்டமைப்பு rb_வேர் *வேர்)
 {
-	struct rb_node	*n;
+	கட்டமைப்பு rb_முனை	*n;
 
-	n = root->rb_node;
-	if (!n)
-		return NULL;
-	while (n->rb_left)
-		n = n->rb_left;
-	return n;
+	n = வேர்->rb_முனை;
+	எனில் (!n)
+		திரும்பு வெற்று;
+	போது (n->rb_இடது)
+		n = n->rb_இடது;
+	திரும்பு n;
 }
 
-struct rb_node *ext2fs_rb_last(const struct rb_root *root)
+கட்டமைப்பு rb_முனை *ext2fs_rb_last(மாறிலி கட்டமைப்பு rb_வேர் *வேர்)
 {
-	struct rb_node	*n;
+	கட்டமைப்பு rb_முனை	*n;
 
-	n = root->rb_node;
-	if (!n)
-		return NULL;
-	while (n->rb_right)
-		n = n->rb_right;
-	return n;
+	n = வேர்->rb_முனை;
+	எனில் (!n)
+		திரும்பு வெற்று;
+	போது (n->rb_வலது)
+		n = n->rb_வலது;
+	திரும்பு n;
 }
 
-struct rb_node *ext2fs_rb_next(struct rb_node *node)
+கட்டமைப்பு rb_முனை *ext2fs_rb_next(கட்டமைப்பு rb_முனை *முனை)
 {
-	struct rb_node *parent;
+	கட்டமைப்பு rb_முனை *parent;
 
-	if (ext2fs_rb_parent(node) == node)
-		return NULL;
+	எனில் (ext2fs_rb_parent(முனை) == முனை)
+		திரும்பு வெற்று;
 
 	/* If we have a right-hand child, go down and then left as far
 	   as we can. */
-	if (node->rb_right) {
-		node = node->rb_right;
-		while (node->rb_left)
-			node=node->rb_left;
-		return (struct rb_node *)node;
+	எனில் (முனை->rb_வலது) {
+		முனை = முனை->rb_வலது;
+		போது (முனை->rb_இடது)
+			முனை=முனை->rb_இடது;
+		திரும்பு (கட்டமைப்பு rb_முனை *)முனை;
 	}
 
 	/* No right-hand children.  Everything down and left is
@@ -329,54 +329,54 @@ struct rb_node *ext2fs_rb_next(struct rb_node *node)
 	   ancestor is a right-hand child of its parent, keep going
 	   up. First time it's a left-hand child of its parent, said
 	   parent is our 'next' node. */
-	while ((parent = ext2fs_rb_parent(node)) && node == parent->rb_right)
-		node = parent;
+	போது ((parent = ext2fs_rb_parent(முனை)) && முனை == parent->rb_வலது)
+		முனை = parent;
 
-	return parent;
+	திரும்பு parent;
 }
 
-struct rb_node *ext2fs_rb_prev(struct rb_node *node)
+கட்டமைப்பு rb_முனை *ext2fs_rb_prev(கட்டமைப்பு rb_முனை *முனை)
 {
-	struct rb_node *parent;
+	கட்டமைப்பு rb_முனை *parent;
 
-	if (ext2fs_rb_parent(node) == node)
-		return NULL;
+	எனில் (ext2fs_rb_parent(முனை) == முனை)
+		திரும்பு வெற்று;
 
 	/* If we have a left-hand child, go down and then right as far
 	   as we can. */
-	if (node->rb_left) {
-		node = node->rb_left;
-		while (node->rb_right)
-			node=node->rb_right;
-		return (struct rb_node *)node;
+	எனில் (முனை->rb_இடது) {
+		முனை = முனை->rb_இடது;
+		போது (முனை->rb_வலது)
+			முனை=முனை->rb_வலது;
+		திரும்பு (கட்டமைப்பு rb_முனை *)முனை;
 	}
 
 	/* No left-hand children. Go up till we find an ancestor which
 	   is a right-hand child of its parent */
-	while ((parent = ext2fs_rb_parent(node)) && node == parent->rb_left)
-		node = parent;
+	போது ((parent = ext2fs_rb_parent(முனை)) && முனை == parent->rb_இடது)
+		முனை = parent;
 
-	return parent;
+	திரும்பு parent;
 }
 
-void ext2fs_rb_replace_node(struct rb_node *victim, struct rb_node *new,
-			  struct rb_root *root)
+வெறுமை ext2fs_rb_replace_முனை(கட்டமைப்பு rb_முனை *victim, கட்டமைப்பு rb_முனை *new,
+			  கட்டமைப்பு rb_வேர் *வேர்)
 {
-	struct rb_node *parent = ext2fs_rb_parent(victim);
+	கட்டமைப்பு rb_முனை *parent = ext2fs_rb_parent(victim);
 
 	/* Set the surrounding nodes to point to the replacement */
-	if (parent) {
-		if (victim == parent->rb_left)
-			parent->rb_left = new;
-		else
-			parent->rb_right = new;
-	} else {
-		root->rb_node = new;
+	எனில் (parent) {
+		எனில் (victim == parent->rb_இடது)
+			parent->rb_இடது = new;
+		இல்லையெனில்
+			parent->rb_வலது = new;
+	} இல்லையெனில் {
+		வேர்->rb_முனை = new;
 	}
-	if (victim->rb_left)
-		ext2fs_rb_set_parent(victim->rb_left, new);
-	if (victim->rb_right)
-		ext2fs_rb_set_parent(victim->rb_right, new);
+	எனில் (victim->rb_இடது)
+		ext2fs_rb_set_parent(victim->rb_இடது, new);
+	எனில் (victim->rb_வலது)
+		ext2fs_rb_set_parent(victim->rb_வலது, new);
 
 	/* Copy the pointers/colour from the victim to the replacement */
 	*new = *victim;

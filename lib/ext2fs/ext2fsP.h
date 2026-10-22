@@ -9,212 +9,212 @@
  * %End-Header%
  */
 
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#எனில் HAVE_SYS_STAT_H
+#அந்தர்பாவ <sys/stat.h>
 #endif
 
-#include "ext2fs.h"
+#அந்தர்பாவ "ext2fs.h"
 
 #define EXT2FS_MAX_NESTED_LINKS  8
 
-static inline int ext2fsP_is_disk_device(mode_t mode)
+நிலையான உள்வரி முழு ext2fsP_is_disk_device(mode_t mode)
 {
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-	return S_ISBLK(mode) || S_ISCHR(mode);
-#else
-	return S_ISBLK(mode);
+#எனில் defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+	திரும்பு S_ISBLK(mode) || S_ISCHR(mode);
+#இல்லையெனில்
+	திரும்பு S_ISBLK(mode);
 #endif
 }
 
-static inline time_t ext2fsP_get_time(ext2_filsys fs)
+நிலையான உள்வரி time_t ext2fsP_get_time(ext2_filsys fs)
 {
-	if (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
-		return fs->now;
-	return time(NULL);
+	எனில் (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
+		திரும்பு fs->now;
+	திரும்பு time(வெற்று);
 }
 
 /*
  * Badblocks list
  */
-struct ext2_struct_u32_list {
-	int	magic;
-	int	num;
-	int	size;
+கட்டமைப்பு ext2_struct_u32_list {
+	முழு	magic;
+	முழு	இலக்கம்;
+	முழு	size;
 	__u32	*list;
-	int	badblocks_flags;
+	முழு	badblocks_flags;
 };
 
-struct ext2_struct_u32_iterate {
-	int			magic;
+கட்டமைப்பு ext2_struct_u32_iterate {
+	முழு			magic;
 	ext2_u32_list		bb;
-	int			ptr;
+	முழு			ptr;
 };
 
 
 /*
  * Directory block iterator definition
  */
-struct ext2_struct_dblist {
-	int			magic;
+கட்டமைப்பு ext2_struct_dblist {
+	முழு			magic;
 	ext2_filsys		fs;
 	unsigned long long	size;
-	unsigned long long	count;
-	int			sorted;
-	struct ext2_db_entry2 *	list;
+	unsigned long long	மொத்தம்;
+	முழு			sorted;
+	கட்டமைப்பு ext2_db_entry2 *	list;
 };
 
 /*
  * For directory iterators
  */
-struct dir_context {
+கட்டமைப்பு dir_context {
 	ext2_ino_t		dir;
-	int		flags;
-	char		*buf;
-	unsigned int	buflen;
-	int (*func)(ext2_ino_t	dir,
-		    int	entry,
-		    struct ext2_dir_entry *dirent,
-		    int	offset,
-		    int	blocksize,
-		    char	*buf,
-		    void	*priv_data);
-	void		*priv_data;
+	முழு		flags;
+	எழுத்து		*buf;
+	unsigned முழு	buflen;
+	முழு (*func)(ext2_ino_t	dir,
+		    முழு	entry,
+		    கட்டமைப்பு ext2_dir_entry *dirent,
+		    முழு	offset,
+		    முழு	blocksize,
+		    எழுத்து	*buf,
+		    வெறுமை	*priv_data);
+	வெறுமை		*priv_data;
 	errcode_t	errcode;
 };
 
 /*
  * Inode cache structure
  */
-struct ext2_inode_cache {
-	void *				buffer;
+கட்டமைப்பு ext2_inode_cache {
+	வெறுமை *				buffer;
 	blk64_t				buffer_blk;
-	int				cache_last;
-	unsigned int			cache_size;
-	int				refcount;
-	struct ext2_inode_cache_ent	*cache;
+	முழு				cache_last;
+	unsigned முழு			cache_size;
+	முழு				refcount;
+	கட்டமைப்பு ext2_inode_cache_ent	*cache;
 };
 
-struct ext2_inode_cache_ent {
+கட்டமைப்பு ext2_inode_cache_ent {
 	ext2_ino_t		ino;
-	struct ext2_inode	*inode;
+	கட்டமைப்பு ext2_inode	*inode;
 };
 
 /*
  * NLS definitions
  */
-struct ext2fs_nls_table {
-	int version;
-	const struct ext2fs_nls_ops *ops;
+கட்டமைப்பு ext2fs_nls_table {
+	முழு version;
+	மாறிலி கட்டமைப்பு ext2fs_nls_ops *ops;
 };
 
-struct ext2fs_nls_ops {
-	int (*casefold)(const struct ext2fs_nls_table *charset,
-			const unsigned char *str, size_t len,
-			unsigned char *dest, size_t dlen);
-	int (*validate)(const struct ext2fs_nls_table *table,
-			char *s, size_t len, char **pos);
-	int (*casefold_cmp)(const struct ext2fs_nls_table *table,
-			    const unsigned char *str1, size_t len1,
-			    const unsigned char *str2, size_t len2);
+கட்டமைப்பு ext2fs_nls_ops {
+	முழு (*casefold)(மாறிலி கட்டமைப்பு ext2fs_nls_table *charset,
+			மாறிலி unsigned எழுத்து *str, size_t len,
+			unsigned எழுத்து *dest, size_t dlen);
+	முழு (*validate)(மாறிலி கட்டமைப்பு ext2fs_nls_table *table,
+			எழுத்து *s, size_t len, எழுத்து **pos);
+	முழு (*casefold_cmp)(மாறிலி கட்டமைப்பு ext2fs_nls_table *table,
+			    மாறிலி unsigned எழுத்து *str1, size_t len1,
+			    மாறிலி unsigned எழுத்து *str2, size_t len2);
 };
 
 /* Function prototypes */
 
-extern int ext2fs_process_dir_block(ext2_filsys  	fs,
+வெளி முழு ext2fs_process_dir_block(ext2_filsys  	fs,
 				    blk64_t		*blocknr,
 				    e2_blkcnt_t		blockcnt,
 				    blk64_t		ref_block,
-				    int			ref_offset,
-				    void		*priv_data);
+				    முழு			ref_offset,
+				    வெறுமை		*priv_data);
 
-extern errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino);
-extern errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino);
-extern int ext2fs_inline_data_dir_iterate(ext2_filsys fs,
+வெளி errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino);
+வெளி errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino);
+வெளி முழு ext2fs_inline_data_dir_iterate(ext2_filsys fs,
 					  ext2_ino_t ino,
-					  void *priv_data);
+					  வெறுமை *priv_data);
 
 /* Generic numeric progress meter */
 
-struct ext2fs_numeric_progress_struct {
+கட்டமைப்பு ext2fs_numeric_progress_struct {
 	__u64		max;
-	int		log_max;
-	int		skip_progress;
+	முழு		log_max;
+	முழு		skip_progress;
 };
 
 /*
  * progress callback functions
  */
-struct ext2fs_progress_ops {
-	void (*init)(ext2_filsys fs,
-		     struct ext2fs_numeric_progress_struct * progress,
-		     const char *label, __u64 max);
-	void (*update)(ext2_filsys fs,
-		       struct ext2fs_numeric_progress_struct * progress,
+கட்டமைப்பு ext2fs_progress_ops {
+	வெறுமை (*init)(ext2_filsys fs,
+		     கட்டமைப்பு ext2fs_numeric_progress_struct * progress,
+		     மாறிலி எழுத்து *label, __u64 max);
+	வெறுமை (*update)(ext2_filsys fs,
+		       கட்டமைப்பு ext2fs_numeric_progress_struct * progress,
 		       __u64 val);
-	void (*close)(ext2_filsys fs,
-		      struct ext2fs_numeric_progress_struct * progress,
-		      const char *message);
+	வெறுமை (*close)(ext2_filsys fs,
+		      கட்டமைப்பு ext2fs_numeric_progress_struct * progress,
+		      மாறிலி எழுத்து *message);
 };
 
-extern struct ext2fs_progress_ops ext2fs_numeric_progress_ops;
+வெளி கட்டமைப்பு ext2fs_progress_ops ext2fs_numeric_progress_ops;
 
-extern void ext2fs_numeric_progress_init(ext2_filsys fs,
-					 struct ext2fs_numeric_progress_struct * progress,
-					 const char *label, __u64 max);
-extern void ext2fs_numeric_progress_update(ext2_filsys fs,
-					   struct ext2fs_numeric_progress_struct * progress,
+வெளி வெறுமை ext2fs_numeric_progress_init(ext2_filsys fs,
+					 கட்டமைப்பு ext2fs_numeric_progress_struct * progress,
+					 மாறிலி எழுத்து *label, __u64 max);
+வெளி வெறுமை ext2fs_numeric_progress_update(ext2_filsys fs,
+					   கட்டமைப்பு ext2fs_numeric_progress_struct * progress,
 					   __u64 val);
-extern void ext2fs_numeric_progress_close(ext2_filsys fs,
-					  struct ext2fs_numeric_progress_struct * progress,
-					  const char *message);
+வெளி வெறுமை ext2fs_numeric_progress_close(ext2_filsys fs,
+					  கட்டமைப்பு ext2fs_numeric_progress_struct * progress,
+					  மாறிலி எழுத்து *message);
 
 /*
  * 64-bit bitmap support
  */
 
-extern errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
-					   int type, __u64 start, __u64 end,
+வெளி errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
+					   முழு type, __u64 start, __u64 end,
 					   __u64 real_end,
-					   const char * description,
+					   மாறிலி எழுத்து * description,
 					   ext2fs_generic_bitmap *bmap);
 
-extern void ext2fs_free_generic_bmap(ext2fs_generic_bitmap bmap);
+வெளி வெறுமை ext2fs_free_generic_bmap(ext2fs_generic_bitmap bmap);
 
-extern errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap src,
+வெளி errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap src,
 					  ext2fs_generic_bitmap *dest);
 
-extern errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap bmap,
+வெளி errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap bmap,
 					    __u64 new_end,
 					    __u64 new_real_end);
-extern errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap bitmap,
+வெளி errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap bitmap,
 					       errcode_t neq,
 					       __u64 end, __u64 *oend);
-extern int ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
+வெளி முழு ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
-extern int ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
+வெளி முழு ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				      __u64 arg);
-extern int ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
+வெளி முழு ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
-extern errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
-					       void *in);
-extern errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
-					       void *out);
-extern void ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,const char *func);
+வெளி errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap bitmap,
+					       __u64 start, unsigned முழு இலக்கம்,
+					       வெறுமை *in);
+வெளி errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bitmap,
+					       __u64 start, unsigned முழு இலக்கம்,
+					       வெறுமை *out);
+வெளி வெறுமை ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,மாறிலி எழுத்து *func);
 
-extern int ext2fs_mem_is_zero(const char *mem, size_t len);
+வெளி முழு ext2fs_mem_is_zero(மாறிலி எழுத்து *mem, size_t len);
 
-extern int ext2fs_file_block_offset_too_big(ext2_filsys fs,
-					    struct ext2_inode *inode,
+வெளி முழு ext2fs_file_block_offset_too_big(ext2_filsys fs,
+					    கட்டமைப்பு ext2_inode *inode,
 					    blk64_t offset);
 
 /* atexit support */
-typedef void (*ext2_exit_fn)(void *);
-errcode_t ext2fs_add_exit_fn(ext2_exit_fn fn, void *data);
-errcode_t ext2fs_remove_exit_fn(ext2_exit_fn fn, void *data);
+வகைவரை வெறுமை (*ext2_exit_fn)(வெறுமை *);
+errcode_t ext2fs_add_exit_fn(ext2_exit_fn fn, வெறுமை *data);
+errcode_t ext2fs_remove_exit_fn(ext2_exit_fn fn, வெறுமை *data);
 
 #define ARRAY_SIZE(array)			\
-        (sizeof(array) / sizeof(array[0]))
+        (அளவு(array) / அளவு(array[0]))
 
-#define EXT2FS_BUILD_BUG_ON(cond) ((void)sizeof(char[1 - 2*!!(cond)]))
+#define EXT2FS_BUILD_BUG_ON(cond) ((வெறுமை)அளவு(எழுத்து[1 - 2*!!(cond)]))

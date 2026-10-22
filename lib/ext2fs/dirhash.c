@@ -11,14 +11,14 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#include <limits.h>
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <limits.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#அந்தர்பாவ "ext2_fs.h"
+#அந்தர்பாவ "ext2fs.h"
+#அந்தர்பாவ "ext2fsP.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
@@ -37,18 +37,18 @@
  */
 #define DELTA 0x9E3779B9
 
-static void TEA_transform(__u32 buf[4], __u32 const in[])
+நிலையான வெறுமை TEA_transform(__u32 buf[4], __u32 மாறிலி in[])
 {
 	__u32	sum = 0;
 	__u32	b0 = buf[0], b1 = buf[1];
 	__u32	a = in[0], b = in[1], c = in[2], d = in[3];
-	int	n = 16;
+	முழு	n = 16;
 
-	do {
+	செய் {
 		sum += DELTA;
 		b0 += ((b1 << 4)+a) ^ (b1+sum) ^ ((b1 >> 5)+b);
 		b1 += ((b0 << 4)+c) ^ (b0+sum) ^ ((b0 >> 5)+d);
-	} while(--n);
+	} போது(--n);
 
 	buf[0] += b0;
 	buf[1] += b1;
@@ -74,7 +74,7 @@ static void TEA_transform(__u32 buf[4], __u32 const in[])
 /*
  * Basic cut-down MD4 transform.  Returns only 32 bits of result.
  */
-static void halfMD4Transform (__u32 buf[4], __u32 const in[])
+நிலையான வெறுமை halfMD4Transform (__u32 buf[4], __u32 மாறிலி in[])
 {
 	__u32	a = buf[0], b = buf[1], c = buf[2], d = buf[3];
 
@@ -123,58 +123,58 @@ static void halfMD4Transform (__u32 buf[4], __u32 const in[])
 #undef K3
 
 /* The old legacy hash */
-static ext2_dirhash_t dx_hack_hash (const char *name, int len,
-				    int unsigned_flag)
+நிலையான ext2_dirhash_t dx_hack_hash (மாறிலி எழுத்து *name, முழு len,
+				    முழு unsigned_flag)
 {
 	__u32 hash, hash0 = 0x12a3fe2d, hash1 = 0x37abe8f9;
-	const unsigned char *ucp = (const unsigned char *) name;
-	const signed char *scp = (const signed char *) name;
-	int c;
+	மாறிலி unsigned எழுத்து *ucp = (மாறிலி unsigned எழுத்து *) name;
+	மாறிலி signed எழுத்து *scp = (மாறிலி signed எழுத்து *) name;
+	முழு c;
 
-	while (len--) {
-		if (unsigned_flag)
-			c = (int) *ucp++;
-		else
-			c = (int) *scp++;
+	போது (len--) {
+		எனில் (unsigned_flag)
+			c = (முழு) *ucp++;
+		இல்லையெனில்
+			c = (முழு) *scp++;
 		hash = hash1 + (hash0 ^ (c * 7152373));
 
-		if (hash & 0x80000000) hash -= 0x7fffffff;
+		எனில் (hash & 0x80000000) hash -= 0x7fffffff;
 		hash1 = hash0;
 		hash0 = hash;
 	}
-	return (hash0 << 1);
+	திரும்பு (hash0 << 1);
 }
 
-static void str2hashbuf(const char *msg, int len, __u32 *buf, int num,
-			int unsigned_flag)
+நிலையான வெறுமை str2hashbuf(மாறிலி எழுத்து *செய்தி, முழு len, __u32 *buf, முழு இலக்கம்,
+			முழு unsigned_flag)
 {
 	__u32	pad, val;
-	int	i, c;
-	const unsigned char *ucp = (const unsigned char *) msg;
-	const signed char *scp = (const signed char *) msg;
+	முழு	i, c;
+	மாறிலி unsigned எழுத்து *ucp = (மாறிலி unsigned எழுத்து *) செய்தி;
+	மாறிலி signed எழுத்து *scp = (மாறிலி signed எழுத்து *) செய்தி;
 
 	pad = (__u32)len | ((__u32)len << 8);
 	pad |= pad << 16;
 
 	val = pad;
-	if (len > num*4)
-		len = num * 4;
-	for (i=0; i < len; i++) {
-		if (unsigned_flag)
-			c = (int) ucp[i];
-		else
-			c = (int) scp[i];
+	எனில் (len > இலக்கம்*4)
+		len = இலக்கம் * 4;
+	க்கு (i=0; i < len; i++) {
+		எனில் (unsigned_flag)
+			c = (முழு) ucp[i];
+		இல்லையெனில்
+			c = (முழு) scp[i];
 
 		val = c + (val << 8);
-		if ((i % 4) == 3) {
+		எனில் ((i % 4) == 3) {
 			*buf++ = val;
 			val = pad;
-			num--;
+			இலக்கம்--;
 		}
 	}
-	if (--num >= 0)
+	எனில் (--இலக்கம் >= 0)
 		*buf++ = val;
-	while (--num >= 0)
+	போது (--இலக்கம் >= 0)
 		*buf++ = pad;
 }
 
@@ -196,17 +196,17 @@ static void str2hashbuf(const char *msg, int len, __u32 *buf, int num,
  * ext2fs_dirhash2.
  *
  */
-errcode_t ext2fs_dirhash(int version, const char *name, int len,
-			 const __u32 *seed,
+errcode_t ext2fs_dirhash(முழு version, மாறிலி எழுத்து *name, முழு len,
+			 மாறிலி __u32 *seed,
 			 ext2_dirhash_t *ret_hash,
 			 ext2_dirhash_t *ret_minor_hash)
 {
 	__u32	hash;
 	__u32	minor_hash = 0;
-	const char	*p;
-	int		i;
+	மாறிலி எழுத்து	*p;
+	முழு		i;
 	__u32 		in[8], buf[4];
-	int		unsigned_flag = 0;
+	முழு		unsigned_flag = 0;
 
 	/* Initialize the default seed for the hash checksum functions */
 	buf[0] = 0x67452301;
@@ -215,28 +215,28 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 	buf[3] = 0x10325476;
 
 	/* Check to see if the seed is all zero's */
-	if (seed) {
-		for (i=0; i < 4; i++) {
-			if (seed[i])
-				break;
+	எனில் (seed) {
+		க்கு (i=0; i < 4; i++) {
+			எனில் (seed[i])
+				நிறுத்து;
 		}
-		if (i < 4)
-			memcpy(buf, seed, sizeof(buf));
+		எனில் (i < 4)
+			memcpy(buf, seed, அளவு(buf));
 	}
 
-	switch (version) {
-	case EXT2_HASH_LEGACY_UNSIGNED:
+	தேர்வு (version) {
+	நிலை EXT2_HASH_LEGACY_UNSIGNED:
 		unsigned_flag++;
 		/* fallthrough */
-	case EXT2_HASH_LEGACY:
+	நிலை EXT2_HASH_LEGACY:
 		hash = dx_hack_hash(name, len, unsigned_flag);
-		break;
-	case EXT2_HASH_HALF_MD4_UNSIGNED:
+		நிறுத்து;
+	நிலை EXT2_HASH_HALF_MD4_UNSIGNED:
 		unsigned_flag++;
 		/* fallthrough */
-	case EXT2_HASH_HALF_MD4:
+	நிலை EXT2_HASH_HALF_MD4:
 		p = name;
-		while (len > 0) {
+		போது (len > 0) {
 			str2hashbuf(p, len, in, 8, unsigned_flag);
 			halfMD4Transform(buf, in);
 			len -= 32;
@@ -244,13 +244,13 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 		}
 		minor_hash = buf[2];
 		hash = buf[1];
-		break;
-	case EXT2_HASH_TEA_UNSIGNED:
+		நிறுத்து;
+	நிலை EXT2_HASH_TEA_UNSIGNED:
 		unsigned_flag++;
 		/* fallthrough */
-	case EXT2_HASH_TEA:
+	நிலை EXT2_HASH_TEA:
 		p = name;
-		while (len > 0) {
+		போது (len > 0) {
 			str2hashbuf(p, len, in, 4, unsigned_flag);
 			TEA_transform(buf, in);
 			len -= 16;
@@ -258,15 +258,15 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 		}
 		hash = buf[0];
 		minor_hash = buf[1];
-		break;
-	default:
+		நிறுத்து;
+	இயல்பு:
 		*ret_hash = 0;
-		return EXT2_ET_DIRHASH_UNSUPP;
+		திரும்பு EXT2_ET_DIRHASH_UNSUPP;
 	}
 	*ret_hash = hash & ~1;
-	if (ret_minor_hash)
+	எனில் (ret_minor_hash)
 		*ret_minor_hash = minor_hash;
-	return 0;
+	திரும்பு 0;
 }
 
 /*
@@ -275,33 +275,33 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
  * encoding support based on the nls_table and the flags. Check
  * ext2fs_dirhash for documentation on the input and output parameters.
  */
-errcode_t ext2fs_dirhash2(int version, const char *name, int len,
-			  const struct ext2fs_nls_table *charset,
-			  int hash_flags, const __u32 *seed,
+errcode_t ext2fs_dirhash2(முழு version, மாறிலி எழுத்து *name, முழு len,
+			  மாறிலி கட்டமைப்பு ext2fs_nls_table *charset,
+			  முழு hash_flags, மாறிலி __u32 *seed,
 			  ext2_dirhash_t *ret_hash,
 			  ext2_dirhash_t *ret_minor_hash)
 {
 	errcode_t r;
-	int dlen;
+	முழு dlen;
 
-	if (len && charset && (hash_flags & EXT4_CASEFOLD_FL)) {
-		char buff[PATH_MAX];
+	எனில் (len && charset && (hash_flags & EXT4_CASEFOLD_FL)) {
+		எழுத்து buff[PATH_MAX];
 
 		dlen = charset->ops->casefold(charset,
-			      (const unsigned char *) name, len,
-			      (unsigned char *) buff, sizeof(buff));
-		if (dlen < 0) {
-			if (dlen == -EINVAL)
-				goto opaque_seq;
+			      (மாறிலி unsigned எழுத்து *) name, len,
+			      (unsigned எழுத்து *) buff, அளவு(buff));
+		எனில் (dlen < 0) {
+			எனில் (dlen == -EINVAL)
+				செல் opaque_seq;
 
-			return dlen;
+			திரும்பு dlen;
 		}
 		r = ext2fs_dirhash(version, buff, dlen, seed, ret_hash,
 				   ret_minor_hash);
-		return r;
+		திரும்பு r;
 	}
 
 opaque_seq:
-	return ext2fs_dirhash(version, name, len, seed, ret_hash,
+	திரும்பு ext2fs_dirhash(version, name, len, seed, ret_hash,
 			      ret_minor_hash);
 }

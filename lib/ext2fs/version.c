@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#அந்தர்பாவ "config.h"
+#எனில் HAVE_UNISTD_H
+#அந்தர்பாவ <unistd.h>
 #endif
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <ctype.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#அந்தர்பாவ "ext2_fs.h"
+#அந்தர்பாவ "ext2fs.h"
 
-#include "../../version.h"
+#அந்தர்பாவ "../../version.h"
 
-static const char *lib_version = E2FSPROGS_VERSION;
-static const char *lib_date = E2FSPROGS_DATE;
+நிலையான மாறிலி எழுத்து *lib_version = E2FSPROGS_VERSION;
+நிலையான மாறிலி எழுத்து *lib_date = E2FSPROGS_DATE;
 
-int ext2fs_parse_version_string(const char *ver_string)
+முழு ext2fs_parse_version_string(மாறிலி எழுத்து *ver_string)
 {
-	const char *cp;
-	int version = 0, dot_count = 0;
+	மாறிலி எழுத்து *cp;
+	முழு version = 0, dot_மொத்தம் = 0;
 
-	for (cp = ver_string; *cp; cp++) {
-		if (*cp == '.') {
-			if (dot_count++)
-				break;
-			else
-				continue;
+	க்கு (cp = ver_string; *cp; cp++) {
+		எனில் (*cp == '.') {
+			எனில் (dot_மொத்தம்++)
+				நிறுத்து;
+			இல்லையெனில்
+				தொடர்;
 		}
-		if (!isdigit(*cp))
-			break;
+		எனில் (!isdigit(*cp))
+			நிறுத்து;
 		version = (version * 10) + (*cp - '0');
 	}
-	return version;
+	திரும்பு version;
 }
 
 
-int ext2fs_get_library_version(const char **ver_string,
-			       const char **date_string)
+முழு ext2fs_get_library_version(மாறிலி எழுத்து **ver_string,
+			       மாறிலி எழுத்து **date_string)
 {
-	if (ver_string)
+	எனில் (ver_string)
 		*ver_string = lib_version;
-	if (date_string)
+	எனில் (date_string)
 		*date_string = lib_date;
 
-	return ext2fs_parse_version_string(lib_version);
+	திரும்பு ext2fs_parse_version_string(lib_version);
 }

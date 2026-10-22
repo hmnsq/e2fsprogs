@@ -21,43 +21,43 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include "config.h"
-#include <errno.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <string.h>
-#include <fcntl.h>
-#include <time.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <ctype.h>
-#include <signal.h>
-#include <stdarg.h>
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <time.h>
+#அந்தர்பாவ <sys/mman.h>
+#அந்தர்பாவ <sys/stat.h>
+#அந்தர்பாவ <sys/time.h>
+#அந்தர்பாவ <ctype.h>
+#அந்தர்பாவ <signal.h>
+#அந்தர்பாவ <stdarg.h>
 
-#include "tdb.h"
+#அந்தர்பாவ "tdb.h"
 
-static int do_command(void);
-const char *cmdname;
-char *arg1, *arg2;
+நிலையான முழு do_command(வெறுமை);
+மாறிலி எழுத்து *cmdname;
+எழுத்து *arg1, *arg2;
 size_t arg1len, arg2len;
-int bIterate = 0;
-char *line;
+முழு bIterate = 0;
+எழுத்து *வரி;
 TDB_DATA iterate_kbuf;
-char cmdline[1024];
+எழுத்து cmdline[1024];
 
-enum commands {
+எண்ணிக்கை commands {
 	CMD_CREATE_TDB,
 	CMD_OPEN_TDB,
 	CMD_ERASE,
 	CMD_DUMP,
-	CMD_INSERT,
+	CMD_செருகு,
 	CMD_MOVE,
 	CMD_STORE,
 	CMD_SHOW,
-	CMD_KEYS,
+	CMD_சாவிகள்,
 	CMD_HEXKEYS,
 	CMD_DELETE,
 	CMD_LIST_HASH_FREE,
@@ -70,9 +70,9 @@ enum commands {
 	CMD_HELP
 };
 
-typedef struct {
-	const char *name;
-	enum commands cmd;
+வகைவரை கட்டமைப்பு {
+	மாறிலி எழுத்து *name;
+	எண்ணிக்கை commands cmd;
 } COMMAND_TABLE;
 
 COMMAND_TABLE cmd_table[] = {
@@ -80,11 +80,11 @@ COMMAND_TABLE cmd_table[] = {
 	{"open",	CMD_OPEN_TDB},
 	{"erase",	CMD_ERASE},
 	{"dump",	CMD_DUMP},
-	{"insert",	CMD_INSERT},
+	{"insert",	CMD_செருகு},
 	{"move",	CMD_MOVE},
 	{"store",	CMD_STORE},
 	{"show",	CMD_SHOW},
-	{"keys",	CMD_KEYS},
+	{"keys",	CMD_சாவிகள்},
 	{"hexkeys",	CMD_HEXKEYS},
 	{"delete",	CMD_DELETE},
 	{"list",	CMD_LIST_HASH_FREE},
@@ -97,64 +97,64 @@ COMMAND_TABLE cmd_table[] = {
 	{"quit",	CMD_QUIT},
 	{"q",		CMD_QUIT},
 	{"!",		CMD_SYSTEM},
-	{NULL,		CMD_HELP}
+	{வெற்று,		CMD_HELP}
 };
 
 /* a tdb tool for manipulating a tdb database */
 
-static TDB_CONTEXT *tdb;
+நிலையான TDB_CONTEXT *tdb;
 
-static int print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
-static int print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
-static int print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
+நிலையான முழு print_rec(TDB_CONTEXT *the_tdb, TDB_DATA சாவி, TDB_DATA dbuf, வெறுமை *state);
+நிலையான முழு print_சாவி(TDB_CONTEXT *the_tdb, TDB_DATA சாவி, TDB_DATA dbuf, வெறுமை *state);
+நிலையான முழு print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA சாவி, TDB_DATA dbuf, வெறுமை *state);
 
-static void print_asc(const char *buf,int len)
+நிலையான வெறுமை print_asc(மாறிலி எழுத்து *buf,முழு len)
 {
-	int i;
+	முழு i;
 
 	/* We're probably printing ASCII strings so don't try to display
 	   the trailing NULL character. */
 
-	if (buf[len - 1] == 0)
+	எனில் (buf[len - 1] == 0)
 	        len--;
 
-	for (i=0;i<len;i++)
+	க்கு (i=0;i<len;i++)
 		printf("%c",isprint(buf[i])?buf[i]:'.');
 }
 
-static void print_data(const char *buf,int len)
+நிலையான வெறுமை print_data(மாறிலி எழுத்து *buf,முழு len)
 {
-	int i=0;
-	if (len<=0) return;
+	முழு i=0;
+	எனில் (len<=0) திரும்பு;
 	printf("[%03X] ",i);
-	for (i=0;i<len;) {
-		printf("%02X ",(int)buf[i]);
+	க்கு (i=0;i<len;) {
+		printf("%02X ",(முழு)buf[i]);
 		i++;
-		if (i%8 == 0) printf(" ");
-		if (i%16 == 0) {
+		எனில் (i%8 == 0) printf(" ");
+		எனில் (i%16 == 0) {
 			print_asc(&buf[i-16],8); printf(" ");
 			print_asc(&buf[i-8],8); printf("\n");
-			if (i<len) printf("[%03X] ",i);
+			எனில் (i<len) printf("[%03X] ",i);
 		}
 	}
-	if (i%16) {
-		int n;
+	எனில் (i%16) {
+		முழு n;
 
 		n = 16 - (i%16);
 		printf(" ");
-		if (n>8) printf(" ");
-		while (n--) printf("   ");
+		எனில் (n>8) printf(" ");
+		போது (n--) printf("   ");
 
 		n = i%16;
-		if (n > 8) n = 8;
+		எனில் (n > 8) n = 8;
 		print_asc(&buf[i-(i%16)],n); printf(" ");
 		n = (i%16) - n;
-		if (n>0) print_asc(&buf[i-n],n);
+		எனில் (n>0) print_asc(&buf[i-n],n);
 		printf("\n");
 	}
 }
 
-static void help(void)
+நிலையான வெறுமை help(வெறுமை)
 {
 	printf("\n"
 "tdbtool: \n"
@@ -180,442 +180,442 @@ static void help(void)
 "\n");
 }
 
-static void terror(const char *why)
+நிலையான வெறுமை terror(மாறிலி எழுத்து *why)
 {
 	printf("%s\n", why);
 }
 
-static void create_tdb(const char *tdbname)
+நிலையான வெறுமை create_tdb(மாறிலி எழுத்து *tdbname)
 {
-	if (tdb) tdb_close(tdb);
+	எனில் (tdb) tdb_close(tdb);
 	tdb = tdb_open(tdbname, 0, TDB_CLEAR_IF_FIRST,
 		       O_RDWR | O_CREAT | O_TRUNC, 0600);
-	if (!tdb) {
+	எனில் (!tdb) {
 		printf("Could not create %s: %s\n", tdbname, strerror(errno));
 	}
 }
 
-static void open_tdb(const char *tdbname)
+நிலையான வெறுமை open_tdb(மாறிலி எழுத்து *tdbname)
 {
-	if (tdb) tdb_close(tdb);
+	எனில் (tdb) tdb_close(tdb);
 	tdb = tdb_open(tdbname, 0, 0, O_RDWR, 0600);
-	if (!tdb) {
+	எனில் (!tdb) {
 		printf("Could not open %s: %s\n", tdbname, strerror(errno));
 	}
 }
 
-static void insert_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
+நிலையான வெறுமை செருகு_tdb(எழுத்து *keyname, size_t keylen, எழுத்து* data, size_t datalen)
 {
-	TDB_DATA key, dbuf;
+	TDB_DATA சாவி, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	எனில் ((keyname == வெற்று) || (keylen == 0)) {
 		terror("need key");
-		return;
+		திரும்பு;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
-	dbuf.dptr = (unsigned char *)data;
+	சாவி.dptr = (unsigned எழுத்து *)keyname;
+	சாவி.dsize = keylen;
+	dbuf.dptr = (unsigned எழுத்து *)data;
 	dbuf.dsize = datalen;
 
-	if (tdb_store(tdb, key, dbuf, TDB_INSERT) == -1) {
+	எனில் (tdb_store(tdb, சாவி, dbuf, TDB_செருகு) == -1) {
 		terror("insert failed");
 	}
 }
 
-static void store_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
+நிலையான வெறுமை store_tdb(எழுத்து *keyname, size_t keylen, எழுத்து* data, size_t datalen)
 {
-	TDB_DATA key, dbuf;
+	TDB_DATA சாவி, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	எனில் ((keyname == வெற்று) || (keylen == 0)) {
 		terror("need key");
-		return;
+		திரும்பு;
 	}
 
-	if ((data == NULL) || (datalen == 0)) {
+	எனில் ((data == வெற்று) || (datalen == 0)) {
 		terror("need data");
-		return;
+		திரும்பு;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
-	dbuf.dptr = (unsigned char *)data;
+	சாவி.dptr = (unsigned எழுத்து *)keyname;
+	சாவி.dsize = keylen;
+	dbuf.dptr = (unsigned எழுத்து *)data;
 	dbuf.dsize = datalen;
 
 	printf("Storing key:\n");
-	print_rec(tdb, key, dbuf, NULL);
+	print_rec(tdb, சாவி, dbuf, வெற்று);
 
-	if (tdb_store(tdb, key, dbuf, TDB_REPLACE) == -1) {
+	எனில் (tdb_store(tdb, சாவி, dbuf, TDB_REPLACE) == -1) {
 		terror("store failed");
 	}
 }
 
-static void show_tdb(char *keyname, size_t keylen)
+நிலையான வெறுமை show_tdb(எழுத்து *keyname, size_t keylen)
 {
-	TDB_DATA key, dbuf;
+	TDB_DATA சாவி, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	எனில் ((keyname == வெற்று) || (keylen == 0)) {
 		terror("need key");
-		return;
+		திரும்பு;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	சாவி.dptr = (unsigned எழுத்து *)keyname;
+	சாவி.dsize = keylen;
 
-	dbuf = tdb_fetch(tdb, key);
-	if (!dbuf.dptr) {
+	dbuf = tdb_fetch(tdb, சாவி);
+	எனில் (!dbuf.dptr) {
 	    terror("fetch failed");
-	    return;
+	    திரும்பு;
 	}
 
-	print_rec(tdb, key, dbuf, NULL);
+	print_rec(tdb, சாவி, dbuf, வெற்று);
 
-	free( dbuf.dptr );
+	விடுவி( dbuf.dptr );
 
-	return;
+	திரும்பு;
 }
 
-static void delete_tdb(char *keyname, size_t keylen)
+நிலையான வெறுமை delete_tdb(எழுத்து *keyname, size_t keylen)
 {
-	TDB_DATA key;
+	TDB_DATA சாவி;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	எனில் ((keyname == வெற்று) || (keylen == 0)) {
 		terror("need key");
-		return;
+		திரும்பு;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	சாவி.dptr = (unsigned எழுத்து *)keyname;
+	சாவி.dsize = keylen;
 
-	if (tdb_delete(tdb, key) != 0) {
+	எனில் (tdb_delete(tdb, சாவி) != 0) {
 		terror("delete failed");
 	}
 }
 
-static void move_rec(char *keyname, size_t keylen, char* tdbname)
+நிலையான வெறுமை move_rec(எழுத்து *keyname, size_t keylen, எழுத்து* tdbname)
 {
-	TDB_DATA key, dbuf;
+	TDB_DATA சாவி, dbuf;
 	TDB_CONTEXT *dst_tdb;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	எனில் ((keyname == வெற்று) || (keylen == 0)) {
 		terror("need key");
-		return;
+		திரும்பு;
 	}
 
-	if ( !tdbname ) {
+	எனில் ( !tdbname ) {
 		terror("need destination tdb name");
-		return;
+		திரும்பு;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	சாவி.dptr = (unsigned எழுத்து *)keyname;
+	சாவி.dsize = keylen;
 
-	dbuf = tdb_fetch(tdb, key);
-	if (!dbuf.dptr) {
+	dbuf = tdb_fetch(tdb, சாவி);
+	எனில் (!dbuf.dptr) {
 		terror("fetch failed");
-		return;
+		திரும்பு;
 	}
 
-	print_rec(tdb, key, dbuf, NULL);
+	print_rec(tdb, சாவி, dbuf, வெற்று);
 
 	dst_tdb = tdb_open(tdbname, 0, 0, O_RDWR, 0600);
-	if ( !dst_tdb ) {
+	எனில் ( !dst_tdb ) {
 		terror("unable to open destination tdb");
-		return;
+		திரும்பு;
 	}
 
-	if ( tdb_store( dst_tdb, key, dbuf, TDB_REPLACE ) == -1 ) {
+	எனில் ( tdb_store( dst_tdb, சாவி, dbuf, TDB_REPLACE ) == -1 ) {
 		terror("failed to move record");
 	}
-	else
+	இல்லையெனில்
 		printf("record moved\n");
 
 	tdb_close( dst_tdb );
 
-	return;
+	திரும்பு;
 }
 
-static int print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+நிலையான முழு print_rec(TDB_CONTEXT *the_tdb, TDB_DATA சாவி, TDB_DATA dbuf, வெறுமை *state)
 {
-	printf("\nkey %d bytes\n", (int)key.dsize);
-	print_asc((const char *)key.dptr, key.dsize);
-	printf("\ndata %d bytes\n", (int)dbuf.dsize);
-	print_data((const char *)dbuf.dptr, dbuf.dsize);
-	return 0;
+	printf("\nkey %d bytes\n", (முழு)சாவி.dsize);
+	print_asc((மாறிலி எழுத்து *)சாவி.dptr, சாவி.dsize);
+	printf("\ndata %d bytes\n", (முழு)dbuf.dsize);
+	print_data((மாறிலி எழுத்து *)dbuf.dptr, dbuf.dsize);
+	திரும்பு 0;
 }
 
-static int print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+நிலையான முழு print_சாவி(TDB_CONTEXT *the_tdb, TDB_DATA சாவி, TDB_DATA dbuf, வெறுமை *state)
 {
-	printf("key %d bytes: ", (int)key.dsize);
-	print_asc((const char *)key.dptr, key.dsize);
+	printf("key %d bytes: ", (முழு)சாவி.dsize);
+	print_asc((மாறிலி எழுத்து *)சாவி.dptr, சாவி.dsize);
 	printf("\n");
-	return 0;
+	திரும்பு 0;
 }
 
-static int print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+நிலையான முழு print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA சாவி, TDB_DATA dbuf, வெறுமை *state)
 {
-	printf("key %d bytes\n", (int)key.dsize);
-	print_data((const char *)key.dptr, key.dsize);
+	printf("key %d bytes\n", (முழு)சாவி.dsize);
+	print_data((மாறிலி எழுத்து *)சாவி.dptr, சாவி.dsize);
 	printf("\n");
-	return 0;
+	திரும்பு 0;
 }
 
-static int total_bytes;
+நிலையான முழு total_bytes;
 
-static int traverse_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+நிலையான முழு traverse_fn(TDB_CONTEXT *the_tdb, TDB_DATA சாவி, TDB_DATA dbuf, வெறுமை *state)
 {
 	total_bytes += dbuf.dsize;
-	return 0;
+	திரும்பு 0;
 }
 
-static void info_tdb(void)
+நிலையான வெறுமை info_tdb(வெறுமை)
 {
-	int count;
+	முழு மொத்தம்;
 	total_bytes = 0;
-	if ((count = tdb_traverse(tdb, traverse_fn, NULL)) == -1)
+	எனில் ((மொத்தம் = tdb_traverse(tdb, traverse_fn, வெற்று)) == -1)
 		printf("Error = %s\n", tdb_errorstr(tdb));
-	else
-		printf("%d records totalling %d bytes\n", count, total_bytes);
+	இல்லையெனில்
+		printf("%d records totalling %d bytes\n", மொத்தம், total_bytes);
 }
 
-static char *tdb_getline(const char *prompt)
+நிலையான எழுத்து *tdb_getline(மாறிலி எழுத்து *prompt)
 {
-	static char thisline[1024];
-	char *p;
+	நிலையான எழுத்து thisline[1024];
+	எழுத்து *p;
 	fputs(prompt, stdout);
 	thisline[0] = 0;
-	p = fgets(thisline, sizeof(thisline)-1, stdin);
-	if (p) p = strchr(p, '\n');
-	if (p) *p = 0;
-	return p?thisline:NULL;
+	p = fgets(thisline, அளவு(thisline)-1, stdin);
+	எனில் (p) p = strchr(p, '\n');
+	எனில் (p) *p = 0;
+	திரும்பு p?thisline:வெற்று;
 }
 
-static int do_delete_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf,
-                     void *state)
+நிலையான முழு do_delete_fn(TDB_CONTEXT *the_tdb, TDB_DATA சாவி, TDB_DATA dbuf,
+                     வெறுமை *state)
 {
-    return tdb_delete(the_tdb, key);
+    திரும்பு tdb_delete(the_tdb, சாவி);
 }
 
-static void first_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
+நிலையான வெறுமை first_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
 {
 	TDB_DATA dbuf;
 	*pkey = tdb_firstkey(the_tdb);
 
 	dbuf = tdb_fetch(the_tdb, *pkey);
-	if (!dbuf.dptr) terror("fetch failed");
-	else {
-		print_rec(the_tdb, *pkey, dbuf, NULL);
+	எனில் (!dbuf.dptr) terror("fetch failed");
+	இல்லையெனில் {
+		print_rec(the_tdb, *pkey, dbuf, வெற்று);
 	}
 }
 
-static void next_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
+நிலையான வெறுமை next_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
 {
 	TDB_DATA dbuf;
 	*pkey = tdb_nextkey(the_tdb, *pkey);
 
 	dbuf = tdb_fetch(the_tdb, *pkey);
-	if (!dbuf.dptr)
+	எனில் (!dbuf.dptr)
 		terror("fetch failed");
-	else
-		print_rec(the_tdb, *pkey, dbuf, NULL);
+	இல்லையெனில்
+		print_rec(the_tdb, *pkey, dbuf, வெற்று);
 }
 
-static int do_command(void)
+நிலையான முழு do_command(வெறுமை)
 {
 	COMMAND_TABLE *ctp = cmd_table;
-	enum commands mycmd = CMD_HELP;
-	int cmd_len;
+	எண்ணிக்கை commands mycmd = CMD_HELP;
+	முழு cmd_len;
 
-	if (cmdname && strlen(cmdname) == 0) {
+	எனில் (cmdname && strlen(cmdname) == 0) {
 	    mycmd = CMD_NEXT;
-	} else {
-	    while (ctp->name) {
+	} இல்லையெனில் {
+	    போது (ctp->name) {
 		cmd_len = strlen(ctp->name);
-		if (strncmp(ctp->name,cmdname,cmd_len) == 0) {
+		எனில் (strncmp(ctp->name,cmdname,cmd_len) == 0) {
 			mycmd = ctp->cmd;
-			break;
+			நிறுத்து;
 		}
 		ctp++;
 	    }
 	}
 
-	switch (mycmd) {
-	case CMD_CREATE_TDB:
+	தேர்வு (mycmd) {
+	நிலை CMD_CREATE_TDB:
             bIterate = 0;
             create_tdb(arg1);
-	    return 0;
-	case CMD_OPEN_TDB:
+	    திரும்பு 0;
+	நிலை CMD_OPEN_TDB:
             bIterate = 0;
             open_tdb(arg1);
-            return 0;
-	case CMD_SYSTEM:
+            திரும்பு 0;
+	நிலை CMD_SYSTEM:
 	    /* Shell command */
 	    system(arg1);
-	    return 0;
-	case CMD_QUIT:
-	    return 1;
-	default:
+	    திரும்பு 0;
+	நிலை CMD_QUIT:
+	    திரும்பு 1;
+	இயல்பு:
 	    /* all the rest require a open database */
-	    if (!tdb) {
+	    எனில் (!tdb) {
 		bIterate = 0;
 		terror("database not open");
 		help();
-		return 0;
+		திரும்பு 0;
 	    }
-	    switch (mycmd) {
-	    case CMD_ERASE:
+	    தேர்வு (mycmd) {
+	    நிலை CMD_ERASE:
 		bIterate = 0;
-		tdb_traverse(tdb, do_delete_fn, NULL);
-		return 0;
-	    case CMD_DUMP:
+		tdb_traverse(tdb, do_delete_fn, வெற்று);
+		திரும்பு 0;
+	    நிலை CMD_DUMP:
 		bIterate = 0;
-		tdb_traverse(tdb, print_rec, NULL);
-		return 0;
-	    case CMD_INSERT:
+		tdb_traverse(tdb, print_rec, வெற்று);
+		திரும்பு 0;
+	    நிலை CMD_செருகு:
 		bIterate = 0;
-		insert_tdb(arg1, arg1len,arg2,arg2len);
-		return 0;
-	    case CMD_MOVE:
+		செருகு_tdb(arg1, arg1len,arg2,arg2len);
+		திரும்பு 0;
+	    நிலை CMD_MOVE:
 		bIterate = 0;
 		move_rec(arg1,arg1len,arg2);
-		return 0;
-	    case CMD_STORE:
+		திரும்பு 0;
+	    நிலை CMD_STORE:
 		bIterate = 0;
 		store_tdb(arg1,arg1len,arg2,arg2len);
-		return 0;
-	    case CMD_SHOW:
+		திரும்பு 0;
+	    நிலை CMD_SHOW:
 		bIterate = 0;
 		show_tdb(arg1, arg1len);
-		return 0;
-	    case CMD_KEYS:
-		tdb_traverse(tdb, print_key, NULL);
-		return 0;
-	    case CMD_HEXKEYS:
-		tdb_traverse(tdb, print_hexkey, NULL);
-		return 0;
-	    case CMD_DELETE:
+		திரும்பு 0;
+	    நிலை CMD_சாவிகள்:
+		tdb_traverse(tdb, print_சாவி, வெற்று);
+		திரும்பு 0;
+	    நிலை CMD_HEXKEYS:
+		tdb_traverse(tdb, print_hexkey, வெற்று);
+		திரும்பு 0;
+	    நிலை CMD_DELETE:
 		bIterate = 0;
 		delete_tdb(arg1,arg1len);
-		return 0;
-	    case CMD_LIST_HASH_FREE:
+		திரும்பு 0;
+	    நிலை CMD_LIST_HASH_FREE:
 		tdb_dump_all(tdb);
-		return 0;
-	    case CMD_LIST_FREE:
+		திரும்பு 0;
+	    நிலை CMD_LIST_FREE:
 		tdb_printfreelist(tdb);
-		return 0;
-	    case CMD_INFO:
+		திரும்பு 0;
+	    நிலை CMD_INFO:
 		info_tdb();
-		return 0;
-	    case CMD_FIRST:
+		திரும்பு 0;
+	    நிலை CMD_FIRST:
 		bIterate = 1;
 		first_record(tdb, &iterate_kbuf);
-		return 0;
-	    case CMD_NEXT:
-	       if (bIterate)
+		திரும்பு 0;
+	    நிலை CMD_NEXT:
+	       எனில் (bIterate)
 		  next_record(tdb, &iterate_kbuf);
-		return 0;
-	    case CMD_HELP:
+		திரும்பு 0;
+	    நிலை CMD_HELP:
 		help();
-		return 0;
-            case CMD_CREATE_TDB:
-            case CMD_OPEN_TDB:
-            case CMD_SYSTEM:
-            case CMD_QUIT:
+		திரும்பு 0;
+            நிலை CMD_CREATE_TDB:
+            நிலை CMD_OPEN_TDB:
+            நிலை CMD_SYSTEM:
+            நிலை CMD_QUIT:
                 /*
                  * unhandled commands.  cases included here to avoid compiler
                  * warnings.
                  */
-                return 0;
+                திரும்பு 0;
 	    }
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static char *convert_string(char *instring, size_t *sizep)
+நிலையான எழுத்து *convert_string(எழுத்து *instring, size_t *sizep)
 {
     size_t length = 0;
-    char *outp, *inp;
-    char temp[3];
+    எழுத்து *outp, *inp;
+    எழுத்து temp[3];
 
 
     outp = inp = instring;
 
-    while (*inp) {
-	if (*inp == '\\') {
+    போது (*inp) {
+	எனில் (*inp == '\\') {
 	    inp++;
-	    if (*inp && strchr("0123456789abcdefABCDEF",(int)*inp)) {
+	    எனில் (*inp && strchr("0123456789abcdefABCDEF",(முழு)*inp)) {
 		temp[0] = *inp++;
 		temp[1] = '\0';
-		if (*inp && strchr("0123456789abcdefABCDEF",(int)*inp)) {
+		எனில் (*inp && strchr("0123456789abcdefABCDEF",(முழு)*inp)) {
 		    temp[1] = *inp++;
 		    temp[2] = '\0';
 		}
-		*outp++ = (char)strtol((const char *)temp,NULL,16);
-	    } else {
+		*outp++ = (எழுத்து)strtol((மாறிலி எழுத்து *)temp,வெற்று,16);
+	    } இல்லையெனில் {
 		*outp++ = *inp++;
 	    }
-	} else {
+	} இல்லையெனில் {
 	    *outp++ = *inp++;
 	}
 	length++;
     }
     *sizep = length;
-    return instring;
+    திரும்பு instring;
 }
 
-int main(int argc, char *argv[])
+முழு முதன்மை(முழு argc, எழுத்து *argv[])
 {
     cmdname = "";
-    arg1 = NULL;
+    arg1 = வெற்று;
     arg1len = 0;
-    arg2 = NULL;
+    arg2 = வெற்று;
     arg2len = 0;
 
-    if (argv[1]) {
+    எனில் (argv[1]) {
 	cmdname = "open";
 	arg1 = argv[1];
         do_command();
 	cmdname =  "";
-	arg1 = NULL;
+	arg1 = வெற்று;
     }
 
-    switch (argc) {
-	case 1:
-	case 2:
+    தேர்வு (argc) {
+	நிலை 1:
+	நிலை 2:
 	    /* Interactive mode */
-	    while ((cmdname = tdb_getline("tdb> "))) {
-		arg2 = arg1 = NULL;
-		if ((arg1 = strchr((const char *)cmdname,' ')) != NULL) {
+	    போது ((cmdname = tdb_getline("tdb> "))) {
+		arg2 = arg1 = வெற்று;
+		எனில் ((arg1 = strchr((மாறிலி எழுத்து *)cmdname,' ')) != வெற்று) {
 		    arg1++;
 		    arg2 = arg1;
-		    while (*arg2) {
-			if (*arg2 == ' ') {
+		    போது (*arg2) {
+			எனில் (*arg2 == ' ') {
 			    *arg2++ = '\0';
-			    break;
+			    நிறுத்து;
 			}
-			if ((*arg2++ == '\\') && (*arg2 == ' ')) {
+			எனில் ((*arg2++ == '\\') && (*arg2 == ' ')) {
 			    arg2++;
 			}
 		    }
 		}
-		if (arg1) arg1 = convert_string(arg1,&arg1len);
-		if (arg2) arg2 = convert_string(arg2,&arg2len);
-		if (do_command()) break;
+		எனில் (arg1) arg1 = convert_string(arg1,&arg1len);
+		எனில் (arg2) arg2 = convert_string(arg2,&arg2len);
+		எனில் (do_command()) நிறுத்து;
 	    }
-	    break;
-	case 5:
+	    நிறுத்து;
+	நிலை 5:
 	    arg2 = convert_string(argv[4],&arg2len);
-	case 4:
+	நிலை 4:
 	    arg1 = convert_string(argv[3],&arg1len);
-	case 3:
+	நிலை 3:
 	    cmdname = argv[2];
-	default:
+	இயல்பு:
 	    do_command();
-	    break;
+	    நிறுத்து;
     }
 
-    if (tdb) tdb_close(tdb);
+    எனில் (tdb) tdb_close(tdb);
 
-    return 0;
+    திரும்பு 0;
 }

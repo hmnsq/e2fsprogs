@@ -9,18 +9,18 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ <stdio.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#அந்தர்பாவ "ext2_fs.h"
+#அந்தர்பாவ "ext2fs.h"
 
-int ext2fs_native_flag(void)
+முழு ext2fs_native_flag(வெறுமை)
 {
-#ifdef WORDS_BIGENDIAN
-	return EXT2_FLAG_SWAP_BYTES;
-#else
-	return 0;
+#ifdef சொற்கள்_BIGENDIAN
+	திரும்பு EXT2_FLAG_SWAP_BYTES;
+#இல்லையெனில்
+	திரும்பு 0;
 #endif
 }
 

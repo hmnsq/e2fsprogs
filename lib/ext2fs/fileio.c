@@ -9,40 +9,40 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#எனில் HAVE_UNISTD_H
+#அந்தர்பாவ <unistd.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#அந்தர்பாவ "ext2_fs.h"
+#அந்தர்பாவ "ext2fs.h"
+#அந்தர்பாவ "ext2fsP.h"
 
-struct ext2_file {
+கட்டமைப்பு ext2_file {
 	errcode_t		magic;
 	ext2_filsys 		fs;
 	ext2_ino_t		ino;
-	struct ext2_inode	inode;
-	int 			flags;
+	கட்டமைப்பு ext2_inode	inode;
+	முழு 			flags;
 	__u64			pos;
 	blk64_t			blockno;
 	blk64_t			physblock;
-	char 			*buf;
+	எழுத்து 			*buf;
 };
 
-struct block_entry {
+கட்டமைப்பு block_entry {
 	blk64_t		physblock;
-	unsigned char 	sha[EXT2FS_SHA512_LENGTH];
+	unsigned எழுத்து 	sha[EXT2FS_SHA512_LENGTH];
 };
-typedef struct block_entry *block_entry_t;
+வகைவரை கட்டமைப்பு block_entry *block_entry_t;
 
 #define BMAP_BUFFER (file->buf + fs->blocksize)
 
 errcode_t ext2fs_file_open2(ext2_filsys fs, ext2_ino_t ino,
-			    struct ext2_inode *inode,
-			    int flags, ext2_file_t *ret)
+			    கட்டமைப்பு ext2_inode *inode,
+			    முழு flags, ext2_file_t *ret)
 {
 	ext2_file_t 	file;
 	errcode_t	retval;
@@ -51,46 +51,46 @@ errcode_t ext2fs_file_open2(ext2_filsys fs, ext2_ino_t ino,
 	 * Don't let caller create or open a file for writing if the
 	 * filesystem is read-only.
 	 */
-	if ((flags & (EXT2_FILE_WRITE | EXT2_FILE_CREATE)) &&
+	எனில் ((flags & (EXT2_FILE_WRITE | EXT2_FILE_CREATE)) &&
 	    !(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+		திரும்பு EXT2_ET_RO_FILSYS;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_file), &file);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(அளவு(கட்டமைப்பு ext2_file), &file);
+	எனில் (retval)
+		திரும்பு retval;
 
-	memset(file, 0, sizeof(struct ext2_file));
+	memset(file, 0, அளவு(கட்டமைப்பு ext2_file));
 	file->magic = EXT2_ET_MAGIC_EXT2_FILE;
 	file->fs = fs;
 	file->ino = ino;
 	file->flags = flags & EXT2_FILE_MASK;
 
-	if (inode) {
-		memcpy(&file->inode, inode, sizeof(struct ext2_inode));
-	} else {
+	எனில் (inode) {
+		memcpy(&file->inode, inode, அளவு(கட்டமைப்பு ext2_inode));
+	} இல்லையெனில் {
 		retval = ext2fs_read_inode(fs, ino, &file->inode);
-		if (retval)
-			goto fail;
+		எனில் (retval)
+			செல் fail;
 	}
 
 	retval = ext2fs_get_array(3, fs->blocksize, &file->buf);
-	if (retval)
-		goto fail;
+	எனில் (retval)
+		செல் fail;
 
 	*ret = file;
-	return 0;
+	திரும்பு 0;
 
 fail:
-	if (file->buf)
+	எனில் (file->buf)
 		ext2fs_free_mem(&file->buf);
 	ext2fs_free_mem(&file);
-	return retval;
+	திரும்பு retval;
 }
 
 errcode_t ext2fs_file_open(ext2_filsys fs, ext2_ino_t ino,
-			   int flags, ext2_file_t *ret)
+			   முழு flags, ext2_file_t *ret)
 {
-	return ext2fs_file_open2(fs, ino, NULL, flags, ret);
+	திரும்பு ext2fs_file_open2(fs, ino, வெற்று, flags, ret);
 }
 
 /*
@@ -98,27 +98,27 @@ errcode_t ext2fs_file_open(ext2_filsys fs, ext2_ino_t ino,
  */
 ext2_filsys ext2fs_file_get_fs(ext2_file_t file)
 {
-	if (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
-		return 0;
-	return file->fs;
+	எனில் (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
+		திரும்பு 0;
+	திரும்பு file->fs;
 }
 
 /*
  * This function returns the pointer to the inode of a file from the structure
  */
-struct ext2_inode *ext2fs_file_get_inode(ext2_file_t file)
+கட்டமைப்பு ext2_inode *ext2fs_file_get_inode(ext2_file_t file)
 {
-	if (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
-		return NULL;
-	return &file->inode;
+	எனில் (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
+		திரும்பு வெற்று;
+	திரும்பு &file->inode;
 }
 
 /* This function returns the inode number from the structure */
-ext2_ino_t ext2fs_file_get_inode_num(ext2_file_t file)
+ext2_ino_t ext2fs_file_get_inode_இலக்கம்(ext2_file_t file)
 {
-	if (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
-		return 0;
-	return file->ino;
+	எனில் (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
+		திரும்பு 0;
+	திரும்பு file->ino;
 }
 
 /*
@@ -129,29 +129,29 @@ errcode_t ext2fs_file_flush(ext2_file_t file)
 {
 	errcode_t	retval;
 	ext2_filsys fs;
-	int		ret_flags;
+	முழு		ret_flags;
 	blk64_t		dontcare;
 
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
 	fs = file->fs;
 
-	if (!(file->flags & EXT2_FILE_BUF_VALID) ||
+	எனில் (!(file->flags & EXT2_FILE_BUF_VALID) ||
 	    !(file->flags & EXT2_FILE_BUF_DIRTY))
-		return 0;
+		திரும்பு 0;
 
 	/* Is this an uninit block? */
-	if (file->physblock && file->inode.i_flags & EXT4_EXTENTS_FL) {
+	எனில் (file->physblock && file->inode.i_flags & EXT4_EXTENTS_FL) {
 		retval = ext2fs_bmap2(fs, file->ino, &file->inode, BMAP_BUFFER,
 				      0, file->blockno, &ret_flags, &dontcare);
-		if (retval)
-			return retval;
-		if (ret_flags & BMAP_RET_UNINIT) {
+		எனில் (retval)
+			திரும்பு retval;
+		எனில் (ret_flags & BMAP_RET_UNINIT) {
 			retval = ext2fs_bmap2(fs, file->ino, &file->inode,
 					      BMAP_BUFFER, BMAP_SET,
 					      file->blockno, 0,
 					      &file->physblock);
-			if (retval)
-				return retval;
+			எனில் (retval)
+				திரும்பு retval;
 		}
 	}
 
@@ -159,41 +159,41 @@ errcode_t ext2fs_file_flush(ext2_file_t file)
 	 * OK, the physical block hasn't been allocated yet.
 	 * Allocate it.
 	 */
-	if (!file->physblock) {
+	எனில் (!file->physblock) {
 		retval = ext2fs_bmap2(fs, file->ino, &file->inode,
 				     BMAP_BUFFER, file->ino ? BMAP_ALLOC : 0,
 				     file->blockno, 0, &file->physblock);
-		if (retval)
-			return retval;
+		எனில் (retval)
+			திரும்பு retval;
 	}
 
 	retval = io_channel_write_blk64(fs->io, file->physblock, 1, file->buf);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 
 	file->flags &= ~EXT2_FILE_BUF_DIRTY;
 
-	return retval;
+	திரும்பு retval;
 }
 
 /*
  * This function synchronizes the file's block buffer and the current
  * file position, possibly invalidating block buffer if necessary
  */
-static errcode_t sync_buffer_position(ext2_file_t file)
+நிலையான errcode_t sync_buffer_position(ext2_file_t file)
 {
 	blk64_t	b;
 	errcode_t	retval;
 
 	b = file->pos / file->fs->blocksize;
-	if (b != file->blockno) {
+	எனில் (b != file->blockno) {
 		retval = ext2fs_file_flush(file);
-		if (retval)
-			return retval;
+		எனில் (retval)
+			திரும்பு retval;
 		file->flags &= ~EXT2_FILE_BUF_VALID;
 	}
 	file->blockno = b;
-	return 0;
+	திரும்பு 0;
 }
 
 /*
@@ -205,32 +205,32 @@ static errcode_t sync_buffer_position(ext2_file_t file)
  * function basically only sets file->physblock and EXT2_FILE_BUF_VALID
  */
 #define DONTFILL 1
-static errcode_t load_buffer(ext2_file_t file, int dontfill)
+நிலையான errcode_t load_buffer(ext2_file_t file, முழு dontfill)
 {
 	ext2_filsys	fs = file->fs;
 	errcode_t	retval;
-	int		ret_flags;
+	முழு		ret_flags;
 
-	if (!(file->flags & EXT2_FILE_BUF_VALID)) {
+	எனில் (!(file->flags & EXT2_FILE_BUF_VALID)) {
 		retval = ext2fs_bmap2(fs, file->ino, &file->inode,
 				     BMAP_BUFFER, 0, file->blockno, &ret_flags,
 				     &file->physblock);
-		if (retval)
-			return retval;
-		if (!dontfill) {
-			if (file->physblock &&
+		எனில் (retval)
+			திரும்பு retval;
+		எனில் (!dontfill) {
+			எனில் (file->physblock &&
 			    !(ret_flags & BMAP_RET_UNINIT)) {
 				retval = io_channel_read_blk64(fs->io,
 							       file->physblock,
 							       1, file->buf);
-				if (retval)
-					return retval;
-			} else
+				எனில் (retval)
+					திரும்பு retval;
+			} இல்லையெனில்
 				memset(file->buf, 0, fs->blocksize);
 		}
 		file->flags |= EXT2_FILE_BUF_VALID;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 
@@ -242,111 +242,111 @@ errcode_t ext2fs_file_close(ext2_file_t file)
 
 	retval = ext2fs_file_flush(file);
 
-	if (file->buf)
+	எனில் (file->buf)
 		ext2fs_free_mem(&file->buf);
 	ext2fs_free_mem(&file);
 
-	return retval;
+	திரும்பு retval;
 }
 
 
-static errcode_t
-ext2fs_file_read_inline_data(ext2_file_t file, void *buf,
-			     unsigned int wanted, unsigned int *got)
+நிலையான errcode_t
+ext2fs_file_read_inline_data(ext2_file_t file, வெறுமை *buf,
+			     unsigned முழு wanted, unsigned முழு *got)
 {
 	ext2_filsys fs;
 	errcode_t retval = 0;
-	unsigned int count = 0;
+	unsigned முழு மொத்தம் = 0;
 	uint64_t isize = EXT2_I_SIZE(&file->inode);
 	size_t size;
 
-	if (file->pos >= isize)
-		goto out;
+	எனில் (file->pos >= isize)
+		செல் out;
 
 	fs = file->fs;
 	retval = ext2fs_inline_data_get(fs, file->ino, &file->inode,
 					file->buf, &size);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 
 	/*
 	 * size is the number of bytes available for inline data storage, which
 	 * means it can exceed isize.
 	 */
-	if (size > isize)
+	எனில் (size > isize)
 		size = isize;
 
-	count = size - file->pos;
-	if (count > wanted)
-		count = wanted;
-	memcpy(buf, file->buf + file->pos, count);
-	file->pos += count;
-	buf = (char *) buf + count;
+	மொத்தம் = size - file->pos;
+	எனில் (மொத்தம் > wanted)
+		மொத்தம் = wanted;
+	memcpy(buf, file->buf + file->pos, மொத்தம்);
+	file->pos += மொத்தம்;
+	buf = (எழுத்து *) buf + மொத்தம்;
 
 	/* zero-fill the rest of the buffer */
-	wanted -= count;
-	if (wanted > 0) {
+	wanted -= மொத்தம்;
+	எனில் (wanted > 0) {
 		memset(buf, 0, wanted);
 		file->pos += wanted;
-		count += wanted;
+		மொத்தம் += wanted;
 	}
 
 out:
-	if (got)
-		*got = count;
-	return retval;
+	எனில் (got)
+		*got = மொத்தம்;
+	திரும்பு retval;
 }
 
 
-errcode_t ext2fs_file_read(ext2_file_t file, void *buf,
-			   unsigned int wanted, unsigned int *got)
+errcode_t ext2fs_file_read(ext2_file_t file, வெறுமை *buf,
+			   unsigned முழு wanted, unsigned முழு *got)
 {
 	ext2_filsys	fs;
 	errcode_t	retval = 0;
-	unsigned int	start, c, count = 0;
-	__u64		left;
-	char		*ptr = (char *) buf;
+	unsigned முழு	start, c, மொத்தம் = 0;
+	__u64		இடது;
+	எழுத்து		*ptr = (எழுத்து *) buf;
 
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
 	fs = file->fs;
 
 	/* If an inode has inline data, things get complicated. */
-	if (file->inode.i_flags & EXT4_INLINE_DATA_FL)
-		return ext2fs_file_read_inline_data(file, buf, wanted, got);
+	எனில் (file->inode.i_flags & EXT4_INLINE_DATA_FL)
+		திரும்பு ext2fs_file_read_inline_data(file, buf, wanted, got);
 
-	while ((file->pos < EXT2_I_SIZE(&file->inode)) && (wanted > 0)) {
+	போது ((file->pos < EXT2_I_SIZE(&file->inode)) && (wanted > 0)) {
 		retval = sync_buffer_position(file);
-		if (retval)
-			goto fail;
+		எனில் (retval)
+			செல் fail;
 		retval = load_buffer(file, 0);
-		if (retval)
-			goto fail;
+		எனில் (retval)
+			செல் fail;
 
 		start = file->pos % fs->blocksize;
 		c = fs->blocksize - start;
-		if (c > wanted)
+		எனில் (c > wanted)
 			c = wanted;
-		left = EXT2_I_SIZE(&file->inode) - file->pos ;
-		if (c > left)
-			c = left;
+		இடது = EXT2_I_SIZE(&file->inode) - file->pos ;
+		எனில் (c > இடது)
+			c = இடது;
 
 		memcpy(ptr, file->buf+start, c);
 		file->pos += c;
 		ptr += c;
-		count += c;
+		மொத்தம் += c;
 		wanted -= c;
 	}
 
 fail:
-	if (got)
-		*got = count;
-	return retval;
+	எனில் (got)
+		*got = மொத்தம்;
+	திரும்பு retval;
 }
 
 
-static errcode_t
-ext2fs_file_write_inline_data(ext2_file_t file, const void *buf,
-			      unsigned int nbytes, unsigned int *written)
+நிலையான errcode_t
+ext2fs_file_write_inline_data(ext2_file_t file, மாறிலி வெறுமை *buf,
+			      unsigned முழு nbytes, unsigned முழு *written)
 {
 	ext2_filsys fs;
 	uint64_t old_isize = EXT2_I_SIZE(&file->inode);
@@ -354,53 +354,53 @@ ext2fs_file_write_inline_data(ext2_file_t file, const void *buf,
 	errcode_t retval;
 	size_t size;
 
-	if (file->pos + nbytes > old_isize)
+	எனில் (file->pos + nbytes > old_isize)
 		new_isize = file->pos + nbytes;
 
 	fs = file->fs;
 	retval = ext2fs_inline_data_get(fs, file->ino, &file->inode,
 					file->buf, &size);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 
 	/*
 	 * Only try to set new inline data if it won't go past the end of
 	 * @file->buf; if there's not enough space in the ondisk inode, we'll
 	 * jump out to the expand code.
 	 */
-	if (new_isize < fs->blocksize) {
-		if (file->pos > old_isize)
+	எனில் (new_isize < fs->blocksize) {
+		எனில் (file->pos > old_isize)
 			memset(file->buf + old_isize, 0, file->pos - old_isize);
 
 		memcpy(file->buf + file->pos, buf, nbytes);
 
 		retval = ext2fs_inline_data_set(fs, file->ino, &file->inode,
 						file->buf, new_isize);
-		if (retval == EXT2_ET_INLINE_DATA_NO_SPACE)
-			goto expand;
-		if (retval)
-			return retval;
+		எனில் (retval == EXT2_ET_INLINE_DATA_NO_SPACE)
+			செல் expand;
+		எனில் (retval)
+			திரும்பு retval;
 
 		file->pos += nbytes;
 
 		/* Update inode size */
-		if (old_isize < new_isize) {
+		எனில் (old_isize < new_isize) {
 			errcode_t	rc;
 
 			rc = ext2fs_file_set_size2(file, file->pos);
-			if (retval == 0)
+			எனில் (retval == 0)
 				retval = rc;
 		}
 
-		if (written)
+		எனில் (written)
 			*written = nbytes;
-		return 0;
+		திரும்பு 0;
 	}
 
 expand:
 	retval = ext2fs_inline_data_expand(fs, file->ino);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 	/*
 	 * reload inode and return no space error
 	 *
@@ -409,46 +409,46 @@ expand:
 	 * the outside inode.
 	 */
 	retval = ext2fs_read_inode(fs, file->ino, &file->inode);
-	if (retval)
-		return retval;
-	return EXT2_ET_INLINE_DATA_NO_SPACE;
+	எனில் (retval)
+		திரும்பு retval;
+	திரும்பு EXT2_ET_INLINE_DATA_NO_SPACE;
 }
 
 
-errcode_t ext2fs_file_write(ext2_file_t file, const void *buf,
-			    unsigned int nbytes, unsigned int *written)
+errcode_t ext2fs_file_write(ext2_file_t file, மாறிலி வெறுமை *buf,
+			    unsigned முழு nbytes, unsigned முழு *written)
 {
 	ext2_filsys	fs;
 	errcode_t	retval = 0;
-	unsigned int	start, c, count = 0;
-	const char	*ptr = (const char *) buf;
-	block_entry_t	new_block = NULL, old_block = NULL;
-	int		bmap_flags = 0;
+	unsigned முழு	start, c, மொத்தம் = 0;
+	மாறிலி எழுத்து	*ptr = (மாறிலி எழுத்து *) buf;
+	block_entry_t	new_block = வெற்று, old_block = வெற்று;
+	முழு		bmap_flags = 0;
 
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
 	fs = file->fs;
 
-	if (!(file->flags & EXT2_FILE_WRITE))
-		return EXT2_ET_FILE_RO;
+	எனில் (!(file->flags & EXT2_FILE_WRITE))
+		திரும்பு EXT2_ET_FILE_RO;
 
 	/* If an inode has inline data, things get complicated. */
-	if (file->inode.i_flags & EXT4_INLINE_DATA_FL) {
+	எனில் (file->inode.i_flags & EXT4_INLINE_DATA_FL) {
 		retval = ext2fs_file_write_inline_data(file, buf, nbytes,
 						       written);
-		if (retval != EXT2_ET_INLINE_DATA_NO_SPACE)
-			return retval;
+		எனில் (retval != EXT2_ET_INLINE_DATA_NO_SPACE)
+			திரும்பு retval;
 		/* fall through to read data from the block */
 		retval = 0;
 	}
 
-	while (nbytes > 0) {
+	போது (nbytes > 0) {
 		retval = sync_buffer_position(file);
-		if (retval)
-			goto fail;
+		எனில் (retval)
+			செல் fail;
 
 		start = file->pos % fs->blocksize;
 		c = fs->blocksize - start;
-		if (c > nbytes)
+		எனில் (c > nbytes)
 			c = nbytes;
 
 		/*
@@ -456,8 +456,8 @@ errcode_t ext2fs_file_write(ext2_file_t file, const void *buf,
 		 * we're doing a partial write.
 		 */
 		retval = load_buffer(file, (c == fs->blocksize));
-		if (retval)
-			goto fail;
+		எனில் (retval)
+			செல் fail;
 
 		file->flags |= EXT2_FILE_BUF_DIRTY;
 		memcpy(file->buf+start, ptr, c);
@@ -466,27 +466,27 @@ errcode_t ext2fs_file_write(ext2_file_t file, const void *buf,
 		 * OK, the physical block hasn't been allocated yet.
 		 * Allocate it.
 		 */
-		if (!file->physblock) {
+		எனில் (!file->physblock) {
 			bmap_flags = (file->ino ? BMAP_ALLOC : 0);
-			if (fs->flags & EXT2_FLAG_SHARE_DUP) {
-				new_block = calloc(1, sizeof(*new_block));
-				if (!new_block) {
+			எனில் (fs->flags & EXT2_FLAG_SHARE_DUP) {
+				new_block = calloc(1, அளவு(*new_block));
+				எனில் (!new_block) {
 					retval = EXT2_ET_NO_MEMORY;
-					goto fail;
+					செல் fail;
 				}
-				ext2fs_sha512((const unsigned char*)file->buf,
+				ext2fs_sha512((மாறிலி unsigned எழுத்து*)file->buf,
 						fs->blocksize, new_block->sha);
 				old_block = ext2fs_hashmap_lookup(
 							fs->block_sha_map,
 							new_block->sha,
-							sizeof(new_block->sha));
+							அளவு(new_block->sha));
 			}
 
-			if (old_block) {
+			எனில் (old_block) {
 				file->physblock = old_block->physblock;
 				bmap_flags |= BMAP_SET;
-				free(new_block);
-				new_block = NULL;
+				விடுவி(new_block);
+				new_block = வெற்று;
 			}
 
 			retval = ext2fs_bmap2(fs, file->ino, &file->inode,
@@ -494,25 +494,25 @@ errcode_t ext2fs_file_write(ext2_file_t file, const void *buf,
 					      bmap_flags,
 					      file->blockno, 0,
 					      &file->physblock);
-			if (retval) {
-				free(new_block);
-				new_block = NULL;
-				goto fail;
+			எனில் (retval) {
+				விடுவி(new_block);
+				new_block = வெற்று;
+				செல் fail;
 			}
 
-			if (new_block) {
+			எனில் (new_block) {
 				new_block->physblock = file->physblock;
-				int ret = ext2fs_hashmap_add(fs->block_sha_map,
+				முழு ret = ext2fs_hashmap_add(fs->block_sha_map,
 						new_block, new_block->sha,
-						sizeof(new_block->sha));
-				if (ret) {
+						அளவு(new_block->sha));
+				எனில் (ret) {
 					retval = EXT2_ET_NO_MEMORY;
-					free(new_block);
-					goto fail;
+					விடுவி(new_block);
+					செல் fail;
 				}
 			}
 
-			if (bmap_flags & BMAP_SET) {
+			எனில் (bmap_flags & BMAP_SET) {
 				ext2fs_iblk_add_blocks(fs, &file->inode, 1);
 				ext2fs_write_inode(fs, file->ino, &file->inode);
 			}
@@ -520,56 +520,56 @@ errcode_t ext2fs_file_write(ext2_file_t file, const void *buf,
 
 		file->pos += c;
 		ptr += c;
-		count += c;
+		மொத்தம் += c;
 		nbytes -= c;
 	}
 
 fail:
 	/* Update inode size */
-	if (count != 0 && EXT2_I_SIZE(&file->inode) < file->pos) {
+	எனில் (மொத்தம் != 0 && EXT2_I_SIZE(&file->inode) < file->pos) {
 		errcode_t	rc;
 
 		rc = ext2fs_file_set_size2(file, file->pos);
-		if (retval == 0)
+		எனில் (retval == 0)
 			retval = rc;
 	}
 
-	if (written)
-		*written = count;
-	return retval;
+	எனில் (written)
+		*written = மொத்தம்;
+	திரும்பு retval;
 }
 
 errcode_t ext2fs_file_llseek(ext2_file_t file, __u64 offset,
-			    int whence, __u64 *ret_pos)
+			    முழு whence, __u64 *ret_pos)
 {
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
 
-	if (whence == EXT2_SEEK_SET)
+	எனில் (whence == EXT2_SEEK_SET)
 		file->pos = offset;
-	else if (whence == EXT2_SEEK_CUR)
+	இல்லையெனில் எனில் (whence == EXT2_SEEK_CUR)
 		file->pos += offset;
-	else if (whence == EXT2_SEEK_END)
+	இல்லையெனில் எனில் (whence == EXT2_SEEK_END)
 		file->pos = EXT2_I_SIZE(&file->inode) + offset;
-	else
-		return EXT2_ET_INVALID_ARGUMENT;
+	இல்லையெனில்
+		திரும்பு EXT2_ET_INVALID_ARGUMENT;
 
-	if (ret_pos)
+	எனில் (ret_pos)
 		*ret_pos = file->pos;
 
-	return 0;
+	திரும்பு 0;
 }
 
 errcode_t ext2fs_file_lseek(ext2_file_t file, ext2_off_t offset,
-			    int whence, ext2_off_t *ret_pos)
+			    முழு whence, ext2_off_t *ret_pos)
 {
 	__u64		loffset, ret_loffset = 0;
 	errcode_t	retval;
 
 	loffset = offset;
 	retval = ext2fs_file_llseek(file, loffset, whence, &ret_loffset);
-	if (ret_pos)
+	எனில் (ret_pos)
 		*ret_pos = (ext2_off_t) ret_loffset;
-	return retval;
+	திரும்பு retval;
 }
 
 
@@ -578,10 +578,10 @@ errcode_t ext2fs_file_lseek(ext2_file_t file, ext2_off_t offset,
  */
 errcode_t ext2fs_file_get_lsize(ext2_file_t file, __u64 *ret_size)
 {
-	if (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
-		return EXT2_ET_MAGIC_EXT2_FILE;
+	எனில் (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
+		திரும்பு EXT2_ET_MAGIC_EXT2_FILE;
 	*ret_size = EXT2_I_SIZE(&file->inode);
-	return 0;
+	திரும்பு 0;
 }
 
 /*
@@ -591,58 +591,58 @@ ext2_off_t ext2fs_file_get_size(ext2_file_t file)
 {
 	__u64	size;
 
-	if (ext2fs_file_get_lsize(file, &size))
-		return 0;
-	if ((size >> 32) != 0)
-		return 0;
-	return size;
+	எனில் (ext2fs_file_get_lsize(file, &size))
+		திரும்பு 0;
+	எனில் ((size >> 32) != 0)
+		திரும்பு 0;
+	திரும்பு size;
 }
 
 /* Zero the parts of the last block that are past EOF. */
-static errcode_t ext2fs_file_zero_past_offset(ext2_file_t file,
+நிலையான errcode_t ext2fs_file_zero_past_offset(ext2_file_t file,
 					      ext2_off64_t offset)
 {
 	ext2_filsys fs = file->fs;
-	char *b = NULL;
+	எழுத்து *b = வெற்று;
 	ext2_off64_t off = offset % fs->blocksize;
 	blk64_t blk;
-	int ret_flags;
+	முழு ret_flags;
 	errcode_t retval;
 
-	if (off == 0)
-		return 0;
+	எனில் (off == 0)
+		திரும்பு 0;
 
 	retval = sync_buffer_position(file);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 
 	/* Is there an initialized block at the end? */
-	retval = ext2fs_bmap2(fs, file->ino, NULL, NULL, 0,
+	retval = ext2fs_bmap2(fs, file->ino, வெற்று, வெற்று, 0,
 			      offset / fs->blocksize, &ret_flags, &blk);
-	if (retval)
-		return retval;
-	if ((blk == 0) || (ret_flags & BMAP_RET_UNINIT))
-		return 0;
+	எனில் (retval)
+		திரும்பு retval;
+	எனில் ((blk == 0) || (ret_flags & BMAP_RET_UNINIT))
+		திரும்பு 0;
 
 	/* Zero to the end of the block */
 	retval = ext2fs_get_mem(fs->blocksize, &b);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 
 	/* Read/zero/write block */
 	retval = io_channel_read_blk64(fs->io, blk, 1, b);
-	if (retval)
-		goto out;
+	எனில் (retval)
+		செல் out;
 
 	memset(b + off, 0, fs->blocksize - off);
 
 	retval = io_channel_write_blk64(fs->io, blk, 1, b);
-	if (retval)
-		goto out;
+	எனில் (retval)
+		செல் out;
 
 out:
 	ext2fs_free_mem(&b);
-	return retval;
+	திரும்பு retval;
 }
 
 /*
@@ -657,9 +657,9 @@ errcode_t ext2fs_file_set_size2(ext2_file_t file, ext2_off64_t size)
 
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
 
-	if (size && ext2fs_file_block_offset_too_big(file->fs, &file->inode,
+	எனில் (size && ext2fs_file_block_offset_too_big(file->fs, &file->inode,
 					(size - 1) / file->fs->blocksize))
-		return EXT2_ET_FILE_TOO_BIG;
+		திரும்பு EXT2_ET_FILE_TOO_BIG;
 	truncate_block = ((size + file->fs->blocksize - 1) >>
 			  EXT2_BLOCK_SIZE_BITS(file->fs->super));
 	old_size = EXT2_I_SIZE(&file->inode);
@@ -667,27 +667,27 @@ errcode_t ext2fs_file_set_size2(ext2_file_t file, ext2_off64_t size)
 		      EXT2_BLOCK_SIZE_BITS(file->fs->super));
 
 	retval = ext2fs_inode_size_set(file->fs, &file->inode, size);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 
-	if (file->ino) {
+	எனில் (file->ino) {
 		retval = ext2fs_write_inode(file->fs, file->ino, &file->inode);
-		if (retval)
-			return retval;
+		எனில் (retval)
+			திரும்பு retval;
 	}
 
 	retval = ext2fs_file_zero_past_offset(file, size);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 
-	if (truncate_block >= old_truncate)
-		return 0;
+	எனில் (truncate_block >= old_truncate)
+		திரும்பு 0;
 
-	return ext2fs_punch(file->fs, file->ino, &file->inode, 0,
+	திரும்பு ext2fs_punch(file->fs, file->ino, &file->inode, 0,
 			    truncate_block, ~0ULL);
 }
 
 errcode_t ext2fs_file_set_size(ext2_file_t file, ext2_off_t size)
 {
-	return ext2fs_file_set_size2(file, size);
+	திரும்பு ext2fs_file_set_size2(file, size);
 }

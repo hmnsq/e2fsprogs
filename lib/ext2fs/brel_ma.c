@@ -12,44 +12,44 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#எனில் HAVE_UNISTD_H
+#அந்தர்பாவ <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#எனில் HAVE_ERRNO_H
+#அந்தர்பாவ <errno.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "brel.h"
+#அந்தர்பாவ "ext2_fs.h"
+#அந்தர்பாவ "ext2fs.h"
+#அந்தர்பாவ "brel.h"
 
-static errcode_t bma_put(ext2_brel brel, blk64_t old,
-			struct ext2_block_relocate_entry *ent);
-static errcode_t bma_get(ext2_brel brel, blk64_t old,
-			struct ext2_block_relocate_entry *ent);
-static errcode_t bma_start_iter(ext2_brel brel);
-static errcode_t bma_next(ext2_brel brel, blk64_t *old,
-			 struct ext2_block_relocate_entry *ent);
-static errcode_t bma_move(ext2_brel brel, blk64_t old, blk64_t new);
-static errcode_t bma_delete(ext2_brel brel, blk64_t old);
-static errcode_t bma_free(ext2_brel brel);
+நிலையான errcode_t bma_put(ext2_brel brel, blk64_t old,
+			கட்டமைப்பு ext2_block_relocate_entry *ent);
+நிலையான errcode_t bma_get(ext2_brel brel, blk64_t old,
+			கட்டமைப்பு ext2_block_relocate_entry *ent);
+நிலையான errcode_t bma_start_iter(ext2_brel brel);
+நிலையான errcode_t bma_next(ext2_brel brel, blk64_t *old,
+			 கட்டமைப்பு ext2_block_relocate_entry *ent);
+நிலையான errcode_t bma_move(ext2_brel brel, blk64_t old, blk64_t new);
+நிலையான errcode_t bma_delete(ext2_brel brel, blk64_t old);
+நிலையான errcode_t bma_free(ext2_brel brel);
 
-struct brel_ma {
+கட்டமைப்பு brel_ma {
 	__u32 magic;
 	blk64_t max_block;
-	struct ext2_block_relocate_entry *entries;
+	கட்டமைப்பு ext2_block_relocate_entry *entries;
 };
 
-errcode_t ext2fs_brel_memarray_create(char *name, blk64_t max_block,
+errcode_t ext2fs_brel_memarray_create(எழுத்து *name, blk64_t max_block,
 				      ext2_brel *new_brel)
 {
 	ext2_brel		brel = 0;
 	errcode_t	retval;
-	struct brel_ma 	*ma = 0;
+	கட்டமைப்பு brel_ma 	*ma = 0;
 	size_t		size;
 
 	*new_brel = 0;
@@ -57,29 +57,29 @@ errcode_t ext2fs_brel_memarray_create(char *name, blk64_t max_block,
 	/*
 	 * Allocate memory structures
 	 */
-	retval = ext2fs_get_mem(sizeof(struct ext2_block_relocation_table),
+	retval = ext2fs_get_mem(அளவு(கட்டமைப்பு ext2_block_relocation_table),
 				&brel);
-	if (retval)
-		goto errout;
-	memset(brel, 0, sizeof(struct ext2_block_relocation_table));
+	எனில் (retval)
+		செல் errout;
+	memset(brel, 0, அளவு(கட்டமைப்பு ext2_block_relocation_table));
 
 	retval = ext2fs_get_mem(strlen(name)+1, &brel->name);
-	if (retval)
-		goto errout;
+	எனில் (retval)
+		செல் errout;
 	strcpy(brel->name, name);
 
-	retval = ext2fs_get_mem(sizeof(struct brel_ma), &ma);
-	if (retval)
-		goto errout;
-	memset(ma, 0, sizeof(struct brel_ma));
+	retval = ext2fs_get_mem(அளவு(கட்டமைப்பு brel_ma), &ma);
+	எனில் (retval)
+		செல் errout;
+	memset(ma, 0, அளவு(கட்டமைப்பு brel_ma));
 	brel->priv_data = ma;
 
-	size = (size_t) (sizeof(struct ext2_block_relocate_entry) *
+	size = (size_t) (அளவு(கட்டமைப்பு ext2_block_relocate_entry) *
 			 (max_block+1));
 	retval = ext2fs_get_array(max_block+1,
-		sizeof(struct ext2_block_relocate_entry), &ma->entries);
-	if (retval)
-		goto errout;
+		அளவு(கட்டமைப்பு ext2_block_relocate_entry), &ma->entries);
+	எனில் (retval)
+		செல் errout;
 	memset(ma->entries, 0, size);
 	ma->max_block = max_block;
 
@@ -92,108 +92,108 @@ errcode_t ext2fs_brel_memarray_create(char *name, blk64_t max_block,
 	brel->next = bma_next;
 	brel->move = bma_move;
 	brel->delete = bma_delete;
-	brel->free = bma_free;
+	brel->விடுவி = bma_free;
 
 	*new_brel = brel;
-	return 0;
+	திரும்பு 0;
 
 errout:
 	bma_free(brel);
-	return retval;
+	திரும்பு retval;
 }
 
-static errcode_t bma_put(ext2_brel brel, blk64_t old,
-			struct ext2_block_relocate_entry *ent)
+நிலையான errcode_t bma_put(ext2_brel brel, blk64_t old,
+			கட்டமைப்பு ext2_block_relocate_entry *ent)
 {
-	struct brel_ma 	*ma;
+	கட்டமைப்பு brel_ma 	*ma;
 
 	ma = brel->priv_data;
-	if (old > ma->max_block)
-		return EXT2_ET_INVALID_ARGUMENT;
+	எனில் (old > ma->max_block)
+		திரும்பு EXT2_ET_INVALID_ARGUMENT;
 	ma->entries[(unsigned)old] = *ent;
-	return 0;
+	திரும்பு 0;
 }
 
-static errcode_t bma_get(ext2_brel brel, blk64_t old,
-			struct ext2_block_relocate_entry *ent)
+நிலையான errcode_t bma_get(ext2_brel brel, blk64_t old,
+			கட்டமைப்பு ext2_block_relocate_entry *ent)
 {
-	struct brel_ma 	*ma;
+	கட்டமைப்பு brel_ma 	*ma;
 
 	ma = brel->priv_data;
-	if (old > ma->max_block)
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned)old].new == 0)
-		return ENOENT;
+	எனில் (old > ma->max_block)
+		திரும்பு EXT2_ET_INVALID_ARGUMENT;
+	எனில் (ma->entries[(unsigned)old].new == 0)
+		திரும்பு ENOENT;
 	*ent = ma->entries[old];
-	return 0;
+	திரும்பு 0;
 }
 
-static errcode_t bma_start_iter(ext2_brel brel)
+நிலையான errcode_t bma_start_iter(ext2_brel brel)
 {
 	brel->current = 0;
-	return 0;
+	திரும்பு 0;
 }
 
-static errcode_t bma_next(ext2_brel brel, blk64_t *old,
-			  struct ext2_block_relocate_entry *ent)
+நிலையான errcode_t bma_next(ext2_brel brel, blk64_t *old,
+			  கட்டமைப்பு ext2_block_relocate_entry *ent)
 {
-	struct brel_ma 	*ma;
+	கட்டமைப்பு brel_ma 	*ma;
 
 	ma = brel->priv_data;
-	while (++brel->current < ma->max_block) {
-		if (ma->entries[(unsigned)brel->current].new == 0)
-			continue;
+	போது (++brel->current < ma->max_block) {
+		எனில் (ma->entries[(unsigned)brel->current].new == 0)
+			தொடர்;
 		*old = brel->current;
 		*ent = ma->entries[(unsigned)brel->current];
-		return 0;
+		திரும்பு 0;
 	}
 	*old = 0;
-	return 0;
+	திரும்பு 0;
 }
 
-static errcode_t bma_move(ext2_brel brel, blk64_t old, blk64_t new)
+நிலையான errcode_t bma_move(ext2_brel brel, blk64_t old, blk64_t new)
 {
-	struct brel_ma 	*ma;
+	கட்டமைப்பு brel_ma 	*ma;
 
 	ma = brel->priv_data;
-	if ((old > ma->max_block) || (new > ma->max_block))
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned)old].new == 0)
-		return ENOENT;
+	எனில் ((old > ma->max_block) || (new > ma->max_block))
+		திரும்பு EXT2_ET_INVALID_ARGUMENT;
+	எனில் (ma->entries[(unsigned)old].new == 0)
+		திரும்பு ENOENT;
 	ma->entries[(unsigned)new] = ma->entries[old];
 	ma->entries[(unsigned)old].new = 0;
-	return 0;
+	திரும்பு 0;
 }
 
-static errcode_t bma_delete(ext2_brel brel, blk64_t old)
+நிலையான errcode_t bma_delete(ext2_brel brel, blk64_t old)
 {
-	struct brel_ma 	*ma;
+	கட்டமைப்பு brel_ma 	*ma;
 
 	ma = brel->priv_data;
-	if (old > ma->max_block)
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned)old].new == 0)
-		return ENOENT;
+	எனில் (old > ma->max_block)
+		திரும்பு EXT2_ET_INVALID_ARGUMENT;
+	எனில் (ma->entries[(unsigned)old].new == 0)
+		திரும்பு ENOENT;
 	ma->entries[(unsigned)old].new = 0;
-	return 0;
+	திரும்பு 0;
 }
 
-static errcode_t bma_free(ext2_brel brel)
+நிலையான errcode_t bma_free(ext2_brel brel)
 {
-	struct brel_ma 	*ma;
+	கட்டமைப்பு brel_ma 	*ma;
 
-	if (!brel)
-		return 0;
+	எனில் (!brel)
+		திரும்பு 0;
 
 	ma = brel->priv_data;
 
-	if (ma) {
-		if (ma->entries)
+	எனில் (ma) {
+		எனில் (ma->entries)
 			ext2fs_free_mem(&ma->entries);
 		ext2fs_free_mem(&ma);
 	}
-	if (brel->name)
+	எனில் (brel->name)
 		ext2fs_free_mem(&brel->name);
 	ext2fs_free_mem(&brel);
-	return 0;
+	திரும்பு 0;
 }

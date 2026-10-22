@@ -12,11 +12,11 @@
  * %End-Header%
  */
 
-#include <windows.h>
-#include <winioctl.h>
-#include <io.h>
+#அந்தர்பாவ <windows.h>
+#அந்தர்பாவ <winioctl.h>
+#அந்தர்பாவ <io.h>
 
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#எனில் !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
 #define _XOPEN_SOURCE 600
 #define _DARWIN_C_SOURCE
 #define _FILE_OFFSET_BITS 64
@@ -31,59 +31,59 @@
 #endif
 #endif
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#எனில் HAVE_UNISTD_H
+#அந்தர்பாவ <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#எனில் HAVE_ERRNO_H
+#அந்தர்பாவ <errno.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <time.h>
+#எனில் HAVE_SYS_TYPES_H
+#அந்தர்பாவ <sys/types.h>
 #endif
 #define PR_GET_DUMPABLE 3
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#எனில் HAVE_SYS_STAT_H
+#அந்தர்பாவ <sys/stat.h>
 #endif
-#include <fcntl.h>
+#அந்தர்பாவ <fcntl.h>
 
 #undef ALIGN_DEBUG
 
 //#define DEBUG
 #ifdef DEBUG
 #define TRACE(...) {\
-		    char __log[256];\
-		    snprintf(__log, sizeof(__log), __VA_ARGS__);\
-		    __log[sizeof(__log)-1] = 0;\
+		    எழுத்து __log[256];\
+		    snprintf(__log, அளவு(__log), __VA_ARGS__);\
+		    __log[அளவு(__log)-1] = 0;\
 		    OutputDebugString(__log);\
 		}
-#else
-#define TRACE(...) do { } while (0);
+#இல்லையெனில்
+#define TRACE(...) செய் { } போது (0);
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#அந்தர்பாவ "ext2_fs.h"
+#அந்தர்பாவ "ext2fs.h"
+#அந்தர்பாவ "ext2fsP.h"
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
-#define EXT2_CHECK_MAGIC_RETURN(struct, code, ret) \
-	  if ((struct)->magic != (code)) return (ret)
+#define EXT2_CHECK_MAGIC(கட்டமைப்பு, code) \
+	  எனில் ((கட்டமைப்பு)->magic != (code)) திரும்பு (code)
+#define EXT2_CHECK_MAGIC_RETURN(கட்டமைப்பு, code, ret) \
+	  எனில் ((கட்டமைப்பு)->magic != (code)) திரும்பு (ret)
 
 #define EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL  0x10ed
 
-struct windows_cache {
-	char			*buf;
+கட்டமைப்பு windows_cache {
+	எழுத்து			*buf;
 	unsigned long long	block;
-	int			access_time;
+	முழு			access_time;
 	unsigned		dirty:1;
 	unsigned		in_use:1;
 };
@@ -92,122 +92,122 @@ struct windows_cache {
 #define WRITE_DIRECT_SIZE 4	/* Must be smaller than CACHE_SIZE */
 #define READ_DIRECT_SIZE 4	/* Should be smaller than CACHE_SIZE */
 
-struct windows_private_data {
-	int	magic;
-	char	name[MAX_PATH];
+கட்டமைப்பு windows_private_data {
+	முழு	magic;
+	எழுத்து	name[MAX_PATH];
 	HANDLE	handle;
-	char	dos_device[MAX_PATH];
-	char	cf_device[MAX_PATH];
-	int	dev;
-	int	flags;
-	int	align;
-	int	access_time;
+	எழுத்து	dos_device[MAX_PATH];
+	எழுத்து	cf_device[MAX_PATH];
+	முழு	dev;
+	முழு	flags;
+	முழு	align;
+	முழு	access_time;
 	ext2_loff_t offset;
-	struct windows_cache cache[CACHE_SIZE];
-	void	*bounce;
-	struct struct_io_stats io_stats;
+	கட்டமைப்பு windows_cache cache[CACHE_SIZE];
+	வெறுமை	*bounce;
+	கட்டமைப்பு struct_io_stats io_stats;
 };
 
 #define IS_ALIGNED(n, align) ((((uintptr_t) n) & \
 			       ((uintptr_t) ((align)-1))) == 0)
 
-static int fake_dos_name_for_device(struct windows_private_data *data)
+நிலையான முழு fake_dos_name_for_device(கட்டமைப்பு windows_private_data *data)
 {
-	if (strncmp(data->name, "\\\\", 2) == 0) {
+	எனில் (strncmp(data->name, "\\\\", 2) == 0) {
 		data->dos_device[0] = 0;
 		strcpy(data->cf_device, data->name);
-		return 0;
+		திரும்பு 0;
 	}
 
 	_snprintf(data->dos_device, MAX_PATH, "fakedevice%lu", GetCurrentProcessId());
 
-	if (!DefineDosDevice(DDD_RAW_TARGET_PATH, data->dos_device, data->name))
-		return 1;
+	எனில் (!DefineDosDevice(DDD_RAW_TARGET_PATH, data->dos_device, data->name))
+		திரும்பு 1;
 
 	_snprintf(data->cf_device, MAX_PATH, "\\\\.\\%s", data->dos_device);
 	TRACE("e2fsprogs::fake_dos_name_for_device::DefineDosDevice(\"%s\")", data->dos_device);
 
-	return 0;
+	திரும்பு 0;
 }
 
-static void remove_fake_dos_name(struct windows_private_data *data)
+நிலையான வெறுமை remove_fake_dos_name(கட்டமைப்பு windows_private_data *data)
 {
-	if (*data->dos_device) {
+	எனில் (*data->dos_device) {
 		TRACE("e2fsprogs::remove_fake_dos_name::DefineDosDevice(\"%s\")", data->dos_device);
 		DefineDosDevice(DDD_RAW_TARGET_PATH | DDD_EXACT_MATCH_ON_REMOVE | DDD_REMOVE_DEFINITION, data->dos_device, data->name);
 	}
 }
 
-static errcode_t windows_get_stats(io_channel channel, io_stats *stats)
+நிலையான errcode_t windows_get_stats(io_channel channel, io_stats *stats)
 {
 	errcode_t	retval = 0;
 
-	struct windows_private_data *data;
+	கட்டமைப்பு windows_private_data *data;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (கட்டமைப்பு windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (stats)
+	எனில் (stats)
 		*stats = &data->io_stats;
 
-	return retval;
+	திரும்பு retval;
 }
 
-static LARGE_INTEGER make_large_integer(LONGLONG value)
+நிலையான LARGE_INTEGER make_large_integer(LONGLONG மதிப்பு)
 {
 	LARGE_INTEGER	li;
 
-	li.QuadPart = value;
-	return li;
+	li.QuadPart = மதிப்பு;
+	திரும்பு li;
 }
 
 /*
  * Here are the raw I/O functions
  */
-static errcode_t raw_read_blk(io_channel channel,
-			      struct windows_private_data *data,
+நிலையான errcode_t raw_read_blk(io_channel channel,
+			      கட்டமைப்பு windows_private_data *data,
 			      unsigned long long block,
-			      int count, void *bufv)
+			      முழு மொத்தம், வெறுமை *bufv)
 {
 	errcode_t	retval;
 	ssize_t	size;
 	ext2_loff_t	location;
 	DWORD		actual = 0;
-	unsigned char	*buf = bufv;
+	unsigned எழுத்து	*buf = bufv;
 	ssize_t		really_read = 0;
 
-	size = (count < 0) ? -count : count * channel->block_size;
+	size = (மொத்தம் < 0) ? -மொத்தம் : மொத்தம் * channel->block_size;
 	data->io_stats.bytes_read += size;
 	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
+	எனில் (data->flags & IO_FLAG_FORCE_BOUNCE) {
+		எனில் (!SetFilePointerEx(data->handle, make_large_integer(location), வெற்று, FILE_BEGIN)) {
 			retval = GetLastError();
-			goto error_out;
+			செல் error_out;
 		}
-		goto bounce_read;
+		செல் bounce_read;
 	}
 
-	if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
+	எனில் (!SetFilePointerEx(data->handle, make_large_integer(location), வெற்று, FILE_BEGIN)) {
 		retval = GetLastError();
-		goto error_out;
+		செல் error_out;
 	}
-	if ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
-		if (!ReadFile(data->handle, buf, size, &actual, NULL)) {
+	எனில் ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
+		எனில் (!ReadFile(data->handle, buf, size, &actual, வெற்று)) {
 			retval = GetLastError();
-			goto error_out;
+			செல் error_out;
 		}
-		if (actual != size) {
+		எனில் (actual != size) {
 	short_read:
-		if (actual < 0) {
+		எனில் (actual < 0) {
 			retval = GetLastError();
 			actual = 0;
-		} else
+		} இல்லையெனில்
 			retval = EXT2_ET_SHORT_READ;
-		goto error_out;
+		செல் error_out;
 		}
-	return 0;
+	திரும்பு 0;
 	}
 
 	/*
@@ -215,86 +215,86 @@ static errcode_t raw_read_blk(io_channel channel,
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_read:
-	while (size > 0) {
-		if (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
+	போது (size > 0) {
+		எனில் (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, வெற்று)) {
 			retval = GetLastError();
-			goto error_out;
+			செல் error_out;
 		}
-		if (actual != channel->block_size) {
+		எனில் (actual != channel->block_size) {
 			actual = really_read;
 			buf -= really_read;
 			size += really_read;
-			goto short_read;
+			செல் short_read;
 		}
 		actual = size;
-		if (size > channel->block_size)
+		எனில் (size > channel->block_size)
 			actual = channel->block_size;
 		memcpy(buf, data->bounce, actual);
 		really_read += actual;
 		size -= actual;
 		buf += actual;
 	}
-	return 0;
+	திரும்பு 0;
 
 error_out:
-	if (actual >= 0 && actual < size)
-		memset((char *) buf+actual, 0, size-actual);
-	if (channel->read_error)
-		retval = (channel->read_error)(channel, block, count, buf,
+	எனில் (actual >= 0 && actual < size)
+		memset((எழுத்து *) buf+actual, 0, size-actual);
+	எனில் (channel->read_error)
+		retval = (channel->read_error)(channel, block, மொத்தம், buf,
 					       size, actual, retval);
-	return retval;
+	திரும்பு retval;
 }
 
-static errcode_t raw_write_blk(io_channel channel,
-			       struct windows_private_data *data,
+நிலையான errcode_t raw_write_blk(io_channel channel,
+			       கட்டமைப்பு windows_private_data *data,
 			       unsigned long long block,
-			       int count, const void *bufv)
+			       முழு மொத்தம், மாறிலி வெறுமை *bufv)
 {
 	ssize_t		size;
 	ext2_loff_t	location;
 	DWORD		actual = 0;
 	errcode_t	retval;
-	const unsigned char *buf = bufv;
+	மாறிலி unsigned எழுத்து *buf = bufv;
 
-	if (count == 1)
+	எனில் (மொத்தம் == 1)
 		size = channel->block_size;
-	else {
-		if (count < 0)
-			size = -count;
-		else
-			size = count * channel->block_size;
+	இல்லையெனில் {
+		எனில் (மொத்தம் < 0)
+			size = -மொத்தம்;
+		இல்லையெனில்
+			size = மொத்தம் * channel->block_size;
 	}
 	data->io_stats.bytes_written += size;
 
 	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
+	எனில் (data->flags & IO_FLAG_FORCE_BOUNCE) {
+		எனில் (!SetFilePointerEx(data->handle, make_large_integer(location), வெற்று, FILE_BEGIN)) {
 			retval = GetLastError();
-			goto error_out;
+			செல் error_out;
 		}
-	goto bounce_write;
+	செல் bounce_write;
 	}
 
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
+		எனில் (!SetFilePointerEx(data->handle, make_large_integer(location), வெற்று, FILE_BEGIN)) {
 			retval = GetLastError();
-		goto error_out;
+		செல் error_out;
 	}
 
 	SetLastError(0);
 
-	if ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
-		if (!WriteFile(data->handle, buf, size, &actual, NULL)) {
+	எனில் ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
+		எனில் (!WriteFile(data->handle, buf, size, &actual, வெற்று)) {
 			retval = GetLastError();
-			goto error_out;
+			செல் error_out;
 		}
 
-		if (actual != size) {
+		எனில் (actual != size) {
 		short_write:
 			retval = EXT2_ET_SHORT_WRITE;
-			goto error_out;
+			செல் error_out;
 		}
-		return 0;
+		திரும்பு 0;
 	}
 
 	/*
@@ -302,47 +302,47 @@ static errcode_t raw_write_blk(io_channel channel,
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_write:
-	while (size > 0) {
-		if (size < channel->block_size) {
-			if (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
+	போது (size > 0) {
+		எனில் (size < channel->block_size) {
+			எனில் (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, வெற்று)) {
 				retval = GetLastError();
-				goto error_out;
+				செல் error_out;
 			}
-			if (actual != channel->block_size) {
-				if (actual < 0) {
+			எனில் (actual != channel->block_size) {
+				எனில் (actual < 0) {
 					retval = GetLastError();
-					goto error_out;
+					செல் error_out;
 				}
-				memset((char *) data->bounce + actual, 0,
+				memset((எழுத்து *) data->bounce + actual, 0,
 				       channel->block_size - actual);
 			}
 		}
 		actual = size;
-		if (size > channel->block_size)
+		எனில் (size > channel->block_size)
 			actual = channel->block_size;
 		memcpy(data->bounce, buf, actual);
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
+		எனில் (!SetFilePointerEx(data->handle, make_large_integer(location), வெற்று, FILE_BEGIN)) {
 			retval = GetLastError();
-			goto error_out;
+			செல் error_out;
 		}
-		if (!WriteFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
+		எனில் (!WriteFile(data->handle, data->bounce, channel->block_size, &actual, வெற்று)) {
 			retval = GetLastError();
-			goto error_out;
+			செல் error_out;
 		}
 
-		if (actual != channel->block_size)
-			goto short_write;
+		எனில் (actual != channel->block_size)
+			செல் short_write;
 		size -= actual;
 		buf += actual;
 		location += actual;
 	}
-	return 0;
+	திரும்பு 0;
 
 error_out:
-	if (channel->write_error)
-		retval = (channel->write_error)(channel, block, count, buf,
+	எனில் (channel->write_error)
+		retval = (channel->write_error)(channel, block, மொத்தம், buf,
 						size, actual, retval);
-	return retval;
+	திரும்பு retval;
 }
 
 
@@ -351,49 +351,49 @@ error_out:
  */
 
 /* Allocate the cache buffers */
-static errcode_t alloc_cache(io_channel channel,
-			     struct windows_private_data *data)
+நிலையான errcode_t alloc_cache(io_channel channel,
+			     கட்டமைப்பு windows_private_data *data)
 {
 	errcode_t		retval;
-	struct windows_cache	*cache;
-	int			i;
+	கட்டமைப்பு windows_cache	*cache;
+	முழு			i;
 
 	data->access_time = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
+	க்கு (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
 		cache->block = 0;
 		cache->access_time = 0;
 		cache->dirty = 0;
 		cache->in_use = 0;
-		if (cache->buf)
+		எனில் (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 		retval = io_channel_alloc_buf(channel, 0, &cache->buf);
-		if (retval)
-			return retval;
+		எனில் (retval)
+			திரும்பு retval;
 	}
-	if (channel->align || data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (data->bounce)
+	எனில் (channel->align || data->flags & IO_FLAG_FORCE_BOUNCE) {
+		எனில் (data->bounce)
 			ext2fs_free_mem(&data->bounce);
 		retval = io_channel_alloc_buf(channel, 0, &data->bounce);
 	}
-	return retval;
+	திரும்பு retval;
 }
 
 /* Free the cache buffers */
-static void free_cache(struct windows_private_data *data)
+நிலையான வெறுமை free_cache(கட்டமைப்பு windows_private_data *data)
 {
-	struct windows_cache    *cache;
-	int			i;
+	கட்டமைப்பு windows_cache    *cache;
+	முழு			i;
 
 	data->access_time = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
+	க்கு (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
 		cache->block = 0;
 		cache->access_time = 0;
 		cache->dirty = 0;
 		cache->in_use = 0;
-		if (cache->buf)
+		எனில் (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 	}
-	if (data->bounce)
+	எனில் (data->bounce)
 		ext2fs_free_mem(&data->bounce);
 }
 
@@ -403,40 +403,40 @@ static void free_cache(struct windows_private_data *data)
  * eldest is a non-zero pointer, then fill in eldest with the cache
  * entry to that should be reused.
  */
-static struct windows_cache *find_cached_block(struct windows_private_data *data,
+நிலையான கட்டமைப்பு windows_cache *find_cached_block(கட்டமைப்பு windows_private_data *data,
 					    unsigned long long block,
-					    struct windows_cache **eldest)
+					    கட்டமைப்பு windows_cache **eldest)
 {
-	struct windows_cache	*cache, *unused_cache, *oldest_cache;
-	int			i;
+	கட்டமைப்பு windows_cache	*cache, *unused_cache, *oldest_cache;
+	முழு			i;
 
 	unused_cache = oldest_cache = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
-		if (!cache->in_use) {
-			if (!unused_cache)
+	க்கு (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
+		எனில் (!cache->in_use) {
+			எனில் (!unused_cache)
 				unused_cache = cache;
-			continue;
+			தொடர்;
 		}
-		if (cache->block == block) {
+		எனில் (cache->block == block) {
 			cache->access_time = ++data->access_time;
-			return cache;
+			திரும்பு cache;
 		}
-		if (!oldest_cache ||
+		எனில் (!oldest_cache ||
 		   (cache->access_time < oldest_cache->access_time))
 			oldest_cache = cache;
 	}
-	if (eldest)
+	எனில் (eldest)
 		*eldest = (unused_cache) ? unused_cache : oldest_cache;
-	return 0;
+	திரும்பு 0;
 }
 
 /*
  * Reuse a particular cache entry for another block.
  */
-static void reuse_cache(io_channel channel, struct windows_private_data *data,
-		 struct windows_cache *cache, unsigned long long block)
+நிலையான வெறுமை reuse_cache(io_channel channel, கட்டமைப்பு windows_private_data *data,
+		 கட்டமைப்பு windows_cache *cache, unsigned long long block)
 {
-	if (cache->dirty && cache->in_use)
+	எனில் (cache->dirty && cache->in_use)
 		raw_write_blk(channel, data, cache->block, 1, cache->buf);
 
 	cache->in_use = 1;
@@ -448,54 +448,54 @@ static void reuse_cache(io_channel channel, struct windows_private_data *data,
 /*
  * Flush all of the blocks in the cache
  */
-static errcode_t flush_cached_blocks(io_channel channel,
-				     struct windows_private_data *data,
-				     int invalidate)
+நிலையான errcode_t flush_cached_blocks(io_channel channel,
+				     கட்டமைப்பு windows_private_data *data,
+				     முழு invalidate)
 {
-	struct windows_cache	*cache;
+	கட்டமைப்பு windows_cache	*cache;
 	errcode_t	retval, retval2;
-	int			i;
+	முழு			i;
 
 	retval2 = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
-		if (!cache->in_use)
-			continue;
+	க்கு (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
+		எனில் (!cache->in_use)
+			தொடர்;
 
-		if (invalidate)
+		எனில் (invalidate)
 			cache->in_use = 0;
 
-		if (!cache->dirty)
-			continue;
+		எனில் (!cache->dirty)
+			தொடர்;
 
 		retval = raw_write_blk(channel, data,
 				       cache->block, 1, cache->buf);
-		if (retval)
+		எனில் (retval)
 			retval2 = retval;
-		else
+		இல்லையெனில்
 			cache->dirty = 0;
 	}
-	return retval2;
+	திரும்பு retval2;
 }
 #endif /* NO_IO_CACHE */
 
-static errcode_t windows_open_channel(struct windows_private_data *data,
-				   int flags, io_channel *channel,
+நிலையான errcode_t windows_open_channel(கட்டமைப்பு windows_private_data *data,
+				   முழு flags, io_channel *channel,
 				   io_manager io_mgr)
 {
-	io_channel	io = NULL;
+	io_channel	io = வெற்று;
 	errcode_t	retval;
 	ext2fs_struct_stat st;
 
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	retval = ext2fs_get_mem(அளவு(கட்டமைப்பு struct_io_channel), &io);
+	எனில் (retval)
+		செல் cleanup;
+	memset(io, 0, அளவு(கட்டமைப்பு struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
 
 	io->manager = io_mgr;
 	retval = ext2fs_get_mem(strlen(data->name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	எனில் (retval)
+		செல் cleanup;
 
 	strcpy(io->name, data->name);
 	io->private_data = data;
@@ -504,8 +504,8 @@ static errcode_t windows_open_channel(struct windows_private_data *data,
 	io->write_error = 0;
 	io->refcount = 1;
 
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
+#எனில் defined(O_DIRECT)
+	எனில் (flags & IO_FLAG_DIRECT_IO)
 		io->align = ext2fs_get_dio_alignment(data->dev);
 #endif
 
@@ -516,86 +516,86 @@ static errcode_t windows_open_channel(struct windows_private_data *data,
 	 * and if it succeed, subsequent read from sparse area returns
 	 * zero.
 	 */
-	if (ext2fs_fstat(data->dev, &st) == 0) {
-		if (ext2fsP_is_disk_device(st.st_mode))
+	எனில் (ext2fs_fstat(data->dev, &st) == 0) {
+		எனில் (ext2fsP_is_disk_device(st.st_mode))
 			io->flags |= CHANNEL_FLAGS_BLOCK_DEVICE;
-		else
+		இல்லையெனில்
 			io->flags |= CHANNEL_FLAGS_DISCARD_ZEROES;
 	}
 
-	if ((retval = alloc_cache(io, data)))
-		goto cleanup;
+	எனில் ((retval = alloc_cache(io, data)))
+		செல் cleanup;
 
 #ifdef BLKROGET
-	if (flags & IO_FLAG_RW) {
-		int error;
-		int readonly = 0;
+	எனில் (flags & IO_FLAG_RW) {
+		முழு error;
+		முழு readonly = 0;
 
 		/* Is the block device actually writable? */
 		error = ioctl(data->dev, BLKROGET, &readonly);
-		if (!error && readonly) {
+		எனில் (!error && readonly) {
 			retval = EPERM;
-			goto cleanup;
+			செல் cleanup;
 		}
 	}
 #endif
 
 	*channel = io;
-	return 0;
+	திரும்பு 0;
 
 cleanup:
-	if (data) {
-		if (data->dev >= 0)
+	எனில் (data) {
+		எனில் (data->dev >= 0)
 			close(data->dev);
 		free_cache(data);
 		ext2fs_free_mem(&data);
 	}
-	if (io) {
-		if (io->name) {
+	எனில் (io) {
+		எனில் (io->name) {
 			ext2fs_free_mem(&io->name);
 		}
 		ext2fs_free_mem(&io);
 	}
-	return retval;
+	திரும்பு retval;
 }
 
-static DWORD windows_open_device(struct windows_private_data *data, int open_flags)
+நிலையான DWORD windows_open_device(கட்டமைப்பு windows_private_data *data, முழு open_flags)
 {
 	DWORD ret = 0;
 
-	if (*data->name != '\\')
+	எனில் (*data->name != '\\')
 		strcpy(data->cf_device, data->name);
-	else if (fake_dos_name_for_device(data))
-		return -1;
+	இல்லையெனில் எனில் (fake_dos_name_for_device(data))
+		திரும்பு -1;
 
 	DWORD desired_access = GENERIC_READ | ((open_flags & O_RDWR) ? GENERIC_WRITE : 0);
 	DWORD share_mode = (open_flags & O_EXCL) ? 0 : FILE_SHARE_READ | ((open_flags & O_RDWR) ? FILE_SHARE_WRITE : 0);
 	DWORD flags_and_attributes =
-#if defined(O_DIRECT)
+#எனில் defined(O_DIRECT)
 	(open_flags & O_DIRECT) ? (FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH) : FILE_ATTRIBUTE_NORMAL;
-#else
+#இல்லையெனில்
 	FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH;
 #endif
 
-	data->handle = CreateFile(data->cf_device, desired_access, share_mode, NULL, OPEN_EXISTING,
-				  flags_and_attributes, NULL);
+	data->handle = CreateFile(data->cf_device, desired_access, share_mode, வெற்று, OPEN_EXISTING,
+				  flags_and_attributes, வெற்று);
 
-	if (data->handle == INVALID_HANDLE_VALUE) {
+	எனில் (data->handle == INVALID_HANDLE_மதிப்பு) {
 		ret = GetLastError();
-		goto invalid_handle;
+		செல் invalid_handle;
 	}
 
 	TRACE("e2fsprogs::windows_open_device::CreateFile(\"%s\") = %p", data->cf_device, data->handle);
 
 	data->dev = _open_osfhandle((intptr_t)data->handle, 0);
-	if (data->dev < 0) {
+	எனில் (data->dev < 0) {
 		ret = GetLastError() ? GetLastError() : 9999;
-		goto osfhandle_error;
+		செல் osfhandle_error;
 	}
 
 	TRACE("e2fsprogs::windows_open_device::_open_osfhandle(%p) = %d", data->handle, data->dev);
 
-	return 0;
+	திரும்பு 0;
 
 osfhandle_error:
 	TRACE("e2fsprogs::windows_open_device::CloseHandle(%p)", data->handle);
@@ -603,65 +603,65 @@ osfhandle_error:
 invalid_handle:
 	remove_fake_dos_name(data);
 	TRACE("e2fsprogs::windows_open_device() = %lu, errno = %d", ret, errno);
-	return ret;
+	திரும்பு ret;
 }
 
-static struct windows_private_data *init_private_data(const char *name, int flags)
+நிலையான கட்டமைப்பு windows_private_data *init_private_data(மாறிலி எழுத்து *name, முழு flags)
 {
-	struct windows_private_data *data = NULL;
+	கட்டமைப்பு windows_private_data *data = வெற்று;
 
-	if (ext2fs_get_mem(sizeof(struct windows_private_data), &data))
-		return NULL;
+	எனில் (ext2fs_get_mem(அளவு(கட்டமைப்பு windows_private_data), &data))
+		திரும்பு வெற்று;
 
-	memset(data, 0, sizeof(struct windows_private_data));
-	strncpy(data->name, name, sizeof(data->name) - 1);
+	memset(data, 0, அளவு(கட்டமைப்பு windows_private_data));
+	strncpy(data->name, name, அளவு(data->name) - 1);
 	data->magic = EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL;
-	data->io_stats.num_fields = 2;
+	data->io_stats.இலக்கம்_fields = 2;
 	data->flags = flags;
-	data->handle = INVALID_HANDLE_VALUE;
+	data->handle = INVALID_HANDLE_மதிப்பு;
 
-	return data;
+	திரும்பு data;
 }
 
-static errcode_t windows_open(const char *name, int flags, io_channel *channel)
+நிலையான errcode_t windows_open(மாறிலி எழுத்து *name, முழு flags, io_channel *channel)
 {
-	int open_flags;
-	struct windows_private_data *data;
+	முழு open_flags;
+	கட்டமைப்பு windows_private_data *data;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	எனில் (name == 0)
+		திரும்பு EXT2_ET_BAD_DEVICE_NAME;
 
 	data = init_private_data(name, flags);
-	if (!data)
-		return EXT2_ET_NO_MEMORY;
+	எனில் (!data)
+		திரும்பு EXT2_ET_NO_MEMORY;
 
 	open_flags = (flags & IO_FLAG_RW) ? O_RDWR : O_RDONLY;
-	if (flags & IO_FLAG_EXCLUSIVE)
+	எனில் (flags & IO_FLAG_EXCLUSIVE)
 		open_flags |= O_EXCL;
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
+#எனில் defined(O_DIRECT)
+	எனில் (flags & IO_FLAG_DIRECT_IO)
 		open_flags |= O_DIRECT;
 #endif
 
-	if (windows_open_device(data, open_flags)) {
+	எனில் (windows_open_device(data, open_flags)) {
 		ext2fs_free_mem(&data);
-		return EXT2_ET_BAD_DEVICE_NAME;
+		திரும்பு EXT2_ET_BAD_DEVICE_NAME;
 	}
 
-	return windows_open_channel(data, flags, channel, windows_io_manager);
+	திரும்பு windows_open_channel(data, flags, channel, windows_io_manager);
 }
 
-static errcode_t windows_close(io_channel channel)
+நிலையான errcode_t windows_close(io_channel channel)
 {
-	struct windows_private_data *data;
+	கட்டமைப்பு windows_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (கட்டமைப்பு windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	எனில் (--channel->refcount > 0)
+		திரும்பு 0;
 
 #ifndef NO_IO_CACHE
 	retval = flush_cached_blocks(channel, data, 0);
@@ -669,7 +669,7 @@ static errcode_t windows_close(io_channel channel)
 
 	remove_fake_dos_name(data);
 
-	if (_close(data->dev) != 0)
+	எனில் (_close(data->dev) != 0)
 		retval = errno;
 
 	TRACE("e2fsprogs::windows_close::_close(%d)", data->dev);
@@ -677,146 +677,146 @@ static errcode_t windows_close(io_channel channel)
 	free_cache(data);
 
 	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	எனில் (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	திரும்பு retval;
 }
 
-static errcode_t windows_set_blksize(io_channel channel, int blksize)
+நிலையான errcode_t windows_set_blksize(io_channel channel, முழு blksize)
 {
-	struct windows_private_data *data;
+	கட்டமைப்பு windows_private_data *data;
 	errcode_t		retval;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (கட்டமைப்பு windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (channel->block_size != blksize) {
+	எனில் (channel->block_size != blksize) {
 #ifndef NO_IO_CACHE
-		if ((retval = flush_cached_blocks(channel, data, 0)))
-			return retval;
+		எனில் ((retval = flush_cached_blocks(channel, data, 0)))
+			திரும்பு retval;
 #endif
 
 		channel->block_size = blksize;
 		free_cache(data);
-		if ((retval = alloc_cache(channel, data)))
-			return retval;
+		எனில் ((retval = alloc_cache(channel, data)))
+			திரும்பு retval;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static errcode_t windows_read_blk64(io_channel channel, unsigned long long block, int count, void *buf)
+நிலையான errcode_t windows_read_blk64(io_channel channel, unsigned long long block, முழு மொத்தம், வெறுமை *buf)
 {
-	struct windows_private_data *data;
-	struct windows_cache *cache, *reuse[READ_DIRECT_SIZE];
+	கட்டமைப்பு windows_private_data *data;
+	கட்டமைப்பு windows_cache *cache, *reuse[READ_DIRECT_SIZE];
 	errcode_t	retval;
-	char		*cp;
-	int		i, j;
+	எழுத்து		*cp;
+	முழு		i, j;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (கட்டமைப்பு windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
 #ifdef NO_IO_CACHE
-	return raw_read_blk(channel, data, block, count, buf);
-#else
+	திரும்பு raw_read_blk(channel, data, block, மொத்தம், buf);
+#இல்லையெனில்
 	/*
 	 * If we're doing an odd-sized read or a very large read,
 	 * flush out the cache and then do a direct read.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data, 0)))
-			return retval;
-		return raw_read_blk(channel, data, block, count, buf);
+	எனில் (மொத்தம் < 0 || மொத்தம் > WRITE_DIRECT_SIZE) {
+		எனில் ((retval = flush_cached_blocks(channel, data, 0)))
+			திரும்பு retval;
+		திரும்பு raw_read_blk(channel, data, block, மொத்தம், buf);
 	}
 
 	cp = buf;
-	while (count > 0) {
+	போது (மொத்தம் > 0) {
 		/* If it's in the cache, use it! */
-		if ((cache = find_cached_block(data, block, &reuse[0]))) {
+		எனில் ((cache = find_cached_block(data, block, &reuse[0]))) {
 #ifdef DEBUG
 			printf("Using cached block %lu\n", block);
 #endif
 			memcpy(cp, cache->buf, channel->block_size);
-			count--;
+			மொத்தம்--;
 			block++;
 			cp += channel->block_size;
-			continue;
+			தொடர்;
 		}
-		if (count == 1) {
+		எனில் (மொத்தம் == 1) {
 			/*
 			 * Special case where we read directly into the
 			 * cache buffer; important in the O_DIRECT case
 			 */
 			cache = reuse[0];
 			reuse_cache(channel, data, cache, block);
-			if ((retval = raw_read_blk(channel, data, block, 1,
+			எனில் ((retval = raw_read_blk(channel, data, block, 1,
 						   cache->buf))) {
 				cache->in_use = 0;
-				return retval;
+				திரும்பு retval;
 			}
 			memcpy(cp, cache->buf, channel->block_size);
-			return 0;
+			திரும்பு 0;
 		}
 
 		/*
 		 * Find the number of uncached blocks so we can do a
 		 * single read request
 		 */
-		for (i=1; i < count; i++)
-			if (find_cached_block(data, block+i, &reuse[i]))
-				break;
+		க்கு (i=1; i < மொத்தம்; i++)
+			எனில் (find_cached_block(data, block+i, &reuse[i]))
+				நிறுத்து;
 #ifdef DEBUG
 		printf("Reading %d blocks starting at %lu\n", i, block);
 #endif
-		if ((retval = raw_read_blk(channel, data, block, i, cp)))
-			return retval;
+		எனில் ((retval = raw_read_blk(channel, data, block, i, cp)))
+			திரும்பு retval;
 
 		/* Save the results in the cache */
-		for (j=0; j < i; j++) {
-			count--;
+		க்கு (j=0; j < i; j++) {
+			மொத்தம்--;
 			cache = reuse[j];
 			reuse_cache(channel, data, cache, block++);
 			memcpy(cache->buf, cp, channel->block_size);
 			cp += channel->block_size;
 		}
 	}
-	return 0;
+	திரும்பு 0;
 #endif /* NO_IO_CACHE */
 }
 
-static errcode_t windows_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+நிலையான errcode_t windows_read_blk(io_channel channel, unsigned long block,
+			       முழு மொத்தம், வெறுமை *buf)
 {
-	return windows_read_blk64(channel, block, count, buf);
+	திரும்பு windows_read_blk64(channel, block, மொத்தம், buf);
 }
 
-static errcode_t windows_write_blk64(io_channel channel,
+நிலையான errcode_t windows_write_blk64(io_channel channel,
 				unsigned long long block,
-				int count, const void *buf)
+				முழு மொத்தம், மாறிலி வெறுமை *buf)
 {
-	struct windows_private_data *data;
-	struct windows_cache *cache, *reuse;
+	கட்டமைப்பு windows_private_data *data;
+	கட்டமைப்பு windows_cache *cache, *reuse;
 	errcode_t	retval = 0;
-	const char	*cp;
-	int		writethrough;
+	மாறிலி எழுத்து	*cp;
+	முழு		writethrough;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (கட்டமைப்பு windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
 #ifdef NO_IO_CACHE
-	return raw_write_blk(channel, data, block, count, buf);
-#else
+	திரும்பு raw_write_blk(channel, data, block, மொத்தம், buf);
+#இல்லையெனில்
 	/*
 	 * If we're doing an odd-sized write or a very large write,
 	 * flush out the cache completely and then do a direct write.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data, 1)))
-			return retval;
-		return raw_write_blk(channel, data, block, count, buf);
+	எனில் (மொத்தம் < 0 || மொத்தம் > WRITE_DIRECT_SIZE) {
+		எனில் ((retval = flush_cached_blocks(channel, data, 1)))
+			திரும்பு retval;
+		திரும்பு raw_write_blk(channel, data, block, மொத்தம், buf);
 	}
 
 	/*
@@ -825,188 +825,188 @@ static errcode_t windows_write_blk64(io_channel channel,
 	 * cache with the blocks.
 	 */
 	writethrough = channel->flags & CHANNEL_FLAGS_WRITETHROUGH;
-	if (writethrough)
-		retval = raw_write_blk(channel, data, block, count, buf);
+	எனில் (writethrough)
+		retval = raw_write_blk(channel, data, block, மொத்தம், buf);
 
 	cp = buf;
-	while (count > 0) {
+	போது (மொத்தம் > 0) {
 		cache = find_cached_block(data, block, &reuse);
-		if (!cache) {
+		எனில் (!cache) {
 			cache = reuse;
 			reuse_cache(channel, data, cache, block);
 		}
-		if (cache->buf != cp)
+		எனில் (cache->buf != cp)
 			memcpy(cache->buf, cp, channel->block_size);
 		cache->dirty = !writethrough;
-		count--;
+		மொத்தம்--;
 		block++;
 		cp += channel->block_size;
 	}
-	return retval;
+	திரும்பு retval;
 #endif /* NO_IO_CACHE */
 }
 
-static errcode_t windows_cache_readahead(io_channel channel,
+நிலையான errcode_t windows_cache_readahead(io_channel channel,
 				      unsigned long long block,
-				      unsigned long long count)
+				      unsigned long long மொத்தம்)
 {
-	return EXT2_ET_OP_NOT_SUPPORTED;
+	திரும்பு EXT2_ET_OP_NOT_SUPPORTED;
 }
 
-static errcode_t windows_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+நிலையான errcode_t windows_write_blk(io_channel channel, unsigned long block,
+				முழு மொத்தம், மாறிலி வெறுமை *buf)
 {
-	return windows_write_blk64(channel, block, count, buf);
+	திரும்பு windows_write_blk64(channel, block, மொத்தம், buf);
 }
 
-static errcode_t windows_write_byte(io_channel channel, unsigned long offset,
-				 int size, const void *buf)
+நிலையான errcode_t windows_write_byte(io_channel channel, unsigned long offset,
+				 முழு size, மாறிலி வெறுமை *buf)
 {
-	return EXT2_ET_UNIMPLEMENTED;
+	திரும்பு EXT2_ET_UNIMPLEMENTED;
 }
 
 /*
  * Flush data buffers to disk.
  */
-static errcode_t windows_flush(io_channel channel)
+நிலையான errcode_t windows_flush(io_channel channel)
 {
-	struct windows_private_data *data;
+	கட்டமைப்பு windows_private_data *data;
 	errcode_t retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (கட்டமைப்பு windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
 #ifndef NO_IO_CACHE
 	retval = flush_cached_blocks(channel, data, 0);
 #endif
 
-	return retval;
+	திரும்பு retval;
 }
 
-static errcode_t windows_set_option(io_channel channel, const char *option,
-				 const char *arg)
+நிலையான errcode_t windows_set_option(io_channel channel, மாறிலி எழுத்து *option,
+				 மாறிலி எழுத்து *arg)
 {
-	struct windows_private_data *data;
+	கட்டமைப்பு windows_private_data *data;
 	unsigned long long tmp;
-	char *end;
+	எழுத்து *end;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (கட்டமைப்பு windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (!strcmp(option, "offset")) {
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
+	எனில் (!strcmp(option, "offset")) {
+		எனில் (!arg)
+			திரும்பு EXT2_ET_INVALID_ARGUMENT;
 
 		tmp = strtoull(arg, &end, 0);
-		if (*end)
-			return EXT2_ET_INVALID_ARGUMENT;
+		எனில் (*end)
+			திரும்பு EXT2_ET_INVALID_ARGUMENT;
 		data->offset = tmp;
-		if (data->offset < 0)
-			return EXT2_ET_INVALID_ARGUMENT;
-		return 0;
+		எனில் (data->offset < 0)
+			திரும்பு EXT2_ET_INVALID_ARGUMENT;
+		திரும்பு 0;
 	}
-	return EXT2_ET_INVALID_ARGUMENT;
+	திரும்பு EXT2_ET_INVALID_ARGUMENT;
 }
 
-static errcode_t windows_discard(io_channel channel, unsigned long long block,
-				 unsigned long long count)
+நிலையான errcode_t windows_discard(io_channel channel, unsigned long long block,
+				 unsigned long long மொத்தம்)
 {
 	TRACE("e2fsprogs::windows_discard::EXT2_ET_UNIMPLEMENTED");
-	return EXT2_ET_UNIMPLEMENTED;
+	திரும்பு EXT2_ET_UNIMPLEMENTED;
 }
 
 /* parameters might not be used if OS doesn't support zeroout */
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
+#எனில் __GNUC_PREREQ (4, 6)
+#pragma GCC diagnostic தள்ளு
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
-static errcode_t windows_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+நிலையான errcode_t windows_zeroout(io_channel channel, unsigned long long block,
+			      unsigned long long மொத்தம்)
 {
-	struct windows_private_data *data;
-	int		ret;
+	கட்டமைப்பு windows_private_data *data;
+	முழு		ret;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (கட்டமைப்பு windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (channel->flags & CHANNEL_FLAGS_BLOCK_DEVICE) {
+	எனில் (channel->flags & CHANNEL_FLAGS_BLOCK_DEVICE) {
 		/* Not implemented until the BLKZEROOUT mess is fixed */
-		goto unimplemented;
-	} else {
+		செல் unimplemented;
+	} இல்லையெனில் {
 		/* Regular file, try to use truncate/punch/zero. */
-		struct stat statbuf;
+		கட்டமைப்பு stat statbuf;
 
-		if (count == 0)
-			return 0;
+		எனில் (மொத்தம் == 0)
+			திரும்பு 0;
 		/*
 		 * If we're trying to zero a range past the end of the file,
 		 * extend the file size, then truncate everything.
 		 */
 		ret = fstat(data->dev, &statbuf);
-		if (ret)
-			goto err;
-		if ((unsigned long long) statbuf.st_size <
-			(block + count) * channel->block_size + data->offset) {
+		எனில் (ret)
+			செல் err;
+		எனில் ((unsigned long long) statbuf.st_size <
+			(block + மொத்தம்) * channel->block_size + data->offset) {
 			ret = ftruncate(data->dev,
-					(block + count) * channel->block_size + data->offset);
-			if (ret)
-				goto err;
+					(block + மொத்தம்) * channel->block_size + data->offset);
+			எனில் (ret)
+				செல் err;
 		}
-		goto unimplemented;
+		செல் unimplemented;
 	}
 err:
-	if (ret < 0) {
-		if (errno == EOPNOTSUPP)
-			goto unimplemented;
-		return errno;
+	எனில் (ret < 0) {
+		எனில் (errno == EOPNOTSUPP)
+			செல் unimplemented;
+		திரும்பு errno;
 	}
-	return 0;
+	திரும்பு 0;
 unimplemented:
-	return EXT2_ET_UNIMPLEMENTED;
+	திரும்பு EXT2_ET_UNIMPLEMENTED;
 }
 
-int ext2fs_open_file(const char *pathname, int flags, mode_t mode)
+முழு ext2fs_open_file(மாறிலி எழுத்து *pathname, முழு flags, mode_t mode)
 {
-	flags |= O_BINARY;
+	flags |= O_இருமம்;
 
-	if (mode)
-#if defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-		return open64(pathname, flags, mode);
-	else
-		return open64(pathname, flags);
-#else
-		return open(pathname, flags, mode);
-	else
-		return open(pathname, flags);
+	எனில் (mode)
+#எனில் defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+		திரும்பு open64(pathname, flags, mode);
+	இல்லையெனில்
+		திரும்பு open64(pathname, flags);
+#இல்லையெனில்
+		திரும்பு open(pathname, flags, mode);
+	இல்லையெனில்
+		திரும்பு open(pathname, flags);
 #endif
 }
 
-int ext2fs_stat(const char *path, ext2fs_struct_stat *buf)
+முழு ext2fs_stat(மாறிலி எழுத்து *path, ext2fs_struct_stat *buf)
 {
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return stat64(path, buf);
-#else
-	return stat(path, buf);
+#எனில் defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	திரும்பு stat64(path, buf);
+#இல்லையெனில்
+	திரும்பு stat(path, buf);
 #endif
 }
 
-int ext2fs_fstat(int fd, ext2fs_struct_stat *buf)
+முழு ext2fs_fstat(முழு fd, ext2fs_struct_stat *buf)
 {
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return fstat64(fd, buf);
-#else
-	return fstat(fd, buf);
+#எனில் defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	திரும்பு fstat64(fd, buf);
+#இல்லையெனில்
+	திரும்பு fstat(fd, buf);
 #endif
 }
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
+#எனில் __GNUC_PREREQ (4, 6)
+#pragma GCC diagnostic எடு
 #endif
 
-static struct struct_io_manager struct_windows_manager = {
+நிலையான கட்டமைப்பு struct_io_manager struct_windows_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Windows I/O Manager",
 	.open		= windows_open,

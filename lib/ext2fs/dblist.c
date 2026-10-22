@@ -9,76 +9,76 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ <stdio.h>
+#எனில் HAVE_UNISTD_H
+#அந்தர்பாவ <unistd.h>
 #endif
-#include <string.h>
-#include <time.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#அந்தர்பாவ "ext2_fs.h"
+#அந்தர்பாவ "ext2fsP.h"
 
-static EXT2_QSORT_TYPE dir_block_cmp(const void *a, const void *b);
-static EXT2_QSORT_TYPE dir_block_cmp2(const void *a, const void *b);
-static EXT2_QSORT_TYPE (*sortfunc32)(const void *a, const void *b);
+நிலையான EXT2_QSORT_TYPE dir_block_cmp(மாறிலி வெறுமை *a, மாறிலி வெறுமை *b);
+நிலையான EXT2_QSORT_TYPE dir_block_cmp2(மாறிலி வெறுமை *a, மாறிலி வெறுமை *b);
+நிலையான EXT2_QSORT_TYPE (*sortfunc32)(மாறிலி வெறுமை *a, மாறிலி வெறுமை *b);
 
 /*
  * helper function for making a new directory block list (for
  * initialize and copy).
  */
-static errcode_t make_dblist(ext2_filsys fs, ext2_ino_t size,
-			     ext2_ino_t count,
-			     struct ext2_db_entry2 *list,
+நிலையான errcode_t make_dblist(ext2_filsys fs, ext2_ino_t size,
+			     ext2_ino_t மொத்தம்,
+			     கட்டமைப்பு ext2_db_entry2 *list,
 			     ext2_dblist *ret_dblist)
 {
-	ext2_dblist	dblist = NULL;
+	ext2_dblist	dblist = வெற்று;
 	errcode_t	retval;
-	ext2_ino_t	num_dirs;
+	ext2_ino_t	இலக்கம்_dirs;
 	size_t		len;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if ((ret_dblist == 0) && fs->dblist &&
+	எனில் ((ret_dblist == 0) && fs->dblist &&
 	    (fs->dblist->magic == EXT2_ET_MAGIC_DBLIST))
-		return 0;
+		திரும்பு 0;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_struct_dblist), &dblist);
-	if (retval)
-		goto cleanup;
-	memset(dblist, 0, sizeof(struct ext2_struct_dblist));
+	retval = ext2fs_get_mem(அளவு(கட்டமைப்பு ext2_struct_dblist), &dblist);
+	எனில் (retval)
+		செல் cleanup;
+	memset(dblist, 0, அளவு(கட்டமைப்பு ext2_struct_dblist));
 
 	dblist->magic = EXT2_ET_MAGIC_DBLIST;
 	dblist->fs = fs;
-	if (size)
+	எனில் (size)
 		dblist->size = size;
-	else {
-		retval = ext2fs_get_num_dirs(fs, &num_dirs);
-		if (retval)
-			goto cleanup;
-		dblist->size = (num_dirs * 2) + 12;
+	இல்லையெனில் {
+		retval = ext2fs_get_இலக்கம்_dirs(fs, &இலக்கம்_dirs);
+		எனில் (retval)
+			செல் cleanup;
+		dblist->size = (இலக்கம்_dirs * 2) + 12;
 	}
-	len = (size_t) sizeof(struct ext2_db_entry2) * dblist->size;
-	dblist->count = count;
-	retval = ext2fs_get_array(dblist->size, sizeof(struct ext2_db_entry2),
+	len = (size_t) அளவு(கட்டமைப்பு ext2_db_entry2) * dblist->size;
+	dblist->மொத்தம் = மொத்தம்;
+	retval = ext2fs_get_array(dblist->size, அளவு(கட்டமைப்பு ext2_db_entry2),
 		&dblist->list);
-	if (retval)
-		goto cleanup;
+	எனில் (retval)
+		செல் cleanup;
 
-	if (list)
+	எனில் (list)
 		memcpy(dblist->list, list, len);
-	else
+	இல்லையெனில்
 		memset(dblist->list, 0, len);
-	if (ret_dblist)
+	எனில் (ret_dblist)
 		*ret_dblist = dblist;
-	else
+	இல்லையெனில்
 		fs->dblist = dblist;
-	return 0;
+	திரும்பு 0;
 cleanup:
-	if (dblist)
+	எனில் (dblist)
 		ext2fs_free_mem(&dblist);
-	return retval;
+	திரும்பு retval;
 }
 
 /*
@@ -90,16 +90,16 @@ errcode_t ext2fs_init_dblist(ext2_filsys fs, ext2_dblist *ret_dblist)
 	errcode_t	retval;
 
 	retval = make_dblist(fs, 0, 0, 0, &dblist);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 
 	dblist->sorted = 1;
-	if (ret_dblist)
+	எனில் (ret_dblist)
 		*ret_dblist = dblist;
-	else
+	இல்லையெனில்
 		fs->dblist = dblist;
 
-	return 0;
+	திரும்பு 0;
 }
 
 /*
@@ -110,13 +110,13 @@ errcode_t ext2fs_copy_dblist(ext2_dblist src, ext2_dblist *dest)
 	ext2_dblist	dblist;
 	errcode_t	retval;
 
-	retval = make_dblist(src->fs, src->size, src->count, src->list,
+	retval = make_dblist(src->fs, src->size, src->மொத்தம், src->list,
 			     &dblist);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 	dblist->sorted = src->sorted;
 	*dest = dblist;
-	return 0;
+	திரும்பு 0;
 }
 
 /*
@@ -132,31 +132,31 @@ errcode_t ext2fs_copy_dblist(ext2_dblist src, ext2_dblist *dest)
 errcode_t ext2fs_add_dir_block2(ext2_dblist dblist, ext2_ino_t ino,
 				blk64_t blk, e2_blkcnt_t blockcnt)
 {
-	struct ext2_db_entry2 	*new_entry;
+	கட்டமைப்பு ext2_db_entry2 	*new_entry;
 	errcode_t		retval;
 	unsigned long		old_size;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count >= dblist->size) {
-		old_size = dblist->size * sizeof(struct ext2_db_entry2);
+	எனில் (dblist->மொத்தம் >= dblist->size) {
+		old_size = dblist->size * அளவு(கட்டமைப்பு ext2_db_entry2);
 		dblist->size += dblist->size > 200 ? dblist->size / 2 : 100;
 		retval = ext2fs_resize_mem(old_size, (size_t) dblist->size *
-					   sizeof(struct ext2_db_entry2),
+					   அளவு(கட்டமைப்பு ext2_db_entry2),
 					   &dblist->list);
-		if (retval) {
-			dblist->size = old_size / sizeof(struct ext2_db_entry2);
-			return retval;
+		எனில் (retval) {
+			dblist->size = old_size / அளவு(கட்டமைப்பு ext2_db_entry2);
+			திரும்பு retval;
 		}
 	}
-	new_entry = dblist->list + ( dblist->count++);
+	new_entry = dblist->list + ( dblist->மொத்தம்++);
 	new_entry->blk = blk;
 	new_entry->ino = ino;
 	new_entry->blockcnt = blockcnt;
 
 	dblist->sorted = 0;
 
-	return 0;
+	திரும்பு 0;
 }
 
 /*
@@ -169,25 +169,25 @@ errcode_t ext2fs_set_dir_block2(ext2_dblist dblist, ext2_ino_t ino,
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	for (i=0; i < dblist->count; i++) {
-		if ((dblist->list[i].ino != ino) ||
+	க்கு (i=0; i < dblist->மொத்தம்; i++) {
+		எனில் ((dblist->list[i].ino != ino) ||
 		    (dblist->list[i].blockcnt != blockcnt))
-			continue;
+			தொடர்;
 		dblist->list[i].blk = blk;
 		dblist->sorted = 0;
-		return 0;
+		திரும்பு 0;
 	}
-	return EXT2_ET_DB_NOT_FOUND;
+	திரும்பு EXT2_ET_DB_NOT_FOUND;
 }
 
-void ext2fs_dblist_sort2(ext2_dblist dblist,
-			 EXT2_QSORT_TYPE (*sortfunc)(const void *,
-						     const void *))
+வெறுமை ext2fs_dblist_sort2(ext2_dblist dblist,
+			 EXT2_QSORT_TYPE (*sortfunc)(மாறிலி வெறுமை *,
+						     மாறிலி வெறுமை *))
 {
-	if (!sortfunc)
+	எனில் (!sortfunc)
 		sortfunc = dir_block_cmp2;
-	qsort(dblist->list, (size_t) dblist->count,
-	      sizeof(struct ext2_db_entry2), sortfunc);
+	qsort(dblist->list, (size_t) dblist->மொத்தம்,
+	      அளவு(கட்டமைப்பு ext2_db_entry2), sortfunc);
 	dblist->sorted = 1;
 }
 
@@ -195,84 +195,84 @@ void ext2fs_dblist_sort2(ext2_dblist dblist,
  * This function iterates over the directory block list
  */
 errcode_t ext2fs_dblist_iterate3(ext2_dblist dblist,
-				 int (*func)(ext2_filsys fs,
-					     struct ext2_db_entry2 *db_info,
-					     void	*priv_data),
+				 முழு (*func)(ext2_filsys fs,
+					     கட்டமைப்பு ext2_db_entry2 *db_info,
+					     வெறுமை	*priv_data),
 				 unsigned long long start,
-				 unsigned long long count,
-				 void *priv_data)
+				 unsigned long long மொத்தம்,
+				 வெறுமை *priv_data)
 {
 	unsigned long long	i, end;
-	int		ret;
+	முழு		ret;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	end = start + count;
-	if (!dblist->sorted)
+	end = start + மொத்தம்;
+	எனில் (!dblist->sorted)
 		ext2fs_dblist_sort2(dblist, 0);
-	if (end > dblist->count)
-		end = dblist->count;
-	for (i = start; i < end; i++) {
+	எனில் (end > dblist->மொத்தம்)
+		end = dblist->மொத்தம்;
+	க்கு (i = start; i < end; i++) {
 		ret = (*func)(dblist->fs, &dblist->list[i], priv_data);
-		if (ret & DBLIST_ABORT)
-			return 0;
+		எனில் (ret & DBLIST_ABORT)
+			திரும்பு 0;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 errcode_t ext2fs_dblist_iterate2(ext2_dblist dblist,
-				 int (*func)(ext2_filsys fs,
-					     struct ext2_db_entry2 *db_info,
-					     void	*priv_data),
-				 void *priv_data)
+				 முழு (*func)(ext2_filsys fs,
+					     கட்டமைப்பு ext2_db_entry2 *db_info,
+					     வெறுமை	*priv_data),
+				 வெறுமை *priv_data)
 {
-	return ext2fs_dblist_iterate3(dblist, func, 0, dblist->count,
+	திரும்பு ext2fs_dblist_iterate3(dblist, func, 0, dblist->மொத்தம்,
 				      priv_data);
 }
 
-static EXT2_QSORT_TYPE dir_block_cmp2(const void *a, const void *b)
+நிலையான EXT2_QSORT_TYPE dir_block_cmp2(மாறிலி வெறுமை *a, மாறிலி வெறுமை *b)
 {
-	const struct ext2_db_entry2 *db_a =
-		(const struct ext2_db_entry2 *) a;
-	const struct ext2_db_entry2 *db_b =
-		(const struct ext2_db_entry2 *) b;
+	மாறிலி கட்டமைப்பு ext2_db_entry2 *db_a =
+		(மாறிலி கட்டமைப்பு ext2_db_entry2 *) a;
+	மாறிலி கட்டமைப்பு ext2_db_entry2 *db_b =
+		(மாறிலி கட்டமைப்பு ext2_db_entry2 *) b;
 
-	if (db_a->blk != db_b->blk)
-		return (int) (db_a->blk - db_b->blk);
+	எனில் (db_a->blk != db_b->blk)
+		திரும்பு (முழு) (db_a->blk - db_b->blk);
 
-	if (db_a->ino != db_b->ino)
-		return (int) (db_a->ino - db_b->ino);
+	எனில் (db_a->ino != db_b->ino)
+		திரும்பு (முழு) (db_a->ino - db_b->ino);
 
-	return (db_a->blockcnt - db_b->blockcnt);
+	திரும்பு (db_a->blockcnt - db_b->blockcnt);
 }
 
 blk64_t ext2fs_dblist_count2(ext2_dblist dblist)
 {
-	return dblist->count;
+	திரும்பு dblist->மொத்தம்;
 }
 
 errcode_t ext2fs_dblist_get_last2(ext2_dblist dblist,
-				  struct ext2_db_entry2 **entry)
+				  கட்டமைப்பு ext2_db_entry2 **entry)
 {
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count == 0)
-		return EXT2_ET_DBLIST_EMPTY;
+	எனில் (dblist->மொத்தம் == 0)
+		திரும்பு EXT2_ET_DBLIST_EMPTY;
 
-	if (entry)
-		*entry = dblist->list + ( dblist->count-1);
-	return 0;
+	எனில் (entry)
+		*entry = dblist->list + ( dblist->மொத்தம்-1);
+	திரும்பு 0;
 }
 
 errcode_t ext2fs_dblist_drop_last(ext2_dblist dblist)
 {
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count == 0)
-		return EXT2_ET_DBLIST_EMPTY;
+	எனில் (dblist->மொத்தம் == 0)
+		திரும்பு EXT2_ET_DBLIST_EMPTY;
 
-	dblist->count--;
-	return 0;
+	dblist->மொத்தம்--;
+	திரும்பு 0;
 }
 
 /*
@@ -283,85 +283,85 @@ errcode_t ext2fs_dblist_drop_last(ext2_dblist dblist)
  * Add a directory block to the directory block list
  */
 errcode_t ext2fs_add_dir_block(ext2_dblist dblist, ext2_ino_t ino, blk_t blk,
-			       int blockcnt)
+			       முழு blockcnt)
 {
-	return ext2fs_add_dir_block2(dblist, ino, blk, blockcnt);
+	திரும்பு ext2fs_add_dir_block2(dblist, ino, blk, blockcnt);
 }
 
 /*
  * Change the directory block to the directory block list
  */
 errcode_t ext2fs_set_dir_block(ext2_dblist dblist, ext2_ino_t ino, blk_t blk,
-			       int blockcnt)
+			       முழு blockcnt)
 {
-	return ext2fs_set_dir_block2(dblist, ino, blk, blockcnt);
+	திரும்பு ext2fs_set_dir_block2(dblist, ino, blk, blockcnt);
 }
 
-void ext2fs_dblist_sort(ext2_dblist dblist,
-			EXT2_QSORT_TYPE (*sortfunc)(const void *,
-						    const void *))
+வெறுமை ext2fs_dblist_sort(ext2_dblist dblist,
+			EXT2_QSORT_TYPE (*sortfunc)(மாறிலி வெறுமை *,
+						    மாறிலி வெறுமை *))
 {
-	if (sortfunc) {
+	எனில் (sortfunc) {
 		sortfunc32 = sortfunc;
 		sortfunc = dir_block_cmp;
-	} else
+	} இல்லையெனில்
 		sortfunc = dir_block_cmp2;
-	qsort(dblist->list, (size_t) dblist->count,
-	      sizeof(struct ext2_db_entry2), sortfunc);
+	qsort(dblist->list, (size_t) dblist->மொத்தம்,
+	      அளவு(கட்டமைப்பு ext2_db_entry2), sortfunc);
 	dblist->sorted = 1;
 }
 
 /*
  * This function iterates over the directory block list
  */
-struct iterate_passthrough {
-	int (*func)(ext2_filsys fs,
-		    struct ext2_db_entry *db_info,
-		    void	*priv_data);
-	void *priv_data;
+கட்டமைப்பு iterate_passthrough {
+	முழு (*func)(ext2_filsys fs,
+		    கட்டமைப்பு ext2_db_entry *db_info,
+		    வெறுமை	*priv_data);
+	வெறுமை *priv_data;
 };
 
-static int passthrough_func(ext2_filsys fs,
-			    struct ext2_db_entry2 *db_info,
-			    void	*priv_data)
+நிலையான முழு passthrough_func(ext2_filsys fs,
+			    கட்டமைப்பு ext2_db_entry2 *db_info,
+			    வெறுமை	*priv_data)
 {
-	struct iterate_passthrough *p = priv_data;
-	struct ext2_db_entry db;
-	int ret;
+	கட்டமைப்பு iterate_passthrough *p = priv_data;
+	கட்டமைப்பு ext2_db_entry db;
+	முழு ret;
 
 	db.ino = db_info->ino;
 	db.blk = (blk_t) db_info->blk;
-	db.blockcnt = (int) db_info->blockcnt;
+	db.blockcnt = (முழு) db_info->blockcnt;
 	ret = (p->func)(fs, &db, p->priv_data);
 	db_info->ino = db.ino;
 	db_info->blk = db.blk;
 	db_info->blockcnt = db.blockcnt;
-	return ret;
+	திரும்பு ret;
 }
 
 errcode_t ext2fs_dblist_iterate(ext2_dblist dblist,
-				int (*func)(ext2_filsys fs,
-					    struct ext2_db_entry *db_info,
-					    void	*priv_data),
-				void *priv_data)
+				முழு (*func)(ext2_filsys fs,
+					    கட்டமைப்பு ext2_db_entry *db_info,
+					    வெறுமை	*priv_data),
+				வெறுமை *priv_data)
 {
-	struct iterate_passthrough pass;
+	கட்டமைப்பு iterate_passthrough pass;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 	pass.func = func;
 	pass.priv_data = priv_data;
 
-	return ext2fs_dblist_iterate2(dblist, passthrough_func, &pass);
+	திரும்பு ext2fs_dblist_iterate2(dblist, passthrough_func, &pass);
 }
 
-static EXT2_QSORT_TYPE dir_block_cmp(const void *a, const void *b)
+நிலையான EXT2_QSORT_TYPE dir_block_cmp(மாறிலி வெறுமை *a, மாறிலி வெறுமை *b)
 {
-	const struct ext2_db_entry2 *db_a =
-		(const struct ext2_db_entry2 *) a;
-	const struct ext2_db_entry2 *db_b =
-		(const struct ext2_db_entry2 *) b;
+	மாறிலி கட்டமைப்பு ext2_db_entry2 *db_a =
+		(மாறிலி கட்டமைப்பு ext2_db_entry2 *) a;
+	மாறிலி கட்டமைப்பு ext2_db_entry2 *db_b =
+		(மாறிலி கட்டமைப்பு ext2_db_entry2 *) b;
 
-	struct ext2_db_entry a32, b32;
+	கட்டமைப்பு ext2_db_entry a32, b32;
 
 	a32.ino = db_a->ino;  a32.blk = db_a->blk;
 	a32.blockcnt = db_a->blockcnt;
@@ -369,35 +369,35 @@ static EXT2_QSORT_TYPE dir_block_cmp(const void *a, const void *b)
 	b32.ino = db_b->ino;  b32.blk = db_b->blk;
 	b32.blockcnt = db_b->blockcnt;
 
-	return sortfunc32(&a32, &b32);
+	திரும்பு sortfunc32(&a32, &b32);
 }
 
-int ext2fs_dblist_count(ext2_dblist dblist)
+முழு ext2fs_dblist_மொத்தம்(ext2_dblist dblist)
 {
-	return dblist->count;
+	திரும்பு dblist->மொத்தம்;
 }
 
 errcode_t ext2fs_dblist_get_last(ext2_dblist dblist,
-				 struct ext2_db_entry **entry)
+				 கட்டமைப்பு ext2_db_entry **entry)
 {
-	static struct ext2_db_entry ret_entry;
-	struct ext2_db_entry2 *last;
+	நிலையான கட்டமைப்பு ext2_db_entry ret_entry;
+	கட்டமைப்பு ext2_db_entry2 *last;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count == 0)
-		return EXT2_ET_DBLIST_EMPTY;
+	எனில் (dblist->மொத்தம் == 0)
+		திரும்பு EXT2_ET_DBLIST_EMPTY;
 
-	if (!entry)
-		return 0;
+	எனில் (!entry)
+		திரும்பு 0;
 
-	last = dblist->list + dblist->count -1;
+	last = dblist->list + dblist->மொத்தம் -1;
 
 	ret_entry.ino = last->ino;
 	ret_entry.blk = last->blk;
 	ret_entry.blockcnt = last->blockcnt;
 	*entry = &ret_entry;
 
-	return 0;
+	திரும்பு 0;
 }
 

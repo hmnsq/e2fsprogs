@@ -10,58 +10,58 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#எனில் HAVE_UNISTD_H
+#அந்தர்பாவ <unistd.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#அந்தர்பாவ "ext2_fs.h"
+#அந்தர்பாவ "ext2fs.h"
 
-errcode_t ext2fs_read_ind_block(ext2_filsys fs, blk_t blk, void *buf)
+errcode_t ext2fs_read_ind_block(ext2_filsys fs, blk_t blk, வெறுமை *buf)
 {
 	errcode_t	retval;
-#ifdef WORDS_BIGENDIAN
+#ifdef சொற்கள்_BIGENDIAN
 	blk_t		*block_nr;
-	int		i;
-	int		limit = fs->blocksize >> 2;
+	முழு		i;
+	முழு		limit = fs->blocksize >> 2;
 #endif
 
-	if ((fs->flags & EXT2_FLAG_IMAGE_FILE) &&
+	எனில் ((fs->flags & EXT2_FLAG_IMAGE_FILE) &&
 	    (fs->io != fs->image_io))
 		memset(buf, 0, fs->blocksize);
-	else {
+	இல்லையெனில் {
 		retval = io_channel_read_blk(fs->io, blk, 1, buf);
-		if (retval)
-			return retval;
+		எனில் (retval)
+			திரும்பு retval;
 	}
-#ifdef WORDS_BIGENDIAN
+#ifdef சொற்கள்_BIGENDIAN
 	block_nr = (blk_t *) buf;
-	for (i = 0; i < limit; i++, block_nr++)
+	க்கு (i = 0; i < limit; i++, block_nr++)
 		*block_nr = ext2fs_swab32(*block_nr);
 #endif
-	return 0;
+	திரும்பு 0;
 }
 
-errcode_t ext2fs_write_ind_block(ext2_filsys fs, blk_t blk, void *buf)
+errcode_t ext2fs_write_ind_block(ext2_filsys fs, blk_t blk, வெறுமை *buf)
 {
-#ifdef WORDS_BIGENDIAN
+#ifdef சொற்கள்_BIGENDIAN
 	blk_t		*block_nr;
-	int		i;
-	int		limit = fs->blocksize >> 2;
+	முழு		i;
+	முழு		limit = fs->blocksize >> 2;
 #endif
 
-	if (fs->flags & EXT2_FLAG_IMAGE_FILE)
-		return 0;
+	எனில் (fs->flags & EXT2_FLAG_IMAGE_FILE)
+		திரும்பு 0;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef சொற்கள்_BIGENDIAN
 	block_nr = (blk_t *) buf;
-	for (i = 0; i < limit; i++, block_nr++)
+	க்கு (i = 0; i < limit; i++, block_nr++)
 		*block_nr = ext2fs_swab32(*block_nr);
 #endif
-	return io_channel_write_blk(fs->io, blk, 1, buf);
+	திரும்பு io_channel_write_blk(fs->io, blk, 1, buf);
 }
 
 

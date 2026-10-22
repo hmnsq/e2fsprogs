@@ -9,22 +9,22 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#எனில் HAVE_UNISTD_H
+#அந்தர்பாவ <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <time.h>
+#அந்தர்பாவ <sys/stat.h>
+#அந்தர்பாவ <sys/types.h>
+#எனில் HAVE_ERRNO_H
+#அந்தர்பாவ <errno.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#அந்தர்பாவ "ext2_fs.h"
+#அந்தர்பாவ "ext2fs.h"
 
 __u16 test1[] = {
 	0x0001, 0x0100,
@@ -45,49 +45,49 @@ __u32 test2[] = {
 	0x00000000, 0x00000000
 	};
 
-int main(int argc, char **argv)
+முழு முதன்மை(முழு argc, எழுத்து **argv)
 {
-	int	i;
-	int	errors = 0;
+	முழு	i;
+	முழு	errors = 0;
 
 	printf("Testing ext2fs_swab16\n");
 	i=0;
-	do {
+	செய் {
 		printf("swab16(0x%04x) = 0x%04x\n", test1[i],
 		       ext2fs_swab16(test1[i]));
-		if (ext2fs_swab16(test1[i]) != test1[i+1]) {
+		எனில் (ext2fs_swab16(test1[i]) != test1[i+1]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab16(test1[i]), test1[i+1]);
 			errors++;
 		}
-		if (ext2fs_swab16(test1[i+1]) != test1[i]) {
+		எனில் (ext2fs_swab16(test1[i+1]) != test1[i]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab16(test1[i+1]), test1[i]);
 			errors++;
 		}
 		i += 2;
-	} while (test1[i] != 0);
+	} போது (test1[i] != 0);
 
 	printf("Testing ext2fs_swab32\n");
 	i = 0;
-	do {
+	செய் {
 		printf("swab32(0x%08x) = 0x%08x\n", test2[i],
 		       ext2fs_swab32(test2[i]));
-		if (ext2fs_swab32(test2[i]) != test2[i+1]) {
+		எனில் (ext2fs_swab32(test2[i]) != test2[i+1]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab32(test2[i]), test2[i+1]);
 			errors++;
 		}
-		if (ext2fs_swab32(test2[i+1]) != test2[i]) {
+		எனில் (ext2fs_swab32(test2[i+1]) != test2[i]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab32(test2[i+1]), test2[i]);
 			errors++;
 		}
 		i += 2;
-	} while (test2[i] != 0);
+	} போது (test2[i] != 0);
 
-	if (!errors)
+	எனில் (!errors)
 		printf("No errors found in the byteswap implementation!\n");
 
-	return errors;
+	திரும்பு errors;
 }

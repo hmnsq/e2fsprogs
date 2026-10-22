@@ -9,102 +9,102 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#அந்தர்பாவ "config.h"
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#எனில் HAVE_UNISTD_H
+#அந்தர்பாவ <unistd.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#அந்தர்பாவ "ext2_fs.h"
+#அந்தர்பாவ "ext2fs.h"
+#அந்தர்பாவ "ext2fsP.h"
 
-struct expand_dir_struct {
-	int		done;
-	int		newblocks;
+கட்டமைப்பு expand_dir_struct {
+	முழு		done;
+	முழு		newblocks;
 	blk64_t		goal;
 	errcode_t	err;
 	ext2_ino_t	dir;
 };
 
-static int expand_dir_proc(ext2_filsys	fs,
+நிலையான முழு expand_dir_proc(ext2_filsys	fs,
 			   blk64_t	*blocknr,
 			   e2_blkcnt_t	blockcnt,
 			   blk64_t	ref_block EXT2FS_ATTR((unused)),
-			   int		ref_offset EXT2FS_ATTR((unused)),
-			   void		*priv_data)
+			   முழு		ref_offset EXT2FS_ATTR((unused)),
+			   வெறுமை		*priv_data)
 {
-	struct expand_dir_struct *es = (struct expand_dir_struct *) priv_data;
+	கட்டமைப்பு expand_dir_struct *es = (கட்டமைப்பு expand_dir_struct *) priv_data;
 	blk64_t	new_blk;
-	char		*block;
+	எழுத்து		*block;
 	errcode_t	retval;
 
-	if (*blocknr) {
-		if (blockcnt >= 0)
+	எனில் (*blocknr) {
+		எனில் (blockcnt >= 0)
 			es->goal = *blocknr;
-		return 0;
+		திரும்பு 0;
 	}
-	if (blockcnt &&
+	எனில் (blockcnt &&
 	    (EXT2FS_B2C(fs, es->goal) == EXT2FS_B2C(fs, es->goal+1)))
 		new_blk = es->goal+1;
-	else {
+	இல்லையெனில் {
 		es->goal &= ~EXT2FS_CLUSTER_MASK(fs);
 		retval = ext2fs_new_block2(fs, es->goal, 0, &new_blk);
-		if (retval) {
+		எனில் (retval) {
 			es->err = retval;
-			return BLOCK_ABORT;
+			திரும்பு BLOCK_ABORT;
 		}
 		es->newblocks++;
 		ext2fs_block_alloc_stats2(fs, new_blk, +1);
 	}
-	if (blockcnt > 0) {
+	எனில் (blockcnt > 0) {
 		retval = ext2fs_new_dir_block(fs, 0, 0, &block);
-		if (retval) {
+		எனில் (retval) {
 			es->err = retval;
-			return BLOCK_ABORT;
+			திரும்பு BLOCK_ABORT;
 		}
 		es->done = 1;
 		retval = ext2fs_write_dir_block4(fs, new_blk, block, 0,
 						 es->dir);
 		ext2fs_free_mem(&block);
-	} else
-		retval = ext2fs_zero_blocks2(fs, new_blk, 1, NULL, NULL);
-	if (blockcnt >= 0)
+	} இல்லையெனில்
+		retval = ext2fs_zero_blocks2(fs, new_blk, 1, வெற்று, வெற்று);
+	எனில் (blockcnt >= 0)
 		es->goal = new_blk;
-	if (retval) {
+	எனில் (retval) {
 		es->err = retval;
-		return BLOCK_ABORT;
+		திரும்பு BLOCK_ABORT;
 	}
 	*blocknr = new_blk;
 
-	if (es->done)
-		return (BLOCK_CHANGED | BLOCK_ABORT);
-	else
-		return BLOCK_CHANGED;
+	எனில் (es->done)
+		திரும்பு (BLOCK_CHANGED | BLOCK_ABORT);
+	இல்லையெனில்
+		திரும்பு BLOCK_CHANGED;
 }
 
 errcode_t ext2fs_expand_dir(ext2_filsys fs, ext2_ino_t dir)
 {
 	errcode_t	retval;
-	struct expand_dir_struct es;
-	struct ext2_inode	inode;
+	கட்டமைப்பு expand_dir_struct es;
+	கட்டமைப்பு ext2_inode	inode;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	எனில் (!(fs->flags & EXT2_FLAG_RW))
+		திரும்பு EXT2_ET_RO_FILSYS;
 
-	if (!fs->block_map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
+	எனில் (!fs->block_map)
+		திரும்பு EXT2_ET_NO_BLOCK_BITMAP;
 
 	retval = ext2fs_check_directory(fs, dir);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 
 	retval = ext2fs_read_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 
 	es.done = 0;
 	es.err = 0;
@@ -114,30 +114,30 @@ errcode_t ext2fs_expand_dir(ext2_filsys fs, ext2_ino_t dir)
 
 	retval = ext2fs_block_iterate3(fs, dir, BLOCK_FLAG_APPEND,
 				       0, expand_dir_proc, &es);
-	if (retval == EXT2_ET_INLINE_DATA_CANT_ITERATE)
-		return ext2fs_inline_data_expand(fs, dir);
+	எனில் (retval == EXT2_ET_INLINE_DATA_CANT_ITERATE)
+		திரும்பு ext2fs_inline_data_expand(fs, dir);
 
-	if (es.err)
-		return es.err;
-	if (!es.done)
-		return EXT2_ET_EXPAND_DIR_ERR;
+	எனில் (es.err)
+		திரும்பு es.err;
+	எனில் (!es.done)
+		திரும்பு EXT2_ET_EXPAND_DIR_ERR;
 
 	/*
 	 * Update the size and block count fields in the inode.
 	 */
 	retval = ext2fs_read_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 
 	retval = ext2fs_inode_size_set(fs, &inode,
 				       EXT2_I_SIZE(&inode) + fs->blocksize);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 	ext2fs_iblk_add_blocks(fs, &inode, es.newblocks);
 
 	retval = ext2fs_write_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	எனில் (retval)
+		திரும்பு retval;
 
-	return 0;
+	திரும்பு 0;
 }
