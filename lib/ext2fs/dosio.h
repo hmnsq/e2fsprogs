@@ -20,35 +20,35 @@
 #endif
 
 #ifdef __TURBOC__
-#include "msdos.h"
+#अन्तर्भाव "msdos.h"
 #endif
 
 /*
  * A helper structure used in LBA => CHS conversion
  */
-typedef struct
+प्रकारनिर्देश संरचना
 {
-  unsigned short       cyl;     /* Cylinder (or track) */
-  unsigned short       head;
-  unsigned short       sector;
-  unsigned short       offset;  /* Offset of byte within the sector */
+  अचिन्हित लघु       cyl;     /* Cylinder (or track) */
+  अचिन्हित लघु       head;
+  अचिन्हित लघु       sector;
+  अचिन्हित लघु       offset;  /* Offset of byte within the sector */
 } CHS;
 
 /*
  * All partition data we need is here
  */
-typedef struct
+प्रकारनिर्देश संरचना
 {
-  char                 *dev;  /* _Linux_ device name (like "/dev/hda1") */
-  unsigned char        phys;  /* Physical DOS drive number */
-  unsigned long        start; /* LBA address of partition start */
-  unsigned long        len;   /* length of partition in sectors */
-  unsigned char        pno;   /* Partition number (read from *dev) */
+  वर्ण                 *dev;  /* _Linux_ device name (like "/dev/hda1") */
+  अचिन्हित वर्ण        phys;  /* Physical DOS drive number */
+  अचिन्हित दीर्घ        start; /* LBA address of partition start */
+  अचिन्हित दीर्घ        len;   /* length of partition in sectors */
+  अचिन्हित वर्ण        pno;   /* Partition number (read from *dev) */
 
   /* This partition's drive geometry */
-  unsigned short       cyls;
-  unsigned short       heads;
-  unsigned short       sects;
+  अचिन्हित लघु       cyls;
+  अचिन्हित लघु       heads;
+  अचिन्हित लघु       sects;
 } PARTITION;
 
 /*
@@ -57,18 +57,18 @@ typedef struct
 #ifdef __DJGPP__
 #pragma pack(1)
 #endif
-typedef struct
+प्रकारनिर्देश संरचना
 {
-  unsigned char        active;
-  unsigned char        start_head;
-  unsigned char        start_sec;
-  unsigned char        start_cyl;
-  unsigned char        type;
-  unsigned char        end_head;
-  unsigned char        end_sec;
-  unsigned char        end_cyl;
-  unsigned long        first_sec_rel;
-  unsigned long        size;
+  अचिन्हित वर्ण        active;
+  अचिन्हित वर्ण        start_head;
+  अचिन्हित वर्ण        start_sec;
+  अचिन्हित वर्ण        start_cyl;
+  अचिन्हित वर्ण        type;
+  अचिन्हित वर्ण        end_head;
+  अचिन्हित वर्ण        end_sec;
+  अचिन्हित वर्ण        end_cyl;
+  अचिन्हित दीर्घ        first_sec_rel;
+  अचिन्हित दीर्घ        size;
 } PTABLE_ENTRY;
 #ifdef __DJGPP__
 #pragma pack()
@@ -99,39 +99,39 @@ typedef struct
 /*
  * Variable contains last module's error
  */
-extern unsigned long        _dio_error;
+बाह्य अचिन्हित दीर्घ        _dio_error;
 
 /*
  * This one contains last hardware error (if _dio_error == ERR_HARDWARE)
  */
-extern unsigned long        _dio_hw_error;
+बाह्य अचिन्हित दीर्घ        _dio_hw_error;
 
 /*
  * Macros to check for disk hardware errors
  */
-#define HW_OK()             ((unsigned char)_dio_hw_error == 0x00)
-#define HW_BAD_CMD()        ((unsigned char)_dio_hw_error == 0x01)
-#define HW_NO_ADDR_MARK()   ((unsigned char)_dio_hw_error == 0x02)
-#define HW_WRITE_PROT()     ((unsigned char)_dio_hw_error == 0x03)
-#define HW_NO_SECTOR()      ((unsigned char)_dio_hw_error == 0x04)
-#define HW_RESET_FAIL()     ((unsigned char)_dio_hw_error == 0x05)
-#define HW_DISK_CHANGED()   ((unsigned char)_dio_hw_error == 0x06)
-#define HW_DRIVE_FAIL()     ((unsigned char)_dio_hw_error == 0x07)
-#define HW_DMA_OVERRUN()    ((unsigned char)_dio_hw_error == 0x08)
-#define HW_DMA_BOUNDARY()   ((unsigned char)_dio_hw_error == 0x09)
-#define HW_BAD_SECTOR()     ((unsigned char)_dio_hw_error == 0x0A)
-#define HW_BAD_TRACK()      ((unsigned char)_dio_hw_error == 0x0B)
-#define HW_UNSUPP_TRACK()   ((unsigned char)_dio_hw_error == 0x0C)
-#define HW_BAD_CRC_ECC()    ((unsigned char)_dio_hw_error == 0x10)
-#define HW_CRC_ECC_CORR()   ((unsigned char)_dio_hw_error == 0x11)
-#define HW_CONTR_FAIL()     ((unsigned char)_dio_hw_error == 0x20)
-#define HW_SEEK_FAIL()      ((unsigned char)_dio_hw_error == 0x40)
-#define HW_ATTACH_FAIL()    ((unsigned char)_dio_hw_error == 0x80)
-#define HW_DRIVE_NREADY()   ((unsigned char)_dio_hw_error == 0xAA)
-#define HW_UNDEF_ERROR()    ((unsigned char)_dio_hw_error == 0xBB)
-#define HW_WRITE_FAULT()    ((unsigned char)_dio_hw_error == 0xCC)
-#define HW_STATUS_ERROR()   ((unsigned char)_dio_hw_error == 0xE0)
-#define HW_SENSE_FAIL()     ((unsigned char)_dio_hw_error == 0xFF)
+#define HW_OK()             ((अचिन्हित वर्ण)_dio_hw_error == 0x00)
+#define HW_BAD_CMD()        ((अचिन्हित वर्ण)_dio_hw_error == 0x01)
+#define HW_NO_ADDR_MARK()   ((अचिन्हित वर्ण)_dio_hw_error == 0x02)
+#define HW_WRITE_PROT()     ((अचिन्हित वर्ण)_dio_hw_error == 0x03)
+#define HW_NO_SECTOR()      ((अचिन्हित वर्ण)_dio_hw_error == 0x04)
+#define HW_RESET_FAIL()     ((अचिन्हित वर्ण)_dio_hw_error == 0x05)
+#define HW_DISK_CHANGED()   ((अचिन्हित वर्ण)_dio_hw_error == 0x06)
+#define HW_DRIVE_FAIL()     ((अचिन्हित वर्ण)_dio_hw_error == 0x07)
+#define HW_DMA_OVERRUN()    ((अचिन्हित वर्ण)_dio_hw_error == 0x08)
+#define HW_DMA_BOUNDARY()   ((अचिन्हित वर्ण)_dio_hw_error == 0x09)
+#define HW_BAD_SECTOR()     ((अचिन्हित वर्ण)_dio_hw_error == 0x0A)
+#define HW_BAD_TRACK()      ((अचिन्हित वर्ण)_dio_hw_error == 0x0B)
+#define HW_UNSUPP_TRACK()   ((अचिन्हित वर्ण)_dio_hw_error == 0x0C)
+#define HW_BAD_CRC_ECC()    ((अचिन्हित वर्ण)_dio_hw_error == 0x10)
+#define HW_CRC_ECC_CORR()   ((अचिन्हित वर्ण)_dio_hw_error == 0x11)
+#define HW_CONTR_FAIL()     ((अचिन्हित वर्ण)_dio_hw_error == 0x20)
+#define HW_SEEK_FAIL()      ((अचिन्हित वर्ण)_dio_hw_error == 0x40)
+#define HW_ATTACH_FAIL()    ((अचिन्हित वर्ण)_dio_hw_error == 0x80)
+#define HW_DRIVE_NREADY()   ((अचिन्हित वर्ण)_dio_hw_error == 0xAA)
+#define HW_UNDEF_ERROR()    ((अचिन्हित वर्ण)_dio_hw_error == 0xBB)
+#define HW_WRITE_FAULT()    ((अचिन्हित वर्ण)_dio_hw_error == 0xCC)
+#define HW_STATUS_ERROR()   ((अचिन्हित वर्ण)_dio_hw_error == 0xE0)
+#define HW_SENSE_FAIL()     ((अचिन्हित वर्ण)_dio_hw_error == 0xFF)
 
 
 /*
@@ -152,6 +152,6 @@ extern unsigned long        _dio_hw_error;
  *
  * Routine returns 0 on success and !=0 otherwise.
  */
-int open_partition(char *dev);
+पूर्णाङ्क open_partition(वर्ण *dev);
 
 #endif /* __diskio_h */

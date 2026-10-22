@@ -2,167 +2,167 @@
  * io_manager.c --- the I/O manager abstraction
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <time.h>
+#यदि HAVE_SYS_STAT_H
+#अन्तर्भाव <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#यदि HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
 
-errcode_t io_channel_set_options(io_channel channel, const char *opts)
+errcode_t io_channel_set_options(io_channel channel, अचर वर्ण *opts)
 {
 	errcode_t retval = 0;
-	char *next, *ptr, *options, *arg;
+	वर्ण *next, *ptr, *options, *arg;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (!opts)
-		return 0;
+	यदि (!opts)
+		फर्काऊ 0;
 
-	if (!channel->manager->set_option)
-		return EXT2_ET_INVALID_ARGUMENT;
+	यदि (!channel->manager->set_option)
+		फर्काऊ EXT2_ET_INVALID_ARGUMENT;
 
-	options = malloc(strlen(opts)+1);
-	if (!options)
-		return EXT2_ET_NO_MEMORY;
-	strcpy(options, opts);
+	options = दो_स्मृति(म_माप(opts)+1);
+	यदि (!options)
+		फर्काऊ EXT2_ET_NO_MEMORY;
+	म_नकल(options, opts);
 	ptr = options;
 
-	while (ptr && *ptr) {
-		next = strchr(ptr, '&');
-		if (next)
+	जबसम्म (ptr && *ptr) {
+		next = म_अक्षर(ptr, '&');
+		यदि (next)
 			*next++ = 0;
 
-		arg = strchr(ptr, '=');
-		if (arg)
+		arg = म_अक्षर(ptr, '=');
+		यदि (arg)
 			*arg++ = 0;
 
 		retval = (channel->manager->set_option)(channel, ptr, arg);
-		if (retval)
-			break;
+		यदि (retval)
+			रोक;
 		ptr = next;
 	}
-	free(options);
-	return retval;
+	मुक्त(options);
+	फर्काऊ retval;
 }
 
-errcode_t io_channel_write_byte(io_channel channel, unsigned long offset,
-				int count, const void *data)
+errcode_t io_channel_write_byte(io_channel channel, अचिन्हित दीर्घ offset,
+				पूर्णाङ्क गन्ती, अचर शून्य *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_byte)
-		return channel->manager->write_byte(channel, offset,
-						    count, data);
+	यदि (channel->manager->write_byte)
+		फर्काऊ channel->manager->write_byte(channel, offset,
+						    गन्ती, data);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	फर्काऊ EXT2_ET_UNIMPLEMENTED;
 }
 
-errcode_t io_channel_read_blk64(io_channel channel, unsigned long long block,
-				 int count, void *data)
+errcode_t io_channel_read_blk64(io_channel channel, अचिन्हित दीर्घ दीर्घ block,
+				 पूर्णाङ्क गन्ती, शून्य *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->read_blk64)
-		return (channel->manager->read_blk64)(channel, block,
-						      count, data);
+	यदि (channel->manager->read_blk64)
+		फर्काऊ (channel->manager->read_blk64)(channel, block,
+						      गन्ती, data);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	यदि ((block >> 32) != 0)
+		फर्काऊ EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->read_blk)(channel, (unsigned long) block,
-					     count, data);
+	फर्काऊ (channel->manager->read_blk)(channel, (अचिन्हित दीर्घ) block,
+					     गन्ती, data);
 }
 
-errcode_t io_channel_write_blk64(io_channel channel, unsigned long long block,
-				 int count, const void *data)
+errcode_t io_channel_write_blk64(io_channel channel, अचिन्हित दीर्घ दीर्घ block,
+				 पूर्णाङ्क गन्ती, अचर शून्य *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_blk64)
-		return (channel->manager->write_blk64)(channel, block,
-						       count, data);
+	यदि (channel->manager->write_blk64)
+		फर्काऊ (channel->manager->write_blk64)(channel, block,
+						       गन्ती, data);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	यदि ((block >> 32) != 0)
+		फर्काऊ EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->write_blk)(channel, (unsigned long) block,
-					     count, data);
+	फर्काऊ (channel->manager->write_blk)(channel, (अचिन्हित दीर्घ) block,
+					     गन्ती, data);
 }
 
-errcode_t io_channel_discard(io_channel channel, unsigned long long block,
-			     unsigned long long count)
+errcode_t io_channel_discard(io_channel channel, अचिन्हित दीर्घ दीर्घ block,
+			     अचिन्हित दीर्घ दीर्घ गन्ती)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->discard)
-		return (channel->manager->discard)(channel, block, count);
+	यदि (channel->manager->discard)
+		फर्काऊ (channel->manager->discard)(channel, block, गन्ती);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	फर्काऊ EXT2_ET_UNIMPLEMENTED;
 }
 
-errcode_t io_channel_zeroout(io_channel channel, unsigned long long block,
-			     unsigned long long count)
+errcode_t io_channel_zeroout(io_channel channel, अचिन्हित दीर्घ दीर्घ block,
+			     अचिन्हित दीर्घ दीर्घ गन्ती)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->zeroout)
-		return (channel->manager->zeroout)(channel, block, count);
+	यदि (channel->manager->zeroout)
+		फर्काऊ (channel->manager->zeroout)(channel, block, गन्ती);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	फर्काऊ EXT2_ET_UNIMPLEMENTED;
 }
 
-errcode_t io_channel_alloc_buf(io_channel io, int count, void *ptr)
+errcode_t io_channel_alloc_buf(io_channel io, पूर्णाङ्क गन्ती, शून्य *ptr)
 {
-	size_t	size;
+	माप_प्रकार	size;
 
-	if (count == 0)
+	यदि (गन्ती == 0)
 		size = io->block_size;
-	else if (count > 0)
-		size = io->block_size * count;
-	else
-		size = -count;
+	अन्यथा यदि (गन्ती > 0)
+		size = io->block_size * गन्ती;
+	अन्यथा
+		size = -गन्ती;
 
-	if (io->align > 0) {
-		if ((unsigned) io->align > size)
+	यदि (io->align > 0) {
+		यदि ((अचिन्हित) io->align > size)
 			size = io->align;
-		return ext2fs_get_memalign(size, io->align, ptr);
-	} else
-		return ext2fs_get_mem(size, ptr);
+		फर्काऊ ext2fs_get_memalign(size, io->align, ptr);
+	} अन्यथा
+		फर्काऊ ext2fs_get_mem(size, ptr);
 }
 
-errcode_t io_channel_cache_readahead(io_channel io, unsigned long long block,
-				     unsigned long long count)
+errcode_t io_channel_cache_readahead(io_channel io, अचिन्हित दीर्घ दीर्घ block,
+				     अचिन्हित दीर्घ दीर्घ गन्ती)
 {
-	if (!io->manager->cache_readahead)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	यदि (!io->manager->cache_readahead)
+		फर्काऊ EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->cache_readahead(io, block, count);
+	फर्काऊ io->manager->cache_readahead(io, block, गन्ती);
 }
 
-errcode_t io_channel_flock(io_channel io, unsigned int flock_flags)
+errcode_t io_channel_flock(io_channel io, अचिन्हित पूर्णाङ्क flock_flags)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	यदि (!io->manager->flock)
+		फर्काऊ EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, flock_flags);
+	फर्काऊ io->manager->flock(io, flock_flags);
 }
 
 errcode_t io_channel_funlock(io_channel io)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	यदि (!io->manager->flock)
+		फर्काऊ EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, 0);
+	फर्काऊ io->manager->flock(io, 0);
 }

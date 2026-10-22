@@ -9,105 +9,105 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
 #endif
-#include <string.h>
-#include <time.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
 
 errcode_t ext2fs_read_dir_block4(ext2_filsys fs, blk64_t block,
-				 void *buf, int flags EXT2FS_ATTR((unused)),
+				 शून्य *buf, पूर्णाङ्क flags EXT2FS_ATTR((unused)),
 				 ext2_ino_t ino)
 {
 	errcode_t	retval;
-	int		corrupt = 0;
+	पूर्णाङ्क		corrupt = 0;
 
 	retval = io_channel_read_blk64(fs->io, block, 1, buf);
-	if (retval)
-		return retval;
+	यदि (retval)
+		फर्काऊ retval;
 
-	if (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+	यदि (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
 	    !ext2fs_dir_block_csum_verify(fs, ino,
-					  (struct ext2_dir_entry *)buf))
+					  (संरचना ext2_dir_entry *)buf))
 		corrupt = 1;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef शब्दहरू_BIGENDIAN
 	retval = ext2fs_dirent_swab_in(fs, buf, flags);
 #endif
-	if (!retval && corrupt)
+	यदि (!retval && corrupt)
 		retval = EXT2_ET_DIR_CSUM_INVALID;
-	return retval;
+	फर्काऊ retval;
 }
 
 errcode_t ext2fs_read_dir_block3(ext2_filsys fs, blk64_t block,
-				 void *buf, int flags EXT2FS_ATTR((unused)))
+				 शून्य *buf, पूर्णाङ्क flags EXT2FS_ATTR((unused)))
 {
-	return ext2fs_read_dir_block4(fs, block, buf, flags, 0);
+	फर्काऊ ext2fs_read_dir_block4(fs, block, buf, flags, 0);
 }
 
 errcode_t ext2fs_read_dir_block2(ext2_filsys fs, blk_t block,
-				 void *buf, int flags EXT2FS_ATTR((unused)))
+				 शून्य *buf, पूर्णाङ्क flags EXT2FS_ATTR((unused)))
 {
-	return ext2fs_read_dir_block3(fs, block, buf, flags);
+	फर्काऊ ext2fs_read_dir_block3(fs, block, buf, flags);
 }
 
 errcode_t ext2fs_read_dir_block(ext2_filsys fs, blk_t block,
-				 void *buf)
+				 शून्य *buf)
 {
-	return ext2fs_read_dir_block3(fs, block, buf, 0);
+	फर्काऊ ext2fs_read_dir_block3(fs, block, buf, 0);
 }
 
 
 errcode_t ext2fs_write_dir_block4(ext2_filsys fs, blk64_t block,
-				  void *inbuf, int flags EXT2FS_ATTR((unused)),
+				  शून्य *inbuf, पूर्णाङ्क flags EXT2FS_ATTR((unused)),
 				  ext2_ino_t ino)
 {
 	errcode_t	retval;
-	char		*buf = inbuf;
+	वर्ण		*buf = inbuf;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef शब्दहरू_BIGENDIAN
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
-	memcpy(buf, inbuf, fs->blocksize);
+	यदि (retval)
+		फर्काऊ retval;
+	स_नकल(buf, inbuf, fs->blocksize);
 	retval = ext2fs_dirent_swab_out(fs, buf, flags);
-	if (retval)
-		return retval;
+	यदि (retval)
+		फर्काऊ retval;
 #endif
 	retval = ext2fs_dir_block_csum_set(fs, ino,
-					   (struct ext2_dir_entry *)buf);
-	if (retval)
-		goto out;
+					   (संरचना ext2_dir_entry *)buf);
+	यदि (retval)
+		गच्छ out;
 
 	retval = io_channel_write_blk64(fs->io, block, 1, buf);
 
 out:
-#ifdef WORDS_BIGENDIAN
+#ifdef शब्दहरू_BIGENDIAN
 	ext2fs_free_mem(&buf);
 #endif
-	return retval;
+	फर्काऊ retval;
 }
 
 errcode_t ext2fs_write_dir_block3(ext2_filsys fs, blk64_t block,
-				  void *inbuf, int flags EXT2FS_ATTR((unused)))
+				  शून्य *inbuf, पूर्णाङ्क flags EXT2FS_ATTR((unused)))
 {
-	return ext2fs_write_dir_block4(fs, block, inbuf, flags, 0);
+	फर्काऊ ext2fs_write_dir_block4(fs, block, inbuf, flags, 0);
 }
 
 errcode_t ext2fs_write_dir_block2(ext2_filsys fs, blk_t block,
-				 void *inbuf, int flags EXT2FS_ATTR((unused)))
+				 शून्य *inbuf, पूर्णाङ्क flags EXT2FS_ATTR((unused)))
 {
-	return ext2fs_write_dir_block3(fs, block, inbuf, flags);
+	फर्काऊ ext2fs_write_dir_block3(fs, block, inbuf, flags);
 }
 
 errcode_t ext2fs_write_dir_block(ext2_filsys fs, blk_t block,
-				 void *inbuf)
+				 शून्य *inbuf)
 {
-	return ext2fs_write_dir_block3(fs, block, inbuf, 0);
+	फर्काऊ ext2fs_write_dir_block3(fs, block, inbuf, 0);
 }
 

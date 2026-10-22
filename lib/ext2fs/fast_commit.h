@@ -3,7 +3,7 @@
 #ifndef __FAST_COMMIT_H__
 #define __FAST_COMMIT_H__
 
-#include "jfs_compat.h"
+#अन्तर्भाव "jfs_compat.h"
 
 /*
  * Note this file is present in e2fsprogs/lib/ext2fs/fast_commit.h and
@@ -26,25 +26,25 @@
 /* On disk fast commit tlv value structures */
 
 /* Fast commit on disk tag length structure */
-struct ext4_fc_tl {
+संरचना ext4_fc_tl {
 	__le16 fc_tag;
 	__le16 fc_len;
 };
 
 /* Value structure for tag EXT4_FC_TAG_HEAD. */
-struct ext4_fc_head {
+संरचना ext4_fc_head {
 	__le32 fc_features;
 	__le32 fc_tid;
 };
 
 /* Value structure for EXT4_FC_TAG_ADD_RANGE. */
-struct ext4_fc_add_range {
+संरचना ext4_fc_add_range {
 	__le32 fc_ino;
 	__u8 fc_ex[12];
 };
 
 /* Value structure for tag EXT4_FC_TAG_DEL_RANGE. */
-struct ext4_fc_del_range {
+संरचना ext4_fc_del_range {
 	__le32 fc_ino;
 	__le32 fc_lblk;
 	__le32 fc_len;
@@ -54,20 +54,20 @@ struct ext4_fc_del_range {
  * This is the value structure for tags EXT4_FC_TAG_CREAT, EXT4_FC_TAG_LINK
  * and EXT4_FC_TAG_UNLINK.
  */
-struct ext4_fc_dentry_info {
+संरचना ext4_fc_dentry_info {
 	__le32 fc_parent_ino;
 	__le32 fc_ino;
 	__u8 fc_dname[0];
 };
 
 /* Value structure for EXT4_FC_TAG_INODE and EXT4_FC_TAG_INODE_PARTIAL. */
-struct ext4_fc_inode {
+संरचना ext4_fc_inode {
 	__le32 fc_ino;
 	__u8 fc_raw_inode[0];
 };
 
 /* Value structure for tag EXT4_FC_TAG_TAIL. */
-struct ext4_fc_tail {
+संरचना ext4_fc_tail {
 	__le32 fc_tid;
 	__le32 fc_crc;
 };
@@ -75,7 +75,7 @@ struct ext4_fc_tail {
 /*
  * Fast commit reason codes
  */
-enum {
+गणना {
 	/*
 	 * Commit status codes:
 	 */
@@ -106,20 +106,20 @@ enum {
  * In memory list of dentry updates that are performed on the file
  * system used by fast commit code.
  */
-struct ext4_fc_dentry_update {
-	int fcd_op;		/* Type of update create / unlink / link */
-	int fcd_parent;		/* Parent inode number */
-	int fcd_ino;		/* Inode number */
-	struct qstr fcd_name;	/* Dirent name */
-	unsigned char fcd_iname[DNAME_INLINE_LEN];	/* Dirent name string */
-	struct list_head fcd_list;
+संरचना ext4_fc_dentry_update {
+	पूर्णाङ्क fcd_op;		/* Type of update create / unlink / link */
+	पूर्णाङ्क fcd_parent;		/* Parent inode number */
+	पूर्णाङ्क fcd_ino;		/* Inode number */
+	संरचना qstr fcd_name;	/* Dirent name */
+	अचिन्हित वर्ण fcd_iname[DNAME_INLINE_LEN];	/* Dirent name string */
+	संरचना list_head fcd_list;
 };
 
-struct ext4_fc_stats {
-	unsigned int fc_ineligible_reason_count[EXT4_FC_REASON_MAX];
-	unsigned long fc_num_commits;
-	unsigned long fc_ineligible_commits;
-	unsigned long fc_numblks;
+संरचना ext4_fc_stats {
+	अचिन्हित पूर्णाङ्क fc_ineligible_reason_गन्ती[EXT4_FC_REASON_MAX];
+	अचिन्हित दीर्घ fc_अङ्क_commits;
+	अचिन्हित दीर्घ fc_ineligible_commits;
+	अचिन्हित दीर्घ fc_numblks;
 };
 
 #define EXT4_FC_REPLAY_REALLOC_INCREMENT	4
@@ -131,60 +131,60 @@ struct ext4_fc_stats {
  * we don't accidentally allocating a block that is going to be used by
  * another inode.
  */
-struct ext4_fc_alloc_region {
+संरचना ext4_fc_alloc_region {
 	ext4_lblk_t lblk;
 	ext4_fsblk_t pblk;
-	int ino, len;
+	पूर्णाङ्क ino, len;
 };
 
 /*
  * Fast commit replay state.
  */
-struct ext4_fc_replay_state {
-	int fc_replay_num_tags;
-	int fc_replay_expected_off;
-	int fc_current_pass;
-	int fc_cur_tag;
-	int fc_crc;
-	struct ext4_fc_alloc_region *fc_regions;
-	int fc_regions_size, fc_regions_used, fc_regions_valid;
-	int *fc_modified_inodes;
-	int fc_modified_inodes_used, fc_modified_inodes_size;
+संरचना ext4_fc_replay_state {
+	पूर्णाङ्क fc_replay_अङ्क_tags;
+	पूर्णाङ्क fc_replay_expected_off;
+	पूर्णाङ्क fc_current_pass;
+	पूर्णाङ्क fc_cur_tag;
+	पूर्णाङ्क fc_crc;
+	संरचना ext4_fc_alloc_region *fc_regions;
+	पूर्णाङ्क fc_regions_size, fc_regions_used, fc_regions_valid;
+	पूर्णाङ्क *fc_modified_inodes;
+	पूर्णाङ्क fc_modified_inodes_used, fc_modified_inodes_size;
 };
 
 #define region_last(__region) (((__region)->lblk) + ((__region)->len) - 1)
 #endif
 
-static inline const char *tag2str(__u16 tag)
+स्थिर अन्तःस्थ अचर वर्ण *tag2str(__u16 tag)
 {
-	switch (tag) {
-	case EXT4_FC_TAG_LINK:
-		return "ADD_ENTRY";
-	case EXT4_FC_TAG_UNLINK:
-		return "DEL_ENTRY";
-	case EXT4_FC_TAG_ADD_RANGE:
-		return "ADD_RANGE";
-	case EXT4_FC_TAG_CREAT:
-		return "CREAT_DENTRY";
-	case EXT4_FC_TAG_DEL_RANGE:
-		return "DEL_RANGE";
-	case EXT4_FC_TAG_INODE:
-		return "INODE";
-	case EXT4_FC_TAG_PAD:
-		return "PAD";
-	case EXT4_FC_TAG_TAIL:
-		return "TAIL";
-	case EXT4_FC_TAG_HEAD:
-		return "HEAD";
-	default:
-		return "ERROR";
+	विकल्प (tag) {
+	पक्ष EXT4_FC_TAG_LINK:
+		फर्काऊ "ADD_ENTRY";
+	पक्ष EXT4_FC_TAG_UNLINK:
+		फर्काऊ "DEL_ENTRY";
+	पक्ष EXT4_FC_TAG_ADD_RANGE:
+		फर्काऊ "ADD_RANGE";
+	पक्ष EXT4_FC_TAG_CREAT:
+		फर्काऊ "CREAT_DENTRY";
+	पक्ष EXT4_FC_TAG_DEL_RANGE:
+		फर्काऊ "DEL_RANGE";
+	पक्ष EXT4_FC_TAG_INODE:
+		फर्काऊ "INODE";
+	पक्ष EXT4_FC_TAG_PAD:
+		फर्काऊ "PAD";
+	पक्ष EXT4_FC_TAG_TAIL:
+		फर्काऊ "TAIL";
+	पक्ष EXT4_FC_TAG_HEAD:
+		फर्काऊ "HEAD";
+	स्वभाव:
+		फर्काऊ "ERROR";
 	}
 }
 
 /* Get length of a particular tlv */
-static inline int ext4_fc_tag_len(struct ext4_fc_tl *tl)
+स्थिर अन्तःस्थ पूर्णाङ्क ext4_fc_tag_len(संरचना ext4_fc_tl *tl)
 {
-	return le16_to_cpu(tl->fc_len);
+	फर्काऊ le16_to_cpu(tl->fc_len);
 }
 
 #endif /* __FAST_COMMIT_H__ */

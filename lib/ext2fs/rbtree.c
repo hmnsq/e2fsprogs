@@ -20,307 +20,307 @@
   linux/lib/rbtree.c
 */
 
-#include "rbtree.h"
+#अन्तर्भाव "rbtree.h"
 
-static void __rb_rotate_left(struct rb_node *node, struct rb_root *root)
+स्थिर शून्य __rb_rotate_left(संरचना rb_गाँठो *गाँठो, संरचना rb_जरा *जरा)
 {
-	struct rb_node *right = node->rb_right;
-	struct rb_node *parent = ext2fs_rb_parent(node);
+	संरचना rb_गाँठो *दायाँ = गाँठो->rb_दायाँ;
+	संरचना rb_गाँठो *parent = ext2fs_rb_parent(गाँठो);
 
-	if ((node->rb_right = right->rb_left))
-		ext2fs_rb_set_parent(right->rb_left, node);
-	right->rb_left = node;
+	यदि ((गाँठो->rb_दायाँ = दायाँ->rb_बायाँ))
+		ext2fs_rb_set_parent(दायाँ->rb_बायाँ, गाँठो);
+	दायाँ->rb_बायाँ = गाँठो;
 
-	ext2fs_rb_set_parent(right, parent);
+	ext2fs_rb_set_parent(दायाँ, parent);
 
-	if (parent)
+	यदि (parent)
 	{
-		if (node == parent->rb_left)
-			parent->rb_left = right;
-		else
-			parent->rb_right = right;
+		यदि (गाँठो == parent->rb_बायाँ)
+			parent->rb_बायाँ = दायाँ;
+		अन्यथा
+			parent->rb_दायाँ = दायाँ;
 	}
-	else
-		root->rb_node = right;
-	ext2fs_rb_set_parent(node, right);
+	अन्यथा
+		जरा->rb_गाँठो = दायाँ;
+	ext2fs_rb_set_parent(गाँठो, दायाँ);
 }
 
-static void __rb_rotate_right(struct rb_node *node, struct rb_root *root)
+स्थिर शून्य __rb_rotate_right(संरचना rb_गाँठो *गाँठो, संरचना rb_जरा *जरा)
 {
-	struct rb_node *left = node->rb_left;
-	struct rb_node *parent = ext2fs_rb_parent(node);
+	संरचना rb_गाँठो *बायाँ = गाँठो->rb_बायाँ;
+	संरचना rb_गाँठो *parent = ext2fs_rb_parent(गाँठो);
 
-	if ((node->rb_left = left->rb_right))
-		ext2fs_rb_set_parent(left->rb_right, node);
-	left->rb_right = node;
+	यदि ((गाँठो->rb_बायाँ = बायाँ->rb_दायाँ))
+		ext2fs_rb_set_parent(बायाँ->rb_दायाँ, गाँठो);
+	बायाँ->rb_दायाँ = गाँठो;
 
-	ext2fs_rb_set_parent(left, parent);
+	ext2fs_rb_set_parent(बायाँ, parent);
 
-	if (parent)
+	यदि (parent)
 	{
-		if (node == parent->rb_right)
-			parent->rb_right = left;
-		else
-			parent->rb_left = left;
+		यदि (गाँठो == parent->rb_दायाँ)
+			parent->rb_दायाँ = बायाँ;
+		अन्यथा
+			parent->rb_बायाँ = बायाँ;
 	}
-	else
-		root->rb_node = left;
-	ext2fs_rb_set_parent(node, left);
+	अन्यथा
+		जरा->rb_गाँठो = बायाँ;
+	ext2fs_rb_set_parent(गाँठो, बायाँ);
 }
 
-void ext2fs_rb_insert_color(struct rb_node *node, struct rb_root *root)
+शून्य ext2fs_rb_घुसाउ_color(संरचना rb_गाँठो *गाँठो, संरचना rb_जरा *जरा)
 {
-	struct rb_node *parent, *gparent;
+	संरचना rb_गाँठो *parent, *gparent;
 
-	while ((parent = ext2fs_rb_parent(node)) && ext2fs_rb_is_red(parent))
+	जबसम्म ((parent = ext2fs_rb_parent(गाँठो)) && ext2fs_rb_is_red(parent))
 	{
 		gparent = ext2fs_rb_parent(parent);
 
-		if (parent == gparent->rb_left)
+		यदि (parent == gparent->rb_बायाँ)
 		{
 			{
-				register struct rb_node *uncle = gparent->rb_right;
-				if (uncle && ext2fs_rb_is_red(uncle))
+				पञ्जिका संरचना rb_गाँठो *uncle = gparent->rb_दायाँ;
+				यदि (uncle && ext2fs_rb_is_red(uncle))
 				{
 					ext2fs_rb_set_black(uncle);
 					ext2fs_rb_set_black(parent);
 					ext2fs_rb_set_red(gparent);
-					node = gparent;
-					continue;
+					गाँठो = gparent;
+					जारी;
 				}
 			}
 
-			if (parent->rb_right == node)
+			यदि (parent->rb_दायाँ == गाँठो)
 			{
-				register struct rb_node *tmp;
-				__rb_rotate_left(parent, root);
+				पञ्जिका संरचना rb_गाँठो *tmp;
+				__rb_rotate_left(parent, जरा);
 				tmp = parent;
-				parent = node;
-				node = tmp;
+				parent = गाँठो;
+				गाँठो = tmp;
 			}
 
 			ext2fs_rb_set_black(parent);
 			ext2fs_rb_set_red(gparent);
-			__rb_rotate_right(gparent, root);
-		} else {
+			__rb_rotate_right(gparent, जरा);
+		} अन्यथा {
 			{
-				register struct rb_node *uncle = gparent->rb_left;
-				if (uncle && ext2fs_rb_is_red(uncle))
+				पञ्जिका संरचना rb_गाँठो *uncle = gparent->rb_बायाँ;
+				यदि (uncle && ext2fs_rb_is_red(uncle))
 				{
 					ext2fs_rb_set_black(uncle);
 					ext2fs_rb_set_black(parent);
 					ext2fs_rb_set_red(gparent);
-					node = gparent;
-					continue;
+					गाँठो = gparent;
+					जारी;
 				}
 			}
 
-			if (parent->rb_left == node)
+			यदि (parent->rb_बायाँ == गाँठो)
 			{
-				register struct rb_node *tmp;
-				__rb_rotate_right(parent, root);
+				पञ्जिका संरचना rb_गाँठो *tmp;
+				__rb_rotate_right(parent, जरा);
 				tmp = parent;
-				parent = node;
-				node = tmp;
+				parent = गाँठो;
+				गाँठो = tmp;
 			}
 
 			ext2fs_rb_set_black(parent);
 			ext2fs_rb_set_red(gparent);
-			__rb_rotate_left(gparent, root);
+			__rb_rotate_left(gparent, जरा);
 		}
 	}
 
-	ext2fs_rb_set_black(root->rb_node);
+	ext2fs_rb_set_black(जरा->rb_गाँठो);
 }
 
-static void __rb_erase_color(struct rb_node *node, struct rb_node *parent,
-			     struct rb_root *root)
+स्थिर शून्य __rb_erase_color(संरचना rb_गाँठो *गाँठो, संरचना rb_गाँठो *parent,
+			     संरचना rb_जरा *जरा)
 {
-	struct rb_node *other;
+	संरचना rb_गाँठो *other;
 
-	while ((!node || ext2fs_rb_is_black(node)) && node != root->rb_node)
+	जबसम्म ((!गाँठो || ext2fs_rb_is_black(गाँठो)) && गाँठो != जरा->rb_गाँठो)
 	{
-		if (parent->rb_left == node)
+		यदि (parent->rb_बायाँ == गाँठो)
 		{
-			other = parent->rb_right;
-			if (ext2fs_rb_is_red(other))
+			other = parent->rb_दायाँ;
+			यदि (ext2fs_rb_is_red(other))
 			{
 				ext2fs_rb_set_black(other);
 				ext2fs_rb_set_red(parent);
-				__rb_rotate_left(parent, root);
-				other = parent->rb_right;
+				__rb_rotate_left(parent, जरा);
+				other = parent->rb_दायाँ;
 			}
-			if ((!other->rb_left || ext2fs_rb_is_black(other->rb_left)) &&
-			    (!other->rb_right || ext2fs_rb_is_black(other->rb_right)))
+			यदि ((!other->rb_बायाँ || ext2fs_rb_is_black(other->rb_बायाँ)) &&
+			    (!other->rb_दायाँ || ext2fs_rb_is_black(other->rb_दायाँ)))
 			{
 				ext2fs_rb_set_red(other);
-				node = parent;
-				parent = ext2fs_rb_parent(node);
+				गाँठो = parent;
+				parent = ext2fs_rb_parent(गाँठो);
 			}
-			else
+			अन्यथा
 			{
-				if (!other->rb_right || ext2fs_rb_is_black(other->rb_right))
+				यदि (!other->rb_दायाँ || ext2fs_rb_is_black(other->rb_दायाँ))
 				{
-					ext2fs_rb_set_black(other->rb_left);
+					ext2fs_rb_set_black(other->rb_बायाँ);
 					ext2fs_rb_set_red(other);
-					__rb_rotate_right(other, root);
-					other = parent->rb_right;
+					__rb_rotate_right(other, जरा);
+					other = parent->rb_दायाँ;
 				}
 				ext2fs_rb_set_color(other, ext2fs_rb_color(parent));
 				ext2fs_rb_set_black(parent);
-				ext2fs_rb_set_black(other->rb_right);
-				__rb_rotate_left(parent, root);
-				node = root->rb_node;
-				break;
+				ext2fs_rb_set_black(other->rb_दायाँ);
+				__rb_rotate_left(parent, जरा);
+				गाँठो = जरा->rb_गाँठो;
+				रोक;
 			}
 		}
-		else
+		अन्यथा
 		{
-			other = parent->rb_left;
-			if (ext2fs_rb_is_red(other))
+			other = parent->rb_बायाँ;
+			यदि (ext2fs_rb_is_red(other))
 			{
 				ext2fs_rb_set_black(other);
 				ext2fs_rb_set_red(parent);
-				__rb_rotate_right(parent, root);
-				other = parent->rb_left;
+				__rb_rotate_right(parent, जरा);
+				other = parent->rb_बायाँ;
 			}
-			if ((!other->rb_left || ext2fs_rb_is_black(other->rb_left)) &&
-			    (!other->rb_right || ext2fs_rb_is_black(other->rb_right)))
+			यदि ((!other->rb_बायाँ || ext2fs_rb_is_black(other->rb_बायाँ)) &&
+			    (!other->rb_दायाँ || ext2fs_rb_is_black(other->rb_दायाँ)))
 			{
 				ext2fs_rb_set_red(other);
-				node = parent;
-				parent = ext2fs_rb_parent(node);
+				गाँठो = parent;
+				parent = ext2fs_rb_parent(गाँठो);
 			}
-			else
+			अन्यथा
 			{
-				if (!other->rb_left || ext2fs_rb_is_black(other->rb_left))
+				यदि (!other->rb_बायाँ || ext2fs_rb_is_black(other->rb_बायाँ))
 				{
-					ext2fs_rb_set_black(other->rb_right);
+					ext2fs_rb_set_black(other->rb_दायाँ);
 					ext2fs_rb_set_red(other);
-					__rb_rotate_left(other, root);
-					other = parent->rb_left;
+					__rb_rotate_left(other, जरा);
+					other = parent->rb_बायाँ;
 				}
 				ext2fs_rb_set_color(other, ext2fs_rb_color(parent));
 				ext2fs_rb_set_black(parent);
-				ext2fs_rb_set_black(other->rb_left);
-				__rb_rotate_right(parent, root);
-				node = root->rb_node;
-				break;
+				ext2fs_rb_set_black(other->rb_बायाँ);
+				__rb_rotate_right(parent, जरा);
+				गाँठो = जरा->rb_गाँठो;
+				रोक;
 			}
 		}
 	}
-	if (node)
-		ext2fs_rb_set_black(node);
+	यदि (गाँठो)
+		ext2fs_rb_set_black(गाँठो);
 }
 
-void ext2fs_rb_erase(struct rb_node *node, struct rb_root *root)
+शून्य ext2fs_rb_erase(संरचना rb_गाँठो *गाँठो, संरचना rb_जरा *जरा)
 {
-	struct rb_node *child, *parent;
-	int color;
+	संरचना rb_गाँठो *child, *parent;
+	पूर्णाङ्क color;
 
-	if (!node->rb_left)
-		child = node->rb_right;
-	else if (!node->rb_right)
-		child = node->rb_left;
-	else
+	यदि (!गाँठो->rb_बायाँ)
+		child = गाँठो->rb_दायाँ;
+	अन्यथा यदि (!गाँठो->rb_दायाँ)
+		child = गाँठो->rb_बायाँ;
+	अन्यथा
 	{
-		struct rb_node *old = node, *left;
+		संरचना rb_गाँठो *old = गाँठो, *बायाँ;
 
-		node = node->rb_right;
-		while ((left = node->rb_left) != NULL)
-			node = left;
+		गाँठो = गाँठो->rb_दायाँ;
+		जबसम्म ((बायाँ = गाँठो->rb_बायाँ) != रिक्त)
+			गाँठो = बायाँ;
 
-		if (ext2fs_rb_parent(old)) {
-			if (ext2fs_rb_parent(old)->rb_left == old)
-				ext2fs_rb_parent(old)->rb_left = node;
-			else
-				ext2fs_rb_parent(old)->rb_right = node;
-		} else
-			root->rb_node = node;
+		यदि (ext2fs_rb_parent(old)) {
+			यदि (ext2fs_rb_parent(old)->rb_बायाँ == old)
+				ext2fs_rb_parent(old)->rb_बायाँ = गाँठो;
+			अन्यथा
+				ext2fs_rb_parent(old)->rb_दायाँ = गाँठो;
+		} अन्यथा
+			जरा->rb_गाँठो = गाँठो;
 
-		child = node->rb_right;
-		parent = ext2fs_rb_parent(node);
-		color = ext2fs_rb_color(node);
+		child = गाँठो->rb_दायाँ;
+		parent = ext2fs_rb_parent(गाँठो);
+		color = ext2fs_rb_color(गाँठो);
 
-		if (parent == old) {
-			parent = node;
-		} else {
-			if (child)
+		यदि (parent == old) {
+			parent = गाँठो;
+		} अन्यथा {
+			यदि (child)
 				ext2fs_rb_set_parent(child, parent);
-			parent->rb_left = child;
+			parent->rb_बायाँ = child;
 
-			node->rb_right = old->rb_right;
-			ext2fs_rb_set_parent(old->rb_right, node);
+			गाँठो->rb_दायाँ = old->rb_दायाँ;
+			ext2fs_rb_set_parent(old->rb_दायाँ, गाँठो);
 		}
 
-		node->rb_parent_color = old->rb_parent_color;
-		node->rb_left = old->rb_left;
-		ext2fs_rb_set_parent(old->rb_left, node);
+		गाँठो->rb_parent_color = old->rb_parent_color;
+		गाँठो->rb_बायाँ = old->rb_बायाँ;
+		ext2fs_rb_set_parent(old->rb_बायाँ, गाँठो);
 
-		goto color;
+		गच्छ color;
 	}
 
-	parent = ext2fs_rb_parent(node);
-	color = ext2fs_rb_color(node);
+	parent = ext2fs_rb_parent(गाँठो);
+	color = ext2fs_rb_color(गाँठो);
 
-	if (child)
+	यदि (child)
 		ext2fs_rb_set_parent(child, parent);
-	if (parent)
+	यदि (parent)
 	{
-		if (parent->rb_left == node)
-			parent->rb_left = child;
-		else
-			parent->rb_right = child;
+		यदि (parent->rb_बायाँ == गाँठो)
+			parent->rb_बायाँ = child;
+		अन्यथा
+			parent->rb_दायाँ = child;
 	}
-	else
-		root->rb_node = child;
+	अन्यथा
+		जरा->rb_गाँठो = child;
 
  color:
-	if (color == RB_BLACK)
-		__rb_erase_color(child, parent, root);
+	यदि (color == RB_BLACK)
+		__rb_erase_color(child, parent, जरा);
 }
 
 /*
  * This function returns the first node (in sort order) of the tree.
  */
-struct rb_node *ext2fs_rb_first(const struct rb_root *root)
+संरचना rb_गाँठो *ext2fs_rb_first(अचर संरचना rb_जरा *जरा)
 {
-	struct rb_node	*n;
+	संरचना rb_गाँठो	*n;
 
-	n = root->rb_node;
-	if (!n)
-		return NULL;
-	while (n->rb_left)
-		n = n->rb_left;
-	return n;
+	n = जरा->rb_गाँठो;
+	यदि (!n)
+		फर्काऊ रिक्त;
+	जबसम्म (n->rb_बायाँ)
+		n = n->rb_बायाँ;
+	फर्काऊ n;
 }
 
-struct rb_node *ext2fs_rb_last(const struct rb_root *root)
+संरचना rb_गाँठो *ext2fs_rb_last(अचर संरचना rb_जरा *जरा)
 {
-	struct rb_node	*n;
+	संरचना rb_गाँठो	*n;
 
-	n = root->rb_node;
-	if (!n)
-		return NULL;
-	while (n->rb_right)
-		n = n->rb_right;
-	return n;
+	n = जरा->rb_गाँठो;
+	यदि (!n)
+		फर्काऊ रिक्त;
+	जबसम्म (n->rb_दायाँ)
+		n = n->rb_दायाँ;
+	फर्काऊ n;
 }
 
-struct rb_node *ext2fs_rb_next(struct rb_node *node)
+संरचना rb_गाँठो *ext2fs_rb_next(संरचना rb_गाँठो *गाँठो)
 {
-	struct rb_node *parent;
+	संरचना rb_गाँठो *parent;
 
-	if (ext2fs_rb_parent(node) == node)
-		return NULL;
+	यदि (ext2fs_rb_parent(गाँठो) == गाँठो)
+		फर्काऊ रिक्त;
 
 	/* If we have a right-hand child, go down and then left as far
 	   as we can. */
-	if (node->rb_right) {
-		node = node->rb_right;
-		while (node->rb_left)
-			node=node->rb_left;
-		return (struct rb_node *)node;
+	यदि (गाँठो->rb_दायाँ) {
+		गाँठो = गाँठो->rb_दायाँ;
+		जबसम्म (गाँठो->rb_बायाँ)
+			गाँठो=गाँठो->rb_बायाँ;
+		फर्काऊ (संरचना rb_गाँठो *)गाँठो;
 	}
 
 	/* No right-hand children.  Everything down and left is
@@ -329,54 +329,54 @@ struct rb_node *ext2fs_rb_next(struct rb_node *node)
 	   ancestor is a right-hand child of its parent, keep going
 	   up. First time it's a left-hand child of its parent, said
 	   parent is our 'next' node. */
-	while ((parent = ext2fs_rb_parent(node)) && node == parent->rb_right)
-		node = parent;
+	जबसम्म ((parent = ext2fs_rb_parent(गाँठो)) && गाँठो == parent->rb_दायाँ)
+		गाँठो = parent;
 
-	return parent;
+	फर्काऊ parent;
 }
 
-struct rb_node *ext2fs_rb_prev(struct rb_node *node)
+संरचना rb_गाँठो *ext2fs_rb_prev(संरचना rb_गाँठो *गाँठो)
 {
-	struct rb_node *parent;
+	संरचना rb_गाँठो *parent;
 
-	if (ext2fs_rb_parent(node) == node)
-		return NULL;
+	यदि (ext2fs_rb_parent(गाँठो) == गाँठो)
+		फर्काऊ रिक्त;
 
 	/* If we have a left-hand child, go down and then right as far
 	   as we can. */
-	if (node->rb_left) {
-		node = node->rb_left;
-		while (node->rb_right)
-			node=node->rb_right;
-		return (struct rb_node *)node;
+	यदि (गाँठो->rb_बायाँ) {
+		गाँठो = गाँठो->rb_बायाँ;
+		जबसम्म (गाँठो->rb_दायाँ)
+			गाँठो=गाँठो->rb_दायाँ;
+		फर्काऊ (संरचना rb_गाँठो *)गाँठो;
 	}
 
 	/* No left-hand children. Go up till we find an ancestor which
 	   is a right-hand child of its parent */
-	while ((parent = ext2fs_rb_parent(node)) && node == parent->rb_left)
-		node = parent;
+	जबसम्म ((parent = ext2fs_rb_parent(गाँठो)) && गाँठो == parent->rb_बायाँ)
+		गाँठो = parent;
 
-	return parent;
+	फर्काऊ parent;
 }
 
-void ext2fs_rb_replace_node(struct rb_node *victim, struct rb_node *new,
-			  struct rb_root *root)
+शून्य ext2fs_rb_replace_गाँठो(संरचना rb_गाँठो *victim, संरचना rb_गाँठो *new,
+			  संरचना rb_जरा *जरा)
 {
-	struct rb_node *parent = ext2fs_rb_parent(victim);
+	संरचना rb_गाँठो *parent = ext2fs_rb_parent(victim);
 
 	/* Set the surrounding nodes to point to the replacement */
-	if (parent) {
-		if (victim == parent->rb_left)
-			parent->rb_left = new;
-		else
-			parent->rb_right = new;
-	} else {
-		root->rb_node = new;
+	यदि (parent) {
+		यदि (victim == parent->rb_बायाँ)
+			parent->rb_बायाँ = new;
+		अन्यथा
+			parent->rb_दायाँ = new;
+	} अन्यथा {
+		जरा->rb_गाँठो = new;
 	}
-	if (victim->rb_left)
-		ext2fs_rb_set_parent(victim->rb_left, new);
-	if (victim->rb_right)
-		ext2fs_rb_set_parent(victim->rb_right, new);
+	यदि (victim->rb_बायाँ)
+		ext2fs_rb_set_parent(victim->rb_बायाँ, new);
+	यदि (victim->rb_दायाँ)
+		ext2fs_rb_set_parent(victim->rb_दायाँ, new);
 
 	/* Copy the pointers/colour from the victim to the replacement */
 	*new = *victim;

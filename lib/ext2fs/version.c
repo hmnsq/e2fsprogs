@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#अन्तर्भाव "config.h"
+#यदि HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
 #endif
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <ctype.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
 
-#include "../../version.h"
+#अन्तर्भाव "../../version.h"
 
-static const char *lib_version = E2FSPROGS_VERSION;
-static const char *lib_date = E2FSPROGS_DATE;
+स्थिर अचर वर्ण *lib_version = E2FSPROGS_VERSION;
+स्थिर अचर वर्ण *lib_date = E2FSPROGS_DATE;
 
-int ext2fs_parse_version_string(const char *ver_string)
+पूर्णाङ्क ext2fs_parse_version_string(अचर वर्ण *ver_string)
 {
-	const char *cp;
-	int version = 0, dot_count = 0;
+	अचर वर्ण *cp;
+	पूर्णाङ्क version = 0, dot_गन्ती = 0;
 
-	for (cp = ver_string; *cp; cp++) {
-		if (*cp == '.') {
-			if (dot_count++)
-				break;
-			else
-				continue;
+	लागि (cp = ver_string; *cp; cp++) {
+		यदि (*cp == '.') {
+			यदि (dot_गन्ती++)
+				रोक;
+			अन्यथा
+				जारी;
 		}
-		if (!isdigit(*cp))
-			break;
+		यदि (!है_अंक(*cp))
+			रोक;
 		version = (version * 10) + (*cp - '0');
 	}
-	return version;
+	फर्काऊ version;
 }
 
 
-int ext2fs_get_library_version(const char **ver_string,
-			       const char **date_string)
+पूर्णाङ्क ext2fs_get_library_version(अचर वर्ण **ver_string,
+			       अचर वर्ण **date_string)
 {
-	if (ver_string)
+	यदि (ver_string)
 		*ver_string = lib_version;
-	if (date_string)
+	यदि (date_string)
 		*date_string = lib_date;
 
-	return ext2fs_parse_version_string(lib_version);
+	फर्काऊ ext2fs_parse_version_string(lib_version);
 }
