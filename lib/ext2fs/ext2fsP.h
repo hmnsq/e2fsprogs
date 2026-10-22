@@ -9,212 +9,212 @@
  * %End-Header%
  */
 
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#ܐܢ HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
 #endif
 
-#include "ext2fs.h"
+#ضمن "ext2fs.h"
 
 #define EXT2FS_MAX_NESTED_LINKS  8
 
-static inline int ext2fsP_is_disk_device(mode_t mode)
+ساكن مضمن صحيح ext2fsP_is_disk_device(mode_t mode)
 {
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-	return S_ISBLK(mode) || S_ISCHR(mode);
-#else
-	return S_ISBLK(mode);
+#ܐܢ defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+	ܦܢܐ S_ISBLK(mode) || S_ISCHR(mode);
+#ܐܚܪܢܐ
+	ܦܢܐ S_ISBLK(mode);
 #endif
 }
 
-static inline time_t ext2fsP_get_time(ext2_filsys fs)
+ساكن مضمن time_t ext2fsP_get_time(ext2_filsys fs)
 {
-	if (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
-		return fs->now;
-	return time(NULL);
+	ܐܢ (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
+		ܦܢܐ fs->now;
+	ܦܢܐ time(عدم);
 }
 
 /*
  * Badblocks list
  */
-struct ext2_struct_u32_list {
-	int	magic;
-	int	num;
-	int	size;
+بنية ext2_struct_u32_list {
+	صحيح	magic;
+	صحيح	num;
+	صحيح	size;
 	__u32	*list;
-	int	badblocks_flags;
+	صحيح	badblocks_flags;
 };
 
-struct ext2_struct_u32_iterate {
-	int			magic;
+بنية ext2_struct_u32_iterate {
+	صحيح			magic;
 	ext2_u32_list		bb;
-	int			ptr;
+	صحيح			ptr;
 };
 
 
 /*
  * Directory block iterator definition
  */
-struct ext2_struct_dblist {
-	int			magic;
+بنية ext2_struct_dblist {
+	صحيح			magic;
 	ext2_filsys		fs;
 	unsigned long long	size;
 	unsigned long long	count;
-	int			sorted;
-	struct ext2_db_entry2 *	list;
+	صحيح			sorted;
+	بنية ext2_db_entry2 *	list;
 };
 
 /*
  * For directory iterators
  */
-struct dir_context {
+بنية dir_context {
 	ext2_ino_t		dir;
-	int		flags;
-	char		*buf;
-	unsigned int	buflen;
-	int (*func)(ext2_ino_t	dir,
-		    int	entry,
-		    struct ext2_dir_entry *dirent,
-		    int	offset,
-		    int	blocksize,
-		    char	*buf,
-		    void	*priv_data);
-	void		*priv_data;
+	صحيح		flags;
+	حرف		*buf;
+	unsigned صحيح	buflen;
+	صحيح (*func)(ext2_ino_t	dir,
+		    صحيح	entry,
+		    بنية ext2_dir_entry *dirent,
+		    صحيح	offset,
+		    صحيح	blocksize,
+		    حرف	*buf,
+		    فراغ	*priv_data);
+	فراغ		*priv_data;
 	errcode_t	errcode;
 };
 
 /*
  * Inode cache structure
  */
-struct ext2_inode_cache {
-	void *				buffer;
+بنية ext2_inode_cache {
+	فراغ *				buffer;
 	blk64_t				buffer_blk;
-	int				cache_last;
-	unsigned int			cache_size;
-	int				refcount;
-	struct ext2_inode_cache_ent	*cache;
+	صحيح				cache_last;
+	unsigned صحيح			cache_size;
+	صحيح				refcount;
+	بنية ext2_inode_cache_ent	*cache;
 };
 
-struct ext2_inode_cache_ent {
+بنية ext2_inode_cache_ent {
 	ext2_ino_t		ino;
-	struct ext2_inode	*inode;
+	بنية ext2_inode	*inode;
 };
 
 /*
  * NLS definitions
  */
-struct ext2fs_nls_table {
-	int version;
-	const struct ext2fs_nls_ops *ops;
+بنية ext2fs_nls_table {
+	صحيح version;
+	ثابت بنية ext2fs_nls_ops *ops;
 };
 
-struct ext2fs_nls_ops {
-	int (*casefold)(const struct ext2fs_nls_table *charset,
-			const unsigned char *str, size_t len,
-			unsigned char *dest, size_t dlen);
-	int (*validate)(const struct ext2fs_nls_table *table,
-			char *s, size_t len, char **pos);
-	int (*casefold_cmp)(const struct ext2fs_nls_table *table,
-			    const unsigned char *str1, size_t len1,
-			    const unsigned char *str2, size_t len2);
+بنية ext2fs_nls_ops {
+	صحيح (*casefold)(ثابت بنية ext2fs_nls_table *charset,
+			ثابت unsigned حرف *str, size_t len,
+			unsigned حرف *dest, size_t dlen);
+	صحيح (*validate)(ثابت بنية ext2fs_nls_table *table,
+			حرف *s, size_t len, حرف **pos);
+	صحيح (*casefold_cmp)(ثابت بنية ext2fs_nls_table *table,
+			    ثابت unsigned حرف *str1, size_t len1,
+			    ثابت unsigned حرف *str2, size_t len2);
 };
 
 /* Function prototypes */
 
-extern int ext2fs_process_dir_block(ext2_filsys  	fs,
+خارجي صحيح ext2fs_process_dir_block(ext2_filsys  	fs,
 				    blk64_t		*blocknr,
 				    e2_blkcnt_t		blockcnt,
 				    blk64_t		ref_block,
-				    int			ref_offset,
-				    void		*priv_data);
+				    صحيح			ref_offset,
+				    فراغ		*priv_data);
 
-extern errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino);
-extern errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino);
-extern int ext2fs_inline_data_dir_iterate(ext2_filsys fs,
+خارجي errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino);
+خارجي errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino);
+خارجي صحيح ext2fs_inline_data_dir_iterate(ext2_filsys fs,
 					  ext2_ino_t ino,
-					  void *priv_data);
+					  فراغ *priv_data);
 
 /* Generic numeric progress meter */
 
-struct ext2fs_numeric_progress_struct {
+بنية ext2fs_numeric_progress_struct {
 	__u64		max;
-	int		log_max;
-	int		skip_progress;
+	صحيح		log_max;
+	صحيح		skip_progress;
 };
 
 /*
  * progress callback functions
  */
-struct ext2fs_progress_ops {
-	void (*init)(ext2_filsys fs,
-		     struct ext2fs_numeric_progress_struct * progress,
-		     const char *label, __u64 max);
-	void (*update)(ext2_filsys fs,
-		       struct ext2fs_numeric_progress_struct * progress,
+بنية ext2fs_progress_ops {
+	فراغ (*init)(ext2_filsys fs,
+		     بنية ext2fs_numeric_progress_struct * progress,
+		     ثابت حرف *label, __u64 max);
+	فراغ (*update)(ext2_filsys fs,
+		       بنية ext2fs_numeric_progress_struct * progress,
 		       __u64 val);
-	void (*close)(ext2_filsys fs,
-		      struct ext2fs_numeric_progress_struct * progress,
-		      const char *message);
+	فراغ (*close)(ext2_filsys fs,
+		      بنية ext2fs_numeric_progress_struct * progress,
+		      ثابت حرف *message);
 };
 
-extern struct ext2fs_progress_ops ext2fs_numeric_progress_ops;
+خارجي بنية ext2fs_progress_ops ext2fs_numeric_progress_ops;
 
-extern void ext2fs_numeric_progress_init(ext2_filsys fs,
-					 struct ext2fs_numeric_progress_struct * progress,
-					 const char *label, __u64 max);
-extern void ext2fs_numeric_progress_update(ext2_filsys fs,
-					   struct ext2fs_numeric_progress_struct * progress,
+خارجي فراغ ext2fs_numeric_progress_init(ext2_filsys fs,
+					 بنية ext2fs_numeric_progress_struct * progress,
+					 ثابت حرف *label, __u64 max);
+خارجي فراغ ext2fs_numeric_progress_update(ext2_filsys fs,
+					   بنية ext2fs_numeric_progress_struct * progress,
 					   __u64 val);
-extern void ext2fs_numeric_progress_close(ext2_filsys fs,
-					  struct ext2fs_numeric_progress_struct * progress,
-					  const char *message);
+خارجي فراغ ext2fs_numeric_progress_close(ext2_filsys fs,
+					  بنية ext2fs_numeric_progress_struct * progress,
+					  ثابت حرف *message);
 
 /*
  * 64-bit bitmap support
  */
 
-extern errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
-					   int type, __u64 start, __u64 end,
+خارجي errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
+					   صحيح type, __u64 start, __u64 end,
 					   __u64 real_end,
-					   const char * description,
+					   ثابت حرف * description,
 					   ext2fs_generic_bitmap *bmap);
 
-extern void ext2fs_free_generic_bmap(ext2fs_generic_bitmap bmap);
+خارجي فراغ ext2fs_free_generic_bmap(ext2fs_generic_bitmap bmap);
 
-extern errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap src,
+خارجي errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap src,
 					  ext2fs_generic_bitmap *dest);
 
-extern errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap bmap,
+خارجي errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap bmap,
 					    __u64 new_end,
 					    __u64 new_real_end);
-extern errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap bitmap,
+خارجي errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap bitmap,
 					       errcode_t neq,
 					       __u64 end, __u64 *oend);
-extern int ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
+خارجي صحيح ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
-extern int ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
+خارجي صحيح ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				      __u64 arg);
-extern int ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
+خارجي صحيح ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
-extern errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
-					       void *in);
-extern errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
-					       void *out);
-extern void ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,const char *func);
+خارجي errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap bitmap,
+					       __u64 start, unsigned صحيح num,
+					       فراغ *in);
+خارجي errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bitmap,
+					       __u64 start, unsigned صحيح num,
+					       فراغ *out);
+خارجي فراغ ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,ثابت حرف *func);
 
-extern int ext2fs_mem_is_zero(const char *mem, size_t len);
+خارجي صحيح ext2fs_mem_is_zero(ثابت حرف *mem, size_t len);
 
-extern int ext2fs_file_block_offset_too_big(ext2_filsys fs,
-					    struct ext2_inode *inode,
+خارجي صحيح ext2fs_file_block_offset_too_big(ext2_filsys fs,
+					    بنية ext2_inode *inode,
 					    blk64_t offset);
 
 /* atexit support */
-typedef void (*ext2_exit_fn)(void *);
-errcode_t ext2fs_add_exit_fn(ext2_exit_fn fn, void *data);
-errcode_t ext2fs_remove_exit_fn(ext2_exit_fn fn, void *data);
+تعريفنوع فراغ (*ext2_exit_fn)(فراغ *);
+errcode_t ext2fs_add_exit_fn(ext2_exit_fn fn, فراغ *data);
+errcode_t ext2fs_remove_exit_fn(ext2_exit_fn fn, فراغ *data);
 
 #define ARRAY_SIZE(array)			\
-        (sizeof(array) / sizeof(array[0]))
+        (حجم(array) / حجم(array[0]))
 
-#define EXT2FS_BUILD_BUG_ON(cond) ((void)sizeof(char[1 - 2*!!(cond)]))
+#define EXT2FS_BUILD_BUG_ON(cond) ((فراغ)حجم(حرف[1 - 2*!!(cond)]))

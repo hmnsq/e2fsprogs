@@ -2,102 +2,102 @@
  * io_manager.c --- the I/O manager abstraction
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#ܐܢ HAVE_UNISTD_H
+#ضمن <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#ضمن <fcntl.h>
+#ضمن <time.h>
+#ܐܢ HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#ܐܢ HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
-errcode_t io_channel_set_options(io_channel channel, const char *opts)
+errcode_t io_channel_set_options(io_channel channel, ثابت حرف *opts)
 {
 	errcode_t retval = 0;
-	char *next, *ptr, *options, *arg;
+	حرف *next, *ptr, *options, *arg;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (!opts)
-		return 0;
+	ܐܢ (!opts)
+		ܦܢܐ 0;
 
-	if (!channel->manager->set_option)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ܐܢ (!channel->manager->set_option)
+		ܦܢܐ EXT2_ET_INVALID_ARGUMENT;
 
 	options = malloc(strlen(opts)+1);
-	if (!options)
-		return EXT2_ET_NO_MEMORY;
+	ܐܢ (!options)
+		ܦܢܐ EXT2_ET_NO_MEMORY;
 	strcpy(options, opts);
 	ptr = options;
 
-	while (ptr && *ptr) {
+	ܟܡܐ (ptr && *ptr) {
 		next = strchr(ptr, '&');
-		if (next)
+		ܐܢ (next)
 			*next++ = 0;
 
 		arg = strchr(ptr, '=');
-		if (arg)
+		ܐܢ (arg)
 			*arg++ = 0;
 
 		retval = (channel->manager->set_option)(channel, ptr, arg);
-		if (retval)
-			break;
+		ܐܢ (retval)
+			اكسر;
 		ptr = next;
 	}
-	free(options);
-	return retval;
+	حرر(options);
+	ܦܢܐ retval;
 }
 
 errcode_t io_channel_write_byte(io_channel channel, unsigned long offset,
-				int count, const void *data)
+				صحيح count, ثابت فراغ *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_byte)
-		return channel->manager->write_byte(channel, offset,
+	ܐܢ (channel->manager->write_byte)
+		ܦܢܐ channel->manager->write_byte(channel, offset,
 						    count, data);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	ܦܢܐ EXT2_ET_UNIMPLEMENTED;
 }
 
 errcode_t io_channel_read_blk64(io_channel channel, unsigned long long block,
-				 int count, void *data)
+				 صحيح count, فراغ *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->read_blk64)
-		return (channel->manager->read_blk64)(channel, block,
+	ܐܢ (channel->manager->read_blk64)
+		ܦܢܐ (channel->manager->read_blk64)(channel, block,
 						      count, data);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	ܐܢ ((block >> 32) != 0)
+		ܦܢܐ EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->read_blk)(channel, (unsigned long) block,
+	ܦܢܐ (channel->manager->read_blk)(channel, (unsigned long) block,
 					     count, data);
 }
 
 errcode_t io_channel_write_blk64(io_channel channel, unsigned long long block,
-				 int count, const void *data)
+				 صحيح count, ثابت فراغ *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_blk64)
-		return (channel->manager->write_blk64)(channel, block,
+	ܐܢ (channel->manager->write_blk64)
+		ܦܢܐ (channel->manager->write_blk64)(channel, block,
 						       count, data);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	ܐܢ ((block >> 32) != 0)
+		ܦܢܐ EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->write_blk)(channel, (unsigned long) block,
+	ܦܢܐ (channel->manager->write_blk)(channel, (unsigned long) block,
 					     count, data);
 }
 
@@ -106,10 +106,10 @@ errcode_t io_channel_discard(io_channel channel, unsigned long long block,
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->discard)
-		return (channel->manager->discard)(channel, block, count);
+	ܐܢ (channel->manager->discard)
+		ܦܢܐ (channel->manager->discard)(channel, block, count);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	ܦܢܐ EXT2_ET_UNIMPLEMENTED;
 }
 
 errcode_t io_channel_zeroout(io_channel channel, unsigned long long block,
@@ -117,52 +117,52 @@ errcode_t io_channel_zeroout(io_channel channel, unsigned long long block,
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->zeroout)
-		return (channel->manager->zeroout)(channel, block, count);
+	ܐܢ (channel->manager->zeroout)
+		ܦܢܐ (channel->manager->zeroout)(channel, block, count);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	ܦܢܐ EXT2_ET_UNIMPLEMENTED;
 }
 
-errcode_t io_channel_alloc_buf(io_channel io, int count, void *ptr)
+errcode_t io_channel_alloc_buf(io_channel io, صحيح count, فراغ *ptr)
 {
 	size_t	size;
 
-	if (count == 0)
+	ܐܢ (count == 0)
 		size = io->block_size;
-	else if (count > 0)
+	ܐܚܪܢܐ ܐܢ (count > 0)
 		size = io->block_size * count;
-	else
+	ܐܚܪܢܐ
 		size = -count;
 
-	if (io->align > 0) {
-		if ((unsigned) io->align > size)
+	ܐܢ (io->align > 0) {
+		ܐܢ ((unsigned) io->align > size)
 			size = io->align;
-		return ext2fs_get_memalign(size, io->align, ptr);
-	} else
-		return ext2fs_get_mem(size, ptr);
+		ܦܢܐ ext2fs_get_memalign(size, io->align, ptr);
+	} ܐܚܪܢܐ
+		ܦܢܐ ext2fs_get_mem(size, ptr);
 }
 
 errcode_t io_channel_cache_readahead(io_channel io, unsigned long long block,
 				     unsigned long long count)
 {
-	if (!io->manager->cache_readahead)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	ܐܢ (!io->manager->cache_readahead)
+		ܦܢܐ EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->cache_readahead(io, block, count);
+	ܦܢܐ io->manager->cache_readahead(io, block, count);
 }
 
-errcode_t io_channel_flock(io_channel io, unsigned int flock_flags)
+errcode_t io_channel_flock(io_channel io, unsigned صحيح flock_flags)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	ܐܢ (!io->manager->flock)
+		ܦܢܐ EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, flock_flags);
+	ܦܢܐ io->manager->flock(io, flock_flags);
 }
 
 errcode_t io_channel_funlock(io_channel io)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	ܐܢ (!io->manager->flock)
+		ܦܢܐ EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, 0);
+	ܦܢܐ io->manager->flock(io, 0);
 }

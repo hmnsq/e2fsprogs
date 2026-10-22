@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ضمن "config.h"
+#ܐܢ HAVE_UNISTD_H
+#ضمن <unistd.h>
 #endif
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
+#ضمن <string.h>
+#ضمن <stdio.h>
+#ضمن <ctype.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
-#include "../../version.h"
+#ضمن "../../version.h"
 
-static const char *lib_version = E2FSPROGS_VERSION;
-static const char *lib_date = E2FSPROGS_DATE;
+ساكن ثابت حرف *lib_version = E2FSPROGS_VERSION;
+ساكن ثابت حرف *lib_date = E2FSPROGS_DATE;
 
-int ext2fs_parse_version_string(const char *ver_string)
+صحيح ext2fs_parse_version_string(ثابت حرف *ver_string)
 {
-	const char *cp;
-	int version = 0, dot_count = 0;
+	ثابت حرف *cp;
+	صحيح version = 0, dot_count = 0;
 
-	for (cp = ver_string; *cp; cp++) {
-		if (*cp == '.') {
-			if (dot_count++)
-				break;
-			else
-				continue;
+	لكل (cp = ver_string; *cp; cp++) {
+		ܐܢ (*cp == '.') {
+			ܐܢ (dot_count++)
+				اكسر;
+			ܐܚܪܢܐ
+				استمر;
 		}
-		if (!isdigit(*cp))
-			break;
+		ܐܢ (!isdigit(*cp))
+			اكسر;
 		version = (version * 10) + (*cp - '0');
 	}
-	return version;
+	ܦܢܐ version;
 }
 
 
-int ext2fs_get_library_version(const char **ver_string,
-			       const char **date_string)
+صحيح ext2fs_get_library_version(ثابت حرف **ver_string,
+			       ثابت حرف **date_string)
 {
-	if (ver_string)
+	ܐܢ (ver_string)
 		*ver_string = lib_version;
-	if (date_string)
+	ܐܢ (date_string)
 		*date_string = lib_date;
 
-	return ext2fs_parse_version_string(lib_version);
+	ܦܢܐ ext2fs_parse_version_string(lib_version);
 }

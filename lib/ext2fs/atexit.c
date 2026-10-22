@@ -17,28 +17,28 @@
 #define _LARGEFILE64_SOURCE
 #endif
 
-#include "config.h"
-#include <stdlib.h>
+#ضمن "config.h"
+#ضمن <stdlib.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
+#ضمن "ext2fsP.h"
 
-struct exit_data {
+بنية exit_data {
 	ext2_exit_fn func;
-	void *data;
+	فراغ *data;
 };
 
-static struct exit_data *items;
-static size_t nr_items;
+ساكن بنية exit_data *items;
+ساكن size_t nr_items;
 
-static void handle_exit(void)
+ساكن فراغ handle_exit(فراغ)
 {
-	struct exit_data *ed;
+	بنية exit_data *ed;
 
-	for (ed = items + nr_items - 1; ed >= items; ed--) {
-		if (ed->func == NULL)
-			continue;
+	لكل (ed = items + nr_items - 1; ed >= items; ed--) {
+		ܐܢ (ed->func == عدم)
+			استمر;
 		ed->func(ed->data);
 	}
 
@@ -51,66 +51,66 @@ static void handle_exit(void)
  * If you want this to be called during a signal exit, you must capture
  * the signal and call exit() yourself!
  */
-errcode_t ext2fs_add_exit_fn(ext2_exit_fn func, void *data)
+errcode_t ext2fs_add_exit_fn(ext2_exit_fn func, فراغ *data)
 {
-	struct exit_data *ed, *free_ed = NULL;
+	بنية exit_data *ed, *free_ed = عدم;
 	size_t x;
 	errcode_t ret;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ܐܢ (func == عدم)
+		ܦܢܐ EXT2_ET_INVALID_ARGUMENT;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == func && ed->data == data)
-			return EXT2_ET_FILE_EXISTS;
-		if (ed->func == NULL)
+	لكل (x = 0, ed = items; x < nr_items; x++, ed++) {
+		ܐܢ (ed->func == func && ed->data == data)
+			ܦܢܐ EXT2_ET_FILE_EXISTS;
+		ܐܢ (ed->func == عدم)
 			free_ed = ed;
 	}
 
-	if (free_ed) {
+	ܐܢ (free_ed) {
 		free_ed->func = func;
 		free_ed->data = data;
-		return 0;
+		ܦܢܐ 0;
 	}
 
-	if (nr_items == 0) {
+	ܐܢ (nr_items == 0) {
 		ret = atexit(handle_exit);
-		if (ret)
-			return ret;
+		ܐܢ (ret)
+			ܦܢܐ ret;
 	}
 
-	ret = ext2fs_resize_mem(0, (nr_items + 1) * sizeof(struct exit_data),
+	ret = ext2fs_resize_mem(0, (nr_items + 1) * حجم(بنية exit_data),
 				&items);
-	if (ret)
-		return ret;
+	ܐܢ (ret)
+		ܦܢܐ ret;
 
 	items[nr_items].func = func;
 	items[nr_items].data = data;
 	nr_items++;
 
-	return 0;
+	ܦܢܐ 0;
 }
 
 /* Remove a function from the exit cleanup list. */
-errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, void *data)
+errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, فراغ *data)
 {
-	struct exit_data *ed;
+	بنية exit_data *ed;
 	size_t x;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ܐܢ (func == عدم)
+		ܦܢܐ EXT2_ET_INVALID_ARGUMENT;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == NULL)
-			return 0;
-		if (ed->func == func && ed->data == data) {
+	لكل (x = 0, ed = items; x < nr_items; x++, ed++) {
+		ܐܢ (ed->func == عدم)
+			ܦܢܐ 0;
+		ܐܢ (ed->func == func && ed->data == data) {
 			size_t sz = (nr_items - (x + 1)) *
-				    sizeof(struct exit_data);
+				    حجم(بنية exit_data);
 			memmove(ed, ed + 1, sz);
 			memset(items + nr_items - 1, 0,
-			       sizeof(struct exit_data));
+			       حجم(بنية exit_data));
 		}
 	}
 
-	return 0;
+	ܦܢܐ 0;
 }

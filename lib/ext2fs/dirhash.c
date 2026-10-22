@@ -11,14 +11,14 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#include <limits.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#ضمن <limits.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
+#ضمن "ext2fsP.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
@@ -37,18 +37,18 @@
  */
 #define DELTA 0x9E3779B9
 
-static void TEA_transform(__u32 buf[4], __u32 const in[])
+ساكن فراغ TEA_transform(__u32 buf[4], __u32 ثابت in[])
 {
 	__u32	sum = 0;
 	__u32	b0 = buf[0], b1 = buf[1];
 	__u32	a = in[0], b = in[1], c = in[2], d = in[3];
-	int	n = 16;
+	صحيح	n = 16;
 
-	do {
+	ܥܒܕ {
 		sum += DELTA;
 		b0 += ((b1 << 4)+a) ^ (b1+sum) ^ ((b1 >> 5)+b);
 		b1 += ((b0 << 4)+c) ^ (b0+sum) ^ ((b0 >> 5)+d);
-	} while(--n);
+	} ܟܡܐ(--n);
 
 	buf[0] += b0;
 	buf[1] += b1;
@@ -74,7 +74,7 @@ static void TEA_transform(__u32 buf[4], __u32 const in[])
 /*
  * Basic cut-down MD4 transform.  Returns only 32 bits of result.
  */
-static void halfMD4Transform (__u32 buf[4], __u32 const in[])
+ساكن فراغ halfMD4Transform (__u32 buf[4], __u32 ثابت in[])
 {
 	__u32	a = buf[0], b = buf[1], c = buf[2], d = buf[3];
 
@@ -123,58 +123,58 @@ static void halfMD4Transform (__u32 buf[4], __u32 const in[])
 #undef K3
 
 /* The old legacy hash */
-static ext2_dirhash_t dx_hack_hash (const char *name, int len,
-				    int unsigned_flag)
+ساكن ext2_dirhash_t dx_hack_hash (ثابت حرف *name, صحيح len,
+				    صحيح unsigned_flag)
 {
 	__u32 hash, hash0 = 0x12a3fe2d, hash1 = 0x37abe8f9;
-	const unsigned char *ucp = (const unsigned char *) name;
-	const signed char *scp = (const signed char *) name;
-	int c;
+	ثابت unsigned حرف *ucp = (ثابت unsigned حرف *) name;
+	ثابت signed حرف *scp = (ثابت signed حرف *) name;
+	صحيح c;
 
-	while (len--) {
-		if (unsigned_flag)
-			c = (int) *ucp++;
-		else
-			c = (int) *scp++;
+	ܟܡܐ (len--) {
+		ܐܢ (unsigned_flag)
+			c = (صحيح) *ucp++;
+		ܐܚܪܢܐ
+			c = (صحيح) *scp++;
 		hash = hash1 + (hash0 ^ (c * 7152373));
 
-		if (hash & 0x80000000) hash -= 0x7fffffff;
+		ܐܢ (hash & 0x80000000) hash -= 0x7fffffff;
 		hash1 = hash0;
 		hash0 = hash;
 	}
-	return (hash0 << 1);
+	ܦܢܐ (hash0 << 1);
 }
 
-static void str2hashbuf(const char *msg, int len, __u32 *buf, int num,
-			int unsigned_flag)
+ساكن فراغ str2hashbuf(ثابت حرف *msg, صحيح len, __u32 *buf, صحيح num,
+			صحيح unsigned_flag)
 {
 	__u32	pad, val;
-	int	i, c;
-	const unsigned char *ucp = (const unsigned char *) msg;
-	const signed char *scp = (const signed char *) msg;
+	صحيح	i, c;
+	ثابت unsigned حرف *ucp = (ثابت unsigned حرف *) msg;
+	ثابت signed حرف *scp = (ثابت signed حرف *) msg;
 
 	pad = (__u32)len | ((__u32)len << 8);
 	pad |= pad << 16;
 
 	val = pad;
-	if (len > num*4)
+	ܐܢ (len > num*4)
 		len = num * 4;
-	for (i=0; i < len; i++) {
-		if (unsigned_flag)
-			c = (int) ucp[i];
-		else
-			c = (int) scp[i];
+	لكل (i=0; i < len; i++) {
+		ܐܢ (unsigned_flag)
+			c = (صحيح) ucp[i];
+		ܐܚܪܢܐ
+			c = (صحيح) scp[i];
 
 		val = c + (val << 8);
-		if ((i % 4) == 3) {
+		ܐܢ ((i % 4) == 3) {
 			*buf++ = val;
 			val = pad;
 			num--;
 		}
 	}
-	if (--num >= 0)
+	ܐܢ (--num >= 0)
 		*buf++ = val;
-	while (--num >= 0)
+	ܟܡܐ (--num >= 0)
 		*buf++ = pad;
 }
 
@@ -196,17 +196,17 @@ static void str2hashbuf(const char *msg, int len, __u32 *buf, int num,
  * ext2fs_dirhash2.
  *
  */
-errcode_t ext2fs_dirhash(int version, const char *name, int len,
-			 const __u32 *seed,
+errcode_t ext2fs_dirhash(صحيح version, ثابت حرف *name, صحيح len,
+			 ثابت __u32 *seed,
 			 ext2_dirhash_t *ret_hash,
 			 ext2_dirhash_t *ret_minor_hash)
 {
 	__u32	hash;
 	__u32	minor_hash = 0;
-	const char	*p;
-	int		i;
+	ثابت حرف	*p;
+	صحيح		i;
 	__u32 		in[8], buf[4];
-	int		unsigned_flag = 0;
+	صحيح		unsigned_flag = 0;
 
 	/* Initialize the default seed for the hash checksum functions */
 	buf[0] = 0x67452301;
@@ -215,28 +215,28 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 	buf[3] = 0x10325476;
 
 	/* Check to see if the seed is all zero's */
-	if (seed) {
-		for (i=0; i < 4; i++) {
-			if (seed[i])
-				break;
+	ܐܢ (seed) {
+		لكل (i=0; i < 4; i++) {
+			ܐܢ (seed[i])
+				اكسر;
 		}
-		if (i < 4)
-			memcpy(buf, seed, sizeof(buf));
+		ܐܢ (i < 4)
+			memcpy(buf, seed, حجم(buf));
 	}
 
-	switch (version) {
-	case EXT2_HASH_LEGACY_UNSIGNED:
+	بدل (version) {
+	حالة EXT2_HASH_LEGACY_UNSIGNED:
 		unsigned_flag++;
 		/* fallthrough */
-	case EXT2_HASH_LEGACY:
+	حالة EXT2_HASH_LEGACY:
 		hash = dx_hack_hash(name, len, unsigned_flag);
-		break;
-	case EXT2_HASH_HALF_MD4_UNSIGNED:
+		اكسر;
+	حالة EXT2_HASH_HALF_MD4_UNSIGNED:
 		unsigned_flag++;
 		/* fallthrough */
-	case EXT2_HASH_HALF_MD4:
+	حالة EXT2_HASH_HALF_MD4:
 		p = name;
-		while (len > 0) {
+		ܟܡܐ (len > 0) {
 			str2hashbuf(p, len, in, 8, unsigned_flag);
 			halfMD4Transform(buf, in);
 			len -= 32;
@@ -244,13 +244,13 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 		}
 		minor_hash = buf[2];
 		hash = buf[1];
-		break;
-	case EXT2_HASH_TEA_UNSIGNED:
+		اكسر;
+	حالة EXT2_HASH_TEA_UNSIGNED:
 		unsigned_flag++;
 		/* fallthrough */
-	case EXT2_HASH_TEA:
+	حالة EXT2_HASH_TEA:
 		p = name;
-		while (len > 0) {
+		ܟܡܐ (len > 0) {
 			str2hashbuf(p, len, in, 4, unsigned_flag);
 			TEA_transform(buf, in);
 			len -= 16;
@@ -258,15 +258,15 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 		}
 		hash = buf[0];
 		minor_hash = buf[1];
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		*ret_hash = 0;
-		return EXT2_ET_DIRHASH_UNSUPP;
+		ܦܢܐ EXT2_ET_DIRHASH_UNSUPP;
 	}
 	*ret_hash = hash & ~1;
-	if (ret_minor_hash)
+	ܐܢ (ret_minor_hash)
 		*ret_minor_hash = minor_hash;
-	return 0;
+	ܦܢܐ 0;
 }
 
 /*
@@ -275,33 +275,33 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
  * encoding support based on the nls_table and the flags. Check
  * ext2fs_dirhash for documentation on the input and output parameters.
  */
-errcode_t ext2fs_dirhash2(int version, const char *name, int len,
-			  const struct ext2fs_nls_table *charset,
-			  int hash_flags, const __u32 *seed,
+errcode_t ext2fs_dirhash2(صحيح version, ثابت حرف *name, صحيح len,
+			  ثابت بنية ext2fs_nls_table *charset,
+			  صحيح hash_flags, ثابت __u32 *seed,
 			  ext2_dirhash_t *ret_hash,
 			  ext2_dirhash_t *ret_minor_hash)
 {
 	errcode_t r;
-	int dlen;
+	صحيح dlen;
 
-	if (len && charset && (hash_flags & EXT4_CASEFOLD_FL)) {
-		char buff[PATH_MAX];
+	ܐܢ (len && charset && (hash_flags & EXT4_CASEFOLD_FL)) {
+		حرف buff[PATH_MAX];
 
 		dlen = charset->ops->casefold(charset,
-			      (const unsigned char *) name, len,
-			      (unsigned char *) buff, sizeof(buff));
-		if (dlen < 0) {
-			if (dlen == -EINVAL)
-				goto opaque_seq;
+			      (ثابت unsigned حرف *) name, len,
+			      (unsigned حرف *) buff, حجم(buff));
+		ܐܢ (dlen < 0) {
+			ܐܢ (dlen == -EINVAL)
+				اذهب opaque_seq;
 
-			return dlen;
+			ܦܢܐ dlen;
 		}
 		r = ext2fs_dirhash(version, buff, dlen, seed, ret_hash,
 				   ret_minor_hash);
-		return r;
+		ܦܢܐ r;
 	}
 
 opaque_seq:
-	return ext2fs_dirhash(version, name, len, seed, ret_hash,
+	ܦܢܐ ext2fs_dirhash(version, name, len, seed, ret_hash,
 			      ret_minor_hash);
 }

@@ -23,18 +23,18 @@
 
 #define ACL_UNDEFINED_ID	((id_t)-1)
 
-typedef struct {
+تعريفنوع بنية {
         __le16          e_tag;
         __le16          e_perm;
         __le32          e_id;
  } ext4_acl_entry;
  
-typedef struct {
+تعريفنوع بنية {
         __le16          e_tag;
         __le16          e_perm;
 } ext4_acl_entry_short;
 
-typedef struct {
+تعريفنوع بنية {
          __le32          a_version;
 } ext4_acl_header;
 
@@ -42,20 +42,20 @@ typedef struct {
 /* Supported ACL a_version fields */
  #define POSIX_ACL_XATTR_VERSION 0x0002
 
-typedef struct {
+تعريفنوع بنية {
         __le16                  e_tag;
         __le16                  e_perm;
         __le32                  e_id;
 } posix_acl_xattr_entry;
 
-typedef struct {
+تعريفنوع بنية {
         __le32                  a_version;
-#if __GNUC_PREREQ (4, 8)
+#ܐܢ __GNUC_PREREQ (4, 8)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #endif
         posix_acl_xattr_entry   a_entries[0];
-#if __GNUC_PREREQ (4, 8)
+#ܐܢ __GNUC_PREREQ (4, 8)
 #pragma GCC diagnostic pop
 #endif
 } posix_acl_xattr_header;

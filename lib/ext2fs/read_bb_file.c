@@ -9,84 +9,84 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#ܐܢ HAVE_UNISTD_H
+#ضمن <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#ضمن <fcntl.h>
+#ضمن <time.h>
+#ܐܢ HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#ܐܢ HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
 /*
  * Reads a list of bad blocks from  a FILE *
  */
 errcode_t ext2fs_read_bb_FILE2(ext2_filsys fs, FILE *f,
 			       ext2_badblocks_list *bb_list,
-			       void *priv_data,
-			       void (*invalid)(ext2_filsys fs,
+			       فراغ *priv_data,
+			       فراغ (*invalid)(ext2_filsys fs,
 					       blk_t blk,
-					       char *badstr,
-					       void *priv_data))
+					       حرف *badstr,
+					       فراغ *priv_data))
 {
 	errcode_t	retval;
 	unsigned long long blockno;
-	int		count;
-	char		buf[128];
+	صحيح		count;
+	حرف		buf[128];
 
-	if (fs)
+	ܐܢ (fs)
 		EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!*bb_list) {
+	ܐܢ (!*bb_list) {
 		retval = ext2fs_badblocks_list_create(bb_list, 10);
-		if (retval)
-			return retval;
+		ܐܢ (retval)
+			ܦܢܐ retval;
 	}
 
-	while (!feof (f)) {
-		if (fgets(buf, sizeof(buf), f) == NULL)
-			break;
+	ܟܡܐ (!feof (f)) {
+		ܐܢ (fgets(buf, حجم(buf), f) == عدم)
+			اكسر;
 		count = sscanf(buf, "%llu", &blockno);
-		if (count <= 0)
-			continue;
+		ܐܢ (count <= 0)
+			استمر;
 		/* Badblocks isn't going to be updated for 64bit */
-		if (blockno >> 32)
-			return EOVERFLOW;
-		if (fs &&
+		ܐܢ (blockno >> 32)
+			ܦܢܐ EOVERFLOW;
+		ܐܢ (fs &&
 		    ((blockno < fs->super->s_first_data_block) ||
 		     (blockno >= ext2fs_blocks_count(fs->super)))) {
-			if (invalid)
+			ܐܢ (invalid)
 				(invalid)(fs, (blk64_t) blockno, buf, priv_data);
-			continue;
+			استمر;
 		}
 		retval = ext2fs_badblocks_list_add(*bb_list, (blk64_t) blockno);
-		if (retval)
-			return retval;
+		ܐܢ (retval)
+			ܦܢܐ retval;
 	}
-	return 0;
+	ܦܢܐ 0;
 }
 
-struct compat_struct {
-	void (*invalid)(ext2_filsys, blk_t);
+بنية compat_struct {
+	فراغ (*invalid)(ext2_filsys, blk_t);
 };
 
-static void call_compat_invalid(ext2_filsys fs, blk_t blk,
-				char *badstr EXT2FS_ATTR((unused)),
-				void *priv_data)
+ساكن فراغ call_compat_invalid(ext2_filsys fs, blk_t blk,
+				حرف *badstr EXT2FS_ATTR((unused)),
+				فراغ *priv_data)
 {
-	struct compat_struct *st;
+	بنية compat_struct *st;
 
-	st = (struct compat_struct *) priv_data;
-	if (st->invalid)
+	st = (بنية compat_struct *) priv_data;
+	ܐܢ (st->invalid)
 		(st->invalid)(fs, blk);
 }
 
@@ -96,13 +96,13 @@ static void call_compat_invalid(ext2_filsys fs, blk_t blk,
  */
 errcode_t ext2fs_read_bb_FILE(ext2_filsys fs, FILE *f,
 			      ext2_badblocks_list *bb_list,
-			      void (*invalid)(ext2_filsys fs, blk_t blk))
+			      فراغ (*invalid)(ext2_filsys fs, blk_t blk))
 {
-	struct compat_struct st;
+	بنية compat_struct st;
 
 	st.invalid = invalid;
 
-	return ext2fs_read_bb_FILE2(fs, f, bb_list, &st,
+	ܦܢܐ ext2fs_read_bb_FILE2(fs, f, bb_list, &st,
 				    call_compat_invalid);
 }
 
