@@ -107,16 +107,16 @@ enum {
  * system used by fast commit code.
  */
 struct ext4_fc_dentry_update {
-	int fcd_op;		/* Type of update create / unlink / link */
-	int fcd_parent;		/* Parent inode number */
-	int fcd_ino;		/* Inode number */
+	цяло fcd_op;		/* Type of update create / unlink / link */
+	цяло fcd_parent;		/* Parent inode number */
+	цяло fcd_ino;		/* Inode number */
 	struct qstr fcd_name;	/* Dirent name */
 	unsigned char fcd_iname[DNAME_INLINE_LEN];	/* Dirent name string */
 	struct list_head fcd_list;
 };
 
 struct ext4_fc_stats {
-	unsigned int fc_ineligible_reason_count[EXT4_FC_REASON_MAX];
+	unsigned цяло fc_ineligible_reason_count[EXT4_FC_REASON_MAX];
 	unsigned long fc_num_commits;
 	unsigned long fc_ineligible_commits;
 	unsigned long fc_numblks;
@@ -134,22 +134,22 @@ struct ext4_fc_stats {
 struct ext4_fc_alloc_region {
 	ext4_lblk_t lblk;
 	ext4_fsblk_t pblk;
-	int ino, len;
+	цяло ino, len;
 };
 
 /*
  * Fast commit replay state.
  */
 struct ext4_fc_replay_state {
-	int fc_replay_num_tags;
-	int fc_replay_expected_off;
-	int fc_current_pass;
-	int fc_cur_tag;
-	int fc_crc;
+	цяло fc_replay_num_tags;
+	цяло fc_replay_expected_off;
+	цяло fc_current_pass;
+	цяло fc_cur_tag;
+	цяло fc_crc;
 	struct ext4_fc_alloc_region *fc_regions;
-	int fc_regions_size, fc_regions_used, fc_regions_valid;
-	int *fc_modified_inodes;
-	int fc_modified_inodes_used, fc_modified_inodes_size;
+	цяло fc_regions_size, fc_regions_used, fc_regions_valid;
+	цяло *fc_modified_inodes;
+	цяло fc_modified_inodes_used, fc_modified_inodes_size;
 };
 
 #define region_last(__region) (((__region)->lblk) + ((__region)->len) - 1)
@@ -159,32 +159,32 @@ static inline const char *tag2str(__u16 tag)
 {
 	switch (tag) {
 	case EXT4_FC_TAG_LINK:
-		return "ADD_ENTRY";
+		върни "ADD_ENTRY";
 	case EXT4_FC_TAG_UNLINK:
-		return "DEL_ENTRY";
+		върни "DEL_ENTRY";
 	case EXT4_FC_TAG_ADD_RANGE:
-		return "ADD_RANGE";
+		върни "ADD_RANGE";
 	case EXT4_FC_TAG_CREAT:
-		return "CREAT_DENTRY";
+		върни "CREAT_DENTRY";
 	case EXT4_FC_TAG_DEL_RANGE:
-		return "DEL_RANGE";
+		върни "DEL_RANGE";
 	case EXT4_FC_TAG_INODE:
-		return "INODE";
+		върни "INODE";
 	case EXT4_FC_TAG_PAD:
-		return "PAD";
+		върни "PAD";
 	case EXT4_FC_TAG_TAIL:
-		return "TAIL";
+		върни "TAIL";
 	case EXT4_FC_TAG_HEAD:
-		return "HEAD";
+		върни "HEAD";
 	default:
-		return "ERROR";
+		върни "ERROR";
 	}
 }
 
 /* Get length of a particular tlv */
-static inline int ext4_fc_tag_len(struct ext4_fc_tl *tl)
+static inline цяло ext4_fc_tag_len(struct ext4_fc_tl *tl)
 {
-	return le16_to_cpu(tl->fc_len);
+	върни le16_to_cpu(tl->fc_len);
 }
 
 #endif /* __FAST_COMMIT_H__ */

@@ -29,27 +29,27 @@ struct sb_struct sb;
 						offsetof(struct sb_struct, x), \
 						cur_offset)
 
-static int do_field(const char *field, unsigned size, unsigned cur_size,
+static цяло do_field(const char *field, unsigned size, unsigned cur_size,
 		    unsigned offset, unsigned cur_offset)
 {
-	if (size != cur_size) {
+	ако (size != cur_size) {
 		printf("error: %s size %u should be %u\n",
 		       field, cur_size, size);
 		exit(1);
 	}
-	if (offset != cur_offset) {
+	ако (offset != cur_offset) {
 		printf("error: %s offset %u should be %u\n",
 		       field, cur_offset, offset);
 		exit(1);
 	}
 	printf("%8d %-30s %3u\n", offset, field, size);
-	return offset + size;
+	върни offset + size;
 }
 
-int main(int argc, char **argv)
+цяло main(цяло argc, char **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#ако (__GNUC__ >= 4)
+	цяло cur_offset = 0;
 
 	printf("%8s %-30s %3s\n", "offset", "field", "size");
 	check_field(s_inodes_count, 4);
@@ -157,5 +157,5 @@ int main(int argc, char **argv)
 	check_field(s_checksum, 4);
 	do_field("Superblock end", 0, 0, cur_offset, 1024);
 #endif
-	return 0;
+	върни 0;
 }

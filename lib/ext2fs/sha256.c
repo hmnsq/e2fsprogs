@@ -12,7 +12,7 @@
 
 
 #include "config.h"
-#if HAVE_SYS_TYPES_H
+#ако HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 #include "ext2fs.h"
@@ -59,17 +59,17 @@ static const __u32 K[64] = {
 		(y)[4] = (unsigned char)(((x)>>24)&255);\
 		(y)[5] = (unsigned char)(((x)>>16)&255);\
 		(y)[6] = (unsigned char)(((x)>>8)&255);\
-		(y)[7] = (unsigned char)((x)&255); } while(0)
+		(y)[7] = (unsigned char)((x)&255); } докато(0)
 
 #define STORE32H(x, y)                                                                     \
   do { (y)[0] = (unsigned char)(((x)>>24)&255); (y)[1] = (unsigned char)(((x)>>16)&255);   \
-       (y)[2] = (unsigned char)(((x)>>8)&255); (y)[3] = (unsigned char)((x)&255); } while(0)
+       (y)[2] = (unsigned char)(((x)>>8)&255); (y)[3] = (unsigned char)((x)&255); } докато(0)
 
 #define LOAD32H(x, y)                            \
   do { x = ((__u32)((y)[0] & 255)<<24) | \
            ((__u32)((y)[1] & 255)<<16) | \
            ((__u32)((y)[2] & 255)<<8)  | \
-           ((__u32)((y)[3] & 255)); } while(0)
+           ((__u32)((y)[3] & 255)); } докато(0)
 
 struct sha256_state {
     __u64 length;
@@ -86,32 +86,32 @@ static void sha256_compress(struct hash_state * md, const unsigned char *buf)
 {
     __u32 S[8], W[64], t0, t1;
     __u32 t;
-    int i;
+    цяло i;
 
     /* copy state into S */
-    for (i = 0; i < 8; i++) {
+    за (i = 0; i < 8; i++) {
         S[i] = md->sha256.state[i];
     }
 
     /* copy the state into 512-bits into W[0..15] */
-    for (i = 0; i < 16; i++) {
+    за (i = 0; i < 16; i++) {
         LOAD32H(W[i], buf + (4*i));
     }
 
     /* fill W[16..63] */
-    for (i = 16; i < 64; i++) {
+    за (i = 16; i < 64; i++) {
         W[i] = Gamma1(W[i - 2]) + W[i - 7] + Gamma0(W[i - 15]) + W[i - 16];
     }        
 
     /* Compress */
-     for (i = 0; i < 64; ++i) {
+     за (i = 0; i < 64; ++i) {
          RND(S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7],i);
          t = S[7]; S[7] = S[6]; S[6] = S[5]; S[5] = S[4]; 
          S[4] = S[3]; S[3] = S[2]; S[2] = S[1]; S[1] = S[0]; S[0] = t;
      }  
 
     /* feedback */
-    for (i = 0; i < 8; i++) {
+    за (i = 0; i < 8; i++) {
         md->sha256.state[i] = md->sha256.state[i] + S[i];
     }
 }
@@ -136,19 +136,19 @@ static void sha256_process(struct hash_state * md, const unsigned char *in, unsi
 {
     unsigned long n;
 
-    while (inlen > 0) {
-	    if (md->sha256.curlen == 0 && inlen >= SHA256_BLOCKSIZE) {
+    докато (inlen > 0) {
+	    ако (md->sha256.curlen == 0 && inlen >= SHA256_BLOCKSIZE) {
 		    sha256_compress(md, in);
 		    md->sha256.length += SHA256_BLOCKSIZE * 8;
 		    in += SHA256_BLOCKSIZE;
 		    inlen -= SHA256_BLOCKSIZE;
-	    } else {
+	    } иначе {
 		    n = MIN(inlen, (SHA256_BLOCKSIZE - md->sha256.curlen));
 		    memcpy(md->sha256.buf + md->sha256.curlen, in, (size_t)n);
 		    md->sha256.curlen += n;
 		    in += n;
 		    inlen -= n;
-		    if (md->sha256.curlen == SHA256_BLOCKSIZE) {
+		    ако (md->sha256.curlen == SHA256_BLOCKSIZE) {
 			    sha256_compress(md, md->sha256.buf);
 			    md->sha256.length += 8*SHA256_BLOCKSIZE;
 			    md->sha256.curlen = 0;
@@ -160,7 +160,7 @@ static void sha256_process(struct hash_state * md, const unsigned char *in, unsi
 
 static void sha256_done(struct hash_state * md, unsigned char *out)
 {
-    int i;
+    цяло i;
 
     /* increase the length of the message */
     md->sha256.length += md->sha256.curlen * 8;
@@ -172,8 +172,8 @@ static void sha256_done(struct hash_state * md, unsigned char *out)
      * then compress.  Then we can fall back to padding zeros and length
      * encoding like normal.
      */
-    if (md->sha256.curlen > 56) {
-        while (md->sha256.curlen < 64) {
+    ако (md->sha256.curlen > 56) {
+        докато (md->sha256.curlen < 64) {
             md->sha256.buf[md->sha256.curlen++] = (unsigned char)0;
         }
         sha256_compress(md, md->sha256.buf);
@@ -181,7 +181,7 @@ static void sha256_done(struct hash_state * md, unsigned char *out)
     }
 
     /* pad up to 56 bytes of zeroes */
-    while (md->sha256.curlen < 56) {
+    докато (md->sha256.curlen < 56) {
         md->sha256.buf[md->sha256.curlen++] = (unsigned char)0;
     }
 
@@ -190,7 +190,7 @@ static void sha256_done(struct hash_state * md, unsigned char *out)
     sha256_compress(md, md->sha256.buf);
 
     /* copy output */
-    for (i = 0; i < 8; i++) {
+    за (i = 0; i < 8; i++) {
         STORE32H(md->sha256.state[i], out+(4*i));
     }
 }
@@ -230,25 +230,25 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+цяло main(цяло argc, char **argv)
 {
-	int i;
-	int errors = 0;
+	цяло i;
+	цяло errors = 0;
 	unsigned char tmp[32];
 
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
+	за (i = 0; i < (цяло)(sizeof(tests) / sizeof(tests[0])); i++) {
 		unsigned char *msg = (unsigned char *) tests[i].msg;
-		int len = strlen(tests[i].msg);
+		цяло len = strlen(tests[i].msg);
 
 		ext2fs_sha256(msg, len, tmp);
 		printf("SHA256 test message %d: ", i);
-		if (memcmp(tmp, tests[i].hash, 32) != 0) {
+		ако (memcmp(tmp, tests[i].hash, 32) != 0) {
 			printf("FAILED\n");
 			errors++;
-		} else
+		} иначе
 			printf("OK\n");
 	}
-	return errors;
+	върни errors;
 }
 
 #endif /* UNITTEST */

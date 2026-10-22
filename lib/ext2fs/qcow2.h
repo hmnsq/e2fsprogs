@@ -91,7 +91,7 @@ struct ext2_qcow2_refcount {
 };
 
 struct ext2_qcow2_image {
-	int	fd;
+	цяло	fd;
 	struct	ext2_qcow2_hdr		*hdr;
 	struct	ext2_qcow2_l2_cache	*l2_cache;
 	struct	ext2_qcow2_refcount	refcount;
@@ -111,6 +111,6 @@ struct ext2_qcow2_image {
 /* qcow2.c */
 
 /* Functions for converting qcow2 image into raw image */
-struct ext2_qcow2_hdr *qcow2_read_header(int);
-int qcow2_write_raw_image(int, int, struct ext2_qcow2_hdr *);
+struct ext2_qcow2_hdr *qcow2_read_header(цяло);
+цяло qcow2_write_raw_image(цяло, цяло, struct ext2_qcow2_hdr *);
 

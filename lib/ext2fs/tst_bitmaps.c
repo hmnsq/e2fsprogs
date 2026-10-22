@@ -33,21 +33,21 @@ static char subsystem_name[] = "tst_bitmaps";
 static char version[] = "1.0";
 
 ext2_filsys	test_fs;
-int		exit_status = 0;
+цяло		exit_status = 0;
 
-static int source_file(const char *cmd_file, int sci_idx)
+static цяло source_file(const char *cmd_file, цяло sci_idx)
 {
 	FILE		*f;
 	char		buf[256];
 	char		*cp;
-	int		retval;
-	int 		noecho;
+	цяло		retval;
+	цяло 		noecho;
 
-	if (strcmp(cmd_file, "-") == 0)
+	ако (strcmp(cmd_file, "-") == 0)
 		f = stdin;
-	else {
+	иначе {
 		f = fopen(cmd_file, "r");
-		if (!f) {
+		ако (!f) {
 			perror(cmd_file);
 			exit(1);
 		}
@@ -56,31 +56,31 @@ static int source_file(const char *cmd_file, int sci_idx)
 	fflush(stderr);
 	setbuf(stdout, NULL);
 	setbuf(stderr, NULL);
-	while (!feof(f)) {
-		if (fgets(buf, sizeof(buf), f) == NULL)
+	докато (!feof(f)) {
+		ако (fgets(buf, sizeof(buf), f) == NULL)
 			break;
-		if (buf[0] == '#')
+		ако (buf[0] == '#')
 			continue;
 		noecho = 0;
-		if (buf[0] == '-') {
+		ако (buf[0] == '-') {
 			noecho = 1;
 			buf[0] = ' ';
 		}
 		cp = strchr(buf, '\n');
-		if (cp)
+		ако (cp)
 			*cp = 0;
 		cp = strchr(buf, '\r');
-		if (cp)
+		ако (cp)
 			*cp = 0;
-		if (!noecho)
+		ако (!noecho)
 			printf("%s: %s\n", subsystem_name, buf);
 		retval = ss_execute_line(sci_idx, buf);
-		if (retval) {
+		ако (retval) {
 			ss_perror(sci_idx, retval, buf);
 			exit_status++;
 		}
 	}
-	return exit_status;
+	върни exit_status;
 }
 
 
@@ -105,9 +105,9 @@ static int source_file(const char *cmd_file, int sci_idx)
  */
 void reset_getopt(void)
 {
-#if defined(__GLIBC__) || defined(__linux__)
+#ако defined(__GLIBC__) || defined(__linux__)
 	optind = 0;
-#else
+#иначе
 	optind = 1;
 #endif
 #ifdef HAVE_OPTRESET
@@ -120,38 +120,38 @@ void reset_getopt(void)
  * an error message if it fails, and returning success or failure in err.
  */
 unsigned long parse_ulong(const char *str, const char *cmd,
-			  const char *descr, int *err)
+			  const char *descr, цяло *err)
 {
 	char		*tmp;
 	unsigned long	ret;
 
 	ret = strtoul(str, &tmp, 0);
-	if (*tmp == 0) {
-		if (err)
+	ако (*tmp == 0) {
+		ако (err)
 			*err = 0;
-		return ret;
+		върни ret;
 	}
 	com_err(cmd, 0, "Bad %s - %s", descr, str);
-	if (err)
+	ако (err)
 		*err = 1;
-	else
+	иначе
 		exit(1);
-	return 0;
+	върни 0;
 }
 
 
-int check_fs_open(const char *name)
+цяло check_fs_open(const char *name)
 {
-	if (!test_fs) {
+	ако (!test_fs) {
 		com_err(name, 0, "Filesystem not open");
-		return 1;
+		върни 1;
 	}
-	return 0;
+	върни 0;
 }
 
 static void setup_filesystem(const char *name,
-			     unsigned int blocks, unsigned int inodes,
-			     unsigned int type, int flags)
+			     unsigned цяло blocks, unsigned цяло inodes,
+			     unsigned цяло type, цяло flags)
 {
 	struct ext2_super_block param;
 	errcode_t retval;
@@ -163,9 +163,9 @@ static void setup_filesystem(const char *name,
 	retval = ext2fs_initialize("test fs", flags, &param,
 				   test_io_manager, &test_fs);
 
-	if (retval) {
+	ако (retval) {
 		com_err(name, retval, "while initializing filesystem");
-		return;
+		върни;
 	}
 	test_fs->default_bitmap_type = type;
 	ext2fs_free_block_bitmap(test_fs->block_map);
@@ -174,49 +174,49 @@ static void setup_filesystem(const char *name,
 	test_fs->inode_map = 0;
 	retval = ext2fs_allocate_block_bitmap(test_fs, "block bitmap",
 					      &test_fs->block_map);
-	if (retval) {
+	ако (retval) {
 		com_err(name, retval, "while allocating block bitmap");
 		goto errout;
 	}
 	retval = ext2fs_allocate_inode_bitmap(test_fs, "inode bitmap",
 					      &test_fs->inode_map);
-	if (retval) {
+	ако (retval) {
 		com_err(name, retval, "while allocating inode bitmap");
 		goto errout;
 	}
-	return;
+	върни;
 
 errout:
 	ext2fs_close_free(&test_fs);
 }
 
-void setup_cmd(int argc, ss_argv_t argv,
-	       int sci_idx EXT2FS_ATTR((unused)),
+void setup_cmd(цяло argc, ss_argv_t argv,
+	       цяло sci_idx EXT2FS_ATTR((unused)),
 	       void *infop EXT2FS_ATTR((unused)))
 {
-	int		c, err;
-	unsigned int	blocks = 128;
-	unsigned int	inodes = 0;
-	unsigned int	type = EXT2FS_BMAP64_BITARRAY;
-	int		flags = EXT2_FLAG_64BITS;
+	цяло		c, err;
+	unsigned цяло	blocks = 128;
+	unsigned цяло	inodes = 0;
+	unsigned цяло	type = EXT2FS_BMAP64_BITARRAY;
+	цяло		flags = EXT2_FLAG_64BITS;
 
-	if (test_fs)
+	ако (test_fs)
 		ext2fs_close_free(&test_fs);
 
 	reset_getopt();
-	while ((c = getopt(argc, argv, "b:i:lt:")) != EOF) {
+	докато ((c = getopt(argc, argv, "b:i:lt:")) != EOF) {
 		switch (c) {
 		case 'b':
 			blocks = parse_ulong(optarg, argv[0],
 					     "number of blocks", &err);
-			if (err)
-				return;
+			ако (err)
+				върни;
 			break;
 		case 'i':
 			inodes = parse_ulong(optarg, argv[0],
 					     "number of blocks", &err);
-			if (err)
-				return;
+			ако (err)
+				върни;
 			break;
 		case 'l':	/* Legacy bitmaps */
 			flags = 0;
@@ -224,468 +224,468 @@ void setup_cmd(int argc, ss_argv_t argv,
 		case 't':
 			type = parse_ulong(optarg, argv[0],
 					   "bitmap backend type", &err);
-			if (err)
-				return;
+			ако (err)
+				върни;
 			break;
 		default:
 			fprintf(stderr, "%s: usage: setup [-b blocks] "
 				"[-i inodes] [-t type]\n", argv[0]);
-			return;
+			върни;
 		}
 	}
 	setup_filesystem(argv[0], blocks, inodes, type, flags);
 }
 
-void close_cmd(int argc, char **argv, int sci_idx EXT2FS_ATTR((unused)),
+void close_cmd(цяло argc, char **argv, цяло sci_idx EXT2FS_ATTR((unused)),
 	       void *infop EXT2FS_ATTR((unused)))
 {
-	if (check_fs_open(argv[0]))
-		return;
+	ако (check_fs_open(argv[0]))
+		върни;
 
 	ext2fs_close_free(&test_fs);
 }
 
 
-void dump_bitmap(ext2fs_generic_bitmap bmap, unsigned int start, unsigned num)
+void dump_bitmap(ext2fs_generic_bitmap bmap, unsigned цяло start, unsigned num)
 {
 	unsigned char	*buf;
 	errcode_t	retval;
-	int		i, len = (num - start + 7) / 8;
+	цяло		i, len = (num - start + 7) / 8;
 
 	buf = malloc(len);
-	if (!buf) {
+	ако (!buf) {
 		com_err("dump_bitmap", 0, "couldn't allocate buffer");
-		return;
+		върни;
 	}
 	memset(buf, 0, len);
 	retval = ext2fs_get_generic_bmap_range(bmap, (__u64) start, num, buf);
-	if (retval) {
+	ако (retval) {
 		com_err("dump_bitmap", retval, 
 			"while calling ext2fs_generic_bmap_range");
 		free(buf);
-		return;
+		върни;
 	}
-	for (i=0; i < len; i++)
+	за (i=0; i < len; i++)
 		printf("%02x", buf[i]);
 	printf("\n");
 	printf("bits set: %u\n", ext2fs_bitcount(buf, len));
 	free(buf);
 }
 
-void dump_inode_bitmap_cmd(int argc, ss_argv_t argv,
-			   int sci_idx EXT2FS_ATTR((unused)),
+void dump_inode_bitmap_cmd(цяло argc, ss_argv_t argv,
+			   цяло sci_idx EXT2FS_ATTR((unused)),
 			   void *infop EXT2FS_ATTR((unused)))
 {
-	if (check_fs_open(argv[0]))
-		return;
+	ако (check_fs_open(argv[0]))
+		върни;
 
 	printf("inode bitmap: ");
 	dump_bitmap(test_fs->inode_map, 1, test_fs->super->s_inodes_count);
 }
 	
-void dump_block_bitmap_cmd(int argc, ss_argv_t argv,
-			   int sci_idx EXT2FS_ATTR((unused)),
+void dump_block_bitmap_cmd(цяло argc, ss_argv_t argv,
+			   цяло sci_idx EXT2FS_ATTR((unused)),
 			   void *infop EXT2FS_ATTR((unused)))
 {
-	if (check_fs_open(argv[0]))
-		return;
+	ако (check_fs_open(argv[0]))
+		върни;
 
 	printf("block bitmap: ");
 	dump_bitmap(test_fs->block_map, test_fs->super->s_first_data_block,
 		    test_fs->super->s_blocks_count);
 }
 	
-void do_setb(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
+void do_setb(цяло argc, ss_argv_t argv,
+	     цяло sci_idx EXT2FS_ATTR((unused)),
 	     void *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int block, num;
-	int err;
-	int test_result, op_result;
+	unsigned цяло block, num;
+	цяло err;
+	цяло test_result, op_result;
 
-	if (check_fs_open(argv[0]))
-		return;
+	ако (check_fs_open(argv[0]))
+		върни;
 
-	if (argc != 2 && argc != 3) {
+	ако (argc != 2 && argc != 3) {
 		com_err(argv[0], 0, "Usage: setb <block> [num]");
-		return;
+		върни;
 	}
 
 	block = parse_ulong(argv[1], argv[0], "block", &err);
-	if (err)
-		return;
+	ако (err)
+		върни;
 
-	if (argc == 3) {
+	ако (argc == 3) {
 		num = parse_ulong(argv[2], argv[0], "num", &err);
-		if (err)
-			return;
+		ако (err)
+			върни;
 
 		ext2fs_mark_block_bitmap_range2(test_fs->block_map,
 						block, num);
 		printf("Marking blocks %u to %u\n", block, block + num - 1);
-		return;
+		върни;
 	}
 
 	test_result = ext2fs_test_block_bitmap2(test_fs->block_map, block);
 	op_result = ext2fs_mark_block_bitmap2(test_fs->block_map, block);
 	printf("Setting block %u, was %s before\n", block, op_result ?
 	       "set" : "clear");
-	if (!test_result != !op_result)
+	ако (!test_result != !op_result)
 		com_err(argv[0], 0, "*ERROR* test_result different! (%d, %d)",
 			test_result, op_result);
 }
 
-void do_clearb(int argc, ss_argv_t argv,
-	       int sci_idx EXT2FS_ATTR((unused)),
+void do_clearb(цяло argc, ss_argv_t argv,
+	       цяло sci_idx EXT2FS_ATTR((unused)),
 	       void *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int block, num;
-	int err;
-	int test_result, op_result;
+	unsigned цяло block, num;
+	цяло err;
+	цяло test_result, op_result;
 
-	if (check_fs_open(argv[0]))
-		return;
+	ако (check_fs_open(argv[0]))
+		върни;
 
-	if (argc != 2 && argc != 3) {
+	ако (argc != 2 && argc != 3) {
 		com_err(argv[0], 0, "Usage: clearb <block> [num]");
-		return;
+		върни;
 	}
 
 	block = parse_ulong(argv[1], argv[0], "block", &err);
-	if (err)
-		return;
+	ако (err)
+		върни;
 
-	if (argc == 3) {
+	ако (argc == 3) {
 		num = parse_ulong(argv[2], argv[0], "num", &err);
-		if (err)
-			return;
+		ако (err)
+			върни;
 
 		ext2fs_unmark_block_bitmap_range2(test_fs->block_map,
 						block, num);
 		printf("Clearing blocks %u to %u\n", block, block + num - 1);
-		return;
+		върни;
 	}
 
 	test_result = ext2fs_test_block_bitmap2(test_fs->block_map, block);
 	op_result = ext2fs_unmark_block_bitmap2(test_fs->block_map, block);
 	printf("Clearing block %u, was %s before\n", block, op_result ?
 	       "set" : "clear");
-	if (!test_result != !op_result)
+	ако (!test_result != !op_result)
 		com_err(argv[0], 0, "*ERROR* test_result different! (%d, %d)",
 			test_result, op_result);
 }
 
-void do_testb(int argc, ss_argv_t argv,
-	      int sci_idx EXT2FS_ATTR((unused)),
+void do_testb(цяло argc, ss_argv_t argv,
+	      цяло sci_idx EXT2FS_ATTR((unused)),
 	      void *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int block, num;
-	int err;
-	int test_result;
+	unsigned цяло block, num;
+	цяло err;
+	цяло test_result;
 
-	if (check_fs_open(argv[0]))
-		return;
+	ако (check_fs_open(argv[0]))
+		върни;
 
-	if (argc != 2 && argc != 3) {
+	ако (argc != 2 && argc != 3) {
 		com_err(argv[0], 0, "Usage: testb <block> [num]");
-		return;
+		върни;
 	}
 
 	block = parse_ulong(argv[1], argv[0], "block", &err);
-	if (err)
-		return;
+	ако (err)
+		върни;
 
-	if (argc == 3) {
+	ако (argc == 3) {
 		num = parse_ulong(argv[2], argv[0], "num", &err);
-		if (err)
-			return;
+		ако (err)
+			върни;
 
 		test_result =
 			ext2fs_test_block_bitmap_range2(test_fs->block_map,
 							block, num);
 		printf("Blocks %u to %u are %sall clear.\n",
 		       block, block + num - 1, test_result ? "" : "NOT ");
-		return;
+		върни;
 	}
 
 	test_result = ext2fs_test_block_bitmap2(test_fs->block_map, block);
 	printf("Block %u is %s\n", block, test_result ? "set" : "clear");
 }
 
-void do_ffzb(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
+void do_ffzb(цяло argc, ss_argv_t argv,
+	     цяло sci_idx EXT2FS_ATTR((unused)),
 	     void *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int start, end;
-	int err;
+	unsigned цяло start, end;
+	цяло err;
 	errcode_t retval;
 	blk64_t out;
 
-	if (check_fs_open(argv[0]))
-		return;
+	ако (check_fs_open(argv[0]))
+		върни;
 
-	if (argc != 3 && argc != 3) {
+	ако (argc != 3 && argc != 3) {
 		com_err(argv[0], 0, "Usage: ffzb <start> <end>");
-		return;
+		върни;
 	}
 
 	start = parse_ulong(argv[1], argv[0], "start", &err);
-	if (err)
-		return;
+	ако (err)
+		върни;
 
 	end = parse_ulong(argv[2], argv[0], "end", &err);
-	if (err)
-		return;
+	ако (err)
+		върни;
 
 	retval = ext2fs_find_first_zero_block_bitmap2(test_fs->block_map,
 						      start, end, &out);
-	if (retval) {
+	ако (retval) {
 		printf("ext2fs_find_first_zero_block_bitmap2() returned %s\n",
 		       error_message(retval));
-		return;
+		върни;
 	}
 	printf("First unmarked block is %llu\n", (unsigned long long) out);
 }
 
-void do_ffsb(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
+void do_ffsb(цяло argc, ss_argv_t argv,
+	     цяло sci_idx EXT2FS_ATTR((unused)),
 	     void *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int start, end;
-	int err;
+	unsigned цяло start, end;
+	цяло err;
 	errcode_t retval;
 	blk64_t out;
 
-	if (check_fs_open(argv[0]))
-		return;
+	ако (check_fs_open(argv[0]))
+		върни;
 
-	if (argc != 3 && argc != 3) {
+	ако (argc != 3 && argc != 3) {
 		com_err(argv[0], 0, "Usage: ffsb <start> <end>");
-		return;
+		върни;
 	}
 
 	start = parse_ulong(argv[1], argv[0], "start", &err);
-	if (err)
-		return;
+	ако (err)
+		върни;
 
 	end = parse_ulong(argv[2], argv[0], "end", &err);
-	if (err)
-		return;
+	ако (err)
+		върни;
 
 	retval = ext2fs_find_first_set_block_bitmap2(test_fs->block_map,
 						      start, end, &out);
-	if (retval) {
+	ако (retval) {
 		printf("ext2fs_find_first_set_block_bitmap2() returned %s\n",
 		       error_message(retval));
-		return;
+		върни;
 	}
 	printf("First marked block is %llu\n", (unsigned long long) out);
 }
 
 
-void do_zerob(int argc, ss_argv_t argv,
-	      int sci_idx EXT2FS_ATTR((unused)),
+void do_zerob(цяло argc, ss_argv_t argv,
+	      цяло sci_idx EXT2FS_ATTR((unused)),
 	      void *infop EXT2FS_ATTR((unused)))
 {
-	if (check_fs_open(argv[0]))
-		return;
+	ако (check_fs_open(argv[0]))
+		върни;
 
 	printf("Clearing block bitmap.\n");
 	ext2fs_clear_block_bitmap(test_fs->block_map);
 }
 
-void do_seti(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
+void do_seti(цяло argc, ss_argv_t argv,
+	     цяло sci_idx EXT2FS_ATTR((unused)),
 	     void *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int inode;
-	int err;
-	int test_result, op_result;
+	unsigned цяло inode;
+	цяло err;
+	цяло test_result, op_result;
 
-	if (check_fs_open(argv[0]))
-		return;
+	ако (check_fs_open(argv[0]))
+		върни;
 
-	if (argc != 2) {
+	ако (argc != 2) {
 		com_err(argv[0], 0, "Usage: seti <inode>");
-		return;
+		върни;
 	}
 
 	inode = parse_ulong(argv[1], argv[0], "inode", &err);
-	if (err)
-		return;
+	ако (err)
+		върни;
 
 	test_result = ext2fs_test_inode_bitmap2(test_fs->inode_map, inode);
 	op_result = ext2fs_mark_inode_bitmap2(test_fs->inode_map, inode);
 	printf("Setting inode %u, was %s before\n", inode, op_result ?
 	       "set" : "clear");
-	if (!test_result != !op_result) {
+	ако (!test_result != !op_result) {
 		com_err(argv[0], 0, "*ERROR* test_result different! (%d, %d)",
 			test_result, op_result);
 		exit_status++;
 	}
 }
 
-void do_cleari(int argc, ss_argv_t argv,
-	       int sci_idx EXT2FS_ATTR((unused)),
+void do_cleari(цяло argc, ss_argv_t argv,
+	       цяло sci_idx EXT2FS_ATTR((unused)),
 	       void *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int inode;
-	int err;
-	int test_result, op_result;
+	unsigned цяло inode;
+	цяло err;
+	цяло test_result, op_result;
 
-	if (check_fs_open(argv[0]))
-		return;
+	ако (check_fs_open(argv[0]))
+		върни;
 
-	if (argc != 2) {
+	ако (argc != 2) {
 		com_err(argv[0], 0, "Usage: clearb <inode>");
-		return;
+		върни;
 	}
 
 	inode = parse_ulong(argv[1], argv[0], "inode", &err);
-	if (err)
-		return;
+	ако (err)
+		върни;
 
 	test_result = ext2fs_test_inode_bitmap2(test_fs->inode_map, inode);
 	op_result = ext2fs_unmark_inode_bitmap2(test_fs->inode_map, inode);
 	printf("Clearing inode %u, was %s before\n", inode, op_result ?
 	       "set" : "clear");
-	if (!test_result != !op_result) {
+	ако (!test_result != !op_result) {
 		com_err(argv[0], 0, "*ERROR* test_result different! (%d, %d)",
 			test_result, op_result);
 		exit_status++;
 	}
 }
 
-void do_testi(int argc, ss_argv_t argv,
-	      int sci_idx EXT2FS_ATTR((unused)),
+void do_testi(цяло argc, ss_argv_t argv,
+	      цяло sci_idx EXT2FS_ATTR((unused)),
 	      void *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int inode;
-	int err;
-	int test_result;
+	unsigned цяло inode;
+	цяло err;
+	цяло test_result;
 
-	if (check_fs_open(argv[0]))
-		return;
+	ако (check_fs_open(argv[0]))
+		върни;
 
-	if (argc != 2) {
+	ако (argc != 2) {
 		com_err(argv[0], 0, "Usage: testb <inode>");
-		return;
+		върни;
 	}
 
 	inode = parse_ulong(argv[1], argv[0], "inode", &err);
-	if (err)
-		return;
+	ако (err)
+		върни;
 
 	test_result = ext2fs_test_inode_bitmap2(test_fs->inode_map, inode);
 	printf("Inode %u is %s\n", inode, test_result ? "set" : "clear");
 }
 
-void do_ffzi(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
+void do_ffzi(цяло argc, ss_argv_t argv,
+	     цяло sci_idx EXT2FS_ATTR((unused)),
 	     void *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int start, end;
-	int err;
+	unsigned цяло start, end;
+	цяло err;
 	errcode_t retval;
 	ext2_ino_t out;
 
-	if (check_fs_open(argv[0]))
-		return;
+	ако (check_fs_open(argv[0]))
+		върни;
 
-	if (argc != 3 && argc != 3) {
+	ако (argc != 3 && argc != 3) {
 		com_err(argv[0], 0, "Usage: ffzi <start> <end>");
-		return;
+		върни;
 	}
 
 	start = parse_ulong(argv[1], argv[0], "start", &err);
-	if (err)
-		return;
+	ако (err)
+		върни;
 
 	end = parse_ulong(argv[2], argv[0], "end", &err);
-	if (err)
-		return;
+	ако (err)
+		върни;
 
 	retval = ext2fs_find_first_zero_inode_bitmap2(test_fs->inode_map,
 						      start, end, &out);
-	if (retval) {
+	ако (retval) {
 		printf("ext2fs_find_first_zero_inode_bitmap2() returned %s\n",
 		       error_message(retval));
-		return;
+		върни;
 	}
 	printf("First unmarked inode is %u\n", out);
 }
 
-void do_ffsi(int argc, ss_argv_t argv,
-	     int sci_idx EXT2FS_ATTR((unused)),
+void do_ffsi(цяло argc, ss_argv_t argv,
+	     цяло sci_idx EXT2FS_ATTR((unused)),
 	     void *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int start, end;
-	int err;
+	unsigned цяло start, end;
+	цяло err;
 	errcode_t retval;
 	ext2_ino_t out;
 
-	if (check_fs_open(argv[0]))
-		return;
+	ако (check_fs_open(argv[0]))
+		върни;
 
-	if (argc != 3 && argc != 3) {
+	ако (argc != 3 && argc != 3) {
 		com_err(argv[0], 0, "Usage: ffsi <start> <end>");
-		return;
+		върни;
 	}
 
 	start = parse_ulong(argv[1], argv[0], "start", &err);
-	if (err)
-		return;
+	ако (err)
+		върни;
 
 	end = parse_ulong(argv[2], argv[0], "end", &err);
-	if (err)
-		return;
+	ако (err)
+		върни;
 
 	retval = ext2fs_find_first_set_inode_bitmap2(test_fs->inode_map,
 						     start, end, &out);
-	if (retval) {
+	ако (retval) {
 		printf("ext2fs_find_first_set_inode_bitmap2() returned %s\n",
 		       error_message(retval));
-		return;
+		върни;
 	}
 	printf("First marked inode is %u\n", out);
 }
 
-void do_zeroi(int argc, ss_argv_t argv,
-	      int sci_idx EXT2FS_ATTR((unused)),
+void do_zeroi(цяло argc, ss_argv_t argv,
+	      цяло sci_idx EXT2FS_ATTR((unused)),
 	      void *infop EXT2FS_ATTR((unused)))
 {
-	if (check_fs_open(argv[0]))
-		return;
+	ако (check_fs_open(argv[0]))
+		върни;
 
 	printf("Clearing inode bitmap.\n");
 	ext2fs_clear_inode_bitmap(test_fs->inode_map);
 }
 
-int main(int argc, char **argv)
+цяло main(цяло argc, char **argv)
 {
-	unsigned int	blocks = 128;
-	unsigned int	inodes = 0;
-	unsigned int	type = EXT2FS_BMAP64_BITARRAY;
-	int		c, err, code;
+	unsigned цяло	blocks = 128;
+	unsigned цяло	inodes = 0;
+	unsigned цяло	type = EXT2FS_BMAP64_BITARRAY;
+	цяло		c, err, code;
 	char		*request = (char *)NULL;
 	char		*cmd_file = 0;
-	int		sci_idx;
-	int		flags = EXT2_FLAG_64BITS;
+	цяло		sci_idx;
+	цяло		flags = EXT2_FLAG_64BITS;
 
 	add_error_table(&et_ss_error_table);
 	add_error_table(&et_ext2_error_table);
-	while ((c = getopt (argc, argv, "b:i:lt:R:f:")) != EOF) {
+	докато ((c = getopt (argc, argv, "b:i:lt:R:f:")) != EOF) {
 		switch (c) {
 		case 'b':
 			blocks = parse_ulong(optarg, argv[0],
 					     "number of blocks", &err);
-			if (err)
+			ако (err)
 				exit(1);
 			break;
 		case 'i':
 			inodes = parse_ulong(optarg, argv[0],
 					     "number of blocks", &err);
-			if (err)
+			ако (err)
 				exit(1);
 			break;
 		case 'l':	/* Legacy bitmaps */
@@ -694,7 +694,7 @@ int main(int argc, char **argv)
 		case 't':
 			type = parse_ulong(optarg, argv[0],
 					   "bitmap backend type", &err);
-			if (err)
+			ако (err)
 				exit(1);
 			break;
 		case 'R':
@@ -712,13 +712,13 @@ int main(int argc, char **argv)
 
 	sci_idx = ss_create_invocation(subsystem_name, version,
 				       (char *)NULL, &tst_bitmaps_cmds, &code);
-	if (code) {
+	ако (code) {
 		ss_perror(sci_idx, code, "creating invocation");
 		exit(1);
 	}
 
 	(void) ss_add_request_table (sci_idx, &ss_std_requests, 1, &code);
-	if (code) {
+	ако (code) {
 		ss_perror(sci_idx, code, "adding standard requests");
 		exit (1);
 	}
@@ -728,15 +728,15 @@ int main(int argc, char **argv)
 
 	setup_filesystem(argv[0], blocks, inodes, type, flags);
 
-	if (request) {
+	ако (request) {
 		code = ss_execute_line(sci_idx, request);
-		if (code) {
+		ако (code) {
 			ss_perror(sci_idx, code, request);
 			exit_status++;
 		}
-	} else if (cmd_file) {
+	} иначе ако (cmd_file) {
 		exit_status = source_file(cmd_file, sci_idx);
-	} else {
+	} иначе {
 		ss_listen(sci_idx);
 	}
 

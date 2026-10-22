@@ -32,7 +32,7 @@ struct ext2_ext_attr_entry {
 	__u32	e_value_inum;	/* inode in which the value is stored */
 	__u32	e_value_size;	/* size of attribute value */
 	__u32	e_hash;		/* hash value of name and value */
-#if 0
+#ако 0
 	char	e_name[0];	/* attribute name */
 #endif
 };
@@ -64,13 +64,13 @@ struct ext2_ext_attr_entry {
 
 #ifdef __KERNEL__
 # ifdef CONFIG_EXT2_FS_EXT_ATTR
-extern int ext2_get_ext_attr(struct inode *, const char *, char *, size_t, int);
-extern int ext2_set_ext_attr(struct inode *, const char *, char *, size_t, int);
+extern цяло ext2_get_ext_attr(struct inode *, const char *, char *, size_t, цяло);
+extern цяло ext2_set_ext_attr(struct inode *, const char *, char *, size_t, цяло);
 extern void ext2_ext_attr_free_inode(struct inode *inode);
 extern void ext2_ext_attr_put_super(struct super_block *sb);
-extern int ext2_ext_attr_init(void);
+extern цяло ext2_ext_attr_init(void);
 extern void ext2_ext_attr_done(void);
-# else
+# иначе
 #  define ext2_get_ext_attr NULL
 #  define ext2_set_ext_attr NULL
 # endif

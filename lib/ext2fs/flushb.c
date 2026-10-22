@@ -12,16 +12,16 @@
 
 #include "config.h"
 #include <stdio.h>
-#if HAVE_ERRNO_H
+#ако HAVE_ERRNO_H
 #include <errno.h>
 #endif
-#if HAVE_UNISTD_H
+#ако HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_SYS_IOCTL_H
+#ако HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
-#if HAVE_SYS_MOUNT_H
+#ако HAVE_SYS_MOUNT_H
 #include <sys/param.h>
 #include <sys/mount.h>		/* This may define BLKFLSBUF */
 #endif
@@ -50,7 +50,7 @@
  * flush the buffer cache.  The latter is basically only useful for
  * system benchmarks and for torturing systems in burn-in tests.  :)
  */
-errcode_t ext2fs_sync_device(int fd, int flushb)
+errcode_t ext2fs_sync_device(цяло fd, цяло flushb)
 {
 	/*
 	 * We always sync the device in case we're running on old
@@ -58,31 +58,31 @@ errcode_t ext2fs_sync_device(int fd, int flushb)
 	 * still is a race condition for those kernels, but this
 	 * reduces it greatly.)
 	 */
-#if defined(HAVE_FSYNC)
-	if (fsync (fd) == -1)
-		return errno;
+#ако defined(HAVE_FSYNC)
+	ако (fsync (fd) == -1)
+		върни errno;
 #endif
 
-	if (flushb) {
+	ако (flushb) {
 		errcode_t	retval = 0;
 
 #ifdef BLKFLSBUF
-		if (ioctl (fd, BLKFLSBUF, 0) == 0)
-			return 0;
+		ако (ioctl (fd, BLKFLSBUF, 0) == 0)
+			върни 0;
 		retval = errno;
 #elif defined(__linux__)
 #warning BLKFLSBUF not defined
 #endif
 #ifdef FDFLUSH
 		/* In case this is a floppy */
-		if (ioctl(fd, FDFLUSH, 0) == 0)
-			return 0;
-		if (retval == 0)
+		ако (ioctl(fd, FDFLUSH, 0) == 0)
+			върни 0;
+		ако (retval == 0)
 			retval = errno;
 #elif defined(__linux__)
 #warning FDFLUSH not defined
 #endif
-		return retval;
+		върни retval;
 	}
-	return 0;
+	върни 0;
 }

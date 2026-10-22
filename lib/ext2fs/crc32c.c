@@ -47,7 +47,7 @@
 #define __cpu_to_be32(x) (x)
 #define __cpu_to_le32(x) (ext2fs_cpu_to_le32((x)))
 #define __le32_to_cpu(x) (ext2fs_le32_to_cpu((x)))
-#else
+#иначе
 #define __constant_cpu_to_le32(x) (x)
 #define __constant_cpu_to_be32(x) ___constant_swab32((x))
 #define __be32_to_cpu(x) (ext2fs_be32_to_cpu((x)))
@@ -56,25 +56,25 @@
 #define __le32_to_cpu(x) (x)
 #endif
 
-#if CRC_LE_BITS > 8
+#ако CRC_LE_BITS > 8
 # define tole(x) __constant_cpu_to_le32(x)
-#else
+#иначе
 # define tole(x) (x)
 #endif
 
-#if CRC_BE_BITS > 8
+#ако CRC_BE_BITS > 8
 # define tobe(x) __constant_cpu_to_be32(x)
-#else
+#иначе
 # define tobe(x) (x)
 #endif
 
 #include "crc32c_table.h"
 
-#if CRC_LE_BITS > 8 || CRC_BE_BITS > 8
+#ако CRC_LE_BITS > 8 || CRC_BE_BITS > 8
 
-#if CRC_LE_BITS < 64 && CRC_BE_BITS < 64
+#ако CRC_LE_BITS < 64 && CRC_BE_BITS < 64
 #define CRC_INLINE inline
-#else
+#иначе
 #define CRC_INLINE
 #endif
 
@@ -89,7 +89,7 @@ crc32_body(uint32_t crc, unsigned char const *buf, size_t len,
 		   t1[(q >> 16) & 255] ^ t0[(q >> 24) & 255])
 #  define DO_CRC8 (t7[(q) & 255] ^ t6[(q >> 8) & 255] ^ \
 		   t5[(q >> 16) & 255] ^ t4[(q >> 24) & 255])
-# else
+# иначе
 #  define DO_CRC(x) (crc = t0[((crc >> 24) ^ (x)) & 255] ^ (crc << 8))
 #  define DO_CRC4 (t0[(q) & 255] ^ t1[(q >> 8) & 255] ^ \
 		   t2[(q >> 16) & 255] ^ t3[(q >> 24) & 255])
@@ -103,26 +103,26 @@ crc32_body(uint32_t crc, unsigned char const *buf, size_t len,
 	uint32_t q;
 
 	/* Align it */
-	if (unlikely((uintptr_t)buf & 3 && len)) {
+	ако (unlikely((uintptr_t)buf & 3 && len)) {
 		do {
 			DO_CRC(*buf++);
-		} while ((--len) && ((uintptr_t)buf)&3);
+		} докато ((--len) && ((uintptr_t)buf)&3);
 	}
 
-# if CRC_LE_BITS == 32
+# ако CRC_LE_BITS == 32
 	rem_len = len & 3;
 	len = len >> 2;
-# else
+# иначе
 	rem_len = len & 7;
 	len = len >> 3;
 # endif
 
 	b = (const uint32_t *)buf;
-	for (--b; len; --len) {
+	за (--b; len; --len) {
 		q = crc ^ *++b; /* use pre increment for speed */
-# if CRC_LE_BITS == 32
+# ако CRC_LE_BITS == 32
 		crc = DO_CRC4;
-# else
+# иначе
 		crc = DO_CRC8;
 		q = *++b;
 		crc ^= DO_CRC4;
@@ -130,13 +130,13 @@ crc32_body(uint32_t crc, unsigned char const *buf, size_t len,
 	}
 	len = rem_len;
 	/* And the last few bytes */
-	if (len) {
+	ако (len) {
 		const uint8_t *p = (const uint8_t *)(b + 1) - 1;
 		do {
 			DO_CRC(*++p); /* use pre increment for speed */
-		} while (--len);
+		} докато (--len);
 	}
-	return crc;
+	върни crc;
 #undef DO_CRC
 #undef DO_CRC4
 #undef DO_CRC8
@@ -154,15 +154,15 @@ static inline uint32_t crc32_le_generic(uint32_t crc, unsigned char const *p,
 					size_t len, const uint32_t (*tab)[256],
 					uint32_t polynomial EXT2FS_ATTR((unused)))
 {
-#if CRC_LE_BITS == 1
-	int i;
-	while (len--) {
+#ако CRC_LE_BITS == 1
+	цяло i;
+	докато (len--) {
 		crc ^= *p++;
-		for (i = 0; i < 8; i++)
+		за (i = 0; i < 8; i++)
 			crc = (crc >> 1) ^ ((crc & 1) ? polynomial : 0);
 	}
 # elif CRC_LE_BITS == 2
-	while (len--) {
+	докато (len--) {
 		crc ^= *p++;
 		crc = (crc >> 2) ^ tab[0][crc & 3];
 		crc = (crc >> 2) ^ tab[0][crc & 3];
@@ -170,28 +170,28 @@ static inline uint32_t crc32_le_generic(uint32_t crc, unsigned char const *p,
 		crc = (crc >> 2) ^ tab[0][crc & 3];
 	}
 # elif CRC_LE_BITS == 4
-	while (len--) {
+	докато (len--) {
 		crc ^= *p++;
 		crc = (crc >> 4) ^ tab[0][crc & 15];
 		crc = (crc >> 4) ^ tab[0][crc & 15];
 	}
 # elif CRC_LE_BITS == 8
 	/* aka Sarwate algorithm */
-	while (len--) {
+	докато (len--) {
 		crc ^= *p++;
 		crc = (crc >> 8) ^ tab[0][crc & 255];
 	}
-# else
+# иначе
 	crc = __cpu_to_le32(crc);
 	crc = crc32_body(crc, p, len, tab);
 	crc = __le32_to_cpu(crc);
 #endif
-	return crc;
+	върни crc;
 }
 
 uint32_t ext2fs_crc32c_le(uint32_t crc, unsigned char const *p, size_t len)
 {
-	return crc32_le_generic(crc, p, len, crc32ctable_le, CRC32C_POLY_LE);
+	върни crc32_le_generic(crc, p, len, crc32ctable_le, CRC32C_POLY_LE);
 }
 
 /**
@@ -205,17 +205,17 @@ static inline uint32_t crc32_be_generic(uint32_t crc, unsigned char const *p,
 					size_t len, const uint32_t (*tab)[256],
 					uint32_t polynomial EXT2FS_ATTR((unused)))
 {
-#if CRC_BE_BITS == 1
-	int i;
-	while (len--) {
+#ако CRC_BE_BITS == 1
+	цяло i;
+	докато (len--) {
 		crc ^= *p++ << 24;
-		for (i = 0; i < 8; i++)
+		за (i = 0; i < 8; i++)
 			crc =
 			    (crc << 1) ^ ((crc & 0x80000000) ? polynomial :
 					  0);
 	}
 # elif CRC_BE_BITS == 2
-	while (len--) {
+	докато (len--) {
 		crc ^= *p++ << 24;
 		crc = (crc << 2) ^ tab[0][crc >> 30];
 		crc = (crc << 2) ^ tab[0][crc >> 30];
@@ -223,27 +223,27 @@ static inline uint32_t crc32_be_generic(uint32_t crc, unsigned char const *p,
 		crc = (crc << 2) ^ tab[0][crc >> 30];
 	}
 # elif CRC_BE_BITS == 4
-	while (len--) {
+	докато (len--) {
 		crc ^= *p++ << 24;
 		crc = (crc << 4) ^ tab[0][crc >> 28];
 		crc = (crc << 4) ^ tab[0][crc >> 28];
 	}
 # elif CRC_BE_BITS == 8
-	while (len--) {
+	докато (len--) {
 		crc ^= *p++ << 24;
 		crc = (crc << 8) ^ tab[0][crc >> 24];
 	}
-# else
+# иначе
 	crc = __cpu_to_be32(crc);
 	crc = crc32_body(crc, p, len, tab);
 	crc = __be32_to_cpu(crc);
 # endif
-	return crc;
+	върни crc;
 }
 
 uint32_t ext2fs_crc32_be(uint32_t crc, unsigned char const *p, size_t len)
 {
-	return crc32_be_generic(crc, p, len, crc32table_be, CRCPOLY_BE);
+	върни crc32_be_generic(crc, p, len, crc32table_be, CRCPOLY_BE);
 }
 
 #ifdef UNITTEST
@@ -900,39 +900,39 @@ static struct crc_test {
 	{0, 0, 0, 0, 0},
 };
 
-static int test_crc32c(void)
+static цяло test_crc32c(void)
 {
 	struct crc_test *t = test;
-	int failures = 0;
+	цяло failures = 0;
 
-	while (t->length) {
+	докато (t->length) {
 		uint32_t be, le;
 		le = ext2fs_crc32c_le(t->crc, test_buf + t->start, t->length);
 		be = ext2fs_crc32_be(t->crc, test_buf + t->start, t->length);
-		if (le != t->crc32c_le) {
+		ако (le != t->crc32c_le) {
 			printf("Test %d LE fails, %x != %x\n",
-			       (int) (t - test), le, t->crc32c_le);
+			       (цяло) (t - test), le, t->crc32c_le);
 			failures++;
 		}
-		if (be != t->crc32_be) {
+		ако (be != t->crc32_be) {
 			printf("Test %d BE fails, %x != %x\n",
-			       (int) (t - test), be, t->crc32_be);
+			       (цяло) (t - test), be, t->crc32_be);
 			failures++;
 		}
 		t++;
 	}
 
-	return failures;
+	върни failures;
 }
 
-int main(int argc, char *argv[])
+цяло main(цяло argc, char *argv[])
 {
-	int ret;
+	цяло ret;
 
 	ret = test_crc32c();
-	if (!ret)
+	ако (!ret)
 		printf("No failures.\n");
 
-	return ret;
+	върни ret;
 }
 #endif /* UNITTEST */

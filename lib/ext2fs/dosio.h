@@ -152,6 +152,6 @@ extern unsigned long        _dio_hw_error;
  *
  * Routine returns 0 on success and !=0 otherwise.
  */
-int open_partition(char *dev);
+цяло open_partition(char *dev);
 
 #endif /* __diskio_h */
