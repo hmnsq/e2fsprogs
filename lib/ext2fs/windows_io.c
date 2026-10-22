@@ -12,202 +12,202 @@
  * %End-Header%
  */
 
-#include <windows.h>
-#include <winioctl.h>
-#include <io.h>
+#ضمن <windows.h>
+#ضمن <winioctl.h>
+#ضمن <io.h>
 
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
-#define _XOPEN_SOURCE 600
-#define _DARWIN_C_SOURCE
-#define _FILE_OFFSET_BITS 64
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#endif
+#إذا !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#وصف_ڪريو XOPEN_ذريعو 600
+#وصف_ڪريو DARWIN_C_ذريعو
+#وصف_ڪريو FILE_وٿي_بٽ 64
+#جيڪڏهن_وصف_نه_ٿيل LARGEFILE_ذريعو
+#وصف_ڪريو LARGEFILE_ذريعو
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_نه_ٿيل LARGEFILE64_ذريعو
+#وصف_ڪريو LARGEFILE64_ذريعو
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_نه_ٿيل GNU_ذريعو
+#وصف_ڪريو GNU_ذريعو
+#جيڪڏهن_پورو
+#جيڪڏهن_پورو
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#define PR_GET_DUMPABLE 3
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#include <fcntl.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جيڪڏهن_پورو
+#إذا HAVE_ERRNO_H
+#ضمن <errno.h>
+#جيڪڏهن_پورو
+#ضمن <fcntl.h>
+#ضمن <time.h>
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#جيڪڏهن_پورو
+#وصف_ڪريو PR_GET_DUMPABLE 3
+#إذا HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
+#جيڪڏهن_پورو
+#ضمن <fcntl.h>
 
-#undef ALIGN_DEBUG
+#وصف_رد ALIGN_DEBUG
 
 //#define DEBUG
-#ifdef DEBUG
-#define TRACE(...) {\
-		    char __log[256];\
-		    snprintf(__log, sizeof(__log), __VA_ARGS__);\
-		    __log[sizeof(__log)-1] = 0;\
+#جيڪڏهن_وصف_ٿيل DEBUG
+#وصف_ڪريو TRACE(...) {\
+		    حرف __log[256];\
+		    snprintf(__log, حجم(__log), __VA_ARGS__);\
+		    __log[حجم(__log)-1] = 0;\
 		    OutputDebugString(__log);\
 		}
-#else
-#define TRACE(...) do { } while (0);
-#endif
+#وإلا
+#وصف_ڪريو TRACE(...) افعل { } طالما (0);
+#جيڪڏهن_پورو
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
+#ضمن "ext2fsP.h"
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
-#define EXT2_CHECK_MAGIC_RETURN(struct, code, ret) \
-	  if ((struct)->magic != (code)) return (ret)
+#وصف_ڪريو EXT2_CHECK_MAGIC(بنية, ڪوڊ) \
+	  إذا ((بنية)->magic != (ڪوڊ)) أرجع (ڪوڊ)
+#وصف_ڪريو EXT2_CHECK_MAGIC_RETURN(بنية, ڪوڊ, ret) \
+	  إذا ((بنية)->magic != (ڪوڊ)) أرجع (ret)
 
-#define EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL  0x10ed
+#وصف_ڪريو EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL  0x10ed
 
-struct windows_cache {
-	char			*buf;
-	unsigned long long	block;
-	int			access_time;
-	unsigned		dirty:1;
-	unsigned		in_use:1;
+بنية windows_cache {
+	حرف			*buf;
+	بنانشان ڊگهو ڊگهو	بلاڪ;
+	صحيح			access_وقت;
+	بنانشان		dirty:1;
+	بنانشان		اندريون_use:1;
 };
 
-#define CACHE_SIZE 8
-#define WRITE_DIRECT_SIZE 4	/* Must be smaller than CACHE_SIZE */
-#define READ_DIRECT_SIZE 4	/* Should be smaller than CACHE_SIZE */
+#وصف_ڪريو CACHE_سائيز 8
+#وصف_ڪريو WRITE_سڌو_سائيز 4	/* Must be smaller than CACHE_SIZE */
+#وصف_ڪريو READ_سڌو_سائيز 4	/* Should be smaller than CACHE_SIZE */
 
-struct windows_private_data {
-	int	magic;
-	char	name[MAX_PATH];
+بنية windows_ذاتي_معلومات {
+	صحيح	magic;
+	حرف	name[MAX_رستو];
 	HANDLE	handle;
-	char	dos_device[MAX_PATH];
-	char	cf_device[MAX_PATH];
-	int	dev;
-	int	flags;
-	int	align;
-	int	access_time;
-	ext2_loff_t offset;
-	struct windows_cache cache[CACHE_SIZE];
-	void	*bounce;
-	struct struct_io_stats io_stats;
+	حرف	dos_device[MAX_رستو];
+	حرف	cf_device[MAX_رستو];
+	صحيح	dev;
+	صحيح	flags;
+	صحيح	align;
+	صحيح	access_وقت;
+	ext2_loff_t وٿي;
+	بنية windows_cache cache[CACHE_سائيز];
+	فراغ	*bounce;
+	بنية struct_io_stats io_stats;
 };
 
-#define IS_ALIGNED(n, align) ((((uintptr_t) n) & \
+#وصف_ڪريو IS_ALIGNED(n, align) ((((uintptr_t) n) & \
 			       ((uintptr_t) ((align)-1))) == 0)
 
-static int fake_dos_name_for_device(struct windows_private_data *data)
+ساكن صحيح fake_dos_name_for_device(بنية windows_ذاتي_معلومات *معلومات)
 {
-	if (strncmp(data->name, "\\\\", 2) == 0) {
-		data->dos_device[0] = 0;
-		strcpy(data->cf_device, data->name);
-		return 0;
+	إذا (لڙي_ڀيٽ(معلومات->name, "\\\\", 2) == 0) {
+		معلومات->dos_device[0] = 0;
+		strcpy(معلومات->cf_device, معلومات->name);
+		أرجع 0;
 	}
 
-	_snprintf(data->dos_device, MAX_PATH, "fakedevice%lu", GetCurrentProcessId());
+	_snprintf(معلومات->dos_device, MAX_رستو, "fakedevice%lu", GetCurrentProcessId());
 
-	if (!DefineDosDevice(DDD_RAW_TARGET_PATH, data->dos_device, data->name))
-		return 1;
+	إذا (!DefineDosDevice(DDD_RAW_هدف_رستو, معلومات->dos_device, معلومات->name))
+		أرجع 1;
 
-	_snprintf(data->cf_device, MAX_PATH, "\\\\.\\%s", data->dos_device);
-	TRACE("e2fsprogs::fake_dos_name_for_device::DefineDosDevice(\"%s\")", data->dos_device);
+	_snprintf(معلومات->cf_device, MAX_رستو, "\\\\.\\%s", معلومات->dos_device);
+	TRACE("e2fsprogs::fake_dos_name_for_device::DefineDosDevice(\"%s\")", معلومات->dos_device);
 
-	return 0;
+	أرجع 0;
 }
 
-static void remove_fake_dos_name(struct windows_private_data *data)
+ساكن فراغ remove_fake_dos_name(بنية windows_ذاتي_معلومات *معلومات)
 {
-	if (*data->dos_device) {
-		TRACE("e2fsprogs::remove_fake_dos_name::DefineDosDevice(\"%s\")", data->dos_device);
-		DefineDosDevice(DDD_RAW_TARGET_PATH | DDD_EXACT_MATCH_ON_REMOVE | DDD_REMOVE_DEFINITION, data->dos_device, data->name);
+	إذا (*معلومات->dos_device) {
+		TRACE("e2fsprogs::remove_fake_dos_name::DefineDosDevice(\"%s\")", معلومات->dos_device);
+		DefineDosDevice(DDD_RAW_هدف_رستو | DDD_EXACT_ميلاپ_ON_REMOVE | DDD_REMOVE_DEFINITION, معلومات->dos_device, معلومات->name);
 	}
 }
 
-static errcode_t windows_get_stats(io_channel channel, io_stats *stats)
+ساكن errcode_t windows_get_stats(io_channel channel, io_stats *stats)
 {
 	errcode_t	retval = 0;
 
-	struct windows_private_data *data;
+	بنية windows_ذاتي_معلومات *معلومات;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	معلومات = (بنية windows_ذاتي_معلومات *) channel->ذاتي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (stats)
-		*stats = &data->io_stats;
+	إذا (stats)
+		*stats = &معلومات->io_stats;
 
-	return retval;
+	أرجع retval;
 }
 
-static LARGE_INTEGER make_large_integer(LONGLONG value)
+ساكن LARGE_INTEGER make_large_integer(LONGLONG قدر)
 {
 	LARGE_INTEGER	li;
 
-	li.QuadPart = value;
-	return li;
+	li.QuadPart = قدر;
+	أرجع li;
 }
 
 /*
  * Here are the raw I/O functions
  */
-static errcode_t raw_read_blk(io_channel channel,
-			      struct windows_private_data *data,
-			      unsigned long long block,
-			      int count, void *bufv)
+ساكن errcode_t raw_read_blk(io_channel channel,
+			      بنية windows_ذاتي_معلومات *معلومات,
+			      بنانشان ڊگهو ڊگهو بلاڪ,
+			      صحيح ڳڻپ, فراغ *bufv)
 {
 	errcode_t	retval;
-	ssize_t	size;
+	ssize_t	سائيز;
 	ext2_loff_t	location;
 	DWORD		actual = 0;
-	unsigned char	*buf = bufv;
+	بنانشان حرف	*buf = bufv;
 	ssize_t		really_read = 0;
 
-	size = (count < 0) ? -count : count * channel->block_size;
-	data->io_stats.bytes_read += size;
-	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
+	سائيز = (ڳڻپ < 0) ? -ڳڻپ : ڳڻپ * channel->بلاڪ_سائيز;
+	معلومات->io_stats.بائيٽون_read += سائيز;
+	location = ((ext2_loff_t) بلاڪ * channel->بلاڪ_سائيز) + معلومات->وٿي;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
-			retval = GetLastError();
-			goto error_out;
+	إذا (معلومات->flags & IO_FLAG_FORCE_BOUNCE) {
+		إذا (!سيٽ_File_اشارو_Ex(معلومات->handle, make_large_integer(location), عدم, FILE_BEGIN)) {
+			retval = Get_آخري_Error();
+			اذهب error_ٻاهريون;
 		}
-		goto bounce_read;
+		اذهب bounce_read;
 	}
 
-	if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
-		retval = GetLastError();
-		goto error_out;
+	إذا (!سيٽ_File_اشارو_Ex(معلومات->handle, make_large_integer(location), عدم, FILE_BEGIN)) {
+		retval = Get_آخري_Error();
+		اذهب error_ٻاهريون;
 	}
-	if ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
-		if (!ReadFile(data->handle, buf, size, &actual, NULL)) {
-			retval = GetLastError();
-			goto error_out;
+	إذا ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(سائيز, channel->align))) {
+		إذا (!ReadFile(معلومات->handle, buf, سائيز, &actual, عدم)) {
+			retval = Get_آخري_Error();
+			اذهب error_ٻاهريون;
 		}
-		if (actual != size) {
+		إذا (actual != سائيز) {
 	short_read:
-		if (actual < 0) {
-			retval = GetLastError();
+		إذا (actual < 0) {
+			retval = Get_آخري_Error();
 			actual = 0;
-		} else
+		} وإلا
 			retval = EXT2_ET_SHORT_READ;
-		goto error_out;
+		اذهب error_ٻاهريون;
 		}
-	return 0;
+	أرجع 0;
 	}
 
 	/*
@@ -215,86 +215,86 @@ static errcode_t raw_read_blk(io_channel channel,
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_read:
-	while (size > 0) {
-		if (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
-			retval = GetLastError();
-			goto error_out;
+	طالما (سائيز > 0) {
+		إذا (!ReadFile(معلومات->handle, معلومات->bounce, channel->بلاڪ_سائيز, &actual, عدم)) {
+			retval = Get_آخري_Error();
+			اذهب error_ٻاهريون;
 		}
-		if (actual != channel->block_size) {
+		إذا (actual != channel->بلاڪ_سائيز) {
 			actual = really_read;
 			buf -= really_read;
-			size += really_read;
-			goto short_read;
+			سائيز += really_read;
+			اذهب short_read;
 		}
-		actual = size;
-		if (size > channel->block_size)
-			actual = channel->block_size;
-		memcpy(buf, data->bounce, actual);
+		actual = سائيز;
+		إذا (سائيز > channel->بلاڪ_سائيز)
+			actual = channel->بلاڪ_سائيز;
+		يادگيري_نقل(buf, معلومات->bounce, actual);
 		really_read += actual;
-		size -= actual;
+		سائيز -= actual;
 		buf += actual;
 	}
-	return 0;
+	أرجع 0;
 
-error_out:
-	if (actual >= 0 && actual < size)
-		memset((char *) buf+actual, 0, size-actual);
-	if (channel->read_error)
-		retval = (channel->read_error)(channel, block, count, buf,
-					       size, actual, retval);
-	return retval;
+error_ٻاهريون:
+	إذا (actual >= 0 && actual < سائيز)
+		memset((حرف *) buf+actual, 0, سائيز-actual);
+	إذا (channel->read_error)
+		retval = (channel->read_error)(channel, بلاڪ, ڳڻپ, buf,
+					       سائيز, actual, retval);
+	أرجع retval;
 }
 
-static errcode_t raw_write_blk(io_channel channel,
-			       struct windows_private_data *data,
-			       unsigned long long block,
-			       int count, const void *bufv)
+ساكن errcode_t raw_write_blk(io_channel channel,
+			       بنية windows_ذاتي_معلومات *معلومات,
+			       بنانشان ڊگهو ڊگهو بلاڪ,
+			       صحيح ڳڻپ, ثابت فراغ *bufv)
 {
-	ssize_t		size;
+	ssize_t		سائيز;
 	ext2_loff_t	location;
 	DWORD		actual = 0;
 	errcode_t	retval;
-	const unsigned char *buf = bufv;
+	ثابت بنانشان حرف *buf = bufv;
 
-	if (count == 1)
-		size = channel->block_size;
-	else {
-		if (count < 0)
-			size = -count;
-		else
-			size = count * channel->block_size;
+	إذا (ڳڻپ == 1)
+		سائيز = channel->بلاڪ_سائيز;
+	وإلا {
+		إذا (ڳڻپ < 0)
+			سائيز = -ڳڻپ;
+		وإلا
+			سائيز = ڳڻپ * channel->بلاڪ_سائيز;
 	}
-	data->io_stats.bytes_written += size;
+	معلومات->io_stats.بائيٽون_written += سائيز;
 
-	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
+	location = ((ext2_loff_t) بلاڪ * channel->بلاڪ_سائيز) + معلومات->وٿي;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
-			retval = GetLastError();
-			goto error_out;
+	إذا (معلومات->flags & IO_FLAG_FORCE_BOUNCE) {
+		إذا (!سيٽ_File_اشارو_Ex(معلومات->handle, make_large_integer(location), عدم, FILE_BEGIN)) {
+			retval = Get_آخري_Error();
+			اذهب error_ٻاهريون;
 		}
-	goto bounce_write;
+	اذهب bounce_write;
 	}
 
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
-			retval = GetLastError();
-		goto error_out;
+		إذا (!سيٽ_File_اشارو_Ex(معلومات->handle, make_large_integer(location), عدم, FILE_BEGIN)) {
+			retval = Get_آخري_Error();
+		اذهب error_ٻاهريون;
 	}
 
-	SetLastError(0);
+	سيٽ_آخري_Error(0);
 
-	if ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
-		if (!WriteFile(data->handle, buf, size, &actual, NULL)) {
-			retval = GetLastError();
-			goto error_out;
+	إذا ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(سائيز, channel->align))) {
+		إذا (!WriteFile(معلومات->handle, buf, سائيز, &actual, عدم)) {
+			retval = Get_آخري_Error();
+			اذهب error_ٻاهريون;
 		}
 
-		if (actual != size) {
+		إذا (actual != سائيز) {
 		short_write:
 			retval = EXT2_ET_SHORT_WRITE;
-			goto error_out;
+			اذهب error_ٻاهريون;
 		}
-		return 0;
+		أرجع 0;
 	}
 
 	/*
@@ -302,47 +302,47 @@ static errcode_t raw_write_blk(io_channel channel,
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_write:
-	while (size > 0) {
-		if (size < channel->block_size) {
-			if (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
-				retval = GetLastError();
-				goto error_out;
+	طالما (سائيز > 0) {
+		إذا (سائيز < channel->بلاڪ_سائيز) {
+			إذا (!ReadFile(معلومات->handle, معلومات->bounce, channel->بلاڪ_سائيز, &actual, عدم)) {
+				retval = Get_آخري_Error();
+				اذهب error_ٻاهريون;
 			}
-			if (actual != channel->block_size) {
-				if (actual < 0) {
-					retval = GetLastError();
-					goto error_out;
+			إذا (actual != channel->بلاڪ_سائيز) {
+				إذا (actual < 0) {
+					retval = Get_آخري_Error();
+					اذهب error_ٻاهريون;
 				}
-				memset((char *) data->bounce + actual, 0,
-				       channel->block_size - actual);
+				memset((حرف *) معلومات->bounce + actual, 0,
+				       channel->بلاڪ_سائيز - actual);
 			}
 		}
-		actual = size;
-		if (size > channel->block_size)
-			actual = channel->block_size;
-		memcpy(data->bounce, buf, actual);
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
-			retval = GetLastError();
-			goto error_out;
+		actual = سائيز;
+		إذا (سائيز > channel->بلاڪ_سائيز)
+			actual = channel->بلاڪ_سائيز;
+		يادگيري_نقل(معلومات->bounce, buf, actual);
+		إذا (!سيٽ_File_اشارو_Ex(معلومات->handle, make_large_integer(location), عدم, FILE_BEGIN)) {
+			retval = Get_آخري_Error();
+			اذهب error_ٻاهريون;
 		}
-		if (!WriteFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
-			retval = GetLastError();
-			goto error_out;
+		إذا (!WriteFile(معلومات->handle, معلومات->bounce, channel->بلاڪ_سائيز, &actual, عدم)) {
+			retval = Get_آخري_Error();
+			اذهب error_ٻاهريون;
 		}
 
-		if (actual != channel->block_size)
-			goto short_write;
-		size -= actual;
+		إذا (actual != channel->بلاڪ_سائيز)
+			اذهب short_write;
+		سائيز -= actual;
 		buf += actual;
 		location += actual;
 	}
-	return 0;
+	أرجع 0;
 
-error_out:
-	if (channel->write_error)
-		retval = (channel->write_error)(channel, block, count, buf,
-						size, actual, retval);
-	return retval;
+error_ٻاهريون:
+	إذا (channel->write_error)
+		retval = (channel->write_error)(channel, بلاڪ, ڳڻپ, buf,
+						سائيز, actual, retval);
+	أرجع retval;
 }
 
 
@@ -351,163 +351,163 @@ error_out:
  */
 
 /* Allocate the cache buffers */
-static errcode_t alloc_cache(io_channel channel,
-			     struct windows_private_data *data)
+ساكن errcode_t alloc_cache(io_channel channel,
+			     بنية windows_ذاتي_معلومات *معلومات)
 {
 	errcode_t		retval;
-	struct windows_cache	*cache;
-	int			i;
+	بنية windows_cache	*cache;
+	صحيح			i;
 
-	data->access_time = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
-		cache->block = 0;
-		cache->access_time = 0;
+	معلومات->access_وقت = 0;
+	لكل (i=0, cache = معلومات->cache; i < CACHE_سائيز; i++, cache++) {
+		cache->بلاڪ = 0;
+		cache->access_وقت = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
-		if (cache->buf)
+		cache->اندريون_use = 0;
+		إذا (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 		retval = io_channel_alloc_buf(channel, 0, &cache->buf);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 	}
-	if (channel->align || data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (data->bounce)
-			ext2fs_free_mem(&data->bounce);
-		retval = io_channel_alloc_buf(channel, 0, &data->bounce);
+	إذا (channel->align || معلومات->flags & IO_FLAG_FORCE_BOUNCE) {
+		إذا (معلومات->bounce)
+			ext2fs_free_mem(&معلومات->bounce);
+		retval = io_channel_alloc_buf(channel, 0, &معلومات->bounce);
 	}
-	return retval;
+	أرجع retval;
 }
 
 /* Free the cache buffers */
-static void free_cache(struct windows_private_data *data)
+ساكن فراغ free_cache(بنية windows_ذاتي_معلومات *معلومات)
 {
-	struct windows_cache    *cache;
-	int			i;
+	بنية windows_cache    *cache;
+	صحيح			i;
 
-	data->access_time = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
-		cache->block = 0;
-		cache->access_time = 0;
+	معلومات->access_وقت = 0;
+	لكل (i=0, cache = معلومات->cache; i < CACHE_سائيز; i++, cache++) {
+		cache->بلاڪ = 0;
+		cache->access_وقت = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
-		if (cache->buf)
+		cache->اندريون_use = 0;
+		إذا (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 	}
-	if (data->bounce)
-		ext2fs_free_mem(&data->bounce);
+	إذا (معلومات->bounce)
+		ext2fs_free_mem(&معلومات->bounce);
 }
 
-#ifndef NO_IO_CACHE
+#جيڪڏهن_وصف_نه_ٿيل NO_IO_CACHE
 /*
  * Try to find a block in the cache.  If the block is not found, and
  * eldest is a non-zero pointer, then fill in eldest with the cache
  * entry to that should be reused.
  */
-static struct windows_cache *find_cached_block(struct windows_private_data *data,
-					    unsigned long long block,
-					    struct windows_cache **eldest)
+ساكن بنية windows_cache *ڳوليو_cached_بلاڪ(بنية windows_ذاتي_معلومات *معلومات,
+					    بنانشان ڊگهو ڊگهو بلاڪ,
+					    بنية windows_cache **eldest)
 {
-	struct windows_cache	*cache, *unused_cache, *oldest_cache;
-	int			i;
+	بنية windows_cache	*cache, *اڻ_استعمال_ٿيل_cache, *oldest_cache;
+	صحيح			i;
 
-	unused_cache = oldest_cache = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
-		if (!cache->in_use) {
-			if (!unused_cache)
-				unused_cache = cache;
-			continue;
+	اڻ_استعمال_ٿيل_cache = oldest_cache = 0;
+	لكل (i=0, cache = معلومات->cache; i < CACHE_سائيز; i++, cache++) {
+		إذا (!cache->اندريون_use) {
+			إذا (!اڻ_استعمال_ٿيل_cache)
+				اڻ_استعمال_ٿيل_cache = cache;
+			استمر;
 		}
-		if (cache->block == block) {
-			cache->access_time = ++data->access_time;
-			return cache;
+		إذا (cache->بلاڪ == بلاڪ) {
+			cache->access_وقت = ++معلومات->access_وقت;
+			أرجع cache;
 		}
-		if (!oldest_cache ||
-		   (cache->access_time < oldest_cache->access_time))
+		إذا (!oldest_cache ||
+		   (cache->access_وقت < oldest_cache->access_وقت))
 			oldest_cache = cache;
 	}
-	if (eldest)
-		*eldest = (unused_cache) ? unused_cache : oldest_cache;
-	return 0;
+	إذا (eldest)
+		*eldest = (اڻ_استعمال_ٿيل_cache) ? اڻ_استعمال_ٿيل_cache : oldest_cache;
+	أرجع 0;
 }
 
 /*
  * Reuse a particular cache entry for another block.
  */
-static void reuse_cache(io_channel channel, struct windows_private_data *data,
-		 struct windows_cache *cache, unsigned long long block)
+ساكن فراغ reuse_cache(io_channel channel, بنية windows_ذاتي_معلومات *معلومات,
+		 بنية windows_cache *cache, بنانشان ڊگهو ڊگهو بلاڪ)
 {
-	if (cache->dirty && cache->in_use)
-		raw_write_blk(channel, data, cache->block, 1, cache->buf);
+	إذا (cache->dirty && cache->اندريون_use)
+		raw_write_blk(channel, معلومات, cache->بلاڪ, 1, cache->buf);
 
-	cache->in_use = 1;
+	cache->اندريون_use = 1;
 	cache->dirty = 0;
-	cache->block = block;
-	cache->access_time = ++data->access_time;
+	cache->بلاڪ = بلاڪ;
+	cache->access_وقت = ++معلومات->access_وقت;
 }
 
 /*
  * Flush all of the blocks in the cache
  */
-static errcode_t flush_cached_blocks(io_channel channel,
-				     struct windows_private_data *data,
-				     int invalidate)
+ساكن errcode_t flush_cached_بلاڪون(io_channel channel,
+				     بنية windows_ذاتي_معلومات *معلومات,
+				     صحيح invalidate)
 {
-	struct windows_cache	*cache;
+	بنية windows_cache	*cache;
 	errcode_t	retval, retval2;
-	int			i;
+	صحيح			i;
 
 	retval2 = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
-		if (!cache->in_use)
-			continue;
+	لكل (i=0, cache = معلومات->cache; i < CACHE_سائيز; i++, cache++) {
+		إذا (!cache->اندريون_use)
+			استمر;
 
-		if (invalidate)
-			cache->in_use = 0;
+		إذا (invalidate)
+			cache->اندريون_use = 0;
 
-		if (!cache->dirty)
-			continue;
+		إذا (!cache->dirty)
+			استمر;
 
-		retval = raw_write_blk(channel, data,
-				       cache->block, 1, cache->buf);
-		if (retval)
+		retval = raw_write_blk(channel, معلومات,
+				       cache->بلاڪ, 1, cache->buf);
+		إذا (retval)
 			retval2 = retval;
-		else
+		وإلا
 			cache->dirty = 0;
 	}
-	return retval2;
+	أرجع retval2;
 }
-#endif /* NO_IO_CACHE */
+#جيڪڏهن_پورو /* NO_IO_CACHE */
 
-static errcode_t windows_open_channel(struct windows_private_data *data,
-				   int flags, io_channel *channel,
+ساكن errcode_t windows_open_channel(بنية windows_ذاتي_معلومات *معلومات,
+				   صحيح flags, io_channel *channel,
 				   io_manager io_mgr)
 {
-	io_channel	io = NULL;
+	io_channel	io = عدم;
 	errcode_t	retval;
 	ext2fs_struct_stat st;
 
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	retval = ext2fs_get_mem(حجم(بنية struct_io_channel), &io);
+	إذا (retval)
+		اذهب cleanup;
+	memset(io, 0, حجم(بنية struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
 
 	io->manager = io_mgr;
-	retval = ext2fs_get_mem(strlen(data->name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(لڙي_ڊيگهه(معلومات->name)+1, &io->name);
+	إذا (retval)
+		اذهب cleanup;
 
-	strcpy(io->name, data->name);
-	io->private_data = data;
-	io->block_size = 1024;
+	strcpy(io->name, معلومات->name);
+	io->ذاتي_معلومات = معلومات;
+	io->بلاڪ_سائيز = 1024;
 	io->read_error = 0;
 	io->write_error = 0;
 	io->refcount = 1;
 
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
-		io->align = ext2fs_get_dio_alignment(data->dev);
-#endif
+#إذا defined(O_سڌو)
+	إذا (flags & IO_FLAG_سڌو_IO)
+		io->align = ext2fs_get_dio_alignment(معلومات->dev);
+#جيڪڏهن_پورو
 
 	/*
 	 * If the device is really a block device, then set the
@@ -516,307 +516,307 @@ static errcode_t windows_open_channel(struct windows_private_data *data,
 	 * and if it succeed, subsequent read from sparse area returns
 	 * zero.
 	 */
-	if (ext2fs_fstat(data->dev, &st) == 0) {
-		if (ext2fsP_is_disk_device(st.st_mode))
-			io->flags |= CHANNEL_FLAGS_BLOCK_DEVICE;
-		else
+	إذا (ext2fs_fstat(معلومات->dev, &st) == 0) {
+		إذا (ext2fsP_is_disk_device(st.st_گهڻائي))
+			io->flags |= CHANNEL_FLAGS_بلاڪ_DEVICE;
+		وإلا
 			io->flags |= CHANNEL_FLAGS_DISCARD_ZEROES;
 	}
 
-	if ((retval = alloc_cache(io, data)))
-		goto cleanup;
+	إذا ((retval = alloc_cache(io, معلومات)))
+		اذهب cleanup;
 
-#ifdef BLKROGET
-	if (flags & IO_FLAG_RW) {
-		int error;
-		int readonly = 0;
+#جيڪڏهن_وصف_ٿيل BLKROGET
+	إذا (flags & IO_FLAG_RW) {
+		صحيح error;
+		صحيح readonly = 0;
 
 		/* Is the block device actually writable? */
-		error = ioctl(data->dev, BLKROGET, &readonly);
-		if (!error && readonly) {
+		error = ioctl(معلومات->dev, BLKROGET, &readonly);
+		إذا (!error && readonly) {
 			retval = EPERM;
-			goto cleanup;
+			اذهب cleanup;
 		}
 	}
-#endif
+#جيڪڏهن_پورو
 
 	*channel = io;
-	return 0;
+	أرجع 0;
 
 cleanup:
-	if (data) {
-		if (data->dev >= 0)
-			close(data->dev);
-		free_cache(data);
-		ext2fs_free_mem(&data);
+	إذا (معلومات) {
+		إذا (معلومات->dev >= 0)
+			close(معلومات->dev);
+		free_cache(معلومات);
+		ext2fs_free_mem(&معلومات);
 	}
-	if (io) {
-		if (io->name) {
+	إذا (io) {
+		إذا (io->name) {
 			ext2fs_free_mem(&io->name);
 		}
 		ext2fs_free_mem(&io);
 	}
-	return retval;
+	أرجع retval;
 }
 
-static DWORD windows_open_device(struct windows_private_data *data, int open_flags)
+ساكن DWORD windows_open_device(بنية windows_ذاتي_معلومات *معلومات, صحيح open_flags)
 {
 	DWORD ret = 0;
 
-	if (*data->name != '\\')
-		strcpy(data->cf_device, data->name);
-	else if (fake_dos_name_for_device(data))
-		return -1;
+	إذا (*معلومات->name != '\\')
+		strcpy(معلومات->cf_device, معلومات->name);
+	وإلا إذا (fake_dos_name_for_device(معلومات))
+		أرجع -1;
 
 	DWORD desired_access = GENERIC_READ | ((open_flags & O_RDWR) ? GENERIC_WRITE : 0);
-	DWORD share_mode = (open_flags & O_EXCL) ? 0 : FILE_SHARE_READ | ((open_flags & O_RDWR) ? FILE_SHARE_WRITE : 0);
-	DWORD flags_and_attributes =
-#if defined(O_DIRECT)
-	(open_flags & O_DIRECT) ? (FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH) : FILE_ATTRIBUTE_NORMAL;
-#else
+	DWORD share_گهڻائي = (open_flags & O_EXCL) ? 0 : FILE_SHARE_READ | ((open_flags & O_RDWR) ? FILE_SHARE_WRITE : 0);
+	DWORD flags_and_خاصيتون =
+#إذا defined(O_سڌو)
+	(open_flags & O_سڌو) ? (FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH) : FILE_ATTRIBUTE_عام;
+#وإلا
 	FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH;
-#endif
+#جيڪڏهن_پورو
 
-	data->handle = CreateFile(data->cf_device, desired_access, share_mode, NULL, OPEN_EXISTING,
-				  flags_and_attributes, NULL);
+	معلومات->handle = CreateFile(معلومات->cf_device, desired_access, share_گهڻائي, عدم, OPEN_EXISTING,
+				  flags_and_خاصيتون, عدم);
 
-	if (data->handle == INVALID_HANDLE_VALUE) {
-		ret = GetLastError();
-		goto invalid_handle;
+	إذا (معلومات->handle == INVALID_HANDLE_قدر) {
+		ret = Get_آخري_Error();
+		اذهب invalid_handle;
 	}
 
-	TRACE("e2fsprogs::windows_open_device::CreateFile(\"%s\") = %p", data->cf_device, data->handle);
+	TRACE("e2fsprogs::windows_open_device::CreateFile(\"%s\") = %p", معلومات->cf_device, معلومات->handle);
 
-	data->dev = _open_osfhandle((intptr_t)data->handle, 0);
-	if (data->dev < 0) {
-		ret = GetLastError() ? GetLastError() : 9999;
-		goto osfhandle_error;
+	معلومات->dev = _open_osfhandle((intptr_t)معلومات->handle, 0);
+	إذا (معلومات->dev < 0) {
+		ret = Get_آخري_Error() ? Get_آخري_Error() : 9999;
+		اذهب osfhandle_error;
 	}
 
-	TRACE("e2fsprogs::windows_open_device::_open_osfhandle(%p) = %d", data->handle, data->dev);
+	TRACE("e2fsprogs::windows_open_device::_open_osfhandle(%p) = %d", معلومات->handle, معلومات->dev);
 
-	return 0;
+	أرجع 0;
 
 osfhandle_error:
-	TRACE("e2fsprogs::windows_open_device::CloseHandle(%p)", data->handle);
-	CloseHandle(data->handle);
+	TRACE("e2fsprogs::windows_open_device::CloseHandle(%p)", معلومات->handle);
+	CloseHandle(معلومات->handle);
 invalid_handle:
-	remove_fake_dos_name(data);
+	remove_fake_dos_name(معلومات);
 	TRACE("e2fsprogs::windows_open_device() = %lu, errno = %d", ret, errno);
-	return ret;
+	أرجع ret;
 }
 
-static struct windows_private_data *init_private_data(const char *name, int flags)
+ساكن بنية windows_ذاتي_معلومات *init_ذاتي_معلومات(ثابت حرف *name, صحيح flags)
 {
-	struct windows_private_data *data = NULL;
+	بنية windows_ذاتي_معلومات *معلومات = عدم;
 
-	if (ext2fs_get_mem(sizeof(struct windows_private_data), &data))
-		return NULL;
+	إذا (ext2fs_get_mem(حجم(بنية windows_ذاتي_معلومات), &معلومات))
+		أرجع عدم;
 
-	memset(data, 0, sizeof(struct windows_private_data));
-	strncpy(data->name, name, sizeof(data->name) - 1);
-	data->magic = EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL;
-	data->io_stats.num_fields = 2;
-	data->flags = flags;
-	data->handle = INVALID_HANDLE_VALUE;
+	memset(معلومات, 0, حجم(بنية windows_ذاتي_معلومات));
+	strncpy(معلومات->name, name, حجم(معلومات->name) - 1);
+	معلومات->magic = EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL;
+	معلومات->io_stats.انگ_fields = 2;
+	معلومات->flags = flags;
+	معلومات->handle = INVALID_HANDLE_قدر;
 
-	return data;
+	أرجع معلومات;
 }
 
-static errcode_t windows_open(const char *name, int flags, io_channel *channel)
+ساكن errcode_t windows_open(ثابت حرف *name, صحيح flags, io_channel *channel)
 {
-	int open_flags;
-	struct windows_private_data *data;
+	صحيح open_flags;
+	بنية windows_ذاتي_معلومات *معلومات;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	إذا (name == 0)
+		أرجع EXT2_ET_BAD_DEVICE_NAME;
 
-	data = init_private_data(name, flags);
-	if (!data)
-		return EXT2_ET_NO_MEMORY;
+	معلومات = init_ذاتي_معلومات(name, flags);
+	إذا (!معلومات)
+		أرجع EXT2_ET_NO_يادگيري;
 
 	open_flags = (flags & IO_FLAG_RW) ? O_RDWR : O_RDONLY;
-	if (flags & IO_FLAG_EXCLUSIVE)
+	إذا (flags & IO_FLAG_EXCLUSIVE)
 		open_flags |= O_EXCL;
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
-		open_flags |= O_DIRECT;
-#endif
+#إذا defined(O_سڌو)
+	إذا (flags & IO_FLAG_سڌو_IO)
+		open_flags |= O_سڌو;
+#جيڪڏهن_پورو
 
-	if (windows_open_device(data, open_flags)) {
-		ext2fs_free_mem(&data);
-		return EXT2_ET_BAD_DEVICE_NAME;
+	إذا (windows_open_device(معلومات, open_flags)) {
+		ext2fs_free_mem(&معلومات);
+		أرجع EXT2_ET_BAD_DEVICE_NAME;
 	}
 
-	return windows_open_channel(data, flags, channel, windows_io_manager);
+	أرجع windows_open_channel(معلومات, flags, channel, windows_io_manager);
 }
 
-static errcode_t windows_close(io_channel channel)
+ساكن errcode_t windows_close(io_channel channel)
 {
-	struct windows_private_data *data;
+	بنية windows_ذاتي_معلومات *معلومات;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	معلومات = (بنية windows_ذاتي_معلومات *) channel->ذاتي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	إذا (--channel->refcount > 0)
+		أرجع 0;
 
-#ifndef NO_IO_CACHE
-	retval = flush_cached_blocks(channel, data, 0);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل NO_IO_CACHE
+	retval = flush_cached_بلاڪون(channel, معلومات, 0);
+#جيڪڏهن_پورو
 
-	remove_fake_dos_name(data);
+	remove_fake_dos_name(معلومات);
 
-	if (_close(data->dev) != 0)
+	إذا (_close(معلومات->dev) != 0)
 		retval = errno;
 
-	TRACE("e2fsprogs::windows_close::_close(%d)", data->dev);
+	TRACE("e2fsprogs::windows_close::_close(%d)", معلومات->dev);
 
-	free_cache(data);
+	free_cache(معلومات);
 
-	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	ext2fs_free_mem(&channel->ذاتي_معلومات);
+	إذا (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t windows_set_blksize(io_channel channel, int blksize)
+ساكن errcode_t windows_سيٽ_blksize(io_channel channel, صحيح blksize)
 {
-	struct windows_private_data *data;
+	بنية windows_ذاتي_معلومات *معلومات;
 	errcode_t		retval;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	معلومات = (بنية windows_ذاتي_معلومات *) channel->ذاتي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (channel->block_size != blksize) {
-#ifndef NO_IO_CACHE
-		if ((retval = flush_cached_blocks(channel, data, 0)))
-			return retval;
-#endif
+	إذا (channel->بلاڪ_سائيز != blksize) {
+#جيڪڏهن_وصف_نه_ٿيل NO_IO_CACHE
+		إذا ((retval = flush_cached_بلاڪون(channel, معلومات, 0)))
+			أرجع retval;
+#جيڪڏهن_پورو
 
-		channel->block_size = blksize;
-		free_cache(data);
-		if ((retval = alloc_cache(channel, data)))
-			return retval;
+		channel->بلاڪ_سائيز = blksize;
+		free_cache(معلومات);
+		إذا ((retval = alloc_cache(channel, معلومات)))
+			أرجع retval;
 	}
-	return 0;
+	أرجع 0;
 }
 
-static errcode_t windows_read_blk64(io_channel channel, unsigned long long block, int count, void *buf)
+ساكن errcode_t windows_read_blk64(io_channel channel, بنانشان ڊگهو ڊگهو بلاڪ, صحيح ڳڻپ, فراغ *buf)
 {
-	struct windows_private_data *data;
-	struct windows_cache *cache, *reuse[READ_DIRECT_SIZE];
+	بنية windows_ذاتي_معلومات *معلومات;
+	بنية windows_cache *cache, *reuse[READ_سڌو_سائيز];
 	errcode_t	retval;
-	char		*cp;
-	int		i, j;
+	حرف		*cp;
+	صحيح		i, j;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	معلومات = (بنية windows_ذاتي_معلومات *) channel->ذاتي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-#ifdef NO_IO_CACHE
-	return raw_read_blk(channel, data, block, count, buf);
-#else
+#جيڪڏهن_وصف_ٿيل NO_IO_CACHE
+	أرجع raw_read_blk(channel, معلومات, بلاڪ, ڳڻپ, buf);
+#وإلا
 	/*
 	 * If we're doing an odd-sized read or a very large read,
 	 * flush out the cache and then do a direct read.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data, 0)))
-			return retval;
-		return raw_read_blk(channel, data, block, count, buf);
+	إذا (ڳڻپ < 0 || ڳڻپ > WRITE_سڌو_سائيز) {
+		إذا ((retval = flush_cached_بلاڪون(channel, معلومات, 0)))
+			أرجع retval;
+		أرجع raw_read_blk(channel, معلومات, بلاڪ, ڳڻپ, buf);
 	}
 
 	cp = buf;
-	while (count > 0) {
+	طالما (ڳڻپ > 0) {
 		/* If it's in the cache, use it! */
-		if ((cache = find_cached_block(data, block, &reuse[0]))) {
-#ifdef DEBUG
-			printf("Using cached block %lu\n", block);
-#endif
-			memcpy(cp, cache->buf, channel->block_size);
-			count--;
-			block++;
-			cp += channel->block_size;
-			continue;
+		إذا ((cache = ڳوليو_cached_بلاڪ(معلومات, بلاڪ, &reuse[0]))) {
+#جيڪڏهن_وصف_ٿيل DEBUG
+			لکو("Using cached block %lu\n", بلاڪ);
+#جيڪڏهن_پورو
+			يادگيري_نقل(cp, cache->buf, channel->بلاڪ_سائيز);
+			ڳڻپ--;
+			بلاڪ++;
+			cp += channel->بلاڪ_سائيز;
+			استمر;
 		}
-		if (count == 1) {
+		إذا (ڳڻپ == 1) {
 			/*
 			 * Special case where we read directly into the
 			 * cache buffer; important in the O_DIRECT case
 			 */
 			cache = reuse[0];
-			reuse_cache(channel, data, cache, block);
-			if ((retval = raw_read_blk(channel, data, block, 1,
+			reuse_cache(channel, معلومات, cache, بلاڪ);
+			إذا ((retval = raw_read_blk(channel, معلومات, بلاڪ, 1,
 						   cache->buf))) {
-				cache->in_use = 0;
-				return retval;
+				cache->اندريون_use = 0;
+				أرجع retval;
 			}
-			memcpy(cp, cache->buf, channel->block_size);
-			return 0;
+			يادگيري_نقل(cp, cache->buf, channel->بلاڪ_سائيز);
+			أرجع 0;
 		}
 
 		/*
 		 * Find the number of uncached blocks so we can do a
 		 * single read request
 		 */
-		for (i=1; i < count; i++)
-			if (find_cached_block(data, block+i, &reuse[i]))
-				break;
-#ifdef DEBUG
-		printf("Reading %d blocks starting at %lu\n", i, block);
-#endif
-		if ((retval = raw_read_blk(channel, data, block, i, cp)))
-			return retval;
+		لكل (i=1; i < ڳڻپ; i++)
+			إذا (ڳوليو_cached_بلاڪ(معلومات, بلاڪ+i, &reuse[i]))
+				اكسر;
+#جيڪڏهن_وصف_ٿيل DEBUG
+		لکو("Reading %d blocks starting at %lu\n", i, بلاڪ);
+#جيڪڏهن_پورو
+		إذا ((retval = raw_read_blk(channel, معلومات, بلاڪ, i, cp)))
+			أرجع retval;
 
 		/* Save the results in the cache */
-		for (j=0; j < i; j++) {
-			count--;
+		لكل (j=0; j < i; j++) {
+			ڳڻپ--;
 			cache = reuse[j];
-			reuse_cache(channel, data, cache, block++);
-			memcpy(cache->buf, cp, channel->block_size);
-			cp += channel->block_size;
+			reuse_cache(channel, معلومات, cache, بلاڪ++);
+			يادگيري_نقل(cache->buf, cp, channel->بلاڪ_سائيز);
+			cp += channel->بلاڪ_سائيز;
 		}
 	}
-	return 0;
-#endif /* NO_IO_CACHE */
+	أرجع 0;
+#جيڪڏهن_پورو /* NO_IO_CACHE */
 }
 
-static errcode_t windows_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+ساكن errcode_t windows_read_blk(io_channel channel, بنانشان ڊگهو بلاڪ,
+			       صحيح ڳڻپ, فراغ *buf)
 {
-	return windows_read_blk64(channel, block, count, buf);
+	أرجع windows_read_blk64(channel, بلاڪ, ڳڻپ, buf);
 }
 
-static errcode_t windows_write_blk64(io_channel channel,
-				unsigned long long block,
-				int count, const void *buf)
+ساكن errcode_t windows_write_blk64(io_channel channel,
+				بنانشان ڊگهو ڊگهو بلاڪ,
+				صحيح ڳڻپ, ثابت فراغ *buf)
 {
-	struct windows_private_data *data;
-	struct windows_cache *cache, *reuse;
+	بنية windows_ذاتي_معلومات *معلومات;
+	بنية windows_cache *cache, *reuse;
 	errcode_t	retval = 0;
-	const char	*cp;
-	int		writethrough;
+	ثابت حرف	*cp;
+	صحيح		writethrough;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	معلومات = (بنية windows_ذاتي_معلومات *) channel->ذاتي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-#ifdef NO_IO_CACHE
-	return raw_write_blk(channel, data, block, count, buf);
-#else
+#جيڪڏهن_وصف_ٿيل NO_IO_CACHE
+	أرجع raw_write_blk(channel, معلومات, بلاڪ, ڳڻپ, buf);
+#وإلا
 	/*
 	 * If we're doing an odd-sized write or a very large write,
 	 * flush out the cache completely and then do a direct write.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data, 1)))
-			return retval;
-		return raw_write_blk(channel, data, block, count, buf);
+	إذا (ڳڻپ < 0 || ڳڻپ > WRITE_سڌو_سائيز) {
+		إذا ((retval = flush_cached_بلاڪون(channel, معلومات, 1)))
+			أرجع retval;
+		أرجع raw_write_blk(channel, معلومات, بلاڪ, ڳڻپ, buf);
 	}
 
 	/*
@@ -825,198 +825,198 @@ static errcode_t windows_write_blk64(io_channel channel,
 	 * cache with the blocks.
 	 */
 	writethrough = channel->flags & CHANNEL_FLAGS_WRITETHROUGH;
-	if (writethrough)
-		retval = raw_write_blk(channel, data, block, count, buf);
+	إذا (writethrough)
+		retval = raw_write_blk(channel, معلومات, بلاڪ, ڳڻپ, buf);
 
 	cp = buf;
-	while (count > 0) {
-		cache = find_cached_block(data, block, &reuse);
-		if (!cache) {
+	طالما (ڳڻپ > 0) {
+		cache = ڳوليو_cached_بلاڪ(معلومات, بلاڪ, &reuse);
+		إذا (!cache) {
 			cache = reuse;
-			reuse_cache(channel, data, cache, block);
+			reuse_cache(channel, معلومات, cache, بلاڪ);
 		}
-		if (cache->buf != cp)
-			memcpy(cache->buf, cp, channel->block_size);
+		إذا (cache->buf != cp)
+			يادگيري_نقل(cache->buf, cp, channel->بلاڪ_سائيز);
 		cache->dirty = !writethrough;
-		count--;
-		block++;
-		cp += channel->block_size;
+		ڳڻپ--;
+		بلاڪ++;
+		cp += channel->بلاڪ_سائيز;
 	}
-	return retval;
-#endif /* NO_IO_CACHE */
+	أرجع retval;
+#جيڪڏهن_پورو /* NO_IO_CACHE */
 }
 
-static errcode_t windows_cache_readahead(io_channel channel,
-				      unsigned long long block,
-				      unsigned long long count)
+ساكن errcode_t windows_cache_readahead(io_channel channel,
+				      بنانشان ڊگهو ڊگهو بلاڪ,
+				      بنانشان ڊگهو ڊگهو ڳڻپ)
 {
-	return EXT2_ET_OP_NOT_SUPPORTED;
+	أرجع EXT2_ET_OP_NOT_SUPPORTED;
 }
 
-static errcode_t windows_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+ساكن errcode_t windows_write_blk(io_channel channel, بنانشان ڊگهو بلاڪ,
+				صحيح ڳڻپ, ثابت فراغ *buf)
 {
-	return windows_write_blk64(channel, block, count, buf);
+	أرجع windows_write_blk64(channel, بلاڪ, ڳڻپ, buf);
 }
 
-static errcode_t windows_write_byte(io_channel channel, unsigned long offset,
-				 int size, const void *buf)
+ساكن errcode_t windows_write_byte(io_channel channel, بنانشان ڊگهو وٿي,
+				 صحيح سائيز, ثابت فراغ *buf)
 {
-	return EXT2_ET_UNIMPLEMENTED;
+	أرجع EXT2_ET_UNIMPLEMENTED;
 }
 
 /*
  * Flush data buffers to disk.
  */
-static errcode_t windows_flush(io_channel channel)
+ساكن errcode_t windows_flush(io_channel channel)
 {
-	struct windows_private_data *data;
+	بنية windows_ذاتي_معلومات *معلومات;
 	errcode_t retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	معلومات = (بنية windows_ذاتي_معلومات *) channel->ذاتي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-#ifndef NO_IO_CACHE
-	retval = flush_cached_blocks(channel, data, 0);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل NO_IO_CACHE
+	retval = flush_cached_بلاڪون(channel, معلومات, 0);
+#جيڪڏهن_پورو
 
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t windows_set_option(io_channel channel, const char *option,
-				 const char *arg)
+ساكن errcode_t windows_سيٽ_option(io_channel channel, ثابت حرف *option,
+				 ثابت حرف *arg)
 {
-	struct windows_private_data *data;
-	unsigned long long tmp;
-	char *end;
+	بنية windows_ذاتي_معلومات *معلومات;
+	بنانشان ڊگهو ڊگهو tmp;
+	حرف *پڇاڙي;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	معلومات = (بنية windows_ذاتي_معلومات *) channel->ذاتي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (!strcmp(option, "offset")) {
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
+	إذا (!strcmp(option, "offset")) {
+		إذا (!arg)
+			أرجع EXT2_ET_INVALID_دليل;
 
-		tmp = strtoull(arg, &end, 0);
-		if (*end)
-			return EXT2_ET_INVALID_ARGUMENT;
-		data->offset = tmp;
-		if (data->offset < 0)
-			return EXT2_ET_INVALID_ARGUMENT;
-		return 0;
+		tmp = strtoull(arg, &پڇاڙي, 0);
+		إذا (*پڇاڙي)
+			أرجع EXT2_ET_INVALID_دليل;
+		معلومات->وٿي = tmp;
+		إذا (معلومات->وٿي < 0)
+			أرجع EXT2_ET_INVALID_دليل;
+		أرجع 0;
 	}
-	return EXT2_ET_INVALID_ARGUMENT;
+	أرجع EXT2_ET_INVALID_دليل;
 }
 
-static errcode_t windows_discard(io_channel channel, unsigned long long block,
-				 unsigned long long count)
+ساكن errcode_t windows_discard(io_channel channel, بنانشان ڊگهو ڊگهو بلاڪ,
+				 بنانشان ڊگهو ڊگهو ڳڻپ)
 {
 	TRACE("e2fsprogs::windows_discard::EXT2_ET_UNIMPLEMENTED");
-	return EXT2_ET_UNIMPLEMENTED;
+	أرجع EXT2_ET_UNIMPLEMENTED;
 }
 
 /* parameters might not be used if OS doesn't support zeroout */
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-static errcode_t windows_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+#إذا __GNUC_PREREQ (4, 6)
+#هدايت GCC diagnostic ڌڪو
+#هدايت GCC diagnostic ignored "-Wunused-parameter"
+#جيڪڏهن_پورو
+ساكن errcode_t windows_zeroout(io_channel channel, بنانشان ڊگهو ڊگهو بلاڪ,
+			      بنانشان ڊگهو ڊگهو ڳڻپ)
 {
-	struct windows_private_data *data;
-	int		ret;
+	بنية windows_ذاتي_معلومات *معلومات;
+	صحيح		ret;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
+	معلومات = (بنية windows_ذاتي_معلومات *) channel->ذاتي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (channel->flags & CHANNEL_FLAGS_BLOCK_DEVICE) {
+	إذا (channel->flags & CHANNEL_FLAGS_بلاڪ_DEVICE) {
 		/* Not implemented until the BLKZEROOUT mess is fixed */
-		goto unimplemented;
-	} else {
+		اذهب unimplemented;
+	} وإلا {
 		/* Regular file, try to use truncate/punch/zero. */
-		struct stat statbuf;
+		بنية stat statbuf;
 
-		if (count == 0)
-			return 0;
+		إذا (ڳڻپ == 0)
+			أرجع 0;
 		/*
 		 * If we're trying to zero a range past the end of the file,
 		 * extend the file size, then truncate everything.
 		 */
-		ret = fstat(data->dev, &statbuf);
-		if (ret)
-			goto err;
-		if ((unsigned long long) statbuf.st_size <
-			(block + count) * channel->block_size + data->offset) {
-			ret = ftruncate(data->dev,
-					(block + count) * channel->block_size + data->offset);
-			if (ret)
-				goto err;
+		ret = fstat(معلومات->dev, &statbuf);
+		إذا (ret)
+			اذهب err;
+		إذا ((بنانشان ڊگهو ڊگهو) statbuf.st_سائيز <
+			(بلاڪ + ڳڻپ) * channel->بلاڪ_سائيز + معلومات->وٿي) {
+			ret = ftruncate(معلومات->dev,
+					(بلاڪ + ڳڻپ) * channel->بلاڪ_سائيز + معلومات->وٿي);
+			إذا (ret)
+				اذهب err;
 		}
-		goto unimplemented;
+		اذهب unimplemented;
 	}
 err:
-	if (ret < 0) {
-		if (errno == EOPNOTSUPP)
-			goto unimplemented;
-		return errno;
+	إذا (ret < 0) {
+		إذا (errno == EOPNOTSUPP)
+			اذهب unimplemented;
+		أرجع errno;
 	}
-	return 0;
+	أرجع 0;
 unimplemented:
-	return EXT2_ET_UNIMPLEMENTED;
+	أرجع EXT2_ET_UNIMPLEMENTED;
 }
 
-int ext2fs_open_file(const char *pathname, int flags, mode_t mode)
+صحيح ext2fs_open_file(ثابت حرف *pathname, صحيح flags, mode_t گهڻائي)
 {
-	flags |= O_BINARY;
+	flags |= O_ٻٽو;
 
-	if (mode)
-#if defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-		return open64(pathname, flags, mode);
-	else
-		return open64(pathname, flags);
-#else
-		return open(pathname, flags, mode);
-	else
-		return open(pathname, flags);
-#endif
+	إذا (گهڻائي)
+#إذا defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+		أرجع open64(pathname, flags, گهڻائي);
+	وإلا
+		أرجع open64(pathname, flags);
+#وإلا
+		أرجع open(pathname, flags, گهڻائي);
+	وإلا
+		أرجع open(pathname, flags);
+#جيڪڏهن_پورو
 }
 
-int ext2fs_stat(const char *path, ext2fs_struct_stat *buf)
+صحيح ext2fs_stat(ثابت حرف *رستو, ext2fs_struct_stat *buf)
 {
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return stat64(path, buf);
-#else
-	return stat(path, buf);
-#endif
+#إذا defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	أرجع stat64(رستو, buf);
+#وإلا
+	أرجع stat(رستو, buf);
+#جيڪڏهن_پورو
 }
 
-int ext2fs_fstat(int fd, ext2fs_struct_stat *buf)
+صحيح ext2fs_fstat(صحيح fd, ext2fs_struct_stat *buf)
 {
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return fstat64(fd, buf);
-#else
-	return fstat(fd, buf);
-#endif
+#إذا defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	أرجع fstat64(fd, buf);
+#وإلا
+	أرجع fstat(fd, buf);
+#جيڪڏهن_پورو
 }
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
-#endif
+#إذا __GNUC_PREREQ (4, 6)
+#هدايت GCC diagnostic ڪڍو
+#جيڪڏهن_پورو
 
-static struct struct_io_manager struct_windows_manager = {
+ساكن بنية struct_io_manager struct_windows_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Windows I/O Manager",
 	.open		= windows_open,
 	.close		= windows_close,
-	.set_blksize	= windows_set_blksize,
+	.سيٽ_blksize	= windows_سيٽ_blksize,
 	.read_blk	= windows_read_blk,
 	.write_blk	= windows_write_blk,
 	.flush		= windows_flush,
 	.write_byte	= windows_write_byte,
-	.set_option	= windows_set_option,
+	.سيٽ_option	= windows_سيٽ_option,
 	.get_stats	= windows_get_stats,
 	.read_blk64	= windows_read_blk64,
 	.write_blk64	= windows_write_blk64,

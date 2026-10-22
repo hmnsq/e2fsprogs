@@ -9,47 +9,47 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <time.h>
-#include <string.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جيڪڏهن_پورو
+#ضمن <time.h>
+#ضمن <string.h>
+#إذا HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
+#جيڪڏهن_پورو
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#جيڪڏهن_پورو
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
-#define min(a, b) ((a) < (b) ? (a) : (b))
+#وصف_ڪريو min(a, b) ((a) < (b) ? (a) : (b))
 
-#undef DEBUG
+#وصف_رد DEBUG
 
-#ifdef DEBUG
-# define dbg_printf(f, a...)  do {printf(f, ## a); fflush(stdout); } while (0)
-#else
+#جيڪڏهن_وصف_ٿيل DEBUG
+# define dbg_printf(f, a...)  افعل {لکو(f, ## a); fflush(stdout); } طالما (0)
+#وإلا
 # define dbg_printf(f, a...)
-#endif
+#جيڪڏهن_پورو
 
 /*
  * Clear the uninit block bitmap flag if necessary
  */
-void ext2fs_clear_block_uninit(ext2_filsys fs, dgrp_t group)
+فراغ ext2fs_clear_بلاڪ_uninit(ext2_filsys fs, dgrp_t گروهه)
 {
-	if (group >= fs->group_desc_count ||
-	    !ext2fs_has_group_desc_csum(fs) ||
-	    !(ext2fs_bg_flags_test(fs, group, EXT2_BG_BLOCK_UNINIT)))
-		return;
+	إذا (گروهه >= fs->گروهه_desc_ڳڻپ ||
+	    !ext2fs_has_گروهه_desc_csum(fs) ||
+	    !(ext2fs_bg_flags_test(fs, گروهه, EXT2_BG_بلاڪ_UNINIT)))
+		أرجع;
 
 	/* uninit block bitmaps are now initialized in read_bitmaps() */
 
-	ext2fs_bg_flags_clear(fs, group, EXT2_BG_BLOCK_UNINIT);
-	ext2fs_group_desc_csum_set(fs, group);
+	ext2fs_bg_flags_clear(fs, گروهه, EXT2_BG_بلاڪ_UNINIT);
+	ext2fs_گروهه_desc_csum_سيٽ(fs, گروهه);
 	ext2fs_mark_super_dirty(fs);
 	ext2fs_mark_bb_dirty(fs);
 }
@@ -57,24 +57,24 @@ void ext2fs_clear_block_uninit(ext2_filsys fs, dgrp_t group)
 /*
  * Check for uninit inode bitmaps and deal with them appropriately
  */
-static void check_inode_uninit(ext2_filsys fs, ext2fs_inode_bitmap map,
-			  dgrp_t group)
+ساكن فراغ check_inode_uninit(ext2_filsys fs, ext2fs_inode_bitmap map,
+			  dgrp_t گروهه)
 {
 	ext2_ino_t	i, ino;
 
-	if (group >= fs->group_desc_count ||
-	    !ext2fs_has_group_desc_csum(fs) ||
-	    !(ext2fs_bg_flags_test(fs, group, EXT2_BG_INODE_UNINIT)))
-		return;
+	إذا (گروهه >= fs->گروهه_desc_ڳڻپ ||
+	    !ext2fs_has_گروهه_desc_csum(fs) ||
+	    !(ext2fs_bg_flags_test(fs, گروهه, EXT2_BG_INODE_UNINIT)))
+		أرجع;
 
-	ino = (group * fs->super->s_inodes_per_group) + 1;
-	for (i=0; i < fs->super->s_inodes_per_group; i++, ino++)
+	ino = (گروهه * fs->super->s_inodes_في_گروهه) + 1;
+	لكل (i=0; i < fs->super->s_inodes_في_گروهه; i++, ino++)
 		ext2fs_fast_unmark_inode_bitmap2(map, ino);
 
-	ext2fs_bg_flags_clear(fs, group, EXT2_BG_INODE_UNINIT);
+	ext2fs_bg_flags_clear(fs, گروهه, EXT2_BG_INODE_UNINIT);
 	/* Mimics what the kernel does */
-	ext2fs_bg_flags_clear(fs, group, EXT2_BG_BLOCK_UNINIT);
-	ext2fs_group_desc_csum_set(fs, group);
+	ext2fs_bg_flags_clear(fs, گروهه, EXT2_BG_بلاڪ_UNINIT);
+	ext2fs_گروهه_desc_csum_سيٽ(fs, گروهه);
 	ext2fs_mark_ib_dirty(fs);
 	ext2fs_mark_super_dirty(fs);
 }
@@ -86,58 +86,58 @@ static void check_inode_uninit(ext2_filsys fs, ext2fs_inode_bitmap map,
  * Should have a special policy for directories.
  */
 errcode_t ext2fs_new_inode(ext2_filsys fs, ext2_ino_t dir,
-			   int mode EXT2FS_ATTR((unused)),
+			   صحيح گهڻائي EXT2FS_ATTR((اڻ_استعمال_ٿيل)),
 			   ext2fs_inode_bitmap map, ext2_ino_t *ret)
 {
-	ext2_ino_t	start_inode = 0;
-	ext2_ino_t	i, ino_in_group, upto, first_zero;
+	ext2_ino_t	شروعات_inode = 0;
+	ext2_ino_t	i, ino_اندريون_گروهه, upto, پهريون_zero;
 	errcode_t	retval;
-	dgrp_t		group;
+	dgrp_t		گروهه;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!map)
+	إذا (!map)
 		map = fs->inode_map;
-	if (!map)
-		return EXT2_ET_NO_INODE_BITMAP;
+	إذا (!map)
+		أرجع EXT2_ET_NO_INODE_BITMAP;
 
-	if (dir > 0) {
-		group = (dir - 1) / EXT2_INODES_PER_GROUP(fs->super);
-		start_inode = (group * EXT2_INODES_PER_GROUP(fs->super)) + 1;
+	إذا (dir > 0) {
+		گروهه = (dir - 1) / EXT2_INODES_في_گروهه(fs->super);
+		شروعات_inode = (گروهه * EXT2_INODES_في_گروهه(fs->super)) + 1;
 	}
-	if (start_inode < EXT2_FIRST_INODE(fs->super))
-		start_inode = EXT2_FIRST_INODE(fs->super);
-	if (start_inode > fs->super->s_inodes_count)
-		return EXT2_ET_INODE_ALLOC_FAIL;
-	i = start_inode;
-	do {
-		ino_in_group = (i - 1) % EXT2_INODES_PER_GROUP(fs->super);
-		group = (i - 1) / EXT2_INODES_PER_GROUP(fs->super);
+	إذا (شروعات_inode < EXT2_پهريون_INODE(fs->super))
+		شروعات_inode = EXT2_پهريون_INODE(fs->super);
+	إذا (شروعات_inode > fs->super->s_inodes_ڳڻپ)
+		أرجع EXT2_ET_INODE_ALLOC_FAIL;
+	i = شروعات_inode;
+	افعل {
+		ino_اندريون_گروهه = (i - 1) % EXT2_INODES_في_گروهه(fs->super);
+		گروهه = (i - 1) / EXT2_INODES_في_گروهه(fs->super);
 
-		check_inode_uninit(fs, map, group);
-		upto = i + (EXT2_INODES_PER_GROUP(fs->super) - ino_in_group);
-		if (i < start_inode && upto >= start_inode)
-			upto = start_inode - 1;
-		if (upto > fs->super->s_inodes_count)
-			upto = fs->super->s_inodes_count;
+		check_inode_uninit(fs, map, گروهه);
+		upto = i + (EXT2_INODES_في_گروهه(fs->super) - ino_اندريون_گروهه);
+		إذا (i < شروعات_inode && upto >= شروعات_inode)
+			upto = شروعات_inode - 1;
+		إذا (upto > fs->super->s_inodes_ڳڻپ)
+			upto = fs->super->s_inodes_ڳڻپ;
 
-		retval = ext2fs_find_first_zero_inode_bitmap2(map, i, upto,
-							      &first_zero);
-		if (retval == 0) {
-			i = first_zero;
-			break;
+		retval = ext2fs_ڳوليو_پهريون_zero_inode_bitmap2(map, i, upto,
+							      &پهريون_zero);
+		إذا (retval == 0) {
+			i = پهريون_zero;
+			اكسر;
 		}
-		if (retval != ENOENT)
-			return EXT2_ET_INODE_ALLOC_FAIL;
+		إذا (retval != ENOENT)
+			أرجع EXT2_ET_INODE_ALLOC_FAIL;
 		i = upto + 1;
-		if (i > fs->super->s_inodes_count)
-			i = EXT2_FIRST_INODE(fs->super);
-	} while (i != start_inode);
+		إذا (i > fs->super->s_inodes_ڳڻپ)
+			i = EXT2_پهريون_INODE(fs->super);
+	} طالما (i != شروعات_inode);
 
-	if (ext2fs_test_inode_bitmap2(map, i))
-		return EXT2_ET_INODE_ALLOC_FAIL;
+	إذا (ext2fs_test_inode_bitmap2(map, i))
+		أرجع EXT2_ET_INODE_ALLOC_FAIL;
 	*ret = i;
-	return 0;
+	أرجع 0;
 }
 
 /*
@@ -145,189 +145,189 @@ errcode_t ext2fs_new_inode(ext2_filsys fs, ext2_ino_t dir,
  * goal.  Should put in a smarter one someday....
  */
 errcode_t ext2fs_new_block3(ext2_filsys fs, blk64_t goal,
-			    ext2fs_block_bitmap map, blk64_t *ret,
-			    struct blk_alloc_ctx *ctx)
+			    ext2fs_بلاڪ_bitmap map, blk64_t *ret,
+			    بنية blk_alloc_ctx *ctx)
 {
 	errcode_t retval;
 	blk64_t	b = 0;
 	errcode_t (*gab)(ext2_filsys fs, blk64_t goal, blk64_t *ret);
 	errcode_t (*gab2)(ext2_filsys, blk64_t, blk64_t *,
-			  struct blk_alloc_ctx *);
+			  بنية blk_alloc_ctx *);
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!map) {
+	إذا (!map) {
 		/*
 		 * In case there are clients out there whose get_alloc_block
 		 * handlers call ext2fs_new_block2 with a NULL block map,
 		 * temporarily swap out the function pointer so that we don't
 		 * end up in an infinite loop.
 		 */
-		if (fs->get_alloc_block2) {
+		إذا (fs->get_alloc_block2) {
 			gab2 = fs->get_alloc_block2;
-			fs->get_alloc_block2 = NULL;
+			fs->get_alloc_block2 = عدم;
 			retval = gab2(fs, goal, &b, ctx);
 			fs->get_alloc_block2 = gab2;
-			goto allocated;
-		} else if (fs->get_alloc_block) {
-			gab = fs->get_alloc_block;
-			fs->get_alloc_block = NULL;
+			اذهب allocated;
+		} وإلا إذا (fs->get_alloc_بلاڪ) {
+			gab = fs->get_alloc_بلاڪ;
+			fs->get_alloc_بلاڪ = عدم;
 			retval = gab(fs, goal, &b);
-			fs->get_alloc_block = gab;
-			goto allocated;
+			fs->get_alloc_بلاڪ = gab;
+			اذهب allocated;
 		}
 	}
-	if (!map)
-		map = fs->block_map;
-	if (!map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
-	if (!goal || (goal >= ext2fs_blocks_count(fs->super)))
-		goal = fs->super->s_first_data_block;
-	goal &= ~EXT2FS_CLUSTER_MASK(fs);
+	إذا (!map)
+		map = fs->بلاڪ_map;
+	إذا (!map)
+		أرجع EXT2_ET_NO_بلاڪ_BITMAP;
+	إذا (!goal || (goal >= ext2fs_بلاڪون_ڳڻپ(fs->super)))
+		goal = fs->super->s_پهريون_معلومات_بلاڪ;
+	goal &= ~EXT2_FS_CLUSTER_نقاب(fs);
 
-	retval = ext2fs_find_first_zero_block_bitmap2(map,
-			goal, ext2fs_blocks_count(fs->super) - 1, &b);
-	if ((retval == ENOENT) && (goal != fs->super->s_first_data_block))
-		retval = ext2fs_find_first_zero_block_bitmap2(map,
-			fs->super->s_first_data_block, goal - 1, &b);
+	retval = ext2fs_ڳوليو_پهريون_zero_بلاڪ_bitmap2(map,
+			goal, ext2fs_بلاڪون_ڳڻپ(fs->super) - 1, &b);
+	إذا ((retval == ENOENT) && (goal != fs->super->s_پهريون_معلومات_بلاڪ))
+		retval = ext2fs_ڳوليو_پهريون_zero_بلاڪ_bitmap2(map,
+			fs->super->s_پهريون_معلومات_بلاڪ, goal - 1, &b);
 allocated:
-	if (retval == ENOENT)
-		return EXT2_ET_BLOCK_ALLOC_FAIL;
-	if (retval)
-		return retval;
+	إذا (retval == ENOENT)
+		أرجع EXT2_ET_بلاڪ_ALLOC_FAIL;
+	إذا (retval)
+		أرجع retval;
 
-	ext2fs_clear_block_uninit(fs, ext2fs_group_of_blk2(fs, b));
+	ext2fs_clear_بلاڪ_uninit(fs, ext2fs_گروهه_جو_blk2(fs, b));
 	*ret = b;
-	return 0;
+	أرجع 0;
 }
 
 errcode_t ext2fs_new_block2(ext2_filsys fs, blk64_t goal,
-			   ext2fs_block_bitmap map, blk64_t *ret)
+			   ext2fs_بلاڪ_bitmap map, blk64_t *ret)
 {
-	return ext2fs_new_block3(fs, goal, map, ret, NULL);
+	أرجع ext2fs_new_block3(fs, goal, map, ret, عدم);
 }
 
-errcode_t ext2fs_new_block(ext2_filsys fs, blk_t goal,
-			   ext2fs_block_bitmap map, blk_t *ret)
+errcode_t ext2fs_new_بلاڪ(ext2_filsys fs, blk_t goal,
+			   ext2fs_بلاڪ_bitmap map, blk_t *ret)
 {
 	errcode_t retval;
 	blk64_t val;
 	retval = ext2fs_new_block2(fs, goal, map, &val);
-	if (!retval)
+	إذا (!retval)
 		*ret = (blk_t) val;
-	return retval;
+	أرجع retval;
 }
 
 /*
  * This function zeros out the allocated block, and updates all of the
  * appropriate filesystem records.
  */
-errcode_t ext2fs_alloc_block3(ext2_filsys fs, blk64_t goal, char *block_buf,
-			      blk64_t *ret, struct blk_alloc_ctx *ctx)
+errcode_t ext2fs_alloc_block3(ext2_filsys fs, blk64_t goal, حرف *بلاڪ_buf,
+			      blk64_t *ret, بنية blk_alloc_ctx *ctx)
 {
 	errcode_t	retval;
-	blk64_t		block;
+	blk64_t		بلاڪ;
 
-	if (fs->get_alloc_block2) {
-		retval = (fs->get_alloc_block2)(fs, goal, &block, ctx);
-		if (retval)
-			goto fail;
-	} else if (fs->get_alloc_block) {
-		retval = (fs->get_alloc_block)(fs, goal, &block);
-		if (retval)
-			goto fail;
-	} else {
-		if (!fs->block_map) {
-			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				goto fail;
+	إذا (fs->get_alloc_block2) {
+		retval = (fs->get_alloc_block2)(fs, goal, &بلاڪ, ctx);
+		إذا (retval)
+			اذهب fail;
+	} وإلا إذا (fs->get_alloc_بلاڪ) {
+		retval = (fs->get_alloc_بلاڪ)(fs, goal, &بلاڪ);
+		إذا (retval)
+			اذهب fail;
+	} وإلا {
+		إذا (!fs->بلاڪ_map) {
+			retval = ext2fs_read_بلاڪ_bitmap(fs);
+			إذا (retval)
+				اذهب fail;
 		}
 
-		retval = ext2fs_new_block3(fs, goal, 0, &block, ctx);
-		if (retval)
-			goto fail;
+		retval = ext2fs_new_block3(fs, goal, 0, &بلاڪ, ctx);
+		إذا (retval)
+			اذهب fail;
 	}
 
-	if (block_buf) {
-		memset(block_buf, 0, fs->blocksize);
-		retval = io_channel_write_blk64(fs->io, block, 1, block_buf);
-	} else
-		retval = ext2fs_zero_blocks2(fs, block, 1, NULL, NULL);
-	if (retval)
-		goto fail;
+	إذا (بلاڪ_buf) {
+		memset(بلاڪ_buf, 0, fs->blocksize);
+		retval = io_channel_write_blk64(fs->io, بلاڪ, 1, بلاڪ_buf);
+	} وإلا
+		retval = ext2fs_zero_blocks2(fs, بلاڪ, 1, عدم, عدم);
+	إذا (retval)
+		اذهب fail;
 
-	ext2fs_block_alloc_stats2(fs, block, +1);
-	*ret = block;
+	ext2fs_بلاڪ_alloc_stats2(fs, بلاڪ, +1);
+	*ret = بلاڪ;
 
 fail:
-	return retval;
+	أرجع retval;
 }
 
 errcode_t ext2fs_alloc_block2(ext2_filsys fs, blk64_t goal,
-			     char *block_buf, blk64_t *ret)
+			     حرف *بلاڪ_buf, blk64_t *ret)
 {
-	return ext2fs_alloc_block3(fs, goal, block_buf, ret, NULL);
+	أرجع ext2fs_alloc_block3(fs, goal, بلاڪ_buf, ret, عدم);
 }
 
-errcode_t ext2fs_alloc_block(ext2_filsys fs, blk_t goal,
-			     char *block_buf, blk_t *ret)
+errcode_t ext2fs_alloc_بلاڪ(ext2_filsys fs, blk_t goal,
+			     حرف *بلاڪ_buf, blk_t *ret)
 {
 	errcode_t retval;
 	blk64_t ret64, goal64 = goal;
-	retval = ext2fs_alloc_block3(fs, goal64, block_buf, &ret64, NULL);
-	if (!retval)
+	retval = ext2fs_alloc_block3(fs, goal64, بلاڪ_buf, &ret64, عدم);
+	إذا (!retval)
 		*ret = (blk_t)ret64;
-        return retval;
+        أرجع retval;
 }
 
-errcode_t ext2fs_get_free_blocks2(ext2_filsys fs, blk64_t start, blk64_t finish,
-				 int num, ext2fs_block_bitmap map, blk64_t *ret)
+errcode_t ext2fs_get_free_blocks2(ext2_filsys fs, blk64_t شروعات, blk64_t پڄاڻي,
+				 صحيح انگ, ext2fs_بلاڪ_bitmap map, blk64_t *ret)
 {
-	blk64_t	b = start;
-	int	c_ratio;
+	blk64_t	b = شروعات;
+	صحيح	c_تناسب;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!map)
-		map = fs->block_map;
-	if (!map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
-	if (!b)
-		b = fs->super->s_first_data_block;
-	if (!finish)
-		finish = start;
-	if (!num)
-		num = 1;
-	c_ratio = 1 << ext2fs_get_bitmap_granularity(map);
-	b &= ~(c_ratio - 1);
-	finish &= ~(c_ratio -1);
-	do {
-		if (b + num - 1 >= ext2fs_blocks_count(fs->super)) {
-			if (finish > start)
-				return EXT2_ET_BLOCK_ALLOC_FAIL;
-			b = fs->super->s_first_data_block;
+	إذا (!map)
+		map = fs->بلاڪ_map;
+	إذا (!map)
+		أرجع EXT2_ET_NO_بلاڪ_BITMAP;
+	إذا (!b)
+		b = fs->super->s_پهريون_معلومات_بلاڪ;
+	إذا (!پڄاڻي)
+		پڄاڻي = شروعات;
+	إذا (!انگ)
+		انگ = 1;
+	c_تناسب = 1 << ext2fs_get_bitmap_granularity(map);
+	b &= ~(c_تناسب - 1);
+	پڄاڻي &= ~(c_تناسب -1);
+	افعل {
+		إذا (b + انگ - 1 >= ext2fs_بلاڪون_ڳڻپ(fs->super)) {
+			إذا (پڄاڻي > شروعات)
+				أرجع EXT2_ET_بلاڪ_ALLOC_FAIL;
+			b = fs->super->s_پهريون_معلومات_بلاڪ;
 		}
-		if (ext2fs_fast_test_block_bitmap_range2(map, b, num)) {
+		إذا (ext2fs_fast_test_بلاڪ_bitmap_range2(map, b, انگ)) {
 			*ret = b;
-			return 0;
+			أرجع 0;
 		}
-		b += c_ratio;
-	} while (b != finish);
-	return EXT2_ET_BLOCK_ALLOC_FAIL;
+		b += c_تناسب;
+	} طالما (b != پڄاڻي);
+	أرجع EXT2_ET_بلاڪ_ALLOC_FAIL;
 }
 
-errcode_t ext2fs_get_free_blocks(ext2_filsys fs, blk_t start, blk_t finish,
-				 int num, ext2fs_block_bitmap map, blk_t *ret)
+errcode_t ext2fs_get_free_بلاڪون(ext2_filsys fs, blk_t شروعات, blk_t پڄاڻي,
+				 صحيح انگ, ext2fs_بلاڪ_bitmap map, blk_t *ret)
 {
 	errcode_t retval;
 	blk64_t val;
-	retval = ext2fs_get_free_blocks2(fs, start, finish, num, map, &val);
-	if(!retval)
+	retval = ext2fs_get_free_blocks2(fs, شروعات, پڄاڻي, انگ, map, &val);
+	إذا(!retval)
 		*ret = (blk_t) val;
-	return retval;
+	أرجع retval;
 }
 
-void ext2fs_set_alloc_block_callback(ext2_filsys fs,
+فراغ ext2fs_سيٽ_alloc_بلاڪ_callback(ext2_filsys fs,
 				     errcode_t (*func)(ext2_filsys fs,
 						       blk64_t goal,
 						       blk64_t *ret),
@@ -335,56 +335,56 @@ void ext2fs_set_alloc_block_callback(ext2_filsys fs,
 						       blk64_t goal,
 						       blk64_t *ret))
 {
-	if (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
-		return;
+	إذا (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
+		أرجع;
 
-	if (old)
-		*old = fs->get_alloc_block;
+	إذا (old)
+		*old = fs->get_alloc_بلاڪ;
 
-	fs->get_alloc_block = func;
+	fs->get_alloc_بلاڪ = func;
 }
 
-blk64_t ext2fs_find_inode_goal(ext2_filsys fs, ext2_ino_t ino,
-			       struct ext2_inode *inode, blk64_t lblk)
+blk64_t ext2fs_ڳوليو_inode_goal(ext2_filsys fs, ext2_ino_t ino,
+			       بنية ext2_inode *inode, blk64_t lblk)
 {
-	dgrp_t			group;
+	dgrp_t			گروهه;
 	__u8			log_flex;
-	struct ext2fs_extent	extent;
-	ext2_extent_handle_t	handle = NULL;
+	بنية ext2fs_extent	extent;
+	ext2_extent_handle_t	handle = عدم;
 	errcode_t		err;
 
 	/* Make sure data stored in inode->i_block is neither fast symlink nor
 	 * inline data.
 	 */
-	if (inode == NULL || ext2fs_is_fast_symlink(inode) ||
-	    inode->i_flags & EXT4_INLINE_DATA_FL)
-		goto no_blocks;
+	إذا (inode == عدم || ext2fs_is_fast_symlink(inode) ||
+	    inode->i_flags & EXT4_INLINE_معلومات_FL)
+		اذهب no_بلاڪون;
 
-	if (inode->i_flags & EXT4_EXTENTS_FL) {
+	إذا (inode->i_flags & EXT4_EXTENTS_FL) {
 		err = ext2fs_extent_open2(fs, ino, inode, &handle);
-		if (err)
-			goto no_blocks;
+		إذا (err)
+			اذهب no_بلاڪون;
 		err = ext2fs_extent_goto2(handle, 0, lblk);
-		if (err)
-			goto no_blocks;
+		إذا (err)
+			اذهب no_بلاڪون;
 		err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-		if (err)
-			goto no_blocks;
+		إذا (err)
+			اذهب no_بلاڪون;
 		ext2fs_extent_free(handle);
-		return extent.e_pblk + (lblk - extent.e_lblk);
+		أرجع extent.e_pblk + (lblk - extent.e_lblk);
 	}
 
 	/* block mapped file; see if block zero is mapped? */
-	if (inode->i_block[0])
-		return inode->i_block[0];
+	إذا (inode->i_بلاڪ[0])
+		أرجع inode->i_بلاڪ[0];
 
-no_blocks:
+no_بلاڪون:
 	ext2fs_extent_free(handle);
-	log_flex = fs->super->s_log_groups_per_flex;
-	group = ext2fs_group_of_ino(fs, ino);
-	if (log_flex)
-		group = group & ~((1 << (log_flex)) - 1);
-	return ext2fs_group_first_block2(fs, group);
+	log_flex = fs->super->s_log_groups_في_flex;
+	گروهه = ext2fs_گروهه_جو_ino(fs, ino);
+	إذا (log_flex)
+		گروهه = گروهه & ~((1 << (log_flex)) - 1);
+	أرجع ext2fs_گروهه_پهريون_block2(fs, گروهه);
 }
 
 /*
@@ -401,24 +401,24 @@ no_blocks:
  *
  * This function can return a range that is longer than what was requested.
  */
-errcode_t ext2fs_new_range(ext2_filsys fs, int flags, blk64_t goal,
-			   blk64_t len, ext2fs_block_bitmap map, blk64_t *pblk,
+errcode_t ext2fs_new_range(ext2_filsys fs, صحيح flags, blk64_t goal,
+			   blk64_t len, ext2fs_بلاڪ_bitmap map, blk64_t *pblk,
 			   blk64_t *plen)
 {
 	errcode_t retval;
-	blk64_t start, end, b;
-	int looped = 0;
-	blk64_t max_blocks = ext2fs_blocks_count(fs->super);
-	errcode_t (*nrf)(ext2_filsys fs, int flags, blk64_t goal,
+	blk64_t شروعات, پڇاڙي, b;
+	صحيح looped = 0;
+	blk64_t max_بلاڪون = ext2fs_بلاڪون_ڳڻپ(fs->super);
+	errcode_t (*nrf)(ext2_filsys fs, صحيح flags, blk64_t goal,
 			 blk64_t len, blk64_t *pblk, blk64_t *plen);
 
 	dbg_printf("%s: flags=0x%x goal=%llu len=%llu\n", __func__, flags,
 		   goal, len);
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
-	if (len == 0 || (flags & ~EXT2_NEWRANGE_ALL_FLAGS))
-		return EXT2_ET_INVALID_ARGUMENT;
+	إذا (len == 0 || (flags & ~EXT2_NEWRANGE_ALL_FLAGS))
+		أرجع EXT2_ET_INVALID_دليل;
 
-	if (!map && fs->new_range) {
+	إذا (!map && fs->new_range) {
 		/*
 		 * In case there are clients out there whose new_range
 		 * handlers call ext2fs_new_range with a NULL block map,
@@ -426,129 +426,129 @@ errcode_t ext2fs_new_range(ext2_filsys fs, int flags, blk64_t goal,
 		 * end up in an infinite loop.
 		 */
 		nrf = fs->new_range;
-		fs->new_range = NULL;
+		fs->new_range = عدم;
 		retval = nrf(fs, flags, goal, len, pblk, plen);
 		fs->new_range = nrf;
-		if (retval)
-			return retval;
-		start = *pblk;
-		end = *pblk + *plen;
-		goto allocated;
+		إذا (retval)
+			أرجع retval;
+		شروعات = *pblk;
+		پڇاڙي = *pblk + *plen;
+		اذهب allocated;
 	}
-	if (!map)
-		map = fs->block_map;
-	if (!map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
-	if (!goal || goal >= ext2fs_blocks_count(fs->super))
-		goal = fs->super->s_first_data_block;
+	إذا (!map)
+		map = fs->بلاڪ_map;
+	إذا (!map)
+		أرجع EXT2_ET_NO_بلاڪ_BITMAP;
+	إذا (!goal || goal >= ext2fs_بلاڪون_ڳڻپ(fs->super))
+		goal = fs->super->s_پهريون_معلومات_بلاڪ;
 
-	start = goal;
-	while (!looped || start <= goal) {
-		retval = ext2fs_find_first_zero_block_bitmap2(map, start,
-							      max_blocks - 1,
-							      &start);
-		if (retval == ENOENT) {
+	شروعات = goal;
+	طالما (!looped || شروعات <= goal) {
+		retval = ext2fs_ڳوليو_پهريون_zero_بلاڪ_bitmap2(map, شروعات,
+							      max_بلاڪون - 1,
+							      &شروعات);
+		إذا (retval == ENOENT) {
 			/*
 			 * If there are no free blocks beyond the starting
 			 * point, try scanning the whole filesystem, unless the
 			 * user told us only to allocate from _goal_, or if
 			 * we're already scanning the whole filesystem.
 			 */
-			if (flags & EXT2_NEWRANGE_FIXED_GOAL ||
-			    start == fs->super->s_first_data_block)
-				goto fail;
-			start = fs->super->s_first_data_block;
-			continue;
-		} else if (retval)
-			goto errout;
+			إذا (flags & EXT2_NEWRANGE_FIXED_GOAL ||
+			    شروعات == fs->super->s_پهريون_معلومات_بلاڪ)
+				اذهب fail;
+			شروعات = fs->super->s_پهريون_معلومات_بلاڪ;
+			استمر;
+		} وإلا إذا (retval)
+			اذهب errout;
 
-		if (flags & EXT2_NEWRANGE_FIXED_GOAL && start != goal)
-			goto fail;
+		إذا (flags & EXT2_NEWRANGE_FIXED_GOAL && شروعات != goal)
+			اذهب fail;
 
-		b = min(start + len - 1, max_blocks - 1);
-		retval =  ext2fs_find_first_set_block_bitmap2(map, start, b,
-							      &end);
-		if (retval == ENOENT)
-			end = b + 1;
-		else if (retval)
-			goto errout;
+		b = min(شروعات + len - 1, max_بلاڪون - 1);
+		retval =  ext2fs_ڳوليو_پهريون_سيٽ_بلاڪ_bitmap2(map, شروعات, b,
+							      &پڇاڙي);
+		إذا (retval == ENOENT)
+			پڇاڙي = b + 1;
+		وإلا إذا (retval)
+			اذهب errout;
 
-		if (!(flags & EXT2_NEWRANGE_MIN_LENGTH) ||
-		    (end - start) >= len) {
+		إذا (!(flags & EXT2_NEWRANGE_MIN_ڊيگهائي) ||
+		    (پڇاڙي - شروعات) >= len) {
 			/* Success! */
-			*pblk = start;
-			*plen = end - start;
+			*pblk = شروعات;
+			*plen = پڇاڙي - شروعات;
 			dbg_printf("%s: new_range goal=%llu--%llu "
 				   "blk=%llu--%llu %llu\n",
 				   __func__, goal, goal + len - 1,
 				   *pblk, *pblk + *plen - 1, *plen);
 allocated:
-			for (b = start; b < end;
-			     b += fs->super->s_blocks_per_group)
-				ext2fs_clear_block_uninit(fs,
-						ext2fs_group_of_blk2(fs, b));
-			return 0;
+			لكل (b = شروعات; b < پڇاڙي;
+			     b += fs->super->s_بلاڪون_في_گروهه)
+				ext2fs_clear_بلاڪ_uninit(fs,
+						ext2fs_گروهه_جو_blk2(fs, b));
+			أرجع 0;
 		}
 
-		if (flags & EXT2_NEWRANGE_FIXED_GOAL)
-			goto fail;
-		start = end;
-		if (start >= max_blocks) {
-			if (looped)
-				goto fail;
+		إذا (flags & EXT2_NEWRANGE_FIXED_GOAL)
+			اذهب fail;
+		شروعات = پڇاڙي;
+		إذا (شروعات >= max_بلاڪون) {
+			إذا (looped)
+				اذهب fail;
 			looped = 1;
-			start = fs->super->s_first_data_block;
+			شروعات = fs->super->s_پهريون_معلومات_بلاڪ;
 		}
 	}
 
 fail:
-	retval = EXT2_ET_BLOCK_ALLOC_FAIL;
+	retval = EXT2_ET_بلاڪ_ALLOC_FAIL;
 errout:
-	return retval;
+	أرجع retval;
 }
 
-void ext2fs_set_new_range_callback(ext2_filsys fs,
-	errcode_t (*func)(ext2_filsys fs, int flags, blk64_t goal,
+فراغ ext2fs_سيٽ_new_range_callback(ext2_filsys fs,
+	errcode_t (*func)(ext2_filsys fs, صحيح flags, blk64_t goal,
 			       blk64_t len, blk64_t *pblk, blk64_t *plen),
-	errcode_t (**old)(ext2_filsys fs, int flags, blk64_t goal,
+	errcode_t (**old)(ext2_filsys fs, صحيح flags, blk64_t goal,
 			       blk64_t len, blk64_t *pblk, blk64_t *plen))
 {
-	if (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
-		return;
+	إذا (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
+		أرجع;
 
-	if (old)
+	إذا (old)
 		*old = fs->new_range;
 
 	fs->new_range = func;
 }
 
-errcode_t ext2fs_alloc_range(ext2_filsys fs, int flags, blk64_t goal,
+errcode_t ext2fs_alloc_range(ext2_filsys fs, صحيح flags, blk64_t goal,
 			     blk_t len, blk64_t *ret)
 {
-	int newr_flags = EXT2_NEWRANGE_MIN_LENGTH;
+	صحيح newr_flags = EXT2_NEWRANGE_MIN_ڊيگهائي;
 	errcode_t retval;
 	blk64_t plen;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
-	if (len == 0 || (flags & ~EXT2_ALLOCRANGE_ALL_FLAGS))
-		return EXT2_ET_INVALID_ARGUMENT;
+	إذا (len == 0 || (flags & ~EXT2_ALLOCRANGE_ALL_FLAGS))
+		أرجع EXT2_ET_INVALID_دليل;
 
-	if (flags & EXT2_ALLOCRANGE_FIXED_GOAL)
+	إذا (flags & EXT2_ALLOCRANGE_FIXED_GOAL)
 		newr_flags |= EXT2_NEWRANGE_FIXED_GOAL;
 
-	retval = ext2fs_new_range(fs, newr_flags, goal, len, NULL, ret, &plen);
-	if (retval)
-		return retval;
+	retval = ext2fs_new_range(fs, newr_flags, goal, len, عدم, ret, &plen);
+	إذا (retval)
+		أرجع retval;
 
-	if (plen < len)
-		return EXT2_ET_BLOCK_ALLOC_FAIL;
+	إذا (plen < len)
+		أرجع EXT2_ET_بلاڪ_ALLOC_FAIL;
 
-	if (flags & EXT2_ALLOCRANGE_ZERO_BLOCKS) {
-		retval = ext2fs_zero_blocks2(fs, *ret, len, NULL, NULL);
-		if (retval)
-			return retval;
+	إذا (flags & EXT2_ALLOCRANGE_ZERO_بلاڪون) {
+		retval = ext2fs_zero_blocks2(fs, *ret, len, عدم, عدم);
+		إذا (retval)
+			أرجع retval;
 	}
 
-	ext2fs_block_alloc_stats_range(fs, *ret, len, +1);
-	return retval;
+	ext2fs_بلاڪ_alloc_stats_range(fs, *ret, len, +1);
+	أرجع retval;
 }

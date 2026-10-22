@@ -2,167 +2,167 @@
  * io_manager.c --- the I/O manager abstraction
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جيڪڏهن_پورو
+#ضمن <fcntl.h>
+#ضمن <time.h>
+#إذا HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
+#جيڪڏهن_پورو
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#جيڪڏهن_پورو
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
-errcode_t io_channel_set_options(io_channel channel, const char *opts)
+errcode_t io_channel_سيٽ_options(io_channel channel, ثابت حرف *opts)
 {
 	errcode_t retval = 0;
-	char *next, *ptr, *options, *arg;
+	حرف *ايندڙ, *ptr, *options, *arg;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (!opts)
-		return 0;
+	إذا (!opts)
+		أرجع 0;
 
-	if (!channel->manager->set_option)
-		return EXT2_ET_INVALID_ARGUMENT;
+	إذا (!channel->manager->سيٽ_option)
+		أرجع EXT2_ET_INVALID_دليل;
 
-	options = malloc(strlen(opts)+1);
-	if (!options)
-		return EXT2_ET_NO_MEMORY;
+	options = يادگيري_ڏيو(لڙي_ڊيگهه(opts)+1);
+	إذا (!options)
+		أرجع EXT2_ET_NO_يادگيري;
 	strcpy(options, opts);
 	ptr = options;
 
-	while (ptr && *ptr) {
-		next = strchr(ptr, '&');
-		if (next)
-			*next++ = 0;
+	طالما (ptr && *ptr) {
+		ايندڙ = strchr(ptr, '&');
+		إذا (ايندڙ)
+			*ايندڙ++ = 0;
 
 		arg = strchr(ptr, '=');
-		if (arg)
+		إذا (arg)
 			*arg++ = 0;
 
-		retval = (channel->manager->set_option)(channel, ptr, arg);
-		if (retval)
-			break;
-		ptr = next;
+		retval = (channel->manager->سيٽ_option)(channel, ptr, arg);
+		إذا (retval)
+			اكسر;
+		ptr = ايندڙ;
 	}
-	free(options);
-	return retval;
+	حرر(options);
+	أرجع retval;
 }
 
-errcode_t io_channel_write_byte(io_channel channel, unsigned long offset,
-				int count, const void *data)
+errcode_t io_channel_write_byte(io_channel channel, بنانشان ڊگهو وٿي,
+				صحيح ڳڻپ, ثابت فراغ *معلومات)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_byte)
-		return channel->manager->write_byte(channel, offset,
-						    count, data);
+	إذا (channel->manager->write_byte)
+		أرجع channel->manager->write_byte(channel, وٿي,
+						    ڳڻپ, معلومات);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	أرجع EXT2_ET_UNIMPLEMENTED;
 }
 
-errcode_t io_channel_read_blk64(io_channel channel, unsigned long long block,
-				 int count, void *data)
+errcode_t io_channel_read_blk64(io_channel channel, بنانشان ڊگهو ڊگهو بلاڪ,
+				 صحيح ڳڻپ, فراغ *معلومات)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->read_blk64)
-		return (channel->manager->read_blk64)(channel, block,
-						      count, data);
+	إذا (channel->manager->read_blk64)
+		أرجع (channel->manager->read_blk64)(channel, بلاڪ,
+						      ڳڻپ, معلومات);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	إذا ((بلاڪ >> 32) != 0)
+		أرجع EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->read_blk)(channel, (unsigned long) block,
-					     count, data);
+	أرجع (channel->manager->read_blk)(channel, (بنانشان ڊگهو) بلاڪ,
+					     ڳڻپ, معلومات);
 }
 
-errcode_t io_channel_write_blk64(io_channel channel, unsigned long long block,
-				 int count, const void *data)
+errcode_t io_channel_write_blk64(io_channel channel, بنانشان ڊگهو ڊگهو بلاڪ,
+				 صحيح ڳڻپ, ثابت فراغ *معلومات)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_blk64)
-		return (channel->manager->write_blk64)(channel, block,
-						       count, data);
+	إذا (channel->manager->write_blk64)
+		أرجع (channel->manager->write_blk64)(channel, بلاڪ,
+						       ڳڻپ, معلومات);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	إذا ((بلاڪ >> 32) != 0)
+		أرجع EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->write_blk)(channel, (unsigned long) block,
-					     count, data);
+	أرجع (channel->manager->write_blk)(channel, (بنانشان ڊگهو) بلاڪ,
+					     ڳڻپ, معلومات);
 }
 
-errcode_t io_channel_discard(io_channel channel, unsigned long long block,
-			     unsigned long long count)
+errcode_t io_channel_discard(io_channel channel, بنانشان ڊگهو ڊگهو بلاڪ,
+			     بنانشان ڊگهو ڊگهو ڳڻپ)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->discard)
-		return (channel->manager->discard)(channel, block, count);
+	إذا (channel->manager->discard)
+		أرجع (channel->manager->discard)(channel, بلاڪ, ڳڻپ);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	أرجع EXT2_ET_UNIMPLEMENTED;
 }
 
-errcode_t io_channel_zeroout(io_channel channel, unsigned long long block,
-			     unsigned long long count)
+errcode_t io_channel_zeroout(io_channel channel, بنانشان ڊگهو ڊگهو بلاڪ,
+			     بنانشان ڊگهو ڊگهو ڳڻپ)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->zeroout)
-		return (channel->manager->zeroout)(channel, block, count);
+	إذا (channel->manager->zeroout)
+		أرجع (channel->manager->zeroout)(channel, بلاڪ, ڳڻپ);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	أرجع EXT2_ET_UNIMPLEMENTED;
 }
 
-errcode_t io_channel_alloc_buf(io_channel io, int count, void *ptr)
+errcode_t io_channel_alloc_buf(io_channel io, صحيح ڳڻپ, فراغ *ptr)
 {
-	size_t	size;
+	size_t	سائيز;
 
-	if (count == 0)
-		size = io->block_size;
-	else if (count > 0)
-		size = io->block_size * count;
-	else
-		size = -count;
+	إذا (ڳڻپ == 0)
+		سائيز = io->بلاڪ_سائيز;
+	وإلا إذا (ڳڻپ > 0)
+		سائيز = io->بلاڪ_سائيز * ڳڻپ;
+	وإلا
+		سائيز = -ڳڻپ;
 
-	if (io->align > 0) {
-		if ((unsigned) io->align > size)
-			size = io->align;
-		return ext2fs_get_memalign(size, io->align, ptr);
-	} else
-		return ext2fs_get_mem(size, ptr);
+	إذا (io->align > 0) {
+		إذا ((بنانشان) io->align > سائيز)
+			سائيز = io->align;
+		أرجع ext2fs_get_memalign(سائيز, io->align, ptr);
+	} وإلا
+		أرجع ext2fs_get_mem(سائيز, ptr);
 }
 
-errcode_t io_channel_cache_readahead(io_channel io, unsigned long long block,
-				     unsigned long long count)
+errcode_t io_channel_cache_readahead(io_channel io, بنانشان ڊگهو ڊگهو بلاڪ,
+				     بنانشان ڊگهو ڊگهو ڳڻپ)
 {
-	if (!io->manager->cache_readahead)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	إذا (!io->manager->cache_readahead)
+		أرجع EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->cache_readahead(io, block, count);
+	أرجع io->manager->cache_readahead(io, بلاڪ, ڳڻپ);
 }
 
-errcode_t io_channel_flock(io_channel io, unsigned int flock_flags)
+errcode_t io_channel_flock(io_channel io, بنانشان صحيح flock_flags)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	إذا (!io->manager->flock)
+		أرجع EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, flock_flags);
+	أرجع io->manager->flock(io, flock_flags);
 }
 
 errcode_t io_channel_funlock(io_channel io)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	إذا (!io->manager->flock)
+		أرجع EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, 0);
+	أرجع io->manager->flock(io, 0);
 }

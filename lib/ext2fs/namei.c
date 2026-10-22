@@ -9,83 +9,83 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جيڪڏهن_پورو
 
 /* #define NAMEI_DEBUG */
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
+#ضمن "ext2fsP.h"
 
-static errcode_t open_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t base,
-			    const char *pathname, size_t pathlen, int follow,
-			    int link_count, char *buf, ext2_ino_t *res_inode);
+ساكن errcode_t open_namei(ext2_filsys fs, ext2_ino_t پاڙ, ext2_ino_t بنياد,
+			    ثابت حرف *pathname, size_t pathlen, صحيح follow,
+			    صحيح link_ڳڻپ, حرف *buf, ext2_ino_t *res_inode);
 
-static errcode_t follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
-			     ext2_ino_t inode, int link_count,
-			     char *buf, ext2_ino_t *res_inode)
+ساكن errcode_t follow_link(ext2_filsys fs, ext2_ino_t پاڙ, ext2_ino_t dir,
+			     ext2_ino_t inode, صحيح link_ڳڻپ,
+			     حرف *buf, ext2_ino_t *res_inode)
 {
-	char *pathname;
-	char *buffer = 0;
+	حرف *pathname;
+	حرف *بفر = 0;
 	errcode_t retval;
-	struct ext2_inode ei;
+	بنية ext2_inode ei;
 	blk64_t blk;
 
-#ifdef NAMEI_DEBUG
-	printf("follow_link: root=%lu, dir=%lu, inode=%lu, lc=%d\n",
-	       root, dir, inode, link_count);
+#جيڪڏهن_وصف_ٿيل NAMEI_DEBUG
+	لکو("follow_link: root=%lu, dir=%lu, inode=%lu, lc=%d\n",
+	       پاڙ, dir, inode, link_ڳڻپ);
 
-#endif
+#جيڪڏهن_پورو
 	retval = ext2fs_read_inode (fs, inode, &ei);
-	if (retval) return retval;
-	if (!LINUX_S_ISLNK (ei.i_mode)) {
+	إذا (retval) أرجع retval;
+	إذا (!LINUX_S_ISLNK (ei.i_گهڻائي)) {
 		*res_inode = inode;
-		return 0;
+		أرجع 0;
 	}
-	if (link_count++ >= EXT2FS_MAX_NESTED_LINKS)
-		return EXT2_ET_SYMLINK_LOOP;
+	إذا (link_ڳڻپ++ >= EXT2FS_MAX_NESTED_LINKS)
+		أرجع EXT2_ET_SYMLINK_LOOP;
 
-	if (ext2fs_is_fast_symlink(&ei))
-		pathname = (char *)&(ei.i_block[0]);
-	else if (ei.i_flags & EXT4_INLINE_DATA_FL) {
-		retval = ext2fs_get_memzero(ei.i_size, &buffer);
-		if (retval)
-			return retval;
+	إذا (ext2fs_is_fast_symlink(&ei))
+		pathname = (حرف *)&(ei.i_بلاڪ[0]);
+	وإلا إذا (ei.i_flags & EXT4_INLINE_معلومات_FL) {
+		retval = ext2fs_get_memzero(ei.i_سائيز, &بفر);
+		إذا (retval)
+			أرجع retval;
 
-		retval = ext2fs_inline_data_get(fs, inode,
-						&ei, buffer, NULL);
-		if (retval) {
-			ext2fs_free_mem(&buffer);
-			return retval;
+		retval = ext2fs_inline_معلومات_get(fs, inode,
+						&ei, بفر, عدم);
+		إذا (retval) {
+			ext2fs_free_mem(&بفر);
+			أرجع retval;
 		}
-		pathname = buffer;
-	} else {
-		retval = ext2fs_bmap2(fs, inode, &ei, NULL, 0, 0, NULL, &blk);
-		if (retval)
-			return retval;
+		pathname = بفر;
+	} وإلا {
+		retval = ext2fs_bmap2(fs, inode, &ei, عدم, 0, 0, عدم, &blk);
+		إذا (retval)
+			أرجع retval;
 
-		retval = ext2fs_get_mem(fs->blocksize, &buffer);
-		if (retval)
-			return retval;
+		retval = ext2fs_get_mem(fs->blocksize, &بفر);
+		إذا (retval)
+			أرجع retval;
 
-		retval = io_channel_read_blk64(fs->io, blk, 1, buffer);
-		if (retval) {
-			ext2fs_free_mem(&buffer);
-			return retval;
+		retval = io_channel_read_blk64(fs->io, blk, 1, بفر);
+		إذا (retval) {
+			ext2fs_free_mem(&بفر);
+			أرجع retval;
 		}
-		pathname = buffer;
+		pathname = بفر;
 	}
 
-	retval = open_namei(fs, root, dir, pathname, ei.i_size, 1,
-			    link_count, buf, res_inode);
-	if (buffer)
-		ext2fs_free_mem(&buffer);
-	return retval;
+	retval = open_namei(fs, پاڙ, dir, pathname, ei.i_سائيز, 1,
+			    link_ڳڻپ, buf, res_inode);
+	إذا (بفر)
+		ext2fs_free_mem(&بفر);
+	أرجع retval;
 }
 
 /*
@@ -94,134 +94,134 @@ static errcode_t follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
  * containing directory, and a pointer to the filename of the file
  * (pointing into the pathname) and the length of the filename.
  */
-static errcode_t dir_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
-			   const char *pathname, int pathlen,
-			   int link_count, char *buf,
-			   const char **name, int *namelen,
+ساكن errcode_t dir_namei(ext2_filsys fs, ext2_ino_t پاڙ, ext2_ino_t dir,
+			   ثابت حرف *pathname, صحيح pathlen,
+			   صحيح link_ڳڻپ, حرف *buf,
+			   ثابت حرف **name, صحيح *namelen,
 			   ext2_ino_t *res_inode)
 {
-	char c;
-	const char *thisname;
-	int len;
+	حرف c;
+	ثابت حرف *thisname;
+	صحيح len;
 	ext2_ino_t inode;
 	errcode_t retval;
 
-	if ((c = *pathname) == '/') {
-        	dir = root;
+	إذا ((c = *pathname) == '/') {
+        	dir = پاڙ;
 		pathname++;
 		pathlen--;
 	}
-	while (1) {
+	طالما (1) {
         	thisname = pathname;
-		for (len=0; --pathlen >= 0;len++) {
+		لكل (len=0; --pathlen >= 0;len++) {
 			c = *(pathname++);
-			if (c == '/')
-				break;
+			إذا (c == '/')
+				اكسر;
 		}
-		if (pathlen < 0)
-			break;
+		إذا (pathlen < 0)
+			اكسر;
 		retval = ext2fs_lookup (fs, dir, thisname, len, buf, &inode);
-		if (retval) return retval;
-        	retval = follow_link (fs, root, dir, inode,
-				      link_count, buf, &dir);
-        	if (retval) return retval;
+		إذا (retval) أرجع retval;
+        	retval = follow_link (fs, پاڙ, dir, inode,
+				      link_ڳڻپ, buf, &dir);
+        	إذا (retval) أرجع retval;
     	}
 	*name = thisname;
 	*namelen = len;
 	*res_inode = dir;
-	return 0;
+	أرجع 0;
 }
 
-static errcode_t open_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t base,
-			    const char *pathname, size_t pathlen, int follow,
-			    int link_count, char *buf, ext2_ino_t *res_inode)
+ساكن errcode_t open_namei(ext2_filsys fs, ext2_ino_t پاڙ, ext2_ino_t بنياد,
+			    ثابت حرف *pathname, size_t pathlen, صحيح follow,
+			    صحيح link_ڳڻپ, حرف *buf, ext2_ino_t *res_inode)
 {
-	const char *base_name;
-	int namelen;
+	ثابت حرف *بنياد_name;
+	صحيح namelen;
 	ext2_ino_t dir, inode;
 	errcode_t retval;
 
-#ifdef NAMEI_DEBUG
-	printf("open_namei: root=%lu, dir=%lu, path=%.*s, lc=%d\n",
-	       root, base, pathlen, pathname, link_count);
-#endif
-	retval = dir_namei(fs, root, base, pathname, pathlen,
-			   link_count, buf, &base_name, &namelen, &dir);
-	if (retval) return retval;
-	if (!namelen) {                     /* special case: '/usr/' etc */
+#جيڪڏهن_وصف_ٿيل NAMEI_DEBUG
+	لکو("open_namei: root=%lu, dir=%lu, path=%.*s, lc=%d\n",
+	       پاڙ, بنياد, pathlen, pathname, link_ڳڻپ);
+#جيڪڏهن_پورو
+	retval = dir_namei(fs, پاڙ, بنياد, pathname, pathlen,
+			   link_ڳڻپ, buf, &بنياد_name, &namelen, &dir);
+	إذا (retval) أرجع retval;
+	إذا (!namelen) {                     /* special case: '/usr/' etc */
 		*res_inode=dir;
-		return 0;
+		أرجع 0;
 	}
-	retval = ext2fs_lookup (fs, dir, base_name, namelen, buf, &inode);
-	if (retval)
-		return retval;
-	if (follow) {
-		retval = follow_link(fs, root, dir, inode, link_count,
+	retval = ext2fs_lookup (fs, dir, بنياد_name, namelen, buf, &inode);
+	إذا (retval)
+		أرجع retval;
+	إذا (follow) {
+		retval = follow_link(fs, پاڙ, dir, inode, link_ڳڻپ,
 				     buf, &inode);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 	}
-#ifdef NAMEI_DEBUG
-	printf("open_namei: (link_count=%d) returns %lu\n",
-	       link_count, inode);
-#endif
+#جيڪڏهن_وصف_ٿيل NAMEI_DEBUG
+	لکو("open_namei: (link_count=%d) returns %lu\n",
+	       link_ڳڻپ, inode);
+#جيڪڏهن_پورو
 	*res_inode = inode;
-	return 0;
+	أرجع 0;
 }
 
-errcode_t ext2fs_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
-		       const char *name, ext2_ino_t *inode)
+errcode_t ext2fs_namei(ext2_filsys fs, ext2_ino_t پاڙ, ext2_ino_t cwd,
+		       ثابت حرف *name, ext2_ino_t *inode)
 {
-	char *buf;
+	حرف *buf;
 	errcode_t retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-	retval = open_namei(fs, root, cwd, name, strlen(name), 0, 0,
+	retval = open_namei(fs, پاڙ, cwd, name, لڙي_ڊيگهه(name), 0, 0,
 			    buf, inode);
 
 	ext2fs_free_mem(&buf);
-	return retval;
+	أرجع retval;
 }
 
-errcode_t ext2fs_namei_follow(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
-			      const char *name, ext2_ino_t *inode)
+errcode_t ext2fs_namei_follow(ext2_filsys fs, ext2_ino_t پاڙ, ext2_ino_t cwd,
+			      ثابت حرف *name, ext2_ino_t *inode)
 {
-	char *buf;
+	حرف *buf;
 	errcode_t retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-	retval = open_namei(fs, root, cwd, name, strlen(name), 1, 0,
+	retval = open_namei(fs, پاڙ, cwd, name, لڙي_ڊيگهه(name), 1, 0,
 			    buf, inode);
 
 	ext2fs_free_mem(&buf);
-	return retval;
+	أرجع retval;
 }
 
-errcode_t ext2fs_follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
+errcode_t ext2fs_follow_link(ext2_filsys fs, ext2_ino_t پاڙ, ext2_ino_t cwd,
 			ext2_ino_t inode, ext2_ino_t *res_inode)
 {
-	char *buf;
+	حرف *buf;
 	errcode_t retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-	retval = follow_link(fs, root, cwd, inode, 0, buf, res_inode);
+	retval = follow_link(fs, پاڙ, cwd, inode, 0, buf, res_inode);
 
 	ext2fs_free_mem(&buf);
-	return retval;
+	أرجع retval;
 }
 

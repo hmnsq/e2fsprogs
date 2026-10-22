@@ -9,100 +9,100 @@
  * %End-Header%
  */
 
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
+#جيڪڏهن_وصف_نه_ٿيل LARGEFILE_ذريعو
+#وصف_ڪريو LARGEFILE_ذريعو
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_نه_ٿيل LARGEFILE64_ذريعو
+#وصف_ڪريو LARGEFILE64_ذريعو
+#جيڪڏهن_پورو
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ضمن "config.h"
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#جيڪڏهن_پورو
 
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef __MSDOS__
-#include <io.h>
-#endif
-#include "et/com_err.h"
-#include "ext2fs/ext2_io.h"
+#إذا HAVE_ERRNO_H
+#ضمن <errno.h>
+#جيڪڏهن_پورو
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل __MSDOS__
+#ضمن <io.h>
+#جيڪڏهن_پورو
+#ضمن "et/com_err.h"
+#ضمن "ext2fs/ext2_io.h"
 
-#ifdef __linux__
+#جيڪڏهن_وصف_ٿيل __linux__
 
-#include <sys/syscall.h>
+#ضمن <sys/syscall.h>
 
-static ext2_loff_t my_llseek (int fd, ext2_loff_t offset, int origin)
+ساكن ext2_loff_t my_llseek (صحيح fd, ext2_loff_t وٿي, صحيح origin)
 {
-#if SIZEOF_OFF_T >= 8
-	return lseek(fd, offset, origin);
-#elif HAVE_LSEEK64_PROTOTYPE
-	return lseek64(fd, offset, origin);
-#elif HAVE_LLSEEK_PROTOTYPE
-	return llseek(fd, offset, origin);
-#elif defined(__NR__llseek)
-	loff_t result;
-	int retval;
+#إذا SIZEOF_OFF_T >= 8
+	أرجع lseek(fd, وٿي, origin);
+#وإلاإذا HAVE_LSEEK64_PROTOTYPE
+	أرجع lseek64(fd, وٿي, origin);
+#وإلاإذا HAVE_LLSEEK_PROTOTYPE
+	أرجع llseek(fd, وٿي, origin);
+#وإلاإذا defined(__NR__llseek)
+	loff_t نتيجو;
+	صحيح retval;
 	retval = syscall(__NR__llseek, fd,
-		(unsigned long)(offset >> 32),
-		(unsigned long)(offset & 0xffffffff),
-		&result, origin);
-	return (retval == -1 ? retval : result);
-#else
+		(بنانشان ڊگهو)(وٿي >> 32),
+		(بنانشان ڊگهو)(وٿي & 0xffffffff),
+		&نتيجو, origin);
+	أرجع (retval == -1 ? retval : نتيجو);
+#وإلا
 	errno = ENOSYS;
-	return -1;
-#endif
+	أرجع -1;
+#جيڪڏهن_پورو
 }
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (صحيح fd, ext2_loff_t وٿي, صحيح origin)
 {
-	ext2_loff_t result;
-	static int do_compat = 0;
+	ext2_loff_t نتيجو;
+	ساكن صحيح do_compat = 0;
 
-	if (do_compat)
-		goto fallback;
+	إذا (do_compat)
+		اذهب fallback;
 
-	result = my_llseek (fd, offset, origin);
-	if (result == -1 && errno == ENOSYS) {
+	نتيجو = my_llseek (fd, وٿي, origin);
+	إذا (نتيجو == -1 && errno == ENOSYS) {
 		/*
 		 * Just in case this code runs on top of an old kernel
 		 * which does not support the llseek system call
 		 */
 		do_compat++;
 	fallback:
-		if (offset < ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))
-			return lseek(fd, (off_t) offset, origin);
+		إذا (وٿي < ((ext2_loff_t) 1 << ((حجم(off_t)*8) -1)))
+			أرجع lseek(fd, (off_t) وٿي, origin);
 		errno = EINVAL;
-		return -1;
+		أرجع -1;
 	}
-	return result;
+	أرجع نتيجو;
 }
 
-#else /* !linux */
+#وإلا /* !linux */
 
-#ifndef EINVAL
-#define EINVAL EXT2_ET_INVALID_ARGUMENT
-#endif
+#جيڪڏهن_وصف_نه_ٿيل EINVAL
+#وصف_ڪريو EINVAL EXT2_ET_INVALID_دليل
+#جيڪڏهن_پورو
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (صحيح fd, ext2_loff_t وٿي, صحيح origin)
 {
-#if defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
-	return lseek64 (fd, offset, origin);
-#else
-	if ((sizeof(off_t) < sizeof(ext2_loff_t)) &&
-	    (offset >= ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))) {
+#إذا defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
+	أرجع lseek64 (fd, وٿي, origin);
+#وإلا
+	إذا ((حجم(off_t) < حجم(ext2_loff_t)) &&
+	    (وٿي >= ((ext2_loff_t) 1 << ((حجم(off_t)*8) -1)))) {
 		errno = EINVAL;
-		return -1;
+		أرجع -1;
 	}
-	return lseek (fd, (off_t) offset, origin);
-#endif
+	أرجع lseek (fd, (off_t) وٿي, origin);
+#جيڪڏهن_پورو
 }
 
-#endif 	/* linux */
+#جيڪڏهن_پورو 	/* linux */
 
 

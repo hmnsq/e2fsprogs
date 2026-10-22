@@ -91,93 +91,93 @@ static inline struct page * rb_insert_page_cache(struct inode * inode,
 -----------------------------------------------------------------------
 */
 
-#ifndef	_LINUX_RBTREE_H
-#define	_LINUX_RBTREE_H
+#جيڪڏهن_وصف_نه_ٿيل	_LINUX_RBTREE_H
+#وصف_ڪريو	_LINUX_RBTREE_H
 
-#include <stdlib.h>
-#include <stdint.h>
-#include "compiler.h"
+#ضمن <stdlib.h>
+#ضمن <stdint.h>
+#ضمن "compiler.h"
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-function"
-#endif
+#إذا __GNUC_PREREQ (4, 6)
+#هدايت GCC diagnostic ڌڪو
+#هدايت GCC diagnostic ignored "-Wunused-function"
+#جيڪڏهن_پورو
 
-struct rb_node
+بنية rb_ڳنڍ
 {
-	uintptr_t  rb_parent_color;
-#define	RB_RED		0
-#define	RB_BLACK	1
-	struct rb_node *rb_right;
-	struct rb_node *rb_left;
-} __attribute__((aligned(sizeof(long))));
+	uintptr_t  rb_والد_color;
+#وصف_ڪريو	RB_RED		0
+#وصف_ڪريو	RB_BLACK	1
+	بنية rb_ڳنڍ *rb_ساڄو;
+	بنية rb_ڳنڍ *rb_کاٻو;
+} __attribute__((aligned(حجم(ڊگهو))));
     /* The alignment might seem pointless, but allegedly CRIS needs it */
 
-struct rb_root
+بنية rb_پاڙ
 {
-	struct rb_node *rb_node;
+	بنية rb_ڳنڍ *rb_ڳنڍ;
 };
 
 
-#define ext2fs_rb_parent(r)   ((struct rb_node *)((r)->rb_parent_color & ~3))
-#define ext2fs_rb_color(r)   ((r)->rb_parent_color & 1)
-#define ext2fs_rb_is_red(r)   (!ext2fs_rb_color(r))
-#define ext2fs_rb_is_black(r) ext2fs_rb_color(r)
-#define ext2fs_rb_set_red(r)  do { (r)->rb_parent_color &= ~1; } while (0)
-#define ext2fs_rb_set_black(r)  do { (r)->rb_parent_color |= 1; } while (0)
+#وصف_ڪريو ext2fs_rb_والد(r)   ((بنية rb_ڳنڍ *)((r)->rb_والد_color & ~3))
+#وصف_ڪريو ext2fs_rb_color(r)   ((r)->rb_والد_color & 1)
+#وصف_ڪريو ext2fs_rb_is_red(r)   (!ext2fs_rb_color(r))
+#وصف_ڪريو ext2fs_rb_is_black(r) ext2fs_rb_color(r)
+#وصف_ڪريو ext2fs_rb_سيٽ_red(r)  افعل { (r)->rb_والد_color &= ~1; } طالما (0)
+#وصف_ڪريو ext2fs_rb_سيٽ_black(r)  افعل { (r)->rb_والد_color |= 1; } طالما (0)
 
-static inline void ext2fs_rb_set_parent(struct rb_node *rb, struct rb_node *p)
+ساكن مضمن فراغ ext2fs_rb_سيٽ_والد(بنية rb_ڳنڍ *rb, بنية rb_ڳنڍ *p)
 {
-	rb->rb_parent_color = (rb->rb_parent_color & 3) | (uintptr_t)p;
+	rb->rb_والد_color = (rb->rb_والد_color & 3) | (uintptr_t)p;
 }
-static inline void ext2fs_rb_set_color(struct rb_node *rb, int color)
+ساكن مضمن فراغ ext2fs_rb_سيٽ_color(بنية rb_ڳنڍ *rb, صحيح color)
 {
-	rb->rb_parent_color = (rb->rb_parent_color & ~1) | color;
-}
-
-#define RB_ROOT	(struct rb_root) { NULL, }
-#define	ext2fs_rb_entry(ptr, type, member) container_of(ptr, type, member)
-
-static inline int ext2fs_rb_empty_root(struct rb_root *root)
-{
-	return root->rb_node == NULL;
+	rb->rb_والد_color = (rb->rb_والد_color & ~1) | color;
 }
 
-static inline int ext2fs_rb_empty_node(struct rb_node *node)
+#وصف_ڪريو RB_پاڙ	(بنية rb_پاڙ) { عدم, }
+#وصف_ڪريو	ext2fs_rb_داخلا(ptr, type, member) container_جو(ptr, type, member)
+
+ساكن مضمن صحيح ext2fs_rb_خالي_جايون_پاڙ(بنية rb_پاڙ *پاڙ)
 {
-	return ext2fs_rb_parent(node) == node;
+	أرجع پاڙ->rb_ڳنڍ == عدم;
 }
 
-static inline void ext2fs_rb_clear_node(struct rb_node *node)
+ساكن مضمن صحيح ext2fs_rb_خالي_جايون_ڳنڍ(بنية rb_ڳنڍ *ڳنڍ)
 {
-	ext2fs_rb_set_parent(node, node);
+	أرجع ext2fs_rb_والد(ڳنڍ) == ڳنڍ;
 }
 
-extern void ext2fs_rb_insert_color(struct rb_node *, struct rb_root *);
-extern void ext2fs_rb_erase(struct rb_node *, struct rb_root *);
+ساكن مضمن فراغ ext2fs_rb_clear_ڳنڍ(بنية rb_ڳنڍ *ڳنڍ)
+{
+	ext2fs_rb_سيٽ_والد(ڳنڍ, ڳنڍ);
+}
+
+خارجي فراغ ext2fs_rb_وجهو_color(بنية rb_ڳنڍ *, بنية rb_پاڙ *);
+خارجي فراغ ext2fs_rb_erase(بنية rb_ڳنڍ *, بنية rb_پاڙ *);
 
 /* Find logical next and previous nodes in a tree */
-extern struct rb_node *ext2fs_rb_next(struct rb_node *);
-extern struct rb_node *ext2fs_rb_prev(struct rb_node *);
-extern struct rb_node *ext2fs_rb_first(const struct rb_root *);
-extern struct rb_node *ext2fs_rb_last(const struct rb_root *);
+خارجي بنية rb_ڳنڍ *ext2fs_rb_ايندڙ(بنية rb_ڳنڍ *);
+خارجي بنية rb_ڳنڍ *ext2fs_rb_prev(بنية rb_ڳنڍ *);
+خارجي بنية rb_ڳنڍ *ext2fs_rb_پهريون(ثابت بنية rb_پاڙ *);
+خارجي بنية rb_ڳنڍ *ext2fs_rb_آخري(ثابت بنية rb_پاڙ *);
 
 /* Fast replacement of a single node without remove/rebalance/add/rebalance */
-extern void ext2fs_rb_replace_node(struct rb_node *victim, struct rb_node *new_,
-				 struct rb_root *root);
+خارجي فراغ ext2fs_rb_replace_ڳنڍ(بنية rb_ڳنڍ *victim, بنية rb_ڳنڍ *new_,
+				 بنية rb_پاڙ *پاڙ);
 
-static inline void ext2fs_rb_link_node(struct rb_node * node,
-				     struct rb_node * parent,
-				     struct rb_node ** rb_link)
+ساكن مضمن فراغ ext2fs_rb_link_ڳنڍ(بنية rb_ڳنڍ * ڳنڍ,
+				     بنية rb_ڳنڍ * والد,
+				     بنية rb_ڳنڍ ** rb_link)
 {
-	node->rb_parent_color = (uintptr_t)parent;
-	node->rb_left = node->rb_right = NULL;
+	ڳنڍ->rb_والد_color = (uintptr_t)والد;
+	ڳنڍ->rb_کاٻو = ڳنڍ->rb_ساڄو = عدم;
 
-	*rb_link = node;
+	*rb_link = ڳنڍ;
 }
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
-#endif
+#إذا __GNUC_PREREQ (4, 6)
+#هدايت GCC diagnostic ڪڍو
+#جيڪڏهن_پورو
 
-#endif	/* _LINUX_RBTREE_H */
+#جيڪڏهن_پورو	/* _LINUX_RBTREE_H */

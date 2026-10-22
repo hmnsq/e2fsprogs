@@ -10,158 +10,158 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#if HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جيڪڏهن_پورو
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#جيڪڏهن_پورو
+#إذا HAVE_SYS_وقت_H
+#ضمن <sys/time.h>
+#جيڪڏهن_پورو
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fsP.h"
 
-struct process_block_struct {
+بنية process_بلاڪ_struct {
 	ext2_ino_t		ino;
-	struct ext2_inode *	inode;
-	ext2fs_block_bitmap	reserve;
-	ext2fs_block_bitmap	alloc_map;
+	بنية ext2_inode *	inode;
+	ext2fs_بلاڪ_bitmap	reserve;
+	ext2fs_بلاڪ_bitmap	alloc_map;
 	errcode_t		error;
-	char			*buf;
-	int			add_dir;
-	int			flags;
+	حرف			*buf;
+	صحيح			جوڙيو_dir;
+	صحيح			flags;
 };
 
-static int process_block(ext2_filsys fs, blk64_t *block_nr,
-			 e2_blkcnt_t blockcnt, blk64_t ref_block,
-			 int ref_offset, void *priv_data)
+ساكن صحيح process_بلاڪ(ext2_filsys fs, blk64_t *بلاڪ_nr,
+			 e2_blkcnt_t blockcnt, blk64_t ref_بلاڪ,
+			 صحيح ref_وٿي, فراغ *priv_معلومات)
 {
-	struct process_block_struct *pb;
+	بنية process_بلاڪ_struct *pb;
 	errcode_t	retval;
-	int		ret;
-	blk64_t		block, orig;
+	صحيح		ret;
+	blk64_t		بلاڪ, orig;
 
-	pb = (struct process_block_struct *) priv_data;
-	block = orig = *block_nr;
+	pb = (بنية process_بلاڪ_struct *) priv_معلومات;
+	بلاڪ = orig = *بلاڪ_nr;
 	ret = 0;
 
 	/*
 	 * Let's see if this is one which we need to relocate
 	 */
-	if (ext2fs_test_block_bitmap2(pb->reserve, block)) {
-		do {
-			if (++block >= ext2fs_blocks_count(fs->super))
-				block = fs->super->s_first_data_block;
-			if (block == orig) {
-				pb->error = EXT2_ET_BLOCK_ALLOC_FAIL;
-				return BLOCK_ABORT;
+	إذا (ext2fs_test_بلاڪ_bitmap2(pb->reserve, بلاڪ)) {
+		افعل {
+			إذا (++بلاڪ >= ext2fs_بلاڪون_ڳڻپ(fs->super))
+				بلاڪ = fs->super->s_پهريون_معلومات_بلاڪ;
+			إذا (بلاڪ == orig) {
+				pb->error = EXT2_ET_بلاڪ_ALLOC_FAIL;
+				أرجع بلاڪ_ABORT;
 			}
-		} while (ext2fs_test_block_bitmap2(pb->reserve, block) ||
-			 ext2fs_test_block_bitmap2(pb->alloc_map, block));
+		} طالما (ext2fs_test_بلاڪ_bitmap2(pb->reserve, بلاڪ) ||
+			 ext2fs_test_بلاڪ_bitmap2(pb->alloc_map, بلاڪ));
 
 		retval = io_channel_read_blk64(fs->io, orig, 1, pb->buf);
-		if (retval) {
+		إذا (retval) {
 			pb->error = retval;
-			return BLOCK_ABORT;
+			أرجع بلاڪ_ABORT;
 		}
-		retval = io_channel_write_blk64(fs->io, block, 1, pb->buf);
-		if (retval) {
+		retval = io_channel_write_blk64(fs->io, بلاڪ, 1, pb->buf);
+		إذا (retval) {
 			pb->error = retval;
-			return BLOCK_ABORT;
+			أرجع بلاڪ_ABORT;
 		}
-		*block_nr = block;
-		ext2fs_mark_block_bitmap2(pb->alloc_map, block);
-		ret = BLOCK_CHANGED;
-		if (pb->flags & EXT2_BMOVE_DEBUG)
-			printf("ino=%u, blockcnt=%lld, %llu->%llu\n",
-			       (unsigned) pb->ino, blockcnt, 
-			       (unsigned long long) orig,
-			       (unsigned long long) block);
+		*بلاڪ_nr = بلاڪ;
+		ext2fs_mark_بلاڪ_bitmap2(pb->alloc_map, بلاڪ);
+		ret = بلاڪ_بدليو;
+		إذا (pb->flags & EXT2_BMOVE_DEBUG)
+			لکو("ino=%u, blockcnt=%lld, %llu->%llu\n",
+			       (بنانشان) pb->ino, blockcnt, 
+			       (بنانشان ڊگهو ڊگهو) orig,
+			       (بنانشان ڊگهو ڊگهو) بلاڪ);
 	}
-	if (pb->add_dir) {
-		retval = ext2fs_add_dir_block2(fs->dblist, pb->ino,
-					       block, blockcnt);
-		if (retval) {
+	إذا (pb->جوڙيو_dir) {
+		retval = ext2fs_جوڙيو_dir_block2(fs->dblist, pb->ino,
+					       بلاڪ, blockcnt);
+		إذا (retval) {
 			pb->error = retval;
-			ret |= BLOCK_ABORT;
+			ret |= بلاڪ_ABORT;
 		}
 	}
-	return ret;
+	أرجع ret;
 }
 
-errcode_t ext2fs_move_blocks(ext2_filsys fs,
-			     ext2fs_block_bitmap reserve,
-			     ext2fs_block_bitmap alloc_map,
-			     int flags)
+errcode_t ext2fs_move_بلاڪون(ext2_filsys fs,
+			     ext2fs_بلاڪ_bitmap reserve,
+			     ext2fs_بلاڪ_bitmap alloc_map,
+			     صحيح flags)
 {
 	ext2_ino_t	ino;
-	struct ext2_inode inode;
+	بنية ext2_inode inode;
 	errcode_t	retval;
-	struct process_block_struct pb;
-	ext2_inode_scan	scan;
-	char		*block_buf;
+	بنية process_بلاڪ_struct pb;
+	ext2_inode_جاچ	جاچ;
+	حرف		*بلاڪ_buf;
 
-	retval = ext2fs_open_inode_scan(fs, 0, &scan);
-	if (retval)
-		return retval;
+	retval = ext2fs_open_inode_جاچ(fs, 0, &جاچ);
+	إذا (retval)
+		أرجع retval;
 
 	pb.reserve = reserve;
 	pb.error = 0;
-	pb.alloc_map = alloc_map ? alloc_map : fs->block_map;
+	pb.alloc_map = alloc_map ? alloc_map : fs->بلاڪ_map;
 	pb.flags = flags;
 
-	retval = ext2fs_get_array(4, fs->blocksize, &block_buf);
-	if (retval)
-		return retval;
-	pb.buf = block_buf + fs->blocksize * 3;
+	retval = ext2fs_get_array(4, fs->blocksize, &بلاڪ_buf);
+	إذا (retval)
+		أرجع retval;
+	pb.buf = بلاڪ_buf + fs->blocksize * 3;
 
 	/*
 	 * If GET_DBLIST is set in the flags field, then we should
 	 * gather directory block information while we're doing the
 	 * block move.
 	 */
-	if (flags & EXT2_BMOVE_GET_DBLIST) {
-		if (fs->dblist) {
+	إذا (flags & EXT2_BMOVE_GET_DBLIST) {
+		إذا (fs->dblist) {
 			ext2fs_free_dblist(fs->dblist);
-			fs->dblist = NULL;
+			fs->dblist = عدم;
 		}
 		retval = ext2fs_init_dblist(fs, 0);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 	}
 
-	retval = ext2fs_get_next_inode(scan, &ino, &inode);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_ايندڙ_inode(جاچ, &ino, &inode);
+	إذا (retval)
+		أرجع retval;
 
-	while (ino) {
-		if ((inode.i_links_count == 0) ||
+	طالما (ino) {
+		إذا ((inode.i_links_ڳڻپ == 0) ||
 		    !ext2fs_inode_has_valid_blocks2(fs, &inode))
-			goto next;
+			اذهب ايندڙ;
 
 		pb.ino = ino;
 		pb.inode = &inode;
 
-		pb.add_dir = (LINUX_S_ISDIR(inode.i_mode) &&
+		pb.جوڙيو_dir = (LINUX_S_ISDIR(inode.i_گهڻائي) &&
 			      flags & EXT2_BMOVE_GET_DBLIST);
 
-		retval = ext2fs_block_iterate3(fs, ino, 0, block_buf,
-					       process_block, &pb);
-		if (retval)
-			return retval;
-		if (pb.error)
-			return pb.error;
+		retval = ext2fs_بلاڪ_iterate3(fs, ino, 0, بلاڪ_buf,
+					       process_بلاڪ, &pb);
+		إذا (retval)
+			أرجع retval;
+		إذا (pb.error)
+			أرجع pb.error;
 
-	next:
-		retval = ext2fs_get_next_inode(scan, &ino, &inode);
-		if (retval == EXT2_ET_BAD_BLOCK_IN_INODE_TABLE)
-			goto next;
+	ايندڙ:
+		retval = ext2fs_get_ايندڙ_inode(جاچ, &ino, &inode);
+		إذا (retval == EXT2_ET_BAD_بلاڪ_اندريون_INODE_جدول)
+			اذهب ايندڙ;
 	}
-	return 0;
+	أرجع 0;
 }
 

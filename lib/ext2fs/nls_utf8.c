@@ -20,43 +20,43 @@
  * implementation.
  */
 
-#include "config.h"
-#include <stdint.h>
-#include <unistd.h>
-#include <string.h>
-#include <limits.h>
-#include <errno.h>
+#ضمن "config.h"
+#ضمن <stdint.h>
+#ضمن <unistd.h>
+#ضمن <string.h>
+#ضمن <limits.h>
+#ضمن <errno.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
+#ضمن "ext2fsP.h"
 
 /* Encoding a unicode version number as a single unsigned int. */
-#define UNICODE_MAJ_SHIFT		(16)
-#define UNICODE_MIN_SHIFT		(8)
+#وصف_ڪريو UNICODE_MAJ_سرڪايو		(16)
+#وصف_ڪريو UNICODE_MIN_سرڪايو		(8)
 
-#define UNICODE_AGE(MAJ, MIN, REV)			\
-	(((unsigned int)(MAJ) << UNICODE_MAJ_SHIFT) |	\
-	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
-	 ((unsigned int)(REV)))
+#وصف_ڪريو UNICODE_AGE(MAJ, MIN, REV)			\
+	(((بنانشان صحيح)(MAJ) << UNICODE_MAJ_سرڪايو) |	\
+	 ((بنانشان صحيح)(MIN) << UNICODE_MIN_سرڪايو) |	\
+	 ((بنانشان صحيح)(REV)))
 
 /* Needed in struct utf8cursor below. */
-#define UTF8HANGULLEAF	(12)
+#وصف_ڪريو UTF8HANGULLEAF	(12)
 
 /*
  * Cursor structure used by the normalizer.
  */
-struct utf8cursor {
-	const struct utf8data	*data;
-	const char	*s;
-	const char	*p;
-	const char	*ss;
-	const char	*sp;
-	unsigned int	len;
-	unsigned int	slen;
-	short int	ccc;
-	short int	nccc;
-	unsigned char	hangul[UTF8HANGULLEAF];
+بنية utf8cursor {
+	ثابت بنية utf8data	*معلومات;
+	ثابت حرف	*s;
+	ثابت حرف	*p;
+	ثابت حرف	*ss;
+	ثابت حرف	*sp;
+	بنانشان صحيح	len;
+	بنانشان صحيح	slen;
+	ننڍو صحيح	ccc;
+	ننڍو صحيح	nccc;
+	بنانشان حرف	hangul[UTF8HANGULLEAF];
 };
 
 /*
@@ -78,40 +78,40 @@ struct utf8cursor {
 // extern int utf8byte(struct utf8cursor *u8c);
 
 
-struct utf8data {
-	unsigned int maxage;
-	unsigned int offset;
+بنية utf8data {
+	بنانشان صحيح maxage;
+	بنانشان صحيح وٿي;
 };
 
-#define __INCLUDED_FROM_UTF8NORM_C__
-#include "utf8data.h"
-#undef __INCLUDED_FROM_UTF8NORM_C__
+#وصف_ڪريو __INCLUDED_FROM_UTF8NORM_C__
+#ضمن "utf8data.h"
+#وصف_رد __INCLUDED_FROM_UTF8NORM_C__
 
-#define ARRAY_SIZE(array)			\
-        (sizeof(array) / sizeof(array[0]))
+#وصف_ڪريو ARRAY_سائيز(array)			\
+        (حجم(array) / حجم(array[0]))
 
-#if 0
+#إذا 0
 /* Highest unicode version supported by the data tables. */
-static int utf8version_is_supported(uint8_t maj, uint8_t min, uint8_t rev)
+ساكن صحيح utf8version_is_supported(uint8_t maj, uint8_t min, uint8_t rev)
 {
-	int i = ARRAY_SIZE(utf8agetab) - 1;
-	unsigned int sb_utf8version = UNICODE_AGE(maj, min, rev);
+	صحيح i = ARRAY_سائيز(utf8agetab) - 1;
+	بنانشان صحيح sb_utf8version = UNICODE_AGE(maj, min, rev);
 
-	while (i >= 0 && utf8agetab[i] != 0) {
-		if (sb_utf8version == utf8agetab[i])
-			return 1;
+	طالما (i >= 0 && utf8agetab[i] != 0) {
+		إذا (sb_utf8version == utf8agetab[i])
+			أرجع 1;
 		i--;
 	}
-	return 0;
+	أرجع 0;
 }
-#endif
+#جيڪڏهن_پورو
 
-#if 0
-static int utf8version_latest(void)
+#إذا 0
+ساكن صحيح utf8version_latest(فراغ)
 {
-	return utf8vers;
+	أرجع utf8vers;
 }
-#endif
+#جيڪڏهن_پورو
 
 /*
  * UTF-8 valid ranges.
@@ -166,20 +166,20 @@ static int utf8version_latest(void)
  * Assumes the input points to the first byte of a valid UTF-8
  * sequence.
  */
-static inline int utf8clen(const char *s)
+ساكن مضمن صحيح utf8clen(ثابت حرف *s)
 {
-	unsigned char c = *s;
+	بنانشان حرف c = *s;
 
-	return 1 + (c >= 0xC0) + (c >= 0xE0) + (c >= 0xF0);
+	أرجع 1 + (c >= 0xC0) + (c >= 0xE0) + (c >= 0xF0);
 }
 
 /*
  * Decode a 3-byte UTF-8 sequence.
  */
-static unsigned int
-utf8decode3(const char *str)
+ساكن بنانشان صحيح
+utf8decode3(ثابت حرف *str)
 {
-	unsigned int		uc;
+	بنانشان صحيح		uc;
 
 	uc = *str++ & 0x0F;
 	uc <<= 6;
@@ -187,14 +187,14 @@ utf8decode3(const char *str)
 	uc <<= 6;
 	uc |= *str++ & 0x3F;
 
-	return uc;
+	أرجع uc;
 }
 
 /*
  * Encode a 3-byte UTF-8 sequence.
  */
-static int
-utf8encode3(char *str, unsigned int val)
+ساكن صحيح
+utf8encode3(حرف *str, بنانشان صحيح val)
 {
 	str[2] = (val & 0x3F) | 0x80;
 	val >>= 6;
@@ -202,7 +202,7 @@ utf8encode3(char *str, unsigned int val)
 	val >>= 6;
 	str[0] = val | 0xE0;
 
-	return 3;
+	أرجع 3;
 }
 
 /*
@@ -229,15 +229,15 @@ utf8encode3(char *str, unsigned int val)
  * NEXTBYTE set, and moreover those nodes always have a righthand
  * descendant.
  */
-typedef const unsigned char utf8trie_t;
-#define BITNUM		0x07
-#define NEXTBYTE	0x08
-#define OFFLEN		0x30
-#define OFFLEN_SHIFT	4
-#define RIGHTPATH	0x40
-#define TRIENODE	0x80
-#define RIGHTNODE	0x40
-#define LEFTNODE	0x80
+تعريفنوع ثابت بنانشان حرف utf8trie_t;
+#وصف_ڪريو BITNUM		0x07
+#وصف_ڪريو NEXTBYTE	0x08
+#وصف_ڪريو OFFLEN		0x30
+#وصف_ڪريو OFFLEN_سرڪايو	4
+#وصف_ڪريو RIGHTPATH	0x40
+#وصف_ڪريو TRIENODE	0x80
+#وصف_ڪريو RIGHTNODE	0x40
+#وصف_ڪريو LEFTNODE	0x80
 
 /*
  * utf8leaf_t
@@ -276,21 +276,21 @@ typedef const unsigned char utf8trie_t;
  * ranges" comment above, and only for those sequences.  Therefore a
  * lookup in the trie can be used to validate the UTF-8 input.
  */
-typedef const unsigned char utf8leaf_t;
+تعريفنوع ثابت بنانشان حرف utf8leaf_t;
 
-#define LEAF_GEN(LEAF)	((LEAF)[0])
-#define LEAF_CCC(LEAF)	((LEAF)[1])
-#define LEAF_STR(LEAF)	((const char *)((LEAF) + 2))
+#وصف_ڪريو پن_GEN(پن)	((پن)[0])
+#وصف_ڪريو پن_CCC(پن)	((پن)[1])
+#وصف_ڪريو پن_STR(پن)	((ثابت حرف *)((پن) + 2))
 
-#define MINCCC		(0)
-#define MAXCCC		(254)
-#define STOPPER		(0)
-#define	DECOMPOSE	(255)
+#وصف_ڪريو MINCCC		(0)
+#وصف_ڪريو MAXCCC		(254)
+#وصف_ڪريو STOPPER		(0)
+#وصف_ڪريو	DECOMPOSE	(255)
 
 /* Marker for hangul syllable decomposition. */
-#define HANGUL		((char)(255))
+#وصف_ڪريو HANGUL		((حرف)(255))
 /* Size of the synthesized leaf used for Hangul syllable decomposition. */
-#define UTF8HANGULLEAF	(12)
+#وصف_ڪريو UTF8HANGULLEAF	(12)
 
 /*
  * Hangul decomposition (algorithm from Section 3.12 of Unicode 6.3.0)
@@ -338,25 +338,25 @@ typedef const unsigned char utf8leaf_t;
  */
 
 /* Constants */
-#define SB	(0xAC00)
-#define LB	(0x1100)
-#define VB	(0x1161)
-#define TB	(0x11A7)
-#define LC	(19)
-#define VC	(21)
-#define TC	(28)
-#define NC	(VC * TC)
-#define SC	(LC * NC)
+#وصف_ڪريو SB	(0xAC00)
+#وصف_ڪريو LB	(0x1100)
+#وصف_ڪريو VB	(0x1161)
+#وصف_ڪريو TB	(0x11A7)
+#وصف_ڪريو LC	(19)
+#وصف_ڪريو VC	(21)
+#وصف_ڪريو TC	(28)
+#وصف_ڪريو NC	(VC * TC)
+#وصف_ڪريو SC	(LC * NC)
 
 /* Algorithmic decomposition of hangul syllable. */
-static utf8leaf_t *
-utf8hangul(const char *str, unsigned char *hangul)
+ساكن utf8leaf_t *
+utf8hangul(ثابت حرف *str, بنانشان حرف *hangul)
 {
-	unsigned int	si;
-	unsigned int	li;
-	unsigned int	vi;
-	unsigned int	ti;
-	unsigned char	*h;
+	بنانشان صحيح	si;
+	بنانشان صحيح	li;
+	بنانشان صحيح	vi;
+	بنانشان صحيح	ti;
+	بنانشان حرف	*h;
 
 	/* Calculate the SI, LI, VI, and TI values. */
 	si = utf8decode3(str) - SB;
@@ -366,24 +366,24 @@ utf8hangul(const char *str, unsigned char *hangul)
 
 	/* Fill in base of leaf. */
 	h = hangul;
-	LEAF_GEN(h) = 2;
-	LEAF_CCC(h) = DECOMPOSE;
+	پن_GEN(h) = 2;
+	پن_CCC(h) = DECOMPOSE;
 	h += 2;
 
 	/* Add LPart, a 3-byte UTF-8 sequence. */
-	h += utf8encode3((char *)h, li + LB);
+	h += utf8encode3((حرف *)h, li + LB);
 
 	/* Add VPart, a 3-byte UTF-8 sequence. */
-	h += utf8encode3((char *)h, vi + VB);
+	h += utf8encode3((حرف *)h, vi + VB);
 
 	/* Add TPart if required, also a 3-byte UTF-8 sequence. */
-	if (ti)
-		h += utf8encode3((char *)h, ti + TB);
+	إذا (ti)
+		h += utf8encode3((حرف *)h, ti + TB);
 
 	/* Terminate string. */
 	h[0] = '\0';
 
-	return hangul;
+	أرجع hangul;
 }
 
 /*
@@ -394,61 +394,61 @@ utf8hangul(const char *str, unsigned char *hangul)
  * is well-formed and corresponds to a known unicode code point.  The
  * shorthand for this will be "is valid UTF-8 unicode".
  */
-static utf8leaf_t *utf8nlookup(const struct utf8data *data,
-			       unsigned char *hangul, const char *s, size_t len)
+ساكن utf8leaf_t *utf8nlookup(ثابت بنية utf8data *معلومات,
+			       بنانشان حرف *hangul, ثابت حرف *s, size_t len)
 {
 	utf8trie_t	*trie;
-	int		offlen;
-	int		offset;
-	int		mask;
-	int		node;
+	صحيح		offlen;
+	صحيح		وٿي;
+	صحيح		نقاب;
+	صحيح		ڳنڍ;
 
-	if (!data)
-		return NULL;
-	if (len == 0)
-		return NULL;
+	إذا (!معلومات)
+		أرجع عدم;
+	إذا (len == 0)
+		أرجع عدم;
 
-	trie = utf8data + data->offset;
-	node = 1;
-	while (node) {
-		offlen = (*trie & OFFLEN) >> OFFLEN_SHIFT;
-		if (*trie & NEXTBYTE) {
-			if (--len == 0)
-				return NULL;
+	trie = utf8data + معلومات->وٿي;
+	ڳنڍ = 1;
+	طالما (ڳنڍ) {
+		offlen = (*trie & OFFLEN) >> OFFLEN_سرڪايو;
+		إذا (*trie & NEXTBYTE) {
+			إذا (--len == 0)
+				أرجع عدم;
 			s++;
 		}
-		mask = 1 << (*trie & BITNUM);
-		if (*s & mask) {
+		نقاب = 1 << (*trie & BITNUM);
+		إذا (*s & نقاب) {
 			/* Right leg */
-			if (offlen) {
+			إذا (offlen) {
 				/* Right node at offset of trie */
-				node = (*trie & RIGHTNODE);
-				offset = trie[offlen];
-				while (--offlen) {
-					offset <<= 8;
-					offset |= trie[offlen];
+				ڳنڍ = (*trie & RIGHTNODE);
+				وٿي = trie[offlen];
+				طالما (--offlen) {
+					وٿي <<= 8;
+					وٿي |= trie[offlen];
 				}
-				trie += offset;
-			} else if (*trie & RIGHTPATH) {
+				trie += وٿي;
+			} وإلا إذا (*trie & RIGHTPATH) {
 				/* Right node after this node */
-				node = (*trie & TRIENODE);
+				ڳنڍ = (*trie & TRIENODE);
 				trie++;
-			} else {
+			} وإلا {
 				/* No right node. */
-				return NULL;
+				أرجع عدم;
 			}
-		} else {
+		} وإلا {
 			/* Left leg */
-			if (offlen) {
+			إذا (offlen) {
 				/* Left node after this node. */
-				node = (*trie & LEFTNODE);
+				ڳنڍ = (*trie & LEFTNODE);
 				trie += offlen + 1;
-			} else if (*trie & RIGHTPATH) {
+			} وإلا إذا (*trie & RIGHTPATH) {
 				/* No left node. */
-				return NULL;
-			} else {
+				أرجع عدم;
+			} وإلا {
 				/* Left node after this node */
-				node = (*trie & TRIENODE);
+				ڳنڍ = (*trie & TRIENODE);
 				trie++;
 			}
 		}
@@ -459,9 +459,9 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
 	 * always 3 bytes long, so s has been advanced twice, and the
 	 * start of the sequence is at s-2.
 	 */
-	if (LEAF_CCC(trie) == DECOMPOSE && LEAF_STR(trie)[0] == HANGUL)
+	إذا (پن_CCC(trie) == DECOMPOSE && پن_STR(trie)[0] == HANGUL)
 		trie = utf8hangul(s - 2, hangul);
-	return trie;
+	أرجع trie;
 }
 
 /*
@@ -470,189 +470,189 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
  *
  * Forwards to utf8nlookup().
  */
-static utf8leaf_t *utf8lookup(const struct utf8data *data,
-			      unsigned char *hangul, const char *s)
+ساكن utf8leaf_t *utf8lookup(ثابت بنية utf8data *معلومات,
+			      بنانشان حرف *hangul, ثابت حرف *s)
 {
-	return utf8nlookup(data, hangul, s, (size_t)-1);
+	أرجع utf8nlookup(معلومات, hangul, s, (size_t)-1);
 }
 
-#if 0
+#إذا 0
 /*
  * Maximum age of any character in s.
  * Return -1 if s is not valid UTF-8 unicode.
  * Return 0 if only non-assigned code points are used.
  */
-static int utf8agemax(const struct utf8data *data, const char *s)
+ساكن صحيح utf8agemax(ثابت بنية utf8data *معلومات, ثابت حرف *s)
 {
-	utf8leaf_t	*leaf;
-	int		age = 0;
-	int		leaf_age;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	utf8leaf_t	*پن_2;
+	صحيح		age = 0;
+	صحيح		پن_age;
+	بنانشان حرف	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
+	إذا (!معلومات)
+		أرجع -1;
 
-	while (*s) {
-		leaf = utf8lookup(data, hangul, s);
-		if (!leaf)
-			return -1;
+	طالما (*s) {
+		پن_2 = utf8lookup(معلومات, hangul, s);
+		إذا (!پن_2)
+			أرجع -1;
 
-		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age > age)
-			age = leaf_age;
+		پن_age = utf8agetab[پن_GEN(پن_2)];
+		إذا (پن_age <= معلومات->maxage && پن_age > age)
+			age = پن_age;
 		s += utf8clen(s);
 	}
-	return age;
+	أرجع age;
 }
-#endif
+#جيڪڏهن_پورو
 
-#if 0
+#إذا 0
 /*
  * Minimum age of any character in s.
  * Return -1 if s is not valid UTF-8 unicode.
  * Return 0 if non-assigned code points are used.
  */
-static int utf8agemin(const struct utf8data *data, const char *s)
+ساكن صحيح utf8agemin(ثابت بنية utf8data *معلومات, ثابت حرف *s)
 {
-	utf8leaf_t	*leaf;
-	int		age;
-	int		leaf_age;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	utf8leaf_t	*پن_2;
+	صحيح		age;
+	صحيح		پن_age;
+	بنانشان حرف	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	age = data->maxage;
-	while (*s) {
-		leaf = utf8lookup(data, hangul, s);
-		if (!leaf)
-			return -1;
-		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age < age)
-			age = leaf_age;
+	إذا (!معلومات)
+		أرجع -1;
+	age = معلومات->maxage;
+	طالما (*s) {
+		پن_2 = utf8lookup(معلومات, hangul, s);
+		إذا (!پن_2)
+			أرجع -1;
+		پن_age = utf8agetab[پن_GEN(پن_2)];
+		إذا (پن_age <= معلومات->maxage && پن_age < age)
+			age = پن_age;
 		s += utf8clen(s);
 	}
-	return age;
+	أرجع age;
 }
-#endif
+#جيڪڏهن_پورو
 
-#if 0
+#إذا 0
 /*
  * Maximum age of any character in s, touch at most len bytes.
  * Return -1 if s is not valid UTF-8 unicode.
  */
-static int utf8nagemax(const struct utf8data *data, const char *s, size_t len)
+ساكن صحيح utf8nagemax(ثابت بنية utf8data *معلومات, ثابت حرف *s, size_t len)
 {
-	utf8leaf_t	*leaf;
-	int		age = 0;
-	int		leaf_age;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	utf8leaf_t	*پن_2;
+	صحيح		age = 0;
+	صحيح		پن_age;
+	بنانشان حرف	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
+	إذا (!معلومات)
+		أرجع -1;
 
-	while (len && *s) {
-		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf)
-			return -1;
-		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age > age)
-			age = leaf_age;
+	طالما (len && *s) {
+		پن_2 = utf8nlookup(معلومات, hangul, s, len);
+		إذا (!پن_2)
+			أرجع -1;
+		پن_age = utf8agetab[پن_GEN(پن_2)];
+		إذا (پن_age <= معلومات->maxage && پن_age > age)
+			age = پن_age;
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return age;
+	أرجع age;
 }
-#endif
+#جيڪڏهن_پورو
 
-#if 0
+#إذا 0
 /*
  * Maximum age of any character in s, touch at most len bytes.
  * Return -1 if s is not valid UTF-8 unicode.
  */
-static int utf8nagemin(const struct utf8data *data, const char *s, size_t len)
+ساكن صحيح utf8nagemin(ثابت بنية utf8data *معلومات, ثابت حرف *s, size_t len)
 {
-	utf8leaf_t	*leaf;
-	int		leaf_age;
-	int		age;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	utf8leaf_t	*پن_2;
+	صحيح		پن_age;
+	صحيح		age;
+	بنانشان حرف	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	age = data->maxage;
-	while (len && *s) {
-		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf)
-			return -1;
-		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age < age)
-			age = leaf_age;
+	إذا (!معلومات)
+		أرجع -1;
+	age = معلومات->maxage;
+	طالما (len && *s) {
+		پن_2 = utf8nlookup(معلومات, hangul, s, len);
+		إذا (!پن_2)
+			أرجع -1;
+		پن_age = utf8agetab[پن_GEN(پن_2)];
+		إذا (پن_age <= معلومات->maxage && پن_age < age)
+			age = پن_age;
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return age;
+	أرجع age;
 }
-#endif
+#جيڪڏهن_پورو
 
-#if 0
+#إذا 0
 /*
  * Length of the normalization of s.
  * Return -1 if s is not valid UTF-8 unicode.
  *
  * A string of Default_Ignorable_Code_Point has length 0.
  */
-static ssize_t utf8len(const struct utf8data *data, const char *s)
+ساكن ssize_t utf8len(ثابت بنية utf8data *معلومات, ثابت حرف *s)
 {
-	utf8leaf_t	*leaf;
+	utf8leaf_t	*پن_2;
 	size_t		ret = 0;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	بنانشان حرف	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	while (*s) {
-		leaf = utf8lookup(data, hangul, s);
-		if (!leaf)
-			return -1;
-		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
+	إذا (!معلومات)
+		أرجع -1;
+	طالما (*s) {
+		پن_2 = utf8lookup(معلومات, hangul, s);
+		إذا (!پن_2)
+			أرجع -1;
+		إذا (utf8agetab[پن_GEN(پن_2)] > معلومات->maxage)
 			ret += utf8clen(s);
-		else if (LEAF_CCC(leaf) == DECOMPOSE)
-			ret += strlen(LEAF_STR(leaf));
-		else
+		وإلا إذا (پن_CCC(پن_2) == DECOMPOSE)
+			ret += لڙي_ڊيگهه(پن_STR(پن_2));
+		وإلا
 			ret += utf8clen(s);
 		s += utf8clen(s);
 	}
-	return ret;
+	أرجع ret;
 }
-#endif
+#جيڪڏهن_پورو
 
-#if 0
+#إذا 0
 /*
  * Length of the normalization of s, touch at most len bytes.
  * Return -1 if s is not valid UTF-8 unicode.
  */
-static ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len)
+ساكن ssize_t utf8nlen(ثابت بنية utf8data *معلومات, ثابت حرف *s, size_t len)
 {
-	utf8leaf_t	*leaf;
+	utf8leaf_t	*پن_2;
 	size_t		ret = 0;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	بنانشان حرف	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	while (len && *s) {
-		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf)
-			return -1;
-		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
+	إذا (!معلومات)
+		أرجع -1;
+	طالما (len && *s) {
+		پن_2 = utf8nlookup(معلومات, hangul, s, len);
+		إذا (!پن_2)
+			أرجع -1;
+		إذا (utf8agetab[پن_GEN(پن_2)] > معلومات->maxage)
 			ret += utf8clen(s);
-		else if (LEAF_CCC(leaf) == DECOMPOSE)
-			ret += strlen(LEAF_STR(leaf));
-		else
+		وإلا إذا (پن_CCC(پن_2) == DECOMPOSE)
+			ret += لڙي_ڊيگهه(پن_STR(پن_2));
+		وإلا
 			ret += utf8clen(s);
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return ret;
+	أرجع ret;
 }
-#endif
+#جيڪڏهن_پورو
 
 /*
  * Set up an utf8cursor for use by utf8byte().
@@ -664,32 +664,32 @@ static ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len)
  *
  * Returns -1 on error, 0 on success.
  */
-static int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
-		const char *s, size_t len)
+ساكن صحيح utf8ncursor(بنية utf8cursor *u8c, ثابت بنية utf8data *معلومات,
+		ثابت حرف *s, size_t len)
 {
-	if (!data)
-		return -1;
-	if (!s)
-		return -1;
-	u8c->data = data;
+	إذا (!معلومات)
+		أرجع -1;
+	إذا (!s)
+		أرجع -1;
+	u8c->معلومات = معلومات;
 	u8c->s = s;
-	u8c->p = NULL;
-	u8c->ss = NULL;
-	u8c->sp = NULL;
+	u8c->p = عدم;
+	u8c->ss = عدم;
+	u8c->sp = عدم;
 	u8c->len = len;
 	u8c->slen = 0;
 	u8c->ccc = STOPPER;
 	u8c->nccc = STOPPER;
 	/* Check we didn't clobber the maximum length. */
-	if (u8c->len != len)
-		return -1;
+	إذا (u8c->len != len)
+		أرجع -1;
 	/* The first byte of s may not be an utf8 continuation. */
-	if (len > 0 && (*s & 0xC0) == 0x80)
-		return -1;
-	return 0;
+	إذا (len > 0 && (*s & 0xC0) == 0x80)
+		أرجع -1;
+	أرجع 0;
 }
 
-#if 0
+#إذا 0
 /*
  * Set up an utf8cursor for use by utf8byte().
  *
@@ -699,12 +699,12 @@ static int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
  *
  * Returns -1 on error, 0 on success.
  */
-static int utf8cursor(struct utf8cursor *u8c, const struct utf8data *data,
-	       const char *s)
+ساكن صحيح utf8cursor(بنية utf8cursor *u8c, ثابت بنية utf8data *معلومات,
+	       ثابت حرف *s)
 {
-	return utf8ncursor(u8c, data, s, (unsigned int)-1);
+	أرجع utf8ncursor(u8c, معلومات, s, (بنانشان صحيح)-1);
 }
-#endif
+#جيڪڏهن_پورو
 
 /*
  * Get one byte from the normalized form of the string described by u8c.
@@ -733,87 +733,87 @@ static int utf8cursor(struct utf8cursor *u8c, const struct utf8data *data,
  *  u8c->ss != NULL -> this is a repeating scan.
  *  u8c->ccc == -1   -> this is the first scan of a repeating scan.
  */
-static int utf8byte(struct utf8cursor *u8c)
+ساكن صحيح utf8byte(بنية utf8cursor *u8c)
 {
-	utf8leaf_t *leaf;
-	int ccc;
+	utf8leaf_t *پن_2;
+	صحيح ccc;
 
-	for (;;) {
+	لكل (;;) {
 		/* Check for the end of a decomposed character. */
-		if (u8c->p && *u8c->s == '\0') {
+		إذا (u8c->p && *u8c->s == '\0') {
 			u8c->s = u8c->p;
-			u8c->p = NULL;
+			u8c->p = عدم;
 		}
 
 		/* Check for end-of-string. */
-		if (!u8c->p && (u8c->len == 0 || *u8c->s == '\0')) {
+		إذا (!u8c->p && (u8c->len == 0 || *u8c->s == '\0')) {
 			/* There is no next byte. */
-			if (u8c->ccc == STOPPER)
-				return 0;
+			إذا (u8c->ccc == STOPPER)
+				أرجع 0;
 			/* End-of-string during a scan counts as a stopper. */
 			ccc = STOPPER;
-			goto ccc_mismatch;
-		} else if ((*u8c->s & 0xC0) == 0x80) {
+			اذهب ccc_mismatch;
+		} وإلا إذا ((*u8c->s & 0xC0) == 0x80) {
 			/* This is a continuation of the current character. */
-			if (!u8c->p)
+			إذا (!u8c->p)
 				u8c->len--;
-			return (unsigned char)*u8c->s++;
+			أرجع (بنانشان حرف)*u8c->s++;
 		}
 
 		/* Look up the data for the current character. */
-		if (u8c->p) {
-			leaf = utf8lookup(u8c->data, u8c->hangul, u8c->s);
-		} else {
-			leaf = utf8nlookup(u8c->data, u8c->hangul,
+		إذا (u8c->p) {
+			پن_2 = utf8lookup(u8c->معلومات, u8c->hangul, u8c->s);
+		} وإلا {
+			پن_2 = utf8nlookup(u8c->معلومات, u8c->hangul,
 					   u8c->s, u8c->len);
 		}
 
 		/* No leaf found implies that the input is a binary blob. */
-		if (!leaf)
-			return -1;
+		إذا (!پن_2)
+			أرجع -1;
 
-		ccc = LEAF_CCC(leaf);
+		ccc = پن_CCC(پن_2);
 		/* Characters that are too new have CCC 0. */
-		if (utf8agetab[LEAF_GEN(leaf)] > u8c->data->maxage) {
+		إذا (utf8agetab[پن_GEN(پن_2)] > u8c->معلومات->maxage) {
 			ccc = STOPPER;
-		} else if (ccc == DECOMPOSE) {
+		} وإلا إذا (ccc == DECOMPOSE) {
 			u8c->len -= utf8clen(u8c->s);
 			u8c->p = u8c->s + utf8clen(u8c->s);
-			u8c->s = LEAF_STR(leaf);
+			u8c->s = پن_STR(پن_2);
 			/* Empty decomposition implies CCC 0. */
-			if (*u8c->s == '\0') {
-				if (u8c->ccc == STOPPER)
-					continue;
+			إذا (*u8c->s == '\0') {
+				إذا (u8c->ccc == STOPPER)
+					استمر;
 				ccc = STOPPER;
-				goto ccc_mismatch;
+				اذهب ccc_mismatch;
 			}
 
-			leaf = utf8lookup(u8c->data, u8c->hangul, u8c->s);
-			if (!leaf)
-				return -1;
-			ccc = LEAF_CCC(leaf);
+			پن_2 = utf8lookup(u8c->معلومات, u8c->hangul, u8c->s);
+			إذا (!پن_2)
+				أرجع -1;
+			ccc = پن_CCC(پن_2);
 		}
 
 		/*
 		 * If this is not a stopper, then see if it updates
 		 * the next canonical class to be emitted.
 		 */
-		if (ccc != STOPPER && u8c->ccc < ccc && ccc < u8c->nccc)
+		إذا (ccc != STOPPER && u8c->ccc < ccc && ccc < u8c->nccc)
 			u8c->nccc = ccc;
 
 		/*
 		 * Return the current byte if this is the current
 		 * combining class.
 		 */
-		if (ccc == u8c->ccc) {
-			if (!u8c->p)
+		إذا (ccc == u8c->ccc) {
+			إذا (!u8c->p)
 				u8c->len--;
-			return (unsigned char)*u8c->s++;
+			أرجع (بنانشان حرف)*u8c->s++;
 		}
 
 		/* Current combining class mismatch. */
 ccc_mismatch:
-		if (u8c->nccc == STOPPER) {
+		إذا (u8c->nccc == STOPPER) {
 			/*
 			 * Scan forward for the first canonical class
 			 * to be emitted.  Save the position from
@@ -824,33 +824,33 @@ ccc_mismatch:
 			u8c->sp = u8c->p;
 			u8c->ss = u8c->s;
 			u8c->slen = u8c->len;
-			if (!u8c->p)
+			إذا (!u8c->p)
 				u8c->len -= utf8clen(u8c->s);
 			u8c->s += utf8clen(u8c->s);
-		} else if (ccc != STOPPER) {
+		} وإلا إذا (ccc != STOPPER) {
 			/* Not a stopper, and not the ccc we're emitting. */
-			if (!u8c->p)
+			إذا (!u8c->p)
 				u8c->len -= utf8clen(u8c->s);
 			u8c->s += utf8clen(u8c->s);
-		} else if (u8c->nccc != MAXCCC + 1) {
+		} وإلا إذا (u8c->nccc != MAXCCC + 1) {
 			/* At a stopper, restart for next ccc. */
 			u8c->ccc = u8c->nccc;
 			u8c->nccc = MAXCCC + 1;
 			u8c->s = u8c->ss;
 			u8c->p = u8c->sp;
 			u8c->len = u8c->slen;
-		} else {
+		} وإلا {
 			/* All done, proceed from here. */
 			u8c->ccc = STOPPER;
 			u8c->nccc = STOPPER;
-			u8c->sp = NULL;
-			u8c->ss = NULL;
+			u8c->sp = عدم;
+			u8c->ss = عدم;
 			u8c->slen = 0;
 		}
 	}
 }
 
-#if 0
+#إذا 0
 /*
  * Look for the correct const struct utf8data for a unicode version.
  * Returns NULL if the version requested is too new.
@@ -866,135 +866,135 @@ ccc_mismatch:
  *  - Remove any Default_Ignorable_Code_Point.
  *  - Apply a full casefold (C + F).
  */
-static const struct utf8data *utf8nfdi(unsigned int maxage)
+ساكن ثابت بنية utf8data *utf8nfdi(بنانشان صحيح maxage)
 {
-	int i = ARRAY_SIZE(utf8nfdidata) - 1;
+	صحيح i = ARRAY_سائيز(utf8nfdidata) - 1;
 
-	while (maxage < utf8nfdidata[i].maxage)
+	طالما (maxage < utf8nfdidata[i].maxage)
 		i--;
-	if (maxage > utf8nfdidata[i].maxage)
-		return NULL;
-	return &utf8nfdidata[i];
+	إذا (maxage > utf8nfdidata[i].maxage)
+		أرجع عدم;
+	أرجع &utf8nfdidata[i];
 }
-#endif
+#جيڪڏهن_پورو
 
-static const struct utf8data *utf8nfdicf(unsigned int maxage)
+ساكن ثابت بنية utf8data *utf8nfdicf(بنانشان صحيح maxage)
 {
-	int i = ARRAY_SIZE(utf8nfdicfdata) - 1;
+	صحيح i = ARRAY_سائيز(utf8nfdicfdata) - 1;
 
-	while (maxage < utf8nfdicfdata[i].maxage)
+	طالما (maxage < utf8nfdicfdata[i].maxage)
 		i--;
-	if (maxage > utf8nfdicfdata[i].maxage)
-		return NULL;
-	return &utf8nfdicfdata[i];
+	إذا (maxage > utf8nfdicfdata[i].maxage)
+		أرجع عدم;
+	أرجع &utf8nfdicfdata[i];
 }
 
-static int utf8_casefold(const struct ext2fs_nls_table *table,
-			  const unsigned char *str, size_t len,
-			  unsigned char *dest, size_t dlen)
+ساكن صحيح utf8_casefold(ثابت بنية ext2fs_nls_جدول *جدول,
+			  ثابت بنانشان حرف *str, size_t len,
+			  بنانشان حرف *dest, size_t dlen)
 {
-	const struct utf8data *data = utf8nfdicf(table->version);
-	struct utf8cursor cur;
+	ثابت بنية utf8data *معلومات = utf8nfdicf(جدول->نسخو);
+	بنية utf8cursor cur;
 	size_t nlen = 0;
 
-	if (utf8ncursor(&cur, data, (const char *) str, len) < 0)
-		goto invalid_seq;
+	إذا (utf8ncursor(&cur, معلومات, (ثابت حرف *) str, len) < 0)
+		اذهب invalid_seq;
 
-	for (nlen = 0; nlen < dlen; nlen++) {
-		int c = utf8byte(&cur);
+	لكل (nlen = 0; nlen < dlen; nlen++) {
+		صحيح c = utf8byte(&cur);
 
 		dest[nlen] = c;
-		if (!c)
-			return nlen;
-		if (c == -1)
-			break;
+		إذا (!c)
+			أرجع nlen;
+		إذا (c == -1)
+			اكسر;
 	}
 
-	return -ENAMETOOLONG;
+	أرجع -ENAMETOOLONG;
 
 invalid_seq:
-	if (dlen < len)
-		return -ENAMETOOLONG;
+	إذا (dlen < len)
+		أرجع -ENAMETOOLONG;
 
 	/* Signal invalid sequence */
-	return -EINVAL;
+	أرجع -EINVAL;
 }
 
-static int utf8_validate(const struct ext2fs_nls_table *table,
-			 char *s, size_t len, char **pos)
+ساكن صحيح utf8_validate(ثابت بنية ext2fs_nls_جدول *جدول,
+			 حرف *s, size_t len, حرف **pos)
 {
-	const struct utf8data *data = utf8nfdicf(table->version);
-	utf8leaf_t	*leaf;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	ثابت بنية utf8data *معلومات = utf8nfdicf(جدول->نسخو);
+	utf8leaf_t	*پن_2;
+	بنانشان حرف	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	while (len && *s) {
-		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf) {
+	إذا (!معلومات)
+		أرجع -1;
+	طالما (len && *s) {
+		پن_2 = utf8nlookup(معلومات, hangul, s, len);
+		إذا (!پن_2) {
 			*pos = s;
-			return 1;
+			أرجع 1;
 		}
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return 0;
+	أرجع 0;
 }
 
-static int utf8_casefold_cmp(const struct ext2fs_nls_table *table,
-			     const unsigned char *str1, size_t len1,
-			     const unsigned char *str2, size_t len2)
+ساكن صحيح utf8_casefold_cmp(ثابت بنية ext2fs_nls_جدول *جدول,
+			     ثابت بنانشان حرف *str1, size_t len1,
+			     ثابت بنانشان حرف *str2, size_t len2)
 {
-	const struct utf8data *data = utf8nfdicf(table->version);
-	int c1, c2;
-	struct utf8cursor cur1, cur2;
+	ثابت بنية utf8data *معلومات = utf8nfdicf(جدول->نسخو);
+	صحيح c1, c2;
+	بنية utf8cursor cur1, cur2;
 
-	if (utf8ncursor(&cur1, data, (const char *) str1, len1) < 0)
-		return -1;
-	if (utf8ncursor(&cur2, data, (const char *) str2, len2) < 0)
-		return -1;
+	إذا (utf8ncursor(&cur1, معلومات, (ثابت حرف *) str1, len1) < 0)
+		أرجع -1;
+	إذا (utf8ncursor(&cur2, معلومات, (ثابت حرف *) str2, len2) < 0)
+		أرجع -1;
 
-	do {
+	افعل {
 		c1 = utf8byte(&cur1);
 		c2 = utf8byte(&cur2);
 
-		if (c1 < 0 || c2 < 0)
-			return -1;
-		if (c1 != c2)
-			return c1 - c2;
-	} while (c1);
+		إذا (c1 < 0 || c2 < 0)
+			أرجع -1;
+		إذا (c1 != c2)
+			أرجع c1 - c2;
+	} طالما (c1);
 
-	return 0;
+	أرجع 0;
 }
 
-static const struct ext2fs_nls_ops utf8_ops = {
+ساكن ثابت بنية ext2fs_nls_ops utf8_ops = {
 	.casefold = utf8_casefold,
 	.validate = utf8_validate,
 	.casefold_cmp = utf8_casefold_cmp,
 };
 
-static const struct ext2fs_nls_table nls_utf8 = {
+ساكن ثابت بنية ext2fs_nls_جدول nls_utf8 = {
 	.ops = &utf8_ops,
-	.version = UNICODE_AGE(12, 1, 0),
+	.نسخو = UNICODE_AGE(12, 1, 0),
 };
 
-const struct ext2fs_nls_table *ext2fs_load_nls_table(int encoding)
+ثابت بنية ext2fs_nls_جدول *ext2fs_ڀريو_nls_جدول(صحيح encoding)
 {
-	if (encoding == EXT4_ENC_UTF8_12_1)
-		return &nls_utf8;
+	إذا (encoding == EXT4_ENC_UTF8_12_1)
+		أرجع &nls_utf8;
 
-	return NULL;
+	أرجع عدم;
 }
 
-int ext2fs_check_encoded_name(const struct ext2fs_nls_table *table,
-			      char *name, size_t len, char **pos)
+صحيح ext2fs_check_encoded_name(ثابت بنية ext2fs_nls_جدول *جدول,
+			      حرف *name, size_t len, حرف **pos)
 {
-	return table->ops->validate(table, name, len, pos);
+	أرجع جدول->ops->validate(جدول, name, len, pos);
 }
 
-int ext2fs_casefold_cmp(const struct ext2fs_nls_table *table,
-			const unsigned char *str1, size_t len1,
-			const unsigned char *str2, size_t len2)
+صحيح ext2fs_casefold_cmp(ثابت بنية ext2fs_nls_جدول *جدول,
+			ثابت بنانشان حرف *str1, size_t len1,
+			ثابت بنانشان حرف *str2, size_t len2)
 {
-	return table->ops->casefold_cmp(table, str1, len1, str2, len2);
+	أرجع جدول->ops->casefold_cmp(جدول, str1, len1, str2, len2);
 }

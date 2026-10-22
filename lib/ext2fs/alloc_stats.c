@@ -9,160 +9,160 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
-void ext2fs_inode_alloc_stats2(ext2_filsys fs, ext2_ino_t ino,
-			       int inuse, int isdir)
+فراغ ext2fs_inode_alloc_stats2(ext2_filsys fs, ext2_ino_t ino,
+			       صحيح inuse, صحيح isdir)
 {
-	int	group = ext2fs_group_of_ino(fs, ino);
+	صحيح	گروهه = ext2fs_گروهه_جو_ino(fs, ino);
 
-	if (ino > fs->super->s_inodes_count) {
-#ifndef OMIT_COM_ERR
+	إذا (ino > fs->super->s_inodes_ڳڻپ) {
+#جيڪڏهن_وصف_نه_ٿيل OMIT_COM_ERR
 		com_err("ext2fs_inode_alloc_stats2", 0,
-			"Illegal inode number: %lu", (unsigned long) ino);
-#endif
-		return;
+			"Illegal inode number: %lu", (بنانشان ڊگهو) ino);
+#جيڪڏهن_پورو
+		أرجع;
 	}
-	if (inuse > 0)
+	إذا (inuse > 0)
 		ext2fs_mark_inode_bitmap2(fs->inode_map, ino);
-	else
+	وإلا
 		ext2fs_unmark_inode_bitmap2(fs->inode_map, ino);
-	ext2fs_bg_free_inodes_count_set(fs, group, ext2fs_bg_free_inodes_count(fs, group) - inuse);
-	if (isdir)
-		ext2fs_bg_used_dirs_count_set(fs, group, ext2fs_bg_used_dirs_count(fs, group) + inuse);
+	ext2fs_bg_free_inodes_ڳڻپ_سيٽ(fs, گروهه, ext2fs_bg_free_inodes_ڳڻپ(fs, گروهه) - inuse);
+	إذا (isdir)
+		ext2fs_bg_استعمال_ٿيل_dirs_ڳڻپ_سيٽ(fs, گروهه, ext2fs_bg_استعمال_ٿيل_dirs_ڳڻپ(fs, گروهه) + inuse);
 
 	/* We don't strictly need to be clearing the uninit flag if inuse < 0
 	 * (i.e. freeing inodes) but it also means something is bad. */
-	ext2fs_bg_flags_clear(fs, group, EXT2_BG_INODE_UNINIT);
-	if (ext2fs_has_group_desc_csum(fs)) {
-		ext2_ino_t first_unused_inode =	fs->super->s_inodes_per_group -
-			ext2fs_bg_itable_unused(fs, group) +
-			group * fs->super->s_inodes_per_group + 1;
+	ext2fs_bg_flags_clear(fs, گروهه, EXT2_BG_INODE_UNINIT);
+	إذا (ext2fs_has_گروهه_desc_csum(fs)) {
+		ext2_ino_t پهريون_اڻ_استعمال_ٿيل_inode =	fs->super->s_inodes_في_گروهه -
+			ext2fs_bg_itable_اڻ_استعمال_ٿيل(fs, گروهه) +
+			گروهه * fs->super->s_inodes_في_گروهه + 1;
 
-		if (ino >= first_unused_inode)
-			ext2fs_bg_itable_unused_set(fs, group, group * fs->super->s_inodes_per_group + fs->super->s_inodes_per_group - ino);
-		ext2fs_group_desc_csum_set(fs, group);
+		إذا (ino >= پهريون_اڻ_استعمال_ٿيل_inode)
+			ext2fs_bg_itable_اڻ_استعمال_ٿيل_سيٽ(fs, گروهه, گروهه * fs->super->s_inodes_في_گروهه + fs->super->s_inodes_في_گروهه - ino);
+		ext2fs_گروهه_desc_csum_سيٽ(fs, گروهه);
 	}
 
-	fs->super->s_free_inodes_count -= inuse;
+	fs->super->s_free_inodes_ڳڻپ -= inuse;
 	ext2fs_mark_super_dirty(fs);
 	ext2fs_mark_ib_dirty(fs);
 }
 
-void ext2fs_inode_alloc_stats(ext2_filsys fs, ext2_ino_t ino, int inuse)
+فراغ ext2fs_inode_alloc_stats(ext2_filsys fs, ext2_ino_t ino, صحيح inuse)
 {
 	ext2fs_inode_alloc_stats2(fs, ino, inuse, 0);
 }
 
-void ext2fs_block_alloc_stats2(ext2_filsys fs, blk64_t blk, int inuse)
+فراغ ext2fs_بلاڪ_alloc_stats2(ext2_filsys fs, blk64_t blk, صحيح inuse)
 {
-	int	group = ext2fs_group_of_blk2(fs, blk);
+	صحيح	گروهه = ext2fs_گروهه_جو_blk2(fs, blk);
 
-	if (blk < fs->super->s_first_data_block ||
-	    blk >= ext2fs_blocks_count(fs->super)) {
-#ifndef OMIT_COM_ERR
+	إذا (blk < fs->super->s_پهريون_معلومات_بلاڪ ||
+	    blk >= ext2fs_بلاڪون_ڳڻپ(fs->super)) {
+#جيڪڏهن_وصف_نه_ٿيل OMIT_COM_ERR
 		com_err("ext2fs_block_alloc_stats", 0,
-			"Illegal block number: %lu", (unsigned long) blk);
-#endif
-		return;
+			"Illegal block number: %lu", (بنانشان ڊگهو) blk);
+#جيڪڏهن_پورو
+		أرجع;
 	}
-	if (inuse > 0)
-		ext2fs_mark_block_bitmap2(fs->block_map, blk);
-	else
-		ext2fs_unmark_block_bitmap2(fs->block_map, blk);
-	ext2fs_bg_free_blocks_count_set(fs, group, ext2fs_bg_free_blocks_count(fs, group) - inuse);
-	ext2fs_bg_flags_clear(fs, group, EXT2_BG_BLOCK_UNINIT);
-	ext2fs_group_desc_csum_set(fs, group);
+	إذا (inuse > 0)
+		ext2fs_mark_بلاڪ_bitmap2(fs->بلاڪ_map, blk);
+	وإلا
+		ext2fs_unmark_بلاڪ_bitmap2(fs->بلاڪ_map, blk);
+	ext2fs_bg_free_بلاڪون_ڳڻپ_سيٽ(fs, گروهه, ext2fs_bg_free_بلاڪون_ڳڻپ(fs, گروهه) - inuse);
+	ext2fs_bg_flags_clear(fs, گروهه, EXT2_BG_بلاڪ_UNINIT);
+	ext2fs_گروهه_desc_csum_سيٽ(fs, گروهه);
 
-	ext2fs_free_blocks_count_add(fs->super,
-			     -inuse * (blk64_t) EXT2FS_CLUSTER_RATIO(fs));
+	ext2fs_free_بلاڪون_ڳڻپ_جوڙيو(fs->super,
+			     -inuse * (blk64_t) EXT2_FS_CLUSTER_تناسب(fs));
 	ext2fs_mark_super_dirty(fs);
 	ext2fs_mark_bb_dirty(fs);
-	if (fs->block_alloc_stats)
-		(fs->block_alloc_stats)(fs, (blk64_t) blk, inuse);
+	إذا (fs->بلاڪ_alloc_stats)
+		(fs->بلاڪ_alloc_stats)(fs, (blk64_t) blk, inuse);
 }
 
-void ext2fs_block_alloc_stats(ext2_filsys fs, blk_t blk, int inuse)
+فراغ ext2fs_بلاڪ_alloc_stats(ext2_filsys fs, blk_t blk, صحيح inuse)
 {
-	ext2fs_block_alloc_stats2(fs, blk, inuse);
+	ext2fs_بلاڪ_alloc_stats2(fs, blk, inuse);
 }
 
-void ext2fs_set_block_alloc_stats_callback(ext2_filsys fs,
-					   void (*func)(ext2_filsys fs,
+فراغ ext2fs_سيٽ_بلاڪ_alloc_stats_callback(ext2_filsys fs,
+					   فراغ (*func)(ext2_filsys fs,
 							blk64_t blk,
-							int inuse),
-					   void (**old)(ext2_filsys fs,
+							صحيح inuse),
+					   فراغ (**old)(ext2_filsys fs,
 							blk64_t blk,
-							int inuse))
+							صحيح inuse))
 {
-	if (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
-		return;
-	if (old)
-		*old = fs->block_alloc_stats;
+	إذا (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
+		أرجع;
+	إذا (old)
+		*old = fs->بلاڪ_alloc_stats;
 
-	fs->block_alloc_stats = func;
+	fs->بلاڪ_alloc_stats = func;
 }
 
-void ext2fs_block_alloc_stats_range(ext2_filsys fs, blk64_t blk,
-				    blk_t num, int inuse)
+فراغ ext2fs_بلاڪ_alloc_stats_range(ext2_filsys fs, blk64_t blk,
+				    blk_t انگ, صحيح inuse)
 {
-	const blk64_t orig_blk = blk;
-	const blk_t orig_num = num;
+	ثابت blk64_t orig_blk = blk;
+	ثابت blk_t orig_انگ = انگ;
 
-#ifndef OMIT_COM_ERR
-	if (blk + num > ext2fs_blocks_count(fs->super)) {
+#جيڪڏهن_وصف_نه_ٿيل OMIT_COM_ERR
+	إذا (blk + انگ > ext2fs_بلاڪون_ڳڻپ(fs->super)) {
 		com_err("ext2fs_block_alloc_stats_range", 0,
 			"Illegal block range: %llu (%u) ",
-			(unsigned long long) blk, num);
-		return;
+			(بنانشان ڊگهو ڊگهو) blk, انگ);
+		أرجع;
 	}
-#endif
-	if (inuse == 0)
-		return;
-	if (inuse > 0) {
-		ext2fs_mark_block_bitmap_range2(fs->block_map, blk, num);
+#جيڪڏهن_پورو
+	إذا (inuse == 0)
+		أرجع;
+	إذا (inuse > 0) {
+		ext2fs_mark_بلاڪ_bitmap_range2(fs->بلاڪ_map, blk, انگ);
 		inuse = 1;
-	} else {
-		ext2fs_unmark_block_bitmap_range2(fs->block_map, blk, num);
+	} وإلا {
+		ext2fs_unmark_بلاڪ_bitmap_range2(fs->بلاڪ_map, blk, انگ);
 		inuse = -1;
 	}
-	while (num) {
-		int group = ext2fs_group_of_blk2(fs, blk);
-		blk64_t last_blk = ext2fs_group_last_block2(fs, group);
-		blk64_t n = num;
+	طالما (انگ) {
+		صحيح گروهه = ext2fs_گروهه_جو_blk2(fs, blk);
+		blk64_t آخري_blk = ext2fs_گروهه_آخري_block2(fs, گروهه);
+		blk64_t n = انگ;
 
-		if (blk + num > last_blk)
-			n = last_blk - blk + 1;
+		إذا (blk + انگ > آخري_blk)
+			n = آخري_blk - blk + 1;
 
-		ext2fs_bg_free_blocks_count_set(fs, group,
-			ext2fs_bg_free_blocks_count(fs, group) -
-			inuse*n/EXT2FS_CLUSTER_RATIO(fs));
-		ext2fs_bg_flags_clear(fs, group, EXT2_BG_BLOCK_UNINIT);
-		ext2fs_group_desc_csum_set(fs, group);
-		ext2fs_free_blocks_count_add(fs->super, -inuse * (blk64_t) n);
+		ext2fs_bg_free_بلاڪون_ڳڻپ_سيٽ(fs, گروهه,
+			ext2fs_bg_free_بلاڪون_ڳڻپ(fs, گروهه) -
+			inuse*n/EXT2_FS_CLUSTER_تناسب(fs));
+		ext2fs_bg_flags_clear(fs, گروهه, EXT2_BG_بلاڪ_UNINIT);
+		ext2fs_گروهه_desc_csum_سيٽ(fs, گروهه);
+		ext2fs_free_بلاڪون_ڳڻپ_جوڙيو(fs->super, -inuse * (blk64_t) n);
 		blk += n;
-		num -= n;
+		انگ -= n;
 	}
 	ext2fs_mark_super_dirty(fs);
 	ext2fs_mark_bb_dirty(fs);
-	if (fs->block_alloc_stats_range)
-		(fs->block_alloc_stats_range)(fs, orig_blk, orig_num, inuse);
+	إذا (fs->بلاڪ_alloc_stats_range)
+		(fs->بلاڪ_alloc_stats_range)(fs, orig_blk, orig_انگ, inuse);
 }
 
-void ext2fs_set_block_alloc_stats_range_callback(ext2_filsys fs,
-	void (*func)(ext2_filsys fs, blk64_t blk,
-				    blk_t num, int inuse),
-	void (**old)(ext2_filsys fs, blk64_t blk,
-				    blk_t num, int inuse))
+فراغ ext2fs_سيٽ_بلاڪ_alloc_stats_range_callback(ext2_filsys fs,
+	فراغ (*func)(ext2_filsys fs, blk64_t blk,
+				    blk_t انگ, صحيح inuse),
+	فراغ (**old)(ext2_filsys fs, blk64_t blk,
+				    blk_t انگ, صحيح inuse))
 {
-	if (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
-		return;
-	if (old)
-		*old = fs->block_alloc_stats_range;
+	إذا (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
+		أرجع;
+	إذا (old)
+		*old = fs->بلاڪ_alloc_stats_range;
 
-	fs->block_alloc_stats_range = func;
+	fs->بلاڪ_alloc_stats_range = func;
 }

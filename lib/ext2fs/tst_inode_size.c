@@ -9,81 +9,81 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <unistd.h>
+#ضمن <stdlib.h>
 
-#include "ext2_fs.h"
+#ضمن "ext2_fs.h"
 
-struct ext2_inode_large inode;
+بنية ext2_inode_large inode;
 
-#ifndef offsetof
-#define offsetof(type, member)  __builtin_offsetof(type, member)
-#endif
+#جيڪڏهن_وصف_نه_ٿيل offsetof
+#وصف_ڪريو offsetof(type, member)  __builtin_offsetof(type, member)
+#جيڪڏهن_پورو
 
-#define check_field(x, s) cur_offset = do_field(#x, s, sizeof(inode.x),	       \
-					offsetof(struct ext2_inode_large, x),  \
-					cur_offset)
+#وصف_ڪريو check_ميدان(x, s) cur_وٿي = do_ميدان(#x, s, حجم(inode.x),	       \
+					offsetof(بنية ext2_inode_large, x),  \
+					cur_وٿي)
 
-static int do_field(const char *field, unsigned size, unsigned cur_size,
-		    unsigned offset, unsigned cur_offset)
+ساكن صحيح do_ميدان(ثابت حرف *ميدان, بنانشان سائيز, بنانشان cur_سائيز,
+		    بنانشان وٿي, بنانشان cur_وٿي)
 {
-	if (size != cur_size) {
-		printf("error: %s size %u should be %u\n",
-		       field, cur_size, size);
-		exit(1);
+	إذا (سائيز != cur_سائيز) {
+		لکو("error: %s size %u should be %u\n",
+		       ميدان, cur_سائيز, سائيز);
+		ٻاهر_نڪرو(1);
 	}
-	if (offset != cur_offset) {
-		printf("error: %s offset %u should be %u\n",
-		       field, cur_offset, offset);
-		exit(1);
+	إذا (وٿي != cur_وٿي) {
+		لکو("error: %s offset %u should be %u\n",
+		       ميدان, cur_وٿي, وٿي);
+		ٻاهر_نڪرو(1);
 	}
-	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	لکو("%8d %-30s %3u\n", وٿي, ميدان, (بنانشان) سائيز);
+	أرجع وٿي + سائيز;
 }
 
-int main(int argc, char **argv)
+صحيح مکيه(صحيح argc, حرف **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#إذا (__GNUC__ >= 4)
+	صحيح cur_وٿي = 0;
 
-	printf("%8s %-30s %3s\n", "offset", "field", "size");
-	check_field(i_mode, 2);
-	check_field(i_uid, 2);
-	check_field(i_size, 4);
-	check_field(i_atime, 4);
-	check_field(i_ctime, 4);
-	check_field(i_mtime, 4);
-	check_field(i_dtime, 4);
-	check_field(i_gid, 2);
-	check_field(i_links_count, 2);
-	check_field(i_blocks, 4);
-	check_field(i_flags, 4);
-	check_field(osd1.linux1.l_i_version, 4);
-	check_field(i_block, 15 * 4);
-	check_field(i_generation, 4);
-	check_field(i_file_acl, 4);
-	check_field(i_size_high, 4);
-	check_field(i_faddr, 4);
-	check_field(osd2.linux2.l_i_blocks_hi, 2);
-	check_field(osd2.linux2.l_i_file_acl_high, 2);
-	check_field(osd2.linux2.l_i_uid_high, 2);
-	check_field(osd2.linux2.l_i_gid_high, 2);
-	check_field(osd2.linux2.l_i_checksum_lo, 2);
-	check_field(osd2.linux2.l_i_reserved, 2);
-	do_field("Small inode end", 0, 0, cur_offset, 128);
-	check_field(i_extra_isize, 2);
-	check_field(i_checksum_hi, 2);
-	check_field(i_ctime_extra, 4);
-	check_field(i_mtime_extra, 4);
-	check_field(i_atime_extra, 4);
-	check_field(i_crtime, 4);
-	check_field(i_crtime_extra, 4);
-	check_field(i_version_hi, 4);
-	check_field(i_projid, 4);
+	لکو("%8s %-30s %3s\n", "offset", "field", "size");
+	check_ميدان(i_گهڻائي, 2);
+	check_ميدان(i_uid, 2);
+	check_ميدان(i_سائيز, 4);
+	check_ميدان(i_atime, 4);
+	check_ميدان(i_ctime, 4);
+	check_ميدان(i_mtime, 4);
+	check_ميدان(i_dtime, 4);
+	check_ميدان(i_gid, 2);
+	check_ميدان(i_links_ڳڻپ, 2);
+	check_ميدان(i_بلاڪون, 4);
+	check_ميدان(i_flags, 4);
+	check_ميدان(osd1.linux1.l_i_نسخو, 4);
+	check_ميدان(i_بلاڪ, 15 * 4);
+	check_ميدان(i_generation, 4);
+	check_ميدان(i_file_acl, 4);
+	check_ميدان(i_سائيز_مٿاهون, 4);
+	check_ميدان(i_faddr, 4);
+	check_ميدان(osd2.linux2.l_i_بلاڪون_hi, 2);
+	check_ميدان(osd2.linux2.l_i_file_acl_مٿاهون, 2);
+	check_ميدان(osd2.linux2.l_i_uid_مٿاهون, 2);
+	check_ميدان(osd2.linux2.l_i_gid_مٿاهون, 2);
+	check_ميدان(osd2.linux2.l_i_checksum_lo, 2);
+	check_ميدان(osd2.linux2.l_i_reserved, 2);
+	do_ميدان("Small inode end", 0, 0, cur_وٿي, 128);
+	check_ميدان(i_extra_isize, 2);
+	check_ميدان(i_checksum_hi, 2);
+	check_ميدان(i_ctime_extra, 4);
+	check_ميدان(i_mtime_extra, 4);
+	check_ميدان(i_atime_extra, 4);
+	check_ميدان(i_crtime, 4);
+	check_ميدان(i_crtime_extra, 4);
+	check_ميدان(i_نسخو_hi, 4);
+	check_ميدان(i_projid, 4);
 	/* This size will change as new fields are added */
-	do_field("Large inode end", 0, 0, cur_offset, sizeof(inode));
-#endif
-	return 0;
+	do_ميدان("Large inode end", 0, 0, cur_وٿي, حجم(inode));
+#جيڪڏهن_پورو
+	أرجع 0;
 }

@@ -11,184 +11,184 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include "ext2fs.h"
+#ضمن "config.h"
+#ضمن "ext2fs.h"
 
 /*
  * Return the group # of a block
  */
-dgrp_t ext2fs_group_of_blk2(ext2_filsys fs, blk64_t blk)
+dgrp_t ext2fs_گروهه_جو_blk2(ext2_filsys fs, blk64_t blk)
 {
-	return (blk - fs->super->s_first_data_block) /
-		fs->super->s_blocks_per_group;
+	أرجع (blk - fs->super->s_پهريون_معلومات_بلاڪ) /
+		fs->super->s_بلاڪون_في_گروهه;
 }
 
 /*
  * Return the first block (inclusive) in a group
  */
-blk64_t ext2fs_group_first_block2(ext2_filsys fs, dgrp_t group)
+blk64_t ext2fs_گروهه_پهريون_block2(ext2_filsys fs, dgrp_t گروهه)
 {
-	return fs->super->s_first_data_block +
-		EXT2_GROUPS_TO_BLOCKS(fs->super, group);
+	أرجع fs->super->s_پهريون_معلومات_بلاڪ +
+		EXT2_GROUPS_منزل_بلاڪون(fs->super, گروهه);
 }
 
 /*
  * Return the last block (inclusive) in a group
  */
-blk64_t ext2fs_group_last_block2(ext2_filsys fs, dgrp_t group)
+blk64_t ext2fs_گروهه_آخري_block2(ext2_filsys fs, dgrp_t گروهه)
 {
-	return (group == fs->group_desc_count - 1 ?
-		ext2fs_blocks_count(fs->super) - 1 :
-		ext2fs_group_first_block2(fs, group) +
-			(fs->super->s_blocks_per_group - 1));
+	أرجع (گروهه == fs->گروهه_desc_ڳڻپ - 1 ?
+		ext2fs_بلاڪون_ڳڻپ(fs->super) - 1 :
+		ext2fs_گروهه_پهريون_block2(fs, گروهه) +
+			(fs->super->s_بلاڪون_في_گروهه - 1));
 }
 
 /*
  * Return the number of blocks in a group
  */
-int ext2fs_group_blocks_count(ext2_filsys fs, dgrp_t group)
+صحيح ext2fs_گروهه_بلاڪون_ڳڻپ(ext2_filsys fs, dgrp_t گروهه)
 {
-	int num_blocks;
+	صحيح انگ_بلاڪون;
 
-	if (group == fs->group_desc_count - 1) {
-		num_blocks = (ext2fs_blocks_count(fs->super) -
-				fs->super->s_first_data_block) %
-			      fs->super->s_blocks_per_group;
-		if (!num_blocks)
-			num_blocks = fs->super->s_blocks_per_group;
-	} else
-		num_blocks = fs->super->s_blocks_per_group;
+	إذا (گروهه == fs->گروهه_desc_ڳڻپ - 1) {
+		انگ_بلاڪون = (ext2fs_بلاڪون_ڳڻپ(fs->super) -
+				fs->super->s_پهريون_معلومات_بلاڪ) %
+			      fs->super->s_بلاڪون_في_گروهه;
+		إذا (!انگ_بلاڪون)
+			انگ_بلاڪون = fs->super->s_بلاڪون_في_گروهه;
+	} وإلا
+		انگ_بلاڪون = fs->super->s_بلاڪون_في_گروهه;
 
-	return num_blocks;
+	أرجع انگ_بلاڪون;
 }
 
 /*
  * Return the inode data block count
  */
-blk64_t ext2fs_inode_data_blocks2(ext2_filsys fs,
-					struct ext2_inode *inode)
+blk64_t ext2fs_inode_معلومات_blocks2(ext2_filsys fs,
+					بنية ext2_inode *inode)
 {
-	return (inode->i_blocks |
+	أرجع (inode->i_بلاڪون |
 		(ext2fs_has_feature_huge_file(fs->super) ?
-		 (__u64) inode->osd2.linux2.l_i_blocks_hi << 32 : 0)) -
-		(inode->i_file_acl ? EXT2_CLUSTER_SIZE(fs->super) >> 9 : 0);
+		 (__u64) inode->osd2.linux2.l_i_بلاڪون_hi << 32 : 0)) -
+		(inode->i_file_acl ? EXT2_CLUSTER_سائيز(fs->super) >> 9 : 0);
 }
 
 /*
  * Return the inode i_blocks count
  */
-blk64_t ext2fs_inode_i_blocks(ext2_filsys fs,
-					struct ext2_inode *inode)
+blk64_t ext2fs_inode_i_بلاڪون(ext2_filsys fs,
+					بنية ext2_inode *inode)
 {
-	return (inode->i_blocks |
+	أرجع (inode->i_بلاڪون |
 		(ext2fs_has_feature_huge_file(fs->super) ?
-		 (__u64)inode->osd2.linux2.l_i_blocks_hi << 32 : 0));
+		 (__u64)inode->osd2.linux2.l_i_بلاڪون_hi << 32 : 0));
 }
 
 /*
  * Return the inode i_blocks in stat (512 byte) units
  */
-blk64_t ext2fs_get_stat_i_blocks(ext2_filsys fs,
-				 struct ext2_inode *inode)
+blk64_t ext2fs_get_stat_i_بلاڪون(ext2_filsys fs,
+				 بنية ext2_inode *inode)
 {
-	blk64_t	ret = inode->i_blocks;
+	blk64_t	ret = inode->i_بلاڪون;
 
-	if (ext2fs_has_feature_huge_file(fs->super)) {
-		ret += ((long long) inode->osd2.linux2.l_i_blocks_hi) << 32;
-		if (inode->i_flags & EXT4_HUGE_FILE_FL)
+	إذا (ext2fs_has_feature_huge_file(fs->super)) {
+		ret += ((ڊگهو ڊگهو) inode->osd2.linux2.l_i_بلاڪون_hi) << 32;
+		إذا (inode->i_flags & EXT4_HUGE_FILE_FL)
 			ret *= (fs->blocksize / 512);
 	}
-	return ret;
+	أرجع ret;
 }
 
 /*
  * Return the fs block count
  */
-blk64_t ext2fs_blocks_count(struct ext2_super_block *super)
+blk64_t ext2fs_بلاڪون_ڳڻپ(بنية ext2_super_بلاڪ *super)
 {
-	return super->s_blocks_count |
+	أرجع super->s_بلاڪون_ڳڻپ |
 		(ext2fs_has_feature_64bit(super) ?
-		(__u64) super->s_blocks_count_hi << 32 : 0);
+		(__u64) super->s_بلاڪون_ڳڻپ_hi << 32 : 0);
 }
 
 /*
  * Set the fs block count
  */
-void ext2fs_blocks_count_set(struct ext2_super_block *super, blk64_t blk)
+فراغ ext2fs_بلاڪون_ڳڻپ_سيٽ(بنية ext2_super_بلاڪ *super, blk64_t blk)
 {
-	super->s_blocks_count = blk;
-	if (ext2fs_has_feature_64bit(super))
-		super->s_blocks_count_hi = (__u64) blk >> 32;
+	super->s_بلاڪون_ڳڻپ = blk;
+	إذا (ext2fs_has_feature_64bit(super))
+		super->s_بلاڪون_ڳڻپ_hi = (__u64) blk >> 32;
 }
 
 /*
  * Add to the current fs block count
  */
-void ext2fs_blocks_count_add(struct ext2_super_block *super, blk64_t blk)
+فراغ ext2fs_بلاڪون_ڳڻپ_جوڙيو(بنية ext2_super_بلاڪ *super, blk64_t blk)
 {
 	blk64_t tmp;
-	tmp = ext2fs_blocks_count(super) + blk;
-	ext2fs_blocks_count_set(super, tmp);
+	tmp = ext2fs_بلاڪون_ڳڻپ(super) + blk;
+	ext2fs_بلاڪون_ڳڻپ_سيٽ(super, tmp);
 }
 
 /*
  * Return the fs reserved block count
  */
-blk64_t ext2fs_r_blocks_count(struct ext2_super_block *super)
+blk64_t ext2fs_r_بلاڪون_ڳڻپ(بنية ext2_super_بلاڪ *super)
 {
-	return super->s_r_blocks_count |
+	أرجع super->s_r_بلاڪون_ڳڻپ |
 		(ext2fs_has_feature_64bit(super) ?
-		(__u64) super->s_r_blocks_count_hi << 32 : 0);
+		(__u64) super->s_r_بلاڪون_ڳڻپ_hi << 32 : 0);
 }
 
 /*
  * Set the fs reserved block count
  */
-void ext2fs_r_blocks_count_set(struct ext2_super_block *super, blk64_t blk)
+فراغ ext2fs_r_بلاڪون_ڳڻپ_سيٽ(بنية ext2_super_بلاڪ *super, blk64_t blk)
 {
-	super->s_r_blocks_count = blk;
-	if (ext2fs_has_feature_64bit(super))
-		super->s_r_blocks_count_hi = (__u64) blk >> 32;
+	super->s_r_بلاڪون_ڳڻپ = blk;
+	إذا (ext2fs_has_feature_64bit(super))
+		super->s_r_بلاڪون_ڳڻپ_hi = (__u64) blk >> 32;
 }
 
 /*
  * Add to the current reserved fs block count
  */
-void ext2fs_r_blocks_count_add(struct ext2_super_block *super, blk64_t blk)
+فراغ ext2fs_r_بلاڪون_ڳڻپ_جوڙيو(بنية ext2_super_بلاڪ *super, blk64_t blk)
 {
 	blk64_t tmp;
-	tmp = ext2fs_r_blocks_count(super) + blk;
-	ext2fs_r_blocks_count_set(super, tmp);
+	tmp = ext2fs_r_بلاڪون_ڳڻپ(super) + blk;
+	ext2fs_r_بلاڪون_ڳڻپ_سيٽ(super, tmp);
 }
 
 /*
  * Return the fs free block count
  */
-blk64_t ext2fs_free_blocks_count(struct ext2_super_block *super)
+blk64_t ext2fs_free_بلاڪون_ڳڻپ(بنية ext2_super_بلاڪ *super)
 {
-	return super->s_free_blocks_count |
+	أرجع super->s_free_بلاڪون_ڳڻپ |
 		(ext2fs_has_feature_64bit(super) ?
-		(__u64) super->s_free_blocks_hi << 32 : 0);
+		(__u64) super->s_free_بلاڪون_hi << 32 : 0);
 }
 
 /*
  * Set the fs free block count
  */
-void ext2fs_free_blocks_count_set(struct ext2_super_block *super, blk64_t blk)
+فراغ ext2fs_free_بلاڪون_ڳڻپ_سيٽ(بنية ext2_super_بلاڪ *super, blk64_t blk)
 {
-	super->s_free_blocks_count = blk;
-	if (ext2fs_has_feature_64bit(super))
-		super->s_free_blocks_hi = (__u64) blk >> 32;
+	super->s_free_بلاڪون_ڳڻپ = blk;
+	إذا (ext2fs_has_feature_64bit(super))
+		super->s_free_بلاڪون_hi = (__u64) blk >> 32;
 }
 
 /*
  * Add to the current free fs block count
  */
-void ext2fs_free_blocks_count_add(struct ext2_super_block *super, blk64_t blk)
+فراغ ext2fs_free_بلاڪون_ڳڻپ_جوڙيو(بنية ext2_super_بلاڪ *super, blk64_t blk)
 {
 	blk64_t tmp;
-	tmp = ext2fs_free_blocks_count(super) + blk;
-	ext2fs_free_blocks_count_set(super, tmp);
+	tmp = ext2fs_free_بلاڪون_ڳڻپ(super) + blk;
+	ext2fs_free_بلاڪون_ڳڻپ_سيٽ(super, tmp);
 }
 
 /*
@@ -197,121 +197,121 @@ void ext2fs_free_blocks_count_add(struct ext2_super_block *super, blk64_t blk)
  * descriptors before writing them out, as it wants to make a copy and
  * do the swap there.
  */
-struct ext2_group_desc *ext2fs_group_desc(ext2_filsys fs,
-					  struct opaque_ext2_group_desc *gdp,
-					  dgrp_t group)
+بنية ext2_گروهه_desc *ext2fs_گروهه_desc(ext2_filsys fs,
+					  بنية opaque_ext2_گروهه_desc *gdp,
+					  dgrp_t گروهه)
 {
-	struct ext2_group_desc *ret_gdp;
+	بنية ext2_گروهه_desc *ret_gdp;
 	errcode_t	retval;
-	static char	*buf = 0;
-	static unsigned	bufsize = 0;
+	ساكن حرف	*buf = 0;
+	ساكن بنانشان	bufsize = 0;
 	blk64_t		blk;
-	int		desc_size = EXT2_DESC_SIZE(fs->super) & ~7;
-	int		desc_per_blk = EXT2_DESC_PER_BLOCK(fs->super);
+	صحيح		desc_سائيز = EXT2_DESC_سائيز(fs->super) & ~7;
+	صحيح		desc_في_blk = EXT2_DESC_في_بلاڪ(fs->super);
 
-	if (group > fs->group_desc_count)
-		return NULL;
-	if (gdp)
-		return (struct ext2_group_desc *)((char *)gdp +
-						  group * desc_size);
+	إذا (گروهه > fs->گروهه_desc_ڳڻپ)
+		أرجع عدم;
+	إذا (gdp)
+		أرجع (بنية ext2_گروهه_desc *)((حرف *)gdp +
+						  گروهه * desc_سائيز);
 	/*
 	 * If fs->group_desc wasn't read in when the file system was
 	 * opened, then read it on demand here.
 	 */
-	if (bufsize < fs->blocksize)
+	إذا (bufsize < fs->blocksize)
 		ext2fs_free_mem(&buf);
-	if (!buf) {
+	إذا (!buf) {
 		retval = ext2fs_get_mem(fs->blocksize, &buf);
-		if (retval)
-			return NULL;
+		إذا (retval)
+			أرجع عدم;
 		bufsize = fs->blocksize;
 	}
-	blk = ext2fs_descriptor_block_loc2(fs, fs->super->s_first_data_block,
-					   group / desc_per_blk);
+	blk = ext2fs_descriptor_بلاڪ_loc2(fs, fs->super->s_پهريون_معلومات_بلاڪ,
+					   گروهه / desc_في_blk);
 	retval = io_channel_read_blk(fs->io, blk, 1, buf);
-	if (retval)
-		return NULL;
-	ret_gdp = (struct ext2_group_desc *)
-		(buf + ((group % desc_per_blk) * desc_size));
-#ifdef WORDS_BIGENDIAN
-	ext2fs_swap_group_desc2(fs, ret_gdp);
-#endif
-	return ret_gdp;
+	إذا (retval)
+		أرجع عدم;
+	ret_gdp = (بنية ext2_گروهه_desc *)
+		(buf + ((گروهه % desc_في_blk) * desc_سائيز));
+#جيڪڏهن_وصف_ٿيل لفظ_BIGENDIAN
+	ext2fs_مٽا_سٽا_گروهه_desc2(fs, ret_gdp);
+#جيڪڏهن_پورو
+	أرجع ret_gdp;
 }
 
 /* Do the same but as an ext4 group desc for internal use here */
-static struct ext4_group_desc *ext4fs_group_desc(ext2_filsys fs,
-					  struct opaque_ext2_group_desc *gdp,
-					  dgrp_t group)
+ساكن بنية ext4_گروهه_desc *ext4fs_گروهه_desc(ext2_filsys fs,
+					  بنية opaque_ext2_گروهه_desc *gdp,
+					  dgrp_t گروهه)
 {
-	return (struct ext4_group_desc *)ext2fs_group_desc(fs, gdp, group);
+	أرجع (بنية ext4_گروهه_desc *)ext2fs_گروهه_desc(fs, gdp, گروهه);
 }
 
 /*
  * Return the block bitmap checksum of a group
  */
-__u32 ext2fs_block_bitmap_checksum(ext2_filsys fs, dgrp_t group)
+__u32 ext2fs_بلاڪ_bitmap_checksum(ext2_filsys fs, dgrp_t گروهه)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 	__u32 csum;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	csum = gdp->bg_block_bitmap_csum_lo;
-	if (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_BLOCK_BITMAP_CSUM_HI_LOCATION)
-		csum |= ((__u32)gdp->bg_block_bitmap_csum_hi << 16);
-	return csum;
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	csum = gdp->bg_بلاڪ_bitmap_csum_lo;
+	إذا (EXT2_DESC_سائيز(fs->super) >= EXT4_BG_بلاڪ_BITMAP_CSUM_HI_LOCATION)
+		csum |= ((__u32)gdp->bg_بلاڪ_bitmap_csum_hi << 16);
+	أرجع csum;
 }
 
 /*
  * Return the block bitmap block of a group
  */
-blk64_t ext2fs_block_bitmap_loc(ext2_filsys fs, dgrp_t group)
+blk64_t ext2fs_بلاڪ_bitmap_loc(ext2_filsys fs, dgrp_t گروهه)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_block_bitmap |
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	أرجع gdp->bg_بلاڪ_bitmap |
 		(ext2fs_has_feature_64bit(fs->super) ?
-		 (__u64)gdp->bg_block_bitmap_hi << 32 : 0);
+		 (__u64)gdp->bg_بلاڪ_bitmap_hi << 32 : 0);
 }
 
 /*
  * Set the block bitmap block of a group
  */
-void ext2fs_block_bitmap_loc_set(ext2_filsys fs, dgrp_t group, blk64_t blk)
+فراغ ext2fs_بلاڪ_bitmap_loc_سيٽ(ext2_filsys fs, dgrp_t گروهه, blk64_t blk)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	gdp->bg_block_bitmap = blk;
-	if (ext2fs_has_feature_64bit(fs->super))
-		gdp->bg_block_bitmap_hi = (__u64) blk >> 32;
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	gdp->bg_بلاڪ_bitmap = blk;
+	إذا (ext2fs_has_feature_64bit(fs->super))
+		gdp->bg_بلاڪ_bitmap_hi = (__u64) blk >> 32;
 }
 
 /*
  * Return the inode bitmap checksum of a group
  */
-__u32 ext2fs_inode_bitmap_checksum(ext2_filsys fs, dgrp_t group)
+__u32 ext2fs_inode_bitmap_checksum(ext2_filsys fs, dgrp_t گروهه)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 	__u32 csum;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
 	csum = gdp->bg_inode_bitmap_csum_lo;
-	if (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_INODE_BITMAP_CSUM_HI_END)
+	إذا (EXT2_DESC_سائيز(fs->super) >= EXT4_BG_INODE_BITMAP_CSUM_HI_پڇاڙي)
 		csum |= ((__u32)gdp->bg_inode_bitmap_csum_hi << 16);
-	return csum;
+	أرجع csum;
 }
 
 /*
  * Return the inode bitmap block of a group
  */
-blk64_t ext2fs_inode_bitmap_loc(ext2_filsys fs, dgrp_t group)
+blk64_t ext2fs_inode_bitmap_loc(ext2_filsys fs, dgrp_t گروهه)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_inode_bitmap |
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	أرجع gdp->bg_inode_bitmap |
 		(ext2fs_has_feature_64bit(fs->super) ?
 		 (__u64) gdp->bg_inode_bitmap_hi << 32 : 0);
 }
@@ -319,288 +319,288 @@ blk64_t ext2fs_inode_bitmap_loc(ext2_filsys fs, dgrp_t group)
 /*
  * Set the inode bitmap block of a group
  */
-void ext2fs_inode_bitmap_loc_set(ext2_filsys fs, dgrp_t group, blk64_t blk)
+فراغ ext2fs_inode_bitmap_loc_سيٽ(ext2_filsys fs, dgrp_t گروهه, blk64_t blk)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
 	gdp->bg_inode_bitmap = blk;
-	if (ext2fs_has_feature_64bit(fs->super))
+	إذا (ext2fs_has_feature_64bit(fs->super))
 		gdp->bg_inode_bitmap_hi = (__u64) blk >> 32;
 }
 
 /*
  * Return the inode table block of a group
  */
-blk64_t ext2fs_inode_table_loc(ext2_filsys fs, dgrp_t group)
+blk64_t ext2fs_inode_جدول_loc(ext2_filsys fs, dgrp_t گروهه)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_inode_table |
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	أرجع gdp->bg_inode_جدول |
 		(ext2fs_has_feature_64bit(fs->super) ?
-		 (__u64) gdp->bg_inode_table_hi << 32 : 0);
+		 (__u64) gdp->bg_inode_جدول_hi << 32 : 0);
 }
 
 /*
  * Set the inode table block of a group
  */
-void ext2fs_inode_table_loc_set(ext2_filsys fs, dgrp_t group, blk64_t blk)
+فراغ ext2fs_inode_جدول_loc_سيٽ(ext2_filsys fs, dgrp_t گروهه, blk64_t blk)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	gdp->bg_inode_table = blk;
-	if (ext2fs_has_feature_64bit(fs->super))
-		gdp->bg_inode_table_hi = (__u64) blk >> 32;
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	gdp->bg_inode_جدول = blk;
+	إذا (ext2fs_has_feature_64bit(fs->super))
+		gdp->bg_inode_جدول_hi = (__u64) blk >> 32;
 }
 
 /*
  * Return the free blocks count of a group
  */
-__u32 ext2fs_bg_free_blocks_count(ext2_filsys fs, dgrp_t group)
+__u32 ext2fs_bg_free_بلاڪون_ڳڻپ(ext2_filsys fs, dgrp_t گروهه)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_free_blocks_count |
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	أرجع gdp->bg_free_بلاڪون_ڳڻپ |
 		(ext2fs_has_feature_64bit(fs->super) ?
-		 (__u32) gdp->bg_free_blocks_count_hi << 16 : 0);
+		 (__u32) gdp->bg_free_بلاڪون_ڳڻپ_hi << 16 : 0);
 }
 
 /*
  * Set the free blocks count of a group
  */
-void ext2fs_bg_free_blocks_count_set(ext2_filsys fs, dgrp_t group, __u32 n)
+فراغ ext2fs_bg_free_بلاڪون_ڳڻپ_سيٽ(ext2_filsys fs, dgrp_t گروهه, __u32 n)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	gdp->bg_free_blocks_count = n;
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	gdp->bg_free_بلاڪون_ڳڻپ = n;
 
-	if (ext2fs_has_feature_64bit(fs->super))
-		gdp->bg_free_blocks_count_hi = (__u32) n >> 16;
+	إذا (ext2fs_has_feature_64bit(fs->super))
+		gdp->bg_free_بلاڪون_ڳڻپ_hi = (__u32) n >> 16;
 }
 
 /*
  * Return the free inodes count of a group
  */
-__u32 ext2fs_bg_free_inodes_count(ext2_filsys fs, dgrp_t group)
+__u32 ext2fs_bg_free_inodes_ڳڻپ(ext2_filsys fs, dgrp_t گروهه)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_free_inodes_count |
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	أرجع gdp->bg_free_inodes_ڳڻپ |
 		(ext2fs_has_feature_64bit(fs->super) ?
-		 (__u32) gdp->bg_free_inodes_count_hi << 16 : 0);
+		 (__u32) gdp->bg_free_inodes_ڳڻپ_hi << 16 : 0);
 }
 
 /*
  * Set the free inodes count of a group
  */
-void ext2fs_bg_free_inodes_count_set(ext2_filsys fs, dgrp_t group, __u32 n)
+فراغ ext2fs_bg_free_inodes_ڳڻپ_سيٽ(ext2_filsys fs, dgrp_t گروهه, __u32 n)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	gdp->bg_free_inodes_count = n;
-	if (ext2fs_has_feature_64bit(fs->super))
-		gdp->bg_free_inodes_count_hi = (__u32) n >> 16;
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	gdp->bg_free_inodes_ڳڻپ = n;
+	إذا (ext2fs_has_feature_64bit(fs->super))
+		gdp->bg_free_inodes_ڳڻپ_hi = (__u32) n >> 16;
 }
 
 /*
  * Return the used dirs count of a group
  */
-__u32 ext2fs_bg_used_dirs_count(ext2_filsys fs, dgrp_t group)
+__u32 ext2fs_bg_استعمال_ٿيل_dirs_ڳڻپ(ext2_filsys fs, dgrp_t گروهه)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_used_dirs_count |
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	أرجع gdp->bg_استعمال_ٿيل_dirs_ڳڻپ |
 		(ext2fs_has_feature_64bit(fs->super) ?
-		 (__u32) gdp->bg_used_dirs_count_hi << 16 : 0);
+		 (__u32) gdp->bg_استعمال_ٿيل_dirs_ڳڻپ_hi << 16 : 0);
 }
 
 /*
  * Set the used dirs count of a group
  */
-void ext2fs_bg_used_dirs_count_set(ext2_filsys fs, dgrp_t group, __u32 n)
+فراغ ext2fs_bg_استعمال_ٿيل_dirs_ڳڻپ_سيٽ(ext2_filsys fs, dgrp_t گروهه, __u32 n)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	gdp->bg_used_dirs_count = n;
-	if (ext2fs_has_feature_64bit(fs->super))
-		gdp->bg_used_dirs_count_hi = (__u32) n >> 16;
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	gdp->bg_استعمال_ٿيل_dirs_ڳڻپ = n;
+	إذا (ext2fs_has_feature_64bit(fs->super))
+		gdp->bg_استعمال_ٿيل_dirs_ڳڻپ_hi = (__u32) n >> 16;
 }
 
 /*
  * Return the unused inodes count of a group
  */
-__u32 ext2fs_bg_itable_unused(ext2_filsys fs, dgrp_t group)
+__u32 ext2fs_bg_itable_اڻ_استعمال_ٿيل(ext2_filsys fs, dgrp_t گروهه)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_itable_unused |
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	أرجع gdp->bg_itable_اڻ_استعمال_ٿيل |
 		(ext2fs_has_feature_64bit(fs->super) ?
-		 (__u32) gdp->bg_itable_unused_hi << 16 : 0);
+		 (__u32) gdp->bg_itable_اڻ_استعمال_ٿيل_hi << 16 : 0);
 }
 
 /*
  * Set the unused inodes count of a group
  */
-void ext2fs_bg_itable_unused_set(ext2_filsys fs, dgrp_t group, __u32 n)
+فراغ ext2fs_bg_itable_اڻ_استعمال_ٿيل_سيٽ(ext2_filsys fs, dgrp_t گروهه, __u32 n)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	gdp->bg_itable_unused = n;
-	if (ext2fs_has_feature_64bit(fs->super))
-		gdp->bg_itable_unused_hi = (__u32) n >> 16;
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	gdp->bg_itable_اڻ_استعمال_ٿيل = n;
+	إذا (ext2fs_has_feature_64bit(fs->super))
+		gdp->bg_itable_اڻ_استعمال_ٿيل_hi = (__u32) n >> 16;
 }
 
 /*
  * Get the flags for this block group
  */
-__u16 ext2fs_bg_flags(ext2_filsys fs, dgrp_t group)
+__u16 ext2fs_bg_flags(ext2_filsys fs, dgrp_t گروهه)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_flags;
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	أرجع gdp->bg_flags;
 }
 
 /*
  * Zero out the flags for this block group
  */
-void ext2fs_bg_flags_zap(ext2_filsys fs, dgrp_t group)
+فراغ ext2fs_bg_flags_zap(ext2_filsys fs, dgrp_t گروهه)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
 	gdp->bg_flags = 0;
-	return;
+	أرجع;
 }
 
 /*
  * Get the value of a particular flag for this block group
  */
-int ext2fs_bg_flags_test(ext2_filsys fs, dgrp_t group, __u16 bg_flag)
+صحيح ext2fs_bg_flags_test(ext2_filsys fs, dgrp_t گروهه, __u16 bg_flag)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_flags & bg_flag;
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	أرجع gdp->bg_flags & bg_flag;
 }
 
 /*
  * Set a flag or set of flags for this block group
  */
-void ext2fs_bg_flags_set(ext2_filsys fs, dgrp_t group, __u16 bg_flags)
+فراغ ext2fs_bg_flags_سيٽ(ext2_filsys fs, dgrp_t گروهه, __u16 bg_flags)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
 	gdp->bg_flags |= bg_flags;
-	return;
+	أرجع;
 }
 
 /*
  * Clear a flag or set of flags for this block group
  */
-void ext2fs_bg_flags_clear(ext2_filsys fs, dgrp_t group, __u16 bg_flags)
+فراغ ext2fs_bg_flags_clear(ext2_filsys fs, dgrp_t گروهه, __u16 bg_flags)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
 	gdp->bg_flags &= ~bg_flags;
-	return;
+	أرجع;
 }
 
 /*
  * Get the checksum for this block group
  */
-__u16 ext2fs_bg_checksum(ext2_filsys fs, dgrp_t group)
+__u16 ext2fs_bg_checksum(ext2_filsys fs, dgrp_t گروهه)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_checksum;
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
+	أرجع gdp->bg_checksum;
 }
 
 /*
  * Set the checksum for this block group to a previously calculated value
  */
-void ext2fs_bg_checksum_set(ext2_filsys fs, dgrp_t group, __u16 checksum)
+فراغ ext2fs_bg_checksum_سيٽ(ext2_filsys fs, dgrp_t گروهه, __u16 checksum)
 {
-	struct ext4_group_desc *gdp;
+	بنية ext4_گروهه_desc *gdp;
 
-	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
+	gdp = ext4fs_گروهه_desc(fs, fs->گروهه_desc, گروهه);
 	gdp->bg_checksum = checksum;
-	return;
+	أرجع;
 }
 
 /*
  * Get the acl block of a file
  */
-blk64_t ext2fs_file_acl_block(ext2_filsys fs, const struct ext2_inode *inode)
+blk64_t ext2fs_file_acl_بلاڪ(ext2_filsys fs, ثابت بنية ext2_inode *inode)
 {
 	blk64_t	blk = inode->i_file_acl;
 
-	if (fs && ext2fs_has_feature_64bit(fs->super))
-		blk |= ((__u64) inode->osd2.linux2.l_i_file_acl_high) << 32;
-	return blk;
+	إذا (fs && ext2fs_has_feature_64bit(fs->super))
+		blk |= ((__u64) inode->osd2.linux2.l_i_file_acl_مٿاهون) << 32;
+	أرجع blk;
 }
 
 /*
  * Set the acl block of a file
  */
-void ext2fs_file_acl_block_set(ext2_filsys fs, struct ext2_inode *inode,
+فراغ ext2fs_file_acl_بلاڪ_سيٽ(ext2_filsys fs, بنية ext2_inode *inode,
 			       blk64_t blk)
 {
 	inode->i_file_acl = blk;
-	if (fs && ext2fs_has_feature_64bit(fs->super))
-		inode->osd2.linux2.l_i_file_acl_high = (__u64) blk >> 32;
+	إذا (fs && ext2fs_has_feature_64bit(fs->super))
+		inode->osd2.linux2.l_i_file_acl_مٿاهون = (__u64) blk >> 32;
 }
 
 /*
  * Set the size of the inode
  */
-errcode_t ext2fs_inode_size_set(ext2_filsys fs, struct ext2_inode *inode,
-				ext2_off64_t size)
+errcode_t ext2fs_inode_سائيز_سيٽ(ext2_filsys fs, بنية ext2_inode *inode,
+				ext2_off64_t سائيز)
 {
-	if (size < 0)
-		return EINVAL;
+	إذا (سائيز < 0)
+		أرجع EINVAL;
 
 	/* If writing a large inode, set the large_file or large_dir flag */
-	if (ext2fs_needs_large_file_feature(size)) {
-		int dirty_sb = 0;
+	إذا (ext2fs_needs_large_file_feature(سائيز)) {
+		صحيح dirty_sb = 0;
 
-		if (LINUX_S_ISREG(inode->i_mode)) {
-			if (!ext2fs_has_feature_large_file(fs->super)) {
-				ext2fs_set_feature_large_file(fs->super);
+		إذا (LINUX_S_ISREG(inode->i_گهڻائي)) {
+			إذا (!ext2fs_has_feature_large_file(fs->super)) {
+				ext2fs_سيٽ_feature_large_file(fs->super);
 				dirty_sb = 1;
 			}
-		} else if (LINUX_S_ISDIR(inode->i_mode)) {
-			if (!ext2fs_has_feature_largedir(fs->super)) {
-				ext2fs_set_feature_largedir(fs->super);
+		} وإلا إذا (LINUX_S_ISDIR(inode->i_گهڻائي)) {
+			إذا (!ext2fs_has_feature_largedir(fs->super)) {
+				ext2fs_سيٽ_feature_largedir(fs->super);
 				dirty_sb = 1;
 			}
-		} else {
+		} وإلا {
 			/* Only regular files get to be larger than 4GB */
-			return EXT2_ET_FILE_TOO_BIG;
+			أرجع EXT2_ET_FILE_TOO_BIG;
 		}
-		if (dirty_sb) {
-			if (fs->super->s_rev_level == EXT2_GOOD_OLD_REV)
+		إذا (dirty_sb) {
+			إذا (fs->super->s_rev_level == EXT2_GOOD_OLD_REV)
 				ext2fs_update_dynamic_rev(fs);
 			ext2fs_mark_super_dirty(fs);
 		}
 	}
 
-	inode->i_size = size & 0xffffffff;
-	inode->i_size_high = (size >> 32);
+	inode->i_سائيز = سائيز & 0xffffffff;
+	inode->i_سائيز_مٿاهون = (سائيز >> 32);
 
-	return 0;
+	أرجع 0;
 }
 

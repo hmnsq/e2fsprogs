@@ -9,25 +9,25 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جيڪڏهن_پورو
+#ضمن <fcntl.h>
+#ضمن <time.h>
+#ضمن <sys/stat.h>
+#ضمن <sys/types.h>
+#إذا HAVE_ERRNO_H
+#ضمن <errno.h>
+#جيڪڏهن_پورو
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
-#define ADD_BLK	0x0001
-#define DEL_BLK	0x0002
+#وصف_ڪريو جوڙيو_BLK	0x0001
+#وصف_ڪريو DEL_BLK	0x0002
 
 blk_t test1[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0 };
 blk_t test2[] = { 11, 10, 9, 8, 7, 6, 5, 4, 3, 3, 2, 1, 0 };
@@ -50,320 +50,320 @@ blk_t test4a[] = {
 	0 };
 blk_t test5[] = { 31, 20, 17, 51, 23, 1, 56, 57, 0 };
 blk_t test5a[] = {
-	50, ADD_BLK,
+	50, جوڙيو_BLK,
 	51, DEL_BLK,
 	57, DEL_BLK,
-	66, ADD_BLK,
+	66, جوڙيو_BLK,
 	31, DEL_BLK,
-	12, ADD_BLK,
-	2, ADD_BLK,
-	13, ADD_BLK,
+	12, جوڙيو_BLK,
+	2, جوڙيو_BLK,
+	13, جوڙيو_BLK,
 	1, DEL_BLK,
 	0
 	};
 
 
-static int test_fail = 0;
-static int test_expected_fail = 0;
+ساكن صحيح test_fail = 0;
+ساكن صحيح test_expected_fail = 0;
 
-static errcode_t create_test_list(blk_t *vec, badblocks_list *ret)
+ساكن errcode_t create_test_list(blk_t *vec, badblocks_list *ret)
 {
 	errcode_t	retval;
 	badblocks_list	bb;
-	int		i;
+	صحيح		i;
 
 	retval = ext2fs_badblocks_list_create(&bb, 5);
-	if (retval) {
+	إذا (retval) {
 		com_err("create_test_list", retval, "while creating list");
-		return retval;
+		أرجع retval;
 	}
-	for (i=0; vec[i]; i++) {
-		retval = ext2fs_badblocks_list_add(bb, vec[i]);
-		if (retval) {
+	لكل (i=0; vec[i]; i++) {
+		retval = ext2fs_badblocks_list_جوڙيو(bb, vec[i]);
+		إذا (retval) {
 			com_err("create_test_list", retval,
 				"while adding test vector %d", i);
 			ext2fs_badblocks_list_free(bb);
-			return retval;
+			أرجع retval;
 		}
 	}
 	*ret = bb;
-	return 0;
+	أرجع 0;
 }
 
-static void print_list(badblocks_list bb, int verify)
+ساكن فراغ print_list(badblocks_list bb, صحيح verify)
 {
 	errcode_t	retval;
 	badblocks_iterate	iter;
 	blk_t			blk;
-	int			i, ok;
+	صحيح			i, ok;
 
 	retval = ext2fs_badblocks_list_iterate_begin(bb, &iter);
-	if (retval) {
+	إذا (retval) {
 		com_err("print_list", retval, "while setting up iterator");
-		return;
+		أرجع;
 	}
 	ok = i = 1;
-	while (ext2fs_badblocks_list_iterate(iter, &blk)) {
-		printf("%u ", blk);
-		if (i++ != blk)
+	طالما (ext2fs_badblocks_list_iterate(iter, &blk)) {
+		لکو("%u ", blk);
+		إذا (i++ != blk)
 			ok = 0;
 	}
-	ext2fs_badblocks_list_iterate_end(iter);
-	if (verify) {
-		if (ok)
-			printf("--- OK");
-		else {
-			printf("--- NOT OK");
+	ext2fs_badblocks_list_iterate_پڇاڙي(iter);
+	إذا (verify) {
+		إذا (ok)
+			لکو("--- OK");
+		وإلا {
+			لکو("--- NOT OK");
 			test_fail++;
 		}
 	}
 }
 
-static void validate_test_seq(badblocks_list bb, blk_t *vec)
+ساكن فراغ validate_test_seq(badblocks_list bb, blk_t *vec)
 {
-	int	i, match, ok;
+	صحيح	i, ميلاپ, ok;
 
-	for (i = 0; vec[i]; i += 2) {
-		match = ext2fs_badblocks_list_test(bb, vec[i]);
-		if (match == vec[i+1])
+	لكل (i = 0; vec[i]; i += 2) {
+		ميلاپ = ext2fs_badblocks_list_test(bb, vec[i]);
+		إذا (ميلاپ == vec[i+1])
 			ok = 1;
-		else {
+		وإلا {
 			ok = 0;
 			test_fail++;
 		}
-		printf("\tblock %u is %s --- %s\n", vec[i],
-		       match ? "present" : "absent",
+		لکو("\tblock %u is %s --- %s\n", vec[i],
+		       ميلاپ ? "present" : "absent",
 		       ok ? "OK" : "NOT OK");
 	}
 }
 
-static void do_test_seq(badblocks_list bb, blk_t *vec)
+ساكن فراغ do_test_seq(badblocks_list bb, blk_t *vec)
 {
-	int	i, match;
+	صحيح	i, ميلاپ;
 
-	for (i = 0; vec[i]; i += 2) {
-		switch (vec[i+1]) {
-		case ADD_BLK:
-			ext2fs_badblocks_list_add(bb, vec[i]);
-			match = ext2fs_badblocks_list_test(bb, vec[i]);
-			printf("Adding block %u --- now %s\n", vec[i],
-			       match ? "present" : "absent");
-			if (!match) {
-				printf("FAILURE!\n");
+	لكل (i = 0; vec[i]; i += 2) {
+		بدل (vec[i+1]) {
+		حالة جوڙيو_BLK:
+			ext2fs_badblocks_list_جوڙيو(bb, vec[i]);
+			ميلاپ = ext2fs_badblocks_list_test(bb, vec[i]);
+			لکو("Adding block %u --- now %s\n", vec[i],
+			       ميلاپ ? "present" : "absent");
+			إذا (!ميلاپ) {
+				لکو("FAILURE!\n");
 				test_fail++;
 			}
-			break;
-		case DEL_BLK:
+			اكسر;
+		حالة DEL_BLK:
 			ext2fs_badblocks_list_del(bb, vec[i]);
-			match = ext2fs_badblocks_list_test(bb, vec[i]);
-			printf("Removing block %u --- now %s\n", vec[i],
+			ميلاپ = ext2fs_badblocks_list_test(bb, vec[i]);
+			لکو("Removing block %u --- now %s\n", vec[i],
 			       ext2fs_badblocks_list_test(bb, vec[i]) ?
 			       "present" : "absent");
-			if (match) {
-				printf("FAILURE!\n");
+			إذا (ميلاپ) {
+				لکو("FAILURE!\n");
 				test_fail++;
 			}
-			break;
+			اكسر;
 		}
 	}
 }
 
 
-int file_test(badblocks_list bb)
+صحيح file_test(badblocks_list bb)
 {
 	badblocks_list new_bb = 0;
 	errcode_t	retval;
 	FILE	*f;
 
 	f = tmpfile();
-	if (!f) {
+	إذا (!f) {
 		fprintf(stderr, "Error opening temp file: %s\n",
-			error_message(errno));
-		return 1;
+			error_پيغام(errno));
+		أرجع 1;
 	}
 	retval = ext2fs_write_bb_FILE(bb, 0, f);
-	if (retval) {
+	إذا (retval) {
 		com_err("file_test", retval, "while writing bad blocks");
-		return 1;
+		أرجع 1;
 	}
 
 	rewind(f);
 	retval = ext2fs_read_bb_FILE2(0, f, &new_bb, 0, 0);
-	if (retval) {
+	إذا (retval) {
 		com_err("file_test", retval, "while reading bad blocks");
-		return 1;
+		أرجع 1;
 	}
 	fclose(f);
 
-	if (ext2fs_badblocks_equal(bb, new_bb)) {
-		printf("Block bitmap matched after reading and writing.\n");
-	} else {
-		printf("Block bitmap NOT matched.\n");
+	إذا (ext2fs_badblocks_equal(bb, new_bb)) {
+		لکو("Block bitmap matched after reading and writing.\n");
+	} وإلا {
+		لکو("Block bitmap NOT matched.\n");
 		test_fail++;
 	}
 	ext2fs_badblocks_list_free(new_bb);
-	return 0;
+	أرجع 0;
 }
 
-static void invalid_proc(ext2_filsys fs, blk_t blk)
+ساكن فراغ invalid_proc(ext2_filsys fs, blk_t blk)
 {
-	if (blk == 34500) {
-		printf("Expected invalid block\n");
+	إذا (blk == 34500) {
+		لکو("Expected invalid block\n");
 		test_expected_fail++;
-	} else {
-		printf("Invalid block #: %u\n", blk);
+	} وإلا {
+		لکو("Invalid block #: %u\n", blk);
 		test_fail++;
 	}
 }
 
-void file_test_invalid(badblocks_list bb)
+فراغ file_test_invalid(badblocks_list bb)
 {
 	badblocks_list new_bb = 0;
 	errcode_t	retval;
 	ext2_filsys 	fs;
 	FILE	*f;
 
-	fs = malloc(sizeof(struct struct_ext2_filsys));
-	memset(fs, 0, sizeof(struct struct_ext2_filsys));
+	fs = يادگيري_ڏيو(حجم(بنية struct_ext2_filsys));
+	memset(fs, 0, حجم(بنية struct_ext2_filsys));
 	fs->magic = EXT2_ET_MAGIC_EXT2FS_FILSYS;
-	fs->super = malloc(SUPERBLOCK_SIZE);
-	memset(fs->super, 0, SUPERBLOCK_SIZE);
-	fs->super->s_first_data_block = 1;
-	ext2fs_blocks_count_set(fs->super, 100);
+	fs->super = يادگيري_ڏيو(SUPERBLOCK_سائيز);
+	memset(fs->super, 0, SUPERBLOCK_سائيز);
+	fs->super->s_پهريون_معلومات_بلاڪ = 1;
+	ext2fs_بلاڪون_ڳڻپ_سيٽ(fs->super, 100);
 
 	f = tmpfile();
-	if (!f) {
+	إذا (!f) {
 		fprintf(stderr, "Error opening temp file: %s\n",
-			error_message(errno));
+			error_پيغام(errno));
 		test_fail++;
-		goto out;
+		اذهب ٻاهريون;
 	}
 	retval = ext2fs_write_bb_FILE(bb, 0, f);
-	if (retval) {
+	إذا (retval) {
 		com_err("file_test", retval, "while writing bad blocks");
 		test_fail++;
-		goto out;
+		اذهب ٻاهريون;
 	}
 	fprintf(f, "34500\n");
 
 	rewind(f);
 	test_expected_fail = 0;
 	retval = ext2fs_read_bb_FILE(fs, f, &new_bb, invalid_proc);
-	if (retval) {
+	إذا (retval) {
 		com_err("file_test", retval, "while reading bad blocks");
 		test_fail++;
-		goto out;
+		اذهب ٻاهريون;
 	}
 	fclose(f);
-	if (!test_expected_fail) {
-		printf("Expected test failure didn't happen!\n");
+	إذا (!test_expected_fail) {
+		لکو("Expected test failure didn't happen!\n");
 		test_fail++;
 	}
 
 
-	if (ext2fs_badblocks_equal(bb, new_bb)) {
-		printf("Block bitmap matched after reading and writing.\n");
-	} else {
-		printf("Block bitmap NOT matched.\n");
+	إذا (ext2fs_badblocks_equal(bb, new_bb)) {
+		لکو("Block bitmap matched after reading and writing.\n");
+	} وإلا {
+		لکو("Block bitmap NOT matched.\n");
 		test_fail++;
 	}
 	ext2fs_badblocks_list_free(new_bb);
-out:
-	free(fs->super);
-	free(fs);
+ٻاهريون:
+	حرر(fs->super);
+	حرر(fs);
 }
 
-int main(int argc, char **argv)
+صحيح مکيه(صحيح argc, حرف **argv)
 {
 	badblocks_list bb1, bb2, bb3, bb4, bb5;
-	int	equal;
+	صحيح	equal;
 	errcode_t	retval;
 
-	add_error_table(&et_ext2_error_table);
+	جوڙيو_error_جدول(&et_ext2_error_جدول);
 
 	bb1 = bb2 = bb3 = bb4 = bb5 = 0;
 
-	printf("test1: ");
+	لکو("test1: ");
 	retval = create_test_list(test1, &bb1);
-	if (retval == 0)
+	إذا (retval == 0)
 		print_list(bb1, 1);
-	printf("\n");
+	لکو("\n");
 
-	printf("test2: ");
+	لکو("test2: ");
 	retval = create_test_list(test2, &bb2);
-	if (retval == 0)
+	إذا (retval == 0)
 		print_list(bb2, 1);
-	printf("\n");
+	لکو("\n");
 
-	printf("test3: ");
+	لکو("test3: ");
 	retval = create_test_list(test3, &bb3);
-	if (retval == 0)
+	إذا (retval == 0)
 		print_list(bb3, 1);
-	printf("\n");
+	لکو("\n");
 
-	printf("test4: ");
+	لکو("test4: ");
 	retval = create_test_list(test4, &bb4);
-	if (retval == 0) {
+	إذا (retval == 0) {
 		print_list(bb4, 0);
-		printf("\n");
+		لکو("\n");
 		validate_test_seq(bb4, test4a);
 	}
-	printf("\n");
+	لکو("\n");
 
-	printf("test5: ");
+	لکو("test5: ");
 	retval = create_test_list(test5, &bb5);
-	if (retval == 0) {
+	إذا (retval == 0) {
 		print_list(bb5, 0);
-		printf("\n");
+		لکو("\n");
 		do_test_seq(bb5, test5a);
-		printf("After test5 sequence: ");
+		لکو("After test5 sequence: ");
 		print_list(bb5, 0);
-		printf("\n");
+		لکو("\n");
 	}
-	printf("\n");
+	لکو("\n");
 
-	if (bb1 && bb2 && bb3 && bb4 && bb5) {
-		printf("Comparison tests:\n");
+	إذا (bb1 && bb2 && bb3 && bb4 && bb5) {
+		لکو("Comparison tests:\n");
 		equal = ext2fs_badblocks_equal(bb1, bb2);
-		printf("bb1 and bb2 are %sequal.\n", equal ? "" : "NOT ");
-		if (equal)
+		لکو("bb1 and bb2 are %sequal.\n", equal ? "" : "NOT ");
+		إذا (equal)
 			test_fail++;
 
 		equal = ext2fs_badblocks_equal(bb1, bb3);
-		printf("bb1 and bb3 are %sequal.\n", equal ? "" : "NOT ");
-		if (!equal)
+		لکو("bb1 and bb3 are %sequal.\n", equal ? "" : "NOT ");
+		إذا (!equal)
 			test_fail++;
 
 		equal = ext2fs_badblocks_equal(bb1, bb4);
-		printf("bb1 and bb4 are %sequal.\n", equal ? "" : "NOT ");
-		if (equal)
+		لکو("bb1 and bb4 are %sequal.\n", equal ? "" : "NOT ");
+		إذا (equal)
 			test_fail++;
 
 		equal = ext2fs_badblocks_equal(bb4, bb5);
-		printf("bb4 and bb5 are %sequal.\n", equal ? "" : "NOT ");
-		if (!equal)
+		لکو("bb4 and bb5 are %sequal.\n", equal ? "" : "NOT ");
+		إذا (!equal)
 			test_fail++;
-		printf("\n");
+		لکو("\n");
 	}
 
 	file_test(bb4);
 
 	file_test_invalid(bb4);
 
-	if (test_fail == 0)
-		printf("ext2fs library badblocks tests checks out OK!\n");
+	إذا (test_fail == 0)
+		لکو("ext2fs library badblocks tests checks out OK!\n");
 
-	if (bb1)
+	إذا (bb1)
 		ext2fs_badblocks_list_free(bb1);
-	if (bb2)
+	إذا (bb2)
 		ext2fs_badblocks_list_free(bb2);
-	if (bb3)
+	إذا (bb3)
 		ext2fs_badblocks_list_free(bb3);
-	if (bb4)
+	إذا (bb4)
 		ext2fs_badblocks_list_free(bb4);
-	if (bb5)
+	إذا (bb5)
 		ext2fs_badblocks_list_free(bb5);
 
-	return test_fail;
+	أرجع test_fail;
 
 }

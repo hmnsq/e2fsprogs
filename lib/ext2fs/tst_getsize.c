@@ -9,39 +9,39 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#جيڪڏهن_پورو
+#ضمن <fcntl.h>
+#ضمن <time.h>
+#ضمن <sys/stat.h>
+#ضمن <sys/types.h>
+#إذا HAVE_ERRNO_H
+#ضمن <errno.h>
+#جيڪڏهن_پورو
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
-int main(int argc, const char *argv[])
+صحيح مکيه(صحيح argc, ثابت حرف *argv[])
 {
 	errcode_t	retval;
-	blk64_t		blocks;
+	blk64_t		بلاڪون;
 
-	if (argc < 2) {
+	إذا (argc < 2) {
 		fprintf(stderr, "%s device\n", argv[0]);
-		exit(1);
+		ٻاهر_نڪرو(1);
 	}
-	add_error_table(&et_ext2_error_table);
-	retval = ext2fs_get_device_size2(argv[1], 1024, &blocks);
-	if (retval) {
+	جوڙيو_error_جدول(&et_ext2_error_جدول);
+	retval = ext2fs_get_device_size2(argv[1], 1024, &بلاڪون);
+	إذا (retval) {
 		com_err(argv[0], retval, "while getting device size");
-		exit(1);
+		ٻاهر_نڪرو(1);
 	}
-	printf("%s is device has %llu blocks.\n", argv[1],
-	       (unsigned long long) blocks);
-	return 0;
+	لکو("%s is device has %llu blocks.\n", argv[1],
+	       (بنانشان ڊگهو ڊگهو) بلاڪون);
+	أرجع 0;
 }

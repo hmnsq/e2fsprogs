@@ -9,23 +9,23 @@
  * %End-Header%
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#جيڪڏهن_پورو
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#define min(a, b) ((a) < (b) ? (a) : (b))
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
+#وصف_ڪريو min(a, b) ((a) < (b) ? (a) : (b))
 
-#undef DEBUG
+#وصف_رد DEBUG
 
-#ifdef DEBUG
-# define dbg_printf(f, a...)  do {printf(f, ## a); fflush(stdout); } while (0)
-#else
+#جيڪڏهن_وصف_ٿيل DEBUG
+# define dbg_printf(f, a...)  افعل {لکو(f, ## a); fflush(stdout); } طالما (0)
+#وإلا
 # define dbg_printf(f, a...)
-#endif
+#جيڪڏهن_پورو
 
 /*
  * Extent-based fallocate code.
@@ -58,395 +58,395 @@
  * At the end, update i_blocks and i_size appropriately.
  */
 
-static void dbg_print_extent(const char *desc EXT2FS_ATTR((unused)),
-		const struct ext2fs_extent *extent EXT2FS_ATTR((unused)))
+ساكن فراغ dbg_print_extent(ثابت حرف *desc EXT2FS_ATTR((اڻ_استعمال_ٿيل)),
+		ثابت بنية ext2fs_extent *extent EXT2FS_ATTR((اڻ_استعمال_ٿيل)))
 {
-#ifdef DEBUG
-	if (desc)
-		printf("%s: ", desc);
-	printf("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
+#جيڪڏهن_وصف_ٿيل DEBUG
+	إذا (desc)
+		لکو("%s: ", desc);
+	لکو("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
 	       extent->e_lblk, extent->e_lblk + extent->e_len - 1,
 	       extent->e_len, extent->e_pblk);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_LEAF)
+	إذا (extent->e_flags & EXT2_EXTENT_FLAGS_پن)
 		fputs("LEAF ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	إذا (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 		fputs("UNINIT ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_SECOND_VISIT)
+	إذا (extent->e_flags & EXT2_EXTENT_FLAGS_ٻيو_گهمو)
 		fputs("2ND_VISIT ", stdout);
-	if (!extent->e_flags)
+	إذا (!extent->e_flags)
 		fputs("(none)", stdout);
 	fputc('\n', stdout);
 	fflush(stdout);
-#endif
+#جيڪڏهن_پورو
 }
 
-static errcode_t claim_range(ext2_filsys fs, struct ext2_inode *inode,
+ساكن errcode_t claim_range(ext2_filsys fs, بنية ext2_inode *inode,
 			     blk64_t blk, blk64_t len)
 {
 	blk64_t	clusters;
 
-	clusters = (len + EXT2FS_CLUSTER_RATIO(fs) - 1) /
-		   EXT2FS_CLUSTER_RATIO(fs);
-	ext2fs_block_alloc_stats_range(fs, blk,
-			clusters * EXT2FS_CLUSTER_RATIO(fs), +1);
-	return ext2fs_iblk_add_blocks(fs, inode, clusters);
+	clusters = (len + EXT2_FS_CLUSTER_تناسب(fs) - 1) /
+		   EXT2_FS_CLUSTER_تناسب(fs);
+	ext2fs_بلاڪ_alloc_stats_range(fs, blk,
+			clusters * EXT2_FS_CLUSTER_تناسب(fs), +1);
+	أرجع ext2fs_iblk_جوڙيو_بلاڪون(fs, inode, clusters);
 }
 
-static errcode_t ext_falloc_helper(ext2_filsys fs,
-				   int flags,
+ساكن errcode_t ext_falloc_helper(ext2_filsys fs,
+				   صحيح flags,
 				   ext2_ino_t ino,
-				   struct ext2_inode *inode,
+				   بنية ext2_inode *inode,
 				   ext2_extent_handle_t handle,
-				   struct ext2fs_extent *left_ext,
-				   struct ext2fs_extent *right_ext,
-				   blk64_t range_start, blk64_t range_len,
+				   بنية ext2fs_extent *کاٻو_ext,
+				   بنية ext2fs_extent *ساڄو_ext,
+				   blk64_t range_شروعات, blk64_t range_len,
 				   blk64_t alloc_goal)
 {
-	struct ext2fs_extent	newex, ex;
-	int			op;
+	بنية ext2fs_extent	newex, ex;
+	صحيح			op;
 	blk64_t			fillable, pblk, plen, x, y;
 	blk64_t			eof_blk = 0, cluster_fill = 0;
 	errcode_t		err;
 	blk_t			max_extent_len, max_uninit_len, max_init_len;
 
-#ifdef DEBUG
-	printf("%s: ", __func__);
-	if (left_ext)
-		printf("left_ext=%llu--%llu, ", left_ext->e_lblk,
-		       left_ext->e_lblk + left_ext->e_len - 1);
-	if (right_ext)
-		printf("right_ext=%llu--%llu, ", right_ext->e_lblk,
-		       right_ext->e_lblk + right_ext->e_len - 1);
-	printf("start=%llu len=%llu, goal=%llu\n", range_start, range_len,
+#جيڪڏهن_وصف_ٿيل DEBUG
+	لکو("%s: ", __func__);
+	إذا (کاٻو_ext)
+		لکو("left_ext=%llu--%llu, ", کاٻو_ext->e_lblk,
+		       کاٻو_ext->e_lblk + کاٻو_ext->e_len - 1);
+	إذا (ساڄو_ext)
+		لکو("right_ext=%llu--%llu, ", ساڄو_ext->e_lblk,
+		       ساڄو_ext->e_lblk + ساڄو_ext->e_len - 1);
+	لکو("start=%llu len=%llu, goal=%llu\n", range_شروعات, range_len,
 	       alloc_goal);
 	fflush(stdout);
-#endif
+#جيڪڏهن_پورو
 	/* Can't create initialized extents past EOF? */
-	if (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF))
-		eof_blk = EXT2_I_SIZE(inode) / fs->blocksize;
+	إذا (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF))
+		eof_blk = EXT2_I_سائيز(inode) / fs->blocksize;
 
 	/* The allocation goal must be as far into a cluster as range_start. */
-	alloc_goal = (alloc_goal & ~EXT2FS_CLUSTER_MASK(fs)) |
-		     (range_start & EXT2FS_CLUSTER_MASK(fs));
+	alloc_goal = (alloc_goal & ~EXT2_FS_CLUSTER_نقاب(fs)) |
+		     (range_شروعات & EXT2_FS_CLUSTER_نقاب(fs));
 
-	max_uninit_len = EXT_UNINIT_MAX_LEN & ~EXT2FS_CLUSTER_MASK(fs);
-	max_init_len = EXT_INIT_MAX_LEN & ~EXT2FS_CLUSTER_MASK(fs);
+	max_uninit_len = EXT_UNINIT_MAX_LEN & ~EXT2_FS_CLUSTER_نقاب(fs);
+	max_init_len = EXT_INIT_MAX_LEN & ~EXT2_FS_CLUSTER_نقاب(fs);
 
 	/* We must lengthen the left extent to the end of the cluster */
-	if (left_ext && EXT2FS_CLUSTER_RATIO(fs) > 1) {
+	إذا (کاٻو_ext && EXT2_FS_CLUSTER_تناسب(fs) > 1) {
 		/* How many more blocks can be attached to left_ext? */
-		if (left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-			fillable = max_uninit_len - left_ext->e_len;
-		else
-			fillable = max_init_len - left_ext->e_len;
+		إذا (کاٻو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+			fillable = max_uninit_len - کاٻو_ext->e_len;
+		وإلا
+			fillable = max_init_len - کاٻو_ext->e_len;
 
-		if (fillable > range_len)
+		إذا (fillable > range_len)
 			fillable = range_len;
-		if (fillable == 0)
-			goto expand_right;
+		إذا (fillable == 0)
+			اذهب expand_ساڄو;
 
 		/*
 		 * If range_start isn't on a cluster boundary, try an
 		 * implied cluster allocation for left_ext.
 		 */
-		cluster_fill = EXT2FS_CLUSTER_RATIO(fs) -
-			       (range_start & EXT2FS_CLUSTER_MASK(fs));
-		cluster_fill &= EXT2FS_CLUSTER_MASK(fs);
-		if (cluster_fill == 0)
-			goto expand_right;
+		cluster_fill = EXT2_FS_CLUSTER_تناسب(fs) -
+			       (range_شروعات & EXT2_FS_CLUSTER_نقاب(fs));
+		cluster_fill &= EXT2_FS_CLUSTER_نقاب(fs);
+		إذا (cluster_fill == 0)
+			اذهب expand_ساڄو;
 
-		if (cluster_fill > fillable)
+		إذا (cluster_fill > fillable)
 			cluster_fill = fillable;
 
 		/* Don't expand an initialized left_ext beyond EOF */
-		if (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF)) {
-			x = left_ext->e_lblk + left_ext->e_len - 1;
+		إذا (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF)) {
+			x = کاٻو_ext->e_lblk + کاٻو_ext->e_len - 1;
 			dbg_printf("%s: lend=%llu newlend=%llu eofblk=%llu\n",
 				   __func__, x, x + cluster_fill, eof_blk);
-			if (eof_blk >= x && eof_blk <= x + cluster_fill)
+			إذا (eof_blk >= x && eof_blk <= x + cluster_fill)
 				cluster_fill = eof_blk - x;
-			if (cluster_fill == 0)
-				goto expand_right;
+			إذا (cluster_fill == 0)
+				اذهب expand_ساڄو;
 		}
 
-		err = ext2fs_extent_goto(handle, left_ext->e_lblk);
-		if (err)
-			goto expand_right;
-		left_ext->e_len += cluster_fill;
-		range_start += cluster_fill;
+		err = ext2fs_extent_goto(handle, کاٻو_ext->e_lblk);
+		إذا (err)
+			اذهب expand_ساڄو;
+		کاٻو_ext->e_len += cluster_fill;
+		range_شروعات += cluster_fill;
 		range_len -= cluster_fill;
 		alloc_goal += cluster_fill;
 
-		dbg_print_extent("ext_falloc clus left+", left_ext);
-		err = ext2fs_extent_replace(handle, 0, left_ext);
-		if (err)
-			goto out;
+		dbg_print_extent("ext_falloc clus left+", کاٻو_ext);
+		err = ext2fs_extent_replace(handle, 0, کاٻو_ext);
+		إذا (err)
+			اذهب ٻاهريون;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		إذا (err)
+			اذهب ٻاهريون;
 
 		/* Zero blocks */
-		if (!(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) {
-			err = ext2fs_zero_blocks2(fs, left_ext->e_pblk +
-						  left_ext->e_len -
+		إذا (!(کاٻو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) {
+			err = ext2fs_zero_blocks2(fs, کاٻو_ext->e_pblk +
+						  کاٻو_ext->e_len -
 						  cluster_fill, cluster_fill,
-						  NULL, NULL);
-			if (err)
-				goto out;
+						  عدم, عدم);
+			إذا (err)
+				اذهب ٻاهريون;
 		}
 	}
 
-expand_right:
+expand_ساڄو:
 	/* We must lengthen the right extent to the beginning of the cluster */
-	if (right_ext && EXT2FS_CLUSTER_RATIO(fs) > 1) {
+	إذا (ساڄو_ext && EXT2_FS_CLUSTER_تناسب(fs) > 1) {
 		/* How much can we attach to right_ext? */
-		if (right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-			fillable = max_uninit_len - right_ext->e_len;
-		else
-			fillable = max_init_len - right_ext->e_len;
+		إذا (ساڄو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+			fillable = max_uninit_len - ساڄو_ext->e_len;
+		وإلا
+			fillable = max_init_len - ساڄو_ext->e_len;
 
-		if (fillable > range_len)
+		إذا (fillable > range_len)
 			fillable = range_len;
-		if (fillable == 0)
-			goto try_merge;
+		إذا (fillable == 0)
+			اذهب try_ملايو;
 
 		/*
 		 * If range_end isn't on a cluster boundary, try an implied
 		 * cluster allocation for right_ext.
 		 */
-		cluster_fill = right_ext->e_lblk & EXT2FS_CLUSTER_MASK(fs);
-		if (cluster_fill == 0)
-			goto try_merge;
+		cluster_fill = ساڄو_ext->e_lblk & EXT2_FS_CLUSTER_نقاب(fs);
+		إذا (cluster_fill == 0)
+			اذهب try_ملايو;
 
-		err = ext2fs_extent_goto(handle, right_ext->e_lblk);
-		if (err)
-			goto out;
+		err = ext2fs_extent_goto(handle, ساڄو_ext->e_lblk);
+		إذا (err)
+			اذهب ٻاهريون;
 
-		if (cluster_fill > fillable)
+		إذا (cluster_fill > fillable)
 			cluster_fill = fillable;
-		right_ext->e_lblk -= cluster_fill;
-		right_ext->e_pblk -= cluster_fill;
-		right_ext->e_len += cluster_fill;
+		ساڄو_ext->e_lblk -= cluster_fill;
+		ساڄو_ext->e_pblk -= cluster_fill;
+		ساڄو_ext->e_len += cluster_fill;
 		range_len -= cluster_fill;
 
-		dbg_print_extent("ext_falloc clus right+", right_ext);
-		err = ext2fs_extent_replace(handle, 0, right_ext);
-		if (err)
-			goto out;
+		dbg_print_extent("ext_falloc clus right+", ساڄو_ext);
+		err = ext2fs_extent_replace(handle, 0, ساڄو_ext);
+		إذا (err)
+			اذهب ٻاهريون;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		إذا (err)
+			اذهب ٻاهريون;
 
 		/* Zero blocks if necessary */
-		if (!(right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) {
-			err = ext2fs_zero_blocks2(fs, right_ext->e_pblk,
-						  cluster_fill, NULL, NULL);
-			if (err)
-				goto out;
+		إذا (!(ساڄو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) {
+			err = ext2fs_zero_blocks2(fs, ساڄو_ext->e_pblk,
+						  cluster_fill, عدم, عدم);
+			إذا (err)
+				اذهب ٻاهريون;
 		}
 	}
 
-try_merge:
+try_ملايو:
 	/* Merge both extents together, perhaps? */
-	if (left_ext && right_ext) {
+	إذا (کاٻو_ext && ساڄو_ext) {
 		/* Are the two extents mergeable? */
-		if ((left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) !=
-		    (right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT))
-			goto try_left;
+		إذا ((کاٻو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) !=
+		    (ساڄو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT))
+			اذهب try_کاٻو;
 
 		/* User requires init/uninit but extent is uninit/init. */
-		if (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
-		     (left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
+		إذا (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
+		     (کاٻو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
 		    ((flags & EXT2_FALLOCATE_FORCE_UNINIT) &&
-		     !(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
-			goto try_left;
+		     !(کاٻو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
+			اذهب try_کاٻو;
 
 		/*
 		 * Skip initialized extent unless user wants to zero blocks
 		 * or requires init extent.
 		 */
-		if (!(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
-		    (!(flags & EXT2_FALLOCATE_ZERO_BLOCKS) ||
+		إذا (!(کاٻو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		    (!(flags & EXT2_FALLOCATE_ZERO_بلاڪون) ||
 		     !(flags & EXT2_FALLOCATE_FORCE_INIT)))
-			goto try_left;
+			اذهب try_کاٻو;
 
 		/* Will it even fit? */
-		x = left_ext->e_len + range_len + right_ext->e_len;
-		if (x > (left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT ?
+		x = کاٻو_ext->e_len + range_len + ساڄو_ext->e_len;
+		إذا (x > (کاٻو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT ?
 				max_uninit_len : max_init_len))
-			goto try_left;
+			اذهب try_کاٻو;
 
 		/* Would they even be physically contiguous if merged? */
-		if (left_ext->e_pblk + left_ext->e_len + range_len !=
-				right_ext->e_pblk)
-			goto try_left;
+		إذا (کاٻو_ext->e_pblk + کاٻو_ext->e_len + range_len !=
+				ساڄو_ext->e_pblk)
+			اذهب try_کاٻو;
 
-		err = ext2fs_extent_goto(handle, left_ext->e_lblk);
-		if (err)
-			goto try_left;
+		err = ext2fs_extent_goto(handle, کاٻو_ext->e_lblk);
+		إذا (err)
+			اذهب try_کاٻو;
 
 		/* Allocate blocks */
-		y = left_ext->e_pblk + left_ext->e_len;
+		y = کاٻو_ext->e_pblk + کاٻو_ext->e_len;
 		err = ext2fs_new_range(fs, EXT2_NEWRANGE_FIXED_GOAL |
-				       EXT2_NEWRANGE_MIN_LENGTH, y,
-				       right_ext->e_pblk - y + 1, NULL,
+				       EXT2_NEWRANGE_MIN_ڊيگهائي, y,
+				       ساڄو_ext->e_pblk - y + 1, عدم,
 				       &pblk, &plen);
-		if (err)
-			goto try_left;
-		if (pblk + plen != right_ext->e_pblk)
-			goto try_left;
+		إذا (err)
+			اذهب try_کاٻو;
+		إذا (pblk + plen != ساڄو_ext->e_pblk)
+			اذهب try_کاٻو;
 		err = claim_range(fs, inode, pblk, plen);
-		if (err)
-			goto out;
+		إذا (err)
+			اذهب ٻاهريون;
 
 		/* Modify extents */
-		left_ext->e_len = x;
-		dbg_print_extent("ext_falloc merge", left_ext);
-		err = ext2fs_extent_replace(handle, 0, left_ext);
-		if (err)
-			goto out;
+		کاٻو_ext->e_len = x;
+		dbg_print_extent("ext_falloc merge", کاٻو_ext);
+		err = ext2fs_extent_replace(handle, 0, کاٻو_ext);
+		إذا (err)
+			اذهب ٻاهريون;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
-		err = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT_LEAF, &newex);
-		if (err)
-			goto out;
+		إذا (err)
+			اذهب ٻاهريون;
+		err = ext2fs_extent_get(handle, EXT2_EXTENT_ايندڙ_پن, &newex);
+		إذا (err)
+			اذهب ٻاهريون;
 		err = ext2fs_extent_delete(handle, 0);
-		if (err)
-			goto out;
+		إذا (err)
+			اذهب ٻاهريون;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
-		*right_ext = *left_ext;
+		إذا (err)
+			اذهب ٻاهريون;
+		*ساڄو_ext = *کاٻو_ext;
 
 		/* Zero blocks */
-		if (!(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
-		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
-			err = ext2fs_zero_blocks2(fs, range_start, range_len,
-						  NULL, NULL);
-			if (err)
-				goto out;
+		إذا (!(کاٻو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		    (flags & EXT2_FALLOCATE_ZERO_بلاڪون)) {
+			err = ext2fs_zero_blocks2(fs, range_شروعات, range_len,
+						  عدم, عدم);
+			إذا (err)
+				اذهب ٻاهريون;
 		}
 
-		return 0;
+		أرجع 0;
 	}
 
-try_left:
+try_کاٻو:
 	/* Extend the left extent */
-	if (left_ext) {
+	إذا (کاٻو_ext) {
 		/* How many more blocks can be attached to left_ext? */
-		if (left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-			fillable = max_uninit_len - left_ext->e_len;
-		else if (flags & EXT2_FALLOCATE_ZERO_BLOCKS)
-			fillable = max_init_len - left_ext->e_len;
-		else
+		إذا (کاٻو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+			fillable = max_uninit_len - کاٻو_ext->e_len;
+		وإلا إذا (flags & EXT2_FALLOCATE_ZERO_بلاڪون)
+			fillable = max_init_len - کاٻو_ext->e_len;
+		وإلا
 			fillable = 0;
 
 		/* User requires init/uninit but extent is uninit/init. */
-		if (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
-		     (left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
+		إذا (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
+		     (کاٻو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
 		    ((flags & EXT2_FALLOCATE_FORCE_UNINIT) &&
-		     !(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
-			goto try_right;
+		     !(کاٻو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
+			اذهب try_ساڄو;
 
-		if (fillable > range_len)
+		إذا (fillable > range_len)
 			fillable = range_len;
 
 		/* Don't expand an initialized left_ext beyond EOF */
-		x = left_ext->e_lblk + left_ext->e_len - 1;
-		if (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF)) {
+		x = کاٻو_ext->e_lblk + کاٻو_ext->e_len - 1;
+		إذا (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF)) {
 			dbg_printf("%s: lend=%llu newlend=%llu eofblk=%llu\n",
 				   __func__, x, x + fillable, eof_blk);
-			if (eof_blk >= x && eof_blk <= x + fillable)
+			إذا (eof_blk >= x && eof_blk <= x + fillable)
 				fillable = eof_blk - x;
 		}
 
-		if (fillable == 0)
-			goto try_right;
+		إذا (fillable == 0)
+			اذهب try_ساڄو;
 
 		/* Test if the right edge of the range is already mapped? */
-		if (EXT2FS_CLUSTER_RATIO(fs) > 1) {
-			err = ext2fs_map_cluster_block(fs, ino, inode,
+		إذا (EXT2_FS_CLUSTER_تناسب(fs) > 1) {
+			err = ext2fs_map_cluster_بلاڪ(fs, ino, inode,
 					x + fillable, &pblk);
-			if (err)
-				goto out;
-			if (pblk)
+			إذا (err)
+				اذهب ٻاهريون;
+			إذا (pblk)
 				fillable -= 1 + ((x + fillable)
-						 & EXT2FS_CLUSTER_MASK(fs));
-			if (fillable == 0)
-				goto try_right;
+						 & EXT2_FS_CLUSTER_نقاب(fs));
+			إذا (fillable == 0)
+				اذهب try_ساڄو;
 		}
 
 		/* Allocate range of blocks */
-		x = left_ext->e_pblk + left_ext->e_len;
+		x = کاٻو_ext->e_pblk + کاٻو_ext->e_len;
 		err = ext2fs_new_range(fs, EXT2_NEWRANGE_FIXED_GOAL |
-				EXT2_NEWRANGE_MIN_LENGTH,
-				x, fillable, NULL, &pblk, &plen);
-		if (err)
-			goto try_right;
+				EXT2_NEWRANGE_MIN_ڊيگهائي,
+				x, fillable, عدم, &pblk, &plen);
+		إذا (err)
+			اذهب try_ساڄو;
 		err = claim_range(fs, inode, pblk, plen);
-		if (err)
-			goto out;
+		إذا (err)
+			اذهب ٻاهريون;
 
 		/* Modify left_ext */
-		err = ext2fs_extent_goto(handle, left_ext->e_lblk);
-		if (err)
-			goto out;
-		range_start += plen;
+		err = ext2fs_extent_goto(handle, کاٻو_ext->e_lblk);
+		إذا (err)
+			اذهب ٻاهريون;
+		range_شروعات += plen;
 		range_len -= plen;
-		left_ext->e_len += plen;
-		dbg_print_extent("ext_falloc left+", left_ext);
-		err = ext2fs_extent_replace(handle, 0, left_ext);
-		if (err)
-			goto out;
+		کاٻو_ext->e_len += plen;
+		dbg_print_extent("ext_falloc left+", کاٻو_ext);
+		err = ext2fs_extent_replace(handle, 0, کاٻو_ext);
+		إذا (err)
+			اذهب ٻاهريون;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		إذا (err)
+			اذهب ٻاهريون;
 
 		/* Zero blocks if necessary */
-		if (!(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
-		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
-			err = ext2fs_zero_blocks2(fs, pblk, plen, NULL, NULL);
-			if (err)
-				goto out;
+		إذا (!(کاٻو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		    (flags & EXT2_FALLOCATE_ZERO_بلاڪون)) {
+			err = ext2fs_zero_blocks2(fs, pblk, plen, عدم, عدم);
+			إذا (err)
+				اذهب ٻاهريون;
 		}
 	}
 
-try_right:
+try_ساڄو:
 	/* Extend the right extent */
-	if (right_ext) {
+	إذا (ساڄو_ext) {
 		/* How much can we attach to right_ext? */
-		if (right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-			fillable = max_uninit_len - right_ext->e_len;
-		else if (flags & EXT2_FALLOCATE_ZERO_BLOCKS)
-			fillable = max_init_len - right_ext->e_len;
-		else
+		إذا (ساڄو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+			fillable = max_uninit_len - ساڄو_ext->e_len;
+		وإلا إذا (flags & EXT2_FALLOCATE_ZERO_بلاڪون)
+			fillable = max_init_len - ساڄو_ext->e_len;
+		وإلا
 			fillable = 0;
 
 		/* User requires init/uninit but extent is uninit/init. */
-		if (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
-		     (right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
+		إذا (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
+		     (ساڄو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
 		    ((flags & EXT2_FALLOCATE_FORCE_UNINIT) &&
-		     !(right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
-			goto try_anywhere;
+		     !(ساڄو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
+			اذهب try_anywhere;
 
-		if (fillable > range_len)
+		إذا (fillable > range_len)
 			fillable = range_len;
-		if (fillable == 0)
-			goto try_anywhere;
+		إذا (fillable == 0)
+			اذهب try_anywhere;
 
 		/* Test if the left edge of the range is already mapped? */
-		if (EXT2FS_CLUSTER_RATIO(fs) > 1) {
-			err = ext2fs_map_cluster_block(fs, ino, inode,
-					right_ext->e_lblk - fillable, &pblk);
-			if (err)
-				goto out;
-			if (pblk)
-				fillable -= EXT2FS_CLUSTER_RATIO(fs) -
-						((right_ext->e_lblk - fillable)
-						 & EXT2FS_CLUSTER_MASK(fs));
-			if (fillable == 0)
-				goto try_anywhere;
+		إذا (EXT2_FS_CLUSTER_تناسب(fs) > 1) {
+			err = ext2fs_map_cluster_بلاڪ(fs, ino, inode,
+					ساڄو_ext->e_lblk - fillable, &pblk);
+			إذا (err)
+				اذهب ٻاهريون;
+			إذا (pblk)
+				fillable -= EXT2_FS_CLUSTER_تناسب(fs) -
+						((ساڄو_ext->e_lblk - fillable)
+						 & EXT2_FS_CLUSTER_نقاب(fs));
+			إذا (fillable == 0)
+				اذهب try_anywhere;
 		}
 
 		/*
@@ -456,58 +456,58 @@ try_right:
 		 * unavailable.
 		 */
 		err = ext2fs_new_range(fs, EXT2_NEWRANGE_FIXED_GOAL |
-				EXT2_NEWRANGE_MIN_LENGTH,
-				right_ext->e_pblk - fillable,
-				fillable, NULL, &pblk, &plen);
-		if (err)
-			goto try_anywhere;
+				EXT2_NEWRANGE_MIN_ڊيگهائي,
+				ساڄو_ext->e_pblk - fillable,
+				fillable, عدم, &pblk, &plen);
+		إذا (err)
+			اذهب try_anywhere;
 		err = claim_range(fs, inode,
-			      pblk & ~EXT2FS_CLUSTER_MASK(fs),
-			      plen + (pblk & EXT2FS_CLUSTER_MASK(fs)));
-		if (err)
-			goto out;
+			      pblk & ~EXT2_FS_CLUSTER_نقاب(fs),
+			      plen + (pblk & EXT2_FS_CLUSTER_نقاب(fs)));
+		إذا (err)
+			اذهب ٻاهريون;
 
 		/* Modify right_ext */
-		err = ext2fs_extent_goto(handle, right_ext->e_lblk);
-		if (err)
-			goto out;
+		err = ext2fs_extent_goto(handle, ساڄو_ext->e_lblk);
+		إذا (err)
+			اذهب ٻاهريون;
 		range_len -= plen;
-		right_ext->e_lblk -= plen;
-		right_ext->e_pblk -= plen;
-		right_ext->e_len += plen;
-		dbg_print_extent("ext_falloc right+", right_ext);
-		err = ext2fs_extent_replace(handle, 0, right_ext);
-		if (err)
-			goto out;
+		ساڄو_ext->e_lblk -= plen;
+		ساڄو_ext->e_pblk -= plen;
+		ساڄو_ext->e_len += plen;
+		dbg_print_extent("ext_falloc right+", ساڄو_ext);
+		err = ext2fs_extent_replace(handle, 0, ساڄو_ext);
+		إذا (err)
+			اذهب ٻاهريون;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		إذا (err)
+			اذهب ٻاهريون;
 
 		/* Zero blocks if necessary */
-		if (!(right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
-		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
+		إذا (!(ساڄو_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		    (flags & EXT2_FALLOCATE_ZERO_بلاڪون)) {
 			err = ext2fs_zero_blocks2(fs, pblk,
-					plen + cluster_fill, NULL, NULL);
-			if (err)
-				goto out;
+					plen + cluster_fill, عدم, عدم);
+			إذا (err)
+				اذهب ٻاهريون;
 		}
 	}
 
 try_anywhere:
 	/* Try implied cluster alloc on the left and right ends */
-	if (range_len > 0 && (range_start & EXT2FS_CLUSTER_MASK(fs))) {
-		cluster_fill = EXT2FS_CLUSTER_RATIO(fs) -
-			       (range_start & EXT2FS_CLUSTER_MASK(fs));
-		cluster_fill &= EXT2FS_CLUSTER_MASK(fs);
-		if (cluster_fill > range_len)
+	إذا (range_len > 0 && (range_شروعات & EXT2_FS_CLUSTER_نقاب(fs))) {
+		cluster_fill = EXT2_FS_CLUSTER_تناسب(fs) -
+			       (range_شروعات & EXT2_FS_CLUSTER_نقاب(fs));
+		cluster_fill &= EXT2_FS_CLUSTER_نقاب(fs);
+		إذا (cluster_fill > range_len)
 			cluster_fill = range_len;
-		newex.e_lblk = range_start;
-		err = ext2fs_map_cluster_block(fs, ino, inode, newex.e_lblk,
+		newex.e_lblk = range_شروعات;
+		err = ext2fs_map_cluster_بلاڪ(fs, ino, inode, newex.e_lblk,
 					       &pblk);
-		if (err)
-			goto out;
-		if (pblk == 0)
-			goto try_right_implied;
+		إذا (err)
+			اذهب ٻاهريون;
+		إذا (pblk == 0)
+			اذهب try_ساڄو_implied;
 		newex.e_pblk = pblk;
 		newex.e_len = cluster_fill;
 		newex.e_flags = (flags & EXT2_FALLOCATE_FORCE_INIT ? 0 :
@@ -516,50 +516,50 @@ try_anywhere:
 		ext2fs_extent_goto(handle, newex.e_lblk);
 		err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					&ex);
-		if (err == EXT2_ET_NO_CURRENT_NODE)
+		إذا (err == EXT2_ET_NO_CURRENT_ڳنڍ)
 			ex.e_lblk = 0;
-		else if (err)
-			goto out;
+		وإلا إذا (err)
+			اذهب ٻاهريون;
 
-		if (ex.e_lblk > newex.e_lblk)
+		إذا (ex.e_lblk > newex.e_lblk)
 			op = 0; /* insert before */
-		else
-			op = EXT2_EXTENT_INSERT_AFTER;
+		وإلا
+			op = EXT2_EXTENT_وجهو_AFTER;
 		dbg_printf("%s: inserting %s lblk %llu newex=%llu\n",
 			   __func__, op ? "after" : "before", ex.e_lblk,
 			   newex.e_lblk);
-		err = ext2fs_extent_insert(handle, op, &newex);
-		if (err)
-			goto out;
+		err = ext2fs_extent_وجهو(handle, op, &newex);
+		إذا (err)
+			اذهب ٻاهريون;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		إذا (err)
+			اذهب ٻاهريون;
 
-		if (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
-		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
+		إذا (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		    (flags & EXT2_FALLOCATE_ZERO_بلاڪون)) {
 			err = ext2fs_zero_blocks2(fs, newex.e_pblk,
-						  newex.e_len, NULL, NULL);
-			if (err)
-				goto out;
+						  newex.e_len, عدم, عدم);
+			إذا (err)
+				اذهب ٻاهريون;
 		}
 
-		range_start += cluster_fill;
+		range_شروعات += cluster_fill;
 		range_len -= cluster_fill;
 	}
 
-try_right_implied:
-	y = range_start + range_len;
-	if (range_len > 0 && (y & EXT2FS_CLUSTER_MASK(fs))) {
-		cluster_fill = y & EXT2FS_CLUSTER_MASK(fs);
-		if (cluster_fill > range_len)
+try_ساڄو_implied:
+	y = range_شروعات + range_len;
+	إذا (range_len > 0 && (y & EXT2_FS_CLUSTER_نقاب(fs))) {
+		cluster_fill = y & EXT2_FS_CLUSTER_نقاب(fs);
+		إذا (cluster_fill > range_len)
 			cluster_fill = range_len;
-		newex.e_lblk = y & ~EXT2FS_CLUSTER_MASK(fs);
-		err = ext2fs_map_cluster_block(fs, ino, inode, newex.e_lblk,
+		newex.e_lblk = y & ~EXT2_FS_CLUSTER_نقاب(fs);
+		err = ext2fs_map_cluster_بلاڪ(fs, ino, inode, newex.e_lblk,
 					       &pblk);
-		if (err)
-			goto out;
-		if (pblk == 0)
-			goto no_implied;
+		إذا (err)
+			اذهب ٻاهريون;
+		إذا (pblk == 0)
+			اذهب no_implied;
 		newex.e_pblk = pblk;
 		newex.e_len = cluster_fill;
 		newex.e_flags = (flags & EXT2_FALLOCATE_FORCE_INIT ? 0 :
@@ -568,61 +568,61 @@ try_right_implied:
 		ext2fs_extent_goto(handle, newex.e_lblk);
 		err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					&ex);
-		if (err == EXT2_ET_NO_CURRENT_NODE)
+		إذا (err == EXT2_ET_NO_CURRENT_ڳنڍ)
 			ex.e_lblk = 0;
-		else if (err)
-			goto out;
+		وإلا إذا (err)
+			اذهب ٻاهريون;
 
-		if (ex.e_lblk > newex.e_lblk)
+		إذا (ex.e_lblk > newex.e_lblk)
 			op = 0; /* insert before */
-		else
-			op = EXT2_EXTENT_INSERT_AFTER;
+		وإلا
+			op = EXT2_EXTENT_وجهو_AFTER;
 		dbg_printf("%s: inserting %s lblk %llu newex=%llu\n",
 			   __func__, op ? "after" : "before", ex.e_lblk,
 			   newex.e_lblk);
-		err = ext2fs_extent_insert(handle, op, &newex);
-		if (err)
-			goto out;
+		err = ext2fs_extent_وجهو(handle, op, &newex);
+		إذا (err)
+			اذهب ٻاهريون;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		إذا (err)
+			اذهب ٻاهريون;
 
-		if (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
-		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
+		إذا (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		    (flags & EXT2_FALLOCATE_ZERO_بلاڪون)) {
 			err = ext2fs_zero_blocks2(fs, newex.e_pblk,
-						  newex.e_len, NULL, NULL);
-			if (err)
-				goto out;
+						  newex.e_len, عدم, عدم);
+			إذا (err)
+				اذهب ٻاهريون;
 		}
 
 		range_len -= cluster_fill;
 	}
 
 no_implied:
-	if (range_len == 0)
-		return 0;
+	إذا (range_len == 0)
+		أرجع 0;
 
-	newex.e_lblk = range_start;
-	if (flags & EXT2_FALLOCATE_FORCE_INIT) {
+	newex.e_lblk = range_شروعات;
+	إذا (flags & EXT2_FALLOCATE_FORCE_INIT) {
 		max_extent_len = max_init_len;
 		newex.e_flags = 0;
-	} else {
+	} وإلا {
 		max_extent_len = max_uninit_len;
 		newex.e_flags = EXT2_EXTENT_FLAGS_UNINIT;
 	}
 	pblk = alloc_goal;
 	y = range_len;
-	for (x = 0; x < y;) {
-		cluster_fill = newex.e_lblk & EXT2FS_CLUSTER_MASK(fs);
+	لكل (x = 0; x < y;) {
+		cluster_fill = newex.e_lblk & EXT2_FS_CLUSTER_نقاب(fs);
 		fillable = min(range_len + cluster_fill, max_extent_len);
-		err = ext2fs_new_range(fs, 0, pblk & ~EXT2FS_CLUSTER_MASK(fs),
+		err = ext2fs_new_range(fs, 0, pblk & ~EXT2_FS_CLUSTER_نقاب(fs),
 				       fillable,
-				       NULL, &pblk, &plen);
-		if (err)
-			goto out;
+				       عدم, &pblk, &plen);
+		إذا (err)
+			اذهب ٻاهريون;
 		err = claim_range(fs, inode, pblk, plen);
-		if (err)
-			goto out;
+		إذا (err)
+			اذهب ٻاهريون;
 
 		/* Create extent */
 		newex.e_pblk = pblk + cluster_fill;
@@ -631,30 +631,30 @@ no_implied:
 		ext2fs_extent_goto(handle, newex.e_lblk);
 		err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					&ex);
-		if (err == EXT2_ET_NO_CURRENT_NODE)
+		إذا (err == EXT2_ET_NO_CURRENT_ڳنڍ)
 			ex.e_lblk = 0;
-		else if (err)
-			goto out;
+		وإلا إذا (err)
+			اذهب ٻاهريون;
 
-		if (ex.e_lblk > newex.e_lblk)
+		إذا (ex.e_lblk > newex.e_lblk)
 			op = 0; /* insert before */
-		else
-			op = EXT2_EXTENT_INSERT_AFTER;
+		وإلا
+			op = EXT2_EXTENT_وجهو_AFTER;
 		dbg_printf("%s: inserting %s lblk %llu newex=%llu\n",
 			   __func__, op ? "after" : "before", ex.e_lblk,
 			   newex.e_lblk);
-		err = ext2fs_extent_insert(handle, op, &newex);
-		if (err)
-			goto out;
+		err = ext2fs_extent_وجهو(handle, op, &newex);
+		إذا (err)
+			اذهب ٻاهريون;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		إذا (err)
+			اذهب ٻاهريون;
 
-		if (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
-		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
-			err = ext2fs_zero_blocks2(fs, pblk, plen, NULL, NULL);
-			if (err)
-				goto out;
+		إذا (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		    (flags & EXT2_FALLOCATE_ZERO_بلاڪون)) {
+			err = ext2fs_zero_blocks2(fs, pblk, plen, عدم, عدم);
+			إذا (err)
+				اذهب ٻاهريون;
 		}
 
 		/* Update variables at end of loop */
@@ -662,29 +662,29 @@ no_implied:
 		range_len -= plen - cluster_fill;
 		newex.e_lblk += plen - cluster_fill;
 		pblk += plen - cluster_fill;
-		if (pblk >= ext2fs_blocks_count(fs->super))
-			pblk = fs->super->s_first_data_block;
+		إذا (pblk >= ext2fs_بلاڪون_ڳڻپ(fs->super))
+			pblk = fs->super->s_پهريون_معلومات_بلاڪ;
 	}
 
-out:
-	return err;
+ٻاهريون:
+	أرجع err;
 }
 
-static errcode_t extent_fallocate(ext2_filsys fs, int flags, ext2_ino_t ino,
-				      struct ext2_inode *inode, blk64_t goal,
-				      blk64_t start, blk64_t len)
+ساكن errcode_t extent_fallocate(ext2_filsys fs, صحيح flags, ext2_ino_t ino,
+				      بنية ext2_inode *inode, blk64_t goal,
+				      blk64_t شروعات, blk64_t len)
 {
 	ext2_extent_handle_t	handle;
-	struct ext2fs_extent	left_extent, right_extent;
-	struct ext2fs_extent	*left_adjacent, *right_adjacent;
+	بنية ext2fs_extent	کاٻو_extent, ساڄو_extent;
+	بنية ext2fs_extent	*کاٻو_adjacent, *ساڄو_adjacent;
 	errcode_t		err;
-	blk64_t			range_start, range_end = 0, end, next;
-	blk64_t			count, goal_distance;
+	blk64_t			range_شروعات, range_پڇاڙي = 0, پڇاڙي, ايندڙ;
+	blk64_t			ڳڻپ, goal_مفاصلو;
 
-	end = start + len - 1;
+	پڇاڙي = شروعات + len - 1;
 	err = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (err)
-		return err;
+	إذا (err)
+		أرجع err;
 
 	/*
 	 * Find the extent closest to the start of the alloc range.  We don't
@@ -694,100 +694,100 @@ static errcode_t extent_fallocate(ext2_filsys fs, int flags, ext2_ino_t ino,
 	 * if there was a real error reading the extent tree.  In that case,
 	 * _get() will error out.
 	 */
-start_again:
-	ext2fs_extent_goto(handle, start);
-	err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &left_extent);
-	if (err == EXT2_ET_NO_CURRENT_NODE) {
-		blk64_t max_blocks = ext2fs_blocks_count(fs->super);
+شروعات_again:
+	ext2fs_extent_goto(handle, شروعات);
+	err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &کاٻو_extent);
+	إذا (err == EXT2_ET_NO_CURRENT_ڳنڍ) {
+		blk64_t max_بلاڪون = ext2fs_بلاڪون_ڳڻپ(fs->super);
 
-		if (goal == ~0ULL)
-			goal = ext2fs_find_inode_goal(fs, ino, inode, start);
-		err = ext2fs_find_first_zero_block_bitmap2(fs->block_map,
-						goal, max_blocks - 1, &goal);
-		goal += start;
-		err = ext_falloc_helper(fs, flags, ino, inode, handle, NULL,
-					NULL, start, len, goal);
-		goto errout;
-	} else if (err)
-		goto errout;
+		إذا (goal == ~0ULL)
+			goal = ext2fs_ڳوليو_inode_goal(fs, ino, inode, شروعات);
+		err = ext2fs_ڳوليو_پهريون_zero_بلاڪ_bitmap2(fs->بلاڪ_map,
+						goal, max_بلاڪون - 1, &goal);
+		goal += شروعات;
+		err = ext_falloc_helper(fs, flags, ino, inode, handle, عدم,
+					عدم, شروعات, len, goal);
+		اذهب errout;
+	} وإلا إذا (err)
+		اذهب errout;
 
-	dbg_print_extent("ext_falloc initial", &left_extent);
-	next = left_extent.e_lblk + left_extent.e_len;
-	if (left_extent.e_lblk > start) {
+	dbg_print_extent("ext_falloc initial", &کاٻو_extent);
+	ايندڙ = کاٻو_extent.e_lblk + کاٻو_extent.e_len;
+	إذا (کاٻو_extent.e_lblk > شروعات) {
 		/* The nearest extent we found was beyond start??? */
-		goal = left_extent.e_pblk - (left_extent.e_lblk - start);
-		err = ext_falloc_helper(fs, flags, ino, inode, handle, NULL,
-					&left_extent, start,
-					min(len, left_extent.e_lblk - start),
+		goal = کاٻو_extent.e_pblk - (کاٻو_extent.e_lblk - شروعات);
+		err = ext_falloc_helper(fs, flags, ino, inode, handle, عدم,
+					&کاٻو_extent, شروعات,
+					min(len, کاٻو_extent.e_lblk - شروعات),
 					goal);
-		if (err)
-			goto errout;
+		إذا (err)
+			اذهب errout;
 
-		goto start_again;
-	} else if (next >= start) {
-		range_start = next;
-		left_adjacent = &left_extent;
-	} else {
-		range_start = start;
-		left_adjacent = NULL;
+		اذهب شروعات_again;
+	} وإلا إذا (ايندڙ >= شروعات) {
+		range_شروعات = ايندڙ;
+		کاٻو_adjacent = &کاٻو_extent;
+	} وإلا {
+		range_شروعات = شروعات;
+		کاٻو_adjacent = عدم;
 	}
-	goal = left_extent.e_pblk + (range_start - left_extent.e_lblk);
+	goal = کاٻو_extent.e_pblk + (range_شروعات - کاٻو_extent.e_lblk);
 
-	do {
-		err = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT_LEAF,
-					   &right_extent);
+	افعل {
+		err = ext2fs_extent_get(handle, EXT2_EXTENT_ايندڙ_پن,
+					   &ساڄو_extent);
 		dbg_printf("%s: ino=%d get next =%d\n", __func__, ino,
-			   (int)err);
-		dbg_print_extent("ext_falloc next", &right_extent);
+			   (صحيح)err);
+		dbg_print_extent("ext_falloc next", &ساڄو_extent);
 		/* Stop if we've seen this extent before */
-		if (!err && right_extent.e_lblk <= left_extent.e_lblk)
-			err = EXT2_ET_EXTENT_NO_NEXT;
+		إذا (!err && ساڄو_extent.e_lblk <= کاٻو_extent.e_lblk)
+			err = EXT2_ET_EXTENT_NO_ايندڙ;
 
-		if (err && err != EXT2_ET_EXTENT_NO_NEXT)
-			goto errout;
-		if (err == EXT2_ET_EXTENT_NO_NEXT ||
-		    right_extent.e_lblk > end + 1) {
-			range_end = end;
-			right_adjacent = NULL;
-		} else {
+		إذا (err && err != EXT2_ET_EXTENT_NO_ايندڙ)
+			اذهب errout;
+		إذا (err == EXT2_ET_EXTENT_NO_ايندڙ ||
+		    ساڄو_extent.e_lblk > پڇاڙي + 1) {
+			range_پڇاڙي = پڇاڙي;
+			ساڄو_adjacent = عدم;
+		} وإلا {
 			/* Handle right_extent.e_lblk <= end */
-			range_end = right_extent.e_lblk - 1;
-			right_adjacent = &right_extent;
+			range_پڇاڙي = ساڄو_extent.e_lblk - 1;
+			ساڄو_adjacent = &ساڄو_extent;
 		}
-		goal_distance = range_start - next;
-		if (err != EXT2_ET_EXTENT_NO_NEXT &&
-		    goal_distance > (range_end - right_extent.e_lblk))
-			goal = right_extent.e_pblk -
-					(right_extent.e_lblk - range_start);
+		goal_مفاصلو = range_شروعات - ايندڙ;
+		إذا (err != EXT2_ET_EXTENT_NO_ايندڙ &&
+		    goal_مفاصلو > (range_پڇاڙي - ساڄو_extent.e_lblk))
+			goal = ساڄو_extent.e_pblk -
+					(ساڄو_extent.e_lblk - range_شروعات);
 
 		dbg_printf("%s: ino=%d rstart=%llu rend=%llu\n", __func__, ino,
-			   range_start, range_end);
+			   range_شروعات, range_پڇاڙي);
 		err = 0;
-		if (range_start <= range_end) {
-			count = range_end - range_start + 1;
+		إذا (range_شروعات <= range_پڇاڙي) {
+			ڳڻپ = range_پڇاڙي - range_شروعات + 1;
 			err = ext_falloc_helper(fs, flags, ino, inode, handle,
-						left_adjacent, right_adjacent,
-						range_start, count, goal);
-			if (err)
-				goto errout;
+						کاٻو_adjacent, ساڄو_adjacent,
+						range_شروعات, ڳڻپ, goal);
+			إذا (err)
+				اذهب errout;
 		}
 
-		if (range_end == end)
-			break;
+		إذا (range_پڇاڙي == پڇاڙي)
+			اكسر;
 
-		err = ext2fs_extent_goto(handle, right_extent.e_lblk);
-		if (err)
-			goto errout;
-		next = right_extent.e_lblk + right_extent.e_len;
-		left_extent = right_extent;
-		left_adjacent = &left_extent;
-		range_start = next;
-		goal = left_extent.e_pblk + (range_start - left_extent.e_lblk);
-	} while (range_end < end);
+		err = ext2fs_extent_goto(handle, ساڄو_extent.e_lblk);
+		إذا (err)
+			اذهب errout;
+		ايندڙ = ساڄو_extent.e_lblk + ساڄو_extent.e_len;
+		کاٻو_extent = ساڄو_extent;
+		کاٻو_adjacent = &کاٻو_extent;
+		range_شروعات = ايندڙ;
+		goal = کاٻو_extent.e_pblk + (range_شروعات - کاٻو_extent.e_lblk);
+	} طالما (range_پڇاڙي < پڇاڙي);
 
 errout:
 	ext2fs_extent_free(handle);
-	return err;
+	أرجع err;
 }
 
 /*
@@ -806,74 +806,74 @@ errout:
  * If neither FORCE_INIT nor FORCE_UNINIT are specified, this function will
  * try to expand any extents it finds, zeroing blocks as necessary.
  */
-errcode_t ext2fs_fallocate(ext2_filsys fs, int flags, ext2_ino_t ino,
-			   struct ext2_inode *inode, blk64_t goal,
-			   blk64_t start, blk64_t len)
+errcode_t ext2fs_fallocate(ext2_filsys fs, صحيح flags, ext2_ino_t ino,
+			   بنية ext2_inode *inode, blk64_t goal,
+			   blk64_t شروعات, blk64_t len)
 {
-	struct ext2_inode	inode_buf;
-	blk64_t			blk, x, zero_blk, last = 0;
-	int			zero_len = 0;
+	بنية ext2_inode	inode_buf;
+	blk64_t			blk, x, zero_blk, آخري = 0;
+	صحيح			zero_len = 0;
 	errcode_t		err;
 
-	if (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
+	إذا (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
 	    (flags & EXT2_FALLOCATE_FORCE_UNINIT)) ||
 	   (flags & ~EXT2_FALLOCATE_ALL_FLAGS))
-		return EXT2_ET_INVALID_ARGUMENT;
+		أرجع EXT2_ET_INVALID_دليل;
 
-	if (len > ext2fs_blocks_count(fs->super))
-		return EXT2_ET_BLOCK_ALLOC_FAIL;
-	else if (len == 0)
-		return 0;
+	إذا (len > ext2fs_بلاڪون_ڳڻپ(fs->super))
+		أرجع EXT2_ET_بلاڪ_ALLOC_FAIL;
+	وإلا إذا (len == 0)
+		أرجع 0;
 
 	/* Read inode structure if necessary */
-	if (!inode) {
+	إذا (!inode) {
 		err = ext2fs_read_inode(fs, ino, &inode_buf);
-		if (err)
-			return err;
+		إذا (err)
+			أرجع err;
 		inode = &inode_buf;
 	}
 	dbg_printf("%s: ino=%d start=%llu len=%llu goal=%llu\n", __func__, ino,
-		   start, len, goal);
+		   شروعات, len, goal);
 
-	if (inode->i_flags & EXT4_EXTENTS_FL) {
-		err = extent_fallocate(fs, flags, ino, inode, goal, start, len);
-		goto out;
+	إذا (inode->i_flags & EXT4_EXTENTS_FL) {
+		err = extent_fallocate(fs, flags, ino, inode, goal, شروعات, len);
+		اذهب ٻاهريون;
 	}
 
 	/* XXX: Allocate a bunch of blocks the slow way */
-	for (blk = start; blk < start + len; blk++) {
-		err = ext2fs_bmap2(fs, ino, inode, NULL, 0, blk, 0, &x);
-		if (err)
-			return err;
-		if (x)
-			continue;
+	لكل (blk = شروعات; blk < شروعات + len; blk++) {
+		err = ext2fs_bmap2(fs, ino, inode, عدم, 0, blk, 0, &x);
+		إذا (err)
+			أرجع err;
+		إذا (x)
+			استمر;
 
-		err = ext2fs_bmap2(fs, ino, inode, NULL, BMAP_ALLOC,
+		err = ext2fs_bmap2(fs, ino, inode, عدم, BMAP_ALLOC,
 				   blk, 0, &x);
-		if (err)
-			goto errout;
-		if ((zero_len && (x != last+1)) ||
+		إذا (err)
+			اذهب errout;
+		إذا ((zero_len && (x != آخري+1)) ||
 		    (zero_len >= 65536)) {
 			err = ext2fs_zero_blocks2(fs, zero_blk, zero_len,
-						  NULL, NULL);
+						  عدم, عدم);
 			zero_len = 0;
-			if (err)
-				goto errout;
+			إذا (err)
+				اذهب errout;
 		}
-		if (zero_len == 0) {
+		إذا (zero_len == 0) {
 			zero_blk = x;
 			zero_len = 1;
-		} else {
+		} وإلا {
 			zero_len++;
 		}
-		last = x;
+		آخري = x;
 	}
 
-out:
-	if (inode == &inode_buf)
+ٻاهريون:
+	إذا (inode == &inode_buf)
 		ext2fs_write_inode(fs, ino, inode);
 errout:
-	if (zero_len)
-		ext2fs_zero_blocks2(fs, zero_blk, zero_len, NULL, NULL);
-	return err;
+	إذا (zero_len)
+		ext2fs_zero_blocks2(fs, zero_blk, zero_len, عدم, عدم);
+	أرجع err;
 }

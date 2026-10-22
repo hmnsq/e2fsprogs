@@ -1,109 +1,109 @@
-#include "hashmap.h"
-#include <string.h>
+#ضمن "hashmap.h"
+#ضمن <string.h>
 
-struct ext2fs_hashmap {
-	uint32_t size;
-	uint32_t(*hash)(const void *key, size_t len);
-	void(*free)(void*);
-	struct ext2fs_hashmap_entry *first;
-	struct ext2fs_hashmap_entry *last;
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-#endif
-	struct ext2fs_hashmap_entry *entries[0];
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic pop
-#endif
+بنية ext2fs_hashmap {
+	uint32_t سائيز;
+	uint32_t(*hash)(ثابت فراغ *ڪنجي, size_t len);
+	فراغ(*حرر)(فراغ*);
+	بنية ext2fs_hashmap_داخلا *پهريون;
+	بنية ext2fs_hashmap_داخلا *آخري;
+#إذا __GNUC_PREREQ (4, 8)
+#هدايت GCC diagnostic ڌڪو
+#هدايت GCC diagnostic ignored "-Wpedantic"
+#جيڪڏهن_پورو
+	بنية ext2fs_hashmap_داخلا *entries[0];
+#إذا __GNUC_PREREQ (4, 8)
+#هدايت GCC diagnostic ڪڍو
+#جيڪڏهن_پورو
 };
 
-uint32_t ext2fs_djb2_hash(const void *str, size_t size)
+uint32_t ext2fs_djb2_hash(ثابت فراغ *str, size_t سائيز)
 {
-	int c;
-	const char *s = str;
+	صحيح c;
+	ثابت حرف *s = str;
 	uint32_t hash = 5381;
 
-	while (size-- > 0) {
+	طالما (سائيز-- > 0) {
 		c = *s++;
 		hash = ((hash << 5) + hash) + c;
 	}
-	return hash;
+	أرجع hash;
 }
 
-struct ext2fs_hashmap *ext2fs_hashmap_create(
-				uint32_t(*hash_fct)(const void*, size_t),
-				void(*free_fct)(void*), size_t size)
+بنية ext2fs_hashmap *ext2fs_hashmap_create(
+				uint32_t(*hash_fct)(ثابت فراغ*, size_t),
+				فراغ(*free_fct)(فراغ*), size_t سائيز)
 {
-	struct ext2fs_hashmap *h = calloc(1, sizeof(struct ext2fs_hashmap) +
-				sizeof(struct ext2fs_hashmap_entry) * size);
-	if (!h)
-		return NULL;
+	بنية ext2fs_hashmap *h = صفر_يادگيري_ڏيو(1, حجم(بنية ext2fs_hashmap) +
+				حجم(بنية ext2fs_hashmap_داخلا) * سائيز);
+	إذا (!h)
+		أرجع عدم;
 
-	h->size = size;
-	h->free = free_fct;
+	h->سائيز = سائيز;
+	h->حرر = free_fct;
 	h->hash = hash_fct;
-	h->first = h->last = NULL;
-	return h;
+	h->پهريون = h->آخري = عدم;
+	أرجع h;
 }
 
-int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
-		       void *data, const void *key, size_t key_len)
+صحيح ext2fs_hashmap_جوڙيو(بنية ext2fs_hashmap *h,
+		       فراغ *معلومات, ثابت فراغ *ڪنجي, size_t ڪنجي_len)
 {
-	uint32_t hash = h->hash(key, key_len) % h->size;
-	struct ext2fs_hashmap_entry *e = malloc(sizeof(*e));
+	uint32_t hash = h->hash(ڪنجي, ڪنجي_len) % h->سائيز;
+	بنية ext2fs_hashmap_داخلا *e = يادگيري_ڏيو(حجم(*e));
 
-	if (!e)
-		return -1;
+	إذا (!e)
+		أرجع -1;
 
-	e->data = data;
-	e->key = key;
-	e->key_len = key_len;
-	e->next = h->entries[hash];
+	e->معلومات = معلومات;
+	e->ڪنجي = ڪنجي;
+	e->ڪنجي_len = ڪنجي_len;
+	e->ايندڙ = h->entries[hash];
 	h->entries[hash] = e;
 
-	e->list_prev = NULL;
-	e->list_next = h->first;
-	if (h->first)
-		h->first->list_prev = e;
-	h->first = e;
-	if (!h->last)
-		h->last = e;
+	e->list_prev = عدم;
+	e->list_ايندڙ = h->پهريون;
+	إذا (h->پهريون)
+		h->پهريون->list_prev = e;
+	h->پهريون = e;
+	إذا (!h->آخري)
+		h->آخري = e;
 
-	return 0;
+	أرجع 0;
 }
 
-void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *key,
-			    size_t key_len)
+فراغ *ext2fs_hashmap_lookup(بنية ext2fs_hashmap *h, ثابت فراغ *ڪنجي,
+			    size_t ڪنجي_len)
 {
-	struct ext2fs_hashmap_entry *iter;
-	uint32_t hash = h->hash(key, key_len) % h->size;
+	بنية ext2fs_hashmap_داخلا *iter;
+	uint32_t hash = h->hash(ڪنجي, ڪنجي_len) % h->سائيز;
 
-	for (iter = h->entries[hash]; iter; iter = iter->next)
-		if (iter->key_len == key_len && !memcmp(iter->key, key, key_len))
-			return iter->data;
-	return NULL;
+	لكل (iter = h->entries[hash]; iter; iter = iter->ايندڙ)
+		إذا (iter->ڪنجي_len == ڪنجي_len && !memcmp(iter->ڪنجي, ڪنجي, ڪنجي_len))
+			أرجع iter->معلومات;
+	أرجع عدم;
 }
 
-void *ext2fs_hashmap_iter_in_order(struct ext2fs_hashmap *h,
-				   struct ext2fs_hashmap_entry **it)
+فراغ *ext2fs_hashmap_iter_اندريون_ترتيب(بنية ext2fs_hashmap *h,
+				   بنية ext2fs_hashmap_داخلا **it)
 {
-	*it = *it ? (*it)->list_next : h->first;
-	return *it ? (*it)->data : NULL;
+	*it = *it ? (*it)->list_ايندڙ : h->پهريون;
+	أرجع *it ? (*it)->معلومات : عدم;
 }
 
-void ext2fs_hashmap_free(struct ext2fs_hashmap *h)
+فراغ ext2fs_hashmap_free(بنية ext2fs_hashmap *h)
 {
 	size_t	i;
 
-	for (i = 0; i < h->size; ++i) {
-		struct ext2fs_hashmap_entry *it = h->entries[i];
-		while (it) {
-			struct ext2fs_hashmap_entry *tmp = it->next;
-			if (h->free)
-				h->free(it->data);
-			free(it);
+	لكل (i = 0; i < h->سائيز; ++i) {
+		بنية ext2fs_hashmap_داخلا *it = h->entries[i];
+		طالما (it) {
+			بنية ext2fs_hashmap_داخلا *tmp = it->ايندڙ;
+			إذا (h->حرر)
+				h->حرر(it->معلومات);
+			حرر(it);
 			it = tmp;
 		}
 	}
-	free(h);
+	حرر(h);
 }

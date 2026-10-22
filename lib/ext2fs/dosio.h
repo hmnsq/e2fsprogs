@@ -11,86 +11,86 @@
  * %End-Header%
  */
 
-#ifndef __diskio_h
-#define __diskio_h
-#ifdef __TURBOC__
-#ifndef __LARGE__
+#جيڪڏهن_وصف_نه_ٿيل __diskio_h
+#وصف_ڪريو __diskio_h
+#جيڪڏهن_وصف_ٿيل __TURBOC__
+#جيڪڏهن_وصف_نه_ٿيل __LARGE__
 # error "ext2fs/DOS library requires LARGE model!"
-#endif
-#endif
+#جيڪڏهن_پورو
+#جيڪڏهن_پورو
 
-#ifdef __TURBOC__
-#include "msdos.h"
-#endif
+#جيڪڏهن_وصف_ٿيل __TURBOC__
+#ضمن "msdos.h"
+#جيڪڏهن_پورو
 
 /*
  * A helper structure used in LBA => CHS conversion
  */
-typedef struct
+تعريفنوع بنية
 {
-  unsigned short       cyl;     /* Cylinder (or track) */
-  unsigned short       head;
-  unsigned short       sector;
-  unsigned short       offset;  /* Offset of byte within the sector */
+  بنانشان ننڍو       cyl;     /* Cylinder (or track) */
+  بنانشان ننڍو       سر;
+  بنانشان ننڍو       sector;
+  بنانشان ننڍو       وٿي;  /* Offset of byte within the sector */
 } CHS;
 
 /*
  * All partition data we need is here
  */
-typedef struct
+تعريفنوع بنية
 {
-  char                 *dev;  /* _Linux_ device name (like "/dev/hda1") */
-  unsigned char        phys;  /* Physical DOS drive number */
-  unsigned long        start; /* LBA address of partition start */
-  unsigned long        len;   /* length of partition in sectors */
-  unsigned char        pno;   /* Partition number (read from *dev) */
+  حرف                 *dev;  /* _Linux_ device name (like "/dev/hda1") */
+  بنانشان حرف        phys;  /* Physical DOS drive number */
+  بنانشان ڊگهو        شروعات; /* LBA address of partition start */
+  بنانشان ڊگهو        len;   /* length of partition in sectors */
+  بنانشان حرف        pno;   /* Partition number (read from *dev) */
 
   /* This partition's drive geometry */
-  unsigned short       cyls;
-  unsigned short       heads;
-  unsigned short       sects;
-} PARTITION;
+  بنانشان ننڍو       cyls;
+  بنانشان ننڍو       heads;
+  بنانشان ننڍو       sects;
+} حصا_ڪريو;
 
 /*
  * PC partition table entry format
  */
-#ifdef __DJGPP__
-#pragma pack(1)
-#endif
-typedef struct
+#جيڪڏهن_وصف_ٿيل __DJGPP__
+#هدايت pack(1)
+#جيڪڏهن_پورو
+تعريفنوع بنية
 {
-  unsigned char        active;
-  unsigned char        start_head;
-  unsigned char        start_sec;
-  unsigned char        start_cyl;
-  unsigned char        type;
-  unsigned char        end_head;
-  unsigned char        end_sec;
-  unsigned char        end_cyl;
-  unsigned long        first_sec_rel;
-  unsigned long        size;
-} PTABLE_ENTRY;
-#ifdef __DJGPP__
-#pragma pack()
-#endif
+  بنانشان حرف        سرگرم;
+  بنانشان حرف        شروعات_سر;
+  بنانشان حرف        شروعات_sec;
+  بنانشان حرف        شروعات_cyl;
+  بنانشان حرف        type;
+  بنانشان حرف        پڇاڙي_سر;
+  بنانشان حرف        پڇاڙي_sec;
+  بنانشان حرف        پڇاڙي_cyl;
+  بنانشان ڊگهو        پهريون_sec_rel;
+  بنانشان ڊگهو        سائيز;
+} PTABLE_داخلا;
+#جيڪڏهن_وصف_ٿيل __DJGPP__
+#هدايت pack()
+#جيڪڏهن_پورو
 
 /*
  * INT 0x13 operation codes
  */
-#define DISK_READ          0x02
-#define DISK_WRITE         0x03
-#define DISK_GET_GEOMETRY  0x08
-#define DISK_READY         0x10
+#وصف_ڪريو DISK_READ          0x02
+#وصف_ڪريو DISK_WRITE         0x03
+#وصف_ڪريو DISK_GET_GEOMETRY  0x08
+#وصف_ڪريو DISK_READY         0x10
 
 /*
  * Errors to put in _dio_error
  */
-#define ERR_BADDEV         0x00000001L
-#define ERR_HARDWARE       0x00000002L
-#define ERR_NOTSUPP        0x00000003L
-#define ERR_NOTEXT2FS      0x00000004L
-#define ERR_EMPTYPART      0x00000005L
-#define ERR_LINUXSWAP      0x00000006L
+#وصف_ڪريو ERR_BADDEV         0x00000001L
+#وصف_ڪريو ERR_HARDWARE       0x00000002L
+#وصف_ڪريو ERR_NOTSUPP        0x00000003L
+#وصف_ڪريو ERR_NOTEXT2FS      0x00000004L
+#وصف_ڪريو ERR_EMPTYPART      0x00000005L
+#وصف_ڪريو ERR_LINUXSWAP      0x00000006L
 
 /*
  * Functions in diskio.c
@@ -99,39 +99,39 @@ typedef struct
 /*
  * Variable contains last module's error
  */
-extern unsigned long        _dio_error;
+خارجي بنانشان ڊگهو        _dio_error;
 
 /*
  * This one contains last hardware error (if _dio_error == ERR_HARDWARE)
  */
-extern unsigned long        _dio_hw_error;
+خارجي بنانشان ڊگهو        _dio_hw_error;
 
 /*
  * Macros to check for disk hardware errors
  */
-#define HW_OK()             ((unsigned char)_dio_hw_error == 0x00)
-#define HW_BAD_CMD()        ((unsigned char)_dio_hw_error == 0x01)
-#define HW_NO_ADDR_MARK()   ((unsigned char)_dio_hw_error == 0x02)
-#define HW_WRITE_PROT()     ((unsigned char)_dio_hw_error == 0x03)
-#define HW_NO_SECTOR()      ((unsigned char)_dio_hw_error == 0x04)
-#define HW_RESET_FAIL()     ((unsigned char)_dio_hw_error == 0x05)
-#define HW_DISK_CHANGED()   ((unsigned char)_dio_hw_error == 0x06)
-#define HW_DRIVE_FAIL()     ((unsigned char)_dio_hw_error == 0x07)
-#define HW_DMA_OVERRUN()    ((unsigned char)_dio_hw_error == 0x08)
-#define HW_DMA_BOUNDARY()   ((unsigned char)_dio_hw_error == 0x09)
-#define HW_BAD_SECTOR()     ((unsigned char)_dio_hw_error == 0x0A)
-#define HW_BAD_TRACK()      ((unsigned char)_dio_hw_error == 0x0B)
-#define HW_UNSUPP_TRACK()   ((unsigned char)_dio_hw_error == 0x0C)
-#define HW_BAD_CRC_ECC()    ((unsigned char)_dio_hw_error == 0x10)
-#define HW_CRC_ECC_CORR()   ((unsigned char)_dio_hw_error == 0x11)
-#define HW_CONTR_FAIL()     ((unsigned char)_dio_hw_error == 0x20)
-#define HW_SEEK_FAIL()      ((unsigned char)_dio_hw_error == 0x40)
-#define HW_ATTACH_FAIL()    ((unsigned char)_dio_hw_error == 0x80)
-#define HW_DRIVE_NREADY()   ((unsigned char)_dio_hw_error == 0xAA)
-#define HW_UNDEF_ERROR()    ((unsigned char)_dio_hw_error == 0xBB)
-#define HW_WRITE_FAULT()    ((unsigned char)_dio_hw_error == 0xCC)
-#define HW_STATUS_ERROR()   ((unsigned char)_dio_hw_error == 0xE0)
-#define HW_SENSE_FAIL()     ((unsigned char)_dio_hw_error == 0xFF)
+#وصف_ڪريو HW_OK()             ((بنانشان حرف)_dio_hw_error == 0x00)
+#وصف_ڪريو HW_BAD_CMD()        ((بنانشان حرف)_dio_hw_error == 0x01)
+#وصف_ڪريو HW_NO_ADDR_MARK()   ((بنانشان حرف)_dio_hw_error == 0x02)
+#وصف_ڪريو HW_WRITE_PROT()     ((بنانشان حرف)_dio_hw_error == 0x03)
+#وصف_ڪريو HW_NO_SECTOR()      ((بنانشان حرف)_dio_hw_error == 0x04)
+#وصف_ڪريو HW_RESET_FAIL()     ((بنانشان حرف)_dio_hw_error == 0x05)
+#وصف_ڪريو HW_DISK_بدليو()   ((بنانشان حرف)_dio_hw_error == 0x06)
+#وصف_ڪريو HW_DRIVE_FAIL()     ((بنانشان حرف)_dio_hw_error == 0x07)
+#وصف_ڪريو HW_DMA_OVERRUN()    ((بنانشان حرف)_dio_hw_error == 0x08)
+#وصف_ڪريو HW_DMA_BOUNDARY()   ((بنانشان حرف)_dio_hw_error == 0x09)
+#وصف_ڪريو HW_BAD_SECTOR()     ((بنانشان حرف)_dio_hw_error == 0x0A)
+#وصف_ڪريو HW_BAD_TRACK()      ((بنانشان حرف)_dio_hw_error == 0x0B)
+#وصف_ڪريو HW_UNSUPP_TRACK()   ((بنانشان حرف)_dio_hw_error == 0x0C)
+#وصف_ڪريو HW_BAD_چڪري_جاچ_ECC()    ((بنانشان حرف)_dio_hw_error == 0x10)
+#وصف_ڪريو HW_چڪري_جاچ_ECC_CORR()   ((بنانشان حرف)_dio_hw_error == 0x11)
+#وصف_ڪريو HW_CONTR_FAIL()     ((بنانشان حرف)_dio_hw_error == 0x20)
+#وصف_ڪريو HW_SEEK_FAIL()      ((بنانشان حرف)_dio_hw_error == 0x40)
+#وصف_ڪريو HW_ATTACH_FAIL()    ((بنانشان حرف)_dio_hw_error == 0x80)
+#وصف_ڪريو HW_DRIVE_NREADY()   ((بنانشان حرف)_dio_hw_error == 0xAA)
+#وصف_ڪريو HW_UNDEF_ERROR()    ((بنانشان حرف)_dio_hw_error == 0xBB)
+#وصف_ڪريو HW_WRITE_FAULT()    ((بنانشان حرف)_dio_hw_error == 0xCC)
+#وصف_ڪريو HW_حالت_ERROR()   ((بنانشان حرف)_dio_hw_error == 0xE0)
+#وصف_ڪريو HW_SENSE_FAIL()     ((بنانشان حرف)_dio_hw_error == 0xFF)
 
 
 /*
@@ -152,6 +152,6 @@ extern unsigned long        _dio_hw_error;
  *
  * Routine returns 0 on success and !=0 otherwise.
  */
-int open_partition(char *dev);
+صحيح open_حصا_ڪريو(حرف *dev);
 
-#endif /* __diskio_h */
+#جيڪڏهن_پورو /* __diskio_h */
