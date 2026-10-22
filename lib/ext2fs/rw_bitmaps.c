@@ -9,674 +9,674 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_PTHREAD_H
-#include <pthread.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SYS_STAT_H
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PTHREAD_H
+#ಅನ್ತರ್ಭಾವ <pthread.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "e2image.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "e2image.h"
 
-#ifdef HAVE_PTHREAD
-typedef pthread_mutex_t mutex_t;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PTHREAD
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ pthread_mutex_t mutex_t;
 
-static void unix_pthread_mutex_lock(mutex_t *mutex)
+ಸ್ಥಿರ ಶೂನ್ಯ unix_pthread_mutex_ಬೀಗ(mutex_t *mutex)
 {
-	if (mutex)
-		pthread_mutex_lock(mutex);
+	ಆದರೆ (mutex)
+		pthread_mutex_ಬೀಗ(mutex);
 }
-static void unix_pthread_mutex_unlock(mutex_t *mutex)
+ಸ್ಥಿರ ಶೂನ್ಯ unix_pthread_mutex_unlock(mutex_t *mutex)
 {
-	if (mutex)
+	ಆದರೆ (mutex)
 		pthread_mutex_unlock(mutex);
 }
-#else
-typedef int mutex_t;
-#define unix_pthread_mutex_lock(mutex_t) do {} while (0)
-#define unix_pthread_mutex_unlock(mutex_t) do {} while (0)
-#endif
+#ಇಲ್ಲದಿದ್ದರೆ
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಪೂರ್ಣಾಂಕ mutex_t;
+#ವ್ಯಾಖ್ಯಾನಿಸು unix_pthread_mutex_ಬೀಗ(mutex_t) ಮಾಡು {} ಆಗ (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು unix_pthread_mutex_unlock(mutex_t) ಮಾಡು {} ಆಗ (0)
+#ಆದರೆ_ಅಂತ್ಯ
 
-static errcode_t write_bitmaps(ext2_filsys fs, int do_inode, int do_block)
+ಸ್ಥಿರ errcode_t write_bitmaps(ext2_filsys fs, ಪೂರ್ಣಾಂಕ do_inode, ಪೂರ್ಣಾಂಕ do_ಖಂಡ)
 {
 	dgrp_t 		i;
-	unsigned int	j;
-	int		block_nbytes, inode_nbytes;
-	unsigned int	nbits;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ	j;
+	ಪೂರ್ಣಾಂಕ		ಖಂಡ_nbytes, inode_nbytes;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ	nbits;
 	errcode_t	retval;
-	char		*block_buf = NULL, *inode_buf = NULL;
-	int		csum_flag;
+	ಅಕ್ಷರ		*ಖಂಡ_buf = ಖಾಲಿ, *inode_buf = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ		csum_flag;
 	blk64_t		blk;
-	blk64_t		blk_itr = EXT2FS_B2C(fs, fs->super->s_first_data_block);
+	blk64_t		blk_itr = EXT2FS_B2C(fs, fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ);
 	ext2_ino_t	ino_itr = 1;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ಆದರೆ (!(fs->flags & EXT2_FLAG_RW))
+		ಹಿಂತಿರುಗಿ EXT2_ET_RO_FILSYS;
 
-	csum_flag = ext2fs_has_group_desc_csum(fs);
+	csum_flag = ext2fs_has_ಗುಂಪು_desc_csum(fs);
 
-	inode_nbytes = block_nbytes = 0;
-	if (do_block) {
-		block_nbytes = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
-		retval = io_channel_alloc_buf(fs->io, 0, &block_buf);
-		if (retval)
-			goto errout;
-		memset(block_buf, 0xff, fs->blocksize);
+	inode_nbytes = ಖಂಡ_nbytes = 0;
+	ಆದರೆ (do_ಖಂಡ) {
+		ಖಂಡ_nbytes = EXT2_CLUSTERS_ಪ್ರತಿ_ಗುಂಪು(fs->super) / 8;
+		retval = io_channel_alloc_buf(fs->io, 0, &ಖಂಡ_buf);
+		ಆದರೆ (retval)
+			ಹೋಗು errout;
+		memset(ಖಂಡ_buf, 0xff, fs->blocksize);
 	}
-	if (do_inode) {
+	ಆದರೆ (do_inode) {
 		inode_nbytes = (size_t)
-			((EXT2_INODES_PER_GROUP(fs->super)+7) / 8);
+			((EXT2_INODES_ಪ್ರತಿ_ಗುಂಪು(fs->super)+7) / 8);
 		retval = io_channel_alloc_buf(fs->io, 0, &inode_buf);
-		if (retval)
-			goto errout;
+		ಆದರೆ (retval)
+			ಹೋಗು errout;
 		memset(inode_buf, 0xff, fs->blocksize);
 	}
 
-	for (i = 0; i < fs->group_desc_count; i++) {
-		if (!do_block)
-			goto skip_block_bitmap;
+	ಗಾಗಿ (i = 0; i < fs->ಗುಂಪು_desc_ಎಣಿಕೆ; i++) {
+		ಆದರೆ (!do_ಖಂಡ)
+			ಹೋಗು skip_ಖಂಡ_bitmap;
 
-		if (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_BLOCK_UNINIT)
+		ಆದರೆ (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_ಖಂಡ_UNINIT)
 		    )
-			goto skip_this_block_bitmap;
+			ಹೋಗು skip_this_ಖಂಡ_bitmap;
 
-		retval = ext2fs_get_block_bitmap_range2(fs->block_map,
-				blk_itr, block_nbytes << 3, block_buf);
-		if (retval)
-			goto errout;
+		retval = ext2fs_get_ಖಂಡ_bitmap_range2(fs->ಖಂಡ_map,
+				blk_itr, ಖಂಡ_nbytes << 3, ಖಂಡ_buf);
+		ಆದರೆ (retval)
+			ಹೋಗು errout;
 
-		if (i == fs->group_desc_count - 1) {
+		ಆದರೆ (i == fs->ಗುಂಪು_desc_ಎಣಿಕೆ - 1) {
 			/* Force bitmap padding for the last group */
-			nbits = EXT2FS_NUM_B2C(fs,
-				((ext2fs_blocks_count(fs->super)
-				  - (__u64) fs->super->s_first_data_block)
-				 % (__u64) EXT2_BLOCKS_PER_GROUP(fs->super)));
-			if (nbits)
-				for (j = nbits; j < fs->blocksize * 8; j++)
-					ext2fs_set_bit(j, block_buf);
+			nbits = EXT2_FS_ಅಂಕೆ_B2_C(fs,
+				((ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super)
+				  - (__u64) fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ)
+				 % (__u64) EXT2_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು(fs->super)));
+			ಆದರೆ (nbits)
+				ಗಾಗಿ (j = nbits; j < fs->blocksize * 8; j++)
+					ext2fs_ಗಣ_ಬಿಟ್(j, ಖಂಡ_buf);
 		}
 
-		retval = ext2fs_block_bitmap_csum_set(fs, i, block_buf,
-						      block_nbytes);
-		if (retval)
-			return retval;
-		ext2fs_group_desc_csum_set(fs, i);
+		retval = ext2fs_ಖಂಡ_bitmap_csum_ಗಣ(fs, i, ಖಂಡ_buf,
+						      ಖಂಡ_nbytes);
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
+		ext2fs_ಗುಂಪು_desc_csum_ಗಣ(fs, i);
 		fs->flags |= EXT2_FLAG_DIRTY;
 
-		blk = ext2fs_block_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super)) {
+		blk = ext2fs_ಖಂಡ_bitmap_loc(fs, i);
+		ಆದರೆ (blk && blk < ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super)) {
 			retval = io_channel_write_blk64(fs->io, blk, 1,
-							block_buf);
-			if (retval) {
-				retval = EXT2_ET_BLOCK_BITMAP_WRITE;
-				goto errout;
+							ಖಂಡ_buf);
+			ಆದರೆ (retval) {
+				retval = EXT2_ET_ಖಂಡ_BITMAP_WRITE;
+				ಹೋಗು errout;
 			}
 		}
-	skip_this_block_bitmap:
-		blk_itr += block_nbytes << 3;
-	skip_block_bitmap:
+	skip_this_ಖಂಡ_bitmap:
+		blk_itr += ಖಂಡ_nbytes << 3;
+	skip_ಖಂಡ_bitmap:
 
-		if (!do_inode)
-			continue;
+		ಆದರೆ (!do_inode)
+			ಮುಂದುವರಿ;
 
-		if (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_INODE_UNINIT)
+		ಆದರೆ (csum_flag && ext2fs_bg_flags_test(fs, i, EXT2_BG_INODE_UNINIT)
 		    )
-			goto skip_this_inode_bitmap;
+			ಹೋಗು skip_this_inode_bitmap;
 
 		retval = ext2fs_get_inode_bitmap_range2(fs->inode_map,
 				ino_itr, inode_nbytes << 3, inode_buf);
-		if (retval)
-			goto errout;
+		ಆದರೆ (retval)
+			ಹೋಗು errout;
 
-		retval = ext2fs_inode_bitmap_csum_set(fs, i, inode_buf,
+		retval = ext2fs_inode_bitmap_csum_ಗಣ(fs, i, inode_buf,
 						      inode_nbytes);
-		if (retval)
-			goto errout;
-		ext2fs_group_desc_csum_set(fs, i);
+		ಆದರೆ (retval)
+			ಹೋಗು errout;
+		ext2fs_ಗುಂಪು_desc_csum_ಗಣ(fs, i);
 		fs->flags |= EXT2_FLAG_DIRTY;
 
 		blk = ext2fs_inode_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super)) {
+		ಆದರೆ (blk && blk < ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super)) {
 			retval = io_channel_write_blk64(fs->io, blk, 1,
 						      inode_buf);
-			if (retval) {
+			ಆದರೆ (retval) {
 				retval = EXT2_ET_INODE_BITMAP_WRITE;
-				goto errout;
+				ಹೋಗು errout;
 			}
 		}
 	skip_this_inode_bitmap:
 		ino_itr += inode_nbytes << 3;
 
 	}
-	if (do_block) {
+	ಆದರೆ (do_ಖಂಡ) {
 		fs->flags &= ~EXT2_FLAG_BB_DIRTY;
-		ext2fs_free_mem(&block_buf);
+		ext2fs_free_mem(&ಖಂಡ_buf);
 	}
-	if (do_inode) {
+	ಆದರೆ (do_inode) {
 		fs->flags &= ~EXT2_FLAG_IB_DIRTY;
 		ext2fs_free_mem(&inode_buf);
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 errout:
-	if (inode_buf)
+	ಆದರೆ (inode_buf)
 		ext2fs_free_mem(&inode_buf);
-	if (block_buf)
-		ext2fs_free_mem(&block_buf);
-	return retval;
+	ಆದರೆ (ಖಂಡ_buf)
+		ext2fs_free_mem(&ಖಂಡ_buf);
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t mark_uninit_bg_group_blocks(ext2_filsys fs)
+ಸ್ಥಿರ errcode_t mark_uninit_bg_ಗುಂಪು_ಖಂಡಗಳು(ext2_filsys fs)
 {
 	dgrp_t			i;
 	blk64_t			blk;
-	ext2fs_block_bitmap	bmap = fs->block_map;
+	ext2fs_ಖಂಡ_bitmap	bmap = fs->ಖಂಡ_map;
 
-	for (i = 0; i < fs->group_desc_count; i++) {
-		if (!ext2fs_bg_flags_test(fs, i, EXT2_BG_BLOCK_UNINIT))
-			continue;
+	ಗಾಗಿ (i = 0; i < fs->ಗುಂಪು_desc_ಎಣಿಕೆ; i++) {
+		ಆದರೆ (!ext2fs_bg_flags_test(fs, i, EXT2_BG_ಖಂಡ_UNINIT))
+			ಮುಂದುವರಿ;
 
 		ext2fs_reserve_super_and_bgd(fs, i, bmap);
 
 		/*
 		 * Mark the blocks used for the inode table
 		 */
-		blk = ext2fs_inode_table_loc(fs, i);
-		if (blk)
-			ext2fs_mark_block_bitmap_range2(bmap, blk,
-						fs->inode_blocks_per_group);
+		blk = ext2fs_inode_ಕೋಷ್ಟಕ_loc(fs, i);
+		ಆದರೆ (blk)
+			ext2fs_mark_ಖಂಡ_bitmap_range2(bmap, blk,
+						fs->inode_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು);
 
 		/*
 		 * Mark block used for the block bitmap
 		 */
-		blk = ext2fs_block_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super))
-			ext2fs_mark_block_bitmap2(bmap, blk);
+		blk = ext2fs_ಖಂಡ_bitmap_loc(fs, i);
+		ಆದರೆ (blk && blk < ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super))
+			ext2fs_mark_ಖಂಡ_bitmap2(bmap, blk);
 
 		/*
 		 * Mark block used for the inode bitmap
 		 */
 		blk = ext2fs_inode_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super))
-			ext2fs_mark_block_bitmap2(bmap, blk);
+		ಆದರೆ (blk && blk < ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super))
+			ext2fs_mark_ಖಂಡ_bitmap2(bmap, blk);
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static int bitmap_tail_verify(unsigned char *bitmap, int first, int last)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ bitmap_ಬಾಲ_verify(ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *bitmap, ಪೂರ್ಣಾಂಕ ಮೊದಲ, ಪೂರ್ಣಾಂಕ ಕೊನೆಯ)
 {
-	int i;
+	ಪೂರ್ಣಾಂಕ i;
 
-	for (i = first; i <= last; i++)
-		if (bitmap[i] != 0xff)
-			return 0;
-	return 1;
+	ಗಾಗಿ (i = ಮೊದಲ; i <= ಕೊನೆಯ; i++)
+		ಆದರೆ (bitmap[i] != 0xff)
+			ಹಿಂತಿರುಗಿ 0;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
-static errcode_t read_bitmaps_range_prepare(ext2_filsys fs, int flags)
+ಸ್ಥಿರ errcode_t read_bitmaps_range_prepare(ext2_filsys fs, ಪೂರ್ಣಾಂಕ flags)
 {
 	errcode_t retval;
-	int block_nbytes = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
-	int inode_nbytes = EXT2_INODES_PER_GROUP(fs->super) / 8;
-	char *buf;
+	ಪೂರ್ಣಾಂಕ ಖಂಡ_nbytes = EXT2_CLUSTERS_ಪ್ರತಿ_ಗುಂಪು(fs->super) / 8;
+	ಪೂರ್ಣಾಂಕ inode_nbytes = EXT2_INODES_ಪ್ರತಿ_ಗುಂಪು(fs->super) / 8;
+	ಅಕ್ಷರ *buf;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if ((block_nbytes > (int) fs->blocksize) ||
-	    (inode_nbytes > (int) fs->blocksize))
-		return EXT2_ET_CORRUPT_SUPERBLOCK;
+	ಆದರೆ ((ಖಂಡ_nbytes > (ಪೂರ್ಣಾಂಕ) fs->blocksize) ||
+	    (inode_nbytes > (ಪೂರ್ಣಾಂಕ) fs->blocksize))
+		ಹಿಂತಿರುಗಿ EXT2_ET_CORRUPT_SUPERBLOCK;
 
 	fs->write_bitmaps = ext2fs_write_bitmaps;
 
-	retval = ext2fs_get_mem(strlen(fs->device_name) + 80, &buf);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(fs->device_name) + 80, &buf);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		if (fs->block_map)
-			ext2fs_free_block_bitmap(fs->block_map);
+	ಆದರೆ (flags & EXT2_FS_BITMAPS_ಖಂಡ) {
+		ಆದರೆ (fs->ಖಂಡ_map)
+			ext2fs_free_ಖಂಡ_bitmap(fs->ಖಂಡ_map);
 		strcpy(buf, "block bitmap for ");
 		strcat(buf, fs->device_name);
-		retval = ext2fs_allocate_block_bitmap(fs, buf, &fs->block_map);
-		if (retval)
-			goto cleanup;
+		retval = ext2fs_allocate_ಖಂಡ_bitmap(fs, buf, &fs->ಖಂಡ_map);
+		ಆದರೆ (retval)
+			ಹೋಗು cleanup;
 	}
 
-	if (flags & EXT2FS_BITMAPS_INODE) {
-		if (fs->inode_map)
+	ಆದರೆ (flags & EXT2FS_BITMAPS_INODE) {
+		ಆದರೆ (fs->inode_map)
 			ext2fs_free_inode_bitmap(fs->inode_map);
 		strcpy(buf, "inode bitmap for ");
 		strcat(buf, fs->device_name);
 		retval = ext2fs_allocate_inode_bitmap(fs, buf, &fs->inode_map);
-		if (retval)
-			goto cleanup;
+		ಆದರೆ (retval)
+			ಹೋಗು cleanup;
 	}
 	ext2fs_free_mem(&buf);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 
 cleanup:
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		ext2fs_free_block_bitmap(fs->block_map);
-		fs->block_map = 0;
+	ಆದರೆ (flags & EXT2_FS_BITMAPS_ಖಂಡ) {
+		ext2fs_free_ಖಂಡ_bitmap(fs->ಖಂಡ_map);
+		fs->ಖಂಡ_map = 0;
 	}
-	if (flags & EXT2FS_BITMAPS_INODE) {
+	ಆದರೆ (flags & EXT2FS_BITMAPS_INODE) {
 		ext2fs_free_inode_bitmap(fs->inode_map);
 		fs->inode_map = 0;
 	}
 	ext2fs_free_mem(&buf);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t read_bitmaps_range_start(ext2_filsys fs, int flags,
-					  dgrp_t start, dgrp_t end,
+ಸ್ಥಿರ errcode_t read_bitmaps_range_ಆರಂಭ(ext2_filsys fs, ಪೂರ್ಣಾಂಕ flags,
+					  dgrp_t ಆರಂಭ, dgrp_t ಕೊನೆ,
 					  mutex_t *mutex,
-					  int *tail_flags)
+					  ಪೂರ್ಣಾಂಕ *ಬಾಲ_flags)
 {
 	dgrp_t i;
-	char *block_bitmap = 0, *inode_bitmap = 0;
+	ಅಕ್ಷರ *ಖಂಡ_bitmap = 0, *inode_bitmap = 0;
 	errcode_t retval = 0;
-	int block_nbytes = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
-	int inode_nbytes = EXT2_INODES_PER_GROUP(fs->super) / 8;
-	int csum_flag;
-	unsigned int	cnt;
+	ಪೂರ್ಣಾಂಕ ಖಂಡ_nbytes = EXT2_CLUSTERS_ಪ್ರತಿ_ಗುಂಪು(fs->super) / 8;
+	ಪೂರ್ಣಾಂಕ inode_nbytes = EXT2_INODES_ಪ್ರತಿ_ಗುಂಪು(fs->super) / 8;
+	ಪೂರ್ಣಾಂಕ csum_flag;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ	cnt;
 	blk64_t	blk;
-	blk64_t	blk_itr = EXT2FS_B2C(fs, fs->super->s_first_data_block);
+	blk64_t	blk_itr = EXT2FS_B2C(fs, fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ);
 	blk64_t   blk_cnt;
 	ext2_ino_t ino_itr = 1;
 	ext2_ino_t ino_cnt;
 
-	csum_flag = ext2fs_has_group_desc_csum(fs);
+	csum_flag = ext2fs_has_ಗುಂಪು_desc_csum(fs);
 
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		retval = io_channel_alloc_buf(fs->io, 0, &block_bitmap);
-		if (retval)
-			goto cleanup;
-	} else {
-		block_nbytes = 0;
+	ಆದರೆ (flags & EXT2_FS_BITMAPS_ಖಂಡ) {
+		retval = io_channel_alloc_buf(fs->io, 0, &ಖಂಡ_bitmap);
+		ಆದರೆ (retval)
+			ಹೋಗು cleanup;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಖಂಡ_nbytes = 0;
 	}
 
-	if (flags & EXT2FS_BITMAPS_INODE) {
+	ಆದರೆ (flags & EXT2FS_BITMAPS_INODE) {
 		retval = io_channel_alloc_buf(fs->io, 0, &inode_bitmap);
-		if (retval)
-			goto cleanup;
-	} else {
+		ಆದರೆ (retval)
+			ಹೋಗು cleanup;
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		inode_nbytes = 0;
 	}
 
 	/* io should be null */
-	if (fs->flags & EXT2_FLAG_IMAGE_FILE) {
-		blk = (ext2fs_le32_to_cpu(fs->image_header->offset_inodemap) / fs->blocksize);
-		ino_cnt = fs->super->s_inodes_count;
-		while (inode_bitmap && ino_cnt > 0) {
+	ಆದರೆ (fs->flags & EXT2_FLAG_IMAGE_FILE) {
+		blk = (ext2fs_le32_ಗಮ್ಯ_cpu(fs->image_ಶೀರ್ಷಿಕೆ->ಸ್ಥಾನಾಂತರ_inodemap) / fs->blocksize);
+		ino_cnt = fs->super->s_inodes_ಎಣಿಕೆ;
+		ಆಗ (inode_bitmap && ino_cnt > 0) {
 			retval = io_channel_read_blk64(fs->image_io, blk++,
 						     1, inode_bitmap);
-			if (retval)
-				goto cleanup;
+			ಆದರೆ (retval)
+				ಹೋಗು cleanup;
 			cnt = fs->blocksize << 3;
-			if (cnt > ino_cnt)
+			ಆದರೆ (cnt > ino_cnt)
 				cnt = ino_cnt;
-			retval = ext2fs_set_inode_bitmap_range2(fs->inode_map,
+			retval = ext2fs_ಗಣ_inode_bitmap_range2(fs->inode_map,
 					       ino_itr, cnt, inode_bitmap);
-			if (retval)
-				goto cleanup;
+			ಆದರೆ (retval)
+				ಹೋಗು cleanup;
 			ino_itr += cnt;
 			ino_cnt -= cnt;
 		}
-		blk = (ext2fs_le32_to_cpu(fs->image_header->offset_blockmap) /
+		blk = (ext2fs_le32_ಗಮ್ಯ_cpu(fs->image_ಶೀರ್ಷಿಕೆ->ಸ್ಥಾನಾಂತರ_blockmap) /
 		       fs->blocksize);
-		blk_cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super,
-						  fs->group_desc_count);
-		while (block_bitmap && blk_cnt > 0) {
+		blk_cnt = EXT2_GROUPS_ಗಮ್ಯ_CLUSTERS(fs->super,
+						  fs->ಗುಂಪು_desc_ಎಣಿಕೆ);
+		ಆಗ (ಖಂಡ_bitmap && blk_cnt > 0) {
 			retval = io_channel_read_blk64(fs->image_io, blk++,
-						     1, block_bitmap);
-			if (retval)
-				goto cleanup;
+						     1, ಖಂಡ_bitmap);
+			ಆದರೆ (retval)
+				ಹೋಗು cleanup;
 			cnt = fs->blocksize << 3;
-			if (cnt > blk_cnt)
+			ಆದರೆ (cnt > blk_cnt)
 				cnt = blk_cnt;
-			retval = ext2fs_set_block_bitmap_range2(fs->block_map,
-				       blk_itr, cnt, block_bitmap);
-			if (retval)
-				goto cleanup;
+			retval = ext2fs_ಗಣ_ಖಂಡ_bitmap_range2(fs->ಖಂಡ_map,
+				       blk_itr, cnt, ಖಂಡ_bitmap);
+			ಆದರೆ (retval)
+				ಹೋಗು cleanup;
 			blk_itr += cnt;
 			blk_cnt -= cnt;
 		}
-		goto cleanup;
+		ಹೋಗು cleanup;
 	}
 
-	blk_itr += ((blk64_t)start * (block_nbytes << 3));
-	ino_itr += ((blk64_t)start * (inode_nbytes << 3));
-	for (i = start; i <= end; i++) {
-		if (block_bitmap) {
-			blk = ext2fs_block_bitmap_loc(fs, i);
-			if ((csum_flag &&
-			     ext2fs_bg_flags_test(fs, i, EXT2_BG_BLOCK_UNINIT) &&
-			     ext2fs_group_desc_csum_verify(fs, i)) ||
-			    (blk >= ext2fs_blocks_count(fs->super)))
+	blk_itr += ((blk64_t)ಆರಂಭ * (ಖಂಡ_nbytes << 3));
+	ino_itr += ((blk64_t)ಆರಂಭ * (inode_nbytes << 3));
+	ಗಾಗಿ (i = ಆರಂಭ; i <= ಕೊನೆ; i++) {
+		ಆದರೆ (ಖಂಡ_bitmap) {
+			blk = ext2fs_ಖಂಡ_bitmap_loc(fs, i);
+			ಆದರೆ ((csum_flag &&
+			     ext2fs_bg_flags_test(fs, i, EXT2_BG_ಖಂಡ_UNINIT) &&
+			     ext2fs_ಗುಂಪು_desc_csum_verify(fs, i)) ||
+			    (blk >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super)))
 				blk = 0;
-			if (blk) {
+			ಆದರೆ (blk) {
 				retval = io_channel_read_blk64(fs->io, blk,
-							       1, block_bitmap);
-				if (retval) {
-					retval = EXT2_ET_BLOCK_BITMAP_READ;
-					goto cleanup;
+							       1, ಖಂಡ_bitmap);
+				ಆದರೆ (retval) {
+					retval = EXT2_ET_ಖಂಡ_BITMAP_READ;
+					ಹೋಗು cleanup;
 				}
 				/* verify block bitmap checksum */
-				if (!(fs->flags &
+				ಆದರೆ (!(fs->flags &
 				      EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
-				    !ext2fs_block_bitmap_csum_verify(fs, i,
-						block_bitmap, block_nbytes)) {
+				    !ext2fs_ಖಂಡ_bitmap_csum_verify(fs, i,
+						ಖಂಡ_bitmap, ಖಂಡ_nbytes)) {
 					retval =
-					EXT2_ET_BLOCK_BITMAP_CSUM_INVALID;
-					goto cleanup;
+					EXT2_ET_ಖಂಡ_BITMAP_CSUM_INVALID;
+					ಹೋಗು cleanup;
 				}
-				if (!bitmap_tail_verify((unsigned char *) block_bitmap,
-							block_nbytes, fs->blocksize - 1))
-					*tail_flags |= EXT2_FLAG_BBITMAP_TAIL_PROBLEM;
-			} else
-				memset(block_bitmap, 0, block_nbytes);
-			cnt = block_nbytes << 3;
-			unix_pthread_mutex_lock(mutex);
-			retval = ext2fs_set_block_bitmap_range2(fs->block_map,
-					       blk_itr, cnt, block_bitmap);
+				ಆದರೆ (!bitmap_ಬಾಲ_verify((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *) ಖಂಡ_bitmap,
+							ಖಂಡ_nbytes, fs->blocksize - 1))
+					*ಬಾಲ_flags |= EXT2_FLAG_BBITMAP_ಬಾಲ_PROBLEM;
+			} ಇಲ್ಲದಿದ್ದರೆ
+				memset(ಖಂಡ_bitmap, 0, ಖಂಡ_nbytes);
+			cnt = ಖಂಡ_nbytes << 3;
+			unix_pthread_mutex_ಬೀಗ(mutex);
+			retval = ext2fs_ಗಣ_ಖಂಡ_bitmap_range2(fs->ಖಂಡ_map,
+					       blk_itr, cnt, ಖಂಡ_bitmap);
 			unix_pthread_mutex_unlock(mutex);
-			if (retval)
-				goto cleanup;
-			blk_itr += block_nbytes << 3;
+			ಆದರೆ (retval)
+				ಹೋಗು cleanup;
+			blk_itr += ಖಂಡ_nbytes << 3;
 		}
-		if (inode_bitmap) {
+		ಆದರೆ (inode_bitmap) {
 			blk = ext2fs_inode_bitmap_loc(fs, i);
-			if ((csum_flag &&
+			ಆದರೆ ((csum_flag &&
 			     ext2fs_bg_flags_test(fs, i, EXT2_BG_INODE_UNINIT) &&
-			     ext2fs_group_desc_csum_verify(fs, i)) ||
-			    (blk >= ext2fs_blocks_count(fs->super)))
+			     ext2fs_ಗುಂಪು_desc_csum_verify(fs, i)) ||
+			    (blk >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super)))
 				blk = 0;
-			if (blk) {
+			ಆದರೆ (blk) {
 				retval = io_channel_read_blk64(fs->io, blk,
 							       1, inode_bitmap);
-				if (retval) {
+				ಆದರೆ (retval) {
 					retval = EXT2_ET_INODE_BITMAP_READ;
-					goto cleanup;
+					ಹೋಗು cleanup;
 				}
 
 				/* verify inode bitmap checksum */
-				if (!(fs->flags &
+				ಆದರೆ (!(fs->flags &
 				      EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
 				    !ext2fs_inode_bitmap_csum_verify(fs, i,
 						inode_bitmap, inode_nbytes)) {
 					retval =
 					EXT2_ET_INODE_BITMAP_CSUM_INVALID;
-					goto cleanup;
+					ಹೋಗು cleanup;
 				}
-				if (!bitmap_tail_verify((unsigned char *) inode_bitmap,
+				ಆದರೆ (!bitmap_ಬಾಲ_verify((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *) inode_bitmap,
 							inode_nbytes, fs->blocksize - 1))
-					*tail_flags |= EXT2_FLAG_IBITMAP_TAIL_PROBLEM;
-			} else
+					*ಬಾಲ_flags |= EXT2_FLAG_IBITMAP_ಬಾಲ_PROBLEM;
+			} ಇಲ್ಲದಿದ್ದರೆ
 				memset(inode_bitmap, 0, inode_nbytes);
 			cnt = inode_nbytes << 3;
-			unix_pthread_mutex_lock(mutex);
-			retval = ext2fs_set_inode_bitmap_range2(fs->inode_map,
+			unix_pthread_mutex_ಬೀಗ(mutex);
+			retval = ext2fs_ಗಣ_inode_bitmap_range2(fs->inode_map,
 					       ino_itr, cnt, inode_bitmap);
 			unix_pthread_mutex_unlock(mutex);
-			if (retval)
-				goto cleanup;
+			ಆದರೆ (retval)
+				ಹೋಗು cleanup;
 			ino_itr += inode_nbytes << 3;
 		}
 	}
 
 cleanup:
-	if (inode_bitmap)
+	ಆದರೆ (inode_bitmap)
 		ext2fs_free_mem(&inode_bitmap);
-	if (block_bitmap)
-		ext2fs_free_mem(&block_bitmap);
-	return retval;
+	ಆದರೆ (ಖಂಡ_bitmap)
+		ext2fs_free_mem(&ಖಂಡ_bitmap);
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t read_bitmaps_range_end(ext2_filsys fs, int flags,
-					int tail_flags)
+ಸ್ಥಿರ errcode_t read_bitmaps_range_ಕೊನೆ(ext2_filsys fs, ಪೂರ್ಣಾಂಕ flags,
+					ಪೂರ್ಣಾಂಕ ಬಾಲ_flags)
 {
 	errcode_t retval;
 
 	/* Mark group blocks for any BLOCK_UNINIT groups */
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		retval = mark_uninit_bg_group_blocks(fs);
-		if (retval)
-			return retval;
-		fs->flags &= ~EXT2_FLAG_BBITMAP_TAIL_PROBLEM;
+	ಆದರೆ (flags & EXT2_FS_BITMAPS_ಖಂಡ) {
+		retval = mark_uninit_bg_ಗುಂಪು_ಖಂಡಗಳು(fs);
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
+		fs->flags &= ~EXT2_FLAG_BBITMAP_ಬಾಲ_PROBLEM;
 	}
-	if (flags & EXT2FS_BITMAPS_INODE)
-		fs->flags &= ~EXT2_FLAG_IBITMAP_TAIL_PROBLEM;
-	fs->flags |= tail_flags;
+	ಆದರೆ (flags & EXT2FS_BITMAPS_INODE)
+		fs->flags &= ~EXT2_FLAG_IBITMAP_ಬಾಲ_PROBLEM;
+	fs->flags |= ಬಾಲ_flags;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static void read_bitmaps_cleanup_on_error(ext2_filsys fs, int flags)
+ಸ್ಥಿರ ಶೂನ್ಯ read_bitmaps_cleanup_on_error(ext2_filsys fs, ಪೂರ್ಣಾಂಕ flags)
 {
-	if (flags & EXT2FS_BITMAPS_BLOCK) {
-		ext2fs_free_block_bitmap(fs->block_map);
-		fs->block_map = 0;
+	ಆದರೆ (flags & EXT2_FS_BITMAPS_ಖಂಡ) {
+		ext2fs_free_ಖಂಡ_bitmap(fs->ಖಂಡ_map);
+		fs->ಖಂಡ_map = 0;
 	}
-	if (flags & EXT2FS_BITMAPS_INODE) {
+	ಆದರೆ (flags & EXT2FS_BITMAPS_INODE) {
 		ext2fs_free_inode_bitmap(fs->inode_map);
 		fs->inode_map = 0;
 	}
 }
 
-static errcode_t read_bitmaps_range(ext2_filsys fs, int flags,
-				    dgrp_t start, dgrp_t end)
+ಸ್ಥಿರ errcode_t read_bitmaps_range(ext2_filsys fs, ಪೂರ್ಣಾಂಕ flags,
+				    dgrp_t ಆರಂಭ, dgrp_t ಕೊನೆ)
 {
 	errcode_t retval;
-	int tail_flags = 0;
+	ಪೂರ್ಣಾಂಕ ಬಾಲ_flags = 0;
 
 	retval = read_bitmaps_range_prepare(fs, flags);
-	if (retval)
-		return retval;
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-	retval = read_bitmaps_range_start(fs, flags, start, end,
-					  NULL, &tail_flags);
-	if (retval == 0)
-		retval = read_bitmaps_range_end(fs, flags, tail_flags);
-	if (retval)
+	retval = read_bitmaps_range_ಆರಂಭ(fs, flags, ಆರಂಭ, ಕೊನೆ,
+					  ಖಾಲಿ, &ಬಾಲ_flags);
+	ಆದರೆ (retval == 0)
+		retval = read_bitmaps_range_ಕೊನೆ(fs, flags, ಬಾಲ_flags);
+	ಆದರೆ (retval)
 		read_bitmaps_cleanup_on_error(fs, flags);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-#ifdef HAVE_PTHREAD
-struct read_bitmaps_thread_info {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PTHREAD
+ರಚನೆ read_bitmaps_thread_info {
 	ext2_filsys	rbt_fs;
-	int		rbt_flags;
-	dgrp_t		rbt_grp_start;
-	dgrp_t		rbt_grp_end;
+	ಪೂರ್ಣಾಂಕ		rbt_flags;
+	dgrp_t		rbt_grp_ಆರಂಭ;
+	dgrp_t		rbt_grp_ಕೊನೆ;
 	errcode_t	rbt_retval;
 	pthread_mutex_t *rbt_mutex;
-	int		rbt_tail_flags;
+	ಪೂರ್ಣಾಂಕ		rbt_ಬಾಲ_flags;
 };
 
-static void *read_bitmaps_thread(void *data)
+ಸ್ಥಿರ ಶೂನ್ಯ *read_bitmaps_thread(ಶೂನ್ಯ *ದತ್ತಾಂಶ)
 {
-	struct read_bitmaps_thread_info *rbt = data;
+	ರಚನೆ read_bitmaps_thread_info *rbt = ದತ್ತಾಂಶ;
 
-	rbt->rbt_retval = read_bitmaps_range_start(rbt->rbt_fs, rbt->rbt_flags,
-				rbt->rbt_grp_start, rbt->rbt_grp_end,
-				rbt->rbt_mutex, &rbt->rbt_tail_flags);
-	return NULL;
+	rbt->rbt_retval = read_bitmaps_range_ಆರಂಭ(rbt->rbt_fs, rbt->rbt_flags,
+				rbt->rbt_grp_ಆರಂಭ, rbt->rbt_grp_ಕೊನೆ,
+				rbt->rbt_mutex, &rbt->rbt_ಬಾಲ_flags);
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, int flags, int num_threads)
+errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, ಪೂರ್ಣಾಂಕ flags, ಪೂರ್ಣಾಂಕ ಅಂಕೆ_ಎಳೆಗಳು)
 {
-#ifdef HAVE_PTHREAD
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PTHREAD
 	pthread_attr_t	attr;
-	pthread_t *thread_ids = NULL;
-	struct read_bitmaps_thread_info *thread_infos = NULL;
+	pthread_t *thread_ids = ಖಾಲಿ;
+	ರಚನೆ read_bitmaps_thread_info *thread_infos = ಖಾಲಿ;
 	pthread_mutex_t rbt_mutex = PTHREAD_MUTEX_INITIALIZER;
 	errcode_t retval;
 	errcode_t rc;
-	unsigned flexbg_size = 1U << fs->super->s_log_groups_per_flex;
-	dgrp_t average_group;
-	int i, tail_flags = 0;
-#endif
+	ಚಿಹ್ನೆರಹಿತ flexbg_ಗಾತ್ರ = 1U << fs->super->s_log_groups_ಪ್ರತಿ_flex;
+	dgrp_t ಸರಾಸರಿ_ಮೌಲ್ಯ_ಗುಂಪು;
+	ಪೂರ್ಣಾಂಕ i, ಬಾಲ_flags = 0;
+#ಆದರೆ_ಅಂತ್ಯ
 
-	if (flags & ~EXT2FS_BITMAPS_VALID_FLAGS)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ಆದರೆ (flags & ~EXT2FS_BITMAPS_VALID_FLAGS)
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
 
-	if (ext2fs_has_feature_journal_dev(fs->super))
-		return EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
+	ಆದರೆ (ext2fs_has_feature_journal_dev(fs->super))
+		ಹಿಂತಿರುಗಿ EXT2_ET_EXTERNAL_JOURNAL_NOSUPP;
 
-	if (flags & EXT2FS_BITMAPS_WRITE)
-		return write_bitmaps(fs, flags & EXT2FS_BITMAPS_INODE,
-				     flags & EXT2FS_BITMAPS_BLOCK);
+	ಆದರೆ (flags & EXT2FS_BITMAPS_WRITE)
+		ಹಿಂತಿರುಗಿ write_bitmaps(fs, flags & EXT2FS_BITMAPS_INODE,
+				     flags & EXT2_FS_BITMAPS_ಖಂಡ);
 
-#ifdef HAVE_PTHREAD
-	if (((fs->io->flags & CHANNEL_FLAGS_THREADS) == 0) ||
-	    (num_threads == 1) || (fs->flags & EXT2_FLAG_IMAGE_FILE))
-		goto fallback;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PTHREAD
+	ಆದರೆ (((fs->io->flags & CHANNEL_FLAGS_ಎಳೆಗಳು) == 0) ||
+	    (ಅಂಕೆ_ಎಳೆಗಳು == 1) || (fs->flags & EXT2_FLAG_IMAGE_FILE))
+		ಹೋಗು fallback;
 
-#if defined(HAVE_SYSCONF) && defined(_SC_NPROCESSORS_CONF)
-	if (num_threads < 0)
-		num_threads = sysconf(_SC_NPROCESSORS_CONF);
-#endif
+#ಆದರೆ defined(HAVE_SYSCONF) && defined(_SC_NPROCESSORS_CONF)
+	ಆದರೆ (ಅಂಕೆ_ಎಳೆಗಳು < 0)
+		ಅಂಕೆ_ಎಳೆಗಳು = sysconf(_SC_NPROCESSORS_CONF);
+#ಆದರೆ_ಅಂತ್ಯ
 	/*
 	 * Guess for now; eventually we should probably define
 	 * ext2fs_get_num_cpus() and teach it how to get this info on
 	 * MacOS, FreeBSD, etc.
 	 * ref: https://stackoverflow.com/questions/150355
 	 */
-	if (num_threads <= 0)
-		num_threads = 4;
+	ಆದರೆ (ಅಂಕೆ_ಎಳೆಗಳು <= 0)
+		ಅಂಕೆ_ಎಳೆಗಳು = 4;
 
-	if ((unsigned) num_threads > fs->group_desc_count)
-		num_threads = fs->group_desc_count;
-	average_group = fs->group_desc_count / num_threads;
-	if (ext2fs_has_feature_flex_bg(fs->super)) {
-		average_group = (average_group / flexbg_size) * flexbg_size;
+	ಆದರೆ ((ಚಿಹ್ನೆರಹಿತ) ಅಂಕೆ_ಎಳೆಗಳು > fs->ಗುಂಪು_desc_ಎಣಿಕೆ)
+		ಅಂಕೆ_ಎಳೆಗಳು = fs->ಗುಂಪು_desc_ಎಣಿಕೆ;
+	ಸರಾಸರಿ_ಮೌಲ್ಯ_ಗುಂಪು = fs->ಗುಂಪು_desc_ಎಣಿಕೆ / ಅಂಕೆ_ಎಳೆಗಳು;
+	ಆದರೆ (ext2fs_has_feature_flex_bg(fs->super)) {
+		ಸರಾಸರಿ_ಮೌಲ್ಯ_ಗುಂಪು = (ಸರಾಸರಿ_ಮೌಲ್ಯ_ಗುಂಪು / flexbg_ಗಾತ್ರ) * flexbg_ಗಾತ್ರ;
 	}
-	if ((num_threads <= 1) || (average_group == 0))
-		goto fallback;
+	ಆದರೆ ((ಅಂಕೆ_ಎಳೆಗಳು <= 1) || (ಸರಾಸರಿ_ಮೌಲ್ಯ_ಗುಂಪು == 0))
+		ಹೋಗು fallback;
 
-	io_channel_set_options(fs->io, "cache=off");
+	io_channel_ಗಣ_options(fs->io, "cache=off");
 	retval = pthread_attr_init(&attr);
-	if (retval)
-		return retval;
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-	thread_ids = calloc(sizeof(pthread_t), num_threads);
-	if (!thread_ids)
-		return ENOMEM;
+	thread_ids = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(pthread_t), ಅಂಕೆ_ಎಳೆಗಳು);
+	ಆದರೆ (!thread_ids)
+		ಹಿಂತಿರುಗಿ ENOMEM;
 
-	thread_infos = calloc(sizeof(struct read_bitmaps_thread_info),
-				num_threads);
-	if (!thread_infos)
-		goto out;
+	thread_infos = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(ರಚನೆ read_bitmaps_thread_info),
+				ಅಂಕೆ_ಎಳೆಗಳು);
+	ಆದರೆ (!thread_infos)
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	retval = read_bitmaps_range_prepare(fs, flags);
-	if (retval)
-		goto out;
+	ಆದರೆ (retval)
+		ಹೋಗು ಹೊರಹೋಗು;
 
 //	fprintf(stdout, "Multiple threads triggered to read bitmaps\n");
-	for (i = 0; i < num_threads; i++) {
+	ಗಾಗಿ (i = 0; i < ಅಂಕೆ_ಎಳೆಗಳು; i++) {
 		thread_infos[i].rbt_fs = fs;
 		thread_infos[i].rbt_flags = flags;
 		thread_infos[i].rbt_mutex = &rbt_mutex;
-		thread_infos[i].rbt_tail_flags = 0;
-		if (i == 0)
-			thread_infos[i].rbt_grp_start = 0;
-		else
-			thread_infos[i].rbt_grp_start = average_group * i + 1;
+		thread_infos[i].rbt_ಬಾಲ_flags = 0;
+		ಆದರೆ (i == 0)
+			thread_infos[i].rbt_grp_ಆರಂಭ = 0;
+		ಇಲ್ಲದಿದ್ದರೆ
+			thread_infos[i].rbt_grp_ಆರಂಭ = ಸರಾಸರಿ_ಮೌಲ್ಯ_ಗುಂಪು * i + 1;
 
-		if (i == num_threads - 1)
-			thread_infos[i].rbt_grp_end = fs->group_desc_count - 1;
-		else
-			thread_infos[i].rbt_grp_end = average_group * (i + 1);
+		ಆದರೆ (i == ಅಂಕೆ_ಎಳೆಗಳು - 1)
+			thread_infos[i].rbt_grp_ಕೊನೆ = fs->ಗುಂಪು_desc_ಎಣಿಕೆ - 1;
+		ಇಲ್ಲದಿದ್ದರೆ
+			thread_infos[i].rbt_grp_ಕೊನೆ = ಸರಾಸರಿ_ಮೌಲ್ಯ_ಗುಂಪು * (i + 1);
 		retval = pthread_create(&thread_ids[i], &attr,
 					&read_bitmaps_thread, &thread_infos[i]);
-		if (retval)
-			break;
+		ಆದರೆ (retval)
+			ನಿಲ್ಲಿಸು;
 	}
-	for (i = 0; i < num_threads; i++) {
-		if (!thread_ids[i])
-			break;
-		rc = pthread_join(thread_ids[i], NULL);
-		if (rc && !retval)
+	ಗಾಗಿ (i = 0; i < ಅಂಕೆ_ಎಳೆಗಳು; i++) {
+		ಆದರೆ (!thread_ids[i])
+			ನಿಲ್ಲಿಸು;
+		rc = pthread_join(thread_ids[i], ಖಾಲಿ);
+		ಆದರೆ (rc && !retval)
 			retval = rc;
 		rc = thread_infos[i].rbt_retval;
-		if (rc && !retval)
+		ಆದರೆ (rc && !retval)
 			retval = rc;
-		tail_flags |= thread_infos[i].rbt_tail_flags;
+		ಬಾಲ_flags |= thread_infos[i].rbt_ಬಾಲ_flags;
 	}
-out:
+ಹೊರಹೋಗು:
 	rc = pthread_attr_destroy(&attr);
-	if (rc && !retval)
+	ಆದರೆ (rc && !retval)
 		retval = rc;
-	free(thread_infos);
-	free(thread_ids);
+	ಬಿಡುಗಡೆ(thread_infos);
+	ಬಿಡುಗಡೆ(thread_ids);
 
-	if (retval == 0)
-		retval = read_bitmaps_range_end(fs, flags, tail_flags);
-	if (retval)
+	ಆದರೆ (retval == 0)
+		retval = read_bitmaps_range_ಕೊನೆ(fs, flags, ಬಾಲ_flags);
+	ಆದರೆ (retval)
 		read_bitmaps_cleanup_on_error(fs, flags);
 	/* XXX should save and restore cache setting */
-	io_channel_set_options(fs->io, "cache=on");
-	return retval;
+	io_channel_ಗಣ_options(fs->io, "cache=on");
+	ಹಿಂತಿರುಗಿ retval;
 fallback:
-#endif /* HAVE_PTHREAD */
-	return read_bitmaps_range(fs, flags, 0, fs->group_desc_count - 1);
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_PTHREAD */
+	ಹಿಂತಿರುಗಿ read_bitmaps_range(fs, flags, 0, fs->ಗುಂಪು_desc_ಎಣಿಕೆ - 1);
 }
 
 errcode_t ext2fs_read_inode_bitmap(ext2_filsys fs)
 {
-	return ext2fs_rw_bitmaps(fs, EXT2FS_BITMAPS_INODE, -1);
+	ಹಿಂತಿರುಗಿ ext2fs_rw_bitmaps(fs, EXT2FS_BITMAPS_INODE, -1);
 }
 
-errcode_t ext2fs_read_block_bitmap(ext2_filsys fs)
+errcode_t ext2fs_read_ಖಂಡ_bitmap(ext2_filsys fs)
 {
-	return ext2fs_rw_bitmaps(fs, EXT2FS_BITMAPS_BLOCK, -1);
+	ಹಿಂತಿರುಗಿ ext2fs_rw_bitmaps(fs, EXT2_FS_BITMAPS_ಖಂಡ, -1);
 }
 
 errcode_t ext2fs_write_inode_bitmap(ext2_filsys fs)
 {
-	return write_bitmaps(fs, 1, 0);
+	ಹಿಂತಿರುಗಿ write_bitmaps(fs, 1, 0);
 }
 
-errcode_t ext2fs_write_block_bitmap (ext2_filsys fs)
+errcode_t ext2fs_write_ಖಂಡ_bitmap (ext2_filsys fs)
 {
-	return write_bitmaps(fs, 0, 1);
+	ಹಿಂತಿರುಗಿ write_bitmaps(fs, 0, 1);
 }
 
 errcode_t ext2fs_read_bitmaps(ext2_filsys fs)
 {
-	int flags = 0;
+	ಪೂರ್ಣಾಂಕ flags = 0;
 
-	if (!fs->inode_map)
+	ಆದರೆ (!fs->inode_map)
 		flags |= EXT2FS_BITMAPS_INODE;
-	if (!fs->block_map)
-		flags |= EXT2FS_BITMAPS_BLOCK;
-	if (flags == 0)
-		return 0;
-	return ext2fs_rw_bitmaps(fs, flags, -1);
+	ಆದರೆ (!fs->ಖಂಡ_map)
+		flags |= EXT2_FS_BITMAPS_ಖಂಡ;
+	ಆದರೆ (flags == 0)
+		ಹಿಂತಿರುಗಿ 0;
+	ಹಿಂತಿರುಗಿ ext2fs_rw_bitmaps(fs, flags, -1);
 }
 
 errcode_t ext2fs_write_bitmaps(ext2_filsys fs)
 {
-	int do_inode = fs->inode_map && ext2fs_test_ib_dirty(fs);
-	int do_block = fs->block_map && ext2fs_test_bb_dirty(fs);
+	ಪೂರ್ಣಾಂಕ do_inode = fs->inode_map && ext2fs_test_ib_dirty(fs);
+	ಪೂರ್ಣಾಂಕ do_ಖಂಡ = fs->ಖಂಡ_map && ext2fs_test_bb_dirty(fs);
 
-	if (!do_inode && !do_block)
-		return 0;
+	ಆದರೆ (!do_inode && !do_ಖಂಡ)
+		ಹಿಂತಿರುಗಿ 0;
 
-	return write_bitmaps(fs, do_inode, do_block);
+	ಹಿಂತಿರುಗಿ write_bitmaps(fs, do_inode, do_ಖಂಡ);
 }

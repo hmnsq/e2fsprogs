@@ -9,48 +9,48 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <string.h>
-#include <time.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
 /*
  * This function returns 1 if the inode's block entries actually
  * contain block entries.
  */
-int ext2fs_inode_has_valid_blocks2(ext2_filsys fs, struct ext2_inode *inode)
+ಪೂರ್ಣಾಂಕ ext2fs_inode_has_valid_blocks2(ext2_filsys fs, ರಚನೆ ext2_inode *inode)
 {
 	/*
 	 * Only directories, regular files, and some symbolic links
 	 * have valid block entries.
 	 */
-	if (!LINUX_S_ISDIR(inode->i_mode) && !LINUX_S_ISREG(inode->i_mode) &&
-	    !LINUX_S_ISLNK(inode->i_mode))
-		return 0;
+	ಆದರೆ (!LINUX_S_ISDIR(inode->i_ಬಹುಲಕ) && !LINUX_S_ISREG(inode->i_ಬಹುಲಕ) &&
+	    !LINUX_S_ISLNK(inode->i_ಬಹುಲಕ))
+		ಹಿಂತಿರುಗಿ 0;
 
 	/*
 	 * If the symbolic link is a "fast symlink", then the symlink
 	 * target is stored in the block entries.
 	 */
-	if (LINUX_S_ISLNK (inode->i_mode)) {
-		if (ext2fs_file_acl_block(fs, inode) == 0) {
+	ಆದರೆ (LINUX_S_ISLNK (inode->i_ಬಹುಲಕ)) {
+		ಆದರೆ (ext2fs_file_acl_ಖಂಡ(fs, inode) == 0) {
 			/* With no EA block, we can rely on i_blocks */
-			if (inode->i_blocks == 0)
-				return 0;
-			return !ext2fs_is_fast_symlink(inode);
-		} else {
+			ಆದರೆ (inode->i_ಖಂಡಗಳು == 0)
+				ಹಿಂತಿರುಗಿ 0;
+			ಹಿಂತಿರುಗಿ !ext2fs_is_fast_symlink(inode);
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			/* With an EA block, life gets more tricky */
-			if (inode->i_size >= EXT2_N_BLOCKS*4)
-				return 1; /* definitely using i_block[] */
-			if (inode->i_size > 4 && inode->i_block[1] == 0)
-				return 1; /* definitely using i_block[] */
-			return 0; /* Probably a fast symlink */
+			ಆದರೆ (inode->i_ಗಾತ್ರ >= EXT2_N_ಖಂಡಗಳು*4)
+				ಹಿಂತಿರುಗಿ 1; /* definitely using i_block[] */
+			ಆದರೆ (inode->i_ಗಾತ್ರ > 4 && inode->i_ಖಂಡ[1] == 0)
+				ಹಿಂತಿರುಗಿ 1; /* definitely using i_block[] */
+			ಹಿಂತಿರುಗಿ 0; /* Probably a fast symlink */
 		}
 	}
 
@@ -58,12 +58,12 @@ int ext2fs_inode_has_valid_blocks2(ext2_filsys fs, struct ext2_inode *inode)
 	 * If this inode has inline data, it shouldn't have valid block
 	 * entries.
 	 */
-	if (inode->i_flags & EXT4_INLINE_DATA_FL)
-		return 0;
-	return 1;
+	ಆದರೆ (inode->i_flags & EXT4_INLINE_ದತ್ತಾಂಶ_FL)
+		ಹಿಂತಿರುಗಿ 0;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
-int ext2fs_inode_has_valid_blocks(struct ext2_inode *inode)
+ಪೂರ್ಣಾಂಕ ext2fs_inode_has_valid_ಖಂಡಗಳು(ರಚನೆ ext2_inode *inode)
 {
-	return ext2fs_inode_has_valid_blocks2(NULL, inode);
+	ಹಿಂತಿರುಗಿ ext2fs_inode_has_valid_blocks2(ಖಾಲಿ, inode);
 }

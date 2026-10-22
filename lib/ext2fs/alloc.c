@@ -9,47 +9,47 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <time.h>
-#include <string.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_SYS_STAT_H
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
-#define min(a, b) ((a) < (b) ? (a) : (b))
+#ವ್ಯಾಖ್ಯಾನಿಸು min(a, b) ((a) < (b) ? (a) : (b))
 
-#undef DEBUG
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು DEBUG
 
-#ifdef DEBUG
-# define dbg_printf(f, a...)  do {printf(f, ## a); fflush(stdout); } while (0)
-#else
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ DEBUG
+# define dbg_printf(f, a...)  ಮಾಡು {ಬರೆ(f, ## a); fflush(stdout); } ಆಗ (0)
+#ಇಲ್ಲದಿದ್ದರೆ
 # define dbg_printf(f, a...)
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /*
  * Clear the uninit block bitmap flag if necessary
  */
-void ext2fs_clear_block_uninit(ext2_filsys fs, dgrp_t group)
+ಶೂನ್ಯ ext2fs_clear_ಖಂಡ_uninit(ext2_filsys fs, dgrp_t ಗುಂಪು)
 {
-	if (group >= fs->group_desc_count ||
-	    !ext2fs_has_group_desc_csum(fs) ||
-	    !(ext2fs_bg_flags_test(fs, group, EXT2_BG_BLOCK_UNINIT)))
-		return;
+	ಆದರೆ (ಗುಂಪು >= fs->ಗುಂಪು_desc_ಎಣಿಕೆ ||
+	    !ext2fs_has_ಗುಂಪು_desc_csum(fs) ||
+	    !(ext2fs_bg_flags_test(fs, ಗುಂಪು, EXT2_BG_ಖಂಡ_UNINIT)))
+		ಹಿಂತಿರುಗಿ;
 
 	/* uninit block bitmaps are now initialized in read_bitmaps() */
 
-	ext2fs_bg_flags_clear(fs, group, EXT2_BG_BLOCK_UNINIT);
-	ext2fs_group_desc_csum_set(fs, group);
+	ext2fs_bg_flags_clear(fs, ಗುಂಪು, EXT2_BG_ಖಂಡ_UNINIT);
+	ext2fs_ಗುಂಪು_desc_csum_ಗಣ(fs, ಗುಂಪು);
 	ext2fs_mark_super_dirty(fs);
 	ext2fs_mark_bb_dirty(fs);
 }
@@ -57,24 +57,24 @@ void ext2fs_clear_block_uninit(ext2_filsys fs, dgrp_t group)
 /*
  * Check for uninit inode bitmaps and deal with them appropriately
  */
-static void check_inode_uninit(ext2_filsys fs, ext2fs_inode_bitmap map,
-			  dgrp_t group)
+ಸ್ಥಿರ ಶೂನ್ಯ check_inode_uninit(ext2_filsys fs, ext2fs_inode_bitmap map,
+			  dgrp_t ಗುಂಪು)
 {
 	ext2_ino_t	i, ino;
 
-	if (group >= fs->group_desc_count ||
-	    !ext2fs_has_group_desc_csum(fs) ||
-	    !(ext2fs_bg_flags_test(fs, group, EXT2_BG_INODE_UNINIT)))
-		return;
+	ಆದರೆ (ಗುಂಪು >= fs->ಗುಂಪು_desc_ಎಣಿಕೆ ||
+	    !ext2fs_has_ಗುಂಪು_desc_csum(fs) ||
+	    !(ext2fs_bg_flags_test(fs, ಗುಂಪು, EXT2_BG_INODE_UNINIT)))
+		ಹಿಂತಿರುಗಿ;
 
-	ino = (group * fs->super->s_inodes_per_group) + 1;
-	for (i=0; i < fs->super->s_inodes_per_group; i++, ino++)
+	ino = (ಗುಂಪು * fs->super->s_inodes_ಪ್ರತಿ_ಗುಂಪು) + 1;
+	ಗಾಗಿ (i=0; i < fs->super->s_inodes_ಪ್ರತಿ_ಗುಂಪು; i++, ino++)
 		ext2fs_fast_unmark_inode_bitmap2(map, ino);
 
-	ext2fs_bg_flags_clear(fs, group, EXT2_BG_INODE_UNINIT);
+	ext2fs_bg_flags_clear(fs, ಗುಂಪು, EXT2_BG_INODE_UNINIT);
 	/* Mimics what the kernel does */
-	ext2fs_bg_flags_clear(fs, group, EXT2_BG_BLOCK_UNINIT);
-	ext2fs_group_desc_csum_set(fs, group);
+	ext2fs_bg_flags_clear(fs, ಗುಂಪು, EXT2_BG_ಖಂಡ_UNINIT);
+	ext2fs_ಗುಂಪು_desc_csum_ಗಣ(fs, ಗುಂಪು);
 	ext2fs_mark_ib_dirty(fs);
 	ext2fs_mark_super_dirty(fs);
 }
@@ -86,58 +86,58 @@ static void check_inode_uninit(ext2_filsys fs, ext2fs_inode_bitmap map,
  * Should have a special policy for directories.
  */
 errcode_t ext2fs_new_inode(ext2_filsys fs, ext2_ino_t dir,
-			   int mode EXT2FS_ATTR((unused)),
+			   ಪೂರ್ಣಾಂಕ ಬಹುಲಕ EXT2FS_ATTR((ಬಳಸದ)),
 			   ext2fs_inode_bitmap map, ext2_ino_t *ret)
 {
-	ext2_ino_t	start_inode = 0;
-	ext2_ino_t	i, ino_in_group, upto, first_zero;
+	ext2_ino_t	ಆರಂಭ_inode = 0;
+	ext2_ino_t	i, ino_ಒಳ_ಗುಂಪು, upto, ಮೊದಲ_zero;
 	errcode_t	retval;
-	dgrp_t		group;
+	dgrp_t		ಗುಂಪು;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!map)
+	ಆದರೆ (!map)
 		map = fs->inode_map;
-	if (!map)
-		return EXT2_ET_NO_INODE_BITMAP;
+	ಆದರೆ (!map)
+		ಹಿಂತಿರುಗಿ EXT2_ET_NO_INODE_BITMAP;
 
-	if (dir > 0) {
-		group = (dir - 1) / EXT2_INODES_PER_GROUP(fs->super);
-		start_inode = (group * EXT2_INODES_PER_GROUP(fs->super)) + 1;
+	ಆದರೆ (dir > 0) {
+		ಗುಂಪು = (dir - 1) / EXT2_INODES_ಪ್ರತಿ_ಗುಂಪು(fs->super);
+		ಆರಂಭ_inode = (ಗುಂಪು * EXT2_INODES_ಪ್ರತಿ_ಗುಂಪು(fs->super)) + 1;
 	}
-	if (start_inode < EXT2_FIRST_INODE(fs->super))
-		start_inode = EXT2_FIRST_INODE(fs->super);
-	if (start_inode > fs->super->s_inodes_count)
-		return EXT2_ET_INODE_ALLOC_FAIL;
-	i = start_inode;
-	do {
-		ino_in_group = (i - 1) % EXT2_INODES_PER_GROUP(fs->super);
-		group = (i - 1) / EXT2_INODES_PER_GROUP(fs->super);
+	ಆದರೆ (ಆರಂಭ_inode < EXT2_ಮೊದಲ_INODE(fs->super))
+		ಆರಂಭ_inode = EXT2_ಮೊದಲ_INODE(fs->super);
+	ಆದರೆ (ಆರಂಭ_inode > fs->super->s_inodes_ಎಣಿಕೆ)
+		ಹಿಂತಿರುಗಿ EXT2_ET_INODE_ALLOC_FAIL;
+	i = ಆರಂಭ_inode;
+	ಮಾಡು {
+		ino_ಒಳ_ಗುಂಪು = (i - 1) % EXT2_INODES_ಪ್ರತಿ_ಗುಂಪು(fs->super);
+		ಗುಂಪು = (i - 1) / EXT2_INODES_ಪ್ರತಿ_ಗುಂಪು(fs->super);
 
-		check_inode_uninit(fs, map, group);
-		upto = i + (EXT2_INODES_PER_GROUP(fs->super) - ino_in_group);
-		if (i < start_inode && upto >= start_inode)
-			upto = start_inode - 1;
-		if (upto > fs->super->s_inodes_count)
-			upto = fs->super->s_inodes_count;
+		check_inode_uninit(fs, map, ಗುಂಪು);
+		upto = i + (EXT2_INODES_ಪ್ರತಿ_ಗುಂಪು(fs->super) - ino_ಒಳ_ಗುಂಪು);
+		ಆದರೆ (i < ಆರಂಭ_inode && upto >= ಆರಂಭ_inode)
+			upto = ಆರಂಭ_inode - 1;
+		ಆದರೆ (upto > fs->super->s_inodes_ಎಣಿಕೆ)
+			upto = fs->super->s_inodes_ಎಣಿಕೆ;
 
-		retval = ext2fs_find_first_zero_inode_bitmap2(map, i, upto,
-							      &first_zero);
-		if (retval == 0) {
-			i = first_zero;
-			break;
+		retval = ext2fs_ಕಂಡುಹಿಡಿ_ಮೊದಲ_zero_inode_bitmap2(map, i, upto,
+							      &ಮೊದಲ_zero);
+		ಆದರೆ (retval == 0) {
+			i = ಮೊದಲ_zero;
+			ನಿಲ್ಲಿಸು;
 		}
-		if (retval != ENOENT)
-			return EXT2_ET_INODE_ALLOC_FAIL;
+		ಆದರೆ (retval != ENOENT)
+			ಹಿಂತಿರುಗಿ EXT2_ET_INODE_ALLOC_FAIL;
 		i = upto + 1;
-		if (i > fs->super->s_inodes_count)
-			i = EXT2_FIRST_INODE(fs->super);
-	} while (i != start_inode);
+		ಆದರೆ (i > fs->super->s_inodes_ಎಣಿಕೆ)
+			i = EXT2_ಮೊದಲ_INODE(fs->super);
+	} ಆಗ (i != ಆರಂಭ_inode);
 
-	if (ext2fs_test_inode_bitmap2(map, i))
-		return EXT2_ET_INODE_ALLOC_FAIL;
+	ಆದರೆ (ext2fs_test_inode_bitmap2(map, i))
+		ಹಿಂತಿರುಗಿ EXT2_ET_INODE_ALLOC_FAIL;
 	*ret = i;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 /*
@@ -145,189 +145,189 @@ errcode_t ext2fs_new_inode(ext2_filsys fs, ext2_ino_t dir,
  * goal.  Should put in a smarter one someday....
  */
 errcode_t ext2fs_new_block3(ext2_filsys fs, blk64_t goal,
-			    ext2fs_block_bitmap map, blk64_t *ret,
-			    struct blk_alloc_ctx *ctx)
+			    ext2fs_ಖಂಡ_bitmap map, blk64_t *ret,
+			    ರಚನೆ blk_alloc_ctx *ctx)
 {
 	errcode_t retval;
 	blk64_t	b = 0;
 	errcode_t (*gab)(ext2_filsys fs, blk64_t goal, blk64_t *ret);
 	errcode_t (*gab2)(ext2_filsys, blk64_t, blk64_t *,
-			  struct blk_alloc_ctx *);
+			  ರಚನೆ blk_alloc_ctx *);
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!map) {
+	ಆದರೆ (!map) {
 		/*
 		 * In case there are clients out there whose get_alloc_block
 		 * handlers call ext2fs_new_block2 with a NULL block map,
 		 * temporarily swap out the function pointer so that we don't
 		 * end up in an infinite loop.
 		 */
-		if (fs->get_alloc_block2) {
+		ಆದರೆ (fs->get_alloc_block2) {
 			gab2 = fs->get_alloc_block2;
-			fs->get_alloc_block2 = NULL;
+			fs->get_alloc_block2 = ಖಾಲಿ;
 			retval = gab2(fs, goal, &b, ctx);
 			fs->get_alloc_block2 = gab2;
-			goto allocated;
-		} else if (fs->get_alloc_block) {
-			gab = fs->get_alloc_block;
-			fs->get_alloc_block = NULL;
+			ಹೋಗು allocated;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (fs->get_alloc_ಖಂಡ) {
+			gab = fs->get_alloc_ಖಂಡ;
+			fs->get_alloc_ಖಂಡ = ಖಾಲಿ;
 			retval = gab(fs, goal, &b);
-			fs->get_alloc_block = gab;
-			goto allocated;
+			fs->get_alloc_ಖಂಡ = gab;
+			ಹೋಗು allocated;
 		}
 	}
-	if (!map)
-		map = fs->block_map;
-	if (!map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
-	if (!goal || (goal >= ext2fs_blocks_count(fs->super)))
-		goal = fs->super->s_first_data_block;
-	goal &= ~EXT2FS_CLUSTER_MASK(fs);
+	ಆದರೆ (!map)
+		map = fs->ಖಂಡ_map;
+	ಆದರೆ (!map)
+		ಹಿಂತಿರುಗಿ EXT2_ET_NO_ಖಂಡ_BITMAP;
+	ಆದರೆ (!goal || (goal >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super)))
+		goal = fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ;
+	goal &= ~EXT2_FS_CLUSTER_ಮುಖವಾಡ(fs);
 
-	retval = ext2fs_find_first_zero_block_bitmap2(map,
-			goal, ext2fs_blocks_count(fs->super) - 1, &b);
-	if ((retval == ENOENT) && (goal != fs->super->s_first_data_block))
-		retval = ext2fs_find_first_zero_block_bitmap2(map,
-			fs->super->s_first_data_block, goal - 1, &b);
+	retval = ext2fs_ಕಂಡುಹಿಡಿ_ಮೊದಲ_zero_ಖಂಡ_bitmap2(map,
+			goal, ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super) - 1, &b);
+	ಆದರೆ ((retval == ENOENT) && (goal != fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ))
+		retval = ext2fs_ಕಂಡುಹಿಡಿ_ಮೊದಲ_zero_ಖಂಡ_bitmap2(map,
+			fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ, goal - 1, &b);
 allocated:
-	if (retval == ENOENT)
-		return EXT2_ET_BLOCK_ALLOC_FAIL;
-	if (retval)
-		return retval;
+	ಆದರೆ (retval == ENOENT)
+		ಹಿಂತಿರುಗಿ EXT2_ET_ಖಂಡ_ALLOC_FAIL;
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-	ext2fs_clear_block_uninit(fs, ext2fs_group_of_blk2(fs, b));
+	ext2fs_clear_ಖಂಡ_uninit(fs, ext2fs_ಗುಂಪು_ದ_blk2(fs, b));
 	*ret = b;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 errcode_t ext2fs_new_block2(ext2_filsys fs, blk64_t goal,
-			   ext2fs_block_bitmap map, blk64_t *ret)
+			   ext2fs_ಖಂಡ_bitmap map, blk64_t *ret)
 {
-	return ext2fs_new_block3(fs, goal, map, ret, NULL);
+	ಹಿಂತಿರುಗಿ ext2fs_new_block3(fs, goal, map, ret, ಖಾಲಿ);
 }
 
-errcode_t ext2fs_new_block(ext2_filsys fs, blk_t goal,
-			   ext2fs_block_bitmap map, blk_t *ret)
+errcode_t ext2fs_new_ಖಂಡ(ext2_filsys fs, blk_t goal,
+			   ext2fs_ಖಂಡ_bitmap map, blk_t *ret)
 {
 	errcode_t retval;
 	blk64_t val;
 	retval = ext2fs_new_block2(fs, goal, map, &val);
-	if (!retval)
+	ಆದರೆ (!retval)
 		*ret = (blk_t) val;
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
 /*
  * This function zeros out the allocated block, and updates all of the
  * appropriate filesystem records.
  */
-errcode_t ext2fs_alloc_block3(ext2_filsys fs, blk64_t goal, char *block_buf,
-			      blk64_t *ret, struct blk_alloc_ctx *ctx)
+errcode_t ext2fs_alloc_block3(ext2_filsys fs, blk64_t goal, ಅಕ್ಷರ *ಖಂಡ_buf,
+			      blk64_t *ret, ರಚನೆ blk_alloc_ctx *ctx)
 {
 	errcode_t	retval;
-	blk64_t		block;
+	blk64_t		ಖಂಡ;
 
-	if (fs->get_alloc_block2) {
-		retval = (fs->get_alloc_block2)(fs, goal, &block, ctx);
-		if (retval)
-			goto fail;
-	} else if (fs->get_alloc_block) {
-		retval = (fs->get_alloc_block)(fs, goal, &block);
-		if (retval)
-			goto fail;
-	} else {
-		if (!fs->block_map) {
-			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				goto fail;
+	ಆದರೆ (fs->get_alloc_block2) {
+		retval = (fs->get_alloc_block2)(fs, goal, &ಖಂಡ, ctx);
+		ಆದರೆ (retval)
+			ಹೋಗು fail;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (fs->get_alloc_ಖಂಡ) {
+		retval = (fs->get_alloc_ಖಂಡ)(fs, goal, &ಖಂಡ);
+		ಆದರೆ (retval)
+			ಹೋಗು fail;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (!fs->ಖಂಡ_map) {
+			retval = ext2fs_read_ಖಂಡ_bitmap(fs);
+			ಆದರೆ (retval)
+				ಹೋಗು fail;
 		}
 
-		retval = ext2fs_new_block3(fs, goal, 0, &block, ctx);
-		if (retval)
-			goto fail;
+		retval = ext2fs_new_block3(fs, goal, 0, &ಖಂಡ, ctx);
+		ಆದರೆ (retval)
+			ಹೋಗು fail;
 	}
 
-	if (block_buf) {
-		memset(block_buf, 0, fs->blocksize);
-		retval = io_channel_write_blk64(fs->io, block, 1, block_buf);
-	} else
-		retval = ext2fs_zero_blocks2(fs, block, 1, NULL, NULL);
-	if (retval)
-		goto fail;
+	ಆದರೆ (ಖಂಡ_buf) {
+		memset(ಖಂಡ_buf, 0, fs->blocksize);
+		retval = io_channel_write_blk64(fs->io, ಖಂಡ, 1, ಖಂಡ_buf);
+	} ಇಲ್ಲದಿದ್ದರೆ
+		retval = ext2fs_zero_blocks2(fs, ಖಂಡ, 1, ಖಾಲಿ, ಖಾಲಿ);
+	ಆದರೆ (retval)
+		ಹೋಗು fail;
 
-	ext2fs_block_alloc_stats2(fs, block, +1);
-	*ret = block;
+	ext2fs_ಖಂಡ_alloc_stats2(fs, ಖಂಡ, +1);
+	*ret = ಖಂಡ;
 
 fail:
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
 errcode_t ext2fs_alloc_block2(ext2_filsys fs, blk64_t goal,
-			     char *block_buf, blk64_t *ret)
+			     ಅಕ್ಷರ *ಖಂಡ_buf, blk64_t *ret)
 {
-	return ext2fs_alloc_block3(fs, goal, block_buf, ret, NULL);
+	ಹಿಂತಿರುಗಿ ext2fs_alloc_block3(fs, goal, ಖಂಡ_buf, ret, ಖಾಲಿ);
 }
 
-errcode_t ext2fs_alloc_block(ext2_filsys fs, blk_t goal,
-			     char *block_buf, blk_t *ret)
+errcode_t ext2fs_alloc_ಖಂಡ(ext2_filsys fs, blk_t goal,
+			     ಅಕ್ಷರ *ಖಂಡ_buf, blk_t *ret)
 {
 	errcode_t retval;
 	blk64_t ret64, goal64 = goal;
-	retval = ext2fs_alloc_block3(fs, goal64, block_buf, &ret64, NULL);
-	if (!retval)
+	retval = ext2fs_alloc_block3(fs, goal64, ಖಂಡ_buf, &ret64, ಖಾಲಿ);
+	ಆದರೆ (!retval)
 		*ret = (blk_t)ret64;
-        return retval;
+        ಹಿಂತಿರುಗಿ retval;
 }
 
-errcode_t ext2fs_get_free_blocks2(ext2_filsys fs, blk64_t start, blk64_t finish,
-				 int num, ext2fs_block_bitmap map, blk64_t *ret)
+errcode_t ext2fs_get_free_blocks2(ext2_filsys fs, blk64_t ಆರಂಭ, blk64_t ಮುಕ್ತಾಯ,
+				 ಪೂರ್ಣಾಂಕ ಅಂಕೆ, ext2fs_ಖಂಡ_bitmap map, blk64_t *ret)
 {
-	blk64_t	b = start;
-	int	c_ratio;
+	blk64_t	b = ಆರಂಭ;
+	ಪೂರ್ಣಾಂಕ	c_ಅನುಪಾತ;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!map)
-		map = fs->block_map;
-	if (!map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
-	if (!b)
-		b = fs->super->s_first_data_block;
-	if (!finish)
-		finish = start;
-	if (!num)
-		num = 1;
-	c_ratio = 1 << ext2fs_get_bitmap_granularity(map);
-	b &= ~(c_ratio - 1);
-	finish &= ~(c_ratio -1);
-	do {
-		if (b + num - 1 >= ext2fs_blocks_count(fs->super)) {
-			if (finish > start)
-				return EXT2_ET_BLOCK_ALLOC_FAIL;
-			b = fs->super->s_first_data_block;
+	ಆದರೆ (!map)
+		map = fs->ಖಂಡ_map;
+	ಆದರೆ (!map)
+		ಹಿಂತಿರುಗಿ EXT2_ET_NO_ಖಂಡ_BITMAP;
+	ಆದರೆ (!b)
+		b = fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ;
+	ಆದರೆ (!ಮುಕ್ತಾಯ)
+		ಮುಕ್ತಾಯ = ಆರಂಭ;
+	ಆದರೆ (!ಅಂಕೆ)
+		ಅಂಕೆ = 1;
+	c_ಅನುಪಾತ = 1 << ext2fs_get_bitmap_granularity(map);
+	b &= ~(c_ಅನುಪಾತ - 1);
+	ಮುಕ್ತಾಯ &= ~(c_ಅನುಪಾತ -1);
+	ಮಾಡು {
+		ಆದರೆ (b + ಅಂಕೆ - 1 >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super)) {
+			ಆದರೆ (ಮುಕ್ತಾಯ > ಆರಂಭ)
+				ಹಿಂತಿರುಗಿ EXT2_ET_ಖಂಡ_ALLOC_FAIL;
+			b = fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ;
 		}
-		if (ext2fs_fast_test_block_bitmap_range2(map, b, num)) {
+		ಆದರೆ (ext2fs_fast_test_ಖಂಡ_bitmap_range2(map, b, ಅಂಕೆ)) {
 			*ret = b;
-			return 0;
+			ಹಿಂತಿರುಗಿ 0;
 		}
-		b += c_ratio;
-	} while (b != finish);
-	return EXT2_ET_BLOCK_ALLOC_FAIL;
+		b += c_ಅನುಪಾತ;
+	} ಆಗ (b != ಮುಕ್ತಾಯ);
+	ಹಿಂತಿರುಗಿ EXT2_ET_ಖಂಡ_ALLOC_FAIL;
 }
 
-errcode_t ext2fs_get_free_blocks(ext2_filsys fs, blk_t start, blk_t finish,
-				 int num, ext2fs_block_bitmap map, blk_t *ret)
+errcode_t ext2fs_get_free_ಖಂಡಗಳು(ext2_filsys fs, blk_t ಆರಂಭ, blk_t ಮುಕ್ತಾಯ,
+				 ಪೂರ್ಣಾಂಕ ಅಂಕೆ, ext2fs_ಖಂಡ_bitmap map, blk_t *ret)
 {
 	errcode_t retval;
 	blk64_t val;
-	retval = ext2fs_get_free_blocks2(fs, start, finish, num, map, &val);
-	if(!retval)
+	retval = ext2fs_get_free_blocks2(fs, ಆರಂಭ, ಮುಕ್ತಾಯ, ಅಂಕೆ, map, &val);
+	ಆದರೆ(!retval)
 		*ret = (blk_t) val;
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-void ext2fs_set_alloc_block_callback(ext2_filsys fs,
+ಶೂನ್ಯ ext2fs_ಗಣ_alloc_ಖಂಡ_callback(ext2_filsys fs,
 				     errcode_t (*func)(ext2_filsys fs,
 						       blk64_t goal,
 						       blk64_t *ret),
@@ -335,56 +335,56 @@ void ext2fs_set_alloc_block_callback(ext2_filsys fs,
 						       blk64_t goal,
 						       blk64_t *ret))
 {
-	if (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
-		return;
+	ಆದರೆ (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
+		ಹಿಂತಿರುಗಿ;
 
-	if (old)
-		*old = fs->get_alloc_block;
+	ಆದರೆ (old)
+		*old = fs->get_alloc_ಖಂಡ;
 
-	fs->get_alloc_block = func;
+	fs->get_alloc_ಖಂಡ = func;
 }
 
-blk64_t ext2fs_find_inode_goal(ext2_filsys fs, ext2_ino_t ino,
-			       struct ext2_inode *inode, blk64_t lblk)
+blk64_t ext2fs_ಕಂಡುಹಿಡಿ_inode_goal(ext2_filsys fs, ext2_ino_t ino,
+			       ರಚನೆ ext2_inode *inode, blk64_t lblk)
 {
-	dgrp_t			group;
+	dgrp_t			ಗುಂಪು;
 	__u8			log_flex;
-	struct ext2fs_extent	extent;
-	ext2_extent_handle_t	handle = NULL;
+	ರಚನೆ ext2fs_extent	extent;
+	ext2_extent_handle_t	handle = ಖಾಲಿ;
 	errcode_t		err;
 
 	/* Make sure data stored in inode->i_block is neither fast symlink nor
 	 * inline data.
 	 */
-	if (inode == NULL || ext2fs_is_fast_symlink(inode) ||
-	    inode->i_flags & EXT4_INLINE_DATA_FL)
-		goto no_blocks;
+	ಆದರೆ (inode == ಖಾಲಿ || ext2fs_is_fast_symlink(inode) ||
+	    inode->i_flags & EXT4_INLINE_ದತ್ತಾಂಶ_FL)
+		ಹೋಗು no_ಖಂಡಗಳು;
 
-	if (inode->i_flags & EXT4_EXTENTS_FL) {
+	ಆದರೆ (inode->i_flags & EXT4_EXTENTS_FL) {
 		err = ext2fs_extent_open2(fs, ino, inode, &handle);
-		if (err)
-			goto no_blocks;
+		ಆದರೆ (err)
+			ಹೋಗು no_ಖಂಡಗಳು;
 		err = ext2fs_extent_goto2(handle, 0, lblk);
-		if (err)
-			goto no_blocks;
+		ಆದರೆ (err)
+			ಹೋಗು no_ಖಂಡಗಳು;
 		err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-		if (err)
-			goto no_blocks;
+		ಆದರೆ (err)
+			ಹೋಗು no_ಖಂಡಗಳು;
 		ext2fs_extent_free(handle);
-		return extent.e_pblk + (lblk - extent.e_lblk);
+		ಹಿಂತಿರುಗಿ extent.e_pblk + (lblk - extent.e_lblk);
 	}
 
 	/* block mapped file; see if block zero is mapped? */
-	if (inode->i_block[0])
-		return inode->i_block[0];
+	ಆದರೆ (inode->i_ಖಂಡ[0])
+		ಹಿಂತಿರುಗಿ inode->i_ಖಂಡ[0];
 
-no_blocks:
+no_ಖಂಡಗಳು:
 	ext2fs_extent_free(handle);
-	log_flex = fs->super->s_log_groups_per_flex;
-	group = ext2fs_group_of_ino(fs, ino);
-	if (log_flex)
-		group = group & ~((1 << (log_flex)) - 1);
-	return ext2fs_group_first_block2(fs, group);
+	log_flex = fs->super->s_log_groups_ಪ್ರತಿ_flex;
+	ಗುಂಪು = ext2fs_ಗುಂಪು_ದ_ino(fs, ino);
+	ಆದರೆ (log_flex)
+		ಗುಂಪು = ಗುಂಪು & ~((1 << (log_flex)) - 1);
+	ಹಿಂತಿರುಗಿ ext2fs_ಗುಂಪು_ಮೊದಲ_block2(fs, ಗುಂಪು);
 }
 
 /*
@@ -401,24 +401,24 @@ no_blocks:
  *
  * This function can return a range that is longer than what was requested.
  */
-errcode_t ext2fs_new_range(ext2_filsys fs, int flags, blk64_t goal,
-			   blk64_t len, ext2fs_block_bitmap map, blk64_t *pblk,
+errcode_t ext2fs_new_range(ext2_filsys fs, ಪೂರ್ಣಾಂಕ flags, blk64_t goal,
+			   blk64_t len, ext2fs_ಖಂಡ_bitmap map, blk64_t *pblk,
 			   blk64_t *plen)
 {
 	errcode_t retval;
-	blk64_t start, end, b;
-	int looped = 0;
-	blk64_t max_blocks = ext2fs_blocks_count(fs->super);
-	errcode_t (*nrf)(ext2_filsys fs, int flags, blk64_t goal,
+	blk64_t ಆರಂಭ, ಕೊನೆ, b;
+	ಪೂರ್ಣಾಂಕ looped = 0;
+	blk64_t max_ಖಂಡಗಳು = ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super);
+	errcode_t (*nrf)(ext2_filsys fs, ಪೂರ್ಣಾಂಕ flags, blk64_t goal,
 			 blk64_t len, blk64_t *pblk, blk64_t *plen);
 
 	dbg_printf("%s: flags=0x%x goal=%llu len=%llu\n", __func__, flags,
 		   goal, len);
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
-	if (len == 0 || (flags & ~EXT2_NEWRANGE_ALL_FLAGS))
-		return EXT2_ET_INVALID_ARGUMENT;
+	ಆದರೆ (len == 0 || (flags & ~EXT2_NEWRANGE_ALL_FLAGS))
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
 
-	if (!map && fs->new_range) {
+	ಆದರೆ (!map && fs->new_range) {
 		/*
 		 * In case there are clients out there whose new_range
 		 * handlers call ext2fs_new_range with a NULL block map,
@@ -426,129 +426,129 @@ errcode_t ext2fs_new_range(ext2_filsys fs, int flags, blk64_t goal,
 		 * end up in an infinite loop.
 		 */
 		nrf = fs->new_range;
-		fs->new_range = NULL;
+		fs->new_range = ಖಾಲಿ;
 		retval = nrf(fs, flags, goal, len, pblk, plen);
 		fs->new_range = nrf;
-		if (retval)
-			return retval;
-		start = *pblk;
-		end = *pblk + *plen;
-		goto allocated;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
+		ಆರಂಭ = *pblk;
+		ಕೊನೆ = *pblk + *plen;
+		ಹೋಗು allocated;
 	}
-	if (!map)
-		map = fs->block_map;
-	if (!map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
-	if (!goal || goal >= ext2fs_blocks_count(fs->super))
-		goal = fs->super->s_first_data_block;
+	ಆದರೆ (!map)
+		map = fs->ಖಂಡ_map;
+	ಆದರೆ (!map)
+		ಹಿಂತಿರುಗಿ EXT2_ET_NO_ಖಂಡ_BITMAP;
+	ಆದರೆ (!goal || goal >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super))
+		goal = fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ;
 
-	start = goal;
-	while (!looped || start <= goal) {
-		retval = ext2fs_find_first_zero_block_bitmap2(map, start,
-							      max_blocks - 1,
-							      &start);
-		if (retval == ENOENT) {
+	ಆರಂಭ = goal;
+	ಆಗ (!looped || ಆರಂಭ <= goal) {
+		retval = ext2fs_ಕಂಡುಹಿಡಿ_ಮೊದಲ_zero_ಖಂಡ_bitmap2(map, ಆರಂಭ,
+							      max_ಖಂಡಗಳು - 1,
+							      &ಆರಂಭ);
+		ಆದರೆ (retval == ENOENT) {
 			/*
 			 * If there are no free blocks beyond the starting
 			 * point, try scanning the whole filesystem, unless the
 			 * user told us only to allocate from _goal_, or if
 			 * we're already scanning the whole filesystem.
 			 */
-			if (flags & EXT2_NEWRANGE_FIXED_GOAL ||
-			    start == fs->super->s_first_data_block)
-				goto fail;
-			start = fs->super->s_first_data_block;
-			continue;
-		} else if (retval)
-			goto errout;
+			ಆದರೆ (flags & EXT2_NEWRANGE_FIXED_GOAL ||
+			    ಆರಂಭ == fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ)
+				ಹೋಗು fail;
+			ಆರಂಭ = fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ;
+			ಮುಂದುವರಿ;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (retval)
+			ಹೋಗು errout;
 
-		if (flags & EXT2_NEWRANGE_FIXED_GOAL && start != goal)
-			goto fail;
+		ಆದರೆ (flags & EXT2_NEWRANGE_FIXED_GOAL && ಆರಂಭ != goal)
+			ಹೋಗು fail;
 
-		b = min(start + len - 1, max_blocks - 1);
-		retval =  ext2fs_find_first_set_block_bitmap2(map, start, b,
-							      &end);
-		if (retval == ENOENT)
-			end = b + 1;
-		else if (retval)
-			goto errout;
+		b = min(ಆರಂಭ + len - 1, max_ಖಂಡಗಳು - 1);
+		retval =  ext2fs_ಕಂಡುಹಿಡಿ_ಮೊದಲ_ಗಣ_ಖಂಡ_bitmap2(map, ಆರಂಭ, b,
+							      &ಕೊನೆ);
+		ಆದರೆ (retval == ENOENT)
+			ಕೊನೆ = b + 1;
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (retval)
+			ಹೋಗು errout;
 
-		if (!(flags & EXT2_NEWRANGE_MIN_LENGTH) ||
-		    (end - start) >= len) {
+		ಆದರೆ (!(flags & EXT2_NEWRANGE_MIN_ಉದ್ದಳತೆ) ||
+		    (ಕೊನೆ - ಆರಂಭ) >= len) {
 			/* Success! */
-			*pblk = start;
-			*plen = end - start;
+			*pblk = ಆರಂಭ;
+			*plen = ಕೊನೆ - ಆರಂಭ;
 			dbg_printf("%s: new_range goal=%llu--%llu "
 				   "blk=%llu--%llu %llu\n",
 				   __func__, goal, goal + len - 1,
 				   *pblk, *pblk + *plen - 1, *plen);
 allocated:
-			for (b = start; b < end;
-			     b += fs->super->s_blocks_per_group)
-				ext2fs_clear_block_uninit(fs,
-						ext2fs_group_of_blk2(fs, b));
-			return 0;
+			ಗಾಗಿ (b = ಆರಂಭ; b < ಕೊನೆ;
+			     b += fs->super->s_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು)
+				ext2fs_clear_ಖಂಡ_uninit(fs,
+						ext2fs_ಗುಂಪು_ದ_blk2(fs, b));
+			ಹಿಂತಿರುಗಿ 0;
 		}
 
-		if (flags & EXT2_NEWRANGE_FIXED_GOAL)
-			goto fail;
-		start = end;
-		if (start >= max_blocks) {
-			if (looped)
-				goto fail;
+		ಆದರೆ (flags & EXT2_NEWRANGE_FIXED_GOAL)
+			ಹೋಗು fail;
+		ಆರಂಭ = ಕೊನೆ;
+		ಆದರೆ (ಆರಂಭ >= max_ಖಂಡಗಳು) {
+			ಆದರೆ (looped)
+				ಹೋಗು fail;
 			looped = 1;
-			start = fs->super->s_first_data_block;
+			ಆರಂಭ = fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ;
 		}
 	}
 
 fail:
-	retval = EXT2_ET_BLOCK_ALLOC_FAIL;
+	retval = EXT2_ET_ಖಂಡ_ALLOC_FAIL;
 errout:
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-void ext2fs_set_new_range_callback(ext2_filsys fs,
-	errcode_t (*func)(ext2_filsys fs, int flags, blk64_t goal,
+ಶೂನ್ಯ ext2fs_ಗಣ_new_range_callback(ext2_filsys fs,
+	errcode_t (*func)(ext2_filsys fs, ಪೂರ್ಣಾಂಕ flags, blk64_t goal,
 			       blk64_t len, blk64_t *pblk, blk64_t *plen),
-	errcode_t (**old)(ext2_filsys fs, int flags, blk64_t goal,
+	errcode_t (**old)(ext2_filsys fs, ಪೂರ್ಣಾಂಕ flags, blk64_t goal,
 			       blk64_t len, blk64_t *pblk, blk64_t *plen))
 {
-	if (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
-		return;
+	ಆದರೆ (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
+		ಹಿಂತಿರುಗಿ;
 
-	if (old)
+	ಆದರೆ (old)
 		*old = fs->new_range;
 
 	fs->new_range = func;
 }
 
-errcode_t ext2fs_alloc_range(ext2_filsys fs, int flags, blk64_t goal,
+errcode_t ext2fs_alloc_range(ext2_filsys fs, ಪೂರ್ಣಾಂಕ flags, blk64_t goal,
 			     blk_t len, blk64_t *ret)
 {
-	int newr_flags = EXT2_NEWRANGE_MIN_LENGTH;
+	ಪೂರ್ಣಾಂಕ newr_flags = EXT2_NEWRANGE_MIN_ಉದ್ದಳತೆ;
 	errcode_t retval;
 	blk64_t plen;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
-	if (len == 0 || (flags & ~EXT2_ALLOCRANGE_ALL_FLAGS))
-		return EXT2_ET_INVALID_ARGUMENT;
+	ಆದರೆ (len == 0 || (flags & ~EXT2_ALLOCRANGE_ALL_FLAGS))
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
 
-	if (flags & EXT2_ALLOCRANGE_FIXED_GOAL)
+	ಆದರೆ (flags & EXT2_ALLOCRANGE_FIXED_GOAL)
 		newr_flags |= EXT2_NEWRANGE_FIXED_GOAL;
 
-	retval = ext2fs_new_range(fs, newr_flags, goal, len, NULL, ret, &plen);
-	if (retval)
-		return retval;
+	retval = ext2fs_new_range(fs, newr_flags, goal, len, ಖಾಲಿ, ret, &plen);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-	if (plen < len)
-		return EXT2_ET_BLOCK_ALLOC_FAIL;
+	ಆದರೆ (plen < len)
+		ಹಿಂತಿರುಗಿ EXT2_ET_ಖಂಡ_ALLOC_FAIL;
 
-	if (flags & EXT2_ALLOCRANGE_ZERO_BLOCKS) {
-		retval = ext2fs_zero_blocks2(fs, *ret, len, NULL, NULL);
-		if (retval)
-			return retval;
+	ಆದರೆ (flags & EXT2_ALLOCRANGE_ZERO_ಖಂಡಗಳು) {
+		retval = ext2fs_zero_blocks2(fs, *ret, len, ಖಾಲಿ, ಖಾಲಿ);
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 	}
 
-	ext2fs_block_alloc_stats_range(fs, *ret, len, +1);
-	return retval;
+	ext2fs_ಖಂಡ_alloc_stats_range(fs, *ret, len, +1);
+	ಹಿಂತಿರುಗಿ retval;
 }

@@ -28,120 +28,120 @@
  * This source code is licensed under the GNU General Public License,
  * Version 2.  See the file COPYING for more details.
  */
-#include "config.h"
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#define min(x, y)		((x) > (y) ? (y) : (x))
-#define __ALIGN_KERNEL_MASK(x, mask)	(((x) + (mask)) & ~(mask))
-#define __ALIGN_KERNEL(x, a)	__ALIGN_KERNEL_MASK(x, (__typeof__(x))(a) - 1)
-#define ALIGN(x, a)		__ALIGN_KERNEL((x), (a))
-#define PTR_ALIGN(p, a)		((__typeof__(p))ALIGN((unsigned long)(p), (a)))
-#include "crc32c_defs.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ವ್ಯಾಖ್ಯಾನಿಸು min(x, y)		((x) > (y) ? (y) : (x))
+#ವ್ಯಾಖ್ಯಾನಿಸು __ALIGN_KERNEL_MASK(x, ಮುಖವಾಡ)	(((x) + (ಮುಖವಾಡ)) & ~(ಮುಖವಾಡ))
+#ವ್ಯಾಖ್ಯಾನಿಸು __ALIGN_KERNEL(x, a)	__ALIGN_KERNEL_MASK(x, (__typeof__(x))(a) - 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು ALIGN(x, a)		__ALIGN_KERNEL((x), (a))
+#ವ್ಯಾಖ್ಯಾನಿಸು PTR_ALIGN(p, a)		((__typeof__(p))ALIGN((ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)(p), (a)))
+#ಅನ್ತರ್ಭಾವ "crc32c_defs.h"
 
-#include "ext2fs.h"
-#ifdef WORDS_BIGENDIAN
-#define __constant_cpu_to_le32(x) ___constant_swab32((x))
-#define __constant_cpu_to_be32(x) (x)
-#define __be32_to_cpu(x) (x)
-#define __cpu_to_be32(x) (x)
-#define __cpu_to_le32(x) (ext2fs_cpu_to_le32((x)))
-#define __le32_to_cpu(x) (ext2fs_le32_to_cpu((x)))
-#else
-#define __constant_cpu_to_le32(x) (x)
-#define __constant_cpu_to_be32(x) ___constant_swab32((x))
-#define __be32_to_cpu(x) (ext2fs_be32_to_cpu((x)))
-#define __cpu_to_be32(x) (ext2fs_cpu_to_be32((x)))
-#define __cpu_to_le32(x) (x)
-#define __le32_to_cpu(x) (x)
-#endif
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
+#ವ್ಯಾಖ್ಯಾನಿಸು __constant_cpu_to_le32(x) ___constant_swab32((x))
+#ವ್ಯಾಖ್ಯಾನಿಸು __constant_cpu_to_be32(x) (x)
+#ವ್ಯಾಖ್ಯಾನಿಸು __be32_to_cpu(x) (x)
+#ವ್ಯಾಖ್ಯಾನಿಸು __cpu_to_be32(x) (x)
+#ವ್ಯಾಖ್ಯಾನಿಸು __cpu_to_le32(x) (ext2fs_cpu_ಗಮ್ಯ_le32((x)))
+#ವ್ಯಾಖ್ಯಾನಿಸು __le32_to_cpu(x) (ext2fs_le32_ಗಮ್ಯ_cpu((x)))
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು __constant_cpu_to_le32(x) (x)
+#ವ್ಯಾಖ್ಯಾನಿಸು __constant_cpu_to_be32(x) ___constant_swab32((x))
+#ವ್ಯಾಖ್ಯಾನಿಸು __be32_to_cpu(x) (ext2fs_be32_ಗಮ್ಯ_cpu((x)))
+#ವ್ಯಾಖ್ಯಾನಿಸು __cpu_to_be32(x) (ext2fs_cpu_ಗಮ್ಯ_be32((x)))
+#ವ್ಯಾಖ್ಯಾನಿಸು __cpu_to_le32(x) (x)
+#ವ್ಯಾಖ್ಯಾನಿಸು __le32_to_cpu(x) (x)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if CRC_LE_BITS > 8
+#ಆದರೆ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_LE_ಬಿಟ್ಟುಗಳು > 8
 # define tole(x) __constant_cpu_to_le32(x)
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 # define tole(x) (x)
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if CRC_BE_BITS > 8
+#ಆದರೆ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_BE_ಬಿಟ್ಟುಗಳು > 8
 # define tobe(x) __constant_cpu_to_be32(x)
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 # define tobe(x) (x)
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "crc32c_table.h"
+#ಅನ್ತರ್ಭಾವ "crc32c_table.h"
 
-#if CRC_LE_BITS > 8 || CRC_BE_BITS > 8
+#ಆದರೆ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_LE_ಬಿಟ್ಟುಗಳು > 8 || ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_BE_ಬಿಟ್ಟುಗಳು > 8
 
-#if CRC_LE_BITS < 64 && CRC_BE_BITS < 64
-#define CRC_INLINE inline
-#else
-#define CRC_INLINE
-#endif
+#ಆದರೆ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_LE_ಬಿಟ್ಟುಗಳು < 64 && ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_BE_ಬಿಟ್ಟುಗಳು < 64
+#ವ್ಯಾಖ್ಯಾನಿಸು ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_INLINE ಸಾಲೊಳಗೆ
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_INLINE
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* implements slicing-by-4 or slicing-by-8 algorithm */
-static CRC_INLINE uint32_t
-crc32_body(uint32_t crc, unsigned char const *buf, size_t len,
-	   const uint32_t (*tab)[256])
+ಸ್ಥಿರ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_INLINE uint32_t
+ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_body(uint32_t ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ಸ್ಥಿರಾಂಕ *buf, size_t len,
+	   ಸ್ಥಿರಾಂಕ uint32_t (*tab)[256])
 {
-# ifndef WORDS_BIGENDIAN
-#  define DO_CRC(x) (crc = t0[(crc ^ (x)) & 255] ^ (crc >> 8))
+# ifndef ಪದಗಳು_BIGENDIAN
+#  define DO_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ(x) (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = t0[(ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ ^ (x)) & 255] ^ (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 8))
 #  define DO_CRC4 (t3[(q) & 255] ^ t2[(q >> 8) & 255] ^ \
 		   t1[(q >> 16) & 255] ^ t0[(q >> 24) & 255])
 #  define DO_CRC8 (t7[(q) & 255] ^ t6[(q >> 8) & 255] ^ \
 		   t5[(q >> 16) & 255] ^ t4[(q >> 24) & 255])
-# else
-#  define DO_CRC(x) (crc = t0[((crc >> 24) ^ (x)) & 255] ^ (crc << 8))
+# ಇಲ್ಲದಿದ್ದರೆ
+#  define DO_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ(x) (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = t0[((ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 24) ^ (x)) & 255] ^ (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ << 8))
 #  define DO_CRC4 (t0[(q) & 255] ^ t1[(q >> 8) & 255] ^ \
 		   t2[(q >> 16) & 255] ^ t3[(q >> 24) & 255])
 #  define DO_CRC8 (t4[(q) & 255] ^ t5[(q >> 8) & 255] ^ \
 		   t6[(q >> 16) & 255] ^ t7[(q >> 24) & 255])
 # endif
-	const uint32_t *b;
+	ಸ್ಥಿರಾಂಕ uint32_t *b;
 	size_t rem_len;
-	const uint32_t *t0 = tab[0], *t1 = tab[1], *t2 = tab[2], *t3 = tab[3];
-	const uint32_t *t4 = tab[4], *t5 = tab[5], *t6 = tab[6], *t7 = tab[7];
+	ಸ್ಥಿರಾಂಕ uint32_t *t0 = tab[0], *t1 = tab[1], *t2 = tab[2], *t3 = tab[3];
+	ಸ್ಥಿರಾಂಕ uint32_t *t4 = tab[4], *t5 = tab[5], *t6 = tab[6], *t7 = tab[7];
 	uint32_t q;
 
 	/* Align it */
-	if (unlikely((uintptr_t)buf & 3 && len)) {
-		do {
-			DO_CRC(*buf++);
-		} while ((--len) && ((uintptr_t)buf)&3);
+	ಆದರೆ (unlikely((uintptr_t)buf & 3 && len)) {
+		ಮಾಡು {
+			DO_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ(*buf++);
+		} ಆಗ ((--len) && ((uintptr_t)buf)&3);
 	}
 
-# if CRC_LE_BITS == 32
+# ಆದರೆ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_LE_ಬಿಟ್ಟುಗಳು == 32
 	rem_len = len & 3;
 	len = len >> 2;
-# else
+# ಇಲ್ಲದಿದ್ದರೆ
 	rem_len = len & 7;
 	len = len >> 3;
 # endif
 
-	b = (const uint32_t *)buf;
-	for (--b; len; --len) {
-		q = crc ^ *++b; /* use pre increment for speed */
-# if CRC_LE_BITS == 32
-		crc = DO_CRC4;
-# else
-		crc = DO_CRC8;
+	b = (ಸ್ಥಿರಾಂಕ uint32_t *)buf;
+	ಗಾಗಿ (--b; len; --len) {
+		q = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ ^ *++b; /* use pre increment for speed */
+# ಆದರೆ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_LE_ಬಿಟ್ಟುಗಳು == 32
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = DO_CRC4;
+# ಇಲ್ಲದಿದ್ದರೆ
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = DO_CRC8;
 		q = *++b;
-		crc ^= DO_CRC4;
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ ^= DO_CRC4;
 # endif
 	}
 	len = rem_len;
 	/* And the last few bytes */
-	if (len) {
-		const uint8_t *p = (const uint8_t *)(b + 1) - 1;
-		do {
-			DO_CRC(*++p); /* use pre increment for speed */
-		} while (--len);
+	ಆದರೆ (len) {
+		ಸ್ಥಿರಾಂಕ uint8_t *p = (ಸ್ಥಿರಾಂಕ uint8_t *)(b + 1) - 1;
+		ಮಾಡು {
+			DO_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ(*++p); /* use pre increment for speed */
+		} ಆಗ (--len);
 	}
-	return crc;
-#undef DO_CRC
-#undef DO_CRC4
-#undef DO_CRC8
+	ಹಿಂತಿರುಗಿ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ;
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು DO_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು DO_CRC4
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು DO_CRC8
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /**
  * crc32_le() - Calculate bitwise little-endian Ethernet AUTODIN II CRC32
@@ -150,48 +150,48 @@ crc32_body(uint32_t crc, unsigned char const *buf, size_t len,
  * @p: pointer to buffer over which CRC is run
  * @len: length of buffer @p
  */
-static inline uint32_t crc32_le_generic(uint32_t crc, unsigned char const *p,
-					size_t len, const uint32_t (*tab)[256],
-					uint32_t polynomial EXT2FS_ATTR((unused)))
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ uint32_t ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_le_generic(uint32_t ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ಸ್ಥಿರಾಂಕ *p,
+					size_t len, ಸ್ಥಿರಾಂಕ uint32_t (*tab)[256],
+					uint32_t polynomial EXT2FS_ATTR((ಬಳಸದ)))
 {
-#if CRC_LE_BITS == 1
-	int i;
-	while (len--) {
-		crc ^= *p++;
-		for (i = 0; i < 8; i++)
-			crc = (crc >> 1) ^ ((crc & 1) ? polynomial : 0);
+#ಆದರೆ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_LE_ಬಿಟ್ಟುಗಳು == 1
+	ಪೂರ್ಣಾಂಕ i;
+	ಆಗ (len--) {
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ ^= *p++;
+		ಗಾಗಿ (i = 0; i < 8; i++)
+			ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 1) ^ ((ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ & 1) ? polynomial : 0);
 	}
-# elif CRC_LE_BITS == 2
-	while (len--) {
-		crc ^= *p++;
-		crc = (crc >> 2) ^ tab[0][crc & 3];
-		crc = (crc >> 2) ^ tab[0][crc & 3];
-		crc = (crc >> 2) ^ tab[0][crc & 3];
-		crc = (crc >> 2) ^ tab[0][crc & 3];
+# elif ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_LE_ಬಿಟ್ಟುಗಳು == 2
+	ಆಗ (len--) {
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ ^= *p++;
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 2) ^ tab[0][ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ & 3];
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 2) ^ tab[0][ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ & 3];
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 2) ^ tab[0][ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ & 3];
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 2) ^ tab[0][ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ & 3];
 	}
-# elif CRC_LE_BITS == 4
-	while (len--) {
-		crc ^= *p++;
-		crc = (crc >> 4) ^ tab[0][crc & 15];
-		crc = (crc >> 4) ^ tab[0][crc & 15];
+# elif ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_LE_ಬಿಟ್ಟುಗಳು == 4
+	ಆಗ (len--) {
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ ^= *p++;
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 4) ^ tab[0][ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ & 15];
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 4) ^ tab[0][ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ & 15];
 	}
-# elif CRC_LE_BITS == 8
+# elif ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_LE_ಬಿಟ್ಟುಗಳು == 8
 	/* aka Sarwate algorithm */
-	while (len--) {
-		crc ^= *p++;
-		crc = (crc >> 8) ^ tab[0][crc & 255];
+	ಆಗ (len--) {
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ ^= *p++;
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 8) ^ tab[0][ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ & 255];
 	}
-# else
-	crc = __cpu_to_le32(crc);
-	crc = crc32_body(crc, p, len, tab);
-	crc = __le32_to_cpu(crc);
-#endif
-	return crc;
+# ಇಲ್ಲದಿದ್ದರೆ
+	ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = __cpu_to_le32(ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ);
+	ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_body(ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, p, len, tab);
+	ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = __le32_to_cpu(ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ);
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ;
 }
 
-uint32_t ext2fs_crc32c_le(uint32_t crc, unsigned char const *p, size_t len)
+uint32_t ext2fs_crc32c_le(uint32_t ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ಸ್ಥಿರಾಂಕ *p, size_t len)
 {
-	return crc32_le_generic(crc, p, len, crc32ctable_le, CRC32C_POLY_LE);
+	ಹಿಂತಿರುಗಿ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_le_generic(ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, p, len, crc32ctable_le, ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_C_POLY_LE);
 }
 
 /**
@@ -201,53 +201,53 @@ uint32_t ext2fs_crc32c_le(uint32_t crc, unsigned char const *p, size_t len)
  * @p: pointer to buffer over which CRC is run
  * @len: length of buffer @p
  */
-static inline uint32_t crc32_be_generic(uint32_t crc, unsigned char const *p,
-					size_t len, const uint32_t (*tab)[256],
-					uint32_t polynomial EXT2FS_ATTR((unused)))
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ uint32_t ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_be_generic(uint32_t ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ಸ್ಥಿರಾಂಕ *p,
+					size_t len, ಸ್ಥಿರಾಂಕ uint32_t (*tab)[256],
+					uint32_t polynomial EXT2FS_ATTR((ಬಳಸದ)))
 {
-#if CRC_BE_BITS == 1
-	int i;
-	while (len--) {
-		crc ^= *p++ << 24;
-		for (i = 0; i < 8; i++)
-			crc =
-			    (crc << 1) ^ ((crc & 0x80000000) ? polynomial :
+#ಆದರೆ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_BE_ಬಿಟ್ಟುಗಳು == 1
+	ಪೂರ್ಣಾಂಕ i;
+	ಆಗ (len--) {
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ ^= *p++ << 24;
+		ಗಾಗಿ (i = 0; i < 8; i++)
+			ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ =
+			    (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ << 1) ^ ((ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ & 0x80000000) ? polynomial :
 					  0);
 	}
-# elif CRC_BE_BITS == 2
-	while (len--) {
-		crc ^= *p++ << 24;
-		crc = (crc << 2) ^ tab[0][crc >> 30];
-		crc = (crc << 2) ^ tab[0][crc >> 30];
-		crc = (crc << 2) ^ tab[0][crc >> 30];
-		crc = (crc << 2) ^ tab[0][crc >> 30];
+# elif ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_BE_ಬಿಟ್ಟುಗಳು == 2
+	ಆಗ (len--) {
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ ^= *p++ << 24;
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ << 2) ^ tab[0][ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 30];
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ << 2) ^ tab[0][ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 30];
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ << 2) ^ tab[0][ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 30];
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ << 2) ^ tab[0][ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 30];
 	}
-# elif CRC_BE_BITS == 4
-	while (len--) {
-		crc ^= *p++ << 24;
-		crc = (crc << 4) ^ tab[0][crc >> 28];
-		crc = (crc << 4) ^ tab[0][crc >> 28];
+# elif ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_BE_ಬಿಟ್ಟುಗಳು == 4
+	ಆಗ (len--) {
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ ^= *p++ << 24;
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ << 4) ^ tab[0][ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 28];
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ << 4) ^ tab[0][ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 28];
 	}
-# elif CRC_BE_BITS == 8
-	while (len--) {
-		crc ^= *p++ << 24;
-		crc = (crc << 8) ^ tab[0][crc >> 24];
+# elif ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_BE_ಬಿಟ್ಟುಗಳು == 8
+	ಆಗ (len--) {
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ ^= *p++ << 24;
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ << 8) ^ tab[0][ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 24];
 	}
-# else
-	crc = __cpu_to_be32(crc);
-	crc = crc32_body(crc, p, len, tab);
-	crc = __be32_to_cpu(crc);
+# ಇಲ್ಲದಿದ್ದರೆ
+	ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = __cpu_to_be32(ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ);
+	ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_body(ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, p, len, tab);
+	ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = __be32_to_cpu(ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ);
 # endif
-	return crc;
+	ಹಿಂತಿರುಗಿ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ;
 }
 
-uint32_t ext2fs_crc32_be(uint32_t crc, unsigned char const *p, size_t len)
+uint32_t ext2fs_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_be(uint32_t ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ಸ್ಥಿರಾಂಕ *p, size_t len)
 {
-	return crc32_be_generic(crc, p, len, crc32table_be, CRCPOLY_BE);
+	ಹಿಂತಿರುಗಿ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_be_generic(ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, p, len, crc32table_be, CRCPOLY_BE);
 }
 
-#ifdef UNITTEST
-static uint8_t test_buf[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ UNITTEST
+ಸ್ಥಿರ uint8_t test_buf[] = {
 	0xd9, 0xd7, 0x6a, 0x13, 0x3a, 0xb1, 0x05, 0x48,
 	0xda, 0xad, 0x14, 0xbd, 0x03, 0x3a, 0x58, 0x5e,
 	0x6e, 0xd1, 0x56, 0xc9, 0x2e, 0xc4, 0xcb, 0x6b,
@@ -762,12 +762,12 @@ static uint8_t test_buf[] = {
 	0x02, 0x21, 0x16, 0x8f, 0x0f, 0xdf, 0xa5, 0xf0,
 };
 
-static struct crc_test {
-	uint32_t crc;		/* random starting crc */
-	uint32_t start;		/* random offset in buf */
-	uint32_t length;	/* random length of test */
+ಸ್ಥಿರ ರಚನೆ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_test {
+	uint32_t ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ;		/* random starting crc */
+	uint32_t ಆರಂಭ;		/* random offset in buf */
+	uint32_t ಉದ್ದಳತೆ;	/* random length of test */
 	uint32_t crc32c_le;	/* expected crc32c_le result */
-	uint32_t crc32_be;	/* expected crc32_be result */
+	uint32_t ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_be;	/* expected crc32_be result */
 } test[] = {
 	{0xffffffff, 0x00000000, 0x00001000, 0x13934bef, 0xd8ddcdc3},
 	{0xfe7328ea, 0x00000763, 0x00000717, 0xed2c0d70, 0xc863aef8},
@@ -900,39 +900,39 @@ static struct crc_test {
 	{0, 0, 0, 0, 0},
 };
 
-static int test_crc32c(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ test_crc32c(ಶೂನ್ಯ)
 {
-	struct crc_test *t = test;
-	int failures = 0;
+	ರಚನೆ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_test *t = test;
+	ಪೂರ್ಣಾಂಕ failures = 0;
 
-	while (t->length) {
+	ಆಗ (t->ಉದ್ದಳತೆ) {
 		uint32_t be, le;
-		le = ext2fs_crc32c_le(t->crc, test_buf + t->start, t->length);
-		be = ext2fs_crc32_be(t->crc, test_buf + t->start, t->length);
-		if (le != t->crc32c_le) {
-			printf("Test %d LE fails, %x != %x\n",
-			       (int) (t - test), le, t->crc32c_le);
+		le = ext2fs_crc32c_le(t->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, test_buf + t->ಆರಂಭ, t->ಉದ್ದಳತೆ);
+		be = ext2fs_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_be(t->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, test_buf + t->ಆರಂಭ, t->ಉದ್ದಳತೆ);
+		ಆದರೆ (le != t->crc32c_le) {
+			ಬರೆ("Test %d LE fails, %x != %x\n",
+			       (ಪೂರ್ಣಾಂಕ) (t - test), le, t->crc32c_le);
 			failures++;
 		}
-		if (be != t->crc32_be) {
-			printf("Test %d BE fails, %x != %x\n",
-			       (int) (t - test), be, t->crc32_be);
+		ಆದರೆ (be != t->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_be) {
+			ಬರೆ("Test %d BE fails, %x != %x\n",
+			       (ಪೂರ್ಣಾಂಕ) (t - test), be, t->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_be);
 			failures++;
 		}
 		t++;
 	}
 
-	return failures;
+	ಹಿಂತಿರುಗಿ failures;
 }
 
-int main(int argc, char *argv[])
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ *argv[])
 {
-	int ret;
+	ಪೂರ್ಣಾಂಕ ret;
 
 	ret = test_crc32c();
-	if (!ret)
-		printf("No failures.\n");
+	ಆದರೆ (!ret)
+		ಬರೆ("No failures.\n");
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
-#endif /* UNITTEST */
+#ಆದರೆ_ಅಂತ್ಯ /* UNITTEST */

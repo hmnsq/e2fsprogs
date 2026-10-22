@@ -11,13 +11,13 @@
  */
 
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಆದರೆ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
-static const __u32 K[64] = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ __u32 K[64] = {
     0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL, 0x3956c25bUL,
     0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL, 0xd807aa98UL, 0x12835b01UL,
     0x243185beUL, 0x550c7dc3UL, 0x72be5d74UL, 0x80deb1feUL, 0x9bdc06a7UL,
@@ -34,92 +34,92 @@ static const __u32 K[64] = {
 };
 
 /* Various logical functions */
-#define Ch(x,y,z)       (z ^ (x & (y ^ z)))
-#define Maj(x,y,z)      (((x | y) & z) | (x & y)) 
-#define S(x, n)         RORc((x),(n))
-#define R(x, n)         (((x)&0xFFFFFFFFUL)>>(n))
-#define Sigma0(x)       (S(x, 2) ^ S(x, 13) ^ S(x, 22))
-#define Sigma1(x)       (S(x, 6) ^ S(x, 11) ^ S(x, 25))
-#define Gamma0(x)       (S(x, 7) ^ S(x, 18) ^ R(x, 3))
-#define Gamma1(x)       (S(x, 17) ^ S(x, 19) ^ R(x, 10))
-#define RORc(x, y) ( ((((__u32)(x)&0xFFFFFFFFUL)>>(__u32)((y)&31)) | ((__u32)(x)<<(__u32)(32-((y)&31)))) & 0xFFFFFFFFUL)
+#ವ್ಯಾಖ್ಯಾನಿಸು Ch(x,y,z)       (z ^ (x & (y ^ z)))
+#ವ್ಯಾಖ್ಯಾನಿಸು Maj(x,y,z)      (((x | y) & z) | (x & y)) 
+#ವ್ಯಾಖ್ಯಾನಿಸು S(x, n)         RORc((x),(n))
+#ವ್ಯಾಖ್ಯಾನಿಸು R(x, n)         (((x)&0xFFFFFFFFUL)>>(n))
+#ವ್ಯಾಖ್ಯಾನಿಸು Sigma0(x)       (S(x, 2) ^ S(x, 13) ^ S(x, 22))
+#ವ್ಯಾಖ್ಯಾನಿಸು Sigma1(x)       (S(x, 6) ^ S(x, 11) ^ S(x, 25))
+#ವ್ಯಾಖ್ಯಾನಿಸು Gamma0(x)       (S(x, 7) ^ S(x, 18) ^ R(x, 3))
+#ವ್ಯಾಖ್ಯಾನಿಸು Gamma1(x)       (S(x, 17) ^ S(x, 19) ^ R(x, 10))
+#ವ್ಯಾಖ್ಯಾನಿಸು RORc(x, y) ( ((((__u32)(x)&0xFFFFFFFFUL)>>(__u32)((y)&31)) | ((__u32)(x)<<(__u32)(32-((y)&31)))) & 0xFFFFFFFFUL)
 
-#define RND(a,b,c,d,e,f,g,h,i)                         \
+#ವ್ಯಾಖ್ಯಾನಿಸು RND(a,b,c,d,e,f,g,h,i)                         \
      t0 = h + Sigma1(e) + Ch(e, f, g) + K[i] + W[i];   \
      t1 = Sigma0(a) + Maj(a, b, c);                    \
      d += t0;                                          \
      h  = t0 + t1;
 
-#define STORE64H(x, y) \
-	do { \
-		(y)[0] = (unsigned char)(((x)>>56)&255);\
-		(y)[1] = (unsigned char)(((x)>>48)&255);\
-		(y)[2] = (unsigned char)(((x)>>40)&255);\
-		(y)[3] = (unsigned char)(((x)>>32)&255);\
-		(y)[4] = (unsigned char)(((x)>>24)&255);\
-		(y)[5] = (unsigned char)(((x)>>16)&255);\
-		(y)[6] = (unsigned char)(((x)>>8)&255);\
-		(y)[7] = (unsigned char)((x)&255); } while(0)
+#ವ್ಯಾಖ್ಯಾನಿಸು STORE64H(x, y) \
+	ಮಾಡು { \
+		(y)[0] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(((x)>>56)&255);\
+		(y)[1] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(((x)>>48)&255);\
+		(y)[2] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(((x)>>40)&255);\
+		(y)[3] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(((x)>>32)&255);\
+		(y)[4] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(((x)>>24)&255);\
+		(y)[5] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(((x)>>16)&255);\
+		(y)[6] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(((x)>>8)&255);\
+		(y)[7] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)((x)&255); } ಆಗ(0)
 
-#define STORE32H(x, y)                                                                     \
-  do { (y)[0] = (unsigned char)(((x)>>24)&255); (y)[1] = (unsigned char)(((x)>>16)&255);   \
-       (y)[2] = (unsigned char)(((x)>>8)&255); (y)[3] = (unsigned char)((x)&255); } while(0)
+#ವ್ಯಾಖ್ಯಾನಿಸು STORE32H(x, y)                                                                     \
+  ಮಾಡು { (y)[0] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(((x)>>24)&255); (y)[1] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(((x)>>16)&255);   \
+       (y)[2] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(((x)>>8)&255); (y)[3] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)((x)&255); } ಆಗ(0)
 
-#define LOAD32H(x, y)                            \
-  do { x = ((__u32)((y)[0] & 255)<<24) | \
+#ವ್ಯಾಖ್ಯಾನಿಸು LOAD32H(x, y)                            \
+  ಮಾಡು { x = ((__u32)((y)[0] & 255)<<24) | \
            ((__u32)((y)[1] & 255)<<16) | \
            ((__u32)((y)[2] & 255)<<8)  | \
-           ((__u32)((y)[3] & 255)); } while(0)
+           ((__u32)((y)[3] & 255)); } ಆಗ(0)
 
-struct sha256_state {
-    __u64 length;
+ರಚನೆ sha256_state {
+    __u64 ಉದ್ದಳತೆ;
     __u32 state[8], curlen;
-    unsigned char buf[64];
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ buf[64];
 };
 
 /* This is a highly simplified version from libtomcrypt */
-struct hash_state {
-	struct sha256_state sha256;
+ರಚನೆ hash_state {
+	ರಚನೆ sha256_state sha256;
 };
 
-static void sha256_compress(struct hash_state * md, const unsigned char *buf)
+ಸ್ಥಿರ ಶೂನ್ಯ sha256_compress(ರಚನೆ hash_state * md, ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *buf)
 {
     __u32 S[8], W[64], t0, t1;
     __u32 t;
-    int i;
+    ಪೂರ್ಣಾಂಕ i;
 
     /* copy state into S */
-    for (i = 0; i < 8; i++) {
+    ಗಾಗಿ (i = 0; i < 8; i++) {
         S[i] = md->sha256.state[i];
     }
 
     /* copy the state into 512-bits into W[0..15] */
-    for (i = 0; i < 16; i++) {
+    ಗಾಗಿ (i = 0; i < 16; i++) {
         LOAD32H(W[i], buf + (4*i));
     }
 
     /* fill W[16..63] */
-    for (i = 16; i < 64; i++) {
+    ಗಾಗಿ (i = 16; i < 64; i++) {
         W[i] = Gamma1(W[i - 2]) + W[i - 7] + Gamma0(W[i - 15]) + W[i - 16];
     }        
 
     /* Compress */
-     for (i = 0; i < 64; ++i) {
+     ಗಾಗಿ (i = 0; i < 64; ++i) {
          RND(S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7],i);
          t = S[7]; S[7] = S[6]; S[6] = S[5]; S[5] = S[4]; 
          S[4] = S[3]; S[3] = S[2]; S[2] = S[1]; S[1] = S[0]; S[0] = t;
      }  
 
     /* feedback */
-    for (i = 0; i < 8; i++) {
+    ಗಾಗಿ (i = 0; i < 8; i++) {
         md->sha256.state[i] = md->sha256.state[i] + S[i];
     }
 }
 
-static void sha256_init(struct hash_state * md)
+ಸ್ಥಿರ ಶೂನ್ಯ sha256_init(ರಚನೆ hash_state * md)
 {
     md->sha256.curlen = 0;
-    md->sha256.length = 0;
+    md->sha256.ಉದ್ದಳತೆ = 0;
     md->sha256.state[0] = 0x6A09E667UL;
     md->sha256.state[1] = 0xBB67AE85UL;
     md->sha256.state[2] = 0x3C6EF372UL;
@@ -130,27 +130,27 @@ static void sha256_init(struct hash_state * md)
     md->sha256.state[7] = 0x5BE0CD19UL;
 }
 
-#define MIN(x, y) ( ((x)<(y))?(x):(y) )
-#define SHA256_BLOCKSIZE 64
-static void sha256_process(struct hash_state * md, const unsigned char *in, unsigned long inlen)
+#ವ್ಯಾಖ್ಯಾನಿಸು MIN(x, y) ( ((x)<(y))?(x):(y) )
+#ವ್ಯಾಖ್ಯಾನಿಸು SHA256_BLOCKSIZE 64
+ಸ್ಥಿರ ಶೂನ್ಯ sha256_process(ರಚನೆ hash_state * md, ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *ಒಳ, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ inlen)
 {
-    unsigned long n;
+    ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ n;
 
-    while (inlen > 0) {
-	    if (md->sha256.curlen == 0 && inlen >= SHA256_BLOCKSIZE) {
-		    sha256_compress(md, in);
-		    md->sha256.length += SHA256_BLOCKSIZE * 8;
-		    in += SHA256_BLOCKSIZE;
+    ಆಗ (inlen > 0) {
+	    ಆದರೆ (md->sha256.curlen == 0 && inlen >= SHA256_BLOCKSIZE) {
+		    sha256_compress(md, ಒಳ);
+		    md->sha256.ಉದ್ದಳತೆ += SHA256_BLOCKSIZE * 8;
+		    ಒಳ += SHA256_BLOCKSIZE;
 		    inlen -= SHA256_BLOCKSIZE;
-	    } else {
+	    } ಇಲ್ಲದಿದ್ದರೆ {
 		    n = MIN(inlen, (SHA256_BLOCKSIZE - md->sha256.curlen));
-		    memcpy(md->sha256.buf + md->sha256.curlen, in, (size_t)n);
+		    ಸ್ಮರಣೆ_ನಕಲು(md->sha256.buf + md->sha256.curlen, ಒಳ, (size_t)n);
 		    md->sha256.curlen += n;
-		    in += n;
+		    ಒಳ += n;
 		    inlen -= n;
-		    if (md->sha256.curlen == SHA256_BLOCKSIZE) {
+		    ಆದರೆ (md->sha256.curlen == SHA256_BLOCKSIZE) {
 			    sha256_compress(md, md->sha256.buf);
-			    md->sha256.length += 8*SHA256_BLOCKSIZE;
+			    md->sha256.ಉದ್ದಳತೆ += 8*SHA256_BLOCKSIZE;
 			    md->sha256.curlen = 0;
 		    }
 	    }
@@ -158,57 +158,57 @@ static void sha256_process(struct hash_state * md, const unsigned char *in, unsi
 }
 
 
-static void sha256_done(struct hash_state * md, unsigned char *out)
+ಸ್ಥಿರ ಶೂನ್ಯ sha256_ಮುಗಿದ(ರಚನೆ hash_state * md, ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *ಹೊರಹೋಗು)
 {
-    int i;
+    ಪೂರ್ಣಾಂಕ i;
 
     /* increase the length of the message */
-    md->sha256.length += md->sha256.curlen * 8;
+    md->sha256.ಉದ್ದಳತೆ += md->sha256.curlen * 8;
 
     /* append the '1' bit */
-    md->sha256.buf[md->sha256.curlen++] = (unsigned char)0x80;
+    md->sha256.buf[md->sha256.curlen++] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)0x80;
 
     /* if the length is currently above 56 bytes we append zeros
      * then compress.  Then we can fall back to padding zeros and length
      * encoding like normal.
      */
-    if (md->sha256.curlen > 56) {
-        while (md->sha256.curlen < 64) {
-            md->sha256.buf[md->sha256.curlen++] = (unsigned char)0;
+    ಆದರೆ (md->sha256.curlen > 56) {
+        ಆಗ (md->sha256.curlen < 64) {
+            md->sha256.buf[md->sha256.curlen++] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)0;
         }
         sha256_compress(md, md->sha256.buf);
         md->sha256.curlen = 0;
     }
 
     /* pad up to 56 bytes of zeroes */
-    while (md->sha256.curlen < 56) {
-        md->sha256.buf[md->sha256.curlen++] = (unsigned char)0;
+    ಆಗ (md->sha256.curlen < 56) {
+        md->sha256.buf[md->sha256.curlen++] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)0;
     }
 
     /* store length */
-    STORE64H(md->sha256.length, md->sha256.buf+56);
+    STORE64H(md->sha256.ಉದ್ದಳತೆ, md->sha256.buf+56);
     sha256_compress(md, md->sha256.buf);
 
     /* copy output */
-    for (i = 0; i < 8; i++) {
-        STORE32H(md->sha256.state[i], out+(4*i));
+    ಗಾಗಿ (i = 0; i < 8; i++) {
+        STORE32H(md->sha256.state[i], ಹೊರಹೋಗು+(4*i));
     }
 }
 
-void ext2fs_sha256(const unsigned char *in, unsigned long in_size,
-		   unsigned char out[EXT2FS_SHA256_LENGTH])
+ಶೂನ್ಯ ext2fs_sha256(ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *ಒಳ, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಒಳ_ಗಾತ್ರ,
+		   ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ಹೊರಹೋಗು[EXT2_FS_SHA256_ಉದ್ದಳತೆ])
 {
-	struct hash_state md;
+	ರಚನೆ hash_state md;
 
 	sha256_init(&md);
-	sha256_process(&md, in, in_size);
-	sha256_done(&md, out);
+	sha256_process(&md, ಒಳ, ಒಳ_ಗಾತ್ರ);
+	sha256_ಮುಗಿದ(&md, ಹೊರಹೋಗು);
 }
 
-#ifdef UNITTEST
-static const struct {
-	char *msg;
-	unsigned char hash[32];
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ UNITTEST
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ರಚನೆ {
+	ಅಕ್ಷರ *ಸಂದೇಶ;
+	ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ hash[32];
 } tests[] = {
 	{ "",
 	  { 0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14,
@@ -230,25 +230,25 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-	int i;
-	int errors = 0;
-	unsigned char tmp[32];
+	ಪೂರ್ಣಾಂಕ i;
+	ಪೂರ್ಣಾಂಕ errors = 0;
+	ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ tmp[32];
 
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
-		unsigned char *msg = (unsigned char *) tests[i].msg;
-		int len = strlen(tests[i].msg);
+	ಗಾಗಿ (i = 0; i < (ಪೂರ್ಣಾಂಕ)(ಗಾತ್ರ(tests) / ಗಾತ್ರ(tests[0])); i++) {
+		ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *ಸಂದೇಶ = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *) tests[i].ಸಂದೇಶ;
+		ಪೂರ್ಣಾಂಕ len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(tests[i].ಸಂದೇಶ);
 
-		ext2fs_sha256(msg, len, tmp);
-		printf("SHA256 test message %d: ", i);
-		if (memcmp(tmp, tests[i].hash, 32) != 0) {
-			printf("FAILED\n");
+		ext2fs_sha256(ಸಂದೇಶ, len, tmp);
+		ಬರೆ("SHA256 test message %d: ", i);
+		ಆದರೆ (memcmp(tmp, tests[i].hash, 32) != 0) {
+			ಬರೆ("FAILED\n");
 			errors++;
-		} else
-			printf("OK\n");
+		} ಇಲ್ಲದಿದ್ದರೆ
+			ಬರೆ("OK\n");
 	}
-	return errors;
+	ಹಿಂತಿರುಗಿ errors;
 }
 
-#endif /* UNITTEST */
+#ಆದರೆ_ಅಂತ್ಯ /* UNITTEST */

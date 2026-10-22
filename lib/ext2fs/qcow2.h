@@ -24,86 +24,86 @@
  * %End-Header%
  */
 
-#include <ext2fs/ext2_types.h>
+#ಅನ್ತರ್ಭಾವ <ext2fs/ext2_types.h>
 
 /* Number of l2 tables in memory before writeback */
-#define L2_CACHE_PREALLOC	512
+#ವ್ಯಾಖ್ಯಾನಿಸು L2_CACHE_PREALLOC	512
 
 
-#define QCOW_MAGIC (('Q' << 24) | ('F' << 16) | ('I' << 8) | 0xfb)
-#define QCOW_VERSION		2
-#define QCOW_OFLAG_COPIED	(1ULL << 63)
-#define QCOW_OFLAG_COMPRESSED	(1ULL << 62)
+#ವ್ಯಾಖ್ಯಾನಿಸು QCOW_MAGIC (('Q' << 24) | ('F' << 16) | ('I' << 8) | 0xfb)
+#ವ್ಯಾಖ್ಯಾನಿಸು QCOW_ಆವೃತ್ತಿ		2
+#ವ್ಯಾಖ್ಯಾನಿಸು QCOW_OFLAG_COPIED	(1ULL << 63)
+#ವ್ಯಾಖ್ಯಾನಿಸು QCOW_OFLAG_COMPRESSED	(1ULL << 62)
 
-#define QCOW_COMPRESSED		1
-#define QCOW_ENCRYPTED		2
-#define QCOW_CORRUPTED		3
+#ವ್ಯಾಖ್ಯಾನಿಸು QCOW_COMPRESSED		1
+#ವ್ಯಾಖ್ಯಾನಿಸು QCOW_ENCRYPTED		2
+#ವ್ಯಾಖ್ಯಾನಿಸು QCOW_CORRUPTED		3
 
-struct ext2_qcow2_hdr {
+ರಚನೆ ext2_qcow2_hdr {
 	__u32	magic;
-	__u32	version;
+	__u32	ಆವೃತ್ತಿ;
 
-	__u64	backing_file_offset;
-	__u32	backing_file_size;
+	__u64	backing_file_ಸ್ಥಾನಾಂತರ;
+	__u32	backing_file_ಗಾತ್ರ;
 
-	__u32	cluster_bits;
-	__u64	size;
-	__u32	crypt_method;
+	__u32	cluster_ಬಿಟ್ಟುಗಳು;
+	__u64	ಗಾತ್ರ_2;
+	__u32	crypt_ವಿಧಾನ;
 
-	__u32	l1_size;
-	__u64	l1_table_offset;
+	__u32	l1_ಗಾತ್ರ;
+	__u64	l1_ಕೋಷ್ಟಕ_ಸ್ಥಾನಾಂತರ;
 
-	__u64	refcount_table_offset;
-	__u32	refcount_table_clusters;
+	__u64	refcount_ಕೋಷ್ಟಕ_ಸ್ಥಾನಾಂತರ;
+	__u32	refcount_ಕೋಷ್ಟಕ_clusters;
 
 	__u32	nb_snapshots;
-	__u64	snapshots_offset;
+	__u64	snapshots_ಸ್ಥಾನಾಂತರ;
 };
 
-typedef struct ext2_qcow2_l2_table L2_CACHE_HEAD;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ ext2_qcow2_l2_ಕೋಷ್ಟಕ L2_CACHE_ತಲೆ;
 
-struct ext2_qcow2_l2_table {
-	__u32		l1_index;
-	__u64		offset;
-	__u64		*data;
-	L2_CACHE_HEAD	*next;
+ರಚನೆ ext2_qcow2_l2_ಕೋಷ್ಟಕ {
+	__u32		l1_ಸೂಚ್ಯಂಕ;
+	__u64		ಸ್ಥಾನಾಂತರ;
+	__u64		*ದತ್ತಾಂಶ;
+	L2_CACHE_ತಲೆ	*ಮುಂದಿನ;
 };
 
-struct ext2_qcow2_l2_cache {
-	L2_CACHE_HEAD	*used_head;
-	L2_CACHE_HEAD	*used_tail;
-	L2_CACHE_HEAD	*free_head;
-	__u32		free;
-	__u32		count;
-	__u64		next_offset;
+ರಚನೆ ext2_qcow2_l2_cache {
+	L2_CACHE_ತಲೆ	*ಬಳಸಿದ_ತಲೆ;
+	L2_CACHE_ತಲೆ	*ಬಳಸಿದ_ಬಾಲ;
+	L2_CACHE_ತಲೆ	*free_ತಲೆ;
+	__u32		ಬಿಡುಗಡೆ;
+	__u32		ಎಣಿಕೆ_2;
+	__u64		ಮುಂದಿನ_ಸ್ಥಾನಾಂತರ;
 };
 
-struct ext2_qcow2_refcount {
-	__u64	*refcount_table;
-	__u64	refcount_table_offset;
-	__u64	refcount_block_offset;
+ರಚನೆ ext2_qcow2_refcount {
+	__u64	*refcount_ಕೋಷ್ಟಕ;
+	__u64	refcount_ಕೋಷ್ಟಕ_ಸ್ಥಾನಾಂತರ;
+	__u64	refcount_ಖಂಡ_ಸ್ಥಾನಾಂತರ;
 
-	__u32	refcount_table_clusters;
-	__u32	refcount_table_index;
-	__u32	refcount_block_index;
+	__u32	refcount_ಕೋಷ್ಟಕ_clusters;
+	__u32	refcount_ಕೋಷ್ಟಕ_ಸೂಚ್ಯಂಕ;
+	__u32	refcount_ಖಂಡ_ಸೂಚ್ಯಂಕ;
 
-	__u16	*refcount_block;
+	__u16	*refcount_ಖಂಡ;
 };
 
-struct ext2_qcow2_image {
-	int	fd;
-	struct	ext2_qcow2_hdr		*hdr;
-	struct	ext2_qcow2_l2_cache	*l2_cache;
-	struct	ext2_qcow2_refcount	refcount;
-	__u32	cluster_size;
-	__u32	cluster_bits;
-	__u32	l1_size;
-	__u32	l2_size;
+ರಚನೆ ext2_qcow2_image {
+	ಪೂರ್ಣಾಂಕ	fd;
+	ರಚನೆ	ext2_qcow2_hdr		*hdr;
+	ರಚನೆ	ext2_qcow2_l2_cache	*l2_cache;
+	ರಚನೆ	ext2_qcow2_refcount	refcount;
+	__u32	cluster_ಗಾತ್ರ;
+	__u32	cluster_ಬಿಟ್ಟುಗಳು;
+	__u32	l1_ಗಾತ್ರ;
+	__u32	l2_ಗಾತ್ರ;
 
-	__u64	*l1_table;
-	__u64	l2_offset;
-	__u64	l1_offset;
-	__u64	image_size;
+	__u64	*l1_ಕೋಷ್ಟಕ;
+	__u64	l2_ಸ್ಥಾನಾಂತರ;
+	__u64	l1_ಸ್ಥಾನಾಂತರ;
+	__u64	image_ಗಾತ್ರ;
 };
 
 /* Function prototypes */
@@ -111,6 +111,6 @@ struct ext2_qcow2_image {
 /* qcow2.c */
 
 /* Functions for converting qcow2 image into raw image */
-struct ext2_qcow2_hdr *qcow2_read_header(int);
-int qcow2_write_raw_image(int, int, struct ext2_qcow2_hdr *);
+ರಚನೆ ext2_qcow2_hdr *qcow2_read_ಶೀರ್ಷಿಕೆ(ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ qcow2_write_raw_image(ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ರಚನೆ ext2_qcow2_hdr *);
 

@@ -9,109 +9,109 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_ERRNO_H
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "irel.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "irel.h"
 
-static errcode_t ima_put(ext2_irel irel, ext2_ino_t old,
-			 struct ext2_inode_relocate_entry *ent);
-static errcode_t ima_get(ext2_irel irel, ext2_ino_t old,
-			 struct ext2_inode_relocate_entry *ent);
-static errcode_t ima_get_by_orig(ext2_irel irel, ext2_ino_t orig, ext2_ino_t *old,
-				 struct ext2_inode_relocate_entry *ent);
-static errcode_t ima_start_iter(ext2_irel irel);
-static errcode_t ima_next(ext2_irel irel, ext2_ino_t *old,
-			  struct ext2_inode_relocate_entry *ent);
-static errcode_t ima_add_ref(ext2_irel irel, ext2_ino_t ino,
-			     struct ext2_inode_reference *ref);
-static errcode_t ima_start_iter_ref(ext2_irel irel, ext2_ino_t ino);
-static errcode_t ima_next_ref(ext2_irel irel, struct ext2_inode_reference *ref);
-static errcode_t ima_move(ext2_irel irel, ext2_ino_t old, ext2_ino_t new);
-static errcode_t ima_delete(ext2_irel irel, ext2_ino_t old);
-static errcode_t ima_free(ext2_irel irel);
+ಸ್ಥಿರ errcode_t ima_put(ext2_irel irel, ext2_ino_t old,
+			 ರಚನೆ ext2_inode_relocate_ನಮೂದು *ent);
+ಸ್ಥಿರ errcode_t ima_get(ext2_irel irel, ext2_ino_t old,
+			 ರಚನೆ ext2_inode_relocate_ನಮೂದು *ent);
+ಸ್ಥಿರ errcode_t ima_get_by_orig(ext2_irel irel, ext2_ino_t orig, ext2_ino_t *old,
+				 ರಚನೆ ext2_inode_relocate_ನಮೂದು *ent);
+ಸ್ಥಿರ errcode_t ima_ಆರಂಭ_iter(ext2_irel irel);
+ಸ್ಥಿರ errcode_t ima_ಮುಂದಿನ(ext2_irel irel, ext2_ino_t *old,
+			  ರಚನೆ ext2_inode_relocate_ನಮೂದು *ent);
+ಸ್ಥಿರ errcode_t ima_ಕೂಡಿಸು_ref(ext2_irel irel, ext2_ino_t ino,
+			     ರಚನೆ ext2_inode_reference *ref);
+ಸ್ಥಿರ errcode_t ima_ಆರಂಭ_iter_ref(ext2_irel irel, ext2_ino_t ino);
+ಸ್ಥಿರ errcode_t ima_ಮುಂದಿನ_ref(ext2_irel irel, ರಚನೆ ext2_inode_reference *ref);
+ಸ್ಥಿರ errcode_t ima_move(ext2_irel irel, ext2_ino_t old, ext2_ino_t new);
+ಸ್ಥಿರ errcode_t ima_delete(ext2_irel irel, ext2_ino_t old);
+ಸ್ಥಿರ errcode_t ima_free(ext2_irel irel);
 
 /*
  * This data structure stores the array of inode references; there is
  * a structure for each inode.
  */
-struct inode_reference_entry {
-	__u16 num;
-	struct ext2_inode_reference *refs;
+ರಚನೆ inode_reference_ನಮೂದು {
+	__u16 ಅಂಕೆ;
+	ರಚನೆ ext2_inode_reference *refs;
 };
 
-struct irel_ma {
+ರಚನೆ irel_ma {
 	__u32 magic;
 	ext2_ino_t max_inode;
 	ext2_ino_t ref_current;
-	int   ref_iter;
+	ಪೂರ್ಣಾಂಕ   ref_iter;
 	ext2_ino_t	*orig_map;
-	struct ext2_inode_relocate_entry *entries;
-	struct inode_reference_entry *ref_entries;
+	ರಚನೆ ext2_inode_relocate_ನಮೂದು *entries;
+	ರಚನೆ inode_reference_ನಮೂದು *ref_entries;
 };
 
-errcode_t ext2fs_irel_memarray_create(char *name, ext2_ino_t max_inode,
+errcode_t ext2fs_irel_memarray_create(ಅಕ್ಷರ *name, ext2_ino_t max_inode,
 				      ext2_irel *new_irel)
 {
 	ext2_irel		irel = 0;
 	errcode_t	retval;
-	struct irel_ma 	*ma = 0;
-	size_t		size;
+	ರಚನೆ irel_ma 	*ma = 0;
+	size_t		ಗಾತ್ರ_2;
 
 	*new_irel = 0;
 
 	/*
 	 * Allocate memory structures
 	 */
-	retval = ext2fs_get_mem(sizeof(struct ext2_inode_relocation_table),
+	retval = ext2fs_get_mem(ಗಾತ್ರ(ರಚನೆ ext2_inode_relocation_ಕೋಷ್ಟಕ),
 				&irel);
-	if (retval)
-		goto errout;
-	memset(irel, 0, sizeof(struct ext2_inode_relocation_table));
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
+	memset(irel, 0, ಗಾತ್ರ(ರಚನೆ ext2_inode_relocation_ಕೋಷ್ಟಕ));
 
-	retval = ext2fs_get_mem(strlen(name)+1, &irel->name);
-	if (retval)
-		goto errout;
+	retval = ext2fs_get_mem(ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(name)+1, &irel->name);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
 	strcpy(irel->name, name);
 
-	retval = ext2fs_get_mem(sizeof(struct irel_ma), &ma);
-	if (retval)
-		goto errout;
-	memset(ma, 0, sizeof(struct irel_ma));
-	irel->priv_data = ma;
+	retval = ext2fs_get_mem(ಗಾತ್ರ(ರಚನೆ irel_ma), &ma);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
+	memset(ma, 0, ಗಾತ್ರ(ರಚನೆ irel_ma));
+	irel->priv_ದತ್ತಾಂಶ = ma;
 
-	size = (size_t) (sizeof(ext2_ino_t) * (max_inode+1));
-	retval = ext2fs_get_array(max_inode+1, sizeof(ext2_ino_t),
+	ಗಾತ್ರ_2 = (size_t) (ಗಾತ್ರ(ext2_ino_t) * (max_inode+1));
+	retval = ext2fs_get_array(max_inode+1, ಗಾತ್ರ(ext2_ino_t),
 		&ma->orig_map);
-	if (retval)
-		goto errout;
-	memset(ma->orig_map, 0, size);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
+	memset(ma->orig_map, 0, ಗಾತ್ರ_2);
 
-	size = (size_t) (sizeof(struct ext2_inode_relocate_entry) *
+	ಗಾತ್ರ_2 = (size_t) (ಗಾತ್ರ(ರಚನೆ ext2_inode_relocate_ನಮೂದು) *
 			 (max_inode+1));
 	retval = ext2fs_get_array((max_inode+1,
-		sizeof(struct ext2_inode_relocate_entry), &ma->entries);
-	if (retval)
-		goto errout;
-	memset(ma->entries, 0, size);
+		ಗಾತ್ರ(ರಚನೆ ext2_inode_relocate_ನಮೂದು), &ma->entries);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
+	memset(ma->entries, 0, ಗಾತ್ರ_2);
 
-	size = (size_t) (sizeof(struct inode_reference_entry) *
+	ಗಾತ್ರ_2 = (size_t) (ಗಾತ್ರ(ರಚನೆ inode_reference_ನಮೂದು) *
 			 (max_inode+1));
 	retval = ext2fs_get_mem(max_inode+1,
-		sizeof(struct inode_reference_entry), &ma->ref_entries);
-	if (retval)
-		goto errout;
-	memset(ma->ref_entries, 0, size);
+		ಗಾತ್ರ(ರಚನೆ inode_reference_ನಮೂದು), &ma->ref_entries);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
+	memset(ma->ref_entries, 0, ಗಾತ್ರ_2);
 	ma->max_inode = max_inode;
 
 	/*
@@ -120,258 +120,258 @@ errcode_t ext2fs_irel_memarray_create(char *name, ext2_ino_t max_inode,
 	irel->put = ima_put;
 	irel->get = ima_get;
 	irel->get_by_orig = ima_get_by_orig;
-	irel->start_iter = ima_start_iter;
-	irel->next = ima_next;
-	irel->add_ref = ima_add_ref;
-	irel->start_iter_ref = ima_start_iter_ref;
-	irel->next_ref = ima_next_ref;
+	irel->ಆರಂಭ_iter = ima_ಆರಂಭ_iter;
+	irel->ಮುಂದಿನ = ima_ಮುಂದಿನ;
+	irel->ಕೂಡಿಸು_ref = ima_ಕೂಡಿಸು_ref;
+	irel->ಆರಂಭ_iter_ref = ima_ಆರಂಭ_iter_ref;
+	irel->ಮುಂದಿನ_ref = ima_ಮುಂದಿನ_ref;
 	irel->move = ima_move;
 	irel->delete = ima_delete;
-	irel->free = ima_free;
+	irel->ಬಿಡುಗಡೆ = ima_free;
 
 	*new_irel = irel;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 
 errout:
 	ima_free(irel);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t ima_put(ext2_irel irel, ext2_ino_t old,
-			struct ext2_inode_relocate_entry *ent)
+ಸ್ಥಿರ errcode_t ima_put(ext2_irel irel, ext2_ino_t old,
+			ರಚನೆ ext2_inode_relocate_ನಮೂದು *ent)
 {
-	struct inode_reference_entry	*ref_ent;
-	struct irel_ma 			*ma;
+	ರಚನೆ inode_reference_ನಮೂದು	*ref_ent;
+	ರಚನೆ irel_ma 			*ma;
 	errcode_t			retval;
-	size_t				size, old_size;
+	size_t				ಗಾತ್ರ_2, old_ಗಾತ್ರ;
 
-	ma = irel->priv_data;
-	if (old > ma->max_inode)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ma = irel->priv_ದತ್ತಾಂಶ;
+	ಆದರೆ (old > ma->max_inode)
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
 
 	/*
 	 * Force the orig field to the correct value; the application
 	 * program shouldn't be messing with this field.
 	 */
-	if (ma->entries[(unsigned) old].new == 0)
+	ಆದರೆ (ma->entries[(ಚಿಹ್ನೆರಹಿತ) old].new == 0)
 		ent->orig = old;
-	else
-		ent->orig = ma->entries[(unsigned) old].orig;
+	ಇಲ್ಲದಿದ್ದರೆ
+		ent->orig = ma->entries[(ಚಿಹ್ನೆರಹಿತ) old].orig;
 
 	/*
 	 * If max_refs has changed, reallocate the refs array
 	 */
-	ref_ent = ma->ref_entries + (unsigned) old;
-	if (ref_ent->refs && ent->max_refs !=
-	    ma->entries[(unsigned) old].max_refs) {
-		size = (sizeof(struct ext2_inode_reference) * ent->max_refs);
-		old_size = (sizeof(struct ext2_inode_reference) *
-			    ma->entries[(unsigned) old].max_refs);
-		retval = ext2fs_resize_mem(old_size, size, &ref_ent->refs);
-		if (retval)
-			return retval;
+	ref_ent = ma->ref_entries + (ಚಿಹ್ನೆರಹಿತ) old;
+	ಆದರೆ (ref_ent->refs && ent->max_refs !=
+	    ma->entries[(ಚಿಹ್ನೆರಹಿತ) old].max_refs) {
+		ಗಾತ್ರ_2 = (ಗಾತ್ರ(ರಚನೆ ext2_inode_reference) * ent->max_refs);
+		old_ಗಾತ್ರ = (ಗಾತ್ರ(ರಚನೆ ext2_inode_reference) *
+			    ma->entries[(ಚಿಹ್ನೆರಹಿತ) old].max_refs);
+		retval = ext2fs_resize_mem(old_ಗಾತ್ರ, ಗಾತ್ರ_2, &ref_ent->refs);
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 	}
 
-	ma->entries[(unsigned) old] = *ent;
-	ma->orig_map[(unsigned) ent->orig] = old;
-	return 0;
+	ma->entries[(ಚಿಹ್ನೆರಹಿತ) old] = *ent;
+	ma->orig_map[(ಚಿಹ್ನೆರಹಿತ) ent->orig] = old;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t ima_get(ext2_irel irel, ext2_ino_t old,
-			struct ext2_inode_relocate_entry *ent)
+ಸ್ಥಿರ errcode_t ima_get(ext2_irel irel, ext2_ino_t old,
+			ರಚನೆ ext2_inode_relocate_ನಮೂದು *ent)
 {
-	struct irel_ma 	*ma;
+	ರಚನೆ irel_ma 	*ma;
 
-	ma = irel->priv_data;
-	if (old > ma->max_inode)
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned) old].new == 0)
-		return ENOENT;
-	*ent = ma->entries[(unsigned) old];
-	return 0;
+	ma = irel->priv_ದತ್ತಾಂಶ;
+	ಆದರೆ (old > ma->max_inode)
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
+	ಆದರೆ (ma->entries[(ಚಿಹ್ನೆರಹಿತ) old].new == 0)
+		ಹಿಂತಿರುಗಿ ENOENT;
+	*ent = ma->entries[(ಚಿಹ್ನೆರಹಿತ) old];
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t ima_get_by_orig(ext2_irel irel, ext2_ino_t orig, ext2_ino_t *old,
-			struct ext2_inode_relocate_entry *ent)
+ಸ್ಥಿರ errcode_t ima_get_by_orig(ext2_irel irel, ext2_ino_t orig, ext2_ino_t *old,
+			ರಚನೆ ext2_inode_relocate_ನಮೂದು *ent)
 {
-	struct irel_ma 	*ma;
+	ರಚನೆ irel_ma 	*ma;
 	ext2_ino_t	ino;
 
-	ma = irel->priv_data;
-	if (orig > ma->max_inode)
-		return EXT2_ET_INVALID_ARGUMENT;
-	ino = ma->orig_map[(unsigned) orig];
-	if (ino == 0)
-		return ENOENT;
+	ma = irel->priv_ದತ್ತಾಂಶ;
+	ಆದರೆ (orig > ma->max_inode)
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
+	ino = ma->orig_map[(ಚಿಹ್ನೆರಹಿತ) orig];
+	ಆದರೆ (ino == 0)
+		ಹಿಂತಿರುಗಿ ENOENT;
 	*old = ino;
-	*ent = ma->entries[(unsigned) ino];
-	return 0;
+	*ent = ma->entries[(ಚಿಹ್ನೆರಹಿತ) ino];
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t ima_start_iter(ext2_irel irel)
+ಸ್ಥಿರ errcode_t ima_ಆರಂಭ_iter(ext2_irel irel)
 {
 	irel->current = 0;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t ima_next(ext2_irel irel, ext2_ino_t *old,
-			 struct ext2_inode_relocate_entry *ent)
+ಸ್ಥಿರ errcode_t ima_ಮುಂದಿನ(ext2_irel irel, ext2_ino_t *old,
+			 ರಚನೆ ext2_inode_relocate_ನಮೂದು *ent)
 {
-	struct irel_ma 	*ma;
+	ರಚನೆ irel_ma 	*ma;
 
-	ma = irel->priv_data;
-	while (++irel->current < ma->max_inode) {
-		if (ma->entries[(unsigned) irel->current].new == 0)
-			continue;
+	ma = irel->priv_ದತ್ತಾಂಶ;
+	ಆಗ (++irel->current < ma->max_inode) {
+		ಆದರೆ (ma->entries[(ಚಿಹ್ನೆರಹಿತ) irel->current].new == 0)
+			ಮುಂದುವರಿ;
 		*old = irel->current;
-		*ent = ma->entries[(unsigned) irel->current];
-		return 0;
+		*ent = ma->entries[(ಚಿಹ್ನೆರಹಿತ) irel->current];
+		ಹಿಂತಿರುಗಿ 0;
 	}
 	*old = 0;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t ima_add_ref(ext2_irel irel, ext2_ino_t ino,
-			     struct ext2_inode_reference *ref)
+ಸ್ಥಿರ errcode_t ima_ಕೂಡಿಸು_ref(ext2_irel irel, ext2_ino_t ino,
+			     ರಚನೆ ext2_inode_reference *ref)
 {
-	struct irel_ma 	*ma;
-	size_t		size;
-	struct inode_reference_entry *ref_ent;
-	struct ext2_inode_relocate_entry *ent;
+	ರಚನೆ irel_ma 	*ma;
+	size_t		ಗಾತ್ರ_2;
+	ರಚನೆ inode_reference_ನಮೂದು *ref_ent;
+	ರಚನೆ ext2_inode_relocate_ನಮೂದು *ent;
 	errcode_t		retval;
 
-	ma = irel->priv_data;
-	if (ino > ma->max_inode)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ma = irel->priv_ದತ್ತಾಂಶ;
+	ಆದರೆ (ino > ma->max_inode)
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
 
-	ref_ent = ma->ref_entries + (unsigned) ino;
-	ent = ma->entries + (unsigned) ino;
+	ref_ent = ma->ref_entries + (ಚಿಹ್ನೆರಹಿತ) ino;
+	ent = ma->entries + (ಚಿಹ್ನೆರಹಿತ) ino;
 
 	/*
 	 * If the inode reference array doesn't exist, create it.
 	 */
-	if (ref_ent->refs == 0) {
-		size = (size_t) ((sizeof(struct ext2_inode_reference) *
+	ಆದರೆ (ref_ent->refs == 0) {
+		ಗಾತ್ರ_2 = (size_t) ((ಗಾತ್ರ(ರಚನೆ ext2_inode_reference) *
 				  ent->max_refs));
 		retval = ext2fs_get_array(ent->max_refs,
-			sizeof(struct ext2_inode_reference), &ref_ent->refs);
-		if (retval)
-			return retval;
-		memset(ref_ent->refs, 0, size);
-		ref_ent->num = 0;
+			ಗಾತ್ರ(ರಚನೆ ext2_inode_reference), &ref_ent->refs);
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
+		memset(ref_ent->refs, 0, ಗಾತ್ರ_2);
+		ref_ent->ಅಂಕೆ = 0;
 	}
 
-	if (ref_ent->num >= ent->max_refs)
-		return EXT2_ET_TOO_MANY_REFS;
+	ಆದರೆ (ref_ent->ಅಂಕೆ >= ent->max_refs)
+		ಹಿಂತಿರುಗಿ EXT2_ET_TOO_MANY_REFS;
 
-	ref_ent->refs[(unsigned) ref_ent->num++] = *ref;
-	return 0;
+	ref_ent->refs[(ಚಿಹ್ನೆರಹಿತ) ref_ent->ಅಂಕೆ++] = *ref;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t ima_start_iter_ref(ext2_irel irel, ext2_ino_t ino)
+ಸ್ಥಿರ errcode_t ima_ಆರಂಭ_iter_ref(ext2_irel irel, ext2_ino_t ino)
 {
-	struct irel_ma 	*ma;
+	ರಚನೆ irel_ma 	*ma;
 
-	ma = irel->priv_data;
-	if (ino > ma->max_inode)
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned) ino].new == 0)
-		return ENOENT;
+	ma = irel->priv_ದತ್ತಾಂಶ;
+	ಆದರೆ (ino > ma->max_inode)
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
+	ಆದರೆ (ma->entries[(ಚಿಹ್ನೆರಹಿತ) ino].new == 0)
+		ಹಿಂತಿರುಗಿ ENOENT;
 	ma->ref_current = ino;
 	ma->ref_iter = 0;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t ima_next_ref(ext2_irel irel,
-			      struct ext2_inode_reference *ref)
+ಸ್ಥಿರ errcode_t ima_ಮುಂದಿನ_ref(ext2_irel irel,
+			      ರಚನೆ ext2_inode_reference *ref)
 {
-	struct irel_ma 	*ma;
-	struct inode_reference_entry *ref_ent;
+	ರಚನೆ irel_ma 	*ma;
+	ರಚನೆ inode_reference_ನಮೂದು *ref_ent;
 
-	ma = irel->priv_data;
+	ma = irel->priv_ದತ್ತಾಂಶ;
 
 	ref_ent = ma->ref_entries + ma->ref_current;
 
-	if ((ref_ent->refs == NULL) ||
-	    (ma->ref_iter >= ref_ent->num)) {
-		ref->block = 0;
-		ref->offset = 0;
-		return 0;
+	ಆದರೆ ((ref_ent->refs == ಖಾಲಿ) ||
+	    (ma->ref_iter >= ref_ent->ಅಂಕೆ)) {
+		ref->ಖಂಡ = 0;
+		ref->ಸ್ಥಾನಾಂತರ = 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 	*ref = ref_ent->refs[ma->ref_iter++];
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 
-static errcode_t ima_move(ext2_irel irel, ext2_ino_t old, ext2_ino_t new)
+ಸ್ಥಿರ errcode_t ima_move(ext2_irel irel, ext2_ino_t old, ext2_ino_t new)
 {
-	struct irel_ma 	*ma;
+	ರಚನೆ irel_ma 	*ma;
 
-	ma = irel->priv_data;
-	if ((old > ma->max_inode) || (new > ma->max_inode))
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned) old].new == 0)
-		return ENOENT;
+	ma = irel->priv_ದತ್ತಾಂಶ;
+	ಆದರೆ ((old > ma->max_inode) || (new > ma->max_inode))
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
+	ಆದರೆ (ma->entries[(ಚಿಹ್ನೆರಹಿತ) old].new == 0)
+		ಹಿಂತಿರುಗಿ ENOENT;
 
-	ma->entries[(unsigned) new] = ma->entries[(unsigned) old];
-	if (ma->ref_entries[(unsigned) new].refs)
-		ext2fs_free_mem(&ma->ref_entries[(unsigned) new].refs);
-	ma->ref_entries[(unsigned) new] = ma->ref_entries[(unsigned) old];
+	ma->entries[(ಚಿಹ್ನೆರಹಿತ) new] = ma->entries[(ಚಿಹ್ನೆರಹಿತ) old];
+	ಆದರೆ (ma->ref_entries[(ಚಿಹ್ನೆರಹಿತ) new].refs)
+		ext2fs_free_mem(&ma->ref_entries[(ಚಿಹ್ನೆರಹಿತ) new].refs);
+	ma->ref_entries[(ಚಿಹ್ನೆರಹಿತ) new] = ma->ref_entries[(ಚಿಹ್ನೆರಹಿತ) old];
 
-	ma->entries[(unsigned) old].new = 0;
-	ma->ref_entries[(unsigned) old].num = 0;
-	ma->ref_entries[(unsigned) old].refs = 0;
+	ma->entries[(ಚಿಹ್ನೆರಹಿತ) old].new = 0;
+	ma->ref_entries[(ಚಿಹ್ನೆರಹಿತ) old].ಅಂಕೆ = 0;
+	ma->ref_entries[(ಚಿಹ್ನೆರಹಿತ) old].refs = 0;
 
 	ma->orig_map[ma->entries[new].orig] = new;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t ima_delete(ext2_irel irel, ext2_ino_t old)
+ಸ್ಥಿರ errcode_t ima_delete(ext2_irel irel, ext2_ino_t old)
 {
-	struct irel_ma 	*ma;
+	ರಚನೆ irel_ma 	*ma;
 
-	ma = irel->priv_data;
-	if (old > ma->max_inode)
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned) old].new == 0)
-		return ENOENT;
+	ma = irel->priv_ದತ್ತಾಂಶ;
+	ಆದರೆ (old > ma->max_inode)
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
+	ಆದರೆ (ma->entries[(ಚಿಹ್ನೆರಹಿತ) old].new == 0)
+		ಹಿಂತಿರುಗಿ ENOENT;
 
 	ma->entries[old].new = 0;
-	if (ma->ref_entries[(unsigned) old].refs)
-		ext2fs_free_mem(&ma->ref_entries[(unsigned) old].refs);
-	ma->orig_map[ma->entries[(unsigned) old].orig] = 0;
+	ಆದರೆ (ma->ref_entries[(ಚಿಹ್ನೆರಹಿತ) old].refs)
+		ext2fs_free_mem(&ma->ref_entries[(ಚಿಹ್ನೆರಹಿತ) old].refs);
+	ma->orig_map[ma->entries[(ಚಿಹ್ನೆರಹಿತ) old].orig] = 0;
 
-	ma->ref_entries[(unsigned) old].num = 0;
-	ma->ref_entries[(unsigned) old].refs = 0;
-	return 0;
+	ma->ref_entries[(ಚಿಹ್ನೆರಹಿತ) old].ಅಂಕೆ = 0;
+	ma->ref_entries[(ಚಿಹ್ನೆರಹಿತ) old].refs = 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t ima_free(ext2_irel irel)
+ಸ್ಥಿರ errcode_t ima_free(ext2_irel irel)
 {
-	struct irel_ma 	*ma;
+	ರಚನೆ irel_ma 	*ma;
 	ext2_ino_t	ino;
 
-	if (!irel)
-		return 0;
+	ಆದರೆ (!irel)
+		ಹಿಂತಿರುಗಿ 0;
 
-	ma = irel->priv_data;
+	ma = irel->priv_ದತ್ತಾಂಶ;
 
-	if (ma) {
-		if (ma->orig_map)
+	ಆದರೆ (ma) {
+		ಆದರೆ (ma->orig_map)
 			ext2fs_free_mem(&ma->orig_map);
-		if (ma->entries)
+		ಆದರೆ (ma->entries)
 			ext2fs_free_mem(&ma->entries);
-		if (ma->ref_entries) {
-			for (ino = 0; ino <= ma->max_inode; ino++) {
-				if (ma->ref_entries[(unsigned) ino].refs)
-					ext2fs_free_mem(&ma->ref_entries[(unsigned) ino].refs);
+		ಆದರೆ (ma->ref_entries) {
+			ಗಾಗಿ (ino = 0; ino <= ma->max_inode; ino++) {
+				ಆದರೆ (ma->ref_entries[(ಚಿಹ್ನೆರಹಿತ) ino].refs)
+					ext2fs_free_mem(&ma->ref_entries[(ಚಿಹ್ನೆರಹಿತ) ino].refs);
 			}
 			ext2fs_free_mem(&ma->ref_entries);
 		}
 		ext2fs_free_mem(&ma);
 	}
-	if (irel->name)
+	ಆದರೆ (irel->name)
 		ext2fs_free_mem(&irel->name);
 	ext2fs_free_mem(&irel);
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }

@@ -9,82 +9,82 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <time.h>
-#include <string.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#include <errno.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_SYS_STAT_H
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <errno.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
-errcode_t ext2fs_iblk_add_blocks(ext2_filsys fs, struct ext2_inode *inode,
-				 blk64_t num_blocks)
+errcode_t ext2fs_iblk_ಕೂಡಿಸು_ಖಂಡಗಳು(ext2_filsys fs, ರಚನೆ ext2_inode *inode,
+				 blk64_t ಅಂಕೆ_ಖಂಡಗಳು)
 {
-	unsigned long long b = inode->i_blocks;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ b = inode->i_ಖಂಡಗಳು;
 
-	if (ext2fs_has_feature_huge_file(fs->super))
-		b += ((long long) inode->osd2.linux2.l_i_blocks_hi) << 32;
+	ಆದರೆ (ext2fs_has_feature_huge_file(fs->super))
+		b += ((ದೀರ್ಘ ದೀರ್ಘ) inode->osd2.linux2.l_i_ಖಂಡಗಳು_hi) << 32;
 
-	if (!ext2fs_has_feature_huge_file(fs->super) ||
+	ಆದರೆ (!ext2fs_has_feature_huge_file(fs->super) ||
 	    !(inode->i_flags & EXT4_HUGE_FILE_FL))
-	    num_blocks *= fs->blocksize / 512;
-	num_blocks *= EXT2FS_CLUSTER_RATIO(fs);
+	    ಅಂಕೆ_ಖಂಡಗಳು *= fs->blocksize / 512;
+	ಅಂಕೆ_ಖಂಡಗಳು *= EXT2_FS_CLUSTER_ಅನುಪಾತ(fs);
 
-	b += num_blocks;
+	b += ಅಂಕೆ_ಖಂಡಗಳು;
 
-	if (ext2fs_has_feature_huge_file(fs->super))
-		inode->osd2.linux2.l_i_blocks_hi = b >> 32;
-	else if (b > 0xFFFFFFFF)
-		return EOVERFLOW;
-	inode->i_blocks = b & 0xFFFFFFFF;
-	return 0;
+	ಆದರೆ (ext2fs_has_feature_huge_file(fs->super))
+		inode->osd2.linux2.l_i_ಖಂಡಗಳು_hi = b >> 32;
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (b > 0xFFFFFFFF)
+		ಹಿಂತಿರುಗಿ EOVERFLOW;
+	inode->i_ಖಂಡಗಳು = b & 0xFFFFFFFF;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-errcode_t ext2fs_iblk_sub_blocks(ext2_filsys fs, struct ext2_inode *inode,
-				 blk64_t num_blocks)
+errcode_t ext2fs_iblk_sub_ಖಂಡಗಳು(ext2_filsys fs, ರಚನೆ ext2_inode *inode,
+				 blk64_t ಅಂಕೆ_ಖಂಡಗಳು)
 {
-	unsigned long long b = inode->i_blocks;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ b = inode->i_ಖಂಡಗಳು;
 
-	if (ext2fs_has_feature_huge_file(fs->super))
-		b += ((long long) inode->osd2.linux2.l_i_blocks_hi) << 32;
+	ಆದರೆ (ext2fs_has_feature_huge_file(fs->super))
+		b += ((ದೀರ್ಘ ದೀರ್ಘ) inode->osd2.linux2.l_i_ಖಂಡಗಳು_hi) << 32;
 
-	if (!ext2fs_has_feature_huge_file(fs->super) ||
+	ಆದರೆ (!ext2fs_has_feature_huge_file(fs->super) ||
 	    !(inode->i_flags & EXT4_HUGE_FILE_FL))
-	    num_blocks *= fs->blocksize / 512;
-	num_blocks *= EXT2FS_CLUSTER_RATIO(fs);
+	    ಅಂಕೆ_ಖಂಡಗಳು *= fs->blocksize / 512;
+	ಅಂಕೆ_ಖಂಡಗಳು *= EXT2_FS_CLUSTER_ಅನುಪಾತ(fs);
 
-	if (num_blocks > b)
-		return EOVERFLOW;
+	ಆದರೆ (ಅಂಕೆ_ಖಂಡಗಳು > b)
+		ಹಿಂತಿರುಗಿ EOVERFLOW;
 
-	b -= num_blocks;
+	b -= ಅಂಕೆ_ಖಂಡಗಳು;
 
-	if (ext2fs_has_feature_huge_file(fs->super))
-		inode->osd2.linux2.l_i_blocks_hi = b >> 32;
-	inode->i_blocks = b & 0xFFFFFFFF;
-	return 0;
+	ಆದರೆ (ext2fs_has_feature_huge_file(fs->super))
+		inode->osd2.linux2.l_i_ಖಂಡಗಳು_hi = b >> 32;
+	inode->i_ಖಂಡಗಳು = b & 0xFFFFFFFF;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-errcode_t ext2fs_iblk_set(ext2_filsys fs, struct ext2_inode *inode, blk64_t b)
+errcode_t ext2fs_iblk_ಗಣ(ext2_filsys fs, ರಚನೆ ext2_inode *inode, blk64_t b)
 {
-	if (!ext2fs_has_feature_huge_file(fs->super) ||
+	ಆದರೆ (!ext2fs_has_feature_huge_file(fs->super) ||
 	    !(inode->i_flags & EXT4_HUGE_FILE_FL))
 		b *= fs->blocksize / 512;
-	b *= EXT2FS_CLUSTER_RATIO(fs);
+	b *= EXT2_FS_CLUSTER_ಅನುಪಾತ(fs);
 
-	inode->i_blocks = b & 0xFFFFFFFF;
-	if (ext2fs_has_feature_huge_file(fs->super))
-		inode->osd2.linux2.l_i_blocks_hi = b >> 32;
-	else if (b >> 32)
-		return EOVERFLOW;
-	return 0;
+	inode->i_ಖಂಡಗಳು = b & 0xFFFFFFFF;
+	ಆದರೆ (ext2fs_has_feature_huge_file(fs->super))
+		inode->osd2.linux2.l_i_ಖಂಡಗಳು_hi = b >> 32;
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (b >> 32)
+		ಹಿಂತಿರುಗಿ EOVERFLOW;
+	ಹಿಂತಿರುಗಿ 0;
 }

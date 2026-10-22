@@ -9,51 +9,51 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_ERRNO_H
-#include <errno.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಆದರೆ HAVE_SYS_STAT_H
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_ERRNO_H
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
 
-#include "ext2fs.h"
-#include "e2image.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "e2image.h"
 
-blk64_t ext2fs_descriptor_block_loc2(ext2_filsys fs, blk64_t group_block,
+blk64_t ext2fs_descriptor_ಖಂಡ_loc2(ext2_filsys fs, blk64_t ಗುಂಪು_ಖಂಡ,
 				     dgrp_t i)
 {
-	int	bg;
-	int	has_super = 0, group_zero_adjust = 0;
+	ಪೂರ್ಣಾಂಕ	bg;
+	ಪೂರ್ಣಾಂಕ	has_super = 0, ಗುಂಪು_zero_adjust = 0;
 	blk64_t	ret_blk;
 
 	/*
 	 * On a bigalloc FS with 1K blocks, block 0 is reserved for non-ext4
 	 * stuff, so adjust for that if we're being asked for group 0.
 	 */
-	if (i == 0 && fs->blocksize == 1024 && EXT2FS_CLUSTER_RATIO(fs) > 1)
-		group_zero_adjust = 1;
+	ಆದರೆ (i == 0 && fs->blocksize == 1024 && EXT2_FS_CLUSTER_ಅನುಪಾತ(fs) > 1)
+		ಗುಂಪು_zero_adjust = 1;
 
-	if (!ext2fs_has_feature_meta_bg(fs->super) ||
-	    (i < fs->super->s_first_meta_bg))
-		return group_block + i + 1 + group_zero_adjust;
+	ಆದರೆ (!ext2fs_has_feature_meta_bg(fs->super) ||
+	    (i < fs->super->s_ಮೊದಲ_meta_bg))
+		ಹಿಂತಿರುಗಿ ಗುಂಪು_ಖಂಡ + i + 1 + ಗುಂಪು_zero_adjust;
 
-	bg = EXT2_DESC_PER_BLOCK(fs->super) * i;
-	if (ext2fs_bg_has_super(fs, bg))
+	bg = EXT2_DESC_ಪ್ರತಿ_ಖಂಡ(fs->super) * i;
+	ಆದರೆ (ext2fs_bg_has_super(fs, bg))
 		has_super = 1;
-	ret_blk = ext2fs_group_first_block2(fs, bg);
+	ret_blk = ext2fs_ಗುಂಪು_ಮೊದಲ_block2(fs, bg);
 	/*
 	 * If group_block is not the normal value, we're trying to use
 	 * the backup group descriptors and superblock --- so use the
@@ -62,41 +62,41 @@ blk64_t ext2fs_descriptor_block_loc2(ext2_filsys fs, blk64_t group_block,
 	 * descriptor block individually for correctness, but we don't
 	 * have the infrastructure in place to do that.
 	 */
-	if (group_block != fs->super->s_first_data_block &&
-	    ((ret_blk + has_super + fs->super->s_blocks_per_group) <
-	     ext2fs_blocks_count(fs->super))) {
-		ret_blk += fs->super->s_blocks_per_group;
+	ಆದರೆ (ಗುಂಪು_ಖಂಡ != fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ &&
+	    ((ret_blk + has_super + fs->super->s_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು) <
+	     ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super))) {
+		ret_blk += fs->super->s_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು;
 
 		/*
 		 * If we're going to jump forward a block group, make sure
 		 * that we adjust has_super to account for the next group's
 		 * backup superblock (or lack thereof).
 		 */
-		if (ext2fs_bg_has_super(fs, bg + 1))
+		ಆದರೆ (ext2fs_bg_has_super(fs, bg + 1))
 			has_super = 1;
-		else
+		ಇಲ್ಲದಿದ್ದರೆ
 			has_super = 0;
 	}
-	return ret_blk + has_super + group_zero_adjust;
+	ಹಿಂತಿರುಗಿ ret_blk + has_super + ಗುಂಪು_zero_adjust;
 }
 
-blk_t ext2fs_descriptor_block_loc(ext2_filsys fs, blk_t group_block, dgrp_t i)
+blk_t ext2fs_descriptor_ಖಂಡ_loc(ext2_filsys fs, blk_t ಗುಂಪು_ಖಂಡ, dgrp_t i)
 {
-	return ext2fs_descriptor_block_loc2(fs, group_block, i);
+	ಹಿಂತಿರುಗಿ ext2fs_descriptor_ಖಂಡ_loc2(fs, ಗುಂಪು_ಖಂಡ, i);
 }
 
-errcode_t ext2fs_open(const char *name, int flags, int superblock,
-		      unsigned int block_size, io_manager manager,
+errcode_t ext2fs_open(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name, ಪೂರ್ಣಾಂಕ flags, ಪೂರ್ಣಾಂಕ superblock,
+		      ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಖಂಡ_ಗಾತ್ರ, io_manager manager,
 		      ext2_filsys *ret_fs)
 {
-	return ext2fs_open2(name, 0, flags, superblock, block_size,
+	ಹಿಂತಿರುಗಿ ext2fs_open2(name, 0, flags, superblock, ಖಂಡ_ಗಾತ್ರ,
 			    manager, ret_fs);
 }
 
-static void block_sha_map_free_entry(void *data)
+ಸ್ಥಿರ ಶೂನ್ಯ ಖಂಡ_sha_map_free_ನಮೂದು(ಶೂನ್ಯ *ದತ್ತಾಂಶ)
 {
-	free(data);
-	return;
+	ಬಿಡುಗಡೆ(ದತ್ತಾಂಶ);
+	ಹಿಂತಿರುಗಿ;
 }
 
 /*
@@ -113,96 +113,96 @@ static void block_sha_map_free_entry(void *data)
  *	EXT2_FLAG_64BITS - Allow 64-bit bitfields (needed for large
  *				filesystems)
  */
-errcode_t ext2fs_open2(const char *name, const char *io_options,
-		       int flags, int superblock,
-		       unsigned int block_size, io_manager manager,
+errcode_t ext2fs_open2(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *io_options,
+		       ಪೂರ್ಣಾಂಕ flags, ಪೂರ್ಣಾಂಕ superblock,
+		       ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಖಂಡ_ಗಾತ್ರ, io_manager manager,
 		       ext2_filsys *ret_fs)
 {
 	ext2_filsys	fs;
 	errcode_t	retval;
-	unsigned long	i, first_meta_bg;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	i, ಮೊದಲ_meta_bg;
 	__u32		features;
-	unsigned int	blocks_per_group, io_flags;
-	blk64_t		group_block, blk;
-	char		*dest, *cp;
-	int		group_zero_adjust = 0;
-	unsigned int	inode_size;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ	ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು, io_flags;
+	blk64_t		ಗುಂಪು_ಖಂಡ, blk;
+	ಅಕ್ಷರ		*dest, *cp;
+	ಪೂರ್ಣಾಂಕ		ಗುಂಪು_zero_adjust = 0;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ	inode_ಗಾತ್ರ;
 	__u64		groups_cnt;
-#ifdef WORDS_BIGENDIAN
-	unsigned int	groups_per_block;
-	struct ext2_group_desc *gdp;
-	int		j;
-#endif
-	char		*time_env;
-	int		csum_retries = 0;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ	groups_ಪ್ರತಿ_ಖಂಡ;
+	ರಚನೆ ext2_ಗುಂಪು_desc *gdp;
+	ಪೂರ್ಣಾಂಕ		j;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಅಕ್ಷರ		*ಸಮಯ_env;
+	ಪೂರ್ಣಾಂಕ		csum_retries = 0;
 
 	EXT2_CHECK_MAGIC(manager, EXT2_ET_MAGIC_IO_MANAGER);
 
-	retval = ext2fs_get_mem(sizeof(struct struct_ext2_filsys), &fs);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(ಗಾತ್ರ(ರಚನೆ struct_ext2_filsys), &fs);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-	memset(fs, 0, sizeof(struct struct_ext2_filsys));
+	memset(fs, 0, ಗಾತ್ರ(ರಚನೆ struct_ext2_filsys));
 	fs->magic = EXT2_ET_MAGIC_EXT2FS_FILSYS;
 	fs->flags = flags;
 	/* don't overwrite sb backups unless flag is explicitly cleared */
 	fs->flags |= EXT2_FLAG_MASTER_SB_ONLY;
 	fs->umask = 022;
 
-	time_env = ext2fs_safe_getenv("SOURCE_DATE_EPOCH");
-	if (time_env) {
-		fs->now = strtoul(time_env, NULL, 0);
-		fs->flags2 |= EXT2_FLAG2_USE_FAKE_TIME;
-	} else {
-		time_env = ext2fs_safe_getenv("E2FSPROGS_FAKE_TIME");
-		if (time_env)
-			fs->now = strtoul(time_env, NULL, 0);
+	ಸಮಯ_env = ext2fs_ಸುರಕ್ಷಿತ_getenv("SOURCE_DATE_EPOCH");
+	ಆದರೆ (ಸಮಯ_env) {
+		fs->now = strtoul(ಸಮಯ_env, ಖಾಲಿ, 0);
+		fs->flags2 |= EXT2_FLAG2_USE_FAKE_ಸಮಯ;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಸಮಯ_env = ext2fs_ಸುರಕ್ಷಿತ_getenv("E2FSPROGS_FAKE_TIME");
+		ಆದರೆ (ಸಮಯ_env)
+			fs->now = strtoul(ಸಮಯ_env, ಖಾಲಿ, 0);
 	}
 
-	retval = ext2fs_get_mem(strlen(name)+1, &fs->device_name);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(name)+1, &fs->device_name);
+	ಆದರೆ (retval)
+		ಹೋಗು cleanup;
 	strcpy(fs->device_name, name);
 	cp = strchr(fs->device_name, '?');
-	if (!io_options && cp) {
+	ಆದರೆ (!io_options && cp) {
 		*cp++ = 0;
 		io_options = cp;
 	}
 
 	io_flags = 0;
-	if (flags & EXT2_FLAG_RW)
+	ಆದರೆ (flags & EXT2_FLAG_RW)
 		io_flags |= IO_FLAG_RW;
-	if (flags & EXT2_FLAG_EXCLUSIVE)
+	ಆದರೆ (flags & EXT2_FLAG_EXCLUSIVE)
 		io_flags |= IO_FLAG_EXCLUSIVE;
-	if (flags & EXT2_FLAG_DIRECT_IO)
-		io_flags |= IO_FLAG_DIRECT_IO;
-	if (flags & EXT2_FLAG_THREADS)
-		io_flags |= IO_FLAG_THREADS;
+	ಆದರೆ (flags & EXT2_FLAG_ನೇರ_IO)
+		io_flags |= IO_FLAG_ನೇರ_IO;
+	ಆದರೆ (flags & EXT2_FLAG_ಎಳೆಗಳು)
+		io_flags |= IO_FLAG_ಎಳೆಗಳು;
 	retval = manager->open(fs->device_name, io_flags, &fs->io);
-	if (retval)
-		goto cleanup;
-	if (io_options &&
-	    (retval = io_channel_set_options(fs->io, io_options)))
-		goto cleanup;
+	ಆದರೆ (retval)
+		ಹೋಗು cleanup;
+	ಆದರೆ (io_options &&
+	    (retval = io_channel_ಗಣ_options(fs->io, io_options)))
+		ಹೋಗು cleanup;
 	fs->image_io = fs->io;
-	fs->io->app_data = fs;
-	retval = io_channel_alloc_buf(fs->io, -SUPERBLOCK_SIZE, &fs->super);
-	if (retval)
-		goto cleanup;
-	if (flags & EXT2_FLAG_IMAGE_FILE) {
-		retval = ext2fs_get_mem(sizeof(struct ext2_image_hdr),
-					&fs->image_header);
-		if (retval)
-			goto cleanup;
+	fs->io->app_ದತ್ತಾಂಶ = fs;
+	retval = io_channel_alloc_buf(fs->io, -SUPERBLOCK_ಗಾತ್ರ, &fs->super);
+	ಆದರೆ (retval)
+		ಹೋಗು cleanup;
+	ಆದರೆ (flags & EXT2_FLAG_IMAGE_FILE) {
+		retval = ext2fs_get_mem(ಗಾತ್ರ(ರಚನೆ ext2_image_hdr),
+					&fs->image_ಶೀರ್ಷಿಕೆ);
+		ಆದರೆ (retval)
+			ಹೋಗು cleanup;
 		retval = io_channel_read_blk(fs->io, 0,
-					     -(int)sizeof(struct ext2_image_hdr),
-					     fs->image_header);
-		if (retval)
-			goto cleanup;
-		if (ext2fs_le32_to_cpu(fs->image_header->magic_number) != EXT2_ET_MAGIC_E2IMAGE)
-			return EXT2_ET_MAGIC_E2IMAGE;
+					     -(ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ(ರಚನೆ ext2_image_hdr),
+					     fs->image_ಶೀರ್ಷಿಕೆ);
+		ಆದರೆ (retval)
+			ಹೋಗು cleanup;
+		ಆದರೆ (ext2fs_le32_ಗಮ್ಯ_cpu(fs->image_ಶೀರ್ಷಿಕೆ->magic_ಸಂಖ್ಯೆ) != EXT2_ET_MAGIC_E2IMAGE)
+			ಹಿಂತಿರುಗಿ EXT2_ET_MAGIC_E2IMAGE;
 		superblock = 1;
-		block_size = ext2fs_le32_to_cpu(fs->image_header->fs_blocksize);
+		ಖಂಡ_ಗಾತ್ರ = ext2fs_le32_ಗಮ್ಯ_cpu(fs->image_ಶೀರ್ಷಿಕೆ->fs_blocksize);
 	}
 
 	/*
@@ -214,222 +214,222 @@ errcode_t ext2fs_open2(const char *name, const char *io_options,
 	 * Note: we only save a backup copy of the superblock if we
 	 * are reading the superblock from the primary superblock location.
 	 */
-	if (superblock) {
-		if (!block_size) {
-			retval = EXT2_ET_INVALID_ARGUMENT;
-			goto cleanup;
+	ಆದರೆ (superblock) {
+		ಆದರೆ (!ಖಂಡ_ಗಾತ್ರ) {
+			retval = EXT2_ET_INVALID_ವಾದ;
+			ಹೋಗು cleanup;
 		}
-		io_channel_set_blksize(fs->io, block_size);
-		group_block = superblock;
+		io_channel_ಗಣ_blksize(fs->io, ಖಂಡ_ಗಾತ್ರ);
+		ಗುಂಪು_ಖಂಡ = superblock;
 		fs->orig_super = 0;
-	} else {
-		io_channel_set_blksize(fs->io, SUPERBLOCK_OFFSET);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		io_channel_ಗಣ_blksize(fs->io, SUPERBLOCK_ಸ್ಥಾನಾಂತರ);
 		superblock = 1;
-		group_block = 0;
-		retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &fs->orig_super);
-		if (retval)
-			goto cleanup;
+		ಗುಂಪು_ಖಂಡ = 0;
+		retval = ext2fs_get_mem(SUPERBLOCK_ಗಾತ್ರ, &fs->orig_super);
+		ಆದರೆ (retval)
+			ಹೋಗು cleanup;
 	}
 retry:
-	retval = io_channel_read_blk(fs->io, superblock, -SUPERBLOCK_SIZE,
+	retval = io_channel_read_blk(fs->io, superblock, -SUPERBLOCK_ಗಾತ್ರ,
 				     fs->super);
-	if (retval)
-		goto cleanup;
-	if (fs->orig_super)
-		memcpy(fs->orig_super, fs->super, SUPERBLOCK_SIZE);
+	ಆದರೆ (retval)
+		ಹೋಗು cleanup;
+	ಆದರೆ (fs->orig_super)
+		ಸ್ಮರಣೆ_ನಕಲು(fs->orig_super, fs->super, SUPERBLOCK_ಗಾತ್ರ);
 
-	if (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS)) {
+	ಆದರೆ (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS)) {
 		retval = 0;
-		if (!ext2fs_verify_csum_type(fs, fs->super))
+		ಆದರೆ (!ext2fs_verify_csum_type(fs, fs->super))
 			retval = EXT2_ET_UNKNOWN_CSUM;
-		if (!ext2fs_superblock_csum_verify(fs, fs->super)) {
-			if (csum_retries++ < 3)
-				goto retry;
+		ಆದರೆ (!ext2fs_superblock_csum_verify(fs, fs->super)) {
+			ಆದರೆ (csum_retries++ < 3)
+				ಹೋಗು retry;
 			retval = EXT2_ET_SB_CSUM_INVALID;
 		}
 	}
 
-#ifdef WORDS_BIGENDIAN
-	fs->flags |= EXT2_FLAG_SWAP_BYTES;
-	ext2fs_swap_super(fs->super);
-#else
-	if (fs->flags & EXT2_FLAG_SWAP_BYTES) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
+	fs->flags |= EXT2_FLAG_ಅದಲುಬದಲು_ಬೈಟುಗಳು;
+	ext2fs_ಅದಲುಬದಲು_super(fs->super);
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಆದರೆ (fs->flags & EXT2_FLAG_ಅದಲುಬದಲು_ಬೈಟುಗಳು) {
 		retval = EXT2_ET_UNIMPLEMENTED;
-		goto cleanup;
+		ಹೋಗು cleanup;
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	if (fs->super->s_magic != EXT2_SUPER_MAGIC)
+	ಆದರೆ (fs->super->s_magic != EXT2_SUPER_MAGIC)
 		retval = EXT2_ET_BAD_MAGIC;
-	if (retval)
-		goto cleanup;
+	ಆದರೆ (retval)
+		ಹೋಗು cleanup;
 
-	if (fs->super->s_rev_level > EXT2_LIB_CURRENT_REV) {
-		retval = EXT2_ET_REV_TOO_HIGH;
-		goto cleanup;
+	ಆದರೆ (fs->super->s_rev_level > EXT2_LIB_CURRENT_REV) {
+		retval = EXT2_ET_REV_TOO_ಮೇಲಿನ;
+		ಹೋಗು cleanup;
 	}
 
 	/*
 	 * Check for feature set incompatibility
 	 */
-	if (!(flags & EXT2_FLAG_FORCE)) {
+	ಆದರೆ (!(flags & EXT2_FLAG_FORCE)) {
 		features = fs->super->s_feature_incompat;
-#ifdef EXT2_LIB_SOFTSUPP_INCOMPAT
-		if (flags & EXT2_FLAG_SOFTSUPP_FEATURES)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ EXT2_LIB_SOFTSUPP_INCOMPAT
+		ಆದರೆ (flags & EXT2_FLAG_SOFTSUPP_FEATURES)
 			features &= ~EXT2_LIB_SOFTSUPP_INCOMPAT;
-#endif
-		if (features & ~EXT2_LIB_FEATURE_INCOMPAT_SUPP) {
+#ಆದರೆ_ಅಂತ್ಯ
+		ಆದರೆ (features & ~EXT2_LIB_FEATURE_INCOMPAT_SUPP) {
 			retval = EXT2_ET_UNSUPP_FEATURE;
-			goto cleanup;
+			ಹೋಗು cleanup;
 		}
 
 		features = fs->super->s_feature_ro_compat;
-#ifdef EXT2_LIB_SOFTSUPP_RO_COMPAT
-		if (flags & EXT2_FLAG_SOFTSUPP_FEATURES)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ EXT2_LIB_SOFTSUPP_RO_COMPAT
+		ಆದರೆ (flags & EXT2_FLAG_SOFTSUPP_FEATURES)
 			features &= ~EXT2_LIB_SOFTSUPP_RO_COMPAT;
-#endif
-		if ((flags & EXT2_FLAG_RW) &&
+#ಆದರೆ_ಅಂತ್ಯ
+		ಆದರೆ ((flags & EXT2_FLAG_RW) &&
 		    (features & ~EXT2_LIB_FEATURE_RO_COMPAT_SUPP)) {
 			retval = EXT2_ET_RO_UNSUPP_FEATURE;
-			goto cleanup;
+			ಹೋಗು cleanup;
 		}
 
-		if (!(flags & EXT2_FLAG_JOURNAL_DEV_OK) &&
+		ಆದರೆ (!(flags & EXT2_FLAG_JOURNAL_DEV_OK) &&
 		    ext2fs_has_feature_journal_dev(fs->super)) {
 			retval = EXT2_ET_UNSUPP_FEATURE;
-			goto cleanup;
+			ಹೋಗು cleanup;
 		}
 	}
 
-	if ((fs->super->s_log_block_size >
-	     (unsigned) (EXT2_MAX_BLOCK_LOG_SIZE - EXT2_MIN_BLOCK_LOG_SIZE)) ||
-	    (fs->super->s_log_cluster_size >
-	     (unsigned) (EXT2_MAX_CLUSTER_LOG_SIZE - EXT2_MIN_CLUSTER_LOG_SIZE)) ||
-	    (fs->super->s_log_block_size > fs->super->s_log_cluster_size) ||
-	    (fs->super->s_log_groups_per_flex > 31)) {
+	ಆದರೆ ((fs->super->s_log_ಖಂಡ_ಗಾತ್ರ >
+	     (ಚಿಹ್ನೆರಹಿತ) (EXT2_MAX_ಖಂಡ_LOG_ಗಾತ್ರ - EXT2_MIN_ಖಂಡ_LOG_ಗಾತ್ರ)) ||
+	    (fs->super->s_log_cluster_ಗಾತ್ರ >
+	     (ಚಿಹ್ನೆರಹಿತ) (EXT2_MAX_CLUSTER_LOG_ಗಾತ್ರ - EXT2_MIN_CLUSTER_LOG_ಗಾತ್ರ)) ||
+	    (fs->super->s_log_ಖಂಡ_ಗಾತ್ರ > fs->super->s_log_cluster_ಗಾತ್ರ) ||
+	    (fs->super->s_log_groups_ಪ್ರತಿ_flex > 31)) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		ಹೋಗು cleanup;
 	}
 
 	/*
 	 * bigalloc requires cluster-aware bitfield operations, which at the
 	 * moment means we need EXT2_FLAG_64BITS.
 	 */
-	if (ext2fs_has_feature_bigalloc(fs->super) &&
-	    !(flags & EXT2_FLAG_64BITS)) {
+	ಆದರೆ (ext2fs_has_feature_bigalloc(fs->super) &&
+	    !(flags & EXT2_FLAG_64_ಬಿಟ್ಟುಗಳು)) {
 		retval = EXT2_ET_CANT_USE_LEGACY_BITMAPS;
-		goto cleanup;
+		ಹೋಗು cleanup;
 	}
 
-	if (!ext2fs_has_feature_bigalloc(fs->super) &&
-	    (fs->super->s_log_block_size != fs->super->s_log_cluster_size)) {
+	ಆದರೆ (!ext2fs_has_feature_bigalloc(fs->super) &&
+	    (fs->super->s_log_ಖಂಡ_ಗಾತ್ರ != fs->super->s_log_cluster_ಗಾತ್ರ)) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		ಹೋಗು cleanup;
 	}
-	fs->fragsize = fs->blocksize = EXT2_BLOCK_SIZE(fs->super);
-	inode_size = EXT2_INODE_SIZE(fs->super);
-	if ((inode_size < EXT2_GOOD_OLD_INODE_SIZE) ||
-	    (inode_size > fs->blocksize) ||
-	    (inode_size & (inode_size - 1))) {
+	fs->fragsize = fs->blocksize = EXT2_ಖಂಡ_ಗಾತ್ರ(fs->super);
+	inode_ಗಾತ್ರ = EXT2_INODE_ಗಾತ್ರ(fs->super);
+	ಆದರೆ ((inode_ಗಾತ್ರ < EXT2_GOOD_OLD_INODE_ಗಾತ್ರ) ||
+	    (inode_ಗಾತ್ರ > fs->blocksize) ||
+	    (inode_ಗಾತ್ರ & (inode_ಗಾತ್ರ - 1))) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		ಹೋಗು cleanup;
 	}
 
 	/* Enforce the block group descriptor size */
-	if (ext2fs_has_feature_64bit(fs->super)) {
-		unsigned desc_size = fs->super->s_desc_size;
+	ಆದರೆ (ext2fs_has_feature_64bit(fs->super)) {
+		ಚಿಹ್ನೆರಹಿತ desc_ಗಾತ್ರ = fs->super->s_desc_ಗಾತ್ರ;
 
-		if (desc_size == 0 ||
+		ಆದರೆ (desc_ಗಾತ್ರ == 0 ||
 		    (!(flags & EXT2_FLAG_IGNORE_SB_ERRORS) &&
-		     ((desc_size > EXT2_MAX_DESC_SIZE) ||
-		      (desc_size < EXT2_MIN_DESC_SIZE_64BIT) ||
-		      (desc_size & (desc_size - 1)) != 0))) {
-			retval = EXT2_ET_BAD_DESC_SIZE;
-			goto cleanup;
+		     ((desc_ಗಾತ್ರ > EXT2_MAX_DESC_ಗಾತ್ರ) ||
+		      (desc_ಗಾತ್ರ < EXT2_MIN_DESC_ಗಾತ್ರ_64_ಬಿಟ್) ||
+		      (desc_ಗಾತ್ರ & (desc_ಗಾತ್ರ - 1)) != 0))) {
+			retval = EXT2_ET_BAD_DESC_ಗಾತ್ರ;
+			ಹೋಗು cleanup;
 		}
 	}
 
-	fs->cluster_ratio_bits = fs->super->s_log_cluster_size -
-		fs->super->s_log_block_size;
-	if (EXT2_BLOCKS_PER_GROUP(fs->super) !=
-	    EXT2_CLUSTERS_PER_GROUP(fs->super) << fs->cluster_ratio_bits) {
+	fs->cluster_ಅನುಪಾತ_ಬಿಟ್ಟುಗಳು = fs->super->s_log_cluster_ಗಾತ್ರ -
+		fs->super->s_log_ಖಂಡ_ಗಾತ್ರ;
+	ಆದರೆ (EXT2_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು(fs->super) !=
+	    EXT2_CLUSTERS_ಪ್ರತಿ_ಗುಂಪು(fs->super) << fs->cluster_ಅನುಪಾತ_ಬಿಟ್ಟುಗಳು) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		ಹೋಗು cleanup;
 	}
-	fs->inode_blocks_per_group = ((EXT2_INODES_PER_GROUP(fs->super) *
-				       EXT2_INODE_SIZE(fs->super) +
-				       EXT2_BLOCK_SIZE(fs->super) - 1) /
-				      EXT2_BLOCK_SIZE(fs->super));
-	if (block_size) {
-		if (block_size != fs->blocksize) {
-			retval = EXT2_ET_UNEXPECTED_BLOCK_SIZE;
-			goto cleanup;
+	fs->inode_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು = ((EXT2_INODES_ಪ್ರತಿ_ಗುಂಪು(fs->super) *
+				       EXT2_INODE_ಗಾತ್ರ(fs->super) +
+				       EXT2_ಖಂಡ_ಗಾತ್ರ(fs->super) - 1) /
+				      EXT2_ಖಂಡ_ಗಾತ್ರ(fs->super));
+	ಆದರೆ (ಖಂಡ_ಗಾತ್ರ) {
+		ಆದರೆ (ಖಂಡ_ಗಾತ್ರ != fs->blocksize) {
+			retval = EXT2_ET_UNEXPECTED_ಖಂಡ_ಗಾತ್ರ;
+			ಹೋಗು cleanup;
 		}
 	}
 	/*
 	 * Set the blocksize to the filesystem's blocksize.
 	 */
-	io_channel_set_blksize(fs->io, fs->blocksize);
+	io_channel_ಗಣ_blksize(fs->io, fs->blocksize);
 
 	/*
 	 * If this is an external journal device, don't try to read
 	 * the group descriptors, because they're not there.
 	 */
-	if (ext2fs_has_feature_journal_dev(fs->super)) {
-		fs->group_desc_count = 0;
+	ಆದರೆ (ext2fs_has_feature_journal_dev(fs->super)) {
+		fs->ಗುಂಪು_desc_ಎಣಿಕೆ = 0;
 		*ret_fs = fs;
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-	if (EXT2_INODES_PER_GROUP(fs->super) == 0) {
+	ಆದರೆ (EXT2_INODES_ಪ್ರತಿ_ಗುಂಪು(fs->super) == 0) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		ಹೋಗು cleanup;
 	}
 	/* Precompute the FS UUID to seed other checksums */
-	ext2fs_init_csum_seed(fs);
+	ext2fs_init_csum_ಬೀಜ(fs);
 
 	/*
 	 * Read group descriptors
 	 */
-	blocks_per_group = EXT2_BLOCKS_PER_GROUP(fs->super);
-	if (blocks_per_group < 8 ||
-	    blocks_per_group > EXT2_MAX_BLOCKS_PER_GROUP(fs->super) ||
-	    fs->inode_blocks_per_group > EXT2_MAX_INODES_PER_GROUP(fs->super) ||
-           EXT2_DESC_PER_BLOCK(fs->super) == 0 ||
-           fs->super->s_first_data_block >= ext2fs_blocks_count(fs->super)) {
+	ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು = EXT2_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು(fs->super);
+	ಆದರೆ (ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು < 8 ||
+	    ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು > EXT2_MAX_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು(fs->super) ||
+	    fs->inode_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು > EXT2_MAX_INODES_ಪ್ರತಿ_ಗುಂಪು(fs->super) ||
+           EXT2_DESC_ಪ್ರತಿ_ಖಂಡ(fs->super) == 0 ||
+           fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super)) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		ಹೋಗು cleanup;
 	}
-	groups_cnt = ext2fs_div64_ceil(ext2fs_blocks_count(fs->super) -
-				       fs->super->s_first_data_block,
-				       blocks_per_group);
-	if (groups_cnt >> 32) {
+	groups_cnt = ext2fs_div64_ceil(ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super) -
+				       fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ,
+				       ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು);
+	ಆದರೆ (groups_cnt >> 32) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		ಹೋಗು cleanup;
 	}
-	fs->group_desc_count = 	groups_cnt;
-	if (!(flags & EXT2_FLAG_IGNORE_SB_ERRORS) &&
-	    (__u64)fs->group_desc_count * EXT2_INODES_PER_GROUP(fs->super) !=
-	    fs->super->s_inodes_count) {
+	fs->ಗುಂಪು_desc_ಎಣಿಕೆ = 	groups_cnt;
+	ಆದರೆ (!(flags & EXT2_FLAG_IGNORE_SB_ERRORS) &&
+	    (__u64)fs->ಗುಂಪು_desc_ಎಣಿಕೆ * EXT2_INODES_ಪ್ರತಿ_ಗುಂಪು(fs->super) !=
+	    fs->super->s_inodes_ಎಣಿಕೆ) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		ಹೋಗು cleanup;
 	}
-	fs->desc_blocks = ext2fs_div_ceil(fs->group_desc_count,
-					  EXT2_DESC_PER_BLOCK(fs->super));
-	if (ext2fs_has_feature_meta_bg(fs->super) &&
-	    (fs->super->s_first_meta_bg > fs->desc_blocks) &&
+	fs->desc_ಖಂಡಗಳು = ext2fs_div_ceil(fs->ಗುಂಪು_desc_ಎಣಿಕೆ,
+					  EXT2_DESC_ಪ್ರತಿ_ಖಂಡ(fs->super));
+	ಆದರೆ (ext2fs_has_feature_meta_bg(fs->super) &&
+	    (fs->super->s_ಮೊದಲ_meta_bg > fs->desc_ಖಂಡಗಳು) &&
 	    !(flags & EXT2_FLAG_IGNORE_SB_ERRORS)) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		ಹೋಗು cleanup;
 	}
-	if (flags & EXT2_FLAG_SUPER_ONLY)
-		goto skip_read_bg;
-	retval = ext2fs_get_array(fs->desc_blocks, fs->blocksize,
-				&fs->group_desc);
-	if (retval)
-		goto cleanup;
-	if (!group_block)
-		group_block = fs->super->s_first_data_block;
+	ಆದರೆ (flags & EXT2_FLAG_SUPER_ONLY)
+		ಹೋಗು skip_read_bg;
+	retval = ext2fs_get_array(fs->desc_ಖಂಡಗಳು, fs->blocksize,
+				&fs->ಗುಂಪು_desc);
+	ಆದರೆ (retval)
+		ಹೋಗು cleanup;
+	ಆದರೆ (!ಗುಂಪು_ಖಂಡ)
+		ಗುಂಪು_ಖಂಡ = fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ;
 	/*
 	 * On a FS with a 1K blocksize, block 0 is reserved for bootloaders
 	 * so we must increment block numbers to any group 0 items.
@@ -441,54 +441,54 @@ retry:
 	 * set superblock == 0 (i.e. auto-detect the superblock), which is
 	 * what's going on here.
 	 */
-	if (group_block == 0 && fs->blocksize == 1024)
-		group_zero_adjust = 1;
-	dest = (char *) fs->group_desc;
-#ifdef WORDS_BIGENDIAN
-	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-#endif
-	if (ext2fs_has_feature_meta_bg(fs->super) &&
+	ಆದರೆ (ಗುಂಪು_ಖಂಡ == 0 && fs->blocksize == 1024)
+		ಗುಂಪು_zero_adjust = 1;
+	dest = (ಅಕ್ಷರ *) fs->ಗುಂಪು_desc;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
+	groups_ಪ್ರತಿ_ಖಂಡ = EXT2_DESC_ಪ್ರತಿ_ಖಂಡ(fs->super);
+#ಆದರೆ_ಅಂತ್ಯ
+	ಆದರೆ (ext2fs_has_feature_meta_bg(fs->super) &&
 	    !(flags & EXT2_FLAG_IMAGE_FILE)) {
-		first_meta_bg = fs->super->s_first_meta_bg;
-		if (first_meta_bg > fs->desc_blocks)
-			first_meta_bg = fs->desc_blocks;
-	} else
-		first_meta_bg = fs->desc_blocks;
-	if (first_meta_bg) {
-		retval = io_channel_read_blk(fs->io, group_block +
-					     group_zero_adjust + 1,
-					     first_meta_bg, dest);
-		if (retval)
-			goto cleanup;
-#ifdef WORDS_BIGENDIAN
-		gdp = (struct ext2_group_desc *) dest;
-		for (j=0; j < groups_per_block*first_meta_bg; j++) {
-			gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-			if (gdp)
-				ext2fs_swap_group_desc2(fs, gdp);
+		ಮೊದಲ_meta_bg = fs->super->s_ಮೊದಲ_meta_bg;
+		ಆದರೆ (ಮೊದಲ_meta_bg > fs->desc_ಖಂಡಗಳು)
+			ಮೊದಲ_meta_bg = fs->desc_ಖಂಡಗಳು;
+	} ಇಲ್ಲದಿದ್ದರೆ
+		ಮೊದಲ_meta_bg = fs->desc_ಖಂಡಗಳು;
+	ಆದರೆ (ಮೊದಲ_meta_bg) {
+		retval = io_channel_read_blk(fs->io, ಗುಂಪು_ಖಂಡ +
+					     ಗುಂಪು_zero_adjust + 1,
+					     ಮೊದಲ_meta_bg, dest);
+		ಆದರೆ (retval)
+			ಹೋಗು cleanup;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
+		gdp = (ರಚನೆ ext2_ಗುಂಪು_desc *) dest;
+		ಗಾಗಿ (j=0; j < groups_ಪ್ರತಿ_ಖಂಡ*ಮೊದಲ_meta_bg; j++) {
+			gdp = ext2fs_ಗುಂಪು_desc(fs, fs->ಗುಂಪು_desc, j);
+			ಆದರೆ (gdp)
+				ext2fs_ಅದಲುಬದಲು_ಗುಂಪು_desc2(fs, gdp);
 		}
-#endif
-		dest += fs->blocksize*first_meta_bg;
+#ಆದರೆ_ಅಂತ್ಯ
+		dest += fs->blocksize*ಮೊದಲ_meta_bg;
 	}
 
-	for (i = first_meta_bg ; i < fs->desc_blocks; i++) {
-		blk = ext2fs_descriptor_block_loc2(fs, group_block, i);
+	ಗಾಗಿ (i = ಮೊದಲ_meta_bg ; i < fs->desc_ಖಂಡಗಳು; i++) {
+		blk = ext2fs_descriptor_ಖಂಡ_loc2(fs, ಗುಂಪು_ಖಂಡ, i);
 		io_channel_cache_readahead(fs->io, blk, 1);
 	}
 
-	for (i=first_meta_bg ; i < fs->desc_blocks; i++) {
-		blk = ext2fs_descriptor_block_loc2(fs, group_block, i);
+	ಗಾಗಿ (i=ಮೊದಲ_meta_bg ; i < fs->desc_ಖಂಡಗಳು; i++) {
+		blk = ext2fs_descriptor_ಖಂಡ_loc2(fs, ಗುಂಪು_ಖಂಡ, i);
 		retval = io_channel_read_blk64(fs->io, blk, 1, dest);
-		if (retval)
-			goto cleanup;
-#ifdef WORDS_BIGENDIAN
-		for (j=0; j < groups_per_block; j++) {
-			gdp = ext2fs_group_desc(fs, fs->group_desc,
-						i * groups_per_block + j);
-			if (gdp)
-				ext2fs_swap_group_desc2(fs, gdp);
+		ಆದರೆ (retval)
+			ಹೋಗು cleanup;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
+		ಗಾಗಿ (j=0; j < groups_ಪ್ರತಿ_ಖಂಡ; j++) {
+			gdp = ext2fs_ಗುಂಪು_desc(fs, fs->ಗುಂಪು_desc,
+						i * groups_ಪ್ರತಿ_ಖಂಡ + j);
+			ಆದರೆ (gdp)
+				ext2fs_ಅದಲುಬದಲು_ಗುಂಪು_desc2(fs, gdp);
 		}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 		dest += fs->blocksize;
 	}
 
@@ -498,56 +498,56 @@ retry:
 	 * If recovery is from backup superblock, Clear _UNININT flags &
 	 * reset bg_itable_unused to zero
 	 */
-	if (superblock > 1 && ext2fs_has_group_desc_csum(fs)) {
-		dgrp_t group;
+	ಆದರೆ (superblock > 1 && ext2fs_has_ಗುಂಪು_desc_csum(fs)) {
+		dgrp_t ಗುಂಪು;
 
-		for (group = 0; group < fs->group_desc_count; group++) {
-			ext2fs_bg_flags_clear(fs, group, EXT2_BG_BLOCK_UNINIT);
-			ext2fs_bg_flags_clear(fs, group, EXT2_BG_INODE_UNINIT);
-			ext2fs_bg_itable_unused_set(fs, group, 0);
+		ಗಾಗಿ (ಗುಂಪು = 0; ಗುಂಪು < fs->ಗುಂಪು_desc_ಎಣಿಕೆ; ಗುಂಪು++) {
+			ext2fs_bg_flags_clear(fs, ಗುಂಪು, EXT2_BG_ಖಂಡ_UNINIT);
+			ext2fs_bg_flags_clear(fs, ಗುಂಪು, EXT2_BG_INODE_UNINIT);
+			ext2fs_bg_itable_ಬಳಸದ_ಗಣ(fs, ಗುಂಪು, 0);
 			/* The checksum will be reset later, but fix it here
 			 * anyway to avoid printing a lot of spurious errors. */
-			ext2fs_group_desc_csum_set(fs, group);
+			ext2fs_ಗುಂಪು_desc_csum_ಗಣ(fs, ಗುಂಪು);
 		}
-		if (fs->flags & EXT2_FLAG_RW)
+		ಆದರೆ (fs->flags & EXT2_FLAG_RW)
 			ext2fs_mark_super_dirty(fs);
 	}
 skip_read_bg:
-	if (ext2fs_has_feature_mmp(fs->super) &&
+	ಆದರೆ (ext2fs_has_feature_mmp(fs->super) &&
 	    !(flags & EXT2_FLAG_SKIP_MMP) &&
 	    (flags & (EXT2_FLAG_RW | EXT2_FLAG_EXCLUSIVE))) {
-		retval = ext2fs_mmp_start(fs);
-		if (retval) {
+		retval = ext2fs_mmp_ಆರಂಭ(fs);
+		ಆದರೆ (retval) {
 			fs->flags |= EXT2_FLAG_SKIP_MMP; /* just do cleanup */
 			ext2fs_mmp_stop(fs);
-			goto cleanup;
+			ಹೋಗು cleanup;
 		}
 	}
 
-	if (fs->flags & EXT2_FLAG_SHARE_DUP) {
-		fs->block_sha_map = ext2fs_hashmap_create(ext2fs_djb2_hash,
-					block_sha_map_free_entry, 4096);
-		if (!fs->block_sha_map) {
-			retval = EXT2_ET_NO_MEMORY;
-			goto cleanup;
+	ಆದರೆ (fs->flags & EXT2_FLAG_SHARE_DUP) {
+		fs->ಖಂಡ_sha_map = ext2fs_hashmap_create(ext2fs_djb2_hash,
+					ಖಂಡ_sha_map_free_ನಮೂದು, 4096);
+		ಆದರೆ (!fs->ಖಂಡ_sha_map) {
+			retval = EXT2_ET_NO_ಸ್ಮರಣೆ;
+			ಹೋಗು cleanup;
 		}
-		ext2fs_set_feature_shared_blocks(fs->super);
+		ext2fs_ಗಣ_feature_shared_ಖಂಡಗಳು(fs->super);
 	}
 
-	if (ext2fs_has_feature_casefold(fs->super))
-		fs->encoding = ext2fs_load_nls_table(fs->super->s_encoding);
+	ಆದರೆ (ext2fs_has_feature_casefold(fs->super))
+		fs->encoding = ext2fs_ತುಂಬು_nls_ಕೋಷ್ಟಕ(fs->super->s_encoding);
 
 	fs->flags &= ~EXT2_FLAG_NOFREE_ON_ERROR;
 	*ret_fs = fs;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 cleanup:
-	if (!(flags & EXT2_FLAG_NOFREE_ON_ERROR)) {
+	ಆದರೆ (!(flags & EXT2_FLAG_NOFREE_ON_ERROR)) {
 		ext2fs_free(fs);
-		fs = NULL;
+		fs = ಖಾಲಿ;
 	}
 	*ret_fs = fs;
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
 /*
@@ -555,43 +555,43 @@ cleanup:
  *
  * These functions are only valid if EXT2_FLAG_IMAGE_FILE is true.
  */
-errcode_t ext2fs_get_data_io(ext2_filsys fs, io_channel *old_io)
+errcode_t ext2fs_get_ದತ್ತಾಂಶ_io(ext2_filsys fs, io_channel *old_io)
 {
-	if ((fs->flags & EXT2_FLAG_IMAGE_FILE) == 0)
-		return EXT2_ET_NOT_IMAGE_FILE;
-	if (old_io) {
+	ಆದರೆ ((fs->flags & EXT2_FLAG_IMAGE_FILE) == 0)
+		ಹಿಂತಿರುಗಿ EXT2_ET_NOT_IMAGE_FILE;
+	ಆದರೆ (old_io) {
 		*old_io = (fs->image_io == fs->io) ? 0 : fs->io;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-errcode_t ext2fs_set_data_io(ext2_filsys fs, io_channel new_io)
+errcode_t ext2fs_ಗಣ_ದತ್ತಾಂಶ_io(ext2_filsys fs, io_channel new_io)
 {
-	if ((fs->flags & EXT2_FLAG_IMAGE_FILE) == 0)
-		return EXT2_ET_NOT_IMAGE_FILE;
+	ಆದರೆ ((fs->flags & EXT2_FLAG_IMAGE_FILE) == 0)
+		ಹಿಂತಿರುಗಿ EXT2_ET_NOT_IMAGE_FILE;
 	fs->io = new_io ? new_io : fs->image_io;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-errcode_t ext2fs_rewrite_to_io(ext2_filsys fs, io_channel new_io)
+errcode_t ext2fs_rewrite_ಗಮ್ಯ_io(ext2_filsys fs, io_channel new_io)
 {
 	errcode_t err;
 
-	if ((fs->flags & EXT2_FLAG_IMAGE_FILE) == 0)
-		return EXT2_ET_NOT_IMAGE_FILE;
-	err = io_channel_set_blksize(new_io, fs->blocksize);
-	if (err)
-		return err;
-	if ((new_io == fs->image_io) || (new_io == fs->io))
-		return 0;
-	if ((fs->image_io != fs->io) &&
+	ಆದರೆ ((fs->flags & EXT2_FLAG_IMAGE_FILE) == 0)
+		ಹಿಂತಿರುಗಿ EXT2_ET_NOT_IMAGE_FILE;
+	err = io_channel_ಗಣ_blksize(new_io, fs->blocksize);
+	ಆದರೆ (err)
+		ಹಿಂತಿರುಗಿ err;
+	ಆದರೆ ((new_io == fs->image_io) || (new_io == fs->io))
+		ಹಿಂತಿರುಗಿ 0;
+	ಆದರೆ ((fs->image_io != fs->io) &&
 	    fs->image_io)
 		io_channel_close(fs->image_io);
-	if (fs->io)
+	ಆದರೆ (fs->io)
 		io_channel_close(fs->io);
 	fs->io = fs->image_io = new_io;
 	fs->flags |= EXT2_FLAG_DIRTY | EXT2_FLAG_RW |
 		EXT2_FLAG_BB_DIRTY | EXT2_FLAG_IB_DIRTY;
 	fs->flags &= ~EXT2_FLAG_IMAGE_FILE;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }

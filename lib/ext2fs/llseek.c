@@ -9,100 +9,100 @@
  * %End-Header%
  */
 
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ LARGEFILE_ಮೂಲ
+#ವ್ಯಾಖ್ಯಾನಿಸು LARGEFILE_ಮೂಲ
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ LARGEFILE64_ಮೂಲ
+#ವ್ಯಾಖ್ಯಾನಿಸು LARGEFILE64_ಮೂಲ
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಆದರೆ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef __MSDOS__
-#include <io.h>
-#endif
-#include "et/com_err.h"
-#include "ext2fs/ext2_io.h"
+#ಆದರೆ HAVE_ERRNO_H
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __MSDOS__
+#ಅನ್ತರ್ಭಾವ <io.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ "et/com_err.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs/ext2_io.h"
 
-#ifdef __linux__
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __linux__
 
-#include <sys/syscall.h>
+#ಅನ್ತರ್ಭಾವ <sys/syscall.h>
 
-static ext2_loff_t my_llseek (int fd, ext2_loff_t offset, int origin)
+ಸ್ಥಿರ ext2_loff_t my_llseek (ಪೂರ್ಣಾಂಕ fd, ext2_loff_t ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ origin)
 {
-#if SIZEOF_OFF_T >= 8
-	return lseek(fd, offset, origin);
-#elif HAVE_LSEEK64_PROTOTYPE
-	return lseek64(fd, offset, origin);
-#elif HAVE_LLSEEK_PROTOTYPE
-	return llseek(fd, offset, origin);
-#elif defined(__NR__llseek)
-	loff_t result;
-	int retval;
+#ಆದರೆ SIZEOF_OFF_T >= 8
+	ಹಿಂತಿರುಗಿ lseek(fd, ಸ್ಥಾನಾಂತರ, origin);
+#ಅಥವಾಆದರೆ HAVE_LSEEK64_PROTOTYPE
+	ಹಿಂತಿರುಗಿ lseek64(fd, ಸ್ಥಾನಾಂತರ, origin);
+#ಅಥವಾಆದರೆ HAVE_LLSEEK_PROTOTYPE
+	ಹಿಂತಿರುಗಿ llseek(fd, ಸ್ಥಾನಾಂತರ, origin);
+#ಅಥವಾಆದರೆ defined(__NR__llseek)
+	loff_t ಫಲಿತಾಂಶ;
+	ಪೂರ್ಣಾಂಕ retval;
 	retval = syscall(__NR__llseek, fd,
-		(unsigned long)(offset >> 32),
-		(unsigned long)(offset & 0xffffffff),
-		&result, origin);
-	return (retval == -1 ? retval : result);
-#else
+		(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)(ಸ್ಥಾನಾಂತರ >> 32),
+		(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)(ಸ್ಥಾನಾಂತರ & 0xffffffff),
+		&ಫಲಿತಾಂಶ, origin);
+	ಹಿಂತಿರುಗಿ (retval == -1 ? retval : ಫಲಿತಾಂಶ);
+#ಇಲ್ಲದಿದ್ದರೆ
 	errno = ENOSYS;
-	return -1;
-#endif
+	ಹಿಂತಿರುಗಿ -1;
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (ಪೂರ್ಣಾಂಕ fd, ext2_loff_t ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ origin)
 {
-	ext2_loff_t result;
-	static int do_compat = 0;
+	ext2_loff_t ಫಲಿತಾಂಶ;
+	ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ do_compat = 0;
 
-	if (do_compat)
-		goto fallback;
+	ಆದರೆ (do_compat)
+		ಹೋಗು fallback;
 
-	result = my_llseek (fd, offset, origin);
-	if (result == -1 && errno == ENOSYS) {
+	ಫಲಿತಾಂಶ = my_llseek (fd, ಸ್ಥಾನಾಂತರ, origin);
+	ಆದರೆ (ಫಲಿತಾಂಶ == -1 && errno == ENOSYS) {
 		/*
 		 * Just in case this code runs on top of an old kernel
 		 * which does not support the llseek system call
 		 */
 		do_compat++;
 	fallback:
-		if (offset < ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))
-			return lseek(fd, (off_t) offset, origin);
+		ಆದರೆ (ಸ್ಥಾನಾಂತರ < ((ext2_loff_t) 1 << ((ಗಾತ್ರ(off_t)*8) -1)))
+			ಹಿಂತಿರುಗಿ lseek(fd, (off_t) ಸ್ಥಾನಾಂತರ, origin);
 		errno = EINVAL;
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	return result;
+	ಹಿಂತಿರುಗಿ ಫಲಿತಾಂಶ;
 }
 
-#else /* !linux */
+#ಇಲ್ಲದಿದ್ದರೆ /* !linux */
 
-#ifndef EINVAL
-#define EINVAL EXT2_ET_INVALID_ARGUMENT
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ EINVAL
+#ವ್ಯಾಖ್ಯಾನಿಸು EINVAL EXT2_ET_INVALID_ವಾದ
+#ಆದರೆ_ಅಂತ್ಯ
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (ಪೂರ್ಣಾಂಕ fd, ext2_loff_t ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ origin)
 {
-#if defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
-	return lseek64 (fd, offset, origin);
-#else
-	if ((sizeof(off_t) < sizeof(ext2_loff_t)) &&
-	    (offset >= ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))) {
+#ಆದರೆ defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
+	ಹಿಂತಿರುಗಿ lseek64 (fd, ಸ್ಥಾನಾಂತರ, origin);
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಆದರೆ ((ಗಾತ್ರ(off_t) < ಗಾತ್ರ(ext2_loff_t)) &&
+	    (ಸ್ಥಾನಾಂತರ >= ((ext2_loff_t) 1 << ((ಗಾತ್ರ(off_t)*8) -1)))) {
 		errno = EINVAL;
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	return lseek (fd, (off_t) offset, origin);
-#endif
+	ಹಿಂತಿರುಗಿ lseek (fd, (off_t) ಸ್ಥಾನಾಂತರ, origin);
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-#endif 	/* linux */
+#ಆದರೆ_ಅಂತ್ಯ 	/* linux */
 
 

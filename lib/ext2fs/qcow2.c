@@ -23,262 +23,262 @@
  * %End-Header%
  */
 
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ LARGEFILE_ಮೂಲ
+#ವ್ಯಾಖ್ಯಾನಿಸು LARGEFILE_ಮೂಲ
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ LARGEFILE64_ಮೂಲ
+#ವ್ಯಾಖ್ಯಾನಿಸು LARGEFILE64_ಮೂಲ
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "config.h"
-#include <fcntl.h>
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <assert.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <grp.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_STDLIB_H
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
 
-#include "ext2fs/ext2fs.h"
-#include "qcow2.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs/ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "qcow2.h"
 
 /* Functions for converting qcow2 image into raw image */
 
-struct ext2_qcow2_hdr *qcow2_read_header(int fd)
+ರಚನೆ ext2_qcow2_hdr *qcow2_read_ಶೀರ್ಷಿಕೆ(ಪೂರ್ಣಾಂಕ fd)
 {
-	void *buffer = NULL;
-	struct ext2_qcow2_hdr *hdr = NULL;
-	size_t size;
+	ಶೂನ್ಯ *ಬಫರ್ = ಖಾಲಿ;
+	ರಚನೆ ext2_qcow2_hdr *hdr = ಖಾಲಿ;
+	size_t ಗಾತ್ರ_2;
 	errcode_t ret;
 
-	ret = ext2fs_get_mem(sizeof(struct ext2_qcow2_hdr), &buffer);
-	if (ret)
-		return NULL;
-	memset(buffer, 0, sizeof(struct ext2_qcow2_hdr));
+	ret = ext2fs_get_mem(ಗಾತ್ರ(ರಚನೆ ext2_qcow2_hdr), &ಬಫರ್);
+	ಆದರೆ (ret)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+	memset(ಬಫರ್, 0, ಗಾತ್ರ(ರಚನೆ ext2_qcow2_hdr));
 
-	if (ext2fs_llseek(fd, 0, SEEK_SET < 0)) {
-		ext2fs_free_mem(&buffer);
-		return NULL;
+	ಆದರೆ (ext2fs_llseek(fd, 0, SEEK_SET < 0)) {
+		ext2fs_free_mem(&ಬಫರ್);
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	size = read(fd, buffer, sizeof(struct ext2_qcow2_hdr));
-	if (size != sizeof(struct ext2_qcow2_hdr)) {
-		ext2fs_free_mem(&buffer);
-		return NULL;
+	ಗಾತ್ರ_2 = ಪಠ(fd, ಬಫರ್, ಗಾತ್ರ(ರಚನೆ ext2_qcow2_hdr));
+	ಆದರೆ (ಗಾತ್ರ_2 != ಗಾತ್ರ(ರಚನೆ ext2_qcow2_hdr)) {
+		ext2fs_free_mem(&ಬಫರ್);
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	hdr = (struct ext2_qcow2_hdr *)(buffer);
+	hdr = (ರಚನೆ ext2_qcow2_hdr *)(ಬಫರ್);
 
-	if ((ext2fs_be32_to_cpu(hdr->magic) != QCOW_MAGIC) ||
-	    (ext2fs_be32_to_cpu(hdr->version) != 2)) {
+	ಆದರೆ ((ext2fs_be32_ಗಮ್ಯ_cpu(hdr->magic) != QCOW_MAGIC) ||
+	    (ext2fs_be32_ಗಮ್ಯ_cpu(hdr->ಆವೃತ್ತಿ) != 2)) {
 		ext2fs_free_mem(&hdr);
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	return hdr;
+	ಹಿಂತಿರುಗಿ hdr;
 }
 
-static int qcow2_read_l1_table(struct ext2_qcow2_image *img)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ qcow2_read_l1_ಕೋಷ್ಟಕ(ರಚನೆ ext2_qcow2_image *img)
 {
-	int fd = img->fd;
-	size_t size, l1_size = img->l1_size * sizeof(blk64_t);
-	blk64_t *table;
+	ಪೂರ್ಣಾಂಕ fd = img->fd;
+	size_t ಗಾತ್ರ_2, l1_ಗಾತ್ರ = img->l1_ಗಾತ್ರ * ಗಾತ್ರ(blk64_t);
+	blk64_t *ಕೋಷ್ಟಕ;
 	errcode_t ret;
 
-	ret = ext2fs_get_memzero(l1_size, &table);
-	if (ret)
-		return ret;
+	ret = ext2fs_get_memzero(l1_ಗಾತ್ರ, &ಕೋಷ್ಟಕ);
+	ಆದರೆ (ret)
+		ಹಿಂತಿರುಗಿ ret;
 
-	if (ext2fs_llseek(fd, img->l1_offset, SEEK_SET) < 0) {
-		ext2fs_free_mem(&table);
-		return errno;
+	ಆದರೆ (ext2fs_llseek(fd, img->l1_ಸ್ಥಾನಾಂತರ, SEEK_SET) < 0) {
+		ext2fs_free_mem(&ಕೋಷ್ಟಕ);
+		ಹಿಂತಿರುಗಿ errno;
 	}
 
-	size = read(fd, table, l1_size);
-	if (size != l1_size) {
-		ext2fs_free_mem(&table);
-		return errno;
+	ಗಾತ್ರ_2 = ಪಠ(fd, ಕೋಷ್ಟಕ, l1_ಗಾತ್ರ);
+	ಆದರೆ (ಗಾತ್ರ_2 != l1_ಗಾತ್ರ) {
+		ext2fs_free_mem(&ಕೋಷ್ಟಕ);
+		ಹಿಂತಿರುಗಿ errno;
 	}
 
-	img->l1_table = table;
+	img->l1_ಕೋಷ್ಟಕ = ಕೋಷ್ಟಕ;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static int qcow2_read_l2_table(struct ext2_qcow2_image *img,
-			       __u64 offset, blk64_t **l2_table)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ qcow2_read_l2_ಕೋಷ್ಟಕ(ರಚನೆ ext2_qcow2_image *img,
+			       __u64 ಸ್ಥಾನಾಂತರ, blk64_t **l2_ಕೋಷ್ಟಕ)
 {
-	int fd = img->fd;
-	size_t size;
+	ಪೂರ್ಣಾಂಕ fd = img->fd;
+	size_t ಗಾತ್ರ_2;
 
-	assert(*l2_table);
+	ಪ್ರತಿಜ್ಞಾ(*l2_ಕೋಷ್ಟಕ);
 
-	if (ext2fs_llseek(fd, offset, SEEK_SET) < 0)
-		return errno;
+	ಆದರೆ (ext2fs_llseek(fd, ಸ್ಥಾನಾಂತರ, SEEK_SET) < 0)
+		ಹಿಂತಿರುಗಿ errno;
 
-	size = read(fd, *l2_table, img->cluster_size);
-	if (size != img->cluster_size)
-		return errno;
+	ಗಾತ್ರ_2 = ಪಠ(fd, *l2_ಕೋಷ್ಟಕ, img->cluster_ಗಾತ್ರ);
+	ಆದರೆ (ಗಾತ್ರ_2 != img->cluster_ಗಾತ್ರ)
+		ಹಿಂತಿರುಗಿ errno;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static int qcow2_copy_data(int fdin, int fdout, __u64 off_in,
-			   __u64 off_out, void *buf, size_t count)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ qcow2_copy_ದತ್ತಾಂಶ(ಪೂರ್ಣಾಂಕ fdin, ಪೂರ್ಣಾಂಕ fdout, __u64 off_ಒಳ,
+			   __u64 off_ಹೊರಹೋಗು, ಶೂನ್ಯ *buf, size_t ಎಣಿಕೆ_2)
 {
 	ssize_t c1, c2, c;
-	void *ptr;
-	int retries = 10;
+	ಶೂನ್ಯ *ptr;
+	ಪೂರ್ಣಾಂಕ retries = 10;
 
-	assert(buf);
+	ಪ್ರತಿಜ್ಞಾ(buf);
 
-	if (ext2fs_llseek(fdout, off_out, SEEK_SET) < 0)
-		return errno;
+	ಆದರೆ (ext2fs_llseek(fdout, off_ಹೊರಹೋಗು, SEEK_SET) < 0)
+		ಹಿಂತಿರುಗಿ errno;
 
-	if (ext2fs_llseek(fdin, off_in, SEEK_SET) < 0)
-		return errno;
+	ಆದರೆ (ext2fs_llseek(fdin, off_ಒಳ, SEEK_SET) < 0)
+		ಹಿಂತಿರುಗಿ errno;
 
-	while (count > 0) {
+	ಆಗ (ಎಣಿಕೆ_2 > 0) {
 		errno = 0;
-		c1 = read(fdin, buf, count);
-		if (c1 < 0 || ((c1 == 0) && errno))
-			return errno;
-		if (c1 == 0)
-			break; 	/* EOF */
+		c1 = ಪಠ(fdin, buf, ಎಣಿಕೆ_2);
+		ಆದರೆ (c1 < 0 || ((c1 == 0) && errno))
+			ಹಿಂತಿರುಗಿ errno;
+		ಆದರೆ (c1 == 0)
+			ನಿಲ್ಲಿಸು; 	/* EOF */
 
-		for (ptr = buf, c = c1; c > 0; ptr += c2, c -= c2) {
+		ಗಾಗಿ (ptr = buf, c = c1; c > 0; ptr += c2, c -= c2) {
 			errno = 0;
-			c2 = write(fdout, ptr, c1);
-			if (c2 < 0 || ((c2 == 0) && errno))
-				return errno;
-			if (c2 == 0 && --retries <= 0)
-				break; /* This should never happen...  */
+			c2 = ಲಿಖ(fdout, ptr, c1);
+			ಆದರೆ (c2 < 0 || ((c2 == 0) && errno))
+				ಹಿಂತಿರುಗಿ errno;
+			ಆದರೆ (c2 == 0 && --retries <= 0)
+				ನಿಲ್ಲಿಸು; /* This should never happen...  */
 		}
-		count -= c1;
+		ಎಣಿಕೆ_2 -= c1;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 
-int qcow2_write_raw_image(int qcow2_fd, int raw_fd,
-			      struct ext2_qcow2_hdr *hdr)
+ಪೂರ್ಣಾಂಕ qcow2_write_raw_image(ಪೂರ್ಣಾಂಕ qcow2_fd, ಪೂರ್ಣಾಂಕ raw_fd,
+			      ರಚನೆ ext2_qcow2_hdr *hdr)
 {
-	struct ext2_qcow2_image img;
+	ರಚನೆ ext2_qcow2_image img;
 	errcode_t ret = 0;
-	unsigned int l1_index, l2_index;
-	__u64 offset;
-	blk64_t *l1_table, *l2_table = NULL;
-	void *copy_buf = NULL;
-	size_t size;
-	unsigned int max_l1_size;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ l1_ಸೂಚ್ಯಂಕ, l2_ಸೂಚ್ಯಂಕ;
+	__u64 ಸ್ಥಾನಾಂತರ;
+	blk64_t *l1_ಕೋಷ್ಟಕ, *l2_ಕೋಷ್ಟಕ = ಖಾಲಿ;
+	ಶೂನ್ಯ *copy_buf = ಖಾಲಿ;
+	size_t ಗಾತ್ರ_2;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ max_l1_ಗಾತ್ರ;
 
-	if (hdr->crypt_method)
-		return -QCOW_ENCRYPTED;
+	ಆದರೆ (hdr->crypt_ವಿಧಾನ)
+		ಹಿಂತಿರುಗಿ -QCOW_ENCRYPTED;
 
 	img.fd = qcow2_fd;
 	img.hdr = hdr;
-	img.l2_cache = NULL;
-	img.l1_table = NULL;
-	img.cluster_bits = ext2fs_be32_to_cpu(hdr->cluster_bits);
-	if (img.cluster_bits < 9 || img.cluster_bits > 31)
-		return -QCOW_CORRUPTED;
-	img.cluster_size = 1 << img.cluster_bits;
-	img.l1_size = ext2fs_be32_to_cpu(hdr->l1_size);
-	img.l1_offset = ext2fs_be64_to_cpu(hdr->l1_table_offset);
-	img.l2_size = 1 << (img.cluster_bits - 3);
-	img.image_size = ext2fs_be64_to_cpu(hdr->size);
+	img.l2_cache = ಖಾಲಿ;
+	img.l1_ಕೋಷ್ಟಕ = ಖಾಲಿ;
+	img.cluster_ಬಿಟ್ಟುಗಳು = ext2fs_be32_ಗಮ್ಯ_cpu(hdr->cluster_ಬಿಟ್ಟುಗಳು);
+	ಆದರೆ (img.cluster_ಬಿಟ್ಟುಗಳು < 9 || img.cluster_ಬಿಟ್ಟುಗಳು > 31)
+		ಹಿಂತಿರುಗಿ -QCOW_CORRUPTED;
+	img.cluster_ಗಾತ್ರ = 1 << img.cluster_ಬಿಟ್ಟುಗಳು;
+	img.l1_ಗಾತ್ರ = ext2fs_be32_ಗಮ್ಯ_cpu(hdr->l1_ಗಾತ್ರ);
+	img.l1_ಸ್ಥಾನಾಂತರ = ext2fs_be64_ಗಮ್ಯ_cpu(hdr->l1_ಕೋಷ್ಟಕ_ಸ್ಥಾನಾಂತರ);
+	img.l2_ಗಾತ್ರ = 1 << (img.cluster_ಬಿಟ್ಟುಗಳು - 3);
+	img.image_ಗಾತ್ರ = ext2fs_be64_ಗಮ್ಯ_cpu(hdr->ಗಾತ್ರ_2);
 
-	if (img.l1_offset & (img.cluster_size - 1))
-		return -QCOW_CORRUPTED;
+	ಆದರೆ (img.l1_ಸ್ಥಾನಾಂತರ & (img.cluster_ಗಾತ್ರ - 1))
+		ಹಿಂತಿರುಗಿ -QCOW_CORRUPTED;
 
-	max_l1_size = (img.image_size >> ((2 * img.cluster_bits) - 3)) +
-		img.cluster_size;
-	if (img.l1_size > max_l1_size)
-		return -QCOW_CORRUPTED;
+	max_l1_ಗಾತ್ರ = (img.image_ಗಾತ್ರ >> ((2 * img.cluster_ಬಿಟ್ಟುಗಳು) - 3)) +
+		img.cluster_ಗಾತ್ರ;
+	ಆದರೆ (img.l1_ಗಾತ್ರ > max_l1_ಗಾತ್ರ)
+		ಹಿಂತಿರುಗಿ -QCOW_CORRUPTED;
 
-	ret = ext2fs_get_memzero(img.cluster_size, &l2_table);
-	if (ret)
-		goto out;
+	ret = ext2fs_get_memzero(img.cluster_ಗಾತ್ರ, &l2_ಕೋಷ್ಟಕ);
+	ಆದರೆ (ret)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	ret = ext2fs_get_memzero(1 << img.cluster_bits, &copy_buf);
-	if (ret)
-		goto out;
+	ret = ext2fs_get_memzero(1 << img.cluster_ಬಿಟ್ಟುಗಳು, &copy_buf);
+	ಆದರೆ (ret)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (ext2fs_llseek(raw_fd, 0, SEEK_SET) < 0) {
+	ಆದರೆ (ext2fs_llseek(raw_fd, 0, SEEK_SET) < 0) {
 		ret = errno;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
-	ret = qcow2_read_l1_table(&img);
-	if (ret)
-		goto out;
+	ret = qcow2_read_l1_ಕೋಷ್ಟಕ(&img);
+	ಆದರೆ (ret)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	l1_table = img.l1_table;
+	l1_ಕೋಷ್ಟಕ = img.l1_ಕೋಷ್ಟಕ;
 	/* Walk through l1 table */
-	for (l1_index = 0; l1_index < img.l1_size; l1_index++) {
-		__u64 off_out;
+	ಗಾಗಿ (l1_ಸೂಚ್ಯಂಕ = 0; l1_ಸೂಚ್ಯಂಕ < img.l1_ಗಾತ್ರ; l1_ಸೂಚ್ಯಂಕ++) {
+		__u64 off_ಹೊರಹೋಗು;
 
-		offset = ext2fs_be64_to_cpu(l1_table[l1_index]) &
+		ಸ್ಥಾನಾಂತರ = ext2fs_be64_ಗಮ್ಯ_cpu(l1_ಕೋಷ್ಟಕ[l1_ಸೂಚ್ಯಂಕ]) &
 			 ~QCOW_OFLAG_COPIED;
 
-		if ((offset > img.image_size) ||
-		    (offset <= 0))
-			continue;
+		ಆದರೆ ((ಸ್ಥಾನಾಂತರ > img.image_ಗಾತ್ರ) ||
+		    (ಸ್ಥಾನಾಂತರ <= 0))
+			ಮುಂದುವರಿ;
 
-		if (offset & QCOW_OFLAG_COMPRESSED) {
+		ಆದರೆ (ಸ್ಥಾನಾಂತರ & QCOW_OFLAG_COMPRESSED) {
 			ret = -QCOW_COMPRESSED;
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 
-		ret = qcow2_read_l2_table(&img, offset, &l2_table);
-		if (ret)
-			break;
+		ret = qcow2_read_l2_ಕೋಷ್ಟಕ(&img, ಸ್ಥಾನಾಂತರ, &l2_ಕೋಷ್ಟಕ);
+		ಆದರೆ (ret)
+			ನಿಲ್ಲಿಸು;
 
 		/* Walk through l2 table and copy data blocks into raw image */
-		for (l2_index = 0; l2_index < img.l2_size; l2_index++) {
-			offset = ext2fs_be64_to_cpu(l2_table[l2_index]) &
+		ಗಾಗಿ (l2_ಸೂಚ್ಯಂಕ = 0; l2_ಸೂಚ್ಯಂಕ < img.l2_ಗಾತ್ರ; l2_ಸೂಚ್ಯಂಕ++) {
+			ಸ್ಥಾನಾಂತರ = ext2fs_be64_ಗಮ್ಯ_cpu(l2_ಕೋಷ್ಟಕ[l2_ಸೂಚ್ಯಂಕ]) &
 				 ~QCOW_OFLAG_COPIED;
 
-			if (offset == 0)
-				continue;
+			ಆದರೆ (ಸ್ಥಾನಾಂತರ == 0)
+				ಮುಂದುವರಿ;
 
-			off_out = ((__u64)l1_index * img.l2_size) +
-				  l2_index;
-			off_out <<= img.cluster_bits;
-			ret = qcow2_copy_data(qcow2_fd, raw_fd, offset,
-					off_out, copy_buf, img.cluster_size);
-			if (ret)
-				goto out;
+			off_ಹೊರಹೋಗು = ((__u64)l1_ಸೂಚ್ಯಂಕ * img.l2_ಗಾತ್ರ) +
+				  l2_ಸೂಚ್ಯಂಕ;
+			off_ಹೊರಹೋಗು <<= img.cluster_ಬಿಟ್ಟುಗಳು;
+			ret = qcow2_copy_ದತ್ತಾಂಶ(qcow2_fd, raw_fd, ಸ್ಥಾನಾಂತರ,
+					off_ಹೊರಹೋಗು, copy_buf, img.cluster_ಗಾತ್ರ);
+			ಆದರೆ (ret)
+				ಹೋಗು ಹೊರಹೋಗು;
 		}
 	}
 
 	/* Resize the output image to the filesystem size */
-	if (ext2fs_llseek(raw_fd, img.image_size - 1, SEEK_SET) < 0) {
+	ಆದರೆ (ext2fs_llseek(raw_fd, img.image_ಗಾತ್ರ - 1, SEEK_SET) < 0) {
 		ret = errno;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
-	((char *)copy_buf)[0] = 0;
-	size = write(raw_fd, copy_buf, 1);
-	if (size != 1) {
+	((ಅಕ್ಷರ *)copy_buf)[0] = 0;
+	ಗಾತ್ರ_2 = ಲಿಖ(raw_fd, copy_buf, 1);
+	ಆದರೆ (ಗಾತ್ರ_2 != 1) {
 		ret = errno;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
-out:
-	if (copy_buf)
+ಹೊರಹೋಗು:
+	ಆದರೆ (copy_buf)
 		ext2fs_free_mem(&copy_buf);
-	if (img.l1_table)
-		ext2fs_free_mem(&img.l1_table);
-	if (l2_table)
-		ext2fs_free_mem(&l2_table);
-	return ret;
+	ಆದರೆ (img.l1_ಕೋಷ್ಟಕ)
+		ext2fs_free_mem(&img.l1_ಕೋಷ್ಟಕ);
+	ಆದರೆ (l2_ಕೋಷ್ಟಕ)
+		ext2fs_free_mem(&l2_ಕೋಷ್ಟಕ);
+	ಹಿಂತಿರುಗಿ ret;
 }

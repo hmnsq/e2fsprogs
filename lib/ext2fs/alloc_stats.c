@@ -9,160 +9,160 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
-void ext2fs_inode_alloc_stats2(ext2_filsys fs, ext2_ino_t ino,
-			       int inuse, int isdir)
+ಶೂನ್ಯ ext2fs_inode_alloc_stats2(ext2_filsys fs, ext2_ino_t ino,
+			       ಪೂರ್ಣಾಂಕ inuse, ಪೂರ್ಣಾಂಕ isdir)
 {
-	int	group = ext2fs_group_of_ino(fs, ino);
+	ಪೂರ್ಣಾಂಕ	ಗುಂಪು = ext2fs_ಗುಂಪು_ದ_ino(fs, ino);
 
-	if (ino > fs->super->s_inodes_count) {
-#ifndef OMIT_COM_ERR
+	ಆದರೆ (ino > fs->super->s_inodes_ಎಣಿಕೆ) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ OMIT_COM_ERR
 		com_err("ext2fs_inode_alloc_stats2", 0,
-			"Illegal inode number: %lu", (unsigned long) ino);
-#endif
-		return;
+			"Illegal inode number: %lu", (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ) ino);
+#ಆದರೆ_ಅಂತ್ಯ
+		ಹಿಂತಿರುಗಿ;
 	}
-	if (inuse > 0)
+	ಆದರೆ (inuse > 0)
 		ext2fs_mark_inode_bitmap2(fs->inode_map, ino);
-	else
+	ಇಲ್ಲದಿದ್ದರೆ
 		ext2fs_unmark_inode_bitmap2(fs->inode_map, ino);
-	ext2fs_bg_free_inodes_count_set(fs, group, ext2fs_bg_free_inodes_count(fs, group) - inuse);
-	if (isdir)
-		ext2fs_bg_used_dirs_count_set(fs, group, ext2fs_bg_used_dirs_count(fs, group) + inuse);
+	ext2fs_bg_free_inodes_ಎಣಿಕೆ_ಗಣ(fs, ಗುಂಪು, ext2fs_bg_free_inodes_ಎಣಿಕೆ(fs, ಗುಂಪು) - inuse);
+	ಆದರೆ (isdir)
+		ext2fs_bg_ಬಳಸಿದ_dirs_ಎಣಿಕೆ_ಗಣ(fs, ಗುಂಪು, ext2fs_bg_ಬಳಸಿದ_dirs_ಎಣಿಕೆ(fs, ಗುಂಪು) + inuse);
 
 	/* We don't strictly need to be clearing the uninit flag if inuse < 0
 	 * (i.e. freeing inodes) but it also means something is bad. */
-	ext2fs_bg_flags_clear(fs, group, EXT2_BG_INODE_UNINIT);
-	if (ext2fs_has_group_desc_csum(fs)) {
-		ext2_ino_t first_unused_inode =	fs->super->s_inodes_per_group -
-			ext2fs_bg_itable_unused(fs, group) +
-			group * fs->super->s_inodes_per_group + 1;
+	ext2fs_bg_flags_clear(fs, ಗುಂಪು, EXT2_BG_INODE_UNINIT);
+	ಆದರೆ (ext2fs_has_ಗುಂಪು_desc_csum(fs)) {
+		ext2_ino_t ಮೊದಲ_ಬಳಸದ_inode =	fs->super->s_inodes_ಪ್ರತಿ_ಗುಂಪು -
+			ext2fs_bg_itable_ಬಳಸದ(fs, ಗುಂಪು) +
+			ಗುಂಪು * fs->super->s_inodes_ಪ್ರತಿ_ಗುಂಪು + 1;
 
-		if (ino >= first_unused_inode)
-			ext2fs_bg_itable_unused_set(fs, group, group * fs->super->s_inodes_per_group + fs->super->s_inodes_per_group - ino);
-		ext2fs_group_desc_csum_set(fs, group);
+		ಆದರೆ (ino >= ಮೊದಲ_ಬಳಸದ_inode)
+			ext2fs_bg_itable_ಬಳಸದ_ಗಣ(fs, ಗುಂಪು, ಗುಂಪು * fs->super->s_inodes_ಪ್ರತಿ_ಗುಂಪು + fs->super->s_inodes_ಪ್ರತಿ_ಗುಂಪು - ino);
+		ext2fs_ಗುಂಪು_desc_csum_ಗಣ(fs, ಗುಂಪು);
 	}
 
-	fs->super->s_free_inodes_count -= inuse;
+	fs->super->s_free_inodes_ಎಣಿಕೆ -= inuse;
 	ext2fs_mark_super_dirty(fs);
 	ext2fs_mark_ib_dirty(fs);
 }
 
-void ext2fs_inode_alloc_stats(ext2_filsys fs, ext2_ino_t ino, int inuse)
+ಶೂನ್ಯ ext2fs_inode_alloc_stats(ext2_filsys fs, ext2_ino_t ino, ಪೂರ್ಣಾಂಕ inuse)
 {
 	ext2fs_inode_alloc_stats2(fs, ino, inuse, 0);
 }
 
-void ext2fs_block_alloc_stats2(ext2_filsys fs, blk64_t blk, int inuse)
+ಶೂನ್ಯ ext2fs_ಖಂಡ_alloc_stats2(ext2_filsys fs, blk64_t blk, ಪೂರ್ಣಾಂಕ inuse)
 {
-	int	group = ext2fs_group_of_blk2(fs, blk);
+	ಪೂರ್ಣಾಂಕ	ಗುಂಪು = ext2fs_ಗುಂಪು_ದ_blk2(fs, blk);
 
-	if (blk < fs->super->s_first_data_block ||
-	    blk >= ext2fs_blocks_count(fs->super)) {
-#ifndef OMIT_COM_ERR
+	ಆದರೆ (blk < fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ ||
+	    blk >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super)) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ OMIT_COM_ERR
 		com_err("ext2fs_block_alloc_stats", 0,
-			"Illegal block number: %lu", (unsigned long) blk);
-#endif
-		return;
+			"Illegal block number: %lu", (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ) blk);
+#ಆದರೆ_ಅಂತ್ಯ
+		ಹಿಂತಿರುಗಿ;
 	}
-	if (inuse > 0)
-		ext2fs_mark_block_bitmap2(fs->block_map, blk);
-	else
-		ext2fs_unmark_block_bitmap2(fs->block_map, blk);
-	ext2fs_bg_free_blocks_count_set(fs, group, ext2fs_bg_free_blocks_count(fs, group) - inuse);
-	ext2fs_bg_flags_clear(fs, group, EXT2_BG_BLOCK_UNINIT);
-	ext2fs_group_desc_csum_set(fs, group);
+	ಆದರೆ (inuse > 0)
+		ext2fs_mark_ಖಂಡ_bitmap2(fs->ಖಂಡ_map, blk);
+	ಇಲ್ಲದಿದ್ದರೆ
+		ext2fs_unmark_ಖಂಡ_bitmap2(fs->ಖಂಡ_map, blk);
+	ext2fs_bg_free_ಖಂಡಗಳು_ಎಣಿಕೆ_ಗಣ(fs, ಗುಂಪು, ext2fs_bg_free_ಖಂಡಗಳು_ಎಣಿಕೆ(fs, ಗುಂಪು) - inuse);
+	ext2fs_bg_flags_clear(fs, ಗುಂಪು, EXT2_BG_ಖಂಡ_UNINIT);
+	ext2fs_ಗುಂಪು_desc_csum_ಗಣ(fs, ಗುಂಪು);
 
-	ext2fs_free_blocks_count_add(fs->super,
-			     -inuse * (blk64_t) EXT2FS_CLUSTER_RATIO(fs));
+	ext2fs_free_ಖಂಡಗಳು_ಎಣಿಕೆ_ಕೂಡಿಸು(fs->super,
+			     -inuse * (blk64_t) EXT2_FS_CLUSTER_ಅನುಪಾತ(fs));
 	ext2fs_mark_super_dirty(fs);
 	ext2fs_mark_bb_dirty(fs);
-	if (fs->block_alloc_stats)
-		(fs->block_alloc_stats)(fs, (blk64_t) blk, inuse);
+	ಆದರೆ (fs->ಖಂಡ_alloc_stats)
+		(fs->ಖಂಡ_alloc_stats)(fs, (blk64_t) blk, inuse);
 }
 
-void ext2fs_block_alloc_stats(ext2_filsys fs, blk_t blk, int inuse)
+ಶೂನ್ಯ ext2fs_ಖಂಡ_alloc_stats(ext2_filsys fs, blk_t blk, ಪೂರ್ಣಾಂಕ inuse)
 {
-	ext2fs_block_alloc_stats2(fs, blk, inuse);
+	ext2fs_ಖಂಡ_alloc_stats2(fs, blk, inuse);
 }
 
-void ext2fs_set_block_alloc_stats_callback(ext2_filsys fs,
-					   void (*func)(ext2_filsys fs,
+ಶೂನ್ಯ ext2fs_ಗಣ_ಖಂಡ_alloc_stats_callback(ext2_filsys fs,
+					   ಶೂನ್ಯ (*func)(ext2_filsys fs,
 							blk64_t blk,
-							int inuse),
-					   void (**old)(ext2_filsys fs,
+							ಪೂರ್ಣಾಂಕ inuse),
+					   ಶೂನ್ಯ (**old)(ext2_filsys fs,
 							blk64_t blk,
-							int inuse))
+							ಪೂರ್ಣಾಂಕ inuse))
 {
-	if (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
-		return;
-	if (old)
-		*old = fs->block_alloc_stats;
+	ಆದರೆ (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
+		ಹಿಂತಿರುಗಿ;
+	ಆದರೆ (old)
+		*old = fs->ಖಂಡ_alloc_stats;
 
-	fs->block_alloc_stats = func;
+	fs->ಖಂಡ_alloc_stats = func;
 }
 
-void ext2fs_block_alloc_stats_range(ext2_filsys fs, blk64_t blk,
-				    blk_t num, int inuse)
+ಶೂನ್ಯ ext2fs_ಖಂಡ_alloc_stats_range(ext2_filsys fs, blk64_t blk,
+				    blk_t ಅಂಕೆ, ಪೂರ್ಣಾಂಕ inuse)
 {
-	const blk64_t orig_blk = blk;
-	const blk_t orig_num = num;
+	ಸ್ಥಿರಾಂಕ blk64_t orig_blk = blk;
+	ಸ್ಥಿರಾಂಕ blk_t orig_ಅಂಕೆ = ಅಂಕೆ;
 
-#ifndef OMIT_COM_ERR
-	if (blk + num > ext2fs_blocks_count(fs->super)) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ OMIT_COM_ERR
+	ಆದರೆ (blk + ಅಂಕೆ > ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super)) {
 		com_err("ext2fs_block_alloc_stats_range", 0,
 			"Illegal block range: %llu (%u) ",
-			(unsigned long long) blk, num);
-		return;
+			(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ) blk, ಅಂಕೆ);
+		ಹಿಂತಿರುಗಿ;
 	}
-#endif
-	if (inuse == 0)
-		return;
-	if (inuse > 0) {
-		ext2fs_mark_block_bitmap_range2(fs->block_map, blk, num);
+#ಆದರೆ_ಅಂತ್ಯ
+	ಆದರೆ (inuse == 0)
+		ಹಿಂತಿರುಗಿ;
+	ಆದರೆ (inuse > 0) {
+		ext2fs_mark_ಖಂಡ_bitmap_range2(fs->ಖಂಡ_map, blk, ಅಂಕೆ);
 		inuse = 1;
-	} else {
-		ext2fs_unmark_block_bitmap_range2(fs->block_map, blk, num);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ext2fs_unmark_ಖಂಡ_bitmap_range2(fs->ಖಂಡ_map, blk, ಅಂಕೆ);
 		inuse = -1;
 	}
-	while (num) {
-		int group = ext2fs_group_of_blk2(fs, blk);
-		blk64_t last_blk = ext2fs_group_last_block2(fs, group);
-		blk64_t n = num;
+	ಆಗ (ಅಂಕೆ) {
+		ಪೂರ್ಣಾಂಕ ಗುಂಪು = ext2fs_ಗುಂಪು_ದ_blk2(fs, blk);
+		blk64_t ಕೊನೆಯ_blk = ext2fs_ಗುಂಪು_ಕೊನೆಯ_block2(fs, ಗುಂಪು);
+		blk64_t n = ಅಂಕೆ;
 
-		if (blk + num > last_blk)
-			n = last_blk - blk + 1;
+		ಆದರೆ (blk + ಅಂಕೆ > ಕೊನೆಯ_blk)
+			n = ಕೊನೆಯ_blk - blk + 1;
 
-		ext2fs_bg_free_blocks_count_set(fs, group,
-			ext2fs_bg_free_blocks_count(fs, group) -
-			inuse*n/EXT2FS_CLUSTER_RATIO(fs));
-		ext2fs_bg_flags_clear(fs, group, EXT2_BG_BLOCK_UNINIT);
-		ext2fs_group_desc_csum_set(fs, group);
-		ext2fs_free_blocks_count_add(fs->super, -inuse * (blk64_t) n);
+		ext2fs_bg_free_ಖಂಡಗಳು_ಎಣಿಕೆ_ಗಣ(fs, ಗುಂಪು,
+			ext2fs_bg_free_ಖಂಡಗಳು_ಎಣಿಕೆ(fs, ಗುಂಪು) -
+			inuse*n/EXT2_FS_CLUSTER_ಅನುಪಾತ(fs));
+		ext2fs_bg_flags_clear(fs, ಗುಂಪು, EXT2_BG_ಖಂಡ_UNINIT);
+		ext2fs_ಗುಂಪು_desc_csum_ಗಣ(fs, ಗುಂಪು);
+		ext2fs_free_ಖಂಡಗಳು_ಎಣಿಕೆ_ಕೂಡಿಸು(fs->super, -inuse * (blk64_t) n);
 		blk += n;
-		num -= n;
+		ಅಂಕೆ -= n;
 	}
 	ext2fs_mark_super_dirty(fs);
 	ext2fs_mark_bb_dirty(fs);
-	if (fs->block_alloc_stats_range)
-		(fs->block_alloc_stats_range)(fs, orig_blk, orig_num, inuse);
+	ಆದರೆ (fs->ಖಂಡ_alloc_stats_range)
+		(fs->ಖಂಡ_alloc_stats_range)(fs, orig_blk, orig_ಅಂಕೆ, inuse);
 }
 
-void ext2fs_set_block_alloc_stats_range_callback(ext2_filsys fs,
-	void (*func)(ext2_filsys fs, blk64_t blk,
-				    blk_t num, int inuse),
-	void (**old)(ext2_filsys fs, blk64_t blk,
-				    blk_t num, int inuse))
+ಶೂನ್ಯ ext2fs_ಗಣ_ಖಂಡ_alloc_stats_range_callback(ext2_filsys fs,
+	ಶೂನ್ಯ (*func)(ext2_filsys fs, blk64_t blk,
+				    blk_t ಅಂಕೆ, ಪೂರ್ಣಾಂಕ inuse),
+	ಶೂನ್ಯ (**old)(ext2_filsys fs, blk64_t blk,
+				    blk_t ಅಂಕೆ, ಪೂರ್ಣಾಂಕ inuse))
 {
-	if (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
-		return;
-	if (old)
-		*old = fs->block_alloc_stats_range;
+	ಆದರೆ (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
+		ಹಿಂತಿರುಗಿ;
+	ಆದರೆ (old)
+		*old = fs->ಖಂಡ_alloc_stats_range;
 
-	fs->block_alloc_stats_range = func;
+	fs->ಖಂಡ_alloc_stats_range = func;
 }

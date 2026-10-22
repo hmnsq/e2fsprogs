@@ -1,27 +1,27 @@
-#include <stdio.h>
-#include "crc32c_defs.h"
-#include <inttypes.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ "crc32c_defs.h"
+#ಅನ್ತರ್ಭಾವ <inttypes.h>
 
-#define ENTRIES_PER_LINE 4
+#ವ್ಯಾಖ್ಯಾನಿಸು ENTRIES_ಪ್ರತಿ_ಸಾಲು 4
 
-#if CRC_LE_BITS > 8
-# define LE_TABLE_ROWS (CRC_LE_BITS/8)
-# define LE_TABLE_SIZE 256
-#else
-# define LE_TABLE_ROWS 1
-# define LE_TABLE_SIZE (1 << CRC_LE_BITS)
-#endif
+#ಆದರೆ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_LE_ಬಿಟ್ಟುಗಳು > 8
+# define LE_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲುಗಳು (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_LE_ಬಿಟ್ಟುಗಳು/8)
+# define LE_ಕೋಷ್ಟಕ_ಗಾತ್ರ 256
+#ಇಲ್ಲದಿದ್ದರೆ
+# define LE_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲುಗಳು 1
+# define LE_ಕೋಷ್ಟಕ_ಗಾತ್ರ (1 << ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_LE_ಬಿಟ್ಟುಗಳು)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if CRC_BE_BITS > 8
-# define BE_TABLE_ROWS (CRC_BE_BITS/8)
-# define BE_TABLE_SIZE 256
-#else
-# define BE_TABLE_ROWS 1
-# define BE_TABLE_SIZE (1 << CRC_BE_BITS)
-#endif
+#ಆದರೆ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_BE_ಬಿಟ್ಟುಗಳು > 8
+# define BE_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲುಗಳು (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_BE_ಬಿಟ್ಟುಗಳು/8)
+# define BE_ಕೋಷ್ಟಕ_ಗಾತ್ರ 256
+#ಇಲ್ಲದಿದ್ದರೆ
+# define BE_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲುಗಳು 1
+# define BE_ಕೋಷ್ಟಕ_ಗಾತ್ರ (1 << ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_BE_ಬಿಟ್ಟುಗಳು)
+#ಆದರೆ_ಅಂತ್ಯ
 
-static uint32_t crc32table_be[BE_TABLE_ROWS][256];
-static uint32_t crc32ctable_le[LE_TABLE_ROWS][256];
+ಸ್ಥಿರ uint32_t crc32table_be[BE_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲುಗಳು][256];
+ಸ್ಥಿರ uint32_t crc32ctable_le[LE_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲುಗಳು][256];
 
 /**
  * crc32init_le() - allocate and initialize LE table data
@@ -30,23 +30,23 @@ static uint32_t crc32ctable_le[LE_TABLE_ROWS][256];
  * fact that crctable[i^j] = crctable[i] ^ crctable[j].
  *
  */
-static void crc32cinit_le(void)
+ಸ್ಥಿರ ಶೂನ್ಯ crc32cinit_le(ಶೂನ್ಯ)
 {
-	unsigned i, j;
-	uint32_t crc = 1;
+	ಚಿಹ್ನೆರಹಿತ i, j;
+	uint32_t ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = 1;
 
 	crc32ctable_le[0][0] = 0;
 
-	for (i = LE_TABLE_SIZE >> 1; i; i >>= 1) {
-		crc = (crc >> 1) ^ ((crc & 1) ? CRC32C_POLY_LE : 0);
-		for (j = 0; j < LE_TABLE_SIZE; j += 2 * i)
-			crc32ctable_le[0][i + j] = crc ^ crc32ctable_le[0][j];
+	ಗಾಗಿ (i = LE_ಕೋಷ್ಟಕ_ಗಾತ್ರ >> 1; i; i >>= 1) {
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 1) ^ ((ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ & 1) ? ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_C_POLY_LE : 0);
+		ಗಾಗಿ (j = 0; j < LE_ಕೋಷ್ಟಕ_ಗಾತ್ರ; j += 2 * i)
+			crc32ctable_le[0][i + j] = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ ^ crc32ctable_le[0][j];
 	}
-	for (i = 0; i < LE_TABLE_SIZE; i++) {
-		crc = crc32ctable_le[0][i];
-		for (j = 1; j < LE_TABLE_ROWS; j++) {
-			crc = crc32ctable_le[0][crc & 0xff] ^ (crc >> 8);
-			crc32ctable_le[j][i] = crc;
+	ಗಾಗಿ (i = 0; i < LE_ಕೋಷ್ಟಕ_ಗಾತ್ರ; i++) {
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = crc32ctable_le[0][i];
+		ಗಾಗಿ (j = 1; j < LE_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲುಗಳು; j++) {
+			ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = crc32ctable_le[0][ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ & 0xff] ^ (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 8);
+			crc32ctable_le[j][i] = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ;
 		}
 	}
 }
@@ -54,64 +54,64 @@ static void crc32cinit_le(void)
 /**
  * crc32init_be() - allocate and initialize BE table data
  */
-static void crc32init_be(void)
+ಸ್ಥಿರ ಶೂನ್ಯ crc32init_be(ಶೂನ್ಯ)
 {
-	unsigned i, j;
-	uint32_t crc = 0x80000000;
+	ಚಿಹ್ನೆರಹಿತ i, j;
+	uint32_t ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = 0x80000000;
 
 	crc32table_be[0][0] = 0;
 
-	for (i = 1; i < BE_TABLE_SIZE; i <<= 1) {
-		crc = (crc << 1) ^ ((crc & 0x80000000) ? CRCPOLY_BE : 0);
-		for (j = 0; j < i; j++)
-			crc32table_be[0][i + j] = crc ^ crc32table_be[0][j];
+	ಗಾಗಿ (i = 1; i < BE_ಕೋಷ್ಟಕ_ಗಾತ್ರ; i <<= 1) {
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ << 1) ^ ((ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ & 0x80000000) ? CRCPOLY_BE : 0);
+		ಗಾಗಿ (j = 0; j < i; j++)
+			crc32table_be[0][i + j] = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ ^ crc32table_be[0][j];
 	}
-	for (i = 0; i < BE_TABLE_SIZE; i++) {
-		crc = crc32table_be[0][i];
-		for (j = 1; j < BE_TABLE_ROWS; j++) {
-			crc = crc32table_be[0][(crc >> 24) & 0xff] ^ (crc << 8);
-			crc32table_be[j][i] = crc;
+	ಗಾಗಿ (i = 0; i < BE_ಕೋಷ್ಟಕ_ಗಾತ್ರ; i++) {
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = crc32table_be[0][i];
+		ಗಾಗಿ (j = 1; j < BE_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲುಗಳು; j++) {
+			ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = crc32table_be[0][(ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ >> 24) & 0xff] ^ (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ << 8);
+			crc32table_be[j][i] = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ;
 		}
 	}
 }
 
-static void output_table(uint32_t (*table)[256], int rows, int len, char *trans)
+ಸ್ಥಿರ ಶೂನ್ಯ output_ಕೋಷ್ಟಕ(uint32_t (*ಕೋಷ್ಟಕ)[256], ಪೂರ್ಣಾಂಕ ಅಡ್ಡಸಾಲುಗಳು, ಪೂರ್ಣಾಂಕ len, ಅಕ್ಷರ *trans)
 {
-	int i, j;
+	ಪೂರ್ಣಾಂಕ i, j;
 
-	for (j = 0 ; j < rows; j++) {
-		printf("{");
-		for (i = 0; i < len - 1; i++) {
-			if (i % ENTRIES_PER_LINE == 0)
-				printf("\n");
-			printf("%s(0x%8.8xL), ", trans, table[j][i]);
+	ಗಾಗಿ (j = 0 ; j < ಅಡ್ಡಸಾಲುಗಳು; j++) {
+		ಬರೆ("{");
+		ಗಾಗಿ (i = 0; i < len - 1; i++) {
+			ಆದರೆ (i % ENTRIES_ಪ್ರತಿ_ಸಾಲು == 0)
+				ಬರೆ("\n");
+			ಬರೆ("%s(0x%8.8xL), ", trans, ಕೋಷ್ಟಕ[j][i]);
 		}
-		printf("%s(0x%8.8xL)},\n", trans, table[j][len - 1]);
+		ಬರೆ("%s(0x%8.8xL)},\n", trans, ಕೋಷ್ಟಕ[j][len - 1]);
 	}
 }
 
-int main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-	printf("/* this file is generated - do not edit */\n\n");
+	ಬರೆ("/* this file is generated - do not edit */\n\n");
 
-	if (CRC_BE_BITS > 1) {
+	ಆದರೆ (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_BE_ಬಿಟ್ಟುಗಳು > 1) {
 		crc32init_be();
-		printf("static const uint32_t "
+		ಬರೆ("static const uint32_t "
 		       "crc32table_be[%d][%d] = {",
-		       BE_TABLE_ROWS, BE_TABLE_SIZE);
-		output_table(crc32table_be, LE_TABLE_ROWS,
-			     BE_TABLE_SIZE, "tobe");
-		printf("};\n");
+		       BE_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲುಗಳು, BE_ಕೋಷ್ಟಕ_ಗಾತ್ರ);
+		output_ಕೋಷ್ಟಕ(crc32table_be, LE_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲುಗಳು,
+			     BE_ಕೋಷ್ಟಕ_ಗಾತ್ರ, "tobe");
+		ಬರೆ("};\n");
 	}
-	if (CRC_LE_BITS > 1) {
+	ಆದರೆ (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_LE_ಬಿಟ್ಟುಗಳು > 1) {
 		crc32cinit_le();
-		printf("static const uint32_t "
+		ಬರೆ("static const uint32_t "
 		       "crc32ctable_le[%d][%d] = {",
-		       LE_TABLE_ROWS, LE_TABLE_SIZE);
-		output_table(crc32ctable_le, LE_TABLE_ROWS,
-			     LE_TABLE_SIZE, "tole");
-		printf("};\n");
+		       LE_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲುಗಳು, LE_ಕೋಷ್ಟಕ_ಗಾತ್ರ);
+		output_ಕೋಷ್ಟಕ(crc32ctable_le, LE_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲುಗಳು,
+			     LE_ಕೋಷ್ಟಕ_ಗಾತ್ರ, "tole");
+		ಬರೆ("};\n");
 	}
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }

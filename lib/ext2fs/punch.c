@@ -9,34 +9,34 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <errno.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <errno.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fsP.h"
 
-#undef PUNCH_DEBUG
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು PUNCH_DEBUG
 
 /*
  * This function returns 1 if the specified block is all zeros
  */
-static int check_zero_block(char *buf, int blocksize)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ check_zero_ಖಂಡ(ಅಕ್ಷರ *buf, ಪೂರ್ಣಾಂಕ blocksize)
 {
-	char	*cp = buf;
-	int	left = blocksize;
+	ಅಕ್ಷರ	*cp = buf;
+	ಪೂರ್ಣಾಂಕ	ಎಡ = blocksize;
 
-	while (left > 0) {
-		if (*cp++)
-			return 0;
-		left--;
+	ಆಗ (ಎಡ > 0) {
+		ಆದರೆ (*cp++)
+			ಹಿಂತಿರುಗಿ 0;
+		ಎಡ--;
 	}
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
 /*
@@ -46,178 +46,178 @@ static int check_zero_block(char *buf, int blocksize)
  * each one, will recursively handle any indirect blocks and then
  * frees and deallocates the blocks.
  */
-static errcode_t ind_punch(ext2_filsys fs, struct ext2_inode *inode,
-			   char *block_buf, blk_t *p, int level,
-			   blk64_t start, blk64_t count, int max)
+ಸ್ಥಿರ errcode_t ind_punch(ext2_filsys fs, ರಚನೆ ext2_inode *inode,
+			   ಅಕ್ಷರ *ಖಂಡ_buf, blk_t *p, ಪೂರ್ಣಾಂಕ level,
+			   blk64_t ಆರಂಭ, blk64_t ಎಣಿಕೆ_2, ಪೂರ್ಣಾಂಕ max)
 {
 	errcode_t	retval;
 	blk_t		b;
-	int		i;
-	blk64_t		offset, incr;
-	const blk64_t	end = start + count;
-	int		freed = 0;
+	ಪೂರ್ಣಾಂಕ		i;
+	blk64_t		ಸ್ಥಾನಾಂತರ, incr;
+	ಸ್ಥಿರಾಂಕ blk64_t	ಕೊನೆ = ಆರಂಭ + ಎಣಿಕೆ_2;
+	ಪೂರ್ಣಾಂಕ		freed = 0;
 
-#ifdef PUNCH_DEBUG
-	printf("Entering ind_punch, level %d, start %llu, count %llu, "
-	       "max %d\n", level, start, count, max);
-#endif
-	incr = 1ULL << ((EXT2_BLOCK_SIZE_BITS(fs->super) - 2) * level);
-	for (i = 0, offset = 0; i < max; i++, p++, offset += incr) {
-		if (offset >= end)
-			break;
-		if (*p == 0 || (offset+incr) <= start)
-			continue;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ PUNCH_DEBUG
+	ಬರೆ("Entering ind_punch, level %d, start %llu, count %llu, "
+	       "max %d\n", level, ಆರಂಭ, ಎಣಿಕೆ_2, max);
+#ಆದರೆ_ಅಂತ್ಯ
+	incr = 1ULL << ((EXT2_ಖಂಡ_ಗಾತ್ರ_ಬಿಟ್ಟುಗಳು(fs->super) - 2) * level);
+	ಗಾಗಿ (i = 0, ಸ್ಥಾನಾಂತರ = 0; i < max; i++, p++, ಸ್ಥಾನಾಂತರ += incr) {
+		ಆದರೆ (ಸ್ಥಾನಾಂತರ >= ಕೊನೆ)
+			ನಿಲ್ಲಿಸು;
+		ಆದರೆ (*p == 0 || (ಸ್ಥಾನಾಂತರ+incr) <= ಆರಂಭ)
+			ಮುಂದುವರಿ;
 		b = *p;
-		if (level > 0) {
+		ಆದರೆ (level > 0) {
 			blk_t start2;
 			blk_t count2;
-#ifdef PUNCH_DEBUG
-			printf("Reading indirect block %u\n", b);
-#endif
-			retval = ext2fs_read_ind_block(fs, b, block_buf);
-			if (retval)
-				return retval;
-			start2 = (start > offset) ? start - offset : 0;
-			count2 = end - ((start > offset) ? start : offset);
-#ifdef PUNCH_DEBUG
-			printf("start %llu offset %llu count %llu end %llu "
-			       "incr %llu start2 %u count2 %u\n", start,
-			       offset, count, end, incr, start2, count2);
-#endif
-			retval = ind_punch(fs, inode, block_buf + fs->blocksize,
-					   (blk_t *) block_buf, level - 1,
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ PUNCH_DEBUG
+			ಬರೆ("Reading indirect block %u\n", b);
+#ಆದರೆ_ಅಂತ್ಯ
+			retval = ext2fs_read_ind_ಖಂಡ(fs, b, ಖಂಡ_buf);
+			ಆದರೆ (retval)
+				ಹಿಂತಿರುಗಿ retval;
+			start2 = (ಆರಂಭ > ಸ್ಥಾನಾಂತರ) ? ಆರಂಭ - ಸ್ಥಾನಾಂತರ : 0;
+			count2 = ಕೊನೆ - ((ಆರಂಭ > ಸ್ಥಾನಾಂತರ) ? ಆರಂಭ : ಸ್ಥಾನಾಂತರ);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ PUNCH_DEBUG
+			ಬರೆ("start %llu offset %llu count %llu end %llu "
+			       "incr %llu start2 %u count2 %u\n", ಆರಂಭ,
+			       ಸ್ಥಾನಾಂತರ, ಎಣಿಕೆ_2, ಕೊನೆ, incr, start2, count2);
+#ಆದರೆ_ಅಂತ್ಯ
+			retval = ind_punch(fs, inode, ಖಂಡ_buf + fs->blocksize,
+					   (blk_t *) ಖಂಡ_buf, level - 1,
 					   start2, count2,
 					   fs->blocksize >> 2);
-			if (retval)
-				return retval;
-			retval = ext2fs_write_ind_block(fs, b, block_buf);
-			if (retval)
-				return retval;
-			if (!check_zero_block(block_buf, fs->blocksize))
-				continue;
+			ಆದರೆ (retval)
+				ಹಿಂತಿರುಗಿ retval;
+			retval = ext2fs_write_ind_ಖಂಡ(fs, b, ಖಂಡ_buf);
+			ಆದರೆ (retval)
+				ಹಿಂತಿರುಗಿ retval;
+			ಆದರೆ (!check_zero_ಖಂಡ(ಖಂಡ_buf, fs->blocksize))
+				ಮುಂದುವರಿ;
 		}
-#ifdef PUNCH_DEBUG
-		printf("Freeing block %u (offset %llu)\n", b, offset);
-#endif
-		ext2fs_block_alloc_stats(fs, b, -1);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ PUNCH_DEBUG
+		ಬರೆ("Freeing block %u (offset %llu)\n", b, ಸ್ಥಾನಾಂತರ);
+#ಆದರೆ_ಅಂತ್ಯ
+		ext2fs_ಖಂಡ_alloc_stats(fs, b, -1);
 		*p = 0;
 		freed++;
 	}
-#ifdef PUNCH_DEBUG
-	printf("Freed %d blocks\n", freed);
-#endif
-	return ext2fs_iblk_sub_blocks(fs, inode, freed);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ PUNCH_DEBUG
+	ಬರೆ("Freed %d blocks\n", freed);
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ ext2fs_iblk_sub_ಖಂಡಗಳು(fs, inode, freed);
 }
 
-#define BLK_T_MAX ((blk_t)~0ULL)
-static errcode_t ext2fs_punch_ind(ext2_filsys fs, struct ext2_inode *inode,
-				  char *block_buf, blk64_t start, blk64_t end)
+#ವ್ಯಾಖ್ಯಾನಿಸು BLK_T_MAX ((blk_t)~0ULL)
+ಸ್ಥಿರ errcode_t ext2fs_punch_ind(ext2_filsys fs, ರಚನೆ ext2_inode *inode,
+				  ಅಕ್ಷರ *ಖಂಡ_buf, blk64_t ಆರಂಭ, blk64_t ಕೊನೆ)
 {
 	errcode_t		retval;
-	char			*buf = 0;
-	int			level;
-	int			num = EXT2_NDIR_BLOCKS;
-	blk_t			*bp = inode->i_block;
-	blk_t			addr_per_block;
-	blk64_t			max = EXT2_NDIR_BLOCKS;
-	blk_t			count;
+	ಅಕ್ಷರ			*buf = 0;
+	ಪೂರ್ಣಾಂಕ			level;
+	ಪೂರ್ಣಾಂಕ			ಅಂಕೆ = EXT2_NDIR_ಖಂಡಗಳು;
+	blk_t			*bp = inode->i_ಖಂಡ;
+	blk_t			addr_ಪ್ರತಿ_ಖಂಡ;
+	blk64_t			max = EXT2_NDIR_ಖಂಡಗಳು;
+	blk_t			ಎಣಿಕೆ_2;
 
 	/* Check start/end don't overflow the 2^32-1 indirect block limit */
-	if (start > BLK_T_MAX)
-		return 0;
-	if (end >= BLK_T_MAX || end - start + 1 >= BLK_T_MAX)
-		count = BLK_T_MAX - start;
-	else
-		count = end - start + 1;
+	ಆದರೆ (ಆರಂಭ > BLK_T_MAX)
+		ಹಿಂತಿರುಗಿ 0;
+	ಆದರೆ (ಕೊನೆ >= BLK_T_MAX || ಕೊನೆ - ಆರಂಭ + 1 >= BLK_T_MAX)
+		ಎಣಿಕೆ_2 = BLK_T_MAX - ಆರಂಭ;
+	ಇಲ್ಲದಿದ್ದರೆ
+		ಎಣಿಕೆ_2 = ಕೊನೆ - ಆರಂಭ + 1;
 
-	if (!block_buf) {
+	ಆದರೆ (!ಖಂಡ_buf) {
 		retval = ext2fs_get_array(3, fs->blocksize, &buf);
-		if (retval)
-			return retval;
-		block_buf = buf;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
+		ಖಂಡ_buf = buf;
 	}
 
-	addr_per_block = (blk_t)fs->blocksize >> 2;
+	addr_ಪ್ರತಿ_ಖಂಡ = (blk_t)fs->blocksize >> 2;
 
-	for (level = 0; level < 4; level++, max *= (blk64_t)addr_per_block) {
-#ifdef PUNCH_DEBUG
-		printf("Main loop level %d, start %llu count %u "
-		       "max %llu num %d\n", level, start, count, max, num);
-#endif
-		if (start < max) {
-			retval = ind_punch(fs, inode, block_buf, bp, level,
-					   start, count, num);
-			if (retval)
-				goto errout;
-			if (count > max)
-				count -= max - start;
-			else
-				break;
-			start = 0;
-		} else
-			start -= max;
-		bp += num;
-		if (level == 0) {
-			num = 1;
+	ಗಾಗಿ (level = 0; level < 4; level++, max *= (blk64_t)addr_ಪ್ರತಿ_ಖಂಡ) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ PUNCH_DEBUG
+		ಬರೆ("Main loop level %d, start %llu count %u "
+		       "max %llu num %d\n", level, ಆರಂಭ, ಎಣಿಕೆ_2, max, ಅಂಕೆ);
+#ಆದರೆ_ಅಂತ್ಯ
+		ಆದರೆ (ಆರಂಭ < max) {
+			retval = ind_punch(fs, inode, ಖಂಡ_buf, bp, level,
+					   ಆರಂಭ, ಎಣಿಕೆ_2, ಅಂಕೆ);
+			ಆದರೆ (retval)
+				ಹೋಗು errout;
+			ಆದರೆ (ಎಣಿಕೆ_2 > max)
+				ಎಣಿಕೆ_2 -= max - ಆರಂಭ;
+			ಇಲ್ಲದಿದ್ದರೆ
+				ನಿಲ್ಲಿಸು;
+			ಆರಂಭ = 0;
+		} ಇಲ್ಲದಿದ್ದರೆ
+			ಆರಂಭ -= max;
+		bp += ಅಂಕೆ;
+		ಆದರೆ (level == 0) {
+			ಅಂಕೆ = 1;
 			max = 1;
 		}
 	}
 	retval = 0;
 errout:
-	if (buf)
+	ಆದರೆ (buf)
 		ext2fs_free_mem(&buf);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
-#undef BLK_T_MAX
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು BLK_T_MAX
 
-#ifdef PUNCH_DEBUG
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ PUNCH_DEBUG
 
-#define dbg_printf(f, a...)  printf(f, ## a)
+#ವ್ಯಾಖ್ಯಾನಿಸು dbg_printf(f, a...)  ಬರೆ(f, ## a)
 
-static void dbg_print_extent(char *desc, struct ext2fs_extent *extent)
+ಸ್ಥಿರ ಶೂನ್ಯ dbg_print_extent(ಅಕ್ಷರ *desc, ರಚನೆ ext2fs_extent *extent)
 {
-	if (desc)
-		printf("%s: ", desc);
-	printf("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
+	ಆದರೆ (desc)
+		ಬರೆ("%s: ", desc);
+	ಬರೆ("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
 	       extent->e_lblk, extent->e_lblk + extent->e_len - 1,
 	       extent->e_len, extent->e_pblk);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_LEAF)
+	ಆದರೆ (extent->e_flags & EXT2_EXTENT_FLAGS_ಎಲೆ)
 		fputs("LEAF ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	ಆದರೆ (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 		fputs("UNINIT ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_SECOND_VISIT)
+	ಆದರೆ (extent->e_flags & EXT2_EXTENT_FLAGS_ಎರಡನೇ_ಭೇಟಿ)
 		fputs("2ND_VISIT ", stdout);
-	if (!extent->e_flags)
+	ಆದರೆ (!extent->e_flags)
 		fputs("(none)", stdout);
 	fputc('\n', stdout);
 
 }
-#else
-#define dbg_print_extent(desc, ex)	do { } while (0)
-#define dbg_printf(f, a...)		do { } while (0)
-#endif
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು dbg_print_extent(desc, ex)	ಮಾಡು { } ಆಗ (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು dbg_printf(f, a...)		ಮಾಡು { } ಆಗ (0)
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* Free a range of blocks, respecting cluster boundaries */
-static errcode_t punch_extent_blocks(ext2_filsys fs, ext2_ino_t ino,
-				     struct ext2_inode *inode,
-				     blk64_t lfree_start, blk64_t free_start,
-				     __u32 free_count, blk64_t *freed)
+ಸ್ಥಿರ errcode_t punch_extent_ಖಂಡಗಳು(ext2_filsys fs, ext2_ino_t ino,
+				     ರಚನೆ ext2_inode *inode,
+				     blk64_t lfree_ಆರಂಭ, blk64_t free_ಆರಂಭ,
+				     __u32 free_ಎಣಿಕೆ, blk64_t *freed)
 {
 	blk64_t		pblk;
 	__u32		freed_now = 0;
 	__u32		cluster_freed;
 	errcode_t	retval = 0;
 
-	if (free_start < fs->super->s_first_data_block ||
-	    (free_start + free_count) > ext2fs_blocks_count(fs->super))
-		return EXT2_ET_BAD_BLOCK_NUM;
+	ಆದರೆ (free_ಆರಂಭ < fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ ||
+	    (free_ಆರಂಭ + free_ಎಣಿಕೆ) > ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super))
+		ಹಿಂತಿರುಗಿ EXT2_ET_BAD_ಖಂಡ_ಅಂಕೆ;
 
 	/* No bigalloc?  Just free each block. */
-	if (EXT2FS_CLUSTER_RATIO(fs) == 1) {
-		*freed += free_count;
-		while (free_count-- > 0)
-			ext2fs_block_alloc_stats2(fs, free_start++, -1);
-		return retval;
+	ಆದರೆ (EXT2_FS_CLUSTER_ಅನುಪಾತ(fs) == 1) {
+		*freed += free_ಎಣಿಕೆ;
+		ಆಗ (free_ಎಣಿಕೆ-- > 0)
+			ext2fs_ಖಂಡ_alloc_stats2(fs, free_ಆರಂಭ++, -1);
+		ಹಿಂತಿರುಗಿ retval;
 	}
 
 	/*
@@ -225,66 +225,66 @@ static errcode_t punch_extent_blocks(ext2_filsys fs, ext2_ino_t ino,
 	 * blocks in a logical cluster map to blocks from the same physical
 	 * cluster, and that the offsets within the [pl]clusters match.
 	 */
-	if (free_start & EXT2FS_CLUSTER_MASK(fs)) {
-		retval = ext2fs_map_cluster_block(fs, ino, inode,
-						  lfree_start, &pblk);
-		if (retval)
-			goto errout;
-		if (!pblk) {
-			ext2fs_block_alloc_stats2(fs, free_start, -1);
+	ಆದರೆ (free_ಆರಂಭ & EXT2_FS_CLUSTER_ಮುಖವಾಡ(fs)) {
+		retval = ext2fs_map_cluster_ಖಂಡ(fs, ino, inode,
+						  lfree_ಆರಂಭ, &pblk);
+		ಆದರೆ (retval)
+			ಹೋಗು errout;
+		ಆದರೆ (!pblk) {
+			ext2fs_ಖಂಡ_alloc_stats2(fs, free_ಆರಂಭ, -1);
 			freed_now++;
 		}
-		cluster_freed = EXT2FS_CLUSTER_RATIO(fs) -
-			(free_start & EXT2FS_CLUSTER_MASK(fs));
-		if (cluster_freed > free_count)
-			cluster_freed = free_count;
-		free_count -= cluster_freed;
-		free_start += cluster_freed;
-		lfree_start += cluster_freed;
+		cluster_freed = EXT2_FS_CLUSTER_ಅನುಪಾತ(fs) -
+			(free_ಆರಂಭ & EXT2_FS_CLUSTER_ಮುಖವಾಡ(fs));
+		ಆದರೆ (cluster_freed > free_ಎಣಿಕೆ)
+			cluster_freed = free_ಎಣಿಕೆ;
+		free_ಎಣಿಕೆ -= cluster_freed;
+		free_ಆರಂಭ += cluster_freed;
+		lfree_ಆರಂಭ += cluster_freed;
 	}
 
 	/* Free whole clusters from the middle of the range. */
-	while (free_count > 0 && free_count >= (unsigned) EXT2FS_CLUSTER_RATIO(fs)) {
-		ext2fs_block_alloc_stats2(fs, free_start, -1);
+	ಆಗ (free_ಎಣಿಕೆ > 0 && free_ಎಣಿಕೆ >= (ಚಿಹ್ನೆರಹಿತ) EXT2_FS_CLUSTER_ಅನುಪಾತ(fs)) {
+		ext2fs_ಖಂಡ_alloc_stats2(fs, free_ಆರಂಭ, -1);
 		freed_now++;
-		cluster_freed = EXT2FS_CLUSTER_RATIO(fs);
-		free_count -= cluster_freed;
-		free_start += cluster_freed;
-		lfree_start += cluster_freed;
+		cluster_freed = EXT2_FS_CLUSTER_ಅನುಪಾತ(fs);
+		free_ಎಣಿಕೆ -= cluster_freed;
+		free_ಆರಂಭ += cluster_freed;
+		lfree_ಆರಂಭ += cluster_freed;
 	}
 
 	/* Try to free the last cluster. */
-	if (free_count > 0) {
-		retval = ext2fs_map_cluster_block(fs, ino, inode,
-						  lfree_start, &pblk);
-		if (retval)
-			goto errout;
-		if (!pblk) {
-			ext2fs_block_alloc_stats2(fs, free_start, -1);
+	ಆದರೆ (free_ಎಣಿಕೆ > 0) {
+		retval = ext2fs_map_cluster_ಖಂಡ(fs, ino, inode,
+						  lfree_ಆರಂಭ, &pblk);
+		ಆದರೆ (retval)
+			ಹೋಗು errout;
+		ಆದರೆ (!pblk) {
+			ext2fs_ಖಂಡ_alloc_stats2(fs, free_ಆರಂಭ, -1);
 			freed_now++;
 		}
 	}
 
 errout:
 	*freed += freed_now;
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
-				     struct ext2_inode *inode,
-				     blk64_t start, blk64_t end)
+ಸ್ಥಿರ errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
+				     ರಚನೆ ext2_inode *inode,
+				     blk64_t ಆರಂಭ, blk64_t ಕೊನೆ)
 {
 	ext2_extent_handle_t	handle = 0;
-	struct ext2fs_extent	extent;
+	ರಚನೆ ext2fs_extent	extent;
 	errcode_t		retval;
-	blk64_t			free_start, next, lfree_start;
-	__u32			free_count, newlen;
+	blk64_t			free_ಆರಂಭ, ಮುಂದಿನ, lfree_ಆರಂಭ;
+	__u32			free_ಎಣಿಕೆ, newlen;
 	blk64_t			freed = 0;
-	int			op;
+	ಪೂರ್ಣಾಂಕ			op;
 
 	retval = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (retval)
-		return retval;
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 	/*
 	 * Find the extent closest to the start of the punch range.  We don't
 	 * check the return value because _goto() sets the current node to the
@@ -296,80 +296,80 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 	 * there aren't any blocks mapped past this point in the file, so we're
 	 * done.
 	 */
-	ext2fs_extent_goto(handle, start);
+	ext2fs_extent_goto(handle, ಆರಂಭ);
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval == EXT2_ET_NO_CURRENT_NODE) {
+	ಆದರೆ (retval == EXT2_ET_NO_CURRENT_ಗಂಟು) {
 		retval = 0;
-		goto errout;
-	} else if (retval)
-		goto errout;
-	while (1) {
-		op = EXT2_EXTENT_NEXT_LEAF;
+		ಹೋಗು errout;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (retval)
+		ಹೋಗು errout;
+	ಆಗ (1) {
+		op = EXT2_EXTENT_ಮುಂದಿನ_ಎಲೆ;
 		dbg_print_extent("main loop", &extent);
-		next = extent.e_lblk + extent.e_len;
+		ಮುಂದಿನ = extent.e_lblk + extent.e_len;
 		dbg_printf("start %llu, end %llu, next %llu\n",
-			   (unsigned long long) start,
-			   (unsigned long long) end,
-			   (unsigned long long) next);
-		if (start <= extent.e_lblk) {
+			   (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ) ಆರಂಭ,
+			   (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ) ಕೊನೆ,
+			   (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ) ಮುಂದಿನ);
+		ಆದರೆ (ಆರಂಭ <= extent.e_lblk) {
 			/*
 			 * Have we iterated past the end of the punch region?
 			 * If so, we can stop.
 			 */
-			if (end < extent.e_lblk)
-				break;
+			ಆದರೆ (ಕೊನೆ < extent.e_lblk)
+				ನಿಲ್ಲಿಸು;
 			dbg_printf("Case #%d\n", 1);
 			/* Start of deleted region before extent; 
 			   adjust beginning of extent */
-			free_start = extent.e_pblk;
-			lfree_start = extent.e_lblk;
-			if (next > end)
-				free_count = end - extent.e_lblk + 1;
-			else
-				free_count = extent.e_len;
-			extent.e_len -= free_count;
-			extent.e_lblk += free_count;
-			extent.e_pblk += free_count;
-		} else if (end >= next-1) {
+			free_ಆರಂಭ = extent.e_pblk;
+			lfree_ಆರಂಭ = extent.e_lblk;
+			ಆದರೆ (ಮುಂದಿನ > ಕೊನೆ)
+				free_ಎಣಿಕೆ = ಕೊನೆ - extent.e_lblk + 1;
+			ಇಲ್ಲದಿದ್ದರೆ
+				free_ಎಣಿಕೆ = extent.e_len;
+			extent.e_len -= free_ಎಣಿಕೆ;
+			extent.e_lblk += free_ಎಣಿಕೆ;
+			extent.e_pblk += free_ಎಣಿಕೆ;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಕೊನೆ >= ಮುಂದಿನ-1) {
 			/*
 			 * Is the punch region beyond this extent?  This can
 			 * happen if start is already inside a hole.  Try to
 			 * advance to the next extent if this is the case.
 			 */
-			if (start >= next)
-				goto next_extent;
+			ಆದರೆ (ಆರಂಭ >= ಮುಂದಿನ)
+				ಹೋಗು ಮುಂದಿನ_extent;
 			/* End of deleted region after extent;
 			   adjust end of extent */
 			dbg_printf("Case #%d\n", 2);
-			newlen = start - extent.e_lblk;
-			free_start = extent.e_pblk + newlen;
-			lfree_start = extent.e_lblk + newlen;
-			free_count = extent.e_len - newlen;
+			newlen = ಆರಂಭ - extent.e_lblk;
+			free_ಆರಂಭ = extent.e_pblk + newlen;
+			lfree_ಆರಂಭ = extent.e_lblk + newlen;
+			free_ಎಣಿಕೆ = extent.e_len - newlen;
 			extent.e_len = newlen;
-		} else {
-			struct ext2fs_extent	newex;
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ರಚನೆ ext2fs_extent	newex;
 
 			dbg_printf("Case #%d\n", 3);
 			/* The hard case; we need to split the extent */
 			newex.e_pblk = extent.e_pblk +
-				(end + 1 - extent.e_lblk);
-			newex.e_lblk = end + 1;
-			newex.e_len = next - end - 1;
+				(ಕೊನೆ + 1 - extent.e_lblk);
+			newex.e_lblk = ಕೊನೆ + 1;
+			newex.e_len = ಮುಂದಿನ - ಕೊನೆ - 1;
 			newex.e_flags = extent.e_flags;
 
-			extent.e_len = start - extent.e_lblk;
-			free_start = extent.e_pblk + extent.e_len;
-			lfree_start = extent.e_lblk + extent.e_len;
-			free_count = end - start + 1;
+			extent.e_len = ಆರಂಭ - extent.e_lblk;
+			free_ಆರಂಭ = extent.e_pblk + extent.e_len;
+			lfree_ಆರಂಭ = extent.e_lblk + extent.e_len;
+			free_ಎಣಿಕೆ = ಕೊನೆ - ಆರಂಭ + 1;
 
 			dbg_print_extent("inserting", &newex);
-			retval = ext2fs_extent_insert(handle,
-					EXT2_EXTENT_INSERT_AFTER, &newex);
-			if (retval)
-				goto errout;
+			retval = ext2fs_extent_ಸೇರಿಸು(handle,
+					EXT2_EXTENT_ಸೇರಿಸು_AFTER, &newex);
+			ಆದರೆ (retval)
+				ಹೋಗು errout;
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval)
-				goto errout;
+			ಆದರೆ (retval)
+				ಹೋಗು errout;
 			/*
 			 * Now pointing at inserted extent; so go back.
 			 *
@@ -377,18 +377,18 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 			 * subtlety in the comment for fix_parents().
 			 */
 			retval = ext2fs_extent_goto(handle, extent.e_lblk);
-			if (retval)
-				goto errout;
+			ಆದರೆ (retval)
+				ಹೋಗು errout;
 		} 
-		if (extent.e_len) {
+		ಆದರೆ (extent.e_len) {
 			dbg_print_extent("replacing", &extent);
 			retval = ext2fs_extent_replace(handle, 0, &extent);
-			if (retval)
-				goto errout;
+			ಆದರೆ (retval)
+				ಹೋಗು errout;
 			retval = ext2fs_extent_fix_parents(handle);
-		} else {
-			struct ext2fs_extent	newex;
-			blk64_t			old_lblk, next_lblk;
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ರಚನೆ ext2fs_extent	newex;
+			blk64_t			old_lblk, ಮುಂದಿನ_lblk;
 			dbg_printf("deleting current extent%s\n", "");
 
 			/*
@@ -397,32 +397,32 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 			 */
 			retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 						   &newex);
-			if (retval)
-				goto errout;
+			ಆದರೆ (retval)
+				ಹೋಗು errout;
 			old_lblk = newex.e_lblk;
 
 			retval = ext2fs_extent_get(handle,
-						   EXT2_EXTENT_NEXT_LEAF,
+						   EXT2_EXTENT_ಮುಂದಿನ_ಎಲೆ,
 						   &newex);
-			if (retval == EXT2_ET_EXTENT_NO_NEXT)
-				next_lblk = old_lblk;
-			else if (retval)
-				goto errout;
-			else
-				next_lblk = newex.e_lblk;
+			ಆದರೆ (retval == EXT2_ET_EXTENT_NO_ಮುಂದಿನ)
+				ಮುಂದಿನ_lblk = old_lblk;
+			ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (retval)
+				ಹೋಗು errout;
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಮುಂದಿನ_lblk = newex.e_lblk;
 
 			retval = ext2fs_extent_goto(handle, old_lblk);
-			if (retval)
-				goto errout;
+			ಆದರೆ (retval)
+				ಹೋಗು errout;
 
 			/* Now delete the extent. */
 			retval = ext2fs_extent_delete(handle, 0);
-			if (retval)
-				goto errout;
+			ಆದರೆ (retval)
+				ಹೋಗು errout;
 
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval && retval != EXT2_ET_NO_CURRENT_NODE)
-				goto errout;
+			ಆದರೆ (retval && retval != EXT2_ET_NO_CURRENT_ಗಂಟು)
+				ಹೋಗು errout;
 			retval = 0;
 
 			/*
@@ -430,37 +430,37 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 			 * errors, the ext2fs_extent_get down below will
 			 * capture them for us.
 			 */
-			(void)ext2fs_extent_goto(handle, next_lblk);
+			(ಶೂನ್ಯ)ext2fs_extent_goto(handle, ಮುಂದಿನ_lblk);
 			op = EXT2_EXTENT_CURRENT;
 		}
-		if (retval)
-			goto errout;
+		ಆದರೆ (retval)
+			ಹೋಗು errout;
 		dbg_printf("Free start %llu, free count = %u\n",
-		       free_start, free_count);
-		retval = punch_extent_blocks(fs, ino, inode, lfree_start,
-					     free_start, free_count, &freed);
-		if (retval)
-			goto errout;
-	next_extent:
+		       free_ಆರಂಭ, free_ಎಣಿಕೆ);
+		retval = punch_extent_ಖಂಡಗಳು(fs, ino, inode, lfree_ಆರಂಭ,
+					     free_ಆರಂಭ, free_ಎಣಿಕೆ, &freed);
+		ಆದರೆ (retval)
+			ಹೋಗು errout;
+	ಮುಂದಿನ_extent:
 		retval = ext2fs_extent_get(handle, op,
 					   &extent);
-		if (retval == EXT2_ET_EXTENT_NO_NEXT ||
-		    retval == EXT2_ET_NO_CURRENT_NODE)
-			break;
-		if (retval)
-			goto errout;
+		ಆದರೆ (retval == EXT2_ET_EXTENT_NO_ಮುಂದಿನ ||
+		    retval == EXT2_ET_NO_CURRENT_ಗಂಟು)
+			ನಿಲ್ಲಿಸು;
+		ಆದರೆ (retval)
+			ಹೋಗು errout;
 	}
 	dbg_printf("Freed %llu blocks\n", freed);
-	retval = ext2fs_iblk_sub_blocks(fs, inode, freed);
+	retval = ext2fs_iblk_sub_ಖಂಡಗಳು(fs, inode, freed);
 errout:
 	ext2fs_extent_free(handle);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 	
-static errcode_t ext2fs_punch_inline_data(ext2_filsys fs, ext2_ino_t ino,
-					  struct ext2_inode *inode,
-					  blk64_t start,
-					  blk64_t end EXT2FS_ATTR((unused)))
+ಸ್ಥಿರ errcode_t ext2fs_punch_inline_ದತ್ತಾಂಶ(ext2_filsys fs, ext2_ino_t ino,
+					  ರಚನೆ ext2_inode *inode,
+					  blk64_t ಆರಂಭ,
+					  blk64_t ಕೊನೆ EXT2FS_ATTR((ಬಳಸದ)))
 {
 	errcode_t retval;
 
@@ -470,16 +470,16 @@ static errcode_t ext2fs_punch_inline_data(ext2_filsys fs, ext2_ino_t ino,
 	 * to this we will remove all inline data in ext2fs_punch()
 	 * now.
 	 */
-	if (start > 0)
-		return 0;
+	ಆದರೆ (ಆರಂಭ > 0)
+		ಹಿಂತಿರುಗಿ 0;
 
-	memset((char *)inode->i_block, 0, EXT4_MIN_INLINE_DATA_SIZE);
-	inode->i_size = 0;
+	memset((ಅಕ್ಷರ *)inode->i_ಖಂಡ, 0, EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ);
+	inode->i_ಗಾತ್ರ = 0;
 	retval = ext2fs_write_inode(fs, ino, inode);
-	if (retval)
-		return retval;
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-	return ext2fs_inline_data_ea_remove(fs, ino);
+	ಹಿಂತಿರುಗಿ ext2fs_inline_ದತ್ತಾಂಶ_ea_remove(fs, ino);
 }
 
 /*
@@ -487,35 +487,35 @@ static errcode_t ext2fs_punch_inline_data(ext2_filsys fs, ext2_ino_t ino,
  * If end is ~0ULL, then this is effectively truncate.
  */
 errcode_t ext2fs_punch(ext2_filsys fs, ext2_ino_t ino,
-		       struct ext2_inode *inode,
-		       char *block_buf, blk64_t start,
-		       blk64_t end)
+		       ರಚನೆ ext2_inode *inode,
+		       ಅಕ್ಷರ *ಖಂಡ_buf, blk64_t ಆರಂಭ,
+		       blk64_t ಕೊನೆ)
 {
 	errcode_t		retval;
-	struct ext2_inode	inode_buf;
+	ರಚನೆ ext2_inode	inode_buf;
 
-	if (start > end)
-		return EINVAL;
+	ಆದರೆ (ಆರಂಭ > ಕೊನೆ)
+		ಹಿಂತಿರುಗಿ EINVAL;
 
 	/* Read inode structure if necessary */
-	if (!inode) {
+	ಆದರೆ (!inode) {
 		retval = ext2fs_read_inode(fs, ino, &inode_buf);
-		if (retval)
-			return retval;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 		inode = &inode_buf;
 	}
-	if (inode->i_flags & EXT4_INLINE_DATA_FL)
-		return ext2fs_punch_inline_data(fs, ino, inode, start, end);
-	else if (inode->i_flags & EXT4_EXTENTS_FL)
-		retval = ext2fs_punch_extent(fs, ino, inode, start, end);
-	else
-		retval = ext2fs_punch_ind(fs, inode, block_buf, start, end);
-	if (retval)
-		return retval;
+	ಆದರೆ (inode->i_flags & EXT4_INLINE_ದತ್ತಾಂಶ_FL)
+		ಹಿಂತಿರುಗಿ ext2fs_punch_inline_ದತ್ತಾಂಶ(fs, ino, inode, ಆರಂಭ, ಕೊನೆ);
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (inode->i_flags & EXT4_EXTENTS_FL)
+		retval = ext2fs_punch_extent(fs, ino, inode, ಆರಂಭ, ಕೊನೆ);
+	ಇಲ್ಲದಿದ್ದರೆ
+		retval = ext2fs_punch_ind(fs, inode, ಖಂಡ_buf, ಆರಂಭ, ಕೊನೆ);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-#ifdef PUNCH_DEBUG
-	printf("%u: write inode size now %lu blocks %u\n",
-		ino, EXT2_I_SIZE(inode), inode->i_blocks);
-#endif
-	return ext2fs_write_inode(fs, ino, inode);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ PUNCH_DEBUG
+	ಬರೆ("%u: write inode size now %lu blocks %u\n",
+		ino, EXT2_I_ಗಾತ್ರ(inode), inode->i_ಖಂಡಗಳು);
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ ext2fs_write_inode(fs, ino, inode);
 }

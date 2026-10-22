@@ -9,98 +9,98 @@
  * %End-Header%
  */
 
-struct ext2_bmap_statistics {
-	int		type;
-	struct timeval	created;
+ರಚನೆ ext2_bmap_statistics {
+	ಪೂರ್ಣಾಂಕ		type;
+	ರಚನೆ timeval	created;
 
-#ifdef ENABLE_BMAP_STATS_OPS
-	unsigned long	copy_count;
-	unsigned long	resize_count;
-	unsigned long	mark_count;
-	unsigned long	unmark_count;
-	unsigned long	test_count;
-	unsigned long	mark_ext_count;
-	unsigned long	unmark_ext_count;
-	unsigned long	test_ext_count;
-	unsigned long	set_range_count;
-	unsigned long	get_range_count;
-	unsigned long	clear_count;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_BMAP_STATS_OPS
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	copy_ಎಣಿಕೆ;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	resize_ಎಣಿಕೆ;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	mark_ಎಣಿಕೆ;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	unmark_ಎಣಿಕೆ;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	test_ಎಣಿಕೆ;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	mark_ext_ಎಣಿಕೆ;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	unmark_ext_ಎಣಿಕೆ;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	test_ext_ಎಣಿಕೆ;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	ಗಣ_range_ಎಣಿಕೆ;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	get_range_ಎಣಿಕೆ;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	clear_ಎಣಿಕೆ;
 
-	blk64_t		last_marked;
-	blk64_t		last_tested;
-	blk64_t		mark_back;
-	blk64_t		test_back;
+	blk64_t		ಕೊನೆಯ_marked;
+	blk64_t		ಕೊನೆಯ_tested;
+	blk64_t		mark_ಹಿಂಭಾಗ;
+	blk64_t		test_ಹಿಂಭಾಗ;
 
-	unsigned long	mark_seq;
-	unsigned long	test_seq;
-#endif /* ENABLE_BMAP_STATS_OPS */
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	mark_seq;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	test_seq;
+#ಆದರೆ_ಅಂತ್ಯ /* ENABLE_BMAP_STATS_OPS */
 };
 
 
-struct ext2fs_struct_generic_bitmap_64 {
+ರಚನೆ ext2fs_struct_generic_bitmap_64 {
 	errcode_t		magic;
 	ext2_filsys 		fs;
-	struct ext2_bitmap_ops	*bitmap_ops;
-	int			flags;
-	__u64			start, end;
-	__u64			real_end;
-	int			cluster_bits;
-	char			*description;
-	void			*private;
-	errcode_t		base_error_code;
-#ifdef ENABLE_BMAP_STATS
-	struct ext2_bmap_statistics	stats;
-#endif
+	ರಚನೆ ext2_bitmap_ops	*bitmap_ops;
+	ಪೂರ್ಣಾಂಕ			flags;
+	__u64			ಆರಂಭ, ಕೊನೆ;
+	__u64			real_ಕೊನೆ;
+	ಪೂರ್ಣಾಂಕ			cluster_ಬಿಟ್ಟುಗಳು;
+	ಅಕ್ಷರ			*description;
+	ಶೂನ್ಯ			*ಖಾಸಗಿ;
+	errcode_t		ತಳ_error_ಸಂಕೇತ;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_BMAP_STATS
+	ರಚನೆ ext2_bmap_statistics	stats;
+#ಆದರೆ_ಅಂತ್ಯ
 };
 
-typedef struct ext2fs_struct_generic_bitmap_64 *ext2fs_generic_bitmap_64;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ ext2fs_struct_generic_bitmap_64 *ext2fs_generic_bitmap_64;
 
-#define EXT2FS_IS_32_BITMAP(bmap) \
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2FS_IS_32_BITMAP(bmap) \
 	(((bmap)->magic == EXT2_ET_MAGIC_GENERIC_BITMAP) || \
-	 ((bmap)->magic == EXT2_ET_MAGIC_BLOCK_BITMAP) || \
+	 ((bmap)->magic == EXT2_ET_MAGIC_ಖಂಡ_BITMAP) || \
 	 ((bmap)->magic == EXT2_ET_MAGIC_INODE_BITMAP))
 
-#define EXT2FS_IS_64_BITMAP(bmap) \
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2FS_IS_64_BITMAP(bmap) \
 	(((bmap)->magic == EXT2_ET_MAGIC_GENERIC_BITMAP64) || \
-	 ((bmap)->magic == EXT2_ET_MAGIC_BLOCK_BITMAP64) || \
+	 ((bmap)->magic == EXT2_ET_MAGIC_ಖಂಡ_BITMAP64) || \
 	 ((bmap)->magic == EXT2_ET_MAGIC_INODE_BITMAP64))
 
-struct ext2_bitmap_ops {
-	int	type;
+ರಚನೆ ext2_bitmap_ops {
+	ಪೂರ್ಣಾಂಕ	type;
 	/* Generic bmap operators */
 	errcode_t (*new_bmap)(ext2_filsys fs, ext2fs_generic_bitmap_64 bmap);
-	void	(*free_bmap)(ext2fs_generic_bitmap_64 bitmap);
+	ಶೂನ್ಯ	(*free_bmap)(ext2fs_generic_bitmap_64 bitmap);
 	errcode_t (*copy_bmap)(ext2fs_generic_bitmap_64 src,
 			     ext2fs_generic_bitmap_64 dest);
 	errcode_t (*resize_bmap)(ext2fs_generic_bitmap_64 bitmap,
-			       __u64 new_end,
-			       __u64 new_real_end);
+			       __u64 new_ಕೊನೆ,
+			       __u64 new_real_ಕೊನೆ);
 	/* bit set/test operators */
-	int	(*mark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
-	int	(*unmark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
-	int	(*test_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
-	void	(*mark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				    unsigned int num);
-	void	(*unmark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				      unsigned int num);
-	int	(*test_clear_bmap_extent)(ext2fs_generic_bitmap_64 bitmap,
-					  __u64 arg, unsigned int num);
-	errcode_t (*set_bmap_range)(ext2fs_generic_bitmap_64 bitmap,
-				    __u64 start, size_t num, void *in);
+	ಪೂರ್ಣಾಂಕ	(*mark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
+	ಪೂರ್ಣಾಂಕ	(*unmark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
+	ಪೂರ್ಣಾಂಕ	(*test_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
+	ಶೂನ್ಯ	(*mark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				    ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಅಂಕೆ);
+	ಶೂನ್ಯ	(*unmark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				      ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಅಂಕೆ);
+	ಪೂರ್ಣಾಂಕ	(*test_clear_bmap_extent)(ext2fs_generic_bitmap_64 bitmap,
+					  __u64 arg, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಅಂಕೆ);
+	errcode_t (*ಗಣ_bmap_range)(ext2fs_generic_bitmap_64 bitmap,
+				    __u64 ಆರಂಭ, size_t ಅಂಕೆ, ಶೂನ್ಯ *ಒಳ);
 	errcode_t (*get_bmap_range)(ext2fs_generic_bitmap_64 bitmap,
-				    __u64 start, size_t num, void *out);
-	void (*clear_bmap)(ext2fs_generic_bitmap_64 bitmap);
-	void (*print_stats)(ext2fs_generic_bitmap_64);
+				    __u64 ಆರಂಭ, size_t ಅಂಕೆ, ಶೂನ್ಯ *ಹೊರಹೋಗು);
+	ಶೂನ್ಯ (*clear_bmap)(ext2fs_generic_bitmap_64 bitmap);
+	ಶೂನ್ಯ (*print_stats)(ext2fs_generic_bitmap_64);
 
 	/* Find the first zero bit between start and end, inclusive.
 	 * May be NULL, in which case a generic function is used. */
-	errcode_t (*find_first_zero)(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, __u64 end, __u64 *out);
+	errcode_t (*ಕಂಡುಹಿಡಿ_ಮೊದಲ_zero)(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 ಆರಂಭ, __u64 ಕೊನೆ, __u64 *ಹೊರಹೋಗು);
 	/* Find the first set bit between start and end, inclusive.
 	 * May be NULL, in which case a generic function is used. */
-	errcode_t (*find_first_set)(ext2fs_generic_bitmap_64 bitmap,
-				    __u64 start, __u64 end, __u64 *out);
+	errcode_t (*ಕಂಡುಹಿಡಿ_ಮೊದಲ_ಗಣ)(ext2fs_generic_bitmap_64 bitmap,
+				    __u64 ಆರಂಭ, __u64 ಕೊನೆ, __u64 *ಹೊರಹೋಗು);
 };
 
-extern struct ext2_bitmap_ops ext2fs_blkmap64_bitarray;
-extern struct ext2_bitmap_ops ext2fs_blkmap64_rbtree;
+ಬಾಹ್ಯ ರಚನೆ ext2_bitmap_ops ext2fs_blkmap64_bitarray;
+ಬಾಹ್ಯ ರಚನೆ ext2_bitmap_ops ext2fs_blkmap64_rbtree;

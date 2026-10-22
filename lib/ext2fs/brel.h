@@ -9,51 +9,51 @@
  * %End-Header%
  */
 
-struct ext2_block_relocate_entry {
+ರಚನೆ ext2_ಖಂಡ_relocate_ನಮೂದು {
 	blk64_t	new;
-	__s16	offset;
+	__s16	ಸ್ಥಾನಾಂತರ;
 	__u16	flags;
-	union {
-		blk64_t		block_ref;
+	ಒಕ್ಕೂಟ {
+		blk64_t		ಖಂಡ_ref;
 		ext2_ino_t	inode_ref;
 	} owner;
 };
 
-#define RELOCATE_TYPE_REF  0x0007
-#define RELOCATE_BLOCK_REF 0x0001
-#define RELOCATE_INODE_REF 0x0002
+#ವ್ಯಾಖ್ಯಾನಿಸು RELOCATE_TYPE_REF  0x0007
+#ವ್ಯಾಖ್ಯಾನಿಸು RELOCATE_ಖಂಡ_REF 0x0001
+#ವ್ಯಾಖ್ಯಾನಿಸು RELOCATE_INODE_REF 0x0002
 
-typedef struct ext2_block_relocation_table *ext2_brel;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ ext2_ಖಂಡ_relocation_ಕೋಷ್ಟಕ *ext2_brel;
 
-struct ext2_block_relocation_table {
+ರಚನೆ ext2_ಖಂಡ_relocation_ಕೋಷ್ಟಕ {
 	__u32	magic;
-	char	*name;
+	ಅಕ್ಷರ	*name;
 	blk64_t	current;
-	void	*priv_data;
+	ಶೂನ್ಯ	*priv_ದತ್ತಾಂಶ;
 
 	/*
 	 * Add a block relocation entry.
 	 */
 	errcode_t (*put)(ext2_brel brel, blk64_t old,
-			      struct ext2_block_relocate_entry *ent);
+			      ರಚನೆ ext2_ಖಂಡ_relocate_ನಮೂದು *ent);
 
 	/*
 	 * Get a block relocation entry.
 	 */
 	errcode_t (*get)(ext2_brel brel, blk64_t old,
-			      struct ext2_block_relocate_entry *ent);
+			      ರಚನೆ ext2_ಖಂಡ_relocate_ನಮೂದು *ent);
 
 	/*
 	 * Initialize for iterating over the block relocation entries.
 	 */
-	errcode_t (*start_iter)(ext2_brel brel);
+	errcode_t (*ಆರಂಭ_iter)(ext2_brel brel);
 
 	/*
 	 * The iterator function for the inode relocation entries.
 	 * Returns an inode number of 0 when out of entries.
 	 */
-	errcode_t (*next)(ext2_brel brel, blk64_t *old,
-			  struct ext2_block_relocate_entry *ent);
+	errcode_t (*ಮುಂದಿನ)(ext2_brel brel, blk64_t *old,
+			  ರಚನೆ ext2_ಖಂಡ_relocate_ನಮೂದು *ent);
 
 	/*
 	 * Move the inode relocation table from one block number to
@@ -70,17 +70,17 @@ struct ext2_block_relocation_table {
 	/*
 	 * Free the block relocation table.
 	 */
-	errcode_t (*free)(ext2_brel brel);
+	errcode_t (*ಬಿಡುಗಡೆ)(ext2_brel brel);
 };
 
-errcode_t ext2fs_brel_memarray_create(char *name, blk64_t max_block,
+errcode_t ext2fs_brel_memarray_create(ಅಕ್ಷರ *name, blk64_t max_ಖಂಡ,
 				    ext2_brel *brel);
 
-#define ext2fs_brel_put(brel, old, ent) ((brel)->put((brel), old, ent))
-#define ext2fs_brel_get(brel, old, ent) ((brel)->get((brel), old, ent))
-#define ext2fs_brel_start_iter(brel) ((brel)->start_iter((brel)))
-#define ext2fs_brel_next(brel, old, ent) ((brel)->next((brel), old, ent))
-#define ext2fs_brel_move(brel, old, new) ((brel)->move((brel), old, new))
-#define ext2fs_brel_delete(brel, old) ((brel)->delete((brel), old))
-#define ext2fs_brel_free(brel) ((brel)->free((brel)))
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_brel_put(brel, old, ent) ((brel)->put((brel), old, ent))
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_brel_get(brel, old, ent) ((brel)->get((brel), old, ent))
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_brel_ಆರಂಭ_iter(brel) ((brel)->ಆರಂಭ_iter((brel)))
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_brel_ಮುಂದಿನ(brel, old, ent) ((brel)->ಮುಂದಿನ((brel), old, ent))
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_brel_move(brel, old, new) ((brel)->move((brel), old, new))
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_brel_delete(brel, old) ((brel)->delete((brel), old))
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_brel_free(brel) ((brel)->ಬಿಡುಗಡೆ((brel)))
 

@@ -10,23 +10,23 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಆದರೆ HAVE_SYS_STAT_H
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
 /*
  * This function reserves the superblock and block group descriptors
@@ -41,42 +41,42 @@
  *
  * See also the comment for ext2fs_super_and_bgd_loc()
  */
-int ext2fs_reserve_super_and_bgd(ext2_filsys fs,
-				 dgrp_t group,
-				 ext2fs_block_bitmap bmap)
+ಪೂರ್ಣಾಂಕ ext2fs_reserve_super_and_bgd(ext2_filsys fs,
+				 dgrp_t ಗುಂಪು,
+				 ext2fs_ಖಂಡ_bitmap bmap)
 {
 	blk64_t	super_blk, old_desc_blk, new_desc_blk;
-	blk_t	used_blks, old_desc_blocks, num_blocks;
+	blk_t	ಬಳಸಿದ_blks, old_desc_ಖಂಡಗಳು, ಅಂಕೆ_ಖಂಡಗಳು;
 
-	ext2fs_super_and_bgd_loc2(fs, group, &super_blk,
-				  &old_desc_blk, &new_desc_blk, &used_blks);
+	ext2fs_super_and_bgd_loc2(fs, ಗುಂಪು, &super_blk,
+				  &old_desc_blk, &new_desc_blk, &ಬಳಸಿದ_blks);
 
-	if (ext2fs_has_feature_meta_bg(fs->super))
-		old_desc_blocks = fs->super->s_first_meta_bg;
-	else
-		old_desc_blocks =
-			fs->desc_blocks + fs->super->s_reserved_gdt_blocks;
+	ಆದರೆ (ext2fs_has_feature_meta_bg(fs->super))
+		old_desc_ಖಂಡಗಳು = fs->super->s_ಮೊದಲ_meta_bg;
+	ಇಲ್ಲದಿದ್ದರೆ
+		old_desc_ಖಂಡಗಳು =
+			fs->desc_ಖಂಡಗಳು + fs->super->s_reserved_gdt_ಖಂಡಗಳು;
 
-	if (super_blk || (group == 0))
-		ext2fs_mark_block_bitmap2(bmap, super_blk);
-	if ((group == 0) && (fs->blocksize == 1024) &&
-	    EXT2FS_CLUSTER_RATIO(fs) > 1)
-		ext2fs_mark_block_bitmap2(bmap, 0);
+	ಆದರೆ (super_blk || (ಗುಂಪು == 0))
+		ext2fs_mark_ಖಂಡ_bitmap2(bmap, super_blk);
+	ಆದರೆ ((ಗುಂಪು == 0) && (fs->blocksize == 1024) &&
+	    EXT2_FS_CLUSTER_ಅನುಪಾತ(fs) > 1)
+		ext2fs_mark_ಖಂಡ_bitmap2(bmap, 0);
 
-	if (old_desc_blk) {
-		num_blocks = old_desc_blocks;
-		if (old_desc_blk + num_blocks >= ext2fs_blocks_count(fs->super))
-			num_blocks = ext2fs_blocks_count(fs->super) -
+	ಆದರೆ (old_desc_blk) {
+		ಅಂಕೆ_ಖಂಡಗಳು = old_desc_ಖಂಡಗಳು;
+		ಆದರೆ (old_desc_blk + ಅಂಕೆ_ಖಂಡಗಳು >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super))
+			ಅಂಕೆ_ಖಂಡಗಳು = ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super) -
 				old_desc_blk;
-		ext2fs_mark_block_bitmap_range2(bmap, old_desc_blk, num_blocks);
+		ext2fs_mark_ಖಂಡ_bitmap_range2(bmap, old_desc_blk, ಅಂಕೆ_ಖಂಡಗಳು);
 	}
-	if (new_desc_blk)
-		ext2fs_mark_block_bitmap2(bmap, new_desc_blk);
+	ಆದರೆ (new_desc_blk)
+		ext2fs_mark_ಖಂಡ_bitmap2(bmap, new_desc_blk);
 
-	num_blocks = ext2fs_group_blocks_count(fs, group);
-	num_blocks -= 2 + fs->inode_blocks_per_group + used_blks;
+	ಅಂಕೆ_ಖಂಡಗಳು = ext2fs_ಗುಂಪು_ಖಂಡಗಳು_ಎಣಿಕೆ(fs, ಗುಂಪು);
+	ಅಂಕೆ_ಖಂಡಗಳು -= 2 + fs->inode_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು + ಬಳಸಿದ_blks;
 
-	return num_blocks  ;
+	ಹಿಂತಿರುಗಿ ಅಂಕೆ_ಖಂಡಗಳು  ;
 }
 
 /*
@@ -85,21 +85,21 @@ int ext2fs_reserve_super_and_bgd(ext2_filsys fs,
  * super block and group descriptors by looking up the block bitmap.
  */
 errcode_t ext2fs_reserve_super_and_bgd2(ext2_filsys fs,
-				        dgrp_t group,
-				        ext2fs_block_bitmap bmap,
-				        blk_t *desc_blocks)
+				        dgrp_t ಗುಂಪು,
+				        ext2fs_ಖಂಡ_bitmap bmap,
+				        blk_t *desc_ಖಂಡಗಳು)
 {
-	blk64_t	num_blocks;
+	blk64_t	ಅಂಕೆ_ಖಂಡಗಳು;
 	errcode_t retval = 0;
 
-	ext2fs_reserve_super_and_bgd(fs, group, bmap);
+	ext2fs_reserve_super_and_bgd(fs, ಗುಂಪು, bmap);
 
-	retval = ext2fs_count_used_blocks(fs,
-					ext2fs_group_first_block2(fs, group),
-					ext2fs_group_last_block2(fs, group),
-					&num_blocks);
-	if (!retval)
-		*desc_blocks = num_blocks;
+	retval = ext2fs_ಎಣಿಕೆ_ಬಳಸಿದ_ಖಂಡಗಳು(fs,
+					ext2fs_ಗುಂಪು_ಮೊದಲ_block2(fs, ಗುಂಪು),
+					ext2fs_ಗುಂಪು_ಕೊನೆಯ_block2(fs, ಗುಂಪು),
+					&ಅಂಕೆ_ಖಂಡಗಳು);
+	ಆದರೆ (!retval)
+		*desc_ಖಂಡಗಳು = ಅಂಕೆ_ಖಂಡಗಳು;
 
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }

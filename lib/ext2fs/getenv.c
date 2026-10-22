@@ -9,49 +9,49 @@
  * General Public License, version 2.
  * %End-Header%
  */
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
-#define _XOPEN_SOURCE 600
-#define _DARWIN_C_SOURCE
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#endif
+#ಆದರೆ !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#ವ್ಯಾಖ್ಯಾನಿಸು XOPEN_ಮೂಲ 600
+#ವ್ಯಾಖ್ಯಾನಿಸು DARWIN_C_ಮೂಲ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ GNU_ಮೂಲ
+#ವ್ಯಾಖ್ಯಾನಿಸು GNU_ಮೂಲ
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "config.h"
-#include <stdlib.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef HAVE_SYS_PRCTL_H
-#include <sys/prctl.h>
-#else
-#define PR_GET_DUMPABLE 3
-#endif
-#if (!defined(HAVE_PRCTL) && defined(linux))
-#include <sys/syscall.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SYS_PRCTL_H
+#ಅನ್ತರ್ಭಾವ <sys/prctl.h>
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು PR_GET_DUMPABLE 3
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ (!defined(HAVE_PRCTL) && defined(linux))
+#ಅನ್ತರ್ಭಾವ <sys/syscall.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
-char *ext2fs_safe_getenv(const char *arg)
+ಅಕ್ಷರ *ext2fs_ಸುರಕ್ಷಿತ_getenv(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg)
 {
-	if ((getuid() != geteuid()) || (getgid() != getegid()))
-		return NULL;
-#ifdef HAVE_PRCTL
-	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#else
-#if (defined(linux) && defined(SYS_prctl))
-	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#endif
-#endif
+	ಆದರೆ ((getuid() != geteuid()) || (getgid() != getegid()))
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PRCTL
+	ಆದರೆ (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+#ಇಲ್ಲದಿದ್ದರೆ
+#ಆದರೆ (defined(linux) && defined(SYS_prctl))
+	ಆದರೆ (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(HAVE_SECURE_GETENV)
-	return secure_getenv(arg);
-#elif defined(HAVE___SECURE_GETENV)
-	return __secure_getenv(arg);
-#else
-	return getenv(arg);
-#endif
+#ಆದರೆ defined(HAVE_SECURE_GETENV)
+	ಹಿಂತಿರುಗಿ secure_getenv(arg);
+#ಅಥವಾಆದರೆ defined(HAVE___SECURE_GETENV)
+	ಹಿಂತಿರುಗಿ __secure_getenv(arg);
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಹಿಂತಿರುಗಿ getenv(arg);
+#ಆದರೆ_ಅಂತ್ಯ
 }

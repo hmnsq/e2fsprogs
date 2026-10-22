@@ -9,56 +9,56 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#include "ext2fs/ext2_types.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs/ext2_types.h"
 
-int main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-	if (sizeof(__u8) != 1) {
-		printf("Sizeof(__u8) is %d should be 1\n",
-		       (int)sizeof(__u8));
-		exit(1);
+	ಆದರೆ (ಗಾತ್ರ(__u8) != 1) {
+		ಬರೆ("Sizeof(__u8) is %d should be 1\n",
+		       (ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ(__u8));
+		ನಿರ್ಗಮಿಸು(1);
 	}
-	if (sizeof(__s8) != 1) {
-		printf("Sizeof(_s8) is %d should be 1\n",
-		       (int)sizeof(__s8));
-		exit(1);
+	ಆದರೆ (ಗಾತ್ರ(__s8) != 1) {
+		ಬರೆ("Sizeof(_s8) is %d should be 1\n",
+		       (ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ(__s8));
+		ನಿರ್ಗಮಿಸು(1);
 	}
-	if (sizeof(__u16) != 2) {
-		printf("Sizeof(__u16) is %d should be 2\n",
-		       (int)sizeof(__u16));
-		exit(1);
+	ಆದರೆ (ಗಾತ್ರ(__u16) != 2) {
+		ಬರೆ("Sizeof(__u16) is %d should be 2\n",
+		       (ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ(__u16));
+		ನಿರ್ಗಮಿಸು(1);
 	}
-	if (sizeof(__s16) != 2) {
-		printf("Sizeof(__s16) is %d should be 2\n",
-		       (int)sizeof(__s16));
-		exit(1);
+	ಆದರೆ (ಗಾತ್ರ(__s16) != 2) {
+		ಬರೆ("Sizeof(__s16) is %d should be 2\n",
+		       (ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ(__s16));
+		ನಿರ್ಗಮಿಸು(1);
 	}
-	if (sizeof(__u32) != 4) {
-		printf("Sizeof(__u32) is %d should be 4\n",
-		       (int)sizeof(__u32));
-		exit(1);
+	ಆದರೆ (ಗಾತ್ರ(__u32) != 4) {
+		ಬರೆ("Sizeof(__u32) is %d should be 4\n",
+		       (ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ(__u32));
+		ನಿರ್ಗಮಿಸು(1);
 	}
-	if (sizeof(__s32) != 4) {
-		printf("Sizeof(__s32) is %d should be 4\n",
-		       (int)sizeof(__s32));
-		exit(1);
+	ಆದರೆ (ಗಾತ್ರ(__s32) != 4) {
+		ಬರೆ("Sizeof(__s32) is %d should be 4\n",
+		       (ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ(__s32));
+		ನಿರ್ಗಮಿಸು(1);
 	}
-	if (sizeof(__u64) != 8) {
-		printf("Sizeof(__u64) is %d should be 8\n",
-		       (int)sizeof(__u64));
-		exit(1);
+	ಆದರೆ (ಗಾತ್ರ(__u64) != 8) {
+		ಬರೆ("Sizeof(__u64) is %d should be 8\n",
+		       (ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ(__u64));
+		ನಿರ್ಗಮಿಸು(1);
 	}
-	if (sizeof(__s64) != 8) {
-		printf("Sizeof(__s64) is %d should be 8\n",
-		       (int)sizeof(__s64));
-		exit(1);
+	ಆದರೆ (ಗಾತ್ರ(__s64) != 8) {
+		ಬರೆ("Sizeof(__s64) is %d should be 8\n",
+		       (ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ(__s64));
+		ನಿರ್ಗಮಿಸು(1);
 	}
-	printf("The ext2_types.h types are correct.\n");
-	exit(0);
+	ಬರೆ("The ext2_types.h types are correct.\n");
+	ನಿರ್ಗಮಿಸು(0);
 }
 

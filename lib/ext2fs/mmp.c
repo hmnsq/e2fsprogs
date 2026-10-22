@@ -9,63 +9,63 @@
  * %End-Header%
  */
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#ifndef _DEFAULT_SOURCE
-#define _DEFAULT_SOURCE	/* since glibc 2.20 _SVID_SOURCE is deprecated */
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ GNU_ಮೂಲ
+#ವ್ಯಾಖ್ಯಾನಿಸು GNU_ಮೂಲ
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _DEFAULT_SOURCE
+#ವ್ಯಾಖ್ಯಾನಿಸು _DEFAULT_SOURCE	/* since glibc 2.20 _SVID_SOURCE is deprecated */
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <sys/time.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <sys/time.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
 
-#include "ext2fs/ext2_fs.h"
-#include "ext2fs/ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs/ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs/ext2fs.h"
 
-#ifndef O_DIRECT
-#define O_DIRECT 0
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ O_ನೇರ
+#ವ್ಯಾಖ್ಯಾನಿಸು O_ನೇರ 0
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
-#ifndef CONFIG_MMP
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-#endif
+#ಆದರೆ __GNUC_PREREQ (4, 6)
+#ಸೂಚನೆ GCC diagnostic ತಳ್ಳು
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ CONFIG_MMP
+#ಸೂಚನೆ GCC diagnostic ignored "-Wunused-parameter"
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ
 
-errcode_t ext2fs_mmp_get_mem(ext2_filsys fs, void **ptr)
+errcode_t ext2fs_mmp_get_mem(ext2_filsys fs, ಶೂನ್ಯ **ptr)
 {
-	int align = ext2fs_get_dio_alignment(fs->mmp_fd);
+	ಪೂರ್ಣಾಂಕ align = ext2fs_get_dio_alignment(fs->mmp_fd);
 
-	return ext2fs_get_memalign(fs->blocksize, align, ptr);
+	ಹಿಂತಿರುಗಿ ext2fs_get_memalign(fs->blocksize, align, ptr);
 }
 
-errcode_t ext2fs_mmp_read(ext2_filsys fs, blk64_t mmp_blk, void *buf)
+errcode_t ext2fs_mmp_read(ext2_filsys fs, blk64_t mmp_blk, ಶೂನ್ಯ *buf)
 {
-#ifdef CONFIG_MMP
-	struct mmp_struct *mmp_cmp;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_MMP
+	ರಚನೆ mmp_struct *mmp_cmp;
 	errcode_t retval = 0;
 
-	if ((mmp_blk <= fs->super->s_first_data_block) ||
-	    (mmp_blk >= ext2fs_blocks_count(fs->super)))
-		return EXT2_ET_MMP_BAD_BLOCK;
+	ಆದರೆ ((mmp_blk <= fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ) ||
+	    (mmp_blk >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super)))
+		ಹಿಂತಿರುಗಿ EXT2_ET_MMP_BAD_ಖಂಡ;
 
 	/* ext2fs_open() reserves fd0,1,2 to avoid stdio collision, so checking
 	 * mmp_fd <= 0 is OK to validate that the fd is valid.  This opens its
 	 * own fd to read the MMP block to ensure that it is using O_DIRECT,
 	 * regardless of how the io_manager is doing reads, to avoid caching of
 	 * the MMP block by the io_manager or the VM.  It needs to be fresh. */
-	if (fs->mmp_fd <= 0) {
-		struct stat st;
-		int flags = O_RDONLY | O_DIRECT;
+	ಆದರೆ (fs->mmp_fd <= 0) {
+		ರಚನೆ stat st;
+		ಪೂರ್ಣಾಂಕ flags = O_RDONLY | O_ನೇರ;
 
 		/*
 		 * There is no reason for using O_DIRECT if we're working with
@@ -73,110 +73,110 @@ errcode_t ext2fs_mmp_read(ext2_filsys fs, blk64_t mmp_blk, void *buf)
 		 * alignment when the device of the host file system has sector
 		 * size larger than blocksize of the fs we're working with.
 		 */
-		if (stat(fs->device_name, &st) == 0 &&
-		    S_ISREG(st.st_mode))
-			flags &= ~O_DIRECT;
+		ಆದರೆ (stat(fs->device_name, &st) == 0 &&
+		    S_ISREG(st.st_ಬಹುಲಕ))
+			flags &= ~O_ನೇರ;
 
 		fs->mmp_fd = open(fs->device_name, flags);
-		if (fs->mmp_fd < 0) {
-			retval = EXT2_ET_MMP_OPEN_DIRECT;
-			goto out;
+		ಆದರೆ (fs->mmp_fd < 0) {
+			retval = EXT2_ET_MMP_OPEN_ನೇರ;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 	}
 
-	if (fs->mmp_cmp == NULL) {
+	ಆದರೆ (fs->mmp_cmp == ಖಾಲಿ) {
 		retval = ext2fs_mmp_get_mem(fs, &fs->mmp_cmp);
-		if (retval)
-			return retval;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 	}
 
-	if ((blk64_t) ext2fs_llseek(fs->mmp_fd, mmp_blk * fs->blocksize,
+	ಆದರೆ ((blk64_t) ext2fs_llseek(fs->mmp_fd, mmp_blk * fs->blocksize,
 				    SEEK_SET) !=
 	    mmp_blk * fs->blocksize) {
 		retval = EXT2_ET_LLSEEK_FAILED;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
-	if (read(fs->mmp_fd, fs->mmp_cmp, fs->blocksize) != fs->blocksize) {
+	ಆದರೆ (ಪಠ(fs->mmp_fd, fs->mmp_cmp, fs->blocksize) != fs->blocksize) {
 		retval = EXT2_ET_SHORT_READ;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
 	mmp_cmp = fs->mmp_cmp;
 
-	if (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+	ಆದರೆ (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
 	    !ext2fs_mmp_csum_verify(fs, mmp_cmp))
 		retval = EXT2_ET_MMP_CSUM_INVALID;
 
-#ifdef WORDS_BIGENDIAN
-	ext2fs_swap_mmp(mmp_cmp);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
+	ext2fs_ಅದಲುಬದಲು_mmp(mmp_cmp);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	if (buf != NULL && buf != fs->mmp_cmp)
-		memcpy(buf, fs->mmp_cmp, fs->blocksize);
+	ಆದರೆ (buf != ಖಾಲಿ && buf != fs->mmp_cmp)
+		ಸ್ಮರಣೆ_ನಕಲು(buf, fs->mmp_cmp, fs->blocksize);
 
-	if (mmp_cmp->mmp_magic != EXT4_MMP_MAGIC) {
+	ಆದರೆ (mmp_cmp->mmp_magic != EXT4_MMP_MAGIC) {
 		retval = EXT2_ET_MMP_MAGIC_INVALID;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
-out:
-	return retval;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+ಹೊರಹೋಗು:
+	ಹಿಂತಿರುಗಿ retval;
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಹಿಂತಿರುಗಿ EXT2_ET_OP_NOT_SUPPORTED;
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-errcode_t ext2fs_mmp_write(ext2_filsys fs, blk64_t mmp_blk, void *buf)
+errcode_t ext2fs_mmp_write(ext2_filsys fs, blk64_t mmp_blk, ಶೂನ್ಯ *buf)
 {
-#ifdef CONFIG_MMP
-	struct mmp_struct *mmp_s = buf;
-	struct timeval tv;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_MMP
+	ರಚನೆ mmp_struct *mmp_s = buf;
+	ರಚನೆ timeval tv;
 	errcode_t retval = 0;
 
 	gettimeofday(&tv, 0);
-	mmp_s->mmp_time = tv.tv_sec;
-	fs->mmp_last_written = tv.tv_sec;
+	mmp_s->mmp_ಸಮಯ = tv.tv_sec;
+	fs->mmp_ಕೊನೆಯ_written = tv.tv_sec;
 
-	if (fs->super->s_mmp_block < fs->super->s_first_data_block ||
-	    fs->super->s_mmp_block > ext2fs_blocks_count(fs->super))
-		return EXT2_ET_MMP_BAD_BLOCK;
+	ಆದರೆ (fs->super->s_mmp_ಖಂಡ < fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ ||
+	    fs->super->s_mmp_ಖಂಡ > ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super))
+		ಹಿಂತಿರುಗಿ EXT2_ET_MMP_BAD_ಖಂಡ;
 
-#ifdef WORDS_BIGENDIAN
-	ext2fs_swap_mmp(mmp_s);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
+	ext2fs_ಅದಲುಬದಲು_mmp(mmp_s);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	retval = ext2fs_mmp_csum_set(fs, mmp_s);
-	if (retval)
-		return retval;
+	retval = ext2fs_mmp_csum_ಗಣ(fs, mmp_s);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
 	/* I was tempted to make this use O_DIRECT and the mmp_fd, but
 	 * this caused no end of grief, while leaving it as-is works. */
-	retval = io_channel_write_blk64(fs->io, mmp_blk, -(int)sizeof(struct mmp_struct), buf);
+	retval = io_channel_write_blk64(fs->io, mmp_blk, -(ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ(ರಚನೆ mmp_struct), buf);
 
-#ifdef WORDS_BIGENDIAN
-	ext2fs_swap_mmp(mmp_s);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
+	ext2fs_ಅದಲುಬದಲು_mmp(mmp_s);
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/* Make sure the block gets to disk quickly */
 	io_channel_flush(fs->io);
-	return retval;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+	ಹಿಂತಿರುಗಿ retval;
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಹಿಂತಿರುಗಿ EXT2_ET_OP_NOT_SUPPORTED;
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-#ifdef HAVE_SRANDOM
-#define srand(x)	srandom(x)
-#define rand()		random()
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SRANDOM
+#ವ್ಯಾಖ್ಯಾನಿಸು srand(x)	srandom(x)
+#ವ್ಯಾಖ್ಯಾನಿಸು rand()		random()
+#ಆದರೆ_ಅಂತ್ಯ
 
-unsigned ext2fs_mmp_new_seq(void)
+ಚಿಹ್ನೆರಹಿತ ext2fs_mmp_new_seq(ಶೂನ್ಯ)
 {
-#ifdef CONFIG_MMP
-	unsigned new_seq;
-	struct timeval tv;
-	unsigned long pid = getpid();
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_MMP
+	ಚಿಹ್ನೆರಹಿತ new_seq;
+	ರಚನೆ timeval tv;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ pid = getpid();
 
 	gettimeofday(&tv, 0);
 	pid = (pid >> 16) | ((pid & 0xFFFF) << 16);
@@ -184,29 +184,29 @@ unsigned ext2fs_mmp_new_seq(void)
 
 	gettimeofday(&tv, 0);
 	/* Crank the random number generator a few times */
-	for (new_seq = (tv.tv_sec ^ tv.tv_usec) & 0x1F; new_seq > 0; new_seq--)
+	ಗಾಗಿ (new_seq = (tv.tv_sec ^ tv.tv_usec) & 0x1F; new_seq > 0; new_seq--)
 		rand();
 
-	do {
+	ಮಾಡು {
 		new_seq = rand();
-	} while (new_seq > EXT4_MMP_SEQ_MAX);
+	} ಆಗ (new_seq > EXT4_MMP_SEQ_MAX);
 
-	return new_seq;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+	ಹಿಂತಿರುಗಿ new_seq;
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಹಿಂತಿರುಗಿ EXT2_ET_OP_NOT_SUPPORTED;
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-#ifdef CONFIG_MMP
-static errcode_t ext2fs_mmp_reset(ext2_filsys fs)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_MMP
+ಸ್ಥಿರ errcode_t ext2fs_mmp_reset(ext2_filsys fs)
 {
-	struct mmp_struct *mmp_s = NULL;
+	ರಚನೆ mmp_struct *mmp_s = ಖಾಲಿ;
 	errcode_t retval = 0;
 
-	if (fs->mmp_buf == NULL) {
+	ಆದರೆ (fs->mmp_buf == ಖಾಲಿ) {
 		retval = ext2fs_mmp_get_mem(fs, &fs->mmp_buf);
-		if (retval)
-			goto out;
+		ಆದರೆ (retval)
+			ಹೋಗು ಹೊರಹೋಗು;
 	}
 
 	memset(fs->mmp_buf, 0, fs->blocksize);
@@ -214,184 +214,184 @@ static errcode_t ext2fs_mmp_reset(ext2_filsys fs)
 
 	mmp_s->mmp_magic = EXT4_MMP_MAGIC;
 	mmp_s->mmp_seq = EXT4_MMP_SEQ_CLEAN;
-	mmp_s->mmp_time = 0;
-#ifdef HAVE_GETHOSTNAME
-	gethostname((char *) mmp_s->mmp_nodename, sizeof(mmp_s->mmp_nodename));
-#else
+	mmp_s->mmp_ಸಮಯ = 0;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_GETHOSTNAME
+	gethostname((ಅಕ್ಷರ *) mmp_s->mmp_nodename, ಗಾತ್ರ(mmp_s->mmp_nodename));
+#ಇಲ್ಲದಿದ್ದರೆ
 	mmp_s->mmp_nodename[0] = '\0';
-#endif
-	strncpy((char *) mmp_s->mmp_bdevname, fs->device_name,
-		sizeof(mmp_s->mmp_bdevname));
+#ಆದರೆ_ಅಂತ್ಯ
+	strncpy((ಅಕ್ಷರ *) mmp_s->mmp_bdevname, fs->device_name,
+		ಗಾತ್ರ(mmp_s->mmp_bdevname));
 
 	mmp_s->mmp_check_interval = fs->super->s_mmp_update_interval;
-	if (mmp_s->mmp_check_interval < EXT4_MMP_MIN_CHECK_INTERVAL)
+	ಆದರೆ (mmp_s->mmp_check_interval < EXT4_MMP_MIN_CHECK_INTERVAL)
 		mmp_s->mmp_check_interval = EXT4_MMP_MIN_CHECK_INTERVAL;
 
-	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_block, fs->mmp_buf);
-out:
-	return retval;
+	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_ಖಂಡ, fs->mmp_buf);
+ಹೊರಹೋಗು:
+	ಹಿಂತಿರುಗಿ retval;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 errcode_t ext2fs_mmp_update(ext2_filsys fs)
 {
-	return ext2fs_mmp_update2(fs, 0);
+	ಹಿಂತಿರುಗಿ ext2fs_mmp_update2(fs, 0);
 }
 
 errcode_t ext2fs_mmp_clear(ext2_filsys fs)
 {
-#ifdef CONFIG_MMP
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_MMP
 	errcode_t retval = 0;
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	ಆದರೆ (!(fs->flags & EXT2_FLAG_RW))
+		ಹಿಂತಿರುಗಿ EXT2_ET_RO_FILSYS;
 
 	retval = ext2fs_mmp_reset(fs);
 
-	return retval;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+	ಹಿಂತಿರುಗಿ retval;
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಹಿಂತಿರುಗಿ EXT2_ET_OP_NOT_SUPPORTED;
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
 errcode_t ext2fs_mmp_init(ext2_filsys fs)
 {
-#ifdef CONFIG_MMP
-	struct ext2_super_block *sb = fs->super;
-	blk64_t mmp_block;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_MMP
+	ರಚನೆ ext2_super_ಖಂಡ *sb = fs->super;
+	blk64_t mmp_ಖಂಡ;
 	errcode_t retval;
 
-	if (sb->s_mmp_update_interval == 0)
+	ಆದರೆ (sb->s_mmp_update_interval == 0)
 		sb->s_mmp_update_interval = EXT4_MMP_UPDATE_INTERVAL;
 	/* This is probably excessively large, but who knows? */
-	else if (sb->s_mmp_update_interval > EXT4_MMP_MAX_UPDATE_INTERVAL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (sb->s_mmp_update_interval > EXT4_MMP_MAX_UPDATE_INTERVAL)
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
 
-	if (fs->mmp_buf == NULL) {
+	ಆದರೆ (fs->mmp_buf == ಖಾಲಿ) {
 		retval = ext2fs_mmp_get_mem(fs, &fs->mmp_buf);
-		if (retval)
-			goto out;
+		ಆದರೆ (retval)
+			ಹೋಗು ಹೊರಹೋಗು;
 	}
 
-	retval = ext2fs_alloc_block2(fs, 0, fs->mmp_buf, &mmp_block);
-	if (retval)
-		goto out;
+	retval = ext2fs_alloc_block2(fs, 0, fs->mmp_buf, &mmp_ಖಂಡ);
+	ಆದರೆ (retval)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	sb->s_mmp_block = mmp_block;
+	sb->s_mmp_ಖಂಡ = mmp_ಖಂಡ;
 
 	retval = ext2fs_mmp_reset(fs);
-	if (retval)
-		goto out;
+	ಆದರೆ (retval)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-out:
-	return retval;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+ಹೊರಹೋಗು:
+	ಹಿಂತಿರುಗಿ retval;
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಹಿಂತಿರುಗಿ EXT2_ET_OP_NOT_SUPPORTED;
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-#ifndef min
-#define min(x, y) ((x) < (y) ? (x) : (y))
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ min
+#ವ್ಯಾಖ್ಯಾನಿಸು min(x, y) ((x) < (y) ? (x) : (y))
+#ಆದರೆ_ಅಂತ್ಯ
 
 /*
  * Make sure that the fs is not mounted or being fsck'ed while opening the fs.
  */
-errcode_t ext2fs_mmp_start(ext2_filsys fs)
+errcode_t ext2fs_mmp_ಆರಂಭ(ext2_filsys fs)
 {
-#ifdef CONFIG_MMP
-	struct mmp_struct *mmp_s;
-	unsigned seq;
-	unsigned int mmp_check_interval;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_MMP
+	ರಚನೆ mmp_struct *mmp_s;
+	ಚಿಹ್ನೆರಹಿತ seq;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ mmp_check_interval;
 	errcode_t retval = 0;
 
-	if (fs->mmp_buf == NULL) {
+	ಆದರೆ (fs->mmp_buf == ಖಾಲಿ) {
 		retval = ext2fs_mmp_get_mem(fs, &fs->mmp_buf);
-		if (retval)
-			goto mmp_error;
+		ಆದರೆ (retval)
+			ಹೋಗು mmp_error;
 	}
 
-	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, fs->mmp_buf);
-	if (retval)
-		goto mmp_error;
+	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_ಖಂಡ, fs->mmp_buf);
+	ಆದರೆ (retval)
+		ಹೋಗು mmp_error;
 
 	mmp_s = fs->mmp_buf;
 
 	mmp_check_interval = fs->super->s_mmp_update_interval;
-	if (mmp_check_interval < EXT4_MMP_MIN_CHECK_INTERVAL)
+	ಆದರೆ (mmp_check_interval < EXT4_MMP_MIN_CHECK_INTERVAL)
 		mmp_check_interval = EXT4_MMP_MIN_CHECK_INTERVAL;
 
 	seq = mmp_s->mmp_seq;
-	if (seq == EXT4_MMP_SEQ_CLEAN)
-		goto clean_seq;
-	if (seq == EXT4_MMP_SEQ_FSCK) {
+	ಆದರೆ (seq == EXT4_MMP_SEQ_CLEAN)
+		ಹೋಗು clean_seq;
+	ಆದರೆ (seq == EXT4_MMP_SEQ_FSCK) {
 		retval = EXT2_ET_MMP_FSCK_ON;
-		goto mmp_error;
+		ಹೋಗು mmp_error;
 	}
 
-	if (seq > EXT4_MMP_SEQ_FSCK) {
+	ಆದರೆ (seq > EXT4_MMP_SEQ_FSCK) {
 		retval = EXT2_ET_MMP_UNKNOWN_SEQ;
-		goto mmp_error;
+		ಹೋಗು mmp_error;
 	}
 
 	/*
 	 * If check_interval in MMP block is larger, use that instead of
 	 * check_interval from the superblock.
 	 */
-	if (mmp_s->mmp_check_interval > mmp_check_interval)
+	ಆದರೆ (mmp_s->mmp_check_interval > mmp_check_interval)
 		mmp_check_interval = mmp_s->mmp_check_interval;
 
 	sleep(min(mmp_check_interval * 2 + 1, mmp_check_interval + 60));
 
-	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, fs->mmp_buf);
-	if (retval)
-		goto mmp_error;
+	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_ಖಂಡ, fs->mmp_buf);
+	ಆದರೆ (retval)
+		ಹೋಗು mmp_error;
 
-	if (seq != mmp_s->mmp_seq) {
+	ಆದರೆ (seq != mmp_s->mmp_seq) {
 		retval = EXT2_ET_MMP_FAILED;
-		goto mmp_error;
+		ಹೋಗು mmp_error;
 	}
 
 clean_seq:
-	if (!(fs->flags & EXT2_FLAG_RW))
-		goto mmp_error;
+	ಆದರೆ (!(fs->flags & EXT2_FLAG_RW))
+		ಹೋಗು mmp_error;
 
 	mmp_s->mmp_seq = seq = ext2fs_mmp_new_seq();
-#ifdef HAVE_GETHOSTNAME
-	gethostname((char *) mmp_s->mmp_nodename, sizeof(mmp_s->mmp_nodename));
-#else
-	strcpy((char *) mmp_s->mmp_nodename, "unknown host");
-#endif
-	strncpy((char *) mmp_s->mmp_bdevname, fs->device_name,
-		sizeof(mmp_s->mmp_bdevname));
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_GETHOSTNAME
+	gethostname((ಅಕ್ಷರ *) mmp_s->mmp_nodename, ಗಾತ್ರ(mmp_s->mmp_nodename));
+#ಇಲ್ಲದಿದ್ದರೆ
+	strcpy((ಅಕ್ಷರ *) mmp_s->mmp_nodename, "unknown host");
+#ಆದರೆ_ಅಂತ್ಯ
+	strncpy((ಅಕ್ಷರ *) mmp_s->mmp_bdevname, fs->device_name,
+		ಗಾತ್ರ(mmp_s->mmp_bdevname));
 
-	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_block, fs->mmp_buf);
-	if (retval)
-		goto mmp_error;
+	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_ಖಂಡ, fs->mmp_buf);
+	ಆದರೆ (retval)
+		ಹೋಗು mmp_error;
 
 	sleep(min(2 * mmp_check_interval + 1, mmp_check_interval + 60));
 
-	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, fs->mmp_buf);
-	if (retval)
-		goto mmp_error;
+	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_ಖಂಡ, fs->mmp_buf);
+	ಆದರೆ (retval)
+		ಹೋಗು mmp_error;
 
-	if (seq != mmp_s->mmp_seq) {
+	ಆದರೆ (seq != mmp_s->mmp_seq) {
 		retval = EXT2_ET_MMP_FAILED;
-		goto mmp_error;
+		ಹೋಗು mmp_error;
 	}
 
 	mmp_s->mmp_seq = EXT4_MMP_SEQ_FSCK;
-	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_block, fs->mmp_buf);
-	if (retval)
-		goto mmp_error;
+	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_ಖಂಡ, fs->mmp_buf);
+	ಆದರೆ (retval)
+		ಹೋಗು mmp_error;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 
 mmp_error:
-	return retval;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+	ಹಿಂತಿರುಗಿ retval;
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಹಿಂತಿರುಗಿ EXT2_ET_OP_NOT_SUPPORTED;
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
 /*
@@ -402,97 +402,97 @@ mmp_error:
  */
 errcode_t ext2fs_mmp_stop(ext2_filsys fs)
 {
-#ifdef CONFIG_MMP
-	struct mmp_struct *mmp, *mmp_cmp;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_MMP
+	ರಚನೆ mmp_struct *mmp, *mmp_cmp;
 	errcode_t retval = 0;
 
-	if (!ext2fs_has_feature_mmp(fs->super) ||
+	ಆದರೆ (!ext2fs_has_feature_mmp(fs->super) ||
 	    !(fs->flags & EXT2_FLAG_RW) || (fs->flags & EXT2_FLAG_SKIP_MMP) ||
-	    (fs->mmp_buf == NULL) || (fs->mmp_cmp == NULL))
-		goto mmp_error;
+	    (fs->mmp_buf == ಖಾಲಿ) || (fs->mmp_cmp == ಖಾಲಿ))
+		ಹೋಗು mmp_error;
 
-	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, NULL);
-	if (retval)
-		goto mmp_error;
+	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_ಖಂಡ, ಖಾಲಿ);
+	ಆದರೆ (retval)
+		ಹೋಗು mmp_error;
 
 	/* Check if the MMP block is not changed. */
 	mmp = fs->mmp_buf;
 	mmp_cmp = fs->mmp_cmp;
-	if (memcmp(mmp, mmp_cmp, sizeof(*mmp_cmp))) {
+	ಆದರೆ (memcmp(mmp, mmp_cmp, ಗಾತ್ರ(*mmp_cmp))) {
 		retval = EXT2_ET_MMP_CHANGE_ABORT;
-		goto mmp_error;
+		ಹೋಗು mmp_error;
 	}
 
 	mmp_cmp->mmp_seq = EXT4_MMP_SEQ_CLEAN;
-	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_block, fs->mmp_cmp);
+	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_ಖಂಡ, fs->mmp_cmp);
 
 mmp_error:
-	if (fs->mmp_fd > 0) {
+	ಆದರೆ (fs->mmp_fd > 0) {
 		close(fs->mmp_fd);
 		fs->mmp_fd = -1;
 	}
 
-	return retval;
-#else
-	if (!ext2fs_has_feature_mmp(fs->super) ||
+	ಹಿಂತಿರುಗಿ retval;
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಆದರೆ (!ext2fs_has_feature_mmp(fs->super) ||
 	    !(fs->flags & EXT2_FLAG_RW) || (fs->flags & EXT2_FLAG_SKIP_MMP))
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+	ಹಿಂತಿರುಗಿ EXT2_ET_OP_NOT_SUPPORTED;
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-#define EXT2_MIN_MMP_UPDATE_INTERVAL 60
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MIN_MMP_UPDATE_INTERVAL 60
 
 /*
  * Update the on-disk mmp buffer, after checking that it hasn't been changed.
  */
-errcode_t ext2fs_mmp_update2(ext2_filsys fs, int immediately)
+errcode_t ext2fs_mmp_update2(ext2_filsys fs, ಪೂರ್ಣಾಂಕ immediately)
 {
-#ifdef CONFIG_MMP
-	struct mmp_struct *mmp, *mmp_cmp;
-	struct timeval tv;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_MMP
+	ರಚನೆ mmp_struct *mmp, *mmp_cmp;
+	ರಚನೆ timeval tv;
 	errcode_t retval = 0;
 
-	if (!ext2fs_has_feature_mmp(fs->super) ||
+	ಆದರೆ (!ext2fs_has_feature_mmp(fs->super) ||
 	    !(fs->flags & EXT2_FLAG_RW) || (fs->flags & EXT2_FLAG_SKIP_MMP))
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 
 	gettimeofday(&tv, 0);
-	if (!immediately &&
-	    tv.tv_sec - fs->mmp_last_written < EXT2_MIN_MMP_UPDATE_INTERVAL)
-		return 0;
+	ಆದರೆ (!immediately &&
+	    tv.tv_sec - fs->mmp_ಕೊನೆಯ_written < EXT2_MIN_MMP_UPDATE_INTERVAL)
+		ಹಿಂತಿರುಗಿ 0;
 
-	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, NULL);
-	if (retval)
-		goto mmp_error;
+	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_ಖಂಡ, ಖಾಲಿ);
+	ಆದರೆ (retval)
+		ಹೋಗು mmp_error;
 
 	mmp = fs->mmp_buf;
 	mmp_cmp = fs->mmp_cmp;
 
-	if (memcmp(mmp, mmp_cmp, sizeof(*mmp_cmp)))
-		return EXT2_ET_MMP_CHANGE_ABORT;
+	ಆದರೆ (memcmp(mmp, mmp_cmp, ಗಾತ್ರ(*mmp_cmp)))
+		ಹಿಂತಿರುಗಿ EXT2_ET_MMP_CHANGE_ABORT;
 
 	/*
 	 * Believe it or not, ext2fs_mmp_read actually overwrites fs->mmp_cmp
 	 * and leaves fs->mmp_buf untouched.  Hence we copy mmp_cmp into
 	 * mmp_buf, update mmp_buf, and write mmp_buf out to disk.
 	 */
-	memcpy(mmp, mmp_cmp, sizeof(*mmp_cmp));
-	mmp->mmp_time = tv.tv_sec;
+	ಸ್ಮರಣೆ_ನಕಲು(mmp, mmp_cmp, ಗಾತ್ರ(*mmp_cmp));
+	mmp->mmp_ಸಮಯ = tv.tv_sec;
 	mmp->mmp_seq = EXT4_MMP_SEQ_FSCK;
-	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_block, fs->mmp_buf);
+	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_ಖಂಡ, fs->mmp_buf);
 
 mmp_error:
-	return retval;
-#else
-	if (!ext2fs_has_feature_mmp(fs->super) ||
+	ಹಿಂತಿರುಗಿ retval;
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಆದರೆ (!ext2fs_has_feature_mmp(fs->super) ||
 	    !(fs->flags & EXT2_FLAG_RW) || (fs->flags & EXT2_FLAG_SKIP_MMP))
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+	ಹಿಂತಿರುಗಿ EXT2_ET_OP_NOT_SUPPORTED;
+#ಆದರೆ_ಅಂತ್ಯ
 }
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
-#endif
+#ಆದರೆ __GNUC_PREREQ (4, 6)
+#ಸೂಚನೆ GCC diagnostic ತೆಗೆ
+#ಆದರೆ_ಅಂತ್ಯ

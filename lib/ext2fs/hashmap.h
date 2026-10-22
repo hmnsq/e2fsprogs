@@ -1,42 +1,42 @@
-#ifndef HASHMAP_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HASHMAP_H
 # define HASHMAP_H
 
 # include <stdlib.h>
 # include <stdint.h>
 
-#ifndef __GNUC_PREREQ
-#if defined(__GNUC__) && defined(__GNUC_MINOR__)
-#define __GNUC_PREREQ(maj, min) \
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ __GNUC_PREREQ
+#ಆದರೆ defined(__GNUC__) && defined(__GNUC_MINOR__)
+#ವ್ಯಾಖ್ಯಾನಿಸು __GNUC_PREREQ(maj, min) \
 	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
-#else
-#define __GNUC_PREREQ(maj, min) 0
-#endif
-#endif
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು __GNUC_PREREQ(maj, min) 0
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ
 
-struct ext2fs_hashmap;
+ರಚನೆ ext2fs_hashmap;
 
-struct ext2fs_hashmap_entry {
-	void *data;
-	const void *key;
-	size_t key_len;
-	struct ext2fs_hashmap_entry *next;
-	struct ext2fs_hashmap_entry *list_next;
-	struct ext2fs_hashmap_entry *list_prev;
+ರಚನೆ ext2fs_hashmap_ನಮೂದು {
+	ಶೂನ್ಯ *ದತ್ತಾಂಶ;
+	ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಕೀಲಿ;
+	size_t ಕೀಲಿ_len;
+	ರಚನೆ ext2fs_hashmap_ನಮೂದು *ಮುಂದಿನ;
+	ರಚನೆ ext2fs_hashmap_ನಮೂದು *list_ಮುಂದಿನ;
+	ರಚನೆ ext2fs_hashmap_ನಮೂದು *list_prev;
 };
 
-struct ext2fs_hashmap *ext2fs_hashmap_create(
-				uint32_t(*hash_fct)(const void*, size_t),
-				void(*free_fct)(void*), size_t size);
-int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
-		       void *data, const void *key,size_t key_len);
-void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *key,
-			    size_t key_len);
-void *ext2fs_hashmap_iter_in_order(struct ext2fs_hashmap *h,
-				   struct ext2fs_hashmap_entry **it);
-void ext2fs_hashmap_del(struct ext2fs_hashmap *h,
-			struct ext2fs_hashmap_entry *e);
-void ext2fs_hashmap_free(struct ext2fs_hashmap *h);
+ರಚನೆ ext2fs_hashmap *ext2fs_hashmap_create(
+				uint32_t(*hash_fct)(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ*, size_t),
+				ಶೂನ್ಯ(*free_fct)(ಶೂನ್ಯ*), size_t ಗಾತ್ರ_2);
+ಪೂರ್ಣಾಂಕ ext2fs_hashmap_ಕೂಡಿಸು(ರಚನೆ ext2fs_hashmap *h,
+		       ಶೂನ್ಯ *ದತ್ತಾಂಶ, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಕೀಲಿ,size_t ಕೀಲಿ_len);
+ಶೂನ್ಯ *ext2fs_hashmap_lookup(ರಚನೆ ext2fs_hashmap *h, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಕೀಲಿ,
+			    size_t ಕೀಲಿ_len);
+ಶೂನ್ಯ *ext2fs_hashmap_iter_ಒಳ_ಕ್ರಮ(ರಚನೆ ext2fs_hashmap *h,
+				   ರಚನೆ ext2fs_hashmap_ನಮೂದು **it);
+ಶೂನ್ಯ ext2fs_hashmap_del(ರಚನೆ ext2fs_hashmap *h,
+			ರಚನೆ ext2fs_hashmap_ನಮೂದು *e);
+ಶೂನ್ಯ ext2fs_hashmap_free(ರಚನೆ ext2fs_hashmap *h);
 
-uint32_t ext2fs_djb2_hash(const void *str, size_t size);
+uint32_t ext2fs_djb2_hash(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *str, size_t ಗಾತ್ರ_2);
 
-#endif /* !HASHMAP_H */
+#ಆದರೆ_ಅಂತ್ಯ /* !HASHMAP_H */

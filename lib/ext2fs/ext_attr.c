@@ -11,93 +11,93 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <string.h>
-#include <time.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
 
-#include "ext2_fs.h"
-#include "ext2_ext_attr.h"
-#include "ext4_acl.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_ext_attr.h"
+#ಅನ್ತರ್ಭಾವ "ext4_acl.h"
 
-#include "ext2fsP.h"
+#ಅನ್ತರ್ಭಾವ "ext2fsP.h"
 
-static errcode_t read_ea_inode_hash(ext2_filsys fs, ext2_ino_t ino, __u32 *hash)
+ಸ್ಥಿರ errcode_t read_ea_inode_hash(ext2_filsys fs, ext2_ino_t ino, __u32 *hash)
 {
-	struct ext2_inode inode;
+	ರಚನೆ ext2_inode inode;
 	errcode_t retval;
 
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
-		return retval;
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 	*hash = ext2fs_get_ea_inode_hash(&inode);
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-#define NAME_HASH_SHIFT 5
-#define VALUE_HASH_SHIFT 16
+#ವ್ಯಾಖ್ಯಾನಿಸು NAME_HASH_ಸರಿಸು 5
+#ವ್ಯಾಖ್ಯಾನಿಸು ಮೌಲ್ಯ_HASH_ಸರಿಸು 16
 
 /*
  * ext2_xattr_hash_entry()
  *
  * Compute the hash of an extended attribute.
  */
-__u32 ext2fs_ext_attr_hash_entry(struct ext2_ext_attr_entry *entry, void *data)
+__u32 ext2fs_ext_attr_hash_ನಮೂದು(ರಚನೆ ext2_ext_attr_ನಮೂದು *ನಮೂದು, ಶೂನ್ಯ *ದತ್ತಾಂಶ)
 {
 	__u32 hash = 0;
-	unsigned char *name = (((unsigned char *) entry) +
-			       sizeof(struct ext2_ext_attr_entry));
-	int n;
+	ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *name = (((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *) ನಮೂದು) +
+			       ಗಾತ್ರ(ರಚನೆ ext2_ext_attr_ನಮೂದು));
+	ಪೂರ್ಣಾಂಕ n;
 
-	for (n = 0; n < entry->e_name_len; n++) {
-		hash = (hash << NAME_HASH_SHIFT) ^
-		       (hash >> (8*sizeof(hash) - NAME_HASH_SHIFT)) ^
+	ಗಾಗಿ (n = 0; n < ನಮೂದು->e_name_len; n++) {
+		hash = (hash << NAME_HASH_ಸರಿಸು) ^
+		       (hash >> (8*ಗಾತ್ರ(hash) - NAME_HASH_ಸರಿಸು)) ^
 		       *name++;
 	}
 
 	/* The hash needs to be calculated on the data in little-endian. */
-	if (entry->e_value_inum == 0 && entry->e_value_size != 0) {
-		__u32 *value = (__u32 *)data;
-		for (n = (entry->e_value_size + EXT2_EXT_ATTR_ROUND) >>
-			 EXT2_EXT_ATTR_PAD_BITS; n; n--) {
-			hash = (hash << VALUE_HASH_SHIFT) ^
-			       (hash >> (8*sizeof(hash) - VALUE_HASH_SHIFT)) ^
-			       ext2fs_le32_to_cpu(*value++);
+	ಆದರೆ (ನಮೂದು->e_ಮೌಲ್ಯ_inum == 0 && ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ != 0) {
+		__u32 *ಮೌಲ್ಯ = (__u32 *)ದತ್ತಾಂಶ;
+		ಗಾಗಿ (n = (ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ + EXT2_EXT_ATTR_ಸುತ್ತು) >>
+			 EXT2_EXT_ATTR_PAD_ಬಿಟ್ಟುಗಳು; n; n--) {
+			hash = (hash << ಮೌಲ್ಯ_HASH_ಸರಿಸು) ^
+			       (hash >> (8*ಗಾತ್ರ(hash) - ಮೌಲ್ಯ_HASH_ಸರಿಸು)) ^
+			       ext2fs_le32_ಗಮ್ಯ_cpu(*ಮೌಲ್ಯ++);
 		}
 	}
 
-	return hash;
+	ಹಿಂತಿರುಗಿ hash;
 }
 
-__u32 ext2fs_ext_attr_hash_entry_signed(struct ext2_ext_attr_entry *entry,
-					void *data)
+__u32 ext2fs_ext_attr_hash_ನಮೂದು_signed(ರಚನೆ ext2_ext_attr_ನಮೂದು *ನಮೂದು,
+					ಶೂನ್ಯ *ದತ್ತಾಂಶ)
 {
 	__u32 hash = 0;
-	signed char *name = (((signed char *) entry) +
-			     sizeof(struct ext2_ext_attr_entry));
-	int n;
+	ಚಿಹ್ನೆಯುಳ್ಳ ಅಕ್ಷರ *name = (((ಚಿಹ್ನೆಯುಳ್ಳ ಅಕ್ಷರ *) ನಮೂದು) +
+			     ಗಾತ್ರ(ರಚನೆ ext2_ext_attr_ನಮೂದು));
+	ಪೂರ್ಣಾಂಕ n;
 
-	for (n = 0; n < entry->e_name_len; n++) {
-		hash = (hash << NAME_HASH_SHIFT) ^
-		       (hash >> (8*sizeof(hash) - NAME_HASH_SHIFT)) ^
+	ಗಾಗಿ (n = 0; n < ನಮೂದು->e_name_len; n++) {
+		hash = (hash << NAME_HASH_ಸರಿಸು) ^
+		       (hash >> (8*ಗಾತ್ರ(hash) - NAME_HASH_ಸರಿಸು)) ^
 		       *name++;
 	}
 
 	/* The hash needs to be calculated on the data in little-endian. */
-	if (entry->e_value_inum == 0 && entry->e_value_size != 0) {
-		__u32 *value = (__u32 *)data;
-		for (n = (entry->e_value_size + EXT2_EXT_ATTR_ROUND) >>
-			 EXT2_EXT_ATTR_PAD_BITS; n; n--) {
-			hash = (hash << VALUE_HASH_SHIFT) ^
-			       (hash >> (8*sizeof(hash) - VALUE_HASH_SHIFT)) ^
-			       ext2fs_le32_to_cpu(*value++);
+	ಆದರೆ (ನಮೂದು->e_ಮೌಲ್ಯ_inum == 0 && ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ != 0) {
+		__u32 *ಮೌಲ್ಯ = (__u32 *)ದತ್ತಾಂಶ;
+		ಗಾಗಿ (n = (ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ + EXT2_EXT_ATTR_ಸುತ್ತು) >>
+			 EXT2_EXT_ATTR_PAD_ಬಿಟ್ಟುಗಳು; n; n--) {
+			hash = (hash << ಮೌಲ್ಯ_HASH_ಸರಿಸು) ^
+			       (hash >> (8*ಗಾತ್ರ(hash) - ಮೌಲ್ಯ_HASH_ಸರಿಸು)) ^
+			       ext2fs_le32_ಗಮ್ಯ_cpu(*ಮೌಲ್ಯ++);
 		}
 	}
 
-	return hash;
+	ಹಿಂತಿರುಗಿ hash;
 }
 
 
@@ -110,33 +110,33 @@ __u32 ext2fs_ext_attr_hash_entry_signed(struct ext2_ext_attr_entry *entry,
  * hash variant.
  */
 errcode_t ext2fs_ext_attr_hash_entry3(ext2_filsys fs,
-				      struct ext2_ext_attr_entry *entry,
-				      void *data, __u32 *hash,
+				      ರಚನೆ ext2_ext_attr_ನಮೂದು *ನಮೂದು,
+				      ಶೂನ್ಯ *ದತ್ತಾಂಶ, __u32 *hash,
 				      __u32 *signed_hash)
 {
-	*hash = ext2fs_ext_attr_hash_entry(entry, data);
-	if (signed_hash)
-		*signed_hash = ext2fs_ext_attr_hash_entry_signed(entry, data);
+	*hash = ext2fs_ext_attr_hash_ನಮೂದು(ನಮೂದು, ದತ್ತಾಂಶ);
+	ಆದರೆ (signed_hash)
+		*signed_hash = ext2fs_ext_attr_hash_ನಮೂದು_signed(ನಮೂದು, ದತ್ತಾಂಶ);
 
-	if (entry->e_value_inum) {
+	ಆದರೆ (ನಮೂದು->e_ಮೌಲ್ಯ_inum) {
 		__u32 ea_inode_hash;
 		errcode_t retval;
 
-		retval = read_ea_inode_hash(fs, entry->e_value_inum,
+		retval = read_ea_inode_hash(fs, ನಮೂದು->e_ಮೌಲ್ಯ_inum,
 					    &ea_inode_hash);
-		if (retval)
-			return retval;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 
-		*hash = (*hash << VALUE_HASH_SHIFT) ^
-			(*hash >> (8*sizeof(*hash) - VALUE_HASH_SHIFT)) ^
+		*hash = (*hash << ಮೌಲ್ಯ_HASH_ಸರಿಸು) ^
+			(*hash >> (8*ಗಾತ್ರ(*hash) - ಮೌಲ್ಯ_HASH_ಸರಿಸು)) ^
 			ea_inode_hash;
-		if (signed_hash)
-			*signed_hash = (*signed_hash << VALUE_HASH_SHIFT) ^
-				(*signed_hash >> (8*sizeof(*hash) -
-						  VALUE_HASH_SHIFT)) ^
+		ಆದರೆ (signed_hash)
+			*signed_hash = (*signed_hash << ಮೌಲ್ಯ_HASH_ಸರಿಸು) ^
+				(*signed_hash >> (8*ಗಾತ್ರ(*hash) -
+						  ಮೌಲ್ಯ_HASH_ಸರಿಸು)) ^
 				ea_inode_hash;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 /*
@@ -147,250 +147,250 @@ errcode_t ext2fs_ext_attr_hash_entry3(ext2_filsys fs,
  * external inodes (ea_inode feature).
  */
 errcode_t ext2fs_ext_attr_hash_entry2(ext2_filsys fs,
-				      struct ext2_ext_attr_entry *entry,
-				      void *data, __u32 *hash)
+				      ರಚನೆ ext2_ext_attr_ನಮೂದು *ನಮೂದು,
+				      ಶೂನ್ಯ *ದತ್ತಾಂಶ, __u32 *hash)
 {
-	return ext2fs_ext_attr_hash_entry3(fs, entry, data, hash, NULL);
+	ಹಿಂತಿರುಗಿ ext2fs_ext_attr_hash_entry3(fs, ನಮೂದು, ದತ್ತಾಂಶ, hash, ಖಾಲಿ);
 }
 
-#undef NAME_HASH_SHIFT
-#undef VALUE_HASH_SHIFT
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು NAME_HASH_ಸರಿಸು
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು ಮೌಲ್ಯ_HASH_ಸರಿಸು
 
-#define BLOCK_HASH_SHIFT 16
+#ವ್ಯಾಖ್ಯಾನಿಸು ಖಂಡ_HASH_ಸರಿಸು 16
 
 /* Mirrors ext4_xattr_rehash() implementation in kernel. */
-void ext2fs_ext_attr_block_rehash(struct ext2_ext_attr_header *header,
-				  struct ext2_ext_attr_entry *end)
+ಶೂನ್ಯ ext2fs_ext_attr_ಖಂಡ_rehash(ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ *ಶೀರ್ಷಿಕೆ,
+				  ರಚನೆ ext2_ext_attr_ನಮೂದು *ಕೊನೆ)
 {
-	struct ext2_ext_attr_entry *here;
+	ರಚನೆ ext2_ext_attr_ನಮೂದು *ಇಲ್ಲಿ;
 	__u32 hash = 0;
 
-	here = (struct ext2_ext_attr_entry *)(header+1);
-	while (here < end && !EXT2_EXT_IS_LAST_ENTRY(here)) {
-		if (!here->e_hash) {
+	ಇಲ್ಲಿ = (ರಚನೆ ext2_ext_attr_ನಮೂದು *)(ಶೀರ್ಷಿಕೆ+1);
+	ಆಗ (ಇಲ್ಲಿ < ಕೊನೆ && !EXT2_EXT_IS_ಕೊನೆಯ_ನಮೂದು(ಇಲ್ಲಿ)) {
+		ಆದರೆ (!ಇಲ್ಲಿ->e_hash) {
 			/* Block is not shared if an entry's hash value == 0 */
 			hash = 0;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
-		hash = (hash << BLOCK_HASH_SHIFT) ^
-		       (hash >> (8*sizeof(hash) - BLOCK_HASH_SHIFT)) ^
-		       here->e_hash;
-		here = EXT2_EXT_ATTR_NEXT(here);
+		hash = (hash << ಖಂಡ_HASH_ಸರಿಸು) ^
+		       (hash >> (8*ಗಾತ್ರ(hash) - ಖಂಡ_HASH_ಸರಿಸು)) ^
+		       ಇಲ್ಲಿ->e_hash;
+		ಇಲ್ಲಿ = EXT2_EXT_ATTR_ಮುಂದಿನ(ಇಲ್ಲಿ);
 	}
-	header->h_hash = hash;
+	ಶೀರ್ಷಿಕೆ->h_hash = hash;
 }
 
-#undef BLOCK_HASH_SHIFT
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು ಖಂಡ_HASH_ಸರಿಸು
 
-__u32 ext2fs_get_ea_inode_hash(struct ext2_inode *inode)
+__u32 ext2fs_get_ea_inode_hash(ರಚನೆ ext2_inode *inode)
 {
-	return inode->i_atime;
+	ಹಿಂತಿರುಗಿ inode->i_atime;
 }
 
-void ext2fs_set_ea_inode_hash(struct ext2_inode *inode, __u32 hash)
+ಶೂನ್ಯ ext2fs_ಗಣ_ea_inode_hash(ರಚನೆ ext2_inode *inode, __u32 hash)
 {
 	inode->i_atime = hash;
 }
 
-__u64 ext2fs_get_ea_inode_ref(struct ext2_inode *inode)
+__u64 ext2fs_get_ea_inode_ref(ರಚನೆ ext2_inode *inode)
 {
-	return ((__u64)inode->i_ctime << 32) | inode->osd1.linux1.l_i_version;
+	ಹಿಂತಿರುಗಿ ((__u64)inode->i_ctime << 32) | inode->osd1.linux1.l_i_ಆವೃತ್ತಿ;
 }
 
-void ext2fs_set_ea_inode_ref(struct ext2_inode *inode, __u64 ref_count)
+ಶೂನ್ಯ ext2fs_ಗಣ_ea_inode_ref(ರಚನೆ ext2_inode *inode, __u64 ref_ಎಣಿಕೆ)
 {
-	inode->i_ctime = (__u32)(ref_count >> 32);
-	inode->osd1.linux1.l_i_version = (__u32)ref_count;
+	inode->i_ctime = (__u32)(ref_ಎಣಿಕೆ >> 32);
+	inode->osd1.linux1.l_i_ಆವೃತ್ತಿ = (__u32)ref_ಎಣಿಕೆ;
 }
 
-static errcode_t check_ext_attr_header(struct ext2_ext_attr_header *header)
+ಸ್ಥಿರ errcode_t check_ext_attr_ಶೀರ್ಷಿಕೆ(ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ *ಶೀರ್ಷಿಕೆ)
 {
-	if ((header->h_magic != EXT2_EXT_ATTR_MAGIC_v1 &&
-	     header->h_magic != EXT2_EXT_ATTR_MAGIC) ||
-	    header->h_blocks != 1)
-		return EXT2_ET_BAD_EA_HEADER;
+	ಆದರೆ ((ಶೀರ್ಷಿಕೆ->h_magic != EXT2_EXT_ATTR_MAGIC_v1 &&
+	     ಶೀರ್ಷಿಕೆ->h_magic != EXT2_EXT_ATTR_MAGIC) ||
+	    ಶೀರ್ಷಿಕೆ->h_ಖಂಡಗಳು != 1)
+		ಹಿಂತಿರುಗಿ EXT2_ET_BAD_EA_ಶೀರ್ಷಿಕೆ;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-errcode_t ext2fs_read_ext_attr3(ext2_filsys fs, blk64_t block, void *buf,
+errcode_t ext2fs_read_ext_attr3(ext2_filsys fs, blk64_t ಖಂಡ, ಶೂನ್ಯ *buf,
 				ext2_ino_t inum)
 {
-	int		csum_failed = 0;
+	ಪೂರ್ಣಾಂಕ		csum_failed = 0;
 	errcode_t	retval;
 
-	retval = io_channel_read_blk64(fs->io, block, 1, buf);
-	if (retval)
-		return retval;
+	retval = io_channel_read_blk64(fs->io, ಖಂಡ, 1, buf);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-	if (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
-	    !ext2fs_ext_attr_block_csum_verify(fs, inum, block, buf))
+	ಆದರೆ (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+	    !ext2fs_ext_attr_ಖಂಡ_csum_verify(fs, inum, ಖಂಡ, buf))
 		csum_failed = 1;
 
-#ifdef WORDS_BIGENDIAN
-	ext2fs_swap_ext_attr(buf, buf, fs->blocksize, 1);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
+	ext2fs_ಅದಲುಬದಲು_ext_attr(buf, buf, fs->blocksize, 1);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	retval = check_ext_attr_header(buf);
-	if (retval == 0 && csum_failed)
+	retval = check_ext_attr_ಶೀರ್ಷಿಕೆ(buf);
+	ಆದರೆ (retval == 0 && csum_failed)
 		retval = EXT2_ET_EXT_ATTR_CSUM_INVALID;
 
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-errcode_t ext2fs_read_ext_attr2(ext2_filsys fs, blk64_t block, void *buf)
+errcode_t ext2fs_read_ext_attr2(ext2_filsys fs, blk64_t ಖಂಡ, ಶೂನ್ಯ *buf)
 {
-	return ext2fs_read_ext_attr3(fs, block, buf, 0);
+	ಹಿಂತಿರುಗಿ ext2fs_read_ext_attr3(fs, ಖಂಡ, buf, 0);
 }
 
-errcode_t ext2fs_read_ext_attr(ext2_filsys fs, blk_t block, void *buf)
+errcode_t ext2fs_read_ext_attr(ext2_filsys fs, blk_t ಖಂಡ, ಶೂನ್ಯ *buf)
 {
-	return ext2fs_read_ext_attr2(fs, block, buf);
+	ಹಿಂತಿರುಗಿ ext2fs_read_ext_attr2(fs, ಖಂಡ, buf);
 }
 
-errcode_t ext2fs_write_ext_attr3(ext2_filsys fs, blk64_t block, void *inbuf,
+errcode_t ext2fs_write_ext_attr3(ext2_filsys fs, blk64_t ಖಂಡ, ಶೂನ್ಯ *inbuf,
 				 ext2_ino_t inum)
 {
 	errcode_t	retval;
-	char		*write_buf;
+	ಅಕ್ಷರ		*write_buf;
 
-#ifdef WORDS_BIGENDIAN
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
 	retval = ext2fs_get_mem(fs->blocksize, &write_buf);
-	if (retval)
-		return retval;
-	ext2fs_swap_ext_attr(write_buf, inbuf, fs->blocksize, 1);
-#else
-	write_buf = (char *) inbuf;
-#endif
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
+	ext2fs_ಅದಲುಬದಲು_ext_attr(write_buf, inbuf, fs->blocksize, 1);
+#ಇಲ್ಲದಿದ್ದರೆ
+	write_buf = (ಅಕ್ಷರ *) inbuf;
+#ಆದರೆ_ಅಂತ್ಯ
 
-	retval = ext2fs_ext_attr_block_csum_set(fs, inum, block,
-			(struct ext2_ext_attr_header *)write_buf);
-	if (retval)
-		return retval;
+	retval = ext2fs_ext_attr_ಖಂಡ_csum_ಗಣ(fs, inum, ಖಂಡ,
+			(ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ *)write_buf);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-	retval = io_channel_write_blk64(fs->io, block, 1, write_buf);
-#ifdef WORDS_BIGENDIAN
+	retval = io_channel_write_blk64(fs->io, ಖಂಡ, 1, write_buf);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
 	ext2fs_free_mem(&write_buf);
-#endif
-	if (!retval)
-		ext2fs_mark_changed(fs);
-	return retval;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಆದರೆ (!retval)
+		ext2fs_mark_ಬದಲಾಯಿತು(fs);
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-errcode_t ext2fs_write_ext_attr2(ext2_filsys fs, blk64_t block, void *inbuf)
+errcode_t ext2fs_write_ext_attr2(ext2_filsys fs, blk64_t ಖಂಡ, ಶೂನ್ಯ *inbuf)
 {
-	return ext2fs_write_ext_attr3(fs, block, inbuf, 0);
+	ಹಿಂತಿರುಗಿ ext2fs_write_ext_attr3(fs, ಖಂಡ, inbuf, 0);
 }
 
-errcode_t ext2fs_write_ext_attr(ext2_filsys fs, blk_t block, void *inbuf)
+errcode_t ext2fs_write_ext_attr(ext2_filsys fs, blk_t ಖಂಡ, ಶೂನ್ಯ *inbuf)
 {
-	return ext2fs_write_ext_attr2(fs, block, inbuf);
+	ಹಿಂತಿರುಗಿ ext2fs_write_ext_attr2(fs, ಖಂಡ, inbuf);
 }
 
 /*
  * This function adjusts the reference count of the EA block.
  */
 errcode_t ext2fs_adjust_ea_refcount3(ext2_filsys fs, blk64_t blk,
-				    char *block_buf, int adjust,
+				    ಅಕ್ಷರ *ಖಂಡ_buf, ಪೂರ್ಣಾಂಕ adjust,
 				    __u32 *newcount, ext2_ino_t inum)
 {
 	errcode_t	retval;
-	struct ext2_ext_attr_header *header;
-	char	*buf = 0;
+	ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ *ಶೀರ್ಷಿಕೆ;
+	ಅಕ್ಷರ	*buf = 0;
 
-	if ((blk >= ext2fs_blocks_count(fs->super)) ||
-	    (blk < fs->super->s_first_data_block))
-		return EXT2_ET_BAD_EA_BLOCK_NUM;
+	ಆದರೆ ((blk >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super)) ||
+	    (blk < fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ))
+		ಹಿಂತಿರುಗಿ EXT2_ET_BAD_EA_ಖಂಡ_ಅಂಕೆ;
 
-	if (!block_buf) {
+	ಆದರೆ (!ಖಂಡ_buf) {
 		retval = ext2fs_get_mem(fs->blocksize, &buf);
-		if (retval)
-			return retval;
-		block_buf = buf;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
+		ಖಂಡ_buf = buf;
 	}
 
-	retval = ext2fs_read_ext_attr3(fs, blk, block_buf, inum);
-	if (retval)
-		goto errout;
+	retval = ext2fs_read_ext_attr3(fs, blk, ಖಂಡ_buf, inum);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
 
-	header = (struct ext2_ext_attr_header *) block_buf;
-	header->h_refcount += adjust;
-	if (newcount)
-		*newcount = header->h_refcount;
+	ಶೀರ್ಷಿಕೆ = (ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ *) ಖಂಡ_buf;
+	ಶೀರ್ಷಿಕೆ->h_refcount += adjust;
+	ಆದರೆ (newcount)
+		*newcount = ಶೀರ್ಷಿಕೆ->h_refcount;
 
-	retval = ext2fs_write_ext_attr3(fs, blk, block_buf, inum);
-	if (retval)
-		goto errout;
+	retval = ext2fs_write_ext_attr3(fs, blk, ಖಂಡ_buf, inum);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
 
 errout:
-	if (buf)
+	ಆದರೆ (buf)
 		ext2fs_free_mem(&buf);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
 errcode_t ext2fs_adjust_ea_refcount2(ext2_filsys fs, blk64_t blk,
-				    char *block_buf, int adjust,
+				    ಅಕ್ಷರ *ಖಂಡ_buf, ಪೂರ್ಣಾಂಕ adjust,
 				    __u32 *newcount)
 {
-	return ext2fs_adjust_ea_refcount3(fs, blk, block_buf, adjust,
+	ಹಿಂತಿರುಗಿ ext2fs_adjust_ea_refcount3(fs, blk, ಖಂಡ_buf, adjust,
 					  newcount, 0);
 }
 
 errcode_t ext2fs_adjust_ea_refcount(ext2_filsys fs, blk_t blk,
-					char *block_buf, int adjust,
+					ಅಕ್ಷರ *ಖಂಡ_buf, ಪೂರ್ಣಾಂಕ adjust,
 					__u32 *newcount)
 {
-	return ext2fs_adjust_ea_refcount2(fs, blk, block_buf, adjust,
+	ಹಿಂತಿರುಗಿ ext2fs_adjust_ea_refcount2(fs, blk, ಖಂಡ_buf, adjust,
 					  newcount);
 }
 
 /* Manipulate the contents of extended attribute regions */
-struct ext2_xattr {
-	int name_index;
-	char *name;
-	char *short_name;
-	void *value;
-	unsigned int value_len;
+ರಚನೆ ext2_xattr {
+	ಪೂರ್ಣಾಂಕ name_ಸೂಚ್ಯಂಕ;
+	ಅಕ್ಷರ *name;
+	ಅಕ್ಷರ *short_name;
+	ಶೂನ್ಯ *ಮೌಲ್ಯ;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಮೌಲ್ಯ_len;
 	ext2_ino_t ea_ino;
 };
 
-struct ext2_xattr_handle {
+ರಚನೆ ext2_xattr_handle {
 	errcode_t magic;
 	ext2_filsys fs;
-	struct ext2_xattr *attrs;
-	int capacity;
-	int count;
-	int ibody_count;
+	ರಚನೆ ext2_xattr *attrs;
+	ಪೂರ್ಣಾಂಕ ಸಾಮರ್ಥ್ಯ;
+	ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2;
+	ಪೂರ್ಣಾಂಕ ibody_ಎಣಿಕೆ;
 	ext2_ino_t ino;
-	unsigned int flags;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ flags;
 };
 
-static errcode_t ext2fs_xattrs_expand(struct ext2_xattr_handle *h,
-				      unsigned int expandby)
+ಸ್ಥಿರ errcode_t ext2fs_xattrs_expand(ರಚನೆ ext2_xattr_handle *h,
+				      ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ expandby)
 {
-	struct ext2_xattr *new_attrs;
+	ರಚನೆ ext2_xattr *new_attrs;
 	errcode_t err;
 
-	err = ext2fs_get_arrayzero(h->capacity + expandby,
-				   sizeof(struct ext2_xattr), &new_attrs);
-	if (err)
-		return err;
+	err = ext2fs_get_arrayzero(h->ಸಾಮರ್ಥ್ಯ + expandby,
+				   ಗಾತ್ರ(ರಚನೆ ext2_xattr), &new_attrs);
+	ಆದರೆ (err)
+		ಹಿಂತಿರುಗಿ err;
 
-	memcpy(new_attrs, h->attrs, h->capacity * sizeof(struct ext2_xattr));
+	ಸ್ಮರಣೆ_ನಕಲು(new_attrs, h->attrs, h->ಸಾಮರ್ಥ್ಯ * ಗಾತ್ರ(ರಚನೆ ext2_xattr));
 	ext2fs_free_mem(&h->attrs);
-	h->capacity += expandby;
+	h->ಸಾಮರ್ಥ್ಯ += expandby;
 	h->attrs = new_attrs;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-struct ea_name_index {
-	int index;
-	const char *name;
+ರಚನೆ ea_name_ಸೂಚ್ಯಂಕ {
+	ಪೂರ್ಣಾಂಕ ಸೂಚ್ಯಂಕ;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name;
 };
 
 /* Keep these names sorted in order of decreasing specificity. */
-static struct ea_name_index ea_names[] = {
+ಸ್ಥಿರ ರಚನೆ ea_name_ಸೂಚ್ಯಂಕ ea_ಹೆಸರುಗಳು[] = {
 	{10, "gnu."},
 	{3, "system.posix_acl_default"},
 	{2, "system.posix_acl_access"},
@@ -399,178 +399,178 @@ static struct ea_name_index ea_names[] = {
 	{4, "trusted."},
 	{7, "system."},
 	{1, "user."},
-	{0, NULL},
+	{0, ಖಾಲಿ},
 };
 
-static const char *find_ea_prefix(int index)
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಕಂಡುಹಿಡಿ_ea_ಪೂರ್ವಪ್ರತ್ಯಯ(ಪೂರ್ಣಾಂಕ ಸೂಚ್ಯಂಕ)
 {
-	struct ea_name_index *e;
+	ರಚನೆ ea_name_ಸೂಚ್ಯಂಕ *e;
 
-	for (e = ea_names; e->name; e++)
-		if (e->index == index)
-			return e->name;
+	ಗಾಗಿ (e = ea_ಹೆಸರುಗಳು; e->name; e++)
+		ಆದರೆ (e->ಸೂಚ್ಯಂಕ == ಸೂಚ್ಯಂಕ)
+			ಹಿಂತಿರುಗಿ e->name;
 
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
-static int find_ea_index(const char *fullname, const char **name, int *index)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ ಕಂಡುಹಿಡಿ_ea_ಸೂಚ್ಯಂಕ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fullname, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ **name, ಪೂರ್ಣಾಂಕ *ಸೂಚ್ಯಂಕ)
 {
-	struct ea_name_index *e;
+	ರಚನೆ ea_name_ಸೂಚ್ಯಂಕ *e;
 
-	for (e = ea_names; e->name; e++) {
-		if (strncmp(fullname, e->name, strlen(e->name)) == 0) {
-			*name = fullname + strlen(e->name);
-			*index = e->index;
-			return 1;
+	ಗಾಗಿ (e = ea_ಹೆಸರುಗಳು; e->name; e++) {
+		ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(fullname, e->name, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(e->name)) == 0) {
+			*name = fullname + ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(e->name);
+			*ಸೂಚ್ಯಂಕ = e->ಸೂಚ್ಯಂಕ;
+			ಹಿಂತಿರುಗಿ 1;
 		}
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 errcode_t ext2fs_free_ext_attr(ext2_filsys fs, ext2_ino_t ino,
-			       struct ext2_inode_large *inode)
+			       ರಚನೆ ext2_inode_large *inode)
 {
-	struct ext2_ext_attr_header *header;
-	void *block_buf = NULL;
+	ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ *ಶೀರ್ಷಿಕೆ;
+	ಶೂನ್ಯ *ಖಂಡ_buf = ಖಾಲಿ;
 	blk64_t blk;
 	errcode_t err;
-	struct ext2_inode_large i;
+	ರಚನೆ ext2_inode_large i;
 
 	/* Read inode? */
-	if (inode == NULL) {
-		err = ext2fs_read_inode_full(fs, ino, (struct ext2_inode *)&i,
-					     sizeof(struct ext2_inode_large));
-		if (err)
-			return err;
+	ಆದರೆ (inode == ಖಾಲಿ) {
+		err = ext2fs_read_inode_ತುಂಬಿದ(fs, ino, (ರಚನೆ ext2_inode *)&i,
+					     ಗಾತ್ರ(ರಚನೆ ext2_inode_large));
+		ಆದರೆ (err)
+			ಹಿಂತಿರುಗಿ err;
 		inode = &i;
 	}
 
 	/* Do we already have an EA block? */
-	blk = ext2fs_file_acl_block(fs, (struct ext2_inode *)inode);
-	if (blk == 0)
-		return 0;
+	blk = ext2fs_file_acl_ಖಂಡ(fs, (ರಚನೆ ext2_inode *)inode);
+	ಆದರೆ (blk == 0)
+		ಹಿಂತಿರುಗಿ 0;
 
 	/* Find block, zero it, write back */
-	if ((blk < fs->super->s_first_data_block) ||
-	    (blk >= ext2fs_blocks_count(fs->super))) {
-		err = EXT2_ET_BAD_EA_BLOCK_NUM;
-		goto out;
+	ಆದರೆ ((blk < fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ) ||
+	    (blk >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super))) {
+		err = EXT2_ET_BAD_EA_ಖಂಡ_ಅಂಕೆ;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
-	err = ext2fs_get_mem(fs->blocksize, &block_buf);
-	if (err)
-		goto out;
+	err = ext2fs_get_mem(fs->blocksize, &ಖಂಡ_buf);
+	ಆದರೆ (err)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	err = ext2fs_read_ext_attr3(fs, blk, block_buf, ino);
-	if (err)
-		goto out2;
+	err = ext2fs_read_ext_attr3(fs, blk, ಖಂಡ_buf, ino);
+	ಆದರೆ (err)
+		ಹೋಗು out2;
 
 	/* We only know how to deal with v2 EA blocks */
-	header = (struct ext2_ext_attr_header *) block_buf;
-	if (header->h_magic != EXT2_EXT_ATTR_MAGIC) {
-		err = EXT2_ET_BAD_EA_HEADER;
-		goto out2;
+	ಶೀರ್ಷಿಕೆ = (ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ *) ಖಂಡ_buf;
+	ಆದರೆ (ಶೀರ್ಷಿಕೆ->h_magic != EXT2_EXT_ATTR_MAGIC) {
+		err = EXT2_ET_BAD_EA_ಶೀರ್ಷಿಕೆ;
+		ಹೋಗು out2;
 	}
 
-	header->h_refcount--;
-	err = ext2fs_write_ext_attr3(fs, blk, block_buf, ino);
-	if (err)
-		goto out2;
+	ಶೀರ್ಷಿಕೆ->h_refcount--;
+	err = ext2fs_write_ext_attr3(fs, blk, ಖಂಡ_buf, ino);
+	ಆದರೆ (err)
+		ಹೋಗು out2;
 
 	/* Erase link to block */
-	ext2fs_file_acl_block_set(fs, (struct ext2_inode *)inode, 0);
-	if (header->h_refcount == 0)
-		ext2fs_block_alloc_stats2(fs, blk, -1);
-	err = ext2fs_iblk_sub_blocks(fs, (struct ext2_inode *)inode, 1);
-	if (err)
-		goto out2;
+	ext2fs_file_acl_ಖಂಡ_ಗಣ(fs, (ರಚನೆ ext2_inode *)inode, 0);
+	ಆದರೆ (ಶೀರ್ಷಿಕೆ->h_refcount == 0)
+		ext2fs_ಖಂಡ_alloc_stats2(fs, blk, -1);
+	err = ext2fs_iblk_sub_ಖಂಡಗಳು(fs, (ರಚನೆ ext2_inode *)inode, 1);
+	ಆದರೆ (err)
+		ಹೋಗು out2;
 
 	/* Write inode? */
-	if (inode == &i) {
-		err = ext2fs_write_inode_full(fs, ino, (struct ext2_inode *)&i,
-					      sizeof(struct ext2_inode_large));
-		if (err)
-			goto out2;
+	ಆದರೆ (inode == &i) {
+		err = ext2fs_write_inode_ತುಂಬಿದ(fs, ino, (ರಚನೆ ext2_inode *)&i,
+					      ಗಾತ್ರ(ರಚನೆ ext2_inode_large));
+		ಆದರೆ (err)
+			ಹೋಗು out2;
 	}
 
 out2:
-	ext2fs_free_mem(&block_buf);
-out:
-	return err;
+	ext2fs_free_mem(&ಖಂಡ_buf);
+ಹೊರಹೋಗು:
+	ಹಿಂತಿರುಗಿ err;
 }
 
-static errcode_t prep_ea_block_for_write(ext2_filsys fs, ext2_ino_t ino,
-					 struct ext2_inode_large *inode)
+ಸ್ಥಿರ errcode_t prep_ea_ಖಂಡ_for_write(ext2_filsys fs, ext2_ino_t ino,
+					 ರಚನೆ ext2_inode_large *inode)
 {
-	struct ext2_ext_attr_header *header;
-	void *block_buf = NULL;
+	ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ *ಶೀರ್ಷಿಕೆ;
+	ಶೂನ್ಯ *ಖಂಡ_buf = ಖಾಲಿ;
 	blk64_t blk, goal;
 	errcode_t err;
 
 	/* Do we already have an EA block? */
-	blk = ext2fs_file_acl_block(fs, (struct ext2_inode *)inode);
-	if (blk != 0) {
-		if ((blk < fs->super->s_first_data_block) ||
-		    (blk >= ext2fs_blocks_count(fs->super))) {
-			err = EXT2_ET_BAD_EA_BLOCK_NUM;
-			goto out;
+	blk = ext2fs_file_acl_ಖಂಡ(fs, (ರಚನೆ ext2_inode *)inode);
+	ಆದರೆ (blk != 0) {
+		ಆದರೆ ((blk < fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ) ||
+		    (blk >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super))) {
+			err = EXT2_ET_BAD_EA_ಖಂಡ_ಅಂಕೆ;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 
-		err = ext2fs_get_mem(fs->blocksize, &block_buf);
-		if (err)
-			goto out;
+		err = ext2fs_get_mem(fs->blocksize, &ಖಂಡ_buf);
+		ಆದರೆ (err)
+			ಹೋಗು ಹೊರಹೋಗು;
 
-		err = ext2fs_read_ext_attr3(fs, blk, block_buf, ino);
-		if (err)
-			goto out2;
+		err = ext2fs_read_ext_attr3(fs, blk, ಖಂಡ_buf, ino);
+		ಆದರೆ (err)
+			ಹೋಗು out2;
 
 		/* We only know how to deal with v2 EA blocks */
-		header = (struct ext2_ext_attr_header *) block_buf;
-		if (header->h_magic != EXT2_EXT_ATTR_MAGIC) {
-			err = EXT2_ET_BAD_EA_HEADER;
-			goto out2;
+		ಶೀರ್ಷಿಕೆ = (ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ *) ಖಂಡ_buf;
+		ಆದರೆ (ಶೀರ್ಷಿಕೆ->h_magic != EXT2_EXT_ATTR_MAGIC) {
+			err = EXT2_ET_BAD_EA_ಶೀರ್ಷಿಕೆ;
+			ಹೋಗು out2;
 		}
 
 		/* Single-user block.  We're done here. */
-		if (header->h_refcount == 1)
-			goto out2;
+		ಆದರೆ (ಶೀರ್ಷಿಕೆ->h_refcount == 1)
+			ಹೋಗು out2;
 
 		/* We need to CoW the block. */
-		header->h_refcount--;
-		err = ext2fs_write_ext_attr3(fs, blk, block_buf, ino);
-		if (err)
-			goto out2;
-	} else {
+		ಶೀರ್ಷಿಕೆ->h_refcount--;
+		err = ext2fs_write_ext_attr3(fs, blk, ಖಂಡ_buf, ino);
+		ಆದರೆ (err)
+			ಹೋಗು out2;
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/* No block, we must increment i_blocks */
-		err = ext2fs_iblk_add_blocks(fs, (struct ext2_inode *)inode,
+		err = ext2fs_iblk_ಕೂಡಿಸು_ಖಂಡಗಳು(fs, (ರಚನೆ ext2_inode *)inode,
 					     1);
-		if (err)
-			goto out;
+		ಆದರೆ (err)
+			ಹೋಗು ಹೊರಹೋಗು;
 	}
 
 	/* Allocate a block */
-	goal = ext2fs_find_inode_goal(fs, ino, (struct ext2_inode *)inode, 0);
-	err = ext2fs_alloc_block2(fs, goal, NULL, &blk);
-	if (err)
-		goto out2;
-	ext2fs_file_acl_block_set(fs, (struct ext2_inode *)inode, blk);
+	goal = ext2fs_ಕಂಡುಹಿಡಿ_inode_goal(fs, ino, (ರಚನೆ ext2_inode *)inode, 0);
+	err = ext2fs_alloc_block2(fs, goal, ಖಾಲಿ, &blk);
+	ಆದರೆ (err)
+		ಹೋಗು out2;
+	ext2fs_file_acl_ಖಂಡ_ಗಣ(fs, (ರಚನೆ ext2_inode *)inode, blk);
 out2:
-	if (block_buf)
-		ext2fs_free_mem(&block_buf);
-out:
-	return err;
+	ಆದರೆ (ಖಂಡ_buf)
+		ext2fs_free_mem(&ಖಂಡ_buf);
+ಹೊರಹೋಗು:
+	ಹಿಂತಿರುಗಿ err;
 }
 
 
-static inline int
-posix_acl_xattr_count(size_t size)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ
+posix_acl_xattr_ಎಣಿಕೆ(size_t ಗಾತ್ರ_2)
 {
-        if (size < sizeof(posix_acl_xattr_header))
-                return -1;
-        size -= sizeof(posix_acl_xattr_header);
-        if (size % sizeof(posix_acl_xattr_entry))
-                return -1;
-        return size / sizeof(posix_acl_xattr_entry);
+        ಆದರೆ (ಗಾತ್ರ_2 < ಗಾತ್ರ(posix_acl_xattr_ಶೀರ್ಷಿಕೆ))
+                ಹಿಂತಿರುಗಿ -1;
+        ಗಾತ್ರ_2 -= ಗಾತ್ರ(posix_acl_xattr_ಶೀರ್ಷಿಕೆ);
+        ಆದರೆ (ಗಾತ್ರ_2 % ಗಾತ್ರ(posix_acl_xattr_ನಮೂದು))
+                ಹಿಂತಿರುಗಿ -1;
+        ಹಿಂತಿರುಗಿ ಗಾತ್ರ_2 / ಗಾತ್ರ(posix_acl_xattr_ನಮೂದು);
 }
 
 /*
@@ -578,1226 +578,1226 @@ posix_acl_xattr_count(size_t size)
  * attribute format.  The on-disk format uses a more compact encoding.
  * See the ext4_acl_to_disk in fs/ext4/acl.c.
  */
-static errcode_t convert_posix_acl_to_disk_buffer(const void *value, size_t size,
-						  void *out_buf, size_t *size_out)
+ಸ್ಥಿರ errcode_t convert_posix_acl_ಗಮ್ಯ_disk_ಬಫರ್(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಮೌಲ್ಯ, size_t ಗಾತ್ರ_2,
+						  ಶೂನ್ಯ *ಹೊರಹೋಗು_buf, size_t *ಗಾತ್ರ_ಹೊರಹೋಗು)
 {
-	const posix_acl_xattr_header *header =
-		(const posix_acl_xattr_header*) value;
-	const posix_acl_xattr_entry *end, *entry =
-		(const posix_acl_xattr_entry *)(header+1);
-	ext4_acl_header *ext_acl;
+	ಸ್ಥಿರಾಂಕ posix_acl_xattr_ಶೀರ್ಷಿಕೆ *ಶೀರ್ಷಿಕೆ =
+		(ಸ್ಥಿರಾಂಕ posix_acl_xattr_ಶೀರ್ಷಿಕೆ*) ಮೌಲ್ಯ;
+	ಸ್ಥಿರಾಂಕ posix_acl_xattr_ನಮೂದು *ಕೊನೆ, *ನಮೂದು =
+		(ಸ್ಥಿರಾಂಕ posix_acl_xattr_ನಮೂದು *)(ಶೀರ್ಷಿಕೆ+1);
+	ext4_acl_ಶೀರ್ಷಿಕೆ *ext_acl;
 	size_t s;
-	char *e;
+	ಅಕ್ಷರ *e;
 
-	int count;
+	ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2;
 
-	if (!value)
-		return EINVAL;
-	if (size < sizeof(posix_acl_xattr_header))
-		return ENOMEM;
-	if (header->a_version != ext2fs_cpu_to_le32(POSIX_ACL_XATTR_VERSION))
-		return EINVAL;
+	ಆದರೆ (!ಮೌಲ್ಯ)
+		ಹಿಂತಿರುಗಿ EINVAL;
+	ಆದರೆ (ಗಾತ್ರ_2 < ಗಾತ್ರ(posix_acl_xattr_ಶೀರ್ಷಿಕೆ))
+		ಹಿಂತಿರುಗಿ ENOMEM;
+	ಆದರೆ (ಶೀರ್ಷಿಕೆ->a_ಆವೃತ್ತಿ != ext2fs_cpu_ಗಮ್ಯ_le32(POSIX_ACL_XATTR_ಆವೃತ್ತಿ))
+		ಹಿಂತಿರುಗಿ EINVAL;
 
-	count = posix_acl_xattr_count(size);
-	ext_acl = out_buf;
-	ext_acl->a_version = ext2fs_cpu_to_le32(EXT4_ACL_VERSION);
+	ಎಣಿಕೆ_2 = posix_acl_xattr_ಎಣಿಕೆ(ಗಾತ್ರ_2);
+	ext_acl = ಹೊರಹೋಗು_buf;
+	ext_acl->a_ಆವೃತ್ತಿ = ext2fs_cpu_ಗಮ್ಯ_le32(EXT4_ACL_ಆವೃತ್ತಿ);
 
-	if (count <= 0)
-		return EINVAL;
+	ಆದರೆ (ಎಣಿಕೆ_2 <= 0)
+		ಹಿಂತಿರುಗಿ EINVAL;
 
-	e = (char *) out_buf + sizeof(ext4_acl_header);
-	s = sizeof(ext4_acl_header);
-	for (end = entry + count; entry != end;entry++) {
-		ext4_acl_entry *disk_entry = (ext4_acl_entry*) e;
-		disk_entry->e_tag = entry->e_tag;
-		disk_entry->e_perm = entry->e_perm;
+	e = (ಅಕ್ಷರ *) ಹೊರಹೋಗು_buf + ಗಾತ್ರ(ext4_acl_ಶೀರ್ಷಿಕೆ);
+	s = ಗಾತ್ರ(ext4_acl_ಶೀರ್ಷಿಕೆ);
+	ಗಾಗಿ (ಕೊನೆ = ನಮೂದು + ಎಣಿಕೆ_2; ನಮೂದು != ಕೊನೆ;ನಮೂದು++) {
+		ext4_acl_ನಮೂದು *disk_ನಮೂದು = (ext4_acl_ನಮೂದು*) e;
+		disk_ನಮೂದು->e_ಟ್ಯಾಗ್ = ನಮೂದು->e_ಟ್ಯಾಗ್;
+		disk_ನಮೂದು->e_perm = ನಮೂದು->e_perm;
 
-		switch(ext2fs_le16_to_cpu(entry->e_tag)) {
-			case ACL_USER_OBJ:
-			case ACL_GROUP_OBJ:
-			case ACL_MASK:
-			case ACL_OTHER:
-				e += sizeof(ext4_acl_entry_short);
-				s += sizeof(ext4_acl_entry_short);
-				break;
-			case ACL_USER:
-			case ACL_GROUP:
-				disk_entry->e_id = entry->e_id;
-				e += sizeof(ext4_acl_entry);
-				s += sizeof(ext4_acl_entry);
-				break;
-			default:
-				return EINVAL;
+		ಆಯ್ಕೆ(ext2fs_le16_ಗಮ್ಯ_cpu(ನಮೂದು->e_ಟ್ಯಾಗ್)) {
+			ಸ್ಥಿತಿ ACL_USER_OBJ:
+			ಸ್ಥಿತಿ ACL_ಗುಂಪು_OBJ:
+			ಸ್ಥಿತಿ ACL_ಮುಖವಾಡ:
+			ಸ್ಥಿತಿ ACL_OTHER:
+				e += ಗಾತ್ರ(ext4_acl_ನಮೂದು_short);
+				s += ಗಾತ್ರ(ext4_acl_ನಮೂದು_short);
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ ACL_USER:
+			ಸ್ಥಿತಿ ACL_ಗುಂಪು:
+				disk_ನಮೂದು->e_id = ನಮೂದು->e_id;
+				e += ಗಾತ್ರ(ext4_acl_ನಮೂದು);
+				s += ಗಾತ್ರ(ext4_acl_ನಮೂದು);
+				ನಿಲ್ಲಿಸು;
+			ಪೂರ್ವನಿಯೋಜಿತ:
+				ಹಿಂತಿರುಗಿ EINVAL;
 		}
 	}
-	*size_out = s;
-	return 0;
+	*ಗಾತ್ರ_ಹೊರಹೋಗು = s;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t convert_disk_buffer_to_posix_acl(const void *value, size_t size,
-						  void **out_buf, size_t *size_out)
+ಸ್ಥಿರ errcode_t convert_disk_ಬಫರ್_ಗಮ್ಯ_posix_acl(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಮೌಲ್ಯ, size_t ಗಾತ್ರ_2,
+						  ಶೂನ್ಯ **ಹೊರಹೋಗು_buf, size_t *ಗಾತ್ರ_ಹೊರಹೋಗು)
 {
-	posix_acl_xattr_header *header;
-	posix_acl_xattr_entry *entry;
-	const ext4_acl_header *ext_acl = (const ext4_acl_header *) value;
+	posix_acl_xattr_ಶೀರ್ಷಿಕೆ *ಶೀರ್ಷಿಕೆ;
+	posix_acl_xattr_ನಮೂದು *ನಮೂದು;
+	ಸ್ಥಿರಾಂಕ ext4_acl_ಶೀರ್ಷಿಕೆ *ext_acl = (ಸ್ಥಿರಾಂಕ ext4_acl_ಶೀರ್ಷಿಕೆ *) ಮೌಲ್ಯ;
 	errcode_t err;
-	const char *cp;
-	char *out;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *cp;
+	ಅಕ್ಷರ *ಹೊರಹೋಗು;
 
-	if ((!value) ||
-	    (size < sizeof(ext4_acl_header)) ||
-	    (ext_acl->a_version != ext2fs_cpu_to_le32(EXT4_ACL_VERSION)))
-		return EINVAL;
+	ಆದರೆ ((!ಮೌಲ್ಯ) ||
+	    (ಗಾತ್ರ_2 < ಗಾತ್ರ(ext4_acl_ಶೀರ್ಷಿಕೆ)) ||
+	    (ext_acl->a_ಆವೃತ್ತಿ != ext2fs_cpu_ಗಮ್ಯ_le32(EXT4_ACL_ಆವೃತ್ತಿ)))
+		ಹಿಂತಿರುಗಿ EINVAL;
 
-	err = ext2fs_get_mem(size * 2, &out);
-	if (err)
-		return err;
+	err = ext2fs_get_mem(ಗಾತ್ರ_2 * 2, &ಹೊರಹೋಗು);
+	ಆದರೆ (err)
+		ಹಿಂತಿರುಗಿ err;
 
-	header = (posix_acl_xattr_header *) out;
-	header->a_version = ext2fs_cpu_to_le32(POSIX_ACL_XATTR_VERSION);
-	entry = (posix_acl_xattr_entry *) (out + sizeof(posix_acl_xattr_header));
+	ಶೀರ್ಷಿಕೆ = (posix_acl_xattr_ಶೀರ್ಷಿಕೆ *) ಹೊರಹೋಗು;
+	ಶೀರ್ಷಿಕೆ->a_ಆವೃತ್ತಿ = ext2fs_cpu_ಗಮ್ಯ_le32(POSIX_ACL_XATTR_ಆವೃತ್ತಿ);
+	ನಮೂದು = (posix_acl_xattr_ನಮೂದು *) (ಹೊರಹೋಗು + ಗಾತ್ರ(posix_acl_xattr_ಶೀರ್ಷಿಕೆ));
 
-	cp = (const char *) value + sizeof(ext4_acl_header);
-	size -= sizeof(ext4_acl_header);
+	cp = (ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *) ಮೌಲ್ಯ + ಗಾತ್ರ(ext4_acl_ಶೀರ್ಷಿಕೆ);
+	ಗಾತ್ರ_2 -= ಗಾತ್ರ(ext4_acl_ಶೀರ್ಷಿಕೆ);
 
-	while (size > 0) {
-		const ext4_acl_entry *disk_entry = (const ext4_acl_entry *) cp;
+	ಆಗ (ಗಾತ್ರ_2 > 0) {
+		ಸ್ಥಿರಾಂಕ ext4_acl_ನಮೂದು *disk_ನಮೂದು = (ಸ್ಥಿರಾಂಕ ext4_acl_ನಮೂದು *) cp;
 
-		entry->e_tag = disk_entry->e_tag;
-		entry->e_perm = disk_entry->e_perm;
+		ನಮೂದು->e_ಟ್ಯಾಗ್ = disk_ನಮೂದು->e_ಟ್ಯಾಗ್;
+		ನಮೂದು->e_perm = disk_ನಮೂದು->e_perm;
 
-		switch(ext2fs_le16_to_cpu(entry->e_tag)) {
-			case ACL_USER_OBJ:
-			case ACL_GROUP_OBJ:
-			case ACL_MASK:
-			case ACL_OTHER:
-				entry->e_id = 0;
-				cp += sizeof(ext4_acl_entry_short);
-				size -= sizeof(ext4_acl_entry_short);
-				break;
-			case ACL_USER:
-			case ACL_GROUP:
-				entry->e_id = disk_entry->e_id;
-				cp += sizeof(ext4_acl_entry);
-				size -= sizeof(ext4_acl_entry);
-				break;
-			default:
-				ext2fs_free_mem(&out);
-				return EINVAL;
+		ಆಯ್ಕೆ(ext2fs_le16_ಗಮ್ಯ_cpu(ನಮೂದು->e_ಟ್ಯಾಗ್)) {
+			ಸ್ಥಿತಿ ACL_USER_OBJ:
+			ಸ್ಥಿತಿ ACL_ಗುಂಪು_OBJ:
+			ಸ್ಥಿತಿ ACL_ಮುಖವಾಡ:
+			ಸ್ಥಿತಿ ACL_OTHER:
+				ನಮೂದು->e_id = 0;
+				cp += ಗಾತ್ರ(ext4_acl_ನಮೂದು_short);
+				ಗಾತ್ರ_2 -= ಗಾತ್ರ(ext4_acl_ನಮೂದು_short);
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ ACL_USER:
+			ಸ್ಥಿತಿ ACL_ಗುಂಪು:
+				ನಮೂದು->e_id = disk_ನಮೂದು->e_id;
+				cp += ಗಾತ್ರ(ext4_acl_ನಮೂದು);
+				ಗಾತ್ರ_2 -= ಗಾತ್ರ(ext4_acl_ನಮೂದು);
+				ನಿಲ್ಲಿಸು;
+			ಪೂರ್ವನಿಯೋಜಿತ:
+				ext2fs_free_mem(&ಹೊರಹೋಗು);
+				ಹಿಂತಿರುಗಿ EINVAL;
 		}
-		entry++;
+		ನಮೂದು++;
 	}
-	*out_buf = out;
-	*size_out = ((char *) entry - out);
-	return 0;
+	*ಹೊರಹೋಗು_buf = ಹೊರಹೋಗು;
+	*ಗಾತ್ರ_ಹೊರಹೋಗು = ((ಅಕ್ಷರ *) ನಮೂದು - ಹೊರಹೋಗು);
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t
-write_xattrs_to_buffer(ext2_filsys fs, struct ext2_xattr *attrs, int count,
-		       void *entries_start, unsigned int storage_size,
-		       unsigned int value_offset_correction, int write_hash)
+ಸ್ಥಿರ errcode_t
+write_xattrs_ಗಮ್ಯ_ಬಫರ್(ext2_filsys fs, ರಚನೆ ext2_xattr *attrs, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2,
+		       ಶೂನ್ಯ *entries_ಆರಂಭ, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ storage_ಗಾತ್ರ,
+		       ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಮೌಲ್ಯ_ಸ್ಥಾನಾಂತರ_correction, ಪೂರ್ಣಾಂಕ write_hash)
 {
-	struct ext2_xattr *x;
-	struct ext2_ext_attr_entry *e = entries_start;
-	char *end = (char *) entries_start + storage_size;
-	unsigned int value_size;
+	ರಚನೆ ext2_xattr *x;
+	ರಚನೆ ext2_ext_attr_ನಮೂದು *e = entries_ಆರಂಭ;
+	ಅಕ್ಷರ *ಕೊನೆ = (ಅಕ್ಷರ *) entries_ಆರಂಭ + storage_ಗಾತ್ರ;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಮೌಲ್ಯ_ಗಾತ್ರ;
 	errcode_t err;
 
-	memset(entries_start, 0, storage_size);
-	for (x = attrs; x < attrs + count; x++) {
-		value_size = ((x->value_len + EXT2_EXT_ATTR_PAD - 1) /
+	memset(entries_ಆರಂಭ, 0, storage_ಗಾತ್ರ);
+	ಗಾಗಿ (x = attrs; x < attrs + ಎಣಿಕೆ_2; x++) {
+		ಮೌಲ್ಯ_ಗಾತ್ರ = ((x->ಮೌಲ್ಯ_len + EXT2_EXT_ATTR_PAD - 1) /
 			      EXT2_EXT_ATTR_PAD) * EXT2_EXT_ATTR_PAD;
 
 		/* Fill out e appropriately */
-		e->e_name_len = strlen(x->short_name);
-		e->e_name_index = x->name_index;
+		e->e_name_len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(x->short_name);
+		e->e_name_ಸೂಚ್ಯಂಕ = x->name_ಸೂಚ್ಯಂಕ;
 
-		e->e_value_size = x->value_len;
-		e->e_value_inum = x->ea_ino;
+		e->e_ಮೌಲ್ಯ_ಗಾತ್ರ = x->ಮೌಲ್ಯ_len;
+		e->e_ಮೌಲ್ಯ_inum = x->ea_ino;
 
 		/* Store name */
-		memcpy((char *)e + sizeof(*e), x->short_name, e->e_name_len);
-		if (x->ea_ino) {
-			e->e_value_offs = 0;
-		} else {
-			end -= value_size;
-			e->e_value_offs = end - (char *) entries_start +
-						value_offset_correction;
-			memcpy(end, x->value, e->e_value_size);
+		ಸ್ಮರಣೆ_ನಕಲು((ಅಕ್ಷರ *)e + ಗಾತ್ರ(*e), x->short_name, e->e_name_len);
+		ಆದರೆ (x->ea_ino) {
+			e->e_ಮೌಲ್ಯ_offs = 0;
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಕೊನೆ -= ಮೌಲ್ಯ_ಗಾತ್ರ;
+			e->e_ಮೌಲ್ಯ_offs = ಕೊನೆ - (ಅಕ್ಷರ *) entries_ಆರಂಭ +
+						ಮೌಲ್ಯ_ಸ್ಥಾನಾಂತರ_correction;
+			ಸ್ಮರಣೆ_ನಕಲು(ಕೊನೆ, x->ಮೌಲ್ಯ, e->e_ಮೌಲ್ಯ_ಗಾತ್ರ);
 		}
 
-		if (write_hash || x->ea_ino) {
+		ಆದರೆ (write_hash || x->ea_ino) {
 			err = ext2fs_ext_attr_hash_entry2(fs, e,
-							  x->ea_ino ? 0 : end,
+							  x->ea_ino ? 0 : ಕೊನೆ,
 							  &e->e_hash);
-			if (err)
-				return err;
-		} else
+			ಆದರೆ (err)
+				ಹಿಂತಿರುಗಿ err;
+		} ಇಲ್ಲದಿದ್ದರೆ
 			e->e_hash = 0;
 
-		e = EXT2_EXT_ATTR_NEXT(e);
+		e = EXT2_EXT_ATTR_ಮುಂದಿನ(e);
 		*(__u32 *)e = 0;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-errcode_t ext2fs_xattrs_write(struct ext2_xattr_handle *handle)
+errcode_t ext2fs_xattrs_write(ರಚನೆ ext2_xattr_handle *handle)
 {
 	ext2_filsys fs = handle->fs;
-	const unsigned int inode_size = EXT2_INODE_SIZE(fs->super);
-	struct ext2_inode_large *inode;
-	char *start, *block_buf = NULL;
-	struct ext2_ext_attr_header *header;
+	ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ inode_ಗಾತ್ರ = EXT2_INODE_ಗಾತ್ರ(fs->super);
+	ರಚನೆ ext2_inode_large *inode;
+	ಅಕ್ಷರ *ಆರಂಭ, *ಖಂಡ_buf = ಖಾಲಿ;
+	ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ *ಶೀರ್ಷಿಕೆ;
 	__u32 ea_inode_magic;
 	blk64_t blk;
-	unsigned int storage_size;
-	unsigned int i;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ storage_ಗಾತ್ರ;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ i;
 	errcode_t err;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EA_HANDLE);
-	i = inode_size;
-	if (i < sizeof(*inode))
-		i = sizeof(*inode);
+	i = inode_ಗಾತ್ರ;
+	ಆದರೆ (i < ಗಾತ್ರ(*inode))
+		i = ಗಾತ್ರ(*inode);
 	err = ext2fs_get_memzero(i, &inode);
-	if (err)
-		return err;
+	ಆದರೆ (err)
+		ಹಿಂತಿರುಗಿ err;
 
-	err = ext2fs_read_inode_full(fs, handle->ino, EXT2_INODE(inode),
-				     inode_size);
-	if (err)
-		goto out;
+	err = ext2fs_read_inode_ತುಂಬಿದ(fs, handle->ino, EXT2_INODE(inode),
+				     inode_ಗಾತ್ರ);
+	ಆದರೆ (err)
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	/* If extra_isize isn't set, we need to set it now */
-	if (inode->i_extra_isize == 0 &&
-	    inode_size > EXT2_GOOD_OLD_INODE_SIZE) {
-		char *p = (char *)inode;
+	ಆದರೆ (inode->i_extra_isize == 0 &&
+	    inode_ಗಾತ್ರ > EXT2_GOOD_OLD_INODE_ಗಾತ್ರ) {
+		ಅಕ್ಷರ *p = (ಅಕ್ಷರ *)inode;
 		size_t extra = fs->super->s_want_extra_isize;
 
-		if (extra == 0)
-			extra = sizeof(__u32);
-		memset(p + EXT2_GOOD_OLD_INODE_SIZE, 0, extra);
+		ಆದರೆ (extra == 0)
+			extra = ಗಾತ್ರ(__u32);
+		memset(p + EXT2_GOOD_OLD_INODE_ಗಾತ್ರ, 0, extra);
 		inode->i_extra_isize = extra;
 	}
-	if (inode->i_extra_isize & 3) {
+	ಆದರೆ (inode->i_extra_isize & 3) {
 		err = EXT2_ET_INODE_CORRUPTED;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
 	/* Does the inode have space for EA? */
-	if (inode->i_extra_isize < sizeof(inode->i_extra_isize) ||
-	    inode_size <= EXT2_GOOD_OLD_INODE_SIZE + inode->i_extra_isize +
-								sizeof(__u32))
-		goto write_ea_block;
+	ಆದರೆ (inode->i_extra_isize < ಗಾತ್ರ(inode->i_extra_isize) ||
+	    inode_ಗಾತ್ರ <= EXT2_GOOD_OLD_INODE_ಗಾತ್ರ + inode->i_extra_isize +
+								ಗಾತ್ರ(__u32))
+		ಹೋಗು write_ea_ಖಂಡ;
 
 	/* Write the inode EA */
 	ea_inode_magic = EXT2_EXT_ATTR_MAGIC;
-	memcpy(((char *) inode) + EXT2_GOOD_OLD_INODE_SIZE +
-	       inode->i_extra_isize, &ea_inode_magic, sizeof(__u32));
-	storage_size = inode_size - EXT2_GOOD_OLD_INODE_SIZE -
-				inode->i_extra_isize - sizeof(__u32);
-	start = ((char *) inode) + EXT2_GOOD_OLD_INODE_SIZE +
-				inode->i_extra_isize + sizeof(__u32);
+	ಸ್ಮರಣೆ_ನಕಲು(((ಅಕ್ಷರ *) inode) + EXT2_GOOD_OLD_INODE_ಗಾತ್ರ +
+	       inode->i_extra_isize, &ea_inode_magic, ಗಾತ್ರ(__u32));
+	storage_ಗಾತ್ರ = inode_ಗಾತ್ರ - EXT2_GOOD_OLD_INODE_ಗಾತ್ರ -
+				inode->i_extra_isize - ಗಾತ್ರ(__u32);
+	ಆರಂಭ = ((ಅಕ್ಷರ *) inode) + EXT2_GOOD_OLD_INODE_ಗಾತ್ರ +
+				inode->i_extra_isize + ಗಾತ್ರ(__u32);
 
-	err = write_xattrs_to_buffer(fs, handle->attrs, handle->ibody_count,
-				     start, storage_size, 0, 0);
-	if (err)
-		goto out;
-write_ea_block:
+	err = write_xattrs_ಗಮ್ಯ_ಬಫರ್(fs, handle->attrs, handle->ibody_ಎಣಿಕೆ,
+				     ಆರಂಭ, storage_ಗಾತ್ರ, 0, 0);
+	ಆದರೆ (err)
+		ಹೋಗು ಹೊರಹೋಗು;
+write_ea_ಖಂಡ:
 	/* Are we done? */
-	if (handle->ibody_count == handle->count &&
-	    !ext2fs_file_acl_block(fs, EXT2_INODE(inode)))
-		goto skip_ea_block;
+	ಆದರೆ (handle->ibody_ಎಣಿಕೆ == handle->ಎಣಿಕೆ_2 &&
+	    !ext2fs_file_acl_ಖಂಡ(fs, EXT2_INODE(inode)))
+		ಹೋಗು skip_ea_ಖಂಡ;
 
 	/* Write the EA block */
-	err = ext2fs_get_memzero(fs->blocksize, &block_buf);
-	if (err)
-		goto out;
+	err = ext2fs_get_memzero(fs->blocksize, &ಖಂಡ_buf);
+	ಆದರೆ (err)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	storage_size = fs->blocksize - sizeof(struct ext2_ext_attr_header);
-	start = block_buf + sizeof(struct ext2_ext_attr_header);
+	storage_ಗಾತ್ರ = fs->blocksize - ಗಾತ್ರ(ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ);
+	ಆರಂಭ = ಖಂಡ_buf + ಗಾತ್ರ(ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ);
 
-	err = write_xattrs_to_buffer(fs, handle->attrs + handle->ibody_count,
-				     handle->count - handle->ibody_count, start,
-				     storage_size, start - block_buf, 1);
-	if (err)
-		goto out2;
+	err = write_xattrs_ಗಮ್ಯ_ಬಫರ್(fs, handle->attrs + handle->ibody_ಎಣಿಕೆ,
+				     handle->ಎಣಿಕೆ_2 - handle->ibody_ಎಣಿಕೆ, ಆರಂಭ,
+				     storage_ಗಾತ್ರ, ಆರಂಭ - ಖಂಡ_buf, 1);
+	ಆದರೆ (err)
+		ಹೋಗು out2;
 
 	/* Write a header on the EA block */
-	header = (struct ext2_ext_attr_header *) block_buf;
-	header->h_magic = EXT2_EXT_ATTR_MAGIC;
-	header->h_refcount = 1;
-	header->h_blocks = 1;
+	ಶೀರ್ಷಿಕೆ = (ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ *) ಖಂಡ_buf;
+	ಶೀರ್ಷಿಕೆ->h_magic = EXT2_EXT_ATTR_MAGIC;
+	ಶೀರ್ಷಿಕೆ->h_refcount = 1;
+	ಶೀರ್ಷಿಕೆ->h_ಖಂಡಗಳು = 1;
 
 	/* Get a new block for writing */
-	err = prep_ea_block_for_write(fs, handle->ino, inode);
-	if (err)
-		goto out2;
+	err = prep_ea_ಖಂಡ_for_write(fs, handle->ino, inode);
+	ಆದರೆ (err)
+		ಹೋಗು out2;
 
 	/* Finally, write the new EA block */
-	blk = ext2fs_file_acl_block(fs, EXT2_INODE(inode));
-	err = ext2fs_write_ext_attr3(fs, blk, block_buf, handle->ino);
-	if (err)
-		goto out2;
+	blk = ext2fs_file_acl_ಖಂಡ(fs, EXT2_INODE(inode));
+	err = ext2fs_write_ext_attr3(fs, blk, ಖಂಡ_buf, handle->ino);
+	ಆದರೆ (err)
+		ಹೋಗು out2;
 
-skip_ea_block:
-	blk = ext2fs_file_acl_block(fs, (struct ext2_inode *)inode);
-	if (!block_buf && blk) {
+skip_ea_ಖಂಡ:
+	blk = ext2fs_file_acl_ಖಂಡ(fs, (ರಚನೆ ext2_inode *)inode);
+	ಆದರೆ (!ಖಂಡ_buf && blk) {
 		/* xattrs shrunk, free the block */
 		err = ext2fs_free_ext_attr(fs, handle->ino, inode);
-		if (err)
-			goto out;
+		ಆದರೆ (err)
+			ಹೋಗು ಹೊರಹೋಗು;
 	}
 
 	/* Write the inode */
-	err = ext2fs_write_inode_full(fs, handle->ino, EXT2_INODE(inode),
-				      inode_size);
-	if (err)
-		goto out2;
+	err = ext2fs_write_inode_ತುಂಬಿದ(fs, handle->ino, EXT2_INODE(inode),
+				      inode_ಗಾತ್ರ);
+	ಆದರೆ (err)
+		ಹೋಗು out2;
 
 out2:
-	ext2fs_free_mem(&block_buf);
-out:
+	ext2fs_free_mem(&ಖಂಡ_buf);
+ಹೊರಹೋಗು:
 	ext2fs_free_mem(&inode);
-	return err;
+	ಹಿಂತಿರುಗಿ err;
 }
 
-static errcode_t read_xattrs_from_buffer(struct ext2_xattr_handle *handle,
-					 struct ext2_inode_large *inode,
-					 struct ext2_ext_attr_entry *entries,
-					 unsigned int storage_size,
-					 char *value_start)
+ಸ್ಥಿರ errcode_t read_xattrs_from_ಬಫರ್(ರಚನೆ ext2_xattr_handle *handle,
+					 ರಚನೆ ext2_inode_large *inode,
+					 ರಚನೆ ext2_ext_attr_ನಮೂದು *entries,
+					 ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ storage_ಗಾತ್ರ,
+					 ಅಕ್ಷರ *ಮೌಲ್ಯ_ಆರಂಭ)
 {
-	struct ext2_xattr *x;
-	struct ext2_ext_attr_entry *entry, *end;
-	const char *prefix;
-	unsigned int remain, prefix_len;
+	ರಚನೆ ext2_xattr *x;
+	ರಚನೆ ext2_ext_attr_ನಮೂದು *ನಮೂದು, *ಕೊನೆ;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಪೂರ್ವಪ್ರತ್ಯಯ;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ remain, ಪೂರ್ವಪ್ರತ್ಯಯ_len;
 	errcode_t err;
-	unsigned int values_size = storage_size +
-			((char *)entries - value_start);
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಮೌಲ್ಯಗಳು_ಗಾತ್ರ = storage_ಗಾತ್ರ +
+			((ಅಕ್ಷರ *)entries - ಮೌಲ್ಯ_ಆರಂಭ);
 
 	/* find the end */
-	end = entries;
-	remain = storage_size;
-	while (remain >= sizeof(struct ext2_ext_attr_entry) &&
-	       !EXT2_EXT_IS_LAST_ENTRY(end)) {
+	ಕೊನೆ = entries;
+	remain = storage_ಗಾತ್ರ;
+	ಆಗ (remain >= ಗಾತ್ರ(ರಚನೆ ext2_ext_attr_ನಮೂದು) &&
+	       !EXT2_EXT_IS_ಕೊನೆಯ_ನಮೂದು(ಕೊನೆ)) {
 
 		/* header eats this space */
-		remain -= sizeof(struct ext2_ext_attr_entry);
+		remain -= ಗಾತ್ರ(ರಚನೆ ext2_ext_attr_ನಮೂದು);
 
 		/* is attribute name valid? */
-		if (EXT2_EXT_ATTR_SIZE(end->e_name_len) > remain)
-			return EXT2_ET_EA_BAD_NAME_LEN;
+		ಆದರೆ (EXT2_EXT_ATTR_ಗಾತ್ರ(ಕೊನೆ->e_name_len) > remain)
+			ಹಿಂತಿರುಗಿ EXT2_ET_EA_BAD_NAME_LEN;
 
 		/* attribute len eats this space */
-		remain -= EXT2_EXT_ATTR_SIZE(end->e_name_len);
-		end = EXT2_EXT_ATTR_NEXT(end);
+		remain -= EXT2_EXT_ATTR_ಗಾತ್ರ(ಕೊನೆ->e_name_len);
+		ಕೊನೆ = EXT2_EXT_ATTR_ಮುಂದಿನ(ಕೊನೆ);
 	}
 
-	entry = entries;
-	remain = storage_size;
-	while (remain >= sizeof(struct ext2_ext_attr_entry) &&
-	       !EXT2_EXT_IS_LAST_ENTRY(entry)) {
+	ನಮೂದು = entries;
+	remain = storage_ಗಾತ್ರ;
+	ಆಗ (remain >= ಗಾತ್ರ(ರಚನೆ ext2_ext_attr_ನಮೂದು) &&
+	       !EXT2_EXT_IS_ಕೊನೆಯ_ನಮೂದು(ನಮೂದು)) {
 
 		/* Allocate space for more attrs? */
-		if (handle->count == handle->capacity) {
+		ಆದರೆ (handle->ಎಣಿಕೆ_2 == handle->ಸಾಮರ್ಥ್ಯ) {
 			err = ext2fs_xattrs_expand(handle, 4);
-			if (err)
-				return err;
+			ಆದರೆ (err)
+				ಹಿಂತಿರುಗಿ err;
 		}
 
-		x = handle->attrs + handle->count;
+		x = handle->attrs + handle->ಎಣಿಕೆ_2;
 
 		/* header eats this space */
-		remain -= sizeof(struct ext2_ext_attr_entry);
+		remain -= ಗಾತ್ರ(ರಚನೆ ext2_ext_attr_ನಮೂದು);
 
 		/* attribute len eats this space */
-		remain -= EXT2_EXT_ATTR_SIZE(entry->e_name_len);
+		remain -= EXT2_EXT_ATTR_ಗಾತ್ರ(ನಮೂದು->e_name_len);
 
 		/* Extract name */
-		prefix = find_ea_prefix(entry->e_name_index);
-		prefix_len = (prefix ? strlen(prefix) : 0);
-		err = ext2fs_get_memzero(entry->e_name_len + prefix_len + 1,
+		ಪೂರ್ವಪ್ರತ್ಯಯ = ಕಂಡುಹಿಡಿ_ea_ಪೂರ್ವಪ್ರತ್ಯಯ(ನಮೂದು->e_name_ಸೂಚ್ಯಂಕ);
+		ಪೂರ್ವಪ್ರತ್ಯಯ_len = (ಪೂರ್ವಪ್ರತ್ಯಯ ? ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಪೂರ್ವಪ್ರತ್ಯಯ) : 0);
+		err = ext2fs_get_memzero(ನಮೂದು->e_name_len + ಪೂರ್ವಪ್ರತ್ಯಯ_len + 1,
 					 &x->name);
-		if (err)
-			return err;
-		if (prefix)
-			memcpy(x->name, prefix, prefix_len);
-		if (entry->e_name_len)
-			memcpy(x->name + prefix_len,
-			       (char *)entry + sizeof(*entry),
-			       entry->e_name_len);
-		x->short_name = x->name + prefix_len;
-		x->name_index = entry->e_name_index;
+		ಆದರೆ (err)
+			ಹಿಂತಿರುಗಿ err;
+		ಆದರೆ (ಪೂರ್ವಪ್ರತ್ಯಯ)
+			ಸ್ಮರಣೆ_ನಕಲು(x->name, ಪೂರ್ವಪ್ರತ್ಯಯ, ಪೂರ್ವಪ್ರತ್ಯಯ_len);
+		ಆದರೆ (ನಮೂದು->e_name_len)
+			ಸ್ಮರಣೆ_ನಕಲು(x->name + ಪೂರ್ವಪ್ರತ್ಯಯ_len,
+			       (ಅಕ್ಷರ *)ನಮೂದು + ಗಾತ್ರ(*ನಮೂದು),
+			       ನಮೂದು->e_name_len);
+		x->short_name = x->name + ಪೂರ್ವಪ್ರತ್ಯಯ_len;
+		x->name_ಸೂಚ್ಯಂಕ = ನಮೂದು->e_name_ಸೂಚ್ಯಂಕ;
 
 		/* Check & copy value */
-		if (!ext2fs_has_feature_ea_inode(handle->fs->super) &&
-		    entry->e_value_inum != 0)
-			return EXT2_ET_BAD_EA_BLOCK_NUM;
+		ಆದರೆ (!ext2fs_has_feature_ea_inode(handle->fs->super) &&
+		    ನಮೂದು->e_ಮೌಲ್ಯ_inum != 0)
+			ಹಿಂತಿರುಗಿ EXT2_ET_BAD_EA_ಖಂಡ_ಅಂಕೆ;
 
-		if (entry->e_value_inum == 0) {
-			if (entry->e_value_size > remain)
-				return EXT2_ET_EA_BAD_VALUE_SIZE;
+		ಆದರೆ (ನಮೂದು->e_ಮೌಲ್ಯ_inum == 0) {
+			ಆದರೆ (ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ > remain)
+				ಹಿಂತಿರುಗಿ EXT2_ET_EA_BAD_ಮೌಲ್ಯ_ಗಾತ್ರ;
 
-			if (entry->e_value_offs + entry->e_value_size > values_size)
-				return EXT2_ET_EA_BAD_VALUE_OFFSET;
+			ಆದರೆ (ನಮೂದು->e_ಮೌಲ್ಯ_offs + ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ > ಮೌಲ್ಯಗಳು_ಗಾತ್ರ)
+				ಹಿಂತಿರುಗಿ EXT2_ET_EA_BAD_ಮೌಲ್ಯ_ಸ್ಥಾನಾಂತರ;
 
-			if (entry->e_value_size > 0 &&
-			    value_start + entry->e_value_offs <
-			    (char *)end + sizeof(__u32))
-				return EXT2_ET_EA_BAD_VALUE_OFFSET;
+			ಆದರೆ (ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ > 0 &&
+			    ಮೌಲ್ಯ_ಆರಂಭ + ನಮೂದು->e_ಮೌಲ್ಯ_offs <
+			    (ಅಕ್ಷರ *)ಕೊನೆ + ಗಾತ್ರ(__u32))
+				ಹಿಂತಿರುಗಿ EXT2_ET_EA_BAD_ಮೌಲ್ಯ_ಸ್ಥಾನಾಂತರ;
 
-			remain -= entry->e_value_size;
+			remain -= ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ;
 
-			err = ext2fs_get_mem(entry->e_value_size, &x->value);
-			if (err)
-				return err;
-			memcpy(x->value, value_start + entry->e_value_offs,
-			       entry->e_value_size);
-		} else {
-			struct ext2_inode *ea_inode;
+			err = ext2fs_get_mem(ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ, &x->ಮೌಲ್ಯ);
+			ಆದರೆ (err)
+				ಹಿಂತಿರುಗಿ err;
+			ಸ್ಮರಣೆ_ನಕಲು(x->ಮೌಲ್ಯ, ಮೌಲ್ಯ_ಆರಂಭ + ನಮೂದು->e_ಮೌಲ್ಯ_offs,
+			       ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ);
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ರಚನೆ ext2_inode *ea_inode;
 			ext2_file_t ea_file;
 
-			if (entry->e_value_offs != 0)
-				return EXT2_ET_EA_BAD_VALUE_OFFSET;
+			ಆದರೆ (ನಮೂದು->e_ಮೌಲ್ಯ_offs != 0)
+				ಹಿಂತಿರುಗಿ EXT2_ET_EA_BAD_ಮೌಲ್ಯ_ಸ್ಥಾನಾಂತರ;
 
-			if (entry->e_value_size > (64 * 1024))
-				return EXT2_ET_EA_BAD_VALUE_SIZE;
+			ಆದರೆ (ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ > (64 * 1024))
+				ಹಿಂತಿರುಗಿ EXT2_ET_EA_BAD_ಮೌಲ್ಯ_ಗಾತ್ರ;
 
-			err = ext2fs_get_mem(entry->e_value_size, &x->value);
-			if (err)
-				return err;
+			err = ext2fs_get_mem(ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ, &x->ಮೌಲ್ಯ);
+			ಆದರೆ (err)
+				ಹಿಂತಿರುಗಿ err;
 
-			err = ext2fs_file_open(handle->fs, entry->e_value_inum,
+			err = ext2fs_file_open(handle->fs, ನಮೂದು->e_ಮೌಲ್ಯ_inum,
 					       0, &ea_file);
-			if (err)
-				return err;
+			ಆದರೆ (err)
+				ಹಿಂತಿರುಗಿ err;
 
 			ea_inode = ext2fs_file_get_inode(ea_file);
-			if ((ea_inode->i_flags & EXT4_INLINE_DATA_FL) ||
+			ಆದರೆ ((ea_inode->i_flags & EXT4_INLINE_ದತ್ತಾಂಶ_FL) ||
 			    !(ea_inode->i_flags & EXT4_EA_INODE_FL) ||
-			    ea_inode->i_links_count == 0)
+			    ea_inode->i_links_ಎಣಿಕೆ == 0)
 				err = EXT2_ET_EA_INODE_CORRUPTED;
-			else if ((__u64) ext2fs_file_get_size(ea_file) !=
-				 entry->e_value_size)
-				err = EXT2_ET_EA_BAD_VALUE_SIZE;
-			else
-				err = ext2fs_file_read(ea_file, x->value,
-						       entry->e_value_size, 0);
+			ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((__u64) ext2fs_file_get_ಗಾತ್ರ(ea_file) !=
+				 ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ)
+				err = EXT2_ET_EA_BAD_ಮೌಲ್ಯ_ಗಾತ್ರ;
+			ಇಲ್ಲದಿದ್ದರೆ
+				err = ext2fs_file_read(ea_file, x->ಮೌಲ್ಯ,
+						       ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ, 0);
 			ext2fs_file_close(ea_file);
-			if (err)
-				return err;
+			ಆದರೆ (err)
+				ಹಿಂತಿರುಗಿ err;
 		}
 
-		x->ea_ino = entry->e_value_inum;
-		x->value_len = entry->e_value_size;
+		x->ea_ino = ನಮೂದು->e_ಮೌಲ್ಯ_inum;
+		x->ಮೌಲ್ಯ_len = ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ;
 
 		/* e_hash may be 0 in older inode's ea */
-		if (entry->e_hash != 0) {
+		ಆದರೆ (ನಮೂದು->e_hash != 0) {
 			__u32 hash, signed_hash;
 
-			void *data = (entry->e_value_inum != 0) ?
-					0 : value_start + entry->e_value_offs;
+			ಶೂನ್ಯ *ದತ್ತಾಂಶ = (ನಮೂದು->e_ಮೌಲ್ಯ_inum != 0) ?
+					0 : ಮೌಲ್ಯ_ಆರಂಭ + ನಮೂದು->e_ಮೌಲ್ಯ_offs;
 
-			err = ext2fs_ext_attr_hash_entry3(handle->fs, entry,
-							  data, &hash,
+			err = ext2fs_ext_attr_hash_entry3(handle->fs, ನಮೂದು,
+							  ದತ್ತಾಂಶ, &hash,
 							  &signed_hash);
-			if (err)
-				return err;
-			if ((entry->e_hash != hash) &&
-			    (entry->e_hash != signed_hash)) {
-				struct ext2_inode child;
+			ಆದರೆ (err)
+				ಹಿಂತಿರುಗಿ err;
+			ಆದರೆ ((ನಮೂದು->e_hash != hash) &&
+			    (ನಮೂದು->e_hash != signed_hash)) {
+				ರಚನೆ ext2_inode ಮಗು;
 
 				/* Check whether this is an old Lustre-style
 				 * ea_inode reference.
 				 */
 				err = ext2fs_read_inode(handle->fs,
-							entry->e_value_inum,
-							&child);
-				if (err)
-					return err;
-				if (child.i_mtime != handle->ino ||
-				    child.i_generation != inode->i_generation)
-					return EXT2_ET_BAD_EA_HASH;
+							ನಮೂದು->e_ಮೌಲ್ಯ_inum,
+							&ಮಗು);
+				ಆದರೆ (err)
+					ಹಿಂತಿರುಗಿ err;
+				ಆದರೆ (ಮಗು.i_mtime != handle->ino ||
+				    ಮಗು.i_generation != inode->i_generation)
+					ಹಿಂತಿರುಗಿ EXT2_ET_BAD_EA_HASH;
 			}
 		}
 
-		handle->count++;
-		entry = EXT2_EXT_ATTR_NEXT(entry);
+		handle->ಎಣಿಕೆ_2++;
+		ನಮೂದು = EXT2_EXT_ATTR_ಮುಂದಿನ(ನಮೂದು);
 	}
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static void xattrs_free_keys(struct ext2_xattr_handle *h)
+ಸ್ಥಿರ ಶೂನ್ಯ xattrs_free_ಕೀಲಿಗಳು(ರಚನೆ ext2_xattr_handle *h)
 {
-	struct ext2_xattr *a = h->attrs;
-	int i;
+	ರಚನೆ ext2_xattr *a = h->attrs;
+	ಪೂರ್ಣಾಂಕ i;
 
-	for (i = 0; i < h->capacity; i++) {
-		if (a[i].name)
+	ಗಾಗಿ (i = 0; i < h->ಸಾಮರ್ಥ್ಯ; i++) {
+		ಆದರೆ (a[i].name)
 			ext2fs_free_mem(&a[i].name);
-		if (a[i].value)
-			ext2fs_free_mem(&a[i].value);
+		ಆದರೆ (a[i].ಮೌಲ್ಯ)
+			ext2fs_free_mem(&a[i].ಮೌಲ್ಯ);
 	}
-	h->count = 0;
-	h->ibody_count = 0;
+	h->ಎಣಿಕೆ_2 = 0;
+	h->ibody_ಎಣಿಕೆ = 0;
 }
 
 /* fetch xattrs from an already-loaded inode */
-errcode_t ext2fs_xattrs_read_inode(struct ext2_xattr_handle *handle,
-				   struct ext2_inode_large *inode)
+errcode_t ext2fs_xattrs_read_inode(ರಚನೆ ext2_xattr_handle *handle,
+				   ರಚನೆ ext2_inode_large *inode)
 {
-	struct ext2_ext_attr_header *header;
+	ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ *ಶೀರ್ಷಿಕೆ;
 	__u32 ea_inode_magic;
-	unsigned int storage_size;
-	char *start, *block_buf = NULL;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ storage_ಗಾತ್ರ;
+	ಅಕ್ಷರ *ಆರಂಭ, *ಖಂಡ_buf = ಖಾಲಿ;
 	blk64_t blk;
 	errcode_t err = 0;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EA_HANDLE);
 
-	xattrs_free_keys(handle);
+	xattrs_free_ಕೀಲಿಗಳು(handle);
 
 	/* Does the inode have space for EA? */
-	if (inode->i_extra_isize < sizeof(inode->i_extra_isize) ||
-	    EXT2_INODE_SIZE(handle->fs->super) <= EXT2_GOOD_OLD_INODE_SIZE +
+	ಆದರೆ (inode->i_extra_isize < ಗಾತ್ರ(inode->i_extra_isize) ||
+	    EXT2_INODE_ಗಾತ್ರ(handle->fs->super) <= EXT2_GOOD_OLD_INODE_ಗಾತ್ರ +
 						  inode->i_extra_isize +
-						  sizeof(__u32))
-		goto read_ea_block;
-	if (inode->i_extra_isize & 3) {
+						  ಗಾತ್ರ(__u32))
+		ಹೋಗು read_ea_ಖಂಡ;
+	ಆದರೆ (inode->i_extra_isize & 3) {
 		err = EXT2_ET_INODE_CORRUPTED;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
 	/* Look for EA in the inode */
-	memcpy(&ea_inode_magic, ((char *) inode) + EXT2_GOOD_OLD_INODE_SIZE +
-	       inode->i_extra_isize, sizeof(__u32));
-	if (ea_inode_magic == EXT2_EXT_ATTR_MAGIC) {
-		storage_size = EXT2_INODE_SIZE(handle->fs->super) -
-			EXT2_GOOD_OLD_INODE_SIZE - inode->i_extra_isize -
-			sizeof(__u32);
-		start = ((char *) inode) + EXT2_GOOD_OLD_INODE_SIZE +
-			inode->i_extra_isize + sizeof(__u32);
+	ಸ್ಮರಣೆ_ನಕಲು(&ea_inode_magic, ((ಅಕ್ಷರ *) inode) + EXT2_GOOD_OLD_INODE_ಗಾತ್ರ +
+	       inode->i_extra_isize, ಗಾತ್ರ(__u32));
+	ಆದರೆ (ea_inode_magic == EXT2_EXT_ATTR_MAGIC) {
+		storage_ಗಾತ್ರ = EXT2_INODE_ಗಾತ್ರ(handle->fs->super) -
+			EXT2_GOOD_OLD_INODE_ಗಾತ್ರ - inode->i_extra_isize -
+			ಗಾತ್ರ(__u32);
+		ಆರಂಭ = ((ಅಕ್ಷರ *) inode) + EXT2_GOOD_OLD_INODE_ಗಾತ್ರ +
+			inode->i_extra_isize + ಗಾತ್ರ(__u32);
 
-		err = read_xattrs_from_buffer(handle, inode,
-					(struct ext2_ext_attr_entry *) start,
-					storage_size, start);
-		if (err)
-			goto out;
+		err = read_xattrs_from_ಬಫರ್(handle, inode,
+					(ರಚನೆ ext2_ext_attr_ನಮೂದು *) ಆರಂಭ,
+					storage_ಗಾತ್ರ, ಆರಂಭ);
+		ಆದರೆ (err)
+			ಹೋಗು ಹೊರಹೋಗು;
 
-		handle->ibody_count = handle->count;
+		handle->ibody_ಎಣಿಕೆ = handle->ಎಣಿಕೆ_2;
 	}
 
-read_ea_block:
+read_ea_ಖಂಡ:
 	/* Look for EA in a separate EA block */
-	blk = ext2fs_file_acl_block(handle->fs, EXT2_INODE(inode));
-	if (blk != 0) {
-		if ((blk < handle->fs->super->s_first_data_block) ||
-		    (blk >= ext2fs_blocks_count(handle->fs->super))) {
-			err = EXT2_ET_BAD_EA_BLOCK_NUM;
-			goto out;
+	blk = ext2fs_file_acl_ಖಂಡ(handle->fs, EXT2_INODE(inode));
+	ಆದರೆ (blk != 0) {
+		ಆದರೆ ((blk < handle->fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ) ||
+		    (blk >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(handle->fs->super))) {
+			err = EXT2_ET_BAD_EA_ಖಂಡ_ಅಂಕೆ;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 
-		err = ext2fs_get_mem(handle->fs->blocksize, &block_buf);
-		if (err)
-			goto out;
+		err = ext2fs_get_mem(handle->fs->blocksize, &ಖಂಡ_buf);
+		ಆದರೆ (err)
+			ಹೋಗು ಹೊರಹೋಗು;
 
-		err = ext2fs_read_ext_attr3(handle->fs, blk, block_buf,
+		err = ext2fs_read_ext_attr3(handle->fs, blk, ಖಂಡ_buf,
 					    handle->ino);
-		if (err)
-			goto out3;
+		ಆದರೆ (err)
+			ಹೋಗು out3;
 
 		/* We only know how to deal with v2 EA blocks */
-		header = (struct ext2_ext_attr_header *) block_buf;
-		if (header->h_magic != EXT2_EXT_ATTR_MAGIC) {
-			err = EXT2_ET_BAD_EA_HEADER;
-			goto out3;
+		ಶೀರ್ಷಿಕೆ = (ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ *) ಖಂಡ_buf;
+		ಆದರೆ (ಶೀರ್ಷಿಕೆ->h_magic != EXT2_EXT_ATTR_MAGIC) {
+			err = EXT2_ET_BAD_EA_ಶೀರ್ಷಿಕೆ;
+			ಹೋಗು out3;
 		}
 
 		/* Read EAs */
-		storage_size = handle->fs->blocksize -
-			sizeof(struct ext2_ext_attr_header);
-		start = block_buf + sizeof(struct ext2_ext_attr_header);
-		err = read_xattrs_from_buffer(handle, inode,
-					(struct ext2_ext_attr_entry *) start,
-					storage_size, block_buf);
+		storage_ಗಾತ್ರ = handle->fs->blocksize -
+			ಗಾತ್ರ(ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ);
+		ಆರಂಭ = ಖಂಡ_buf + ಗಾತ್ರ(ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ);
+		err = read_xattrs_from_ಬಫರ್(handle, inode,
+					(ರಚನೆ ext2_ext_attr_ನಮೂದು *) ಆರಂಭ,
+					storage_ಗಾತ್ರ, ಖಂಡ_buf);
 	}
 
 out3:
-	if (block_buf)
-		ext2fs_free_mem(&block_buf);
-out:
-	return err;
+	ಆದರೆ (ಖಂಡ_buf)
+		ext2fs_free_mem(&ಖಂಡ_buf);
+ಹೊರಹೋಗು:
+	ಹಿಂತಿರುಗಿ err;
 }
 
-errcode_t ext2fs_xattrs_read(struct ext2_xattr_handle *handle)
+errcode_t ext2fs_xattrs_read(ರಚನೆ ext2_xattr_handle *handle)
 {
-	struct ext2_inode_large *inode;
-	size_t inode_size = EXT2_INODE_SIZE(handle->fs->super);
+	ರಚನೆ ext2_inode_large *inode;
+	size_t inode_ಗಾತ್ರ = EXT2_INODE_ಗಾತ್ರ(handle->fs->super);
 	errcode_t err;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EA_HANDLE);
 
-	if (inode_size < sizeof(*inode))
-		inode_size = sizeof(*inode);
-	err = ext2fs_get_memzero(inode_size, &inode);
-	if (err)
-		return err;
+	ಆದರೆ (inode_ಗಾತ್ರ < ಗಾತ್ರ(*inode))
+		inode_ಗಾತ್ರ = ಗಾತ್ರ(*inode);
+	err = ext2fs_get_memzero(inode_ಗಾತ್ರ, &inode);
+	ಆದರೆ (err)
+		ಹಿಂತಿರುಗಿ err;
 
-	err = ext2fs_read_inode_full(handle->fs, handle->ino, EXT2_INODE(inode),
-				     EXT2_INODE_SIZE(handle->fs->super));
-	if (err)
-		goto out;
+	err = ext2fs_read_inode_ತುಂಬಿದ(handle->fs, handle->ino, EXT2_INODE(inode),
+				     EXT2_INODE_ಗಾತ್ರ(handle->fs->super));
+	ಆದರೆ (err)
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	err = ext2fs_xattrs_read_inode(handle, inode);
 
-out:
+ಹೊರಹೋಗು:
 	ext2fs_free_mem(&inode);
 
-	return err;
+	ಹಿಂತಿರುಗಿ err;
 }
 
-errcode_t ext2fs_xattrs_iterate(struct ext2_xattr_handle *h,
-				int (*func)(char *name, char *value,
-					    size_t value_len, void *data),
-				void *data)
+errcode_t ext2fs_xattrs_iterate(ರಚನೆ ext2_xattr_handle *h,
+				ಪೂರ್ಣಾಂಕ (*func)(ಅಕ್ಷರ *name, ಅಕ್ಷರ *ಮೌಲ್ಯ,
+					    size_t ಮೌಲ್ಯ_len, ಶೂನ್ಯ *ದತ್ತಾಂಶ),
+				ಶೂನ್ಯ *ದತ್ತಾಂಶ)
 {
-	struct ext2_xattr *x;
-	int dirty = 0;
-	int ret;
+	ರಚನೆ ext2_xattr *x;
+	ಪೂರ್ಣಾಂಕ dirty = 0;
+	ಪೂರ್ಣಾಂಕ ret;
 
 	EXT2_CHECK_MAGIC(h, EXT2_ET_MAGIC_EA_HANDLE);
-	for (x = h->attrs; x < h->attrs + h->count; x++) {
-		ret = func(x->name, x->value, x->value_len, data);
-		if (ret & XATTR_CHANGED)
+	ಗಾಗಿ (x = h->attrs; x < h->attrs + h->ಎಣಿಕೆ_2; x++) {
+		ret = func(x->name, x->ಮೌಲ್ಯ, x->ಮೌಲ್ಯ_len, ದತ್ತಾಂಶ);
+		ಆದರೆ (ret & XATTR_ಬದಲಾಯಿತು)
 			dirty = 1;
-		if (ret & XATTR_ABORT)
-			break;
+		ಆದರೆ (ret & XATTR_ABORT)
+			ನಿಲ್ಲಿಸು;
 	}
 
-	if (dirty)
-		return ext2fs_xattrs_write(h);
-	return 0;
+	ಆದರೆ (dirty)
+		ಹಿಂತಿರುಗಿ ext2fs_xattrs_write(h);
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-errcode_t ext2fs_xattr_get(struct ext2_xattr_handle *h, const char *key,
-			   void **value, size_t *value_len)
+errcode_t ext2fs_xattr_get(ರಚನೆ ext2_xattr_handle *h, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಕೀಲಿ,
+			   ಶೂನ್ಯ **ಮೌಲ್ಯ, size_t *ಮೌಲ್ಯ_len)
 {
-	struct ext2_xattr *x;
-	char *val;
+	ರಚನೆ ext2_xattr *x;
+	ಅಕ್ಷರ *val;
 	errcode_t err;
 
 	EXT2_CHECK_MAGIC(h, EXT2_ET_MAGIC_EA_HANDLE);
-	for (x = h->attrs; x < h->attrs + h->count; x++) {
-		if (strcmp(x->name, key))
-			continue;
+	ಗಾಗಿ (x = h->attrs; x < h->attrs + h->ಎಣಿಕೆ_2; x++) {
+		ಆದರೆ (strcmp(x->name, ಕೀಲಿ))
+			ಮುಂದುವರಿ;
 
-		if (!(h->flags & XATTR_HANDLE_FLAG_RAW) &&
-		    ((strcmp(key, "system.posix_acl_default") == 0) ||
-		     (strcmp(key, "system.posix_acl_access") == 0))) {
-			err = convert_disk_buffer_to_posix_acl(x->value, x->value_len,
-							       value, value_len);
-			return err;
-		} else {
-			err = ext2fs_get_mem(x->value_len, &val);
-			if (err)
-				return err;
-			memcpy(val, x->value, x->value_len);
-			*value = val;
-			*value_len = x->value_len;
-			return 0;
+		ಆದರೆ (!(h->flags & XATTR_HANDLE_FLAG_RAW) &&
+		    ((strcmp(ಕೀಲಿ, "system.posix_acl_default") == 0) ||
+		     (strcmp(ಕೀಲಿ, "system.posix_acl_access") == 0))) {
+			err = convert_disk_ಬಫರ್_ಗಮ್ಯ_posix_acl(x->ಮೌಲ್ಯ, x->ಮೌಲ್ಯ_len,
+							       ಮೌಲ್ಯ, ಮೌಲ್ಯ_len);
+			ಹಿಂತಿರುಗಿ err;
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			err = ext2fs_get_mem(x->ಮೌಲ್ಯ_len, &val);
+			ಆದರೆ (err)
+				ಹಿಂತಿರುಗಿ err;
+			ಸ್ಮರಣೆ_ನಕಲು(val, x->ಮೌಲ್ಯ, x->ಮೌಲ್ಯ_len);
+			*ಮೌಲ್ಯ = val;
+			*ಮೌಲ್ಯ_len = x->ಮೌಲ್ಯ_len;
+			ಹಿಂತಿರುಗಿ 0;
 		}
 	}
 
-	return EXT2_ET_EA_KEY_NOT_FOUND;
+	ಹಿಂತಿರುಗಿ EXT2_ET_EA_ಕೀಲಿ_NOT_ಸಿಕ್ಕಿತು;
 }
 
-errcode_t ext2fs_xattr_inode_max_size(ext2_filsys fs, ext2_ino_t ino,
-				      size_t *size)
+errcode_t ext2fs_xattr_inode_max_ಗಾತ್ರ(ext2_filsys fs, ext2_ino_t ino,
+				      size_t *ಗಾತ್ರ_2)
 {
-	struct ext2_ext_attr_entry *entry;
-	struct ext2_inode_large *inode;
+	ರಚನೆ ext2_ext_attr_ನಮೂದು *ನಮೂದು;
+	ರಚನೆ ext2_inode_large *inode;
 	__u32 ea_inode_magic;
-	unsigned int minoff;
-	char *start;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ minoff;
+	ಅಕ್ಷರ *ಆರಂಭ;
 	size_t i;
 	errcode_t err;
 
-	i = EXT2_INODE_SIZE(fs->super);
-	if (i < sizeof(*inode))
-		i = sizeof(*inode);
+	i = EXT2_INODE_ಗಾತ್ರ(fs->super);
+	ಆದರೆ (i < ಗಾತ್ರ(*inode))
+		i = ಗಾತ್ರ(*inode);
 	err = ext2fs_get_memzero(i, &inode);
-	if (err)
-		return err;
+	ಆದರೆ (err)
+		ಹಿಂತಿರುಗಿ err;
 
-	err = ext2fs_read_inode_full(fs, ino, (struct ext2_inode *)inode,
-				     EXT2_INODE_SIZE(fs->super));
-	if (err)
-		goto out;
+	err = ext2fs_read_inode_ತುಂಬಿದ(fs, ino, (ರಚನೆ ext2_inode *)inode,
+				     EXT2_INODE_ಗಾತ್ರ(fs->super));
+	ಆದರೆ (err)
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	/* Does the inode have size for EA? */
-	if (EXT2_INODE_SIZE(fs->super) <= EXT2_GOOD_OLD_INODE_SIZE +
+	ಆದರೆ (EXT2_INODE_ಗಾತ್ರ(fs->super) <= EXT2_GOOD_OLD_INODE_ಗಾತ್ರ +
 						  inode->i_extra_isize +
-						  sizeof(__u32)) {
-		err = EXT2_ET_INLINE_DATA_NO_SPACE;
-		goto out;
+						  ಗಾತ್ರ(__u32)) {
+		err = EXT2_ET_INLINE_ದತ್ತಾಂಶ_NO_SPACE;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
-	minoff = EXT2_INODE_SIZE(fs->super) - sizeof(*inode) - sizeof(__u32);
-	memcpy(&ea_inode_magic, ((char *) inode) + EXT2_GOOD_OLD_INODE_SIZE +
-	       inode->i_extra_isize, sizeof(__u32));
-	if (ea_inode_magic == EXT2_EXT_ATTR_MAGIC) {
+	minoff = EXT2_INODE_ಗಾತ್ರ(fs->super) - ಗಾತ್ರ(*inode) - ಗಾತ್ರ(__u32);
+	ಸ್ಮರಣೆ_ನಕಲು(&ea_inode_magic, ((ಅಕ್ಷರ *) inode) + EXT2_GOOD_OLD_INODE_ಗಾತ್ರ +
+	       inode->i_extra_isize, ಗಾತ್ರ(__u32));
+	ಆದರೆ (ea_inode_magic == EXT2_EXT_ATTR_MAGIC) {
 		/* has xattrs.  calculate the size */
-		start= ((char *) inode) + EXT2_GOOD_OLD_INODE_SIZE +
-			inode->i_extra_isize + sizeof(__u32);
-		entry = (struct ext2_ext_attr_entry *) start;
-		while (!EXT2_EXT_IS_LAST_ENTRY(entry)) {
-			if (!entry->e_value_inum && entry->e_value_size) {
-				unsigned int offs = entry->e_value_offs;
-				if (offs < minoff)
+		ಆರಂಭ= ((ಅಕ್ಷರ *) inode) + EXT2_GOOD_OLD_INODE_ಗಾತ್ರ +
+			inode->i_extra_isize + ಗಾತ್ರ(__u32);
+		ನಮೂದು = (ರಚನೆ ext2_ext_attr_ನಮೂದು *) ಆರಂಭ;
+		ಆಗ (!EXT2_EXT_IS_ಕೊನೆಯ_ನಮೂದು(ನಮೂದು)) {
+			ಆದರೆ (!ನಮೂದು->e_ಮೌಲ್ಯ_inum && ನಮೂದು->e_ಮೌಲ್ಯ_ಗಾತ್ರ) {
+				ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ offs = ನಮೂದು->e_ಮೌಲ್ಯ_offs;
+				ಆದರೆ (offs < minoff)
 					minoff = offs;
 			}
-			entry = EXT2_EXT_ATTR_NEXT(entry);
+			ನಮೂದು = EXT2_EXT_ATTR_ಮುಂದಿನ(ನಮೂದು);
 		}
-		*size = minoff - ((char *)entry - (char *)start) - sizeof(__u32);
-	} else {
+		*ಗಾತ್ರ_2 = minoff - ((ಅಕ್ಷರ *)ನಮೂದು - (ಅಕ್ಷರ *)ಆರಂಭ) - ಗಾತ್ರ(__u32);
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/* no xattr.  return a maximum size */
-		*size = EXT2_EXT_ATTR_SIZE(minoff -
-					   EXT2_EXT_ATTR_LEN(strlen("data")) -
-					   EXT2_EXT_ATTR_ROUND - sizeof(__u32));
+		*ಗಾತ್ರ_2 = EXT2_EXT_ATTR_ಗಾತ್ರ(minoff -
+					   EXT2_EXT_ATTR_LEN(ಅಕ್ಷರಸರಣಿ_ಉದ್ದ("data")) -
+					   EXT2_EXT_ATTR_ಸುತ್ತು - ಗಾತ್ರ(__u32));
 	}
 
-out:
+ಹೊರಹೋಗು:
 	ext2fs_free_mem(&inode);
-	return err;
+	ಹಿಂತಿರುಗಿ err;
 }
 
-static errcode_t xattr_create_ea_inode(ext2_filsys fs, const void *value,
-				       size_t value_len, ext2_ino_t *ea_ino)
+ಸ್ಥಿರ errcode_t xattr_create_ea_inode(ext2_filsys fs, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಮೌಲ್ಯ,
+				       size_t ಮೌಲ್ಯ_len, ext2_ino_t *ea_ino)
 {
-	struct ext2_inode inode;
+	ರಚನೆ ext2_inode inode;
 	ext2_ino_t ino;
 	ext2_file_t file;
 	__u32 hash;
 	errcode_t ret;
 
 	ret = ext2fs_new_inode(fs, 0, 0, 0, &ino);
-	if (ret)
-		return ret;
+	ಆದರೆ (ret)
+		ಹಿಂತಿರುಗಿ ret;
 
-	memset(&inode, 0, sizeof(inode));
+	memset(&inode, 0, ಗಾತ್ರ(inode));
 	inode.i_flags |= EXT4_EA_INODE_FL;
-	if (ext2fs_has_feature_extents(fs->super))
+	ಆದರೆ (ext2fs_has_feature_extents(fs->super))
 		inode.i_flags |= EXT4_EXTENTS_FL;
-	inode.i_size = 0;
-	inode.i_mode = LINUX_S_IFREG | 0600;
-	inode.i_links_count = 1;
+	inode.i_ಗಾತ್ರ = 0;
+	inode.i_ಬಹುಲಕ = LINUX_S_IFREG | 0600;
+	inode.i_links_ಎಣಿಕೆ = 1;
 	ret = ext2fs_write_new_inode(fs, ino, &inode);
-	if (ret)
-		return ret;
+	ಆದರೆ (ret)
+		ಹಿಂತಿರುಗಿ ret;
 	/*
 	 * ref_count and hash utilize inode's i_*time fields.
 	 * ext2fs_write_new_inode() call above initializes these fields with
 	 * current time. That's why ref count and hash updates are done
 	 * separately below.
 	 */
-	ext2fs_set_ea_inode_ref(&inode, 1);
-	hash = ext2fs_crc32c_le(fs->csum_seed, value, value_len);
-	ext2fs_set_ea_inode_hash(&inode, hash);
+	ext2fs_ಗಣ_ea_inode_ref(&inode, 1);
+	hash = ext2fs_crc32c_le(fs->csum_ಬೀಜ, ಮೌಲ್ಯ, ಮೌಲ್ಯ_len);
+	ext2fs_ಗಣ_ea_inode_hash(&inode, hash);
 
 	ret = ext2fs_write_inode(fs, ino, &inode);
-	if (ret)
-		return ret;
+	ಆದರೆ (ret)
+		ಹಿಂತಿರುಗಿ ret;
 
 	ret = ext2fs_file_open(fs, ino, EXT2_FILE_WRITE, &file);
-	if (ret)
-		return ret;
-	ret = ext2fs_file_write(file, value, value_len, NULL);
+	ಆದರೆ (ret)
+		ಹಿಂತಿರುಗಿ ret;
+	ret = ext2fs_file_write(file, ಮೌಲ್ಯ, ಮೌಲ್ಯ_len, ಖಾಲಿ);
 	ext2fs_file_close(file);
-	if (ret)
-		return ret;
+	ಆದರೆ (ret)
+		ಹಿಂತಿರುಗಿ ret;
 
 	ext2fs_inode_alloc_stats2(fs, ino, 1 /* inuse */, 0 /* isdir */);
 
 	*ea_ino = ino;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t xattr_inode_dec_ref(ext2_filsys fs, ext2_ino_t ino)
+ಸ್ಥಿರ errcode_t xattr_inode_dec_ref(ext2_filsys fs, ext2_ino_t ino)
 {
-	struct ext2_inode_large inode;
-	__u64 ref_count;
+	ರಚನೆ ext2_inode_large inode;
+	__u64 ref_ಎಣಿಕೆ;
 	errcode_t ret;
 
-	ret = ext2fs_read_inode_full(fs, ino, (struct ext2_inode *)&inode,
-				     sizeof(inode));
-	if (ret)
-		goto out;
+	ret = ext2fs_read_inode_ತುಂಬಿದ(fs, ino, (ರಚನೆ ext2_inode *)&inode,
+				     ಗಾತ್ರ(inode));
+	ಆದರೆ (ret)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	ref_count = ext2fs_get_ea_inode_ref(EXT2_INODE(&inode));
-	ref_count--;
-	ext2fs_set_ea_inode_ref(EXT2_INODE(&inode), ref_count);
+	ref_ಎಣಿಕೆ = ext2fs_get_ea_inode_ref(EXT2_INODE(&inode));
+	ref_ಎಣಿಕೆ--;
+	ext2fs_ಗಣ_ea_inode_ref(EXT2_INODE(&inode), ref_ಎಣಿಕೆ);
 
-	if (ref_count)
-		goto write_out;
+	ಆದರೆ (ref_ಎಣಿಕೆ)
+		ಹೋಗು write_ಹೊರಹೋಗು;
 
-	inode.i_links_count = 0;
-	ext2fs_set_dtime(fs, EXT2_INODE(&inode));
+	inode.i_links_ಎಣಿಕೆ = 0;
+	ext2fs_ಗಣ_dtime(fs, EXT2_INODE(&inode));
 
 	ret = ext2fs_free_ext_attr(fs, ino, &inode);
-	if (ret)
-		goto write_out;
+	ಆದರೆ (ret)
+		ಹೋಗು write_ಹೊರಹೋಗು;
 
-	if (ext2fs_inode_has_valid_blocks2(fs, (struct ext2_inode *)&inode)) {
-		ret = ext2fs_punch(fs, ino, (struct ext2_inode *)&inode, NULL,
+	ಆದರೆ (ext2fs_inode_has_valid_blocks2(fs, (ರಚನೆ ext2_inode *)&inode)) {
+		ret = ext2fs_punch(fs, ino, (ರಚನೆ ext2_inode *)&inode, ಖಾಲಿ,
 				   0, ~0ULL);
-		if (ret)
-			goto out;
+		ಆದರೆ (ret)
+			ಹೋಗು ಹೊರಹೋಗು;
 	}
 
 	inode.i_flags &= ~EXT4_EA_INODE_FL;
 	ext2fs_inode_alloc_stats2(fs, ino, -1 /* inuse */, 0 /* is_dir */);
 
-write_out:
-	ret = ext2fs_write_inode_full(fs, ino, (struct ext2_inode *)&inode,
-				      sizeof(inode));
-out:
-	return ret;
+write_ಹೊರಹೋಗು:
+	ret = ext2fs_write_inode_ತುಂಬಿದ(fs, ino, (ರಚನೆ ext2_inode *)&inode,
+				      ಗಾತ್ರ(inode));
+ಹೊರಹೋಗು:
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-static errcode_t xattr_update_entry(ext2_filsys fs, struct ext2_xattr *x,
-				    const char *name, const char *short_name,
-				    int index, const void *value,
-				    size_t value_len, int in_inode)
+ಸ್ಥಿರ errcode_t xattr_update_ನಮೂದು(ext2_filsys fs, ರಚನೆ ext2_xattr *x,
+				    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *short_name,
+				    ಪೂರ್ಣಾಂಕ ಸೂಚ್ಯಂಕ, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಮೌಲ್ಯ,
+				    size_t ಮೌಲ್ಯ_len, ಪೂರ್ಣಾಂಕ ಒಳ_inode)
 {
 	ext2_ino_t ea_ino = 0;
-	void *new_value = NULL;
-	char *new_name = NULL;
-	int name_len;
+	ಶೂನ್ಯ *new_ಮೌಲ್ಯ = ಖಾಲಿ;
+	ಅಕ್ಷರ *new_name = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ name_len;
 	errcode_t ret;
 
-	if (!x->name) {
-		name_len = strlen(name);
+	ಆದರೆ (!x->name) {
+		name_len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(name);
 		ret = ext2fs_get_mem(name_len + 1, &new_name);
-		if (ret)
-			goto fail;
-		memcpy(new_name, name, name_len + 1);
+		ಆದರೆ (ret)
+			ಹೋಗು fail;
+		ಸ್ಮರಣೆ_ನಕಲು(new_name, name, name_len + 1);
 	}
 
-	ret = ext2fs_get_mem(value_len, &new_value);
-	if (ret)
-		goto fail;
-	memcpy(new_value, value, value_len);
+	ret = ext2fs_get_mem(ಮೌಲ್ಯ_len, &new_ಮೌಲ್ಯ);
+	ಆದರೆ (ret)
+		ಹೋಗು fail;
+	ಸ್ಮರಣೆ_ನಕಲು(new_ಮೌಲ್ಯ, ಮೌಲ್ಯ, ಮೌಲ್ಯ_len);
 
-	if (in_inode) {
-		ret = xattr_create_ea_inode(fs, value, value_len, &ea_ino);
-		if (ret)
-			goto fail;
+	ಆದರೆ (ಒಳ_inode) {
+		ret = xattr_create_ea_inode(fs, ಮೌಲ್ಯ, ಮೌಲ್ಯ_len, &ea_ino);
+		ಆದರೆ (ret)
+			ಹೋಗು fail;
 	}
 
-	if (x->ea_ino) {
+	ಆದರೆ (x->ea_ino) {
 		ret = xattr_inode_dec_ref(fs, x->ea_ino);
-		if (ret)
-			goto fail;
+		ಆದರೆ (ret)
+			ಹೋಗು fail;
 	}
 
-	if (!x->name) {
+	ಆದರೆ (!x->name) {
 		x->name = new_name;
 		x->short_name = new_name + (short_name  - name);
 	}
-	x->name_index = index;
+	x->name_ಸೂಚ್ಯಂಕ = ಸೂಚ್ಯಂಕ;
 
-	if (x->value)
-		ext2fs_free_mem(&x->value);
-	x->value = new_value;
-	x->value_len = value_len;
+	ಆದರೆ (x->ಮೌಲ್ಯ)
+		ext2fs_free_mem(&x->ಮೌಲ್ಯ);
+	x->ಮೌಲ್ಯ = new_ಮೌಲ್ಯ;
+	x->ಮೌಲ್ಯ_len = ಮೌಲ್ಯ_len;
 	x->ea_ino = ea_ino;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 fail:
-	if (new_name)
+	ಆದರೆ (new_name)
 		ext2fs_free_mem(&new_name);
-	if (new_value)
-		ext2fs_free_mem(&new_value);
-	if (ea_ino)
+	ಆದರೆ (new_ಮೌಲ್ಯ)
+		ext2fs_free_mem(&new_ಮೌಲ್ಯ);
+	ಆದರೆ (ea_ino)
 		xattr_inode_dec_ref(fs, ea_ino);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-static int xattr_find_position(struct ext2_xattr *attrs, int count,
-			       const char *shortname, int name_idx)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ xattr_ಕಂಡುಹಿಡಿ_position(ರಚನೆ ext2_xattr *attrs, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2,
+			       ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *shortname, ಪೂರ್ಣಾಂಕ name_idx)
 {
-	struct ext2_xattr *x;
-	int i;
-	int shortname_len, x_shortname_len;
+	ರಚನೆ ext2_xattr *x;
+	ಪೂರ್ಣಾಂಕ i;
+	ಪೂರ್ಣಾಂಕ shortname_len, x_shortname_len;
 
-	shortname_len = strlen(shortname);
+	shortname_len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(shortname);
 
-	for (i = 0, x = attrs; i < count; i++, x++) {
-		if (name_idx < x->name_index)
-			break;
-		if (name_idx > x->name_index)
-			continue;
+	ಗಾಗಿ (i = 0, x = attrs; i < ಎಣಿಕೆ_2; i++, x++) {
+		ಆದರೆ (name_idx < x->name_ಸೂಚ್ಯಂಕ)
+			ನಿಲ್ಲಿಸು;
+		ಆದರೆ (name_idx > x->name_ಸೂಚ್ಯಂಕ)
+			ಮುಂದುವರಿ;
 
-		x_shortname_len = strlen(x->short_name);
-		if (shortname_len < x_shortname_len)
-			break;
-		if (shortname_len > x_shortname_len)
-			continue;
+		x_shortname_len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(x->short_name);
+		ಆದರೆ (shortname_len < x_shortname_len)
+			ನಿಲ್ಲಿಸು;
+		ಆದರೆ (shortname_len > x_shortname_len)
+			ಮುಂದುವರಿ;
 
-		if (memcmp(shortname, x->short_name, shortname_len) <= 0)
-			break;
+		ಆದರೆ (memcmp(shortname, x->short_name, shortname_len) <= 0)
+			ನಿಲ್ಲಿಸು;
 	}
-	return i;
+	ಹಿಂತಿರುಗಿ i;
 }
 
-static errcode_t xattr_array_update(struct ext2_xattr_handle *h,
-				    const char *name,
-				    const void *value, size_t value_len,
-				    int ibody_free, int block_free,
-				    int old_idx, int in_inode)
+ಸ್ಥಿರ errcode_t xattr_array_update(ರಚನೆ ext2_xattr_handle *h,
+				    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name,
+				    ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಮೌಲ್ಯ, size_t ಮೌಲ್ಯ_len,
+				    ಪೂರ್ಣಾಂಕ ibody_free, ಪೂರ್ಣಾಂಕ ಖಂಡ_free,
+				    ಪೂರ್ಣಾಂಕ old_idx, ಪೂರ್ಣಾಂಕ ಒಳ_inode)
 {
-	struct ext2_xattr tmp;
-	int add_to_ibody;
-	int needed;
-	int name_len, name_idx = 0;
-	const char *shortname = name;
-	int new_idx;
-	int ret;
+	ರಚನೆ ext2_xattr tmp;
+	ಪೂರ್ಣಾಂಕ ಕೂಡಿಸು_ಗಮ್ಯ_ibody;
+	ಪೂರ್ಣಾಂಕ needed;
+	ಪೂರ್ಣಾಂಕ name_len, name_idx = 0;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *shortname = name;
+	ಪೂರ್ಣಾಂಕ new_idx;
+	ಪೂರ್ಣಾಂಕ ret;
 
-	find_ea_index(name, &shortname, &name_idx);
-	name_len = strlen(shortname);
+	ಕಂಡುಹಿಡಿ_ea_ಸೂಚ್ಯಂಕ(name, &shortname, &name_idx);
+	name_len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(shortname);
 
 	needed = EXT2_EXT_ATTR_LEN(name_len);
-	if (!in_inode)
-		needed += EXT2_EXT_ATTR_SIZE(value_len);
+	ಆದರೆ (!ಒಳ_inode)
+		needed += EXT2_EXT_ATTR_ಗಾತ್ರ(ಮೌಲ್ಯ_len);
 
-	if (old_idx >= 0 && old_idx < h->ibody_count) {
+	ಆದರೆ (old_idx >= 0 && old_idx < h->ibody_ಎಣಿಕೆ) {
 		ibody_free += EXT2_EXT_ATTR_LEN(name_len);
-		if (!h->attrs[old_idx].ea_ino)
-			ibody_free += EXT2_EXT_ATTR_SIZE(
-						h->attrs[old_idx].value_len);
+		ಆದರೆ (!h->attrs[old_idx].ea_ino)
+			ibody_free += EXT2_EXT_ATTR_ಗಾತ್ರ(
+						h->attrs[old_idx].ಮೌಲ್ಯ_len);
 	}
 
-	if (needed <= ibody_free) {
-		if (old_idx < 0) {
-			new_idx = h->ibody_count;
-			add_to_ibody = 1;
-			goto add_new;
+	ಆದರೆ (needed <= ibody_free) {
+		ಆದರೆ (old_idx < 0) {
+			new_idx = h->ibody_ಎಣಿಕೆ;
+			ಕೂಡಿಸು_ಗಮ್ಯ_ibody = 1;
+			ಹೋಗು ಕೂಡಿಸು_new;
 		}
 
 		/* Update the existing entry. */
-		ret = xattr_update_entry(h->fs, &h->attrs[old_idx], name,
-					 shortname, name_idx, value,
-					 value_len, in_inode);
-		if (ret)
-			return ret;
-		if (h->ibody_count <= old_idx) {
+		ret = xattr_update_ನಮೂದು(h->fs, &h->attrs[old_idx], name,
+					 shortname, name_idx, ಮೌಲ್ಯ,
+					 ಮೌಲ್ಯ_len, ಒಳ_inode);
+		ಆದರೆ (ret)
+			ಹಿಂತಿರುಗಿ ret;
+		ಆದರೆ (h->ibody_ಎಣಿಕೆ <= old_idx) {
 			/* Move entry from block to the end of ibody. */
 			tmp = h->attrs[old_idx];
-			memmove(h->attrs + h->ibody_count + 1,
-				h->attrs + h->ibody_count,
-				(old_idx - h->ibody_count) * sizeof(*h->attrs));
-			h->attrs[h->ibody_count] = tmp;
-			h->ibody_count++;
+			memmove(h->attrs + h->ibody_ಎಣಿಕೆ + 1,
+				h->attrs + h->ibody_ಎಣಿಕೆ,
+				(old_idx - h->ibody_ಎಣಿಕೆ) * ಗಾತ್ರ(*h->attrs));
+			h->attrs[h->ibody_ಎಣಿಕೆ] = tmp;
+			h->ibody_ಎಣಿಕೆ++;
 		}
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-	if (h->ibody_count <= old_idx) {
-		block_free += EXT2_EXT_ATTR_LEN(name_len);
-		if (!h->attrs[old_idx].ea_ino)
-			block_free +=
-				EXT2_EXT_ATTR_SIZE(h->attrs[old_idx].value_len);
+	ಆದರೆ (h->ibody_ಎಣಿಕೆ <= old_idx) {
+		ಖಂಡ_free += EXT2_EXT_ATTR_LEN(name_len);
+		ಆದರೆ (!h->attrs[old_idx].ea_ino)
+			ಖಂಡ_free +=
+				EXT2_EXT_ATTR_ಗಾತ್ರ(h->attrs[old_idx].ಮೌಲ್ಯ_len);
 	}
 
-	if (needed > block_free)
-		return EXT2_ET_EA_NO_SPACE;
+	ಆದರೆ (needed > ಖಂಡ_free)
+		ಹಿಂತಿರುಗಿ EXT2_ET_EA_NO_SPACE;
 
-	if (old_idx >= 0) {
+	ಆದರೆ (old_idx >= 0) {
 		/* Update the existing entry. */
-		ret = xattr_update_entry(h->fs, &h->attrs[old_idx], name,
-					 shortname, name_idx, value,
-					 value_len, in_inode);
-		if (ret)
-			return ret;
-		if (old_idx < h->ibody_count) {
+		ret = xattr_update_ನಮೂದು(h->fs, &h->attrs[old_idx], name,
+					 shortname, name_idx, ಮೌಲ್ಯ,
+					 ಮೌಲ್ಯ_len, ಒಳ_inode);
+		ಆದರೆ (ret)
+			ಹಿಂತಿರುಗಿ ret;
+		ಆದರೆ (old_idx < h->ibody_ಎಣಿಕೆ) {
 			/*
 			 * Move entry from ibody to the block. Note that
 			 * entries in the block are sorted.
 			 */
-			new_idx = xattr_find_position(h->attrs + h->ibody_count,
-						      h->count - h->ibody_count,
+			new_idx = xattr_ಕಂಡುಹಿಡಿ_position(h->attrs + h->ibody_ಎಣಿಕೆ,
+						      h->ಎಣಿಕೆ_2 - h->ibody_ಎಣಿಕೆ,
 						      shortname, name_idx);
-			new_idx += h->ibody_count - 1;
+			new_idx += h->ibody_ಎಣಿಕೆ - 1;
 			tmp = h->attrs[old_idx];
 			memmove(h->attrs + old_idx, h->attrs + old_idx + 1,
-				(new_idx - old_idx) * sizeof(*h->attrs));
+				(new_idx - old_idx) * ಗಾತ್ರ(*h->attrs));
 			h->attrs[new_idx] = tmp;
-			h->ibody_count--;
+			h->ibody_ಎಣಿಕೆ--;
 		}
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-	new_idx = xattr_find_position(h->attrs + h->ibody_count,
-				      h->count - h->ibody_count,
+	new_idx = xattr_ಕಂಡುಹಿಡಿ_position(h->attrs + h->ibody_ಎಣಿಕೆ,
+				      h->ಎಣಿಕೆ_2 - h->ibody_ಎಣಿಕೆ,
 				      shortname, name_idx);
-	new_idx += h->ibody_count;
-	add_to_ibody = 0;
+	new_idx += h->ibody_ಎಣಿಕೆ;
+	ಕೂಡಿಸು_ಗಮ್ಯ_ibody = 0;
 
-add_new:
-	if (h->count == h->capacity) {
+ಕೂಡಿಸು_new:
+	ಆದರೆ (h->ಎಣಿಕೆ_2 == h->ಸಾಮರ್ಥ್ಯ) {
 		ret = ext2fs_xattrs_expand(h, 4);
-		if (ret)
-			return ret;
+		ಆದರೆ (ret)
+			ಹಿಂತಿರುಗಿ ret;
 	}
 
-	ret = xattr_update_entry(h->fs, &h->attrs[h->count], name, shortname,
-				 name_idx, value, value_len, in_inode);
-	if (ret)
-		return ret;
+	ret = xattr_update_ನಮೂದು(h->fs, &h->attrs[h->ಎಣಿಕೆ_2], name, shortname,
+				 name_idx, ಮೌಲ್ಯ, ಮೌಲ್ಯ_len, ಒಳ_inode);
+	ಆದರೆ (ret)
+		ಹಿಂತಿರುಗಿ ret;
 
-	tmp = h->attrs[h->count];
+	tmp = h->attrs[h->ಎಣಿಕೆ_2];
 	memmove(h->attrs + new_idx + 1, h->attrs + new_idx,
-		(h->count - new_idx)*sizeof(*h->attrs));
+		(h->ಎಣಿಕೆ_2 - new_idx)*ಗಾತ್ರ(*h->attrs));
 	h->attrs[new_idx] = tmp;
-	if (add_to_ibody)
-		h->ibody_count++;
-	h->count++;
-	return 0;
+	ಆದರೆ (ಕೂಡಿಸು_ಗಮ್ಯ_ibody)
+		h->ibody_ಎಣಿಕೆ++;
+	h->ಎಣಿಕೆ_2++;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static int space_used(struct ext2_xattr *attrs, int count)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ space_ಬಳಸಿದ(ರಚನೆ ext2_xattr *attrs, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2)
 {
-	int total = 0;
-	struct ext2_xattr *x;
-	int i, len;
+	ಪೂರ್ಣಾಂಕ ಒಟ್ಟು = 0;
+	ರಚನೆ ext2_xattr *x;
+	ಪೂರ್ಣಾಂಕ i, len;
 
-	for (i = 0, x = attrs; i < count; i++, x++) {
-		len = strlen(x->short_name);
-		total += EXT2_EXT_ATTR_LEN(len);
-		if (!x->ea_ino)
-			total += EXT2_EXT_ATTR_SIZE(x->value_len);
+	ಗಾಗಿ (i = 0, x = attrs; i < ಎಣಿಕೆ_2; i++, x++) {
+		len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(x->short_name);
+		ಒಟ್ಟು += EXT2_EXT_ATTR_LEN(len);
+		ಆದರೆ (!x->ea_ino)
+			ಒಟ್ಟು += EXT2_EXT_ATTR_ಗಾತ್ರ(x->ಮೌಲ್ಯ_len);
 	}
-	return total;
+	ಹಿಂತಿರುಗಿ ಒಟ್ಟು;
 }
 
 /*
  * The minimum size of EA value when you start storing it in an external inode
  * size of block - size of header - size of 1 entry - 4 null bytes
  */
-#define EXT4_XATTR_MIN_LARGE_EA_SIZE(b)	\
-	((b) - EXT2_EXT_ATTR_LEN(3) - sizeof(struct ext2_ext_attr_header) - 4)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_XATTR_MIN_LARGE_EA_ಗಾತ್ರ(b)	\
+	((b) - EXT2_EXT_ATTR_LEN(3) - ಗಾತ್ರ(ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ) - 4)
 
-errcode_t ext2fs_xattr_set(struct ext2_xattr_handle *h,
-			   const char *name,
-			   const void *value,
-			   size_t value_len)
+errcode_t ext2fs_xattr_ಗಣ(ರಚನೆ ext2_xattr_handle *h,
+			   ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name,
+			   ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಮೌಲ್ಯ,
+			   size_t ಮೌಲ್ಯ_len)
 {
 	ext2_filsys fs = h->fs;
-	const int inode_size = EXT2_INODE_SIZE(fs->super);
-	struct ext2_inode_large *inode = NULL;
-	struct ext2_xattr *x;
-	char *new_value;
-	int ibody_free, block_free;
-	int in_inode = 0;
-	int old_idx = -1;
-	int extra_isize;
+	ಸ್ಥಿರಾಂಕ ಪೂರ್ಣಾಂಕ inode_ಗಾತ್ರ = EXT2_INODE_ಗಾತ್ರ(fs->super);
+	ರಚನೆ ext2_inode_large *inode = ಖಾಲಿ;
+	ರಚನೆ ext2_xattr *x;
+	ಅಕ್ಷರ *new_ಮೌಲ್ಯ;
+	ಪೂರ್ಣಾಂಕ ibody_free, ಖಂಡ_free;
+	ಪೂರ್ಣಾಂಕ ಒಳ_inode = 0;
+	ಪೂರ್ಣಾಂಕ old_idx = -1;
+	ಪೂರ್ಣಾಂಕ extra_isize;
 	errcode_t ret;
 
 	EXT2_CHECK_MAGIC(h, EXT2_ET_MAGIC_EA_HANDLE);
 
-	ret = ext2fs_get_mem(value_len, &new_value);
-	if (ret)
-		return ret;
-	if (!(h->flags & XATTR_HANDLE_FLAG_RAW) &&
+	ret = ext2fs_get_mem(ಮೌಲ್ಯ_len, &new_ಮೌಲ್ಯ);
+	ಆದರೆ (ret)
+		ಹಿಂತಿರುಗಿ ret;
+	ಆದರೆ (!(h->flags & XATTR_HANDLE_FLAG_RAW) &&
 	    ((strcmp(name, "system.posix_acl_default") == 0) ||
 	     (strcmp(name, "system.posix_acl_access") == 0))) {
-		ret = convert_posix_acl_to_disk_buffer(value, value_len,
-						       new_value, &value_len);
-		if (ret)
-			goto out;
-	} else if (value_len)
-		memcpy(new_value, value, value_len);
+		ret = convert_posix_acl_ಗಮ್ಯ_disk_ಬಫರ್(ಮೌಲ್ಯ, ಮೌಲ್ಯ_len,
+						       new_ಮೌಲ್ಯ, &ಮೌಲ್ಯ_len);
+		ಆದರೆ (ret)
+			ಹೋಗು ಹೊರಹೋಗು;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಮೌಲ್ಯ_len)
+		ಸ್ಮರಣೆ_ನಕಲು(new_ಮೌಲ್ಯ, ಮೌಲ್ಯ, ಮೌಲ್ಯ_len);
 
 	/* Imitate kernel behavior by skipping update if value is the same. */
-	for (x = h->attrs; x < h->attrs + h->count; x++) {
-		if (!strcmp(x->name, name)) {
-			if (!x->ea_ino && x->value_len == value_len &&
-			    (!value_len ||
-			     !memcmp(x->value, new_value, value_len))) {
+	ಗಾಗಿ (x = h->attrs; x < h->attrs + h->ಎಣಿಕೆ_2; x++) {
+		ಆದರೆ (!strcmp(x->name, name)) {
+			ಆದರೆ (!x->ea_ino && x->ಮೌಲ್ಯ_len == ಮೌಲ್ಯ_len &&
+			    (!ಮೌಲ್ಯ_len ||
+			     !memcmp(x->ಮೌಲ್ಯ, new_ಮೌಲ್ಯ, ಮೌಲ್ಯ_len))) {
 				ret = 0;
-				goto out;
+				ಹೋಗು ಹೊರಹೋಗು;
 			}
 			old_idx = x - h->attrs;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 	}
 
-	ret = ext2fs_get_memzero(inode_size, &inode);
-	if (ret)
-		goto out;
-	ret = ext2fs_read_inode_full(fs, h->ino,
-				     (struct ext2_inode *)inode,
-				     inode_size);
-	if (ret)
-		goto out;
-	if (inode_size > EXT2_GOOD_OLD_INODE_SIZE) {
+	ret = ext2fs_get_memzero(inode_ಗಾತ್ರ, &inode);
+	ಆದರೆ (ret)
+		ಹೋಗು ಹೊರಹೋಗು;
+	ret = ext2fs_read_inode_ತುಂಬಿದ(fs, h->ino,
+				     (ರಚನೆ ext2_inode *)inode,
+				     inode_ಗಾತ್ರ);
+	ಆದರೆ (ret)
+		ಹೋಗು ಹೊರಹೋಗು;
+	ಆದರೆ (inode_ಗಾತ್ರ > EXT2_GOOD_OLD_INODE_ಗಾತ್ರ) {
 		extra_isize = inode->i_extra_isize;
-		if (extra_isize == 0) {
+		ಆದರೆ (extra_isize == 0) {
 			extra_isize = fs->super->s_want_extra_isize;
-			if (extra_isize == 0)
-				extra_isize = sizeof(__u32);
+			ಆದರೆ (extra_isize == 0)
+				extra_isize = ಗಾತ್ರ(__u32);
 		}
-		ibody_free = inode_size - EXT2_GOOD_OLD_INODE_SIZE;
+		ibody_free = inode_ಗಾತ್ರ - EXT2_GOOD_OLD_INODE_ಗಾತ್ರ;
 		ibody_free -= extra_isize;
 		/* Extended attribute magic and final null entry. */
-		ibody_free -= sizeof(__u32) * 2;
-		ibody_free -= space_used(h->attrs, h->ibody_count);
-	} else
+		ibody_free -= ಗಾತ್ರ(__u32) * 2;
+		ibody_free -= space_ಬಳಸಿದ(h->attrs, h->ibody_ಎಣಿಕೆ);
+	} ಇಲ್ಲದಿದ್ದರೆ
 		ibody_free = 0;
 
 	/* Inline data can only go to ibody. */
-	if (strcmp(name, "system.data") == 0) {
-		if (h->ibody_count <= old_idx) {
+	ಆದರೆ (strcmp(name, "system.data") == 0) {
+		ಆದರೆ (h->ibody_ಎಣಿಕೆ <= old_idx) {
 			ret = EXT2_ET_FILESYSTEM_CORRUPTED;
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
-		ret = xattr_array_update(h, name, new_value, value_len,
+		ret = xattr_array_update(h, name, new_ಮೌಲ್ಯ, ಮೌಲ್ಯ_len,
 					 ibody_free,
 					 0 /* block_free */, old_idx,
 					 0 /* in_inode */);
-		if (ret)
-			goto out;
-		goto write_out;
+		ಆದರೆ (ret)
+			ಹೋಗು ಹೊರಹೋಗು;
+		ಹೋಗು write_ಹೊರಹೋಗು;
 	}
 
-	block_free = fs->blocksize;
-	block_free -= sizeof(struct ext2_ext_attr_header);
+	ಖಂಡ_free = fs->blocksize;
+	ಖಂಡ_free -= ಗಾತ್ರ(ರಚನೆ ext2_ext_attr_ಶೀರ್ಷಿಕೆ);
 	/* Final null entry. */
-	block_free -= sizeof(__u32);
-	block_free -= space_used(h->attrs + h->ibody_count,
-				 h->count - h->ibody_count);
+	ಖಂಡ_free -= ಗಾತ್ರ(__u32);
+	ಖಂಡ_free -= space_ಬಳಸಿದ(h->attrs + h->ibody_ಎಣಿಕೆ,
+				 h->ಎಣಿಕೆ_2 - h->ibody_ಎಣಿಕೆ);
 
-	if (ext2fs_has_feature_ea_inode(fs->super) &&
-	    value_len > EXT4_XATTR_MIN_LARGE_EA_SIZE(fs->blocksize))
-		in_inode = 1;
+	ಆದರೆ (ext2fs_has_feature_ea_inode(fs->super) &&
+	    ಮೌಲ್ಯ_len > EXT4_XATTR_MIN_LARGE_EA_ಗಾತ್ರ(fs->blocksize))
+		ಒಳ_inode = 1;
 
-	ret = xattr_array_update(h, name, new_value, value_len, ibody_free,
-				 block_free, old_idx, in_inode);
-	if (ret == EXT2_ET_EA_NO_SPACE && !in_inode &&
+	ret = xattr_array_update(h, name, new_ಮೌಲ್ಯ, ಮೌಲ್ಯ_len, ibody_free,
+				 ಖಂಡ_free, old_idx, ಒಳ_inode);
+	ಆದರೆ (ret == EXT2_ET_EA_NO_SPACE && !ಒಳ_inode &&
 	    ext2fs_has_feature_ea_inode(fs->super))
-		ret = xattr_array_update(h, name, new_value, value_len,
-			ibody_free, block_free, old_idx, 1 /* in_inode */);
-	if (ret)
-		goto out;
+		ret = xattr_array_update(h, name, new_ಮೌಲ್ಯ, ಮೌಲ್ಯ_len,
+			ibody_free, ಖಂಡ_free, old_idx, 1 /* in_inode */);
+	ಆದರೆ (ret)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-write_out:
+write_ಹೊರಹೋಗು:
 	ret = ext2fs_xattrs_write(h);
-out:
-	if (inode)
+ಹೊರಹೋಗು:
+	ಆದರೆ (inode)
 		ext2fs_free_mem(&inode);
-	ext2fs_free_mem(&new_value);
-	return ret;
+	ext2fs_free_mem(&new_ಮೌಲ್ಯ);
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-errcode_t ext2fs_xattr_remove(struct ext2_xattr_handle *handle,
-			      const char *key)
+errcode_t ext2fs_xattr_remove(ರಚನೆ ext2_xattr_handle *handle,
+			      ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಕೀಲಿ)
 {
-	struct ext2_xattr *x;
-	struct ext2_xattr *end = handle->attrs + handle->count;
+	ರಚನೆ ext2_xattr *x;
+	ರಚನೆ ext2_xattr *ಕೊನೆ = handle->attrs + handle->ಎಣಿಕೆ_2;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EA_HANDLE);
-	for (x = handle->attrs; x < end; x++) {
-		if (strcmp(x->name, key) == 0) {
+	ಗಾಗಿ (x = handle->attrs; x < ಕೊನೆ; x++) {
+		ಆದರೆ (strcmp(x->name, ಕೀಲಿ) == 0) {
 			ext2fs_free_mem(&x->name);
-			ext2fs_free_mem(&x->value);
-			if (x->ea_ino)
+			ext2fs_free_mem(&x->ಮೌಲ್ಯ);
+			ಆದರೆ (x->ea_ino)
 				xattr_inode_dec_ref(handle->fs, x->ea_ino);
-			memmove(x, x + 1, (end - x - 1)*sizeof(*x));
-			memset(end - 1, 0, sizeof(*end));
-			if (x < handle->attrs + handle->ibody_count)
-				handle->ibody_count--;
-			handle->count--;
-			return ext2fs_xattrs_write(handle);
+			memmove(x, x + 1, (ಕೊನೆ - x - 1)*ಗಾತ್ರ(*x));
+			memset(ಕೊನೆ - 1, 0, ಗಾತ್ರ(*ಕೊನೆ));
+			ಆದರೆ (x < handle->attrs + handle->ibody_ಎಣಿಕೆ)
+				handle->ibody_ಎಣಿಕೆ--;
+			handle->ಎಣಿಕೆ_2--;
+			ಹಿಂತಿರುಗಿ ext2fs_xattrs_write(handle);
 		}
 	}
 
 	/* no key found, success! */
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-errcode_t ext2fs_xattr_remove_all(struct ext2_xattr_handle *handle)
+errcode_t ext2fs_xattr_remove_all(ರಚನೆ ext2_xattr_handle *handle)
 {
-	struct ext2_xattr *x;
-	struct ext2_xattr *end = handle->attrs + handle->count;
+	ರಚನೆ ext2_xattr *x;
+	ರಚನೆ ext2_xattr *ಕೊನೆ = handle->attrs + handle->ಎಣಿಕೆ_2;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EA_HANDLE);
-	for (x = handle->attrs; x < end; x++) {
+	ಗಾಗಿ (x = handle->attrs; x < ಕೊನೆ; x++) {
 		ext2fs_free_mem(&x->name);
-		ext2fs_free_mem(&x->value);
-		if (x->ea_ino)
+		ext2fs_free_mem(&x->ಮೌಲ್ಯ);
+		ಆದರೆ (x->ea_ino)
 			xattr_inode_dec_ref(handle->fs, x->ea_ino);
 	}
 
-	handle->ibody_count = 0;
-	handle->count = 0;
-	return ext2fs_xattrs_write(handle);
+	handle->ibody_ಎಣಿಕೆ = 0;
+	handle->ಎಣಿಕೆ_2 = 0;
+	ಹಿಂತಿರುಗಿ ext2fs_xattrs_write(handle);
 }
 
 errcode_t ext2fs_xattrs_open(ext2_filsys fs, ext2_ino_t ino,
-			     struct ext2_xattr_handle **handle)
+			     ರಚನೆ ext2_xattr_handle **handle)
 {
-	struct ext2_xattr_handle *h;
+	ರಚನೆ ext2_xattr_handle *h;
 	errcode_t err;
 
-	if (!ext2fs_has_feature_xattr(fs->super) &&
-	    !ext2fs_has_feature_inline_data(fs->super))
-		return EXT2_ET_MISSING_EA_FEATURE;
+	ಆದರೆ (!ext2fs_has_feature_xattr(fs->super) &&
+	    !ext2fs_has_feature_inline_ದತ್ತಾಂಶ(fs->super))
+		ಹಿಂತಿರುಗಿ EXT2_ET_MISSING_EA_FEATURE;
 
-	err = ext2fs_get_memzero(sizeof(*h), &h);
-	if (err)
-		return err;
+	err = ext2fs_get_memzero(ಗಾತ್ರ(*h), &h);
+	ಆದರೆ (err)
+		ಹಿಂತಿರುಗಿ err;
 
 	h->magic = EXT2_ET_MAGIC_EA_HANDLE;
-	h->capacity = 4;
-	err = ext2fs_get_arrayzero(h->capacity, sizeof(struct ext2_xattr),
+	h->ಸಾಮರ್ಥ್ಯ = 4;
+	err = ext2fs_get_arrayzero(h->ಸಾಮರ್ಥ್ಯ, ಗಾತ್ರ(ರಚನೆ ext2_xattr),
 				   &h->attrs);
-	if (err) {
+	ಆದರೆ (err) {
 		ext2fs_free_mem(&h);
-		return err;
+		ಹಿಂತಿರುಗಿ err;
 	}
-	h->count = 0;
+	h->ಎಣಿಕೆ_2 = 0;
 	h->ino = ino;
 	h->fs = fs;
 	*handle = h;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-errcode_t ext2fs_xattrs_close(struct ext2_xattr_handle **handle)
+errcode_t ext2fs_xattrs_close(ರಚನೆ ext2_xattr_handle **handle)
 {
-	struct ext2_xattr_handle *h = *handle;
+	ರಚನೆ ext2_xattr_handle *h = *handle;
 
 	EXT2_CHECK_MAGIC(h, EXT2_ET_MAGIC_EA_HANDLE);
-	xattrs_free_keys(h);
+	xattrs_free_ಕೀಲಿಗಳು(h);
 	ext2fs_free_mem(&h->attrs);
 	ext2fs_free_mem(handle);
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-errcode_t ext2fs_xattrs_count(struct ext2_xattr_handle *handle, size_t *count)
+errcode_t ext2fs_xattrs_ಎಣಿಕೆ(ರಚನೆ ext2_xattr_handle *handle, size_t *ಎಣಿಕೆ_2)
 {
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EA_HANDLE);
-	*count = handle->count;
-	return 0;
+	*ಎಣಿಕೆ_2 = handle->ಎಣಿಕೆ_2;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-errcode_t ext2fs_xattrs_flags(struct ext2_xattr_handle *handle,
-			      unsigned int *new_flags, unsigned int *old_flags)
+errcode_t ext2fs_xattrs_flags(ರಚನೆ ext2_xattr_handle *handle,
+			      ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ *new_flags, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ *old_flags)
 {
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EA_HANDLE);
-	if (old_flags)
+	ಆದರೆ (old_flags)
 		*old_flags = handle->flags;
-	if (new_flags)
+	ಆದರೆ (new_flags)
 		handle->flags = *new_flags;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }

@@ -91,93 +91,93 @@ static inline struct page * rb_insert_page_cache(struct inode * inode,
 -----------------------------------------------------------------------
 */
 
-#ifndef	_LINUX_RBTREE_H
-#define	_LINUX_RBTREE_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ	_LINUX_RBTREE_H
+#ವ್ಯಾಖ್ಯಾನಿಸು	_LINUX_RBTREE_H
 
-#include <stdlib.h>
-#include <stdint.h>
-#include "compiler.h"
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ "compiler.h"
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-function"
-#endif
+#ಆದರೆ __GNUC_PREREQ (4, 6)
+#ಸೂಚನೆ GCC diagnostic ತಳ್ಳು
+#ಸೂಚನೆ GCC diagnostic ignored "-Wunused-function"
+#ಆದರೆ_ಅಂತ್ಯ
 
-struct rb_node
+ರಚನೆ rb_ಗಂಟು
 {
-	uintptr_t  rb_parent_color;
-#define	RB_RED		0
-#define	RB_BLACK	1
-	struct rb_node *rb_right;
-	struct rb_node *rb_left;
-} __attribute__((aligned(sizeof(long))));
+	uintptr_t  rb_ಪೋಷಕ_color;
+#ವ್ಯಾಖ್ಯಾನಿಸು	RB_RED		0
+#ವ್ಯಾಖ್ಯಾನಿಸು	RB_BLACK	1
+	ರಚನೆ rb_ಗಂಟು *rb_ಬಲ;
+	ರಚನೆ rb_ಗಂಟು *rb_ಎಡ;
+} __attribute__((aligned(ಗಾತ್ರ(ದೀರ್ಘ))));
     /* The alignment might seem pointless, but allegedly CRIS needs it */
 
-struct rb_root
+ರಚನೆ rb_ಬೇರು
 {
-	struct rb_node *rb_node;
+	ರಚನೆ rb_ಗಂಟು *rb_ಗಂಟು;
 };
 
 
-#define ext2fs_rb_parent(r)   ((struct rb_node *)((r)->rb_parent_color & ~3))
-#define ext2fs_rb_color(r)   ((r)->rb_parent_color & 1)
-#define ext2fs_rb_is_red(r)   (!ext2fs_rb_color(r))
-#define ext2fs_rb_is_black(r) ext2fs_rb_color(r)
-#define ext2fs_rb_set_red(r)  do { (r)->rb_parent_color &= ~1; } while (0)
-#define ext2fs_rb_set_black(r)  do { (r)->rb_parent_color |= 1; } while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_rb_ಪೋಷಕ(r)   ((ರಚನೆ rb_ಗಂಟು *)((r)->rb_ಪೋಷಕ_color & ~3))
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_rb_color(r)   ((r)->rb_ಪೋಷಕ_color & 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_rb_is_red(r)   (!ext2fs_rb_color(r))
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_rb_is_black(r) ext2fs_rb_color(r)
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_rb_ಗಣ_red(r)  ಮಾಡು { (r)->rb_ಪೋಷಕ_color &= ~1; } ಆಗ (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_rb_ಗಣ_black(r)  ಮಾಡು { (r)->rb_ಪೋಷಕ_color |= 1; } ಆಗ (0)
 
-static inline void ext2fs_rb_set_parent(struct rb_node *rb, struct rb_node *p)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ ext2fs_rb_ಗಣ_ಪೋಷಕ(ರಚನೆ rb_ಗಂಟು *rb, ರಚನೆ rb_ಗಂಟು *p)
 {
-	rb->rb_parent_color = (rb->rb_parent_color & 3) | (uintptr_t)p;
+	rb->rb_ಪೋಷಕ_color = (rb->rb_ಪೋಷಕ_color & 3) | (uintptr_t)p;
 }
-static inline void ext2fs_rb_set_color(struct rb_node *rb, int color)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ ext2fs_rb_ಗಣ_color(ರಚನೆ rb_ಗಂಟು *rb, ಪೂರ್ಣಾಂಕ color)
 {
-	rb->rb_parent_color = (rb->rb_parent_color & ~1) | color;
-}
-
-#define RB_ROOT	(struct rb_root) { NULL, }
-#define	ext2fs_rb_entry(ptr, type, member) container_of(ptr, type, member)
-
-static inline int ext2fs_rb_empty_root(struct rb_root *root)
-{
-	return root->rb_node == NULL;
+	rb->rb_ಪೋಷಕ_color = (rb->rb_ಪೋಷಕ_color & ~1) | color;
 }
 
-static inline int ext2fs_rb_empty_node(struct rb_node *node)
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_ಬೇರು	(ರಚನೆ rb_ಬೇರು) { ಖಾಲಿ, }
+#ವ್ಯಾಖ್ಯಾನಿಸು	ext2fs_rb_ನಮೂದು(ptr, type, member) container_ದ(ptr, type, member)
+
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ ext2fs_rb_ಖಾಲಿಗಳು_ಬೇರು(ರಚನೆ rb_ಬೇರು *ಬೇರು)
 {
-	return ext2fs_rb_parent(node) == node;
+	ಹಿಂತಿರುಗಿ ಬೇರು->rb_ಗಂಟು == ಖಾಲಿ;
 }
 
-static inline void ext2fs_rb_clear_node(struct rb_node *node)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ ext2fs_rb_ಖಾಲಿಗಳು_ಗಂಟು(ರಚನೆ rb_ಗಂಟು *ಗಂಟು)
 {
-	ext2fs_rb_set_parent(node, node);
+	ಹಿಂತಿರುಗಿ ext2fs_rb_ಪೋಷಕ(ಗಂಟು) == ಗಂಟು;
 }
 
-extern void ext2fs_rb_insert_color(struct rb_node *, struct rb_root *);
-extern void ext2fs_rb_erase(struct rb_node *, struct rb_root *);
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ ext2fs_rb_clear_ಗಂಟು(ರಚನೆ rb_ಗಂಟು *ಗಂಟು)
+{
+	ext2fs_rb_ಗಣ_ಪೋಷಕ(ಗಂಟು, ಗಂಟು);
+}
+
+ಬಾಹ್ಯ ಶೂನ್ಯ ext2fs_rb_ಸೇರಿಸು_color(ರಚನೆ rb_ಗಂಟು *, ರಚನೆ rb_ಬೇರು *);
+ಬಾಹ್ಯ ಶೂನ್ಯ ext2fs_rb_erase(ರಚನೆ rb_ಗಂಟು *, ರಚನೆ rb_ಬೇರು *);
 
 /* Find logical next and previous nodes in a tree */
-extern struct rb_node *ext2fs_rb_next(struct rb_node *);
-extern struct rb_node *ext2fs_rb_prev(struct rb_node *);
-extern struct rb_node *ext2fs_rb_first(const struct rb_root *);
-extern struct rb_node *ext2fs_rb_last(const struct rb_root *);
+ಬಾಹ್ಯ ರಚನೆ rb_ಗಂಟು *ext2fs_rb_ಮುಂದಿನ(ರಚನೆ rb_ಗಂಟು *);
+ಬಾಹ್ಯ ರಚನೆ rb_ಗಂಟು *ext2fs_rb_prev(ರಚನೆ rb_ಗಂಟು *);
+ಬಾಹ್ಯ ರಚನೆ rb_ಗಂಟು *ext2fs_rb_ಮೊದಲ(ಸ್ಥಿರಾಂಕ ರಚನೆ rb_ಬೇರು *);
+ಬಾಹ್ಯ ರಚನೆ rb_ಗಂಟು *ext2fs_rb_ಕೊನೆಯ(ಸ್ಥಿರಾಂಕ ರಚನೆ rb_ಬೇರು *);
 
 /* Fast replacement of a single node without remove/rebalance/add/rebalance */
-extern void ext2fs_rb_replace_node(struct rb_node *victim, struct rb_node *new_,
-				 struct rb_root *root);
+ಬಾಹ್ಯ ಶೂನ್ಯ ext2fs_rb_replace_ಗಂಟು(ರಚನೆ rb_ಗಂಟು *victim, ರಚನೆ rb_ಗಂಟು *new_,
+				 ರಚನೆ rb_ಬೇರು *ಬೇರು);
 
-static inline void ext2fs_rb_link_node(struct rb_node * node,
-				     struct rb_node * parent,
-				     struct rb_node ** rb_link)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ ext2fs_rb_link_ಗಂಟು(ರಚನೆ rb_ಗಂಟು * ಗಂಟು,
+				     ರಚನೆ rb_ಗಂಟು * ಪೋಷಕ,
+				     ರಚನೆ rb_ಗಂಟು ** rb_link)
 {
-	node->rb_parent_color = (uintptr_t)parent;
-	node->rb_left = node->rb_right = NULL;
+	ಗಂಟು->rb_ಪೋಷಕ_color = (uintptr_t)ಪೋಷಕ;
+	ಗಂಟು->rb_ಎಡ = ಗಂಟು->rb_ಬಲ = ಖಾಲಿ;
 
-	*rb_link = node;
+	*rb_link = ಗಂಟು;
 }
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
-#endif
+#ಆದರೆ __GNUC_PREREQ (4, 6)
+#ಸೂಚನೆ GCC diagnostic ತೆಗೆ
+#ಆದರೆ_ಅಂತ್ಯ
 
-#endif	/* _LINUX_RBTREE_H */
+#ಆದರೆ_ಅಂತ್ಯ	/* _LINUX_RBTREE_H */

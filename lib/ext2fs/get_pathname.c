@@ -21,151 +21,151 @@
  *
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
-struct get_pathname_struct {
-	ext2_ino_t	search_ino;
-	ext2_ino_t	parent;
-	char		*name;
+ರಚನೆ get_pathname_struct {
+	ext2_ino_t	ಹುಡುಕು_ino;
+	ext2_ino_t	ಪೋಷಕ;
+	ಅಕ್ಷರ		*name;
 	errcode_t	errcode;
 };
 
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-static int get_pathname_proc(struct ext2_dir_entry *dirent,
-			     int	offset EXT2FS_ATTR((unused)),
-			     int	blocksize EXT2FS_ATTR((unused)),
-			     char	*buf EXT2FS_ATTR((unused)),
-			     void	*priv_data)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __TURBOC__
+ #ಸೂಚನೆ argsused
+#ಆದರೆ_ಅಂತ್ಯ
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ get_pathname_proc(ರಚನೆ ext2_dir_ನಮೂದು *dirent,
+			     ಪೂರ್ಣಾಂಕ	ಸ್ಥಾನಾಂತರ EXT2FS_ATTR((ಬಳಸದ)),
+			     ಪೂರ್ಣಾಂಕ	blocksize EXT2FS_ATTR((ಬಳಸದ)),
+			     ಅಕ್ಷರ	*buf EXT2FS_ATTR((ಬಳಸದ)),
+			     ಶೂನ್ಯ	*priv_ದತ್ತಾಂಶ)
 {
-	struct get_pathname_struct	*gp;
+	ರಚನೆ get_pathname_struct	*gp;
 	errcode_t			retval;
-	int name_len = ext2fs_dirent_name_len(dirent);
+	ಪೂರ್ಣಾಂಕ name_len = ext2fs_dirent_name_len(dirent);
 
-	gp = (struct get_pathname_struct *) priv_data;
+	gp = (ರಚನೆ get_pathname_struct *) priv_ದತ್ತಾಂಶ;
 
-	if ((name_len == 2) && !strncmp(dirent->name, "..", 2))
-		gp->parent = dirent->inode;
-	if (dirent->inode == gp->search_ino) {
+	ಆದರೆ ((name_len == 2) && !ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(dirent->name, "..", 2))
+		gp->ಪೋಷಕ = dirent->inode;
+	ಆದರೆ (dirent->inode == gp->ಹುಡುಕು_ino) {
 		retval = ext2fs_get_mem(name_len + 1, &gp->name);
-		if (retval) {
+		ಆದರೆ (retval) {
 			gp->errcode = retval;
-			return DIRENT_ABORT;
+			ಹಿಂತಿರುಗಿ DIRENT_ABORT;
 		}
 		strncpy(gp->name, dirent->name, name_len);
 		gp->name[name_len] = '\0';
-		return DIRENT_ABORT;
+		ಹಿಂತಿರುಗಿ DIRENT_ABORT;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t ext2fs_get_pathname_int(ext2_filsys fs, ext2_ino_t dir,
-					 ext2_ino_t ino, int maxdepth,
-					 char *buf, char **name)
+ಸ್ಥಿರ errcode_t ext2fs_get_pathname_int(ext2_filsys fs, ext2_ino_t dir,
+					 ext2_ino_t ino, ಪೂರ್ಣಾಂಕ maxdepth,
+					 ಅಕ್ಷರ *buf, ಅಕ್ಷರ **name)
 {
-	struct get_pathname_struct gp;
-	char	*parent_name = 0, *ret;
+	ರಚನೆ get_pathname_struct gp;
+	ಅಕ್ಷರ	*ಪೋಷಕ_name = 0, *ret;
 	errcode_t	retval;
 
-	if (dir == ino) {
+	ಆದರೆ (dir == ino) {
 		retval = ext2fs_get_mem(2, name);
-		if (retval)
-			return retval;
-		strcpy(*name, (dir == EXT2_ROOT_INO) ? "/" : ".");
-		return 0;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
+		strcpy(*name, (dir == EXT2_ಬೇರು_INO) ? "/" : ".");
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-	if (!dir || (maxdepth < 0)) {
+	ಆದರೆ (!dir || (maxdepth < 0)) {
 		retval = ext2fs_get_mem(4, name);
-		if (retval)
-			return retval;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 		strcpy(*name, "...");
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-	gp.search_ino = ino;
-	gp.parent = 0;
+	gp.ಹುಡುಕು_ino = ino;
+	gp.ಪೋಷಕ = 0;
 	gp.name = 0;
 	gp.errcode = 0;
 
 	retval = ext2fs_dir_iterate(fs, dir, 0, buf, get_pathname_proc, &gp);
-	if (retval == EXT2_ET_NO_DIRECTORY) {
-		char tmp[32];
+	ಆದರೆ (retval == EXT2_ET_NO_DIRECTORY) {
+		ಅಕ್ಷರ tmp[32];
 
-		if (ino)
-			snprintf(tmp, sizeof(tmp), "<%u>/<%u>", dir, ino);
-		else
-			snprintf(tmp, sizeof(tmp), "<%u>", dir);
-		retval = ext2fs_get_mem(strlen(tmp)+1, name);
-		if (retval)
-			goto cleanup;
+		ಆದರೆ (ino)
+			snprintf(tmp, ಗಾತ್ರ(tmp), "<%u>/<%u>", dir, ino);
+		ಇಲ್ಲದಿದ್ದರೆ
+			snprintf(tmp, ಗಾತ್ರ(tmp), "<%u>", dir);
+		retval = ext2fs_get_mem(ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(tmp)+1, name);
+		ಆದರೆ (retval)
+			ಹೋಗು cleanup;
 		strcpy(*name, tmp);
-		return 0;
-	} else if (retval)
-		goto cleanup;
-	if (gp.errcode) {
+		ಹಿಂತಿರುಗಿ 0;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (retval)
+		ಹೋಗು cleanup;
+	ಆದರೆ (gp.errcode) {
 		retval = gp.errcode;
-		goto cleanup;
+		ಹೋಗು cleanup;
 	}
 
-	retval = ext2fs_get_pathname_int(fs, gp.parent, dir, maxdepth-1,
-					 buf, &parent_name);
-	if (retval)
-		goto cleanup;
-	if (!ino) {
-		*name = parent_name;
-		return 0;
+	retval = ext2fs_get_pathname_int(fs, gp.ಪೋಷಕ, dir, maxdepth-1,
+					 buf, &ಪೋಷಕ_name);
+	ಆದರೆ (retval)
+		ಹೋಗು cleanup;
+	ಆದರೆ (!ino) {
+		*name = ಪೋಷಕ_name;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-	if (gp.name)
-		retval = ext2fs_get_mem(strlen(parent_name)+strlen(gp.name)+2,
+	ಆದರೆ (gp.name)
+		retval = ext2fs_get_mem(ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಪೋಷಕ_name)+ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(gp.name)+2,
 					&ret);
-	else
-		retval = ext2fs_get_mem(strlen(parent_name)+5, &ret);
-	if (retval)
-		goto cleanup;
+	ಇಲ್ಲದಿದ್ದರೆ
+		retval = ext2fs_get_mem(ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಪೋಷಕ_name)+5, &ret);
+	ಆದರೆ (retval)
+		ಹೋಗು cleanup;
 
 	ret[0] = 0;
-	if (parent_name[1])
-		strcat(ret, parent_name);
+	ಆದರೆ (ಪೋಷಕ_name[1])
+		strcat(ret, ಪೋಷಕ_name);
 	strcat(ret, "/");
-	if (gp.name)
+	ಆದರೆ (gp.name)
 		strcat(ret, gp.name);
-	else
+	ಇಲ್ಲದಿದ್ದರೆ
 		strcat(ret, "???");
 	*name = ret;
 	retval = 0;
 
 cleanup:
-	ext2fs_free_mem(&parent_name);
+	ext2fs_free_mem(&ಪೋಷಕ_name);
 	ext2fs_free_mem(&gp.name);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
 errcode_t ext2fs_get_pathname(ext2_filsys fs, ext2_ino_t dir, ext2_ino_t ino,
-			      char **name)
+			      ಅಕ್ಷರ **name)
 {
-	char	*buf;
+	ಅಕ್ಷರ	*buf;
 	errcode_t	retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
-	if (dir == ino)
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
+	ಆದರೆ (dir == ino)
 		ino = 0;
 	retval = ext2fs_get_pathname_int(fs, dir, ino, 32, buf, name);
 	ext2fs_free_mem(&buf);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 
 }

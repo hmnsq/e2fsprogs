@@ -14,13 +14,13 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಆದರೆ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
-static const char *lookup_table =
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *lookup_ಕೋಷ್ಟಕ =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
 
 /**
@@ -29,56 +29,56 @@ static const char *lookup_table =
  * Encodes the input digest using characters from the set [a-zA-Z0-9_+].
  * The encoded string is roughly 4/3 times the size of the input string.
  */
-int ext2fs_digest_encode(const char *src, int len, char *dst)
+ಪೂರ್ಣಾಂಕ ext2fs_digest_encode(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *src, ಪೂರ್ಣಾಂಕ len, ಅಕ್ಷರ *dst)
 {
-	int i = 0, bits = 0, ac = 0;
-	char *cp = dst;
+	ಪೂರ್ಣಾಂಕ i = 0, ಬಿಟ್ಟುಗಳು = 0, ac = 0;
+	ಅಕ್ಷರ *cp = dst;
 
-	while (i < len) {
-		ac += (((unsigned char) src[i]) << bits);
-		bits += 8;
-		do {
-			*cp++ = lookup_table[ac & 0x3f];
+	ಆಗ (i < len) {
+		ac += (((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ) src[i]) << ಬಿಟ್ಟುಗಳು);
+		ಬಿಟ್ಟುಗಳು += 8;
+		ಮಾಡು {
+			*cp++ = lookup_ಕೋಷ್ಟಕ[ac & 0x3f];
 			ac >>= 6;
-			bits -= 6;
-		} while (bits >= 6);
+			ಬಿಟ್ಟುಗಳು -= 6;
+		} ಆಗ (ಬಿಟ್ಟುಗಳು >= 6);
 		i++;
 	}
-	if (bits)
-		*cp++ = lookup_table[ac & 0x3f];
-	return cp - dst;
+	ಆದರೆ (ಬಿಟ್ಟುಗಳು)
+		*cp++ = lookup_ಕೋಷ್ಟಕ[ac & 0x3f];
+	ಹಿಂತಿರುಗಿ cp - dst;
 }
 
-int ext2fs_digest_decode(const char *src, int len, char *dst)
+ಪೂರ್ಣಾಂಕ ext2fs_digest_decode(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *src, ಪೂರ್ಣಾಂಕ len, ಅಕ್ಷರ *dst)
 {
-	int i = 0, bits = 0, ac = 0;
-	const char *p;
-	char *cp = dst;
+	ಪೂರ್ಣಾಂಕ i = 0, ಬಿಟ್ಟುಗಳು = 0, ac = 0;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *p;
+	ಅಕ್ಷರ *cp = dst;
 
-	while (i < len) {
-		p = strchr(lookup_table, src[i]);
-		if (p == NULL || src[i] == 0)
-			return -1;
-		ac += (p - lookup_table) << bits;
-		bits += 6;
-		if (bits >= 8) {
+	ಆಗ (i < len) {
+		p = strchr(lookup_ಕೋಷ್ಟಕ, src[i]);
+		ಆದರೆ (p == ಖಾಲಿ || src[i] == 0)
+			ಹಿಂತಿರುಗಿ -1;
+		ac += (p - lookup_ಕೋಷ್ಟಕ) << ಬಿಟ್ಟುಗಳು;
+		ಬಿಟ್ಟುಗಳು += 6;
+		ಆದರೆ (ಬಿಟ್ಟುಗಳು >= 8) {
 			*cp++ = ac & 0xff;
 			ac >>= 8;
-			bits -= 8;
+			ಬಿಟ್ಟುಗಳು -= 8;
 		}
 		i++;
 	}
-	if (ac)
-		return -1;
-	return cp - dst;
+	ಆದರೆ (ac)
+		ಹಿಂತಿರುಗಿ -1;
+	ಹಿಂತಿರುಗಿ cp - dst;
 }
 
 
-#ifdef UNITTEST
-static const struct {
-	unsigned char d[32];
-	unsigned int len;
-	const char *ed;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ UNITTEST
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ರಚನೆ {
+	ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ d[32];
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ len;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ed;
 } tests[] = {
 	{ { 0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14,
 	    0x9a, 0xfb, 0xf4, 0xc8, 0x99, 0x6f, 0xb9, 0x24,
@@ -124,64 +124,64 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-	int i, ret, len;
-	int errors = 0;
-	char tmp[1024], tmp2[1024];
+	ಪೂರ್ಣಾಂಕ i, ret, len;
+	ಪೂರ್ಣಾಂಕ errors = 0;
+	ಅಕ್ಷರ tmp[1024], tmp2[1024];
 
-	if (argc == 3 && !strcmp(argv[1], "encode")) {
-		memset(tmp, 0, sizeof(tmp));
-		ext2fs_digest_encode(argv[2], strlen(argv[2]), tmp);
+	ಆದರೆ (argc == 3 && !strcmp(argv[1], "encode")) {
+		memset(tmp, 0, ಗಾತ್ರ(tmp));
+		ext2fs_digest_encode(argv[2], ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(argv[2]), tmp);
 		puts(tmp);
-		exit(0);
+		ನಿರ್ಗಮಿಸು(0);
 	}
-	if (argc == 3 && !strcmp(argv[1], "decode")) {
-		memset(tmp, 0, sizeof(tmp));
-		ret = ext2fs_digest_decode(argv[2], strlen(argv[2]), tmp);
+	ಆದರೆ (argc == 3 && !strcmp(argv[1], "decode")) {
+		memset(tmp, 0, ಗಾತ್ರ(tmp));
+		ret = ext2fs_digest_decode(argv[2], ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(argv[2]), tmp);
 		puts(tmp);
 		fprintf(stderr, "returned %d\n", ret);
-		exit(0);
+		ನಿರ್ಗಮಿಸು(0);
 	}
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
-		memset(tmp, 0, sizeof(tmp));
-		ret = ext2fs_digest_encode((const char *) tests[i].d,
+	ಗಾಗಿ (i = 0; i < (ಪೂರ್ಣಾಂಕ)(ಗಾತ್ರ(tests) / ಗಾತ್ರ(tests[0])); i++) {
+		memset(tmp, 0, ಗಾತ್ರ(tmp));
+		ret = ext2fs_digest_encode((ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *) tests[i].d,
 					   tests[i].len, tmp);
-		len = strlen(tmp);
-		printf("Test Digest %d (returned %d): ", i, ret);
-		if (ret != len) {
-			printf("FAILED returned %d, string length was %d\n",
+		len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(tmp);
+		ಬರೆ("Test Digest %d (returned %d): ", i, ret);
+		ಆದರೆ (ret != len) {
+			ಬರೆ("FAILED returned %d, string length was %d\n",
 			       ret, len);
 			errors++;
-			continue;
-		} else if (strcmp(tmp, tests[i].ed) != 0) {
-			printf("FAILED: got %s, expected %s\n", tmp,
+			ಮುಂದುವರಿ;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(tmp, tests[i].ed) != 0) {
+			ಬರೆ("FAILED: got %s, expected %s\n", tmp,
 			       tests[i].ed);
 			errors++;
-			continue;
+			ಮುಂದುವರಿ;
 		}
 		ret = ext2fs_digest_decode(tmp, len, tmp2);
-		if (ret != tests[i].len) {
-			printf("FAILED decode returned %d, expected %d\n",
+		ಆದರೆ (ret != tests[i].len) {
+			ಬರೆ("FAILED decode returned %d, expected %d\n",
 			       ret, tests[i].len);
 			errors++;
-			continue;
+			ಮುಂದುವರಿ;
 		}
-		if (memcmp(tmp2, tests[i].d, ret) != 0) {
+		ಆದರೆ (memcmp(tmp2, tests[i].d, ret) != 0) {
 			puts("FAILED: decode mismatched");
 			errors++;
-			continue;
+			ಮುಂದುವರಿ;
 		}
-		printf("OK\n");
+		ಬರೆ("OK\n");
 	}
-	for (i = 1; i < argc; i++) {
-		memset(tmp, 0, sizeof(tmp));
-		ret = ext2fs_digest_encode(argv[i], strlen(argv[i]), tmp);
-		len = strlen(tmp);
-		printf("Digest of '%s' is '%s' (returned %d, length %d)\n",
+	ಗಾಗಿ (i = 1; i < argc; i++) {
+		memset(tmp, 0, ಗಾತ್ರ(tmp));
+		ret = ext2fs_digest_encode(argv[i], ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(argv[i]), tmp);
+		len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(tmp);
+		ಬರೆ("Digest of '%s' is '%s' (returned %d, length %d)\n",
 		       argv[i], tmp, ret, len);
 	}
-	return errors;
+	ಹಿಂತಿರುಗಿ errors;
 }
 
-#endif /* UNITTEST */
+#ಆದರೆ_ಅಂತ್ಯ /* UNITTEST */

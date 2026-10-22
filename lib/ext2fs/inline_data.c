@@ -9,458 +9,458 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <time.h>
-#include <limits.h> /* for PATH_MAX */
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಅನ್ತರ್ಭಾವ <limits.h> /* for PATH_MAX */
 
-#include "ext2_fs.h"
-#include "ext2_ext_attr.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_ext_attr.h"
 
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fsP.h"
 
-struct ext2_inline_data {
+ರಚನೆ ext2_inline_ದತ್ತಾಂಶ {
 	ext2_filsys fs;
 	ext2_ino_t ino;
-	size_t ea_size;	/* the size of inline data in ea area */
-	void *ea_data;
+	size_t ea_ಗಾತ್ರ;	/* the size of inline data in ea area */
+	ಶೂನ್ಯ *ea_ದತ್ತಾಂಶ;
 };
 
-static errcode_t ext2fs_inline_data_ea_set(struct ext2_inline_data *data)
+ಸ್ಥಿರ errcode_t ext2fs_inline_ದತ್ತಾಂಶ_ea_ಗಣ(ರಚನೆ ext2_inline_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ)
 {
-	struct ext2_xattr_handle *handle;
+	ರಚನೆ ext2_xattr_handle *handle;
 	errcode_t retval;
 
-	retval = ext2fs_xattrs_open(data->fs, data->ino, &handle);
-	if (retval)
-		return retval;
+	retval = ext2fs_xattrs_open(ದತ್ತಾಂಶ->fs, ದತ್ತಾಂಶ->ino, &handle);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
 	retval = ext2fs_xattrs_read(handle);
-	if (retval)
-		goto err;
+	ಆದರೆ (retval)
+		ಹೋಗು err;
 
-	retval = ext2fs_xattr_set(handle, "system.data",
-				  data->ea_data, data->ea_size);
+	retval = ext2fs_xattr_ಗಣ(handle, "system.data",
+				  ದತ್ತಾಂಶ->ea_ದತ್ತಾಂಶ, ದತ್ತಾಂಶ->ea_ಗಾತ್ರ);
 err:
-	(void) ext2fs_xattrs_close(&handle);
-	return retval;
+	(ಶೂನ್ಯ) ext2fs_xattrs_close(&handle);
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t ext2fs_inline_data_ea_get(struct ext2_inline_data *data)
+ಸ್ಥಿರ errcode_t ext2fs_inline_ದತ್ತಾಂಶ_ea_get(ರಚನೆ ext2_inline_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ)
 {
-	struct ext2_xattr_handle *handle;
+	ರಚನೆ ext2_xattr_handle *handle;
 	errcode_t retval;
 
-	data->ea_size = 0;
-	data->ea_data = 0;
+	ದತ್ತಾಂಶ->ea_ಗಾತ್ರ = 0;
+	ದತ್ತಾಂಶ->ea_ದತ್ತಾಂಶ = 0;
 
-	retval = ext2fs_xattrs_open(data->fs, data->ino, &handle);
-	if (retval)
-		return retval;
+	retval = ext2fs_xattrs_open(ದತ್ತಾಂಶ->fs, ದತ್ತಾಂಶ->ino, &handle);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
 	retval = ext2fs_xattrs_read(handle);
-	if (retval)
-		goto err;
+	ಆದರೆ (retval)
+		ಹೋಗು err;
 
 	retval = ext2fs_xattr_get(handle, "system.data",
-				  (void **)&data->ea_data, &data->ea_size);
-	if (retval == EXT2_ET_EA_KEY_NOT_FOUND) {
-		data->ea_size = 0;
-		data->ea_data = NULL;
+				  (ಶೂನ್ಯ **)&ದತ್ತಾಂಶ->ea_ದತ್ತಾಂಶ, &ದತ್ತಾಂಶ->ea_ಗಾತ್ರ);
+	ಆದರೆ (retval == EXT2_ET_EA_ಕೀಲಿ_NOT_ಸಿಕ್ಕಿತು) {
+		ದತ್ತಾಂಶ->ea_ಗಾತ್ರ = 0;
+		ದತ್ತಾಂಶ->ea_ದತ್ತಾಂಶ = ಖಾಲಿ;
 		retval = 0;
-	} else if (retval)
-		goto err;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (retval)
+		ಹೋಗು err;
 
 err:
-	(void) ext2fs_xattrs_close(&handle);
-	return retval;
+	(ಶೂನ್ಯ) ext2fs_xattrs_close(&handle);
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-errcode_t ext2fs_inline_data_init(ext2_filsys fs, ext2_ino_t ino)
+errcode_t ext2fs_inline_ದತ್ತಾಂಶ_init(ext2_filsys fs, ext2_ino_t ino)
 {
-	struct ext2_inline_data data;
-	char empty[1] = { '\0' };
+	ರಚನೆ ext2_inline_ದತ್ತಾಂಶ ದತ್ತಾಂಶ;
+	ಅಕ್ಷರ ಖಾಲಿಗಳು[1] = { '\0' };
 
-	data.fs = fs;
-	data.ino = ino;
-	data.ea_size = 0;
-	data.ea_data = empty;
-	return ext2fs_inline_data_ea_set(&data);
+	ದತ್ತಾಂಶ.fs = fs;
+	ದತ್ತಾಂಶ.ino = ino;
+	ದತ್ತಾಂಶ.ea_ಗಾತ್ರ = 0;
+	ದತ್ತಾಂಶ.ea_ದತ್ತಾಂಶ = ಖಾಲಿಗಳು;
+	ಹಿಂತಿರುಗಿ ext2fs_inline_ದತ್ತಾಂಶ_ea_ಗಣ(&ದತ್ತಾಂಶ);
 }
 
-errcode_t ext2fs_inline_data_size(ext2_filsys fs, ext2_ino_t ino, size_t *size)
+errcode_t ext2fs_inline_ದತ್ತಾಂಶ_ಗಾತ್ರ(ext2_filsys fs, ext2_ino_t ino, size_t *ಗಾತ್ರ_2)
 {
-	struct ext2_inode inode;
-	struct ext2_inline_data data;
+	ರಚನೆ ext2_inode inode;
+	ರಚನೆ ext2_inline_ದತ್ತಾಂಶ ದತ್ತಾಂಶ;
 	errcode_t retval;
 
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
-		return retval;
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-	if (!(inode.i_flags & EXT4_INLINE_DATA_FL))
-		return EXT2_ET_NO_INLINE_DATA;
+	ಆದರೆ (!(inode.i_flags & EXT4_INLINE_ದತ್ತಾಂಶ_FL))
+		ಹಿಂತಿರುಗಿ EXT2_ET_NO_INLINE_ದತ್ತಾಂಶ;
 
-	data.fs = fs;
-	data.ino = ino;
-	retval = ext2fs_inline_data_ea_get(&data);
-	if (retval)
-		return retval;
+	ದತ್ತಾಂಶ.fs = fs;
+	ದತ್ತಾಂಶ.ino = ino;
+	retval = ext2fs_inline_ದತ್ತಾಂಶ_ea_get(&ದತ್ತಾಂಶ);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-	*size = EXT4_MIN_INLINE_DATA_SIZE + data.ea_size;
-	return ext2fs_free_mem(&data.ea_data);
+	*ಗಾತ್ರ_2 = EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ + ದತ್ತಾಂಶ.ea_ಗಾತ್ರ;
+	ಹಿಂತಿರುಗಿ ext2fs_free_mem(&ದತ್ತಾಂಶ.ea_ದತ್ತಾಂಶ);
 }
 
-int ext2fs_inline_data_dir_iterate(ext2_filsys fs, ext2_ino_t ino,
-				   void *priv_data)
+ಪೂರ್ಣಾಂಕ ext2fs_inline_ದತ್ತಾಂಶ_dir_iterate(ext2_filsys fs, ext2_ino_t ino,
+				   ಶೂನ್ಯ *priv_ದತ್ತಾಂಶ)
 {
-	struct dir_context *ctx;
-	struct ext2_inode inode;
-	struct ext2_dir_entry dirent;
-	struct ext2_inline_data data;
-	int ret = BLOCK_ABORT;
+	ರಚನೆ dir_context *ctx;
+	ರಚನೆ ext2_inode inode;
+	ರಚನೆ ext2_dir_ನಮೂದು dirent;
+	ರಚನೆ ext2_inline_ದತ್ತಾಂಶ ದತ್ತಾಂಶ;
+	ಪೂರ್ಣಾಂಕ ret = ಖಂಡ_ABORT;
 	e2_blkcnt_t blockcnt = 0;
-	char *old_buf;
-	unsigned int old_buflen;
-	int old_flags;
+	ಅಕ್ಷರ *old_buf;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ old_buflen;
+	ಪೂರ್ಣಾಂಕ old_flags;
 
-	ctx = (struct dir_context *)priv_data;
+	ctx = (ರಚನೆ dir_context *)priv_ದತ್ತಾಂಶ;
 	old_buf = ctx->buf;
 	old_buflen = ctx->buflen;
 	old_flags = ctx->flags;
-	ctx->flags |= DIRENT_FLAG_INCLUDE_INLINE_DATA;
+	ctx->flags |= DIRENT_FLAG_INCLUDE_INLINE_ದತ್ತಾಂಶ;
 
 	ctx->errcode = ext2fs_read_inode(fs, ino, &inode);
-	if (ctx->errcode)
-		goto out;
+	ಆದರೆ (ctx->errcode)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (!(inode.i_flags & EXT4_INLINE_DATA_FL)) {
-		ctx->errcode = EXT2_ET_NO_INLINE_DATA;
-		goto out;
+	ಆದರೆ (!(inode.i_flags & EXT4_INLINE_ದತ್ತಾಂಶ_FL)) {
+		ctx->errcode = EXT2_ET_NO_INLINE_ದತ್ತಾಂಶ;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
-	if (!LINUX_S_ISDIR(inode.i_mode)) {
+	ಆದರೆ (!LINUX_S_ISDIR(inode.i_ಬಹುಲಕ)) {
 		ctx->errcode = EXT2_ET_NO_DIRECTORY;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 	ret = 0;
 
 	/* we first check '.' and '..' dir */
 	dirent.inode = ino;
 	dirent.name_len = 1;
-	ext2fs_set_rec_len(fs, EXT2_DIR_REC_LEN(2), &dirent);
+	ext2fs_ಗಣ_rec_len(fs, EXT2_DIR_REC_LEN(2), &dirent);
 	dirent.name[0] = '.';
 	dirent.name[1] = '\0';
-	ctx->buf = (char *)&dirent;
+	ctx->buf = (ಅಕ್ಷರ *)&dirent;
 	ext2fs_get_rec_len(fs, &dirent, &ctx->buflen);
-	ret |= ext2fs_process_dir_block(fs, 0, blockcnt++, 0, 0, priv_data);
-	if (ret & BLOCK_ABORT)
-		goto out;
+	ret |= ext2fs_process_dir_ಖಂಡ(fs, 0, blockcnt++, 0, 0, priv_ದತ್ತಾಂಶ);
+	ಆದರೆ (ret & ಖಂಡ_ABORT)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	dirent.inode = ext2fs_le32_to_cpu(inode.i_block[0]);
+	dirent.inode = ext2fs_le32_ಗಮ್ಯ_cpu(inode.i_ಖಂಡ[0]);
 	dirent.name_len = 2;
-	ext2fs_set_rec_len(fs, EXT2_DIR_REC_LEN(3), &dirent);
+	ext2fs_ಗಣ_rec_len(fs, EXT2_DIR_REC_LEN(3), &dirent);
 	dirent.name[0] = '.';
 	dirent.name[1] = '.';
 	dirent.name[2] = '\0';
-	ctx->buf = (char *)&dirent;
+	ctx->buf = (ಅಕ್ಷರ *)&dirent;
 	ext2fs_get_rec_len(fs, &dirent, &ctx->buflen);
-	ret |= ext2fs_process_dir_block(fs, 0, blockcnt++, 0, 0, priv_data);
-	if (ret & BLOCK_INLINE_DATA_CHANGED) {
+	ret |= ext2fs_process_dir_ಖಂಡ(fs, 0, blockcnt++, 0, 0, priv_ದತ್ತಾಂಶ);
+	ಆದರೆ (ret & ಖಂಡ_INLINE_ದತ್ತಾಂಶ_ಬದಲಾಯಿತು) {
 		errcode_t err;
 
-		inode.i_block[0] = ext2fs_cpu_to_le32(dirent.inode);
+		inode.i_ಖಂಡ[0] = ext2fs_cpu_ಗಮ್ಯ_le32(dirent.inode);
 		err = ext2fs_write_inode(fs, ino, &inode);
-		if (err)
-			goto out;
-		ret &= ~BLOCK_INLINE_DATA_CHANGED;
+		ಆದರೆ (err)
+			ಹೋಗು ಹೊರಹೋಗು;
+		ret &= ~ಖಂಡ_INLINE_ದತ್ತಾಂಶ_ಬದಲಾಯಿತು;
 	}
-	if (ret & BLOCK_ABORT)
-		goto out;
+	ಆದರೆ (ret & ಖಂಡ_ABORT)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	ctx->buf = (char *)inode.i_block + EXT4_INLINE_DATA_DOTDOT_SIZE;
-	ctx->buflen = EXT4_MIN_INLINE_DATA_SIZE - EXT4_INLINE_DATA_DOTDOT_SIZE;
-#ifdef WORDS_BIGENDIAN
+	ctx->buf = (ಅಕ್ಷರ *)inode.i_ಖಂಡ + EXT4_INLINE_ದತ್ತಾಂಶ_DOTDOT_ಗಾತ್ರ;
+	ctx->buflen = EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ - EXT4_INLINE_ದತ್ತಾಂಶ_DOTDOT_ಗಾತ್ರ;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
 	ctx->errcode = ext2fs_dirent_swab_in2(fs, ctx->buf, ctx->buflen, 0);
-	if (ctx->errcode) {
-		ret |= BLOCK_ABORT;
-		goto out;
+	ಆದರೆ (ctx->errcode) {
+		ret |= ಖಂಡ_ABORT;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
-#endif
-	ret |= ext2fs_process_dir_block(fs, 0, blockcnt++, 0, 0, priv_data);
-	if (ret & BLOCK_INLINE_DATA_CHANGED) {
-#ifdef WORDS_BIGENDIAN
+#ಆದರೆ_ಅಂತ್ಯ
+	ret |= ext2fs_process_dir_ಖಂಡ(fs, 0, blockcnt++, 0, 0, priv_ದತ್ತಾಂಶ);
+	ಆದರೆ (ret & ಖಂಡ_INLINE_ದತ್ತಾಂಶ_ಬದಲಾಯಿತು) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
 		ctx->errcode = ext2fs_dirent_swab_out2(fs, ctx->buf,
 						       ctx->buflen, 0);
-		if (ctx->errcode) {
-			ret |= BLOCK_ABORT;
-			goto out;
+		ಆದರೆ (ctx->errcode) {
+			ret |= ಖಂಡ_ABORT;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 		ctx->errcode = ext2fs_write_inode(fs, ino, &inode);
-		if (ctx->errcode)
-			ret |= BLOCK_ABORT;
-		ret &= ~BLOCK_INLINE_DATA_CHANGED;
+		ಆದರೆ (ctx->errcode)
+			ret |= ಖಂಡ_ABORT;
+		ret &= ~ಖಂಡ_INLINE_ದತ್ತಾಂಶ_ಬದಲಾಯಿತು;
 	}
-	if (ret & BLOCK_ABORT)
-		goto out;
+	ಆದರೆ (ret & ಖಂಡ_ABORT)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	data.fs = fs;
-	data.ino = ino;
-	ctx->errcode = ext2fs_inline_data_ea_get(&data);
-	if (ctx->errcode) {
-		ret |= BLOCK_ABORT;
-		goto out;
+	ದತ್ತಾಂಶ.fs = fs;
+	ದತ್ತಾಂಶ.ino = ino;
+	ctx->errcode = ext2fs_inline_ದತ್ತಾಂಶ_ea_get(&ದತ್ತಾಂಶ);
+	ಆದರೆ (ctx->errcode) {
+		ret |= ಖಂಡ_ABORT;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
-	if (data.ea_size <= 0)
-		goto out1;
+	ಆದರೆ (ದತ್ತಾಂಶ.ea_ಗಾತ್ರ <= 0)
+		ಹೋಗು out1;
 
-	ctx->buf = data.ea_data;
-	ctx->buflen = data.ea_size;
-#ifdef WORDS_BIGENDIAN
+	ctx->buf = ದತ್ತಾಂಶ.ea_ದತ್ತಾಂಶ;
+	ctx->buflen = ದತ್ತಾಂಶ.ea_ಗಾತ್ರ;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
 	ctx->errcode = ext2fs_dirent_swab_in2(fs, ctx->buf, ctx->buflen, 0);
-	if (ctx->errcode) {
-		ret |= BLOCK_ABORT;
-		goto out1;
+	ಆದರೆ (ctx->errcode) {
+		ret |= ಖಂಡ_ABORT;
+		ಹೋಗು out1;
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	ret |= ext2fs_process_dir_block(fs, 0, blockcnt++, 0, 0, priv_data);
-	if (ret & BLOCK_INLINE_DATA_CHANGED) {
-#ifdef WORDS_BIGENDIAN
+	ret |= ext2fs_process_dir_ಖಂಡ(fs, 0, blockcnt++, 0, 0, priv_ದತ್ತಾಂಶ);
+	ಆದರೆ (ret & ಖಂಡ_INLINE_ದತ್ತಾಂಶ_ಬದಲಾಯಿತು) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
 		ctx->errcode = ext2fs_dirent_swab_out2(fs, ctx->buf,
 						      ctx->buflen, 0);
-		if (ctx->errcode) {
-			ret |= BLOCK_ABORT;
-			goto out1;
+		ಆದರೆ (ctx->errcode) {
+			ret |= ಖಂಡ_ABORT;
+			ಹೋಗು out1;
 		}
-#endif
-		ctx->errcode = ext2fs_inline_data_ea_set(&data);
-		if (ctx->errcode)
-			ret |= BLOCK_ABORT;
+#ಆದರೆ_ಅಂತ್ಯ
+		ctx->errcode = ext2fs_inline_ದತ್ತಾಂಶ_ea_ಗಣ(&ದತ್ತಾಂಶ);
+		ಆದರೆ (ctx->errcode)
+			ret |= ಖಂಡ_ABORT;
 	}
 
 out1:
-	ext2fs_free_mem(&data.ea_data);
-out:
+	ext2fs_free_mem(&ದತ್ತಾಂಶ.ea_ದತ್ತಾಂಶ);
+ಹೊರಹೋಗು:
 	ctx->buf = old_buf;
 	ctx->buflen = old_buflen;
 	ctx->flags = old_flags;
-	ret &= ~(BLOCK_ABORT | BLOCK_INLINE_DATA_CHANGED);
-	return ret;
+	ret &= ~(ಖಂಡ_ABORT | ಖಂಡ_INLINE_ದತ್ತಾಂಶ_ಬದಲಾಯಿತು);
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino)
+errcode_t ext2fs_inline_ದತ್ತಾಂಶ_ea_remove(ext2_filsys fs, ext2_ino_t ino)
 {
-	struct ext2_xattr_handle *handle;
+	ರಚನೆ ext2_xattr_handle *handle;
 	errcode_t retval;
 
 	retval = ext2fs_xattrs_open(fs, ino, &handle);
-	if (retval)
-		return retval;
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
 	retval = ext2fs_xattrs_read(handle);
-	if (retval)
-		goto err;
+	ಆದರೆ (retval)
+		ಹೋಗು err;
 
 	retval = ext2fs_xattr_remove(handle, "system.data");
 err:
-	(void) ext2fs_xattrs_close(&handle);
-	return retval;
+	(ಶೂನ್ಯ) ext2fs_xattrs_close(&handle);
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t ext2fs_inline_data_convert_dir(ext2_filsys fs, ext2_ino_t ino,
-						char *bbuf, char *ibuf, int size)
+ಸ್ಥಿರ errcode_t ext2fs_inline_ದತ್ತಾಂಶ_convert_dir(ext2_filsys fs, ext2_ino_t ino,
+						ಅಕ್ಷರ *bbuf, ಅಕ್ಷರ *ibuf, ಪೂರ್ಣಾಂಕ ಗಾತ್ರ_2)
 {
-	struct ext2_dir_entry *dir, *dir2;
-	struct ext2_dir_entry_tail *t;
+	ರಚನೆ ext2_dir_ನಮೂದು *dir, *dir2;
+	ರಚನೆ ext2_dir_ನಮೂದು_ಬಾಲ *t;
 	errcode_t retval;
-	int offset;
-	unsigned int rec_len;
-	int csum_size = 0;
-	int filetype = 0;
+	ಪೂರ್ಣಾಂಕ ಸ್ಥಾನಾಂತರ;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ rec_len;
+	ಪೂರ್ಣಾಂಕ csum_ಗಾತ್ರ = 0;
+	ಪೂರ್ಣಾಂಕ filetype = 0;
 
-	if (ext2fs_has_feature_metadata_csum(fs->super))
-		csum_size = sizeof(struct ext2_dir_entry_tail);
+	ಆದರೆ (ext2fs_has_feature_metadata_csum(fs->super))
+		csum_ಗಾತ್ರ = ಗಾತ್ರ(ರಚನೆ ext2_dir_ನಮೂದು_ಬಾಲ);
 
 	/* Create '.' and '..' */
-	if (ext2fs_has_feature_filetype(fs->super))
+	ಆದರೆ (ext2fs_has_feature_filetype(fs->super))
 		filetype = EXT2_FT_DIR;
 
 	/*
 	 * Set up entry for '.'
 	 */
-	dir = (struct ext2_dir_entry *) bbuf;
+	dir = (ರಚನೆ ext2_dir_ನಮೂದು *) bbuf;
 	dir->inode = ino;
-	ext2fs_dirent_set_name_len(dir, 1);
-	ext2fs_dirent_set_file_type(dir, filetype);
+	ext2fs_dirent_ಗಣ_name_len(dir, 1);
+	ext2fs_dirent_ಗಣ_file_type(dir, filetype);
 	dir->name[0] = '.';
-	rec_len = (fs->blocksize - csum_size) - EXT2_DIR_REC_LEN(1);
+	rec_len = (fs->blocksize - csum_ಗಾತ್ರ) - EXT2_DIR_REC_LEN(1);
 	dir->rec_len = EXT2_DIR_REC_LEN(1);
 
 	/*
 	 * Set up entry for '..'
 	 */
-	dir = (struct ext2_dir_entry *) (bbuf + dir->rec_len);
+	dir = (ರಚನೆ ext2_dir_ನಮೂದು *) (bbuf + dir->rec_len);
 	dir->rec_len = EXT2_DIR_REC_LEN(2);
-	dir->inode = ext2fs_le32_to_cpu(((__u32 *)ibuf)[0]);
-	ext2fs_dirent_set_name_len(dir, 2);
-	ext2fs_dirent_set_file_type(dir, filetype);
+	dir->inode = ext2fs_le32_ಗಮ್ಯ_cpu(((__u32 *)ibuf)[0]);
+	ext2fs_dirent_ಗಣ_name_len(dir, 2);
+	ext2fs_dirent_ಗಣ_file_type(dir, filetype);
 	dir->name[0] = '.';
 	dir->name[1] = '.';
 
 	/*
 	 * Adjust the last rec_len
 	 */
-	offset = EXT2_DIR_REC_LEN(1) + EXT2_DIR_REC_LEN(2);
-	dir = (struct ext2_dir_entry *) (bbuf + offset);
-	memcpy(bbuf + offset, ibuf + EXT4_INLINE_DATA_DOTDOT_SIZE,
-	       size - EXT4_INLINE_DATA_DOTDOT_SIZE);
-	size += EXT2_DIR_REC_LEN(1) + EXT2_DIR_REC_LEN(2) -
-		EXT4_INLINE_DATA_DOTDOT_SIZE;
+	ಸ್ಥಾನಾಂತರ = EXT2_DIR_REC_LEN(1) + EXT2_DIR_REC_LEN(2);
+	dir = (ರಚನೆ ext2_dir_ನಮೂದು *) (bbuf + ಸ್ಥಾನಾಂತರ);
+	ಸ್ಮರಣೆ_ನಕಲು(bbuf + ಸ್ಥಾನಾಂತರ, ibuf + EXT4_INLINE_ದತ್ತಾಂಶ_DOTDOT_ಗಾತ್ರ,
+	       ಗಾತ್ರ_2 - EXT4_INLINE_ದತ್ತಾಂಶ_DOTDOT_ಗಾತ್ರ);
+	ಗಾತ್ರ_2 += EXT2_DIR_REC_LEN(1) + EXT2_DIR_REC_LEN(2) -
+		EXT4_INLINE_ದತ್ತಾಂಶ_DOTDOT_ಗಾತ್ರ;
 
-	do {
+	ಮಾಡು {
 		dir2 = dir;
 		retval = ext2fs_get_rec_len(fs, dir, &rec_len);
-		if (retval)
-			goto err;
-		offset += rec_len;
-		dir = (struct ext2_dir_entry *) (bbuf + offset);
-	} while (offset < size);
-	rec_len += fs->blocksize - csum_size - offset;
-	retval = ext2fs_set_rec_len(fs, rec_len, dir2);
-	if (retval)
-		goto err;
+		ಆದರೆ (retval)
+			ಹೋಗು err;
+		ಸ್ಥಾನಾಂತರ += rec_len;
+		dir = (ರಚನೆ ext2_dir_ನಮೂದು *) (bbuf + ಸ್ಥಾನಾಂತರ);
+	} ಆಗ (ಸ್ಥಾನಾಂತರ < ಗಾತ್ರ_2);
+	rec_len += fs->blocksize - csum_ಗಾತ್ರ - ಸ್ಥಾನಾಂತರ;
+	retval = ext2fs_ಗಣ_rec_len(fs, rec_len, dir2);
+	ಆದರೆ (retval)
+		ಹೋಗು err;
 
-	if (csum_size) {
-		t = EXT2_DIRENT_TAIL(bbuf, fs->blocksize);
-		ext2fs_initialize_dirent_tail(fs, t);
+	ಆದರೆ (csum_ಗಾತ್ರ) {
+		t = EXT2_DIRENT_ಬಾಲ(bbuf, fs->blocksize);
+		ext2fs_initialize_dirent_ಬಾಲ(fs, t);
 	}
 
 err:
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t
-ext2fs_inline_data_dir_expand(ext2_filsys fs, ext2_ino_t ino,
-			      struct ext2_inode *inode, char *buf, size_t size)
+ಸ್ಥಿರ errcode_t
+ext2fs_inline_ದತ್ತಾಂಶ_dir_expand(ext2_filsys fs, ext2_ino_t ino,
+			      ರಚನೆ ext2_inode *inode, ಅಕ್ಷರ *buf, size_t ಗಾತ್ರ_2)
 {
 	errcode_t retval;
 	blk64_t blk;
-	char *blk_buf;
+	ಅಕ್ಷರ *blk_buf;
 
 	retval = ext2fs_get_memzero(fs->blocksize, &blk_buf);
-	if (retval)
-		return retval;
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-#ifdef WORDS_BIGENDIAN
-	retval = ext2fs_dirent_swab_in2(fs, buf + EXT4_INLINE_DATA_DOTDOT_SIZE,
-					size, 0);
-	if (retval)
-		goto errout;
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಪದಗಳು_BIGENDIAN
+	retval = ext2fs_dirent_swab_in2(fs, buf + EXT4_INLINE_ದತ್ತಾಂಶ_DOTDOT_ಗಾತ್ರ,
+					ಗಾತ್ರ_2, 0);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/* Adjust the rec_len */
-	retval = ext2fs_inline_data_convert_dir(fs, ino, blk_buf, buf, size);
-	if (retval)
-		goto errout;
+	retval = ext2fs_inline_ದತ್ತಾಂಶ_convert_dir(fs, ino, blk_buf, buf, ಗಾತ್ರ_2);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
 	/* Allocate a new block */
 	retval = ext2fs_new_block2(fs, 0, 0, &blk);
-	if (retval)
-		goto errout;
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
 	retval = ext2fs_write_dir_block4(fs, blk, blk_buf, 0, ino);
-	if (retval)
-		goto errout;
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
 
 	/* Update inode */
-	if (ext2fs_has_feature_extents(fs->super))
+	ಆದರೆ (ext2fs_has_feature_extents(fs->super))
 		inode->i_flags |= EXT4_EXTENTS_FL;
-	inode->i_flags &= ~EXT4_INLINE_DATA_FL;
-	retval = ext2fs_iblk_add_blocks(fs, inode, 1);
-	if (retval)
-		goto errout;
-	inode->i_size = fs->blocksize;
-	retval = ext2fs_bmap2(fs, ino, inode, 0, BMAP_SET, 0, 0, &blk);
-	if (retval)
-		goto errout;
+	inode->i_flags &= ~EXT4_INLINE_ದತ್ತಾಂಶ_FL;
+	retval = ext2fs_iblk_ಕೂಡಿಸು_ಖಂಡಗಳು(fs, inode, 1);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
+	inode->i_ಗಾತ್ರ = fs->blocksize;
+	retval = ext2fs_bmap2(fs, ino, inode, 0, BMAP_ಗಣ, 0, 0, &blk);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
 	retval = ext2fs_write_inode(fs, ino, inode);
-	if (retval)
-		goto errout;
-	ext2fs_block_alloc_stats(fs, blk, +1);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
+	ext2fs_ಖಂಡ_alloc_stats(fs, blk, +1);
 
 errout:
 	ext2fs_free_mem(&blk_buf);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t
-ext2fs_inline_data_file_expand(ext2_filsys fs, ext2_ino_t ino,
-			       struct ext2_inode *inode, char *buf, size_t size)
+ಸ್ಥಿರ errcode_t
+ext2fs_inline_ದತ್ತಾಂಶ_file_expand(ext2_filsys fs, ext2_ino_t ino,
+			       ರಚನೆ ext2_inode *inode, ಅಕ್ಷರ *buf, size_t ಗಾತ್ರ_2)
 {
 	ext2_file_t e2_file;
 	errcode_t retval;
 
 	/* Update inode */
-	memset(inode->i_block, 0, sizeof(inode->i_block));
-	if (ext2fs_has_feature_extents(fs->super)) {
+	memset(inode->i_ಖಂಡ, 0, ಗಾತ್ರ(inode->i_ಖಂಡ));
+	ಆದರೆ (ext2fs_has_feature_extents(fs->super)) {
 		ext2_extent_handle_t handle;
 
 		inode->i_flags &= ~EXT4_EXTENTS_FL;
 		retval = ext2fs_extent_open2(fs, ino, inode, &handle);
-		if (retval)
-			return retval;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 		ext2fs_extent_free(handle);
 	}
-	inode->i_flags &= ~EXT4_INLINE_DATA_FL;
-	inode->i_size = 0;
+	inode->i_flags &= ~EXT4_INLINE_ದತ್ತಾಂಶ_FL;
+	inode->i_ಗಾತ್ರ = 0;
 	retval = ext2fs_write_inode(fs, ino, inode);
-	if (retval)
-		return retval;
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
 	/* Write out the block buffer */
 	retval = ext2fs_file_open(fs, ino, EXT2_FILE_WRITE, &e2_file);
-	if (retval)
-		return retval;
-	retval = ext2fs_file_write(e2_file, buf, size, 0);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
+	retval = ext2fs_file_write(e2_file, buf, ಗಾತ್ರ_2, 0);
 	ext2fs_file_close(e2_file);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino)
+errcode_t ext2fs_inline_ದತ್ತಾಂಶ_expand(ext2_filsys fs, ext2_ino_t ino)
 {
-	struct ext2_inode inode;
-	struct ext2_inline_data data;
+	ರಚನೆ ext2_inode inode;
+	ರಚನೆ ext2_inline_ದತ್ತಾಂಶ ದತ್ತಾಂಶ;
 	errcode_t retval;
-	size_t inline_size;
-	char *inline_buf = 0;
+	size_t inline_ಗಾತ್ರ;
+	ಅಕ್ಷರ *inline_buf = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
-		return retval;
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-	if (!(inode.i_flags & EXT4_INLINE_DATA_FL))
-		return EXT2_ET_NO_INLINE_DATA;
+	ಆದರೆ (!(inode.i_flags & EXT4_INLINE_ದತ್ತಾಂಶ_FL))
+		ಹಿಂತಿರುಗಿ EXT2_ET_NO_INLINE_ದತ್ತಾಂಶ;
 
-	data.fs = fs;
-	data.ino = ino;
-	retval = ext2fs_inline_data_ea_get(&data);
-	if (retval)
-		return retval;
-	inline_size = data.ea_size + EXT4_MIN_INLINE_DATA_SIZE;
-	retval = ext2fs_get_mem(inline_size, &inline_buf);
-	if (retval)
-		goto errout;
+	ದತ್ತಾಂಶ.fs = fs;
+	ದತ್ತಾಂಶ.ino = ino;
+	retval = ext2fs_inline_ದತ್ತಾಂಶ_ea_get(&ದತ್ತಾಂಶ);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
+	inline_ಗಾತ್ರ = ದತ್ತಾಂಶ.ea_ಗಾತ್ರ + EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ;
+	retval = ext2fs_get_mem(inline_ಗಾತ್ರ, &inline_buf);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
 
-	memcpy(inline_buf, (void *)inode.i_block, EXT4_MIN_INLINE_DATA_SIZE);
-	if (data.ea_size > 0) {
-		memcpy(inline_buf + EXT4_MIN_INLINE_DATA_SIZE,
-		       data.ea_data, data.ea_size);
+	ಸ್ಮರಣೆ_ನಕಲು(inline_buf, (ಶೂನ್ಯ *)inode.i_ಖಂಡ, EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ);
+	ಆದರೆ (ದತ್ತಾಂಶ.ea_ಗಾತ್ರ > 0) {
+		ಸ್ಮರಣೆ_ನಕಲು(inline_buf + EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ,
+		       ದತ್ತಾಂಶ.ea_ದತ್ತಾಂಶ, ದತ್ತಾಂಶ.ea_ಗಾತ್ರ);
 	}
 
-	memset((void *)inode.i_block, 0, EXT4_MIN_INLINE_DATA_SIZE);
+	memset((ಶೂನ್ಯ *)inode.i_ಖಂಡ, 0, EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ);
 	/*
 	 * NOTE: We must do this write -> ea_remove -> read cycle here because
 	 * removing the inline data EA can free the EA block, which is a change
@@ -469,28 +469,28 @@ errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino)
 	 * pblk, which is bad news.
 	 */
 	retval = ext2fs_write_inode(fs, ino, &inode);
-	if (retval)
-		goto errout;
-	retval = ext2fs_inline_data_ea_remove(fs, ino);
-	if (retval)
-		goto errout;
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
+	retval = ext2fs_inline_ದತ್ತಾಂಶ_ea_remove(fs, ino);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
-		goto errout;
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
 
-	if (LINUX_S_ISDIR(inode.i_mode)) {
-		retval = ext2fs_inline_data_dir_expand(fs, ino, &inode,
-						inline_buf, inline_size);
-	} else {
-		retval = ext2fs_inline_data_file_expand(fs, ino, &inode,
-						inline_buf, inline_size);
+	ಆದರೆ (LINUX_S_ISDIR(inode.i_ಬಹುಲಕ)) {
+		retval = ext2fs_inline_ದತ್ತಾಂಶ_dir_expand(fs, ino, &inode,
+						inline_buf, inline_ಗಾತ್ರ);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		retval = ext2fs_inline_ದತ್ತಾಂಶ_file_expand(fs, ino, &inode,
+						inline_buf, inline_ಗಾತ್ರ);
 	}
 
 errout:
-	if (inline_buf)
+	ಆದರೆ (inline_buf)
 		ext2fs_free_mem(&inline_buf);
-	ext2fs_free_mem(&data.ea_data);
-	return retval;
+	ext2fs_free_mem(&ದತ್ತಾಂಶ.ea_ದತ್ತಾಂಶ);
+	ಹಿಂತಿರುಗಿ retval;
 }
 
 /*
@@ -498,345 +498,345 @@ errout:
  * allocate a buffer which has the size of inline data.  The size of
  * inline data can be know by ext2fs_inline_data_get_size().
  */
-errcode_t ext2fs_inline_data_get(ext2_filsys fs, ext2_ino_t ino,
-				 struct ext2_inode *inode,
-				 void *buf, size_t *size)
+errcode_t ext2fs_inline_ದತ್ತಾಂಶ_get(ext2_filsys fs, ext2_ino_t ino,
+				 ರಚನೆ ext2_inode *inode,
+				 ಶೂನ್ಯ *buf, size_t *ಗಾತ್ರ_2)
 {
-	struct ext2_inode inode_buf;
-	struct ext2_inline_data data;
+	ರಚನೆ ext2_inode inode_buf;
+	ರಚನೆ ext2_inline_ದತ್ತಾಂಶ ದತ್ತಾಂಶ;
 	errcode_t retval;
 
-	if (!inode) {
+	ಆದರೆ (!inode) {
 		retval = ext2fs_read_inode(fs, ino, &inode_buf);
-		if (retval)
-			return retval;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 		inode = &inode_buf;
 	}
 
-	data.fs = fs;
-	data.ino = ino;
-	retval = ext2fs_inline_data_ea_get(&data);
-	if (retval)
-		return retval;
+	ದತ್ತಾಂಶ.fs = fs;
+	ದತ್ತಾಂಶ.ino = ino;
+	retval = ext2fs_inline_ದತ್ತಾಂಶ_ea_get(&ದತ್ತಾಂಶ);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-	memcpy(buf, (void *)inode->i_block, EXT4_MIN_INLINE_DATA_SIZE);
-	if (data.ea_size > 0)
-		memcpy((char *) buf + EXT4_MIN_INLINE_DATA_SIZE,
-		       data.ea_data, data.ea_size);
+	ಸ್ಮರಣೆ_ನಕಲು(buf, (ಶೂನ್ಯ *)inode->i_ಖಂಡ, EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ);
+	ಆದರೆ (ದತ್ತಾಂಶ.ea_ಗಾತ್ರ > 0)
+		ಸ್ಮರಣೆ_ನಕಲು((ಅಕ್ಷರ *) buf + EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ,
+		       ದತ್ತಾಂಶ.ea_ದತ್ತಾಂಶ, ದತ್ತಾಂಶ.ea_ಗಾತ್ರ);
 
-	if (size)
-		*size = EXT4_MIN_INLINE_DATA_SIZE + data.ea_size;
-	ext2fs_free_mem(&data.ea_data);
-	return 0;
+	ಆದರೆ (ಗಾತ್ರ_2)
+		*ಗಾತ್ರ_2 = EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ + ದತ್ತಾಂಶ.ea_ಗಾತ್ರ;
+	ext2fs_free_mem(&ದತ್ತಾಂಶ.ea_ದತ್ತಾಂಶ);
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-errcode_t ext2fs_inline_data_set(ext2_filsys fs, ext2_ino_t ino,
-				 struct ext2_inode *inode,
-				 void *buf, size_t size)
+errcode_t ext2fs_inline_ದತ್ತಾಂಶ_ಗಣ(ext2_filsys fs, ext2_ino_t ino,
+				 ರಚನೆ ext2_inode *inode,
+				 ಶೂನ್ಯ *buf, size_t ಗಾತ್ರ_2)
 {
-	struct ext2_inode inode_buf;
-	struct ext2_inline_data data = {
+	ರಚನೆ ext2_inode inode_buf;
+	ರಚನೆ ext2_inline_ದತ್ತಾಂಶ ದತ್ತಾಂಶ = {
 		.fs = fs,
 		.ino = ino,
 	};
 	errcode_t retval;
-	size_t free_ea_size, existing_size, free_inode_size;
+	size_t free_ea_ಗಾತ್ರ, existing_ಗಾತ್ರ, free_inode_ಗಾತ್ರ;
 
-	if (!inode) {
+	ಆದರೆ (!inode) {
 		retval = ext2fs_read_inode(fs, ino, &inode_buf);
-		if (retval)
-			return retval;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 		inode = &inode_buf;
 	}
 
-	if (size <= EXT4_MIN_INLINE_DATA_SIZE) {
-		memcpy((void *)inode->i_block, buf, size);
-	} else {
-		retval = ext2fs_xattr_inode_max_size(fs, ino, &free_ea_size);
-		if (retval)
-			return retval;
+	ಆದರೆ (ಗಾತ್ರ_2 <= EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ) {
+		ಸ್ಮರಣೆ_ನಕಲು((ಶೂನ್ಯ *)inode->i_ಖಂಡ, buf, ಗಾತ್ರ_2);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		retval = ext2fs_xattr_inode_max_ಗಾತ್ರ(fs, ino, &free_ea_ಗಾತ್ರ);
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 
-		retval = ext2fs_inline_data_size(fs, ino, &existing_size);
-		if (retval)
-			return retval;
+		retval = ext2fs_inline_ದತ್ತಾಂಶ_ಗಾತ್ರ(fs, ino, &existing_ಗಾತ್ರ);
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 
-		if (existing_size < EXT4_MIN_INLINE_DATA_SIZE) {
-			free_inode_size = EXT4_MIN_INLINE_DATA_SIZE -
-					  existing_size;
-		} else {
-			free_inode_size = 0;
+		ಆದರೆ (existing_ಗಾತ್ರ < EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ) {
+			free_inode_ಗಾತ್ರ = EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ -
+					  existing_ಗಾತ್ರ;
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			free_inode_ಗಾತ್ರ = 0;
 		}
 
-		if (size != existing_size &&
-		    size > existing_size + free_ea_size + free_inode_size)
-			return EXT2_ET_INLINE_DATA_NO_SPACE;
+		ಆದರೆ (ಗಾತ್ರ_2 != existing_ಗಾತ್ರ &&
+		    ಗಾತ್ರ_2 > existing_ಗಾತ್ರ + free_ea_ಗಾತ್ರ + free_inode_ಗಾತ್ರ)
+			ಹಿಂತಿರುಗಿ EXT2_ET_INLINE_ದತ್ತಾಂಶ_NO_SPACE;
 
-		memcpy((void *)inode->i_block, buf, EXT4_MIN_INLINE_DATA_SIZE);
-		if (size > EXT4_MIN_INLINE_DATA_SIZE)
-			data.ea_size = size - EXT4_MIN_INLINE_DATA_SIZE;
-		data.ea_data = (char *) buf + EXT4_MIN_INLINE_DATA_SIZE;
+		ಸ್ಮರಣೆ_ನಕಲು((ಶೂನ್ಯ *)inode->i_ಖಂಡ, buf, EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ);
+		ಆದರೆ (ಗಾತ್ರ_2 > EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ)
+			ದತ್ತಾಂಶ.ea_ಗಾತ್ರ = ಗಾತ್ರ_2 - EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ;
+		ದತ್ತಾಂಶ.ea_ದತ್ತಾಂಶ = (ಅಕ್ಷರ *) buf + EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ;
 	}
 	retval = ext2fs_write_inode(fs, ino, inode);
-	if (retval)
-		return retval;
-	return ext2fs_inline_data_ea_set(&data);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
+	ಹಿಂತಿರುಗಿ ext2fs_inline_ದತ್ತಾಂಶ_ea_ಗಣ(&ದತ್ತಾಂಶ);
 }
 
-#ifdef DEBUG
-#include "e2p/e2p.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ DEBUG
+#ಅನ್ತರ್ಭಾವ "e2p/e2p.h"
 
 /*
  * The length of buffer is set to 64 because in inode's i_block member it only
  * can save 60 bytes.  Thus this value can let the data being saved in extra
  * space.
  */
-#define BUFF_SIZE (64)
+#ವ್ಯಾಖ್ಯಾನಿಸು BUFF_ಗಾತ್ರ (64)
 
-static errcode_t file_test(ext2_filsys fs)
+ಸ್ಥಿರ errcode_t file_test(ext2_filsys fs)
 {
-	struct ext2_inode inode;
+	ರಚನೆ ext2_inode inode;
 	ext2_ino_t newfile;
 	errcode_t retval;
-	size_t size;
-	char *buf = 0, *cmpbuf = 0;
+	size_t ಗಾತ್ರ_2;
+	ಅಕ್ಷರ *buf = 0, *cmpbuf = 0;
 
 	/* create a new file */
 	retval = ext2fs_new_inode(fs, 2, 010755, 0, &newfile);
-	if (retval) {
+	ಆದರೆ (retval) {
 		com_err("file_test", retval, "while allocating a new inode");
-		return 1;
+		ಹಿಂತಿರುಗಿ 1;
 	}
 
-	memset(&inode, 0, sizeof(inode));
-	inode.i_flags |= EXT4_INLINE_DATA_FL;
-	inode.i_size = EXT4_MIN_INLINE_DATA_SIZE;
-	inode.i_mode = LINUX_S_IFREG;
+	memset(&inode, 0, ಗಾತ್ರ(inode));
+	inode.i_flags |= EXT4_INLINE_ದತ್ತಾಂಶ_FL;
+	inode.i_ಗಾತ್ರ = EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ;
+	inode.i_ಬಹುಲಕ = LINUX_S_IFREG;
 	retval = ext2fs_write_new_inode(fs, newfile, &inode);
-	if (retval) {
+	ಆದರೆ (retval) {
 		com_err("file_test", retval, "while writing a new inode");
-		return 1;
+		ಹಿಂತಿರುಗಿ 1;
 	}
 
-	retval = ext2fs_inline_data_init(fs, newfile);
-	if (retval) {
+	retval = ext2fs_inline_ದತ್ತಾಂಶ_init(fs, newfile);
+	ಆದರೆ (retval) {
 		com_err("file_test", retval, "while init 'system.data'");
-		return 1;
+		ಹಿಂತಿರುಗಿ 1;
 	}
 
-	retval = ext2fs_inline_data_size(fs, newfile, &size);
-	if (retval) {
+	retval = ext2fs_inline_ದತ್ತಾಂಶ_ಗಾತ್ರ(fs, newfile, &ಗಾತ್ರ_2);
+	ಆದರೆ (retval) {
 		com_err("file_test", retval, "while getting size");
-		return 1;
+		ಹಿಂತಿರುಗಿ 1;
 	}
 
-	if (size != EXT4_MIN_INLINE_DATA_SIZE) {
+	ಆದರೆ (ಗಾತ್ರ_2 != EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ) {
 		fprintf(stderr,
 			"tst_inline_data: size of inline data is wrong\n");
-		return 1;
+		ಹಿಂತಿರುಗಿ 1;
 	}
 
-	ext2fs_get_mem(BUFF_SIZE, &buf);
-	memset(buf, 'a', BUFF_SIZE);
-	retval = ext2fs_inline_data_set(fs, newfile, 0, buf, BUFF_SIZE);
-	if (retval) {
+	ext2fs_get_mem(BUFF_ಗಾತ್ರ, &buf);
+	memset(buf, 'a', BUFF_ಗಾತ್ರ);
+	retval = ext2fs_inline_ದತ್ತಾಂಶ_ಗಣ(fs, newfile, 0, buf, BUFF_ಗಾತ್ರ);
+	ಆದರೆ (retval) {
 		com_err("file_test", retval,
 			"while setting inline data %s", buf);
-		goto err;
+		ಹೋಗು err;
 	}
 
-	ext2fs_get_mem(BUFF_SIZE, &cmpbuf);
-	retval = ext2fs_inline_data_get(fs, newfile, 0, cmpbuf, &size);
-	if (retval) {
+	ext2fs_get_mem(BUFF_ಗಾತ್ರ, &cmpbuf);
+	retval = ext2fs_inline_ದತ್ತಾಂಶ_get(fs, newfile, 0, cmpbuf, &ಗಾತ್ರ_2);
+	ಆದರೆ (retval) {
 		com_err("file_test", retval, "while getting inline data");
-		goto err;
+		ಹೋಗು err;
 	}
 
-	if (size != BUFF_SIZE) {
+	ಆದರೆ (ಗಾತ್ರ_2 != BUFF_ಗಾತ್ರ) {
 		fprintf(stderr,
 			"tst_inline_data: size %zu != buflen %u\n",
-			size, BUFF_SIZE);
+			ಗಾತ್ರ_2, BUFF_ಗಾತ್ರ);
 		retval = 1;
-		goto err;
+		ಹೋಗು err;
 	}
 
-	if (memcmp(buf, cmpbuf, BUFF_SIZE)) {
+	ಆದರೆ (memcmp(buf, cmpbuf, BUFF_ಗಾತ್ರ)) {
 		fprintf(stderr, "tst_inline_data: buf != cmpbuf\n");
 		retval = 1;
-		goto err;
+		ಹೋಗು err;
 	}
 
 	retval = ext2fs_punch(fs, newfile, 0, 0, 0, ~0ULL);
-	if (retval) {
+	ಆದರೆ (retval) {
 		com_err("file_test", retval, "while truncating inode");
-		goto err;
+		ಹೋಗು err;
 	}
 
 	/* reload inode and check isize */
 	ext2fs_read_inode(fs, newfile, &inode);
-	if (inode.i_size != 0) {
+	ಆದರೆ (inode.i_ಗಾತ್ರ != 0) {
 		fprintf(stderr, "tst_inline_data: i_size should be 0\n");
 		retval = 1;
 	}
 
 err:
-	if (cmpbuf)
+	ಆದರೆ (cmpbuf)
 		ext2fs_free_mem(&cmpbuf);
-	if (buf)
+	ಆದರೆ (buf)
 		ext2fs_free_mem(&buf);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t dir_test(ext2_filsys fs)
+ಸ್ಥಿರ errcode_t dir_test(ext2_filsys fs)
 {
-	const char *dot_name = ".";
-	const char *stub_name = "stub";
-	const char *parent_name = "test";
-	ext2_ino_t parent, dir, tmp;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *dot_name = ".";
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *stub_name = "stub";
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಪೋಷಕ_name = "test";
+	ext2_ino_t ಪೋಷಕ, dir, tmp;
 	errcode_t retval;
-	char dirname[32];
-	int i;
+	ಅಕ್ಷರ dirname[32];
+	ಪೂರ್ಣಾಂಕ i;
 
 	retval = ext2fs_mkdir(fs, 11, 11, stub_name);
-	if (retval) {
+	ಆದರೆ (retval) {
 		com_err("dir_test", retval, "while creating %s dir", stub_name);
-		return retval;
+		ಹಿಂತಿರುಗಿ retval;
 	}
 
-	retval = ext2fs_mkdir(fs, 11, 0, parent_name);
-	if (retval) {
+	retval = ext2fs_mkdir(fs, 11, 0, ಪೋಷಕ_name);
+	ಆದರೆ (retval) {
 		com_err("dir_test", retval,
-			"while creating %s dir", parent_name);
-		return retval;
+			"while creating %s dir", ಪೋಷಕ_name);
+		ಹಿಂತಿರುಗಿ retval;
 	}
 
-	retval = ext2fs_lookup(fs, 11, parent_name, strlen(parent_name),
-			       0, &parent);
-	if (retval) {
+	retval = ext2fs_lookup(fs, 11, ಪೋಷಕ_name, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಪೋಷಕ_name),
+			       0, &ಪೋಷಕ);
+	ಆದರೆ (retval) {
 		com_err("dir_test", retval,
-			"while looking up %s dir", parent_name);
-		return retval;
+			"while looking up %s dir", ಪೋಷಕ_name);
+		ಹಿಂತಿರುಗಿ retval;
 	}
 
-	retval = ext2fs_lookup(fs, parent, dot_name, strlen(dot_name),
+	retval = ext2fs_lookup(fs, ಪೋಷಕ, dot_name, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(dot_name),
 			       0, &tmp);
-	if (retval) {
+	ಆದರೆ (retval) {
 		com_err("dir_test", retval,
-			"while looking up %s dir", parent_name);
-		return retval;
+			"while looking up %s dir", ಪೋಷಕ_name);
+		ಹಿಂತಿರುಗಿ retval;
 	}
 
-	if (parent != tmp) {
+	ಆದರೆ (ಪೋಷಕ != tmp) {
 		fprintf(stderr, "tst_inline_data: parent (%u) != tmp (%u)\n",
-			parent, tmp);
-		return 1;
+			ಪೋಷಕ, tmp);
+		ಹಿಂತಿರುಗಿ 1;
 	}
 
-	for (i = 0, dir = 13; i < 4; i++, dir++) {
+	ಗಾಗಿ (i = 0, dir = 13; i < 4; i++, dir++) {
 		tmp = 0;
-		snprintf(dirname, sizeof(dirname), "%d", i);
-		retval = ext2fs_mkdir(fs, parent, 0, dirname);
-		if (retval) {
+		snprintf(dirname, ಗಾತ್ರ(dirname), "%d", i);
+		retval = ext2fs_mkdir(fs, ಪೋಷಕ, 0, dirname);
+		ಆದರೆ (retval) {
 			com_err("dir_test", retval,
 				"while creating %s dir", dirname);
-			return retval;
+			ಹಿಂತಿರುಗಿ retval;
 		}
 
-		retval = ext2fs_lookup(fs, parent, dirname, strlen(dirname),
+		retval = ext2fs_lookup(fs, ಪೋಷಕ, dirname, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(dirname),
 				       0, &tmp);
-		if (retval) {
+		ಆದರೆ (retval) {
 			com_err("dir_test", retval,
-				"while looking up %s dir", parent_name);
-			return retval;
+				"while looking up %s dir", ಪೋಷಕ_name);
+			ಹಿಂತಿರುಗಿ retval;
 		}
 
-		if (dir != tmp) {
+		ಆದರೆ (dir != tmp) {
 			fprintf(stderr,
 				"tst_inline_data: dir (%u) != tmp (%u)\n",
 				dir, tmp);
-			return 1;
+			ಹಿಂತಿರುಗಿ 1;
 		}
 	}
 
-	snprintf(dirname, sizeof(dirname), "%d", i);
-	retval = ext2fs_mkdir(fs, parent, 0, dirname);
-	if (retval && retval != EXT2_ET_DIR_NO_SPACE) {
+	snprintf(dirname, ಗಾತ್ರ(dirname), "%d", i);
+	retval = ext2fs_mkdir(fs, ಪೋಷಕ, 0, dirname);
+	ಆದರೆ (retval && retval != EXT2_ET_DIR_NO_SPACE) {
 		com_err("dir_test", retval, "while creating %s dir", dirname);
-		return retval;
+		ಹಿಂತಿರುಗಿ retval;
 	}
 
-	retval = ext2fs_expand_dir(fs, parent);
-	if (retval) {
-		com_err("dir_test", retval, "while expanding %s dir", parent_name);
-		return retval;
+	retval = ext2fs_expand_dir(fs, ಪೋಷಕ);
+	ಆದರೆ (retval) {
+		com_err("dir_test", retval, "while expanding %s dir", ಪೋಷಕ_name);
+		ಹಿಂತಿರುಗಿ retval;
 	}
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int main(int argc, char *argv[])
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ *argv[])
 {
 	ext2_filsys		fs;
-	struct ext2_super_block param;
+	ರಚನೆ ext2_super_ಖಂಡ param;
 	errcode_t		retval;
 
-	/* setup */
-	initialize_ext2_error_table();
+	/*ಸಿದ್ಧತೆ*/
+	initialize_ext2_error_ಕೋಷ್ಟಕ();
 
-	memset(&param, 0, sizeof(param));
-	ext2fs_blocks_count_set(&param, 32768);
-	param.s_inodes_count = 100;
+	memset(&param, 0, ಗಾತ್ರ(param));
+	ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ_ಗಣ(&param, 32768);
+	param.s_inodes_ಎಣಿಕೆ = 100;
 
-	param.s_feature_incompat |= EXT4_FEATURE_INCOMPAT_INLINE_DATA;
+	param.s_feature_incompat |= EXT4_FEATURE_INCOMPAT_INLINE_ದತ್ತಾಂಶ;
 	param.s_rev_level = EXT2_DYNAMIC_REV;
-	param.s_inode_size = 256;
+	param.s_inode_ಗಾತ್ರ = 256;
 
-	retval = ext2fs_initialize("test fs", EXT2_FLAG_64BITS, &param,
+	retval = ext2fs_initialize("test fs", EXT2_FLAG_64_ಬಿಟ್ಟುಗಳು, &param,
 				   test_io_manager, &fs);
-	if (retval) {
+	ಆದರೆ (retval) {
 		com_err("setup", retval,
 			"while initializing filesystem");
-		exit(1);
+		ನಿರ್ಗಮಿಸು(1);
 	}
 
 	retval = ext2fs_allocate_tables(fs);
-	if (retval) {
+	ಆದರೆ (retval) {
 		com_err("setup", retval,
 			"while allocating tables for test filesystem");
-		exit(1);
+		ನಿರ್ಗಮಿಸು(1);
 	}
 
 	/* initialize inode cache */
-	if (!fs->icache) {
-		ext2_ino_t first_ino = EXT2_FIRST_INO(fs->super);
-		int i;
+	ಆದರೆ (!fs->icache) {
+		ext2_ino_t ಮೊದಲ_ino = EXT2_ಮೊದಲ_INO(fs->super);
+		ಪೂರ್ಣಾಂಕ i;
 
 		/* we just want to init inode cache.  So ignore error */
 		ext2fs_create_inode_cache(fs, 16);
-		if (!fs->icache) {
+		ಆದರೆ (!fs->icache) {
 			fprintf(stderr,
 				"tst_inline_data: init inode cache failed\n");
-			exit(1);
+			ನಿರ್ಗಮಿಸು(1);
 		}
 
 		/* setup inode cache */
-		for (i = 0; i < fs->icache->cache_size; i++)
-			fs->icache->cache[i].ino = first_ino++;
+		ಗಾಗಿ (i = 0; i < fs->icache->cache_ಗಾತ್ರ; i++)
+			fs->icache->cache[i].ino = ಮೊದಲ_ino++;
 	}
 
 	/* test */
-	if (file_test(fs)) {
+	ಆದರೆ (file_test(fs)) {
 		fprintf(stderr, "tst_inline_data(FILE): FAILED\n");
-		return 1;
+		ಹಿಂತಿರುಗಿ 1;
 	}
-	printf("tst_inline_data(FILE): OK\n");
+	ಬರೆ("tst_inline_data(FILE): OK\n");
 
-	if (dir_test(fs)) {
+	ಆದರೆ (dir_test(fs)) {
 		fprintf(stderr, "tst_inline_data(DIR): FAILED\n");
-		return 1;
+		ಹಿಂತಿರುಗಿ 1;
 	}
-	printf("tst_inline_data(DIR): OK\n");
+	ಬರೆ("tst_inline_data(DIR): OK\n");
 	ext2fs_free(fs);
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

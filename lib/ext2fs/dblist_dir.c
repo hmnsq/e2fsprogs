@@ -9,80 +9,80 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <string.h>
-#include <time.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fsP.h"
 
-static int db_dir_proc(ext2_filsys fs, struct ext2_db_entry2 *db_info,
-		       void *priv_data);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ db_dir_proc(ext2_filsys fs, ರಚನೆ ext2_db_entry2 *db_info,
+		       ಶೂನ್ಯ *priv_ದತ್ತಾಂಶ);
 
 errcode_t ext2fs_dblist_dir_iterate(ext2_dblist dblist,
-				    int	flags,
-				    char	*block_buf,
-				    int (*func)(ext2_ino_t dir,
-						int	entry,
-						struct ext2_dir_entry *dirent,
-						int	offset,
-						int	blocksize,
-						char	*buf,
-						void	*priv_data),
-				    void *priv_data)
+				    ಪೂರ್ಣಾಂಕ	flags,
+				    ಅಕ್ಷರ	*ಖಂಡ_buf,
+				    ಪೂರ್ಣಾಂಕ (*func)(ext2_ino_t dir,
+						ಪೂರ್ಣಾಂಕ	ನಮೂದು,
+						ರಚನೆ ext2_dir_ನಮೂದು *dirent,
+						ಪೂರ್ಣಾಂಕ	ಸ್ಥಾನಾಂತರ,
+						ಪೂರ್ಣಾಂಕ	blocksize,
+						ಅಕ್ಷರ	*buf,
+						ಶೂನ್ಯ	*priv_ದತ್ತಾಂಶ),
+				    ಶೂನ್ಯ *priv_ದತ್ತಾಂಶ)
 {
 	errcode_t		retval;
-	struct dir_context	ctx;
+	ರಚನೆ dir_context	ctx;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
 	ctx.dir = 0;
 	ctx.flags = flags;
-	if (block_buf)
-		ctx.buf = block_buf;
-	else {
+	ಆದರೆ (ಖಂಡ_buf)
+		ctx.buf = ಖಂಡ_buf;
+	ಇಲ್ಲದಿದ್ದರೆ {
 		retval = ext2fs_get_mem(dblist->fs->blocksize, &ctx.buf);
-		if (retval)
-			return retval;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 	}
 	ctx.func = func;
-	ctx.priv_data = priv_data;
+	ctx.priv_ದತ್ತಾಂಶ = priv_ದತ್ತಾಂಶ;
 	ctx.errcode = 0;
 
 	retval = ext2fs_dblist_iterate2(dblist, db_dir_proc, &ctx);
 
-	if (!block_buf)
+	ಆದರೆ (!ಖಂಡ_buf)
 		ext2fs_free_mem(&ctx.buf);
-	if (retval)
-		return retval;
-	return ctx.errcode;
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
+	ಹಿಂತಿರುಗಿ ctx.errcode;
 }
 
-static int db_dir_proc(ext2_filsys fs, struct ext2_db_entry2 *db_info,
-		       void *priv_data)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ db_dir_proc(ext2_filsys fs, ರಚನೆ ext2_db_entry2 *db_info,
+		       ಶೂನ್ಯ *priv_ದತ್ತಾಂಶ)
 {
-	struct ext2_inode	inode;
-	struct dir_context	*ctx;
-	int			ret;
+	ರಚನೆ ext2_inode	inode;
+	ರಚನೆ dir_context	*ctx;
+	ಪೂರ್ಣಾಂಕ			ret;
 
-	ctx = (struct dir_context *) priv_data;
+	ctx = (ರಚನೆ dir_context *) priv_ದತ್ತಾಂಶ;
 	ctx->dir = db_info->ino;
 	ctx->errcode = 0;
 
 	ctx->errcode = ext2fs_read_inode(fs, ctx->dir, &inode);
-	if (ctx->errcode)
-		return DBLIST_ABORT;
-	if (inode.i_flags & EXT4_INLINE_DATA_FL)
-		ret = ext2fs_inline_data_dir_iterate(fs, ctx->dir, ctx);
-	else
-		ret = ext2fs_process_dir_block(fs, &db_info->blk,
+	ಆದರೆ (ctx->errcode)
+		ಹಿಂತಿರುಗಿ DBLIST_ABORT;
+	ಆದರೆ (inode.i_flags & EXT4_INLINE_ದತ್ತಾಂಶ_FL)
+		ret = ext2fs_inline_ದತ್ತಾಂಶ_dir_iterate(fs, ctx->dir, ctx);
+	ಇಲ್ಲದಿದ್ದರೆ
+		ret = ext2fs_process_dir_ಖಂಡ(fs, &db_info->blk,
 					       db_info->blockcnt, 0, 0,
-					       priv_data);
-	if ((ret & BLOCK_ABORT) && !ctx->errcode)
-		return DBLIST_ABORT;
-	return 0;
+					       priv_ದತ್ತಾಂಶ);
+	ಆದರೆ ((ret & ಖಂಡ_ABORT) && !ctx->errcode)
+		ಹಿಂತಿರುಗಿ DBLIST_ABORT;
+	ಹಿಂತಿರುಗಿ 0;
 }

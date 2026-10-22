@@ -9,56 +9,56 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಆದರೆ HAVE_SYS_STAT_H
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fsP.h"
 
-errcode_t badblocks_list_create(badblocks_list *ret, int size)
+errcode_t badblocks_list_create(badblocks_list *ret, ಪೂರ್ಣಾಂಕ ಗಾತ್ರ_2)
 {
-	return ext2fs_badblocks_list_create(ret, size);
+	ಹಿಂತಿರುಗಿ ext2fs_badblocks_list_create(ret, ಗಾತ್ರ_2);
 }
 
-void badblocks_list_free(badblocks_list bb)
+ಶೂನ್ಯ badblocks_list_free(badblocks_list bb)
 {
 	ext2fs_badblocks_list_free(bb);
 }
 
-errcode_t badblocks_list_add(badblocks_list bb, blk_t blk)
+errcode_t badblocks_list_ಕೂಡಿಸು(badblocks_list bb, blk_t blk)
 {
-	return ext2fs_badblocks_list_add(bb, blk);
+	ಹಿಂತಿರುಗಿ ext2fs_badblocks_list_ಕೂಡಿಸು(bb, blk);
 }
 
-int badblocks_list_test(badblocks_list bb, blk_t blk)
+ಪೂರ್ಣಾಂಕ badblocks_list_test(badblocks_list bb, blk_t blk)
 {
-	return ext2fs_badblocks_list_test(bb, blk);
+	ಹಿಂತಿರುಗಿ ext2fs_badblocks_list_test(bb, blk);
 }
 
 errcode_t badblocks_list_iterate_begin(badblocks_list bb,
 				       badblocks_iterate *ret)
 {
-	return ext2fs_badblocks_list_iterate_begin(bb, ret);
+	ಹಿಂತಿರುಗಿ ext2fs_badblocks_list_iterate_begin(bb, ret);
 }
 
-int badblocks_list_iterate(badblocks_iterate iter, blk_t *blk)
+ಪೂರ್ಣಾಂಕ badblocks_list_iterate(badblocks_iterate iter, blk_t *blk)
 {
-	return ext2fs_badblocks_list_iterate(iter, blk);
+	ಹಿಂತಿರುಗಿ ext2fs_badblocks_list_iterate(iter, blk);
 }
 
-void badblocks_list_iterate_end(badblocks_iterate iter)
+ಶೂನ್ಯ badblocks_list_iterate_ಕೊನೆ(badblocks_iterate iter)
 {
-	ext2fs_badblocks_list_iterate_end(iter);
+	ext2fs_badblocks_list_iterate_ಕೊನೆ(iter);
 }

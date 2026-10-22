@@ -13,31 +13,31 @@
  *  Copyright (C) 1991, 1992  Linus Torvalds
  */
 
-#ifndef _LINUX_EXT2_FS_H
-#define _LINUX_EXT2_FS_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _LINUX_EXT2_FS_H
+#ವ್ಯಾಖ್ಯಾನಿಸು _LINUX_EXT2_FS_H
 
-#include <ext2fs/ext2_types.h>		/* Changed from linux/types.h */
+#ಅನ್ತರ್ಭಾವ <ext2fs/ext2_types.h>		/* Changed from linux/types.h */
 
-#ifndef __GNUC_PREREQ
-#if defined(__GNUC__) && defined(__GNUC_MINOR__)
-#define __GNUC_PREREQ(maj, min) \
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ __GNUC_PREREQ
+#ಆದರೆ defined(__GNUC__) && defined(__GNUC_MINOR__)
+#ವ್ಯಾಖ್ಯಾನಿಸು __GNUC_PREREQ(maj, min) \
 	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
-#else
-#define __GNUC_PREREQ(maj, min) 0
-#endif
-#endif
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು __GNUC_PREREQ(maj, min) 0
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef __nonstring
-#ifdef __has_attribute
-#if __has_attribute(__nonstring__)
-#define __nonstring                    __attribute__((__nonstring__))
-#else
-#define __nonstring
-#endif /* __has_attribute(__nonstring__) */
-#else
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ __nonstring
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __has_attribute
+#ಆದರೆ __has_attribute(__nonstring__)
+#ವ್ಯಾಖ್ಯಾನಿಸು __nonstring                    __attribute__((__nonstring__))
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು __nonstring
+#ಆದರೆ_ಅಂತ್ಯ /* __has_attribute(__nonstring__) */
+#ಇಲ್ಲದಿದ್ದರೆ
 # define __nonstring
-#endif /* __has_attribute */
-#endif /* __nonstring */
+#ಆದರೆ_ಅಂತ್ಯ /* __has_attribute */
+#ಆದರೆ_ಅಂತ್ಯ /* __nonstring */
 
 /*
  * The second extended filesystem constants/structures
@@ -46,89 +46,89 @@
 /*
  * Define EXT2FS_DEBUG to produce debug messages
  */
-#undef EXT2FS_DEBUG
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು EXT2FS_DEBUG
 
 /*
  * Define EXT2_PREALLOCATE to preallocate data blocks for expanding files
  */
-#define EXT2_PREALLOCATE
-#define EXT2_DEFAULT_PREALLOC_BLOCKS	8
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_PREALLOCATE
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DEFAULT_PREALLOC_ಖಂಡಗಳು	8
 
 /*
  * The second extended file system version
  */
-#define EXT2FS_DATE		"95/08/09"
-#define EXT2FS_VERSION		"0.5b"
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2FS_DATE		"95/08/09"
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FS_ಆವೃತ್ತಿ		"0.5b"
 
 /*
  * Special inode numbers
  */
-#define EXT2_BAD_INO		 1	/* Bad blocks inode */
-#define EXT2_ROOT_INO		 2	/* Root inode */
-#define EXT4_USR_QUOTA_INO	 3	/* User quota inode */
-#define EXT4_GRP_QUOTA_INO	 4	/* Group quota inode */
-#define EXT2_BOOT_LOADER_INO	 5	/* Boot loader inode */
-#define EXT2_UNDEL_DIR_INO	 6	/* Undelete directory inode */
-#define EXT2_RESIZE_INO		 7	/* Reserved group descriptors inode */
-#define EXT2_JOURNAL_INO	 8	/* Journal inode */
-#define EXT2_EXCLUDE_INO	 9	/* The "exclude" inode, for snapshots */
-#define EXT4_REPLICA_INO	10	/* Used by non-upstream feature */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_BAD_INO		 1	/* Bad blocks inode */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ಬೇರು_INO		 2	/* Root inode */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_USR_QUOTA_INO	 3	/* User quota inode */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_GRP_QUOTA_INO	 4	/* Group quota inode */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_BOOT_LOADER_INO	 5	/* Boot loader inode */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_UNDEL_DIR_INO	 6	/* Undelete directory inode */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_RESIZE_INO		 7	/* Reserved group descriptors inode */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_JOURNAL_INO	 8	/* Journal inode */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_EXCLUDE_INO	 9	/* The "exclude" inode, for snapshots */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_REPLICA_INO	10	/* Used by non-upstream feature */
 
 /* First non-reserved inode for old ext2 filesystems */
-#define EXT2_GOOD_OLD_FIRST_INO	11
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_GOOD_OLD_ಮೊದಲ_INO	11
 
 /*
  * The second extended file system magic number
  */
-#define EXT2_SUPER_MAGIC	0xEF53
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_SUPER_MAGIC	0xEF53
 
-#ifdef __KERNEL__
-#define EXT2_SB(sb)	(&((sb)->u.ext2_sb))
-#else
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __KERNEL__
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_SB(sb)	(&((sb)->u.ext2_sb))
+#ಇಲ್ಲದಿದ್ದರೆ
 /* Assume that user mode programs are passing in an ext2fs superblock, not
  * a kernel struct super_block.  This will allow us to call the feature-test
  * macros from user land. */
-#define EXT2_SB(sb)	(sb)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_SB(sb)	(sb)
+#ಆದರೆ_ಅಂತ್ಯ
 
 /*
  * Maximal count of links to a file
  */
-#define EXT2_LINK_MAX		65000
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_LINK_MAX		65000
 
 /*
  * Macro-instructions used to manage several block sizes
  */
-#define EXT2_MIN_BLOCK_LOG_SIZE		10	/* 1024 */
-#define EXT2_MAX_BLOCK_LOG_SIZE		16	/* 65536 */
-#define EXT2_MIN_BLOCK_SIZE	(1 << EXT2_MIN_BLOCK_LOG_SIZE)
-#define EXT2_MAX_BLOCK_SIZE	(1 << EXT2_MAX_BLOCK_LOG_SIZE)
-#ifdef __KERNEL__
-#define EXT2_BLOCK_SIZE(s)	((s)->s_blocksize)
-#define EXT2_BLOCK_SIZE_BITS(s)	((s)->s_blocksize_bits)
-#define EXT2_ADDR_PER_BLOCK_BITS(s)	(EXT2_SB(s)->addr_per_block_bits)
-#define EXT2_INODE_SIZE(s)	(EXT2_SB(s)->s_inode_size)
-#define EXT2_FIRST_INO(s)	(EXT2_SB(s)->s_first_ino)
-#else
-#define EXT2_BLOCK_SIZE(s)	(EXT2_MIN_BLOCK_SIZE << (s)->s_log_block_size)
-#define EXT2_BLOCK_SIZE_BITS(s)	((s)->s_log_block_size + 10)
-#define EXT2_INODE_SIZE(s)	(((s)->s_rev_level == EXT2_GOOD_OLD_REV) ? \
-				 EXT2_GOOD_OLD_INODE_SIZE : (s)->s_inode_size)
-#define EXT2_FIRST_INO(s)	(((s)->s_rev_level == EXT2_GOOD_OLD_REV) ? \
-				 EXT2_GOOD_OLD_FIRST_INO : (s)->s_first_ino)
-#endif
-#define EXT2_ADDR_PER_BLOCK(s)	(EXT2_BLOCK_SIZE(s) / sizeof(__u32))
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MIN_ಖಂಡ_LOG_ಗಾತ್ರ		10	/* 1024 */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MAX_ಖಂಡ_LOG_ಗಾತ್ರ		16	/* 65536 */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MIN_ಖಂಡ_ಗಾತ್ರ	(1 << EXT2_MIN_ಖಂಡ_LOG_ಗಾತ್ರ)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MAX_ಖಂಡ_ಗಾತ್ರ	(1 << EXT2_MAX_ಖಂಡ_LOG_ಗಾತ್ರ)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __KERNEL__
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ಖಂಡ_ಗಾತ್ರ(s)	((s)->s_blocksize)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ಖಂಡ_ಗಾತ್ರ_ಬಿಟ್ಟುಗಳು(s)	((s)->s_blocksize_ಬಿಟ್ಟುಗಳು)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ADDR_ಪ್ರತಿ_ಖಂಡ_ಬಿಟ್ಟುಗಳು(s)	(EXT2_SB(s)->addr_ಪ್ರತಿ_ಖಂಡ_ಬಿಟ್ಟುಗಳು)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_INODE_ಗಾತ್ರ(s)	(EXT2_SB(s)->s_inode_ಗಾತ್ರ)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ಮೊದಲ_INO(s)	(EXT2_SB(s)->s_ಮೊದಲ_ino)
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ಖಂಡ_ಗಾತ್ರ(s)	(EXT2_MIN_ಖಂಡ_ಗಾತ್ರ << (s)->s_log_ಖಂಡ_ಗಾತ್ರ)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ಖಂಡ_ಗಾತ್ರ_ಬಿಟ್ಟುಗಳು(s)	((s)->s_log_ಖಂಡ_ಗಾತ್ರ + 10)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_INODE_ಗಾತ್ರ(s)	(((s)->s_rev_level == EXT2_GOOD_OLD_REV) ? \
+				 EXT2_GOOD_OLD_INODE_ಗಾತ್ರ : (s)->s_inode_ಗಾತ್ರ)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ಮೊದಲ_INO(s)	(((s)->s_rev_level == EXT2_GOOD_OLD_REV) ? \
+				 EXT2_GOOD_OLD_ಮೊದಲ_INO : (s)->s_ಮೊದಲ_ino)
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ADDR_ಪ್ರತಿ_ಖಂಡ(s)	(EXT2_ಖಂಡ_ಗಾತ್ರ(s) / ಗಾತ್ರ(__u32))
 
 /*
  * Macro-instructions used to manage allocation clusters
  */
-#define EXT2_MIN_CLUSTER_LOG_SIZE	EXT2_MIN_BLOCK_LOG_SIZE
-#define EXT2_MAX_CLUSTER_LOG_SIZE	29	/* 512MB  */
-#define EXT2_MIN_CLUSTER_SIZE		EXT2_MIN_BLOCK_SIZE
-#define EXT2_MAX_CLUSTER_SIZE		(1 << EXT2_MAX_CLUSTER_LOG_SIZE)
-#define EXT2_CLUSTER_SIZE(s)		(EXT2_MIN_BLOCK_SIZE << \
-						(s)->s_log_cluster_size)
-#define EXT2_CLUSTER_SIZE_BITS(s)	((s)->s_log_cluster_size + 10)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MIN_CLUSTER_LOG_ಗಾತ್ರ	EXT2_MIN_ಖಂಡ_LOG_ಗಾತ್ರ
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MAX_CLUSTER_LOG_ಗಾತ್ರ	29	/* 512MB  */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MIN_CLUSTER_ಗಾತ್ರ		EXT2_MIN_ಖಂಡ_ಗಾತ್ರ
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MAX_CLUSTER_ಗಾತ್ರ		(1 << EXT2_MAX_CLUSTER_LOG_ಗಾತ್ರ)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_CLUSTER_ಗಾತ್ರ(s)		(EXT2_MIN_ಖಂಡ_ಗಾತ್ರ << \
+						(s)->s_log_cluster_ಗಾತ್ರ)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_CLUSTER_ಗಾತ್ರ_ಬಿಟ್ಟುಗಳು(s)	((s)->s_log_cluster_ಗಾತ್ರ + 10)
 
 /*
  * Macro-instructions used to manage fragments
@@ -136,93 +136,93 @@
  * Note: for backwards compatibility only, for the dump program.
  * Ext2/3/4 will never support fragments....
  */
-#define EXT2_MIN_FRAG_SIZE              EXT2_MIN_BLOCK_SIZE
-#define EXT2_MAX_FRAG_SIZE              EXT2_MAX_BLOCK_SIZE
-#define EXT2_MIN_FRAG_LOG_SIZE          EXT2_MIN_BLOCK_LOG_SIZE
-#define EXT2_FRAG_SIZE(s)		EXT2_BLOCK_SIZE(s)
-#define EXT2_FRAGS_PER_BLOCK(s)		1
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MIN_FRAG_ಗಾತ್ರ              EXT2_MIN_ಖಂಡ_ಗಾತ್ರ
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MAX_FRAG_ಗಾತ್ರ              EXT2_MAX_ಖಂಡ_ಗಾತ್ರ
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MIN_FRAG_LOG_ಗಾತ್ರ          EXT2_MIN_ಖಂಡ_LOG_ಗಾತ್ರ
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FRAG_ಗಾತ್ರ(s)		EXT2_ಖಂಡ_ಗಾತ್ರ(s)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FRAGS_ಪ್ರತಿ_ಖಂಡ(s)		1
 
 /*
  * ACL structures
  */
-struct ext2_acl_header	/* Header of Access Control Lists */
+ರಚನೆ ext2_acl_ಶೀರ್ಷಿಕೆ	/* Header of Access Control Lists */
 {
-	__u32	aclh_size;
-	__u32	aclh_file_count;
-	__u32	aclh_acle_count;
-	__u32	aclh_first_acle;
+	__u32	aclh_ಗಾತ್ರ;
+	__u32	aclh_file_ಎಣಿಕೆ;
+	__u32	aclh_acle_ಎಣಿಕೆ;
+	__u32	aclh_ಮೊದಲ_acle;
 };
 
-struct ext2_acl_entry	/* Access Control List Entry */
+ರಚನೆ ext2_acl_ನಮೂದು	/* Access Control List Entry */
 {
-	__u32	acle_size;
+	__u32	acle_ಗಾತ್ರ;
 	__u16	acle_perms;	/* Access permissions */
 	__u16	acle_type;	/* Type of entry */
-	__u16	acle_tag;	/* User or group identity */
+	__u16	acle_ಟ್ಯಾಗ್;	/* User or group identity */
 	__u16	acle_pad1;
-	__u32	acle_next;	/* Pointer on next entry for the */
+	__u32	acle_ಮುಂದಿನ;	/* Pointer on next entry for the */
 					/* same inode or on next free entry */
 };
 
 /*
  * Structure of a blocks group descriptor
  */
-struct ext2_group_desc
+ರಚನೆ ext2_ಗುಂಪು_desc
 {
-	__u32	bg_block_bitmap;	/* Blocks bitmap block */
+	__u32	bg_ಖಂಡ_bitmap;	/* Blocks bitmap block */
 	__u32	bg_inode_bitmap;	/* Inodes bitmap block */
-	__u32	bg_inode_table;		/* Inodes table block */
-	__u16	bg_free_blocks_count;	/* Free blocks count */
-	__u16	bg_free_inodes_count;	/* Free inodes count */
-	__u16	bg_used_dirs_count;	/* Directories count */
+	__u32	bg_inode_ಕೋಷ್ಟಕ;		/* Inodes table block */
+	__u16	bg_free_ಖಂಡಗಳು_ಎಣಿಕೆ;	/* Free blocks count */
+	__u16	bg_free_inodes_ಎಣಿಕೆ;	/* Free inodes count */
+	__u16	bg_ಬಳಸಿದ_dirs_ಎಣಿಕೆ;	/* Directories count */
 	__u16	bg_flags;
 	__u32	bg_exclude_bitmap_lo;	/* Exclude bitmap for snapshots */
-	__u16	bg_block_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */
+	__u16	bg_ಖಂಡ_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */
 	__u16	bg_inode_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */
-	__u16	bg_itable_unused;	/* Unused inodes count */
+	__u16	bg_itable_ಬಳಸದ;	/* Unused inodes count */
 	__u16	bg_checksum;		/* crc16(s_uuid+group_num+group_desc)*/
 };
 
 /*
  * Structure of a blocks group descriptor
  */
-struct ext4_group_desc
+ರಚನೆ ext4_ಗುಂಪು_desc
 {
-	__u32	bg_block_bitmap;	/* Blocks bitmap block */
+	__u32	bg_ಖಂಡ_bitmap;	/* Blocks bitmap block */
 	__u32	bg_inode_bitmap;	/* Inodes bitmap block */
-	__u32	bg_inode_table;		/* Inodes table block */
-	__u16	bg_free_blocks_count;	/* Free blocks count */
-	__u16	bg_free_inodes_count;	/* Free inodes count */
-	__u16	bg_used_dirs_count;	/* Directories count */
+	__u32	bg_inode_ಕೋಷ್ಟಕ;		/* Inodes table block */
+	__u16	bg_free_ಖಂಡಗಳು_ಎಣಿಕೆ;	/* Free blocks count */
+	__u16	bg_free_inodes_ಎಣಿಕೆ;	/* Free inodes count */
+	__u16	bg_ಬಳಸಿದ_dirs_ಎಣಿಕೆ;	/* Directories count */
 	__u16	bg_flags;		/* EXT4_BG_flags (INODE_UNINIT, etc) */
 	__u32	bg_exclude_bitmap_lo;	/* Exclude bitmap for snapshots */
-	__u16	bg_block_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */
+	__u16	bg_ಖಂಡ_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */
 	__u16	bg_inode_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */
-	__u16	bg_itable_unused;	/* Unused inodes count */
+	__u16	bg_itable_ಬಳಸದ;	/* Unused inodes count */
 	__u16	bg_checksum;		/* crc16(sb_uuid+group+desc) */
-	__u32	bg_block_bitmap_hi;	/* Blocks bitmap block MSB */
+	__u32	bg_ಖಂಡ_bitmap_hi;	/* Blocks bitmap block MSB */
 	__u32	bg_inode_bitmap_hi;	/* Inodes bitmap block MSB */
-	__u32	bg_inode_table_hi;	/* Inodes table block MSB */
-	__u16	bg_free_blocks_count_hi;/* Free blocks count MSB */
-	__u16	bg_free_inodes_count_hi;/* Free inodes count MSB */
-	__u16	bg_used_dirs_count_hi;	/* Directories count MSB */
-	__u16	bg_itable_unused_hi;	/* Unused inodes count MSB */
+	__u32	bg_inode_ಕೋಷ್ಟಕ_hi;	/* Inodes table block MSB */
+	__u16	bg_free_ಖಂಡಗಳು_ಎಣಿಕೆ_hi;/* Free blocks count MSB */
+	__u16	bg_free_inodes_ಎಣಿಕೆ_hi;/* Free inodes count MSB */
+	__u16	bg_ಬಳಸಿದ_dirs_ಎಣಿಕೆ_hi;	/* Directories count MSB */
+	__u16	bg_itable_ಬಳಸದ_hi;	/* Unused inodes count MSB */
 	__u32	bg_exclude_bitmap_hi;	/* Exclude bitmap block MSB */
-	__u16	bg_block_bitmap_csum_hi;/* crc32c(s_uuid+grp_num+bitmap) MSB */
+	__u16	bg_ಖಂಡ_bitmap_csum_hi;/* crc32c(s_uuid+grp_num+bitmap) MSB */
 	__u16	bg_inode_bitmap_csum_hi;/* crc32c(s_uuid+grp_num+bitmap) MSB */
 	__u32	bg_reserved;
 };
 
-#define EXT4_BG_INODE_BITMAP_CSUM_HI_END	\
-	(offsetof(struct ext4_group_desc, bg_inode_bitmap_csum_hi) + \
-	 sizeof(__u16))
-#define EXT4_BG_BLOCK_BITMAP_CSUM_HI_LOCATION	\
-	(offsetof(struct ext4_group_desc, bg_block_bitmap_csum_hi) + \
-	 sizeof(__u16))
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_BG_INODE_BITMAP_CSUM_HI_ಕೊನೆ	\
+	(offsetof(ರಚನೆ ext4_ಗುಂಪು_desc, bg_inode_bitmap_csum_hi) + \
+	 ಗಾತ್ರ(__u16))
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_BG_ಖಂಡ_BITMAP_CSUM_HI_LOCATION	\
+	(offsetof(ರಚನೆ ext4_ಗುಂಪು_desc, bg_ಖಂಡ_bitmap_csum_hi) + \
+	 ಗಾತ್ರ(__u16))
 
-#define EXT2_BG_INODE_UNINIT	0x0001 /* Inode table/bitmap not initialized */
-#define EXT2_BG_BLOCK_UNINIT	0x0002 /* Block bitmap not initialized */
-#define EXT2_BG_INODE_ZEROED	0x0004 /* On-disk itable initialized to zero */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_BG_INODE_UNINIT	0x0001 /* Inode table/bitmap not initialized */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_BG_ಖಂಡ_UNINIT	0x0002 /* Block bitmap not initialized */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_BG_INODE_ZEROED	0x0004 /* On-disk itable initialized to zero */
 
 /*
  * Data structures used by the directory indexing feature
@@ -236,40 +236,40 @@ struct ext4_group_desc
  * zero.  Therefore, the hash version mod 4 should never be 0.
  * Sincerely, the paranoia department.
  */
-struct ext2_dx_root_info {
+ರಚನೆ ext2_dx_ಬೇರು_info {
 	__u32 reserved_zero;
-	__u8 hash_version; /* 0 now, 1 at release */
-	__u8 info_length; /* 8 */
-	__u8 indirect_levels;
-	__u8 unused_flags;
+	__u8 hash_ಆವೃತ್ತಿ; /* 0 now, 1 at release */
+	__u8 info_ಉದ್ದಳತೆ; /* 8 */
+	__u8 ಪರೋಕ್ಷ_ಮಟ್ಟಗಳು;
+	__u8 ಬಳಸದ_flags;
 };
 
-#define EXT2_HASH_LEGACY		0
-#define EXT2_HASH_HALF_MD4		1
-#define EXT2_HASH_TEA			2
-#define EXT2_HASH_LEGACY_UNSIGNED	3 /* reserved for userspace lib */
-#define EXT2_HASH_HALF_MD4_UNSIGNED	4 /* reserved for userspace lib */
-#define EXT2_HASH_TEA_UNSIGNED		5 /* reserved for userspace lib */
-#define EXT2_HASH_SIPHASH		6
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_HASH_LEGACY		0
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_HASH_HALF_MD4		1
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_HASH_TEA			2
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_HASH_LEGACY_UNSIGNED	3 /* reserved for userspace lib */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_HASH_HALF_MD4_UNSIGNED	4 /* reserved for userspace lib */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_HASH_TEA_UNSIGNED		5 /* reserved for userspace lib */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_HASH_SIPHASH		6
 
-#define EXT2_HASH_FLAG_INCOMPAT	0x1
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_HASH_FLAG_INCOMPAT	0x1
 
-#define EXT4_DX_BLOCK_MASK 0x0fffffff
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_DX_ಖಂಡ_ಮುಖವಾಡ 0x0fffffff
 
-struct ext2_dx_entry {
+ರಚನೆ ext2_dx_ನಮೂದು {
 	__le32 hash;
-	__le32 block;
+	__le32 ಖಂಡ;
 };
 
-struct ext2_dx_countlimit {
-	__le16 limit;
-	__le16 count;
+ರಚನೆ ext2_dx_countlimit {
+	__le16 ಎಲ್ಲೆ;
+	__le16 ಎಣಿಕೆ_2;
 };
 
 /*
  * This goes at the end of each htree block.
  */
-struct ext2_dx_tail {
+ರಚನೆ ext2_dx_ಬಾಲ {
 	__le32 dt_reserved;
 	__le32 dt_checksum;	/* crc32c(uuid+inum+dxblock) */
 };
@@ -277,170 +277,170 @@ struct ext2_dx_tail {
 /*
  * Macro-instructions used to manage group descriptors
  */
-#define EXT2_MIN_DESC_SIZE             32
-#define EXT2_MIN_DESC_SIZE_64BIT       64
-#define EXT2_MAX_DESC_SIZE             EXT2_MIN_BLOCK_SIZE
-#define EXT2_DESC_SIZE(s)                                                \
-	(ext2fs_has_feature_64bit(s) ? (s)->s_desc_size : EXT2_MIN_DESC_SIZE)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MIN_DESC_ಗಾತ್ರ             32
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MIN_DESC_ಗಾತ್ರ_64_ಬಿಟ್       64
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MAX_DESC_ಗಾತ್ರ             EXT2_MIN_ಖಂಡ_ಗಾತ್ರ
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DESC_ಗಾತ್ರ(s)                                                \
+	(ext2fs_has_feature_64bit(s) ? (s)->s_desc_ಗಾತ್ರ : EXT2_MIN_DESC_ಗಾತ್ರ)
 
-#define EXT2_BLOCKS_PER_GROUP(s)	(EXT2_SB(s)->s_blocks_per_group)
-#define EXT2_INODES_PER_GROUP(s)	(EXT2_SB(s)->s_inodes_per_group)
-#define EXT2_CLUSTERS_PER_GROUP(s)	(EXT2_SB(s)->s_clusters_per_group)
-#define EXT2_INODES_PER_BLOCK(s)	(EXT2_BLOCK_SIZE(s)/EXT2_INODE_SIZE(s))
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು(s)	(EXT2_SB(s)->s_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_INODES_ಪ್ರತಿ_ಗುಂಪು(s)	(EXT2_SB(s)->s_inodes_ಪ್ರತಿ_ಗುಂಪು)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_CLUSTERS_ಪ್ರತಿ_ಗುಂಪು(s)	(EXT2_SB(s)->s_clusters_ಪ್ರತಿ_ಗುಂಪು)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_INODES_ಪ್ರತಿ_ಖಂಡ(s)	(EXT2_ಖಂಡ_ಗಾತ್ರ(s)/EXT2_INODE_ಗಾತ್ರ(s))
 /* limits imposed by 16-bit value gd_free_{blocks,inode}_count */
-#define EXT2_MAX_BLOCKS_PER_GROUP(s)	((((unsigned) 1 << 16) - 8) *	\
-					 (EXT2_CLUSTER_SIZE(s) / \
-					  EXT2_BLOCK_SIZE(s)))
-#define EXT2_MAX_CLUSTERS_PER_GROUP(s)	(((unsigned) 1 << 16) - 8)
-#define EXT2_MAX_INODES_PER_GROUP(s)	(((unsigned) 1 << 16) - \
-					 EXT2_INODES_PER_BLOCK(s))
-#ifdef __KERNEL__
-#define EXT2_DESC_PER_BLOCK(s)		(EXT2_SB(s)->s_desc_per_block)
-#define EXT2_DESC_PER_BLOCK_BITS(s)	(EXT2_SB(s)->s_desc_per_block_bits)
-#else
-#define EXT2_DESC_PER_BLOCK(s)		(EXT2_BLOCK_SIZE(s) / EXT2_DESC_SIZE(s))
-#endif
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MAX_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು(s)	((((ಚಿಹ್ನೆರಹಿತ) 1 << 16) - 8) *	\
+					 (EXT2_CLUSTER_ಗಾತ್ರ(s) / \
+					  EXT2_ಖಂಡ_ಗಾತ್ರ(s)))
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MAX_CLUSTERS_ಪ್ರತಿ_ಗುಂಪು(s)	(((ಚಿಹ್ನೆರಹಿತ) 1 << 16) - 8)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MAX_INODES_ಪ್ರತಿ_ಗುಂಪು(s)	(((ಚಿಹ್ನೆರಹಿತ) 1 << 16) - \
+					 EXT2_INODES_ಪ್ರತಿ_ಖಂಡ(s))
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __KERNEL__
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DESC_ಪ್ರತಿ_ಖಂಡ(s)		(EXT2_SB(s)->s_desc_ಪ್ರತಿ_ಖಂಡ)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DESC_ಪ್ರತಿ_ಖಂಡ_ಬಿಟ್ಟುಗಳು(s)	(EXT2_SB(s)->s_desc_ಪ್ರತಿ_ಖಂಡ_ಬಿಟ್ಟುಗಳು)
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DESC_ಪ್ರತಿ_ಖಂಡ(s)		(EXT2_ಖಂಡ_ಗಾತ್ರ(s) / EXT2_DESC_ಗಾತ್ರ(s))
+#ಆದರೆ_ಅಂತ್ಯ
 
-#define EXT2_GROUPS_TO_BLOCKS(s, g)   ((blk64_t) EXT2_BLOCKS_PER_GROUP(s) * \
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_GROUPS_ಗಮ್ಯ_ಖಂಡಗಳು(s, g)   ((blk64_t) EXT2_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು(s) * \
 				       (g))
-#define EXT2_GROUPS_TO_CLUSTERS(s, g) ((blk64_t) EXT2_CLUSTERS_PER_GROUP(s) * \
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_GROUPS_ಗಮ್ಯ_CLUSTERS(s, g) ((blk64_t) EXT2_CLUSTERS_ಪ್ರತಿ_ಗುಂಪು(s) * \
 				       (g))
 
 /*
  * Constants relative to the data blocks
  */
-#define EXT2_NDIR_BLOCKS		12
-#define EXT2_IND_BLOCK			EXT2_NDIR_BLOCKS
-#define EXT2_DIND_BLOCK			(EXT2_IND_BLOCK + 1)
-#define EXT2_TIND_BLOCK			(EXT2_DIND_BLOCK + 1)
-#define EXT2_N_BLOCKS			(EXT2_TIND_BLOCK + 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_NDIR_ಖಂಡಗಳು		12
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_IND_ಖಂಡ			EXT2_NDIR_ಖಂಡಗಳು
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DIND_ಖಂಡ			(EXT2_IND_ಖಂಡ + 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_TIND_ಖಂಡ			(EXT2_DIND_ಖಂಡ + 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_N_ಖಂಡಗಳು			(EXT2_TIND_ಖಂಡ + 1)
 
 /*
  * Inode flags
  */
-#define EXT2_SECRM_FL			0x00000001 /* Secure deletion */
-#define EXT2_UNRM_FL			0x00000002 /* Undelete */
-#define EXT2_COMPR_FL			0x00000004 /* Compress file */
-#define EXT2_SYNC_FL			0x00000008 /* Synchronous updates */
-#define EXT2_IMMUTABLE_FL		0x00000010 /* Immutable file */
-#define EXT2_APPEND_FL			0x00000020 /* writes to file may only append */
-#define EXT2_NODUMP_FL			0x00000040 /* do not dump file */
-#define EXT2_NOATIME_FL			0x00000080 /* do not update atime */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_SECRM_FL			0x00000001 /* Secure deletion */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_UNRM_FL			0x00000002 /* Undelete */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_COMPR_FL			0x00000004 /* Compress file */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_SYNC_FL			0x00000008 /* Synchronous updates */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_IMMUTABLE_FL		0x00000010 /* Immutable file */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_APPEND_FL			0x00000020 /* writes to file may only append */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_NODUMP_FL			0x00000040 /* do not dump file */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_NOATIME_FL			0x00000080 /* do not update atime */
 /* Reserved for compression usage... */
-#define EXT2_DIRTY_FL			0x00000100
-#define EXT2_COMPRBLK_FL		0x00000200 /* One or more compressed clusters */
-#define EXT2_NOCOMPR_FL			0x00000400 /* Access raw compressed data */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DIRTY_FL			0x00000100
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_COMPRBLK_FL		0x00000200 /* One or more compressed clusters */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_NOCOMPR_FL			0x00000400 /* Access raw compressed data */
 	/* nb: was previously EXT2_ECOMPR_FL */
-#define EXT4_ENCRYPT_FL			0x00000800 /* encrypted inode */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_ENCRYPT_FL			0x00000800 /* encrypted inode */
 /* End compression flags --- maybe not all used */
-#define EXT2_BTREE_FL			0x00001000 /* btree format dir */
-#define EXT2_INDEX_FL			0x00001000 /* hash-indexed directory */
-#define EXT2_IMAGIC_FL			0x00002000
-#define EXT3_JOURNAL_DATA_FL		0x00004000 /* file data should be journaled */
-#define EXT2_NOTAIL_FL			0x00008000 /* file tail should not be merged */
-#define EXT2_DIRSYNC_FL 		0x00010000 /* Synchronous directory modifications */
-#define EXT2_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
-#define EXT4_HUGE_FILE_FL               0x00040000 /* Set to each huge file */
-#define EXT4_EXTENTS_FL 		0x00080000 /* Inode uses extents */
-#define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
-#define EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_BTREE_FL			0x00001000 /* btree format dir */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ಸೂಚ್ಯಂಕ_FL			0x00001000 /* hash-indexed directory */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_IMAGIC_FL			0x00002000
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT3_JOURNAL_ದತ್ತಾಂಶ_FL		0x00004000 /* file data should be journaled */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_NOTAIL_FL			0x00008000 /* file tail should not be merged */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DIRSYNC_FL 		0x00010000 /* Synchronous directory modifications */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_HUGE_FILE_FL               0x00040000 /* Set to each huge file */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_EXTENTS_FL 		0x00080000 /* Inode uses extents */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
 /* EXT4_EOFBLOCKS_FL 0x00400000 was here */
-#define FS_NOCOW_FL			0x00800000 /* Do not cow file */
-#define EXT4_SNAPFILE_FL		0x01000000  /* Inode is a snapshot */
-#define FS_DAX_FL			0x02000000 /* Inode is DAX */
-#define EXT4_SNAPFILE_DELETED_FL	0x04000000  /* Snapshot is being deleted */
-#define EXT4_SNAPFILE_SHRUNK_FL		0x08000000  /* Snapshot shrink has completed */
-#define EXT4_INLINE_DATA_FL		0x10000000 /* Inode has inline data */
-#define EXT4_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
-#define EXT4_CASEFOLD_FL		0x40000000 /* Casefolded file */
-#define EXT2_RESERVED_FL		0x80000000 /* reserved for ext2 lib */
+#ವ್ಯಾಖ್ಯಾನಿಸು FS_NOCOW_FL			0x00800000 /* Do not cow file */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_SNAPFILE_FL		0x01000000  /* Inode is a snapshot */
+#ವ್ಯಾಖ್ಯಾನಿಸು FS_DAX_FL			0x02000000 /* Inode is DAX */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_SNAPFILE_DELETED_FL	0x04000000  /* Snapshot is being deleted */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_SNAPFILE_SHRUNK_FL		0x08000000  /* Snapshot shrink has completed */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_INLINE_ದತ್ತಾಂಶ_FL		0x10000000 /* Inode has inline data */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_CASEFOLD_FL		0x40000000 /* Casefolded file */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_RESERVED_FL		0x80000000 /* reserved for ext2 lib */
 
-#define EXT2_FL_USER_VISIBLE		0x604BDFFF /* User visible flags */
-#define EXT2_FL_USER_MODIFIABLE		0x604B80FF /* User modifiable flags */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FL_USER_VISIBLE		0x604BDFFF /* User visible flags */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FL_USER_MODIFIABLE		0x604B80FF /* User modifiable flags */
 
 /*
  * ioctl commands
  */
 
 /* Used for online resize */
-struct ext2_new_group_input {
-	__u32 group;		/* Group number for this data */
-	__u32 block_bitmap;	/* Absolute block number of block bitmap */
+ರಚನೆ ext2_new_ಗುಂಪು_ಒಳಹರಿವು {
+	__u32 ಗುಂಪು;		/* Group number for this data */
+	__u32 ಖಂಡ_bitmap;	/* Absolute block number of block bitmap */
 	__u32 inode_bitmap;	/* Absolute block number of inode bitmap */
-	__u32 inode_table;	/* Absolute block number of inode table start */
-	__u32 blocks_count;	/* Total number of blocks in this group */
-	__u16 reserved_blocks;	/* Number of reserved blocks in this group */
-	__u16 unused;		/* Number of reserved GDT blocks in group */
+	__u32 inode_ಕೋಷ್ಟಕ;	/* Absolute block number of inode table start */
+	__u32 ಖಂಡಗಳು_ಎಣಿಕೆ;	/* Total number of blocks in this group */
+	__u16 reserved_ಖಂಡಗಳು;	/* Number of reserved blocks in this group */
+	__u16 ಬಳಸದ;		/* Number of reserved GDT blocks in group */
 };
 
-struct ext4_new_group_input {
-	__u32 group;		/* Group number for this data */
-	__u64 block_bitmap;	/* Absolute block number of block bitmap */
+ರಚನೆ ext4_new_ಗುಂಪು_ಒಳಹರಿವು {
+	__u32 ಗುಂಪು;		/* Group number for this data */
+	__u64 ಖಂಡ_bitmap;	/* Absolute block number of block bitmap */
 	__u64 inode_bitmap;	/* Absolute block number of inode bitmap */
-	__u64 inode_table;	/* Absolute block number of inode table start */
-	__u32 blocks_count;	/* Total number of blocks in this group */
-	__u16 reserved_blocks;	/* Number of reserved blocks in this group */
-	__u16 unused;
+	__u64 inode_ಕೋಷ್ಟಕ;	/* Absolute block number of inode table start */
+	__u32 ಖಂಡಗಳು_ಎಣಿಕೆ;	/* Total number of blocks in this group */
+	__u16 reserved_ಖಂಡಗಳು;	/* Number of reserved blocks in this group */
+	__u16 ಬಳಸದ;
 };
 
-#ifdef __GNU__			/* Needed for the Hurd */
-#define _IOT_ext2_new_group_input _IOT (_IOTS(__u32), 5, _IOTS(__u16), 2, 0, 0)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __GNU__			/* Needed for the Hurd */
+#ವ್ಯಾಖ್ಯಾನಿಸು IOT_ext2_new_ಗುಂಪು_ಒಳಹರಿವು _IOT (_IOTS(__u32), 5, _IOTS(__u16), 2, 0, 0)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#define EXT2_IOC_GETFLAGS		_IOR('f', 1, long)
-#define EXT2_IOC_SETFLAGS		_IOW('f', 2, long)
-#define EXT2_IOC_GETVERSION		_IOR('v', 1, long)
-#define EXT2_IOC_SETVERSION		_IOW('v', 2, long)
-#define EXT2_IOC_GETVERSION_NEW		_IOR('f', 3, long)
-#define EXT2_IOC_SETVERSION_NEW		_IOW('f', 4, long)
-#define EXT2_IOC_GROUP_EXTEND		_IOW('f', 7, unsigned long)
-#define EXT2_IOC_GROUP_ADD		_IOW('f', 8,struct ext2_new_group_input)
-#define EXT4_IOC_GROUP_ADD		_IOW('f', 8,struct ext4_new_group_input)
-#define EXT4_IOC_RESIZE_FS		_IOW('f', 16, __u64)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_IOC_GETFLAGS		_IOR('f', 1, ದೀರ್ಘ)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_IOC_SETFLAGS		_IOW('f', 2, ದೀರ್ಘ)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_IOC_GETVERSION		_IOR('v', 1, ದೀರ್ಘ)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_IOC_SETVERSION		_IOW('v', 2, ದೀರ್ಘ)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_IOC_GETVERSION_NEW		_IOR('f', 3, ದೀರ್ಘ)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_IOC_SETVERSION_NEW		_IOW('f', 4, ದೀರ್ಘ)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_IOC_ಗುಂಪು_EXTEND		_IOW('f', 7, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_IOC_ಗುಂಪು_ಕೂಡಿಸು		_IOW('f', 8,ರಚನೆ ext2_new_ಗುಂಪು_ಒಳಹರಿವು)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_IOC_ಗುಂಪು_ಕೂಡಿಸು		_IOW('f', 8,ರಚನೆ ext4_new_ಗುಂಪು_ಒಳಹರಿವು)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_IOC_RESIZE_FS		_IOW('f', 16, __u64)
 
 /*
  * Structure of an inode on the disk
  */
-struct ext2_inode {
-/*00*/	__u16	i_mode;		/* File mode */
+ರಚನೆ ext2_inode {
+/*00*/	__u16	i_ಬಹುಲಕ;		/* File mode */
 	__u16	i_uid;		/* Low 16 bits of Owner Uid */
-	__u32	i_size;		/* Size in bytes */
+	__u32	i_ಗಾತ್ರ;		/* Size in bytes */
 	__u32	i_atime;	/* Access time */
 	__u32	i_ctime;	/* Inode change time */
 /*10*/	__u32	i_mtime;	/* Modification time */
 	__u32	i_dtime;	/* Deletion Time */
 	__u16	i_gid;		/* Low 16 bits of Group Id */
-	__u16	i_links_count;	/* Links count */
-	__u32	i_blocks;	/* Blocks count */
+	__u16	i_links_ಎಣಿಕೆ;	/* Links count */
+	__u32	i_ಖಂಡಗಳು;	/* Blocks count */
 /*20*/	__u32	i_flags;	/* File flags */
-	union {
-		struct {
-			__u32	l_i_version; /* was l_i_reserved1 */
+	ಒಕ್ಕೂಟ {
+		ರಚನೆ {
+			__u32	l_i_ಆವೃತ್ತಿ; /* was l_i_reserved1 */
 		} linux1;
-		struct {
+		ರಚನೆ {
 			__u32  h_i_translator;
 		} hurd1;
 	} osd1;				/* OS dependent 1 */
-/*28*/	__u32	i_block[EXT2_N_BLOCKS];/* Pointers to blocks */
+/*28*/	__u32	i_ಖಂಡ[EXT2_N_ಖಂಡಗಳು];/* Pointers to blocks */
 /*64*/	__u32	i_generation;	/* File version (for NFS) */
 	__u32	i_file_acl;	/* File ACL */
-	__u32	i_size_high;
+	__u32	i_ಗಾತ್ರ_ಮೇಲಿನ;
 /*70*/	__u32	i_faddr;	/* Fragment address */
-	union {
-		struct {
-			__u16	l_i_blocks_hi;
-			__u16	l_i_file_acl_high;
-			__u16	l_i_uid_high;	/* these 2 fields    */
-			__u16	l_i_gid_high;	/* were reserved2[0] */
+	ಒಕ್ಕೂಟ {
+		ರಚನೆ {
+			__u16	l_i_ಖಂಡಗಳು_hi;
+			__u16	l_i_file_acl_ಮೇಲಿನ;
+			__u16	l_i_uid_ಮೇಲಿನ;	/* these 2 fields    */
+			__u16	l_i_gid_ಮೇಲಿನ;	/* were reserved2[0] */
 			__u16	l_i_checksum_lo; /* crc32c(uuid+inum+inode) */
 			__u16	l_i_reserved;
 		} linux2;
-		struct {
+		ರಚನೆ {
 			__u8	h_i_frag;	/* Fragment number */
 			__u8	h_i_fsize;	/* Fragment size */
-			__u16	h_i_mode_high;
-			__u16	h_i_uid_high;
-			__u16	h_i_gid_high;
+			__u16	h_i_ಬಹುಲಕ_ಮೇಲಿನ;
+			__u16	h_i_uid_ಮೇಲಿನ;
+			__u16	h_i_gid_ಮೇಲಿನ;
 			__u32	h_i_author;
 		} hurd2;
 	} osd2;				/* OS dependent 2 */
@@ -449,46 +449,46 @@ struct ext2_inode {
 /*
  * Permanent part of an large inode on the disk
  */
-struct ext2_inode_large {
-/*00*/	__u16	i_mode;		/* File mode */
+ರಚನೆ ext2_inode_large {
+/*00*/	__u16	i_ಬಹುಲಕ;		/* File mode */
 	__u16	i_uid;		/* Low 16 bits of Owner Uid */
-	__u32	i_size;		/* Size in bytes */
+	__u32	i_ಗಾತ್ರ;		/* Size in bytes */
 	__u32	i_atime;	/* Access time */
 	__u32	i_ctime;	/* Inode Change time */
 /*10*/	__u32	i_mtime;	/* Modification time */
 	__u32	i_dtime;	/* Deletion Time */
 	__u16	i_gid;		/* Low 16 bits of Group Id */
-	__u16	i_links_count;	/* Links count */
-	__u32	i_blocks;	/* Blocks count */
+	__u16	i_links_ಎಣಿಕೆ;	/* Links count */
+	__u32	i_ಖಂಡಗಳು;	/* Blocks count */
 /*20*/	__u32	i_flags;	/* File flags */
-	union {
-		struct {
-			__u32	l_i_version; /* was l_i_reserved1 */
+	ಒಕ್ಕೂಟ {
+		ರಚನೆ {
+			__u32	l_i_ಆವೃತ್ತಿ; /* was l_i_reserved1 */
 		} linux1;
-		struct {
+		ರಚನೆ {
 			__u32  h_i_translator;
 		} hurd1;
 	} osd1;				/* OS dependent 1 */
-/*28*/	__u32	i_block[EXT2_N_BLOCKS];/* Pointers to blocks */
+/*28*/	__u32	i_ಖಂಡ[EXT2_N_ಖಂಡಗಳು];/* Pointers to blocks */
 /*64*/	__u32	i_generation;	/* File version (for NFS) */
 	__u32	i_file_acl;	/* File ACL */
-	__u32	i_size_high;
+	__u32	i_ಗಾತ್ರ_ಮೇಲಿನ;
 /*70*/	__u32	i_faddr;	/* Fragment address */
-	union {
-		struct {
-			__u16	l_i_blocks_hi;
-			__u16	l_i_file_acl_high;
-			__u16	l_i_uid_high;	/* these 2 fields    */
-			__u16	l_i_gid_high;	/* were reserved2[0] */
+	ಒಕ್ಕೂಟ {
+		ರಚನೆ {
+			__u16	l_i_ಖಂಡಗಳು_hi;
+			__u16	l_i_file_acl_ಮೇಲಿನ;
+			__u16	l_i_uid_ಮೇಲಿನ;	/* these 2 fields    */
+			__u16	l_i_gid_ಮೇಲಿನ;	/* were reserved2[0] */
 			__u16	l_i_checksum_lo; /* crc32c(uuid+inum+inode) */
 			__u16	l_i_reserved;
 		} linux2;
-		struct {
+		ರಚನೆ {
 			__u8	h_i_frag;	/* Fragment number */
 			__u8	h_i_fsize;	/* Fragment size */
-			__u16	h_i_mode_high;
-			__u16	h_i_uid_high;
-			__u16	h_i_gid_high;
+			__u16	h_i_ಬಹುಲಕ_ಮೇಲಿನ;
+			__u16	h_i_uid_ಮೇಲಿನ;
+			__u16	h_i_gid_ಮೇಲಿನ;
 			__u32	h_i_author;
 		} hurd2;
 	} osd2;				/* OS dependent 2 */
@@ -499,173 +499,173 @@ struct ext2_inode_large {
 	__u32	i_atime_extra;	/* extra Access time (nsec << 2 | epoch) */
 /*90*/	__u32	i_crtime;	/* File creation time */
 	__u32	i_crtime_extra;	/* extra File creation time (nsec << 2 | epoch)*/
-	__u32	i_version_hi;	/* high 32 bits for 64-bit version */
+	__u32	i_ಆವೃತ್ತಿ_hi;	/* high 32 bits for 64-bit version */
 /*9c*/	__u32   i_projid;       /* Project ID */
 };
 
-#define EXT4_INODE_CSUM_HI_EXTRA_END	\
-	(offsetof(struct ext2_inode_large, i_checksum_hi) + sizeof(__u16) - \
-	 EXT2_GOOD_OLD_INODE_SIZE)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_INODE_CSUM_HI_EXTRA_ಕೊನೆ	\
+	(offsetof(ರಚನೆ ext2_inode_large, i_checksum_hi) + ಗಾತ್ರ(__u16) - \
+	 EXT2_GOOD_OLD_INODE_ಗಾತ್ರ)
 
-#define EXT4_EPOCH_BITS 2
-#define EXT4_EPOCH_MASK ((1 << EXT4_EPOCH_BITS) - 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_EPOCH_ಬಿಟ್ಟುಗಳು 2
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_EPOCH_ಮುಖವಾಡ ((1 << EXT4_EPOCH_ಬಿಟ್ಟುಗಳು) - 1)
 
-#define i_checksum_lo	osd2.linux2.l_i_checksum_lo
+#ವ್ಯಾಖ್ಯಾನಿಸು i_checksum_lo	osd2.linux2.l_i_checksum_lo
 
-#define ext2fs_inode_includes(size, field)				\
-	((size) >= (sizeof(((struct ext2_inode_large *)0)->field) +	\
-		    offsetof(struct ext2_inode_large, field)))
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_inode_includes(ಗಾತ್ರ_2, ಕ್ಷೇತ್ರ)				\
+	((ಗಾತ್ರ_2) >= (ಗಾತ್ರ(((ರಚನೆ ext2_inode_large *)0)->ಕ್ಷೇತ್ರ) +	\
+		    offsetof(ರಚನೆ ext2_inode_large, ಕ್ಷೇತ್ರ)))
 
-#if defined(__KERNEL__) || defined(__linux__)
-#define i_reserved1	osd1.linux1.l_i_reserved1
-#define i_frag		osd2.linux2.l_i_frag
-#define i_fsize		osd2.linux2.l_i_fsize
-#define i_uid_low	i_uid
-#define i_gid_low	i_gid
-#define i_uid_high	osd2.linux2.l_i_uid_high
-#define i_gid_high	osd2.linux2.l_i_gid_high
-#else
-#if defined(__GNU__)
+#ಆದರೆ defined(__KERNEL__) || defined(__linux__)
+#ವ್ಯಾಖ್ಯಾನಿಸು i_reserved1	osd1.linux1.l_i_reserved1
+#ವ್ಯಾಖ್ಯಾನಿಸು i_frag		osd2.linux2.l_i_frag
+#ವ್ಯಾಖ್ಯಾನಿಸು i_fsize		osd2.linux2.l_i_fsize
+#ವ್ಯಾಖ್ಯಾನಿಸು i_uid_ಕೆಳಗಿನ	i_uid
+#ವ್ಯಾಖ್ಯಾನಿಸು i_gid_ಕೆಳಗಿನ	i_gid
+#ವ್ಯಾಖ್ಯಾನಿಸು i_uid_ಮೇಲಿನ	osd2.linux2.l_i_uid_ಮೇಲಿನ
+#ವ್ಯಾಖ್ಯಾನಿಸು i_gid_ಮೇಲಿನ	osd2.linux2.l_i_gid_ಮೇಲಿನ
+#ಇಲ್ಲದಿದ್ದರೆ
+#ಆದರೆ defined(__GNU__)
 
-#define i_translator	osd1.hurd1.h_i_translator
-#define i_frag		osd2.hurd2.h_i_frag;
-#define i_fsize		osd2.hurd2.h_i_fsize;
-#define i_uid_high	osd2.hurd2.h_i_uid_high
-#define i_gid_high	osd2.hurd2.h_i_gid_high
-#define i_author	osd2.hurd2.h_i_author
+#ವ್ಯಾಖ್ಯಾನಿಸು i_translator	osd1.hurd1.h_i_translator
+#ವ್ಯಾಖ್ಯಾನಿಸು i_frag		osd2.hurd2.h_i_frag;
+#ವ್ಯಾಖ್ಯಾನಿಸು i_fsize		osd2.hurd2.h_i_fsize;
+#ವ್ಯಾಖ್ಯಾನಿಸು i_uid_ಮೇಲಿನ	osd2.hurd2.h_i_uid_ಮೇಲಿನ
+#ವ್ಯಾಖ್ಯಾನಿಸು i_gid_ಮೇಲಿನ	osd2.hurd2.h_i_gid_ಮೇಲಿನ
+#ವ್ಯಾಖ್ಯಾನಿಸು i_author	osd2.hurd2.h_i_author
 
-#endif  /* __GNU__ */
-#endif	/* defined(__KERNEL__) || defined(__linux__) */
+#ಆದರೆ_ಅಂತ್ಯ  /* __GNU__ */
+#ಆದರೆ_ಅಂತ್ಯ	/* defined(__KERNEL__) || defined(__linux__) */
 
-#define inode_uid(inode)	((inode).i_uid | (unsigned)(inode).osd2.linux2.l_i_uid_high << 16)
-#define inode_gid(inode)	((inode).i_gid | (unsigned)(inode).osd2.linux2.l_i_gid_high << 16)
-#define inode_projid(inode)	((inode).i_projid)
-#define ext2fs_set_i_uid_high(inode,x) ((inode).osd2.linux2.l_i_uid_high = (x))
-#define ext2fs_set_i_gid_high(inode,x) ((inode).osd2.linux2.l_i_gid_high = (x))
+#ವ್ಯಾಖ್ಯಾನಿಸು inode_uid(inode)	((inode).i_uid | (ಚಿಹ್ನೆರಹಿತ)(inode).osd2.linux2.l_i_uid_ಮೇಲಿನ << 16)
+#ವ್ಯಾಖ್ಯಾನಿಸು inode_gid(inode)	((inode).i_gid | (ಚಿಹ್ನೆರಹಿತ)(inode).osd2.linux2.l_i_gid_ಮೇಲಿನ << 16)
+#ವ್ಯಾಖ್ಯಾನಿಸು inode_projid(inode)	((inode).i_projid)
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_ಗಣ_i_uid_ಮೇಲಿನ(inode,x) ((inode).osd2.linux2.l_i_uid_ಮೇಲಿನ = (x))
+#ವ್ಯಾಖ್ಯಾನಿಸು ext2fs_ಗಣ_i_gid_ಮೇಲಿನ(inode,x) ((inode).osd2.linux2.l_i_gid_ಮೇಲಿನ = (x))
 
-static inline
-struct ext2_inode *EXT2_INODE(struct ext2_inode_large *large_inode)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ
+ರಚನೆ ext2_inode *EXT2_INODE(ರಚನೆ ext2_inode_large *large_inode)
 {
-	return (struct ext2_inode *) large_inode;
+	ಹಿಂತಿರುಗಿ (ರಚನೆ ext2_inode *) large_inode;
 }
 
 /*
  * File system states
  */
-#define EXT2_VALID_FS			0x0001	/* Unmounted cleanly */
-#define EXT2_ERROR_FS			0x0002	/* Errors detected */
-#define EXT3_ORPHAN_FS			0x0004	/* Orphans being recovered */
-#define EXT4_FC_REPLAY			0x0020	/* Ext4 fast commit replay ongoing */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_VALID_FS			0x0001	/* Unmounted cleanly */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ERROR_FS			0x0002	/* Errors detected */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT3_ORPHAN_FS			0x0004	/* Orphans being recovered */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FC_REPLAY			0x0020	/* Ext4 fast commit replay ongoing */
 
 /*
  * Misc. filesystem flags
  */
-#define EXT2_FLAGS_SIGNED_HASH		0x0001  /* Signed dirhash in use */
-#define EXT2_FLAGS_UNSIGNED_HASH	0x0002  /* Unsigned dirhash in use */
-#define EXT2_FLAGS_TEST_FILESYS		0x0004	/* OK for use on development code */
-#define EXT2_FLAGS_IS_SNAPSHOT		0x0010	/* This is a snapshot image */
-#define EXT2_FLAGS_FIX_SNAPSHOT		0x0020	/* Snapshot inodes corrupted */
-#define EXT2_FLAGS_FIX_EXCLUDE		0x0040	/* Exclude bitmaps corrupted */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FLAGS_SIGNED_HASH		0x0001  /* Signed dirhash in use */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FLAGS_UNSIGNED_HASH	0x0002  /* Unsigned dirhash in use */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FLAGS_TEST_FILESYS		0x0004	/* OK for use on development code */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FLAGS_IS_SNAPSHOT		0x0010	/* This is a snapshot image */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FLAGS_FIX_SNAPSHOT		0x0020	/* Snapshot inodes corrupted */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FLAGS_FIX_EXCLUDE		0x0040	/* Exclude bitmaps corrupted */
 
 /*
  * Mount flags
  */
-#define EXT2_MOUNT_CHECK		0x0001	/* Do mount-time checks */
-#define EXT2_MOUNT_GRPID		0x0004	/* Create files with directory's group */
-#define EXT2_MOUNT_DEBUG		0x0008	/* Some debugging messages */
-#define EXT2_MOUNT_ERRORS_CONT		0x0010	/* Continue on errors */
-#define EXT2_MOUNT_ERRORS_RO		0x0020	/* Remount fs ro on errors */
-#define EXT2_MOUNT_ERRORS_PANIC		0x0040	/* Panic on errors */
-#define EXT2_MOUNT_MINIX_DF		0x0080	/* Mimics the Minix statfs */
-#define EXT2_MOUNT_NO_UID32		0x0200  /* Disable 32-bit UIDs */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MOUNT_CHECK		0x0001	/* Do mount-time checks */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MOUNT_GRPID		0x0004	/* Create files with directory's group */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MOUNT_DEBUG		0x0008	/* Some debugging messages */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MOUNT_ERRORS_CONT		0x0010	/* Continue on errors */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MOUNT_ERRORS_RO		0x0020	/* Remount fs ro on errors */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MOUNT_ERRORS_PANIC		0x0040	/* Panic on errors */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MOUNT_MINIX_DF		0x0080	/* Mimics the Minix statfs */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MOUNT_NO_UID32		0x0200  /* Disable 32-bit UIDs */
 
-#define clear_opt(o, opt)		o &= ~EXT2_MOUNT_##opt
-#define set_opt(o, opt)			o |= EXT2_MOUNT_##opt
-#define test_opt(sb, opt)		(EXT2_SB(sb)->s_mount_opt & \
+#ವ್ಯಾಖ್ಯಾನಿಸು clear_opt(o, opt)		o &= ~EXT2_MOUNT_##opt
+#ವ್ಯಾಖ್ಯಾನಿಸು ಗಣ_opt(o, opt)			o |= EXT2_MOUNT_##opt
+#ವ್ಯಾಖ್ಯಾನಿಸು test_opt(sb, opt)		(EXT2_SB(sb)->s_mount_opt & \
 					 EXT2_MOUNT_##opt)
 /*
  * Maximal mount counts between two filesystem checks
  */
-#define EXT2_DFL_MAX_MNT_COUNT		20	/* Allow 20 mounts */
-#define EXT2_DFL_CHECKINTERVAL		0	/* Don't use interval check */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DFL_MAX_MNT_ಎಣಿಕೆ		20	/* Allow 20 mounts */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DFL_CHECKINTERVAL		0	/* Don't use interval check */
 
 /*
  * Behaviour when detecting errors
  */
-#define EXT2_ERRORS_CONTINUE		1	/* Continue execution */
-#define EXT2_ERRORS_RO			2	/* Remount fs read-only */
-#define EXT2_ERRORS_PANIC		3	/* Panic */
-#define EXT2_ERRORS_DEFAULT		EXT2_ERRORS_CONTINUE
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ERRORS_CONTINUE		1	/* Continue execution */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ERRORS_RO			2	/* Remount fs read-only */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ERRORS_PANIC		3	/* Panic */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ERRORS_DEFAULT		EXT2_ERRORS_CONTINUE
 
-#if (__GNUC__ >= 4)
-#define ext4_offsetof(TYPE,MEMBER) __builtin_offsetof(TYPE,MEMBER)
-#else
-#define ext4_offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
-#endif
+#ಆದರೆ (__GNUC__ >= 4)
+#ವ್ಯಾಖ್ಯಾನಿಸು ext4_offsetof(TYPE,MEMBER) __builtin_offsetof(TYPE,MEMBER)
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು ext4_offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* Metadata checksum algorithms */
-#define EXT2_CRC32C_CHKSUM		1
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_C_CHKSUM		1
 
 /* Encryption algorithms, key size and key reference len */
-#define EXT4_ENCRYPTION_MODE_INVALID		0
-#define EXT4_ENCRYPTION_MODE_AES_256_XTS	1
-#define EXT4_ENCRYPTION_MODE_AES_256_GCM	2
-#define EXT4_ENCRYPTION_MODE_AES_256_CBC	3
-#define EXT4_ENCRYPTION_MODE_AES_256_CTS	4
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_ENCRYPTION_ಬಹುಲಕ_INVALID		0
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_ENCRYPTION_ಬಹುಲಕ_AES_256_XTS	1
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_ENCRYPTION_ಬಹುಲಕ_AES_256_GCM	2
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_ENCRYPTION_ಬಹುಲಕ_AES_256_CBC	3
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_ENCRYPTION_ಬಹುಲಕ_AES_256_CTS	4
 
-#define EXT4_AES_256_XTS_KEY_SIZE		64
-#define EXT4_AES_256_GCM_KEY_SIZE		32
-#define EXT4_AES_256_CBC_KEY_SIZE		32
-#define EXT4_AES_256_CTS_KEY_SIZE		32
-#define EXT4_MAX_KEY_SIZE			64
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_AES_256_XTS_ಕೀಲಿ_ಗಾತ್ರ		64
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_AES_256_GCM_ಕೀಲಿ_ಗಾತ್ರ		32
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_AES_256_CBC_ಕೀಲಿ_ಗಾತ್ರ		32
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_AES_256_CTS_ಕೀಲಿ_ಗಾತ್ರ		32
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_MAX_ಕೀಲಿ_ಗಾತ್ರ			64
 
-#define EXT4_KEY_DESCRIPTOR_SIZE		8
-#define EXT4_CRYPTO_BLOCK_SIZE			16
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_ಕೀಲಿ_DESCRIPTOR_ಗಾತ್ರ		8
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_CRYPTO_ಖಂಡ_ಗಾತ್ರ			16
 
 /* Password derivation constants */
-#define EXT4_MAX_PASSPHRASE_SIZE		1024
-#define EXT4_MAX_SALT_SIZE			256
-#define EXT4_PBKDF2_ITERATIONS			0xFFFF
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_MAX_PASSPHRASE_ಗಾತ್ರ		1024
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_MAX_SALT_ಗಾತ್ರ			256
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_PBKDF2_ITERATIONS			0xFFFF
 
-#define EXT2_LABEL_LEN				16
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_LABEL_LEN				16
 
 /*
  * Policy provided via an ioctl on the topmost directory. This
  * structure is also in the kernel.
  */
-struct ext4_encryption_policy {
-  char version;
-  char contents_encryption_mode;
-  char filenames_encryption_mode;
-  char flags;
-  char master_key_descriptor[EXT4_KEY_DESCRIPTOR_SIZE];
+ರಚನೆ ext4_encryption_policy {
+  ಅಕ್ಷರ ಆವೃತ್ತಿ;
+  ಅಕ್ಷರ contents_encryption_ಬಹುಲಕ;
+  ಅಕ್ಷರ filenames_encryption_ಬಹುಲಕ;
+  ಅಕ್ಷರ flags;
+  ಅಕ್ಷರ master_ಕೀಲಿ_descriptor[EXT4_ಕೀಲಿ_DESCRIPTOR_ಗಾತ್ರ];
 } __attribute__((__packed__));
 
-struct ext4_encryption_key {
-        __u32 mode;
-        char raw[EXT4_MAX_KEY_SIZE];
-        __u32 size;
+ರಚನೆ ext4_encryption_ಕೀಲಿ {
+        __u32 ಬಹುಲಕ;
+        ಅಕ್ಷರ raw[EXT4_MAX_ಕೀಲಿ_ಗಾತ್ರ];
+        __u32 ಗಾತ್ರ_2;
 } __attribute__((__packed__));
 
 /*
  * Structure of the super block
  */
-struct ext2_super_block {
-/*000*/	__u32	s_inodes_count;		/* Inodes count */
-	__u32	s_blocks_count;		/* Blocks count */
-	__u32	s_r_blocks_count;	/* Reserved blocks count */
-	__u32	s_free_blocks_count;	/* Free blocks count */
-/*010*/	__u32	s_free_inodes_count;	/* Free inodes count */
-	__u32	s_first_data_block;	/* First Data Block */
-	__u32	s_log_block_size;	/* Block size */
-	__u32	s_log_cluster_size;	/* Allocation cluster size */
-/*020*/	__u32	s_blocks_per_group;	/* # Blocks per group */
-	__u32	s_clusters_per_group;	/* # Fragments per group */
-	__u32	s_inodes_per_group;	/* # Inodes per group */
+ರಚನೆ ext2_super_ಖಂಡ {
+/*000*/	__u32	s_inodes_ಎಣಿಕೆ;		/* Inodes count */
+	__u32	s_ಖಂಡಗಳು_ಎಣಿಕೆ;		/* Blocks count */
+	__u32	s_r_ಖಂಡಗಳು_ಎಣಿಕೆ;	/* Reserved blocks count */
+	__u32	s_free_ಖಂಡಗಳು_ಎಣಿಕೆ;	/* Free blocks count */
+/*010*/	__u32	s_free_inodes_ಎಣಿಕೆ;	/* Free inodes count */
+	__u32	s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ;	/* First Data Block */
+	__u32	s_log_ಖಂಡ_ಗಾತ್ರ;	/* Block size */
+	__u32	s_log_cluster_ಗಾತ್ರ;	/* Allocation cluster size */
+/*020*/	__u32	s_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು;	/* # Blocks per group */
+	__u32	s_clusters_ಪ್ರತಿ_ಗುಂಪು;	/* # Fragments per group */
+	__u32	s_inodes_ಪ್ರತಿ_ಗುಂಪು;	/* # Inodes per group */
 	__u32	s_mtime;		/* Mount time */
 /*030*/	__u32	s_wtime;		/* Write time */
-	__u16	s_mnt_count;		/* Mount count */
-	__s16	s_max_mnt_count;	/* Maximal mount count */
+	__u16	s_mnt_ಎಣಿಕೆ;		/* Mount count */
+	__s16	s_max_mnt_ಎಣಿಕೆ;	/* Maximal mount count */
 	__u16	s_magic;		/* Magic signature */
 	__u16	s_state;		/* File system state */
 	__u16	s_errors;		/* Behaviour when detecting errors */
@@ -689,70 +689,70 @@ struct ext2_super_block {
 	 * feature set, it must abort and not try to meddle with
 	 * things it doesn't understand...
 	 */
-	__u32	s_first_ino;		/* First non-reserved inode */
-	__u16   s_inode_size;		/* size of inode structure */
-	__u16	s_block_group_nr;	/* block group # of this superblock */
+	__u32	s_ಮೊದಲ_ino;		/* First non-reserved inode */
+	__u16   s_inode_ಗಾತ್ರ;		/* size of inode structure */
+	__u16	s_ಖಂಡ_ಗುಂಪು_nr;	/* block group # of this superblock */
 	__u32	s_feature_compat;	/* compatible feature set */
 /*060*/	__u32	s_feature_incompat;	/* incompatible feature set */
 	__u32	s_feature_ro_compat;	/* readonly-compatible feature set */
 /*068*/	__u8	s_uuid[16] __nonstring;		/* 128-bit uuid for volume */
 /*078*/	__u8	s_volume_name[EXT2_LABEL_LEN] __nonstring;	/* volume name, no NUL? */
-/*088*/	__u8	s_last_mounted[64] __nonstring;	/* directory last mounted on, no NUL? */
+/*088*/	__u8	s_ಕೊನೆಯ_mounted[64] __nonstring;	/* directory last mounted on, no NUL? */
 /*0c8*/	__u32	s_algorithm_usage_bitmap; /* For compression */
 	/*
 	 * Performance hints.  Directory preallocation should only
 	 * happen if the EXT2_FEATURE_COMPAT_DIR_PREALLOC flag is on.
 	 */
-	__u8	s_prealloc_blocks;	/* Nr of blocks to try to preallocate*/
-	__u8	s_prealloc_dir_blocks;	/* Nr to preallocate for dirs */
-	__u16	s_reserved_gdt_blocks;	/* Per group table for online growth */
+	__u8	s_prealloc_ಖಂಡಗಳು;	/* Nr of blocks to try to preallocate*/
+	__u8	s_prealloc_dir_ಖಂಡಗಳು;	/* Nr to preallocate for dirs */
+	__u16	s_reserved_gdt_ಖಂಡಗಳು;	/* Per group table for online growth */
 	/*
 	 * Journaling support valid if EXT2_FEATURE_COMPAT_HAS_JOURNAL set.
 	 */
 /*0d0*/	__u8	s_journal_uuid[16] __nonstring;	/* uuid of journal superblock */
 /*0e0*/	__u32	s_journal_inum;		/* inode number of journal file */
 	__u32	s_journal_dev;		/* device number of journal file */
-	__u32	s_last_orphan;		/* start of list of inodes to delete */
-/*0ec*/	__u32	s_hash_seed[4];		/* HTREE hash seed */
-/*0fc*/	__u8	s_def_hash_version;	/* Default hash version to use */
+	__u32	s_ಕೊನೆಯ_orphan;		/* start of list of inodes to delete */
+/*0ec*/	__u32	s_hash_ಬೀಜ[4];		/* HTREE hash seed */
+/*0fc*/	__u8	s_def_hash_ಆವೃತ್ತಿ;	/* Default hash version to use */
 	__u8	s_jnl_backup_type;	/* Default type of journal backup */
-	__u16	s_desc_size;		/* Group desc. size: INCOMPAT_64BIT */
+	__u16	s_desc_ಗಾತ್ರ;		/* Group desc. size: INCOMPAT_64BIT */
 /*100*/	__u32	s_default_mount_opts;	/* default EXT2_MOUNT_* flags used */
-	__u32	s_first_meta_bg;	/* First metablock group */
-	__u32	s_mkfs_time;		/* When the filesystem was created */
-/*10c*/	__u32	s_jnl_blocks[17];	/* Backup of the journal inode */
-/*150*/	__u32	s_blocks_count_hi;	/* Blocks count high 32bits */
-	__u32	s_r_blocks_count_hi;	/* Reserved blocks count high 32 bits*/
-	__u32	s_free_blocks_hi;	/* Free blocks count */
+	__u32	s_ಮೊದಲ_meta_bg;	/* First metablock group */
+	__u32	s_mkfs_ಸಮಯ;		/* When the filesystem was created */
+/*10c*/	__u32	s_jnl_ಖಂಡಗಳು[17];	/* Backup of the journal inode */
+/*150*/	__u32	s_ಖಂಡಗಳು_ಎಣಿಕೆ_hi;	/* Blocks count high 32bits */
+	__u32	s_r_ಖಂಡಗಳು_ಎಣಿಕೆ_hi;	/* Reserved blocks count high 32 bits*/
+	__u32	s_free_ಖಂಡಗಳು_hi;	/* Free blocks count */
 	__u16	s_min_extra_isize;	/* All inodes have at least # bytes */
 	__u16	s_want_extra_isize;	/* New inodes should reserve # bytes */
 /*160*/	__u32	s_flags;		/* Miscellaneous flags */
 	__u16	s_raid_stride;		/* RAID stride in blocks */
 	__u16	s_mmp_update_interval;  /* # seconds to wait in MMP checking */
-	__u64	s_mmp_block;		/* Block for multi-mount protection */
-/*170*/	__u32	s_raid_stripe_width;	/* blocks on all data disks (N*stride)*/
-	__u8	s_log_groups_per_flex;	/* FLEX_BG group size */
+	__u64	s_mmp_ಖಂಡ;		/* Block for multi-mount protection */
+/*170*/	__u32	s_raid_stripe_ಅಗಲ;	/* blocks on all data disks (N*stride)*/
+	__u8	s_log_groups_ಪ್ರತಿ_flex;	/* FLEX_BG group size */
 	__u8	s_checksum_type;	/* metadata checksum algorithm */
 	__u8	s_encryption_level;	/* versioning level for encryption */
 	__u8	s_reserved_pad;		/* Padding to next 32bits */
 	__u64	s_kbytes_written;	/* nr of lifetime kilobytes written */
 /*180*/	__u32	s_snapshot_inum;	/* Inode number of active snapshot */
 	__u32	s_snapshot_id;		/* sequential ID of active snapshot */
-	__u64	s_snapshot_r_blocks_count; /* active snapshot reserved blocks */
+	__u64	s_snapshot_r_ಖಂಡಗಳು_ಎಣಿಕೆ; /* active snapshot reserved blocks */
 /*190*/	__u32	s_snapshot_list;	/* inode number of disk snapshot list */
-#define EXT4_S_ERR_START ext4_offsetof(struct ext2_super_block, s_error_count)
-	__u32	s_error_count;		/* number of fs errors */
-	__u32	s_first_error_time;	/* first time an error happened */
-	__u32	s_first_error_ino;	/* inode involved in first error */
-/*1a0*/	__u64	s_first_error_block;	/* block involved in first error */
-	__u8	s_first_error_func[32] __nonstring;	/* function where error hit, no NUL? */
-/*1c8*/	__u32	s_first_error_line;	/* line number where error happened */
-	__u32	s_last_error_time;	/* most recent time of an error */
-/*1d0*/	__u32	s_last_error_ino;	/* inode involved in last error */
-	__u32	s_last_error_line;	/* line number where error happened */
-	__u64	s_last_error_block;	/* block involved of last error */
-/*1e0*/	__u8	s_last_error_func[32] __nonstring;	/* function where error hit, no NUL? */
-#define EXT4_S_ERR_END ext4_offsetof(struct ext2_super_block, s_mount_opts)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_S_ERR_ಆರಂಭ ext4_offsetof(ರಚನೆ ext2_super_ಖಂಡ, s_error_ಎಣಿಕೆ)
+	__u32	s_error_ಎಣಿಕೆ;		/* number of fs errors */
+	__u32	s_ಮೊದಲ_error_ಸಮಯ;	/* first time an error happened */
+	__u32	s_ಮೊದಲ_error_ino;	/* inode involved in first error */
+/*1a0*/	__u64	s_ಮೊದಲ_error_ಖಂಡ;	/* block involved in first error */
+	__u8	s_ಮೊದಲ_error_func[32] __nonstring;	/* function where error hit, no NUL? */
+/*1c8*/	__u32	s_ಮೊದಲ_error_ಸಾಲು;	/* line number where error happened */
+	__u32	s_ಕೊನೆಯ_error_ಸಮಯ;	/* most recent time of an error */
+/*1d0*/	__u32	s_ಕೊನೆಯ_error_ino;	/* inode involved in last error */
+	__u32	s_ಕೊನೆಯ_error_ಸಾಲು;	/* line number where error happened */
+	__u64	s_ಕೊನೆಯ_error_ಖಂಡ;	/* block involved of last error */
+/*1e0*/	__u8	s_ಕೊನೆಯ_error_func[32] __nonstring;	/* function where error hit, no NUL? */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_S_ERR_ಕೊನೆ ext4_offsetof(ರಚನೆ ext2_super_ಖಂಡ, s_mount_opts)
 /*200*/	__u8	s_mount_opts[64] __nonstring;	/* default mount options, no NUL? */
 /*240*/	__u32	s_usr_quota_inum;	/* inode number of user quota file */
 	__u32	s_grp_quota_inum;	/* inode number of group quota file */
@@ -762,15 +762,15 @@ struct ext2_super_block {
 /*258*/	__u8	s_encrypt_pw_salt[16];	/* Salt used for string2key algorithm */
 /*268*/	__le32	s_lpf_ino;		/* Location of the lost+found inode */
 	__le32  s_prj_quota_inum;	/* inode for tracking project quota */
-/*270*/	__le32	s_checksum_seed;	/* crc32c(orig_uuid) if csum_seed set */
+/*270*/	__le32	s_checksum_ಬೀಜ;	/* crc32c(orig_uuid) if csum_seed set */
 /*274*/	__u8	s_wtime_hi;
 	__u8	s_mtime_hi;
-	__u8	s_mkfs_time_hi;
+	__u8	s_mkfs_ಸಮಯ_hi;
 	__u8	s_lastcheck_hi;
-	__u8	s_first_error_time_hi;
-	__u8	s_last_error_time_hi;
-	__u8	s_first_error_errcode;
-	__u8    s_last_error_errcode;
+	__u8	s_ಮೊದಲ_error_ಸಮಯ_hi;
+	__u8	s_ಕೊನೆಯ_error_ಸಮಯ_hi;
+	__u8	s_ಮೊದಲ_error_errcode;
+	__u8    s_ಕೊನೆಯ_error_errcode;
 /*27c*/ __le16	s_encoding;		/* Filename charset encoding */
 	__le16	s_encoding_flags;	/* Filename charset encoding flags */
 	__le32  s_orphan_file_inum;	/* Inode for tracking orphan inodes */
@@ -778,149 +778,149 @@ struct ext2_super_block {
 /*3fc*/	__u32	s_checksum;		/* crc32c(superblock) */
 };
 
-#define EXT4_S_ERR_LEN (EXT4_S_ERR_END - EXT4_S_ERR_START)
-#define EXT2_LEN_STR(buf) (int)sizeof(buf), (char *)buf
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_S_ERR_LEN (EXT4_S_ERR_ಕೊನೆ - EXT4_S_ERR_ಆರಂಭ)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_LEN_STR(buf) (ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ(buf), (ಅಕ್ಷರ *)buf
 
 /*
  * Codes for operating systems
  */
-#define EXT2_OS_LINUX		0
-#define EXT2_OS_HURD		1
-#define EXT2_OBSO_OS_MASIX	2
-#define EXT2_OS_FREEBSD		3
-#define EXT2_OS_LITES		4
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_OS_LINUX		0
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_OS_HURD		1
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_OBSO_OS_MASIX	2
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_OS_FREEBSD		3
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_OS_LITES		4
 
 /*
  * Revision levels
  */
-#define EXT2_GOOD_OLD_REV	0	/* The good old (original) format */
-#define EXT2_DYNAMIC_REV	1	/* V2 format w/ dynamic inode sizes */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_GOOD_OLD_REV	0	/* The good old (original) format */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DYNAMIC_REV	1	/* V2 format w/ dynamic inode sizes */
 
-#define EXT2_CURRENT_REV	EXT2_GOOD_OLD_REV
-#define EXT2_MAX_SUPP_REV	EXT2_DYNAMIC_REV
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_CURRENT_REV	EXT2_GOOD_OLD_REV
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_MAX_SUPP_REV	EXT2_DYNAMIC_REV
 
-#define EXT2_GOOD_OLD_INODE_SIZE 128
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_GOOD_OLD_INODE_ಗಾತ್ರ 128
 
-#define EXT4_EXTRA_TIMESTAMP_MAX	(((int64_t)1 << 34) - 1  + INT32_MIN)
-#define EXT4_NON_EXTRA_TIMESTAMP_MAX	INT32_MAX
-#define EXT4_TIMESTAMP_MIN		INT32_MIN
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_EXTRA_TIMESTAMP_MAX	(((int64_t)1 << 34) - 1  + INT32_MIN)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_NON_EXTRA_TIMESTAMP_MAX	INT32_MAX
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_TIMESTAMP_MIN		INT32_MIN
 
 /*
  * Journal inode backup types
  */
-#define EXT3_JNL_BACKUP_BLOCKS	1
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT3_JNL_BACKUP_ಖಂಡಗಳು	1
 
 /*
  * Feature set definitions
  */
 
-#define EXT2_HAS_COMPAT_FEATURE(sb,mask)			\
-	( EXT2_SB(sb)->s_feature_compat & (mask) )
-#define EXT2_HAS_RO_COMPAT_FEATURE(sb,mask)			\
-	( EXT2_SB(sb)->s_feature_ro_compat & (mask) )
-#define EXT2_HAS_INCOMPAT_FEATURE(sb,mask)			\
-	( EXT2_SB(sb)->s_feature_incompat & (mask) )
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_HAS_COMPAT_FEATURE(sb,ಮುಖವಾಡ)			\
+	( EXT2_SB(sb)->s_feature_compat & (ಮುಖವಾಡ) )
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_HAS_RO_COMPAT_FEATURE(sb,ಮುಖವಾಡ)			\
+	( EXT2_SB(sb)->s_feature_ro_compat & (ಮುಖವಾಡ) )
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_HAS_INCOMPAT_FEATURE(sb,ಮುಖವಾಡ)			\
+	( EXT2_SB(sb)->s_feature_incompat & (ಮುಖವಾಡ) )
 
-#define EXT2_FEATURE_COMPAT_DIR_PREALLOC	0x0001
-#define EXT2_FEATURE_COMPAT_IMAGIC_INODES	0x0002
-#define EXT3_FEATURE_COMPAT_HAS_JOURNAL		0x0004
-#define EXT2_FEATURE_COMPAT_EXT_ATTR		0x0008
-#define EXT2_FEATURE_COMPAT_RESIZE_INODE	0x0010
-#define EXT2_FEATURE_COMPAT_DIR_INDEX		0x0020
-#define EXT2_FEATURE_COMPAT_LAZY_BG		0x0040
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FEATURE_COMPAT_DIR_PREALLOC	0x0001
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FEATURE_COMPAT_IMAGIC_INODES	0x0002
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT3_FEATURE_COMPAT_HAS_JOURNAL		0x0004
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FEATURE_COMPAT_EXT_ATTR		0x0008
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FEATURE_COMPAT_RESIZE_INODE	0x0010
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FEATURE_COMPAT_DIR_ಸೂಚ್ಯಂಕ		0x0020
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FEATURE_COMPAT_LAZY_BG		0x0040
 /* #define EXT2_FEATURE_COMPAT_EXCLUDE_INODE	0x0080 not used, legacy */
-#define EXT2_FEATURE_COMPAT_EXCLUDE_BITMAP	0x0100
-#define EXT4_FEATURE_COMPAT_SPARSE_SUPER2	0x0200
-#define EXT4_FEATURE_COMPAT_FAST_COMMIT		0x0400
-#define EXT4_FEATURE_COMPAT_STABLE_INODES	0x0800
-#define EXT4_FEATURE_COMPAT_ORPHAN_FILE		0x1000
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FEATURE_COMPAT_EXCLUDE_BITMAP	0x0100
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_COMPAT_SPARSE_SUPER2	0x0200
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_COMPAT_FAST_COMMIT		0x0400
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_COMPAT_STABLE_INODES	0x0800
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_COMPAT_ORPHAN_FILE		0x1000
 
-#define EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER	0x0001
-#define EXT2_FEATURE_RO_COMPAT_LARGE_FILE	0x0002
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER	0x0001
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FEATURE_RO_COMPAT_LARGE_FILE	0x0002
 /* #define EXT2_FEATURE_RO_COMPAT_BTREE_DIR	0x0004 not used */
-#define EXT4_FEATURE_RO_COMPAT_HUGE_FILE	0x0008
-#define EXT4_FEATURE_RO_COMPAT_GDT_CSUM		0x0010
-#define EXT4_FEATURE_RO_COMPAT_DIR_NLINK	0x0020
-#define EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE	0x0040
-#define EXT4_FEATURE_RO_COMPAT_HAS_SNAPSHOT	0x0080
-#define EXT4_FEATURE_RO_COMPAT_QUOTA		0x0100
-#define EXT4_FEATURE_RO_COMPAT_BIGALLOC		0x0200
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_RO_COMPAT_HUGE_FILE	0x0008
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_RO_COMPAT_GDT_CSUM		0x0010
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_RO_COMPAT_DIR_NLINK	0x0020
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE	0x0040
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_RO_COMPAT_HAS_SNAPSHOT	0x0080
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_RO_COMPAT_QUOTA		0x0100
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_RO_COMPAT_BIGALLOC		0x0200
 /*
  * METADATA_CSUM implies GDT_CSUM.  When METADATA_CSUM is set, group
  * descriptor checksums use the same algorithm as all other data
  * structures' checksums.
  */
-#define EXT4_FEATURE_RO_COMPAT_METADATA_CSUM	0x0400
-#define EXT4_FEATURE_RO_COMPAT_REPLICA		0x0800
-#define EXT4_FEATURE_RO_COMPAT_READONLY		0x1000
-#define EXT4_FEATURE_RO_COMPAT_PROJECT		0x2000 /* Project quota */
-#define EXT4_FEATURE_RO_COMPAT_SHARED_BLOCKS	0x4000
-#define EXT4_FEATURE_RO_COMPAT_VERITY		0x8000
-#define EXT4_FEATURE_RO_COMPAT_ORPHAN_PRESENT	0x10000
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_RO_COMPAT_METADATA_CSUM	0x0400
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_RO_COMPAT_REPLICA		0x0800
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_RO_COMPAT_READONLY		0x1000
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_RO_COMPAT_PROJECT		0x2000 /* Project quota */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_RO_COMPAT_SHARED_ಖಂಡಗಳು	0x4000
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_RO_COMPAT_VERITY		0x8000
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_RO_COMPAT_ORPHAN_PRESENT	0x10000
 
-#define EXT2_FEATURE_INCOMPAT_COMPRESSION	0x0001
-#define EXT2_FEATURE_INCOMPAT_FILETYPE		0x0002
-#define EXT3_FEATURE_INCOMPAT_RECOVER		0x0004 /* Needs recovery */
-#define EXT3_FEATURE_INCOMPAT_JOURNAL_DEV	0x0008 /* Journal device */
-#define EXT2_FEATURE_INCOMPAT_META_BG		0x0010
-#define EXT3_FEATURE_INCOMPAT_EXTENTS		0x0040
-#define EXT4_FEATURE_INCOMPAT_64BIT		0x0080
-#define EXT4_FEATURE_INCOMPAT_MMP		0x0100
-#define EXT4_FEATURE_INCOMPAT_FLEX_BG		0x0200
-#define EXT4_FEATURE_INCOMPAT_EA_INODE		0x0400
-#define EXT4_FEATURE_INCOMPAT_DIRDATA		0x1000
-#define EXT4_FEATURE_INCOMPAT_CSUM_SEED		0x2000
-#define EXT4_FEATURE_INCOMPAT_LARGEDIR		0x4000 /* >2GB or 3-lvl htree */
-#define EXT4_FEATURE_INCOMPAT_INLINE_DATA	0x8000 /* data in inode */
-#define EXT4_FEATURE_INCOMPAT_ENCRYPT		0x10000
-#define EXT4_FEATURE_INCOMPAT_CASEFOLD		0x20000
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FEATURE_INCOMPAT_COMPRESSION	0x0001
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FEATURE_INCOMPAT_FILETYPE		0x0002
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT3_FEATURE_INCOMPAT_RECOVER		0x0004 /* Needs recovery */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT3_FEATURE_INCOMPAT_JOURNAL_DEV	0x0008 /* Journal device */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FEATURE_INCOMPAT_META_BG		0x0010
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT3_FEATURE_INCOMPAT_EXTENTS		0x0040
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_INCOMPAT_64_ಬಿಟ್		0x0080
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_INCOMPAT_MMP		0x0100
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_INCOMPAT_FLEX_BG		0x0200
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_INCOMPAT_EA_INODE		0x0400
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_INCOMPAT_DIRDATA		0x1000
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_INCOMPAT_CSUM_ಬೀಜ		0x2000
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_INCOMPAT_LARGEDIR		0x4000 /* >2GB or 3-lvl htree */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_INCOMPAT_INLINE_ದತ್ತಾಂಶ	0x8000 /* data in inode */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_INCOMPAT_ENCRYPT		0x10000
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_INCOMPAT_CASEFOLD		0x20000
 
-#define EXT4_FEATURE_COMPAT_FUNCS(name, ver, flagname) \
-static inline int ext2fs_has_feature_##name(struct ext2_super_block *sb) \
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_COMPAT_FUNCS(name, ver, flagname) \
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ ext2fs_has_feature_##name(ರಚನೆ ext2_super_ಖಂಡ *sb) \
 { \
-	return ((EXT2_SB(sb)->s_feature_compat & \
+	ಹಿಂತಿರುಗಿ ((EXT2_SB(sb)->s_feature_compat & \
 		 EXT##ver##_FEATURE_COMPAT_##flagname) != 0); \
 } \
-static inline void ext2fs_set_feature_##name(struct ext2_super_block *sb) \
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ ext2fs_ಗಣ_feature##name(ರಚನೆ ext2_super_ಖಂಡ *sb) \
 { \
 	EXT2_SB(sb)->s_feature_compat |= \
 		EXT##ver##_FEATURE_COMPAT_##flagname; \
 } \
-static inline void ext2fs_clear_feature_##name(struct ext2_super_block *sb) \
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ ext2fs_clear_feature_##name(ರಚನೆ ext2_super_ಖಂಡ *sb) \
 { \
 	EXT2_SB(sb)->s_feature_compat &= \
 		~EXT##ver##_FEATURE_COMPAT_##flagname; \
 }
 
-#define EXT4_FEATURE_RO_COMPAT_FUNCS(name, ver, flagname) \
-static inline int ext2fs_has_feature_##name(struct ext2_super_block *sb) \
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_RO_COMPAT_FUNCS(name, ver, flagname) \
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ ext2fs_has_feature_##name(ರಚನೆ ext2_super_ಖಂಡ *sb) \
 { \
-	return ((EXT2_SB(sb)->s_feature_ro_compat & \
+	ಹಿಂತಿರುಗಿ ((EXT2_SB(sb)->s_feature_ro_compat & \
 		 EXT##ver##_FEATURE_RO_COMPAT_##flagname) != 0); \
 } \
-static inline void ext2fs_set_feature_##name(struct ext2_super_block *sb) \
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ ext2fs_ಗಣ_feature##name(ರಚನೆ ext2_super_ಖಂಡ *sb) \
 { \
 	EXT2_SB(sb)->s_feature_ro_compat |= \
 		EXT##ver##_FEATURE_RO_COMPAT_##flagname; \
 } \
-static inline void ext2fs_clear_feature_##name(struct ext2_super_block *sb) \
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ ext2fs_clear_feature_##name(ರಚನೆ ext2_super_ಖಂಡ *sb) \
 { \
 	EXT2_SB(sb)->s_feature_ro_compat &= \
 		~EXT##ver##_FEATURE_RO_COMPAT_##flagname; \
 }
 
-#define EXT4_FEATURE_INCOMPAT_FUNCS(name, ver, flagname) \
-static inline int ext2fs_has_feature_##name(struct ext2_super_block *sb) \
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_FEATURE_INCOMPAT_FUNCS(name, ver, flagname) \
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ ext2fs_has_feature_##name(ರಚನೆ ext2_super_ಖಂಡ *sb) \
 { \
-	return ((EXT2_SB(sb)->s_feature_incompat & \
+	ಹಿಂತಿರುಗಿ ((EXT2_SB(sb)->s_feature_incompat & \
 		 EXT##ver##_FEATURE_INCOMPAT_##flagname) != 0); \
 } \
-static inline void ext2fs_set_feature_##name(struct ext2_super_block *sb) \
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ ext2fs_ಗಣ_feature##name(ರಚನೆ ext2_super_ಖಂಡ *sb) \
 { \
 	EXT2_SB(sb)->s_feature_incompat |= \
 		EXT##ver##_FEATURE_INCOMPAT_##flagname; \
 } \
-static inline void ext2fs_clear_feature_##name(struct ext2_super_block *sb) \
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ ext2fs_clear_feature_##name(ರಚನೆ ext2_super_ಖಂಡ *sb) \
 { \
 	EXT2_SB(sb)->s_feature_incompat &= \
 		~EXT##ver##_FEATURE_INCOMPAT_##flagname; \
@@ -931,7 +931,7 @@ EXT4_FEATURE_COMPAT_FUNCS(imagic_inodes,	2, IMAGIC_INODES)
 EXT4_FEATURE_COMPAT_FUNCS(journal,		3, HAS_JOURNAL)
 EXT4_FEATURE_COMPAT_FUNCS(xattr,		2, EXT_ATTR)
 EXT4_FEATURE_COMPAT_FUNCS(resize_inode,		2, RESIZE_INODE)
-EXT4_FEATURE_COMPAT_FUNCS(dir_index,		2, DIR_INDEX)
+EXT4_FEATURE_COMPAT_FUNCS(dir_ಸೂಚ್ಯಂಕ,		2, DIR_ಸೂಚ್ಯಂಕ)
 EXT4_FEATURE_COMPAT_FUNCS(lazy_bg,		2, LAZY_BG)
 EXT4_FEATURE_COMPAT_FUNCS(exclude_bitmap,	2, EXCLUDE_BITMAP)
 EXT4_FEATURE_COMPAT_FUNCS(sparse_super2,	4, SPARSE_SUPER2)
@@ -952,7 +952,7 @@ EXT4_FEATURE_RO_COMPAT_FUNCS(metadata_csum,	4, METADATA_CSUM)
 EXT4_FEATURE_RO_COMPAT_FUNCS(replica,		4, REPLICA)
 EXT4_FEATURE_RO_COMPAT_FUNCS(readonly,		4, READONLY)
 EXT4_FEATURE_RO_COMPAT_FUNCS(project,		4, PROJECT)
-EXT4_FEATURE_RO_COMPAT_FUNCS(shared_blocks,	4, SHARED_BLOCKS)
+EXT4_FEATURE_RO_COMPAT_FUNCS(shared_ಖಂಡಗಳು,	4, SHARED_ಖಂಡಗಳು)
 EXT4_FEATURE_RO_COMPAT_FUNCS(verity,		4, VERITY)
 EXT4_FEATURE_RO_COMPAT_FUNCS(orphan_present,	4, ORPHAN_PRESENT)
 
@@ -962,23 +962,23 @@ EXT4_FEATURE_INCOMPAT_FUNCS(journal_needs_recovery,	3, RECOVER)
 EXT4_FEATURE_INCOMPAT_FUNCS(journal_dev,	3, JOURNAL_DEV)
 EXT4_FEATURE_INCOMPAT_FUNCS(meta_bg,		2, META_BG)
 EXT4_FEATURE_INCOMPAT_FUNCS(extents,		3, EXTENTS)
-EXT4_FEATURE_INCOMPAT_FUNCS(64bit,		4, 64BIT)
+EXT4_FEATURE_INCOMPAT_FUNCS(64ಬಿಟ್,		4, 64ಬಿಟ್_2)
 EXT4_FEATURE_INCOMPAT_FUNCS(mmp,		4, MMP)
 EXT4_FEATURE_INCOMPAT_FUNCS(flex_bg,		4, FLEX_BG)
 EXT4_FEATURE_INCOMPAT_FUNCS(ea_inode,		4, EA_INODE)
 EXT4_FEATURE_INCOMPAT_FUNCS(dirdata,		4, DIRDATA)
-EXT4_FEATURE_INCOMPAT_FUNCS(csum_seed,		4, CSUM_SEED)
+EXT4_FEATURE_INCOMPAT_FUNCS(csum_ಬೀಜ,		4, CSUM_ಬೀಜ)
 EXT4_FEATURE_INCOMPAT_FUNCS(largedir,		4, LARGEDIR)
-EXT4_FEATURE_INCOMPAT_FUNCS(inline_data,	4, INLINE_DATA)
+EXT4_FEATURE_INCOMPAT_FUNCS(inline_ದತ್ತಾಂಶ,	4, INLINE_ದತ್ತಾಂಶ)
 EXT4_FEATURE_INCOMPAT_FUNCS(encrypt,		4, ENCRYPT)
 EXT4_FEATURE_INCOMPAT_FUNCS(casefold,		4, CASEFOLD)
 
-#define EXT2_FEATURE_COMPAT_SUPP	0
-#define EXT2_FEATURE_INCOMPAT_SUPP    (EXT2_FEATURE_INCOMPAT_FILETYPE| \
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FEATURE_COMPAT_SUPP	0
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FEATURE_INCOMPAT_SUPP    (EXT2_FEATURE_INCOMPAT_FILETYPE| \
 				       EXT4_FEATURE_INCOMPAT_MMP| \
 				       EXT4_FEATURE_INCOMPAT_LARGEDIR| \
 				       EXT4_FEATURE_INCOMPAT_EA_INODE)
-#define EXT2_FEATURE_RO_COMPAT_SUPP	(EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER| \
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FEATURE_RO_COMPAT_SUPP	(EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER| \
 					 EXT2_FEATURE_RO_COMPAT_LARGE_FILE| \
 					 EXT4_FEATURE_RO_COMPAT_DIR_NLINK| \
 					 EXT2_FEATURE_RO_COMPAT_BTREE_DIR| \
@@ -987,42 +987,42 @@ EXT4_FEATURE_INCOMPAT_FUNCS(casefold,		4, CASEFOLD)
 /*
  * Default values for user and/or group using reserved blocks
  */
-#define EXT2_DEF_RESUID		0
-#define EXT2_DEF_RESGID		0
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DEF_RESUID		0
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DEF_RESGID		0
 
 /*
  * Default mount options
  */
-#define EXT2_DEFM_DEBUG		0x0001
-#define EXT2_DEFM_BSDGROUPS	0x0002
-#define EXT2_DEFM_XATTR_USER	0x0004
-#define EXT2_DEFM_ACL		0x0008
-#define EXT2_DEFM_UID16		0x0010
-#define EXT3_DEFM_JMODE		0x0060
-#define EXT3_DEFM_JMODE_DATA	0x0020
-#define EXT3_DEFM_JMODE_ORDERED	0x0040
-#define EXT3_DEFM_JMODE_WBACK	0x0060
-#define EXT4_DEFM_NOBARRIER	0x0100
-#define EXT4_DEFM_BLOCK_VALIDITY 0x0200
-#define EXT4_DEFM_DISCARD	0x0400
-#define EXT4_DEFM_NODELALLOC	0x0800
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DEFM_DEBUG		0x0001
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DEFM_BSDGROUPS	0x0002
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DEFM_XATTR_USER	0x0004
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DEFM_ACL		0x0008
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DEFM_UID16		0x0010
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT3_DEFM_JMODE		0x0060
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT3_DEFM_JMODE_ದತ್ತಾಂಶ	0x0020
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT3_DEFM_JMODE_ORDERED	0x0040
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT3_DEFM_JMODE_WBACK	0x0060
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_DEFM_NOBARRIER	0x0100
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_DEFM_ಖಂಡ_VALIDITY 0x0200
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_DEFM_DISCARD	0x0400
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_DEFM_NODELALLOC	0x0800
 
-static inline int ext4_hash_in_dirent(const struct ext2_inode *inode)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ ext4_hash_ಒಳ_dirent(ಸ್ಥಿರಾಂಕ ರಚನೆ ext2_inode *inode)
 {
-	return (inode->i_flags & EXT4_ENCRYPT_FL) &&
+	ಹಿಂತಿರುಗಿ (inode->i_flags & EXT4_ENCRYPT_FL) &&
 		(inode->i_flags & EXT4_CASEFOLD_FL);
 }
 
 /*
  * Structure of a directory entry
  */
-#define EXT2_NAME_LEN 255
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_NAME_LEN 255
 
-struct ext2_dir_entry {
+ರಚನೆ ext2_dir_ನಮೂದು {
 	__u32	inode;			/* Inode number */
 	__u16	rec_len;		/* Directory entry length */
 	__u16	name_len;		/* Name length */
-	char	name[EXT2_NAME_LEN];	/* File name */
+	ಅಕ್ಷರ	name[EXT2_NAME_LEN];	/* File name */
 };
 
 /*
@@ -1039,12 +1039,12 @@ struct ext2_dir_entry {
  *   ext2fs_dirent_set_file_type
  * to get and set name_len and file_type fields.
  */
-struct ext2_dir_entry_2 {
+ರಚನೆ ext2_dir_ನಮೂದು_2 {
 	__u32	inode;			/* Inode number */
 	__u16	rec_len;		/* Directory entry length */
 	__u8	name_len;		/* Name length */
 	__u8	file_type;
-	char	name[EXT2_NAME_LEN];	/* File name */
+	ಅಕ್ಷರ	name[EXT2_NAME_LEN];	/* File name */
 };
 
 /*
@@ -1052,25 +1052,25 @@ struct ext2_dir_entry_2 {
  * This is located at the first 4 bit aligned location after the name.
  */
 
-struct ext2_dir_entry_hash {
+ರಚನೆ ext2_dir_ನಮೂದು_hash {
 	__le32 hash;
 	__le32 minor_hash;
 };
 
-#define EXT2_DIRENT_HASHES(entry) \
-	((struct ext2_dir_entry_hash *) &entry->name[\
-		(ext2fs_dirent_name_len(entry) + \
-			EXT2_DIR_ROUND) & ~EXT2_DIR_ROUND])
-#define EXT2_DIRENT_HASH(entry) \
-		ext2fs_le32_to_cpu(EXT2_DIRENT_HASHES(entry)->hash)
-#define EXT2_DIRENT_MINOR_HASH(entry) \
-		ext2fs_le32_to_cpu(EXT2_DIRENT_HASHES(entry)->minor_hash)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DIRENT_HASHES(ನಮೂದು) \
+	((ರಚನೆ ext2_dir_ನಮೂದು_hash *) &ನಮೂದು->name[\
+		(ext2fs_dirent_name_len(ನಮೂದು) + \
+			EXT2_DIR_ಸುತ್ತು) & ~EXT2_DIR_ಸುತ್ತು])
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DIRENT_HASH(ನಮೂದು) \
+		ext2fs_le32_ಗಮ್ಯ_cpu(EXT2_DIRENT_HASHES(ನಮೂದು)->hash)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DIRENT_MINOR_HASH(ನಮೂದು) \
+		ext2fs_le32_ಗಮ್ಯ_cpu(EXT2_DIRENT_HASHES(ನಮೂದು)->minor_hash)
 
 /*
  * This is a bogus directory entry at the end of each leaf block that
  * records checksums.
  */
-struct ext2_dir_entry_tail {
+ರಚನೆ ext2_dir_ನಮೂದು_ಬಾಲ {
 	__u32	det_reserved_zero1;	/* Pretend to be unused */
 	__u16	det_rec_len;		/* 12 */
 	__u16	det_reserved_name_len;	/* 0xDE00, fake namelen/filetype */
@@ -1081,16 +1081,16 @@ struct ext2_dir_entry_tail {
  * Ext2 directory file types.  Only the low 3 bits are used.  The
  * other bits are reserved for now.
  */
-#define EXT2_FT_UNKNOWN		0
-#define EXT2_FT_REG_FILE	1
-#define EXT2_FT_DIR		2
-#define EXT2_FT_CHRDEV		3
-#define EXT2_FT_BLKDEV		4
-#define EXT2_FT_FIFO		5
-#define EXT2_FT_SOCK		6
-#define EXT2_FT_SYMLINK		7
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FT_UNKNOWN		0
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FT_REG_FILE	1
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FT_DIR		2
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FT_CHRDEV		3
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FT_BLKDEV		4
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FT_FIFO		5
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FT_SOCK		6
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FT_SYMLINK		7
 
-#define EXT2_FT_MAX		8
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_FT_MAX		8
 
 /*
  * Annoyingly, e2fsprogs always swab16s ext2_dir_entry.name_len, so we
@@ -1098,34 +1098,34 @@ struct ext2_dir_entry_tail {
  * constant helps to build the dir_entry_tail to look like it has an
  * "invalid" file type.
  */
-#define EXT2_DIR_NAME_LEN_CSUM	0xDE00
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DIR_NAME_LEN_CSUM	0xDE00
 
 /*
  * EXT2_DIR_PAD defines the directory entries boundaries
  *
  * NOTE: It must be a multiple of 4
  */
-#define EXT2_DIR_ENTRY_HEADER_LEN	8
-#define EXT2_DIR_ENTRY_HASH_LEN		8
-#define EXT2_DIR_PAD			4
-#define EXT2_DIR_ROUND			(EXT2_DIR_PAD - 1)
-#define EXT2_DIR_REC_LEN(name_len) ext2fs_dir_rec_len(name_len, 0)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DIR_ನಮೂದು_ಶೀರ್ಷಿಕೆ_LEN	8
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DIR_ನಮೂದು_HASH_LEN		8
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DIR_PAD			4
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DIR_ಸುತ್ತು			(EXT2_DIR_PAD - 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_DIR_REC_LEN(name_len) ext2fs_dir_rec_len(name_len, 0)
 
-static inline unsigned int ext2fs_dir_rec_len(__u8 name_len,
-						int extended)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ext2fs_dir_rec_len(__u8 name_len,
+						ಪೂರ್ಣಾಂಕ extended)
 {
-	int rec_len = (name_len + EXT2_DIR_ENTRY_HEADER_LEN + EXT2_DIR_ROUND);
+	ಪೂರ್ಣಾಂಕ rec_len = (name_len + EXT2_DIR_ನಮೂದು_ಶೀರ್ಷಿಕೆ_LEN + EXT2_DIR_ಸುತ್ತು);
 
-	rec_len &= ~EXT2_DIR_ROUND;
-	if (extended)
-		rec_len += EXT2_DIR_ENTRY_HASH_LEN;
-	return rec_len;
+	rec_len &= ~EXT2_DIR_ಸುತ್ತು;
+	ಆದರೆ (extended)
+		rec_len += EXT2_DIR_ನಮೂದು_HASH_LEN;
+	ಹಿಂತಿರುಗಿ rec_len;
 }
 
-#define EXT4_ORPHAN_BLOCK_MAGIC 0x0b10ca04
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_ORPHAN_ಖಂಡ_MAGIC 0x0b10ca04
 
 /* Structure at the tail of orphan block */
-struct ext4_orphan_block_tail {
+ರಚನೆ ext4_orphan_ಖಂಡ_ಬಾಲ {
 	__le32 ob_magic;
 	__le32 ob_checksum;
 };
@@ -1133,9 +1133,9 @@ struct ext4_orphan_block_tail {
 /*
  * Constants for ext4's extended time encoding
  */
-#define EXT4_EPOCH_BITS 2
-#define EXT4_EPOCH_MASK ((1 << EXT4_EPOCH_BITS) - 1)
-#define EXT4_NSEC_MASK  (~0UL << EXT4_EPOCH_BITS)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_EPOCH_ಬಿಟ್ಟುಗಳು 2
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_EPOCH_ಮುಖವಾಡ ((1 << EXT4_EPOCH_ಬಿಟ್ಟುಗಳು) - 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_NSEC_ಮುಖವಾಡ  (~0UL << EXT4_EPOCH_ಬಿಟ್ಟುಗಳು)
 
 /*
  * This structure is used for multiple mount protection. It is written
@@ -1155,16 +1155,16 @@ struct ext4_orphan_block_tail {
  *	fields are only for informational purposes for the administrator,
  *	due to clock skew between nodes and hostname HA service takeover.
  */
-#define EXT4_MMP_MAGIC     0x004D4D50U /* ASCII for MMP */
-#define EXT4_MMP_SEQ_CLEAN 0xFF4D4D50U /* mmp_seq value for clean unmount */
-#define EXT4_MMP_SEQ_FSCK  0xE24D4D50U /* mmp_seq value when being fscked */
-#define EXT4_MMP_SEQ_MAX   0xE24D4D4FU /* maximum valid mmp_seq value */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_MMP_MAGIC     0x004D4D50U /* ASCII for MMP */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_MMP_SEQ_CLEAN 0xFF4D4D50U /* mmp_seq value for clean unmount */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_MMP_SEQ_FSCK  0xE24D4D50U /* mmp_seq value when being fscked */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_MMP_SEQ_MAX   0xE24D4D4FU /* maximum valid mmp_seq value */
 
 /* Not endian-annotated; it's swapped at read/write time */
-struct mmp_struct {
+ರಚನೆ mmp_struct {
 	__u32	mmp_magic;		/* Magic number for MMP */
 	__u32	mmp_seq;		/* Sequence no. updated periodically */
-	__u64	mmp_time;		/* Time last updated (seconds) */
+	__u64	mmp_ಸಮಯ;		/* Time last updated (seconds) */
 	__u8	mmp_nodename[64] __nonstring;	/* Node updating MMP block, no NUL? */
 	__u8	mmp_bdevname[32] __nonstring;	/* Bdev updating MMP block, no NUL? */
 	__u16	mmp_check_interval;	/* Changed mmp_check_interval */
@@ -1176,30 +1176,30 @@ struct mmp_struct {
 /*
  * Default interval for MMP update in seconds.
  */
-#define EXT4_MMP_UPDATE_INTERVAL	5
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_MMP_UPDATE_INTERVAL	5
 
 /*
  * Maximum interval for MMP update in seconds.
  */
-#define EXT4_MMP_MAX_UPDATE_INTERVAL	300
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_MMP_MAX_UPDATE_INTERVAL	300
 
 /*
  * Minimum interval for MMP checking in seconds.
  */
-#define EXT4_MMP_MIN_CHECK_INTERVAL     5
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_MMP_MIN_CHECK_INTERVAL     5
 
 /*
  * Minimum size of inline data.
  */
-#define EXT4_MIN_INLINE_DATA_SIZE	((sizeof(__u32) * EXT2_N_BLOCKS))
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_MIN_INLINE_ದತ್ತಾಂಶ_ಗಾತ್ರ	((ಗಾತ್ರ(__u32) * EXT2_N_ಖಂಡಗಳು))
 
 /*
  * Size of a parent inode in inline data directory.
  */
-#define EXT4_INLINE_DATA_DOTDOT_SIZE	(4)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_INLINE_ದತ್ತಾಂಶ_DOTDOT_ಗಾತ್ರ	(4)
 
-#define EXT4_ENC_UTF8_12_1	1
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_ENC_UTF8_12_1	1
 
-#define EXT4_ENC_STRICT_MODE_FL			(1 << 0) /* Reject invalid sequences */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT4_ENC_STRICT_ಬಹುಲಕ_FL			(1 << 0) /* Reject invalid sequences */
 
-#endif	/* _LINUX_EXT2_FS_H */
+#ಆದರೆ_ಅಂತ್ಯ	/* _LINUX_EXT2_FS_H */

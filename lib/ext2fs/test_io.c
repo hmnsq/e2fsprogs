@@ -9,44 +9,44 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಆದರೆ HAVE_SYS_STAT_H
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_CHECK_MAGIC(ರಚನೆ, ಸಂಕೇತ_2) \
+	  ಆದರೆ ((ರಚನೆ)->magic != (ಸಂಕೇತ_2)) ಹಿಂತಿರುಗಿ (ಸಂಕೇತ_2)
 
-struct test_private_data {
-	int	magic;
+ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ {
+	ಪೂರ್ಣಾಂಕ	magic;
 	io_channel real;
-	int flags;
+	ಪೂರ್ಣಾಂಕ flags;
 	FILE *outfile;
-	unsigned long block;
-	int read_abort_count, write_abort_count;
-	void (*read_blk)(unsigned long block, int count, errcode_t err);
-	void (*write_blk)(unsigned long block, int count, errcode_t err);
-	void (*set_blksize)(int blksize, errcode_t err);
-	void (*write_byte)(unsigned long block, int count, errcode_t err);
-	void (*read_blk64)(unsigned long long block, int count, errcode_t err);
-	void (*write_blk64)(unsigned long long block, int count, errcode_t err);
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಖಂಡ;
+	ಪೂರ್ಣಾಂಕ read_abort_ಎಣಿಕೆ, write_abort_ಎಣಿಕೆ;
+	ಶೂನ್ಯ (*read_blk)(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಖಂಡ, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, errcode_t err);
+	ಶೂನ್ಯ (*write_blk)(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಖಂಡ, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, errcode_t err);
+	ಶೂನ್ಯ (*ಗಣ_blksize)(ಪೂರ್ಣಾಂಕ blksize, errcode_t err);
+	ಶೂನ್ಯ (*write_byte)(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಖಂಡ, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, errcode_t err);
+	ಶೂನ್ಯ (*read_blk64)(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, errcode_t err);
+	ಶೂನ್ಯ (*write_blk64)(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, errcode_t err);
 };
 
 /*
@@ -54,47 +54,47 @@ struct test_private_data {
  * necessary *before* calling test_open
  */
 io_manager test_io_backing_manager = 0;
-void (*test_io_cb_read_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
-void (*test_io_cb_write_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
-void (*test_io_cb_read_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
-void (*test_io_cb_write_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
-void (*test_io_cb_set_blksize)
-	(int blksize, errcode_t err) = 0;
-void (*test_io_cb_write_byte)
-	(unsigned long block, int count, errcode_t err) = 0;
+ಶೂನ್ಯ (*test_io_cb_read_blk)
+	(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಖಂಡ, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, errcode_t err) = 0;
+ಶೂನ್ಯ (*test_io_cb_write_blk)
+	(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಖಂಡ, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, errcode_t err) = 0;
+ಶೂನ್ಯ (*test_io_cb_read_blk64)
+	(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, errcode_t err) = 0;
+ಶೂನ್ಯ (*test_io_cb_write_blk64)
+	(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, errcode_t err) = 0;
+ಶೂನ್ಯ (*test_io_cb_ಗಣ_blksize)
+	(ಪೂರ್ಣಾಂಕ blksize, errcode_t err) = 0;
+ಶೂನ್ಯ (*test_io_cb_write_byte)
+	(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಖಂಡ, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, errcode_t err) = 0;
 
 /*
  * Test flags
  */
-#define TEST_FLAG_READ			0x01
-#define TEST_FLAG_WRITE			0x02
-#define TEST_FLAG_SET_BLKSIZE		0x04
-#define TEST_FLAG_FLUSH			0x08
-#define TEST_FLAG_DUMP			0x10
-#define TEST_FLAG_SET_OPTION		0x20
-#define TEST_FLAG_DISCARD		0x40
-#define TEST_FLAG_READAHEAD		0x80
-#define TEST_FLAG_ZEROOUT		0x100
+#ವ್ಯಾಖ್ಯಾನಿಸು TEST_FLAG_READ			0x01
+#ವ್ಯಾಖ್ಯಾನಿಸು TEST_FLAG_WRITE			0x02
+#ವ್ಯಾಖ್ಯಾನಿಸು TEST_FLAG_ಗಣ_BLKSIZE		0x04
+#ವ್ಯಾಖ್ಯಾನಿಸು TEST_FLAG_FLUSH			0x08
+#ವ್ಯಾಖ್ಯಾನಿಸು TEST_FLAG_DUMP			0x10
+#ವ್ಯಾಖ್ಯಾನಿಸು TEST_FLAG_ಗಣ_OPTION		0x20
+#ವ್ಯಾಖ್ಯಾನಿಸು TEST_FLAG_DISCARD		0x40
+#ವ್ಯಾಖ್ಯಾನಿಸು TEST_FLAG_READAHEAD		0x80
+#ವ್ಯಾಖ್ಯಾನಿಸು TEST_FLAG_ZEROOUT		0x100
 
-static void test_dump_block(io_channel channel,
-			    struct test_private_data *data,
-			    unsigned long block, const void *buf)
+ಸ್ಥಿರ ಶೂನ್ಯ test_dump_ಖಂಡ(io_channel channel,
+			    ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ,
+			    ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಖಂಡ, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *buf)
 {
-	const unsigned char *cp;
-	FILE *f = data->outfile;
-	int	i;
-	unsigned long	cksum = 0;
+	ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *cp;
+	FILE *f = ದತ್ತಾಂಶ->outfile;
+	ಪೂರ್ಣಾಂಕ	i;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	cksum = 0;
 
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
+	ಗಾಗಿ (i=0, cp = buf; i < channel->ಖಂಡ_ಗಾತ್ರ; i++, cp++) {
 		cksum += *cp;
 	}
-	fprintf(f, "Contents of block %lu, checksum %08lu: \n", block, cksum);
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
-		if ((i % 16) == 0)
+	fprintf(f, "Contents of block %lu, checksum %08lu: \n", ಖಂಡ, cksum);
+	ಗಾಗಿ (i=0, cp = buf; i < channel->ಖಂಡ_ಗಾತ್ರ; i++, cp++) {
+		ಆದರೆ ((i % 16) == 0)
 			fprintf(f, "%04x: ", i);
 		fprintf(f, "%02x%c", *cp, ((i % 16) == 15) ? '\n' : ' ');
 	}
@@ -103,416 +103,416 @@ static void test_dump_block(io_channel channel,
 /*
  * Flush data buffers to disk.
  */
-static errcode_t test_flush(io_channel channel)
+ಸ್ಥಿರ errcode_t test_flush(io_channel channel)
 {
-	struct test_private_data	*data;
+	ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ	*ದತ್ತಾಂಶ;
 	errcode_t			retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *)channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *)channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_flush(data->real);
+	ಆದರೆ (ದತ್ತಾಂಶ->real)
+		retval = io_channel_flush(ದತ್ತಾಂಶ->real);
 
-	if (data->flags & TEST_FLAG_FLUSH)
-		fprintf(data->outfile, "Test_io: flush() returned %s\n",
-			retval ? error_message(retval) : "OK");
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_FLUSH)
+		fprintf(ದತ್ತಾಂಶ->outfile, "Test_io: flush() returned %s\n",
+			retval ? error_ಸಂದೇಶ(retval) : "OK");
 
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static void test_abort(io_channel channel, unsigned long block)
+ಸ್ಥಿರ ಶೂನ್ಯ test_abort(io_channel channel, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಖಂಡ)
 {
-	struct test_private_data *data;
+	ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	FILE *f;
 
-	data = (struct test_private_data *) channel->private_data;
-	f = data->outfile;
+	ದತ್ತಾಂಶ = (ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	f = ದತ್ತಾಂಶ->outfile;
 	test_flush(channel);
 
-	fprintf(f, "Aborting due to I/O to block %lu\n", block);
+	fprintf(f, "Aborting due to I/O to block %lu\n", ಖಂಡ);
 	fflush(f);
 	abort();
 }
 
-static errcode_t test_open(const char *name, int flags, io_channel *channel)
+ಸ್ಥಿರ errcode_t test_open(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name, ಪೂರ್ಣಾಂಕ flags, io_channel *channel)
 {
-	io_channel	io = NULL;
-	struct test_private_data *data = NULL;
+	io_channel	io = ಖಾಲಿ;
+	ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ = ಖಾಲಿ;
 	errcode_t	retval;
-	char		*value;
+	ಅಕ್ಷರ		*ಮೌಲ್ಯ;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	ಆದರೆ (name == 0)
+		ಹಿಂತಿರುಗಿ EXT2_ET_BAD_DEVICE_NAME;
+	retval = ext2fs_get_mem(ಗಾತ್ರ(ರಚನೆ struct_io_channel), &io);
+	ಆದರೆ (retval)
+		ಹೋಗು cleanup;
+	memset(io, 0, ಗಾತ್ರ(ರಚನೆ struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
-	retval = ext2fs_get_mem(sizeof(struct test_private_data), &data);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(ಗಾತ್ರ(ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ), &ದತ್ತಾಂಶ);
+	ಆದರೆ (retval)
+		ಹೋಗು cleanup;
 	io->manager = test_io_manager;
-	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(name)+1, &io->name);
+	ಆದರೆ (retval)
+		ಹೋಗು cleanup;
 
 	strcpy(io->name, name);
-	io->private_data = data;
-	io->block_size = 1024;
+	io->ಖಾಸಗಿ_ದತ್ತಾಂಶ = ದತ್ತಾಂಶ;
+	io->ಖಂಡ_ಗಾತ್ರ = 1024;
 	io->read_error = 0;
 	io->write_error = 0;
 	io->refcount = 1;
 	io->flags = 0;
 
-	memset(data, 0, sizeof(struct test_private_data));
-	data->magic = EXT2_ET_MAGIC_TEST_IO_CHANNEL;
-	if (test_io_backing_manager) {
+	memset(ದತ್ತಾಂಶ, 0, ಗಾತ್ರ(ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ));
+	ದತ್ತಾಂಶ->magic = EXT2_ET_MAGIC_TEST_IO_CHANNEL;
+	ಆದರೆ (test_io_backing_manager) {
 		retval = test_io_backing_manager->open(name, flags,
-						       &data->real);
-		if (retval)
-			goto cleanup;
-	} else {
-		data->real = 0;
+						       &ದತ್ತಾಂಶ->real);
+		ಆದರೆ (retval)
+			ಹೋಗು cleanup;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ದತ್ತಾಂಶ->real = 0;
 	}
-	data->read_blk =	test_io_cb_read_blk;
-	data->write_blk =	test_io_cb_write_blk;
-	data->set_blksize =	test_io_cb_set_blksize;
-	data->write_byte =	test_io_cb_write_byte;
-	data->read_blk64 =	test_io_cb_read_blk64;
-	data->write_blk64 =	test_io_cb_write_blk64;
+	ದತ್ತಾಂಶ->read_blk =	test_io_cb_read_blk;
+	ದತ್ತಾಂಶ->write_blk =	test_io_cb_write_blk;
+	ದತ್ತಾಂಶ->ಗಣ_blksize =	test_io_cb_ಗಣ_blksize;
+	ದತ್ತಾಂಶ->write_byte =	test_io_cb_write_byte;
+	ದತ್ತಾಂಶ->read_blk64 =	test_io_cb_read_blk64;
+	ದತ್ತಾಂಶ->write_blk64 =	test_io_cb_write_blk64;
 
-	data->outfile = NULL;
-	if ((value = ext2fs_safe_getenv("TEST_IO_LOGFILE")) != NULL)
-		data->outfile = fopen(value, "w");
-	if (!data->outfile)
-		data->outfile = stderr;
+	ದತ್ತಾಂಶ->outfile = ಖಾಲಿ;
+	ಆದರೆ ((ಮೌಲ್ಯ = ext2fs_ಸುರಕ್ಷಿತ_getenv("TEST_IO_LOGFILE")) != ಖಾಲಿ)
+		ದತ್ತಾಂಶ->outfile = fopen(ಮೌಲ್ಯ, "w");
+	ಆದರೆ (!ದತ್ತಾಂಶ->outfile)
+		ದತ್ತಾಂಶ->outfile = stderr;
 
-	data->flags = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_FLAGS")) != NULL)
-		data->flags = strtoul(value, NULL, 0);
+	ದತ್ತಾಂಶ->flags = 0;
+	ಆದರೆ ((ಮೌಲ್ಯ = ext2fs_ಸುರಕ್ಷಿತ_getenv("TEST_IO_FLAGS")) != ಖಾಲಿ)
+		ದತ್ತಾಂಶ->flags = strtoul(ಮೌಲ್ಯ, ಖಾಲಿ, 0);
 
-	data->block = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_BLOCK")) != NULL)
-		data->block = strtoul(value, NULL, 0);
+	ದತ್ತಾಂಶ->ಖಂಡ = 0;
+	ಆದರೆ ((ಮೌಲ್ಯ = ext2fs_ಸುರಕ್ಷಿತ_getenv("TEST_IO_BLOCK")) != ಖಾಲಿ)
+		ದತ್ತಾಂಶ->ಖಂಡ = strtoul(ಮೌಲ್ಯ, ಖಾಲಿ, 0);
 
-	data->read_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_READ_ABORT")) != NULL)
-		data->read_abort_count = strtoul(value, NULL, 0);
+	ದತ್ತಾಂಶ->read_abort_ಎಣಿಕೆ = 0;
+	ಆದರೆ ((ಮೌಲ್ಯ = ext2fs_ಸುರಕ್ಷಿತ_getenv("TEST_IO_READ_ABORT")) != ಖಾಲಿ)
+		ದತ್ತಾಂಶ->read_abort_ಎಣಿಕೆ = strtoul(ಮೌಲ್ಯ, ಖಾಲಿ, 0);
 
-	data->write_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_WRITE_ABORT")) != NULL)
-		data->write_abort_count = strtoul(value, NULL, 0);
+	ದತ್ತಾಂಶ->write_abort_ಎಣಿಕೆ = 0;
+	ಆದರೆ ((ಮೌಲ್ಯ = ext2fs_ಸುರಕ್ಷಿತ_getenv("TEST_IO_WRITE_ABORT")) != ಖಾಲಿ)
+		ದತ್ತಾಂಶ->write_abort_ಎಣಿಕೆ = strtoul(ಮೌಲ್ಯ, ಖಾಲಿ, 0);
 
-	if (data->real) {
-		io->align = data->real->align;
-		if (data->real->flags & CHANNEL_FLAGS_THREADS)
-			io->flags |= CHANNEL_FLAGS_THREADS;
+	ಆದರೆ (ದತ್ತಾಂಶ->real) {
+		io->align = ದತ್ತಾಂಶ->real->align;
+		ಆದರೆ (ದತ್ತಾಂಶ->real->flags & CHANNEL_FLAGS_ಎಳೆಗಳು)
+			io->flags |= CHANNEL_FLAGS_ಎಳೆಗಳು;
 	}
 
 	*channel = io;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 
 cleanup:
-	if (io && io->name)
+	ಆದರೆ (io && io->name)
 		ext2fs_free_mem(&io->name);
-	if (io)
+	ಆದರೆ (io)
 		ext2fs_free_mem(&io);
-	if (data)
-		ext2fs_free_mem(&data);
-	return retval;
+	ಆದರೆ (ದತ್ತಾಂಶ)
+		ext2fs_free_mem(&ದತ್ತಾಂಶ);
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t test_close(io_channel channel)
+ಸ್ಥಿರ errcode_t test_close(io_channel channel)
 {
-	struct test_private_data *data;
+	ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	ಆದರೆ (--channel->refcount > 0)
+		ಹಿಂತಿರುಗಿ 0;
 
-	if (data->real)
-		retval = io_channel_close(data->real);
+	ಆದರೆ (ದತ್ತಾಂಶ->real)
+		retval = io_channel_close(ದತ್ತಾಂಶ->real);
 
-	if (data->outfile && data->outfile != stderr)
-		fclose(data->outfile);
+	ಆದರೆ (ದತ್ತಾಂಶ->outfile && ದತ್ತಾಂಶ->outfile != stderr)
+		fclose(ದತ್ತಾಂಶ->outfile);
 
-	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	ext2fs_free_mem(&channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ);
+	ಆದರೆ (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t test_set_blksize(io_channel channel, int blksize)
+ಸ್ಥಿರ errcode_t test_ಗಣ_blksize(io_channel channel, ಪೂರ್ಣಾಂಕ blksize)
 {
-	struct test_private_data *data;
+	ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real) {
-		retval = io_channel_set_blksize(data->real, blksize);
-		channel->align = data->real->align;
+	ಆದರೆ (ದತ್ತಾಂಶ->real) {
+		retval = io_channel_ಗಣ_blksize(ದತ್ತಾಂಶ->real, blksize);
+		channel->align = ದತ್ತಾಂಶ->real->align;
 	}
-	if (data->set_blksize)
-		data->set_blksize(blksize, retval);
-	if (data->flags & TEST_FLAG_SET_BLKSIZE)
-		fprintf(data->outfile,
+	ಆದರೆ (ದತ್ತಾಂಶ->ಗಣ_blksize)
+		ದತ್ತಾಂಶ->ಗಣ_blksize(blksize, retval);
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_ಗಣ_BLKSIZE)
+		fprintf(ದತ್ತಾಂಶ->outfile,
 			"Test_io: set_blksize(%d) returned %s\n",
-			blksize, retval ? error_message(retval) : "OK");
-	channel->block_size = blksize;
-	return retval;
+			blksize, retval ? error_ಸಂದೇಶ(retval) : "OK");
+	channel->ಖಂಡ_ಗಾತ್ರ = blksize;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
 
-static errcode_t test_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+ಸ್ಥಿರ errcode_t test_read_blk(io_channel channel, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಖಂಡ,
+			       ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, ಶೂನ್ಯ *buf)
 {
-	struct test_private_data *data;
+	ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_read_blk(data->real, block, count, buf);
-	if (data->read_blk)
-		data->read_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
-		fprintf(data->outfile,
+	ಆದರೆ (ದತ್ತಾಂಶ->real)
+		retval = io_channel_read_blk(ದತ್ತಾಂಶ->real, ಖಂಡ, ಎಣಿಕೆ_2, buf);
+	ಆದರೆ (ದತ್ತಾಂಶ->read_blk)
+		ದತ್ತಾಂಶ->read_blk(ಖಂಡ, ಎಣಿಕೆ_2, retval);
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_READ)
+		fprintf(ದತ್ತಾಂಶ->outfile,
 			"Test_io: read_blk(%lu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
-			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
-			test_abort(channel, block);
+			ಖಂಡ, ಎಣಿಕೆ_2, retval ? error_ಸಂದೇಶ(retval) : "OK");
+	ಆದರೆ (ದತ್ತಾಂಶ->ಖಂಡ && ದತ್ತಾಂಶ->ಖಂಡ == ಖಂಡ) {
+		ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_DUMP)
+			test_dump_ಖಂಡ(channel, ದತ್ತಾಂಶ, ಖಂಡ, buf);
+		ಆದರೆ (--ದತ್ತಾಂಶ->read_abort_ಎಣಿಕೆ == 0)
+			test_abort(channel, ಖಂಡ);
 	}
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t test_write_blk(io_channel channel, unsigned long block,
-			       int count, const void *buf)
+ಸ್ಥಿರ errcode_t test_write_blk(io_channel channel, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಖಂಡ,
+			       ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *buf)
 {
-	struct test_private_data *data;
+	ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_write_blk(data->real, block, count, buf);
-	if (data->write_blk)
-		data->write_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
-		fprintf(data->outfile,
+	ಆದರೆ (ದತ್ತಾಂಶ->real)
+		retval = io_channel_write_blk(ದತ್ತಾಂಶ->real, ಖಂಡ, ಎಣಿಕೆ_2, buf);
+	ಆದರೆ (ದತ್ತಾಂಶ->write_blk)
+		ದತ್ತಾಂಶ->write_blk(ಖಂಡ, ಎಣಿಕೆ_2, retval);
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_WRITE)
+		fprintf(ದತ್ತಾಂಶ->outfile,
 			"Test_io: write_blk(%lu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
-			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
-			test_abort(channel, block);
+			ಖಂಡ, ಎಣಿಕೆ_2, retval ? error_ಸಂದೇಶ(retval) : "OK");
+	ಆದರೆ (ದತ್ತಾಂಶ->ಖಂಡ && ದತ್ತಾಂಶ->ಖಂಡ == ಖಂಡ) {
+		ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_DUMP)
+			test_dump_ಖಂಡ(channel, ದತ್ತಾಂಶ, ಖಂಡ, buf);
+		ಆದರೆ (--ದತ್ತಾಂಶ->write_abort_ಎಣಿಕೆ == 0)
+			test_abort(channel, ಖಂಡ);
 	}
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t test_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+ಸ್ಥಿರ errcode_t test_read_blk64(io_channel channel, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ,
+			       ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, ಶೂನ್ಯ *buf)
 {
-	struct test_private_data *data;
+	ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_read_blk64(data->real, block, count, buf);
-	if (data->read_blk64)
-		data->read_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
-		fprintf(data->outfile,
+	ಆದರೆ (ದತ್ತಾಂಶ->real)
+		retval = io_channel_read_blk64(ದತ್ತಾಂಶ->real, ಖಂಡ, ಎಣಿಕೆ_2, buf);
+	ಆದರೆ (ದತ್ತಾಂಶ->read_blk64)
+		ದತ್ತಾಂಶ->read_blk64(ಖಂಡ, ಎಣಿಕೆ_2, retval);
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_READ)
+		fprintf(ದತ್ತಾಂಶ->outfile,
 			"Test_io: read_blk64(%llu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
-			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
-			test_abort(channel, block);
+			ಖಂಡ, ಎಣಿಕೆ_2, retval ? error_ಸಂದೇಶ(retval) : "OK");
+	ಆದರೆ (ದತ್ತಾಂಶ->ಖಂಡ && ದತ್ತಾಂಶ->ಖಂಡ == ಖಂಡ) {
+		ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_DUMP)
+			test_dump_ಖಂಡ(channel, ದತ್ತಾಂಶ, ಖಂಡ, buf);
+		ಆದರೆ (--ದತ್ತಾಂಶ->read_abort_ಎಣಿಕೆ == 0)
+			test_abort(channel, ಖಂಡ);
 	}
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t test_write_blk64(io_channel channel, unsigned long long block,
-			       int count, const void *buf)
+ಸ್ಥಿರ errcode_t test_write_blk64(io_channel channel, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ,
+			       ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *buf)
 {
-	struct test_private_data *data;
+	ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_write_blk64(data->real, block, count, buf);
-	if (data->write_blk64)
-		data->write_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
-		fprintf(data->outfile,
+	ಆದರೆ (ದತ್ತಾಂಶ->real)
+		retval = io_channel_write_blk64(ದತ್ತಾಂಶ->real, ಖಂಡ, ಎಣಿಕೆ_2, buf);
+	ಆದರೆ (ದತ್ತಾಂಶ->write_blk64)
+		ದತ್ತಾಂಶ->write_blk64(ಖಂಡ, ಎಣಿಕೆ_2, retval);
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_WRITE)
+		fprintf(ದತ್ತಾಂಶ->outfile,
 			"Test_io: write_blk64(%llu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
-			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
-			test_abort(channel, block);
+			ಖಂಡ, ಎಣಿಕೆ_2, retval ? error_ಸಂದೇಶ(retval) : "OK");
+	ಆದರೆ (ದತ್ತಾಂಶ->ಖಂಡ && ದತ್ತಾಂಶ->ಖಂಡ == ಖಂಡ) {
+		ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_DUMP)
+			test_dump_ಖಂಡ(channel, ದತ್ತಾಂಶ, ಖಂಡ, buf);
+		ಆದರೆ (--ದತ್ತಾಂಶ->write_abort_ಎಣಿಕೆ == 0)
+			test_abort(channel, ಖಂಡ);
 	}
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t test_write_byte(io_channel channel, unsigned long offset,
-			       int count, const void *buf)
+ಸ್ಥಿರ errcode_t test_write_byte(io_channel channel, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಸ್ಥಾನಾಂತರ,
+			       ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *buf)
 {
-	struct test_private_data *data;
+	ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->write_byte)
-		retval = io_channel_write_byte(data->real, offset, count, buf);
-	if (data->write_byte)
-		data->write_byte(offset, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
-		fprintf(data->outfile,
+	ಆದರೆ (ದತ್ತಾಂಶ->real && ದತ್ತಾಂಶ->real->manager->write_byte)
+		retval = io_channel_write_byte(ದತ್ತಾಂಶ->real, ಸ್ಥಾನಾಂತರ, ಎಣಿಕೆ_2, buf);
+	ಆದರೆ (ದತ್ತಾಂಶ->write_byte)
+		ದತ್ತಾಂಶ->write_byte(ಸ್ಥಾನಾಂತರ, ಎಣಿಕೆ_2, retval);
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_WRITE)
+		fprintf(ದತ್ತಾಂಶ->outfile,
 			"Test_io: write_byte(%lu, %d) returned %s\n",
-			offset, count, retval ? error_message(retval) : "OK");
-	return retval;
+			ಸ್ಥಾನಾಂತರ, ಎಣಿಕೆ_2, retval ? error_ಸಂದೇಶ(retval) : "OK");
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t test_set_option(io_channel channel, const char *option,
-				 const char *arg)
+ಸ್ಥಿರ errcode_t test_ಗಣ_option(io_channel channel, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *option,
+				 ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg)
 {
-	struct test_private_data *data;
+	ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 
-	if (data->flags & TEST_FLAG_SET_OPTION)
-		fprintf(data->outfile, "Test_io: set_option(%s, %s) ",
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_ಗಣ_OPTION)
+		fprintf(ದತ್ತಾಂಶ->outfile, "Test_io: set_option(%s, %s) ",
 			option, arg);
-	if (data->real && data->real->manager->set_option) {
-		retval = (data->real->manager->set_option)(data->real,
+	ಆದರೆ (ದತ್ತಾಂಶ->real && ದತ್ತಾಂಶ->real->manager->ಗಣ_option) {
+		retval = (ದತ್ತಾಂಶ->real->manager->ಗಣ_option)(ದತ್ತಾಂಶ->real,
 							   option, arg);
-		if (data->flags & TEST_FLAG_SET_OPTION)
-			fprintf(data->outfile, "returned %s\n",
-				retval ? error_message(retval) : "OK");
-	} else {
-		if (data->flags & TEST_FLAG_SET_OPTION)
-			fprintf(data->outfile, "not implemented\n");
+		ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_ಗಣ_OPTION)
+			fprintf(ದತ್ತಾಂಶ->outfile, "returned %s\n",
+				retval ? error_ಸಂದೇಶ(retval) : "OK");
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_ಗಣ_OPTION)
+			fprintf(ದತ್ತಾಂಶ->outfile, "not implemented\n");
 	}
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t test_get_stats(io_channel channel, io_stats *stats)
+ಸ್ಥಿರ errcode_t test_get_stats(io_channel channel, io_stats *stats)
 {
-	struct test_private_data *data;
+	ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->get_stats) {
-		retval = (data->real->manager->get_stats)(data->real, stats);
+	ಆದರೆ (ದತ್ತಾಂಶ->real && ದತ್ತಾಂಶ->real->manager->get_stats) {
+		retval = (ದತ್ತಾಂಶ->real->manager->get_stats)(ದತ್ತಾಂಶ->real, stats);
 	}
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t test_discard(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+ಸ್ಥಿರ errcode_t test_discard(io_channel channel, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ,
+			      ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಎಣಿಕೆ_2)
 {
-	struct test_private_data *data;
+	ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_discard(data->real, block, count);
-	if (data->flags & TEST_FLAG_DISCARD)
-		fprintf(data->outfile,
+	ಆದರೆ (ದತ್ತಾಂಶ->real)
+		retval = io_channel_discard(ದತ್ತಾಂಶ->real, ಖಂಡ, ಎಣಿಕೆ_2);
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_DISCARD)
+		fprintf(ದತ್ತಾಂಶ->outfile,
 			"Test_io: discard(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			ಖಂಡ, ಎಣಿಕೆ_2, retval ? error_ಸಂದೇಶ(retval) : "OK");
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t test_cache_readahead(io_channel channel,
-				      unsigned long long block,
-				      unsigned long long count)
+ಸ್ಥಿರ errcode_t test_cache_readahead(io_channel channel,
+				      ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ,
+				      ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಎಣಿಕೆ_2)
 {
-	struct test_private_data *data;
+	ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_cache_readahead(data->real, block, count);
-	if (data->flags & TEST_FLAG_READAHEAD)
-		fprintf(data->outfile,
+	ಆದರೆ (ದತ್ತಾಂಶ->real)
+		retval = io_channel_cache_readahead(ದತ್ತಾಂಶ->real, ಖಂಡ, ಎಣಿಕೆ_2);
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_READAHEAD)
+		fprintf(ದತ್ತಾಂಶ->outfile,
 			"Test_io: readahead(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			ಖಂಡ, ಎಣಿಕೆ_2, retval ? error_ಸಂದೇಶ(retval) : "OK");
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t test_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+ಸ್ಥಿರ errcode_t test_zeroout(io_channel channel, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ,
+			      ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಎಣಿಕೆ_2)
 {
-	struct test_private_data *data;
+	ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ test_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_zeroout(data->real, block, count);
-	if (data->flags & TEST_FLAG_ZEROOUT)
-		fprintf(data->outfile,
+	ಆದರೆ (ದತ್ತಾಂಶ->real)
+		retval = io_channel_zeroout(ದತ್ತಾಂಶ->real, ಖಂಡ, ಎಣಿಕೆ_2);
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & TEST_FLAG_ZEROOUT)
+		fprintf(ದತ್ತಾಂಶ->outfile,
 			"Test_io: zeroout(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			ಖಂಡ, ಎಣಿಕೆ_2, retval ? error_ಸಂದೇಶ(retval) : "OK");
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static struct struct_io_manager struct_test_manager = {
+ಸ್ಥಿರ ರಚನೆ struct_io_manager struct_test_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Test I/O Manager",
 	.open		= test_open,
 	.close		= test_close,
-	.set_blksize	= test_set_blksize,
+	.ಗಣ_blksize	= test_ಗಣ_blksize,
 	.read_blk	= test_read_blk,
 	.write_blk	= test_write_blk,
 	.flush		= test_flush,
 	.write_byte	= test_write_byte,
-	.set_option	= test_set_option,
+	.ಗಣ_option	= test_ಗಣ_option,
 	.get_stats	= test_get_stats,
 	.read_blk64	= test_read_blk64,
 	.write_blk64	= test_write_blk64,

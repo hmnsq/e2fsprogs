@@ -10,12 +10,12 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fsP.h"
 
 /*
  * Iterate through the groups which hold BACKUP superblock/GDT copies in an
@@ -29,48 +29,48 @@ dgrp_t ext2fs_list_backups(ext2_filsys fs, dgrp_t *three,
 			   dgrp_t *five, dgrp_t *seven)
 {
 	dgrp_t *min = three;
-	unsigned long long mult = 3;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ mult = 3;
 	dgrp_t ret;
 
-	if (fs && ext2fs_has_feature_sparse_super2(fs->super)) {
-		if (*min == 1) {
+	ಆದರೆ (fs && ext2fs_has_feature_sparse_super2(fs->super)) {
+		ಆದರೆ (*min == 1) {
 			*min += 1;
-			if (fs->super->s_backup_bgs[0])
-				return fs->super->s_backup_bgs[0];
+			ಆದರೆ (fs->super->s_backup_bgs[0])
+				ಹಿಂತಿರುಗಿ fs->super->s_backup_bgs[0];
 		}
-		if (*min == 2) {
+		ಆದರೆ (*min == 2) {
 			*min += 1;
-			if (fs->super->s_backup_bgs[1])
-				return fs->super->s_backup_bgs[1];
+			ಆದರೆ (fs->super->s_backup_bgs[1])
+				ಹಿಂತಿರುಗಿ fs->super->s_backup_bgs[1];
 		}
 
-		return fs->group_desc_count;
+		ಹಿಂತಿರುಗಿ fs->ಗುಂಪು_desc_ಎಣಿಕೆ;
 	}
 
-	if (fs && !ext2fs_has_feature_sparse_super(fs->super)) {
+	ಆದರೆ (fs && !ext2fs_has_feature_sparse_super(fs->super)) {
 		ret = *min;
 		*min += 1;
 
-		return ret;
+		ಹಿಂತಿರುಗಿ ret;
 	}
 
-	if (*five < *min) {
+	ಆದರೆ (*five < *min) {
 		min = five;
 		mult = 5;
 	}
-	if (*seven < *min) {
+	ಆದರೆ (*seven < *min) {
 		min = seven;
 		mult = 7;
 	}
 
 	ret = *min;
 	mult *= *min;
-	if (mult > (dgrp_t)-1)
+	ಆದರೆ (mult > (dgrp_t)-1)
 		*min = (dgrp_t)-1;
-	else
+	ಇಲ್ಲದಿದ್ದರೆ
 		*min = mult;
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
 /*
@@ -82,80 +82,80 @@ dgrp_t ext2fs_list_backups(ext2_filsys fs, dgrp_t *three,
 errcode_t ext2fs_create_resize_inode(ext2_filsys fs)
 {
 	errcode_t		retval, retval2;
-	struct ext2_super_block	*sb;
-	struct ext2_inode	inode;
+	ರಚನೆ ext2_super_ಖಂಡ	*sb;
+	ರಚನೆ ext2_inode	inode;
 	__u32			*dindir_buf, *gdt_buf;
-	unsigned long long	apb, inode_size;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ	apb, inode_ಗಾತ್ರ;
 	/* FIXME-64 - can't deal with extents */
 	blk_t			dindir_blk, rsv_off, gdt_off, gdt_blk;
-	int			dindir_dirty = 0, inode_dirty = 0, sb_blk = 0;
+	ಪೂರ್ಣಾಂಕ			dindir_dirty = 0, inode_dirty = 0, sb_blk = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	sb = fs->super;
 
 	retval = ext2fs_get_array(2, fs->blocksize, &dindir_buf);
-	if (retval)
-		return retval;
-	gdt_buf = (__u32 *)((char *)dindir_buf + fs->blocksize);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
+	gdt_buf = (__u32 *)((ಅಕ್ಷರ *)dindir_buf + fs->blocksize);
 
 	retval = ext2fs_read_inode(fs, EXT2_RESIZE_INO, &inode);
-	if (retval)
-		goto out_free;
+	ಆದರೆ (retval)
+		ಹೋಗು ಹೊರಹೋಗು_free;
 
 	/*
 	 * File systems with a blocksize of 1024 and bigalloc have
 	 * sb->s_first_data_block of 0; yet the superblock is still at
 	 * block #1.  We compensate for it here.
 	 */
-	sb_blk = sb->s_first_data_block;
-	if (fs->blocksize == 1024 && sb_blk == 0)
+	sb_blk = sb->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ;
+	ಆದರೆ (fs->blocksize == 1024 && sb_blk == 0)
 		sb_blk = 1;
 
 	/* Maximum possible file size (we only use double indirect blocks) */
-	apb = EXT2_ADDR_PER_BLOCK(sb);
-	if ((dindir_blk = inode.i_block[EXT2_DIND_BLOCK])) {
-#ifdef RES_GDT_DEBUG
-		printf("reading GDT dindir %u\n", dindir_blk);
-#endif
-		retval = ext2fs_read_ind_block(fs, dindir_blk, dindir_buf);
-		if (retval)
-			goto out_inode;
-	} else {
-		blk_t goal = sb_blk + fs->desc_blocks +
-			sb->s_reserved_gdt_blocks + 2 +
-			fs->inode_blocks_per_group;
+	apb = EXT2_ADDR_ಪ್ರತಿ_ಖಂಡ(sb);
+	ಆದರೆ ((dindir_blk = inode.i_ಖಂಡ[EXT2_DIND_ಖಂಡ])) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ RES_GDT_DEBUG
+		ಬರೆ("reading GDT dindir %u\n", dindir_blk);
+#ಆದರೆ_ಅಂತ್ಯ
+		retval = ext2fs_read_ind_ಖಂಡ(fs, dindir_blk, dindir_buf);
+		ಆದರೆ (retval)
+			ಹೋಗು ಹೊರಹೋಗು_inode;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		blk_t goal = sb_blk + fs->desc_ಖಂಡಗಳು +
+			sb->s_reserved_gdt_ಖಂಡಗಳು + 2 +
+			fs->inode_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು;
 
-		retval = ext2fs_alloc_block(fs, goal, 0, &dindir_blk);
-		if (retval)
-			goto out_free;
-		inode.i_mode = LINUX_S_IFREG | 0600;
-		inode.i_links_count = 1;
-		inode.i_block[EXT2_DIND_BLOCK] = dindir_blk;
-		ext2fs_iblk_set(fs, &inode, 1);
+		retval = ext2fs_alloc_ಖಂಡ(fs, goal, 0, &dindir_blk);
+		ಆದರೆ (retval)
+			ಹೋಗು ಹೊರಹೋಗು_free;
+		inode.i_ಬಹುಲಕ = LINUX_S_IFREG | 0600;
+		inode.i_links_ಎಣಿಕೆ = 1;
+		inode.i_ಖಂಡ[EXT2_DIND_ಖಂಡ] = dindir_blk;
+		ext2fs_iblk_ಗಣ(fs, &inode, 1);
 		memset(dindir_buf, 0, fs->blocksize);
-#ifdef RES_GDT_DEBUG
-		printf("allocated GDT dindir %u\n", dindir_blk);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ RES_GDT_DEBUG
+		ಬರೆ("allocated GDT dindir %u\n", dindir_blk);
+#ಆದರೆ_ಅಂತ್ಯ
 		dindir_dirty = inode_dirty = 1;
-		inode_size = apb*apb + apb + EXT2_NDIR_BLOCKS;
-		inode_size *= fs->blocksize;
-		retval = ext2fs_inode_size_set(fs, &inode, inode_size);
-		if (retval)
-			goto out_free;
-		inode.i_ctime = ext2fsP_get_time(fs);
+		inode_ಗಾತ್ರ = apb*apb + apb + EXT2_NDIR_ಖಂಡಗಳು;
+		inode_ಗಾತ್ರ *= fs->blocksize;
+		retval = ext2fs_inode_ಗಾತ್ರ_ಗಣ(fs, &inode, inode_ಗಾತ್ರ);
+		ಆದರೆ (retval)
+			ಹೋಗು ಹೊರಹೋಗು_free;
+		inode.i_ctime = ext2fs_P_get_ಸಮಯ(fs);
 	}
 
-	for (rsv_off = 0, gdt_off = fs->desc_blocks,
-	     gdt_blk = sb_blk + 1 + fs->desc_blocks;
-	     rsv_off < sb->s_reserved_gdt_blocks;
+	ಗಾಗಿ (rsv_off = 0, gdt_off = fs->desc_ಖಂಡಗಳು,
+	     gdt_blk = sb_blk + 1 + fs->desc_ಖಂಡಗಳು;
+	     rsv_off < sb->s_reserved_gdt_ಖಂಡಗಳು;
 	     rsv_off++, gdt_off++, gdt_blk++) {
 		dgrp_t three = 1, five = 5, seven = 7;
-		dgrp_t grp, last = 0;
-		int gdt_dirty = 0;
+		dgrp_t grp, ಕೊನೆಯ = 0;
+		ಪೂರ್ಣಾಂಕ gdt_dirty = 0;
 
 		gdt_off %= apb;
-		if (!dindir_buf[gdt_off]) {
+		ಆದರೆ (!dindir_buf[gdt_off]) {
 			/* FIXME XXX XXX
 			blk_t new_blk;
 
@@ -170,81 +170,81 @@ errcode_t ext2fs_create_resize_inode(ext2_filsys fs)
 			gdt_dirty = dindir_dirty = inode_dirty = 1;
 			memset(gdt_buf, 0, fs->blocksize);
 			dindir_buf[gdt_off] = gdt_blk;
-			ext2fs_iblk_add_blocks(fs, &inode, 1);
-#ifdef RES_GDT_DEBUG
-			printf("added primary GDT block %u at %u[%u]\n",
+			ext2fs_iblk_ಕೂಡಿಸು_ಖಂಡಗಳು(fs, &inode, 1);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ RES_GDT_DEBUG
+			ಬರೆ("added primary GDT block %u at %u[%u]\n",
 			       gdt_blk, dindir_blk, gdt_off);
-#endif
-		} else if (dindir_buf[gdt_off] == gdt_blk) {
-#ifdef RES_GDT_DEBUG
-			printf("reading primary GDT block %u\n", gdt_blk);
-#endif
-			retval = ext2fs_read_ind_block(fs, gdt_blk, gdt_buf);
-			if (retval)
-				goto out_dindir;
-		} else {
-#ifdef RES_GDT_DEBUG
-			printf("bad primary GDT %u != %u at %u[%u]\n",
+#ಆದರೆ_ಅಂತ್ಯ
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (dindir_buf[gdt_off] == gdt_blk) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ RES_GDT_DEBUG
+			ಬರೆ("reading primary GDT block %u\n", gdt_blk);
+#ಆದರೆ_ಅಂತ್ಯ
+			retval = ext2fs_read_ind_ಖಂಡ(fs, gdt_blk, gdt_buf);
+			ಆದರೆ (retval)
+				ಹೋಗು ಹೊರಹೋಗು_dindir;
+		} ಇಲ್ಲದಿದ್ದರೆ {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ RES_GDT_DEBUG
+			ಬರೆ("bad primary GDT %u != %u at %u[%u]\n",
 			       dindir_buf[gdt_off], gdt_blk,dindir_blk,gdt_off);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 			retval = EXT2_ET_RESIZE_INODE_CORRUPT;
-			goto out_dindir;
+			ಹೋಗು ಹೊರಹೋಗು_dindir;
 		}
 
-		while ((grp = ext2fs_list_backups(fs, &three, &five, &seven)) <
-		       fs->group_desc_count) {
-			blk_t expect = gdt_blk + grp * sb->s_blocks_per_group;
+		ಆಗ ((grp = ext2fs_list_backups(fs, &three, &five, &seven)) <
+		       fs->ಗುಂಪು_desc_ಎಣಿಕೆ) {
+			blk_t expect = gdt_blk + grp * sb->s_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು;
 
-			if (!gdt_buf[last]) {
-#ifdef RES_GDT_DEBUG
-				printf("added backup GDT %u grp %u@%u[%u]\n",
-				       expect, grp, gdt_blk, last);
-#endif
-				gdt_buf[last] = expect;
-				ext2fs_iblk_add_blocks(fs, &inode, 1);
+			ಆದರೆ (!gdt_buf[ಕೊನೆಯ]) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ RES_GDT_DEBUG
+				ಬರೆ("added backup GDT %u grp %u@%u[%u]\n",
+				       expect, grp, gdt_blk, ಕೊನೆಯ);
+#ಆದರೆ_ಅಂತ್ಯ
+				gdt_buf[ಕೊನೆಯ] = expect;
+				ext2fs_iblk_ಕೂಡಿಸು_ಖಂಡಗಳು(fs, &inode, 1);
 				gdt_dirty = inode_dirty = 1;
-			} else if (gdt_buf[last] != expect) {
-#ifdef RES_GDT_DEBUG
-				printf("bad backup GDT %u != %u at %u[%u]\n",
-				       gdt_buf[last], expect, gdt_blk, last);
-#endif
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (gdt_buf[ಕೊನೆಯ] != expect) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ RES_GDT_DEBUG
+				ಬರೆ("bad backup GDT %u != %u at %u[%u]\n",
+				       gdt_buf[ಕೊನೆಯ], expect, gdt_blk, ಕೊನೆಯ);
+#ಆದರೆ_ಅಂತ್ಯ
 				retval = EXT2_ET_RESIZE_INODE_CORRUPT;
-				goto out_dindir;
+				ಹೋಗು ಹೊರಹೋಗು_dindir;
 			}
-			last++;
+			ಕೊನೆಯ++;
 		}
-		if (gdt_dirty) {
-#ifdef RES_GDT_DEBUG
-			printf("writing primary GDT block %u\n", gdt_blk);
-#endif
-			retval = ext2fs_write_ind_block(fs, gdt_blk, gdt_buf);
-			if (retval)
-				goto out_dindir;
+		ಆದರೆ (gdt_dirty) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ RES_GDT_DEBUG
+			ಬರೆ("writing primary GDT block %u\n", gdt_blk);
+#ಆದರೆ_ಅಂತ್ಯ
+			retval = ext2fs_write_ind_ಖಂಡ(fs, gdt_blk, gdt_buf);
+			ಆದರೆ (retval)
+				ಹೋಗು ಹೊರಹೋಗು_dindir;
 		}
 	}
 
-out_dindir:
-	if (dindir_dirty) {
-		retval2 = ext2fs_write_ind_block(fs, dindir_blk, dindir_buf);
-		if (!retval)
+ಹೊರಹೋಗು_dindir:
+	ಆದರೆ (dindir_dirty) {
+		retval2 = ext2fs_write_ind_ಖಂಡ(fs, dindir_blk, dindir_buf);
+		ಆದರೆ (!retval)
 			retval = retval2;
 	}
-out_inode:
-#ifdef RES_GDT_DEBUG
-	printf("inode.i_blocks = %u, i_size = %lu\n", inode.i_blocks,
-	       EXT2_I_SIZE(&inode));
-#endif
-	if (inode_dirty) {
-		time_t now = ext2fsP_get_time(fs);
+ಹೊರಹೋಗು_inode:
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ RES_GDT_DEBUG
+	ಬರೆ("inode.i_blocks = %u, i_size = %lu\n", inode.i_ಖಂಡಗಳು,
+	       EXT2_I_ಗಾತ್ರ(&inode));
+#ಆದರೆ_ಅಂತ್ಯ
+	ಆದರೆ (inode_dirty) {
+		time_t now = ext2fs_P_get_ಸಮಯ(fs);
 
-		ext2fs_inode_xtime_set(&inode, i_atime, now);
-		ext2fs_inode_xtime_set(&inode, i_mtime, now);
+		ext2fs_inode_xtime_ಗಣ(&inode, i_atime, now);
+		ext2fs_inode_xtime_ಗಣ(&inode, i_mtime, now);
 		retval2 = ext2fs_write_new_inode(fs, EXT2_RESIZE_INO, &inode);
-		if (!retval)
+		ಆದರೆ (!retval)
 			retval = retval2;
 	}
-out_free:
+ಹೊರಹೋಗು_free:
 	ext2fs_free_mem(&dindir_buf);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 

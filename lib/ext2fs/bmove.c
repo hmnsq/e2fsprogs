@@ -10,158 +10,158 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#if HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_SYS_ಸಮಯ_H
+#ಅನ್ತರ್ಭಾವ <sys/time.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fsP.h"
 
-struct process_block_struct {
+ರಚನೆ process_ಖಂಡ_struct {
 	ext2_ino_t		ino;
-	struct ext2_inode *	inode;
-	ext2fs_block_bitmap	reserve;
-	ext2fs_block_bitmap	alloc_map;
+	ರಚನೆ ext2_inode *	inode;
+	ext2fs_ಖಂಡ_bitmap	reserve;
+	ext2fs_ಖಂಡ_bitmap	alloc_map;
 	errcode_t		error;
-	char			*buf;
-	int			add_dir;
-	int			flags;
+	ಅಕ್ಷರ			*buf;
+	ಪೂರ್ಣಾಂಕ			ಕೂಡಿಸು_dir;
+	ಪೂರ್ಣಾಂಕ			flags;
 };
 
-static int process_block(ext2_filsys fs, blk64_t *block_nr,
-			 e2_blkcnt_t blockcnt, blk64_t ref_block,
-			 int ref_offset, void *priv_data)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ process_ಖಂಡ(ext2_filsys fs, blk64_t *ಖಂಡ_nr,
+			 e2_blkcnt_t blockcnt, blk64_t ref_ಖಂಡ,
+			 ಪೂರ್ಣಾಂಕ ref_ಸ್ಥಾನಾಂತರ, ಶೂನ್ಯ *priv_ದತ್ತಾಂಶ)
 {
-	struct process_block_struct *pb;
+	ರಚನೆ process_ಖಂಡ_struct *pb;
 	errcode_t	retval;
-	int		ret;
-	blk64_t		block, orig;
+	ಪೂರ್ಣಾಂಕ		ret;
+	blk64_t		ಖಂಡ, orig;
 
-	pb = (struct process_block_struct *) priv_data;
-	block = orig = *block_nr;
+	pb = (ರಚನೆ process_ಖಂಡ_struct *) priv_ದತ್ತಾಂಶ;
+	ಖಂಡ = orig = *ಖಂಡ_nr;
 	ret = 0;
 
 	/*
 	 * Let's see if this is one which we need to relocate
 	 */
-	if (ext2fs_test_block_bitmap2(pb->reserve, block)) {
-		do {
-			if (++block >= ext2fs_blocks_count(fs->super))
-				block = fs->super->s_first_data_block;
-			if (block == orig) {
-				pb->error = EXT2_ET_BLOCK_ALLOC_FAIL;
-				return BLOCK_ABORT;
+	ಆದರೆ (ext2fs_test_ಖಂಡ_bitmap2(pb->reserve, ಖಂಡ)) {
+		ಮಾಡು {
+			ಆದರೆ (++ಖಂಡ >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super))
+				ಖಂಡ = fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ;
+			ಆದರೆ (ಖಂಡ == orig) {
+				pb->error = EXT2_ET_ಖಂಡ_ALLOC_FAIL;
+				ಹಿಂತಿರುಗಿ ಖಂಡ_ABORT;
 			}
-		} while (ext2fs_test_block_bitmap2(pb->reserve, block) ||
-			 ext2fs_test_block_bitmap2(pb->alloc_map, block));
+		} ಆಗ (ext2fs_test_ಖಂಡ_bitmap2(pb->reserve, ಖಂಡ) ||
+			 ext2fs_test_ಖಂಡ_bitmap2(pb->alloc_map, ಖಂಡ));
 
 		retval = io_channel_read_blk64(fs->io, orig, 1, pb->buf);
-		if (retval) {
+		ಆದರೆ (retval) {
 			pb->error = retval;
-			return BLOCK_ABORT;
+			ಹಿಂತಿರುಗಿ ಖಂಡ_ABORT;
 		}
-		retval = io_channel_write_blk64(fs->io, block, 1, pb->buf);
-		if (retval) {
+		retval = io_channel_write_blk64(fs->io, ಖಂಡ, 1, pb->buf);
+		ಆದರೆ (retval) {
 			pb->error = retval;
-			return BLOCK_ABORT;
+			ಹಿಂತಿರುಗಿ ಖಂಡ_ABORT;
 		}
-		*block_nr = block;
-		ext2fs_mark_block_bitmap2(pb->alloc_map, block);
-		ret = BLOCK_CHANGED;
-		if (pb->flags & EXT2_BMOVE_DEBUG)
-			printf("ino=%u, blockcnt=%lld, %llu->%llu\n",
-			       (unsigned) pb->ino, blockcnt, 
-			       (unsigned long long) orig,
-			       (unsigned long long) block);
+		*ಖಂಡ_nr = ಖಂಡ;
+		ext2fs_mark_ಖಂಡ_bitmap2(pb->alloc_map, ಖಂಡ);
+		ret = ಖಂಡ_ಬದಲಾಯಿತು;
+		ಆದರೆ (pb->flags & EXT2_BMOVE_DEBUG)
+			ಬರೆ("ino=%u, blockcnt=%lld, %llu->%llu\n",
+			       (ಚಿಹ್ನೆರಹಿತ) pb->ino, blockcnt, 
+			       (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ) orig,
+			       (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ) ಖಂಡ);
 	}
-	if (pb->add_dir) {
-		retval = ext2fs_add_dir_block2(fs->dblist, pb->ino,
-					       block, blockcnt);
-		if (retval) {
+	ಆದರೆ (pb->ಕೂಡಿಸು_dir) {
+		retval = ext2fs_ಕೂಡಿಸು_dir_block2(fs->dblist, pb->ino,
+					       ಖಂಡ, blockcnt);
+		ಆದರೆ (retval) {
 			pb->error = retval;
-			ret |= BLOCK_ABORT;
+			ret |= ಖಂಡ_ABORT;
 		}
 	}
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-errcode_t ext2fs_move_blocks(ext2_filsys fs,
-			     ext2fs_block_bitmap reserve,
-			     ext2fs_block_bitmap alloc_map,
-			     int flags)
+errcode_t ext2fs_move_ಖಂಡಗಳು(ext2_filsys fs,
+			     ext2fs_ಖಂಡ_bitmap reserve,
+			     ext2fs_ಖಂಡ_bitmap alloc_map,
+			     ಪೂರ್ಣಾಂಕ flags)
 {
 	ext2_ino_t	ino;
-	struct ext2_inode inode;
+	ರಚನೆ ext2_inode inode;
 	errcode_t	retval;
-	struct process_block_struct pb;
-	ext2_inode_scan	scan;
-	char		*block_buf;
+	ರಚನೆ process_ಖಂಡ_struct pb;
+	ext2_inode_ಪರಿಶೀಲನೆ	ಪರಿಶೀಲನೆ;
+	ಅಕ್ಷರ		*ಖಂಡ_buf;
 
-	retval = ext2fs_open_inode_scan(fs, 0, &scan);
-	if (retval)
-		return retval;
+	retval = ext2fs_open_inode_ಪರಿಶೀಲನೆ(fs, 0, &ಪರಿಶೀಲನೆ);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
 	pb.reserve = reserve;
 	pb.error = 0;
-	pb.alloc_map = alloc_map ? alloc_map : fs->block_map;
+	pb.alloc_map = alloc_map ? alloc_map : fs->ಖಂಡ_map;
 	pb.flags = flags;
 
-	retval = ext2fs_get_array(4, fs->blocksize, &block_buf);
-	if (retval)
-		return retval;
-	pb.buf = block_buf + fs->blocksize * 3;
+	retval = ext2fs_get_array(4, fs->blocksize, &ಖಂಡ_buf);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
+	pb.buf = ಖಂಡ_buf + fs->blocksize * 3;
 
 	/*
 	 * If GET_DBLIST is set in the flags field, then we should
 	 * gather directory block information while we're doing the
 	 * block move.
 	 */
-	if (flags & EXT2_BMOVE_GET_DBLIST) {
-		if (fs->dblist) {
+	ಆದರೆ (flags & EXT2_BMOVE_GET_DBLIST) {
+		ಆದರೆ (fs->dblist) {
 			ext2fs_free_dblist(fs->dblist);
-			fs->dblist = NULL;
+			fs->dblist = ಖಾಲಿ;
 		}
 		retval = ext2fs_init_dblist(fs, 0);
-		if (retval)
-			return retval;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 	}
 
-	retval = ext2fs_get_next_inode(scan, &ino, &inode);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_ಮುಂದಿನ_inode(ಪರಿಶೀಲನೆ, &ino, &inode);
+	ಆದರೆ (retval)
+		ಹಿಂತಿರುಗಿ retval;
 
-	while (ino) {
-		if ((inode.i_links_count == 0) ||
+	ಆಗ (ino) {
+		ಆದರೆ ((inode.i_links_ಎಣಿಕೆ == 0) ||
 		    !ext2fs_inode_has_valid_blocks2(fs, &inode))
-			goto next;
+			ಹೋಗು ಮುಂದಿನ;
 
 		pb.ino = ino;
 		pb.inode = &inode;
 
-		pb.add_dir = (LINUX_S_ISDIR(inode.i_mode) &&
+		pb.ಕೂಡಿಸು_dir = (LINUX_S_ISDIR(inode.i_ಬಹುಲಕ) &&
 			      flags & EXT2_BMOVE_GET_DBLIST);
 
-		retval = ext2fs_block_iterate3(fs, ino, 0, block_buf,
-					       process_block, &pb);
-		if (retval)
-			return retval;
-		if (pb.error)
-			return pb.error;
+		retval = ext2fs_ಖಂಡ_iterate3(fs, ino, 0, ಖಂಡ_buf,
+					       process_ಖಂಡ, &pb);
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
+		ಆದರೆ (pb.error)
+			ಹಿಂತಿರುಗಿ pb.error;
 
-	next:
-		retval = ext2fs_get_next_inode(scan, &ino, &inode);
-		if (retval == EXT2_ET_BAD_BLOCK_IN_INODE_TABLE)
-			goto next;
+	ಮುಂದಿನ:
+		retval = ext2fs_get_ಮುಂದಿನ_inode(ಪರಿಶೀಲನೆ, &ino, &inode);
+		ಆದರೆ (retval == EXT2_ET_BAD_ಖಂಡ_ಒಳ_INODE_ಕೋಷ್ಟಕ)
+			ಹೋಗು ಮುಂದಿನ;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 

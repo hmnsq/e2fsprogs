@@ -15,497 +15,497 @@
  * %End-Header%
  */
 
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
-#define _XOPEN_SOURCE 600
-#define _DARWIN_C_SOURCE
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#endif
+#ಆದರೆ !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#ವ್ಯಾಖ್ಯಾನಿಸು XOPEN_ಮೂಲ 600
+#ವ್ಯಾಖ್ಯಾನಿಸು DARWIN_C_ಮೂಲ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ LARGEFILE_ಮೂಲ
+#ವ್ಯಾಖ್ಯಾನಿಸು LARGEFILE_ಮೂಲ
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ LARGEFILE64_ಮೂಲ
+#ವ್ಯಾಖ್ಯಾನಿಸು LARGEFILE64_ಮೂಲ
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ GNU_ಮೂಲ
+#ವ್ಯಾಖ್ಯಾನಿಸು GNU_ಮೂಲ
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#ifdef __linux__
-#include <sys/utsname.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
-#endif
-#ifdef HAVE_SYS_MOUNT_H
-#include <sys/mount.h>
-#endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_RESOURCE_H
-#include <sys/resource.h>
-#endif
-#if HAVE_LINUX_FALLOC_H
-#include <linux/falloc.h>
-#endif
-#ifdef HAVE_PTHREAD
-#include <pthread.h>
-#endif
-#ifdef HAVE_SYS_FILE_H
-#include <sys/file.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_ERRNO_H
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __linux__
+#ಅನ್ತರ್ಭಾವ <sys/utsname.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SYS_IOCTL_H
+#ಅನ್ತರ್ಭಾವ <sys/ioctl.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SYS_MOUNT_H
+#ಅನ್ತರ್ಭಾವ <sys/mount.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_SYS_STAT_H
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_SYS_RESOURCE_H
+#ಅನ್ತರ್ಭಾವ <sys/resource.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_LINUX_FALLOC_H
+#ಅನ್ತರ್ಭಾವ <linux/falloc.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PTHREAD
+#ಅನ್ತರ್ಭಾವ <pthread.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SYS_FILE_H
+#ಅನ್ತರ್ಭಾವ <sys/file.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(__linux__) && defined(_IO) && !defined(BLKROGET)
-#define BLKROGET   _IO(0x12, 94) /* Get read-only status (0 = read_write).  */
-#endif
+#ಆದರೆ defined(__linux__) && defined(_IO) && !defined(BLKROGET)
+#ವ್ಯಾಖ್ಯಾನಿಸು BLKROGET   _IO(0x12, 94) /* Get read-only status (0 = read_write).  */
+#ಆದರೆ_ಅಂತ್ಯ
 
-#undef ALIGN_DEBUG
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು ALIGN_DEBUG
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fsP.h"
 
-static inline int find_last_bit_set(int x)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ ಕಂಡುಹಿಡಿ_ಕೊನೆಯ_ಬಿಟ್_ಗಣ(ಪೂರ್ಣಾಂಕ x)
 {
-	int r = 32;
+	ಪೂರ್ಣಾಂಕ r = 32;
 
-	if (!x)
-		return 0;
-	if (!(x & 0xffff0000u)) {
+	ಆದರೆ (!x)
+		ಹಿಂತಿರುಗಿ 0;
+	ಆದರೆ (!(x & 0xffff0000u)) {
 		x = (x & 0xffffu) << 16;
 		r -= 16;
 	}
-	if (!(x & 0xff000000u)) {
+	ಆದರೆ (!(x & 0xff000000u)) {
 		x = (x & 0xffffffu) << 8;
 		r -= 8;
 	}
-	if (!(x & 0xf0000000u)) {
+	ಆದರೆ (!(x & 0xf0000000u)) {
 		x = (x & 0xfffffffu) << 4;
 		r -= 4;
 	}
-	if (!(x & 0xc0000000u)) {
+	ಆದರೆ (!(x & 0xc0000000u)) {
 		x = (x & 0x3fffffffu) << 2;
 		r -= 2;
 	}
-	if (!(x & 0x80000000u)) {
+	ಆದರೆ (!(x & 0x80000000u)) {
 		r -= 1;
 	}
-	return r;
+	ಹಿಂತಿರುಗಿ r;
 }
 
 /* Get high bit set out of 32-bit argument, -1 if none set */
-static inline int highbit32(uint32_t v)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ highbit32(uint32_t v)
 {
-	return find_last_bit_set(v) - 1;
+	ಹಿಂತಿರುಗಿ ಕಂಡುಹಿಡಿ_ಕೊನೆಯ_ಬಿಟ್_ಗಣ(v) - 1;
 }
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2_CHECK_MAGIC(ರಚನೆ, ಸಂಕೇತ_2) \
+	  ಆದರೆ ((ರಚನೆ)->magic != (ಸಂಕೇತ_2)) ಹಿಂತಿರುಗಿ (ಸಂಕೇತ_2)
 
-struct unix_cache {
-	char			*buf;
-	unsigned long long	block;
-	int			access_time;
-	unsigned		dirty:1;
-	unsigned		in_use:1;
-	unsigned		write_err:1;
+ರಚನೆ unix_cache {
+	ಅಕ್ಷರ			*buf;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ	ಖಂಡ;
+	ಪೂರ್ಣಾಂಕ			access_ಸಮಯ;
+	ಚಿಹ್ನೆರಹಿತ		dirty:1;
+	ಚಿಹ್ನೆರಹಿತ		ಒಳ_use:1;
+	ಚಿಹ್ನೆರಹಿತ		write_err:1;
 };
 
-#define DEFAULT_CACHE_SIZE 8
-#define WRITE_DIRECT_SIZE 4	/* Must be smaller than CACHE_SIZE */
-#define READ_DIRECT_SIZE 4	/* Should be smaller than CACHE_SIZE */
+#ವ್ಯಾಖ್ಯಾನಿಸು DEFAULT_CACHE_ಗಾತ್ರ 8
+#ವ್ಯಾಖ್ಯಾನಿಸು WRITE_ನೇರ_ಗಾತ್ರ 4	/* Must be smaller than CACHE_SIZE */
+#ವ್ಯಾಖ್ಯಾನಿಸು READ_ನೇರ_ಗಾತ್ರ 4	/* Should be smaller than CACHE_SIZE */
 
-struct unix_private_data {
-	int	magic;
-	int	dev;
-	int	flags;
-	int	align;
-	int	access_time;
-	int	unix_flock_flags;
-	ext2_loff_t offset;
-	struct unix_cache *cache;
-	unsigned int cache_size;
-	unsigned int cache_hash_shift;
-	void	*bounce;
-	struct struct_io_stats io_stats;
-#ifdef HAVE_PTHREAD
+ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ {
+	ಪೂರ್ಣಾಂಕ	magic;
+	ಪೂರ್ಣಾಂಕ	dev;
+	ಪೂರ್ಣಾಂಕ	flags;
+	ಪೂರ್ಣಾಂಕ	align;
+	ಪೂರ್ಣಾಂಕ	access_ಸಮಯ;
+	ಪೂರ್ಣಾಂಕ	unix_flock_flags;
+	ext2_loff_t ಸ್ಥಾನಾಂತರ;
+	ರಚನೆ unix_cache *cache;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ cache_ಗಾತ್ರ;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ cache_hash_ಸರಿಸು;
+	ಶೂನ್ಯ	*bounce;
+	ರಚನೆ struct_io_stats io_stats;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PTHREAD
 	pthread_mutex_t cache_mutex;
 	pthread_mutex_t bounce_mutex;
 	pthread_mutex_t stats_mutex;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 };
 
-#define IS_ALIGNED(n, align) ((((uintptr_t) n) & \
+#ವ್ಯಾಖ್ಯಾನಿಸು IS_ALIGNED(n, align) ((((uintptr_t) n) & \
 			       ((uintptr_t) ((align)-1))) == 0)
 
-typedef enum lock_kind {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಎಣಿಕೆ ಬೀಗ_ಬಗೆ {
 	CACHE_MTX, BOUNCE_MTX, STATS_MTX
-} kind_t;
+} ಬಗೆ_t;
 
-#ifdef HAVE_PTHREAD
-static inline pthread_mutex_t *get_mutex(struct unix_private_data *data,
-					 kind_t kind)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PTHREAD
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ pthread_mutex_t *get_mutex(ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ,
+					 ಬಗೆ_t ಬಗೆ)
 {
-	if (data->flags & IO_FLAG_THREADS) {
-		switch (kind) {
-		case CACHE_MTX:
-			return &data->cache_mutex;
-		case BOUNCE_MTX:
-			return &data->bounce_mutex;
-		case STATS_MTX:
-			return &data->stats_mutex;
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & IO_FLAG_ಎಳೆಗಳು) {
+		ಆಯ್ಕೆ (ಬಗೆ) {
+		ಸ್ಥಿತಿ CACHE_MTX:
+			ಹಿಂತಿರುಗಿ &ದತ್ತಾಂಶ->cache_mutex;
+		ಸ್ಥಿತಿ BOUNCE_MTX:
+			ಹಿಂತಿರುಗಿ &ದತ್ತಾಂಶ->bounce_mutex;
+		ಸ್ಥಿತಿ STATS_MTX:
+			ಹಿಂತಿರುಗಿ &ದತ್ತಾಂಶ->stats_mutex;
 		}
 	}
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-static inline void mutex_lock(struct unix_private_data *data, kind_t kind)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ mutex_ಬೀಗ(ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ, ಬಗೆ_t ಬಗೆ)
 {
-#ifdef HAVE_PTHREAD
-	pthread_mutex_t *mtx = get_mutex(data,kind);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PTHREAD
+	pthread_mutex_t *mtx = get_mutex(ದತ್ತಾಂಶ,ಬಗೆ);
 
-	if (mtx)
-		pthread_mutex_lock(mtx);
-#endif
+	ಆದರೆ (mtx)
+		pthread_mutex_ಬೀಗ(mtx);
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-static inline void mutex_unlock(struct unix_private_data *data, kind_t kind)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ mutex_unlock(ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ, ಬಗೆ_t ಬಗೆ)
 {
-#ifdef HAVE_PTHREAD
-	pthread_mutex_t *mtx = get_mutex(data,kind);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PTHREAD
+	pthread_mutex_t *mtx = get_mutex(ದತ್ತಾಂಶ,ಬಗೆ);
 
-	if (mtx)
+	ಆದರೆ (mtx)
 		pthread_mutex_unlock(mtx);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-static errcode_t unix_get_stats(io_channel channel, io_stats *stats)
+ಸ್ಥಿರ errcode_t unix_get_stats(io_channel channel, io_stats *stats)
 {
 	errcode_t	retval = 0;
 
-	struct unix_private_data *data;
+	ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (stats) {
-		mutex_lock(data, STATS_MTX);
-		*stats = &data->io_stats;
-		mutex_unlock(data, STATS_MTX);
+	ಆದರೆ (stats) {
+		mutex_ಬೀಗ(ದತ್ತಾಂಶ, STATS_MTX);
+		*stats = &ದತ್ತಾಂಶ->io_stats;
+		mutex_unlock(ದತ್ತಾಂಶ, STATS_MTX);
 	}
 
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
 /*
  * Here are the raw I/O functions
  */
-static errcode_t raw_read_blk(io_channel channel,
-			      struct unix_private_data *data,
-			      unsigned long long block,
-			      int count, void *bufv)
+ಸ್ಥಿರ errcode_t raw_read_blk(io_channel channel,
+			      ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ,
+			      ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ,
+			      ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, ಶೂನ್ಯ *bufv)
 {
 	errcode_t	retval;
-	ssize_t		size;
+	ssize_t		ಗಾತ್ರ_2;
 	ext2_loff_t	location;
-	int		actual = 0;
-	unsigned char	*buf = bufv;
+	ಪೂರ್ಣಾಂಕ		actual = 0;
+	ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ	*buf = bufv;
 	ssize_t		really_read = 0;
-	unsigned long long aligned_blk;
-	int		align_size, offset;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ aligned_blk;
+	ಪೂರ್ಣಾಂಕ		align_ಗಾತ್ರ, ಸ್ಥಾನಾಂತರ;
 
-	size = (count < 0) ? -count : (ext2_loff_t) count * channel->block_size;
-	mutex_lock(data, STATS_MTX);
-	data->io_stats.bytes_read += size;
-	mutex_unlock(data, STATS_MTX);
-	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
+	ಗಾತ್ರ_2 = (ಎಣಿಕೆ_2 < 0) ? -ಎಣಿಕೆ_2 : (ext2_loff_t) ಎಣಿಕೆ_2 * channel->ಖಂಡ_ಗಾತ್ರ;
+	mutex_ಬೀಗ(ದತ್ತಾಂಶ, STATS_MTX);
+	ದತ್ತಾಂಶ->io_stats.ಬೈಟುಗಳು_read += ಗಾತ್ರ_2;
+	mutex_unlock(ದತ್ತಾಂಶ, STATS_MTX);
+	location = ((ext2_loff_t) ಖಂಡ * channel->ಖಂಡ_ಗಾತ್ರ) + ದತ್ತಾಂಶ->ಸ್ಥಾನಾಂತರ;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE)
-		goto bounce_read;
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & IO_FLAG_FORCE_BOUNCE)
+		ಹೋಗು bounce_read;
 
-#ifdef HAVE_PREAD64
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PREAD64
 	/* Try an aligned pread */
-	if ((channel->align == 0) ||
+	ಆದರೆ ((channel->align == 0) ||
 	    (IS_ALIGNED(buf, channel->align) &&
 	     IS_ALIGNED(location, channel->align) &&
-	     IS_ALIGNED(size, channel->align))) {
-		actual = pread64(data->dev, buf, size, location);
-		if (actual == size)
-			return 0;
+	     IS_ALIGNED(ಗಾತ್ರ_2, channel->align))) {
+		actual = pread64(ದತ್ತಾಂಶ->dev, buf, ಗಾತ್ರ_2, location);
+		ಆದರೆ (actual == ಗಾತ್ರ_2)
+			ಹಿಂತಿರುಗಿ 0;
 		actual = 0;
 	}
-#elif HAVE_PREAD
+#ಅಥವಾಆದರೆ HAVE_PREAD
 	/* Try an aligned pread */
-	if ((sizeof(off_t) >= sizeof(ext2_loff_t)) &&
+	ಆದರೆ ((ಗಾತ್ರ(off_t) >= ಗಾತ್ರ(ext2_loff_t)) &&
 	    ((channel->align == 0) ||
 	     (IS_ALIGNED(buf, channel->align) &&
 	      IS_ALIGNED(location, channel->align) &&
-	      IS_ALIGNED(size, channel->align)))) {
-		actual = pread(data->dev, buf, size, location);
-		if (actual == size)
-			return 0;
+	      IS_ALIGNED(ಗಾತ್ರ_2, channel->align)))) {
+		actual = pread(ದತ್ತಾಂಶ->dev, buf, ಗಾತ್ರ_2, location);
+		ಆದರೆ (actual == ಗಾತ್ರ_2)
+			ಹಿಂತಿರುಗಿ 0;
 		actual = 0;
 	}
-#endif /* HAVE_PREAD */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_PREAD */
 
-	if ((channel->align == 0) ||
+	ಆದರೆ ((channel->align == 0) ||
 	    (IS_ALIGNED(buf, channel->align) &&
 	     IS_ALIGNED(location, channel->align) &&
-	     IS_ALIGNED(size, channel->align))) {
-		mutex_lock(data, BOUNCE_MTX);
-		if (ext2fs_llseek(data->dev, location, SEEK_SET) < 0) {
+	     IS_ALIGNED(ಗಾತ್ರ_2, channel->align))) {
+		mutex_ಬೀಗ(ದತ್ತಾಂಶ, BOUNCE_MTX);
+		ಆದರೆ (ext2fs_llseek(ದತ್ತಾಂಶ->dev, location, SEEK_SET) < 0) {
 			retval = errno ? errno : EXT2_ET_LLSEEK_FAILED;
-			goto error_unlock;
+			ಹೋಗು error_unlock;
 		}
-		actual = read(data->dev, buf, size);
-		if (actual != size) {
+		actual = ಪಠ(ದತ್ತಾಂಶ->dev, buf, ಗಾತ್ರ_2);
+		ಆದರೆ (actual != ಗಾತ್ರ_2) {
 		short_read:
-			if (actual < 0) {
+			ಆದರೆ (actual < 0) {
 				retval = errno;
 				actual = 0;
-			} else
+			} ಇಲ್ಲದಿದ್ದರೆ
 				retval = EXT2_ET_SHORT_READ;
-			goto error_unlock;
+			ಹೋಗು error_unlock;
 		}
-		goto success_unlock;
+		ಹೋಗು success_unlock;
 	}
 
-#ifdef ALIGN_DEBUG
-	printf("raw_read_blk: O_DIRECT fallback: %p %lu\n", buf,
-	       (unsigned long) size);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ALIGN_DEBUG
+	ಬರೆ("raw_read_blk: O_DIRECT fallback: %p %lu\n", buf,
+	       (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ) ಗಾತ್ರ_2);
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/*
 	 * The buffer or size which we're trying to read isn't aligned
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_read:
-	if (channel->align == 0)
+	ಆದರೆ (channel->align == 0)
 		channel->align = 1;
-	if ((channel->block_size > channel->align) &&
-	    (channel->block_size % channel->align) == 0)
-		align_size = channel->block_size;
-	else
-		align_size = channel->align;
-	aligned_blk = location / align_size;
-	offset = location % align_size;
+	ಆದರೆ ((channel->ಖಂಡ_ಗಾತ್ರ > channel->align) &&
+	    (channel->ಖಂಡ_ಗಾತ್ರ % channel->align) == 0)
+		align_ಗಾತ್ರ = channel->ಖಂಡ_ಗಾತ್ರ;
+	ಇಲ್ಲದಿದ್ದರೆ
+		align_ಗಾತ್ರ = channel->align;
+	aligned_blk = location / align_ಗಾತ್ರ;
+	ಸ್ಥಾನಾಂತರ = location % align_ಗಾತ್ರ;
 
-	mutex_lock(data, BOUNCE_MTX);
-	if (ext2fs_llseek(data->dev, aligned_blk * align_size, SEEK_SET) < 0) {
+	mutex_ಬೀಗ(ದತ್ತಾಂಶ, BOUNCE_MTX);
+	ಆದರೆ (ext2fs_llseek(ದತ್ತಾಂಶ->dev, aligned_blk * align_ಗಾತ್ರ, SEEK_SET) < 0) {
 		retval = errno ? errno : EXT2_ET_LLSEEK_FAILED;
-		goto error_unlock;
+		ಹೋಗು error_unlock;
 	}
-	while (size > 0) {
-		actual = read(data->dev, data->bounce, align_size);
-		if (actual != align_size) {
+	ಆಗ (ಗಾತ್ರ_2 > 0) {
+		actual = ಪಠ(ದತ್ತಾಂಶ->dev, ದತ್ತಾಂಶ->bounce, align_ಗಾತ್ರ);
+		ಆದರೆ (actual != align_ಗಾತ್ರ) {
 			actual = really_read;
 			buf -= really_read;
-			size += really_read;
-			goto short_read;
+			ಗಾತ್ರ_2 += really_read;
+			ಹೋಗು short_read;
 		}
-		if ((actual + offset) > align_size)
-			actual = align_size - offset;
-		if (actual > size)
-			actual = size;
-		memcpy(buf, (char *)data->bounce + offset, actual);
+		ಆದರೆ ((actual + ಸ್ಥಾನಾಂತರ) > align_ಗಾತ್ರ)
+			actual = align_ಗಾತ್ರ - ಸ್ಥಾನಾಂತರ;
+		ಆದರೆ (actual > ಗಾತ್ರ_2)
+			actual = ಗಾತ್ರ_2;
+		ಸ್ಮರಣೆ_ನಕಲು(buf, (ಅಕ್ಷರ *)ದತ್ತಾಂಶ->bounce + ಸ್ಥಾನಾಂತರ, actual);
 
 		really_read += actual;
-		size -= actual;
+		ಗಾತ್ರ_2 -= actual;
 		buf += actual;
-		offset = 0;
+		ಸ್ಥಾನಾಂತರ = 0;
 		aligned_blk++;
 	}
 success_unlock:
-	mutex_unlock(data, BOUNCE_MTX);
-	return 0;
+	mutex_unlock(ದತ್ತಾಂಶ, BOUNCE_MTX);
+	ಹಿಂತಿರುಗಿ 0;
 
 error_unlock:
-	mutex_unlock(data, BOUNCE_MTX);
-	if (actual >= 0 && actual < size)
-		memset((char *) buf+actual, 0, size-actual);
-	if (channel->read_error)
-		retval = (channel->read_error)(channel, block, count, buf,
-					       size, actual, retval);
-	return retval;
+	mutex_unlock(ದತ್ತಾಂಶ, BOUNCE_MTX);
+	ಆದರೆ (actual >= 0 && actual < ಗಾತ್ರ_2)
+		memset((ಅಕ್ಷರ *) buf+actual, 0, ಗಾತ್ರ_2-actual);
+	ಆದರೆ (channel->read_error)
+		retval = (channel->read_error)(channel, ಖಂಡ, ಎಣಿಕೆ_2, buf,
+					       ಗಾತ್ರ_2, actual, retval);
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-#define RAW_WRITE_NO_HANDLER	(1U << 0)
-#define RAW_WRITE_NOLOCK	(1U << 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು RAW_WRITE_NO_HANDLER	(1U << 0)
+#ವ್ಯಾಖ್ಯಾನಿಸು RAW_WRITE_NOLOCK	(1U << 1)
 
-static errcode_t raw_write_blk(io_channel channel,
-			       struct unix_private_data *data,
-			       unsigned long long block,
-			       int count, const void *bufv,
-			       int flags)
+ಸ್ಥಿರ errcode_t raw_write_blk(io_channel channel,
+			       ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ,
+			       ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ,
+			       ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *bufv,
+			       ಪೂರ್ಣಾಂಕ flags)
 {
-	ssize_t		size;
+	ssize_t		ಗಾತ್ರ_2;
 	ext2_loff_t	location;
-	int		actual = 0;
+	ಪೂರ್ಣಾಂಕ		actual = 0;
 	errcode_t	retval;
-	const unsigned char *buf = bufv;
-	unsigned long long aligned_blk;
-	int		align_size, offset;
+	ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *buf = bufv;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ aligned_blk;
+	ಪೂರ್ಣಾಂಕ		align_ಗಾತ್ರ, ಸ್ಥಾನಾಂತರ;
 
-	if (count == 1)
-		size = channel->block_size;
-	else {
-		if (count < 0)
-			size = -count;
-		else
-			size = (ext2_loff_t) count * channel->block_size;
+	ಆದರೆ (ಎಣಿಕೆ_2 == 1)
+		ಗಾತ್ರ_2 = channel->ಖಂಡ_ಗಾತ್ರ;
+	ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (ಎಣಿಕೆ_2 < 0)
+			ಗಾತ್ರ_2 = -ಎಣಿಕೆ_2;
+		ಇಲ್ಲದಿದ್ದರೆ
+			ಗಾತ್ರ_2 = (ext2_loff_t) ಎಣಿಕೆ_2 * channel->ಖಂಡ_ಗಾತ್ರ;
 	}
-	mutex_lock(data, STATS_MTX);
-	data->io_stats.bytes_written += size;
-	mutex_unlock(data, STATS_MTX);
+	mutex_ಬೀಗ(ದತ್ತಾಂಶ, STATS_MTX);
+	ದತ್ತಾಂಶ->io_stats.ಬೈಟುಗಳು_written += ಗಾತ್ರ_2;
+	mutex_unlock(ದತ್ತಾಂಶ, STATS_MTX);
 
-	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
+	location = ((ext2_loff_t) ಖಂಡ * channel->ಖಂಡ_ಗಾತ್ರ) + ದತ್ತಾಂಶ->ಸ್ಥಾನಾಂತರ;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE)
-		goto bounce_write;
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & IO_FLAG_FORCE_BOUNCE)
+		ಹೋಗು bounce_write;
 
-#ifdef HAVE_PWRITE64
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PWRITE64
 	/* Try an aligned pwrite */
-	if ((channel->align == 0) ||
+	ಆದರೆ ((channel->align == 0) ||
 	    (IS_ALIGNED(buf, channel->align) &&
 	     IS_ALIGNED(location, channel->align) &&
-	     IS_ALIGNED(size, channel->align))) {
-		actual = pwrite64(data->dev, buf, size, location);
-		if (actual == size)
-			return 0;
+	     IS_ALIGNED(ಗಾತ್ರ_2, channel->align))) {
+		actual = pwrite64(ದತ್ತಾಂಶ->dev, buf, ಗಾತ್ರ_2, location);
+		ಆದರೆ (actual == ಗಾತ್ರ_2)
+			ಹಿಂತಿರುಗಿ 0;
 	}
-#elif HAVE_PWRITE
+#ಅಥವಾಆದರೆ HAVE_PWRITE
 	/* Try an aligned pwrite */
-	if ((sizeof(off_t) >= sizeof(ext2_loff_t)) &&
+	ಆದರೆ ((ಗಾತ್ರ(off_t) >= ಗಾತ್ರ(ext2_loff_t)) &&
 	    ((channel->align == 0) ||
 	     (IS_ALIGNED(buf, channel->align) &&
 	      IS_ALIGNED(location, channel->align) &&
-	      IS_ALIGNED(size, channel->align)))) {
-		actual = pwrite(data->dev, buf, size, location);
-		if (actual == size)
-			return 0;
+	      IS_ALIGNED(ಗಾತ್ರ_2, channel->align)))) {
+		actual = pwrite(ದತ್ತಾಂಶ->dev, buf, ಗಾತ್ರ_2, location);
+		ಆದರೆ (actual == ಗಾತ್ರ_2)
+			ಹಿಂತಿರುಗಿ 0;
 	}
-#endif /* HAVE_PWRITE */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_PWRITE */
 
-	if ((channel->align == 0) ||
+	ಆದರೆ ((channel->align == 0) ||
 	    (IS_ALIGNED(buf, channel->align) &&
 	     IS_ALIGNED(location, channel->align) &&
-	     IS_ALIGNED(size, channel->align))) {
-		if (!(flags & RAW_WRITE_NOLOCK))
-			mutex_lock(data, BOUNCE_MTX);
-		if (ext2fs_llseek(data->dev, location, SEEK_SET) < 0) {
+	     IS_ALIGNED(ಗಾತ್ರ_2, channel->align))) {
+		ಆದರೆ (!(flags & RAW_WRITE_NOLOCK))
+			mutex_ಬೀಗ(ದತ್ತಾಂಶ, BOUNCE_MTX);
+		ಆದರೆ (ext2fs_llseek(ದತ್ತಾಂಶ->dev, location, SEEK_SET) < 0) {
 			retval = errno ? errno : EXT2_ET_LLSEEK_FAILED;
-			goto error_unlock;
+			ಹೋಗು error_unlock;
 		}
-		actual = write(data->dev, buf, size);
-		if (!(flags & RAW_WRITE_NOLOCK))
-			mutex_unlock(data, BOUNCE_MTX);
-		if (actual < 0) {
+		actual = ಲಿಖ(ದತ್ತಾಂಶ->dev, buf, ಗಾತ್ರ_2);
+		ಆದರೆ (!(flags & RAW_WRITE_NOLOCK))
+			mutex_unlock(ದತ್ತಾಂಶ, BOUNCE_MTX);
+		ಆದರೆ (actual < 0) {
 			retval = errno;
-			goto error_out;
+			ಹೋಗು error_ಹೊರಹೋಗು;
 		}
-		if (actual != size) {
+		ಆದರೆ (actual != ಗಾತ್ರ_2) {
 		short_write:
 			retval = EXT2_ET_SHORT_WRITE;
-			goto error_out;
+			ಹೋಗು error_ಹೊರಹೋಗು;
 		}
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-#ifdef ALIGN_DEBUG
-	printf("raw_write_blk: O_DIRECT fallback: %p %lu\n", buf,
-	       (unsigned long) size);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ALIGN_DEBUG
+	ಬರೆ("raw_write_blk: O_DIRECT fallback: %p %lu\n", buf,
+	       (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ) ಗಾತ್ರ_2);
+#ಆದರೆ_ಅಂತ್ಯ
 	/*
 	 * The buffer or size which we're trying to write isn't aligned
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_write:
-	if (channel->align == 0)
+	ಆದರೆ (channel->align == 0)
 		channel->align = 1;
-	if ((channel->block_size > channel->align) &&
-	    (channel->block_size % channel->align) == 0)
-		align_size = channel->block_size;
-	else
-		align_size = channel->align;
-	aligned_blk = location / align_size;
-	offset = location % align_size;
+	ಆದರೆ ((channel->ಖಂಡ_ಗಾತ್ರ > channel->align) &&
+	    (channel->ಖಂಡ_ಗಾತ್ರ % channel->align) == 0)
+		align_ಗಾತ್ರ = channel->ಖಂಡ_ಗಾತ್ರ;
+	ಇಲ್ಲದಿದ್ದರೆ
+		align_ಗಾತ್ರ = channel->align;
+	aligned_blk = location / align_ಗಾತ್ರ;
+	ಸ್ಥಾನಾಂತರ = location % align_ಗಾತ್ರ;
 
-	while (size > 0) {
-		int actual_w;
+	ಆಗ (ಗಾತ್ರ_2 > 0) {
+		ಪೂರ್ಣಾಂಕ actual_w;
 
-		if (!(flags & RAW_WRITE_NOLOCK))
-			mutex_lock(data, BOUNCE_MTX);
-		if (size < align_size || offset) {
-			if (ext2fs_llseek(data->dev, aligned_blk * align_size,
+		ಆದರೆ (!(flags & RAW_WRITE_NOLOCK))
+			mutex_ಬೀಗ(ದತ್ತಾಂಶ, BOUNCE_MTX);
+		ಆದರೆ (ಗಾತ್ರ_2 < align_ಗಾತ್ರ || ಸ್ಥಾನಾಂತರ) {
+			ಆದರೆ (ext2fs_llseek(ದತ್ತಾಂಶ->dev, aligned_blk * align_ಗಾತ್ರ,
 					  SEEK_SET) < 0) {
 				retval = errno ? errno : EXT2_ET_LLSEEK_FAILED;
-				goto error_unlock;
+				ಹೋಗು error_unlock;
 			}
-			actual = read(data->dev, data->bounce,
-				      align_size);
-			if (actual != align_size) {
-				if (actual < 0) {
+			actual = ಪಠ(ದತ್ತಾಂಶ->dev, ದತ್ತಾಂಶ->bounce,
+				      align_ಗಾತ್ರ);
+			ಆದರೆ (actual != align_ಗಾತ್ರ) {
+				ಆದರೆ (actual < 0) {
 					retval = errno;
-					goto error_unlock;
+					ಹೋಗು error_unlock;
 				}
-				memset((char *) data->bounce + actual, 0,
-				       align_size - actual);
+				memset((ಅಕ್ಷರ *) ದತ್ತಾಂಶ->bounce + actual, 0,
+				       align_ಗಾತ್ರ - actual);
 			}
 		}
-		actual = size;
-		if ((actual + offset) > align_size)
-			actual = align_size - offset;
-		if (actual > size)
-			actual = size;
-		memcpy(((char *)data->bounce) + offset, buf, actual);
-		if (ext2fs_llseek(data->dev, aligned_blk * align_size, SEEK_SET) < 0) {
+		actual = ಗಾತ್ರ_2;
+		ಆದರೆ ((actual + ಸ್ಥಾನಾಂತರ) > align_ಗಾತ್ರ)
+			actual = align_ಗಾತ್ರ - ಸ್ಥಾನಾಂತರ;
+		ಆದರೆ (actual > ಗಾತ್ರ_2)
+			actual = ಗಾತ್ರ_2;
+		ಸ್ಮರಣೆ_ನಕಲು(((ಅಕ್ಷರ *)ದತ್ತಾಂಶ->bounce) + ಸ್ಥಾನಾಂತರ, buf, actual);
+		ಆದರೆ (ext2fs_llseek(ದತ್ತಾಂಶ->dev, aligned_blk * align_ಗಾತ್ರ, SEEK_SET) < 0) {
 			retval = errno ? errno : EXT2_ET_LLSEEK_FAILED;
-			goto error_unlock;
+			ಹೋಗು error_unlock;
 		}
-		actual_w = write(data->dev, data->bounce, align_size);
-		if (!(flags & RAW_WRITE_NOLOCK))
-			mutex_unlock(data, BOUNCE_MTX);
-		if (actual_w < 0) {
+		actual_w = ಲಿಖ(ದತ್ತಾಂಶ->dev, ದತ್ತಾಂಶ->bounce, align_ಗಾತ್ರ);
+		ಆದರೆ (!(flags & RAW_WRITE_NOLOCK))
+			mutex_unlock(ದತ್ತಾಂಶ, BOUNCE_MTX);
+		ಆದರೆ (actual_w < 0) {
 			retval = errno;
-			goto error_out;
+			ಹೋಗು error_ಹೊರಹೋಗು;
 		}
-		if (actual_w != align_size)
-			goto short_write;
-		size -= actual;
+		ಆದರೆ (actual_w != align_ಗಾತ್ರ)
+			ಹೋಗು short_write;
+		ಗಾತ್ರ_2 -= actual;
 		buf += actual;
 		location += actual;
 		aligned_blk++;
-		offset = 0;
+		ಸ್ಥಾನಾಂತರ = 0;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 
 error_unlock:
-	if (!(flags & RAW_WRITE_NOLOCK))
-		mutex_unlock(data, BOUNCE_MTX);
-error_out:
-	if (((flags & RAW_WRITE_NO_HANDLER) == 0) && channel->write_error)
-		retval = (channel->write_error)(channel, block, count, buf,
-						size, actual, retval);
-	return retval;
+	ಆದರೆ (!(flags & RAW_WRITE_NOLOCK))
+		mutex_unlock(ದತ್ತಾಂಶ, BOUNCE_MTX);
+error_ಹೊರಹೋಗು:
+	ಆದರೆ (((flags & RAW_WRITE_NO_HANDLER) == 0) && channel->write_error)
+		retval = (channel->write_error)(channel, ಖಂಡ, ಎಣಿಕೆ_2, buf,
+						ಗಾತ್ರ_2, actual, retval);
+	ಹಿಂತಿರುಗಿ retval;
 }
 
 
@@ -514,75 +514,75 @@ error_out:
  */
 
 /* Allocate the cache buffers */
-static errcode_t alloc_cache(io_channel channel,
-			     struct unix_private_data *data)
+ಸ್ಥಿರ errcode_t alloc_cache(io_channel channel,
+			     ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ)
 {
 	errcode_t		retval;
-	struct unix_cache	*cache;
-	unsigned int		i;
+	ರಚನೆ unix_cache	*cache;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ		i;
 
-	data->access_time = 0;
-	for (i=0, cache = data->cache; i < data->cache_size; i++, cache++) {
-		cache->block = 0;
-		cache->access_time = 0;
+	ದತ್ತಾಂಶ->access_ಸಮಯ = 0;
+	ಗಾಗಿ (i=0, cache = ದತ್ತಾಂಶ->cache; i < ದತ್ತಾಂಶ->cache_ಗಾತ್ರ; i++, cache++) {
+		cache->ಖಂಡ = 0;
+		cache->access_ಸಮಯ = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
-		if (cache->buf)
+		cache->ಒಳ_use = 0;
+		ಆದರೆ (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 		retval = io_channel_alloc_buf(channel, 0, &cache->buf);
-		if (retval)
-			return retval;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 	}
-	if (channel->align || data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (data->bounce)
-			ext2fs_free_mem(&data->bounce);
-		retval = io_channel_alloc_buf(channel, 0, &data->bounce);
+	ಆದರೆ (channel->align || ದತ್ತಾಂಶ->flags & IO_FLAG_FORCE_BOUNCE) {
+		ಆದರೆ (ದತ್ತಾಂಶ->bounce)
+			ext2fs_free_mem(&ದತ್ತಾಂಶ->bounce);
+		retval = io_channel_alloc_buf(channel, 0, &ದತ್ತಾಂಶ->bounce);
 	}
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
 /* Free the cache buffers */
-static void free_cache(struct unix_private_data *data)
+ಸ್ಥಿರ ಶೂನ್ಯ free_cache(ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ)
 {
-	struct unix_cache	*cache;
-	unsigned int		i;
+	ರಚನೆ unix_cache	*cache;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ		i;
 
-	data->access_time = 0;
-	for (i=0, cache = data->cache; i < data->cache_size; i++, cache++) {
-		cache->block = 0;
-		cache->access_time = 0;
+	ದತ್ತಾಂಶ->access_ಸಮಯ = 0;
+	ಗಾಗಿ (i=0, cache = ದತ್ತಾಂಶ->cache; i < ದತ್ತಾಂಶ->cache_ಗಾತ್ರ; i++, cache++) {
+		cache->ಖಂಡ = 0;
+		cache->access_ಸಮಯ = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
-		if (cache->buf)
+		cache->ಒಳ_use = 0;
+		ಆದರೆ (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 	}
-	if (data->bounce)
-		ext2fs_free_mem(&data->bounce);
+	ಆದರೆ (ದತ್ತಾಂಶ->bounce)
+		ext2fs_free_mem(&ದತ್ತಾಂಶ->bounce);
 }
 
-#ifndef NO_IO_CACHE
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NO_IO_CACHE
 
 /*  2^63 + 2^61 - 2^57 + 2^54 - 2^51 - 2^18 + 1 */
-#define GOLDEN_RATIO_PRIME	0x9e37fffffffc0001UL
-#ifndef CACHE_LINE_SIZE
+#ವ್ಯಾಖ್ಯಾನಿಸು GOLDEN_ಅನುಪಾತ_ಅವಿಭಾಜ್ಯ	0x9e37fffffffc0001UL
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ CACHE_ಸಾಲು_ಗಾತ್ರ
 /* if the system didn't tell us, guess something reasonable */
-#define CACHE_LINE_SIZE		64
-#endif
+#ವ್ಯಾಖ್ಯಾನಿಸು CACHE_ಸಾಲು_ಗಾತ್ರ		64
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* buffer cache hashing function, crudely stolen from xfsprogs */
-static unsigned int
-cache_hash(struct unix_private_data *data, blk64_t blkno)
+ಸ್ಥಿರ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ
+cache_hash(ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ, blk64_t blkno)
 {
 	uint64_t	hashval = blkno;
 	uint64_t	tmp;
 
 	/* the default cache size is small, just do a linear scan */
-	if (data->cache_size <= DEFAULT_CACHE_SIZE)
-		return 0;
+	ಆದರೆ (ದತ್ತಾಂಶ->cache_ಗಾತ್ರ <= DEFAULT_CACHE_ಗಾತ್ರ)
+		ಹಿಂತಿರುಗಿ 0;
 
-	tmp = hashval ^ (GOLDEN_RATIO_PRIME + hashval) / CACHE_LINE_SIZE;
-	tmp = tmp ^ ((tmp ^ GOLDEN_RATIO_PRIME) >> data->cache_hash_shift);
-	return tmp % data->cache_size;
+	tmp = hashval ^ (GOLDEN_ಅನುಪಾತ_ಅವಿಭಾಜ್ಯ + hashval) / CACHE_ಸಾಲು_ಗಾತ್ರ;
+	tmp = tmp ^ ((tmp ^ GOLDEN_ಅನುಪಾತ_ಅವಿಭಾಜ್ಯ) >> ದತ್ತಾಂಶ->cache_hash_ಸರಿಸು);
+	ಹಿಂತಿರುಗಿ tmp % ದತ್ತಾಂಶ->cache_ಗಾತ್ರ;
 }
 
 /*
@@ -590,427 +590,427 @@ cache_hash(struct unix_private_data *data, blk64_t blkno)
  * eldest is a non-zero pointer, then fill in eldest with the cache
  * entry to that should be reused.
  */
-static struct unix_cache *find_cached_block(struct unix_private_data *data,
-					    unsigned long long block,
-					    struct unix_cache **eldest)
+ಸ್ಥಿರ ರಚನೆ unix_cache *ಕಂಡುಹಿಡಿ_cached_ಖಂಡ(ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ,
+					    ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ,
+					    ರಚನೆ unix_cache **eldest)
 {
-	struct unix_cache	*cache, *unused_cache, *oldest_cache;
-	unsigned int		hash = cache_hash(data, block);
-	unsigned int		i;
+	ರಚನೆ unix_cache	*cache, *ಬಳಸದ_cache, *oldest_cache;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ		hash = cache_hash(ದತ್ತಾಂಶ, ಖಂಡ);
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ		i;
 
-	unused_cache = oldest_cache = 0;
+	ಬಳಸದ_cache = oldest_cache = 0;
 	/* walk [hash..] cache elements */
-	for (i = hash, cache = data->cache + hash;
-	     i < data->cache_size;
+	ಗಾಗಿ (i = hash, cache = ದತ್ತಾಂಶ->cache + hash;
+	     i < ದತ್ತಾಂಶ->cache_ಗಾತ್ರ;
 	     i++, cache++) {
-		if (!cache->in_use) {
-			if (!unused_cache)
-				unused_cache = cache;
-			continue;
+		ಆದರೆ (!cache->ಒಳ_use) {
+			ಆದರೆ (!ಬಳಸದ_cache)
+				ಬಳಸದ_cache = cache;
+			ಮುಂದುವರಿ;
 		}
-		if (cache->block == block) {
-			cache->access_time = ++data->access_time;
-			data->io_stats.cache_hits++;
-			return cache;
+		ಆದರೆ (cache->ಖಂಡ == ಖಂಡ) {
+			cache->access_ಸಮಯ = ++ದತ್ತಾಂಶ->access_ಸಮಯ;
+			ದತ್ತಾಂಶ->io_stats.cache_ದೊರಕಿದವು++;
+			ಹಿಂತಿರುಗಿ cache;
 		}
-		if (!oldest_cache ||
-		    (cache->access_time < oldest_cache->access_time))
+		ಆದರೆ (!oldest_cache ||
+		    (cache->access_ಸಮಯ < oldest_cache->access_ಸಮಯ))
 			oldest_cache = cache;
 	}
 	/* walk [..hash] since we didnt find a good slot yet */
-	for (i = 0, cache = data->cache; i < hash; i++, cache++) {
-		if (!cache->in_use) {
-			if (!unused_cache)
-				unused_cache = cache;
-			continue;
+	ಗಾಗಿ (i = 0, cache = ದತ್ತಾಂಶ->cache; i < hash; i++, cache++) {
+		ಆದರೆ (!cache->ಒಳ_use) {
+			ಆದರೆ (!ಬಳಸದ_cache)
+				ಬಳಸದ_cache = cache;
+			ಮುಂದುವರಿ;
 		}
-		if (cache->block == block) {
-			cache->access_time = ++data->access_time;
-			data->io_stats.cache_hits++;
-			return cache;
+		ಆದರೆ (cache->ಖಂಡ == ಖಂಡ) {
+			cache->access_ಸಮಯ = ++ದತ್ತಾಂಶ->access_ಸಮಯ;
+			ದತ್ತಾಂಶ->io_stats.cache_ದೊರಕಿದವು++;
+			ಹಿಂತಿರುಗಿ cache;
 		}
-		if (!oldest_cache ||
-		    (cache->access_time < oldest_cache->access_time))
+		ಆದರೆ (!oldest_cache ||
+		    (cache->access_ಸಮಯ < oldest_cache->access_ಸಮಯ))
 			oldest_cache = cache;
 	}
-	if (eldest)
-		*eldest = (unused_cache) ? unused_cache : oldest_cache;
-	data->io_stats.cache_misses++;
-	return 0;
+	ಆದರೆ (eldest)
+		*eldest = (ಬಳಸದ_cache) ? ಬಳಸದ_cache : oldest_cache;
+	ದತ್ತಾಂಶ->io_stats.cache_ತಪ್ಪಿದವು++;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 /*
  * Reuse a particular cache entry for another block.
  */
-static errcode_t reuse_cache(io_channel channel,
-		struct unix_private_data *data, struct unix_cache *cache,
-		unsigned long long block)
+ಸ್ಥಿರ errcode_t reuse_cache(io_channel channel,
+		ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ, ರಚನೆ unix_cache *cache,
+		ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ)
 {
-	if (cache->dirty && cache->in_use) {
+	ಆದರೆ (cache->dirty && cache->ಒಳ_use) {
 		errcode_t retval;
 
-		retval = raw_write_blk(channel, data, cache->block, 1,
+		retval = raw_write_blk(channel, ದತ್ತಾಂಶ, cache->ಖಂಡ, 1,
 				       cache->buf, RAW_WRITE_NO_HANDLER);
-		if (retval) {
+		ಆದರೆ (retval) {
 			cache->write_err = 1;
-			return retval;
+			ಹಿಂತಿರುಗಿ retval;
 		}
 	}
 
-	cache->in_use = 1;
+	cache->ಒಳ_use = 1;
 	cache->dirty = 0;
 	cache->write_err = 0;
-	cache->block = block;
-	cache->access_time = ++data->access_time;
-	return 0;
+	cache->ಖಂಡ = ಖಂಡ;
+	cache->access_ಸಮಯ = ++ದತ್ತಾಂಶ->access_ಸಮಯ;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-#define FLUSH_INVALIDATE	0x01
-#define FLUSH_NOLOCK		0x02
+#ವ್ಯಾಖ್ಯಾನಿಸು FLUSH_INVALIDATE	0x01
+#ವ್ಯಾಖ್ಯಾನಿಸು FLUSH_NOLOCK		0x02
 
 /*
  * Flush all of the blocks in the cache
  */
-static errcode_t flush_cached_blocks(io_channel channel,
-				     struct unix_private_data *data,
-				     int flags)
+ಸ್ಥಿರ errcode_t flush_cached_ಖಂಡಗಳು(io_channel channel,
+				     ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ,
+				     ಪೂರ್ಣಾಂಕ flags)
 {
-	struct unix_cache	*cache;
+	ರಚನೆ unix_cache	*cache;
 	errcode_t		retval, retval2 = 0;
-	unsigned int		i;
-	int			errors_found = 0;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ		i;
+	ಪೂರ್ಣಾಂಕ			errors_ಸಿಕ್ಕಿತು = 0;
 
-	if ((flags & FLUSH_NOLOCK) == 0)
-		mutex_lock(data, CACHE_MTX);
-	for (i=0, cache = data->cache; i < data->cache_size; i++, cache++) {
-		if (!cache->in_use)
-			continue;
-		if (cache->dirty) {
-			int raw_flags = RAW_WRITE_NO_HANDLER;
+	ಆದರೆ ((flags & FLUSH_NOLOCK) == 0)
+		mutex_ಬೀಗ(ದತ್ತಾಂಶ, CACHE_MTX);
+	ಗಾಗಿ (i=0, cache = ದತ್ತಾಂಶ->cache; i < ದತ್ತಾಂಶ->cache_ಗಾತ್ರ; i++, cache++) {
+		ಆದರೆ (!cache->ಒಳ_use)
+			ಮುಂದುವರಿ;
+		ಆದರೆ (cache->dirty) {
+			ಪೂರ್ಣಾಂಕ raw_flags = RAW_WRITE_NO_HANDLER;
 
-			if (flags & FLUSH_NOLOCK)
+			ಆದರೆ (flags & FLUSH_NOLOCK)
 				raw_flags |= RAW_WRITE_NOLOCK;
 
-			retval = raw_write_blk(channel, data,
-					       cache->block, 1, cache->buf,
+			retval = raw_write_blk(channel, ದತ್ತಾಂಶ,
+					       cache->ಖಂಡ, 1, cache->buf,
 					       raw_flags);
-			if (retval) {
+			ಆದರೆ (retval) {
 				cache->write_err = 1;
-				errors_found = 1;
+				errors_ಸಿಕ್ಕಿತು = 1;
 				retval2 = retval;
-			} else {
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				cache->dirty = 0;
 				cache->write_err = 0;
-				if (flags & FLUSH_INVALIDATE)
-					cache->in_use = 0;
+				ಆದರೆ (flags & FLUSH_INVALIDATE)
+					cache->ಒಳ_use = 0;
 			}
-		} else if (flags & FLUSH_INVALIDATE) {
-			cache->in_use = 0;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (flags & FLUSH_INVALIDATE) {
+			cache->ಒಳ_use = 0;
 		}
 	}
-	if ((flags & FLUSH_NOLOCK) == 0)
-		mutex_unlock(data, CACHE_MTX);
+	ಆದರೆ ((flags & FLUSH_NOLOCK) == 0)
+		mutex_unlock(ದತ್ತಾಂಶ, CACHE_MTX);
 retry:
-	while (errors_found) {
-		if ((flags & FLUSH_NOLOCK) == 0)
-			mutex_lock(data, CACHE_MTX);
-		errors_found = 0;
-		for (i=0, cache = data->cache; i < data->cache_size; i++, cache++) {
-			if (!cache->in_use || !cache->write_err)
-				continue;
-			errors_found = 1;
-			if (cache->write_err && channel->write_error) {
-				char *err_buf = NULL;
-				unsigned long long err_block = cache->block;
+	ಆಗ (errors_ಸಿಕ್ಕಿತು) {
+		ಆದರೆ ((flags & FLUSH_NOLOCK) == 0)
+			mutex_ಬೀಗ(ದತ್ತಾಂಶ, CACHE_MTX);
+		errors_ಸಿಕ್ಕಿತು = 0;
+		ಗಾಗಿ (i=0, cache = ದತ್ತಾಂಶ->cache; i < ದತ್ತಾಂಶ->cache_ಗಾತ್ರ; i++, cache++) {
+			ಆದರೆ (!cache->ಒಳ_use || !cache->write_err)
+				ಮುಂದುವರಿ;
+			errors_ಸಿಕ್ಕಿತು = 1;
+			ಆದರೆ (cache->write_err && channel->write_error) {
+				ಅಕ್ಷರ *err_buf = ಖಾಲಿ;
+				ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ err_ಖಂಡ = cache->ಖಂಡ;
 
 				cache->dirty = 0;
-				cache->in_use = 0;
+				cache->ಒಳ_use = 0;
 				cache->write_err = 0;
-				if (io_channel_alloc_buf(channel, 0,
+				ಆದರೆ (io_channel_alloc_buf(channel, 0,
 							 &err_buf))
-					err_buf = NULL;
-				else
-					memcpy(err_buf, cache->buf,
-					       channel->block_size);
-				mutex_unlock(data, CACHE_MTX);
-				(channel->write_error)(channel, err_block,
-					1, err_buf, channel->block_size, -1,
+					err_buf = ಖಾಲಿ;
+				ಇಲ್ಲದಿದ್ದರೆ
+					ಸ್ಮರಣೆ_ನಕಲು(err_buf, cache->buf,
+					       channel->ಖಂಡ_ಗಾತ್ರ);
+				mutex_unlock(ದತ್ತಾಂಶ, CACHE_MTX);
+				(channel->write_error)(channel, err_ಖಂಡ,
+					1, err_buf, channel->ಖಂಡ_ಗಾತ್ರ, -1,
 					retval2);
-				if (err_buf)
+				ಆದರೆ (err_buf)
 					ext2fs_free_mem(&err_buf);
-				mutex_lock(data, CACHE_MTX);
-				goto retry;
-			} else
+				mutex_ಬೀಗ(ದತ್ತಾಂಶ, CACHE_MTX);
+				ಹೋಗು retry;
+			} ಇಲ್ಲದಿದ್ದರೆ
 				cache->write_err = 0;
 		}
-		if ((flags & FLUSH_NOLOCK) == 0)
-			mutex_unlock(data, CACHE_MTX);
+		ಆದರೆ ((flags & FLUSH_NOLOCK) == 0)
+			mutex_unlock(ದತ್ತಾಂಶ, CACHE_MTX);
 	}
-	return retval2;
+	ಹಿಂತಿರುಗಿ retval2;
 }
 
 /* Shrink the cache buffers */
-static errcode_t shrink_cache(io_channel channel,
-			      struct unix_private_data *data,
-			      unsigned int new_size)
+ಸ್ಥಿರ errcode_t shrink_cache(io_channel channel,
+			      ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ,
+			      ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ new_ಗಾತ್ರ)
 {
-	struct unix_cache	*cache, *new_cache;
-	unsigned int		i;
+	ರಚನೆ unix_cache	*cache, *new_cache;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ		i;
 	errcode_t		retval;
 
-	mutex_lock(data, CACHE_MTX);
+	mutex_ಬೀಗ(ದತ್ತಾಂಶ, CACHE_MTX);
 
-	retval = flush_cached_blocks(channel, data,
+	retval = flush_cached_ಖಂಡಗಳು(channel, ದತ್ತಾಂಶ,
 			FLUSH_INVALIDATE | FLUSH_NOLOCK);
-	if (retval)
-		goto unlock;
+	ಆದರೆ (retval)
+		ಹೋಗು unlock;
 
-	for (i = new_size, cache = data->cache + new_size;
-	     i < data->cache_size;
+	ಗಾಗಿ (i = new_ಗಾತ್ರ, cache = ದತ್ತಾಂಶ->cache + new_ಗಾತ್ರ;
+	     i < ದತ್ತಾಂಶ->cache_ಗಾತ್ರ;
 	     i++, cache++) {
-		cache->block = 0;
-		cache->access_time = 0;
+		cache->ಖಂಡ = 0;
+		cache->access_ಸಮಯ = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
-		if (cache->buf)
+		cache->ಒಳ_use = 0;
+		ಆದರೆ (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 	}
 
-	new_cache = realloc(data->cache, new_size * sizeof(struct unix_cache));
-	if (!new_cache) {
-		retval = EXT2_ET_NO_MEMORY;
-		goto unlock;
+	new_cache = realloc(ದತ್ತಾಂಶ->cache, new_ಗಾತ್ರ * ಗಾತ್ರ(ರಚನೆ unix_cache));
+	ಆದರೆ (!new_cache) {
+		retval = EXT2_ET_NO_ಸ್ಮರಣೆ;
+		ಹೋಗು unlock;
 	}
 
-	data->cache = new_cache;
-	data->cache_size = new_size;
-	data->cache_hash_shift = highbit32(data->cache_size);
+	ದತ್ತಾಂಶ->cache = new_cache;
+	ದತ್ತಾಂಶ->cache_ಗಾತ್ರ = new_ಗಾತ್ರ;
+	ದತ್ತಾಂಶ->cache_hash_ಸರಿಸು = highbit32(ದತ್ತಾಂಶ->cache_ಗಾತ್ರ);
 
 unlock:
-	mutex_unlock(data, CACHE_MTX);
-	return retval;
+	mutex_unlock(ದತ್ತಾಂಶ, CACHE_MTX);
+	ಹಿಂತಿರುಗಿ retval;
 }
 
 /* Grow the cache buffers */
-static errcode_t grow_cache(io_channel channel,
-			    struct unix_private_data *data,
-			    unsigned int new_size)
+ಸ್ಥಿರ errcode_t grow_cache(io_channel channel,
+			    ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ,
+			    ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ new_ಗಾತ್ರ)
 {
-	struct unix_cache	*cache, *new_cache;
-	unsigned int		i;
+	ರಚನೆ unix_cache	*cache, *new_cache;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ		i;
 	errcode_t		retval;
 
-	mutex_lock(data, CACHE_MTX);
+	mutex_ಬೀಗ(ದತ್ತಾಂಶ, CACHE_MTX);
 
-	retval = flush_cached_blocks(channel, data,
+	retval = flush_cached_ಖಂಡಗಳು(channel, ದತ್ತಾಂಶ,
 			FLUSH_INVALIDATE | FLUSH_NOLOCK);
-	if (retval)
-		goto unlock;
+	ಆದರೆ (retval)
+		ಹೋಗು unlock;
 
-	new_cache = realloc(data->cache, new_size * sizeof(struct unix_cache));
-	if (!new_cache) {
-		retval = EXT2_ET_NO_MEMORY;
-		goto unlock;
+	new_cache = realloc(ದತ್ತಾಂಶ->cache, new_ಗಾತ್ರ * ಗಾತ್ರ(ರಚನೆ unix_cache));
+	ಆದರೆ (!new_cache) {
+		retval = EXT2_ET_NO_ಸ್ಮರಣೆ;
+		ಹೋಗು unlock;
 	}
-	data->cache = new_cache;
+	ದತ್ತಾಂಶ->cache = new_cache;
 
-	for (i = data->cache_size, cache = new_cache + data->cache_size;
-	     i < new_size;
+	ಗಾಗಿ (i = ದತ್ತಾಂಶ->cache_ಗಾತ್ರ, cache = new_cache + ದತ್ತಾಂಶ->cache_ಗಾತ್ರ;
+	     i < new_ಗಾತ್ರ;
 	     i++, cache++) {
-		cache->block = 0;
-		cache->access_time = 0;
+		cache->ಖಂಡ = 0;
+		cache->access_ಸಮಯ = 0;
 		cache->dirty = 0;
-		cache->in_use = 0;
+		cache->ಒಳ_use = 0;
 		retval = io_channel_alloc_buf(channel, 0, &cache->buf);
-		if (retval) {
-			while (i > data->cache_size) {
+		ಆದರೆ (retval) {
+			ಆಗ (i > ದತ್ತಾಂಶ->cache_ಗಾತ್ರ) {
 				cache--; i--;
-				if (cache->buf)
+				ಆದರೆ (cache->buf)
 					ext2fs_free_mem(&cache->buf);
 			}
-			goto unlock;
+			ಹೋಗು unlock;
 		}
 	}
 
-	data->cache_size = new_size;
-	data->cache_hash_shift = highbit32(data->cache_size);
+	ದತ್ತಾಂಶ->cache_ಗಾತ್ರ = new_ಗಾತ್ರ;
+	ದತ್ತಾಂಶ->cache_hash_ಸರಿಸು = highbit32(ದತ್ತಾಂಶ->cache_ಗಾತ್ರ);
 
 unlock:
-	mutex_unlock(data, CACHE_MTX);
-	return retval;
+	mutex_unlock(ದತ್ತಾಂಶ, CACHE_MTX);
+	ಹಿಂತಿರುಗಿ retval;
 }
-#endif /* NO_IO_CACHE */
+#ಆದರೆ_ಅಂತ್ಯ /* NO_IO_CACHE */
 
-#ifdef __linux__
-#ifndef BLKDISCARDZEROES
-#define BLKDISCARDZEROES _IO(0x12,124)
-#endif
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __linux__
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ BLKDISCARDZEROES
+#ವ್ಯಾಖ್ಯಾನಿಸು BLKDISCARDZEROES _IO(0x12,124)
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ
 
-int ext2fs_open_file(const char *pathname, int flags, mode_t mode)
+ಪೂರ್ಣಾಂಕ ext2fs_open_file(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *pathname, ಪೂರ್ಣಾಂಕ flags, mode_t ಬಹುಲಕ)
 {
-	if (mode)
-#if defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-		return open64(pathname, flags, mode);
-	else
-		return open64(pathname, flags);
-#else
-		return open(pathname, flags, mode);
-	else
-		return open(pathname, flags);
-#endif
-}
-
-int ext2fs_stat(const char *path, ext2fs_struct_stat *buf)
-{
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return stat64(path, buf);
-#else
-	return stat(path, buf);
-#endif
+	ಆದರೆ (ಬಹುಲಕ)
+#ಆದರೆ defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+		ಹಿಂತಿರುಗಿ open64(pathname, flags, ಬಹುಲಕ);
+	ಇಲ್ಲದಿದ್ದರೆ
+		ಹಿಂತಿರುಗಿ open64(pathname, flags);
+#ಇಲ್ಲದಿದ್ದರೆ
+		ಹಿಂತಿರುಗಿ open(pathname, flags, ಬಹುಲಕ);
+	ಇಲ್ಲದಿದ್ದರೆ
+		ಹಿಂತಿರುಗಿ open(pathname, flags);
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-int ext2fs_fstat(int fd, ext2fs_struct_stat *buf)
+ಪೂರ್ಣಾಂಕ ext2fs_stat(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, ext2fs_struct_stat *buf)
 {
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return fstat64(fd, buf);
-#else
-	return fstat(fd, buf);
-#endif
+#ಆದರೆ defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	ಹಿಂತಿರುಗಿ stat64(ಮಾರ್ಗ, buf);
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಹಿಂತಿರುಗಿ stat(ಮಾರ್ಗ, buf);
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-#ifdef HAVE_SYS_FILE_H
-static errcode_t unix_funlock(io_channel channel)
+ಪೂರ್ಣಾಂಕ ext2fs_fstat(ಪೂರ್ಣಾಂಕ fd, ext2fs_struct_stat *buf)
 {
-	struct unix_private_data *data;
-	int ret;
+#ಆದರೆ defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	ಹಿಂತಿರುಗಿ fstat64(fd, buf);
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಹಿಂತಿರುಗಿ fstat(fd, buf);
+#ಆದರೆ_ಅಂತ್ಯ
+}
+
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SYS_FILE_H
+ಸ್ಥಿರ errcode_t unix_funlock(io_channel channel)
+{
+	ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
+	ಪೂರ್ಣಾಂಕ ret;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (data->unix_flock_flags) {
-		ret = flock(data->dev, LOCK_UN);
-		if (ret)
-			return errno;
+	ಆದರೆ (ದತ್ತಾಂಶ->unix_flock_flags) {
+		ret = flock(ದತ್ತಾಂಶ->dev, LOCK_UN);
+		ಆದರೆ (ret)
+			ಹಿಂತಿರುಗಿ errno;
 
-		data->unix_flock_flags = 0;
+		ದತ್ತಾಂಶ->unix_flock_flags = 0;
 	}
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t unix_flock(io_channel channel, unsigned int flock_flags)
+ಸ್ಥಿರ errcode_t unix_flock(io_channel channel, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ flock_flags)
 {
-	struct unix_private_data *data;
-	int unix_flock_flags = 0;
+	ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
+	ಪೂರ್ಣಾಂಕ unix_flock_flags = 0;
 	errcode_t ret;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
 	ret = unix_funlock(channel);
-	if (ret)
-		return ret;
+	ಆದರೆ (ret)
+		ಹಿಂತಿರುಗಿ ret;
 
-	if (flock_flags & IO_CHANNEL_FLOCK_EXCLUSIVE)
+	ಆದರೆ (flock_flags & IO_CHANNEL_FLOCK_EXCLUSIVE)
 		unix_flock_flags |= LOCK_EX;
 
-	if (flock_flags & IO_CHANNEL_FLOCK_SHARED)
+	ಆದರೆ (flock_flags & IO_CHANNEL_FLOCK_SHARED)
 		unix_flock_flags |= LOCK_SH;
 
-	if (flock_flags & IO_CHANNEL_FLOCK_TRYLOCK)
+	ಆದರೆ (flock_flags & IO_CHANNEL_FLOCK_TRYLOCK)
 		unix_flock_flags |= LOCK_NB;
 
-	if (!unix_flock_flags)
-		return 0;
+	ಆದರೆ (!unix_flock_flags)
+		ಹಿಂತಿರುಗಿ 0;
 
-	ret = flock(data->dev, unix_flock_flags);
-	if (ret < 0)
-		return errno;
+	ret = flock(ದತ್ತಾಂಶ->dev, unix_flock_flags);
+	ಆದರೆ (ret < 0)
+		ಹಿಂತಿರುಗಿ errno;
 
-	data->unix_flock_flags = unix_flock_flags & ~LOCK_NB;
-	return 0;
+	ದತ್ತಾಂಶ->unix_flock_flags = unix_flock_flags & ~LOCK_NB;
+	ಹಿಂತಿರುಗಿ 0;
 }
-#else
-#define unix_flock		NULL
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು unix_flock		ಖಾಲಿ
 
-static errcode_t unix_funlock(io_channel channel)
+ಸ್ಥಿರ errcode_t unix_funlock(io_channel channel)
 {
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
-#endif /* HAVE_SYS_FILE_H */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_SYS_FILE_H */
 
-static errcode_t unix_open_channel(const char *name, int fd,
-				   int flags, io_channel *channel,
+ಸ್ಥಿರ errcode_t unix_open_channel(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name, ಪೂರ್ಣಾಂಕ fd,
+				   ಪೂರ್ಣಾಂಕ flags, io_channel *channel,
 				   io_manager io_mgr)
 {
-	io_channel	io = NULL;
-	struct unix_private_data *data = NULL;
+	io_channel	io = ಖಾಲಿ;
+	ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ = ಖಾಲಿ;
 	errcode_t	retval;
 	ext2fs_struct_stat st;
-#ifdef __linux__
-	struct		utsname ut;
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __linux__
+	ರಚನೆ		utsname ut;
+#ಆದರೆ_ಅಂತ್ಯ
 
-	if (ext2fs_safe_getenv("UNIX_IO_FORCE_BOUNCE"))
+	ಆದರೆ (ext2fs_ಸುರಕ್ಷಿತ_getenv("UNIX_IO_FORCE_BOUNCE"))
 		flags |= IO_FLAG_FORCE_BOUNCE;
 
-#ifdef __linux__
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __linux__
 	/*
 	 * We need to make sure any previous errors in the block
 	 * device are thrown away, sigh.
 	 */
-	(void) fsync(fd);
-#endif
+	(ಶೂನ್ಯ) fsync(fd);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	retval = ext2fs_get_mem(ಗಾತ್ರ(ರಚನೆ struct_io_channel), &io);
+	ಆದರೆ (retval)
+		ಹೋಗು cleanup;
+	memset(io, 0, ಗಾತ್ರ(ರಚನೆ struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
-	retval = ext2fs_get_mem(sizeof(struct unix_private_data), &data);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(ಗಾತ್ರ(ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ), &ದತ್ತಾಂಶ);
+	ಆದರೆ (retval)
+		ಹೋಗು cleanup;
 
 	io->manager = io_mgr;
-	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(name)+1, &io->name);
+	ಆದರೆ (retval)
+		ಹೋಗು cleanup;
 
 	strcpy(io->name, name);
-	io->private_data = data;
-	io->block_size = 1024;
+	io->ಖಾಸಗಿ_ದತ್ತಾಂಶ = ದತ್ತಾಂಶ;
+	io->ಖಂಡ_ಗಾತ್ರ = 1024;
 	io->read_error = 0;
 	io->write_error = 0;
 	io->refcount = 1;
 	io->flags = 0;
 
-	if (ext2fs_safe_getenv("UNIX_IO_NOZEROOUT"))
+	ಆದರೆ (ext2fs_ಸುರಕ್ಷಿತ_getenv("UNIX_IO_NOZEROOUT"))
 		io->flags |= CHANNEL_FLAGS_NOZEROOUT;
 
-	memset(data, 0, sizeof(struct unix_private_data));
-	data->magic = EXT2_ET_MAGIC_UNIX_IO_CHANNEL;
-	data->io_stats.num_fields = 4;
-	data->flags = flags;
-	data->dev = fd;
+	memset(ದತ್ತಾಂಶ, 0, ಗಾತ್ರ(ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ));
+	ದತ್ತಾಂಶ->magic = EXT2_ET_MAGIC_UNIX_IO_CHANNEL;
+	ದತ್ತಾಂಶ->io_stats.ಅಂಕೆ_fields = 4;
+	ದತ್ತಾಂಶ->flags = flags;
+	ದತ್ತಾಂಶ->dev = fd;
 
-	data->cache_size = DEFAULT_CACHE_SIZE;
-	data->cache_hash_shift = highbit32(data->cache_size);
-	data->cache = calloc(DEFAULT_CACHE_SIZE, sizeof(struct unix_cache));
-	if (!data->cache) {
-		retval = EXT2_ET_NO_MEMORY;
-		goto cleanup;
+	ದತ್ತಾಂಶ->cache_ಗಾತ್ರ = DEFAULT_CACHE_ಗಾತ್ರ;
+	ದತ್ತಾಂಶ->cache_hash_ಸರಿಸು = highbit32(ದತ್ತಾಂಶ->cache_ಗಾತ್ರ);
+	ದತ್ತಾಂಶ->cache = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(DEFAULT_CACHE_ಗಾತ್ರ, ಗಾತ್ರ(ರಚನೆ unix_cache));
+	ಆದರೆ (!ದತ್ತಾಂಶ->cache) {
+		retval = EXT2_ET_NO_ಸ್ಮರಣೆ;
+		ಹೋಗು cleanup;
 	}
 
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
-		io->align = ext2fs_get_dio_alignment(data->dev);
-#elif defined(F_NOCACHE)
-	if (flags & IO_FLAG_DIRECT_IO)
+#ಆದರೆ defined(O_ನೇರ)
+	ಆದರೆ (flags & IO_FLAG_ನೇರ_IO)
+		io->align = ext2fs_get_dio_alignment(ದತ್ತಾಂಶ->dev);
+#ಅಥವಾಆದರೆ defined(F_NOCACHE)
+	ಆದರೆ (flags & IO_FLAG_ನೇರ_IO)
 		io->align = 4096;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/*
 	 * If the device is really a block device, then set the
@@ -1019,63 +1019,63 @@ static errcode_t unix_open_channel(const char *name, int fd,
 	 * and if it succeed, subsequent read from sparse area returns
 	 * zero.
 	 */
-	if (ext2fs_fstat(data->dev, &st) == 0) {
-		if (ext2fsP_is_disk_device(st.st_mode)) {
-#ifdef BLKDISCARDZEROES
-			int zeroes = 0;
+	ಆದರೆ (ext2fs_fstat(ದತ್ತಾಂಶ->dev, &st) == 0) {
+		ಆದರೆ (ext2fsP_is_disk_device(st.st_ಬಹುಲಕ)) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BLKDISCARDZEROES
+			ಪೂರ್ಣಾಂಕ zeroes = 0;
 
-			if (ioctl(data->dev, BLKDISCARDZEROES, &zeroes) == 0 &&
+			ಆದರೆ (ioctl(ದತ್ತಾಂಶ->dev, BLKDISCARDZEROES, &zeroes) == 0 &&
 			    zeroes)
 				io->flags |= CHANNEL_FLAGS_DISCARD_ZEROES;
-#endif
-			io->flags |= CHANNEL_FLAGS_BLOCK_DEVICE;
-		} else {
+#ಆದರೆ_ಅಂತ್ಯ
+			io->flags |= CHANNEL_FLAGS_ಖಂಡ_DEVICE;
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			io->flags |= CHANNEL_FLAGS_DISCARD_ZEROES;
 		}
 	}
 
-#if defined(__CYGWIN__)
+#ಆದರೆ defined(__CYGWIN__)
 	/*
 	 * Some operating systems require that the buffers be aligned,
 	 * regardless of O_DIRECT
 	 */
-	if (!io->align)
+	ಆದರೆ (!io->align)
 		io->align = 512;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-	if (io->flags & CHANNEL_FLAGS_BLOCK_DEVICE) {
-		int dio_align = ext2fs_get_dio_alignment(fd);
+#ಆದರೆ defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+	ಆದರೆ (io->flags & CHANNEL_FLAGS_ಖಂಡ_DEVICE) {
+		ಪೂರ್ಣಾಂಕ dio_align = ext2fs_get_dio_alignment(fd);
 
-		if (io->align < dio_align)
+		ಆದರೆ (io->align < dio_align)
 			io->align = dio_align;
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	if ((retval = alloc_cache(io, data)))
-		goto cleanup;
+	ಆದರೆ ((retval = alloc_cache(io, ದತ್ತಾಂಶ)))
+		ಹೋಗು cleanup;
 
-#ifdef BLKROGET
-	if (flags & IO_FLAG_RW) {
-		int error;
-		int readonly = 0;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BLKROGET
+	ಆದರೆ (flags & IO_FLAG_RW) {
+		ಪೂರ್ಣಾಂಕ error;
+		ಪೂರ್ಣಾಂಕ readonly = 0;
 
 		/* Is the block device actually writable? */
-		error = ioctl(data->dev, BLKROGET, &readonly);
-		if (!error && readonly) {
+		error = ioctl(ದತ್ತಾಂಶ->dev, BLKROGET, &readonly);
+		ಆದರೆ (!error && readonly) {
 			retval = EPERM;
-			goto cleanup;
+			ಹೋಗು cleanup;
 		}
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef __linux__
-#undef RLIM_INFINITY
-#if (defined(__alpha__) || ((defined(__sparc__) || defined(__mips__)) && (SIZEOF_LONG == 4)))
-#define RLIM_INFINITY	((unsigned long)(~0UL>>1))
-#else
-#define RLIM_INFINITY  (~0UL)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __linux__
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು RLIM_INFINITY
+#ಆದರೆ (defined(__alpha__) || ((defined(__sparc__) || defined(__mips__)) && (SIZEOF_LONG == 4)))
+#ವ್ಯಾಖ್ಯಾನಿಸು RLIM_INFINITY	((ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)(~0UL>>1))
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು RLIM_INFINITY  (~0UL)
+#ಆದರೆ_ಅಂತ್ಯ
 	/*
 	 * Work around a bug in 2.4.10-2.4.18 kernels where writes to
 	 * block devices are wrongly getting hit by the filesize
@@ -1083,319 +1083,319 @@ static errcode_t unix_open_channel(const char *name, int fd,
 	 * if glibc wasn't built against 2.2 header files.  (Sigh.)
 	 *
 	 */
-	if ((flags & IO_FLAG_RW) &&
+	ಆದರೆ ((flags & IO_FLAG_RW) &&
 	    (uname(&ut) == 0) &&
 	    ((ut.release[0] == '2') && (ut.release[1] == '.') &&
 	     (ut.release[2] == '4') && (ut.release[3] == '.') &&
 	     (ut.release[4] == '1') && (ut.release[5] >= '0') &&
 	     (ut.release[5] < '8')) &&
-	    (ext2fs_fstat(data->dev, &st) == 0) &&
-	    (ext2fsP_is_disk_device(st.st_mode))) {
-		struct rlimit	rlim;
+	    (ext2fs_fstat(ದತ್ತಾಂಶ->dev, &st) == 0) &&
+	    (ext2fsP_is_disk_device(st.st_ಬಹುಲಕ))) {
+		ರಚನೆ rlimit	rlim;
 
-		rlim.rlim_cur = rlim.rlim_max = (unsigned long) RLIM_INFINITY;
+		rlim.rlim_cur = rlim.rlim_max = (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ) RLIM_INFINITY;
 		setrlimit(RLIMIT_FSIZE, &rlim);
 		getrlimit(RLIMIT_FSIZE, &rlim);
-		if (((unsigned long) rlim.rlim_cur) <
-		    ((unsigned long) rlim.rlim_max)) {
+		ಆದರೆ (((ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ) rlim.rlim_cur) <
+		    ((ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ) rlim.rlim_max)) {
 			rlim.rlim_cur = rlim.rlim_max;
 			setrlimit(RLIMIT_FSIZE, &rlim);
 		}
 	}
-#endif
-#ifdef HAVE_PTHREAD
-	if (flags & IO_FLAG_THREADS) {
-		io->flags |= CHANNEL_FLAGS_THREADS;
-		retval = pthread_mutex_init(&data->cache_mutex, NULL);
-		if (retval)
-			goto cleanup;
-		retval = pthread_mutex_init(&data->bounce_mutex, NULL);
-		if (retval) {
-			pthread_mutex_destroy(&data->cache_mutex);
-			goto cleanup;
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PTHREAD
+	ಆದರೆ (flags & IO_FLAG_ಎಳೆಗಳು) {
+		io->flags |= CHANNEL_FLAGS_ಎಳೆಗಳು;
+		retval = pthread_mutex_init(&ದತ್ತಾಂಶ->cache_mutex, ಖಾಲಿ);
+		ಆದರೆ (retval)
+			ಹೋಗು cleanup;
+		retval = pthread_mutex_init(&ದತ್ತಾಂಶ->bounce_mutex, ಖಾಲಿ);
+		ಆದರೆ (retval) {
+			pthread_mutex_destroy(&ದತ್ತಾಂಶ->cache_mutex);
+			ಹೋಗು cleanup;
 		}
-		retval = pthread_mutex_init(&data->stats_mutex, NULL);
-		if (retval) {
-			pthread_mutex_destroy(&data->cache_mutex);
-			pthread_mutex_destroy(&data->bounce_mutex);
-			goto cleanup;
+		retval = pthread_mutex_init(&ದತ್ತಾಂಶ->stats_mutex, ಖಾಲಿ);
+		ಆದರೆ (retval) {
+			pthread_mutex_destroy(&ದತ್ತಾಂಶ->cache_mutex);
+			pthread_mutex_destroy(&ದತ್ತಾಂಶ->bounce_mutex);
+			ಹೋಗು cleanup;
 		}
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	*channel = io;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 
 cleanup:
-	if (data) {
+	ಆದರೆ (ದತ್ತಾಂಶ) {
 		unix_funlock(io);
-		if (io->manager != unixfd_io_manager && data->dev >= 0)
-			close(data->dev);
-		if (data->cache) {
-			free_cache(data);
-			free(data->cache);
+		ಆದರೆ (io->manager != unixfd_io_manager && ದತ್ತಾಂಶ->dev >= 0)
+			close(ದತ್ತಾಂಶ->dev);
+		ಆದರೆ (ದತ್ತಾಂಶ->cache) {
+			free_cache(ದತ್ತಾಂಶ);
+			ಬಿಡುಗಡೆ(ದತ್ತಾಂಶ->cache);
 		}
-		ext2fs_free_mem(&data);
+		ext2fs_free_mem(&ದತ್ತಾಂಶ);
 	}
-	if (io) {
-		if (io->name) {
+	ಆದರೆ (io) {
+		ಆದರೆ (io->name) {
 			ext2fs_free_mem(&io->name);
 		}
 		ext2fs_free_mem(&io);
 	}
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t unixfd_open(const char *str_fd, int flags,
+ಸ್ಥಿರ errcode_t unixfd_open(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *str_fd, ಪೂರ್ಣಾಂಕ flags,
 			     io_channel *channel)
 {
-	int fd;
-	int fd_flags;
+	ಪೂರ್ಣಾಂಕ fd;
+	ಪೂರ್ಣಾಂಕ fd_flags;
 
 	fd = atoi(str_fd);
-#if defined(HAVE_FCNTL)
+#ಆದರೆ defined(HAVE_FCNTL)
 	fd_flags = fcntl(fd, F_GETFL);
-	if (fd_flags == -1)
-		return EBADF;
+	ಆದರೆ (fd_flags == -1)
+		ಹಿಂತಿರುಗಿ EBADF;
 
 	/* O_EXCL is cleared by Linux at open and not returned by F_GETFL */
 	flags &= IO_FLAG_EXCLUSIVE;
-	if (fd_flags & O_RDWR)
+	ಆದರೆ (fd_flags & O_RDWR)
 		flags |= IO_FLAG_RW;
-#if defined(O_DIRECT)
-	if (fd_flags & O_DIRECT)
-		flags |= IO_FLAG_DIRECT_IO;
-#endif
-#endif  /* HAVE_FCNTL */
+#ಆದರೆ defined(O_ನೇರ)
+	ಆದರೆ (fd_flags & O_ನೇರ)
+		flags |= IO_FLAG_ನೇರ_IO;
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ  /* HAVE_FCNTL */
 
-	return unix_open_channel(str_fd, fd, flags, channel, unixfd_io_manager);
+	ಹಿಂತಿರುಗಿ unix_open_channel(str_fd, fd, flags, channel, unixfd_io_manager);
 }
 
-static errcode_t unix_open(const char *name, int flags,
+ಸ್ಥಿರ errcode_t unix_open(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name, ಪೂರ್ಣಾಂಕ flags,
 			   io_channel *channel)
 {
-	int fd = -1;
-	int open_flags;
+	ಪೂರ್ಣಾಂಕ fd = -1;
+	ಪೂರ್ಣಾಂಕ open_flags;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	ಆದರೆ (name == 0)
+		ಹಿಂತಿರುಗಿ EXT2_ET_BAD_DEVICE_NAME;
 
 	open_flags = (flags & IO_FLAG_RW) ? O_RDWR : O_RDONLY;
-	if (flags & IO_FLAG_EXCLUSIVE)
+	ಆದರೆ (flags & IO_FLAG_EXCLUSIVE)
 		open_flags |= O_EXCL;
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
-		open_flags |= O_DIRECT;
-#endif
+#ಆದರೆ defined(O_ನೇರ)
+	ಆದರೆ (flags & IO_FLAG_ನೇರ_IO)
+		open_flags |= O_ನೇರ;
+#ಆದರೆ_ಅಂತ್ಯ
 	fd = ext2fs_open_file(name, open_flags, 0);
-	if (fd < 0)
-		return errno;
-#if defined(F_NOCACHE) && !defined(IO_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO) {
-		if (fcntl(fd, F_NOCACHE, 1) < 0)
-			return errno;
+	ಆದರೆ (fd < 0)
+		ಹಿಂತಿರುಗಿ errno;
+#ಆದರೆ defined(F_NOCACHE) && !defined(IO_ನೇರ)
+	ಆದರೆ (flags & IO_FLAG_ನೇರ_IO) {
+		ಆದರೆ (fcntl(fd, F_NOCACHE, 1) < 0)
+			ಹಿಂತಿರುಗಿ errno;
 	}
-#endif
-	return unix_open_channel(name, fd, flags, channel, unix_io_manager);
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ unix_open_channel(name, fd, flags, channel, unix_io_manager);
 }
 
-static errcode_t unix_close(io_channel channel)
+ಸ್ಥಿರ errcode_t unix_close(io_channel channel)
 {
-	struct unix_private_data *data;
+	ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	ಆದರೆ (--channel->refcount > 0)
+		ಹಿಂತಿರುಗಿ 0;
 
-#ifndef NO_IO_CACHE
-	retval = flush_cached_blocks(channel, data, 0);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NO_IO_CACHE
+	retval = flush_cached_ಖಂಡಗಳು(channel, ದತ್ತಾಂಶ, 0);
+#ಆದರೆ_ಅಂತ್ಯ
 
 	unix_funlock(channel);
 
-	if (channel->manager != unixfd_io_manager && close(data->dev) < 0)
+	ಆದರೆ (channel->manager != unixfd_io_manager && close(ದತ್ತಾಂಶ->dev) < 0)
 		retval = errno;
-	free_cache(data);
-	free(data->cache);
-#ifdef HAVE_PTHREAD
-	if (data->flags & IO_FLAG_THREADS) {
-		pthread_mutex_destroy(&data->cache_mutex);
-		pthread_mutex_destroy(&data->bounce_mutex);
-		pthread_mutex_destroy(&data->stats_mutex);
+	free_cache(ದತ್ತಾಂಶ);
+	ಬಿಡುಗಡೆ(ದತ್ತಾಂಶ->cache);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PTHREAD
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & IO_FLAG_ಎಳೆಗಳು) {
+		pthread_mutex_destroy(&ದತ್ತಾಂಶ->cache_mutex);
+		pthread_mutex_destroy(&ದತ್ತಾಂಶ->bounce_mutex);
+		pthread_mutex_destroy(&ದತ್ತಾಂಶ->stats_mutex);
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	ext2fs_free_mem(&channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ);
+	ಆದರೆ (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t unix_set_blksize(io_channel channel, int blksize)
+ಸ್ಥಿರ errcode_t unix_ಗಣ_blksize(io_channel channel, ಪೂರ್ಣಾಂಕ blksize)
 {
-	struct unix_private_data *data;
+	ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t		retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (channel->block_size != blksize) {
-		mutex_lock(data, CACHE_MTX);
-		mutex_lock(data, BOUNCE_MTX);
-#ifndef NO_IO_CACHE
-		if ((retval = flush_cached_blocks(channel, data, FLUSH_NOLOCK))){
-			mutex_unlock(data, BOUNCE_MTX);
-			mutex_unlock(data, CACHE_MTX);
-			return retval;
+	ಆದರೆ (channel->ಖಂಡ_ಗಾತ್ರ != blksize) {
+		mutex_ಬೀಗ(ದತ್ತಾಂಶ, CACHE_MTX);
+		mutex_ಬೀಗ(ದತ್ತಾಂಶ, BOUNCE_MTX);
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NO_IO_CACHE
+		ಆದರೆ ((retval = flush_cached_ಖಂಡಗಳು(channel, ದತ್ತಾಂಶ, FLUSH_NOLOCK))){
+			mutex_unlock(ದತ್ತಾಂಶ, BOUNCE_MTX);
+			mutex_unlock(ದತ್ತಾಂಶ, CACHE_MTX);
+			ಹಿಂತಿರುಗಿ retval;
 		}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-		channel->block_size = blksize;
-		free_cache(data);
-		retval = alloc_cache(channel, data);
-		mutex_unlock(data, BOUNCE_MTX);
-		mutex_unlock(data, CACHE_MTX);
+		channel->ಖಂಡ_ಗಾತ್ರ = blksize;
+		free_cache(ದತ್ತಾಂಶ);
+		retval = alloc_cache(channel, ದತ್ತಾಂಶ);
+		mutex_unlock(ದತ್ತಾಂಶ, BOUNCE_MTX);
+		mutex_unlock(ದತ್ತಾಂಶ, CACHE_MTX);
 	}
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t unix_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+ಸ್ಥಿರ errcode_t unix_read_blk64(io_channel channel, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ,
+			       ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, ಶೂನ್ಯ *buf)
 {
-	struct unix_private_data *data;
-	struct unix_cache *cache;
+	ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
+	ರಚನೆ unix_cache *cache;
 	errcode_t	retval;
-	char		*cp;
-	int		i, j;
+	ಅಕ್ಷರ		*cp;
+	ಪೂರ್ಣಾಂಕ		i, j;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-#ifdef NO_IO_CACHE
-	return raw_read_blk(channel, data, block, count, buf);
-#else
-	if (data->flags & IO_FLAG_NOCACHE)
-		return raw_read_blk(channel, data, block, count, buf);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ NO_IO_CACHE
+	ಹಿಂತಿರುಗಿ raw_read_blk(channel, ದತ್ತಾಂಶ, ಖಂಡ, ಎಣಿಕೆ_2, buf);
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & IO_FLAG_NOCACHE)
+		ಹಿಂತಿರುಗಿ raw_read_blk(channel, ದತ್ತಾಂಶ, ಖಂಡ, ಎಣಿಕೆ_2, buf);
 	/*
 	 * If we're doing an odd-sized read or a very large read,
 	 * flush out the cache and then do a direct read.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data, 0)))
-			return retval;
-		return raw_read_blk(channel, data, block, count, buf);
+	ಆದರೆ (ಎಣಿಕೆ_2 < 0 || ಎಣಿಕೆ_2 > WRITE_ನೇರ_ಗಾತ್ರ) {
+		ಆದರೆ ((retval = flush_cached_ಖಂಡಗಳು(channel, ದತ್ತಾಂಶ, 0)))
+			ಹಿಂತಿರುಗಿ retval;
+		ಹಿಂತಿರುಗಿ raw_read_blk(channel, ದತ್ತಾಂಶ, ಖಂಡ, ಎಣಿಕೆ_2, buf);
 	}
 
 	cp = buf;
-	mutex_lock(data, CACHE_MTX);
-	while (count > 0) {
+	mutex_ಬೀಗ(ದತ್ತಾಂಶ, CACHE_MTX);
+	ಆಗ (ಎಣಿಕೆ_2 > 0) {
 		/* If it's in the cache, use it! */
-		if ((cache = find_cached_block(data, block, NULL))) {
-#ifdef DEBUG
-			printf("Using cached block %lu\n", block);
-#endif
-			memcpy(cp, cache->buf, channel->block_size);
-			count--;
-			block++;
-			cp += channel->block_size;
-			continue;
+		ಆದರೆ ((cache = ಕಂಡುಹಿಡಿ_cached_ಖಂಡ(ದತ್ತಾಂಶ, ಖಂಡ, ಖಾಲಿ))) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ DEBUG
+			ಬರೆ("Using cached block %lu\n", ಖಂಡ);
+#ಆದರೆ_ಅಂತ್ಯ
+			ಸ್ಮರಣೆ_ನಕಲು(cp, cache->buf, channel->ಖಂಡ_ಗಾತ್ರ);
+			ಎಣಿಕೆ_2--;
+			ಖಂಡ++;
+			cp += channel->ಖಂಡ_ಗಾತ್ರ;
+			ಮುಂದುವರಿ;
 		}
 
 		/*
 		 * Find the number of uncached blocks so we can do a
 		 * single read request
 		 */
-		for (i=1; i < count; i++)
-			if (find_cached_block(data, block+i, NULL))
-				break;
-#ifdef DEBUG
-		printf("Reading %d blocks starting at %lu\n", i, block);
-#endif
-		mutex_unlock(data, CACHE_MTX);
-		if ((retval = raw_read_blk(channel, data, block, i, cp)))
-			return retval;
-		mutex_lock(data, CACHE_MTX);
+		ಗಾಗಿ (i=1; i < ಎಣಿಕೆ_2; i++)
+			ಆದರೆ (ಕಂಡುಹಿಡಿ_cached_ಖಂಡ(ದತ್ತಾಂಶ, ಖಂಡ+i, ಖಾಲಿ))
+				ನಿಲ್ಲಿಸು;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ DEBUG
+		ಬರೆ("Reading %d blocks starting at %lu\n", i, ಖಂಡ);
+#ಆದರೆ_ಅಂತ್ಯ
+		mutex_unlock(ದತ್ತಾಂಶ, CACHE_MTX);
+		ಆದರೆ ((retval = raw_read_blk(channel, ದತ್ತಾಂಶ, ಖಂಡ, i, cp)))
+			ಹಿಂತಿರುಗಿ retval;
+		mutex_ಬೀಗ(ದತ್ತಾಂಶ, CACHE_MTX);
 
 		/* Save the results in the cache */
-		for (j=0; j < i; j++) {
-			if (!find_cached_block(data, block, &cache)) {
-				retval = reuse_cache(channel, data,
-						     cache, block);
-				if (retval)
-					goto call_write_handler;
-				memcpy(cache->buf, cp, channel->block_size);
+		ಗಾಗಿ (j=0; j < i; j++) {
+			ಆದರೆ (!ಕಂಡುಹಿಡಿ_cached_ಖಂಡ(ದತ್ತಾಂಶ, ಖಂಡ, &cache)) {
+				retval = reuse_cache(channel, ದತ್ತಾಂಶ,
+						     cache, ಖಂಡ);
+				ಆದರೆ (retval)
+					ಹೋಗು call_write_handler;
+				ಸ್ಮರಣೆ_ನಕಲು(cache->buf, cp, channel->ಖಂಡ_ಗಾತ್ರ);
 			}
-			count--;
-			block++;
-			cp += channel->block_size;
+			ಎಣಿಕೆ_2--;
+			ಖಂಡ++;
+			cp += channel->ಖಂಡ_ಗಾತ್ರ;
 		}
 	}
-	mutex_unlock(data, CACHE_MTX);
-	return 0;
+	mutex_unlock(ದತ್ತಾಂಶ, CACHE_MTX);
+	ಹಿಂತಿರುಗಿ 0;
 
 call_write_handler:
-	if (cache->write_err && channel->write_error) {
-		char *err_buf = NULL;
-		unsigned long long err_block = cache->block;
+	ಆದರೆ (cache->write_err && channel->write_error) {
+		ಅಕ್ಷರ *err_buf = ಖಾಲಿ;
+		ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ err_ಖಂಡ = cache->ಖಂಡ;
 
 		cache->dirty = 0;
-		cache->in_use = 0;
+		cache->ಒಳ_use = 0;
 		cache->write_err = 0;
-		if (io_channel_alloc_buf(channel, 0, &err_buf))
-			err_buf = NULL;
-		else
-			memcpy(err_buf, cache->buf, channel->block_size);
-		mutex_unlock(data, CACHE_MTX);
-		(channel->write_error)(channel, err_block, 1, err_buf,
-				       channel->block_size, -1,
+		ಆದರೆ (io_channel_alloc_buf(channel, 0, &err_buf))
+			err_buf = ಖಾಲಿ;
+		ಇಲ್ಲದಿದ್ದರೆ
+			ಸ್ಮರಣೆ_ನಕಲು(err_buf, cache->buf, channel->ಖಂಡ_ಗಾತ್ರ);
+		mutex_unlock(ದತ್ತಾಂಶ, CACHE_MTX);
+		(channel->write_error)(channel, err_ಖಂಡ, 1, err_buf,
+				       channel->ಖಂಡ_ಗಾತ್ರ, -1,
 				       retval);
-		if (err_buf)
+		ಆದರೆ (err_buf)
 			ext2fs_free_mem(&err_buf);
-	} else
-		mutex_unlock(data, CACHE_MTX);
-	return retval;
-#endif /* NO_IO_CACHE */
+	} ಇಲ್ಲದಿದ್ದರೆ
+		mutex_unlock(ದತ್ತಾಂಶ, CACHE_MTX);
+	ಹಿಂತಿರುಗಿ retval;
+#ಆದರೆ_ಅಂತ್ಯ /* NO_IO_CACHE */
 }
 
-static errcode_t unix_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+ಸ್ಥಿರ errcode_t unix_read_blk(io_channel channel, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಖಂಡ,
+			       ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, ಶೂನ್ಯ *buf)
 {
-	return unix_read_blk64(channel, block, count, buf);
+	ಹಿಂತಿರುಗಿ unix_read_blk64(channel, ಖಂಡ, ಎಣಿಕೆ_2, buf);
 }
 
-static errcode_t unix_write_blk64(io_channel channel, unsigned long long block,
-				int count, const void *buf)
+ಸ್ಥಿರ errcode_t unix_write_blk64(io_channel channel, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ,
+				ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *buf)
 {
-	struct unix_private_data *data;
-	struct unix_cache *cache, *reuse;
+	ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
+	ರಚನೆ unix_cache *cache, *reuse;
 	errcode_t	retval = 0;
-	const char	*cp;
-	int		writethrough;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ	*cp;
+	ಪೂರ್ಣಾಂಕ		writethrough;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-#ifdef NO_IO_CACHE
-	return raw_write_blk(channel, data, block, count, buf, 0);
-#else
-	if (data->flags & IO_FLAG_NOCACHE)
-		return raw_write_blk(channel, data, block, count, buf, 0);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ NO_IO_CACHE
+	ಹಿಂತಿರುಗಿ raw_write_blk(channel, ದತ್ತಾಂಶ, ಖಂಡ, ಎಣಿಕೆ_2, buf, 0);
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಆದರೆ (ದತ್ತಾಂಶ->flags & IO_FLAG_NOCACHE)
+		ಹಿಂತಿರುಗಿ raw_write_blk(channel, ದತ್ತಾಂಶ, ಖಂಡ, ಎಣಿಕೆ_2, buf, 0);
 	/*
 	 * If we're doing an odd-sized write or a very large write,
 	 * flush out the cache completely and then do a direct write.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data,
+	ಆದರೆ (ಎಣಿಕೆ_2 < 0 || ಎಣಿಕೆ_2 > WRITE_ನೇರ_ಗಾತ್ರ) {
+		ಆದರೆ ((retval = flush_cached_ಖಂಡಗಳು(channel, ದತ್ತಾಂಶ,
 						  FLUSH_INVALIDATE)))
-			return retval;
-		return raw_write_blk(channel, data, block, count, buf, 0);
+			ಹಿಂತಿರುಗಿ retval;
+		ಹಿಂತಿರುಗಿ raw_write_blk(channel, ದತ್ತಾಂಶ, ಖಂಡ, ಎಣಿಕೆ_2, buf, 0);
 	}
 
 	/*
@@ -1404,251 +1404,251 @@ static errcode_t unix_write_blk64(io_channel channel, unsigned long long block,
 	 * cache with the blocks.
 	 */
 	writethrough = channel->flags & CHANNEL_FLAGS_WRITETHROUGH;
-	if (writethrough)
-		retval = raw_write_blk(channel, data, block, count, buf, 0);
+	ಆದರೆ (writethrough)
+		retval = raw_write_blk(channel, ದತ್ತಾಂಶ, ಖಂಡ, ಎಣಿಕೆ_2, buf, 0);
 
 	cp = buf;
-	mutex_lock(data, CACHE_MTX);
-	while (count > 0) {
-		cache = find_cached_block(data, block, &reuse);
-		if (!cache) {
+	mutex_ಬೀಗ(ದತ್ತಾಂಶ, CACHE_MTX);
+	ಆಗ (ಎಣಿಕೆ_2 > 0) {
+		cache = ಕಂಡುಹಿಡಿ_cached_ಖಂಡ(ದತ್ತಾಂಶ, ಖಂಡ, &reuse);
+		ಆದರೆ (!cache) {
 			errcode_t err;
 
 			cache = reuse;
-			err = reuse_cache(channel, data, cache, block);
-			if (err)
-				goto call_write_handler;
+			err = reuse_cache(channel, ದತ್ತಾಂಶ, cache, ಖಂಡ);
+			ಆದರೆ (err)
+				ಹೋಗು call_write_handler;
 		}
-		if (cache->buf != cp)
-			memcpy(cache->buf, cp, channel->block_size);
+		ಆದರೆ (cache->buf != cp)
+			ಸ್ಮರಣೆ_ನಕಲು(cache->buf, cp, channel->ಖಂಡ_ಗಾತ್ರ);
 		cache->dirty = !writethrough;
-		count--;
-		block++;
-		cp += channel->block_size;
+		ಎಣಿಕೆ_2--;
+		ಖಂಡ++;
+		cp += channel->ಖಂಡ_ಗಾತ್ರ;
 	}
-	mutex_unlock(data, CACHE_MTX);
-	return retval;
+	mutex_unlock(ದತ್ತಾಂಶ, CACHE_MTX);
+	ಹಿಂತಿರುಗಿ retval;
 
 call_write_handler:
-	if (cache->write_err && channel->write_error) {
-		char *err_buf = NULL;
-		unsigned long long err_block = cache->block;
+	ಆದರೆ (cache->write_err && channel->write_error) {
+		ಅಕ್ಷರ *err_buf = ಖಾಲಿ;
+		ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ err_ಖಂಡ = cache->ಖಂಡ;
 
 		cache->dirty = 0;
-		cache->in_use = 0;
+		cache->ಒಳ_use = 0;
 		cache->write_err = 0;
-		if (io_channel_alloc_buf(channel, 0, &err_buf))
-			err_buf = NULL;
-		else
-			memcpy(err_buf, cache->buf, channel->block_size);
-		mutex_unlock(data, CACHE_MTX);
-		(channel->write_error)(channel, err_block, 1, err_buf,
-				       channel->block_size, -1,
+		ಆದರೆ (io_channel_alloc_buf(channel, 0, &err_buf))
+			err_buf = ಖಾಲಿ;
+		ಇಲ್ಲದಿದ್ದರೆ
+			ಸ್ಮರಣೆ_ನಕಲು(err_buf, cache->buf, channel->ಖಂಡ_ಗಾತ್ರ);
+		mutex_unlock(ದತ್ತಾಂಶ, CACHE_MTX);
+		(channel->write_error)(channel, err_ಖಂಡ, 1, err_buf,
+				       channel->ಖಂಡ_ಗಾತ್ರ, -1,
 				       retval);
-		if (err_buf)
+		ಆದರೆ (err_buf)
 			ext2fs_free_mem(&err_buf);
-	} else
-		mutex_unlock(data, CACHE_MTX);
-	return retval;
-#endif /* NO_IO_CACHE */
+	} ಇಲ್ಲದಿದ್ದರೆ
+		mutex_unlock(ದತ್ತಾಂಶ, CACHE_MTX);
+	ಹಿಂತಿರುಗಿ retval;
+#ಆದರೆ_ಅಂತ್ಯ /* NO_IO_CACHE */
 }
 
-static errcode_t unix_cache_readahead(io_channel channel,
-				      unsigned long long block,
-				      unsigned long long count)
+ಸ್ಥಿರ errcode_t unix_cache_readahead(io_channel channel,
+				      ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ,
+				      ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಎಣಿಕೆ_2)
 {
-#ifdef POSIX_FADV_WILLNEED
-	struct unix_private_data *data;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ POSIX_FADV_WILLNEED
+	ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 
-	data = (struct unix_private_data *)channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
-	return posix_fadvise(data->dev,
-			     (ext2_loff_t)block * channel->block_size + data->offset,
-			     (ext2_loff_t)count * channel->block_size,
+	ದತ್ತಾಂಶ = (ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *)channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ಹಿಂತಿರುಗಿ posix_fadvise(ದತ್ತಾಂಶ->dev,
+			     (ext2_loff_t)ಖಂಡ * channel->ಖಂಡ_ಗಾತ್ರ + ದತ್ತಾಂಶ->ಸ್ಥಾನಾಂತರ,
+			     (ext2_loff_t)ಎಣಿಕೆ_2 * channel->ಖಂಡ_ಗಾತ್ರ,
 			     POSIX_FADV_WILLNEED);
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಹಿಂತಿರುಗಿ EXT2_ET_OP_NOT_SUPPORTED;
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-static errcode_t unix_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+ಸ್ಥಿರ errcode_t unix_write_blk(io_channel channel, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಖಂಡ,
+				ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *buf)
 {
-	return unix_write_blk64(channel, block, count, buf);
+	ಹಿಂತಿರುಗಿ unix_write_blk64(channel, ಖಂಡ, ಎಣಿಕೆ_2, buf);
 }
 
-static errcode_t unix_write_byte(io_channel channel, unsigned long offset,
-				 int size, const void *buf)
+ಸ್ಥಿರ errcode_t unix_write_byte(io_channel channel, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಸ್ಥಾನಾಂತರ,
+				 ಪೂರ್ಣಾಂಕ ಗಾತ್ರ_2, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *buf)
 {
-	struct unix_private_data *data;
+	ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t	retval = 0;
 	ssize_t		actual;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (channel->align != 0) {
-#ifdef ALIGN_DEBUG
-		printf("unix_write_byte: O_DIRECT fallback\n");
-#endif
-		return EXT2_ET_UNIMPLEMENTED;
+	ಆದರೆ (channel->align != 0) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ALIGN_DEBUG
+		ಬರೆ("unix_write_byte: O_DIRECT fallback\n");
+#ಆದರೆ_ಅಂತ್ಯ
+		ಹಿಂತಿರುಗಿ EXT2_ET_UNIMPLEMENTED;
 	}
 
-#ifndef NO_IO_CACHE
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NO_IO_CACHE
 	/*
 	 * Flush out the cache completely
 	 */
-	if ((retval = flush_cached_blocks(channel, data, FLUSH_INVALIDATE)))
-		return retval;
-#endif
+	ಆದರೆ ((retval = flush_cached_ಖಂಡಗಳು(channel, ದತ್ತಾಂಶ, FLUSH_INVALIDATE)))
+		ಹಿಂತಿರುಗಿ retval;
+#ಆದರೆ_ಅಂತ್ಯ
 
-	if (lseek(data->dev, offset + data->offset, SEEK_SET) < 0)
-		return errno;
+	ಆದರೆ (lseek(ದತ್ತಾಂಶ->dev, ಸ್ಥಾನಾಂತರ + ದತ್ತಾಂಶ->ಸ್ಥಾನಾಂತರ, SEEK_SET) < 0)
+		ಹಿಂತಿರುಗಿ errno;
 
-	actual = write(data->dev, buf, size);
-	if (actual < 0)
-		return errno;
-	if (actual != size)
-		return EXT2_ET_SHORT_WRITE;
+	actual = ಲಿಖ(ದತ್ತಾಂಶ->dev, buf, ಗಾತ್ರ_2);
+	ಆದರೆ (actual < 0)
+		ಹಿಂತಿರುಗಿ errno;
+	ಆದರೆ (actual != ಗಾತ್ರ_2)
+		ಹಿಂತಿರುಗಿ EXT2_ET_SHORT_WRITE;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 /*
  * Flush data buffers to disk.
  */
-static errcode_t unix_flush(io_channel channel)
+ಸ್ಥಿರ errcode_t unix_flush(io_channel channel)
 {
-	struct unix_private_data *data;
+	ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 	errcode_t retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-#ifndef NO_IO_CACHE
-	retval = flush_cached_blocks(channel, data, 0);
-#endif
-#ifdef HAVE_FSYNC
-	if (!retval && fsync(data->dev) != 0)
-		return errno;
-#endif
-	return retval;
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NO_IO_CACHE
+	retval = flush_cached_ಖಂಡಗಳು(channel, ದತ್ತಾಂಶ, 0);
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_FSYNC
+	ಆದರೆ (!retval && fsync(ದತ್ತಾಂಶ->dev) != 0)
+		ಹಿಂತಿರುಗಿ errno;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t unix_set_option(io_channel channel, const char *option,
-				 const char *arg)
+ಸ್ಥಿರ errcode_t unix_ಗಣ_option(io_channel channel, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *option,
+				 ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg)
 {
-	struct unix_private_data *data;
-	unsigned long long tmp;
+	ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ tmp;
 	errcode_t retval;
-	char *end;
+	ಅಕ್ಷರ *ಕೊನೆ;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (!strcmp(option, "offset")) {
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
+	ಆದರೆ (!strcmp(option, "offset")) {
+		ಆದರೆ (!arg)
+			ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
 
-		tmp = strtoull(arg, &end, 0);
-		if (*end)
-			return EXT2_ET_INVALID_ARGUMENT;
-		data->offset = tmp;
-		if (data->offset < 0)
-			return EXT2_ET_INVALID_ARGUMENT;
-		return 0;
+		tmp = strtoull(arg, &ಕೊನೆ, 0);
+		ಆದರೆ (*ಕೊನೆ)
+			ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
+		ದತ್ತಾಂಶ->ಸ್ಥಾನಾಂತರ = tmp;
+		ಆದರೆ (ದತ್ತಾಂಶ->ಸ್ಥಾನಾಂತರ < 0)
+			ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
+		ಹಿಂತಿರುಗಿ 0;
 	}
-	if (!strcmp(option, "cache")) {
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
-		if (!strcmp(arg, "on")) {
-			data->flags &= ~IO_FLAG_NOCACHE;
-			return 0;
+	ಆದರೆ (!strcmp(option, "cache")) {
+		ಆದರೆ (!arg)
+			ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
+		ಆದರೆ (!strcmp(arg, "on")) {
+			ದತ್ತಾಂಶ->flags &= ~IO_FLAG_NOCACHE;
+			ಹಿಂತಿರುಗಿ 0;
 		}
-		if (!strcmp(arg, "off")) {
-			retval = flush_cached_blocks(channel, data, 0);
-			data->flags |= IO_FLAG_NOCACHE;
-			return retval;
+		ಆದರೆ (!strcmp(arg, "off")) {
+			retval = flush_cached_ಖಂಡಗಳು(channel, ದತ್ತಾಂಶ, 0);
+			ದತ್ತಾಂಶ->flags |= IO_FLAG_NOCACHE;
+			ಹಿಂತಿರುಗಿ retval;
 		}
-		return EXT2_ET_INVALID_ARGUMENT;
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
 	}
-#ifndef NO_IO_CACHE
-	if (!strcmp(option, "cache_blocks")) {
-		unsigned long long	size;
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NO_IO_CACHE
+	ಆದರೆ (!strcmp(option, "cache_blocks")) {
+		ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ	ಗಾತ್ರ_2;
 
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
+		ಆದರೆ (!arg)
+			ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
 
 		errno = 0;
-		size = strtoll(arg, NULL, 0);
-		if (errno || size == 0 || size > INT32_MAX)
-			return EXT2_ET_INVALID_ARGUMENT;
+		ಗಾತ್ರ_2 = strtoll(arg, ಖಾಲಿ, 0);
+		ಆದರೆ (errno || ಗಾತ್ರ_2 == 0 || ಗಾತ್ರ_2 > INT32_MAX)
+			ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
 
-		if (data->cache_size == size)
-			return 0;
-		if (data->cache_size > size)
-			return shrink_cache(channel, data, size);
-		return grow_cache(channel, data, size);
+		ಆದರೆ (ದತ್ತಾಂಶ->cache_ಗಾತ್ರ == ಗಾತ್ರ_2)
+			ಹಿಂತಿರುಗಿ 0;
+		ಆದರೆ (ದತ್ತಾಂಶ->cache_ಗಾತ್ರ > ಗಾತ್ರ_2)
+			ಹಿಂತಿರುಗಿ shrink_cache(channel, ದತ್ತಾಂಶ, ಗಾತ್ರ_2);
+		ಹಿಂತಿರುಗಿ grow_cache(channel, ದತ್ತಾಂಶ, ಗಾತ್ರ_2);
 	}
-#endif
-	return EXT2_ET_INVALID_ARGUMENT;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
 }
 
-#if defined(__linux__) && !defined(BLKDISCARD)
-#define BLKDISCARD		_IO(0x12,119)
-#endif
+#ಆದರೆ defined(__linux__) && !defined(BLKDISCARD)
+#ವ್ಯಾಖ್ಯಾನಿಸು BLKDISCARD		_IO(0x12,119)
+#ಆದರೆ_ಅಂತ್ಯ
 
-static errcode_t unix_discard(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+ಸ್ಥಿರ errcode_t unix_discard(io_channel channel, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ,
+			      ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಎಣಿಕೆ_2)
 {
-	struct unix_private_data *data;
-	int		ret = EOPNOTSUPP;
+	ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
+	ಪೂರ್ಣಾಂಕ		ret = EOPNOTSUPP;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (channel->flags & CHANNEL_FLAGS_NODISCARD)
-		goto unimplemented;
+	ಆದರೆ (channel->flags & CHANNEL_FLAGS_NODISCARD)
+		ಹೋಗು unimplemented;
 
-	if (channel->flags & CHANNEL_FLAGS_BLOCK_DEVICE) {
-#ifdef BLKDISCARD
+	ಆದರೆ (channel->flags & CHANNEL_FLAGS_ಖಂಡ_DEVICE) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BLKDISCARD
 		__u64 range[2];
 
-		range[0] = (__u64)(block) * channel->block_size + data->offset;
-		range[1] = (__u64)(count) * channel->block_size;
+		range[0] = (__u64)(ಖಂಡ) * channel->ಖಂಡ_ಗಾತ್ರ + ದತ್ತಾಂಶ->ಸ್ಥಾನಾಂತರ;
+		range[1] = (__u64)(ಎಣಿಕೆ_2) * channel->ಖಂಡ_ಗಾತ್ರ;
 
-		ret = ioctl(data->dev, BLKDISCARD, &range);
-#else
-		goto unimplemented;
-#endif
-	} else {
-#if defined(HAVE_FALLOCATE) && defined(FALLOC_FL_PUNCH_HOLE)
+		ret = ioctl(ದತ್ತಾಂಶ->dev, BLKDISCARD, &range);
+#ಇಲ್ಲದಿದ್ದರೆ
+		ಹೋಗು unimplemented;
+#ಆದರೆ_ಅಂತ್ಯ
+	} ಇಲ್ಲದಿದ್ದರೆ {
+#ಆದರೆ defined(HAVE_FALLOCATE) && defined(FALLOC_FL_PUNCH_HOLE)
 		/*
 		 * If we are not on block device, try to use punch hole
 		 * to reclaim free space.
 		 */
-		ret = fallocate(data->dev,
+		ret = fallocate(ದತ್ತಾಂಶ->dev,
 				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-				(off_t)(block) * channel->block_size + data->offset,
-				(off_t)(count) * channel->block_size);
-#else
-		goto unimplemented;
-#endif
+				(off_t)(ಖಂಡ) * channel->ಖಂಡ_ಗಾತ್ರ + ದತ್ತಾಂಶ->ಸ್ಥಾನಾಂತರ,
+				(off_t)(ಎಣಿಕೆ_2) * channel->ಖಂಡ_ಗಾತ್ರ);
+#ಇಲ್ಲದಿದ್ದರೆ
+		ಹೋಗು unimplemented;
+#ಆದರೆ_ಅಂತ್ಯ
 	}
-	if (ret < 0) {
-		if (errno == EOPNOTSUPP) {
+	ಆದರೆ (ret < 0) {
+		ಆದರೆ (errno == EOPNOTSUPP) {
 			channel->flags |= CHANNEL_FLAGS_NODISCARD;
-			goto unimplemented;
+			ಹೋಗು unimplemented;
 		}
-		return errno;
+		ಹಿಂತಿರುಗಿ errno;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 unimplemented:
-	return EXT2_ET_UNIMPLEMENTED;
+	ಹಿಂತಿರುಗಿ EXT2_ET_UNIMPLEMENTED;
 }
 
 /*
@@ -1657,95 +1657,95 @@ unimplemented:
  * it always invalidates page cache, and libext2fs requires that reads after
  * ZERO_RANGE return zeroes.
  */
-static int __unix_zeroout(int fd, off_t offset, off_t len)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ __unix_zeroout(ಪೂರ್ಣಾಂಕ fd, off_t ಸ್ಥಾನಾಂತರ, off_t len)
 {
-	int ret = -1;
+	ಪೂರ್ಣಾಂಕ ret = -1;
 
-#if defined(HAVE_FALLOCATE) && defined(FALLOC_FL_ZERO_RANGE)
-	ret = fallocate(fd, FALLOC_FL_ZERO_RANGE, offset, len);
-	if (ret == 0)
-		return 0;
-#endif
-#if defined(HAVE_FALLOCATE) && defined(FALLOC_FL_PUNCH_HOLE) && defined(FALLOC_FL_KEEP_SIZE)
+#ಆದರೆ defined(HAVE_FALLOCATE) && defined(FALLOC_FL_ZERO_RANGE)
+	ret = fallocate(fd, FALLOC_FL_ZERO_RANGE, ಸ್ಥಾನಾಂತರ, len);
+	ಆದರೆ (ret == 0)
+		ಹಿಂತಿರುಗಿ 0;
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ defined(HAVE_FALLOCATE) && defined(FALLOC_FL_PUNCH_HOLE) && defined(FALLOC_FL_KEEP_SIZE)
 	ret = fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-			offset,  len);
-	if (ret == 0)
-		return 0;
-#endif
+			ಸ್ಥಾನಾಂತರ,  len);
+	ಆದರೆ (ret == 0)
+		ಹಿಂತಿರುಗಿ 0;
+#ಆದರೆ_ಅಂತ್ಯ
 	errno = EOPNOTSUPP;
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
 /* parameters might not be used if OS doesn't support zeroout */
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-static errcode_t unix_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+#ಆದರೆ __GNUC_PREREQ (4, 6)
+#ಸೂಚನೆ GCC diagnostic ತಳ್ಳು
+#ಸೂಚನೆ GCC diagnostic ignored "-Wunused-parameter"
+#ಆದರೆ_ಅಂತ್ಯ
+ಸ್ಥಿರ errcode_t unix_zeroout(io_channel channel, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡ,
+			      ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಎಣಿಕೆ_2)
 {
-	struct unix_private_data *data;
-	int		ret;
+	ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
+	ಪೂರ್ಣಾಂಕ		ret;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct unix_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
+	ದತ್ತಾಂಶ = (ರಚನೆ unix_ಖಾಸಗಿ_ದತ್ತಾಂಶ *) channel->ಖಾಸಗಿ_ದತ್ತಾಂಶ;
+	EXT2_CHECK_MAGIC(ದತ್ತಾಂಶ, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (!(channel->flags & CHANNEL_FLAGS_BLOCK_DEVICE)) {
+	ಆದರೆ (!(channel->flags & CHANNEL_FLAGS_ಖಂಡ_DEVICE)) {
 		/* Regular file, try to use truncate/punch/zero. */
-		struct stat statbuf;
+		ರಚನೆ stat statbuf;
 
-		if (count == 0)
-			return 0;
+		ಆದರೆ (ಎಣಿಕೆ_2 == 0)
+			ಹಿಂತಿರುಗಿ 0;
 		/*
 		 * If we're trying to zero a range past the end of the file,
 		 * extend the file size, then truncate everything.
 		 */
-		ret = fstat(data->dev, &statbuf);
-		if (ret)
-			goto err;
-		if ((unsigned long long) statbuf.st_size <
-			(block + count) * channel->block_size + data->offset) {
-			ret = ftruncate(data->dev,
-					(block + count) * channel->block_size + data->offset);
-			if (ret)
-				goto err;
+		ret = fstat(ದತ್ತಾಂಶ->dev, &statbuf);
+		ಆದರೆ (ret)
+			ಹೋಗು err;
+		ಆದರೆ ((ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ) statbuf.st_ಗಾತ್ರ <
+			(ಖಂಡ + ಎಣಿಕೆ_2) * channel->ಖಂಡ_ಗಾತ್ರ + ದತ್ತಾಂಶ->ಸ್ಥಾನಾಂತರ) {
+			ret = ftruncate(ದತ್ತಾಂಶ->dev,
+					(ಖಂಡ + ಎಣಿಕೆ_2) * channel->ಖಂಡ_ಗಾತ್ರ + ದತ್ತಾಂಶ->ಸ್ಥಾನಾಂತರ);
+			ಆದರೆ (ret)
+				ಹೋಗು err;
 		}
 	}
 
-	if (channel->flags & CHANNEL_FLAGS_NOZEROOUT)
-		goto unimplemented;
+	ಆದರೆ (channel->flags & CHANNEL_FLAGS_NOZEROOUT)
+		ಹೋಗು unimplemented;
 
-	ret = __unix_zeroout(data->dev,
-			(off_t)(block) * channel->block_size + data->offset,
-			(off_t)(count) * channel->block_size);
+	ret = __unix_zeroout(ದತ್ತಾಂಶ->dev,
+			(off_t)(ಖಂಡ) * channel->ಖಂಡ_ಗಾತ್ರ + ದತ್ತಾಂಶ->ಸ್ಥಾನಾಂತರ,
+			(off_t)(ಎಣಿಕೆ_2) * channel->ಖಂಡ_ಗಾತ್ರ);
 err:
-	if (ret < 0) {
-		if (errno == EOPNOTSUPP) {
+	ಆದರೆ (ret < 0) {
+		ಆದರೆ (errno == EOPNOTSUPP) {
 			channel->flags |= CHANNEL_FLAGS_NOZEROOUT;
-			goto unimplemented;
+			ಹೋಗು unimplemented;
 		}
-		return errno;
+		ಹಿಂತಿರುಗಿ errno;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 unimplemented:
-	return EXT2_ET_UNIMPLEMENTED;
+	ಹಿಂತಿರುಗಿ EXT2_ET_UNIMPLEMENTED;
 }
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
-#endif
+#ಆದರೆ __GNUC_PREREQ (4, 6)
+#ಸೂಚನೆ GCC diagnostic ತೆಗೆ
+#ಆದರೆ_ಅಂತ್ಯ
 
-static struct struct_io_manager struct_unix_manager = {
+ಸ್ಥಿರ ರಚನೆ struct_io_manager struct_unix_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Unix I/O Manager",
 	.open		= unix_open,
 	.close		= unix_close,
-	.set_blksize	= unix_set_blksize,
+	.ಗಣ_blksize	= unix_ಗಣ_blksize,
 	.read_blk	= unix_read_blk,
 	.write_blk	= unix_write_blk,
 	.flush		= unix_flush,
 	.write_byte	= unix_write_byte,
-	.set_option	= unix_set_option,
+	.ಗಣ_option	= unix_ಗಣ_option,
 	.get_stats	= unix_get_stats,
 	.read_blk64	= unix_read_blk64,
 	.write_blk64	= unix_write_blk64,
@@ -1757,17 +1757,17 @@ static struct struct_io_manager struct_unix_manager = {
 
 io_manager unix_io_manager = &struct_unix_manager;
 
-static struct struct_io_manager struct_unixfd_manager = {
+ಸ್ಥಿರ ರಚನೆ struct_io_manager struct_unixfd_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Unix fd I/O Manager",
 	.open		= unixfd_open,
 	.close		= unix_close,
-	.set_blksize	= unix_set_blksize,
+	.ಗಣ_blksize	= unix_ಗಣ_blksize,
 	.read_blk	= unix_read_blk,
 	.write_blk	= unix_write_blk,
 	.flush		= unix_flush,
 	.write_byte	= unix_write_byte,
-	.set_option	= unix_set_option,
+	.ಗಣ_option	= unix_ಗಣ_option,
 	.get_stats	= unix_get_stats,
 	.read_blk64	= unix_read_blk64,
 	.write_blk64	= unix_write_blk64,

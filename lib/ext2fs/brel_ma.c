@@ -12,188 +12,188 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_ERRNO_H
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "brel.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "brel.h"
 
-static errcode_t bma_put(ext2_brel brel, blk64_t old,
-			struct ext2_block_relocate_entry *ent);
-static errcode_t bma_get(ext2_brel brel, blk64_t old,
-			struct ext2_block_relocate_entry *ent);
-static errcode_t bma_start_iter(ext2_brel brel);
-static errcode_t bma_next(ext2_brel brel, blk64_t *old,
-			 struct ext2_block_relocate_entry *ent);
-static errcode_t bma_move(ext2_brel brel, blk64_t old, blk64_t new);
-static errcode_t bma_delete(ext2_brel brel, blk64_t old);
-static errcode_t bma_free(ext2_brel brel);
+ಸ್ಥಿರ errcode_t bma_put(ext2_brel brel, blk64_t old,
+			ರಚನೆ ext2_ಖಂಡ_relocate_ನಮೂದು *ent);
+ಸ್ಥಿರ errcode_t bma_get(ext2_brel brel, blk64_t old,
+			ರಚನೆ ext2_ಖಂಡ_relocate_ನಮೂದು *ent);
+ಸ್ಥಿರ errcode_t bma_ಆರಂಭ_iter(ext2_brel brel);
+ಸ್ಥಿರ errcode_t bma_ಮುಂದಿನ(ext2_brel brel, blk64_t *old,
+			 ರಚನೆ ext2_ಖಂಡ_relocate_ನಮೂದು *ent);
+ಸ್ಥಿರ errcode_t bma_move(ext2_brel brel, blk64_t old, blk64_t new);
+ಸ್ಥಿರ errcode_t bma_delete(ext2_brel brel, blk64_t old);
+ಸ್ಥಿರ errcode_t bma_free(ext2_brel brel);
 
-struct brel_ma {
+ರಚನೆ brel_ma {
 	__u32 magic;
-	blk64_t max_block;
-	struct ext2_block_relocate_entry *entries;
+	blk64_t max_ಖಂಡ;
+	ರಚನೆ ext2_ಖಂಡ_relocate_ನಮೂದು *entries;
 };
 
-errcode_t ext2fs_brel_memarray_create(char *name, blk64_t max_block,
+errcode_t ext2fs_brel_memarray_create(ಅಕ್ಷರ *name, blk64_t max_ಖಂಡ,
 				      ext2_brel *new_brel)
 {
 	ext2_brel		brel = 0;
 	errcode_t	retval;
-	struct brel_ma 	*ma = 0;
-	size_t		size;
+	ರಚನೆ brel_ma 	*ma = 0;
+	size_t		ಗಾತ್ರ_2;
 
 	*new_brel = 0;
 
 	/*
 	 * Allocate memory structures
 	 */
-	retval = ext2fs_get_mem(sizeof(struct ext2_block_relocation_table),
+	retval = ext2fs_get_mem(ಗಾತ್ರ(ರಚನೆ ext2_ಖಂಡ_relocation_ಕೋಷ್ಟಕ),
 				&brel);
-	if (retval)
-		goto errout;
-	memset(brel, 0, sizeof(struct ext2_block_relocation_table));
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
+	memset(brel, 0, ಗಾತ್ರ(ರಚನೆ ext2_ಖಂಡ_relocation_ಕೋಷ್ಟಕ));
 
-	retval = ext2fs_get_mem(strlen(name)+1, &brel->name);
-	if (retval)
-		goto errout;
+	retval = ext2fs_get_mem(ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(name)+1, &brel->name);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
 	strcpy(brel->name, name);
 
-	retval = ext2fs_get_mem(sizeof(struct brel_ma), &ma);
-	if (retval)
-		goto errout;
-	memset(ma, 0, sizeof(struct brel_ma));
-	brel->priv_data = ma;
+	retval = ext2fs_get_mem(ಗಾತ್ರ(ರಚನೆ brel_ma), &ma);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
+	memset(ma, 0, ಗಾತ್ರ(ರಚನೆ brel_ma));
+	brel->priv_ದತ್ತಾಂಶ = ma;
 
-	size = (size_t) (sizeof(struct ext2_block_relocate_entry) *
-			 (max_block+1));
-	retval = ext2fs_get_array(max_block+1,
-		sizeof(struct ext2_block_relocate_entry), &ma->entries);
-	if (retval)
-		goto errout;
-	memset(ma->entries, 0, size);
-	ma->max_block = max_block;
+	ಗಾತ್ರ_2 = (size_t) (ಗಾತ್ರ(ರಚನೆ ext2_ಖಂಡ_relocate_ನಮೂದು) *
+			 (max_ಖಂಡ+1));
+	retval = ext2fs_get_array(max_ಖಂಡ+1,
+		ಗಾತ್ರ(ರಚನೆ ext2_ಖಂಡ_relocate_ನಮೂದು), &ma->entries);
+	ಆದರೆ (retval)
+		ಹೋಗು errout;
+	memset(ma->entries, 0, ಗಾತ್ರ_2);
+	ma->max_ಖಂಡ = max_ಖಂಡ;
 
 	/*
 	 * Fill in the brel data structure
 	 */
 	brel->put = bma_put;
 	brel->get = bma_get;
-	brel->start_iter = bma_start_iter;
-	brel->next = bma_next;
+	brel->ಆರಂಭ_iter = bma_ಆರಂಭ_iter;
+	brel->ಮುಂದಿನ = bma_ಮುಂದಿನ;
 	brel->move = bma_move;
 	brel->delete = bma_delete;
-	brel->free = bma_free;
+	brel->ಬಿಡುಗಡೆ = bma_free;
 
 	*new_brel = brel;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 
 errout:
 	bma_free(brel);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-static errcode_t bma_put(ext2_brel brel, blk64_t old,
-			struct ext2_block_relocate_entry *ent)
+ಸ್ಥಿರ errcode_t bma_put(ext2_brel brel, blk64_t old,
+			ರಚನೆ ext2_ಖಂಡ_relocate_ನಮೂದು *ent)
 {
-	struct brel_ma 	*ma;
+	ರಚನೆ brel_ma 	*ma;
 
-	ma = brel->priv_data;
-	if (old > ma->max_block)
-		return EXT2_ET_INVALID_ARGUMENT;
-	ma->entries[(unsigned)old] = *ent;
-	return 0;
+	ma = brel->priv_ದತ್ತಾಂಶ;
+	ಆದರೆ (old > ma->max_ಖಂಡ)
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
+	ma->entries[(ಚಿಹ್ನೆರಹಿತ)old] = *ent;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t bma_get(ext2_brel brel, blk64_t old,
-			struct ext2_block_relocate_entry *ent)
+ಸ್ಥಿರ errcode_t bma_get(ext2_brel brel, blk64_t old,
+			ರಚನೆ ext2_ಖಂಡ_relocate_ನಮೂದು *ent)
 {
-	struct brel_ma 	*ma;
+	ರಚನೆ brel_ma 	*ma;
 
-	ma = brel->priv_data;
-	if (old > ma->max_block)
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned)old].new == 0)
-		return ENOENT;
+	ma = brel->priv_ದತ್ತಾಂಶ;
+	ಆದರೆ (old > ma->max_ಖಂಡ)
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
+	ಆದರೆ (ma->entries[(ಚಿಹ್ನೆರಹಿತ)old].new == 0)
+		ಹಿಂತಿರುಗಿ ENOENT;
 	*ent = ma->entries[old];
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t bma_start_iter(ext2_brel brel)
+ಸ್ಥಿರ errcode_t bma_ಆರಂಭ_iter(ext2_brel brel)
 {
 	brel->current = 0;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t bma_next(ext2_brel brel, blk64_t *old,
-			  struct ext2_block_relocate_entry *ent)
+ಸ್ಥಿರ errcode_t bma_ಮುಂದಿನ(ext2_brel brel, blk64_t *old,
+			  ರಚನೆ ext2_ಖಂಡ_relocate_ನಮೂದು *ent)
 {
-	struct brel_ma 	*ma;
+	ರಚನೆ brel_ma 	*ma;
 
-	ma = brel->priv_data;
-	while (++brel->current < ma->max_block) {
-		if (ma->entries[(unsigned)brel->current].new == 0)
-			continue;
+	ma = brel->priv_ದತ್ತಾಂಶ;
+	ಆಗ (++brel->current < ma->max_ಖಂಡ) {
+		ಆದರೆ (ma->entries[(ಚಿಹ್ನೆರಹಿತ)brel->current].new == 0)
+			ಮುಂದುವರಿ;
 		*old = brel->current;
-		*ent = ma->entries[(unsigned)brel->current];
-		return 0;
+		*ent = ma->entries[(ಚಿಹ್ನೆರಹಿತ)brel->current];
+		ಹಿಂತಿರುಗಿ 0;
 	}
 	*old = 0;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t bma_move(ext2_brel brel, blk64_t old, blk64_t new)
+ಸ್ಥಿರ errcode_t bma_move(ext2_brel brel, blk64_t old, blk64_t new)
 {
-	struct brel_ma 	*ma;
+	ರಚನೆ brel_ma 	*ma;
 
-	ma = brel->priv_data;
-	if ((old > ma->max_block) || (new > ma->max_block))
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned)old].new == 0)
-		return ENOENT;
-	ma->entries[(unsigned)new] = ma->entries[old];
-	ma->entries[(unsigned)old].new = 0;
-	return 0;
+	ma = brel->priv_ದತ್ತಾಂಶ;
+	ಆದರೆ ((old > ma->max_ಖಂಡ) || (new > ma->max_ಖಂಡ))
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
+	ಆದರೆ (ma->entries[(ಚಿಹ್ನೆರಹಿತ)old].new == 0)
+		ಹಿಂತಿರುಗಿ ENOENT;
+	ma->entries[(ಚಿಹ್ನೆರಹಿತ)new] = ma->entries[old];
+	ma->entries[(ಚಿಹ್ನೆರಹಿತ)old].new = 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t bma_delete(ext2_brel brel, blk64_t old)
+ಸ್ಥಿರ errcode_t bma_delete(ext2_brel brel, blk64_t old)
 {
-	struct brel_ma 	*ma;
+	ರಚನೆ brel_ma 	*ma;
 
-	ma = brel->priv_data;
-	if (old > ma->max_block)
-		return EXT2_ET_INVALID_ARGUMENT;
-	if (ma->entries[(unsigned)old].new == 0)
-		return ENOENT;
-	ma->entries[(unsigned)old].new = 0;
-	return 0;
+	ma = brel->priv_ದತ್ತಾಂಶ;
+	ಆದರೆ (old > ma->max_ಖಂಡ)
+		ಹಿಂತಿರುಗಿ EXT2_ET_INVALID_ವಾದ;
+	ಆದರೆ (ma->entries[(ಚಿಹ್ನೆರಹಿತ)old].new == 0)
+		ಹಿಂತಿರುಗಿ ENOENT;
+	ma->entries[(ಚಿಹ್ನೆರಹಿತ)old].new = 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static errcode_t bma_free(ext2_brel brel)
+ಸ್ಥಿರ errcode_t bma_free(ext2_brel brel)
 {
-	struct brel_ma 	*ma;
+	ರಚನೆ brel_ma 	*ma;
 
-	if (!brel)
-		return 0;
+	ಆದರೆ (!brel)
+		ಹಿಂತಿರುಗಿ 0;
 
-	ma = brel->priv_data;
+	ma = brel->priv_ದತ್ತಾಂಶ;
 
-	if (ma) {
-		if (ma->entries)
+	ಆದರೆ (ma) {
+		ಆದರೆ (ma->entries)
 			ext2fs_free_mem(&ma->entries);
 		ext2fs_free_mem(&ma);
 	}
-	if (brel->name)
+	ಆದರೆ (brel->name)
 		ext2fs_free_mem(&brel->name);
 	ext2fs_free_mem(&brel);
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }

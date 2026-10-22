@@ -2,71 +2,71 @@
  * tst_libext2fs.c
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_ERRNO_H
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_SYS_STAT_H
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fsP.h"
 
-#include "ss/ss.h"
-#include "debugfs.h"
+#ಅನ್ತರ್ಭಾವ "ss/ss.h"
+#ಅನ್ತರ್ಭಾವ "debugfs.h"
 
 /*
  * Hook in new commands into debugfs
  * Override debugfs's prompt
  */
-const char *debug_prog_name = "tst_libext2fs";
-extern ss_request_table libext2fs_cmds;
-ss_request_table *extra_cmds = &libext2fs_cmds;
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *debug_prog_name = "tst_libext2fs";
+ಬಾಹ್ಯ ss_request_ಕೋಷ್ಟಕ libext2fs_cmds;
+ss_request_ಕೋಷ್ಟಕ *extra_cmds = &libext2fs_cmds;
 
-static int print_blocks_proc(ext2_filsys fs EXT2FS_ATTR((unused)),
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ print_ಖಂಡಗಳು_proc(ext2_filsys fs EXT2FS_ATTR((ಬಳಸದ)),
 			     blk64_t *blocknr, e2_blkcnt_t blockcnt,
-			     blk64_t ref_block, int ref_offset,
-			     void *private EXT2FS_ATTR((unused)))
+			     blk64_t ref_ಖಂಡ, ಪೂರ್ಣಾಂಕ ref_ಸ್ಥಾನಾಂತರ,
+			     ಶೂನ್ಯ *ಖಾಸಗಿ EXT2FS_ATTR((ಬಳಸದ)))
 {
-	printf("%6lld %8llu (%d %llu)\n", (long long) blockcnt,
-	       (unsigned long long) *blocknr, ref_offset,
-	       (unsigned long long) ref_block);
-	return 0;
+	ಬರೆ("%6lld %8llu (%d %llu)\n", (ದೀರ್ಘ ದೀರ್ಘ) blockcnt,
+	       (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ) *blocknr, ref_ಸ್ಥಾನಾಂತರ,
+	       (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ) ref_ಖಂಡ);
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 
-void do_block_iterate(int argc, char **argv, int sci_idx EXT2FS_ATTR((unused)),
-		      void *infop EXT2FS_ATTR((unused)))
+ಶೂನ್ಯ do_ಖಂಡ_iterate(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv, ಪೂರ್ಣಾಂಕ sci_idx EXT2FS_ATTR((ಬಳಸದ)),
+		      ಶೂನ್ಯ *infop EXT2FS_ATTR((ಬಳಸದ)))
 {
-	const char	*usage = "block_iterate <file> <flags";
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ	*usage = "block_iterate <file> <flags";
 	ext2_ino_t	ino;
-	int		err = 0;
-	int		flags = 0;
+	ಪೂರ್ಣಾಂಕ		err = 0;
+	ಪೂರ್ಣಾಂಕ		flags = 0;
 
-	if (common_args_process(argc, argv, 2, 3, argv[0], usage, 0))
-		return;
+	ಆದರೆ (common_ವಾದಗಳು_process(argc, argv, 2, 3, argv[0], usage, 0))
+		ಹಿಂತಿರುಗಿ;
 
-	ino = string_to_inode(argv[1]);
-	if (!ino)
-		return;
+	ino = string_ಗಮ್ಯ_inode(argv[1]);
+	ಆದರೆ (!ino)
+		ಹಿಂತಿರುಗಿ;
 
-	if (argc > 2) {
+	ಆದರೆ (argc > 2) {
 		flags = parse_ulong(argv[2], argv[0], "flags", &err);
-		if (err)
-			return;
+		ಆದರೆ (err)
+			ಹಿಂತಿರುಗಿ;
 	}
-	flags |= BLOCK_FLAG_READ_ONLY;
+	flags |= ಖಂಡ_FLAG_READ_ONLY;
 
-	ext2fs_block_iterate3(current_fs, ino, flags, NULL,
-			      print_blocks_proc, NULL);
+	ext2fs_ಖಂಡ_iterate3(current_fs, ino, flags, ಖಾಲಿ,
+			      print_ಖಂಡಗಳು_proc, ಖಾಲಿ);
 	putc('\n', stdout);
 }

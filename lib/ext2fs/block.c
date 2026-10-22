@@ -9,370 +9,370 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
-struct block_context {
+ರಚನೆ ಖಂಡ_context {
 	ext2_filsys	fs;
-	int (*func)(ext2_filsys	fs,
+	ಪೂರ್ಣಾಂಕ (*func)(ext2_filsys	fs,
 		    blk64_t	*blocknr,
 		    e2_blkcnt_t	bcount,
 		    blk64_t	ref_blk,
-		    int		ref_offset,
-		    void	*priv_data);
+		    ಪೂರ್ಣಾಂಕ		ref_ಸ್ಥಾನಾಂತರ,
+		    ಶೂನ್ಯ	*priv_ದತ್ತಾಂಶ);
 	e2_blkcnt_t	bcount;
-	int		bsize;
-	int		flags;
+	ಪೂರ್ಣಾಂಕ		bsize;
+	ಪೂರ್ಣಾಂಕ		flags;
 	errcode_t	errcode;
-	char	*ind_buf;
-	char	*dind_buf;
-	char	*tind_buf;
-	void	*priv_data;
+	ಅಕ್ಷರ	*ind_buf;
+	ಅಕ್ಷರ	*dind_buf;
+	ಅಕ್ಷರ	*tind_buf;
+	ಶೂನ್ಯ	*priv_ದತ್ತಾಂಶ;
 };
 
-#define check_for_ro_violation_return(ctx, ret)				\
-	do {								\
-		if (((ctx)->flags & BLOCK_FLAG_READ_ONLY) &&		\
-		    ((ret) & BLOCK_CHANGED)) {				\
-			(ctx)->errcode = EXT2_ET_RO_BLOCK_ITERATE;	\
-			ret |= BLOCK_ABORT | BLOCK_ERROR;		\
-			return ret;					\
+#ವ್ಯಾಖ್ಯಾನಿಸು check_for_ro_violation_return(ctx, ret)				\
+	ಮಾಡು {								\
+		ಆದರೆ (((ctx)->flags & ಖಂಡ_FLAG_READ_ONLY) &&		\
+		    ((ret) & ಖಂಡ_ಬದಲಾಯಿತು)) {				\
+			(ctx)->errcode = EXT2_ET_RO_ಖಂಡ_ITERATE;	\
+			ret |= ಖಂಡ_ABORT | ಖಂಡ_ERROR;		\
+			ಹಿಂತಿರುಗಿ ret;					\
 		}							\
-	} while (0)
+	} ಆಗ (0)
 
-#define check_for_ro_violation_goto(ctx, ret, label)			\
-	do {								\
-		if (((ctx)->flags & BLOCK_FLAG_READ_ONLY) &&		\
-		    ((ret) & BLOCK_CHANGED)) {				\
-			(ctx)->errcode = EXT2_ET_RO_BLOCK_ITERATE;	\
-			ret |= BLOCK_ABORT | BLOCK_ERROR;		\
-			goto label;					\
+#ವ್ಯಾಖ್ಯಾನಿಸು check_for_ro_violation_goto(ctx, ret, label)			\
+	ಮಾಡು {								\
+		ಆದರೆ (((ctx)->flags & ಖಂಡ_FLAG_READ_ONLY) &&		\
+		    ((ret) & ಖಂಡ_ಬದಲಾಯಿತು)) {				\
+			(ctx)->errcode = EXT2_ET_RO_ಖಂಡ_ITERATE;	\
+			ret |= ಖಂಡ_ABORT | ಖಂಡ_ERROR;		\
+			ಹೋಗು label;					\
 		}							\
-	} while (0)
+	} ಆಗ (0)
 
-static int block_iterate_ind(blk_t *ind_block, blk_t ref_block,
-			     int ref_offset, struct block_context *ctx)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ ಖಂಡ_iterate_ind(blk_t *ind_ಖಂಡ, blk_t ref_ಖಂಡ,
+			     ಪೂರ್ಣಾಂಕ ref_ಸ್ಥಾನಾಂತರ, ರಚನೆ ಖಂಡ_context *ctx)
 {
-	int	ret = 0, changed = 0;
-	int	i, flags, limit, offset;
-	blk_t	*block_nr;
+	ಪೂರ್ಣಾಂಕ	ret = 0, ಬದಲಾಯಿತು = 0;
+	ಪೂರ್ಣಾಂಕ	i, flags, ಎಲ್ಲೆ, ಸ್ಥಾನಾಂತರ;
+	blk_t	*ಖಂಡ_nr;
 	blk64_t	blk64;
 
-	limit = ctx->fs->blocksize >> 2;
-	if (!(ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
-	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY)) {
-		blk64 = *ind_block;
+	ಎಲ್ಲೆ = ctx->fs->blocksize >> 2;
+	ಆದರೆ (!(ctx->flags & ಖಂಡ_FLAG_ಆಳ_TRAVERSE) &&
+	    !(ctx->flags & ಖಂಡ_FLAG_ದತ್ತಾಂಶ_ONLY)) {
+		blk64 = *ind_ಖಂಡ;
 		ret = (*ctx->func)(ctx->fs, &blk64,
-				   BLOCK_COUNT_IND, ref_block,
-				   ref_offset, ctx->priv_data);
-		*ind_block = blk64;
+				   ಖಂಡ_ಎಣಿಕೆ_IND, ref_ಖಂಡ,
+				   ref_ಸ್ಥಾನಾಂತರ, ctx->priv_ದತ್ತಾಂಶ);
+		*ind_ಖಂಡ = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	if (!*ind_block || (ret & BLOCK_ABORT)) {
-		ctx->bcount += limit;
-		return ret;
+	ಆದರೆ (!*ind_ಖಂಡ || (ret & ಖಂಡ_ABORT)) {
+		ctx->bcount += ಎಲ್ಲೆ;
+		ಹಿಂತಿರುಗಿ ret;
 	}
-	if (*ind_block >= ext2fs_blocks_count(ctx->fs->super) ||
-	    *ind_block < ctx->fs->super->s_first_data_block) {
-		ctx->errcode = EXT2_ET_BAD_IND_BLOCK;
-		ret |= BLOCK_ERROR;
-		return ret;
+	ಆದರೆ (*ind_ಖಂಡ >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(ctx->fs->super) ||
+	    *ind_ಖಂಡ < ctx->fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ) {
+		ctx->errcode = EXT2_ET_BAD_IND_ಖಂಡ;
+		ret |= ಖಂಡ_ERROR;
+		ಹಿಂತಿರುಗಿ ret;
 	}
-	ctx->errcode = ext2fs_read_ind_block(ctx->fs, *ind_block,
+	ctx->errcode = ext2fs_read_ind_ಖಂಡ(ctx->fs, *ind_ಖಂಡ,
 					     ctx->ind_buf);
-	if (ctx->errcode) {
-		ret |= BLOCK_ERROR;
-		return ret;
+	ಆದರೆ (ctx->errcode) {
+		ret |= ಖಂಡ_ERROR;
+		ಹಿಂತಿರುಗಿ ret;
 	}
 
-	block_nr = (blk_t *) ctx->ind_buf;
-	offset = 0;
-	if (ctx->flags & BLOCK_FLAG_APPEND) {
-		for (i = 0; i < limit; i++, ctx->bcount++, block_nr++) {
-			blk64 = *block_nr;
+	ಖಂಡ_nr = (blk_t *) ctx->ind_buf;
+	ಸ್ಥಾನಾಂತರ = 0;
+	ಆದರೆ (ctx->flags & ಖಂಡ_FLAG_APPEND) {
+		ಗಾಗಿ (i = 0; i < ಎಲ್ಲೆ; i++, ctx->bcount++, ಖಂಡ_nr++) {
+			blk64 = *ಖಂಡ_nr;
 			flags = (*ctx->func)(ctx->fs, &blk64, ctx->bcount,
-					     *ind_block, offset,
-					     ctx->priv_data);
-			*block_nr = blk64;
-			changed	|= flags;
-			if (flags & BLOCK_ABORT) {
-				ret |= BLOCK_ABORT;
-				break;
+					     *ind_ಖಂಡ, ಸ್ಥಾನಾಂತರ,
+					     ctx->priv_ದತ್ತಾಂಶ);
+			*ಖಂಡ_nr = blk64;
+			ಬದಲಾಯಿತು	|= flags;
+			ಆದರೆ (flags & ಖಂಡ_ABORT) {
+				ret |= ಖಂಡ_ABORT;
+				ನಿಲ್ಲಿಸು;
 			}
-			offset += sizeof(blk_t);
+			ಸ್ಥಾನಾಂತರ += ಗಾತ್ರ(blk_t);
 		}
-	} else {
-		for (i = 0; i < limit; i++, ctx->bcount++, block_nr++) {
-			if (*block_nr == 0)
-				goto skip_sparse;
-			blk64 = *block_nr;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಗಾಗಿ (i = 0; i < ಎಲ್ಲೆ; i++, ctx->bcount++, ಖಂಡ_nr++) {
+			ಆದರೆ (*ಖಂಡ_nr == 0)
+				ಹೋಗು skip_sparse;
+			blk64 = *ಖಂಡ_nr;
 			flags = (*ctx->func)(ctx->fs, &blk64, ctx->bcount,
-					     *ind_block, offset,
-					     ctx->priv_data);
-			*block_nr = blk64;
-			changed	|= flags;
-			if (flags & BLOCK_ABORT) {
-				ret |= BLOCK_ABORT;
-				break;
+					     *ind_ಖಂಡ, ಸ್ಥಾನಾಂತರ,
+					     ctx->priv_ದತ್ತಾಂಶ);
+			*ಖಂಡ_nr = blk64;
+			ಬದಲಾಯಿತು	|= flags;
+			ಆದರೆ (flags & ಖಂಡ_ABORT) {
+				ret |= ಖಂಡ_ABORT;
+				ನಿಲ್ಲಿಸು;
 			}
 		skip_sparse:
-			offset += sizeof(blk_t);
+			ಸ್ಥಾನಾಂತರ += ಗಾತ್ರ(blk_t);
 		}
 	}
-	check_for_ro_violation_return(ctx, changed);
-	if (changed & BLOCK_CHANGED) {
-		ctx->errcode = ext2fs_write_ind_block(ctx->fs, *ind_block,
+	check_for_ro_violation_return(ctx, ಬದಲಾಯಿತು);
+	ಆದರೆ (ಬದಲಾಯಿತು & ಖಂಡ_ಬದಲಾಯಿತು) {
+		ctx->errcode = ext2fs_write_ind_ಖಂಡ(ctx->fs, *ind_ಖಂಡ,
 						      ctx->ind_buf);
-		if (ctx->errcode)
-			ret |= BLOCK_ERROR | BLOCK_ABORT;
+		ಆದರೆ (ctx->errcode)
+			ret |= ಖಂಡ_ERROR | ಖಂಡ_ABORT;
 	}
-	if ((ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
-	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY) &&
-	    !(ret & BLOCK_ABORT)) {
-		blk64 = *ind_block;
+	ಆದರೆ ((ctx->flags & ಖಂಡ_FLAG_ಆಳ_TRAVERSE) &&
+	    !(ctx->flags & ಖಂಡ_FLAG_ದತ್ತಾಂಶ_ONLY) &&
+	    !(ret & ಖಂಡ_ABORT)) {
+		blk64 = *ind_ಖಂಡ;
 		ret |= (*ctx->func)(ctx->fs, &blk64,
-				    BLOCK_COUNT_IND, ref_block,
-				    ref_offset, ctx->priv_data);
-		*ind_block = blk64;
+				    ಖಂಡ_ಎಣಿಕೆ_IND, ref_ಖಂಡ,
+				    ref_ಸ್ಥಾನಾಂತರ, ctx->priv_ದತ್ತಾಂಶ);
+		*ind_ಖಂಡ = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-static int block_iterate_dind(blk_t *dind_block, blk_t ref_block,
-			      int ref_offset, struct block_context *ctx)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ ಖಂಡ_iterate_dind(blk_t *dind_ಖಂಡ, blk_t ref_ಖಂಡ,
+			      ಪೂರ್ಣಾಂಕ ref_ಸ್ಥಾನಾಂತರ, ರಚನೆ ಖಂಡ_context *ctx)
 {
-	int	ret = 0, changed = 0;
-	int	i, flags, limit, offset;
-	blk_t	*block_nr;
+	ಪೂರ್ಣಾಂಕ	ret = 0, ಬದಲಾಯಿತು = 0;
+	ಪೂರ್ಣಾಂಕ	i, flags, ಎಲ್ಲೆ, ಸ್ಥಾನಾಂತರ;
+	blk_t	*ಖಂಡ_nr;
 	blk64_t	blk64;
 
-	limit = ctx->fs->blocksize >> 2;
-	if (!(ctx->flags & (BLOCK_FLAG_DEPTH_TRAVERSE |
-			    BLOCK_FLAG_DATA_ONLY))) {
-		blk64 = *dind_block;
+	ಎಲ್ಲೆ = ctx->fs->blocksize >> 2;
+	ಆದರೆ (!(ctx->flags & (ಖಂಡ_FLAG_ಆಳ_TRAVERSE |
+			    ಖಂಡ_FLAG_ದತ್ತಾಂಶ_ONLY))) {
+		blk64 = *dind_ಖಂಡ;
 		ret = (*ctx->func)(ctx->fs, &blk64,
-				   BLOCK_COUNT_DIND, ref_block,
-				   ref_offset, ctx->priv_data);
-		*dind_block = blk64;
+				   ಖಂಡ_ಎಣಿಕೆ_DIND, ref_ಖಂಡ,
+				   ref_ಸ್ಥಾನಾಂತರ, ctx->priv_ದತ್ತಾಂಶ);
+		*dind_ಖಂಡ = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	if (!*dind_block || (ret & BLOCK_ABORT)) {
-		ctx->bcount += limit*limit;
-		return ret;
+	ಆದರೆ (!*dind_ಖಂಡ || (ret & ಖಂಡ_ABORT)) {
+		ctx->bcount += ಎಲ್ಲೆ*ಎಲ್ಲೆ;
+		ಹಿಂತಿರುಗಿ ret;
 	}
-	if (*dind_block >= ext2fs_blocks_count(ctx->fs->super) ||
-	    *dind_block < ctx->fs->super->s_first_data_block) {
-		ctx->errcode = EXT2_ET_BAD_DIND_BLOCK;
-		ret |= BLOCK_ERROR;
-		return ret;
+	ಆದರೆ (*dind_ಖಂಡ >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(ctx->fs->super) ||
+	    *dind_ಖಂಡ < ctx->fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ) {
+		ctx->errcode = EXT2_ET_BAD_DIND_ಖಂಡ;
+		ret |= ಖಂಡ_ERROR;
+		ಹಿಂತಿರುಗಿ ret;
 	}
-	ctx->errcode = ext2fs_read_ind_block(ctx->fs, *dind_block,
+	ctx->errcode = ext2fs_read_ind_ಖಂಡ(ctx->fs, *dind_ಖಂಡ,
 					     ctx->dind_buf);
-	if (ctx->errcode) {
-		ret |= BLOCK_ERROR;
-		return ret;
+	ಆದರೆ (ctx->errcode) {
+		ret |= ಖಂಡ_ERROR;
+		ಹಿಂತಿರುಗಿ ret;
 	}
 
-	block_nr = (blk_t *) ctx->dind_buf;
-	offset = 0;
-	if (ctx->flags & BLOCK_FLAG_APPEND) {
-		for (i = 0; i < limit; i++, block_nr++) {
-			flags = block_iterate_ind(block_nr,
-						  *dind_block, offset,
+	ಖಂಡ_nr = (blk_t *) ctx->dind_buf;
+	ಸ್ಥಾನಾಂತರ = 0;
+	ಆದರೆ (ctx->flags & ಖಂಡ_FLAG_APPEND) {
+		ಗಾಗಿ (i = 0; i < ಎಲ್ಲೆ; i++, ಖಂಡ_nr++) {
+			flags = ಖಂಡ_iterate_ind(ಖಂಡ_nr,
+						  *dind_ಖಂಡ, ಸ್ಥಾನಾಂತರ,
 						  ctx);
-			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
-				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+			ಬದಲಾಯಿತು |= flags;
+			ಆದರೆ (flags & (ಖಂಡ_ABORT | ಖಂಡ_ERROR)) {
+				ret |= flags & (ಖಂಡ_ABORT | ಖಂಡ_ERROR);
+				ನಿಲ್ಲಿಸು;
 			}
-			offset += sizeof(blk_t);
+			ಸ್ಥಾನಾಂತರ += ಗಾತ್ರ(blk_t);
 		}
-	} else {
-		for (i = 0; i < limit; i++, block_nr++) {
-			if (*block_nr == 0) {
-				ctx->bcount += limit;
-				continue;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಗಾಗಿ (i = 0; i < ಎಲ್ಲೆ; i++, ಖಂಡ_nr++) {
+			ಆದರೆ (*ಖಂಡ_nr == 0) {
+				ctx->bcount += ಎಲ್ಲೆ;
+				ಮುಂದುವರಿ;
 			}
-			flags = block_iterate_ind(block_nr,
-						  *dind_block, offset,
+			flags = ಖಂಡ_iterate_ind(ಖಂಡ_nr,
+						  *dind_ಖಂಡ, ಸ್ಥಾನಾಂತರ,
 						  ctx);
-			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
-				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+			ಬದಲಾಯಿತು |= flags;
+			ಆದರೆ (flags & (ಖಂಡ_ABORT | ಖಂಡ_ERROR)) {
+				ret |= flags & (ಖಂಡ_ABORT | ಖಂಡ_ERROR);
+				ನಿಲ್ಲಿಸು;
 			}
-			offset += sizeof(blk_t);
+			ಸ್ಥಾನಾಂತರ += ಗಾತ್ರ(blk_t);
 		}
 	}
-	check_for_ro_violation_return(ctx, changed);
-	if (changed & BLOCK_CHANGED) {
-		ctx->errcode = ext2fs_write_ind_block(ctx->fs, *dind_block,
+	check_for_ro_violation_return(ctx, ಬದಲಾಯಿತು);
+	ಆದರೆ (ಬದಲಾಯಿತು & ಖಂಡ_ಬದಲಾಯಿತು) {
+		ctx->errcode = ext2fs_write_ind_ಖಂಡ(ctx->fs, *dind_ಖಂಡ,
 						      ctx->dind_buf);
-		if (ctx->errcode)
-			ret |= BLOCK_ERROR | BLOCK_ABORT;
+		ಆದರೆ (ctx->errcode)
+			ret |= ಖಂಡ_ERROR | ಖಂಡ_ABORT;
 	}
-	if ((ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
-	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY) &&
-	    !(ret & BLOCK_ABORT)) {
-		blk64 = *dind_block;
+	ಆದರೆ ((ctx->flags & ಖಂಡ_FLAG_ಆಳ_TRAVERSE) &&
+	    !(ctx->flags & ಖಂಡ_FLAG_ದತ್ತಾಂಶ_ONLY) &&
+	    !(ret & ಖಂಡ_ABORT)) {
+		blk64 = *dind_ಖಂಡ;
 		ret |= (*ctx->func)(ctx->fs, &blk64,
-				    BLOCK_COUNT_DIND, ref_block,
-				    ref_offset, ctx->priv_data);
-		*dind_block = blk64;
+				    ಖಂಡ_ಎಣಿಕೆ_DIND, ref_ಖಂಡ,
+				    ref_ಸ್ಥಾನಾಂತರ, ctx->priv_ದತ್ತಾಂಶ);
+		*dind_ಖಂಡ = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-static int block_iterate_tind(blk_t *tind_block, blk_t ref_block,
-			      int ref_offset, struct block_context *ctx)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ ಖಂಡ_iterate_tind(blk_t *tind_ಖಂಡ, blk_t ref_ಖಂಡ,
+			      ಪೂರ್ಣಾಂಕ ref_ಸ್ಥಾನಾಂತರ, ರಚನೆ ಖಂಡ_context *ctx)
 {
-	int	ret = 0, changed = 0;
-	int	i, flags, limit, offset;
-	blk_t	*block_nr;
+	ಪೂರ್ಣಾಂಕ	ret = 0, ಬದಲಾಯಿತು = 0;
+	ಪೂರ್ಣಾಂಕ	i, flags, ಎಲ್ಲೆ, ಸ್ಥಾನಾಂತರ;
+	blk_t	*ಖಂಡ_nr;
 	blk64_t	blk64;
 
-	limit = ctx->fs->blocksize >> 2;
-	if (!(ctx->flags & (BLOCK_FLAG_DEPTH_TRAVERSE |
-			    BLOCK_FLAG_DATA_ONLY))) {
-		blk64 = *tind_block;
+	ಎಲ್ಲೆ = ctx->fs->blocksize >> 2;
+	ಆದರೆ (!(ctx->flags & (ಖಂಡ_FLAG_ಆಳ_TRAVERSE |
+			    ಖಂಡ_FLAG_ದತ್ತಾಂಶ_ONLY))) {
+		blk64 = *tind_ಖಂಡ;
 		ret = (*ctx->func)(ctx->fs, &blk64,
-				   BLOCK_COUNT_TIND, ref_block,
-				   ref_offset, ctx->priv_data);
-		*tind_block = blk64;
+				   ಖಂಡ_ಎಣಿಕೆ_TIND, ref_ಖಂಡ,
+				   ref_ಸ್ಥಾನಾಂತರ, ctx->priv_ದತ್ತಾಂಶ);
+		*tind_ಖಂಡ = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	if (!*tind_block || (ret & BLOCK_ABORT)) {
-		ctx->bcount += ((unsigned long long) limit)*limit*limit;
-		return ret;
+	ಆದರೆ (!*tind_ಖಂಡ || (ret & ಖಂಡ_ABORT)) {
+		ctx->bcount += ((ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ) ಎಲ್ಲೆ)*ಎಲ್ಲೆ*ಎಲ್ಲೆ;
+		ಹಿಂತಿರುಗಿ ret;
 	}
-	if (*tind_block >= ext2fs_blocks_count(ctx->fs->super) ||
-	    *tind_block < ctx->fs->super->s_first_data_block) {
-		ctx->errcode = EXT2_ET_BAD_TIND_BLOCK;
-		ret |= BLOCK_ERROR;
-		return ret;
+	ಆದರೆ (*tind_ಖಂಡ >= ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(ctx->fs->super) ||
+	    *tind_ಖಂಡ < ctx->fs->super->s_ಮೊದಲ_ದತ್ತಾಂಶ_ಖಂಡ) {
+		ctx->errcode = EXT2_ET_BAD_TIND_ಖಂಡ;
+		ret |= ಖಂಡ_ERROR;
+		ಹಿಂತಿರುಗಿ ret;
 	}
-	ctx->errcode = ext2fs_read_ind_block(ctx->fs, *tind_block,
+	ctx->errcode = ext2fs_read_ind_ಖಂಡ(ctx->fs, *tind_ಖಂಡ,
 					     ctx->tind_buf);
-	if (ctx->errcode) {
-		ret |= BLOCK_ERROR;
-		return ret;
+	ಆದರೆ (ctx->errcode) {
+		ret |= ಖಂಡ_ERROR;
+		ಹಿಂತಿರುಗಿ ret;
 	}
 
-	block_nr = (blk_t *) ctx->tind_buf;
-	offset = 0;
-	if (ctx->flags & BLOCK_FLAG_APPEND) {
-		for (i = 0; i < limit; i++, block_nr++) {
-			flags = block_iterate_dind(block_nr,
-						   *tind_block,
-						   offset, ctx);
-			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
-				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+	ಖಂಡ_nr = (blk_t *) ctx->tind_buf;
+	ಸ್ಥಾನಾಂತರ = 0;
+	ಆದರೆ (ctx->flags & ಖಂಡ_FLAG_APPEND) {
+		ಗಾಗಿ (i = 0; i < ಎಲ್ಲೆ; i++, ಖಂಡ_nr++) {
+			flags = ಖಂಡ_iterate_dind(ಖಂಡ_nr,
+						   *tind_ಖಂಡ,
+						   ಸ್ಥಾನಾಂತರ, ctx);
+			ಬದಲಾಯಿತು |= flags;
+			ಆದರೆ (flags & (ಖಂಡ_ABORT | ಖಂಡ_ERROR)) {
+				ret |= flags & (ಖಂಡ_ABORT | ಖಂಡ_ERROR);
+				ನಿಲ್ಲಿಸು;
 			}
-			offset += sizeof(blk_t);
+			ಸ್ಥಾನಾಂತರ += ಗಾತ್ರ(blk_t);
 		}
-	} else {
-		for (i = 0; i < limit; i++, block_nr++) {
-			if (*block_nr == 0) {
-				ctx->bcount += limit*limit;
-				continue;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಗಾಗಿ (i = 0; i < ಎಲ್ಲೆ; i++, ಖಂಡ_nr++) {
+			ಆದರೆ (*ಖಂಡ_nr == 0) {
+				ctx->bcount += ಎಲ್ಲೆ*ಎಲ್ಲೆ;
+				ಮುಂದುವರಿ;
 			}
-			flags = block_iterate_dind(block_nr,
-						   *tind_block,
-						   offset, ctx);
-			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
-				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+			flags = ಖಂಡ_iterate_dind(ಖಂಡ_nr,
+						   *tind_ಖಂಡ,
+						   ಸ್ಥಾನಾಂತರ, ctx);
+			ಬದಲಾಯಿತು |= flags;
+			ಆದರೆ (flags & (ಖಂಡ_ABORT | ಖಂಡ_ERROR)) {
+				ret |= flags & (ಖಂಡ_ABORT | ಖಂಡ_ERROR);
+				ನಿಲ್ಲಿಸು;
 			}
-			offset += sizeof(blk_t);
+			ಸ್ಥಾನಾಂತರ += ಗಾತ್ರ(blk_t);
 		}
 	}
-	check_for_ro_violation_return(ctx, changed);
-	if (changed & BLOCK_CHANGED) {
-		ctx->errcode = ext2fs_write_ind_block(ctx->fs, *tind_block,
+	check_for_ro_violation_return(ctx, ಬದಲಾಯಿತು);
+	ಆದರೆ (ಬದಲಾಯಿತು & ಖಂಡ_ಬದಲಾಯಿತು) {
+		ctx->errcode = ext2fs_write_ind_ಖಂಡ(ctx->fs, *tind_ಖಂಡ,
 						      ctx->tind_buf);
-		if (ctx->errcode)
-			ret |= BLOCK_ERROR | BLOCK_ABORT;
+		ಆದರೆ (ctx->errcode)
+			ret |= ಖಂಡ_ERROR | ಖಂಡ_ABORT;
 	}
-	if ((ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
-	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY) &&
-	    !(ret & BLOCK_ABORT)) {
-		blk64 = *tind_block;
+	ಆದರೆ ((ctx->flags & ಖಂಡ_FLAG_ಆಳ_TRAVERSE) &&
+	    !(ctx->flags & ಖಂಡ_FLAG_ದತ್ತಾಂಶ_ONLY) &&
+	    !(ret & ಖಂಡ_ABORT)) {
+		blk64 = *tind_ಖಂಡ;
 		ret |= (*ctx->func)(ctx->fs, &blk64,
-				    BLOCK_COUNT_TIND, ref_block,
-				    ref_offset, ctx->priv_data);
-		*tind_block = blk64;
+				    ಖಂಡ_ಎಣಿಕೆ_TIND, ref_ಖಂಡ,
+				    ref_ಸ್ಥಾನಾಂತರ, ctx->priv_ದತ್ತಾಂಶ);
+		*tind_ಖಂಡ = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-errcode_t ext2fs_block_iterate3(ext2_filsys fs,
+errcode_t ext2fs_ಖಂಡ_iterate3(ext2_filsys fs,
 				ext2_ino_t ino,
-				int	flags,
-				char *block_buf,
-				int (*func)(ext2_filsys fs,
+				ಪೂರ್ಣಾಂಕ	flags,
+				ಅಕ್ಷರ *ಖಂಡ_buf,
+				ಪೂರ್ಣಾಂಕ (*func)(ext2_filsys fs,
 					    blk64_t	*blocknr,
 					    e2_blkcnt_t	blockcnt,
 					    blk64_t	ref_blk,
-					    int		ref_offset,
-					    void	*priv_data),
-				void *priv_data)
+					    ಪೂರ್ಣಾಂಕ		ref_ಸ್ಥಾನಾಂತರ,
+					    ಶೂನ್ಯ	*priv_ದತ್ತಾಂಶ),
+				ಶೂನ್ಯ *priv_ದತ್ತಾಂಶ)
 {
-	int	i;
-	int	r, ret = 0;
-	struct ext2_inode inode;
+	ಪೂರ್ಣಾಂಕ	i;
+	ಪೂರ್ಣಾಂಕ	r, ret = 0;
+	ರಚನೆ ext2_inode inode;
 	errcode_t	retval;
-	struct block_context ctx;
-	int	limit;
+	ರಚನೆ ಖಂಡ_context ctx;
+	ಪೂರ್ಣಾಂಕ	ಎಲ್ಲೆ;
 	blk64_t	blk64;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	ctx.errcode = ext2fs_read_inode(fs, ino, &inode);
-	if (ctx.errcode)
-		return ctx.errcode;
+	ಆದರೆ (ctx.errcode)
+		ಹಿಂತಿರುಗಿ ctx.errcode;
 
 	/*
 	 * An inode with inline data has no blocks over which to
 	 * iterate, so return an error code indicating this fact.
 	 */
-	if (inode.i_flags & EXT4_INLINE_DATA_FL)
-		return EXT2_ET_INLINE_DATA_CANT_ITERATE;
+	ಆದರೆ (inode.i_flags & EXT4_INLINE_ದತ್ತಾಂಶ_FL)
+		ಹಿಂತಿರುಗಿ EXT2_ET_INLINE_ದತ್ತಾಂಶ_CANT_ITERATE;
 
 	/*
 	 * Check to see if we need to limit large files
 	 */
-	if (flags & BLOCK_FLAG_NO_LARGE) {
-		if (!LINUX_S_ISDIR(inode.i_mode) &&
-		    (inode.i_size_high != 0))
-			return EXT2_ET_FILE_TOO_BIG;
+	ಆದರೆ (flags & ಖಂಡ_FLAG_NO_LARGE) {
+		ಆದರೆ (!LINUX_S_ISDIR(inode.i_ಬಹುಲಕ) &&
+		    (inode.i_ಗಾತ್ರ_ಮೇಲಿನ != 0))
+			ಹಿಂತಿರುಗಿ EXT2_ET_FILE_TOO_BIG;
 	}
 
-	limit = fs->blocksize >> 2;
+	ಎಲ್ಲೆ = fs->blocksize >> 2;
 
 	ctx.fs = fs;
 	ctx.func = func;
-	ctx.priv_data = priv_data;
+	ctx.priv_ದತ್ತಾಂಶ = priv_ದತ್ತಾಂಶ;
 	ctx.flags = flags;
 	ctx.bcount = 0;
-	if (block_buf) {
-		ctx.ind_buf = block_buf;
-	} else {
+	ಆದರೆ (ಖಂಡ_buf) {
+		ctx.ind_buf = ಖಂಡ_buf;
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		retval = ext2fs_get_array(3, fs->blocksize, &ctx.ind_buf);
-		if (retval)
-			return retval;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 	}
 	ctx.dind_buf = ctx.ind_buf + fs->blocksize;
 	ctx.tind_buf = ctx.dind_buf + fs->blocksize;
@@ -380,280 +380,280 @@ errcode_t ext2fs_block_iterate3(ext2_filsys fs,
 	/*
 	 * Iterate over the HURD translator block (if present)
 	 */
-	if ((fs->super->s_creator_os == EXT2_OS_HURD) &&
-	    !(flags & BLOCK_FLAG_DATA_ONLY)) {
-		if (inode.osd1.hurd1.h_i_translator) {
+	ಆದರೆ ((fs->super->s_creator_os == EXT2_OS_HURD) &&
+	    !(flags & ಖಂಡ_FLAG_ದತ್ತಾಂಶ_ONLY)) {
+		ಆದರೆ (inode.osd1.hurd1.h_i_translator) {
 			blk64 = inode.osd1.hurd1.h_i_translator;
 			ret |= (*ctx.func)(fs, &blk64,
-					   BLOCK_COUNT_TRANSLATOR,
-					   0, 0, priv_data);
+					   ಖಂಡ_ಎಣಿಕೆ_TRANSLATOR,
+					   0, 0, priv_ದತ್ತಾಂಶ);
 			inode.osd1.hurd1.h_i_translator = (blk_t) blk64;
-			if (ret & BLOCK_ABORT)
-				goto abort_exit;
+			ಆದರೆ (ret & ಖಂಡ_ABORT)
+				ಹೋಗು abort_exit;
 			check_for_ro_violation_goto(&ctx, ret, abort_exit);
 		}
 	}
 
-	if (inode.i_flags & EXT4_EXTENTS_FL) {
+	ಆದರೆ (inode.i_flags & EXT4_EXTENTS_FL) {
 		ext2_extent_handle_t	handle;
-		struct ext2fs_extent	extent, next;
+		ರಚನೆ ext2fs_extent	extent, ಮುಂದಿನ;
 		e2_blkcnt_t		blockcnt = 0;
 		blk64_t			blk, new_blk;
-		int			op = EXT2_EXTENT_ROOT;
-		int			uninit;
-		unsigned int		j;
+		ಪೂರ್ಣಾಂಕ			op = EXT2_EXTENT_ಬೇರು;
+		ಪೂರ್ಣಾಂಕ			uninit;
+		ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ		j;
 
 		ctx.errcode = ext2fs_extent_open2(fs, ino, &inode, &handle);
-		if (ctx.errcode)
-			goto abort_exit;
+		ಆದರೆ (ctx.errcode)
+			ಹೋಗು abort_exit;
 
-		while (1) {
-			if (op == EXT2_EXTENT_CURRENT)
+		ಆಗ (1) {
+			ಆದರೆ (op == EXT2_EXTENT_CURRENT)
 				ctx.errcode = 0;
-			else
+			ಇಲ್ಲದಿದ್ದರೆ
 				ctx.errcode = ext2fs_extent_get(handle, op,
 								&extent);
-			if (ctx.errcode) {
-				if (ctx.errcode != EXT2_ET_EXTENT_NO_NEXT)
-					break;
+			ಆದರೆ (ctx.errcode) {
+				ಆದರೆ (ctx.errcode != EXT2_ET_EXTENT_NO_ಮುಂದಿನ)
+					ನಿಲ್ಲಿಸು;
 				ctx.errcode = 0;
-				if (!(flags & BLOCK_FLAG_APPEND))
-					break;
-			next_block_set:
+				ಆದರೆ (!(flags & ಖಂಡ_FLAG_APPEND))
+					ನಿಲ್ಲಿಸು;
+			ಮುಂದಿನ_ಖಂಡ_ಗಣ:
 				blk = 0;
 				r = (*ctx.func)(fs, &blk, blockcnt,
-						0, 0, priv_data);
+						0, 0, priv_ದತ್ತಾಂಶ);
 				ret |= r;
 				check_for_ro_violation_goto(&ctx, ret,
-							    extent_done);
-				if (r & BLOCK_CHANGED) {
+							    extent_ಮುಗಿದ);
+				ಆದರೆ (r & ಖಂಡ_ಬದಲಾಯಿತು) {
 					ctx.errcode =
-						ext2fs_extent_set_bmap(handle,
+						ext2fs_extent_ಗಣ_bmap(handle,
 						       (blk64_t) blockcnt++,
 						       (blk64_t) blk, 0);
-					if (ctx.errcode || (ret & BLOCK_ABORT))
-						break;
-					if (blk)
-						goto next_block_set;
+					ಆದರೆ (ctx.errcode || (ret & ಖಂಡ_ABORT))
+						ನಿಲ್ಲಿಸು;
+					ಆದರೆ (blk)
+						ಹೋಗು ಮುಂದಿನ_ಖಂಡ_ಗಣ;
 				}
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
 
-			op = EXT2_EXTENT_NEXT;
+			op = EXT2_EXTENT_ಮುಂದಿನ;
 			blk = extent.e_pblk;
-			if (!(extent.e_flags & EXT2_EXTENT_FLAGS_LEAF)) {
-				if (ctx.flags & BLOCK_FLAG_DATA_ONLY)
-					continue;
-				if ((!(extent.e_flags &
-				       EXT2_EXTENT_FLAGS_SECOND_VISIT) &&
-				     !(ctx.flags & BLOCK_FLAG_DEPTH_TRAVERSE)) ||
+			ಆದರೆ (!(extent.e_flags & EXT2_EXTENT_FLAGS_ಎಲೆ)) {
+				ಆದರೆ (ctx.flags & ಖಂಡ_FLAG_ದತ್ತಾಂಶ_ONLY)
+					ಮುಂದುವರಿ;
+				ಆದರೆ ((!(extent.e_flags &
+				       EXT2_EXTENT_FLAGS_ಎರಡನೇ_ಭೇಟಿ) &&
+				     !(ctx.flags & ಖಂಡ_FLAG_ಆಳ_TRAVERSE)) ||
 				    ((extent.e_flags &
-				      EXT2_EXTENT_FLAGS_SECOND_VISIT) &&
-				     (ctx.flags & BLOCK_FLAG_DEPTH_TRAVERSE))) {
+				      EXT2_EXTENT_FLAGS_ಎರಡನೇ_ಭೇಟಿ) &&
+				     (ctx.flags & ಖಂಡ_FLAG_ಆಳ_TRAVERSE))) {
 					ret |= (*ctx.func)(fs, &blk,
-							   -1, 0, 0, priv_data);
-					if (ret & BLOCK_CHANGED) {
+							   -1, 0, 0, priv_ದತ್ತಾಂಶ);
+					ಆದರೆ (ret & ಖಂಡ_ಬದಲಾಯಿತು) {
 						extent.e_pblk = blk;
 						ctx.errcode =
 				ext2fs_extent_replace(handle, 0, &extent);
-						if (ctx.errcode)
-							break;
+						ಆದರೆ (ctx.errcode)
+							ನಿಲ್ಲಿಸು;
 					}
-					if (ret & BLOCK_ABORT)
-						break;
+					ಆದರೆ (ret & ಖಂಡ_ABORT)
+						ನಿಲ್ಲಿಸು;
 				}
-				continue;
+				ಮುಂದುವರಿ;
 			}
 			uninit = 0;
-			if (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-				uninit = EXT2_EXTENT_SET_BMAP_UNINIT;
+			ಆದರೆ (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+				uninit = EXT2_EXTENT_ಗಣ_BMAP_UNINIT;
 
 			/* 
 			 * Get the next extent before we start messing
 			 * with the current extent
 			 */
-			retval = ext2fs_extent_get(handle, op, &next);
+			retval = ext2fs_extent_get(handle, op, &ಮುಂದಿನ);
 
-#if 0
-			printf("lblk %llu pblk %llu len %d blockcnt %llu\n",
+#ಆದರೆ 0
+			ಬರೆ("lblk %llu pblk %llu len %d blockcnt %llu\n",
 			       extent.e_lblk, extent.e_pblk,
 			       extent.e_len, blockcnt);
-#endif
-			if (extent.e_lblk + extent.e_len <= (blk64_t) blockcnt)
-				continue;
-			if (extent.e_lblk > (blk64_t) blockcnt)
+#ಆದರೆ_ಅಂತ್ಯ
+			ಆದರೆ (extent.e_lblk + extent.e_len <= (blk64_t) blockcnt)
+				ಮುಂದುವರಿ;
+			ಆದರೆ (extent.e_lblk > (blk64_t) blockcnt)
 				blockcnt = extent.e_lblk;
 			j = blockcnt - extent.e_lblk;
 			blk += j;
-			for (blockcnt = extent.e_lblk, j = 0;
+			ಗಾಗಿ (blockcnt = extent.e_lblk, j = 0;
 			     j < extent.e_len;
 			     blk++, blockcnt++, j++) {
 				new_blk = blk;
 				r = (*ctx.func)(fs, &new_blk, blockcnt,
-						0, 0, priv_data);
+						0, 0, priv_ದತ್ತಾಂಶ);
 				ret |= r;
 				check_for_ro_violation_goto(&ctx, ret,
-							    extent_done);
-				if (r & BLOCK_CHANGED) {
+							    extent_ಮುಗಿದ);
+				ಆದರೆ (r & ಖಂಡ_ಬದಲಾಯಿತು) {
 					ctx.errcode =
-						ext2fs_extent_set_bmap(handle,
+						ext2fs_extent_ಗಣ_bmap(handle,
 						       (blk64_t) blockcnt,
 						       new_blk, uninit);
-					if (ctx.errcode)
-						goto extent_done;
+					ಆದರೆ (ctx.errcode)
+						ಹೋಗು extent_ಮುಗಿದ;
 				}
-				if (ret & BLOCK_ABORT)
-					goto extent_done;
+				ಆದರೆ (ret & ಖಂಡ_ABORT)
+					ಹೋಗು extent_ಮುಗಿದ;
 			}
-			if (retval == 0) {
-				extent = next;
+			ಆದರೆ (retval == 0) {
+				extent = ಮುಂದಿನ;
 				op = EXT2_EXTENT_CURRENT;
 			}
 		}
 
-	extent_done:
+	extent_ಮುಗಿದ:
 		ext2fs_extent_free(handle);
-		ret |= BLOCK_ERROR; /* ctx.errcode is always valid here */
-		goto errout;
+		ret |= ಖಂಡ_ERROR; /* ctx.errcode is always valid here */
+		ಹೋಗು errout;
 	}
 
 	/*
 	 * Iterate over normal data blocks
 	 */
-	for (i = 0; i < EXT2_NDIR_BLOCKS ; i++, ctx.bcount++) {
-		if (inode.i_block[i] || (flags & BLOCK_FLAG_APPEND)) {
-			blk64 = inode.i_block[i];
+	ಗಾಗಿ (i = 0; i < EXT2_NDIR_ಖಂಡಗಳು ; i++, ctx.bcount++) {
+		ಆದರೆ (inode.i_ಖಂಡ[i] || (flags & ಖಂಡ_FLAG_APPEND)) {
+			blk64 = inode.i_ಖಂಡ[i];
 			ret |= (*ctx.func)(fs, &blk64, ctx.bcount, 0, i, 
-					   priv_data);
-			inode.i_block[i] = (blk_t) blk64;
-			if (ret & BLOCK_ABORT)
-				goto abort_exit;
+					   priv_ದತ್ತಾಂಶ);
+			inode.i_ಖಂಡ[i] = (blk_t) blk64;
+			ಆದರೆ (ret & ಖಂಡ_ABORT)
+				ಹೋಗು abort_exit;
 		}
 	}
 	check_for_ro_violation_goto(&ctx, ret, abort_exit);
-	if (inode.i_block[EXT2_IND_BLOCK] || (flags & BLOCK_FLAG_APPEND)) {
-		ret |= block_iterate_ind(&inode.i_block[EXT2_IND_BLOCK], 
-					 0, EXT2_IND_BLOCK, &ctx);
-		if (ret & BLOCK_ABORT)
-			goto abort_exit;
-	} else
-		ctx.bcount += limit;
-	if (inode.i_block[EXT2_DIND_BLOCK] || (flags & BLOCK_FLAG_APPEND)) {
-		ret |= block_iterate_dind(&inode.i_block[EXT2_DIND_BLOCK],
-					  0, EXT2_DIND_BLOCK, &ctx);
-		if (ret & BLOCK_ABORT)
-			goto abort_exit;
-	} else
-		ctx.bcount += limit * limit;
-	if (inode.i_block[EXT2_TIND_BLOCK] || (flags & BLOCK_FLAG_APPEND)) {
-		ret |= block_iterate_tind(&inode.i_block[EXT2_TIND_BLOCK],
-					  0, EXT2_TIND_BLOCK, &ctx);
-		if (ret & BLOCK_ABORT)
-			goto abort_exit;
+	ಆದರೆ (inode.i_ಖಂಡ[EXT2_IND_ಖಂಡ] || (flags & ಖಂಡ_FLAG_APPEND)) {
+		ret |= ಖಂಡ_iterate_ind(&inode.i_ಖಂಡ[EXT2_IND_ಖಂಡ], 
+					 0, EXT2_IND_ಖಂಡ, &ctx);
+		ಆದರೆ (ret & ಖಂಡ_ABORT)
+			ಹೋಗು abort_exit;
+	} ಇಲ್ಲದಿದ್ದರೆ
+		ctx.bcount += ಎಲ್ಲೆ;
+	ಆದರೆ (inode.i_ಖಂಡ[EXT2_DIND_ಖಂಡ] || (flags & ಖಂಡ_FLAG_APPEND)) {
+		ret |= ಖಂಡ_iterate_dind(&inode.i_ಖಂಡ[EXT2_DIND_ಖಂಡ],
+					  0, EXT2_DIND_ಖಂಡ, &ctx);
+		ಆದರೆ (ret & ಖಂಡ_ABORT)
+			ಹೋಗು abort_exit;
+	} ಇಲ್ಲದಿದ್ದರೆ
+		ctx.bcount += ಎಲ್ಲೆ * ಎಲ್ಲೆ;
+	ಆದರೆ (inode.i_ಖಂಡ[EXT2_TIND_ಖಂಡ] || (flags & ಖಂಡ_FLAG_APPEND)) {
+		ret |= ಖಂಡ_iterate_tind(&inode.i_ಖಂಡ[EXT2_TIND_ಖಂಡ],
+					  0, EXT2_TIND_ಖಂಡ, &ctx);
+		ಆದರೆ (ret & ಖಂಡ_ABORT)
+			ಹೋಗು abort_exit;
 	}
 
 abort_exit:
-	if (ret & BLOCK_CHANGED) {
+	ಆದರೆ (ret & ಖಂಡ_ಬದಲಾಯಿತು) {
 		retval = ext2fs_write_inode(fs, ino, &inode);
-		if (retval) {
-			ret |= BLOCK_ERROR;
+		ಆದರೆ (retval) {
+			ret |= ಖಂಡ_ERROR;
 			ctx.errcode = retval;
 		}
 	}
 errout:
-	if (!block_buf)
+	ಆದರೆ (!ಖಂಡ_buf)
 		ext2fs_free_mem(&ctx.ind_buf);
 
-	return (ret & BLOCK_ERROR) ? ctx.errcode : 0;
+	ಹಿಂತಿರುಗಿ (ret & ಖಂಡ_ERROR) ? ctx.errcode : 0;
 }
 
 /*
  * Emulate the old ext2fs_block_iterate function!
  */
 
-struct xlate64 {
-	int (*func)(ext2_filsys fs,
+ರಚನೆ xlate64 {
+	ಪೂರ್ಣಾಂಕ (*func)(ext2_filsys fs,
 		    blk_t	*blocknr,
 		    e2_blkcnt_t	blockcnt,
 		    blk_t	ref_blk,
-		    int		ref_offset,
-		    void	*priv_data);
-	void *real_private;
+		    ಪೂರ್ಣಾಂಕ		ref_ಸ್ಥಾನಾಂತರ,
+		    ಶೂನ್ಯ	*priv_ದತ್ತಾಂಶ);
+	ಶೂನ್ಯ *real_ಖಾಸಗಿ;
 };
 
-static int xlate64_func(ext2_filsys fs, blk64_t	*blocknr,
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ xlate64_func(ext2_filsys fs, blk64_t	*blocknr,
 			e2_blkcnt_t blockcnt, blk64_t ref_blk,
-			int ref_offset, void *priv_data)
+			ಪೂರ್ಣಾಂಕ ref_ಸ್ಥಾನಾಂತರ, ಶೂನ್ಯ *priv_ದತ್ತಾಂಶ)
 {
-	struct xlate64 *xl = (struct xlate64 *) priv_data;
-	int		ret;
+	ರಚನೆ xlate64 *xl = (ರಚನೆ xlate64 *) priv_ದತ್ತಾಂಶ;
+	ಪೂರ್ಣಾಂಕ		ret;
 	blk_t		block32 = *blocknr;
 	
-	ret = (*xl->func)(fs, &block32, blockcnt, (blk_t) ref_blk, ref_offset,
-			     xl->real_private);
+	ret = (*xl->func)(fs, &block32, blockcnt, (blk_t) ref_blk, ref_ಸ್ಥಾನಾಂತರ,
+			     xl->real_ಖಾಸಗಿ);
 	*blocknr = block32;
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-errcode_t ext2fs_block_iterate2(ext2_filsys fs,
+errcode_t ext2fs_ಖಂಡ_iterate2(ext2_filsys fs,
 				ext2_ino_t ino,
-				int	flags,
-				char *block_buf,
-				int (*func)(ext2_filsys fs,
+				ಪೂರ್ಣಾಂಕ	flags,
+				ಅಕ್ಷರ *ಖಂಡ_buf,
+				ಪೂರ್ಣಾಂಕ (*func)(ext2_filsys fs,
 					    blk_t	*blocknr,
 					    e2_blkcnt_t	blockcnt,
 					    blk_t	ref_blk,
-					    int		ref_offset,
-					    void	*priv_data),
-				void *priv_data)
+					    ಪೂರ್ಣಾಂಕ		ref_ಸ್ಥಾನಾಂತರ,
+					    ಶೂನ್ಯ	*priv_ದತ್ತಾಂಶ),
+				ಶೂನ್ಯ *priv_ದತ್ತಾಂಶ)
 {
-	struct xlate64 xl;
+	ರಚನೆ xlate64 xl;
 
-	xl.real_private = priv_data;
+	xl.real_ಖಾಸಗಿ = priv_ದತ್ತಾಂಶ;
 	xl.func = func;
 
-	return ext2fs_block_iterate3(fs, ino, flags, block_buf, 
+	ಹಿಂತಿರುಗಿ ext2fs_ಖಂಡ_iterate3(fs, ino, flags, ಖಂಡ_buf, 
 				     xlate64_func, &xl);
 }
 
 
-struct xlate {
-	int (*func)(ext2_filsys	fs,
+ರಚನೆ xlate {
+	ಪೂರ್ಣಾಂಕ (*func)(ext2_filsys	fs,
 		    blk_t	*blocknr,
-		    int		bcount,
-		    void	*priv_data);
-	void *real_private;
+		    ಪೂರ್ಣಾಂಕ		bcount,
+		    ಶೂನ್ಯ	*priv_ದತ್ತಾಂಶ);
+	ಶೂನ್ಯ *real_ಖಾಸಗಿ;
 };
 
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-static int xlate_func(ext2_filsys fs, blk_t *blocknr, e2_blkcnt_t blockcnt,
-		      blk_t ref_block EXT2FS_ATTR((unused)),
-		      int ref_offset EXT2FS_ATTR((unused)),
-		      void *priv_data)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __TURBOC__
+ #ಸೂಚನೆ argsused
+#ಆದರೆ_ಅಂತ್ಯ
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ xlate_func(ext2_filsys fs, blk_t *blocknr, e2_blkcnt_t blockcnt,
+		      blk_t ref_ಖಂಡ EXT2FS_ATTR((ಬಳಸದ)),
+		      ಪೂರ್ಣಾಂಕ ref_ಸ್ಥಾನಾಂತರ EXT2FS_ATTR((ಬಳಸದ)),
+		      ಶೂನ್ಯ *priv_ದತ್ತಾಂಶ)
 {
-	struct xlate *xl = (struct xlate *) priv_data;
+	ರಚನೆ xlate *xl = (ರಚನೆ xlate *) priv_ದತ್ತಾಂಶ;
 
-	return (*xl->func)(fs, blocknr, (int) blockcnt, xl->real_private);
+	ಹಿಂತಿರುಗಿ (*xl->func)(fs, blocknr, (ಪೂರ್ಣಾಂಕ) blockcnt, xl->real_ಖಾಸಗಿ);
 }
 
-errcode_t ext2fs_block_iterate(ext2_filsys fs,
+errcode_t ext2fs_ಖಂಡ_iterate(ext2_filsys fs,
 			       ext2_ino_t ino,
-			       int	flags,
-			       char *block_buf,
-			       int (*func)(ext2_filsys fs,
+			       ಪೂರ್ಣಾಂಕ	flags,
+			       ಅಕ್ಷರ *ಖಂಡ_buf,
+			       ಪೂರ್ಣಾಂಕ (*func)(ext2_filsys fs,
 					   blk_t	*blocknr,
-					   int	blockcnt,
-					   void	*priv_data),
-			       void *priv_data)
+					   ಪೂರ್ಣಾಂಕ	blockcnt,
+					   ಶೂನ್ಯ	*priv_ದತ್ತಾಂಶ),
+			       ಶೂನ್ಯ *priv_ದತ್ತಾಂಶ)
 {
-	struct xlate xl;
+	ರಚನೆ xlate xl;
 
-	xl.real_private = priv_data;
+	xl.real_ಖಾಸಗಿ = priv_ದತ್ತಾಂಶ;
 	xl.func = func;
 
-	return ext2fs_block_iterate2(fs, ino, BLOCK_FLAG_NO_LARGE | flags,
-				     block_buf, xlate_func, &xl);
+	ಹಿಂತಿರುಗಿ ext2fs_ಖಂಡ_iterate2(fs, ino, ಖಂಡ_FLAG_NO_LARGE | flags,
+				     ಖಂಡ_buf, xlate_func, &xl);
 }
 

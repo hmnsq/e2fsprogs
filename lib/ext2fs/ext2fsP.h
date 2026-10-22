@@ -9,212 +9,212 @@
  * %End-Header%
  */
 
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
+#ಆದರೆ HAVE_SYS_STAT_H
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
-#define EXT2FS_MAX_NESTED_LINKS  8
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2FS_MAX_NESTED_LINKS  8
 
-static inline int ext2fsP_is_disk_device(mode_t mode)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ ext2fsP_is_disk_device(mode_t ಬಹುಲಕ)
 {
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-	return S_ISBLK(mode) || S_ISCHR(mode);
-#else
-	return S_ISBLK(mode);
-#endif
+#ಆದರೆ defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+	ಹಿಂತಿರುಗಿ S_ISBLK(ಬಹುಲಕ) || S_ISCHR(ಬಹುಲಕ);
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಹಿಂತಿರುಗಿ S_ISBLK(ಬಹುಲಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-static inline time_t ext2fsP_get_time(ext2_filsys fs)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ time_t ext2fs_P_get_ಸಮಯ(ext2_filsys fs)
 {
-	if (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
-		return fs->now;
-	return time(NULL);
+	ಆದರೆ (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_ಸಮಯ))
+		ಹಿಂತಿರುಗಿ fs->now;
+	ಹಿಂತಿರುಗಿ time(ಖಾಲಿ);
 }
 
 /*
  * Badblocks list
  */
-struct ext2_struct_u32_list {
-	int	magic;
-	int	num;
-	int	size;
+ರಚನೆ ext2_struct_u32_list {
+	ಪೂರ್ಣಾಂಕ	magic;
+	ಪೂರ್ಣಾಂಕ	ಅಂಕೆ;
+	ಪೂರ್ಣಾಂಕ	ಗಾತ್ರ_2;
 	__u32	*list;
-	int	badblocks_flags;
+	ಪೂರ್ಣಾಂಕ	badblocks_flags;
 };
 
-struct ext2_struct_u32_iterate {
-	int			magic;
+ರಚನೆ ext2_struct_u32_iterate {
+	ಪೂರ್ಣಾಂಕ			magic;
 	ext2_u32_list		bb;
-	int			ptr;
+	ಪೂರ್ಣಾಂಕ			ptr;
 };
 
 
 /*
  * Directory block iterator definition
  */
-struct ext2_struct_dblist {
-	int			magic;
+ರಚನೆ ext2_struct_dblist {
+	ಪೂರ್ಣಾಂಕ			magic;
 	ext2_filsys		fs;
-	unsigned long long	size;
-	unsigned long long	count;
-	int			sorted;
-	struct ext2_db_entry2 *	list;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ	ಗಾತ್ರ_2;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ	ಎಣಿಕೆ_2;
+	ಪೂರ್ಣಾಂಕ			sorted;
+	ರಚನೆ ext2_db_entry2 *	list;
 };
 
 /*
  * For directory iterators
  */
-struct dir_context {
+ರಚನೆ dir_context {
 	ext2_ino_t		dir;
-	int		flags;
-	char		*buf;
-	unsigned int	buflen;
-	int (*func)(ext2_ino_t	dir,
-		    int	entry,
-		    struct ext2_dir_entry *dirent,
-		    int	offset,
-		    int	blocksize,
-		    char	*buf,
-		    void	*priv_data);
-	void		*priv_data;
+	ಪೂರ್ಣಾಂಕ		flags;
+	ಅಕ್ಷರ		*buf;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ	buflen;
+	ಪೂರ್ಣಾಂಕ (*func)(ext2_ino_t	dir,
+		    ಪೂರ್ಣಾಂಕ	ನಮೂದು,
+		    ರಚನೆ ext2_dir_ನಮೂದು *dirent,
+		    ಪೂರ್ಣಾಂಕ	ಸ್ಥಾನಾಂತರ,
+		    ಪೂರ್ಣಾಂಕ	blocksize,
+		    ಅಕ್ಷರ	*buf,
+		    ಶೂನ್ಯ	*priv_ದತ್ತಾಂಶ);
+	ಶೂನ್ಯ		*priv_ದತ್ತಾಂಶ;
 	errcode_t	errcode;
 };
 
 /*
  * Inode cache structure
  */
-struct ext2_inode_cache {
-	void *				buffer;
-	blk64_t				buffer_blk;
-	int				cache_last;
-	unsigned int			cache_size;
-	int				refcount;
-	struct ext2_inode_cache_ent	*cache;
+ರಚನೆ ext2_inode_cache {
+	ಶೂನ್ಯ *				ಬಫರ್;
+	blk64_t				ಬಫರ್_blk;
+	ಪೂರ್ಣಾಂಕ				cache_ಕೊನೆಯ;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ			cache_ಗಾತ್ರ;
+	ಪೂರ್ಣಾಂಕ				refcount;
+	ರಚನೆ ext2_inode_cache_ent	*cache;
 };
 
-struct ext2_inode_cache_ent {
+ರಚನೆ ext2_inode_cache_ent {
 	ext2_ino_t		ino;
-	struct ext2_inode	*inode;
+	ರಚನೆ ext2_inode	*inode;
 };
 
 /*
  * NLS definitions
  */
-struct ext2fs_nls_table {
-	int version;
-	const struct ext2fs_nls_ops *ops;
+ರಚನೆ ext2fs_nls_ಕೋಷ್ಟಕ {
+	ಪೂರ್ಣಾಂಕ ಆವೃತ್ತಿ;
+	ಸ್ಥಿರಾಂಕ ರಚನೆ ext2fs_nls_ops *ops;
 };
 
-struct ext2fs_nls_ops {
-	int (*casefold)(const struct ext2fs_nls_table *charset,
-			const unsigned char *str, size_t len,
-			unsigned char *dest, size_t dlen);
-	int (*validate)(const struct ext2fs_nls_table *table,
-			char *s, size_t len, char **pos);
-	int (*casefold_cmp)(const struct ext2fs_nls_table *table,
-			    const unsigned char *str1, size_t len1,
-			    const unsigned char *str2, size_t len2);
+ರಚನೆ ext2fs_nls_ops {
+	ಪೂರ್ಣಾಂಕ (*casefold)(ಸ್ಥಿರಾಂಕ ರಚನೆ ext2fs_nls_ಕೋಷ್ಟಕ *charset,
+			ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *str, size_t len,
+			ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *dest, size_t dlen);
+	ಪೂರ್ಣಾಂಕ (*validate)(ಸ್ಥಿರಾಂಕ ರಚನೆ ext2fs_nls_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ,
+			ಅಕ್ಷರ *s, size_t len, ಅಕ್ಷರ **pos);
+	ಪೂರ್ಣಾಂಕ (*casefold_cmp)(ಸ್ಥಿರಾಂಕ ರಚನೆ ext2fs_nls_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ,
+			    ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *str1, size_t len1,
+			    ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *str2, size_t len2);
 };
 
 /* Function prototypes */
 
-extern int ext2fs_process_dir_block(ext2_filsys  	fs,
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ext2fs_process_dir_ಖಂಡ(ext2_filsys  	fs,
 				    blk64_t		*blocknr,
 				    e2_blkcnt_t		blockcnt,
-				    blk64_t		ref_block,
-				    int			ref_offset,
-				    void		*priv_data);
+				    blk64_t		ref_ಖಂಡ,
+				    ಪೂರ್ಣಾಂಕ			ref_ಸ್ಥಾನಾಂತರ,
+				    ಶೂನ್ಯ		*priv_ದತ್ತಾಂಶ);
 
-extern errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino);
-extern errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino);
-extern int ext2fs_inline_data_dir_iterate(ext2_filsys fs,
+ಬಾಹ್ಯ errcode_t ext2fs_inline_ದತ್ತಾಂಶ_ea_remove(ext2_filsys fs, ext2_ino_t ino);
+ಬಾಹ್ಯ errcode_t ext2fs_inline_ದತ್ತಾಂಶ_expand(ext2_filsys fs, ext2_ino_t ino);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ext2fs_inline_ದತ್ತಾಂಶ_dir_iterate(ext2_filsys fs,
 					  ext2_ino_t ino,
-					  void *priv_data);
+					  ಶೂನ್ಯ *priv_ದತ್ತಾಂಶ);
 
 /* Generic numeric progress meter */
 
-struct ext2fs_numeric_progress_struct {
+ರಚನೆ ext2fs_numeric_ಪ್ರಗತಿ_struct {
 	__u64		max;
-	int		log_max;
-	int		skip_progress;
+	ಪೂರ್ಣಾಂಕ		log_max;
+	ಪೂರ್ಣಾಂಕ		skip_ಪ್ರಗತಿ;
 };
 
 /*
  * progress callback functions
  */
-struct ext2fs_progress_ops {
-	void (*init)(ext2_filsys fs,
-		     struct ext2fs_numeric_progress_struct * progress,
-		     const char *label, __u64 max);
-	void (*update)(ext2_filsys fs,
-		       struct ext2fs_numeric_progress_struct * progress,
+ರಚನೆ ext2fs_ಪ್ರಗತಿ_ops {
+	ಶೂನ್ಯ (*init)(ext2_filsys fs,
+		     ರಚನೆ ext2fs_numeric_ಪ್ರಗತಿ_struct * ಪ್ರಗತಿ,
+		     ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *label, __u64 max);
+	ಶೂನ್ಯ (*update)(ext2_filsys fs,
+		       ರಚನೆ ext2fs_numeric_ಪ್ರಗತಿ_struct * ಪ್ರಗತಿ,
 		       __u64 val);
-	void (*close)(ext2_filsys fs,
-		      struct ext2fs_numeric_progress_struct * progress,
-		      const char *message);
+	ಶೂನ್ಯ (*close)(ext2_filsys fs,
+		      ರಚನೆ ext2fs_numeric_ಪ್ರಗತಿ_struct * ಪ್ರಗತಿ,
+		      ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಸಂದೇಶ_3);
 };
 
-extern struct ext2fs_progress_ops ext2fs_numeric_progress_ops;
+ಬಾಹ್ಯ ರಚನೆ ext2fs_ಪ್ರಗತಿ_ops ext2fs_numeric_ಪ್ರಗತಿ_ops;
 
-extern void ext2fs_numeric_progress_init(ext2_filsys fs,
-					 struct ext2fs_numeric_progress_struct * progress,
-					 const char *label, __u64 max);
-extern void ext2fs_numeric_progress_update(ext2_filsys fs,
-					   struct ext2fs_numeric_progress_struct * progress,
+ಬಾಹ್ಯ ಶೂನ್ಯ ext2fs_numeric_ಪ್ರಗತಿ_init(ext2_filsys fs,
+					 ರಚನೆ ext2fs_numeric_ಪ್ರಗತಿ_struct * ಪ್ರಗತಿ,
+					 ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *label, __u64 max);
+ಬಾಹ್ಯ ಶೂನ್ಯ ext2fs_numeric_ಪ್ರಗತಿ_update(ext2_filsys fs,
+					   ರಚನೆ ext2fs_numeric_ಪ್ರಗತಿ_struct * ಪ್ರಗತಿ,
 					   __u64 val);
-extern void ext2fs_numeric_progress_close(ext2_filsys fs,
-					  struct ext2fs_numeric_progress_struct * progress,
-					  const char *message);
+ಬಾಹ್ಯ ಶೂನ್ಯ ext2fs_numeric_ಪ್ರಗತಿ_close(ext2_filsys fs,
+					  ರಚನೆ ext2fs_numeric_ಪ್ರಗತಿ_struct * ಪ್ರಗತಿ,
+					  ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಸಂದೇಶ_3);
 
 /*
  * 64-bit bitmap support
  */
 
-extern errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
-					   int type, __u64 start, __u64 end,
-					   __u64 real_end,
-					   const char * description,
+ಬಾಹ್ಯ errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
+					   ಪೂರ್ಣಾಂಕ type, __u64 ಆರಂಭ, __u64 ಕೊನೆ,
+					   __u64 real_ಕೊನೆ,
+					   ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ * description,
 					   ext2fs_generic_bitmap *bmap);
 
-extern void ext2fs_free_generic_bmap(ext2fs_generic_bitmap bmap);
+ಬಾಹ್ಯ ಶೂನ್ಯ ext2fs_free_generic_bmap(ext2fs_generic_bitmap bmap);
 
-extern errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap src,
+ಬಾಹ್ಯ errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap src,
 					  ext2fs_generic_bitmap *dest);
 
-extern errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap bmap,
-					    __u64 new_end,
-					    __u64 new_real_end);
-extern errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap bitmap,
+ಬಾಹ್ಯ errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap bmap,
+					    __u64 new_ಕೊನೆ,
+					    __u64 new_real_ಕೊನೆ);
+ಬಾಹ್ಯ errcode_t ext2fs_fudge_generic_bmap_ಕೊನೆ(ext2fs_generic_bitmap bitmap,
 					       errcode_t neq,
-					       __u64 end, __u64 *oend);
-extern int ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
+					       __u64 ಕೊನೆ, __u64 *oend);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
-extern int ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				      __u64 arg);
-extern int ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
-extern errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
-					       void *in);
-extern errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
-					       void *out);
-extern void ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,const char *func);
+ಬಾಹ್ಯ errcode_t ext2fs_ಗಣ_generic_bmap_range(ext2fs_generic_bitmap bitmap,
+					       __u64 ಆರಂಭ, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಅಂಕೆ,
+					       ಶೂನ್ಯ *ಒಳ);
+ಬಾಹ್ಯ errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bitmap,
+					       __u64 ಆರಂಭ, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಅಂಕೆ,
+					       ಶೂನ್ಯ *ಹೊರಹೋಗು);
+ಬಾಹ್ಯ ಶೂನ್ಯ ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *func);
 
-extern int ext2fs_mem_is_zero(const char *mem, size_t len);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ext2fs_mem_is_zero(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *mem, size_t len);
 
-extern int ext2fs_file_block_offset_too_big(ext2_filsys fs,
-					    struct ext2_inode *inode,
-					    blk64_t offset);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ext2fs_file_ಖಂಡ_ಸ್ಥಾನಾಂತರ_too_big(ext2_filsys fs,
+					    ರಚನೆ ext2_inode *inode,
+					    blk64_t ಸ್ಥಾನಾಂತರ);
 
 /* atexit support */
-typedef void (*ext2_exit_fn)(void *);
-errcode_t ext2fs_add_exit_fn(ext2_exit_fn fn, void *data);
-errcode_t ext2fs_remove_exit_fn(ext2_exit_fn fn, void *data);
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಶೂನ್ಯ (*ext2_exit_fn)(ಶೂನ್ಯ *);
+errcode_t ext2fs_ಕೂಡಿಸು_exit_fn(ext2_exit_fn fn, ಶೂನ್ಯ *ದತ್ತಾಂಶ);
+errcode_t ext2fs_remove_exit_fn(ext2_exit_fn fn, ಶೂನ್ಯ *ದತ್ತಾಂಶ);
 
-#define ARRAY_SIZE(array)			\
-        (sizeof(array) / sizeof(array[0]))
+#ವ್ಯಾಖ್ಯಾನಿಸು ARRAY_ಗಾತ್ರ(array)			\
+        (ಗಾತ್ರ(array) / ಗಾತ್ರ(array[0]))
 
-#define EXT2FS_BUILD_BUG_ON(cond) ((void)sizeof(char[1 - 2*!!(cond)]))
+#ವ್ಯಾಖ್ಯಾನಿಸು EXT2FS_BUILD_BUG_ON(cond) ((ಶೂನ್ಯ)ಗಾತ್ರ(ಅಕ್ಷರ[1 - 2*!!(cond)]))

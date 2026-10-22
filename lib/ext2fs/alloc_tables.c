@@ -10,24 +10,24 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಆದರೆ HAVE_SYS_STAT_H
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fsP.h"
 
 /*
  * This routine searches for free blocks that can allocate a full
@@ -35,244 +35,244 @@
  * block number with a correct offset were the bitmaps and inode
  * tables can be allocated continuously and in order.
  */
-static blk64_t flexbg_offset(ext2_filsys fs, dgrp_t group, blk64_t start_blk,
-			     ext2fs_block_bitmap bmap, int rem_grp,
-			     int elem_size)
+ಸ್ಥಿರ blk64_t flexbg_ಸ್ಥಾನಾಂತರ(ext2_filsys fs, dgrp_t ಗುಂಪು, blk64_t ಆರಂಭ_blk,
+			     ext2fs_ಖಂಡ_bitmap bmap, ಪೂರ್ಣಾಂಕ rem_grp,
+			     ಪೂರ್ಣಾಂಕ elem_ಗಾತ್ರ)
 {
-	int		flexbg, flexbg_size, size;
-	blk64_t		last_blk, first_free = 0;
-	dgrp_t	       	last_grp;
+	ಪೂರ್ಣಾಂಕ		flexbg, flexbg_ಗಾತ್ರ, ಗಾತ್ರ_2;
+	blk64_t		ಕೊನೆಯ_blk, ಮೊದಲ_free = 0;
+	dgrp_t	       	ಕೊನೆಯ_grp;
 
-	flexbg_size = 1U << fs->super->s_log_groups_per_flex;
-	flexbg = group / flexbg_size;
-	size = rem_grp * elem_size;
+	flexbg_ಗಾತ್ರ = 1U << fs->super->s_log_groups_ಪ್ರತಿ_flex;
+	flexbg = ಗುಂಪು / flexbg_ಗಾತ್ರ;
+	ಗಾತ್ರ_2 = rem_grp * elem_ಗಾತ್ರ;
 
-	if (size > (int) (fs->super->s_blocks_per_group / 4))
-		size = (int) fs->super->s_blocks_per_group / 4;
+	ಆದರೆ (ಗಾತ್ರ_2 > (ಪೂರ್ಣಾಂಕ) (fs->super->s_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು / 4))
+		ಗಾತ್ರ_2 = (ಪೂರ್ಣಾಂಕ) fs->super->s_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು / 4;
 
 	/*
 	 * Don't do a long search if the previous block search is still valid,
 	 * but skip minor obstructions such as group descriptor backups.
 	 */
-	if (start_blk && start_blk < ext2fs_blocks_count(fs->super) &&
-	    ext2fs_get_free_blocks2(fs, start_blk, start_blk + size, elem_size,
-				    bmap, &first_free) == 0)
-		return first_free;
+	ಆದರೆ (ಆರಂಭ_blk && ಆರಂಭ_blk < ext2fs_ಖಂಡಗಳು_ಎಣಿಕೆ(fs->super) &&
+	    ext2fs_get_free_blocks2(fs, ಆರಂಭ_blk, ಆರಂಭ_blk + ಗಾತ್ರ_2, elem_ಗಾತ್ರ,
+				    bmap, &ಮೊದಲ_free) == 0)
+		ಹಿಂತಿರುಗಿ ಮೊದಲ_free;
 
-	start_blk = ext2fs_group_first_block2(fs, flexbg_size * flexbg);
-	last_grp = group | (flexbg_size - 1);
-	if (last_grp > fs->group_desc_count-1)
-		last_grp = fs->group_desc_count-1;
-	last_blk = ext2fs_group_last_block2(fs, last_grp);
+	ಆರಂಭ_blk = ext2fs_ಗುಂಪು_ಮೊದಲ_block2(fs, flexbg_ಗಾತ್ರ * flexbg);
+	ಕೊನೆಯ_grp = ಗುಂಪು | (flexbg_ಗಾತ್ರ - 1);
+	ಆದರೆ (ಕೊನೆಯ_grp > fs->ಗುಂಪು_desc_ಎಣಿಕೆ-1)
+		ಕೊನೆಯ_grp = fs->ಗುಂಪು_desc_ಎಣಿಕೆ-1;
+	ಕೊನೆಯ_blk = ext2fs_ಗುಂಪು_ಕೊನೆಯ_block2(fs, ಕೊನೆಯ_grp);
 
 	/* Find the first available block */
-	if (ext2fs_get_free_blocks2(fs, start_blk, last_blk, size,
-				    bmap, &first_free) == 0)
-		return first_free;
+	ಆದರೆ (ext2fs_get_free_blocks2(fs, ಆರಂಭ_blk, ಕೊನೆಯ_blk, ಗಾತ್ರ_2,
+				    bmap, &ಮೊದಲ_free) == 0)
+		ಹಿಂತಿರುಗಿ ಮೊದಲ_free;
 
-	if (ext2fs_get_free_blocks2(fs, start_blk, last_blk, elem_size,
-				   bmap, &first_free) == 0)
-		return first_free;
+	ಆದರೆ (ext2fs_get_free_blocks2(fs, ಆರಂಭ_blk, ಕೊನೆಯ_blk, elem_ಗಾತ್ರ,
+				   bmap, &ಮೊದಲ_free) == 0)
+		ಹಿಂತಿರುಗಿ ಮೊದಲ_free;
 
-	if (ext2fs_get_free_blocks2(fs, 0, last_blk, elem_size, bmap,
-				    &first_free) == 0)
-		return first_free;
+	ಆದರೆ (ext2fs_get_free_blocks2(fs, 0, ಕೊನೆಯ_blk, elem_ಗಾತ್ರ, bmap,
+				    &ಮೊದಲ_free) == 0)
+		ಹಿಂತಿರುಗಿ ಮೊದಲ_free;
 
-	return first_free;
+	ಹಿಂತಿರುಗಿ ಮೊದಲ_free;
 }
 
-errcode_t ext2fs_allocate_group_table(ext2_filsys fs, dgrp_t group,
-				      ext2fs_block_bitmap bmap)
+errcode_t ext2fs_allocate_ಗುಂಪು_ಕೋಷ್ಟಕ(ext2_filsys fs, dgrp_t ಗುಂಪು,
+				      ext2fs_ಖಂಡ_bitmap bmap)
 {
 	errcode_t	retval;
-	blk64_t		group_blk, start_blk, last_blk, new_blk;
-	dgrp_t		last_grp = 0;
-	int		rem_grps = 0, flexbg_size = 0, table_offset = 0;
+	blk64_t		ಗುಂಪು_blk, ಆರಂಭ_blk, ಕೊನೆಯ_blk, new_blk;
+	dgrp_t		ಕೊನೆಯ_grp = 0;
+	ಪೂರ್ಣಾಂಕ		rem_grps = 0, flexbg_ಗಾತ್ರ = 0, ಕೋಷ್ಟಕ_ಸ್ಥಾನಾಂತರ = 0;
 
-	group_blk = ext2fs_group_first_block2(fs, group);
-	last_blk = ext2fs_group_last_block2(fs, group);
+	ಗುಂಪು_blk = ext2fs_ಗುಂಪು_ಮೊದಲ_block2(fs, ಗುಂಪು);
+	ಕೊನೆಯ_blk = ext2fs_ಗುಂಪು_ಕೊನೆಯ_block2(fs, ಗುಂಪು);
 
-	if (!bmap)
-		bmap = fs->block_map;
+	ಆದರೆ (!bmap)
+		bmap = fs->ಖಂಡ_map;
 
-	if (ext2fs_has_feature_flex_bg(fs->super) &&
-	    fs->super->s_log_groups_per_flex) {
-		flexbg_size = 1U << fs->super->s_log_groups_per_flex;
-		last_grp = group | (flexbg_size - 1);
-		if (last_grp > fs->group_desc_count-1)
-			last_grp = fs->group_desc_count-1;
-		rem_grps = last_grp - group + 1;
+	ಆದರೆ (ext2fs_has_feature_flex_bg(fs->super) &&
+	    fs->super->s_log_groups_ಪ್ರತಿ_flex) {
+		flexbg_ಗಾತ್ರ = 1U << fs->super->s_log_groups_ಪ್ರತಿ_flex;
+		ಕೊನೆಯ_grp = ಗುಂಪು | (flexbg_ಗಾತ್ರ - 1);
+		ಆದರೆ (ಕೊನೆಯ_grp > fs->ಗುಂಪು_desc_ಎಣಿಕೆ-1)
+			ಕೊನೆಯ_grp = fs->ಗುಂಪು_desc_ಎಣಿಕೆ-1;
+		rem_grps = ಕೊನೆಯ_grp - ಗುಂಪು + 1;
 	}
 
 	/*
 	 * Allocate the block and inode bitmaps, if necessary
 	 */
-	if (fs->stride && !flexbg_size) {
-		retval = ext2fs_get_free_blocks2(fs, group_blk, last_blk,
-						 1, bmap, &start_blk);
-		if (retval)
-			return retval;
-		start_blk += fs->inode_blocks_per_group;
-		start_blk += ((fs->stride * group) %
-			      (last_blk - start_blk + 1));
-		if (start_blk >= last_blk)
-			start_blk = group_blk;
-	} else
-		start_blk = group_blk;
+	ಆದರೆ (fs->stride && !flexbg_ಗಾತ್ರ) {
+		retval = ext2fs_get_free_blocks2(fs, ಗುಂಪು_blk, ಕೊನೆಯ_blk,
+						 1, bmap, &ಆರಂಭ_blk);
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
+		ಆರಂಭ_blk += fs->inode_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು;
+		ಆರಂಭ_blk += ((fs->stride * ಗುಂಪು) %
+			      (ಕೊನೆಯ_blk - ಆರಂಭ_blk + 1));
+		ಆದರೆ (ಆರಂಭ_blk >= ಕೊನೆಯ_blk)
+			ಆರಂಭ_blk = ಗುಂಪು_blk;
+	} ಇಲ್ಲದಿದ್ದರೆ
+		ಆರಂಭ_blk = ಗುಂಪು_blk;
 
-	if (flexbg_size) {
-		blk64_t prev_block = 0;
+	ಆದರೆ (flexbg_ಗಾತ್ರ) {
+		blk64_t prev_ಖಂಡ = 0;
 
-		table_offset = flexbg_size;
-		if (group % flexbg_size)
-			prev_block = ext2fs_block_bitmap_loc(fs, group - 1) + 1;
-		else if (last_grp == fs->group_desc_count-1) {
+		ಕೋಷ್ಟಕ_ಸ್ಥಾನಾಂತರ = flexbg_ಗಾತ್ರ;
+		ಆದರೆ (ಗುಂಪು % flexbg_ಗಾತ್ರ)
+			prev_ಖಂಡ = ext2fs_ಖಂಡ_bitmap_loc(fs, ಗುಂಪು - 1) + 1;
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಕೊನೆಯ_grp == fs->ಗುಂಪು_desc_ಎಣಿಕೆ-1) {
 			/*
 			 * If we are allocating for the last flex_bg
 			 * keep the metadata tables contiguous
 			 */
-			table_offset = last_grp & (flexbg_size - 1);
-			if (table_offset == 0)
-				table_offset = flexbg_size;
-			else
-				table_offset++;
+			ಕೋಷ್ಟಕ_ಸ್ಥಾನಾಂತರ = ಕೊನೆಯ_grp & (flexbg_ಗಾತ್ರ - 1);
+			ಆದರೆ (ಕೋಷ್ಟಕ_ಸ್ಥಾನಾಂತರ == 0)
+				ಕೋಷ್ಟಕ_ಸ್ಥಾನಾಂತರ = flexbg_ಗಾತ್ರ;
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಕೋಷ್ಟಕ_ಸ್ಥಾನಾಂತರ++;
 		}
 		/* FIXME: Take backup group descriptor blocks into account
 		 * if the flexbg allocations will grow to overlap them... */
-		start_blk = flexbg_offset(fs, group, prev_block, bmap,
+		ಆರಂಭ_blk = flexbg_ಸ್ಥಾನಾಂತರ(fs, ಗುಂಪು, prev_ಖಂಡ, bmap,
 					  rem_grps, 1);
-		last_blk = ext2fs_group_last_block2(fs, last_grp);
+		ಕೊನೆಯ_blk = ext2fs_ಗುಂಪು_ಕೊನೆಯ_block2(fs, ಕೊನೆಯ_grp);
 	}
 
-	if (!ext2fs_block_bitmap_loc(fs, group)) {
-		retval = ext2fs_get_free_blocks2(fs, start_blk, last_blk,
+	ಆದರೆ (!ext2fs_ಖಂಡ_bitmap_loc(fs, ಗುಂಪು)) {
+		retval = ext2fs_get_free_blocks2(fs, ಆರಂಭ_blk, ಕೊನೆಯ_blk,
 						 1, bmap, &new_blk);
-		if (retval == EXT2_ET_BLOCK_ALLOC_FAIL)
-			retval = ext2fs_get_free_blocks2(fs, group_blk,
-					last_blk, 1, bmap, &new_blk);
-		if (retval)
-			return retval;
-		ext2fs_mark_block_bitmap2(bmap, new_blk);
-		ext2fs_block_bitmap_loc_set(fs, group, new_blk);
-		if (flexbg_size) {
-			dgrp_t gr = ext2fs_group_of_blk2(fs, new_blk);
-			ext2fs_bg_free_blocks_count_set(fs, gr, ext2fs_bg_free_blocks_count(fs, gr) - 1);
-			ext2fs_free_blocks_count_add(fs->super, -1);
-			ext2fs_bg_flags_clear(fs, gr, EXT2_BG_BLOCK_UNINIT);
-			ext2fs_group_desc_csum_set(fs, gr);
+		ಆದರೆ (retval == EXT2_ET_ಖಂಡ_ALLOC_FAIL)
+			retval = ext2fs_get_free_blocks2(fs, ಗುಂಪು_blk,
+					ಕೊನೆಯ_blk, 1, bmap, &new_blk);
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
+		ext2fs_mark_ಖಂಡ_bitmap2(bmap, new_blk);
+		ext2fs_ಖಂಡ_bitmap_loc_ಗಣ(fs, ಗುಂಪು, new_blk);
+		ಆದರೆ (flexbg_ಗಾತ್ರ) {
+			dgrp_t gr = ext2fs_ಗುಂಪು_ದ_blk2(fs, new_blk);
+			ext2fs_bg_free_ಖಂಡಗಳು_ಎಣಿಕೆ_ಗಣ(fs, gr, ext2fs_bg_free_ಖಂಡಗಳು_ಎಣಿಕೆ(fs, gr) - 1);
+			ext2fs_free_ಖಂಡಗಳು_ಎಣಿಕೆ_ಕೂಡಿಸು(fs->super, -1);
+			ext2fs_bg_flags_clear(fs, gr, EXT2_BG_ಖಂಡ_UNINIT);
+			ext2fs_ಗುಂಪು_desc_csum_ಗಣ(fs, gr);
 		}
 	}
 
-	if (flexbg_size) {
-		blk64_t prev_block = 0;
-		if (group % flexbg_size)
-			prev_block = ext2fs_inode_bitmap_loc(fs, group - 1) + 1;
-		else
-			prev_block = ext2fs_block_bitmap_loc(fs, group) +
-				table_offset;
+	ಆದರೆ (flexbg_ಗಾತ್ರ) {
+		blk64_t prev_ಖಂಡ = 0;
+		ಆದರೆ (ಗುಂಪು % flexbg_ಗಾತ್ರ)
+			prev_ಖಂಡ = ext2fs_inode_bitmap_loc(fs, ಗುಂಪು - 1) + 1;
+		ಇಲ್ಲದಿದ್ದರೆ
+			prev_ಖಂಡ = ext2fs_ಖಂಡ_bitmap_loc(fs, ಗುಂಪು) +
+				ಕೋಷ್ಟಕ_ಸ್ಥಾನಾಂತರ;
 		/* FIXME: Take backup group descriptor blocks into account
 		 * if the flexbg allocations will grow to overlap them... */
-		start_blk = flexbg_offset(fs, group, prev_block, bmap,
+		ಆರಂಭ_blk = flexbg_ಸ್ಥಾನಾಂತರ(fs, ಗುಂಪು, prev_ಖಂಡ, bmap,
 					  rem_grps, 1);
-		last_blk = ext2fs_group_last_block2(fs, last_grp);
+		ಕೊನೆಯ_blk = ext2fs_ಗುಂಪು_ಕೊನೆಯ_block2(fs, ಕೊನೆಯ_grp);
 	}
 
-	if (!ext2fs_inode_bitmap_loc(fs, group)) {
-		retval = ext2fs_get_free_blocks2(fs, start_blk, last_blk,
+	ಆದರೆ (!ext2fs_inode_bitmap_loc(fs, ಗುಂಪು)) {
+		retval = ext2fs_get_free_blocks2(fs, ಆರಂಭ_blk, ಕೊನೆಯ_blk,
 						 1, bmap, &new_blk);
-		if (retval == EXT2_ET_BLOCK_ALLOC_FAIL)
-			retval = ext2fs_get_free_blocks2(fs, group_blk,
-					 last_blk, 1, bmap, &new_blk);
-		if (retval)
-			return retval;
-		ext2fs_mark_block_bitmap2(bmap, new_blk);
-		ext2fs_inode_bitmap_loc_set(fs, group, new_blk);
-		if (flexbg_size) {
-			dgrp_t gr = ext2fs_group_of_blk2(fs, new_blk);
-			ext2fs_bg_free_blocks_count_set(fs, gr, ext2fs_bg_free_blocks_count(fs, gr) - 1);
-			ext2fs_free_blocks_count_add(fs->super, -1);
-			ext2fs_bg_flags_clear(fs, gr, EXT2_BG_BLOCK_UNINIT);
-			ext2fs_group_desc_csum_set(fs, gr);
+		ಆದರೆ (retval == EXT2_ET_ಖಂಡ_ALLOC_FAIL)
+			retval = ext2fs_get_free_blocks2(fs, ಗುಂಪು_blk,
+					 ಕೊನೆಯ_blk, 1, bmap, &new_blk);
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
+		ext2fs_mark_ಖಂಡ_bitmap2(bmap, new_blk);
+		ext2fs_inode_bitmap_loc_ಗಣ(fs, ಗುಂಪು, new_blk);
+		ಆದರೆ (flexbg_ಗಾತ್ರ) {
+			dgrp_t gr = ext2fs_ಗುಂಪು_ದ_blk2(fs, new_blk);
+			ext2fs_bg_free_ಖಂಡಗಳು_ಎಣಿಕೆ_ಗಣ(fs, gr, ext2fs_bg_free_ಖಂಡಗಳು_ಎಣಿಕೆ(fs, gr) - 1);
+			ext2fs_free_ಖಂಡಗಳು_ಎಣಿಕೆ_ಕೂಡಿಸು(fs->super, -1);
+			ext2fs_bg_flags_clear(fs, gr, EXT2_BG_ಖಂಡ_UNINIT);
+			ext2fs_ಗುಂಪು_desc_csum_ಗಣ(fs, gr);
 		}
 	}
 
 	/*
 	 * Allocate the inode table
 	 */
-	if (flexbg_size) {
-		blk64_t prev_block = 0;
+	ಆದರೆ (flexbg_ಗಾತ್ರ) {
+		blk64_t prev_ಖಂಡ = 0;
 
-		if (group % flexbg_size)
-			prev_block = ext2fs_inode_table_loc(fs, group - 1) +
-				fs->inode_blocks_per_group;
-		else
-			prev_block = ext2fs_inode_bitmap_loc(fs, group) +
-				table_offset;
+		ಆದರೆ (ಗುಂಪು % flexbg_ಗಾತ್ರ)
+			prev_ಖಂಡ = ext2fs_inode_ಕೋಷ್ಟಕ_loc(fs, ಗುಂಪು - 1) +
+				fs->inode_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು;
+		ಇಲ್ಲದಿದ್ದರೆ
+			prev_ಖಂಡ = ext2fs_inode_bitmap_loc(fs, ಗುಂಪು) +
+				ಕೋಷ್ಟಕ_ಸ್ಥಾನಾಂತರ;
 
 		/* FIXME: Take backup group descriptor blocks into account
 		 * if the flexbg allocations will grow to overlap them... */
-		group_blk = flexbg_offset(fs, group, prev_block, bmap,
-					  rem_grps, fs->inode_blocks_per_group);
-		last_blk = ext2fs_group_last_block2(fs, last_grp);
+		ಗುಂಪು_blk = flexbg_ಸ್ಥಾನಾಂತರ(fs, ಗುಂಪು, prev_ಖಂಡ, bmap,
+					  rem_grps, fs->inode_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು);
+		ಕೊನೆಯ_blk = ext2fs_ಗುಂಪು_ಕೊನೆಯ_block2(fs, ಕೊನೆಯ_grp);
 	}
 
-	if (!ext2fs_inode_table_loc(fs, group)) {
-		retval = ext2fs_get_free_blocks2(fs, group_blk, last_blk,
-						fs->inode_blocks_per_group,
+	ಆದರೆ (!ext2fs_inode_ಕೋಷ್ಟಕ_loc(fs, ಗುಂಪು)) {
+		retval = ext2fs_get_free_blocks2(fs, ಗುಂಪು_blk, ಕೊನೆಯ_blk,
+						fs->inode_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು,
 						bmap, &new_blk);
-		if (retval)
-			return retval;
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 
-		ext2fs_mark_block_bitmap_range2(bmap,
-			new_blk, fs->inode_blocks_per_group);
-		if (flexbg_size) {
-			blk64_t num, blk;
-			num = fs->inode_blocks_per_group;
+		ext2fs_mark_ಖಂಡ_bitmap_range2(bmap,
+			new_blk, fs->inode_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು);
+		ಆದರೆ (flexbg_ಗಾತ್ರ) {
+			blk64_t ಅಂಕೆ, blk;
+			ಅಂಕೆ = fs->inode_ಖಂಡಗಳು_ಪ್ರತಿ_ಗುಂಪು;
 			blk = new_blk;
-			while (num) {
-				int gr = ext2fs_group_of_blk2(fs, blk);
-				last_blk = ext2fs_group_last_block2(fs, gr);
-				blk64_t n = num;
+			ಆಗ (ಅಂಕೆ) {
+				ಪೂರ್ಣಾಂಕ gr = ext2fs_ಗುಂಪು_ದ_blk2(fs, blk);
+				ಕೊನೆಯ_blk = ext2fs_ಗುಂಪು_ಕೊನೆಯ_block2(fs, gr);
+				blk64_t n = ಅಂಕೆ;
 
-				if (blk + num > last_blk)
-					n = last_blk - blk + 1;
+				ಆದರೆ (blk + ಅಂಕೆ > ಕೊನೆಯ_blk)
+					n = ಕೊನೆಯ_blk - blk + 1;
 
-				ext2fs_bg_free_blocks_count_set(fs, gr,
-					ext2fs_bg_free_blocks_count(fs, gr) -
-					n/EXT2FS_CLUSTER_RATIO(fs));
+				ext2fs_bg_free_ಖಂಡಗಳು_ಎಣಿಕೆ_ಗಣ(fs, gr,
+					ext2fs_bg_free_ಖಂಡಗಳು_ಎಣಿಕೆ(fs, gr) -
+					n/EXT2_FS_CLUSTER_ಅನುಪಾತ(fs));
 				ext2fs_bg_flags_clear(fs, gr,
-					EXT2_BG_BLOCK_UNINIT);
-				ext2fs_group_desc_csum_set(fs, gr);
-				ext2fs_free_blocks_count_add(fs->super, -n);
+					EXT2_BG_ಖಂಡ_UNINIT);
+				ext2fs_ಗುಂಪು_desc_csum_ಗಣ(fs, gr);
+				ext2fs_free_ಖಂಡಗಳು_ಎಣಿಕೆ_ಕೂಡಿಸು(fs->super, -n);
 				blk += n;
-				num -= n;
+				ಅಂಕೆ -= n;
 			}
 		}
-		ext2fs_inode_table_loc_set(fs, group, new_blk);
+		ext2fs_inode_ಕೋಷ್ಟಕ_loc_ಗಣ(fs, ಗುಂಪು, new_blk);
 	}
-	ext2fs_group_desc_csum_set(fs, group);
-	return 0;
+	ext2fs_ಗುಂಪು_desc_csum_ಗಣ(fs, ಗುಂಪು);
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 errcode_t ext2fs_allocate_tables(ext2_filsys fs)
 {
 	errcode_t	retval;
 	dgrp_t		i;
-	struct ext2fs_numeric_progress_struct progress;
+	ರಚನೆ ext2fs_numeric_ಪ್ರಗತಿ_struct ಪ್ರಗತಿ;
 
-	if (fs->progress_ops && fs->progress_ops->init)
-		(fs->progress_ops->init)(fs, &progress, NULL,
-					 fs->group_desc_count);
+	ಆದರೆ (fs->ಪ್ರಗತಿ_ops && fs->ಪ್ರಗತಿ_ops->init)
+		(fs->ಪ್ರಗತಿ_ops->init)(fs, &ಪ್ರಗತಿ, ಖಾಲಿ,
+					 fs->ಗುಂಪು_desc_ಎಣಿಕೆ);
 
-	for (i = 0; i < fs->group_desc_count; i++) {
-		if (fs->progress_ops && fs->progress_ops->update)
-			(fs->progress_ops->update)(fs, &progress, i);
-		retval = ext2fs_allocate_group_table(fs, i, fs->block_map);
-		if (retval)
-			return retval;
+	ಗಾಗಿ (i = 0; i < fs->ಗುಂಪು_desc_ಎಣಿಕೆ; i++) {
+		ಆದರೆ (fs->ಪ್ರಗತಿ_ops && fs->ಪ್ರಗತಿ_ops->update)
+			(fs->ಪ್ರಗತಿ_ops->update)(fs, &ಪ್ರಗತಿ, i);
+		retval = ext2fs_allocate_ಗುಂಪು_ಕೋಷ್ಟಕ(fs, i, fs->ಖಂಡ_map);
+		ಆದರೆ (retval)
+			ಹಿಂತಿರುಗಿ retval;
 	}
-	if (fs->progress_ops && fs->progress_ops->close)
-		(fs->progress_ops->close)(fs, &progress, NULL);
-	return 0;
+	ಆದರೆ (fs->ಪ್ರಗತಿ_ops && fs->ಪ್ರಗತಿ_ops->close)
+		(fs->ಪ್ರಗತಿ_ops->close)(fs, &ಪ್ರಗತಿ, ಖಾಲಿ);
+	ಹಿಂತಿರುಗಿ 0;
 }
 
