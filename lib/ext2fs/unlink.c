@@ -9,92 +9,92 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#অন্তর্ভাব "config.h"
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#যদি HAVE_UNISTD_H
+#অন্তর্ভাব <unistd.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#অন্তর্ভাব "ext2_fs.h"
+#অন্তর্ভাব "ext2fs.h"
 
-struct link_struct  {
-	const char	*name;
-	int		namelen;
+কাঠামো link_struct  {
+	ধ্রুবক অক্ষর	*name;
+	পূর্ণসংখ্যা		namelen;
 	ext2_ino_t	inode;
-	int		flags;
-	struct ext2_dir_entry *prev;
-	int		done;
+	পূর্ণসংখ্যা		flags;
+	কাঠামো ext2_dir_entry *পূর্ব;
+	পূর্ণসংখ্যা		done;
 };
 
 #ifdef __TURBOC__
  #pragma argsused
 #endif
-static int unlink_proc(struct ext2_dir_entry *dirent,
-		     int	offset,
-		     int	blocksize EXT2FS_ATTR((unused)),
-		     char	*buf EXT2FS_ATTR((unused)),
-		     void	*priv_data)
+স্থির পূর্ণসংখ্যা unlink_proc(কাঠামো ext2_dir_entry *dirent,
+		     পূর্ণসংখ্যা	offset,
+		     পূর্ণসংখ্যা	blocksize EXT2FS_ATTR((unused)),
+		     অক্ষর	*buf EXT2FS_ATTR((unused)),
+		     শূন্য	*priv_তথ্য)
 {
-	struct link_struct *ls = (struct link_struct *) priv_data;
-	struct ext2_dir_entry *prev;
+	কাঠামো link_struct *ls = (কাঠামো link_struct *) priv_তথ্য;
+	কাঠামো ext2_dir_entry *পূর্ব;
 
-	prev = ls->prev;
-	ls->prev = dirent;
+	পূর্ব = ls->পূর্ব;
+	ls->পূর্ব = dirent;
 
-	if (ls->name) {
-		if (ext2fs_dirent_name_len(dirent) != ls->namelen)
-			return 0;
-		if (strncmp(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
-			return 0;
+	যদি (ls->name) {
+		যদি (ext2fs_dirent_name_len(dirent) != ls->namelen)
+			ফেরত 0;
+		যদি (strncmp(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
+			ফেরত 0;
 	}
-	if (!(ls->flags & EXT2FS_UNLINK_FORCE) && ls->inode) {
-		if (dirent->inode != ls->inode)
-			return 0;
-	} else {
-		if (!dirent->inode)
-			return 0;
+	যদি (!(ls->flags & EXT2FS_UNLINK_FORCE) && ls->inode) {
+		যদি (dirent->inode != ls->inode)
+			ফেরত 0;
+	} অন্যথা {
+		যদি (!dirent->inode)
+			ফেরত 0;
 	}
 
-	if (offset)
-		prev->rec_len += dirent->rec_len;
-	else
+	যদি (offset)
+		পূর্ব->rec_len += dirent->rec_len;
+	অন্যথা
 		dirent->inode = 0;
 	ls->done++;
-	return DIRENT_ABORT|DIRENT_CHANGED;
+	ফেরত DIRENT_ABORT|DIRENT_CHANGED;
 }
 
 #ifdef __TURBOC__
  #pragma argsused
 #endif
 errcode_t ext2fs_unlink(ext2_filsys fs, ext2_ino_t dir,
-			const char *name, ext2_ino_t ino,
-			int flags)
+			ধ্রুবক অক্ষর *name, ext2_ino_t ino,
+			পূর্ণসংখ্যা flags)
 {
 	errcode_t	retval;
-	struct link_struct ls;
+	কাঠামো link_struct ls;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!name && !ino)
-		return EXT2_ET_INVALID_ARGUMENT;
+	যদি (!name && !ino)
+		ফেরত EXT2_ET_INVALID_ARGUMENT;
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	যদি (!(fs->flags & EXT2_FLAG_RW))
+		ফেরত EXT2_ET_RO_FILSYS;
 
 	ls.name = name;
 	ls.namelen = name ? strlen(name) : 0;
 	ls.inode = ino;
 	ls.flags = flags;
 	ls.done = 0;
-	ls.prev = 0;
+	ls.পূর্ব = 0;
 
 	retval = ext2fs_dir_iterate(fs, dir, DIRENT_FLAG_INCLUDE_EMPTY,
 				    0, unlink_proc, &ls);
-	if (retval)
-		return retval;
+	যদি (retval)
+		ফেরত retval;
 
-	return (ls.done) ? 0 : EXT2_ET_DIR_NO_SPACE;
+	ফেরত (ls.done) ? 0 : EXT2_ET_DIR_NO_SPACE;
 }
 

@@ -16,7 +16,7 @@
 #ifndef _LINUX_JBD_H
 #define _LINUX_JBD_H
 
-#include "jfs_compat.h"
+#অন্তর্ভাব "jfs_compat.h"
 #define JFS_DEBUG
 #define jfs_debug jbd_debug
 
@@ -33,29 +33,29 @@
  * CONFIG_JBD_DEBUG is on.
  */
 #define JBD_EXPENSIVE_CHECKING
-extern int journal_enable_debug;
-#else
+বাহ্যিক পূর্ণসংখ্যা journal_enable_debug;
+#অন্যথা
 #define journal_enable_debug (-1)
 #endif /* !CONFIG_JBD_DEBUG */
 
 #ifdef __STDC__
 #define jbd_debug(n, f, a...)						\
-	do {								\
-		if ((n) <= journal_enable_debug) {			\
+	করো {								\
+		যদি ((n) <= journal_enable_debug) {			\
 			printk (KERN_DEBUG "(%s, %d): %s: ",		\
 				__FILE__, __LINE__, __FUNCTION__);	\
 		  	printk (f, ## a);				\
 		}							\
-	} while (0)
-#else
+	} যখন (0)
+#অন্যথা
 #define jbd_debug(x)		/* AIX doesn't do STDC */
 #endif /* !__STDC__ */
 
-extern void * __jbd_kmalloc (char *where, size_t size, int flags, int retry);
-#define jbd_kmalloc(size, flags) \
-	__jbd_kmalloc(__FUNCTION__, (size), (flags), journal_oom_retry)
-#define jbd_rep_kmalloc(size, flags) \
-	__jbd_kmalloc(__FUNCTION__, (size), (flags), 1)
+বাহ্যিক শূন্য * __jbd_kmalloc (অক্ষর *where, size_t আকার_2, পূর্ণসংখ্যা flags, পূর্ণসংখ্যা retry);
+#define jbd_kmalloc(আকার_2, flags) \
+	__jbd_kmalloc(__FUNCTION__, (আকার_2), (flags), journal_oom_retry)
+#define jbd_rep_kmalloc(আকার_2, flags) \
+	__jbd_kmalloc(__FUNCTION__, (আকার_2), (flags), 1)
 
 #define JBD2_MIN_JOURNAL_BLOCKS 1024
 #define JBD2_MAX_JOURNAL_BLOCKS (JBD2_MIN_JOURNAL_BLOCKS * 10000)
@@ -65,7 +65,7 @@ extern void * __jbd_kmalloc (char *where, size_t size, int flags, int retry);
  * Internal structures used by the logging mechanism:
  */
 
-#define JBD2_MAGIC_NUMBER 0xc03b3998U /* The first 4 bytes of /dev/random! */
+#define JBD2_MAGIC_সংখ্যা 0xc03b3998U /* The first 4 bytes of /dev/random! */
 
 /*
  * On-disk structures
@@ -85,7 +85,7 @@ extern void * __jbd_kmalloc (char *where, size_t size, int flags, int retry);
 /*
  * Standard header for all descriptor blocks:
  */
-typedef struct journal_header_s
+প্রকারলেখ কাঠামো journal_header_s
 {
 	__be32		h_magic;
 	__be32		h_blocktype;
@@ -100,9 +100,9 @@ typedef struct journal_header_s
 #define JBD2_SHA1_CHKSUM    3
 #define JBD2_CRC32C_CHKSUM  4
 
-#define JBD2_CRC32_CHKSUM_SIZE 4
+#define JBD2_CRC32_CHKSUM_আকার 4
 
-#define JBD2_CHECKSUM_BYTES (32 / sizeof(__u32))
+#define JBD2_CHECKSUM_BYTES (32 / আকার(__u32))
 /*
  * Commit block header for storing transactional checksums:
  *
@@ -121,13 +121,13 @@ typedef struct journal_header_s
  *
  * Checksum v1, v2, and v3 are mutually exclusive features.
  */
-struct commit_header {
+কাঠামো commit_header {
 	__be32		h_magic;
 	__be32		h_blocktype;
 	__be32		h_sequence;
-	unsigned char	h_chksum_type;
-	unsigned char	h_chksum_size;
-	unsigned char	h_padding[2];
+	unsigned অক্ষর	h_chksum_type;
+	unsigned অক্ষর	h_chksum_আকার;
+	unsigned অক্ষর	h_padding[2];
 	__be32		h_chksum[JBD2_CHECKSUM_BYTES];
 	__be64		h_commit_sec;
 	__be32		h_commit_nsec;
@@ -136,24 +136,24 @@ struct commit_header {
 /*
  * The block tag: used to describe a single buffer in the journal
  */
-typedef struct journal_block_tag3_s
+প্রকারলেখ কাঠামো journal_block_tag3_s
 {
 	__be32		t_blocknr;	/* The on-disk block number */
 	__be32		t_flags;	/* See below */
-	__be32		t_blocknr_high; /* most-significant high 32bits. */
+	__be32		t_blocknr_উপরের; /* most-significant high 32bits. */
 	__be32		t_checksum;	/* crc32c(uuid+seq+block) */
 } journal_block_tag3_t;
 
-typedef struct journal_block_tag_s
+প্রকারলেখ কাঠামো journal_block_tag_s
 {
 	__be32		t_blocknr;	/* The on-disk block number */
 	__be16		t_checksum;	/* truncated crc32c(uuid+seq+block) */
 	__be16		t_flags;	/* See below */
-	__be32		t_blocknr_high; /* most-significant high 32bits. */
+	__be32		t_blocknr_উপরের; /* most-significant high 32bits. */
 } journal_block_tag_t;
 
 /* Tail of descriptor or revoke block, for checksumming */
-struct jbd2_journal_block_tail {
+কাঠামো jbd2_journal_block_লেজ {
 	__be32		t_checksum;
 };
 
@@ -161,10 +161,10 @@ struct jbd2_journal_block_tail {
  * The revoke descriptor: used on disk to describe a series of blocks to
  * be revoked from the log
  */
-typedef struct journal_revoke_header_s
+প্রকারলেখ কাঠামো journal_revoke_header_s
 {
 	journal_header_t r_header;
-	__be32		 r_count;	/* Count of bytes used in the block */
+	__be32		 r_গুনতি;	/* Count of bytes used in the block */
 } jbd2_journal_revoke_header_t;
 
 /* Definitions for the journal tag flags word: */
@@ -174,13 +174,13 @@ typedef struct journal_revoke_header_s
 #define JBD2_FLAG_LAST_TAG	8	/* last tag in this descriptor block */
 
 
-#define UUID_SIZE 16
+#define UUID_আকার 16
 #define JBD2_USERS_MAX 48
-#define JBD2_USERS_SIZE (UUID_SIZE * JBD2_USERS_MAX)
+#define JBD2_USERS_আকার (UUID_আকার * JBD2_USERS_MAX)
 /*
  * The journal superblock.  All fields are in big-endian byte order.
  */
-typedef struct journal_superblock_s
+প্রকারলেখ কাঠামো journal_superblock_s
 {
 /* 0x0000 */
 	journal_header_t s_header;
@@ -215,19 +215,19 @@ typedef struct journal_superblock_s
 
 /* 0x0048 */
 	__be32	s_max_transaction;	/* Limit of journal blocks per trans.*/
-	__be32	s_max_trans_data;	/* Limit of data blocks per trans. */
+	__be32	s_max_trans_তথ্য;	/* Limit of data blocks per trans. */
 
 /* 0x0050 */
 	__u8	s_checksum_type;	/* checksum type */
 	__u8	s_padding2[3];
 /* 0x0054 */
-	__be32	s_num_fc_blks;		/* Number of fast commit blocks */
+	__be32	s_অঙ্ক_fc_blks;		/* Number of fast commit blocks */
 /* 0x0058 */
 	__be32	s_padding[41];
 	__be32	s_checksum;		/* crc32c(superblock) */
 
 /* 0x0100 */
-	__u8	s_users[JBD2_USERS_SIZE];		/* ids of all fs'es sharing the log */
+	__u8	s_users[JBD2_USERS_আকার];		/* ids of all fs'es sharing the log */
 
 /* 0x0400 */
 } journal_superblock_t;
@@ -262,111 +262,111 @@ typedef struct journal_superblock_s
 					 JBD2_FEATURE_INCOMPAT_FAST_COMMIT)
 
 #ifdef NO_INLINE_FUNCS
-extern size_t journal_tag_bytes(journal_t *journal);
-extern int jbd2_journal_has_csum_v2or3(journal_t *journal);
-extern int jbd2_journal_get_num_fc_blks(journal_superblock_t *jsb);
-extern int tid_gt(tid_t x, tid_t y) EXT2FS_ATTR((unused));
-extern int tid_geq(tid_t x, tid_t y) EXT2FS_ATTR((unused));
+বাহ্যিক size_t journal_tag_bytes(journal_t *journal);
+বাহ্যিক পূর্ণসংখ্যা jbd2_journal_has_csum_v2or3(journal_t *journal);
+বাহ্যিক পূর্ণসংখ্যা jbd2_journal_get_অঙ্ক_fc_blks(journal_superblock_t *jsb);
+বাহ্যিক পূর্ণসংখ্যা tid_gt(tid_t x, tid_t y) EXT2FS_ATTR((unused));
+বাহ্যিক পূর্ণসংখ্যা tid_geq(tid_t x, tid_t y) EXT2FS_ATTR((unused));
 #endif
 
-#if (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
+#যদি (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
 #ifdef E2FSCK_INCLUDE_INLINE_FUNCS
-#if (__STDC_VERSION__ >= 199901L)
-#define _INLINE_ extern inline
-#else
-#define _INLINE_ inline
+#যদি (__STDC_VERSION__ >= 199901L)
+#define _INLINE_ বাহ্যিক অন্তঃরেখ
+#অন্যথা
+#define _INLINE_ অন্তঃরেখ
 #endif
-#else /* !E2FSCK_INCLUDE_INLINE FUNCS */
-#if (__STDC_VERSION__ >= 199901L)
-#define _INLINE_ inline
-#else /* not C99 */
+#অন্যথা /* !E2FSCK_INCLUDE_INLINE FUNCS */
+#যদি (__STDC_VERSION__ >= 199901L)
+#define _INLINE_ অন্তঃরেখ
+#অন্যথা /* not C99 */
 #ifdef __GNUC__
-#define _INLINE_ extern __inline__
-#else				/* For Watcom C */
-#define _INLINE_ extern inline
+#define _INLINE_ বাহ্যিক __inline__
+#অন্যথা				/* For Watcom C */
+#define _INLINE_ বাহ্যিক অন্তঃরেখ
 #endif /* __GNUC__ */
 #endif /* __STDC_VERSION__ >= 199901L */
 #endif /* INCLUDE_INLINE_FUNCS */
 
 /* journal feature predicate functions */
 #define JBD2_FEATURE_COMPAT_FUNCS(name, flagname) \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j); \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j) \
+_INLINE_ পূর্ণসংখ্যা jbd2_has_feature_##name(journal_t *j); \
+_INLINE_ পূর্ণসংখ্যা jbd2_has_feature_##name(journal_t *j) \
 { \
-	return ((j)->j_format_version >= 2 && \
+	ফেরত ((j)->j_format_version >= 2 && \
 		((j)->j_superblock->s_feature_compat & \
 		 ext2fs_cpu_to_be32(JBD2_FEATURE_COMPAT_##flagname)) != 0); \
 } \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j) \
+_INLINE_ শূন্য jbd2_set_feature_##name(journal_t *j); \
+_INLINE_ শূন্য jbd2_set_feature_##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_compat |= \
 		ext2fs_cpu_to_be32(JBD2_FEATURE_COMPAT_##flagname); \
 } \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j) \
+_INLINE_ শূন্য jbd2_clear_feature_##name(journal_t *j); \
+_INLINE_ শূন্য jbd2_clear_feature_##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_compat &= \
 		~ext2fs_cpu_to_be32(JBD2_FEATURE_COMPAT_##flagname); \
 }
 
 #define JBD2_FEATURE_RO_COMPAT_FUNCS(name, flagname) \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j);	\
-_INLINE_ int jbd2_has_feature_##name(journal_t *j) \
+_INLINE_ পূর্ণসংখ্যা jbd2_has_feature_##name(journal_t *j);	\
+_INLINE_ পূর্ণসংখ্যা jbd2_has_feature_##name(journal_t *j) \
 { \
-	return ((j)->j_format_version >= 2 && \
+	ফেরত ((j)->j_format_version >= 2 && \
 		((j)->j_superblock->s_feature_ro_compat & \
 		 ext2fs_cpu_to_be32(JBD2_FEATURE_RO_COMPAT_##flagname)) != 0); \
 } \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j) \
+_INLINE_ শূন্য jbd2_set_feature_##name(journal_t *j); \
+_INLINE_ শূন্য jbd2_set_feature_##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_ro_compat |= \
 		ext2fs_cpu_to_be32(JBD2_FEATURE_RO_COMPAT_##flagname); \
 } \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j) \
+_INLINE_ শূন্য jbd2_clear_feature_##name(journal_t *j); \
+_INLINE_ শূন্য jbd2_clear_feature_##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_ro_compat &= \
 		~ext2fs_cpu_to_be32(JBD2_FEATURE_RO_COMPAT_##flagname); \
 }
 
 #define JBD2_FEATURE_INCOMPAT_FUNCS(name, flagname) \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j); \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j) \
+_INLINE_ পূর্ণসংখ্যা jbd2_has_feature_##name(journal_t *j); \
+_INLINE_ পূর্ণসংখ্যা jbd2_has_feature_##name(journal_t *j) \
 { \
-	return ((j)->j_format_version >= 2 && \
+	ফেরত ((j)->j_format_version >= 2 && \
 		((j)->j_superblock->s_feature_incompat & \
 		 ext2fs_cpu_to_be32(JBD2_FEATURE_INCOMPAT_##flagname)) != 0); \
 } \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_set_feature_##name(journal_t *j) \
+_INLINE_ শূন্য jbd2_set_feature_##name(journal_t *j); \
+_INLINE_ শূন্য jbd2_set_feature_##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_incompat |= \
 		ext2fs_cpu_to_be32(JBD2_FEATURE_INCOMPAT_##flagname); \
 } \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j); \
-_INLINE_ void jbd2_clear_feature_##name(journal_t *j) \
+_INLINE_ শূন্য jbd2_clear_feature_##name(journal_t *j); \
+_INLINE_ শূন্য jbd2_clear_feature_##name(journal_t *j) \
 { \
 	(j)->j_superblock->s_feature_incompat &= \
 		~ext2fs_cpu_to_be32(JBD2_FEATURE_INCOMPAT_##flagname); \
 }
 
-#else
+#অন্যথা
 #define JBD2_FEATURE_COMPAT_FUNCS(name, flagname) \
-extern int jbd2_has_feature_##name(journal_t *j); \
-extern void jbd2_set_feature_##name(journal_t *j); \
-extern void jbd2_clear_feature_##name(journal_t *j);
+বাহ্যিক পূর্ণসংখ্যা jbd2_has_feature_##name(journal_t *j); \
+বাহ্যিক শূন্য jbd2_set_feature_##name(journal_t *j); \
+বাহ্যিক শূন্য jbd2_clear_feature_##name(journal_t *j);
 
 #define JBD2_FEATURE_RO_COMPAT_FUNCS(name, flagname) \
-extern int jbd2_has_feature_##name(journal_t *j); \
-extern void jbd2_set_feature_##name(journal_t *j); \
-extern void jbd2_clear_feature_##name(journal_t *j);
+বাহ্যিক পূর্ণসংখ্যা jbd2_has_feature_##name(journal_t *j); \
+বাহ্যিক শূন্য jbd2_set_feature_##name(journal_t *j); \
+বাহ্যিক শূন্য jbd2_clear_feature_##name(journal_t *j);
 
 #define JBD2_FEATURE_INCOMPAT_FUNCS(name, flagname) \
-extern int jbd2_has_feature_##name(journal_t *j); \
-extern void jbd2_set_feature_##name(journal_t *j); \
-extern void jbd2_clear_feature_##name(journal_t *j);
+বাহ্যিক পূর্ণসংখ্যা jbd2_has_feature_##name(journal_t *j); \
+বাহ্যিক শূন্য jbd2_set_feature_##name(journal_t *j); \
+বাহ্যিক শূন্য jbd2_clear_feature_##name(journal_t *j);
 
 #endif /* (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS)) */
 
@@ -379,7 +379,7 @@ JBD2_FEATURE_INCOMPAT_FUNCS(csum2,		CSUM_V2)
 JBD2_FEATURE_INCOMPAT_FUNCS(csum3,		CSUM_V3)
 JBD2_FEATURE_INCOMPAT_FUNCS(fast_commit,	FAST_COMMIT)
 
-#if (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
+#যদি (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
 /*
  * helper functions to deal with 32 or 64bit block numbers.
  */
@@ -387,54 +387,54 @@ _INLINE_ size_t journal_tag_bytes(journal_t *journal)
 {
 	size_t sz;
 
-	if (jbd2_has_feature_csum3(journal))
-		return sizeof(journal_block_tag3_t);
+	যদি (jbd2_has_feature_csum3(journal))
+		ফেরত আকার(journal_block_tag3_t);
 
-	sz = sizeof(journal_block_tag_t);
+	sz = আকার(journal_block_tag_t);
 
-	if (jbd2_has_feature_csum2(journal))
-		sz += sizeof(__u16);
+	যদি (jbd2_has_feature_csum2(journal))
+		sz += আকার(__u16);
 
-	if (jbd2_has_feature_64bit(journal))
-		return sz;
+	যদি (jbd2_has_feature_64bit(journal))
+		ফেরত sz;
 
-	return sz - sizeof(__u32);
+	ফেরত sz - আকার(__u32);
 }
 
-_INLINE_ int jbd2_journal_has_csum_v2or3(journal_t *journal)
+_INLINE_ পূর্ণসংখ্যা jbd2_journal_has_csum_v2or3(journal_t *journal)
 {
-	if (jbd2_has_feature_csum2(journal) || jbd2_has_feature_csum3(journal))
-		return 1;
+	যদি (jbd2_has_feature_csum2(journal) || jbd2_has_feature_csum3(journal))
+		ফেরত 1;
 
-	return 0;
+	ফেরত 0;
 }
 
-_INLINE_ int jbd2_journal_get_num_fc_blks(journal_superblock_t *jsb)
+_INLINE_ পূর্ণসংখ্যা jbd2_journal_get_অঙ্ক_fc_blks(journal_superblock_t *jsb)
 {
-	int num_fc_blocks = be32_to_cpu(jsb->s_num_fc_blks);
+	পূর্ণসংখ্যা অঙ্ক_fc_blocks = be32_to_cpu(jsb->s_অঙ্ক_fc_blks);
 
-	return num_fc_blocks ? num_fc_blocks : JBD2_DEFAULT_FAST_COMMIT_BLOCKS;
+	ফেরত অঙ্ক_fc_blocks ? অঙ্ক_fc_blocks : JBD2_DEFAULT_FAST_COMMIT_BLOCKS;
 }
 
 /* Comparison functions for transaction IDs: perform comparisons using
  * modulo arithmetic so that they work over sequence number wraps. */
 
-_INLINE_ int tid_gt(tid_t x, tid_t y)
+_INLINE_ পূর্ণসংখ্যা tid_gt(tid_t x, tid_t y)
 {
-	int difference = (x - y);
-	return (difference > 0);
+	পূর্ণসংখ্যা difference = (x - y);
+	ফেরত (difference > 0);
 }
 
-_INLINE_ int tid_geq(tid_t x, tid_t y)
+_INLINE_ পূর্ণসংখ্যা tid_geq(tid_t x, tid_t y)
 {
-	int difference = (x - y);
-	return (difference >= 0);
+	পূর্ণসংখ্যা difference = (x - y);
+	ফেরত (difference >= 0);
 }
 #endif /* (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS)) */
 
 #undef _INLINE_
 
-extern int journal_blocks_per_page(struct inode *inode);
+বাহ্যিক পূর্ণসংখ্যা journal_blocks_per_page(কাঠামো inode *inode);
 
 /*
  * Definitions which augment the buffer_head layer
@@ -442,8 +442,8 @@ extern int journal_blocks_per_page(struct inode *inode);
 
 /* journaling buffer types */
 #define BJ_None		0	/* Not journaled */
-#define BJ_SyncData	1	/* Normal data: flush before commit */
-#define BJ_AsyncData	2	/* writepage data: wait on it before commit */
+#define BJ_Sync_তথ্য	1	/* Normal data: flush before commit */
+#define BJ_Async_তথ্য	2	/* writepage data: wait on it before commit */
 #define BJ_Metadata	3	/* Normal journaled metadata */
 #define BJ_Forget	4	/* Buffer superseded by this transaction */
 #define BJ_IO		5	/* Buffer is for temporary IO use */
@@ -452,6 +452,6 @@ extern int journal_blocks_per_page(struct inode *inode);
 #define BJ_Reserved	8	/* Buffer is reserved for access by journal */
 #define BJ_Types	9
 
-extern int jbd_blocks_per_page(struct inode *inode);
+বাহ্যিক পূর্ণসংখ্যা jbd_blocks_per_page(কাঠামো inode *inode);
 
 #endif	/* _LINUX_JBD_H */

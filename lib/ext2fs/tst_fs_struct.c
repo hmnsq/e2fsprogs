@@ -9,34 +9,34 @@
  * %End-Header%
  */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <stdlib.h>
 
-#include "ext2fs.h"
+#অন্তর্ভাব "ext2fs.h"
 
-struct struct_ext2_filsys fs;
+কাঠামো struct_ext2_filsys fs;
 
 #ifndef offsetof
 #define offsetof(type, member)  __builtin_offsetof (type, member)
 #endif
-#define check_field(x) cur_offset = do_field(#x, sizeof(fs.x),		\
-					offsetof(struct struct_ext2_filsys, x), \
+#define check_field(x) cur_offset = do_field(#x, আকার(fs.x),		\
+					offsetof(কাঠামো struct_ext2_filsys, x), \
 					cur_offset)
 
-static int do_field(const char *field, size_t size, int offset, int cur_offset)
+স্থির পূর্ণসংখ্যা do_field(ধ্রুবক অক্ষর *field, size_t আকার_2, পূর্ণসংখ্যা offset, পূর্ণসংখ্যা cur_offset)
 {
-	if (offset != cur_offset) {
+	যদি (offset != cur_offset) {
 		printf("\t(padding %d bytes?)\n", offset - cur_offset);
 	}
-	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	printf("%8d %-30s %3u\n", offset, field, (unsigned) আকার_2);
+	ফেরত offset + আকার_2;
 }
 
-int main(int argc, char **argv)
+পূর্ণসংখ্যা প্রধান(পূর্ণসংখ্যা argc, অক্ষর **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#যদি (__GNUC__ >= 4)
+	পূর্ণসংখ্যা cur_offset = 0;
 
 	printf("%8s %-30s %3s\n", "offset", "field", "size");
 	check_field(magic);
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	check_field(super);
 	check_field(blocksize);
 	check_field(fragsize);
-	check_field(group_desc_count);
+	check_field(group_desc_গুনতি);
 	check_field(desc_blocks);
 	check_field(group_desc);
 	check_field(inode_blocks_per_group);
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 	check_field(now);
 	check_field(cluster_ratio_bits);
 	check_field(reserved);
-	check_field(priv_data);
+	check_field(priv_তথ্য);
 	check_field(icache);
 	check_field(image_io);
 	check_field(get_alloc_block);

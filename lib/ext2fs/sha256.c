@@ -11,13 +11,13 @@
  */
 
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#অন্তর্ভাব "config.h"
+#যদি HAVE_SYS_TYPES_H
+#অন্তর্ভাব <sys/types.h>
 #endif
-#include "ext2fs.h"
+#অন্তর্ভাব "ext2fs.h"
 
-static const __u32 K[64] = {
+স্থির ধ্রুবক __u32 K[64] = {
     0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL, 0x3956c25bUL,
     0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL, 0xd807aa98UL, 0x12835b01UL,
     0x243185beUL, 0x550c7dc3UL, 0x72be5d74UL, 0x80deb1feUL, 0x9bdc06a7UL,
@@ -51,75 +51,75 @@ static const __u32 K[64] = {
      h  = t0 + t1;
 
 #define STORE64H(x, y) \
-	do { \
-		(y)[0] = (unsigned char)(((x)>>56)&255);\
-		(y)[1] = (unsigned char)(((x)>>48)&255);\
-		(y)[2] = (unsigned char)(((x)>>40)&255);\
-		(y)[3] = (unsigned char)(((x)>>32)&255);\
-		(y)[4] = (unsigned char)(((x)>>24)&255);\
-		(y)[5] = (unsigned char)(((x)>>16)&255);\
-		(y)[6] = (unsigned char)(((x)>>8)&255);\
-		(y)[7] = (unsigned char)((x)&255); } while(0)
+	করো { \
+		(y)[0] = (unsigned অক্ষর)(((x)>>56)&255);\
+		(y)[1] = (unsigned অক্ষর)(((x)>>48)&255);\
+		(y)[2] = (unsigned অক্ষর)(((x)>>40)&255);\
+		(y)[3] = (unsigned অক্ষর)(((x)>>32)&255);\
+		(y)[4] = (unsigned অক্ষর)(((x)>>24)&255);\
+		(y)[5] = (unsigned অক্ষর)(((x)>>16)&255);\
+		(y)[6] = (unsigned অক্ষর)(((x)>>8)&255);\
+		(y)[7] = (unsigned অক্ষর)((x)&255); } যখন(0)
 
 #define STORE32H(x, y)                                                                     \
-  do { (y)[0] = (unsigned char)(((x)>>24)&255); (y)[1] = (unsigned char)(((x)>>16)&255);   \
-       (y)[2] = (unsigned char)(((x)>>8)&255); (y)[3] = (unsigned char)((x)&255); } while(0)
+  করো { (y)[0] = (unsigned অক্ষর)(((x)>>24)&255); (y)[1] = (unsigned অক্ষর)(((x)>>16)&255);   \
+       (y)[2] = (unsigned অক্ষর)(((x)>>8)&255); (y)[3] = (unsigned অক্ষর)((x)&255); } যখন(0)
 
 #define LOAD32H(x, y)                            \
-  do { x = ((__u32)((y)[0] & 255)<<24) | \
+  করো { x = ((__u32)((y)[0] & 255)<<24) | \
            ((__u32)((y)[1] & 255)<<16) | \
            ((__u32)((y)[2] & 255)<<8)  | \
-           ((__u32)((y)[3] & 255)); } while(0)
+           ((__u32)((y)[3] & 255)); } যখন(0)
 
-struct sha256_state {
-    __u64 length;
+কাঠামো sha256_state {
+    __u64 দৈর্ঘ্য;
     __u32 state[8], curlen;
-    unsigned char buf[64];
+    unsigned অক্ষর buf[64];
 };
 
 /* This is a highly simplified version from libtomcrypt */
-struct hash_state {
-	struct sha256_state sha256;
+কাঠামো hash_state {
+	কাঠামো sha256_state sha256;
 };
 
-static void sha256_compress(struct hash_state * md, const unsigned char *buf)
+স্থির শূন্য sha256_compress(কাঠামো hash_state * md, ধ্রুবক unsigned অক্ষর *buf)
 {
     __u32 S[8], W[64], t0, t1;
     __u32 t;
-    int i;
+    পূর্ণসংখ্যা i;
 
     /* copy state into S */
-    for (i = 0; i < 8; i++) {
+    জন্য (i = 0; i < 8; i++) {
         S[i] = md->sha256.state[i];
     }
 
     /* copy the state into 512-bits into W[0..15] */
-    for (i = 0; i < 16; i++) {
+    জন্য (i = 0; i < 16; i++) {
         LOAD32H(W[i], buf + (4*i));
     }
 
     /* fill W[16..63] */
-    for (i = 16; i < 64; i++) {
+    জন্য (i = 16; i < 64; i++) {
         W[i] = Gamma1(W[i - 2]) + W[i - 7] + Gamma0(W[i - 15]) + W[i - 16];
     }        
 
     /* Compress */
-     for (i = 0; i < 64; ++i) {
+     জন্য (i = 0; i < 64; ++i) {
          RND(S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7],i);
          t = S[7]; S[7] = S[6]; S[6] = S[5]; S[5] = S[4]; 
          S[4] = S[3]; S[3] = S[2]; S[2] = S[1]; S[1] = S[0]; S[0] = t;
      }  
 
     /* feedback */
-    for (i = 0; i < 8; i++) {
+    জন্য (i = 0; i < 8; i++) {
         md->sha256.state[i] = md->sha256.state[i] + S[i];
     }
 }
 
-static void sha256_init(struct hash_state * md)
+স্থির শূন্য sha256_init(কাঠামো hash_state * md)
 {
     md->sha256.curlen = 0;
-    md->sha256.length = 0;
+    md->sha256.দৈর্ঘ্য = 0;
     md->sha256.state[0] = 0x6A09E667UL;
     md->sha256.state[1] = 0xBB67AE85UL;
     md->sha256.state[2] = 0x3C6EF372UL;
@@ -132,25 +132,25 @@ static void sha256_init(struct hash_state * md)
 
 #define MIN(x, y) ( ((x)<(y))?(x):(y) )
 #define SHA256_BLOCKSIZE 64
-static void sha256_process(struct hash_state * md, const unsigned char *in, unsigned long inlen)
+স্থির শূন্য sha256_process(কাঠামো hash_state * md, ধ্রুবক unsigned অক্ষর *in, unsigned long inlen)
 {
     unsigned long n;
 
-    while (inlen > 0) {
-	    if (md->sha256.curlen == 0 && inlen >= SHA256_BLOCKSIZE) {
+    যখন (inlen > 0) {
+	    যদি (md->sha256.curlen == 0 && inlen >= SHA256_BLOCKSIZE) {
 		    sha256_compress(md, in);
-		    md->sha256.length += SHA256_BLOCKSIZE * 8;
+		    md->sha256.দৈর্ঘ্য += SHA256_BLOCKSIZE * 8;
 		    in += SHA256_BLOCKSIZE;
 		    inlen -= SHA256_BLOCKSIZE;
-	    } else {
+	    } অন্যথা {
 		    n = MIN(inlen, (SHA256_BLOCKSIZE - md->sha256.curlen));
 		    memcpy(md->sha256.buf + md->sha256.curlen, in, (size_t)n);
 		    md->sha256.curlen += n;
 		    in += n;
 		    inlen -= n;
-		    if (md->sha256.curlen == SHA256_BLOCKSIZE) {
+		    যদি (md->sha256.curlen == SHA256_BLOCKSIZE) {
 			    sha256_compress(md, md->sha256.buf);
-			    md->sha256.length += 8*SHA256_BLOCKSIZE;
+			    md->sha256.দৈর্ঘ্য += 8*SHA256_BLOCKSIZE;
 			    md->sha256.curlen = 0;
 		    }
 	    }
@@ -158,57 +158,57 @@ static void sha256_process(struct hash_state * md, const unsigned char *in, unsi
 }
 
 
-static void sha256_done(struct hash_state * md, unsigned char *out)
+স্থির শূন্য sha256_done(কাঠামো hash_state * md, unsigned অক্ষর *out)
 {
-    int i;
+    পূর্ণসংখ্যা i;
 
     /* increase the length of the message */
-    md->sha256.length += md->sha256.curlen * 8;
+    md->sha256.দৈর্ঘ্য += md->sha256.curlen * 8;
 
     /* append the '1' bit */
-    md->sha256.buf[md->sha256.curlen++] = (unsigned char)0x80;
+    md->sha256.buf[md->sha256.curlen++] = (unsigned অক্ষর)0x80;
 
     /* if the length is currently above 56 bytes we append zeros
      * then compress.  Then we can fall back to padding zeros and length
      * encoding like normal.
      */
-    if (md->sha256.curlen > 56) {
-        while (md->sha256.curlen < 64) {
-            md->sha256.buf[md->sha256.curlen++] = (unsigned char)0;
+    যদি (md->sha256.curlen > 56) {
+        যখন (md->sha256.curlen < 64) {
+            md->sha256.buf[md->sha256.curlen++] = (unsigned অক্ষর)0;
         }
         sha256_compress(md, md->sha256.buf);
         md->sha256.curlen = 0;
     }
 
     /* pad up to 56 bytes of zeroes */
-    while (md->sha256.curlen < 56) {
-        md->sha256.buf[md->sha256.curlen++] = (unsigned char)0;
+    যখন (md->sha256.curlen < 56) {
+        md->sha256.buf[md->sha256.curlen++] = (unsigned অক্ষর)0;
     }
 
     /* store length */
-    STORE64H(md->sha256.length, md->sha256.buf+56);
+    STORE64H(md->sha256.দৈর্ঘ্য, md->sha256.buf+56);
     sha256_compress(md, md->sha256.buf);
 
     /* copy output */
-    for (i = 0; i < 8; i++) {
+    জন্য (i = 0; i < 8; i++) {
         STORE32H(md->sha256.state[i], out+(4*i));
     }
 }
 
-void ext2fs_sha256(const unsigned char *in, unsigned long in_size,
-		   unsigned char out[EXT2FS_SHA256_LENGTH])
+শূন্য ext2fs_sha256(ধ্রুবক unsigned অক্ষর *in, unsigned long in_আকার,
+		   unsigned অক্ষর out[EXT2_FS_SHA256_দৈর্ঘ্য])
 {
-	struct hash_state md;
+	কাঠামো hash_state md;
 
 	sha256_init(&md);
-	sha256_process(&md, in, in_size);
+	sha256_process(&md, in, in_আকার);
 	sha256_done(&md, out);
 }
 
 #ifdef UNITTEST
-static const struct {
-	char *msg;
-	unsigned char hash[32];
+স্থির ধ্রুবক কাঠামো {
+	অক্ষর *বার্তা;
+	unsigned অক্ষর hash[32];
 } tests[] = {
 	{ "",
 	  { 0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14,
@@ -230,25 +230,25 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+পূর্ণসংখ্যা প্রধান(পূর্ণসংখ্যা argc, অক্ষর **argv)
 {
-	int i;
-	int errors = 0;
-	unsigned char tmp[32];
+	পূর্ণসংখ্যা i;
+	পূর্ণসংখ্যা errors = 0;
+	unsigned অক্ষর tmp[32];
 
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
-		unsigned char *msg = (unsigned char *) tests[i].msg;
-		int len = strlen(tests[i].msg);
+	জন্য (i = 0; i < (পূর্ণসংখ্যা)(আকার(tests) / আকার(tests[0])); i++) {
+		unsigned অক্ষর *বার্তা = (unsigned অক্ষর *) tests[i].বার্তা;
+		পূর্ণসংখ্যা len = strlen(tests[i].বার্তা);
 
-		ext2fs_sha256(msg, len, tmp);
+		ext2fs_sha256(বার্তা, len, tmp);
 		printf("SHA256 test message %d: ", i);
-		if (memcmp(tmp, tests[i].hash, 32) != 0) {
+		যদি (memcmp(tmp, tests[i].hash, 32) != 0) {
 			printf("FAILED\n");
 			errors++;
-		} else
+		} অন্যথা
 			printf("OK\n");
 	}
-	return errors;
+	ফেরত errors;
 }
 
 #endif /* UNITTEST */

@@ -11,49 +11,49 @@
 #ifndef _LINUX_FIEMAP_H
 #define _LINUX_FIEMAP_H
 
-struct fiemap_extent {
+কাঠামো fiemap_extent {
 	__u64 fe_logical;  /* logical offset in bytes for the start of
 			    * the extent from the beginning of the file */
 	__u64 fe_physical; /* physical offset in bytes for the start
 			    * of the extent from the beginning of the disk */
-	__u64 fe_length;   /* length in bytes for this extent */
+	__u64 fe_দৈর্ঘ্য;   /* length in bytes for this extent */
 	__u64 fe_reserved64[2];
 	__u32 fe_flags;    /* FIEMAP_EXTENT_* flags for this extent */
 	__u32 fe_reserved[3];
 };
 
-struct fiemap {
+কাঠামো fiemap {
 	__u64 fm_start;		/* logical offset (inclusive) at
 				 * which to start mapping (in) */
-	__u64 fm_length;	/* logical length of mapping which
+	__u64 fm_দৈর্ঘ্য;	/* logical length of mapping which
 				 * userspace wants (in) */
 	__u32 fm_flags;		/* FIEMAP_FLAG_* flags for request (in/out) */
 	__u32 fm_mapped_extents;/* number of extents that were mapped (out) */
-	__u32 fm_extent_count;  /* size of fm_extents array (in) */
+	__u32 fm_extent_গুনতি;  /* size of fm_extents array (in) */
 	__u32 fm_reserved;
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic push
+#যদি __GNUC_PREREQ (4, 8)
+#pragma GCC diagnostic ঠেলো
 #pragma GCC diagnostic ignored "-Wpedantic"
 #endif
-	struct fiemap_extent fm_extents[0]; /* array of mapped extents (out) */
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic pop
+	কাঠামো fiemap_extent fm_extents[0]; /* array of mapped extents (out) */
+#যদি __GNUC_PREREQ (4, 8)
+#pragma GCC diagnostic বের_করো
 #endif
 };
 
-#if defined(__linux__) && !defined(FS_IOC_FIEMAP)
-#define FS_IOC_FIEMAP	_IOWR('f', 11, struct fiemap)
+#যদি defined(__linux__) && !defined(FS_IOC_FIEMAP)
+#define FS_IOC_FIEMAP	_IOWR('f', 11, কাঠামো fiemap)
 #endif
 
-#if defined(__linux__) && !defined(FS_IOC_GETSTATE)
+#যদি defined(__linux__) && !defined(FS_IOC_GETSTATE)
 #define EXT4_IOC_GETSTATE		_IOW('f', 41, __u32)
 #endif
 
-#if defined(__linux__) && !defined(EXT4_IOC_GET_ES_CACHE)
-#define EXT4_IOC_GET_ES_CACHE		_IOWR('f', 42, struct fiemap)
+#যদি defined(__linux__) && !defined(EXT4_IOC_GET_ES_CACHE)
+#define EXT4_IOC_GET_ES_CACHE		_IOWR('f', 42, কাঠামো fiemap)
 #endif
 
-#if defined(__linux__) && !defined(EXT4_STATE_FLAG_EXT_PRECACHED)
+#যদি defined(__linux__) && !defined(EXT4_STATE_FLAG_EXT_PRECACHED)
 #define EXT4_STATE_FLAG_EXT_PRECACHED	0x00000001
 #endif
 
@@ -71,13 +71,13 @@ struct fiemap {
 						    * Sets EXTENT_UNKNOWN. */
 #define FIEMAP_EXTENT_ENCODED		0x00000008 /* Data can not be read
 						    * while fs is unmounted */
-#define FIEMAP_EXTENT_DATA_ENCRYPTED	0x00000080 /* Data is encrypted by fs.
+#define FIEMAP_EXTENT_তথ্য_ENCRYPTED	0x00000080 /* Data is encrypted by fs.
 						    * Sets EXTENT_NO_BYPASS. */
 #define FIEMAP_EXTENT_NOT_ALIGNED	0x00000100 /* Extent offsets may not be
 						    * block aligned. */
-#define FIEMAP_EXTENT_DATA_INLINE	0x00000200 /* Data mixed with metadata.
+#define FIEMAP_EXTENT_তথ্য_INLINE	0x00000200 /* Data mixed with metadata.
 						    * Sets EXTENT_NOT_ALIGNED.*/
-#define FIEMAP_EXTENT_DATA_TAIL		0x00000400 /* Multiple files in block.
+#define FIEMAP_EXTENT_তথ্য_লেজ		0x00000400 /* Multiple files in block.
 						    * Sets EXTENT_NOT_ALIGNED.*/
 #define FIEMAP_EXTENT_UNWRITTEN		0x00000800 /* Space allocated, but
 						    * no data (i.e. zero). */

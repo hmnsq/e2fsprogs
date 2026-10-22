@@ -15,104 +15,104 @@
 #define _XOPEN_SOURCE 600	/* for posix_memalign() */
 #endif
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#অন্তর্ভাব "config.h"
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#যদি HAVE_UNISTD_H
+#অন্তর্ভাব <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#অন্তর্ভাব <fcntl.h>
+#অন্তর্ভাব <time.h>
+#যদি HAVE_SYS_STAT_H
+#অন্তর্ভাব <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#যদি HAVE_SYS_TYPES_H
+#অন্তর্ভাব <sys/types.h>
 #endif
-#if HAVE_MALLOC_H
-#include <malloc.h>
+#যদি HAVE_MALLOC_H
+#অন্তর্ভাব <malloc.h>
 #endif
 
-#include "ext2_fs.h"
+#অন্তর্ভাব "ext2_fs.h"
 #define INCLUDE_INLINE_FUNCS
-#include "ext2fs.h"
+#অন্তর্ভাব "ext2fs.h"
 
 /*
  * We used to define this as an inline, but since we are now using
  * autoconf-defined #ifdef's, we need to export this as a
  * library-provided function exclusively.
  */
-errcode_t ext2fs_get_memalign(unsigned long size,
-			      unsigned long align, void *ptr)
+errcode_t ext2fs_get_memalign(unsigned long আকার_2,
+			      unsigned long align, শূন্য *ptr)
 {
 	errcode_t retval = 0;
-	void **p = ptr;
+	শূন্য **p = ptr;
 
-	if (align < 8)
+	যদি (align < 8)
 		align = 8;
 #ifdef HAVE_POSIX_MEMALIGN
-	retval = posix_memalign(p, align, size);
-	if (retval == ENOMEM)
-		return EXT2_ET_NO_MEMORY;
-#else  /* !HAVE_POSIX_MEMALIGN */
+	retval = posix_memalign(p, align, আকার_2);
+	যদি (retval == ENOMEM)
+		ফেরত EXT2_ET_NO_MEMORY;
+#অন্যথা  /* !HAVE_POSIX_MEMALIGN */
 #ifdef HAVE_MEMALIGN
-	*p = memalign(align, size);
-	if (*p == NULL) {
-		if (errno)
-			return errno;
-		else
-			return EXT2_ET_NO_MEMORY;
+	*p = memalign(align, আকার_2);
+	যদি (*p == ফাঁকা) {
+		যদি (errno)
+			ফেরত errno;
+		অন্যথা
+			ফেরত EXT2_ET_NO_MEMORY;
 	}
-#else  /* !HAVE_MEMALIGN */
+#অন্যথা  /* !HAVE_MEMALIGN */
 #ifdef HAVE_VALLOC
-	if (align > sizeof(long long))
-		*p = valloc(size);
-	else
+	যদি (align > আকার(long long))
+		*p = valloc(আকার_2);
+	অন্যথা
 #endif
-		*p = malloc(size);
-	if ((uintptr_t) *p & (align - 1)) {
-		free(*p);
+		*p = malloc(আকার_2);
+	যদি ((uintptr_t) *p & (align - 1)) {
+		মুক্ত(*p);
 		*p = 0;
 	}
-	if (*p == 0)
-		return EXT2_ET_NO_MEMORY;
+	যদি (*p == 0)
+		ফেরত EXT2_ET_NO_MEMORY;
 #endif	/* HAVE_MEMALIGN */
 #endif	/* HAVE_POSIX_MEMALIGN */
-	return retval;
+	ফেরত retval;
 }
 
 #ifdef DEBUG
-static int isaligned(void *ptr, unsigned long align)
+স্থির পূর্ণসংখ্যা isaligned(শূন্য *ptr, unsigned long align)
 {
-	return (((unsigned long) ptr & (align - 1)) == 0);
+	ফেরত (((unsigned long) ptr & (align - 1)) == 0);
 }
 
-static errcode_t test_memalign(unsigned long align)
+স্থির errcode_t test_memalign(unsigned long align)
 {
-	void *ptr = 0;
+	শূন্য *ptr = 0;
 	errcode_t retval;
 
 	retval = ext2fs_get_memalign(32, align, &ptr);
-	if (!retval && !isaligned(ptr, align))
+	যদি (!retval && !isaligned(ptr, align))
 		retval = EINVAL;
-	free(ptr);
+	মুক্ত(ptr);
 	printf("tst_memalign(%lu) is %s\n", align,
 	       retval ? error_message(retval) : "OK");
-	return retval;
+	ফেরত retval;
 }
 
-int main(int argc, char **argv)
+পূর্ণসংখ্যা প্রধান(পূর্ণসংখ্যা argc, অক্ষর **argv)
 {
-	int err = 0;
+	পূর্ণসংখ্যা err = 0;
 
-	if (test_memalign(4))
+	যদি (test_memalign(4))
 		err++;
-	if (test_memalign(32))
+	যদি (test_memalign(32))
 		err++;
-	if (test_memalign(1024))
+	যদি (test_memalign(1024))
 		err++;
-	if (test_memalign(4096))
+	যদি (test_memalign(4096))
 		err++;
-	return err;
+	ফেরত err;
 }
 #endif

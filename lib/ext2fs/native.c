@@ -9,18 +9,18 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
+#অন্তর্ভাব "config.h"
+#অন্তর্ভাব <stdio.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#অন্তর্ভাব "ext2_fs.h"
+#অন্তর্ভাব "ext2fs.h"
 
-int ext2fs_native_flag(void)
+পূর্ণসংখ্যা ext2fs_native_flag(শূন্য)
 {
-#ifdef WORDS_BIGENDIAN
-	return EXT2_FLAG_SWAP_BYTES;
-#else
-	return 0;
+#ifdef শব্দগুলি_BIGENDIAN
+	ফেরত EXT2_FLAG_SWAP_BYTES;
+#অন্যথা
+	ফেরত 0;
 #endif
 }
 

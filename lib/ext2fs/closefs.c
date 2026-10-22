@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#অন্তর্ভাব "config.h"
+#অন্তর্ভাব <stdio.h>
+#যদি HAVE_UNISTD_H
+#অন্তর্ভাব <unistd.h>
 #endif
-#include <time.h>
-#include <string.h>
+#অন্তর্ভাব <time.h>
+#অন্তর্ভাব <string.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#অন্তর্ভাব "ext2_fs.h"
+#অন্তর্ভাব "ext2fsP.h"
 
-static int test_root(unsigned int a, unsigned int b)
+স্থির পূর্ণসংখ্যা test_মূল(unsigned পূর্ণসংখ্যা a, unsigned পূর্ণসংখ্যা b)
 {
-	while (1) {
-		if (a < b)
-			return 0;
-		if (a == b)
-			return 1;
-		if (a % b)
-			return 0;
+	যখন (1) {
+		যদি (a < b)
+			ফেরত 0;
+		যদি (a == b)
+			ফেরত 1;
+		যদি (a % b)
+			ফেরত 0;
 		a = a / b;
 	}
 }
 
-int ext2fs_bg_has_super(ext2_filsys fs, dgrp_t group)
+পূর্ণসংখ্যা ext2fs_bg_has_super(ext2_filsys fs, dgrp_t group)
 {
-	if (group == 0)
-		return 1;
-	if (ext2fs_has_feature_sparse_super2(fs->super)) {
-		if (group == fs->super->s_backup_bgs[0] ||
+	যদি (group == 0)
+		ফেরত 1;
+	যদি (ext2fs_has_feature_sparse_super2(fs->super)) {
+		যদি (group == fs->super->s_backup_bgs[0] ||
 		    group == fs->super->s_backup_bgs[1])
-			return 1;
-		return 0;
+			ফেরত 1;
+		ফেরত 0;
 	}
-	if ((group <= 1) || !ext2fs_has_feature_sparse_super(fs->super))
-		return 1;
-	if (!(group & 1))
-		return 0;
-	if (test_root(group, 3) || (test_root(group, 5)) ||
-	    test_root(group, 7))
-		return 1;
+	যদি ((group <= 1) || !ext2fs_has_feature_sparse_super(fs->super))
+		ফেরত 1;
+	যদি (!(group & 1))
+		ফেরত 0;
+	যদি (test_মূল(group, 3) || (test_মূল(group, 5)) ||
+	    test_মূল(group, 7))
+		ফেরত 1;
 
-	return 0;
+	ফেরত 0;
 }
 
 /*
@@ -76,57 +76,57 @@ errcode_t ext2fs_super_and_bgd_loc2(ext2_filsys fs,
 					   blk_t *ret_used_blks)
 {
 	blk64_t	group_block, super_blk = 0, old_desc_blk = 0, new_desc_blk = 0;
-	unsigned int meta_bg, meta_bg_size;
+	unsigned পূর্ণসংখ্যা meta_bg, meta_bg_আকার;
 	blk_t	numblocks = 0;
 	blk64_t old_desc_blocks;
-	int	has_super;
+	পূর্ণসংখ্যা	has_super;
 
 	group_block = ext2fs_group_first_block2(fs, group);
-	if (group_block == 0 && fs->blocksize == 1024)
+	যদি (group_block == 0 && fs->blocksize == 1024)
 		group_block = 1; /* Deal with 1024 blocksize && bigalloc */
 
-	if (ext2fs_has_feature_meta_bg(fs->super))
+	যদি (ext2fs_has_feature_meta_bg(fs->super))
 		old_desc_blocks = fs->super->s_first_meta_bg;
-	else
+	অন্যথা
 		old_desc_blocks =
 			fs->desc_blocks + fs->super->s_reserved_gdt_blocks;
 
 	has_super = ext2fs_bg_has_super(fs, group);
 
-	if (has_super) {
+	যদি (has_super) {
 		super_blk = group_block;
 		numblocks++;
 	}
-	meta_bg_size = EXT2_DESC_PER_BLOCK(fs->super);
-	meta_bg = group / meta_bg_size;
+	meta_bg_আকার = EXT2_DESC_PER_BLOCK(fs->super);
+	meta_bg = group / meta_bg_আকার;
 
-	if (!ext2fs_has_feature_meta_bg(fs->super) ||
+	যদি (!ext2fs_has_feature_meta_bg(fs->super) ||
 	    (meta_bg < fs->super->s_first_meta_bg)) {
-		if (has_super) {
+		যদি (has_super) {
 			old_desc_blk = group_block + 1;
 			numblocks += old_desc_blocks;
 		}
-	} else {
-		if (((group % meta_bg_size) == 0) ||
-		    ((group % meta_bg_size) == 1) ||
-		    ((group % meta_bg_size) == (meta_bg_size-1))) {
-			if (has_super)
+	} অন্যথা {
+		যদি (((group % meta_bg_আকার) == 0) ||
+		    ((group % meta_bg_আকার) == 1) ||
+		    ((group % meta_bg_আকার) == (meta_bg_আকার-1))) {
+			যদি (has_super)
 				has_super = 1;
 			new_desc_blk = group_block + has_super;
 			numblocks++;
 		}
 	}
 
-	if (ret_super_blk)
+	যদি (ret_super_blk)
 		*ret_super_blk = super_blk;
-	if (ret_old_desc_blk)
+	যদি (ret_old_desc_blk)
 		*ret_old_desc_blk = old_desc_blk;
-	if (ret_new_desc_blk)
+	যদি (ret_new_desc_blk)
 		*ret_new_desc_blk = new_desc_blk;
-	if (ret_used_blks)
+	যদি (ret_used_blks)
 		*ret_used_blks = numblocks;
 
-	return 0;
+	ফেরত 0;
 }
 
 /*
@@ -142,41 +142,41 @@ errcode_t ext2fs_super_and_bgd_loc2(ext2_filsys fs,
  * capable and returns the number of blocks used by super block and
  * group descriptors.
  */
-int ext2fs_super_and_bgd_loc(ext2_filsys fs,
+পূর্ণসংখ্যা ext2fs_super_and_bgd_loc(ext2_filsys fs,
 			     dgrp_t group,
 			     blk_t *ret_super_blk,
 			     blk_t *ret_old_desc_blk,
 			     blk_t *ret_new_desc_blk,
-			     int *ret_meta_bg)
+			     পূর্ণসংখ্যা *ret_meta_bg)
 {
 	blk64_t ret_super_blk2;
 	blk64_t ret_old_desc_blk2;
 	blk64_t ret_new_desc_blk2;
 	blk_t ret_used_blks;
 	blk_t numblocks;
-	unsigned int meta_bg_size;
+	unsigned পূর্ণসংখ্যা meta_bg_আকার;
 
 	ext2fs_super_and_bgd_loc2(fs, group, &ret_super_blk2,
 					&ret_old_desc_blk2,
 					&ret_new_desc_blk2,
 					&ret_used_blks);
 
-	numblocks = ext2fs_group_blocks_count(fs, group);
+	numblocks = ext2fs_group_blocks_গুনতি(fs, group);
 
-	if (ret_super_blk)
+	যদি (ret_super_blk)
 		*ret_super_blk = (blk_t)ret_super_blk2;
-	if (ret_old_desc_blk)
+	যদি (ret_old_desc_blk)
 		*ret_old_desc_blk = (blk_t)ret_old_desc_blk2;
-	if (ret_new_desc_blk)
+	যদি (ret_new_desc_blk)
 		*ret_new_desc_blk = (blk_t)ret_new_desc_blk2;
-	if (ret_meta_bg) {
-		meta_bg_size = EXT2_DESC_PER_BLOCK(fs->super);
-		*ret_meta_bg = group / meta_bg_size;
+	যদি (ret_meta_bg) {
+		meta_bg_আকার = EXT2_DESC_PER_BLOCK(fs->super);
+		*ret_meta_bg = group / meta_bg_আকার;
 	}
 
 	numblocks -= 2 + fs->inode_blocks_per_group + ret_used_blks;
 
-	return numblocks;
+	ফেরত numblocks;
 }
 
 /*
@@ -189,114 +189,114 @@ int ext2fs_super_and_bgd_loc(ext2_filsys fs,
  * (if necessary).
  *
  */
-static errcode_t write_primary_superblock(ext2_filsys fs,
-					  struct ext2_super_block *super)
+স্থির errcode_t write_primary_superblock(ext2_filsys fs,
+					  কাঠামো ext2_super_block *super)
 {
 	__u16		*old_super, *new_super;
-	int		check_idx, write_idx, size;
+	পূর্ণসংখ্যা		check_idx, write_idx, আকার_2;
 	errcode_t	retval;
 
-	if (!fs->io->manager->write_byte || !fs->orig_super) {
+	যদি (!fs->io->manager->write_byte || !fs->orig_super) {
 	fallback:
 		io_channel_set_blksize(fs->io, SUPERBLOCK_OFFSET);
-		retval = io_channel_write_blk64(fs->io, 1, -SUPERBLOCK_SIZE,
+		retval = io_channel_write_blk64(fs->io, 1, -SUPERBLOCK_আকার,
 					      super);
 		io_channel_set_blksize(fs->io, fs->blocksize);
-		return retval;
+		ফেরত retval;
 	}
 
 	old_super = (__u16 *) fs->orig_super;
 	new_super = (__u16 *) super;
 
-	for (check_idx = 0; check_idx < SUPERBLOCK_SIZE/2; check_idx++) {
-		if (old_super[check_idx] == new_super[check_idx])
-			continue;
+	জন্য (check_idx = 0; check_idx < SUPERBLOCK_আকার/2; check_idx++) {
+		যদি (old_super[check_idx] == new_super[check_idx])
+			চালু;
 		write_idx = check_idx;
-		for (check_idx++; check_idx < SUPERBLOCK_SIZE/2; check_idx++)
-			if (old_super[check_idx] == new_super[check_idx])
-				break;
-		size = 2 * (check_idx - write_idx);
-#if 0
+		জন্য (check_idx++; check_idx < SUPERBLOCK_আকার/2; check_idx++)
+			যদি (old_super[check_idx] == new_super[check_idx])
+				বিরতি;
+		আকার_2 = 2 * (check_idx - write_idx);
+#যদি 0
 		printf("Writing %d bytes starting at %d\n",
-		       size, write_idx*2);
+		       আকার_2, write_idx*2);
 #endif
 		retval = io_channel_write_byte(fs->io,
-			       SUPERBLOCK_OFFSET + (2 * write_idx), size,
+			       SUPERBLOCK_OFFSET + (2 * write_idx), আকার_2,
 					       new_super + write_idx);
-		if (retval == EXT2_ET_UNIMPLEMENTED)
-			goto fallback;
-		if (retval)
-			return retval;
+		যদি (retval == EXT2_ET_UNIMPLEMENTED)
+			যাও fallback;
+		যদি (retval)
+			ফেরত retval;
 	}
-	memcpy(fs->orig_super, super, SUPERBLOCK_SIZE);
-	return 0;
+	memcpy(fs->orig_super, super, SUPERBLOCK_আকার);
+	ফেরত 0;
 }
 
 
 /*
  * Updates the revision to EXT2_DYNAMIC_REV
  */
-void ext2fs_update_dynamic_rev(ext2_filsys fs)
+শূন্য ext2fs_update_dynamic_rev(ext2_filsys fs)
 {
-	struct ext2_super_block *sb = fs->super;
+	কাঠামো ext2_super_block *sb = fs->super;
 
-	if (sb->s_rev_level > EXT2_GOOD_OLD_REV)
-		return;
+	যদি (sb->s_rev_level > EXT2_GOOD_OLD_REV)
+		ফেরত;
 
 	sb->s_rev_level = EXT2_DYNAMIC_REV;
 	sb->s_first_ino = EXT2_GOOD_OLD_FIRST_INO;
-	sb->s_inode_size = EXT2_GOOD_OLD_INODE_SIZE;
+	sb->s_inode_আকার = EXT2_GOOD_OLD_INODE_আকার;
 	/* s_uuid is handled by e2fsck already */
 	/* other fields should be left alone */
 }
 
-static errcode_t write_backup_super(ext2_filsys fs, dgrp_t group,
+স্থির errcode_t write_backup_super(ext2_filsys fs, dgrp_t group,
 				    blk64_t group_block,
-				    struct ext2_super_block *super_shadow)
+				    কাঠামো ext2_super_block *super_shadow)
 {
 	errcode_t retval;
 	dgrp_t	sgrp = group;
 
-	if (sgrp > ((1 << 16) - 1))
+	যদি (sgrp > ((1 << 16) - 1))
 		sgrp = (1 << 16) - 1;
 
 	super_shadow->s_block_group_nr = ext2fs_cpu_to_le16(sgrp);
 
 	retval = ext2fs_superblock_csum_set(fs, super_shadow);
-	if (retval)
-		return retval;
+	যদি (retval)
+		ফেরত retval;
 
-	return io_channel_write_blk64(fs->io, group_block, -SUPERBLOCK_SIZE,
+	ফেরত io_channel_write_blk64(fs->io, group_block, -SUPERBLOCK_আকার,
 				    super_shadow);
 }
 
 errcode_t ext2fs_flush(ext2_filsys fs)
 {
-	return ext2fs_flush2(fs, 0);
+	ফেরত ext2fs_flush2(fs, 0);
 }
 
-errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
+errcode_t ext2fs_flush2(ext2_filsys fs, পূর্ণসংখ্যা flags)
 {
 	dgrp_t		i;
 	errcode_t	retval;
 	unsigned long	fs_state;
 	__u32		feature_incompat;
-	struct ext2_super_block *super_shadow = 0;
-	struct opaque_ext2_group_desc *group_shadow = 0;
-#ifdef WORDS_BIGENDIAN
-	struct ext2_group_desc *gdp;
+	কাঠামো ext2_super_block *super_shadow = 0;
+	কাঠামো opaque_ext2_group_desc *group_shadow = 0;
+#ifdef শব্দগুলি_BIGENDIAN
+	কাঠামো ext2_group_desc *gdp;
 	dgrp_t		j;
 #endif
-	char	*group_ptr;
+	অক্ষর	*group_ptr;
 	blk64_t	old_desc_blocks;
-	struct ext2fs_numeric_progress_struct progress;
+	কাঠামো ext2fs_numeric_progress_struct progress;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if ((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0 &&
+	যদি ((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0 &&
 	    !ext2fs_has_feature_journal_dev(fs->super) &&
-	    fs->group_desc == NULL)
-		return EXT2_ET_NO_GDESC;
+	    fs->group_desc == ফাঁকা)
+		ফেরত EXT2_ET_NO_GDESC;
 
 	fs_state = fs->super->s_state;
 	feature_incompat = fs->super->s_feature_incompat;
@@ -313,10 +313,10 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 	 * Bitmap checksums live in the group descriptor, so the
 	 * bitmaps need to be written before the descriptors.
 	 */
-	if (fs->write_bitmaps) {
+	যদি (fs->write_bitmaps) {
 		retval = fs->write_bitmaps(fs);
-		if (retval)
-			goto errout;
+		যদি (retval)
+			যাও errout;
 	}
 
 	/*
@@ -328,29 +328,29 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 	ext2fs_clear_feature_journal_needs_recovery(fs->super);
 
 	/* Byte swap the superblock and the group descriptors if necessary */
-#ifdef WORDS_BIGENDIAN
+#ifdef শব্দগুলি_BIGENDIAN
 	retval = EXT2_ET_NO_MEMORY;
-	retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &super_shadow);
-	if (retval)
-		goto errout;
-	memcpy(super_shadow, fs->super, sizeof(struct ext2_super_block));
+	retval = ext2fs_get_mem(SUPERBLOCK_আকার, &super_shadow);
+	যদি (retval)
+		যাও errout;
+	memcpy(super_shadow, fs->super, আকার(কাঠামো ext2_super_block));
 	ext2fs_swap_super(super_shadow);
 
-	if (((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0) &&
+	যদি (((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0) &&
 	    !ext2fs_has_feature_journal_dev(fs->super)) {
 		retval = ext2fs_get_array(fs->desc_blocks, fs->blocksize,
 					  &group_shadow);
-		if (retval)
-			goto errout;
+		যদি (retval)
+			যাও errout;
 		memcpy(group_shadow, fs->group_desc, (size_t) fs->blocksize *
 		       fs->desc_blocks);
 
-		for (j = 0; j < fs->group_desc_count; j++) {
+		জন্য (j = 0; j < fs->group_desc_গুনতি; j++) {
 			gdp = ext2fs_group_desc(fs, group_shadow, j);
 			ext2fs_swap_group_desc2(fs, gdp);
 		}
 	}
-#else
+#অন্যথা
 	super_shadow = fs->super;
 	group_shadow = fs->group_desc;
 #endif
@@ -359,61 +359,61 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 	 * If this is an external journal device, don't write out the
 	 * block group descriptors or any of the backup superblocks
 	 */
-	if (ext2fs_has_feature_journal_dev(fs->super))
-		goto write_primary_superblock_only;
+	যদি (ext2fs_has_feature_journal_dev(fs->super))
+		যাও write_primary_superblock_only;
 
 	/*
 	 * Write out the master group descriptors, and the backup
 	 * superblocks and group descriptors.
 	 */
-	group_ptr = (char *) group_shadow;
-	if (ext2fs_has_feature_meta_bg(fs->super)) {
+	group_ptr = (অক্ষর *) group_shadow;
+	যদি (ext2fs_has_feature_meta_bg(fs->super)) {
 		old_desc_blocks = fs->super->s_first_meta_bg;
-		if (old_desc_blocks > fs->desc_blocks)
+		যদি (old_desc_blocks > fs->desc_blocks)
 			old_desc_blocks = fs->desc_blocks;
-	} else
+	} অন্যথা
 		old_desc_blocks = fs->desc_blocks;
 
-	if (fs->progress_ops && fs->progress_ops->init)
-		(fs->progress_ops->init)(fs, &progress, NULL,
-					 fs->group_desc_count);
+	যদি (fs->progress_ops && fs->progress_ops->init)
+		(fs->progress_ops->init)(fs, &progress, ফাঁকা,
+					 fs->group_desc_গুনতি);
 
 
-	for (i = 0; i < fs->group_desc_count; i++) {
+	জন্য (i = 0; i < fs->group_desc_গুনতি; i++) {
 		blk64_t	super_blk, old_desc_blk, new_desc_blk;
 
-		if (fs->progress_ops && fs->progress_ops->update)
+		যদি (fs->progress_ops && fs->progress_ops->update)
 			(fs->progress_ops->update)(fs, &progress, i);
 		ext2fs_super_and_bgd_loc2(fs, i, &super_blk, &old_desc_blk,
 					 &new_desc_blk, 0);
 
-		if (!(fs->flags & EXT2_FLAG_MASTER_SB_ONLY) &&i && super_blk) {
+		যদি (!(fs->flags & EXT2_FLAG_MASTER_SB_ONLY) &&i && super_blk) {
 			retval = write_backup_super(fs, i, super_blk,
 						    super_shadow);
-			if (retval)
-				goto errout;
+			যদি (retval)
+				যাও errout;
 		}
-		if (fs->flags & EXT2_FLAG_SUPER_ONLY)
-			continue;
-		if ((old_desc_blk) &&
+		যদি (fs->flags & EXT2_FLAG_SUPER_ONLY)
+			চালু;
+		যদি ((old_desc_blk) &&
 		    (!(fs->flags & EXT2_FLAG_MASTER_SB_ONLY) || (i == 0))) {
 			retval = io_channel_write_blk64(fs->io,
 			      old_desc_blk, old_desc_blocks, group_ptr);
-			if (retval)
-				goto errout;
+			যদি (retval)
+				যাও errout;
 		}
-		if (new_desc_blk) {
-			int meta_bg = i / EXT2_DESC_PER_BLOCK(fs->super);
+		যদি (new_desc_blk) {
+			পূর্ণসংখ্যা meta_bg = i / EXT2_DESC_PER_BLOCK(fs->super);
 
 			retval = io_channel_write_blk64(fs->io, new_desc_blk,
 				1, group_ptr + (meta_bg*fs->blocksize));
-			if (retval)
-				goto errout;
+			যদি (retval)
+				যাও errout;
 		}
 	}
 
-	if (fs->progress_ops && fs->progress_ops->close)
-		(fs->progress_ops->close)(fs, &progress, NULL);
+	যদি (fs->progress_ops && fs->progress_ops->close)
+		(fs->progress_ops->close)(fs, &progress, ফাঁকা);
 
 write_primary_superblock_only:
 	/*
@@ -427,40 +427,40 @@ write_primary_superblock_only:
 	fs->super->s_block_group_nr = 0;
 	fs->super->s_state = fs_state;
 	fs->super->s_feature_incompat = feature_incompat;
-#ifdef WORDS_BIGENDIAN
+#ifdef শব্দগুলি_BIGENDIAN
 	*super_shadow = *fs->super;
 	ext2fs_swap_super(super_shadow);
 #endif
 
 	retval = ext2fs_superblock_csum_set(fs, super_shadow);
-	if (retval)
-		return retval;
+	যদি (retval)
+		ফেরত retval;
 
-	if (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
+	যদি (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
 		retval = io_channel_flush(fs->io);
-		if (retval)
-			goto errout;
+		যদি (retval)
+			যাও errout;
 	}
 	retval = write_primary_superblock(fs, super_shadow);
-	if (retval)
-		goto errout;
+	যদি (retval)
+		যাও errout;
 
 	fs->flags &= ~EXT2_FLAG_DIRTY;
 
-	if (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
+	যদি (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
 		retval = io_channel_flush(fs->io);
-		if (retval)
-			goto errout;
+		যদি (retval)
+			যাও errout;
 	}
 errout:
 	fs->super->s_state = fs_state;
-#ifdef WORDS_BIGENDIAN
-	if (super_shadow)
+#ifdef শব্দগুলি_BIGENDIAN
+	যদি (super_shadow)
 		ext2fs_free_mem(&super_shadow);
-	if (group_shadow)
+	যদি (group_shadow)
 		ext2fs_free_mem(&group_shadow);
 #endif
-	return retval;
+	ফেরত retval;
 }
 
 errcode_t ext2fs_close_free(ext2_filsys *fs_ptr)
@@ -469,53 +469,53 @@ errcode_t ext2fs_close_free(ext2_filsys *fs_ptr)
 	ext2_filsys fs = *fs_ptr;
 
 	ret = ext2fs_close2(fs, 0);
-	if (ret)
+	যদি (ret)
 		ext2fs_free(fs);
-	*fs_ptr = NULL;
-	return ret;
+	*fs_ptr = ফাঁকা;
+	ফেরত ret;
 }
 
 errcode_t ext2fs_close(ext2_filsys fs)
 {
-	return ext2fs_close2(fs, 0);
+	ফেরত ext2fs_close2(fs, 0);
 }
 
-errcode_t ext2fs_close2(ext2_filsys fs, int flags)
+errcode_t ext2fs_close2(ext2_filsys fs, পূর্ণসংখ্যা flags)
 {
 	errcode_t	retval;
-	int		meta_blks;
+	পূর্ণসংখ্যা		meta_blks;
 	io_stats stats = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (fs->write_bitmaps) {
+	যদি (fs->write_bitmaps) {
 		retval = fs->write_bitmaps(fs);
-		if (retval)
-			return retval;
+		যদি (retval)
+			ফেরত retval;
 	}
-	if (fs->super->s_kbytes_written &&
+	যদি (fs->super->s_kbytes_written &&
 	    fs->io->manager->get_stats)
 		fs->io->manager->get_stats(fs->io, &stats);
-	if (stats && stats->bytes_written && (fs->flags & EXT2_FLAG_RW)) {
+	যদি (stats && stats->bytes_written && (fs->flags & EXT2_FLAG_RW)) {
 		fs->super->s_kbytes_written += stats->bytes_written >> 10;
 		meta_blks = fs->desc_blocks + 1;
-		if (!(fs->flags & EXT2_FLAG_SUPER_ONLY))
+		যদি (!(fs->flags & EXT2_FLAG_SUPER_ONLY))
 			fs->super->s_kbytes_written += meta_blks /
 				(fs->blocksize / 1024);
-		if ((fs->flags & EXT2_FLAG_DIRTY) == 0)
+		যদি ((fs->flags & EXT2_FLAG_DIRTY) == 0)
 			fs->flags |= EXT2_FLAG_SUPER_ONLY | EXT2_FLAG_DIRTY;
 	}
-	if (fs->flags & EXT2_FLAG_DIRTY) {
+	যদি (fs->flags & EXT2_FLAG_DIRTY) {
 		retval = ext2fs_flush2(fs, flags);
-		if (retval)
-			return retval;
+		যদি (retval)
+			ফেরত retval;
 	}
 
 	retval = ext2fs_mmp_stop(fs);
-	if (retval)
-		return retval;
+	যদি (retval)
+		ফেরত retval;
 
 	ext2fs_free(fs);
-	return 0;
+	ফেরত 0;
 }
 

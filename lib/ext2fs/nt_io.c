@@ -13,7 +13,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#অন্তর্ভাব "config.h"
 #endif
 
 
@@ -23,17 +23,17 @@
 
 
 #pragma warning(disable:4514) // unreferenced inline function has been removed
-#pragma warning(push,4)
+#pragma warning(ঠেলো,4)
 
 #pragma warning(disable:4201) // nonstandard extension used : nameless struct/union)
 #pragma warning(disable:4214) // nonstandard extension used : bit field types other than int
 #pragma warning(disable:4115) // named type definition in parentheses
 
-#include <ntddk.h>
-#include <ntdddisk.h>
-#include <ntstatus.h>
+#অন্তর্ভাব <ntddk.h>
+#অন্তর্ভাব <ntdddisk.h>
+#অন্তর্ভাব <ntstatus.h>
 
-#pragma warning(pop)
+#pragma warning(বের_করো)
 
 
 //
@@ -85,10 +85,10 @@ NtReadFile(
     IN PIO_APC_ROUTINE ApcRoutine OPTIONAL,
     IN PVOID ApcContext OPTIONAL,
     OUT PIO_STATUS_BLOCK IoStatusBlock,
-    OUT PVOID Buffer,
-    IN ULONG Length,
+    OUT PVOID বাফার_2,
+    IN ULONG দৈর্ঘ্য_2,
     IN PLARGE_INTEGER ByteOffset OPTIONAL,
-    IN PULONG Key OPTIONAL
+    IN PULONG চাবি_2 OPTIONAL
     );
 
 NTSYSAPI
@@ -100,10 +100,10 @@ NtWriteFile(
     IN PIO_APC_ROUTINE ApcRoutine OPTIONAL,
     IN PVOID ApcContext OPTIONAL,
     OUT PIO_STATUS_BLOCK IoStatusBlock,
-    IN PVOID Buffer,
-    IN ULONG Length,
+    IN PVOID বাফার_2,
+    IN ULONG দৈর্ঘ্য_2,
     IN PLARGE_INTEGER ByteOffset OPTIONAL,
-    IN PULONG Key OPTIONAL
+    IN PULONG চাবি_2 OPTIONAL
     );
 
 NTSYSAPI
@@ -116,10 +116,10 @@ NtDeviceIoControlFile(
     IN PVOID ApcContext OPTIONAL,
     OUT PIO_STATUS_BLOCK IoStatusBlock,
     IN ULONG IoControlCode,
-    IN PVOID InputBuffer OPTIONAL,
-    IN ULONG InputBufferLength,
-    OUT PVOID OutputBuffer OPTIONAL,
-    IN ULONG OutputBufferLength
+    IN PVOID প্রবেশ_বাফার OPTIONAL,
+    IN ULONG প্রবেশ_বাফার_দৈর্ঘ্য,
+    OUT PVOID Output_বাফার OPTIONAL,
+    IN ULONG Output_বাফার_দৈর্ঘ্য
     );
 
 NTSYSAPI
@@ -132,10 +132,10 @@ NtFsControlFile(
     IN PVOID ApcContext OPTIONAL,
     OUT PIO_STATUS_BLOCK IoStatusBlock,
     IN ULONG IoControlCode,
-    IN PVOID InputBuffer OPTIONAL,
-    IN ULONG InputBufferLength,
-    OUT PVOID OutputBuffer OPTIONAL,
-    IN ULONG OutputBufferLength
+    IN PVOID প্রবেশ_বাফার OPTIONAL,
+    IN ULONG প্রবেশ_বাফার_দৈর্ঘ্য,
+    OUT PVOID Output_বাফার OPTIONAL,
+    IN ULONG Output_বাফার_দৈর্ঘ্য
     );
 
 
@@ -165,25 +165,25 @@ NtDelayExecution(
 // Include Win32 error codes.
 //
 
-#include <winerror.h>
+#অন্তর্ভাব <winerror.h>
 
 //
 // standard stuff
 //
 
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <malloc.h>
+#অন্তর্ভাব <assert.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <malloc.h>
 
-#include <linux/types.h>
-#include "ext2_fs.h"
-#include <errno.h>
+#অন্তর্ভাব <linux/types.h>
+#অন্তর্ভাব "ext2_fs.h"
+#অন্তর্ভাব <errno.h>
 
-#include "et/com_err.h"
-#include "ext2fs/ext2fs.h"
-#include "ext2fs/ext2_err.h"
+#অন্তর্ভাব "et/com_err.h"
+#অন্তর্ভাব "ext2fs/ext2fs.h"
+#অন্তর্ভাব "ext2fs/ext2_err.h"
 
 
 
@@ -193,8 +193,8 @@ NtDelayExecution(
 //
 
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#define EXT2_CHECK_MAGIC(কাঠামো, code) \
+	  যদি ((কাঠামো)->magic != (code)) ফেরত (code)
 
 #define EXT2_ET_MAGIC_NT_IO_CHANNEL  0x10ed
 
@@ -203,16 +203,16 @@ NtDelayExecution(
 // Private data block
 //
 
-typedef struct _NT_PRIVATE_DATA {
-	int	   magic;
+প্রকারলেখ কাঠামো NT_PRIVATE_তথ্য {
+	পূর্ণসংখ্যা	   magic;
 	HANDLE Handle;
-	int	   Flags;
-	PCHAR  Buffer;
-	__u32  BufferBlockNumber;
-	ULONG  BufferSize;
+	পূর্ণসংখ্যা	   Flags;
+	PCHAR  বাফার_2;
+	__u32  বাফার_Block_সংখ্যা;
+	ULONG  বাফার_আকার;
 	BOOLEAN OpenedReadonly;
 	BOOLEAN Written;
-}NT_PRIVATE_DATA, *PNT_PRIVATE_DATA;
+}NT_PRIVATE_তথ্য_2, *PNT_PRIVATE_তথ্য;
 
 
 
@@ -220,16 +220,16 @@ typedef struct _NT_PRIVATE_DATA {
 // Standard interface prototypes
 //
 
-static errcode_t nt_open(const char *name, int flags, io_channel *channel);
-static errcode_t nt_close(io_channel channel);
-static errcode_t nt_set_blksize(io_channel channel, int blksize);
-static errcode_t nt_read_blk(io_channel channel, unsigned long block,
-			       int count, void *data);
-static errcode_t nt_write_blk(io_channel channel, unsigned long block,
-				int count, const void *data);
-static errcode_t nt_flush(io_channel channel);
+স্থির errcode_t nt_open(ধ্রুবক অক্ষর *name, পূর্ণসংখ্যা flags, io_channel *channel);
+স্থির errcode_t nt_close(io_channel channel);
+স্থির errcode_t nt_set_blksize(io_channel channel, পূর্ণসংখ্যা blksize);
+স্থির errcode_t nt_read_blk(io_channel channel, unsigned long block,
+			       পূর্ণসংখ্যা গুনতি, শূন্য *তথ্য);
+স্থির errcode_t nt_write_blk(io_channel channel, unsigned long block,
+				পূর্ণসংখ্যা গুনতি, ধ্রুবক শূন্য *তথ্য);
+স্থির errcode_t nt_flush(io_channel channel);
 
-static struct struct_io_manager struct_nt_manager = {
+স্থির কাঠামো struct_io_manager struct_nt_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "NT I/O Manager",
 	.open		= nt_open,
@@ -246,7 +246,7 @@ static struct struct_io_manager struct_nt_manager = {
 
 io_manager nt_io_manager()
 {
-	return &struct_nt_manager;
+	ফেরত &struct_nt_manager;
 }
 
 
@@ -257,12 +257,12 @@ io_manager nt_io_manager()
 // This is a code to convert Win32 errors to unix errno
 //
 
-typedef struct {
+প্রকারলেখ কাঠামো {
 	ULONG WinError;
-	int errnocode;
+	পূর্ণসংখ্যা errnocode;
 }ERROR_ENTRY;
 
-static ERROR_ENTRY ErrorTable[] = {
+স্থির ERROR_ENTRY ErrorTable[] = {
         {  ERROR_INVALID_FUNCTION,       EINVAL    },
         {  ERROR_FILE_NOT_FOUND,         ENOENT    },
         {  ERROR_PATH_NOT_FOUND,         ENOENT    },
@@ -275,7 +275,7 @@ static ERROR_ENTRY ErrorTable[] = {
         {  ERROR_BAD_ENVIRONMENT,        E2BIG     },
         {  ERROR_BAD_FORMAT,             ENOEXEC   },
         {  ERROR_INVALID_ACCESS,         EINVAL    },
-        {  ERROR_INVALID_DATA,           EINVAL    },
+        {  ERROR_INVALID_তথ্য,           EINVAL    },
         {  ERROR_INVALID_DRIVE,          ENOENT    },
         {  ERROR_CURRENT_DIRECTORY,      EACCES    },
         {  ERROR_NOT_SAME_DEVICE,        EXDEV     },
@@ -313,23 +313,23 @@ static ERROR_ENTRY ErrorTable[] = {
 
 
 
-static
+স্থির
 unsigned
 _MapDosError (
     IN ULONG WinError
    )
 {
-	int i;
+	পূর্ণসংখ্যা i;
 
 	//
 	// Lookup
 	//
 
-	for (i = 0; i < (sizeof(ErrorTable)/sizeof(ErrorTable[0])); ++i)
+	জন্য (i = 0; i < (আকার(ErrorTable)/আকার(ErrorTable[0])); ++i)
 	{
-		if (WinError == ErrorTable[i].WinError)
+		যদি (WinError == ErrorTable[i].WinError)
 		{
-			return ErrorTable[i].errnocode;
+			ফেরত ErrorTable[i].errnocode;
 		}
 	}
 
@@ -337,19 +337,19 @@ _MapDosError (
 	// not in table. Check ranges
 	//
 
-	if ((WinError >= ERROR_WRITE_PROTECT) &&
-		(WinError <= ERROR_SHARING_BUFFER_EXCEEDED))
+	যদি ((WinError >= ERROR_WRITE_PROTECT) &&
+		(WinError <= ERROR_SHARING_বাফার_EXCEEDED))
 	{
-		return EACCES;
+		ফেরত EACCES;
 	}
-	else if ((WinError >= ERROR_INVALID_STARTING_CODESEG) &&
+	অন্যথা যদি ((WinError >= ERROR_INVALID_STARTING_CODESEG) &&
 			 (WinError <= ERROR_INFLOOP_IN_RELOC_CHAIN))
 	{
-		return ENOEXEC;
+		ফেরত ENOEXEC;
 	}
-	else
+	অন্যথা
 	{
-		return EINVAL;
+		ফেরত EINVAL;
 	}
 }
 
@@ -363,14 +363,14 @@ _MapDosError (
 // Function to map NT status to dos error.
 //
 
-static
+স্থির
 __inline
 unsigned
 _MapNtStatus(
     IN NTSTATUS Status
    )
 {
-	return _MapDosError(RtlNtStatusToDosError(Status));
+	ফেরত _MapDosError(RtlNtStatusToDosError(Status));
 }
 
 
@@ -381,7 +381,7 @@ _MapNtStatus(
 // Helper functions to make things easier
 //
 
-static
+স্থির
 NTSTATUS
 _OpenNtName(
     IN PCSTR Name,
@@ -392,7 +392,7 @@ _OpenNtName(
 {
 	UNICODE_STRING UnicodeString;
 	ANSI_STRING    AnsiString;
-	WCHAR Buffer[512];
+	WCHAR বাফার_2[512];
 	NTSTATUS Status;
 	OBJECT_ATTRIBUTES ObjectAttributes;
 	IO_STATUS_BLOCK IoStatusBlock;
@@ -401,17 +401,17 @@ _OpenNtName(
 	// Make Unicode name from input string
 	//
 
-	UnicodeString.Buffer = &Buffer[0];
-	UnicodeString.Length = 0;
-	UnicodeString.MaximumLength = sizeof(Buffer); // in bytes!!!
+	UnicodeString.বাফার_2 = &বাফার_2[0];
+	UnicodeString.দৈর্ঘ্য_2 = 0;
+	UnicodeString.Maximum_দৈর্ঘ্য = আকার(বাফার_2); // in bytes!!!
 
 	RtlInitAnsiString(&AnsiString, Name);
 
 	Status = RtlAnsiStringToUnicodeString(&UnicodeString, &AnsiString, FALSE);
 
-	if(!NT_SUCCESS(Status))
+	যদি(!NT_SUCCESS(Status))
 	{
-		return Status; // Unmappable character?
+		ফেরত Status; // Unmappable character?
 	}
 
 	//
@@ -421,27 +421,27 @@ _OpenNtName(
 	InitializeObjectAttributes(&ObjectAttributes,
 							   &UnicodeString,
 							   OBJ_CASE_INSENSITIVE,
-							   NULL,
-							   NULL );
+							   ফাঁকা,
+							   ফাঁকা );
 
 	//
 	// Try to open it in initial mode
 	//
 
-	if(ARGUMENT_PRESENT(OpenedReadonly))
+	যদি(ARGUMENT_PRESENT(OpenedReadonly))
 	{
 		*OpenedReadonly = Readonly;
 	}
 
 
 	Status = NtOpenFile(Handle,
-						SYNCHRONIZE | FILE_READ_DATA | (Readonly ? 0 : FILE_WRITE_DATA),
+						SYNCHRONIZE | FILE_READ_তথ্য | (Readonly ? 0 : FILE_WRITE_তথ্য),
 						&ObjectAttributes,
 						&IoStatusBlock,
 						FILE_SHARE_WRITE | FILE_SHARE_READ,
 						FILE_SYNCHRONOUS_IO_NONALERT);
 
-	if(!NT_SUCCESS(Status))
+	যদি(!NT_SUCCESS(Status))
 	{
 		//
 		// Maybe was just mounted? wait 0.5 sec and retry.
@@ -453,7 +453,7 @@ _OpenNtName(
 		NtDelayExecution(FALSE, &Interval);
 
 		Status = NtOpenFile(Handle,
-							SYNCHRONIZE | FILE_READ_DATA | (Readonly ? 0 : FILE_WRITE_DATA),
+							SYNCHRONIZE | FILE_READ_তথ্য | (Readonly ? 0 : FILE_WRITE_তথ্য),
 							&ObjectAttributes,
 							&IoStatusBlock,
 							FILE_SHARE_WRITE | FILE_SHARE_READ,
@@ -463,15 +463,15 @@ _OpenNtName(
 		// Try to satisfy mode
 		//
 
-		if((STATUS_ACCESS_DENIED == Status) && !Readonly)
+		যদি((STATUS_ACCESS_DENIED == Status) && !Readonly)
 		{
-			if(ARGUMENT_PRESENT(OpenedReadonly))
+			যদি(ARGUMENT_PRESENT(OpenedReadonly))
 			{
 				*OpenedReadonly = TRUE;
 			}
 
 			Status = NtOpenFile(Handle,
-							SYNCHRONIZE | FILE_READ_DATA,
+							SYNCHRONIZE | FILE_READ_তথ্য,
 							&ObjectAttributes,
 							&IoStatusBlock,
 							FILE_SHARE_WRITE | FILE_SHARE_READ,
@@ -485,11 +485,11 @@ _OpenNtName(
 	// done
 	//
 
-	return Status;
+	ফেরত Status;
 }
 
 
-static
+স্থির
 NTSTATUS
 _OpenDriveLetter(
     IN CHAR Letter,
@@ -498,11 +498,11 @@ _OpenDriveLetter(
     OUT PBOOLEAN OpenedReadonly OPTIONAL
    )
 {
-	CHAR Buffer[100];
+	CHAR বাফার_2[100];
 
-	sprintf(Buffer, "\\DosDevices\\%c:", Letter);
+	sprintf(বাফার_2, "\\DosDevices\\%c:", Letter);
 
-	return _OpenNtName(Buffer, ReadOnly, Handle, OpenedReadonly);
+	ফেরত _OpenNtName(বাফার_2, ReadOnly, Handle, OpenedReadonly);
 }
 
 
@@ -510,7 +510,7 @@ _OpenDriveLetter(
 // Flush device
 //
 
-static
+স্থির
 __inline
 NTSTATUS
 _FlushDrive(
@@ -518,7 +518,7 @@ _FlushDrive(
 		)
 {
 	IO_STATUS_BLOCK IoStatusBlock;
-	return NtFlushBuffersFile(Handle, &IoStatusBlock);
+	ফেরত NtFlushBuffersFile(Handle, &IoStatusBlock);
 }
 
 
@@ -526,7 +526,7 @@ _FlushDrive(
 // lock drive
 //
 
-static
+স্থির
 __inline
 NTSTATUS
 _LockDrive(
@@ -534,7 +534,7 @@ _LockDrive(
 		)
 {
 	IO_STATUS_BLOCK IoStatusBlock;
-	return NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_LOCK_VOLUME, 0, 0, 0, 0);
+	ফেরত NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_LOCK_VOLUME, 0, 0, 0, 0);
 }
 
 
@@ -542,7 +542,7 @@ _LockDrive(
 // unlock drive
 //
 
-static
+স্থির
 __inline
 NTSTATUS
 _UnlockDrive(
@@ -550,10 +550,10 @@ _UnlockDrive(
 	)
 {
 	IO_STATUS_BLOCK IoStatusBlock;
-	return NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_UNLOCK_VOLUME, 0, 0, 0, 0);
+	ফেরত NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_UNLOCK_VOLUME, 0, 0, 0, 0);
 }
 
-static
+স্থির
 __inline
 NTSTATUS
 _DismountDrive(
@@ -561,7 +561,7 @@ _DismountDrive(
 	)
 {
 	IO_STATUS_BLOCK IoStatusBlock;
-	return NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_DISMOUNT_VOLUME, 0, 0, 0, 0);
+	ফেরত NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_DISMOUNT_VOLUME, 0, 0, 0, 0);
 }
 
 
@@ -569,7 +569,7 @@ _DismountDrive(
 // is mounted
 //
 
-static
+স্থির
 __inline
 BOOLEAN
 _IsMounted(
@@ -579,18 +579,18 @@ _IsMounted(
 	IO_STATUS_BLOCK IoStatusBlock;
 	NTSTATUS Status;
 	Status = NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_IS_VOLUME_MOUNTED, 0, 0, 0, 0);
-	return (BOOLEAN)(STATUS_SUCCESS == Status);
+	ফেরত (BOOLEAN)(STATUS_SUCCESS == Status);
 }
 
 
-static
+স্থির
 __inline
 NTSTATUS
 _CloseDisk(
 		IN HANDLE Handle
 		)
 {
-	return NtClose(Handle);
+	ফেরত NtClose(Handle);
 }
 
 
@@ -600,15 +600,15 @@ _CloseDisk(
 // Make NT name from any recognized name
 //
 
-static
+স্থির
 PCSTR
 _NormalizeDeviceName(
     IN PCSTR Device,
-    IN PSTR NormalizedDeviceNameBuffer
+    IN PSTR Normalized_Device_Name_বাফার
    )
 {
-	int PartitionNumber = -1;
-	UCHAR DiskNumber;
+	পূর্ণসংখ্যা Partition_সংখ্যা = -1;
+	UCHAR Disk_সংখ্যা;
 	PSTR p;
 
 
@@ -616,8 +616,8 @@ _NormalizeDeviceName(
 	// Do not try to parse NT name
 	//
 
-	if('\\' == *Device)
-		return Device;
+	যদি('\\' == *Device)
+		ফেরত Device;
 
 
 
@@ -625,7 +625,7 @@ _NormalizeDeviceName(
 	// Strip leading '/dev/' if any
 	//
 
-	if(('/' == *(Device)) &&
+	যদি(('/' == *(Device)) &&
 		('d' == *(Device + 1)) &&
 		('e' == *(Device + 2)) &&
 		('v' == *(Device + 3)) &&
@@ -634,9 +634,9 @@ _NormalizeDeviceName(
 		Device += 5;
 	}
 
-	if('\0' == *Device)
+	যদি('\0' == *Device)
 	{
-		return NULL;
+		ফেরত ফাঁকা;
 	}
 
 
@@ -644,14 +644,14 @@ _NormalizeDeviceName(
 	// forms: hda[n], fd[n]
 	//
 
-	if('d' != *(Device + 1))
+	যদি('d' != *(Device + 1))
 	{
-		return NULL;
+		ফেরত ফাঁকা;
 	}
 
-	if('h' == *Device)
+	যদি('h' == *Device)
 	{
-		if((*(Device + 2) < 'a') || (*(Device + 2) > ('a' + 9)) ||
+		যদি((*(Device + 2) < 'a') || (*(Device + 2) > ('a' + 9)) ||
 		   ((*(Device + 3) != '\0') &&
 			((*(Device + 4) != '\0') ||
 			 ((*(Device + 3) < '0') || (*(Device + 3) > '9'))
@@ -659,39 +659,39 @@ _NormalizeDeviceName(
 		   )
 		  )
 		{
-			return NULL;
+			ফেরত ফাঁকা;
 		}
 
-		DiskNumber = (UCHAR)(*(Device + 2) - 'a');
+		Disk_সংখ্যা = (UCHAR)(*(Device + 2) - 'a');
 
-		if(*(Device + 3) != '\0')
+		যদি(*(Device + 3) != '\0')
 		{
-			PartitionNumber = (*(Device + 3) - '0');
+			Partition_সংখ্যা = (*(Device + 3) - '0');
 		}
 
 	}
-	else if('f' == *Device)
+	অন্যথা যদি('f' == *Device)
 	{
 		//
 		// 3-d letter should be a digit.
 		//
 
-		if((*(Device + 3) != '\0') ||
+		যদি((*(Device + 3) != '\0') ||
 		   (*(Device + 2) < '0') || (*(Device + 2) > '9'))
 		{
-			return NULL;
+			ফেরত ফাঁকা;
 		}
 
-		DiskNumber = (UCHAR)(*(Device + 2) - '0');
+		Disk_সংখ্যা = (UCHAR)(*(Device + 2) - '0');
 
 	}
-	else
+	অন্যথা
 	{
 		//
 		// invalid prefix
 		//
 
-		return NULL;
+		ফেরত ফাঁকা;
 	}
 
 
@@ -700,53 +700,53 @@ _NormalizeDeviceName(
 	// Prefix
 	//
 
-	strcpy(NormalizedDeviceNameBuffer, "\\Device\\");
+	strcpy(Normalized_Device_Name_বাফার, "\\Device\\");
 
 	//
 	// Media name
 	//
 
-	switch(*Device)
+	নির্বাচন(*Device)
 	{
 
-	case 'f':
-		strcat(NormalizedDeviceNameBuffer, "Floppy0");
-		break;
+	ক্ষেত্র 'f':
+		strcat(Normalized_Device_Name_বাফার, "Floppy0");
+		বিরতি;
 
-	case 'h':
-		strcat(NormalizedDeviceNameBuffer, "Harddisk0");
-		break;
+	ক্ষেত্র 'h':
+		strcat(Normalized_Device_Name_বাফার, "Harddisk0");
+		বিরতি;
 	}
 
 
-	p = NormalizedDeviceNameBuffer + strlen(NormalizedDeviceNameBuffer) - 1;
-	*p = (CHAR)(*p + DiskNumber);
+	p = Normalized_Device_Name_বাফার + strlen(Normalized_Device_Name_বাফার) - 1;
+	*p = (CHAR)(*p + Disk_সংখ্যা);
 
 
 	//
 	// Partition nr.
 	//
 
-	if(PartitionNumber >= 0)
+	যদি(Partition_সংখ্যা >= 0)
 	{
-		strcat(NormalizedDeviceNameBuffer, "\\Partition0");
+		strcat(Normalized_Device_Name_বাফার, "\\Partition0");
 
-		p = NormalizedDeviceNameBuffer + strlen(NormalizedDeviceNameBuffer) - 1;
-		*p = (CHAR)(*p + PartitionNumber);
+		p = Normalized_Device_Name_বাফার + strlen(Normalized_Device_Name_বাফার) - 1;
+		*p = (CHAR)(*p + Partition_সংখ্যা);
 	}
 
 
-	return NormalizedDeviceNameBuffer;
+	ফেরত Normalized_Device_Name_বাফার;
 }
 
 
 
 
-static
+স্থির
 VOID
-_GetDeviceSize(
+Get_Device_আকার(
     IN HANDLE h,
-    OUT unsigned __int64 *FsSize
+    OUT unsigned __int64 *Fs_আকার
    )
 {
 	PARTITION_INFORMATION pi;
@@ -758,41 +758,41 @@ _GetDeviceSize(
 	// Zero it
 	//
 
-	*FsSize = 0;
+	*Fs_আকার = 0;
 
 	//
 	// Call driver
 	//
 
-	RtlZeroMemory(&pi, sizeof(PARTITION_INFORMATION));
+	RtlZeroMemory(&pi, আকার(PARTITION_INFORMATION));
 
 	Status = NtDeviceIoControlFile(
-		h, NULL, NULL, NULL, &IoStatusBlock, IOCTL_DISK_GET_PARTITION_INFO,
-		&pi, sizeof(PARTITION_INFORMATION),
-		&pi, sizeof(PARTITION_INFORMATION));
+		h, ফাঁকা, ফাঁকা, ফাঁকা, &IoStatusBlock, IOCTL_DISK_GET_PARTITION_INFO,
+		&pi, আকার(PARTITION_INFORMATION),
+		&pi, আকার(PARTITION_INFORMATION));
 
 
-	if(NT_SUCCESS(Status))
+	যদি(NT_SUCCESS(Status))
 	{
-		*FsSize = pi.PartitionLength.QuadPart;
+		*Fs_আকার = pi.Partition_দৈর্ঘ্য.QuadPart;
 	}
-	else if(STATUS_INVALID_DEVICE_REQUEST == Status)
+	অন্যথা যদি(STATUS_INVALID_DEVICE_REQUEST == Status)
 	{
 		//
 		// No partitions: get device info.
 		//
 
-		RtlZeroMemory(&gi, sizeof(DISK_GEOMETRY));
+		RtlZeroMemory(&gi, আকার(DISK_GEOMETRY));
 
 		Status = NtDeviceIoControlFile(
-				h, NULL, NULL, NULL, &IoStatusBlock, IOCTL_DISK_GET_DRIVE_GEOMETRY,
-				&gi, sizeof(DISK_GEOMETRY),
-				&gi, sizeof(DISK_GEOMETRY));
+				h, ফাঁকা, ফাঁকা, ফাঁকা, &IoStatusBlock, IOCTL_DISK_GET_DRIVE_GEOMETRY,
+				&gi, আকার(DISK_GEOMETRY),
+				&gi, আকার(DISK_GEOMETRY));
 
 
-		if(NT_SUCCESS(Status))
+		যদি(NT_SUCCESS(Status))
 		{
-			*FsSize =
+			*Fs_আকার =
 				gi.BytesPerSector *
 				gi.SectorsPerTrack *
 				gi.TracksPerCylinder *
@@ -808,7 +808,7 @@ _GetDeviceSize(
 // Open device by name.
 //
 
-static
+স্থির
 BOOLEAN
 _Ext2OpenDevice(
     IN PCSTR Name,
@@ -821,25 +821,25 @@ _Ext2OpenDevice(
 	CHAR NormalizedDeviceName[512];
 	NTSTATUS Status;
 
-	if(NULL == Name)
+	যদি(ফাঁকা == Name)
 	{
 		//
 		// Set not found
 		//
 
-		if(ARGUMENT_PRESENT(Errno))
+		যদি(ARGUMENT_PRESENT(Errno))
 			*Errno = ENOENT;
 
-		return FALSE;
+		ফেরত FALSE;
 	}
 
 
-	if((((*Name) | 0x20) >= 'a') && (((*Name) | 0x20) <= 'z') &&
+	যদি((((*Name) | 0x20) >= 'a') && (((*Name) | 0x20) <= 'z') &&
 		(':' == *(Name + 1)) && ('\0' == *(Name + 2)))
 	{
 		Status = _OpenDriveLetter(*Name, ReadOnly, Handle, OpenedReadonly);
 	}
-	else
+	অন্যথা
 	{
 		//
 		// Make name
@@ -847,16 +847,16 @@ _Ext2OpenDevice(
 
 		Name = _NormalizeDeviceName(Name, NormalizedDeviceName);
 
-		if(NULL == Name)
+		যদি(ফাঁকা == Name)
 		{
 			//
 			// Set not found
 			//
 
-			if(ARGUMENT_PRESENT(Errno))
+			যদি(ARGUMENT_PRESENT(Errno))
 				*Errno = ENOENT;
 
-			return FALSE;
+			ফেরত FALSE;
 		}
 
 		//
@@ -867,15 +867,15 @@ _Ext2OpenDevice(
 	}
 
 
-	if(!NT_SUCCESS(Status))
+	যদি(!NT_SUCCESS(Status))
 	{
-		if(ARGUMENT_PRESENT(Errno))
+		যদি(ARGUMENT_PRESENT(Errno))
 			*Errno = _MapNtStatus(Status);
 
-		return FALSE;
+		ফেরত FALSE;
 	}
 
-	return TRUE;
+	ফেরত TRUE;
 }
 
 
@@ -883,13 +883,13 @@ _Ext2OpenDevice(
 // Raw block io. Sets dos errno
 //
 
-static
+স্থির
 BOOLEAN
 _BlockIo(
     IN HANDLE Handle,
     IN LARGE_INTEGER Offset,
     IN ULONG Bytes,
-    IN OUT PCHAR Buffer,
+    IN OUT PCHAR বাফার_2,
     IN BOOLEAN Read,
     OUT unsigned* Errno
    )
@@ -902,22 +902,22 @@ _BlockIo(
 	//
 
 	ASSERT(0 == (Bytes % 512));
-	ASSERT(0 == (Offset.LowPart % 512));
+	ASSERT(0 == (Offset.নিচের_Part % 512));
 
 
 	//
 	// perform io
 	//
 
-	if(Read)
+	যদি(Read)
 	{
-		Status = NtReadFile(Handle, NULL, NULL, NULL,
-			&IoStatusBlock, Buffer, Bytes, &Offset, NULL);
+		Status = NtReadFile(Handle, ফাঁকা, ফাঁকা, ফাঁকা,
+			&IoStatusBlock, বাফার_2, Bytes, &Offset, ফাঁকা);
 	}
-	else
+	অন্যথা
 	{
-		Status = NtWriteFile(Handle, NULL, NULL, NULL,
-			&IoStatusBlock, Buffer, Bytes, &Offset, NULL);
+		Status = NtWriteFile(Handle, ফাঁকা, ফাঁকা, ফাঁকা,
+			&IoStatusBlock, বাফার_2, Bytes, &Offset, ফাঁকা);
 	}
 
 
@@ -925,15 +925,15 @@ _BlockIo(
 	// translate error
 	//
 
-	if(NT_SUCCESS(Status))
+	যদি(NT_SUCCESS(Status))
 	{
 		*Errno = 0;
-		return TRUE;
+		ফেরত TRUE;
 	}
 
 	*Errno = _MapNtStatus(Status);
 
-	return FALSE;
+	ফেরত FALSE;
 }
 
 
@@ -944,11 +944,11 @@ _RawWrite(
     IN HANDLE Handle,
     IN LARGE_INTEGER Offset,
     IN ULONG Bytes,
-    OUT const CHAR* Buffer,
+    OUT ধ্রুবক CHAR* বাফার_2,
     OUT unsigned* Errno
    )
 {
-	return _BlockIo(Handle, Offset, Bytes, (PCHAR)Buffer, FALSE, Errno);
+	ফেরত _BlockIo(Handle, Offset, Bytes, (PCHAR)বাফার_2, FALSE, Errno);
 }
 
 __inline
@@ -957,11 +957,11 @@ _RawRead(
     IN HANDLE Handle,
     IN LARGE_INTEGER Offset,
     IN ULONG Bytes,
-    IN PCHAR Buffer,
+    IN PCHAR বাফার_2,
     OUT unsigned* Errno
    )
 {
-	return _BlockIo(Handle, Offset, Bytes, Buffer, TRUE, Errno);
+	ফেরত _BlockIo(Handle, Offset, Bytes, বাফার_2, TRUE, Errno);
 }
 
 
@@ -974,10 +974,10 @@ _SetPartType(
    )
 {
 	IO_STATUS_BLOCK IoStatusBlock;
-	return STATUS_SUCCESS == NtDeviceIoControlFile(
-												   Handle, NULL, NULL, NULL, &IoStatusBlock, IOCTL_DISK_SET_PARTITION_INFO,
-												   &Type, sizeof(Type),
-												   NULL, 0);
+	ফেরত STATUS_SUCCESS == NtDeviceIoControlFile(
+												   Handle, ফাঁকা, ফাঁকা, ফাঁকা, &IoStatusBlock, IOCTL_DISK_SET_PARTITION_INFO,
+												   &Type, আকার(Type),
+												   ফাঁকা, 0);
 }
 
 
@@ -990,16 +990,16 @@ _SetPartType(
 //
 
 errcode_t
-ext2fs_check_if_mounted(const char *file, int *mount_flags)
+ext2fs_check_if_mounted(ধ্রুবক অক্ষর *file, পূর্ণসংখ্যা *mount_flags)
 {
 	HANDLE h;
 	BOOLEAN Readonly;
 
 	*mount_flags = 0;
 
-	if(!_Ext2OpenDevice(file, TRUE, &h, &Readonly, NULL))
+	যদি(!_Ext2OpenDevice(file, TRUE, &h, &Readonly, ফাঁকা))
 	{
-		return 0;
+		ফেরত 0;
 	}
 
 
@@ -1010,7 +1010,7 @@ ext2fs_check_if_mounted(const char *file, int *mount_flags)
 		_CloseDisk(h);
 	}
 
-	return 0;
+	ফেরত 0;
 }
 
 
@@ -1019,23 +1019,23 @@ ext2fs_check_if_mounted(const char *file, int *mount_flags)
 // Returns the number of blocks in a partition
 //
 
-static __int64 FsSize = 0;
-static char knowndevice[1024] = "";
+স্থির __int64 Fs_আকার = 0;
+স্থির অক্ষর knowndevice[1024] = "";
 
 
 errcode_t
-ext2fs_get_device_size(const char *file, int blocksize,
+ext2fs_get_device_আকার(ধ্রুবক অক্ষর *file, পূর্ণসংখ্যা blocksize,
 				 blk_t *retblocks)
 {
 	HANDLE h;
 	BOOLEAN Readonly;
 
-	if((0 == FsSize) || (0 != strcmp(knowndevice, file)))
+	যদি((0 == Fs_আকার) || (0 != strcmp(knowndevice, file)))
 	{
 
-		if(!_Ext2OpenDevice(file, TRUE, &h, &Readonly, NULL))
+		যদি(!_Ext2OpenDevice(file, TRUE, &h, &Readonly, ফাঁকা))
 		{
-			return 0;
+			ফেরত 0;
 		}
 
 
@@ -1045,7 +1045,7 @@ ext2fs_get_device_size(const char *file, int blocksize,
 			// Get size
 			//
 
-			_GetDeviceSize(h, &FsSize);
+			Get_Device_আকার(h, &Fs_আকার);
 			strcpy(knowndevice, file);
 		}
 		__finally{
@@ -1054,9 +1054,9 @@ ext2fs_get_device_size(const char *file, int blocksize,
 
 	}
 
-	*retblocks = (blk_t)(unsigned __int64)(FsSize / blocksize);
+	*retblocks = (blk_t)(unsigned __int64)(Fs_আকার / blocksize);
 	UNREFERENCED_PARAMETER(file);
-	return 0;
+	ফেরত 0;
 }
 
 
@@ -1069,21 +1069,21 @@ ext2fs_get_device_size(const char *file, int blocksize,
 //
 
 
-static
+স্থির
 errcode_t
-nt_open(const char *name, int flags, io_channel *channel)
+nt_open(ধ্রুবক অক্ষর *name, পূর্ণসংখ্যা flags, io_channel *channel)
 {
-	io_channel      io = NULL;
-	PNT_PRIVATE_DATA NtData = NULL;
+	io_channel      io = ফাঁকা;
+	PNT_PRIVATE_তথ্য Nt_তথ্য = ফাঁকা;
 	errcode_t Errno = 0;
 
 	//
 	// Check name
 	//
 
-	if (NULL == name)
+	যদি (ফাঁকা == name)
 	{
-		return EXT2_ET_BAD_DEVICE_NAME;
+		ফেরত EXT2_ET_BAD_DEVICE_NAME;
 	}
 
 	__try{
@@ -1092,20 +1092,20 @@ nt_open(const char *name, int flags, io_channel *channel)
 		// Allocate channel handle
 		//
 
-		io = (io_channel) malloc(sizeof(struct struct_io_channel));
+		io = (io_channel) malloc(আকার(কাঠামো struct_io_channel));
 
-		if (NULL == io)
+		যদি (ফাঁকা == io)
 		{
 			Errno = ENOMEM;
 			__leave;
 		}
 
-		RtlZeroMemory(io, sizeof(struct struct_io_channel));
+		RtlZeroMemory(io, আকার(কাঠামো struct_io_channel));
 		io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
 
-		NtData = (PNT_PRIVATE_DATA)malloc(sizeof(NT_PRIVATE_DATA));
+		Nt_তথ্য = (PNT_PRIVATE_তথ্য)malloc(আকার(NT_PRIVATE_তথ্য_2));
 
-		if (NULL == NtData)
+		যদি (ফাঁকা == Nt_তথ্য)
 		{
 			Errno = ENOMEM;
 			__leave;
@@ -1114,15 +1114,15 @@ nt_open(const char *name, int flags, io_channel *channel)
 
 		io->manager = nt_io_manager();
 		io->name = malloc(strlen(name) + 1);
-		if (NULL == io->name)
+		যদি (ফাঁকা == io->name)
 		{
 			Errno = ENOMEM;
 			__leave;
 		}
 
 		strcpy(io->name, name);
-		io->private_data = NtData;
-		io->block_size = 1024;
+		io->private_তথ্য = Nt_তথ্য;
+		io->block_আকার = 1024;
 		io->read_error = 0;
 		io->write_error = 0;
 		io->refcount = 1;
@@ -1131,14 +1131,14 @@ nt_open(const char *name, int flags, io_channel *channel)
 		// Initialize data
 		//
 
-		RtlZeroMemory(NtData, sizeof(NT_PRIVATE_DATA));
+		RtlZeroMemory(Nt_তথ্য, আকার(NT_PRIVATE_তথ্য_2));
 
-		NtData->magic = EXT2_ET_MAGIC_NT_IO_CHANNEL;
-		NtData->BufferBlockNumber = 0xffffffff;
-		NtData->BufferSize = 1024;
-		NtData->Buffer = malloc(NtData->BufferSize);
+		Nt_তথ্য->magic = EXT2_ET_MAGIC_NT_IO_CHANNEL;
+		Nt_তথ্য->বাফার_Block_সংখ্যা = 0xffffffff;
+		Nt_তথ্য->বাফার_আকার = 1024;
+		Nt_তথ্য->বাফার_2 = malloc(Nt_তথ্য->বাফার_আকার);
 
-		if (NULL == NtData->Buffer)
+		যদি (ফাঁকা == Nt_তথ্য->বাফার_2)
 		{
 			Errno = ENOMEM;
 			__leave;
@@ -1148,7 +1148,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 		// Open it
 		//
 
-		if(!_Ext2OpenDevice(name, (BOOLEAN)!BooleanFlagOn(flags, EXT2_FLAG_RW), &NtData->Handle, &NtData->OpenedReadonly, &Errno))
+		যদি(!_Ext2OpenDevice(name, (BOOLEAN)!BooleanFlagOn(flags, EXT2_FLAG_RW), &Nt_তথ্য->Handle, &Nt_তথ্য->OpenedReadonly, &Errno))
 		{
 			__leave;
 		}
@@ -1158,7 +1158,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 		// get size
 		//
 
-		_GetDeviceSize(NtData->Handle, &FsSize);
+		Get_Device_আকার(Nt_তথ্য->Handle, &Fs_আকার);
 		strcpy(knowndevice, name);
 
 
@@ -1166,9 +1166,9 @@ nt_open(const char *name, int flags, io_channel *channel)
 		// Lock/dismount
 		//
 
-		if(!NT_SUCCESS(_LockDrive(NtData->Handle)) /*|| !NT_SUCCESS(_DismountDrive(NtData->Handle))*/)
+		যদি(!NT_SUCCESS(_LockDrive(Nt_তথ্য->Handle)) /*|| !NT_SUCCESS(_DismountDrive(NtData->Handle))*/)
 		{
-			NtData->OpenedReadonly = TRUE;
+			Nt_তথ্য->OpenedReadonly = TRUE;
 		}
 
 		//
@@ -1181,33 +1181,33 @@ nt_open(const char *name, int flags, io_channel *channel)
 	}
 	__finally{
 
-		if(0 != Errno)
+		যদি(0 != Errno)
 		{
 			//
 			// Cleanup
 			//
 
-			if (NULL != io)
+			যদি (ফাঁকা != io)
 			{
-				free(io->name);
-				free(io);
+				মুক্ত(io->name);
+				মুক্ত(io);
 			}
 
-			if (NULL != NtData)
+			যদি (ফাঁকা != Nt_তথ্য)
 			{
-				if(NULL != NtData->Handle)
+				যদি(ফাঁকা != Nt_তথ্য->Handle)
 				{
-					_UnlockDrive(NtData->Handle);
-					_CloseDisk(NtData->Handle);
+					_UnlockDrive(Nt_তথ্য->Handle);
+					_CloseDisk(Nt_তথ্য->Handle);
 				}
 
-				free(NtData->Buffer);
-				free(NtData);
+				মুক্ত(Nt_তথ্য->বাফার_2);
+				মুক্ত(Nt_তথ্য);
 			}
 		}
 	}
 
-	return Errno;
+	ফেরত Errno;
 }
 
 
@@ -1215,43 +1215,43 @@ nt_open(const char *name, int flags, io_channel *channel)
 // Close api
 //
 
-static
+স্থির
 errcode_t
 nt_close(io_channel channel)
 {
-	PNT_PRIVATE_DATA NtData = NULL;
+	PNT_PRIVATE_তথ্য Nt_তথ্য = ফাঁকা;
 
-	if(NULL == channel)
+	যদি(ফাঁকা == channel)
 	{
-		return 0;
+		ফেরত 0;
 	}
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	NtData = (PNT_PRIVATE_DATA) channel->private_data;
-	EXT2_CHECK_MAGIC(NtData, EXT2_ET_MAGIC_NT_IO_CHANNEL);
+	Nt_তথ্য = (PNT_PRIVATE_তথ্য) channel->private_তথ্য;
+	EXT2_CHECK_MAGIC(Nt_তথ্য, EXT2_ET_MAGIC_NT_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
+	যদি (--channel->refcount > 0)
 	{
-		return 0;
+		ফেরত 0;
 	}
 
-	free(channel->name);
-	free(channel);
+	মুক্ত(channel->name);
+	মুক্ত(channel);
 
-	if (NULL != NtData)
+	যদি (ফাঁকা != Nt_তথ্য)
 	{
-		if(NULL != NtData->Handle)
+		যদি(ফাঁকা != Nt_তথ্য->Handle)
 		{
-			_DismountDrive(NtData->Handle);
-			_UnlockDrive(NtData->Handle);
-			_CloseDisk(NtData->Handle);
+			_DismountDrive(Nt_তথ্য->Handle);
+			_UnlockDrive(Nt_তথ্য->Handle);
+			_CloseDisk(Nt_তথ্য->Handle);
 		}
 
-		free(NtData->Buffer);
-		free(NtData);
+		মুক্ত(Nt_তথ্য->বাফার_2);
+		মুক্ত(Nt_তথ্য);
 	}
 
-	return 0;
+	ফেরত 0;
 }
 
 
@@ -1260,35 +1260,35 @@ nt_close(io_channel channel)
 // set block size
 //
 
-static
+স্থির
 errcode_t
-nt_set_blksize(io_channel channel, int blksize)
+nt_set_blksize(io_channel channel, পূর্ণসংখ্যা blksize)
 {
-	PNT_PRIVATE_DATA NtData = NULL;
+	PNT_PRIVATE_তথ্য Nt_তথ্য = ফাঁকা;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	NtData = (PNT_PRIVATE_DATA) channel->private_data;
-	EXT2_CHECK_MAGIC(NtData, EXT2_ET_MAGIC_NT_IO_CHANNEL);
+	Nt_তথ্য = (PNT_PRIVATE_তথ্য) channel->private_তথ্য;
+	EXT2_CHECK_MAGIC(Nt_তথ্য, EXT2_ET_MAGIC_NT_IO_CHANNEL);
 
-	if (channel->block_size != blksize)
+	যদি (channel->block_আকার != blksize)
 	{
-		channel->block_size = blksize;
+		channel->block_আকার = blksize;
 
-		free(NtData->Buffer);
-		NtData->BufferBlockNumber = 0xffffffff;
-		NtData->BufferSize = channel->block_size;
-		ASSERT(0 == (NtData->BufferSize % 512));
+		মুক্ত(Nt_তথ্য->বাফার_2);
+		Nt_তথ্য->বাফার_Block_সংখ্যা = 0xffffffff;
+		Nt_তথ্য->বাফার_আকার = channel->block_আকার;
+		ASSERT(0 == (Nt_তথ্য->বাফার_আকার % 512));
 
-		NtData->Buffer = malloc(NtData->BufferSize);
+		Nt_তথ্য->বাফার_2 = malloc(Nt_তথ্য->বাফার_আকার);
 
-		if (NULL == NtData->Buffer)
+		যদি (ফাঁকা == Nt_তথ্য->বাফার_2)
 		{
-			return ENOMEM;
+			ফেরত ENOMEM;
 		}
 
 	}
 
-	return 0;
+	ফেরত 0;
 }
 
 
@@ -1296,81 +1296,81 @@ nt_set_blksize(io_channel channel, int blksize)
 // read block
 //
 
-static
+স্থির
 errcode_t
 nt_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+			       পূর্ণসংখ্যা গুনতি, শূন্য *buf)
 {
-	PVOID BufferToRead;
-	ULONG SizeToRead;
-	ULONG Size;
+	PVOID বাফার_To_Read;
+	ULONG আকার_To_Read;
+	ULONG আকার_3;
 	LARGE_INTEGER Offset;
-	PNT_PRIVATE_DATA NtData = NULL;
+	PNT_PRIVATE_তথ্য Nt_তথ্য = ফাঁকা;
 	unsigned Errno = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	NtData = (PNT_PRIVATE_DATA) channel->private_data;
-	EXT2_CHECK_MAGIC(NtData, EXT2_ET_MAGIC_NT_IO_CHANNEL);
+	Nt_তথ্য = (PNT_PRIVATE_তথ্য) channel->private_তথ্য;
+	EXT2_CHECK_MAGIC(Nt_তথ্য, EXT2_ET_MAGIC_NT_IO_CHANNEL);
 
 	//
 	// If it's in the cache, use it!
 	//
 
-	if ((1 == count) &&
-		(block == NtData->BufferBlockNumber) &&
-		(NtData->BufferBlockNumber != 0xffffffff))
+	যদি ((1 == গুনতি) &&
+		(block == Nt_তথ্য->বাফার_Block_সংখ্যা) &&
+		(Nt_তথ্য->বাফার_Block_সংখ্যা != 0xffffffff))
 	{
-		memcpy(buf, NtData->Buffer, channel->block_size);
-		return 0;
+		memcpy(buf, Nt_তথ্য->বাফার_2, channel->block_আকার);
+		ফেরত 0;
 	}
 
-	Size = (count < 0) ? (ULONG)(-count) : (ULONG)(count * channel->block_size);
+	আকার_3 = (গুনতি < 0) ? (ULONG)(-গুনতি) : (ULONG)(গুনতি * channel->block_আকার);
 
-	Offset.QuadPart = block * channel->block_size;
+	Offset.QuadPart = block * channel->block_আকার;
 
 	//
 	// If not fit to the block
 	//
 
-	if(Size <= NtData->BufferSize)
+	যদি(আকার_3 <= Nt_তথ্য->বাফার_আকার)
 	{
 		//
 		// Update the cache
 		//
 
-		NtData->BufferBlockNumber = block;
-		BufferToRead = NtData->Buffer;
-		SizeToRead = NtData->BufferSize;
+		Nt_তথ্য->বাফার_Block_সংখ্যা = block;
+		বাফার_To_Read = Nt_তথ্য->বাফার_2;
+		আকার_To_Read = Nt_তথ্য->বাফার_আকার;
 	}
-	else
+	অন্যথা
 	{
-		SizeToRead = Size;
-		BufferToRead = buf;
-		ASSERT(0 == (SizeToRead % channel->block_size));
+		আকার_To_Read = আকার_3;
+		বাফার_To_Read = buf;
+		ASSERT(0 == (আকার_To_Read % channel->block_আকার));
 	}
 
-	if(!_RawRead(NtData->Handle, Offset, SizeToRead, BufferToRead, &Errno))
+	যদি(!_RawRead(Nt_তথ্য->Handle, Offset, আকার_To_Read, বাফার_To_Read, &Errno))
 	{
 
-		if (channel->read_error)
+		যদি (channel->read_error)
 		{
-			return (channel->read_error)(channel, block, count, buf,
-					       Size, 0, Errno);
+			ফেরত (channel->read_error)(channel, block, গুনতি, buf,
+					       আকার_3, 0, Errno);
 		}
-		else
+		অন্যথা
 		{
-			return Errno;
+			ফেরত Errno;
 		}
 	}
 
 
-	if(BufferToRead != buf)
+	যদি(বাফার_To_Read != buf)
 	{
-		ASSERT(Size <= SizeToRead);
-		memcpy(buf, BufferToRead, Size);
+		ASSERT(আকার_3 <= আকার_To_Read);
+		memcpy(buf, বাফার_To_Read, আকার_3);
 	}
 
-	return 0;
+	ফেরত 0;
 }
 
 
@@ -1378,57 +1378,57 @@ nt_read_blk(io_channel channel, unsigned long block,
 // write block
 //
 
-static
+স্থির
 errcode_t
 nt_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+				পূর্ণসংখ্যা গুনতি, ধ্রুবক শূন্য *buf)
 {
-	ULONG SizeToWrite;
+	ULONG আকার_To_Write;
 	LARGE_INTEGER Offset;
-	PNT_PRIVATE_DATA NtData = NULL;
+	PNT_PRIVATE_তথ্য Nt_তথ্য = ফাঁকা;
 	unsigned Errno = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	NtData = (PNT_PRIVATE_DATA) channel->private_data;
-	EXT2_CHECK_MAGIC(NtData, EXT2_ET_MAGIC_NT_IO_CHANNEL);
+	Nt_তথ্য = (PNT_PRIVATE_তথ্য) channel->private_তথ্য;
+	EXT2_CHECK_MAGIC(Nt_তথ্য, EXT2_ET_MAGIC_NT_IO_CHANNEL);
 
-	if(NtData->OpenedReadonly)
+	যদি(Nt_তথ্য->OpenedReadonly)
 	{
-		return EACCES;
+		ফেরত EACCES;
 	}
 
-	if (count == 1)
+	যদি (গুনতি == 1)
 	{
-		SizeToWrite = channel->block_size;
+		আকার_To_Write = channel->block_আকার;
 	}
-	else
+	অন্যথা
 	{
-		NtData->BufferBlockNumber = 0xffffffff;
+		Nt_তথ্য->বাফার_Block_সংখ্যা = 0xffffffff;
 
-		if (count < 0)
+		যদি (গুনতি < 0)
 		{
-			SizeToWrite = (ULONG)(-count);
+			আকার_To_Write = (ULONG)(-গুনতি);
 		}
-		else
+		অন্যথা
 		{
-			SizeToWrite = (ULONG)(count * channel->block_size);
+			আকার_To_Write = (ULONG)(গুনতি * channel->block_আকার);
 		}
 	}
 
 
-	ASSERT(0 == (SizeToWrite % 512));
-	Offset.QuadPart = block * channel->block_size;
+	ASSERT(0 == (আকার_To_Write % 512));
+	Offset.QuadPart = block * channel->block_আকার;
 
-	if(!_RawWrite(NtData->Handle, Offset, SizeToWrite, buf, &Errno))
+	যদি(!_RawWrite(Nt_তথ্য->Handle, Offset, আকার_To_Write, buf, &Errno))
 	{
-		if (channel->write_error)
+		যদি (channel->write_error)
 		{
-			return (channel->write_error)(channel, block, count, buf,
-						SizeToWrite, 0, Errno);
+			ফেরত (channel->write_error)(channel, block, গুনতি, buf,
+						আকার_To_Write, 0, Errno);
 		}
-		else
+		অন্যথা
 		{
-			return Errno;
+			ফেরত Errno;
 		}
 	}
 
@@ -1437,15 +1437,15 @@ nt_write_blk(io_channel channel, unsigned long block,
 	// Stash a copy.
 	//
 
-	if(SizeToWrite >= NtData->BufferSize)
+	যদি(আকার_To_Write >= Nt_তথ্য->বাফার_আকার)
 	{
-		NtData->BufferBlockNumber = block;
-		memcpy(NtData->Buffer, buf, NtData->BufferSize);
+		Nt_তথ্য->বাফার_Block_সংখ্যা = block;
+		memcpy(Nt_তথ্য->বাফার_2, buf, Nt_তথ্য->বাফার_আকার);
 	}
 
-	NtData->Written = TRUE;
+	Nt_তথ্য->Written = TRUE;
 
-	return 0;
+	ফেরত 0;
 
 }
 
@@ -1456,19 +1456,19 @@ nt_write_blk(io_channel channel, unsigned long block,
 // write-through cache, this is a no-op.
 //
 
-static
+স্থির
 errcode_t
 nt_flush(io_channel channel)
 {
-	PNT_PRIVATE_DATA NtData = NULL;
+	PNT_PRIVATE_তথ্য Nt_তথ্য = ফাঁকা;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	NtData = (PNT_PRIVATE_DATA) channel->private_data;
-	EXT2_CHECK_MAGIC(NtData, EXT2_ET_MAGIC_NT_IO_CHANNEL);
+	Nt_তথ্য = (PNT_PRIVATE_তথ্য) channel->private_তথ্য;
+	EXT2_CHECK_MAGIC(Nt_তথ্য, EXT2_ET_MAGIC_NT_IO_CHANNEL);
 
-	if(NtData->OpenedReadonly)
+	যদি(Nt_তথ্য->OpenedReadonly)
 	{
-		return 0; // EACCESS;
+		ফেরত 0; // EACCESS;
 	}
 
 
@@ -1476,19 +1476,19 @@ nt_flush(io_channel channel)
 	// Flush file buffers.
 	//
 
-	_FlushDrive(NtData->Handle);
+	_FlushDrive(Nt_তথ্য->Handle);
 
 
 	//
 	// Test and correct partition type.
 	//
 
-	if(NtData->Written)
+	যদি(Nt_তথ্য->Written)
 	{
-		_SetPartType(NtData->Handle, 0x83);
+		_SetPartType(Nt_তথ্য->Handle, 0x83);
 	}
 
-	return 0;
+	ফেরত 0;
 }
 
 

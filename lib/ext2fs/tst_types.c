@@ -9,53 +9,53 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#অন্তর্ভাব "config.h"
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <unistd.h>
 
-#include "ext2fs/ext2_types.h"
+#অন্তর্ভাব "ext2fs/ext2_types.h"
 
-int main(int argc, char **argv)
+পূর্ণসংখ্যা প্রধান(পূর্ণসংখ্যা argc, অক্ষর **argv)
 {
-	if (sizeof(__u8) != 1) {
+	যদি (আকার(__u8) != 1) {
 		printf("Sizeof(__u8) is %d should be 1\n",
-		       (int)sizeof(__u8));
+		       (পূর্ণসংখ্যা)আকার(__u8));
 		exit(1);
 	}
-	if (sizeof(__s8) != 1) {
+	যদি (আকার(__s8) != 1) {
 		printf("Sizeof(_s8) is %d should be 1\n",
-		       (int)sizeof(__s8));
+		       (পূর্ণসংখ্যা)আকার(__s8));
 		exit(1);
 	}
-	if (sizeof(__u16) != 2) {
+	যদি (আকার(__u16) != 2) {
 		printf("Sizeof(__u16) is %d should be 2\n",
-		       (int)sizeof(__u16));
+		       (পূর্ণসংখ্যা)আকার(__u16));
 		exit(1);
 	}
-	if (sizeof(__s16) != 2) {
+	যদি (আকার(__s16) != 2) {
 		printf("Sizeof(__s16) is %d should be 2\n",
-		       (int)sizeof(__s16));
+		       (পূর্ণসংখ্যা)আকার(__s16));
 		exit(1);
 	}
-	if (sizeof(__u32) != 4) {
+	যদি (আকার(__u32) != 4) {
 		printf("Sizeof(__u32) is %d should be 4\n",
-		       (int)sizeof(__u32));
+		       (পূর্ণসংখ্যা)আকার(__u32));
 		exit(1);
 	}
-	if (sizeof(__s32) != 4) {
+	যদি (আকার(__s32) != 4) {
 		printf("Sizeof(__s32) is %d should be 4\n",
-		       (int)sizeof(__s32));
+		       (পূর্ণসংখ্যা)আকার(__s32));
 		exit(1);
 	}
-	if (sizeof(__u64) != 8) {
+	যদি (আকার(__u64) != 8) {
 		printf("Sizeof(__u64) is %d should be 8\n",
-		       (int)sizeof(__u64));
+		       (পূর্ণসংখ্যা)আকার(__u64));
 		exit(1);
 	}
-	if (sizeof(__s64) != 8) {
+	যদি (আকার(__s64) != 8) {
 		printf("Sizeof(__s64) is %d should be 8\n",
-		       (int)sizeof(__s64));
+		       (পূর্ণসংখ্যা)আকার(__s64));
 		exit(1);
 	}
 	printf("The ext2_types.h types are correct.\n");

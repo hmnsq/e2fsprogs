@@ -13,45 +13,45 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#অন্তর্ভাব "config.h"
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#যদি HAVE_UNISTD_H
+#অন্তর্ভাব <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#যদি HAVE_ERRNO_H
+#অন্তর্ভাব <errno.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#অন্তর্ভাব <fcntl.h>
+#অন্তর্ভাব <time.h>
+#যদি HAVE_SYS_STAT_H
+#অন্তর্ভাব <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#যদি HAVE_SYS_TYPES_H
+#অন্তর্ভাব <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#অন্তর্ভাব "ext2_fs.h"
+#অন্তর্ভাব "ext2fs.h"
 
 #ifndef HAVE_TYPE_SSIZE_T
-typedef int ssize_t;
+প্রকারলেখ পূর্ণসংখ্যা ssize_t;
 #endif
 
 /*
  * This function returns 1 if the specified block is all zeros
  */
-static int check_zero_block(char *buf, int blocksize)
+স্থির পূর্ণসংখ্যা check_zero_block(অক্ষর *buf, পূর্ণসংখ্যা blocksize)
 {
-	char	*cp = buf;
-	int	left = blocksize;
+	অক্ষর	*cp = buf;
+	পূর্ণসংখ্যা	বাম = blocksize;
 
-	while (left > 0) {
-		if (*cp++)
-			return 0;
-		left--;
+	যখন (বাম > 0) {
+		যদি (*cp++)
+			ফেরত 0;
+		বাম--;
 	}
-	return 1;
+	ফেরত 1;
 }
 
 /*
@@ -59,78 +59,78 @@ static int check_zero_block(char *buf, int blocksize)
  */
 #define BUF_BLOCKS	32
 
-errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_inode_write(ext2_filsys fs, পূর্ণসংখ্যা fd, পূর্ণসংখ্যা flags)
 {
 	dgrp_t		group;
-	ssize_t		left, c, d;
-	char		*buf, *cp;
+	ssize_t		বাম, c, d;
+	অক্ষর		*buf, *cp;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 	ext2_loff_t	r;
 
 	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	যদি (!buf)
+		ফেরত ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
+	জন্য (group = 0; group < fs->group_desc_গুনতি; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
+		যদি (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
-			goto errout;
+			যাও errout;
 		}
-		left = fs->inode_blocks_per_group;
-		if ((blk < fs->super->s_first_data_block) ||
-		    (blk + left - 1 >= ext2fs_blocks_count(fs->super))) {
+		বাম = fs->inode_blocks_per_group;
+		যদি ((blk < fs->super->s_first_তথ্য_block) ||
+		    (blk + বাম - 1 >= ext2fs_blocks_গুনতি(fs->super))) {
 			retval = EXT2_ET_GDESC_BAD_INODE_TABLE;
-			goto errout;
+			যাও errout;
 		}
-		while (left) {
+		যখন (বাম) {
 			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
+			যদি (c > বাম)
+				c = বাম;
 			retval = io_channel_read_blk64(fs->io, blk, c, buf);
-			if (retval)
-				goto errout;
+			যদি (retval)
+				যাও errout;
 			cp = buf;
-			while (c) {
-				if (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
+			যখন (c) {
+				যদি (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
 					d = c;
-					goto skip_sparse;
+					যাও skip_sparse;
 				}
 				/* Skip zero blocks */
-				if (check_zero_block(cp, fs->blocksize)) {
+				যদি (check_zero_block(cp, fs->blocksize)) {
 					c--;
 					blk++;
-					left--;
+					বাম--;
 					cp += fs->blocksize;
 					r = ext2fs_llseek(fd, fs->blocksize,
 							  SEEK_CUR);
-					if (r < 0) {
+					যদি (r < 0) {
 						retval = errno;
-						goto errout;
+						যাও errout;
 					}
-					continue;
+					চালু;
 				}
 				/* Find non-zero blocks */
-				for (d = 1; d < c; d++) {
-					if (check_zero_block(cp +
+				জন্য (d = 1; d < c; d++) {
+					যদি (check_zero_block(cp +
 							     d * fs->blocksize,
 							     fs->blocksize))
-						break;
+						বিরতি;
 				}
 			skip_sparse:
-				actual = write(fd, cp, d * fs->blocksize);
-				if (actual == -1) {
+				actual = লিখ(fd, cp, d * fs->blocksize);
+				যদি (actual == -1) {
 					retval = errno;
-					goto errout;
+					যাও errout;
 				}
-				if (actual != d * fs->blocksize) {
+				যদি (actual != d * fs->blocksize) {
 					retval = EXT2_ET_SHORT_WRITE;
-					goto errout;
+					যাও errout;
 				}
 				blk += d;
-				left -= d;
+				বাম -= d;
 				cp += d * fs->blocksize;
 				c -= d;
 			}
@@ -139,188 +139,188 @@ errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	মুক্ত(buf);
+	ফেরত retval;
 }
 
 /*
  * Read in the inode table and stuff it into place
  */
-errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_inode_read(ext2_filsys fs, পূর্ণসংখ্যা fd,
+				  পূর্ণসংখ্যা flags EXT2FS_ATTR((unused)))
 {
 	dgrp_t		group;
-	ssize_t		c, left;
-	char		*buf;
+	ssize_t		c, বাম;
+	অক্ষর		*buf;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 
 	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	যদি (!buf)
+		ফেরত ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
+	জন্য (group = 0; group < fs->group_desc_গুনতি; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
+		যদি (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
-			goto errout;
+			যাও errout;
 		}
-		left = fs->inode_blocks_per_group;
-		while (left) {
+		বাম = fs->inode_blocks_per_group;
+		যখন (বাম) {
 			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
-			actual = read(fd, buf, fs->blocksize * c);
-			if (actual == -1) {
+			যদি (c > বাম)
+				c = বাম;
+			actual = পঠ(fd, buf, fs->blocksize * c);
+			যদি (actual == -1) {
 				retval = errno;
-				goto errout;
+				যাও errout;
 			}
-			if (actual != fs->blocksize * c) {
+			যদি (actual != fs->blocksize * c) {
 				retval = EXT2_ET_SHORT_READ;
-				goto errout;
+				যাও errout;
 			}
 			retval = io_channel_write_blk64(fs->io, blk, c, buf);
-			if (retval)
-				goto errout;
+			যদি (retval)
+				যাও errout;
 
 			blk += c;
-			left -= c;
+			বাম -= c;
 		}
 	}
 	retval = ext2fs_flush_icache(fs);
 
 errout:
-	free(buf);
-	return retval;
+	মুক্ত(buf);
+	ফেরত retval;
 }
 
 /*
  * Write out superblock and group descriptors
  */
-errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
-				   int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_write(ext2_filsys fs, পূর্ণসংখ্যা fd,
+				   পূর্ণসংখ্যা flags EXT2FS_ATTR((unused)))
 {
-	char		*buf, *cp;
+	অক্ষর		*buf, *cp;
 	ssize_t		actual;
 	errcode_t	retval;
-#ifdef WORDS_BIGENDIAN
-	unsigned int	groups_per_block;
-	struct		ext2_group_desc *gdp;
-	int		j;
+#ifdef শব্দগুলি_BIGENDIAN
+	unsigned পূর্ণসংখ্যা	groups_per_block;
+	কাঠামো		ext2_group_desc *gdp;
+	পূর্ণসংখ্যা		j;
 #endif
 
-	if (fs->group_desc == NULL)
-		return EXT2_ET_NO_GDESC;
+	যদি (fs->group_desc == ফাঁকা)
+		ফেরত EXT2_ET_NO_GDESC;
 
 	buf = malloc(fs->blocksize);
-	if (!buf)
-		return ENOMEM;
+	যদি (!buf)
+		ফেরত ENOMEM;
 
 	/*
 	 * Write out the superblock
 	 */
 	memset(buf, 0, fs->blocksize);
-#ifdef WORDS_BIGENDIAN
+#ifdef শব্দগুলি_BIGENDIAN
 	/*
 	 * We're writing out superblock so let's convert
 	 * it to little endian and then back if needed
 	 */
 	ext2fs_swap_super(fs->super);
-	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
+	memcpy(buf, fs->super, SUPERBLOCK_আকার);
 	ext2fs_swap_super(fs->super);
-#else
-	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
+#অন্যথা
+	memcpy(buf, fs->super, SUPERBLOCK_আকার);
 #endif
-	actual = write(fd, buf, fs->blocksize);
-	if (actual == -1) {
+	actual = লিখ(fd, buf, fs->blocksize);
+	যদি (actual == -1) {
 		retval = errno;
-		goto errout;
+		যাও errout;
 	}
-	if (actual != (ssize_t) fs->blocksize) {
+	যদি (actual != (ssize_t) fs->blocksize) {
 		retval = EXT2_ET_SHORT_WRITE;
-		goto errout;
+		যাও errout;
 	}
 
 	/*
 	 * Now write out the block group descriptors
 	 */
 
-	cp = (char *) fs->group_desc;
+	cp = (অক্ষর *) fs->group_desc;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef শব্দগুলি_BIGENDIAN
 	/*
 	 * Convert group descriptors to little endian and back
 	 * if needed
 	 */
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
+	জন্য (j=0; j < groups_per_block*fs->desc_blocks; j++) {
 		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
+		যদি (gdp)
 			ext2fs_swap_group_desc2(fs, gdp);
 	}
 #endif
 
-	actual = write(fd, cp, (ssize_t)fs->blocksize * fs->desc_blocks);
+	actual = লিখ(fd, cp, (ssize_t)fs->blocksize * fs->desc_blocks);
 
 
-#ifdef WORDS_BIGENDIAN
+#ifdef শব্দগুলি_BIGENDIAN
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
+	জন্য (j=0; j < groups_per_block*fs->desc_blocks; j++) {
 		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
+		যদি (gdp)
 			ext2fs_swap_group_desc2(fs, gdp);
 	}
 #endif
 
-	if (actual == -1) {
+	যদি (actual == -1) {
 		retval = errno;
-		goto errout;
+		যাও errout;
 	}
-	if (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
+	যদি (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
 		retval = EXT2_ET_SHORT_WRITE;
-		goto errout;
+		যাও errout;
 	}
 
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	মুক্ত(buf);
+	ফেরত retval;
 }
 
 /*
  * Read the superblock and group descriptors and overwrite them.
  */
-errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_read(ext2_filsys fs, পূর্ণসংখ্যা fd,
+				  পূর্ণসংখ্যা flags EXT2FS_ATTR((unused)))
 {
-	char		*buf;
-	ssize_t		actual, size;
+	অক্ষর		*buf;
+	ssize_t		actual, আকার_2;
 	errcode_t	retval;
 
-	size = (ssize_t)fs->blocksize * (fs->desc_blocks + 1);
-	buf = malloc(size);
-	if (!buf)
-		return ENOMEM;
+	আকার_2 = (ssize_t)fs->blocksize * (fs->desc_blocks + 1);
+	buf = malloc(আকার_2);
+	যদি (!buf)
+		ফেরত ENOMEM;
 
 	/*
 	 * Read it all in.
 	 */
-	actual = read(fd, buf, size);
-	if (actual == -1) {
+	actual = পঠ(fd, buf, আকার_2);
+	যদি (actual == -1) {
 		retval = errno;
-		goto errout;
+		যাও errout;
 	}
-	if (actual != size) {
+	যদি (actual != আকার_2) {
 		retval = EXT2_ET_SHORT_READ;
-		goto errout;
+		যাও errout;
 	}
 
 	/*
 	 * Now copy in the superblock and group descriptors
 	 */
-	memcpy(fs->super, buf, SUPERBLOCK_SIZE);
+	memcpy(fs->super, buf, SUPERBLOCK_আকার);
 
 	memcpy(fs->group_desc, buf + fs->blocksize,
 	       (ssize_t)fs->blocksize * fs->desc_blocks);
@@ -328,143 +328,143 @@ errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	মুক্ত(buf);
+	ফেরত retval;
 }
 
 /*
  * Write the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, পূর্ণসংখ্যা fd, পূর্ণসংখ্যা flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	ssize_t			actual;
 	size_t			c;
-	__u64			itr, cnt, size, total_size;
-	char			buf[1024];
+	__u64			itr, cnt, আকার_2, যোগ_আকার;
+	অক্ষর			buf[1024];
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	যদি (flags & IMAGER_FLAG_INODEMAP) {
+		যদি (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			যদি (retval)
+				ফেরত retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
-		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
+			fs->group_desc_গুনতি;
+		আকার_2 = (EXT2_INODES_PER_GROUP(fs->super) / 8);
+	} অন্যথা {
+		যদি (!fs->block_map) {
 			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+			যদি (retval)
+				ফেরত retval;
 		}
 		bmap = fs->block_map;
-		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super, fs->group_desc_count);
-		size = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
+		itr = fs->super->s_first_তথ্য_block;
+		cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super, fs->group_desc_গুনতি);
+		আকার_2 = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
 	}
-	total_size = size * fs->group_desc_count;
+	যোগ_আকার = আকার_2 * fs->group_desc_গুনতি;
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
-			size = (cnt >> 3);
-		if (size == 0)
-			break;
+	যখন (cnt > 0) {
+		আকার_2 = আকার(buf);
+		যদি (আকার_2 > (cnt >> 3))
+			আকার_2 = (cnt >> 3);
+		যদি (আকার_2 == 0)
+			বিরতি;
 
 		retval = ext2fs_get_generic_bmap_range(bmap, itr,
-						       size << 3, buf);
-		if (retval)
-			return retval;
+						       আকার_2 << 3, buf);
+		যদি (retval)
+			ফেরত retval;
 
-		actual = write(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		actual = লিখ(fd, buf, আকার_2);
+		যদি (actual == -1)
+			ফেরত errno;
+		যদি (actual != (পূর্ণসংখ্যা) আকার_2)
+			ফেরত EXT2_ET_SHORT_READ;
 
-		itr += size << 3;
-		cnt -= size << 3;
+		itr += আকার_2 << 3;
+		cnt -= আকার_2 << 3;
 	}
 
-	size = total_size % fs->blocksize;
-	memset(buf, 0, sizeof(buf));
-	if (size) {
-		size = fs->blocksize - size;
-		while (size) {
-			c = size;
-			if (c > (int) sizeof(buf))
-				c = sizeof(buf);
-			actual = write(fd, buf, c);
-			if (actual < 0)
-				return errno;
-			if ((size_t) actual != c)
-				return EXT2_ET_SHORT_WRITE;
-			size -= c;
+	আকার_2 = যোগ_আকার % fs->blocksize;
+	memset(buf, 0, আকার(buf));
+	যদি (আকার_2) {
+		আকার_2 = fs->blocksize - আকার_2;
+		যখন (আকার_2) {
+			c = আকার_2;
+			যদি (c > (পূর্ণসংখ্যা) আকার(buf))
+				c = আকার(buf);
+			actual = লিখ(fd, buf, c);
+			যদি (actual < 0)
+				ফেরত errno;
+			যদি ((size_t) actual != c)
+				ফেরত EXT2_ET_SHORT_WRITE;
+			আকার_2 -= c;
 		}
 	}
-	return 0;
+	ফেরত 0;
 }
 
 
 /*
  * Read the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, পূর্ণসংখ্যা fd, পূর্ণসংখ্যা flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	__u64			itr, cnt;
-	char			buf[1024];
-	unsigned int		size;
+	অক্ষর			buf[1024];
+	unsigned পূর্ণসংখ্যা		আকার_2;
 	ssize_t			actual;
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	যদি (flags & IMAGER_FLAG_INODEMAP) {
+		যদি (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			যদি (retval)
+				ফেরত retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
-		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
+			fs->group_desc_গুনতি;
+		আকার_2 = (EXT2_INODES_PER_GROUP(fs->super) / 8);
+	} অন্যথা {
+		যদি (!fs->block_map) {
 			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+			যদি (retval)
+				ফেরত retval;
 		}
 		bmap = fs->block_map;
-		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_BLOCKS(fs->super, fs->group_desc_count);
-		size = EXT2_BLOCKS_PER_GROUP(fs->super) / 8;
+		itr = fs->super->s_first_তথ্য_block;
+		cnt = EXT2_GROUPS_TO_BLOCKS(fs->super, fs->group_desc_গুনতি);
+		আকার_2 = EXT2_BLOCKS_PER_GROUP(fs->super) / 8;
 	}
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
-			size = (cnt >> 3);
-		if (size == 0)
-			break;
+	যখন (cnt > 0) {
+		আকার_2 = আকার(buf);
+		যদি (আকার_2 > (cnt >> 3))
+			আকার_2 = (cnt >> 3);
+		যদি (আকার_2 == 0)
+			বিরতি;
 
-		actual = read(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		actual = পঠ(fd, buf, আকার_2);
+		যদি (actual == -1)
+			ফেরত errno;
+		যদি (actual != (পূর্ণসংখ্যা) আকার_2)
+			ফেরত EXT2_ET_SHORT_READ;
 
 		retval = ext2fs_set_generic_bmap_range(bmap, itr,
-						       size << 3, buf);
-		if (retval)
-			return retval;
+						       আকার_2 << 3, buf);
+		যদি (retval)
+			ফেরত retval;
 
-		itr += size << 3;
-		cnt -= size << 3;
+		itr += আকার_2 << 3;
+		cnt -= আকার_2 << 3;
 	}
-	return 0;
+	ফেরত 0;
 }

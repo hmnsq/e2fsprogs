@@ -9,81 +9,81 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#অন্তর্ভাব "config.h"
+#অন্তর্ভাব <stdio.h>
+#যদি HAVE_UNISTD_H
+#অন্তর্ভাব <unistd.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
-#include "hashmap.h"
+#অন্তর্ভাব "ext2_fs.h"
+#অন্তর্ভাব "ext2fsP.h"
+#অন্তর্ভাব "hashmap.h"
 
-void ext2fs_free(ext2_filsys fs)
+শূন্য ext2fs_free(ext2_filsys fs)
 {
-	if (!fs || (fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS))
-		return;
-	if (fs->image_io != fs->io) {
-		if (fs->image_io)
+	যদি (!fs || (fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS))
+		ফেরত;
+	যদি (fs->image_io != fs->io) {
+		যদি (fs->image_io)
 			io_channel_close(fs->image_io);
 	}
-	if (fs->io) {
+	যদি (fs->io) {
 		io_channel_close(fs->io);
 	}
-	if (fs->device_name)
+	যদি (fs->device_name)
 		ext2fs_free_mem(&fs->device_name);
-	if (fs->super)
+	যদি (fs->super)
 		ext2fs_free_mem(&fs->super);
-	if (fs->orig_super)
+	যদি (fs->orig_super)
 		ext2fs_free_mem(&fs->orig_super);
-	if (fs->group_desc)
+	যদি (fs->group_desc)
 		ext2fs_free_mem(&fs->group_desc);
-	if (fs->block_map)
+	যদি (fs->block_map)
 		ext2fs_free_block_bitmap(fs->block_map);
-	if (fs->inode_map)
+	যদি (fs->inode_map)
 		ext2fs_free_inode_bitmap(fs->inode_map);
-	if (fs->image_header)
+	যদি (fs->image_header)
 		ext2fs_free_mem(&fs->image_header);
 
-	if (fs->badblocks)
+	যদি (fs->badblocks)
 		ext2fs_badblocks_list_free(fs->badblocks);
 	fs->badblocks = 0;
 
-	if (fs->dblist)
+	যদি (fs->dblist)
 		ext2fs_free_dblist(fs->dblist);
 
-	if (fs->icache)
+	যদি (fs->icache)
 		ext2fs_free_inode_cache(fs->icache);
 
-	if (fs->mmp_buf)
+	যদি (fs->mmp_buf)
 		ext2fs_free_mem(&fs->mmp_buf);
-	if (fs->mmp_cmp)
+	যদি (fs->mmp_cmp)
 		ext2fs_free_mem(&fs->mmp_cmp);
 
-	if (fs->block_sha_map)
+	যদি (fs->block_sha_map)
 		ext2fs_hashmap_free(fs->block_sha_map);
 
 	fs->magic = 0;
 
-	ext2fs_zero_blocks2(NULL, 0, 0, NULL, NULL);
+	ext2fs_zero_blocks2(ফাঁকা, 0, 0, ফাঁকা, ফাঁকা);
 	ext2fs_free_mem(&fs);
 }
 
 /*
  * This procedure frees a badblocks list.
  */
-void ext2fs_u32_list_free(ext2_u32_list bb)
+শূন্য ext2fs_u32_list_free(ext2_u32_list bb)
 {
-	if (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
-		return;
+	যদি (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
+		ফেরত;
 
-	if (bb->list)
+	যদি (bb->list)
 		ext2fs_free_mem(&bb->list);
 	bb->list = 0;
 	ext2fs_free_mem(&bb);
 }
 
-void ext2fs_badblocks_list_free(ext2_badblocks_list bb)
+শূন্য ext2fs_badblocks_list_free(ext2_badblocks_list bb)
 {
 	ext2fs_u32_list_free((ext2_u32_list) bb);
 }
@@ -92,15 +92,15 @@ void ext2fs_badblocks_list_free(ext2_badblocks_list bb)
 /*
  * Free a directory block list
  */
-void ext2fs_free_dblist(ext2_dblist dblist)
+শূন্য ext2fs_free_dblist(ext2_dblist dblist)
 {
-	if (!dblist || (dblist->magic != EXT2_ET_MAGIC_DBLIST))
-		return;
+	যদি (!dblist || (dblist->magic != EXT2_ET_MAGIC_DBLIST))
+		ফেরত;
 
-	if (dblist->list)
+	যদি (dblist->list)
 		ext2fs_free_mem(&dblist->list);
 	dblist->list = 0;
-	if (dblist->fs && dblist->fs->dblist == dblist)
+	যদি (dblist->fs && dblist->fs->dblist == dblist)
 		dblist->fs->dblist = 0;
 	dblist->magic = 0;
 	ext2fs_free_mem(&dblist);

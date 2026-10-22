@@ -10,12 +10,12 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#অন্তর্ভাব "config.h"
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <time.h>
+#অন্তর্ভাব "ext2_fs.h"
+#অন্তর্ভাব "ext2fsP.h"
 
 /*
  * Iterate through the groups which hold BACKUP superblock/GDT copies in an
@@ -32,45 +32,45 @@ dgrp_t ext2fs_list_backups(ext2_filsys fs, dgrp_t *three,
 	unsigned long long mult = 3;
 	dgrp_t ret;
 
-	if (fs && ext2fs_has_feature_sparse_super2(fs->super)) {
-		if (*min == 1) {
+	যদি (fs && ext2fs_has_feature_sparse_super2(fs->super)) {
+		যদি (*min == 1) {
 			*min += 1;
-			if (fs->super->s_backup_bgs[0])
-				return fs->super->s_backup_bgs[0];
+			যদি (fs->super->s_backup_bgs[0])
+				ফেরত fs->super->s_backup_bgs[0];
 		}
-		if (*min == 2) {
+		যদি (*min == 2) {
 			*min += 1;
-			if (fs->super->s_backup_bgs[1])
-				return fs->super->s_backup_bgs[1];
+			যদি (fs->super->s_backup_bgs[1])
+				ফেরত fs->super->s_backup_bgs[1];
 		}
 
-		return fs->group_desc_count;
+		ফেরত fs->group_desc_গুনতি;
 	}
 
-	if (fs && !ext2fs_has_feature_sparse_super(fs->super)) {
+	যদি (fs && !ext2fs_has_feature_sparse_super(fs->super)) {
 		ret = *min;
 		*min += 1;
 
-		return ret;
+		ফেরত ret;
 	}
 
-	if (*five < *min) {
+	যদি (*five < *min) {
 		min = five;
 		mult = 5;
 	}
-	if (*seven < *min) {
+	যদি (*seven < *min) {
 		min = seven;
 		mult = 7;
 	}
 
 	ret = *min;
 	mult *= *min;
-	if (mult > (dgrp_t)-1)
+	যদি (mult > (dgrp_t)-1)
 		*min = (dgrp_t)-1;
-	else
+	অন্যথা
 		*min = mult;
 
-	return ret;
+	ফেরত ret;
 }
 
 /*
@@ -82,55 +82,55 @@ dgrp_t ext2fs_list_backups(ext2_filsys fs, dgrp_t *three,
 errcode_t ext2fs_create_resize_inode(ext2_filsys fs)
 {
 	errcode_t		retval, retval2;
-	struct ext2_super_block	*sb;
-	struct ext2_inode	inode;
+	কাঠামো ext2_super_block	*sb;
+	কাঠামো ext2_inode	inode;
 	__u32			*dindir_buf, *gdt_buf;
-	unsigned long long	apb, inode_size;
+	unsigned long long	apb, inode_আকার;
 	/* FIXME-64 - can't deal with extents */
 	blk_t			dindir_blk, rsv_off, gdt_off, gdt_blk;
-	int			dindir_dirty = 0, inode_dirty = 0, sb_blk = 0;
+	পূর্ণসংখ্যা			dindir_dirty = 0, inode_dirty = 0, sb_blk = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	sb = fs->super;
 
 	retval = ext2fs_get_array(2, fs->blocksize, &dindir_buf);
-	if (retval)
-		return retval;
-	gdt_buf = (__u32 *)((char *)dindir_buf + fs->blocksize);
+	যদি (retval)
+		ফেরত retval;
+	gdt_buf = (__u32 *)((অক্ষর *)dindir_buf + fs->blocksize);
 
 	retval = ext2fs_read_inode(fs, EXT2_RESIZE_INO, &inode);
-	if (retval)
-		goto out_free;
+	যদি (retval)
+		যাও out_free;
 
 	/*
 	 * File systems with a blocksize of 1024 and bigalloc have
 	 * sb->s_first_data_block of 0; yet the superblock is still at
 	 * block #1.  We compensate for it here.
 	 */
-	sb_blk = sb->s_first_data_block;
-	if (fs->blocksize == 1024 && sb_blk == 0)
+	sb_blk = sb->s_first_তথ্য_block;
+	যদি (fs->blocksize == 1024 && sb_blk == 0)
 		sb_blk = 1;
 
 	/* Maximum possible file size (we only use double indirect blocks) */
 	apb = EXT2_ADDR_PER_BLOCK(sb);
-	if ((dindir_blk = inode.i_block[EXT2_DIND_BLOCK])) {
+	যদি ((dindir_blk = inode.i_block[EXT2_DIND_BLOCK])) {
 #ifdef RES_GDT_DEBUG
 		printf("reading GDT dindir %u\n", dindir_blk);
 #endif
 		retval = ext2fs_read_ind_block(fs, dindir_blk, dindir_buf);
-		if (retval)
-			goto out_inode;
-	} else {
+		যদি (retval)
+			যাও out_inode;
+	} অন্যথা {
 		blk_t goal = sb_blk + fs->desc_blocks +
 			sb->s_reserved_gdt_blocks + 2 +
 			fs->inode_blocks_per_group;
 
 		retval = ext2fs_alloc_block(fs, goal, 0, &dindir_blk);
-		if (retval)
-			goto out_free;
+		যদি (retval)
+			যাও out_free;
 		inode.i_mode = LINUX_S_IFREG | 0600;
-		inode.i_links_count = 1;
+		inode.i_links_গুনতি = 1;
 		inode.i_block[EXT2_DIND_BLOCK] = dindir_blk;
 		ext2fs_iblk_set(fs, &inode, 1);
 		memset(dindir_buf, 0, fs->blocksize);
@@ -138,24 +138,24 @@ errcode_t ext2fs_create_resize_inode(ext2_filsys fs)
 		printf("allocated GDT dindir %u\n", dindir_blk);
 #endif
 		dindir_dirty = inode_dirty = 1;
-		inode_size = apb*apb + apb + EXT2_NDIR_BLOCKS;
-		inode_size *= fs->blocksize;
-		retval = ext2fs_inode_size_set(fs, &inode, inode_size);
-		if (retval)
-			goto out_free;
+		inode_আকার = apb*apb + apb + EXT2_NDIR_BLOCKS;
+		inode_আকার *= fs->blocksize;
+		retval = ext2fs_inode_আকার_set(fs, &inode, inode_আকার);
+		যদি (retval)
+			যাও out_free;
 		inode.i_ctime = ext2fsP_get_time(fs);
 	}
 
-	for (rsv_off = 0, gdt_off = fs->desc_blocks,
+	জন্য (rsv_off = 0, gdt_off = fs->desc_blocks,
 	     gdt_blk = sb_blk + 1 + fs->desc_blocks;
 	     rsv_off < sb->s_reserved_gdt_blocks;
 	     rsv_off++, gdt_off++, gdt_blk++) {
 		dgrp_t three = 1, five = 5, seven = 7;
 		dgrp_t grp, last = 0;
-		int gdt_dirty = 0;
+		পূর্ণসংখ্যা gdt_dirty = 0;
 
 		gdt_off %= apb;
-		if (!dindir_buf[gdt_off]) {
+		যদি (!dindir_buf[gdt_off]) {
 			/* FIXME XXX XXX
 			blk_t new_blk;
 
@@ -175,27 +175,27 @@ errcode_t ext2fs_create_resize_inode(ext2_filsys fs)
 			printf("added primary GDT block %u at %u[%u]\n",
 			       gdt_blk, dindir_blk, gdt_off);
 #endif
-		} else if (dindir_buf[gdt_off] == gdt_blk) {
+		} অন্যথা যদি (dindir_buf[gdt_off] == gdt_blk) {
 #ifdef RES_GDT_DEBUG
 			printf("reading primary GDT block %u\n", gdt_blk);
 #endif
 			retval = ext2fs_read_ind_block(fs, gdt_blk, gdt_buf);
-			if (retval)
-				goto out_dindir;
-		} else {
+			যদি (retval)
+				যাও out_dindir;
+		} অন্যথা {
 #ifdef RES_GDT_DEBUG
 			printf("bad primary GDT %u != %u at %u[%u]\n",
 			       dindir_buf[gdt_off], gdt_blk,dindir_blk,gdt_off);
 #endif
 			retval = EXT2_ET_RESIZE_INODE_CORRUPT;
-			goto out_dindir;
+			যাও out_dindir;
 		}
 
-		while ((grp = ext2fs_list_backups(fs, &three, &five, &seven)) <
-		       fs->group_desc_count) {
+		যখন ((grp = ext2fs_list_backups(fs, &three, &five, &seven)) <
+		       fs->group_desc_গুনতি) {
 			blk_t expect = gdt_blk + grp * sb->s_blocks_per_group;
 
-			if (!gdt_buf[last]) {
+			যদি (!gdt_buf[last]) {
 #ifdef RES_GDT_DEBUG
 				printf("added backup GDT %u grp %u@%u[%u]\n",
 				       expect, grp, gdt_blk, last);
@@ -203,48 +203,48 @@ errcode_t ext2fs_create_resize_inode(ext2_filsys fs)
 				gdt_buf[last] = expect;
 				ext2fs_iblk_add_blocks(fs, &inode, 1);
 				gdt_dirty = inode_dirty = 1;
-			} else if (gdt_buf[last] != expect) {
+			} অন্যথা যদি (gdt_buf[last] != expect) {
 #ifdef RES_GDT_DEBUG
 				printf("bad backup GDT %u != %u at %u[%u]\n",
 				       gdt_buf[last], expect, gdt_blk, last);
 #endif
 				retval = EXT2_ET_RESIZE_INODE_CORRUPT;
-				goto out_dindir;
+				যাও out_dindir;
 			}
 			last++;
 		}
-		if (gdt_dirty) {
+		যদি (gdt_dirty) {
 #ifdef RES_GDT_DEBUG
 			printf("writing primary GDT block %u\n", gdt_blk);
 #endif
 			retval = ext2fs_write_ind_block(fs, gdt_blk, gdt_buf);
-			if (retval)
-				goto out_dindir;
+			যদি (retval)
+				যাও out_dindir;
 		}
 	}
 
 out_dindir:
-	if (dindir_dirty) {
+	যদি (dindir_dirty) {
 		retval2 = ext2fs_write_ind_block(fs, dindir_blk, dindir_buf);
-		if (!retval)
+		যদি (!retval)
 			retval = retval2;
 	}
 out_inode:
 #ifdef RES_GDT_DEBUG
 	printf("inode.i_blocks = %u, i_size = %lu\n", inode.i_blocks,
-	       EXT2_I_SIZE(&inode));
+	       EXT2_I_আকার(&inode));
 #endif
-	if (inode_dirty) {
+	যদি (inode_dirty) {
 		time_t now = ext2fsP_get_time(fs);
 
 		ext2fs_inode_xtime_set(&inode, i_atime, now);
 		ext2fs_inode_xtime_set(&inode, i_mtime, now);
 		retval2 = ext2fs_write_new_inode(fs, EXT2_RESIZE_INO, &inode);
-		if (!retval)
+		যদি (!retval)
 			retval = retval2;
 	}
 out_free:
 	ext2fs_free_mem(&dindir_buf);
-	return retval;
+	ফেরত retval;
 }
 

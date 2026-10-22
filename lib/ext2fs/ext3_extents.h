@@ -25,7 +25,7 @@
  * covers all valid ext4 block sizes.  Therefore, this tail structure can be
  * crammed into the end of the block without having to rebalance the tree.
  */
-struct ext3_extent_tail {
+কাঠামো ext3_extent_লেজ {
 	__le32	et_checksum;	/* crc32c(uuid+inum+extent_block) */
 };
 
@@ -33,7 +33,7 @@ struct ext3_extent_tail {
  * this is extent on-disk structure
  * it's used at the bottom of the tree
  */
-struct ext3_extent {
+কাঠামো ext3_extent {
 	__le32	ee_block;	/* first logical block extent covers */
 	__le16	ee_len;		/* number of blocks covered by extent */
 	__le16	ee_start_hi;	/* high 16 bits of physical block */
@@ -44,7 +44,7 @@ struct ext3_extent {
  * this is index on-disk structure
  * it's used at all the levels, but the bottom
  */
-struct ext3_extent_idx {
+কাঠামো ext3_extent_idx {
 	__le32	ei_block;	/* index covers logical blocks from 'block' */
 	__le32	ei_leaf;	/* pointer to the physical block of the next *
 				 * level. leaf or next index could bet here */
@@ -55,7 +55,7 @@ struct ext3_extent_idx {
 /*
  * each block (leaves and indexes), even inode-stored has header
  */
-struct ext3_extent_header {
+কাঠামো ext3_extent_header {
 	__le16	eh_magic;	/* probably will support different formats */
 	__le16	eh_entries;	/* number of valid entries */
 	__le16	eh_max;		/* capacity of store in entries */
@@ -70,13 +70,13 @@ struct ext3_extent_header {
  * creation/lookup routines use it for traversal/splitting/etc
  * truncate uses it to simulate recursive walking
  */
-struct ext3_ext_path {
+কাঠামো ext3_ext_path {
 	__u32				p_block;
 	__u16				p_depth;
-	struct ext3_extent		*p_ext;
-	struct ext3_extent_idx		*p_idx;
-	struct ext3_extent_header	*p_hdr;
-	struct buffer_head		*p_bh;
+	কাঠামো ext3_extent		*p_ext;
+	কাঠামো ext3_extent_idx		*p_idx;
+	কাঠামো ext3_extent_header	*p_hdr;
+	কাঠামো বাফার_শীর্ষ		*p_bh;
 };
 
 /*
@@ -102,25 +102,25 @@ struct ext3_ext_path {
 #define EXT_MAX_EXTENT_PBLK	(((__u64) 1 << 48) - 1)
 
 #define EXT_FIRST_EXTENT(__hdr__) \
-	((struct ext3_extent *) (((char *) (__hdr__)) +		\
-				 sizeof(struct ext3_extent_header)))
-#define EXT_FIRST_INDEX(__hdr__) \
-	((struct ext3_extent_idx *) (((char *) (__hdr__)) +	\
-				     sizeof(struct ext3_extent_header)))
-#define EXT_HAS_FREE_INDEX(__path__) \
+	((কাঠামো ext3_extent *) (((অক্ষর *) (__hdr__)) +		\
+				 আকার(কাঠামো ext3_extent_header)))
+#define EXT_FIRST_সূচক(__hdr__) \
+	((কাঠামো ext3_extent_idx *) (((অক্ষর *) (__hdr__)) +	\
+				     আকার(কাঠামো ext3_extent_header)))
+#define EXT_HAS_FREE_সূচক(__path__) \
 	(ext2fs_le16_to_cpu((__path__)->p_hdr->eh_entries) < \
 	 ext2fs_le16_to_cpu((__path__)->p_hdr->eh_max))
 #define EXT_LAST_EXTENT(__hdr__) \
 	(EXT_FIRST_EXTENT((__hdr__)) + \
 	ext2fs_le16_to_cpu((__hdr__)->eh_entries) - 1)
-#define EXT_LAST_INDEX(__hdr__) \
-	(EXT_FIRST_INDEX((__hdr__)) + \
+#define EXT_LAST_সূচক(__hdr__) \
+	(EXT_FIRST_সূচক((__hdr__)) + \
 	ext2fs_le16_to_cpu((__hdr__)->eh_entries) - 1)
 #define EXT_MAX_EXTENT(__hdr__) \
 	(EXT_FIRST_EXTENT((__hdr__)) + \
 	ext2fs_le16_to_cpu((__hdr__)->eh_max) - 1)
-#define EXT_MAX_INDEX(__hdr__) \
-	(EXT_FIRST_INDEX((__hdr__)) + \
+#define EXT_MAX_সূচক(__hdr__) \
+	(EXT_FIRST_সূচক((__hdr__)) + \
 	ext2fs_le16_to_cpu((__hdr__)->eh_max) - 1)
 
 #endif /* _LINUX_EXT3_EXTENTS */

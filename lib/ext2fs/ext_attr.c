@@ -11,93 +11,93 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#অন্তর্ভাব "config.h"
+#অন্তর্ভাব <stdio.h>
+#যদি HAVE_UNISTD_H
+#অন্তর্ভাব <unistd.h>
 #endif
-#include <string.h>
-#include <time.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <time.h>
 
-#include "ext2_fs.h"
-#include "ext2_ext_attr.h"
-#include "ext4_acl.h"
+#অন্তর্ভাব "ext2_fs.h"
+#অন্তর্ভাব "ext2_ext_attr.h"
+#অন্তর্ভাব "ext4_acl.h"
 
-#include "ext2fsP.h"
+#অন্তর্ভাব "ext2fsP.h"
 
-static errcode_t read_ea_inode_hash(ext2_filsys fs, ext2_ino_t ino, __u32 *hash)
+স্থির errcode_t read_ea_inode_hash(ext2_filsys fs, ext2_ino_t ino, __u32 *hash)
 {
-	struct ext2_inode inode;
+	কাঠামো ext2_inode inode;
 	errcode_t retval;
 
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
-		return retval;
+	যদি (retval)
+		ফেরত retval;
 	*hash = ext2fs_get_ea_inode_hash(&inode);
-	return 0;
+	ফেরত 0;
 }
 
 #define NAME_HASH_SHIFT 5
-#define VALUE_HASH_SHIFT 16
+#define মান_HASH_SHIFT 16
 
 /*
  * ext2_xattr_hash_entry()
  *
  * Compute the hash of an extended attribute.
  */
-__u32 ext2fs_ext_attr_hash_entry(struct ext2_ext_attr_entry *entry, void *data)
+__u32 ext2fs_ext_attr_hash_entry(কাঠামো ext2_ext_attr_entry *entry, শূন্য *তথ্য)
 {
 	__u32 hash = 0;
-	unsigned char *name = (((unsigned char *) entry) +
-			       sizeof(struct ext2_ext_attr_entry));
-	int n;
+	unsigned অক্ষর *name = (((unsigned অক্ষর *) entry) +
+			       আকার(কাঠামো ext2_ext_attr_entry));
+	পূর্ণসংখ্যা n;
 
-	for (n = 0; n < entry->e_name_len; n++) {
+	জন্য (n = 0; n < entry->e_name_len; n++) {
 		hash = (hash << NAME_HASH_SHIFT) ^
-		       (hash >> (8*sizeof(hash) - NAME_HASH_SHIFT)) ^
+		       (hash >> (8*আকার(hash) - NAME_HASH_SHIFT)) ^
 		       *name++;
 	}
 
 	/* The hash needs to be calculated on the data in little-endian. */
-	if (entry->e_value_inum == 0 && entry->e_value_size != 0) {
-		__u32 *value = (__u32 *)data;
-		for (n = (entry->e_value_size + EXT2_EXT_ATTR_ROUND) >>
+	যদি (entry->e_মান_inum == 0 && entry->e_মান_আকার != 0) {
+		__u32 *মান = (__u32 *)তথ্য;
+		জন্য (n = (entry->e_মান_আকার + EXT2_EXT_ATTR_ROUND) >>
 			 EXT2_EXT_ATTR_PAD_BITS; n; n--) {
-			hash = (hash << VALUE_HASH_SHIFT) ^
-			       (hash >> (8*sizeof(hash) - VALUE_HASH_SHIFT)) ^
-			       ext2fs_le32_to_cpu(*value++);
+			hash = (hash << মান_HASH_SHIFT) ^
+			       (hash >> (8*আকার(hash) - মান_HASH_SHIFT)) ^
+			       ext2fs_le32_to_cpu(*মান++);
 		}
 	}
 
-	return hash;
+	ফেরত hash;
 }
 
-__u32 ext2fs_ext_attr_hash_entry_signed(struct ext2_ext_attr_entry *entry,
-					void *data)
+__u32 ext2fs_ext_attr_hash_entry_signed(কাঠামো ext2_ext_attr_entry *entry,
+					শূন্য *তথ্য)
 {
 	__u32 hash = 0;
-	signed char *name = (((signed char *) entry) +
-			     sizeof(struct ext2_ext_attr_entry));
-	int n;
+	signed অক্ষর *name = (((signed অক্ষর *) entry) +
+			     আকার(কাঠামো ext2_ext_attr_entry));
+	পূর্ণসংখ্যা n;
 
-	for (n = 0; n < entry->e_name_len; n++) {
+	জন্য (n = 0; n < entry->e_name_len; n++) {
 		hash = (hash << NAME_HASH_SHIFT) ^
-		       (hash >> (8*sizeof(hash) - NAME_HASH_SHIFT)) ^
+		       (hash >> (8*আকার(hash) - NAME_HASH_SHIFT)) ^
 		       *name++;
 	}
 
 	/* The hash needs to be calculated on the data in little-endian. */
-	if (entry->e_value_inum == 0 && entry->e_value_size != 0) {
-		__u32 *value = (__u32 *)data;
-		for (n = (entry->e_value_size + EXT2_EXT_ATTR_ROUND) >>
+	যদি (entry->e_মান_inum == 0 && entry->e_মান_আকার != 0) {
+		__u32 *মান = (__u32 *)তথ্য;
+		জন্য (n = (entry->e_মান_আকার + EXT2_EXT_ATTR_ROUND) >>
 			 EXT2_EXT_ATTR_PAD_BITS; n; n--) {
-			hash = (hash << VALUE_HASH_SHIFT) ^
-			       (hash >> (8*sizeof(hash) - VALUE_HASH_SHIFT)) ^
-			       ext2fs_le32_to_cpu(*value++);
+			hash = (hash << মান_HASH_SHIFT) ^
+			       (hash >> (8*আকার(hash) - মান_HASH_SHIFT)) ^
+			       ext2fs_le32_to_cpu(*মান++);
 		}
 	}
 
-	return hash;
+	ফেরত hash;
 }
 
 
@@ -110,33 +110,33 @@ __u32 ext2fs_ext_attr_hash_entry_signed(struct ext2_ext_attr_entry *entry,
  * hash variant.
  */
 errcode_t ext2fs_ext_attr_hash_entry3(ext2_filsys fs,
-				      struct ext2_ext_attr_entry *entry,
-				      void *data, __u32 *hash,
+				      কাঠামো ext2_ext_attr_entry *entry,
+				      শূন্য *তথ্য, __u32 *hash,
 				      __u32 *signed_hash)
 {
-	*hash = ext2fs_ext_attr_hash_entry(entry, data);
-	if (signed_hash)
-		*signed_hash = ext2fs_ext_attr_hash_entry_signed(entry, data);
+	*hash = ext2fs_ext_attr_hash_entry(entry, তথ্য);
+	যদি (signed_hash)
+		*signed_hash = ext2fs_ext_attr_hash_entry_signed(entry, তথ্য);
 
-	if (entry->e_value_inum) {
+	যদি (entry->e_মান_inum) {
 		__u32 ea_inode_hash;
 		errcode_t retval;
 
-		retval = read_ea_inode_hash(fs, entry->e_value_inum,
+		retval = read_ea_inode_hash(fs, entry->e_মান_inum,
 					    &ea_inode_hash);
-		if (retval)
-			return retval;
+		যদি (retval)
+			ফেরত retval;
 
-		*hash = (*hash << VALUE_HASH_SHIFT) ^
-			(*hash >> (8*sizeof(*hash) - VALUE_HASH_SHIFT)) ^
+		*hash = (*hash << মান_HASH_SHIFT) ^
+			(*hash >> (8*আকার(*hash) - মান_HASH_SHIFT)) ^
 			ea_inode_hash;
-		if (signed_hash)
-			*signed_hash = (*signed_hash << VALUE_HASH_SHIFT) ^
-				(*signed_hash >> (8*sizeof(*hash) -
-						  VALUE_HASH_SHIFT)) ^
+		যদি (signed_hash)
+			*signed_hash = (*signed_hash << মান_HASH_SHIFT) ^
+				(*signed_hash >> (8*আকার(*hash) -
+						  মান_HASH_SHIFT)) ^
 				ea_inode_hash;
 	}
-	return 0;
+	ফেরত 0;
 }
 
 /*
@@ -147,250 +147,250 @@ errcode_t ext2fs_ext_attr_hash_entry3(ext2_filsys fs,
  * external inodes (ea_inode feature).
  */
 errcode_t ext2fs_ext_attr_hash_entry2(ext2_filsys fs,
-				      struct ext2_ext_attr_entry *entry,
-				      void *data, __u32 *hash)
+				      কাঠামো ext2_ext_attr_entry *entry,
+				      শূন্য *তথ্য, __u32 *hash)
 {
-	return ext2fs_ext_attr_hash_entry3(fs, entry, data, hash, NULL);
+	ফেরত ext2fs_ext_attr_hash_entry3(fs, entry, তথ্য, hash, ফাঁকা);
 }
 
 #undef NAME_HASH_SHIFT
-#undef VALUE_HASH_SHIFT
+#undef মান_HASH_SHIFT
 
 #define BLOCK_HASH_SHIFT 16
 
 /* Mirrors ext4_xattr_rehash() implementation in kernel. */
-void ext2fs_ext_attr_block_rehash(struct ext2_ext_attr_header *header,
-				  struct ext2_ext_attr_entry *end)
+শূন্য ext2fs_ext_attr_block_rehash(কাঠামো ext2_ext_attr_header *header,
+				  কাঠামো ext2_ext_attr_entry *end)
 {
-	struct ext2_ext_attr_entry *here;
+	কাঠামো ext2_ext_attr_entry *here;
 	__u32 hash = 0;
 
-	here = (struct ext2_ext_attr_entry *)(header+1);
-	while (here < end && !EXT2_EXT_IS_LAST_ENTRY(here)) {
-		if (!here->e_hash) {
+	here = (কাঠামো ext2_ext_attr_entry *)(header+1);
+	যখন (here < end && !EXT2_EXT_IS_LAST_ENTRY(here)) {
+		যদি (!here->e_hash) {
 			/* Block is not shared if an entry's hash value == 0 */
 			hash = 0;
-			break;
+			বিরতি;
 		}
 		hash = (hash << BLOCK_HASH_SHIFT) ^
-		       (hash >> (8*sizeof(hash) - BLOCK_HASH_SHIFT)) ^
+		       (hash >> (8*আকার(hash) - BLOCK_HASH_SHIFT)) ^
 		       here->e_hash;
-		here = EXT2_EXT_ATTR_NEXT(here);
+		here = EXT2_EXT_ATTR_পরবর্তী(here);
 	}
 	header->h_hash = hash;
 }
 
 #undef BLOCK_HASH_SHIFT
 
-__u32 ext2fs_get_ea_inode_hash(struct ext2_inode *inode)
+__u32 ext2fs_get_ea_inode_hash(কাঠামো ext2_inode *inode)
 {
-	return inode->i_atime;
+	ফেরত inode->i_atime;
 }
 
-void ext2fs_set_ea_inode_hash(struct ext2_inode *inode, __u32 hash)
+শূন্য ext2fs_set_ea_inode_hash(কাঠামো ext2_inode *inode, __u32 hash)
 {
 	inode->i_atime = hash;
 }
 
-__u64 ext2fs_get_ea_inode_ref(struct ext2_inode *inode)
+__u64 ext2fs_get_ea_inode_ref(কাঠামো ext2_inode *inode)
 {
-	return ((__u64)inode->i_ctime << 32) | inode->osd1.linux1.l_i_version;
+	ফেরত ((__u64)inode->i_ctime << 32) | inode->osd1.linux1.l_i_version;
 }
 
-void ext2fs_set_ea_inode_ref(struct ext2_inode *inode, __u64 ref_count)
+শূন্য ext2fs_set_ea_inode_ref(কাঠামো ext2_inode *inode, __u64 ref_গুনতি)
 {
-	inode->i_ctime = (__u32)(ref_count >> 32);
-	inode->osd1.linux1.l_i_version = (__u32)ref_count;
+	inode->i_ctime = (__u32)(ref_গুনতি >> 32);
+	inode->osd1.linux1.l_i_version = (__u32)ref_গুনতি;
 }
 
-static errcode_t check_ext_attr_header(struct ext2_ext_attr_header *header)
+স্থির errcode_t check_ext_attr_header(কাঠামো ext2_ext_attr_header *header)
 {
-	if ((header->h_magic != EXT2_EXT_ATTR_MAGIC_v1 &&
+	যদি ((header->h_magic != EXT2_EXT_ATTR_MAGIC_v1 &&
 	     header->h_magic != EXT2_EXT_ATTR_MAGIC) ||
 	    header->h_blocks != 1)
-		return EXT2_ET_BAD_EA_HEADER;
+		ফেরত EXT2_ET_BAD_EA_HEADER;
 
-	return 0;
+	ফেরত 0;
 }
 
-errcode_t ext2fs_read_ext_attr3(ext2_filsys fs, blk64_t block, void *buf,
+errcode_t ext2fs_read_ext_attr3(ext2_filsys fs, blk64_t block, শূন্য *buf,
 				ext2_ino_t inum)
 {
-	int		csum_failed = 0;
+	পূর্ণসংখ্যা		csum_failed = 0;
 	errcode_t	retval;
 
 	retval = io_channel_read_blk64(fs->io, block, 1, buf);
-	if (retval)
-		return retval;
+	যদি (retval)
+		ফেরত retval;
 
-	if (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+	যদি (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
 	    !ext2fs_ext_attr_block_csum_verify(fs, inum, block, buf))
 		csum_failed = 1;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef শব্দগুলি_BIGENDIAN
 	ext2fs_swap_ext_attr(buf, buf, fs->blocksize, 1);
 #endif
 
 	retval = check_ext_attr_header(buf);
-	if (retval == 0 && csum_failed)
+	যদি (retval == 0 && csum_failed)
 		retval = EXT2_ET_EXT_ATTR_CSUM_INVALID;
 
-	return retval;
+	ফেরত retval;
 }
 
-errcode_t ext2fs_read_ext_attr2(ext2_filsys fs, blk64_t block, void *buf)
+errcode_t ext2fs_read_ext_attr2(ext2_filsys fs, blk64_t block, শূন্য *buf)
 {
-	return ext2fs_read_ext_attr3(fs, block, buf, 0);
+	ফেরত ext2fs_read_ext_attr3(fs, block, buf, 0);
 }
 
-errcode_t ext2fs_read_ext_attr(ext2_filsys fs, blk_t block, void *buf)
+errcode_t ext2fs_read_ext_attr(ext2_filsys fs, blk_t block, শূন্য *buf)
 {
-	return ext2fs_read_ext_attr2(fs, block, buf);
+	ফেরত ext2fs_read_ext_attr2(fs, block, buf);
 }
 
-errcode_t ext2fs_write_ext_attr3(ext2_filsys fs, blk64_t block, void *inbuf,
+errcode_t ext2fs_write_ext_attr3(ext2_filsys fs, blk64_t block, শূন্য *inbuf,
 				 ext2_ino_t inum)
 {
 	errcode_t	retval;
-	char		*write_buf;
+	অক্ষর		*write_buf;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef শব্দগুলি_BIGENDIAN
 	retval = ext2fs_get_mem(fs->blocksize, &write_buf);
-	if (retval)
-		return retval;
+	যদি (retval)
+		ফেরত retval;
 	ext2fs_swap_ext_attr(write_buf, inbuf, fs->blocksize, 1);
-#else
-	write_buf = (char *) inbuf;
+#অন্যথা
+	write_buf = (অক্ষর *) inbuf;
 #endif
 
 	retval = ext2fs_ext_attr_block_csum_set(fs, inum, block,
-			(struct ext2_ext_attr_header *)write_buf);
-	if (retval)
-		return retval;
+			(কাঠামো ext2_ext_attr_header *)write_buf);
+	যদি (retval)
+		ফেরত retval;
 
 	retval = io_channel_write_blk64(fs->io, block, 1, write_buf);
-#ifdef WORDS_BIGENDIAN
+#ifdef শব্দগুলি_BIGENDIAN
 	ext2fs_free_mem(&write_buf);
 #endif
-	if (!retval)
+	যদি (!retval)
 		ext2fs_mark_changed(fs);
-	return retval;
+	ফেরত retval;
 }
 
-errcode_t ext2fs_write_ext_attr2(ext2_filsys fs, blk64_t block, void *inbuf)
+errcode_t ext2fs_write_ext_attr2(ext2_filsys fs, blk64_t block, শূন্য *inbuf)
 {
-	return ext2fs_write_ext_attr3(fs, block, inbuf, 0);
+	ফেরত ext2fs_write_ext_attr3(fs, block, inbuf, 0);
 }
 
-errcode_t ext2fs_write_ext_attr(ext2_filsys fs, blk_t block, void *inbuf)
+errcode_t ext2fs_write_ext_attr(ext2_filsys fs, blk_t block, শূন্য *inbuf)
 {
-	return ext2fs_write_ext_attr2(fs, block, inbuf);
+	ফেরত ext2fs_write_ext_attr2(fs, block, inbuf);
 }
 
 /*
  * This function adjusts the reference count of the EA block.
  */
 errcode_t ext2fs_adjust_ea_refcount3(ext2_filsys fs, blk64_t blk,
-				    char *block_buf, int adjust,
+				    অক্ষর *block_buf, পূর্ণসংখ্যা adjust,
 				    __u32 *newcount, ext2_ino_t inum)
 {
 	errcode_t	retval;
-	struct ext2_ext_attr_header *header;
-	char	*buf = 0;
+	কাঠামো ext2_ext_attr_header *header;
+	অক্ষর	*buf = 0;
 
-	if ((blk >= ext2fs_blocks_count(fs->super)) ||
-	    (blk < fs->super->s_first_data_block))
-		return EXT2_ET_BAD_EA_BLOCK_NUM;
+	যদি ((blk >= ext2fs_blocks_গুনতি(fs->super)) ||
+	    (blk < fs->super->s_first_তথ্য_block))
+		ফেরত EXT2_ET_BAD_EA_BLOCK_অঙ্ক;
 
-	if (!block_buf) {
+	যদি (!block_buf) {
 		retval = ext2fs_get_mem(fs->blocksize, &buf);
-		if (retval)
-			return retval;
+		যদি (retval)
+			ফেরত retval;
 		block_buf = buf;
 	}
 
 	retval = ext2fs_read_ext_attr3(fs, blk, block_buf, inum);
-	if (retval)
-		goto errout;
+	যদি (retval)
+		যাও errout;
 
-	header = (struct ext2_ext_attr_header *) block_buf;
+	header = (কাঠামো ext2_ext_attr_header *) block_buf;
 	header->h_refcount += adjust;
-	if (newcount)
+	যদি (newcount)
 		*newcount = header->h_refcount;
 
 	retval = ext2fs_write_ext_attr3(fs, blk, block_buf, inum);
-	if (retval)
-		goto errout;
+	যদি (retval)
+		যাও errout;
 
 errout:
-	if (buf)
+	যদি (buf)
 		ext2fs_free_mem(&buf);
-	return retval;
+	ফেরত retval;
 }
 
 errcode_t ext2fs_adjust_ea_refcount2(ext2_filsys fs, blk64_t blk,
-				    char *block_buf, int adjust,
+				    অক্ষর *block_buf, পূর্ণসংখ্যা adjust,
 				    __u32 *newcount)
 {
-	return ext2fs_adjust_ea_refcount3(fs, blk, block_buf, adjust,
+	ফেরত ext2fs_adjust_ea_refcount3(fs, blk, block_buf, adjust,
 					  newcount, 0);
 }
 
 errcode_t ext2fs_adjust_ea_refcount(ext2_filsys fs, blk_t blk,
-					char *block_buf, int adjust,
+					অক্ষর *block_buf, পূর্ণসংখ্যা adjust,
 					__u32 *newcount)
 {
-	return ext2fs_adjust_ea_refcount2(fs, blk, block_buf, adjust,
+	ফেরত ext2fs_adjust_ea_refcount2(fs, blk, block_buf, adjust,
 					  newcount);
 }
 
 /* Manipulate the contents of extended attribute regions */
-struct ext2_xattr {
-	int name_index;
-	char *name;
-	char *short_name;
-	void *value;
-	unsigned int value_len;
+কাঠামো ext2_xattr {
+	পূর্ণসংখ্যা name_সূচক;
+	অক্ষর *name;
+	অক্ষর *short_name;
+	শূন্য *মান;
+	unsigned পূর্ণসংখ্যা মান_len;
 	ext2_ino_t ea_ino;
 };
 
-struct ext2_xattr_handle {
+কাঠামো ext2_xattr_handle {
 	errcode_t magic;
 	ext2_filsys fs;
-	struct ext2_xattr *attrs;
-	int capacity;
-	int count;
-	int ibody_count;
+	কাঠামো ext2_xattr *attrs;
+	পূর্ণসংখ্যা capacity;
+	পূর্ণসংখ্যা গুনতি;
+	পূর্ণসংখ্যা ibody_গুনতি;
 	ext2_ino_t ino;
-	unsigned int flags;
+	unsigned পূর্ণসংখ্যা flags;
 };
 
-static errcode_t ext2fs_xattrs_expand(struct ext2_xattr_handle *h,
-				      unsigned int expandby)
+স্থির errcode_t ext2fs_xattrs_expand(কাঠামো ext2_xattr_handle *h,
+				      unsigned পূর্ণসংখ্যা expandby)
 {
-	struct ext2_xattr *new_attrs;
+	কাঠামো ext2_xattr *new_attrs;
 	errcode_t err;
 
 	err = ext2fs_get_arrayzero(h->capacity + expandby,
-				   sizeof(struct ext2_xattr), &new_attrs);
-	if (err)
-		return err;
+				   আকার(কাঠামো ext2_xattr), &new_attrs);
+	যদি (err)
+		ফেরত err;
 
-	memcpy(new_attrs, h->attrs, h->capacity * sizeof(struct ext2_xattr));
+	memcpy(new_attrs, h->attrs, h->capacity * আকার(কাঠামো ext2_xattr));
 	ext2fs_free_mem(&h->attrs);
 	h->capacity += expandby;
 	h->attrs = new_attrs;
 
-	return 0;
+	ফেরত 0;
 }
 
-struct ea_name_index {
-	int index;
-	const char *name;
+কাঠামো ea_name_সূচক {
+	পূর্ণসংখ্যা সূচক;
+	ধ্রুবক অক্ষর *name;
 };
 
 /* Keep these names sorted in order of decreasing specificity. */
-static struct ea_name_index ea_names[] = {
+স্থির কাঠামো ea_name_সূচক ea_names[] = {
 	{10, "gnu."},
 	{3, "system.posix_acl_default"},
 	{2, "system.posix_acl_access"},
@@ -399,178 +399,178 @@ static struct ea_name_index ea_names[] = {
 	{4, "trusted."},
 	{7, "system."},
 	{1, "user."},
-	{0, NULL},
+	{0, ফাঁকা},
 };
 
-static const char *find_ea_prefix(int index)
+স্থির ধ্রুবক অক্ষর *find_ea_prefix(পূর্ণসংখ্যা সূচক)
 {
-	struct ea_name_index *e;
+	কাঠামো ea_name_সূচক *e;
 
-	for (e = ea_names; e->name; e++)
-		if (e->index == index)
-			return e->name;
+	জন্য (e = ea_names; e->name; e++)
+		যদি (e->সূচক == সূচক)
+			ফেরত e->name;
 
-	return NULL;
+	ফেরত ফাঁকা;
 }
 
-static int find_ea_index(const char *fullname, const char **name, int *index)
+স্থির পূর্ণসংখ্যা find_ea_সূচক(ধ্রুবক অক্ষর *fullname, ধ্রুবক অক্ষর **name, পূর্ণসংখ্যা *সূচক)
 {
-	struct ea_name_index *e;
+	কাঠামো ea_name_সূচক *e;
 
-	for (e = ea_names; e->name; e++) {
-		if (strncmp(fullname, e->name, strlen(e->name)) == 0) {
+	জন্য (e = ea_names; e->name; e++) {
+		যদি (strncmp(fullname, e->name, strlen(e->name)) == 0) {
 			*name = fullname + strlen(e->name);
-			*index = e->index;
-			return 1;
+			*সূচক = e->সূচক;
+			ফেরত 1;
 		}
 	}
-	return 0;
+	ফেরত 0;
 }
 
 errcode_t ext2fs_free_ext_attr(ext2_filsys fs, ext2_ino_t ino,
-			       struct ext2_inode_large *inode)
+			       কাঠামো ext2_inode_large *inode)
 {
-	struct ext2_ext_attr_header *header;
-	void *block_buf = NULL;
+	কাঠামো ext2_ext_attr_header *header;
+	শূন্য *block_buf = ফাঁকা;
 	blk64_t blk;
 	errcode_t err;
-	struct ext2_inode_large i;
+	কাঠামো ext2_inode_large i;
 
 	/* Read inode? */
-	if (inode == NULL) {
-		err = ext2fs_read_inode_full(fs, ino, (struct ext2_inode *)&i,
-					     sizeof(struct ext2_inode_large));
-		if (err)
-			return err;
+	যদি (inode == ফাঁকা) {
+		err = ext2fs_read_inode_full(fs, ino, (কাঠামো ext2_inode *)&i,
+					     আকার(কাঠামো ext2_inode_large));
+		যদি (err)
+			ফেরত err;
 		inode = &i;
 	}
 
 	/* Do we already have an EA block? */
-	blk = ext2fs_file_acl_block(fs, (struct ext2_inode *)inode);
-	if (blk == 0)
-		return 0;
+	blk = ext2fs_file_acl_block(fs, (কাঠামো ext2_inode *)inode);
+	যদি (blk == 0)
+		ফেরত 0;
 
 	/* Find block, zero it, write back */
-	if ((blk < fs->super->s_first_data_block) ||
-	    (blk >= ext2fs_blocks_count(fs->super))) {
-		err = EXT2_ET_BAD_EA_BLOCK_NUM;
-		goto out;
+	যদি ((blk < fs->super->s_first_তথ্য_block) ||
+	    (blk >= ext2fs_blocks_গুনতি(fs->super))) {
+		err = EXT2_ET_BAD_EA_BLOCK_অঙ্ক;
+		যাও out;
 	}
 
 	err = ext2fs_get_mem(fs->blocksize, &block_buf);
-	if (err)
-		goto out;
+	যদি (err)
+		যাও out;
 
 	err = ext2fs_read_ext_attr3(fs, blk, block_buf, ino);
-	if (err)
-		goto out2;
+	যদি (err)
+		যাও out2;
 
 	/* We only know how to deal with v2 EA blocks */
-	header = (struct ext2_ext_attr_header *) block_buf;
-	if (header->h_magic != EXT2_EXT_ATTR_MAGIC) {
+	header = (কাঠামো ext2_ext_attr_header *) block_buf;
+	যদি (header->h_magic != EXT2_EXT_ATTR_MAGIC) {
 		err = EXT2_ET_BAD_EA_HEADER;
-		goto out2;
+		যাও out2;
 	}
 
 	header->h_refcount--;
 	err = ext2fs_write_ext_attr3(fs, blk, block_buf, ino);
-	if (err)
-		goto out2;
+	যদি (err)
+		যাও out2;
 
 	/* Erase link to block */
-	ext2fs_file_acl_block_set(fs, (struct ext2_inode *)inode, 0);
-	if (header->h_refcount == 0)
+	ext2fs_file_acl_block_set(fs, (কাঠামো ext2_inode *)inode, 0);
+	যদি (header->h_refcount == 0)
 		ext2fs_block_alloc_stats2(fs, blk, -1);
-	err = ext2fs_iblk_sub_blocks(fs, (struct ext2_inode *)inode, 1);
-	if (err)
-		goto out2;
+	err = ext2fs_iblk_sub_blocks(fs, (কাঠামো ext2_inode *)inode, 1);
+	যদি (err)
+		যাও out2;
 
 	/* Write inode? */
-	if (inode == &i) {
-		err = ext2fs_write_inode_full(fs, ino, (struct ext2_inode *)&i,
-					      sizeof(struct ext2_inode_large));
-		if (err)
-			goto out2;
+	যদি (inode == &i) {
+		err = ext2fs_write_inode_full(fs, ino, (কাঠামো ext2_inode *)&i,
+					      আকার(কাঠামো ext2_inode_large));
+		যদি (err)
+			যাও out2;
 	}
 
 out2:
 	ext2fs_free_mem(&block_buf);
 out:
-	return err;
+	ফেরত err;
 }
 
-static errcode_t prep_ea_block_for_write(ext2_filsys fs, ext2_ino_t ino,
-					 struct ext2_inode_large *inode)
+স্থির errcode_t prep_ea_block_for_write(ext2_filsys fs, ext2_ino_t ino,
+					 কাঠামো ext2_inode_large *inode)
 {
-	struct ext2_ext_attr_header *header;
-	void *block_buf = NULL;
+	কাঠামো ext2_ext_attr_header *header;
+	শূন্য *block_buf = ফাঁকা;
 	blk64_t blk, goal;
 	errcode_t err;
 
 	/* Do we already have an EA block? */
-	blk = ext2fs_file_acl_block(fs, (struct ext2_inode *)inode);
-	if (blk != 0) {
-		if ((blk < fs->super->s_first_data_block) ||
-		    (blk >= ext2fs_blocks_count(fs->super))) {
-			err = EXT2_ET_BAD_EA_BLOCK_NUM;
-			goto out;
+	blk = ext2fs_file_acl_block(fs, (কাঠামো ext2_inode *)inode);
+	যদি (blk != 0) {
+		যদি ((blk < fs->super->s_first_তথ্য_block) ||
+		    (blk >= ext2fs_blocks_গুনতি(fs->super))) {
+			err = EXT2_ET_BAD_EA_BLOCK_অঙ্ক;
+			যাও out;
 		}
 
 		err = ext2fs_get_mem(fs->blocksize, &block_buf);
-		if (err)
-			goto out;
+		যদি (err)
+			যাও out;
 
 		err = ext2fs_read_ext_attr3(fs, blk, block_buf, ino);
-		if (err)
-			goto out2;
+		যদি (err)
+			যাও out2;
 
 		/* We only know how to deal with v2 EA blocks */
-		header = (struct ext2_ext_attr_header *) block_buf;
-		if (header->h_magic != EXT2_EXT_ATTR_MAGIC) {
+		header = (কাঠামো ext2_ext_attr_header *) block_buf;
+		যদি (header->h_magic != EXT2_EXT_ATTR_MAGIC) {
 			err = EXT2_ET_BAD_EA_HEADER;
-			goto out2;
+			যাও out2;
 		}
 
 		/* Single-user block.  We're done here. */
-		if (header->h_refcount == 1)
-			goto out2;
+		যদি (header->h_refcount == 1)
+			যাও out2;
 
 		/* We need to CoW the block. */
 		header->h_refcount--;
 		err = ext2fs_write_ext_attr3(fs, blk, block_buf, ino);
-		if (err)
-			goto out2;
-	} else {
+		যদি (err)
+			যাও out2;
+	} অন্যথা {
 		/* No block, we must increment i_blocks */
-		err = ext2fs_iblk_add_blocks(fs, (struct ext2_inode *)inode,
+		err = ext2fs_iblk_add_blocks(fs, (কাঠামো ext2_inode *)inode,
 					     1);
-		if (err)
-			goto out;
+		যদি (err)
+			যাও out;
 	}
 
 	/* Allocate a block */
-	goal = ext2fs_find_inode_goal(fs, ino, (struct ext2_inode *)inode, 0);
-	err = ext2fs_alloc_block2(fs, goal, NULL, &blk);
-	if (err)
-		goto out2;
-	ext2fs_file_acl_block_set(fs, (struct ext2_inode *)inode, blk);
+	goal = ext2fs_find_inode_goal(fs, ino, (কাঠামো ext2_inode *)inode, 0);
+	err = ext2fs_alloc_block2(fs, goal, ফাঁকা, &blk);
+	যদি (err)
+		যাও out2;
+	ext2fs_file_acl_block_set(fs, (কাঠামো ext2_inode *)inode, blk);
 out2:
-	if (block_buf)
+	যদি (block_buf)
 		ext2fs_free_mem(&block_buf);
 out:
-	return err;
+	ফেরত err;
 }
 
 
-static inline int
-posix_acl_xattr_count(size_t size)
+স্থির অন্তঃরেখ পূর্ণসংখ্যা
+posix_acl_xattr_গুনতি(size_t আকার_2)
 {
-        if (size < sizeof(posix_acl_xattr_header))
-                return -1;
-        size -= sizeof(posix_acl_xattr_header);
-        if (size % sizeof(posix_acl_xattr_entry))
-                return -1;
-        return size / sizeof(posix_acl_xattr_entry);
+        যদি (আকার_2 < আকার(posix_acl_xattr_header))
+                ফেরত -1;
+        আকার_2 -= আকার(posix_acl_xattr_header);
+        যদি (আকার_2 % আকার(posix_acl_xattr_entry))
+                ফেরত -1;
+        ফেরত আকার_2 / আকার(posix_acl_xattr_entry);
 }
 
 /*
@@ -578,723 +578,723 @@ posix_acl_xattr_count(size_t size)
  * attribute format.  The on-disk format uses a more compact encoding.
  * See the ext4_acl_to_disk in fs/ext4/acl.c.
  */
-static errcode_t convert_posix_acl_to_disk_buffer(const void *value, size_t size,
-						  void *out_buf, size_t *size_out)
+স্থির errcode_t convert_posix_acl_to_disk_বাফার(ধ্রুবক শূন্য *মান, size_t আকার_2,
+						  শূন্য *out_buf, size_t *আকার_out)
 {
-	const posix_acl_xattr_header *header =
-		(const posix_acl_xattr_header*) value;
-	const posix_acl_xattr_entry *end, *entry =
-		(const posix_acl_xattr_entry *)(header+1);
+	ধ্রুবক posix_acl_xattr_header *header =
+		(ধ্রুবক posix_acl_xattr_header*) মান;
+	ধ্রুবক posix_acl_xattr_entry *end, *entry =
+		(ধ্রুবক posix_acl_xattr_entry *)(header+1);
 	ext4_acl_header *ext_acl;
 	size_t s;
-	char *e;
+	অক্ষর *e;
 
-	int count;
+	পূর্ণসংখ্যা গুনতি;
 
-	if (!value)
-		return EINVAL;
-	if (size < sizeof(posix_acl_xattr_header))
-		return ENOMEM;
-	if (header->a_version != ext2fs_cpu_to_le32(POSIX_ACL_XATTR_VERSION))
-		return EINVAL;
+	যদি (!মান)
+		ফেরত EINVAL;
+	যদি (আকার_2 < আকার(posix_acl_xattr_header))
+		ফেরত ENOMEM;
+	যদি (header->a_version != ext2fs_cpu_to_le32(POSIX_ACL_XATTR_VERSION))
+		ফেরত EINVAL;
 
-	count = posix_acl_xattr_count(size);
+	গুনতি = posix_acl_xattr_গুনতি(আকার_2);
 	ext_acl = out_buf;
 	ext_acl->a_version = ext2fs_cpu_to_le32(EXT4_ACL_VERSION);
 
-	if (count <= 0)
-		return EINVAL;
+	যদি (গুনতি <= 0)
+		ফেরত EINVAL;
 
-	e = (char *) out_buf + sizeof(ext4_acl_header);
-	s = sizeof(ext4_acl_header);
-	for (end = entry + count; entry != end;entry++) {
+	e = (অক্ষর *) out_buf + আকার(ext4_acl_header);
+	s = আকার(ext4_acl_header);
+	জন্য (end = entry + গুনতি; entry != end;entry++) {
 		ext4_acl_entry *disk_entry = (ext4_acl_entry*) e;
 		disk_entry->e_tag = entry->e_tag;
 		disk_entry->e_perm = entry->e_perm;
 
-		switch(ext2fs_le16_to_cpu(entry->e_tag)) {
-			case ACL_USER_OBJ:
-			case ACL_GROUP_OBJ:
-			case ACL_MASK:
-			case ACL_OTHER:
-				e += sizeof(ext4_acl_entry_short);
-				s += sizeof(ext4_acl_entry_short);
-				break;
-			case ACL_USER:
-			case ACL_GROUP:
+		নির্বাচন(ext2fs_le16_to_cpu(entry->e_tag)) {
+			ক্ষেত্র ACL_USER_OBJ:
+			ক্ষেত্র ACL_GROUP_OBJ:
+			ক্ষেত্র ACL_MASK:
+			ক্ষেত্র ACL_OTHER:
+				e += আকার(ext4_acl_entry_short);
+				s += আকার(ext4_acl_entry_short);
+				বিরতি;
+			ক্ষেত্র ACL_USER:
+			ক্ষেত্র ACL_GROUP:
 				disk_entry->e_id = entry->e_id;
-				e += sizeof(ext4_acl_entry);
-				s += sizeof(ext4_acl_entry);
-				break;
-			default:
-				return EINVAL;
+				e += আকার(ext4_acl_entry);
+				s += আকার(ext4_acl_entry);
+				বিরতি;
+			পূর্বনির্ধারিত:
+				ফেরত EINVAL;
 		}
 	}
-	*size_out = s;
-	return 0;
+	*আকার_out = s;
+	ফেরত 0;
 }
 
-static errcode_t convert_disk_buffer_to_posix_acl(const void *value, size_t size,
-						  void **out_buf, size_t *size_out)
+স্থির errcode_t convert_disk_বাফার_to_posix_acl(ধ্রুবক শূন্য *মান, size_t আকার_2,
+						  শূন্য **out_buf, size_t *আকার_out)
 {
 	posix_acl_xattr_header *header;
 	posix_acl_xattr_entry *entry;
-	const ext4_acl_header *ext_acl = (const ext4_acl_header *) value;
+	ধ্রুবক ext4_acl_header *ext_acl = (ধ্রুবক ext4_acl_header *) মান;
 	errcode_t err;
-	const char *cp;
-	char *out;
+	ধ্রুবক অক্ষর *cp;
+	অক্ষর *out;
 
-	if ((!value) ||
-	    (size < sizeof(ext4_acl_header)) ||
+	যদি ((!মান) ||
+	    (আকার_2 < আকার(ext4_acl_header)) ||
 	    (ext_acl->a_version != ext2fs_cpu_to_le32(EXT4_ACL_VERSION)))
-		return EINVAL;
+		ফেরত EINVAL;
 
-	err = ext2fs_get_mem(size * 2, &out);
-	if (err)
-		return err;
+	err = ext2fs_get_mem(আকার_2 * 2, &out);
+	যদি (err)
+		ফেরত err;
 
 	header = (posix_acl_xattr_header *) out;
 	header->a_version = ext2fs_cpu_to_le32(POSIX_ACL_XATTR_VERSION);
-	entry = (posix_acl_xattr_entry *) (out + sizeof(posix_acl_xattr_header));
+	entry = (posix_acl_xattr_entry *) (out + আকার(posix_acl_xattr_header));
 
-	cp = (const char *) value + sizeof(ext4_acl_header);
-	size -= sizeof(ext4_acl_header);
+	cp = (ধ্রুবক অক্ষর *) মান + আকার(ext4_acl_header);
+	আকার_2 -= আকার(ext4_acl_header);
 
-	while (size > 0) {
-		const ext4_acl_entry *disk_entry = (const ext4_acl_entry *) cp;
+	যখন (আকার_2 > 0) {
+		ধ্রুবক ext4_acl_entry *disk_entry = (ধ্রুবক ext4_acl_entry *) cp;
 
 		entry->e_tag = disk_entry->e_tag;
 		entry->e_perm = disk_entry->e_perm;
 
-		switch(ext2fs_le16_to_cpu(entry->e_tag)) {
-			case ACL_USER_OBJ:
-			case ACL_GROUP_OBJ:
-			case ACL_MASK:
-			case ACL_OTHER:
+		নির্বাচন(ext2fs_le16_to_cpu(entry->e_tag)) {
+			ক্ষেত্র ACL_USER_OBJ:
+			ক্ষেত্র ACL_GROUP_OBJ:
+			ক্ষেত্র ACL_MASK:
+			ক্ষেত্র ACL_OTHER:
 				entry->e_id = 0;
-				cp += sizeof(ext4_acl_entry_short);
-				size -= sizeof(ext4_acl_entry_short);
-				break;
-			case ACL_USER:
-			case ACL_GROUP:
+				cp += আকার(ext4_acl_entry_short);
+				আকার_2 -= আকার(ext4_acl_entry_short);
+				বিরতি;
+			ক্ষেত্র ACL_USER:
+			ক্ষেত্র ACL_GROUP:
 				entry->e_id = disk_entry->e_id;
-				cp += sizeof(ext4_acl_entry);
-				size -= sizeof(ext4_acl_entry);
-				break;
-			default:
+				cp += আকার(ext4_acl_entry);
+				আকার_2 -= আকার(ext4_acl_entry);
+				বিরতি;
+			পূর্বনির্ধারিত:
 				ext2fs_free_mem(&out);
-				return EINVAL;
+				ফেরত EINVAL;
 		}
 		entry++;
 	}
 	*out_buf = out;
-	*size_out = ((char *) entry - out);
-	return 0;
+	*আকার_out = ((অক্ষর *) entry - out);
+	ফেরত 0;
 }
 
-static errcode_t
-write_xattrs_to_buffer(ext2_filsys fs, struct ext2_xattr *attrs, int count,
-		       void *entries_start, unsigned int storage_size,
-		       unsigned int value_offset_correction, int write_hash)
+স্থির errcode_t
+write_xattrs_to_বাফার(ext2_filsys fs, কাঠামো ext2_xattr *attrs, পূর্ণসংখ্যা গুনতি,
+		       শূন্য *entries_start, unsigned পূর্ণসংখ্যা storage_আকার,
+		       unsigned পূর্ণসংখ্যা মান_offset_correction, পূর্ণসংখ্যা write_hash)
 {
-	struct ext2_xattr *x;
-	struct ext2_ext_attr_entry *e = entries_start;
-	char *end = (char *) entries_start + storage_size;
-	unsigned int value_size;
+	কাঠামো ext2_xattr *x;
+	কাঠামো ext2_ext_attr_entry *e = entries_start;
+	অক্ষর *end = (অক্ষর *) entries_start + storage_আকার;
+	unsigned পূর্ণসংখ্যা মান_আকার;
 	errcode_t err;
 
-	memset(entries_start, 0, storage_size);
-	for (x = attrs; x < attrs + count; x++) {
-		value_size = ((x->value_len + EXT2_EXT_ATTR_PAD - 1) /
+	memset(entries_start, 0, storage_আকার);
+	জন্য (x = attrs; x < attrs + গুনতি; x++) {
+		মান_আকার = ((x->মান_len + EXT2_EXT_ATTR_PAD - 1) /
 			      EXT2_EXT_ATTR_PAD) * EXT2_EXT_ATTR_PAD;
 
 		/* Fill out e appropriately */
 		e->e_name_len = strlen(x->short_name);
-		e->e_name_index = x->name_index;
+		e->e_name_সূচক = x->name_সূচক;
 
-		e->e_value_size = x->value_len;
-		e->e_value_inum = x->ea_ino;
+		e->e_মান_আকার = x->মান_len;
+		e->e_মান_inum = x->ea_ino;
 
 		/* Store name */
-		memcpy((char *)e + sizeof(*e), x->short_name, e->e_name_len);
-		if (x->ea_ino) {
-			e->e_value_offs = 0;
-		} else {
-			end -= value_size;
-			e->e_value_offs = end - (char *) entries_start +
-						value_offset_correction;
-			memcpy(end, x->value, e->e_value_size);
+		memcpy((অক্ষর *)e + আকার(*e), x->short_name, e->e_name_len);
+		যদি (x->ea_ino) {
+			e->e_মান_offs = 0;
+		} অন্যথা {
+			end -= মান_আকার;
+			e->e_মান_offs = end - (অক্ষর *) entries_start +
+						মান_offset_correction;
+			memcpy(end, x->মান, e->e_মান_আকার);
 		}
 
-		if (write_hash || x->ea_ino) {
+		যদি (write_hash || x->ea_ino) {
 			err = ext2fs_ext_attr_hash_entry2(fs, e,
 							  x->ea_ino ? 0 : end,
 							  &e->e_hash);
-			if (err)
-				return err;
-		} else
+			যদি (err)
+				ফেরত err;
+		} অন্যথা
 			e->e_hash = 0;
 
-		e = EXT2_EXT_ATTR_NEXT(e);
+		e = EXT2_EXT_ATTR_পরবর্তী(e);
 		*(__u32 *)e = 0;
 	}
-	return 0;
+	ফেরত 0;
 }
 
-errcode_t ext2fs_xattrs_write(struct ext2_xattr_handle *handle)
+errcode_t ext2fs_xattrs_write(কাঠামো ext2_xattr_handle *handle)
 {
 	ext2_filsys fs = handle->fs;
-	const unsigned int inode_size = EXT2_INODE_SIZE(fs->super);
-	struct ext2_inode_large *inode;
-	char *start, *block_buf = NULL;
-	struct ext2_ext_attr_header *header;
+	ধ্রুবক unsigned পূর্ণসংখ্যা inode_আকার = EXT2_INODE_আকার(fs->super);
+	কাঠামো ext2_inode_large *inode;
+	অক্ষর *start, *block_buf = ফাঁকা;
+	কাঠামো ext2_ext_attr_header *header;
 	__u32 ea_inode_magic;
 	blk64_t blk;
-	unsigned int storage_size;
-	unsigned int i;
+	unsigned পূর্ণসংখ্যা storage_আকার;
+	unsigned পূর্ণসংখ্যা i;
 	errcode_t err;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EA_HANDLE);
-	i = inode_size;
-	if (i < sizeof(*inode))
-		i = sizeof(*inode);
+	i = inode_আকার;
+	যদি (i < আকার(*inode))
+		i = আকার(*inode);
 	err = ext2fs_get_memzero(i, &inode);
-	if (err)
-		return err;
+	যদি (err)
+		ফেরত err;
 
 	err = ext2fs_read_inode_full(fs, handle->ino, EXT2_INODE(inode),
-				     inode_size);
-	if (err)
-		goto out;
+				     inode_আকার);
+	যদি (err)
+		যাও out;
 
 	/* If extra_isize isn't set, we need to set it now */
-	if (inode->i_extra_isize == 0 &&
-	    inode_size > EXT2_GOOD_OLD_INODE_SIZE) {
-		char *p = (char *)inode;
+	যদি (inode->i_extra_isize == 0 &&
+	    inode_আকার > EXT2_GOOD_OLD_INODE_আকার) {
+		অক্ষর *p = (অক্ষর *)inode;
 		size_t extra = fs->super->s_want_extra_isize;
 
-		if (extra == 0)
-			extra = sizeof(__u32);
-		memset(p + EXT2_GOOD_OLD_INODE_SIZE, 0, extra);
+		যদি (extra == 0)
+			extra = আকার(__u32);
+		memset(p + EXT2_GOOD_OLD_INODE_আকার, 0, extra);
 		inode->i_extra_isize = extra;
 	}
-	if (inode->i_extra_isize & 3) {
+	যদি (inode->i_extra_isize & 3) {
 		err = EXT2_ET_INODE_CORRUPTED;
-		goto out;
+		যাও out;
 	}
 
 	/* Does the inode have space for EA? */
-	if (inode->i_extra_isize < sizeof(inode->i_extra_isize) ||
-	    inode_size <= EXT2_GOOD_OLD_INODE_SIZE + inode->i_extra_isize +
-								sizeof(__u32))
-		goto write_ea_block;
+	যদি (inode->i_extra_isize < আকার(inode->i_extra_isize) ||
+	    inode_আকার <= EXT2_GOOD_OLD_INODE_আকার + inode->i_extra_isize +
+								আকার(__u32))
+		যাও write_ea_block;
 
 	/* Write the inode EA */
 	ea_inode_magic = EXT2_EXT_ATTR_MAGIC;
-	memcpy(((char *) inode) + EXT2_GOOD_OLD_INODE_SIZE +
-	       inode->i_extra_isize, &ea_inode_magic, sizeof(__u32));
-	storage_size = inode_size - EXT2_GOOD_OLD_INODE_SIZE -
-				inode->i_extra_isize - sizeof(__u32);
-	start = ((char *) inode) + EXT2_GOOD_OLD_INODE_SIZE +
-				inode->i_extra_isize + sizeof(__u32);
+	memcpy(((অক্ষর *) inode) + EXT2_GOOD_OLD_INODE_আকার +
+	       inode->i_extra_isize, &ea_inode_magic, আকার(__u32));
+	storage_আকার = inode_আকার - EXT2_GOOD_OLD_INODE_আকার -
+				inode->i_extra_isize - আকার(__u32);
+	start = ((অক্ষর *) inode) + EXT2_GOOD_OLD_INODE_আকার +
+				inode->i_extra_isize + আকার(__u32);
 
-	err = write_xattrs_to_buffer(fs, handle->attrs, handle->ibody_count,
-				     start, storage_size, 0, 0);
-	if (err)
-		goto out;
+	err = write_xattrs_to_বাফার(fs, handle->attrs, handle->ibody_গুনতি,
+				     start, storage_আকার, 0, 0);
+	যদি (err)
+		যাও out;
 write_ea_block:
 	/* Are we done? */
-	if (handle->ibody_count == handle->count &&
+	যদি (handle->ibody_গুনতি == handle->গুনতি &&
 	    !ext2fs_file_acl_block(fs, EXT2_INODE(inode)))
-		goto skip_ea_block;
+		যাও skip_ea_block;
 
 	/* Write the EA block */
 	err = ext2fs_get_memzero(fs->blocksize, &block_buf);
-	if (err)
-		goto out;
+	যদি (err)
+		যাও out;
 
-	storage_size = fs->blocksize - sizeof(struct ext2_ext_attr_header);
-	start = block_buf + sizeof(struct ext2_ext_attr_header);
+	storage_আকার = fs->blocksize - আকার(কাঠামো ext2_ext_attr_header);
+	start = block_buf + আকার(কাঠামো ext2_ext_attr_header);
 
-	err = write_xattrs_to_buffer(fs, handle->attrs + handle->ibody_count,
-				     handle->count - handle->ibody_count, start,
-				     storage_size, start - block_buf, 1);
-	if (err)
-		goto out2;
+	err = write_xattrs_to_বাফার(fs, handle->attrs + handle->ibody_গুনতি,
+				     handle->গুনতি - handle->ibody_গুনতি, start,
+				     storage_আকার, start - block_buf, 1);
+	যদি (err)
+		যাও out2;
 
 	/* Write a header on the EA block */
-	header = (struct ext2_ext_attr_header *) block_buf;
+	header = (কাঠামো ext2_ext_attr_header *) block_buf;
 	header->h_magic = EXT2_EXT_ATTR_MAGIC;
 	header->h_refcount = 1;
 	header->h_blocks = 1;
 
 	/* Get a new block for writing */
 	err = prep_ea_block_for_write(fs, handle->ino, inode);
-	if (err)
-		goto out2;
+	যদি (err)
+		যাও out2;
 
 	/* Finally, write the new EA block */
 	blk = ext2fs_file_acl_block(fs, EXT2_INODE(inode));
 	err = ext2fs_write_ext_attr3(fs, blk, block_buf, handle->ino);
-	if (err)
-		goto out2;
+	যদি (err)
+		যাও out2;
 
 skip_ea_block:
-	blk = ext2fs_file_acl_block(fs, (struct ext2_inode *)inode);
-	if (!block_buf && blk) {
+	blk = ext2fs_file_acl_block(fs, (কাঠামো ext2_inode *)inode);
+	যদি (!block_buf && blk) {
 		/* xattrs shrunk, free the block */
 		err = ext2fs_free_ext_attr(fs, handle->ino, inode);
-		if (err)
-			goto out;
+		যদি (err)
+			যাও out;
 	}
 
 	/* Write the inode */
 	err = ext2fs_write_inode_full(fs, handle->ino, EXT2_INODE(inode),
-				      inode_size);
-	if (err)
-		goto out2;
+				      inode_আকার);
+	যদি (err)
+		যাও out2;
 
 out2:
 	ext2fs_free_mem(&block_buf);
 out:
 	ext2fs_free_mem(&inode);
-	return err;
+	ফেরত err;
 }
 
-static errcode_t read_xattrs_from_buffer(struct ext2_xattr_handle *handle,
-					 struct ext2_inode_large *inode,
-					 struct ext2_ext_attr_entry *entries,
-					 unsigned int storage_size,
-					 char *value_start)
+স্থির errcode_t read_xattrs_from_বাফার(কাঠামো ext2_xattr_handle *handle,
+					 কাঠামো ext2_inode_large *inode,
+					 কাঠামো ext2_ext_attr_entry *entries,
+					 unsigned পূর্ণসংখ্যা storage_আকার,
+					 অক্ষর *মান_start)
 {
-	struct ext2_xattr *x;
-	struct ext2_ext_attr_entry *entry, *end;
-	const char *prefix;
-	unsigned int remain, prefix_len;
+	কাঠামো ext2_xattr *x;
+	কাঠামো ext2_ext_attr_entry *entry, *end;
+	ধ্রুবক অক্ষর *prefix;
+	unsigned পূর্ণসংখ্যা remain, prefix_len;
 	errcode_t err;
-	unsigned int values_size = storage_size +
-			((char *)entries - value_start);
+	unsigned পূর্ণসংখ্যা মানসমূহ_আকার = storage_আকার +
+			((অক্ষর *)entries - মান_start);
 
 	/* find the end */
 	end = entries;
-	remain = storage_size;
-	while (remain >= sizeof(struct ext2_ext_attr_entry) &&
+	remain = storage_আকার;
+	যখন (remain >= আকার(কাঠামো ext2_ext_attr_entry) &&
 	       !EXT2_EXT_IS_LAST_ENTRY(end)) {
 
 		/* header eats this space */
-		remain -= sizeof(struct ext2_ext_attr_entry);
+		remain -= আকার(কাঠামো ext2_ext_attr_entry);
 
 		/* is attribute name valid? */
-		if (EXT2_EXT_ATTR_SIZE(end->e_name_len) > remain)
-			return EXT2_ET_EA_BAD_NAME_LEN;
+		যদি (EXT2_EXT_ATTR_আকার(end->e_name_len) > remain)
+			ফেরত EXT2_ET_EA_BAD_NAME_LEN;
 
 		/* attribute len eats this space */
-		remain -= EXT2_EXT_ATTR_SIZE(end->e_name_len);
-		end = EXT2_EXT_ATTR_NEXT(end);
+		remain -= EXT2_EXT_ATTR_আকার(end->e_name_len);
+		end = EXT2_EXT_ATTR_পরবর্তী(end);
 	}
 
 	entry = entries;
-	remain = storage_size;
-	while (remain >= sizeof(struct ext2_ext_attr_entry) &&
+	remain = storage_আকার;
+	যখন (remain >= আকার(কাঠামো ext2_ext_attr_entry) &&
 	       !EXT2_EXT_IS_LAST_ENTRY(entry)) {
 
 		/* Allocate space for more attrs? */
-		if (handle->count == handle->capacity) {
+		যদি (handle->গুনতি == handle->capacity) {
 			err = ext2fs_xattrs_expand(handle, 4);
-			if (err)
-				return err;
+			যদি (err)
+				ফেরত err;
 		}
 
-		x = handle->attrs + handle->count;
+		x = handle->attrs + handle->গুনতি;
 
 		/* header eats this space */
-		remain -= sizeof(struct ext2_ext_attr_entry);
+		remain -= আকার(কাঠামো ext2_ext_attr_entry);
 
 		/* attribute len eats this space */
-		remain -= EXT2_EXT_ATTR_SIZE(entry->e_name_len);
+		remain -= EXT2_EXT_ATTR_আকার(entry->e_name_len);
 
 		/* Extract name */
-		prefix = find_ea_prefix(entry->e_name_index);
+		prefix = find_ea_prefix(entry->e_name_সূচক);
 		prefix_len = (prefix ? strlen(prefix) : 0);
 		err = ext2fs_get_memzero(entry->e_name_len + prefix_len + 1,
 					 &x->name);
-		if (err)
-			return err;
-		if (prefix)
+		যদি (err)
+			ফেরত err;
+		যদি (prefix)
 			memcpy(x->name, prefix, prefix_len);
-		if (entry->e_name_len)
+		যদি (entry->e_name_len)
 			memcpy(x->name + prefix_len,
-			       (char *)entry + sizeof(*entry),
+			       (অক্ষর *)entry + আকার(*entry),
 			       entry->e_name_len);
 		x->short_name = x->name + prefix_len;
-		x->name_index = entry->e_name_index;
+		x->name_সূচক = entry->e_name_সূচক;
 
 		/* Check & copy value */
-		if (!ext2fs_has_feature_ea_inode(handle->fs->super) &&
-		    entry->e_value_inum != 0)
-			return EXT2_ET_BAD_EA_BLOCK_NUM;
+		যদি (!ext2fs_has_feature_ea_inode(handle->fs->super) &&
+		    entry->e_মান_inum != 0)
+			ফেরত EXT2_ET_BAD_EA_BLOCK_অঙ্ক;
 
-		if (entry->e_value_inum == 0) {
-			if (entry->e_value_size > remain)
-				return EXT2_ET_EA_BAD_VALUE_SIZE;
+		যদি (entry->e_মান_inum == 0) {
+			যদি (entry->e_মান_আকার > remain)
+				ফেরত EXT2_ET_EA_BAD_মান_আকার;
 
-			if (entry->e_value_offs + entry->e_value_size > values_size)
-				return EXT2_ET_EA_BAD_VALUE_OFFSET;
+			যদি (entry->e_মান_offs + entry->e_মান_আকার > মানসমূহ_আকার)
+				ফেরত EXT2_ET_EA_BAD_মান_OFFSET;
 
-			if (entry->e_value_size > 0 &&
-			    value_start + entry->e_value_offs <
-			    (char *)end + sizeof(__u32))
-				return EXT2_ET_EA_BAD_VALUE_OFFSET;
+			যদি (entry->e_মান_আকার > 0 &&
+			    মান_start + entry->e_মান_offs <
+			    (অক্ষর *)end + আকার(__u32))
+				ফেরত EXT2_ET_EA_BAD_মান_OFFSET;
 
-			remain -= entry->e_value_size;
+			remain -= entry->e_মান_আকার;
 
-			err = ext2fs_get_mem(entry->e_value_size, &x->value);
-			if (err)
-				return err;
-			memcpy(x->value, value_start + entry->e_value_offs,
-			       entry->e_value_size);
-		} else {
-			struct ext2_inode *ea_inode;
+			err = ext2fs_get_mem(entry->e_মান_আকার, &x->মান);
+			যদি (err)
+				ফেরত err;
+			memcpy(x->মান, মান_start + entry->e_মান_offs,
+			       entry->e_মান_আকার);
+		} অন্যথা {
+			কাঠামো ext2_inode *ea_inode;
 			ext2_file_t ea_file;
 
-			if (entry->e_value_offs != 0)
-				return EXT2_ET_EA_BAD_VALUE_OFFSET;
+			যদি (entry->e_মান_offs != 0)
+				ফেরত EXT2_ET_EA_BAD_মান_OFFSET;
 
-			if (entry->e_value_size > (64 * 1024))
-				return EXT2_ET_EA_BAD_VALUE_SIZE;
+			যদি (entry->e_মান_আকার > (64 * 1024))
+				ফেরত EXT2_ET_EA_BAD_মান_আকার;
 
-			err = ext2fs_get_mem(entry->e_value_size, &x->value);
-			if (err)
-				return err;
+			err = ext2fs_get_mem(entry->e_মান_আকার, &x->মান);
+			যদি (err)
+				ফেরত err;
 
-			err = ext2fs_file_open(handle->fs, entry->e_value_inum,
+			err = ext2fs_file_open(handle->fs, entry->e_মান_inum,
 					       0, &ea_file);
-			if (err)
-				return err;
+			যদি (err)
+				ফেরত err;
 
 			ea_inode = ext2fs_file_get_inode(ea_file);
-			if ((ea_inode->i_flags & EXT4_INLINE_DATA_FL) ||
+			যদি ((ea_inode->i_flags & EXT4_INLINE_তথ্য_FL) ||
 			    !(ea_inode->i_flags & EXT4_EA_INODE_FL) ||
-			    ea_inode->i_links_count == 0)
+			    ea_inode->i_links_গুনতি == 0)
 				err = EXT2_ET_EA_INODE_CORRUPTED;
-			else if ((__u64) ext2fs_file_get_size(ea_file) !=
-				 entry->e_value_size)
-				err = EXT2_ET_EA_BAD_VALUE_SIZE;
-			else
-				err = ext2fs_file_read(ea_file, x->value,
-						       entry->e_value_size, 0);
+			অন্যথা যদি ((__u64) ext2fs_file_get_আকার(ea_file) !=
+				 entry->e_মান_আকার)
+				err = EXT2_ET_EA_BAD_মান_আকার;
+			অন্যথা
+				err = ext2fs_file_read(ea_file, x->মান,
+						       entry->e_মান_আকার, 0);
 			ext2fs_file_close(ea_file);
-			if (err)
-				return err;
+			যদি (err)
+				ফেরত err;
 		}
 
-		x->ea_ino = entry->e_value_inum;
-		x->value_len = entry->e_value_size;
+		x->ea_ino = entry->e_মান_inum;
+		x->মান_len = entry->e_মান_আকার;
 
 		/* e_hash may be 0 in older inode's ea */
-		if (entry->e_hash != 0) {
+		যদি (entry->e_hash != 0) {
 			__u32 hash, signed_hash;
 
-			void *data = (entry->e_value_inum != 0) ?
-					0 : value_start + entry->e_value_offs;
+			শূন্য *তথ্য = (entry->e_মান_inum != 0) ?
+					0 : মান_start + entry->e_মান_offs;
 
 			err = ext2fs_ext_attr_hash_entry3(handle->fs, entry,
-							  data, &hash,
+							  তথ্য, &hash,
 							  &signed_hash);
-			if (err)
-				return err;
-			if ((entry->e_hash != hash) &&
+			যদি (err)
+				ফেরত err;
+			যদি ((entry->e_hash != hash) &&
 			    (entry->e_hash != signed_hash)) {
-				struct ext2_inode child;
+				কাঠামো ext2_inode child;
 
 				/* Check whether this is an old Lustre-style
 				 * ea_inode reference.
 				 */
 				err = ext2fs_read_inode(handle->fs,
-							entry->e_value_inum,
+							entry->e_মান_inum,
 							&child);
-				if (err)
-					return err;
-				if (child.i_mtime != handle->ino ||
+				যদি (err)
+					ফেরত err;
+				যদি (child.i_mtime != handle->ino ||
 				    child.i_generation != inode->i_generation)
-					return EXT2_ET_BAD_EA_HASH;
+					ফেরত EXT2_ET_BAD_EA_HASH;
 			}
 		}
 
-		handle->count++;
-		entry = EXT2_EXT_ATTR_NEXT(entry);
+		handle->গুনতি++;
+		entry = EXT2_EXT_ATTR_পরবর্তী(entry);
 	}
 
-	return 0;
+	ফেরত 0;
 }
 
-static void xattrs_free_keys(struct ext2_xattr_handle *h)
+স্থির শূন্য xattrs_free_চাবিগুলি(কাঠামো ext2_xattr_handle *h)
 {
-	struct ext2_xattr *a = h->attrs;
-	int i;
+	কাঠামো ext2_xattr *a = h->attrs;
+	পূর্ণসংখ্যা i;
 
-	for (i = 0; i < h->capacity; i++) {
-		if (a[i].name)
+	জন্য (i = 0; i < h->capacity; i++) {
+		যদি (a[i].name)
 			ext2fs_free_mem(&a[i].name);
-		if (a[i].value)
-			ext2fs_free_mem(&a[i].value);
+		যদি (a[i].মান)
+			ext2fs_free_mem(&a[i].মান);
 	}
-	h->count = 0;
-	h->ibody_count = 0;
+	h->গুনতি = 0;
+	h->ibody_গুনতি = 0;
 }
 
 /* fetch xattrs from an already-loaded inode */
-errcode_t ext2fs_xattrs_read_inode(struct ext2_xattr_handle *handle,
-				   struct ext2_inode_large *inode)
+errcode_t ext2fs_xattrs_read_inode(কাঠামো ext2_xattr_handle *handle,
+				   কাঠামো ext2_inode_large *inode)
 {
-	struct ext2_ext_attr_header *header;
+	কাঠামো ext2_ext_attr_header *header;
 	__u32 ea_inode_magic;
-	unsigned int storage_size;
-	char *start, *block_buf = NULL;
+	unsigned পূর্ণসংখ্যা storage_আকার;
+	অক্ষর *start, *block_buf = ফাঁকা;
 	blk64_t blk;
 	errcode_t err = 0;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EA_HANDLE);
 
-	xattrs_free_keys(handle);
+	xattrs_free_চাবিগুলি(handle);
 
 	/* Does the inode have space for EA? */
-	if (inode->i_extra_isize < sizeof(inode->i_extra_isize) ||
-	    EXT2_INODE_SIZE(handle->fs->super) <= EXT2_GOOD_OLD_INODE_SIZE +
+	যদি (inode->i_extra_isize < আকার(inode->i_extra_isize) ||
+	    EXT2_INODE_আকার(handle->fs->super) <= EXT2_GOOD_OLD_INODE_আকার +
 						  inode->i_extra_isize +
-						  sizeof(__u32))
-		goto read_ea_block;
-	if (inode->i_extra_isize & 3) {
+						  আকার(__u32))
+		যাও read_ea_block;
+	যদি (inode->i_extra_isize & 3) {
 		err = EXT2_ET_INODE_CORRUPTED;
-		goto out;
+		যাও out;
 	}
 
 	/* Look for EA in the inode */
-	memcpy(&ea_inode_magic, ((char *) inode) + EXT2_GOOD_OLD_INODE_SIZE +
-	       inode->i_extra_isize, sizeof(__u32));
-	if (ea_inode_magic == EXT2_EXT_ATTR_MAGIC) {
-		storage_size = EXT2_INODE_SIZE(handle->fs->super) -
-			EXT2_GOOD_OLD_INODE_SIZE - inode->i_extra_isize -
-			sizeof(__u32);
-		start = ((char *) inode) + EXT2_GOOD_OLD_INODE_SIZE +
-			inode->i_extra_isize + sizeof(__u32);
+	memcpy(&ea_inode_magic, ((অক্ষর *) inode) + EXT2_GOOD_OLD_INODE_আকার +
+	       inode->i_extra_isize, আকার(__u32));
+	যদি (ea_inode_magic == EXT2_EXT_ATTR_MAGIC) {
+		storage_আকার = EXT2_INODE_আকার(handle->fs->super) -
+			EXT2_GOOD_OLD_INODE_আকার - inode->i_extra_isize -
+			আকার(__u32);
+		start = ((অক্ষর *) inode) + EXT2_GOOD_OLD_INODE_আকার +
+			inode->i_extra_isize + আকার(__u32);
 
-		err = read_xattrs_from_buffer(handle, inode,
-					(struct ext2_ext_attr_entry *) start,
-					storage_size, start);
-		if (err)
-			goto out;
+		err = read_xattrs_from_বাফার(handle, inode,
+					(কাঠামো ext2_ext_attr_entry *) start,
+					storage_আকার, start);
+		যদি (err)
+			যাও out;
 
-		handle->ibody_count = handle->count;
+		handle->ibody_গুনতি = handle->গুনতি;
 	}
 
 read_ea_block:
 	/* Look for EA in a separate EA block */
 	blk = ext2fs_file_acl_block(handle->fs, EXT2_INODE(inode));
-	if (blk != 0) {
-		if ((blk < handle->fs->super->s_first_data_block) ||
-		    (blk >= ext2fs_blocks_count(handle->fs->super))) {
-			err = EXT2_ET_BAD_EA_BLOCK_NUM;
-			goto out;
+	যদি (blk != 0) {
+		যদি ((blk < handle->fs->super->s_first_তথ্য_block) ||
+		    (blk >= ext2fs_blocks_গুনতি(handle->fs->super))) {
+			err = EXT2_ET_BAD_EA_BLOCK_অঙ্ক;
+			যাও out;
 		}
 
 		err = ext2fs_get_mem(handle->fs->blocksize, &block_buf);
-		if (err)
-			goto out;
+		যদি (err)
+			যাও out;
 
 		err = ext2fs_read_ext_attr3(handle->fs, blk, block_buf,
 					    handle->ino);
-		if (err)
-			goto out3;
+		যদি (err)
+			যাও out3;
 
 		/* We only know how to deal with v2 EA blocks */
-		header = (struct ext2_ext_attr_header *) block_buf;
-		if (header->h_magic != EXT2_EXT_ATTR_MAGIC) {
+		header = (কাঠামো ext2_ext_attr_header *) block_buf;
+		যদি (header->h_magic != EXT2_EXT_ATTR_MAGIC) {
 			err = EXT2_ET_BAD_EA_HEADER;
-			goto out3;
+			যাও out3;
 		}
 
 		/* Read EAs */
-		storage_size = handle->fs->blocksize -
-			sizeof(struct ext2_ext_attr_header);
-		start = block_buf + sizeof(struct ext2_ext_attr_header);
-		err = read_xattrs_from_buffer(handle, inode,
-					(struct ext2_ext_attr_entry *) start,
-					storage_size, block_buf);
+		storage_আকার = handle->fs->blocksize -
+			আকার(কাঠামো ext2_ext_attr_header);
+		start = block_buf + আকার(কাঠামো ext2_ext_attr_header);
+		err = read_xattrs_from_বাফার(handle, inode,
+					(কাঠামো ext2_ext_attr_entry *) start,
+					storage_আকার, block_buf);
 	}
 
 out3:
-	if (block_buf)
+	যদি (block_buf)
 		ext2fs_free_mem(&block_buf);
 out:
-	return err;
+	ফেরত err;
 }
 
-errcode_t ext2fs_xattrs_read(struct ext2_xattr_handle *handle)
+errcode_t ext2fs_xattrs_read(কাঠামো ext2_xattr_handle *handle)
 {
-	struct ext2_inode_large *inode;
-	size_t inode_size = EXT2_INODE_SIZE(handle->fs->super);
+	কাঠামো ext2_inode_large *inode;
+	size_t inode_আকার = EXT2_INODE_আকার(handle->fs->super);
 	errcode_t err;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EA_HANDLE);
 
-	if (inode_size < sizeof(*inode))
-		inode_size = sizeof(*inode);
-	err = ext2fs_get_memzero(inode_size, &inode);
-	if (err)
-		return err;
+	যদি (inode_আকার < আকার(*inode))
+		inode_আকার = আকার(*inode);
+	err = ext2fs_get_memzero(inode_আকার, &inode);
+	যদি (err)
+		ফেরত err;
 
 	err = ext2fs_read_inode_full(handle->fs, handle->ino, EXT2_INODE(inode),
-				     EXT2_INODE_SIZE(handle->fs->super));
-	if (err)
-		goto out;
+				     EXT2_INODE_আকার(handle->fs->super));
+	যদি (err)
+		যাও out;
 
 	err = ext2fs_xattrs_read_inode(handle, inode);
 
 out:
 	ext2fs_free_mem(&inode);
 
-	return err;
+	ফেরত err;
 }
 
-errcode_t ext2fs_xattrs_iterate(struct ext2_xattr_handle *h,
-				int (*func)(char *name, char *value,
-					    size_t value_len, void *data),
-				void *data)
+errcode_t ext2fs_xattrs_iterate(কাঠামো ext2_xattr_handle *h,
+				পূর্ণসংখ্যা (*func)(অক্ষর *name, অক্ষর *মান,
+					    size_t মান_len, শূন্য *তথ্য),
+				শূন্য *তথ্য)
 {
-	struct ext2_xattr *x;
-	int dirty = 0;
-	int ret;
+	কাঠামো ext2_xattr *x;
+	পূর্ণসংখ্যা dirty = 0;
+	পূর্ণসংখ্যা ret;
 
 	EXT2_CHECK_MAGIC(h, EXT2_ET_MAGIC_EA_HANDLE);
-	for (x = h->attrs; x < h->attrs + h->count; x++) {
-		ret = func(x->name, x->value, x->value_len, data);
-		if (ret & XATTR_CHANGED)
+	জন্য (x = h->attrs; x < h->attrs + h->গুনতি; x++) {
+		ret = func(x->name, x->মান, x->মান_len, তথ্য);
+		যদি (ret & XATTR_CHANGED)
 			dirty = 1;
-		if (ret & XATTR_ABORT)
-			break;
+		যদি (ret & XATTR_ABORT)
+			বিরতি;
 	}
 
-	if (dirty)
-		return ext2fs_xattrs_write(h);
-	return 0;
+	যদি (dirty)
+		ফেরত ext2fs_xattrs_write(h);
+	ফেরত 0;
 }
 
-errcode_t ext2fs_xattr_get(struct ext2_xattr_handle *h, const char *key,
-			   void **value, size_t *value_len)
+errcode_t ext2fs_xattr_get(কাঠামো ext2_xattr_handle *h, ধ্রুবক অক্ষর *চাবি,
+			   শূন্য **মান, size_t *মান_len)
 {
-	struct ext2_xattr *x;
-	char *val;
+	কাঠামো ext2_xattr *x;
+	অক্ষর *val;
 	errcode_t err;
 
 	EXT2_CHECK_MAGIC(h, EXT2_ET_MAGIC_EA_HANDLE);
-	for (x = h->attrs; x < h->attrs + h->count; x++) {
-		if (strcmp(x->name, key))
-			continue;
+	জন্য (x = h->attrs; x < h->attrs + h->গুনতি; x++) {
+		যদি (strcmp(x->name, চাবি))
+			চালু;
 
-		if (!(h->flags & XATTR_HANDLE_FLAG_RAW) &&
-		    ((strcmp(key, "system.posix_acl_default") == 0) ||
-		     (strcmp(key, "system.posix_acl_access") == 0))) {
-			err = convert_disk_buffer_to_posix_acl(x->value, x->value_len,
-							       value, value_len);
-			return err;
-		} else {
-			err = ext2fs_get_mem(x->value_len, &val);
-			if (err)
-				return err;
-			memcpy(val, x->value, x->value_len);
-			*value = val;
-			*value_len = x->value_len;
-			return 0;
+		যদি (!(h->flags & XATTR_HANDLE_FLAG_RAW) &&
+		    ((strcmp(চাবি, "system.posix_acl_default") == 0) ||
+		     (strcmp(চাবি, "system.posix_acl_access") == 0))) {
+			err = convert_disk_বাফার_to_posix_acl(x->মান, x->মান_len,
+							       মান, মান_len);
+			ফেরত err;
+		} অন্যথা {
+			err = ext2fs_get_mem(x->মান_len, &val);
+			যদি (err)
+				ফেরত err;
+			memcpy(val, x->মান, x->মান_len);
+			*মান = val;
+			*মান_len = x->মান_len;
+			ফেরত 0;
 		}
 	}
 
-	return EXT2_ET_EA_KEY_NOT_FOUND;
+	ফেরত EXT2_ET_EA_চাবি_NOT_FOUND;
 }
 
-errcode_t ext2fs_xattr_inode_max_size(ext2_filsys fs, ext2_ino_t ino,
-				      size_t *size)
+errcode_t ext2fs_xattr_inode_max_আকার(ext2_filsys fs, ext2_ino_t ino,
+				      size_t *আকার_2)
 {
-	struct ext2_ext_attr_entry *entry;
-	struct ext2_inode_large *inode;
+	কাঠামো ext2_ext_attr_entry *entry;
+	কাঠামো ext2_inode_large *inode;
 	__u32 ea_inode_magic;
-	unsigned int minoff;
-	char *start;
+	unsigned পূর্ণসংখ্যা minoff;
+	অক্ষর *start;
 	size_t i;
 	errcode_t err;
 
-	i = EXT2_INODE_SIZE(fs->super);
-	if (i < sizeof(*inode))
-		i = sizeof(*inode);
+	i = EXT2_INODE_আকার(fs->super);
+	যদি (i < আকার(*inode))
+		i = আকার(*inode);
 	err = ext2fs_get_memzero(i, &inode);
-	if (err)
-		return err;
+	যদি (err)
+		ফেরত err;
 
-	err = ext2fs_read_inode_full(fs, ino, (struct ext2_inode *)inode,
-				     EXT2_INODE_SIZE(fs->super));
-	if (err)
-		goto out;
+	err = ext2fs_read_inode_full(fs, ino, (কাঠামো ext2_inode *)inode,
+				     EXT2_INODE_আকার(fs->super));
+	যদি (err)
+		যাও out;
 
 	/* Does the inode have size for EA? */
-	if (EXT2_INODE_SIZE(fs->super) <= EXT2_GOOD_OLD_INODE_SIZE +
+	যদি (EXT2_INODE_আকার(fs->super) <= EXT2_GOOD_OLD_INODE_আকার +
 						  inode->i_extra_isize +
-						  sizeof(__u32)) {
-		err = EXT2_ET_INLINE_DATA_NO_SPACE;
-		goto out;
+						  আকার(__u32)) {
+		err = EXT2_ET_INLINE_তথ্য_NO_SPACE;
+		যাও out;
 	}
 
-	minoff = EXT2_INODE_SIZE(fs->super) - sizeof(*inode) - sizeof(__u32);
-	memcpy(&ea_inode_magic, ((char *) inode) + EXT2_GOOD_OLD_INODE_SIZE +
-	       inode->i_extra_isize, sizeof(__u32));
-	if (ea_inode_magic == EXT2_EXT_ATTR_MAGIC) {
+	minoff = EXT2_INODE_আকার(fs->super) - আকার(*inode) - আকার(__u32);
+	memcpy(&ea_inode_magic, ((অক্ষর *) inode) + EXT2_GOOD_OLD_INODE_আকার +
+	       inode->i_extra_isize, আকার(__u32));
+	যদি (ea_inode_magic == EXT2_EXT_ATTR_MAGIC) {
 		/* has xattrs.  calculate the size */
-		start= ((char *) inode) + EXT2_GOOD_OLD_INODE_SIZE +
-			inode->i_extra_isize + sizeof(__u32);
-		entry = (struct ext2_ext_attr_entry *) start;
-		while (!EXT2_EXT_IS_LAST_ENTRY(entry)) {
-			if (!entry->e_value_inum && entry->e_value_size) {
-				unsigned int offs = entry->e_value_offs;
-				if (offs < minoff)
+		start= ((অক্ষর *) inode) + EXT2_GOOD_OLD_INODE_আকার +
+			inode->i_extra_isize + আকার(__u32);
+		entry = (কাঠামো ext2_ext_attr_entry *) start;
+		যখন (!EXT2_EXT_IS_LAST_ENTRY(entry)) {
+			যদি (!entry->e_মান_inum && entry->e_মান_আকার) {
+				unsigned পূর্ণসংখ্যা offs = entry->e_মান_offs;
+				যদি (offs < minoff)
 					minoff = offs;
 			}
-			entry = EXT2_EXT_ATTR_NEXT(entry);
+			entry = EXT2_EXT_ATTR_পরবর্তী(entry);
 		}
-		*size = minoff - ((char *)entry - (char *)start) - sizeof(__u32);
-	} else {
+		*আকার_2 = minoff - ((অক্ষর *)entry - (অক্ষর *)start) - আকার(__u32);
+	} অন্যথা {
 		/* no xattr.  return a maximum size */
-		*size = EXT2_EXT_ATTR_SIZE(minoff -
+		*আকার_2 = EXT2_EXT_ATTR_আকার(minoff -
 					   EXT2_EXT_ATTR_LEN(strlen("data")) -
-					   EXT2_EXT_ATTR_ROUND - sizeof(__u32));
+					   EXT2_EXT_ATTR_ROUND - আকার(__u32));
 	}
 
 out:
 	ext2fs_free_mem(&inode);
-	return err;
+	ফেরত err;
 }
 
-static errcode_t xattr_create_ea_inode(ext2_filsys fs, const void *value,
-				       size_t value_len, ext2_ino_t *ea_ino)
+স্থির errcode_t xattr_create_ea_inode(ext2_filsys fs, ধ্রুবক শূন্য *মান,
+				       size_t মান_len, ext2_ino_t *ea_ino)
 {
-	struct ext2_inode inode;
+	কাঠামো ext2_inode inode;
 	ext2_ino_t ino;
 	ext2_file_t file;
 	__u32 hash;
 	errcode_t ret;
 
 	ret = ext2fs_new_inode(fs, 0, 0, 0, &ino);
-	if (ret)
-		return ret;
+	যদি (ret)
+		ফেরত ret;
 
-	memset(&inode, 0, sizeof(inode));
+	memset(&inode, 0, আকার(inode));
 	inode.i_flags |= EXT4_EA_INODE_FL;
-	if (ext2fs_has_feature_extents(fs->super))
+	যদি (ext2fs_has_feature_extents(fs->super))
 		inode.i_flags |= EXT4_EXTENTS_FL;
-	inode.i_size = 0;
+	inode.i_আকার = 0;
 	inode.i_mode = LINUX_S_IFREG | 0600;
-	inode.i_links_count = 1;
+	inode.i_links_গুনতি = 1;
 	ret = ext2fs_write_new_inode(fs, ino, &inode);
-	if (ret)
-		return ret;
+	যদি (ret)
+		ফেরত ret;
 	/*
 	 * ref_count and hash utilize inode's i_*time fields.
 	 * ext2fs_write_new_inode() call above initializes these fields with
@@ -1302,502 +1302,502 @@ static errcode_t xattr_create_ea_inode(ext2_filsys fs, const void *value,
 	 * separately below.
 	 */
 	ext2fs_set_ea_inode_ref(&inode, 1);
-	hash = ext2fs_crc32c_le(fs->csum_seed, value, value_len);
+	hash = ext2fs_crc32c_le(fs->csum_seed, মান, মান_len);
 	ext2fs_set_ea_inode_hash(&inode, hash);
 
 	ret = ext2fs_write_inode(fs, ino, &inode);
-	if (ret)
-		return ret;
+	যদি (ret)
+		ফেরত ret;
 
 	ret = ext2fs_file_open(fs, ino, EXT2_FILE_WRITE, &file);
-	if (ret)
-		return ret;
-	ret = ext2fs_file_write(file, value, value_len, NULL);
+	যদি (ret)
+		ফেরত ret;
+	ret = ext2fs_file_write(file, মান, মান_len, ফাঁকা);
 	ext2fs_file_close(file);
-	if (ret)
-		return ret;
+	যদি (ret)
+		ফেরত ret;
 
 	ext2fs_inode_alloc_stats2(fs, ino, 1 /* inuse */, 0 /* isdir */);
 
 	*ea_ino = ino;
-	return 0;
+	ফেরত 0;
 }
 
-static errcode_t xattr_inode_dec_ref(ext2_filsys fs, ext2_ino_t ino)
+স্থির errcode_t xattr_inode_dec_ref(ext2_filsys fs, ext2_ino_t ino)
 {
-	struct ext2_inode_large inode;
-	__u64 ref_count;
+	কাঠামো ext2_inode_large inode;
+	__u64 ref_গুনতি;
 	errcode_t ret;
 
-	ret = ext2fs_read_inode_full(fs, ino, (struct ext2_inode *)&inode,
-				     sizeof(inode));
-	if (ret)
-		goto out;
+	ret = ext2fs_read_inode_full(fs, ino, (কাঠামো ext2_inode *)&inode,
+				     আকার(inode));
+	যদি (ret)
+		যাও out;
 
-	ref_count = ext2fs_get_ea_inode_ref(EXT2_INODE(&inode));
-	ref_count--;
-	ext2fs_set_ea_inode_ref(EXT2_INODE(&inode), ref_count);
+	ref_গুনতি = ext2fs_get_ea_inode_ref(EXT2_INODE(&inode));
+	ref_গুনতি--;
+	ext2fs_set_ea_inode_ref(EXT2_INODE(&inode), ref_গুনতি);
 
-	if (ref_count)
-		goto write_out;
+	যদি (ref_গুনতি)
+		যাও write_out;
 
-	inode.i_links_count = 0;
+	inode.i_links_গুনতি = 0;
 	ext2fs_set_dtime(fs, EXT2_INODE(&inode));
 
 	ret = ext2fs_free_ext_attr(fs, ino, &inode);
-	if (ret)
-		goto write_out;
+	যদি (ret)
+		যাও write_out;
 
-	if (ext2fs_inode_has_valid_blocks2(fs, (struct ext2_inode *)&inode)) {
-		ret = ext2fs_punch(fs, ino, (struct ext2_inode *)&inode, NULL,
+	যদি (ext2fs_inode_has_valid_blocks2(fs, (কাঠামো ext2_inode *)&inode)) {
+		ret = ext2fs_punch(fs, ino, (কাঠামো ext2_inode *)&inode, ফাঁকা,
 				   0, ~0ULL);
-		if (ret)
-			goto out;
+		যদি (ret)
+			যাও out;
 	}
 
 	inode.i_flags &= ~EXT4_EA_INODE_FL;
 	ext2fs_inode_alloc_stats2(fs, ino, -1 /* inuse */, 0 /* is_dir */);
 
 write_out:
-	ret = ext2fs_write_inode_full(fs, ino, (struct ext2_inode *)&inode,
-				      sizeof(inode));
+	ret = ext2fs_write_inode_full(fs, ino, (কাঠামো ext2_inode *)&inode,
+				      আকার(inode));
 out:
-	return ret;
+	ফেরত ret;
 }
 
-static errcode_t xattr_update_entry(ext2_filsys fs, struct ext2_xattr *x,
-				    const char *name, const char *short_name,
-				    int index, const void *value,
-				    size_t value_len, int in_inode)
+স্থির errcode_t xattr_update_entry(ext2_filsys fs, কাঠামো ext2_xattr *x,
+				    ধ্রুবক অক্ষর *name, ধ্রুবক অক্ষর *short_name,
+				    পূর্ণসংখ্যা সূচক, ধ্রুবক শূন্য *মান,
+				    size_t মান_len, পূর্ণসংখ্যা in_inode)
 {
 	ext2_ino_t ea_ino = 0;
-	void *new_value = NULL;
-	char *new_name = NULL;
-	int name_len;
+	শূন্য *new_মান = ফাঁকা;
+	অক্ষর *new_name = ফাঁকা;
+	পূর্ণসংখ্যা name_len;
 	errcode_t ret;
 
-	if (!x->name) {
+	যদি (!x->name) {
 		name_len = strlen(name);
 		ret = ext2fs_get_mem(name_len + 1, &new_name);
-		if (ret)
-			goto fail;
+		যদি (ret)
+			যাও fail;
 		memcpy(new_name, name, name_len + 1);
 	}
 
-	ret = ext2fs_get_mem(value_len, &new_value);
-	if (ret)
-		goto fail;
-	memcpy(new_value, value, value_len);
+	ret = ext2fs_get_mem(মান_len, &new_মান);
+	যদি (ret)
+		যাও fail;
+	memcpy(new_মান, মান, মান_len);
 
-	if (in_inode) {
-		ret = xattr_create_ea_inode(fs, value, value_len, &ea_ino);
-		if (ret)
-			goto fail;
+	যদি (in_inode) {
+		ret = xattr_create_ea_inode(fs, মান, মান_len, &ea_ino);
+		যদি (ret)
+			যাও fail;
 	}
 
-	if (x->ea_ino) {
+	যদি (x->ea_ino) {
 		ret = xattr_inode_dec_ref(fs, x->ea_ino);
-		if (ret)
-			goto fail;
+		যদি (ret)
+			যাও fail;
 	}
 
-	if (!x->name) {
+	যদি (!x->name) {
 		x->name = new_name;
 		x->short_name = new_name + (short_name  - name);
 	}
-	x->name_index = index;
+	x->name_সূচক = সূচক;
 
-	if (x->value)
-		ext2fs_free_mem(&x->value);
-	x->value = new_value;
-	x->value_len = value_len;
+	যদি (x->মান)
+		ext2fs_free_mem(&x->মান);
+	x->মান = new_মান;
+	x->মান_len = মান_len;
 	x->ea_ino = ea_ino;
-	return 0;
+	ফেরত 0;
 fail:
-	if (new_name)
+	যদি (new_name)
 		ext2fs_free_mem(&new_name);
-	if (new_value)
-		ext2fs_free_mem(&new_value);
-	if (ea_ino)
+	যদি (new_মান)
+		ext2fs_free_mem(&new_মান);
+	যদি (ea_ino)
 		xattr_inode_dec_ref(fs, ea_ino);
-	return ret;
+	ফেরত ret;
 }
 
-static int xattr_find_position(struct ext2_xattr *attrs, int count,
-			       const char *shortname, int name_idx)
+স্থির পূর্ণসংখ্যা xattr_find_position(কাঠামো ext2_xattr *attrs, পূর্ণসংখ্যা গুনতি,
+			       ধ্রুবক অক্ষর *shortname, পূর্ণসংখ্যা name_idx)
 {
-	struct ext2_xattr *x;
-	int i;
-	int shortname_len, x_shortname_len;
+	কাঠামো ext2_xattr *x;
+	পূর্ণসংখ্যা i;
+	পূর্ণসংখ্যা shortname_len, x_shortname_len;
 
 	shortname_len = strlen(shortname);
 
-	for (i = 0, x = attrs; i < count; i++, x++) {
-		if (name_idx < x->name_index)
-			break;
-		if (name_idx > x->name_index)
-			continue;
+	জন্য (i = 0, x = attrs; i < গুনতি; i++, x++) {
+		যদি (name_idx < x->name_সূচক)
+			বিরতি;
+		যদি (name_idx > x->name_সূচক)
+			চালু;
 
 		x_shortname_len = strlen(x->short_name);
-		if (shortname_len < x_shortname_len)
-			break;
-		if (shortname_len > x_shortname_len)
-			continue;
+		যদি (shortname_len < x_shortname_len)
+			বিরতি;
+		যদি (shortname_len > x_shortname_len)
+			চালু;
 
-		if (memcmp(shortname, x->short_name, shortname_len) <= 0)
-			break;
+		যদি (memcmp(shortname, x->short_name, shortname_len) <= 0)
+			বিরতি;
 	}
-	return i;
+	ফেরত i;
 }
 
-static errcode_t xattr_array_update(struct ext2_xattr_handle *h,
-				    const char *name,
-				    const void *value, size_t value_len,
-				    int ibody_free, int block_free,
-				    int old_idx, int in_inode)
+স্থির errcode_t xattr_array_update(কাঠামো ext2_xattr_handle *h,
+				    ধ্রুবক অক্ষর *name,
+				    ধ্রুবক শূন্য *মান, size_t মান_len,
+				    পূর্ণসংখ্যা ibody_free, পূর্ণসংখ্যা block_free,
+				    পূর্ণসংখ্যা old_idx, পূর্ণসংখ্যা in_inode)
 {
-	struct ext2_xattr tmp;
-	int add_to_ibody;
-	int needed;
-	int name_len, name_idx = 0;
-	const char *shortname = name;
-	int new_idx;
-	int ret;
+	কাঠামো ext2_xattr tmp;
+	পূর্ণসংখ্যা add_to_ibody;
+	পূর্ণসংখ্যা needed;
+	পূর্ণসংখ্যা name_len, name_idx = 0;
+	ধ্রুবক অক্ষর *shortname = name;
+	পূর্ণসংখ্যা new_idx;
+	পূর্ণসংখ্যা ret;
 
-	find_ea_index(name, &shortname, &name_idx);
+	find_ea_সূচক(name, &shortname, &name_idx);
 	name_len = strlen(shortname);
 
 	needed = EXT2_EXT_ATTR_LEN(name_len);
-	if (!in_inode)
-		needed += EXT2_EXT_ATTR_SIZE(value_len);
+	যদি (!in_inode)
+		needed += EXT2_EXT_ATTR_আকার(মান_len);
 
-	if (old_idx >= 0 && old_idx < h->ibody_count) {
+	যদি (old_idx >= 0 && old_idx < h->ibody_গুনতি) {
 		ibody_free += EXT2_EXT_ATTR_LEN(name_len);
-		if (!h->attrs[old_idx].ea_ino)
-			ibody_free += EXT2_EXT_ATTR_SIZE(
-						h->attrs[old_idx].value_len);
+		যদি (!h->attrs[old_idx].ea_ino)
+			ibody_free += EXT2_EXT_ATTR_আকার(
+						h->attrs[old_idx].মান_len);
 	}
 
-	if (needed <= ibody_free) {
-		if (old_idx < 0) {
-			new_idx = h->ibody_count;
+	যদি (needed <= ibody_free) {
+		যদি (old_idx < 0) {
+			new_idx = h->ibody_গুনতি;
 			add_to_ibody = 1;
-			goto add_new;
+			যাও add_new;
 		}
 
 		/* Update the existing entry. */
 		ret = xattr_update_entry(h->fs, &h->attrs[old_idx], name,
-					 shortname, name_idx, value,
-					 value_len, in_inode);
-		if (ret)
-			return ret;
-		if (h->ibody_count <= old_idx) {
+					 shortname, name_idx, মান,
+					 মান_len, in_inode);
+		যদি (ret)
+			ফেরত ret;
+		যদি (h->ibody_গুনতি <= old_idx) {
 			/* Move entry from block to the end of ibody. */
 			tmp = h->attrs[old_idx];
-			memmove(h->attrs + h->ibody_count + 1,
-				h->attrs + h->ibody_count,
-				(old_idx - h->ibody_count) * sizeof(*h->attrs));
-			h->attrs[h->ibody_count] = tmp;
-			h->ibody_count++;
+			memmove(h->attrs + h->ibody_গুনতি + 1,
+				h->attrs + h->ibody_গুনতি,
+				(old_idx - h->ibody_গুনতি) * আকার(*h->attrs));
+			h->attrs[h->ibody_গুনতি] = tmp;
+			h->ibody_গুনতি++;
 		}
-		return 0;
+		ফেরত 0;
 	}
 
-	if (h->ibody_count <= old_idx) {
+	যদি (h->ibody_গুনতি <= old_idx) {
 		block_free += EXT2_EXT_ATTR_LEN(name_len);
-		if (!h->attrs[old_idx].ea_ino)
+		যদি (!h->attrs[old_idx].ea_ino)
 			block_free +=
-				EXT2_EXT_ATTR_SIZE(h->attrs[old_idx].value_len);
+				EXT2_EXT_ATTR_আকার(h->attrs[old_idx].মান_len);
 	}
 
-	if (needed > block_free)
-		return EXT2_ET_EA_NO_SPACE;
+	যদি (needed > block_free)
+		ফেরত EXT2_ET_EA_NO_SPACE;
 
-	if (old_idx >= 0) {
+	যদি (old_idx >= 0) {
 		/* Update the existing entry. */
 		ret = xattr_update_entry(h->fs, &h->attrs[old_idx], name,
-					 shortname, name_idx, value,
-					 value_len, in_inode);
-		if (ret)
-			return ret;
-		if (old_idx < h->ibody_count) {
+					 shortname, name_idx, মান,
+					 মান_len, in_inode);
+		যদি (ret)
+			ফেরত ret;
+		যদি (old_idx < h->ibody_গুনতি) {
 			/*
 			 * Move entry from ibody to the block. Note that
 			 * entries in the block are sorted.
 			 */
-			new_idx = xattr_find_position(h->attrs + h->ibody_count,
-						      h->count - h->ibody_count,
+			new_idx = xattr_find_position(h->attrs + h->ibody_গুনতি,
+						      h->গুনতি - h->ibody_গুনতি,
 						      shortname, name_idx);
-			new_idx += h->ibody_count - 1;
+			new_idx += h->ibody_গুনতি - 1;
 			tmp = h->attrs[old_idx];
 			memmove(h->attrs + old_idx, h->attrs + old_idx + 1,
-				(new_idx - old_idx) * sizeof(*h->attrs));
+				(new_idx - old_idx) * আকার(*h->attrs));
 			h->attrs[new_idx] = tmp;
-			h->ibody_count--;
+			h->ibody_গুনতি--;
 		}
-		return 0;
+		ফেরত 0;
 	}
 
-	new_idx = xattr_find_position(h->attrs + h->ibody_count,
-				      h->count - h->ibody_count,
+	new_idx = xattr_find_position(h->attrs + h->ibody_গুনতি,
+				      h->গুনতি - h->ibody_গুনতি,
 				      shortname, name_idx);
-	new_idx += h->ibody_count;
+	new_idx += h->ibody_গুনতি;
 	add_to_ibody = 0;
 
 add_new:
-	if (h->count == h->capacity) {
+	যদি (h->গুনতি == h->capacity) {
 		ret = ext2fs_xattrs_expand(h, 4);
-		if (ret)
-			return ret;
+		যদি (ret)
+			ফেরত ret;
 	}
 
-	ret = xattr_update_entry(h->fs, &h->attrs[h->count], name, shortname,
-				 name_idx, value, value_len, in_inode);
-	if (ret)
-		return ret;
+	ret = xattr_update_entry(h->fs, &h->attrs[h->গুনতি], name, shortname,
+				 name_idx, মান, মান_len, in_inode);
+	যদি (ret)
+		ফেরত ret;
 
-	tmp = h->attrs[h->count];
+	tmp = h->attrs[h->গুনতি];
 	memmove(h->attrs + new_idx + 1, h->attrs + new_idx,
-		(h->count - new_idx)*sizeof(*h->attrs));
+		(h->গুনতি - new_idx)*আকার(*h->attrs));
 	h->attrs[new_idx] = tmp;
-	if (add_to_ibody)
-		h->ibody_count++;
-	h->count++;
-	return 0;
+	যদি (add_to_ibody)
+		h->ibody_গুনতি++;
+	h->গুনতি++;
+	ফেরত 0;
 }
 
-static int space_used(struct ext2_xattr *attrs, int count)
+স্থির পূর্ণসংখ্যা space_used(কাঠামো ext2_xattr *attrs, পূর্ণসংখ্যা গুনতি)
 {
-	int total = 0;
-	struct ext2_xattr *x;
-	int i, len;
+	পূর্ণসংখ্যা যোগ_2 = 0;
+	কাঠামো ext2_xattr *x;
+	পূর্ণসংখ্যা i, len;
 
-	for (i = 0, x = attrs; i < count; i++, x++) {
+	জন্য (i = 0, x = attrs; i < গুনতি; i++, x++) {
 		len = strlen(x->short_name);
-		total += EXT2_EXT_ATTR_LEN(len);
-		if (!x->ea_ino)
-			total += EXT2_EXT_ATTR_SIZE(x->value_len);
+		যোগ_2 += EXT2_EXT_ATTR_LEN(len);
+		যদি (!x->ea_ino)
+			যোগ_2 += EXT2_EXT_ATTR_আকার(x->মান_len);
 	}
-	return total;
+	ফেরত যোগ_2;
 }
 
 /*
  * The minimum size of EA value when you start storing it in an external inode
  * size of block - size of header - size of 1 entry - 4 null bytes
  */
-#define EXT4_XATTR_MIN_LARGE_EA_SIZE(b)	\
-	((b) - EXT2_EXT_ATTR_LEN(3) - sizeof(struct ext2_ext_attr_header) - 4)
+#define EXT4_XATTR_MIN_LARGE_EA_আকার(b)	\
+	((b) - EXT2_EXT_ATTR_LEN(3) - আকার(কাঠামো ext2_ext_attr_header) - 4)
 
-errcode_t ext2fs_xattr_set(struct ext2_xattr_handle *h,
-			   const char *name,
-			   const void *value,
-			   size_t value_len)
+errcode_t ext2fs_xattr_set(কাঠামো ext2_xattr_handle *h,
+			   ধ্রুবক অক্ষর *name,
+			   ধ্রুবক শূন্য *মান,
+			   size_t মান_len)
 {
 	ext2_filsys fs = h->fs;
-	const int inode_size = EXT2_INODE_SIZE(fs->super);
-	struct ext2_inode_large *inode = NULL;
-	struct ext2_xattr *x;
-	char *new_value;
-	int ibody_free, block_free;
-	int in_inode = 0;
-	int old_idx = -1;
-	int extra_isize;
+	ধ্রুবক পূর্ণসংখ্যা inode_আকার = EXT2_INODE_আকার(fs->super);
+	কাঠামো ext2_inode_large *inode = ফাঁকা;
+	কাঠামো ext2_xattr *x;
+	অক্ষর *new_মান;
+	পূর্ণসংখ্যা ibody_free, block_free;
+	পূর্ণসংখ্যা in_inode = 0;
+	পূর্ণসংখ্যা old_idx = -1;
+	পূর্ণসংখ্যা extra_isize;
 	errcode_t ret;
 
 	EXT2_CHECK_MAGIC(h, EXT2_ET_MAGIC_EA_HANDLE);
 
-	ret = ext2fs_get_mem(value_len, &new_value);
-	if (ret)
-		return ret;
-	if (!(h->flags & XATTR_HANDLE_FLAG_RAW) &&
+	ret = ext2fs_get_mem(মান_len, &new_মান);
+	যদি (ret)
+		ফেরত ret;
+	যদি (!(h->flags & XATTR_HANDLE_FLAG_RAW) &&
 	    ((strcmp(name, "system.posix_acl_default") == 0) ||
 	     (strcmp(name, "system.posix_acl_access") == 0))) {
-		ret = convert_posix_acl_to_disk_buffer(value, value_len,
-						       new_value, &value_len);
-		if (ret)
-			goto out;
-	} else if (value_len)
-		memcpy(new_value, value, value_len);
+		ret = convert_posix_acl_to_disk_বাফার(মান, মান_len,
+						       new_মান, &মান_len);
+		যদি (ret)
+			যাও out;
+	} অন্যথা যদি (মান_len)
+		memcpy(new_মান, মান, মান_len);
 
 	/* Imitate kernel behavior by skipping update if value is the same. */
-	for (x = h->attrs; x < h->attrs + h->count; x++) {
-		if (!strcmp(x->name, name)) {
-			if (!x->ea_ino && x->value_len == value_len &&
-			    (!value_len ||
-			     !memcmp(x->value, new_value, value_len))) {
+	জন্য (x = h->attrs; x < h->attrs + h->গুনতি; x++) {
+		যদি (!strcmp(x->name, name)) {
+			যদি (!x->ea_ino && x->মান_len == মান_len &&
+			    (!মান_len ||
+			     !memcmp(x->মান, new_মান, মান_len))) {
 				ret = 0;
-				goto out;
+				যাও out;
 			}
 			old_idx = x - h->attrs;
-			break;
+			বিরতি;
 		}
 	}
 
-	ret = ext2fs_get_memzero(inode_size, &inode);
-	if (ret)
-		goto out;
+	ret = ext2fs_get_memzero(inode_আকার, &inode);
+	যদি (ret)
+		যাও out;
 	ret = ext2fs_read_inode_full(fs, h->ino,
-				     (struct ext2_inode *)inode,
-				     inode_size);
-	if (ret)
-		goto out;
-	if (inode_size > EXT2_GOOD_OLD_INODE_SIZE) {
+				     (কাঠামো ext2_inode *)inode,
+				     inode_আকার);
+	যদি (ret)
+		যাও out;
+	যদি (inode_আকার > EXT2_GOOD_OLD_INODE_আকার) {
 		extra_isize = inode->i_extra_isize;
-		if (extra_isize == 0) {
+		যদি (extra_isize == 0) {
 			extra_isize = fs->super->s_want_extra_isize;
-			if (extra_isize == 0)
-				extra_isize = sizeof(__u32);
+			যদি (extra_isize == 0)
+				extra_isize = আকার(__u32);
 		}
-		ibody_free = inode_size - EXT2_GOOD_OLD_INODE_SIZE;
+		ibody_free = inode_আকার - EXT2_GOOD_OLD_INODE_আকার;
 		ibody_free -= extra_isize;
 		/* Extended attribute magic and final null entry. */
-		ibody_free -= sizeof(__u32) * 2;
-		ibody_free -= space_used(h->attrs, h->ibody_count);
-	} else
+		ibody_free -= আকার(__u32) * 2;
+		ibody_free -= space_used(h->attrs, h->ibody_গুনতি);
+	} অন্যথা
 		ibody_free = 0;
 
 	/* Inline data can only go to ibody. */
-	if (strcmp(name, "system.data") == 0) {
-		if (h->ibody_count <= old_idx) {
+	যদি (strcmp(name, "system.data") == 0) {
+		যদি (h->ibody_গুনতি <= old_idx) {
 			ret = EXT2_ET_FILESYSTEM_CORRUPTED;
-			goto out;
+			যাও out;
 		}
-		ret = xattr_array_update(h, name, new_value, value_len,
+		ret = xattr_array_update(h, name, new_মান, মান_len,
 					 ibody_free,
 					 0 /* block_free */, old_idx,
 					 0 /* in_inode */);
-		if (ret)
-			goto out;
-		goto write_out;
+		যদি (ret)
+			যাও out;
+		যাও write_out;
 	}
 
 	block_free = fs->blocksize;
-	block_free -= sizeof(struct ext2_ext_attr_header);
+	block_free -= আকার(কাঠামো ext2_ext_attr_header);
 	/* Final null entry. */
-	block_free -= sizeof(__u32);
-	block_free -= space_used(h->attrs + h->ibody_count,
-				 h->count - h->ibody_count);
+	block_free -= আকার(__u32);
+	block_free -= space_used(h->attrs + h->ibody_গুনতি,
+				 h->গুনতি - h->ibody_গুনতি);
 
-	if (ext2fs_has_feature_ea_inode(fs->super) &&
-	    value_len > EXT4_XATTR_MIN_LARGE_EA_SIZE(fs->blocksize))
+	যদি (ext2fs_has_feature_ea_inode(fs->super) &&
+	    মান_len > EXT4_XATTR_MIN_LARGE_EA_আকার(fs->blocksize))
 		in_inode = 1;
 
-	ret = xattr_array_update(h, name, new_value, value_len, ibody_free,
+	ret = xattr_array_update(h, name, new_মান, মান_len, ibody_free,
 				 block_free, old_idx, in_inode);
-	if (ret == EXT2_ET_EA_NO_SPACE && !in_inode &&
+	যদি (ret == EXT2_ET_EA_NO_SPACE && !in_inode &&
 	    ext2fs_has_feature_ea_inode(fs->super))
-		ret = xattr_array_update(h, name, new_value, value_len,
+		ret = xattr_array_update(h, name, new_মান, মান_len,
 			ibody_free, block_free, old_idx, 1 /* in_inode */);
-	if (ret)
-		goto out;
+	যদি (ret)
+		যাও out;
 
 write_out:
 	ret = ext2fs_xattrs_write(h);
 out:
-	if (inode)
+	যদি (inode)
 		ext2fs_free_mem(&inode);
-	ext2fs_free_mem(&new_value);
-	return ret;
+	ext2fs_free_mem(&new_মান);
+	ফেরত ret;
 }
 
-errcode_t ext2fs_xattr_remove(struct ext2_xattr_handle *handle,
-			      const char *key)
+errcode_t ext2fs_xattr_remove(কাঠামো ext2_xattr_handle *handle,
+			      ধ্রুবক অক্ষর *চাবি)
 {
-	struct ext2_xattr *x;
-	struct ext2_xattr *end = handle->attrs + handle->count;
+	কাঠামো ext2_xattr *x;
+	কাঠামো ext2_xattr *end = handle->attrs + handle->গুনতি;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EA_HANDLE);
-	for (x = handle->attrs; x < end; x++) {
-		if (strcmp(x->name, key) == 0) {
+	জন্য (x = handle->attrs; x < end; x++) {
+		যদি (strcmp(x->name, চাবি) == 0) {
 			ext2fs_free_mem(&x->name);
-			ext2fs_free_mem(&x->value);
-			if (x->ea_ino)
+			ext2fs_free_mem(&x->মান);
+			যদি (x->ea_ino)
 				xattr_inode_dec_ref(handle->fs, x->ea_ino);
-			memmove(x, x + 1, (end - x - 1)*sizeof(*x));
-			memset(end - 1, 0, sizeof(*end));
-			if (x < handle->attrs + handle->ibody_count)
-				handle->ibody_count--;
-			handle->count--;
-			return ext2fs_xattrs_write(handle);
+			memmove(x, x + 1, (end - x - 1)*আকার(*x));
+			memset(end - 1, 0, আকার(*end));
+			যদি (x < handle->attrs + handle->ibody_গুনতি)
+				handle->ibody_গুনতি--;
+			handle->গুনতি--;
+			ফেরত ext2fs_xattrs_write(handle);
 		}
 	}
 
 	/* no key found, success! */
-	return 0;
+	ফেরত 0;
 }
 
-errcode_t ext2fs_xattr_remove_all(struct ext2_xattr_handle *handle)
+errcode_t ext2fs_xattr_remove_all(কাঠামো ext2_xattr_handle *handle)
 {
-	struct ext2_xattr *x;
-	struct ext2_xattr *end = handle->attrs + handle->count;
+	কাঠামো ext2_xattr *x;
+	কাঠামো ext2_xattr *end = handle->attrs + handle->গুনতি;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EA_HANDLE);
-	for (x = handle->attrs; x < end; x++) {
+	জন্য (x = handle->attrs; x < end; x++) {
 		ext2fs_free_mem(&x->name);
-		ext2fs_free_mem(&x->value);
-		if (x->ea_ino)
+		ext2fs_free_mem(&x->মান);
+		যদি (x->ea_ino)
 			xattr_inode_dec_ref(handle->fs, x->ea_ino);
 	}
 
-	handle->ibody_count = 0;
-	handle->count = 0;
-	return ext2fs_xattrs_write(handle);
+	handle->ibody_গুনতি = 0;
+	handle->গুনতি = 0;
+	ফেরত ext2fs_xattrs_write(handle);
 }
 
 errcode_t ext2fs_xattrs_open(ext2_filsys fs, ext2_ino_t ino,
-			     struct ext2_xattr_handle **handle)
+			     কাঠামো ext2_xattr_handle **handle)
 {
-	struct ext2_xattr_handle *h;
+	কাঠামো ext2_xattr_handle *h;
 	errcode_t err;
 
-	if (!ext2fs_has_feature_xattr(fs->super) &&
-	    !ext2fs_has_feature_inline_data(fs->super))
-		return EXT2_ET_MISSING_EA_FEATURE;
+	যদি (!ext2fs_has_feature_xattr(fs->super) &&
+	    !ext2fs_has_feature_inline_তথ্য(fs->super))
+		ফেরত EXT2_ET_MISSING_EA_FEATURE;
 
-	err = ext2fs_get_memzero(sizeof(*h), &h);
-	if (err)
-		return err;
+	err = ext2fs_get_memzero(আকার(*h), &h);
+	যদি (err)
+		ফেরত err;
 
 	h->magic = EXT2_ET_MAGIC_EA_HANDLE;
 	h->capacity = 4;
-	err = ext2fs_get_arrayzero(h->capacity, sizeof(struct ext2_xattr),
+	err = ext2fs_get_arrayzero(h->capacity, আকার(কাঠামো ext2_xattr),
 				   &h->attrs);
-	if (err) {
+	যদি (err) {
 		ext2fs_free_mem(&h);
-		return err;
+		ফেরত err;
 	}
-	h->count = 0;
+	h->গুনতি = 0;
 	h->ino = ino;
 	h->fs = fs;
 	*handle = h;
-	return 0;
+	ফেরত 0;
 }
 
-errcode_t ext2fs_xattrs_close(struct ext2_xattr_handle **handle)
+errcode_t ext2fs_xattrs_close(কাঠামো ext2_xattr_handle **handle)
 {
-	struct ext2_xattr_handle *h = *handle;
+	কাঠামো ext2_xattr_handle *h = *handle;
 
 	EXT2_CHECK_MAGIC(h, EXT2_ET_MAGIC_EA_HANDLE);
-	xattrs_free_keys(h);
+	xattrs_free_চাবিগুলি(h);
 	ext2fs_free_mem(&h->attrs);
 	ext2fs_free_mem(handle);
-	return 0;
+	ফেরত 0;
 }
 
-errcode_t ext2fs_xattrs_count(struct ext2_xattr_handle *handle, size_t *count)
+errcode_t ext2fs_xattrs_গুনতি(কাঠামো ext2_xattr_handle *handle, size_t *গুনতি)
 {
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EA_HANDLE);
-	*count = handle->count;
-	return 0;
+	*গুনতি = handle->গুনতি;
+	ফেরত 0;
 }
 
-errcode_t ext2fs_xattrs_flags(struct ext2_xattr_handle *handle,
-			      unsigned int *new_flags, unsigned int *old_flags)
+errcode_t ext2fs_xattrs_flags(কাঠামো ext2_xattr_handle *handle,
+			      unsigned পূর্ণসংখ্যা *new_flags, unsigned পূর্ণসংখ্যা *old_flags)
 {
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EA_HANDLE);
-	if (old_flags)
+	যদি (old_flags)
 		*old_flags = handle->flags;
-	if (new_flags)
+	যদি (new_flags)
 		handle->flags = *new_flags;
-	return 0;
+	ফেরত 0;
 }

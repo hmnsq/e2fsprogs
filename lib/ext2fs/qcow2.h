@@ -24,7 +24,7 @@
  * %End-Header%
  */
 
-#include <ext2fs/ext2_types.h>
+#অন্তর্ভাব <ext2fs/ext2_types.h>
 
 /* Number of l2 tables in memory before writeback */
 #define L2_CACHE_PREALLOC	512
@@ -39,18 +39,18 @@
 #define QCOW_ENCRYPTED		2
 #define QCOW_CORRUPTED		3
 
-struct ext2_qcow2_hdr {
+কাঠামো ext2_qcow2_hdr {
 	__u32	magic;
 	__u32	version;
 
 	__u64	backing_file_offset;
-	__u32	backing_file_size;
+	__u32	backing_file_আকার;
 
 	__u32	cluster_bits;
-	__u64	size;
+	__u64	আকার_2;
 	__u32	crypt_method;
 
-	__u32	l1_size;
+	__u32	l1_আকার;
 	__u64	l1_table_offset;
 
 	__u64	refcount_table_offset;
@@ -60,50 +60,50 @@ struct ext2_qcow2_hdr {
 	__u64	snapshots_offset;
 };
 
-typedef struct ext2_qcow2_l2_table L2_CACHE_HEAD;
+প্রকারলেখ কাঠামো ext2_qcow2_l2_table L2_CACHE_শীর্ষ;
 
-struct ext2_qcow2_l2_table {
-	__u32		l1_index;
+কাঠামো ext2_qcow2_l2_table {
+	__u32		l1_সূচক;
 	__u64		offset;
-	__u64		*data;
-	L2_CACHE_HEAD	*next;
+	__u64		*তথ্য;
+	L2_CACHE_শীর্ষ	*পরবর্তী;
 };
 
-struct ext2_qcow2_l2_cache {
-	L2_CACHE_HEAD	*used_head;
-	L2_CACHE_HEAD	*used_tail;
-	L2_CACHE_HEAD	*free_head;
-	__u32		free;
-	__u32		count;
-	__u64		next_offset;
+কাঠামো ext2_qcow2_l2_cache {
+	L2_CACHE_শীর্ষ	*used_শীর্ষ;
+	L2_CACHE_শীর্ষ	*used_লেজ;
+	L2_CACHE_শীর্ষ	*free_শীর্ষ;
+	__u32		মুক্ত;
+	__u32		গুনতি;
+	__u64		পরবর্তী_offset;
 };
 
-struct ext2_qcow2_refcount {
+কাঠামো ext2_qcow2_refcount {
 	__u64	*refcount_table;
 	__u64	refcount_table_offset;
 	__u64	refcount_block_offset;
 
 	__u32	refcount_table_clusters;
-	__u32	refcount_table_index;
-	__u32	refcount_block_index;
+	__u32	refcount_table_সূচক;
+	__u32	refcount_block_সূচক;
 
 	__u16	*refcount_block;
 };
 
-struct ext2_qcow2_image {
-	int	fd;
-	struct	ext2_qcow2_hdr		*hdr;
-	struct	ext2_qcow2_l2_cache	*l2_cache;
-	struct	ext2_qcow2_refcount	refcount;
-	__u32	cluster_size;
+কাঠামো ext2_qcow2_image {
+	পূর্ণসংখ্যা	fd;
+	কাঠামো	ext2_qcow2_hdr		*hdr;
+	কাঠামো	ext2_qcow2_l2_cache	*l2_cache;
+	কাঠামো	ext2_qcow2_refcount	refcount;
+	__u32	cluster_আকার;
 	__u32	cluster_bits;
-	__u32	l1_size;
-	__u32	l2_size;
+	__u32	l1_আকার;
+	__u32	l2_আকার;
 
 	__u64	*l1_table;
 	__u64	l2_offset;
 	__u64	l1_offset;
-	__u64	image_size;
+	__u64	image_আকার;
 };
 
 /* Function prototypes */
@@ -111,6 +111,6 @@ struct ext2_qcow2_image {
 /* qcow2.c */
 
 /* Functions for converting qcow2 image into raw image */
-struct ext2_qcow2_hdr *qcow2_read_header(int);
-int qcow2_write_raw_image(int, int, struct ext2_qcow2_hdr *);
+কাঠামো ext2_qcow2_hdr *qcow2_read_header(পূর্ণসংখ্যা);
+পূর্ণসংখ্যা qcow2_write_raw_image(পূর্ণসংখ্যা, পূর্ণসংখ্যা, কাঠামো ext2_qcow2_hdr *);
 

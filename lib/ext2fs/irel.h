@@ -9,42 +9,42 @@
  * %End-Header%
  */
 
-struct ext2_inode_reference {
+কাঠামো ext2_inode_reference {
 	blk64_t	block;
 	__u16 offset;
 };
 
-struct ext2_inode_relocate_entry {
+কাঠামো ext2_inode_relocate_entry {
 	ext2_ino_t	new;
 	ext2_ino_t	orig;
 	__u16		flags;
 	__u16		max_refs;
 };
 
-typedef struct ext2_inode_relocation_table *ext2_irel;
+প্রকারলেখ কাঠামো ext2_inode_relocation_table *ext2_irel;
 
-struct ext2_inode_relocation_table {
+কাঠামো ext2_inode_relocation_table {
 	__u32	magic;
-	char	*name;
+	অক্ষর	*name;
 	ext2_ino_t	current;
-	void	*priv_data;
+	শূন্য	*priv_তথ্য;
 
 	/*
 	 * Add an inode relocation entry.
 	 */
 	errcode_t (*put)(ext2_irel irel, ext2_ino_t old,
-			      struct ext2_inode_relocate_entry *ent);
+			      কাঠামো ext2_inode_relocate_entry *ent);
 	/*
 	 * Get an inode relocation entry.
 	 */
 	errcode_t (*get)(ext2_irel irel, ext2_ino_t old,
-			      struct ext2_inode_relocate_entry *ent);
+			      কাঠামো ext2_inode_relocate_entry *ent);
 
 	/*
 	 * Get an inode relocation entry by its original inode number
 	 */
 	errcode_t (*get_by_orig)(ext2_irel irel, ext2_ino_t orig, ext2_ino_t *old,
-				 struct ext2_inode_relocate_entry *ent);
+				 কাঠামো ext2_inode_relocate_entry *ent);
 
 	/*
 	 * Initialize for iterating over the inode relocation entries.
@@ -55,15 +55,15 @@ struct ext2_inode_relocation_table {
 	 * The iterator function for the inode relocation entries.
 	 * Returns an inode number of 0 when out of entries.
 	 */
-	errcode_t (*next)(ext2_irel irel, ext2_ino_t *old,
-			  struct ext2_inode_relocate_entry *ent);
+	errcode_t (*পরবর্তী)(ext2_irel irel, ext2_ino_t *old,
+			  কাঠামো ext2_inode_relocate_entry *ent);
 
 	/*
 	 * Add an inode reference (i.e., note the fact that a
 	 * particular block/offset contains a reference to an inode)
 	 */
 	errcode_t (*add_ref)(ext2_irel irel, ext2_ino_t ino,
-			     struct ext2_inode_reference *ref);
+			     কাঠামো ext2_inode_reference *ref);
 
 	/*
 	 * Initialize for iterating over the inode references for a
@@ -76,8 +76,8 @@ struct ext2_inode_relocation_table {
 	 * inode.  The references for only one inode can be iterator
 	 * over at a time, as the iterator state is stored in ext2_irel.
 	 */
-	errcode_t (*next_ref)(ext2_irel irel,
-			      struct ext2_inode_reference *ref);
+	errcode_t (*পরবর্তী_ref)(ext2_irel irel,
+			      কাঠামো ext2_inode_reference *ref);
 
 	/*
 	 * Move the inode relocation table from one inode number to
@@ -94,10 +94,10 @@ struct ext2_inode_relocation_table {
 	/*
 	 * Free the inode relocation table.
 	 */
-	errcode_t (*free)(ext2_irel irel);
+	errcode_t (*মুক্ত)(ext2_irel irel);
 };
 
-errcode_t ext2fs_irel_memarray_create(char *name, ext2_ino_t max_inode,
+errcode_t ext2fs_irel_memarray_create(অক্ষর *name, ext2_ino_t max_inode,
 				    ext2_irel *irel);
 
 #define ext2fs_irel_put(irel, old, ent) ((irel)->put((irel), old, ent))
@@ -105,10 +105,10 @@ errcode_t ext2fs_irel_memarray_create(char *name, ext2_ino_t max_inode,
 #define ext2fs_irel_get_by_orig(irel, orig, old, ent) \
 			((irel)->get_by_orig((irel), orig, old, ent))
 #define ext2fs_irel_start_iter(irel) ((irel)->start_iter((irel)))
-#define ext2fs_irel_next(irel, old, ent) ((irel)->next((irel), old, ent))
+#define ext2fs_irel_পরবর্তী(irel, old, ent) ((irel)->পরবর্তী((irel), old, ent))
 #define ext2fs_irel_add_ref(irel, ino, ref) ((irel)->add_ref((irel), ino, ref))
 #define ext2fs_irel_start_iter_ref(irel, ino) ((irel)->start_iter_ref((irel), ino))
-#define ext2fs_irel_next_ref(irel, ref) ((irel)->next_ref((irel), ref))
+#define ext2fs_irel_পরবর্তী_ref(irel, ref) ((irel)->পরবর্তী_ref((irel), ref))
 #define ext2fs_irel_move(irel, old, new) ((irel)->move((irel), old, new))
 #define ext2fs_irel_delete(irel, old) ((irel)->delete((irel), old))
-#define ext2fs_irel_free(irel) ((irel)->free((irel)))
+#define ext2fs_irel_free(irel) ((irel)->মুক্ত((irel)))

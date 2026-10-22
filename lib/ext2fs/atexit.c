@@ -17,33 +17,33 @@
 #define _LARGEFILE64_SOURCE
 #endif
 
-#include "config.h"
-#include <stdlib.h>
+#অন্তর্ভাব "config.h"
+#অন্তর্ভাব <stdlib.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#অন্তর্ভাব "ext2_fs.h"
+#অন্তর্ভাব "ext2fs.h"
+#অন্তর্ভাব "ext2fsP.h"
 
-struct exit_data {
+কাঠামো exit_তথ্য {
 	ext2_exit_fn func;
-	void *data;
+	শূন্য *তথ্য;
 };
 
-static struct exit_data *items;
-static size_t nr_items;
+স্থির কাঠামো exit_তথ্য *বস্তুসমূহ;
+স্থির size_t nr_বস্তুসমূহ;
 
-static void handle_exit(void)
+স্থির শূন্য handle_exit(শূন্য)
 {
-	struct exit_data *ed;
+	কাঠামো exit_তথ্য *ed;
 
-	for (ed = items + nr_items - 1; ed >= items; ed--) {
-		if (ed->func == NULL)
-			continue;
-		ed->func(ed->data);
+	জন্য (ed = বস্তুসমূহ + nr_বস্তুসমূহ - 1; ed >= বস্তুসমূহ; ed--) {
+		যদি (ed->func == ফাঁকা)
+			চালু;
+		ed->func(ed->তথ্য);
 	}
 
-	ext2fs_free_mem(&items);
-	nr_items = 0;
+	ext2fs_free_mem(&বস্তুসমূহ);
+	nr_বস্তুসমূহ = 0;
 }
 
 /*
@@ -51,66 +51,66 @@ static void handle_exit(void)
  * If you want this to be called during a signal exit, you must capture
  * the signal and call exit() yourself!
  */
-errcode_t ext2fs_add_exit_fn(ext2_exit_fn func, void *data)
+errcode_t ext2fs_add_exit_fn(ext2_exit_fn func, শূন্য *তথ্য)
 {
-	struct exit_data *ed, *free_ed = NULL;
+	কাঠামো exit_তথ্য *ed, *free_ed = ফাঁকা;
 	size_t x;
 	errcode_t ret;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	যদি (func == ফাঁকা)
+		ফেরত EXT2_ET_INVALID_ARGUMENT;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == func && ed->data == data)
-			return EXT2_ET_FILE_EXISTS;
-		if (ed->func == NULL)
+	জন্য (x = 0, ed = বস্তুসমূহ; x < nr_বস্তুসমূহ; x++, ed++) {
+		যদি (ed->func == func && ed->তথ্য == তথ্য)
+			ফেরত EXT2_ET_FILE_EXISTS;
+		যদি (ed->func == ফাঁকা)
 			free_ed = ed;
 	}
 
-	if (free_ed) {
+	যদি (free_ed) {
 		free_ed->func = func;
-		free_ed->data = data;
-		return 0;
+		free_ed->তথ্য = তথ্য;
+		ফেরত 0;
 	}
 
-	if (nr_items == 0) {
+	যদি (nr_বস্তুসমূহ == 0) {
 		ret = atexit(handle_exit);
-		if (ret)
-			return ret;
+		যদি (ret)
+			ফেরত ret;
 	}
 
-	ret = ext2fs_resize_mem(0, (nr_items + 1) * sizeof(struct exit_data),
-				&items);
-	if (ret)
-		return ret;
+	ret = ext2fs_resize_mem(0, (nr_বস্তুসমূহ + 1) * আকার(কাঠামো exit_তথ্য),
+				&বস্তুসমূহ);
+	যদি (ret)
+		ফেরত ret;
 
-	items[nr_items].func = func;
-	items[nr_items].data = data;
-	nr_items++;
+	বস্তুসমূহ[nr_বস্তুসমূহ].func = func;
+	বস্তুসমূহ[nr_বস্তুসমূহ].তথ্য = তথ্য;
+	nr_বস্তুসমূহ++;
 
-	return 0;
+	ফেরত 0;
 }
 
 /* Remove a function from the exit cleanup list. */
-errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, void *data)
+errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, শূন্য *তথ্য)
 {
-	struct exit_data *ed;
+	কাঠামো exit_তথ্য *ed;
 	size_t x;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	যদি (func == ফাঁকা)
+		ফেরত EXT2_ET_INVALID_ARGUMENT;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == NULL)
-			return 0;
-		if (ed->func == func && ed->data == data) {
-			size_t sz = (nr_items - (x + 1)) *
-				    sizeof(struct exit_data);
+	জন্য (x = 0, ed = বস্তুসমূহ; x < nr_বস্তুসমূহ; x++, ed++) {
+		যদি (ed->func == ফাঁকা)
+			ফেরত 0;
+		যদি (ed->func == func && ed->তথ্য == তথ্য) {
+			size_t sz = (nr_বস্তুসমূহ - (x + 1)) *
+				    আকার(কাঠামো exit_তথ্য);
 			memmove(ed, ed + 1, sz);
-			memset(items + nr_items - 1, 0,
-			       sizeof(struct exit_data));
+			memset(বস্তুসমূহ + nr_বস্তুসমূহ - 1, 0,
+			       আকার(কাঠামো exit_তথ্য));
 		}
 	}
 
-	return 0;
+	ফেরত 0;
 }
