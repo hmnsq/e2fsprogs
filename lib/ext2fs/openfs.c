@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_ERRNO_H
-#include <errno.h>
-#endif
+#समावेश "config.h"
+#समावेश <stdio.h>
+#समावेश <string.h>
+#अगर HAVE_UNISTD_H
+#समावेश <unistd.h>
+#पूर्ण_अगर
+#समावेश <fcntl.h>
+#समावेश <time.h>
+#अगर HAVE_SYS_STAT_H
+#समावेश <sys/stat.h>
+#पूर्ण_अगर
+#अगर HAVE_SYS_TYPES_H
+#समावेश <sys/types.h>
+#पूर्ण_अगर
+#अगर_घोषित HAVE_ERRNO_H
+#समावेश <errno.h>
+#पूर्ण_अगर
 
-#include "ext2_fs.h"
+#समावेश "ext2_fs.h"
 
-#include "ext2fs.h"
-#include "e2image.h"
+#समावेश "ext2fs.h"
+#समावेश "e2image.h"
 
 blk64_t ext2fs_descriptor_block_loc2(ext2_filsys fs, blk64_t group_block,
 				     dgrp_t i)
 {
-	int	bg;
-	int	has_super = 0, group_zero_adjust = 0;
+	पूर्णांक	bg;
+	पूर्णांक	has_super = 0, group_zero_adjust = 0;
 	blk64_t	ret_blk;
 
 	/*
 	 * On a bigalloc FS with 1K blocks, block 0 is reserved for non-ext4
 	 * stuff, so adjust for that if we're being asked for group 0.
 	 */
-	if (i == 0 && fs->blocksize == 1024 && EXT2FS_CLUSTER_RATIO(fs) > 1)
+	अगर (i == 0 && fs->blocksize == 1024 && EXT2FS_CLUSTER_RATIO(fs) > 1)
 		group_zero_adjust = 1;
 
-	if (!ext2fs_has_feature_meta_bg(fs->super) ||
+	अगर (!ext2fs_has_feature_meta_bg(fs->super) ||
 	    (i < fs->super->s_first_meta_bg))
-		return group_block + i + 1 + group_zero_adjust;
+		वापस group_block + i + 1 + group_zero_adjust;
 
 	bg = EXT2_DESC_PER_BLOCK(fs->super) * i;
-	if (ext2fs_bg_has_super(fs, bg))
+	अगर (ext2fs_bg_has_super(fs, bg))
 		has_super = 1;
 	ret_blk = ext2fs_group_first_block2(fs, bg);
 	/*
@@ -62,9 +62,9 @@ blk64_t ext2fs_descriptor_block_loc2(ext2_filsys fs, blk64_t group_block,
 	 * descriptor block individually for correctness, but we don't
 	 * have the infrastructure in place to do that.
 	 */
-	if (group_block != fs->super->s_first_data_block &&
+	अगर (group_block != fs->super->s_first_तथ्य_block &&
 	    ((ret_blk + has_super + fs->super->s_blocks_per_group) <
-	     ext2fs_blocks_count(fs->super))) {
+	     ext2fs_blocks_गिनती(fs->super))) {
 		ret_blk += fs->super->s_blocks_per_group;
 
 		/*
@@ -72,31 +72,31 @@ blk64_t ext2fs_descriptor_block_loc2(ext2_filsys fs, blk64_t group_block,
 		 * that we adjust has_super to account for the next group's
 		 * backup superblock (or lack thereof).
 		 */
-		if (ext2fs_bg_has_super(fs, bg + 1))
+		अगर (ext2fs_bg_has_super(fs, bg + 1))
 			has_super = 1;
-		else
+		अन्यथा
 			has_super = 0;
 	}
-	return ret_blk + has_super + group_zero_adjust;
+	वापस ret_blk + has_super + group_zero_adjust;
 }
 
 blk_t ext2fs_descriptor_block_loc(ext2_filsys fs, blk_t group_block, dgrp_t i)
 {
-	return ext2fs_descriptor_block_loc2(fs, group_block, i);
+	वापस ext2fs_descriptor_block_loc2(fs, group_block, i);
 }
 
-errcode_t ext2fs_open(const char *name, int flags, int superblock,
-		      unsigned int block_size, io_manager manager,
+errcode_t ext2fs_open(स्थिर अक्षर *name, पूर्णांक flags, पूर्णांक superblock,
+		      अचिन्हित पूर्णांक block_आकार, io_manager manager,
 		      ext2_filsys *ret_fs)
 {
-	return ext2fs_open2(name, 0, flags, superblock, block_size,
+	वापस ext2fs_open2(name, 0, flags, superblock, block_आकार,
 			    manager, ret_fs);
 }
 
-static void block_sha_map_free_entry(void *data)
+अटल व्योम block_sha_map_free_entry(व्योम *तथ्य)
 {
-	free(data);
-	return;
+	मुक्त(तथ्य);
+	वापस;
 }
 
 /*
@@ -113,36 +113,36 @@ static void block_sha_map_free_entry(void *data)
  *	EXT2_FLAG_64BITS - Allow 64-bit bitfields (needed for large
  *				filesystems)
  */
-errcode_t ext2fs_open2(const char *name, const char *io_options,
-		       int flags, int superblock,
-		       unsigned int block_size, io_manager manager,
+errcode_t ext2fs_open2(स्थिर अक्षर *name, स्थिर अक्षर *io_options,
+		       पूर्णांक flags, पूर्णांक superblock,
+		       अचिन्हित पूर्णांक block_आकार, io_manager manager,
 		       ext2_filsys *ret_fs)
 {
 	ext2_filsys	fs;
 	errcode_t	retval;
-	unsigned long	i, first_meta_bg;
+	अचिन्हित दीर्घ	i, first_meta_bg;
 	__u32		features;
-	unsigned int	blocks_per_group, io_flags;
+	अचिन्हित पूर्णांक	blocks_per_group, io_flags;
 	blk64_t		group_block, blk;
-	char		*dest, *cp;
-	int		group_zero_adjust = 0;
-	unsigned int	inode_size;
+	अक्षर		*dest, *cp;
+	पूर्णांक		group_zero_adjust = 0;
+	अचिन्हित पूर्णांक	inode_आकार;
 	__u64		groups_cnt;
-#ifdef WORDS_BIGENDIAN
-	unsigned int	groups_per_block;
-	struct ext2_group_desc *gdp;
-	int		j;
-#endif
-	char		*time_env;
-	int		csum_retries = 0;
+#अगर_घोषित शब्दगण_BIGENDIAN
+	अचिन्हित पूर्णांक	groups_per_block;
+	काष्ठा ext2_group_desc *gdp;
+	पूर्णांक		j;
+#पूर्ण_अगर
+	अक्षर		*time_env;
+	पूर्णांक		csum_retries = 0;
 
 	EXT2_CHECK_MAGIC(manager, EXT2_ET_MAGIC_IO_MANAGER);
 
-	retval = ext2fs_get_mem(sizeof(struct struct_ext2_filsys), &fs);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(माप(काष्ठा struct_ext2_filsys), &fs);
+	अगर (retval)
+		वापस retval;
 
-	memset(fs, 0, sizeof(struct struct_ext2_filsys));
+	स_रखो(fs, 0, माप(काष्ठा struct_ext2_filsys));
 	fs->magic = EXT2_ET_MAGIC_EXT2FS_FILSYS;
 	fs->flags = flags;
 	/* don't overwrite sb backups unless flag is explicitly cleared */
@@ -150,59 +150,59 @@ errcode_t ext2fs_open2(const char *name, const char *io_options,
 	fs->umask = 022;
 
 	time_env = ext2fs_safe_getenv("SOURCE_DATE_EPOCH");
-	if (time_env) {
-		fs->now = strtoul(time_env, NULL, 0);
+	अगर (time_env) {
+		fs->now = म_से_अदीर्घ(time_env, शून्य, 0);
 		fs->flags2 |= EXT2_FLAG2_USE_FAKE_TIME;
-	} else {
+	} अन्यथा {
 		time_env = ext2fs_safe_getenv("E2FSPROGS_FAKE_TIME");
-		if (time_env)
-			fs->now = strtoul(time_env, NULL, 0);
+		अगर (time_env)
+			fs->now = म_से_अदीर्घ(time_env, शून्य, 0);
 	}
 
-	retval = ext2fs_get_mem(strlen(name)+1, &fs->device_name);
-	if (retval)
-		goto cleanup;
-	strcpy(fs->device_name, name);
-	cp = strchr(fs->device_name, '?');
-	if (!io_options && cp) {
+	retval = ext2fs_get_mem(म_माप(name)+1, &fs->device_name);
+	अगर (retval)
+		जाओ cleanup;
+	म_नकल(fs->device_name, name);
+	cp = म_अक्षर(fs->device_name, '?');
+	अगर (!io_options && cp) {
 		*cp++ = 0;
 		io_options = cp;
 	}
 
 	io_flags = 0;
-	if (flags & EXT2_FLAG_RW)
+	अगर (flags & EXT2_FLAG_RW)
 		io_flags |= IO_FLAG_RW;
-	if (flags & EXT2_FLAG_EXCLUSIVE)
+	अगर (flags & EXT2_FLAG_EXCLUSIVE)
 		io_flags |= IO_FLAG_EXCLUSIVE;
-	if (flags & EXT2_FLAG_DIRECT_IO)
+	अगर (flags & EXT2_FLAG_DIRECT_IO)
 		io_flags |= IO_FLAG_DIRECT_IO;
-	if (flags & EXT2_FLAG_THREADS)
+	अगर (flags & EXT2_FLAG_THREADS)
 		io_flags |= IO_FLAG_THREADS;
-	retval = manager->open(fs->device_name, io_flags, &fs->io);
-	if (retval)
-		goto cleanup;
-	if (io_options &&
+	retval = manager->खोलो(fs->device_name, io_flags, &fs->io);
+	अगर (retval)
+		जाओ cleanup;
+	अगर (io_options &&
 	    (retval = io_channel_set_options(fs->io, io_options)))
-		goto cleanup;
+		जाओ cleanup;
 	fs->image_io = fs->io;
-	fs->io->app_data = fs;
-	retval = io_channel_alloc_buf(fs->io, -SUPERBLOCK_SIZE, &fs->super);
-	if (retval)
-		goto cleanup;
-	if (flags & EXT2_FLAG_IMAGE_FILE) {
-		retval = ext2fs_get_mem(sizeof(struct ext2_image_hdr),
+	fs->io->app_तथ्य = fs;
+	retval = io_channel_alloc_buf(fs->io, -SUPERBLOCK_आकार, &fs->super);
+	अगर (retval)
+		जाओ cleanup;
+	अगर (flags & EXT2_FLAG_IMAGE_FILE) {
+		retval = ext2fs_get_mem(माप(काष्ठा ext2_image_hdr),
 					&fs->image_header);
-		if (retval)
-			goto cleanup;
+		अगर (retval)
+			जाओ cleanup;
 		retval = io_channel_read_blk(fs->io, 0,
-					     -(int)sizeof(struct ext2_image_hdr),
+					     -(पूर्णांक)माप(काष्ठा ext2_image_hdr),
 					     fs->image_header);
-		if (retval)
-			goto cleanup;
-		if (ext2fs_le32_to_cpu(fs->image_header->magic_number) != EXT2_ET_MAGIC_E2IMAGE)
-			return EXT2_ET_MAGIC_E2IMAGE;
+		अगर (retval)
+			जाओ cleanup;
+		अगर (ext2fs_le32_to_cpu(fs->image_header->magic_संख्या) != EXT2_ET_MAGIC_E2IMAGE)
+			वापस EXT2_ET_MAGIC_E2IMAGE;
 		superblock = 1;
-		block_size = ext2fs_le32_to_cpu(fs->image_header->fs_blocksize);
+		block_आकार = ext2fs_le32_to_cpu(fs->image_header->fs_blocksize);
 	}
 
 	/*
@@ -214,156 +214,156 @@ errcode_t ext2fs_open2(const char *name, const char *io_options,
 	 * Note: we only save a backup copy of the superblock if we
 	 * are reading the superblock from the primary superblock location.
 	 */
-	if (superblock) {
-		if (!block_size) {
+	अगर (superblock) {
+		अगर (!block_आकार) {
 			retval = EXT2_ET_INVALID_ARGUMENT;
-			goto cleanup;
+			जाओ cleanup;
 		}
-		io_channel_set_blksize(fs->io, block_size);
+		io_channel_set_blksize(fs->io, block_आकार);
 		group_block = superblock;
 		fs->orig_super = 0;
-	} else {
+	} अन्यथा {
 		io_channel_set_blksize(fs->io, SUPERBLOCK_OFFSET);
 		superblock = 1;
 		group_block = 0;
-		retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &fs->orig_super);
-		if (retval)
-			goto cleanup;
+		retval = ext2fs_get_mem(SUPERBLOCK_आकार, &fs->orig_super);
+		अगर (retval)
+			जाओ cleanup;
 	}
 retry:
-	retval = io_channel_read_blk(fs->io, superblock, -SUPERBLOCK_SIZE,
+	retval = io_channel_read_blk(fs->io, superblock, -SUPERBLOCK_आकार,
 				     fs->super);
-	if (retval)
-		goto cleanup;
-	if (fs->orig_super)
-		memcpy(fs->orig_super, fs->super, SUPERBLOCK_SIZE);
+	अगर (retval)
+		जाओ cleanup;
+	अगर (fs->orig_super)
+		स_नकल(fs->orig_super, fs->super, SUPERBLOCK_आकार);
 
-	if (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS)) {
+	अगर (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS)) {
 		retval = 0;
-		if (!ext2fs_verify_csum_type(fs, fs->super))
+		अगर (!ext2fs_verify_csum_type(fs, fs->super))
 			retval = EXT2_ET_UNKNOWN_CSUM;
-		if (!ext2fs_superblock_csum_verify(fs, fs->super)) {
-			if (csum_retries++ < 3)
-				goto retry;
+		अगर (!ext2fs_superblock_csum_verify(fs, fs->super)) {
+			अगर (csum_retries++ < 3)
+				जाओ retry;
 			retval = EXT2_ET_SB_CSUM_INVALID;
 		}
 	}
 
-#ifdef WORDS_BIGENDIAN
+#अगर_घोषित शब्दगण_BIGENDIAN
 	fs->flags |= EXT2_FLAG_SWAP_BYTES;
 	ext2fs_swap_super(fs->super);
-#else
-	if (fs->flags & EXT2_FLAG_SWAP_BYTES) {
+#अन्यथा
+	अगर (fs->flags & EXT2_FLAG_SWAP_BYTES) {
 		retval = EXT2_ET_UNIMPLEMENTED;
-		goto cleanup;
+		जाओ cleanup;
 	}
-#endif
+#पूर्ण_अगर
 
-	if (fs->super->s_magic != EXT2_SUPER_MAGIC)
+	अगर (fs->super->s_magic != EXT2_SUPER_MAGIC)
 		retval = EXT2_ET_BAD_MAGIC;
-	if (retval)
-		goto cleanup;
+	अगर (retval)
+		जाओ cleanup;
 
-	if (fs->super->s_rev_level > EXT2_LIB_CURRENT_REV) {
-		retval = EXT2_ET_REV_TOO_HIGH;
-		goto cleanup;
+	अगर (fs->super->s_rev_level > EXT2_LIB_CURRENT_REV) {
+		retval = EXT2_ET_REV_TOO_ऊपरी;
+		जाओ cleanup;
 	}
 
 	/*
 	 * Check for feature set incompatibility
 	 */
-	if (!(flags & EXT2_FLAG_FORCE)) {
+	अगर (!(flags & EXT2_FLAG_FORCE)) {
 		features = fs->super->s_feature_incompat;
-#ifdef EXT2_LIB_SOFTSUPP_INCOMPAT
-		if (flags & EXT2_FLAG_SOFTSUPP_FEATURES)
+#अगर_घोषित EXT2_LIB_SOFTSUPP_INCOMPAT
+		अगर (flags & EXT2_FLAG_SOFTSUPP_FEATURES)
 			features &= ~EXT2_LIB_SOFTSUPP_INCOMPAT;
-#endif
-		if (features & ~EXT2_LIB_FEATURE_INCOMPAT_SUPP) {
+#पूर्ण_अगर
+		अगर (features & ~EXT2_LIB_FEATURE_INCOMPAT_SUPP) {
 			retval = EXT2_ET_UNSUPP_FEATURE;
-			goto cleanup;
+			जाओ cleanup;
 		}
 
 		features = fs->super->s_feature_ro_compat;
-#ifdef EXT2_LIB_SOFTSUPP_RO_COMPAT
-		if (flags & EXT2_FLAG_SOFTSUPP_FEATURES)
+#अगर_घोषित EXT2_LIB_SOFTSUPP_RO_COMPAT
+		अगर (flags & EXT2_FLAG_SOFTSUPP_FEATURES)
 			features &= ~EXT2_LIB_SOFTSUPP_RO_COMPAT;
-#endif
-		if ((flags & EXT2_FLAG_RW) &&
+#पूर्ण_अगर
+		अगर ((flags & EXT2_FLAG_RW) &&
 		    (features & ~EXT2_LIB_FEATURE_RO_COMPAT_SUPP)) {
 			retval = EXT2_ET_RO_UNSUPP_FEATURE;
-			goto cleanup;
+			जाओ cleanup;
 		}
 
-		if (!(flags & EXT2_FLAG_JOURNAL_DEV_OK) &&
+		अगर (!(flags & EXT2_FLAG_JOURNAL_DEV_OK) &&
 		    ext2fs_has_feature_journal_dev(fs->super)) {
 			retval = EXT2_ET_UNSUPP_FEATURE;
-			goto cleanup;
+			जाओ cleanup;
 		}
 	}
 
-	if ((fs->super->s_log_block_size >
-	     (unsigned) (EXT2_MAX_BLOCK_LOG_SIZE - EXT2_MIN_BLOCK_LOG_SIZE)) ||
-	    (fs->super->s_log_cluster_size >
-	     (unsigned) (EXT2_MAX_CLUSTER_LOG_SIZE - EXT2_MIN_CLUSTER_LOG_SIZE)) ||
-	    (fs->super->s_log_block_size > fs->super->s_log_cluster_size) ||
+	अगर ((fs->super->s_log_block_आकार >
+	     (अचिन्हित) (EXT2_MAX_BLOCK_LOG_आकार - EXT2_MIN_BLOCK_LOG_आकार)) ||
+	    (fs->super->s_log_cluster_आकार >
+	     (अचिन्हित) (EXT2_MAX_CLUSTER_LOG_आकार - EXT2_MIN_CLUSTER_LOG_आकार)) ||
+	    (fs->super->s_log_block_आकार > fs->super->s_log_cluster_आकार) ||
 	    (fs->super->s_log_groups_per_flex > 31)) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		जाओ cleanup;
 	}
 
 	/*
 	 * bigalloc requires cluster-aware bitfield operations, which at the
 	 * moment means we need EXT2_FLAG_64BITS.
 	 */
-	if (ext2fs_has_feature_bigalloc(fs->super) &&
+	अगर (ext2fs_has_feature_bigalloc(fs->super) &&
 	    !(flags & EXT2_FLAG_64BITS)) {
 		retval = EXT2_ET_CANT_USE_LEGACY_BITMAPS;
-		goto cleanup;
+		जाओ cleanup;
 	}
 
-	if (!ext2fs_has_feature_bigalloc(fs->super) &&
-	    (fs->super->s_log_block_size != fs->super->s_log_cluster_size)) {
+	अगर (!ext2fs_has_feature_bigalloc(fs->super) &&
+	    (fs->super->s_log_block_आकार != fs->super->s_log_cluster_आकार)) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		जाओ cleanup;
 	}
-	fs->fragsize = fs->blocksize = EXT2_BLOCK_SIZE(fs->super);
-	inode_size = EXT2_INODE_SIZE(fs->super);
-	if ((inode_size < EXT2_GOOD_OLD_INODE_SIZE) ||
-	    (inode_size > fs->blocksize) ||
-	    (inode_size & (inode_size - 1))) {
+	fs->fragsize = fs->blocksize = EXT2_BLOCK_आकार(fs->super);
+	inode_आकार = EXT2_INODE_आकार(fs->super);
+	अगर ((inode_आकार < EXT2_GOOD_OLD_INODE_आकार) ||
+	    (inode_आकार > fs->blocksize) ||
+	    (inode_आकार & (inode_आकार - 1))) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		जाओ cleanup;
 	}
 
 	/* Enforce the block group descriptor size */
-	if (ext2fs_has_feature_64bit(fs->super)) {
-		unsigned desc_size = fs->super->s_desc_size;
+	अगर (ext2fs_has_feature_64bit(fs->super)) {
+		अचिन्हित desc_आकार = fs->super->s_desc_आकार;
 
-		if (desc_size == 0 ||
+		अगर (desc_आकार == 0 ||
 		    (!(flags & EXT2_FLAG_IGNORE_SB_ERRORS) &&
-		     ((desc_size > EXT2_MAX_DESC_SIZE) ||
-		      (desc_size < EXT2_MIN_DESC_SIZE_64BIT) ||
-		      (desc_size & (desc_size - 1)) != 0))) {
-			retval = EXT2_ET_BAD_DESC_SIZE;
-			goto cleanup;
+		     ((desc_आकार > EXT2_MAX_DESC_आकार) ||
+		      (desc_आकार < EXT2_MIN_DESC_आकार_64_BIT) ||
+		      (desc_आकार & (desc_आकार - 1)) != 0))) {
+			retval = EXT2_ET_BAD_DESC_आकार;
+			जाओ cleanup;
 		}
 	}
 
-	fs->cluster_ratio_bits = fs->super->s_log_cluster_size -
-		fs->super->s_log_block_size;
-	if (EXT2_BLOCKS_PER_GROUP(fs->super) !=
+	fs->cluster_ratio_bits = fs->super->s_log_cluster_आकार -
+		fs->super->s_log_block_आकार;
+	अगर (EXT2_BLOCKS_PER_GROUP(fs->super) !=
 	    EXT2_CLUSTERS_PER_GROUP(fs->super) << fs->cluster_ratio_bits) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		जाओ cleanup;
 	}
 	fs->inode_blocks_per_group = ((EXT2_INODES_PER_GROUP(fs->super) *
-				       EXT2_INODE_SIZE(fs->super) +
-				       EXT2_BLOCK_SIZE(fs->super) - 1) /
-				      EXT2_BLOCK_SIZE(fs->super));
-	if (block_size) {
-		if (block_size != fs->blocksize) {
-			retval = EXT2_ET_UNEXPECTED_BLOCK_SIZE;
-			goto cleanup;
+				       EXT2_INODE_आकार(fs->super) +
+				       EXT2_BLOCK_आकार(fs->super) - 1) /
+				      EXT2_BLOCK_आकार(fs->super));
+	अगर (block_आकार) {
+		अगर (block_आकार != fs->blocksize) {
+			retval = EXT2_ET_UNEXPECTED_BLOCK_आकार;
+			जाओ cleanup;
 		}
 	}
 	/*
@@ -375,15 +375,15 @@ retry:
 	 * If this is an external journal device, don't try to read
 	 * the group descriptors, because they're not there.
 	 */
-	if (ext2fs_has_feature_journal_dev(fs->super)) {
-		fs->group_desc_count = 0;
+	अगर (ext2fs_has_feature_journal_dev(fs->super)) {
+		fs->group_desc_गिनती = 0;
 		*ret_fs = fs;
-		return 0;
+		वापस 0;
 	}
 
-	if (EXT2_INODES_PER_GROUP(fs->super) == 0) {
+	अगर (EXT2_INODES_PER_GROUP(fs->super) == 0) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		जाओ cleanup;
 	}
 	/* Precompute the FS UUID to seed other checksums */
 	ext2fs_init_csum_seed(fs);
@@ -392,44 +392,44 @@ retry:
 	 * Read group descriptors
 	 */
 	blocks_per_group = EXT2_BLOCKS_PER_GROUP(fs->super);
-	if (blocks_per_group < 8 ||
+	अगर (blocks_per_group < 8 ||
 	    blocks_per_group > EXT2_MAX_BLOCKS_PER_GROUP(fs->super) ||
 	    fs->inode_blocks_per_group > EXT2_MAX_INODES_PER_GROUP(fs->super) ||
            EXT2_DESC_PER_BLOCK(fs->super) == 0 ||
-           fs->super->s_first_data_block >= ext2fs_blocks_count(fs->super)) {
+           fs->super->s_first_तथ्य_block >= ext2fs_blocks_गिनती(fs->super)) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		जाओ cleanup;
 	}
-	groups_cnt = ext2fs_div64_ceil(ext2fs_blocks_count(fs->super) -
-				       fs->super->s_first_data_block,
+	groups_cnt = ext2fs_div64_ceil(ext2fs_blocks_गिनती(fs->super) -
+				       fs->super->s_first_तथ्य_block,
 				       blocks_per_group);
-	if (groups_cnt >> 32) {
+	अगर (groups_cnt >> 32) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		जाओ cleanup;
 	}
-	fs->group_desc_count = 	groups_cnt;
-	if (!(flags & EXT2_FLAG_IGNORE_SB_ERRORS) &&
-	    (__u64)fs->group_desc_count * EXT2_INODES_PER_GROUP(fs->super) !=
-	    fs->super->s_inodes_count) {
+	fs->group_desc_गिनती = 	groups_cnt;
+	अगर (!(flags & EXT2_FLAG_IGNORE_SB_ERRORS) &&
+	    (__u64)fs->group_desc_गिनती * EXT2_INODES_PER_GROUP(fs->super) !=
+	    fs->super->s_inodes_गिनती) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		जाओ cleanup;
 	}
-	fs->desc_blocks = ext2fs_div_ceil(fs->group_desc_count,
+	fs->desc_blocks = ext2fs_div_ceil(fs->group_desc_गिनती,
 					  EXT2_DESC_PER_BLOCK(fs->super));
-	if (ext2fs_has_feature_meta_bg(fs->super) &&
+	अगर (ext2fs_has_feature_meta_bg(fs->super) &&
 	    (fs->super->s_first_meta_bg > fs->desc_blocks) &&
 	    !(flags & EXT2_FLAG_IGNORE_SB_ERRORS)) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
-		goto cleanup;
+		जाओ cleanup;
 	}
-	if (flags & EXT2_FLAG_SUPER_ONLY)
-		goto skip_read_bg;
+	अगर (flags & EXT2_FLAG_SUPER_ONLY)
+		जाओ skip_read_bg;
 	retval = ext2fs_get_array(fs->desc_blocks, fs->blocksize,
 				&fs->group_desc);
-	if (retval)
-		goto cleanup;
-	if (!group_block)
-		group_block = fs->super->s_first_data_block;
+	अगर (retval)
+		जाओ cleanup;
+	अगर (!group_block)
+		group_block = fs->super->s_first_तथ्य_block;
 	/*
 	 * On a FS with a 1K blocksize, block 0 is reserved for bootloaders
 	 * so we must increment block numbers to any group 0 items.
@@ -441,54 +441,54 @@ retry:
 	 * set superblock == 0 (i.e. auto-detect the superblock), which is
 	 * what's going on here.
 	 */
-	if (group_block == 0 && fs->blocksize == 1024)
+	अगर (group_block == 0 && fs->blocksize == 1024)
 		group_zero_adjust = 1;
-	dest = (char *) fs->group_desc;
-#ifdef WORDS_BIGENDIAN
+	dest = (अक्षर *) fs->group_desc;
+#अगर_घोषित शब्दगण_BIGENDIAN
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-#endif
-	if (ext2fs_has_feature_meta_bg(fs->super) &&
+#पूर्ण_अगर
+	अगर (ext2fs_has_feature_meta_bg(fs->super) &&
 	    !(flags & EXT2_FLAG_IMAGE_FILE)) {
 		first_meta_bg = fs->super->s_first_meta_bg;
-		if (first_meta_bg > fs->desc_blocks)
+		अगर (first_meta_bg > fs->desc_blocks)
 			first_meta_bg = fs->desc_blocks;
-	} else
+	} अन्यथा
 		first_meta_bg = fs->desc_blocks;
-	if (first_meta_bg) {
+	अगर (first_meta_bg) {
 		retval = io_channel_read_blk(fs->io, group_block +
 					     group_zero_adjust + 1,
 					     first_meta_bg, dest);
-		if (retval)
-			goto cleanup;
-#ifdef WORDS_BIGENDIAN
-		gdp = (struct ext2_group_desc *) dest;
-		for (j=0; j < groups_per_block*first_meta_bg; j++) {
+		अगर (retval)
+			जाओ cleanup;
+#अगर_घोषित शब्दगण_BIGENDIAN
+		gdp = (काष्ठा ext2_group_desc *) dest;
+		क्रम (j=0; j < groups_per_block*first_meta_bg; j++) {
 			gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-			if (gdp)
+			अगर (gdp)
 				ext2fs_swap_group_desc2(fs, gdp);
 		}
-#endif
+#पूर्ण_अगर
 		dest += fs->blocksize*first_meta_bg;
 	}
 
-	for (i = first_meta_bg ; i < fs->desc_blocks; i++) {
+	क्रम (i = first_meta_bg ; i < fs->desc_blocks; i++) {
 		blk = ext2fs_descriptor_block_loc2(fs, group_block, i);
 		io_channel_cache_readahead(fs->io, blk, 1);
 	}
 
-	for (i=first_meta_bg ; i < fs->desc_blocks; i++) {
+	क्रम (i=first_meta_bg ; i < fs->desc_blocks; i++) {
 		blk = ext2fs_descriptor_block_loc2(fs, group_block, i);
 		retval = io_channel_read_blk64(fs->io, blk, 1, dest);
-		if (retval)
-			goto cleanup;
-#ifdef WORDS_BIGENDIAN
-		for (j=0; j < groups_per_block; j++) {
+		अगर (retval)
+			जाओ cleanup;
+#अगर_घोषित शब्दगण_BIGENDIAN
+		क्रम (j=0; j < groups_per_block; j++) {
 			gdp = ext2fs_group_desc(fs, fs->group_desc,
 						i * groups_per_block + j);
-			if (gdp)
+			अगर (gdp)
 				ext2fs_swap_group_desc2(fs, gdp);
 		}
-#endif
+#पूर्ण_अगर
 		dest += fs->blocksize;
 	}
 
@@ -498,10 +498,10 @@ retry:
 	 * If recovery is from backup superblock, Clear _UNININT flags &
 	 * reset bg_itable_unused to zero
 	 */
-	if (superblock > 1 && ext2fs_has_group_desc_csum(fs)) {
+	अगर (superblock > 1 && ext2fs_has_group_desc_csum(fs)) {
 		dgrp_t group;
 
-		for (group = 0; group < fs->group_desc_count; group++) {
+		क्रम (group = 0; group < fs->group_desc_गिनती; group++) {
 			ext2fs_bg_flags_clear(fs, group, EXT2_BG_BLOCK_UNINIT);
 			ext2fs_bg_flags_clear(fs, group, EXT2_BG_INODE_UNINIT);
 			ext2fs_bg_itable_unused_set(fs, group, 0);
@@ -509,45 +509,45 @@ retry:
 			 * anyway to avoid printing a lot of spurious errors. */
 			ext2fs_group_desc_csum_set(fs, group);
 		}
-		if (fs->flags & EXT2_FLAG_RW)
+		अगर (fs->flags & EXT2_FLAG_RW)
 			ext2fs_mark_super_dirty(fs);
 	}
 skip_read_bg:
-	if (ext2fs_has_feature_mmp(fs->super) &&
+	अगर (ext2fs_has_feature_mmp(fs->super) &&
 	    !(flags & EXT2_FLAG_SKIP_MMP) &&
 	    (flags & (EXT2_FLAG_RW | EXT2_FLAG_EXCLUSIVE))) {
 		retval = ext2fs_mmp_start(fs);
-		if (retval) {
+		अगर (retval) {
 			fs->flags |= EXT2_FLAG_SKIP_MMP; /* just do cleanup */
 			ext2fs_mmp_stop(fs);
-			goto cleanup;
+			जाओ cleanup;
 		}
 	}
 
-	if (fs->flags & EXT2_FLAG_SHARE_DUP) {
+	अगर (fs->flags & EXT2_FLAG_SHARE_DUP) {
 		fs->block_sha_map = ext2fs_hashmap_create(ext2fs_djb2_hash,
 					block_sha_map_free_entry, 4096);
-		if (!fs->block_sha_map) {
+		अगर (!fs->block_sha_map) {
 			retval = EXT2_ET_NO_MEMORY;
-			goto cleanup;
+			जाओ cleanup;
 		}
 		ext2fs_set_feature_shared_blocks(fs->super);
 	}
 
-	if (ext2fs_has_feature_casefold(fs->super))
+	अगर (ext2fs_has_feature_casefold(fs->super))
 		fs->encoding = ext2fs_load_nls_table(fs->super->s_encoding);
 
 	fs->flags &= ~EXT2_FLAG_NOFREE_ON_ERROR;
 	*ret_fs = fs;
 
-	return 0;
+	वापस 0;
 cleanup:
-	if (!(flags & EXT2_FLAG_NOFREE_ON_ERROR)) {
+	अगर (!(flags & EXT2_FLAG_NOFREE_ON_ERROR)) {
 		ext2fs_free(fs);
-		fs = NULL;
+		fs = शून्य;
 	}
 	*ret_fs = fs;
-	return retval;
+	वापस retval;
 }
 
 /*
@@ -555,43 +555,43 @@ cleanup:
  *
  * These functions are only valid if EXT2_FLAG_IMAGE_FILE is true.
  */
-errcode_t ext2fs_get_data_io(ext2_filsys fs, io_channel *old_io)
+errcode_t ext2fs_get_तथ्य_io(ext2_filsys fs, io_channel *old_io)
 {
-	if ((fs->flags & EXT2_FLAG_IMAGE_FILE) == 0)
-		return EXT2_ET_NOT_IMAGE_FILE;
-	if (old_io) {
+	अगर ((fs->flags & EXT2_FLAG_IMAGE_FILE) == 0)
+		वापस EXT2_ET_NOT_IMAGE_FILE;
+	अगर (old_io) {
 		*old_io = (fs->image_io == fs->io) ? 0 : fs->io;
 	}
-	return 0;
+	वापस 0;
 }
 
-errcode_t ext2fs_set_data_io(ext2_filsys fs, io_channel new_io)
+errcode_t ext2fs_set_तथ्य_io(ext2_filsys fs, io_channel new_io)
 {
-	if ((fs->flags & EXT2_FLAG_IMAGE_FILE) == 0)
-		return EXT2_ET_NOT_IMAGE_FILE;
+	अगर ((fs->flags & EXT2_FLAG_IMAGE_FILE) == 0)
+		वापस EXT2_ET_NOT_IMAGE_FILE;
 	fs->io = new_io ? new_io : fs->image_io;
-	return 0;
+	वापस 0;
 }
 
 errcode_t ext2fs_rewrite_to_io(ext2_filsys fs, io_channel new_io)
 {
 	errcode_t err;
 
-	if ((fs->flags & EXT2_FLAG_IMAGE_FILE) == 0)
-		return EXT2_ET_NOT_IMAGE_FILE;
+	अगर ((fs->flags & EXT2_FLAG_IMAGE_FILE) == 0)
+		वापस EXT2_ET_NOT_IMAGE_FILE;
 	err = io_channel_set_blksize(new_io, fs->blocksize);
-	if (err)
-		return err;
-	if ((new_io == fs->image_io) || (new_io == fs->io))
-		return 0;
-	if ((fs->image_io != fs->io) &&
+	अगर (err)
+		वापस err;
+	अगर ((new_io == fs->image_io) || (new_io == fs->io))
+		वापस 0;
+	अगर ((fs->image_io != fs->io) &&
 	    fs->image_io)
 		io_channel_close(fs->image_io);
-	if (fs->io)
+	अगर (fs->io)
 		io_channel_close(fs->io);
 	fs->io = fs->image_io = new_io;
 	fs->flags |= EXT2_FLAG_DIRTY | EXT2_FLAG_RW |
 		EXT2_FLAG_BB_DIRTY | EXT2_FLAG_IB_DIRTY;
 	fs->flags &= ~EXT2_FLAG_IMAGE_FILE;
-	return 0;
+	वापस 0;
 }

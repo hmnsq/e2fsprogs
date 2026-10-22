@@ -9,63 +9,63 @@
  * %End-Header%
  */
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#ifndef _DEFAULT_SOURCE
-#define _DEFAULT_SOURCE	/* since glibc 2.20 _SVID_SOURCE is deprecated */
-#endif
+#अगर_अघोषित _GNU_SOURCE
+#घोषणा _GNU_SOURCE
+#पूर्ण_अगर
+#अगर_अघोषित _DEFAULT_SOURCE
+#घोषणा _DEFAULT_SOURCE	/* since glibc 2.20 _SVID_SOURCE is deprecated */
+#पूर्ण_अगर
 
-#include "config.h"
+#समावेश "config.h"
 
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <sys/time.h>
+#अगर HAVE_UNISTD_H
+#समावेश <unistd.h>
+#पूर्ण_अगर
+#समावेश <sys/time.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#समावेश <sys/types.h>
+#समावेश <sys/stat.h>
+#समावेश <fcntl.h>
 
-#include "ext2fs/ext2_fs.h"
-#include "ext2fs/ext2fs.h"
+#समावेश "ext2fs/ext2_fs.h"
+#समावेश "ext2fs/ext2fs.h"
 
-#ifndef O_DIRECT
-#define O_DIRECT 0
-#endif
+#अगर_अघोषित O_DIRECT
+#घोषणा O_DIRECT 0
+#पूर्ण_अगर
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
-#ifndef CONFIG_MMP
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-#endif
+#अगर __GNUC_PREREQ (4, 6)
+#आशय GCC diagnostic धकेलो
+#अगर_अघोषित CONFIG_MMP
+#आशय GCC diagnostic ignored "-Wunused-parameter"
+#पूर्ण_अगर
+#पूर्ण_अगर
 
-errcode_t ext2fs_mmp_get_mem(ext2_filsys fs, void **ptr)
+errcode_t ext2fs_mmp_get_mem(ext2_filsys fs, व्योम **ptr)
 {
-	int align = ext2fs_get_dio_alignment(fs->mmp_fd);
+	पूर्णांक align = ext2fs_get_dio_alignment(fs->mmp_fd);
 
-	return ext2fs_get_memalign(fs->blocksize, align, ptr);
+	वापस ext2fs_get_memalign(fs->blocksize, align, ptr);
 }
 
-errcode_t ext2fs_mmp_read(ext2_filsys fs, blk64_t mmp_blk, void *buf)
+errcode_t ext2fs_mmp_read(ext2_filsys fs, blk64_t mmp_blk, व्योम *buf)
 {
-#ifdef CONFIG_MMP
-	struct mmp_struct *mmp_cmp;
+#अगर_घोषित CONFIG_MMP
+	काष्ठा mmp_struct *mmp_cmp;
 	errcode_t retval = 0;
 
-	if ((mmp_blk <= fs->super->s_first_data_block) ||
-	    (mmp_blk >= ext2fs_blocks_count(fs->super)))
-		return EXT2_ET_MMP_BAD_BLOCK;
+	अगर ((mmp_blk <= fs->super->s_first_तथ्य_block) ||
+	    (mmp_blk >= ext2fs_blocks_गिनती(fs->super)))
+		वापस EXT2_ET_MMP_BAD_BLOCK;
 
 	/* ext2fs_open() reserves fd0,1,2 to avoid stdio collision, so checking
 	 * mmp_fd <= 0 is OK to validate that the fd is valid.  This opens its
 	 * own fd to read the MMP block to ensure that it is using O_DIRECT,
 	 * regardless of how the io_manager is doing reads, to avoid caching of
 	 * the MMP block by the io_manager or the VM.  It needs to be fresh. */
-	if (fs->mmp_fd <= 0) {
-		struct stat st;
-		int flags = O_RDONLY | O_DIRECT;
+	अगर (fs->mmp_fd <= 0) {
+		काष्ठा stat st;
+		पूर्णांक flags = O_RDONLY | O_DIRECT;
 
 		/*
 		 * There is no reason for using O_DIRECT if we're working with
@@ -73,325 +73,325 @@ errcode_t ext2fs_mmp_read(ext2_filsys fs, blk64_t mmp_blk, void *buf)
 		 * alignment when the device of the host file system has sector
 		 * size larger than blocksize of the fs we're working with.
 		 */
-		if (stat(fs->device_name, &st) == 0 &&
+		अगर (stat(fs->device_name, &st) == 0 &&
 		    S_ISREG(st.st_mode))
 			flags &= ~O_DIRECT;
 
-		fs->mmp_fd = open(fs->device_name, flags);
-		if (fs->mmp_fd < 0) {
+		fs->mmp_fd = खोलो(fs->device_name, flags);
+		अगर (fs->mmp_fd < 0) {
 			retval = EXT2_ET_MMP_OPEN_DIRECT;
-			goto out;
+			जाओ out;
 		}
 	}
 
-	if (fs->mmp_cmp == NULL) {
+	अगर (fs->mmp_cmp == शून्य) {
 		retval = ext2fs_mmp_get_mem(fs, &fs->mmp_cmp);
-		if (retval)
-			return retval;
+		अगर (retval)
+			वापस retval;
 	}
 
-	if ((blk64_t) ext2fs_llseek(fs->mmp_fd, mmp_blk * fs->blocksize,
-				    SEEK_SET) !=
+	अगर ((blk64_t) ext2fs_llseek(fs->mmp_fd, mmp_blk * fs->blocksize,
+				    शुरू_से) !=
 	    mmp_blk * fs->blocksize) {
 		retval = EXT2_ET_LLSEEK_FAILED;
-		goto out;
+		जाओ out;
 	}
 
-	if (read(fs->mmp_fd, fs->mmp_cmp, fs->blocksize) != fs->blocksize) {
+	अगर (पढ़ो(fs->mmp_fd, fs->mmp_cmp, fs->blocksize) != fs->blocksize) {
 		retval = EXT2_ET_SHORT_READ;
-		goto out;
+		जाओ out;
 	}
 
 	mmp_cmp = fs->mmp_cmp;
 
-	if (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+	अगर (!(fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
 	    !ext2fs_mmp_csum_verify(fs, mmp_cmp))
 		retval = EXT2_ET_MMP_CSUM_INVALID;
 
-#ifdef WORDS_BIGENDIAN
+#अगर_घोषित शब्दगण_BIGENDIAN
 	ext2fs_swap_mmp(mmp_cmp);
-#endif
+#पूर्ण_अगर
 
-	if (buf != NULL && buf != fs->mmp_cmp)
-		memcpy(buf, fs->mmp_cmp, fs->blocksize);
+	अगर (buf != शून्य && buf != fs->mmp_cmp)
+		स_नकल(buf, fs->mmp_cmp, fs->blocksize);
 
-	if (mmp_cmp->mmp_magic != EXT4_MMP_MAGIC) {
+	अगर (mmp_cmp->mmp_magic != EXT4_MMP_MAGIC) {
 		retval = EXT2_ET_MMP_MAGIC_INVALID;
-		goto out;
+		जाओ out;
 	}
 
 out:
-	return retval;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+	वापस retval;
+#अन्यथा
+	वापस EXT2_ET_OP_NOT_SUPPORTED;
+#पूर्ण_अगर
 }
 
-errcode_t ext2fs_mmp_write(ext2_filsys fs, blk64_t mmp_blk, void *buf)
+errcode_t ext2fs_mmp_write(ext2_filsys fs, blk64_t mmp_blk, व्योम *buf)
 {
-#ifdef CONFIG_MMP
-	struct mmp_struct *mmp_s = buf;
-	struct timeval tv;
+#अगर_घोषित CONFIG_MMP
+	काष्ठा mmp_struct *mmp_s = buf;
+	काष्ठा timeval tv;
 	errcode_t retval = 0;
 
 	gettimeofday(&tv, 0);
 	mmp_s->mmp_time = tv.tv_sec;
 	fs->mmp_last_written = tv.tv_sec;
 
-	if (fs->super->s_mmp_block < fs->super->s_first_data_block ||
-	    fs->super->s_mmp_block > ext2fs_blocks_count(fs->super))
-		return EXT2_ET_MMP_BAD_BLOCK;
+	अगर (fs->super->s_mmp_block < fs->super->s_first_तथ्य_block ||
+	    fs->super->s_mmp_block > ext2fs_blocks_गिनती(fs->super))
+		वापस EXT2_ET_MMP_BAD_BLOCK;
 
-#ifdef WORDS_BIGENDIAN
+#अगर_घोषित शब्दगण_BIGENDIAN
 	ext2fs_swap_mmp(mmp_s);
-#endif
+#पूर्ण_अगर
 
 	retval = ext2fs_mmp_csum_set(fs, mmp_s);
-	if (retval)
-		return retval;
+	अगर (retval)
+		वापस retval;
 
 	/* I was tempted to make this use O_DIRECT and the mmp_fd, but
 	 * this caused no end of grief, while leaving it as-is works. */
-	retval = io_channel_write_blk64(fs->io, mmp_blk, -(int)sizeof(struct mmp_struct), buf);
+	retval = io_channel_write_blk64(fs->io, mmp_blk, -(पूर्णांक)माप(काष्ठा mmp_struct), buf);
 
-#ifdef WORDS_BIGENDIAN
+#अगर_घोषित शब्दगण_BIGENDIAN
 	ext2fs_swap_mmp(mmp_s);
-#endif
+#पूर्ण_अगर
 
 	/* Make sure the block gets to disk quickly */
 	io_channel_flush(fs->io);
-	return retval;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+	वापस retval;
+#अन्यथा
+	वापस EXT2_ET_OP_NOT_SUPPORTED;
+#पूर्ण_अगर
 }
 
-#ifdef HAVE_SRANDOM
-#define srand(x)	srandom(x)
-#define rand()		random()
-#endif
+#अगर_घोषित HAVE_SRANDOM
+#घोषणा बेक्रम(x)	srandom(x)
+#घोषणा अक्रम()		random()
+#पूर्ण_अगर
 
-unsigned ext2fs_mmp_new_seq(void)
+अचिन्हित ext2fs_mmp_new_seq(व्योम)
 {
-#ifdef CONFIG_MMP
-	unsigned new_seq;
-	struct timeval tv;
-	unsigned long pid = getpid();
+#अगर_घोषित CONFIG_MMP
+	अचिन्हित new_seq;
+	काष्ठा timeval tv;
+	अचिन्हित दीर्घ pid = getpid();
 
 	gettimeofday(&tv, 0);
 	pid = (pid >> 16) | ((pid & 0xFFFF) << 16);
-	srand(pid ^ getuid() ^ tv.tv_sec ^ tv.tv_usec);
+	बेक्रम(pid ^ getuid() ^ tv.tv_sec ^ tv.tv_usec);
 
 	gettimeofday(&tv, 0);
 	/* Crank the random number generator a few times */
-	for (new_seq = (tv.tv_sec ^ tv.tv_usec) & 0x1F; new_seq > 0; new_seq--)
-		rand();
+	क्रम (new_seq = (tv.tv_sec ^ tv.tv_usec) & 0x1F; new_seq > 0; new_seq--)
+		अक्रम();
 
-	do {
-		new_seq = rand();
-	} while (new_seq > EXT4_MMP_SEQ_MAX);
+	करो {
+		new_seq = अक्रम();
+	} जबतक (new_seq > EXT4_MMP_SEQ_MAX);
 
-	return new_seq;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+	वापस new_seq;
+#अन्यथा
+	वापस EXT2_ET_OP_NOT_SUPPORTED;
+#पूर्ण_अगर
 }
 
-#ifdef CONFIG_MMP
-static errcode_t ext2fs_mmp_reset(ext2_filsys fs)
+#अगर_घोषित CONFIG_MMP
+अटल errcode_t ext2fs_mmp_reset(ext2_filsys fs)
 {
-	struct mmp_struct *mmp_s = NULL;
+	काष्ठा mmp_struct *mmp_s = शून्य;
 	errcode_t retval = 0;
 
-	if (fs->mmp_buf == NULL) {
+	अगर (fs->mmp_buf == शून्य) {
 		retval = ext2fs_mmp_get_mem(fs, &fs->mmp_buf);
-		if (retval)
-			goto out;
+		अगर (retval)
+			जाओ out;
 	}
 
-	memset(fs->mmp_buf, 0, fs->blocksize);
+	स_रखो(fs->mmp_buf, 0, fs->blocksize);
 	mmp_s = fs->mmp_buf;
 
 	mmp_s->mmp_magic = EXT4_MMP_MAGIC;
 	mmp_s->mmp_seq = EXT4_MMP_SEQ_CLEAN;
 	mmp_s->mmp_time = 0;
-#ifdef HAVE_GETHOSTNAME
-	gethostname((char *) mmp_s->mmp_nodename, sizeof(mmp_s->mmp_nodename));
-#else
+#अगर_घोषित HAVE_GETHOSTNAME
+	gethostname((अक्षर *) mmp_s->mmp_nodename, माप(mmp_s->mmp_nodename));
+#अन्यथा
 	mmp_s->mmp_nodename[0] = '\0';
-#endif
-	strncpy((char *) mmp_s->mmp_bdevname, fs->device_name,
-		sizeof(mmp_s->mmp_bdevname));
+#पूर्ण_अगर
+	म_नकलन((अक्षर *) mmp_s->mmp_bdevname, fs->device_name,
+		माप(mmp_s->mmp_bdevname));
 
 	mmp_s->mmp_check_interval = fs->super->s_mmp_update_interval;
-	if (mmp_s->mmp_check_interval < EXT4_MMP_MIN_CHECK_INTERVAL)
+	अगर (mmp_s->mmp_check_interval < EXT4_MMP_MIN_CHECK_INTERVAL)
 		mmp_s->mmp_check_interval = EXT4_MMP_MIN_CHECK_INTERVAL;
 
 	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_block, fs->mmp_buf);
 out:
-	return retval;
+	वापस retval;
 }
-#endif
+#पूर्ण_अगर
 
 errcode_t ext2fs_mmp_update(ext2_filsys fs)
 {
-	return ext2fs_mmp_update2(fs, 0);
+	वापस ext2fs_mmp_update2(fs, 0);
 }
 
 errcode_t ext2fs_mmp_clear(ext2_filsys fs)
 {
-#ifdef CONFIG_MMP
+#अगर_घोषित CONFIG_MMP
 	errcode_t retval = 0;
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	अगर (!(fs->flags & EXT2_FLAG_RW))
+		वापस EXT2_ET_RO_FILSYS;
 
 	retval = ext2fs_mmp_reset(fs);
 
-	return retval;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+	वापस retval;
+#अन्यथा
+	वापस EXT2_ET_OP_NOT_SUPPORTED;
+#पूर्ण_अगर
 }
 
 errcode_t ext2fs_mmp_init(ext2_filsys fs)
 {
-#ifdef CONFIG_MMP
-	struct ext2_super_block *sb = fs->super;
+#अगर_घोषित CONFIG_MMP
+	काष्ठा ext2_super_block *sb = fs->super;
 	blk64_t mmp_block;
 	errcode_t retval;
 
-	if (sb->s_mmp_update_interval == 0)
+	अगर (sb->s_mmp_update_interval == 0)
 		sb->s_mmp_update_interval = EXT4_MMP_UPDATE_INTERVAL;
 	/* This is probably excessively large, but who knows? */
-	else if (sb->s_mmp_update_interval > EXT4_MMP_MAX_UPDATE_INTERVAL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	अन्यथा अगर (sb->s_mmp_update_interval > EXT4_MMP_MAX_UPDATE_INTERVAL)
+		वापस EXT2_ET_INVALID_ARGUMENT;
 
-	if (fs->mmp_buf == NULL) {
+	अगर (fs->mmp_buf == शून्य) {
 		retval = ext2fs_mmp_get_mem(fs, &fs->mmp_buf);
-		if (retval)
-			goto out;
+		अगर (retval)
+			जाओ out;
 	}
 
 	retval = ext2fs_alloc_block2(fs, 0, fs->mmp_buf, &mmp_block);
-	if (retval)
-		goto out;
+	अगर (retval)
+		जाओ out;
 
 	sb->s_mmp_block = mmp_block;
 
 	retval = ext2fs_mmp_reset(fs);
-	if (retval)
-		goto out;
+	अगर (retval)
+		जाओ out;
 
 out:
-	return retval;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+	वापस retval;
+#अन्यथा
+	वापस EXT2_ET_OP_NOT_SUPPORTED;
+#पूर्ण_अगर
 }
 
-#ifndef min
-#define min(x, y) ((x) < (y) ? (x) : (y))
-#endif
+#अगर_अघोषित min
+#घोषणा min(x, y) ((x) < (y) ? (x) : (y))
+#पूर्ण_अगर
 
 /*
  * Make sure that the fs is not mounted or being fsck'ed while opening the fs.
  */
 errcode_t ext2fs_mmp_start(ext2_filsys fs)
 {
-#ifdef CONFIG_MMP
-	struct mmp_struct *mmp_s;
-	unsigned seq;
-	unsigned int mmp_check_interval;
+#अगर_घोषित CONFIG_MMP
+	काष्ठा mmp_struct *mmp_s;
+	अचिन्हित seq;
+	अचिन्हित पूर्णांक mmp_check_interval;
 	errcode_t retval = 0;
 
-	if (fs->mmp_buf == NULL) {
+	अगर (fs->mmp_buf == शून्य) {
 		retval = ext2fs_mmp_get_mem(fs, &fs->mmp_buf);
-		if (retval)
-			goto mmp_error;
+		अगर (retval)
+			जाओ mmp_error;
 	}
 
 	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, fs->mmp_buf);
-	if (retval)
-		goto mmp_error;
+	अगर (retval)
+		जाओ mmp_error;
 
 	mmp_s = fs->mmp_buf;
 
 	mmp_check_interval = fs->super->s_mmp_update_interval;
-	if (mmp_check_interval < EXT4_MMP_MIN_CHECK_INTERVAL)
+	अगर (mmp_check_interval < EXT4_MMP_MIN_CHECK_INTERVAL)
 		mmp_check_interval = EXT4_MMP_MIN_CHECK_INTERVAL;
 
 	seq = mmp_s->mmp_seq;
-	if (seq == EXT4_MMP_SEQ_CLEAN)
-		goto clean_seq;
-	if (seq == EXT4_MMP_SEQ_FSCK) {
+	अगर (seq == EXT4_MMP_SEQ_CLEAN)
+		जाओ clean_seq;
+	अगर (seq == EXT4_MMP_SEQ_FSCK) {
 		retval = EXT2_ET_MMP_FSCK_ON;
-		goto mmp_error;
+		जाओ mmp_error;
 	}
 
-	if (seq > EXT4_MMP_SEQ_FSCK) {
+	अगर (seq > EXT4_MMP_SEQ_FSCK) {
 		retval = EXT2_ET_MMP_UNKNOWN_SEQ;
-		goto mmp_error;
+		जाओ mmp_error;
 	}
 
 	/*
 	 * If check_interval in MMP block is larger, use that instead of
 	 * check_interval from the superblock.
 	 */
-	if (mmp_s->mmp_check_interval > mmp_check_interval)
+	अगर (mmp_s->mmp_check_interval > mmp_check_interval)
 		mmp_check_interval = mmp_s->mmp_check_interval;
 
 	sleep(min(mmp_check_interval * 2 + 1, mmp_check_interval + 60));
 
 	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, fs->mmp_buf);
-	if (retval)
-		goto mmp_error;
+	अगर (retval)
+		जाओ mmp_error;
 
-	if (seq != mmp_s->mmp_seq) {
+	अगर (seq != mmp_s->mmp_seq) {
 		retval = EXT2_ET_MMP_FAILED;
-		goto mmp_error;
+		जाओ mmp_error;
 	}
 
 clean_seq:
-	if (!(fs->flags & EXT2_FLAG_RW))
-		goto mmp_error;
+	अगर (!(fs->flags & EXT2_FLAG_RW))
+		जाओ mmp_error;
 
 	mmp_s->mmp_seq = seq = ext2fs_mmp_new_seq();
-#ifdef HAVE_GETHOSTNAME
-	gethostname((char *) mmp_s->mmp_nodename, sizeof(mmp_s->mmp_nodename));
-#else
-	strcpy((char *) mmp_s->mmp_nodename, "unknown host");
-#endif
-	strncpy((char *) mmp_s->mmp_bdevname, fs->device_name,
-		sizeof(mmp_s->mmp_bdevname));
+#अगर_घोषित HAVE_GETHOSTNAME
+	gethostname((अक्षर *) mmp_s->mmp_nodename, माप(mmp_s->mmp_nodename));
+#अन्यथा
+	म_नकल((अक्षर *) mmp_s->mmp_nodename, "unknown host");
+#पूर्ण_अगर
+	म_नकलन((अक्षर *) mmp_s->mmp_bdevname, fs->device_name,
+		माप(mmp_s->mmp_bdevname));
 
 	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_block, fs->mmp_buf);
-	if (retval)
-		goto mmp_error;
+	अगर (retval)
+		जाओ mmp_error;
 
 	sleep(min(2 * mmp_check_interval + 1, mmp_check_interval + 60));
 
 	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, fs->mmp_buf);
-	if (retval)
-		goto mmp_error;
+	अगर (retval)
+		जाओ mmp_error;
 
-	if (seq != mmp_s->mmp_seq) {
+	अगर (seq != mmp_s->mmp_seq) {
 		retval = EXT2_ET_MMP_FAILED;
-		goto mmp_error;
+		जाओ mmp_error;
 	}
 
 	mmp_s->mmp_seq = EXT4_MMP_SEQ_FSCK;
 	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_block, fs->mmp_buf);
-	if (retval)
-		goto mmp_error;
+	अगर (retval)
+		जाओ mmp_error;
 
-	return 0;
+	वापस 0;
 
 mmp_error:
-	return retval;
-#else
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+	वापस retval;
+#अन्यथा
+	वापस EXT2_ET_OP_NOT_SUPPORTED;
+#पूर्ण_अगर
 }
 
 /*
@@ -402,97 +402,97 @@ mmp_error:
  */
 errcode_t ext2fs_mmp_stop(ext2_filsys fs)
 {
-#ifdef CONFIG_MMP
-	struct mmp_struct *mmp, *mmp_cmp;
+#अगर_घोषित CONFIG_MMP
+	काष्ठा mmp_struct *mmp, *mmp_cmp;
 	errcode_t retval = 0;
 
-	if (!ext2fs_has_feature_mmp(fs->super) ||
+	अगर (!ext2fs_has_feature_mmp(fs->super) ||
 	    !(fs->flags & EXT2_FLAG_RW) || (fs->flags & EXT2_FLAG_SKIP_MMP) ||
-	    (fs->mmp_buf == NULL) || (fs->mmp_cmp == NULL))
-		goto mmp_error;
+	    (fs->mmp_buf == शून्य) || (fs->mmp_cmp == शून्य))
+		जाओ mmp_error;
 
-	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, NULL);
-	if (retval)
-		goto mmp_error;
+	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, शून्य);
+	अगर (retval)
+		जाओ mmp_error;
 
 	/* Check if the MMP block is not changed. */
 	mmp = fs->mmp_buf;
 	mmp_cmp = fs->mmp_cmp;
-	if (memcmp(mmp, mmp_cmp, sizeof(*mmp_cmp))) {
+	अगर (स_भेद(mmp, mmp_cmp, माप(*mmp_cmp))) {
 		retval = EXT2_ET_MMP_CHANGE_ABORT;
-		goto mmp_error;
+		जाओ mmp_error;
 	}
 
 	mmp_cmp->mmp_seq = EXT4_MMP_SEQ_CLEAN;
 	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_block, fs->mmp_cmp);
 
 mmp_error:
-	if (fs->mmp_fd > 0) {
-		close(fs->mmp_fd);
+	अगर (fs->mmp_fd > 0) {
+		बंद(fs->mmp_fd);
 		fs->mmp_fd = -1;
 	}
 
-	return retval;
-#else
-	if (!ext2fs_has_feature_mmp(fs->super) ||
+	वापस retval;
+#अन्यथा
+	अगर (!ext2fs_has_feature_mmp(fs->super) ||
 	    !(fs->flags & EXT2_FLAG_RW) || (fs->flags & EXT2_FLAG_SKIP_MMP))
-		return 0;
+		वापस 0;
 
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+	वापस EXT2_ET_OP_NOT_SUPPORTED;
+#पूर्ण_अगर
 }
 
-#define EXT2_MIN_MMP_UPDATE_INTERVAL 60
+#घोषणा EXT2_MIN_MMP_UPDATE_INTERVAL 60
 
 /*
  * Update the on-disk mmp buffer, after checking that it hasn't been changed.
  */
-errcode_t ext2fs_mmp_update2(ext2_filsys fs, int immediately)
+errcode_t ext2fs_mmp_update2(ext2_filsys fs, पूर्णांक immediately)
 {
-#ifdef CONFIG_MMP
-	struct mmp_struct *mmp, *mmp_cmp;
-	struct timeval tv;
+#अगर_घोषित CONFIG_MMP
+	काष्ठा mmp_struct *mmp, *mmp_cmp;
+	काष्ठा timeval tv;
 	errcode_t retval = 0;
 
-	if (!ext2fs_has_feature_mmp(fs->super) ||
+	अगर (!ext2fs_has_feature_mmp(fs->super) ||
 	    !(fs->flags & EXT2_FLAG_RW) || (fs->flags & EXT2_FLAG_SKIP_MMP))
-		return 0;
+		वापस 0;
 
 	gettimeofday(&tv, 0);
-	if (!immediately &&
+	अगर (!immediately &&
 	    tv.tv_sec - fs->mmp_last_written < EXT2_MIN_MMP_UPDATE_INTERVAL)
-		return 0;
+		वापस 0;
 
-	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, NULL);
-	if (retval)
-		goto mmp_error;
+	retval = ext2fs_mmp_read(fs, fs->super->s_mmp_block, शून्य);
+	अगर (retval)
+		जाओ mmp_error;
 
 	mmp = fs->mmp_buf;
 	mmp_cmp = fs->mmp_cmp;
 
-	if (memcmp(mmp, mmp_cmp, sizeof(*mmp_cmp)))
-		return EXT2_ET_MMP_CHANGE_ABORT;
+	अगर (स_भेद(mmp, mmp_cmp, माप(*mmp_cmp)))
+		वापस EXT2_ET_MMP_CHANGE_ABORT;
 
 	/*
 	 * Believe it or not, ext2fs_mmp_read actually overwrites fs->mmp_cmp
 	 * and leaves fs->mmp_buf untouched.  Hence we copy mmp_cmp into
 	 * mmp_buf, update mmp_buf, and write mmp_buf out to disk.
 	 */
-	memcpy(mmp, mmp_cmp, sizeof(*mmp_cmp));
+	स_नकल(mmp, mmp_cmp, माप(*mmp_cmp));
 	mmp->mmp_time = tv.tv_sec;
 	mmp->mmp_seq = EXT4_MMP_SEQ_FSCK;
 	retval = ext2fs_mmp_write(fs, fs->super->s_mmp_block, fs->mmp_buf);
 
 mmp_error:
-	return retval;
-#else
-	if (!ext2fs_has_feature_mmp(fs->super) ||
+	वापस retval;
+#अन्यथा
+	अगर (!ext2fs_has_feature_mmp(fs->super) ||
 	    !(fs->flags & EXT2_FLAG_RW) || (fs->flags & EXT2_FLAG_SKIP_MMP))
-		return 0;
+		वापस 0;
 
-	return EXT2_ET_OP_NOT_SUPPORTED;
-#endif
+	वापस EXT2_ET_OP_NOT_SUPPORTED;
+#पूर्ण_अगर
 }
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
-#endif
+#अगर __GNUC_PREREQ (4, 6)
+#आशय GCC diagnostic निकालो
+#पूर्ण_अगर

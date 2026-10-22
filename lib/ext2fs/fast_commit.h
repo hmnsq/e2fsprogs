@@ -1,9 +1,9 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 
-#ifndef __FAST_COMMIT_H__
-#define __FAST_COMMIT_H__
+#अगर_अघोषित __FAST_COMMIT_H__
+#घोषणा __FAST_COMMIT_H__
 
-#include "jfs_compat.h"
+#समावेश "jfs_compat.h"
 
 /*
  * Note this file is present in e2fsprogs/lib/ext2fs/fast_commit.h and
@@ -11,40 +11,40 @@
  */
 
 /* Fast commit tags */
-#define EXT4_FC_TAG_ADD_RANGE		0x0001
-#define EXT4_FC_TAG_DEL_RANGE		0x0002
-#define EXT4_FC_TAG_CREAT		0x0003
-#define EXT4_FC_TAG_LINK		0x0004
-#define EXT4_FC_TAG_UNLINK		0x0005
-#define EXT4_FC_TAG_INODE		0x0006
-#define EXT4_FC_TAG_PAD			0x0007
-#define EXT4_FC_TAG_TAIL		0x0008
-#define EXT4_FC_TAG_HEAD		0x0009
+#घोषणा EXT4_FC_TAG_ADD_RANGE		0x0001
+#घोषणा EXT4_FC_TAG_DEL_RANGE		0x0002
+#घोषणा EXT4_FC_TAG_CREAT		0x0003
+#घोषणा EXT4_FC_TAG_LINK		0x0004
+#घोषणा EXT4_FC_TAG_UNLINK		0x0005
+#घोषणा EXT4_FC_TAG_INODE		0x0006
+#घोषणा EXT4_FC_TAG_PAD			0x0007
+#घोषणा EXT4_FC_TAG_पुच्छ		0x0008
+#घोषणा EXT4_FC_TAG_शीर्ष		0x0009
 
-#define EXT4_FC_SUPPORTED_FEATURES	0x0
+#घोषणा EXT4_FC_SUPPORTED_FEATURES	0x0
 
 /* On disk fast commit tlv value structures */
 
 /* Fast commit on disk tag length structure */
-struct ext4_fc_tl {
+काष्ठा ext4_fc_tl {
 	__le16 fc_tag;
 	__le16 fc_len;
 };
 
 /* Value structure for tag EXT4_FC_TAG_HEAD. */
-struct ext4_fc_head {
+काष्ठा ext4_fc_शीर्ष {
 	__le32 fc_features;
 	__le32 fc_tid;
 };
 
 /* Value structure for EXT4_FC_TAG_ADD_RANGE. */
-struct ext4_fc_add_range {
+काष्ठा ext4_fc_add_range {
 	__le32 fc_ino;
 	__u8 fc_ex[12];
 };
 
 /* Value structure for tag EXT4_FC_TAG_DEL_RANGE. */
-struct ext4_fc_del_range {
+काष्ठा ext4_fc_del_range {
 	__le32 fc_ino;
 	__le32 fc_lblk;
 	__le32 fc_len;
@@ -54,20 +54,20 @@ struct ext4_fc_del_range {
  * This is the value structure for tags EXT4_FC_TAG_CREAT, EXT4_FC_TAG_LINK
  * and EXT4_FC_TAG_UNLINK.
  */
-struct ext4_fc_dentry_info {
+काष्ठा ext4_fc_dentry_info {
 	__le32 fc_parent_ino;
 	__le32 fc_ino;
 	__u8 fc_dname[0];
 };
 
 /* Value structure for EXT4_FC_TAG_INODE and EXT4_FC_TAG_INODE_PARTIAL. */
-struct ext4_fc_inode {
+काष्ठा ext4_fc_inode {
 	__le32 fc_ino;
 	__u8 fc_raw_inode[0];
 };
 
 /* Value structure for tag EXT4_FC_TAG_TAIL. */
-struct ext4_fc_tail {
+काष्ठा ext4_fc_पुच्छ {
 	__le32 fc_tid;
 	__le32 fc_crc;
 };
@@ -75,7 +75,7 @@ struct ext4_fc_tail {
 /*
  * Fast commit reason codes
  */
-enum {
+क्रमागत {
 	/*
 	 * Commit status codes:
 	 */
@@ -96,33 +96,33 @@ enum {
 	EXT4_FC_REASON_RESIZE,
 	EXT4_FC_REASON_RENAME_DIR,
 	EXT4_FC_REASON_FALLOC_RANGE,
-	EXT4_FC_REASON_INODE_JOURNAL_DATA,
+	EXT4_FC_REASON_INODE_JOURNAL_तथ्य,
 	EXT4_FC_COMMIT_FAILED,
 	EXT4_FC_REASON_MAX
 };
 
-#ifdef __KERNEL__
+#अगर_घोषित __KERNEL__
 /*
  * In memory list of dentry updates that are performed on the file
  * system used by fast commit code.
  */
-struct ext4_fc_dentry_update {
-	int fcd_op;		/* Type of update create / unlink / link */
-	int fcd_parent;		/* Parent inode number */
-	int fcd_ino;		/* Inode number */
-	struct qstr fcd_name;	/* Dirent name */
-	unsigned char fcd_iname[DNAME_INLINE_LEN];	/* Dirent name string */
-	struct list_head fcd_list;
+काष्ठा ext4_fc_dentry_update {
+	पूर्णांक fcd_op;		/* Type of update create / unlink / link */
+	पूर्णांक fcd_parent;		/* Parent inode number */
+	पूर्णांक fcd_ino;		/* Inode number */
+	काष्ठा qstr fcd_name;	/* Dirent name */
+	अचिन्हित अक्षर fcd_iname[DNAME_INLINE_LEN];	/* Dirent name string */
+	काष्ठा list_शीर्ष fcd_list;
 };
 
-struct ext4_fc_stats {
-	unsigned int fc_ineligible_reason_count[EXT4_FC_REASON_MAX];
-	unsigned long fc_num_commits;
-	unsigned long fc_ineligible_commits;
-	unsigned long fc_numblks;
+काष्ठा ext4_fc_stats {
+	अचिन्हित पूर्णांक fc_ineligible_reason_गिनती[EXT4_FC_REASON_MAX];
+	अचिन्हित दीर्घ fc_अंक_commits;
+	अचिन्हित दीर्घ fc_ineligible_commits;
+	अचिन्हित दीर्घ fc_numblks;
 };
 
-#define EXT4_FC_REPLAY_REALLOC_INCREMENT	4
+#घोषणा EXT4_FC_REPLAY_REALLOC_INCREMENT	4
 
 /*
  * Physical block regions added to different inodes due to fast commit
@@ -131,60 +131,60 @@ struct ext4_fc_stats {
  * we don't accidentally allocating a block that is going to be used by
  * another inode.
  */
-struct ext4_fc_alloc_region {
+काष्ठा ext4_fc_alloc_region {
 	ext4_lblk_t lblk;
 	ext4_fsblk_t pblk;
-	int ino, len;
+	पूर्णांक ino, len;
 };
 
 /*
  * Fast commit replay state.
  */
-struct ext4_fc_replay_state {
-	int fc_replay_num_tags;
-	int fc_replay_expected_off;
-	int fc_current_pass;
-	int fc_cur_tag;
-	int fc_crc;
-	struct ext4_fc_alloc_region *fc_regions;
-	int fc_regions_size, fc_regions_used, fc_regions_valid;
-	int *fc_modified_inodes;
-	int fc_modified_inodes_used, fc_modified_inodes_size;
+काष्ठा ext4_fc_replay_state {
+	पूर्णांक fc_replay_अंक_tags;
+	पूर्णांक fc_replay_expected_off;
+	पूर्णांक fc_current_pass;
+	पूर्णांक fc_cur_tag;
+	पूर्णांक fc_crc;
+	काष्ठा ext4_fc_alloc_region *fc_regions;
+	पूर्णांक fc_regions_आकार, fc_regions_used, fc_regions_valid;
+	पूर्णांक *fc_modified_inodes;
+	पूर्णांक fc_modified_inodes_used, fc_modified_inodes_आकार;
 };
 
-#define region_last(__region) (((__region)->lblk) + ((__region)->len) - 1)
-#endif
+#घोषणा region_last(__region) (((__region)->lblk) + ((__region)->len) - 1)
+#पूर्ण_अगर
 
-static inline const char *tag2str(__u16 tag)
+अटल अंतरभूत स्थिर अक्षर *tag2str(__u16 tag)
 {
-	switch (tag) {
-	case EXT4_FC_TAG_LINK:
-		return "ADD_ENTRY";
-	case EXT4_FC_TAG_UNLINK:
-		return "DEL_ENTRY";
-	case EXT4_FC_TAG_ADD_RANGE:
-		return "ADD_RANGE";
-	case EXT4_FC_TAG_CREAT:
-		return "CREAT_DENTRY";
-	case EXT4_FC_TAG_DEL_RANGE:
-		return "DEL_RANGE";
-	case EXT4_FC_TAG_INODE:
-		return "INODE";
-	case EXT4_FC_TAG_PAD:
-		return "PAD";
-	case EXT4_FC_TAG_TAIL:
-		return "TAIL";
-	case EXT4_FC_TAG_HEAD:
-		return "HEAD";
-	default:
-		return "ERROR";
+	चयन (tag) {
+	हाल EXT4_FC_TAG_LINK:
+		वापस "ADD_ENTRY";
+	हाल EXT4_FC_TAG_UNLINK:
+		वापस "DEL_ENTRY";
+	हाल EXT4_FC_TAG_ADD_RANGE:
+		वापस "ADD_RANGE";
+	हाल EXT4_FC_TAG_CREAT:
+		वापस "CREAT_DENTRY";
+	हाल EXT4_FC_TAG_DEL_RANGE:
+		वापस "DEL_RANGE";
+	हाल EXT4_FC_TAG_INODE:
+		वापस "INODE";
+	हाल EXT4_FC_TAG_PAD:
+		वापस "PAD";
+	हाल EXT4_FC_TAG_पुच्छ:
+		वापस "TAIL";
+	हाल EXT4_FC_TAG_शीर्ष:
+		वापस "HEAD";
+	शेष:
+		वापस "ERROR";
 	}
 }
 
 /* Get length of a particular tlv */
-static inline int ext4_fc_tag_len(struct ext4_fc_tl *tl)
+अटल अंतरभूत पूर्णांक ext4_fc_tag_len(काष्ठा ext4_fc_tl *tl)
 {
-	return le16_to_cpu(tl->fc_len);
+	वापस le16_to_cpu(tl->fc_len);
 }
 
-#endif /* __FAST_COMMIT_H__ */
+#पूर्ण_अगर /* __FAST_COMMIT_H__ */

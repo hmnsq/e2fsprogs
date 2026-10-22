@@ -9,39 +9,39 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
+#समावेश "config.h"
+#समावेश <stdio.h>
+#समावेश <string.h>
+#अगर HAVE_UNISTD_H
+#समावेश <unistd.h>
+#पूर्ण_अगर
+#समावेश <fcntl.h>
+#समावेश <time.h>
+#समावेश <sys/stat.h>
+#समावेश <sys/types.h>
+#अगर HAVE_ERRNO_H
+#समावेश <errno.h>
+#पूर्ण_अगर
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#समावेश "ext2_fs.h"
+#समावेश "ext2fs.h"
 
-int main(int argc, const char *argv[])
+पूर्णांक मुख्य(पूर्णांक argc, स्थिर अक्षर *argv[])
 {
 	errcode_t	retval;
 	blk64_t		blocks;
 
-	if (argc < 2) {
-		fprintf(stderr, "%s device\n", argv[0]);
-		exit(1);
+	अगर (argc < 2) {
+		ख_लिखो(मानक_त्रुटि, "%s device\n", argv[0]);
+		निकास(1);
 	}
 	add_error_table(&et_ext2_error_table);
 	retval = ext2fs_get_device_size2(argv[1], 1024, &blocks);
-	if (retval) {
+	अगर (retval) {
 		com_err(argv[0], retval, "while getting device size");
-		exit(1);
+		निकास(1);
 	}
-	printf("%s is device has %llu blocks.\n", argv[1],
-	       (unsigned long long) blocks);
-	return 0;
+	म_लिखो("%s is device has %llu blocks.\n", argv[1],
+	       (अचिन्हित दीर्घ दीर्घ) blocks);
+	वापस 0;
 }

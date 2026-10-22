@@ -10,82 +10,82 @@
  */
 
 /* define BSD_SOURCE to make sure we get the major() macro */
-#ifndef _BSD_SOURCE
-#define _BSD_SOURCE
-#endif
-#ifndef _DEFAULT_SOURCE
-#define _DEFAULT_SOURCE	/* since glibc 2.20 _SVID_SOURCE is deprecated */
-#endif
+#अगर_अघोषित _BSD_SOURCE
+#घोषणा _BSD_SOURCE
+#पूर्ण_अगर
+#अगर_अघोषित _DEFAULT_SOURCE
+#घोषणा _DEFAULT_SOURCE	/* since glibc 2.20 _SVID_SOURCE is deprecated */
+#पूर्ण_अगर
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <fcntl.h>
-#ifdef HAVE_LINUX_FD_H
-#include <linux/fd.h>
-#endif
-#ifdef HAVE_LINUX_LOOP_H
-#include <linux/loop.h>
-#include <sys/ioctl.h>
-#ifdef HAVE_LINUX_MAJOR_H
-#include <linux/major.h>
-#endif /* HAVE_LINUX_MAJOR_H */
-#endif /* HAVE_LINUX_LOOP_H */
-#ifdef HAVE_MNTENT_H
-#include <mntent.h>
-#endif
-#ifdef HAVE_GETMNTINFO
-#include <paths.h>
-#include <sys/param.h>
-#include <sys/mount.h>
-#endif /* HAVE_GETMNTINFO */
-#include <string.h>
-#include <sys/stat.h>
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_SYSMACROS_H
-#include <sys/sysmacros.h>
-#endif
+#समावेश "config.h"
+#समावेश <stdio.h>
+#अगर HAVE_UNISTD_H
+#समावेश <unistd.h>
+#पूर्ण_अगर
+#अगर HAVE_ERRNO_H
+#समावेश <errno.h>
+#पूर्ण_अगर
+#समावेश <fcntl.h>
+#अगर_घोषित HAVE_LINUX_FD_H
+#समावेश <linux/fd.h>
+#पूर्ण_अगर
+#अगर_घोषित HAVE_LINUX_LOOP_H
+#समावेश <linux/loop.h>
+#समावेश <sys/ioctl.h>
+#अगर_घोषित HAVE_LINUX_MAJOR_H
+#समावेश <linux/major.h>
+#पूर्ण_अगर /* HAVE_LINUX_MAJOR_H */
+#पूर्ण_अगर /* HAVE_LINUX_LOOP_H */
+#अगर_घोषित HAVE_MNTENT_H
+#समावेश <mntent.h>
+#पूर्ण_अगर
+#अगर_घोषित HAVE_GETMNTINFO
+#समावेश <paths.h>
+#समावेश <sys/param.h>
+#समावेश <sys/mount.h>
+#पूर्ण_अगर /* HAVE_GETMNTINFO */
+#समावेश <string.h>
+#समावेश <sys/stat.h>
+#अगर HAVE_SYS_TYPES_H
+#समावेश <sys/types.h>
+#पूर्ण_अगर
+#अगर_घोषित HAVE_SYS_SYSMACROS_H
+#समावेश <sys/sysmacros.h>
+#पूर्ण_अगर
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#समावेश "ext2_fs.h"
+#समावेश "ext2fs.h"
+#समावेश "ext2fsP.h"
 
-#ifdef HAVE_SETMNTENT
+#अगर_घोषित HAVE_SETMNTENT
 /*
  * Check to see if a regular file is mounted.
  * If /etc/mtab/ is a symlink of /proc/mounts, you will need the following check
  * because the name in /proc/mounts is a loopback device not a regular file.
  */
-static int check_loop_mounted(const char *mnt_fsname, dev_t mnt_rdev,
+अटल पूर्णांक check_loop_mounted(स्थिर अक्षर *mnt_fsname, dev_t mnt_rdev,
 				dev_t file_dev, ino_t file_ino)
 {
-#if defined(HAVE_LINUX_LOOP_H) && defined(HAVE_LINUX_MAJOR_H)
-	struct loop_info64 loopinfo = {0, };
-	int loop_fd, ret;
+#अगर defined(HAVE_LINUX_LOOP_H) && defined(HAVE_LINUX_MAJOR_H)
+	काष्ठा loop_info64 loopinfo = {0, };
+	पूर्णांक loop_fd, ret;
 
-	if (major(mnt_rdev) == LOOP_MAJOR) {
-		loop_fd = open(mnt_fsname, O_RDONLY);
-		if (loop_fd < 0)
-			return -1;
+	अगर (major(mnt_rdev) == LOOP_MAJOR) {
+		loop_fd = खोलो(mnt_fsname, O_RDONLY);
+		अगर (loop_fd < 0)
+			वापस -1;
 
 		ret = ioctl(loop_fd, LOOP_GET_STATUS64, &loopinfo);
-		close(loop_fd);
-		if (ret < 0)
-			return -1;
+		बंद(loop_fd);
+		अगर (ret < 0)
+			वापस -1;
 
-		if (file_dev == loopinfo.lo_device &&
+		अगर (file_dev == loopinfo.lo_device &&
 				file_ino == loopinfo.lo_inode)
-			return 1;
+			वापस 1;
 	}
-#endif /* defined(HAVE_LINUX_LOOP_H) && defined(HAVE_LINUX_MAJOR_H) */
-	return 0;
+#पूर्ण_अगर /* defined(HAVE_LINUX_LOOP_H) && defined(HAVE_LINUX_MAJOR_H) */
+	वापस 0;
 }
 
 /*
@@ -93,80 +93,80 @@ static int check_loop_mounted(const char *mnt_fsname, dev_t mnt_rdev,
  * filesystem is mounted.  Returns an error if the file doesn't exist
  * or can't be opened.
  */
-static errcode_t check_mntent_file(const char *mtab_file, const char *file,
-				   int *mount_flags, char *mtpt, int mtlen)
+अटल errcode_t check_mntent_file(स्थिर अक्षर *mtab_file, स्थिर अक्षर *file,
+				   पूर्णांक *mount_flags, अक्षर *mtpt, पूर्णांक mtlen)
 {
-	struct mntent 	*mnt;
-	struct stat	st_buf, dir_st_buf;
+	काष्ठा mntent 	*mnt;
+	काष्ठा stat	st_buf, dir_st_buf;
 	errcode_t	retval = 0;
 	dev_t		file_dev=0, file_rdev=0;
 	ino_t		file_ino=0;
-	FILE 		*f;
-	int		fd;
+	खाता 		*f;
+	पूर्णांक		fd;
 
 	*mount_flags = 0;
 
-	if ((f = setmntent (mtab_file, "r")) == NULL) {
-		if (errno == ENOENT) {
-			if (ext2fs_safe_getenv("EXT2FS_NO_MTAB_OK"))
-				return 0;
-			else
-				return EXT2_ET_NO_MTAB_FILE;
+	अगर ((f = setmntent (mtab_file, "r")) == शून्य) {
+		अगर (त्रुटि_सं == ENOENT) {
+			अगर (ext2fs_safe_getenv("EXT2FS_NO_MTAB_OK"))
+				वापस 0;
+			अन्यथा
+				वापस EXT2_ET_NO_MTAB_FILE;
 		}
-		return errno;
+		वापस त्रुटि_सं;
 	}
-	if (stat(file, &st_buf) == 0) {
-		if (ext2fsP_is_disk_device(st_buf.st_mode)) {
-#ifndef __GNU__ /* The GNU hurd is broken with respect to stat devices */
+	अगर (stat(file, &st_buf) == 0) {
+		अगर (ext2fsP_is_disk_device(st_buf.st_mode)) {
+#अगर_अघोषित __GNU__ /* The GNU hurd is broken with respect to stat devices */
 			file_rdev = st_buf.st_rdev;
-#endif	/* __GNU__ */
-		} else {
+#पूर्ण_अगर	/* __GNU__ */
+		} अन्यथा {
 			file_dev = st_buf.st_dev;
 			file_ino = st_buf.st_ino;
 		}
 	}
-	while ((mnt = getmntent (f)) != NULL) {
-		if (mnt->mnt_fsname[0] != '/')
-			continue;
-		if (strcmp(file, mnt->mnt_fsname) == 0) {
-			if (stat(mnt->mnt_dir, &st_buf) != 0)
-				continue;
-			if (file_rdev && (file_rdev != st_buf.st_dev)) {
-#ifdef DEBUG
-				printf("Bogus entry in %s!  "
+	जबतक ((mnt = getmntent (f)) != शून्य) {
+		अगर (mnt->mnt_fsname[0] != '/')
+			जारी;
+		अगर (म_भेद(file, mnt->mnt_fsname) == 0) {
+			अगर (stat(mnt->mnt_dir, &st_buf) != 0)
+				जारी;
+			अगर (file_rdev && (file_rdev != st_buf.st_dev)) {
+#अगर_घोषित DEBUG
+				म_लिखो("Bogus entry in %s!  "
 				       "(%s is not mounted on %s)\n",
 				       mtab_file, file, mnt->mnt_dir);
-#endif /* DEBUG */
-				continue;
+#पूर्ण_अगर /* DEBUG */
+				जारी;
 			}
-			break;
+			अवरोध;
 		}
-		if (stat(mnt->mnt_fsname, &st_buf) == 0) {
-			if (ext2fsP_is_disk_device(st_buf.st_mode)) {
-#ifndef __GNU__
-				if (file_rdev &&
+		अगर (stat(mnt->mnt_fsname, &st_buf) == 0) {
+			अगर (ext2fsP_is_disk_device(st_buf.st_mode)) {
+#अगर_अघोषित __GNU__
+				अगर (file_rdev &&
 				    (file_rdev == st_buf.st_rdev)) {
-					if (stat(mnt->mnt_dir,
+					अगर (stat(mnt->mnt_dir,
 						 &dir_st_buf) != 0)
-						continue;
-					if (file_rdev == dir_st_buf.st_dev)
-						break;
+						जारी;
+					अगर (file_rdev == dir_st_buf.st_dev)
+						अवरोध;
 				}
-				if (check_loop_mounted(mnt->mnt_fsname,
+				अगर (check_loop_mounted(mnt->mnt_fsname,
 						st_buf.st_rdev, file_dev,
 						file_ino) == 1)
-					break;
-#endif	/* __GNU__ */
-			} else {
-				if (file_dev && ((file_dev == st_buf.st_dev) &&
+					अवरोध;
+#पूर्ण_अगर	/* __GNU__ */
+			} अन्यथा {
+				अगर (file_dev && ((file_dev == st_buf.st_dev) &&
 						 (file_ino == st_buf.st_ino)))
-					break;
+					अवरोध;
 			}
 		}
 	}
 
-	if (mnt == 0) {
-#ifndef __GNU__ /* The GNU hurd is broken with respect to stat devices */
+	अगर (mnt == 0) {
+#अगर_अघोषित __GNU__ /* The GNU hurd is broken with respect to stat devices */
 		/*
 		 * Do an extra check to see if this is the root device.  We
 		 * can't trust /etc/mtab, and /proc/mounts will only list
@@ -174,178 +174,178 @@ static errcode_t check_mntent_file(const char *mtab_file, const char *file,
 		 * check if the given device has the same major/minor number
 		 * as the device that the root directory is on.
 		 */
-		if (file_rdev && stat("/", &st_buf) == 0) {
-			if (st_buf.st_dev == file_rdev) {
+		अगर (file_rdev && stat("/", &st_buf) == 0) {
+			अगर (st_buf.st_dev == file_rdev) {
 				*mount_flags = EXT2_MF_MOUNTED;
-				if (mtpt)
-					strncpy(mtpt, "/", mtlen);
-				goto is_root;
+				अगर (mtpt)
+					म_नकलन(mtpt, "/", mtlen);
+				जाओ is_मूल;
 			}
 		}
-#endif	/* __GNU__ */
-		goto errout;
+#पूर्ण_अगर	/* __GNU__ */
+		जाओ errout;
 	}
 	*mount_flags = EXT2_MF_MOUNTED;
 
-#ifdef MNTOPT_RO
+#अगर_घोषित MNTOPT_RO
 	/* Check to see if the ro option is set */
-	if (hasmntopt(mnt, MNTOPT_RO))
+	अगर (hasmntopt(mnt, MNTOPT_RO))
 		*mount_flags |= EXT2_MF_READONLY;
-#endif
+#पूर्ण_अगर
 
-	if (mtpt)
-		strncpy(mtpt, mnt->mnt_dir, mtlen);
+	अगर (mtpt)
+		म_नकलन(mtpt, mnt->mnt_dir, mtlen);
 	/*
 	 * Check to see if we're referring to the root filesystem.
 	 * If so, do a manual check to see if we can open /etc/mtab
 	 * read/write, since if the root is mounted read/only, the
 	 * contents of /etc/mtab may not be accurate.
 	 */
-	if (!strcmp(mnt->mnt_dir, "/")) {
-is_root:
-#define TEST_FILE "/.ismount-test-file"
+	अगर (!म_भेद(mnt->mnt_dir, "/")) {
+is_मूल:
+#घोषणा TEST_FILE "/.ismount-test-file"
 		*mount_flags |= EXT2_MF_ISROOT;
-		fd = open(TEST_FILE, O_RDWR|O_CREAT, 0600);
-		if (fd < 0) {
-			if (errno == EROFS)
+		fd = खोलो(TEST_FILE, O_RDWR|O_CREAT, 0600);
+		अगर (fd < 0) {
+			अगर (त्रुटि_सं == EROFS)
 				*mount_flags |= EXT2_MF_READONLY;
-		} else
-			close(fd);
-		(void) unlink(TEST_FILE);
+		} अन्यथा
+			बंद(fd);
+		(व्योम) unlink(TEST_FILE);
 	}
 
-	if (mnt && mnt->mnt_type &&
-	    (!strcmp(mnt->mnt_type, "ext4") ||
-	     !strcmp(mnt->mnt_type, "ext3") ||
-	     !strcmp(mnt->mnt_type, "ext2")))
+	अगर (mnt && mnt->mnt_type &&
+	    (!म_भेद(mnt->mnt_type, "ext4") ||
+	     !म_भेद(mnt->mnt_type, "ext3") ||
+	     !म_भेद(mnt->mnt_type, "ext2")))
 		*mount_flags |= EXT2_MF_EXTFS;
 	retval = 0;
 errout:
 	endmntent (f);
-	return retval;
+	वापस retval;
 }
 
-static errcode_t check_mntent(const char *file, int *mount_flags,
-			      char *mtpt, int mtlen)
+अटल errcode_t check_mntent(स्थिर अक्षर *file, पूर्णांक *mount_flags,
+			      अक्षर *mtpt, पूर्णांक mtlen)
 {
 	errcode_t	retval;
 
-#ifdef DEBUG
+#अगर_घोषित DEBUG
 	retval = check_mntent_file("/tmp/mtab", file, mount_flags,
 				   mtpt, mtlen);
-	if (retval == 0)
-		return 0;
-#endif /* DEBUG */
-#ifdef __linux__
+	अगर (retval == 0)
+		वापस 0;
+#पूर्ण_अगर /* DEBUG */
+#अगर_घोषित __linux__
 	retval = check_mntent_file("/proc/mounts", file, mount_flags,
 				   mtpt, mtlen);
-	if (retval == 0)
-		return 0;
-#endif /* __linux__ */
-#if defined(MOUNTED) || defined(_PATH_MOUNTED)
-#ifndef MOUNTED
-#define MOUNTED _PATH_MOUNTED
-#endif /* MOUNTED */
+	अगर (retval == 0)
+		वापस 0;
+#पूर्ण_अगर /* __linux__ */
+#अगर defined(MOUNTED) || defined(_PATH_MOUNTED)
+#अगर_अघोषित MOUNTED
+#घोषणा MOUNTED _PATH_MOUNTED
+#पूर्ण_अगर /* MOUNTED */
 	retval = check_mntent_file(MOUNTED, file, mount_flags, mtpt, mtlen);
-	return retval;
-#else
+	वापस retval;
+#अन्यथा
 	*mount_flags = 0;
-	return 0;
-#endif /* defined(MOUNTED) || defined(_PATH_MOUNTED) */
+	वापस 0;
+#पूर्ण_अगर /* defined(MOUNTED) || defined(_PATH_MOUNTED) */
 }
 
-#else
-#if defined(HAVE_GETMNTINFO)
+#अन्यथा
+#अगर defined(HAVE_GETMNTINFO)
 
-static errcode_t check_getmntinfo(const char *file, int *mount_flags,
-				  char *mtpt, int mtlen)
+अटल errcode_t check_getmntinfo(स्थिर अक्षर *file, पूर्णांक *mount_flags,
+				  अक्षर *mtpt, पूर्णांक mtlen)
 {
-	struct statfs *mp;
-        int    len, n;
-        const  char   *s1;
-	char	*s2;
+	काष्ठा statfs *mp;
+        पूर्णांक    len, n;
+        स्थिर  अक्षर   *s1;
+	अक्षर	*s2;
 
         n = getmntinfo(&mp, MNT_NOWAIT);
-        if (n == 0)
-		return errno;
+        अगर (n == 0)
+		वापस त्रुटि_सं;
 
-        len = sizeof(_PATH_DEV) - 1;
+        len = माप(_PATH_DEV) - 1;
         s1 = file;
-        if (strncmp(_PATH_DEV, s1, len) == 0)
+        अगर (म_भेदन(_PATH_DEV, s1, len) == 0)
                 s1 += len;
 
 	*mount_flags = 0;
-        while (--n >= 0) {
+        जबतक (--n >= 0) {
                 s2 = mp->f_mntfromname;
-                if (strncmp(_PATH_DEV, s2, len) == 0) {
+                अगर (म_भेदन(_PATH_DEV, s2, len) == 0) {
                         s2 += len - 1;
                         *s2 = 'r';
                 }
-                if (strcmp(s1, s2) == 0 || strcmp(s1, &s2[1]) == 0) {
+                अगर (म_भेद(s1, s2) == 0 || म_भेद(s1, &s2[1]) == 0) {
 			*mount_flags = EXT2_MF_MOUNTED;
-			break;
+			अवरोध;
 		}
                 ++mp;
 	}
-	if (mtpt)
-		strncpy(mtpt, mp->f_mntonname, mtlen);
-	return 0;
+	अगर (mtpt)
+		म_नकलन(mtpt, mp->f_mntonname, mtlen);
+	वापस 0;
 }
-#endif /* HAVE_GETMNTINFO */
-#endif /* HAVE_SETMNTENT */
+#पूर्ण_अगर /* HAVE_GETMNTINFO */
+#पूर्ण_अगर /* HAVE_SETMNTENT */
 
 /*
  * Check to see if we're dealing with the swap device.
  */
-static int is_swap_device(const char *file)
+अटल पूर्णांक is_swap_device(स्थिर अक्षर *file)
 {
-	FILE		*f;
-	char		buf[1024], *cp;
+	खाता		*f;
+	अक्षर		buf[1024], *cp;
 	dev_t		file_dev;
-	struct stat	st_buf;
-	int		ret = 0;
+	काष्ठा stat	st_buf;
+	पूर्णांक		ret = 0;
 
 	file_dev = 0;
-#ifndef __GNU__ /* The GNU hurd is broken with respect to stat devices */
-	if ((stat(file, &st_buf) == 0) &&
+#अगर_अघोषित __GNU__ /* The GNU hurd is broken with respect to stat devices */
+	अगर ((stat(file, &st_buf) == 0) &&
 	    ext2fsP_is_disk_device(st_buf.st_mode))
 		file_dev = st_buf.st_rdev;
-#endif	/* __GNU__ */
+#पूर्ण_अगर	/* __GNU__ */
 
-	if (!(f = fopen("/proc/swaps", "r")))
-		return 0;
+	अगर (!(f = ख_खोलो("/proc/swaps", "r")))
+		वापस 0;
 	/* Skip the first line */
-	if (!fgets(buf, sizeof(buf), f))
-		goto leave;
-	if (*buf && strncmp(buf, "Filename\t", 9))
+	अगर (!ख_माला_लो(buf, माप(buf), f))
+		जाओ leave;
+	अगर (*buf && म_भेदन(buf, "Filename\t", 9))
 		/* Linux <=2.6.19 contained a bug in the /proc/swaps
 		 * code where the header would not be displayed
 		 */
-		goto valid_first_line;
+		जाओ valid_first_पंक्ति;
 
-	while (fgets(buf, sizeof(buf), f)) {
-valid_first_line:
-		if ((cp = strchr(buf, ' ')) != NULL)
+	जबतक (ख_माला_लो(buf, माप(buf), f)) {
+valid_first_पंक्ति:
+		अगर ((cp = म_अक्षर(buf, ' ')) != शून्य)
 			*cp = 0;
-		if ((cp = strchr(buf, '\t')) != NULL)
+		अगर ((cp = म_अक्षर(buf, '\t')) != शून्य)
 			*cp = 0;
-		if (strcmp(buf, file) == 0) {
+		अगर (म_भेद(buf, file) == 0) {
 			ret++;
-			break;
+			अवरोध;
 		}
-#ifndef __GNU__
-		if (file_dev && (stat(buf, &st_buf) == 0) &&
+#अगर_अघोषित __GNU__
+		अगर (file_dev && (stat(buf, &st_buf) == 0) &&
 		    ext2fsP_is_disk_device(st_buf.st_mode) &&
 		    file_dev == st_buf.st_rdev) {
 			ret++;
-			break;
+			अवरोध;
 		}
-#endif 	/* __GNU__ */
+#पूर्ण_अगर 	/* __GNU__ */
 	}
 
 leave:
-	fclose(f);
-	return ret;
+	ख_बंद(f);
+	वापस ret;
 }
 
 
@@ -357,77 +357,77 @@ leave:
  * non-NULL, the directory where the device is mounted is copied to
  * where mtpt is pointing, up to mtlen characters.
  */
-#ifdef __TURBOC__
- #pragma argsused
-#endif
-errcode_t ext2fs_check_mount_point(const char *device, int *mount_flags,
-				  char *mtpt, int mtlen)
+#अगर_घोषित __TURBOC__
+ #आशय argsused
+#पूर्ण_अगर
+errcode_t ext2fs_check_mount_point(स्थिर अक्षर *device, पूर्णांक *mount_flags,
+				  अक्षर *mtpt, पूर्णांक mtlen)
 {
 	errcode_t	retval = 0;
-	int 		busy = 0;
+	पूर्णांक 		busy = 0;
 
-	if (ext2fs_safe_getenv("EXT2FS_PRETEND_RO_MOUNT")) {
+	अगर (ext2fs_safe_getenv("EXT2FS_PRETEND_RO_MOUNT")) {
 		*mount_flags = EXT2_MF_MOUNTED | EXT2_MF_READONLY;
-		if (ext2fs_safe_getenv("EXT2FS_PRETEND_ROOTFS"))
+		अगर (ext2fs_safe_getenv("EXT2FS_PRETEND_ROOTFS"))
 			*mount_flags = EXT2_MF_ISROOT;
-		return 0;
+		वापस 0;
 	}
-	if (ext2fs_safe_getenv("EXT2FS_PRETEND_RW_MOUNT")) {
+	अगर (ext2fs_safe_getenv("EXT2FS_PRETEND_RW_MOUNT")) {
 		*mount_flags = EXT2_MF_MOUNTED;
-		if (ext2fs_safe_getenv("EXT2FS_PRETEND_ROOTFS"))
+		अगर (ext2fs_safe_getenv("EXT2FS_PRETEND_ROOTFS"))
 			*mount_flags = EXT2_MF_ISROOT;
-		return 0;
+		वापस 0;
 	}
 
-#ifdef __linux__ /* This only works on Linux 2.6+ systems */
+#अगर_घोषित __linux__ /* This only works on Linux 2.6+ systems */
 	{
-		struct stat st_buf;
+		काष्ठा stat st_buf;
 
-		if (stat(device, &st_buf) == 0 &&
+		अगर (stat(device, &st_buf) == 0 &&
 		    ext2fsP_is_disk_device(st_buf.st_mode)) {
-			int fd = open(device, O_RDONLY | O_EXCL);
+			पूर्णांक fd = खोलो(device, O_RDONLY | O_EXCL);
 
-			if (fd >= 0) {
+			अगर (fd >= 0) {
 				/*
 				 * The device is not busy so it's
 				 * definitelly not mounted. No need to
 				 * to perform any more checks.
 				 */
-				close(fd);
+				बंद(fd);
 				*mount_flags = 0;
-				return 0;
-			} else if (errno == EBUSY) {
+				वापस 0;
+			} अन्यथा अगर (त्रुटि_सं == EBUSY) {
 				busy = 1;
 			}
 		}
 	}
-#endif
+#पूर्ण_अगर
 
-	if (is_swap_device(device)) {
+	अगर (is_swap_device(device)) {
 		*mount_flags = EXT2_MF_MOUNTED | EXT2_MF_SWAP;
-		if (mtpt)
-			strncpy(mtpt, "<swap>", mtlen);
-	} else {
-#ifdef HAVE_SETMNTENT
+		अगर (mtpt)
+			म_नकलन(mtpt, "<swap>", mtlen);
+	} अन्यथा {
+#अगर_घोषित HAVE_SETMNTENT
 		retval = check_mntent(device, mount_flags, mtpt, mtlen);
-#else
-#ifdef HAVE_GETMNTINFO
+#अन्यथा
+#अगर_घोषित HAVE_GETMNTINFO
 		retval = check_getmntinfo(device, mount_flags, mtpt, mtlen);
-#else
-#if defined(__GNUC__) && !defined(_WIN32)
+#अन्यथा
+#अगर defined(__GNUC__) && !defined(_WIN32)
  #warning "Can't use getmntent or getmntinfo to check for mounted filesystems!"
-#endif
+#पूर्ण_अगर
 		*mount_flags = 0;
-#endif /* HAVE_GETMNTINFO */
-#endif /* HAVE_SETMNTENT */
+#पूर्ण_अगर /* HAVE_GETMNTINFO */
+#पूर्ण_अगर /* HAVE_SETMNTENT */
 	}
-	if (retval)
-		return retval;
+	अगर (retval)
+		वापस retval;
 
-	if (busy)
+	अगर (busy)
 		*mount_flags |= EXT2_MF_BUSY;
 
-	return 0;
+	वापस 0;
 }
 
 /*
@@ -435,44 +435,44 @@ errcode_t ext2fs_check_mount_point(const char *device, int *mount_flags,
  * EXT2_MF_READONLY, and EXT2_MF_ROOT
  *
  */
-errcode_t ext2fs_check_if_mounted(const char *file, int *mount_flags)
+errcode_t ext2fs_check_if_mounted(स्थिर अक्षर *file, पूर्णांक *mount_flags)
 {
-	return ext2fs_check_mount_point(file, mount_flags, NULL, 0);
+	वापस ext2fs_check_mount_point(file, mount_flags, शून्य, 0);
 }
 
-#ifdef DEBUG
-int main(int argc, char **argv)
+#अगर_घोषित DEBUG
+पूर्णांक मुख्य(पूर्णांक argc, अक्षर **argv)
 {
-	int	retval, mount_flags;
-	char	mntpt[80];
+	पूर्णांक	retval, mount_flags;
+	अक्षर	mntpt[80];
 
-	if (argc < 2) {
-		fprintf(stderr, "Usage: %s device\n", argv[0]);
-		exit(1);
+	अगर (argc < 2) {
+		ख_लिखो(मानक_त्रुटि, "Usage: %s device\n", argv[0]);
+		निकास(1);
 	}
 
 	add_error_table(&et_ext2_error_table);
 	mntpt[0] = 0;
 	retval = ext2fs_check_mount_point(argv[1], &mount_flags,
-					  mntpt, sizeof(mntpt));
-	if (retval) {
+					  mntpt, माप(mntpt));
+	अगर (retval) {
 		com_err(argv[0], retval,
 			"while calling ext2fs_check_if_mounted");
-		exit(1);
+		निकास(1);
 	}
-	printf("Device %s reports flags %02x\n", argv[1], mount_flags);
-	if (mount_flags & EXT2_MF_BUSY)
-		printf("\t%s is apparently in use.\n", argv[1]);
-	if (mount_flags & EXT2_MF_MOUNTED)
-		printf("\t%s is mounted.\n", argv[1]);
-	if (mount_flags & EXT2_MF_SWAP)
-		printf("\t%s is a swap device.\n", argv[1]);
-	if (mount_flags & EXT2_MF_READONLY)
-		printf("\t%s is read-only.\n", argv[1]);
-	if (mount_flags & EXT2_MF_ISROOT)
-		printf("\t%s is the root filesystem.\n", argv[1]);
-	if (mntpt[0])
-		printf("\t%s is mounted on %s.\n", argv[1], mntpt);
-	exit(0);
+	म_लिखो("Device %s reports flags %02x\n", argv[1], mount_flags);
+	अगर (mount_flags & EXT2_MF_BUSY)
+		म_लिखो("\t%s is apparently in use.\n", argv[1]);
+	अगर (mount_flags & EXT2_MF_MOUNTED)
+		म_लिखो("\t%s is mounted.\n", argv[1]);
+	अगर (mount_flags & EXT2_MF_SWAP)
+		म_लिखो("\t%s is a swap device.\n", argv[1]);
+	अगर (mount_flags & EXT2_MF_READONLY)
+		म_लिखो("\t%s is read-only.\n", argv[1]);
+	अगर (mount_flags & EXT2_MF_ISROOT)
+		म_लिखो("\t%s is the root filesystem.\n", argv[1]);
+	अगर (mntpt[0])
+		म_लिखो("\t%s is mounted on %s.\n", argv[1], mntpt);
+	निकास(0);
 }
-#endif /* DEBUG */
+#पूर्ण_अगर /* DEBUG */

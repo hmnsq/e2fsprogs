@@ -9,64 +9,64 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#समावेश "config.h"
+#समावेश <stdio.h>
+#समावेश <unistd.h>
+#समावेश <stdlib.h>
 
-#include "ext2_fs.h"
+#समावेश "ext2_fs.h"
 
-#define sb_struct ext2_super_block
-#define sb_struct_name "ext2_super_block"
+#घोषणा sb_struct ext2_super_block
+#घोषणा sb_struct_name "ext2_super_block"
 
-struct sb_struct sb;
+काष्ठा sb_struct sb;
 
-#ifndef offsetof
-#define offsetof(type, member)  __builtin_offsetof (type, member)
-#endif
+#अगर_अघोषित दुरत्व
+#घोषणा दुरत्व(type, member)  __builtin_offsetof (type, member)
+#पूर्ण_अगर
 
-#define check_field(x, s) cur_offset = do_field(#x, s, sizeof(sb.x),	       \
-						offsetof(struct sb_struct, x), \
+#घोषणा check_field(x, s) cur_offset = do_field(#x, s, माप(sb.x),	       \
+						दुरत्व(काष्ठा sb_struct, x), \
 						cur_offset)
 
-static int do_field(const char *field, unsigned size, unsigned cur_size,
-		    unsigned offset, unsigned cur_offset)
+अटल पूर्णांक do_field(स्थिर अक्षर *field, अचिन्हित आकार, अचिन्हित cur_आकार,
+		    अचिन्हित offset, अचिन्हित cur_offset)
 {
-	if (size != cur_size) {
-		printf("error: %s size %u should be %u\n",
-		       field, cur_size, size);
-		exit(1);
+	अगर (आकार != cur_आकार) {
+		म_लिखो("error: %s size %u should be %u\n",
+		       field, cur_आकार, आकार);
+		निकास(1);
 	}
-	if (offset != cur_offset) {
-		printf("error: %s offset %u should be %u\n",
+	अगर (offset != cur_offset) {
+		म_लिखो("error: %s offset %u should be %u\n",
 		       field, cur_offset, offset);
-		exit(1);
+		निकास(1);
 	}
-	printf("%8d %-30s %3u\n", offset, field, size);
-	return offset + size;
+	म_लिखो("%8d %-30s %3u\n", offset, field, आकार);
+	वापस offset + आकार;
 }
 
-int main(int argc, char **argv)
+पूर्णांक मुख्य(पूर्णांक argc, अक्षर **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#अगर (__GNUC__ >= 4)
+	पूर्णांक cur_offset = 0;
 
-	printf("%8s %-30s %3s\n", "offset", "field", "size");
-	check_field(s_inodes_count, 4);
-	check_field(s_blocks_count, 4);
-	check_field(s_r_blocks_count, 4);
-	check_field(s_free_blocks_count, 4);
-	check_field(s_free_inodes_count, 4);
-	check_field(s_first_data_block, 4);
-	check_field(s_log_block_size, 4);
-	check_field(s_log_cluster_size, 4);
+	म_लिखो("%8s %-30s %3s\n", "offset", "field", "size");
+	check_field(s_inodes_गिनती, 4);
+	check_field(s_blocks_गिनती, 4);
+	check_field(s_r_blocks_गिनती, 4);
+	check_field(s_free_blocks_गिनती, 4);
+	check_field(s_free_inodes_गिनती, 4);
+	check_field(s_first_तथ्य_block, 4);
+	check_field(s_log_block_आकार, 4);
+	check_field(s_log_cluster_आकार, 4);
 	check_field(s_blocks_per_group, 4);
 	check_field(s_clusters_per_group, 4);
 	check_field(s_inodes_per_group, 4);
 	check_field(s_mtime, 4);
 	check_field(s_wtime, 4);
-	check_field(s_mnt_count, 2);
-	check_field(s_max_mnt_count, 2);
+	check_field(s_mnt_गिनती, 2);
+	check_field(s_max_mnt_गिनती, 2);
 	check_field(s_magic, 2);
 	check_field(s_state, 2);
 	check_field(s_errors, 2);
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 	check_field(s_def_resuid, 2);
 	check_field(s_def_resgid, 2);
 	check_field(s_first_ino, 4);
-	check_field(s_inode_size, 2);
+	check_field(s_inode_आकार, 2);
 	check_field(s_block_group_nr, 2);
 	check_field(s_feature_compat, 4);
 	check_field(s_feature_incompat, 4);
@@ -97,13 +97,13 @@ int main(int argc, char **argv)
 	check_field(s_hash_seed, 4 * 4);
 	check_field(s_def_hash_version, 1);
 	check_field(s_jnl_backup_type, 1);
-	check_field(s_desc_size, 2);
+	check_field(s_desc_आकार, 2);
 	check_field(s_default_mount_opts, 4);
 	check_field(s_first_meta_bg, 4);
 	check_field(s_mkfs_time, 4);
 	check_field(s_jnl_blocks, 17 * 4);
-	check_field(s_blocks_count_hi, 4);
-	check_field(s_r_blocks_count_hi, 4);
+	check_field(s_blocks_गिनती_hi, 4);
+	check_field(s_r_blocks_गिनती_hi, 4);
 	check_field(s_free_blocks_hi, 4);
 	check_field(s_min_extra_isize, 2);
 	check_field(s_want_extra_isize, 2);
@@ -119,17 +119,17 @@ int main(int argc, char **argv)
 	check_field(s_kbytes_written, 8);
 	check_field(s_snapshot_inum, 4);
 	check_field(s_snapshot_id, 4);
-	check_field(s_snapshot_r_blocks_count, 8);
+	check_field(s_snapshot_r_blocks_गिनती, 8);
 	check_field(s_snapshot_list, 4);
-	check_field(s_error_count, 4);
+	check_field(s_error_गिनती, 4);
 	check_field(s_first_error_time, 4);
 	check_field(s_first_error_ino, 4);
 	check_field(s_first_error_block, 8);
 	check_field(s_first_error_func, 32);
-	check_field(s_first_error_line, 4);
+	check_field(s_first_error_पंक्ति, 4);
 	check_field(s_last_error_time, 4);
 	check_field(s_last_error_ino, 4);
-	check_field(s_last_error_line, 4);
+	check_field(s_last_error_पंक्ति, 4);
 	check_field(s_last_error_block, 8);
 	check_field(s_last_error_func, 32);
 	check_field(s_mount_opts, 64);
@@ -156,6 +156,6 @@ int main(int argc, char **argv)
 	check_field(s_reserved, 94 * 4);
 	check_field(s_checksum, 4);
 	do_field("Superblock end", 0, 0, cur_offset, 1024);
-#endif
-	return 0;
+#पूर्ण_अगर
+	वापस 0;
 }

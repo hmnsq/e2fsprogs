@@ -9,49 +9,49 @@
  * General Public License, version 2.
  * %End-Header%
  */
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
-#define _XOPEN_SOURCE 600
-#define _DARWIN_C_SOURCE
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#endif
+#अगर !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#घोषणा _XOPEN_SOURCE 600
+#घोषणा _DARWIN_C_SOURCE
+#अगर_अघोषित _GNU_SOURCE
+#घोषणा _GNU_SOURCE
+#पूर्ण_अगर
+#पूर्ण_अगर
 
-#include "config.h"
-#include <stdlib.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef HAVE_SYS_PRCTL_H
-#include <sys/prctl.h>
-#else
-#define PR_GET_DUMPABLE 3
-#endif
-#if (!defined(HAVE_PRCTL) && defined(linux))
-#include <sys/syscall.h>
-#endif
+#समावेश "config.h"
+#समावेश <stdlib.h>
+#अगर HAVE_UNISTD_H
+#समावेश <unistd.h>
+#पूर्ण_अगर
+#अगर_घोषित HAVE_SYS_PRCTL_H
+#समावेश <sys/prctl.h>
+#अन्यथा
+#घोषणा PR_GET_DUMPABLE 3
+#पूर्ण_अगर
+#अगर (!defined(HAVE_PRCTL) && defined(linux))
+#समावेश <sys/syscall.h>
+#पूर्ण_अगर
 
-#include "ext2fs.h"
+#समावेश "ext2fs.h"
 
-char *ext2fs_safe_getenv(const char *arg)
+अक्षर *ext2fs_safe_getenv(स्थिर अक्षर *arg)
 {
-	if ((getuid() != geteuid()) || (getgid() != getegid()))
-		return NULL;
-#ifdef HAVE_PRCTL
-	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#else
-#if (defined(linux) && defined(SYS_prctl))
-	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#endif
-#endif
+	अगर ((getuid() != geteuid()) || (getgid() != getegid()))
+		वापस शून्य;
+#अगर_घोषित HAVE_PRCTL
+	अगर (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		वापस शून्य;
+#अन्यथा
+#अगर (defined(linux) && defined(SYS_prctl))
+	अगर (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		वापस शून्य;
+#पूर्ण_अगर
+#पूर्ण_अगर
 
-#if defined(HAVE_SECURE_GETENV)
-	return secure_getenv(arg);
-#elif defined(HAVE___SECURE_GETENV)
-	return __secure_getenv(arg);
-#else
-	return getenv(arg);
-#endif
+#अगर defined(HAVE_SECURE_GETENV)
+	वापस secure_getenv(arg);
+#या_अगर defined(HAVE___SECURE_GETENV)
+	वापस __secure_getenv(arg);
+#अन्यथा
+	वापस दो_पर्या(arg);
+#पूर्ण_अगर
 }

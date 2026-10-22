@@ -1,114 +1,114 @@
 
-#ifndef _JFS_COMPAT_H
-#define _JFS_COMPAT_H
+#अगर_अघोषित _JFS_COMPAT_H
+#घोषणा _JFS_COMPAT_H
 
-#include "support/list.h"
-#include <errno.h>
-#ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
-#include <arpa/inet.h>
-#include <stdbool.h>
+#समावेश "support/list.h"
+#समावेश <errno.h>
+#अगर_घोषित HAVE_NETINET_IN_H
+#समावेश <netinet/in.h>
+#पूर्ण_अगर
+#समावेश <arpa/inet.h>
+#समावेश <stdbool.h>
 
-#define printk printf
-#define KERN_ERR ""
-#define KERN_DEBUG ""
+#घोषणा printk म_लिखो
+#घोषणा KERN_ERR ""
+#घोषणा KERN_DEBUG ""
 
-#define REQ_OP_READ 0
-#define REQ_OP_WRITE 1
+#घोषणा REQ_OP_READ 0
+#घोषणा REQ_OP_WRITE 1
 
-#define cpu_to_le16(x)	ext2fs_cpu_to_le16(x)
-#define cpu_to_be16(x)	ext2fs_cpu_to_be16(x)
-#define cpu_to_le32(x)	ext2fs_cpu_to_le32(x)
-#define cpu_to_be32(x)	ext2fs_cpu_to_be32(x)
-#define cpu_to_le64(x)	ext2fs_cpu_to_le64(x)
-#define cpu_to_be64(x)	ext2fs_cpu_to_be64(x)
+#घोषणा cpu_to_le16(x)	ext2fs_cpu_to_le16(x)
+#घोषणा cpu_to_be16(x)	ext2fs_cpu_to_be16(x)
+#घोषणा cpu_to_le32(x)	ext2fs_cpu_to_le32(x)
+#घोषणा cpu_to_be32(x)	ext2fs_cpu_to_be32(x)
+#घोषणा cpu_to_le64(x)	ext2fs_cpu_to_le64(x)
+#घोषणा cpu_to_be64(x)	ext2fs_cpu_to_be64(x)
 
-#define le16_to_cpu(x)	ext2fs_le16_to_cpu(x)
-#define be16_to_cpu(x)	ext2fs_be16_to_cpu(x)
-#define le32_to_cpu(x)	ext2fs_le32_to_cpu(x)
-#define be32_to_cpu(x)	ext2fs_be32_to_cpu(x)
-#define le64_to_cpu(x)	ext2fs_le64_to_cpu(x)
-#define be64_to_cpu(x)	ext2fs_be64_to_cpu(x)
+#घोषणा le16_to_cpu(x)	ext2fs_le16_to_cpu(x)
+#घोषणा be16_to_cpu(x)	ext2fs_be16_to_cpu(x)
+#घोषणा le32_to_cpu(x)	ext2fs_le32_to_cpu(x)
+#घोषणा be32_to_cpu(x)	ext2fs_be32_to_cpu(x)
+#घोषणा le64_to_cpu(x)	ext2fs_le64_to_cpu(x)
+#घोषणा be64_to_cpu(x)	ext2fs_be64_to_cpu(x)
 
-typedef unsigned int tid_t;
-typedef struct journal_s journal_t;
-typedef struct kdev_s *kdev_t;
+प्रकार अचिन्हित पूर्णांक tid_t;
+प्रकार काष्ठा journal_s journal_t;
+प्रकार काष्ठा kdev_s *kdev_t;
 
-struct buffer_head;
-struct inode;
+काष्ठा बफर_शीर्ष;
+काष्ठा inode;
 
-typedef unsigned int gfp_t;
-#define GFP_KERNEL	0
-#define GFP_NOFS	0
-#define __GFP_NOFAIL	0
-#define JBD2_TAG_SIZE32	JBD_TAG_SIZE32
-#define JBD2_BARRIER	0
-typedef __u64 u64;
-#define put_bh(x)	brelse(x)
+प्रकार अचिन्हित पूर्णांक gfp_t;
+#घोषणा GFP_KERNEL	0
+#घोषणा GFP_NOFS	0
+#घोषणा __GFP_NOFAIL	0
+#घोषणा JBD2_TAG_SIZE32	JBD_TAG_SIZE32
+#घोषणा JBD2_BARRIER	0
+प्रकार __u64 u64;
+#घोषणा put_bh(x)	brelse(x)
 
-#define crc32_be(x, y, z)	ext2fs_crc32_be((x), (y), (z))
-#define spin_lock_init(x)
-#define spin_lock(x)
-#define spin_unlock(x)
-#define SLAB_HWCACHE_ALIGN	0
-#define SLAB_TEMPORARY		0
-#define KMEM_CACHE(__struct, __flags) kmem_cache_create(#__struct,\
-                sizeof(struct __struct), __alignof__(struct __struct),\
-                (__flags), NULL)
+#घोषणा crc32_be(x, y, z)	ext2fs_crc32_be((x), (y), (z))
+#घोषणा spin_lock_init(x)
+#घोषणा spin_lock(x)
+#घोषणा spin_unlock(x)
+#घोषणा SLAB_HWCACHE_ALIGN	0
+#घोषणा SLAB_TEMPORARY		0
+#घोषणा KMEM_CACHE(__struct, __flags) kmem_cache_create(#__struct,\
+                माप(काष्ठा __struct), __alignof__(काष्ठा __struct),\
+                (__flags), शून्य)
 
-#define blkdev_issue_flush(kdev)	sync_blockdev(kdev)
-#define is_power_of_2(x)		((x) != 0 && (((x) & ((x) - 1)) == 0))
-#define roundup_power_of_two(n)		(1UL << (ext2fs_log2_u32((n) - 1) + 1))
-#define pr_emerg(fmt)
-#define pr_err(...)
+#घोषणा blkdev_issue_flush(kdev)	sync_blockdev(kdev)
+#घोषणा is_power_of_2(x)		((x) != 0 && (((x) & ((x) - 1)) == 0))
+#घोषणा roundup_power_of_two(n)		(1UL << (ext2fs_log2_u32((n) - 1) + 1))
+#घोषणा pr_emerg(fmt)
+#घोषणा pr_err(...)
 
-enum passtype {PASS_SCAN, PASS_REVOKE, PASS_REPLAY};
+क्रमागत passtype {PASS_SCAN, PASS_REVOKE, PASS_REPLAY};
 
-#define JBD2_FC_REPLAY_STOP		0
-#define JBD2_FC_REPLAY_CONTINUE		1
+#घोषणा JBD2_FC_REPLAY_STOP		0
+#घोषणा JBD2_FC_REPLAY_CONTINUE		1
 
-struct journal_s
+काष्ठा journal_s
 {
-	unsigned long		j_flags;
-	int			j_errno;
-	struct buffer_head *	j_sb_buffer;
-	struct journal_superblock_s *j_superblock;
-	int			j_format_version;
-	unsigned long		j_head;
-	unsigned long		j_tail;
-	unsigned long		j_fc_first;
-	unsigned long		j_fc_off;
-	unsigned long		j_fc_last;
-	unsigned long		j_free;
-	unsigned long		j_first, j_last;
+	अचिन्हित दीर्घ		j_flags;
+	पूर्णांक			j_errno;
+	काष्ठा बफर_शीर्ष *	j_sb_बफर;
+	काष्ठा journal_superblock_s *j_superblock;
+	पूर्णांक			j_format_version;
+	अचिन्हित दीर्घ		j_शीर्ष;
+	अचिन्हित दीर्घ		j_पुच्छ;
+	अचिन्हित दीर्घ		j_fc_first;
+	अचिन्हित दीर्घ		j_fc_off;
+	अचिन्हित दीर्घ		j_fc_last;
+	अचिन्हित दीर्घ		j_free;
+	अचिन्हित दीर्घ		j_first, j_last;
 	kdev_t			j_dev;
 	kdev_t			j_fs_dev;
-	int			j_blocksize;
-	unsigned int		j_blk_offset;
-	unsigned int		j_total_len;
-	struct inode *		j_inode;
-	tid_t			j_tail_sequence;
+	पूर्णांक			j_blocksize;
+	अचिन्हित पूर्णांक		j_blk_offset;
+	अचिन्हित पूर्णांक		j_योग_len;
+	काष्ठा inode *		j_inode;
+	tid_t			j_पुच्छ_sequence;
 	tid_t			j_transaction_sequence;
 	__u8			j_uuid[16];
-	struct jbd2_revoke_table_s *j_revoke;
-	struct jbd2_revoke_table_s *j_revoke_table[2];
+	काष्ठा jbd2_revoke_table_s *j_revoke;
+	काष्ठा jbd2_revoke_table_s *j_revoke_table[2];
 	tid_t			j_failed_commit;
 	__u32			j_csum_seed;
-	int (*j_fc_replay_callback)(struct journal_s *journal,
-				    struct buffer_head *bh,
-				    enum passtype pass, int off,
+	पूर्णांक (*j_fc_replay_callback)(काष्ठा journal_s *journal,
+				    काष्ठा बफर_शीर्ष *bh,
+				    क्रमागत passtype pass, पूर्णांक off,
 				    tid_t expected_tid);
 
 };
 
-#define is_journal_abort(x) 0
+#घोषणा is_journal_abort(x) 0
 
-#define BUFFER_TRACE(bh, info)	do {} while (0)
+#घोषणा बफर_TRACE(bh, info)	करो {} जबतक (0)
 
 /* Need this so we can compile with configure --enable-gcc-wall */
-#ifdef NO_INLINE_FUNCS
-#define inline
-#endif
+#अगर_घोषित NO_INLINE_FUNCS
+#घोषणा अंतरभूत
+#पूर्ण_अगर
 
-#endif /* _JFS_COMPAT_H */
+#पूर्ण_अगर /* _JFS_COMPAT_H */

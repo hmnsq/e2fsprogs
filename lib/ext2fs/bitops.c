@@ -10,14 +10,14 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#समावेश "config.h"
+#समावेश <stdio.h>
+#अगर HAVE_SYS_TYPES_H
+#समावेश <sys/types.h>
+#पूर्ण_अगर
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#समावेश "ext2_fs.h"
+#समावेश "ext2fs.h"
 
 /*
  * C language bitmap functions written by Theodore Ts'o, 9/26/92.
@@ -25,124 +25,124 @@
  * systems, as well as non-32 bit systems.
  */
 
-int ext2fs_set_bit(unsigned int nr,void * addr)
+पूर्णांक ext2fs_set_bit(अचिन्हित पूर्णांक nr,व्योम * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	पूर्णांक		mask, retval;
+	अचिन्हित अक्षर	*ADDR = (अचिन्हित अक्षर *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR |= mask;
-	return retval;
+	वापस retval;
 }
 
-int ext2fs_clear_bit(unsigned int nr, void * addr)
+पूर्णांक ext2fs_clear_bit(अचिन्हित पूर्णांक nr, व्योम * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	पूर्णांक		mask, retval;
+	अचिन्हित अक्षर	*ADDR = (अचिन्हित अक्षर *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR &= ~mask;
-	return retval;
+	वापस retval;
 }
 
-int ext2fs_test_bit(unsigned int nr, const void * addr)
+पूर्णांक ext2fs_test_bit(अचिन्हित पूर्णांक nr, स्थिर व्योम * addr)
 {
-	int			mask;
-	const unsigned char	*ADDR = (const unsigned char *) addr;
+	पूर्णांक			mask;
+	स्थिर अचिन्हित अक्षर	*ADDR = (स्थिर अचिन्हित अक्षर *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
-	return (mask & *ADDR);
+	वापस (mask & *ADDR);
 }
 
-void ext2fs_warn_bitmap(errcode_t errcode, unsigned long arg,
-			const char *description)
+व्योम ext2fs_warn_bitmap(errcode_t errcode, अचिन्हित दीर्घ arg,
+			स्थिर अक्षर *description)
 {
-#ifndef OMIT_COM_ERR
-	if (description)
+#अगर_अघोषित OMIT_COM_ERR
+	अगर (description)
 		com_err(0, errcode, "#%lu for %s", arg, description);
-	else
+	अन्यथा
 		com_err(0, errcode, "#%lu", arg);
-#endif
+#पूर्ण_अगर
 }
 
 /* Bitmap functions that take a 64-bit offset */
 
-int ext2fs_set_bit64(__u64 nr, void * addr)
+पूर्णांक ext2fs_set_bit64(__u64 nr, व्योम * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	पूर्णांक		mask, retval;
+	अचिन्हित अक्षर	*ADDR = (अचिन्हित अक्षर *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR |= mask;
-	return retval;
+	वापस retval;
 }
 
-int ext2fs_clear_bit64(__u64 nr, void * addr)
+पूर्णांक ext2fs_clear_bit64(__u64 nr, व्योम * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	पूर्णांक		mask, retval;
+	अचिन्हित अक्षर	*ADDR = (अचिन्हित अक्षर *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR &= ~mask;
-	return retval;
+	वापस retval;
 }
 
-int ext2fs_test_bit64(__u64 nr, const void * addr)
+पूर्णांक ext2fs_test_bit64(__u64 nr, स्थिर व्योम * addr)
 {
-	int			mask;
-	const unsigned char	*ADDR = (const unsigned char *) addr;
+	पूर्णांक			mask;
+	स्थिर अचिन्हित अक्षर	*ADDR = (स्थिर अचिन्हित अक्षर *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
-	return (mask & *ADDR);
+	वापस (mask & *ADDR);
 }
 
-static unsigned int popcount8(unsigned int w)
+अटल अचिन्हित पूर्णांक popcount8(अचिन्हित पूर्णांक w)
 {
-	unsigned int res = w - ((w >> 1) & 0x55);
+	अचिन्हित पूर्णांक res = w - ((w >> 1) & 0x55);
 	res = (res & 0x33) + ((res >> 2) & 0x33);
-	return (res + (res >> 4)) & 0x0F;
+	वापस (res + (res >> 4)) & 0x0F;
 }
 
-static unsigned int popcount32(unsigned int w)
+अटल अचिन्हित पूर्णांक popcount32(अचिन्हित पूर्णांक w)
 {
-	unsigned int res = w - ((w >> 1) & 0x55555555);
+	अचिन्हित पूर्णांक res = w - ((w >> 1) & 0x55555555);
 	res = (res & 0x33333333) + ((res >> 2) & 0x33333333);
 	res = (res + (res >> 4)) & 0x0F0F0F0F;
 	res = res + (res >> 8);
-	return (res + (res >> 16)) & 0x000000FF;
+	वापस (res + (res >> 16)) & 0x000000FF;
 }
 
-unsigned int ext2fs_bitcount(const void *addr, unsigned int nbytes)
+अचिन्हित पूर्णांक ext2fs_bitcount(स्थिर व्योम *addr, अचिन्हित पूर्णांक nbytes)
 {
-	const unsigned char *cp = addr;
-	const __u32 *p;
-	unsigned int res = 0;
+	स्थिर अचिन्हित अक्षर *cp = addr;
+	स्थिर __u32 *p;
+	अचिन्हित पूर्णांक res = 0;
 
-	while (((((uintptr_t) cp) & 3) != 0) && (nbytes > 0)) {
+	जबतक (((((uintptr_t) cp) & 3) != 0) && (nbytes > 0)) {
 		res += popcount8(*cp++);
 		nbytes--;
 	}
-	p = (const __u32 *) cp;
+	p = (स्थिर __u32 *) cp;
 
-	while (nbytes > 4) {
+	जबतक (nbytes > 4) {
 		res += popcount32(*p++);
 		nbytes -= 4;
 	}
-	cp = (const unsigned char *) p;
+	cp = (स्थिर अचिन्हित अक्षर *) p;
 
-	while (nbytes > 0) {
+	जबतक (nbytes > 0) {
 		res += popcount8(*cp++);
 		nbytes--;
 	}
-	return res;
+	वापस res;
 }

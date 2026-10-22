@@ -21,58 +21,58 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include "config.h"
-#include <errno.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <string.h>
-#include <fcntl.h>
-#include <time.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <ctype.h>
-#include <signal.h>
-#include <stdarg.h>
+#समावेश "config.h"
+#समावेश <errno.h>
+#समावेश <stdlib.h>
+#समावेश <stdio.h>
+#समावेश <fcntl.h>
+#समावेश <unistd.h>
+#समावेश <string.h>
+#समावेश <fcntl.h>
+#समावेश <time.h>
+#समावेश <sys/mman.h>
+#समावेश <sys/stat.h>
+#समावेश <sys/time.h>
+#समावेश <ctype.h>
+#समावेश <signal.h>
+#समावेश <stdarg.h>
 
-#include "tdb.h"
+#समावेश "tdb.h"
 
-static int do_command(void);
-const char *cmdname;
-char *arg1, *arg2;
-size_t arg1len, arg2len;
-int bIterate = 0;
-char *line;
-TDB_DATA iterate_kbuf;
-char cmdline[1024];
+अटल पूर्णांक do_command(व्योम);
+स्थिर अक्षर *cmdname;
+अक्षर *arg1, *arg2;
+माप_प्रकार arg1len, arg2len;
+पूर्णांक bIterate = 0;
+अक्षर *पंक्ति;
+TDB_तथ्य iterate_kbuf;
+अक्षर cmdline[1024];
 
-enum commands {
+क्रमागत commands {
 	CMD_CREATE_TDB,
 	CMD_OPEN_TDB,
 	CMD_ERASE,
 	CMD_DUMP,
-	CMD_INSERT,
+	CMD_जोड़ो,
 	CMD_MOVE,
 	CMD_STORE,
 	CMD_SHOW,
-	CMD_KEYS,
+	CMD_कुंजियाँ,
 	CMD_HEXKEYS,
 	CMD_DELETE,
 	CMD_LIST_HASH_FREE,
 	CMD_LIST_FREE,
 	CMD_INFO,
 	CMD_FIRST,
-	CMD_NEXT,
+	CMD_अग्र,
 	CMD_SYSTEM,
 	CMD_QUIT,
 	CMD_HELP
 };
 
-typedef struct {
-	const char *name;
-	enum commands cmd;
+प्रकार काष्ठा {
+	स्थिर अक्षर *name;
+	क्रमागत commands cmd;
 } COMMAND_TABLE;
 
 COMMAND_TABLE cmd_table[] = {
@@ -80,11 +80,11 @@ COMMAND_TABLE cmd_table[] = {
 	{"open",	CMD_OPEN_TDB},
 	{"erase",	CMD_ERASE},
 	{"dump",	CMD_DUMP},
-	{"insert",	CMD_INSERT},
+	{"insert",	CMD_जोड़ो},
 	{"move",	CMD_MOVE},
 	{"store",	CMD_STORE},
 	{"show",	CMD_SHOW},
-	{"keys",	CMD_KEYS},
+	{"keys",	CMD_कुंजियाँ},
 	{"hexkeys",	CMD_HEXKEYS},
 	{"delete",	CMD_DELETE},
 	{"list",	CMD_LIST_HASH_FREE},
@@ -92,71 +92,71 @@ COMMAND_TABLE cmd_table[] = {
 	{"info",	CMD_INFO},
 	{"first",	CMD_FIRST},
 	{"1",		CMD_FIRST},
-	{"next",	CMD_NEXT},
-	{"n",		CMD_NEXT},
+	{"next",	CMD_अग्र},
+	{"n",		CMD_अग्र},
 	{"quit",	CMD_QUIT},
 	{"q",		CMD_QUIT},
 	{"!",		CMD_SYSTEM},
-	{NULL,		CMD_HELP}
+	{शून्य,		CMD_HELP}
 };
 
 /* a tdb tool for manipulating a tdb database */
 
-static TDB_CONTEXT *tdb;
+अटल TDB_CONTEXT *tdb;
 
-static int print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
-static int print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
-static int print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
+अटल पूर्णांक print_rec(TDB_CONTEXT *the_tdb, TDB_तथ्य कुंजी, TDB_तथ्य dbuf, व्योम *state);
+अटल पूर्णांक print_कुंजी(TDB_CONTEXT *the_tdb, TDB_तथ्य कुंजी, TDB_तथ्य dbuf, व्योम *state);
+अटल पूर्णांक print_hexkey(TDB_CONTEXT *the_tdb, TDB_तथ्य कुंजी, TDB_तथ्य dbuf, व्योम *state);
 
-static void print_asc(const char *buf,int len)
+अटल व्योम print_asc(स्थिर अक्षर *buf,पूर्णांक len)
 {
-	int i;
+	पूर्णांक i;
 
 	/* We're probably printing ASCII strings so don't try to display
 	   the trailing NULL character. */
 
-	if (buf[len - 1] == 0)
+	अगर (buf[len - 1] == 0)
 	        len--;
 
-	for (i=0;i<len;i++)
-		printf("%c",isprint(buf[i])?buf[i]:'.');
+	क्रम (i=0;i<len;i++)
+		म_लिखो("%c",है_छाप(buf[i])?buf[i]:'.');
 }
 
-static void print_data(const char *buf,int len)
+अटल व्योम print_तथ्य(स्थिर अक्षर *buf,पूर्णांक len)
 {
-	int i=0;
-	if (len<=0) return;
-	printf("[%03X] ",i);
-	for (i=0;i<len;) {
-		printf("%02X ",(int)buf[i]);
+	पूर्णांक i=0;
+	अगर (len<=0) वापस;
+	म_लिखो("[%03X] ",i);
+	क्रम (i=0;i<len;) {
+		म_लिखो("%02X ",(पूर्णांक)buf[i]);
 		i++;
-		if (i%8 == 0) printf(" ");
-		if (i%16 == 0) {
-			print_asc(&buf[i-16],8); printf(" ");
-			print_asc(&buf[i-8],8); printf("\n");
-			if (i<len) printf("[%03X] ",i);
+		अगर (i%8 == 0) म_लिखो(" ");
+		अगर (i%16 == 0) {
+			print_asc(&buf[i-16],8); म_लिखो(" ");
+			print_asc(&buf[i-8],8); म_लिखो("\n");
+			अगर (i<len) म_लिखो("[%03X] ",i);
 		}
 	}
-	if (i%16) {
-		int n;
+	अगर (i%16) {
+		पूर्णांक n;
 
 		n = 16 - (i%16);
-		printf(" ");
-		if (n>8) printf(" ");
-		while (n--) printf("   ");
+		म_लिखो(" ");
+		अगर (n>8) म_लिखो(" ");
+		जबतक (n--) म_लिखो("   ");
 
 		n = i%16;
-		if (n > 8) n = 8;
-		print_asc(&buf[i-(i%16)],n); printf(" ");
+		अगर (n > 8) n = 8;
+		print_asc(&buf[i-(i%16)],n); म_लिखो(" ");
 		n = (i%16) - n;
-		if (n>0) print_asc(&buf[i-n],n);
-		printf("\n");
+		अगर (n>0) print_asc(&buf[i-n],n);
+		म_लिखो("\n");
 	}
 }
 
-static void help(void)
+अटल व्योम help(व्योम)
 {
-	printf("\n"
+	म_लिखो("\n"
 "tdbtool: \n"
 "  create    dbname     : create a database\n"
 "  open      dbname     : open an existing database\n"
@@ -180,442 +180,442 @@ static void help(void)
 "\n");
 }
 
-static void terror(const char *why)
+अटल व्योम terror(स्थिर अक्षर *why)
 {
-	printf("%s\n", why);
+	म_लिखो("%s\n", why);
 }
 
-static void create_tdb(const char *tdbname)
+अटल व्योम create_tdb(स्थिर अक्षर *tdbname)
 {
-	if (tdb) tdb_close(tdb);
+	अगर (tdb) tdb_close(tdb);
 	tdb = tdb_open(tdbname, 0, TDB_CLEAR_IF_FIRST,
 		       O_RDWR | O_CREAT | O_TRUNC, 0600);
-	if (!tdb) {
-		printf("Could not create %s: %s\n", tdbname, strerror(errno));
+	अगर (!tdb) {
+		म_लिखो("Could not create %s: %s\n", tdbname, म_त्रुटि(त्रुटि_सं));
 	}
 }
 
-static void open_tdb(const char *tdbname)
+अटल व्योम open_tdb(स्थिर अक्षर *tdbname)
 {
-	if (tdb) tdb_close(tdb);
+	अगर (tdb) tdb_close(tdb);
 	tdb = tdb_open(tdbname, 0, 0, O_RDWR, 0600);
-	if (!tdb) {
-		printf("Could not open %s: %s\n", tdbname, strerror(errno));
+	अगर (!tdb) {
+		म_लिखो("Could not open %s: %s\n", tdbname, म_त्रुटि(त्रुटि_सं));
 	}
 }
 
-static void insert_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
+अटल व्योम जोड़ो_tdb(अक्षर *keyname, माप_प्रकार keylen, अक्षर* तथ्य, माप_प्रकार datalen)
 {
-	TDB_DATA key, dbuf;
+	TDB_तथ्य कुंजी, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	अगर ((keyname == शून्य) || (keylen == 0)) {
 		terror("need key");
-		return;
+		वापस;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
-	dbuf.dptr = (unsigned char *)data;
+	कुंजी.dptr = (अचिन्हित अक्षर *)keyname;
+	कुंजी.dsize = keylen;
+	dbuf.dptr = (अचिन्हित अक्षर *)तथ्य;
 	dbuf.dsize = datalen;
 
-	if (tdb_store(tdb, key, dbuf, TDB_INSERT) == -1) {
+	अगर (tdb_store(tdb, कुंजी, dbuf, TDB_जोड़ो) == -1) {
 		terror("insert failed");
 	}
 }
 
-static void store_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
+अटल व्योम store_tdb(अक्षर *keyname, माप_प्रकार keylen, अक्षर* तथ्य, माप_प्रकार datalen)
 {
-	TDB_DATA key, dbuf;
+	TDB_तथ्य कुंजी, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	अगर ((keyname == शून्य) || (keylen == 0)) {
 		terror("need key");
-		return;
+		वापस;
 	}
 
-	if ((data == NULL) || (datalen == 0)) {
+	अगर ((तथ्य == शून्य) || (datalen == 0)) {
 		terror("need data");
-		return;
+		वापस;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
-	dbuf.dptr = (unsigned char *)data;
+	कुंजी.dptr = (अचिन्हित अक्षर *)keyname;
+	कुंजी.dsize = keylen;
+	dbuf.dptr = (अचिन्हित अक्षर *)तथ्य;
 	dbuf.dsize = datalen;
 
-	printf("Storing key:\n");
-	print_rec(tdb, key, dbuf, NULL);
+	म_लिखो("Storing key:\n");
+	print_rec(tdb, कुंजी, dbuf, शून्य);
 
-	if (tdb_store(tdb, key, dbuf, TDB_REPLACE) == -1) {
+	अगर (tdb_store(tdb, कुंजी, dbuf, TDB_REPLACE) == -1) {
 		terror("store failed");
 	}
 }
 
-static void show_tdb(char *keyname, size_t keylen)
+अटल व्योम show_tdb(अक्षर *keyname, माप_प्रकार keylen)
 {
-	TDB_DATA key, dbuf;
+	TDB_तथ्य कुंजी, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	अगर ((keyname == शून्य) || (keylen == 0)) {
 		terror("need key");
-		return;
+		वापस;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	कुंजी.dptr = (अचिन्हित अक्षर *)keyname;
+	कुंजी.dsize = keylen;
 
-	dbuf = tdb_fetch(tdb, key);
-	if (!dbuf.dptr) {
+	dbuf = tdb_fetch(tdb, कुंजी);
+	अगर (!dbuf.dptr) {
 	    terror("fetch failed");
-	    return;
+	    वापस;
 	}
 
-	print_rec(tdb, key, dbuf, NULL);
+	print_rec(tdb, कुंजी, dbuf, शून्य);
 
-	free( dbuf.dptr );
+	मुक्त( dbuf.dptr );
 
-	return;
+	वापस;
 }
 
-static void delete_tdb(char *keyname, size_t keylen)
+अटल व्योम delete_tdb(अक्षर *keyname, माप_प्रकार keylen)
 {
-	TDB_DATA key;
+	TDB_तथ्य कुंजी;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	अगर ((keyname == शून्य) || (keylen == 0)) {
 		terror("need key");
-		return;
+		वापस;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	कुंजी.dptr = (अचिन्हित अक्षर *)keyname;
+	कुंजी.dsize = keylen;
 
-	if (tdb_delete(tdb, key) != 0) {
+	अगर (tdb_delete(tdb, कुंजी) != 0) {
 		terror("delete failed");
 	}
 }
 
-static void move_rec(char *keyname, size_t keylen, char* tdbname)
+अटल व्योम move_rec(अक्षर *keyname, माप_प्रकार keylen, अक्षर* tdbname)
 {
-	TDB_DATA key, dbuf;
+	TDB_तथ्य कुंजी, dbuf;
 	TDB_CONTEXT *dst_tdb;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	अगर ((keyname == शून्य) || (keylen == 0)) {
 		terror("need key");
-		return;
+		वापस;
 	}
 
-	if ( !tdbname ) {
+	अगर ( !tdbname ) {
 		terror("need destination tdb name");
-		return;
+		वापस;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	कुंजी.dptr = (अचिन्हित अक्षर *)keyname;
+	कुंजी.dsize = keylen;
 
-	dbuf = tdb_fetch(tdb, key);
-	if (!dbuf.dptr) {
+	dbuf = tdb_fetch(tdb, कुंजी);
+	अगर (!dbuf.dptr) {
 		terror("fetch failed");
-		return;
+		वापस;
 	}
 
-	print_rec(tdb, key, dbuf, NULL);
+	print_rec(tdb, कुंजी, dbuf, शून्य);
 
 	dst_tdb = tdb_open(tdbname, 0, 0, O_RDWR, 0600);
-	if ( !dst_tdb ) {
+	अगर ( !dst_tdb ) {
 		terror("unable to open destination tdb");
-		return;
+		वापस;
 	}
 
-	if ( tdb_store( dst_tdb, key, dbuf, TDB_REPLACE ) == -1 ) {
+	अगर ( tdb_store( dst_tdb, कुंजी, dbuf, TDB_REPLACE ) == -1 ) {
 		terror("failed to move record");
 	}
-	else
-		printf("record moved\n");
+	अन्यथा
+		म_लिखो("record moved\n");
 
 	tdb_close( dst_tdb );
 
-	return;
+	वापस;
 }
 
-static int print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+अटल पूर्णांक print_rec(TDB_CONTEXT *the_tdb, TDB_तथ्य कुंजी, TDB_तथ्य dbuf, व्योम *state)
 {
-	printf("\nkey %d bytes\n", (int)key.dsize);
-	print_asc((const char *)key.dptr, key.dsize);
-	printf("\ndata %d bytes\n", (int)dbuf.dsize);
-	print_data((const char *)dbuf.dptr, dbuf.dsize);
-	return 0;
+	म_लिखो("\nkey %d bytes\n", (पूर्णांक)कुंजी.dsize);
+	print_asc((स्थिर अक्षर *)कुंजी.dptr, कुंजी.dsize);
+	म_लिखो("\ndata %d bytes\n", (पूर्णांक)dbuf.dsize);
+	print_तथ्य((स्थिर अक्षर *)dbuf.dptr, dbuf.dsize);
+	वापस 0;
 }
 
-static int print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+अटल पूर्णांक print_कुंजी(TDB_CONTEXT *the_tdb, TDB_तथ्य कुंजी, TDB_तथ्य dbuf, व्योम *state)
 {
-	printf("key %d bytes: ", (int)key.dsize);
-	print_asc((const char *)key.dptr, key.dsize);
-	printf("\n");
-	return 0;
+	म_लिखो("key %d bytes: ", (पूर्णांक)कुंजी.dsize);
+	print_asc((स्थिर अक्षर *)कुंजी.dptr, कुंजी.dsize);
+	म_लिखो("\n");
+	वापस 0;
 }
 
-static int print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+अटल पूर्णांक print_hexkey(TDB_CONTEXT *the_tdb, TDB_तथ्य कुंजी, TDB_तथ्य dbuf, व्योम *state)
 {
-	printf("key %d bytes\n", (int)key.dsize);
-	print_data((const char *)key.dptr, key.dsize);
-	printf("\n");
-	return 0;
+	म_लिखो("key %d bytes\n", (पूर्णांक)कुंजी.dsize);
+	print_तथ्य((स्थिर अक्षर *)कुंजी.dptr, कुंजी.dsize);
+	म_लिखो("\n");
+	वापस 0;
 }
 
-static int total_bytes;
+अटल पूर्णांक योग_bytes;
 
-static int traverse_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+अटल पूर्णांक traverse_fn(TDB_CONTEXT *the_tdb, TDB_तथ्य कुंजी, TDB_तथ्य dbuf, व्योम *state)
 {
-	total_bytes += dbuf.dsize;
-	return 0;
+	योग_bytes += dbuf.dsize;
+	वापस 0;
 }
 
-static void info_tdb(void)
+अटल व्योम info_tdb(व्योम)
 {
-	int count;
-	total_bytes = 0;
-	if ((count = tdb_traverse(tdb, traverse_fn, NULL)) == -1)
-		printf("Error = %s\n", tdb_errorstr(tdb));
-	else
-		printf("%d records totalling %d bytes\n", count, total_bytes);
+	पूर्णांक गिनती;
+	योग_bytes = 0;
+	अगर ((गिनती = tdb_traverse(tdb, traverse_fn, शून्य)) == -1)
+		म_लिखो("Error = %s\n", tdb_errorstr(tdb));
+	अन्यथा
+		म_लिखो("%d records totalling %d bytes\n", गिनती, योग_bytes);
 }
 
-static char *tdb_getline(const char *prompt)
+अटल अक्षर *tdb_getline(स्थिर अक्षर *prompt)
 {
-	static char thisline[1024];
-	char *p;
-	fputs(prompt, stdout);
+	अटल अक्षर thisline[1024];
+	अक्षर *p;
+	ख_माला_दो(prompt, मानक_निकास);
 	thisline[0] = 0;
-	p = fgets(thisline, sizeof(thisline)-1, stdin);
-	if (p) p = strchr(p, '\n');
-	if (p) *p = 0;
-	return p?thisline:NULL;
+	p = ख_माला_लो(thisline, माप(thisline)-1, मानक_निवेश);
+	अगर (p) p = म_अक्षर(p, '\n');
+	अगर (p) *p = 0;
+	वापस p?thisline:शून्य;
 }
 
-static int do_delete_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf,
-                     void *state)
+अटल पूर्णांक do_delete_fn(TDB_CONTEXT *the_tdb, TDB_तथ्य कुंजी, TDB_तथ्य dbuf,
+                     व्योम *state)
 {
-    return tdb_delete(the_tdb, key);
+    वापस tdb_delete(the_tdb, कुंजी);
 }
 
-static void first_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
+अटल व्योम first_record(TDB_CONTEXT *the_tdb, TDB_तथ्य *pkey)
 {
-	TDB_DATA dbuf;
+	TDB_तथ्य dbuf;
 	*pkey = tdb_firstkey(the_tdb);
 
 	dbuf = tdb_fetch(the_tdb, *pkey);
-	if (!dbuf.dptr) terror("fetch failed");
-	else {
-		print_rec(the_tdb, *pkey, dbuf, NULL);
+	अगर (!dbuf.dptr) terror("fetch failed");
+	अन्यथा {
+		print_rec(the_tdb, *pkey, dbuf, शून्य);
 	}
 }
 
-static void next_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
+अटल व्योम अग्र_record(TDB_CONTEXT *the_tdb, TDB_तथ्य *pkey)
 {
-	TDB_DATA dbuf;
+	TDB_तथ्य dbuf;
 	*pkey = tdb_nextkey(the_tdb, *pkey);
 
 	dbuf = tdb_fetch(the_tdb, *pkey);
-	if (!dbuf.dptr)
+	अगर (!dbuf.dptr)
 		terror("fetch failed");
-	else
-		print_rec(the_tdb, *pkey, dbuf, NULL);
+	अन्यथा
+		print_rec(the_tdb, *pkey, dbuf, शून्य);
 }
 
-static int do_command(void)
+अटल पूर्णांक do_command(व्योम)
 {
 	COMMAND_TABLE *ctp = cmd_table;
-	enum commands mycmd = CMD_HELP;
-	int cmd_len;
+	क्रमागत commands mycmd = CMD_HELP;
+	पूर्णांक cmd_len;
 
-	if (cmdname && strlen(cmdname) == 0) {
-	    mycmd = CMD_NEXT;
-	} else {
-	    while (ctp->name) {
-		cmd_len = strlen(ctp->name);
-		if (strncmp(ctp->name,cmdname,cmd_len) == 0) {
+	अगर (cmdname && म_माप(cmdname) == 0) {
+	    mycmd = CMD_अग्र;
+	} अन्यथा {
+	    जबतक (ctp->name) {
+		cmd_len = म_माप(ctp->name);
+		अगर (म_भेदन(ctp->name,cmdname,cmd_len) == 0) {
 			mycmd = ctp->cmd;
-			break;
+			अवरोध;
 		}
 		ctp++;
 	    }
 	}
 
-	switch (mycmd) {
-	case CMD_CREATE_TDB:
+	चयन (mycmd) {
+	हाल CMD_CREATE_TDB:
             bIterate = 0;
             create_tdb(arg1);
-	    return 0;
-	case CMD_OPEN_TDB:
+	    वापस 0;
+	हाल CMD_OPEN_TDB:
             bIterate = 0;
             open_tdb(arg1);
-            return 0;
-	case CMD_SYSTEM:
+            वापस 0;
+	हाल CMD_SYSTEM:
 	    /* Shell command */
-	    system(arg1);
-	    return 0;
-	case CMD_QUIT:
-	    return 1;
-	default:
+	    प्रणाली(arg1);
+	    वापस 0;
+	हाल CMD_QUIT:
+	    वापस 1;
+	शेष:
 	    /* all the rest require a open database */
-	    if (!tdb) {
+	    अगर (!tdb) {
 		bIterate = 0;
 		terror("database not open");
 		help();
-		return 0;
+		वापस 0;
 	    }
-	    switch (mycmd) {
-	    case CMD_ERASE:
+	    चयन (mycmd) {
+	    हाल CMD_ERASE:
 		bIterate = 0;
-		tdb_traverse(tdb, do_delete_fn, NULL);
-		return 0;
-	    case CMD_DUMP:
+		tdb_traverse(tdb, do_delete_fn, शून्य);
+		वापस 0;
+	    हाल CMD_DUMP:
 		bIterate = 0;
-		tdb_traverse(tdb, print_rec, NULL);
-		return 0;
-	    case CMD_INSERT:
+		tdb_traverse(tdb, print_rec, शून्य);
+		वापस 0;
+	    हाल CMD_जोड़ो:
 		bIterate = 0;
-		insert_tdb(arg1, arg1len,arg2,arg2len);
-		return 0;
-	    case CMD_MOVE:
+		जोड़ो_tdb(arg1, arg1len,arg2,arg2len);
+		वापस 0;
+	    हाल CMD_MOVE:
 		bIterate = 0;
 		move_rec(arg1,arg1len,arg2);
-		return 0;
-	    case CMD_STORE:
+		वापस 0;
+	    हाल CMD_STORE:
 		bIterate = 0;
 		store_tdb(arg1,arg1len,arg2,arg2len);
-		return 0;
-	    case CMD_SHOW:
+		वापस 0;
+	    हाल CMD_SHOW:
 		bIterate = 0;
 		show_tdb(arg1, arg1len);
-		return 0;
-	    case CMD_KEYS:
-		tdb_traverse(tdb, print_key, NULL);
-		return 0;
-	    case CMD_HEXKEYS:
-		tdb_traverse(tdb, print_hexkey, NULL);
-		return 0;
-	    case CMD_DELETE:
+		वापस 0;
+	    हाल CMD_कुंजियाँ:
+		tdb_traverse(tdb, print_कुंजी, शून्य);
+		वापस 0;
+	    हाल CMD_HEXKEYS:
+		tdb_traverse(tdb, print_hexkey, शून्य);
+		वापस 0;
+	    हाल CMD_DELETE:
 		bIterate = 0;
 		delete_tdb(arg1,arg1len);
-		return 0;
-	    case CMD_LIST_HASH_FREE:
+		वापस 0;
+	    हाल CMD_LIST_HASH_FREE:
 		tdb_dump_all(tdb);
-		return 0;
-	    case CMD_LIST_FREE:
+		वापस 0;
+	    हाल CMD_LIST_FREE:
 		tdb_printfreelist(tdb);
-		return 0;
-	    case CMD_INFO:
+		वापस 0;
+	    हाल CMD_INFO:
 		info_tdb();
-		return 0;
-	    case CMD_FIRST:
+		वापस 0;
+	    हाल CMD_FIRST:
 		bIterate = 1;
 		first_record(tdb, &iterate_kbuf);
-		return 0;
-	    case CMD_NEXT:
-	       if (bIterate)
-		  next_record(tdb, &iterate_kbuf);
-		return 0;
-	    case CMD_HELP:
+		वापस 0;
+	    हाल CMD_अग्र:
+	       अगर (bIterate)
+		  अग्र_record(tdb, &iterate_kbuf);
+		वापस 0;
+	    हाल CMD_HELP:
 		help();
-		return 0;
-            case CMD_CREATE_TDB:
-            case CMD_OPEN_TDB:
-            case CMD_SYSTEM:
-            case CMD_QUIT:
+		वापस 0;
+            हाल CMD_CREATE_TDB:
+            हाल CMD_OPEN_TDB:
+            हाल CMD_SYSTEM:
+            हाल CMD_QUIT:
                 /*
                  * unhandled commands.  cases included here to avoid compiler
                  * warnings.
                  */
-                return 0;
+                वापस 0;
 	    }
 	}
 
-	return 0;
+	वापस 0;
 }
 
-static char *convert_string(char *instring, size_t *sizep)
+अटल अक्षर *convert_string(अक्षर *instring, माप_प्रकार *sizep)
 {
-    size_t length = 0;
-    char *outp, *inp;
-    char temp[3];
+    माप_प्रकार लंबाई = 0;
+    अक्षर *outp, *inp;
+    अक्षर अस्थायी[3];
 
 
     outp = inp = instring;
 
-    while (*inp) {
-	if (*inp == '\\') {
+    जबतक (*inp) {
+	अगर (*inp == '\\') {
 	    inp++;
-	    if (*inp && strchr("0123456789abcdefABCDEF",(int)*inp)) {
-		temp[0] = *inp++;
-		temp[1] = '\0';
-		if (*inp && strchr("0123456789abcdefABCDEF",(int)*inp)) {
-		    temp[1] = *inp++;
-		    temp[2] = '\0';
+	    अगर (*inp && म_अक्षर("0123456789abcdefABCDEF",(पूर्णांक)*inp)) {
+		अस्थायी[0] = *inp++;
+		अस्थायी[1] = '\0';
+		अगर (*inp && म_अक्षर("0123456789abcdefABCDEF",(पूर्णांक)*inp)) {
+		    अस्थायी[1] = *inp++;
+		    अस्थायी[2] = '\0';
 		}
-		*outp++ = (char)strtol((const char *)temp,NULL,16);
-	    } else {
+		*outp++ = (अक्षर)म_से_दीर्घ((स्थिर अक्षर *)अस्थायी,शून्य,16);
+	    } अन्यथा {
 		*outp++ = *inp++;
 	    }
-	} else {
+	} अन्यथा {
 	    *outp++ = *inp++;
 	}
-	length++;
+	लंबाई++;
     }
-    *sizep = length;
-    return instring;
+    *sizep = लंबाई;
+    वापस instring;
 }
 
-int main(int argc, char *argv[])
+पूर्णांक मुख्य(पूर्णांक argc, अक्षर *argv[])
 {
     cmdname = "";
-    arg1 = NULL;
+    arg1 = शून्य;
     arg1len = 0;
-    arg2 = NULL;
+    arg2 = शून्य;
     arg2len = 0;
 
-    if (argv[1]) {
+    अगर (argv[1]) {
 	cmdname = "open";
 	arg1 = argv[1];
         do_command();
 	cmdname =  "";
-	arg1 = NULL;
+	arg1 = शून्य;
     }
 
-    switch (argc) {
-	case 1:
-	case 2:
+    चयन (argc) {
+	हाल 1:
+	हाल 2:
 	    /* Interactive mode */
-	    while ((cmdname = tdb_getline("tdb> "))) {
-		arg2 = arg1 = NULL;
-		if ((arg1 = strchr((const char *)cmdname,' ')) != NULL) {
+	    जबतक ((cmdname = tdb_getline("tdb> "))) {
+		arg2 = arg1 = शून्य;
+		अगर ((arg1 = म_अक्षर((स्थिर अक्षर *)cmdname,' ')) != शून्य) {
 		    arg1++;
 		    arg2 = arg1;
-		    while (*arg2) {
-			if (*arg2 == ' ') {
+		    जबतक (*arg2) {
+			अगर (*arg2 == ' ') {
 			    *arg2++ = '\0';
-			    break;
+			    अवरोध;
 			}
-			if ((*arg2++ == '\\') && (*arg2 == ' ')) {
+			अगर ((*arg2++ == '\\') && (*arg2 == ' ')) {
 			    arg2++;
 			}
 		    }
 		}
-		if (arg1) arg1 = convert_string(arg1,&arg1len);
-		if (arg2) arg2 = convert_string(arg2,&arg2len);
-		if (do_command()) break;
+		अगर (arg1) arg1 = convert_string(arg1,&arg1len);
+		अगर (arg2) arg2 = convert_string(arg2,&arg2len);
+		अगर (do_command()) अवरोध;
 	    }
-	    break;
-	case 5:
+	    अवरोध;
+	हाल 5:
 	    arg2 = convert_string(argv[4],&arg2len);
-	case 4:
+	हाल 4:
 	    arg1 = convert_string(argv[3],&arg1len);
-	case 3:
+	हाल 3:
 	    cmdname = argv[2];
-	default:
+	शेष:
 	    do_command();
-	    break;
+	    अवरोध;
     }
 
-    if (tdb) tdb_close(tdb);
+    अगर (tdb) tdb_close(tdb);
 
-    return 0;
+    वापस 0;
 }

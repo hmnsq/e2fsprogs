@@ -9,212 +9,212 @@
  * %End-Header%
  */
 
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
+#अगर HAVE_SYS_STAT_H
+#समावेश <sys/stat.h>
+#पूर्ण_अगर
 
-#include "ext2fs.h"
+#समावेश "ext2fs.h"
 
-#define EXT2FS_MAX_NESTED_LINKS  8
+#घोषणा EXT2FS_MAX_NESTED_LINKS  8
 
-static inline int ext2fsP_is_disk_device(mode_t mode)
+अटल अंतरभूत पूर्णांक ext2fsP_is_disk_device(mode_t mode)
 {
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-	return S_ISBLK(mode) || S_ISCHR(mode);
-#else
-	return S_ISBLK(mode);
-#endif
+#अगर defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+	वापस S_ISBLK(mode) || S_ISCHR(mode);
+#अन्यथा
+	वापस S_ISBLK(mode);
+#पूर्ण_अगर
 }
 
-static inline time_t ext2fsP_get_time(ext2_filsys fs)
+अटल अंतरभूत समय_प्रकार ext2fsP_get_time(ext2_filsys fs)
 {
-	if (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
-		return fs->now;
-	return time(NULL);
+	अगर (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
+		वापस fs->now;
+	वापस समय(शून्य);
 }
 
 /*
  * Badblocks list
  */
-struct ext2_struct_u32_list {
-	int	magic;
-	int	num;
-	int	size;
+काष्ठा ext2_struct_u32_list {
+	पूर्णांक	magic;
+	पूर्णांक	अंक;
+	पूर्णांक	आकार;
 	__u32	*list;
-	int	badblocks_flags;
+	पूर्णांक	badblocks_flags;
 };
 
-struct ext2_struct_u32_iterate {
-	int			magic;
+काष्ठा ext2_struct_u32_iterate {
+	पूर्णांक			magic;
 	ext2_u32_list		bb;
-	int			ptr;
+	पूर्णांक			ptr;
 };
 
 
 /*
  * Directory block iterator definition
  */
-struct ext2_struct_dblist {
-	int			magic;
+काष्ठा ext2_struct_dblist {
+	पूर्णांक			magic;
 	ext2_filsys		fs;
-	unsigned long long	size;
-	unsigned long long	count;
-	int			sorted;
-	struct ext2_db_entry2 *	list;
+	अचिन्हित दीर्घ दीर्घ	आकार;
+	अचिन्हित दीर्घ दीर्घ	गिनती;
+	पूर्णांक			sorted;
+	काष्ठा ext2_db_entry2 *	list;
 };
 
 /*
  * For directory iterators
  */
-struct dir_context {
+काष्ठा dir_context {
 	ext2_ino_t		dir;
-	int		flags;
-	char		*buf;
-	unsigned int	buflen;
-	int (*func)(ext2_ino_t	dir,
-		    int	entry,
-		    struct ext2_dir_entry *dirent,
-		    int	offset,
-		    int	blocksize,
-		    char	*buf,
-		    void	*priv_data);
-	void		*priv_data;
+	पूर्णांक		flags;
+	अक्षर		*buf;
+	अचिन्हित पूर्णांक	buflen;
+	पूर्णांक (*func)(ext2_ino_t	dir,
+		    पूर्णांक	entry,
+		    काष्ठा ext2_dir_entry *dirent,
+		    पूर्णांक	offset,
+		    पूर्णांक	blocksize,
+		    अक्षर	*buf,
+		    व्योम	*priv_तथ्य);
+	व्योम		*priv_तथ्य;
 	errcode_t	errcode;
 };
 
 /*
  * Inode cache structure
  */
-struct ext2_inode_cache {
-	void *				buffer;
-	blk64_t				buffer_blk;
-	int				cache_last;
-	unsigned int			cache_size;
-	int				refcount;
-	struct ext2_inode_cache_ent	*cache;
+काष्ठा ext2_inode_cache {
+	व्योम *				बफर;
+	blk64_t				बफर_blk;
+	पूर्णांक				cache_last;
+	अचिन्हित पूर्णांक			cache_आकार;
+	पूर्णांक				refcount;
+	काष्ठा ext2_inode_cache_ent	*cache;
 };
 
-struct ext2_inode_cache_ent {
+काष्ठा ext2_inode_cache_ent {
 	ext2_ino_t		ino;
-	struct ext2_inode	*inode;
+	काष्ठा ext2_inode	*inode;
 };
 
 /*
  * NLS definitions
  */
-struct ext2fs_nls_table {
-	int version;
-	const struct ext2fs_nls_ops *ops;
+काष्ठा ext2fs_nls_table {
+	पूर्णांक version;
+	स्थिर काष्ठा ext2fs_nls_ops *ops;
 };
 
-struct ext2fs_nls_ops {
-	int (*casefold)(const struct ext2fs_nls_table *charset,
-			const unsigned char *str, size_t len,
-			unsigned char *dest, size_t dlen);
-	int (*validate)(const struct ext2fs_nls_table *table,
-			char *s, size_t len, char **pos);
-	int (*casefold_cmp)(const struct ext2fs_nls_table *table,
-			    const unsigned char *str1, size_t len1,
-			    const unsigned char *str2, size_t len2);
+काष्ठा ext2fs_nls_ops {
+	पूर्णांक (*casefold)(स्थिर काष्ठा ext2fs_nls_table *charset,
+			स्थिर अचिन्हित अक्षर *str, माप_प्रकार len,
+			अचिन्हित अक्षर *dest, माप_प्रकार dlen);
+	पूर्णांक (*validate)(स्थिर काष्ठा ext2fs_nls_table *table,
+			अक्षर *s, माप_प्रकार len, अक्षर **pos);
+	पूर्णांक (*casefold_cmp)(स्थिर काष्ठा ext2fs_nls_table *table,
+			    स्थिर अचिन्हित अक्षर *str1, माप_प्रकार len1,
+			    स्थिर अचिन्हित अक्षर *str2, माप_प्रकार len2);
 };
 
 /* Function prototypes */
 
-extern int ext2fs_process_dir_block(ext2_filsys  	fs,
+बाह्य पूर्णांक ext2fs_process_dir_block(ext2_filsys  	fs,
 				    blk64_t		*blocknr,
 				    e2_blkcnt_t		blockcnt,
 				    blk64_t		ref_block,
-				    int			ref_offset,
-				    void		*priv_data);
+				    पूर्णांक			ref_offset,
+				    व्योम		*priv_तथ्य);
 
-extern errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino);
-extern errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino);
-extern int ext2fs_inline_data_dir_iterate(ext2_filsys fs,
+बाह्य errcode_t ext2fs_inline_तथ्य_ea_remove(ext2_filsys fs, ext2_ino_t ino);
+बाह्य errcode_t ext2fs_inline_तथ्य_expand(ext2_filsys fs, ext2_ino_t ino);
+बाह्य पूर्णांक ext2fs_inline_तथ्य_dir_iterate(ext2_filsys fs,
 					  ext2_ino_t ino,
-					  void *priv_data);
+					  व्योम *priv_तथ्य);
 
 /* Generic numeric progress meter */
 
-struct ext2fs_numeric_progress_struct {
+काष्ठा ext2fs_numeric_progress_struct {
 	__u64		max;
-	int		log_max;
-	int		skip_progress;
+	पूर्णांक		log_max;
+	पूर्णांक		skip_progress;
 };
 
 /*
  * progress callback functions
  */
-struct ext2fs_progress_ops {
-	void (*init)(ext2_filsys fs,
-		     struct ext2fs_numeric_progress_struct * progress,
-		     const char *label, __u64 max);
-	void (*update)(ext2_filsys fs,
-		       struct ext2fs_numeric_progress_struct * progress,
+काष्ठा ext2fs_progress_ops {
+	व्योम (*init)(ext2_filsys fs,
+		     काष्ठा ext2fs_numeric_progress_struct * progress,
+		     स्थिर अक्षर *label, __u64 max);
+	व्योम (*update)(ext2_filsys fs,
+		       काष्ठा ext2fs_numeric_progress_struct * progress,
 		       __u64 val);
-	void (*close)(ext2_filsys fs,
-		      struct ext2fs_numeric_progress_struct * progress,
-		      const char *message);
+	व्योम (*बंद)(ext2_filsys fs,
+		      काष्ठा ext2fs_numeric_progress_struct * progress,
+		      स्थिर अक्षर *message);
 };
 
-extern struct ext2fs_progress_ops ext2fs_numeric_progress_ops;
+बाह्य काष्ठा ext2fs_progress_ops ext2fs_numeric_progress_ops;
 
-extern void ext2fs_numeric_progress_init(ext2_filsys fs,
-					 struct ext2fs_numeric_progress_struct * progress,
-					 const char *label, __u64 max);
-extern void ext2fs_numeric_progress_update(ext2_filsys fs,
-					   struct ext2fs_numeric_progress_struct * progress,
+बाह्य व्योम ext2fs_numeric_progress_init(ext2_filsys fs,
+					 काष्ठा ext2fs_numeric_progress_struct * progress,
+					 स्थिर अक्षर *label, __u64 max);
+बाह्य व्योम ext2fs_numeric_progress_update(ext2_filsys fs,
+					   काष्ठा ext2fs_numeric_progress_struct * progress,
 					   __u64 val);
-extern void ext2fs_numeric_progress_close(ext2_filsys fs,
-					  struct ext2fs_numeric_progress_struct * progress,
-					  const char *message);
+बाह्य व्योम ext2fs_numeric_progress_close(ext2_filsys fs,
+					  काष्ठा ext2fs_numeric_progress_struct * progress,
+					  स्थिर अक्षर *message);
 
 /*
  * 64-bit bitmap support
  */
 
-extern errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
-					   int type, __u64 start, __u64 end,
+बाह्य errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
+					   पूर्णांक type, __u64 start, __u64 end,
 					   __u64 real_end,
-					   const char * description,
+					   स्थिर अक्षर * description,
 					   ext2fs_generic_bitmap *bmap);
 
-extern void ext2fs_free_generic_bmap(ext2fs_generic_bitmap bmap);
+बाह्य व्योम ext2fs_free_generic_bmap(ext2fs_generic_bitmap bmap);
 
-extern errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap src,
+बाह्य errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap src,
 					  ext2fs_generic_bitmap *dest);
 
-extern errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap bmap,
+बाह्य errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap bmap,
 					    __u64 new_end,
 					    __u64 new_real_end);
-extern errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap bitmap,
+बाह्य errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap bitmap,
 					       errcode_t neq,
 					       __u64 end, __u64 *oend);
-extern int ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
+बाह्य पूर्णांक ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
-extern int ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
+बाह्य पूर्णांक ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				      __u64 arg);
-extern int ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
+बाह्य पूर्णांक ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
-extern errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
-					       void *in);
-extern errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
-					       void *out);
-extern void ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,const char *func);
+बाह्य errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap bitmap,
+					       __u64 start, अचिन्हित पूर्णांक अंक,
+					       व्योम *in);
+बाह्य errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bitmap,
+					       __u64 start, अचिन्हित पूर्णांक अंक,
+					       व्योम *out);
+बाह्य व्योम ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,स्थिर अक्षर *func);
 
-extern int ext2fs_mem_is_zero(const char *mem, size_t len);
+बाह्य पूर्णांक ext2fs_mem_is_zero(स्थिर अक्षर *mem, माप_प्रकार len);
 
-extern int ext2fs_file_block_offset_too_big(ext2_filsys fs,
-					    struct ext2_inode *inode,
+बाह्य पूर्णांक ext2fs_file_block_offset_too_big(ext2_filsys fs,
+					    काष्ठा ext2_inode *inode,
 					    blk64_t offset);
 
 /* atexit support */
-typedef void (*ext2_exit_fn)(void *);
-errcode_t ext2fs_add_exit_fn(ext2_exit_fn fn, void *data);
-errcode_t ext2fs_remove_exit_fn(ext2_exit_fn fn, void *data);
+प्रकार व्योम (*ext2_exit_fn)(व्योम *);
+errcode_t ext2fs_add_exit_fn(ext2_exit_fn fn, व्योम *तथ्य);
+errcode_t ext2fs_remove_exit_fn(ext2_exit_fn fn, व्योम *तथ्य);
 
-#define ARRAY_SIZE(array)			\
-        (sizeof(array) / sizeof(array[0]))
+#घोषणा ARRAY_आकार(array)			\
+        (माप(array) / माप(array[0]))
 
-#define EXT2FS_BUILD_BUG_ON(cond) ((void)sizeof(char[1 - 2*!!(cond)]))
+#घोषणा EXT2FS_BUILD_BUG_ON(cond) ((व्योम)माप(अक्षर[1 - 2*!!(cond)]))

@@ -23,262 +23,262 @@
  * %End-Header%
  */
 
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
+#अगर_अघोषित _LARGEFILE_SOURCE
+#घोषणा _LARGEFILE_SOURCE
+#पूर्ण_अगर
+#अगर_अघोषित _LARGEFILE64_SOURCE
+#घोषणा _LARGEFILE64_SOURCE
+#पूर्ण_अगर
 
-#include "config.h"
-#include <fcntl.h>
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <assert.h>
+#समावेश "config.h"
+#समावेश <fcntl.h>
+#समावेश <grp.h>
+#समावेश <pwd.h>
+#समावेश <stdio.h>
+#अगर_घोषित HAVE_STDLIB_H
+#समावेश <stdlib.h>
+#पूर्ण_अगर
+#समावेश <string.h>
+#समावेश <time.h>
+#समावेश <unistd.h>
+#समावेश <fcntl.h>
+#समावेश <errno.h>
+#समावेश <sys/stat.h>
+#समावेश <sys/types.h>
+#समावेश <assert.h>
 
-#include "ext2fs/ext2fs.h"
-#include "qcow2.h"
+#समावेश "ext2fs/ext2fs.h"
+#समावेश "qcow2.h"
 
 /* Functions for converting qcow2 image into raw image */
 
-struct ext2_qcow2_hdr *qcow2_read_header(int fd)
+काष्ठा ext2_qcow2_hdr *qcow2_read_header(पूर्णांक fd)
 {
-	void *buffer = NULL;
-	struct ext2_qcow2_hdr *hdr = NULL;
-	size_t size;
+	व्योम *बफर = शून्य;
+	काष्ठा ext2_qcow2_hdr *hdr = शून्य;
+	माप_प्रकार आकार;
 	errcode_t ret;
 
-	ret = ext2fs_get_mem(sizeof(struct ext2_qcow2_hdr), &buffer);
-	if (ret)
-		return NULL;
-	memset(buffer, 0, sizeof(struct ext2_qcow2_hdr));
+	ret = ext2fs_get_mem(माप(काष्ठा ext2_qcow2_hdr), &बफर);
+	अगर (ret)
+		वापस शून्य;
+	स_रखो(बफर, 0, माप(काष्ठा ext2_qcow2_hdr));
 
-	if (ext2fs_llseek(fd, 0, SEEK_SET < 0)) {
-		ext2fs_free_mem(&buffer);
-		return NULL;
+	अगर (ext2fs_llseek(fd, 0, शुरू_से < 0)) {
+		ext2fs_free_mem(&बफर);
+		वापस शून्य;
 	}
 
-	size = read(fd, buffer, sizeof(struct ext2_qcow2_hdr));
-	if (size != sizeof(struct ext2_qcow2_hdr)) {
-		ext2fs_free_mem(&buffer);
-		return NULL;
+	आकार = पढ़ो(fd, बफर, माप(काष्ठा ext2_qcow2_hdr));
+	अगर (आकार != माप(काष्ठा ext2_qcow2_hdr)) {
+		ext2fs_free_mem(&बफर);
+		वापस शून्य;
 	}
 
-	hdr = (struct ext2_qcow2_hdr *)(buffer);
+	hdr = (काष्ठा ext2_qcow2_hdr *)(बफर);
 
-	if ((ext2fs_be32_to_cpu(hdr->magic) != QCOW_MAGIC) ||
+	अगर ((ext2fs_be32_to_cpu(hdr->magic) != QCOW_MAGIC) ||
 	    (ext2fs_be32_to_cpu(hdr->version) != 2)) {
 		ext2fs_free_mem(&hdr);
-		return NULL;
+		वापस शून्य;
 	}
 
-	return hdr;
+	वापस hdr;
 }
 
-static int qcow2_read_l1_table(struct ext2_qcow2_image *img)
+अटल पूर्णांक qcow2_read_l1_table(काष्ठा ext2_qcow2_image *img)
 {
-	int fd = img->fd;
-	size_t size, l1_size = img->l1_size * sizeof(blk64_t);
+	पूर्णांक fd = img->fd;
+	माप_प्रकार आकार, l1_आकार = img->l1_आकार * माप(blk64_t);
 	blk64_t *table;
 	errcode_t ret;
 
-	ret = ext2fs_get_memzero(l1_size, &table);
-	if (ret)
-		return ret;
+	ret = ext2fs_get_memzero(l1_आकार, &table);
+	अगर (ret)
+		वापस ret;
 
-	if (ext2fs_llseek(fd, img->l1_offset, SEEK_SET) < 0) {
+	अगर (ext2fs_llseek(fd, img->l1_offset, शुरू_से) < 0) {
 		ext2fs_free_mem(&table);
-		return errno;
+		वापस त्रुटि_सं;
 	}
 
-	size = read(fd, table, l1_size);
-	if (size != l1_size) {
+	आकार = पढ़ो(fd, table, l1_आकार);
+	अगर (आकार != l1_आकार) {
 		ext2fs_free_mem(&table);
-		return errno;
+		वापस त्रुटि_सं;
 	}
 
 	img->l1_table = table;
 
-	return 0;
+	वापस 0;
 }
 
-static int qcow2_read_l2_table(struct ext2_qcow2_image *img,
+अटल पूर्णांक qcow2_read_l2_table(काष्ठा ext2_qcow2_image *img,
 			       __u64 offset, blk64_t **l2_table)
 {
-	int fd = img->fd;
-	size_t size;
+	पूर्णांक fd = img->fd;
+	माप_प्रकार आकार;
 
-	assert(*l2_table);
+	निश्चित(*l2_table);
 
-	if (ext2fs_llseek(fd, offset, SEEK_SET) < 0)
-		return errno;
+	अगर (ext2fs_llseek(fd, offset, शुरू_से) < 0)
+		वापस त्रुटि_सं;
 
-	size = read(fd, *l2_table, img->cluster_size);
-	if (size != img->cluster_size)
-		return errno;
+	आकार = पढ़ो(fd, *l2_table, img->cluster_आकार);
+	अगर (आकार != img->cluster_आकार)
+		वापस त्रुटि_सं;
 
-	return 0;
+	वापस 0;
 }
 
-static int qcow2_copy_data(int fdin, int fdout, __u64 off_in,
-			   __u64 off_out, void *buf, size_t count)
+अटल पूर्णांक qcow2_copy_तथ्य(पूर्णांक fdin, पूर्णांक fdout, __u64 off_in,
+			   __u64 off_out, व्योम *buf, माप_प्रकार गिनती)
 {
 	ssize_t c1, c2, c;
-	void *ptr;
-	int retries = 10;
+	व्योम *ptr;
+	पूर्णांक retries = 10;
 
-	assert(buf);
+	निश्चित(buf);
 
-	if (ext2fs_llseek(fdout, off_out, SEEK_SET) < 0)
-		return errno;
+	अगर (ext2fs_llseek(fdout, off_out, शुरू_से) < 0)
+		वापस त्रुटि_सं;
 
-	if (ext2fs_llseek(fdin, off_in, SEEK_SET) < 0)
-		return errno;
+	अगर (ext2fs_llseek(fdin, off_in, शुरू_से) < 0)
+		वापस त्रुटि_सं;
 
-	while (count > 0) {
-		errno = 0;
-		c1 = read(fdin, buf, count);
-		if (c1 < 0 || ((c1 == 0) && errno))
-			return errno;
-		if (c1 == 0)
-			break; 	/* EOF */
+	जबतक (गिनती > 0) {
+		त्रुटि_सं = 0;
+		c1 = पढ़ो(fdin, buf, गिनती);
+		अगर (c1 < 0 || ((c1 == 0) && त्रुटि_सं))
+			वापस त्रुटि_सं;
+		अगर (c1 == 0)
+			अवरोध; 	/* EOF */
 
-		for (ptr = buf, c = c1; c > 0; ptr += c2, c -= c2) {
-			errno = 0;
-			c2 = write(fdout, ptr, c1);
-			if (c2 < 0 || ((c2 == 0) && errno))
-				return errno;
-			if (c2 == 0 && --retries <= 0)
-				break; /* This should never happen...  */
+		क्रम (ptr = buf, c = c1; c > 0; ptr += c2, c -= c2) {
+			त्रुटि_सं = 0;
+			c2 = ग_लिखो(fdout, ptr, c1);
+			अगर (c2 < 0 || ((c2 == 0) && त्रुटि_सं))
+				वापस त्रुटि_सं;
+			अगर (c2 == 0 && --retries <= 0)
+				अवरोध; /* This should never happen...  */
 		}
-		count -= c1;
+		गिनती -= c1;
 	}
-	return 0;
+	वापस 0;
 }
 
 
-int qcow2_write_raw_image(int qcow2_fd, int raw_fd,
-			      struct ext2_qcow2_hdr *hdr)
+पूर्णांक qcow2_write_raw_image(पूर्णांक qcow2_fd, पूर्णांक raw_fd,
+			      काष्ठा ext2_qcow2_hdr *hdr)
 {
-	struct ext2_qcow2_image img;
+	काष्ठा ext2_qcow2_image img;
 	errcode_t ret = 0;
-	unsigned int l1_index, l2_index;
+	अचिन्हित पूर्णांक l1_सूचकांक, l2_सूचकांक;
 	__u64 offset;
-	blk64_t *l1_table, *l2_table = NULL;
-	void *copy_buf = NULL;
-	size_t size;
-	unsigned int max_l1_size;
+	blk64_t *l1_table, *l2_table = शून्य;
+	व्योम *copy_buf = शून्य;
+	माप_प्रकार आकार;
+	अचिन्हित पूर्णांक max_l1_आकार;
 
-	if (hdr->crypt_method)
-		return -QCOW_ENCRYPTED;
+	अगर (hdr->crypt_method)
+		वापस -QCOW_ENCRYPTED;
 
 	img.fd = qcow2_fd;
 	img.hdr = hdr;
-	img.l2_cache = NULL;
-	img.l1_table = NULL;
+	img.l2_cache = शून्य;
+	img.l1_table = शून्य;
 	img.cluster_bits = ext2fs_be32_to_cpu(hdr->cluster_bits);
-	if (img.cluster_bits < 9 || img.cluster_bits > 31)
-		return -QCOW_CORRUPTED;
-	img.cluster_size = 1 << img.cluster_bits;
-	img.l1_size = ext2fs_be32_to_cpu(hdr->l1_size);
+	अगर (img.cluster_bits < 9 || img.cluster_bits > 31)
+		वापस -QCOW_CORRUPTED;
+	img.cluster_आकार = 1 << img.cluster_bits;
+	img.l1_आकार = ext2fs_be32_to_cpu(hdr->l1_आकार);
 	img.l1_offset = ext2fs_be64_to_cpu(hdr->l1_table_offset);
-	img.l2_size = 1 << (img.cluster_bits - 3);
-	img.image_size = ext2fs_be64_to_cpu(hdr->size);
+	img.l2_आकार = 1 << (img.cluster_bits - 3);
+	img.image_आकार = ext2fs_be64_to_cpu(hdr->आकार);
 
-	if (img.l1_offset & (img.cluster_size - 1))
-		return -QCOW_CORRUPTED;
+	अगर (img.l1_offset & (img.cluster_आकार - 1))
+		वापस -QCOW_CORRUPTED;
 
-	max_l1_size = (img.image_size >> ((2 * img.cluster_bits) - 3)) +
-		img.cluster_size;
-	if (img.l1_size > max_l1_size)
-		return -QCOW_CORRUPTED;
+	max_l1_आकार = (img.image_आकार >> ((2 * img.cluster_bits) - 3)) +
+		img.cluster_आकार;
+	अगर (img.l1_आकार > max_l1_आकार)
+		वापस -QCOW_CORRUPTED;
 
-	ret = ext2fs_get_memzero(img.cluster_size, &l2_table);
-	if (ret)
-		goto out;
+	ret = ext2fs_get_memzero(img.cluster_आकार, &l2_table);
+	अगर (ret)
+		जाओ out;
 
 	ret = ext2fs_get_memzero(1 << img.cluster_bits, &copy_buf);
-	if (ret)
-		goto out;
+	अगर (ret)
+		जाओ out;
 
-	if (ext2fs_llseek(raw_fd, 0, SEEK_SET) < 0) {
-		ret = errno;
-		goto out;
+	अगर (ext2fs_llseek(raw_fd, 0, शुरू_से) < 0) {
+		ret = त्रुटि_सं;
+		जाओ out;
 	}
 
 	ret = qcow2_read_l1_table(&img);
-	if (ret)
-		goto out;
+	अगर (ret)
+		जाओ out;
 
 	l1_table = img.l1_table;
 	/* Walk through l1 table */
-	for (l1_index = 0; l1_index < img.l1_size; l1_index++) {
+	क्रम (l1_सूचकांक = 0; l1_सूचकांक < img.l1_आकार; l1_सूचकांक++) {
 		__u64 off_out;
 
-		offset = ext2fs_be64_to_cpu(l1_table[l1_index]) &
+		offset = ext2fs_be64_to_cpu(l1_table[l1_सूचकांक]) &
 			 ~QCOW_OFLAG_COPIED;
 
-		if ((offset > img.image_size) ||
+		अगर ((offset > img.image_आकार) ||
 		    (offset <= 0))
-			continue;
+			जारी;
 
-		if (offset & QCOW_OFLAG_COMPRESSED) {
+		अगर (offset & QCOW_OFLAG_COMPRESSED) {
 			ret = -QCOW_COMPRESSED;
-			goto out;
+			जाओ out;
 		}
 
 		ret = qcow2_read_l2_table(&img, offset, &l2_table);
-		if (ret)
-			break;
+		अगर (ret)
+			अवरोध;
 
 		/* Walk through l2 table and copy data blocks into raw image */
-		for (l2_index = 0; l2_index < img.l2_size; l2_index++) {
-			offset = ext2fs_be64_to_cpu(l2_table[l2_index]) &
+		क्रम (l2_सूचकांक = 0; l2_सूचकांक < img.l2_आकार; l2_सूचकांक++) {
+			offset = ext2fs_be64_to_cpu(l2_table[l2_सूचकांक]) &
 				 ~QCOW_OFLAG_COPIED;
 
-			if (offset == 0)
-				continue;
+			अगर (offset == 0)
+				जारी;
 
-			off_out = ((__u64)l1_index * img.l2_size) +
-				  l2_index;
+			off_out = ((__u64)l1_सूचकांक * img.l2_आकार) +
+				  l2_सूचकांक;
 			off_out <<= img.cluster_bits;
-			ret = qcow2_copy_data(qcow2_fd, raw_fd, offset,
-					off_out, copy_buf, img.cluster_size);
-			if (ret)
-				goto out;
+			ret = qcow2_copy_तथ्य(qcow2_fd, raw_fd, offset,
+					off_out, copy_buf, img.cluster_आकार);
+			अगर (ret)
+				जाओ out;
 		}
 	}
 
 	/* Resize the output image to the filesystem size */
-	if (ext2fs_llseek(raw_fd, img.image_size - 1, SEEK_SET) < 0) {
-		ret = errno;
-		goto out;
+	अगर (ext2fs_llseek(raw_fd, img.image_आकार - 1, शुरू_से) < 0) {
+		ret = त्रुटि_सं;
+		जाओ out;
 	}
 
-	((char *)copy_buf)[0] = 0;
-	size = write(raw_fd, copy_buf, 1);
-	if (size != 1) {
-		ret = errno;
-		goto out;
+	((अक्षर *)copy_buf)[0] = 0;
+	आकार = ग_लिखो(raw_fd, copy_buf, 1);
+	अगर (आकार != 1) {
+		ret = त्रुटि_सं;
+		जाओ out;
 	}
 
 out:
-	if (copy_buf)
+	अगर (copy_buf)
 		ext2fs_free_mem(&copy_buf);
-	if (img.l1_table)
+	अगर (img.l1_table)
 		ext2fs_free_mem(&img.l1_table);
-	if (l2_table)
+	अगर (l2_table)
 		ext2fs_free_mem(&l2_table);
-	return ret;
+	वापस ret;
 }

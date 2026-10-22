@@ -9,280 +9,280 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <sys/time.h>
-#include <sys/resource.h>
+#समावेश "config.h"
+#समावेश <stdio.h>
+#समावेश <string.h>
+#अगर HAVE_UNISTD_H
+#समावेश <unistd.h>
+#पूर्ण_अगर
+#समावेश <fcntl.h>
+#समावेश <time.h>
+#समावेश <sys/stat.h>
+#समावेश <sys/types.h>
+#अगर HAVE_ERRNO_H
+#समावेश <errno.h>
+#पूर्ण_अगर
+#समावेश <sys/time.h>
+#समावेश <sys/resource.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#समावेश "ext2_fs.h"
+#समावेश "ext2fs.h"
 
-unsigned char bitarray[] = {
+अचिन्हित अक्षर bitarray[] = {
 	0x80, 0xF0, 0x40, 0x40, 0x0, 0x0, 0x0, 0x0, 0x10, 0x20, 0x00, 0x00
 	};
 
-int bits_list[] = {
+पूर्णांक bits_list[] = {
 	7, 12, 13, 14,15, 22, 30, 68, 77, -1,
 };
 
-#define BIG_TEST_BIT   (((unsigned) 1 << 31) + 42)
+#घोषणा BIG_TEST_BIT   (((अचिन्हित) 1 << 31) + 42)
 
 
-int main(int argc, char **argv)
+पूर्णांक मुख्य(पूर्णांक argc, अक्षर **argv)
 {
-	int	i, j, size;
-	unsigned char testarray[12];
-	unsigned char *bigarray;
+	पूर्णांक	i, j, आकार;
+	अचिन्हित अक्षर testarray[12];
+	अचिन्हित अक्षर *bigarray;
 
-	size = sizeof(bitarray)*8;
-#if 0
-	i = ext2fs_find_first_bit_set(bitarray, size);
-	while (i < size) {
-		printf("Bit set: %d\n", i);
-		i = ext2fs_find_next_bit_set(bitarray, size, i+1);
+	आकार = माप(bitarray)*8;
+#अगर 0
+	i = ext2fs_find_first_bit_set(bitarray, आकार);
+	जबतक (i < आकार) {
+		म_लिखो("Bit set: %d\n", i);
+		i = ext2fs_find_अग्र_bit_set(bitarray, आकार, i+1);
 	}
-#endif
+#पूर्ण_अगर
 
 	/* Test test_bit */
-	for (i=0,j=0; i < size; i++) {
-		if (ext2fs_test_bit(i, bitarray)) {
-			if (bits_list[j] == i) {
+	क्रम (i=0,j=0; i < आकार; i++) {
+		अगर (ext2fs_test_bit(i, bitarray)) {
+			अगर (bits_list[j] == i) {
 				j++;
-			} else {
-				printf("Bit %d set, not expected\n", i);
-				exit(1);
+			} अन्यथा {
+				म_लिखो("Bit %d set, not expected\n", i);
+				निकास(1);
 			}
-		} else {
-			if (bits_list[j] == i) {
-				printf("Expected bit %d to be clear.\n", i);
-				exit(1);
+		} अन्यथा {
+			अगर (bits_list[j] == i) {
+				म_लिखो("Expected bit %d to be clear.\n", i);
+				निकास(1);
 			}
 		}
 	}
-	printf("ext2fs_test_bit appears to be correct\n");
+	म_लिखो("ext2fs_test_bit appears to be correct\n");
 
 	/* Test ext2fs_set_bit */
-	memset(testarray, 0, sizeof(testarray));
-	for (i=0; bits_list[i] > 0; i++) {
+	स_रखो(testarray, 0, माप(testarray));
+	क्रम (i=0; bits_list[i] > 0; i++) {
 		ext2fs_set_bit(bits_list[i], testarray);
 	}
-	if (memcmp(testarray, bitarray, sizeof(testarray)) == 0) {
-		printf("ext2fs_set_bit test succeeded.\n");
-	} else {
-		printf("ext2fs_set_bit test failed.\n");
-		for (i=0; i < sizeof(testarray); i++) {
-			printf("%02x ", testarray[i]);
+	अगर (स_भेद(testarray, bitarray, माप(testarray)) == 0) {
+		म_लिखो("ext2fs_set_bit test succeeded.\n");
+	} अन्यथा {
+		म_लिखो("ext2fs_set_bit test failed.\n");
+		क्रम (i=0; i < माप(testarray); i++) {
+			म_लिखो("%02x ", testarray[i]);
 		}
-		printf("\n");
-		exit(1);
+		म_लिखो("\n");
+		निकास(1);
 	}
-	for (i=0; bits_list[i] > 0; i++) {
+	क्रम (i=0; bits_list[i] > 0; i++) {
 		ext2fs_clear_bit(bits_list[i], testarray);
 	}
-	for (i=0; i < sizeof(testarray); i++) {
-		if (testarray[i]) {
-			printf("ext2fs_clear_bit failed, "
+	क्रम (i=0; i < माप(testarray); i++) {
+		अगर (testarray[i]) {
+			म_लिखो("ext2fs_clear_bit failed, "
 			       "testarray[%d] is %d\n", i, testarray[i]);
-			exit(1);
+			निकास(1);
 		}
 	}
-	printf("ext2fs_clear_bit test succeed.\n");
+	म_लिखो("ext2fs_clear_bit test succeed.\n");
 
 
 	/* Do bigarray test */
-	bigarray = malloc(1 << 29);
-	if (!bigarray) {
-		fprintf(stderr, "Failed to allocate scratch memory!\n");
-		exit(0);
+	bigarray = दो_स्मृति(1 << 29);
+	अगर (!bigarray) {
+		ख_लिखो(मानक_त्रुटि, "Failed to allocate scratch memory!\n");
+		निकास(0);
 	}
 
         bigarray[BIG_TEST_BIT >> 3] = 0;
 
 	ext2fs_set_bit(BIG_TEST_BIT, bigarray);
-	printf("big bit number (%u) test: %d, expected %d\n", BIG_TEST_BIT,
+	म_लिखो("big bit number (%u) test: %d, expected %d\n", BIG_TEST_BIT,
 	       bigarray[BIG_TEST_BIT >> 3], (1 << (BIG_TEST_BIT & 7)));
-	if (bigarray[BIG_TEST_BIT >> 3] != (1 << (BIG_TEST_BIT & 7)))
-		exit(1);
+	अगर (bigarray[BIG_TEST_BIT >> 3] != (1 << (BIG_TEST_BIT & 7)))
+		निकास(1);
 
 	ext2fs_clear_bit(BIG_TEST_BIT, bigarray);
 
-	printf("big bit number (%u) test: %d, expected 0\n", BIG_TEST_BIT,
+	म_लिखो("big bit number (%u) test: %d, expected 0\n", BIG_TEST_BIT,
 	       bigarray[BIG_TEST_BIT >> 3]);
-	if (bigarray[BIG_TEST_BIT >> 3] != 0)
-		exit(1);
+	अगर (bigarray[BIG_TEST_BIT >> 3] != 0)
+		निकास(1);
 
-	printf("ext2fs_set_bit big_test successful\n");
+	म_लिखो("ext2fs_set_bit big_test successful\n");
 
 
 	/* Now test ext2fs_fast_set_bit */
-	memset(testarray, 0, sizeof(testarray));
-	for (i=0; bits_list[i] > 0; i++) {
+	स_रखो(testarray, 0, माप(testarray));
+	क्रम (i=0; bits_list[i] > 0; i++) {
 		ext2fs_fast_set_bit(bits_list[i], testarray);
 	}
-	if (memcmp(testarray, bitarray, sizeof(testarray)) == 0) {
-		printf("ext2fs_fast_set_bit test succeeded.\n");
-	} else {
-		printf("ext2fs_fast_set_bit test failed.\n");
-		for (i=0; i < sizeof(testarray); i++) {
-			printf("%02x ", testarray[i]);
+	अगर (स_भेद(testarray, bitarray, माप(testarray)) == 0) {
+		म_लिखो("ext2fs_fast_set_bit test succeeded.\n");
+	} अन्यथा {
+		म_लिखो("ext2fs_fast_set_bit test failed.\n");
+		क्रम (i=0; i < माप(testarray); i++) {
+			म_लिखो("%02x ", testarray[i]);
 		}
-		printf("\n");
-		exit(1);
+		म_लिखो("\n");
+		निकास(1);
 	}
-	for (i=0; bits_list[i] > 0; i++) {
+	क्रम (i=0; bits_list[i] > 0; i++) {
 		ext2fs_clear_bit(bits_list[i], testarray);
 	}
-	for (i=0; i < sizeof(testarray); i++) {
-		if (testarray[i]) {
-			printf("ext2fs_clear_bit failed, "
+	क्रम (i=0; i < माप(testarray); i++) {
+		अगर (testarray[i]) {
+			म_लिखो("ext2fs_clear_bit failed, "
 			       "testarray[%d] is %d\n", i, testarray[i]);
-			exit(1);
+			निकास(1);
 		}
 	}
-	printf("ext2fs_clear_bit test succeed.\n");
+	म_लिखो("ext2fs_clear_bit test succeed.\n");
 
 
         bigarray[BIG_TEST_BIT >> 3] = 0;
 
 	ext2fs_fast_set_bit(BIG_TEST_BIT, bigarray);
-	printf("big bit number (%u) test: %d, expected %d\n", BIG_TEST_BIT,
+	म_लिखो("big bit number (%u) test: %d, expected %d\n", BIG_TEST_BIT,
 	       bigarray[BIG_TEST_BIT >> 3], (1 << (BIG_TEST_BIT & 7)));
-	if (bigarray[BIG_TEST_BIT >> 3] != (1 << (BIG_TEST_BIT & 7)))
-		exit(1);
+	अगर (bigarray[BIG_TEST_BIT >> 3] != (1 << (BIG_TEST_BIT & 7)))
+		निकास(1);
 
 	ext2fs_fast_clear_bit(BIG_TEST_BIT, bigarray);
 
-	printf("big bit number (%u) test: %d, expected 0\n", BIG_TEST_BIT,
+	म_लिखो("big bit number (%u) test: %d, expected 0\n", BIG_TEST_BIT,
 	       bigarray[BIG_TEST_BIT >> 3]);
-	if (bigarray[BIG_TEST_BIT >> 3] != 0)
-		exit(1);
+	अगर (bigarray[BIG_TEST_BIT >> 3] != 0)
+		निकास(1);
 
-	printf("ext2fs_fast_set_bit big_test successful\n");
+	म_लिखो("ext2fs_fast_set_bit big_test successful\n");
 
 	/* Repeat foregoing tests for 64-bit bitops */
 
 	/* Test test_bit */
-	for (i=0,j=0; i < size; i++) {
-		if (ext2fs_test_bit64(i, bitarray)) {
-			if (bits_list[j] == i) {
+	क्रम (i=0,j=0; i < आकार; i++) {
+		अगर (ext2fs_test_bit64(i, bitarray)) {
+			अगर (bits_list[j] == i) {
 				j++;
-			} else {
-				printf("64-bit: Bit %d set, not expected\n",
+			} अन्यथा {
+				म_लिखो("64-bit: Bit %d set, not expected\n",
 				       i);
-				exit(1);
+				निकास(1);
 			}
-		} else {
-			if (bits_list[j] == i) {
-				printf("64-bit: "
+		} अन्यथा {
+			अगर (bits_list[j] == i) {
+				म_लिखो("64-bit: "
 				       "Expected bit %d to be clear.\n", i);
-				exit(1);
+				निकास(1);
 			}
 		}
 	}
-	printf("64-bit: ext2fs_test_bit appears to be correct\n");
+	म_लिखो("64-bit: ext2fs_test_bit appears to be correct\n");
 
 	/* Test ext2fs_set_bit */
-	memset(testarray, 0, sizeof(testarray));
-	for (i=0; bits_list[i] > 0; i++) {
+	स_रखो(testarray, 0, माप(testarray));
+	क्रम (i=0; bits_list[i] > 0; i++) {
 		ext2fs_set_bit64(bits_list[i], testarray);
 	}
-	if (memcmp(testarray, bitarray, sizeof(testarray)) == 0) {
-		printf("64-bit: ext2fs_set_bit test succeeded.\n");
-	} else {
-		printf("64-bit: ext2fs_set_bit test failed.\n");
-		for (i=0; i < sizeof(testarray); i++) {
-			printf("%02x ", testarray[i]);
+	अगर (स_भेद(testarray, bitarray, माप(testarray)) == 0) {
+		म_लिखो("64-bit: ext2fs_set_bit test succeeded.\n");
+	} अन्यथा {
+		म_लिखो("64-bit: ext2fs_set_bit test failed.\n");
+		क्रम (i=0; i < माप(testarray); i++) {
+			म_लिखो("%02x ", testarray[i]);
 		}
-		printf("\n");
-		exit(1);
+		म_लिखो("\n");
+		निकास(1);
 	}
-	for (i=0; bits_list[i] > 0; i++) {
+	क्रम (i=0; bits_list[i] > 0; i++) {
 		ext2fs_clear_bit64(bits_list[i], testarray);
 	}
-	for (i=0; i < sizeof(testarray); i++) {
-		if (testarray[i]) {
-			printf("64-bit: ext2fs_clear_bit failed, "
+	क्रम (i=0; i < माप(testarray); i++) {
+		अगर (testarray[i]) {
+			म_लिखो("64-bit: ext2fs_clear_bit failed, "
 			       "testarray[%d] is %d\n", i, testarray[i]);
-			exit(1);
+			निकास(1);
 		}
 	}
-	printf("64-bit: ext2fs_clear_bit test succeed.\n");
+	म_लिखो("64-bit: ext2fs_clear_bit test succeed.\n");
 
 	/* Do bigarray test */
         bigarray[BIG_TEST_BIT >> 3] = 0;
 
 	ext2fs_set_bit64(BIG_TEST_BIT, bigarray);
-	printf("64-bit: big bit number (%u) test: %d, expected %d\n",
+	म_लिखो("64-bit: big bit number (%u) test: %d, expected %d\n",
 	       BIG_TEST_BIT, bigarray[BIG_TEST_BIT >> 3],
 	       (1 << (BIG_TEST_BIT & 7)));
-	if (bigarray[BIG_TEST_BIT >> 3] != (1 << (BIG_TEST_BIT & 7)))
-		exit(1);
+	अगर (bigarray[BIG_TEST_BIT >> 3] != (1 << (BIG_TEST_BIT & 7)))
+		निकास(1);
 
 	ext2fs_clear_bit64(BIG_TEST_BIT, bigarray);
 
-	printf("64-bit: big bit number (%u) test: %d, expected 0\n",
+	म_लिखो("64-bit: big bit number (%u) test: %d, expected 0\n",
 	       BIG_TEST_BIT,
 	       bigarray[BIG_TEST_BIT >> 3]);
-	if (bigarray[BIG_TEST_BIT >> 3] != 0)
-		exit(1);
+	अगर (bigarray[BIG_TEST_BIT >> 3] != 0)
+		निकास(1);
 
-	printf("64-bit: ext2fs_set_bit big_test successful\n");
+	म_लिखो("64-bit: ext2fs_set_bit big_test successful\n");
 
 	/* Now test ext2fs_fast_set_bit */
-	memset(testarray, 0, sizeof(testarray));
-	for (i=0; bits_list[i] > 0; i++) {
+	स_रखो(testarray, 0, माप(testarray));
+	क्रम (i=0; bits_list[i] > 0; i++) {
 		ext2fs_fast_set_bit64(bits_list[i], testarray);
 	}
-	if (memcmp(testarray, bitarray, sizeof(testarray)) == 0) {
-		printf("64-bit: ext2fs_fast_set_bit test succeeded.\n");
-	} else {
-		printf("64-bit: ext2fs_fast_set_bit test failed.\n");
-		for (i=0; i < sizeof(testarray); i++) {
-			printf("%02x ", testarray[i]);
+	अगर (स_भेद(testarray, bitarray, माप(testarray)) == 0) {
+		म_लिखो("64-bit: ext2fs_fast_set_bit test succeeded.\n");
+	} अन्यथा {
+		म_लिखो("64-bit: ext2fs_fast_set_bit test failed.\n");
+		क्रम (i=0; i < माप(testarray); i++) {
+			म_लिखो("%02x ", testarray[i]);
 		}
-		printf("\n");
-		exit(1);
+		म_लिखो("\n");
+		निकास(1);
 	}
-	for (i=0; bits_list[i] > 0; i++) {
+	क्रम (i=0; bits_list[i] > 0; i++) {
 		ext2fs_clear_bit64(bits_list[i], testarray);
 	}
-	for (i=0; i < sizeof(testarray); i++) {
-		if (testarray[i]) {
-			printf("64-bit: ext2fs_clear_bit failed, "
+	क्रम (i=0; i < माप(testarray); i++) {
+		अगर (testarray[i]) {
+			म_लिखो("64-bit: ext2fs_clear_bit failed, "
 			       "testarray[%d] is %d\n", i, testarray[i]);
-			exit(1);
+			निकास(1);
 		}
 	}
-	printf("64-bit: ext2fs_clear_bit test succeed.\n");
+	म_लिखो("64-bit: ext2fs_clear_bit test succeed.\n");
 
         bigarray[BIG_TEST_BIT >> 3] = 0;
 
 	ext2fs_fast_set_bit64(BIG_TEST_BIT, bigarray);
-	printf("64-bit: big bit number (%u) test: %d, expected %d\n",
+	म_लिखो("64-bit: big bit number (%u) test: %d, expected %d\n",
 	       BIG_TEST_BIT, bigarray[BIG_TEST_BIT >> 3],
 	       (1 << (BIG_TEST_BIT & 7)));
-	if (bigarray[BIG_TEST_BIT >> 3] != (1 << (BIG_TEST_BIT & 7)))
-		exit(1);
+	अगर (bigarray[BIG_TEST_BIT >> 3] != (1 << (BIG_TEST_BIT & 7)))
+		निकास(1);
 
 	ext2fs_fast_clear_bit64(BIG_TEST_BIT, bigarray);
 
-	printf("64-bit: big bit number (%u) test: %d, expected 0\n",
+	म_लिखो("64-bit: big bit number (%u) test: %d, expected 0\n",
 	       BIG_TEST_BIT, bigarray[BIG_TEST_BIT >> 3]);
-	if (bigarray[BIG_TEST_BIT >> 3] != 0)
-		exit(1);
+	अगर (bigarray[BIG_TEST_BIT >> 3] != 0)
+		निकास(1);
 
-	printf("64-bit: ext2fs_fast_set_bit big_test successful\n");
-	free(bigarray);
-	exit(0);
+	म_लिखो("64-bit: ext2fs_fast_set_bit big_test successful\n");
+	मुक्त(bigarray);
+	निकास(0);
 }

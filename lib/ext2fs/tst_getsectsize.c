@@ -9,55 +9,55 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
+#समावेश "config.h"
+#समावेश <stdio.h>
+#समावेश <string.h>
+#अगर HAVE_UNISTD_H
+#समावेश <unistd.h>
+#पूर्ण_अगर
+#समावेश <fcntl.h>
+#समावेश <time.h>
+#समावेश <sys/stat.h>
+#समावेश <sys/types.h>
+#अगर HAVE_ERRNO_H
+#समावेश <errno.h>
+#पूर्ण_अगर
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#समावेश "ext2_fs.h"
+#समावेश "ext2fs.h"
 
-int main(int argc, char **argv)
+पूर्णांक मुख्य(पूर्णांक argc, अक्षर **argv)
 {
-	int	lsectsize, psectsize;
-	int	retval;
-	int	fd;
+	पूर्णांक	lsectsize, psectsize;
+	पूर्णांक	retval;
+	पूर्णांक	fd;
 
-	if (argc < 2) {
-		fprintf(stderr, "Usage: %s device\n", argv[0]);
-		exit(1);
+	अगर (argc < 2) {
+		ख_लिखो(मानक_त्रुटि, "Usage: %s device\n", argv[0]);
+		निकास(1);
 	}
 
 	retval = ext2fs_get_device_sectsize(argv[1], &lsectsize);
-	if (retval) {
+	अगर (retval) {
 		com_err(argv[0], retval,
 			"while calling ext2fs_get_device_sectsize");
-		exit(1);
+		निकास(1);
 	}
 	retval = ext2fs_get_device_phys_sectsize(argv[1], &psectsize);
-	if (retval) {
+	अगर (retval) {
 		com_err(argv[0], retval,
 			"while calling ext2fs_get_device_phys_sectsize");
-		exit(1);
+		निकास(1);
 	}
-	printf("Device %s has logical/physical sector size of %d/%d.\n",
+	म_लिखो("Device %s has logical/physical sector size of %d/%d.\n",
 	       argv[1], lsectsize, psectsize);
-	fd = open(argv[1], O_RDONLY);
-	if (fd < 0) {
-		perror("open");
-		exit(1);
+	fd = खोलो(argv[1], O_RDONLY);
+	अगर (fd < 0) {
+		लिखो_त्रुटि("open");
+		निकास(1);
 	}
-	printf("The device's DIO alignment is %d\n",
+	म_लिखो("The device's DIO alignment is %d\n",
 	       ext2fs_get_dio_alignment(fd));
-	close(fd);
-	exit(0);
+	बंद(fd);
+	निकास(0);
 }

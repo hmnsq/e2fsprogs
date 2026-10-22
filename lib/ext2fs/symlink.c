@@ -10,51 +10,51 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#समावेश "config.h"
+#समावेश <stdio.h>
+#समावेश <string.h>
+#अगर HAVE_UNISTD_H
+#समावेश <unistd.h>
+#पूर्ण_अगर
+#समावेश <fcntl.h>
+#समावेश <time.h>
+#अगर HAVE_SYS_STAT_H
+#समावेश <sys/stat.h>
+#पूर्ण_अगर
+#अगर HAVE_SYS_TYPES_H
+#समावेश <sys/types.h>
+#पूर्ण_अगर
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#समावेश "ext2_fs.h"
+#समावेश "ext2fs.h"
 
-#ifndef HAVE_STRNLEN
+#अगर_अघोषित HAVE_STRNLEN
 /*
  * Incredibly, libc5 doesn't appear to have strnlen.  So we have to
  * provide our own.
  */
-static int my_strnlen(const char * s, int count)
+अटल पूर्णांक my_strnlen(स्थिर अक्षर * s, पूर्णांक गिनती)
 {
-	const char *cp = s;
+	स्थिर अक्षर *cp = s;
 
-	while (count-- && *cp)
+	जबतक (गिनती-- && *cp)
 		cp++;
-	return cp - s;
+	वापस cp - s;
 }
-#define strnlen(str, x) my_strnlen((str),(x))
-#endif
+#घोषणा strnlen(str, x) my_strnlen((str),(x))
+#पूर्ण_अगर
 
 errcode_t ext2fs_symlink(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t ino,
-			 const char *name, const char *target)
+			 स्थिर अक्षर *name, स्थिर अक्षर *target)
 {
 	errcode_t		retval;
-	struct ext2_inode	inode;
+	काष्ठा ext2_inode	inode;
 	ext2_ino_t		scratch_ino;
 	blk64_t			blk;
-	int			fastlink, inlinelink;
-	unsigned int		target_len;
-	char			*block_buf = 0;
-	int			drop_refcount = 0;
+	पूर्णांक			fastlink, inlinelink;
+	अचिन्हित पूर्णांक		target_len;
+	अक्षर			*block_buf = 0;
+	पूर्णांक			drop_refcount = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
@@ -63,39 +63,39 @@ errcode_t ext2fs_symlink(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t ino,
 	 * (counting the NUL terminator)
 	 */
 	target_len = strnlen(target, fs->blocksize + 1);
-	if (target_len >= fs->blocksize) {
+	अगर (target_len >= fs->blocksize) {
 		retval = EXT2_ET_INVALID_ARGUMENT;
-		goto cleanup;
+		जाओ cleanup;
 	}
 
 	/*
 	 * Allocate a data block for slow links
 	 */
 	retval = ext2fs_get_mem(fs->blocksize, &block_buf);
-	if (retval)
-		goto cleanup;
-	memset(block_buf, 0, fs->blocksize);
-	strncpy(block_buf, target, fs->blocksize);
+	अगर (retval)
+		जाओ cleanup;
+	स_रखो(block_buf, 0, fs->blocksize);
+	म_नकलन(block_buf, target, fs->blocksize);
 
-	memset(&inode, 0, sizeof(struct ext2_inode));
-	fastlink = (target_len < sizeof(inode.i_block));
-	if (!fastlink) {
+	स_रखो(&inode, 0, माप(काष्ठा ext2_inode));
+	fastlink = (target_len < माप(inode.i_block));
+	अगर (!fastlink) {
 		retval = ext2fs_new_block2(fs, ext2fs_find_inode_goal(fs, ino,
 								      &inode,
 								      0),
-					   NULL, &blk);
-		if (retval)
-			goto cleanup;
+					   शून्य, &blk);
+		अगर (retval)
+			जाओ cleanup;
 	}
 
 	/*
 	 * Allocate an inode, if necessary
 	 */
-	if (!ino) {
+	अगर (!ino) {
 		retval = ext2fs_new_inode(fs, parent, LINUX_S_IFLNK | 0755,
 					  0, &ino);
-		if (retval)
-			goto cleanup;
+		अगर (retval)
+			जाओ cleanup;
 	}
 
 	/*
@@ -103,35 +103,35 @@ errcode_t ext2fs_symlink(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t ino,
 	 */
 	inode.i_mode = LINUX_S_IFLNK | 0777;
 	inode.i_uid = inode.i_gid = 0;
-	inode.i_links_count = 1;
-	ext2fs_inode_size_set(fs, &inode, target_len);
+	inode.i_links_गिनती = 1;
+	ext2fs_inode_आकार_set(fs, &inode, target_len);
 	/* The time fields are set by ext2fs_write_new_inode() */
 
-	inlinelink = !fastlink && ext2fs_has_feature_inline_data(fs->super);
-	if (fastlink) {
+	inlinelink = !fastlink && ext2fs_has_feature_inline_तथ्य(fs->super);
+	अगर (fastlink) {
 		/* Fast symlinks, target stored in inode */
-		strcpy((char *)&inode.i_block, target);
-	} else if (inlinelink) {
+		म_नकल((अक्षर *)&inode.i_block, target);
+	} अन्यथा अगर (inlinelink) {
 		/* Try inserting an inline data symlink */
-		inode.i_flags |= EXT4_INLINE_DATA_FL;
+		inode.i_flags |= EXT4_INLINE_तथ्य_FL;
 		retval = ext2fs_write_new_inode(fs, ino, &inode);
-		if (retval)
-			goto cleanup;
-		retval = ext2fs_inline_data_set(fs, ino, &inode, block_buf,
+		अगर (retval)
+			जाओ cleanup;
+		retval = ext2fs_inline_तथ्य_set(fs, ino, &inode, block_buf,
 						target_len);
-		if (retval) {
-			inode.i_flags &= ~EXT4_INLINE_DATA_FL;
+		अगर (retval) {
+			inode.i_flags &= ~EXT4_INLINE_तथ्य_FL;
 			inlinelink = 0;
-			goto need_block;
+			जाओ need_block;
 		}
 		retval = ext2fs_read_inode(fs, ino, &inode);
-		if (retval)
-			goto cleanup;
-	} else {
+		अगर (retval)
+			जाओ cleanup;
+	} अन्यथा {
 need_block:
 		/* Slow symlinks, target stored in the first block */
 		ext2fs_iblk_set(fs, &inode, 1);
-		if (ext2fs_has_feature_extents(fs->super)) {
+		अगर (ext2fs_has_feature_extents(fs->super)) {
 			/*
 			 * The extent bmap is setup after the inode and block
 			 * have been written out below.
@@ -145,28 +145,28 @@ need_block:
 	 * number is assigned by write_new_inode, which means that the
 	 * operations using ino must come after it.
 	 */
-	if (inlinelink)
+	अगर (inlinelink)
 		retval = ext2fs_write_inode(fs, ino, &inode);
-	else
+	अन्यथा
 		retval = ext2fs_write_new_inode(fs, ino, &inode);
-	if (retval)
-		goto cleanup;
+	अगर (retval)
+		जाओ cleanup;
 
-	if (!fastlink && !inlinelink) {
-		retval = ext2fs_bmap2(fs, ino, &inode, NULL, BMAP_SET, 0, NULL,
+	अगर (!fastlink && !inlinelink) {
+		retval = ext2fs_bmap2(fs, ino, &inode, शून्य, BMAP_SET, 0, शून्य,
 				      &blk);
-		if (retval)
-			goto cleanup;
+		अगर (retval)
+			जाओ cleanup;
 
 		retval = io_channel_write_blk64(fs->io, blk, 1, block_buf);
-		if (retval)
-			goto cleanup;
+		अगर (retval)
+			जाओ cleanup;
 	}
 
 	/*
 	 * Update accounting....
 	 */
-	if (!fastlink && !inlinelink)
+	अगर (!fastlink && !inlinelink)
 		ext2fs_block_alloc_stats2(fs, blk, +1);
 	ext2fs_inode_alloc_stats2(fs, ino, +1, 0);
 	drop_refcount = 1;
@@ -174,30 +174,30 @@ need_block:
 	/*
 	 * Link the symlink into the filesystem hierarchy
 	 */
-	if (name) {
-		retval = ext2fs_lookup(fs, parent, name, strlen(name), 0,
+	अगर (name) {
+		retval = ext2fs_lookup(fs, parent, name, म_माप(name), 0,
 				       &scratch_ino);
-		if (!retval) {
+		अगर (!retval) {
 			retval = EXT2_ET_FILE_EXISTS;
-			goto cleanup;
+			जाओ cleanup;
 		}
-		if (retval != EXT2_ET_FILE_NOT_FOUND)
-			goto cleanup;
+		अगर (retval != EXT2_ET_FILE_NOT_FOUND)
+			जाओ cleanup;
 		retval = ext2fs_link(fs, parent, name, ino, EXT2_FT_SYMLINK);
-		if (retval)
-			goto cleanup;
+		अगर (retval)
+			जाओ cleanup;
 	}
 	drop_refcount = 0;
 
 cleanup:
-	if (block_buf)
+	अगर (block_buf)
 		ext2fs_free_mem(&block_buf);
-	if (drop_refcount) {
-		if (!fastlink && !inlinelink)
+	अगर (drop_refcount) {
+		अगर (!fastlink && !inlinelink)
 			ext2fs_block_alloc_stats2(fs, blk, -1);
 		ext2fs_inode_alloc_stats2(fs, ino, -1, 0);
 	}
-	return retval;
+	वापस retval;
 }
 
 /*
@@ -205,8 +205,8 @@ cleanup:
  *
  * A fast symlink has its symlink data stored in inode->i_block.
  */
-int ext2fs_is_fast_symlink(struct ext2_inode *inode)
+पूर्णांक ext2fs_is_fast_symlink(काष्ठा ext2_inode *inode)
 {
-	return LINUX_S_ISLNK(inode->i_mode) && EXT2_I_SIZE(inode) &&
-	       EXT2_I_SIZE(inode) < sizeof(inode->i_block);
+	वापस LINUX_S_ISLNK(inode->i_mode) && EXT2_I_आकार(inode) &&
+	       EXT2_I_आकार(inode) < माप(inode->i_block);
 }

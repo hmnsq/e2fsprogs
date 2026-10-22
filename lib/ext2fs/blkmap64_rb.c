@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#if HAVE_LINUX_TYPES_H
-#include <linux/types.h>
-#endif
+#समावेश "config.h"
+#समावेश <stdio.h>
+#समावेश <string.h>
+#अगर HAVE_UNISTD_H
+#समावेश <unistd.h>
+#पूर्ण_अगर
+#समावेश <fcntl.h>
+#समावेश <time.h>
+#अगर HAVE_SYS_STAT_H
+#समावेश <sys/stat.h>
+#पूर्ण_अगर
+#अगर HAVE_SYS_TYPES_H
+#समावेश <sys/types.h>
+#पूर्ण_अगर
+#अगर HAVE_LINUX_TYPES_H
+#समावेश <linux/types.h>
+#पूर्ण_अगर
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
-#include "bmap64.h"
-#include "rbtree.h"
+#समावेश "ext2_fs.h"
+#समावेश "ext2fsP.h"
+#समावेश "bmap64.h"
+#समावेश "rbtree.h"
 
-#include <limits.h>
+#समावेश <limits.h>
 
-struct bmap_rb_extent {
-	struct rb_node node;
+काष्ठा bmap_rb_extent {
+	काष्ठा rb_गाँठ गाँठ;
 	__u64 start;
-	__u64 count;
+	__u64 गिनती;
 };
 
-struct ext2fs_rb_private {
-	struct rb_root root;
-	struct bmap_rb_extent *wcursor;
-	struct bmap_rb_extent *rcursor;
-	struct bmap_rb_extent *rcursor_next;
-#ifdef ENABLE_BMAP_STATS_OPS
+काष्ठा ext2fs_rb_private {
+	काष्ठा rb_मूल मूल;
+	काष्ठा bmap_rb_extent *wcursor;
+	काष्ठा bmap_rb_extent *rcursor;
+	काष्ठा bmap_rb_extent *rcursor_अग्र;
+#अगर_घोषित ENABLE_BMAP_STATS_OPS
 	__u64 mark_hit;
 	__u64 test_hit;
-#endif
+#पूर्ण_अगर
 };
 
-inline static struct bmap_rb_extent *node_to_extent(struct rb_node *node)
+अंतरभूत अटल काष्ठा bmap_rb_extent *गाँठ_to_extent(काष्ठा rb_गाँठ *गाँठ)
 {
 	/*
 	 * This depends on the fact the struct rb_node is at the
@@ -59,925 +59,925 @@ inline static struct bmap_rb_extent *node_to_extent(struct rb_node *node)
 	 * instead of the ext2fs_rb_entry macro because it causes gcc
 	 * -Wall to generate a huge amount of noise.
 	 */
-	return (struct bmap_rb_extent *) node;
+	वापस (काष्ठा bmap_rb_extent *) गाँठ;
 }
 
-static int rb_insert_extent(__u64 start, __u64 count,
-			    struct ext2fs_rb_private *);
-static void rb_get_new_extent(struct bmap_rb_extent **, __u64, __u64);
+अटल पूर्णांक rb_जोड़ो_extent(__u64 start, __u64 गिनती,
+			    काष्ठा ext2fs_rb_private *);
+अटल व्योम rb_get_new_extent(काष्ठा bmap_rb_extent **, __u64, __u64);
 
 /* #define DEBUG_RB */
 
-#ifdef DEBUG_RB
-static void print_tree(struct rb_root *root)
+#अगर_घोषित DEBUG_RB
+अटल व्योम print_वृक्ष(काष्ठा rb_मूल *मूल)
 {
-	struct rb_node *node = NULL;
-	struct bmap_rb_extent *ext;
+	काष्ठा rb_गाँठ *गाँठ = शून्य;
+	काष्ठा bmap_rb_extent *ext;
 
-	fprintf(stderr, "\t\t\t=================================\n");
-	node = ext2fs_rb_first(root);
-	for (node = ext2fs_rb_first(root); node != NULL; 
-	     node = ext2fs_rb_next(node)) {
-		ext = node_to_extent(node);
-		fprintf(stderr, "\t\t\t--> (%llu -> %llu)\n",
-			(unsigned long long) ext->start,
-			(unsigned long long) ext->start + ext->count);
+	ख_लिखो(मानक_त्रुटि, "\t\t\t=================================\n");
+	गाँठ = ext2fs_rb_first(मूल);
+	क्रम (गाँठ = ext2fs_rb_first(मूल); गाँठ != शून्य; 
+	     गाँठ = ext2fs_rb_अग्र(गाँठ)) {
+		ext = गाँठ_to_extent(गाँठ);
+		ख_लिखो(मानक_त्रुटि, "\t\t\t--> (%llu -> %llu)\n",
+			(अचिन्हित दीर्घ दीर्घ) ext->start,
+			(अचिन्हित दीर्घ दीर्घ) ext->start + ext->गिनती);
 	}
-	fprintf(stderr, "\t\t\t=================================\n");
+	ख_लिखो(मानक_त्रुटि, "\t\t\t=================================\n");
 }
 
-static void check_tree(struct rb_root *root, const char *msg)
+अटल व्योम check_वृक्ष(काष्ठा rb_मूल *मूल, स्थिर अक्षर *संदेश)
 {
-	struct rb_node *node;
-	struct bmap_rb_extent *ext, *old = NULL;
+	काष्ठा rb_गाँठ *गाँठ;
+	काष्ठा bmap_rb_extent *ext, *old = शून्य;
 
-	for (node = ext2fs_rb_first(root); node;
-	     node = ext2fs_rb_next(node)) {
-		ext = node_to_extent(node);
-		if (ext->count == 0) {
-			fprintf(stderr, "Tree Error: count is zero\n");
-			fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
-				(unsigned long long) ext->start,
-				(unsigned long long) ext->start + ext->count,
-				(unsigned long long) ext->count);
-			goto err_out;
+	क्रम (गाँठ = ext2fs_rb_first(मूल); गाँठ;
+	     गाँठ = ext2fs_rb_अग्र(गाँठ)) {
+		ext = गाँठ_to_extent(गाँठ);
+		अगर (ext->गिनती == 0) {
+			ख_लिखो(मानक_त्रुटि, "Tree Error: count is zero\n");
+			ख_लिखो(मानक_त्रुटि, "extent: %llu -> %llu (%llu)\n",
+				(अचिन्हित दीर्घ दीर्घ) ext->start,
+				(अचिन्हित दीर्घ दीर्घ) ext->start + ext->गिनती,
+				(अचिन्हित दीर्घ दीर्घ) ext->गिनती);
+			जाओ err_out;
 		}
-		if (ext->start + ext->count < ext->start) {
-			fprintf(stderr,
+		अगर (ext->start + ext->गिनती < ext->start) {
+			ख_लिखो(मानक_त्रुटि,
 				"Tree Error: start or count is crazy\n");
-			fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
-				(unsigned long long) ext->start,
-				(unsigned long long) ext->start + ext->count,
-				(unsigned long long) ext->count);
-			goto err_out;
+			ख_लिखो(मानक_त्रुटि, "extent: %llu -> %llu (%llu)\n",
+				(अचिन्हित दीर्घ दीर्घ) ext->start,
+				(अचिन्हित दीर्घ दीर्घ) ext->start + ext->गिनती,
+				(अचिन्हित दीर्घ दीर्घ) ext->गिनती);
+			जाओ err_out;
 		}
 
-		if (old) {
-			if (old->start > ext->start) {
-				fprintf(stderr, "Tree Error: start is crazy\n");
-				fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
-					(unsigned long long) old->start,
-					(unsigned long long) old->start + old->count,
-					(unsigned long long) old->count);
-				fprintf(stderr,
+		अगर (old) {
+			अगर (old->start > ext->start) {
+				ख_लिखो(मानक_त्रुटि, "Tree Error: start is crazy\n");
+				ख_लिखो(मानक_त्रुटि, "extent: %llu -> %llu (%llu)\n",
+					(अचिन्हित दीर्घ दीर्घ) old->start,
+					(अचिन्हित दीर्घ दीर्घ) old->start + old->गिनती,
+					(अचिन्हित दीर्घ दीर्घ) old->गिनती);
+				ख_लिखो(मानक_त्रुटि,
 					"extent next: %llu -> %llu (%llu)\n",
-					(unsigned long long) ext->start,
-					(unsigned long long) ext->start + ext->count,
-					(unsigned long long) ext->count);
-				goto err_out;
+					(अचिन्हित दीर्घ दीर्घ) ext->start,
+					(अचिन्हित दीर्घ दीर्घ) ext->start + ext->गिनती,
+					(अचिन्हित दीर्घ दीर्घ) ext->गिनती);
+				जाओ err_out;
 			}
-			if ((old->start + old->count) >= ext->start) {
-				fprintf(stderr,
+			अगर ((old->start + old->गिनती) >= ext->start) {
+				ख_लिखो(मानक_त्रुटि,
 					"Tree Error: extent is crazy\n");
-				fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
-					(unsigned long long) old->start,
-					(unsigned long long) old->start + old->count,
-					(unsigned long long) old->count);
-				fprintf(stderr,
+				ख_लिखो(मानक_त्रुटि, "extent: %llu -> %llu (%llu)\n",
+					(अचिन्हित दीर्घ दीर्घ) old->start,
+					(अचिन्हित दीर्घ दीर्घ) old->start + old->गिनती,
+					(अचिन्हित दीर्घ दीर्घ) old->गिनती);
+				ख_लिखो(मानक_त्रुटि,
 					"extent next: %llu -> %llu (%llu)\n",
-					(unsigned long long) ext->start,
-					(unsigned long long) ext->start + ext->count,
-					(unsigned long long) ext->count);
-				goto err_out;
+					(अचिन्हित दीर्घ दीर्घ) ext->start,
+					(अचिन्हित दीर्घ दीर्घ) ext->start + ext->गिनती,
+					(अचिन्हित दीर्घ दीर्घ) ext->गिनती);
+				जाओ err_out;
 			}
 		}
 		old = ext;
 	}
-	return;
+	वापस;
 
 err_out:
-	fprintf(stderr, "%s\n", msg);
-	print_tree(root);
-	exit(1);
+	ख_लिखो(मानक_त्रुटि, "%s\n", संदेश);
+	print_वृक्ष(मूल);
+	निकास(1);
 }
-#else
-#define check_tree(root, msg) do {} while (0)
-#define print_tree(root) do {} while (0)
-#endif
+#अन्यथा
+#घोषणा check_वृक्ष(मूल, संदेश) करो {} जबतक (0)
+#घोषणा print_वृक्ष(मूल) करो {} जबतक (0)
+#पूर्ण_अगर
 
-static void rb_get_new_extent(struct bmap_rb_extent **ext, __u64 start,
-			     __u64 count)
+अटल व्योम rb_get_new_extent(काष्ठा bmap_rb_extent **ext, __u64 start,
+			     __u64 गिनती)
 {
-	struct bmap_rb_extent *new_ext;
-	int retval;
+	काष्ठा bmap_rb_extent *new_ext;
+	पूर्णांक retval;
 
-	retval = ext2fs_get_mem(sizeof (struct bmap_rb_extent),
+	retval = ext2fs_get_mem(माप (काष्ठा bmap_rb_extent),
 				&new_ext);
-	if (retval)
-		abort();
+	अगर (retval)
+		पात();
 
 	new_ext->start = start;
-	new_ext->count = count;
+	new_ext->गिनती = गिनती;
 	*ext = new_ext;
 }
 
-inline
-static void rb_free_extent(struct ext2fs_rb_private *bp,
-			   struct bmap_rb_extent *ext)
+अंतरभूत
+अटल व्योम rb_free_extent(काष्ठा ext2fs_rb_private *bp,
+			   काष्ठा bmap_rb_extent *ext)
 {
-	if (bp->wcursor == ext)
-		bp->wcursor = NULL;
-	if (bp->rcursor == ext)
-		bp->rcursor = NULL;
-	if (bp->rcursor_next == ext)
-		bp->rcursor_next = NULL;
+	अगर (bp->wcursor == ext)
+		bp->wcursor = शून्य;
+	अगर (bp->rcursor == ext)
+		bp->rcursor = शून्य;
+	अगर (bp->rcursor_अग्र == ext)
+		bp->rcursor_अग्र = शून्य;
 	ext2fs_free_mem(&ext);
 }
 
-static errcode_t rb_alloc_private_data (ext2fs_generic_bitmap_64 bitmap)
+अटल errcode_t rb_alloc_private_तथ्य (ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
+	काष्ठा ext2fs_rb_private *bp;
 	errcode_t	retval;
 
-	retval = ext2fs_get_mem(sizeof (struct ext2fs_rb_private), &bp);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(माप (काष्ठा ext2fs_rb_private), &bp);
+	अगर (retval)
+		वापस retval;
 
-	bp->root = RB_ROOT;
-	bp->rcursor = NULL;
-	bp->rcursor_next = NULL;
-	bp->wcursor = NULL;
+	bp->मूल = RB_मूल;
+	bp->rcursor = शून्य;
+	bp->rcursor_अग्र = शून्य;
+	bp->wcursor = शून्य;
 
-#ifdef ENABLE_BMAP_STATS_OPS
+#अगर_घोषित ENABLE_BMAP_STATS_OPS
 	bp->test_hit = 0;
 	bp->mark_hit = 0;
-#endif
+#पूर्ण_अगर
 
-	bitmap->private = (void *) bp;
-	return 0;
+	bitmap->निजी = (व्योम *) bp;
+	वापस 0;
 }
 
-static errcode_t rb_new_bmap(ext2_filsys fs EXT2FS_ATTR((unused)),
+अटल errcode_t rb_new_bmap(ext2_filsys fs EXT2FS_ATTR((unused)),
 			     ext2fs_generic_bitmap_64 bitmap)
 {
 	errcode_t	retval;
 
-	retval = rb_alloc_private_data (bitmap);
-	if (retval)
-		return retval;
+	retval = rb_alloc_private_तथ्य (bitmap);
+	अगर (retval)
+		वापस retval;
 
-	return 0;
+	वापस 0;
 }
 
-static void rb_free_tree(struct rb_root *root)
+अटल व्योम rb_free_वृक्ष(काष्ठा rb_मूल *मूल)
 {
-	struct bmap_rb_extent *ext;
-	struct rb_node *node, *next;
+	काष्ठा bmap_rb_extent *ext;
+	काष्ठा rb_गाँठ *गाँठ, *अग्र;
 
-	for (node = ext2fs_rb_first(root); node; node = next) {
-		next = ext2fs_rb_next(node);
-		ext = node_to_extent(node);
-		ext2fs_rb_erase(node, root);
+	क्रम (गाँठ = ext2fs_rb_first(मूल); गाँठ; गाँठ = अग्र) {
+		अग्र = ext2fs_rb_अग्र(गाँठ);
+		ext = गाँठ_to_extent(गाँठ);
+		ext2fs_rb_erase(गाँठ, मूल);
 		ext2fs_free_mem(&ext);
 	}
 }
 
-static void rb_free_bmap(ext2fs_generic_bitmap_64 bitmap)
+अटल व्योम rb_free_bmap(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
+	काष्ठा ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (काष्ठा ext2fs_rb_private *) bitmap->निजी;
 
-	rb_free_tree(&bp->root);
+	rb_free_वृक्ष(&bp->मूल);
 	ext2fs_free_mem(&bp);
 	bp = 0;
 }
 
-static errcode_t rb_copy_bmap(ext2fs_generic_bitmap_64 src,
+अटल errcode_t rb_copy_bmap(ext2fs_generic_bitmap_64 src,
 			      ext2fs_generic_bitmap_64 dest)
 {
-	struct ext2fs_rb_private *src_bp, *dest_bp;
-	struct bmap_rb_extent *src_ext, *dest_ext;
-	struct rb_node *dest_node, *src_node, *dest_last, **n;
+	काष्ठा ext2fs_rb_private *src_bp, *dest_bp;
+	काष्ठा bmap_rb_extent *src_ext, *dest_ext;
+	काष्ठा rb_गाँठ *dest_गाँठ, *src_गाँठ, *dest_last, **n;
 	errcode_t retval = 0;
 
-	retval = rb_alloc_private_data (dest);
-	if (retval)
-		return retval;
+	retval = rb_alloc_private_तथ्य (dest);
+	अगर (retval)
+		वापस retval;
 
-	src_bp = (struct ext2fs_rb_private *) src->private;
-	dest_bp = (struct ext2fs_rb_private *) dest->private;
-	src_bp->rcursor = NULL;
-	dest_bp->rcursor = NULL;
+	src_bp = (काष्ठा ext2fs_rb_private *) src->निजी;
+	dest_bp = (काष्ठा ext2fs_rb_private *) dest->निजी;
+	src_bp->rcursor = शून्य;
+	dest_bp->rcursor = शून्य;
 
-	src_node = ext2fs_rb_first(&src_bp->root);
-	while (src_node) {
-		src_ext = node_to_extent(src_node);
-		retval = ext2fs_get_mem(sizeof (struct bmap_rb_extent),
+	src_गाँठ = ext2fs_rb_first(&src_bp->मूल);
+	जबतक (src_गाँठ) {
+		src_ext = गाँठ_to_extent(src_गाँठ);
+		retval = ext2fs_get_mem(माप (काष्ठा bmap_rb_extent),
 					&dest_ext);
-		if (retval)
-			break;
+		अगर (retval)
+			अवरोध;
 
-		memcpy(dest_ext, src_ext, sizeof(struct bmap_rb_extent));
+		स_नकल(dest_ext, src_ext, माप(काष्ठा bmap_rb_extent));
 
-		dest_node = &dest_ext->node;
-		n = &dest_bp->root.rb_node;
+		dest_गाँठ = &dest_ext->गाँठ;
+		n = &dest_bp->मूल.rb_गाँठ;
 
-		dest_last = NULL;
-		if (*n) {
-			dest_last = ext2fs_rb_last(&dest_bp->root);
-			n = &(dest_last)->rb_right;
+		dest_last = शून्य;
+		अगर (*n) {
+			dest_last = ext2fs_rb_last(&dest_bp->मूल);
+			n = &(dest_last)->rb_दायाँ;
 		}
 
-		ext2fs_rb_link_node(dest_node, dest_last, n);
-		ext2fs_rb_insert_color(dest_node, &dest_bp->root);
+		ext2fs_rb_link_गाँठ(dest_गाँठ, dest_last, n);
+		ext2fs_rb_जोड़ो_color(dest_गाँठ, &dest_bp->मूल);
 
-		src_node = ext2fs_rb_next(src_node);
+		src_गाँठ = ext2fs_rb_अग्र(src_गाँठ);
 	}
 
-	return retval;
+	वापस retval;
 }
 
-static void rb_truncate(__u64 new_max, struct rb_root *root)
+अटल व्योम rb_truncate(__u64 new_max, काष्ठा rb_मूल *मूल)
 {
-	struct bmap_rb_extent *ext;
-	struct rb_node *node;
+	काष्ठा bmap_rb_extent *ext;
+	काष्ठा rb_गाँठ *गाँठ;
 
-	node = ext2fs_rb_last(root);
-	while (node) {
-		ext = node_to_extent(node);
+	गाँठ = ext2fs_rb_last(मूल);
+	जबतक (गाँठ) {
+		ext = गाँठ_to_extent(गाँठ);
 
-		if ((ext->start + ext->count - 1) <= new_max)
-			break;
-		else if (ext->start > new_max) {
-			ext2fs_rb_erase(node, root);
+		अगर ((ext->start + ext->गिनती - 1) <= new_max)
+			अवरोध;
+		अन्यथा अगर (ext->start > new_max) {
+			ext2fs_rb_erase(गाँठ, मूल);
 			ext2fs_free_mem(&ext);
-			node = ext2fs_rb_last(root);
-			continue;
-		} else
-			ext->count = new_max - ext->start + 1;
+			गाँठ = ext2fs_rb_last(मूल);
+			जारी;
+		} अन्यथा
+			ext->गिनती = new_max - ext->start + 1;
 	}
 }
 
-static errcode_t rb_resize_bmap(ext2fs_generic_bitmap_64 bmap,
+अटल errcode_t rb_resize_bmap(ext2fs_generic_bitmap_64 bmap,
 				__u64 new_end, __u64 new_real_end)
 {
-	struct ext2fs_rb_private *bp;
+	काष्ठा ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bmap->private;
-	bp->rcursor = NULL;
-	bp->wcursor = NULL;
+	bp = (काष्ठा ext2fs_rb_private *) bmap->निजी;
+	bp->rcursor = शून्य;
+	bp->wcursor = शून्य;
 
 	rb_truncate(((new_end < bmap->end) ? new_end : bmap->end) - bmap->start,
-		    &bp->root);
+		    &bp->मूल);
 
 	bmap->end = new_end;
 	bmap->real_end = new_real_end;
 
-	if (bmap->end < bmap->real_end)
-		rb_insert_extent(bmap->end + 1 - bmap->start,
+	अगर (bmap->end < bmap->real_end)
+		rb_जोड़ो_extent(bmap->end + 1 - bmap->start,
 				 bmap->real_end - bmap->end, bp);
-	return 0;
+	वापस 0;
 
 }
 
-inline static int
-rb_test_bit(struct ext2fs_rb_private *bp, __u64 bit)
+अंतरभूत अटल पूर्णांक
+rb_test_bit(काष्ठा ext2fs_rb_private *bp, __u64 bit)
 {
-	struct bmap_rb_extent *rcursor, *next_ext = NULL;
-	struct rb_node *parent = NULL, *next;
-	struct rb_node **n = &bp->root.rb_node;
-	struct bmap_rb_extent *ext;
+	काष्ठा bmap_rb_extent *rcursor, *अग्र_ext = शून्य;
+	काष्ठा rb_गाँठ *parent = शून्य, *अग्र;
+	काष्ठा rb_गाँठ **n = &bp->मूल.rb_गाँठ;
+	काष्ठा bmap_rb_extent *ext;
 
 	rcursor = bp->rcursor;
-	if (!rcursor)
-		goto search_tree;
+	अगर (!rcursor)
+		जाओ खोज_वृक्ष;
 
-	if (bit >= rcursor->start && bit < rcursor->start + rcursor->count) {
-#ifdef ENABLE_BMAP_STATS_OPS
+	अगर (bit >= rcursor->start && bit < rcursor->start + rcursor->गिनती) {
+#अगर_घोषित ENABLE_BMAP_STATS_OPS
 		bp->test_hit++;
-#endif
-		return 1;
+#पूर्ण_अगर
+		वापस 1;
 	}
 
-	next_ext = bp->rcursor_next;
-	if (!next_ext) {
-		next = ext2fs_rb_next(&rcursor->node);
-		if (next)
-			next_ext = node_to_extent(next);
-		bp->rcursor_next = next_ext;
+	अग्र_ext = bp->rcursor_अग्र;
+	अगर (!अग्र_ext) {
+		अग्र = ext2fs_rb_अग्र(&rcursor->गाँठ);
+		अगर (अग्र)
+			अग्र_ext = गाँठ_to_extent(अग्र);
+		bp->rcursor_अग्र = अग्र_ext;
 	}
-	if (next_ext) {
-		if ((bit >= rcursor->start + rcursor->count) &&
-		    (bit < next_ext->start)) {
-#ifdef BMAP_STATS_OPS
+	अगर (अग्र_ext) {
+		अगर ((bit >= rcursor->start + rcursor->गिनती) &&
+		    (bit < अग्र_ext->start)) {
+#अगर_घोषित BMAP_STATS_OPS
 			bp->test_hit++;
-#endif
-			return 0;
+#पूर्ण_अगर
+			वापस 0;
 		}
 	}
-	bp->rcursor = NULL;
-	bp->rcursor_next = NULL;
+	bp->rcursor = शून्य;
+	bp->rcursor_अग्र = शून्य;
 
 	rcursor = bp->wcursor;
-	if (!rcursor)
-		goto search_tree;
+	अगर (!rcursor)
+		जाओ खोज_वृक्ष;
 
-	if (bit >= rcursor->start && bit < rcursor->start + rcursor->count)
-		return 1;
+	अगर (bit >= rcursor->start && bit < rcursor->start + rcursor->गिनती)
+		वापस 1;
 
-search_tree:
+खोज_वृक्ष:
 
-	while (*n) {
+	जबतक (*n) {
 		parent = *n;
-		ext = node_to_extent(parent);
-		if (bit < ext->start)
-			n = &(*n)->rb_left;
-		else if (bit >= (ext->start + ext->count))
-			n = &(*n)->rb_right;
-		else {
+		ext = गाँठ_to_extent(parent);
+		अगर (bit < ext->start)
+			n = &(*n)->rb_बायाँ;
+		अन्यथा अगर (bit >= (ext->start + ext->गिनती))
+			n = &(*n)->rb_दायाँ;
+		अन्यथा {
 			bp->rcursor = ext;
-			bp->rcursor_next = NULL;
-			return 1;
+			bp->rcursor_अग्र = शून्य;
+			वापस 1;
 		}
 	}
-	return 0;
+	वापस 0;
 }
 
-static int rb_insert_extent(__u64 start, __u64 count,
-			    struct ext2fs_rb_private *bp)
+अटल पूर्णांक rb_जोड़ो_extent(__u64 start, __u64 गिनती,
+			    काष्ठा ext2fs_rb_private *bp)
 {
-	struct rb_root *root = &bp->root;
-	struct rb_node *parent = NULL, **n = &root->rb_node;
-	struct rb_node *new_node, *node, *next;
-	struct bmap_rb_extent *new_ext;
-	struct bmap_rb_extent *ext;
-	int retval = 0;
+	काष्ठा rb_मूल *मूल = &bp->मूल;
+	काष्ठा rb_गाँठ *parent = शून्य, **n = &मूल->rb_गाँठ;
+	काष्ठा rb_गाँठ *new_गाँठ, *गाँठ, *अग्र;
+	काष्ठा bmap_rb_extent *new_ext;
+	काष्ठा bmap_rb_extent *ext;
+	पूर्णांक retval = 0;
 
-	if (count == 0)
-		return 0;
+	अगर (गिनती == 0)
+		वापस 0;
 
-	bp->rcursor_next = NULL;
+	bp->rcursor_अग्र = शून्य;
 	ext = bp->wcursor;
-	if (ext) {
-		if (start >= ext->start &&
-		    start <= (ext->start + ext->count)) {
-#ifdef ENABLE_BMAP_STATS_OPS
+	अगर (ext) {
+		अगर (start >= ext->start &&
+		    start <= (ext->start + ext->गिनती)) {
+#अगर_घोषित ENABLE_BMAP_STATS_OPS
 			bp->mark_hit++;
-#endif
-			goto got_extent;
+#पूर्ण_अगर
+			जाओ got_extent;
 		}
 	}
 
-	while (*n) {
+	जबतक (*n) {
 		parent = *n;
-		ext = node_to_extent(parent);
+		ext = गाँठ_to_extent(parent);
 
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start > (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else {
+		अगर (start < ext->start) {
+			n = &(*n)->rb_बायाँ;
+		} अन्यथा अगर (start > (ext->start + ext->गिनती)) {
+			n = &(*n)->rb_दायाँ;
+		} अन्यथा {
 got_extent:
-			if ((start + count) <= (ext->start + ext->count))
-				return 1;
+			अगर ((start + गिनती) <= (ext->start + ext->गिनती))
+				वापस 1;
 
-			if ((ext->start + ext->count) == start)
+			अगर ((ext->start + ext->गिनती) == start)
 				retval = 0;
-			else
+			अन्यथा
 				retval = 1;
 
-			count += (start - ext->start);
+			गिनती += (start - ext->start);
 			start = ext->start;
 			new_ext = ext;
-			new_node = &ext->node;
+			new_गाँठ = &ext->गाँठ;
 
-			goto skip_insert;
+			जाओ skip_जोड़ो;
 		}
 	}
 
-	rb_get_new_extent(&new_ext, start, count);
+	rb_get_new_extent(&new_ext, start, गिनती);
 
-	new_node = &new_ext->node;
-	ext2fs_rb_link_node(new_node, parent, n);
-	ext2fs_rb_insert_color(new_node, root);
+	new_गाँठ = &new_ext->गाँठ;
+	ext2fs_rb_link_गाँठ(new_गाँठ, parent, n);
+	ext2fs_rb_जोड़ो_color(new_गाँठ, मूल);
 	bp->wcursor = new_ext;
 
-	node = ext2fs_rb_prev(new_node);
-	if (node) {
-		ext = node_to_extent(node);
-		if ((ext->start + ext->count) == start) {
+	गाँठ = ext2fs_rb_पूर्व(new_गाँठ);
+	अगर (गाँठ) {
+		ext = गाँठ_to_extent(गाँठ);
+		अगर ((ext->start + ext->गिनती) == start) {
 			start = ext->start;
-			count += ext->count;
-			ext2fs_rb_erase(node, root);
+			गिनती += ext->गिनती;
+			ext2fs_rb_erase(गाँठ, मूल);
 			rb_free_extent(bp, ext);
 		}
 	}
 
-skip_insert:
+skip_जोड़ो:
 	/* See if we can merge extent to the right */
-	for (node = ext2fs_rb_next(new_node); node != NULL; node = next) {
-		next = ext2fs_rb_next(node);
-		ext = node_to_extent(node);
+	क्रम (गाँठ = ext2fs_rb_अग्र(new_गाँठ); गाँठ != शून्य; गाँठ = अग्र) {
+		अग्र = ext2fs_rb_अग्र(गाँठ);
+		ext = गाँठ_to_extent(गाँठ);
 
-		if ((ext->start + ext->count) <= start)
-			continue;
+		अगर ((ext->start + ext->गिनती) <= start)
+			जारी;
 
 		/* No more merging */
-		if ((start + count) < ext->start)
-			break;
+		अगर ((start + गिनती) < ext->start)
+			अवरोध;
 
 		/* ext is embedded in new_ext interval */
-		if ((start + count) >= (ext->start + ext->count)) {
-			ext2fs_rb_erase(node, root);
+		अगर ((start + गिनती) >= (ext->start + ext->गिनती)) {
+			ext2fs_rb_erase(गाँठ, मूल);
 			rb_free_extent(bp, ext);
-			continue;
-		} else {
+			जारी;
+		} अन्यथा {
 		/* merge ext with new_ext */
-			count += ((ext->start + ext->count) -
-				  (start + count));
-			ext2fs_rb_erase(node, root);
+			गिनती += ((ext->start + ext->गिनती) -
+				  (start + गिनती));
+			ext2fs_rb_erase(गाँठ, मूल);
 			rb_free_extent(bp, ext);
-			break;
+			अवरोध;
 		}
 	}
 
 	new_ext->start = start;
-	new_ext->count = count;
+	new_ext->गिनती = गिनती;
 
-	return retval;
+	वापस retval;
 }
 
-static int rb_remove_extent(__u64 start, __u64 count,
-			    struct ext2fs_rb_private *bp)
+अटल पूर्णांक rb_remove_extent(__u64 start, __u64 गिनती,
+			    काष्ठा ext2fs_rb_private *bp)
 {
-	struct rb_root *root = &bp->root;
-	struct rb_node *parent = NULL, **n = &root->rb_node;
-	struct rb_node *node;
-	struct bmap_rb_extent *ext;
-	__u64 new_start, new_count;
-	int retval = 0;
+	काष्ठा rb_मूल *मूल = &bp->मूल;
+	काष्ठा rb_गाँठ *parent = शून्य, **n = &मूल->rb_गाँठ;
+	काष्ठा rb_गाँठ *गाँठ;
+	काष्ठा bmap_rb_extent *ext;
+	__u64 new_start, new_गिनती;
+	पूर्णांक retval = 0;
 
-	if (ext2fs_rb_empty_root(root))
-		return 0;
+	अगर (ext2fs_rb_empty_मूल(मूल))
+		वापस 0;
 
-	while (*n) {
+	जबतक (*n) {
 		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-			continue;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-			continue;
+		ext = गाँठ_to_extent(parent);
+		अगर (start < ext->start) {
+			n = &(*n)->rb_बायाँ;
+			जारी;
+		} अन्यथा अगर (start >= (ext->start + ext->गिनती)) {
+			n = &(*n)->rb_दायाँ;
+			जारी;
 		}
 
-		if ((start > ext->start) &&
-		    (start + count) < (ext->start + ext->count)) {
+		अगर ((start > ext->start) &&
+		    (start + गिनती) < (ext->start + ext->गिनती)) {
 			/* We have to split extent into two */
-			new_start = start + count;
-			new_count = (ext->start + ext->count) - new_start;
+			new_start = start + गिनती;
+			new_गिनती = (ext->start + ext->गिनती) - new_start;
 
-			ext->count = start - ext->start;
+			ext->गिनती = start - ext->start;
 
-			rb_insert_extent(new_start, new_count, bp);
-			return 1;
+			rb_जोड़ो_extent(new_start, new_गिनती, bp);
+			वापस 1;
 		}
 
-		if ((start + count) >= (ext->start + ext->count)) {
-			ext->count = start - ext->start;
+		अगर ((start + गिनती) >= (ext->start + ext->गिनती)) {
+			ext->गिनती = start - ext->start;
 			retval = 1;
 		}
 
-		if (0 == ext->count) {
-			parent = ext2fs_rb_next(&ext->node);
-			ext2fs_rb_erase(&ext->node, root);
+		अगर (0 == ext->गिनती) {
+			parent = ext2fs_rb_अग्र(&ext->गाँठ);
+			ext2fs_rb_erase(&ext->गाँठ, मूल);
 			rb_free_extent(bp, ext);
-			break;
+			अवरोध;
 		}
 
-		if (start == ext->start) {
-			ext->start += count;
-			ext->count -= count;
-			return 1;
+		अगर (start == ext->start) {
+			ext->start += गिनती;
+			ext->गिनती -= गिनती;
+			वापस 1;
 		}
 	}
 
 	/* See if we should delete or truncate extent on the right */
-	for (; parent != NULL; parent = node) {
-		node = ext2fs_rb_next(parent);
-		ext = node_to_extent(parent);
-		if ((ext->start + ext->count) <= start)
-			continue;
+	क्रम (; parent != शून्य; parent = गाँठ) {
+		गाँठ = ext2fs_rb_अग्र(parent);
+		ext = गाँठ_to_extent(parent);
+		अगर ((ext->start + ext->गिनती) <= start)
+			जारी;
 
 		/* No more extents to be removed/truncated */
-		if ((start + count) < ext->start)
-			break;
+		अगर ((start + गिनती) < ext->start)
+			अवरोध;
 
 		/* The entire extent is within the region to be removed */
-		if ((start + count) >= (ext->start + ext->count)) {
-			ext2fs_rb_erase(parent, root);
+		अगर ((start + गिनती) >= (ext->start + ext->गिनती)) {
+			ext2fs_rb_erase(parent, मूल);
 			rb_free_extent(bp, ext);
 			retval = 1;
-			continue;
-		} else {
+			जारी;
+		} अन्यथा {
 			/* modify the last extent in region to be removed */
-			ext->count -= ((start + count) - ext->start);
-			ext->start = start + count;
+			ext->गिनती -= ((start + गिनती) - ext->start);
+			ext->start = start + गिनती;
 			retval = 1;
-			break;
+			अवरोध;
 		}
 	}
 
-	return retval;
+	वापस retval;
 }
 
-static int rb_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+अटल पूर्णांक rb_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	struct ext2fs_rb_private *bp;
-	int retval;
+	काष्ठा ext2fs_rb_private *bp;
+	पूर्णांक retval;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (काष्ठा ext2fs_rb_private *) bitmap->निजी;
 	arg -= bitmap->start;
 
-	retval = rb_insert_extent(arg, 1, bp);
-	check_tree(&bp->root, __func__);
-	return retval;
+	retval = rb_जोड़ो_extent(arg, 1, bp);
+	check_वृक्ष(&bp->मूल, __func__);
+	वापस retval;
 }
 
-static int rb_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+अटल पूर्णांक rb_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	struct ext2fs_rb_private *bp;
-	int retval;
+	काष्ठा ext2fs_rb_private *bp;
+	पूर्णांक retval;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (काष्ठा ext2fs_rb_private *) bitmap->निजी;
 	arg -= bitmap->start;
 
 	retval = rb_remove_extent(arg, 1, bp);
-	check_tree(&bp->root, __func__);
+	check_वृक्ष(&bp->मूल, __func__);
 
-	return retval;
+	वापस retval;
 }
 
-inline
-static int rb_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+अंतरभूत
+अटल पूर्णांक rb_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	struct ext2fs_rb_private *bp;
+	काष्ठा ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (काष्ठा ext2fs_rb_private *) bitmap->निजी;
 	arg -= bitmap->start;
 
-	return rb_test_bit(bp, arg);
+	वापस rb_test_bit(bp, arg);
 }
 
-static void rb_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				unsigned int num)
+अटल व्योम rb_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				अचिन्हित पूर्णांक अंक)
 {
-	struct ext2fs_rb_private *bp;
+	काष्ठा ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (काष्ठा ext2fs_rb_private *) bitmap->निजी;
 	arg -= bitmap->start;
 
-	rb_insert_extent(arg, num, bp);
-	check_tree(&bp->root, __func__);
+	rb_जोड़ो_extent(arg, अंक, bp);
+	check_वृक्ष(&bp->मूल, __func__);
 }
 
-static void rb_unmark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				  unsigned int num)
+अटल व्योम rb_unmark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				  अचिन्हित पूर्णांक अंक)
 {
-	struct ext2fs_rb_private *bp;
+	काष्ठा ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (काष्ठा ext2fs_rb_private *) bitmap->निजी;
 	arg -= bitmap->start;
 
-	rb_remove_extent(arg, num, bp);
-	check_tree(&bp->root, __func__);
+	rb_remove_extent(arg, अंक, bp);
+	check_वृक्ष(&bp->मूल, __func__);
 }
 
-static int rb_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, unsigned int len)
+अटल पूर्णांक rb_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 start, अचिन्हित पूर्णांक len)
 {
-	struct rb_node *parent = NULL, **n;
-	struct rb_node *node, *next;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
-	int retval = 1;
+	काष्ठा rb_गाँठ *parent = शून्य, **n;
+	काष्ठा rb_गाँठ *गाँठ, *अग्र;
+	काष्ठा ext2fs_rb_private *bp;
+	काष्ठा bmap_rb_extent *ext;
+	पूर्णांक retval = 1;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
+	bp = (काष्ठा ext2fs_rb_private *) bitmap->निजी;
+	n = &bp->मूल.rb_गाँठ;
 	start -= bitmap->start;
 
-	if (len == 0 || ext2fs_rb_empty_root(&bp->root))
-		return 1;
+	अगर (len == 0 || ext2fs_rb_empty_मूल(&bp->मूल))
+		वापस 1;
 
 	/*
 	 * If we find nothing, we should examine whole extent, but
 	 * when we find match, the extent is not clean, thus be return
 	 * false.
 	 */
-	while (*n) {
+	जबतक (*n) {
 		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else {
+		ext = गाँठ_to_extent(parent);
+		अगर (start < ext->start) {
+			n = &(*n)->rb_बायाँ;
+		} अन्यथा अगर (start >= (ext->start + ext->गिनती)) {
+			n = &(*n)->rb_दायाँ;
+		} अन्यथा {
 			/*
 			 * We found extent int the tree -> extent is not
 			 * clean
 			 */
-			return 0;
+			वापस 0;
 		}
 	}
 
-	node = parent;
-	while (node) {
-		next = ext2fs_rb_next(node);
-		ext = node_to_extent(node);
-		node = next;
+	गाँठ = parent;
+	जबतक (गाँठ) {
+		अग्र = ext2fs_rb_अग्र(गाँठ);
+		ext = गाँठ_to_extent(गाँठ);
+		गाँठ = अग्र;
 
-		if ((ext->start + ext->count) <= start)
-			continue;
+		अगर ((ext->start + ext->गिनती) <= start)
+			जारी;
 
 		/* No more merging */
-		if ((start + len) <= ext->start)
-			break;
+		अगर ((start + len) <= ext->start)
+			अवरोध;
 
 		retval = 0;
-		break;
+		अवरोध;
 	}
-	return retval;
+	वापस retval;
 }
 
-static errcode_t rb_set_bmap_range(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, size_t num, void *in)
+अटल errcode_t rb_set_bmap_range(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 start, माप_प्रकार अंक, व्योम *in)
 {
-	struct ext2fs_rb_private *bp;
-	unsigned char *cp = in;
-	size_t i;
-	int first_set = -1;
+	काष्ठा ext2fs_rb_private *bp;
+	अचिन्हित अक्षर *cp = in;
+	माप_प्रकार i;
+	पूर्णांक first_set = -1;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (काष्ठा ext2fs_rb_private *) bitmap->निजी;
 
-	for (i = 0; i < num; i++) {
-		if ((i & 7) == 0) {
-			unsigned char c = cp[i/8];
-			if (c == 0xFF) {
-				if (first_set == -1)
+	क्रम (i = 0; i < अंक; i++) {
+		अगर ((i & 7) == 0) {
+			अचिन्हित अक्षर c = cp[i/8];
+			अगर (c == 0xFF) {
+				अगर (first_set == -1)
 					first_set = i;
 				i += 7;
-				continue;
+				जारी;
 			}
-			if ((c == 0x00) && (first_set == -1)) {
+			अगर ((c == 0x00) && (first_set == -1)) {
 				i += 7;
-				continue;
+				जारी;
 			}
 		}
-		if (ext2fs_test_bit(i, in)) {
-			if (first_set == -1)
+		अगर (ext2fs_test_bit(i, in)) {
+			अगर (first_set == -1)
 				first_set = i;
-			continue;
+			जारी;
 		}
-		if (first_set == -1)
-			continue;
+		अगर (first_set == -1)
+			जारी;
 
-		rb_insert_extent(start + first_set - bitmap->start,
+		rb_जोड़ो_extent(start + first_set - bitmap->start,
 				 i - first_set, bp);
-		check_tree(&bp->root, __func__);
+		check_वृक्ष(&bp->मूल, __func__);
 		first_set = -1;
 	}
-	if (first_set != -1) {
-		rb_insert_extent(start + first_set - bitmap->start,
-				 num - first_set, bp);
-		check_tree(&bp->root, __func__);
+	अगर (first_set != -1) {
+		rb_जोड़ो_extent(start + first_set - bitmap->start,
+				 अंक - first_set, bp);
+		check_वृक्ष(&bp->मूल, __func__);
 	}
 
-	return 0;
+	वापस 0;
 }
 
-static errcode_t rb_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, size_t num, void *out)
+अटल errcode_t rb_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 start, माप_प्रकार अंक, व्योम *out)
 {
 
-	struct rb_node *parent = NULL, *next, **n;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
-	__u64 count, pos;
+	काष्ठा rb_गाँठ *parent = शून्य, *अग्र, **n;
+	काष्ठा ext2fs_rb_private *bp;
+	काष्ठा bmap_rb_extent *ext;
+	__u64 गिनती, pos;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
+	bp = (काष्ठा ext2fs_rb_private *) bitmap->निजी;
+	n = &bp->मूल.rb_गाँठ;
 	start -= bitmap->start;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return 0;
+	अगर (ext2fs_rb_empty_मूल(&bp->मूल))
+		वापस 0;
 
-	while (*n) {
+	जबतक (*n) {
 		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else
-			break;
+		ext = गाँठ_to_extent(parent);
+		अगर (start < ext->start) {
+			n = &(*n)->rb_बायाँ;
+		} अन्यथा अगर (start >= (ext->start + ext->गिनती)) {
+			n = &(*n)->rb_दायाँ;
+		} अन्यथा
+			अवरोध;
 	}
 
-	memset(out, 0, (num + 7) >> 3);
+	स_रखो(out, 0, (अंक + 7) >> 3);
 
-	for (; parent != NULL; parent = next) {
-		next = ext2fs_rb_next(parent);
-		ext = node_to_extent(parent);
+	क्रम (; parent != शून्य; parent = अग्र) {
+		अग्र = ext2fs_rb_अग्र(parent);
+		ext = गाँठ_to_extent(parent);
 
 		pos = ext->start;
-		count = ext->count;
-		if (pos >= start + num)
-			break;
-		if (pos < start) {
-			if (pos + count <  start)
-				continue;
-			count -= start - pos;
+		गिनती = ext->गिनती;
+		अगर (pos >= start + अंक)
+			अवरोध;
+		अगर (pos < start) {
+			अगर (pos + गिनती <  start)
+				जारी;
+			गिनती -= start - pos;
 			pos = start;
 		}
-		if (pos + count > start + num)
-			count = start + num - pos;
+		अगर (pos + गिनती > start + अंक)
+			गिनती = start + अंक - pos;
 
-		while (count > 0) {
-			if ((count >= 8) &&
+		जबतक (गिनती > 0) {
+			अगर ((गिनती >= 8) &&
 			    ((pos - start) % 8) == 0) {
-				int nbytes = count >> 3;
-				int offset = (pos - start) >> 3;
+				पूर्णांक nbytes = गिनती >> 3;
+				पूर्णांक offset = (pos - start) >> 3;
 
-				memset(((char *) out) + offset, 0xFF, nbytes);
+				स_रखो(((अक्षर *) out) + offset, 0xFF, nbytes);
 				pos += nbytes << 3;
-				count -= nbytes << 3;
-				continue;
+				गिनती -= nbytes << 3;
+				जारी;
 			}
 			ext2fs_fast_set_bit64((pos - start), out);
 			pos++;
-			count--;
+			गिनती--;
 		}
 	}
-	return 0;
+	वापस 0;
 }
 
-static void rb_clear_bmap(ext2fs_generic_bitmap_64 bitmap)
+अटल व्योम rb_clear_bmap(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
+	काष्ठा ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (काष्ठा ext2fs_rb_private *) bitmap->निजी;
 
-	rb_free_tree(&bp->root);
-	bp->rcursor = NULL;
-	bp->rcursor_next = NULL;
-	bp->wcursor = NULL;
-	check_tree(&bp->root, __func__);
+	rb_free_वृक्ष(&bp->मूल);
+	bp->rcursor = शून्य;
+	bp->rcursor_अग्र = शून्य;
+	bp->wcursor = शून्य;
+	check_वृक्ष(&bp->मूल, __func__);
 }
 
-static errcode_t rb_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
+अटल errcode_t rb_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
 				   __u64 start, __u64 end, __u64 *out)
 {
-	struct rb_node *parent = NULL, **n;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
+	काष्ठा rb_गाँठ *parent = शून्य, **n;
+	काष्ठा ext2fs_rb_private *bp;
+	काष्ठा bmap_rb_extent *ext;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
+	bp = (काष्ठा ext2fs_rb_private *) bitmap->निजी;
+	n = &bp->मूल.rb_गाँठ;
 	start -= bitmap->start;
 	end -= bitmap->start;
 
-	if (start > end)
-		return EINVAL;
+	अगर (start > end)
+		वापस EINVAL;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return ENOENT;
+	अगर (ext2fs_rb_empty_मूल(&bp->मूल))
+		वापस ENOENT;
 
-	while (*n) {
+	जबतक (*n) {
 		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else if (ext->start + ext->count <= end) {
-			*out = ext->start + ext->count + bitmap->start;
-			return 0;
-		} else
-			return ENOENT;
+		ext = गाँठ_to_extent(parent);
+		अगर (start < ext->start) {
+			n = &(*n)->rb_बायाँ;
+		} अन्यथा अगर (start >= (ext->start + ext->गिनती)) {
+			n = &(*n)->rb_दायाँ;
+		} अन्यथा अगर (ext->start + ext->गिनती <= end) {
+			*out = ext->start + ext->गिनती + bitmap->start;
+			वापस 0;
+		} अन्यथा
+			वापस ENOENT;
 	}
 
 	*out = start + bitmap->start;
-	return 0;
+	वापस 0;
 }
 
-static errcode_t rb_find_first_set(ext2fs_generic_bitmap_64 bitmap,
+अटल errcode_t rb_find_first_set(ext2fs_generic_bitmap_64 bitmap,
 				   __u64 start, __u64 end, __u64 *out)
 {
-	struct rb_node *parent = NULL, **n;
-	struct rb_node *node;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
+	काष्ठा rb_गाँठ *parent = शून्य, **n;
+	काष्ठा rb_गाँठ *गाँठ;
+	काष्ठा ext2fs_rb_private *bp;
+	काष्ठा bmap_rb_extent *ext;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
+	bp = (काष्ठा ext2fs_rb_private *) bitmap->निजी;
+	n = &bp->मूल.rb_गाँठ;
 	start -= bitmap->start;
 	end -= bitmap->start;
 
-	if (start > end)
-		return EINVAL;
+	अगर (start > end)
+		वापस EINVAL;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return ENOENT;
+	अगर (ext2fs_rb_empty_मूल(&bp->मूल))
+		वापस ENOENT;
 
-	while (*n) {
+	जबतक (*n) {
 		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else {
+		ext = गाँठ_to_extent(parent);
+		अगर (start < ext->start) {
+			n = &(*n)->rb_बायाँ;
+		} अन्यथा अगर (start >= (ext->start + ext->गिनती)) {
+			n = &(*n)->rb_दायाँ;
+		} अन्यथा {
 			/* The start bit is set */
 			*out = start + bitmap->start;
-			return 0;
+			वापस 0;
 		}
 	}
 
-	node = parent;
-	ext = node_to_extent(node);
-	if (ext->start < start) {
-		node = ext2fs_rb_next(node);
-		if (node == NULL)
-			return ENOENT;
-		ext = node_to_extent(node);
+	गाँठ = parent;
+	ext = गाँठ_to_extent(गाँठ);
+	अगर (ext->start < start) {
+		गाँठ = ext2fs_rb_अग्र(गाँठ);
+		अगर (गाँठ == शून्य)
+			वापस ENOENT;
+		ext = गाँठ_to_extent(गाँठ);
 	}
-	if (ext->start <= end) {
+	अगर (ext->start <= end) {
 		*out = ext->start + bitmap->start;
-		return 0;
+		वापस 0;
 	}
-	return ENOENT;
+	वापस ENOENT;
 }
 
-#ifdef ENABLE_BMAP_STATS
-static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap)
+#अगर_घोषित ENABLE_BMAP_STATS
+अटल व्योम rb_print_stats(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
-	struct rb_node *node = NULL;
-	struct bmap_rb_extent *ext;
-	__u64 count = 0;
-	__u64 max_size = 0;
-	__u64 min_size = ULONG_MAX;
-	__u64 size = 0, avg_size = 0;
-	double eff;
-#ifdef ENABLE_BMAP_STATS_OPS
+	काष्ठा ext2fs_rb_private *bp;
+	काष्ठा rb_गाँठ *गाँठ = शून्य;
+	काष्ठा bmap_rb_extent *ext;
+	__u64 गिनती = 0;
+	__u64 max_आकार = 0;
+	__u64 min_आकार = अच_दीर्घ_उच्च;
+	__u64 आकार = 0, avg_आकार = 0;
+	द्विगुन eff;
+#अगर_घोषित ENABLE_BMAP_STATS_OPS
 	__u64 mark_all, test_all;
-	double m_hit = 0.0, t_hit = 0.0;
-#endif
+	द्विगुन m_hit = 0.0, t_hit = 0.0;
+#पूर्ण_अगर
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (काष्ठा ext2fs_rb_private *) bitmap->निजी;
 
-	for (node = ext2fs_rb_first(&bp->root); node != NULL;
-	     node = ext2fs_rb_next(node)) {
-		ext = node_to_extent(node);
-		count++;
-		if (ext->count > max_size)
-			max_size = ext->count;
-		if (ext->count < min_size)
-			min_size = ext->count;
-		size += ext->count;
+	क्रम (गाँठ = ext2fs_rb_first(&bp->मूल); गाँठ != शून्य;
+	     गाँठ = ext2fs_rb_अग्र(गाँठ)) {
+		ext = गाँठ_to_extent(गाँठ);
+		गिनती++;
+		अगर (ext->गिनती > max_आकार)
+			max_आकार = ext->गिनती;
+		अगर (ext->गिनती < min_आकार)
+			min_आकार = ext->गिनती;
+		आकार += ext->गिनती;
 	}
 
-	if (count)
-		avg_size = size / count;
-	if (min_size == ULONG_MAX)
-		min_size = 0;
-	eff = (double)((count * sizeof(struct bmap_rb_extent)) << 3) /
+	अगर (गिनती)
+		avg_आकार = आकार / गिनती;
+	अगर (min_आकार == अच_दीर्घ_उच्च)
+		min_आकार = 0;
+	eff = (द्विगुन)((गिनती * माप(काष्ठा bmap_rb_extent)) << 3) /
 	      (bitmap->real_end - bitmap->start);
-#ifdef ENABLE_BMAP_STATS_OPS
-	mark_all = bitmap->stats.mark_count + bitmap->stats.mark_ext_count;
-	test_all = bitmap->stats.test_count + bitmap->stats.test_ext_count;
-	if (mark_all)
-		m_hit = ((double)bp->mark_hit / mark_all) * 100;
-	if (test_all)
-		t_hit = ((double)bp->test_hit / test_all) * 100;
+#अगर_घोषित ENABLE_BMAP_STATS_OPS
+	mark_all = bitmap->stats.mark_गिनती + bitmap->stats.mark_ext_गिनती;
+	test_all = bitmap->stats.test_गिनती + bitmap->stats.test_ext_गिनती;
+	अगर (mark_all)
+		m_hit = ((द्विगुन)bp->mark_hit / mark_all) * 100;
+	अगर (test_all)
+		t_hit = ((द्विगुन)bp->test_hit / test_all) * 100;
 
-	fprintf(stderr, "%16llu cache hits on test (%.2f%%)\n"
+	ख_लिखो(मानक_त्रुटि, "%16llu cache hits on test (%.2f%%)\n"
 		"%16llu cache hits on mark (%.2f%%)\n",
 		bp->test_hit, t_hit, bp->mark_hit, m_hit);
-#endif
-	fprintf(stderr, "%16llu extents (%llu bytes)\n",
-		(unsigned long long) count, (unsigned long long)
-		((count * sizeof(struct bmap_rb_extent)) +
-		 sizeof(struct ext2fs_rb_private)));
- 	fprintf(stderr, "%16llu bits minimum size\n",
-		(unsigned long long) min_size);
-	fprintf(stderr, "%16llu bits maximum size\n"
+#पूर्ण_अगर
+	ख_लिखो(मानक_त्रुटि, "%16llu extents (%llu bytes)\n",
+		(अचिन्हित दीर्घ दीर्घ) गिनती, (अचिन्हित दीर्घ दीर्घ)
+		((गिनती * माप(काष्ठा bmap_rb_extent)) +
+		 माप(काष्ठा ext2fs_rb_private)));
+ 	ख_लिखो(मानक_त्रुटि, "%16llu bits minimum size\n",
+		(अचिन्हित दीर्घ दीर्घ) min_आकार);
+	ख_लिखो(मानक_त्रुटि, "%16llu bits maximum size\n"
 		"%16llu bits average size\n",
-		(unsigned long long) max_size, (unsigned long long) avg_size);
-	fprintf(stderr, "%16llu bits set in bitmap (out of %llu)\n",
-		(unsigned long long) size,
-		(unsigned long long) bitmap->real_end - bitmap->start);
-	fprintf(stderr,
+		(अचिन्हित दीर्घ दीर्घ) max_आकार, (अचिन्हित दीर्घ दीर्घ) avg_आकार);
+	ख_लिखो(मानक_त्रुटि, "%16llu bits set in bitmap (out of %llu)\n",
+		(अचिन्हित दीर्घ दीर्घ) आकार,
+		(अचिन्हित दीर्घ दीर्घ) bitmap->real_end - bitmap->start);
+	ख_लिखो(मानक_त्रुटि,
 		"%16.4lf memory / bitmap bit memory ratio (bitarray = 1)\n",
 		eff);
 }
-#else
-static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap EXT2FS_ATTR((unused)))
+#अन्यथा
+अटल व्योम rb_print_stats(ext2fs_generic_bitmap_64 bitmap EXT2FS_ATTR((unused)))
 {
 }
-#endif
+#पूर्ण_अगर
 
-struct ext2_bitmap_ops ext2fs_blkmap64_rbtree = {
+काष्ठा ext2_bitmap_ops ext2fs_blkmap64_rbtree = {
 	.type = EXT2FS_BMAP64_RBTREE,
 	.new_bmap = rb_new_bmap,
 	.free_bmap = rb_free_bmap,
