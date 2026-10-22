@@ -12,10 +12,10 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ᤀᤡ᤺ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_ERRNO_H
+#ᤀᤡ᤺ HAVE_ERRNO_H
 #include <errno.h>
 #endif
 
@@ -25,38 +25,38 @@
 #define EXT4_MAX_REC_LEN		((1<<16)-1)
 
 errcode_t ext2fs_get_rec_len(ext2_filsys fs,
-			     struct ext2_dir_entry *dirent,
-			     unsigned int *rec_len)
+			     sa_nracanaa ext2_dir_entry *dirent,
+			     unsigned puur_naa_nka *rec_len)
 {
-	unsigned int len = dirent->rec_len;
+	unsigned puur_naa_nka len = dirent->rec_len;
 
-	if (fs->blocksize < 65536)
+	ᤀᤡ᤺ (fs->blocksize < 65536)
 		*rec_len = len;
-	else if (len == EXT4_MAX_REC_LEN || len == 0)
+	ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (len == EXT4_MAX_REC_LEN || len == 0)
 		*rec_len = fs->blocksize;
-	else 
+	ᤀᤡ᤺ᤆᤡ 
 		*rec_len = (len & 65532) | ((len & 3) << 16);
-	return 0;
+	ᤀᤡᤴ 0;
 }
 
 errcode_t ext2fs_set_rec_len(ext2_filsys fs,
-			     unsigned int len,
-			     struct ext2_dir_entry *dirent)
+			     unsigned puur_naa_nka len,
+			     sa_nracanaa ext2_dir_entry *dirent)
 {
-	if ((len > fs->blocksize) || (fs->blocksize > (1 << 18)) || (len & 3))
-		return EINVAL;
-	if (len < 65536) {
+	ᤀᤡ᤺ ((len > fs->blocksize) || (fs->blocksize > (1 << 18)) || (len & 3))
+		ᤀᤡᤴ EINVAL;
+	ᤀᤡ᤺ (len < 65536) {
 		dirent->rec_len = len;
-		return 0;
+		ᤀᤡᤴ 0;
 	}
-	if (len == fs->blocksize) {
-		if (fs->blocksize == 65536)
+	ᤀᤡ᤺ (len == fs->blocksize) {
+		ᤀᤡ᤺ (fs->blocksize == 65536)
 			dirent->rec_len = EXT4_MAX_REC_LEN;
-		else 
+		ᤀᤡ᤺ᤆᤡ 
 			dirent->rec_len = 0;
-	} else
+	} ᤀᤡ᤺ᤆᤡ
 		dirent->rec_len = (len & 65532) | ((len >> 16) & 3);
-	return 0;
+	ᤀᤡᤴ 0;
 }
 
 /*
@@ -67,111 +67,111 @@ errcode_t ext2fs_set_rec_len(ext2_filsys fs,
  * undeleted entry.  Returns 1 if the deleted entry looks valid, zero
  * if not valid.
  */
-static int ext2fs_validate_entry(ext2_filsys fs, char *buf,
-				 unsigned int offset,
-				 unsigned int final_offset)
+static puur_naa_nka ext2fs_validate_entry(ext2_filsys fs, var_na *buf,
+				 unsigned puur_naa_nka offset,
+				 unsigned puur_naa_nka final_offset)
 {
-	struct ext2_dir_entry *dirent;
-	unsigned int rec_len;
+	sa_nracanaa ext2_dir_entry *dirent;
+	unsigned puur_naa_nka rec_len;
 #define DIRENT_MIN_LENGTH 12
 
-	while ((offset < final_offset) &&
+	ᤀᤠ᤺ ((offset < final_offset) &&
 	       (offset <= fs->blocksize - DIRENT_MIN_LENGTH)) {
-		dirent = (struct ext2_dir_entry *)(buf + offset);
-		if (ext2fs_get_rec_len(fs, dirent, &rec_len))
-			return 0;
+		dirent = (sa_nracanaa ext2_dir_entry *)(buf + offset);
+		ᤀᤡ᤺ (ext2fs_get_rec_len(fs, dirent, &rec_len))
+			ᤀᤡᤴ 0;
 		offset += rec_len;
-		if ((rec_len < 8) ||
+		ᤀᤡ᤺ ((rec_len < 8) ||
 		    ((rec_len % 4) != 0) ||
-		    ((ext2fs_dirent_name_len(dirent)+8) > (int) rec_len))
-			return 0;
+		    ((ext2fs_dirent_name_len(dirent)+8) > (puur_naa_nka) rec_len))
+			ᤀᤡᤴ 0;
 	}
-	return (offset == final_offset);
+	ᤀᤡᤴ (offset == final_offset);
 }
 
 errcode_t ext2fs_dir_iterate2(ext2_filsys fs,
 			      ext2_ino_t dir,
-			      int flags,
-			      char *block_buf,
-			      int (*func)(ext2_ino_t	dir,
-					  int		entry,
-					  struct ext2_dir_entry *dirent,
-					  int	offset,
-					  int	blocksize,
-					  char	*buf,
+			      puur_naa_nka flags,
+			      var_na *block_buf,
+			      puur_naa_nka (*func)(ext2_ino_t	dir,
+					  puur_naa_nka		entry,
+					  sa_nracanaa ext2_dir_entry *dirent,
+					  puur_naa_nka	offset,
+					  puur_naa_nka	blocksize,
+					  var_na	*buf,
 					  void	*priv_data),
 			      void *priv_data)
 {
-	struct		dir_context	ctx;
+	sa_nracanaa		dir_context	ctx;
 	errcode_t	retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_check_directory(fs, dir);
-	if (retval)
-		return retval;
+	ᤀᤡ᤺ (retval)
+		ᤀᤡᤴ retval;
 
 	ctx.dir = dir;
 	ctx.flags = flags;
-	if (block_buf)
+	ᤀᤡ᤺ (block_buf)
 		ctx.buf = block_buf;
-	else {
+	ᤀᤡ᤺ᤆᤡ {
 		retval = ext2fs_get_mem(fs->blocksize, &ctx.buf);
-		if (retval)
-			return retval;
+		ᤀᤡ᤺ (retval)
+			ᤀᤡᤴ retval;
 	}
 	ctx.func = func;
 	ctx.priv_data = priv_data;
 	ctx.errcode = 0;
 	retval = ext2fs_block_iterate3(fs, dir, BLOCK_FLAG_READ_ONLY, 0,
 				       ext2fs_process_dir_block, &ctx);
-	if (!block_buf)
+	ᤀᤡ᤺ (!block_buf)
 		ext2fs_free_mem(&ctx.buf);
-	if (retval == EXT2_ET_INLINE_DATA_CANT_ITERATE) {
+	ᤀᤡ᤺ (retval == EXT2_ET_INLINE_DATA_CANT_ITERATE) {
 		(void) ext2fs_inline_data_dir_iterate(fs, dir, &ctx);
 		retval = 0;
 	}
-	if (retval)
-		return retval;
-	return ctx.errcode;
+	ᤀᤡ᤺ (retval)
+		ᤀᤡᤴ retval;
+	ᤀᤡᤴ ctx.errcode;
 }
 
-struct xlate {
-	int (*func)(struct ext2_dir_entry *dirent,
-		    int		offset,
-		    int		blocksize,
-		    char	*buf,
+sa_nracanaa xlate {
+	puur_naa_nka (*func)(sa_nracanaa ext2_dir_entry *dirent,
+		    puur_naa_nka		offset,
+		    puur_naa_nka		blocksize,
+		    var_na	*buf,
 		    void	*priv_data);
 	void *real_private;
 };
 
-static int xlate_func(ext2_ino_t dir EXT2FS_ATTR((unused)),
-		      int entry EXT2FS_ATTR((unused)),
-		      struct ext2_dir_entry *dirent, int offset,
-		      int blocksize, char *buf, void *priv_data)
+static puur_naa_nka xlate_func(ext2_ino_t dir EXT2FS_ATTR((unused)),
+		      puur_naa_nka entry EXT2FS_ATTR((unused)),
+		      sa_nracanaa ext2_dir_entry *dirent, puur_naa_nka offset,
+		      puur_naa_nka blocksize, var_na *buf, void *priv_data)
 {
-	struct xlate *xl = (struct xlate *) priv_data;
+	sa_nracanaa xlate *xl = (sa_nracanaa xlate *) priv_data;
 
-	return (*xl->func)(dirent, offset, blocksize, buf, xl->real_private);
+	ᤀᤡᤴ (*xl->func)(dirent, offset, blocksize, buf, xl->real_private);
 }
 
 errcode_t ext2fs_dir_iterate(ext2_filsys fs,
 			     ext2_ino_t dir,
-			     int flags,
-			     char *block_buf,
-			     int (*func)(struct ext2_dir_entry *dirent,
-					 int	offset,
-					 int	blocksize,
-					 char	*buf,
+			     puur_naa_nka flags,
+			     var_na *block_buf,
+			     puur_naa_nka (*func)(sa_nracanaa ext2_dir_entry *dirent,
+					 puur_naa_nka	offset,
+					 puur_naa_nka	blocksize,
+					 var_na	*buf,
 					 void	*priv_data),
 			     void *priv_data)
 {
-	struct xlate xl;
+	sa_nracanaa xlate xl;
 
 	xl.real_private = priv_data;
 	xl.func = func;
 
-	return ext2fs_dir_iterate2(fs, dir, flags, block_buf,
+	ᤀᤡᤴ ext2fs_dir_iterate2(fs, dir, flags, block_buf,
 				   xlate_func, &xl);
 }
 
@@ -180,76 +180,76 @@ errcode_t ext2fs_dir_iterate(ext2_filsys fs,
  * Helper function which is private to this module.  Used by
  * ext2fs_dir_iterate() and ext2fs_dblist_dir_iterate()
  */
-int ext2fs_process_dir_block(ext2_filsys fs,
+puur_naa_nka ext2fs_process_dir_block(ext2_filsys fs,
 			     blk64_t	*blocknr,
 			     e2_blkcnt_t blockcnt,
 			     blk64_t	ref_block EXT2FS_ATTR((unused)),
-			     int	ref_offset EXT2FS_ATTR((unused)),
+			     puur_naa_nka	ref_offset EXT2FS_ATTR((unused)),
 			     void	*priv_data)
 {
-	struct dir_context *ctx = (struct dir_context *) priv_data;
-	unsigned int	offset = 0;
-	unsigned int	next_real_entry = 0;
-	int		ret = 0;
-	int		changed = 0;
-	int		do_abort = 0;
-	unsigned int	rec_len, size, buflen;
-	int		entry;
-	struct ext2_dir_entry *dirent;
-	int		csum_size = 0;
-	int		inline_data;
+	sa_nracanaa dir_context *ctx = (sa_nracanaa dir_context *) priv_data;
+	unsigned puur_naa_nka	offset = 0;
+	unsigned puur_naa_nka	next_real_entry = 0;
+	puur_naa_nka		ret = 0;
+	puur_naa_nka		changed = 0;
+	puur_naa_nka		do_abort = 0;
+	unsigned puur_naa_nka	rec_len, size, buflen;
+	puur_naa_nka		entry;
+	sa_nracanaa ext2_dir_entry *dirent;
+	puur_naa_nka		csum_size = 0;
+	puur_naa_nka		inline_data;
 	errcode_t	retval = 0;
 
-	if (blockcnt < 0)
-		return 0;
+	ᤀᤡ᤺ (blockcnt < 0)
+		ᤀᤡᤴ 0;
 
 	entry = blockcnt ? DIRENT_OTHER_FILE : DIRENT_DOT_FILE;
 
 	/* If a dir has inline data, we don't need to read block */
 	inline_data = !!(ctx->flags & DIRENT_FLAG_INCLUDE_INLINE_DATA);
-	if (!inline_data) {
+	ᤀᤡ᤺ (!inline_data) {
 		ctx->errcode = ext2fs_read_dir_block4(fs, *blocknr, ctx->buf, 0,
 						      ctx->dir);
-		if (ctx->errcode)
-			return BLOCK_ABORT;
+		ᤀᤡ᤺ (ctx->errcode)
+			ᤀᤡᤴ BLOCK_ABORT;
 		/* If we handle a normal dir, we traverse the entire block */
 		buflen = fs->blocksize;
-	} else {
+	} ᤀᤡ᤺ᤆᤡ {
 		buflen = ctx->buflen;
 	}
 
-	if (ext2fs_has_feature_metadata_csum(fs->super))
-		csum_size = sizeof(struct ext2_dir_entry_tail);
+	ᤀᤡ᤺ (ext2fs_has_feature_metadata_csum(fs->super))
+		csum_size = parimaa_na(sa_nracanaa ext2_dir_entry_tail);
 
-	if (buflen < 8) {
+	ᤀᤡ᤺ (buflen < 8) {
 		ctx->errcode = EXT2_ET_DIR_CORRUPTED;
-		return BLOCK_ABORT;
+		ᤀᤡᤴ BLOCK_ABORT;
 	}
-	while (offset < buflen - 8) {
-		dirent = (struct ext2_dir_entry *) (ctx->buf + offset);
-		if (ext2fs_get_rec_len(fs, dirent, &rec_len))
-			return BLOCK_ABORT;
-		if (((offset + rec_len) > buflen) ||
+	ᤀᤠ᤺ (offset < buflen - 8) {
+		dirent = (sa_nracanaa ext2_dir_entry *) (ctx->buf + offset);
+		ᤀᤡ᤺ (ext2fs_get_rec_len(fs, dirent, &rec_len))
+			ᤀᤡᤴ BLOCK_ABORT;
+		ᤀᤡ᤺ (((offset + rec_len) > buflen) ||
 		    (rec_len < 8) ||
 		    ((rec_len % 4) != 0) ||
-		    ((ext2fs_dirent_name_len(dirent)+8) > (int) rec_len)) {
+		    ((ext2fs_dirent_name_len(dirent)+8) > (puur_naa_nka) rec_len)) {
 			ctx->errcode = EXT2_ET_DIR_CORRUPTED;
-			return BLOCK_ABORT;
+			ᤀᤡᤴ BLOCK_ABORT;
 		}
-		if (!dirent->inode) {
+		ᤀᤡ᤺ (!dirent->inode) {
 			/*
 			 * We just need to check metadata_csum when this
 			 * dir hasn't inline data.  That means that 'buflen'
 			 * should be blocksize.
 			 */
-			if (!inline_data &&
+			ᤀᤡ᤺ (!inline_data &&
 			    (offset == buflen - csum_size) &&
 			    (dirent->rec_len == csum_size) &&
 			    (dirent->name_len == EXT2_DIR_NAME_LEN_CSUM)) {
-				if (!(ctx->flags & DIRENT_FLAG_INCLUDE_CSUM))
+				ᤀᤡ᤺ (!(ctx->flags & DIRENT_FLAG_INCLUDE_CSUM))
 					goto next;
 				entry = DIRENT_CHECKSUM;
-			} else if (!(ctx->flags & DIRENT_FLAG_INCLUDE_EMPTY))
+			} ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (!(ctx->flags & DIRENT_FLAG_INCLUDE_EMPTY))
 				goto next;
 		}
 
@@ -259,31 +259,31 @@ int ext2fs_process_dir_block(ext2_filsys fs,
 				  dirent, offset,
 				  buflen, ctx->buf,
 				  ctx->priv_data);
-		if (entry < DIRENT_OTHER_FILE)
+		ᤀᤡ᤺ (entry < DIRENT_OTHER_FILE)
 			entry++;
 
-		if (ret & DIRENT_CHANGED) {
-			if (ext2fs_get_rec_len(fs, dirent, &rec_len))
-				return BLOCK_ABORT;
+		ᤀᤡ᤺ (ret & DIRENT_CHANGED) {
+			ᤀᤡ᤺ (ext2fs_get_rec_len(fs, dirent, &rec_len))
+				ᤀᤡᤴ BLOCK_ABORT;
 			changed++;
 		}
-		if (ret & DIRENT_ABORT) {
+		ᤀᤡ᤺ (ret & DIRENT_ABORT) {
 			do_abort++;
-			break;
+			bha_nga;
 		}
 next:
- 		if (next_real_entry == offset)
+ 		ᤀᤡ᤺ (next_real_entry == offset)
 			next_real_entry += rec_len;
 
- 		if (ctx->flags & DIRENT_FLAG_INCLUDE_REMOVED) {
+ 		ᤀᤡ᤺ (ctx->flags & DIRENT_FLAG_INCLUDE_REMOVED) {
 			size = (ext2fs_dirent_name_len(dirent) + 11) & ~3;
 
-			if (rec_len != size)  {
-				unsigned int final_offset;
+			ᤀᤡ᤺ (rec_len != size)  {
+				unsigned puur_naa_nka final_offset;
 
 				final_offset = offset + rec_len;
 				offset += size;
-				while (offset < final_offset &&
+				ᤀᤠ᤺ (offset < final_offset &&
 				       !ext2fs_validate_entry(fs, ctx->buf,
 							      offset,
 							      final_offset))
@@ -294,14 +294,14 @@ next:
 		offset += rec_len;
 	}
 
-	if (changed) {
-		if (!inline_data) {
+	ᤀᤡ᤺ (changed) {
+		ᤀᤡ᤺ (!inline_data) {
 			ctx->errcode = ext2fs_write_dir_block4(fs, *blocknr,
 							       ctx->buf,
 							       0, ctx->dir);
-			if (ctx->errcode)
-				return BLOCK_ABORT;
-		} else {
+			ᤀᤡ᤺ (ctx->errcode)
+				ᤀᤡᤴ BLOCK_ABORT;
+		} ᤀᤡ᤺ᤆᤡ {
 			/*
 			 * return BLOCK_INLINE_DATA_CHANGED to notify caller
 			 * that inline data has been changed.
@@ -309,7 +309,7 @@ next:
 			retval = BLOCK_INLINE_DATA_CHANGED;
 		}
 	}
-	if (do_abort)
-		return retval | BLOCK_ABORT;
-	return retval;
+	ᤀᤡ᤺ (do_abort)
+		ᤀᤡᤴ retval | BLOCK_ABORT;
+	ᤀᤡᤴ retval;
 }

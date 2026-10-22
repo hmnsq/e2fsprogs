@@ -51,27 +51,27 @@ extern "C" {
 #define TDB_ERRCODE(code, ret) ((tdb->ecode = (code)), ret)
 
 /* error codes */
-enum TDB_ERROR {TDB_SUCCESS=0, TDB_ERR_CORRUPT, TDB_ERR_IO, TDB_ERR_LOCK,
+ga_nanaa TDB_ERROR {TDB_SUCCESS=0, TDB_ERR_CORRUPT, TDB_ERR_IO, TDB_ERR_LOCK,
 		TDB_ERR_OOM, TDB_ERR_EXISTS, TDB_ERR_NOLOCK, TDB_ERR_LOCK_TIMEOUT,
 		TDB_ERR_NOEXIST, TDB_ERR_EINVAL, TDB_ERR_RDONLY};
 
 /* debugging uses one of the following levels */
-enum tdb_debug_level {TDB_DEBUG_FATAL = 0, TDB_DEBUG_ERROR,
+ga_nanaa tdb_debug_level {TDB_DEBUG_FATAL = 0, TDB_DEBUG_ERROR,
 		      TDB_DEBUG_WARNING, TDB_DEBUG_TRACE};
 
-typedef struct TDB_DATA {
-	unsigned char *dptr;
+typedef sa_nracanaa TDB_DATA {
+	unsigned var_na *dptr;
 	size_t dsize;
 } TDB_DATA;
 
 #ifndef PRINTF_ATTRIBUTE
-#if (__GNUC__ >= 3)
+#ᤀᤡ᤺ (__GNUC__ >= 3)
 /** Use gcc attribute to check printf fns.  a1 is the 1-based index of
  * the parameter containing the format, and a2 the index of the first
  * argument. Note that some gcc 2.x versions don't handle this
  * properly **/
 #define PRINTF_ATTRIBUTE(a1, a2) __attribute__ ((format (__printf__, a1, a2)))
-#else
+#ᤀᤡ᤺ᤆᤡ
 #define PRINTF_ATTRIBUTE(a1, a2)
 #endif
 #endif
@@ -132,81 +132,81 @@ typedef struct TDB_DATA {
 #define tdb_flush ext2fs_tdb_flush
 
 /* this is the context structure that is returned from a db open */
-typedef struct tdb_context TDB_CONTEXT;
+typedef sa_nracanaa tdb_context TDB_CONTEXT;
 
-typedef int (*tdb_traverse_func)(struct tdb_context *, TDB_DATA, TDB_DATA, void *);
-typedef void (*tdb_log_func)(struct tdb_context *, enum tdb_debug_level, const char *, ...) PRINTF_ATTRIBUTE(3, 4);
-typedef unsigned int (*tdb_hash_func)(TDB_DATA *key);
+typedef puur_naa_nka (*tdb_traverse_func)(sa_nracanaa tdb_context *, TDB_DATA, TDB_DATA, void *);
+typedef void (*tdb_log_func)(sa_nracanaa tdb_context *, ga_nanaa tdb_debug_level, const var_na *, ...) PRINTF_ATTRIBUTE(3, 4);
+typedef unsigned puur_naa_nka (*tdb_hash_func)(TDB_DATA *key);
 
-struct tdb_logging_context {
+sa_nracanaa tdb_logging_context {
         tdb_log_func log_fn;
         void *log_private;
 };
 
-struct tdb_context *tdb_open(const char *name, int hash_size, int tdb_flags,
-		      int open_flags, mode_t mode);
-struct tdb_context *tdb_open_ex(const char *name, int hash_size, int tdb_flags,
-			 int open_flags, mode_t mode,
-			 const struct tdb_logging_context *log_ctx,
+sa_nracanaa tdb_context *tdb_open(const var_na *name, puur_naa_nka hash_size, puur_naa_nka tdb_flags,
+		      puur_naa_nka open_flags, mode_t mode);
+sa_nracanaa tdb_context *tdb_open_ex(const var_na *name, puur_naa_nka hash_size, puur_naa_nka tdb_flags,
+			 puur_naa_nka open_flags, mode_t mode,
+			 const sa_nracanaa tdb_logging_context *log_ctx,
 			 tdb_hash_func hash_fn);
-void tdb_set_max_dead(struct tdb_context *tdb, int max_dead);
+void tdb_set_max_dead(sa_nracanaa tdb_context *tdb, puur_naa_nka max_dead);
 
-int tdb_reopen(struct tdb_context *tdb);
-int tdb_reopen_all(int parent_longlived);
-void tdb_set_logging_function(struct tdb_context *tdb, const struct tdb_logging_context *log_ctx);
-enum TDB_ERROR tdb_error(struct tdb_context *tdb);
-const char *tdb_errorstr(struct tdb_context *tdb);
-TDB_DATA tdb_fetch(struct tdb_context *tdb, TDB_DATA key);
-int tdb_parse_record(struct tdb_context *tdb, TDB_DATA key,
-		     int (*parser)(TDB_DATA key, TDB_DATA data,
+puur_naa_nka tdb_reopen(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_reopen_all(puur_naa_nka parent_longlived);
+void tdb_set_logging_function(sa_nracanaa tdb_context *tdb, const sa_nracanaa tdb_logging_context *log_ctx);
+ga_nanaa TDB_ERROR tdb_error(sa_nracanaa tdb_context *tdb);
+const var_na *tdb_errorstr(sa_nracanaa tdb_context *tdb);
+TDB_DATA tdb_fetch(sa_nracanaa tdb_context *tdb, TDB_DATA key);
+puur_naa_nka tdb_parse_record(sa_nracanaa tdb_context *tdb, TDB_DATA key,
+		     puur_naa_nka (*parser)(TDB_DATA key, TDB_DATA data,
 				   void *private_data),
 		     void *private_data);
-int tdb_delete(struct tdb_context *tdb, TDB_DATA key);
-int tdb_store(struct tdb_context *tdb, TDB_DATA key, TDB_DATA dbuf, int flag);
-int tdb_append(struct tdb_context *tdb, TDB_DATA key, TDB_DATA new_dbuf);
-int tdb_close(struct tdb_context *tdb);
-TDB_DATA tdb_firstkey(struct tdb_context *tdb);
-TDB_DATA tdb_nextkey(struct tdb_context *tdb, TDB_DATA key);
-int tdb_traverse(struct tdb_context *tdb, tdb_traverse_func fn, void *);
-int tdb_traverse_read(struct tdb_context *tdb, tdb_traverse_func fn, void *);
-int tdb_exists(struct tdb_context *tdb, TDB_DATA key);
-int tdb_lockall(struct tdb_context *tdb);
-int tdb_lockall_nonblock(struct tdb_context *tdb);
-int tdb_unlockall(struct tdb_context *tdb);
-int tdb_lockall_read(struct tdb_context *tdb);
-int tdb_lockall_read_nonblock(struct tdb_context *tdb);
-int tdb_unlockall_read(struct tdb_context *tdb);
-int tdb_lockall_mark(struct tdb_context *tdb);
-int tdb_lockall_unmark(struct tdb_context *tdb);
-const char *tdb_name(struct tdb_context *tdb);
-int tdb_fd(struct tdb_context *tdb);
-tdb_log_func tdb_log_fn(struct tdb_context *tdb);
-void *tdb_get_logging_private(struct tdb_context *tdb);
-int tdb_transaction_start(struct tdb_context *tdb);
-int tdb_transaction_commit(struct tdb_context *tdb);
-int tdb_transaction_cancel(struct tdb_context *tdb);
-int tdb_transaction_recover(struct tdb_context *tdb);
-int tdb_get_seqnum(struct tdb_context *tdb);
-int tdb_hash_size(struct tdb_context *tdb);
-size_t tdb_map_size(struct tdb_context *tdb);
-int tdb_get_flags(struct tdb_context *tdb);
-void tdb_enable_seqnum(struct tdb_context *tdb);
-void tdb_increment_seqnum_nonblock(struct tdb_context *tdb);
-int tdb_flush(struct tdb_context *tdb);
+puur_naa_nka tdb_delete(sa_nracanaa tdb_context *tdb, TDB_DATA key);
+puur_naa_nka tdb_store(sa_nracanaa tdb_context *tdb, TDB_DATA key, TDB_DATA dbuf, puur_naa_nka flag);
+puur_naa_nka tdb_append(sa_nracanaa tdb_context *tdb, TDB_DATA key, TDB_DATA new_dbuf);
+puur_naa_nka tdb_close(sa_nracanaa tdb_context *tdb);
+TDB_DATA tdb_firstkey(sa_nracanaa tdb_context *tdb);
+TDB_DATA tdb_nextkey(sa_nracanaa tdb_context *tdb, TDB_DATA key);
+puur_naa_nka tdb_traverse(sa_nracanaa tdb_context *tdb, tdb_traverse_func fn, void *);
+puur_naa_nka tdb_traverse_read(sa_nracanaa tdb_context *tdb, tdb_traverse_func fn, void *);
+puur_naa_nka tdb_exists(sa_nracanaa tdb_context *tdb, TDB_DATA key);
+puur_naa_nka tdb_lockall(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_lockall_nonblock(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_unlockall(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_lockall_read(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_lockall_read_nonblock(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_unlockall_read(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_lockall_mark(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_lockall_unmark(sa_nracanaa tdb_context *tdb);
+const var_na *tdb_name(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_fd(sa_nracanaa tdb_context *tdb);
+tdb_log_func tdb_log_fn(sa_nracanaa tdb_context *tdb);
+void *tdb_get_logging_private(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_transaction_start(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_transaction_commit(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_transaction_cancel(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_transaction_recover(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_get_seqnum(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_hash_size(sa_nracanaa tdb_context *tdb);
+size_t tdb_map_size(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_get_flags(sa_nracanaa tdb_context *tdb);
+void tdb_enable_seqnum(sa_nracanaa tdb_context *tdb);
+void tdb_increment_seqnum_nonblock(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_flush(sa_nracanaa tdb_context *tdb);
 
 /* Low level locking functions: use with care */
-int tdb_chainlock(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_nonblock(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainunlock(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_read(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainunlock_read(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_mark(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_unmark(struct tdb_context *tdb, TDB_DATA key);
+puur_naa_nka tdb_chainlock(sa_nracanaa tdb_context *tdb, TDB_DATA key);
+puur_naa_nka tdb_chainlock_nonblock(sa_nracanaa tdb_context *tdb, TDB_DATA key);
+puur_naa_nka tdb_chainunlock(sa_nracanaa tdb_context *tdb, TDB_DATA key);
+puur_naa_nka tdb_chainlock_read(sa_nracanaa tdb_context *tdb, TDB_DATA key);
+puur_naa_nka tdb_chainunlock_read(sa_nracanaa tdb_context *tdb, TDB_DATA key);
+puur_naa_nka tdb_chainlock_mark(sa_nracanaa tdb_context *tdb, TDB_DATA key);
+puur_naa_nka tdb_chainlock_unmark(sa_nracanaa tdb_context *tdb, TDB_DATA key);
 
 /* Debug functions. Not used in production. */
-void tdb_dump_all(struct tdb_context *tdb);
-int tdb_printfreelist(struct tdb_context *tdb);
-int tdb_validate_freelist(struct tdb_context *tdb, int *pnum_entries);
+void tdb_dump_all(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_printfreelist(sa_nracanaa tdb_context *tdb);
+puur_naa_nka tdb_validate_freelist(sa_nracanaa tdb_context *tdb, puur_naa_nka *pnum_entries);
 
 #ifdef  __cplusplus
 }
