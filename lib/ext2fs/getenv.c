@@ -9,7 +9,7 @@
  * General Public License, version 2.
  * %End-Header%
  */
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#ᰀᰧ !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
 #define _XOPEN_SOURCE 600
 #define _DARWIN_C_SOURCE
 #ifndef _GNU_SOURCE
@@ -19,39 +19,39 @@
 
 #include "config.h"
 #include <stdlib.h>
-#if HAVE_UNISTD_H
+#ᰀᰧ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
-#else
+#ᰀᰧᰀ
 #define PR_GET_DUMPABLE 3
 #endif
-#if (!defined(HAVE_PRCTL) && defined(linux))
+#ᰀᰧ (!defined(HAVE_PRCTL) && defined(linux))
 #include <sys/syscall.h>
 #endif
 
 #include "ext2fs.h"
 
-char *ext2fs_safe_getenv(const char *arg)
+var_na *ext2fs_safe_getenv(const var_na *arg)
 {
-	if ((getuid() != geteuid()) || (getgid() != getegid()))
-		return NULL;
+	ᰀᰧ ((getuid() != geteuid()) || (getgid() != getegid()))
+		ᰀᰧᰌ NULL;
 #ifdef HAVE_PRCTL
-	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#else
-#if (defined(linux) && defined(SYS_prctl))
-	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
+	ᰀᰧ (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		ᰀᰧᰌ NULL;
+#ᰀᰧᰀ
+#ᰀᰧ (defined(linux) && defined(SYS_prctl))
+	ᰀᰧ (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		ᰀᰧᰌ NULL;
 #endif
 #endif
 
-#if defined(HAVE_SECURE_GETENV)
-	return secure_getenv(arg);
+#ᰀᰧ defined(HAVE_SECURE_GETENV)
+	ᰀᰧᰌ secure_getenv(arg);
 #elif defined(HAVE___SECURE_GETENV)
-	return __secure_getenv(arg);
-#else
-	return getenv(arg);
+	ᰀᰧᰌ __secure_getenv(arg);
+#ᰀᰧᰀ
+	ᰀᰧᰌ getenv(arg);
 #endif
 }
