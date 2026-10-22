@@ -5,16 +5,16 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#nếu HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_ERRNO_H
+#nếu HAVE_ERRNO_H
 #include <errno.h>
 #endif
-#if HAVE_SYS_STAT_H
+#nếu HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#nếu HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -32,37 +32,37 @@ const char *debug_prog_name = "tst_libext2fs";
 extern ss_request_table libext2fs_cmds;
 ss_request_table *extra_cmds = &libext2fs_cmds;
 
-static int print_blocks_proc(ext2_filsys fs EXT2FS_ATTR((unused)),
+static số_nguyên print_blocks_proc(ext2_filsys fs EXT2FS_ATTR((unused)),
 			     blk64_t *blocknr, e2_blkcnt_t blockcnt,
-			     blk64_t ref_block, int ref_offset,
+			     blk64_t ref_block, số_nguyên ref_offset,
 			     void *private EXT2FS_ATTR((unused)))
 {
 	printf("%6lld %8llu (%d %llu)\n", (long long) blockcnt,
 	       (unsigned long long) *blocknr, ref_offset,
 	       (unsigned long long) ref_block);
-	return 0;
+	trả_về 0;
 }
 
 
-void do_block_iterate(int argc, char **argv, int sci_idx EXT2FS_ATTR((unused)),
+void do_block_iterate(số_nguyên argc, char **argv, số_nguyên sci_idx EXT2FS_ATTR((unused)),
 		      void *infop EXT2FS_ATTR((unused)))
 {
 	const char	*usage = "block_iterate <file> <flags";
 	ext2_ino_t	ino;
-	int		err = 0;
-	int		flags = 0;
+	số_nguyên		err = 0;
+	số_nguyên		flags = 0;
 
-	if (common_args_process(argc, argv, 2, 3, argv[0], usage, 0))
-		return;
+	nếu (common_args_process(argc, argv, 2, 3, argv[0], usage, 0))
+		trả_về;
 
 	ino = string_to_inode(argv[1]);
-	if (!ino)
-		return;
+	nếu (!ino)
+		trả_về;
 
-	if (argc > 2) {
+	nếu (argc > 2) {
 		flags = parse_ulong(argv[2], argv[0], "flags", &err);
-		if (err)
-			return;
+		nếu (err)
+			trả_về;
 	}
 	flags |= BLOCK_FLAG_READ_ONLY;
 

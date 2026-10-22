@@ -5,10 +5,10 @@
 # include <stdint.h>
 
 #ifndef __GNUC_PREREQ
-#if defined(__GNUC__) && defined(__GNUC_MINOR__)
+#nếu defined(__GNUC__) && defined(__GNUC_MINOR__)
 #define __GNUC_PREREQ(maj, min) \
 	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
-#else
+#không_thì
 #define __GNUC_PREREQ(maj, min) 0
 #endif
 #endif
@@ -27,7 +27,7 @@ struct ext2fs_hashmap_entry {
 struct ext2fs_hashmap *ext2fs_hashmap_create(
 				uint32_t(*hash_fct)(const void*, size_t),
 				void(*free_fct)(void*), size_t size);
-int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
+số_nguyên ext2fs_hashmap_add(struct ext2fs_hashmap *h,
 		       void *data, const void *key,size_t key_len);
 void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *key,
 			    size_t key_len);

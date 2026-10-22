@@ -107,16 +107,16 @@ enum {
  * system used by fast commit code.
  */
 struct ext4_fc_dentry_update {
-	int fcd_op;		/* Type of update create / unlink / link */
-	int fcd_parent;		/* Parent inode number */
-	int fcd_ino;		/* Inode number */
+	số_nguyên fcd_op;		/* Type of update create / unlink / link */
+	số_nguyên fcd_parent;		/* Parent inode number */
+	số_nguyên fcd_ino;		/* Inode number */
 	struct qstr fcd_name;	/* Dirent name */
 	unsigned char fcd_iname[DNAME_INLINE_LEN];	/* Dirent name string */
 	struct list_head fcd_list;
 };
 
 struct ext4_fc_stats {
-	unsigned int fc_ineligible_reason_count[EXT4_FC_REASON_MAX];
+	unsigned số_nguyên fc_ineligible_reason_count[EXT4_FC_REASON_MAX];
 	unsigned long fc_num_commits;
 	unsigned long fc_ineligible_commits;
 	unsigned long fc_numblks;
@@ -134,22 +134,22 @@ struct ext4_fc_stats {
 struct ext4_fc_alloc_region {
 	ext4_lblk_t lblk;
 	ext4_fsblk_t pblk;
-	int ino, len;
+	số_nguyên ino, len;
 };
 
 /*
  * Fast commit replay state.
  */
 struct ext4_fc_replay_state {
-	int fc_replay_num_tags;
-	int fc_replay_expected_off;
-	int fc_current_pass;
-	int fc_cur_tag;
-	int fc_crc;
+	số_nguyên fc_replay_num_tags;
+	số_nguyên fc_replay_expected_off;
+	số_nguyên fc_current_pass;
+	số_nguyên fc_cur_tag;
+	số_nguyên fc_crc;
 	struct ext4_fc_alloc_region *fc_regions;
-	int fc_regions_size, fc_regions_used, fc_regions_valid;
-	int *fc_modified_inodes;
-	int fc_modified_inodes_used, fc_modified_inodes_size;
+	số_nguyên fc_regions_size, fc_regions_used, fc_regions_valid;
+	số_nguyên *fc_modified_inodes;
+	số_nguyên fc_modified_inodes_used, fc_modified_inodes_size;
 };
 
 #define region_last(__region) (((__region)->lblk) + ((__region)->len) - 1)
@@ -159,32 +159,32 @@ static inline const char *tag2str(__u16 tag)
 {
 	switch (tag) {
 	case EXT4_FC_TAG_LINK:
-		return "ADD_ENTRY";
+		trả_về "ADD_ENTRY";
 	case EXT4_FC_TAG_UNLINK:
-		return "DEL_ENTRY";
+		trả_về "DEL_ENTRY";
 	case EXT4_FC_TAG_ADD_RANGE:
-		return "ADD_RANGE";
+		trả_về "ADD_RANGE";
 	case EXT4_FC_TAG_CREAT:
-		return "CREAT_DENTRY";
+		trả_về "CREAT_DENTRY";
 	case EXT4_FC_TAG_DEL_RANGE:
-		return "DEL_RANGE";
+		trả_về "DEL_RANGE";
 	case EXT4_FC_TAG_INODE:
-		return "INODE";
+		trả_về "INODE";
 	case EXT4_FC_TAG_PAD:
-		return "PAD";
+		trả_về "PAD";
 	case EXT4_FC_TAG_TAIL:
-		return "TAIL";
+		trả_về "TAIL";
 	case EXT4_FC_TAG_HEAD:
-		return "HEAD";
+		trả_về "HEAD";
 	default:
-		return "ERROR";
+		trả_về "ERROR";
 	}
 }
 
 /* Get length of a particular tlv */
-static inline int ext4_fc_tag_len(struct ext4_fc_tl *tl)
+static inline số_nguyên ext4_fc_tag_len(struct ext4_fc_tl *tl)
 {
-	return le16_to_cpu(tl->fc_len);
+	trả_về le16_to_cpu(tl->fc_len);
 }
 
 #endif /* __FAST_COMMIT_H__ */

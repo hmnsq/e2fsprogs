@@ -11,7 +11,7 @@
 
 #include "config.h"
 #include <stdio.h>
-#if HAVE_UNISTD_H
+#nếu HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <time.h>
@@ -20,38 +20,38 @@
 #include "ext2_fs.h"
 #include "ext2fsP.h"
 
-static int test_root(unsigned int a, unsigned int b)
+static số_nguyên test_root(unsigned số_nguyên a, unsigned số_nguyên b)
 {
-	while (1) {
-		if (a < b)
-			return 0;
-		if (a == b)
-			return 1;
-		if (a % b)
-			return 0;
+	trong_khi (1) {
+		nếu (a < b)
+			trả_về 0;
+		nếu (a == b)
+			trả_về 1;
+		nếu (a % b)
+			trả_về 0;
 		a = a / b;
 	}
 }
 
-int ext2fs_bg_has_super(ext2_filsys fs, dgrp_t group)
+số_nguyên ext2fs_bg_has_super(ext2_filsys fs, dgrp_t group)
 {
-	if (group == 0)
-		return 1;
-	if (ext2fs_has_feature_sparse_super2(fs->super)) {
-		if (group == fs->super->s_backup_bgs[0] ||
+	nếu (group == 0)
+		trả_về 1;
+	nếu (ext2fs_has_feature_sparse_super2(fs->super)) {
+		nếu (group == fs->super->s_backup_bgs[0] ||
 		    group == fs->super->s_backup_bgs[1])
-			return 1;
-		return 0;
+			trả_về 1;
+		trả_về 0;
 	}
-	if ((group <= 1) || !ext2fs_has_feature_sparse_super(fs->super))
-		return 1;
-	if (!(group & 1))
-		return 0;
-	if (test_root(group, 3) || (test_root(group, 5)) ||
+	nếu ((group <= 1) || !ext2fs_has_feature_sparse_super(fs->super))
+		trả_về 1;
+	nếu (!(group & 1))
+		trả_về 0;
+	nếu (test_root(group, 3) || (test_root(group, 5)) ||
 	    test_root(group, 7))
-		return 1;
+		trả_về 1;
 
-	return 0;
+	trả_về 0;
 }
 
 /*
@@ -76,57 +76,57 @@ errcode_t ext2fs_super_and_bgd_loc2(ext2_filsys fs,
 					   blk_t *ret_used_blks)
 {
 	blk64_t	group_block, super_blk = 0, old_desc_blk = 0, new_desc_blk = 0;
-	unsigned int meta_bg, meta_bg_size;
+	unsigned số_nguyên meta_bg, meta_bg_size;
 	blk_t	numblocks = 0;
 	blk64_t old_desc_blocks;
-	int	has_super;
+	số_nguyên	has_super;
 
 	group_block = ext2fs_group_first_block2(fs, group);
-	if (group_block == 0 && fs->blocksize == 1024)
+	nếu (group_block == 0 && fs->blocksize == 1024)
 		group_block = 1; /* Deal with 1024 blocksize && bigalloc */
 
-	if (ext2fs_has_feature_meta_bg(fs->super))
+	nếu (ext2fs_has_feature_meta_bg(fs->super))
 		old_desc_blocks = fs->super->s_first_meta_bg;
-	else
+	không_thì
 		old_desc_blocks =
 			fs->desc_blocks + fs->super->s_reserved_gdt_blocks;
 
 	has_super = ext2fs_bg_has_super(fs, group);
 
-	if (has_super) {
+	nếu (has_super) {
 		super_blk = group_block;
 		numblocks++;
 	}
 	meta_bg_size = EXT2_DESC_PER_BLOCK(fs->super);
 	meta_bg = group / meta_bg_size;
 
-	if (!ext2fs_has_feature_meta_bg(fs->super) ||
+	nếu (!ext2fs_has_feature_meta_bg(fs->super) ||
 	    (meta_bg < fs->super->s_first_meta_bg)) {
-		if (has_super) {
+		nếu (has_super) {
 			old_desc_blk = group_block + 1;
 			numblocks += old_desc_blocks;
 		}
-	} else {
-		if (((group % meta_bg_size) == 0) ||
+	} không_thì {
+		nếu (((group % meta_bg_size) == 0) ||
 		    ((group % meta_bg_size) == 1) ||
 		    ((group % meta_bg_size) == (meta_bg_size-1))) {
-			if (has_super)
+			nếu (has_super)
 				has_super = 1;
 			new_desc_blk = group_block + has_super;
 			numblocks++;
 		}
 	}
 
-	if (ret_super_blk)
+	nếu (ret_super_blk)
 		*ret_super_blk = super_blk;
-	if (ret_old_desc_blk)
+	nếu (ret_old_desc_blk)
 		*ret_old_desc_blk = old_desc_blk;
-	if (ret_new_desc_blk)
+	nếu (ret_new_desc_blk)
 		*ret_new_desc_blk = new_desc_blk;
-	if (ret_used_blks)
+	nếu (ret_used_blks)
 		*ret_used_blks = numblocks;
 
-	return 0;
+	trả_về 0;
 }
 
 /*
@@ -142,19 +142,19 @@ errcode_t ext2fs_super_and_bgd_loc2(ext2_filsys fs,
  * capable and returns the number of blocks used by super block and
  * group descriptors.
  */
-int ext2fs_super_and_bgd_loc(ext2_filsys fs,
+số_nguyên ext2fs_super_and_bgd_loc(ext2_filsys fs,
 			     dgrp_t group,
 			     blk_t *ret_super_blk,
 			     blk_t *ret_old_desc_blk,
 			     blk_t *ret_new_desc_blk,
-			     int *ret_meta_bg)
+			     số_nguyên *ret_meta_bg)
 {
 	blk64_t ret_super_blk2;
 	blk64_t ret_old_desc_blk2;
 	blk64_t ret_new_desc_blk2;
 	blk_t ret_used_blks;
 	blk_t numblocks;
-	unsigned int meta_bg_size;
+	unsigned số_nguyên meta_bg_size;
 
 	ext2fs_super_and_bgd_loc2(fs, group, &ret_super_blk2,
 					&ret_old_desc_blk2,
@@ -163,20 +163,20 @@ int ext2fs_super_and_bgd_loc(ext2_filsys fs,
 
 	numblocks = ext2fs_group_blocks_count(fs, group);
 
-	if (ret_super_blk)
+	nếu (ret_super_blk)
 		*ret_super_blk = (blk_t)ret_super_blk2;
-	if (ret_old_desc_blk)
+	nếu (ret_old_desc_blk)
 		*ret_old_desc_blk = (blk_t)ret_old_desc_blk2;
-	if (ret_new_desc_blk)
+	nếu (ret_new_desc_blk)
 		*ret_new_desc_blk = (blk_t)ret_new_desc_blk2;
-	if (ret_meta_bg) {
+	nếu (ret_meta_bg) {
 		meta_bg_size = EXT2_DESC_PER_BLOCK(fs->super);
 		*ret_meta_bg = group / meta_bg_size;
 	}
 
 	numblocks -= 2 + fs->inode_blocks_per_group + ret_used_blks;
 
-	return numblocks;
+	trả_về numblocks;
 }
 
 /*
@@ -193,43 +193,43 @@ static errcode_t write_primary_superblock(ext2_filsys fs,
 					  struct ext2_super_block *super)
 {
 	__u16		*old_super, *new_super;
-	int		check_idx, write_idx, size;
+	số_nguyên		check_idx, write_idx, size;
 	errcode_t	retval;
 
-	if (!fs->io->manager->write_byte || !fs->orig_super) {
+	nếu (!fs->io->manager->write_byte || !fs->orig_super) {
 	fallback:
 		io_channel_set_blksize(fs->io, SUPERBLOCK_OFFSET);
 		retval = io_channel_write_blk64(fs->io, 1, -SUPERBLOCK_SIZE,
 					      super);
 		io_channel_set_blksize(fs->io, fs->blocksize);
-		return retval;
+		trả_về retval;
 	}
 
 	old_super = (__u16 *) fs->orig_super;
 	new_super = (__u16 *) super;
 
-	for (check_idx = 0; check_idx < SUPERBLOCK_SIZE/2; check_idx++) {
-		if (old_super[check_idx] == new_super[check_idx])
+	cho (check_idx = 0; check_idx < SUPERBLOCK_SIZE/2; check_idx++) {
+		nếu (old_super[check_idx] == new_super[check_idx])
 			continue;
 		write_idx = check_idx;
-		for (check_idx++; check_idx < SUPERBLOCK_SIZE/2; check_idx++)
-			if (old_super[check_idx] == new_super[check_idx])
+		cho (check_idx++; check_idx < SUPERBLOCK_SIZE/2; check_idx++)
+			nếu (old_super[check_idx] == new_super[check_idx])
 				break;
 		size = 2 * (check_idx - write_idx);
-#if 0
+#nếu 0
 		printf("Writing %d bytes starting at %d\n",
 		       size, write_idx*2);
 #endif
 		retval = io_channel_write_byte(fs->io,
 			       SUPERBLOCK_OFFSET + (2 * write_idx), size,
 					       new_super + write_idx);
-		if (retval == EXT2_ET_UNIMPLEMENTED)
+		nếu (retval == EXT2_ET_UNIMPLEMENTED)
 			goto fallback;
-		if (retval)
-			return retval;
+		nếu (retval)
+			trả_về retval;
 	}
 	memcpy(fs->orig_super, super, SUPERBLOCK_SIZE);
-	return 0;
+	trả_về 0;
 }
 
 
@@ -240,8 +240,8 @@ void ext2fs_update_dynamic_rev(ext2_filsys fs)
 {
 	struct ext2_super_block *sb = fs->super;
 
-	if (sb->s_rev_level > EXT2_GOOD_OLD_REV)
-		return;
+	nếu (sb->s_rev_level > EXT2_GOOD_OLD_REV)
+		trả_về;
 
 	sb->s_rev_level = EXT2_DYNAMIC_REV;
 	sb->s_first_ino = EXT2_GOOD_OLD_FIRST_INO;
@@ -257,25 +257,25 @@ static errcode_t write_backup_super(ext2_filsys fs, dgrp_t group,
 	errcode_t retval;
 	dgrp_t	sgrp = group;
 
-	if (sgrp > ((1 << 16) - 1))
+	nếu (sgrp > ((1 << 16) - 1))
 		sgrp = (1 << 16) - 1;
 
 	super_shadow->s_block_group_nr = ext2fs_cpu_to_le16(sgrp);
 
 	retval = ext2fs_superblock_csum_set(fs, super_shadow);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
-	return io_channel_write_blk64(fs->io, group_block, -SUPERBLOCK_SIZE,
+	trả_về io_channel_write_blk64(fs->io, group_block, -SUPERBLOCK_SIZE,
 				    super_shadow);
 }
 
 errcode_t ext2fs_flush(ext2_filsys fs)
 {
-	return ext2fs_flush2(fs, 0);
+	trả_về ext2fs_flush2(fs, 0);
 }
 
-errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
+errcode_t ext2fs_flush2(ext2_filsys fs, số_nguyên flags)
 {
 	dgrp_t		i;
 	errcode_t	retval;
@@ -293,10 +293,10 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if ((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0 &&
+	nếu ((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0 &&
 	    !ext2fs_has_feature_journal_dev(fs->super) &&
 	    fs->group_desc == NULL)
-		return EXT2_ET_NO_GDESC;
+		trả_về EXT2_ET_NO_GDESC;
 
 	fs_state = fs->super->s_state;
 	feature_incompat = fs->super->s_feature_incompat;
@@ -313,9 +313,9 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 	 * Bitmap checksums live in the group descriptor, so the
 	 * bitmaps need to be written before the descriptors.
 	 */
-	if (fs->write_bitmaps) {
+	nếu (fs->write_bitmaps) {
 		retval = fs->write_bitmaps(fs);
-		if (retval)
+		nếu (retval)
 			goto errout;
 	}
 
@@ -331,26 +331,26 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 #ifdef WORDS_BIGENDIAN
 	retval = EXT2_ET_NO_MEMORY;
 	retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &super_shadow);
-	if (retval)
+	nếu (retval)
 		goto errout;
 	memcpy(super_shadow, fs->super, sizeof(struct ext2_super_block));
 	ext2fs_swap_super(super_shadow);
 
-	if (((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0) &&
+	nếu (((fs->flags & EXT2_FLAG_SUPER_ONLY) == 0) &&
 	    !ext2fs_has_feature_journal_dev(fs->super)) {
 		retval = ext2fs_get_array(fs->desc_blocks, fs->blocksize,
 					  &group_shadow);
-		if (retval)
+		nếu (retval)
 			goto errout;
 		memcpy(group_shadow, fs->group_desc, (size_t) fs->blocksize *
 		       fs->desc_blocks);
 
-		for (j = 0; j < fs->group_desc_count; j++) {
+		cho (j = 0; j < fs->group_desc_count; j++) {
 			gdp = ext2fs_group_desc(fs, group_shadow, j);
 			ext2fs_swap_group_desc2(fs, gdp);
 		}
 	}
-#else
+#không_thì
 	super_shadow = fs->super;
 	group_shadow = fs->group_desc;
 #endif
@@ -359,7 +359,7 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 	 * If this is an external journal device, don't write out the
 	 * block group descriptors or any of the backup superblocks
 	 */
-	if (ext2fs_has_feature_journal_dev(fs->super))
+	nếu (ext2fs_has_feature_journal_dev(fs->super))
 		goto write_primary_superblock_only;
 
 	/*
@@ -367,52 +367,52 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 	 * superblocks and group descriptors.
 	 */
 	group_ptr = (char *) group_shadow;
-	if (ext2fs_has_feature_meta_bg(fs->super)) {
+	nếu (ext2fs_has_feature_meta_bg(fs->super)) {
 		old_desc_blocks = fs->super->s_first_meta_bg;
-		if (old_desc_blocks > fs->desc_blocks)
+		nếu (old_desc_blocks > fs->desc_blocks)
 			old_desc_blocks = fs->desc_blocks;
-	} else
+	} không_thì
 		old_desc_blocks = fs->desc_blocks;
 
-	if (fs->progress_ops && fs->progress_ops->init)
+	nếu (fs->progress_ops && fs->progress_ops->init)
 		(fs->progress_ops->init)(fs, &progress, NULL,
 					 fs->group_desc_count);
 
 
-	for (i = 0; i < fs->group_desc_count; i++) {
+	cho (i = 0; i < fs->group_desc_count; i++) {
 		blk64_t	super_blk, old_desc_blk, new_desc_blk;
 
-		if (fs->progress_ops && fs->progress_ops->update)
+		nếu (fs->progress_ops && fs->progress_ops->update)
 			(fs->progress_ops->update)(fs, &progress, i);
 		ext2fs_super_and_bgd_loc2(fs, i, &super_blk, &old_desc_blk,
 					 &new_desc_blk, 0);
 
-		if (!(fs->flags & EXT2_FLAG_MASTER_SB_ONLY) &&i && super_blk) {
+		nếu (!(fs->flags & EXT2_FLAG_MASTER_SB_ONLY) &&i && super_blk) {
 			retval = write_backup_super(fs, i, super_blk,
 						    super_shadow);
-			if (retval)
+			nếu (retval)
 				goto errout;
 		}
-		if (fs->flags & EXT2_FLAG_SUPER_ONLY)
+		nếu (fs->flags & EXT2_FLAG_SUPER_ONLY)
 			continue;
-		if ((old_desc_blk) &&
+		nếu ((old_desc_blk) &&
 		    (!(fs->flags & EXT2_FLAG_MASTER_SB_ONLY) || (i == 0))) {
 			retval = io_channel_write_blk64(fs->io,
 			      old_desc_blk, old_desc_blocks, group_ptr);
-			if (retval)
+			nếu (retval)
 				goto errout;
 		}
-		if (new_desc_blk) {
-			int meta_bg = i / EXT2_DESC_PER_BLOCK(fs->super);
+		nếu (new_desc_blk) {
+			số_nguyên meta_bg = i / EXT2_DESC_PER_BLOCK(fs->super);
 
 			retval = io_channel_write_blk64(fs->io, new_desc_blk,
 				1, group_ptr + (meta_bg*fs->blocksize));
-			if (retval)
+			nếu (retval)
 				goto errout;
 		}
 	}
 
-	if (fs->progress_ops && fs->progress_ops->close)
+	nếu (fs->progress_ops && fs->progress_ops->close)
 		(fs->progress_ops->close)(fs, &progress, NULL);
 
 write_primary_superblock_only:
@@ -433,34 +433,34 @@ write_primary_superblock_only:
 #endif
 
 	retval = ext2fs_superblock_csum_set(fs, super_shadow);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
-	if (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
+	nếu (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
 		retval = io_channel_flush(fs->io);
-		if (retval)
+		nếu (retval)
 			goto errout;
 	}
 	retval = write_primary_superblock(fs, super_shadow);
-	if (retval)
+	nếu (retval)
 		goto errout;
 
 	fs->flags &= ~EXT2_FLAG_DIRTY;
 
-	if (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
+	nếu (!(flags & EXT2_FLAG_FLUSH_NO_SYNC)) {
 		retval = io_channel_flush(fs->io);
-		if (retval)
+		nếu (retval)
 			goto errout;
 	}
 errout:
 	fs->super->s_state = fs_state;
 #ifdef WORDS_BIGENDIAN
-	if (super_shadow)
+	nếu (super_shadow)
 		ext2fs_free_mem(&super_shadow);
-	if (group_shadow)
+	nếu (group_shadow)
 		ext2fs_free_mem(&group_shadow);
 #endif
-	return retval;
+	trả_về retval;
 }
 
 errcode_t ext2fs_close_free(ext2_filsys *fs_ptr)
@@ -469,53 +469,53 @@ errcode_t ext2fs_close_free(ext2_filsys *fs_ptr)
 	ext2_filsys fs = *fs_ptr;
 
 	ret = ext2fs_close2(fs, 0);
-	if (ret)
+	nếu (ret)
 		ext2fs_free(fs);
 	*fs_ptr = NULL;
-	return ret;
+	trả_về ret;
 }
 
 errcode_t ext2fs_close(ext2_filsys fs)
 {
-	return ext2fs_close2(fs, 0);
+	trả_về ext2fs_close2(fs, 0);
 }
 
-errcode_t ext2fs_close2(ext2_filsys fs, int flags)
+errcode_t ext2fs_close2(ext2_filsys fs, số_nguyên flags)
 {
 	errcode_t	retval;
-	int		meta_blks;
+	số_nguyên		meta_blks;
 	io_stats stats = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (fs->write_bitmaps) {
+	nếu (fs->write_bitmaps) {
 		retval = fs->write_bitmaps(fs);
-		if (retval)
-			return retval;
+		nếu (retval)
+			trả_về retval;
 	}
-	if (fs->super->s_kbytes_written &&
+	nếu (fs->super->s_kbytes_written &&
 	    fs->io->manager->get_stats)
 		fs->io->manager->get_stats(fs->io, &stats);
-	if (stats && stats->bytes_written && (fs->flags & EXT2_FLAG_RW)) {
+	nếu (stats && stats->bytes_written && (fs->flags & EXT2_FLAG_RW)) {
 		fs->super->s_kbytes_written += stats->bytes_written >> 10;
 		meta_blks = fs->desc_blocks + 1;
-		if (!(fs->flags & EXT2_FLAG_SUPER_ONLY))
+		nếu (!(fs->flags & EXT2_FLAG_SUPER_ONLY))
 			fs->super->s_kbytes_written += meta_blks /
 				(fs->blocksize / 1024);
-		if ((fs->flags & EXT2_FLAG_DIRTY) == 0)
+		nếu ((fs->flags & EXT2_FLAG_DIRTY) == 0)
 			fs->flags |= EXT2_FLAG_SUPER_ONLY | EXT2_FLAG_DIRTY;
 	}
-	if (fs->flags & EXT2_FLAG_DIRTY) {
+	nếu (fs->flags & EXT2_FLAG_DIRTY) {
 		retval = ext2fs_flush2(fs, flags);
-		if (retval)
-			return retval;
+		nếu (retval)
+			trả_về retval;
 	}
 
 	retval = ext2fs_mmp_stop(fs);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
 	ext2fs_free(fs);
-	return 0;
+	trả_về 0;
 }
 

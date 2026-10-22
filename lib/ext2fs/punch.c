@@ -12,7 +12,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#nếu HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <errno.h>
@@ -26,17 +26,17 @@
 /*
  * This function returns 1 if the specified block is all zeros
  */
-static int check_zero_block(char *buf, int blocksize)
+static số_nguyên check_zero_block(char *buf, số_nguyên blocksize)
 {
 	char	*cp = buf;
-	int	left = blocksize;
+	số_nguyên	left = blocksize;
 
-	while (left > 0) {
-		if (*cp++)
-			return 0;
+	trong_khi (left > 0) {
+		nếu (*cp++)
+			trả_về 0;
 		left--;
 	}
-	return 1;
+	trả_về 1;
 }
 
 /*
@@ -47,36 +47,36 @@ static int check_zero_block(char *buf, int blocksize)
  * frees and deallocates the blocks.
  */
 static errcode_t ind_punch(ext2_filsys fs, struct ext2_inode *inode,
-			   char *block_buf, blk_t *p, int level,
-			   blk64_t start, blk64_t count, int max)
+			   char *block_buf, blk_t *p, số_nguyên level,
+			   blk64_t start, blk64_t count, số_nguyên max)
 {
 	errcode_t	retval;
 	blk_t		b;
-	int		i;
+	số_nguyên		i;
 	blk64_t		offset, incr;
 	const blk64_t	end = start + count;
-	int		freed = 0;
+	số_nguyên		freed = 0;
 
 #ifdef PUNCH_DEBUG
 	printf("Entering ind_punch, level %d, start %llu, count %llu, "
 	       "max %d\n", level, start, count, max);
 #endif
 	incr = 1ULL << ((EXT2_BLOCK_SIZE_BITS(fs->super) - 2) * level);
-	for (i = 0, offset = 0; i < max; i++, p++, offset += incr) {
-		if (offset >= end)
+	cho (i = 0, offset = 0; i < max; i++, p++, offset += incr) {
+		nếu (offset >= end)
 			break;
-		if (*p == 0 || (offset+incr) <= start)
+		nếu (*p == 0 || (offset+incr) <= start)
 			continue;
 		b = *p;
-		if (level > 0) {
+		nếu (level > 0) {
 			blk_t start2;
 			blk_t count2;
 #ifdef PUNCH_DEBUG
 			printf("Reading indirect block %u\n", b);
 #endif
 			retval = ext2fs_read_ind_block(fs, b, block_buf);
-			if (retval)
-				return retval;
+			nếu (retval)
+				trả_về retval;
 			start2 = (start > offset) ? start - offset : 0;
 			count2 = end - ((start > offset) ? start : offset);
 #ifdef PUNCH_DEBUG
@@ -88,12 +88,12 @@ static errcode_t ind_punch(ext2_filsys fs, struct ext2_inode *inode,
 					   (blk_t *) block_buf, level - 1,
 					   start2, count2,
 					   fs->blocksize >> 2);
-			if (retval)
-				return retval;
+			nếu (retval)
+				trả_về retval;
 			retval = ext2fs_write_ind_block(fs, b, block_buf);
-			if (retval)
-				return retval;
-			if (!check_zero_block(block_buf, fs->blocksize))
+			nếu (retval)
+				trả_về retval;
+			nếu (!check_zero_block(block_buf, fs->blocksize))
 				continue;
 		}
 #ifdef PUNCH_DEBUG
@@ -106,7 +106,7 @@ static errcode_t ind_punch(ext2_filsys fs, struct ext2_inode *inode,
 #ifdef PUNCH_DEBUG
 	printf("Freed %d blocks\n", freed);
 #endif
-	return ext2fs_iblk_sub_blocks(fs, inode, freed);
+	trả_về ext2fs_iblk_sub_blocks(fs, inode, freed);
 }
 
 #define BLK_T_MAX ((blk_t)~0ULL)
@@ -115,58 +115,58 @@ static errcode_t ext2fs_punch_ind(ext2_filsys fs, struct ext2_inode *inode,
 {
 	errcode_t		retval;
 	char			*buf = 0;
-	int			level;
-	int			num = EXT2_NDIR_BLOCKS;
+	số_nguyên			level;
+	số_nguyên			num = EXT2_NDIR_BLOCKS;
 	blk_t			*bp = inode->i_block;
 	blk_t			addr_per_block;
 	blk64_t			max = EXT2_NDIR_BLOCKS;
 	blk_t			count;
 
 	/* Check start/end don't overflow the 2^32-1 indirect block limit */
-	if (start > BLK_T_MAX)
-		return 0;
-	if (end >= BLK_T_MAX || end - start + 1 >= BLK_T_MAX)
+	nếu (start > BLK_T_MAX)
+		trả_về 0;
+	nếu (end >= BLK_T_MAX || end - start + 1 >= BLK_T_MAX)
 		count = BLK_T_MAX - start;
-	else
+	không_thì
 		count = end - start + 1;
 
-	if (!block_buf) {
+	nếu (!block_buf) {
 		retval = ext2fs_get_array(3, fs->blocksize, &buf);
-		if (retval)
-			return retval;
+		nếu (retval)
+			trả_về retval;
 		block_buf = buf;
 	}
 
 	addr_per_block = (blk_t)fs->blocksize >> 2;
 
-	for (level = 0; level < 4; level++, max *= (blk64_t)addr_per_block) {
+	cho (level = 0; level < 4; level++, max *= (blk64_t)addr_per_block) {
 #ifdef PUNCH_DEBUG
 		printf("Main loop level %d, start %llu count %u "
 		       "max %llu num %d\n", level, start, count, max, num);
 #endif
-		if (start < max) {
+		nếu (start < max) {
 			retval = ind_punch(fs, inode, block_buf, bp, level,
 					   start, count, num);
-			if (retval)
+			nếu (retval)
 				goto errout;
-			if (count > max)
+			nếu (count > max)
 				count -= max - start;
-			else
+			không_thì
 				break;
 			start = 0;
-		} else
+		} không_thì
 			start -= max;
 		bp += num;
-		if (level == 0) {
+		nếu (level == 0) {
 			num = 1;
 			max = 1;
 		}
 	}
 	retval = 0;
 errout:
-	if (buf)
+	nếu (buf)
 		ext2fs_free_mem(&buf);
-	return retval;
+	trả_về retval;
 }
 #undef BLK_T_MAX
 
@@ -176,25 +176,25 @@ errout:
 
 static void dbg_print_extent(char *desc, struct ext2fs_extent *extent)
 {
-	if (desc)
+	nếu (desc)
 		printf("%s: ", desc);
 	printf("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
 	       extent->e_lblk, extent->e_lblk + extent->e_len - 1,
 	       extent->e_len, extent->e_pblk);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_LEAF)
+	nếu (extent->e_flags & EXT2_EXTENT_FLAGS_LEAF)
 		fputs("LEAF ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	nếu (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 		fputs("UNINIT ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_SECOND_VISIT)
+	nếu (extent->e_flags & EXT2_EXTENT_FLAGS_SECOND_VISIT)
 		fputs("2ND_VISIT ", stdout);
-	if (!extent->e_flags)
+	nếu (!extent->e_flags)
 		fputs("(none)", stdout);
 	fputc('\n', stdout);
 
 }
-#else
-#define dbg_print_extent(desc, ex)	do { } while (0)
-#define dbg_printf(f, a...)		do { } while (0)
+#không_thì
+#define dbg_print_extent(desc, ex)	do { } trong_khi (0)
+#define dbg_printf(f, a...)		do { } trong_khi (0)
 #endif
 
 /* Free a range of blocks, respecting cluster boundaries */
@@ -208,16 +208,16 @@ static errcode_t punch_extent_blocks(ext2_filsys fs, ext2_ino_t ino,
 	__u32		cluster_freed;
 	errcode_t	retval = 0;
 
-	if (free_start < fs->super->s_first_data_block ||
+	nếu (free_start < fs->super->s_first_data_block ||
 	    (free_start + free_count) > ext2fs_blocks_count(fs->super))
-		return EXT2_ET_BAD_BLOCK_NUM;
+		trả_về EXT2_ET_BAD_BLOCK_NUM;
 
 	/* No bigalloc?  Just free each block. */
-	if (EXT2FS_CLUSTER_RATIO(fs) == 1) {
+	nếu (EXT2FS_CLUSTER_RATIO(fs) == 1) {
 		*freed += free_count;
-		while (free_count-- > 0)
+		trong_khi (free_count-- > 0)
 			ext2fs_block_alloc_stats2(fs, free_start++, -1);
-		return retval;
+		trả_về retval;
 	}
 
 	/*
@@ -225,18 +225,18 @@ static errcode_t punch_extent_blocks(ext2_filsys fs, ext2_ino_t ino,
 	 * blocks in a logical cluster map to blocks from the same physical
 	 * cluster, and that the offsets within the [pl]clusters match.
 	 */
-	if (free_start & EXT2FS_CLUSTER_MASK(fs)) {
+	nếu (free_start & EXT2FS_CLUSTER_MASK(fs)) {
 		retval = ext2fs_map_cluster_block(fs, ino, inode,
 						  lfree_start, &pblk);
-		if (retval)
+		nếu (retval)
 			goto errout;
-		if (!pblk) {
+		nếu (!pblk) {
 			ext2fs_block_alloc_stats2(fs, free_start, -1);
 			freed_now++;
 		}
 		cluster_freed = EXT2FS_CLUSTER_RATIO(fs) -
 			(free_start & EXT2FS_CLUSTER_MASK(fs));
-		if (cluster_freed > free_count)
+		nếu (cluster_freed > free_count)
 			cluster_freed = free_count;
 		free_count -= cluster_freed;
 		free_start += cluster_freed;
@@ -244,7 +244,7 @@ static errcode_t punch_extent_blocks(ext2_filsys fs, ext2_ino_t ino,
 	}
 
 	/* Free whole clusters from the middle of the range. */
-	while (free_count > 0 && free_count >= (unsigned) EXT2FS_CLUSTER_RATIO(fs)) {
+	trong_khi (free_count > 0 && free_count >= (unsigned) EXT2FS_CLUSTER_RATIO(fs)) {
 		ext2fs_block_alloc_stats2(fs, free_start, -1);
 		freed_now++;
 		cluster_freed = EXT2FS_CLUSTER_RATIO(fs);
@@ -254,12 +254,12 @@ static errcode_t punch_extent_blocks(ext2_filsys fs, ext2_ino_t ino,
 	}
 
 	/* Try to free the last cluster. */
-	if (free_count > 0) {
+	nếu (free_count > 0) {
 		retval = ext2fs_map_cluster_block(fs, ino, inode,
 						  lfree_start, &pblk);
-		if (retval)
+		nếu (retval)
 			goto errout;
-		if (!pblk) {
+		nếu (!pblk) {
 			ext2fs_block_alloc_stats2(fs, free_start, -1);
 			freed_now++;
 		}
@@ -267,7 +267,7 @@ static errcode_t punch_extent_blocks(ext2_filsys fs, ext2_ino_t ino,
 
 errout:
 	*freed += freed_now;
-	return retval;
+	trả_về retval;
 }
 
 static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
@@ -280,11 +280,11 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 	blk64_t			free_start, next, lfree_start;
 	__u32			free_count, newlen;
 	blk64_t			freed = 0;
-	int			op;
+	số_nguyên			op;
 
 	retval = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 	/*
 	 * Find the extent closest to the start of the punch range.  We don't
 	 * check the return value because _goto() sets the current node to the
@@ -298,12 +298,12 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 	 */
 	ext2fs_extent_goto(handle, start);
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval == EXT2_ET_NO_CURRENT_NODE) {
+	nếu (retval == EXT2_ET_NO_CURRENT_NODE) {
 		retval = 0;
 		goto errout;
-	} else if (retval)
+	} không_thì nếu (retval)
 		goto errout;
-	while (1) {
+	trong_khi (1) {
 		op = EXT2_EXTENT_NEXT_LEAF;
 		dbg_print_extent("main loop", &extent);
 		next = extent.e_lblk + extent.e_len;
@@ -311,32 +311,32 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 			   (unsigned long long) start,
 			   (unsigned long long) end,
 			   (unsigned long long) next);
-		if (start <= extent.e_lblk) {
+		nếu (start <= extent.e_lblk) {
 			/*
 			 * Have we iterated past the end of the punch region?
 			 * If so, we can stop.
 			 */
-			if (end < extent.e_lblk)
+			nếu (end < extent.e_lblk)
 				break;
 			dbg_printf("Case #%d\n", 1);
 			/* Start of deleted region before extent; 
 			   adjust beginning of extent */
 			free_start = extent.e_pblk;
 			lfree_start = extent.e_lblk;
-			if (next > end)
+			nếu (next > end)
 				free_count = end - extent.e_lblk + 1;
-			else
+			không_thì
 				free_count = extent.e_len;
 			extent.e_len -= free_count;
 			extent.e_lblk += free_count;
 			extent.e_pblk += free_count;
-		} else if (end >= next-1) {
+		} không_thì nếu (end >= next-1) {
 			/*
 			 * Is the punch region beyond this extent?  This can
 			 * happen if start is already inside a hole.  Try to
 			 * advance to the next extent if this is the case.
 			 */
-			if (start >= next)
+			nếu (start >= next)
 				goto next_extent;
 			/* End of deleted region after extent;
 			   adjust end of extent */
@@ -346,7 +346,7 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 			lfree_start = extent.e_lblk + newlen;
 			free_count = extent.e_len - newlen;
 			extent.e_len = newlen;
-		} else {
+		} không_thì {
 			struct ext2fs_extent	newex;
 
 			dbg_printf("Case #%d\n", 3);
@@ -365,10 +365,10 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 			dbg_print_extent("inserting", &newex);
 			retval = ext2fs_extent_insert(handle,
 					EXT2_EXTENT_INSERT_AFTER, &newex);
-			if (retval)
+			nếu (retval)
 				goto errout;
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval)
+			nếu (retval)
 				goto errout;
 			/*
 			 * Now pointing at inserted extent; so go back.
@@ -377,16 +377,16 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 			 * subtlety in the comment for fix_parents().
 			 */
 			retval = ext2fs_extent_goto(handle, extent.e_lblk);
-			if (retval)
+			nếu (retval)
 				goto errout;
 		} 
-		if (extent.e_len) {
+		nếu (extent.e_len) {
 			dbg_print_extent("replacing", &extent);
 			retval = ext2fs_extent_replace(handle, 0, &extent);
-			if (retval)
+			nếu (retval)
 				goto errout;
 			retval = ext2fs_extent_fix_parents(handle);
-		} else {
+		} không_thì {
 			struct ext2fs_extent	newex;
 			blk64_t			old_lblk, next_lblk;
 			dbg_printf("deleting current extent%s\n", "");
@@ -397,31 +397,31 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 			 */
 			retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 						   &newex);
-			if (retval)
+			nếu (retval)
 				goto errout;
 			old_lblk = newex.e_lblk;
 
 			retval = ext2fs_extent_get(handle,
 						   EXT2_EXTENT_NEXT_LEAF,
 						   &newex);
-			if (retval == EXT2_ET_EXTENT_NO_NEXT)
+			nếu (retval == EXT2_ET_EXTENT_NO_NEXT)
 				next_lblk = old_lblk;
-			else if (retval)
+			không_thì nếu (retval)
 				goto errout;
-			else
+			không_thì
 				next_lblk = newex.e_lblk;
 
 			retval = ext2fs_extent_goto(handle, old_lblk);
-			if (retval)
+			nếu (retval)
 				goto errout;
 
 			/* Now delete the extent. */
 			retval = ext2fs_extent_delete(handle, 0);
-			if (retval)
+			nếu (retval)
 				goto errout;
 
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval && retval != EXT2_ET_NO_CURRENT_NODE)
+			nếu (retval && retval != EXT2_ET_NO_CURRENT_NODE)
 				goto errout;
 			retval = 0;
 
@@ -433,28 +433,28 @@ static errcode_t ext2fs_punch_extent(ext2_filsys fs, ext2_ino_t ino,
 			(void)ext2fs_extent_goto(handle, next_lblk);
 			op = EXT2_EXTENT_CURRENT;
 		}
-		if (retval)
+		nếu (retval)
 			goto errout;
 		dbg_printf("Free start %llu, free count = %u\n",
 		       free_start, free_count);
 		retval = punch_extent_blocks(fs, ino, inode, lfree_start,
 					     free_start, free_count, &freed);
-		if (retval)
+		nếu (retval)
 			goto errout;
 	next_extent:
 		retval = ext2fs_extent_get(handle, op,
 					   &extent);
-		if (retval == EXT2_ET_EXTENT_NO_NEXT ||
+		nếu (retval == EXT2_ET_EXTENT_NO_NEXT ||
 		    retval == EXT2_ET_NO_CURRENT_NODE)
 			break;
-		if (retval)
+		nếu (retval)
 			goto errout;
 	}
 	dbg_printf("Freed %llu blocks\n", freed);
 	retval = ext2fs_iblk_sub_blocks(fs, inode, freed);
 errout:
 	ext2fs_extent_free(handle);
-	return retval;
+	trả_về retval;
 }
 	
 static errcode_t ext2fs_punch_inline_data(ext2_filsys fs, ext2_ino_t ino,
@@ -470,16 +470,16 @@ static errcode_t ext2fs_punch_inline_data(ext2_filsys fs, ext2_ino_t ino,
 	 * to this we will remove all inline data in ext2fs_punch()
 	 * now.
 	 */
-	if (start > 0)
-		return 0;
+	nếu (start > 0)
+		trả_về 0;
 
 	memset((char *)inode->i_block, 0, EXT4_MIN_INLINE_DATA_SIZE);
 	inode->i_size = 0;
 	retval = ext2fs_write_inode(fs, ino, inode);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
-	return ext2fs_inline_data_ea_remove(fs, ino);
+	trả_về ext2fs_inline_data_ea_remove(fs, ino);
 }
 
 /*
@@ -494,28 +494,28 @@ errcode_t ext2fs_punch(ext2_filsys fs, ext2_ino_t ino,
 	errcode_t		retval;
 	struct ext2_inode	inode_buf;
 
-	if (start > end)
-		return EINVAL;
+	nếu (start > end)
+		trả_về EINVAL;
 
 	/* Read inode structure if necessary */
-	if (!inode) {
+	nếu (!inode) {
 		retval = ext2fs_read_inode(fs, ino, &inode_buf);
-		if (retval)
-			return retval;
+		nếu (retval)
+			trả_về retval;
 		inode = &inode_buf;
 	}
-	if (inode->i_flags & EXT4_INLINE_DATA_FL)
-		return ext2fs_punch_inline_data(fs, ino, inode, start, end);
-	else if (inode->i_flags & EXT4_EXTENTS_FL)
+	nếu (inode->i_flags & EXT4_INLINE_DATA_FL)
+		trả_về ext2fs_punch_inline_data(fs, ino, inode, start, end);
+	không_thì nếu (inode->i_flags & EXT4_EXTENTS_FL)
 		retval = ext2fs_punch_extent(fs, ino, inode, start, end);
-	else
+	không_thì
 		retval = ext2fs_punch_ind(fs, inode, block_buf, start, end);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
 #ifdef PUNCH_DEBUG
 	printf("%u: write inode size now %lu blocks %u\n",
 		ino, EXT2_I_SIZE(inode), inode->i_blocks);
 #endif
-	return ext2fs_write_inode(fs, ino, inode);
+	trả_về ext2fs_write_inode(fs, ino, inode);
 }

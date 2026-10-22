@@ -15,7 +15,7 @@
  */
 
 #include "config.h"
-#if HAVE_SYS_TYPES_H
+#nếu HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 #include "ext2fs.h"
@@ -29,55 +29,55 @@ static const char *lookup_table =
  * Encodes the input digest using characters from the set [a-zA-Z0-9_+].
  * The encoded string is roughly 4/3 times the size of the input string.
  */
-int ext2fs_digest_encode(const char *src, int len, char *dst)
+số_nguyên ext2fs_digest_encode(const char *src, số_nguyên len, char *dst)
 {
-	int i = 0, bits = 0, ac = 0;
+	số_nguyên i = 0, bits = 0, ac = 0;
 	char *cp = dst;
 
-	while (i < len) {
+	trong_khi (i < len) {
 		ac += (((unsigned char) src[i]) << bits);
 		bits += 8;
 		do {
 			*cp++ = lookup_table[ac & 0x3f];
 			ac >>= 6;
 			bits -= 6;
-		} while (bits >= 6);
+		} trong_khi (bits >= 6);
 		i++;
 	}
-	if (bits)
+	nếu (bits)
 		*cp++ = lookup_table[ac & 0x3f];
-	return cp - dst;
+	trả_về cp - dst;
 }
 
-int ext2fs_digest_decode(const char *src, int len, char *dst)
+số_nguyên ext2fs_digest_decode(const char *src, số_nguyên len, char *dst)
 {
-	int i = 0, bits = 0, ac = 0;
+	số_nguyên i = 0, bits = 0, ac = 0;
 	const char *p;
 	char *cp = dst;
 
-	while (i < len) {
+	trong_khi (i < len) {
 		p = strchr(lookup_table, src[i]);
-		if (p == NULL || src[i] == 0)
-			return -1;
+		nếu (p == NULL || src[i] == 0)
+			trả_về -1;
 		ac += (p - lookup_table) << bits;
 		bits += 6;
-		if (bits >= 8) {
+		nếu (bits >= 8) {
 			*cp++ = ac & 0xff;
 			ac >>= 8;
 			bits -= 8;
 		}
 		i++;
 	}
-	if (ac)
-		return -1;
-	return cp - dst;
+	nếu (ac)
+		trả_về -1;
+	trả_về cp - dst;
 }
 
 
 #ifdef UNITTEST
 static const struct {
 	unsigned char d[32];
-	unsigned int len;
+	unsigned số_nguyên len;
 	const char *ed;
 } tests[] = {
 	{ { 0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14,
@@ -124,64 +124,64 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+số_nguyên main(số_nguyên argc, char **argv)
 {
-	int i, ret, len;
-	int errors = 0;
+	số_nguyên i, ret, len;
+	số_nguyên errors = 0;
 	char tmp[1024], tmp2[1024];
 
-	if (argc == 3 && !strcmp(argv[1], "encode")) {
+	nếu (argc == 3 && !strcmp(argv[1], "encode")) {
 		memset(tmp, 0, sizeof(tmp));
 		ext2fs_digest_encode(argv[2], strlen(argv[2]), tmp);
 		puts(tmp);
 		exit(0);
 	}
-	if (argc == 3 && !strcmp(argv[1], "decode")) {
+	nếu (argc == 3 && !strcmp(argv[1], "decode")) {
 		memset(tmp, 0, sizeof(tmp));
 		ret = ext2fs_digest_decode(argv[2], strlen(argv[2]), tmp);
 		puts(tmp);
 		fprintf(stderr, "returned %d\n", ret);
 		exit(0);
 	}
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
+	cho (i = 0; i < (số_nguyên)(sizeof(tests) / sizeof(tests[0])); i++) {
 		memset(tmp, 0, sizeof(tmp));
 		ret = ext2fs_digest_encode((const char *) tests[i].d,
 					   tests[i].len, tmp);
 		len = strlen(tmp);
 		printf("Test Digest %d (returned %d): ", i, ret);
-		if (ret != len) {
+		nếu (ret != len) {
 			printf("FAILED returned %d, string length was %d\n",
 			       ret, len);
 			errors++;
 			continue;
-		} else if (strcmp(tmp, tests[i].ed) != 0) {
+		} không_thì nếu (strcmp(tmp, tests[i].ed) != 0) {
 			printf("FAILED: got %s, expected %s\n", tmp,
 			       tests[i].ed);
 			errors++;
 			continue;
 		}
 		ret = ext2fs_digest_decode(tmp, len, tmp2);
-		if (ret != tests[i].len) {
+		nếu (ret != tests[i].len) {
 			printf("FAILED decode returned %d, expected %d\n",
 			       ret, tests[i].len);
 			errors++;
 			continue;
 		}
-		if (memcmp(tmp2, tests[i].d, ret) != 0) {
+		nếu (memcmp(tmp2, tests[i].d, ret) != 0) {
 			puts("FAILED: decode mismatched");
 			errors++;
 			continue;
 		}
 		printf("OK\n");
 	}
-	for (i = 1; i < argc; i++) {
+	cho (i = 1; i < argc; i++) {
 		memset(tmp, 0, sizeof(tmp));
 		ret = ext2fs_digest_encode(argv[i], strlen(argv[i]), tmp);
 		len = strlen(tmp);
 		printf("Digest of '%s' is '%s' (returned %d, length %d)\n",
 		       argv[i], tmp, ret, len);
 	}
-	return errors;
+	trả_về errors;
 }
 
 #endif /* UNITTEST */

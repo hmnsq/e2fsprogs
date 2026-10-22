@@ -31,14 +31,14 @@
 #define le64_to_cpu(x)	ext2fs_le64_to_cpu(x)
 #define be64_to_cpu(x)	ext2fs_be64_to_cpu(x)
 
-typedef unsigned int tid_t;
+typedef unsigned số_nguyên tid_t;
 typedef struct journal_s journal_t;
 typedef struct kdev_s *kdev_t;
 
 struct buffer_head;
 struct inode;
 
-typedef unsigned int gfp_t;
+typedef unsigned số_nguyên gfp_t;
 #define GFP_KERNEL	0
 #define GFP_NOFS	0
 #define __GFP_NOFAIL	0
@@ -71,10 +71,10 @@ enum passtype {PASS_SCAN, PASS_REVOKE, PASS_REPLAY};
 struct journal_s
 {
 	unsigned long		j_flags;
-	int			j_errno;
+	số_nguyên			j_errno;
 	struct buffer_head *	j_sb_buffer;
 	struct journal_superblock_s *j_superblock;
-	int			j_format_version;
+	số_nguyên			j_format_version;
 	unsigned long		j_head;
 	unsigned long		j_tail;
 	unsigned long		j_fc_first;
@@ -84,9 +84,9 @@ struct journal_s
 	unsigned long		j_first, j_last;
 	kdev_t			j_dev;
 	kdev_t			j_fs_dev;
-	int			j_blocksize;
-	unsigned int		j_blk_offset;
-	unsigned int		j_total_len;
+	số_nguyên			j_blocksize;
+	unsigned số_nguyên		j_blk_offset;
+	unsigned số_nguyên		j_total_len;
 	struct inode *		j_inode;
 	tid_t			j_tail_sequence;
 	tid_t			j_transaction_sequence;
@@ -95,16 +95,16 @@ struct journal_s
 	struct jbd2_revoke_table_s *j_revoke_table[2];
 	tid_t			j_failed_commit;
 	__u32			j_csum_seed;
-	int (*j_fc_replay_callback)(struct journal_s *journal,
+	số_nguyên (*j_fc_replay_callback)(struct journal_s *journal,
 				    struct buffer_head *bh,
-				    enum passtype pass, int off,
+				    enum passtype pass, số_nguyên off,
 				    tid_t expected_tid);
 
 };
 
 #define is_journal_abort(x) 0
 
-#define BUFFER_TRACE(bh, info)	do {} while (0)
+#define BUFFER_TRACE(bh, info)	do {} trong_khi (0)
 
 /* Need this so we can compile with configure --enable-gcc-wall */
 #ifdef NO_INLINE_FUNCS

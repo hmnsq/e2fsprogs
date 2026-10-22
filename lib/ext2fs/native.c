@@ -15,12 +15,12 @@
 #include "ext2_fs.h"
 #include "ext2fs.h"
 
-int ext2fs_native_flag(void)
+số_nguyên ext2fs_native_flag(void)
 {
 #ifdef WORDS_BIGENDIAN
-	return EXT2_FLAG_SWAP_BYTES;
-#else
-	return 0;
+	trả_về EXT2_FLAG_SWAP_BYTES;
+#không_thì
+	trả_về 0;
 #endif
 }
 

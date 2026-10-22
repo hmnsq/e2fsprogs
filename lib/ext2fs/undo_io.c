@@ -21,10 +21,10 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#nếu HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_ERRNO_H
+#nếu HAVE_ERRNO_H
 #include <errno.h>
 #endif
 #include <fcntl.h>
@@ -32,13 +32,13 @@
 #ifdef __linux__
 #include <sys/utsname.h>
 #endif
-#if HAVE_SYS_STAT_H
+#nếu HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#nếu HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#if HAVE_SYS_RESOURCE_H
+#nếu HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif
 #include <limits.h>
@@ -49,15 +49,15 @@
 
 #ifdef __GNUC__
 #define ATTR(x) __attribute__(x)
-#else
+#không_thì
 #define ATTR(x)
 #endif
 
 #undef DEBUG
 
 #ifdef DEBUG
-# define dbg_printf(f, a...)  do {printf(f, ## a); fflush(stdout); } while (0)
-#else
+# define dbg_printf(f, a...)  do {printf(f, ## a); fflush(stdout); } trong_khi (0)
+#không_thì
 # define dbg_printf(f, a...)
 #endif
 
@@ -66,7 +66,7 @@
  */
 
 #define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+	  nếu ((struct)->magic != (code)) trả_về (code)
 /*
  * Undo file format: The file is cut up into undo_header.block_size blocks.
  * The first block contains the header.
@@ -116,15 +116,15 @@ struct undo_key_block {
 	__le32 crc;		/* block checksum */
 	__le64 reserved;	/* zero */
 
-#if __STDC_VERSION__ >= 199901L
+#nếu __STDC_VERSION__ >= 199901L
 	struct undo_key keys[];		/* keys, which come immediately after */
-#else
+#không_thì
 	struct undo_key keys[0];	/* keys, which come immediately after */
 #endif
 };
 
 struct undo_private_data {
-	int	magic;
+	số_nguyên	magic;
 
 	/* the undo file io channel */
 	io_channel undo_file;
@@ -139,7 +139,7 @@ struct undo_private_data {
 	io_channel real;
 
 	unsigned long long tdb_data_size;
-	int tdb_written;
+	số_nguyên tdb_written;
 
 	/* to support offset in unix I/O manager */
 	ext2_loff_t offset;
@@ -163,7 +163,7 @@ static inline void e2undo_clear_feature_fs_offset(struct undo_header *header) {
 
 static io_manager undo_io_backing_manager;
 static char *tdb_file;
-static int actual_size;
+static số_nguyên actual_size;
 
 errcode_t set_undo_io_backing_manager(io_manager manager)
 {
@@ -171,30 +171,30 @@ errcode_t set_undo_io_backing_manager(io_manager manager)
 	 * We may want to do some validation later
 	 */
 	undo_io_backing_manager = manager;
-	return 0;
+	trả_về 0;
 }
 
 errcode_t set_undo_io_backup_file(char *file_name)
 {
 	tdb_file = strdup(file_name);
 
-	if (tdb_file == NULL) {
-		return EXT2_ET_NO_MEMORY;
+	nếu (tdb_file == NULL) {
+		trả_về EXT2_ET_NO_MEMORY;
 	}
 
-	return 0;
+	trả_về 0;
 }
 
-static errcode_t write_undo_indexes(struct undo_private_data *data, int flush)
+static errcode_t write_undo_indexes(struct undo_private_data *data, số_nguyên flush)
 {
 	errcode_t retval;
 	struct ext2_super_block super;
 	io_channel channel;
-	int block_size;
+	số_nguyên block_size;
 	__u32 sb_crc, hdr_crc;
 
 	/* Spit out a key block, if there's any data */
-	if (data->keys_in_block) {
+	nếu (data->keys_in_block) {
 		data->keyb->magic = ext2fs_cpu_to_le32(KEYBLOCK_MAGIC);
 		data->keyb->crc = 0;
 		data->keyb->crc = ext2fs_cpu_to_le32(
@@ -205,10 +205,10 @@ static errcode_t write_undo_indexes(struct undo_private_data *data, int flush)
 		retval = io_channel_write_blk64(data->undo_file,
 						data->key_blk_num,
 						1, data->keyb);
-		if (retval)
-			return retval;
+		nếu (retval)
+			trả_về retval;
 		/* Move on to the next key block if it's full. */
-		if (data->keys_in_block == KEYS_PER_BLOCK(data)) {
+		nếu (data->keys_in_block == KEYS_PER_BLOCK(data)) {
 			memset(data->keyb, 0, data->tdb_data_size);
 			data->keys_in_block = 0;
 			data->key_blk_num = data->undo_blk_num;
@@ -222,7 +222,7 @@ static errcode_t write_undo_indexes(struct undo_private_data *data, int flush)
 
 	io_channel_set_blksize(channel, SUPERBLOCK_OFFSET);
 	retval = io_channel_read_blk64(channel, 1, -SUPERBLOCK_SIZE, &super);
-	if (retval)
+	nếu (retval)
 		goto err_out;
 	sb_crc = ext2fs_crc32c_le(~0, (unsigned char *)&super, SUPERBLOCK_SIZE);
 	super.s_magic = ~super.s_magic;
@@ -235,18 +235,18 @@ static errcode_t write_undo_indexes(struct undo_private_data *data, int flush)
 	data->hdr.fs_block_size = ext2fs_cpu_to_le32(block_size);
 	data->hdr.sb_crc = ext2fs_cpu_to_le32(sb_crc);
 	data->hdr.fs_offset = ext2fs_cpu_to_le64(data->offset);
-	if (data->offset)
+	nếu (data->offset)
 		e2undo_set_feature_fs_offset(&data->hdr);
-	else
+	không_thì
 		e2undo_clear_feature_fs_offset(&data->hdr);
 	hdr_crc = ext2fs_crc32c_le(~0, (unsigned char *)&data->hdr,
 				   sizeof(data->hdr) -
 				   sizeof(data->hdr.header_crc));
 	data->hdr.header_crc = ext2fs_cpu_to_le32(hdr_crc);
 	retval = io_channel_write_blk64(data->undo_file, 0,
-					-(int)sizeof(data->hdr),
+					-(số_nguyên)sizeof(data->hdr),
 					&data->hdr);
-	if (retval)
+	nếu (retval)
 		goto err_out;
 
 	/*
@@ -256,23 +256,23 @@ static errcode_t write_undo_indexes(struct undo_private_data *data, int flush)
 	dbg_printf("Writing superblock to block %llu\n", data->super_blk_num);
 	retval = io_channel_write_blk64(data->undo_file, data->super_blk_num,
 					-SUPERBLOCK_SIZE, &super);
-	if (retval)
+	nếu (retval)
 		goto err_out;
 
-	if (flush)
+	nếu (flush)
 		retval = io_channel_flush(data->undo_file);
 err_out:
 	io_channel_set_blksize(channel, block_size);
-	return retval;
+	trả_về retval;
 }
 
 static errcode_t undo_setup_tdb(struct undo_private_data *data)
 {
-	int i;
+	số_nguyên i;
 	errcode_t retval;
 
-	if (data->tdb_written == 1)
-		return 0;
+	nếu (data->tdb_written == 1)
+		trả_về 0;
 
 	data->tdb_written = 1;
 
@@ -284,13 +284,13 @@ static errcode_t undo_setup_tdb(struct undo_private_data *data)
 				EXT2FS_BMAP64_RBTREE,
 				0, ~1ULL, ~1ULL,
 				"undo block map", &data->written_block_map);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
 	/* Allocate key block */
 	retval = ext2fs_get_mem(data->tdb_data_size, &data->keyb);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 	data->key_blk_num = data->first_key_blk;
 
 	/* Record block size */
@@ -300,28 +300,28 @@ static errcode_t undo_setup_tdb(struct undo_private_data *data)
 	io_channel_set_blksize(data->undo_file, data->tdb_data_size);
 
 	/* Ensure that we have space for header blocks */
-	for (i = 0; i <= 2; i++) {
+	cho (i = 0; i <= 2; i++) {
 		retval = io_channel_read_blk64(data->undo_file, i, 1,
 					       data->keyb);
-		if (retval)
+		nếu (retval)
 			memset(data->keyb, 0, data->tdb_data_size);
 		retval = io_channel_write_blk64(data->undo_file, i, 1,
 						data->keyb);
-		if (retval)
-			return retval;
+		nếu (retval)
+			trả_về retval;
 		retval = io_channel_flush(data->undo_file);
-		if (retval)
-			return retval;
+		nếu (retval)
+			trả_về retval;
 	}
 	memset(data->keyb, 0, data->tdb_data_size);
-	return 0;
+	trả_về 0;
 }
 
 static errcode_t undo_write_tdb(io_channel channel,
-				unsigned long long block, int count)
+				unsigned long long block, số_nguyên count)
 
 {
-	int size, sz;
+	số_nguyên size, sz;
 	unsigned long long block_num, backing_blk_num;
 	errcode_t retval = 0;
 	ext2_loff_t offset;
@@ -334,25 +334,25 @@ static errcode_t undo_write_tdb(io_channel channel,
 
 	data = (struct undo_private_data *) channel->private_data;
 
-	if (data->undo_file == NULL) {
+	nếu (data->undo_file == NULL) {
 		/*
 		 * Transaction database not initialized
 		 */
-		return 0;
+		trả_về 0;
 	}
 
-	if (count == 1)
+	nếu (count == 1)
 		size = channel->block_size;
-	else {
-		if (count < 0)
+	không_thì {
+		nếu (count < 0)
 			size = -count;
-		else
+		không_thì
 			size = count * channel->block_size;
 	}
 
 	retval = undo_setup_tdb(data);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 	/*
 	 * Data is stored in tdb database as blocks of tdb_data_size size
 	 * This helps in efficient lookup further.
@@ -363,13 +363,13 @@ static errcode_t undo_write_tdb(io_channel channel,
 	block_num = offset / data->tdb_data_size;
 	end_block = (offset + size - 1) / data->tdb_data_size;
 
-	while (block_num <= end_block) {
+	trong_khi (block_num <= end_block) {
 		__u32 keysz;
 
 		/*
 		 * Check if we have the record already
 		 */
-		if (ext2fs_test_block_bitmap2(data->written_block_map,
+		nếu (ext2fs_test_block_bitmap2(data->written_block_map,
 						   block_num)) {
 			/* Try the next block */
 			block_num++;
@@ -389,51 +389,51 @@ static errcode_t undo_write_tdb(io_channel channel,
 		backing_blk_num = (offset - data->offset) / channel->block_size;
 
 		retval = ext2fs_get_mem(data->tdb_data_size, &read_ptr);
-		if (retval) {
-			return retval;
+		nếu (retval) {
+			trả_về retval;
 		}
 
 		memset(read_ptr, 0, data->tdb_data_size);
 		actual_size = 0;
-		if ((data->tdb_data_size % channel->block_size) == 0)
+		nếu ((data->tdb_data_size % channel->block_size) == 0)
 			sz = data->tdb_data_size / channel->block_size;
-		else
+		không_thì
 			sz = -data->tdb_data_size;
 		retval = io_channel_read_blk64(data->real, backing_blk_num,
 					     sz, read_ptr);
-		if (retval) {
-			if (retval != EXT2_ET_SHORT_READ) {
+		nếu (retval) {
+			nếu (retval != EXT2_ET_SHORT_READ) {
 				free(read_ptr);
-				return retval;
+				trả_về retval;
 			}
 			/*
 			 * short read so update the record size
 			 * accordingly
 			 */
 			data_size = actual_size;
-		} else {
+		} không_thì {
 			data_size = data->tdb_data_size;
 		}
-		if (data_size == 0) {
+		nếu (data_size == 0) {
 			free(read_ptr);
 			block_num++;
 			continue;
 		}
 		dbg_printf("Read %llu bytes from FS block %llu (blk=%llu cnt=%llu)\n",
 		       data_size, backing_blk_num, block, data->tdb_data_size);
-		if ((data_size % data->undo_file->block_size) == 0)
+		nếu ((data_size % data->undo_file->block_size) == 0)
 			sz = data_size / data->undo_file->block_size;
-		else
+		không_thì
 			sz = -data_size;;
 		/* extend this key? */
-		if (data->keys_in_block) {
+		nếu (data->keys_in_block) {
 			key = data->keyb->keys + data->keys_in_block - 1;
 			keysz = ext2fs_le32_to_cpu(key->size);
-		} else {
+		} không_thì {
 			key = NULL;
 			keysz = 0;
 		}
-		if (key != NULL &&
+		nếu (key != NULL &&
 		    (ext2fs_le64_to_cpu(key->fsblk) * channel->block_size +
 		     channel->block_size - 1 +
 		     keysz) / channel->block_size == backing_blk_num &&
@@ -443,7 +443,7 @@ static errcode_t undo_write_tdb(io_channel channel,
 			blk_crc = ext2fs_crc32c_le(blk_crc, read_ptr, data_size);
 			key->blk_crc = ext2fs_cpu_to_le32(blk_crc);
 			key->size = ext2fs_cpu_to_le32(keysz + data_size);
-		} else {
+		} không_thì {
 			data->num_keys++;
 			key = data->keyb->keys + data->keys_in_block;
 			data->keys_in_block++;
@@ -458,35 +458,35 @@ static errcode_t undo_write_tdb(io_channel channel,
 		       sz, data->num_keys - 1);
 		retval = io_channel_write_blk64(data->undo_file,
 					data->undo_blk_num, sz, read_ptr);
-		if (retval) {
+		nếu (retval) {
 			free(read_ptr);
-			return retval;
+			trả_về retval;
 		}
 		data->undo_blk_num++;
 		free(read_ptr);
 
 		/* Write out the key block */
 		retval = write_undo_indexes(data, 0);
-		if (retval)
-			return retval;
+		nếu (retval)
+			trả_về retval;
 
 		/* Next block */
 		block_num++;
 	}
 
-	return retval;
+	trả_về retval;
 }
 
 static errcode_t undo_io_read_error(io_channel channel ATTR((unused)),
 				    unsigned long block ATTR((unused)),
-				    int count ATTR((unused)),
+				    số_nguyên count ATTR((unused)),
 				    void *data ATTR((unused)),
 				    size_t size ATTR((unused)),
-				    int actual,
+				    số_nguyên actual,
 				    errcode_t error ATTR((unused)))
 {
 	actual_size = actual;
-	return error;
+	trả_về error;
 }
 
 static void undo_err_handler_init(io_channel channel)
@@ -494,8 +494,8 @@ static void undo_err_handler_init(io_channel channel)
 	channel->read_error = undo_io_read_error;
 }
 
-static int check_filesystem(struct undo_header *hdr, io_channel undo_file,
-			    unsigned int blocksize, blk64_t super_block,
+static số_nguyên check_filesystem(struct undo_header *hdr, io_channel undo_file,
+			    unsigned số_nguyên blocksize, blk64_t super_block,
 			    io_channel channel)
 {
 	struct ext2_super_block super, *sb;
@@ -505,35 +505,35 @@ static int check_filesystem(struct undo_header *hdr, io_channel undo_file,
 
 	io_channel_set_blksize(channel, SUPERBLOCK_OFFSET);
 	retval = io_channel_read_blk64(channel, 1, -SUPERBLOCK_SIZE, &super);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
 	/*
 	 * Compare the FS and the undo file superblock so that we don't
 	 * append to something that doesn't match this FS.
 	 */
 	retval = ext2fs_get_mem(blocksize, &buf);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 	retval = io_channel_read_blk64(undo_file, super_block,
 				       -SUPERBLOCK_SIZE, buf);
-	if (retval)
+	nếu (retval)
 		goto out;
 	sb = (struct ext2_super_block *)buf;
 	sb->s_magic = ~sb->s_magic;
-	if (memcmp(&super, buf, sizeof(super))) {
+	nếu (memcmp(&super, buf, sizeof(super))) {
 		retval = -1;
 		goto out;
 	}
 	sb_crc = ext2fs_crc32c_le(~0, (unsigned char *)buf, SUPERBLOCK_SIZE);
-	if (ext2fs_le32_to_cpu(hdr->sb_crc) != sb_crc) {
+	nếu (ext2fs_le32_to_cpu(hdr->sb_crc) != sb_crc) {
 		retval = -1;
 		goto out;
 	}
 
 out:
 	ext2fs_free_mem(&buf);
-	return retval;
+	trả_về retval;
 }
 
 /*
@@ -542,13 +542,13 @@ out:
  * part of an FS upgrade instead of having to create multiple files and
  * then apply them in correct order.
  */
-static errcode_t try_reopen_undo_file(int undo_fd,
+static errcode_t try_reopen_undo_file(số_nguyên undo_fd,
 				      struct undo_private_data *data)
 {
 	struct undo_header hdr;
 	struct undo_key *dkey;
 	ext2fs_struct_stat statbuf;
-	unsigned int blocksize, fs_blocksize;
+	unsigned số_nguyên blocksize, fs_blocksize;
 	blk64_t super_block, lblk;
 	size_t num_keys, keys_per_block, i;
 	__u32 hdr_crc, key_crc;
@@ -556,28 +556,28 @@ static errcode_t try_reopen_undo_file(int undo_fd,
 
 	/* Zero size already? */
 	retval = ext2fs_fstat(undo_fd, &statbuf);
-	if (retval)
+	nếu (retval)
 		goto bad_file;
-	if (statbuf.st_size == 0)
+	nếu (statbuf.st_size == 0)
 		goto out;
 
 	/* check the file header */
-	retval = io_channel_read_blk64(data->undo_file, 0, -(int)sizeof(hdr),
+	retval = io_channel_read_blk64(data->undo_file, 0, -(số_nguyên)sizeof(hdr),
 				       &hdr);
-	if (retval)
+	nếu (retval)
 		goto bad_file;
 
-	if (memcmp(hdr.magic, E2UNDO_MAGIC,
+	nếu (memcmp(hdr.magic, E2UNDO_MAGIC,
 		    sizeof(hdr.magic)))
 		goto bad_file;
 	hdr_crc = ext2fs_crc32c_le(~0, (unsigned char *)&hdr,
 				   sizeof(struct undo_header) -
 				   sizeof(__u32));
-	if (ext2fs_le32_to_cpu(hdr.header_crc) != hdr_crc)
+	nếu (ext2fs_le32_to_cpu(hdr.header_crc) != hdr_crc)
 		goto bad_file;
 	blocksize = ext2fs_le32_to_cpu(hdr.block_size);
 	fs_blocksize = ext2fs_le32_to_cpu(hdr.fs_block_size);
-	if (blocksize > E2UNDO_MAX_BLOCK_SIZE ||
+	nếu (blocksize > E2UNDO_MAX_BLOCK_SIZE ||
 	    blocksize < E2UNDO_MIN_BLOCK_SIZE ||
 	    !blocksize || !fs_blocksize)
 		goto bad_file;
@@ -589,11 +589,11 @@ static errcode_t try_reopen_undo_file(int undo_fd,
 	 * features set, because a "missing" compatible feature should
 	 * not cause any problems.
 	 */
-	if (hdr.f_incompat || hdr.f_rocompat)
+	nếu (hdr.f_incompat || hdr.f_rocompat)
 		goto bad_file;
 
 	/* Superblock matches this FS? */
-	if (check_filesystem(&hdr, data->undo_file, blocksize, super_block,
+	nếu (check_filesystem(&hdr, data->undo_file, blocksize, super_block,
 			     data->real) != 0) {
 		retval = EXT2_ET_UNDO_FILE_WRONG;
 		goto out;
@@ -602,7 +602,7 @@ static errcode_t try_reopen_undo_file(int undo_fd,
 	/* Try to set ourselves up */
 	data->tdb_data_size = blocksize;
 	retval = undo_setup_tdb(data);
-	if (retval)
+	nếu (retval)
 		goto bad_file;
 	data->num_keys = num_keys;
 	data->super_blk_num = super_block;
@@ -613,18 +613,18 @@ static errcode_t try_reopen_undo_file(int undo_fd,
 	lblk = data->first_key_blk;
 	dbg_printf("nr_keys=%lu, kpb=%zu, blksz=%u\n",
 		   num_keys, keys_per_block, blocksize);
-	for (i = 0; i < num_keys; i += keys_per_block) {
+	cho (i = 0; i < num_keys; i += keys_per_block) {
 		size_t j, max_j;
 		__le32 crc;
 
 		data->key_blk_num = lblk;
 		retval = io_channel_read_blk64(data->undo_file,
 					       lblk, 1, data->keyb);
-		if (retval)
+		nếu (retval)
 			goto bad_key_replay;
 
 		/* check keys */
-		if (ext2fs_le32_to_cpu(data->keyb->magic) != KEYBLOCK_MAGIC) {
+		nếu (ext2fs_le32_to_cpu(data->keyb->magic) != KEYBLOCK_MAGIC) {
 			retval = EXT2_ET_UNDO_FILE_CORRUPT;
 			goto bad_key_replay;
 		}
@@ -632,7 +632,7 @@ static errcode_t try_reopen_undo_file(int undo_fd,
 		data->keyb->crc = 0;
 		key_crc = ext2fs_crc32c_le(~0, (unsigned char *)data->keyb,
 					   blocksize);
-		if (ext2fs_le32_to_cpu(crc) != key_crc) {
+		nếu (ext2fs_le32_to_cpu(crc) != key_crc) {
 			retval = EXT2_ET_UNDO_FILE_CORRUPT;
 			goto bad_key_replay;
 		}
@@ -640,9 +640,9 @@ static errcode_t try_reopen_undo_file(int undo_fd,
 		/* load keys from key block */
 		lblk++;
 		max_j = data->num_keys - i;
-		if (max_j > keys_per_block)
+		nếu (max_j > keys_per_block)
 			max_j = keys_per_block;
-		for (j = 0, dkey = data->keyb->keys;
+		cho (j = 0, dkey = data->keyb->keys;
 		     j < max_j;
 		     j++, dkey++) {
 			blk64_t fsblk = ext2fs_le64_to_cpu(dkey->fsblk);
@@ -665,7 +665,7 @@ static errcode_t try_reopen_undo_file(int undo_fd,
 	data->hdr.f_compat = hdr.f_compat;
 	data->hdr.f_incompat = hdr.f_incompat;
 	data->hdr.f_rocompat = hdr.f_rocompat;
-	return retval;
+	trả_về retval;
 
 bad_key_replay:
 	data->key_blk_num = data->undo_blk_num = 0;
@@ -677,7 +677,7 @@ bad_key_replay:
 bad_file:
 	retval = EXT2_ET_UNDO_FILE_CORRUPT;
 out:
-	return retval;
+	trả_về retval;
 }
 
 static void undo_atexit(void *p)
@@ -691,29 +691,29 @@ static void undo_atexit(void *p)
 	com_err(data->tdb_file, err, "while force-closing undo file");
 }
 
-static errcode_t undo_open(const char *name, int flags, io_channel *channel)
+static errcode_t undo_open(const char *name, số_nguyên flags, io_channel *channel)
 {
 	io_channel	io = NULL;
 	struct undo_private_data *data = NULL;
-	int		undo_fd = -1;
+	số_nguyên		undo_fd = -1;
 	errcode_t	retval;
 
 	/* We don't support multi-threading, at least for now */
 	flags &= ~IO_FLAG_THREADS;
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	nếu (name == 0)
+		trả_về EXT2_ET_BAD_DEVICE_NAME;
 	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
+	nếu (retval)
 		goto cleanup;
 	memset(io, 0, sizeof(struct struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
 	retval = ext2fs_get_mem(sizeof(struct undo_private_data), &data);
-	if (retval)
+	nếu (retval)
 		goto cleanup;
 
 	io->manager = undo_io_manager;
 	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
+	nếu (retval)
 		goto cleanup;
 
 	strcpy(io->name, name);
@@ -729,31 +729,31 @@ static errcode_t undo_open(const char *name, int flags, io_channel *channel)
 	data->first_key_blk = 2;
 	data->undo_blk_num = 3;
 
-	if (undo_io_backing_manager) {
+	nếu (undo_io_backing_manager) {
 		retval = undo_io_backing_manager->open(name, flags,
 						       &data->real);
-		if (retval)
+		nếu (retval)
 			goto cleanup;
 
 		data->tdb_file = strdup(tdb_file);
-		if (data->tdb_file == NULL)
+		nếu (data->tdb_file == NULL)
 			goto cleanup;
 		undo_fd = ext2fs_open_file(data->tdb_file, O_RDWR | O_CREAT,
 					   0600);
-		if (undo_fd < 0)
+		nếu (undo_fd < 0)
 			goto cleanup;
 
 		retval = undo_io_backing_manager->open(data->tdb_file,
 						       IO_FLAG_RW,
 						       &data->undo_file);
-		if (retval)
+		nếu (retval)
 			goto cleanup;
-	} else {
+	} không_thì {
 		data->real = NULL;
 		data->undo_file = NULL;
 	}
 
-	if (data->real)
+	nếu (data->real)
 		io->flags = (io->flags & ~CHANNEL_FLAGS_DISCARD_ZEROES) |
 			    (data->real->flags & CHANNEL_FLAGS_DISCARD_ZEROES);
 
@@ -761,40 +761,40 @@ static errcode_t undo_open(const char *name, int flags, io_channel *channel)
 	 * setup err handler for read so that we know
 	 * when the backing manager fails do short read
 	 */
-	if (data->real)
+	nếu (data->real)
 		undo_err_handler_init(data->real);
 
-	if (data->undo_file) {
+	nếu (data->undo_file) {
 		retval = try_reopen_undo_file(undo_fd, data);
-		if (retval)
+		nếu (retval)
 			goto cleanup;
 	}
 	retval = ext2fs_add_exit_fn(undo_atexit, data);
-	if (retval)
+	nếu (retval)
 		goto cleanup;
 
 	*channel = io;
-	if (undo_fd >= 0)
+	nếu (undo_fd >= 0)
 		close(undo_fd);
-	return retval;
+	trả_về retval;
 
 cleanup:
 	ext2fs_remove_exit_fn(undo_atexit, data);
-	if (undo_fd >= 0)
+	nếu (undo_fd >= 0)
 		close(undo_fd);
-	if (data && data->undo_file)
+	nếu (data && data->undo_file)
 		io_channel_close(data->undo_file);
-	if (data && data->tdb_file)
+	nếu (data && data->tdb_file)
 		free(data->tdb_file);
-	if (data && data->real)
+	nếu (data && data->real)
 		io_channel_close(data->real);
-	if (data)
+	nếu (data)
 		ext2fs_free_mem(&data);
-	if (io && io->name)
+	nếu (io && io->name)
 		ext2fs_free_mem(&io->name);
-	if (io)
+	nếu (io)
 		ext2fs_free_mem(&io);
-	return retval;
+	trả_về retval;
 }
 
 static errcode_t undo_close(io_channel channel)
@@ -806,33 +806,33 @@ static errcode_t undo_close(io_channel channel)
 	data = (struct undo_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	nếu (--channel->refcount > 0)
+		trả_về 0;
 	/* Before closing write the file system identity */
-	if (!ext2fs_safe_getenv("UNDO_IO_SIMULATE_UNFINISHED"))
+	nếu (!ext2fs_safe_getenv("UNDO_IO_SIMULATE_UNFINISHED"))
 		data->hdr.state = ext2fs_cpu_to_le32(E2UNDO_STATE_FINISHED);
 	err = write_undo_indexes(data, 1);
 	ext2fs_remove_exit_fn(undo_atexit, data);
-	if (data->real)
+	nếu (data->real)
 		retval = io_channel_close(data->real);
-	if (data->tdb_file)
+	nếu (data->tdb_file)
 		free(data->tdb_file);
-	if (data->undo_file)
+	nếu (data->undo_file)
 		io_channel_close(data->undo_file);
 	ext2fs_free_mem(&data->keyb);
-	if (data->written_block_map)
+	nếu (data->written_block_map)
 		ext2fs_free_generic_bitmap(data->written_block_map);
 	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	nếu (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
 
-	if (err)
-		return err;
-	return retval;
+	nếu (err)
+		trả_về err;
+	trả_về retval;
 }
 
-static errcode_t undo_set_blksize(io_channel channel, int blksize)
+static errcode_t undo_set_blksize(io_channel channel, số_nguyên blksize)
 {
 	struct undo_private_data *data;
 	errcode_t		retval = 0;
@@ -841,22 +841,22 @@ static errcode_t undo_set_blksize(io_channel channel, int blksize)
 	data = (struct undo_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (blksize > E2UNDO_MAX_BLOCK_SIZE || blksize < E2UNDO_MIN_BLOCK_SIZE)
-		return EXT2_ET_INVALID_ARGUMENT;
+	nếu (blksize > E2UNDO_MAX_BLOCK_SIZE || blksize < E2UNDO_MIN_BLOCK_SIZE)
+		trả_về EXT2_ET_INVALID_ARGUMENT;
 
-	if (data->real)
+	nếu (data->real)
 		retval = io_channel_set_blksize(data->real, blksize);
 	/*
 	 * Set the block size used for tdb
 	 */
-	if (!data->tdb_data_size || !data->tdb_written)
+	nếu (!data->tdb_data_size || !data->tdb_written)
 		data->tdb_data_size = blksize;
 	channel->block_size = blksize;
-	return retval;
+	trả_về retval;
 }
 
 static errcode_t undo_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+			       số_nguyên count, void *buf)
 {
 	errcode_t	retval = 0;
 	struct undo_private_data *data;
@@ -865,20 +865,20 @@ static errcode_t undo_read_blk64(io_channel channel, unsigned long long block,
 	data = (struct undo_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (data->real)
+	nếu (data->real)
 		retval = io_channel_read_blk64(data->real, block, count, buf);
 
-	return retval;
+	trả_về retval;
 }
 
 static errcode_t undo_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+			       số_nguyên count, void *buf)
 {
-	return undo_read_blk64(channel, block, count, buf);
+	trả_về undo_read_blk64(channel, block, count, buf);
 }
 
 static errcode_t undo_write_blk64(io_channel channel, unsigned long long block,
-				int count, const void *buf)
+				số_nguyên count, const void *buf)
 {
 	struct undo_private_data *data;
 	errcode_t	retval = 0;
@@ -890,22 +890,22 @@ static errcode_t undo_write_blk64(io_channel channel, unsigned long long block,
 	 * First write the existing content into database
 	 */
 	retval = undo_write_tdb(channel, block, count);
-	if (retval)
-		 return retval;
-	if (data->real)
+	nếu (retval)
+		 trả_về retval;
+	nếu (data->real)
 		retval = io_channel_write_blk64(data->real, block, count, buf);
 
-	return retval;
+	trả_về retval;
 }
 
 static errcode_t undo_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+				số_nguyên count, const void *buf)
 {
-	return undo_write_blk64(channel, block, count, buf);
+	trả_về undo_write_blk64(channel, block, count, buf);
 }
 
 static errcode_t undo_write_byte(io_channel channel, unsigned long offset,
-				 int size, const void *buf)
+				 số_nguyên size, const void *buf)
 {
 	struct undo_private_data *data;
 	errcode_t	retval = 0;
@@ -927,12 +927,12 @@ static errcode_t undo_write_byte(io_channel channel, unsigned long offset,
 	count = (size + (location % channel->block_size) +
 			channel->block_size  -1)/channel->block_size;
 	retval = undo_write_tdb(channel, blk_num, count);
-	if (retval)
-		return retval;
-	if (data->real && data->real->manager->write_byte)
+	nếu (retval)
+		trả_về retval;
+	nếu (data->real && data->real->manager->write_byte)
 		retval = io_channel_write_byte(data->real, offset, size, buf);
 
-	return retval;
+	trả_về retval;
 }
 
 static errcode_t undo_discard(io_channel channel, unsigned long long block,
@@ -940,26 +940,26 @@ static errcode_t undo_discard(io_channel channel, unsigned long long block,
 {
 	struct undo_private_data *data;
 	errcode_t	retval = 0;
-	int icount;
+	số_nguyên icount;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 	data = (struct undo_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (count > INT_MAX)
-		return EXT2_ET_UNIMPLEMENTED;
+	nếu (count > INT_MAX)
+		trả_về EXT2_ET_UNIMPLEMENTED;
 	icount = count;
 
 	/*
 	 * First write the existing content into database
 	 */
 	retval = undo_write_tdb(channel, block, icount);
-	if (retval)
-		return retval;
-	if (data->real)
+	nếu (retval)
+		trả_về retval;
+	nếu (data->real)
 		retval = io_channel_discard(data->real, block, count);
 
-	return retval;
+	trả_về retval;
 }
 
 static errcode_t undo_zeroout(io_channel channel, unsigned long long block,
@@ -967,26 +967,26 @@ static errcode_t undo_zeroout(io_channel channel, unsigned long long block,
 {
 	struct undo_private_data *data;
 	errcode_t	retval = 0;
-	int icount;
+	số_nguyên icount;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 	data = (struct undo_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (count > INT_MAX)
-		return EXT2_ET_UNIMPLEMENTED;
+	nếu (count > INT_MAX)
+		trả_về EXT2_ET_UNIMPLEMENTED;
 	icount = count;
 
 	/*
 	 * First write the existing content into database
 	 */
 	retval = undo_write_tdb(channel, block, icount);
-	if (retval)
-		return retval;
-	if (data->real)
+	nếu (retval)
+		trả_về retval;
+	nếu (data->real)
 		retval = io_channel_zeroout(data->real, block, count);
 
-	return retval;
+	trả_về retval;
 }
 
 static errcode_t undo_cache_readahead(io_channel channel,
@@ -1000,10 +1000,10 @@ static errcode_t undo_cache_readahead(io_channel channel,
 	data = (struct undo_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (data->real)
+	nếu (data->real)
 		retval = io_channel_cache_readahead(data->real, block, count);
 
-	return retval;
+	trả_về retval;
 }
 
 /*
@@ -1018,10 +1018,10 @@ static errcode_t undo_flush(io_channel channel)
 	data = (struct undo_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (data->real)
+	nếu (data->real)
 		retval = io_channel_flush(data->real);
 
-	return retval;
+	trả_về retval;
 }
 
 static errcode_t undo_set_option(io_channel channel, const char *option,
@@ -1036,39 +1036,39 @@ static errcode_t undo_set_option(io_channel channel, const char *option,
 	data = (struct undo_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (!strcmp(option, "tdb_data_size")) {
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
+	nếu (!strcmp(option, "tdb_data_size")) {
+		nếu (!arg)
+			trả_về EXT2_ET_INVALID_ARGUMENT;
 
 		tmp = strtoul(arg, &end, 0);
-		if (*end)
-			return EXT2_ET_INVALID_ARGUMENT;
-		if (tmp > E2UNDO_MAX_BLOCK_SIZE || tmp < E2UNDO_MIN_BLOCK_SIZE)
-			return EXT2_ET_INVALID_ARGUMENT;
-		if (!data->tdb_data_size || !data->tdb_written) {
+		nếu (*end)
+			trả_về EXT2_ET_INVALID_ARGUMENT;
+		nếu (tmp > E2UNDO_MAX_BLOCK_SIZE || tmp < E2UNDO_MIN_BLOCK_SIZE)
+			trả_về EXT2_ET_INVALID_ARGUMENT;
+		nếu (!data->tdb_data_size || !data->tdb_written) {
 			data->tdb_written = -1;
 			data->tdb_data_size = tmp;
 		}
-		return 0;
+		trả_về 0;
 	}
 	/*
 	 * Need to support offset option to work with
 	 * Unix I/O manager
 	 */
-	if (data->real && data->real->manager->set_option) {
+	nếu (data->real && data->real->manager->set_option) {
 		retval = data->real->manager->set_option(data->real,
 							option, arg);
 	}
-	if (!retval && !strcmp(option, "offset")) {
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
+	nếu (!retval && !strcmp(option, "offset")) {
+		nếu (!arg)
+			trả_về EXT2_ET_INVALID_ARGUMENT;
 
 		tmp = strtoul(arg, &end, 0);
-		if (*end)
-			return EXT2_ET_INVALID_ARGUMENT;
+		nếu (*end)
+			trả_về EXT2_ET_INVALID_ARGUMENT;
 		data->offset = tmp;
 	}
-	return retval;
+	trả_về retval;
 }
 
 static errcode_t undo_get_stats(io_channel channel, io_stats *stats)
@@ -1080,10 +1080,10 @@ static errcode_t undo_get_stats(io_channel channel, io_stats *stats)
 	data = (struct undo_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (data->real)
+	nếu (data->real)
 		retval = (data->real->manager->get_stats)(data->real, stats);
 
-	return retval;
+	trả_về retval;
 }
 
 static struct struct_io_manager struct_undo_manager = {

@@ -10,7 +10,7 @@
  */
 
 #include "config.h"
-#if HAVE_UNISTD_H
+#nếu HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <string.h>
@@ -25,33 +25,33 @@
 static const char *lib_version = E2FSPROGS_VERSION;
 static const char *lib_date = E2FSPROGS_DATE;
 
-int ext2fs_parse_version_string(const char *ver_string)
+số_nguyên ext2fs_parse_version_string(const char *ver_string)
 {
 	const char *cp;
-	int version = 0, dot_count = 0;
+	số_nguyên version = 0, dot_count = 0;
 
-	for (cp = ver_string; *cp; cp++) {
-		if (*cp == '.') {
-			if (dot_count++)
+	cho (cp = ver_string; *cp; cp++) {
+		nếu (*cp == '.') {
+			nếu (dot_count++)
 				break;
-			else
+			không_thì
 				continue;
 		}
-		if (!isdigit(*cp))
+		nếu (!isdigit(*cp))
 			break;
 		version = (version * 10) + (*cp - '0');
 	}
-	return version;
+	trả_về version;
 }
 
 
-int ext2fs_get_library_version(const char **ver_string,
+số_nguyên ext2fs_get_library_version(const char **ver_string,
 			       const char **date_string)
 {
-	if (ver_string)
+	nếu (ver_string)
 		*ver_string = lib_version;
-	if (date_string)
+	nếu (date_string)
 		*date_string = lib_date;
 
-	return ext2fs_parse_version_string(lib_version);
+	trả_về ext2fs_parse_version_string(lib_version);
 }

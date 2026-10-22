@@ -33,25 +33,25 @@
  * CONFIG_JBD_DEBUG is on.
  */
 #define JBD_EXPENSIVE_CHECKING
-extern int journal_enable_debug;
-#else
+extern số_nguyên journal_enable_debug;
+#không_thì
 #define journal_enable_debug (-1)
 #endif /* !CONFIG_JBD_DEBUG */
 
 #ifdef __STDC__
 #define jbd_debug(n, f, a...)						\
 	do {								\
-		if ((n) <= journal_enable_debug) {			\
+		nếu ((n) <= journal_enable_debug) {			\
 			printk (KERN_DEBUG "(%s, %d): %s: ",		\
 				__FILE__, __LINE__, __FUNCTION__);	\
 		  	printk (f, ## a);				\
 		}							\
-	} while (0)
-#else
+	} trong_khi (0)
+#không_thì
 #define jbd_debug(x)		/* AIX doesn't do STDC */
 #endif /* !__STDC__ */
 
-extern void * __jbd_kmalloc (char *where, size_t size, int flags, int retry);
+extern void * __jbd_kmalloc (char *where, size_t size, số_nguyên flags, số_nguyên retry);
 #define jbd_kmalloc(size, flags) \
 	__jbd_kmalloc(__FUNCTION__, (size), (flags), journal_oom_retry)
 #define jbd_rep_kmalloc(size, flags) \
@@ -263,26 +263,26 @@ typedef struct journal_superblock_s
 
 #ifdef NO_INLINE_FUNCS
 extern size_t journal_tag_bytes(journal_t *journal);
-extern int jbd2_journal_has_csum_v2or3(journal_t *journal);
-extern int jbd2_journal_get_num_fc_blks(journal_superblock_t *jsb);
-extern int tid_gt(tid_t x, tid_t y) EXT2FS_ATTR((unused));
-extern int tid_geq(tid_t x, tid_t y) EXT2FS_ATTR((unused));
+extern số_nguyên jbd2_journal_has_csum_v2or3(journal_t *journal);
+extern số_nguyên jbd2_journal_get_num_fc_blks(journal_superblock_t *jsb);
+extern số_nguyên tid_gt(tid_t x, tid_t y) EXT2FS_ATTR((unused));
+extern số_nguyên tid_geq(tid_t x, tid_t y) EXT2FS_ATTR((unused));
 #endif
 
-#if (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
+#nếu (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
 #ifdef E2FSCK_INCLUDE_INLINE_FUNCS
-#if (__STDC_VERSION__ >= 199901L)
+#nếu (__STDC_VERSION__ >= 199901L)
 #define _INLINE_ extern inline
-#else
+#không_thì
 #define _INLINE_ inline
 #endif
-#else /* !E2FSCK_INCLUDE_INLINE FUNCS */
-#if (__STDC_VERSION__ >= 199901L)
+#không_thì /* !E2FSCK_INCLUDE_INLINE FUNCS */
+#nếu (__STDC_VERSION__ >= 199901L)
 #define _INLINE_ inline
-#else /* not C99 */
+#không_thì /* not C99 */
 #ifdef __GNUC__
 #define _INLINE_ extern __inline__
-#else				/* For Watcom C */
+#không_thì				/* For Watcom C */
 #define _INLINE_ extern inline
 #endif /* __GNUC__ */
 #endif /* __STDC_VERSION__ >= 199901L */
@@ -290,10 +290,10 @@ extern int tid_geq(tid_t x, tid_t y) EXT2FS_ATTR((unused));
 
 /* journal feature predicate functions */
 #define JBD2_FEATURE_COMPAT_FUNCS(name, flagname) \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j); \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j) \
+_INLINE_ số_nguyên jbd2_has_feature_##name(journal_t *j); \
+_INLINE_ số_nguyên jbd2_has_feature_##name(journal_t *j) \
 { \
-	return ((j)->j_format_version >= 2 && \
+	trả_về ((j)->j_format_version >= 2 && \
 		((j)->j_superblock->s_feature_compat & \
 		 ext2fs_cpu_to_be32(JBD2_FEATURE_COMPAT_##flagname)) != 0); \
 } \
@@ -311,10 +311,10 @@ _INLINE_ void jbd2_clear_feature_##name(journal_t *j) \
 }
 
 #define JBD2_FEATURE_RO_COMPAT_FUNCS(name, flagname) \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j);	\
-_INLINE_ int jbd2_has_feature_##name(journal_t *j) \
+_INLINE_ số_nguyên jbd2_has_feature_##name(journal_t *j);	\
+_INLINE_ số_nguyên jbd2_has_feature_##name(journal_t *j) \
 { \
-	return ((j)->j_format_version >= 2 && \
+	trả_về ((j)->j_format_version >= 2 && \
 		((j)->j_superblock->s_feature_ro_compat & \
 		 ext2fs_cpu_to_be32(JBD2_FEATURE_RO_COMPAT_##flagname)) != 0); \
 } \
@@ -332,10 +332,10 @@ _INLINE_ void jbd2_clear_feature_##name(journal_t *j) \
 }
 
 #define JBD2_FEATURE_INCOMPAT_FUNCS(name, flagname) \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j); \
-_INLINE_ int jbd2_has_feature_##name(journal_t *j) \
+_INLINE_ số_nguyên jbd2_has_feature_##name(journal_t *j); \
+_INLINE_ số_nguyên jbd2_has_feature_##name(journal_t *j) \
 { \
-	return ((j)->j_format_version >= 2 && \
+	trả_về ((j)->j_format_version >= 2 && \
 		((j)->j_superblock->s_feature_incompat & \
 		 ext2fs_cpu_to_be32(JBD2_FEATURE_INCOMPAT_##flagname)) != 0); \
 } \
@@ -352,19 +352,19 @@ _INLINE_ void jbd2_clear_feature_##name(journal_t *j) \
 		~ext2fs_cpu_to_be32(JBD2_FEATURE_INCOMPAT_##flagname); \
 }
 
-#else
+#không_thì
 #define JBD2_FEATURE_COMPAT_FUNCS(name, flagname) \
-extern int jbd2_has_feature_##name(journal_t *j); \
+extern số_nguyên jbd2_has_feature_##name(journal_t *j); \
 extern void jbd2_set_feature_##name(journal_t *j); \
 extern void jbd2_clear_feature_##name(journal_t *j);
 
 #define JBD2_FEATURE_RO_COMPAT_FUNCS(name, flagname) \
-extern int jbd2_has_feature_##name(journal_t *j); \
+extern số_nguyên jbd2_has_feature_##name(journal_t *j); \
 extern void jbd2_set_feature_##name(journal_t *j); \
 extern void jbd2_clear_feature_##name(journal_t *j);
 
 #define JBD2_FEATURE_INCOMPAT_FUNCS(name, flagname) \
-extern int jbd2_has_feature_##name(journal_t *j); \
+extern số_nguyên jbd2_has_feature_##name(journal_t *j); \
 extern void jbd2_set_feature_##name(journal_t *j); \
 extern void jbd2_clear_feature_##name(journal_t *j);
 
@@ -379,7 +379,7 @@ JBD2_FEATURE_INCOMPAT_FUNCS(csum2,		CSUM_V2)
 JBD2_FEATURE_INCOMPAT_FUNCS(csum3,		CSUM_V3)
 JBD2_FEATURE_INCOMPAT_FUNCS(fast_commit,	FAST_COMMIT)
 
-#if (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
+#nếu (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
 /*
  * helper functions to deal with 32 or 64bit block numbers.
  */
@@ -387,54 +387,54 @@ _INLINE_ size_t journal_tag_bytes(journal_t *journal)
 {
 	size_t sz;
 
-	if (jbd2_has_feature_csum3(journal))
-		return sizeof(journal_block_tag3_t);
+	nếu (jbd2_has_feature_csum3(journal))
+		trả_về sizeof(journal_block_tag3_t);
 
 	sz = sizeof(journal_block_tag_t);
 
-	if (jbd2_has_feature_csum2(journal))
+	nếu (jbd2_has_feature_csum2(journal))
 		sz += sizeof(__u16);
 
-	if (jbd2_has_feature_64bit(journal))
-		return sz;
+	nếu (jbd2_has_feature_64bit(journal))
+		trả_về sz;
 
-	return sz - sizeof(__u32);
+	trả_về sz - sizeof(__u32);
 }
 
-_INLINE_ int jbd2_journal_has_csum_v2or3(journal_t *journal)
+_INLINE_ số_nguyên jbd2_journal_has_csum_v2or3(journal_t *journal)
 {
-	if (jbd2_has_feature_csum2(journal) || jbd2_has_feature_csum3(journal))
-		return 1;
+	nếu (jbd2_has_feature_csum2(journal) || jbd2_has_feature_csum3(journal))
+		trả_về 1;
 
-	return 0;
+	trả_về 0;
 }
 
-_INLINE_ int jbd2_journal_get_num_fc_blks(journal_superblock_t *jsb)
+_INLINE_ số_nguyên jbd2_journal_get_num_fc_blks(journal_superblock_t *jsb)
 {
-	int num_fc_blocks = be32_to_cpu(jsb->s_num_fc_blks);
+	số_nguyên num_fc_blocks = be32_to_cpu(jsb->s_num_fc_blks);
 
-	return num_fc_blocks ? num_fc_blocks : JBD2_DEFAULT_FAST_COMMIT_BLOCKS;
+	trả_về num_fc_blocks ? num_fc_blocks : JBD2_DEFAULT_FAST_COMMIT_BLOCKS;
 }
 
 /* Comparison functions for transaction IDs: perform comparisons using
  * modulo arithmetic so that they work over sequence number wraps. */
 
-_INLINE_ int tid_gt(tid_t x, tid_t y)
+_INLINE_ số_nguyên tid_gt(tid_t x, tid_t y)
 {
-	int difference = (x - y);
-	return (difference > 0);
+	số_nguyên difference = (x - y);
+	trả_về (difference > 0);
 }
 
-_INLINE_ int tid_geq(tid_t x, tid_t y)
+_INLINE_ số_nguyên tid_geq(tid_t x, tid_t y)
 {
-	int difference = (x - y);
-	return (difference >= 0);
+	số_nguyên difference = (x - y);
+	trả_về (difference >= 0);
 }
 #endif /* (defined(E2FSCK_INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS)) */
 
 #undef _INLINE_
 
-extern int journal_blocks_per_page(struct inode *inode);
+extern số_nguyên journal_blocks_per_page(struct inode *inode);
 
 /*
  * Definitions which augment the buffer_head layer
@@ -452,6 +452,6 @@ extern int journal_blocks_per_page(struct inode *inode);
 #define BJ_Reserved	8	/* Buffer is reserved for access by journal */
 #define BJ_Types	9
 
-extern int jbd_blocks_per_page(struct inode *inode);
+extern số_nguyên jbd_blocks_per_page(struct inode *inode);
 
 #endif	/* _LINUX_JBD_H */

@@ -11,7 +11,7 @@
  */
 
 #include "config.h"
-#if HAVE_SYS_TYPES_H
+#nếu HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -26,15 +26,15 @@
 
 #ifdef DEBUG
 #define STATIC
-#else
+#không_thì
 #define STATIC static
 #endif
 
 void ext2fs_init_csum_seed(ext2_filsys fs)
 {
-	if (ext2fs_has_feature_csum_seed(fs->super))
+	nếu (ext2fs_has_feature_csum_seed(fs->super))
 		fs->csum_seed = fs->super->s_checksum_seed;
-	else if (ext2fs_has_feature_metadata_csum(fs->super) ||
+	không_thì nếu (ext2fs_has_feature_metadata_csum(fs->super) ||
 		 ext2fs_has_feature_ea_inode(fs->super))
 		fs->csum_seed = ext2fs_crc32c_le(~0, fs->super->s_uuid,
 						 sizeof(fs->super->s_uuid));
@@ -42,68 +42,68 @@ void ext2fs_init_csum_seed(ext2_filsys fs)
 
 static __u32 ext2fs_mmp_csum(ext2_filsys fs, struct mmp_struct *mmp)
 {
-	int offset = offsetof(struct mmp_struct, mmp_checksum);
+	số_nguyên offset = offsetof(struct mmp_struct, mmp_checksum);
 
-	return ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)mmp, offset);
+	trả_về ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)mmp, offset);
 }
 
-int ext2fs_mmp_csum_verify(ext2_filsys fs, struct mmp_struct *mmp)
+số_nguyên ext2fs_mmp_csum_verify(ext2_filsys fs, struct mmp_struct *mmp)
 {
 	__u32 calculated;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
+	nếu (!ext2fs_has_feature_metadata_csum(fs->super))
+		trả_về 1;
 
 	calculated = ext2fs_mmp_csum(fs, mmp);
 
-	return ext2fs_le32_to_cpu(mmp->mmp_checksum) == calculated;
+	trả_về ext2fs_le32_to_cpu(mmp->mmp_checksum) == calculated;
 }
 
 errcode_t ext2fs_mmp_csum_set(ext2_filsys fs, struct mmp_struct *mmp)
 {
 	__u32 crc;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 0;
+	nếu (!ext2fs_has_feature_metadata_csum(fs->super))
+		trả_về 0;
 
 	crc = ext2fs_mmp_csum(fs, mmp);
 	mmp->mmp_checksum = ext2fs_cpu_to_le32(crc);
 
-	return 0;
+	trả_về 0;
 }
 
-int ext2fs_verify_csum_type(ext2_filsys fs, struct ext2_super_block *sb)
+số_nguyên ext2fs_verify_csum_type(ext2_filsys fs, struct ext2_super_block *sb)
 {
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
+	nếu (!ext2fs_has_feature_metadata_csum(fs->super))
+		trả_về 1;
 
-	return sb->s_checksum_type == EXT2_CRC32C_CHKSUM;
+	trả_về sb->s_checksum_type == EXT2_CRC32C_CHKSUM;
 }
 
 static __u32 ext2fs_superblock_csum(ext2_filsys fs EXT2FS_ATTR((unused)),
 				    struct ext2_super_block *sb)
 {
-	int offset = offsetof(struct ext2_super_block, s_checksum);
+	số_nguyên offset = offsetof(struct ext2_super_block, s_checksum);
 
-	return ext2fs_crc32c_le(~0, (unsigned char *)sb, offset);
+	trả_về ext2fs_crc32c_le(~0, (unsigned char *)sb, offset);
 }
 
 /* NOTE: The input to this function MUST be in LE order */
-int ext2fs_superblock_csum_verify(ext2_filsys fs, struct ext2_super_block *sb)
+số_nguyên ext2fs_superblock_csum_verify(ext2_filsys fs, struct ext2_super_block *sb)
 {
 	__u32 flag, calculated;
 
-	if (fs->flags & EXT2_FLAG_SWAP_BYTES)
+	nếu (fs->flags & EXT2_FLAG_SWAP_BYTES)
 		flag = EXT4_FEATURE_RO_COMPAT_METADATA_CSUM;
-	else
+	không_thì
 		flag = ext2fs_cpu_to_le32(EXT4_FEATURE_RO_COMPAT_METADATA_CSUM);
 
-	if (!EXT2_HAS_RO_COMPAT_FEATURE(fs->super, flag))
-		return 1;
+	nếu (!EXT2_HAS_RO_COMPAT_FEATURE(fs->super, flag))
+		trả_về 1;
 
 	calculated = ext2fs_superblock_csum(fs, sb);
 
-	return ext2fs_le32_to_cpu(sb->s_checksum) == calculated;
+	trả_về ext2fs_le32_to_cpu(sb->s_checksum) == calculated;
 }
 
 /* NOTE: The input to this function MUST be in LE order */
@@ -112,18 +112,18 @@ errcode_t ext2fs_superblock_csum_set(ext2_filsys fs,
 {
 	__u32 flag, crc;
 
-	if (fs->flags & EXT2_FLAG_SWAP_BYTES)
+	nếu (fs->flags & EXT2_FLAG_SWAP_BYTES)
 		flag = EXT4_FEATURE_RO_COMPAT_METADATA_CSUM;
-	else
+	không_thì
 		flag = ext2fs_cpu_to_le32(EXT4_FEATURE_RO_COMPAT_METADATA_CSUM);
 
-	if (!EXT2_HAS_RO_COMPAT_FEATURE(fs->super, flag))
-		return 0;
+	nếu (!EXT2_HAS_RO_COMPAT_FEATURE(fs->super, flag))
+		trả_về 0;
 
 	crc = ext2fs_superblock_csum(fs, sb);
 	sb->s_checksum = ext2fs_cpu_to_le32(crc);
 
-	return 0;
+	trả_về 0;
 }
 
 static errcode_t ext2fs_ext_attr_block_csum(ext2_filsys fs,
@@ -142,24 +142,24 @@ static errcode_t ext2fs_ext_attr_block_csum(ext2_filsys fs,
 	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)buf, fs->blocksize);
 	hdr->h_checksum = old_crc;
 
-	return 0;
+	trả_về 0;
 }
 
-int ext2fs_ext_attr_block_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+số_nguyên ext2fs_ext_attr_block_csum_verify(ext2_filsys fs, ext2_ino_t inum,
 				      blk64_t block,
 				      struct ext2_ext_attr_header *hdr)
 {
 	__u32 calculated;
 	errcode_t retval;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
+	nếu (!ext2fs_has_feature_metadata_csum(fs->super))
+		trả_về 1;
 
 	retval = ext2fs_ext_attr_block_csum(fs, inum, block, hdr, &calculated);
-	if (retval)
-		return 0;
+	nếu (retval)
+		trả_về 0;
 
-	return ext2fs_le32_to_cpu(hdr->h_checksum) == calculated;
+	trả_về ext2fs_le32_to_cpu(hdr->h_checksum) == calculated;
 }
 
 errcode_t ext2fs_ext_attr_block_csum_set(ext2_filsys fs, ext2_ino_t inum,
@@ -169,77 +169,77 @@ errcode_t ext2fs_ext_attr_block_csum_set(ext2_filsys fs, ext2_ino_t inum,
 	errcode_t retval;
 	__u32 crc;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 0;
+	nếu (!ext2fs_has_feature_metadata_csum(fs->super))
+		trả_về 0;
 
 	retval = ext2fs_ext_attr_block_csum(fs, inum, block, hdr, &crc);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 	hdr->h_checksum = ext2fs_cpu_to_le32(crc);
-	return 0;
+	trả_về 0;
 }
 
 static __u16 do_nothing16(__u16 x)
 {
-	return x;
+	trả_về x;
 }
 
 static __u16 disk_to_host16(__u16 x)
 {
-	return ext2fs_le16_to_cpu(x);
+	trả_về ext2fs_le16_to_cpu(x);
 }
 
 static errcode_t __get_dx_countlimit(ext2_filsys fs,
 				     struct ext2_dir_entry *dirent,
 				     struct ext2_dx_countlimit **cc,
-				     int *offset,
-				     int need_swab)
+				     số_nguyên *offset,
+				     số_nguyên need_swab)
 {
 	struct ext2_dir_entry *dp;
 	struct ext2_dx_root_info *root;
 	struct ext2_dx_countlimit *c;
-	int count_offset, max_sane_entries;
-	unsigned int rec_len;
+	số_nguyên count_offset, max_sane_entries;
+	unsigned số_nguyên rec_len;
 	__u16 (*translate)(__u16) = (need_swab ? disk_to_host16 : do_nothing16);
 
 	rec_len = translate(dirent->rec_len);
 
-	if (rec_len == fs->blocksize && translate(dirent->name_len) == 0)
+	nếu (rec_len == fs->blocksize && translate(dirent->name_len) == 0)
 		count_offset = 8;
-	else if (rec_len == 12) {
+	không_thì nếu (rec_len == 12) {
 		dp = (struct ext2_dir_entry *)(((char *)dirent) + rec_len);
 		rec_len = translate(dp->rec_len);
-		if (rec_len != fs->blocksize - 12)
-			return EXT2_ET_DB_NOT_FOUND;
+		nếu (rec_len != fs->blocksize - 12)
+			trả_về EXT2_ET_DB_NOT_FOUND;
 		root = (struct ext2_dx_root_info *)(((char *)dp + 12));
-		if (root->reserved_zero ||
+		nếu (root->reserved_zero ||
 		    root->info_length != sizeof(struct ext2_dx_root_info))
-			return EXT2_ET_DB_NOT_FOUND;
+			trả_về EXT2_ET_DB_NOT_FOUND;
 		count_offset = 32;
-	} else
-		return EXT2_ET_DB_NOT_FOUND;
+	} không_thì
+		trả_về EXT2_ET_DB_NOT_FOUND;
 
 	c = (struct ext2_dx_countlimit *)(((char *)dirent) + count_offset);
 	max_sane_entries = (fs->blocksize - count_offset) /
 			   sizeof(struct ext2_dx_entry);
-	if (ext2fs_le16_to_cpu(c->limit) > max_sane_entries ||
+	nếu (ext2fs_le16_to_cpu(c->limit) > max_sane_entries ||
 	    ext2fs_le16_to_cpu(c->count) > max_sane_entries)
-		return EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
+		trả_về EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
 
-	if (offset)
+	nếu (offset)
 		*offset = count_offset;
-	if (cc)
+	nếu (cc)
 		*cc = c;
 
-	return 0;
+	trả_về 0;
 }
 
 errcode_t ext2fs_get_dx_countlimit(ext2_filsys fs,
 				   struct ext2_dir_entry *dirent,
 				   struct ext2_dx_countlimit **cc,
-				   int *offset)
+				   số_nguyên *offset)
 {
-	return __get_dx_countlimit(fs, dirent, cc, offset, 0);
+	trả_về __get_dx_countlimit(fs, dirent, cc, offset, 0);
 }
 
 void ext2fs_initialize_dirent_tail(ext2_filsys fs,
@@ -254,53 +254,53 @@ void ext2fs_initialize_dirent_tail(ext2_filsys fs,
 static errcode_t __get_dirent_tail(ext2_filsys fs,
 				   struct ext2_dir_entry *dirent,
 				   struct ext2_dir_entry_tail **tt,
-				   int need_swab)
+				   số_nguyên need_swab)
 {
 	struct ext2_dir_entry *d;
 	void *top;
 	struct ext2_dir_entry_tail *t;
-	unsigned int rec_len;
+	unsigned số_nguyên rec_len;
 	errcode_t retval = 0;
 	__u16 (*translate)(__u16) = (need_swab ? disk_to_host16 : do_nothing16);
 
-	if (fs->blocksize < 1024)
-		return EXT2_FILSYS_CORRUPTED; /* Should never happen */
+	nếu (fs->blocksize < 1024)
+		trả_về EXT2_FILSYS_CORRUPTED; /* Should never happen */
 
 	d = dirent;
 	top = EXT2_DIRENT_TAIL(dirent, fs->blocksize);
 
-	while ((void *) d < top) {
+	trong_khi ((void *) d < top) {
 		rec_len = translate(d->rec_len);
-		if ((rec_len < 8) || (rec_len & 0x03))
-			return EXT2_ET_DIR_CORRUPTED;
+		nếu ((rec_len < 8) || (rec_len & 0x03))
+			trả_về EXT2_ET_DIR_CORRUPTED;
 		d = (struct ext2_dir_entry *)(((char *)d) + rec_len);
 	}
 
-	if ((char *)d > ((char *)dirent + fs->blocksize))
-			return EXT2_ET_DIR_CORRUPTED;
-	if (d != top)
-		return EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
+	nếu ((char *)d > ((char *)dirent + fs->blocksize))
+			trả_về EXT2_ET_DIR_CORRUPTED;
+	nếu (d != top)
+		trả_về EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
 
 	t = (struct ext2_dir_entry_tail *)d;
-	if (t->det_reserved_zero1 ||
+	nếu (t->det_reserved_zero1 ||
 	    translate(t->det_rec_len) != sizeof(struct ext2_dir_entry_tail) ||
 	    translate(t->det_reserved_name_len) != EXT2_DIR_NAME_LEN_CSUM)
-		return EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
+		trả_về EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
 
-	if (tt)
+	nếu (tt)
 		*tt = t;
-	return retval;
+	trả_về retval;
 }
 
-int ext2fs_dirent_has_tail(ext2_filsys fs, struct ext2_dir_entry *dirent)
+số_nguyên ext2fs_dirent_has_tail(ext2_filsys fs, struct ext2_dir_entry *dirent)
 {
-	return __get_dirent_tail(fs, dirent, NULL, 0) !=
+	trả_về __get_dirent_tail(fs, dirent, NULL, 0) !=
 		EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
 }
 
 static errcode_t ext2fs_dirent_csum(ext2_filsys fs, ext2_ino_t inum,
 				    struct ext2_dir_entry *dirent, __u32 *crc,
-				    int size)
+				    số_nguyên size)
 {
 	errcode_t retval;
 	char *buf = (char *)dirent;
@@ -308,8 +308,8 @@ static errcode_t ext2fs_dirent_csum(ext2_filsys fs, ext2_ino_t inum,
 	struct ext2_inode inode;
 
 	retval = ext2fs_read_inode(fs, inum, &inode);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
 	inum = ext2fs_cpu_to_le32(inum);
 	gen = ext2fs_cpu_to_le32(inode.i_generation);
@@ -318,10 +318,10 @@ static errcode_t ext2fs_dirent_csum(ext2_filsys fs, ext2_ino_t inum,
 	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)&gen, sizeof(gen));
 	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)buf, size);
 
-	return 0;
+	trả_về 0;
 }
 
-int ext2fs_dirent_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+số_nguyên ext2fs_dirent_csum_verify(ext2_filsys fs, ext2_ino_t inum,
 			      struct ext2_dir_entry *dirent)
 {
 	errcode_t retval;
@@ -329,8 +329,8 @@ int ext2fs_dirent_csum_verify(ext2_filsys fs, ext2_ino_t inum,
 	struct ext2_dir_entry_tail *t;
 
 	retval = __get_dirent_tail(fs, dirent, &t, 1);
-	if (retval)
-		return 1;
+	nếu (retval)
+		trả_về 1;
 
 	/*
 	 * The checksum field is overlaid with the dirent->name field
@@ -338,9 +338,9 @@ int ext2fs_dirent_csum_verify(ext2_filsys fs, ext2_ino_t inum,
 	 */
 	retval = ext2fs_dirent_csum(fs, inum, dirent, &calculated,
 				    (char *)t - (char *)dirent);
-	if (retval)
-		return 0;
-	return ext2fs_le32_to_cpu(t->det_checksum) == calculated;
+	nếu (retval)
+		trả_về 0;
+	trả_về ext2fs_le32_to_cpu(t->det_checksum) == calculated;
 }
 
 static errcode_t ext2fs_dirent_csum_set(ext2_filsys fs, ext2_ino_t inum,
@@ -351,16 +351,16 @@ static errcode_t ext2fs_dirent_csum_set(ext2_filsys fs, ext2_ino_t inum,
 	struct ext2_dir_entry_tail *t;
 
 	retval = __get_dirent_tail(fs, dirent, &t, 1);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
 	/* swapfs.c functions don't change the checksum endianness */
 	retval = ext2fs_dirent_csum(fs, inum, dirent, &crc,
 				    (char *)t - (char *)dirent);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 	t->det_checksum = ext2fs_cpu_to_le32(crc);
-	return 0;
+	trả_về 0;
 }
 
 errcode_t ext2fs_dx_csum(ext2_filsys fs, ext2_ino_t inum,
@@ -369,29 +369,29 @@ errcode_t ext2fs_dx_csum(ext2_filsys fs, ext2_ino_t inum,
 {
 	errcode_t retval;
 	char *buf = (char *)dirent;
-	int size;
+	số_nguyên size;
 	__u32 gen, dummy_csum = 0;
 	struct ext2_inode inode;
 	struct ext2_dx_tail *t;
 	struct ext2_dx_countlimit *c;
-	int count_offset, limit, count;
+	số_nguyên count_offset, limit, count;
 
 	retval = __get_dx_countlimit(fs, dirent, &c, &count_offset, 1);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 	limit = ext2fs_le16_to_cpu(c->limit);
 	count = ext2fs_le16_to_cpu(c->count);
-	if (count_offset + (limit * sizeof(struct ext2_dx_entry)) >
+	nếu (count_offset + (limit * sizeof(struct ext2_dx_entry)) >
 	    fs->blocksize - sizeof(struct ext2_dx_tail))
-		return EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
+		trả_về EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
 	/* htree structs are accessed in LE order */
 	t = (struct ext2_dx_tail *)(((struct ext2_dx_entry *)c) + limit);
 
 	size = count_offset + (count * sizeof(struct ext2_dx_entry));
 
 	retval = ext2fs_read_inode(fs, inum, &inode);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
 	inum = ext2fs_cpu_to_le32(inum);
 	gen = ext2fs_cpu_to_le32(inode.i_generation);
@@ -402,12 +402,12 @@ errcode_t ext2fs_dx_csum(ext2_filsys fs, ext2_ino_t inum,
 	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)t, 4);
 	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)&dummy_csum, 4);
 
-	if (ret_t)
+	nếu (ret_t)
 		*ret_t = t;
-	return 0;
+	trả_về 0;
 }
 
-static int ext2fs_dx_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+static số_nguyên ext2fs_dx_csum_verify(ext2_filsys fs, ext2_ino_t inum,
 				 struct ext2_dir_entry *dirent)
 {
 	__u32 calculated;
@@ -415,10 +415,10 @@ static int ext2fs_dx_csum_verify(ext2_filsys fs, ext2_ino_t inum,
 	struct ext2_dx_tail *t;
 
 	retval = ext2fs_dx_csum(fs, inum, dirent, &calculated, &t);
-	if (retval)
-		return 0;
+	nếu (retval)
+		trả_về 0;
 
-	return ext2fs_le32_to_cpu(t->dt_checksum) == calculated;
+	trả_về ext2fs_le32_to_cpu(t->dt_checksum) == calculated;
 }
 
 static errcode_t ext2fs_dx_csum_set(ext2_filsys fs, ext2_ino_t inum,
@@ -429,40 +429,40 @@ static errcode_t ext2fs_dx_csum_set(ext2_filsys fs, ext2_ino_t inum,
 	struct ext2_dx_tail *t;
 
 	retval = ext2fs_dx_csum(fs, inum, dirent, &crc, &t);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 	t->dt_checksum = ext2fs_cpu_to_le32(crc);
-	return retval;
+	trả_về retval;
 }
 
-int ext2fs_dir_block_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+số_nguyên ext2fs_dir_block_csum_verify(ext2_filsys fs, ext2_ino_t inum,
 				 struct ext2_dir_entry *dirent)
 {
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
+	nếu (!ext2fs_has_feature_metadata_csum(fs->super))
+		trả_về 1;
 
-	if (__get_dirent_tail(fs, dirent, NULL, 1) == 0)
-		return ext2fs_dirent_csum_verify(fs, inum, dirent);
-	if (__get_dx_countlimit(fs, dirent, NULL, NULL, 1) == 0)
-		return ext2fs_dx_csum_verify(fs, inum, dirent);
+	nếu (__get_dirent_tail(fs, dirent, NULL, 1) == 0)
+		trả_về ext2fs_dirent_csum_verify(fs, inum, dirent);
+	nếu (__get_dx_countlimit(fs, dirent, NULL, NULL, 1) == 0)
+		trả_về ext2fs_dx_csum_verify(fs, inum, dirent);
 
-	return 0;
+	trả_về 0;
 }
 
 errcode_t ext2fs_dir_block_csum_set(ext2_filsys fs, ext2_ino_t inum,
 				    struct ext2_dir_entry *dirent)
 {
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 0;
+	nếu (!ext2fs_has_feature_metadata_csum(fs->super))
+		trả_về 0;
 
-	if (__get_dirent_tail(fs, dirent, NULL, 1) == 0)
-		return ext2fs_dirent_csum_set(fs, inum, dirent);
-	if (__get_dx_countlimit(fs, dirent, NULL, NULL, 1) == 0)
-		return ext2fs_dx_csum_set(fs, inum, dirent);
+	nếu (__get_dirent_tail(fs, dirent, NULL, 1) == 0)
+		trả_về ext2fs_dirent_csum_set(fs, inum, dirent);
+	nếu (__get_dx_countlimit(fs, dirent, NULL, NULL, 1) == 0)
+		trả_về ext2fs_dx_csum_set(fs, inum, dirent);
 
-	if (fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS)
-		return 0;
-	return EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
+	nếu (fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS)
+		trả_về 0;
+	trả_về EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
 }
 
 #define EXT3_EXTENT_TAIL_OFFSET(hdr)	(sizeof(struct ext3_extent_header) + \
@@ -470,7 +470,7 @@ errcode_t ext2fs_dir_block_csum_set(ext2_filsys fs, ext2_ino_t inum,
 
 static struct ext3_extent_tail *get_extent_tail(struct ext3_extent_header *h)
 {
-	return (struct ext3_extent_tail *)(((char *)h) +
+	trả_về (struct ext3_extent_tail *)(((char *)h) +
 					   EXT3_EXTENT_TAIL_OFFSET(h));
 }
 
@@ -478,7 +478,7 @@ static errcode_t ext2fs_extent_block_csum(ext2_filsys fs, ext2_ino_t inum,
 					  struct ext3_extent_header *eh,
 					  __u32 *crc)
 {
-	int size;
+	số_nguyên size;
 	__u32 gen;
 	errcode_t retval;
 	struct ext2_inode inode;
@@ -487,8 +487,8 @@ static errcode_t ext2fs_extent_block_csum(ext2_filsys fs, ext2_ino_t inum,
 						      et_checksum);
 
 	retval = ext2fs_read_inode(fs, inum, &inode);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 	inum = ext2fs_cpu_to_le32(inum);
 	gen = ext2fs_cpu_to_le32(inode.i_generation);
 	*crc = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)&inum,
@@ -496,10 +496,10 @@ static errcode_t ext2fs_extent_block_csum(ext2_filsys fs, ext2_ino_t inum,
 	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)&gen, sizeof(gen));
 	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)eh, size);
 
-	return 0;
+	trả_về 0;
 }
 
-int ext2fs_extent_block_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+số_nguyên ext2fs_extent_block_csum_verify(ext2_filsys fs, ext2_ino_t inum,
 				    struct ext3_extent_header *eh)
 {
 	errcode_t retval;
@@ -510,15 +510,15 @@ int ext2fs_extent_block_csum_verify(ext2_filsys fs, ext2_ino_t inum,
 	 * The extent tree structures are accessed in LE order, so we must
 	 * swap the checksum bytes here.
 	 */
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
+	nếu (!ext2fs_has_feature_metadata_csum(fs->super))
+		trả_về 1;
 
 	provided = ext2fs_le32_to_cpu(t->et_checksum);
 	retval = ext2fs_extent_block_csum(fs, inum, eh, &calculated);
-	if (retval)
-		return 0;
+	nếu (retval)
+		trả_về 0;
 
-	return provided == calculated;
+	trả_về provided == calculated;
 }
 
 errcode_t ext2fs_extent_block_csum_set(ext2_filsys fs, ext2_ino_t inum,
@@ -528,99 +528,99 @@ errcode_t ext2fs_extent_block_csum_set(ext2_filsys fs, ext2_ino_t inum,
 	__u32 crc;
 	struct ext3_extent_tail *t = get_extent_tail(eh);
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 0;
+	nếu (!ext2fs_has_feature_metadata_csum(fs->super))
+		trả_về 0;
 
 	/*
 	 * The extent tree structures are accessed in LE order, so we must
 	 * swap the checksum bytes here.
 	 */
 	retval = ext2fs_extent_block_csum(fs, inum, eh, &crc);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 	t->et_checksum = ext2fs_cpu_to_le32(crc);
-	return retval;
+	trả_về retval;
 }
 
-int ext2fs_inode_bitmap_csum_verify(ext2_filsys fs, dgrp_t group,
-				    char *bitmap, int size)
+số_nguyên ext2fs_inode_bitmap_csum_verify(ext2_filsys fs, dgrp_t group,
+				    char *bitmap, số_nguyên size)
 {
 	struct ext4_group_desc *gdp = (struct ext4_group_desc *)
 			ext2fs_group_desc(fs, fs->group_desc, group);
 	__u32 provided, calculated;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
+	nếu (!ext2fs_has_feature_metadata_csum(fs->super))
+		trả_về 1;
 	provided = gdp->bg_inode_bitmap_csum_lo;
 	calculated = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)bitmap,
 				      size);
-	if (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_INODE_BITMAP_CSUM_HI_END)
+	nếu (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_INODE_BITMAP_CSUM_HI_END)
 		provided |= (__u32)gdp->bg_inode_bitmap_csum_hi << 16;
-	else
+	không_thì
 		calculated &= 0xFFFF;
 
-	return provided == calculated;
+	trả_về provided == calculated;
 }
 
 errcode_t ext2fs_inode_bitmap_csum_set(ext2_filsys fs, dgrp_t group,
-				       char *bitmap, int size)
+				       char *bitmap, số_nguyên size)
 {
 	__u32 crc;
 	struct ext4_group_desc *gdp = (struct ext4_group_desc *)
 			ext2fs_group_desc(fs, fs->group_desc, group);
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 0;
+	nếu (!ext2fs_has_feature_metadata_csum(fs->super))
+		trả_về 0;
 
 	crc = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)bitmap, size);
 	gdp->bg_inode_bitmap_csum_lo = crc & 0xFFFF;
-	if (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_INODE_BITMAP_CSUM_HI_END)
+	nếu (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_INODE_BITMAP_CSUM_HI_END)
 		gdp->bg_inode_bitmap_csum_hi = crc >> 16;
 
-	return 0;
+	trả_về 0;
 }
 
-int ext2fs_block_bitmap_csum_verify(ext2_filsys fs, dgrp_t group,
-				    char *bitmap, int size)
+số_nguyên ext2fs_block_bitmap_csum_verify(ext2_filsys fs, dgrp_t group,
+				    char *bitmap, số_nguyên size)
 {
 	struct ext4_group_desc *gdp = (struct ext4_group_desc *)
 			ext2fs_group_desc(fs, fs->group_desc, group);
 	__u32 provided, calculated;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
+	nếu (!ext2fs_has_feature_metadata_csum(fs->super))
+		trả_về 1;
 	provided = gdp->bg_block_bitmap_csum_lo;
 	calculated = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)bitmap,
 				      size);
-	if (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_BLOCK_BITMAP_CSUM_HI_LOCATION)
+	nếu (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_BLOCK_BITMAP_CSUM_HI_LOCATION)
 		provided |= (__u32)gdp->bg_block_bitmap_csum_hi << 16;
-	else
+	không_thì
 		calculated &= 0xFFFF;
 
-	return provided == calculated;
+	trả_về provided == calculated;
 }
 
 errcode_t ext2fs_block_bitmap_csum_set(ext2_filsys fs, dgrp_t group,
-				       char *bitmap, int size)
+				       char *bitmap, số_nguyên size)
 {
 	__u32 crc;
 	struct ext4_group_desc *gdp = (struct ext4_group_desc *)
 			ext2fs_group_desc(fs, fs->group_desc, group);
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 0;
+	nếu (!ext2fs_has_feature_metadata_csum(fs->super))
+		trả_về 0;
 
 	crc = ext2fs_crc32c_le(fs->csum_seed, (unsigned char *)bitmap, size);
 	gdp->bg_block_bitmap_csum_lo = crc & 0xFFFF;
-	if (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_BLOCK_BITMAP_CSUM_HI_LOCATION)
+	nếu (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_BLOCK_BITMAP_CSUM_HI_LOCATION)
 		gdp->bg_block_bitmap_csum_hi = crc >> 16;
 
-	return 0;
+	trả_về 0;
 }
 
 static errcode_t ext2fs_inode_csum(ext2_filsys fs, ext2_ino_t inum,
 			       struct ext2_inode_large *inode,
-			       __u32 *crc, int has_hi)
+			       __u32 *crc, số_nguyên has_hi)
 {
 	__u32 gen;
 	struct ext2_inode_large *desc = inode;
@@ -630,7 +630,7 @@ static errcode_t ext2fs_inode_csum(ext2_filsys fs, ext2_ino_t inum,
 
 	old_lo = inode->i_checksum_lo;
 	inode->i_checksum_lo = 0;
-	if (has_hi) {
+	nếu (has_hi) {
 		old_hi = inode->i_checksum_hi;
 		inode->i_checksum_hi = 0;
 	}
@@ -643,37 +643,37 @@ static errcode_t ext2fs_inode_csum(ext2_filsys fs, ext2_ino_t inum,
 	*crc = ext2fs_crc32c_le(*crc, (unsigned char *)desc, size);
 
 	inode->i_checksum_lo = old_lo;
-	if (has_hi)
+	nếu (has_hi)
 		inode->i_checksum_hi = old_hi;
-	return 0;
+	trả_về 0;
 }
 
-int ext2fs_inode_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+số_nguyên ext2fs_inode_csum_verify(ext2_filsys fs, ext2_ino_t inum,
 			     struct ext2_inode_large *inode)
 {
 	errcode_t retval;
 	__u32 provided, calculated;
-	unsigned int i, has_hi;
+	unsigned số_nguyên i, has_hi;
 	char *cp;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 1;
+	nếu (!ext2fs_has_feature_metadata_csum(fs->super))
+		trả_về 1;
 
 	has_hi = (EXT2_INODE_SIZE(fs->super) > EXT2_GOOD_OLD_INODE_SIZE &&
 		  inode->i_extra_isize >= EXT4_INODE_CSUM_HI_EXTRA_END);
 
 	provided = ext2fs_le16_to_cpu(inode->i_checksum_lo);
 	retval = ext2fs_inode_csum(fs, inum, inode, &calculated, has_hi);
-	if (retval)
-		return 0;
-	if (has_hi) {
+	nếu (retval)
+		trả_về 0;
+	nếu (has_hi) {
 		__u32 hi = ext2fs_le16_to_cpu(inode->i_checksum_hi);
 		provided |= hi << 16;
-	} else
+	} không_thì
 		calculated &= 0xFFFF;
 
-	if (provided == calculated)
-		return 1;
+	nếu (provided == calculated)
+		trả_về 1;
 
 	/*
 	 * If the checksum didn't match, it's possible it was due to
@@ -683,12 +683,12 @@ int ext2fs_inode_csum_verify(ext2_filsys fs, ext2_ino_t inum,
 	 * worth the bother to figure out how much of the extended
 	 * inode, if any, is present.)
 	 */
-	for (cp = (char *) inode, i = 0;
+	cho (cp = (char *) inode, i = 0;
 	     i < sizeof(struct ext2_inode);
 	     cp++, i++)
-		if (*cp)
-			return 0;
-	return 1;		/* Inode must have been all zero's */
+		nếu (*cp)
+			trả_về 0;
+	trả_về 1;		/* Inode must have been all zero's */
 }
 
 errcode_t ext2fs_inode_csum_set(ext2_filsys fs, ext2_ino_t inum,
@@ -696,21 +696,21 @@ errcode_t ext2fs_inode_csum_set(ext2_filsys fs, ext2_ino_t inum,
 {
 	errcode_t retval;
 	__u32 crc;
-	int has_hi;
+	số_nguyên has_hi;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super))
-		return 0;
+	nếu (!ext2fs_has_feature_metadata_csum(fs->super))
+		trả_về 0;
 
 	has_hi = (EXT2_INODE_SIZE(fs->super) > EXT2_GOOD_OLD_INODE_SIZE &&
 		  inode->i_extra_isize >= EXT4_INODE_CSUM_HI_EXTRA_END);
 
 	retval = ext2fs_inode_csum(fs, inum, inode, &crc, has_hi);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 	inode->i_checksum_lo = ext2fs_cpu_to_le16(crc & 0xFFFF);
-	if (has_hi)
+	nếu (has_hi)
 		inode->i_checksum_hi = ext2fs_cpu_to_le16(crc >> 16);
-	return 0;
+	trả_về 0;
 }
 
 __u16 ext2fs_group_desc_csum(ext2_filsys fs, dgrp_t group)
@@ -726,7 +726,7 @@ __u16 ext2fs_group_desc_csum(ext2_filsys fs, dgrp_t group)
 	struct ext2_group_desc *save_desc = desc;
 
 	/* Have to swab back to little-endian to do the checksum */
-	if (size > ext4_bg_size)
+	nếu (size > ext4_bg_size)
 		size = ext4_bg_size;
 	memcpy(&swabdesc, desc, size);
 	ext2fs_swap_group_desc2(fs, (struct ext2_group_desc *) &swabdesc);
@@ -734,7 +734,7 @@ __u16 ext2fs_group_desc_csum(ext2_filsys fs, dgrp_t group)
 	group = ext2fs_swab32(group);
 #endif
 
-	if (ext2fs_has_feature_metadata_csum(fs->super)) {
+	nếu (ext2fs_has_feature_metadata_csum(fs->super)) {
 		/* new metadata csum code */
 		__u16 old_crc;
 		__u32 crc32;
@@ -747,7 +747,7 @@ __u16 ext2fs_group_desc_csum(ext2_filsys fs, dgrp_t group)
 					 size);
 		desc->bg_checksum = old_crc;
 #ifdef WORDS_BIGENDIAN
-		if (save_size > ext4_bg_size)
+		nếu (save_size > ext4_bg_size)
 			crc32 = ext2fs_crc32c_le(crc32,
 				     (unsigned char *)save_desc + ext4_bg_size,
 	                             save_size - ext4_bg_size);
@@ -764,7 +764,7 @@ __u16 ext2fs_group_desc_csum(ext2_filsys fs, dgrp_t group)
 	crc = ext2fs_crc16(crc, desc, offset);
 	offset += sizeof(desc->bg_checksum); /* skip checksum */
 	/* for checksum of struct ext4_group_desc do the rest...*/
-	if (offset < size) {
+	nếu (offset < size) {
 		crc = ext2fs_crc16(crc, (char *)desc + offset,
 				   size - offset);
 	}
@@ -774,29 +774,29 @@ __u16 ext2fs_group_desc_csum(ext2_filsys fs, dgrp_t group)
 	 * bytes, which is the size of the traditional ext4 bg
 	 * descriptor, checksum the rest of the descriptor here
 	 */
-	if (save_size > ext4_bg_size)
+	nếu (save_size > ext4_bg_size)
 		crc = ext2fs_crc16(crc, (char *)save_desc + ext4_bg_size,
 				   save_size - ext4_bg_size);
 #endif
 
 out:
-	return crc;
+	trả_về crc;
 }
 
-int ext2fs_group_desc_csum_verify(ext2_filsys fs, dgrp_t group)
+số_nguyên ext2fs_group_desc_csum_verify(ext2_filsys fs, dgrp_t group)
 {
-	if (ext2fs_has_group_desc_csum(fs) &&
+	nếu (ext2fs_has_group_desc_csum(fs) &&
 	    (ext2fs_bg_checksum(fs, group) !=
 	     ext2fs_group_desc_csum(fs, group)))
-		return 0;
+		trả_về 0;
 
-	return 1;
+	trả_về 1;
 }
 
 void ext2fs_group_desc_csum_set(ext2_filsys fs, dgrp_t group)
 {
-	if (!ext2fs_has_group_desc_csum(fs))
-		return;
+	nếu (!ext2fs_has_group_desc_csum(fs))
+		trả_về;
 
 	/* ext2fs_bg_checksum_set() sets the actual checksum field but
 	 * does not calculate the checksum itself. */
@@ -811,11 +811,11 @@ static __u32 find_last_inode_ingrp(ext2fs_inode_bitmap bitmap,
 	start_ino = grp_no * inodes_per_grp + 1;
 	end_ino = start_ino + inodes_per_grp - 1;
 
-	for (i = end_ino; i >= start_ino; i--) {
-		if (ext2fs_fast_test_inode_bitmap2(bitmap, i))
-			return i - start_ino + 1;
+	cho (i = end_ino; i >= start_ino; i--) {
+		nếu (ext2fs_fast_test_inode_bitmap2(bitmap, i))
+			trả_về i - start_ino + 1;
 	}
-	return inodes_per_grp;
+	trả_về inodes_per_grp;
 }
 
 /* update the bitmap flags, set the itable high watermark, and calculate
@@ -823,31 +823,31 @@ static __u32 find_last_inode_ingrp(ext2fs_inode_bitmap bitmap,
 errcode_t ext2fs_set_gdt_csum(ext2_filsys fs)
 {
 	struct ext2_super_block *sb = fs->super;
-	int dirty = 0;
+	số_nguyên dirty = 0;
 	dgrp_t i;
 
-	if (!fs->inode_map)
-		return EXT2_ET_NO_INODE_BITMAP;
+	nếu (!fs->inode_map)
+		trả_về EXT2_ET_NO_INODE_BITMAP;
 
-	if (!ext2fs_has_group_desc_csum(fs))
-		return 0;
+	nếu (!ext2fs_has_group_desc_csum(fs))
+		trả_về 0;
 
-	for (i = 0; i < fs->group_desc_count; i++) {
+	cho (i = 0; i < fs->group_desc_count; i++) {
 		__u32 old_csum = ext2fs_bg_checksum(fs, i);
 		__u32 old_unused = ext2fs_bg_itable_unused(fs, i);
 		__u32 old_flags = ext2fs_bg_flags(fs, i);
 		__u32 old_free_inodes_count = ext2fs_bg_free_inodes_count(fs, i);
 		__u32 old_free_blocks_count = ext2fs_bg_free_blocks_count(fs, i);
 
-		if (old_free_blocks_count == sb->s_blocks_per_group &&
+		nếu (old_free_blocks_count == sb->s_blocks_per_group &&
 		    i != fs->group_desc_count - 1)
 			ext2fs_bg_flags_set(fs, i, EXT2_BG_BLOCK_UNINIT);
 
-		if (old_free_inodes_count == sb->s_inodes_per_group) {
+		nếu (old_free_inodes_count == sb->s_inodes_per_group) {
 			ext2fs_bg_flags_set(fs, i, EXT2_BG_INODE_UNINIT);
 			ext2fs_bg_itable_unused_set(fs, i, sb->s_inodes_per_group);
-		} else {
-			int unused =
+		} không_thì {
+			số_nguyên unused =
 				sb->s_inodes_per_group -
 				find_last_inode_ingrp(fs->inode_map,
 						      sb->s_inodes_per_group, i);
@@ -857,16 +857,16 @@ errcode_t ext2fs_set_gdt_csum(ext2_filsys fs)
 		}
 
 		ext2fs_group_desc_csum_set(fs, i);
-		if (old_flags != ext2fs_bg_flags(fs, i))
+		nếu (old_flags != ext2fs_bg_flags(fs, i))
 			dirty = 1;
-		if (old_unused != ext2fs_bg_itable_unused(fs, i))
+		nếu (old_unused != ext2fs_bg_itable_unused(fs, i))
 			dirty = 1;
-		if (old_csum != ext2fs_bg_checksum(fs, i))
+		nếu (old_csum != ext2fs_bg_checksum(fs, i))
 			dirty = 1;
 	}
-	if (dirty)
+	nếu (dirty)
 		ext2fs_mark_super_dirty(fs);
-	return 0;
+	trả_về 0;
 }
 
 #ifdef DEBUG
@@ -880,7 +880,7 @@ void print_csum(const char *msg, ext2_filsys fs, dgrp_t group)
 							 group);
 	size_t size = EXT2_DESC_SIZE(fs->super);
 	struct ext2_super_block *sb = fs->super;
-	int offset = offsetof(struct ext2_group_desc, bg_checksum);
+	số_nguyên offset = offsetof(struct ext2_group_desc, bg_checksum);
 #ifdef WORDS_BIGENDIAN
 	struct ext4_group_desc swabdesc;
 	struct ext2_group_desc *save_desc = desc;
@@ -890,14 +890,14 @@ void print_csum(const char *msg, ext2_filsys fs, dgrp_t group)
 
 #ifdef WORDS_BIGENDIAN
 	/* Have to swab back to little-endian to do the checksum */
-	if (size > ext4_bg_size)
+	nếu (size > ext4_bg_size)
 		size = ext4_bg_size;
 	memcpy(&swabdesc, desc, size);
 	ext2fs_swap_group_desc2(fs, (struct ext2_group_desc *) &swabdesc);
 	desc = (struct ext2_group_desc *) &swabdesc;
 
 	swabgroup = ext2fs_swab32(group);
-#else
+#không_thì
 	swabgroup = group;
 #endif
 
@@ -906,10 +906,10 @@ void print_csum(const char *msg, ext2_filsys fs, dgrp_t group)
 	crc3 = ext2fs_crc16(crc2, desc, offset);
 	offset += sizeof(desc->bg_checksum); /* skip checksum */
 	/* for checksum of struct ext4_group_desc do the rest...*/
-	if (offset < size)
+	nếu (offset < size)
 		crc3 = ext2fs_crc16(crc3, (char *)desc + offset, size - offset);
 #ifdef WORDS_BIGENDIAN
-	if (save_size > ext4_bg_size)
+	nếu (save_size > ext4_bg_size)
 		crc3 = ext2fs_crc16(crc3, (char *)save_desc + ext4_bg_size,
 				    save_size - ext4_bg_size);
 #endif
@@ -922,17 +922,17 @@ void print_csum(const char *msg, ext2_filsys fs, dgrp_t group)
 unsigned char sb_uuid[16] = { 0x4f, 0x25, 0xe8, 0xcf, 0xe7, 0x97, 0x48, 0x23,
 			      0xbe, 0xfa, 0xa7, 0x88, 0x4b, 0xae, 0xec, 0xdb };
 
-int main(int argc, char **argv)
+số_nguyên main(số_nguyên argc, char **argv)
 {
 	struct ext2_super_block param;
 	errcode_t		retval;
 	ext2_filsys		fs;
-	int			i;
+	số_nguyên			i;
 	__u16 csum1, csum2, csum_known = 0xd3a4;
 
 	memset(&param, 0, sizeof(param));
 	ext2fs_blocks_count_set(&param, 32768);
-#if 0
+#nếu 0
 	param.s_feature_incompat |= EXT4_FEATURE_INCOMPAT_64BIT;
 	param.s_desc_size = 128;
 	csum_known = 0x5b6e;
@@ -940,7 +940,7 @@ int main(int argc, char **argv)
 
 	retval = ext2fs_initialize("test fs", EXT2_FLAG_64BITS, &param,
 				   test_io_manager, &fs);
-	if (retval) {
+	nếu (retval) {
 		com_err("setup", retval,
 			"While initializing filesystem");
 		exit(1);
@@ -948,7 +948,7 @@ int main(int argc, char **argv)
 	memcpy(fs->super->s_uuid, sb_uuid, 16);
 	fs->super->s_feature_ro_compat = EXT4_FEATURE_RO_COMPAT_GDT_CSUM;
 
-	for (i=0; i < fs->group_desc_count; i++) {
+	cho (i=0; i < fs->group_desc_count; i++) {
 		ext2fs_block_bitmap_loc_set(fs, i, 124);
 		ext2fs_inode_bitmap_loc_set(fs, i, 125);
 		ext2fs_inode_table_loc_set(fs, i, 126);
@@ -961,36 +961,36 @@ int main(int argc, char **argv)
 	csum1 = ext2fs_group_desc_csum(fs, 0);
 	print_csum("csum0000", fs, 0);
 
-	if (csum1 != csum_known) {
+	nếu (csum1 != csum_known) {
 		printf("checksum for group 0 should be %04x\n", csum_known);
 		exit(1);
 	}
 	csum2 = ext2fs_group_desc_csum(fs, 1);
 	print_csum("csum0001", fs, 1);
-	if (csum1 == csum2) {
+	nếu (csum1 == csum2) {
 		printf("checksums for different groups shouldn't match\n");
 		exit(1);
 	}
 	csum2 = ext2fs_group_desc_csum(fs, 2);
 	print_csum("csumffff", fs, 2);
-	if (csum1 == csum2) {
+	nếu (csum1 == csum2) {
 		printf("checksums for different groups shouldn't match\n");
 		exit(1);
 	}
 	ext2fs_bg_checksum_set(fs, 0, csum1);
 	csum2 = ext2fs_group_desc_csum(fs, 0);
 	print_csum("csum_set", fs, 0);
-	if (csum1 != csum2) {
+	nếu (csum1 != csum2) {
 		printf("checksums should not depend on checksum field\n");
 		exit(1);
 	}
-	if (!ext2fs_group_desc_csum_verify(fs, 0)) {
+	nếu (!ext2fs_group_desc_csum_verify(fs, 0)) {
 		printf("checksums should verify against gd_checksum\n");
 		exit(1);
 	}
 	memset(fs->super->s_uuid, 0x30, sizeof(fs->super->s_uuid));
 	print_csum("new_uuid", fs, 0);
-	if (ext2fs_group_desc_csum_verify(fs, 0) != 0) {
+	nếu (ext2fs_group_desc_csum_verify(fs, 0) != 0) {
 		printf("checksums for different filesystems shouldn't match\n");
 		exit(1);
 	}
@@ -1000,12 +1000,12 @@ int main(int argc, char **argv)
 	ext2fs_bg_free_blocks_count_set(fs, 0, 1);
 	csum2 = ext2fs_group_desc_csum(fs, 0);
 	print_csum("csum_blk", fs, 0);
-	if (csum1 == csum2) {
+	nếu (csum1 == csum2) {
 		printf("checksums for different data shouldn't match\n");
 		exit(1);
 	}
 	ext2fs_free(fs);
 
-	return 0;
+	trả_về 0;
 }
 #endif

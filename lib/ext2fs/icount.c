@@ -10,7 +10,7 @@
  */
 
 #include "config.h"
-#if HAVE_UNISTD_H
+#nếu HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <string.h>
@@ -75,32 +75,32 @@ struct ext2_icount {
 
 void ext2fs_free_icount(ext2_icount_t icount)
 {
-	if (!icount)
-		return;
+	nếu (!icount)
+		trả_về;
 
 	icount->magic = 0;
-	if (icount->list)
+	nếu (icount->list)
 		ext2fs_free_mem(&icount->list);
-	if (icount->single)
+	nếu (icount->single)
 		ext2fs_free_inode_bitmap(icount->single);
-	if (icount->multiple)
+	nếu (icount->multiple)
 		ext2fs_free_inode_bitmap(icount->multiple);
 #ifdef CONFIG_TDB
-	if (icount->tdb)
+	nếu (icount->tdb)
 		tdb_close(icount->tdb);
-	if (icount->tdb_fn) {
+	nếu (icount->tdb_fn) {
 		(void) unlink(icount->tdb_fn);
 		free(icount->tdb_fn);
 	}
 #endif
 
-	if (icount->fullmap)
+	nếu (icount->fullmap)
 		ext2fs_free_mem(&icount->fullmap);
 
 	ext2fs_free_mem(&icount);
 }
 
-static errcode_t alloc_icount(ext2_filsys fs, int flags, ext2_icount_t *ret)
+static errcode_t alloc_icount(ext2_filsys fs, số_nguyên flags, ext2_icount_t *ret)
 {
 	ext2_icount_t	icount;
 	errcode_t	retval;
@@ -108,43 +108,43 @@ static errcode_t alloc_icount(ext2_filsys fs, int flags, ext2_icount_t *ret)
 	*ret = 0;
 
 	retval = ext2fs_get_mem(sizeof(struct ext2_icount), &icount);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 	memset(icount, 0, sizeof(struct ext2_icount));
 	icount->magic = EXT2_ET_MAGIC_ICOUNT;
 	icount->num_inodes = fs->super->s_inodes_count;
 
-	if ((flags & EXT2_ICOUNT_OPT_FULLMAP) &&
+	nếu ((flags & EXT2_ICOUNT_OPT_FULLMAP) &&
 	    (flags & EXT2_ICOUNT_OPT_INCREMENT)) {
 		unsigned sz = sizeof(*icount->fullmap) * icount->num_inodes;
 
 		retval = ext2fs_get_mem(sz, &icount->fullmap);
 		/* If we can't allocate, fall back */
-		if (!retval) {
+		nếu (!retval) {
 			memset(icount->fullmap, 0, sz);
 			*ret = icount;
-			return 0;
+			trả_về 0;
 		}
 	}
 
 	retval = ext2fs_allocate_inode_bitmap(fs, "icount", &icount->single);
-	if (retval)
+	nếu (retval)
 		goto errout;
 
-	if (flags & EXT2_ICOUNT_OPT_INCREMENT) {
+	nếu (flags & EXT2_ICOUNT_OPT_INCREMENT) {
 		retval = ext2fs_allocate_inode_bitmap(fs, "icount_inc",
 						      &icount->multiple);
-		if (retval)
+		nếu (retval)
 			goto errout;
-	} else
+	} không_thì
 		icount->multiple = 0;
 
 	*ret = icount;
-	return 0;
+	trả_về 0;
 
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
+	trả_về(retval);
 }
 
 #ifdef CONFIG_TDB
@@ -198,7 +198,7 @@ static void uuid_unparse(void *uu, char *out)
 
 errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2FS_NO_TDB_UNUSED,
 				   char *tdb_dir EXT2FS_NO_TDB_UNUSED,
-				   int flags EXT2FS_NO_TDB_UNUSED,
+				   số_nguyên flags EXT2FS_NO_TDB_UNUSED,
 				   ext2_icount_t *ret EXT2FS_NO_TDB_UNUSED)
 {
 #ifdef CONFIG_TDB
@@ -207,20 +207,20 @@ errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2FS_NO_TDB_UNUSED,
 	char 		*fn, uuid[40];
 	ext2_ino_t	num_inodes;
 	mode_t		save_umask;
-	int		fd;
+	số_nguyên		fd;
 
 	retval = alloc_icount(fs, flags,  &icount);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
 	retval = ext2fs_get_mem(strlen(tdb_dir) + 64, &fn);
-	if (retval)
+	nếu (retval)
 		goto errout;
 	uuid_unparse(fs->super->s_uuid, uuid);
 	sprintf(fn, "%s/%s-icount-XXXXXX", tdb_dir, uuid);
 	save_umask = umask(077);
 	fd = mkstemp(fn);
-	if (fd < 0) {
+	nếu (fd < 0) {
 		retval = errno;
 		ext2fs_free_mem(&fn);
 		goto errout;
@@ -240,21 +240,21 @@ errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2FS_NO_TDB_UNUSED,
 	icount->tdb = tdb_open(fn, num_inodes, TDB_NOLOCK | TDB_NOSYNC,
 			       O_RDWR | O_CREAT | O_TRUNC, 0600);
 	close(fd);
-	if (icount->tdb == NULL) {
+	nếu (icount->tdb == NULL) {
 		retval = errno;
 		goto errout;
 	}
 	*ret = icount;
-	return 0;
+	trả_về 0;
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
-#else
-	return EXT2_ET_UNIMPLEMENTED;
+	trả_về(retval);
+#không_thì
+	trả_về EXT2_ET_UNIMPLEMENTED;
 #endif
 }
 
-errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
+errcode_t ext2fs_create_icount2(ext2_filsys fs, số_nguyên flags, unsigned số_nguyên size,
 				ext2_icount_t hint, ext2_icount_t *ret)
 {
 	ext2_icount_t	icount;
@@ -262,41 +262,41 @@ errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
 	size_t		bytes;
 	ext2_ino_t	i;
 
-	if (hint) {
+	nếu (hint) {
 		EXT2_CHECK_MAGIC(hint, EXT2_ET_MAGIC_ICOUNT);
-		if (hint->size > size)
+		nếu (hint->size > size)
 			size = (size_t) hint->size;
 	}
 
 	retval = alloc_icount(fs, flags, &icount);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
-	if (icount->fullmap)
+	nếu (icount->fullmap)
 		goto successout;
 
-	if (size) {
+	nếu (size) {
 		icount->size = size;
-	} else {
+	} không_thì {
 		/*
 		 * Figure out how many special case inode counts we will
 		 * have.  We know we will need one for each directory;
 		 * we also need to reserve some extra room for file links
 		 */
 		retval = ext2fs_get_num_dirs(fs, &icount->size);
-		if (retval)
+		nếu (retval)
 			goto errout;
 		icount->size += fs->super->s_inodes_count / 50;
 	}
 
 	bytes = (size_t) (icount->size * sizeof(struct ext2_icount_el));
-#if 0
+#nếu 0
 	printf("Icount allocated %u entries, %d bytes.\n",
 	       icount->size, bytes);
 #endif
 	retval = ext2fs_get_array(icount->size, sizeof(struct ext2_icount_el),
 			 &icount->list);
-	if (retval)
+	nếu (retval)
 		goto errout;
 	memset(icount->list, 0, bytes);
 
@@ -308,26 +308,26 @@ errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
 	 * found in the hint icount (since those are ones which will
 	 * likely need to be in the sorted list this time around).
 	 */
-	if (hint) {
-		for (i=0; i < hint->count; i++)
+	nếu (hint) {
+		cho (i=0; i < hint->count; i++)
 			icount->list[i].ino = hint->list[i].ino;
 		icount->count = hint->count;
 	}
 
 successout:
 	*ret = icount;
-	return 0;
+	trả_về 0;
 
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
+	trả_về(retval);
 }
 
-errcode_t ext2fs_create_icount(ext2_filsys fs, int flags,
-			       unsigned int size,
+errcode_t ext2fs_create_icount(ext2_filsys fs, số_nguyên flags,
+			       unsigned số_nguyên size,
 			       ext2_icount_t *ret)
 {
-	return ext2fs_create_icount2(fs, flags, size, 0, ret);
+	trả_về ext2fs_create_icount2(fs, flags, size, 0, ret);
 }
 
 /*
@@ -335,25 +335,25 @@ errcode_t ext2fs_create_icount(ext2_filsys fs, int flags,
  * 	specified position.
  */
 static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
-					    ext2_ino_t ino, int pos)
+					    ext2_ino_t ino, số_nguyên pos)
 {
 	struct ext2_icount_el 	*el;
 	errcode_t		retval;
 	ext2_ino_t		new_size = 0;
-	int			num;
+	số_nguyên			num;
 
-	if (icount->last_lookup && icount->last_lookup->ino == ino)
-		return icount->last_lookup;
+	nếu (icount->last_lookup && icount->last_lookup->ino == ino)
+		trả_về icount->last_lookup;
 
-	if (icount->count >= icount->size) {
-		if (icount->count) {
+	nếu (icount->count >= icount->size) {
+		nếu (icount->count) {
 			new_size = icount->list[(unsigned)icount->count-1].ino;
 			new_size = (ext2_ino_t) (icount->count *
 				((float) icount->num_inodes / new_size));
 		}
-		if (new_size < (icount->size + 100))
+		nếu (new_size < (icount->size + 100))
 			new_size = icount->size + 100;
-#if 0
+#nếu 0
 		printf("Reallocating icount %u entries...\n", new_size);
 #endif
 		retval = ext2fs_resize_mem((size_t) icount->size *
@@ -361,14 +361,14 @@ static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
 					   (size_t) new_size *
 					   sizeof(struct ext2_icount_el),
 					   &icount->list);
-		if (retval)
-			return 0;
+		nếu (retval)
+			trả_về 0;
 		icount->size = new_size;
 	}
-	num = (int) icount->count - pos;
-	if (num < 0)
-		return 0;	/* should never happen */
-	if (num) {
+	num = (số_nguyên) icount->count - pos;
+	nếu (num < 0)
+		trả_về 0;	/* should never happen */
+	nếu (num) {
 		memmove(&icount->list[pos+1], &icount->list[pos],
 			sizeof(struct ext2_icount_el) * num);
 	}
@@ -377,7 +377,7 @@ static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
 	el->count = 0;
 	el->ino = ino;
 	icount->last_lookup = el;
-	return el;
+	trả_về el;
 }
 
 /*
@@ -386,47 +386,47 @@ static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
  * 	and we can't find an entry, create one in the sorted list.
  */
 static struct ext2_icount_el *get_icount_el(ext2_icount_t icount,
-					    ext2_ino_t ino, int create)
+					    ext2_ino_t ino, số_nguyên create)
 {
-	int	low, high, mid;
+	số_nguyên	low, high, mid;
 
-	if (!icount || !icount->list)
-		return 0;
+	nếu (!icount || !icount->list)
+		trả_về 0;
 
-	if (create && ((icount->count == 0) ||
+	nếu (create && ((icount->count == 0) ||
 		       (ino > icount->list[(unsigned)icount->count-1].ino))) {
-		return insert_icount_el(icount, ino, (unsigned) icount->count);
+		trả_về insert_icount_el(icount, ino, (unsigned) icount->count);
 	}
-	if (icount->count == 0)
-		return 0;
+	nếu (icount->count == 0)
+		trả_về 0;
 
-	if (icount->cursor >= icount->count)
+	nếu (icount->cursor >= icount->count)
 		icount->cursor = 0;
-	if (ino == icount->list[icount->cursor].ino)
-		return &icount->list[icount->cursor++];
-#if 0
+	nếu (ino == icount->list[icount->cursor].ino)
+		trả_về &icount->list[icount->cursor++];
+#nếu 0
 	printf("Non-cursor get_icount_el: %u\n", ino);
 #endif
 	low = 0;
-	high = (int) icount->count-1;
-	while (low <= high) {
+	high = (số_nguyên) icount->count-1;
+	trong_khi (low <= high) {
 		mid = ((unsigned)low + (unsigned)high) >> 1;
-		if (ino == icount->list[mid].ino) {
+		nếu (ino == icount->list[mid].ino) {
 			icount->cursor = mid+1;
-			return &icount->list[mid];
+			trả_về &icount->list[mid];
 		}
-		if (ino < icount->list[mid].ino)
+		nếu (ino < icount->list[mid].ino)
 			high = mid-1;
-		else
+		không_thì
 			low = mid+1;
 	}
 	/*
 	 * If we need to create a new entry, it should be right at
 	 * low (where high will be left at low-1).
 	 */
-	if (create)
-		return insert_icount_el(icount, ino, low);
-	return 0;
+	nếu (create)
+		trả_về insert_icount_el(icount, ino, low);
+	trả_về 0;
 }
 
 static errcode_t set_inode_count(ext2_icount_t icount, ext2_ino_t ino,
@@ -436,34 +436,34 @@ static errcode_t set_inode_count(ext2_icount_t icount, ext2_ino_t ino,
 #ifdef CONFIG_TDB
 	TDB_DATA key, data;
 
-	if (icount->tdb) {
+	nếu (icount->tdb) {
 		key.dptr = (unsigned char *) &ino;
 		key.dsize = sizeof(ext2_ino_t);
 		data.dptr = (unsigned char *) &count;
 		data.dsize = sizeof(__u32);
-		if (count) {
-			if (tdb_store(icount->tdb, key, data, TDB_REPLACE))
-				return tdb_error(icount->tdb) +
+		nếu (count) {
+			nếu (tdb_store(icount->tdb, key, data, TDB_REPLACE))
+				trả_về tdb_error(icount->tdb) +
 					EXT2_ET_TDB_SUCCESS;
-		} else {
-			if (tdb_delete(icount->tdb, key))
-				return tdb_error(icount->tdb) +
+		} không_thì {
+			nếu (tdb_delete(icount->tdb, key))
+				trả_về tdb_error(icount->tdb) +
 					EXT2_ET_TDB_SUCCESS;
 		}
-		return 0;
+		trả_về 0;
 	}
 #endif
-	if (icount->fullmap) {
+	nếu (icount->fullmap) {
 		icount->fullmap[ino] = icount_16_xlate(count);
-		return 0;
+		trả_về 0;
 	}
 
 	el = get_icount_el(icount, ino, 1);
-	if (!el)
-		return EXT2_ET_NO_MEMORY;
+	nếu (!el)
+		trả_về EXT2_ET_NO_MEMORY;
 
 	el->count = count;
-	return 0;
+	trả_về 0;
 }
 
 static errcode_t get_inode_count(ext2_icount_t icount, ext2_ino_t ino,
@@ -473,57 +473,57 @@ static errcode_t get_inode_count(ext2_icount_t icount, ext2_ino_t ino,
 #ifdef CONFIG_TDB
 	TDB_DATA key, data;
 
-	if (icount->tdb) {
+	nếu (icount->tdb) {
 		key.dptr = (unsigned char *) &ino;
 		key.dsize = sizeof(ext2_ino_t);
 
 		data = tdb_fetch(icount->tdb, key);
-		if (data.dptr == NULL) {
+		nếu (data.dptr == NULL) {
 			*count = 0;
-			return tdb_error(icount->tdb) + EXT2_ET_TDB_SUCCESS;
+			trả_về tdb_error(icount->tdb) + EXT2_ET_TDB_SUCCESS;
 		}
 
 		*count = *((__u32 *) data.dptr);
 		free(data.dptr);
-		return 0;
+		trả_về 0;
 	}
 #endif
-	if (icount->fullmap) {
+	nếu (icount->fullmap) {
 		*count = icount->fullmap[ino];
-		return 0;
+		trả_về 0;
 	}
 
 	el = get_icount_el(icount, ino, 0);
-	if (!el) {
+	nếu (!el) {
 		*count = 0;
-		return ENOENT;
+		trả_về ENOENT;
 	}
 
 	*count = el->count;
-	return 0;
+	trả_về 0;
 }
 
 errcode_t ext2fs_icount_validate(ext2_icount_t icount, FILE *out)
 {
 	errcode_t	ret = 0;
-	unsigned int	i;
+	unsigned số_nguyên	i;
 	const char *bad = "bad icount";
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->count > icount->size) {
+	nếu (icount->count > icount->size) {
 		fprintf(out, "%s: count > size\n", bad);
-		return EXT2_ET_INVALID_ARGUMENT;
+		trả_về EXT2_ET_INVALID_ARGUMENT;
 	}
-	for (i=1; i < icount->count; i++) {
-		if (icount->list[i-1].ino >= icount->list[i].ino) {
+	cho (i=1; i < icount->count; i++) {
+		nếu (icount->list[i-1].ino >= icount->list[i].ino) {
 			fprintf(out, "%s: list[%d].ino=%u, list[%d].ino=%u\n",
 				bad, i-1, icount->list[i-1].ino,
 				i, icount->list[i].ino);
 			ret = EXT2_ET_INVALID_ARGUMENT;
 		}
 	}
-	return ret;
+	trả_về ret;
 }
 
 errcode_t ext2fs_icount_fetch(ext2_icount_t icount, ext2_ino_t ino, __u16 *ret)
@@ -531,23 +531,23 @@ errcode_t ext2fs_icount_fetch(ext2_icount_t icount, ext2_ino_t ino, __u16 *ret)
 	__u32	val;
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	nếu (!ino || (ino > icount->num_inodes))
+		trả_về EXT2_ET_INVALID_ARGUMENT;
 
-	if (!icount->fullmap) {
-		if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	nếu (!icount->fullmap) {
+		nếu (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 			*ret = 1;
-			return 0;
+			trả_về 0;
 		}
-		if (icount->multiple &&
+		nếu (icount->multiple &&
 			!ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
 			*ret = 0;
-			return 0;
+			trả_về 0;
 		}
 	}
 	get_inode_count(icount, ino, &val);
 	*ret = icount_16_xlate(val);
-	return 0;
+	trả_về 0;
 }
 
 errcode_t ext2fs_icount_increment(ext2_icount_t icount, ext2_ino_t ino,
@@ -557,57 +557,57 @@ errcode_t ext2fs_icount_increment(ext2_icount_t icount, ext2_ino_t ino,
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	nếu (!ino || (ino > icount->num_inodes))
+		trả_về EXT2_ET_INVALID_ARGUMENT;
 
-	if (icount->fullmap) {
+	nếu (icount->fullmap) {
 		curr_value = icount_16_xlate(icount->fullmap[ino] + 1);
 		icount->fullmap[ino] = curr_value;
-	} else if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	} không_thì nếu (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 		/*
 		 * If the existing count is 1, then we know there is
 		 * no entry in the list.
 		 */
-		if (set_inode_count(icount, ino, 2))
-			return EXT2_ET_NO_MEMORY;
+		nếu (set_inode_count(icount, ino, 2))
+			trả_về EXT2_ET_NO_MEMORY;
 		curr_value = 2;
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-	} else if (icount->multiple) {
+	} không_thì nếu (icount->multiple) {
 		/*
 		 * The count is either zero or greater than 1; if the
 		 * inode is set in icount->multiple, then there should
 		 * be an entry in the list, so we need to fix it.
 		 */
-		if (ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
+		nếu (ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
 			get_inode_count(icount, ino, &curr_value);
 			curr_value++;
-			if (set_inode_count(icount, ino, curr_value))
-				return EXT2_ET_NO_MEMORY;
-		} else {
+			nếu (set_inode_count(icount, ino, curr_value))
+				trả_về EXT2_ET_NO_MEMORY;
+		} không_thì {
 			/*
 			 * The count was zero; mark the single bitmap
 			 * and return.
 			 */
 			ext2fs_mark_inode_bitmap2(icount->single, ino);
-			if (ret)
+			nếu (ret)
 				*ret = 1;
-			return 0;
+			trả_về 0;
 		}
-	} else {
+	} không_thì {
 		/*
 		 * The count is either zero or greater than 1; try to
 		 * find an entry in the list to determine which.
 		 */
 		get_inode_count(icount, ino, &curr_value);
 		curr_value++;
-		if (set_inode_count(icount, ino, curr_value))
-			return EXT2_ET_NO_MEMORY;
+		nếu (set_inode_count(icount, ino, curr_value))
+			trả_về EXT2_ET_NO_MEMORY;
 	}
-	if (icount->multiple)
+	nếu (icount->multiple)
 		ext2fs_mark_inode_bitmap2(icount->multiple, ino);
-	if (ret)
+	nếu (ret)
 		*ret = icount_16_xlate(curr_value);
-	return 0;
+	trả_về 0;
 }
 
 errcode_t ext2fs_icount_decrement(ext2_icount_t icount, ext2_ino_t ino,
@@ -615,98 +615,98 @@ errcode_t ext2fs_icount_decrement(ext2_icount_t icount, ext2_ino_t ino,
 {
 	__u32			curr_value;
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	nếu (!ino || (ino > icount->num_inodes))
+		trả_về EXT2_ET_INVALID_ARGUMENT;
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->fullmap) {
-		if (!icount->fullmap[ino])
-			return EXT2_ET_INVALID_ARGUMENT;
+	nếu (icount->fullmap) {
+		nếu (!icount->fullmap[ino])
+			trả_về EXT2_ET_INVALID_ARGUMENT;
 
 		curr_value = --icount->fullmap[ino];
-		if (ret)
+		nếu (ret)
 			*ret = icount_16_xlate(curr_value);
-		return 0;
+		trả_về 0;
 	}
 
-	if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	nếu (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple)
+		nếu (icount->multiple)
 			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		else {
+		không_thì {
 			set_inode_count(icount, ino, 0);
 		}
-		if (ret)
+		nếu (ret)
 			*ret = 0;
-		return 0;
+		trả_về 0;
 	}
 
-	if (icount->multiple &&
+	nếu (icount->multiple &&
 	    !ext2fs_test_inode_bitmap2(icount->multiple, ino))
-		return EXT2_ET_INVALID_ARGUMENT;
+		trả_về EXT2_ET_INVALID_ARGUMENT;
 
 	get_inode_count(icount, ino, &curr_value);
-	if (!curr_value)
-		return EXT2_ET_INVALID_ARGUMENT;
+	nếu (!curr_value)
+		trả_về EXT2_ET_INVALID_ARGUMENT;
 	curr_value--;
-	if (set_inode_count(icount, ino, curr_value))
-		return EXT2_ET_NO_MEMORY;
+	nếu (set_inode_count(icount, ino, curr_value))
+		trả_về EXT2_ET_NO_MEMORY;
 
-	if (curr_value == 1)
+	nếu (curr_value == 1)
 		ext2fs_mark_inode_bitmap2(icount->single, ino);
-	if ((curr_value == 0) && icount->multiple)
+	nếu ((curr_value == 0) && icount->multiple)
 		ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
 
-	if (ret)
+	nếu (ret)
 		*ret = icount_16_xlate(curr_value);
-	return 0;
+	trả_về 0;
 }
 
 errcode_t ext2fs_icount_store(ext2_icount_t icount, ext2_ino_t ino,
 			      __u16 count)
 {
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	nếu (!ino || (ino > icount->num_inodes))
+		trả_về EXT2_ET_INVALID_ARGUMENT;
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->fullmap)
-		return set_inode_count(icount, ino, count);
+	nếu (icount->fullmap)
+		trả_về set_inode_count(icount, ino, count);
 
-	if (count == 1) {
+	nếu (count == 1) {
 		ext2fs_mark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple)
+		nếu (icount->multiple)
 			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		return 0;
+		trả_về 0;
 	}
-	if (count == 0) {
+	nếu (count == 0) {
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple) {
+		nếu (icount->multiple) {
 			/*
 			 * If the icount->multiple bitmap is enabled,
 			 * we can just clear both bitmaps and we're done
 			 */
 			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		} else
+		} không_thì
 			set_inode_count(icount, ino, 0);
-		return 0;
+		trả_về 0;
 	}
 
-	if (set_inode_count(icount, ino, count))
-		return EXT2_ET_NO_MEMORY;
+	nếu (set_inode_count(icount, ino, count))
+		trả_về EXT2_ET_NO_MEMORY;
 	ext2fs_unmark_inode_bitmap2(icount->single, ino);
-	if (icount->multiple)
+	nếu (icount->multiple)
 		ext2fs_mark_inode_bitmap2(icount->multiple, ino);
-	return 0;
+	trả_về 0;
 }
 
 ext2_ino_t ext2fs_get_icount_size(ext2_icount_t icount)
 {
-	if (!icount || icount->magic != EXT2_ET_MAGIC_ICOUNT)
-		return 0;
+	nếu (!icount || icount->magic != EXT2_ET_MAGIC_ICOUNT)
+		trả_về 0;
 
-	return icount->size;
+	trả_về icount->size;
 }
 
 #ifdef DEBUG
@@ -721,7 +721,7 @@ ext2_icount_t	icount;
 #define DECREMENT	0x04
 
 struct test_program {
-	int		cmd;
+	số_nguyên		cmd;
 	ext2_ino_t	ino;
 	__u16		arg;
 	__u16		expected;
@@ -802,56 +802,56 @@ static void setup(void)
 
 	retval = ext2fs_initialize("test fs", EXT2_FLAG_64BITS, &param,
 				   test_io_manager, &test_fs);
-	if (retval) {
+	nếu (retval) {
 		com_err("setup", retval,
 			"while initializing filesystem");
 		exit(1);
 	}
 	retval = ext2fs_allocate_tables(test_fs);
-	if (retval) {
+	nếu (retval) {
 		com_err("setup", retval,
 			"while allocating tables for test filesystem");
 		exit(1);
 	}
 }
 
-int run_test(int flags, int size, char *dir, struct test_program *prog)
+số_nguyên run_test(số_nguyên flags, số_nguyên size, char *dir, struct test_program *prog)
 {
 	errcode_t	retval;
 	ext2_icount_t	icount;
 	struct test_program *pc;
 	__u16		result;
-	int		problem = 0;
+	số_nguyên		problem = 0;
 
-	if (dir) {
+	nếu (dir) {
 #ifdef CONFIG_TDB
 		retval = ext2fs_create_icount_tdb(test_fs, dir,
 						  flags, &icount);
-		if (retval) {
+		nếu (retval) {
 			com_err("run_test", retval,
 				"while creating icount using tdb");
 			exit(1);
 		}
-#else
+#không_thì
 		printf("Skipped\n");
-		return 0;
+		trả_về 0;
 #endif
-	} else {
+	} không_thì {
 		retval = ext2fs_create_icount2(test_fs, flags, size, 0,
 					       &icount);
-		if (retval) {
+		nếu (retval) {
 			com_err("run_test", retval, "while creating icount");
 			exit(1);
 		}
 	}
-	for (pc = prog; pc->cmd != EXIT; pc++) {
+	cho (pc = prog; pc->cmd != EXIT; pc++) {
 		switch (pc->cmd) {
 		case FETCH:
 			printf("icount_fetch(%u) = ", pc->ino);
 			break;
 		case STORE:
 			retval = ext2fs_icount_store(icount, pc->ino, pc->arg);
-			if (retval) {
+			nếu (retval) {
 				com_err("run_test", retval,
 					"while calling icount_store");
 				exit(1);
@@ -860,7 +860,7 @@ int run_test(int flags, int size, char *dir, struct test_program *prog)
 			break;
 		case INCREMENT:
 			retval = ext2fs_icount_increment(icount, pc->ino, 0);
-			if (retval) {
+			nếu (retval) {
 				com_err("run_test", retval,
 					"while calling icount_increment");
 				exit(1);
@@ -869,7 +869,7 @@ int run_test(int flags, int size, char *dir, struct test_program *prog)
 			break;
 		case DECREMENT:
 			retval = ext2fs_icount_decrement(icount, pc->ino, 0);
-			if (retval) {
+			nếu (retval) {
 				com_err("run_test", retval,
 					"while calling icount_decrement");
 				exit(1);
@@ -878,30 +878,30 @@ int run_test(int flags, int size, char *dir, struct test_program *prog)
 			break;
 		}
 		retval = ext2fs_icount_fetch(icount, pc->ino, &result);
-		if (retval) {
+		nếu (retval) {
 			com_err("run_test", retval,
 				"while calling icount_fetch");
 			exit(1);
 		}
 		printf("%u (%s)\n", result, (result == pc->expected) ?
 		       "OK" : "NOT OK");
-		if (result != pc->expected)
+		nếu (result != pc->expected)
 			problem++;
 	}
 	printf("icount size is %u\n", ext2fs_get_icount_size(icount));
 	retval = ext2fs_icount_validate(icount, stdout);
-	if (retval) {
+	nếu (retval) {
 		com_err("run_test", retval, "while calling icount_validate");
 		exit(1);
 	}
 	ext2fs_free_icount(icount);
-	return problem;
+	trả_về problem;
 }
 
 
-int main(int argc, char **argv)
+số_nguyên main(số_nguyên argc, char **argv)
 {
-	int failed = 0;
+	số_nguyên failed = 0;
 
 	setup();
 	printf("Standard icount run:\n");
@@ -914,8 +914,8 @@ int main(int argc, char **argv)
 	failed += run_test(0, 0, ".", prog);
 	printf("\nMultiple bitmap test with tdb:\n");
 	failed += run_test(EXT2_ICOUNT_OPT_INCREMENT, 0, ".", prog);
-	if (failed)
+	nếu (failed)
 		printf("FAILED!\n");
-	return failed;
+	trả_về failed;
 }
 #endif

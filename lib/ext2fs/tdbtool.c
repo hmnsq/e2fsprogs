@@ -39,11 +39,11 @@
 
 #include "tdb.h"
 
-static int do_command(void);
+static số_nguyên do_command(void);
 const char *cmdname;
 char *arg1, *arg2;
 size_t arg1len, arg2len;
-int bIterate = 0;
+số_nguyên bIterate = 0;
 char *line;
 TDB_DATA iterate_kbuf;
 char cmdline[1024];
@@ -104,52 +104,52 @@ COMMAND_TABLE cmd_table[] = {
 
 static TDB_CONTEXT *tdb;
 
-static int print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
-static int print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
-static int print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
+static số_nguyên print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
+static số_nguyên print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
+static số_nguyên print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
 
-static void print_asc(const char *buf,int len)
+static void print_asc(const char *buf,số_nguyên len)
 {
-	int i;
+	số_nguyên i;
 
 	/* We're probably printing ASCII strings so don't try to display
 	   the trailing NULL character. */
 
-	if (buf[len - 1] == 0)
+	nếu (buf[len - 1] == 0)
 	        len--;
 
-	for (i=0;i<len;i++)
+	cho (i=0;i<len;i++)
 		printf("%c",isprint(buf[i])?buf[i]:'.');
 }
 
-static void print_data(const char *buf,int len)
+static void print_data(const char *buf,số_nguyên len)
 {
-	int i=0;
-	if (len<=0) return;
+	số_nguyên i=0;
+	nếu (len<=0) trả_về;
 	printf("[%03X] ",i);
-	for (i=0;i<len;) {
-		printf("%02X ",(int)buf[i]);
+	cho (i=0;i<len;) {
+		printf("%02X ",(số_nguyên)buf[i]);
 		i++;
-		if (i%8 == 0) printf(" ");
-		if (i%16 == 0) {
+		nếu (i%8 == 0) printf(" ");
+		nếu (i%16 == 0) {
 			print_asc(&buf[i-16],8); printf(" ");
 			print_asc(&buf[i-8],8); printf("\n");
-			if (i<len) printf("[%03X] ",i);
+			nếu (i<len) printf("[%03X] ",i);
 		}
 	}
-	if (i%16) {
-		int n;
+	nếu (i%16) {
+		số_nguyên n;
 
 		n = 16 - (i%16);
 		printf(" ");
-		if (n>8) printf(" ");
-		while (n--) printf("   ");
+		nếu (n>8) printf(" ");
+		trong_khi (n--) printf("   ");
 
 		n = i%16;
-		if (n > 8) n = 8;
+		nếu (n > 8) n = 8;
 		print_asc(&buf[i-(i%16)],n); printf(" ");
 		n = (i%16) - n;
-		if (n>0) print_asc(&buf[i-n],n);
+		nếu (n>0) print_asc(&buf[i-n],n);
 		printf("\n");
 	}
 }
@@ -187,19 +187,19 @@ static void terror(const char *why)
 
 static void create_tdb(const char *tdbname)
 {
-	if (tdb) tdb_close(tdb);
+	nếu (tdb) tdb_close(tdb);
 	tdb = tdb_open(tdbname, 0, TDB_CLEAR_IF_FIRST,
 		       O_RDWR | O_CREAT | O_TRUNC, 0600);
-	if (!tdb) {
+	nếu (!tdb) {
 		printf("Could not create %s: %s\n", tdbname, strerror(errno));
 	}
 }
 
 static void open_tdb(const char *tdbname)
 {
-	if (tdb) tdb_close(tdb);
+	nếu (tdb) tdb_close(tdb);
 	tdb = tdb_open(tdbname, 0, 0, O_RDWR, 0600);
-	if (!tdb) {
+	nếu (!tdb) {
 		printf("Could not open %s: %s\n", tdbname, strerror(errno));
 	}
 }
@@ -208,9 +208,9 @@ static void insert_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
 {
 	TDB_DATA key, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	nếu ((keyname == NULL) || (keylen == 0)) {
 		terror("need key");
-		return;
+		trả_về;
 	}
 
 	key.dptr = (unsigned char *)keyname;
@@ -218,7 +218,7 @@ static void insert_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
 	dbuf.dptr = (unsigned char *)data;
 	dbuf.dsize = datalen;
 
-	if (tdb_store(tdb, key, dbuf, TDB_INSERT) == -1) {
+	nếu (tdb_store(tdb, key, dbuf, TDB_INSERT) == -1) {
 		terror("insert failed");
 	}
 }
@@ -227,14 +227,14 @@ static void store_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
 {
 	TDB_DATA key, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	nếu ((keyname == NULL) || (keylen == 0)) {
 		terror("need key");
-		return;
+		trả_về;
 	}
 
-	if ((data == NULL) || (datalen == 0)) {
+	nếu ((data == NULL) || (datalen == 0)) {
 		terror("need data");
-		return;
+		trả_về;
 	}
 
 	key.dptr = (unsigned char *)keyname;
@@ -245,7 +245,7 @@ static void store_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
 	printf("Storing key:\n");
 	print_rec(tdb, key, dbuf, NULL);
 
-	if (tdb_store(tdb, key, dbuf, TDB_REPLACE) == -1) {
+	nếu (tdb_store(tdb, key, dbuf, TDB_REPLACE) == -1) {
 		terror("store failed");
 	}
 }
@@ -254,40 +254,40 @@ static void show_tdb(char *keyname, size_t keylen)
 {
 	TDB_DATA key, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	nếu ((keyname == NULL) || (keylen == 0)) {
 		terror("need key");
-		return;
+		trả_về;
 	}
 
 	key.dptr = (unsigned char *)keyname;
 	key.dsize = keylen;
 
 	dbuf = tdb_fetch(tdb, key);
-	if (!dbuf.dptr) {
+	nếu (!dbuf.dptr) {
 	    terror("fetch failed");
-	    return;
+	    trả_về;
 	}
 
 	print_rec(tdb, key, dbuf, NULL);
 
 	free( dbuf.dptr );
 
-	return;
+	trả_về;
 }
 
 static void delete_tdb(char *keyname, size_t keylen)
 {
 	TDB_DATA key;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	nếu ((keyname == NULL) || (keylen == 0)) {
 		terror("need key");
-		return;
+		trả_về;
 	}
 
 	key.dptr = (unsigned char *)keyname;
 	key.dsize = keylen;
 
-	if (tdb_delete(tdb, key) != 0) {
+	nếu (tdb_delete(tdb, key) != 0) {
 		terror("delete failed");
 	}
 }
@@ -297,84 +297,84 @@ static void move_rec(char *keyname, size_t keylen, char* tdbname)
 	TDB_DATA key, dbuf;
 	TDB_CONTEXT *dst_tdb;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	nếu ((keyname == NULL) || (keylen == 0)) {
 		terror("need key");
-		return;
+		trả_về;
 	}
 
-	if ( !tdbname ) {
+	nếu ( !tdbname ) {
 		terror("need destination tdb name");
-		return;
+		trả_về;
 	}
 
 	key.dptr = (unsigned char *)keyname;
 	key.dsize = keylen;
 
 	dbuf = tdb_fetch(tdb, key);
-	if (!dbuf.dptr) {
+	nếu (!dbuf.dptr) {
 		terror("fetch failed");
-		return;
+		trả_về;
 	}
 
 	print_rec(tdb, key, dbuf, NULL);
 
 	dst_tdb = tdb_open(tdbname, 0, 0, O_RDWR, 0600);
-	if ( !dst_tdb ) {
+	nếu ( !dst_tdb ) {
 		terror("unable to open destination tdb");
-		return;
+		trả_về;
 	}
 
-	if ( tdb_store( dst_tdb, key, dbuf, TDB_REPLACE ) == -1 ) {
+	nếu ( tdb_store( dst_tdb, key, dbuf, TDB_REPLACE ) == -1 ) {
 		terror("failed to move record");
 	}
-	else
+	không_thì
 		printf("record moved\n");
 
 	tdb_close( dst_tdb );
 
-	return;
+	trả_về;
 }
 
-static int print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+static số_nguyên print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
 {
-	printf("\nkey %d bytes\n", (int)key.dsize);
+	printf("\nkey %d bytes\n", (số_nguyên)key.dsize);
 	print_asc((const char *)key.dptr, key.dsize);
-	printf("\ndata %d bytes\n", (int)dbuf.dsize);
+	printf("\ndata %d bytes\n", (số_nguyên)dbuf.dsize);
 	print_data((const char *)dbuf.dptr, dbuf.dsize);
-	return 0;
+	trả_về 0;
 }
 
-static int print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+static số_nguyên print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
 {
-	printf("key %d bytes: ", (int)key.dsize);
+	printf("key %d bytes: ", (số_nguyên)key.dsize);
 	print_asc((const char *)key.dptr, key.dsize);
 	printf("\n");
-	return 0;
+	trả_về 0;
 }
 
-static int print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+static số_nguyên print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
 {
-	printf("key %d bytes\n", (int)key.dsize);
+	printf("key %d bytes\n", (số_nguyên)key.dsize);
 	print_data((const char *)key.dptr, key.dsize);
 	printf("\n");
-	return 0;
+	trả_về 0;
 }
 
-static int total_bytes;
+static số_nguyên total_bytes;
 
-static int traverse_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+static số_nguyên traverse_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
 {
 	total_bytes += dbuf.dsize;
-	return 0;
+	trả_về 0;
 }
 
 static void info_tdb(void)
 {
-	int count;
+	số_nguyên count;
 	total_bytes = 0;
-	if ((count = tdb_traverse(tdb, traverse_fn, NULL)) == -1)
+	nếu ((count = tdb_traverse(tdb, traverse_fn, NULL)) == -1)
 		printf("Error = %s\n", tdb_errorstr(tdb));
-	else
+	không_thì
 		printf("%d records totalling %d bytes\n", count, total_bytes);
 }
 
@@ -385,15 +385,15 @@ static char *tdb_getline(const char *prompt)
 	fputs(prompt, stdout);
 	thisline[0] = 0;
 	p = fgets(thisline, sizeof(thisline)-1, stdin);
-	if (p) p = strchr(p, '\n');
-	if (p) *p = 0;
-	return p?thisline:NULL;
+	nếu (p) p = strchr(p, '\n');
+	nếu (p) *p = 0;
+	trả_về p?thisline:NULL;
 }
 
-static int do_delete_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf,
+static số_nguyên do_delete_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf,
                      void *state)
 {
-    return tdb_delete(the_tdb, key);
+    trả_về tdb_delete(the_tdb, key);
 }
 
 static void first_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
@@ -402,8 +402,8 @@ static void first_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
 	*pkey = tdb_firstkey(the_tdb);
 
 	dbuf = tdb_fetch(the_tdb, *pkey);
-	if (!dbuf.dptr) terror("fetch failed");
-	else {
+	nếu (!dbuf.dptr) terror("fetch failed");
+	không_thì {
 		print_rec(the_tdb, *pkey, dbuf, NULL);
 	}
 }
@@ -414,24 +414,24 @@ static void next_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
 	*pkey = tdb_nextkey(the_tdb, *pkey);
 
 	dbuf = tdb_fetch(the_tdb, *pkey);
-	if (!dbuf.dptr)
+	nếu (!dbuf.dptr)
 		terror("fetch failed");
-	else
+	không_thì
 		print_rec(the_tdb, *pkey, dbuf, NULL);
 }
 
-static int do_command(void)
+static số_nguyên do_command(void)
 {
 	COMMAND_TABLE *ctp = cmd_table;
 	enum commands mycmd = CMD_HELP;
-	int cmd_len;
+	số_nguyên cmd_len;
 
-	if (cmdname && strlen(cmdname) == 0) {
+	nếu (cmdname && strlen(cmdname) == 0) {
 	    mycmd = CMD_NEXT;
-	} else {
-	    while (ctp->name) {
+	} không_thì {
+	    trong_khi (ctp->name) {
 		cmd_len = strlen(ctp->name);
-		if (strncmp(ctp->name,cmdname,cmd_len) == 0) {
+		nếu (strncmp(ctp->name,cmdname,cmd_len) == 0) {
 			mycmd = ctp->cmd;
 			break;
 		}
@@ -443,80 +443,80 @@ static int do_command(void)
 	case CMD_CREATE_TDB:
             bIterate = 0;
             create_tdb(arg1);
-	    return 0;
+	    trả_về 0;
 	case CMD_OPEN_TDB:
             bIterate = 0;
             open_tdb(arg1);
-            return 0;
+            trả_về 0;
 	case CMD_SYSTEM:
 	    /* Shell command */
 	    system(arg1);
-	    return 0;
+	    trả_về 0;
 	case CMD_QUIT:
-	    return 1;
+	    trả_về 1;
 	default:
 	    /* all the rest require a open database */
-	    if (!tdb) {
+	    nếu (!tdb) {
 		bIterate = 0;
 		terror("database not open");
 		help();
-		return 0;
+		trả_về 0;
 	    }
 	    switch (mycmd) {
 	    case CMD_ERASE:
 		bIterate = 0;
 		tdb_traverse(tdb, do_delete_fn, NULL);
-		return 0;
+		trả_về 0;
 	    case CMD_DUMP:
 		bIterate = 0;
 		tdb_traverse(tdb, print_rec, NULL);
-		return 0;
+		trả_về 0;
 	    case CMD_INSERT:
 		bIterate = 0;
 		insert_tdb(arg1, arg1len,arg2,arg2len);
-		return 0;
+		trả_về 0;
 	    case CMD_MOVE:
 		bIterate = 0;
 		move_rec(arg1,arg1len,arg2);
-		return 0;
+		trả_về 0;
 	    case CMD_STORE:
 		bIterate = 0;
 		store_tdb(arg1,arg1len,arg2,arg2len);
-		return 0;
+		trả_về 0;
 	    case CMD_SHOW:
 		bIterate = 0;
 		show_tdb(arg1, arg1len);
-		return 0;
+		trả_về 0;
 	    case CMD_KEYS:
 		tdb_traverse(tdb, print_key, NULL);
-		return 0;
+		trả_về 0;
 	    case CMD_HEXKEYS:
 		tdb_traverse(tdb, print_hexkey, NULL);
-		return 0;
+		trả_về 0;
 	    case CMD_DELETE:
 		bIterate = 0;
 		delete_tdb(arg1,arg1len);
-		return 0;
+		trả_về 0;
 	    case CMD_LIST_HASH_FREE:
 		tdb_dump_all(tdb);
-		return 0;
+		trả_về 0;
 	    case CMD_LIST_FREE:
 		tdb_printfreelist(tdb);
-		return 0;
+		trả_về 0;
 	    case CMD_INFO:
 		info_tdb();
-		return 0;
+		trả_về 0;
 	    case CMD_FIRST:
 		bIterate = 1;
 		first_record(tdb, &iterate_kbuf);
-		return 0;
+		trả_về 0;
 	    case CMD_NEXT:
-	       if (bIterate)
+	       nếu (bIterate)
 		  next_record(tdb, &iterate_kbuf);
-		return 0;
+		trả_về 0;
 	    case CMD_HELP:
 		help();
-		return 0;
+		trả_về 0;
             case CMD_CREATE_TDB:
             case CMD_OPEN_TDB:
             case CMD_SYSTEM:
@@ -525,11 +525,11 @@ static int do_command(void)
                  * unhandled commands.  cases included here to avoid compiler
                  * warnings.
                  */
-                return 0;
+                trả_về 0;
 	    }
 	}
 
-	return 0;
+	trả_về 0;
 }
 
 static char *convert_string(char *instring, size_t *sizep)
@@ -541,30 +541,30 @@ static char *convert_string(char *instring, size_t *sizep)
 
     outp = inp = instring;
 
-    while (*inp) {
-	if (*inp == '\\') {
+    trong_khi (*inp) {
+	nếu (*inp == '\\') {
 	    inp++;
-	    if (*inp && strchr("0123456789abcdefABCDEF",(int)*inp)) {
+	    nếu (*inp && strchr("0123456789abcdefABCDEF",(số_nguyên)*inp)) {
 		temp[0] = *inp++;
 		temp[1] = '\0';
-		if (*inp && strchr("0123456789abcdefABCDEF",(int)*inp)) {
+		nếu (*inp && strchr("0123456789abcdefABCDEF",(số_nguyên)*inp)) {
 		    temp[1] = *inp++;
 		    temp[2] = '\0';
 		}
 		*outp++ = (char)strtol((const char *)temp,NULL,16);
-	    } else {
+	    } không_thì {
 		*outp++ = *inp++;
 	    }
-	} else {
+	} không_thì {
 	    *outp++ = *inp++;
 	}
 	length++;
     }
     *sizep = length;
-    return instring;
+    trả_về instring;
 }
 
-int main(int argc, char *argv[])
+số_nguyên main(số_nguyên argc, char *argv[])
 {
     cmdname = "";
     arg1 = NULL;
@@ -572,7 +572,7 @@ int main(int argc, char *argv[])
     arg2 = NULL;
     arg2len = 0;
 
-    if (argv[1]) {
+    nếu (argv[1]) {
 	cmdname = "open";
 	arg1 = argv[1];
         do_command();
@@ -584,24 +584,24 @@ int main(int argc, char *argv[])
 	case 1:
 	case 2:
 	    /* Interactive mode */
-	    while ((cmdname = tdb_getline("tdb> "))) {
+	    trong_khi ((cmdname = tdb_getline("tdb> "))) {
 		arg2 = arg1 = NULL;
-		if ((arg1 = strchr((const char *)cmdname,' ')) != NULL) {
+		nếu ((arg1 = strchr((const char *)cmdname,' ')) != NULL) {
 		    arg1++;
 		    arg2 = arg1;
-		    while (*arg2) {
-			if (*arg2 == ' ') {
+		    trong_khi (*arg2) {
+			nếu (*arg2 == ' ') {
 			    *arg2++ = '\0';
 			    break;
 			}
-			if ((*arg2++ == '\\') && (*arg2 == ' ')) {
+			nếu ((*arg2++ == '\\') && (*arg2 == ' ')) {
 			    arg2++;
 			}
 		    }
 		}
-		if (arg1) arg1 = convert_string(arg1,&arg1len);
-		if (arg2) arg2 = convert_string(arg2,&arg2len);
-		if (do_command()) break;
+		nếu (arg1) arg1 = convert_string(arg1,&arg1len);
+		nếu (arg2) arg2 = convert_string(arg2,&arg2len);
+		nếu (do_command()) break;
 	    }
 	    break;
 	case 5:
@@ -615,7 +615,7 @@ int main(int argc, char *argv[])
 	    break;
     }
 
-    if (tdb) tdb_close(tdb);
+    nếu (tdb) tdb_close(tdb);
 
-    return 0;
+    trả_về 0;
 }

@@ -98,7 +98,7 @@ static inline struct page * rb_insert_page_cache(struct inode * inode,
 #include <stdint.h>
 #include "compiler.h"
 
-#if __GNUC_PREREQ (4, 6)
+#nếu __GNUC_PREREQ (4, 6)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-function"
 #endif
@@ -123,14 +123,14 @@ struct rb_root
 #define ext2fs_rb_color(r)   ((r)->rb_parent_color & 1)
 #define ext2fs_rb_is_red(r)   (!ext2fs_rb_color(r))
 #define ext2fs_rb_is_black(r) ext2fs_rb_color(r)
-#define ext2fs_rb_set_red(r)  do { (r)->rb_parent_color &= ~1; } while (0)
-#define ext2fs_rb_set_black(r)  do { (r)->rb_parent_color |= 1; } while (0)
+#define ext2fs_rb_set_red(r)  do { (r)->rb_parent_color &= ~1; } trong_khi (0)
+#define ext2fs_rb_set_black(r)  do { (r)->rb_parent_color |= 1; } trong_khi (0)
 
 static inline void ext2fs_rb_set_parent(struct rb_node *rb, struct rb_node *p)
 {
 	rb->rb_parent_color = (rb->rb_parent_color & 3) | (uintptr_t)p;
 }
-static inline void ext2fs_rb_set_color(struct rb_node *rb, int color)
+static inline void ext2fs_rb_set_color(struct rb_node *rb, số_nguyên color)
 {
 	rb->rb_parent_color = (rb->rb_parent_color & ~1) | color;
 }
@@ -138,14 +138,14 @@ static inline void ext2fs_rb_set_color(struct rb_node *rb, int color)
 #define RB_ROOT	(struct rb_root) { NULL, }
 #define	ext2fs_rb_entry(ptr, type, member) container_of(ptr, type, member)
 
-static inline int ext2fs_rb_empty_root(struct rb_root *root)
+static inline số_nguyên ext2fs_rb_empty_root(struct rb_root *root)
 {
-	return root->rb_node == NULL;
+	trả_về root->rb_node == NULL;
 }
 
-static inline int ext2fs_rb_empty_node(struct rb_node *node)
+static inline số_nguyên ext2fs_rb_empty_node(struct rb_node *node)
 {
-	return ext2fs_rb_parent(node) == node;
+	trả_về ext2fs_rb_parent(node) == node;
 }
 
 static inline void ext2fs_rb_clear_node(struct rb_node *node)
@@ -176,7 +176,7 @@ static inline void ext2fs_rb_link_node(struct rb_node * node,
 	*rb_link = node;
 }
 
-#if __GNUC_PREREQ (4, 6)
+#nếu __GNUC_PREREQ (4, 6)
 #pragma GCC diagnostic pop
 #endif
 

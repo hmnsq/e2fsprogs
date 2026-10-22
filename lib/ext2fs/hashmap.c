@@ -7,27 +7,27 @@ struct ext2fs_hashmap {
 	void(*free)(void*);
 	struct ext2fs_hashmap_entry *first;
 	struct ext2fs_hashmap_entry *last;
-#if __GNUC_PREREQ (4, 8)
+#nếu __GNUC_PREREQ (4, 8)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #endif
 	struct ext2fs_hashmap_entry *entries[0];
-#if __GNUC_PREREQ (4, 8)
+#nếu __GNUC_PREREQ (4, 8)
 #pragma GCC diagnostic pop
 #endif
 };
 
 uint32_t ext2fs_djb2_hash(const void *str, size_t size)
 {
-	int c;
+	số_nguyên c;
 	const char *s = str;
 	uint32_t hash = 5381;
 
-	while (size-- > 0) {
+	trong_khi (size-- > 0) {
 		c = *s++;
 		hash = ((hash << 5) + hash) + c;
 	}
-	return hash;
+	trả_về hash;
 }
 
 struct ext2fs_hashmap *ext2fs_hashmap_create(
@@ -36,24 +36,24 @@ struct ext2fs_hashmap *ext2fs_hashmap_create(
 {
 	struct ext2fs_hashmap *h = calloc(1, sizeof(struct ext2fs_hashmap) +
 				sizeof(struct ext2fs_hashmap_entry) * size);
-	if (!h)
-		return NULL;
+	nếu (!h)
+		trả_về NULL;
 
 	h->size = size;
 	h->free = free_fct;
 	h->hash = hash_fct;
 	h->first = h->last = NULL;
-	return h;
+	trả_về h;
 }
 
-int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
+số_nguyên ext2fs_hashmap_add(struct ext2fs_hashmap *h,
 		       void *data, const void *key, size_t key_len)
 {
 	uint32_t hash = h->hash(key, key_len) % h->size;
 	struct ext2fs_hashmap_entry *e = malloc(sizeof(*e));
 
-	if (!e)
-		return -1;
+	nếu (!e)
+		trả_về -1;
 
 	e->data = data;
 	e->key = key;
@@ -63,13 +63,13 @@ int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
 
 	e->list_prev = NULL;
 	e->list_next = h->first;
-	if (h->first)
+	nếu (h->first)
 		h->first->list_prev = e;
 	h->first = e;
-	if (!h->last)
+	nếu (!h->last)
 		h->last = e;
 
-	return 0;
+	trả_về 0;
 }
 
 void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *key,
@@ -78,28 +78,28 @@ void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *key,
 	struct ext2fs_hashmap_entry *iter;
 	uint32_t hash = h->hash(key, key_len) % h->size;
 
-	for (iter = h->entries[hash]; iter; iter = iter->next)
-		if (iter->key_len == key_len && !memcmp(iter->key, key, key_len))
-			return iter->data;
-	return NULL;
+	cho (iter = h->entries[hash]; iter; iter = iter->next)
+		nếu (iter->key_len == key_len && !memcmp(iter->key, key, key_len))
+			trả_về iter->data;
+	trả_về NULL;
 }
 
 void *ext2fs_hashmap_iter_in_order(struct ext2fs_hashmap *h,
 				   struct ext2fs_hashmap_entry **it)
 {
 	*it = *it ? (*it)->list_next : h->first;
-	return *it ? (*it)->data : NULL;
+	trả_về *it ? (*it)->data : NULL;
 }
 
 void ext2fs_hashmap_free(struct ext2fs_hashmap *h)
 {
 	size_t	i;
 
-	for (i = 0; i < h->size; ++i) {
+	cho (i = 0; i < h->size; ++i) {
 		struct ext2fs_hashmap_entry *it = h->entries[i];
-		while (it) {
+		trong_khi (it) {
 			struct ext2fs_hashmap_entry *tmp = it->next;
-			if (h->free)
+			nếu (h->free)
 				h->free(it->data);
 			free(it);
 			it = tmp;
