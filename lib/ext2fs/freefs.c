@@ -9,81 +9,81 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#जइ HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
-#include "hashmap.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fsP.h"
+#अन्तर्भाव "hashmap.h"
 
-void ext2fs_free(ext2_filsys fs)
+शून्य ext2fs_free(ext2_filsys fs)
 {
-	if (!fs || (fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS))
-		return;
-	if (fs->image_io != fs->io) {
-		if (fs->image_io)
+	जइ (!fs || (fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS))
+		प्रत्यागम;
+	जइ (fs->image_io != fs->io) {
+		जइ (fs->image_io)
 			io_channel_close(fs->image_io);
 	}
-	if (fs->io) {
+	जइ (fs->io) {
 		io_channel_close(fs->io);
 	}
-	if (fs->device_name)
+	जइ (fs->device_name)
 		ext2fs_free_mem(&fs->device_name);
-	if (fs->super)
+	जइ (fs->super)
 		ext2fs_free_mem(&fs->super);
-	if (fs->orig_super)
+	जइ (fs->orig_super)
 		ext2fs_free_mem(&fs->orig_super);
-	if (fs->group_desc)
+	जइ (fs->group_desc)
 		ext2fs_free_mem(&fs->group_desc);
-	if (fs->block_map)
+	जइ (fs->block_map)
 		ext2fs_free_block_bitmap(fs->block_map);
-	if (fs->inode_map)
+	जइ (fs->inode_map)
 		ext2fs_free_inode_bitmap(fs->inode_map);
-	if (fs->image_header)
+	जइ (fs->image_header)
 		ext2fs_free_mem(&fs->image_header);
 
-	if (fs->badblocks)
+	जइ (fs->badblocks)
 		ext2fs_badblocks_list_free(fs->badblocks);
 	fs->badblocks = 0;
 
-	if (fs->dblist)
+	जइ (fs->dblist)
 		ext2fs_free_dblist(fs->dblist);
 
-	if (fs->icache)
+	जइ (fs->icache)
 		ext2fs_free_inode_cache(fs->icache);
 
-	if (fs->mmp_buf)
+	जइ (fs->mmp_buf)
 		ext2fs_free_mem(&fs->mmp_buf);
-	if (fs->mmp_cmp)
+	जइ (fs->mmp_cmp)
 		ext2fs_free_mem(&fs->mmp_cmp);
 
-	if (fs->block_sha_map)
+	जइ (fs->block_sha_map)
 		ext2fs_hashmap_free(fs->block_sha_map);
 
 	fs->magic = 0;
 
-	ext2fs_zero_blocks2(NULL, 0, 0, NULL, NULL);
+	ext2fs_zero_blocks2(रिक्त, 0, 0, रिक्त, रिक्त);
 	ext2fs_free_mem(&fs);
 }
 
 /*
  * This procedure frees a badblocks list.
  */
-void ext2fs_u32_list_free(ext2_u32_list bb)
+शून्य ext2fs_u32_list_free(ext2_u32_list bb)
 {
-	if (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
-		return;
+	जइ (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
+		प्रत्यागम;
 
-	if (bb->list)
+	जइ (bb->list)
 		ext2fs_free_mem(&bb->list);
 	bb->list = 0;
 	ext2fs_free_mem(&bb);
 }
 
-void ext2fs_badblocks_list_free(ext2_badblocks_list bb)
+शून्य ext2fs_badblocks_list_free(ext2_badblocks_list bb)
 {
 	ext2fs_u32_list_free((ext2_u32_list) bb);
 }
@@ -92,15 +92,15 @@ void ext2fs_badblocks_list_free(ext2_badblocks_list bb)
 /*
  * Free a directory block list
  */
-void ext2fs_free_dblist(ext2_dblist dblist)
+शून्य ext2fs_free_dblist(ext2_dblist dblist)
 {
-	if (!dblist || (dblist->magic != EXT2_ET_MAGIC_DBLIST))
-		return;
+	जइ (!dblist || (dblist->magic != EXT2_ET_MAGIC_DBLIST))
+		प्रत्यागम;
 
-	if (dblist->list)
+	जइ (dblist->list)
 		ext2fs_free_mem(&dblist->list);
 	dblist->list = 0;
-	if (dblist->fs && dblist->fs->dblist == dblist)
+	जइ (dblist->fs && dblist->fs->dblist == dblist)
 		dblist->fs->dblist = 0;
 	dblist->magic = 0;
 	ext2fs_free_mem(&dblist);

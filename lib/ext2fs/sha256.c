@@ -11,13 +11,13 @@
  */
 
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#अन्तर्भाव "config.h"
+#जइ HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
 #endif
-#include "ext2fs.h"
+#अन्तर्भाव "ext2fs.h"
 
-static const __u32 K[64] = {
+स्थिर ध्रुव __u32 K[64] = {
     0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL, 0x3956c25bUL,
     0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL, 0xd807aa98UL, 0x12835b01UL,
     0x243185beUL, 0x550c7dc3UL, 0x72be5d74UL, 0x80deb1feUL, 0x9bdc06a7UL,
@@ -51,72 +51,72 @@ static const __u32 K[64] = {
      h  = t0 + t1;
 
 #define STORE64H(x, y) \
-	do { \
-		(y)[0] = (unsigned char)(((x)>>56)&255);\
-		(y)[1] = (unsigned char)(((x)>>48)&255);\
-		(y)[2] = (unsigned char)(((x)>>40)&255);\
-		(y)[3] = (unsigned char)(((x)>>32)&255);\
-		(y)[4] = (unsigned char)(((x)>>24)&255);\
-		(y)[5] = (unsigned char)(((x)>>16)&255);\
-		(y)[6] = (unsigned char)(((x)>>8)&255);\
-		(y)[7] = (unsigned char)((x)&255); } while(0)
+	करेहि { \
+		(y)[0] = (unsigned वर्ण)(((x)>>56)&255);\
+		(y)[1] = (unsigned वर्ण)(((x)>>48)&255);\
+		(y)[2] = (unsigned वर्ण)(((x)>>40)&255);\
+		(y)[3] = (unsigned वर्ण)(((x)>>32)&255);\
+		(y)[4] = (unsigned वर्ण)(((x)>>24)&255);\
+		(y)[5] = (unsigned वर्ण)(((x)>>16)&255);\
+		(y)[6] = (unsigned वर्ण)(((x)>>8)&255);\
+		(y)[7] = (unsigned वर्ण)((x)&255); } जाव(0)
 
 #define STORE32H(x, y)                                                                     \
-  do { (y)[0] = (unsigned char)(((x)>>24)&255); (y)[1] = (unsigned char)(((x)>>16)&255);   \
-       (y)[2] = (unsigned char)(((x)>>8)&255); (y)[3] = (unsigned char)((x)&255); } while(0)
+  करेहि { (y)[0] = (unsigned वर्ण)(((x)>>24)&255); (y)[1] = (unsigned वर्ण)(((x)>>16)&255);   \
+       (y)[2] = (unsigned वर्ण)(((x)>>8)&255); (y)[3] = (unsigned वर्ण)((x)&255); } जाव(0)
 
 #define LOAD32H(x, y)                            \
-  do { x = ((__u32)((y)[0] & 255)<<24) | \
+  करेहि { x = ((__u32)((y)[0] & 255)<<24) | \
            ((__u32)((y)[1] & 255)<<16) | \
            ((__u32)((y)[2] & 255)<<8)  | \
-           ((__u32)((y)[3] & 255)); } while(0)
+           ((__u32)((y)[3] & 255)); } जाव(0)
 
-struct sha256_state {
+संरचना sha256_state {
     __u64 length;
     __u32 state[8], curlen;
-    unsigned char buf[64];
+    unsigned वर्ण buf[64];
 };
 
 /* This is a highly simplified version from libtomcrypt */
-struct hash_state {
-	struct sha256_state sha256;
+संरचना hash_state {
+	संरचना sha256_state sha256;
 };
 
-static void sha256_compress(struct hash_state * md, const unsigned char *buf)
+स्थिर शून्य sha256_compress(संरचना hash_state * md, ध्रुव unsigned वर्ण *buf)
 {
     __u32 S[8], W[64], t0, t1;
     __u32 t;
-    int i;
+    पूर्णाङ्क i;
 
     /* copy state into S */
-    for (i = 0; i < 8; i++) {
+    प्रति (i = 0; i < 8; i++) {
         S[i] = md->sha256.state[i];
     }
 
     /* copy the state into 512-bits into W[0..15] */
-    for (i = 0; i < 16; i++) {
+    प्रति (i = 0; i < 16; i++) {
         LOAD32H(W[i], buf + (4*i));
     }
 
     /* fill W[16..63] */
-    for (i = 16; i < 64; i++) {
+    प्रति (i = 16; i < 64; i++) {
         W[i] = Gamma1(W[i - 2]) + W[i - 7] + Gamma0(W[i - 15]) + W[i - 16];
     }        
 
     /* Compress */
-     for (i = 0; i < 64; ++i) {
+     प्रति (i = 0; i < 64; ++i) {
          RND(S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7],i);
          t = S[7]; S[7] = S[6]; S[6] = S[5]; S[5] = S[4]; 
          S[4] = S[3]; S[3] = S[2]; S[2] = S[1]; S[1] = S[0]; S[0] = t;
      }  
 
     /* feedback */
-    for (i = 0; i < 8; i++) {
+    प्रति (i = 0; i < 8; i++) {
         md->sha256.state[i] = md->sha256.state[i] + S[i];
     }
 }
 
-static void sha256_init(struct hash_state * md)
+स्थिर शून्य sha256_init(संरचना hash_state * md)
 {
     md->sha256.curlen = 0;
     md->sha256.length = 0;
@@ -132,23 +132,23 @@ static void sha256_init(struct hash_state * md)
 
 #define MIN(x, y) ( ((x)<(y))?(x):(y) )
 #define SHA256_BLOCKSIZE 64
-static void sha256_process(struct hash_state * md, const unsigned char *in, unsigned long inlen)
+स्थिर शून्य sha256_process(संरचना hash_state * md, ध्रुव unsigned वर्ण *in, unsigned long inlen)
 {
     unsigned long n;
 
-    while (inlen > 0) {
-	    if (md->sha256.curlen == 0 && inlen >= SHA256_BLOCKSIZE) {
+    जाव (inlen > 0) {
+	    जइ (md->sha256.curlen == 0 && inlen >= SHA256_BLOCKSIZE) {
 		    sha256_compress(md, in);
 		    md->sha256.length += SHA256_BLOCKSIZE * 8;
 		    in += SHA256_BLOCKSIZE;
 		    inlen -= SHA256_BLOCKSIZE;
-	    } else {
+	    } अण्णहा {
 		    n = MIN(inlen, (SHA256_BLOCKSIZE - md->sha256.curlen));
 		    memcpy(md->sha256.buf + md->sha256.curlen, in, (size_t)n);
 		    md->sha256.curlen += n;
 		    in += n;
 		    inlen -= n;
-		    if (md->sha256.curlen == SHA256_BLOCKSIZE) {
+		    जइ (md->sha256.curlen == SHA256_BLOCKSIZE) {
 			    sha256_compress(md, md->sha256.buf);
 			    md->sha256.length += 8*SHA256_BLOCKSIZE;
 			    md->sha256.curlen = 0;
@@ -158,31 +158,31 @@ static void sha256_process(struct hash_state * md, const unsigned char *in, unsi
 }
 
 
-static void sha256_done(struct hash_state * md, unsigned char *out)
+स्थिर शून्य sha256_done(संरचना hash_state * md, unsigned वर्ण *out)
 {
-    int i;
+    पूर्णाङ्क i;
 
     /* increase the length of the message */
     md->sha256.length += md->sha256.curlen * 8;
 
     /* append the '1' bit */
-    md->sha256.buf[md->sha256.curlen++] = (unsigned char)0x80;
+    md->sha256.buf[md->sha256.curlen++] = (unsigned वर्ण)0x80;
 
     /* if the length is currently above 56 bytes we append zeros
      * then compress.  Then we can fall back to padding zeros and length
      * encoding like normal.
      */
-    if (md->sha256.curlen > 56) {
-        while (md->sha256.curlen < 64) {
-            md->sha256.buf[md->sha256.curlen++] = (unsigned char)0;
+    जइ (md->sha256.curlen > 56) {
+        जाव (md->sha256.curlen < 64) {
+            md->sha256.buf[md->sha256.curlen++] = (unsigned वर्ण)0;
         }
         sha256_compress(md, md->sha256.buf);
         md->sha256.curlen = 0;
     }
 
     /* pad up to 56 bytes of zeroes */
-    while (md->sha256.curlen < 56) {
-        md->sha256.buf[md->sha256.curlen++] = (unsigned char)0;
+    जाव (md->sha256.curlen < 56) {
+        md->sha256.buf[md->sha256.curlen++] = (unsigned वर्ण)0;
     }
 
     /* store length */
@@ -190,15 +190,15 @@ static void sha256_done(struct hash_state * md, unsigned char *out)
     sha256_compress(md, md->sha256.buf);
 
     /* copy output */
-    for (i = 0; i < 8; i++) {
+    प्रति (i = 0; i < 8; i++) {
         STORE32H(md->sha256.state[i], out+(4*i));
     }
 }
 
-void ext2fs_sha256(const unsigned char *in, unsigned long in_size,
-		   unsigned char out[EXT2FS_SHA256_LENGTH])
+शून्य ext2fs_sha256(ध्रुव unsigned वर्ण *in, unsigned long in_size,
+		   unsigned वर्ण out[EXT2FS_SHA256_LENGTH])
 {
-	struct hash_state md;
+	संरचना hash_state md;
 
 	sha256_init(&md);
 	sha256_process(&md, in, in_size);
@@ -206,9 +206,9 @@ void ext2fs_sha256(const unsigned char *in, unsigned long in_size,
 }
 
 #ifdef UNITTEST
-static const struct {
-	char *msg;
-	unsigned char hash[32];
+स्थिर ध्रुव संरचना {
+	वर्ण *सन्देशः;
+	unsigned वर्ण hash[32];
 } tests[] = {
 	{ "",
 	  { 0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14,
@@ -230,25 +230,25 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+पूर्णाङ्क main(पूर्णाङ्क argc, वर्ण **argv)
 {
-	int i;
-	int errors = 0;
-	unsigned char tmp[32];
+	पूर्णाङ्क i;
+	पूर्णाङ्क errors = 0;
+	unsigned वर्ण tmp[32];
 
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
-		unsigned char *msg = (unsigned char *) tests[i].msg;
-		int len = strlen(tests[i].msg);
+	प्रति (i = 0; i < (पूर्णाङ्क)(परिमाण(tests) / परिमाण(tests[0])); i++) {
+		unsigned वर्ण *सन्देशः = (unsigned वर्ण *) tests[i].सन्देशः;
+		पूर्णाङ्क len = strlen(tests[i].सन्देशः);
 
-		ext2fs_sha256(msg, len, tmp);
+		ext2fs_sha256(सन्देशः, len, tmp);
 		printf("SHA256 test message %d: ", i);
-		if (memcmp(tmp, tests[i].hash, 32) != 0) {
+		जइ (memcmp(tmp, tests[i].hash, 32) != 0) {
 			printf("FAILED\n");
 			errors++;
-		} else
+		} अण्णहा
 			printf("OK\n");
 	}
-	return errors;
+	प्रत्यागम errors;
 }
 
 #endif /* UNITTEST */

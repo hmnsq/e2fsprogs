@@ -9,42 +9,42 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#जइ HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <time.h>
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव <sys/types.h>
+#जइ HAVE_ERRNO_H
+#अन्तर्भाव <errno.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
 
-int main(int argc, char **argv)
+पूर्णाङ्क main(पूर्णाङ्क argc, वर्ण **argv)
 {
-	int	lsectsize, psectsize;
-	int	retval;
-	int	fd;
+	पूर्णाङ्क	lsectsize, psectsize;
+	पूर्णाङ्क	retval;
+	पूर्णाङ्क	fd;
 
-	if (argc < 2) {
+	जइ (argc < 2) {
 		fprintf(stderr, "Usage: %s device\n", argv[0]);
 		exit(1);
 	}
 
 	retval = ext2fs_get_device_sectsize(argv[1], &lsectsize);
-	if (retval) {
+	जइ (retval) {
 		com_err(argv[0], retval,
 			"while calling ext2fs_get_device_sectsize");
 		exit(1);
 	}
 	retval = ext2fs_get_device_phys_sectsize(argv[1], &psectsize);
-	if (retval) {
+	जइ (retval) {
 		com_err(argv[0], retval,
 			"while calling ext2fs_get_device_phys_sectsize");
 		exit(1);
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 	printf("Device %s has logical/physical sector size of %d/%d.\n",
 	       argv[1], lsectsize, psectsize);
 	fd = open(argv[1], O_RDONLY);
-	if (fd < 0) {
+	जइ (fd < 0) {
 		perror("open");
 		exit(1);
 	}
