@@ -19,8 +19,8 @@
  * extension on the value.  Instead, use only the low 16 bits of an
  * unsigned int for holding the CRC value to avoid this.
  */
-typedef unsigned int crc16_t;
+ಪ್ರಕಾರನಿರ್ದೇಶ unsigned ಪೂರ್ಣಾಙ್ಕ crc16_t;
 
-extern crc16_t ext2fs_crc16(crc16_t crc, const void *buffer, unsigned int len);
+ಬಾಹ್ಯ crc16_t ext2fs_crc16(crc16_t crc, ಧ್ರುವ ಶೂನ್ಯ *buffer, unsigned ಪೂರ್ಣಾಙ್ಕ len);
 
 #endif /* __CRC16_H */

@@ -20,13 +20,13 @@
 #endif
 
 #ifdef __TURBOC__
-#include "msdos.h"
+#ಅನ್ತರ್ಭಾವ "msdos.h"
 #endif
 
 /*
  * A helper structure used in LBA => CHS conversion
  */
-typedef struct
+ಪ್ರಕಾರನಿರ್ದೇಶ ಸಂರಚನಾ
 {
   unsigned short       cyl;     /* Cylinder (or track) */
   unsigned short       head;
@@ -37,13 +37,13 @@ typedef struct
 /*
  * All partition data we need is here
  */
-typedef struct
+ಪ್ರಕಾರನಿರ್ದೇಶ ಸಂರಚನಾ
 {
-  char                 *dev;  /* _Linux_ device name (like "/dev/hda1") */
-  unsigned char        phys;  /* Physical DOS drive number */
+  ವರ್ಣ                 *dev;  /* _Linux_ device name (like "/dev/hda1") */
+  unsigned ವರ್ಣ        phys;  /* Physical DOS drive number */
   unsigned long        start; /* LBA address of partition start */
   unsigned long        len;   /* length of partition in sectors */
-  unsigned char        pno;   /* Partition number (read from *dev) */
+  unsigned ವರ್ಣ        pno;   /* Partition number (read from *dev) */
 
   /* This partition's drive geometry */
   unsigned short       cyls;
@@ -57,16 +57,16 @@ typedef struct
 #ifdef __DJGPP__
 #pragma pack(1)
 #endif
-typedef struct
+ಪ್ರಕಾರನಿರ್ದೇಶ ಸಂರಚನಾ
 {
-  unsigned char        active;
-  unsigned char        start_head;
-  unsigned char        start_sec;
-  unsigned char        start_cyl;
-  unsigned char        type;
-  unsigned char        end_head;
-  unsigned char        end_sec;
-  unsigned char        end_cyl;
+  unsigned ವರ್ಣ        active;
+  unsigned ವರ್ಣ        start_head;
+  unsigned ವರ್ಣ        start_sec;
+  unsigned ವರ್ಣ        start_cyl;
+  unsigned ವರ್ಣ        type;
+  unsigned ವರ್ಣ        end_head;
+  unsigned ವರ್ಣ        end_sec;
+  unsigned ವರ್ಣ        end_cyl;
   unsigned long        first_sec_rel;
   unsigned long        size;
 } PTABLE_ENTRY;
@@ -99,39 +99,39 @@ typedef struct
 /*
  * Variable contains last module's error
  */
-extern unsigned long        _dio_error;
+ಬಾಹ್ಯ unsigned long        _dio_error;
 
 /*
  * This one contains last hardware error (if _dio_error == ERR_HARDWARE)
  */
-extern unsigned long        _dio_hw_error;
+ಬಾಹ್ಯ unsigned long        _dio_hw_error;
 
 /*
  * Macros to check for disk hardware errors
  */
-#define HW_OK()             ((unsigned char)_dio_hw_error == 0x00)
-#define HW_BAD_CMD()        ((unsigned char)_dio_hw_error == 0x01)
-#define HW_NO_ADDR_MARK()   ((unsigned char)_dio_hw_error == 0x02)
-#define HW_WRITE_PROT()     ((unsigned char)_dio_hw_error == 0x03)
-#define HW_NO_SECTOR()      ((unsigned char)_dio_hw_error == 0x04)
-#define HW_RESET_FAIL()     ((unsigned char)_dio_hw_error == 0x05)
-#define HW_DISK_CHANGED()   ((unsigned char)_dio_hw_error == 0x06)
-#define HW_DRIVE_FAIL()     ((unsigned char)_dio_hw_error == 0x07)
-#define HW_DMA_OVERRUN()    ((unsigned char)_dio_hw_error == 0x08)
-#define HW_DMA_BOUNDARY()   ((unsigned char)_dio_hw_error == 0x09)
-#define HW_BAD_SECTOR()     ((unsigned char)_dio_hw_error == 0x0A)
-#define HW_BAD_TRACK()      ((unsigned char)_dio_hw_error == 0x0B)
-#define HW_UNSUPP_TRACK()   ((unsigned char)_dio_hw_error == 0x0C)
-#define HW_BAD_CRC_ECC()    ((unsigned char)_dio_hw_error == 0x10)
-#define HW_CRC_ECC_CORR()   ((unsigned char)_dio_hw_error == 0x11)
-#define HW_CONTR_FAIL()     ((unsigned char)_dio_hw_error == 0x20)
-#define HW_SEEK_FAIL()      ((unsigned char)_dio_hw_error == 0x40)
-#define HW_ATTACH_FAIL()    ((unsigned char)_dio_hw_error == 0x80)
-#define HW_DRIVE_NREADY()   ((unsigned char)_dio_hw_error == 0xAA)
-#define HW_UNDEF_ERROR()    ((unsigned char)_dio_hw_error == 0xBB)
-#define HW_WRITE_FAULT()    ((unsigned char)_dio_hw_error == 0xCC)
-#define HW_STATUS_ERROR()   ((unsigned char)_dio_hw_error == 0xE0)
-#define HW_SENSE_FAIL()     ((unsigned char)_dio_hw_error == 0xFF)
+#define HW_OK()             ((unsigned ವರ್ಣ)_dio_hw_error == 0x00)
+#define HW_BAD_CMD()        ((unsigned ವರ್ಣ)_dio_hw_error == 0x01)
+#define HW_NO_ADDR_MARK()   ((unsigned ವರ್ಣ)_dio_hw_error == 0x02)
+#define HW_WRITE_PROT()     ((unsigned ವರ್ಣ)_dio_hw_error == 0x03)
+#define HW_NO_SECTOR()      ((unsigned ವರ್ಣ)_dio_hw_error == 0x04)
+#define HW_RESET_FAIL()     ((unsigned ವರ್ಣ)_dio_hw_error == 0x05)
+#define HW_DISK_CHANGED()   ((unsigned ವರ್ಣ)_dio_hw_error == 0x06)
+#define HW_DRIVE_FAIL()     ((unsigned ವರ್ಣ)_dio_hw_error == 0x07)
+#define HW_DMA_OVERRUN()    ((unsigned ವರ್ಣ)_dio_hw_error == 0x08)
+#define HW_DMA_BOUNDARY()   ((unsigned ವರ್ಣ)_dio_hw_error == 0x09)
+#define HW_BAD_SECTOR()     ((unsigned ವರ್ಣ)_dio_hw_error == 0x0A)
+#define HW_BAD_TRACK()      ((unsigned ವರ್ಣ)_dio_hw_error == 0x0B)
+#define HW_UNSUPP_TRACK()   ((unsigned ವರ್ಣ)_dio_hw_error == 0x0C)
+#define HW_BAD_CRC_ECC()    ((unsigned ವರ್ಣ)_dio_hw_error == 0x10)
+#define HW_CRC_ECC_CORR()   ((unsigned ವರ್ಣ)_dio_hw_error == 0x11)
+#define HW_CONTR_FAIL()     ((unsigned ವರ್ಣ)_dio_hw_error == 0x20)
+#define HW_SEEK_FAIL()      ((unsigned ವರ್ಣ)_dio_hw_error == 0x40)
+#define HW_ATTACH_FAIL()    ((unsigned ವರ್ಣ)_dio_hw_error == 0x80)
+#define HW_DRIVE_NREADY()   ((unsigned ವರ್ಣ)_dio_hw_error == 0xAA)
+#define HW_UNDEF_ERROR()    ((unsigned ವರ್ಣ)_dio_hw_error == 0xBB)
+#define HW_WRITE_FAULT()    ((unsigned ವರ್ಣ)_dio_hw_error == 0xCC)
+#define HW_STATUS_ERROR()   ((unsigned ವರ್ಣ)_dio_hw_error == 0xE0)
+#define HW_SENSE_FAIL()     ((unsigned ವರ್ಣ)_dio_hw_error == 0xFF)
 
 
 /*
@@ -152,6 +152,6 @@ extern unsigned long        _dio_hw_error;
  *
  * Routine returns 0 on success and !=0 otherwise.
  */
-int open_partition(char *dev);
+ಪೂರ್ಣಾಙ್ಕ open_partition(ವರ್ಣ *dev);
 
 #endif /* __diskio_h */

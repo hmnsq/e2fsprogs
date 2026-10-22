@@ -10,36 +10,36 @@
  */
 
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಯದಿ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಯದಿ HAVE_SYS_STAT_H
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#ಯದಿ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fsP.h"
 
-struct ext2fs_struct_generic_bitmap_32 {
+ಸಂರಚನಾ ext2fs_struct_generic_bitmap_32 {
 	errcode_t	magic;
 	ext2_filsys 	fs;
 	__u32		start, end;
 	__u32		real_end;
-	char	*	description;
-	char	*	bitmap;
+	ವರ್ಣ	*	description;
+	ವರ್ಣ	*	bitmap;
 	errcode_t	base_error_code;
 	__u32		reserved[7];
 };
 
-typedef struct ext2fs_struct_generic_bitmap_32 *ext2fs_generic_bitmap_32;
+ಪ್ರಕಾರನಿರ್ದೇಶ ಸಂರಚನಾ ext2fs_struct_generic_bitmap_32 *ext2fs_generic_bitmap_32;
 
 #define EXT2FS_IS_32_BITMAP(bmap) \
 	(((bmap)->magic == EXT2_ET_MAGIC_GENERIC_BITMAP) || \
@@ -55,93 +55,93 @@ typedef struct ext2fs_struct_generic_bitmap_32 *ext2fs_generic_bitmap_32;
  * Used by previously inlined function, so we have to export this and
  * not change the function signature
  */
-void ext2fs_warn_bitmap2(ext2fs_generic_bitmap gen_bitmap,
-			    int code, unsigned long arg)
+ಶೂನ್ಯ ext2fs_warn_bitmap2(ext2fs_generic_bitmap gen_bitmap,
+			    ಪೂರ್ಣಾಙ್ಕ code, unsigned long arg)
 {
 	ext2fs_generic_bitmap_32 bitmap = (ext2fs_generic_bitmap_32) gen_bitmap;
 
 #ifndef OMIT_COM_ERR
-	if (bitmap->description)
+	ಯದಿ (bitmap->description)
 		com_err(0, bitmap->base_error_code+code,
 			"#%lu for %s", arg, bitmap->description);
-	else
+	ಅನ್ಯಥಾ
 		com_err(0, bitmap->base_error_code + code, "#%lu", arg);
 #endif
 }
 
-static errcode_t check_magic(ext2fs_generic_bitmap bitmap)
+ಸ್ಥಿರ errcode_t check_magic(ext2fs_generic_bitmap bitmap)
 {
-	if (!bitmap || !((bitmap->magic == EXT2_ET_MAGIC_GENERIC_BITMAP) ||
+	ಯದಿ (!bitmap || !((bitmap->magic == EXT2_ET_MAGIC_GENERIC_BITMAP) ||
 			 (bitmap->magic == EXT2_ET_MAGIC_INODE_BITMAP) ||
 			 (bitmap->magic == EXT2_ET_MAGIC_BLOCK_BITMAP)))
-		return EXT2_ET_MAGIC_GENERIC_BITMAP;
-	return 0;
+		ಪ್ರತ್ಯಾಗಮ EXT2_ET_MAGIC_GENERIC_BITMAP;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 errcode_t ext2fs_make_generic_bitmap(errcode_t magic, ext2_filsys fs,
 				     __u32 start, __u32 end, __u32 real_end,
-				     const char *descr, char *init_map,
+				     ಧ್ರುವ ವರ್ಣ *descr, ವರ್ಣ *init_map,
 				     ext2fs_generic_bitmap *ret)
 {
 	ext2fs_generic_bitmap_32 bitmap;
 	errcode_t		retval;
 	size_t			size;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2fs_struct_generic_bitmap_32),
+	retval = ext2fs_get_mem(ಪರಿಮಾಣ(ಸಂರಚನಾ ext2fs_struct_generic_bitmap_32),
 				&bitmap);
-	if (retval)
-		return retval;
+	ಯದಿ (retval)
+		ಪ್ರತ್ಯಾಗಮ retval;
 
 	bitmap->magic = magic;
 	bitmap->fs = fs;
 	bitmap->start = start;
 	bitmap->end = end;
 	bitmap->real_end = real_end;
-	switch (magic) {
-	case EXT2_ET_MAGIC_INODE_BITMAP:
+	ವಿಕಲ್ಪ (magic) {
+	ಪಕ್ಷ EXT2_ET_MAGIC_INODE_BITMAP:
 		bitmap->base_error_code = EXT2_ET_BAD_INODE_MARK;
-		break;
-	case EXT2_ET_MAGIC_BLOCK_BITMAP:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ EXT2_ET_MAGIC_BLOCK_BITMAP:
 		bitmap->base_error_code = EXT2_ET_BAD_BLOCK_MARK;
-		break;
-	default:
+		ಭಙ್ಗ;
+	ಸ್ವಭಾವ:
 		bitmap->base_error_code = EXT2_ET_BAD_GENERIC_MARK;
 	}
-	if (descr) {
+	ಯದಿ (descr) {
 		retval = ext2fs_get_mem(strlen(descr)+1, &bitmap->description);
-		if (retval) {
+		ಯದಿ (retval) {
 			ext2fs_free_mem(&bitmap);
-			return retval;
+			ಪ್ರತ್ಯಾಗಮ retval;
 		}
 		strcpy(bitmap->description, descr);
-	} else
+	} ಅನ್ಯಥಾ
 		bitmap->description = 0;
 
 	size = (size_t) (((bitmap->real_end - bitmap->start) / 8) + 1);
 	/* Round up to allow for the BT x86 instruction */
 	size = (size + 7) & ~3;
 	retval = ext2fs_get_mem(size, &bitmap->bitmap);
-	if (retval) {
+	ಯದಿ (retval) {
 		ext2fs_free_mem(&bitmap->description);
 		ext2fs_free_mem(&bitmap);
-		return retval;
+		ಪ್ರತ್ಯಾಗಮ retval;
 	}
 
-	if (init_map)
+	ಯದಿ (init_map)
 		memcpy(bitmap->bitmap, init_map, size);
-	else
+	ಅನ್ಯಥಾ
 		memset(bitmap->bitmap, 0, size);
 	*ret = (ext2fs_generic_bitmap) bitmap;
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 errcode_t ext2fs_allocate_generic_bitmap(__u32 start,
 					 __u32 end,
 					 __u32 real_end,
-					 const char *descr,
+					 ಧ್ರುವ ವರ್ಣ *descr,
 					 ext2fs_generic_bitmap *ret)
 {
-	return ext2fs_make_generic_bitmap(EXT2_ET_MAGIC_GENERIC_BITMAP, 0,
+	ಪ್ರತ್ಯಾಗಮ ext2fs_make_generic_bitmap(EXT2_ET_MAGIC_GENERIC_BITMAP, 0,
 					  start, end, real_end, descr, 0, ret);
 }
 
@@ -150,156 +150,156 @@ errcode_t ext2fs_copy_generic_bitmap(ext2fs_generic_bitmap gen_src,
 {
 	ext2fs_generic_bitmap_32 src = (ext2fs_generic_bitmap_32) gen_src;
 
-	return (ext2fs_make_generic_bitmap(src->magic, src->fs,
+	ಪ್ರತ್ಯಾಗಮ (ext2fs_make_generic_bitmap(src->magic, src->fs,
 					   src->start, src->end,
 					   src->real_end,
 					   src->description, src->bitmap,
 					   dest));
 }
 
-void ext2fs_free_generic_bitmap(ext2fs_inode_bitmap gen_bitmap)
+ಶೂನ್ಯ ext2fs_free_generic_bitmap(ext2fs_inode_bitmap gen_bitmap)
 {
 	ext2fs_generic_bitmap_32 bitmap = (ext2fs_generic_bitmap_32) gen_bitmap;
 
-	if (check_magic(gen_bitmap))
-		return;
+	ಯದಿ (check_magic(gen_bitmap))
+		ಪ್ರತ್ಯಾಗಮ;
 
 	bitmap->magic = 0;
-	if (bitmap->description) {
+	ಯದಿ (bitmap->description) {
 		ext2fs_free_mem(&bitmap->description);
 		bitmap->description = 0;
 	}
-	if (bitmap->bitmap) {
+	ಯದಿ (bitmap->bitmap) {
 		ext2fs_free_mem(&bitmap->bitmap);
 		bitmap->bitmap = 0;
 	}
 	ext2fs_free_mem(&bitmap);
 }
 
-int ext2fs_test_generic_bitmap(ext2fs_generic_bitmap bitmap,
+ಪೂರ್ಣಾಙ್ಕ ext2fs_test_generic_bitmap(ext2fs_generic_bitmap bitmap,
 					blk_t bitno)
 {
 	ext2fs_generic_bitmap_32 bitmap32 = (ext2fs_generic_bitmap_32) bitmap;
 
-	if (!EXT2FS_IS_32_BITMAP(bitmap)) {
-		if (EXT2FS_IS_64_BITMAP(bitmap)) {
+	ಯದಿ (!EXT2FS_IS_32_BITMAP(bitmap)) {
+		ಯದಿ (EXT2FS_IS_64_BITMAP(bitmap)) {
 			ext2fs_warn_bitmap32(bitmap, __func__);
-			return ext2fs_test_generic_bmap(bitmap, bitno);
+			ಪ್ರತ್ಯಾಗಮ ext2fs_test_generic_bmap(bitmap, bitno);
 		}
 #ifndef OMIT_COM_ERR
 		com_err(0, EXT2_ET_MAGIC_GENERIC_BITMAP,
 			"test_bitmap(%lu)", (unsigned long) bitno);
 #endif
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
 
-	if ((bitno < bitmap32->start) || (bitno > bitmap32->end)) {
+	ಯದಿ ((bitno < bitmap32->start) || (bitno > bitmap32->end)) {
 		ext2fs_warn_bitmap2(bitmap, EXT2FS_TEST_ERROR, bitno);
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
-	return ext2fs_test_bit(bitno - bitmap32->start, bitmap32->bitmap);
+	ಪ್ರತ್ಯಾಗಮ ext2fs_test_bit(bitno - bitmap32->start, bitmap32->bitmap);
 }
 
-int ext2fs_mark_generic_bitmap(ext2fs_generic_bitmap bitmap,
+ಪೂರ್ಣಾಙ್ಕ ext2fs_mark_generic_bitmap(ext2fs_generic_bitmap bitmap,
 					 __u32 bitno)
 {
 	ext2fs_generic_bitmap_32 bitmap32 = (ext2fs_generic_bitmap_32) bitmap;
 
-	if (!EXT2FS_IS_32_BITMAP(bitmap)) {
-		if (EXT2FS_IS_64_BITMAP(bitmap)) {
+	ಯದಿ (!EXT2FS_IS_32_BITMAP(bitmap)) {
+		ಯದಿ (EXT2FS_IS_64_BITMAP(bitmap)) {
 			ext2fs_warn_bitmap32(bitmap, __func__);
-			return ext2fs_mark_generic_bmap(bitmap, bitno);
+			ಪ್ರತ್ಯಾಗಮ ext2fs_mark_generic_bmap(bitmap, bitno);
 		}
 #ifndef OMIT_COM_ERR
 		com_err(0, EXT2_ET_MAGIC_GENERIC_BITMAP,
 			"mark_bitmap(%lu)", (unsigned long) bitno);
 #endif
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
 
-	if ((bitno < bitmap32->start) || (bitno > bitmap32->end)) {
+	ಯದಿ ((bitno < bitmap32->start) || (bitno > bitmap32->end)) {
 		ext2fs_warn_bitmap2(bitmap, EXT2FS_MARK_ERROR, bitno);
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
-	return ext2fs_set_bit(bitno - bitmap32->start, bitmap32->bitmap);
+	ಪ್ರತ್ಯಾಗಮ ext2fs_set_bit(bitno - bitmap32->start, bitmap32->bitmap);
 }
 
-int ext2fs_unmark_generic_bitmap(ext2fs_generic_bitmap bitmap,
+ಪೂರ್ಣಾಙ್ಕ ext2fs_unmark_generic_bitmap(ext2fs_generic_bitmap bitmap,
 					   blk_t bitno)
 {
 	ext2fs_generic_bitmap_32 bitmap32 = (ext2fs_generic_bitmap_32) bitmap;
 
-	if (!EXT2FS_IS_32_BITMAP(bitmap)) {
-		if (EXT2FS_IS_64_BITMAP(bitmap)) {
+	ಯದಿ (!EXT2FS_IS_32_BITMAP(bitmap)) {
+		ಯದಿ (EXT2FS_IS_64_BITMAP(bitmap)) {
 			ext2fs_warn_bitmap32(bitmap, __func__);
-			return ext2fs_unmark_generic_bmap(bitmap, bitno);
+			ಪ್ರತ್ಯಾಗಮ ext2fs_unmark_generic_bmap(bitmap, bitno);
 		}
 #ifndef OMIT_COM_ERR
 		com_err(0, EXT2_ET_MAGIC_GENERIC_BITMAP,
 			"mark_bitmap(%lu)", (unsigned long) bitno);
 #endif
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
 
-	if ((bitno < bitmap32->start) || (bitno > bitmap32->end)) {
+	ಯದಿ ((bitno < bitmap32->start) || (bitno > bitmap32->end)) {
 		ext2fs_warn_bitmap2(bitmap, EXT2FS_UNMARK_ERROR, bitno);
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
-	return ext2fs_clear_bit(bitno - bitmap32->start, bitmap32->bitmap);
+	ಪ್ರತ್ಯಾಗಮ ext2fs_clear_bit(bitno - bitmap32->start, bitmap32->bitmap);
 }
 
 __u32 ext2fs_get_generic_bitmap_start(ext2fs_generic_bitmap bitmap)
 {
 	ext2fs_generic_bitmap_32 bitmap32 = (ext2fs_generic_bitmap_32) bitmap;
 
-	if (!EXT2FS_IS_32_BITMAP(bitmap)) {
-		if (EXT2FS_IS_64_BITMAP(bitmap)) {
+	ಯದಿ (!EXT2FS_IS_32_BITMAP(bitmap)) {
+		ಯದಿ (EXT2FS_IS_64_BITMAP(bitmap)) {
 			ext2fs_warn_bitmap32(bitmap, __func__);
-			return ext2fs_get_generic_bmap_start(bitmap);
+			ಪ್ರತ್ಯಾಗಮ ext2fs_get_generic_bmap_start(bitmap);
 		}
 #ifndef OMIT_COM_ERR
 		com_err(0, EXT2_ET_MAGIC_GENERIC_BITMAP,
 			"get_bitmap_start");
 #endif
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
 
-	return bitmap32->start;
+	ಪ್ರತ್ಯಾಗಮ bitmap32->start;
 }
 
 __u32 ext2fs_get_generic_bitmap_end(ext2fs_generic_bitmap bitmap)
 {
 	ext2fs_generic_bitmap_32 bitmap32 = (ext2fs_generic_bitmap_32) bitmap;
 
-	if (!EXT2FS_IS_32_BITMAP(bitmap)) {
-		if (EXT2FS_IS_64_BITMAP(bitmap)) {
+	ಯದಿ (!EXT2FS_IS_32_BITMAP(bitmap)) {
+		ಯದಿ (EXT2FS_IS_64_BITMAP(bitmap)) {
 			ext2fs_warn_bitmap32(bitmap, __func__);
-			return ext2fs_get_generic_bmap_end(bitmap);
+			ಪ್ರತ್ಯಾಗಮ ext2fs_get_generic_bmap_end(bitmap);
 		}
 #ifndef OMIT_COM_ERR
 		com_err(0, EXT2_ET_MAGIC_GENERIC_BITMAP,
 			"get_bitmap_end");
 #endif
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
-	return bitmap32->end;
+	ಪ್ರತ್ಯಾಗಮ bitmap32->end;
 }
 
-void ext2fs_clear_generic_bitmap(ext2fs_generic_bitmap bitmap)
+ಶೂನ್ಯ ext2fs_clear_generic_bitmap(ext2fs_generic_bitmap bitmap)
 {
 	ext2fs_generic_bitmap_32 bitmap32 = (ext2fs_generic_bitmap_32) bitmap;
 
-	if (!EXT2FS_IS_32_BITMAP(bitmap)) {
-		if (EXT2FS_IS_64_BITMAP(bitmap)) {
+	ಯದಿ (!EXT2FS_IS_32_BITMAP(bitmap)) {
+		ಯದಿ (EXT2FS_IS_64_BITMAP(bitmap)) {
 			ext2fs_warn_bitmap32(bitmap, __func__);
 			ext2fs_clear_generic_bmap(bitmap);
-			return;
+			ಪ್ರತ್ಯಾಗಮ;
 		}
 #ifndef OMIT_COM_ERR
 		com_err(0, EXT2_ET_MAGIC_GENERIC_BITMAP,
 			"clear_generic_bitmap");
 #endif
-		return;
+		ಪ್ರತ್ಯಾಗಮ;
 	}
 
 	memset(bitmap32->bitmap, 0,
@@ -314,12 +314,12 @@ errcode_t ext2fs_fudge_generic_bitmap_end(ext2fs_inode_bitmap gen_bitmap,
 
 	EXT2_CHECK_MAGIC(bitmap, magic);
 
-	if (end > bitmap->real_end)
-		return neq;
-	if (oend)
+	ಯದಿ (end > bitmap->real_end)
+		ಪ್ರತ್ಯಾಗಮ neq;
+	ಯದಿ (oend)
 		*oend = bitmap->end;
 	bitmap->end = end;
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 errcode_t ext2fs_resize_generic_bitmap(errcode_t magic,
@@ -331,39 +331,39 @@ errcode_t ext2fs_resize_generic_bitmap(errcode_t magic,
 	size_t		size, new_size;
 	__u32		bitno;
 
-	if (!bmap || (bmap->magic != magic))
-		return magic;
+	ಯದಿ (!bmap || (bmap->magic != magic))
+		ಪ್ರತ್ಯಾಗಮ magic;
 
 	/*
 	 * If we're expanding the bitmap, make sure all of the new
 	 * parts of the bitmap are zero.
 	 */
-	if (new_end > bmap->end) {
+	ಯದಿ (new_end > bmap->end) {
 		bitno = bmap->real_end;
-		if (bitno > new_end)
+		ಯದಿ (bitno > new_end)
 			bitno = new_end;
-		for (; bitno > bmap->end; bitno--)
+		ಪ್ರತಿ (; bitno > bmap->end; bitno--)
 			ext2fs_clear_bit(bitno - bmap->start, bmap->bitmap);
 	}
-	if (new_real_end == bmap->real_end) {
+	ಯದಿ (new_real_end == bmap->real_end) {
 		bmap->end = new_end;
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
 
 	size = ((bmap->real_end - bmap->start) / 8) + 1;
 	new_size = ((new_real_end - bmap->start) / 8) + 1;
 
-	if (size != new_size) {
+	ಯದಿ (size != new_size) {
 		retval = ext2fs_resize_mem(size, new_size, &bmap->bitmap);
-		if (retval)
-			return retval;
+		ಯದಿ (retval)
+			ಪ್ರತ್ಯಾಗಮ retval;
 	}
-	if (new_size > size)
+	ಯದಿ (new_size > size)
 		memset(bmap->bitmap + size, 0, new_size - size);
 
 	bmap->end = new_end;
 	bmap->real_end = new_real_end;
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 errcode_t ext2fs_compare_generic_bitmap(errcode_t magic, errcode_t neq,
@@ -374,32 +374,32 @@ errcode_t ext2fs_compare_generic_bitmap(errcode_t magic, errcode_t neq,
 	ext2fs_generic_bitmap_32 bm2 = (ext2fs_generic_bitmap_32) gen_bm2;
 	blk_t	i;
 
-	if (!bm1 || bm1->magic != magic)
-		return magic;
-	if (!bm2 || bm2->magic != magic)
-		return magic;
+	ಯದಿ (!bm1 || bm1->magic != magic)
+		ಪ್ರತ್ಯಾಗಮ magic;
+	ಯದಿ (!bm2 || bm2->magic != magic)
+		ಪ್ರತ್ಯಾಗಮ magic;
 
-	if ((bm1->start != bm2->start) ||
+	ಯದಿ ((bm1->start != bm2->start) ||
 	    (bm1->end != bm2->end) ||
 	    (memcmp(bm1->bitmap, bm2->bitmap,
 		    (size_t) (bm1->end - bm1->start)/8)))
-		return neq;
+		ಪ್ರತ್ಯಾಗಮ neq;
 
-	for (i = bm1->end - ((bm1->end - bm1->start) % 8); i <= bm1->end; i++)
-		if (ext2fs_fast_test_block_bitmap(gen_bm1, i) !=
+	ಪ್ರತಿ (i = bm1->end - ((bm1->end - bm1->start) % 8); i <= bm1->end; i++)
+		ಯದಿ (ext2fs_fast_test_block_bitmap(gen_bm1, i) !=
 		    ext2fs_fast_test_block_bitmap(gen_bm2, i))
-			return neq;
+			ಪ್ರತ್ಯಾಗಮ neq;
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-void ext2fs_set_generic_bitmap_padding(ext2fs_generic_bitmap gen_map)
+ಶೂನ್ಯ ext2fs_set_generic_bitmap_padding(ext2fs_generic_bitmap gen_map)
 {
 	ext2fs_generic_bitmap_32 map = (ext2fs_generic_bitmap_32) gen_map;
 	__u32	i, j;
 
 	/* Protect loop from wrap-around if map->real_end is maxed */
-	for (i=map->end+1, j = i - map->start;
+	ಪ್ರತಿ (i=map->end+1, j = i - map->start;
 	     i <= map->real_end && i > map->end;
 	     i++, j++)
 		ext2fs_set_bit(j, map->bitmap);
@@ -407,132 +407,132 @@ void ext2fs_set_generic_bitmap_padding(ext2fs_generic_bitmap gen_map)
 
 errcode_t ext2fs_get_generic_bitmap_range(ext2fs_generic_bitmap gen_bmap,
 					  errcode_t magic,
-					  __u32 start, __u32 num,
-					  void *out)
+					  __u32 start, __u32 ಅಂಕೆ,
+					  ಶೂನ್ಯ *out)
 {
 	ext2fs_generic_bitmap_32 bmap = (ext2fs_generic_bitmap_32) gen_bmap;
 
-	if (!bmap || (bmap->magic != magic))
-		return magic;
+	ಯದಿ (!bmap || (bmap->magic != magic))
+		ಪ್ರತ್ಯಾಗಮ magic;
 
-	if ((start < bmap->start) || (start+num-1 > bmap->real_end))
-		return EXT2_ET_INVALID_ARGUMENT;
+	ಯದಿ ((start < bmap->start) || (start+ಅಂಕೆ-1 > bmap->real_end))
+		ಪ್ರತ್ಯಾಗಮ EXT2_ET_INVALID_ARGUMENT;
 
-	memcpy(out, bmap->bitmap + ((start - bmap->start) >> 3), (num+7) >> 3);
-	return 0;
+	memcpy(out, bmap->bitmap + ((start - bmap->start) >> 3), (ಅಂಕೆ+7) >> 3);
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 errcode_t ext2fs_set_generic_bitmap_range(ext2fs_generic_bitmap gen_bmap,
 					  errcode_t magic,
-					  __u32 start, __u32 num,
-					  void *in)
+					  __u32 start, __u32 ಅಂಕೆ,
+					  ಶೂನ್ಯ *in)
 {
 	ext2fs_generic_bitmap_32 bmap = (ext2fs_generic_bitmap_32) gen_bmap;
 
-	if (!bmap || (bmap->magic != magic))
-		return magic;
+	ಯದಿ (!bmap || (bmap->magic != magic))
+		ಪ್ರತ್ಯಾಗಮ magic;
 
-	if ((start < bmap->start) || (start+num-1 > bmap->real_end))
-		return EXT2_ET_INVALID_ARGUMENT;
+	ಯದಿ ((start < bmap->start) || (start+ಅಂಕೆ-1 > bmap->real_end))
+		ಪ್ರತ್ಯಾಗಮ EXT2_ET_INVALID_ARGUMENT;
 
-	memcpy(bmap->bitmap + ((start - bmap->start) >> 3), in, (num+7) >> 3);
-	return 0;
+	memcpy(bmap->bitmap + ((start - bmap->start) >> 3), in, (ಅಂಕೆ+7) >> 3);
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 /*
  * Compare @mem to zero buffer by 256 bytes.
  * Return 1 if @mem is zeroed memory, otherwise return 0.
  */
-int ext2fs_mem_is_zero(const char *mem, size_t len)
+ಪೂರ್ಣಾಙ್ಕ ext2fs_mem_is_zero(ಧ್ರುವ ವರ್ಣ *mem, size_t len)
 {
-	static const char zero_buf[256];
+	ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ zero_buf[256];
 
-	while (len >= sizeof(zero_buf)) {
-		if (memcmp(mem, zero_buf, sizeof(zero_buf)))
-			return 0;
-		len -= sizeof(zero_buf);
-		mem += sizeof(zero_buf);
+	ಯಾವತ್ (len >= ಪರಿಮಾಣ(zero_buf)) {
+		ಯದಿ (memcmp(mem, zero_buf, ಪರಿಮಾಣ(zero_buf)))
+			ಪ್ರತ್ಯಾಗಮ 0;
+		len -= ಪರಿಮಾಣ(zero_buf);
+		mem += ಪರಿಮಾಣ(zero_buf);
 	}
 	/* Deal with leftover bytes. */
-	if (len)
-		return !memcmp(mem, zero_buf, len);
-	return 1;
+	ಯದಿ (len)
+		ಪ್ರತ್ಯಾಗಮ !memcmp(mem, zero_buf, len);
+	ಪ್ರತ್ಯಾಗಮ 1;
 }
 
 /*
  * Return true if all of the bits in a specified range are clear
  */
-static int ext2fs_test_clear_generic_bitmap_range(ext2fs_generic_bitmap gen_bitmap,
-						  unsigned int start,
-						  unsigned int len)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ ext2fs_test_clear_generic_bitmap_range(ext2fs_generic_bitmap gen_bitmap,
+						  unsigned ಪೂರ್ಣಾಙ್ಕ start,
+						  unsigned ಪೂರ್ಣಾಙ್ಕ len)
 {
 	ext2fs_generic_bitmap_32 bitmap = (ext2fs_generic_bitmap_32) gen_bitmap;
 	size_t start_byte, len_byte = len >> 3;
-	unsigned int start_bit, len_bit = len % 8;
-	int first_bit = 0;
-	int last_bit  = 0;
-	int mark_count = 0;
-	int mark_bit = 0;
-	int i;
-	const char *ADDR = bitmap->bitmap;
+	unsigned ಪೂರ್ಣಾಙ್ಕ start_bit, len_bit = len % 8;
+	ಪೂರ್ಣಾಙ್ಕ first_bit = 0;
+	ಪೂರ್ಣಾಙ್ಕ last_bit  = 0;
+	ಪೂರ್ಣಾಙ್ಕ mark_ಎಣಿಕೆ = 0;
+	ಪೂರ್ಣಾಙ್ಕ mark_bit = 0;
+	ಪೂರ್ಣಾಙ್ಕ i;
+	ಧ್ರುವ ವರ್ಣ *ADDR = bitmap->bitmap;
 
 	start -= bitmap->start;
 	start_byte = start >> 3;
 	start_bit = start % 8;
 
-	if (start_bit != 0) {
+	ಯದಿ (start_bit != 0) {
 		/*
 		 * The compared start block number or start inode number
 		 * is not the first bit in a byte.
 		 */
-		mark_count = 8 - start_bit;
-		if (len < 8 - start_bit) {
-			mark_count = (int)len;
+		mark_ಎಣಿಕೆ = 8 - start_bit;
+		ಯದಿ (len < 8 - start_bit) {
+			mark_ಎಣಿಕೆ = (ಪೂರ್ಣಾಙ್ಕ)len;
 			mark_bit = len + start_bit - 1;
-		} else
+		} ಅನ್ಯಥಾ
 			mark_bit = 7;
 
-		for (i = mark_count; i > 0; i--, mark_bit--)
+		ಪ್ರತಿ (i = mark_ಎಣಿಕೆ; i > 0; i--, mark_bit--)
 			first_bit |= 1 << mark_bit;
 
 		/*
 		 * Compare blocks or inodes in the first byte.
 		 * If there is any marked bit, this function returns 0.
 		 */
-		if (first_bit & ADDR[start_byte])
-			return 0;
-		else if (len <= 8 - start_bit)
-			return 1;
+		ಯದಿ (first_bit & ADDR[start_byte])
+			ಪ್ರತ್ಯಾಗಮ 0;
+		ಅನ್ಯಥಾ ಯದಿ (len <= 8 - start_bit)
+			ಪ್ರತ್ಯಾಗಮ 1;
 
 		start_byte++;
-		len_bit = (len - mark_count) % 8;
-		len_byte = (len - mark_count) >> 3;
+		len_bit = (len - mark_ಎಣಿಕೆ) % 8;
+		len_byte = (len - mark_ಎಣಿಕೆ) >> 3;
 	}
 
 	/*
 	 * The compared start block number or start inode number is
 	 * the first bit in a byte.
 	 */
-	if (len_bit != 0) {
+	ಯದಿ (len_bit != 0) {
 		/*
 		 * The compared end block number or end inode number is
 		 * not the last bit in a byte.
 		 */
-		for (mark_bit = len_bit - 1; mark_bit >= 0; mark_bit--)
+		ಪ್ರತಿ (mark_bit = len_bit - 1; mark_bit >= 0; mark_bit--)
 			last_bit |= 1 << mark_bit;
 
 		/*
 		 * Compare blocks or inodes in the last byte.
 		 * If there is any marked bit, this function returns 0.
 		 */
-		if (last_bit & ADDR[start_byte + len_byte])
-			return 0;
-		else if (len_byte == 0)
-			return 1;
+		ಯದಿ (last_bit & ADDR[start_byte + len_byte])
+			ಪ್ರತ್ಯಾಗಮ 0;
+		ಅನ್ಯಥಾ ಯದಿ (len_byte == 0)
+			ಪ್ರತ್ಯಾಗಮ 1;
 	}
 
 	/* Check whether all bytes are 0 */
-	return ext2fs_mem_is_zero(ADDR + start_byte, len_byte);
+	ಪ್ರತ್ಯಾಗಮ ext2fs_mem_is_zero(ADDR + start_byte, len_byte);
 }
 
 errcode_t ext2fs_find_first_zero_generic_bitmap(ext2fs_generic_bitmap gen_bitmap,
@@ -542,21 +542,21 @@ errcode_t ext2fs_find_first_zero_generic_bitmap(ext2fs_generic_bitmap gen_bitmap
 	ext2fs_generic_bitmap_32 bitmap = (ext2fs_generic_bitmap_32) gen_bitmap;
 	blk_t b;
 
-	if (start < bitmap->start || end > bitmap->end || start > end) {
+	ಯದಿ (start < bitmap->start || end > bitmap->end || start > end) {
 		ext2fs_warn_bitmap2(gen_bitmap, EXT2FS_TEST_ERROR, start);
-		return EINVAL;
+		ಪ್ರತ್ಯಾಗಮ EINVAL;
 	}
 
-	while (start <= end) {
+	ಯಾವತ್ (start <= end) {
 		b = ext2fs_test_bit(start - bitmap->start, bitmap->bitmap);
-		if (!b) {
+		ಯದಿ (!b) {
 			*out = start;
-			return 0;
+			ಪ್ರತ್ಯಾಗಮ 0;
 		}
 		start++;
 	}
 
-	return ENOENT;
+	ಪ್ರತ್ಯಾಗಮ ENOENT;
 }
 
 errcode_t ext2fs_find_first_set_generic_bitmap(ext2fs_generic_bitmap gen_bitmap,
@@ -566,84 +566,84 @@ errcode_t ext2fs_find_first_set_generic_bitmap(ext2fs_generic_bitmap gen_bitmap,
 	ext2fs_generic_bitmap_32 bitmap = (ext2fs_generic_bitmap_32) gen_bitmap;
 	blk_t b;
 
-	if (start < bitmap->start || end > bitmap->end || start > end) {
+	ಯದಿ (start < bitmap->start || end > bitmap->end || start > end) {
 		ext2fs_warn_bitmap2(gen_bitmap, EXT2FS_TEST_ERROR, start);
-		return EINVAL;
+		ಪ್ರತ್ಯಾಗಮ EINVAL;
 	}
 
-	while (start <= end) {
+	ಯಾವತ್ (start <= end) {
 		b = ext2fs_test_bit(start - bitmap->start, bitmap->bitmap);
-		if (b) {
+		ಯದಿ (b) {
 			*out = start;
-			return 0;
+			ಪ್ರತ್ಯಾಗಮ 0;
 		}
 		start++;
 	}
 
-	return ENOENT;
+	ಪ್ರತ್ಯಾಗಮ ENOENT;
 }
 
-int ext2fs_test_block_bitmap_range(ext2fs_block_bitmap gen_bitmap,
-				   blk_t block, int num)
+ಪೂರ್ಣಾಙ್ಕ ext2fs_test_block_bitmap_range(ext2fs_block_bitmap gen_bitmap,
+				   blk_t block, ಪೂರ್ಣಾಙ್ಕ ಅಂಕೆ)
 {
 	ext2fs_generic_bitmap_32 bitmap = (ext2fs_generic_bitmap_32) gen_bitmap;
 
 	EXT2_CHECK_MAGIC(bitmap, EXT2_ET_MAGIC_BLOCK_BITMAP);
-	if ((block < bitmap->start) || (block > bitmap->real_end) ||
-	    (block+num-1 > bitmap->real_end)) {
+	ಯದಿ ((block < bitmap->start) || (block > bitmap->real_end) ||
+	    (block+ಅಂಕೆ-1 > bitmap->real_end)) {
 		ext2fs_warn_bitmap(EXT2_ET_BAD_BLOCK_TEST,
 				   block, bitmap->description);
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
-	return ext2fs_test_clear_generic_bitmap_range((ext2fs_generic_bitmap)
-						      bitmap, block, num);
+	ಪ್ರತ್ಯಾಗಮ ext2fs_test_clear_generic_bitmap_range((ext2fs_generic_bitmap)
+						      bitmap, block, ಅಂಕೆ);
 }
 
-int ext2fs_test_inode_bitmap_range(ext2fs_inode_bitmap gen_bitmap,
-				   ext2_ino_t inode, int num)
+ಪೂರ್ಣಾಙ್ಕ ext2fs_test_inode_bitmap_range(ext2fs_inode_bitmap gen_bitmap,
+				   ext2_ino_t inode, ಪೂರ್ಣಾಙ್ಕ ಅಂಕೆ)
 {
 	ext2fs_generic_bitmap_32 bitmap = (ext2fs_generic_bitmap_32) gen_bitmap;
 
 	EXT2_CHECK_MAGIC(bitmap, EXT2_ET_MAGIC_INODE_BITMAP);
-	if ((inode < bitmap->start) || (inode > bitmap->real_end) ||
-	    (inode+num-1 > bitmap->real_end)) {
+	ಯದಿ ((inode < bitmap->start) || (inode > bitmap->real_end) ||
+	    (inode+ಅಂಕೆ-1 > bitmap->real_end)) {
 		ext2fs_warn_bitmap(EXT2_ET_BAD_INODE_TEST,
 				   inode, bitmap->description);
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
-	return ext2fs_test_clear_generic_bitmap_range((ext2fs_generic_bitmap)
-						      bitmap, inode, num);
+	ಪ್ರತ್ಯಾಗಮ ext2fs_test_clear_generic_bitmap_range((ext2fs_generic_bitmap)
+						      bitmap, inode, ಅಂಕೆ);
 }
 
-void ext2fs_mark_block_bitmap_range(ext2fs_block_bitmap gen_bitmap,
-				    blk_t block, int num)
+ಶೂನ್ಯ ext2fs_mark_block_bitmap_range(ext2fs_block_bitmap gen_bitmap,
+				    blk_t block, ಪೂರ್ಣಾಙ್ಕ ಅಂಕೆ)
 {
 	ext2fs_generic_bitmap_32 bitmap = (ext2fs_generic_bitmap_32) gen_bitmap;
-	int	i;
+	ಪೂರ್ಣಾಙ್ಕ	i;
 
-	if ((block < bitmap->start) || (block > bitmap->end) ||
-	    (block+num-1 > bitmap->end)) {
+	ಯದಿ ((block < bitmap->start) || (block > bitmap->end) ||
+	    (block+ಅಂಕೆ-1 > bitmap->end)) {
 		ext2fs_warn_bitmap(EXT2_ET_BAD_BLOCK_MARK, block,
 				   bitmap->description);
-		return;
+		ಪ್ರತ್ಯಾಗಮ;
 	}
-	for (i=0; i < num; i++)
+	ಪ್ರತಿ (i=0; i < ಅಂಕೆ; i++)
 		ext2fs_fast_set_bit(block + i - bitmap->start, bitmap->bitmap);
 }
 
-void ext2fs_unmark_block_bitmap_range(ext2fs_block_bitmap gen_bitmap,
-				      blk_t block, int num)
+ಶೂನ್ಯ ext2fs_unmark_block_bitmap_range(ext2fs_block_bitmap gen_bitmap,
+				      blk_t block, ಪೂರ್ಣಾಙ್ಕ ಅಂಕೆ)
 {
 	ext2fs_generic_bitmap_32 bitmap = (ext2fs_generic_bitmap_32) gen_bitmap;
-	int	i;
+	ಪೂರ್ಣಾಙ್ಕ	i;
 
-	if ((block < bitmap->start) || (block > bitmap->end) ||
-	    (block+num-1 > bitmap->end)) {
+	ಯದಿ ((block < bitmap->start) || (block > bitmap->end) ||
+	    (block+ಅಂಕೆ-1 > bitmap->end)) {
 		ext2fs_warn_bitmap(EXT2_ET_BAD_BLOCK_UNMARK, block,
 				   bitmap->description);
-		return;
+		ಪ್ರತ್ಯಾಗಮ;
 	}
-	for (i=0; i < num; i++)
+	ಪ್ರತಿ (i=0; i < ಅಂಕೆ; i++)
 		ext2fs_fast_clear_bit(block + i - bitmap->start,
 				      bitmap->bitmap);
 }

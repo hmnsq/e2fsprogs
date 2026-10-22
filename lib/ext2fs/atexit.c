@@ -17,33 +17,33 @@
 #define _LARGEFILE64_SOURCE
 #endif
 
-#include "config.h"
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fsP.h"
 
-struct exit_data {
+ಸಂರಚನಾ exit_data {
 	ext2_exit_fn func;
-	void *data;
+	ಶೂನ್ಯ *data;
 };
 
-static struct exit_data *items;
-static size_t nr_items;
+ಸ್ಥಿರ ಸಂರಚನಾ exit_data *ವಸ್ತುಗಳು;
+ಸ್ಥಿರ size_t nr_ವಸ್ತುಗಳು;
 
-static void handle_exit(void)
+ಸ್ಥಿರ ಶೂನ್ಯ handle_exit(ಶೂನ್ಯ)
 {
-	struct exit_data *ed;
+	ಸಂರಚನಾ exit_data *ed;
 
-	for (ed = items + nr_items - 1; ed >= items; ed--) {
-		if (ed->func == NULL)
-			continue;
+	ಪ್ರತಿ (ed = ವಸ್ತುಗಳು + nr_ವಸ್ತುಗಳು - 1; ed >= ವಸ್ತುಗಳು; ed--) {
+		ಯದಿ (ed->func == ರಿಕ್ತ)
+			ಅನುವರ್ತ;
 		ed->func(ed->data);
 	}
 
-	ext2fs_free_mem(&items);
-	nr_items = 0;
+	ext2fs_free_mem(&ವಸ್ತುಗಳು);
+	nr_ವಸ್ತುಗಳು = 0;
 }
 
 /*
@@ -51,66 +51,66 @@ static void handle_exit(void)
  * If you want this to be called during a signal exit, you must capture
  * the signal and call exit() yourself!
  */
-errcode_t ext2fs_add_exit_fn(ext2_exit_fn func, void *data)
+errcode_t ext2fs_add_exit_fn(ext2_exit_fn func, ಶೂನ್ಯ *data)
 {
-	struct exit_data *ed, *free_ed = NULL;
+	ಸಂರಚನಾ exit_data *ed, *free_ed = ರಿಕ್ತ;
 	size_t x;
 	errcode_t ret;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ಯದಿ (func == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ EXT2_ET_INVALID_ARGUMENT;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == func && ed->data == data)
-			return EXT2_ET_FILE_EXISTS;
-		if (ed->func == NULL)
+	ಪ್ರತಿ (x = 0, ed = ವಸ್ತುಗಳು; x < nr_ವಸ್ತುಗಳು; x++, ed++) {
+		ಯದಿ (ed->func == func && ed->data == data)
+			ಪ್ರತ್ಯಾಗಮ EXT2_ET_FILE_EXISTS;
+		ಯದಿ (ed->func == ರಿಕ್ತ)
 			free_ed = ed;
 	}
 
-	if (free_ed) {
+	ಯದಿ (free_ed) {
 		free_ed->func = func;
 		free_ed->data = data;
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
 
-	if (nr_items == 0) {
+	ಯದಿ (nr_ವಸ್ತುಗಳು == 0) {
 		ret = atexit(handle_exit);
-		if (ret)
-			return ret;
+		ಯದಿ (ret)
+			ಪ್ರತ್ಯಾಗಮ ret;
 	}
 
-	ret = ext2fs_resize_mem(0, (nr_items + 1) * sizeof(struct exit_data),
-				&items);
-	if (ret)
-		return ret;
+	ret = ext2fs_resize_mem(0, (nr_ವಸ್ತುಗಳು + 1) * ಪರಿಮಾಣ(ಸಂರಚನಾ exit_data),
+				&ವಸ್ತುಗಳು);
+	ಯದಿ (ret)
+		ಪ್ರತ್ಯಾಗಮ ret;
 
-	items[nr_items].func = func;
-	items[nr_items].data = data;
-	nr_items++;
+	ವಸ್ತುಗಳು[nr_ವಸ್ತುಗಳು].func = func;
+	ವಸ್ತುಗಳು[nr_ವಸ್ತುಗಳು].data = data;
+	nr_ವಸ್ತುಗಳು++;
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 /* Remove a function from the exit cleanup list. */
-errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, void *data)
+errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, ಶೂನ್ಯ *data)
 {
-	struct exit_data *ed;
+	ಸಂರಚನಾ exit_data *ed;
 	size_t x;
 
-	if (func == NULL)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ಯದಿ (func == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ EXT2_ET_INVALID_ARGUMENT;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
-		if (ed->func == NULL)
-			return 0;
-		if (ed->func == func && ed->data == data) {
-			size_t sz = (nr_items - (x + 1)) *
-				    sizeof(struct exit_data);
+	ಪ್ರತಿ (x = 0, ed = ವಸ್ತುಗಳು; x < nr_ವಸ್ತುಗಳು; x++, ed++) {
+		ಯದಿ (ed->func == ರಿಕ್ತ)
+			ಪ್ರತ್ಯಾಗಮ 0;
+		ಯದಿ (ed->func == func && ed->data == data) {
+			size_t sz = (nr_ವಸ್ತುಗಳು - (x + 1)) *
+				    ಪರಿಮಾಣ(ಸಂರಚನಾ exit_data);
 			memmove(ed, ed + 1, sz);
-			memset(items + nr_items - 1, 0,
-			       sizeof(struct exit_data));
+			memset(ವಸ್ತುಗಳು + nr_ವಸ್ತುಗಳು - 1, 0,
+			       ಪರಿಮಾಣ(ಸಂರಚನಾ exit_data));
 		}
 	}
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }

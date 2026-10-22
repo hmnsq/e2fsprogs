@@ -9,34 +9,34 @@
  * %End-Header%
  */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
-struct struct_ext2_filsys fs;
+ಸಂರಚನಾ struct_ext2_filsys fs;
 
 #ifndef offsetof
 #define offsetof(type, member)  __builtin_offsetof (type, member)
 #endif
-#define check_field(x) cur_offset = do_field(#x, sizeof(fs.x),		\
-					offsetof(struct struct_ext2_filsys, x), \
+#define check_field(x) cur_offset = do_field(#x, ಪರಿಮಾಣ(fs.x),		\
+					offsetof(ಸಂರಚನಾ struct_ext2_filsys, x), \
 					cur_offset)
 
-static int do_field(const char *field, size_t size, int offset, int cur_offset)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ do_field(ಧ್ರುವ ವರ್ಣ *field, size_t size, ಪೂರ್ಣಾಙ್ಕ offset, ಪೂರ್ಣಾಙ್ಕ cur_offset)
 {
-	if (offset != cur_offset) {
+	ಯದಿ (offset != cur_offset) {
 		printf("\t(padding %d bytes?)\n", offset - cur_offset);
 	}
 	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	ಪ್ರತ್ಯಾಗಮ offset + size;
 }
 
-int main(int argc, char **argv)
+ಪೂರ್ಣಾಙ್ಕ main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#ಯದಿ (__GNUC__ >= 4)
+	ಪೂರ್ಣಾಙ್ಕ cur_offset = 0;
 
 	printf("%8s %-30s %3s\n", "offset", "field", "size");
 	check_field(magic);
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	check_field(super);
 	check_field(blocksize);
 	check_field(fragsize);
-	check_field(group_desc_count);
+	check_field(group_desc_ಎಣಿಕೆ);
 	check_field(desc_blocks);
 	check_field(group_desc);
 	check_field(inode_blocks_per_group);

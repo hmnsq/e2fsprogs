@@ -16,25 +16,25 @@
 #ifndef _LINUX_EXT2_FS_H
 #define _LINUX_EXT2_FS_H
 
-#include <ext2fs/ext2_types.h>		/* Changed from linux/types.h */
+#ಅನ್ತರ್ಭಾವ <ext2fs/ext2_types.h>		/* Changed from linux/types.h */
 
 #ifndef __GNUC_PREREQ
-#if defined(__GNUC__) && defined(__GNUC_MINOR__)
+#ಯದಿ defined(__GNUC__) && defined(__GNUC_MINOR__)
 #define __GNUC_PREREQ(maj, min) \
 	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
-#else
+#ಅನ್ಯಥಾ
 #define __GNUC_PREREQ(maj, min) 0
 #endif
 #endif
 
 #ifndef __nonstring
 #ifdef __has_attribute
-#if __has_attribute(__nonstring__)
+#ಯದಿ __has_attribute(__nonstring__)
 #define __nonstring                    __attribute__((__nonstring__))
-#else
+#ಅನ್ಯಥಾ
 #define __nonstring
 #endif /* __has_attribute(__nonstring__) */
-#else
+#ಅನ್ಯಥಾ
 # define __nonstring
 #endif /* __has_attribute */
 #endif /* __nonstring */
@@ -64,7 +64,7 @@
  * Special inode numbers
  */
 #define EXT2_BAD_INO		 1	/* Bad blocks inode */
-#define EXT2_ROOT_INO		 2	/* Root inode */
+#define EXT2_ಬೇರು_INO		 2	/* Root inode */
 #define EXT4_USR_QUOTA_INO	 3	/* User quota inode */
 #define EXT4_GRP_QUOTA_INO	 4	/* Group quota inode */
 #define EXT2_BOOT_LOADER_INO	 5	/* Boot loader inode */
@@ -84,7 +84,7 @@
 
 #ifdef __KERNEL__
 #define EXT2_SB(sb)	(&((sb)->u.ext2_sb))
-#else
+#ಅನ್ಯಥಾ
 /* Assume that user mode programs are passing in an ext2fs superblock, not
  * a kernel struct super_block.  This will allow us to call the feature-test
  * macros from user land. */
@@ -109,7 +109,7 @@
 #define EXT2_ADDR_PER_BLOCK_BITS(s)	(EXT2_SB(s)->addr_per_block_bits)
 #define EXT2_INODE_SIZE(s)	(EXT2_SB(s)->s_inode_size)
 #define EXT2_FIRST_INO(s)	(EXT2_SB(s)->s_first_ino)
-#else
+#ಅನ್ಯಥಾ
 #define EXT2_BLOCK_SIZE(s)	(EXT2_MIN_BLOCK_SIZE << (s)->s_log_block_size)
 #define EXT2_BLOCK_SIZE_BITS(s)	((s)->s_log_block_size + 10)
 #define EXT2_INODE_SIZE(s)	(((s)->s_rev_level == EXT2_GOOD_OLD_REV) ? \
@@ -117,7 +117,7 @@
 #define EXT2_FIRST_INO(s)	(((s)->s_rev_level == EXT2_GOOD_OLD_REV) ? \
 				 EXT2_GOOD_OLD_FIRST_INO : (s)->s_first_ino)
 #endif
-#define EXT2_ADDR_PER_BLOCK(s)	(EXT2_BLOCK_SIZE(s) / sizeof(__u32))
+#define EXT2_ADDR_PER_BLOCK(s)	(EXT2_BLOCK_SIZE(s) / ಪರಿಮಾಣ(__u32))
 
 /*
  * Macro-instructions used to manage allocation clusters
@@ -145,15 +145,15 @@
 /*
  * ACL structures
  */
-struct ext2_acl_header	/* Header of Access Control Lists */
+ಸಂರಚನಾ ext2_acl_header	/* Header of Access Control Lists */
 {
 	__u32	aclh_size;
-	__u32	aclh_file_count;
-	__u32	aclh_acle_count;
+	__u32	aclh_file_ಎಣಿಕೆ;
+	__u32	aclh_acle_ಎಣಿಕೆ;
 	__u32	aclh_first_acle;
 };
 
-struct ext2_acl_entry	/* Access Control List Entry */
+ಸಂರಚನಾ ext2_acl_entry	/* Access Control List Entry */
 {
 	__u32	acle_size;
 	__u16	acle_perms;	/* Access permissions */
@@ -167,14 +167,14 @@ struct ext2_acl_entry	/* Access Control List Entry */
 /*
  * Structure of a blocks group descriptor
  */
-struct ext2_group_desc
+ಸಂರಚನಾ ext2_group_desc
 {
 	__u32	bg_block_bitmap;	/* Blocks bitmap block */
 	__u32	bg_inode_bitmap;	/* Inodes bitmap block */
 	__u32	bg_inode_table;		/* Inodes table block */
-	__u16	bg_free_blocks_count;	/* Free blocks count */
-	__u16	bg_free_inodes_count;	/* Free inodes count */
-	__u16	bg_used_dirs_count;	/* Directories count */
+	__u16	bg_free_blocks_ಎಣಿಕೆ;	/* Free blocks count */
+	__u16	bg_free_inodes_ಎಣಿಕೆ;	/* Free inodes count */
+	__u16	bg_used_dirs_ಎಣಿಕೆ;	/* Directories count */
 	__u16	bg_flags;
 	__u32	bg_exclude_bitmap_lo;	/* Exclude bitmap for snapshots */
 	__u16	bg_block_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */
@@ -186,14 +186,14 @@ struct ext2_group_desc
 /*
  * Structure of a blocks group descriptor
  */
-struct ext4_group_desc
+ಸಂರಚನಾ ext4_group_desc
 {
 	__u32	bg_block_bitmap;	/* Blocks bitmap block */
 	__u32	bg_inode_bitmap;	/* Inodes bitmap block */
 	__u32	bg_inode_table;		/* Inodes table block */
-	__u16	bg_free_blocks_count;	/* Free blocks count */
-	__u16	bg_free_inodes_count;	/* Free inodes count */
-	__u16	bg_used_dirs_count;	/* Directories count */
+	__u16	bg_free_blocks_ಎಣಿಕೆ;	/* Free blocks count */
+	__u16	bg_free_inodes_ಎಣಿಕೆ;	/* Free inodes count */
+	__u16	bg_used_dirs_ಎಣಿಕೆ;	/* Directories count */
 	__u16	bg_flags;		/* EXT4_BG_flags (INODE_UNINIT, etc) */
 	__u32	bg_exclude_bitmap_lo;	/* Exclude bitmap for snapshots */
 	__u16	bg_block_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */
@@ -203,9 +203,9 @@ struct ext4_group_desc
 	__u32	bg_block_bitmap_hi;	/* Blocks bitmap block MSB */
 	__u32	bg_inode_bitmap_hi;	/* Inodes bitmap block MSB */
 	__u32	bg_inode_table_hi;	/* Inodes table block MSB */
-	__u16	bg_free_blocks_count_hi;/* Free blocks count MSB */
-	__u16	bg_free_inodes_count_hi;/* Free inodes count MSB */
-	__u16	bg_used_dirs_count_hi;	/* Directories count MSB */
+	__u16	bg_free_blocks_ಎಣಿಕೆ_hi;/* Free blocks count MSB */
+	__u16	bg_free_inodes_ಎಣಿಕೆ_hi;/* Free inodes count MSB */
+	__u16	bg_used_dirs_ಎಣಿಕೆ_hi;	/* Directories count MSB */
 	__u16	bg_itable_unused_hi;	/* Unused inodes count MSB */
 	__u32	bg_exclude_bitmap_hi;	/* Exclude bitmap block MSB */
 	__u16	bg_block_bitmap_csum_hi;/* crc32c(s_uuid+grp_num+bitmap) MSB */
@@ -214,11 +214,11 @@ struct ext4_group_desc
 };
 
 #define EXT4_BG_INODE_BITMAP_CSUM_HI_END	\
-	(offsetof(struct ext4_group_desc, bg_inode_bitmap_csum_hi) + \
-	 sizeof(__u16))
+	(offsetof(ಸಂರಚನಾ ext4_group_desc, bg_inode_bitmap_csum_hi) + \
+	 ಪರಿಮಾಣ(__u16))
 #define EXT4_BG_BLOCK_BITMAP_CSUM_HI_LOCATION	\
-	(offsetof(struct ext4_group_desc, bg_block_bitmap_csum_hi) + \
-	 sizeof(__u16))
+	(offsetof(ಸಂರಚನಾ ext4_group_desc, bg_block_bitmap_csum_hi) + \
+	 ಪರಿಮಾಣ(__u16))
 
 #define EXT2_BG_INODE_UNINIT	0x0001 /* Inode table/bitmap not initialized */
 #define EXT2_BG_BLOCK_UNINIT	0x0002 /* Block bitmap not initialized */
@@ -236,7 +236,7 @@ struct ext4_group_desc
  * zero.  Therefore, the hash version mod 4 should never be 0.
  * Sincerely, the paranoia department.
  */
-struct ext2_dx_root_info {
+ಸಂರಚನಾ ext2_dx_ಬೇರು_info {
 	__u32 reserved_zero;
 	__u8 hash_version; /* 0 now, 1 at release */
 	__u8 info_length; /* 8 */
@@ -256,20 +256,20 @@ struct ext2_dx_root_info {
 
 #define EXT4_DX_BLOCK_MASK 0x0fffffff
 
-struct ext2_dx_entry {
+ಸಂರಚನಾ ext2_dx_entry {
 	__le32 hash;
 	__le32 block;
 };
 
-struct ext2_dx_countlimit {
+ಸಂರಚನಾ ext2_dx_countlimit {
 	__le16 limit;
-	__le16 count;
+	__le16 ಎಣಿಕೆ;
 };
 
 /*
  * This goes at the end of each htree block.
  */
-struct ext2_dx_tail {
+ಸಂರಚನಾ ext2_dx_tail {
 	__le32 dt_reserved;
 	__le32 dt_checksum;	/* crc32c(uuid+inum+dxblock) */
 };
@@ -297,7 +297,7 @@ struct ext2_dx_tail {
 #ifdef __KERNEL__
 #define EXT2_DESC_PER_BLOCK(s)		(EXT2_SB(s)->s_desc_per_block)
 #define EXT2_DESC_PER_BLOCK_BITS(s)	(EXT2_SB(s)->s_desc_per_block_bits)
-#else
+#ಅನ್ಯಥಾ
 #define EXT2_DESC_PER_BLOCK(s)		(EXT2_BLOCK_SIZE(s) / EXT2_DESC_SIZE(s))
 #endif
 
@@ -363,28 +363,28 @@ struct ext2_dx_tail {
  */
 
 /* Used for online resize */
-struct ext2_new_group_input {
+ಸಂರಚನಾ ext2_new_group_ಒಳಹರಿವು {
 	__u32 group;		/* Group number for this data */
 	__u32 block_bitmap;	/* Absolute block number of block bitmap */
 	__u32 inode_bitmap;	/* Absolute block number of inode bitmap */
 	__u32 inode_table;	/* Absolute block number of inode table start */
-	__u32 blocks_count;	/* Total number of blocks in this group */
+	__u32 blocks_ಎಣಿಕೆ;	/* Total number of blocks in this group */
 	__u16 reserved_blocks;	/* Number of reserved blocks in this group */
 	__u16 unused;		/* Number of reserved GDT blocks in group */
 };
 
-struct ext4_new_group_input {
+ಸಂರಚನಾ ext4_new_group_ಒಳಹರಿವು {
 	__u32 group;		/* Group number for this data */
 	__u64 block_bitmap;	/* Absolute block number of block bitmap */
 	__u64 inode_bitmap;	/* Absolute block number of inode bitmap */
 	__u64 inode_table;	/* Absolute block number of inode table start */
-	__u32 blocks_count;	/* Total number of blocks in this group */
+	__u32 blocks_ಎಣಿಕೆ;	/* Total number of blocks in this group */
 	__u16 reserved_blocks;	/* Number of reserved blocks in this group */
 	__u16 unused;
 };
 
 #ifdef __GNU__			/* Needed for the Hurd */
-#define _IOT_ext2_new_group_input _IOT (_IOTS(__u32), 5, _IOTS(__u16), 2, 0, 0)
+#define IOT_ext2_new_group_ಒಳಹರಿವು _IOT (_IOTS(__u32), 5, _IOTS(__u16), 2, 0, 0)
 #endif
 
 #define EXT2_IOC_GETFLAGS		_IOR('f', 1, long)
@@ -394,14 +394,14 @@ struct ext4_new_group_input {
 #define EXT2_IOC_GETVERSION_NEW		_IOR('f', 3, long)
 #define EXT2_IOC_SETVERSION_NEW		_IOW('f', 4, long)
 #define EXT2_IOC_GROUP_EXTEND		_IOW('f', 7, unsigned long)
-#define EXT2_IOC_GROUP_ADD		_IOW('f', 8,struct ext2_new_group_input)
-#define EXT4_IOC_GROUP_ADD		_IOW('f', 8,struct ext4_new_group_input)
+#define EXT2_IOC_GROUP_ADD		_IOW('f', 8,ಸಂರಚನಾ ext2_new_group_ಒಳಹರಿವು)
+#define EXT4_IOC_GROUP_ADD		_IOW('f', 8,ಸಂರಚನಾ ext4_new_group_ಒಳಹರಿವು)
 #define EXT4_IOC_RESIZE_FS		_IOW('f', 16, __u64)
 
 /*
  * Structure of an inode on the disk
  */
-struct ext2_inode {
+ಸಂರಚನಾ ext2_inode {
 /*00*/	__u16	i_mode;		/* File mode */
 	__u16	i_uid;		/* Low 16 bits of Owner Uid */
 	__u32	i_size;		/* Size in bytes */
@@ -410,37 +410,37 @@ struct ext2_inode {
 /*10*/	__u32	i_mtime;	/* Modification time */
 	__u32	i_dtime;	/* Deletion Time */
 	__u16	i_gid;		/* Low 16 bits of Group Id */
-	__u16	i_links_count;	/* Links count */
+	__u16	i_links_ಎಣಿಕೆ;	/* Links count */
 	__u32	i_blocks;	/* Blocks count */
 /*20*/	__u32	i_flags;	/* File flags */
-	union {
-		struct {
+	ಸಙ್ಘ {
+		ಸಂರಚನಾ {
 			__u32	l_i_version; /* was l_i_reserved1 */
 		} linux1;
-		struct {
+		ಸಂರಚನಾ {
 			__u32  h_i_translator;
 		} hurd1;
 	} osd1;				/* OS dependent 1 */
 /*28*/	__u32	i_block[EXT2_N_BLOCKS];/* Pointers to blocks */
 /*64*/	__u32	i_generation;	/* File version (for NFS) */
 	__u32	i_file_acl;	/* File ACL */
-	__u32	i_size_high;
+	__u32	i_size_ಮೇಲಿನ;
 /*70*/	__u32	i_faddr;	/* Fragment address */
-	union {
-		struct {
+	ಸಙ್ಘ {
+		ಸಂರಚನಾ {
 			__u16	l_i_blocks_hi;
-			__u16	l_i_file_acl_high;
-			__u16	l_i_uid_high;	/* these 2 fields    */
-			__u16	l_i_gid_high;	/* were reserved2[0] */
+			__u16	l_i_file_acl_ಮೇಲಿನ;
+			__u16	l_i_uid_ಮೇಲಿನ;	/* these 2 fields    */
+			__u16	l_i_gid_ಮೇಲಿನ;	/* were reserved2[0] */
 			__u16	l_i_checksum_lo; /* crc32c(uuid+inum+inode) */
 			__u16	l_i_reserved;
 		} linux2;
-		struct {
+		ಸಂರಚನಾ {
 			__u8	h_i_frag;	/* Fragment number */
 			__u8	h_i_fsize;	/* Fragment size */
-			__u16	h_i_mode_high;
-			__u16	h_i_uid_high;
-			__u16	h_i_gid_high;
+			__u16	h_i_mode_ಮೇಲಿನ;
+			__u16	h_i_uid_ಮೇಲಿನ;
+			__u16	h_i_gid_ಮೇಲಿನ;
 			__u32	h_i_author;
 		} hurd2;
 	} osd2;				/* OS dependent 2 */
@@ -449,7 +449,7 @@ struct ext2_inode {
 /*
  * Permanent part of an large inode on the disk
  */
-struct ext2_inode_large {
+ಸಂರಚನಾ ext2_inode_large {
 /*00*/	__u16	i_mode;		/* File mode */
 	__u16	i_uid;		/* Low 16 bits of Owner Uid */
 	__u32	i_size;		/* Size in bytes */
@@ -458,37 +458,37 @@ struct ext2_inode_large {
 /*10*/	__u32	i_mtime;	/* Modification time */
 	__u32	i_dtime;	/* Deletion Time */
 	__u16	i_gid;		/* Low 16 bits of Group Id */
-	__u16	i_links_count;	/* Links count */
+	__u16	i_links_ಎಣಿಕೆ;	/* Links count */
 	__u32	i_blocks;	/* Blocks count */
 /*20*/	__u32	i_flags;	/* File flags */
-	union {
-		struct {
+	ಸಙ್ಘ {
+		ಸಂರಚನಾ {
 			__u32	l_i_version; /* was l_i_reserved1 */
 		} linux1;
-		struct {
+		ಸಂರಚನಾ {
 			__u32  h_i_translator;
 		} hurd1;
 	} osd1;				/* OS dependent 1 */
 /*28*/	__u32	i_block[EXT2_N_BLOCKS];/* Pointers to blocks */
 /*64*/	__u32	i_generation;	/* File version (for NFS) */
 	__u32	i_file_acl;	/* File ACL */
-	__u32	i_size_high;
+	__u32	i_size_ಮೇಲಿನ;
 /*70*/	__u32	i_faddr;	/* Fragment address */
-	union {
-		struct {
+	ಸಙ್ಘ {
+		ಸಂರಚನಾ {
 			__u16	l_i_blocks_hi;
-			__u16	l_i_file_acl_high;
-			__u16	l_i_uid_high;	/* these 2 fields    */
-			__u16	l_i_gid_high;	/* were reserved2[0] */
+			__u16	l_i_file_acl_ಮೇಲಿನ;
+			__u16	l_i_uid_ಮೇಲಿನ;	/* these 2 fields    */
+			__u16	l_i_gid_ಮೇಲಿನ;	/* were reserved2[0] */
 			__u16	l_i_checksum_lo; /* crc32c(uuid+inum+inode) */
 			__u16	l_i_reserved;
 		} linux2;
-		struct {
+		ಸಂರಚನಾ {
 			__u8	h_i_frag;	/* Fragment number */
 			__u8	h_i_fsize;	/* Fragment size */
-			__u16	h_i_mode_high;
-			__u16	h_i_uid_high;
-			__u16	h_i_gid_high;
+			__u16	h_i_mode_ಮೇಲಿನ;
+			__u16	h_i_uid_ಮೇಲಿನ;
+			__u16	h_i_gid_ಮೇಲಿನ;
 			__u32	h_i_author;
 		} hurd2;
 	} osd2;				/* OS dependent 2 */
@@ -504,7 +504,7 @@ struct ext2_inode_large {
 };
 
 #define EXT4_INODE_CSUM_HI_EXTRA_END	\
-	(offsetof(struct ext2_inode_large, i_checksum_hi) + sizeof(__u16) - \
+	(offsetof(ಸಂರಚನಾ ext2_inode_large, i_checksum_hi) + ಪರಿಮಾಣ(__u16) - \
 	 EXT2_GOOD_OLD_INODE_SIZE)
 
 #define EXT4_EPOCH_BITS 2
@@ -513,40 +513,40 @@ struct ext2_inode_large {
 #define i_checksum_lo	osd2.linux2.l_i_checksum_lo
 
 #define ext2fs_inode_includes(size, field)				\
-	((size) >= (sizeof(((struct ext2_inode_large *)0)->field) +	\
-		    offsetof(struct ext2_inode_large, field)))
+	((size) >= (ಪರಿಮಾಣ(((ಸಂರಚನಾ ext2_inode_large *)0)->field) +	\
+		    offsetof(ಸಂರಚನಾ ext2_inode_large, field)))
 
-#if defined(__KERNEL__) || defined(__linux__)
+#ಯದಿ defined(__KERNEL__) || defined(__linux__)
 #define i_reserved1	osd1.linux1.l_i_reserved1
 #define i_frag		osd2.linux2.l_i_frag
 #define i_fsize		osd2.linux2.l_i_fsize
-#define i_uid_low	i_uid
-#define i_gid_low	i_gid
-#define i_uid_high	osd2.linux2.l_i_uid_high
-#define i_gid_high	osd2.linux2.l_i_gid_high
-#else
-#if defined(__GNU__)
+#define i_uid_ಕೆಳಗಿನ	i_uid
+#define i_gid_ಕೆಳಗಿನ	i_gid
+#define i_uid_ಮೇಲಿನ	osd2.linux2.l_i_uid_ಮೇಲಿನ
+#define i_gid_ಮೇಲಿನ	osd2.linux2.l_i_gid_ಮೇಲಿನ
+#ಅನ್ಯಥಾ
+#ಯದಿ defined(__GNU__)
 
 #define i_translator	osd1.hurd1.h_i_translator
 #define i_frag		osd2.hurd2.h_i_frag;
 #define i_fsize		osd2.hurd2.h_i_fsize;
-#define i_uid_high	osd2.hurd2.h_i_uid_high
-#define i_gid_high	osd2.hurd2.h_i_gid_high
+#define i_uid_ಮೇಲಿನ	osd2.hurd2.h_i_uid_ಮೇಲಿನ
+#define i_gid_ಮೇಲಿನ	osd2.hurd2.h_i_gid_ಮೇಲಿನ
 #define i_author	osd2.hurd2.h_i_author
 
 #endif  /* __GNU__ */
 #endif	/* defined(__KERNEL__) || defined(__linux__) */
 
-#define inode_uid(inode)	((inode).i_uid | (unsigned)(inode).osd2.linux2.l_i_uid_high << 16)
-#define inode_gid(inode)	((inode).i_gid | (unsigned)(inode).osd2.linux2.l_i_gid_high << 16)
+#define inode_uid(inode)	((inode).i_uid | (unsigned)(inode).osd2.linux2.l_i_uid_ಮೇಲಿನ << 16)
+#define inode_gid(inode)	((inode).i_gid | (unsigned)(inode).osd2.linux2.l_i_gid_ಮೇಲಿನ << 16)
 #define inode_projid(inode)	((inode).i_projid)
-#define ext2fs_set_i_uid_high(inode,x) ((inode).osd2.linux2.l_i_uid_high = (x))
-#define ext2fs_set_i_gid_high(inode,x) ((inode).osd2.linux2.l_i_gid_high = (x))
+#define ext2fs_set_i_uid_ಮೇಲಿನ(inode,x) ((inode).osd2.linux2.l_i_uid_ಮೇಲಿನ = (x))
+#define ext2fs_set_i_gid_ಮೇಲಿನ(inode,x) ((inode).osd2.linux2.l_i_gid_ಮೇಲಿನ = (x))
 
-static inline
-struct ext2_inode *EXT2_INODE(struct ext2_inode_large *large_inode)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ
+ಸಂರಚನಾ ext2_inode *EXT2_INODE(ಸಂರಚನಾ ext2_inode_large *large_inode)
 {
-	return (struct ext2_inode *) large_inode;
+	ಪ್ರತ್ಯಾಗಮ (ಸಂರಚನಾ ext2_inode *) large_inode;
 }
 
 /*
@@ -586,7 +586,7 @@ struct ext2_inode *EXT2_INODE(struct ext2_inode_large *large_inode)
 /*
  * Maximal mount counts between two filesystem checks
  */
-#define EXT2_DFL_MAX_MNT_COUNT		20	/* Allow 20 mounts */
+#define EXT2_DFL_MAX_MNT_ಎಣಿಕೆ		20	/* Allow 20 mounts */
 #define EXT2_DFL_CHECKINTERVAL		0	/* Don't use interval check */
 
 /*
@@ -597,9 +597,9 @@ struct ext2_inode *EXT2_INODE(struct ext2_inode_large *large_inode)
 #define EXT2_ERRORS_PANIC		3	/* Panic */
 #define EXT2_ERRORS_DEFAULT		EXT2_ERRORS_CONTINUE
 
-#if (__GNUC__ >= 4)
+#ಯದಿ (__GNUC__ >= 4)
 #define ext4_offsetof(TYPE,MEMBER) __builtin_offsetof(TYPE,MEMBER)
-#else
+#ಅನ್ಯಥಾ
 #define ext4_offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
 #endif
 
@@ -613,13 +613,13 @@ struct ext2_inode *EXT2_INODE(struct ext2_inode_large *large_inode)
 #define EXT4_ENCRYPTION_MODE_AES_256_CBC	3
 #define EXT4_ENCRYPTION_MODE_AES_256_CTS	4
 
-#define EXT4_AES_256_XTS_KEY_SIZE		64
-#define EXT4_AES_256_GCM_KEY_SIZE		32
-#define EXT4_AES_256_CBC_KEY_SIZE		32
-#define EXT4_AES_256_CTS_KEY_SIZE		32
-#define EXT4_MAX_KEY_SIZE			64
+#define EXT4_AES_256_XTS_ಕೀಲಿ_SIZE		64
+#define EXT4_AES_256_GCM_ಕೀಲಿ_SIZE		32
+#define EXT4_AES_256_CBC_ಕೀಲಿ_SIZE		32
+#define EXT4_AES_256_CTS_ಕೀಲಿ_SIZE		32
+#define EXT4_MAX_ಕೀಲಿ_SIZE			64
 
-#define EXT4_KEY_DESCRIPTOR_SIZE		8
+#define EXT4_ಕೀಲಿ_DESCRIPTOR_SIZE		8
 #define EXT4_CRYPTO_BLOCK_SIZE			16
 
 /* Password derivation constants */
@@ -633,29 +633,29 @@ struct ext2_inode *EXT2_INODE(struct ext2_inode_large *large_inode)
  * Policy provided via an ioctl on the topmost directory. This
  * structure is also in the kernel.
  */
-struct ext4_encryption_policy {
-  char version;
-  char contents_encryption_mode;
-  char filenames_encryption_mode;
-  char flags;
-  char master_key_descriptor[EXT4_KEY_DESCRIPTOR_SIZE];
+ಸಂರಚನಾ ext4_encryption_policy {
+  ವರ್ಣ version;
+  ವರ್ಣ contents_encryption_mode;
+  ವರ್ಣ filenames_encryption_mode;
+  ವರ್ಣ flags;
+  ವರ್ಣ master_ಕೀಲಿ_descriptor[EXT4_ಕೀಲಿ_DESCRIPTOR_SIZE];
 } __attribute__((__packed__));
 
-struct ext4_encryption_key {
+ಸಂರಚನಾ ext4_encryption_ಕೀಲಿ {
         __u32 mode;
-        char raw[EXT4_MAX_KEY_SIZE];
+        ವರ್ಣ raw[EXT4_MAX_ಕೀಲಿ_SIZE];
         __u32 size;
 } __attribute__((__packed__));
 
 /*
  * Structure of the super block
  */
-struct ext2_super_block {
-/*000*/	__u32	s_inodes_count;		/* Inodes count */
-	__u32	s_blocks_count;		/* Blocks count */
-	__u32	s_r_blocks_count;	/* Reserved blocks count */
-	__u32	s_free_blocks_count;	/* Free blocks count */
-/*010*/	__u32	s_free_inodes_count;	/* Free inodes count */
+ಸಂರಚನಾ ext2_super_block {
+/*000*/	__u32	s_inodes_ಎಣಿಕೆ;		/* Inodes count */
+	__u32	s_blocks_ಎಣಿಕೆ;		/* Blocks count */
+	__u32	s_r_blocks_ಎಣಿಕೆ;	/* Reserved blocks count */
+	__u32	s_free_blocks_ಎಣಿಕೆ;	/* Free blocks count */
+/*010*/	__u32	s_free_inodes_ಎಣಿಕೆ;	/* Free inodes count */
 	__u32	s_first_data_block;	/* First Data Block */
 	__u32	s_log_block_size;	/* Block size */
 	__u32	s_log_cluster_size;	/* Allocation cluster size */
@@ -664,8 +664,8 @@ struct ext2_super_block {
 	__u32	s_inodes_per_group;	/* # Inodes per group */
 	__u32	s_mtime;		/* Mount time */
 /*030*/	__u32	s_wtime;		/* Write time */
-	__u16	s_mnt_count;		/* Mount count */
-	__s16	s_max_mnt_count;	/* Maximal mount count */
+	__u16	s_mnt_ಎಣಿಕೆ;		/* Mount count */
+	__s16	s_max_mnt_ಎಣಿಕೆ;	/* Maximal mount count */
 	__u16	s_magic;		/* Magic signature */
 	__u16	s_state;		/* File system state */
 	__u16	s_errors;		/* Behaviour when detecting errors */
@@ -721,8 +721,8 @@ struct ext2_super_block {
 	__u32	s_first_meta_bg;	/* First metablock group */
 	__u32	s_mkfs_time;		/* When the filesystem was created */
 /*10c*/	__u32	s_jnl_blocks[17];	/* Backup of the journal inode */
-/*150*/	__u32	s_blocks_count_hi;	/* Blocks count high 32bits */
-	__u32	s_r_blocks_count_hi;	/* Reserved blocks count high 32 bits*/
+/*150*/	__u32	s_blocks_ಎಣಿಕೆ_hi;	/* Blocks count high 32bits */
+	__u32	s_r_blocks_ಎಣಿಕೆ_hi;	/* Reserved blocks count high 32 bits*/
 	__u32	s_free_blocks_hi;	/* Free blocks count */
 	__u16	s_min_extra_isize;	/* All inodes have at least # bytes */
 	__u16	s_want_extra_isize;	/* New inodes should reserve # bytes */
@@ -738,21 +738,21 @@ struct ext2_super_block {
 	__u64	s_kbytes_written;	/* nr of lifetime kilobytes written */
 /*180*/	__u32	s_snapshot_inum;	/* Inode number of active snapshot */
 	__u32	s_snapshot_id;		/* sequential ID of active snapshot */
-	__u64	s_snapshot_r_blocks_count; /* active snapshot reserved blocks */
+	__u64	s_snapshot_r_blocks_ಎಣಿಕೆ; /* active snapshot reserved blocks */
 /*190*/	__u32	s_snapshot_list;	/* inode number of disk snapshot list */
-#define EXT4_S_ERR_START ext4_offsetof(struct ext2_super_block, s_error_count)
-	__u32	s_error_count;		/* number of fs errors */
+#define EXT4_S_ERR_START ext4_offsetof(ಸಂರಚನಾ ext2_super_block, s_error_ಎಣಿಕೆ)
+	__u32	s_error_ಎಣಿಕೆ;		/* number of fs errors */
 	__u32	s_first_error_time;	/* first time an error happened */
 	__u32	s_first_error_ino;	/* inode involved in first error */
 /*1a0*/	__u64	s_first_error_block;	/* block involved in first error */
 	__u8	s_first_error_func[32] __nonstring;	/* function where error hit, no NUL? */
-/*1c8*/	__u32	s_first_error_line;	/* line number where error happened */
+/*1c8*/	__u32	s_first_error_ಸಾಲು;	/* line number where error happened */
 	__u32	s_last_error_time;	/* most recent time of an error */
 /*1d0*/	__u32	s_last_error_ino;	/* inode involved in last error */
-	__u32	s_last_error_line;	/* line number where error happened */
+	__u32	s_last_error_ಸಾಲು;	/* line number where error happened */
 	__u64	s_last_error_block;	/* block involved of last error */
 /*1e0*/	__u8	s_last_error_func[32] __nonstring;	/* function where error hit, no NUL? */
-#define EXT4_S_ERR_END ext4_offsetof(struct ext2_super_block, s_mount_opts)
+#define EXT4_S_ERR_END ext4_offsetof(ಸಂರಚನಾ ext2_super_block, s_mount_opts)
 /*200*/	__u8	s_mount_opts[64] __nonstring;	/* default mount options, no NUL? */
 /*240*/	__u32	s_usr_quota_inum;	/* inode number of user quota file */
 	__u32	s_grp_quota_inum;	/* inode number of group quota file */
@@ -779,7 +779,7 @@ struct ext2_super_block {
 };
 
 #define EXT4_S_ERR_LEN (EXT4_S_ERR_END - EXT4_S_ERR_START)
-#define EXT2_LEN_STR(buf) (int)sizeof(buf), (char *)buf
+#define EXT2_LEN_STR(buf) (ಪೂರ್ಣಾಙ್ಕ)ಪರಿಮಾಣ(buf), (ವರ್ಣ *)buf
 
 /*
  * Codes for operating systems
@@ -876,51 +876,51 @@ struct ext2_super_block {
 #define EXT4_FEATURE_INCOMPAT_CASEFOLD		0x20000
 
 #define EXT4_FEATURE_COMPAT_FUNCS(name, ver, flagname) \
-static inline int ext2fs_has_feature_##name(struct ext2_super_block *sb) \
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಪೂರ್ಣಾಙ್ಕ ext2fs_has_feature_##name(ಸಂರಚನಾ ext2_super_block *sb) \
 { \
-	return ((EXT2_SB(sb)->s_feature_compat & \
+	ಪ್ರತ್ಯಾಗಮ ((EXT2_SB(sb)->s_feature_compat & \
 		 EXT##ver##_FEATURE_COMPAT_##flagname) != 0); \
 } \
-static inline void ext2fs_set_feature_##name(struct ext2_super_block *sb) \
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಶೂನ್ಯ ext2fs_set_feature_##name(ಸಂರಚನಾ ext2_super_block *sb) \
 { \
 	EXT2_SB(sb)->s_feature_compat |= \
 		EXT##ver##_FEATURE_COMPAT_##flagname; \
 } \
-static inline void ext2fs_clear_feature_##name(struct ext2_super_block *sb) \
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಶೂನ್ಯ ext2fs_clear_feature_##name(ಸಂರಚನಾ ext2_super_block *sb) \
 { \
 	EXT2_SB(sb)->s_feature_compat &= \
 		~EXT##ver##_FEATURE_COMPAT_##flagname; \
 }
 
 #define EXT4_FEATURE_RO_COMPAT_FUNCS(name, ver, flagname) \
-static inline int ext2fs_has_feature_##name(struct ext2_super_block *sb) \
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಪೂರ್ಣಾಙ್ಕ ext2fs_has_feature_##name(ಸಂರಚನಾ ext2_super_block *sb) \
 { \
-	return ((EXT2_SB(sb)->s_feature_ro_compat & \
+	ಪ್ರತ್ಯಾಗಮ ((EXT2_SB(sb)->s_feature_ro_compat & \
 		 EXT##ver##_FEATURE_RO_COMPAT_##flagname) != 0); \
 } \
-static inline void ext2fs_set_feature_##name(struct ext2_super_block *sb) \
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಶೂನ್ಯ ext2fs_set_feature_##name(ಸಂರಚನಾ ext2_super_block *sb) \
 { \
 	EXT2_SB(sb)->s_feature_ro_compat |= \
 		EXT##ver##_FEATURE_RO_COMPAT_##flagname; \
 } \
-static inline void ext2fs_clear_feature_##name(struct ext2_super_block *sb) \
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಶೂನ್ಯ ext2fs_clear_feature_##name(ಸಂರಚನಾ ext2_super_block *sb) \
 { \
 	EXT2_SB(sb)->s_feature_ro_compat &= \
 		~EXT##ver##_FEATURE_RO_COMPAT_##flagname; \
 }
 
 #define EXT4_FEATURE_INCOMPAT_FUNCS(name, ver, flagname) \
-static inline int ext2fs_has_feature_##name(struct ext2_super_block *sb) \
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಪೂರ್ಣಾಙ್ಕ ext2fs_has_feature_##name(ಸಂರಚನಾ ext2_super_block *sb) \
 { \
-	return ((EXT2_SB(sb)->s_feature_incompat & \
+	ಪ್ರತ್ಯಾಗಮ ((EXT2_SB(sb)->s_feature_incompat & \
 		 EXT##ver##_FEATURE_INCOMPAT_##flagname) != 0); \
 } \
-static inline void ext2fs_set_feature_##name(struct ext2_super_block *sb) \
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಶೂನ್ಯ ext2fs_set_feature_##name(ಸಂರಚನಾ ext2_super_block *sb) \
 { \
 	EXT2_SB(sb)->s_feature_incompat |= \
 		EXT##ver##_FEATURE_INCOMPAT_##flagname; \
 } \
-static inline void ext2fs_clear_feature_##name(struct ext2_super_block *sb) \
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಶೂನ್ಯ ext2fs_clear_feature_##name(ಸಂರಚನಾ ext2_super_block *sb) \
 { \
 	EXT2_SB(sb)->s_feature_incompat &= \
 		~EXT##ver##_FEATURE_INCOMPAT_##flagname; \
@@ -1007,9 +1007,9 @@ EXT4_FEATURE_INCOMPAT_FUNCS(casefold,		4, CASEFOLD)
 #define EXT4_DEFM_DISCARD	0x0400
 #define EXT4_DEFM_NODELALLOC	0x0800
 
-static inline int ext4_hash_in_dirent(const struct ext2_inode *inode)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಪೂರ್ಣಾಙ್ಕ ext4_hash_in_dirent(ಧ್ರುವ ಸಂರಚನಾ ext2_inode *inode)
 {
-	return (inode->i_flags & EXT4_ENCRYPT_FL) &&
+	ಪ್ರತ್ಯಾಗಮ (inode->i_flags & EXT4_ENCRYPT_FL) &&
 		(inode->i_flags & EXT4_CASEFOLD_FL);
 }
 
@@ -1018,11 +1018,11 @@ static inline int ext4_hash_in_dirent(const struct ext2_inode *inode)
  */
 #define EXT2_NAME_LEN 255
 
-struct ext2_dir_entry {
+ಸಂರಚನಾ ext2_dir_entry {
 	__u32	inode;			/* Inode number */
 	__u16	rec_len;		/* Directory entry length */
 	__u16	name_len;		/* Name length */
-	char	name[EXT2_NAME_LEN];	/* File name */
+	ವರ್ಣ	name[EXT2_NAME_LEN];	/* File name */
 };
 
 /*
@@ -1039,12 +1039,12 @@ struct ext2_dir_entry {
  *   ext2fs_dirent_set_file_type
  * to get and set name_len and file_type fields.
  */
-struct ext2_dir_entry_2 {
+ಸಂರಚನಾ ext2_dir_entry_2 {
 	__u32	inode;			/* Inode number */
 	__u16	rec_len;		/* Directory entry length */
 	__u8	name_len;		/* Name length */
 	__u8	file_type;
-	char	name[EXT2_NAME_LEN];	/* File name */
+	ವರ್ಣ	name[EXT2_NAME_LEN];	/* File name */
 };
 
 /*
@@ -1052,13 +1052,13 @@ struct ext2_dir_entry_2 {
  * This is located at the first 4 bit aligned location after the name.
  */
 
-struct ext2_dir_entry_hash {
+ಸಂರಚನಾ ext2_dir_entry_hash {
 	__le32 hash;
 	__le32 minor_hash;
 };
 
 #define EXT2_DIRENT_HASHES(entry) \
-	((struct ext2_dir_entry_hash *) &entry->name[\
+	((ಸಂರಚನಾ ext2_dir_entry_hash *) &entry->name[\
 		(ext2fs_dirent_name_len(entry) + \
 			EXT2_DIR_ROUND) & ~EXT2_DIR_ROUND])
 #define EXT2_DIRENT_HASH(entry) \
@@ -1070,7 +1070,7 @@ struct ext2_dir_entry_hash {
  * This is a bogus directory entry at the end of each leaf block that
  * records checksums.
  */
-struct ext2_dir_entry_tail {
+ಸಂರಚನಾ ext2_dir_entry_tail {
 	__u32	det_reserved_zero1;	/* Pretend to be unused */
 	__u16	det_rec_len;		/* 12 */
 	__u16	det_reserved_name_len;	/* 0xDE00, fake namelen/filetype */
@@ -1111,21 +1111,21 @@ struct ext2_dir_entry_tail {
 #define EXT2_DIR_ROUND			(EXT2_DIR_PAD - 1)
 #define EXT2_DIR_REC_LEN(name_len) ext2fs_dir_rec_len(name_len, 0)
 
-static inline unsigned int ext2fs_dir_rec_len(__u8 name_len,
-						int extended)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ unsigned ಪೂರ್ಣಾಙ್ಕ ext2fs_dir_rec_len(__u8 name_len,
+						ಪೂರ್ಣಾಙ್ಕ extended)
 {
-	int rec_len = (name_len + EXT2_DIR_ENTRY_HEADER_LEN + EXT2_DIR_ROUND);
+	ಪೂರ್ಣಾಙ್ಕ rec_len = (name_len + EXT2_DIR_ENTRY_HEADER_LEN + EXT2_DIR_ROUND);
 
 	rec_len &= ~EXT2_DIR_ROUND;
-	if (extended)
+	ಯದಿ (extended)
 		rec_len += EXT2_DIR_ENTRY_HASH_LEN;
-	return rec_len;
+	ಪ್ರತ್ಯಾಗಮ rec_len;
 }
 
 #define EXT4_ORPHAN_BLOCK_MAGIC 0x0b10ca04
 
 /* Structure at the tail of orphan block */
-struct ext4_orphan_block_tail {
+ಸಂರಚನಾ ext4_orphan_block_tail {
 	__le32 ob_magic;
 	__le32 ob_checksum;
 };
@@ -1161,7 +1161,7 @@ struct ext4_orphan_block_tail {
 #define EXT4_MMP_SEQ_MAX   0xE24D4D4FU /* maximum valid mmp_seq value */
 
 /* Not endian-annotated; it's swapped at read/write time */
-struct mmp_struct {
+ಸಂರಚನಾ mmp_struct {
 	__u32	mmp_magic;		/* Magic number for MMP */
 	__u32	mmp_seq;		/* Sequence no. updated periodically */
 	__u64	mmp_time;		/* Time last updated (seconds) */
@@ -1191,7 +1191,7 @@ struct mmp_struct {
 /*
  * Minimum size of inline data.
  */
-#define EXT4_MIN_INLINE_DATA_SIZE	((sizeof(__u32) * EXT2_N_BLOCKS))
+#define EXT4_MIN_INLINE_DATA_SIZE	((ಪರಿಮಾಣ(__u32) * EXT2_N_BLOCKS))
 
 /*
  * Size of a parent inode in inline data directory.

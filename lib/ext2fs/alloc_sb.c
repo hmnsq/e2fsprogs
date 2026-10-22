@@ -10,23 +10,23 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಯದಿ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಯದಿ HAVE_SYS_STAT_H
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#ಯದಿ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
 /*
  * This function reserves the superblock and block group descriptors
@@ -41,42 +41,42 @@
  *
  * See also the comment for ext2fs_super_and_bgd_loc()
  */
-int ext2fs_reserve_super_and_bgd(ext2_filsys fs,
+ಪೂರ್ಣಾಙ್ಕ ext2fs_reserve_super_and_bgd(ext2_filsys fs,
 				 dgrp_t group,
 				 ext2fs_block_bitmap bmap)
 {
 	blk64_t	super_blk, old_desc_blk, new_desc_blk;
-	blk_t	used_blks, old_desc_blocks, num_blocks;
+	blk_t	used_blks, old_desc_blocks, ಅಂಕೆ_blocks;
 
 	ext2fs_super_and_bgd_loc2(fs, group, &super_blk,
 				  &old_desc_blk, &new_desc_blk, &used_blks);
 
-	if (ext2fs_has_feature_meta_bg(fs->super))
+	ಯದಿ (ext2fs_has_feature_meta_bg(fs->super))
 		old_desc_blocks = fs->super->s_first_meta_bg;
-	else
+	ಅನ್ಯಥಾ
 		old_desc_blocks =
 			fs->desc_blocks + fs->super->s_reserved_gdt_blocks;
 
-	if (super_blk || (group == 0))
+	ಯದಿ (super_blk || (group == 0))
 		ext2fs_mark_block_bitmap2(bmap, super_blk);
-	if ((group == 0) && (fs->blocksize == 1024) &&
+	ಯದಿ ((group == 0) && (fs->blocksize == 1024) &&
 	    EXT2FS_CLUSTER_RATIO(fs) > 1)
 		ext2fs_mark_block_bitmap2(bmap, 0);
 
-	if (old_desc_blk) {
-		num_blocks = old_desc_blocks;
-		if (old_desc_blk + num_blocks >= ext2fs_blocks_count(fs->super))
-			num_blocks = ext2fs_blocks_count(fs->super) -
+	ಯದಿ (old_desc_blk) {
+		ಅಂಕೆ_blocks = old_desc_blocks;
+		ಯದಿ (old_desc_blk + ಅಂಕೆ_blocks >= ext2fs_blocks_ಎಣಿಕೆ(fs->super))
+			ಅಂಕೆ_blocks = ext2fs_blocks_ಎಣಿಕೆ(fs->super) -
 				old_desc_blk;
-		ext2fs_mark_block_bitmap_range2(bmap, old_desc_blk, num_blocks);
+		ext2fs_mark_block_bitmap_range2(bmap, old_desc_blk, ಅಂಕೆ_blocks);
 	}
-	if (new_desc_blk)
+	ಯದಿ (new_desc_blk)
 		ext2fs_mark_block_bitmap2(bmap, new_desc_blk);
 
-	num_blocks = ext2fs_group_blocks_count(fs, group);
-	num_blocks -= 2 + fs->inode_blocks_per_group + used_blks;
+	ಅಂಕೆ_blocks = ext2fs_group_blocks_ಎಣಿಕೆ(fs, group);
+	ಅಂಕೆ_blocks -= 2 + fs->inode_blocks_per_group + used_blks;
 
-	return num_blocks  ;
+	ಪ್ರತ್ಯಾಗಮ ಅಂಕೆ_blocks  ;
 }
 
 /*
@@ -89,17 +89,17 @@ errcode_t ext2fs_reserve_super_and_bgd2(ext2_filsys fs,
 				        ext2fs_block_bitmap bmap,
 				        blk_t *desc_blocks)
 {
-	blk64_t	num_blocks;
+	blk64_t	ಅಂಕೆ_blocks;
 	errcode_t retval = 0;
 
 	ext2fs_reserve_super_and_bgd(fs, group, bmap);
 
-	retval = ext2fs_count_used_blocks(fs,
+	retval = ext2fs_ಎಣಿಕೆ_used_blocks(fs,
 					ext2fs_group_first_block2(fs, group),
 					ext2fs_group_last_block2(fs, group),
-					&num_blocks);
-	if (!retval)
-		*desc_blocks = num_blocks;
+					&ಅಂಕೆ_blocks);
+	ಯದಿ (!retval)
+		*desc_blocks = ಅಂಕೆ_blocks;
 
-	return retval;
+	ಪ್ರತ್ಯಾಗಮ retval;
 }

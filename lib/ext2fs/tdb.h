@@ -28,13 +28,13 @@
 */
 
 #ifdef  __cplusplus
-extern "C" {
+ಬಾಹ್ಯ "C" {
 #endif
 
 
 /* flags to tdb_store() */
 #define TDB_REPLACE 1
-#define TDB_INSERT 2
+#define TDB_ಸೇರಿಸು 2
 #define TDB_MODIFY 3
 
 /* flags for tdb_open() */
@@ -51,27 +51,27 @@ extern "C" {
 #define TDB_ERRCODE(code, ret) ((tdb->ecode = (code)), ret)
 
 /* error codes */
-enum TDB_ERROR {TDB_SUCCESS=0, TDB_ERR_CORRUPT, TDB_ERR_IO, TDB_ERR_LOCK,
+ಗಣನಾ TDB_ERROR {TDB_SUCCESS=0, TDB_ERR_CORRUPT, TDB_ERR_IO, TDB_ERR_LOCK,
 		TDB_ERR_OOM, TDB_ERR_EXISTS, TDB_ERR_NOLOCK, TDB_ERR_LOCK_TIMEOUT,
 		TDB_ERR_NOEXIST, TDB_ERR_EINVAL, TDB_ERR_RDONLY};
 
 /* debugging uses one of the following levels */
-enum tdb_debug_level {TDB_DEBUG_FATAL = 0, TDB_DEBUG_ERROR,
+ಗಣನಾ tdb_debug_level {TDB_DEBUG_FATAL = 0, TDB_DEBUG_ERROR,
 		      TDB_DEBUG_WARNING, TDB_DEBUG_TRACE};
 
-typedef struct TDB_DATA {
-	unsigned char *dptr;
+ಪ್ರಕಾರನಿರ್ದೇಶ ಸಂರಚನಾ TDB_DATA {
+	unsigned ವರ್ಣ *dptr;
 	size_t dsize;
 } TDB_DATA;
 
 #ifndef PRINTF_ATTRIBUTE
-#if (__GNUC__ >= 3)
+#ಯದಿ (__GNUC__ >= 3)
 /** Use gcc attribute to check printf fns.  a1 is the 1-based index of
  * the parameter containing the format, and a2 the index of the first
  * argument. Note that some gcc 2.x versions don't handle this
  * properly **/
 #define PRINTF_ATTRIBUTE(a1, a2) __attribute__ ((format (__printf__, a1, a2)))
-#else
+#ಅನ್ಯಥಾ
 #define PRINTF_ATTRIBUTE(a1, a2)
 #endif
 #endif
@@ -132,81 +132,81 @@ typedef struct TDB_DATA {
 #define tdb_flush ext2fs_tdb_flush
 
 /* this is the context structure that is returned from a db open */
-typedef struct tdb_context TDB_CONTEXT;
+ಪ್ರಕಾರನಿರ್ದೇಶ ಸಂರಚನಾ tdb_context TDB_CONTEXT;
 
-typedef int (*tdb_traverse_func)(struct tdb_context *, TDB_DATA, TDB_DATA, void *);
-typedef void (*tdb_log_func)(struct tdb_context *, enum tdb_debug_level, const char *, ...) PRINTF_ATTRIBUTE(3, 4);
-typedef unsigned int (*tdb_hash_func)(TDB_DATA *key);
+ಪ್ರಕಾರನಿರ್ದೇಶ ಪೂರ್ಣಾಙ್ಕ (*tdb_traverse_func)(ಸಂರಚನಾ tdb_context *, TDB_DATA, TDB_DATA, ಶೂನ್ಯ *);
+ಪ್ರಕಾರನಿರ್ದೇಶ ಶೂನ್ಯ (*tdb_log_func)(ಸಂರಚನಾ tdb_context *, ಗಣನಾ tdb_debug_level, ಧ್ರುವ ವರ್ಣ *, ...) PRINTF_ATTRIBUTE(3, 4);
+ಪ್ರಕಾರನಿರ್ದೇಶ unsigned ಪೂರ್ಣಾಙ್ಕ (*tdb_hash_func)(TDB_DATA *ಕೀಲಿ);
 
-struct tdb_logging_context {
+ಸಂರಚನಾ tdb_logging_context {
         tdb_log_func log_fn;
-        void *log_private;
+        ಶೂನ್ಯ *log_private;
 };
 
-struct tdb_context *tdb_open(const char *name, int hash_size, int tdb_flags,
-		      int open_flags, mode_t mode);
-struct tdb_context *tdb_open_ex(const char *name, int hash_size, int tdb_flags,
-			 int open_flags, mode_t mode,
-			 const struct tdb_logging_context *log_ctx,
+ಸಂರಚನಾ tdb_context *tdb_open(ಧ್ರುವ ವರ್ಣ *name, ಪೂರ್ಣಾಙ್ಕ hash_size, ಪೂರ್ಣಾಙ್ಕ tdb_flags,
+		      ಪೂರ್ಣಾಙ್ಕ open_flags, mode_t mode);
+ಸಂರಚನಾ tdb_context *tdb_open_ex(ಧ್ರುವ ವರ್ಣ *name, ಪೂರ್ಣಾಙ್ಕ hash_size, ಪೂರ್ಣಾಙ್ಕ tdb_flags,
+			 ಪೂರ್ಣಾಙ್ಕ open_flags, mode_t mode,
+			 ಧ್ರುವ ಸಂರಚನಾ tdb_logging_context *log_ctx,
 			 tdb_hash_func hash_fn);
-void tdb_set_max_dead(struct tdb_context *tdb, int max_dead);
+ಶೂನ್ಯ tdb_set_max_dead(ಸಂರಚನಾ tdb_context *tdb, ಪೂರ್ಣಾಙ್ಕ max_dead);
 
-int tdb_reopen(struct tdb_context *tdb);
-int tdb_reopen_all(int parent_longlived);
-void tdb_set_logging_function(struct tdb_context *tdb, const struct tdb_logging_context *log_ctx);
-enum TDB_ERROR tdb_error(struct tdb_context *tdb);
-const char *tdb_errorstr(struct tdb_context *tdb);
-TDB_DATA tdb_fetch(struct tdb_context *tdb, TDB_DATA key);
-int tdb_parse_record(struct tdb_context *tdb, TDB_DATA key,
-		     int (*parser)(TDB_DATA key, TDB_DATA data,
-				   void *private_data),
-		     void *private_data);
-int tdb_delete(struct tdb_context *tdb, TDB_DATA key);
-int tdb_store(struct tdb_context *tdb, TDB_DATA key, TDB_DATA dbuf, int flag);
-int tdb_append(struct tdb_context *tdb, TDB_DATA key, TDB_DATA new_dbuf);
-int tdb_close(struct tdb_context *tdb);
-TDB_DATA tdb_firstkey(struct tdb_context *tdb);
-TDB_DATA tdb_nextkey(struct tdb_context *tdb, TDB_DATA key);
-int tdb_traverse(struct tdb_context *tdb, tdb_traverse_func fn, void *);
-int tdb_traverse_read(struct tdb_context *tdb, tdb_traverse_func fn, void *);
-int tdb_exists(struct tdb_context *tdb, TDB_DATA key);
-int tdb_lockall(struct tdb_context *tdb);
-int tdb_lockall_nonblock(struct tdb_context *tdb);
-int tdb_unlockall(struct tdb_context *tdb);
-int tdb_lockall_read(struct tdb_context *tdb);
-int tdb_lockall_read_nonblock(struct tdb_context *tdb);
-int tdb_unlockall_read(struct tdb_context *tdb);
-int tdb_lockall_mark(struct tdb_context *tdb);
-int tdb_lockall_unmark(struct tdb_context *tdb);
-const char *tdb_name(struct tdb_context *tdb);
-int tdb_fd(struct tdb_context *tdb);
-tdb_log_func tdb_log_fn(struct tdb_context *tdb);
-void *tdb_get_logging_private(struct tdb_context *tdb);
-int tdb_transaction_start(struct tdb_context *tdb);
-int tdb_transaction_commit(struct tdb_context *tdb);
-int tdb_transaction_cancel(struct tdb_context *tdb);
-int tdb_transaction_recover(struct tdb_context *tdb);
-int tdb_get_seqnum(struct tdb_context *tdb);
-int tdb_hash_size(struct tdb_context *tdb);
-size_t tdb_map_size(struct tdb_context *tdb);
-int tdb_get_flags(struct tdb_context *tdb);
-void tdb_enable_seqnum(struct tdb_context *tdb);
-void tdb_increment_seqnum_nonblock(struct tdb_context *tdb);
-int tdb_flush(struct tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_reopen(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_reopen_all(ಪೂರ್ಣಾಙ್ಕ parent_longlived);
+ಶೂನ್ಯ tdb_set_logging_function(ಸಂರಚನಾ tdb_context *tdb, ಧ್ರುವ ಸಂರಚನಾ tdb_logging_context *log_ctx);
+ಗಣನಾ TDB_ERROR tdb_error(ಸಂರಚನಾ tdb_context *tdb);
+ಧ್ರುವ ವರ್ಣ *tdb_errorstr(ಸಂರಚನಾ tdb_context *tdb);
+TDB_DATA tdb_fetch(ಸಂರಚನಾ tdb_context *tdb, TDB_DATA ಕೀಲಿ);
+ಪೂರ್ಣಾಙ್ಕ tdb_parse_record(ಸಂರಚನಾ tdb_context *tdb, TDB_DATA ಕೀಲಿ,
+		     ಪೂರ್ಣಾಙ್ಕ (*parser)(TDB_DATA ಕೀಲಿ, TDB_DATA data,
+				   ಶೂನ್ಯ *private_data),
+		     ಶೂನ್ಯ *private_data);
+ಪೂರ್ಣಾಙ್ಕ tdb_delete(ಸಂರಚನಾ tdb_context *tdb, TDB_DATA ಕೀಲಿ);
+ಪೂರ್ಣಾಙ್ಕ tdb_store(ಸಂರಚನಾ tdb_context *tdb, TDB_DATA ಕೀಲಿ, TDB_DATA dbuf, ಪೂರ್ಣಾಙ್ಕ flag);
+ಪೂರ್ಣಾಙ್ಕ tdb_append(ಸಂರಚನಾ tdb_context *tdb, TDB_DATA ಕೀಲಿ, TDB_DATA new_dbuf);
+ಪೂರ್ಣಾಙ್ಕ tdb_close(ಸಂರಚನಾ tdb_context *tdb);
+TDB_DATA tdb_firstkey(ಸಂರಚನಾ tdb_context *tdb);
+TDB_DATA tdb_nextkey(ಸಂರಚನಾ tdb_context *tdb, TDB_DATA ಕೀಲಿ);
+ಪೂರ್ಣಾಙ್ಕ tdb_traverse(ಸಂರಚನಾ tdb_context *tdb, tdb_traverse_func fn, ಶೂನ್ಯ *);
+ಪೂರ್ಣಾಙ್ಕ tdb_traverse_read(ಸಂರಚನಾ tdb_context *tdb, tdb_traverse_func fn, ಶೂನ್ಯ *);
+ಪೂರ್ಣಾಙ್ಕ tdb_exists(ಸಂರಚನಾ tdb_context *tdb, TDB_DATA ಕೀಲಿ);
+ಪೂರ್ಣಾಙ್ಕ tdb_lockall(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_lockall_nonblock(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_unlockall(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_lockall_read(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_lockall_read_nonblock(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_unlockall_read(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_lockall_mark(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_lockall_unmark(ಸಂರಚನಾ tdb_context *tdb);
+ಧ್ರುವ ವರ್ಣ *tdb_name(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_fd(ಸಂರಚನಾ tdb_context *tdb);
+tdb_log_func tdb_log_fn(ಸಂರಚನಾ tdb_context *tdb);
+ಶೂನ್ಯ *tdb_get_logging_private(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_transaction_start(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_transaction_commit(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_transaction_cancel(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_transaction_recover(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_get_seqnum(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_hash_size(ಸಂರಚನಾ tdb_context *tdb);
+size_t tdb_map_size(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_get_flags(ಸಂರಚನಾ tdb_context *tdb);
+ಶೂನ್ಯ tdb_enable_seqnum(ಸಂರಚನಾ tdb_context *tdb);
+ಶೂನ್ಯ tdb_increment_seqnum_nonblock(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_flush(ಸಂರಚನಾ tdb_context *tdb);
 
 /* Low level locking functions: use with care */
-int tdb_chainlock(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_nonblock(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainunlock(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_read(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainunlock_read(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_mark(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_unmark(struct tdb_context *tdb, TDB_DATA key);
+ಪೂರ್ಣಾಙ್ಕ tdb_chainlock(ಸಂರಚನಾ tdb_context *tdb, TDB_DATA ಕೀಲಿ);
+ಪೂರ್ಣಾಙ್ಕ tdb_chainlock_nonblock(ಸಂರಚನಾ tdb_context *tdb, TDB_DATA ಕೀಲಿ);
+ಪೂರ್ಣಾಙ್ಕ tdb_chainunlock(ಸಂರಚನಾ tdb_context *tdb, TDB_DATA ಕೀಲಿ);
+ಪೂರ್ಣಾಙ್ಕ tdb_chainlock_read(ಸಂರಚನಾ tdb_context *tdb, TDB_DATA ಕೀಲಿ);
+ಪೂರ್ಣಾಙ್ಕ tdb_chainunlock_read(ಸಂರಚನಾ tdb_context *tdb, TDB_DATA ಕೀಲಿ);
+ಪೂರ್ಣಾಙ್ಕ tdb_chainlock_mark(ಸಂರಚನಾ tdb_context *tdb, TDB_DATA ಕೀಲಿ);
+ಪೂರ್ಣಾಙ್ಕ tdb_chainlock_unmark(ಸಂರಚನಾ tdb_context *tdb, TDB_DATA ಕೀಲಿ);
 
 /* Debug functions. Not used in production. */
-void tdb_dump_all(struct tdb_context *tdb);
-int tdb_printfreelist(struct tdb_context *tdb);
-int tdb_validate_freelist(struct tdb_context *tdb, int *pnum_entries);
+ಶೂನ್ಯ tdb_dump_all(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_printfreelist(ಸಂರಚನಾ tdb_context *tdb);
+ಪೂರ್ಣಾಙ್ಕ tdb_validate_freelist(ಸಂರಚನಾ tdb_context *tdb, ಪೂರ್ಣಾಙ್ಕ *pnum_entries);
 
 #ifdef  __cplusplus
 }

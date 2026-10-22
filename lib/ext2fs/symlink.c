@@ -10,51 +10,51 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಯದಿ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಯದಿ HAVE_SYS_STAT_H
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#ಯದಿ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
 #ifndef HAVE_STRNLEN
 /*
  * Incredibly, libc5 doesn't appear to have strnlen.  So we have to
  * provide our own.
  */
-static int my_strnlen(const char * s, int count)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ my_strnlen(ಧ್ರುವ ವರ್ಣ * s, ಪೂರ್ಣಾಙ್ಕ ಎಣಿಕೆ)
 {
-	const char *cp = s;
+	ಧ್ರುವ ವರ್ಣ *cp = s;
 
-	while (count-- && *cp)
+	ಯಾವತ್ (ಎಣಿಕೆ-- && *cp)
 		cp++;
-	return cp - s;
+	ಪ್ರತ್ಯಾಗಮ cp - s;
 }
 #define strnlen(str, x) my_strnlen((str),(x))
 #endif
 
 errcode_t ext2fs_symlink(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t ino,
-			 const char *name, const char *target)
+			 ಧ್ರುವ ವರ್ಣ *name, ಧ್ರುವ ವರ್ಣ *target)
 {
 	errcode_t		retval;
-	struct ext2_inode	inode;
+	ಸಂರಚನಾ ext2_inode	inode;
 	ext2_ino_t		scratch_ino;
 	blk64_t			blk;
-	int			fastlink, inlinelink;
-	unsigned int		target_len;
-	char			*block_buf = 0;
-	int			drop_refcount = 0;
+	ಪೂರ್ಣಾಙ್ಕ			fastlink, inlinelink;
+	unsigned ಪೂರ್ಣಾಙ್ಕ		target_len;
+	ವರ್ಣ			*block_buf = 0;
+	ಪೂರ್ಣಾಙ್ಕ			drop_refcount = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
@@ -63,39 +63,39 @@ errcode_t ext2fs_symlink(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t ino,
 	 * (counting the NUL terminator)
 	 */
 	target_len = strnlen(target, fs->blocksize + 1);
-	if (target_len >= fs->blocksize) {
+	ಯದಿ (target_len >= fs->blocksize) {
 		retval = EXT2_ET_INVALID_ARGUMENT;
-		goto cleanup;
+		ಗಚ್ಛ cleanup;
 	}
 
 	/*
 	 * Allocate a data block for slow links
 	 */
 	retval = ext2fs_get_mem(fs->blocksize, &block_buf);
-	if (retval)
-		goto cleanup;
+	ಯದಿ (retval)
+		ಗಚ್ಛ cleanup;
 	memset(block_buf, 0, fs->blocksize);
 	strncpy(block_buf, target, fs->blocksize);
 
-	memset(&inode, 0, sizeof(struct ext2_inode));
-	fastlink = (target_len < sizeof(inode.i_block));
-	if (!fastlink) {
+	memset(&inode, 0, ಪರಿಮಾಣ(ಸಂರಚನಾ ext2_inode));
+	fastlink = (target_len < ಪರಿಮಾಣ(inode.i_block));
+	ಯದಿ (!fastlink) {
 		retval = ext2fs_new_block2(fs, ext2fs_find_inode_goal(fs, ino,
 								      &inode,
 								      0),
-					   NULL, &blk);
-		if (retval)
-			goto cleanup;
+					   ರಿಕ್ತ, &blk);
+		ಯದಿ (retval)
+			ಗಚ್ಛ cleanup;
 	}
 
 	/*
 	 * Allocate an inode, if necessary
 	 */
-	if (!ino) {
+	ಯದಿ (!ino) {
 		retval = ext2fs_new_inode(fs, parent, LINUX_S_IFLNK | 0755,
 					  0, &ino);
-		if (retval)
-			goto cleanup;
+		ಯದಿ (retval)
+			ಗಚ್ಛ cleanup;
 	}
 
 	/*
@@ -103,35 +103,35 @@ errcode_t ext2fs_symlink(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t ino,
 	 */
 	inode.i_mode = LINUX_S_IFLNK | 0777;
 	inode.i_uid = inode.i_gid = 0;
-	inode.i_links_count = 1;
+	inode.i_links_ಎಣಿಕೆ = 1;
 	ext2fs_inode_size_set(fs, &inode, target_len);
 	/* The time fields are set by ext2fs_write_new_inode() */
 
 	inlinelink = !fastlink && ext2fs_has_feature_inline_data(fs->super);
-	if (fastlink) {
+	ಯದಿ (fastlink) {
 		/* Fast symlinks, target stored in inode */
-		strcpy((char *)&inode.i_block, target);
-	} else if (inlinelink) {
+		strcpy((ವರ್ಣ *)&inode.i_block, target);
+	} ಅನ್ಯಥಾ ಯದಿ (inlinelink) {
 		/* Try inserting an inline data symlink */
 		inode.i_flags |= EXT4_INLINE_DATA_FL;
 		retval = ext2fs_write_new_inode(fs, ino, &inode);
-		if (retval)
-			goto cleanup;
+		ಯದಿ (retval)
+			ಗಚ್ಛ cleanup;
 		retval = ext2fs_inline_data_set(fs, ino, &inode, block_buf,
 						target_len);
-		if (retval) {
+		ಯದಿ (retval) {
 			inode.i_flags &= ~EXT4_INLINE_DATA_FL;
 			inlinelink = 0;
-			goto need_block;
+			ಗಚ್ಛ need_block;
 		}
 		retval = ext2fs_read_inode(fs, ino, &inode);
-		if (retval)
-			goto cleanup;
-	} else {
+		ಯದಿ (retval)
+			ಗಚ್ಛ cleanup;
+	} ಅನ್ಯಥಾ {
 need_block:
 		/* Slow symlinks, target stored in the first block */
 		ext2fs_iblk_set(fs, &inode, 1);
-		if (ext2fs_has_feature_extents(fs->super)) {
+		ಯದಿ (ext2fs_has_feature_extents(fs->super)) {
 			/*
 			 * The extent bmap is setup after the inode and block
 			 * have been written out below.
@@ -145,28 +145,28 @@ need_block:
 	 * number is assigned by write_new_inode, which means that the
 	 * operations using ino must come after it.
 	 */
-	if (inlinelink)
+	ಯದಿ (inlinelink)
 		retval = ext2fs_write_inode(fs, ino, &inode);
-	else
+	ಅನ್ಯಥಾ
 		retval = ext2fs_write_new_inode(fs, ino, &inode);
-	if (retval)
-		goto cleanup;
+	ಯದಿ (retval)
+		ಗಚ್ಛ cleanup;
 
-	if (!fastlink && !inlinelink) {
-		retval = ext2fs_bmap2(fs, ino, &inode, NULL, BMAP_SET, 0, NULL,
+	ಯದಿ (!fastlink && !inlinelink) {
+		retval = ext2fs_bmap2(fs, ino, &inode, ರಿಕ್ತ, BMAP_SET, 0, ರಿಕ್ತ,
 				      &blk);
-		if (retval)
-			goto cleanup;
+		ಯದಿ (retval)
+			ಗಚ್ಛ cleanup;
 
 		retval = io_channel_write_blk64(fs->io, blk, 1, block_buf);
-		if (retval)
-			goto cleanup;
+		ಯದಿ (retval)
+			ಗಚ್ಛ cleanup;
 	}
 
 	/*
 	 * Update accounting....
 	 */
-	if (!fastlink && !inlinelink)
+	ಯದಿ (!fastlink && !inlinelink)
 		ext2fs_block_alloc_stats2(fs, blk, +1);
 	ext2fs_inode_alloc_stats2(fs, ino, +1, 0);
 	drop_refcount = 1;
@@ -174,30 +174,30 @@ need_block:
 	/*
 	 * Link the symlink into the filesystem hierarchy
 	 */
-	if (name) {
+	ಯದಿ (name) {
 		retval = ext2fs_lookup(fs, parent, name, strlen(name), 0,
 				       &scratch_ino);
-		if (!retval) {
+		ಯದಿ (!retval) {
 			retval = EXT2_ET_FILE_EXISTS;
-			goto cleanup;
+			ಗಚ್ಛ cleanup;
 		}
-		if (retval != EXT2_ET_FILE_NOT_FOUND)
-			goto cleanup;
+		ಯದಿ (retval != EXT2_ET_FILE_NOT_FOUND)
+			ಗಚ್ಛ cleanup;
 		retval = ext2fs_link(fs, parent, name, ino, EXT2_FT_SYMLINK);
-		if (retval)
-			goto cleanup;
+		ಯದಿ (retval)
+			ಗಚ್ಛ cleanup;
 	}
 	drop_refcount = 0;
 
 cleanup:
-	if (block_buf)
+	ಯದಿ (block_buf)
 		ext2fs_free_mem(&block_buf);
-	if (drop_refcount) {
-		if (!fastlink && !inlinelink)
+	ಯದಿ (drop_refcount) {
+		ಯದಿ (!fastlink && !inlinelink)
 			ext2fs_block_alloc_stats2(fs, blk, -1);
 		ext2fs_inode_alloc_stats2(fs, ino, -1, 0);
 	}
-	return retval;
+	ಪ್ರತ್ಯಾಗಮ retval;
 }
 
 /*
@@ -205,8 +205,8 @@ cleanup:
  *
  * A fast symlink has its symlink data stored in inode->i_block.
  */
-int ext2fs_is_fast_symlink(struct ext2_inode *inode)
+ಪೂರ್ಣಾಙ್ಕ ext2fs_is_fast_symlink(ಸಂರಚನಾ ext2_inode *inode)
 {
-	return LINUX_S_ISLNK(inode->i_mode) && EXT2_I_SIZE(inode) &&
-	       EXT2_I_SIZE(inode) < sizeof(inode->i_block);
+	ಪ್ರತ್ಯಾಗಮ LINUX_S_ISLNK(inode->i_mode) && EXT2_I_SIZE(inode) &&
+	       EXT2_I_SIZE(inode) < ಪರಿಮಾಣ(inode->i_block);
 }

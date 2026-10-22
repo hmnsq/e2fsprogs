@@ -9,76 +9,76 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಯದಿ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 #endif
-#include <string.h>
-#include <time.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fsP.h"
 
-static EXT2_QSORT_TYPE dir_block_cmp(const void *a, const void *b);
-static EXT2_QSORT_TYPE dir_block_cmp2(const void *a, const void *b);
-static EXT2_QSORT_TYPE (*sortfunc32)(const void *a, const void *b);
+ಸ್ಥಿರ EXT2_QSORT_TYPE dir_block_cmp(ಧ್ರುವ ಶೂನ್ಯ *a, ಧ್ರುವ ಶೂನ್ಯ *b);
+ಸ್ಥಿರ EXT2_QSORT_TYPE dir_block_cmp2(ಧ್ರುವ ಶೂನ್ಯ *a, ಧ್ರುವ ಶೂನ್ಯ *b);
+ಸ್ಥಿರ EXT2_QSORT_TYPE (*sortfunc32)(ಧ್ರುವ ಶೂನ್ಯ *a, ಧ್ರುವ ಶೂನ್ಯ *b);
 
 /*
  * helper function for making a new directory block list (for
  * initialize and copy).
  */
-static errcode_t make_dblist(ext2_filsys fs, ext2_ino_t size,
-			     ext2_ino_t count,
-			     struct ext2_db_entry2 *list,
+ಸ್ಥಿರ errcode_t make_dblist(ext2_filsys fs, ext2_ino_t size,
+			     ext2_ino_t ಎಣಿಕೆ,
+			     ಸಂರಚನಾ ext2_db_entry2 *list,
 			     ext2_dblist *ret_dblist)
 {
-	ext2_dblist	dblist = NULL;
+	ext2_dblist	dblist = ರಿಕ್ತ;
 	errcode_t	retval;
-	ext2_ino_t	num_dirs;
+	ext2_ino_t	ಅಂಕೆ_dirs;
 	size_t		len;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if ((ret_dblist == 0) && fs->dblist &&
+	ಯದಿ ((ret_dblist == 0) && fs->dblist &&
 	    (fs->dblist->magic == EXT2_ET_MAGIC_DBLIST))
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_struct_dblist), &dblist);
-	if (retval)
-		goto cleanup;
-	memset(dblist, 0, sizeof(struct ext2_struct_dblist));
+	retval = ext2fs_get_mem(ಪರಿಮಾಣ(ಸಂರಚನಾ ext2_struct_dblist), &dblist);
+	ಯದಿ (retval)
+		ಗಚ್ಛ cleanup;
+	memset(dblist, 0, ಪರಿಮಾಣ(ಸಂರಚನಾ ext2_struct_dblist));
 
 	dblist->magic = EXT2_ET_MAGIC_DBLIST;
 	dblist->fs = fs;
-	if (size)
+	ಯದಿ (size)
 		dblist->size = size;
-	else {
-		retval = ext2fs_get_num_dirs(fs, &num_dirs);
-		if (retval)
-			goto cleanup;
-		dblist->size = (num_dirs * 2) + 12;
+	ಅನ್ಯಥಾ {
+		retval = ext2fs_get_ಅಂಕೆ_dirs(fs, &ಅಂಕೆ_dirs);
+		ಯದಿ (retval)
+			ಗಚ್ಛ cleanup;
+		dblist->size = (ಅಂಕೆ_dirs * 2) + 12;
 	}
-	len = (size_t) sizeof(struct ext2_db_entry2) * dblist->size;
-	dblist->count = count;
-	retval = ext2fs_get_array(dblist->size, sizeof(struct ext2_db_entry2),
+	len = (size_t) ಪರಿಮಾಣ(ಸಂರಚನಾ ext2_db_entry2) * dblist->size;
+	dblist->ಎಣಿಕೆ = ಎಣಿಕೆ;
+	retval = ext2fs_get_array(dblist->size, ಪರಿಮಾಣ(ಸಂರಚನಾ ext2_db_entry2),
 		&dblist->list);
-	if (retval)
-		goto cleanup;
+	ಯದಿ (retval)
+		ಗಚ್ಛ cleanup;
 
-	if (list)
+	ಯದಿ (list)
 		memcpy(dblist->list, list, len);
-	else
+	ಅನ್ಯಥಾ
 		memset(dblist->list, 0, len);
-	if (ret_dblist)
+	ಯದಿ (ret_dblist)
 		*ret_dblist = dblist;
-	else
+	ಅನ್ಯಥಾ
 		fs->dblist = dblist;
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 cleanup:
-	if (dblist)
+	ಯದಿ (dblist)
 		ext2fs_free_mem(&dblist);
-	return retval;
+	ಪ್ರತ್ಯಾಗಮ retval;
 }
 
 /*
@@ -90,16 +90,16 @@ errcode_t ext2fs_init_dblist(ext2_filsys fs, ext2_dblist *ret_dblist)
 	errcode_t	retval;
 
 	retval = make_dblist(fs, 0, 0, 0, &dblist);
-	if (retval)
-		return retval;
+	ಯದಿ (retval)
+		ಪ್ರತ್ಯಾಗಮ retval;
 
 	dblist->sorted = 1;
-	if (ret_dblist)
+	ಯದಿ (ret_dblist)
 		*ret_dblist = dblist;
-	else
+	ಅನ್ಯಥಾ
 		fs->dblist = dblist;
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 /*
@@ -110,13 +110,13 @@ errcode_t ext2fs_copy_dblist(ext2_dblist src, ext2_dblist *dest)
 	ext2_dblist	dblist;
 	errcode_t	retval;
 
-	retval = make_dblist(src->fs, src->size, src->count, src->list,
+	retval = make_dblist(src->fs, src->size, src->ಎಣಿಕೆ, src->list,
 			     &dblist);
-	if (retval)
-		return retval;
+	ಯದಿ (retval)
+		ಪ್ರತ್ಯಾಗಮ retval;
 	dblist->sorted = src->sorted;
 	*dest = dblist;
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 /*
@@ -132,31 +132,31 @@ errcode_t ext2fs_copy_dblist(ext2_dblist src, ext2_dblist *dest)
 errcode_t ext2fs_add_dir_block2(ext2_dblist dblist, ext2_ino_t ino,
 				blk64_t blk, e2_blkcnt_t blockcnt)
 {
-	struct ext2_db_entry2 	*new_entry;
+	ಸಂರಚನಾ ext2_db_entry2 	*new_entry;
 	errcode_t		retval;
 	unsigned long		old_size;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count >= dblist->size) {
-		old_size = dblist->size * sizeof(struct ext2_db_entry2);
+	ಯದಿ (dblist->ಎಣಿಕೆ >= dblist->size) {
+		old_size = dblist->size * ಪರಿಮಾಣ(ಸಂರಚನಾ ext2_db_entry2);
 		dblist->size += dblist->size > 200 ? dblist->size / 2 : 100;
 		retval = ext2fs_resize_mem(old_size, (size_t) dblist->size *
-					   sizeof(struct ext2_db_entry2),
+					   ಪರಿಮಾಣ(ಸಂರಚನಾ ext2_db_entry2),
 					   &dblist->list);
-		if (retval) {
-			dblist->size = old_size / sizeof(struct ext2_db_entry2);
-			return retval;
+		ಯದಿ (retval) {
+			dblist->size = old_size / ಪರಿಮಾಣ(ಸಂರಚನಾ ext2_db_entry2);
+			ಪ್ರತ್ಯಾಗಮ retval;
 		}
 	}
-	new_entry = dblist->list + ( dblist->count++);
+	new_entry = dblist->list + ( dblist->ಎಣಿಕೆ++);
 	new_entry->blk = blk;
 	new_entry->ino = ino;
 	new_entry->blockcnt = blockcnt;
 
 	dblist->sorted = 0;
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 /*
@@ -169,25 +169,25 @@ errcode_t ext2fs_set_dir_block2(ext2_dblist dblist, ext2_ino_t ino,
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	for (i=0; i < dblist->count; i++) {
-		if ((dblist->list[i].ino != ino) ||
+	ಪ್ರತಿ (i=0; i < dblist->ಎಣಿಕೆ; i++) {
+		ಯದಿ ((dblist->list[i].ino != ino) ||
 		    (dblist->list[i].blockcnt != blockcnt))
-			continue;
+			ಅನುವರ್ತ;
 		dblist->list[i].blk = blk;
 		dblist->sorted = 0;
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
-	return EXT2_ET_DB_NOT_FOUND;
+	ಪ್ರತ್ಯಾಗಮ EXT2_ET_DB_NOT_FOUND;
 }
 
-void ext2fs_dblist_sort2(ext2_dblist dblist,
-			 EXT2_QSORT_TYPE (*sortfunc)(const void *,
-						     const void *))
+ಶೂನ್ಯ ext2fs_dblist_sort2(ext2_dblist dblist,
+			 EXT2_QSORT_TYPE (*sortfunc)(ಧ್ರುವ ಶೂನ್ಯ *,
+						     ಧ್ರುವ ಶೂನ್ಯ *))
 {
-	if (!sortfunc)
+	ಯದಿ (!sortfunc)
 		sortfunc = dir_block_cmp2;
-	qsort(dblist->list, (size_t) dblist->count,
-	      sizeof(struct ext2_db_entry2), sortfunc);
+	qsort(dblist->list, (size_t) dblist->ಎಣಿಕೆ,
+	      ಪರಿಮಾಣ(ಸಂರಚನಾ ext2_db_entry2), sortfunc);
 	dblist->sorted = 1;
 }
 
@@ -195,84 +195,84 @@ void ext2fs_dblist_sort2(ext2_dblist dblist,
  * This function iterates over the directory block list
  */
 errcode_t ext2fs_dblist_iterate3(ext2_dblist dblist,
-				 int (*func)(ext2_filsys fs,
-					     struct ext2_db_entry2 *db_info,
-					     void	*priv_data),
+				 ಪೂರ್ಣಾಙ್ಕ (*func)(ext2_filsys fs,
+					     ಸಂರಚನಾ ext2_db_entry2 *db_info,
+					     ಶೂನ್ಯ	*priv_data),
 				 unsigned long long start,
-				 unsigned long long count,
-				 void *priv_data)
+				 unsigned long long ಎಣಿಕೆ,
+				 ಶೂನ್ಯ *priv_data)
 {
 	unsigned long long	i, end;
-	int		ret;
+	ಪೂರ್ಣಾಙ್ಕ		ret;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	end = start + count;
-	if (!dblist->sorted)
+	end = start + ಎಣಿಕೆ;
+	ಯದಿ (!dblist->sorted)
 		ext2fs_dblist_sort2(dblist, 0);
-	if (end > dblist->count)
-		end = dblist->count;
-	for (i = start; i < end; i++) {
+	ಯದಿ (end > dblist->ಎಣಿಕೆ)
+		end = dblist->ಎಣಿಕೆ;
+	ಪ್ರತಿ (i = start; i < end; i++) {
 		ret = (*func)(dblist->fs, &dblist->list[i], priv_data);
-		if (ret & DBLIST_ABORT)
-			return 0;
+		ಯದಿ (ret & DBLIST_ABORT)
+			ಪ್ರತ್ಯಾಗಮ 0;
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 errcode_t ext2fs_dblist_iterate2(ext2_dblist dblist,
-				 int (*func)(ext2_filsys fs,
-					     struct ext2_db_entry2 *db_info,
-					     void	*priv_data),
-				 void *priv_data)
+				 ಪೂರ್ಣಾಙ್ಕ (*func)(ext2_filsys fs,
+					     ಸಂರಚನಾ ext2_db_entry2 *db_info,
+					     ಶೂನ್ಯ	*priv_data),
+				 ಶೂನ್ಯ *priv_data)
 {
-	return ext2fs_dblist_iterate3(dblist, func, 0, dblist->count,
+	ಪ್ರತ್ಯಾಗಮ ext2fs_dblist_iterate3(dblist, func, 0, dblist->ಎಣಿಕೆ,
 				      priv_data);
 }
 
-static EXT2_QSORT_TYPE dir_block_cmp2(const void *a, const void *b)
+ಸ್ಥಿರ EXT2_QSORT_TYPE dir_block_cmp2(ಧ್ರುವ ಶೂನ್ಯ *a, ಧ್ರುವ ಶೂನ್ಯ *b)
 {
-	const struct ext2_db_entry2 *db_a =
-		(const struct ext2_db_entry2 *) a;
-	const struct ext2_db_entry2 *db_b =
-		(const struct ext2_db_entry2 *) b;
+	ಧ್ರುವ ಸಂರಚನಾ ext2_db_entry2 *db_a =
+		(ಧ್ರುವ ಸಂರಚನಾ ext2_db_entry2 *) a;
+	ಧ್ರುವ ಸಂರಚನಾ ext2_db_entry2 *db_b =
+		(ಧ್ರುವ ಸಂರಚನಾ ext2_db_entry2 *) b;
 
-	if (db_a->blk != db_b->blk)
-		return (int) (db_a->blk - db_b->blk);
+	ಯದಿ (db_a->blk != db_b->blk)
+		ಪ್ರತ್ಯಾಗಮ (ಪೂರ್ಣಾಙ್ಕ) (db_a->blk - db_b->blk);
 
-	if (db_a->ino != db_b->ino)
-		return (int) (db_a->ino - db_b->ino);
+	ಯದಿ (db_a->ino != db_b->ino)
+		ಪ್ರತ್ಯಾಗಮ (ಪೂರ್ಣಾಙ್ಕ) (db_a->ino - db_b->ino);
 
-	return (db_a->blockcnt - db_b->blockcnt);
+	ಪ್ರತ್ಯಾಗಮ (db_a->blockcnt - db_b->blockcnt);
 }
 
 blk64_t ext2fs_dblist_count2(ext2_dblist dblist)
 {
-	return dblist->count;
+	ಪ್ರತ್ಯಾಗಮ dblist->ಎಣಿಕೆ;
 }
 
 errcode_t ext2fs_dblist_get_last2(ext2_dblist dblist,
-				  struct ext2_db_entry2 **entry)
+				  ಸಂರಚನಾ ext2_db_entry2 **entry)
 {
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count == 0)
-		return EXT2_ET_DBLIST_EMPTY;
+	ಯದಿ (dblist->ಎಣಿಕೆ == 0)
+		ಪ್ರತ್ಯಾಗಮ EXT2_ET_DBLIST_EMPTY;
 
-	if (entry)
-		*entry = dblist->list + ( dblist->count-1);
-	return 0;
+	ಯದಿ (entry)
+		*entry = dblist->list + ( dblist->ಎಣಿಕೆ-1);
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 errcode_t ext2fs_dblist_drop_last(ext2_dblist dblist)
 {
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count == 0)
-		return EXT2_ET_DBLIST_EMPTY;
+	ಯದಿ (dblist->ಎಣಿಕೆ == 0)
+		ಪ್ರತ್ಯಾಗಮ EXT2_ET_DBLIST_EMPTY;
 
-	dblist->count--;
-	return 0;
+	dblist->ಎಣಿಕೆ--;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 /*
@@ -283,85 +283,85 @@ errcode_t ext2fs_dblist_drop_last(ext2_dblist dblist)
  * Add a directory block to the directory block list
  */
 errcode_t ext2fs_add_dir_block(ext2_dblist dblist, ext2_ino_t ino, blk_t blk,
-			       int blockcnt)
+			       ಪೂರ್ಣಾಙ್ಕ blockcnt)
 {
-	return ext2fs_add_dir_block2(dblist, ino, blk, blockcnt);
+	ಪ್ರತ್ಯಾಗಮ ext2fs_add_dir_block2(dblist, ino, blk, blockcnt);
 }
 
 /*
  * Change the directory block to the directory block list
  */
 errcode_t ext2fs_set_dir_block(ext2_dblist dblist, ext2_ino_t ino, blk_t blk,
-			       int blockcnt)
+			       ಪೂರ್ಣಾಙ್ಕ blockcnt)
 {
-	return ext2fs_set_dir_block2(dblist, ino, blk, blockcnt);
+	ಪ್ರತ್ಯಾಗಮ ext2fs_set_dir_block2(dblist, ino, blk, blockcnt);
 }
 
-void ext2fs_dblist_sort(ext2_dblist dblist,
-			EXT2_QSORT_TYPE (*sortfunc)(const void *,
-						    const void *))
+ಶೂನ್ಯ ext2fs_dblist_sort(ext2_dblist dblist,
+			EXT2_QSORT_TYPE (*sortfunc)(ಧ್ರುವ ಶೂನ್ಯ *,
+						    ಧ್ರುವ ಶೂನ್ಯ *))
 {
-	if (sortfunc) {
+	ಯದಿ (sortfunc) {
 		sortfunc32 = sortfunc;
 		sortfunc = dir_block_cmp;
-	} else
+	} ಅನ್ಯಥಾ
 		sortfunc = dir_block_cmp2;
-	qsort(dblist->list, (size_t) dblist->count,
-	      sizeof(struct ext2_db_entry2), sortfunc);
+	qsort(dblist->list, (size_t) dblist->ಎಣಿಕೆ,
+	      ಪರಿಮಾಣ(ಸಂರಚನಾ ext2_db_entry2), sortfunc);
 	dblist->sorted = 1;
 }
 
 /*
  * This function iterates over the directory block list
  */
-struct iterate_passthrough {
-	int (*func)(ext2_filsys fs,
-		    struct ext2_db_entry *db_info,
-		    void	*priv_data);
-	void *priv_data;
+ಸಂರಚನಾ iterate_passthrough {
+	ಪೂರ್ಣಾಙ್ಕ (*func)(ext2_filsys fs,
+		    ಸಂರಚನಾ ext2_db_entry *db_info,
+		    ಶೂನ್ಯ	*priv_data);
+	ಶೂನ್ಯ *priv_data;
 };
 
-static int passthrough_func(ext2_filsys fs,
-			    struct ext2_db_entry2 *db_info,
-			    void	*priv_data)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ passthrough_func(ext2_filsys fs,
+			    ಸಂರಚನಾ ext2_db_entry2 *db_info,
+			    ಶೂನ್ಯ	*priv_data)
 {
-	struct iterate_passthrough *p = priv_data;
-	struct ext2_db_entry db;
-	int ret;
+	ಸಂರಚನಾ iterate_passthrough *p = priv_data;
+	ಸಂರಚನಾ ext2_db_entry db;
+	ಪೂರ್ಣಾಙ್ಕ ret;
 
 	db.ino = db_info->ino;
 	db.blk = (blk_t) db_info->blk;
-	db.blockcnt = (int) db_info->blockcnt;
+	db.blockcnt = (ಪೂರ್ಣಾಙ್ಕ) db_info->blockcnt;
 	ret = (p->func)(fs, &db, p->priv_data);
 	db_info->ino = db.ino;
 	db_info->blk = db.blk;
 	db_info->blockcnt = db.blockcnt;
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
 errcode_t ext2fs_dblist_iterate(ext2_dblist dblist,
-				int (*func)(ext2_filsys fs,
-					    struct ext2_db_entry *db_info,
-					    void	*priv_data),
-				void *priv_data)
+				ಪೂರ್ಣಾಙ್ಕ (*func)(ext2_filsys fs,
+					    ಸಂರಚನಾ ext2_db_entry *db_info,
+					    ಶೂನ್ಯ	*priv_data),
+				ಶೂನ್ಯ *priv_data)
 {
-	struct iterate_passthrough pass;
+	ಸಂರಚನಾ iterate_passthrough pass;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 	pass.func = func;
 	pass.priv_data = priv_data;
 
-	return ext2fs_dblist_iterate2(dblist, passthrough_func, &pass);
+	ಪ್ರತ್ಯಾಗಮ ext2fs_dblist_iterate2(dblist, passthrough_func, &pass);
 }
 
-static EXT2_QSORT_TYPE dir_block_cmp(const void *a, const void *b)
+ಸ್ಥಿರ EXT2_QSORT_TYPE dir_block_cmp(ಧ್ರುವ ಶೂನ್ಯ *a, ಧ್ರುವ ಶೂನ್ಯ *b)
 {
-	const struct ext2_db_entry2 *db_a =
-		(const struct ext2_db_entry2 *) a;
-	const struct ext2_db_entry2 *db_b =
-		(const struct ext2_db_entry2 *) b;
+	ಧ್ರುವ ಸಂರಚನಾ ext2_db_entry2 *db_a =
+		(ಧ್ರುವ ಸಂರಚನಾ ext2_db_entry2 *) a;
+	ಧ್ರುವ ಸಂರಚನಾ ext2_db_entry2 *db_b =
+		(ಧ್ರುವ ಸಂರಚನಾ ext2_db_entry2 *) b;
 
-	struct ext2_db_entry a32, b32;
+	ಸಂರಚನಾ ext2_db_entry a32, b32;
 
 	a32.ino = db_a->ino;  a32.blk = db_a->blk;
 	a32.blockcnt = db_a->blockcnt;
@@ -369,35 +369,35 @@ static EXT2_QSORT_TYPE dir_block_cmp(const void *a, const void *b)
 	b32.ino = db_b->ino;  b32.blk = db_b->blk;
 	b32.blockcnt = db_b->blockcnt;
 
-	return sortfunc32(&a32, &b32);
+	ಪ್ರತ್ಯಾಗಮ sortfunc32(&a32, &b32);
 }
 
-int ext2fs_dblist_count(ext2_dblist dblist)
+ಪೂರ್ಣಾಙ್ಕ ext2fs_dblist_ಎಣಿಕೆ(ext2_dblist dblist)
 {
-	return dblist->count;
+	ಪ್ರತ್ಯಾಗಮ dblist->ಎಣಿಕೆ;
 }
 
 errcode_t ext2fs_dblist_get_last(ext2_dblist dblist,
-				 struct ext2_db_entry **entry)
+				 ಸಂರಚನಾ ext2_db_entry **entry)
 {
-	static struct ext2_db_entry ret_entry;
-	struct ext2_db_entry2 *last;
+	ಸ್ಥಿರ ಸಂರಚನಾ ext2_db_entry ret_entry;
+	ಸಂರಚನಾ ext2_db_entry2 *last;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count == 0)
-		return EXT2_ET_DBLIST_EMPTY;
+	ಯದಿ (dblist->ಎಣಿಕೆ == 0)
+		ಪ್ರತ್ಯಾಗಮ EXT2_ET_DBLIST_EMPTY;
 
-	if (!entry)
-		return 0;
+	ಯದಿ (!entry)
+		ಪ್ರತ್ಯಾಗಮ 0;
 
-	last = dblist->list + dblist->count -1;
+	last = dblist->list + dblist->ಎಣಿಕೆ -1;
 
 	ret_entry.ino = last->ino;
 	ret_entry.blk = last->blk;
 	ret_entry.blockcnt = last->blockcnt;
 	*entry = &ret_entry;
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 

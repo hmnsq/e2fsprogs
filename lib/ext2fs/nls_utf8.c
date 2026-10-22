@@ -20,25 +20,25 @@
  * implementation.
  */
 
-#include "config.h"
-#include <stdint.h>
-#include <unistd.h>
-#include <string.h>
-#include <limits.h>
-#include <errno.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fsP.h"
 
 /* Encoding a unicode version number as a single unsigned int. */
 #define UNICODE_MAJ_SHIFT		(16)
 #define UNICODE_MIN_SHIFT		(8)
 
 #define UNICODE_AGE(MAJ, MIN, REV)			\
-	(((unsigned int)(MAJ) << UNICODE_MAJ_SHIFT) |	\
-	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
-	 ((unsigned int)(REV)))
+	(((unsigned ಪೂರ್ಣಾಙ್ಕ)(MAJ) << UNICODE_MAJ_SHIFT) |	\
+	 ((unsigned ಪೂರ್ಣಾಙ್ಕ)(MIN) << UNICODE_MIN_SHIFT) |	\
+	 ((unsigned ಪೂರ್ಣಾಙ್ಕ)(REV)))
 
 /* Needed in struct utf8cursor below. */
 #define UTF8HANGULLEAF	(12)
@@ -46,17 +46,17 @@
 /*
  * Cursor structure used by the normalizer.
  */
-struct utf8cursor {
-	const struct utf8data	*data;
-	const char	*s;
-	const char	*p;
-	const char	*ss;
-	const char	*sp;
-	unsigned int	len;
-	unsigned int	slen;
-	short int	ccc;
-	short int	nccc;
-	unsigned char	hangul[UTF8HANGULLEAF];
+ಸಂರಚನಾ utf8cursor {
+	ಧ್ರುವ ಸಂರಚನಾ utf8data	*data;
+	ಧ್ರುವ ವರ್ಣ	*s;
+	ಧ್ರುವ ವರ್ಣ	*p;
+	ಧ್ರುವ ವರ್ಣ	*ss;
+	ಧ್ರುವ ವರ್ಣ	*sp;
+	unsigned ಪೂರ್ಣಾಙ್ಕ	len;
+	unsigned ಪೂರ್ಣಾಙ್ಕ	slen;
+	short ಪೂರ್ಣಾಙ್ಕ	ccc;
+	short ಪೂರ್ಣಾಙ್ಕ	nccc;
+	unsigned ವರ್ಣ	hangul[UTF8HANGULLEAF];
 };
 
 /*
@@ -78,38 +78,38 @@ struct utf8cursor {
 // extern int utf8byte(struct utf8cursor *u8c);
 
 
-struct utf8data {
-	unsigned int maxage;
-	unsigned int offset;
+ಸಂರಚನಾ utf8data {
+	unsigned ಪೂರ್ಣಾಙ್ಕ maxage;
+	unsigned ಪೂರ್ಣಾಙ್ಕ offset;
 };
 
 #define __INCLUDED_FROM_UTF8NORM_C__
-#include "utf8data.h"
+#ಅನ್ತರ್ಭಾವ "utf8data.h"
 #undef __INCLUDED_FROM_UTF8NORM_C__
 
 #define ARRAY_SIZE(array)			\
-        (sizeof(array) / sizeof(array[0]))
+        (ಪರಿಮಾಣ(array) / ಪರಿಮಾಣ(array[0]))
 
-#if 0
+#ಯದಿ 0
 /* Highest unicode version supported by the data tables. */
-static int utf8version_is_supported(uint8_t maj, uint8_t min, uint8_t rev)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ utf8version_is_supported(uint8_t maj, uint8_t min, uint8_t rev)
 {
-	int i = ARRAY_SIZE(utf8agetab) - 1;
-	unsigned int sb_utf8version = UNICODE_AGE(maj, min, rev);
+	ಪೂರ್ಣಾಙ್ಕ i = ARRAY_SIZE(utf8agetab) - 1;
+	unsigned ಪೂರ್ಣಾಙ್ಕ sb_utf8version = UNICODE_AGE(maj, min, rev);
 
-	while (i >= 0 && utf8agetab[i] != 0) {
-		if (sb_utf8version == utf8agetab[i])
-			return 1;
+	ಯಾವತ್ (i >= 0 && utf8agetab[i] != 0) {
+		ಯದಿ (sb_utf8version == utf8agetab[i])
+			ಪ್ರತ್ಯಾಗಮ 1;
 		i--;
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 #endif
 
-#if 0
-static int utf8version_latest(void)
+#ಯದಿ 0
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ utf8version_latest(ಶೂನ್ಯ)
 {
-	return utf8vers;
+	ಪ್ರತ್ಯಾಗಮ utf8vers;
 }
 #endif
 
@@ -166,20 +166,20 @@ static int utf8version_latest(void)
  * Assumes the input points to the first byte of a valid UTF-8
  * sequence.
  */
-static inline int utf8clen(const char *s)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಪೂರ್ಣಾಙ್ಕ utf8clen(ಧ್ರುವ ವರ್ಣ *s)
 {
-	unsigned char c = *s;
+	unsigned ವರ್ಣ c = *s;
 
-	return 1 + (c >= 0xC0) + (c >= 0xE0) + (c >= 0xF0);
+	ಪ್ರತ್ಯಾಗಮ 1 + (c >= 0xC0) + (c >= 0xE0) + (c >= 0xF0);
 }
 
 /*
  * Decode a 3-byte UTF-8 sequence.
  */
-static unsigned int
-utf8decode3(const char *str)
+ಸ್ಥಿರ unsigned ಪೂರ್ಣಾಙ್ಕ
+utf8decode3(ಧ್ರುವ ವರ್ಣ *str)
 {
-	unsigned int		uc;
+	unsigned ಪೂರ್ಣಾಙ್ಕ		uc;
 
 	uc = *str++ & 0x0F;
 	uc <<= 6;
@@ -187,14 +187,14 @@ utf8decode3(const char *str)
 	uc <<= 6;
 	uc |= *str++ & 0x3F;
 
-	return uc;
+	ಪ್ರತ್ಯಾಗಮ uc;
 }
 
 /*
  * Encode a 3-byte UTF-8 sequence.
  */
-static int
-utf8encode3(char *str, unsigned int val)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+utf8encode3(ವರ್ಣ *str, unsigned ಪೂರ್ಣಾಙ್ಕ val)
 {
 	str[2] = (val & 0x3F) | 0x80;
 	val >>= 6;
@@ -202,7 +202,7 @@ utf8encode3(char *str, unsigned int val)
 	val >>= 6;
 	str[0] = val | 0xE0;
 
-	return 3;
+	ಪ್ರತ್ಯಾಗಮ 3;
 }
 
 /*
@@ -229,7 +229,7 @@ utf8encode3(char *str, unsigned int val)
  * NEXTBYTE set, and moreover those nodes always have a righthand
  * descendant.
  */
-typedef const unsigned char utf8trie_t;
+ಪ್ರಕಾರನಿರ್ದೇಶ ಧ್ರುವ unsigned ವರ್ಣ utf8trie_t;
 #define BITNUM		0x07
 #define NEXTBYTE	0x08
 #define OFFLEN		0x30
@@ -276,11 +276,11 @@ typedef const unsigned char utf8trie_t;
  * ranges" comment above, and only for those sequences.  Therefore a
  * lookup in the trie can be used to validate the UTF-8 input.
  */
-typedef const unsigned char utf8leaf_t;
+ಪ್ರಕಾರನಿರ್ದೇಶ ಧ್ರುವ unsigned ವರ್ಣ utf8leaf_t;
 
 #define LEAF_GEN(LEAF)	((LEAF)[0])
 #define LEAF_CCC(LEAF)	((LEAF)[1])
-#define LEAF_STR(LEAF)	((const char *)((LEAF) + 2))
+#define LEAF_STR(LEAF)	((ಧ್ರುವ ವರ್ಣ *)((LEAF) + 2))
 
 #define MINCCC		(0)
 #define MAXCCC		(254)
@@ -288,7 +288,7 @@ typedef const unsigned char utf8leaf_t;
 #define	DECOMPOSE	(255)
 
 /* Marker for hangul syllable decomposition. */
-#define HANGUL		((char)(255))
+#define HANGUL		((ವರ್ಣ)(255))
 /* Size of the synthesized leaf used for Hangul syllable decomposition. */
 #define UTF8HANGULLEAF	(12)
 
@@ -349,14 +349,14 @@ typedef const unsigned char utf8leaf_t;
 #define SC	(LC * NC)
 
 /* Algorithmic decomposition of hangul syllable. */
-static utf8leaf_t *
-utf8hangul(const char *str, unsigned char *hangul)
+ಸ್ಥಿರ utf8leaf_t *
+utf8hangul(ಧ್ರುವ ವರ್ಣ *str, unsigned ವರ್ಣ *hangul)
 {
-	unsigned int	si;
-	unsigned int	li;
-	unsigned int	vi;
-	unsigned int	ti;
-	unsigned char	*h;
+	unsigned ಪೂರ್ಣಾಙ್ಕ	si;
+	unsigned ಪೂರ್ಣಾಙ್ಕ	li;
+	unsigned ಪೂರ್ಣಾಙ್ಕ	vi;
+	unsigned ಪೂರ್ಣಾಙ್ಕ	ti;
+	unsigned ವರ್ಣ	*h;
 
 	/* Calculate the SI, LI, VI, and TI values. */
 	si = utf8decode3(str) - SB;
@@ -371,19 +371,19 @@ utf8hangul(const char *str, unsigned char *hangul)
 	h += 2;
 
 	/* Add LPart, a 3-byte UTF-8 sequence. */
-	h += utf8encode3((char *)h, li + LB);
+	h += utf8encode3((ವರ್ಣ *)h, li + LB);
 
 	/* Add VPart, a 3-byte UTF-8 sequence. */
-	h += utf8encode3((char *)h, vi + VB);
+	h += utf8encode3((ವರ್ಣ *)h, vi + VB);
 
 	/* Add TPart if required, also a 3-byte UTF-8 sequence. */
-	if (ti)
-		h += utf8encode3((char *)h, ti + TB);
+	ಯದಿ (ti)
+		h += utf8encode3((ವರ್ಣ *)h, ti + TB);
 
 	/* Terminate string. */
 	h[0] = '\0';
 
-	return hangul;
+	ಪ್ರತ್ಯಾಗಮ hangul;
 }
 
 /*
@@ -394,61 +394,61 @@ utf8hangul(const char *str, unsigned char *hangul)
  * is well-formed and corresponds to a known unicode code point.  The
  * shorthand for this will be "is valid UTF-8 unicode".
  */
-static utf8leaf_t *utf8nlookup(const struct utf8data *data,
-			       unsigned char *hangul, const char *s, size_t len)
+ಸ್ಥಿರ utf8leaf_t *utf8nlookup(ಧ್ರುವ ಸಂರಚನಾ utf8data *data,
+			       unsigned ವರ್ಣ *hangul, ಧ್ರುವ ವರ್ಣ *s, size_t len)
 {
 	utf8trie_t	*trie;
-	int		offlen;
-	int		offset;
-	int		mask;
-	int		node;
+	ಪೂರ್ಣಾಙ್ಕ		offlen;
+	ಪೂರ್ಣಾಙ್ಕ		offset;
+	ಪೂರ್ಣಾಙ್ಕ		mask;
+	ಪೂರ್ಣಾಙ್ಕ		ಗಂಟು;
 
-	if (!data)
-		return NULL;
-	if (len == 0)
-		return NULL;
+	ಯದಿ (!data)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
+	ಯದಿ (len == 0)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 
 	trie = utf8data + data->offset;
-	node = 1;
-	while (node) {
+	ಗಂಟು = 1;
+	ಯಾವತ್ (ಗಂಟು) {
 		offlen = (*trie & OFFLEN) >> OFFLEN_SHIFT;
-		if (*trie & NEXTBYTE) {
-			if (--len == 0)
-				return NULL;
+		ಯದಿ (*trie & NEXTBYTE) {
+			ಯದಿ (--len == 0)
+				ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 			s++;
 		}
 		mask = 1 << (*trie & BITNUM);
-		if (*s & mask) {
+		ಯದಿ (*s & mask) {
 			/* Right leg */
-			if (offlen) {
+			ಯದಿ (offlen) {
 				/* Right node at offset of trie */
-				node = (*trie & RIGHTNODE);
+				ಗಂಟು = (*trie & RIGHTNODE);
 				offset = trie[offlen];
-				while (--offlen) {
+				ಯಾವತ್ (--offlen) {
 					offset <<= 8;
 					offset |= trie[offlen];
 				}
 				trie += offset;
-			} else if (*trie & RIGHTPATH) {
+			} ಅನ್ಯಥಾ ಯದಿ (*trie & RIGHTPATH) {
 				/* Right node after this node */
-				node = (*trie & TRIENODE);
+				ಗಂಟು = (*trie & TRIENODE);
 				trie++;
-			} else {
+			} ಅನ್ಯಥಾ {
 				/* No right node. */
-				return NULL;
+				ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 			}
-		} else {
+		} ಅನ್ಯಥಾ {
 			/* Left leg */
-			if (offlen) {
+			ಯದಿ (offlen) {
 				/* Left node after this node. */
-				node = (*trie & LEFTNODE);
+				ಗಂಟು = (*trie & LEFTNODE);
 				trie += offlen + 1;
-			} else if (*trie & RIGHTPATH) {
+			} ಅನ್ಯಥಾ ಯದಿ (*trie & RIGHTPATH) {
 				/* No left node. */
-				return NULL;
-			} else {
+				ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
+			} ಅನ್ಯಥಾ {
 				/* Left node after this node */
-				node = (*trie & TRIENODE);
+				ಗಂಟು = (*trie & TRIENODE);
 				trie++;
 			}
 		}
@@ -459,9 +459,9 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
 	 * always 3 bytes long, so s has been advanced twice, and the
 	 * start of the sequence is at s-2.
 	 */
-	if (LEAF_CCC(trie) == DECOMPOSE && LEAF_STR(trie)[0] == HANGUL)
+	ಯದಿ (LEAF_CCC(trie) == DECOMPOSE && LEAF_STR(trie)[0] == HANGUL)
 		trie = utf8hangul(s - 2, hangul);
-	return trie;
+	ಪ್ರತ್ಯಾಗಮ trie;
 }
 
 /*
@@ -470,187 +470,187 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
  *
  * Forwards to utf8nlookup().
  */
-static utf8leaf_t *utf8lookup(const struct utf8data *data,
-			      unsigned char *hangul, const char *s)
+ಸ್ಥಿರ utf8leaf_t *utf8lookup(ಧ್ರುವ ಸಂರಚನಾ utf8data *data,
+			      unsigned ವರ್ಣ *hangul, ಧ್ರುವ ವರ್ಣ *s)
 {
-	return utf8nlookup(data, hangul, s, (size_t)-1);
+	ಪ್ರತ್ಯಾಗಮ utf8nlookup(data, hangul, s, (size_t)-1);
 }
 
-#if 0
+#ಯದಿ 0
 /*
  * Maximum age of any character in s.
  * Return -1 if s is not valid UTF-8 unicode.
  * Return 0 if only non-assigned code points are used.
  */
-static int utf8agemax(const struct utf8data *data, const char *s)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ utf8agemax(ಧ್ರುವ ಸಂರಚನಾ utf8data *data, ಧ್ರುವ ವರ್ಣ *s)
 {
 	utf8leaf_t	*leaf;
-	int		age = 0;
-	int		leaf_age;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	ಪೂರ್ಣಾಙ್ಕ		age = 0;
+	ಪೂರ್ಣಾಙ್ಕ		leaf_age;
+	unsigned ವರ್ಣ	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
+	ಯದಿ (!data)
+		ಪ್ರತ್ಯಾಗಮ -1;
 
-	while (*s) {
+	ಯಾವತ್ (*s) {
 		leaf = utf8lookup(data, hangul, s);
-		if (!leaf)
-			return -1;
+		ಯದಿ (!leaf)
+			ಪ್ರತ್ಯಾಗಮ -1;
 
 		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age > age)
+		ಯದಿ (leaf_age <= data->maxage && leaf_age > age)
 			age = leaf_age;
 		s += utf8clen(s);
 	}
-	return age;
+	ಪ್ರತ್ಯಾಗಮ age;
 }
 #endif
 
-#if 0
+#ಯದಿ 0
 /*
  * Minimum age of any character in s.
  * Return -1 if s is not valid UTF-8 unicode.
  * Return 0 if non-assigned code points are used.
  */
-static int utf8agemin(const struct utf8data *data, const char *s)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ utf8agemin(ಧ್ರುವ ಸಂರಚನಾ utf8data *data, ಧ್ರುವ ವರ್ಣ *s)
 {
 	utf8leaf_t	*leaf;
-	int		age;
-	int		leaf_age;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	ಪೂರ್ಣಾಙ್ಕ		age;
+	ಪೂರ್ಣಾಙ್ಕ		leaf_age;
+	unsigned ವರ್ಣ	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
+	ಯದಿ (!data)
+		ಪ್ರತ್ಯಾಗಮ -1;
 	age = data->maxage;
-	while (*s) {
+	ಯಾವತ್ (*s) {
 		leaf = utf8lookup(data, hangul, s);
-		if (!leaf)
-			return -1;
+		ಯದಿ (!leaf)
+			ಪ್ರತ್ಯಾಗಮ -1;
 		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age < age)
+		ಯದಿ (leaf_age <= data->maxage && leaf_age < age)
 			age = leaf_age;
 		s += utf8clen(s);
 	}
-	return age;
+	ಪ್ರತ್ಯಾಗಮ age;
 }
 #endif
 
-#if 0
+#ಯದಿ 0
 /*
  * Maximum age of any character in s, touch at most len bytes.
  * Return -1 if s is not valid UTF-8 unicode.
  */
-static int utf8nagemax(const struct utf8data *data, const char *s, size_t len)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ utf8nagemax(ಧ್ರುವ ಸಂರಚನಾ utf8data *data, ಧ್ರುವ ವರ್ಣ *s, size_t len)
 {
 	utf8leaf_t	*leaf;
-	int		age = 0;
-	int		leaf_age;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	ಪೂರ್ಣಾಙ್ಕ		age = 0;
+	ಪೂರ್ಣಾಙ್ಕ		leaf_age;
+	unsigned ವರ್ಣ	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
+	ಯದಿ (!data)
+		ಪ್ರತ್ಯಾಗಮ -1;
 
-	while (len && *s) {
+	ಯಾವತ್ (len && *s) {
 		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf)
-			return -1;
+		ಯದಿ (!leaf)
+			ಪ್ರತ್ಯಾಗಮ -1;
 		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age > age)
+		ಯದಿ (leaf_age <= data->maxage && leaf_age > age)
 			age = leaf_age;
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return age;
+	ಪ್ರತ್ಯಾಗಮ age;
 }
 #endif
 
-#if 0
+#ಯದಿ 0
 /*
  * Maximum age of any character in s, touch at most len bytes.
  * Return -1 if s is not valid UTF-8 unicode.
  */
-static int utf8nagemin(const struct utf8data *data, const char *s, size_t len)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ utf8nagemin(ಧ್ರುವ ಸಂರಚನಾ utf8data *data, ಧ್ರುವ ವರ್ಣ *s, size_t len)
 {
 	utf8leaf_t	*leaf;
-	int		leaf_age;
-	int		age;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	ಪೂರ್ಣಾಙ್ಕ		leaf_age;
+	ಪೂರ್ಣಾಙ್ಕ		age;
+	unsigned ವರ್ಣ	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
+	ಯದಿ (!data)
+		ಪ್ರತ್ಯಾಗಮ -1;
 	age = data->maxage;
-	while (len && *s) {
+	ಯಾವತ್ (len && *s) {
 		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf)
-			return -1;
+		ಯದಿ (!leaf)
+			ಪ್ರತ್ಯಾಗಮ -1;
 		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-		if (leaf_age <= data->maxage && leaf_age < age)
+		ಯದಿ (leaf_age <= data->maxage && leaf_age < age)
 			age = leaf_age;
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return age;
+	ಪ್ರತ್ಯಾಗಮ age;
 }
 #endif
 
-#if 0
+#ಯದಿ 0
 /*
  * Length of the normalization of s.
  * Return -1 if s is not valid UTF-8 unicode.
  *
  * A string of Default_Ignorable_Code_Point has length 0.
  */
-static ssize_t utf8len(const struct utf8data *data, const char *s)
+ಸ್ಥಿರ ssize_t utf8len(ಧ್ರುವ ಸಂರಚನಾ utf8data *data, ಧ್ರುವ ವರ್ಣ *s)
 {
 	utf8leaf_t	*leaf;
 	size_t		ret = 0;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	unsigned ವರ್ಣ	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	while (*s) {
+	ಯದಿ (!data)
+		ಪ್ರತ್ಯಾಗಮ -1;
+	ಯಾವತ್ (*s) {
 		leaf = utf8lookup(data, hangul, s);
-		if (!leaf)
-			return -1;
-		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
+		ಯದಿ (!leaf)
+			ಪ್ರತ್ಯಾಗಮ -1;
+		ಯದಿ (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
 			ret += utf8clen(s);
-		else if (LEAF_CCC(leaf) == DECOMPOSE)
+		ಅನ್ಯಥಾ ಯದಿ (LEAF_CCC(leaf) == DECOMPOSE)
 			ret += strlen(LEAF_STR(leaf));
-		else
+		ಅನ್ಯಥಾ
 			ret += utf8clen(s);
 		s += utf8clen(s);
 	}
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 #endif
 
-#if 0
+#ಯದಿ 0
 /*
  * Length of the normalization of s, touch at most len bytes.
  * Return -1 if s is not valid UTF-8 unicode.
  */
-static ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len)
+ಸ್ಥಿರ ssize_t utf8nlen(ಧ್ರುವ ಸಂರಚನಾ utf8data *data, ಧ್ರುವ ವರ್ಣ *s, size_t len)
 {
 	utf8leaf_t	*leaf;
 	size_t		ret = 0;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	unsigned ವರ್ಣ	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	while (len && *s) {
+	ಯದಿ (!data)
+		ಪ್ರತ್ಯಾಗಮ -1;
+	ಯಾವತ್ (len && *s) {
 		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf)
-			return -1;
-		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
+		ಯದಿ (!leaf)
+			ಪ್ರತ್ಯಾಗಮ -1;
+		ಯದಿ (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
 			ret += utf8clen(s);
-		else if (LEAF_CCC(leaf) == DECOMPOSE)
+		ಅನ್ಯಥಾ ಯದಿ (LEAF_CCC(leaf) == DECOMPOSE)
 			ret += strlen(LEAF_STR(leaf));
-		else
+		ಅನ್ಯಥಾ
 			ret += utf8clen(s);
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 #endif
 
@@ -664,32 +664,32 @@ static ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len)
  *
  * Returns -1 on error, 0 on success.
  */
-static int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
-		const char *s, size_t len)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ utf8ncursor(ಸಂರಚನಾ utf8cursor *u8c, ಧ್ರುವ ಸಂರಚನಾ utf8data *data,
+		ಧ್ರುವ ವರ್ಣ *s, size_t len)
 {
-	if (!data)
-		return -1;
-	if (!s)
-		return -1;
+	ಯದಿ (!data)
+		ಪ್ರತ್ಯಾಗಮ -1;
+	ಯದಿ (!s)
+		ಪ್ರತ್ಯಾಗಮ -1;
 	u8c->data = data;
 	u8c->s = s;
-	u8c->p = NULL;
-	u8c->ss = NULL;
-	u8c->sp = NULL;
+	u8c->p = ರಿಕ್ತ;
+	u8c->ss = ರಿಕ್ತ;
+	u8c->sp = ರಿಕ್ತ;
 	u8c->len = len;
 	u8c->slen = 0;
 	u8c->ccc = STOPPER;
 	u8c->nccc = STOPPER;
 	/* Check we didn't clobber the maximum length. */
-	if (u8c->len != len)
-		return -1;
+	ಯದಿ (u8c->len != len)
+		ಪ್ರತ್ಯಾಗಮ -1;
 	/* The first byte of s may not be an utf8 continuation. */
-	if (len > 0 && (*s & 0xC0) == 0x80)
-		return -1;
-	return 0;
+	ಯದಿ (len > 0 && (*s & 0xC0) == 0x80)
+		ಪ್ರತ್ಯಾಗಮ -1;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-#if 0
+#ಯದಿ 0
 /*
  * Set up an utf8cursor for use by utf8byte().
  *
@@ -699,10 +699,10 @@ static int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
  *
  * Returns -1 on error, 0 on success.
  */
-static int utf8cursor(struct utf8cursor *u8c, const struct utf8data *data,
-	       const char *s)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ utf8cursor(ಸಂರಚನಾ utf8cursor *u8c, ಧ್ರುವ ಸಂರಚನಾ utf8data *data,
+	       ಧ್ರುವ ವರ್ಣ *s)
 {
-	return utf8ncursor(u8c, data, s, (unsigned int)-1);
+	ಪ್ರತ್ಯಾಗಮ utf8ncursor(u8c, data, s, (unsigned ಪೂರ್ಣಾಙ್ಕ)-1);
 }
 #endif
 
@@ -733,64 +733,64 @@ static int utf8cursor(struct utf8cursor *u8c, const struct utf8data *data,
  *  u8c->ss != NULL -> this is a repeating scan.
  *  u8c->ccc == -1   -> this is the first scan of a repeating scan.
  */
-static int utf8byte(struct utf8cursor *u8c)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ utf8byte(ಸಂರಚನಾ utf8cursor *u8c)
 {
 	utf8leaf_t *leaf;
-	int ccc;
+	ಪೂರ್ಣಾಙ್ಕ ccc;
 
-	for (;;) {
+	ಪ್ರತಿ (;;) {
 		/* Check for the end of a decomposed character. */
-		if (u8c->p && *u8c->s == '\0') {
+		ಯದಿ (u8c->p && *u8c->s == '\0') {
 			u8c->s = u8c->p;
-			u8c->p = NULL;
+			u8c->p = ರಿಕ್ತ;
 		}
 
 		/* Check for end-of-string. */
-		if (!u8c->p && (u8c->len == 0 || *u8c->s == '\0')) {
+		ಯದಿ (!u8c->p && (u8c->len == 0 || *u8c->s == '\0')) {
 			/* There is no next byte. */
-			if (u8c->ccc == STOPPER)
-				return 0;
+			ಯದಿ (u8c->ccc == STOPPER)
+				ಪ್ರತ್ಯಾಗಮ 0;
 			/* End-of-string during a scan counts as a stopper. */
 			ccc = STOPPER;
-			goto ccc_mismatch;
-		} else if ((*u8c->s & 0xC0) == 0x80) {
+			ಗಚ್ಛ ccc_mismatch;
+		} ಅನ್ಯಥಾ ಯದಿ ((*u8c->s & 0xC0) == 0x80) {
 			/* This is a continuation of the current character. */
-			if (!u8c->p)
+			ಯದಿ (!u8c->p)
 				u8c->len--;
-			return (unsigned char)*u8c->s++;
+			ಪ್ರತ್ಯಾಗಮ (unsigned ವರ್ಣ)*u8c->s++;
 		}
 
 		/* Look up the data for the current character. */
-		if (u8c->p) {
+		ಯದಿ (u8c->p) {
 			leaf = utf8lookup(u8c->data, u8c->hangul, u8c->s);
-		} else {
+		} ಅನ್ಯಥಾ {
 			leaf = utf8nlookup(u8c->data, u8c->hangul,
 					   u8c->s, u8c->len);
 		}
 
 		/* No leaf found implies that the input is a binary blob. */
-		if (!leaf)
-			return -1;
+		ಯದಿ (!leaf)
+			ಪ್ರತ್ಯಾಗಮ -1;
 
 		ccc = LEAF_CCC(leaf);
 		/* Characters that are too new have CCC 0. */
-		if (utf8agetab[LEAF_GEN(leaf)] > u8c->data->maxage) {
+		ಯದಿ (utf8agetab[LEAF_GEN(leaf)] > u8c->data->maxage) {
 			ccc = STOPPER;
-		} else if (ccc == DECOMPOSE) {
+		} ಅನ್ಯಥಾ ಯದಿ (ccc == DECOMPOSE) {
 			u8c->len -= utf8clen(u8c->s);
 			u8c->p = u8c->s + utf8clen(u8c->s);
 			u8c->s = LEAF_STR(leaf);
 			/* Empty decomposition implies CCC 0. */
-			if (*u8c->s == '\0') {
-				if (u8c->ccc == STOPPER)
-					continue;
+			ಯದಿ (*u8c->s == '\0') {
+				ಯದಿ (u8c->ccc == STOPPER)
+					ಅನುವರ್ತ;
 				ccc = STOPPER;
-				goto ccc_mismatch;
+				ಗಚ್ಛ ccc_mismatch;
 			}
 
 			leaf = utf8lookup(u8c->data, u8c->hangul, u8c->s);
-			if (!leaf)
-				return -1;
+			ಯದಿ (!leaf)
+				ಪ್ರತ್ಯಾಗಮ -1;
 			ccc = LEAF_CCC(leaf);
 		}
 
@@ -798,22 +798,22 @@ static int utf8byte(struct utf8cursor *u8c)
 		 * If this is not a stopper, then see if it updates
 		 * the next canonical class to be emitted.
 		 */
-		if (ccc != STOPPER && u8c->ccc < ccc && ccc < u8c->nccc)
+		ಯದಿ (ccc != STOPPER && u8c->ccc < ccc && ccc < u8c->nccc)
 			u8c->nccc = ccc;
 
 		/*
 		 * Return the current byte if this is the current
 		 * combining class.
 		 */
-		if (ccc == u8c->ccc) {
-			if (!u8c->p)
+		ಯದಿ (ccc == u8c->ccc) {
+			ಯದಿ (!u8c->p)
 				u8c->len--;
-			return (unsigned char)*u8c->s++;
+			ಪ್ರತ್ಯಾಗಮ (unsigned ವರ್ಣ)*u8c->s++;
 		}
 
 		/* Current combining class mismatch. */
 ccc_mismatch:
-		if (u8c->nccc == STOPPER) {
+		ಯದಿ (u8c->nccc == STOPPER) {
 			/*
 			 * Scan forward for the first canonical class
 			 * to be emitted.  Save the position from
@@ -824,33 +824,33 @@ ccc_mismatch:
 			u8c->sp = u8c->p;
 			u8c->ss = u8c->s;
 			u8c->slen = u8c->len;
-			if (!u8c->p)
+			ಯದಿ (!u8c->p)
 				u8c->len -= utf8clen(u8c->s);
 			u8c->s += utf8clen(u8c->s);
-		} else if (ccc != STOPPER) {
+		} ಅನ್ಯಥಾ ಯದಿ (ccc != STOPPER) {
 			/* Not a stopper, and not the ccc we're emitting. */
-			if (!u8c->p)
+			ಯದಿ (!u8c->p)
 				u8c->len -= utf8clen(u8c->s);
 			u8c->s += utf8clen(u8c->s);
-		} else if (u8c->nccc != MAXCCC + 1) {
+		} ಅನ್ಯಥಾ ಯದಿ (u8c->nccc != MAXCCC + 1) {
 			/* At a stopper, restart for next ccc. */
 			u8c->ccc = u8c->nccc;
 			u8c->nccc = MAXCCC + 1;
 			u8c->s = u8c->ss;
 			u8c->p = u8c->sp;
 			u8c->len = u8c->slen;
-		} else {
+		} ಅನ್ಯಥಾ {
 			/* All done, proceed from here. */
 			u8c->ccc = STOPPER;
 			u8c->nccc = STOPPER;
-			u8c->sp = NULL;
-			u8c->ss = NULL;
+			u8c->sp = ರಿಕ್ತ;
+			u8c->ss = ರಿಕ್ತ;
 			u8c->slen = 0;
 		}
 	}
 }
 
-#if 0
+#ಯದಿ 0
 /*
  * Look for the correct const struct utf8data for a unicode version.
  * Returns NULL if the version requested is too new.
@@ -866,135 +866,135 @@ ccc_mismatch:
  *  - Remove any Default_Ignorable_Code_Point.
  *  - Apply a full casefold (C + F).
  */
-static const struct utf8data *utf8nfdi(unsigned int maxage)
+ಸ್ಥಿರ ಧ್ರುವ ಸಂರಚನಾ utf8data *utf8nfdi(unsigned ಪೂರ್ಣಾಙ್ಕ maxage)
 {
-	int i = ARRAY_SIZE(utf8nfdidata) - 1;
+	ಪೂರ್ಣಾಙ್ಕ i = ARRAY_SIZE(utf8nfdidata) - 1;
 
-	while (maxage < utf8nfdidata[i].maxage)
+	ಯಾವತ್ (maxage < utf8nfdidata[i].maxage)
 		i--;
-	if (maxage > utf8nfdidata[i].maxage)
-		return NULL;
-	return &utf8nfdidata[i];
+	ಯದಿ (maxage > utf8nfdidata[i].maxage)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
+	ಪ್ರತ್ಯಾಗಮ &utf8nfdidata[i];
 }
 #endif
 
-static const struct utf8data *utf8nfdicf(unsigned int maxage)
+ಸ್ಥಿರ ಧ್ರುವ ಸಂರಚನಾ utf8data *utf8nfdicf(unsigned ಪೂರ್ಣಾಙ್ಕ maxage)
 {
-	int i = ARRAY_SIZE(utf8nfdicfdata) - 1;
+	ಪೂರ್ಣಾಙ್ಕ i = ARRAY_SIZE(utf8nfdicfdata) - 1;
 
-	while (maxage < utf8nfdicfdata[i].maxage)
+	ಯಾವತ್ (maxage < utf8nfdicfdata[i].maxage)
 		i--;
-	if (maxage > utf8nfdicfdata[i].maxage)
-		return NULL;
-	return &utf8nfdicfdata[i];
+	ಯದಿ (maxage > utf8nfdicfdata[i].maxage)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
+	ಪ್ರತ್ಯಾಗಮ &utf8nfdicfdata[i];
 }
 
-static int utf8_casefold(const struct ext2fs_nls_table *table,
-			  const unsigned char *str, size_t len,
-			  unsigned char *dest, size_t dlen)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ utf8_casefold(ಧ್ರುವ ಸಂರಚನಾ ext2fs_nls_table *table,
+			  ಧ್ರುವ unsigned ವರ್ಣ *str, size_t len,
+			  unsigned ವರ್ಣ *dest, size_t dlen)
 {
-	const struct utf8data *data = utf8nfdicf(table->version);
-	struct utf8cursor cur;
+	ಧ್ರುವ ಸಂರಚನಾ utf8data *data = utf8nfdicf(table->version);
+	ಸಂರಚನಾ utf8cursor cur;
 	size_t nlen = 0;
 
-	if (utf8ncursor(&cur, data, (const char *) str, len) < 0)
-		goto invalid_seq;
+	ಯದಿ (utf8ncursor(&cur, data, (ಧ್ರುವ ವರ್ಣ *) str, len) < 0)
+		ಗಚ್ಛ invalid_seq;
 
-	for (nlen = 0; nlen < dlen; nlen++) {
-		int c = utf8byte(&cur);
+	ಪ್ರತಿ (nlen = 0; nlen < dlen; nlen++) {
+		ಪೂರ್ಣಾಙ್ಕ c = utf8byte(&cur);
 
 		dest[nlen] = c;
-		if (!c)
-			return nlen;
-		if (c == -1)
-			break;
+		ಯದಿ (!c)
+			ಪ್ರತ್ಯಾಗಮ nlen;
+		ಯದಿ (c == -1)
+			ಭಙ್ಗ;
 	}
 
-	return -ENAMETOOLONG;
+	ಪ್ರತ್ಯಾಗಮ -ENAMETOOLONG;
 
 invalid_seq:
-	if (dlen < len)
-		return -ENAMETOOLONG;
+	ಯದಿ (dlen < len)
+		ಪ್ರತ್ಯಾಗಮ -ENAMETOOLONG;
 
 	/* Signal invalid sequence */
-	return -EINVAL;
+	ಪ್ರತ್ಯಾಗಮ -EINVAL;
 }
 
-static int utf8_validate(const struct ext2fs_nls_table *table,
-			 char *s, size_t len, char **pos)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ utf8_validate(ಧ್ರುವ ಸಂರಚನಾ ext2fs_nls_table *table,
+			 ವರ್ಣ *s, size_t len, ವರ್ಣ **pos)
 {
-	const struct utf8data *data = utf8nfdicf(table->version);
+	ಧ್ರುವ ಸಂರಚನಾ utf8data *data = utf8nfdicf(table->version);
 	utf8leaf_t	*leaf;
-	unsigned char	hangul[UTF8HANGULLEAF];
+	unsigned ವರ್ಣ	hangul[UTF8HANGULLEAF];
 
-	if (!data)
-		return -1;
-	while (len && *s) {
+	ಯದಿ (!data)
+		ಪ್ರತ್ಯಾಗಮ -1;
+	ಯಾವತ್ (len && *s) {
 		leaf = utf8nlookup(data, hangul, s, len);
-		if (!leaf) {
+		ಯದಿ (!leaf) {
 			*pos = s;
-			return 1;
+			ಪ್ರತ್ಯಾಗಮ 1;
 		}
 		len -= utf8clen(s);
 		s += utf8clen(s);
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int utf8_casefold_cmp(const struct ext2fs_nls_table *table,
-			     const unsigned char *str1, size_t len1,
-			     const unsigned char *str2, size_t len2)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ utf8_casefold_cmp(ಧ್ರುವ ಸಂರಚನಾ ext2fs_nls_table *table,
+			     ಧ್ರುವ unsigned ವರ್ಣ *str1, size_t len1,
+			     ಧ್ರುವ unsigned ವರ್ಣ *str2, size_t len2)
 {
-	const struct utf8data *data = utf8nfdicf(table->version);
-	int c1, c2;
-	struct utf8cursor cur1, cur2;
+	ಧ್ರುವ ಸಂರಚನಾ utf8data *data = utf8nfdicf(table->version);
+	ಪೂರ್ಣಾಙ್ಕ c1, c2;
+	ಸಂರಚನಾ utf8cursor cur1, cur2;
 
-	if (utf8ncursor(&cur1, data, (const char *) str1, len1) < 0)
-		return -1;
-	if (utf8ncursor(&cur2, data, (const char *) str2, len2) < 0)
-		return -1;
+	ಯದಿ (utf8ncursor(&cur1, data, (ಧ್ರುವ ವರ್ಣ *) str1, len1) < 0)
+		ಪ್ರತ್ಯಾಗಮ -1;
+	ಯದಿ (utf8ncursor(&cur2, data, (ಧ್ರುವ ವರ್ಣ *) str2, len2) < 0)
+		ಪ್ರತ್ಯಾಗಮ -1;
 
-	do {
+	ಕುರು {
 		c1 = utf8byte(&cur1);
 		c2 = utf8byte(&cur2);
 
-		if (c1 < 0 || c2 < 0)
-			return -1;
-		if (c1 != c2)
-			return c1 - c2;
-	} while (c1);
+		ಯದಿ (c1 < 0 || c2 < 0)
+			ಪ್ರತ್ಯಾಗಮ -1;
+		ಯದಿ (c1 != c2)
+			ಪ್ರತ್ಯಾಗಮ c1 - c2;
+	} ಯಾವತ್ (c1);
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static const struct ext2fs_nls_ops utf8_ops = {
+ಸ್ಥಿರ ಧ್ರುವ ಸಂರಚನಾ ext2fs_nls_ops utf8_ops = {
 	.casefold = utf8_casefold,
 	.validate = utf8_validate,
 	.casefold_cmp = utf8_casefold_cmp,
 };
 
-static const struct ext2fs_nls_table nls_utf8 = {
+ಸ್ಥಿರ ಧ್ರುವ ಸಂರಚನಾ ext2fs_nls_table nls_utf8 = {
 	.ops = &utf8_ops,
 	.version = UNICODE_AGE(12, 1, 0),
 };
 
-const struct ext2fs_nls_table *ext2fs_load_nls_table(int encoding)
+ಧ್ರುವ ಸಂರಚನಾ ext2fs_nls_table *ext2fs_load_nls_table(ಪೂರ್ಣಾಙ್ಕ encoding)
 {
-	if (encoding == EXT4_ENC_UTF8_12_1)
-		return &nls_utf8;
+	ಯದಿ (encoding == EXT4_ENC_UTF8_12_1)
+		ಪ್ರತ್ಯಾಗಮ &nls_utf8;
 
-	return NULL;
+	ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 }
 
-int ext2fs_check_encoded_name(const struct ext2fs_nls_table *table,
-			      char *name, size_t len, char **pos)
+ಪೂರ್ಣಾಙ್ಕ ext2fs_check_encoded_name(ಧ್ರುವ ಸಂರಚನಾ ext2fs_nls_table *table,
+			      ವರ್ಣ *name, size_t len, ವರ್ಣ **pos)
 {
-	return table->ops->validate(table, name, len, pos);
+	ಪ್ರತ್ಯಾಗಮ table->ops->validate(table, name, len, pos);
 }
 
-int ext2fs_casefold_cmp(const struct ext2fs_nls_table *table,
-			const unsigned char *str1, size_t len1,
-			const unsigned char *str2, size_t len2)
+ಪೂರ್ಣಾಙ್ಕ ext2fs_casefold_cmp(ಧ್ರುವ ಸಂರಚನಾ ext2fs_nls_table *table,
+			ಧ್ರುವ unsigned ವರ್ಣ *str1, size_t len1,
+			ಧ್ರುವ unsigned ವರ್ಣ *str2, size_t len2)
 {
-	return table->ops->casefold_cmp(table, str1, len1, str2, len2);
+	ಪ್ರತ್ಯಾಗಮ table->ops->casefold_cmp(table, str1, len1, str2, len2);
 }

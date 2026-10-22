@@ -9,44 +9,44 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-#include "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
 
-struct ext2_inode_large inode;
+ಸಂರಚನಾ ext2_inode_large inode;
 
 #ifndef offsetof
 #define offsetof(type, member)  __builtin_offsetof(type, member)
 #endif
 
-#define check_field(x, s) cur_offset = do_field(#x, s, sizeof(inode.x),	       \
-					offsetof(struct ext2_inode_large, x),  \
+#define check_field(x, s) cur_offset = do_field(#x, s, ಪರಿಮಾಣ(inode.x),	       \
+					offsetof(ಸಂರಚನಾ ext2_inode_large, x),  \
 					cur_offset)
 
-static int do_field(const char *field, unsigned size, unsigned cur_size,
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ do_field(ಧ್ರುವ ವರ್ಣ *field, unsigned size, unsigned cur_size,
 		    unsigned offset, unsigned cur_offset)
 {
-	if (size != cur_size) {
+	ಯದಿ (size != cur_size) {
 		printf("error: %s size %u should be %u\n",
 		       field, cur_size, size);
 		exit(1);
 	}
-	if (offset != cur_offset) {
+	ಯದಿ (offset != cur_offset) {
 		printf("error: %s offset %u should be %u\n",
 		       field, cur_offset, offset);
 		exit(1);
 	}
 	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	ಪ್ರತ್ಯಾಗಮ offset + size;
 }
 
-int main(int argc, char **argv)
+ಪೂರ್ಣಾಙ್ಕ main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#ಯದಿ (__GNUC__ >= 4)
+	ಪೂರ್ಣಾಙ್ಕ cur_offset = 0;
 
 	printf("%8s %-30s %3s\n", "offset", "field", "size");
 	check_field(i_mode, 2);
@@ -57,19 +57,19 @@ int main(int argc, char **argv)
 	check_field(i_mtime, 4);
 	check_field(i_dtime, 4);
 	check_field(i_gid, 2);
-	check_field(i_links_count, 2);
+	check_field(i_links_ಎಣಿಕೆ, 2);
 	check_field(i_blocks, 4);
 	check_field(i_flags, 4);
 	check_field(osd1.linux1.l_i_version, 4);
 	check_field(i_block, 15 * 4);
 	check_field(i_generation, 4);
 	check_field(i_file_acl, 4);
-	check_field(i_size_high, 4);
+	check_field(i_size_ಮೇಲಿನ, 4);
 	check_field(i_faddr, 4);
 	check_field(osd2.linux2.l_i_blocks_hi, 2);
-	check_field(osd2.linux2.l_i_file_acl_high, 2);
-	check_field(osd2.linux2.l_i_uid_high, 2);
-	check_field(osd2.linux2.l_i_gid_high, 2);
+	check_field(osd2.linux2.l_i_file_acl_ಮೇಲಿನ, 2);
+	check_field(osd2.linux2.l_i_uid_ಮೇಲಿನ, 2);
+	check_field(osd2.linux2.l_i_gid_ಮೇಲಿನ, 2);
 	check_field(osd2.linux2.l_i_checksum_lo, 2);
 	check_field(osd2.linux2.l_i_reserved, 2);
 	do_field("Small inode end", 0, 0, cur_offset, 128);
@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 	check_field(i_version_hi, 4);
 	check_field(i_projid, 4);
 	/* This size will change as new fields are added */
-	do_field("Large inode end", 0, 0, cur_offset, sizeof(inode));
+	do_field("Large inode end", 0, 0, cur_offset, ಪರಿಮಾಣ(inode));
 #endif
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }

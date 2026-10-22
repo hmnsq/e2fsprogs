@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಯದಿ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
-struct lookup_struct  {
-	const char	*name;
-	int		len;
+ಸಂರಚನಾ lookup_struct  {
+	ಧ್ರುವ ವರ್ಣ	*name;
+	ಪೂರ್ಣಾಙ್ಕ		len;
 	ext2_ino_t	*inode;
-	int		found;
+	ಪೂರ್ಣಾಙ್ಕ		found;
 };
 
 #ifdef __TURBOC__
  #pragma argsused
 #endif
-static int lookup_proc(struct ext2_dir_entry *dirent,
-		       int	offset EXT2FS_ATTR((unused)),
-		       int	blocksize EXT2FS_ATTR((unused)),
-		       char	*buf EXT2FS_ATTR((unused)),
-		       void	*priv_data)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ lookup_proc(ಸಂರಚನಾ ext2_dir_entry *dirent,
+		       ಪೂರ್ಣಾಙ್ಕ	offset EXT2FS_ATTR((unused)),
+		       ಪೂರ್ಣಾಙ್ಕ	blocksize EXT2FS_ATTR((unused)),
+		       ವರ್ಣ	*buf EXT2FS_ATTR((unused)),
+		       ಶೂನ್ಯ	*priv_data)
 {
-	struct lookup_struct *ls = (struct lookup_struct *) priv_data;
+	ಸಂರಚನಾ lookup_struct *ls = (ಸಂರಚನಾ lookup_struct *) priv_data;
 
-	if (ls->len != ext2fs_dirent_name_len(dirent))
-		return 0;
-	if (strncmp(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
-		return 0;
+	ಯದಿ (ls->len != ext2fs_dirent_name_len(dirent))
+		ಪ್ರತ್ಯಾಗಮ 0;
+	ಯದಿ (strncmp(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
+		ಪ್ರತ್ಯಾಗಮ 0;
 	*ls->inode = dirent->inode;
 	ls->found++;
-	return DIRENT_ABORT;
+	ಪ್ರತ್ಯಾಗಮ DIRENT_ABORT;
 }
 
 
-errcode_t ext2fs_lookup(ext2_filsys fs, ext2_ino_t dir, const char *name,
-			int namelen, char *buf, ext2_ino_t *inode)
+errcode_t ext2fs_lookup(ext2_filsys fs, ext2_ino_t dir, ಧ್ರುವ ವರ್ಣ *name,
+			ಪೂರ್ಣಾಙ್ಕ namelen, ವರ್ಣ *buf, ext2_ino_t *inode)
 {
 	errcode_t	retval;
-	struct lookup_struct ls;
+	ಸಂರಚನಾ lookup_struct ls;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
@@ -61,10 +61,10 @@ errcode_t ext2fs_lookup(ext2_filsys fs, ext2_ino_t dir, const char *name,
 	ls.found = 0;
 
 	retval = ext2fs_dir_iterate(fs, dir, 0, buf, lookup_proc, &ls);
-	if (retval)
-		return retval;
+	ಯದಿ (retval)
+		ಪ್ರತ್ಯಾಗಮ retval;
 
-	return (ls.found) ? 0 : EXT2_ET_FILE_NOT_FOUND;
+	ಪ್ರತ್ಯಾಗಮ (ls.found) ? 0 : EXT2_ET_FILE_NOT_FOUND;
 }
 
 

@@ -10,24 +10,24 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಯದಿ HAVE_ERRNO_H
+#ಅನ್ತರ್ಭಾವ <errno.h>
 #endif
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ಯದಿ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 #endif
-#if HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
+#ಯದಿ HAVE_SYS_IOCTL_H
+#ಅನ್ತರ್ಭಾವ <sys/ioctl.h>
 #endif
-#if HAVE_SYS_MOUNT_H
-#include <sys/param.h>
-#include <sys/mount.h>		/* This may define BLKFLSBUF */
+#ಯದಿ HAVE_SYS_MOUNT_H
+#ಅನ್ತರ್ಭಾವ <sys/param.h>
+#ಅನ್ತರ್ಭಾವ <sys/mount.h>		/* This may define BLKFLSBUF */
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
 /*
  * For Linux, define BLKFLSBUF and FDFLUSH if necessary, since
@@ -50,7 +50,7 @@
  * flush the buffer cache.  The latter is basically only useful for
  * system benchmarks and for torturing systems in burn-in tests.  :)
  */
-errcode_t ext2fs_sync_device(int fd, int flushb)
+errcode_t ext2fs_sync_device(ಪೂರ್ಣಾಙ್ಕ fd, ಪೂರ್ಣಾಙ್ಕ flushb)
 {
 	/*
 	 * We always sync the device in case we're running on old
@@ -58,31 +58,31 @@ errcode_t ext2fs_sync_device(int fd, int flushb)
 	 * still is a race condition for those kernels, but this
 	 * reduces it greatly.)
 	 */
-#if defined(HAVE_FSYNC)
-	if (fsync (fd) == -1)
-		return errno;
+#ಯದಿ defined(HAVE_FSYNC)
+	ಯದಿ (fsync (fd) == -1)
+		ಪ್ರತ್ಯಾಗಮ errno;
 #endif
 
-	if (flushb) {
+	ಯದಿ (flushb) {
 		errcode_t	retval = 0;
 
 #ifdef BLKFLSBUF
-		if (ioctl (fd, BLKFLSBUF, 0) == 0)
-			return 0;
+		ಯದಿ (ioctl (fd, BLKFLSBUF, 0) == 0)
+			ಪ್ರತ್ಯಾಗಮ 0;
 		retval = errno;
-#elif defined(__linux__)
+#ನೋಚೇದ್ಯದಿ defined(__linux__)
 #warning BLKFLSBUF not defined
 #endif
 #ifdef FDFLUSH
 		/* In case this is a floppy */
-		if (ioctl(fd, FDFLUSH, 0) == 0)
-			return 0;
-		if (retval == 0)
+		ಯದಿ (ioctl(fd, FDFLUSH, 0) == 0)
+			ಪ್ರತ್ಯಾಗಮ 0;
+		ಯದಿ (retval == 0)
 			retval = errno;
-#elif defined(__linux__)
+#ನೋಚೇದ್ಯದಿ defined(__linux__)
 #warning FDFLUSH not defined
 #endif
-		return retval;
+		ಪ್ರತ್ಯಾಗಮ retval;
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }

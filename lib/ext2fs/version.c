@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಯದಿ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 #endif
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <ctype.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fs.h"
 
-#include "../../version.h"
+#ಅನ್ತರ್ಭಾವ "../../version.h"
 
-static const char *lib_version = E2FSPROGS_VERSION;
-static const char *lib_date = E2FSPROGS_DATE;
+ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ *lib_version = E2FSPROGS_VERSION;
+ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ *lib_date = E2FSPROGS_DATE;
 
-int ext2fs_parse_version_string(const char *ver_string)
+ಪೂರ್ಣಾಙ್ಕ ext2fs_parse_version_string(ಧ್ರುವ ವರ್ಣ *ver_string)
 {
-	const char *cp;
-	int version = 0, dot_count = 0;
+	ಧ್ರುವ ವರ್ಣ *cp;
+	ಪೂರ್ಣಾಙ್ಕ version = 0, dot_ಎಣಿಕೆ = 0;
 
-	for (cp = ver_string; *cp; cp++) {
-		if (*cp == '.') {
-			if (dot_count++)
-				break;
-			else
-				continue;
+	ಪ್ರತಿ (cp = ver_string; *cp; cp++) {
+		ಯದಿ (*cp == '.') {
+			ಯದಿ (dot_ಎಣಿಕೆ++)
+				ಭಙ್ಗ;
+			ಅನ್ಯಥಾ
+				ಅನುವರ್ತ;
 		}
-		if (!isdigit(*cp))
-			break;
+		ಯದಿ (!isdigit(*cp))
+			ಭಙ್ಗ;
 		version = (version * 10) + (*cp - '0');
 	}
-	return version;
+	ಪ್ರತ್ಯಾಗಮ version;
 }
 
 
-int ext2fs_get_library_version(const char **ver_string,
-			       const char **date_string)
+ಪೂರ್ಣಾಙ್ಕ ext2fs_get_library_version(ಧ್ರುವ ವರ್ಣ **ver_string,
+			       ಧ್ರುವ ವರ್ಣ **date_string)
 {
-	if (ver_string)
+	ಯದಿ (ver_string)
 		*ver_string = lib_version;
-	if (date_string)
+	ಯದಿ (date_string)
 		*date_string = lib_date;
 
-	return ext2fs_parse_version_string(lib_version);
+	ಪ್ರತ್ಯಾಗಮ ext2fs_parse_version_string(lib_version);
 }

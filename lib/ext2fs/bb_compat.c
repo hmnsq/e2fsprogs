@@ -9,56 +9,56 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಯದಿ HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಯದಿ HAVE_SYS_STAT_H
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#ಯದಿ HAVE_SYS_TYPES_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ಅನ್ತರ್ಭಾವ "ext2_fs.h"
+#ಅನ್ತರ್ಭಾವ "ext2fsP.h"
 
-errcode_t badblocks_list_create(badblocks_list *ret, int size)
+errcode_t badblocks_list_create(badblocks_list *ret, ಪೂರ್ಣಾಙ್ಕ size)
 {
-	return ext2fs_badblocks_list_create(ret, size);
+	ಪ್ರತ್ಯಾಗಮ ext2fs_badblocks_list_create(ret, size);
 }
 
-void badblocks_list_free(badblocks_list bb)
+ಶೂನ್ಯ badblocks_list_free(badblocks_list bb)
 {
 	ext2fs_badblocks_list_free(bb);
 }
 
 errcode_t badblocks_list_add(badblocks_list bb, blk_t blk)
 {
-	return ext2fs_badblocks_list_add(bb, blk);
+	ಪ್ರತ್ಯಾಗಮ ext2fs_badblocks_list_add(bb, blk);
 }
 
-int badblocks_list_test(badblocks_list bb, blk_t blk)
+ಪೂರ್ಣಾಙ್ಕ badblocks_list_test(badblocks_list bb, blk_t blk)
 {
-	return ext2fs_badblocks_list_test(bb, blk);
+	ಪ್ರತ್ಯಾಗಮ ext2fs_badblocks_list_test(bb, blk);
 }
 
 errcode_t badblocks_list_iterate_begin(badblocks_list bb,
 				       badblocks_iterate *ret)
 {
-	return ext2fs_badblocks_list_iterate_begin(bb, ret);
+	ಪ್ರತ್ಯಾಗಮ ext2fs_badblocks_list_iterate_begin(bb, ret);
 }
 
-int badblocks_list_iterate(badblocks_iterate iter, blk_t *blk)
+ಪೂರ್ಣಾಙ್ಕ badblocks_list_iterate(badblocks_iterate iter, blk_t *blk)
 {
-	return ext2fs_badblocks_list_iterate(iter, blk);
+	ಪ್ರತ್ಯಾಗಮ ext2fs_badblocks_list_iterate(iter, blk);
 }
 
-void badblocks_list_iterate_end(badblocks_iterate iter)
+ಶೂನ್ಯ badblocks_list_iterate_end(badblocks_iterate iter)
 {
 	ext2fs_badblocks_list_iterate_end(iter);
 }
