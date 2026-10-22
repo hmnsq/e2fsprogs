@@ -52,13 +52,13 @@ static PARTITION        *active = NULL;
 /*
  * I/O Manager routine prototypes
  */
-static errcode_t dos_open(const char *dev, int flags, io_channel *channel);
+static errcode_t dos_open(const char *dev, целое flags, io_channel *channel);
 static errcode_t dos_close(io_channel channel);
-static errcode_t dos_set_blksize(io_channel channel, int blksize);
+static errcode_t dos_set_blksize(io_channel channel, целое blksize);
 static errcode_t dos_read_blk(io_channel channel, unsigned long block,
-                                             int count, void *buf);
+                                             целое count, void *buf);
 static errcode_t dos_write_blk(io_channel channel, unsigned long block,
-                               int count, const void *buf);
+                               целое count, const void *buf);
 static errcode_t dos_flush(io_channel channel);
 
 static struct struct_io_manager struct_dos_manager = {
@@ -82,7 +82,7 @@ io_manager dos_io_manager = &struct_dos_manager;
  */
 
 #define EXT2_CHECK_MAGIC(struct, code) \
-          if ((struct)->magic != (code)) return (code)
+          если ((struct)->magic != (code)) вернуть (code)
 
 /*
  * Calculates a CHS address of a sector from its LBA
@@ -117,31 +117,31 @@ static PTABLE_ENTRY *scan_partition_table(PTABLE_ENTRY *pentry,
 {
   unsigned        i;
 
-  if(*pno != 0xFF && *pno >= 5)
-     return NULL; /* We don't support extended partitions for now */
+  если(*pno != 0xFF && *pno >= 5)
+     вернуть NULL; /* We don't support extended partitions for now */
 
-  if(*pno != 0xFF)
+  если(*pno != 0xFF)
   {
-    if(pentry[*pno].type == LINUX_EXT2FS)
-      return &pentry[*pno];
-    else
+    если(pentry[*pno].type == LINUX_EXT2FS)
+      вернуть &pentry[*pno];
+    иначе
     {
-      if(!pentry[*pno].type)
+      если(!pentry[*pno].type)
         *pno = 0xFE;
-      else if(pentry[*pno].type == LINUX_SWAP)
+      иначе если(pentry[*pno].type == LINUX_SWAP)
         *pno = 0xFD;
-      return NULL;
+      вернуть NULL;
     }
   }
 
-  for(i = 0; i < 4; i++)
-    if(pentry[i].type == LINUX_EXT2FS)
+  для(i = 0; i < 4; i++)
+    если(pentry[i].type == LINUX_EXT2FS)
     {
       *pno = i;
-      return &pentry[i];
+      вернуть &pentry[i];
     }
 
-  return NULL;
+  вернуть NULL;
 }
 
 /*
@@ -152,15 +152,15 @@ static io_channel alloc_io_channel(PARTITION *part)
   io_channel     ioch;
 
   ioch = (io_channel)malloc(sizeof(struct struct_io_channel));
-  if (!ioch)
-	  return NULL;
+  если (!ioch)
+	  вернуть NULL;
   memset(ioch, 0, sizeof(struct struct_io_channel));
   ioch->magic = EXT2_ET_MAGIC_IO_CHANNEL;
   ioch->manager = dos_io_manager;
   ioch->name = (char *)malloc(strlen(part->dev)+1);
-  if (!ioch->name) {
+  если (!ioch->name) {
 	  free(ioch);
-	  return NULL;
+	  вернуть NULL;
   }
   strcpy(ioch->name, part->dev);
   ioch->private_data = part;
@@ -168,7 +168,7 @@ static io_channel alloc_io_channel(PARTITION *part)
   ioch->read_error = 0;
   ioch->write_error = 0;
 
-  return ioch;
+  вернуть ioch;
 }
 
 #ifdef __TURBOC__
@@ -178,33 +178,33 @@ static io_channel alloc_io_channel(PARTITION *part)
  * Open the 'name' partition, initialize all information structures
  * we need to keep and create libext2fs I/O manager.
  */
-static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
+static errcode_t dos_open(const char *dev, целое flags, io_channel *channel)
 {
   unsigned char  *tmp, sec[512];
   PARTITION      *part;
   PTABLE_ENTRY   *pent;
   PARTITION        **newparts;
 
-  if(!dev)
+  если(!dev)
   {
     _dio_error = ERR_BADDEV;
-    return EXT2_ET_BAD_DEVICE_NAME;
+    вернуть EXT2_ET_BAD_DEVICE_NAME;
   }
 
   /*
    * First check whether the dev name is OK
    */
   tmp = (unsigned char*)strrchr(dev, '/');
-  if(!tmp)
+  если(!tmp)
   {
     _dio_error = ERR_BADDEV;
-    return EXT2_ET_BAD_DEVICE_NAME;
+    вернуть EXT2_ET_BAD_DEVICE_NAME;
   }
   *tmp = 0;
-  if(strcmp(dev, "/dev"))
+  если(strcmp(dev, "/dev"))
   {
     _dio_error = ERR_BADDEV;
-    return EXT2_ET_BAD_DEVICE_NAME;
+    вернуть EXT2_ET_BAD_DEVICE_NAME;
   }
   *tmp++ = '/';
 
@@ -213,20 +213,20 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
    */
 
   part = (PARTITION*)malloc(sizeof(PARTITION));
-  if (!part)
-	  return ENOMEM;
+  если (!part)
+	  вернуть ENOMEM;
   {
-    int   i = 0;
+    целое   i = 0;
 
-    for(;i < npart; i++)
-      if(!strcmp(partitions[i]->dev, dev))
+    для(;i < npart; i++)
+      если(!strcmp(partitions[i]->dev, dev))
       {
         /* Found it! Make it the active one */
         active = partitions[i];
         *channel = alloc_io_channel(active);
-	if (!*channel)
-		return ENOMEM;
-        return 0;
+	если (!*channel)
+		вернуть ENOMEM;
+        вернуть 0;
       }
   }
 
@@ -242,29 +242,29 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
       /*
        * Do we have the partition number?
        */
-      if(tmp[3])
-        part->pno = isdigit((int)tmp[3]) ? tmp[3] - '0' - 1: 0;
-      else
+      если(tmp[3])
+        part->pno = isdigit((целое)tmp[3]) ? tmp[3] - '0' - 1: 0;
+      иначе
         part->pno = 0xFF;
       break;
 
     case 'f':
-      if(tmp[2])
-        part->phys = isdigit((int)tmp[2]) ? tmp[2] - '0' : 0;
-      else
+      если(tmp[2])
+        part->phys = isdigit((целое)tmp[2]) ? tmp[2] - '0' : 0;
+      иначе
         part->phys = 0x00; /* We'll assume /dev/fd0 */
       break;
 
     default:
       _dio_error = ERR_BADDEV;
-      return ENODEV;
+      вернуть ENODEV;
   }
 
-  if(part->phys < 0x80)
+  если(part->phys < 0x80)
   {
      /* We don't support floppies for now */
      _dio_error = ERR_NOTSUPP;
-     return EINVAL;
+     вернуть EINVAL;
   }
 
   part->dev = strdup(dev);
@@ -280,12 +280,12 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
                            1, /* just one sector */
                            sec);
 
-  if(!HW_OK())
+  если(!HW_OK())
   {
     _dio_error = ERR_HARDWARE;
     free(part->dev);
     free(part);
-    return EFAULT;
+    вернуть EFAULT;
   }
 
   /*
@@ -300,24 +300,24 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
    */
   _dio_hw_error = biosdisk(DISK_READ, part->phys, 0, 0, 1, 1, sec);
 
-  if(!HW_OK())
+  если(!HW_OK())
   {
     _dio_error = ERR_HARDWARE;
     free(part->dev);
     free(part);
-    return EFAULT;
+    вернуть EFAULT;
   }
 
   pent = (PTABLE_ENTRY*)&sec[0x1BE];
   pent = scan_partition_table(pent, part->phys, &part->pno);
 
-  if(!pent)
+  если(!pent)
   {
     _dio_error = part->pno == 0xFE ? ERR_EMPTYPART :
                  part->pno == 0xFD ? ERR_LINUXSWAP : ERR_NOTEXT2FS;
     free(part->dev);
     free(part);
-    return ENODEV;
+    вернуть ENODEV;
   }
 
   /*
@@ -338,9 +338,9 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
    * Add the partition to the table
    */
   newparts = (PARTITION**)realloc(partitions, sizeof(PARTITION) * npart);
-  if (!newparts) {
+  если (!newparts) {
 	  free(part);
-	  return ENOMEM;
+	  вернуть ENOMEM;
   }
   partitions = newparts;
   partitions[npart++] = active = part;
@@ -349,10 +349,10 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
    * Now alloc all libe2fs structures
    */
   *channel = alloc_io_channel(active);
-  if (!*channel)
-	  return ENOMEM;
+  если (!*channel)
+	  вернуть ENOMEM;
 
-  return 0;
+  вернуть 0;
 }
 
 static errcode_t dos_close(io_channel channel)
@@ -360,18 +360,18 @@ static errcode_t dos_close(io_channel channel)
 	free(channel->name);
 	free(channel);
 
-	return 0;
+	вернуть 0;
 }
 
-static errcode_t dos_set_blksize(io_channel channel, int blksize)
+static errcode_t dos_set_blksize(io_channel channel, целое blksize)
 {
   channel->block_size = blksize;
 
-  return 0;
+  вернуть 0;
 }
 
 static errcode_t dos_read_blk(io_channel channel, unsigned long block,
-                                             int count, void *buf)
+                                             целое count, void *buf)
 {
   PARTITION     *part;
   size_t        size;
@@ -398,17 +398,17 @@ static errcode_t dos_read_blk(io_channel channel, unsigned long block,
                            size < 512 ? 1 : size/512,
                            buf);
 
-  if(!HW_OK())
+  если(!HW_OK())
   {
     _dio_error = ERR_HARDWARE;
-    return EFAULT;
+    вернуть EFAULT;
   }
 
-  return 0;
+  вернуть 0;
 }
 
 static errcode_t dos_write_blk(io_channel channel, unsigned long block,
-                               int count, const void *buf)
+                               целое count, const void *buf)
 {
   PARTITION     *part;
   size_t        size;
@@ -418,13 +418,13 @@ static errcode_t dos_write_blk(io_channel channel, unsigned long block,
   EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
   part = (PARTITION*)channel->private_data;
 
-  if(count == 1)
+  если(count == 1)
     size = (size_t)channel->block_size;
-  else
+  иначе
   {
-    if (count < 0)
+    если (count < 0)
       size = (size_t)-count;
-    else
+    иначе
       size = (size_t)(count * channel->block_size);
   }
 
@@ -438,13 +438,13 @@ static errcode_t dos_write_blk(io_channel channel, unsigned long block,
                            size < 512 ? 1 : size/512,
                            (void*)buf);
 
-  if(!HW_OK())
+  если(!HW_OK())
   {
     _dio_error = ERR_HARDWARE;
-    return EFAULT;
+    вернуть EFAULT;
   }
 
-  return 0;
+  вернуть 0;
 }
 
 #ifdef __TURBOC__
@@ -455,5 +455,5 @@ static errcode_t dos_flush(io_channel channel)
   /*
    * No buffers, no flush...
    */
-  return 0;
+  вернуть 0;
 }

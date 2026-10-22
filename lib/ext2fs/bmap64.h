@@ -10,7 +10,7 @@
  */
 
 struct ext2_bmap_statistics {
-	int		type;
+	целое		type;
 	struct timeval	created;
 
 #ifdef ENABLE_BMAP_STATS_OPS
@@ -41,10 +41,10 @@ struct ext2fs_struct_generic_bitmap_64 {
 	errcode_t		magic;
 	ext2_filsys 		fs;
 	struct ext2_bitmap_ops	*bitmap_ops;
-	int			flags;
+	целое			flags;
 	__u64			start, end;
 	__u64			real_end;
-	int			cluster_bits;
+	целое			cluster_bits;
 	char			*description;
 	void			*private;
 	errcode_t		base_error_code;
@@ -66,7 +66,7 @@ typedef struct ext2fs_struct_generic_bitmap_64 *ext2fs_generic_bitmap_64;
 	 ((bmap)->magic == EXT2_ET_MAGIC_INODE_BITMAP64))
 
 struct ext2_bitmap_ops {
-	int	type;
+	целое	type;
 	/* Generic bmap operators */
 	errcode_t (*new_bmap)(ext2_filsys fs, ext2fs_generic_bitmap_64 bmap);
 	void	(*free_bmap)(ext2fs_generic_bitmap_64 bitmap);
@@ -76,15 +76,15 @@ struct ext2_bitmap_ops {
 			       __u64 new_end,
 			       __u64 new_real_end);
 	/* bit set/test operators */
-	int	(*mark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
-	int	(*unmark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
-	int	(*test_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
+	целое	(*mark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
+	целое	(*unmark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
+	целое	(*test_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
 	void	(*mark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				    unsigned int num);
+				    unsigned целое num);
 	void	(*unmark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				      unsigned int num);
-	int	(*test_clear_bmap_extent)(ext2fs_generic_bitmap_64 bitmap,
-					  __u64 arg, unsigned int num);
+				      unsigned целое num);
+	целое	(*test_clear_bmap_extent)(ext2fs_generic_bitmap_64 bitmap,
+					  __u64 arg, unsigned целое num);
 	errcode_t (*set_bmap_range)(ext2fs_generic_bitmap_64 bitmap,
 				    __u64 start, size_t num, void *in);
 	errcode_t (*get_bmap_range)(ext2fs_generic_bitmap_64 bitmap,

@@ -5,15 +5,15 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#если HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#если HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#если HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -27,77 +27,77 @@ errcode_t io_channel_set_options(io_channel channel, const char *opts)
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (!opts)
-		return 0;
+	если (!opts)
+		вернуть 0;
 
-	if (!channel->manager->set_option)
-		return EXT2_ET_INVALID_ARGUMENT;
+	если (!channel->manager->set_option)
+		вернуть EXT2_ET_INVALID_ARGUMENT;
 
 	options = malloc(strlen(opts)+1);
-	if (!options)
-		return EXT2_ET_NO_MEMORY;
+	если (!options)
+		вернуть EXT2_ET_NO_MEMORY;
 	strcpy(options, opts);
 	ptr = options;
 
-	while (ptr && *ptr) {
+	пока (ptr && *ptr) {
 		next = strchr(ptr, '&');
-		if (next)
+		если (next)
 			*next++ = 0;
 
 		arg = strchr(ptr, '=');
-		if (arg)
+		если (arg)
 			*arg++ = 0;
 
 		retval = (channel->manager->set_option)(channel, ptr, arg);
-		if (retval)
+		если (retval)
 			break;
 		ptr = next;
 	}
 	free(options);
-	return retval;
+	вернуть retval;
 }
 
 errcode_t io_channel_write_byte(io_channel channel, unsigned long offset,
-				int count, const void *data)
+				целое count, const void *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_byte)
-		return channel->manager->write_byte(channel, offset,
+	если (channel->manager->write_byte)
+		вернуть channel->manager->write_byte(channel, offset,
 						    count, data);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	вернуть EXT2_ET_UNIMPLEMENTED;
 }
 
 errcode_t io_channel_read_blk64(io_channel channel, unsigned long long block,
-				 int count, void *data)
+				 целое count, void *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->read_blk64)
-		return (channel->manager->read_blk64)(channel, block,
+	если (channel->manager->read_blk64)
+		вернуть (channel->manager->read_blk64)(channel, block,
 						      count, data);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	если ((block >> 32) != 0)
+		вернуть EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->read_blk)(channel, (unsigned long) block,
+	вернуть (channel->manager->read_blk)(channel, (unsigned long) block,
 					     count, data);
 }
 
 errcode_t io_channel_write_blk64(io_channel channel, unsigned long long block,
-				 int count, const void *data)
+				 целое count, const void *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_blk64)
-		return (channel->manager->write_blk64)(channel, block,
+	если (channel->manager->write_blk64)
+		вернуть (channel->manager->write_blk64)(channel, block,
 						       count, data);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	если ((block >> 32) != 0)
+		вернуть EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->write_blk)(channel, (unsigned long) block,
+	вернуть (channel->manager->write_blk)(channel, (unsigned long) block,
 					     count, data);
 }
 
@@ -106,10 +106,10 @@ errcode_t io_channel_discard(io_channel channel, unsigned long long block,
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->discard)
-		return (channel->manager->discard)(channel, block, count);
+	если (channel->manager->discard)
+		вернуть (channel->manager->discard)(channel, block, count);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	вернуть EXT2_ET_UNIMPLEMENTED;
 }
 
 errcode_t io_channel_zeroout(io_channel channel, unsigned long long block,
@@ -117,52 +117,52 @@ errcode_t io_channel_zeroout(io_channel channel, unsigned long long block,
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->zeroout)
-		return (channel->manager->zeroout)(channel, block, count);
+	если (channel->manager->zeroout)
+		вернуть (channel->manager->zeroout)(channel, block, count);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	вернуть EXT2_ET_UNIMPLEMENTED;
 }
 
-errcode_t io_channel_alloc_buf(io_channel io, int count, void *ptr)
+errcode_t io_channel_alloc_buf(io_channel io, целое count, void *ptr)
 {
 	size_t	size;
 
-	if (count == 0)
+	если (count == 0)
 		size = io->block_size;
-	else if (count > 0)
+	иначе если (count > 0)
 		size = io->block_size * count;
-	else
+	иначе
 		size = -count;
 
-	if (io->align > 0) {
-		if ((unsigned) io->align > size)
+	если (io->align > 0) {
+		если ((unsigned) io->align > size)
 			size = io->align;
-		return ext2fs_get_memalign(size, io->align, ptr);
-	} else
-		return ext2fs_get_mem(size, ptr);
+		вернуть ext2fs_get_memalign(size, io->align, ptr);
+	} иначе
+		вернуть ext2fs_get_mem(size, ptr);
 }
 
 errcode_t io_channel_cache_readahead(io_channel io, unsigned long long block,
 				     unsigned long long count)
 {
-	if (!io->manager->cache_readahead)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	если (!io->manager->cache_readahead)
+		вернуть EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->cache_readahead(io, block, count);
+	вернуть io->manager->cache_readahead(io, block, count);
 }
 
-errcode_t io_channel_flock(io_channel io, unsigned int flock_flags)
+errcode_t io_channel_flock(io_channel io, unsigned целое flock_flags)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	если (!io->manager->flock)
+		вернуть EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, flock_flags);
+	вернуть io->manager->flock(io, flock_flags);
 }
 
 errcode_t io_channel_funlock(io_channel io)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	если (!io->manager->flock)
+		вернуть EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, 0);
+	вернуть io->manager->flock(io, 0);
 }

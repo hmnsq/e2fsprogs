@@ -16,14 +16,14 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#если HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
-#if HAVE_SYS_STAT_H
+#если HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#если HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -32,22 +32,22 @@
 
 struct set_badblock_record {
 	ext2_badblocks_iterate	bb_iter;
-	int		bad_block_count;
+	целое		bad_block_count;
 	blk_t		*ind_blocks;
-	int		max_ind_blocks;
-	int		ind_blocks_size;
-	int		ind_blocks_ptr;
+	целое		max_ind_blocks;
+	целое		ind_blocks_size;
+	целое		ind_blocks_ptr;
 	char		*block_buf;
 	errcode_t	err;
 };
 
-static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+static целое set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 			      e2_blkcnt_t blockcnt,
-			      blk_t ref_block, int ref_offset,
+			      blk_t ref_block, целое ref_offset,
 			      void *priv_data);
-static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+static целое clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 				e2_blkcnt_t blockcnt,
-				blk_t ref_block, int ref_offset,
+				blk_t ref_block, целое ref_offset,
 				void *priv_data);
 
 /*
@@ -63,18 +63,18 @@ errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!fs->block_map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
+	если (!fs->block_map)
+		вернуть EXT2_ET_NO_BLOCK_BITMAP;
 
 	memset(&rec, 0, sizeof(rec));
 	rec.max_ind_blocks = 10;
 	retval = ext2fs_get_array(rec.max_ind_blocks, sizeof(blk_t),
 				&rec.ind_blocks);
-	if (retval)
-		return retval;
+	если (retval)
+		вернуть retval;
 	memset(rec.ind_blocks, 0, rec.max_ind_blocks * sizeof(blk_t));
 	retval = ext2fs_get_mem(fs->blocksize, &rec.block_buf);
-	if (retval)
+	если (retval)
 		goto cleanup;
 	memset(rec.block_buf, 0, fs->blocksize);
 	rec.err = 0;
@@ -85,9 +85,9 @@ errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 	retval = ext2fs_block_iterate2(fs, EXT2_BAD_INO,
 				       BLOCK_FLAG_DEPTH_TRAVERSE, 0,
 				       clear_bad_block_proc, &rec);
-	if (retval)
+	если (retval)
 		goto cleanup;
-	if (rec.err) {
+	если (rec.err) {
 		retval = rec.err;
 		goto cleanup;
 	}
@@ -99,18 +99,18 @@ errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 	 * block from being used as an indirect block for the bad
 	 * block inode (!).
 	 */
-	if (bb_list) {
+	если (bb_list) {
 		retval = ext2fs_badblocks_list_iterate_begin(bb_list,
 							     &rec.bb_iter);
-		if (retval)
+		если (retval)
 			goto cleanup;
 		retval = ext2fs_block_iterate2(fs, EXT2_BAD_INO,
 					       BLOCK_FLAG_APPEND, 0,
 					       set_bad_block_proc, &rec);
 		ext2fs_badblocks_list_iterate_end(rec.bb_iter);
-		if (retval)
+		если (retval)
 			goto cleanup;
-		if (rec.err) {
+		если (rec.err) {
 			retval = rec.err;
 			goto cleanup;
 		}
@@ -121,28 +121,28 @@ errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 	 * field.
 	 */
 	retval = ext2fs_read_inode(fs, EXT2_BAD_INO, &inode);
-	if (retval)
+	если (retval)
 		goto cleanup;
 
 	now = ext2fsP_get_time(fs);
 	ext2fs_inode_xtime_set(&inode, i_atime, now);
-	if (!ext2fs_inode_xtime_get(&inode, i_ctime))
+	если (!ext2fs_inode_xtime_get(&inode, i_ctime))
 		ext2fs_inode_xtime_set(&inode, i_ctime, now);
 	ext2fs_inode_xtime_set(&inode, i_mtime, now);
 	ext2fs_iblk_set(fs, &inode, rec.bad_block_count);
 	retval = ext2fs_inode_size_set(fs, &inode,
 				       rec.bad_block_count * fs->blocksize);
-	if (retval)
+	если (retval)
 		goto cleanup;
 
 	retval = ext2fs_write_inode(fs, EXT2_BAD_INO, &inode);
-	if (retval)
+	если (retval)
 		goto cleanup;
 
 cleanup:
 	ext2fs_free_mem(&rec.ind_blocks);
 	ext2fs_free_mem(&rec.block_buf);
-	return retval;
+	вернуть retval;
 }
 
 /*
@@ -154,10 +154,10 @@ cleanup:
 #ifdef __TURBOC__
  #pragma argsused
 #endif
-static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+static целое clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 				e2_blkcnt_t blockcnt,
 				blk_t ref_block EXT2FS_ATTR((unused)),
-				int ref_offset EXT2FS_ATTR((unused)),
+				целое ref_offset EXT2FS_ATTR((unused)),
 				void *priv_data)
 {
 	struct set_badblock_record *rec = (struct set_badblock_record *)
@@ -165,29 +165,29 @@ static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 	errcode_t	retval;
 	unsigned long 	old_size;
 
-	if (!*block_nr)
-		return 0;
+	если (!*block_nr)
+		вернуть 0;
 
 	/*
 	 * If the block number is outrageous, clear it and ignore it.
 	 */
-	if (*block_nr >= ext2fs_blocks_count(fs->super) ||
+	если (*block_nr >= ext2fs_blocks_count(fs->super) ||
 	    *block_nr < fs->super->s_first_data_block) {
 		*block_nr = 0;
-		return BLOCK_CHANGED;
+		вернуть BLOCK_CHANGED;
 	}
 
-	if (blockcnt < 0) {
-		if (rec->ind_blocks_size >= rec->max_ind_blocks) {
+	если (blockcnt < 0) {
+		если (rec->ind_blocks_size >= rec->max_ind_blocks) {
 			old_size = rec->max_ind_blocks * sizeof(blk_t);
 			rec->max_ind_blocks += 10;
 			retval = ext2fs_resize_mem(old_size,
 				   rec->max_ind_blocks * sizeof(blk_t),
 				   &rec->ind_blocks);
-			if (retval) {
+			если (retval) {
 				rec->max_ind_blocks -= 10;
 				rec->err = retval;
-				return BLOCK_ABORT;
+				вернуть BLOCK_ABORT;
 			}
 		}
 		rec->ind_blocks[rec->ind_blocks_size++] = *block_nr;
@@ -199,7 +199,7 @@ static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 	ext2fs_block_alloc_stats2(fs, *block_nr, -1);
 
 	*block_nr = 0;
-	return BLOCK_CHANGED;
+	вернуть BLOCK_CHANGED;
 }
 
 
@@ -211,10 +211,10 @@ static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 #ifdef __TURBOC__
  #pragma argsused
 #endif
-static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+static целое set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 			      e2_blkcnt_t blockcnt,
 			      blk_t ref_block EXT2FS_ATTR((unused)),
-			      int ref_offset EXT2FS_ATTR((unused)),
+			      целое ref_offset EXT2FS_ATTR((unused)),
 			      void *priv_data)
 {
 	struct set_badblock_record *rec = (struct set_badblock_record *)
@@ -222,14 +222,14 @@ static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 	errcode_t	retval;
 	blk_t		blk;
 
-	if (blockcnt >= 0) {
+	если (blockcnt >= 0) {
 		/*
 		 * Get the next bad block.
 		 */
-		if (!ext2fs_badblocks_list_iterate(rec->bb_iter, &blk))
-			return BLOCK_ABORT;
+		если (!ext2fs_badblocks_list_iterate(rec->bb_iter, &blk))
+			вернуть BLOCK_ABORT;
 		rec->bad_block_count++;
-	} else {
+	} иначе {
 		/*
 		 * An indirect block; fetch a block from the
 		 * previously used indirect block list.  The block
@@ -238,21 +238,21 @@ static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 		 * a new one.
 		 */
 	retry:
-		if (rec->ind_blocks_ptr < rec->ind_blocks_size) {
+		если (rec->ind_blocks_ptr < rec->ind_blocks_size) {
 			blk = rec->ind_blocks[rec->ind_blocks_ptr++];
-			if (ext2fs_test_block_bitmap2(fs->block_map, blk))
+			если (ext2fs_test_block_bitmap2(fs->block_map, blk))
 				goto retry;
-		} else {
+		} иначе {
 			retval = ext2fs_new_block(fs, 0, 0, &blk);
-			if (retval) {
+			если (retval) {
 				rec->err = retval;
-				return BLOCK_ABORT;
+				вернуть BLOCK_ABORT;
 			}
 		}
 		retval = io_channel_write_blk64(fs->io, blk, 1, rec->block_buf);
-		if (retval) {
+		если (retval) {
 			rec->err = retval;
-			return BLOCK_ABORT;
+			вернуть BLOCK_ABORT;
 		}
 	}
 
@@ -262,7 +262,7 @@ static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 	ext2fs_block_alloc_stats2(fs, blk, +1);
 
 	*block_nr = blk;
-	return BLOCK_CHANGED;
+	вернуть BLOCK_CHANGED;
 }
 
 

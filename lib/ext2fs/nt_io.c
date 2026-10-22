@@ -194,7 +194,7 @@ NtDelayExecution(
 
 
 #define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+	  если ((struct)->magic != (code)) вернуть (code)
 
 #define EXT2_ET_MAGIC_NT_IO_CHANNEL  0x10ed
 
@@ -204,9 +204,9 @@ NtDelayExecution(
 //
 
 typedef struct _NT_PRIVATE_DATA {
-	int	   magic;
+	целое	   magic;
 	HANDLE Handle;
-	int	   Flags;
+	целое	   Flags;
 	PCHAR  Buffer;
 	__u32  BufferBlockNumber;
 	ULONG  BufferSize;
@@ -220,13 +220,13 @@ typedef struct _NT_PRIVATE_DATA {
 // Standard interface prototypes
 //
 
-static errcode_t nt_open(const char *name, int flags, io_channel *channel);
+static errcode_t nt_open(const char *name, целое flags, io_channel *channel);
 static errcode_t nt_close(io_channel channel);
-static errcode_t nt_set_blksize(io_channel channel, int blksize);
+static errcode_t nt_set_blksize(io_channel channel, целое blksize);
 static errcode_t nt_read_blk(io_channel channel, unsigned long block,
-			       int count, void *data);
+			       целое count, void *data);
 static errcode_t nt_write_blk(io_channel channel, unsigned long block,
-				int count, const void *data);
+				целое count, const void *data);
 static errcode_t nt_flush(io_channel channel);
 
 static struct struct_io_manager struct_nt_manager = {
@@ -246,7 +246,7 @@ static struct struct_io_manager struct_nt_manager = {
 
 io_manager nt_io_manager()
 {
-	return &struct_nt_manager;
+	вернуть &struct_nt_manager;
 }
 
 
@@ -259,7 +259,7 @@ io_manager nt_io_manager()
 
 typedef struct {
 	ULONG WinError;
-	int errnocode;
+	целое errnocode;
 }ERROR_ENTRY;
 
 static ERROR_ENTRY ErrorTable[] = {
@@ -319,17 +319,17 @@ _MapDosError (
     IN ULONG WinError
    )
 {
-	int i;
+	целое i;
 
 	//
 	// Lookup
 	//
 
-	for (i = 0; i < (sizeof(ErrorTable)/sizeof(ErrorTable[0])); ++i)
+	для (i = 0; i < (sizeof(ErrorTable)/sizeof(ErrorTable[0])); ++i)
 	{
-		if (WinError == ErrorTable[i].WinError)
+		если (WinError == ErrorTable[i].WinError)
 		{
-			return ErrorTable[i].errnocode;
+			вернуть ErrorTable[i].errnocode;
 		}
 	}
 
@@ -337,19 +337,19 @@ _MapDosError (
 	// not in table. Check ranges
 	//
 
-	if ((WinError >= ERROR_WRITE_PROTECT) &&
+	если ((WinError >= ERROR_WRITE_PROTECT) &&
 		(WinError <= ERROR_SHARING_BUFFER_EXCEEDED))
 	{
-		return EACCES;
+		вернуть EACCES;
 	}
-	else if ((WinError >= ERROR_INVALID_STARTING_CODESEG) &&
+	иначе если ((WinError >= ERROR_INVALID_STARTING_CODESEG) &&
 			 (WinError <= ERROR_INFLOOP_IN_RELOC_CHAIN))
 	{
-		return ENOEXEC;
+		вернуть ENOEXEC;
 	}
-	else
+	иначе
 	{
-		return EINVAL;
+		вернуть EINVAL;
 	}
 }
 
@@ -370,7 +370,7 @@ _MapNtStatus(
     IN NTSTATUS Status
    )
 {
-	return _MapDosError(RtlNtStatusToDosError(Status));
+	вернуть _MapDosError(RtlNtStatusToDosError(Status));
 }
 
 
@@ -409,9 +409,9 @@ _OpenNtName(
 
 	Status = RtlAnsiStringToUnicodeString(&UnicodeString, &AnsiString, FALSE);
 
-	if(!NT_SUCCESS(Status))
+	если(!NT_SUCCESS(Status))
 	{
-		return Status; // Unmappable character?
+		вернуть Status; // Unmappable character?
 	}
 
 	//
@@ -428,7 +428,7 @@ _OpenNtName(
 	// Try to open it in initial mode
 	//
 
-	if(ARGUMENT_PRESENT(OpenedReadonly))
+	если(ARGUMENT_PRESENT(OpenedReadonly))
 	{
 		*OpenedReadonly = Readonly;
 	}
@@ -441,7 +441,7 @@ _OpenNtName(
 						FILE_SHARE_WRITE | FILE_SHARE_READ,
 						FILE_SYNCHRONOUS_IO_NONALERT);
 
-	if(!NT_SUCCESS(Status))
+	если(!NT_SUCCESS(Status))
 	{
 		//
 		// Maybe was just mounted? wait 0.5 sec and retry.
@@ -463,9 +463,9 @@ _OpenNtName(
 		// Try to satisfy mode
 		//
 
-		if((STATUS_ACCESS_DENIED == Status) && !Readonly)
+		если((STATUS_ACCESS_DENIED == Status) && !Readonly)
 		{
-			if(ARGUMENT_PRESENT(OpenedReadonly))
+			если(ARGUMENT_PRESENT(OpenedReadonly))
 			{
 				*OpenedReadonly = TRUE;
 			}
@@ -485,7 +485,7 @@ _OpenNtName(
 	// done
 	//
 
-	return Status;
+	вернуть Status;
 }
 
 
@@ -502,7 +502,7 @@ _OpenDriveLetter(
 
 	sprintf(Buffer, "\\DosDevices\\%c:", Letter);
 
-	return _OpenNtName(Buffer, ReadOnly, Handle, OpenedReadonly);
+	вернуть _OpenNtName(Buffer, ReadOnly, Handle, OpenedReadonly);
 }
 
 
@@ -518,7 +518,7 @@ _FlushDrive(
 		)
 {
 	IO_STATUS_BLOCK IoStatusBlock;
-	return NtFlushBuffersFile(Handle, &IoStatusBlock);
+	вернуть NtFlushBuffersFile(Handle, &IoStatusBlock);
 }
 
 
@@ -534,7 +534,7 @@ _LockDrive(
 		)
 {
 	IO_STATUS_BLOCK IoStatusBlock;
-	return NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_LOCK_VOLUME, 0, 0, 0, 0);
+	вернуть NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_LOCK_VOLUME, 0, 0, 0, 0);
 }
 
 
@@ -550,7 +550,7 @@ _UnlockDrive(
 	)
 {
 	IO_STATUS_BLOCK IoStatusBlock;
-	return NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_UNLOCK_VOLUME, 0, 0, 0, 0);
+	вернуть NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_UNLOCK_VOLUME, 0, 0, 0, 0);
 }
 
 static
@@ -561,7 +561,7 @@ _DismountDrive(
 	)
 {
 	IO_STATUS_BLOCK IoStatusBlock;
-	return NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_DISMOUNT_VOLUME, 0, 0, 0, 0);
+	вернуть NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_DISMOUNT_VOLUME, 0, 0, 0, 0);
 }
 
 
@@ -579,7 +579,7 @@ _IsMounted(
 	IO_STATUS_BLOCK IoStatusBlock;
 	NTSTATUS Status;
 	Status = NtFsControlFile(Handle, 0, 0, 0, &IoStatusBlock, FSCTL_IS_VOLUME_MOUNTED, 0, 0, 0, 0);
-	return (BOOLEAN)(STATUS_SUCCESS == Status);
+	вернуть (BOOLEAN)(STATUS_SUCCESS == Status);
 }
 
 
@@ -590,7 +590,7 @@ _CloseDisk(
 		IN HANDLE Handle
 		)
 {
-	return NtClose(Handle);
+	вернуть NtClose(Handle);
 }
 
 
@@ -607,7 +607,7 @@ _NormalizeDeviceName(
     IN PSTR NormalizedDeviceNameBuffer
    )
 {
-	int PartitionNumber = -1;
+	целое PartitionNumber = -1;
 	UCHAR DiskNumber;
 	PSTR p;
 
@@ -616,8 +616,8 @@ _NormalizeDeviceName(
 	// Do not try to parse NT name
 	//
 
-	if('\\' == *Device)
-		return Device;
+	если('\\' == *Device)
+		вернуть Device;
 
 
 
@@ -625,7 +625,7 @@ _NormalizeDeviceName(
 	// Strip leading '/dev/' if any
 	//
 
-	if(('/' == *(Device)) &&
+	если(('/' == *(Device)) &&
 		('d' == *(Device + 1)) &&
 		('e' == *(Device + 2)) &&
 		('v' == *(Device + 3)) &&
@@ -634,9 +634,9 @@ _NormalizeDeviceName(
 		Device += 5;
 	}
 
-	if('\0' == *Device)
+	если('\0' == *Device)
 	{
-		return NULL;
+		вернуть NULL;
 	}
 
 
@@ -644,14 +644,14 @@ _NormalizeDeviceName(
 	// forms: hda[n], fd[n]
 	//
 
-	if('d' != *(Device + 1))
+	если('d' != *(Device + 1))
 	{
-		return NULL;
+		вернуть NULL;
 	}
 
-	if('h' == *Device)
+	если('h' == *Device)
 	{
-		if((*(Device + 2) < 'a') || (*(Device + 2) > ('a' + 9)) ||
+		если((*(Device + 2) < 'a') || (*(Device + 2) > ('a' + 9)) ||
 		   ((*(Device + 3) != '\0') &&
 			((*(Device + 4) != '\0') ||
 			 ((*(Device + 3) < '0') || (*(Device + 3) > '9'))
@@ -659,39 +659,39 @@ _NormalizeDeviceName(
 		   )
 		  )
 		{
-			return NULL;
+			вернуть NULL;
 		}
 
 		DiskNumber = (UCHAR)(*(Device + 2) - 'a');
 
-		if(*(Device + 3) != '\0')
+		если(*(Device + 3) != '\0')
 		{
 			PartitionNumber = (*(Device + 3) - '0');
 		}
 
 	}
-	else if('f' == *Device)
+	иначе если('f' == *Device)
 	{
 		//
 		// 3-d letter should be a digit.
 		//
 
-		if((*(Device + 3) != '\0') ||
+		если((*(Device + 3) != '\0') ||
 		   (*(Device + 2) < '0') || (*(Device + 2) > '9'))
 		{
-			return NULL;
+			вернуть NULL;
 		}
 
 		DiskNumber = (UCHAR)(*(Device + 2) - '0');
 
 	}
-	else
+	иначе
 	{
 		//
 		// invalid prefix
 		//
 
-		return NULL;
+		вернуть NULL;
 	}
 
 
@@ -727,7 +727,7 @@ _NormalizeDeviceName(
 	// Partition nr.
 	//
 
-	if(PartitionNumber >= 0)
+	если(PartitionNumber >= 0)
 	{
 		strcat(NormalizedDeviceNameBuffer, "\\Partition0");
 
@@ -736,7 +736,7 @@ _NormalizeDeviceName(
 	}
 
 
-	return NormalizedDeviceNameBuffer;
+	вернуть NormalizedDeviceNameBuffer;
 }
 
 
@@ -772,11 +772,11 @@ _GetDeviceSize(
 		&pi, sizeof(PARTITION_INFORMATION));
 
 
-	if(NT_SUCCESS(Status))
+	если(NT_SUCCESS(Status))
 	{
 		*FsSize = pi.PartitionLength.QuadPart;
 	}
-	else if(STATUS_INVALID_DEVICE_REQUEST == Status)
+	иначе если(STATUS_INVALID_DEVICE_REQUEST == Status)
 	{
 		//
 		// No partitions: get device info.
@@ -790,7 +790,7 @@ _GetDeviceSize(
 				&gi, sizeof(DISK_GEOMETRY));
 
 
-		if(NT_SUCCESS(Status))
+		если(NT_SUCCESS(Status))
 		{
 			*FsSize =
 				gi.BytesPerSector *
@@ -821,25 +821,25 @@ _Ext2OpenDevice(
 	CHAR NormalizedDeviceName[512];
 	NTSTATUS Status;
 
-	if(NULL == Name)
+	если(NULL == Name)
 	{
 		//
 		// Set not found
 		//
 
-		if(ARGUMENT_PRESENT(Errno))
+		если(ARGUMENT_PRESENT(Errno))
 			*Errno = ENOENT;
 
-		return FALSE;
+		вернуть FALSE;
 	}
 
 
-	if((((*Name) | 0x20) >= 'a') && (((*Name) | 0x20) <= 'z') &&
+	если((((*Name) | 0x20) >= 'a') && (((*Name) | 0x20) <= 'z') &&
 		(':' == *(Name + 1)) && ('\0' == *(Name + 2)))
 	{
 		Status = _OpenDriveLetter(*Name, ReadOnly, Handle, OpenedReadonly);
 	}
-	else
+	иначе
 	{
 		//
 		// Make name
@@ -847,16 +847,16 @@ _Ext2OpenDevice(
 
 		Name = _NormalizeDeviceName(Name, NormalizedDeviceName);
 
-		if(NULL == Name)
+		если(NULL == Name)
 		{
 			//
 			// Set not found
 			//
 
-			if(ARGUMENT_PRESENT(Errno))
+			если(ARGUMENT_PRESENT(Errno))
 				*Errno = ENOENT;
 
-			return FALSE;
+			вернуть FALSE;
 		}
 
 		//
@@ -867,15 +867,15 @@ _Ext2OpenDevice(
 	}
 
 
-	if(!NT_SUCCESS(Status))
+	если(!NT_SUCCESS(Status))
 	{
-		if(ARGUMENT_PRESENT(Errno))
+		если(ARGUMENT_PRESENT(Errno))
 			*Errno = _MapNtStatus(Status);
 
-		return FALSE;
+		вернуть FALSE;
 	}
 
-	return TRUE;
+	вернуть TRUE;
 }
 
 
@@ -909,12 +909,12 @@ _BlockIo(
 	// perform io
 	//
 
-	if(Read)
+	если(Read)
 	{
 		Status = NtReadFile(Handle, NULL, NULL, NULL,
 			&IoStatusBlock, Buffer, Bytes, &Offset, NULL);
 	}
-	else
+	иначе
 	{
 		Status = NtWriteFile(Handle, NULL, NULL, NULL,
 			&IoStatusBlock, Buffer, Bytes, &Offset, NULL);
@@ -925,15 +925,15 @@ _BlockIo(
 	// translate error
 	//
 
-	if(NT_SUCCESS(Status))
+	если(NT_SUCCESS(Status))
 	{
 		*Errno = 0;
-		return TRUE;
+		вернуть TRUE;
 	}
 
 	*Errno = _MapNtStatus(Status);
 
-	return FALSE;
+	вернуть FALSE;
 }
 
 
@@ -948,7 +948,7 @@ _RawWrite(
     OUT unsigned* Errno
    )
 {
-	return _BlockIo(Handle, Offset, Bytes, (PCHAR)Buffer, FALSE, Errno);
+	вернуть _BlockIo(Handle, Offset, Bytes, (PCHAR)Buffer, FALSE, Errno);
 }
 
 __inline
@@ -961,7 +961,7 @@ _RawRead(
     OUT unsigned* Errno
    )
 {
-	return _BlockIo(Handle, Offset, Bytes, Buffer, TRUE, Errno);
+	вернуть _BlockIo(Handle, Offset, Bytes, Buffer, TRUE, Errno);
 }
 
 
@@ -974,7 +974,7 @@ _SetPartType(
    )
 {
 	IO_STATUS_BLOCK IoStatusBlock;
-	return STATUS_SUCCESS == NtDeviceIoControlFile(
+	вернуть STATUS_SUCCESS == NtDeviceIoControlFile(
 												   Handle, NULL, NULL, NULL, &IoStatusBlock, IOCTL_DISK_SET_PARTITION_INFO,
 												   &Type, sizeof(Type),
 												   NULL, 0);
@@ -990,16 +990,16 @@ _SetPartType(
 //
 
 errcode_t
-ext2fs_check_if_mounted(const char *file, int *mount_flags)
+ext2fs_check_if_mounted(const char *file, целое *mount_flags)
 {
 	HANDLE h;
 	BOOLEAN Readonly;
 
 	*mount_flags = 0;
 
-	if(!_Ext2OpenDevice(file, TRUE, &h, &Readonly, NULL))
+	если(!_Ext2OpenDevice(file, TRUE, &h, &Readonly, NULL))
 	{
-		return 0;
+		вернуть 0;
 	}
 
 
@@ -1010,7 +1010,7 @@ ext2fs_check_if_mounted(const char *file, int *mount_flags)
 		_CloseDisk(h);
 	}
 
-	return 0;
+	вернуть 0;
 }
 
 
@@ -1024,18 +1024,18 @@ static char knowndevice[1024] = "";
 
 
 errcode_t
-ext2fs_get_device_size(const char *file, int blocksize,
+ext2fs_get_device_size(const char *file, целое blocksize,
 				 blk_t *retblocks)
 {
 	HANDLE h;
 	BOOLEAN Readonly;
 
-	if((0 == FsSize) || (0 != strcmp(knowndevice, file)))
+	если((0 == FsSize) || (0 != strcmp(knowndevice, file)))
 	{
 
-		if(!_Ext2OpenDevice(file, TRUE, &h, &Readonly, NULL))
+		если(!_Ext2OpenDevice(file, TRUE, &h, &Readonly, NULL))
 		{
-			return 0;
+			вернуть 0;
 		}
 
 
@@ -1056,7 +1056,7 @@ ext2fs_get_device_size(const char *file, int blocksize,
 
 	*retblocks = (blk_t)(unsigned __int64)(FsSize / blocksize);
 	UNREFERENCED_PARAMETER(file);
-	return 0;
+	вернуть 0;
 }
 
 
@@ -1071,7 +1071,7 @@ ext2fs_get_device_size(const char *file, int blocksize,
 
 static
 errcode_t
-nt_open(const char *name, int flags, io_channel *channel)
+nt_open(const char *name, целое flags, io_channel *channel)
 {
 	io_channel      io = NULL;
 	PNT_PRIVATE_DATA NtData = NULL;
@@ -1081,9 +1081,9 @@ nt_open(const char *name, int flags, io_channel *channel)
 	// Check name
 	//
 
-	if (NULL == name)
+	если (NULL == name)
 	{
-		return EXT2_ET_BAD_DEVICE_NAME;
+		вернуть EXT2_ET_BAD_DEVICE_NAME;
 	}
 
 	__try{
@@ -1094,7 +1094,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 
 		io = (io_channel) malloc(sizeof(struct struct_io_channel));
 
-		if (NULL == io)
+		если (NULL == io)
 		{
 			Errno = ENOMEM;
 			__leave;
@@ -1105,7 +1105,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 
 		NtData = (PNT_PRIVATE_DATA)malloc(sizeof(NT_PRIVATE_DATA));
 
-		if (NULL == NtData)
+		если (NULL == NtData)
 		{
 			Errno = ENOMEM;
 			__leave;
@@ -1114,7 +1114,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 
 		io->manager = nt_io_manager();
 		io->name = malloc(strlen(name) + 1);
-		if (NULL == io->name)
+		если (NULL == io->name)
 		{
 			Errno = ENOMEM;
 			__leave;
@@ -1138,7 +1138,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 		NtData->BufferSize = 1024;
 		NtData->Buffer = malloc(NtData->BufferSize);
 
-		if (NULL == NtData->Buffer)
+		если (NULL == NtData->Buffer)
 		{
 			Errno = ENOMEM;
 			__leave;
@@ -1148,7 +1148,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 		// Open it
 		//
 
-		if(!_Ext2OpenDevice(name, (BOOLEAN)!BooleanFlagOn(flags, EXT2_FLAG_RW), &NtData->Handle, &NtData->OpenedReadonly, &Errno))
+		если(!_Ext2OpenDevice(name, (BOOLEAN)!BooleanFlagOn(flags, EXT2_FLAG_RW), &NtData->Handle, &NtData->OpenedReadonly, &Errno))
 		{
 			__leave;
 		}
@@ -1166,7 +1166,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 		// Lock/dismount
 		//
 
-		if(!NT_SUCCESS(_LockDrive(NtData->Handle)) /*|| !NT_SUCCESS(_DismountDrive(NtData->Handle))*/)
+		если(!NT_SUCCESS(_LockDrive(NtData->Handle)) /*|| !NT_SUCCESS(_DismountDrive(NtData->Handle))*/)
 		{
 			NtData->OpenedReadonly = TRUE;
 		}
@@ -1181,21 +1181,21 @@ nt_open(const char *name, int flags, io_channel *channel)
 	}
 	__finally{
 
-		if(0 != Errno)
+		если(0 != Errno)
 		{
 			//
 			// Cleanup
 			//
 
-			if (NULL != io)
+			если (NULL != io)
 			{
 				free(io->name);
 				free(io);
 			}
 
-			if (NULL != NtData)
+			если (NULL != NtData)
 			{
-				if(NULL != NtData->Handle)
+				если(NULL != NtData->Handle)
 				{
 					_UnlockDrive(NtData->Handle);
 					_CloseDisk(NtData->Handle);
@@ -1207,7 +1207,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 		}
 	}
 
-	return Errno;
+	вернуть Errno;
 }
 
 
@@ -1221,26 +1221,26 @@ nt_close(io_channel channel)
 {
 	PNT_PRIVATE_DATA NtData = NULL;
 
-	if(NULL == channel)
+	если(NULL == channel)
 	{
-		return 0;
+		вернуть 0;
 	}
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 	NtData = (PNT_PRIVATE_DATA) channel->private_data;
 	EXT2_CHECK_MAGIC(NtData, EXT2_ET_MAGIC_NT_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
+	если (--channel->refcount > 0)
 	{
-		return 0;
+		вернуть 0;
 	}
 
 	free(channel->name);
 	free(channel);
 
-	if (NULL != NtData)
+	если (NULL != NtData)
 	{
-		if(NULL != NtData->Handle)
+		если(NULL != NtData->Handle)
 		{
 			_DismountDrive(NtData->Handle);
 			_UnlockDrive(NtData->Handle);
@@ -1251,7 +1251,7 @@ nt_close(io_channel channel)
 		free(NtData);
 	}
 
-	return 0;
+	вернуть 0;
 }
 
 
@@ -1262,7 +1262,7 @@ nt_close(io_channel channel)
 
 static
 errcode_t
-nt_set_blksize(io_channel channel, int blksize)
+nt_set_blksize(io_channel channel, целое blksize)
 {
 	PNT_PRIVATE_DATA NtData = NULL;
 
@@ -1270,7 +1270,7 @@ nt_set_blksize(io_channel channel, int blksize)
 	NtData = (PNT_PRIVATE_DATA) channel->private_data;
 	EXT2_CHECK_MAGIC(NtData, EXT2_ET_MAGIC_NT_IO_CHANNEL);
 
-	if (channel->block_size != blksize)
+	если (channel->block_size != blksize)
 	{
 		channel->block_size = blksize;
 
@@ -1281,14 +1281,14 @@ nt_set_blksize(io_channel channel, int blksize)
 
 		NtData->Buffer = malloc(NtData->BufferSize);
 
-		if (NULL == NtData->Buffer)
+		если (NULL == NtData->Buffer)
 		{
-			return ENOMEM;
+			вернуть ENOMEM;
 		}
 
 	}
 
-	return 0;
+	вернуть 0;
 }
 
 
@@ -1299,7 +1299,7 @@ nt_set_blksize(io_channel channel, int blksize)
 static
 errcode_t
 nt_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+			       целое count, void *buf)
 {
 	PVOID BufferToRead;
 	ULONG SizeToRead;
@@ -1316,12 +1316,12 @@ nt_read_blk(io_channel channel, unsigned long block,
 	// If it's in the cache, use it!
 	//
 
-	if ((1 == count) &&
+	если ((1 == count) &&
 		(block == NtData->BufferBlockNumber) &&
 		(NtData->BufferBlockNumber != 0xffffffff))
 	{
 		memcpy(buf, NtData->Buffer, channel->block_size);
-		return 0;
+		вернуть 0;
 	}
 
 	Size = (count < 0) ? (ULONG)(-count) : (ULONG)(count * channel->block_size);
@@ -1332,7 +1332,7 @@ nt_read_blk(io_channel channel, unsigned long block,
 	// If not fit to the block
 	//
 
-	if(Size <= NtData->BufferSize)
+	если(Size <= NtData->BufferSize)
 	{
 		//
 		// Update the cache
@@ -1342,35 +1342,35 @@ nt_read_blk(io_channel channel, unsigned long block,
 		BufferToRead = NtData->Buffer;
 		SizeToRead = NtData->BufferSize;
 	}
-	else
+	иначе
 	{
 		SizeToRead = Size;
 		BufferToRead = buf;
 		ASSERT(0 == (SizeToRead % channel->block_size));
 	}
 
-	if(!_RawRead(NtData->Handle, Offset, SizeToRead, BufferToRead, &Errno))
+	если(!_RawRead(NtData->Handle, Offset, SizeToRead, BufferToRead, &Errno))
 	{
 
-		if (channel->read_error)
+		если (channel->read_error)
 		{
-			return (channel->read_error)(channel, block, count, buf,
+			вернуть (channel->read_error)(channel, block, count, buf,
 					       Size, 0, Errno);
 		}
-		else
+		иначе
 		{
-			return Errno;
+			вернуть Errno;
 		}
 	}
 
 
-	if(BufferToRead != buf)
+	если(BufferToRead != buf)
 	{
 		ASSERT(Size <= SizeToRead);
 		memcpy(buf, BufferToRead, Size);
 	}
 
-	return 0;
+	вернуть 0;
 }
 
 
@@ -1381,7 +1381,7 @@ nt_read_blk(io_channel channel, unsigned long block,
 static
 errcode_t
 nt_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+				целое count, const void *buf)
 {
 	ULONG SizeToWrite;
 	LARGE_INTEGER Offset;
@@ -1392,24 +1392,24 @@ nt_write_blk(io_channel channel, unsigned long block,
 	NtData = (PNT_PRIVATE_DATA) channel->private_data;
 	EXT2_CHECK_MAGIC(NtData, EXT2_ET_MAGIC_NT_IO_CHANNEL);
 
-	if(NtData->OpenedReadonly)
+	если(NtData->OpenedReadonly)
 	{
-		return EACCES;
+		вернуть EACCES;
 	}
 
-	if (count == 1)
+	если (count == 1)
 	{
 		SizeToWrite = channel->block_size;
 	}
-	else
+	иначе
 	{
 		NtData->BufferBlockNumber = 0xffffffff;
 
-		if (count < 0)
+		если (count < 0)
 		{
 			SizeToWrite = (ULONG)(-count);
 		}
-		else
+		иначе
 		{
 			SizeToWrite = (ULONG)(count * channel->block_size);
 		}
@@ -1419,16 +1419,16 @@ nt_write_blk(io_channel channel, unsigned long block,
 	ASSERT(0 == (SizeToWrite % 512));
 	Offset.QuadPart = block * channel->block_size;
 
-	if(!_RawWrite(NtData->Handle, Offset, SizeToWrite, buf, &Errno))
+	если(!_RawWrite(NtData->Handle, Offset, SizeToWrite, buf, &Errno))
 	{
-		if (channel->write_error)
+		если (channel->write_error)
 		{
-			return (channel->write_error)(channel, block, count, buf,
+			вернуть (channel->write_error)(channel, block, count, buf,
 						SizeToWrite, 0, Errno);
 		}
-		else
+		иначе
 		{
-			return Errno;
+			вернуть Errno;
 		}
 	}
 
@@ -1437,7 +1437,7 @@ nt_write_blk(io_channel channel, unsigned long block,
 	// Stash a copy.
 	//
 
-	if(SizeToWrite >= NtData->BufferSize)
+	если(SizeToWrite >= NtData->BufferSize)
 	{
 		NtData->BufferBlockNumber = block;
 		memcpy(NtData->Buffer, buf, NtData->BufferSize);
@@ -1445,7 +1445,7 @@ nt_write_blk(io_channel channel, unsigned long block,
 
 	NtData->Written = TRUE;
 
-	return 0;
+	вернуть 0;
 
 }
 
@@ -1466,9 +1466,9 @@ nt_flush(io_channel channel)
 	NtData = (PNT_PRIVATE_DATA) channel->private_data;
 	EXT2_CHECK_MAGIC(NtData, EXT2_ET_MAGIC_NT_IO_CHANNEL);
 
-	if(NtData->OpenedReadonly)
+	если(NtData->OpenedReadonly)
 	{
-		return 0; // EACCESS;
+		вернуть 0; // EACCESS;
 	}
 
 
@@ -1483,12 +1483,12 @@ nt_flush(io_channel channel)
 	// Test and correct partition type.
 	//
 
-	if(NtData->Written)
+	если(NtData->Written)
 	{
 		_SetPartType(NtData->Handle, 0x83);
 	}
 
-	return 0;
+	вернуть 0;
 }
 
 

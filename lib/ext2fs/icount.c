@@ -10,7 +10,7 @@
  */
 
 #include "config.h"
-#if HAVE_UNISTD_H
+#если HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <string.h>
@@ -75,32 +75,32 @@ struct ext2_icount {
 
 void ext2fs_free_icount(ext2_icount_t icount)
 {
-	if (!icount)
-		return;
+	если (!icount)
+		вернуть;
 
 	icount->magic = 0;
-	if (icount->list)
+	если (icount->list)
 		ext2fs_free_mem(&icount->list);
-	if (icount->single)
+	если (icount->single)
 		ext2fs_free_inode_bitmap(icount->single);
-	if (icount->multiple)
+	если (icount->multiple)
 		ext2fs_free_inode_bitmap(icount->multiple);
 #ifdef CONFIG_TDB
-	if (icount->tdb)
+	если (icount->tdb)
 		tdb_close(icount->tdb);
-	if (icount->tdb_fn) {
+	если (icount->tdb_fn) {
 		(void) unlink(icount->tdb_fn);
 		free(icount->tdb_fn);
 	}
 #endif
 
-	if (icount->fullmap)
+	если (icount->fullmap)
 		ext2fs_free_mem(&icount->fullmap);
 
 	ext2fs_free_mem(&icount);
 }
 
-static errcode_t alloc_icount(ext2_filsys fs, int flags, ext2_icount_t *ret)
+static errcode_t alloc_icount(ext2_filsys fs, целое flags, ext2_icount_t *ret)
 {
 	ext2_icount_t	icount;
 	errcode_t	retval;
@@ -108,43 +108,43 @@ static errcode_t alloc_icount(ext2_filsys fs, int flags, ext2_icount_t *ret)
 	*ret = 0;
 
 	retval = ext2fs_get_mem(sizeof(struct ext2_icount), &icount);
-	if (retval)
-		return retval;
+	если (retval)
+		вернуть retval;
 	memset(icount, 0, sizeof(struct ext2_icount));
 	icount->magic = EXT2_ET_MAGIC_ICOUNT;
 	icount->num_inodes = fs->super->s_inodes_count;
 
-	if ((flags & EXT2_ICOUNT_OPT_FULLMAP) &&
+	если ((flags & EXT2_ICOUNT_OPT_FULLMAP) &&
 	    (flags & EXT2_ICOUNT_OPT_INCREMENT)) {
 		unsigned sz = sizeof(*icount->fullmap) * icount->num_inodes;
 
 		retval = ext2fs_get_mem(sz, &icount->fullmap);
 		/* If we can't allocate, fall back */
-		if (!retval) {
+		если (!retval) {
 			memset(icount->fullmap, 0, sz);
 			*ret = icount;
-			return 0;
+			вернуть 0;
 		}
 	}
 
 	retval = ext2fs_allocate_inode_bitmap(fs, "icount", &icount->single);
-	if (retval)
+	если (retval)
 		goto errout;
 
-	if (flags & EXT2_ICOUNT_OPT_INCREMENT) {
+	если (flags & EXT2_ICOUNT_OPT_INCREMENT) {
 		retval = ext2fs_allocate_inode_bitmap(fs, "icount_inc",
 						      &icount->multiple);
-		if (retval)
+		если (retval)
 			goto errout;
-	} else
+	} иначе
 		icount->multiple = 0;
 
 	*ret = icount;
-	return 0;
+	вернуть 0;
 
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
+	вернуть(retval);
 }
 
 #ifdef CONFIG_TDB
@@ -198,7 +198,7 @@ static void uuid_unparse(void *uu, char *out)
 
 errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2FS_NO_TDB_UNUSED,
 				   char *tdb_dir EXT2FS_NO_TDB_UNUSED,
-				   int flags EXT2FS_NO_TDB_UNUSED,
+				   целое flags EXT2FS_NO_TDB_UNUSED,
 				   ext2_icount_t *ret EXT2FS_NO_TDB_UNUSED)
 {
 #ifdef CONFIG_TDB
@@ -207,20 +207,20 @@ errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2FS_NO_TDB_UNUSED,
 	char 		*fn, uuid[40];
 	ext2_ino_t	num_inodes;
 	mode_t		save_umask;
-	int		fd;
+	целое		fd;
 
 	retval = alloc_icount(fs, flags,  &icount);
-	if (retval)
-		return retval;
+	если (retval)
+		вернуть retval;
 
 	retval = ext2fs_get_mem(strlen(tdb_dir) + 64, &fn);
-	if (retval)
+	если (retval)
 		goto errout;
 	uuid_unparse(fs->super->s_uuid, uuid);
 	sprintf(fn, "%s/%s-icount-XXXXXX", tdb_dir, uuid);
 	save_umask = umask(077);
 	fd = mkstemp(fn);
-	if (fd < 0) {
+	если (fd < 0) {
 		retval = errno;
 		ext2fs_free_mem(&fn);
 		goto errout;
@@ -240,21 +240,21 @@ errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2FS_NO_TDB_UNUSED,
 	icount->tdb = tdb_open(fn, num_inodes, TDB_NOLOCK | TDB_NOSYNC,
 			       O_RDWR | O_CREAT | O_TRUNC, 0600);
 	close(fd);
-	if (icount->tdb == NULL) {
+	если (icount->tdb == NULL) {
 		retval = errno;
 		goto errout;
 	}
 	*ret = icount;
-	return 0;
+	вернуть 0;
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
-#else
-	return EXT2_ET_UNIMPLEMENTED;
+	вернуть(retval);
+#иначе
+	вернуть EXT2_ET_UNIMPLEMENTED;
 #endif
 }
 
-errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
+errcode_t ext2fs_create_icount2(ext2_filsys fs, целое flags, unsigned целое size,
 				ext2_icount_t hint, ext2_icount_t *ret)
 {
 	ext2_icount_t	icount;
@@ -262,41 +262,41 @@ errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
 	size_t		bytes;
 	ext2_ino_t	i;
 
-	if (hint) {
+	если (hint) {
 		EXT2_CHECK_MAGIC(hint, EXT2_ET_MAGIC_ICOUNT);
-		if (hint->size > size)
+		если (hint->size > size)
 			size = (size_t) hint->size;
 	}
 
 	retval = alloc_icount(fs, flags, &icount);
-	if (retval)
-		return retval;
+	если (retval)
+		вернуть retval;
 
-	if (icount->fullmap)
+	если (icount->fullmap)
 		goto successout;
 
-	if (size) {
+	если (size) {
 		icount->size = size;
-	} else {
+	} иначе {
 		/*
 		 * Figure out how many special case inode counts we will
 		 * have.  We know we will need one for each directory;
 		 * we also need to reserve some extra room for file links
 		 */
 		retval = ext2fs_get_num_dirs(fs, &icount->size);
-		if (retval)
+		если (retval)
 			goto errout;
 		icount->size += fs->super->s_inodes_count / 50;
 	}
 
 	bytes = (size_t) (icount->size * sizeof(struct ext2_icount_el));
-#if 0
+#если 0
 	printf("Icount allocated %u entries, %d bytes.\n",
 	       icount->size, bytes);
 #endif
 	retval = ext2fs_get_array(icount->size, sizeof(struct ext2_icount_el),
 			 &icount->list);
-	if (retval)
+	если (retval)
 		goto errout;
 	memset(icount->list, 0, bytes);
 
@@ -308,26 +308,26 @@ errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
 	 * found in the hint icount (since those are ones which will
 	 * likely need to be in the sorted list this time around).
 	 */
-	if (hint) {
-		for (i=0; i < hint->count; i++)
+	если (hint) {
+		для (i=0; i < hint->count; i++)
 			icount->list[i].ino = hint->list[i].ino;
 		icount->count = hint->count;
 	}
 
 successout:
 	*ret = icount;
-	return 0;
+	вернуть 0;
 
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
+	вернуть(retval);
 }
 
-errcode_t ext2fs_create_icount(ext2_filsys fs, int flags,
-			       unsigned int size,
+errcode_t ext2fs_create_icount(ext2_filsys fs, целое flags,
+			       unsigned целое size,
 			       ext2_icount_t *ret)
 {
-	return ext2fs_create_icount2(fs, flags, size, 0, ret);
+	вернуть ext2fs_create_icount2(fs, flags, size, 0, ret);
 }
 
 /*
@@ -335,25 +335,25 @@ errcode_t ext2fs_create_icount(ext2_filsys fs, int flags,
  * 	specified position.
  */
 static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
-					    ext2_ino_t ino, int pos)
+					    ext2_ino_t ino, целое pos)
 {
 	struct ext2_icount_el 	*el;
 	errcode_t		retval;
 	ext2_ino_t		new_size = 0;
-	int			num;
+	целое			num;
 
-	if (icount->last_lookup && icount->last_lookup->ino == ino)
-		return icount->last_lookup;
+	если (icount->last_lookup && icount->last_lookup->ino == ino)
+		вернуть icount->last_lookup;
 
-	if (icount->count >= icount->size) {
-		if (icount->count) {
+	если (icount->count >= icount->size) {
+		если (icount->count) {
 			new_size = icount->list[(unsigned)icount->count-1].ino;
 			new_size = (ext2_ino_t) (icount->count *
 				((float) icount->num_inodes / new_size));
 		}
-		if (new_size < (icount->size + 100))
+		если (new_size < (icount->size + 100))
 			new_size = icount->size + 100;
-#if 0
+#если 0
 		printf("Reallocating icount %u entries...\n", new_size);
 #endif
 		retval = ext2fs_resize_mem((size_t) icount->size *
@@ -361,14 +361,14 @@ static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
 					   (size_t) new_size *
 					   sizeof(struct ext2_icount_el),
 					   &icount->list);
-		if (retval)
-			return 0;
+		если (retval)
+			вернуть 0;
 		icount->size = new_size;
 	}
-	num = (int) icount->count - pos;
-	if (num < 0)
-		return 0;	/* should never happen */
-	if (num) {
+	num = (целое) icount->count - pos;
+	если (num < 0)
+		вернуть 0;	/* should never happen */
+	если (num) {
 		memmove(&icount->list[pos+1], &icount->list[pos],
 			sizeof(struct ext2_icount_el) * num);
 	}
@@ -377,7 +377,7 @@ static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
 	el->count = 0;
 	el->ino = ino;
 	icount->last_lookup = el;
-	return el;
+	вернуть el;
 }
 
 /*
@@ -386,47 +386,47 @@ static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
  * 	and we can't find an entry, create one in the sorted list.
  */
 static struct ext2_icount_el *get_icount_el(ext2_icount_t icount,
-					    ext2_ino_t ino, int create)
+					    ext2_ino_t ino, целое create)
 {
-	int	low, high, mid;
+	целое	low, high, mid;
 
-	if (!icount || !icount->list)
-		return 0;
+	если (!icount || !icount->list)
+		вернуть 0;
 
-	if (create && ((icount->count == 0) ||
+	если (create && ((icount->count == 0) ||
 		       (ino > icount->list[(unsigned)icount->count-1].ino))) {
-		return insert_icount_el(icount, ino, (unsigned) icount->count);
+		вернуть insert_icount_el(icount, ino, (unsigned) icount->count);
 	}
-	if (icount->count == 0)
-		return 0;
+	если (icount->count == 0)
+		вернуть 0;
 
-	if (icount->cursor >= icount->count)
+	если (icount->cursor >= icount->count)
 		icount->cursor = 0;
-	if (ino == icount->list[icount->cursor].ino)
-		return &icount->list[icount->cursor++];
-#if 0
+	если (ino == icount->list[icount->cursor].ino)
+		вернуть &icount->list[icount->cursor++];
+#если 0
 	printf("Non-cursor get_icount_el: %u\n", ino);
 #endif
 	low = 0;
-	high = (int) icount->count-1;
-	while (low <= high) {
+	high = (целое) icount->count-1;
+	пока (low <= high) {
 		mid = ((unsigned)low + (unsigned)high) >> 1;
-		if (ino == icount->list[mid].ino) {
+		если (ino == icount->list[mid].ino) {
 			icount->cursor = mid+1;
-			return &icount->list[mid];
+			вернуть &icount->list[mid];
 		}
-		if (ino < icount->list[mid].ino)
+		если (ino < icount->list[mid].ino)
 			high = mid-1;
-		else
+		иначе
 			low = mid+1;
 	}
 	/*
 	 * If we need to create a new entry, it should be right at
 	 * low (where high will be left at low-1).
 	 */
-	if (create)
-		return insert_icount_el(icount, ino, low);
-	return 0;
+	если (create)
+		вернуть insert_icount_el(icount, ino, low);
+	вернуть 0;
 }
 
 static errcode_t set_inode_count(ext2_icount_t icount, ext2_ino_t ino,
@@ -436,34 +436,34 @@ static errcode_t set_inode_count(ext2_icount_t icount, ext2_ino_t ino,
 #ifdef CONFIG_TDB
 	TDB_DATA key, data;
 
-	if (icount->tdb) {
+	если (icount->tdb) {
 		key.dptr = (unsigned char *) &ino;
 		key.dsize = sizeof(ext2_ino_t);
 		data.dptr = (unsigned char *) &count;
 		data.dsize = sizeof(__u32);
-		if (count) {
-			if (tdb_store(icount->tdb, key, data, TDB_REPLACE))
-				return tdb_error(icount->tdb) +
+		если (count) {
+			если (tdb_store(icount->tdb, key, data, TDB_REPLACE))
+				вернуть tdb_error(icount->tdb) +
 					EXT2_ET_TDB_SUCCESS;
-		} else {
-			if (tdb_delete(icount->tdb, key))
-				return tdb_error(icount->tdb) +
+		} иначе {
+			если (tdb_delete(icount->tdb, key))
+				вернуть tdb_error(icount->tdb) +
 					EXT2_ET_TDB_SUCCESS;
 		}
-		return 0;
+		вернуть 0;
 	}
 #endif
-	if (icount->fullmap) {
+	если (icount->fullmap) {
 		icount->fullmap[ino] = icount_16_xlate(count);
-		return 0;
+		вернуть 0;
 	}
 
 	el = get_icount_el(icount, ino, 1);
-	if (!el)
-		return EXT2_ET_NO_MEMORY;
+	если (!el)
+		вернуть EXT2_ET_NO_MEMORY;
 
 	el->count = count;
-	return 0;
+	вернуть 0;
 }
 
 static errcode_t get_inode_count(ext2_icount_t icount, ext2_ino_t ino,
@@ -473,57 +473,57 @@ static errcode_t get_inode_count(ext2_icount_t icount, ext2_ino_t ino,
 #ifdef CONFIG_TDB
 	TDB_DATA key, data;
 
-	if (icount->tdb) {
+	если (icount->tdb) {
 		key.dptr = (unsigned char *) &ino;
 		key.dsize = sizeof(ext2_ino_t);
 
 		data = tdb_fetch(icount->tdb, key);
-		if (data.dptr == NULL) {
+		если (data.dptr == NULL) {
 			*count = 0;
-			return tdb_error(icount->tdb) + EXT2_ET_TDB_SUCCESS;
+			вернуть tdb_error(icount->tdb) + EXT2_ET_TDB_SUCCESS;
 		}
 
 		*count = *((__u32 *) data.dptr);
 		free(data.dptr);
-		return 0;
+		вернуть 0;
 	}
 #endif
-	if (icount->fullmap) {
+	если (icount->fullmap) {
 		*count = icount->fullmap[ino];
-		return 0;
+		вернуть 0;
 	}
 
 	el = get_icount_el(icount, ino, 0);
-	if (!el) {
+	если (!el) {
 		*count = 0;
-		return ENOENT;
+		вернуть ENOENT;
 	}
 
 	*count = el->count;
-	return 0;
+	вернуть 0;
 }
 
 errcode_t ext2fs_icount_validate(ext2_icount_t icount, FILE *out)
 {
 	errcode_t	ret = 0;
-	unsigned int	i;
+	unsigned целое	i;
 	const char *bad = "bad icount";
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->count > icount->size) {
+	если (icount->count > icount->size) {
 		fprintf(out, "%s: count > size\n", bad);
-		return EXT2_ET_INVALID_ARGUMENT;
+		вернуть EXT2_ET_INVALID_ARGUMENT;
 	}
-	for (i=1; i < icount->count; i++) {
-		if (icount->list[i-1].ino >= icount->list[i].ino) {
+	для (i=1; i < icount->count; i++) {
+		если (icount->list[i-1].ino >= icount->list[i].ino) {
 			fprintf(out, "%s: list[%d].ino=%u, list[%d].ino=%u\n",
 				bad, i-1, icount->list[i-1].ino,
 				i, icount->list[i].ino);
 			ret = EXT2_ET_INVALID_ARGUMENT;
 		}
 	}
-	return ret;
+	вернуть ret;
 }
 
 errcode_t ext2fs_icount_fetch(ext2_icount_t icount, ext2_ino_t ino, __u16 *ret)
@@ -531,23 +531,23 @@ errcode_t ext2fs_icount_fetch(ext2_icount_t icount, ext2_ino_t ino, __u16 *ret)
 	__u32	val;
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	если (!ino || (ino > icount->num_inodes))
+		вернуть EXT2_ET_INVALID_ARGUMENT;
 
-	if (!icount->fullmap) {
-		if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	если (!icount->fullmap) {
+		если (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 			*ret = 1;
-			return 0;
+			вернуть 0;
 		}
-		if (icount->multiple &&
+		если (icount->multiple &&
 			!ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
 			*ret = 0;
-			return 0;
+			вернуть 0;
 		}
 	}
 	get_inode_count(icount, ino, &val);
 	*ret = icount_16_xlate(val);
-	return 0;
+	вернуть 0;
 }
 
 errcode_t ext2fs_icount_increment(ext2_icount_t icount, ext2_ino_t ino,
@@ -557,57 +557,57 @@ errcode_t ext2fs_icount_increment(ext2_icount_t icount, ext2_ino_t ino,
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	если (!ino || (ino > icount->num_inodes))
+		вернуть EXT2_ET_INVALID_ARGUMENT;
 
-	if (icount->fullmap) {
+	если (icount->fullmap) {
 		curr_value = icount_16_xlate(icount->fullmap[ino] + 1);
 		icount->fullmap[ino] = curr_value;
-	} else if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	} иначе если (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 		/*
 		 * If the existing count is 1, then we know there is
 		 * no entry in the list.
 		 */
-		if (set_inode_count(icount, ino, 2))
-			return EXT2_ET_NO_MEMORY;
+		если (set_inode_count(icount, ino, 2))
+			вернуть EXT2_ET_NO_MEMORY;
 		curr_value = 2;
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-	} else if (icount->multiple) {
+	} иначе если (icount->multiple) {
 		/*
 		 * The count is either zero or greater than 1; if the
 		 * inode is set in icount->multiple, then there should
 		 * be an entry in the list, so we need to fix it.
 		 */
-		if (ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
+		если (ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
 			get_inode_count(icount, ino, &curr_value);
 			curr_value++;
-			if (set_inode_count(icount, ino, curr_value))
-				return EXT2_ET_NO_MEMORY;
-		} else {
+			если (set_inode_count(icount, ino, curr_value))
+				вернуть EXT2_ET_NO_MEMORY;
+		} иначе {
 			/*
 			 * The count was zero; mark the single bitmap
 			 * and return.
 			 */
 			ext2fs_mark_inode_bitmap2(icount->single, ino);
-			if (ret)
+			если (ret)
 				*ret = 1;
-			return 0;
+			вернуть 0;
 		}
-	} else {
+	} иначе {
 		/*
 		 * The count is either zero or greater than 1; try to
 		 * find an entry in the list to determine which.
 		 */
 		get_inode_count(icount, ino, &curr_value);
 		curr_value++;
-		if (set_inode_count(icount, ino, curr_value))
-			return EXT2_ET_NO_MEMORY;
+		если (set_inode_count(icount, ino, curr_value))
+			вернуть EXT2_ET_NO_MEMORY;
 	}
-	if (icount->multiple)
+	если (icount->multiple)
 		ext2fs_mark_inode_bitmap2(icount->multiple, ino);
-	if (ret)
+	если (ret)
 		*ret = icount_16_xlate(curr_value);
-	return 0;
+	вернуть 0;
 }
 
 errcode_t ext2fs_icount_decrement(ext2_icount_t icount, ext2_ino_t ino,
@@ -615,98 +615,98 @@ errcode_t ext2fs_icount_decrement(ext2_icount_t icount, ext2_ino_t ino,
 {
 	__u32			curr_value;
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	если (!ino || (ino > icount->num_inodes))
+		вернуть EXT2_ET_INVALID_ARGUMENT;
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->fullmap) {
-		if (!icount->fullmap[ino])
-			return EXT2_ET_INVALID_ARGUMENT;
+	если (icount->fullmap) {
+		если (!icount->fullmap[ino])
+			вернуть EXT2_ET_INVALID_ARGUMENT;
 
 		curr_value = --icount->fullmap[ino];
-		if (ret)
+		если (ret)
 			*ret = icount_16_xlate(curr_value);
-		return 0;
+		вернуть 0;
 	}
 
-	if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	если (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple)
+		если (icount->multiple)
 			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		else {
+		иначе {
 			set_inode_count(icount, ino, 0);
 		}
-		if (ret)
+		если (ret)
 			*ret = 0;
-		return 0;
+		вернуть 0;
 	}
 
-	if (icount->multiple &&
+	если (icount->multiple &&
 	    !ext2fs_test_inode_bitmap2(icount->multiple, ino))
-		return EXT2_ET_INVALID_ARGUMENT;
+		вернуть EXT2_ET_INVALID_ARGUMENT;
 
 	get_inode_count(icount, ino, &curr_value);
-	if (!curr_value)
-		return EXT2_ET_INVALID_ARGUMENT;
+	если (!curr_value)
+		вернуть EXT2_ET_INVALID_ARGUMENT;
 	curr_value--;
-	if (set_inode_count(icount, ino, curr_value))
-		return EXT2_ET_NO_MEMORY;
+	если (set_inode_count(icount, ino, curr_value))
+		вернуть EXT2_ET_NO_MEMORY;
 
-	if (curr_value == 1)
+	если (curr_value == 1)
 		ext2fs_mark_inode_bitmap2(icount->single, ino);
-	if ((curr_value == 0) && icount->multiple)
+	если ((curr_value == 0) && icount->multiple)
 		ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
 
-	if (ret)
+	если (ret)
 		*ret = icount_16_xlate(curr_value);
-	return 0;
+	вернуть 0;
 }
 
 errcode_t ext2fs_icount_store(ext2_icount_t icount, ext2_ino_t ino,
 			      __u16 count)
 {
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	если (!ino || (ino > icount->num_inodes))
+		вернуть EXT2_ET_INVALID_ARGUMENT;
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->fullmap)
-		return set_inode_count(icount, ino, count);
+	если (icount->fullmap)
+		вернуть set_inode_count(icount, ino, count);
 
-	if (count == 1) {
+	если (count == 1) {
 		ext2fs_mark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple)
+		если (icount->multiple)
 			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		return 0;
+		вернуть 0;
 	}
-	if (count == 0) {
+	если (count == 0) {
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple) {
+		если (icount->multiple) {
 			/*
 			 * If the icount->multiple bitmap is enabled,
 			 * we can just clear both bitmaps and we're done
 			 */
 			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		} else
+		} иначе
 			set_inode_count(icount, ino, 0);
-		return 0;
+		вернуть 0;
 	}
 
-	if (set_inode_count(icount, ino, count))
-		return EXT2_ET_NO_MEMORY;
+	если (set_inode_count(icount, ino, count))
+		вернуть EXT2_ET_NO_MEMORY;
 	ext2fs_unmark_inode_bitmap2(icount->single, ino);
-	if (icount->multiple)
+	если (icount->multiple)
 		ext2fs_mark_inode_bitmap2(icount->multiple, ino);
-	return 0;
+	вернуть 0;
 }
 
 ext2_ino_t ext2fs_get_icount_size(ext2_icount_t icount)
 {
-	if (!icount || icount->magic != EXT2_ET_MAGIC_ICOUNT)
-		return 0;
+	если (!icount || icount->magic != EXT2_ET_MAGIC_ICOUNT)
+		вернуть 0;
 
-	return icount->size;
+	вернуть icount->size;
 }
 
 #ifdef DEBUG
@@ -721,7 +721,7 @@ ext2_icount_t	icount;
 #define DECREMENT	0x04
 
 struct test_program {
-	int		cmd;
+	целое		cmd;
 	ext2_ino_t	ino;
 	__u16		arg;
 	__u16		expected;
@@ -802,56 +802,56 @@ static void setup(void)
 
 	retval = ext2fs_initialize("test fs", EXT2_FLAG_64BITS, &param,
 				   test_io_manager, &test_fs);
-	if (retval) {
+	если (retval) {
 		com_err("setup", retval,
 			"while initializing filesystem");
 		exit(1);
 	}
 	retval = ext2fs_allocate_tables(test_fs);
-	if (retval) {
+	если (retval) {
 		com_err("setup", retval,
 			"while allocating tables for test filesystem");
 		exit(1);
 	}
 }
 
-int run_test(int flags, int size, char *dir, struct test_program *prog)
+целое run_test(целое flags, целое size, char *dir, struct test_program *prog)
 {
 	errcode_t	retval;
 	ext2_icount_t	icount;
 	struct test_program *pc;
 	__u16		result;
-	int		problem = 0;
+	целое		problem = 0;
 
-	if (dir) {
+	если (dir) {
 #ifdef CONFIG_TDB
 		retval = ext2fs_create_icount_tdb(test_fs, dir,
 						  flags, &icount);
-		if (retval) {
+		если (retval) {
 			com_err("run_test", retval,
 				"while creating icount using tdb");
 			exit(1);
 		}
-#else
+#иначе
 		printf("Skipped\n");
-		return 0;
+		вернуть 0;
 #endif
-	} else {
+	} иначе {
 		retval = ext2fs_create_icount2(test_fs, flags, size, 0,
 					       &icount);
-		if (retval) {
+		если (retval) {
 			com_err("run_test", retval, "while creating icount");
 			exit(1);
 		}
 	}
-	for (pc = prog; pc->cmd != EXIT; pc++) {
+	для (pc = prog; pc->cmd != EXIT; pc++) {
 		switch (pc->cmd) {
 		case FETCH:
 			printf("icount_fetch(%u) = ", pc->ino);
 			break;
 		case STORE:
 			retval = ext2fs_icount_store(icount, pc->ino, pc->arg);
-			if (retval) {
+			если (retval) {
 				com_err("run_test", retval,
 					"while calling icount_store");
 				exit(1);
@@ -860,7 +860,7 @@ int run_test(int flags, int size, char *dir, struct test_program *prog)
 			break;
 		case INCREMENT:
 			retval = ext2fs_icount_increment(icount, pc->ino, 0);
-			if (retval) {
+			если (retval) {
 				com_err("run_test", retval,
 					"while calling icount_increment");
 				exit(1);
@@ -869,7 +869,7 @@ int run_test(int flags, int size, char *dir, struct test_program *prog)
 			break;
 		case DECREMENT:
 			retval = ext2fs_icount_decrement(icount, pc->ino, 0);
-			if (retval) {
+			если (retval) {
 				com_err("run_test", retval,
 					"while calling icount_decrement");
 				exit(1);
@@ -878,30 +878,30 @@ int run_test(int flags, int size, char *dir, struct test_program *prog)
 			break;
 		}
 		retval = ext2fs_icount_fetch(icount, pc->ino, &result);
-		if (retval) {
+		если (retval) {
 			com_err("run_test", retval,
 				"while calling icount_fetch");
 			exit(1);
 		}
 		printf("%u (%s)\n", result, (result == pc->expected) ?
 		       "OK" : "NOT OK");
-		if (result != pc->expected)
+		если (result != pc->expected)
 			problem++;
 	}
 	printf("icount size is %u\n", ext2fs_get_icount_size(icount));
 	retval = ext2fs_icount_validate(icount, stdout);
-	if (retval) {
+	если (retval) {
 		com_err("run_test", retval, "while calling icount_validate");
 		exit(1);
 	}
 	ext2fs_free_icount(icount);
-	return problem;
+	вернуть problem;
 }
 
 
-int main(int argc, char **argv)
+целое основной(целое argc, char **argv)
 {
-	int failed = 0;
+	целое failed = 0;
 
 	setup();
 	printf("Standard icount run:\n");
@@ -914,8 +914,8 @@ int main(int argc, char **argv)
 	failed += run_test(0, 0, ".", prog);
 	printf("\nMultiple bitmap test with tdb:\n");
 	failed += run_test(EXT2_ICOUNT_OPT_INCREMENT, 0, ".", prog);
-	if (failed)
+	если (failed)
 		printf("FAILED!\n");
-	return failed;
+	вернуть failed;
 }
 #endif

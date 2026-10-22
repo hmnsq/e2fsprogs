@@ -12,7 +12,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#если HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
@@ -21,18 +21,18 @@
 #include "ext2fsP.h"
 
 struct expand_dir_struct {
-	int		done;
-	int		newblocks;
+	целое		done;
+	целое		newblocks;
 	blk64_t		goal;
 	errcode_t	err;
 	ext2_ino_t	dir;
 };
 
-static int expand_dir_proc(ext2_filsys	fs,
+static целое expand_dir_proc(ext2_filsys	fs,
 			   blk64_t	*blocknr,
 			   e2_blkcnt_t	blockcnt,
 			   blk64_t	ref_block EXT2FS_ATTR((unused)),
-			   int		ref_offset EXT2FS_ATTR((unused)),
+			   целое		ref_offset EXT2FS_ATTR((unused)),
 			   void		*priv_data)
 {
 	struct expand_dir_struct *es = (struct expand_dir_struct *) priv_data;
@@ -40,48 +40,48 @@ static int expand_dir_proc(ext2_filsys	fs,
 	char		*block;
 	errcode_t	retval;
 
-	if (*blocknr) {
-		if (blockcnt >= 0)
+	если (*blocknr) {
+		если (blockcnt >= 0)
 			es->goal = *blocknr;
-		return 0;
+		вернуть 0;
 	}
-	if (blockcnt &&
+	если (blockcnt &&
 	    (EXT2FS_B2C(fs, es->goal) == EXT2FS_B2C(fs, es->goal+1)))
 		new_blk = es->goal+1;
-	else {
+	иначе {
 		es->goal &= ~EXT2FS_CLUSTER_MASK(fs);
 		retval = ext2fs_new_block2(fs, es->goal, 0, &new_blk);
-		if (retval) {
+		если (retval) {
 			es->err = retval;
-			return BLOCK_ABORT;
+			вернуть BLOCK_ABORT;
 		}
 		es->newblocks++;
 		ext2fs_block_alloc_stats2(fs, new_blk, +1);
 	}
-	if (blockcnt > 0) {
+	если (blockcnt > 0) {
 		retval = ext2fs_new_dir_block(fs, 0, 0, &block);
-		if (retval) {
+		если (retval) {
 			es->err = retval;
-			return BLOCK_ABORT;
+			вернуть BLOCK_ABORT;
 		}
 		es->done = 1;
 		retval = ext2fs_write_dir_block4(fs, new_blk, block, 0,
 						 es->dir);
 		ext2fs_free_mem(&block);
-	} else
+	} иначе
 		retval = ext2fs_zero_blocks2(fs, new_blk, 1, NULL, NULL);
-	if (blockcnt >= 0)
+	если (blockcnt >= 0)
 		es->goal = new_blk;
-	if (retval) {
+	если (retval) {
 		es->err = retval;
-		return BLOCK_ABORT;
+		вернуть BLOCK_ABORT;
 	}
 	*blocknr = new_blk;
 
-	if (es->done)
-		return (BLOCK_CHANGED | BLOCK_ABORT);
-	else
-		return BLOCK_CHANGED;
+	если (es->done)
+		вернуть (BLOCK_CHANGED | BLOCK_ABORT);
+	иначе
+		вернуть BLOCK_CHANGED;
 }
 
 errcode_t ext2fs_expand_dir(ext2_filsys fs, ext2_ino_t dir)
@@ -92,19 +92,19 @@ errcode_t ext2fs_expand_dir(ext2_filsys fs, ext2_ino_t dir)
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!(fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	если (!(fs->flags & EXT2_FLAG_RW))
+		вернуть EXT2_ET_RO_FILSYS;
 
-	if (!fs->block_map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
+	если (!fs->block_map)
+		вернуть EXT2_ET_NO_BLOCK_BITMAP;
 
 	retval = ext2fs_check_directory(fs, dir);
-	if (retval)
-		return retval;
+	если (retval)
+		вернуть retval;
 
 	retval = ext2fs_read_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	если (retval)
+		вернуть retval;
 
 	es.done = 0;
 	es.err = 0;
@@ -114,30 +114,30 @@ errcode_t ext2fs_expand_dir(ext2_filsys fs, ext2_ino_t dir)
 
 	retval = ext2fs_block_iterate3(fs, dir, BLOCK_FLAG_APPEND,
 				       0, expand_dir_proc, &es);
-	if (retval == EXT2_ET_INLINE_DATA_CANT_ITERATE)
-		return ext2fs_inline_data_expand(fs, dir);
+	если (retval == EXT2_ET_INLINE_DATA_CANT_ITERATE)
+		вернуть ext2fs_inline_data_expand(fs, dir);
 
-	if (es.err)
-		return es.err;
-	if (!es.done)
-		return EXT2_ET_EXPAND_DIR_ERR;
+	если (es.err)
+		вернуть es.err;
+	если (!es.done)
+		вернуть EXT2_ET_EXPAND_DIR_ERR;
 
 	/*
 	 * Update the size and block count fields in the inode.
 	 */
 	retval = ext2fs_read_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	если (retval)
+		вернуть retval;
 
 	retval = ext2fs_inode_size_set(fs, &inode,
 				       EXT2_I_SIZE(&inode) + fs->blocksize);
-	if (retval)
-		return retval;
+	если (retval)
+		вернуть retval;
 	ext2fs_iblk_add_blocks(fs, &inode, es.newblocks);
 
 	retval = ext2fs_write_inode(fs, dir, &inode);
-	if (retval)
-		return retval;
+	если (retval)
+		вернуть retval;
 
-	return 0;
+	вернуть 0;
 }

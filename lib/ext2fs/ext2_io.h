@@ -17,14 +17,14 @@
 /*
  * ext2_loff_t is defined here since unix_io.c needs it.
  */
-#if defined(__GNUC__) || defined(HAS_LONG_LONG)
+#если defined(__GNUC__) || defined(HAS_LONG_LONG)
 typedef long long	ext2_loff_t;
-#else
+#иначе
 typedef long		ext2_loff_t;
 #endif
 
 /* llseek.c */
-ext2_loff_t ext2fs_llseek (int, ext2_loff_t, int);
+ext2_loff_t ext2fs_llseek (целое, ext2_loff_t, целое);
 
 typedef struct struct_io_manager *io_manager;
 typedef struct struct_io_channel *io_channel;
@@ -43,32 +43,32 @@ struct struct_io_channel {
 	errcode_t	magic;
 	io_manager	manager;
 	char		*name;
-	int		block_size;
+	целое		block_size;
 	errcode_t	(*read_error)(io_channel channel,
 				      unsigned long block,
-				      int count,
+				      целое count,
 				      void *data,
 				      size_t size,
-				      int actual_bytes_read,
+				      целое actual_bytes_read,
 				      errcode_t	error);
 	errcode_t	(*write_error)(io_channel channel,
 				       unsigned long block,
-				       int count,
+				       целое count,
 				       const void *data,
 				       size_t size,
-				       int actual_bytes_written,
+				       целое actual_bytes_written,
 				       errcode_t error);
-	int		refcount;
-	unsigned int	flags;
+	целое		refcount;
+	unsigned целое	flags;
 	long		reserved[14];
 	void		*private_data;
 	void		*app_data;
-	int		align;
+	целое		align;
 };
 
 struct struct_io_stats {
-	int			num_fields;
-	int			reserved;
+	целое			num_fields;
+	целое			reserved;
 	unsigned long long	bytes_read;
 	unsigned long long	bytes_written;
 	unsigned long long	cache_hits;
@@ -78,23 +78,23 @@ struct struct_io_stats {
 struct struct_io_manager {
 	errcode_t magic;
 	const char *name;
-	errcode_t (*open)(const char *name, int flags, io_channel *channel);
+	errcode_t (*open)(const char *name, целое flags, io_channel *channel);
 	errcode_t (*close)(io_channel channel);
-	errcode_t (*set_blksize)(io_channel channel, int blksize);
+	errcode_t (*set_blksize)(io_channel channel, целое blksize);
 	errcode_t (*read_blk)(io_channel channel, unsigned long block,
-			      int count, void *data);
+			      целое count, void *data);
 	errcode_t (*write_blk)(io_channel channel, unsigned long block,
-			       int count, const void *data);
+			       целое count, const void *data);
 	errcode_t (*flush)(io_channel channel);
 	errcode_t (*write_byte)(io_channel channel, unsigned long offset,
-				int count, const void *data);
+				целое count, const void *data);
 	errcode_t (*set_option)(io_channel channel, const char *option,
 				const char *arg);
 	errcode_t (*get_stats)(io_channel channel, io_stats *io_stats);
 	errcode_t (*read_blk64)(io_channel channel, unsigned long long block,
-					int count, void *data);
+					целое count, void *data);
 	errcode_t (*write_blk64)(io_channel channel, unsigned long long block,
-					int count, const void *data);
+					целое count, const void *data);
 	errcode_t (*discard)(io_channel channel, unsigned long long block,
 			     unsigned long long count);
 	errcode_t (*cache_readahead)(io_channel channel,
@@ -102,7 +102,7 @@ struct struct_io_manager {
 				     unsigned long long count);
 	errcode_t (*zeroout)(io_channel channel, unsigned long long block,
 			     unsigned long long count);
-	errcode_t (*flock)(io_channel channel, unsigned int flock_flags);
+	errcode_t (*flock)(io_channel channel, unsigned целое flock_flags);
 	long	reserved[13];
 };
 
@@ -135,13 +135,13 @@ extern errcode_t io_channel_set_options(io_channel channel,
 					const char *options);
 extern errcode_t io_channel_write_byte(io_channel channel,
 				       unsigned long offset,
-				       int count, const void *data);
+				       целое count, const void *data);
 extern errcode_t io_channel_read_blk64(io_channel channel,
 				       unsigned long long block,
-				       int count, void *data);
+				       целое count, void *data);
 extern errcode_t io_channel_write_blk64(io_channel channel,
 					unsigned long long block,
-					int count, const void *data);
+					целое count, const void *data);
 extern errcode_t io_channel_discard(io_channel channel,
 				    unsigned long long block,
 				    unsigned long long count);
@@ -149,18 +149,18 @@ extern errcode_t io_channel_zeroout(io_channel channel,
 				    unsigned long long block,
 				    unsigned long long count);
 extern errcode_t io_channel_alloc_buf(io_channel channel,
-				      int count, void *ptr);
+				      целое count, void *ptr);
 extern errcode_t io_channel_cache_readahead(io_channel io,
 					    unsigned long long block,
 					    unsigned long long count);
-extern errcode_t io_channel_flock(io_channel io, unsigned int flock_flags);
+extern errcode_t io_channel_flock(io_channel io, unsigned целое flock_flags);
 extern errcode_t io_channel_funlock(io_channel io);
 
 #ifdef _WIN32
 /* windows_io.c */
 extern io_manager windows_io_manager;
 #define default_io_manager windows_io_manager
-#else
+#иначе
 /* unix_io.c */
 extern io_manager unix_io_manager;
 extern io_manager unixfd_io_manager;
@@ -179,15 +179,15 @@ extern errcode_t set_undo_io_backup_file(char *file_name);
 /* test_io.c */
 extern io_manager test_io_manager, test_io_backing_manager;
 extern void (*test_io_cb_read_blk)
-	(unsigned long block, int count, errcode_t err);
+	(unsigned long block, целое count, errcode_t err);
 extern void (*test_io_cb_write_blk)
-	(unsigned long block, int count, errcode_t err);
+	(unsigned long block, целое count, errcode_t err);
 extern void (*test_io_cb_read_blk64)
-	(unsigned long long block, int count, errcode_t err);
+	(unsigned long long block, целое count, errcode_t err);
 extern void (*test_io_cb_write_blk64)
-	(unsigned long long block, int count, errcode_t err);
+	(unsigned long long block, целое count, errcode_t err);
 extern void (*test_io_cb_set_blksize)
-	(int blksize, errcode_t err);
+	(целое blksize, errcode_t err);
 
 #endif /* _EXT2FS_EXT2_IO_H */
 

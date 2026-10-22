@@ -12,16 +12,16 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#если HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_ERRNO_H
+#если HAVE_ERRNO_H
 #include <errno.h>
 #endif
-#if HAVE_SYS_STAT_H
+#если HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#если HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -41,11 +41,11 @@
 
 struct extent_path {
 	char		*buf;
-	int		entries;
-	int		max_entries;
-	int		left;
-	int		visit_num;
-	int		flags;
+	целое		entries;
+	целое		max_entries;
+	целое		left;
+	целое		visit_num;
+	целое		flags;
 	blk64_t		end_blk;
 	blk64_t		blk;
 	void		*curr;
@@ -58,16 +58,16 @@ struct ext2_extent_handle {
 	ext2_ino_t 		ino;
 	struct ext2_inode	*inode;
 	struct ext2_inode	inodebuf;
-	int			type;
-	int			level;
-	int			max_depth;
-	int			max_paths;
+	целое			type;
+	целое			level;
+	целое			max_depth;
+	целое			max_paths;
 	struct extent_path	*path;
 };
 
 struct ext2_extent_path {
 	errcode_t		magic;
-	int			leaf_height;
+	целое			leaf_height;
 	blk64_t			lblk;
 };
 
@@ -108,18 +108,18 @@ static void dbg_show_extent(struct ext3_extent *ex)
 
 static void dbg_print_extent(char *desc, struct ext2fs_extent *extent)
 {
-	if (desc)
+	если (desc)
 		printf("%s: ", desc);
 	printf("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
 	       extent->e_lblk, extent->e_lblk + extent->e_len - 1,
 	       extent->e_len, extent->e_pblk);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_LEAF)
+	если (extent->e_flags & EXT2_EXTENT_FLAGS_LEAF)
 		fputs("LEAF ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	если (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 		fputs("UNINIT ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_SECOND_VISIT)
+	если (extent->e_flags & EXT2_EXTENT_FLAGS_SECOND_VISIT)
 		fputs("2ND_VISIT ", stdout);
-	if (!extent->e_flags)
+	если (!extent->e_flags)
 		fputs("(none)", stdout);
 	fputc('\n', stdout);
 
@@ -139,53 +139,53 @@ static void dump_path(const char *tag, struct ext2_extent_handle *handle,
 		       ppp->end_blk, ppp->curr, ppp->curr - (void *)ppp->buf);
 		printf("  ");
 		dbg_show_header((struct ext3_extent_header *)ppp->buf);
-		if (ppp->curr) {
+		если (ppp->curr) {
 			printf("  ");
 			dbg_show_index(ppp->curr);
 			printf("  ");
 			dbg_show_extent(ppp->curr);
 		}
 		ppp--;
-	} while (ppp >= handle->path);
+	} пока (ppp >= handle->path);
 	fflush(stdout);
 
-	return;
+	вернуть;
 }
 
-#else
-#define dbg_show_header(eh) do { } while (0)
-#define dbg_show_index(ix) do { } while (0)
-#define dbg_show_extent(ex) do { } while (0)
-#define dbg_print_extent(desc, ex) do { } while (0)
-#define dump_path(tag, handle, path) do { } while (0)
+#иначе
+#define dbg_show_header(eh) do { } пока (0)
+#define dbg_show_index(ix) do { } пока (0)
+#define dbg_show_extent(ex) do { } пока (0)
+#define dbg_print_extent(desc, ex) do { } пока (0)
+#define dump_path(tag, handle, path) do { } пока (0)
 #endif
 
 /*
  * Verify the extent header as being sane
  */
-errcode_t ext2fs_extent_header_verify(void *ptr, int size)
+errcode_t ext2fs_extent_header_verify(void *ptr, целое size)
 {
-	int eh_max, entry_size;
+	целое eh_max, entry_size;
 	struct ext3_extent_header *eh = ptr;
 
 	dbg_show_header(eh);
-	if (ext2fs_le16_to_cpu(eh->eh_magic) != EXT3_EXT_MAGIC)
-		return EXT2_ET_EXTENT_HEADER_BAD;
-	if (ext2fs_le16_to_cpu(eh->eh_entries) > ext2fs_le16_to_cpu(eh->eh_max))
-		return EXT2_ET_EXTENT_HEADER_BAD;
-	if (eh->eh_depth == 0)
+	если (ext2fs_le16_to_cpu(eh->eh_magic) != EXT3_EXT_MAGIC)
+		вернуть EXT2_ET_EXTENT_HEADER_BAD;
+	если (ext2fs_le16_to_cpu(eh->eh_entries) > ext2fs_le16_to_cpu(eh->eh_max))
+		вернуть EXT2_ET_EXTENT_HEADER_BAD;
+	если (eh->eh_depth == 0)
 		entry_size = sizeof(struct ext3_extent);
-	else
+	иначе
 		entry_size = sizeof(struct ext3_extent_idx);
 
 	eh_max = (size - sizeof(*eh)) / entry_size;
 	/* Allow two extent-sized items at the end of the block, for
 	 * ext4_extent_tail with checksum in the future. */
-	if ((ext2fs_le16_to_cpu(eh->eh_max) > eh_max) ||
+	если ((ext2fs_le16_to_cpu(eh->eh_max) > eh_max) ||
 	    (ext2fs_le16_to_cpu(eh->eh_max) < (eh_max - 2)))
-		return EXT2_ET_EXTENT_HEADER_BAD;
+		вернуть EXT2_ET_EXTENT_HEADER_BAD;
 
-	return 0;
+	вернуть 0;
 }
 
 
@@ -194,14 +194,14 @@ errcode_t ext2fs_extent_header_verify(void *ptr, int size)
  */
 void ext2fs_extent_free(ext2_extent_handle_t handle)
 {
-	int			i;
+	целое			i;
 
-	if (!handle)
-		return;
+	если (!handle)
+		вернуть;
 
-	if (handle->path) {
-		for (i = 1; i < handle->max_paths; i++) {
-			if (handle->path[i].buf)
+	если (handle->path) {
+		для (i = 1; i < handle->max_paths; i++) {
+			если (handle->path[i].buf)
 				ext2fs_free_mem(&handle->path[i].buf);
 		}
 		ext2fs_free_mem(&handle->path);
@@ -212,7 +212,7 @@ void ext2fs_extent_free(ext2_extent_handle_t handle)
 errcode_t ext2fs_extent_open(ext2_filsys fs, ext2_ino_t ino,
 				    ext2_extent_handle_t *ret_handle)
 {
-	return ext2fs_extent_open2(fs, ino, NULL, ret_handle);
+	вернуть ext2fs_extent_open2(fs, ino, NULL, ret_handle);
 }
 
 errcode_t ext2fs_extent_open2(ext2_filsys fs, ext2_ino_t ino,
@@ -221,38 +221,38 @@ errcode_t ext2fs_extent_open2(ext2_filsys fs, ext2_ino_t ino,
 {
 	struct ext2_extent_handle	*handle;
 	errcode_t			retval;
-	int				i;
+	целое				i;
 	struct ext3_extent_header	*eh;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!inode)
-		if ((ino == 0) || (ino > fs->super->s_inodes_count))
-			return EXT2_ET_BAD_INODE_NUM;
+	если (!inode)
+		если ((ino == 0) || (ino > fs->super->s_inodes_count))
+			вернуть EXT2_ET_BAD_INODE_NUM;
 
 	retval = ext2fs_get_mem(sizeof(struct ext2_extent_handle), &handle);
-	if (retval)
-		return retval;
+	если (retval)
+		вернуть retval;
 	memset(handle, 0, sizeof(struct ext2_extent_handle));
 
 	handle->ino = ino;
 	handle->fs = fs;
 
-	if (inode) {
+	если (inode) {
 		handle->inode = inode;
-	} else {
+	} иначе {
 		handle->inode = &handle->inodebuf;
 		retval = ext2fs_read_inode(fs, ino, handle->inode);
-		if (retval)
+		если (retval)
 			goto errout;
 	}
 
 	eh = (struct ext3_extent_header *) &handle->inode->i_block[0];
 
-	for (i=0; i < EXT2_N_BLOCKS; i++)
-		if (handle->inode->i_block[i])
+	для (i=0; i < EXT2_N_BLOCKS; i++)
+		если (handle->inode->i_block[i])
 			break;
-	if (i >= EXT2_N_BLOCKS) {
+	если (i >= EXT2_N_BLOCKS) {
 		eh->eh_magic = ext2fs_cpu_to_le16(EXT3_EXT_MAGIC);
 		eh->eh_depth = 0;
 		eh->eh_entries = 0;
@@ -262,13 +262,13 @@ errcode_t ext2fs_extent_open2(ext2_filsys fs, ext2_ino_t ino,
 		handle->inode->i_flags |= EXT4_EXTENTS_FL;
 	}
 
-	if (!(handle->inode->i_flags & EXT4_EXTENTS_FL)) {
+	если (!(handle->inode->i_flags & EXT4_EXTENTS_FL)) {
 		retval = EXT2_ET_INODE_NOT_EXTENT;
 		goto errout;
 	}
 
 	retval = ext2fs_extent_header_verify(eh, sizeof(handle->inode->i_block));
-	if (retval)
+	если (retval)
 		goto errout;
 
 	handle->max_depth = ext2fs_le16_to_cpu(eh->eh_depth);
@@ -293,11 +293,11 @@ errcode_t ext2fs_extent_open2(ext2_filsys fs, ext2_ino_t ino,
 	handle->magic = EXT2_ET_MAGIC_EXTENT_HANDLE;
 
 	*ret_handle = handle;
-	return 0;
+	вернуть 0;
 
 errout:
 	ext2fs_extent_free(handle);
-	return retval;
+	вернуть retval;
 }
 
 /*
@@ -305,7 +305,7 @@ errout:
  * extent tree and then returning the current extent
  */
 errcode_t ext2fs_extent_get(ext2_extent_handle_t handle,
-			    int flags, struct ext2fs_extent *extent)
+			    целое flags, struct ext2fs_extent *extent)
 {
 	struct extent_path	*path, *newpath, *tp;
 	struct ext3_extent_header	*eh;
@@ -314,41 +314,41 @@ errcode_t ext2fs_extent_get(ext2_extent_handle_t handle,
 	errcode_t			retval;
 	blk64_t				blk;
 	blk64_t				end_blk;
-	int				orig_op, op, l;
-	int				failed_csum = 0;
+	целое				orig_op, op, l;
+	целое				failed_csum = 0;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	если (!handle->path)
+		вернуть EXT2_ET_NO_CURRENT_NODE;
 
 	orig_op = op = flags & EXT2_EXTENT_MOVE_MASK;
 
 retry:
 	path = handle->path + handle->level;
-	if ((orig_op == EXT2_EXTENT_NEXT) ||
+	если ((orig_op == EXT2_EXTENT_NEXT) ||
 	    (orig_op == EXT2_EXTENT_NEXT_LEAF)) {
-		if (handle->level < handle->max_depth) {
+		если (handle->level < handle->max_depth) {
 			/* interior node */
-			if (path->visit_num == 0) {
+			если (path->visit_num == 0) {
 				path->visit_num++;
 				op = EXT2_EXTENT_DOWN;
-			} else if (path->left > 0)
+			} иначе если (path->left > 0)
 				op = EXT2_EXTENT_NEXT_SIB;
-			else if (handle->level > 0)
+			иначе если (handle->level > 0)
 				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_NEXT;
-		} else {
+			иначе
+				вернуть EXT2_ET_EXTENT_NO_NEXT;
+		} иначе {
 			/* leaf node */
-			if (path->left > 0)
+			если (path->left > 0)
 				op = EXT2_EXTENT_NEXT_SIB;
-			else if (handle->level > 0)
+			иначе если (handle->level > 0)
 				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_NEXT;
+			иначе
+				вернуть EXT2_ET_EXTENT_NO_NEXT;
 		}
-		if (op != EXT2_EXTENT_NEXT_SIB) {
+		если (op != EXT2_EXTENT_NEXT_SIB) {
 #ifdef DEBUG_GET_EXTENT
 			printf("<<<< OP = %s\n",
 			       (op == EXT2_EXTENT_DOWN) ? "down" :
@@ -357,29 +357,29 @@ retry:
 		}
 	}
 
-	if ((orig_op == EXT2_EXTENT_PREV) ||
+	если ((orig_op == EXT2_EXTENT_PREV) ||
 	    (orig_op == EXT2_EXTENT_PREV_LEAF)) {
-		if (handle->level < handle->max_depth) {
+		если (handle->level < handle->max_depth) {
 			/* interior node */
-			if (path->visit_num > 0 ) {
+			если (path->visit_num > 0 ) {
 				/* path->visit_num = 0; */
 				op = EXT2_EXTENT_DOWN_AND_LAST;
-			} else if (path->left < path->entries-1)
+			} иначе если (path->left < path->entries-1)
 				op = EXT2_EXTENT_PREV_SIB;
-			else if (handle->level > 0)
+			иначе если (handle->level > 0)
 				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_PREV;
-		} else {
+			иначе
+				вернуть EXT2_ET_EXTENT_NO_PREV;
+		} иначе {
 			/* leaf node */
-			if (path->left < path->entries-1)
+			если (path->left < path->entries-1)
 				op = EXT2_EXTENT_PREV_SIB;
-			else if (handle->level > 0)
+			иначе если (handle->level > 0)
 				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_PREV;
+			иначе
+				вернуть EXT2_ET_EXTENT_NO_PREV;
 		}
-		if (op != EXT2_EXTENT_PREV_SIB) {
+		если (op != EXT2_EXTENT_PREV_SIB) {
 #ifdef DEBUG_GET_EXTENT
 			printf("<<<< OP = %s\n",
 			       (op == EXT2_EXTENT_DOWN_AND_LAST) ? "down/last" :
@@ -388,11 +388,11 @@ retry:
 		}
 	}
 
-	if (orig_op == EXT2_EXTENT_LAST_LEAF) {
-		if ((handle->level < handle->max_depth) &&
+	если (orig_op == EXT2_EXTENT_LAST_LEAF) {
+		если ((handle->level < handle->max_depth) &&
 		    (path->left == 0))
 			op = EXT2_EXTENT_DOWN;
-		else
+		иначе
 			op = EXT2_EXTENT_LAST_SIB;
 #ifdef DEBUG_GET_EXTENT
 		printf("<<<< OP = %s\n",
@@ -413,12 +413,12 @@ retry:
 		path->curr = 0;
 		/* fallthrough */
 	case EXT2_EXTENT_NEXT_SIB:
-		if (path->left <= 0)
-			return EXT2_ET_EXTENT_NO_NEXT;
-		if (path->curr) {
+		если (path->left <= 0)
+			вернуть EXT2_ET_EXTENT_NO_NEXT;
+		если (path->curr) {
 			ix = path->curr;
 			ix++;
-		} else {
+		} иначе {
 			eh = (struct ext3_extent_header *) path->buf;
 			ix = EXT_FIRST_INDEX(eh);
 		}
@@ -427,14 +427,14 @@ retry:
 		path->visit_num = 0;
 		break;
 	case EXT2_EXTENT_PREV_SIB:
-		if (!path->curr ||
+		если (!path->curr ||
 		    path->left+1 >= path->entries)
-			return EXT2_ET_EXTENT_NO_PREV;
+			вернуть EXT2_ET_EXTENT_NO_PREV;
 		ix = path->curr;
 		ix--;
 		path->curr = ix;
 		path->left++;
-		if (handle->level < handle->max_depth)
+		если (handle->level < handle->max_depth)
 			path->visit_num = 1;
 		break;
 	case EXT2_EXTENT_LAST_SIB:
@@ -445,55 +445,55 @@ retry:
 		path->visit_num = 0;
 		break;
 	case EXT2_EXTENT_UP:
-		if (handle->level <= 0)
-			return EXT2_ET_EXTENT_NO_UP;
+		если (handle->level <= 0)
+			вернуть EXT2_ET_EXTENT_NO_UP;
 		handle->level--;
 		path--;
 		ix = path->curr;
-		if ((orig_op == EXT2_EXTENT_PREV) ||
+		если ((orig_op == EXT2_EXTENT_PREV) ||
 		    (orig_op == EXT2_EXTENT_PREV_LEAF))
 			path->visit_num = 0;
 		break;
 	case EXT2_EXTENT_DOWN:
 	case EXT2_EXTENT_DOWN_AND_LAST:
-		if (!path->curr ||(handle->level >= handle->max_depth))
-			return EXT2_ET_EXTENT_NO_DOWN;
+		если (!path->curr ||(handle->level >= handle->max_depth))
+			вернуть EXT2_ET_EXTENT_NO_DOWN;
 
 		ix = path->curr;
 		newpath = path + 1;
-		if (!newpath->buf) {
+		если (!newpath->buf) {
 			retval = ext2fs_get_mem(handle->fs->blocksize,
 						&newpath->buf);
-			if (retval)
-				return retval;
+			если (retval)
+				вернуть retval;
 		}
 		blk = ext2fs_le32_to_cpu(ix->ei_leaf) +
 			((__u64) ext2fs_le16_to_cpu(ix->ei_leaf_hi) << 32);
-		for (l = handle->level, tp = path; l > 0; l--, tp--) {
-			if (blk == tp->blk)
-				return EXT2_ET_EXTENT_CYCLE;
+		для (l = handle->level, tp = path; l > 0; l--, tp--) {
+			если (blk == tp->blk)
+				вернуть EXT2_ET_EXTENT_CYCLE;
 		}
 		newpath->blk = blk;
-		if ((handle->fs->flags & EXT2_FLAG_IMAGE_FILE) &&
+		если ((handle->fs->flags & EXT2_FLAG_IMAGE_FILE) &&
 		    (handle->fs->io != handle->fs->image_io))
 			memset(newpath->buf, 0, handle->fs->blocksize);
-		else {
+		иначе {
 			retval = io_channel_read_blk64(handle->fs->io,
 						     blk, 1, newpath->buf);
-			if (retval)
-				return retval;
+			если (retval)
+				вернуть retval;
 		}
 		handle->level++;
 
 		eh = (struct ext3_extent_header *) newpath->buf;
 
 		retval = ext2fs_extent_header_verify(eh, handle->fs->blocksize);
-		if (retval) {
+		если (retval) {
 			handle->level--;
-			return retval;
+			вернуть retval;
 		}
 
-		if (!(handle->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+		если (!(handle->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
 		    !ext2fs_extent_block_csum_verify(handle->fs, handle->ino,
 						     eh))
 			failed_csum = 1;
@@ -503,26 +503,26 @@ retry:
 		newpath->max_entries = ext2fs_le16_to_cpu(eh->eh_max);
 
 		/* Make sure there is at least one extent present */
-		if (newpath->left <= 0)
-			return EXT2_ET_EXTENT_NO_DOWN;
+		если (newpath->left <= 0)
+			вернуть EXT2_ET_EXTENT_NO_DOWN;
 
-		if (path->left > 0) {
+		если (path->left > 0) {
 			ix++;
 			newpath->end_blk = ext2fs_le32_to_cpu(ix->ei_block);
-		} else
+		} иначе
 			newpath->end_blk = path->end_blk;
 
 		path = newpath;
-		if (op == EXT2_EXTENT_DOWN) {
+		если (op == EXT2_EXTENT_DOWN) {
 			ix = EXT_FIRST_INDEX((struct ext3_extent_header *) eh);
 			path->curr = ix;
 			path->left = path->entries - 1;
 			path->visit_num = 0;
-		} else {
+		} иначе {
 			ix = EXT_LAST_INDEX((struct ext3_extent_header *) eh);
 			path->curr = ix;
 			path->left = 0;
-			if (handle->level < handle->max_depth)
+			если (handle->level < handle->max_depth)
 				path->visit_num = 1;
 		}
 #ifdef DEBUG_GET_EXTENT
@@ -532,18 +532,18 @@ retry:
 #endif
 		break;
 	default:
-		return EXT2_ET_OP_NOT_SUPPORTED;
+		вернуть EXT2_ET_OP_NOT_SUPPORTED;
 	}
 
-	if (!ix)
-		return EXT2_ET_NO_CURRENT_NODE;
+	если (!ix)
+		вернуть EXT2_ET_NO_CURRENT_NODE;
 
 	extent->e_flags = 0;
 #ifdef DEBUG_GET_EXTENT
 	printf("(Left %d)\n", path->left);
 #endif
 
-	if (handle->level == handle->max_depth) {
+	если (handle->level == handle->max_depth) {
 		ex = (struct ext3_extent *) ix;
 
 		extent->e_pblk = ext2fs_le32_to_cpu(ex->ee_start) +
@@ -551,39 +551,39 @@ retry:
 		extent->e_lblk = ext2fs_le32_to_cpu(ex->ee_block);
 		extent->e_len = ext2fs_le16_to_cpu(ex->ee_len);
 		extent->e_flags |= EXT2_EXTENT_FLAGS_LEAF;
-		if (extent->e_len > EXT_INIT_MAX_LEN) {
+		если (extent->e_len > EXT_INIT_MAX_LEN) {
 			extent->e_len -= EXT_INIT_MAX_LEN;
 			extent->e_flags |= EXT2_EXTENT_FLAGS_UNINIT;
 		}
-	} else {
+	} иначе {
 		extent->e_pblk = ext2fs_le32_to_cpu(ix->ei_leaf) +
 			((__u64) ext2fs_le16_to_cpu(ix->ei_leaf_hi) << 32);
 		extent->e_lblk = ext2fs_le32_to_cpu(ix->ei_block);
-		if (path->left > 0) {
+		если (path->left > 0) {
 			ix++;
 			end_blk = ext2fs_le32_to_cpu(ix->ei_block);
-		} else
+		} иначе
 			end_blk = path->end_blk;
 
 		extent->e_len = end_blk - extent->e_lblk;
 	}
-	if (path->visit_num)
+	если (path->visit_num)
 		extent->e_flags |= EXT2_EXTENT_FLAGS_SECOND_VISIT;
 
-	if (((orig_op == EXT2_EXTENT_NEXT_LEAF) ||
+	если (((orig_op == EXT2_EXTENT_NEXT_LEAF) ||
 	     (orig_op == EXT2_EXTENT_PREV_LEAF)) &&
 	    (handle->level != handle->max_depth))
 		goto retry;
 
-	if ((orig_op == EXT2_EXTENT_LAST_LEAF) &&
+	если ((orig_op == EXT2_EXTENT_LAST_LEAF) &&
 	    ((handle->level != handle->max_depth) ||
 	     (path->left != 0)))
 		goto retry;
 
-	if (failed_csum)
-		return EXT2_ET_EXTENT_CSUM_INVALID;
+	если (failed_csum)
+		вернуть EXT2_ET_EXTENT_CSUM_INVALID;
 
-	return 0;
+	вернуть 0;
 }
 
 static errcode_t update_path(ext2_extent_handle_t handle)
@@ -593,10 +593,10 @@ static errcode_t update_path(ext2_extent_handle_t handle)
 	struct ext3_extent_idx		*ix;
 	struct ext3_extent_header	*eh;
 
-	if (handle->level == 0) {
+	если (handle->level == 0) {
 		retval = ext2fs_write_inode(handle->fs, handle->ino,
 					    handle->inode);
-	} else {
+	} иначе {
 		ix = handle->path[handle->level - 1].curr;
 		blk = ext2fs_le32_to_cpu(ix->ei_leaf) +
 			((__u64) ext2fs_le16_to_cpu(ix->ei_leaf_hi) << 32);
@@ -606,16 +606,16 @@ static errcode_t update_path(ext2_extent_handle_t handle)
 				handle->path[handle->level].buf;
 		retval = ext2fs_extent_block_csum_set(handle->fs, handle->ino,
 						      eh);
-		if (retval)
-			return retval;
+		если (retval)
+			вернуть retval;
 
 		retval = io_channel_write_blk64(handle->fs->io,
 				      blk, 1, handle->path[handle->level].buf);
 	}
-	return retval;
+	вернуть retval;
 }
 
-#if 0
+#если 0
 errcode_t ext2fs_extent_save_path(ext2_extent_handle_t handle,
 				  ext2_extent_path_t *ret_path)
 {
@@ -625,16 +625,16 @@ errcode_t ext2fs_extent_save_path(ext2_extent_handle_t handle,
 	errcode_t		retval;
 
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
-		return retval;
+	если (retval)
+		вернуть retval;
 
 	retval = ext2fs_extent_get_info(handle, &info);
-	if (retval)
-		return retval;
+	если (retval)
+		вернуть retval;
 
 	retval = ext2fs_get_mem(sizeof(struct ext2_extent_path), &save_path);
-	if (retval)
-		return retval;
+	если (retval)
+		вернуть retval;
 	memset(save_path, 0, sizeof(struct ext2_extent_path));
 
 	save_path->magic = EXT2_ET_MAGIC_EXTENT_PATH;
@@ -642,7 +642,7 @@ errcode_t ext2fs_extent_save_path(ext2_extent_handle_t handle,
 	save_path->lblk = extent.e_lblk;
 
 	*ret_path = save_path;
-	return 0;
+	вернуть 0;
 }
 
 errcode_t ext2fs_extent_free_path(ext2_extent_path_t path)
@@ -650,7 +650,7 @@ errcode_t ext2fs_extent_free_path(ext2_extent_path_t path)
 	EXT2_CHECK_MAGIC(path, EXT2_ET_MAGIC_EXTENT_PATH);
 
 	ext2fs_free_mem(&path);
-	return 0;
+	вернуть 0;
 }
 #endif
 
@@ -664,24 +664,24 @@ errcode_t ext2fs_extent_free_path(ext2_extent_path_t path)
  * extent before blk.
  */
 errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
-			      int leaf_level, blk64_t blk)
+			      целое leaf_level, blk64_t blk)
 {
 	struct ext2fs_extent	extent;
 	errcode_t		retval;
 
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_ROOT, &extent);
-	if (retval) {
-		if (retval == EXT2_ET_EXTENT_NO_NEXT)
+	если (retval) {
+		если (retval == EXT2_ET_EXTENT_NO_NEXT)
 			retval = EXT2_ET_EXTENT_NOT_FOUND;
-		return retval;
+		вернуть retval;
 	}
 
-	if (leaf_level > handle->max_depth) {
+	если (leaf_level > handle->max_depth) {
 #ifdef DEBUG
 		printf("leaf level %d greater than tree depth %d\n",
 			leaf_level, handle->max_depth);
 #endif
-		return EXT2_ET_OP_NOT_SUPPORTED;
+		вернуть EXT2_ET_OP_NOT_SUPPORTED;
 	}
 
 #ifdef DEBUG
@@ -692,47 +692,47 @@ errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
 #ifdef DEBUG_GOTO_EXTENTS
 	dbg_print_extent("root", &extent);
 #endif
-	while (1) {
-		if (handle->max_depth - handle->level == leaf_level) {
+	пока (1) {
+		если (handle->max_depth - handle->level == leaf_level) {
 			/* block is in this &extent */
-			if ((blk >= extent.e_lblk) &&
+			если ((blk >= extent.e_lblk) &&
 			    (blk < extent.e_lblk + extent.e_len))
-				return 0;
-			if (blk < extent.e_lblk) {
+				вернуть 0;
+			если (blk < extent.e_lblk) {
 				retval = ext2fs_extent_get(handle,
 							   EXT2_EXTENT_PREV_SIB,
 							   &extent);
-				return EXT2_ET_EXTENT_NOT_FOUND;
+				вернуть EXT2_ET_EXTENT_NOT_FOUND;
 			}
 			retval = ext2fs_extent_get(handle,
 						   EXT2_EXTENT_NEXT_SIB,
 						   &extent);
-			if (retval == EXT2_ET_EXTENT_NO_NEXT)
-				return EXT2_ET_EXTENT_NOT_FOUND;
-			if (retval)
-				return retval;
+			если (retval == EXT2_ET_EXTENT_NO_NEXT)
+				вернуть EXT2_ET_EXTENT_NOT_FOUND;
+			если (retval)
+				вернуть retval;
 			continue;
 		}
 
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT_SIB,
 					   &extent);
-		if (retval == EXT2_ET_EXTENT_NO_NEXT)
+		если (retval == EXT2_ET_EXTENT_NO_NEXT)
 			goto go_down;
-		if (retval)
-			return retval;
+		если (retval)
+			вернуть retval;
 
 #ifdef DEBUG_GOTO_EXTENTS
 		dbg_print_extent("next", &extent);
 #endif
-		if (blk == extent.e_lblk)
+		если (blk == extent.e_lblk)
 			goto go_down;
-		if (blk > extent.e_lblk)
+		если (blk > extent.e_lblk)
 			continue;
 
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_PREV_SIB,
 					   &extent);
-		if (retval)
-			return retval;
+		если (retval)
+			вернуть retval;
 
 #ifdef DEBUG_GOTO_EXTENTS
 		dbg_print_extent("prev", &extent);
@@ -741,8 +741,8 @@ errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
 	go_down:
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_DOWN,
 					   &extent);
-		if (retval)
-			return retval;
+		если (retval)
+			вернуть retval;
 
 #ifdef DEBUG_GOTO_EXTENTS
 		dbg_print_extent("down", &extent);
@@ -753,7 +753,7 @@ errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
 errcode_t ext2fs_extent_goto(ext2_extent_handle_t handle,
 			     blk64_t blk)
 {
-	return ext2fs_extent_goto2(handle, 0, blk);
+	вернуть ext2fs_extent_goto2(handle, 0, blk);
 }
 
 /*
@@ -774,8 +774,8 @@ errcode_t ext2fs_extent_goto(ext2_extent_handle_t handle,
  */
 errcode_t ext2fs_extent_fix_parents(ext2_extent_handle_t handle)
 {
-	int				retval = 0;
-	int				orig_height;
+	целое				retval = 0;
+	целое				orig_height;
 	blk64_t				start;
 	struct extent_path		*path;
 	struct ext2fs_extent		extent;
@@ -783,40 +783,40 @@ errcode_t ext2fs_extent_fix_parents(ext2_extent_handle_t handle)
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	если (!(handle->fs->flags & EXT2_FLAG_RW))
+		вернуть EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	если (!handle->path)
+		вернуть EXT2_ET_NO_CURRENT_NODE;
 
 	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	если (!path->curr)
+		вернуть EXT2_ET_NO_CURRENT_NODE;
 
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
+	если (retval)
 		goto done;
 
 	/* modified node's start block */
 	start = extent.e_lblk;
 
-	if ((retval = ext2fs_extent_get_info(handle, &info)))
-		return retval;
+	если ((retval = ext2fs_extent_get_info(handle, &info)))
+		вернуть retval;
 	orig_height = info.max_depth - info.curr_level;
 
 	/* traverse up until index not first, or startblk matches, or top */
-	while (handle->level > 0 &&
+	пока (handle->level > 0 &&
 	       (path->left == path->entries - 1)) {
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP, &extent);
-		if (retval)
+		если (retval)
 			goto done;
-		if (extent.e_lblk == start)
+		если (extent.e_lblk == start)
 			break;
 		path = handle->path + handle->level;
 		extent.e_len += (extent.e_lblk - start);
 		extent.e_lblk = start;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
+		если (retval)
 			goto done;
 		update_path(handle);
 	}
@@ -824,11 +824,11 @@ errcode_t ext2fs_extent_fix_parents(ext2_extent_handle_t handle)
 	/* put handle back to where we started */
 	retval = ext2fs_extent_goto2(handle, orig_height, start);
 done:
-	return retval;
+	вернуть retval;
 }
 
 errcode_t ext2fs_extent_replace(ext2_extent_handle_t handle,
-				int flags EXT2FS_ATTR((unused)),
+				целое flags EXT2FS_ATTR((unused)),
 				struct ext2fs_extent *extent)
 {
 	struct extent_path		*path;
@@ -837,38 +837,38 @@ errcode_t ext2fs_extent_replace(ext2_extent_handle_t handle,
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	если (!(handle->fs->flags & EXT2_FLAG_RW))
+		вернуть EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	если (!handle->path)
+		вернуть EXT2_ET_NO_CURRENT_NODE;
 
 	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	если (!path->curr)
+		вернуть EXT2_ET_NO_CURRENT_NODE;
 
 #ifdef DEBUG
 	printf("extent replace: %u ", handle->ino);
 	dbg_print_extent(0, extent);
 #endif
 
-	if (handle->level == handle->max_depth) {
+	если (handle->level == handle->max_depth) {
 		ex = path->curr;
 
 		ex->ee_block = ext2fs_cpu_to_le32(extent->e_lblk);
 		ex->ee_start = ext2fs_cpu_to_le32(extent->e_pblk & 0xFFFFFFFF);
 		ex->ee_start_hi = ext2fs_cpu_to_le16(extent->e_pblk >> 32);
-		if (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT) {
-			if (extent->e_len > EXT_UNINIT_MAX_LEN)
-				return EXT2_ET_EXTENT_INVALID_LENGTH;
+		если (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT) {
+			если (extent->e_len > EXT_UNINIT_MAX_LEN)
+				вернуть EXT2_ET_EXTENT_INVALID_LENGTH;
 			ex->ee_len = ext2fs_cpu_to_le16(extent->e_len +
 							EXT_INIT_MAX_LEN);
-		} else {
-			if (extent->e_len > EXT_INIT_MAX_LEN)
-				return EXT2_ET_EXTENT_INVALID_LENGTH;
+		} иначе {
+			если (extent->e_len > EXT_INIT_MAX_LEN)
+				вернуть EXT2_ET_EXTENT_INVALID_LENGTH;
 			ex->ee_len = ext2fs_cpu_to_le16(extent->e_len);
 		}
-	} else {
+	} иначе {
 		ix = path->curr;
 
 		ix->ei_leaf = ext2fs_cpu_to_le32(extent->e_pblk & 0xFFFFFFFF);
@@ -877,25 +877,25 @@ errcode_t ext2fs_extent_replace(ext2_extent_handle_t handle,
 		ix->ei_unused = 0;
 	}
 	update_path(handle);
-	return 0;
+	вернуть 0;
 }
 
-static int splitting_at_eof(struct ext2_extent_handle *handle,
+static целое splitting_at_eof(struct ext2_extent_handle *handle,
 			    struct extent_path *path)
 {
 	struct extent_path *ppp = path;
 	dump_path(__func__, handle, path);
 
-	if (handle->level == 0)
-		return 0;
+	если (handle->level == 0)
+		вернуть 0;
 
 	do {
-		if (ppp->left)
-			return 0;
+		если (ppp->left)
+			вернуть 0;
 		ppp--;
-	} while (ppp >= handle->path);
+	} пока (ppp >= handle->path);
 
-	return 1;
+	вернуть 1;
 }
 
 /*
@@ -904,41 +904,41 @@ static int splitting_at_eof(struct ext2_extent_handle *handle,
  * handle will be left pointing at original record.
  */
 static errcode_t extent_node_split(ext2_extent_handle_t handle,
-				   int expand_allowed)
+				   целое expand_allowed)
 {
 	errcode_t			retval = 0;
 	blk64_t				new_node_pblk;
 	blk64_t				new_node_start;
 	blk64_t				orig_lblk;
 	blk64_t				goal_blk = 0;
-	int				orig_height;
+	целое				orig_height;
 	char				*block_buf = NULL;
 	struct ext2fs_extent		extent;
 	struct extent_path		*path, *newpath = 0;
 	struct ext3_extent_header	*eh, *neweh;
-	int				tocopy;
-	int				new_root = 0;
+	целое				tocopy;
+	целое				new_root = 0;
 	struct ext2_extent_info		info;
-	int				no_balance;
+	целое				no_balance;
 
 	/* basic sanity */
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	если (!(handle->fs->flags & EXT2_FLAG_RW))
+		вернуть EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	если (!handle->path)
+		вернуть EXT2_ET_NO_CURRENT_NODE;
 
 #ifdef DEBUG
 	printf("splitting node at level %d\n", handle->level);
 #endif
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
+	если (retval)
 		goto done;
 
 	retval = ext2fs_extent_get_info(handle, &info);
-	if (retval)
+	если (retval)
 		goto done;
 
 	/* save the position we were originally splitting... */
@@ -948,13 +948,13 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 	/* Try to put the index block before the first extent */
 	path = handle->path + handle->level;
 	eh = (struct ext3_extent_header *) path->buf;
-	if (handle->level == handle->max_depth) {
+	если (handle->level == handle->max_depth) {
 		struct ext3_extent	*ex;
 
 		ex = EXT_FIRST_EXTENT(eh);
 		goal_blk = ext2fs_le32_to_cpu(ex->ee_start) +
 			((__u64) ext2fs_le16_to_cpu(ex->ee_start_hi) << 32);
-	} else {
+	} иначе {
 		struct ext3_extent_idx	*ix;
 
 		ix = EXT_FIRST_INDEX(eh);
@@ -965,7 +965,7 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 	goal_blk &= ~EXT2FS_CLUSTER_MASK(handle->fs);
 
 	/* Is there room in the parent for a new entry? */
-	if (handle->level &&
+	если (handle->level &&
 			(handle->path[handle->level - 1].entries >=
 			 handle->path[handle->level - 1].max_entries)) {
 
@@ -975,23 +975,23 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 #endif
 		/* split the parent */
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP, &extent);
-		if (retval)
+		если (retval)
 			goto done;
 
 		retval = extent_node_split(handle, expand_allowed);
-		if (retval)
+		если (retval)
 			goto done;
 
 		/* get handle back to our original split position */
 		retval = ext2fs_extent_goto2(handle, orig_height, orig_lblk);
-		if (retval)
+		если (retval)
 			goto done;
 	}
 
 	/* At this point, parent should have room for this split */
 	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	если (!path->curr)
+		вернуть EXT2_ET_NO_CURRENT_NODE;
 
 	/*
 	 * Normally, we try to split a full node in half.  This doesn't turn
@@ -1005,18 +1005,18 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 	eh = (struct ext3_extent_header *)path->buf;
 
 	/* splitting root level means moving them all out */
-	if (handle->level == 0) {
+	если (handle->level == 0) {
 		new_root = 1;
 		tocopy = ext2fs_le16_to_cpu(eh->eh_entries);
 		retval = ext2fs_get_memzero((handle->max_paths + 1) *
 					    sizeof(struct extent_path),
 					    &newpath);
-		if (retval)
+		если (retval)
 			goto done;
-	} else {
-		if (no_balance)
+	} иначе {
+		если (no_balance)
 			tocopy = 1;
-		else
+		иначе
 			tocopy = ext2fs_le16_to_cpu(eh->eh_entries) / 2;
 	}
 
@@ -1026,7 +1026,7 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 				handle->level);
 #endif
 
-	if (!tocopy && !no_balance) {
+	если (!tocopy && !no_balance) {
 #ifdef DEBUG
 		printf("Nothing to copy to new block!\n");
 #endif
@@ -1036,17 +1036,17 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 
 	/* first we need a new block, or can do nothing. */
 	block_buf = malloc(handle->fs->blocksize);
-	if (!block_buf) {
+	если (!block_buf) {
 		retval = ENOMEM;
 		goto done;
 	}
 
-	if (!goal_blk)
+	если (!goal_blk)
 		goal_blk = ext2fs_find_inode_goal(handle->fs, handle->ino,
 						  handle->inode, 0);
 	retval = ext2fs_alloc_block2(handle->fs, goal_blk, block_buf,
 				    &new_node_pblk);
-	if (retval)
+	если (retval)
 		goto done;
 
 #ifdef DEBUG
@@ -1073,20 +1073,20 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 
 	/* then update the checksum */
 	retval = ext2fs_extent_block_csum_set(handle->fs, handle->ino, neweh);
-	if (retval)
+	если (retval)
 		goto done;
 
 	/* ...and write the new node block out to disk. */
 	retval = io_channel_write_blk64(handle->fs->io, new_node_pblk, 1,
 					block_buf);
 
-	if (retval)
+	если (retval)
 		goto done;
 
 	/* OK! we've created the new node; now adjust the tree */
 
 	/* current path now has fewer active entries, we copied some out */
-	if (handle->level == 0) {
+	если (handle->level == 0) {
 		memcpy(newpath, path,
 		       sizeof(struct extent_path) * handle->max_paths);
 		handle->path = newpath;
@@ -1097,7 +1097,7 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 		handle->max_depth++;
 		handle->max_paths++;
 		eh->eh_depth = ext2fs_cpu_to_le16(handle->max_depth);
-	} else {
+	} иначе {
 		path->entries -= tocopy;
 		path->left -= tocopy;
 	}
@@ -1105,22 +1105,22 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 	eh->eh_entries = ext2fs_cpu_to_le16(path->entries);
 	/* this writes out the node, incl. the modified header */
 	retval = update_path(handle);
-	if (retval)
+	если (retval)
 		goto done;
 
 	/* now go up and insert/replace index for new node we created */
-	if (new_root) {
+	если (new_root) {
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_FIRST_SIB, &extent);
-		if (retval)
+		если (retval)
 			goto done;
 
 		extent.e_lblk = new_node_start;
 		extent.e_pblk = new_node_pblk;
 		extent.e_len = handle->path[0].end_blk - extent.e_lblk;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
+		если (retval)
 			goto done;
-	} else {
+	} иначе {
 		__u32 new_node_length;
 
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP, &extent);
@@ -1128,7 +1128,7 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 		new_node_length = new_node_start - extent.e_lblk;
 		extent.e_len -= new_node_length;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
+		если (retval)
 			goto done;
 
 		/* now set up the new extent and insert it */
@@ -1136,36 +1136,36 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 		extent.e_pblk = new_node_pblk;
 		extent.e_len = new_node_length;
 		retval = ext2fs_extent_insert(handle, EXT2_EXTENT_INSERT_AFTER, &extent);
-		if (retval)
+		если (retval)
 			goto done;
 	}
 
 	/* get handle back to our original position */
 	retval = ext2fs_extent_goto2(handle, orig_height, orig_lblk);
-	if (retval)
+	если (retval)
 		goto done;
 
 	/* new node hooked in, so update inode block count (do this here?) */
 	ext2fs_iblk_add_blocks(handle->fs, handle->inode, 1);
 	retval = ext2fs_write_inode(handle->fs, handle->ino,
 				    handle->inode);
-	if (retval)
+	если (retval)
 		goto done;
 
 done:
-	if (newpath)
+	если (newpath)
 		ext2fs_free_mem(&newpath);
 	free(block_buf);
 
-	return retval;
+	вернуть retval;
 }
 
 errcode_t ext2fs_extent_node_split(ext2_extent_handle_t handle)
 {
-	return extent_node_split(handle, 0);
+	вернуть extent_node_split(handle, 0);
 }
 
-errcode_t ext2fs_extent_insert(ext2_extent_handle_t handle, int flags,
+errcode_t ext2fs_extent_insert(ext2_extent_handle_t handle, целое flags,
 				      struct ext2fs_extent *extent)
 {
 	struct extent_path		*path;
@@ -1175,11 +1175,11 @@ errcode_t ext2fs_extent_insert(ext2_extent_handle_t handle, int flags,
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	если (!(handle->fs->flags & EXT2_FLAG_RW))
+		вернуть EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	если (!handle->path)
+		вернуть EXT2_ET_NO_CURRENT_NODE;
 
 #ifdef DEBUG
 	printf("extent insert: %u ", handle->ino);
@@ -1188,36 +1188,36 @@ errcode_t ext2fs_extent_insert(ext2_extent_handle_t handle, int flags,
 
 	path = handle->path + handle->level;
 
-	if (path->entries >= path->max_entries) {
-		if (flags & EXT2_EXTENT_INSERT_NOSPLIT) {
-			return EXT2_ET_CANT_INSERT_EXTENT;
-		} else {
+	если (path->entries >= path->max_entries) {
+		если (flags & EXT2_EXTENT_INSERT_NOSPLIT) {
+			вернуть EXT2_ET_CANT_INSERT_EXTENT;
+		} иначе {
 #ifdef DEBUG
 			printf("node full (level %d) - splitting\n",
 				   handle->level);
 #endif
 			retval = extent_node_split(handle, 1);
-			if (retval)
-				return retval;
+			если (retval)
+				вернуть retval;
 			path = handle->path + handle->level;
 		}
 	}
 
 	eh = (struct ext3_extent_header *) path->buf;
-	if (path->curr) {
+	если (path->curr) {
 		ix = path->curr;
-		if (flags & EXT2_EXTENT_INSERT_AFTER) {
+		если (flags & EXT2_EXTENT_INSERT_AFTER) {
 			ix++;
 			path->left--;
 		}
-	} else {
+	} иначе {
 		ix = EXT_FIRST_INDEX(eh);
 		path->left = -1;
 	}
 
 	path->curr = ix;
 
-	if (path->left >= 0)
+	если (path->left >= 0)
 		memmove(ix + 1, ix,
 			(path->left+1) * sizeof(struct ext3_extent_idx));
 	path->left++;
@@ -1227,18 +1227,18 @@ errcode_t ext2fs_extent_insert(ext2_extent_handle_t handle, int flags,
 	eh->eh_entries = ext2fs_cpu_to_le16(path->entries);
 
 	retval = ext2fs_extent_replace(handle, 0, extent);
-	if (retval)
+	если (retval)
 		goto errout;
 
 	retval = update_path(handle);
-	if (retval)
+	если (retval)
 		goto errout;
 
-	return 0;
+	вернуть 0;
 
 errout:
 	ext2fs_extent_delete(handle, 0);
-	return retval;
+	вернуть retval;
 }
 
 /*
@@ -1264,17 +1264,17 @@ errout:
  */
 
 errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
-				 blk64_t logical, blk64_t physical, int flags)
+				 blk64_t logical, blk64_t physical, целое flags)
 {
 	errcode_t		ec, retval = 0;
-	int			mapped = 1; /* logical is mapped? */
-	int			orig_height;
-	int			extent_uninit = 0;
-	int			prev_uninit = 0;
-	int			next_uninit = 0;
-	int			new_uninit = 0;
-	int			max_len = EXT_INIT_MAX_LEN;
-	int			has_prev, has_next;
+	целое			mapped = 1; /* logical is mapped? */
+	целое			orig_height;
+	целое			extent_uninit = 0;
+	целое			prev_uninit = 0;
+	целое			next_uninit = 0;
+	целое			new_uninit = 0;
+	целое			max_len = EXT_INIT_MAX_LEN;
+	целое			has_prev, has_next;
 	blk64_t			orig_lblk;
 	struct extent_path	*path;
 	struct ext2fs_extent	extent, next_extent, prev_extent;
@@ -1288,61 +1288,61 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 	       handle->ino, logical, physical, flags);
 #endif
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	если (!(handle->fs->flags & EXT2_FLAG_RW))
+		вернуть EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	если (!handle->path)
+		вернуть EXT2_ET_NO_CURRENT_NODE;
 
 	path = handle->path + handle->level;
 
-	if (flags & EXT2_EXTENT_SET_BMAP_UNINIT) {
+	если (flags & EXT2_EXTENT_SET_BMAP_UNINIT) {
 		new_uninit = 1;
 		max_len = EXT_UNINIT_MAX_LEN;
 	}
 
 	/* if (re)mapping, set up new extent to insert */
-	if (physical) {
+	если (physical) {
 		newextent.e_len = 1;
 		newextent.e_pblk = physical;
 		newextent.e_lblk = logical;
 		newextent.e_flags = EXT2_EXTENT_FLAGS_LEAF;
-		if (new_uninit)
+		если (new_uninit)
 			newextent.e_flags |= EXT2_EXTENT_FLAGS_UNINIT;
 	}
 
 	/* special case if the extent tree is completely empty */
-	if ((handle->max_depth == 0) && (path->entries == 0)) {
+	если ((handle->max_depth == 0) && (path->entries == 0)) {
 		retval = ext2fs_extent_insert(handle, 0, &newextent);
-		return retval;
+		вернуть retval;
 	}
 
 	/* save our original location in the extent tree */
-	if ((retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
+	если ((retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					&extent))) {
-		if (retval != EXT2_ET_NO_CURRENT_NODE)
-			return retval;
+		если (retval != EXT2_ET_NO_CURRENT_NODE)
+			вернуть retval;
 		memset(&extent, 0, sizeof(extent));
 	}
-	if ((retval = ext2fs_extent_get_info(handle, &info)))
-		return retval;
+	если ((retval = ext2fs_extent_get_info(handle, &info)))
+		вернуть retval;
 	orig_height = info.max_depth - info.curr_level;
 	orig_lblk = extent.e_lblk;
 
 	/* go to the logical spot we want to (re/un)map */
 	retval = ext2fs_extent_goto(handle, logical);
-	if (retval) {
-		if (retval == EXT2_ET_EXTENT_NOT_FOUND) {
+	если (retval) {
+		если (retval == EXT2_ET_EXTENT_NOT_FOUND) {
 			retval = 0;
 			mapped = 0;
-			if (!physical) {
+			если (!physical) {
 #ifdef DEBUG
 				printf("block %llu already unmapped\n",
 					logical);
 #endif
 				goto done;
 			}
-		} else
+		} иначе
 			goto done;
 	}
 
@@ -1353,43 +1353,43 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 	 * Get the previous and next leaf extents, if they are present.
 	 */
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
+	если (retval)
 		goto done;
-	if (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	если (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 		extent_uninit = 1;
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT_LEAF, &next_extent);
-	if (retval) {
+	если (retval) {
 		has_next = 0;
-		if (retval != EXT2_ET_EXTENT_NO_NEXT)
+		если (retval != EXT2_ET_EXTENT_NO_NEXT)
 			goto done;
-	} else {
+	} иначе {
 		dbg_print_extent("set_bmap: next_extent",
 				 &next_extent);
 		has_next = 1;
-		if (next_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+		если (next_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 			next_uninit = 1;
 	}
 	retval = ext2fs_extent_goto(handle, logical);
-	if (retval && retval != EXT2_ET_EXTENT_NOT_FOUND)
+	если (retval && retval != EXT2_ET_EXTENT_NOT_FOUND)
 		goto done;
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_PREV_LEAF, &prev_extent);
-	if (retval) {
+	если (retval) {
 		has_prev = 0;
-		if (retval != EXT2_ET_EXTENT_NO_PREV)
+		если (retval != EXT2_ET_EXTENT_NO_PREV)
 			goto done;
-	} else {
+	} иначе {
 		has_prev = 1;
 		dbg_print_extent("set_bmap: prev_extent",
 				 &prev_extent);
-		if (prev_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+		если (prev_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 			prev_uninit = 1;
 	}
 	retval = ext2fs_extent_goto(handle, logical);
-	if (retval && retval != EXT2_ET_EXTENT_NOT_FOUND)
+	если (retval && retval != EXT2_ET_EXTENT_NOT_FOUND)
 		goto done;
 
 	/* check if already pointing to the requested physical */
-	if (mapped && (new_uninit == extent_uninit) &&
+	если (mapped && (new_uninit == extent_uninit) &&
 	    (extent.e_pblk + (logical - extent.e_lblk) == physical)) {
 #ifdef DEBUG
 		printf("physical block (at %llu) unchanged\n", logical);
@@ -1397,63 +1397,63 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 		goto done;
 	}
 
-	if (!mapped) {
+	если (!mapped) {
 #ifdef DEBUG
 		printf("mapping unmapped logical block %llu\n", logical);
 #endif
-		if ((logical == extent.e_lblk + extent.e_len) &&
+		если ((logical == extent.e_lblk + extent.e_len) &&
 		    (physical == extent.e_pblk + extent.e_len) &&
 		    (new_uninit == extent_uninit) &&
-		    ((int) extent.e_len < max_len-1)) {
+		    ((целое) extent.e_len < max_len-1)) {
 			extent.e_len++;
 			retval = ext2fs_extent_replace(handle, 0, &extent);
-		} else if ((logical == extent.e_lblk - 1) &&
+		} иначе если ((logical == extent.e_lblk - 1) &&
 			   (physical == extent.e_pblk - 1) &&
 			   (new_uninit == extent_uninit) &&
-			   ((int) extent.e_len < max_len - 1)) {
+			   ((целое) extent.e_len < max_len - 1)) {
 			extent.e_len++;
 			extent.e_lblk--;
 			extent.e_pblk--;
 			retval = ext2fs_extent_replace(handle, 0, &extent);
-		} else if (has_next &&
+		} иначе если (has_next &&
 			   (logical == next_extent.e_lblk - 1) &&
 			   (physical == next_extent.e_pblk - 1) &&
 			   (new_uninit == next_uninit) &&
-			   ((int) next_extent.e_len < max_len - 1)) {
+			   ((целое) next_extent.e_len < max_len - 1)) {
 			retval = ext2fs_extent_get(handle,
 						   EXT2_EXTENT_NEXT_LEAF,
 						   &next_extent);
-			if (retval)
+			если (retval)
 				goto done;
 			next_extent.e_len++;
 			next_extent.e_lblk--;
 			next_extent.e_pblk--;
 			retval = ext2fs_extent_replace(handle, 0, &next_extent);
-		} else if (logical < extent.e_lblk)
+		} иначе если (logical < extent.e_lblk)
 			retval = ext2fs_extent_insert(handle, 0, &newextent);
-		else
+		иначе
 			retval = ext2fs_extent_insert(handle,
 				      EXT2_EXTENT_INSERT_AFTER, &newextent);
-		if (retval)
+		если (retval)
 			goto done;
 		retval = ext2fs_extent_fix_parents(handle);
-		if (retval)
+		если (retval)
 			goto done;
-	} else if ((logical == extent.e_lblk) && (extent.e_len == 1))  {
+	} иначе если ((logical == extent.e_lblk) && (extent.e_len == 1))  {
 #ifdef DEBUG
 		printf("(re/un)mapping only block in extent\n");
 #endif
-		if (physical) {
-			if (has_prev &&
+		если (physical) {
+			если (has_prev &&
 			    (logical == (prev_extent.e_lblk +
 					 prev_extent.e_len)) &&
 			    (physical == (prev_extent.e_pblk +
 					  prev_extent.e_len)) &&
 			    (new_uninit == prev_uninit) &&
-			    ((int) prev_extent.e_len < max_len-1)) {
+			    ((целое) prev_extent.e_len < max_len-1)) {
 				retval = ext2fs_extent_get(handle,
 					EXT2_EXTENT_PREV_LEAF, &prev_extent);
-				if (retval)
+				если (retval)
 					goto done;
 				prev_extent.e_len++;
 				retval = ext2fs_extent_replace(handle, 0,
@@ -1461,52 +1461,52 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 				retval = ext2fs_extent_get(handle,
 							   EXT2_EXTENT_NEXT_LEAF,
 							   &extent);
-				if (retval)
+				если (retval)
 					goto done;
 				goto delete_node;
 
-			} else
+			} иначе
 				retval = ext2fs_extent_replace(handle, 0, &newextent);
-		} else {
+		} иначе {
 		delete_node:
 			retval = ext2fs_extent_delete(handle, 0);
-			if (retval)
+			если (retval)
 				goto done;
 			ec = ext2fs_extent_fix_parents(handle);
-			if (ec != EXT2_ET_NO_CURRENT_NODE)
+			если (ec != EXT2_ET_NO_CURRENT_NODE)
 				retval = ec;
 		}
 
-		if (retval)
+		если (retval)
 			goto done;
-	} else if (logical == extent.e_lblk + extent.e_len - 1)  {
+	} иначе если (logical == extent.e_lblk + extent.e_len - 1)  {
 #ifdef DEBUG
 		printf("(re/un)mapping last block in extent\n");
 #endif
-		if (physical) {
-			if (has_next &&
+		если (physical) {
+			если (has_next &&
 			    (logical == (next_extent.e_lblk - 1)) &&
 			    (physical == (next_extent.e_pblk - 1)) &&
 			    (new_uninit == next_uninit) &&
-			    ((int) next_extent.e_len < max_len - 1)) {
+			    ((целое) next_extent.e_len < max_len - 1)) {
 				retval = ext2fs_extent_get(handle,
 					EXT2_EXTENT_NEXT_LEAF, &next_extent);
-				if (retval)
+				если (retval)
 					goto done;
 				next_extent.e_len++;
 				next_extent.e_lblk--;
 				next_extent.e_pblk--;
 				retval = ext2fs_extent_replace(handle, 0,
 							       &next_extent);
-				if (retval)
+				если (retval)
 					goto done;
-			} else
+			} иначе
 				retval = ext2fs_extent_insert(handle,
 				      EXT2_EXTENT_INSERT_AFTER, &newextent);
-			if (retval)
+			если (retval)
 				goto done;
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval)
+			если (retval)
 				goto done;
 			/*
 			 * Now pointing at inserted extent; move back to prev.
@@ -1515,19 +1515,19 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 			 * subtlety in the comment for fix_parents().
 			 */
 			retval = ext2fs_extent_goto(handle, logical);
-			if (retval)
+			если (retval)
 				goto done;
 			retval = ext2fs_extent_get(handle,
 						   EXT2_EXTENT_CURRENT,
 						   &extent);
-			if (retval)
+			если (retval)
 				goto done;
 		}
 		extent.e_len--;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
+		если (retval)
 			goto done;
-	} else if (logical == extent.e_lblk) {
+	} иначе если (logical == extent.e_lblk) {
 #ifdef DEBUG
 		printf("(re/un)mapping first block in extent\n");
 #endif
@@ -1535,41 +1535,41 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 		extent.e_lblk++;
 		extent.e_len--;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
+		если (retval)
 			goto done;
 		retval = ext2fs_extent_fix_parents(handle);
-		if (retval)
+		если (retval)
 			goto done;
-		if (physical) {
-			if (has_prev &&
+		если (physical) {
+			если (has_prev &&
 			    (logical == (prev_extent.e_lblk +
 					 prev_extent.e_len)) &&
 			    (physical == (prev_extent.e_pblk +
 					  prev_extent.e_len)) &&
 			    (new_uninit == prev_uninit) &&
-			    ((int) prev_extent.e_len < max_len-1)) {
+			    ((целое) prev_extent.e_len < max_len-1)) {
 				retval = ext2fs_extent_get(handle, 
 					EXT2_EXTENT_PREV_LEAF, &prev_extent);
-				if (retval)
+				если (retval)
 					goto done;
 				prev_extent.e_len++;
 				retval = ext2fs_extent_replace(handle, 0,
 							       &prev_extent);
-			} else
+			} иначе
 				retval = ext2fs_extent_insert(handle,
 							      0, &newextent);
-			if (retval)
+			если (retval)
 				goto done;
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval)
+			если (retval)
 				goto done;
 			retval = ext2fs_extent_get(handle,
 						   EXT2_EXTENT_NEXT_LEAF,
 						   &extent);
-			if (retval)
+			если (retval)
 				goto done;
 		}
-	} else {
+	} иначе {
 		__u32	save_length;
 		blk64_t	save_lblk;
 		struct ext2fs_extent save_extent;
@@ -1586,16 +1586,16 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 		/* shorten pre-split extent */
 		extent.e_len = (logical - extent.e_lblk);
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
+		если (retval)
 			goto done;
 		/* insert our new extent, if any */
-		if (physical) {
+		если (physical) {
 			/* insert new extent after current */
 			retval = ext2fs_extent_insert(handle,
 					EXT2_EXTENT_INSERT_AFTER, &newextent);
-			if (retval) {
+			если (retval) {
 				r2 = ext2fs_extent_goto(handle, save_lblk);
-				if (r2 == 0)
+				если (r2 == 0)
 					(void)ext2fs_extent_replace(handle, 0,
 							      &save_extent);
 				goto done;
@@ -1607,15 +1607,15 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 		extent.e_len = save_length - extent.e_len - 1;
 		retval = ext2fs_extent_insert(handle,
 				EXT2_EXTENT_INSERT_AFTER, &extent);
-		if (retval) {
-			if (physical) {
+		если (retval) {
+			если (physical) {
 				r2 = ext2fs_extent_goto(handle,
 							newextent.e_lblk);
-				if (r2 == 0)
+				если (r2 == 0)
 					(void)ext2fs_extent_delete(handle, 0);
 			}
 			r2 = ext2fs_extent_goto(handle, save_lblk);
-			if (r2 == 0)
+			если (r2 == 0)
 				(void)ext2fs_extent_replace(handle, 0,
 							    &save_extent);
 			goto done;
@@ -1624,13 +1624,13 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 
 done:
 	/* get handle back to its position */
-	if (orig_height > handle->max_depth)
+	если (orig_height > handle->max_depth)
 		orig_height = handle->max_depth; /* In case we shortened the tree */
 	ext2fs_extent_goto2(handle, orig_height, orig_lblk);
-	return retval;
+	вернуть retval;
 }
 
-errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, int flags)
+errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, целое flags)
 {
 	struct extent_path		*path;
 	char 				*cp;
@@ -1639,11 +1639,11 @@ errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, int flags)
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	если (!(handle->fs->flags & EXT2_FLAG_RW))
+		вернуть EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	если (!handle->path)
+		вернуть EXT2_ET_NO_CURRENT_NODE;
 
 #ifdef DEBUG
 	{
@@ -1651,7 +1651,7 @@ errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, int flags)
 
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					   &extent);
-		if (retval == 0) {
+		если (retval == 0) {
 			printf("extent delete %u ", handle->ino);
 			dbg_print_extent(0, &extent);
 		}
@@ -1659,36 +1659,36 @@ errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, int flags)
 #endif
 
 	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	если (!path->curr)
+		вернуть EXT2_ET_NO_CURRENT_NODE;
 
 	cp = path->curr;
 
 	/* Sanity check before memmove() */
-	if (path->left < 0)
-		return EXT2_ET_EXTENT_LEAF_BAD;
+	если (path->left < 0)
+		вернуть EXT2_ET_EXTENT_LEAF_BAD;
 
-	if (path->left) {
+	если (path->left) {
 		memmove(cp, cp + sizeof(struct ext3_extent_idx),
 			path->left * sizeof(struct ext3_extent_idx));
 		path->left--;
-	} else {
+	} иначе {
 		struct ext3_extent_idx	*ix = path->curr;
 		ix--;
 		path->curr = ix;
 	}
-	if (--path->entries == 0)
+	если (--path->entries == 0)
 		path->curr = 0;
 
 	/* if non-root node has no entries left, remove it & parent ptr to it */
-	if (path->entries == 0 && handle->level) {
-		if (!(flags & EXT2_EXTENT_DELETE_KEEP_EMPTY)) {
+	если (path->entries == 0 && handle->level) {
+		если (!(flags & EXT2_EXTENT_DELETE_KEEP_EMPTY)) {
 			struct ext2fs_extent	extent;
 
 			retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP,
 								&extent);
-			if (retval)
-				return retval;
+			если (retval)
+				вернуть retval;
 
 			retval = ext2fs_extent_delete(handle, flags);
 			handle->inode->i_blocks -=
@@ -1699,16 +1699,16 @@ errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, int flags)
 			ext2fs_block_alloc_stats2(handle->fs,
 						  extent.e_pblk, -1);
 		}
-	} else {
+	} иначе {
 		eh = (struct ext3_extent_header *) path->buf;
 		eh->eh_entries = ext2fs_cpu_to_le16(path->entries);
-		if ((path->entries == 0) && (handle->level == 0)) {
+		если ((path->entries == 0) && (handle->level == 0)) {
 			eh->eh_depth = 0;
 			handle->max_depth = 0;
 		}
 		retval = update_path(handle);
 	}
-	return retval;
+	вернуть retval;
 }
 
 errcode_t ext2fs_extent_get_info(ext2_extent_handle_t handle,
@@ -1721,11 +1721,11 @@ errcode_t ext2fs_extent_get_info(ext2_extent_handle_t handle,
 	memset(info, 0, sizeof(struct ext2_extent_info));
 
 	path = handle->path + handle->level;
-	if (path) {
-		if (path->curr)
+	если (path) {
+		если (path->curr)
 			info->curr_entry = ((char *) path->curr - path->buf) /
 				sizeof(struct ext3_extent_idx);
-		else
+		иначе
 			info->curr_entry = 0;
 		info->num_entries = path->entries;
 		info->max_entries = path->max_entries;
@@ -1740,7 +1740,7 @@ errcode_t ext2fs_extent_get_info(ext2_extent_handle_t handle,
 	info->max_len = EXT_INIT_MAX_LEN;
 	info->max_uninit_len = EXT_UNINIT_MAX_LEN;
 
-	return 0;
+	вернуть 0;
 }
 
 size_t ext2fs_max_extent_depth(ext2_extent_handle_t handle)
@@ -1751,17 +1751,17 @@ size_t ext2fs_max_extent_depth(ext2_extent_handle_t handle)
 	size_t extents_per_block = (handle->fs->blocksize -
 				    sizeof(struct ext3_extent_header)) /
 				   sizeof(struct ext3_extent);
-	static unsigned int last_blocksize = 0;
+	static unsigned целое last_blocksize = 0;
 	static size_t last_result = 0;
 
-	if (last_blocksize && last_blocksize == handle->fs->blocksize)
-		return last_result;
+	если (last_blocksize && last_blocksize == handle->fs->blocksize)
+		вернуть last_result;
 
 	last_result = 1 + ((ext2fs_log2_u64(EXT_MAX_EXTENT_LBLK) -
 			    ext2fs_log2_u64(iblock_extents)) /
 			   ext2fs_log2_u32(extents_per_block));
 	last_blocksize = handle->fs->blocksize;
-	return last_result;
+	вернуть last_result;
 }
 
 errcode_t ext2fs_fix_extents_checksums(ext2_filsys fs, ext2_ino_t ino,
@@ -1770,54 +1770,54 @@ errcode_t ext2fs_fix_extents_checksums(ext2_filsys fs, ext2_ino_t ino,
 	ext2_extent_handle_t	handle;
 	struct ext2fs_extent	extent;
 	errcode_t		errcode;
-	int    			save_flags = fs->flags;
+	целое    			save_flags = fs->flags;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super) ||
+	если (!ext2fs_has_feature_metadata_csum(fs->super) ||
 	    (inode && !(inode->i_flags & EXT4_EXTENTS_FL)))
-		return 0;
+		вернуть 0;
 
 	errcode = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (errcode) {
-		if (errcode == EXT2_ET_INODE_NOT_EXTENT)
+	если (errcode) {
+		если (errcode == EXT2_ET_INODE_NOT_EXTENT)
 			errcode = 0;
-		return errcode;
+		вернуть errcode;
 	}
 
 	fs->flags &= ~EXT2_FLAG_IGNORE_CSUM_ERRORS;
 	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_ROOT, &extent);
-	if (errcode)
+	если (errcode)
 		goto out;
 
 	do {
 		/* Skip to the end of a block of leaf nodes */
-		if (extent.e_flags & EXT2_EXTENT_FLAGS_LEAF) {
+		если (extent.e_flags & EXT2_EXTENT_FLAGS_LEAF) {
 			errcode = ext2fs_extent_get(handle,
 						    EXT2_EXTENT_LAST_SIB,
 						    &extent);
-			if (errcode)
+			если (errcode)
 				break;
 		}
 
 		errcode = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT, &extent);
-		if (errcode == EXT2_ET_EXTENT_CSUM_INVALID)
+		если (errcode == EXT2_ET_EXTENT_CSUM_INVALID)
 			errcode = update_path(handle);
-	} while (errcode == 0);
+	} пока (errcode == 0);
 
 out:
 	/* Ok if we run off the end */
-	if (errcode == EXT2_ET_EXTENT_NO_NEXT)
+	если (errcode == EXT2_ET_EXTENT_NO_NEXT)
 		errcode = 0;
 	ext2fs_extent_free(handle);
 	fs->flags = save_flags;
-	return errcode;
+	вернуть errcode;
 }
 
-errcode_t ext2fs_decode_extent(struct ext2fs_extent *to, void *addr, int len)
+errcode_t ext2fs_decode_extent(struct ext2fs_extent *to, void *addr, целое len)
 {
 	struct ext3_extent *from = (struct ext3_extent *)addr;
 
-	if (len != sizeof(struct ext3_extent))
-		return EXT2_ET_INVALID_ARGUMENT;
+	если (len != sizeof(struct ext3_extent))
+		вернуть EXT2_ET_INVALID_ARGUMENT;
 
 	to->e_pblk = ext2fs_le32_to_cpu(from->ee_start) +
 		((__u64) ext2fs_le16_to_cpu(from->ee_start_hi)
@@ -1825,12 +1825,12 @@ errcode_t ext2fs_decode_extent(struct ext2fs_extent *to, void *addr, int len)
 	to->e_lblk = ext2fs_le32_to_cpu(from->ee_block);
 	to->e_len = ext2fs_le16_to_cpu(from->ee_len);
 	to->e_flags = EXT2_EXTENT_FLAGS_LEAF;
-	if (to->e_len > EXT_INIT_MAX_LEN) {
+	если (to->e_len > EXT_INIT_MAX_LEN) {
 		to->e_len -= EXT_INIT_MAX_LEN;
 		to->e_flags |= EXT2_EXTENT_FLAGS_UNINIT;
 	}
 
-	return 0;
+	вернуть 0;
 }
 
 errcode_t ext2fs_count_blocks(ext2_filsys fs, ext2_ino_t ino,
@@ -1839,29 +1839,29 @@ errcode_t ext2fs_count_blocks(ext2_filsys fs, ext2_ino_t ino,
 	ext2_extent_handle_t	handle = NULL;
 	struct ext2fs_extent	extent;
 	errcode_t		errcode;
-	int			i;
+	целое			i;
 	blk64_t			blkcount = 0;
 	blk64_t			*intermediate_nodes;
 
 	errcode = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (errcode)
+	если (errcode)
 		goto out;
 
 	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_ROOT, &extent);
-	if (errcode)
+	если (errcode)
 		goto out;
 
 	errcode = ext2fs_get_array(handle->max_depth, sizeof(blk64_t),
 				   &intermediate_nodes);
-	if (errcode)
+	если (errcode)
 		goto out;
 
 	blkcount = handle->level;
-	while (!errcode) {
-		if (extent.e_flags & EXT2_EXTENT_FLAGS_LEAF) {
+	пока (!errcode) {
+		если (extent.e_flags & EXT2_EXTENT_FLAGS_LEAF) {
 			blkcount += extent.e_len;
-			for (i = 0; i < handle->level; i++) {
-				if (intermediate_nodes[i] !=
+			для (i = 0; i < handle->level; i++) {
+				если (intermediate_nodes[i] !=
 					handle->path[i].end_blk) {
 					blkcount++;
 					intermediate_nodes[i] =
@@ -1876,7 +1876,7 @@ out:
 	*ret_count = blkcount;
 	ext2fs_extent_free(handle);
 
-	return 0;
+	вернуть 0;
 }
 
 #ifdef DEBUG
