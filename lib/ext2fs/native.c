@@ -15,12 +15,12 @@
 #include "ext2_fs.h"
 #include "ext2fs.h"
 
-int ext2fs_native_flag(void)
+ကိန်းပြည့် ext2fs_native_flag(void)
 {
 #ifdef WORDS_BIGENDIAN
-	return EXT2_FLAG_SWAP_BYTES;
-#else
-	return 0;
+	ပြန်ပေး EXT2_FLAG_SWAP_BYTES;
+#မဟုတ်ပါက
+	ပြန်ပေး 0;
 #endif
 }
 

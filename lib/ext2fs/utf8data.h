@@ -3,9 +3,9 @@
 #error Only nls_utf8-norm.c should include this file.
 #endif
 
-static const unsigned int utf8vers = 0xc0100;
+static const unsigned ကိန်းပြည့် utf8vers = 0xc0100;
 
-static const unsigned int utf8agetab[] = {
+static const unsigned ကိန်းပြည့် utf8agetab[] = {
 	0,
 	0x10100,
 	0x20000,
@@ -31,7 +31,7 @@ static const unsigned int utf8agetab[] = {
 	0xc0100
 };
 
-static const struct utf8data utf8nfdicfdata[] = {
+static const sa_nracanaa utf8data utf8nfdicfdata[] = {
 	{ 0, 0 },
 	{ 0x10100, 0 },
 	{ 0x20000, 0 },
@@ -57,7 +57,7 @@ static const struct utf8data utf8nfdicfdata[] = {
 	{ 0xc0100, 3200 }
 };
 
-static const struct utf8data utf8nfdidata[] = {
+static const sa_nracanaa utf8data utf8nfdidata[] = {
 	{ 0, 896 },
 	{ 0x10100, 896 },
 	{ 0x20000, 896 },
@@ -83,7 +83,7 @@ static const struct utf8data utf8nfdidata[] = {
 	{ 0xc0100, 20736 }
 };
 
-static const unsigned char utf8data[64256] = {
+static const unsigned var_na utf8data[64256] = {
 	/* nfdicf_30100 */
 	0xd7,0x07,0x66,0x84,0x0c,0x01,0x00,0xc6,0xd5,0x16,0xe4,0x99,0x1a,0xe3,0x63,0x15,
 	0xe2,0x4c,0x0e,0xc1,0xe0,0x4e,0x0d,0xcf,0x86,0x65,0x2d,0x0d,0x01,0x00,0xd4,0xb8,

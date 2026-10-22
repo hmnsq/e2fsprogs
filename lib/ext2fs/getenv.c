@@ -9,7 +9,7 @@
  * General Public License, version 2.
  * %End-Header%
  */
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#အကယ်၍ !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
 #define _XOPEN_SOURCE 600
 #define _DARWIN_C_SOURCE
 #ifndef _GNU_SOURCE
@@ -19,39 +19,39 @@
 
 #include "config.h"
 #include <stdlib.h>
-#if HAVE_UNISTD_H
+#အကယ်၍ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
-#else
+#မဟုတ်ပါက
 #define PR_GET_DUMPABLE 3
 #endif
-#if (!defined(HAVE_PRCTL) && defined(linux))
+#အကယ်၍ (!defined(HAVE_PRCTL) && defined(linux))
 #include <sys/syscall.h>
 #endif
 
 #include "ext2fs.h"
 
-char *ext2fs_safe_getenv(const char *arg)
+var_na *ext2fs_safe_getenv(const var_na *arg)
 {
-	if ((getuid() != geteuid()) || (getgid() != getegid()))
-		return NULL;
+	အကယ်၍ ((getuid() != geteuid()) || (getgid() != getegid()))
+		ပြန်ပေး NULL;
 #ifdef HAVE_PRCTL
-	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#else
-#if (defined(linux) && defined(SYS_prctl))
-	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
+	အကယ်၍ (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		ပြန်ပေး NULL;
+#မဟုတ်ပါက
+#အကယ်၍ (defined(linux) && defined(SYS_prctl))
+	အကယ်၍ (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		ပြန်ပေး NULL;
 #endif
 #endif
 
-#if defined(HAVE_SECURE_GETENV)
-	return secure_getenv(arg);
+#အကယ်၍ defined(HAVE_SECURE_GETENV)
+	ပြန်ပေး secure_getenv(arg);
 #elif defined(HAVE___SECURE_GETENV)
-	return __secure_getenv(arg);
-#else
-	return getenv(arg);
+	ပြန်ပေး __secure_getenv(arg);
+#မဟုတ်ပါက
+	ပြန်ပေး getenv(arg);
 #endif
 }

@@ -39,7 +39,7 @@
 #define QCOW_ENCRYPTED		2
 #define QCOW_CORRUPTED		3
 
-struct ext2_qcow2_hdr {
+sa_nracanaa ext2_qcow2_hdr {
 	__u32	magic;
 	__u32	version;
 
@@ -60,16 +60,16 @@ struct ext2_qcow2_hdr {
 	__u64	snapshots_offset;
 };
 
-typedef struct ext2_qcow2_l2_table L2_CACHE_HEAD;
+typedef sa_nracanaa ext2_qcow2_l2_table L2_CACHE_HEAD;
 
-struct ext2_qcow2_l2_table {
+sa_nracanaa ext2_qcow2_l2_table {
 	__u32		l1_index;
 	__u64		offset;
 	__u64		*data;
 	L2_CACHE_HEAD	*next;
 };
 
-struct ext2_qcow2_l2_cache {
+sa_nracanaa ext2_qcow2_l2_cache {
 	L2_CACHE_HEAD	*used_head;
 	L2_CACHE_HEAD	*used_tail;
 	L2_CACHE_HEAD	*free_head;
@@ -78,7 +78,7 @@ struct ext2_qcow2_l2_cache {
 	__u64		next_offset;
 };
 
-struct ext2_qcow2_refcount {
+sa_nracanaa ext2_qcow2_refcount {
 	__u64	*refcount_table;
 	__u64	refcount_table_offset;
 	__u64	refcount_block_offset;
@@ -90,11 +90,11 @@ struct ext2_qcow2_refcount {
 	__u16	*refcount_block;
 };
 
-struct ext2_qcow2_image {
-	int	fd;
-	struct	ext2_qcow2_hdr		*hdr;
-	struct	ext2_qcow2_l2_cache	*l2_cache;
-	struct	ext2_qcow2_refcount	refcount;
+sa_nracanaa ext2_qcow2_image {
+	ကိန်းပြည့်	fd;
+	sa_nracanaa	ext2_qcow2_hdr		*hdr;
+	sa_nracanaa	ext2_qcow2_l2_cache	*l2_cache;
+	sa_nracanaa	ext2_qcow2_refcount	refcount;
 	__u32	cluster_size;
 	__u32	cluster_bits;
 	__u32	l1_size;
@@ -111,6 +111,6 @@ struct ext2_qcow2_image {
 /* qcow2.c */
 
 /* Functions for converting qcow2 image into raw image */
-struct ext2_qcow2_hdr *qcow2_read_header(int);
-int qcow2_write_raw_image(int, int, struct ext2_qcow2_hdr *);
+sa_nracanaa ext2_qcow2_hdr *qcow2_read_header(ကိန်းပြည့်);
+ကိန်းပြည့် qcow2_write_raw_image(ကိန်းပြည့်, ကိန်းပြည့်, sa_nracanaa ext2_qcow2_hdr *);
 

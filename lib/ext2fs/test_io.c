@@ -12,15 +12,15 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#အကယ်၍ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#အကယ်၍ HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#အကယ်၍ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -31,22 +31,22 @@
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#define EXT2_CHECK_MAGIC(sa_nracanaa, code) \
+	  အကယ်၍ ((sa_nracanaa)->magic != (code)) ပြန်ပေး (code)
 
-struct test_private_data {
-	int	magic;
+sa_nracanaa test_private_data {
+	ကိန်းပြည့်	magic;
 	io_channel real;
-	int flags;
+	ကိန်းပြည့် flags;
 	FILE *outfile;
 	unsigned long block;
-	int read_abort_count, write_abort_count;
-	void (*read_blk)(unsigned long block, int count, errcode_t err);
-	void (*write_blk)(unsigned long block, int count, errcode_t err);
-	void (*set_blksize)(int blksize, errcode_t err);
-	void (*write_byte)(unsigned long block, int count, errcode_t err);
-	void (*read_blk64)(unsigned long long block, int count, errcode_t err);
-	void (*write_blk64)(unsigned long long block, int count, errcode_t err);
+	ကိန်းပြည့် read_abort_count, write_abort_count;
+	void (*read_blk)(unsigned long block, ကိန်းပြည့် count, errcode_t err);
+	void (*write_blk)(unsigned long block, ကိန်းပြည့် count, errcode_t err);
+	void (*set_blksize)(ကိန်းပြည့် blksize, errcode_t err);
+	void (*write_byte)(unsigned long block, ကိန်းပြည့် count, errcode_t err);
+	void (*read_blk64)(unsigned long long block, ကိန်းပြည့် count, errcode_t err);
+	void (*write_blk64)(unsigned long long block, ကိန်းပြည့် count, errcode_t err);
 };
 
 /*
@@ -55,17 +55,17 @@ struct test_private_data {
  */
 io_manager test_io_backing_manager = 0;
 void (*test_io_cb_read_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
+	(unsigned long block, ကိန်းပြည့် count, errcode_t err) = 0;
 void (*test_io_cb_write_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
+	(unsigned long block, ကိန်းပြည့် count, errcode_t err) = 0;
 void (*test_io_cb_read_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
+	(unsigned long long block, ကိန်းပြည့် count, errcode_t err) = 0;
 void (*test_io_cb_write_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
+	(unsigned long long block, ကိန်းပြည့် count, errcode_t err) = 0;
 void (*test_io_cb_set_blksize)
-	(int blksize, errcode_t err) = 0;
+	(ကိန်းပြည့် blksize, errcode_t err) = 0;
 void (*test_io_cb_write_byte)
-	(unsigned long block, int count, errcode_t err) = 0;
+	(unsigned long block, ကိန်းပြည့် count, errcode_t err) = 0;
 
 /*
  * Test flags
@@ -81,20 +81,20 @@ void (*test_io_cb_write_byte)
 #define TEST_FLAG_ZEROOUT		0x100
 
 static void test_dump_block(io_channel channel,
-			    struct test_private_data *data,
+			    sa_nracanaa test_private_data *data,
 			    unsigned long block, const void *buf)
 {
-	const unsigned char *cp;
+	const unsigned var_na *cp;
 	FILE *f = data->outfile;
-	int	i;
+	ကိန်းပြည့်	i;
 	unsigned long	cksum = 0;
 
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
+	အတွက် (i=0, cp = buf; i < channel->block_size; i++, cp++) {
 		cksum += *cp;
 	}
 	fprintf(f, "Contents of block %lu, checksum %08lu: \n", block, cksum);
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
-		if ((i % 16) == 0)
+	အတွက် (i=0, cp = buf; i < channel->block_size; i++, cp++) {
+		အကယ်၍ ((i % 16) == 0)
 			fprintf(f, "%04x: ", i);
 		fprintf(f, "%02x%c", *cp, ((i % 16) == 15) ? '\n' : ' ');
 	}
@@ -105,29 +105,29 @@ static void test_dump_block(io_channel channel,
  */
 static errcode_t test_flush(io_channel channel)
 {
-	struct test_private_data	*data;
+	sa_nracanaa test_private_data	*data;
 	errcode_t			retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *)channel->private_data;
+	data = (sa_nracanaa test_private_data *)channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	အကယ်၍ (data->real)
 		retval = io_channel_flush(data->real);
 
-	if (data->flags & TEST_FLAG_FLUSH)
+	အကယ်၍ (data->flags & TEST_FLAG_FLUSH)
 		fprintf(data->outfile, "Test_io: flush() returned %s\n",
 			retval ? error_message(retval) : "OK");
 
-	return retval;
+	ပြန်ပေး retval;
 }
 
 static void test_abort(io_channel channel, unsigned long block)
 {
-	struct test_private_data *data;
+	sa_nracanaa test_private_data *data;
 	FILE *f;
 
-	data = (struct test_private_data *) channel->private_data;
+	data = (sa_nracanaa test_private_data *) channel->private_data;
 	f = data->outfile;
 	test_flush(channel);
 
@@ -136,26 +136,26 @@ static void test_abort(io_channel channel, unsigned long block)
 	abort();
 }
 
-static errcode_t test_open(const char *name, int flags, io_channel *channel)
+static errcode_t test_open(const var_na *name, ကိန်းပြည့် flags, io_channel *channel)
 {
 	io_channel	io = NULL;
-	struct test_private_data *data = NULL;
+	sa_nracanaa test_private_data *data = NULL;
 	errcode_t	retval;
-	char		*value;
+	var_na		*value;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
+	အကယ်၍ (name == 0)
+		ပြန်ပေး EXT2_ET_BAD_DEVICE_NAME;
+	retval = ext2fs_get_mem(parimaa_na(sa_nracanaa struct_io_channel), &io);
+	အကယ်၍ (retval)
 		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	memset(io, 0, parimaa_na(sa_nracanaa struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
-	retval = ext2fs_get_mem(sizeof(struct test_private_data), &data);
-	if (retval)
+	retval = ext2fs_get_mem(parimaa_na(sa_nracanaa test_private_data), &data);
+	အကယ်၍ (retval)
 		goto cleanup;
 	io->manager = test_io_manager;
 	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
+	အကယ်၍ (retval)
 		goto cleanup;
 
 	strcpy(io->name, name);
@@ -166,14 +166,14 @@ static errcode_t test_open(const char *name, int flags, io_channel *channel)
 	io->refcount = 1;
 	io->flags = 0;
 
-	memset(data, 0, sizeof(struct test_private_data));
+	memset(data, 0, parimaa_na(sa_nracanaa test_private_data));
 	data->magic = EXT2_ET_MAGIC_TEST_IO_CHANNEL;
-	if (test_io_backing_manager) {
+	အကယ်၍ (test_io_backing_manager) {
 		retval = test_io_backing_manager->open(name, flags,
 						       &data->real);
-		if (retval)
+		အကယ်၍ (retval)
 			goto cleanup;
-	} else {
+	} မဟုတ်ပါက {
 		data->real = 0;
 	}
 	data->read_blk =	test_io_cb_read_blk;
@@ -184,325 +184,325 @@ static errcode_t test_open(const char *name, int flags, io_channel *channel)
 	data->write_blk64 =	test_io_cb_write_blk64;
 
 	data->outfile = NULL;
-	if ((value = ext2fs_safe_getenv("TEST_IO_LOGFILE")) != NULL)
+	အကယ်၍ ((value = ext2fs_safe_getenv("TEST_IO_LOGFILE")) != NULL)
 		data->outfile = fopen(value, "w");
-	if (!data->outfile)
+	အကယ်၍ (!data->outfile)
 		data->outfile = stderr;
 
 	data->flags = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_FLAGS")) != NULL)
+	အကယ်၍ ((value = ext2fs_safe_getenv("TEST_IO_FLAGS")) != NULL)
 		data->flags = strtoul(value, NULL, 0);
 
 	data->block = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_BLOCK")) != NULL)
+	အကယ်၍ ((value = ext2fs_safe_getenv("TEST_IO_BLOCK")) != NULL)
 		data->block = strtoul(value, NULL, 0);
 
 	data->read_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_READ_ABORT")) != NULL)
+	အကယ်၍ ((value = ext2fs_safe_getenv("TEST_IO_READ_ABORT")) != NULL)
 		data->read_abort_count = strtoul(value, NULL, 0);
 
 	data->write_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_WRITE_ABORT")) != NULL)
+	အကယ်၍ ((value = ext2fs_safe_getenv("TEST_IO_WRITE_ABORT")) != NULL)
 		data->write_abort_count = strtoul(value, NULL, 0);
 
-	if (data->real) {
+	အကယ်၍ (data->real) {
 		io->align = data->real->align;
-		if (data->real->flags & CHANNEL_FLAGS_THREADS)
+		အကယ်၍ (data->real->flags & CHANNEL_FLAGS_THREADS)
 			io->flags |= CHANNEL_FLAGS_THREADS;
 	}
 
 	*channel = io;
-	return 0;
+	ပြန်ပေး 0;
 
 cleanup:
-	if (io && io->name)
+	အကယ်၍ (io && io->name)
 		ext2fs_free_mem(&io->name);
-	if (io)
+	အကယ်၍ (io)
 		ext2fs_free_mem(&io);
-	if (data)
+	အကယ်၍ (data)
 		ext2fs_free_mem(&data);
-	return retval;
+	ပြန်ပေး retval;
 }
 
 static errcode_t test_close(io_channel channel)
 {
-	struct test_private_data *data;
+	sa_nracanaa test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (sa_nracanaa test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	အကယ်၍ (--channel->refcount > 0)
+		ပြန်ပေး 0;
 
-	if (data->real)
+	အကယ်၍ (data->real)
 		retval = io_channel_close(data->real);
 
-	if (data->outfile && data->outfile != stderr)
+	အကယ်၍ (data->outfile && data->outfile != stderr)
 		fclose(data->outfile);
 
 	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	အကယ်၍ (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	ပြန်ပေး retval;
 }
 
-static errcode_t test_set_blksize(io_channel channel, int blksize)
+static errcode_t test_set_blksize(io_channel channel, ကိန်းပြည့် blksize)
 {
-	struct test_private_data *data;
+	sa_nracanaa test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (sa_nracanaa test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real) {
+	အကယ်၍ (data->real) {
 		retval = io_channel_set_blksize(data->real, blksize);
 		channel->align = data->real->align;
 	}
-	if (data->set_blksize)
+	အကယ်၍ (data->set_blksize)
 		data->set_blksize(blksize, retval);
-	if (data->flags & TEST_FLAG_SET_BLKSIZE)
+	အကယ်၍ (data->flags & TEST_FLAG_SET_BLKSIZE)
 		fprintf(data->outfile,
 			"Test_io: set_blksize(%d) returned %s\n",
 			blksize, retval ? error_message(retval) : "OK");
 	channel->block_size = blksize;
-	return retval;
+	ပြန်ပေး retval;
 }
 
 
 static errcode_t test_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+			       ကိန်းပြည့် count, void *buf)
 {
-	struct test_private_data *data;
+	sa_nracanaa test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (sa_nracanaa test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	အကယ်၍ (data->real)
 		retval = io_channel_read_blk(data->real, block, count, buf);
-	if (data->read_blk)
+	အကယ်၍ (data->read_blk)
 		data->read_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
+	အကယ်၍ (data->flags & TEST_FLAG_READ)
 		fprintf(data->outfile,
 			"Test_io: read_blk(%lu, %d) returned %s\n",
 			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+	အကယ်၍ (data->block && data->block == block) {
+		အကယ်၍ (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
+		အကယ်၍ (--data->read_abort_count == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	ပြန်ပေး retval;
 }
 
 static errcode_t test_write_blk(io_channel channel, unsigned long block,
-			       int count, const void *buf)
+			       ကိန်းပြည့် count, const void *buf)
 {
-	struct test_private_data *data;
+	sa_nracanaa test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (sa_nracanaa test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	အကယ်၍ (data->real)
 		retval = io_channel_write_blk(data->real, block, count, buf);
-	if (data->write_blk)
+	အကယ်၍ (data->write_blk)
 		data->write_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
+	အကယ်၍ (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_blk(%lu, %d) returned %s\n",
 			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+	အကယ်၍ (data->block && data->block == block) {
+		အကယ်၍ (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
+		အကယ်၍ (--data->write_abort_count == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	ပြန်ပေး retval;
 }
 
 static errcode_t test_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+			       ကိန်းပြည့် count, void *buf)
 {
-	struct test_private_data *data;
+	sa_nracanaa test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (sa_nracanaa test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	အကယ်၍ (data->real)
 		retval = io_channel_read_blk64(data->real, block, count, buf);
-	if (data->read_blk64)
+	အကယ်၍ (data->read_blk64)
 		data->read_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
+	အကယ်၍ (data->flags & TEST_FLAG_READ)
 		fprintf(data->outfile,
 			"Test_io: read_blk64(%llu, %d) returned %s\n",
 			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+	အကယ်၍ (data->block && data->block == block) {
+		အကယ်၍ (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
+		အကယ်၍ (--data->read_abort_count == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	ပြန်ပေး retval;
 }
 
 static errcode_t test_write_blk64(io_channel channel, unsigned long long block,
-			       int count, const void *buf)
+			       ကိန်းပြည့် count, const void *buf)
 {
-	struct test_private_data *data;
+	sa_nracanaa test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (sa_nracanaa test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	အကယ်၍ (data->real)
 		retval = io_channel_write_blk64(data->real, block, count, buf);
-	if (data->write_blk64)
+	အကယ်၍ (data->write_blk64)
 		data->write_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
+	အကယ်၍ (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_blk64(%llu, %d) returned %s\n",
 			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+	အကယ်၍ (data->block && data->block == block) {
+		အကယ်၍ (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
+		အကယ်၍ (--data->write_abort_count == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	ပြန်ပေး retval;
 }
 
 static errcode_t test_write_byte(io_channel channel, unsigned long offset,
-			       int count, const void *buf)
+			       ကိန်းပြည့် count, const void *buf)
 {
-	struct test_private_data *data;
+	sa_nracanaa test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (sa_nracanaa test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->write_byte)
+	အကယ်၍ (data->real && data->real->manager->write_byte)
 		retval = io_channel_write_byte(data->real, offset, count, buf);
-	if (data->write_byte)
+	အကယ်၍ (data->write_byte)
 		data->write_byte(offset, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
+	အကယ်၍ (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_byte(%lu, %d) returned %s\n",
 			offset, count, retval ? error_message(retval) : "OK");
-	return retval;
+	ပြန်ပေး retval;
 }
 
-static errcode_t test_set_option(io_channel channel, const char *option,
-				 const char *arg)
+static errcode_t test_set_option(io_channel channel, const var_na *option,
+				 const var_na *arg)
 {
-	struct test_private_data *data;
+	sa_nracanaa test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (sa_nracanaa test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 
-	if (data->flags & TEST_FLAG_SET_OPTION)
+	အကယ်၍ (data->flags & TEST_FLAG_SET_OPTION)
 		fprintf(data->outfile, "Test_io: set_option(%s, %s) ",
 			option, arg);
-	if (data->real && data->real->manager->set_option) {
+	အကယ်၍ (data->real && data->real->manager->set_option) {
 		retval = (data->real->manager->set_option)(data->real,
 							   option, arg);
-		if (data->flags & TEST_FLAG_SET_OPTION)
+		အကယ်၍ (data->flags & TEST_FLAG_SET_OPTION)
 			fprintf(data->outfile, "returned %s\n",
 				retval ? error_message(retval) : "OK");
-	} else {
-		if (data->flags & TEST_FLAG_SET_OPTION)
+	} မဟုတ်ပါက {
+		အကယ်၍ (data->flags & TEST_FLAG_SET_OPTION)
 			fprintf(data->outfile, "not implemented\n");
 	}
-	return retval;
+	ပြန်ပေး retval;
 }
 
 static errcode_t test_get_stats(io_channel channel, io_stats *stats)
 {
-	struct test_private_data *data;
+	sa_nracanaa test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (sa_nracanaa test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->get_stats) {
+	အကယ်၍ (data->real && data->real->manager->get_stats) {
 		retval = (data->real->manager->get_stats)(data->real, stats);
 	}
-	return retval;
+	ပြန်ပေး retval;
 }
 
 static errcode_t test_discard(io_channel channel, unsigned long long block,
 			      unsigned long long count)
 {
-	struct test_private_data *data;
+	sa_nracanaa test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (sa_nracanaa test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	အကယ်၍ (data->real)
 		retval = io_channel_discard(data->real, block, count);
-	if (data->flags & TEST_FLAG_DISCARD)
+	အကယ်၍ (data->flags & TEST_FLAG_DISCARD)
 		fprintf(data->outfile,
 			"Test_io: discard(%llu, %llu) returned %s\n",
 			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+	ပြန်ပေး retval;
 }
 
 static errcode_t test_cache_readahead(io_channel channel,
 				      unsigned long long block,
 				      unsigned long long count)
 {
-	struct test_private_data *data;
+	sa_nracanaa test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (sa_nracanaa test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	အကယ်၍ (data->real)
 		retval = io_channel_cache_readahead(data->real, block, count);
-	if (data->flags & TEST_FLAG_READAHEAD)
+	အကယ်၍ (data->flags & TEST_FLAG_READAHEAD)
 		fprintf(data->outfile,
 			"Test_io: readahead(%llu, %llu) returned %s\n",
 			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+	ပြန်ပေး retval;
 }
 
 static errcode_t test_zeroout(io_channel channel, unsigned long long block,
 			      unsigned long long count)
 {
-	struct test_private_data *data;
+	sa_nracanaa test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (sa_nracanaa test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	အကယ်၍ (data->real)
 		retval = io_channel_zeroout(data->real, block, count);
-	if (data->flags & TEST_FLAG_ZEROOUT)
+	အကယ်၍ (data->flags & TEST_FLAG_ZEROOUT)
 		fprintf(data->outfile,
 			"Test_io: zeroout(%llu, %llu) returned %s\n",
 			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+	ပြန်ပေး retval;
 }
 
-static struct struct_io_manager struct_test_manager = {
+static sa_nracanaa struct_io_manager struct_test_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Test I/O Manager",
 	.open		= test_open,
