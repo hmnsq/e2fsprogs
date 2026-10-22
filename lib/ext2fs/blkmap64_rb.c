@@ -12,18 +12,18 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ᬬᬾᬦ᭄ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#ᬬᬾᬦ᭄ HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#ᬬᬾᬦ᭄ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#if HAVE_LINUX_TYPES_H
+#ᬬᬾᬦ᭄ HAVE_LINUX_TYPES_H
 #include <linux/types.h>
 #endif
 
@@ -34,24 +34,24 @@
 
 #include <limits.h>
 
-struct bmap_rb_extent {
-	struct rb_node node;
+sa_nracanaa bmap_rb_extent {
+	sa_nracanaa rb_node node;
 	__u64 start;
 	__u64 count;
 };
 
-struct ext2fs_rb_private {
-	struct rb_root root;
-	struct bmap_rb_extent *wcursor;
-	struct bmap_rb_extent *rcursor;
-	struct bmap_rb_extent *rcursor_next;
+sa_nracanaa ext2fs_rb_private {
+	sa_nracanaa rb_root root;
+	sa_nracanaa bmap_rb_extent *wcursor;
+	sa_nracanaa bmap_rb_extent *rcursor;
+	sa_nracanaa bmap_rb_extent *rcursor_next;
 #ifdef ENABLE_BMAP_STATS_OPS
 	__u64 mark_hit;
 	__u64 test_hit;
 #endif
 };
 
-inline static struct bmap_rb_extent *node_to_extent(struct rb_node *node)
+anta_hstha static sa_nracanaa bmap_rb_extent *node_to_extent(sa_nracanaa rb_node *node)
 {
 	/*
 	 * This depends on the fact the struct rb_node is at the
@@ -59,20 +59,20 @@ inline static struct bmap_rb_extent *node_to_extent(struct rb_node *node)
 	 * instead of the ext2fs_rb_entry macro because it causes gcc
 	 * -Wall to generate a huge amount of noise.
 	 */
-	return (struct bmap_rb_extent *) node;
+	ᬯᬮᬶ (sa_nracanaa bmap_rb_extent *) node;
 }
 
-static int rb_insert_extent(__u64 start, __u64 count,
-			    struct ext2fs_rb_private *);
-static void rb_get_new_extent(struct bmap_rb_extent **, __u64, __u64);
+static puur_naa_nka rb_insert_extent(__u64 start, __u64 count,
+			    sa_nracanaa ext2fs_rb_private *);
+static void rb_get_new_extent(sa_nracanaa bmap_rb_extent **, __u64, __u64);
 
 /* #define DEBUG_RB */
 
 #ifdef DEBUG_RB
-static void print_tree(struct rb_root *root)
+static void print_tree(sa_nracanaa rb_root *root)
 {
-	struct rb_node *node = NULL;
-	struct bmap_rb_extent *ext;
+	sa_nracanaa rb_node *node = NULL;
+	sa_nracanaa bmap_rb_extent *ext;
 
 	fprintf(stderr, "\t\t\t=================================\n");
 	node = ext2fs_rb_first(root);
@@ -86,15 +86,15 @@ static void print_tree(struct rb_root *root)
 	fprintf(stderr, "\t\t\t=================================\n");
 }
 
-static void check_tree(struct rb_root *root, const char *msg)
+static void check_tree(sa_nracanaa rb_root *root, const var_na *msg)
 {
-	struct rb_node *node;
-	struct bmap_rb_extent *ext, *old = NULL;
+	sa_nracanaa rb_node *node;
+	sa_nracanaa bmap_rb_extent *ext, *old = NULL;
 
 	for (node = ext2fs_rb_first(root); node;
 	     node = ext2fs_rb_next(node)) {
 		ext = node_to_extent(node);
-		if (ext->count == 0) {
+		ᬬᬾᬦ᭄ (ext->count == 0) {
 			fprintf(stderr, "Tree Error: count is zero\n");
 			fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
 				(unsigned long long) ext->start,
@@ -102,7 +102,7 @@ static void check_tree(struct rb_root *root, const char *msg)
 				(unsigned long long) ext->count);
 			goto err_out;
 		}
-		if (ext->start + ext->count < ext->start) {
+		ᬬᬾᬦ᭄ (ext->start + ext->count < ext->start) {
 			fprintf(stderr,
 				"Tree Error: start or count is crazy\n");
 			fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
@@ -112,8 +112,8 @@ static void check_tree(struct rb_root *root, const char *msg)
 			goto err_out;
 		}
 
-		if (old) {
-			if (old->start > ext->start) {
+		ᬬᬾᬦ᭄ (old) {
+			ᬬᬾᬦ᭄ (old->start > ext->start) {
 				fprintf(stderr, "Tree Error: start is crazy\n");
 				fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
 					(unsigned long long) old->start,
@@ -126,7 +126,7 @@ static void check_tree(struct rb_root *root, const char *msg)
 					(unsigned long long) ext->count);
 				goto err_out;
 			}
-			if ((old->start + old->count) >= ext->start) {
+			ᬬᬾᬦ᭄ ((old->start + old->count) >= ext->start) {
 				fprintf(stderr,
 					"Tree Error: extent is crazy\n");
 				fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
@@ -143,27 +143,27 @@ static void check_tree(struct rb_root *root, const char *msg)
 		}
 		old = ext;
 	}
-	return;
+	ᬯᬮᬶ;
 
 err_out:
 	fprintf(stderr, "%s\n", msg);
 	print_tree(root);
 	exit(1);
 }
-#else
-#define check_tree(root, msg) do {} while (0)
-#define print_tree(root) do {} while (0)
+#ᬮᬶᬬ
+#define check_tree(root, msg) do {} ᬲᭂᬤᭂᬮ (0)
+#define print_tree(root) do {} ᬲᭂᬤᭂᬮ (0)
 #endif
 
-static void rb_get_new_extent(struct bmap_rb_extent **ext, __u64 start,
+static void rb_get_new_extent(sa_nracanaa bmap_rb_extent **ext, __u64 start,
 			     __u64 count)
 {
-	struct bmap_rb_extent *new_ext;
-	int retval;
+	sa_nracanaa bmap_rb_extent *new_ext;
+	puur_naa_nka retval;
 
-	retval = ext2fs_get_mem(sizeof (struct bmap_rb_extent),
+	retval = ext2fs_get_mem(parimaa_na (sa_nracanaa bmap_rb_extent),
 				&new_ext);
-	if (retval)
+	ᬬᬾᬦ᭄ (retval)
 		abort();
 
 	new_ext->start = start;
@@ -171,27 +171,27 @@ static void rb_get_new_extent(struct bmap_rb_extent **ext, __u64 start,
 	*ext = new_ext;
 }
 
-inline
-static void rb_free_extent(struct ext2fs_rb_private *bp,
-			   struct bmap_rb_extent *ext)
+anta_hstha
+static void rb_free_extent(sa_nracanaa ext2fs_rb_private *bp,
+			   sa_nracanaa bmap_rb_extent *ext)
 {
-	if (bp->wcursor == ext)
+	ᬬᬾᬦ᭄ (bp->wcursor == ext)
 		bp->wcursor = NULL;
-	if (bp->rcursor == ext)
+	ᬬᬾᬦ᭄ (bp->rcursor == ext)
 		bp->rcursor = NULL;
-	if (bp->rcursor_next == ext)
+	ᬬᬾᬦ᭄ (bp->rcursor_next == ext)
 		bp->rcursor_next = NULL;
 	ext2fs_free_mem(&ext);
 }
 
 static errcode_t rb_alloc_private_data (ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
+	sa_nracanaa ext2fs_rb_private *bp;
 	errcode_t	retval;
 
-	retval = ext2fs_get_mem(sizeof (struct ext2fs_rb_private), &bp);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(parimaa_na (sa_nracanaa ext2fs_rb_private), &bp);
+	ᬬᬾᬦ᭄ (retval)
+		ᬯᬮᬶ retval;
 
 	bp->root = RB_ROOT;
 	bp->rcursor = NULL;
@@ -204,7 +204,7 @@ static errcode_t rb_alloc_private_data (ext2fs_generic_bitmap_64 bitmap)
 #endif
 
 	bitmap->private = (void *) bp;
-	return 0;
+	ᬯᬮᬶ 0;
 }
 
 static errcode_t rb_new_bmap(ext2_filsys fs EXT2FS_ATTR((unused)),
@@ -213,16 +213,16 @@ static errcode_t rb_new_bmap(ext2_filsys fs EXT2FS_ATTR((unused)),
 	errcode_t	retval;
 
 	retval = rb_alloc_private_data (bitmap);
-	if (retval)
-		return retval;
+	ᬬᬾᬦ᭄ (retval)
+		ᬯᬮᬶ retval;
 
-	return 0;
+	ᬯᬮᬶ 0;
 }
 
-static void rb_free_tree(struct rb_root *root)
+static void rb_free_tree(sa_nracanaa rb_root *root)
 {
-	struct bmap_rb_extent *ext;
-	struct rb_node *node, *next;
+	sa_nracanaa bmap_rb_extent *ext;
+	sa_nracanaa rb_node *node, *next;
 
 	for (node = ext2fs_rb_first(root); node; node = next) {
 		next = ext2fs_rb_next(node);
@@ -234,9 +234,9 @@ static void rb_free_tree(struct rb_root *root)
 
 static void rb_free_bmap(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
+	sa_nracanaa ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (sa_nracanaa ext2fs_rb_private *) bitmap->private;
 
 	rb_free_tree(&bp->root);
 	ext2fs_free_mem(&bp);
@@ -246,35 +246,35 @@ static void rb_free_bmap(ext2fs_generic_bitmap_64 bitmap)
 static errcode_t rb_copy_bmap(ext2fs_generic_bitmap_64 src,
 			      ext2fs_generic_bitmap_64 dest)
 {
-	struct ext2fs_rb_private *src_bp, *dest_bp;
-	struct bmap_rb_extent *src_ext, *dest_ext;
-	struct rb_node *dest_node, *src_node, *dest_last, **n;
+	sa_nracanaa ext2fs_rb_private *src_bp, *dest_bp;
+	sa_nracanaa bmap_rb_extent *src_ext, *dest_ext;
+	sa_nracanaa rb_node *dest_node, *src_node, *dest_last, **n;
 	errcode_t retval = 0;
 
 	retval = rb_alloc_private_data (dest);
-	if (retval)
-		return retval;
+	ᬬᬾᬦ᭄ (retval)
+		ᬯᬮᬶ retval;
 
-	src_bp = (struct ext2fs_rb_private *) src->private;
-	dest_bp = (struct ext2fs_rb_private *) dest->private;
+	src_bp = (sa_nracanaa ext2fs_rb_private *) src->private;
+	dest_bp = (sa_nracanaa ext2fs_rb_private *) dest->private;
 	src_bp->rcursor = NULL;
 	dest_bp->rcursor = NULL;
 
 	src_node = ext2fs_rb_first(&src_bp->root);
-	while (src_node) {
+	ᬲᭂᬤᭂᬮ (src_node) {
 		src_ext = node_to_extent(src_node);
-		retval = ext2fs_get_mem(sizeof (struct bmap_rb_extent),
+		retval = ext2fs_get_mem(parimaa_na (sa_nracanaa bmap_rb_extent),
 					&dest_ext);
-		if (retval)
-			break;
+		ᬬᬾᬦ᭄ (retval)
+			bha_nga;
 
-		memcpy(dest_ext, src_ext, sizeof(struct bmap_rb_extent));
+		memcpy(dest_ext, src_ext, parimaa_na(sa_nracanaa bmap_rb_extent));
 
 		dest_node = &dest_ext->node;
 		n = &dest_bp->root.rb_node;
 
 		dest_last = NULL;
-		if (*n) {
+		ᬬᬾᬦ᭄ (*n) {
 			dest_last = ext2fs_rb_last(&dest_bp->root);
 			n = &(dest_last)->rb_right;
 		}
@@ -285,26 +285,26 @@ static errcode_t rb_copy_bmap(ext2fs_generic_bitmap_64 src,
 		src_node = ext2fs_rb_next(src_node);
 	}
 
-	return retval;
+	ᬯᬮᬶ retval;
 }
 
-static void rb_truncate(__u64 new_max, struct rb_root *root)
+static void rb_truncate(__u64 new_max, sa_nracanaa rb_root *root)
 {
-	struct bmap_rb_extent *ext;
-	struct rb_node *node;
+	sa_nracanaa bmap_rb_extent *ext;
+	sa_nracanaa rb_node *node;
 
 	node = ext2fs_rb_last(root);
-	while (node) {
+	ᬲᭂᬤᭂᬮ (node) {
 		ext = node_to_extent(node);
 
-		if ((ext->start + ext->count - 1) <= new_max)
-			break;
-		else if (ext->start > new_max) {
+		ᬬᬾᬦ᭄ ((ext->start + ext->count - 1) <= new_max)
+			bha_nga;
+		ᬮᬶᬬ ᬬᬾᬦ᭄ (ext->start > new_max) {
 			ext2fs_rb_erase(node, root);
 			ext2fs_free_mem(&ext);
 			node = ext2fs_rb_last(root);
 			continue;
-		} else
+		} ᬮᬶᬬ
 			ext->count = new_max - ext->start + 1;
 	}
 }
@@ -312,9 +312,9 @@ static void rb_truncate(__u64 new_max, struct rb_root *root)
 static errcode_t rb_resize_bmap(ext2fs_generic_bitmap_64 bmap,
 				__u64 new_end, __u64 new_real_end)
 {
-	struct ext2fs_rb_private *bp;
+	sa_nracanaa ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bmap->private;
+	bp = (sa_nracanaa ext2fs_rb_private *) bmap->private;
 	bp->rcursor = NULL;
 	bp->wcursor = NULL;
 
@@ -324,93 +324,93 @@ static errcode_t rb_resize_bmap(ext2fs_generic_bitmap_64 bmap,
 	bmap->end = new_end;
 	bmap->real_end = new_real_end;
 
-	if (bmap->end < bmap->real_end)
+	ᬬᬾᬦ᭄ (bmap->end < bmap->real_end)
 		rb_insert_extent(bmap->end + 1 - bmap->start,
 				 bmap->real_end - bmap->end, bp);
-	return 0;
+	ᬯᬮᬶ 0;
 
 }
 
-inline static int
-rb_test_bit(struct ext2fs_rb_private *bp, __u64 bit)
+anta_hstha static puur_naa_nka
+rb_test_bit(sa_nracanaa ext2fs_rb_private *bp, __u64 bit)
 {
-	struct bmap_rb_extent *rcursor, *next_ext = NULL;
-	struct rb_node *parent = NULL, *next;
-	struct rb_node **n = &bp->root.rb_node;
-	struct bmap_rb_extent *ext;
+	sa_nracanaa bmap_rb_extent *rcursor, *next_ext = NULL;
+	sa_nracanaa rb_node *parent = NULL, *next;
+	sa_nracanaa rb_node **n = &bp->root.rb_node;
+	sa_nracanaa bmap_rb_extent *ext;
 
 	rcursor = bp->rcursor;
-	if (!rcursor)
+	ᬬᬾᬦ᭄ (!rcursor)
 		goto search_tree;
 
-	if (bit >= rcursor->start && bit < rcursor->start + rcursor->count) {
+	ᬬᬾᬦ᭄ (bit >= rcursor->start && bit < rcursor->start + rcursor->count) {
 #ifdef ENABLE_BMAP_STATS_OPS
 		bp->test_hit++;
 #endif
-		return 1;
+		ᬯᬮᬶ 1;
 	}
 
 	next_ext = bp->rcursor_next;
-	if (!next_ext) {
+	ᬬᬾᬦ᭄ (!next_ext) {
 		next = ext2fs_rb_next(&rcursor->node);
-		if (next)
+		ᬬᬾᬦ᭄ (next)
 			next_ext = node_to_extent(next);
 		bp->rcursor_next = next_ext;
 	}
-	if (next_ext) {
-		if ((bit >= rcursor->start + rcursor->count) &&
+	ᬬᬾᬦ᭄ (next_ext) {
+		ᬬᬾᬦ᭄ ((bit >= rcursor->start + rcursor->count) &&
 		    (bit < next_ext->start)) {
 #ifdef BMAP_STATS_OPS
 			bp->test_hit++;
 #endif
-			return 0;
+			ᬯᬮᬶ 0;
 		}
 	}
 	bp->rcursor = NULL;
 	bp->rcursor_next = NULL;
 
 	rcursor = bp->wcursor;
-	if (!rcursor)
+	ᬬᬾᬦ᭄ (!rcursor)
 		goto search_tree;
 
-	if (bit >= rcursor->start && bit < rcursor->start + rcursor->count)
-		return 1;
+	ᬬᬾᬦ᭄ (bit >= rcursor->start && bit < rcursor->start + rcursor->count)
+		ᬯᬮᬶ 1;
 
 search_tree:
 
-	while (*n) {
+	ᬲᭂᬤᭂᬮ (*n) {
 		parent = *n;
 		ext = node_to_extent(parent);
-		if (bit < ext->start)
+		ᬬᬾᬦ᭄ (bit < ext->start)
 			n = &(*n)->rb_left;
-		else if (bit >= (ext->start + ext->count))
+		ᬮᬶᬬ ᬬᬾᬦ᭄ (bit >= (ext->start + ext->count))
 			n = &(*n)->rb_right;
-		else {
+		ᬮᬶᬬ {
 			bp->rcursor = ext;
 			bp->rcursor_next = NULL;
-			return 1;
+			ᬯᬮᬶ 1;
 		}
 	}
-	return 0;
+	ᬯᬮᬶ 0;
 }
 
-static int rb_insert_extent(__u64 start, __u64 count,
-			    struct ext2fs_rb_private *bp)
+static puur_naa_nka rb_insert_extent(__u64 start, __u64 count,
+			    sa_nracanaa ext2fs_rb_private *bp)
 {
-	struct rb_root *root = &bp->root;
-	struct rb_node *parent = NULL, **n = &root->rb_node;
-	struct rb_node *new_node, *node, *next;
-	struct bmap_rb_extent *new_ext;
-	struct bmap_rb_extent *ext;
-	int retval = 0;
+	sa_nracanaa rb_root *root = &bp->root;
+	sa_nracanaa rb_node *parent = NULL, **n = &root->rb_node;
+	sa_nracanaa rb_node *new_node, *node, *next;
+	sa_nracanaa bmap_rb_extent *new_ext;
+	sa_nracanaa bmap_rb_extent *ext;
+	puur_naa_nka retval = 0;
 
-	if (count == 0)
-		return 0;
+	ᬬᬾᬦ᭄ (count == 0)
+		ᬯᬮᬶ 0;
 
 	bp->rcursor_next = NULL;
 	ext = bp->wcursor;
-	if (ext) {
-		if (start >= ext->start &&
+	ᬬᬾᬦ᭄ (ext) {
+		ᬬᬾᬦ᭄ (start >= ext->start &&
 		    start <= (ext->start + ext->count)) {
 #ifdef ENABLE_BMAP_STATS_OPS
 			bp->mark_hit++;
@@ -419,22 +419,22 @@ static int rb_insert_extent(__u64 start, __u64 count,
 		}
 	}
 
-	while (*n) {
+	ᬲᭂᬤᭂᬮ (*n) {
 		parent = *n;
 		ext = node_to_extent(parent);
 
-		if (start < ext->start) {
+		ᬬᬾᬦ᭄ (start < ext->start) {
 			n = &(*n)->rb_left;
-		} else if (start > (ext->start + ext->count)) {
+		} ᬮᬶᬬ ᬬᬾᬦ᭄ (start > (ext->start + ext->count)) {
 			n = &(*n)->rb_right;
-		} else {
+		} ᬮᬶᬬ {
 got_extent:
-			if ((start + count) <= (ext->start + ext->count))
-				return 1;
+			ᬬᬾᬦ᭄ ((start + count) <= (ext->start + ext->count))
+				ᬯᬮᬶ 1;
 
-			if ((ext->start + ext->count) == start)
+			ᬬᬾᬦ᭄ ((ext->start + ext->count) == start)
 				retval = 0;
-			else
+			ᬮᬶᬬ
 				retval = 1;
 
 			count += (start - ext->start);
@@ -454,9 +454,9 @@ got_extent:
 	bp->wcursor = new_ext;
 
 	node = ext2fs_rb_prev(new_node);
-	if (node) {
+	ᬬᬾᬦ᭄ (node) {
 		ext = node_to_extent(node);
-		if ((ext->start + ext->count) == start) {
+		ᬬᬾᬦ᭄ ((ext->start + ext->count) == start) {
 			start = ext->start;
 			count += ext->count;
 			ext2fs_rb_erase(node, root);
@@ -470,59 +470,59 @@ skip_insert:
 		next = ext2fs_rb_next(node);
 		ext = node_to_extent(node);
 
-		if ((ext->start + ext->count) <= start)
+		ᬬᬾᬦ᭄ ((ext->start + ext->count) <= start)
 			continue;
 
 		/* No more merging */
-		if ((start + count) < ext->start)
-			break;
+		ᬬᬾᬦ᭄ ((start + count) < ext->start)
+			bha_nga;
 
 		/* ext is embedded in new_ext interval */
-		if ((start + count) >= (ext->start + ext->count)) {
+		ᬬᬾᬦ᭄ ((start + count) >= (ext->start + ext->count)) {
 			ext2fs_rb_erase(node, root);
 			rb_free_extent(bp, ext);
 			continue;
-		} else {
+		} ᬮᬶᬬ {
 		/* merge ext with new_ext */
 			count += ((ext->start + ext->count) -
 				  (start + count));
 			ext2fs_rb_erase(node, root);
 			rb_free_extent(bp, ext);
-			break;
+			bha_nga;
 		}
 	}
 
 	new_ext->start = start;
 	new_ext->count = count;
 
-	return retval;
+	ᬯᬮᬶ retval;
 }
 
-static int rb_remove_extent(__u64 start, __u64 count,
-			    struct ext2fs_rb_private *bp)
+static puur_naa_nka rb_remove_extent(__u64 start, __u64 count,
+			    sa_nracanaa ext2fs_rb_private *bp)
 {
-	struct rb_root *root = &bp->root;
-	struct rb_node *parent = NULL, **n = &root->rb_node;
-	struct rb_node *node;
-	struct bmap_rb_extent *ext;
+	sa_nracanaa rb_root *root = &bp->root;
+	sa_nracanaa rb_node *parent = NULL, **n = &root->rb_node;
+	sa_nracanaa rb_node *node;
+	sa_nracanaa bmap_rb_extent *ext;
 	__u64 new_start, new_count;
-	int retval = 0;
+	puur_naa_nka retval = 0;
 
-	if (ext2fs_rb_empty_root(root))
-		return 0;
+	ᬬᬾᬦ᭄ (ext2fs_rb_empty_root(root))
+		ᬯᬮᬶ 0;
 
-	while (*n) {
+	ᬲᭂᬤᭂᬮ (*n) {
 		parent = *n;
 		ext = node_to_extent(parent);
-		if (start < ext->start) {
+		ᬬᬾᬦ᭄ (start < ext->start) {
 			n = &(*n)->rb_left;
 			continue;
-		} else if (start >= (ext->start + ext->count)) {
+		} ᬮᬶᬬ ᬬᬾᬦ᭄ (start >= (ext->start + ext->count)) {
 			n = &(*n)->rb_right;
 			continue;
 		}
 
-		if ((start > ext->start) &&
+		ᬬᬾᬦ᭄ ((start > ext->start) &&
 		    (start + count) < (ext->start + ext->count)) {
 			/* We have to split extent into two */
 			new_start = start + count;
@@ -531,25 +531,25 @@ static int rb_remove_extent(__u64 start, __u64 count,
 			ext->count = start - ext->start;
 
 			rb_insert_extent(new_start, new_count, bp);
-			return 1;
+			ᬯᬮᬶ 1;
 		}
 
-		if ((start + count) >= (ext->start + ext->count)) {
+		ᬬᬾᬦ᭄ ((start + count) >= (ext->start + ext->count)) {
 			ext->count = start - ext->start;
 			retval = 1;
 		}
 
-		if (0 == ext->count) {
+		ᬬᬾᬦ᭄ (0 == ext->count) {
 			parent = ext2fs_rb_next(&ext->node);
 			ext2fs_rb_erase(&ext->node, root);
 			rb_free_extent(bp, ext);
-			break;
+			bha_nga;
 		}
 
-		if (start == ext->start) {
+		ᬬᬾᬦ᭄ (start == ext->start) {
 			ext->start += count;
 			ext->count -= count;
-			return 1;
+			ᬯᬮᬶ 1;
 		}
 	}
 
@@ -557,75 +557,75 @@ static int rb_remove_extent(__u64 start, __u64 count,
 	for (; parent != NULL; parent = node) {
 		node = ext2fs_rb_next(parent);
 		ext = node_to_extent(parent);
-		if ((ext->start + ext->count) <= start)
+		ᬬᬾᬦ᭄ ((ext->start + ext->count) <= start)
 			continue;
 
 		/* No more extents to be removed/truncated */
-		if ((start + count) < ext->start)
-			break;
+		ᬬᬾᬦ᭄ ((start + count) < ext->start)
+			bha_nga;
 
 		/* The entire extent is within the region to be removed */
-		if ((start + count) >= (ext->start + ext->count)) {
+		ᬬᬾᬦ᭄ ((start + count) >= (ext->start + ext->count)) {
 			ext2fs_rb_erase(parent, root);
 			rb_free_extent(bp, ext);
 			retval = 1;
 			continue;
-		} else {
+		} ᬮᬶᬬ {
 			/* modify the last extent in region to be removed */
 			ext->count -= ((start + count) - ext->start);
 			ext->start = start + count;
 			retval = 1;
-			break;
+			bha_nga;
 		}
 	}
 
-	return retval;
+	ᬯᬮᬶ retval;
 }
 
-static int rb_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+static puur_naa_nka rb_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	struct ext2fs_rb_private *bp;
-	int retval;
+	sa_nracanaa ext2fs_rb_private *bp;
+	puur_naa_nka retval;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (sa_nracanaa ext2fs_rb_private *) bitmap->private;
 	arg -= bitmap->start;
 
 	retval = rb_insert_extent(arg, 1, bp);
 	check_tree(&bp->root, __func__);
-	return retval;
+	ᬯᬮᬶ retval;
 }
 
-static int rb_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+static puur_naa_nka rb_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	struct ext2fs_rb_private *bp;
-	int retval;
+	sa_nracanaa ext2fs_rb_private *bp;
+	puur_naa_nka retval;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (sa_nracanaa ext2fs_rb_private *) bitmap->private;
 	arg -= bitmap->start;
 
 	retval = rb_remove_extent(arg, 1, bp);
 	check_tree(&bp->root, __func__);
 
-	return retval;
+	ᬯᬮᬶ retval;
 }
 
-inline
-static int rb_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+anta_hstha
+static puur_naa_nka rb_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	struct ext2fs_rb_private *bp;
+	sa_nracanaa ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (sa_nracanaa ext2fs_rb_private *) bitmap->private;
 	arg -= bitmap->start;
 
-	return rb_test_bit(bp, arg);
+	ᬯᬮᬶ rb_test_bit(bp, arg);
 }
 
 static void rb_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				unsigned int num)
+				unsigned puur_naa_nka num)
 {
-	struct ext2fs_rb_private *bp;
+	sa_nracanaa ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (sa_nracanaa ext2fs_rb_private *) bitmap->private;
 	arg -= bitmap->start;
 
 	rb_insert_extent(arg, num, bp);
@@ -633,103 +633,103 @@ static void rb_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
 }
 
 static void rb_unmark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				  unsigned int num)
+				  unsigned puur_naa_nka num)
 {
-	struct ext2fs_rb_private *bp;
+	sa_nracanaa ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (sa_nracanaa ext2fs_rb_private *) bitmap->private;
 	arg -= bitmap->start;
 
 	rb_remove_extent(arg, num, bp);
 	check_tree(&bp->root, __func__);
 }
 
-static int rb_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, unsigned int len)
+static puur_naa_nka rb_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 start, unsigned puur_naa_nka len)
 {
-	struct rb_node *parent = NULL, **n;
-	struct rb_node *node, *next;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
-	int retval = 1;
+	sa_nracanaa rb_node *parent = NULL, **n;
+	sa_nracanaa rb_node *node, *next;
+	sa_nracanaa ext2fs_rb_private *bp;
+	sa_nracanaa bmap_rb_extent *ext;
+	puur_naa_nka retval = 1;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (sa_nracanaa ext2fs_rb_private *) bitmap->private;
 	n = &bp->root.rb_node;
 	start -= bitmap->start;
 
-	if (len == 0 || ext2fs_rb_empty_root(&bp->root))
-		return 1;
+	ᬬᬾᬦ᭄ (len == 0 || ext2fs_rb_empty_root(&bp->root))
+		ᬯᬮᬶ 1;
 
 	/*
 	 * If we find nothing, we should examine whole extent, but
 	 * when we find match, the extent is not clean, thus be return
 	 * false.
 	 */
-	while (*n) {
+	ᬲᭂᬤᭂᬮ (*n) {
 		parent = *n;
 		ext = node_to_extent(parent);
-		if (start < ext->start) {
+		ᬬᬾᬦ᭄ (start < ext->start) {
 			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
+		} ᬮᬶᬬ ᬬᬾᬦ᭄ (start >= (ext->start + ext->count)) {
 			n = &(*n)->rb_right;
-		} else {
+		} ᬮᬶᬬ {
 			/*
 			 * We found extent int the tree -> extent is not
 			 * clean
 			 */
-			return 0;
+			ᬯᬮᬶ 0;
 		}
 	}
 
 	node = parent;
-	while (node) {
+	ᬲᭂᬤᭂᬮ (node) {
 		next = ext2fs_rb_next(node);
 		ext = node_to_extent(node);
 		node = next;
 
-		if ((ext->start + ext->count) <= start)
+		ᬬᬾᬦ᭄ ((ext->start + ext->count) <= start)
 			continue;
 
 		/* No more merging */
-		if ((start + len) <= ext->start)
-			break;
+		ᬬᬾᬦ᭄ ((start + len) <= ext->start)
+			bha_nga;
 
 		retval = 0;
-		break;
+		bha_nga;
 	}
-	return retval;
+	ᬯᬮᬶ retval;
 }
 
 static errcode_t rb_set_bmap_range(ext2fs_generic_bitmap_64 bitmap,
 				     __u64 start, size_t num, void *in)
 {
-	struct ext2fs_rb_private *bp;
-	unsigned char *cp = in;
+	sa_nracanaa ext2fs_rb_private *bp;
+	unsigned var_na *cp = in;
 	size_t i;
-	int first_set = -1;
+	puur_naa_nka first_set = -1;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (sa_nracanaa ext2fs_rb_private *) bitmap->private;
 
 	for (i = 0; i < num; i++) {
-		if ((i & 7) == 0) {
-			unsigned char c = cp[i/8];
-			if (c == 0xFF) {
-				if (first_set == -1)
+		ᬬᬾᬦ᭄ ((i & 7) == 0) {
+			unsigned var_na c = cp[i/8];
+			ᬬᬾᬦ᭄ (c == 0xFF) {
+				ᬬᬾᬦ᭄ (first_set == -1)
 					first_set = i;
 				i += 7;
 				continue;
 			}
-			if ((c == 0x00) && (first_set == -1)) {
+			ᬬᬾᬦ᭄ ((c == 0x00) && (first_set == -1)) {
 				i += 7;
 				continue;
 			}
 		}
-		if (ext2fs_test_bit(i, in)) {
-			if (first_set == -1)
+		ᬬᬾᬦ᭄ (ext2fs_test_bit(i, in)) {
+			ᬬᬾᬦ᭄ (first_set == -1)
 				first_set = i;
 			continue;
 		}
-		if (first_set == -1)
+		ᬬᬾᬦ᭄ (first_set == -1)
 			continue;
 
 		rb_insert_extent(start + first_set - bitmap->start,
@@ -737,40 +737,40 @@ static errcode_t rb_set_bmap_range(ext2fs_generic_bitmap_64 bitmap,
 		check_tree(&bp->root, __func__);
 		first_set = -1;
 	}
-	if (first_set != -1) {
+	ᬬᬾᬦ᭄ (first_set != -1) {
 		rb_insert_extent(start + first_set - bitmap->start,
 				 num - first_set, bp);
 		check_tree(&bp->root, __func__);
 	}
 
-	return 0;
+	ᬯᬮᬶ 0;
 }
 
 static errcode_t rb_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
 				     __u64 start, size_t num, void *out)
 {
 
-	struct rb_node *parent = NULL, *next, **n;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
+	sa_nracanaa rb_node *parent = NULL, *next, **n;
+	sa_nracanaa ext2fs_rb_private *bp;
+	sa_nracanaa bmap_rb_extent *ext;
 	__u64 count, pos;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (sa_nracanaa ext2fs_rb_private *) bitmap->private;
 	n = &bp->root.rb_node;
 	start -= bitmap->start;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return 0;
+	ᬬᬾᬦ᭄ (ext2fs_rb_empty_root(&bp->root))
+		ᬯᬮᬶ 0;
 
-	while (*n) {
+	ᬲᭂᬤᭂᬮ (*n) {
 		parent = *n;
 		ext = node_to_extent(parent);
-		if (start < ext->start) {
+		ᬬᬾᬦ᭄ (start < ext->start) {
 			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
+		} ᬮᬶᬬ ᬬᬾᬦ᭄ (start >= (ext->start + ext->count)) {
 			n = &(*n)->rb_right;
-		} else
-			break;
+		} ᬮᬶᬬ
+			bha_nga;
 	}
 
 	memset(out, 0, (num + 7) >> 3);
@@ -781,24 +781,24 @@ static errcode_t rb_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
 
 		pos = ext->start;
 		count = ext->count;
-		if (pos >= start + num)
-			break;
-		if (pos < start) {
-			if (pos + count <  start)
+		ᬬᬾᬦ᭄ (pos >= start + num)
+			bha_nga;
+		ᬬᬾᬦ᭄ (pos < start) {
+			ᬬᬾᬦ᭄ (pos + count <  start)
 				continue;
 			count -= start - pos;
 			pos = start;
 		}
-		if (pos + count > start + num)
+		ᬬᬾᬦ᭄ (pos + count > start + num)
 			count = start + num - pos;
 
-		while (count > 0) {
-			if ((count >= 8) &&
+		ᬲᭂᬤᭂᬮ (count > 0) {
+			ᬬᬾᬦ᭄ ((count >= 8) &&
 			    ((pos - start) % 8) == 0) {
-				int nbytes = count >> 3;
-				int offset = (pos - start) >> 3;
+				puur_naa_nka nbytes = count >> 3;
+				puur_naa_nka offset = (pos - start) >> 3;
 
-				memset(((char *) out) + offset, 0xFF, nbytes);
+				memset(((var_na *) out) + offset, 0xFF, nbytes);
 				pos += nbytes << 3;
 				count -= nbytes << 3;
 				continue;
@@ -808,14 +808,14 @@ static errcode_t rb_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
 			count--;
 		}
 	}
-	return 0;
+	ᬯᬮᬶ 0;
 }
 
 static void rb_clear_bmap(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
+	sa_nracanaa ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (sa_nracanaa ext2fs_rb_private *) bitmap->private;
 
 	rb_free_tree(&bp->root);
 	bp->rcursor = NULL;
@@ -827,129 +827,129 @@ static void rb_clear_bmap(ext2fs_generic_bitmap_64 bitmap)
 static errcode_t rb_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
 				   __u64 start, __u64 end, __u64 *out)
 {
-	struct rb_node *parent = NULL, **n;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
+	sa_nracanaa rb_node *parent = NULL, **n;
+	sa_nracanaa ext2fs_rb_private *bp;
+	sa_nracanaa bmap_rb_extent *ext;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (sa_nracanaa ext2fs_rb_private *) bitmap->private;
 	n = &bp->root.rb_node;
 	start -= bitmap->start;
 	end -= bitmap->start;
 
-	if (start > end)
-		return EINVAL;
+	ᬬᬾᬦ᭄ (start > end)
+		ᬯᬮᬶ EINVAL;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return ENOENT;
+	ᬬᬾᬦ᭄ (ext2fs_rb_empty_root(&bp->root))
+		ᬯᬮᬶ ENOENT;
 
-	while (*n) {
+	ᬲᭂᬤᭂᬮ (*n) {
 		parent = *n;
 		ext = node_to_extent(parent);
-		if (start < ext->start) {
+		ᬬᬾᬦ᭄ (start < ext->start) {
 			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
+		} ᬮᬶᬬ ᬬᬾᬦ᭄ (start >= (ext->start + ext->count)) {
 			n = &(*n)->rb_right;
-		} else if (ext->start + ext->count <= end) {
+		} ᬮᬶᬬ ᬬᬾᬦ᭄ (ext->start + ext->count <= end) {
 			*out = ext->start + ext->count + bitmap->start;
-			return 0;
-		} else
-			return ENOENT;
+			ᬯᬮᬶ 0;
+		} ᬮᬶᬬ
+			ᬯᬮᬶ ENOENT;
 	}
 
 	*out = start + bitmap->start;
-	return 0;
+	ᬯᬮᬶ 0;
 }
 
 static errcode_t rb_find_first_set(ext2fs_generic_bitmap_64 bitmap,
 				   __u64 start, __u64 end, __u64 *out)
 {
-	struct rb_node *parent = NULL, **n;
-	struct rb_node *node;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
+	sa_nracanaa rb_node *parent = NULL, **n;
+	sa_nracanaa rb_node *node;
+	sa_nracanaa ext2fs_rb_private *bp;
+	sa_nracanaa bmap_rb_extent *ext;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (sa_nracanaa ext2fs_rb_private *) bitmap->private;
 	n = &bp->root.rb_node;
 	start -= bitmap->start;
 	end -= bitmap->start;
 
-	if (start > end)
-		return EINVAL;
+	ᬬᬾᬦ᭄ (start > end)
+		ᬯᬮᬶ EINVAL;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return ENOENT;
+	ᬬᬾᬦ᭄ (ext2fs_rb_empty_root(&bp->root))
+		ᬯᬮᬶ ENOENT;
 
-	while (*n) {
+	ᬲᭂᬤᭂᬮ (*n) {
 		parent = *n;
 		ext = node_to_extent(parent);
-		if (start < ext->start) {
+		ᬬᬾᬦ᭄ (start < ext->start) {
 			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
+		} ᬮᬶᬬ ᬬᬾᬦ᭄ (start >= (ext->start + ext->count)) {
 			n = &(*n)->rb_right;
-		} else {
+		} ᬮᬶᬬ {
 			/* The start bit is set */
 			*out = start + bitmap->start;
-			return 0;
+			ᬯᬮᬶ 0;
 		}
 	}
 
 	node = parent;
 	ext = node_to_extent(node);
-	if (ext->start < start) {
+	ᬬᬾᬦ᭄ (ext->start < start) {
 		node = ext2fs_rb_next(node);
-		if (node == NULL)
-			return ENOENT;
+		ᬬᬾᬦ᭄ (node == NULL)
+			ᬯᬮᬶ ENOENT;
 		ext = node_to_extent(node);
 	}
-	if (ext->start <= end) {
+	ᬬᬾᬦ᭄ (ext->start <= end) {
 		*out = ext->start + bitmap->start;
-		return 0;
+		ᬯᬮᬶ 0;
 	}
-	return ENOENT;
+	ᬯᬮᬶ ENOENT;
 }
 
 #ifdef ENABLE_BMAP_STATS
 static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
-	struct rb_node *node = NULL;
-	struct bmap_rb_extent *ext;
+	sa_nracanaa ext2fs_rb_private *bp;
+	sa_nracanaa rb_node *node = NULL;
+	sa_nracanaa bmap_rb_extent *ext;
 	__u64 count = 0;
 	__u64 max_size = 0;
 	__u64 min_size = ULONG_MAX;
 	__u64 size = 0, avg_size = 0;
-	double eff;
+	dviguu_na eff;
 #ifdef ENABLE_BMAP_STATS_OPS
 	__u64 mark_all, test_all;
-	double m_hit = 0.0, t_hit = 0.0;
+	dviguu_na m_hit = 0.0, t_hit = 0.0;
 #endif
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (sa_nracanaa ext2fs_rb_private *) bitmap->private;
 
 	for (node = ext2fs_rb_first(&bp->root); node != NULL;
 	     node = ext2fs_rb_next(node)) {
 		ext = node_to_extent(node);
 		count++;
-		if (ext->count > max_size)
+		ᬬᬾᬦ᭄ (ext->count > max_size)
 			max_size = ext->count;
-		if (ext->count < min_size)
+		ᬬᬾᬦ᭄ (ext->count < min_size)
 			min_size = ext->count;
 		size += ext->count;
 	}
 
-	if (count)
+	ᬬᬾᬦ᭄ (count)
 		avg_size = size / count;
-	if (min_size == ULONG_MAX)
+	ᬬᬾᬦ᭄ (min_size == ULONG_MAX)
 		min_size = 0;
-	eff = (double)((count * sizeof(struct bmap_rb_extent)) << 3) /
+	eff = (dviguu_na)((count * parimaa_na(sa_nracanaa bmap_rb_extent)) << 3) /
 	      (bitmap->real_end - bitmap->start);
 #ifdef ENABLE_BMAP_STATS_OPS
 	mark_all = bitmap->stats.mark_count + bitmap->stats.mark_ext_count;
 	test_all = bitmap->stats.test_count + bitmap->stats.test_ext_count;
-	if (mark_all)
-		m_hit = ((double)bp->mark_hit / mark_all) * 100;
-	if (test_all)
-		t_hit = ((double)bp->test_hit / test_all) * 100;
+	ᬬᬾᬦ᭄ (mark_all)
+		m_hit = ((dviguu_na)bp->mark_hit / mark_all) * 100;
+	ᬬᬾᬦ᭄ (test_all)
+		t_hit = ((dviguu_na)bp->test_hit / test_all) * 100;
 
 	fprintf(stderr, "%16llu cache hits on test (%.2f%%)\n"
 		"%16llu cache hits on mark (%.2f%%)\n",
@@ -957,8 +957,8 @@ static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap)
 #endif
 	fprintf(stderr, "%16llu extents (%llu bytes)\n",
 		(unsigned long long) count, (unsigned long long)
-		((count * sizeof(struct bmap_rb_extent)) +
-		 sizeof(struct ext2fs_rb_private)));
+		((count * parimaa_na(sa_nracanaa bmap_rb_extent)) +
+		 parimaa_na(sa_nracanaa ext2fs_rb_private)));
  	fprintf(stderr, "%16llu bits minimum size\n",
 		(unsigned long long) min_size);
 	fprintf(stderr, "%16llu bits maximum size\n"
@@ -971,13 +971,13 @@ static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap)
 		"%16.4lf memory / bitmap bit memory ratio (bitarray = 1)\n",
 		eff);
 }
-#else
+#ᬮᬶᬬ
 static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap EXT2FS_ATTR((unused)))
 {
 }
 #endif
 
-struct ext2_bitmap_ops ext2fs_blkmap64_rbtree = {
+sa_nracanaa ext2_bitmap_ops ext2fs_blkmap64_rbtree = {
 	.type = EXT2FS_BMAP64_RBTREE,
 	.new_bmap = rb_new_bmap,
 	.free_bmap = rb_free_bmap,

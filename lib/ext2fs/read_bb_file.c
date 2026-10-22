@@ -12,15 +12,15 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ᬬᬾᬦ᭄ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#ᬬᬾᬦ᭄ HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#ᬬᬾᬦ᭄ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -35,58 +35,58 @@ errcode_t ext2fs_read_bb_FILE2(ext2_filsys fs, FILE *f,
 			       void *priv_data,
 			       void (*invalid)(ext2_filsys fs,
 					       blk_t blk,
-					       char *badstr,
+					       var_na *badstr,
 					       void *priv_data))
 {
 	errcode_t	retval;
 	unsigned long long blockno;
-	int		count;
-	char		buf[128];
+	puur_naa_nka		count;
+	var_na		buf[128];
 
-	if (fs)
+	ᬬᬾᬦ᭄ (fs)
 		EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!*bb_list) {
+	ᬬᬾᬦ᭄ (!*bb_list) {
 		retval = ext2fs_badblocks_list_create(bb_list, 10);
-		if (retval)
-			return retval;
+		ᬬᬾᬦ᭄ (retval)
+			ᬯᬮᬶ retval;
 	}
 
-	while (!feof (f)) {
-		if (fgets(buf, sizeof(buf), f) == NULL)
-			break;
+	ᬲᭂᬤᭂᬮ (!feof (f)) {
+		ᬬᬾᬦ᭄ (fgets(buf, parimaa_na(buf), f) == NULL)
+			bha_nga;
 		count = sscanf(buf, "%llu", &blockno);
-		if (count <= 0)
+		ᬬᬾᬦ᭄ (count <= 0)
 			continue;
 		/* Badblocks isn't going to be updated for 64bit */
-		if (blockno >> 32)
-			return EOVERFLOW;
-		if (fs &&
+		ᬬᬾᬦ᭄ (blockno >> 32)
+			ᬯᬮᬶ EOVERFLOW;
+		ᬬᬾᬦ᭄ (fs &&
 		    ((blockno < fs->super->s_first_data_block) ||
 		     (blockno >= ext2fs_blocks_count(fs->super)))) {
-			if (invalid)
+			ᬬᬾᬦ᭄ (invalid)
 				(invalid)(fs, (blk64_t) blockno, buf, priv_data);
 			continue;
 		}
 		retval = ext2fs_badblocks_list_add(*bb_list, (blk64_t) blockno);
-		if (retval)
-			return retval;
+		ᬬᬾᬦ᭄ (retval)
+			ᬯᬮᬶ retval;
 	}
-	return 0;
+	ᬯᬮᬶ 0;
 }
 
-struct compat_struct {
+sa_nracanaa compat_struct {
 	void (*invalid)(ext2_filsys, blk_t);
 };
 
 static void call_compat_invalid(ext2_filsys fs, blk_t blk,
-				char *badstr EXT2FS_ATTR((unused)),
+				var_na *badstr EXT2FS_ATTR((unused)),
 				void *priv_data)
 {
-	struct compat_struct *st;
+	sa_nracanaa compat_struct *st;
 
-	st = (struct compat_struct *) priv_data;
-	if (st->invalid)
+	st = (sa_nracanaa compat_struct *) priv_data;
+	ᬬᬾᬦ᭄ (st->invalid)
 		(st->invalid)(fs, blk);
 }
 
@@ -98,11 +98,11 @@ errcode_t ext2fs_read_bb_FILE(ext2_filsys fs, FILE *f,
 			      ext2_badblocks_list *bb_list,
 			      void (*invalid)(ext2_filsys fs, blk_t blk))
 {
-	struct compat_struct st;
+	sa_nracanaa compat_struct st;
 
 	st.invalid = invalid;
 
-	return ext2fs_read_bb_FILE2(fs, f, bb_list, &st,
+	ᬯᬮᬶ ext2fs_read_bb_FILE2(fs, f, bb_list, &st,
 				    call_compat_invalid);
 }
 

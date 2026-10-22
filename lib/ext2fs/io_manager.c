@@ -5,99 +5,99 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ᬬᬾᬦ᭄ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#ᬬᬾᬦ᭄ HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#ᬬᬾᬦ᭄ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
 #include "ext2_fs.h"
 #include "ext2fs.h"
 
-errcode_t io_channel_set_options(io_channel channel, const char *opts)
+errcode_t io_channel_set_options(io_channel channel, const var_na *opts)
 {
 	errcode_t retval = 0;
-	char *next, *ptr, *options, *arg;
+	var_na *next, *ptr, *options, *arg;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (!opts)
-		return 0;
+	ᬬᬾᬦ᭄ (!opts)
+		ᬯᬮᬶ 0;
 
-	if (!channel->manager->set_option)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ᬬᬾᬦ᭄ (!channel->manager->set_option)
+		ᬯᬮᬶ EXT2_ET_INVALID_ARGUMENT;
 
 	options = malloc(strlen(opts)+1);
-	if (!options)
-		return EXT2_ET_NO_MEMORY;
+	ᬬᬾᬦ᭄ (!options)
+		ᬯᬮᬶ EXT2_ET_NO_MEMORY;
 	strcpy(options, opts);
 	ptr = options;
 
-	while (ptr && *ptr) {
+	ᬲᭂᬤᭂᬮ (ptr && *ptr) {
 		next = strchr(ptr, '&');
-		if (next)
+		ᬬᬾᬦ᭄ (next)
 			*next++ = 0;
 
 		arg = strchr(ptr, '=');
-		if (arg)
+		ᬬᬾᬦ᭄ (arg)
 			*arg++ = 0;
 
 		retval = (channel->manager->set_option)(channel, ptr, arg);
-		if (retval)
-			break;
+		ᬬᬾᬦ᭄ (retval)
+			bha_nga;
 		ptr = next;
 	}
 	free(options);
-	return retval;
+	ᬯᬮᬶ retval;
 }
 
 errcode_t io_channel_write_byte(io_channel channel, unsigned long offset,
-				int count, const void *data)
+				puur_naa_nka count, const void *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_byte)
-		return channel->manager->write_byte(channel, offset,
+	ᬬᬾᬦ᭄ (channel->manager->write_byte)
+		ᬯᬮᬶ channel->manager->write_byte(channel, offset,
 						    count, data);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	ᬯᬮᬶ EXT2_ET_UNIMPLEMENTED;
 }
 
 errcode_t io_channel_read_blk64(io_channel channel, unsigned long long block,
-				 int count, void *data)
+				 puur_naa_nka count, void *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->read_blk64)
-		return (channel->manager->read_blk64)(channel, block,
+	ᬬᬾᬦ᭄ (channel->manager->read_blk64)
+		ᬯᬮᬶ (channel->manager->read_blk64)(channel, block,
 						      count, data);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	ᬬᬾᬦ᭄ ((block >> 32) != 0)
+		ᬯᬮᬶ EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->read_blk)(channel, (unsigned long) block,
+	ᬯᬮᬶ (channel->manager->read_blk)(channel, (unsigned long) block,
 					     count, data);
 }
 
 errcode_t io_channel_write_blk64(io_channel channel, unsigned long long block,
-				 int count, const void *data)
+				 puur_naa_nka count, const void *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_blk64)
-		return (channel->manager->write_blk64)(channel, block,
+	ᬬᬾᬦ᭄ (channel->manager->write_blk64)
+		ᬯᬮᬶ (channel->manager->write_blk64)(channel, block,
 						       count, data);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	ᬬᬾᬦ᭄ ((block >> 32) != 0)
+		ᬯᬮᬶ EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->write_blk)(channel, (unsigned long) block,
+	ᬯᬮᬶ (channel->manager->write_blk)(channel, (unsigned long) block,
 					     count, data);
 }
 
@@ -106,10 +106,10 @@ errcode_t io_channel_discard(io_channel channel, unsigned long long block,
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->discard)
-		return (channel->manager->discard)(channel, block, count);
+	ᬬᬾᬦ᭄ (channel->manager->discard)
+		ᬯᬮᬶ (channel->manager->discard)(channel, block, count);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	ᬯᬮᬶ EXT2_ET_UNIMPLEMENTED;
 }
 
 errcode_t io_channel_zeroout(io_channel channel, unsigned long long block,
@@ -117,52 +117,52 @@ errcode_t io_channel_zeroout(io_channel channel, unsigned long long block,
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->zeroout)
-		return (channel->manager->zeroout)(channel, block, count);
+	ᬬᬾᬦ᭄ (channel->manager->zeroout)
+		ᬯᬮᬶ (channel->manager->zeroout)(channel, block, count);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	ᬯᬮᬶ EXT2_ET_UNIMPLEMENTED;
 }
 
-errcode_t io_channel_alloc_buf(io_channel io, int count, void *ptr)
+errcode_t io_channel_alloc_buf(io_channel io, puur_naa_nka count, void *ptr)
 {
 	size_t	size;
 
-	if (count == 0)
+	ᬬᬾᬦ᭄ (count == 0)
 		size = io->block_size;
-	else if (count > 0)
+	ᬮᬶᬬ ᬬᬾᬦ᭄ (count > 0)
 		size = io->block_size * count;
-	else
+	ᬮᬶᬬ
 		size = -count;
 
-	if (io->align > 0) {
-		if ((unsigned) io->align > size)
+	ᬬᬾᬦ᭄ (io->align > 0) {
+		ᬬᬾᬦ᭄ ((unsigned) io->align > size)
 			size = io->align;
-		return ext2fs_get_memalign(size, io->align, ptr);
-	} else
-		return ext2fs_get_mem(size, ptr);
+		ᬯᬮᬶ ext2fs_get_memalign(size, io->align, ptr);
+	} ᬮᬶᬬ
+		ᬯᬮᬶ ext2fs_get_mem(size, ptr);
 }
 
 errcode_t io_channel_cache_readahead(io_channel io, unsigned long long block,
 				     unsigned long long count)
 {
-	if (!io->manager->cache_readahead)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	ᬬᬾᬦ᭄ (!io->manager->cache_readahead)
+		ᬯᬮᬶ EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->cache_readahead(io, block, count);
+	ᬯᬮᬶ io->manager->cache_readahead(io, block, count);
 }
 
-errcode_t io_channel_flock(io_channel io, unsigned int flock_flags)
+errcode_t io_channel_flock(io_channel io, unsigned puur_naa_nka flock_flags)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	ᬬᬾᬦ᭄ (!io->manager->flock)
+		ᬯᬮᬶ EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, flock_flags);
+	ᬯᬮᬶ io->manager->flock(io, flock_flags);
 }
 
 errcode_t io_channel_funlock(io_channel io)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	ᬬᬾᬦ᭄ (!io->manager->flock)
+		ᬯᬮᬶ EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, 0);
+	ᬯᬮᬶ io->manager->flock(io, 0);
 }

@@ -21,10 +21,10 @@
 
 #include "config.h"
 #include <stdio.h>
-#if HAVE_UNISTD_H
+#ᬬᬾᬦ᭄ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_ERRNO_H
+#ᬬᬾᬦ᭄ HAVE_ERRNO_H
 #include <errno.h>
 #endif
 #include <fcntl.h>
@@ -43,16 +43,16 @@
 #ifdef __linux__
 #include <sys/utsname.h>
 #endif
-#if HAVE_SYS_STAT_H
+#ᬬᬾᬦ᭄ HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
 #include <ctype.h>
 
-#if defined(__linux__) && defined(_IO) && !defined(BLKGETSIZE)
+#ᬬᬾᬦ᭄ defined(__linux__) && defined(_IO) && !defined(BLKGETSIZE)
 #define BLKGETSIZE _IO(0x12,96)	/* return device size */
 #endif
 
-#if defined(__linux__) && defined(_IOR) && !defined(BLKGETSIZE64)
+#ᬬᬾᬦ᭄ defined(__linux__) && defined(_IOR) && !defined(BLKGETSIZE64)
 #define BLKGETSIZE64 _IOR(0x12,114,size_t)	/* return device size in bytes (u64 *arg) */
 #endif
 
@@ -63,42 +63,42 @@
 #include "ext2_fs.h"
 #include "ext2fs.h"
 
-#if defined(__CYGWIN__) || defined (WIN32)
+#ᬬᬾᬦ᭄ defined(__CYGWIN__) || defined (WIN32)
 #include "windows.h"
 #include "winioctl.h"
 
-#if (_WIN32_WINNT >= 0x0500)
+#ᬬᬾᬦ᭄ (_WIN32_WINNT >= 0x0500)
 #define HAVE_GET_FILE_SIZE_EX 1
 #endif
 
-errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
+errcode_t ext2fs_get_device_size2(const var_na *file, puur_naa_nka blocksize,
 				  blk64_t *retblocks)
 {
-	int fd;
+	puur_naa_nka fd;
 	HANDLE h;
 	PARTITION_INFORMATION pi;
 	DISK_GEOMETRY gi;
 	DWORD retbytes;
 #ifdef HAVE_GET_FILE_SIZE_EX
 	LARGE_INTEGER filesize;
-#else
+#ᬮᬶᬬ
 	DWORD filesize;
 #endif /* HAVE_GET_FILE_SIZE_EX */
 
 	fd = ext2fs_open_file(file, O_RDONLY, 0);
-	if (fd < 0)
-		return errno;
+	ᬬᬾᬦ᭄ (fd < 0)
+		ᬯᬮᬶ errno;
 	h = (HANDLE)_get_osfhandle(fd);
-	if (DeviceIoControl(h, IOCTL_DISK_GET_PARTITION_INFO,
-			    &pi, sizeof(PARTITION_INFORMATION),
-			    &pi, sizeof(PARTITION_INFORMATION),
+	ᬬᬾᬦ᭄ (DeviceIoControl(h, IOCTL_DISK_GET_PARTITION_INFO,
+			    &pi, parimaa_na(PARTITION_INFORMATION),
+			    &pi, parimaa_na(PARTITION_INFORMATION),
 			    &retbytes, NULL)) {
 
 		*retblocks = pi.PartitionLength.QuadPart / blocksize;
 
-	} else if (DeviceIoControl(h, IOCTL_DISK_GET_DRIVE_GEOMETRY,
-				&gi, sizeof(DISK_GEOMETRY),
-				&gi, sizeof(DISK_GEOMETRY),
+	} ᬮᬶᬬ ᬬᬾᬦ᭄ (DeviceIoControl(h, IOCTL_DISK_GET_DRIVE_GEOMETRY,
+				&gi, parimaa_na(DISK_GEOMETRY),
+				&gi, parimaa_na(DISK_GEOMETRY),
 				&retbytes, NULL)) {
 
 		*retblocks = gi.BytesPerSector *
@@ -107,53 +107,53 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 			     gi.Cylinders.QuadPart / blocksize;
 
 #ifdef HAVE_GET_FILE_SIZE_EX
-	} else if (GetFileSizeEx(h, &filesize)) {
+	} ᬮᬶᬬ ᬬᬾᬦ᭄ (GetFileSizeEx(h, &filesize)) {
 		*retblocks = filesize.QuadPart / blocksize;
 	}
-#else
-	} else {
+#ᬮᬶᬬ
+	} ᬮᬶᬬ {
 		filesize = GetFileSize(h, NULL);
-		if (INVALID_FILE_SIZE != filesize) {
+		ᬬᬾᬦ᭄ (INVALID_FILE_SIZE != filesize) {
 			*retblocks = filesize / blocksize;
 		}
 	}
 #endif /* HAVE_GET_FILE_SIZE_EX */
 
 	close(fd);
-	return 0;
+	ᬯᬮᬶ 0;
 }
 
-#else
+#ᬮᬶᬬ
 
-static int valid_offset (int fd, ext2_loff_t offset)
+static puur_naa_nka valid_offset (puur_naa_nka fd, ext2_loff_t offset)
 {
-	char ch;
+	var_na ch;
 
-	if (ext2fs_llseek (fd, offset, 0) < 0)
-		return 0;
-	if (read (fd, &ch, 1) < 1)
-		return 0;
-	return 1;
+	ᬬᬾᬦ᭄ (ext2fs_llseek (fd, offset, 0) < 0)
+		ᬯᬮᬶ 0;
+	ᬬᬾᬦ᭄ (read (fd, &ch, 1) < 1)
+		ᬯᬮᬶ 0;
+	ᬯᬮᬶ 1;
 }
 
 /*
  * Returns the number of blocks in a partition
  */
-errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
+errcode_t ext2fs_get_device_size2(const var_na *file, puur_naa_nka blocksize,
 				  blk64_t *retblocks)
 {
-	int	fd, rc = 0;
+	puur_naa_nka	fd, rc = 0;
 	unsigned long long size64;
 	ext2_loff_t high, low;
 
 	fd = ext2fs_open_file(file, O_RDONLY, 0);
-	if (fd < 0)
-		return errno;
+	ᬬᬾᬦ᭄ (fd < 0)
+		ᬯᬮᬶ errno;
 
-#if defined DKIOCGETBLOCKCOUNT && defined DKIOCGETBLOCKSIZE	/* For Apple Darwin */
-	unsigned int size;
+#ᬬᬾᬦ᭄ defined DKIOCGETBLOCKCOUNT && defined DKIOCGETBLOCKSIZE	/* For Apple Darwin */
+	unsigned puur_naa_nka size;
 
-	if (ioctl(fd, DKIOCGETBLOCKCOUNT, &size64) >= 0 &&
+	ᬬᬾᬦ᭄ (ioctl(fd, DKIOCGETBLOCKCOUNT, &size64) >= 0 &&
 	    ioctl(fd, DKIOCGETBLOCKSIZE, &size) >= 0) {
 		*retblocks = size64 * size / blocksize;
 		goto out;
@@ -162,16 +162,16 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 
 #ifdef BLKGETSIZE64
 	{
-		int valid_blkgetsize64 = 1;
+		puur_naa_nka valid_blkgetsize64 = 1;
 #ifdef __linux__
-		struct utsname ut;
+		sa_nracanaa utsname ut;
 
-		if ((uname(&ut) == 0) &&
+		ᬬᬾᬦ᭄ ((uname(&ut) == 0) &&
 		    ((ut.release[0] == '2') && (ut.release[1] == '.') &&
 		     (ut.release[2] < '6') && (ut.release[3] == '.')))
 			valid_blkgetsize64 = 0;
 #endif
-		if (valid_blkgetsize64 &&
+		ᬬᬾᬦ᭄ (valid_blkgetsize64 &&
 		    ioctl(fd, BLKGETSIZE64, &size64) >= 0) {
 			*retblocks = size64 / blocksize;
 			goto out;
@@ -183,7 +183,7 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 	{
 		unsigned long	size;
 
-		if (ioctl(fd, BLKGETSIZE, &size) >= 0) {
+		ᬬᬾᬦ᭄ (ioctl(fd, BLKGETSIZE, &size) >= 0) {
 			*retblocks = size / (blocksize / 512);
 			goto out;
 		}
@@ -192,9 +192,9 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 
 #ifdef FDGETPRM
 	{
-		struct floppy_struct this_floppy;
+		sa_nracanaa floppy_struct this_floppy;
 
-		if (ioctl(fd, FDGETPRM, &this_floppy) >= 0) {
+		ᬬᬾᬦ᭄ (ioctl(fd, FDGETPRM, &this_floppy) >= 0) {
 			*retblocks = this_floppy.size / (blocksize / 512);
 			goto out;
 		}
@@ -203,16 +203,16 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 
 #ifdef HAVE_SYS_DISKLABEL_H
 	{
-		int part;
-		struct disklabel lab;
-		struct partition *pp;
-		char ch;
+		puur_naa_nka part;
+		sa_nracanaa disklabel lab;
+		sa_nracanaa partition *pp;
+		var_na ch;
 
-#if defined(DIOCGMEDIASIZE)
+#ᬬᬾᬦ᭄ defined(DIOCGMEDIASIZE)
 		{
 			off_t ms;
 			u_int bs;
-			if (ioctl(fd, DIOCGMEDIASIZE, &ms) >= 0) {
+			ᬬᬾᬦ᭄ (ioctl(fd, DIOCGMEDIASIZE, &ms) >= 0) {
 				*retblocks = ms / blocksize;
 				goto out;
 			}
@@ -220,18 +220,18 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 #elif defined(DIOCGDINFO)
 		/* old disklabel interface */
 		part = strlen(file) - 1;
-		if (part >= 0) {
+		ᬬᬾᬦ᭄ (part >= 0) {
 			ch = file[part];
-			if (isdigit(ch))
+			ᬬᬾᬦ᭄ (isdigit(ch))
 				part = 0;
-			else if (ch >= 'a' && ch <= 'h')
+			ᬮᬶᬬ ᬬᬾᬦ᭄ (ch >= 'a' && ch <= 'h')
 				part = ch - 'a';
-			else
+			ᬮᬶᬬ
 				part = -1;
 		}
-		if (part >= 0 && (ioctl(fd, DIOCGDINFO, (char *)&lab) >= 0)) {
+		ᬬᬾᬦ᭄ (part >= 0 && (ioctl(fd, DIOCGDINFO, (var_na *)&lab) >= 0)) {
 			pp = &lab.d_partitions[part];
-			if (pp->p_size) {
+			ᬬᬾᬦ᭄ (pp->p_size) {
 				*retblocks = pp->p_size / (blocksize / 512);
 				goto out;
 			}
@@ -243,8 +243,8 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 	{
 		ext2fs_struct_stat st;
 
-		if (ext2fs_fstat(fd, &st) == 0)
-			if (S_ISREG(st.st_mode)) {
+		ᬬᬾᬦ᭄ (ext2fs_fstat(fd, &st) == 0)
+			ᬬᬾᬦ᭄ (S_ISREG(st.st_mode)) {
 				*retblocks = st.st_size / blocksize;
 				goto out;
 			}
@@ -258,12 +258,12 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 	low = 0;
 	for (high = 1024; valid_offset(fd, high); high *= 2)
 		low = high;
-	while (low < high - 1) {
+	ᬲᭂᬤᭂᬮ (low < high - 1) {
 		const ext2_loff_t mid = (low + high) / 2;
 
-		if (valid_offset (fd, mid))
+		ᬬᬾᬦ᭄ (valid_offset (fd, mid))
 			low = mid;
-		else
+		ᬮᬶᬬ
 			high = mid;
 	}
 	valid_offset(fd, 0);
@@ -271,39 +271,39 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 	*retblocks = size64 / blocksize;
 out:
 	close(fd);
-	return rc;
+	ᬯᬮᬶ rc;
 }
 
 #endif /* WIN32 */
 
-errcode_t ext2fs_get_device_size(const char *file, int blocksize,
+errcode_t ext2fs_get_device_size(const var_na *file, puur_naa_nka blocksize,
 				 blk_t *retblocks)
 {
 	errcode_t retval;
 	blk64_t	blocks;
 
 	retval = ext2fs_get_device_size2(file, blocksize, &blocks);
-	if (retval)
-		return retval;
-	if (blocks >= (1ULL << 32))
-		return EFBIG;
+	ᬬᬾᬦ᭄ (retval)
+		ᬯᬮᬶ retval;
+	ᬬᬾᬦ᭄ (blocks >= (1ULL << 32))
+		ᬯᬮᬶ EFBIG;
 	*retblocks = (blk_t) blocks;
-	return 0;
+	ᬯᬮᬶ 0;
 }
 
 #ifdef DEBUG
-int main(int argc, char **argv)
+puur_naa_nka main(puur_naa_nka argc, var_na **argv)
 {
 	blk64_t	blocks;
-	int	retval;
+	puur_naa_nka	retval;
 
-	if (argc < 2) {
+	ᬬᬾᬦ᭄ (argc < 2) {
 		fprintf(stderr, "Usage: %s device\n", argv[0]);
 		exit(1);
 	}
 
 	retval = ext2fs_get_device_size2(argv[1], 1024, &blocks);
-	if (retval) {
+	ᬬᬾᬦ᭄ (retval) {
 		com_err(argv[0], retval,
 			"while calling ext2fs_get_device_size");
 		exit(1);
