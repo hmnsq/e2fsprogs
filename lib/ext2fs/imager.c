@@ -13,45 +13,45 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#അന്തര്ഭാവ "config.h"
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#എങ്കിൽ HAVE_UNISTD_H
+#അന്തര്ഭാവ <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#എങ്കിൽ HAVE_ERRNO_H
+#അന്തര്ഭാവ <errno.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <time.h>
+#എങ്കിൽ HAVE_SYS_STAT_H
+#അന്തര്ഭാവ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#എങ്കിൽ HAVE_SYS_TYPES_H
+#അന്തര്ഭാവ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#അന്തര്ഭാവ "ext2_fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
 
 #ifndef HAVE_TYPE_SSIZE_T
-typedef int ssize_t;
+തരനിർവചനം പൂർണ്ണസംഖ്യ ssize_t;
 #endif
 
 /*
  * This function returns 1 if the specified block is all zeros
  */
-static int check_zero_block(char *buf, int blocksize)
+സ്ഥിതം പൂർണ്ണസംഖ്യ check_zero_block(അക്ഷരം *buf, പൂർണ്ണസംഖ്യ blocksize)
 {
-	char	*cp = buf;
-	int	left = blocksize;
+	അക്ഷരം	*cp = buf;
+	പൂർണ്ണസംഖ്യ	ഇടത് = blocksize;
 
-	while (left > 0) {
-		if (*cp++)
-			return 0;
-		left--;
+	ആകുമ്പോൾ (ഇടത് > 0) {
+		എങ്കിൽ (*cp++)
+			തിരികെ 0;
+		ഇടത്--;
 	}
-	return 1;
+	തിരികെ 1;
 }
 
 /*
@@ -59,78 +59,78 @@ static int check_zero_block(char *buf, int blocksize)
  */
 #define BUF_BLOCKS	32
 
-errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_inode_write(ext2_filsys fs, പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ flags)
 {
 	dgrp_t		group;
-	ssize_t		left, c, d;
-	char		*buf, *cp;
+	ssize_t		ഇടത്, c, d;
+	അക്ഷരം		*buf, *cp;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 	ext2_loff_t	r;
 
 	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	എങ്കിൽ (!buf)
+		തിരികെ ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
+	വേണ്ടി (group = 0; group < fs->group_desc_എണ്ണം; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
+		എങ്കിൽ (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
-			goto errout;
+			പോകുക errout;
 		}
-		left = fs->inode_blocks_per_group;
-		if ((blk < fs->super->s_first_data_block) ||
-		    (blk + left - 1 >= ext2fs_blocks_count(fs->super))) {
+		ഇടത് = fs->inode_blocks_per_group;
+		എങ്കിൽ ((blk < fs->super->s_first_data_block) ||
+		    (blk + ഇടത് - 1 >= ext2fs_blocks_എണ്ണം(fs->super))) {
 			retval = EXT2_ET_GDESC_BAD_INODE_TABLE;
-			goto errout;
+			പോകുക errout;
 		}
-		while (left) {
+		ആകുമ്പോൾ (ഇടത്) {
 			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
+			എങ്കിൽ (c > ഇടത്)
+				c = ഇടത്;
 			retval = io_channel_read_blk64(fs->io, blk, c, buf);
-			if (retval)
-				goto errout;
+			എങ്കിൽ (retval)
+				പോകുക errout;
 			cp = buf;
-			while (c) {
-				if (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
+			ആകുമ്പോൾ (c) {
+				എങ്കിൽ (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
 					d = c;
-					goto skip_sparse;
+					പോകുക skip_sparse;
 				}
 				/* Skip zero blocks */
-				if (check_zero_block(cp, fs->blocksize)) {
+				എങ്കിൽ (check_zero_block(cp, fs->blocksize)) {
 					c--;
 					blk++;
-					left--;
+					ഇടത്--;
 					cp += fs->blocksize;
 					r = ext2fs_llseek(fd, fs->blocksize,
 							  SEEK_CUR);
-					if (r < 0) {
+					എങ്കിൽ (r < 0) {
 						retval = errno;
-						goto errout;
+						പോകുക errout;
 					}
-					continue;
+					തുടരുക;
 				}
 				/* Find non-zero blocks */
-				for (d = 1; d < c; d++) {
-					if (check_zero_block(cp +
+				വേണ്ടി (d = 1; d < c; d++) {
+					എങ്കിൽ (check_zero_block(cp +
 							     d * fs->blocksize,
 							     fs->blocksize))
-						break;
+						നിർത്തുക;
 				}
 			skip_sparse:
-				actual = write(fd, cp, d * fs->blocksize);
-				if (actual == -1) {
+				actual = ലിഖ(fd, cp, d * fs->blocksize);
+				എങ്കിൽ (actual == -1) {
 					retval = errno;
-					goto errout;
+					പോകുക errout;
 				}
-				if (actual != d * fs->blocksize) {
+				എങ്കിൽ (actual != d * fs->blocksize) {
 					retval = EXT2_ET_SHORT_WRITE;
-					goto errout;
+					പോകുക errout;
 				}
 				blk += d;
-				left -= d;
+				ഇടത് -= d;
 				cp += d * fs->blocksize;
 				c -= d;
 			}
@@ -139,89 +139,89 @@ errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	സ്വതന്ത്രം(buf);
+	തിരികെ retval;
 }
 
 /*
  * Read in the inode table and stuff it into place
  */
-errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_inode_read(ext2_filsys fs, പൂർണ്ണസംഖ്യ fd,
+				  പൂർണ്ണസംഖ്യ flags EXT2FS_ATTR((unused)))
 {
 	dgrp_t		group;
-	ssize_t		c, left;
-	char		*buf;
+	ssize_t		c, ഇടത്;
+	അക്ഷരം		*buf;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 
 	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	എങ്കിൽ (!buf)
+		തിരികെ ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
+	വേണ്ടി (group = 0; group < fs->group_desc_എണ്ണം; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
+		എങ്കിൽ (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
-			goto errout;
+			പോകുക errout;
 		}
-		left = fs->inode_blocks_per_group;
-		while (left) {
+		ഇടത് = fs->inode_blocks_per_group;
+		ആകുമ്പോൾ (ഇടത്) {
 			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
-			actual = read(fd, buf, fs->blocksize * c);
-			if (actual == -1) {
+			എങ്കിൽ (c > ഇടത്)
+				c = ഇടത്;
+			actual = പഠ(fd, buf, fs->blocksize * c);
+			എങ്കിൽ (actual == -1) {
 				retval = errno;
-				goto errout;
+				പോകുക errout;
 			}
-			if (actual != fs->blocksize * c) {
+			എങ്കിൽ (actual != fs->blocksize * c) {
 				retval = EXT2_ET_SHORT_READ;
-				goto errout;
+				പോകുക errout;
 			}
 			retval = io_channel_write_blk64(fs->io, blk, c, buf);
-			if (retval)
-				goto errout;
+			എങ്കിൽ (retval)
+				പോകുക errout;
 
 			blk += c;
-			left -= c;
+			ഇടത് -= c;
 		}
 	}
 	retval = ext2fs_flush_icache(fs);
 
 errout:
-	free(buf);
-	return retval;
+	സ്വതന്ത്രം(buf);
+	തിരികെ retval;
 }
 
 /*
  * Write out superblock and group descriptors
  */
-errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
-				   int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_write(ext2_filsys fs, പൂർണ്ണസംഖ്യ fd,
+				   പൂർണ്ണസംഖ്യ flags EXT2FS_ATTR((unused)))
 {
-	char		*buf, *cp;
+	അക്ഷരം		*buf, *cp;
 	ssize_t		actual;
 	errcode_t	retval;
-#ifdef WORDS_BIGENDIAN
-	unsigned int	groups_per_block;
-	struct		ext2_group_desc *gdp;
-	int		j;
+#ifdef വാക്കുകൾ_BIGENDIAN
+	unsigned പൂർണ്ണസംഖ്യ	groups_per_block;
+	ഘടന		ext2_group_desc *gdp;
+	പൂർണ്ണസംഖ്യ		j;
 #endif
 
-	if (fs->group_desc == NULL)
-		return EXT2_ET_NO_GDESC;
+	എങ്കിൽ (fs->group_desc == ശൂന്യ)
+		തിരികെ EXT2_ET_NO_GDESC;
 
 	buf = malloc(fs->blocksize);
-	if (!buf)
-		return ENOMEM;
+	എങ്കിൽ (!buf)
+		തിരികെ ENOMEM;
 
 	/*
 	 * Write out the superblock
 	 */
 	memset(buf, 0, fs->blocksize);
-#ifdef WORDS_BIGENDIAN
+#ifdef വാക്കുകൾ_BIGENDIAN
 	/*
 	 * We're writing out superblock so let's convert
 	 * it to little endian and then back if needed
@@ -229,92 +229,92 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 	ext2fs_swap_super(fs->super);
 	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
 	ext2fs_swap_super(fs->super);
-#else
+#അല്ലെങ്കിൽ
 	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
 #endif
-	actual = write(fd, buf, fs->blocksize);
-	if (actual == -1) {
+	actual = ലിഖ(fd, buf, fs->blocksize);
+	എങ്കിൽ (actual == -1) {
 		retval = errno;
-		goto errout;
+		പോകുക errout;
 	}
-	if (actual != (ssize_t) fs->blocksize) {
+	എങ്കിൽ (actual != (ssize_t) fs->blocksize) {
 		retval = EXT2_ET_SHORT_WRITE;
-		goto errout;
+		പോകുക errout;
 	}
 
 	/*
 	 * Now write out the block group descriptors
 	 */
 
-	cp = (char *) fs->group_desc;
+	cp = (അക്ഷരം *) fs->group_desc;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef വാക്കുകൾ_BIGENDIAN
 	/*
 	 * Convert group descriptors to little endian and back
 	 * if needed
 	 */
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
+	വേണ്ടി (j=0; j < groups_per_block*fs->desc_blocks; j++) {
 		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
+		എങ്കിൽ (gdp)
 			ext2fs_swap_group_desc2(fs, gdp);
 	}
 #endif
 
-	actual = write(fd, cp, (ssize_t)fs->blocksize * fs->desc_blocks);
+	actual = ലിഖ(fd, cp, (ssize_t)fs->blocksize * fs->desc_blocks);
 
 
-#ifdef WORDS_BIGENDIAN
+#ifdef വാക്കുകൾ_BIGENDIAN
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
+	വേണ്ടി (j=0; j < groups_per_block*fs->desc_blocks; j++) {
 		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
+		എങ്കിൽ (gdp)
 			ext2fs_swap_group_desc2(fs, gdp);
 	}
 #endif
 
-	if (actual == -1) {
+	എങ്കിൽ (actual == -1) {
 		retval = errno;
-		goto errout;
+		പോകുക errout;
 	}
-	if (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
+	എങ്കിൽ (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
 		retval = EXT2_ET_SHORT_WRITE;
-		goto errout;
+		പോകുക errout;
 	}
 
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	സ്വതന്ത്രം(buf);
+	തിരികെ retval;
 }
 
 /*
  * Read the superblock and group descriptors and overwrite them.
  */
-errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_read(ext2_filsys fs, പൂർണ്ണസംഖ്യ fd,
+				  പൂർണ്ണസംഖ്യ flags EXT2FS_ATTR((unused)))
 {
-	char		*buf;
+	അക്ഷരം		*buf;
 	ssize_t		actual, size;
 	errcode_t	retval;
 
 	size = (ssize_t)fs->blocksize * (fs->desc_blocks + 1);
 	buf = malloc(size);
-	if (!buf)
-		return ENOMEM;
+	എങ്കിൽ (!buf)
+		തിരികെ ENOMEM;
 
 	/*
 	 * Read it all in.
 	 */
-	actual = read(fd, buf, size);
-	if (actual == -1) {
+	actual = പഠ(fd, buf, size);
+	എങ്കിൽ (actual == -1) {
 		retval = errno;
-		goto errout;
+		പോകുക errout;
 	}
-	if (actual != size) {
+	എങ്കിൽ (actual != size) {
 		retval = EXT2_ET_SHORT_READ;
-		goto errout;
+		പോകുക errout;
 	}
 
 	/*
@@ -328,143 +328,143 @@ errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	സ്വതന്ത്രം(buf);
+	തിരികെ retval;
 }
 
 /*
  * Write the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	ssize_t			actual;
 	size_t			c;
 	__u64			itr, cnt, size, total_size;
-	char			buf[1024];
+	അക്ഷരം			buf[1024];
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	എങ്കിൽ (flags & IMAGER_FLAG_INODEMAP) {
+		എങ്കിൽ (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			എങ്കിൽ (retval)
+				തിരികെ retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
+			fs->group_desc_എണ്ണം;
 		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (!fs->block_map) {
 			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+			എങ്കിൽ (retval)
+				തിരികെ retval;
 		}
 		bmap = fs->block_map;
 		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super, fs->group_desc_count);
+		cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super, fs->group_desc_എണ്ണം);
 		size = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
 	}
-	total_size = size * fs->group_desc_count;
+	total_size = size * fs->group_desc_എണ്ണം;
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
+	ആകുമ്പോൾ (cnt > 0) {
+		size = വലുപ്പം(buf);
+		എങ്കിൽ (size > (cnt >> 3))
 			size = (cnt >> 3);
-		if (size == 0)
-			break;
+		എങ്കിൽ (size == 0)
+			നിർത്തുക;
 
 		retval = ext2fs_get_generic_bmap_range(bmap, itr,
 						       size << 3, buf);
-		if (retval)
-			return retval;
+		എങ്കിൽ (retval)
+			തിരികെ retval;
 
-		actual = write(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		actual = ലിഖ(fd, buf, size);
+		എങ്കിൽ (actual == -1)
+			തിരികെ errno;
+		എങ്കിൽ (actual != (പൂർണ്ണസംഖ്യ) size)
+			തിരികെ EXT2_ET_SHORT_READ;
 
 		itr += size << 3;
 		cnt -= size << 3;
 	}
 
 	size = total_size % fs->blocksize;
-	memset(buf, 0, sizeof(buf));
-	if (size) {
+	memset(buf, 0, വലുപ്പം(buf));
+	എങ്കിൽ (size) {
 		size = fs->blocksize - size;
-		while (size) {
+		ആകുമ്പോൾ (size) {
 			c = size;
-			if (c > (int) sizeof(buf))
-				c = sizeof(buf);
-			actual = write(fd, buf, c);
-			if (actual < 0)
-				return errno;
-			if ((size_t) actual != c)
-				return EXT2_ET_SHORT_WRITE;
+			എങ്കിൽ (c > (പൂർണ്ണസംഖ്യ) വലുപ്പം(buf))
+				c = വലുപ്പം(buf);
+			actual = ലിഖ(fd, buf, c);
+			എങ്കിൽ (actual < 0)
+				തിരികെ errno;
+			എങ്കിൽ ((size_t) actual != c)
+				തിരികെ EXT2_ET_SHORT_WRITE;
 			size -= c;
 		}
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 
 /*
  * Read the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	__u64			itr, cnt;
-	char			buf[1024];
-	unsigned int		size;
+	അക്ഷരം			buf[1024];
+	unsigned പൂർണ്ണസംഖ്യ		size;
 	ssize_t			actual;
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	എങ്കിൽ (flags & IMAGER_FLAG_INODEMAP) {
+		എങ്കിൽ (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			എങ്കിൽ (retval)
+				തിരികെ retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
+			fs->group_desc_എണ്ണം;
 		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (!fs->block_map) {
 			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+			എങ്കിൽ (retval)
+				തിരികെ retval;
 		}
 		bmap = fs->block_map;
 		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_BLOCKS(fs->super, fs->group_desc_count);
+		cnt = EXT2_GROUPS_TO_BLOCKS(fs->super, fs->group_desc_എണ്ണം);
 		size = EXT2_BLOCKS_PER_GROUP(fs->super) / 8;
 	}
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
+	ആകുമ്പോൾ (cnt > 0) {
+		size = വലുപ്പം(buf);
+		എങ്കിൽ (size > (cnt >> 3))
 			size = (cnt >> 3);
-		if (size == 0)
-			break;
+		എങ്കിൽ (size == 0)
+			നിർത്തുക;
 
-		actual = read(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		actual = പഠ(fd, buf, size);
+		എങ്കിൽ (actual == -1)
+			തിരികെ errno;
+		എങ്കിൽ (actual != (പൂർണ്ണസംഖ്യ) size)
+			തിരികെ EXT2_ET_SHORT_READ;
 
 		retval = ext2fs_set_generic_bmap_range(bmap, itr,
 						       size << 3, buf);
-		if (retval)
-			return retval;
+		എങ്കിൽ (retval)
+			തിരികെ retval;
 
 		itr += size << 3;
 		cnt -= size << 3;
 	}
-	return 0;
+	തിരികെ 0;
 }

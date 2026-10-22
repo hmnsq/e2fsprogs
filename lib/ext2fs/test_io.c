@@ -9,44 +9,44 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#അന്തര്ഭാവ "config.h"
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#എങ്കിൽ HAVE_UNISTD_H
+#അന്തര്ഭാവ <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <time.h>
+#എങ്കിൽ HAVE_SYS_STAT_H
+#അന്തര്ഭാവ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#എങ്കിൽ HAVE_SYS_TYPES_H
+#അന്തര്ഭാവ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#അന്തര്ഭാവ "ext2_fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#define EXT2_CHECK_MAGIC(ഘടന, code) \
+	  എങ്കിൽ ((ഘടന)->magic != (code)) തിരികെ (code)
 
-struct test_private_data {
-	int	magic;
+ഘടന test_private_data {
+	പൂർണ്ണസംഖ്യ	magic;
 	io_channel real;
-	int flags;
+	പൂർണ്ണസംഖ്യ flags;
 	FILE *outfile;
 	unsigned long block;
-	int read_abort_count, write_abort_count;
-	void (*read_blk)(unsigned long block, int count, errcode_t err);
-	void (*write_blk)(unsigned long block, int count, errcode_t err);
-	void (*set_blksize)(int blksize, errcode_t err);
-	void (*write_byte)(unsigned long block, int count, errcode_t err);
-	void (*read_blk64)(unsigned long long block, int count, errcode_t err);
-	void (*write_blk64)(unsigned long long block, int count, errcode_t err);
+	പൂർണ്ണസംഖ്യ read_abort_എണ്ണം, write_abort_എണ്ണം;
+	ശൂന്യം (*read_blk)(unsigned long block, പൂർണ്ണസംഖ്യ എണ്ണം, errcode_t err);
+	ശൂന്യം (*write_blk)(unsigned long block, പൂർണ്ണസംഖ്യ എണ്ണം, errcode_t err);
+	ശൂന്യം (*set_blksize)(പൂർണ്ണസംഖ്യ blksize, errcode_t err);
+	ശൂന്യം (*write_byte)(unsigned long block, പൂർണ്ണസംഖ്യ എണ്ണം, errcode_t err);
+	ശൂന്യം (*read_blk64)(unsigned long long block, പൂർണ്ണസംഖ്യ എണ്ണം, errcode_t err);
+	ശൂന്യം (*write_blk64)(unsigned long long block, പൂർണ്ണസംഖ്യ എണ്ണം, errcode_t err);
 };
 
 /*
@@ -54,18 +54,18 @@ struct test_private_data {
  * necessary *before* calling test_open
  */
 io_manager test_io_backing_manager = 0;
-void (*test_io_cb_read_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
-void (*test_io_cb_write_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
-void (*test_io_cb_read_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
-void (*test_io_cb_write_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
-void (*test_io_cb_set_blksize)
-	(int blksize, errcode_t err) = 0;
-void (*test_io_cb_write_byte)
-	(unsigned long block, int count, errcode_t err) = 0;
+ശൂന്യം (*test_io_cb_read_blk)
+	(unsigned long block, പൂർണ്ണസംഖ്യ എണ്ണം, errcode_t err) = 0;
+ശൂന്യം (*test_io_cb_write_blk)
+	(unsigned long block, പൂർണ്ണസംഖ്യ എണ്ണം, errcode_t err) = 0;
+ശൂന്യം (*test_io_cb_read_blk64)
+	(unsigned long long block, പൂർണ്ണസംഖ്യ എണ്ണം, errcode_t err) = 0;
+ശൂന്യം (*test_io_cb_write_blk64)
+	(unsigned long long block, പൂർണ്ണസംഖ്യ എണ്ണം, errcode_t err) = 0;
+ശൂന്യം (*test_io_cb_set_blksize)
+	(പൂർണ്ണസംഖ്യ blksize, errcode_t err) = 0;
+ശൂന്യം (*test_io_cb_write_byte)
+	(unsigned long block, പൂർണ്ണസംഖ്യ എണ്ണം, errcode_t err) = 0;
 
 /*
  * Test flags
@@ -80,21 +80,21 @@ void (*test_io_cb_write_byte)
 #define TEST_FLAG_READAHEAD		0x80
 #define TEST_FLAG_ZEROOUT		0x100
 
-static void test_dump_block(io_channel channel,
-			    struct test_private_data *data,
-			    unsigned long block, const void *buf)
+സ്ഥിതം ശൂന്യം test_dump_block(io_channel channel,
+			    ഘടന test_private_data *data,
+			    unsigned long block, സ്ഥിരം ശൂന്യം *buf)
 {
-	const unsigned char *cp;
+	സ്ഥിരം unsigned അക്ഷരം *cp;
 	FILE *f = data->outfile;
-	int	i;
+	പൂർണ്ണസംഖ്യ	i;
 	unsigned long	cksum = 0;
 
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
+	വേണ്ടി (i=0, cp = buf; i < channel->block_size; i++, cp++) {
 		cksum += *cp;
 	}
 	fprintf(f, "Contents of block %lu, checksum %08lu: \n", block, cksum);
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
-		if ((i % 16) == 0)
+	വേണ്ടി (i=0, cp = buf; i < channel->block_size; i++, cp++) {
+		എങ്കിൽ ((i % 16) == 0)
 			fprintf(f, "%04x: ", i);
 		fprintf(f, "%02x%c", *cp, ((i % 16) == 15) ? '\n' : ' ');
 	}
@@ -103,31 +103,31 @@ static void test_dump_block(io_channel channel,
 /*
  * Flush data buffers to disk.
  */
-static errcode_t test_flush(io_channel channel)
+സ്ഥിതം errcode_t test_flush(io_channel channel)
 {
-	struct test_private_data	*data;
+	ഘടന test_private_data	*data;
 	errcode_t			retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *)channel->private_data;
+	data = (ഘടന test_private_data *)channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
+	എങ്കിൽ (data->real)
 		retval = io_channel_flush(data->real);
 
-	if (data->flags & TEST_FLAG_FLUSH)
+	എങ്കിൽ (data->flags & TEST_FLAG_FLUSH)
 		fprintf(data->outfile, "Test_io: flush() returned %s\n",
 			retval ? error_message(retval) : "OK");
 
-	return retval;
+	തിരികെ retval;
 }
 
-static void test_abort(io_channel channel, unsigned long block)
+സ്ഥിതം ശൂന്യം test_abort(io_channel channel, unsigned long block)
 {
-	struct test_private_data *data;
+	ഘടന test_private_data *data;
 	FILE *f;
 
-	data = (struct test_private_data *) channel->private_data;
+	data = (ഘടന test_private_data *) channel->private_data;
 	f = data->outfile;
 	test_flush(channel);
 
@@ -136,27 +136,27 @@ static void test_abort(io_channel channel, unsigned long block)
 	abort();
 }
 
-static errcode_t test_open(const char *name, int flags, io_channel *channel)
+സ്ഥിതം errcode_t test_open(സ്ഥിരം അക്ഷരം *name, പൂർണ്ണസംഖ്യ flags, io_channel *channel)
 {
-	io_channel	io = NULL;
-	struct test_private_data *data = NULL;
+	io_channel	io = ശൂന്യ;
+	ഘടന test_private_data *data = ശൂന്യ;
 	errcode_t	retval;
-	char		*value;
+	അക്ഷരം		*മൂല്യം;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	എങ്കിൽ (name == 0)
+		തിരികെ EXT2_ET_BAD_DEVICE_NAME;
+	retval = ext2fs_get_mem(വലുപ്പം(ഘടന struct_io_channel), &io);
+	എങ്കിൽ (retval)
+		പോകുക cleanup;
+	memset(io, 0, വലുപ്പം(ഘടന struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
-	retval = ext2fs_get_mem(sizeof(struct test_private_data), &data);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(വലുപ്പം(ഘടന test_private_data), &data);
+	എങ്കിൽ (retval)
+		പോകുക cleanup;
 	io->manager = test_io_manager;
 	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	എങ്കിൽ (retval)
+		പോകുക cleanup;
 
 	strcpy(io->name, name);
 	io->private_data = data;
@@ -166,14 +166,14 @@ static errcode_t test_open(const char *name, int flags, io_channel *channel)
 	io->refcount = 1;
 	io->flags = 0;
 
-	memset(data, 0, sizeof(struct test_private_data));
+	memset(data, 0, വലുപ്പം(ഘടന test_private_data));
 	data->magic = EXT2_ET_MAGIC_TEST_IO_CHANNEL;
-	if (test_io_backing_manager) {
+	എങ്കിൽ (test_io_backing_manager) {
 		retval = test_io_backing_manager->open(name, flags,
 						       &data->real);
-		if (retval)
-			goto cleanup;
-	} else {
+		എങ്കിൽ (retval)
+			പോകുക cleanup;
+	} അല്ലെങ്കിൽ {
 		data->real = 0;
 	}
 	data->read_blk =	test_io_cb_read_blk;
@@ -183,326 +183,326 @@ static errcode_t test_open(const char *name, int flags, io_channel *channel)
 	data->read_blk64 =	test_io_cb_read_blk64;
 	data->write_blk64 =	test_io_cb_write_blk64;
 
-	data->outfile = NULL;
-	if ((value = ext2fs_safe_getenv("TEST_IO_LOGFILE")) != NULL)
-		data->outfile = fopen(value, "w");
-	if (!data->outfile)
+	data->outfile = ശൂന്യ;
+	എങ്കിൽ ((മൂല്യം = ext2fs_safe_getenv("TEST_IO_LOGFILE")) != ശൂന്യ)
+		data->outfile = fopen(മൂല്യം, "w");
+	എങ്കിൽ (!data->outfile)
 		data->outfile = stderr;
 
 	data->flags = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_FLAGS")) != NULL)
-		data->flags = strtoul(value, NULL, 0);
+	എങ്കിൽ ((മൂല്യം = ext2fs_safe_getenv("TEST_IO_FLAGS")) != ശൂന്യ)
+		data->flags = strtoul(മൂല്യം, ശൂന്യ, 0);
 
 	data->block = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_BLOCK")) != NULL)
-		data->block = strtoul(value, NULL, 0);
+	എങ്കിൽ ((മൂല്യം = ext2fs_safe_getenv("TEST_IO_BLOCK")) != ശൂന്യ)
+		data->block = strtoul(മൂല്യം, ശൂന്യ, 0);
 
-	data->read_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_READ_ABORT")) != NULL)
-		data->read_abort_count = strtoul(value, NULL, 0);
+	data->read_abort_എണ്ണം = 0;
+	എങ്കിൽ ((മൂല്യം = ext2fs_safe_getenv("TEST_IO_READ_ABORT")) != ശൂന്യ)
+		data->read_abort_എണ്ണം = strtoul(മൂല്യം, ശൂന്യ, 0);
 
-	data->write_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_WRITE_ABORT")) != NULL)
-		data->write_abort_count = strtoul(value, NULL, 0);
+	data->write_abort_എണ്ണം = 0;
+	എങ്കിൽ ((മൂല്യം = ext2fs_safe_getenv("TEST_IO_WRITE_ABORT")) != ശൂന്യ)
+		data->write_abort_എണ്ണം = strtoul(മൂല്യം, ശൂന്യ, 0);
 
-	if (data->real) {
+	എങ്കിൽ (data->real) {
 		io->align = data->real->align;
-		if (data->real->flags & CHANNEL_FLAGS_THREADS)
+		എങ്കിൽ (data->real->flags & CHANNEL_FLAGS_THREADS)
 			io->flags |= CHANNEL_FLAGS_THREADS;
 	}
 
 	*channel = io;
-	return 0;
+	തിരികെ 0;
 
 cleanup:
-	if (io && io->name)
+	എങ്കിൽ (io && io->name)
 		ext2fs_free_mem(&io->name);
-	if (io)
+	എങ്കിൽ (io)
 		ext2fs_free_mem(&io);
-	if (data)
+	എങ്കിൽ (data)
 		ext2fs_free_mem(&data);
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t test_close(io_channel channel)
+സ്ഥിതം errcode_t test_close(io_channel channel)
 {
-	struct test_private_data *data;
+	ഘടന test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (ഘടന test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	എങ്കിൽ (--channel->refcount > 0)
+		തിരികെ 0;
 
-	if (data->real)
+	എങ്കിൽ (data->real)
 		retval = io_channel_close(data->real);
 
-	if (data->outfile && data->outfile != stderr)
+	എങ്കിൽ (data->outfile && data->outfile != stderr)
 		fclose(data->outfile);
 
 	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	എങ്കിൽ (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t test_set_blksize(io_channel channel, int blksize)
+സ്ഥിതം errcode_t test_set_blksize(io_channel channel, പൂർണ്ണസംഖ്യ blksize)
 {
-	struct test_private_data *data;
+	ഘടന test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (ഘടന test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real) {
+	എങ്കിൽ (data->real) {
 		retval = io_channel_set_blksize(data->real, blksize);
 		channel->align = data->real->align;
 	}
-	if (data->set_blksize)
+	എങ്കിൽ (data->set_blksize)
 		data->set_blksize(blksize, retval);
-	if (data->flags & TEST_FLAG_SET_BLKSIZE)
+	എങ്കിൽ (data->flags & TEST_FLAG_SET_BLKSIZE)
 		fprintf(data->outfile,
 			"Test_io: set_blksize(%d) returned %s\n",
 			blksize, retval ? error_message(retval) : "OK");
 	channel->block_size = blksize;
-	return retval;
+	തിരികെ retval;
 }
 
 
-static errcode_t test_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+സ്ഥിതം errcode_t test_read_blk(io_channel channel, unsigned long block,
+			       പൂർണ്ണസംഖ്യ എണ്ണം, ശൂന്യം *buf)
 {
-	struct test_private_data *data;
+	ഘടന test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (ഘടന test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_read_blk(data->real, block, count, buf);
-	if (data->read_blk)
-		data->read_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
+	എങ്കിൽ (data->real)
+		retval = io_channel_read_blk(data->real, block, എണ്ണം, buf);
+	എങ്കിൽ (data->read_blk)
+		data->read_blk(block, എണ്ണം, retval);
+	എങ്കിൽ (data->flags & TEST_FLAG_READ)
 		fprintf(data->outfile,
 			"Test_io: read_blk(%lu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+			block, എണ്ണം, retval ? error_message(retval) : "OK");
+	എങ്കിൽ (data->block && data->block == block) {
+		എങ്കിൽ (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
+		എങ്കിൽ (--data->read_abort_എണ്ണം == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t test_write_blk(io_channel channel, unsigned long block,
-			       int count, const void *buf)
+സ്ഥിതം errcode_t test_write_blk(io_channel channel, unsigned long block,
+			       പൂർണ്ണസംഖ്യ എണ്ണം, സ്ഥിരം ശൂന്യം *buf)
 {
-	struct test_private_data *data;
+	ഘടന test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (ഘടന test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_write_blk(data->real, block, count, buf);
-	if (data->write_blk)
-		data->write_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
+	എങ്കിൽ (data->real)
+		retval = io_channel_write_blk(data->real, block, എണ്ണം, buf);
+	എങ്കിൽ (data->write_blk)
+		data->write_blk(block, എണ്ണം, retval);
+	എങ്കിൽ (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_blk(%lu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+			block, എണ്ണം, retval ? error_message(retval) : "OK");
+	എങ്കിൽ (data->block && data->block == block) {
+		എങ്കിൽ (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
+		എങ്കിൽ (--data->write_abort_എണ്ണം == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t test_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+സ്ഥിതം errcode_t test_read_blk64(io_channel channel, unsigned long long block,
+			       പൂർണ്ണസംഖ്യ എണ്ണം, ശൂന്യം *buf)
 {
-	struct test_private_data *data;
+	ഘടന test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (ഘടന test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_read_blk64(data->real, block, count, buf);
-	if (data->read_blk64)
-		data->read_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
+	എങ്കിൽ (data->real)
+		retval = io_channel_read_blk64(data->real, block, എണ്ണം, buf);
+	എങ്കിൽ (data->read_blk64)
+		data->read_blk64(block, എണ്ണം, retval);
+	എങ്കിൽ (data->flags & TEST_FLAG_READ)
 		fprintf(data->outfile,
 			"Test_io: read_blk64(%llu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+			block, എണ്ണം, retval ? error_message(retval) : "OK");
+	എങ്കിൽ (data->block && data->block == block) {
+		എങ്കിൽ (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
+		എങ്കിൽ (--data->read_abort_എണ്ണം == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t test_write_blk64(io_channel channel, unsigned long long block,
-			       int count, const void *buf)
+സ്ഥിതം errcode_t test_write_blk64(io_channel channel, unsigned long long block,
+			       പൂർണ്ണസംഖ്യ എണ്ണം, സ്ഥിരം ശൂന്യം *buf)
 {
-	struct test_private_data *data;
+	ഘടന test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (ഘടന test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_write_blk64(data->real, block, count, buf);
-	if (data->write_blk64)
-		data->write_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
+	എങ്കിൽ (data->real)
+		retval = io_channel_write_blk64(data->real, block, എണ്ണം, buf);
+	എങ്കിൽ (data->write_blk64)
+		data->write_blk64(block, എണ്ണം, retval);
+	എങ്കിൽ (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_blk64(%llu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
+			block, എണ്ണം, retval ? error_message(retval) : "OK");
+	എങ്കിൽ (data->block && data->block == block) {
+		എങ്കിൽ (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
+		എങ്കിൽ (--data->write_abort_എണ്ണം == 0)
 			test_abort(channel, block);
 	}
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t test_write_byte(io_channel channel, unsigned long offset,
-			       int count, const void *buf)
+സ്ഥിതം errcode_t test_write_byte(io_channel channel, unsigned long offset,
+			       പൂർണ്ണസംഖ്യ എണ്ണം, സ്ഥിരം ശൂന്യം *buf)
 {
-	struct test_private_data *data;
+	ഘടന test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (ഘടന test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->write_byte)
-		retval = io_channel_write_byte(data->real, offset, count, buf);
-	if (data->write_byte)
-		data->write_byte(offset, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
+	എങ്കിൽ (data->real && data->real->manager->write_byte)
+		retval = io_channel_write_byte(data->real, offset, എണ്ണം, buf);
+	എങ്കിൽ (data->write_byte)
+		data->write_byte(offset, എണ്ണം, retval);
+	എങ്കിൽ (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_byte(%lu, %d) returned %s\n",
-			offset, count, retval ? error_message(retval) : "OK");
-	return retval;
+			offset, എണ്ണം, retval ? error_message(retval) : "OK");
+	തിരികെ retval;
 }
 
-static errcode_t test_set_option(io_channel channel, const char *option,
-				 const char *arg)
+സ്ഥിതം errcode_t test_set_option(io_channel channel, സ്ഥിരം അക്ഷരം *option,
+				 സ്ഥിരം അക്ഷരം *arg)
 {
-	struct test_private_data *data;
+	ഘടന test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (ഘടന test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 
-	if (data->flags & TEST_FLAG_SET_OPTION)
+	എങ്കിൽ (data->flags & TEST_FLAG_SET_OPTION)
 		fprintf(data->outfile, "Test_io: set_option(%s, %s) ",
 			option, arg);
-	if (data->real && data->real->manager->set_option) {
+	എങ്കിൽ (data->real && data->real->manager->set_option) {
 		retval = (data->real->manager->set_option)(data->real,
 							   option, arg);
-		if (data->flags & TEST_FLAG_SET_OPTION)
+		എങ്കിൽ (data->flags & TEST_FLAG_SET_OPTION)
 			fprintf(data->outfile, "returned %s\n",
 				retval ? error_message(retval) : "OK");
-	} else {
-		if (data->flags & TEST_FLAG_SET_OPTION)
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (data->flags & TEST_FLAG_SET_OPTION)
 			fprintf(data->outfile, "not implemented\n");
 	}
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t test_get_stats(io_channel channel, io_stats *stats)
+സ്ഥിതം errcode_t test_get_stats(io_channel channel, io_stats *stats)
 {
-	struct test_private_data *data;
+	ഘടന test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (ഘടന test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->get_stats) {
+	എങ്കിൽ (data->real && data->real->manager->get_stats) {
 		retval = (data->real->manager->get_stats)(data->real, stats);
 	}
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t test_discard(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+സ്ഥിതം errcode_t test_discard(io_channel channel, unsigned long long block,
+			      unsigned long long എണ്ണം)
 {
-	struct test_private_data *data;
+	ഘടന test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (ഘടന test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_discard(data->real, block, count);
-	if (data->flags & TEST_FLAG_DISCARD)
+	എങ്കിൽ (data->real)
+		retval = io_channel_discard(data->real, block, എണ്ണം);
+	എങ്കിൽ (data->flags & TEST_FLAG_DISCARD)
 		fprintf(data->outfile,
 			"Test_io: discard(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			block, എണ്ണം, retval ? error_message(retval) : "OK");
+	തിരികെ retval;
 }
 
-static errcode_t test_cache_readahead(io_channel channel,
+സ്ഥിതം errcode_t test_cache_readahead(io_channel channel,
 				      unsigned long long block,
-				      unsigned long long count)
+				      unsigned long long എണ്ണം)
 {
-	struct test_private_data *data;
+	ഘടന test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (ഘടന test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_cache_readahead(data->real, block, count);
-	if (data->flags & TEST_FLAG_READAHEAD)
+	എങ്കിൽ (data->real)
+		retval = io_channel_cache_readahead(data->real, block, എണ്ണം);
+	എങ്കിൽ (data->flags & TEST_FLAG_READAHEAD)
 		fprintf(data->outfile,
 			"Test_io: readahead(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			block, എണ്ണം, retval ? error_message(retval) : "OK");
+	തിരികെ retval;
 }
 
-static errcode_t test_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+സ്ഥിതം errcode_t test_zeroout(io_channel channel, unsigned long long block,
+			      unsigned long long എണ്ണം)
 {
-	struct test_private_data *data;
+	ഘടന test_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
+	data = (ഘടന test_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_zeroout(data->real, block, count);
-	if (data->flags & TEST_FLAG_ZEROOUT)
+	എങ്കിൽ (data->real)
+		retval = io_channel_zeroout(data->real, block, എണ്ണം);
+	എങ്കിൽ (data->flags & TEST_FLAG_ZEROOUT)
 		fprintf(data->outfile,
 			"Test_io: zeroout(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			block, എണ്ണം, retval ? error_message(retval) : "OK");
+	തിരികെ retval;
 }
 
-static struct struct_io_manager struct_test_manager = {
+സ്ഥിതം ഘടന struct_io_manager struct_test_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Test I/O Manager",
 	.open		= test_open,

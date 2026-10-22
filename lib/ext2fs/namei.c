@@ -9,83 +9,83 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#അന്തര്ഭാവ "config.h"
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#എങ്കിൽ HAVE_UNISTD_H
+#അന്തര്ഭാവ <unistd.h>
 #endif
 
 /* #define NAMEI_DEBUG */
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#അന്തര്ഭാവ "ext2_fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
+#അന്തര്ഭാവ "ext2fsP.h"
 
-static errcode_t open_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t base,
-			    const char *pathname, size_t pathlen, int follow,
-			    int link_count, char *buf, ext2_ino_t *res_inode);
+സ്ഥിതം errcode_t open_namei(ext2_filsys fs, ext2_ino_t വേര്, ext2_ino_t base,
+			    സ്ഥിരം അക്ഷരം *pathname, size_t pathlen, പൂർണ്ണസംഖ്യ follow,
+			    പൂർണ്ണസംഖ്യ link_എണ്ണം, അക്ഷരം *buf, ext2_ino_t *res_inode);
 
-static errcode_t follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
-			     ext2_ino_t inode, int link_count,
-			     char *buf, ext2_ino_t *res_inode)
+സ്ഥിതം errcode_t follow_link(ext2_filsys fs, ext2_ino_t വേര്, ext2_ino_t dir,
+			     ext2_ino_t inode, പൂർണ്ണസംഖ്യ link_എണ്ണം,
+			     അക്ഷരം *buf, ext2_ino_t *res_inode)
 {
-	char *pathname;
-	char *buffer = 0;
+	അക്ഷരം *pathname;
+	അക്ഷരം *buffer = 0;
 	errcode_t retval;
-	struct ext2_inode ei;
+	ഘടന ext2_inode ei;
 	blk64_t blk;
 
 #ifdef NAMEI_DEBUG
 	printf("follow_link: root=%lu, dir=%lu, inode=%lu, lc=%d\n",
-	       root, dir, inode, link_count);
+	       വേര്, dir, inode, link_എണ്ണം);
 
 #endif
 	retval = ext2fs_read_inode (fs, inode, &ei);
-	if (retval) return retval;
-	if (!LINUX_S_ISLNK (ei.i_mode)) {
+	എങ്കിൽ (retval) തിരികെ retval;
+	എങ്കിൽ (!LINUX_S_ISLNK (ei.i_mode)) {
 		*res_inode = inode;
-		return 0;
+		തിരികെ 0;
 	}
-	if (link_count++ >= EXT2FS_MAX_NESTED_LINKS)
-		return EXT2_ET_SYMLINK_LOOP;
+	എങ്കിൽ (link_എണ്ണം++ >= EXT2FS_MAX_NESTED_LINKS)
+		തിരികെ EXT2_ET_SYMLINK_LOOP;
 
-	if (ext2fs_is_fast_symlink(&ei))
-		pathname = (char *)&(ei.i_block[0]);
-	else if (ei.i_flags & EXT4_INLINE_DATA_FL) {
+	എങ്കിൽ (ext2fs_is_fast_symlink(&ei))
+		pathname = (അക്ഷരം *)&(ei.i_block[0]);
+	അല്ലെങ്കിൽ എങ്കിൽ (ei.i_flags & EXT4_INLINE_DATA_FL) {
 		retval = ext2fs_get_memzero(ei.i_size, &buffer);
-		if (retval)
-			return retval;
+		എങ്കിൽ (retval)
+			തിരികെ retval;
 
 		retval = ext2fs_inline_data_get(fs, inode,
-						&ei, buffer, NULL);
-		if (retval) {
+						&ei, buffer, ശൂന്യ);
+		എങ്കിൽ (retval) {
 			ext2fs_free_mem(&buffer);
-			return retval;
+			തിരികെ retval;
 		}
 		pathname = buffer;
-	} else {
-		retval = ext2fs_bmap2(fs, inode, &ei, NULL, 0, 0, NULL, &blk);
-		if (retval)
-			return retval;
+	} അല്ലെങ്കിൽ {
+		retval = ext2fs_bmap2(fs, inode, &ei, ശൂന്യ, 0, 0, ശൂന്യ, &blk);
+		എങ്കിൽ (retval)
+			തിരികെ retval;
 
 		retval = ext2fs_get_mem(fs->blocksize, &buffer);
-		if (retval)
-			return retval;
+		എങ്കിൽ (retval)
+			തിരികെ retval;
 
 		retval = io_channel_read_blk64(fs->io, blk, 1, buffer);
-		if (retval) {
+		എങ്കിൽ (retval) {
 			ext2fs_free_mem(&buffer);
-			return retval;
+			തിരികെ retval;
 		}
 		pathname = buffer;
 	}
 
-	retval = open_namei(fs, root, dir, pathname, ei.i_size, 1,
-			    link_count, buf, res_inode);
-	if (buffer)
+	retval = open_namei(fs, വേര്, dir, pathname, ei.i_size, 1,
+			    link_എണ്ണം, buf, res_inode);
+	എങ്കിൽ (buffer)
 		ext2fs_free_mem(&buffer);
-	return retval;
+	തിരികെ retval;
 }
 
 /*
@@ -94,134 +94,134 @@ static errcode_t follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
  * containing directory, and a pointer to the filename of the file
  * (pointing into the pathname) and the length of the filename.
  */
-static errcode_t dir_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
-			   const char *pathname, int pathlen,
-			   int link_count, char *buf,
-			   const char **name, int *namelen,
+സ്ഥിതം errcode_t dir_namei(ext2_filsys fs, ext2_ino_t വേര്, ext2_ino_t dir,
+			   സ്ഥിരം അക്ഷരം *pathname, പൂർണ്ണസംഖ്യ pathlen,
+			   പൂർണ്ണസംഖ്യ link_എണ്ണം, അക്ഷരം *buf,
+			   സ്ഥിരം അക്ഷരം **name, പൂർണ്ണസംഖ്യ *namelen,
 			   ext2_ino_t *res_inode)
 {
-	char c;
-	const char *thisname;
-	int len;
+	അക്ഷരം c;
+	സ്ഥിരം അക്ഷരം *thisname;
+	പൂർണ്ണസംഖ്യ len;
 	ext2_ino_t inode;
 	errcode_t retval;
 
-	if ((c = *pathname) == '/') {
-        	dir = root;
+	എങ്കിൽ ((c = *pathname) == '/') {
+        	dir = വേര്;
 		pathname++;
 		pathlen--;
 	}
-	while (1) {
+	ആകുമ്പോൾ (1) {
         	thisname = pathname;
-		for (len=0; --pathlen >= 0;len++) {
+		വേണ്ടി (len=0; --pathlen >= 0;len++) {
 			c = *(pathname++);
-			if (c == '/')
-				break;
+			എങ്കിൽ (c == '/')
+				നിർത്തുക;
 		}
-		if (pathlen < 0)
-			break;
+		എങ്കിൽ (pathlen < 0)
+			നിർത്തുക;
 		retval = ext2fs_lookup (fs, dir, thisname, len, buf, &inode);
-		if (retval) return retval;
-        	retval = follow_link (fs, root, dir, inode,
-				      link_count, buf, &dir);
-        	if (retval) return retval;
+		എങ്കിൽ (retval) തിരികെ retval;
+        	retval = follow_link (fs, വേര്, dir, inode,
+				      link_എണ്ണം, buf, &dir);
+        	എങ്കിൽ (retval) തിരികെ retval;
     	}
 	*name = thisname;
 	*namelen = len;
 	*res_inode = dir;
-	return 0;
+	തിരികെ 0;
 }
 
-static errcode_t open_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t base,
-			    const char *pathname, size_t pathlen, int follow,
-			    int link_count, char *buf, ext2_ino_t *res_inode)
+സ്ഥിതം errcode_t open_namei(ext2_filsys fs, ext2_ino_t വേര്, ext2_ino_t base,
+			    സ്ഥിരം അക്ഷരം *pathname, size_t pathlen, പൂർണ്ണസംഖ്യ follow,
+			    പൂർണ്ണസംഖ്യ link_എണ്ണം, അക്ഷരം *buf, ext2_ino_t *res_inode)
 {
-	const char *base_name;
-	int namelen;
+	സ്ഥിരം അക്ഷരം *base_name;
+	പൂർണ്ണസംഖ്യ namelen;
 	ext2_ino_t dir, inode;
 	errcode_t retval;
 
 #ifdef NAMEI_DEBUG
 	printf("open_namei: root=%lu, dir=%lu, path=%.*s, lc=%d\n",
-	       root, base, pathlen, pathname, link_count);
+	       വേര്, base, pathlen, pathname, link_എണ്ണം);
 #endif
-	retval = dir_namei(fs, root, base, pathname, pathlen,
-			   link_count, buf, &base_name, &namelen, &dir);
-	if (retval) return retval;
-	if (!namelen) {                     /* special case: '/usr/' etc */
+	retval = dir_namei(fs, വേര്, base, pathname, pathlen,
+			   link_എണ്ണം, buf, &base_name, &namelen, &dir);
+	എങ്കിൽ (retval) തിരികെ retval;
+	എങ്കിൽ (!namelen) {                     /* special case: '/usr/' etc */
 		*res_inode=dir;
-		return 0;
+		തിരികെ 0;
 	}
 	retval = ext2fs_lookup (fs, dir, base_name, namelen, buf, &inode);
-	if (retval)
-		return retval;
-	if (follow) {
-		retval = follow_link(fs, root, dir, inode, link_count,
+	എങ്കിൽ (retval)
+		തിരികെ retval;
+	എങ്കിൽ (follow) {
+		retval = follow_link(fs, വേര്, dir, inode, link_എണ്ണം,
 				     buf, &inode);
-		if (retval)
-			return retval;
+		എങ്കിൽ (retval)
+			തിരികെ retval;
 	}
 #ifdef NAMEI_DEBUG
 	printf("open_namei: (link_count=%d) returns %lu\n",
-	       link_count, inode);
+	       link_എണ്ണം, inode);
 #endif
 	*res_inode = inode;
-	return 0;
+	തിരികെ 0;
 }
 
-errcode_t ext2fs_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
-		       const char *name, ext2_ino_t *inode)
+errcode_t ext2fs_namei(ext2_filsys fs, ext2_ino_t വേര്, ext2_ino_t cwd,
+		       സ്ഥിരം അക്ഷരം *name, ext2_ino_t *inode)
 {
-	char *buf;
+	അക്ഷരം *buf;
 	errcode_t retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
+	എങ്കിൽ (retval)
+		തിരികെ retval;
 
-	retval = open_namei(fs, root, cwd, name, strlen(name), 0, 0,
+	retval = open_namei(fs, വേര്, cwd, name, strlen(name), 0, 0,
 			    buf, inode);
 
 	ext2fs_free_mem(&buf);
-	return retval;
+	തിരികെ retval;
 }
 
-errcode_t ext2fs_namei_follow(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
-			      const char *name, ext2_ino_t *inode)
+errcode_t ext2fs_namei_follow(ext2_filsys fs, ext2_ino_t വേര്, ext2_ino_t cwd,
+			      സ്ഥിരം അക്ഷരം *name, ext2_ino_t *inode)
 {
-	char *buf;
+	അക്ഷരം *buf;
 	errcode_t retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
+	എങ്കിൽ (retval)
+		തിരികെ retval;
 
-	retval = open_namei(fs, root, cwd, name, strlen(name), 1, 0,
+	retval = open_namei(fs, വേര്, cwd, name, strlen(name), 1, 0,
 			    buf, inode);
 
 	ext2fs_free_mem(&buf);
-	return retval;
+	തിരികെ retval;
 }
 
-errcode_t ext2fs_follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
+errcode_t ext2fs_follow_link(ext2_filsys fs, ext2_ino_t വേര്, ext2_ino_t cwd,
 			ext2_ino_t inode, ext2_ino_t *res_inode)
 {
-	char *buf;
+	അക്ഷരം *buf;
 	errcode_t retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
+	എങ്കിൽ (retval)
+		തിരികെ retval;
 
-	retval = follow_link(fs, root, cwd, inode, 0, buf, res_inode);
+	retval = follow_link(fs, വേര്, cwd, inode, 0, buf, res_inode);
 
 	ext2fs_free_mem(&buf);
-	return retval;
+	തിരികെ retval;
 }
 

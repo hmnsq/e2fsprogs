@@ -9,22 +9,22 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#അന്തര്ഭാവ "config.h"
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#എങ്കിൽ HAVE_UNISTD_H
+#അന്തര്ഭാവ <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <time.h>
+#അന്തര്ഭാവ <sys/stat.h>
+#അന്തര്ഭാവ <sys/types.h>
+#എങ്കിൽ HAVE_ERRNO_H
+#അന്തര്ഭാവ <errno.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#അന്തര്ഭാവ "ext2_fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
 
 __u16 test1[] = {
 	0x0001, 0x0100,
@@ -45,49 +45,49 @@ __u32 test2[] = {
 	0x00000000, 0x00000000
 	};
 
-int main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
-	int	i;
-	int	errors = 0;
+	പൂർണ്ണസംഖ്യ	i;
+	പൂർണ്ണസംഖ്യ	errors = 0;
 
 	printf("Testing ext2fs_swab16\n");
 	i=0;
-	do {
+	ചെയ്യുക {
 		printf("swab16(0x%04x) = 0x%04x\n", test1[i],
 		       ext2fs_swab16(test1[i]));
-		if (ext2fs_swab16(test1[i]) != test1[i+1]) {
+		എങ്കിൽ (ext2fs_swab16(test1[i]) != test1[i+1]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab16(test1[i]), test1[i+1]);
 			errors++;
 		}
-		if (ext2fs_swab16(test1[i+1]) != test1[i]) {
+		എങ്കിൽ (ext2fs_swab16(test1[i+1]) != test1[i]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab16(test1[i+1]), test1[i]);
 			errors++;
 		}
 		i += 2;
-	} while (test1[i] != 0);
+	} ആകുമ്പോൾ (test1[i] != 0);
 
 	printf("Testing ext2fs_swab32\n");
 	i = 0;
-	do {
+	ചെയ്യുക {
 		printf("swab32(0x%08x) = 0x%08x\n", test2[i],
 		       ext2fs_swab32(test2[i]));
-		if (ext2fs_swab32(test2[i]) != test2[i+1]) {
+		എങ്കിൽ (ext2fs_swab32(test2[i]) != test2[i+1]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab32(test2[i]), test2[i+1]);
 			errors++;
 		}
-		if (ext2fs_swab32(test2[i+1]) != test2[i]) {
+		എങ്കിൽ (ext2fs_swab32(test2[i+1]) != test2[i]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab32(test2[i+1]), test2[i]);
 			errors++;
 		}
 		i += 2;
-	} while (test2[i] != 0);
+	} ആകുമ്പോൾ (test2[i] != 0);
 
-	if (!errors)
+	എങ്കിൽ (!errors)
 		printf("No errors found in the byteswap implementation!\n");
 
-	return errors;
+	തിരികെ errors;
 }

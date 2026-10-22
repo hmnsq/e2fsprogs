@@ -12,11 +12,11 @@
  * %End-Header%
  */
 
-#include <windows.h>
-#include <winioctl.h>
-#include <io.h>
+#അന്തര്ഭാവ <windows.h>
+#അന്തര്ഭാവ <winioctl.h>
+#അന്തര്ഭാവ <io.h>
 
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#എങ്കിൽ !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
 #define _XOPEN_SOURCE 600
 #define _DARWIN_C_SOURCE
 #define _FILE_OFFSET_BITS 64
@@ -31,59 +31,59 @@
 #endif
 #endif
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#അന്തര്ഭാവ "config.h"
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#എങ്കിൽ HAVE_UNISTD_H
+#അന്തര്ഭാവ <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#എങ്കിൽ HAVE_ERRNO_H
+#അന്തര്ഭാവ <errno.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <time.h>
+#എങ്കിൽ HAVE_SYS_TYPES_H
+#അന്തര്ഭാവ <sys/types.h>
 #endif
 #define PR_GET_DUMPABLE 3
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#എങ്കിൽ HAVE_SYS_STAT_H
+#അന്തര്ഭാവ <sys/stat.h>
 #endif
-#include <fcntl.h>
+#അന്തര്ഭാവ <fcntl.h>
 
 #undef ALIGN_DEBUG
 
 //#define DEBUG
 #ifdef DEBUG
 #define TRACE(...) {\
-		    char __log[256];\
-		    snprintf(__log, sizeof(__log), __VA_ARGS__);\
-		    __log[sizeof(__log)-1] = 0;\
+		    അക്ഷരം __log[256];\
+		    snprintf(__log, വലുപ്പം(__log), __VA_ARGS__);\
+		    __log[വലുപ്പം(__log)-1] = 0;\
 		    OutputDebugString(__log);\
 		}
-#else
-#define TRACE(...) do { } while (0);
+#അല്ലെങ്കിൽ
+#define TRACE(...) ചെയ്യുക { } ആകുമ്പോൾ (0);
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#അന്തര്ഭാവ "ext2_fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
+#അന്തര്ഭാവ "ext2fsP.h"
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
-#define EXT2_CHECK_MAGIC_RETURN(struct, code, ret) \
-	  if ((struct)->magic != (code)) return (ret)
+#define EXT2_CHECK_MAGIC(ഘടന, code) \
+	  എങ്കിൽ ((ഘടന)->magic != (code)) തിരികെ (code)
+#define EXT2_CHECK_MAGIC_RETURN(ഘടന, code, ret) \
+	  എങ്കിൽ ((ഘടന)->magic != (code)) തിരികെ (ret)
 
 #define EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL  0x10ed
 
-struct windows_cache {
-	char			*buf;
+ഘടന windows_cache {
+	അക്ഷരം			*buf;
 	unsigned long long	block;
-	int			access_time;
+	പൂർണ്ണസംഖ്യ			access_time;
 	unsigned		dirty:1;
 	unsigned		in_use:1;
 };
@@ -92,122 +92,122 @@ struct windows_cache {
 #define WRITE_DIRECT_SIZE 4	/* Must be smaller than CACHE_SIZE */
 #define READ_DIRECT_SIZE 4	/* Should be smaller than CACHE_SIZE */
 
-struct windows_private_data {
-	int	magic;
-	char	name[MAX_PATH];
+ഘടന windows_private_data {
+	പൂർണ്ണസംഖ്യ	magic;
+	അക്ഷരം	name[MAX_PATH];
 	HANDLE	handle;
-	char	dos_device[MAX_PATH];
-	char	cf_device[MAX_PATH];
-	int	dev;
-	int	flags;
-	int	align;
-	int	access_time;
+	അക്ഷരം	dos_device[MAX_PATH];
+	അക്ഷരം	cf_device[MAX_PATH];
+	പൂർണ്ണസംഖ്യ	dev;
+	പൂർണ്ണസംഖ്യ	flags;
+	പൂർണ്ണസംഖ്യ	align;
+	പൂർണ്ണസംഖ്യ	access_time;
 	ext2_loff_t offset;
-	struct windows_cache cache[CACHE_SIZE];
-	void	*bounce;
-	struct struct_io_stats io_stats;
+	ഘടന windows_cache cache[CACHE_SIZE];
+	ശൂന്യം	*bounce;
+	ഘടന struct_io_stats io_stats;
 };
 
 #define IS_ALIGNED(n, align) ((((uintptr_t) n) & \
 			       ((uintptr_t) ((align)-1))) == 0)
 
-static int fake_dos_name_for_device(struct windows_private_data *data)
+സ്ഥിതം പൂർണ്ണസംഖ്യ fake_dos_name_for_device(ഘടന windows_private_data *data)
 {
-	if (strncmp(data->name, "\\\\", 2) == 0) {
+	എങ്കിൽ (strncmp(data->name, "\\\\", 2) == 0) {
 		data->dos_device[0] = 0;
 		strcpy(data->cf_device, data->name);
-		return 0;
+		തിരികെ 0;
 	}
 
 	_snprintf(data->dos_device, MAX_PATH, "fakedevice%lu", GetCurrentProcessId());
 
-	if (!DefineDosDevice(DDD_RAW_TARGET_PATH, data->dos_device, data->name))
-		return 1;
+	എങ്കിൽ (!DefineDosDevice(DDD_RAW_TARGET_PATH, data->dos_device, data->name))
+		തിരികെ 1;
 
 	_snprintf(data->cf_device, MAX_PATH, "\\\\.\\%s", data->dos_device);
 	TRACE("e2fsprogs::fake_dos_name_for_device::DefineDosDevice(\"%s\")", data->dos_device);
 
-	return 0;
+	തിരികെ 0;
 }
 
-static void remove_fake_dos_name(struct windows_private_data *data)
+സ്ഥിതം ശൂന്യം remove_fake_dos_name(ഘടന windows_private_data *data)
 {
-	if (*data->dos_device) {
+	എങ്കിൽ (*data->dos_device) {
 		TRACE("e2fsprogs::remove_fake_dos_name::DefineDosDevice(\"%s\")", data->dos_device);
 		DefineDosDevice(DDD_RAW_TARGET_PATH | DDD_EXACT_MATCH_ON_REMOVE | DDD_REMOVE_DEFINITION, data->dos_device, data->name);
 	}
 }
 
-static errcode_t windows_get_stats(io_channel channel, io_stats *stats)
+സ്ഥിതം errcode_t windows_get_stats(io_channel channel, io_stats *stats)
 {
 	errcode_t	retval = 0;
 
-	struct windows_private_data *data;
+	ഘടന windows_private_data *data;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (ഘടന windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (stats)
+	എങ്കിൽ (stats)
 		*stats = &data->io_stats;
 
-	return retval;
+	തിരികെ retval;
 }
 
-static LARGE_INTEGER make_large_integer(LONGLONG value)
+സ്ഥിതം LARGE_INTEGER make_large_integer(LONGLONG മൂല്യം)
 {
 	LARGE_INTEGER	li;
 
-	li.QuadPart = value;
-	return li;
+	li.QuadPart = മൂല്യം;
+	തിരികെ li;
 }
 
 /*
  * Here are the raw I/O functions
  */
-static errcode_t raw_read_blk(io_channel channel,
-			      struct windows_private_data *data,
+സ്ഥിതം errcode_t raw_read_blk(io_channel channel,
+			      ഘടന windows_private_data *data,
 			      unsigned long long block,
-			      int count, void *bufv)
+			      പൂർണ്ണസംഖ്യ എണ്ണം, ശൂന്യം *bufv)
 {
 	errcode_t	retval;
 	ssize_t	size;
 	ext2_loff_t	location;
 	DWORD		actual = 0;
-	unsigned char	*buf = bufv;
+	unsigned അക്ഷരം	*buf = bufv;
 	ssize_t		really_read = 0;
 
-	size = (count < 0) ? -count : count * channel->block_size;
+	size = (എണ്ണം < 0) ? -എണ്ണം : എണ്ണം * channel->block_size;
 	data->io_stats.bytes_read += size;
 	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
+	എങ്കിൽ (data->flags & IO_FLAG_FORCE_BOUNCE) {
+		എങ്കിൽ (!SetFilePointerEx(data->handle, make_large_integer(location), ശൂന്യ, FILE_BEGIN)) {
 			retval = GetLastError();
-			goto error_out;
+			പോകുക error_out;
 		}
-		goto bounce_read;
+		പോകുക bounce_read;
 	}
 
-	if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
+	എങ്കിൽ (!SetFilePointerEx(data->handle, make_large_integer(location), ശൂന്യ, FILE_BEGIN)) {
 		retval = GetLastError();
-		goto error_out;
+		പോകുക error_out;
 	}
-	if ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
-		if (!ReadFile(data->handle, buf, size, &actual, NULL)) {
+	എങ്കിൽ ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
+		എങ്കിൽ (!ReadFile(data->handle, buf, size, &actual, ശൂന്യ)) {
 			retval = GetLastError();
-			goto error_out;
+			പോകുക error_out;
 		}
-		if (actual != size) {
+		എങ്കിൽ (actual != size) {
 	short_read:
-		if (actual < 0) {
+		എങ്കിൽ (actual < 0) {
 			retval = GetLastError();
 			actual = 0;
-		} else
+		} അല്ലെങ്കിൽ
 			retval = EXT2_ET_SHORT_READ;
-		goto error_out;
+		പോകുക error_out;
 		}
-	return 0;
+	തിരികെ 0;
 	}
 
 	/*
@@ -215,86 +215,86 @@ static errcode_t raw_read_blk(io_channel channel,
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_read:
-	while (size > 0) {
-		if (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
+	ആകുമ്പോൾ (size > 0) {
+		എങ്കിൽ (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, ശൂന്യ)) {
 			retval = GetLastError();
-			goto error_out;
+			പോകുക error_out;
 		}
-		if (actual != channel->block_size) {
+		എങ്കിൽ (actual != channel->block_size) {
 			actual = really_read;
 			buf -= really_read;
 			size += really_read;
-			goto short_read;
+			പോകുക short_read;
 		}
 		actual = size;
-		if (size > channel->block_size)
+		എങ്കിൽ (size > channel->block_size)
 			actual = channel->block_size;
 		memcpy(buf, data->bounce, actual);
 		really_read += actual;
 		size -= actual;
 		buf += actual;
 	}
-	return 0;
+	തിരികെ 0;
 
 error_out:
-	if (actual >= 0 && actual < size)
-		memset((char *) buf+actual, 0, size-actual);
-	if (channel->read_error)
-		retval = (channel->read_error)(channel, block, count, buf,
+	എങ്കിൽ (actual >= 0 && actual < size)
+		memset((അക്ഷരം *) buf+actual, 0, size-actual);
+	എങ്കിൽ (channel->read_error)
+		retval = (channel->read_error)(channel, block, എണ്ണം, buf,
 					       size, actual, retval);
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t raw_write_blk(io_channel channel,
-			       struct windows_private_data *data,
+സ്ഥിതം errcode_t raw_write_blk(io_channel channel,
+			       ഘടന windows_private_data *data,
 			       unsigned long long block,
-			       int count, const void *bufv)
+			       പൂർണ്ണസംഖ്യ എണ്ണം, സ്ഥിരം ശൂന്യം *bufv)
 {
 	ssize_t		size;
 	ext2_loff_t	location;
 	DWORD		actual = 0;
 	errcode_t	retval;
-	const unsigned char *buf = bufv;
+	സ്ഥിരം unsigned അക്ഷരം *buf = bufv;
 
-	if (count == 1)
+	എങ്കിൽ (എണ്ണം == 1)
 		size = channel->block_size;
-	else {
-		if (count < 0)
-			size = -count;
-		else
-			size = count * channel->block_size;
+	അല്ലെങ്കിൽ {
+		എങ്കിൽ (എണ്ണം < 0)
+			size = -എണ്ണം;
+		അല്ലെങ്കിൽ
+			size = എണ്ണം * channel->block_size;
 	}
 	data->io_stats.bytes_written += size;
 
 	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
+	എങ്കിൽ (data->flags & IO_FLAG_FORCE_BOUNCE) {
+		എങ്കിൽ (!SetFilePointerEx(data->handle, make_large_integer(location), ശൂന്യ, FILE_BEGIN)) {
 			retval = GetLastError();
-			goto error_out;
+			പോകുക error_out;
 		}
-	goto bounce_write;
+	പോകുക bounce_write;
 	}
 
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
+		എങ്കിൽ (!SetFilePointerEx(data->handle, make_large_integer(location), ശൂന്യ, FILE_BEGIN)) {
 			retval = GetLastError();
-		goto error_out;
+		പോകുക error_out;
 	}
 
 	SetLastError(0);
 
-	if ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
-		if (!WriteFile(data->handle, buf, size, &actual, NULL)) {
+	എങ്കിൽ ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
+		എങ്കിൽ (!WriteFile(data->handle, buf, size, &actual, ശൂന്യ)) {
 			retval = GetLastError();
-			goto error_out;
+			പോകുക error_out;
 		}
 
-		if (actual != size) {
+		എങ്കിൽ (actual != size) {
 		short_write:
 			retval = EXT2_ET_SHORT_WRITE;
-			goto error_out;
+			പോകുക error_out;
 		}
-		return 0;
+		തിരികെ 0;
 	}
 
 	/*
@@ -302,47 +302,47 @@ static errcode_t raw_write_blk(io_channel channel,
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_write:
-	while (size > 0) {
-		if (size < channel->block_size) {
-			if (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
+	ആകുമ്പോൾ (size > 0) {
+		എങ്കിൽ (size < channel->block_size) {
+			എങ്കിൽ (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, ശൂന്യ)) {
 				retval = GetLastError();
-				goto error_out;
+				പോകുക error_out;
 			}
-			if (actual != channel->block_size) {
-				if (actual < 0) {
+			എങ്കിൽ (actual != channel->block_size) {
+				എങ്കിൽ (actual < 0) {
 					retval = GetLastError();
-					goto error_out;
+					പോകുക error_out;
 				}
-				memset((char *) data->bounce + actual, 0,
+				memset((അക്ഷരം *) data->bounce + actual, 0,
 				       channel->block_size - actual);
 			}
 		}
 		actual = size;
-		if (size > channel->block_size)
+		എങ്കിൽ (size > channel->block_size)
 			actual = channel->block_size;
 		memcpy(data->bounce, buf, actual);
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
+		എങ്കിൽ (!SetFilePointerEx(data->handle, make_large_integer(location), ശൂന്യ, FILE_BEGIN)) {
 			retval = GetLastError();
-			goto error_out;
+			പോകുക error_out;
 		}
-		if (!WriteFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
+		എങ്കിൽ (!WriteFile(data->handle, data->bounce, channel->block_size, &actual, ശൂന്യ)) {
 			retval = GetLastError();
-			goto error_out;
+			പോകുക error_out;
 		}
 
-		if (actual != channel->block_size)
-			goto short_write;
+		എങ്കിൽ (actual != channel->block_size)
+			പോകുക short_write;
 		size -= actual;
 		buf += actual;
 		location += actual;
 	}
-	return 0;
+	തിരികെ 0;
 
 error_out:
-	if (channel->write_error)
-		retval = (channel->write_error)(channel, block, count, buf,
+	എങ്കിൽ (channel->write_error)
+		retval = (channel->write_error)(channel, block, എണ്ണം, buf,
 						size, actual, retval);
-	return retval;
+	തിരികെ retval;
 }
 
 
@@ -351,49 +351,49 @@ error_out:
  */
 
 /* Allocate the cache buffers */
-static errcode_t alloc_cache(io_channel channel,
-			     struct windows_private_data *data)
+സ്ഥിതം errcode_t alloc_cache(io_channel channel,
+			     ഘടന windows_private_data *data)
 {
 	errcode_t		retval;
-	struct windows_cache	*cache;
-	int			i;
+	ഘടന windows_cache	*cache;
+	പൂർണ്ണസംഖ്യ			i;
 
 	data->access_time = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
+	വേണ്ടി (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
 		cache->block = 0;
 		cache->access_time = 0;
 		cache->dirty = 0;
 		cache->in_use = 0;
-		if (cache->buf)
+		എങ്കിൽ (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 		retval = io_channel_alloc_buf(channel, 0, &cache->buf);
-		if (retval)
-			return retval;
+		എങ്കിൽ (retval)
+			തിരികെ retval;
 	}
-	if (channel->align || data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (data->bounce)
+	എങ്കിൽ (channel->align || data->flags & IO_FLAG_FORCE_BOUNCE) {
+		എങ്കിൽ (data->bounce)
 			ext2fs_free_mem(&data->bounce);
 		retval = io_channel_alloc_buf(channel, 0, &data->bounce);
 	}
-	return retval;
+	തിരികെ retval;
 }
 
 /* Free the cache buffers */
-static void free_cache(struct windows_private_data *data)
+സ്ഥിതം ശൂന്യം free_cache(ഘടന windows_private_data *data)
 {
-	struct windows_cache    *cache;
-	int			i;
+	ഘടന windows_cache    *cache;
+	പൂർണ്ണസംഖ്യ			i;
 
 	data->access_time = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
+	വേണ്ടി (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
 		cache->block = 0;
 		cache->access_time = 0;
 		cache->dirty = 0;
 		cache->in_use = 0;
-		if (cache->buf)
+		എങ്കിൽ (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 	}
-	if (data->bounce)
+	എങ്കിൽ (data->bounce)
 		ext2fs_free_mem(&data->bounce);
 }
 
@@ -403,40 +403,40 @@ static void free_cache(struct windows_private_data *data)
  * eldest is a non-zero pointer, then fill in eldest with the cache
  * entry to that should be reused.
  */
-static struct windows_cache *find_cached_block(struct windows_private_data *data,
+സ്ഥിതം ഘടന windows_cache *find_cached_block(ഘടന windows_private_data *data,
 					    unsigned long long block,
-					    struct windows_cache **eldest)
+					    ഘടന windows_cache **eldest)
 {
-	struct windows_cache	*cache, *unused_cache, *oldest_cache;
-	int			i;
+	ഘടന windows_cache	*cache, *unused_cache, *oldest_cache;
+	പൂർണ്ണസംഖ്യ			i;
 
 	unused_cache = oldest_cache = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
-		if (!cache->in_use) {
-			if (!unused_cache)
+	വേണ്ടി (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
+		എങ്കിൽ (!cache->in_use) {
+			എങ്കിൽ (!unused_cache)
 				unused_cache = cache;
-			continue;
+			തുടരുക;
 		}
-		if (cache->block == block) {
+		എങ്കിൽ (cache->block == block) {
 			cache->access_time = ++data->access_time;
-			return cache;
+			തിരികെ cache;
 		}
-		if (!oldest_cache ||
+		എങ്കിൽ (!oldest_cache ||
 		   (cache->access_time < oldest_cache->access_time))
 			oldest_cache = cache;
 	}
-	if (eldest)
+	എങ്കിൽ (eldest)
 		*eldest = (unused_cache) ? unused_cache : oldest_cache;
-	return 0;
+	തിരികെ 0;
 }
 
 /*
  * Reuse a particular cache entry for another block.
  */
-static void reuse_cache(io_channel channel, struct windows_private_data *data,
-		 struct windows_cache *cache, unsigned long long block)
+സ്ഥിതം ശൂന്യം reuse_cache(io_channel channel, ഘടന windows_private_data *data,
+		 ഘടന windows_cache *cache, unsigned long long block)
 {
-	if (cache->dirty && cache->in_use)
+	എങ്കിൽ (cache->dirty && cache->in_use)
 		raw_write_blk(channel, data, cache->block, 1, cache->buf);
 
 	cache->in_use = 1;
@@ -448,54 +448,54 @@ static void reuse_cache(io_channel channel, struct windows_private_data *data,
 /*
  * Flush all of the blocks in the cache
  */
-static errcode_t flush_cached_blocks(io_channel channel,
-				     struct windows_private_data *data,
-				     int invalidate)
+സ്ഥിതം errcode_t flush_cached_blocks(io_channel channel,
+				     ഘടന windows_private_data *data,
+				     പൂർണ്ണസംഖ്യ invalidate)
 {
-	struct windows_cache	*cache;
+	ഘടന windows_cache	*cache;
 	errcode_t	retval, retval2;
-	int			i;
+	പൂർണ്ണസംഖ്യ			i;
 
 	retval2 = 0;
-	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
-		if (!cache->in_use)
-			continue;
+	വേണ്ടി (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
+		എങ്കിൽ (!cache->in_use)
+			തുടരുക;
 
-		if (invalidate)
+		എങ്കിൽ (invalidate)
 			cache->in_use = 0;
 
-		if (!cache->dirty)
-			continue;
+		എങ്കിൽ (!cache->dirty)
+			തുടരുക;
 
 		retval = raw_write_blk(channel, data,
 				       cache->block, 1, cache->buf);
-		if (retval)
+		എങ്കിൽ (retval)
 			retval2 = retval;
-		else
+		അല്ലെങ്കിൽ
 			cache->dirty = 0;
 	}
-	return retval2;
+	തിരികെ retval2;
 }
 #endif /* NO_IO_CACHE */
 
-static errcode_t windows_open_channel(struct windows_private_data *data,
-				   int flags, io_channel *channel,
+സ്ഥിതം errcode_t windows_open_channel(ഘടന windows_private_data *data,
+				   പൂർണ്ണസംഖ്യ flags, io_channel *channel,
 				   io_manager io_mgr)
 {
-	io_channel	io = NULL;
+	io_channel	io = ശൂന്യ;
 	errcode_t	retval;
 	ext2fs_struct_stat st;
 
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	retval = ext2fs_get_mem(വലുപ്പം(ഘടന struct_io_channel), &io);
+	എങ്കിൽ (retval)
+		പോകുക cleanup;
+	memset(io, 0, വലുപ്പം(ഘടന struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
 
 	io->manager = io_mgr;
 	retval = ext2fs_get_mem(strlen(data->name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	എങ്കിൽ (retval)
+		പോകുക cleanup;
 
 	strcpy(io->name, data->name);
 	io->private_data = data;
@@ -504,8 +504,8 @@ static errcode_t windows_open_channel(struct windows_private_data *data,
 	io->write_error = 0;
 	io->refcount = 1;
 
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
+#എങ്കിൽ defined(O_DIRECT)
+	എങ്കിൽ (flags & IO_FLAG_DIRECT_IO)
 		io->align = ext2fs_get_dio_alignment(data->dev);
 #endif
 
@@ -516,86 +516,86 @@ static errcode_t windows_open_channel(struct windows_private_data *data,
 	 * and if it succeed, subsequent read from sparse area returns
 	 * zero.
 	 */
-	if (ext2fs_fstat(data->dev, &st) == 0) {
-		if (ext2fsP_is_disk_device(st.st_mode))
+	എങ്കിൽ (ext2fs_fstat(data->dev, &st) == 0) {
+		എങ്കിൽ (ext2fsP_is_disk_device(st.st_mode))
 			io->flags |= CHANNEL_FLAGS_BLOCK_DEVICE;
-		else
+		അല്ലെങ്കിൽ
 			io->flags |= CHANNEL_FLAGS_DISCARD_ZEROES;
 	}
 
-	if ((retval = alloc_cache(io, data)))
-		goto cleanup;
+	എങ്കിൽ ((retval = alloc_cache(io, data)))
+		പോകുക cleanup;
 
 #ifdef BLKROGET
-	if (flags & IO_FLAG_RW) {
-		int error;
-		int readonly = 0;
+	എങ്കിൽ (flags & IO_FLAG_RW) {
+		പൂർണ്ണസംഖ്യ error;
+		പൂർണ്ണസംഖ്യ readonly = 0;
 
 		/* Is the block device actually writable? */
 		error = ioctl(data->dev, BLKROGET, &readonly);
-		if (!error && readonly) {
+		എങ്കിൽ (!error && readonly) {
 			retval = EPERM;
-			goto cleanup;
+			പോകുക cleanup;
 		}
 	}
 #endif
 
 	*channel = io;
-	return 0;
+	തിരികെ 0;
 
 cleanup:
-	if (data) {
-		if (data->dev >= 0)
+	എങ്കിൽ (data) {
+		എങ്കിൽ (data->dev >= 0)
 			close(data->dev);
 		free_cache(data);
 		ext2fs_free_mem(&data);
 	}
-	if (io) {
-		if (io->name) {
+	എങ്കിൽ (io) {
+		എങ്കിൽ (io->name) {
 			ext2fs_free_mem(&io->name);
 		}
 		ext2fs_free_mem(&io);
 	}
-	return retval;
+	തിരികെ retval;
 }
 
-static DWORD windows_open_device(struct windows_private_data *data, int open_flags)
+സ്ഥിതം DWORD windows_open_device(ഘടന windows_private_data *data, പൂർണ്ണസംഖ്യ open_flags)
 {
 	DWORD ret = 0;
 
-	if (*data->name != '\\')
+	എങ്കിൽ (*data->name != '\\')
 		strcpy(data->cf_device, data->name);
-	else if (fake_dos_name_for_device(data))
-		return -1;
+	അല്ലെങ്കിൽ എങ്കിൽ (fake_dos_name_for_device(data))
+		തിരികെ -1;
 
 	DWORD desired_access = GENERIC_READ | ((open_flags & O_RDWR) ? GENERIC_WRITE : 0);
 	DWORD share_mode = (open_flags & O_EXCL) ? 0 : FILE_SHARE_READ | ((open_flags & O_RDWR) ? FILE_SHARE_WRITE : 0);
 	DWORD flags_and_attributes =
-#if defined(O_DIRECT)
+#എങ്കിൽ defined(O_DIRECT)
 	(open_flags & O_DIRECT) ? (FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH) : FILE_ATTRIBUTE_NORMAL;
-#else
+#അല്ലെങ്കിൽ
 	FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH;
 #endif
 
-	data->handle = CreateFile(data->cf_device, desired_access, share_mode, NULL, OPEN_EXISTING,
-				  flags_and_attributes, NULL);
+	data->handle = CreateFile(data->cf_device, desired_access, share_mode, ശൂന്യ, OPEN_EXISTING,
+				  flags_and_attributes, ശൂന്യ);
 
-	if (data->handle == INVALID_HANDLE_VALUE) {
+	എങ്കിൽ (data->handle == INVALID_HANDLE_മൂല്യം) {
 		ret = GetLastError();
-		goto invalid_handle;
+		പോകുക invalid_handle;
 	}
 
 	TRACE("e2fsprogs::windows_open_device::CreateFile(\"%s\") = %p", data->cf_device, data->handle);
 
 	data->dev = _open_osfhandle((intptr_t)data->handle, 0);
-	if (data->dev < 0) {
+	എങ്കിൽ (data->dev < 0) {
 		ret = GetLastError() ? GetLastError() : 9999;
-		goto osfhandle_error;
+		പോകുക osfhandle_error;
 	}
 
 	TRACE("e2fsprogs::windows_open_device::_open_osfhandle(%p) = %d", data->handle, data->dev);
 
-	return 0;
+	തിരികെ 0;
 
 osfhandle_error:
 	TRACE("e2fsprogs::windows_open_device::CloseHandle(%p)", data->handle);
@@ -603,65 +603,65 @@ osfhandle_error:
 invalid_handle:
 	remove_fake_dos_name(data);
 	TRACE("e2fsprogs::windows_open_device() = %lu, errno = %d", ret, errno);
-	return ret;
+	തിരികെ ret;
 }
 
-static struct windows_private_data *init_private_data(const char *name, int flags)
+സ്ഥിതം ഘടന windows_private_data *init_private_data(സ്ഥിരം അക്ഷരം *name, പൂർണ്ണസംഖ്യ flags)
 {
-	struct windows_private_data *data = NULL;
+	ഘടന windows_private_data *data = ശൂന്യ;
 
-	if (ext2fs_get_mem(sizeof(struct windows_private_data), &data))
-		return NULL;
+	എങ്കിൽ (ext2fs_get_mem(വലുപ്പം(ഘടന windows_private_data), &data))
+		തിരികെ ശൂന്യ;
 
-	memset(data, 0, sizeof(struct windows_private_data));
-	strncpy(data->name, name, sizeof(data->name) - 1);
+	memset(data, 0, വലുപ്പം(ഘടന windows_private_data));
+	strncpy(data->name, name, വലുപ്പം(data->name) - 1);
 	data->magic = EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL;
-	data->io_stats.num_fields = 2;
+	data->io_stats.അക്കം_fields = 2;
 	data->flags = flags;
-	data->handle = INVALID_HANDLE_VALUE;
+	data->handle = INVALID_HANDLE_മൂല്യം;
 
-	return data;
+	തിരികെ data;
 }
 
-static errcode_t windows_open(const char *name, int flags, io_channel *channel)
+സ്ഥിതം errcode_t windows_open(സ്ഥിരം അക്ഷരം *name, പൂർണ്ണസംഖ്യ flags, io_channel *channel)
 {
-	int open_flags;
-	struct windows_private_data *data;
+	പൂർണ്ണസംഖ്യ open_flags;
+	ഘടന windows_private_data *data;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	എങ്കിൽ (name == 0)
+		തിരികെ EXT2_ET_BAD_DEVICE_NAME;
 
 	data = init_private_data(name, flags);
-	if (!data)
-		return EXT2_ET_NO_MEMORY;
+	എങ്കിൽ (!data)
+		തിരികെ EXT2_ET_NO_MEMORY;
 
 	open_flags = (flags & IO_FLAG_RW) ? O_RDWR : O_RDONLY;
-	if (flags & IO_FLAG_EXCLUSIVE)
+	എങ്കിൽ (flags & IO_FLAG_EXCLUSIVE)
 		open_flags |= O_EXCL;
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
+#എങ്കിൽ defined(O_DIRECT)
+	എങ്കിൽ (flags & IO_FLAG_DIRECT_IO)
 		open_flags |= O_DIRECT;
 #endif
 
-	if (windows_open_device(data, open_flags)) {
+	എങ്കിൽ (windows_open_device(data, open_flags)) {
 		ext2fs_free_mem(&data);
-		return EXT2_ET_BAD_DEVICE_NAME;
+		തിരികെ EXT2_ET_BAD_DEVICE_NAME;
 	}
 
-	return windows_open_channel(data, flags, channel, windows_io_manager);
+	തിരികെ windows_open_channel(data, flags, channel, windows_io_manager);
 }
 
-static errcode_t windows_close(io_channel channel)
+സ്ഥിതം errcode_t windows_close(io_channel channel)
 {
-	struct windows_private_data *data;
+	ഘടന windows_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (ഘടന windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	എങ്കിൽ (--channel->refcount > 0)
+		തിരികെ 0;
 
 #ifndef NO_IO_CACHE
 	retval = flush_cached_blocks(channel, data, 0);
@@ -669,7 +669,7 @@ static errcode_t windows_close(io_channel channel)
 
 	remove_fake_dos_name(data);
 
-	if (_close(data->dev) != 0)
+	എങ്കിൽ (_close(data->dev) != 0)
 		retval = errno;
 
 	TRACE("e2fsprogs::windows_close::_close(%d)", data->dev);
@@ -677,146 +677,146 @@ static errcode_t windows_close(io_channel channel)
 	free_cache(data);
 
 	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	എങ്കിൽ (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t windows_set_blksize(io_channel channel, int blksize)
+സ്ഥിതം errcode_t windows_set_blksize(io_channel channel, പൂർണ്ണസംഖ്യ blksize)
 {
-	struct windows_private_data *data;
+	ഘടന windows_private_data *data;
 	errcode_t		retval;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (ഘടന windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (channel->block_size != blksize) {
+	എങ്കിൽ (channel->block_size != blksize) {
 #ifndef NO_IO_CACHE
-		if ((retval = flush_cached_blocks(channel, data, 0)))
-			return retval;
+		എങ്കിൽ ((retval = flush_cached_blocks(channel, data, 0)))
+			തിരികെ retval;
 #endif
 
 		channel->block_size = blksize;
 		free_cache(data);
-		if ((retval = alloc_cache(channel, data)))
-			return retval;
+		എങ്കിൽ ((retval = alloc_cache(channel, data)))
+			തിരികെ retval;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-static errcode_t windows_read_blk64(io_channel channel, unsigned long long block, int count, void *buf)
+സ്ഥിതം errcode_t windows_read_blk64(io_channel channel, unsigned long long block, പൂർണ്ണസംഖ്യ എണ്ണം, ശൂന്യം *buf)
 {
-	struct windows_private_data *data;
-	struct windows_cache *cache, *reuse[READ_DIRECT_SIZE];
+	ഘടന windows_private_data *data;
+	ഘടന windows_cache *cache, *reuse[READ_DIRECT_SIZE];
 	errcode_t	retval;
-	char		*cp;
-	int		i, j;
+	അക്ഷരം		*cp;
+	പൂർണ്ണസംഖ്യ		i, j;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (ഘടന windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
 #ifdef NO_IO_CACHE
-	return raw_read_blk(channel, data, block, count, buf);
-#else
+	തിരികെ raw_read_blk(channel, data, block, എണ്ണം, buf);
+#അല്ലെങ്കിൽ
 	/*
 	 * If we're doing an odd-sized read or a very large read,
 	 * flush out the cache and then do a direct read.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data, 0)))
-			return retval;
-		return raw_read_blk(channel, data, block, count, buf);
+	എങ്കിൽ (എണ്ണം < 0 || എണ്ണം > WRITE_DIRECT_SIZE) {
+		എങ്കിൽ ((retval = flush_cached_blocks(channel, data, 0)))
+			തിരികെ retval;
+		തിരികെ raw_read_blk(channel, data, block, എണ്ണം, buf);
 	}
 
 	cp = buf;
-	while (count > 0) {
+	ആകുമ്പോൾ (എണ്ണം > 0) {
 		/* If it's in the cache, use it! */
-		if ((cache = find_cached_block(data, block, &reuse[0]))) {
+		എങ്കിൽ ((cache = find_cached_block(data, block, &reuse[0]))) {
 #ifdef DEBUG
 			printf("Using cached block %lu\n", block);
 #endif
 			memcpy(cp, cache->buf, channel->block_size);
-			count--;
+			എണ്ണം--;
 			block++;
 			cp += channel->block_size;
-			continue;
+			തുടരുക;
 		}
-		if (count == 1) {
+		എങ്കിൽ (എണ്ണം == 1) {
 			/*
 			 * Special case where we read directly into the
 			 * cache buffer; important in the O_DIRECT case
 			 */
 			cache = reuse[0];
 			reuse_cache(channel, data, cache, block);
-			if ((retval = raw_read_blk(channel, data, block, 1,
+			എങ്കിൽ ((retval = raw_read_blk(channel, data, block, 1,
 						   cache->buf))) {
 				cache->in_use = 0;
-				return retval;
+				തിരികെ retval;
 			}
 			memcpy(cp, cache->buf, channel->block_size);
-			return 0;
+			തിരികെ 0;
 		}
 
 		/*
 		 * Find the number of uncached blocks so we can do a
 		 * single read request
 		 */
-		for (i=1; i < count; i++)
-			if (find_cached_block(data, block+i, &reuse[i]))
-				break;
+		വേണ്ടി (i=1; i < എണ്ണം; i++)
+			എങ്കിൽ (find_cached_block(data, block+i, &reuse[i]))
+				നിർത്തുക;
 #ifdef DEBUG
 		printf("Reading %d blocks starting at %lu\n", i, block);
 #endif
-		if ((retval = raw_read_blk(channel, data, block, i, cp)))
-			return retval;
+		എങ്കിൽ ((retval = raw_read_blk(channel, data, block, i, cp)))
+			തിരികെ retval;
 
 		/* Save the results in the cache */
-		for (j=0; j < i; j++) {
-			count--;
+		വേണ്ടി (j=0; j < i; j++) {
+			എണ്ണം--;
 			cache = reuse[j];
 			reuse_cache(channel, data, cache, block++);
 			memcpy(cache->buf, cp, channel->block_size);
 			cp += channel->block_size;
 		}
 	}
-	return 0;
+	തിരികെ 0;
 #endif /* NO_IO_CACHE */
 }
 
-static errcode_t windows_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+സ്ഥിതം errcode_t windows_read_blk(io_channel channel, unsigned long block,
+			       പൂർണ്ണസംഖ്യ എണ്ണം, ശൂന്യം *buf)
 {
-	return windows_read_blk64(channel, block, count, buf);
+	തിരികെ windows_read_blk64(channel, block, എണ്ണം, buf);
 }
 
-static errcode_t windows_write_blk64(io_channel channel,
+സ്ഥിതം errcode_t windows_write_blk64(io_channel channel,
 				unsigned long long block,
-				int count, const void *buf)
+				പൂർണ്ണസംഖ്യ എണ്ണം, സ്ഥിരം ശൂന്യം *buf)
 {
-	struct windows_private_data *data;
-	struct windows_cache *cache, *reuse;
+	ഘടന windows_private_data *data;
+	ഘടന windows_cache *cache, *reuse;
 	errcode_t	retval = 0;
-	const char	*cp;
-	int		writethrough;
+	സ്ഥിരം അക്ഷരം	*cp;
+	പൂർണ്ണസംഖ്യ		writethrough;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (ഘടന windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
 #ifdef NO_IO_CACHE
-	return raw_write_blk(channel, data, block, count, buf);
-#else
+	തിരികെ raw_write_blk(channel, data, block, എണ്ണം, buf);
+#അല്ലെങ്കിൽ
 	/*
 	 * If we're doing an odd-sized write or a very large write,
 	 * flush out the cache completely and then do a direct write.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data, 1)))
-			return retval;
-		return raw_write_blk(channel, data, block, count, buf);
+	എങ്കിൽ (എണ്ണം < 0 || എണ്ണം > WRITE_DIRECT_SIZE) {
+		എങ്കിൽ ((retval = flush_cached_blocks(channel, data, 1)))
+			തിരികെ retval;
+		തിരികെ raw_write_blk(channel, data, block, എണ്ണം, buf);
 	}
 
 	/*
@@ -825,188 +825,188 @@ static errcode_t windows_write_blk64(io_channel channel,
 	 * cache with the blocks.
 	 */
 	writethrough = channel->flags & CHANNEL_FLAGS_WRITETHROUGH;
-	if (writethrough)
-		retval = raw_write_blk(channel, data, block, count, buf);
+	എങ്കിൽ (writethrough)
+		retval = raw_write_blk(channel, data, block, എണ്ണം, buf);
 
 	cp = buf;
-	while (count > 0) {
+	ആകുമ്പോൾ (എണ്ണം > 0) {
 		cache = find_cached_block(data, block, &reuse);
-		if (!cache) {
+		എങ്കിൽ (!cache) {
 			cache = reuse;
 			reuse_cache(channel, data, cache, block);
 		}
-		if (cache->buf != cp)
+		എങ്കിൽ (cache->buf != cp)
 			memcpy(cache->buf, cp, channel->block_size);
 		cache->dirty = !writethrough;
-		count--;
+		എണ്ണം--;
 		block++;
 		cp += channel->block_size;
 	}
-	return retval;
+	തിരികെ retval;
 #endif /* NO_IO_CACHE */
 }
 
-static errcode_t windows_cache_readahead(io_channel channel,
+സ്ഥിതം errcode_t windows_cache_readahead(io_channel channel,
 				      unsigned long long block,
-				      unsigned long long count)
+				      unsigned long long എണ്ണം)
 {
-	return EXT2_ET_OP_NOT_SUPPORTED;
+	തിരികെ EXT2_ET_OP_NOT_SUPPORTED;
 }
 
-static errcode_t windows_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+സ്ഥിതം errcode_t windows_write_blk(io_channel channel, unsigned long block,
+				പൂർണ്ണസംഖ്യ എണ്ണം, സ്ഥിരം ശൂന്യം *buf)
 {
-	return windows_write_blk64(channel, block, count, buf);
+	തിരികെ windows_write_blk64(channel, block, എണ്ണം, buf);
 }
 
-static errcode_t windows_write_byte(io_channel channel, unsigned long offset,
-				 int size, const void *buf)
+സ്ഥിതം errcode_t windows_write_byte(io_channel channel, unsigned long offset,
+				 പൂർണ്ണസംഖ്യ size, സ്ഥിരം ശൂന്യം *buf)
 {
-	return EXT2_ET_UNIMPLEMENTED;
+	തിരികെ EXT2_ET_UNIMPLEMENTED;
 }
 
 /*
  * Flush data buffers to disk.
  */
-static errcode_t windows_flush(io_channel channel)
+സ്ഥിതം errcode_t windows_flush(io_channel channel)
 {
-	struct windows_private_data *data;
+	ഘടന windows_private_data *data;
 	errcode_t retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (ഘടന windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
 #ifndef NO_IO_CACHE
 	retval = flush_cached_blocks(channel, data, 0);
 #endif
 
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t windows_set_option(io_channel channel, const char *option,
-				 const char *arg)
+സ്ഥിതം errcode_t windows_set_option(io_channel channel, സ്ഥിരം അക്ഷരം *option,
+				 സ്ഥിരം അക്ഷരം *arg)
 {
-	struct windows_private_data *data;
+	ഘടന windows_private_data *data;
 	unsigned long long tmp;
-	char *end;
+	അക്ഷരം *end;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (ഘടന windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (!strcmp(option, "offset")) {
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
+	എങ്കിൽ (!strcmp(option, "offset")) {
+		എങ്കിൽ (!arg)
+			തിരികെ EXT2_ET_INVALID_ARGUMENT;
 
 		tmp = strtoull(arg, &end, 0);
-		if (*end)
-			return EXT2_ET_INVALID_ARGUMENT;
+		എങ്കിൽ (*end)
+			തിരികെ EXT2_ET_INVALID_ARGUMENT;
 		data->offset = tmp;
-		if (data->offset < 0)
-			return EXT2_ET_INVALID_ARGUMENT;
-		return 0;
+		എങ്കിൽ (data->offset < 0)
+			തിരികെ EXT2_ET_INVALID_ARGUMENT;
+		തിരികെ 0;
 	}
-	return EXT2_ET_INVALID_ARGUMENT;
+	തിരികെ EXT2_ET_INVALID_ARGUMENT;
 }
 
-static errcode_t windows_discard(io_channel channel, unsigned long long block,
-				 unsigned long long count)
+സ്ഥിതം errcode_t windows_discard(io_channel channel, unsigned long long block,
+				 unsigned long long എണ്ണം)
 {
 	TRACE("e2fsprogs::windows_discard::EXT2_ET_UNIMPLEMENTED");
-	return EXT2_ET_UNIMPLEMENTED;
+	തിരികെ EXT2_ET_UNIMPLEMENTED;
 }
 
 /* parameters might not be used if OS doesn't support zeroout */
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
+#എങ്കിൽ __GNUC_PREREQ (4, 6)
+#pragma GCC diagnostic തള്ളുക
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
-static errcode_t windows_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+സ്ഥിതം errcode_t windows_zeroout(io_channel channel, unsigned long long block,
+			      unsigned long long എണ്ണം)
 {
-	struct windows_private_data *data;
-	int		ret;
+	ഘടന windows_private_data *data;
+	പൂർണ്ണസംഖ്യ		ret;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (ഘടന windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (channel->flags & CHANNEL_FLAGS_BLOCK_DEVICE) {
+	എങ്കിൽ (channel->flags & CHANNEL_FLAGS_BLOCK_DEVICE) {
 		/* Not implemented until the BLKZEROOUT mess is fixed */
-		goto unimplemented;
-	} else {
+		പോകുക unimplemented;
+	} അല്ലെങ്കിൽ {
 		/* Regular file, try to use truncate/punch/zero. */
-		struct stat statbuf;
+		ഘടന stat statbuf;
 
-		if (count == 0)
-			return 0;
+		എങ്കിൽ (എണ്ണം == 0)
+			തിരികെ 0;
 		/*
 		 * If we're trying to zero a range past the end of the file,
 		 * extend the file size, then truncate everything.
 		 */
 		ret = fstat(data->dev, &statbuf);
-		if (ret)
-			goto err;
-		if ((unsigned long long) statbuf.st_size <
-			(block + count) * channel->block_size + data->offset) {
+		എങ്കിൽ (ret)
+			പോകുക err;
+		എങ്കിൽ ((unsigned long long) statbuf.st_size <
+			(block + എണ്ണം) * channel->block_size + data->offset) {
 			ret = ftruncate(data->dev,
-					(block + count) * channel->block_size + data->offset);
-			if (ret)
-				goto err;
+					(block + എണ്ണം) * channel->block_size + data->offset);
+			എങ്കിൽ (ret)
+				പോകുക err;
 		}
-		goto unimplemented;
+		പോകുക unimplemented;
 	}
 err:
-	if (ret < 0) {
-		if (errno == EOPNOTSUPP)
-			goto unimplemented;
-		return errno;
+	എങ്കിൽ (ret < 0) {
+		എങ്കിൽ (errno == EOPNOTSUPP)
+			പോകുക unimplemented;
+		തിരികെ errno;
 	}
-	return 0;
+	തിരികെ 0;
 unimplemented:
-	return EXT2_ET_UNIMPLEMENTED;
+	തിരികെ EXT2_ET_UNIMPLEMENTED;
 }
 
-int ext2fs_open_file(const char *pathname, int flags, mode_t mode)
+പൂർണ്ണസംഖ്യ ext2fs_open_file(സ്ഥിരം അക്ഷരം *pathname, പൂർണ്ണസംഖ്യ flags, mode_t mode)
 {
-	flags |= O_BINARY;
+	flags |= O_ദ്വിമാന;
 
-	if (mode)
-#if defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-		return open64(pathname, flags, mode);
-	else
-		return open64(pathname, flags);
-#else
-		return open(pathname, flags, mode);
-	else
-		return open(pathname, flags);
+	എങ്കിൽ (mode)
+#എങ്കിൽ defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+		തിരികെ open64(pathname, flags, mode);
+	അല്ലെങ്കിൽ
+		തിരികെ open64(pathname, flags);
+#അല്ലെങ്കിൽ
+		തിരികെ open(pathname, flags, mode);
+	അല്ലെങ്കിൽ
+		തിരികെ open(pathname, flags);
 #endif
 }
 
-int ext2fs_stat(const char *path, ext2fs_struct_stat *buf)
+പൂർണ്ണസംഖ്യ ext2fs_stat(സ്ഥിരം അക്ഷരം *path, ext2fs_struct_stat *buf)
 {
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return stat64(path, buf);
-#else
-	return stat(path, buf);
+#എങ്കിൽ defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	തിരികെ stat64(path, buf);
+#അല്ലെങ്കിൽ
+	തിരികെ stat(path, buf);
 #endif
 }
 
-int ext2fs_fstat(int fd, ext2fs_struct_stat *buf)
+പൂർണ്ണസംഖ്യ ext2fs_fstat(പൂർണ്ണസംഖ്യ fd, ext2fs_struct_stat *buf)
 {
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return fstat64(fd, buf);
-#else
-	return fstat(fd, buf);
+#എങ്കിൽ defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	തിരികെ fstat64(fd, buf);
+#അല്ലെങ്കിൽ
+	തിരികെ fstat(fd, buf);
 #endif
 }
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
+#എങ്കിൽ __GNUC_PREREQ (4, 6)
+#pragma GCC diagnostic എടുക്കുക
 #endif
 
-static struct struct_io_manager struct_windows_manager = {
+സ്ഥിതം ഘടന struct_io_manager struct_windows_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Windows I/O Manager",
 	.open		= windows_open,

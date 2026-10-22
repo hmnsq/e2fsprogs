@@ -94,90 +94,90 @@ static inline struct page * rb_insert_page_cache(struct inode * inode,
 #ifndef	_LINUX_RBTREE_H
 #define	_LINUX_RBTREE_H
 
-#include <stdlib.h>
-#include <stdint.h>
-#include "compiler.h"
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ "compiler.h"
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
+#എങ്കിൽ __GNUC_PREREQ (4, 6)
+#pragma GCC diagnostic തള്ളുക
 #pragma GCC diagnostic ignored "-Wunused-function"
 #endif
 
-struct rb_node
+ഘടന rb_കണ്ണി
 {
 	uintptr_t  rb_parent_color;
 #define	RB_RED		0
 #define	RB_BLACK	1
-	struct rb_node *rb_right;
-	struct rb_node *rb_left;
-} __attribute__((aligned(sizeof(long))));
+	ഘടന rb_കണ്ണി *rb_വലത്;
+	ഘടന rb_കണ്ണി *rb_ഇടത്;
+} __attribute__((aligned(വലുപ്പം(long))));
     /* The alignment might seem pointless, but allegedly CRIS needs it */
 
-struct rb_root
+ഘടന rb_വേര്
 {
-	struct rb_node *rb_node;
+	ഘടന rb_കണ്ണി *rb_കണ്ണി;
 };
 
 
-#define ext2fs_rb_parent(r)   ((struct rb_node *)((r)->rb_parent_color & ~3))
+#define ext2fs_rb_parent(r)   ((ഘടന rb_കണ്ണി *)((r)->rb_parent_color & ~3))
 #define ext2fs_rb_color(r)   ((r)->rb_parent_color & 1)
 #define ext2fs_rb_is_red(r)   (!ext2fs_rb_color(r))
 #define ext2fs_rb_is_black(r) ext2fs_rb_color(r)
-#define ext2fs_rb_set_red(r)  do { (r)->rb_parent_color &= ~1; } while (0)
-#define ext2fs_rb_set_black(r)  do { (r)->rb_parent_color |= 1; } while (0)
+#define ext2fs_rb_set_red(r)  ചെയ്യുക { (r)->rb_parent_color &= ~1; } ആകുമ്പോൾ (0)
+#define ext2fs_rb_set_black(r)  ചെയ്യുക { (r)->rb_parent_color |= 1; } ആകുമ്പോൾ (0)
 
-static inline void ext2fs_rb_set_parent(struct rb_node *rb, struct rb_node *p)
+സ്ഥിതം വരിയിൽ ശൂന്യം ext2fs_rb_set_parent(ഘടന rb_കണ്ണി *rb, ഘടന rb_കണ്ണി *p)
 {
 	rb->rb_parent_color = (rb->rb_parent_color & 3) | (uintptr_t)p;
 }
-static inline void ext2fs_rb_set_color(struct rb_node *rb, int color)
+സ്ഥിതം വരിയിൽ ശൂന്യം ext2fs_rb_set_color(ഘടന rb_കണ്ണി *rb, പൂർണ്ണസംഖ്യ color)
 {
 	rb->rb_parent_color = (rb->rb_parent_color & ~1) | color;
 }
 
-#define RB_ROOT	(struct rb_root) { NULL, }
+#define RB_വേര്	(ഘടന rb_വേര്) { ശൂന്യ, }
 #define	ext2fs_rb_entry(ptr, type, member) container_of(ptr, type, member)
 
-static inline int ext2fs_rb_empty_root(struct rb_root *root)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ ext2fs_rb_empty_വേര്(ഘടന rb_വേര് *വേര്)
 {
-	return root->rb_node == NULL;
+	തിരികെ വേര്->rb_കണ്ണി == ശൂന്യ;
 }
 
-static inline int ext2fs_rb_empty_node(struct rb_node *node)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ ext2fs_rb_empty_കണ്ണി(ഘടന rb_കണ്ണി *കണ്ണി)
 {
-	return ext2fs_rb_parent(node) == node;
+	തിരികെ ext2fs_rb_parent(കണ്ണി) == കണ്ണി;
 }
 
-static inline void ext2fs_rb_clear_node(struct rb_node *node)
+സ്ഥിതം വരിയിൽ ശൂന്യം ext2fs_rb_clear_കണ്ണി(ഘടന rb_കണ്ണി *കണ്ണി)
 {
-	ext2fs_rb_set_parent(node, node);
+	ext2fs_rb_set_parent(കണ്ണി, കണ്ണി);
 }
 
-extern void ext2fs_rb_insert_color(struct rb_node *, struct rb_root *);
-extern void ext2fs_rb_erase(struct rb_node *, struct rb_root *);
+ബാഹ്യ ശൂന്യം ext2fs_rb_തിരുകുക_color(ഘടന rb_കണ്ണി *, ഘടന rb_വേര് *);
+ബാഹ്യ ശൂന്യം ext2fs_rb_erase(ഘടന rb_കണ്ണി *, ഘടന rb_വേര് *);
 
 /* Find logical next and previous nodes in a tree */
-extern struct rb_node *ext2fs_rb_next(struct rb_node *);
-extern struct rb_node *ext2fs_rb_prev(struct rb_node *);
-extern struct rb_node *ext2fs_rb_first(const struct rb_root *);
-extern struct rb_node *ext2fs_rb_last(const struct rb_root *);
+ബാഹ്യ ഘടന rb_കണ്ണി *ext2fs_rb_next(ഘടന rb_കണ്ണി *);
+ബാഹ്യ ഘടന rb_കണ്ണി *ext2fs_rb_prev(ഘടന rb_കണ്ണി *);
+ബാഹ്യ ഘടന rb_കണ്ണി *ext2fs_rb_first(സ്ഥിരം ഘടന rb_വേര് *);
+ബാഹ്യ ഘടന rb_കണ്ണി *ext2fs_rb_last(സ്ഥിരം ഘടന rb_വേര് *);
 
 /* Fast replacement of a single node without remove/rebalance/add/rebalance */
-extern void ext2fs_rb_replace_node(struct rb_node *victim, struct rb_node *new_,
-				 struct rb_root *root);
+ബാഹ്യ ശൂന്യം ext2fs_rb_replace_കണ്ണി(ഘടന rb_കണ്ണി *victim, ഘടന rb_കണ്ണി *new_,
+				 ഘടന rb_വേര് *വേര്);
 
-static inline void ext2fs_rb_link_node(struct rb_node * node,
-				     struct rb_node * parent,
-				     struct rb_node ** rb_link)
+സ്ഥിതം വരിയിൽ ശൂന്യം ext2fs_rb_link_കണ്ണി(ഘടന rb_കണ്ണി * കണ്ണി,
+				     ഘടന rb_കണ്ണി * parent,
+				     ഘടന rb_കണ്ണി ** rb_link)
 {
-	node->rb_parent_color = (uintptr_t)parent;
-	node->rb_left = node->rb_right = NULL;
+	കണ്ണി->rb_parent_color = (uintptr_t)parent;
+	കണ്ണി->rb_ഇടത് = കണ്ണി->rb_വലത് = ശൂന്യ;
 
-	*rb_link = node;
+	*rb_link = കണ്ണി;
 }
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
+#എങ്കിൽ __GNUC_PREREQ (4, 6)
+#pragma GCC diagnostic എടുക്കുക
 #endif
 
 #endif	/* _LINUX_RBTREE_H */

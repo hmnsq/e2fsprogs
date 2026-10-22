@@ -11,15 +11,15 @@
  */
 
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#അന്തര്ഭാവ "config.h"
+#എങ്കിൽ HAVE_SYS_TYPES_H
+#അന്തര്ഭാവ <sys/types.h>
 #endif
-#include "ext2fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
 
 /* the K array */
 #define CONST64(n) n
-static const __u64 K[80] = {
+സ്ഥിതം സ്ഥിരം __u64 K[80] = {
 	CONST64(0x428a2f98d728ae22), CONST64(0x7137449123ef65cd),
 	CONST64(0xb5c0fbcfec4d3b2f), CONST64(0xe9b5dba58189dbbc),
 	CONST64(0x3956c25bf348b538), CONST64(0x59f111f1b605d019),
@@ -75,18 +75,18 @@ static const __u64 K[80] = {
 		d += t0;\
 		h  = t0 + t1;
 #define STORE64H(x, y) \
-	do { \
-		(y)[0] = (unsigned char)(((x)>>56)&255);\
-		(y)[1] = (unsigned char)(((x)>>48)&255);\
-		(y)[2] = (unsigned char)(((x)>>40)&255);\
-		(y)[3] = (unsigned char)(((x)>>32)&255);\
-		(y)[4] = (unsigned char)(((x)>>24)&255);\
-		(y)[5] = (unsigned char)(((x)>>16)&255);\
-		(y)[6] = (unsigned char)(((x)>>8)&255);\
-		(y)[7] = (unsigned char)((x)&255); } while(0)
+	ചെയ്യുക { \
+		(y)[0] = (unsigned അക്ഷരം)(((x)>>56)&255);\
+		(y)[1] = (unsigned അക്ഷരം)(((x)>>48)&255);\
+		(y)[2] = (unsigned അക്ഷരം)(((x)>>40)&255);\
+		(y)[3] = (unsigned അക്ഷരം)(((x)>>32)&255);\
+		(y)[4] = (unsigned അക്ഷരം)(((x)>>24)&255);\
+		(y)[5] = (unsigned അക്ഷരം)(((x)>>16)&255);\
+		(y)[6] = (unsigned അക്ഷരം)(((x)>>8)&255);\
+		(y)[7] = (unsigned അക്ഷരം)((x)&255); } ആകുമ്പോൾ(0)
 
 #define LOAD64H(x, y)\
-	do {x = \
+	ചെയ്യുക {x = \
 		(((__u64)((y)[0] & 255)) << 56) |\
 		(((__u64)((y)[1] & 255)) << 48) |\
 		(((__u64)((y)[2] & 255)) << 40) |\
@@ -95,45 +95,45 @@ static const __u64 K[80] = {
 		(((__u64)((y)[5] & 255)) << 16) |\
 		(((__u64)((y)[6] & 255)) << 8) |\
 		(((__u64)((y)[7] & 255)));\
-	} while(0)
+	} ആകുമ്പോൾ(0)
 
 #define ROR64c(x, y) \
     ( ((((x)&CONST64(0xFFFFFFFFFFFFFFFF))>>((__u64)(y)&CONST64(63))) | \
       ((x)<<((__u64)(64-((y)&CONST64(63)))))) & CONST64(0xFFFFFFFFFFFFFFFF))
 
-struct sha512_state {
+ഘടന sha512_state {
 	__u64  length, state[8];
 	unsigned long curlen;
-	unsigned char buf[128];
+	unsigned അക്ഷരം buf[128];
 };
 
 /* This is a highly simplified version from libtomcrypt */
-struct hash_state {
-	struct sha512_state sha512;
+ഘടന hash_state {
+	ഘടന sha512_state sha512;
 };
 
-static void sha512_compress(struct hash_state * md, const unsigned char *buf)
+സ്ഥിതം ശൂന്യം sha512_compress(ഘടന hash_state * md, സ്ഥിരം unsigned അക്ഷരം *buf)
 {
 	__u64 S[8], W[80], t0, t1;
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
 	/* copy state into S */
-	for (i = 0; i < 8; i++) {
+	വേണ്ടി (i = 0; i < 8; i++) {
 		S[i] = md->sha512.state[i];
 	}
 
 	/* copy the state into 1024-bits into W[0..15] */
-	for (i = 0; i < 16; i++) {
+	വേണ്ടി (i = 0; i < 16; i++) {
 		LOAD64H(W[i], buf + (8*i));
 	}
 
 	/* fill W[16..79] */
-	for (i = 16; i < 80; i++) {
+	വേണ്ടി (i = 16; i < 80; i++) {
 		W[i] = Gamma1(W[i - 2]) + W[i - 7] +
 			Gamma0(W[i - 15]) + W[i - 16];
 	}
 
-	for (i = 0; i < 80; i += 8) {
+	വേണ്ടി (i = 0; i < 80; i += 8) {
 		RND(S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7],i+0);
 		RND(S[7],S[0],S[1],S[2],S[3],S[4],S[5],S[6],i+1);
 		RND(S[6],S[7],S[0],S[1],S[2],S[3],S[4],S[5],i+2);
@@ -145,12 +145,12 @@ static void sha512_compress(struct hash_state * md, const unsigned char *buf)
 	}
 
 	 /* feedback */
-	for (i = 0; i < 8; i++) {
+	വേണ്ടി (i = 0; i < 8; i++) {
 		md->sha512.state[i] = md->sha512.state[i] + S[i];
 	}
 }
 
-static void sha512_init(struct hash_state * md)
+സ്ഥിതം ശൂന്യം sha512_init(ഘടന hash_state * md)
 {
 	md->sha512.curlen = 0;
 	md->sha512.length = 0;
@@ -164,22 +164,22 @@ static void sha512_init(struct hash_state * md)
 	md->sha512.state[7] = CONST64(0x5be0cd19137e2179);
 }
 
-static void sha512_done(struct hash_state * md, unsigned char *out)
+സ്ഥിതം ശൂന്യം sha512_done(ഘടന hash_state * md, unsigned അക്ഷരം *out)
 {
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
 	/* increase the length of the message */
 	md->sha512.length += md->sha512.curlen * CONST64(8);
 
 	/* append the '1' bit */
-	md->sha512.buf[md->sha512.curlen++] = (unsigned char)0x80;
+	md->sha512.buf[md->sha512.curlen++] = (unsigned അക്ഷരം)0x80;
 
 	/* if the length is currently above 112 bytes we append zeros then
 	 * compress. Then we can fall back to padding zeros and length encoding
 	 * like normal. */
-	if (md->sha512.curlen > 112) {
-		while (md->sha512.curlen < 128) {
-			md->sha512.buf[md->sha512.curlen++] = (unsigned char)0;
+	എങ്കിൽ (md->sha512.curlen > 112) {
+		ആകുമ്പോൾ (md->sha512.curlen < 128) {
+			md->sha512.buf[md->sha512.curlen++] = (unsigned അക്ഷരം)0;
 		}
 		sha512_compress(md, md->sha512.buf);
 		md->sha512.curlen = 0;
@@ -187,8 +187,8 @@ static void sha512_done(struct hash_state * md, unsigned char *out)
 
 	/* pad up to 120 bytes of zeroes note: that from 112 to 120 is the 64 MSB
 	 * of the length. We assume that you won't hash > 2^64 bits of data. */
-	while (md->sha512.curlen < 120) {
-		md->sha512.buf[md->sha512.curlen++] = (unsigned char)0;
+	ആകുമ്പോൾ (md->sha512.curlen < 120) {
+		md->sha512.buf[md->sha512.curlen++] = (unsigned അക്ഷരം)0;
 	}
 
 	/* store length */
@@ -196,33 +196,33 @@ static void sha512_done(struct hash_state * md, unsigned char *out)
 	sha512_compress(md, md->sha512.buf);
 
 	/* copy output */
-	for (i = 0; i < 8; i++) {
+	വേണ്ടി (i = 0; i < 8; i++) {
 		STORE64H(md->sha512.state[i], out+(8 * i));
 	}
 }
 
 #define MIN(x, y) ( ((x)<(y))?(x):(y) )
 #define SHA512_BLOCKSIZE 128
-static void sha512_process(struct hash_state * md,
-			   const unsigned char *in,
+സ്ഥിതം ശൂന്യം sha512_process(ഘടന hash_state * md,
+			   സ്ഥിരം unsigned അക്ഷരം *in,
 			   unsigned long inlen)
 {
 	unsigned long n;
 
-	while (inlen > 0) {
-		if (md->sha512.curlen == 0 && inlen >= SHA512_BLOCKSIZE) {
+	ആകുമ്പോൾ (inlen > 0) {
+		എങ്കിൽ (md->sha512.curlen == 0 && inlen >= SHA512_BLOCKSIZE) {
 			sha512_compress(md, in);
 			md->sha512.length += SHA512_BLOCKSIZE * 8;
 			in += SHA512_BLOCKSIZE;
 			inlen -= SHA512_BLOCKSIZE;
-		} else {
+		} അല്ലെങ്കിൽ {
 			n = MIN(inlen, (SHA512_BLOCKSIZE - md->sha512.curlen));
 			memcpy(md->sha512.buf + md->sha512.curlen,
 			       in, (size_t)n);
 			md->sha512.curlen += n;
 			in += n;
 			inlen -= n;
-			if (md->sha512.curlen == SHA512_BLOCKSIZE) {
+			എങ്കിൽ (md->sha512.curlen == SHA512_BLOCKSIZE) {
 				sha512_compress(md, md->sha512.buf);
 				md->sha512.length += SHA512_BLOCKSIZE * 8;
 				md->sha512.curlen = 0;
@@ -231,10 +231,10 @@ static void sha512_process(struct hash_state * md,
 	}
 }
 
-void ext2fs_sha512(const unsigned char *in, unsigned long in_size,
-		   unsigned char out[EXT2FS_SHA512_LENGTH])
+ശൂന്യം ext2fs_sha512(സ്ഥിരം unsigned അക്ഷരം *in, unsigned long in_size,
+		   unsigned അക്ഷരം out[EXT2FS_SHA512_LENGTH])
 {
-	struct hash_state md;
+	ഘടന hash_state md;
 
 	sha512_init(&md);
 	sha512_process(&md, in, in_size);
@@ -242,9 +242,9 @@ void ext2fs_sha512(const unsigned char *in, unsigned long in_size,
 }
 
 #ifdef UNITTEST
-static const struct {
-	char *msg;
-	unsigned char hash[64];
+സ്ഥിതം സ്ഥിരം ഘടന {
+	അക്ഷരം *സന്ദേശം;
+	unsigned അക്ഷരം hash[64];
 } tests[] = {
 	{ "",
 	  { 0xcf, 0x83, 0xe1, 0x35, 0x7e, 0xef, 0xb8, 0xbd,
@@ -278,25 +278,25 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
-	int i;
-	int errors = 0;
-	unsigned char tmp[64];
+	പൂർണ്ണസംഖ്യ i;
+	പൂർണ്ണസംഖ്യ errors = 0;
+	unsigned അക്ഷരം tmp[64];
 
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
-		unsigned char *msg = (unsigned char *) tests[i].msg;
-		int len = strlen(tests[i].msg);
+	വേണ്ടി (i = 0; i < (പൂർണ്ണസംഖ്യ)(വലുപ്പം(tests) / വലുപ്പം(tests[0])); i++) {
+		unsigned അക്ഷരം *സന്ദേശം = (unsigned അക്ഷരം *) tests[i].സന്ദേശം;
+		പൂർണ്ണസംഖ്യ len = strlen(tests[i].സന്ദേശം);
 
-		ext2fs_sha512(msg, len, tmp);
+		ext2fs_sha512(സന്ദേശം, len, tmp);
 		printf("SHA512 test message %d: ", i);
-		if (memcmp(tmp, tests[i].hash, 64) != 0) {
+		എങ്കിൽ (memcmp(tmp, tests[i].hash, 64) != 0) {
 			printf("FAILED\n");
 			errors++;
-		} else
+		} അല്ലെങ്കിൽ
 			printf("OK\n");
 	}
-	return errors;
+	തിരികെ errors;
 }
 
 #endif /* UNITTEST */

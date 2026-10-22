@@ -14,13 +14,13 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#അന്തര്ഭാവ "config.h"
+#എങ്കിൽ HAVE_SYS_TYPES_H
+#അന്തര്ഭാവ <sys/types.h>
 #endif
-#include "ext2fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
 
-static const char *lookup_table =
+സ്ഥിതം സ്ഥിരം അക്ഷരം *lookup_table =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
 
 /**
@@ -29,56 +29,56 @@ static const char *lookup_table =
  * Encodes the input digest using characters from the set [a-zA-Z0-9_+].
  * The encoded string is roughly 4/3 times the size of the input string.
  */
-int ext2fs_digest_encode(const char *src, int len, char *dst)
+പൂർണ്ണസംഖ്യ ext2fs_digest_encode(സ്ഥിരം അക്ഷരം *src, പൂർണ്ണസംഖ്യ len, അക്ഷരം *dst)
 {
-	int i = 0, bits = 0, ac = 0;
-	char *cp = dst;
+	പൂർണ്ണസംഖ്യ i = 0, bits = 0, ac = 0;
+	അക്ഷരം *cp = dst;
 
-	while (i < len) {
-		ac += (((unsigned char) src[i]) << bits);
+	ആകുമ്പോൾ (i < len) {
+		ac += (((unsigned അക്ഷരം) src[i]) << bits);
 		bits += 8;
-		do {
+		ചെയ്യുക {
 			*cp++ = lookup_table[ac & 0x3f];
 			ac >>= 6;
 			bits -= 6;
-		} while (bits >= 6);
+		} ആകുമ്പോൾ (bits >= 6);
 		i++;
 	}
-	if (bits)
+	എങ്കിൽ (bits)
 		*cp++ = lookup_table[ac & 0x3f];
-	return cp - dst;
+	തിരികെ cp - dst;
 }
 
-int ext2fs_digest_decode(const char *src, int len, char *dst)
+പൂർണ്ണസംഖ്യ ext2fs_digest_decode(സ്ഥിരം അക്ഷരം *src, പൂർണ്ണസംഖ്യ len, അക്ഷരം *dst)
 {
-	int i = 0, bits = 0, ac = 0;
-	const char *p;
-	char *cp = dst;
+	പൂർണ്ണസംഖ്യ i = 0, bits = 0, ac = 0;
+	സ്ഥിരം അക്ഷരം *p;
+	അക്ഷരം *cp = dst;
 
-	while (i < len) {
+	ആകുമ്പോൾ (i < len) {
 		p = strchr(lookup_table, src[i]);
-		if (p == NULL || src[i] == 0)
-			return -1;
+		എങ്കിൽ (p == ശൂന്യ || src[i] == 0)
+			തിരികെ -1;
 		ac += (p - lookup_table) << bits;
 		bits += 6;
-		if (bits >= 8) {
+		എങ്കിൽ (bits >= 8) {
 			*cp++ = ac & 0xff;
 			ac >>= 8;
 			bits -= 8;
 		}
 		i++;
 	}
-	if (ac)
-		return -1;
-	return cp - dst;
+	എങ്കിൽ (ac)
+		തിരികെ -1;
+	തിരികെ cp - dst;
 }
 
 
 #ifdef UNITTEST
-static const struct {
-	unsigned char d[32];
-	unsigned int len;
-	const char *ed;
+സ്ഥിതം സ്ഥിരം ഘടന {
+	unsigned അക്ഷരം d[32];
+	unsigned പൂർണ്ണസംഖ്യ len;
+	സ്ഥിരം അക്ഷരം *ed;
 } tests[] = {
 	{ { 0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14,
 	    0x9a, 0xfb, 0xf4, 0xc8, 0x99, 0x6f, 0xb9, 0x24,
@@ -124,64 +124,64 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
-	int i, ret, len;
-	int errors = 0;
-	char tmp[1024], tmp2[1024];
+	പൂർണ്ണസംഖ്യ i, ret, len;
+	പൂർണ്ണസംഖ്യ errors = 0;
+	അക്ഷരം tmp[1024], tmp2[1024];
 
-	if (argc == 3 && !strcmp(argv[1], "encode")) {
-		memset(tmp, 0, sizeof(tmp));
+	എങ്കിൽ (argc == 3 && !strcmp(argv[1], "encode")) {
+		memset(tmp, 0, വലുപ്പം(tmp));
 		ext2fs_digest_encode(argv[2], strlen(argv[2]), tmp);
 		puts(tmp);
 		exit(0);
 	}
-	if (argc == 3 && !strcmp(argv[1], "decode")) {
-		memset(tmp, 0, sizeof(tmp));
+	എങ്കിൽ (argc == 3 && !strcmp(argv[1], "decode")) {
+		memset(tmp, 0, വലുപ്പം(tmp));
 		ret = ext2fs_digest_decode(argv[2], strlen(argv[2]), tmp);
 		puts(tmp);
 		fprintf(stderr, "returned %d\n", ret);
 		exit(0);
 	}
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
-		memset(tmp, 0, sizeof(tmp));
-		ret = ext2fs_digest_encode((const char *) tests[i].d,
+	വേണ്ടി (i = 0; i < (പൂർണ്ണസംഖ്യ)(വലുപ്പം(tests) / വലുപ്പം(tests[0])); i++) {
+		memset(tmp, 0, വലുപ്പം(tmp));
+		ret = ext2fs_digest_encode((സ്ഥിരം അക്ഷരം *) tests[i].d,
 					   tests[i].len, tmp);
 		len = strlen(tmp);
 		printf("Test Digest %d (returned %d): ", i, ret);
-		if (ret != len) {
+		എങ്കിൽ (ret != len) {
 			printf("FAILED returned %d, string length was %d\n",
 			       ret, len);
 			errors++;
-			continue;
-		} else if (strcmp(tmp, tests[i].ed) != 0) {
+			തുടരുക;
+		} അല്ലെങ്കിൽ എങ്കിൽ (strcmp(tmp, tests[i].ed) != 0) {
 			printf("FAILED: got %s, expected %s\n", tmp,
 			       tests[i].ed);
 			errors++;
-			continue;
+			തുടരുക;
 		}
 		ret = ext2fs_digest_decode(tmp, len, tmp2);
-		if (ret != tests[i].len) {
+		എങ്കിൽ (ret != tests[i].len) {
 			printf("FAILED decode returned %d, expected %d\n",
 			       ret, tests[i].len);
 			errors++;
-			continue;
+			തുടരുക;
 		}
-		if (memcmp(tmp2, tests[i].d, ret) != 0) {
+		എങ്കിൽ (memcmp(tmp2, tests[i].d, ret) != 0) {
 			puts("FAILED: decode mismatched");
 			errors++;
-			continue;
+			തുടരുക;
 		}
 		printf("OK\n");
 	}
-	for (i = 1; i < argc; i++) {
-		memset(tmp, 0, sizeof(tmp));
+	വേണ്ടി (i = 1; i < argc; i++) {
+		memset(tmp, 0, വലുപ്പം(tmp));
 		ret = ext2fs_digest_encode(argv[i], strlen(argv[i]), tmp);
 		len = strlen(tmp);
 		printf("Digest of '%s' is '%s' (returned %d, length %d)\n",
 		       argv[i], tmp, ret, len);
 	}
-	return errors;
+	തിരികെ errors;
 }
 
 #endif /* UNITTEST */

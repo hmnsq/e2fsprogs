@@ -11,30 +11,30 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <bios.h>
-#include <string.h>
-#include <ctype.h>
-#include <io.h>
+#അന്തര്ഭാവ "config.h"
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <bios.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <ctype.h>
+#അന്തര്ഭാവ <io.h>
 #ifdef HAVE_ERRNO_H
-#include <errno.h>
+#അന്തര്ഭാവ <errno.h>
 #endif
 
-#include <ext2fs/ext2_types.h>
-#include "utils.h"
-#include "dosio.h"
-#include "et/com_err.h"
-#include "ext2_err.h"
-#include "ext2fs/io.h"
+#അന്തര്ഭാവ <ext2fs/ext2_types.h>
+#അന്തര്ഭാവ "utils.h"
+#അന്തര്ഭാവ "dosio.h"
+#അന്തര്ഭാവ "et/com_err.h"
+#അന്തര്ഭാവ "ext2_err.h"
+#അന്തര്ഭാവ "ext2fs/io.h"
 
 /*
  * Some helper macros
  */
 #define LINUX_EXT2FS       0x83
 #define LINUX_SWAP         0x82
-#define WRITE_ERR(_msg_) write(2, _msg_, strlen(_msg_))
-#define WRITE_ERR_S(_msg_) write(2, _msg_, sizeof(_msg_))
+#define WRITE_ERR(സന്ദേശം_2) ലിഖ(2, സന്ദേശം_2, strlen(സന്ദേശം_2))
+#define WRITE_ERR_S(സന്ദേശം_2) ലിഖ(2, സന്ദേശം_2, വലുപ്പം(സന്ദേശം_2))
 
 /*
  * Exported variables
@@ -45,23 +45,23 @@ unsigned long        _dio_hw_error;
 /*
  * Array of all opened partitions
  */
-static PARTITION        **partitions = NULL;
-static unsigned short   npart = 0; /* Number of mapped partitions */
-static PARTITION        *active = NULL;
+സ്ഥിതം PARTITION        **partitions = ശൂന്യ;
+സ്ഥിതം unsigned short   npart = 0; /* Number of mapped partitions */
+സ്ഥിതം PARTITION        *active = ശൂന്യ;
 
 /*
  * I/O Manager routine prototypes
  */
-static errcode_t dos_open(const char *dev, int flags, io_channel *channel);
-static errcode_t dos_close(io_channel channel);
-static errcode_t dos_set_blksize(io_channel channel, int blksize);
-static errcode_t dos_read_blk(io_channel channel, unsigned long block,
-                                             int count, void *buf);
-static errcode_t dos_write_blk(io_channel channel, unsigned long block,
-                               int count, const void *buf);
-static errcode_t dos_flush(io_channel channel);
+സ്ഥിതം errcode_t dos_open(സ്ഥിരം അക്ഷരം *dev, പൂർണ്ണസംഖ്യ flags, io_channel *channel);
+സ്ഥിതം errcode_t dos_close(io_channel channel);
+സ്ഥിതം errcode_t dos_set_blksize(io_channel channel, പൂർണ്ണസംഖ്യ blksize);
+സ്ഥിതം errcode_t dos_read_blk(io_channel channel, unsigned long block,
+                                             പൂർണ്ണസംഖ്യ എണ്ണം, ശൂന്യം *buf);
+സ്ഥിതം errcode_t dos_write_blk(io_channel channel, unsigned long block,
+                               പൂർണ്ണസംഖ്യ എണ്ണം, സ്ഥിരം ശൂന്യം *buf);
+സ്ഥിതം errcode_t dos_flush(io_channel channel);
 
-static struct struct_io_manager struct_dos_manager = {
+സ്ഥിതം ഘടന struct_io_manager struct_dos_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "DOS I/O Manager",
 	.open		= dos_open,
@@ -81,14 +81,14 @@ io_manager dos_io_manager = &struct_dos_manager;
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-          if ((struct)->magic != (code)) return (code)
+#define EXT2_CHECK_MAGIC(ഘടന, code) \
+          എങ്കിൽ ((ഘടന)->magic != (code)) തിരികെ (code)
 
 /*
  * Calculates a CHS address of a sector from its LBA
  * offset for the given partition.
  */
-static void lba2chs(unsigned long lba_addr, CHS *chs, PARTITION *part)
+സ്ഥിതം ശൂന്യം lba2chs(unsigned long lba_addr, CHS *chs, PARTITION *part)
 {
   unsigned long      abss;
 
@@ -111,56 +111,56 @@ static void lba2chs(unsigned long lba_addr, CHS *chs, PARTITION *part)
  * dive into them an return an appropriate entry. Also dive into
  * extended partitions when scanning for a first Linux/ext2fs.
  */
-static PTABLE_ENTRY *scan_partition_table(PTABLE_ENTRY *pentry,
+സ്ഥിതം PTABLE_ENTRY *scan_partition_table(PTABLE_ENTRY *pentry,
                                           unsigned short phys,
-                                          unsigned char *pno)
+                                          unsigned അക്ഷരം *pno)
 {
   unsigned        i;
 
-  if(*pno != 0xFF && *pno >= 5)
-     return NULL; /* We don't support extended partitions for now */
+  എങ്കിൽ(*pno != 0xFF && *pno >= 5)
+     തിരികെ ശൂന്യ; /* We don't support extended partitions for now */
 
-  if(*pno != 0xFF)
+  എങ്കിൽ(*pno != 0xFF)
   {
-    if(pentry[*pno].type == LINUX_EXT2FS)
-      return &pentry[*pno];
-    else
+    എങ്കിൽ(pentry[*pno].type == LINUX_EXT2FS)
+      തിരികെ &pentry[*pno];
+    അല്ലെങ്കിൽ
     {
-      if(!pentry[*pno].type)
+      എങ്കിൽ(!pentry[*pno].type)
         *pno = 0xFE;
-      else if(pentry[*pno].type == LINUX_SWAP)
+      അല്ലെങ്കിൽ എങ്കിൽ(pentry[*pno].type == LINUX_SWAP)
         *pno = 0xFD;
-      return NULL;
+      തിരികെ ശൂന്യ;
     }
   }
 
-  for(i = 0; i < 4; i++)
-    if(pentry[i].type == LINUX_EXT2FS)
+  വേണ്ടി(i = 0; i < 4; i++)
+    എങ്കിൽ(pentry[i].type == LINUX_EXT2FS)
     {
       *pno = i;
-      return &pentry[i];
+      തിരികെ &pentry[i];
     }
 
-  return NULL;
+  തിരികെ ശൂന്യ;
 }
 
 /*
  * Allocate libext2fs structures associated with I/O manager
  */
-static io_channel alloc_io_channel(PARTITION *part)
+സ്ഥിതം io_channel alloc_io_channel(PARTITION *part)
 {
   io_channel     ioch;
 
-  ioch = (io_channel)malloc(sizeof(struct struct_io_channel));
-  if (!ioch)
-	  return NULL;
-  memset(ioch, 0, sizeof(struct struct_io_channel));
+  ioch = (io_channel)malloc(വലുപ്പം(ഘടന struct_io_channel));
+  എങ്കിൽ (!ioch)
+	  തിരികെ ശൂന്യ;
+  memset(ioch, 0, വലുപ്പം(ഘടന struct_io_channel));
   ioch->magic = EXT2_ET_MAGIC_IO_CHANNEL;
   ioch->manager = dos_io_manager;
-  ioch->name = (char *)malloc(strlen(part->dev)+1);
-  if (!ioch->name) {
-	  free(ioch);
-	  return NULL;
+  ioch->name = (അക്ഷരം *)malloc(strlen(part->dev)+1);
+  എങ്കിൽ (!ioch->name) {
+	  സ്വതന്ത്രം(ioch);
+	  തിരികെ ശൂന്യ;
   }
   strcpy(ioch->name, part->dev);
   ioch->private_data = part;
@@ -168,7 +168,7 @@ static io_channel alloc_io_channel(PARTITION *part)
   ioch->read_error = 0;
   ioch->write_error = 0;
 
-  return ioch;
+  തിരികെ ioch;
 }
 
 #ifdef __TURBOC__
@@ -178,33 +178,33 @@ static io_channel alloc_io_channel(PARTITION *part)
  * Open the 'name' partition, initialize all information structures
  * we need to keep and create libext2fs I/O manager.
  */
-static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
+സ്ഥിതം errcode_t dos_open(സ്ഥിരം അക്ഷരം *dev, പൂർണ്ണസംഖ്യ flags, io_channel *channel)
 {
-  unsigned char  *tmp, sec[512];
+  unsigned അക്ഷരം  *tmp, sec[512];
   PARTITION      *part;
   PTABLE_ENTRY   *pent;
   PARTITION        **newparts;
 
-  if(!dev)
+  എങ്കിൽ(!dev)
   {
     _dio_error = ERR_BADDEV;
-    return EXT2_ET_BAD_DEVICE_NAME;
+    തിരികെ EXT2_ET_BAD_DEVICE_NAME;
   }
 
   /*
    * First check whether the dev name is OK
    */
-  tmp = (unsigned char*)strrchr(dev, '/');
-  if(!tmp)
+  tmp = (unsigned അക്ഷരം*)strrchr(dev, '/');
+  എങ്കിൽ(!tmp)
   {
     _dio_error = ERR_BADDEV;
-    return EXT2_ET_BAD_DEVICE_NAME;
+    തിരികെ EXT2_ET_BAD_DEVICE_NAME;
   }
   *tmp = 0;
-  if(strcmp(dev, "/dev"))
+  എങ്കിൽ(strcmp(dev, "/dev"))
   {
     _dio_error = ERR_BADDEV;
-    return EXT2_ET_BAD_DEVICE_NAME;
+    തിരികെ EXT2_ET_BAD_DEVICE_NAME;
   }
   *tmp++ = '/';
 
@@ -212,59 +212,59 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
    * Check whether the partition data is already in cache
    */
 
-  part = (PARTITION*)malloc(sizeof(PARTITION));
-  if (!part)
-	  return ENOMEM;
+  part = (PARTITION*)malloc(വലുപ്പം(PARTITION));
+  എങ്കിൽ (!part)
+	  തിരികെ ENOMEM;
   {
-    int   i = 0;
+    പൂർണ്ണസംഖ്യ   i = 0;
 
-    for(;i < npart; i++)
-      if(!strcmp(partitions[i]->dev, dev))
+    വേണ്ടി(;i < npart; i++)
+      എങ്കിൽ(!strcmp(partitions[i]->dev, dev))
       {
         /* Found it! Make it the active one */
         active = partitions[i];
         *channel = alloc_io_channel(active);
-	if (!*channel)
-		return ENOMEM;
-        return 0;
+	എങ്കിൽ (!*channel)
+		തിരികെ ENOMEM;
+        തിരികെ 0;
       }
   }
 
   /*
    * Drive number & optionally partn number
    */
-  switch(tmp[0])
+  തിരഞ്ഞെടുപ്പ്(tmp[0])
   {
-    case 'h':
-    case 's':
+    അവസ്ഥ 'h':
+    അവസ്ഥ 's':
       part->phys = 0x80;
       part->phys += toupper(tmp[2]) - 'A';
       /*
        * Do we have the partition number?
        */
-      if(tmp[3])
-        part->pno = isdigit((int)tmp[3]) ? tmp[3] - '0' - 1: 0;
-      else
+      എങ്കിൽ(tmp[3])
+        part->pno = isdigit((പൂർണ്ണസംഖ്യ)tmp[3]) ? tmp[3] - '0' - 1: 0;
+      അല്ലെങ്കിൽ
         part->pno = 0xFF;
-      break;
+      നിർത്തുക;
 
-    case 'f':
-      if(tmp[2])
-        part->phys = isdigit((int)tmp[2]) ? tmp[2] - '0' : 0;
-      else
+    അവസ്ഥ 'f':
+      എങ്കിൽ(tmp[2])
+        part->phys = isdigit((പൂർണ്ണസംഖ്യ)tmp[2]) ? tmp[2] - '0' : 0;
+      അല്ലെങ്കിൽ
         part->phys = 0x00; /* We'll assume /dev/fd0 */
-      break;
+      നിർത്തുക;
 
-    default:
+    സ്ഥിരസ്ഥിതി:
       _dio_error = ERR_BADDEV;
-      return ENODEV;
+      തിരികെ ENODEV;
   }
 
-  if(part->phys < 0x80)
+  എങ്കിൽ(part->phys < 0x80)
   {
      /* We don't support floppies for now */
      _dio_error = ERR_NOTSUPP;
-     return EINVAL;
+     തിരികെ EINVAL;
   }
 
   part->dev = strdup(dev);
@@ -280,12 +280,12 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
                            1, /* just one sector */
                            sec);
 
-  if(!HW_OK())
+  എങ്കിൽ(!HW_OK())
   {
     _dio_error = ERR_HARDWARE;
-    free(part->dev);
-    free(part);
-    return EFAULT;
+    സ്വതന്ത്രം(part->dev);
+    സ്വതന്ത്രം(part);
+    തിരികെ EFAULT;
   }
 
   /*
@@ -300,24 +300,24 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
    */
   _dio_hw_error = biosdisk(DISK_READ, part->phys, 0, 0, 1, 1, sec);
 
-  if(!HW_OK())
+  എങ്കിൽ(!HW_OK())
   {
     _dio_error = ERR_HARDWARE;
-    free(part->dev);
-    free(part);
-    return EFAULT;
+    സ്വതന്ത്രം(part->dev);
+    സ്വതന്ത്രം(part);
+    തിരികെ EFAULT;
   }
 
   pent = (PTABLE_ENTRY*)&sec[0x1BE];
   pent = scan_partition_table(pent, part->phys, &part->pno);
 
-  if(!pent)
+  എങ്കിൽ(!pent)
   {
     _dio_error = part->pno == 0xFE ? ERR_EMPTYPART :
                  part->pno == 0xFD ? ERR_LINUXSWAP : ERR_NOTEXT2FS;
-    free(part->dev);
-    free(part);
-    return ENODEV;
+    സ്വതന്ത്രം(part->dev);
+    സ്വതന്ത്രം(part);
+    തിരികെ ENODEV;
   }
 
   /*
@@ -337,10 +337,10 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
   /*
    * Add the partition to the table
    */
-  newparts = (PARTITION**)realloc(partitions, sizeof(PARTITION) * npart);
-  if (!newparts) {
-	  free(part);
-	  return ENOMEM;
+  newparts = (PARTITION**)realloc(partitions, വലുപ്പം(PARTITION) * npart);
+  എങ്കിൽ (!newparts) {
+	  സ്വതന്ത്രം(part);
+	  തിരികെ ENOMEM;
   }
   partitions = newparts;
   partitions[npart++] = active = part;
@@ -349,29 +349,29 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel)
    * Now alloc all libe2fs structures
    */
   *channel = alloc_io_channel(active);
-  if (!*channel)
-	  return ENOMEM;
+  എങ്കിൽ (!*channel)
+	  തിരികെ ENOMEM;
 
-  return 0;
+  തിരികെ 0;
 }
 
-static errcode_t dos_close(io_channel channel)
+സ്ഥിതം errcode_t dos_close(io_channel channel)
 {
-	free(channel->name);
-	free(channel);
+	സ്വതന്ത്രം(channel->name);
+	സ്വതന്ത്രം(channel);
 
-	return 0;
+	തിരികെ 0;
 }
 
-static errcode_t dos_set_blksize(io_channel channel, int blksize)
+സ്ഥിതം errcode_t dos_set_blksize(io_channel channel, പൂർണ്ണസംഖ്യ blksize)
 {
   channel->block_size = blksize;
 
-  return 0;
+  തിരികെ 0;
 }
 
-static errcode_t dos_read_blk(io_channel channel, unsigned long block,
-                                             int count, void *buf)
+സ്ഥിതം errcode_t dos_read_blk(io_channel channel, unsigned long block,
+                                             പൂർണ്ണസംഖ്യ എണ്ണം, ശൂന്യം *buf)
 {
   PARTITION     *part;
   size_t        size;
@@ -381,7 +381,7 @@ static errcode_t dos_read_blk(io_channel channel, unsigned long block,
   EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
   part = (PARTITION*)channel->private_data;
 
-  size = (size_t)((count < 0) ? -count : count * channel->block_size);
+  size = (size_t)((എണ്ണം < 0) ? -എണ്ണം : എണ്ണം * channel->block_size);
   loc = (ext2_loff_t) block * channel->block_size;
 
   lba2chs(loc, &chs, part);
@@ -398,17 +398,17 @@ static errcode_t dos_read_blk(io_channel channel, unsigned long block,
                            size < 512 ? 1 : size/512,
                            buf);
 
-  if(!HW_OK())
+  എങ്കിൽ(!HW_OK())
   {
     _dio_error = ERR_HARDWARE;
-    return EFAULT;
+    തിരികെ EFAULT;
   }
 
-  return 0;
+  തിരികെ 0;
 }
 
-static errcode_t dos_write_blk(io_channel channel, unsigned long block,
-                               int count, const void *buf)
+സ്ഥിതം errcode_t dos_write_blk(io_channel channel, unsigned long block,
+                               പൂർണ്ണസംഖ്യ എണ്ണം, സ്ഥിരം ശൂന്യം *buf)
 {
   PARTITION     *part;
   size_t        size;
@@ -418,14 +418,14 @@ static errcode_t dos_write_blk(io_channel channel, unsigned long block,
   EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
   part = (PARTITION*)channel->private_data;
 
-  if(count == 1)
+  എങ്കിൽ(എണ്ണം == 1)
     size = (size_t)channel->block_size;
-  else
+  അല്ലെങ്കിൽ
   {
-    if (count < 0)
-      size = (size_t)-count;
-    else
-      size = (size_t)(count * channel->block_size);
+    എങ്കിൽ (എണ്ണം < 0)
+      size = (size_t)-എണ്ണം;
+    അല്ലെങ്കിൽ
+      size = (size_t)(എണ്ണം * channel->block_size);
   }
 
   loc = (ext2_loff_t)block * channel->block_size;
@@ -436,24 +436,24 @@ static errcode_t dos_write_blk(io_channel channel, unsigned long block,
                            chs.cyl,
                            chs.sector,
                            size < 512 ? 1 : size/512,
-                           (void*)buf);
+                           (ശൂന്യം*)buf);
 
-  if(!HW_OK())
+  എങ്കിൽ(!HW_OK())
   {
     _dio_error = ERR_HARDWARE;
-    return EFAULT;
+    തിരികെ EFAULT;
   }
 
-  return 0;
+  തിരികെ 0;
 }
 
 #ifdef __TURBOC__
 #pragma argsused
 #endif
-static errcode_t dos_flush(io_channel channel)
+സ്ഥിതം errcode_t dos_flush(io_channel channel)
 {
   /*
    * No buffers, no flush...
    */
-  return 0;
+  തിരികെ 0;
 }

@@ -21,126 +21,126 @@
  *
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#അന്തര്ഭാവ "config.h"
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#എങ്കിൽ HAVE_UNISTD_H
+#അന്തര്ഭാവ <unistd.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#അന്തര്ഭാവ "ext2_fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
 
-struct get_pathname_struct {
-	ext2_ino_t	search_ino;
+ഘടന get_pathname_struct {
+	ext2_ino_t	തിരയൽ_ino;
 	ext2_ino_t	parent;
-	char		*name;
+	അക്ഷരം		*name;
 	errcode_t	errcode;
 };
 
 #ifdef __TURBOC__
  #pragma argsused
 #endif
-static int get_pathname_proc(struct ext2_dir_entry *dirent,
-			     int	offset EXT2FS_ATTR((unused)),
-			     int	blocksize EXT2FS_ATTR((unused)),
-			     char	*buf EXT2FS_ATTR((unused)),
-			     void	*priv_data)
+സ്ഥിതം പൂർണ്ണസംഖ്യ get_pathname_proc(ഘടന ext2_dir_entry *dirent,
+			     പൂർണ്ണസംഖ്യ	offset EXT2FS_ATTR((unused)),
+			     പൂർണ്ണസംഖ്യ	blocksize EXT2FS_ATTR((unused)),
+			     അക്ഷരം	*buf EXT2FS_ATTR((unused)),
+			     ശൂന്യം	*priv_data)
 {
-	struct get_pathname_struct	*gp;
+	ഘടന get_pathname_struct	*gp;
 	errcode_t			retval;
-	int name_len = ext2fs_dirent_name_len(dirent);
+	പൂർണ്ണസംഖ്യ name_len = ext2fs_dirent_name_len(dirent);
 
-	gp = (struct get_pathname_struct *) priv_data;
+	gp = (ഘടന get_pathname_struct *) priv_data;
 
-	if ((name_len == 2) && !strncmp(dirent->name, "..", 2))
+	എങ്കിൽ ((name_len == 2) && !strncmp(dirent->name, "..", 2))
 		gp->parent = dirent->inode;
-	if (dirent->inode == gp->search_ino) {
+	എങ്കിൽ (dirent->inode == gp->തിരയൽ_ino) {
 		retval = ext2fs_get_mem(name_len + 1, &gp->name);
-		if (retval) {
+		എങ്കിൽ (retval) {
 			gp->errcode = retval;
-			return DIRENT_ABORT;
+			തിരികെ DIRENT_ABORT;
 		}
 		strncpy(gp->name, dirent->name, name_len);
 		gp->name[name_len] = '\0';
-		return DIRENT_ABORT;
+		തിരികെ DIRENT_ABORT;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-static errcode_t ext2fs_get_pathname_int(ext2_filsys fs, ext2_ino_t dir,
-					 ext2_ino_t ino, int maxdepth,
-					 char *buf, char **name)
+സ്ഥിതം errcode_t ext2fs_get_pathname_int(ext2_filsys fs, ext2_ino_t dir,
+					 ext2_ino_t ino, പൂർണ്ണസംഖ്യ maxdepth,
+					 അക്ഷരം *buf, അക്ഷരം **name)
 {
-	struct get_pathname_struct gp;
-	char	*parent_name = 0, *ret;
+	ഘടന get_pathname_struct gp;
+	അക്ഷരം	*parent_name = 0, *ret;
 	errcode_t	retval;
 
-	if (dir == ino) {
+	എങ്കിൽ (dir == ino) {
 		retval = ext2fs_get_mem(2, name);
-		if (retval)
-			return retval;
-		strcpy(*name, (dir == EXT2_ROOT_INO) ? "/" : ".");
-		return 0;
+		എങ്കിൽ (retval)
+			തിരികെ retval;
+		strcpy(*name, (dir == EXT2_വേര്_INO) ? "/" : ".");
+		തിരികെ 0;
 	}
 
-	if (!dir || (maxdepth < 0)) {
+	എങ്കിൽ (!dir || (maxdepth < 0)) {
 		retval = ext2fs_get_mem(4, name);
-		if (retval)
-			return retval;
+		എങ്കിൽ (retval)
+			തിരികെ retval;
 		strcpy(*name, "...");
-		return 0;
+		തിരികെ 0;
 	}
 
-	gp.search_ino = ino;
+	gp.തിരയൽ_ino = ino;
 	gp.parent = 0;
 	gp.name = 0;
 	gp.errcode = 0;
 
 	retval = ext2fs_dir_iterate(fs, dir, 0, buf, get_pathname_proc, &gp);
-	if (retval == EXT2_ET_NO_DIRECTORY) {
-		char tmp[32];
+	എങ്കിൽ (retval == EXT2_ET_NO_DIRECTORY) {
+		അക്ഷരം tmp[32];
 
-		if (ino)
-			snprintf(tmp, sizeof(tmp), "<%u>/<%u>", dir, ino);
-		else
-			snprintf(tmp, sizeof(tmp), "<%u>", dir);
+		എങ്കിൽ (ino)
+			snprintf(tmp, വലുപ്പം(tmp), "<%u>/<%u>", dir, ino);
+		അല്ലെങ്കിൽ
+			snprintf(tmp, വലുപ്പം(tmp), "<%u>", dir);
 		retval = ext2fs_get_mem(strlen(tmp)+1, name);
-		if (retval)
-			goto cleanup;
+		എങ്കിൽ (retval)
+			പോകുക cleanup;
 		strcpy(*name, tmp);
-		return 0;
-	} else if (retval)
-		goto cleanup;
-	if (gp.errcode) {
+		തിരികെ 0;
+	} അല്ലെങ്കിൽ എങ്കിൽ (retval)
+		പോകുക cleanup;
+	എങ്കിൽ (gp.errcode) {
 		retval = gp.errcode;
-		goto cleanup;
+		പോകുക cleanup;
 	}
 
 	retval = ext2fs_get_pathname_int(fs, gp.parent, dir, maxdepth-1,
 					 buf, &parent_name);
-	if (retval)
-		goto cleanup;
-	if (!ino) {
+	എങ്കിൽ (retval)
+		പോകുക cleanup;
+	എങ്കിൽ (!ino) {
 		*name = parent_name;
-		return 0;
+		തിരികെ 0;
 	}
 
-	if (gp.name)
+	എങ്കിൽ (gp.name)
 		retval = ext2fs_get_mem(strlen(parent_name)+strlen(gp.name)+2,
 					&ret);
-	else
+	അല്ലെങ്കിൽ
 		retval = ext2fs_get_mem(strlen(parent_name)+5, &ret);
-	if (retval)
-		goto cleanup;
+	എങ്കിൽ (retval)
+		പോകുക cleanup;
 
 	ret[0] = 0;
-	if (parent_name[1])
+	എങ്കിൽ (parent_name[1])
 		strcat(ret, parent_name);
 	strcat(ret, "/");
-	if (gp.name)
+	എങ്കിൽ (gp.name)
 		strcat(ret, gp.name);
-	else
+	അല്ലെങ്കിൽ
 		strcat(ret, "???");
 	*name = ret;
 	retval = 0;
@@ -148,24 +148,24 @@ static errcode_t ext2fs_get_pathname_int(ext2_filsys fs, ext2_ino_t dir,
 cleanup:
 	ext2fs_free_mem(&parent_name);
 	ext2fs_free_mem(&gp.name);
-	return retval;
+	തിരികെ retval;
 }
 
 errcode_t ext2fs_get_pathname(ext2_filsys fs, ext2_ino_t dir, ext2_ino_t ino,
-			      char **name)
+			      അക്ഷരം **name)
 {
-	char	*buf;
+	അക്ഷരം	*buf;
 	errcode_t	retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
-	if (retval)
-		return retval;
-	if (dir == ino)
+	എങ്കിൽ (retval)
+		തിരികെ retval;
+	എങ്കിൽ (dir == ino)
 		ino = 0;
 	retval = ext2fs_get_pathname_int(fs, dir, ino, 32, buf, name);
 	ext2fs_free_mem(&buf);
-	return retval;
+	തിരികെ retval;
 
 }

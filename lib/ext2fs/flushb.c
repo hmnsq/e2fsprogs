@@ -10,24 +10,24 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
+#അന്തര്ഭാവ "config.h"
+#അന്തര്ഭാവ <stdio.h>
+#എങ്കിൽ HAVE_ERRNO_H
+#അന്തര്ഭാവ <errno.h>
 #endif
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#എങ്കിൽ HAVE_UNISTD_H
+#അന്തര്ഭാവ <unistd.h>
 #endif
-#if HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
+#എങ്കിൽ HAVE_SYS_IOCTL_H
+#അന്തര്ഭാവ <sys/ioctl.h>
 #endif
-#if HAVE_SYS_MOUNT_H
-#include <sys/param.h>
-#include <sys/mount.h>		/* This may define BLKFLSBUF */
+#എങ്കിൽ HAVE_SYS_MOUNT_H
+#അന്തര്ഭാവ <sys/param.h>
+#അന്തര്ഭാവ <sys/mount.h>		/* This may define BLKFLSBUF */
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#അന്തര്ഭാവ "ext2_fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
 
 /*
  * For Linux, define BLKFLSBUF and FDFLUSH if necessary, since
@@ -50,7 +50,7 @@
  * flush the buffer cache.  The latter is basically only useful for
  * system benchmarks and for torturing systems in burn-in tests.  :)
  */
-errcode_t ext2fs_sync_device(int fd, int flushb)
+errcode_t ext2fs_sync_device(പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ flushb)
 {
 	/*
 	 * We always sync the device in case we're running on old
@@ -58,31 +58,31 @@ errcode_t ext2fs_sync_device(int fd, int flushb)
 	 * still is a race condition for those kernels, but this
 	 * reduces it greatly.)
 	 */
-#if defined(HAVE_FSYNC)
-	if (fsync (fd) == -1)
-		return errno;
+#എങ്കിൽ defined(HAVE_FSYNC)
+	എങ്കിൽ (fsync (fd) == -1)
+		തിരികെ errno;
 #endif
 
-	if (flushb) {
+	എങ്കിൽ (flushb) {
 		errcode_t	retval = 0;
 
 #ifdef BLKFLSBUF
-		if (ioctl (fd, BLKFLSBUF, 0) == 0)
-			return 0;
+		എങ്കിൽ (ioctl (fd, BLKFLSBUF, 0) == 0)
+			തിരികെ 0;
 		retval = errno;
-#elif defined(__linux__)
+#അല്ലെങ്കിലെങ്കിൽ defined(__linux__)
 #warning BLKFLSBUF not defined
 #endif
 #ifdef FDFLUSH
 		/* In case this is a floppy */
-		if (ioctl(fd, FDFLUSH, 0) == 0)
-			return 0;
-		if (retval == 0)
+		എങ്കിൽ (ioctl(fd, FDFLUSH, 0) == 0)
+			തിരികെ 0;
+		എങ്കിൽ (retval == 0)
 			retval = errno;
-#elif defined(__linux__)
+#അല്ലെങ്കിലെങ്കിൽ defined(__linux__)
 #warning FDFLUSH not defined
 #endif
-		return retval;
+		തിരികെ retval;
 	}
-	return 0;
+	തിരികെ 0;
 }

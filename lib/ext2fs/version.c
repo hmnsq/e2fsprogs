@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#അന്തര്ഭാവ "config.h"
+#എങ്കിൽ HAVE_UNISTD_H
+#അന്തര്ഭാവ <unistd.h>
 #endif
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <ctype.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#അന്തര്ഭാവ "ext2_fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
 
-#include "../../version.h"
+#അന്തര്ഭാവ "../../version.h"
 
-static const char *lib_version = E2FSPROGS_VERSION;
-static const char *lib_date = E2FSPROGS_DATE;
+സ്ഥിതം സ്ഥിരം അക്ഷരം *lib_version = E2FSPROGS_VERSION;
+സ്ഥിതം സ്ഥിരം അക്ഷരം *lib_date = E2FSPROGS_DATE;
 
-int ext2fs_parse_version_string(const char *ver_string)
+പൂർണ്ണസംഖ്യ ext2fs_parse_version_string(സ്ഥിരം അക്ഷരം *ver_string)
 {
-	const char *cp;
-	int version = 0, dot_count = 0;
+	സ്ഥിരം അക്ഷരം *cp;
+	പൂർണ്ണസംഖ്യ version = 0, dot_എണ്ണം = 0;
 
-	for (cp = ver_string; *cp; cp++) {
-		if (*cp == '.') {
-			if (dot_count++)
-				break;
-			else
-				continue;
+	വേണ്ടി (cp = ver_string; *cp; cp++) {
+		എങ്കിൽ (*cp == '.') {
+			എങ്കിൽ (dot_എണ്ണം++)
+				നിർത്തുക;
+			അല്ലെങ്കിൽ
+				തുടരുക;
 		}
-		if (!isdigit(*cp))
-			break;
+		എങ്കിൽ (!isdigit(*cp))
+			നിർത്തുക;
 		version = (version * 10) + (*cp - '0');
 	}
-	return version;
+	തിരികെ version;
 }
 
 
-int ext2fs_get_library_version(const char **ver_string,
-			       const char **date_string)
+പൂർണ്ണസംഖ്യ ext2fs_get_library_version(സ്ഥിരം അക്ഷരം **ver_string,
+			       സ്ഥിരം അക്ഷരം **date_string)
 {
-	if (ver_string)
+	എങ്കിൽ (ver_string)
 		*ver_string = lib_version;
-	if (date_string)
+	എങ്കിൽ (date_string)
 		*date_string = lib_date;
 
-	return ext2fs_parse_version_string(lib_version);
+	തിരികെ ext2fs_parse_version_string(lib_version);
 }

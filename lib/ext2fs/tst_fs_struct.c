@@ -9,34 +9,34 @@
  * %End-Header%
  */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <stdlib.h>
 
-#include "ext2fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
 
-struct struct_ext2_filsys fs;
+ഘടന struct_ext2_filsys fs;
 
 #ifndef offsetof
 #define offsetof(type, member)  __builtin_offsetof (type, member)
 #endif
-#define check_field(x) cur_offset = do_field(#x, sizeof(fs.x),		\
-					offsetof(struct struct_ext2_filsys, x), \
+#define check_field(x) cur_offset = do_field(#x, വലുപ്പം(fs.x),		\
+					offsetof(ഘടന struct_ext2_filsys, x), \
 					cur_offset)
 
-static int do_field(const char *field, size_t size, int offset, int cur_offset)
+സ്ഥിതം പൂർണ്ണസംഖ്യ do_field(സ്ഥിരം അക്ഷരം *field, size_t size, പൂർണ്ണസംഖ്യ offset, പൂർണ്ണസംഖ്യ cur_offset)
 {
-	if (offset != cur_offset) {
+	എങ്കിൽ (offset != cur_offset) {
 		printf("\t(padding %d bytes?)\n", offset - cur_offset);
 	}
 	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	തിരികെ offset + size;
 }
 
-int main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#എങ്കിൽ (__GNUC__ >= 4)
+	പൂർണ്ണസംഖ്യ cur_offset = 0;
 
 	printf("%8s %-30s %3s\n", "offset", "field", "size");
 	check_field(magic);
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	check_field(super);
 	check_field(blocksize);
 	check_field(fragsize);
-	check_field(group_desc_count);
+	check_field(group_desc_എണ്ണം);
 	check_field(desc_blocks);
 	check_field(group_desc);
 	check_field(inode_blocks_per_group);

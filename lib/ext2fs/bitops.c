@@ -10,14 +10,14 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#അന്തര്ഭാവ "config.h"
+#അന്തര്ഭാവ <stdio.h>
+#എങ്കിൽ HAVE_SYS_TYPES_H
+#അന്തര്ഭാവ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#അന്തര്ഭാവ "ext2_fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
 
 /*
  * C language bitmap functions written by Theodore Ts'o, 9/26/92.
@@ -25,124 +25,124 @@
  * systems, as well as non-32 bit systems.
  */
 
-int ext2fs_set_bit(unsigned int nr,void * addr)
+പൂർണ്ണസംഖ്യ ext2fs_set_bit(unsigned പൂർണ്ണസംഖ്യ nr,ശൂന്യം * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	പൂർണ്ണസംഖ്യ		mask, retval;
+	unsigned അക്ഷരം	*ADDR = (unsigned അക്ഷരം *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR |= mask;
-	return retval;
+	തിരികെ retval;
 }
 
-int ext2fs_clear_bit(unsigned int nr, void * addr)
+പൂർണ്ണസംഖ്യ ext2fs_clear_bit(unsigned പൂർണ്ണസംഖ്യ nr, ശൂന്യം * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	പൂർണ്ണസംഖ്യ		mask, retval;
+	unsigned അക്ഷരം	*ADDR = (unsigned അക്ഷരം *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR &= ~mask;
-	return retval;
+	തിരികെ retval;
 }
 
-int ext2fs_test_bit(unsigned int nr, const void * addr)
+പൂർണ്ണസംഖ്യ ext2fs_test_bit(unsigned പൂർണ്ണസംഖ്യ nr, സ്ഥിരം ശൂന്യം * addr)
 {
-	int			mask;
-	const unsigned char	*ADDR = (const unsigned char *) addr;
+	പൂർണ്ണസംഖ്യ			mask;
+	സ്ഥിരം unsigned അക്ഷരം	*ADDR = (സ്ഥിരം unsigned അക്ഷരം *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
-	return (mask & *ADDR);
+	തിരികെ (mask & *ADDR);
 }
 
-void ext2fs_warn_bitmap(errcode_t errcode, unsigned long arg,
-			const char *description)
+ശൂന്യം ext2fs_warn_bitmap(errcode_t errcode, unsigned long arg,
+			സ്ഥിരം അക്ഷരം *description)
 {
 #ifndef OMIT_COM_ERR
-	if (description)
+	എങ്കിൽ (description)
 		com_err(0, errcode, "#%lu for %s", arg, description);
-	else
+	അല്ലെങ്കിൽ
 		com_err(0, errcode, "#%lu", arg);
 #endif
 }
 
 /* Bitmap functions that take a 64-bit offset */
 
-int ext2fs_set_bit64(__u64 nr, void * addr)
+പൂർണ്ണസംഖ്യ ext2fs_set_bit64(__u64 nr, ശൂന്യം * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	പൂർണ്ണസംഖ്യ		mask, retval;
+	unsigned അക്ഷരം	*ADDR = (unsigned അക്ഷരം *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR |= mask;
-	return retval;
+	തിരികെ retval;
 }
 
-int ext2fs_clear_bit64(__u64 nr, void * addr)
+പൂർണ്ണസംഖ്യ ext2fs_clear_bit64(__u64 nr, ശൂന്യം * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	പൂർണ്ണസംഖ്യ		mask, retval;
+	unsigned അക്ഷരം	*ADDR = (unsigned അക്ഷരം *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR &= ~mask;
-	return retval;
+	തിരികെ retval;
 }
 
-int ext2fs_test_bit64(__u64 nr, const void * addr)
+പൂർണ്ണസംഖ്യ ext2fs_test_bit64(__u64 nr, സ്ഥിരം ശൂന്യം * addr)
 {
-	int			mask;
-	const unsigned char	*ADDR = (const unsigned char *) addr;
+	പൂർണ്ണസംഖ്യ			mask;
+	സ്ഥിരം unsigned അക്ഷരം	*ADDR = (സ്ഥിരം unsigned അക്ഷരം *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
-	return (mask & *ADDR);
+	തിരികെ (mask & *ADDR);
 }
 
-static unsigned int popcount8(unsigned int w)
+സ്ഥിതം unsigned പൂർണ്ണസംഖ്യ popcount8(unsigned പൂർണ്ണസംഖ്യ w)
 {
-	unsigned int res = w - ((w >> 1) & 0x55);
+	unsigned പൂർണ്ണസംഖ്യ res = w - ((w >> 1) & 0x55);
 	res = (res & 0x33) + ((res >> 2) & 0x33);
-	return (res + (res >> 4)) & 0x0F;
+	തിരികെ (res + (res >> 4)) & 0x0F;
 }
 
-static unsigned int popcount32(unsigned int w)
+സ്ഥിതം unsigned പൂർണ്ണസംഖ്യ popcount32(unsigned പൂർണ്ണസംഖ്യ w)
 {
-	unsigned int res = w - ((w >> 1) & 0x55555555);
+	unsigned പൂർണ്ണസംഖ്യ res = w - ((w >> 1) & 0x55555555);
 	res = (res & 0x33333333) + ((res >> 2) & 0x33333333);
 	res = (res + (res >> 4)) & 0x0F0F0F0F;
 	res = res + (res >> 8);
-	return (res + (res >> 16)) & 0x000000FF;
+	തിരികെ (res + (res >> 16)) & 0x000000FF;
 }
 
-unsigned int ext2fs_bitcount(const void *addr, unsigned int nbytes)
+unsigned പൂർണ്ണസംഖ്യ ext2fs_bitcount(സ്ഥിരം ശൂന്യം *addr, unsigned പൂർണ്ണസംഖ്യ nbytes)
 {
-	const unsigned char *cp = addr;
-	const __u32 *p;
-	unsigned int res = 0;
+	സ്ഥിരം unsigned അക്ഷരം *cp = addr;
+	സ്ഥിരം __u32 *p;
+	unsigned പൂർണ്ണസംഖ്യ res = 0;
 
-	while (((((uintptr_t) cp) & 3) != 0) && (nbytes > 0)) {
+	ആകുമ്പോൾ (((((uintptr_t) cp) & 3) != 0) && (nbytes > 0)) {
 		res += popcount8(*cp++);
 		nbytes--;
 	}
-	p = (const __u32 *) cp;
+	p = (സ്ഥിരം __u32 *) cp;
 
-	while (nbytes > 4) {
+	ആകുമ്പോൾ (nbytes > 4) {
 		res += popcount32(*p++);
 		nbytes -= 4;
 	}
-	cp = (const unsigned char *) p;
+	cp = (സ്ഥിരം unsigned അക്ഷരം *) p;
 
-	while (nbytes > 0) {
+	ആകുമ്പോൾ (nbytes > 0) {
 		res += popcount8(*cp++);
 		nbytes--;
 	}
-	return res;
+	തിരികെ res;
 }

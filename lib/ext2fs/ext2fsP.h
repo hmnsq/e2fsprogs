@@ -9,212 +9,212 @@
  * %End-Header%
  */
 
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#എങ്കിൽ HAVE_SYS_STAT_H
+#അന്തര്ഭാവ <sys/stat.h>
 #endif
 
-#include "ext2fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
 
 #define EXT2FS_MAX_NESTED_LINKS  8
 
-static inline int ext2fsP_is_disk_device(mode_t mode)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ ext2fsP_is_disk_device(mode_t mode)
 {
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-	return S_ISBLK(mode) || S_ISCHR(mode);
-#else
-	return S_ISBLK(mode);
+#എങ്കിൽ defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+	തിരികെ S_ISBLK(mode) || S_ISCHR(mode);
+#അല്ലെങ്കിൽ
+	തിരികെ S_ISBLK(mode);
 #endif
 }
 
-static inline time_t ext2fsP_get_time(ext2_filsys fs)
+സ്ഥിതം വരിയിൽ time_t ext2fsP_get_time(ext2_filsys fs)
 {
-	if (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
-		return fs->now;
-	return time(NULL);
+	എങ്കിൽ (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
+		തിരികെ fs->now;
+	തിരികെ time(ശൂന്യ);
 }
 
 /*
  * Badblocks list
  */
-struct ext2_struct_u32_list {
-	int	magic;
-	int	num;
-	int	size;
+ഘടന ext2_struct_u32_list {
+	പൂർണ്ണസംഖ്യ	magic;
+	പൂർണ്ണസംഖ്യ	അക്കം;
+	പൂർണ്ണസംഖ്യ	size;
 	__u32	*list;
-	int	badblocks_flags;
+	പൂർണ്ണസംഖ്യ	badblocks_flags;
 };
 
-struct ext2_struct_u32_iterate {
-	int			magic;
+ഘടന ext2_struct_u32_iterate {
+	പൂർണ്ണസംഖ്യ			magic;
 	ext2_u32_list		bb;
-	int			ptr;
+	പൂർണ്ണസംഖ്യ			ptr;
 };
 
 
 /*
  * Directory block iterator definition
  */
-struct ext2_struct_dblist {
-	int			magic;
+ഘടന ext2_struct_dblist {
+	പൂർണ്ണസംഖ്യ			magic;
 	ext2_filsys		fs;
 	unsigned long long	size;
-	unsigned long long	count;
-	int			sorted;
-	struct ext2_db_entry2 *	list;
+	unsigned long long	എണ്ണം;
+	പൂർണ്ണസംഖ്യ			sorted;
+	ഘടന ext2_db_entry2 *	list;
 };
 
 /*
  * For directory iterators
  */
-struct dir_context {
+ഘടന dir_context {
 	ext2_ino_t		dir;
-	int		flags;
-	char		*buf;
-	unsigned int	buflen;
-	int (*func)(ext2_ino_t	dir,
-		    int	entry,
-		    struct ext2_dir_entry *dirent,
-		    int	offset,
-		    int	blocksize,
-		    char	*buf,
-		    void	*priv_data);
-	void		*priv_data;
+	പൂർണ്ണസംഖ്യ		flags;
+	അക്ഷരം		*buf;
+	unsigned പൂർണ്ണസംഖ്യ	buflen;
+	പൂർണ്ണസംഖ്യ (*func)(ext2_ino_t	dir,
+		    പൂർണ്ണസംഖ്യ	entry,
+		    ഘടന ext2_dir_entry *dirent,
+		    പൂർണ്ണസംഖ്യ	offset,
+		    പൂർണ്ണസംഖ്യ	blocksize,
+		    അക്ഷരം	*buf,
+		    ശൂന്യം	*priv_data);
+	ശൂന്യം		*priv_data;
 	errcode_t	errcode;
 };
 
 /*
  * Inode cache structure
  */
-struct ext2_inode_cache {
-	void *				buffer;
+ഘടന ext2_inode_cache {
+	ശൂന്യം *				buffer;
 	blk64_t				buffer_blk;
-	int				cache_last;
-	unsigned int			cache_size;
-	int				refcount;
-	struct ext2_inode_cache_ent	*cache;
+	പൂർണ്ണസംഖ്യ				cache_last;
+	unsigned പൂർണ്ണസംഖ്യ			cache_size;
+	പൂർണ്ണസംഖ്യ				refcount;
+	ഘടന ext2_inode_cache_ent	*cache;
 };
 
-struct ext2_inode_cache_ent {
+ഘടന ext2_inode_cache_ent {
 	ext2_ino_t		ino;
-	struct ext2_inode	*inode;
+	ഘടന ext2_inode	*inode;
 };
 
 /*
  * NLS definitions
  */
-struct ext2fs_nls_table {
-	int version;
-	const struct ext2fs_nls_ops *ops;
+ഘടന ext2fs_nls_table {
+	പൂർണ്ണസംഖ്യ version;
+	സ്ഥിരം ഘടന ext2fs_nls_ops *ops;
 };
 
-struct ext2fs_nls_ops {
-	int (*casefold)(const struct ext2fs_nls_table *charset,
-			const unsigned char *str, size_t len,
-			unsigned char *dest, size_t dlen);
-	int (*validate)(const struct ext2fs_nls_table *table,
-			char *s, size_t len, char **pos);
-	int (*casefold_cmp)(const struct ext2fs_nls_table *table,
-			    const unsigned char *str1, size_t len1,
-			    const unsigned char *str2, size_t len2);
+ഘടന ext2fs_nls_ops {
+	പൂർണ്ണസംഖ്യ (*casefold)(സ്ഥിരം ഘടന ext2fs_nls_table *charset,
+			സ്ഥിരം unsigned അക്ഷരം *str, size_t len,
+			unsigned അക്ഷരം *dest, size_t dlen);
+	പൂർണ്ണസംഖ്യ (*validate)(സ്ഥിരം ഘടന ext2fs_nls_table *table,
+			അക്ഷരം *s, size_t len, അക്ഷരം **pos);
+	പൂർണ്ണസംഖ്യ (*casefold_cmp)(സ്ഥിരം ഘടന ext2fs_nls_table *table,
+			    സ്ഥിരം unsigned അക്ഷരം *str1, size_t len1,
+			    സ്ഥിരം unsigned അക്ഷരം *str2, size_t len2);
 };
 
 /* Function prototypes */
 
-extern int ext2fs_process_dir_block(ext2_filsys  	fs,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ext2fs_process_dir_block(ext2_filsys  	fs,
 				    blk64_t		*blocknr,
 				    e2_blkcnt_t		blockcnt,
 				    blk64_t		ref_block,
-				    int			ref_offset,
-				    void		*priv_data);
+				    പൂർണ്ണസംഖ്യ			ref_offset,
+				    ശൂന്യം		*priv_data);
 
-extern errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino);
-extern errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino);
-extern int ext2fs_inline_data_dir_iterate(ext2_filsys fs,
+ബാഹ്യ errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino);
+ബാഹ്യ errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino);
+ബാഹ്യ പൂർണ്ണസംഖ്യ ext2fs_inline_data_dir_iterate(ext2_filsys fs,
 					  ext2_ino_t ino,
-					  void *priv_data);
+					  ശൂന്യം *priv_data);
 
 /* Generic numeric progress meter */
 
-struct ext2fs_numeric_progress_struct {
+ഘടന ext2fs_numeric_progress_struct {
 	__u64		max;
-	int		log_max;
-	int		skip_progress;
+	പൂർണ്ണസംഖ്യ		log_max;
+	പൂർണ്ണസംഖ്യ		skip_progress;
 };
 
 /*
  * progress callback functions
  */
-struct ext2fs_progress_ops {
-	void (*init)(ext2_filsys fs,
-		     struct ext2fs_numeric_progress_struct * progress,
-		     const char *label, __u64 max);
-	void (*update)(ext2_filsys fs,
-		       struct ext2fs_numeric_progress_struct * progress,
+ഘടന ext2fs_progress_ops {
+	ശൂന്യം (*init)(ext2_filsys fs,
+		     ഘടന ext2fs_numeric_progress_struct * progress,
+		     സ്ഥിരം അക്ഷരം *label, __u64 max);
+	ശൂന്യം (*update)(ext2_filsys fs,
+		       ഘടന ext2fs_numeric_progress_struct * progress,
 		       __u64 val);
-	void (*close)(ext2_filsys fs,
-		      struct ext2fs_numeric_progress_struct * progress,
-		      const char *message);
+	ശൂന്യം (*close)(ext2_filsys fs,
+		      ഘടന ext2fs_numeric_progress_struct * progress,
+		      സ്ഥിരം അക്ഷരം *message);
 };
 
-extern struct ext2fs_progress_ops ext2fs_numeric_progress_ops;
+ബാഹ്യ ഘടന ext2fs_progress_ops ext2fs_numeric_progress_ops;
 
-extern void ext2fs_numeric_progress_init(ext2_filsys fs,
-					 struct ext2fs_numeric_progress_struct * progress,
-					 const char *label, __u64 max);
-extern void ext2fs_numeric_progress_update(ext2_filsys fs,
-					   struct ext2fs_numeric_progress_struct * progress,
+ബാഹ്യ ശൂന്യം ext2fs_numeric_progress_init(ext2_filsys fs,
+					 ഘടന ext2fs_numeric_progress_struct * progress,
+					 സ്ഥിരം അക്ഷരം *label, __u64 max);
+ബാഹ്യ ശൂന്യം ext2fs_numeric_progress_update(ext2_filsys fs,
+					   ഘടന ext2fs_numeric_progress_struct * progress,
 					   __u64 val);
-extern void ext2fs_numeric_progress_close(ext2_filsys fs,
-					  struct ext2fs_numeric_progress_struct * progress,
-					  const char *message);
+ബാഹ്യ ശൂന്യം ext2fs_numeric_progress_close(ext2_filsys fs,
+					  ഘടന ext2fs_numeric_progress_struct * progress,
+					  സ്ഥിരം അക്ഷരം *message);
 
 /*
  * 64-bit bitmap support
  */
 
-extern errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
-					   int type, __u64 start, __u64 end,
+ബാഹ്യ errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
+					   പൂർണ്ണസംഖ്യ type, __u64 start, __u64 end,
 					   __u64 real_end,
-					   const char * description,
+					   സ്ഥിരം അക്ഷരം * description,
 					   ext2fs_generic_bitmap *bmap);
 
-extern void ext2fs_free_generic_bmap(ext2fs_generic_bitmap bmap);
+ബാഹ്യ ശൂന്യം ext2fs_free_generic_bmap(ext2fs_generic_bitmap bmap);
 
-extern errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap src,
+ബാഹ്യ errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap src,
 					  ext2fs_generic_bitmap *dest);
 
-extern errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap bmap,
+ബാഹ്യ errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap bmap,
 					    __u64 new_end,
 					    __u64 new_real_end);
-extern errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap bitmap,
+ബാഹ്യ errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap bitmap,
 					       errcode_t neq,
 					       __u64 end, __u64 *oend);
-extern int ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
-extern int ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				      __u64 arg);
-extern int ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
-extern errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
-					       void *in);
-extern errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
-					       void *out);
-extern void ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,const char *func);
+ബാഹ്യ errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap bitmap,
+					       __u64 start, unsigned പൂർണ്ണസംഖ്യ അക്കം,
+					       ശൂന്യം *in);
+ബാഹ്യ errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bitmap,
+					       __u64 start, unsigned പൂർണ്ണസംഖ്യ അക്കം,
+					       ശൂന്യം *out);
+ബാഹ്യ ശൂന്യം ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,സ്ഥിരം അക്ഷരം *func);
 
-extern int ext2fs_mem_is_zero(const char *mem, size_t len);
+ബാഹ്യ പൂർണ്ണസംഖ്യ ext2fs_mem_is_zero(സ്ഥിരം അക്ഷരം *mem, size_t len);
 
-extern int ext2fs_file_block_offset_too_big(ext2_filsys fs,
-					    struct ext2_inode *inode,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ext2fs_file_block_offset_too_big(ext2_filsys fs,
+					    ഘടന ext2_inode *inode,
 					    blk64_t offset);
 
 /* atexit support */
-typedef void (*ext2_exit_fn)(void *);
-errcode_t ext2fs_add_exit_fn(ext2_exit_fn fn, void *data);
-errcode_t ext2fs_remove_exit_fn(ext2_exit_fn fn, void *data);
+തരനിർവചനം ശൂന്യം (*ext2_exit_fn)(ശൂന്യം *);
+errcode_t ext2fs_add_exit_fn(ext2_exit_fn fn, ശൂന്യം *data);
+errcode_t ext2fs_remove_exit_fn(ext2_exit_fn fn, ശൂന്യം *data);
 
 #define ARRAY_SIZE(array)			\
-        (sizeof(array) / sizeof(array[0]))
+        (വലുപ്പം(array) / വലുപ്പം(array[0]))
 
-#define EXT2FS_BUILD_BUG_ON(cond) ((void)sizeof(char[1 - 2*!!(cond)]))
+#define EXT2FS_BUILD_BUG_ON(cond) ((ശൂന്യം)വലുപ്പം(അക്ഷരം[1 - 2*!!(cond)]))

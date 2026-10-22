@@ -9,355 +9,355 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#അന്തര്ഭാവ "config.h"
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#എങ്കിൽ HAVE_UNISTD_H
+#അന്തര്ഭാവ <unistd.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#അന്തര്ഭാവ "ext2_fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
 
-struct block_context {
+ഘടന block_context {
 	ext2_filsys	fs;
-	int (*func)(ext2_filsys	fs,
+	പൂർണ്ണസംഖ്യ (*func)(ext2_filsys	fs,
 		    blk64_t	*blocknr,
 		    e2_blkcnt_t	bcount,
 		    blk64_t	ref_blk,
-		    int		ref_offset,
-		    void	*priv_data);
+		    പൂർണ്ണസംഖ്യ		ref_offset,
+		    ശൂന്യം	*priv_data);
 	e2_blkcnt_t	bcount;
-	int		bsize;
-	int		flags;
+	പൂർണ്ണസംഖ്യ		bsize;
+	പൂർണ്ണസംഖ്യ		flags;
 	errcode_t	errcode;
-	char	*ind_buf;
-	char	*dind_buf;
-	char	*tind_buf;
-	void	*priv_data;
+	അക്ഷരം	*ind_buf;
+	അക്ഷരം	*dind_buf;
+	അക്ഷരം	*tind_buf;
+	ശൂന്യം	*priv_data;
 };
 
 #define check_for_ro_violation_return(ctx, ret)				\
-	do {								\
-		if (((ctx)->flags & BLOCK_FLAG_READ_ONLY) &&		\
+	ചെയ്യുക {								\
+		എങ്കിൽ (((ctx)->flags & BLOCK_FLAG_READ_ONLY) &&		\
 		    ((ret) & BLOCK_CHANGED)) {				\
 			(ctx)->errcode = EXT2_ET_RO_BLOCK_ITERATE;	\
 			ret |= BLOCK_ABORT | BLOCK_ERROR;		\
-			return ret;					\
+			തിരികെ ret;					\
 		}							\
-	} while (0)
+	} ആകുമ്പോൾ (0)
 
 #define check_for_ro_violation_goto(ctx, ret, label)			\
-	do {								\
-		if (((ctx)->flags & BLOCK_FLAG_READ_ONLY) &&		\
+	ചെയ്യുക {								\
+		എങ്കിൽ (((ctx)->flags & BLOCK_FLAG_READ_ONLY) &&		\
 		    ((ret) & BLOCK_CHANGED)) {				\
 			(ctx)->errcode = EXT2_ET_RO_BLOCK_ITERATE;	\
 			ret |= BLOCK_ABORT | BLOCK_ERROR;		\
-			goto label;					\
+			പോകുക label;					\
 		}							\
-	} while (0)
+	} ആകുമ്പോൾ (0)
 
-static int block_iterate_ind(blk_t *ind_block, blk_t ref_block,
-			     int ref_offset, struct block_context *ctx)
+സ്ഥിതം പൂർണ്ണസംഖ്യ block_iterate_ind(blk_t *ind_block, blk_t ref_block,
+			     പൂർണ്ണസംഖ്യ ref_offset, ഘടന block_context *ctx)
 {
-	int	ret = 0, changed = 0;
-	int	i, flags, limit, offset;
+	പൂർണ്ണസംഖ്യ	ret = 0, changed = 0;
+	പൂർണ്ണസംഖ്യ	i, flags, limit, offset;
 	blk_t	*block_nr;
 	blk64_t	blk64;
 
 	limit = ctx->fs->blocksize >> 2;
-	if (!(ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
+	എങ്കിൽ (!(ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
 	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY)) {
 		blk64 = *ind_block;
 		ret = (*ctx->func)(ctx->fs, &blk64,
-				   BLOCK_COUNT_IND, ref_block,
+				   BLOCK_എണ്ണം_IND, ref_block,
 				   ref_offset, ctx->priv_data);
 		*ind_block = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	if (!*ind_block || (ret & BLOCK_ABORT)) {
+	എങ്കിൽ (!*ind_block || (ret & BLOCK_ABORT)) {
 		ctx->bcount += limit;
-		return ret;
+		തിരികെ ret;
 	}
-	if (*ind_block >= ext2fs_blocks_count(ctx->fs->super) ||
+	എങ്കിൽ (*ind_block >= ext2fs_blocks_എണ്ണം(ctx->fs->super) ||
 	    *ind_block < ctx->fs->super->s_first_data_block) {
 		ctx->errcode = EXT2_ET_BAD_IND_BLOCK;
 		ret |= BLOCK_ERROR;
-		return ret;
+		തിരികെ ret;
 	}
 	ctx->errcode = ext2fs_read_ind_block(ctx->fs, *ind_block,
 					     ctx->ind_buf);
-	if (ctx->errcode) {
+	എങ്കിൽ (ctx->errcode) {
 		ret |= BLOCK_ERROR;
-		return ret;
+		തിരികെ ret;
 	}
 
 	block_nr = (blk_t *) ctx->ind_buf;
 	offset = 0;
-	if (ctx->flags & BLOCK_FLAG_APPEND) {
-		for (i = 0; i < limit; i++, ctx->bcount++, block_nr++) {
+	എങ്കിൽ (ctx->flags & BLOCK_FLAG_APPEND) {
+		വേണ്ടി (i = 0; i < limit; i++, ctx->bcount++, block_nr++) {
 			blk64 = *block_nr;
 			flags = (*ctx->func)(ctx->fs, &blk64, ctx->bcount,
 					     *ind_block, offset,
 					     ctx->priv_data);
 			*block_nr = blk64;
 			changed	|= flags;
-			if (flags & BLOCK_ABORT) {
+			എങ്കിൽ (flags & BLOCK_ABORT) {
 				ret |= BLOCK_ABORT;
-				break;
+				നിർത്തുക;
 			}
-			offset += sizeof(blk_t);
+			offset += വലുപ്പം(blk_t);
 		}
-	} else {
-		for (i = 0; i < limit; i++, ctx->bcount++, block_nr++) {
-			if (*block_nr == 0)
-				goto skip_sparse;
+	} അല്ലെങ്കിൽ {
+		വേണ്ടി (i = 0; i < limit; i++, ctx->bcount++, block_nr++) {
+			എങ്കിൽ (*block_nr == 0)
+				പോകുക skip_sparse;
 			blk64 = *block_nr;
 			flags = (*ctx->func)(ctx->fs, &blk64, ctx->bcount,
 					     *ind_block, offset,
 					     ctx->priv_data);
 			*block_nr = blk64;
 			changed	|= flags;
-			if (flags & BLOCK_ABORT) {
+			എങ്കിൽ (flags & BLOCK_ABORT) {
 				ret |= BLOCK_ABORT;
-				break;
+				നിർത്തുക;
 			}
 		skip_sparse:
-			offset += sizeof(blk_t);
+			offset += വലുപ്പം(blk_t);
 		}
 	}
 	check_for_ro_violation_return(ctx, changed);
-	if (changed & BLOCK_CHANGED) {
+	എങ്കിൽ (changed & BLOCK_CHANGED) {
 		ctx->errcode = ext2fs_write_ind_block(ctx->fs, *ind_block,
 						      ctx->ind_buf);
-		if (ctx->errcode)
+		എങ്കിൽ (ctx->errcode)
 			ret |= BLOCK_ERROR | BLOCK_ABORT;
 	}
-	if ((ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
+	എങ്കിൽ ((ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
 	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY) &&
 	    !(ret & BLOCK_ABORT)) {
 		blk64 = *ind_block;
 		ret |= (*ctx->func)(ctx->fs, &blk64,
-				    BLOCK_COUNT_IND, ref_block,
+				    BLOCK_എണ്ണം_IND, ref_block,
 				    ref_offset, ctx->priv_data);
 		*ind_block = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	return ret;
+	തിരികെ ret;
 }
 
-static int block_iterate_dind(blk_t *dind_block, blk_t ref_block,
-			      int ref_offset, struct block_context *ctx)
+സ്ഥിതം പൂർണ്ണസംഖ്യ block_iterate_dind(blk_t *dind_block, blk_t ref_block,
+			      പൂർണ്ണസംഖ്യ ref_offset, ഘടന block_context *ctx)
 {
-	int	ret = 0, changed = 0;
-	int	i, flags, limit, offset;
+	പൂർണ്ണസംഖ്യ	ret = 0, changed = 0;
+	പൂർണ്ണസംഖ്യ	i, flags, limit, offset;
 	blk_t	*block_nr;
 	blk64_t	blk64;
 
 	limit = ctx->fs->blocksize >> 2;
-	if (!(ctx->flags & (BLOCK_FLAG_DEPTH_TRAVERSE |
+	എങ്കിൽ (!(ctx->flags & (BLOCK_FLAG_DEPTH_TRAVERSE |
 			    BLOCK_FLAG_DATA_ONLY))) {
 		blk64 = *dind_block;
 		ret = (*ctx->func)(ctx->fs, &blk64,
-				   BLOCK_COUNT_DIND, ref_block,
+				   BLOCK_എണ്ണം_DIND, ref_block,
 				   ref_offset, ctx->priv_data);
 		*dind_block = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	if (!*dind_block || (ret & BLOCK_ABORT)) {
+	എങ്കിൽ (!*dind_block || (ret & BLOCK_ABORT)) {
 		ctx->bcount += limit*limit;
-		return ret;
+		തിരികെ ret;
 	}
-	if (*dind_block >= ext2fs_blocks_count(ctx->fs->super) ||
+	എങ്കിൽ (*dind_block >= ext2fs_blocks_എണ്ണം(ctx->fs->super) ||
 	    *dind_block < ctx->fs->super->s_first_data_block) {
 		ctx->errcode = EXT2_ET_BAD_DIND_BLOCK;
 		ret |= BLOCK_ERROR;
-		return ret;
+		തിരികെ ret;
 	}
 	ctx->errcode = ext2fs_read_ind_block(ctx->fs, *dind_block,
 					     ctx->dind_buf);
-	if (ctx->errcode) {
+	എങ്കിൽ (ctx->errcode) {
 		ret |= BLOCK_ERROR;
-		return ret;
+		തിരികെ ret;
 	}
 
 	block_nr = (blk_t *) ctx->dind_buf;
 	offset = 0;
-	if (ctx->flags & BLOCK_FLAG_APPEND) {
-		for (i = 0; i < limit; i++, block_nr++) {
+	എങ്കിൽ (ctx->flags & BLOCK_FLAG_APPEND) {
+		വേണ്ടി (i = 0; i < limit; i++, block_nr++) {
 			flags = block_iterate_ind(block_nr,
 						  *dind_block, offset,
 						  ctx);
 			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
+			എങ്കിൽ (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
 				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+				നിർത്തുക;
 			}
-			offset += sizeof(blk_t);
+			offset += വലുപ്പം(blk_t);
 		}
-	} else {
-		for (i = 0; i < limit; i++, block_nr++) {
-			if (*block_nr == 0) {
+	} അല്ലെങ്കിൽ {
+		വേണ്ടി (i = 0; i < limit; i++, block_nr++) {
+			എങ്കിൽ (*block_nr == 0) {
 				ctx->bcount += limit;
-				continue;
+				തുടരുക;
 			}
 			flags = block_iterate_ind(block_nr,
 						  *dind_block, offset,
 						  ctx);
 			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
+			എങ്കിൽ (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
 				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+				നിർത്തുക;
 			}
-			offset += sizeof(blk_t);
+			offset += വലുപ്പം(blk_t);
 		}
 	}
 	check_for_ro_violation_return(ctx, changed);
-	if (changed & BLOCK_CHANGED) {
+	എങ്കിൽ (changed & BLOCK_CHANGED) {
 		ctx->errcode = ext2fs_write_ind_block(ctx->fs, *dind_block,
 						      ctx->dind_buf);
-		if (ctx->errcode)
+		എങ്കിൽ (ctx->errcode)
 			ret |= BLOCK_ERROR | BLOCK_ABORT;
 	}
-	if ((ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
+	എങ്കിൽ ((ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
 	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY) &&
 	    !(ret & BLOCK_ABORT)) {
 		blk64 = *dind_block;
 		ret |= (*ctx->func)(ctx->fs, &blk64,
-				    BLOCK_COUNT_DIND, ref_block,
+				    BLOCK_എണ്ണം_DIND, ref_block,
 				    ref_offset, ctx->priv_data);
 		*dind_block = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	return ret;
+	തിരികെ ret;
 }
 
-static int block_iterate_tind(blk_t *tind_block, blk_t ref_block,
-			      int ref_offset, struct block_context *ctx)
+സ്ഥിതം പൂർണ്ണസംഖ്യ block_iterate_tind(blk_t *tind_block, blk_t ref_block,
+			      പൂർണ്ണസംഖ്യ ref_offset, ഘടന block_context *ctx)
 {
-	int	ret = 0, changed = 0;
-	int	i, flags, limit, offset;
+	പൂർണ്ണസംഖ്യ	ret = 0, changed = 0;
+	പൂർണ്ണസംഖ്യ	i, flags, limit, offset;
 	blk_t	*block_nr;
 	blk64_t	blk64;
 
 	limit = ctx->fs->blocksize >> 2;
-	if (!(ctx->flags & (BLOCK_FLAG_DEPTH_TRAVERSE |
+	എങ്കിൽ (!(ctx->flags & (BLOCK_FLAG_DEPTH_TRAVERSE |
 			    BLOCK_FLAG_DATA_ONLY))) {
 		blk64 = *tind_block;
 		ret = (*ctx->func)(ctx->fs, &blk64,
-				   BLOCK_COUNT_TIND, ref_block,
+				   BLOCK_എണ്ണം_TIND, ref_block,
 				   ref_offset, ctx->priv_data);
 		*tind_block = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	if (!*tind_block || (ret & BLOCK_ABORT)) {
+	എങ്കിൽ (!*tind_block || (ret & BLOCK_ABORT)) {
 		ctx->bcount += ((unsigned long long) limit)*limit*limit;
-		return ret;
+		തിരികെ ret;
 	}
-	if (*tind_block >= ext2fs_blocks_count(ctx->fs->super) ||
+	എങ്കിൽ (*tind_block >= ext2fs_blocks_എണ്ണം(ctx->fs->super) ||
 	    *tind_block < ctx->fs->super->s_first_data_block) {
 		ctx->errcode = EXT2_ET_BAD_TIND_BLOCK;
 		ret |= BLOCK_ERROR;
-		return ret;
+		തിരികെ ret;
 	}
 	ctx->errcode = ext2fs_read_ind_block(ctx->fs, *tind_block,
 					     ctx->tind_buf);
-	if (ctx->errcode) {
+	എങ്കിൽ (ctx->errcode) {
 		ret |= BLOCK_ERROR;
-		return ret;
+		തിരികെ ret;
 	}
 
 	block_nr = (blk_t *) ctx->tind_buf;
 	offset = 0;
-	if (ctx->flags & BLOCK_FLAG_APPEND) {
-		for (i = 0; i < limit; i++, block_nr++) {
+	എങ്കിൽ (ctx->flags & BLOCK_FLAG_APPEND) {
+		വേണ്ടി (i = 0; i < limit; i++, block_nr++) {
 			flags = block_iterate_dind(block_nr,
 						   *tind_block,
 						   offset, ctx);
 			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
+			എങ്കിൽ (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
 				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+				നിർത്തുക;
 			}
-			offset += sizeof(blk_t);
+			offset += വലുപ്പം(blk_t);
 		}
-	} else {
-		for (i = 0; i < limit; i++, block_nr++) {
-			if (*block_nr == 0) {
+	} അല്ലെങ്കിൽ {
+		വേണ്ടി (i = 0; i < limit; i++, block_nr++) {
+			എങ്കിൽ (*block_nr == 0) {
 				ctx->bcount += limit*limit;
-				continue;
+				തുടരുക;
 			}
 			flags = block_iterate_dind(block_nr,
 						   *tind_block,
 						   offset, ctx);
 			changed |= flags;
-			if (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
+			എങ്കിൽ (flags & (BLOCK_ABORT | BLOCK_ERROR)) {
 				ret |= flags & (BLOCK_ABORT | BLOCK_ERROR);
-				break;
+				നിർത്തുക;
 			}
-			offset += sizeof(blk_t);
+			offset += വലുപ്പം(blk_t);
 		}
 	}
 	check_for_ro_violation_return(ctx, changed);
-	if (changed & BLOCK_CHANGED) {
+	എങ്കിൽ (changed & BLOCK_CHANGED) {
 		ctx->errcode = ext2fs_write_ind_block(ctx->fs, *tind_block,
 						      ctx->tind_buf);
-		if (ctx->errcode)
+		എങ്കിൽ (ctx->errcode)
 			ret |= BLOCK_ERROR | BLOCK_ABORT;
 	}
-	if ((ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
+	എങ്കിൽ ((ctx->flags & BLOCK_FLAG_DEPTH_TRAVERSE) &&
 	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY) &&
 	    !(ret & BLOCK_ABORT)) {
 		blk64 = *tind_block;
 		ret |= (*ctx->func)(ctx->fs, &blk64,
-				    BLOCK_COUNT_TIND, ref_block,
+				    BLOCK_എണ്ണം_TIND, ref_block,
 				    ref_offset, ctx->priv_data);
 		*tind_block = blk64;
 	}
 	check_for_ro_violation_return(ctx, ret);
-	return ret;
+	തിരികെ ret;
 }
 
 errcode_t ext2fs_block_iterate3(ext2_filsys fs,
 				ext2_ino_t ino,
-				int	flags,
-				char *block_buf,
-				int (*func)(ext2_filsys fs,
+				പൂർണ്ണസംഖ്യ	flags,
+				അക്ഷരം *block_buf,
+				പൂർണ്ണസംഖ്യ (*func)(ext2_filsys fs,
 					    blk64_t	*blocknr,
 					    e2_blkcnt_t	blockcnt,
 					    blk64_t	ref_blk,
-					    int		ref_offset,
-					    void	*priv_data),
-				void *priv_data)
+					    പൂർണ്ണസംഖ്യ		ref_offset,
+					    ശൂന്യം	*priv_data),
+				ശൂന്യം *priv_data)
 {
-	int	i;
-	int	r, ret = 0;
-	struct ext2_inode inode;
+	പൂർണ്ണസംഖ്യ	i;
+	പൂർണ്ണസംഖ്യ	r, ret = 0;
+	ഘടന ext2_inode inode;
 	errcode_t	retval;
-	struct block_context ctx;
-	int	limit;
+	ഘടന block_context ctx;
+	പൂർണ്ണസംഖ്യ	limit;
 	blk64_t	blk64;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	ctx.errcode = ext2fs_read_inode(fs, ino, &inode);
-	if (ctx.errcode)
-		return ctx.errcode;
+	എങ്കിൽ (ctx.errcode)
+		തിരികെ ctx.errcode;
 
 	/*
 	 * An inode with inline data has no blocks over which to
 	 * iterate, so return an error code indicating this fact.
 	 */
-	if (inode.i_flags & EXT4_INLINE_DATA_FL)
-		return EXT2_ET_INLINE_DATA_CANT_ITERATE;
+	എങ്കിൽ (inode.i_flags & EXT4_INLINE_DATA_FL)
+		തിരികെ EXT2_ET_INLINE_DATA_CANT_ITERATE;
 
 	/*
 	 * Check to see if we need to limit large files
 	 */
-	if (flags & BLOCK_FLAG_NO_LARGE) {
-		if (!LINUX_S_ISDIR(inode.i_mode) &&
-		    (inode.i_size_high != 0))
-			return EXT2_ET_FILE_TOO_BIG;
+	എങ്കിൽ (flags & BLOCK_FLAG_NO_LARGE) {
+		എങ്കിൽ (!LINUX_S_ISDIR(inode.i_mode) &&
+		    (inode.i_size_മുകളിലെ != 0))
+			തിരികെ EXT2_ET_FILE_TOO_BIG;
 	}
 
 	limit = fs->blocksize >> 2;
@@ -367,12 +367,12 @@ errcode_t ext2fs_block_iterate3(ext2_filsys fs,
 	ctx.priv_data = priv_data;
 	ctx.flags = flags;
 	ctx.bcount = 0;
-	if (block_buf) {
+	എങ്കിൽ (block_buf) {
 		ctx.ind_buf = block_buf;
-	} else {
+	} അല്ലെങ്കിൽ {
 		retval = ext2fs_get_array(3, fs->blocksize, &ctx.ind_buf);
-		if (retval)
-			return retval;
+		എങ്കിൽ (retval)
+			തിരികെ retval;
 	}
 	ctx.dind_buf = ctx.ind_buf + fs->blocksize;
 	ctx.tind_buf = ctx.dind_buf + fs->blocksize;
@@ -380,45 +380,45 @@ errcode_t ext2fs_block_iterate3(ext2_filsys fs,
 	/*
 	 * Iterate over the HURD translator block (if present)
 	 */
-	if ((fs->super->s_creator_os == EXT2_OS_HURD) &&
+	എങ്കിൽ ((fs->super->s_creator_os == EXT2_OS_HURD) &&
 	    !(flags & BLOCK_FLAG_DATA_ONLY)) {
-		if (inode.osd1.hurd1.h_i_translator) {
+		എങ്കിൽ (inode.osd1.hurd1.h_i_translator) {
 			blk64 = inode.osd1.hurd1.h_i_translator;
 			ret |= (*ctx.func)(fs, &blk64,
-					   BLOCK_COUNT_TRANSLATOR,
+					   BLOCK_എണ്ണം_TRANSLATOR,
 					   0, 0, priv_data);
 			inode.osd1.hurd1.h_i_translator = (blk_t) blk64;
-			if (ret & BLOCK_ABORT)
-				goto abort_exit;
+			എങ്കിൽ (ret & BLOCK_ABORT)
+				പോകുക abort_exit;
 			check_for_ro_violation_goto(&ctx, ret, abort_exit);
 		}
 	}
 
-	if (inode.i_flags & EXT4_EXTENTS_FL) {
+	എങ്കിൽ (inode.i_flags & EXT4_EXTENTS_FL) {
 		ext2_extent_handle_t	handle;
-		struct ext2fs_extent	extent, next;
+		ഘടന ext2fs_extent	extent, next;
 		e2_blkcnt_t		blockcnt = 0;
 		blk64_t			blk, new_blk;
-		int			op = EXT2_EXTENT_ROOT;
-		int			uninit;
-		unsigned int		j;
+		പൂർണ്ണസംഖ്യ			op = EXT2_EXTENT_വേര്;
+		പൂർണ്ണസംഖ്യ			uninit;
+		unsigned പൂർണ്ണസംഖ്യ		j;
 
 		ctx.errcode = ext2fs_extent_open2(fs, ino, &inode, &handle);
-		if (ctx.errcode)
-			goto abort_exit;
+		എങ്കിൽ (ctx.errcode)
+			പോകുക abort_exit;
 
-		while (1) {
-			if (op == EXT2_EXTENT_CURRENT)
+		ആകുമ്പോൾ (1) {
+			എങ്കിൽ (op == EXT2_EXTENT_CURRENT)
 				ctx.errcode = 0;
-			else
+			അല്ലെങ്കിൽ
 				ctx.errcode = ext2fs_extent_get(handle, op,
 								&extent);
-			if (ctx.errcode) {
-				if (ctx.errcode != EXT2_ET_EXTENT_NO_NEXT)
-					break;
+			എങ്കിൽ (ctx.errcode) {
+				എങ്കിൽ (ctx.errcode != EXT2_ET_EXTENT_NO_NEXT)
+					നിർത്തുക;
 				ctx.errcode = 0;
-				if (!(flags & BLOCK_FLAG_APPEND))
-					break;
+				എങ്കിൽ (!(flags & BLOCK_FLAG_APPEND))
+					നിർത്തുക;
 			next_block_set:
 				blk = 0;
 				r = (*ctx.func)(fs, &blk, blockcnt,
@@ -426,25 +426,25 @@ errcode_t ext2fs_block_iterate3(ext2_filsys fs,
 				ret |= r;
 				check_for_ro_violation_goto(&ctx, ret,
 							    extent_done);
-				if (r & BLOCK_CHANGED) {
+				എങ്കിൽ (r & BLOCK_CHANGED) {
 					ctx.errcode =
 						ext2fs_extent_set_bmap(handle,
 						       (blk64_t) blockcnt++,
 						       (blk64_t) blk, 0);
-					if (ctx.errcode || (ret & BLOCK_ABORT))
-						break;
-					if (blk)
-						goto next_block_set;
+					എങ്കിൽ (ctx.errcode || (ret & BLOCK_ABORT))
+						നിർത്തുക;
+					എങ്കിൽ (blk)
+						പോകുക next_block_set;
 				}
-				break;
+				നിർത്തുക;
 			}
 
 			op = EXT2_EXTENT_NEXT;
 			blk = extent.e_pblk;
-			if (!(extent.e_flags & EXT2_EXTENT_FLAGS_LEAF)) {
-				if (ctx.flags & BLOCK_FLAG_DATA_ONLY)
-					continue;
-				if ((!(extent.e_flags &
+			എങ്കിൽ (!(extent.e_flags & EXT2_EXTENT_FLAGS_LEAF)) {
+				എങ്കിൽ (ctx.flags & BLOCK_FLAG_DATA_ONLY)
+					തുടരുക;
+				എങ്കിൽ ((!(extent.e_flags &
 				       EXT2_EXTENT_FLAGS_SECOND_VISIT) &&
 				     !(ctx.flags & BLOCK_FLAG_DEPTH_TRAVERSE)) ||
 				    ((extent.e_flags &
@@ -452,20 +452,20 @@ errcode_t ext2fs_block_iterate3(ext2_filsys fs,
 				     (ctx.flags & BLOCK_FLAG_DEPTH_TRAVERSE))) {
 					ret |= (*ctx.func)(fs, &blk,
 							   -1, 0, 0, priv_data);
-					if (ret & BLOCK_CHANGED) {
+					എങ്കിൽ (ret & BLOCK_CHANGED) {
 						extent.e_pblk = blk;
 						ctx.errcode =
 				ext2fs_extent_replace(handle, 0, &extent);
-						if (ctx.errcode)
-							break;
+						എങ്കിൽ (ctx.errcode)
+							നിർത്തുക;
 					}
-					if (ret & BLOCK_ABORT)
-						break;
+					എങ്കിൽ (ret & BLOCK_ABORT)
+						നിർത്തുക;
 				}
-				continue;
+				തുടരുക;
 			}
 			uninit = 0;
-			if (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+			എങ്കിൽ (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 				uninit = EXT2_EXTENT_SET_BMAP_UNINIT;
 
 			/* 
@@ -474,18 +474,18 @@ errcode_t ext2fs_block_iterate3(ext2_filsys fs,
 			 */
 			retval = ext2fs_extent_get(handle, op, &next);
 
-#if 0
+#എങ്കിൽ 0
 			printf("lblk %llu pblk %llu len %d blockcnt %llu\n",
 			       extent.e_lblk, extent.e_pblk,
 			       extent.e_len, blockcnt);
 #endif
-			if (extent.e_lblk + extent.e_len <= (blk64_t) blockcnt)
-				continue;
-			if (extent.e_lblk > (blk64_t) blockcnt)
+			എങ്കിൽ (extent.e_lblk + extent.e_len <= (blk64_t) blockcnt)
+				തുടരുക;
+			എങ്കിൽ (extent.e_lblk > (blk64_t) blockcnt)
 				blockcnt = extent.e_lblk;
 			j = blockcnt - extent.e_lblk;
 			blk += j;
-			for (blockcnt = extent.e_lblk, j = 0;
+			വേണ്ടി (blockcnt = extent.e_lblk, j = 0;
 			     j < extent.e_len;
 			     blk++, blockcnt++, j++) {
 				new_blk = blk;
@@ -494,18 +494,18 @@ errcode_t ext2fs_block_iterate3(ext2_filsys fs,
 				ret |= r;
 				check_for_ro_violation_goto(&ctx, ret,
 							    extent_done);
-				if (r & BLOCK_CHANGED) {
+				എങ്കിൽ (r & BLOCK_CHANGED) {
 					ctx.errcode =
 						ext2fs_extent_set_bmap(handle,
 						       (blk64_t) blockcnt,
 						       new_blk, uninit);
-					if (ctx.errcode)
-						goto extent_done;
+					എങ്കിൽ (ctx.errcode)
+						പോകുക extent_done;
 				}
-				if (ret & BLOCK_ABORT)
-					goto extent_done;
+				എങ്കിൽ (ret & BLOCK_ABORT)
+					പോകുക extent_done;
 			}
-			if (retval == 0) {
+			എങ്കിൽ (retval == 0) {
 				extent = next;
 				op = EXT2_EXTENT_CURRENT;
 			}
@@ -514,146 +514,146 @@ errcode_t ext2fs_block_iterate3(ext2_filsys fs,
 	extent_done:
 		ext2fs_extent_free(handle);
 		ret |= BLOCK_ERROR; /* ctx.errcode is always valid here */
-		goto errout;
+		പോകുക errout;
 	}
 
 	/*
 	 * Iterate over normal data blocks
 	 */
-	for (i = 0; i < EXT2_NDIR_BLOCKS ; i++, ctx.bcount++) {
-		if (inode.i_block[i] || (flags & BLOCK_FLAG_APPEND)) {
+	വേണ്ടി (i = 0; i < EXT2_NDIR_BLOCKS ; i++, ctx.bcount++) {
+		എങ്കിൽ (inode.i_block[i] || (flags & BLOCK_FLAG_APPEND)) {
 			blk64 = inode.i_block[i];
 			ret |= (*ctx.func)(fs, &blk64, ctx.bcount, 0, i, 
 					   priv_data);
 			inode.i_block[i] = (blk_t) blk64;
-			if (ret & BLOCK_ABORT)
-				goto abort_exit;
+			എങ്കിൽ (ret & BLOCK_ABORT)
+				പോകുക abort_exit;
 		}
 	}
 	check_for_ro_violation_goto(&ctx, ret, abort_exit);
-	if (inode.i_block[EXT2_IND_BLOCK] || (flags & BLOCK_FLAG_APPEND)) {
+	എങ്കിൽ (inode.i_block[EXT2_IND_BLOCK] || (flags & BLOCK_FLAG_APPEND)) {
 		ret |= block_iterate_ind(&inode.i_block[EXT2_IND_BLOCK], 
 					 0, EXT2_IND_BLOCK, &ctx);
-		if (ret & BLOCK_ABORT)
-			goto abort_exit;
-	} else
+		എങ്കിൽ (ret & BLOCK_ABORT)
+			പോകുക abort_exit;
+	} അല്ലെങ്കിൽ
 		ctx.bcount += limit;
-	if (inode.i_block[EXT2_DIND_BLOCK] || (flags & BLOCK_FLAG_APPEND)) {
+	എങ്കിൽ (inode.i_block[EXT2_DIND_BLOCK] || (flags & BLOCK_FLAG_APPEND)) {
 		ret |= block_iterate_dind(&inode.i_block[EXT2_DIND_BLOCK],
 					  0, EXT2_DIND_BLOCK, &ctx);
-		if (ret & BLOCK_ABORT)
-			goto abort_exit;
-	} else
+		എങ്കിൽ (ret & BLOCK_ABORT)
+			പോകുക abort_exit;
+	} അല്ലെങ്കിൽ
 		ctx.bcount += limit * limit;
-	if (inode.i_block[EXT2_TIND_BLOCK] || (flags & BLOCK_FLAG_APPEND)) {
+	എങ്കിൽ (inode.i_block[EXT2_TIND_BLOCK] || (flags & BLOCK_FLAG_APPEND)) {
 		ret |= block_iterate_tind(&inode.i_block[EXT2_TIND_BLOCK],
 					  0, EXT2_TIND_BLOCK, &ctx);
-		if (ret & BLOCK_ABORT)
-			goto abort_exit;
+		എങ്കിൽ (ret & BLOCK_ABORT)
+			പോകുക abort_exit;
 	}
 
 abort_exit:
-	if (ret & BLOCK_CHANGED) {
+	എങ്കിൽ (ret & BLOCK_CHANGED) {
 		retval = ext2fs_write_inode(fs, ino, &inode);
-		if (retval) {
+		എങ്കിൽ (retval) {
 			ret |= BLOCK_ERROR;
 			ctx.errcode = retval;
 		}
 	}
 errout:
-	if (!block_buf)
+	എങ്കിൽ (!block_buf)
 		ext2fs_free_mem(&ctx.ind_buf);
 
-	return (ret & BLOCK_ERROR) ? ctx.errcode : 0;
+	തിരികെ (ret & BLOCK_ERROR) ? ctx.errcode : 0;
 }
 
 /*
  * Emulate the old ext2fs_block_iterate function!
  */
 
-struct xlate64 {
-	int (*func)(ext2_filsys fs,
+ഘടന xlate64 {
+	പൂർണ്ണസംഖ്യ (*func)(ext2_filsys fs,
 		    blk_t	*blocknr,
 		    e2_blkcnt_t	blockcnt,
 		    blk_t	ref_blk,
-		    int		ref_offset,
-		    void	*priv_data);
-	void *real_private;
+		    പൂർണ്ണസംഖ്യ		ref_offset,
+		    ശൂന്യം	*priv_data);
+	ശൂന്യം *real_private;
 };
 
-static int xlate64_func(ext2_filsys fs, blk64_t	*blocknr,
+സ്ഥിതം പൂർണ്ണസംഖ്യ xlate64_func(ext2_filsys fs, blk64_t	*blocknr,
 			e2_blkcnt_t blockcnt, blk64_t ref_blk,
-			int ref_offset, void *priv_data)
+			പൂർണ്ണസംഖ്യ ref_offset, ശൂന്യം *priv_data)
 {
-	struct xlate64 *xl = (struct xlate64 *) priv_data;
-	int		ret;
+	ഘടന xlate64 *xl = (ഘടന xlate64 *) priv_data;
+	പൂർണ്ണസംഖ്യ		ret;
 	blk_t		block32 = *blocknr;
 	
 	ret = (*xl->func)(fs, &block32, blockcnt, (blk_t) ref_blk, ref_offset,
 			     xl->real_private);
 	*blocknr = block32;
-	return ret;
+	തിരികെ ret;
 }
 
 errcode_t ext2fs_block_iterate2(ext2_filsys fs,
 				ext2_ino_t ino,
-				int	flags,
-				char *block_buf,
-				int (*func)(ext2_filsys fs,
+				പൂർണ്ണസംഖ്യ	flags,
+				അക്ഷരം *block_buf,
+				പൂർണ്ണസംഖ്യ (*func)(ext2_filsys fs,
 					    blk_t	*blocknr,
 					    e2_blkcnt_t	blockcnt,
 					    blk_t	ref_blk,
-					    int		ref_offset,
-					    void	*priv_data),
-				void *priv_data)
+					    പൂർണ്ണസംഖ്യ		ref_offset,
+					    ശൂന്യം	*priv_data),
+				ശൂന്യം *priv_data)
 {
-	struct xlate64 xl;
+	ഘടന xlate64 xl;
 
 	xl.real_private = priv_data;
 	xl.func = func;
 
-	return ext2fs_block_iterate3(fs, ino, flags, block_buf, 
+	തിരികെ ext2fs_block_iterate3(fs, ino, flags, block_buf, 
 				     xlate64_func, &xl);
 }
 
 
-struct xlate {
-	int (*func)(ext2_filsys	fs,
+ഘടന xlate {
+	പൂർണ്ണസംഖ്യ (*func)(ext2_filsys	fs,
 		    blk_t	*blocknr,
-		    int		bcount,
-		    void	*priv_data);
-	void *real_private;
+		    പൂർണ്ണസംഖ്യ		bcount,
+		    ശൂന്യം	*priv_data);
+	ശൂന്യം *real_private;
 };
 
 #ifdef __TURBOC__
  #pragma argsused
 #endif
-static int xlate_func(ext2_filsys fs, blk_t *blocknr, e2_blkcnt_t blockcnt,
+സ്ഥിതം പൂർണ്ണസംഖ്യ xlate_func(ext2_filsys fs, blk_t *blocknr, e2_blkcnt_t blockcnt,
 		      blk_t ref_block EXT2FS_ATTR((unused)),
-		      int ref_offset EXT2FS_ATTR((unused)),
-		      void *priv_data)
+		      പൂർണ്ണസംഖ്യ ref_offset EXT2FS_ATTR((unused)),
+		      ശൂന്യം *priv_data)
 {
-	struct xlate *xl = (struct xlate *) priv_data;
+	ഘടന xlate *xl = (ഘടന xlate *) priv_data;
 
-	return (*xl->func)(fs, blocknr, (int) blockcnt, xl->real_private);
+	തിരികെ (*xl->func)(fs, blocknr, (പൂർണ്ണസംഖ്യ) blockcnt, xl->real_private);
 }
 
 errcode_t ext2fs_block_iterate(ext2_filsys fs,
 			       ext2_ino_t ino,
-			       int	flags,
-			       char *block_buf,
-			       int (*func)(ext2_filsys fs,
+			       പൂർണ്ണസംഖ്യ	flags,
+			       അക്ഷരം *block_buf,
+			       പൂർണ്ണസംഖ്യ (*func)(ext2_filsys fs,
 					   blk_t	*blocknr,
-					   int	blockcnt,
-					   void	*priv_data),
-			       void *priv_data)
+					   പൂർണ്ണസംഖ്യ	blockcnt,
+					   ശൂന്യം	*priv_data),
+			       ശൂന്യം *priv_data)
 {
-	struct xlate xl;
+	ഘടന xlate xl;
 
 	xl.real_private = priv_data;
 	xl.func = func;
 
-	return ext2fs_block_iterate2(fs, ino, BLOCK_FLAG_NO_LARGE | flags,
+	തിരികെ ext2fs_block_iterate2(fs, ino, BLOCK_FLAG_NO_LARGE | flags,
 				     block_buf, xlate_func, &xl);
 }
 

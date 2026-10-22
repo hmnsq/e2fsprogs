@@ -9,48 +9,48 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#അന്തര്ഭാവ "config.h"
+#അന്തര്ഭാവ <stdio.h>
+#എങ്കിൽ HAVE_UNISTD_H
+#അന്തര്ഭാവ <unistd.h>
 #endif
-#include <string.h>
-#include <time.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#അന്തര്ഭാവ "ext2_fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
 
 /*
  * This function returns 1 if the inode's block entries actually
  * contain block entries.
  */
-int ext2fs_inode_has_valid_blocks2(ext2_filsys fs, struct ext2_inode *inode)
+പൂർണ്ണസംഖ്യ ext2fs_inode_has_valid_blocks2(ext2_filsys fs, ഘടന ext2_inode *inode)
 {
 	/*
 	 * Only directories, regular files, and some symbolic links
 	 * have valid block entries.
 	 */
-	if (!LINUX_S_ISDIR(inode->i_mode) && !LINUX_S_ISREG(inode->i_mode) &&
+	എങ്കിൽ (!LINUX_S_ISDIR(inode->i_mode) && !LINUX_S_ISREG(inode->i_mode) &&
 	    !LINUX_S_ISLNK(inode->i_mode))
-		return 0;
+		തിരികെ 0;
 
 	/*
 	 * If the symbolic link is a "fast symlink", then the symlink
 	 * target is stored in the block entries.
 	 */
-	if (LINUX_S_ISLNK (inode->i_mode)) {
-		if (ext2fs_file_acl_block(fs, inode) == 0) {
+	എങ്കിൽ (LINUX_S_ISLNK (inode->i_mode)) {
+		എങ്കിൽ (ext2fs_file_acl_block(fs, inode) == 0) {
 			/* With no EA block, we can rely on i_blocks */
-			if (inode->i_blocks == 0)
-				return 0;
-			return !ext2fs_is_fast_symlink(inode);
-		} else {
+			എങ്കിൽ (inode->i_blocks == 0)
+				തിരികെ 0;
+			തിരികെ !ext2fs_is_fast_symlink(inode);
+		} അല്ലെങ്കിൽ {
 			/* With an EA block, life gets more tricky */
-			if (inode->i_size >= EXT2_N_BLOCKS*4)
-				return 1; /* definitely using i_block[] */
-			if (inode->i_size > 4 && inode->i_block[1] == 0)
-				return 1; /* definitely using i_block[] */
-			return 0; /* Probably a fast symlink */
+			എങ്കിൽ (inode->i_size >= EXT2_N_BLOCKS*4)
+				തിരികെ 1; /* definitely using i_block[] */
+			എങ്കിൽ (inode->i_size > 4 && inode->i_block[1] == 0)
+				തിരികെ 1; /* definitely using i_block[] */
+			തിരികെ 0; /* Probably a fast symlink */
 		}
 	}
 
@@ -58,12 +58,12 @@ int ext2fs_inode_has_valid_blocks2(ext2_filsys fs, struct ext2_inode *inode)
 	 * If this inode has inline data, it shouldn't have valid block
 	 * entries.
 	 */
-	if (inode->i_flags & EXT4_INLINE_DATA_FL)
-		return 0;
-	return 1;
+	എങ്കിൽ (inode->i_flags & EXT4_INLINE_DATA_FL)
+		തിരികെ 0;
+	തിരികെ 1;
 }
 
-int ext2fs_inode_has_valid_blocks(struct ext2_inode *inode)
+പൂർണ്ണസംഖ്യ ext2fs_inode_has_valid_blocks(ഘടന ext2_inode *inode)
 {
-	return ext2fs_inode_has_valid_blocks2(NULL, inode);
+	തിരികെ ext2fs_inode_has_valid_blocks2(ശൂന്യ, inode);
 }

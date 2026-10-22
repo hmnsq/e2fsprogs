@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#അന്തര്ഭാവ "config.h"
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#എങ്കിൽ HAVE_UNISTD_H
+#അന്തര്ഭാവ <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <time.h>
+#എങ്കിൽ HAVE_SYS_STAT_H
+#അന്തര്ഭാവ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#എങ്കിൽ HAVE_SYS_TYPES_H
+#അന്തര്ഭാവ <sys/types.h>
 #endif
-#if HAVE_LINUX_TYPES_H
-#include <linux/types.h>
+#എങ്കിൽ HAVE_LINUX_TYPES_H
+#അന്തര്ഭാവ <linux/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
-#include "bmap64.h"
-#include "rbtree.h"
+#അന്തര്ഭാവ "ext2_fs.h"
+#അന്തര്ഭാവ "ext2fsP.h"
+#അന്തര്ഭാവ "bmap64.h"
+#അന്തര്ഭാവ "rbtree.h"
 
-#include <limits.h>
+#അന്തര്ഭാവ <limits.h>
 
-struct bmap_rb_extent {
-	struct rb_node node;
+ഘടന bmap_rb_extent {
+	ഘടന rb_കണ്ണി കണ്ണി;
 	__u64 start;
-	__u64 count;
+	__u64 എണ്ണം;
 };
 
-struct ext2fs_rb_private {
-	struct rb_root root;
-	struct bmap_rb_extent *wcursor;
-	struct bmap_rb_extent *rcursor;
-	struct bmap_rb_extent *rcursor_next;
+ഘടന ext2fs_rb_private {
+	ഘടന rb_വേര് വേര്;
+	ഘടന bmap_rb_extent *wcursor;
+	ഘടന bmap_rb_extent *rcursor;
+	ഘടന bmap_rb_extent *rcursor_next;
 #ifdef ENABLE_BMAP_STATS_OPS
 	__u64 mark_hit;
 	__u64 test_hit;
 #endif
 };
 
-inline static struct bmap_rb_extent *node_to_extent(struct rb_node *node)
+വരിയിൽ സ്ഥിതം ഘടന bmap_rb_extent *കണ്ണി_to_extent(ഘടന rb_കണ്ണി *കണ്ണി)
 {
 	/*
 	 * This depends on the fact the struct rb_node is at the
@@ -59,906 +59,906 @@ inline static struct bmap_rb_extent *node_to_extent(struct rb_node *node)
 	 * instead of the ext2fs_rb_entry macro because it causes gcc
 	 * -Wall to generate a huge amount of noise.
 	 */
-	return (struct bmap_rb_extent *) node;
+	തിരികെ (ഘടന bmap_rb_extent *) കണ്ണി;
 }
 
-static int rb_insert_extent(__u64 start, __u64 count,
-			    struct ext2fs_rb_private *);
-static void rb_get_new_extent(struct bmap_rb_extent **, __u64, __u64);
+സ്ഥിതം പൂർണ്ണസംഖ്യ rb_തിരുകുക_extent(__u64 start, __u64 എണ്ണം,
+			    ഘടന ext2fs_rb_private *);
+സ്ഥിതം ശൂന്യം rb_get_new_extent(ഘടന bmap_rb_extent **, __u64, __u64);
 
 /* #define DEBUG_RB */
 
 #ifdef DEBUG_RB
-static void print_tree(struct rb_root *root)
+സ്ഥിതം ശൂന്യം print_വൃക്ഷം(ഘടന rb_വേര് *വേര്)
 {
-	struct rb_node *node = NULL;
-	struct bmap_rb_extent *ext;
+	ഘടന rb_കണ്ണി *കണ്ണി = ശൂന്യ;
+	ഘടന bmap_rb_extent *ext;
 
 	fprintf(stderr, "\t\t\t=================================\n");
-	node = ext2fs_rb_first(root);
-	for (node = ext2fs_rb_first(root); node != NULL; 
-	     node = ext2fs_rb_next(node)) {
-		ext = node_to_extent(node);
+	കണ്ണി = ext2fs_rb_first(വേര്);
+	വേണ്ടി (കണ്ണി = ext2fs_rb_first(വേര്); കണ്ണി != ശൂന്യ; 
+	     കണ്ണി = ext2fs_rb_next(കണ്ണി)) {
+		ext = കണ്ണി_to_extent(കണ്ണി);
 		fprintf(stderr, "\t\t\t--> (%llu -> %llu)\n",
 			(unsigned long long) ext->start,
-			(unsigned long long) ext->start + ext->count);
+			(unsigned long long) ext->start + ext->എണ്ണം);
 	}
 	fprintf(stderr, "\t\t\t=================================\n");
 }
 
-static void check_tree(struct rb_root *root, const char *msg)
+സ്ഥിതം ശൂന്യം check_വൃക്ഷം(ഘടന rb_വേര് *വേര്, സ്ഥിരം അക്ഷരം *സന്ദേശം)
 {
-	struct rb_node *node;
-	struct bmap_rb_extent *ext, *old = NULL;
+	ഘടന rb_കണ്ണി *കണ്ണി;
+	ഘടന bmap_rb_extent *ext, *old = ശൂന്യ;
 
-	for (node = ext2fs_rb_first(root); node;
-	     node = ext2fs_rb_next(node)) {
-		ext = node_to_extent(node);
-		if (ext->count == 0) {
+	വേണ്ടി (കണ്ണി = ext2fs_rb_first(വേര്); കണ്ണി;
+	     കണ്ണി = ext2fs_rb_next(കണ്ണി)) {
+		ext = കണ്ണി_to_extent(കണ്ണി);
+		എങ്കിൽ (ext->എണ്ണം == 0) {
 			fprintf(stderr, "Tree Error: count is zero\n");
 			fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
 				(unsigned long long) ext->start,
-				(unsigned long long) ext->start + ext->count,
-				(unsigned long long) ext->count);
-			goto err_out;
+				(unsigned long long) ext->start + ext->എണ്ണം,
+				(unsigned long long) ext->എണ്ണം);
+			പോകുക err_out;
 		}
-		if (ext->start + ext->count < ext->start) {
+		എങ്കിൽ (ext->start + ext->എണ്ണം < ext->start) {
 			fprintf(stderr,
 				"Tree Error: start or count is crazy\n");
 			fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
 				(unsigned long long) ext->start,
-				(unsigned long long) ext->start + ext->count,
-				(unsigned long long) ext->count);
-			goto err_out;
+				(unsigned long long) ext->start + ext->എണ്ണം,
+				(unsigned long long) ext->എണ്ണം);
+			പോകുക err_out;
 		}
 
-		if (old) {
-			if (old->start > ext->start) {
+		എങ്കിൽ (old) {
+			എങ്കിൽ (old->start > ext->start) {
 				fprintf(stderr, "Tree Error: start is crazy\n");
 				fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
 					(unsigned long long) old->start,
-					(unsigned long long) old->start + old->count,
-					(unsigned long long) old->count);
+					(unsigned long long) old->start + old->എണ്ണം,
+					(unsigned long long) old->എണ്ണം);
 				fprintf(stderr,
 					"extent next: %llu -> %llu (%llu)\n",
 					(unsigned long long) ext->start,
-					(unsigned long long) ext->start + ext->count,
-					(unsigned long long) ext->count);
-				goto err_out;
+					(unsigned long long) ext->start + ext->എണ്ണം,
+					(unsigned long long) ext->എണ്ണം);
+				പോകുക err_out;
 			}
-			if ((old->start + old->count) >= ext->start) {
+			എങ്കിൽ ((old->start + old->എണ്ണം) >= ext->start) {
 				fprintf(stderr,
 					"Tree Error: extent is crazy\n");
 				fprintf(stderr, "extent: %llu -> %llu (%llu)\n",
 					(unsigned long long) old->start,
-					(unsigned long long) old->start + old->count,
-					(unsigned long long) old->count);
+					(unsigned long long) old->start + old->എണ്ണം,
+					(unsigned long long) old->എണ്ണം);
 				fprintf(stderr,
 					"extent next: %llu -> %llu (%llu)\n",
 					(unsigned long long) ext->start,
-					(unsigned long long) ext->start + ext->count,
-					(unsigned long long) ext->count);
-				goto err_out;
+					(unsigned long long) ext->start + ext->എണ്ണം,
+					(unsigned long long) ext->എണ്ണം);
+				പോകുക err_out;
 			}
 		}
 		old = ext;
 	}
-	return;
+	തിരികെ;
 
 err_out:
-	fprintf(stderr, "%s\n", msg);
-	print_tree(root);
+	fprintf(stderr, "%s\n", സന്ദേശം);
+	print_വൃക്ഷം(വേര്);
 	exit(1);
 }
-#else
-#define check_tree(root, msg) do {} while (0)
-#define print_tree(root) do {} while (0)
+#അല്ലെങ്കിൽ
+#define check_വൃക്ഷം(വേര്, സന്ദേശം) ചെയ്യുക {} ആകുമ്പോൾ (0)
+#define print_വൃക്ഷം(വേര്) ചെയ്യുക {} ആകുമ്പോൾ (0)
 #endif
 
-static void rb_get_new_extent(struct bmap_rb_extent **ext, __u64 start,
-			     __u64 count)
+സ്ഥിതം ശൂന്യം rb_get_new_extent(ഘടന bmap_rb_extent **ext, __u64 start,
+			     __u64 എണ്ണം)
 {
-	struct bmap_rb_extent *new_ext;
-	int retval;
+	ഘടന bmap_rb_extent *new_ext;
+	പൂർണ്ണസംഖ്യ retval;
 
-	retval = ext2fs_get_mem(sizeof (struct bmap_rb_extent),
+	retval = ext2fs_get_mem(വലുപ്പം (ഘടന bmap_rb_extent),
 				&new_ext);
-	if (retval)
+	എങ്കിൽ (retval)
 		abort();
 
 	new_ext->start = start;
-	new_ext->count = count;
+	new_ext->എണ്ണം = എണ്ണം;
 	*ext = new_ext;
 }
 
-inline
-static void rb_free_extent(struct ext2fs_rb_private *bp,
-			   struct bmap_rb_extent *ext)
+വരിയിൽ
+സ്ഥിതം ശൂന്യം rb_free_extent(ഘടന ext2fs_rb_private *bp,
+			   ഘടന bmap_rb_extent *ext)
 {
-	if (bp->wcursor == ext)
-		bp->wcursor = NULL;
-	if (bp->rcursor == ext)
-		bp->rcursor = NULL;
-	if (bp->rcursor_next == ext)
-		bp->rcursor_next = NULL;
+	എങ്കിൽ (bp->wcursor == ext)
+		bp->wcursor = ശൂന്യ;
+	എങ്കിൽ (bp->rcursor == ext)
+		bp->rcursor = ശൂന്യ;
+	എങ്കിൽ (bp->rcursor_next == ext)
+		bp->rcursor_next = ശൂന്യ;
 	ext2fs_free_mem(&ext);
 }
 
-static errcode_t rb_alloc_private_data (ext2fs_generic_bitmap_64 bitmap)
+സ്ഥിതം errcode_t rb_alloc_private_data (ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
+	ഘടന ext2fs_rb_private *bp;
 	errcode_t	retval;
 
-	retval = ext2fs_get_mem(sizeof (struct ext2fs_rb_private), &bp);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(വലുപ്പം (ഘടന ext2fs_rb_private), &bp);
+	എങ്കിൽ (retval)
+		തിരികെ retval;
 
-	bp->root = RB_ROOT;
-	bp->rcursor = NULL;
-	bp->rcursor_next = NULL;
-	bp->wcursor = NULL;
+	bp->വേര് = RB_വേര്;
+	bp->rcursor = ശൂന്യ;
+	bp->rcursor_next = ശൂന്യ;
+	bp->wcursor = ശൂന്യ;
 
 #ifdef ENABLE_BMAP_STATS_OPS
 	bp->test_hit = 0;
 	bp->mark_hit = 0;
 #endif
 
-	bitmap->private = (void *) bp;
-	return 0;
+	bitmap->സ്വകാര്യ = (ശൂന്യം *) bp;
+	തിരികെ 0;
 }
 
-static errcode_t rb_new_bmap(ext2_filsys fs EXT2FS_ATTR((unused)),
+സ്ഥിതം errcode_t rb_new_bmap(ext2_filsys fs EXT2FS_ATTR((unused)),
 			     ext2fs_generic_bitmap_64 bitmap)
 {
 	errcode_t	retval;
 
 	retval = rb_alloc_private_data (bitmap);
-	if (retval)
-		return retval;
+	എങ്കിൽ (retval)
+		തിരികെ retval;
 
-	return 0;
+	തിരികെ 0;
 }
 
-static void rb_free_tree(struct rb_root *root)
+സ്ഥിതം ശൂന്യം rb_free_വൃക്ഷം(ഘടന rb_വേര് *വേര്)
 {
-	struct bmap_rb_extent *ext;
-	struct rb_node *node, *next;
+	ഘടന bmap_rb_extent *ext;
+	ഘടന rb_കണ്ണി *കണ്ണി, *next;
 
-	for (node = ext2fs_rb_first(root); node; node = next) {
-		next = ext2fs_rb_next(node);
-		ext = node_to_extent(node);
-		ext2fs_rb_erase(node, root);
+	വേണ്ടി (കണ്ണി = ext2fs_rb_first(വേര്); കണ്ണി; കണ്ണി = next) {
+		next = ext2fs_rb_next(കണ്ണി);
+		ext = കണ്ണി_to_extent(കണ്ണി);
+		ext2fs_rb_erase(കണ്ണി, വേര്);
 		ext2fs_free_mem(&ext);
 	}
 }
 
-static void rb_free_bmap(ext2fs_generic_bitmap_64 bitmap)
+സ്ഥിതം ശൂന്യം rb_free_bmap(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
+	ഘടന ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ഘടന ext2fs_rb_private *) bitmap->സ്വകാര്യ;
 
-	rb_free_tree(&bp->root);
+	rb_free_വൃക്ഷം(&bp->വേര്);
 	ext2fs_free_mem(&bp);
 	bp = 0;
 }
 
-static errcode_t rb_copy_bmap(ext2fs_generic_bitmap_64 src,
+സ്ഥിതം errcode_t rb_copy_bmap(ext2fs_generic_bitmap_64 src,
 			      ext2fs_generic_bitmap_64 dest)
 {
-	struct ext2fs_rb_private *src_bp, *dest_bp;
-	struct bmap_rb_extent *src_ext, *dest_ext;
-	struct rb_node *dest_node, *src_node, *dest_last, **n;
+	ഘടന ext2fs_rb_private *src_bp, *dest_bp;
+	ഘടന bmap_rb_extent *src_ext, *dest_ext;
+	ഘടന rb_കണ്ണി *dest_കണ്ണി, *src_കണ്ണി, *dest_last, **n;
 	errcode_t retval = 0;
 
 	retval = rb_alloc_private_data (dest);
-	if (retval)
-		return retval;
+	എങ്കിൽ (retval)
+		തിരികെ retval;
 
-	src_bp = (struct ext2fs_rb_private *) src->private;
-	dest_bp = (struct ext2fs_rb_private *) dest->private;
-	src_bp->rcursor = NULL;
-	dest_bp->rcursor = NULL;
+	src_bp = (ഘടന ext2fs_rb_private *) src->സ്വകാര്യ;
+	dest_bp = (ഘടന ext2fs_rb_private *) dest->സ്വകാര്യ;
+	src_bp->rcursor = ശൂന്യ;
+	dest_bp->rcursor = ശൂന്യ;
 
-	src_node = ext2fs_rb_first(&src_bp->root);
-	while (src_node) {
-		src_ext = node_to_extent(src_node);
-		retval = ext2fs_get_mem(sizeof (struct bmap_rb_extent),
+	src_കണ്ണി = ext2fs_rb_first(&src_bp->വേര്);
+	ആകുമ്പോൾ (src_കണ്ണി) {
+		src_ext = കണ്ണി_to_extent(src_കണ്ണി);
+		retval = ext2fs_get_mem(വലുപ്പം (ഘടന bmap_rb_extent),
 					&dest_ext);
-		if (retval)
-			break;
+		എങ്കിൽ (retval)
+			നിർത്തുക;
 
-		memcpy(dest_ext, src_ext, sizeof(struct bmap_rb_extent));
+		memcpy(dest_ext, src_ext, വലുപ്പം(ഘടന bmap_rb_extent));
 
-		dest_node = &dest_ext->node;
-		n = &dest_bp->root.rb_node;
+		dest_കണ്ണി = &dest_ext->കണ്ണി;
+		n = &dest_bp->വേര്.rb_കണ്ണി;
 
-		dest_last = NULL;
-		if (*n) {
-			dest_last = ext2fs_rb_last(&dest_bp->root);
-			n = &(dest_last)->rb_right;
+		dest_last = ശൂന്യ;
+		എങ്കിൽ (*n) {
+			dest_last = ext2fs_rb_last(&dest_bp->വേര്);
+			n = &(dest_last)->rb_വലത്;
 		}
 
-		ext2fs_rb_link_node(dest_node, dest_last, n);
-		ext2fs_rb_insert_color(dest_node, &dest_bp->root);
+		ext2fs_rb_link_കണ്ണി(dest_കണ്ണി, dest_last, n);
+		ext2fs_rb_തിരുകുക_color(dest_കണ്ണി, &dest_bp->വേര്);
 
-		src_node = ext2fs_rb_next(src_node);
+		src_കണ്ണി = ext2fs_rb_next(src_കണ്ണി);
 	}
 
-	return retval;
+	തിരികെ retval;
 }
 
-static void rb_truncate(__u64 new_max, struct rb_root *root)
+സ്ഥിതം ശൂന്യം rb_truncate(__u64 new_max, ഘടന rb_വേര് *വേര്)
 {
-	struct bmap_rb_extent *ext;
-	struct rb_node *node;
+	ഘടന bmap_rb_extent *ext;
+	ഘടന rb_കണ്ണി *കണ്ണി;
 
-	node = ext2fs_rb_last(root);
-	while (node) {
-		ext = node_to_extent(node);
+	കണ്ണി = ext2fs_rb_last(വേര്);
+	ആകുമ്പോൾ (കണ്ണി) {
+		ext = കണ്ണി_to_extent(കണ്ണി);
 
-		if ((ext->start + ext->count - 1) <= new_max)
-			break;
-		else if (ext->start > new_max) {
-			ext2fs_rb_erase(node, root);
+		എങ്കിൽ ((ext->start + ext->എണ്ണം - 1) <= new_max)
+			നിർത്തുക;
+		അല്ലെങ്കിൽ എങ്കിൽ (ext->start > new_max) {
+			ext2fs_rb_erase(കണ്ണി, വേര്);
 			ext2fs_free_mem(&ext);
-			node = ext2fs_rb_last(root);
-			continue;
-		} else
-			ext->count = new_max - ext->start + 1;
+			കണ്ണി = ext2fs_rb_last(വേര്);
+			തുടരുക;
+		} അല്ലെങ്കിൽ
+			ext->എണ്ണം = new_max - ext->start + 1;
 	}
 }
 
-static errcode_t rb_resize_bmap(ext2fs_generic_bitmap_64 bmap,
+സ്ഥിതം errcode_t rb_resize_bmap(ext2fs_generic_bitmap_64 bmap,
 				__u64 new_end, __u64 new_real_end)
 {
-	struct ext2fs_rb_private *bp;
+	ഘടന ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bmap->private;
-	bp->rcursor = NULL;
-	bp->wcursor = NULL;
+	bp = (ഘടന ext2fs_rb_private *) bmap->സ്വകാര്യ;
+	bp->rcursor = ശൂന്യ;
+	bp->wcursor = ശൂന്യ;
 
 	rb_truncate(((new_end < bmap->end) ? new_end : bmap->end) - bmap->start,
-		    &bp->root);
+		    &bp->വേര്);
 
 	bmap->end = new_end;
 	bmap->real_end = new_real_end;
 
-	if (bmap->end < bmap->real_end)
-		rb_insert_extent(bmap->end + 1 - bmap->start,
+	എങ്കിൽ (bmap->end < bmap->real_end)
+		rb_തിരുകുക_extent(bmap->end + 1 - bmap->start,
 				 bmap->real_end - bmap->end, bp);
-	return 0;
+	തിരികെ 0;
 
 }
 
-inline static int
-rb_test_bit(struct ext2fs_rb_private *bp, __u64 bit)
+വരിയിൽ സ്ഥിതം പൂർണ്ണസംഖ്യ
+rb_test_bit(ഘടന ext2fs_rb_private *bp, __u64 bit)
 {
-	struct bmap_rb_extent *rcursor, *next_ext = NULL;
-	struct rb_node *parent = NULL, *next;
-	struct rb_node **n = &bp->root.rb_node;
-	struct bmap_rb_extent *ext;
+	ഘടന bmap_rb_extent *rcursor, *next_ext = ശൂന്യ;
+	ഘടന rb_കണ്ണി *parent = ശൂന്യ, *next;
+	ഘടന rb_കണ്ണി **n = &bp->വേര്.rb_കണ്ണി;
+	ഘടന bmap_rb_extent *ext;
 
 	rcursor = bp->rcursor;
-	if (!rcursor)
-		goto search_tree;
+	എങ്കിൽ (!rcursor)
+		പോകുക തിരയൽ_വൃക്ഷം;
 
-	if (bit >= rcursor->start && bit < rcursor->start + rcursor->count) {
+	എങ്കിൽ (bit >= rcursor->start && bit < rcursor->start + rcursor->എണ്ണം) {
 #ifdef ENABLE_BMAP_STATS_OPS
 		bp->test_hit++;
 #endif
-		return 1;
+		തിരികെ 1;
 	}
 
 	next_ext = bp->rcursor_next;
-	if (!next_ext) {
-		next = ext2fs_rb_next(&rcursor->node);
-		if (next)
-			next_ext = node_to_extent(next);
+	എങ്കിൽ (!next_ext) {
+		next = ext2fs_rb_next(&rcursor->കണ്ണി);
+		എങ്കിൽ (next)
+			next_ext = കണ്ണി_to_extent(next);
 		bp->rcursor_next = next_ext;
 	}
-	if (next_ext) {
-		if ((bit >= rcursor->start + rcursor->count) &&
+	എങ്കിൽ (next_ext) {
+		എങ്കിൽ ((bit >= rcursor->start + rcursor->എണ്ണം) &&
 		    (bit < next_ext->start)) {
 #ifdef BMAP_STATS_OPS
 			bp->test_hit++;
 #endif
-			return 0;
+			തിരികെ 0;
 		}
 	}
-	bp->rcursor = NULL;
-	bp->rcursor_next = NULL;
+	bp->rcursor = ശൂന്യ;
+	bp->rcursor_next = ശൂന്യ;
 
 	rcursor = bp->wcursor;
-	if (!rcursor)
-		goto search_tree;
+	എങ്കിൽ (!rcursor)
+		പോകുക തിരയൽ_വൃക്ഷം;
 
-	if (bit >= rcursor->start && bit < rcursor->start + rcursor->count)
-		return 1;
+	എങ്കിൽ (bit >= rcursor->start && bit < rcursor->start + rcursor->എണ്ണം)
+		തിരികെ 1;
 
-search_tree:
+തിരയൽ_വൃക്ഷം:
 
-	while (*n) {
+	ആകുമ്പോൾ (*n) {
 		parent = *n;
-		ext = node_to_extent(parent);
-		if (bit < ext->start)
-			n = &(*n)->rb_left;
-		else if (bit >= (ext->start + ext->count))
-			n = &(*n)->rb_right;
-		else {
+		ext = കണ്ണി_to_extent(parent);
+		എങ്കിൽ (bit < ext->start)
+			n = &(*n)->rb_ഇടത്;
+		അല്ലെങ്കിൽ എങ്കിൽ (bit >= (ext->start + ext->എണ്ണം))
+			n = &(*n)->rb_വലത്;
+		അല്ലെങ്കിൽ {
 			bp->rcursor = ext;
-			bp->rcursor_next = NULL;
-			return 1;
+			bp->rcursor_next = ശൂന്യ;
+			തിരികെ 1;
 		}
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-static int rb_insert_extent(__u64 start, __u64 count,
-			    struct ext2fs_rb_private *bp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ rb_തിരുകുക_extent(__u64 start, __u64 എണ്ണം,
+			    ഘടന ext2fs_rb_private *bp)
 {
-	struct rb_root *root = &bp->root;
-	struct rb_node *parent = NULL, **n = &root->rb_node;
-	struct rb_node *new_node, *node, *next;
-	struct bmap_rb_extent *new_ext;
-	struct bmap_rb_extent *ext;
-	int retval = 0;
+	ഘടന rb_വേര് *വേര് = &bp->വേര്;
+	ഘടന rb_കണ്ണി *parent = ശൂന്യ, **n = &വേര്->rb_കണ്ണി;
+	ഘടന rb_കണ്ണി *new_കണ്ണി, *കണ്ണി, *next;
+	ഘടന bmap_rb_extent *new_ext;
+	ഘടന bmap_rb_extent *ext;
+	പൂർണ്ണസംഖ്യ retval = 0;
 
-	if (count == 0)
-		return 0;
+	എങ്കിൽ (എണ്ണം == 0)
+		തിരികെ 0;
 
-	bp->rcursor_next = NULL;
+	bp->rcursor_next = ശൂന്യ;
 	ext = bp->wcursor;
-	if (ext) {
-		if (start >= ext->start &&
-		    start <= (ext->start + ext->count)) {
+	എങ്കിൽ (ext) {
+		എങ്കിൽ (start >= ext->start &&
+		    start <= (ext->start + ext->എണ്ണം)) {
 #ifdef ENABLE_BMAP_STATS_OPS
 			bp->mark_hit++;
 #endif
-			goto got_extent;
+			പോകുക got_extent;
 		}
 	}
 
-	while (*n) {
+	ആകുമ്പോൾ (*n) {
 		parent = *n;
-		ext = node_to_extent(parent);
+		ext = കണ്ണി_to_extent(parent);
 
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start > (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else {
+		എങ്കിൽ (start < ext->start) {
+			n = &(*n)->rb_ഇടത്;
+		} അല്ലെങ്കിൽ എങ്കിൽ (start > (ext->start + ext->എണ്ണം)) {
+			n = &(*n)->rb_വലത്;
+		} അല്ലെങ്കിൽ {
 got_extent:
-			if ((start + count) <= (ext->start + ext->count))
-				return 1;
+			എങ്കിൽ ((start + എണ്ണം) <= (ext->start + ext->എണ്ണം))
+				തിരികെ 1;
 
-			if ((ext->start + ext->count) == start)
+			എങ്കിൽ ((ext->start + ext->എണ്ണം) == start)
 				retval = 0;
-			else
+			അല്ലെങ്കിൽ
 				retval = 1;
 
-			count += (start - ext->start);
+			എണ്ണം += (start - ext->start);
 			start = ext->start;
 			new_ext = ext;
-			new_node = &ext->node;
+			new_കണ്ണി = &ext->കണ്ണി;
 
-			goto skip_insert;
+			പോകുക skip_തിരുകുക;
 		}
 	}
 
-	rb_get_new_extent(&new_ext, start, count);
+	rb_get_new_extent(&new_ext, start, എണ്ണം);
 
-	new_node = &new_ext->node;
-	ext2fs_rb_link_node(new_node, parent, n);
-	ext2fs_rb_insert_color(new_node, root);
+	new_കണ്ണി = &new_ext->കണ്ണി;
+	ext2fs_rb_link_കണ്ണി(new_കണ്ണി, parent, n);
+	ext2fs_rb_തിരുകുക_color(new_കണ്ണി, വേര്);
 	bp->wcursor = new_ext;
 
-	node = ext2fs_rb_prev(new_node);
-	if (node) {
-		ext = node_to_extent(node);
-		if ((ext->start + ext->count) == start) {
+	കണ്ണി = ext2fs_rb_prev(new_കണ്ണി);
+	എങ്കിൽ (കണ്ണി) {
+		ext = കണ്ണി_to_extent(കണ്ണി);
+		എങ്കിൽ ((ext->start + ext->എണ്ണം) == start) {
 			start = ext->start;
-			count += ext->count;
-			ext2fs_rb_erase(node, root);
+			എണ്ണം += ext->എണ്ണം;
+			ext2fs_rb_erase(കണ്ണി, വേര്);
 			rb_free_extent(bp, ext);
 		}
 	}
 
-skip_insert:
+skip_തിരുകുക:
 	/* See if we can merge extent to the right */
-	for (node = ext2fs_rb_next(new_node); node != NULL; node = next) {
-		next = ext2fs_rb_next(node);
-		ext = node_to_extent(node);
+	വേണ്ടി (കണ്ണി = ext2fs_rb_next(new_കണ്ണി); കണ്ണി != ശൂന്യ; കണ്ണി = next) {
+		next = ext2fs_rb_next(കണ്ണി);
+		ext = കണ്ണി_to_extent(കണ്ണി);
 
-		if ((ext->start + ext->count) <= start)
-			continue;
+		എങ്കിൽ ((ext->start + ext->എണ്ണം) <= start)
+			തുടരുക;
 
 		/* No more merging */
-		if ((start + count) < ext->start)
-			break;
+		എങ്കിൽ ((start + എണ്ണം) < ext->start)
+			നിർത്തുക;
 
 		/* ext is embedded in new_ext interval */
-		if ((start + count) >= (ext->start + ext->count)) {
-			ext2fs_rb_erase(node, root);
+		എങ്കിൽ ((start + എണ്ണം) >= (ext->start + ext->എണ്ണം)) {
+			ext2fs_rb_erase(കണ്ണി, വേര്);
 			rb_free_extent(bp, ext);
-			continue;
-		} else {
+			തുടരുക;
+		} അല്ലെങ്കിൽ {
 		/* merge ext with new_ext */
-			count += ((ext->start + ext->count) -
-				  (start + count));
-			ext2fs_rb_erase(node, root);
+			എണ്ണം += ((ext->start + ext->എണ്ണം) -
+				  (start + എണ്ണം));
+			ext2fs_rb_erase(കണ്ണി, വേര്);
 			rb_free_extent(bp, ext);
-			break;
+			നിർത്തുക;
 		}
 	}
 
 	new_ext->start = start;
-	new_ext->count = count;
+	new_ext->എണ്ണം = എണ്ണം;
 
-	return retval;
+	തിരികെ retval;
 }
 
-static int rb_remove_extent(__u64 start, __u64 count,
-			    struct ext2fs_rb_private *bp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ rb_remove_extent(__u64 start, __u64 എണ്ണം,
+			    ഘടന ext2fs_rb_private *bp)
 {
-	struct rb_root *root = &bp->root;
-	struct rb_node *parent = NULL, **n = &root->rb_node;
-	struct rb_node *node;
-	struct bmap_rb_extent *ext;
-	__u64 new_start, new_count;
-	int retval = 0;
+	ഘടന rb_വേര് *വേര് = &bp->വേര്;
+	ഘടന rb_കണ്ണി *parent = ശൂന്യ, **n = &വേര്->rb_കണ്ണി;
+	ഘടന rb_കണ്ണി *കണ്ണി;
+	ഘടന bmap_rb_extent *ext;
+	__u64 new_start, new_എണ്ണം;
+	പൂർണ്ണസംഖ്യ retval = 0;
 
-	if (ext2fs_rb_empty_root(root))
-		return 0;
+	എങ്കിൽ (ext2fs_rb_empty_വേര്(വേര്))
+		തിരികെ 0;
 
-	while (*n) {
+	ആകുമ്പോൾ (*n) {
 		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-			continue;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-			continue;
+		ext = കണ്ണി_to_extent(parent);
+		എങ്കിൽ (start < ext->start) {
+			n = &(*n)->rb_ഇടത്;
+			തുടരുക;
+		} അല്ലെങ്കിൽ എങ്കിൽ (start >= (ext->start + ext->എണ്ണം)) {
+			n = &(*n)->rb_വലത്;
+			തുടരുക;
 		}
 
-		if ((start > ext->start) &&
-		    (start + count) < (ext->start + ext->count)) {
+		എങ്കിൽ ((start > ext->start) &&
+		    (start + എണ്ണം) < (ext->start + ext->എണ്ണം)) {
 			/* We have to split extent into two */
-			new_start = start + count;
-			new_count = (ext->start + ext->count) - new_start;
+			new_start = start + എണ്ണം;
+			new_എണ്ണം = (ext->start + ext->എണ്ണം) - new_start;
 
-			ext->count = start - ext->start;
+			ext->എണ്ണം = start - ext->start;
 
-			rb_insert_extent(new_start, new_count, bp);
-			return 1;
+			rb_തിരുകുക_extent(new_start, new_എണ്ണം, bp);
+			തിരികെ 1;
 		}
 
-		if ((start + count) >= (ext->start + ext->count)) {
-			ext->count = start - ext->start;
+		എങ്കിൽ ((start + എണ്ണം) >= (ext->start + ext->എണ്ണം)) {
+			ext->എണ്ണം = start - ext->start;
 			retval = 1;
 		}
 
-		if (0 == ext->count) {
-			parent = ext2fs_rb_next(&ext->node);
-			ext2fs_rb_erase(&ext->node, root);
+		എങ്കിൽ (0 == ext->എണ്ണം) {
+			parent = ext2fs_rb_next(&ext->കണ്ണി);
+			ext2fs_rb_erase(&ext->കണ്ണി, വേര്);
 			rb_free_extent(bp, ext);
-			break;
+			നിർത്തുക;
 		}
 
-		if (start == ext->start) {
-			ext->start += count;
-			ext->count -= count;
-			return 1;
+		എങ്കിൽ (start == ext->start) {
+			ext->start += എണ്ണം;
+			ext->എണ്ണം -= എണ്ണം;
+			തിരികെ 1;
 		}
 	}
 
 	/* See if we should delete or truncate extent on the right */
-	for (; parent != NULL; parent = node) {
-		node = ext2fs_rb_next(parent);
-		ext = node_to_extent(parent);
-		if ((ext->start + ext->count) <= start)
-			continue;
+	വേണ്ടി (; parent != ശൂന്യ; parent = കണ്ണി) {
+		കണ്ണി = ext2fs_rb_next(parent);
+		ext = കണ്ണി_to_extent(parent);
+		എങ്കിൽ ((ext->start + ext->എണ്ണം) <= start)
+			തുടരുക;
 
 		/* No more extents to be removed/truncated */
-		if ((start + count) < ext->start)
-			break;
+		എങ്കിൽ ((start + എണ്ണം) < ext->start)
+			നിർത്തുക;
 
 		/* The entire extent is within the region to be removed */
-		if ((start + count) >= (ext->start + ext->count)) {
-			ext2fs_rb_erase(parent, root);
+		എങ്കിൽ ((start + എണ്ണം) >= (ext->start + ext->എണ്ണം)) {
+			ext2fs_rb_erase(parent, വേര്);
 			rb_free_extent(bp, ext);
 			retval = 1;
-			continue;
-		} else {
+			തുടരുക;
+		} അല്ലെങ്കിൽ {
 			/* modify the last extent in region to be removed */
-			ext->count -= ((start + count) - ext->start);
-			ext->start = start + count;
+			ext->എണ്ണം -= ((start + എണ്ണം) - ext->start);
+			ext->start = start + എണ്ണം;
 			retval = 1;
-			break;
+			നിർത്തുക;
 		}
 	}
 
-	return retval;
+	തിരികെ retval;
 }
 
-static int rb_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+സ്ഥിതം പൂർണ്ണസംഖ്യ rb_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	struct ext2fs_rb_private *bp;
-	int retval;
+	ഘടന ext2fs_rb_private *bp;
+	പൂർണ്ണസംഖ്യ retval;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ഘടന ext2fs_rb_private *) bitmap->സ്വകാര്യ;
 	arg -= bitmap->start;
 
-	retval = rb_insert_extent(arg, 1, bp);
-	check_tree(&bp->root, __func__);
-	return retval;
+	retval = rb_തിരുകുക_extent(arg, 1, bp);
+	check_വൃക്ഷം(&bp->വേര്, __func__);
+	തിരികെ retval;
 }
 
-static int rb_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+സ്ഥിതം പൂർണ്ണസംഖ്യ rb_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	struct ext2fs_rb_private *bp;
-	int retval;
+	ഘടന ext2fs_rb_private *bp;
+	പൂർണ്ണസംഖ്യ retval;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ഘടന ext2fs_rb_private *) bitmap->സ്വകാര്യ;
 	arg -= bitmap->start;
 
 	retval = rb_remove_extent(arg, 1, bp);
-	check_tree(&bp->root, __func__);
+	check_വൃക്ഷം(&bp->വേര്, __func__);
 
-	return retval;
+	തിരികെ retval;
 }
 
-inline
-static int rb_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+വരിയിൽ
+സ്ഥിതം പൂർണ്ണസംഖ്യ rb_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
-	struct ext2fs_rb_private *bp;
+	ഘടന ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ഘടന ext2fs_rb_private *) bitmap->സ്വകാര്യ;
 	arg -= bitmap->start;
 
-	return rb_test_bit(bp, arg);
+	തിരികെ rb_test_bit(bp, arg);
 }
 
-static void rb_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				unsigned int num)
+സ്ഥിതം ശൂന്യം rb_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				unsigned പൂർണ്ണസംഖ്യ അക്കം)
 {
-	struct ext2fs_rb_private *bp;
+	ഘടന ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ഘടന ext2fs_rb_private *) bitmap->സ്വകാര്യ;
 	arg -= bitmap->start;
 
-	rb_insert_extent(arg, num, bp);
-	check_tree(&bp->root, __func__);
+	rb_തിരുകുക_extent(arg, അക്കം, bp);
+	check_വൃക്ഷം(&bp->വേര്, __func__);
 }
 
-static void rb_unmark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				  unsigned int num)
+സ്ഥിതം ശൂന്യം rb_unmark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				  unsigned പൂർണ്ണസംഖ്യ അക്കം)
 {
-	struct ext2fs_rb_private *bp;
+	ഘടന ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ഘടന ext2fs_rb_private *) bitmap->സ്വകാര്യ;
 	arg -= bitmap->start;
 
-	rb_remove_extent(arg, num, bp);
-	check_tree(&bp->root, __func__);
+	rb_remove_extent(arg, അക്കം, bp);
+	check_വൃക്ഷം(&bp->വേര്, __func__);
 }
 
-static int rb_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, unsigned int len)
+സ്ഥിതം പൂർണ്ണസംഖ്യ rb_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 start, unsigned പൂർണ്ണസംഖ്യ len)
 {
-	struct rb_node *parent = NULL, **n;
-	struct rb_node *node, *next;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
-	int retval = 1;
+	ഘടന rb_കണ്ണി *parent = ശൂന്യ, **n;
+	ഘടന rb_കണ്ണി *കണ്ണി, *next;
+	ഘടന ext2fs_rb_private *bp;
+	ഘടന bmap_rb_extent *ext;
+	പൂർണ്ണസംഖ്യ retval = 1;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
+	bp = (ഘടന ext2fs_rb_private *) bitmap->സ്വകാര്യ;
+	n = &bp->വേര്.rb_കണ്ണി;
 	start -= bitmap->start;
 
-	if (len == 0 || ext2fs_rb_empty_root(&bp->root))
-		return 1;
+	എങ്കിൽ (len == 0 || ext2fs_rb_empty_വേര്(&bp->വേര്))
+		തിരികെ 1;
 
 	/*
 	 * If we find nothing, we should examine whole extent, but
 	 * when we find match, the extent is not clean, thus be return
 	 * false.
 	 */
-	while (*n) {
+	ആകുമ്പോൾ (*n) {
 		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else {
+		ext = കണ്ണി_to_extent(parent);
+		എങ്കിൽ (start < ext->start) {
+			n = &(*n)->rb_ഇടത്;
+		} അല്ലെങ്കിൽ എങ്കിൽ (start >= (ext->start + ext->എണ്ണം)) {
+			n = &(*n)->rb_വലത്;
+		} അല്ലെങ്കിൽ {
 			/*
 			 * We found extent int the tree -> extent is not
 			 * clean
 			 */
-			return 0;
+			തിരികെ 0;
 		}
 	}
 
-	node = parent;
-	while (node) {
-		next = ext2fs_rb_next(node);
-		ext = node_to_extent(node);
-		node = next;
+	കണ്ണി = parent;
+	ആകുമ്പോൾ (കണ്ണി) {
+		next = ext2fs_rb_next(കണ്ണി);
+		ext = കണ്ണി_to_extent(കണ്ണി);
+		കണ്ണി = next;
 
-		if ((ext->start + ext->count) <= start)
-			continue;
+		എങ്കിൽ ((ext->start + ext->എണ്ണം) <= start)
+			തുടരുക;
 
 		/* No more merging */
-		if ((start + len) <= ext->start)
-			break;
+		എങ്കിൽ ((start + len) <= ext->start)
+			നിർത്തുക;
 
 		retval = 0;
-		break;
+		നിർത്തുക;
 	}
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t rb_set_bmap_range(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, size_t num, void *in)
+സ്ഥിതം errcode_t rb_set_bmap_range(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 start, size_t അക്കം, ശൂന്യം *in)
 {
-	struct ext2fs_rb_private *bp;
-	unsigned char *cp = in;
+	ഘടന ext2fs_rb_private *bp;
+	unsigned അക്ഷരം *cp = in;
 	size_t i;
-	int first_set = -1;
+	പൂർണ്ണസംഖ്യ first_set = -1;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ഘടന ext2fs_rb_private *) bitmap->സ്വകാര്യ;
 
-	for (i = 0; i < num; i++) {
-		if ((i & 7) == 0) {
-			unsigned char c = cp[i/8];
-			if (c == 0xFF) {
-				if (first_set == -1)
+	വേണ്ടി (i = 0; i < അക്കം; i++) {
+		എങ്കിൽ ((i & 7) == 0) {
+			unsigned അക്ഷരം c = cp[i/8];
+			എങ്കിൽ (c == 0xFF) {
+				എങ്കിൽ (first_set == -1)
 					first_set = i;
 				i += 7;
-				continue;
+				തുടരുക;
 			}
-			if ((c == 0x00) && (first_set == -1)) {
+			എങ്കിൽ ((c == 0x00) && (first_set == -1)) {
 				i += 7;
-				continue;
+				തുടരുക;
 			}
 		}
-		if (ext2fs_test_bit(i, in)) {
-			if (first_set == -1)
+		എങ്കിൽ (ext2fs_test_bit(i, in)) {
+			എങ്കിൽ (first_set == -1)
 				first_set = i;
-			continue;
+			തുടരുക;
 		}
-		if (first_set == -1)
-			continue;
+		എങ്കിൽ (first_set == -1)
+			തുടരുക;
 
-		rb_insert_extent(start + first_set - bitmap->start,
+		rb_തിരുകുക_extent(start + first_set - bitmap->start,
 				 i - first_set, bp);
-		check_tree(&bp->root, __func__);
+		check_വൃക്ഷം(&bp->വേര്, __func__);
 		first_set = -1;
 	}
-	if (first_set != -1) {
-		rb_insert_extent(start + first_set - bitmap->start,
-				 num - first_set, bp);
-		check_tree(&bp->root, __func__);
+	എങ്കിൽ (first_set != -1) {
+		rb_തിരുകുക_extent(start + first_set - bitmap->start,
+				 അക്കം - first_set, bp);
+		check_വൃക്ഷം(&bp->വേര്, __func__);
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
-static errcode_t rb_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, size_t num, void *out)
+സ്ഥിതം errcode_t rb_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 start, size_t അക്കം, ശൂന്യം *out)
 {
 
-	struct rb_node *parent = NULL, *next, **n;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
-	__u64 count, pos;
+	ഘടന rb_കണ്ണി *parent = ശൂന്യ, *next, **n;
+	ഘടന ext2fs_rb_private *bp;
+	ഘടന bmap_rb_extent *ext;
+	__u64 എണ്ണം, pos;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
+	bp = (ഘടന ext2fs_rb_private *) bitmap->സ്വകാര്യ;
+	n = &bp->വേര്.rb_കണ്ണി;
 	start -= bitmap->start;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return 0;
+	എങ്കിൽ (ext2fs_rb_empty_വേര്(&bp->വേര്))
+		തിരികെ 0;
 
-	while (*n) {
+	ആകുമ്പോൾ (*n) {
 		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else
-			break;
+		ext = കണ്ണി_to_extent(parent);
+		എങ്കിൽ (start < ext->start) {
+			n = &(*n)->rb_ഇടത്;
+		} അല്ലെങ്കിൽ എങ്കിൽ (start >= (ext->start + ext->എണ്ണം)) {
+			n = &(*n)->rb_വലത്;
+		} അല്ലെങ്കിൽ
+			നിർത്തുക;
 	}
 
-	memset(out, 0, (num + 7) >> 3);
+	memset(out, 0, (അക്കം + 7) >> 3);
 
-	for (; parent != NULL; parent = next) {
+	വേണ്ടി (; parent != ശൂന്യ; parent = next) {
 		next = ext2fs_rb_next(parent);
-		ext = node_to_extent(parent);
+		ext = കണ്ണി_to_extent(parent);
 
 		pos = ext->start;
-		count = ext->count;
-		if (pos >= start + num)
-			break;
-		if (pos < start) {
-			if (pos + count <  start)
-				continue;
-			count -= start - pos;
+		എണ്ണം = ext->എണ്ണം;
+		എങ്കിൽ (pos >= start + അക്കം)
+			നിർത്തുക;
+		എങ്കിൽ (pos < start) {
+			എങ്കിൽ (pos + എണ്ണം <  start)
+				തുടരുക;
+			എണ്ണം -= start - pos;
 			pos = start;
 		}
-		if (pos + count > start + num)
-			count = start + num - pos;
+		എങ്കിൽ (pos + എണ്ണം > start + അക്കം)
+			എണ്ണം = start + അക്കം - pos;
 
-		while (count > 0) {
-			if ((count >= 8) &&
+		ആകുമ്പോൾ (എണ്ണം > 0) {
+			എങ്കിൽ ((എണ്ണം >= 8) &&
 			    ((pos - start) % 8) == 0) {
-				int nbytes = count >> 3;
-				int offset = (pos - start) >> 3;
+				പൂർണ്ണസംഖ്യ nbytes = എണ്ണം >> 3;
+				പൂർണ്ണസംഖ്യ offset = (pos - start) >> 3;
 
-				memset(((char *) out) + offset, 0xFF, nbytes);
+				memset(((അക്ഷരം *) out) + offset, 0xFF, nbytes);
 				pos += nbytes << 3;
-				count -= nbytes << 3;
-				continue;
+				എണ്ണം -= nbytes << 3;
+				തുടരുക;
 			}
 			ext2fs_fast_set_bit64((pos - start), out);
 			pos++;
-			count--;
+			എണ്ണം--;
 		}
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-static void rb_clear_bmap(ext2fs_generic_bitmap_64 bitmap)
+സ്ഥിതം ശൂന്യം rb_clear_bmap(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
+	ഘടന ext2fs_rb_private *bp;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ഘടന ext2fs_rb_private *) bitmap->സ്വകാര്യ;
 
-	rb_free_tree(&bp->root);
-	bp->rcursor = NULL;
-	bp->rcursor_next = NULL;
-	bp->wcursor = NULL;
-	check_tree(&bp->root, __func__);
+	rb_free_വൃക്ഷം(&bp->വേര്);
+	bp->rcursor = ശൂന്യ;
+	bp->rcursor_next = ശൂന്യ;
+	bp->wcursor = ശൂന്യ;
+	check_വൃക്ഷം(&bp->വേര്, __func__);
 }
 
-static errcode_t rb_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
+സ്ഥിതം errcode_t rb_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
 				   __u64 start, __u64 end, __u64 *out)
 {
-	struct rb_node *parent = NULL, **n;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
+	ഘടന rb_കണ്ണി *parent = ശൂന്യ, **n;
+	ഘടന ext2fs_rb_private *bp;
+	ഘടന bmap_rb_extent *ext;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
+	bp = (ഘടന ext2fs_rb_private *) bitmap->സ്വകാര്യ;
+	n = &bp->വേര്.rb_കണ്ണി;
 	start -= bitmap->start;
 	end -= bitmap->start;
 
-	if (start > end)
-		return EINVAL;
+	എങ്കിൽ (start > end)
+		തിരികെ EINVAL;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return ENOENT;
+	എങ്കിൽ (ext2fs_rb_empty_വേര്(&bp->വേര്))
+		തിരികെ ENOENT;
 
-	while (*n) {
+	ആകുമ്പോൾ (*n) {
 		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else if (ext->start + ext->count <= end) {
-			*out = ext->start + ext->count + bitmap->start;
-			return 0;
-		} else
-			return ENOENT;
+		ext = കണ്ണി_to_extent(parent);
+		എങ്കിൽ (start < ext->start) {
+			n = &(*n)->rb_ഇടത്;
+		} അല്ലെങ്കിൽ എങ്കിൽ (start >= (ext->start + ext->എണ്ണം)) {
+			n = &(*n)->rb_വലത്;
+		} അല്ലെങ്കിൽ എങ്കിൽ (ext->start + ext->എണ്ണം <= end) {
+			*out = ext->start + ext->എണ്ണം + bitmap->start;
+			തിരികെ 0;
+		} അല്ലെങ്കിൽ
+			തിരികെ ENOENT;
 	}
 
 	*out = start + bitmap->start;
-	return 0;
+	തിരികെ 0;
 }
 
-static errcode_t rb_find_first_set(ext2fs_generic_bitmap_64 bitmap,
+സ്ഥിതം errcode_t rb_find_first_set(ext2fs_generic_bitmap_64 bitmap,
 				   __u64 start, __u64 end, __u64 *out)
 {
-	struct rb_node *parent = NULL, **n;
-	struct rb_node *node;
-	struct ext2fs_rb_private *bp;
-	struct bmap_rb_extent *ext;
+	ഘടന rb_കണ്ണി *parent = ശൂന്യ, **n;
+	ഘടന rb_കണ്ണി *കണ്ണി;
+	ഘടന ext2fs_rb_private *bp;
+	ഘടന bmap_rb_extent *ext;
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
-	n = &bp->root.rb_node;
+	bp = (ഘടന ext2fs_rb_private *) bitmap->സ്വകാര്യ;
+	n = &bp->വേര്.rb_കണ്ണി;
 	start -= bitmap->start;
 	end -= bitmap->start;
 
-	if (start > end)
-		return EINVAL;
+	എങ്കിൽ (start > end)
+		തിരികെ EINVAL;
 
-	if (ext2fs_rb_empty_root(&bp->root))
-		return ENOENT;
+	എങ്കിൽ (ext2fs_rb_empty_വേര്(&bp->വേര്))
+		തിരികെ ENOENT;
 
-	while (*n) {
+	ആകുമ്പോൾ (*n) {
 		parent = *n;
-		ext = node_to_extent(parent);
-		if (start < ext->start) {
-			n = &(*n)->rb_left;
-		} else if (start >= (ext->start + ext->count)) {
-			n = &(*n)->rb_right;
-		} else {
+		ext = കണ്ണി_to_extent(parent);
+		എങ്കിൽ (start < ext->start) {
+			n = &(*n)->rb_ഇടത്;
+		} അല്ലെങ്കിൽ എങ്കിൽ (start >= (ext->start + ext->എണ്ണം)) {
+			n = &(*n)->rb_വലത്;
+		} അല്ലെങ്കിൽ {
 			/* The start bit is set */
 			*out = start + bitmap->start;
-			return 0;
+			തിരികെ 0;
 		}
 	}
 
-	node = parent;
-	ext = node_to_extent(node);
-	if (ext->start < start) {
-		node = ext2fs_rb_next(node);
-		if (node == NULL)
-			return ENOENT;
-		ext = node_to_extent(node);
+	കണ്ണി = parent;
+	ext = കണ്ണി_to_extent(കണ്ണി);
+	എങ്കിൽ (ext->start < start) {
+		കണ്ണി = ext2fs_rb_next(കണ്ണി);
+		എങ്കിൽ (കണ്ണി == ശൂന്യ)
+			തിരികെ ENOENT;
+		ext = കണ്ണി_to_extent(കണ്ണി);
 	}
-	if (ext->start <= end) {
+	എങ്കിൽ (ext->start <= end) {
 		*out = ext->start + bitmap->start;
-		return 0;
+		തിരികെ 0;
 	}
-	return ENOENT;
+	തിരികെ ENOENT;
 }
 
 #ifdef ENABLE_BMAP_STATS
-static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap)
+സ്ഥിതം ശൂന്യം rb_print_stats(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2fs_rb_private *bp;
-	struct rb_node *node = NULL;
-	struct bmap_rb_extent *ext;
-	__u64 count = 0;
+	ഘടന ext2fs_rb_private *bp;
+	ഘടന rb_കണ്ണി *കണ്ണി = ശൂന്യ;
+	ഘടന bmap_rb_extent *ext;
+	__u64 എണ്ണം = 0;
 	__u64 max_size = 0;
 	__u64 min_size = ULONG_MAX;
 	__u64 size = 0, avg_size = 0;
-	double eff;
+	ഇരട്ട eff;
 #ifdef ENABLE_BMAP_STATS_OPS
 	__u64 mark_all, test_all;
-	double m_hit = 0.0, t_hit = 0.0;
+	ഇരട്ട m_hit = 0.0, t_hit = 0.0;
 #endif
 
-	bp = (struct ext2fs_rb_private *) bitmap->private;
+	bp = (ഘടന ext2fs_rb_private *) bitmap->സ്വകാര്യ;
 
-	for (node = ext2fs_rb_first(&bp->root); node != NULL;
-	     node = ext2fs_rb_next(node)) {
-		ext = node_to_extent(node);
-		count++;
-		if (ext->count > max_size)
-			max_size = ext->count;
-		if (ext->count < min_size)
-			min_size = ext->count;
-		size += ext->count;
+	വേണ്ടി (കണ്ണി = ext2fs_rb_first(&bp->വേര്); കണ്ണി != ശൂന്യ;
+	     കണ്ണി = ext2fs_rb_next(കണ്ണി)) {
+		ext = കണ്ണി_to_extent(കണ്ണി);
+		എണ്ണം++;
+		എങ്കിൽ (ext->എണ്ണം > max_size)
+			max_size = ext->എണ്ണം;
+		എങ്കിൽ (ext->എണ്ണം < min_size)
+			min_size = ext->എണ്ണം;
+		size += ext->എണ്ണം;
 	}
 
-	if (count)
-		avg_size = size / count;
-	if (min_size == ULONG_MAX)
+	എങ്കിൽ (എണ്ണം)
+		avg_size = size / എണ്ണം;
+	എങ്കിൽ (min_size == ULONG_MAX)
 		min_size = 0;
-	eff = (double)((count * sizeof(struct bmap_rb_extent)) << 3) /
+	eff = (ഇരട്ട)((എണ്ണം * വലുപ്പം(ഘടന bmap_rb_extent)) << 3) /
 	      (bitmap->real_end - bitmap->start);
 #ifdef ENABLE_BMAP_STATS_OPS
-	mark_all = bitmap->stats.mark_count + bitmap->stats.mark_ext_count;
-	test_all = bitmap->stats.test_count + bitmap->stats.test_ext_count;
-	if (mark_all)
-		m_hit = ((double)bp->mark_hit / mark_all) * 100;
-	if (test_all)
-		t_hit = ((double)bp->test_hit / test_all) * 100;
+	mark_all = bitmap->stats.mark_എണ്ണം + bitmap->stats.mark_ext_എണ്ണം;
+	test_all = bitmap->stats.test_എണ്ണം + bitmap->stats.test_ext_എണ്ണം;
+	എങ്കിൽ (mark_all)
+		m_hit = ((ഇരട്ട)bp->mark_hit / mark_all) * 100;
+	എങ്കിൽ (test_all)
+		t_hit = ((ഇരട്ട)bp->test_hit / test_all) * 100;
 
 	fprintf(stderr, "%16llu cache hits on test (%.2f%%)\n"
 		"%16llu cache hits on mark (%.2f%%)\n",
 		bp->test_hit, t_hit, bp->mark_hit, m_hit);
 #endif
 	fprintf(stderr, "%16llu extents (%llu bytes)\n",
-		(unsigned long long) count, (unsigned long long)
-		((count * sizeof(struct bmap_rb_extent)) +
-		 sizeof(struct ext2fs_rb_private)));
+		(unsigned long long) എണ്ണം, (unsigned long long)
+		((എണ്ണം * വലുപ്പം(ഘടന bmap_rb_extent)) +
+		 വലുപ്പം(ഘടന ext2fs_rb_private)));
  	fprintf(stderr, "%16llu bits minimum size\n",
 		(unsigned long long) min_size);
 	fprintf(stderr, "%16llu bits maximum size\n"
@@ -971,13 +971,13 @@ static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap)
 		"%16.4lf memory / bitmap bit memory ratio (bitarray = 1)\n",
 		eff);
 }
-#else
-static void rb_print_stats(ext2fs_generic_bitmap_64 bitmap EXT2FS_ATTR((unused)))
+#അല്ലെങ്കിൽ
+സ്ഥിതം ശൂന്യം rb_print_stats(ext2fs_generic_bitmap_64 bitmap EXT2FS_ATTR((unused)))
 {
 }
 #endif
 
-struct ext2_bitmap_ops ext2fs_blkmap64_rbtree = {
+ഘടന ext2_bitmap_ops ext2fs_blkmap64_rbtree = {
 	.type = EXT2FS_BMAP64_RBTREE,
 	.new_bmap = rb_new_bmap,
 	.free_bmap = rb_free_bmap,

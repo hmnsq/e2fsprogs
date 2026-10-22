@@ -9,76 +9,76 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#അന്തര്ഭാവ "config.h"
+#അന്തര്ഭാവ <stdio.h>
+#എങ്കിൽ HAVE_UNISTD_H
+#അന്തര്ഭാവ <unistd.h>
 #endif
-#include <string.h>
-#include <time.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#അന്തര്ഭാവ "ext2_fs.h"
+#അന്തര്ഭാവ "ext2fsP.h"
 
-static EXT2_QSORT_TYPE dir_block_cmp(const void *a, const void *b);
-static EXT2_QSORT_TYPE dir_block_cmp2(const void *a, const void *b);
-static EXT2_QSORT_TYPE (*sortfunc32)(const void *a, const void *b);
+സ്ഥിതം EXT2_QSORT_TYPE dir_block_cmp(സ്ഥിരം ശൂന്യം *a, സ്ഥിരം ശൂന്യം *b);
+സ്ഥിതം EXT2_QSORT_TYPE dir_block_cmp2(സ്ഥിരം ശൂന്യം *a, സ്ഥിരം ശൂന്യം *b);
+സ്ഥിതം EXT2_QSORT_TYPE (*sortfunc32)(സ്ഥിരം ശൂന്യം *a, സ്ഥിരം ശൂന്യം *b);
 
 /*
  * helper function for making a new directory block list (for
  * initialize and copy).
  */
-static errcode_t make_dblist(ext2_filsys fs, ext2_ino_t size,
-			     ext2_ino_t count,
-			     struct ext2_db_entry2 *list,
+സ്ഥിതം errcode_t make_dblist(ext2_filsys fs, ext2_ino_t size,
+			     ext2_ino_t എണ്ണം,
+			     ഘടന ext2_db_entry2 *list,
 			     ext2_dblist *ret_dblist)
 {
-	ext2_dblist	dblist = NULL;
+	ext2_dblist	dblist = ശൂന്യ;
 	errcode_t	retval;
-	ext2_ino_t	num_dirs;
+	ext2_ino_t	അക്കം_dirs;
 	size_t		len;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if ((ret_dblist == 0) && fs->dblist &&
+	എങ്കിൽ ((ret_dblist == 0) && fs->dblist &&
 	    (fs->dblist->magic == EXT2_ET_MAGIC_DBLIST))
-		return 0;
+		തിരികെ 0;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_struct_dblist), &dblist);
-	if (retval)
-		goto cleanup;
-	memset(dblist, 0, sizeof(struct ext2_struct_dblist));
+	retval = ext2fs_get_mem(വലുപ്പം(ഘടന ext2_struct_dblist), &dblist);
+	എങ്കിൽ (retval)
+		പോകുക cleanup;
+	memset(dblist, 0, വലുപ്പം(ഘടന ext2_struct_dblist));
 
 	dblist->magic = EXT2_ET_MAGIC_DBLIST;
 	dblist->fs = fs;
-	if (size)
+	എങ്കിൽ (size)
 		dblist->size = size;
-	else {
-		retval = ext2fs_get_num_dirs(fs, &num_dirs);
-		if (retval)
-			goto cleanup;
-		dblist->size = (num_dirs * 2) + 12;
+	അല്ലെങ്കിൽ {
+		retval = ext2fs_get_അക്കം_dirs(fs, &അക്കം_dirs);
+		എങ്കിൽ (retval)
+			പോകുക cleanup;
+		dblist->size = (അക്കം_dirs * 2) + 12;
 	}
-	len = (size_t) sizeof(struct ext2_db_entry2) * dblist->size;
-	dblist->count = count;
-	retval = ext2fs_get_array(dblist->size, sizeof(struct ext2_db_entry2),
+	len = (size_t) വലുപ്പം(ഘടന ext2_db_entry2) * dblist->size;
+	dblist->എണ്ണം = എണ്ണം;
+	retval = ext2fs_get_array(dblist->size, വലുപ്പം(ഘടന ext2_db_entry2),
 		&dblist->list);
-	if (retval)
-		goto cleanup;
+	എങ്കിൽ (retval)
+		പോകുക cleanup;
 
-	if (list)
+	എങ്കിൽ (list)
 		memcpy(dblist->list, list, len);
-	else
+	അല്ലെങ്കിൽ
 		memset(dblist->list, 0, len);
-	if (ret_dblist)
+	എങ്കിൽ (ret_dblist)
 		*ret_dblist = dblist;
-	else
+	അല്ലെങ്കിൽ
 		fs->dblist = dblist;
-	return 0;
+	തിരികെ 0;
 cleanup:
-	if (dblist)
+	എങ്കിൽ (dblist)
 		ext2fs_free_mem(&dblist);
-	return retval;
+	തിരികെ retval;
 }
 
 /*
@@ -90,16 +90,16 @@ errcode_t ext2fs_init_dblist(ext2_filsys fs, ext2_dblist *ret_dblist)
 	errcode_t	retval;
 
 	retval = make_dblist(fs, 0, 0, 0, &dblist);
-	if (retval)
-		return retval;
+	എങ്കിൽ (retval)
+		തിരികെ retval;
 
 	dblist->sorted = 1;
-	if (ret_dblist)
+	എങ്കിൽ (ret_dblist)
 		*ret_dblist = dblist;
-	else
+	അല്ലെങ്കിൽ
 		fs->dblist = dblist;
 
-	return 0;
+	തിരികെ 0;
 }
 
 /*
@@ -110,13 +110,13 @@ errcode_t ext2fs_copy_dblist(ext2_dblist src, ext2_dblist *dest)
 	ext2_dblist	dblist;
 	errcode_t	retval;
 
-	retval = make_dblist(src->fs, src->size, src->count, src->list,
+	retval = make_dblist(src->fs, src->size, src->എണ്ണം, src->list,
 			     &dblist);
-	if (retval)
-		return retval;
+	എങ്കിൽ (retval)
+		തിരികെ retval;
 	dblist->sorted = src->sorted;
 	*dest = dblist;
-	return 0;
+	തിരികെ 0;
 }
 
 /*
@@ -132,31 +132,31 @@ errcode_t ext2fs_copy_dblist(ext2_dblist src, ext2_dblist *dest)
 errcode_t ext2fs_add_dir_block2(ext2_dblist dblist, ext2_ino_t ino,
 				blk64_t blk, e2_blkcnt_t blockcnt)
 {
-	struct ext2_db_entry2 	*new_entry;
+	ഘടന ext2_db_entry2 	*new_entry;
 	errcode_t		retval;
 	unsigned long		old_size;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count >= dblist->size) {
-		old_size = dblist->size * sizeof(struct ext2_db_entry2);
+	എങ്കിൽ (dblist->എണ്ണം >= dblist->size) {
+		old_size = dblist->size * വലുപ്പം(ഘടന ext2_db_entry2);
 		dblist->size += dblist->size > 200 ? dblist->size / 2 : 100;
 		retval = ext2fs_resize_mem(old_size, (size_t) dblist->size *
-					   sizeof(struct ext2_db_entry2),
+					   വലുപ്പം(ഘടന ext2_db_entry2),
 					   &dblist->list);
-		if (retval) {
-			dblist->size = old_size / sizeof(struct ext2_db_entry2);
-			return retval;
+		എങ്കിൽ (retval) {
+			dblist->size = old_size / വലുപ്പം(ഘടന ext2_db_entry2);
+			തിരികെ retval;
 		}
 	}
-	new_entry = dblist->list + ( dblist->count++);
+	new_entry = dblist->list + ( dblist->എണ്ണം++);
 	new_entry->blk = blk;
 	new_entry->ino = ino;
 	new_entry->blockcnt = blockcnt;
 
 	dblist->sorted = 0;
 
-	return 0;
+	തിരികെ 0;
 }
 
 /*
@@ -169,25 +169,25 @@ errcode_t ext2fs_set_dir_block2(ext2_dblist dblist, ext2_ino_t ino,
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	for (i=0; i < dblist->count; i++) {
-		if ((dblist->list[i].ino != ino) ||
+	വേണ്ടി (i=0; i < dblist->എണ്ണം; i++) {
+		എങ്കിൽ ((dblist->list[i].ino != ino) ||
 		    (dblist->list[i].blockcnt != blockcnt))
-			continue;
+			തുടരുക;
 		dblist->list[i].blk = blk;
 		dblist->sorted = 0;
-		return 0;
+		തിരികെ 0;
 	}
-	return EXT2_ET_DB_NOT_FOUND;
+	തിരികെ EXT2_ET_DB_NOT_FOUND;
 }
 
-void ext2fs_dblist_sort2(ext2_dblist dblist,
-			 EXT2_QSORT_TYPE (*sortfunc)(const void *,
-						     const void *))
+ശൂന്യം ext2fs_dblist_sort2(ext2_dblist dblist,
+			 EXT2_QSORT_TYPE (*sortfunc)(സ്ഥിരം ശൂന്യം *,
+						     സ്ഥിരം ശൂന്യം *))
 {
-	if (!sortfunc)
+	എങ്കിൽ (!sortfunc)
 		sortfunc = dir_block_cmp2;
-	qsort(dblist->list, (size_t) dblist->count,
-	      sizeof(struct ext2_db_entry2), sortfunc);
+	qsort(dblist->list, (size_t) dblist->എണ്ണം,
+	      വലുപ്പം(ഘടന ext2_db_entry2), sortfunc);
 	dblist->sorted = 1;
 }
 
@@ -195,84 +195,84 @@ void ext2fs_dblist_sort2(ext2_dblist dblist,
  * This function iterates over the directory block list
  */
 errcode_t ext2fs_dblist_iterate3(ext2_dblist dblist,
-				 int (*func)(ext2_filsys fs,
-					     struct ext2_db_entry2 *db_info,
-					     void	*priv_data),
+				 പൂർണ്ണസംഖ്യ (*func)(ext2_filsys fs,
+					     ഘടന ext2_db_entry2 *db_info,
+					     ശൂന്യം	*priv_data),
 				 unsigned long long start,
-				 unsigned long long count,
-				 void *priv_data)
+				 unsigned long long എണ്ണം,
+				 ശൂന്യം *priv_data)
 {
 	unsigned long long	i, end;
-	int		ret;
+	പൂർണ്ണസംഖ്യ		ret;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	end = start + count;
-	if (!dblist->sorted)
+	end = start + എണ്ണം;
+	എങ്കിൽ (!dblist->sorted)
 		ext2fs_dblist_sort2(dblist, 0);
-	if (end > dblist->count)
-		end = dblist->count;
-	for (i = start; i < end; i++) {
+	എങ്കിൽ (end > dblist->എണ്ണം)
+		end = dblist->എണ്ണം;
+	വേണ്ടി (i = start; i < end; i++) {
 		ret = (*func)(dblist->fs, &dblist->list[i], priv_data);
-		if (ret & DBLIST_ABORT)
-			return 0;
+		എങ്കിൽ (ret & DBLIST_ABORT)
+			തിരികെ 0;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 errcode_t ext2fs_dblist_iterate2(ext2_dblist dblist,
-				 int (*func)(ext2_filsys fs,
-					     struct ext2_db_entry2 *db_info,
-					     void	*priv_data),
-				 void *priv_data)
+				 പൂർണ്ണസംഖ്യ (*func)(ext2_filsys fs,
+					     ഘടന ext2_db_entry2 *db_info,
+					     ശൂന്യം	*priv_data),
+				 ശൂന്യം *priv_data)
 {
-	return ext2fs_dblist_iterate3(dblist, func, 0, dblist->count,
+	തിരികെ ext2fs_dblist_iterate3(dblist, func, 0, dblist->എണ്ണം,
 				      priv_data);
 }
 
-static EXT2_QSORT_TYPE dir_block_cmp2(const void *a, const void *b)
+സ്ഥിതം EXT2_QSORT_TYPE dir_block_cmp2(സ്ഥിരം ശൂന്യം *a, സ്ഥിരം ശൂന്യം *b)
 {
-	const struct ext2_db_entry2 *db_a =
-		(const struct ext2_db_entry2 *) a;
-	const struct ext2_db_entry2 *db_b =
-		(const struct ext2_db_entry2 *) b;
+	സ്ഥിരം ഘടന ext2_db_entry2 *db_a =
+		(സ്ഥിരം ഘടന ext2_db_entry2 *) a;
+	സ്ഥിരം ഘടന ext2_db_entry2 *db_b =
+		(സ്ഥിരം ഘടന ext2_db_entry2 *) b;
 
-	if (db_a->blk != db_b->blk)
-		return (int) (db_a->blk - db_b->blk);
+	എങ്കിൽ (db_a->blk != db_b->blk)
+		തിരികെ (പൂർണ്ണസംഖ്യ) (db_a->blk - db_b->blk);
 
-	if (db_a->ino != db_b->ino)
-		return (int) (db_a->ino - db_b->ino);
+	എങ്കിൽ (db_a->ino != db_b->ino)
+		തിരികെ (പൂർണ്ണസംഖ്യ) (db_a->ino - db_b->ino);
 
-	return (db_a->blockcnt - db_b->blockcnt);
+	തിരികെ (db_a->blockcnt - db_b->blockcnt);
 }
 
 blk64_t ext2fs_dblist_count2(ext2_dblist dblist)
 {
-	return dblist->count;
+	തിരികെ dblist->എണ്ണം;
 }
 
 errcode_t ext2fs_dblist_get_last2(ext2_dblist dblist,
-				  struct ext2_db_entry2 **entry)
+				  ഘടന ext2_db_entry2 **entry)
 {
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count == 0)
-		return EXT2_ET_DBLIST_EMPTY;
+	എങ്കിൽ (dblist->എണ്ണം == 0)
+		തിരികെ EXT2_ET_DBLIST_EMPTY;
 
-	if (entry)
-		*entry = dblist->list + ( dblist->count-1);
-	return 0;
+	എങ്കിൽ (entry)
+		*entry = dblist->list + ( dblist->എണ്ണം-1);
+	തിരികെ 0;
 }
 
 errcode_t ext2fs_dblist_drop_last(ext2_dblist dblist)
 {
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count == 0)
-		return EXT2_ET_DBLIST_EMPTY;
+	എങ്കിൽ (dblist->എണ്ണം == 0)
+		തിരികെ EXT2_ET_DBLIST_EMPTY;
 
-	dblist->count--;
-	return 0;
+	dblist->എണ്ണം--;
+	തിരികെ 0;
 }
 
 /*
@@ -283,85 +283,85 @@ errcode_t ext2fs_dblist_drop_last(ext2_dblist dblist)
  * Add a directory block to the directory block list
  */
 errcode_t ext2fs_add_dir_block(ext2_dblist dblist, ext2_ino_t ino, blk_t blk,
-			       int blockcnt)
+			       പൂർണ്ണസംഖ്യ blockcnt)
 {
-	return ext2fs_add_dir_block2(dblist, ino, blk, blockcnt);
+	തിരികെ ext2fs_add_dir_block2(dblist, ino, blk, blockcnt);
 }
 
 /*
  * Change the directory block to the directory block list
  */
 errcode_t ext2fs_set_dir_block(ext2_dblist dblist, ext2_ino_t ino, blk_t blk,
-			       int blockcnt)
+			       പൂർണ്ണസംഖ്യ blockcnt)
 {
-	return ext2fs_set_dir_block2(dblist, ino, blk, blockcnt);
+	തിരികെ ext2fs_set_dir_block2(dblist, ino, blk, blockcnt);
 }
 
-void ext2fs_dblist_sort(ext2_dblist dblist,
-			EXT2_QSORT_TYPE (*sortfunc)(const void *,
-						    const void *))
+ശൂന്യം ext2fs_dblist_sort(ext2_dblist dblist,
+			EXT2_QSORT_TYPE (*sortfunc)(സ്ഥിരം ശൂന്യം *,
+						    സ്ഥിരം ശൂന്യം *))
 {
-	if (sortfunc) {
+	എങ്കിൽ (sortfunc) {
 		sortfunc32 = sortfunc;
 		sortfunc = dir_block_cmp;
-	} else
+	} അല്ലെങ്കിൽ
 		sortfunc = dir_block_cmp2;
-	qsort(dblist->list, (size_t) dblist->count,
-	      sizeof(struct ext2_db_entry2), sortfunc);
+	qsort(dblist->list, (size_t) dblist->എണ്ണം,
+	      വലുപ്പം(ഘടന ext2_db_entry2), sortfunc);
 	dblist->sorted = 1;
 }
 
 /*
  * This function iterates over the directory block list
  */
-struct iterate_passthrough {
-	int (*func)(ext2_filsys fs,
-		    struct ext2_db_entry *db_info,
-		    void	*priv_data);
-	void *priv_data;
+ഘടന iterate_passthrough {
+	പൂർണ്ണസംഖ്യ (*func)(ext2_filsys fs,
+		    ഘടന ext2_db_entry *db_info,
+		    ശൂന്യം	*priv_data);
+	ശൂന്യം *priv_data;
 };
 
-static int passthrough_func(ext2_filsys fs,
-			    struct ext2_db_entry2 *db_info,
-			    void	*priv_data)
+സ്ഥിതം പൂർണ്ണസംഖ്യ passthrough_func(ext2_filsys fs,
+			    ഘടന ext2_db_entry2 *db_info,
+			    ശൂന്യം	*priv_data)
 {
-	struct iterate_passthrough *p = priv_data;
-	struct ext2_db_entry db;
-	int ret;
+	ഘടന iterate_passthrough *p = priv_data;
+	ഘടന ext2_db_entry db;
+	പൂർണ്ണസംഖ്യ ret;
 
 	db.ino = db_info->ino;
 	db.blk = (blk_t) db_info->blk;
-	db.blockcnt = (int) db_info->blockcnt;
+	db.blockcnt = (പൂർണ്ണസംഖ്യ) db_info->blockcnt;
 	ret = (p->func)(fs, &db, p->priv_data);
 	db_info->ino = db.ino;
 	db_info->blk = db.blk;
 	db_info->blockcnt = db.blockcnt;
-	return ret;
+	തിരികെ ret;
 }
 
 errcode_t ext2fs_dblist_iterate(ext2_dblist dblist,
-				int (*func)(ext2_filsys fs,
-					    struct ext2_db_entry *db_info,
-					    void	*priv_data),
-				void *priv_data)
+				പൂർണ്ണസംഖ്യ (*func)(ext2_filsys fs,
+					    ഘടന ext2_db_entry *db_info,
+					    ശൂന്യം	*priv_data),
+				ശൂന്യം *priv_data)
 {
-	struct iterate_passthrough pass;
+	ഘടന iterate_passthrough pass;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 	pass.func = func;
 	pass.priv_data = priv_data;
 
-	return ext2fs_dblist_iterate2(dblist, passthrough_func, &pass);
+	തിരികെ ext2fs_dblist_iterate2(dblist, passthrough_func, &pass);
 }
 
-static EXT2_QSORT_TYPE dir_block_cmp(const void *a, const void *b)
+സ്ഥിതം EXT2_QSORT_TYPE dir_block_cmp(സ്ഥിരം ശൂന്യം *a, സ്ഥിരം ശൂന്യം *b)
 {
-	const struct ext2_db_entry2 *db_a =
-		(const struct ext2_db_entry2 *) a;
-	const struct ext2_db_entry2 *db_b =
-		(const struct ext2_db_entry2 *) b;
+	സ്ഥിരം ഘടന ext2_db_entry2 *db_a =
+		(സ്ഥിരം ഘടന ext2_db_entry2 *) a;
+	സ്ഥിരം ഘടന ext2_db_entry2 *db_b =
+		(സ്ഥിരം ഘടന ext2_db_entry2 *) b;
 
-	struct ext2_db_entry a32, b32;
+	ഘടന ext2_db_entry a32, b32;
 
 	a32.ino = db_a->ino;  a32.blk = db_a->blk;
 	a32.blockcnt = db_a->blockcnt;
@@ -369,35 +369,35 @@ static EXT2_QSORT_TYPE dir_block_cmp(const void *a, const void *b)
 	b32.ino = db_b->ino;  b32.blk = db_b->blk;
 	b32.blockcnt = db_b->blockcnt;
 
-	return sortfunc32(&a32, &b32);
+	തിരികെ sortfunc32(&a32, &b32);
 }
 
-int ext2fs_dblist_count(ext2_dblist dblist)
+പൂർണ്ണസംഖ്യ ext2fs_dblist_എണ്ണം(ext2_dblist dblist)
 {
-	return dblist->count;
+	തിരികെ dblist->എണ്ണം;
 }
 
 errcode_t ext2fs_dblist_get_last(ext2_dblist dblist,
-				 struct ext2_db_entry **entry)
+				 ഘടന ext2_db_entry **entry)
 {
-	static struct ext2_db_entry ret_entry;
-	struct ext2_db_entry2 *last;
+	സ്ഥിതം ഘടന ext2_db_entry ret_entry;
+	ഘടന ext2_db_entry2 *last;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count == 0)
-		return EXT2_ET_DBLIST_EMPTY;
+	എങ്കിൽ (dblist->എണ്ണം == 0)
+		തിരികെ EXT2_ET_DBLIST_EMPTY;
 
-	if (!entry)
-		return 0;
+	എങ്കിൽ (!entry)
+		തിരികെ 0;
 
-	last = dblist->list + dblist->count -1;
+	last = dblist->list + dblist->എണ്ണം -1;
 
 	ret_entry.ino = last->ino;
 	ret_entry.blk = last->blk;
 	ret_entry.blockcnt = last->blockcnt;
 	*entry = &ret_entry;
 
-	return 0;
+	തിരികെ 0;
 }
 

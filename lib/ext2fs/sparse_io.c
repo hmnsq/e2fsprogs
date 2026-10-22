@@ -1,516 +1,516 @@
-#include "config.h"
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdint.h>
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#അന്തര്ഭാവ "config.h"
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/stat.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ "ext2_fs.h"
+#അന്തര്ഭാവ "ext2fs.h"
 
-#ifndef O_BINARY
-#define O_BINARY 0
+#ifndef O_ദ്വിമാന
+#define O_ദ്വിമാന 0
 #endif
 
-#if !defined(ENABLE_LIBSPARSE)
-static errcode_t sparse_open(const char *name EXT2FS_ATTR((unused)),
-			     int flags EXT2FS_ATTR((unused)),
+#എങ്കിൽ !defined(ENABLE_LIBSPARSE)
+സ്ഥിതം errcode_t sparse_open(സ്ഥിരം അക്ഷരം *name EXT2FS_ATTR((unused)),
+			     പൂർണ്ണസംഖ്യ flags EXT2FS_ATTR((unused)),
 			     io_channel *channel EXT2FS_ATTR((unused)))
 {
-	return EXT2_ET_UNIMPLEMENTED;
+	തിരികെ EXT2_ET_UNIMPLEMENTED;
 }
-static errcode_t sparse_close(io_channel channel EXT2FS_ATTR((unused)))
+സ്ഥിതം errcode_t sparse_close(io_channel channel EXT2FS_ATTR((unused)))
 {
-	return EXT2_ET_UNIMPLEMENTED;
+	തിരികെ EXT2_ET_UNIMPLEMENTED;
 }
-static struct struct_io_manager struct_sparse_manager = {
+സ്ഥിതം ഘടന struct_io_manager struct_sparse_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse I/O Manager",
 	.open			= sparse_open,
 	.close			= sparse_close,
 };
-static struct struct_io_manager struct_sparsefd_manager = {
+സ്ഥിതം ഘടന struct_io_manager struct_sparsefd_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse fd I/O Manager",
 	.open			= sparse_open,
 	.close			= sparse_close,
 };
-#else
-#include <sparse/sparse.h>
+#അല്ലെങ്കിൽ
+#അന്തര്ഭാവ <sparse/sparse.h>
 
-struct sparse_map {
-	int			fd;
-	char			**blocks;
-	int			block_size;
-	uint64_t		blocks_count;
-	char			*file;
-	struct sparse_file	*sparse_file;
+ഘടന sparse_map {
+	പൂർണ്ണസംഖ്യ			fd;
+	അക്ഷരം			**blocks;
+	പൂർണ്ണസംഖ്യ			block_size;
+	uint64_t		blocks_എണ്ണം;
+	അക്ഷരം			*file;
+	ഘടന sparse_file	*sparse_file;
 	io_channel		channel;
 };
 
-struct sparse_io_params {
-	int			fd;
-	char			*file;
-	uint64_t		blocks_count;
-	unsigned int		block_size;
+ഘടന sparse_io_params {
+	പൂർണ്ണസംഖ്യ			fd;
+	അക്ഷരം			*file;
+	uint64_t		blocks_എണ്ണം;
+	unsigned പൂർണ്ണസംഖ്യ		block_size;
 };
 
-static errcode_t sparse_write_blk(io_channel channel, unsigned long block,
-				  int count, const void *buf);
+സ്ഥിതം errcode_t sparse_write_blk(io_channel channel, unsigned long block,
+				  പൂർണ്ണസംഖ്യ എണ്ണം, സ്ഥിരം ശൂന്യം *buf);
 
-static void free_sparse_blocks(struct sparse_map *sm)
+സ്ഥിതം ശൂന്യം free_sparse_blocks(ഘടന sparse_map *sm)
 {
 	uint64_t i;
 
-	for (i = 0; i < sm->blocks_count; ++i)
-		free(sm->blocks[i]);
-	free(sm->blocks);
-	sm->blocks = NULL;
+	വേണ്ടി (i = 0; i < sm->blocks_എണ്ണം; ++i)
+		സ്വതന്ത്രം(sm->blocks[i]);
+	സ്വതന്ത്രം(sm->blocks);
+	sm->blocks = ശൂന്യ;
 }
 
-static int sparse_import_segment(void *priv, const void *data, size_t len,
-				 unsigned int block, unsigned int nr_blocks)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sparse_import_segment(ശൂന്യം *priv, സ്ഥിരം ശൂന്യം *data, size_t len,
+				 unsigned പൂർണ്ണസംഖ്യ block, unsigned പൂർണ്ണസംഖ്യ nr_blocks)
 {
-	struct sparse_map *sm = priv;
+	ഘടന sparse_map *sm = priv;
 
 	/* Ignore chunk headers, only write the data */
-	if (!nr_blocks || len % sm->block_size)
-		return 0;
+	എങ്കിൽ (!nr_blocks || len % sm->block_size)
+		തിരികെ 0;
 
-	return sparse_write_blk(sm->channel, block, nr_blocks, data);
+	തിരികെ sparse_write_blk(sm->channel, block, nr_blocks, data);
 }
 
-static errcode_t io_manager_import_sparse(struct sparse_io_params *params,
-					  struct sparse_map *sm, io_channel io)
+സ്ഥിതം errcode_t io_manager_import_sparse(ഘടന sparse_io_params *params,
+					  ഘടന sparse_map *sm, io_channel io)
 {
-	int fd;
+	പൂർണ്ണസംഖ്യ fd;
 	errcode_t retval;
-	struct sparse_file *sparse_file;
+	ഘടന sparse_file *sparse_file;
 
-	if (params->fd < 0) {
+	എങ്കിൽ (params->fd < 0) {
 		fd = open(params->file, O_RDONLY);
-		if (fd < 0) {
+		എങ്കിൽ (fd < 0) {
 			retval = -1;
-			goto err_open;
+			പോകുക err_open;
 		}
-	} else
+	} അല്ലെങ്കിൽ
 		fd = params->fd;
 	sparse_file = sparse_file_import(fd, false, false);
-	if (!sparse_file) {
+	എങ്കിൽ (!sparse_file) {
 		retval = -1;
-		goto err_sparse;
+		പോകുക err_sparse;
 	}
 
 	sm->block_size = sparse_file_block_size(sparse_file);
-	sm->blocks_count = (sparse_file_len(sparse_file, 0, 0) - 1)
+	sm->blocks_എണ്ണം = (sparse_file_len(sparse_file, 0, 0) - 1)
 				/ sm->block_size + 1;
-	sm->blocks = calloc(sm->blocks_count, sizeof(char*));
-	if (!sm->blocks) {
+	sm->blocks = calloc(sm->blocks_എണ്ണം, വലുപ്പം(അക്ഷരം*));
+	എങ്കിൽ (!sm->blocks) {
 		retval = -1;
-		goto err_alloc;
+		പോകുക err_alloc;
 	}
 	io->block_size = sm->block_size;
 
 	retval = sparse_file_foreach_chunk(sparse_file, true, false,
 					   sparse_import_segment, sm);
 
-	if (retval)
+	എങ്കിൽ (retval)
 		free_sparse_blocks(sm);
 err_alloc:
 	sparse_file_destroy(sparse_file);
 err_sparse:
 	close(fd);
 err_open:
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t io_manager_configure(struct sparse_io_params *params,
-				      int flags, io_channel io)
+സ്ഥിതം errcode_t io_manager_configure(ഘടന sparse_io_params *params,
+				      പൂർണ്ണസംഖ്യ flags, io_channel io)
 {
 	errcode_t retval;
 	uint64_t img_size;
-	struct sparse_map *sm = calloc(1, sizeof(*sm));
-	if (!sm)
-		return EXT2_ET_NO_MEMORY;
+	ഘടന sparse_map *sm = calloc(1, വലുപ്പം(*sm));
+	എങ്കിൽ (!sm)
+		തിരികെ EXT2_ET_NO_MEMORY;
 
 	sm->file = params->file;
 	sm->channel = io;
 	io->private_data = sm;
 	retval = io_manager_import_sparse(params, sm, io);
-	if (retval) {
-		if (!params->block_size || !params->blocks_count) {
+	എങ്കിൽ (retval) {
+		എങ്കിൽ (!params->block_size || !params->blocks_എണ്ണം) {
 			retval = EINVAL;
-			goto err_params;
+			പോകുക err_params;
 		}
 		sm->block_size = params->block_size;
-		sm->blocks_count = params->blocks_count;
-		sm->blocks = calloc(params->blocks_count, sizeof(void*));
-		if (!sm->blocks) {
+		sm->blocks_എണ്ണം = params->blocks_എണ്ണം;
+		sm->blocks = calloc(params->blocks_എണ്ണം, വലുപ്പം(ശൂന്യം*));
+		എങ്കിൽ (!sm->blocks) {
 			retval = EXT2_ET_NO_MEMORY;
-			goto err_alloc;
+			പോകുക err_alloc;
 		}
 	}
 	io->block_size = sm->block_size;
-	img_size = (uint64_t)sm->block_size * sm->blocks_count;
+	img_size = (uint64_t)sm->block_size * sm->blocks_എണ്ണം;
 
-	if (flags & IO_FLAG_RW) {
+	എങ്കിൽ (flags & IO_FLAG_RW) {
 		sm->sparse_file = sparse_file_new(sm->block_size, img_size);
-		if (!sm->sparse_file) {
+		എങ്കിൽ (!sm->sparse_file) {
 			retval = EXT2_ET_NO_MEMORY;
-			goto err_alloc;
+			പോകുക err_alloc;
 		}
-		if (params->fd < 0) {
-			sm->fd = open(params->file, O_CREAT | O_RDWR | O_TRUNC | O_BINARY,
+		എങ്കിൽ (params->fd < 0) {
+			sm->fd = open(params->file, O_CREAT | O_RDWR | O_TRUNC | O_ദ്വിമാന,
 				      0644);
-			if (sm->fd < 0) {
+			എങ്കിൽ (sm->fd < 0) {
 				retval = errno;
-				goto err_open;
+				പോകുക err_open;
 			}
-		} else
+		} അല്ലെങ്കിൽ
 			sm->fd = params->fd;
-	} else {
+	} അല്ലെങ്കിൽ {
 		sm->fd = -1;
-		sm->sparse_file = NULL;
+		sm->sparse_file = ശൂന്യ;
 	}
-	return 0;
+	തിരികെ 0;
 
 err_open:
 	sparse_file_destroy(sm->sparse_file);
 err_alloc:
 	free_sparse_blocks(sm);
 err_params:
-	free(sm);
-	return retval;
+	സ്വതന്ത്രം(sm);
+	തിരികെ retval;
 }
 
-static errcode_t sparse_open_channel(struct sparse_io_params *sparse_params,
-				     int flags, io_channel *channel)
+സ്ഥിതം errcode_t sparse_open_channel(ഘടന sparse_io_params *sparse_params,
+				     പൂർണ്ണസംഖ്യ flags, io_channel *channel)
 {
 	errcode_t retval;
 	io_channel io;
 
-	io = calloc(1, sizeof(struct struct_io_channel));
+	io = calloc(1, വലുപ്പം(ഘടന struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
 	io->block_size = 0;
 	io->refcount = 1;
 
 	retval = io_manager_configure(sparse_params, flags, io);
-	if (retval) {
-		free(io);
-		return retval;
+	എങ്കിൽ (retval) {
+		സ്വതന്ത്രം(io);
+		തിരികെ retval;
 	}
 
 	*channel = io;
-	return 0;
+	തിരികെ 0;
 }
 
-static errcode_t read_sparse_argv(const char *name, bool is_fd,
-				  struct sparse_io_params *sparse_params)
+സ്ഥിതം errcode_t read_sparse_argv(സ്ഥിരം അക്ഷരം *name, bool is_fd,
+				  ഘടന sparse_io_params *sparse_params)
 {
-	int ret;
+	പൂർണ്ണസംഖ്യ ret;
 	sparse_params->fd = -1;
 	sparse_params->block_size = 0;
-	sparse_params->blocks_count = 0;
+	sparse_params->blocks_എണ്ണം = 0;
 
 	sparse_params->file = malloc(strlen(name) + 1);
-	if (!sparse_params->file) {
+	എങ്കിൽ (!sparse_params->file) {
 		fprintf(stderr, "failed to alloc %zu\n", strlen(name) + 1);
-		return EXT2_ET_NO_MEMORY;
+		തിരികെ EXT2_ET_NO_MEMORY;
 	}
 
-	if (is_fd) {
+	എങ്കിൽ (is_fd) {
 		ret = sscanf(name, "(%d):%llu:%u", &sparse_params->fd,
-			     (unsigned long long *)&sparse_params->blocks_count,
+			     (unsigned long long *)&sparse_params->blocks_എണ്ണം,
 			     &sparse_params->block_size);
-	} else {
+	} അല്ലെങ്കിൽ {
 		ret = sscanf(name, "(%[^)])%*[:]%llu%*[:]%u", sparse_params->file,
-			     (unsigned long long *)&sparse_params->blocks_count,
+			     (unsigned long long *)&sparse_params->blocks_എണ്ണം,
 			     &sparse_params->block_size);
 	}
 
-	if (ret < 1) {
-		free(sparse_params->file);
-		return EINVAL;
+	എങ്കിൽ (ret < 1) {
+		സ്വതന്ത്രം(sparse_params->file);
+		തിരികെ EINVAL;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-static errcode_t sparse_open(const char *name, int flags, io_channel *channel)
+സ്ഥിതം errcode_t sparse_open(സ്ഥിരം അക്ഷരം *name, പൂർണ്ണസംഖ്യ flags, io_channel *channel)
 {
 	errcode_t retval;
-	struct sparse_io_params sparse_params;
+	ഘടന sparse_io_params sparse_params;
 
 	retval = read_sparse_argv(name, false, &sparse_params);
-	if (retval)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	എങ്കിൽ (retval)
+		തിരികെ EXT2_ET_BAD_DEVICE_NAME;
 
 	retval = sparse_open_channel(&sparse_params, flags, channel);
-	if (retval)
-		return retval;
+	എങ്കിൽ (retval)
+		തിരികെ retval;
 	(*channel)->manager = sparse_io_manager;
 
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t sparsefd_open(const char *name, int flags, io_channel *channel)
+സ്ഥിതം errcode_t sparsefd_open(സ്ഥിരം അക്ഷരം *name, പൂർണ്ണസംഖ്യ flags, io_channel *channel)
 {
 	errcode_t retval;
-	struct sparse_io_params sparse_params;
+	ഘടന sparse_io_params sparse_params;
 
 	retval = read_sparse_argv(name, true, &sparse_params);
-	if (retval)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	എങ്കിൽ (retval)
+		തിരികെ EXT2_ET_BAD_DEVICE_NAME;
 
 	retval = sparse_open_channel(&sparse_params, flags, channel);
-	if (retval)
-		return retval;
+	എങ്കിൽ (retval)
+		തിരികെ retval;
 	(*channel)->manager = sparsefd_io_manager;
 
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t sparse_merge_blocks(struct sparse_map *sm, uint64_t start,
-					uint64_t num)
+സ്ഥിതം errcode_t sparse_merge_blocks(ഘടന sparse_map *sm, uint64_t start,
+					uint64_t അക്കം)
 {
-	char *buf;
+	അക്ഷരം *buf;
 	uint64_t i;
-	unsigned int block_size = sm->block_size;
+	unsigned പൂർണ്ണസംഖ്യ block_size = sm->block_size;
 	errcode_t retval = 0;
 
-	buf = calloc(num, block_size);
-	if (!buf) {
+	buf = calloc(അക്കം, block_size);
+	എങ്കിൽ (!buf) {
 		fprintf(stderr, "failed to alloc %llu\n",
-			(unsigned long long)num * block_size);
-		return EXT2_ET_NO_MEMORY;
+			(unsigned long long)അക്കം * block_size);
+		തിരികെ EXT2_ET_NO_MEMORY;
 	}
 
-	for (i = 0; i < num; i++) {
+	വേണ്ടി (i = 0; i < അക്കം; i++) {
 		memcpy(buf + i * block_size, sm->blocks[start + i] , block_size);
-		free(sm->blocks[start + i]);
-		sm->blocks[start + i] = NULL;
+		സ്വതന്ത്രം(sm->blocks[start + i]);
+		sm->blocks[start + i] = ശൂന്യ;
 	}
 
 	/* free_sparse_blocks will release this buf. */
 	sm->blocks[start] = buf;
 
 	retval = sparse_file_add_data(sm->sparse_file, sm->blocks[start],
-					block_size * num, start);
+					block_size * അക്കം, start);
 
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t sparse_close_channel(io_channel channel)
+സ്ഥിതം errcode_t sparse_close_channel(io_channel channel)
 {
 	uint64_t i;
 	errcode_t retval = 0;
-	struct sparse_map *sm = channel->private_data;
+	ഘടന sparse_map *sm = channel->private_data;
 
-	if (sm->sparse_file) {
-		int64_t chunk_start = (sm->blocks[0] == NULL) ? -1 : 0;
-		for (i = 0; i < sm->blocks_count; ++i) {
-			if (!sm->blocks[i] && chunk_start != -1) {
+	എങ്കിൽ (sm->sparse_file) {
+		int64_t chunk_start = (sm->blocks[0] == ശൂന്യ) ? -1 : 0;
+		വേണ്ടി (i = 0; i < sm->blocks_എണ്ണം; ++i) {
+			എങ്കിൽ (!sm->blocks[i] && chunk_start != -1) {
 				retval = sparse_merge_blocks(sm, chunk_start, i - chunk_start);
 				chunk_start = -1;
-			} else if (sm->blocks[i] && chunk_start == -1) {
+			} അല്ലെങ്കിൽ എങ്കിൽ (sm->blocks[i] && chunk_start == -1) {
 				chunk_start = i;
 			}
-			if (retval)
-				goto ret;
+			എങ്കിൽ (retval)
+				പോകുക ret;
 		}
-		if (chunk_start != -1) {
+		എങ്കിൽ (chunk_start != -1) {
 			retval = sparse_merge_blocks(sm, chunk_start,
-							sm->blocks_count - chunk_start);
-			if (retval)
-				goto ret;
+							sm->blocks_എണ്ണം - chunk_start);
+			എങ്കിൽ (retval)
+				പോകുക ret;
 		}
 		retval = sparse_file_write(sm->sparse_file, sm->fd,
 					   /*gzip*/0, /*sparse*/1, /*crc*/0);
 	}
 
 ret:
-	if (sm->sparse_file)
+	എങ്കിൽ (sm->sparse_file)
 		sparse_file_destroy(sm->sparse_file);
 	free_sparse_blocks(sm);
-	free(sm->file);
-	free(sm);
-	free(channel);
-	return retval;
+	സ്വതന്ത്രം(sm->file);
+	സ്വതന്ത്രം(sm);
+	സ്വതന്ത്രം(channel);
+	തിരികെ retval;
 }
 
-static errcode_t sparse_close(io_channel channel)
+സ്ഥിതം errcode_t sparse_close(io_channel channel)
 {
 	errcode_t retval;
-	struct sparse_map *sm = channel->private_data;
-	int fd = sm->fd;
+	ഘടന sparse_map *sm = channel->private_data;
+	പൂർണ്ണസംഖ്യ fd = sm->fd;
 
 	retval = sparse_close_channel(channel);
-	if (fd >= 0)
+	എങ്കിൽ (fd >= 0)
 		close(fd);
 
-	return retval;
+	തിരികെ retval;
 }
 
-static errcode_t sparse_set_blksize(io_channel channel, int blksize)
+സ്ഥിതം errcode_t sparse_set_blksize(io_channel channel, പൂർണ്ണസംഖ്യ blksize)
 {
 	channel->block_size = blksize;
-	return 0;
+	തിരികെ 0;
 }
 
-static blk64_t block_to_sparse_block(blk64_t block, blk64_t *offset,
-			       io_channel channel, struct sparse_map *sm)
+സ്ഥിതം blk64_t block_to_sparse_block(blk64_t block, blk64_t *offset,
+			       io_channel channel, ഘടന sparse_map *sm)
 {
-	int ratio;
+	പൂർണ്ണസംഖ്യ ratio;
 	blk64_t ret = block;
 
 	ratio = sm->block_size / channel->block_size;
 	ret /= ratio;
 	*offset = (block % ratio) * channel->block_size;
 
-	return ret;
+	തിരികെ ret;
 }
 
-static errcode_t check_block_size(io_channel channel, struct sparse_map *sm)
+സ്ഥിതം errcode_t check_block_size(io_channel channel, ഘടന sparse_map *sm)
 {
-	if (sm->block_size >= channel->block_size)
-		return 0;
-	return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	എങ്കിൽ (sm->block_size >= channel->block_size)
+		തിരികെ 0;
+	തിരികെ EXT2_ET_UNEXPECTED_BLOCK_SIZE;
 }
 
-static errcode_t sparse_read_blk64(io_channel channel, blk64_t block,
-				   int count, void *buf)
+സ്ഥിതം errcode_t sparse_read_blk64(io_channel channel, blk64_t block,
+				   പൂർണ്ണസംഖ്യ എണ്ണം, ശൂന്യം *buf)
 {
-	int i;
-	char *out = buf;
+	പൂർണ്ണസംഖ്യ i;
+	അക്ഷരം *out = buf;
 	blk64_t offset = 0, cur_block;
-	struct sparse_map *sm = channel->private_data;
+	ഘടന sparse_map *sm = channel->private_data;
 
-	if (check_block_size(channel, sm))
-		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	എങ്കിൽ (check_block_size(channel, sm))
+		തിരികെ EXT2_ET_UNEXPECTED_BLOCK_SIZE;
 
-	if (count < 0) { //partial read
-		count = -count;
+	എങ്കിൽ (എണ്ണം < 0) { //partial read
+		എണ്ണം = -എണ്ണം;
 		cur_block = block_to_sparse_block(block, &offset, channel, sm);
-		if (sm->blocks[cur_block])
-			memcpy(out, (sm->blocks[cur_block]) + offset, count);
-		else
-			memset(out, 0, count);
-	} else {
-		for (i = 0; i < count; ++i) {
+		എങ്കിൽ (sm->blocks[cur_block])
+			memcpy(out, (sm->blocks[cur_block]) + offset, എണ്ണം);
+		അല്ലെങ്കിൽ
+			memset(out, 0, എണ്ണം);
+	} അല്ലെങ്കിൽ {
+		വേണ്ടി (i = 0; i < എണ്ണം; ++i) {
 			cur_block = block_to_sparse_block(block + i, &offset,
 						    channel, sm);
-			if (sm->blocks[cur_block])
+			എങ്കിൽ (sm->blocks[cur_block])
 				memcpy(out + (i * channel->block_size),
 				       sm->blocks[cur_block] + offset,
 				       channel->block_size);
-			else if (sm->blocks)
+			അല്ലെങ്കിൽ എങ്കിൽ (sm->blocks)
 				memset(out + (i * channel->block_size), 0,
 				       channel->block_size);
 		}
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-static errcode_t sparse_read_blk(io_channel channel, unsigned long block,
-				 int count, void *buf)
+സ്ഥിതം errcode_t sparse_read_blk(io_channel channel, unsigned long block,
+				 പൂർണ്ണസംഖ്യ എണ്ണം, ശൂന്യം *buf)
 {
-	return sparse_read_blk64(channel, block, count, buf);
+	തിരികെ sparse_read_blk64(channel, block, എണ്ണം, buf);
 }
 
-static errcode_t sparse_write_blk64(io_channel channel, blk64_t block,
-				    int count, const void *buf)
+സ്ഥിതം errcode_t sparse_write_blk64(io_channel channel, blk64_t block,
+				    പൂർണ്ണസംഖ്യ എണ്ണം, സ്ഥിരം ശൂന്യം *buf)
 {
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 	blk64_t offset = 0, cur_block;
-	const char *in = buf;
-	struct sparse_map *sm = channel->private_data;
+	സ്ഥിരം അക്ഷരം *in = buf;
+	ഘടന sparse_map *sm = channel->private_data;
 
-	if (check_block_size(channel, sm))
-		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	എങ്കിൽ (check_block_size(channel, sm))
+		തിരികെ EXT2_ET_UNEXPECTED_BLOCK_SIZE;
 
-	if (count < 0) { //partial write
-		count = -count;
+	എങ്കിൽ (എണ്ണം < 0) { //partial write
+		എണ്ണം = -എണ്ണം;
 		cur_block = block_to_sparse_block(block, &offset, channel,
 						  sm);
-		if (!sm->blocks[cur_block]) {
+		എങ്കിൽ (!sm->blocks[cur_block]) {
 			sm->blocks[cur_block] = calloc(1, sm->block_size);
-			if (!sm->blocks[cur_block])
-				return EXT2_ET_NO_MEMORY;
+			എങ്കിൽ (!sm->blocks[cur_block])
+				തിരികെ EXT2_ET_NO_MEMORY;
 		}
-		memcpy(sm->blocks[cur_block] + offset, in, count);
-	} else {
-		for (i = 0; i < count; ++i) {
-			if (block + i >= sm->blocks_count)
-				return 0;
+		memcpy(sm->blocks[cur_block] + offset, in, എണ്ണം);
+	} അല്ലെങ്കിൽ {
+		വേണ്ടി (i = 0; i < എണ്ണം; ++i) {
+			എങ്കിൽ (block + i >= sm->blocks_എണ്ണം)
+				തിരികെ 0;
 			cur_block = block_to_sparse_block(block + i, &offset,
 						    channel, sm);
-			if (!sm->blocks[cur_block]) {
+			എങ്കിൽ (!sm->blocks[cur_block]) {
 				sm->blocks[cur_block] =
 					calloc(1, sm->block_size);
-				if (!sm->blocks[cur_block])
-					return EXT2_ET_NO_MEMORY;
+				എങ്കിൽ (!sm->blocks[cur_block])
+					തിരികെ EXT2_ET_NO_MEMORY;
 			}
 			memcpy(sm->blocks[cur_block] + offset,
 			       in + (i * channel->block_size),
 			       channel->block_size);
 		}
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-static errcode_t sparse_write_blk(io_channel channel, unsigned long block,
-				  int count, const void *buf)
+സ്ഥിതം errcode_t sparse_write_blk(io_channel channel, unsigned long block,
+				  പൂർണ്ണസംഖ്യ എണ്ണം, സ്ഥിരം ശൂന്യം *buf)
 {
-	return sparse_write_blk64(channel, block, count, buf);
+	തിരികെ sparse_write_blk64(channel, block, എണ്ണം, buf);
 }
 
-static errcode_t sparse_discard(io_channel channel __attribute__((unused)),
-				blk64_t blk, unsigned long long count)
+സ്ഥിതം errcode_t sparse_discard(io_channel channel __attribute__((unused)),
+				blk64_t blk, unsigned long long എണ്ണം)
 {
 	blk64_t cur_block, offset;
-	struct sparse_map *sm = channel->private_data;
+	ഘടന sparse_map *sm = channel->private_data;
 
-	if (check_block_size(channel, sm))
-		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
+	എങ്കിൽ (check_block_size(channel, sm))
+		തിരികെ EXT2_ET_UNEXPECTED_BLOCK_SIZE;
 
-	for (unsigned long long i = 0; i < count; ++i) {
-		if (blk + i >= sm->blocks_count)
-			return 0;
+	വേണ്ടി (unsigned long long i = 0; i < എണ്ണം; ++i) {
+		എങ്കിൽ (blk + i >= sm->blocks_എണ്ണം)
+			തിരികെ 0;
 		cur_block = block_to_sparse_block(blk + i, &offset, channel,
 						  sm);
-		if (!sm->blocks[cur_block])
-			continue;
-		free(sm->blocks[cur_block]);
-		sm->blocks[cur_block] = NULL;
+		എങ്കിൽ (!sm->blocks[cur_block])
+			തുടരുക;
+		സ്വതന്ത്രം(sm->blocks[cur_block]);
+		sm->blocks[cur_block] = ശൂന്യ;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-static errcode_t sparse_zeroout(io_channel channel, blk64_t blk,
-				unsigned long long count)
+സ്ഥിതം errcode_t sparse_zeroout(io_channel channel, blk64_t blk,
+				unsigned long long എണ്ണം)
 {
-	return sparse_discard(channel, blk, count);
+	തിരികെ sparse_discard(channel, blk, എണ്ണം);
 }
 
-static errcode_t sparse_flush(io_channel channel __attribute__((unused)))
+സ്ഥിതം errcode_t sparse_flush(io_channel channel __attribute__((unused)))
 {
-	return 0;
+	തിരികെ 0;
 }
 
-static errcode_t sparse_set_option(io_channel channel __attribute__((unused)),
-                                   const char *option __attribute__((unused)),
-                                   const char *arg __attribute__((unused)))
+സ്ഥിതം errcode_t sparse_set_option(io_channel channel __attribute__((unused)),
+                                   സ്ഥിരം അക്ഷരം *option __attribute__((unused)),
+                                   സ്ഥിരം അക്ഷരം *arg __attribute__((unused)))
 {
-	return 0;
+	തിരികെ 0;
 }
 
-static errcode_t sparse_cache_readahead(
+സ്ഥിതം errcode_t sparse_cache_readahead(
 			io_channel channel __attribute__((unused)),
 			blk64_t blk __attribute__((unused)),
-			unsigned long long count __attribute__((unused)))
+			unsigned long long എണ്ണം __attribute__((unused)))
 {
-	return 0;
+	തിരികെ 0;
 }
 
-static struct struct_io_manager struct_sparse_manager = {
+സ്ഥിതം ഘടന struct_io_manager struct_sparse_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse I/O Manager",
 	.open			= sparse_open,
@@ -519,9 +519,9 @@ static struct struct_io_manager struct_sparse_manager = {
 	.read_blk		= sparse_read_blk,
 	.write_blk		= sparse_write_blk,
 	.flush			= sparse_flush,
-	.write_byte		= NULL,
+	.write_byte		= ശൂന്യ,
 	.set_option		= sparse_set_option,
-	.get_stats		= NULL,
+	.get_stats		= ശൂന്യ,
 	.read_blk64		= sparse_read_blk64,
 	.write_blk64		= sparse_write_blk64,
 	.discard		= sparse_discard,
@@ -529,7 +529,7 @@ static struct struct_io_manager struct_sparse_manager = {
 	.zeroout		= sparse_zeroout,
 };
 
-static struct struct_io_manager struct_sparsefd_manager = {
+സ്ഥിതം ഘടന struct_io_manager struct_sparsefd_manager = {
 	.magic			= EXT2_ET_MAGIC_IO_MANAGER,
 	.name			= "Android sparse fd I/O Manager",
 	.open			= sparsefd_open,
@@ -538,9 +538,9 @@ static struct struct_io_manager struct_sparsefd_manager = {
 	.read_blk		= sparse_read_blk,
 	.write_blk		= sparse_write_blk,
 	.flush			= sparse_flush,
-	.write_byte		= NULL,
+	.write_byte		= ശൂന്യ,
 	.set_option		= sparse_set_option,
-	.get_stats		= NULL,
+	.get_stats		= ശൂന്യ,
 	.read_blk64		= sparse_read_blk64,
 	.write_blk64		= sparse_write_blk64,
 	.discard		= sparse_discard,
