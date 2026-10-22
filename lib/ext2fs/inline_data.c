@@ -9,458 +9,458 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <time.h>
-#include <limits.h> /* for PATH_MAX */
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <time.h>
+#ضمن <limits.h> /* for PATH_MAX */
 
-#include "ext2_fs.h"
-#include "ext2_ext_attr.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2_ext_attr.h"
 
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2fs.h"
+#ضمن "ext2fsP.h"
 
-struct ext2_inline_data {
+بنية ext2_inline_معلومات {
 	ext2_filsys fs;
 	ext2_ino_t ino;
-	size_t ea_size;	/* the size of inline data in ea area */
-	void *ea_data;
+	size_t ea_اندازه;	/* the size of inline data in ea area */
+	فراغ *ea_معلومات;
 };
 
-static errcode_t ext2fs_inline_data_ea_set(struct ext2_inline_data *data)
+ساكن errcode_t ext2fs_inline_معلومات_ea_سېټ(بنية ext2_inline_معلومات *معلومات)
 {
-	struct ext2_xattr_handle *handle;
+	بنية ext2_xattr_handle *handle;
 	errcode_t retval;
 
-	retval = ext2fs_xattrs_open(data->fs, data->ino, &handle);
-	if (retval)
-		return retval;
+	retval = ext2fs_xattrs_open(معلومات->fs, معلومات->ino, &handle);
+	إذا (retval)
+		أرجع retval;
 
 	retval = ext2fs_xattrs_read(handle);
-	if (retval)
-		goto err;
+	إذا (retval)
+		اذهب err;
 
-	retval = ext2fs_xattr_set(handle, "system.data",
-				  data->ea_data, data->ea_size);
+	retval = ext2fs_xattr_سېټ(handle, "system.data",
+				  معلومات->ea_معلومات, معلومات->ea_اندازه);
 err:
-	(void) ext2fs_xattrs_close(&handle);
-	return retval;
+	(فراغ) ext2fs_xattrs_close(&handle);
+	أرجع retval;
 }
 
-static errcode_t ext2fs_inline_data_ea_get(struct ext2_inline_data *data)
+ساكن errcode_t ext2fs_inline_معلومات_ea_get(بنية ext2_inline_معلومات *معلومات)
 {
-	struct ext2_xattr_handle *handle;
+	بنية ext2_xattr_handle *handle;
 	errcode_t retval;
 
-	data->ea_size = 0;
-	data->ea_data = 0;
+	معلومات->ea_اندازه = 0;
+	معلومات->ea_معلومات = 0;
 
-	retval = ext2fs_xattrs_open(data->fs, data->ino, &handle);
-	if (retval)
-		return retval;
+	retval = ext2fs_xattrs_open(معلومات->fs, معلومات->ino, &handle);
+	إذا (retval)
+		أرجع retval;
 
 	retval = ext2fs_xattrs_read(handle);
-	if (retval)
-		goto err;
+	إذا (retval)
+		اذهب err;
 
 	retval = ext2fs_xattr_get(handle, "system.data",
-				  (void **)&data->ea_data, &data->ea_size);
-	if (retval == EXT2_ET_EA_KEY_NOT_FOUND) {
-		data->ea_size = 0;
-		data->ea_data = NULL;
+				  (فراغ **)&معلومات->ea_معلومات, &معلومات->ea_اندازه);
+	إذا (retval == EXT2_ET_EA_کلی_NOT_وموندل) {
+		معلومات->ea_اندازه = 0;
+		معلومات->ea_معلومات = عدم;
 		retval = 0;
-	} else if (retval)
-		goto err;
+	} وإلا إذا (retval)
+		اذهب err;
 
 err:
-	(void) ext2fs_xattrs_close(&handle);
-	return retval;
+	(فراغ) ext2fs_xattrs_close(&handle);
+	أرجع retval;
 }
 
-errcode_t ext2fs_inline_data_init(ext2_filsys fs, ext2_ino_t ino)
+errcode_t ext2fs_inline_معلومات_init(ext2_filsys fs, ext2_ino_t ino)
 {
-	struct ext2_inline_data data;
-	char empty[1] = { '\0' };
+	بنية ext2_inline_معلومات معلومات;
+	حرف تشه[1] = { '\0' };
 
-	data.fs = fs;
-	data.ino = ino;
-	data.ea_size = 0;
-	data.ea_data = empty;
-	return ext2fs_inline_data_ea_set(&data);
+	معلومات.fs = fs;
+	معلومات.ino = ino;
+	معلومات.ea_اندازه = 0;
+	معلومات.ea_معلومات = تشه;
+	أرجع ext2fs_inline_معلومات_ea_سېټ(&معلومات);
 }
 
-errcode_t ext2fs_inline_data_size(ext2_filsys fs, ext2_ino_t ino, size_t *size)
+errcode_t ext2fs_inline_معلومات_اندازه(ext2_filsys fs, ext2_ino_t ino, size_t *اندازه)
 {
-	struct ext2_inode inode;
-	struct ext2_inline_data data;
+	بنية ext2_inode inode;
+	بنية ext2_inline_معلومات معلومات;
 	errcode_t retval;
 
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-	if (!(inode.i_flags & EXT4_INLINE_DATA_FL))
-		return EXT2_ET_NO_INLINE_DATA;
+	إذا (!(inode.i_flags & EXT4_INLINE_معلومات_FL))
+		أرجع EXT2_ET_NO_INLINE_معلومات;
 
-	data.fs = fs;
-	data.ino = ino;
-	retval = ext2fs_inline_data_ea_get(&data);
-	if (retval)
-		return retval;
+	معلومات.fs = fs;
+	معلومات.ino = ino;
+	retval = ext2fs_inline_معلومات_ea_get(&معلومات);
+	إذا (retval)
+		أرجع retval;
 
-	*size = EXT4_MIN_INLINE_DATA_SIZE + data.ea_size;
-	return ext2fs_free_mem(&data.ea_data);
+	*اندازه = EXT4_MIN_INLINE_معلومات_اندازه + معلومات.ea_اندازه;
+	أرجع ext2fs_free_mem(&معلومات.ea_معلومات);
 }
 
-int ext2fs_inline_data_dir_iterate(ext2_filsys fs, ext2_ino_t ino,
-				   void *priv_data)
+صحيح ext2fs_inline_معلومات_dir_iterate(ext2_filsys fs, ext2_ino_t ino,
+				   فراغ *priv_معلومات)
 {
-	struct dir_context *ctx;
-	struct ext2_inode inode;
-	struct ext2_dir_entry dirent;
-	struct ext2_inline_data data;
-	int ret = BLOCK_ABORT;
+	بنية dir_context *ctx;
+	بنية ext2_inode inode;
+	بنية ext2_dir_ثبت dirent;
+	بنية ext2_inline_معلومات معلومات;
+	صحيح ret = بلاک_ABORT;
 	e2_blkcnt_t blockcnt = 0;
-	char *old_buf;
-	unsigned int old_buflen;
-	int old_flags;
+	حرف *old_buf;
+	بینښه صحيح old_buflen;
+	صحيح old_flags;
 
-	ctx = (struct dir_context *)priv_data;
+	ctx = (بنية dir_context *)priv_معلومات;
 	old_buf = ctx->buf;
 	old_buflen = ctx->buflen;
 	old_flags = ctx->flags;
-	ctx->flags |= DIRENT_FLAG_INCLUDE_INLINE_DATA;
+	ctx->flags |= DIRENT_FLAG_INCLUDE_INLINE_معلومات;
 
 	ctx->errcode = ext2fs_read_inode(fs, ino, &inode);
-	if (ctx->errcode)
-		goto out;
+	إذا (ctx->errcode)
+		اذهب بهر;
 
-	if (!(inode.i_flags & EXT4_INLINE_DATA_FL)) {
-		ctx->errcode = EXT2_ET_NO_INLINE_DATA;
-		goto out;
+	إذا (!(inode.i_flags & EXT4_INLINE_معلومات_FL)) {
+		ctx->errcode = EXT2_ET_NO_INLINE_معلومات;
+		اذهب بهر;
 	}
 
-	if (!LINUX_S_ISDIR(inode.i_mode)) {
+	إذا (!LINUX_S_ISDIR(inode.i_ډېرپېښ)) {
 		ctx->errcode = EXT2_ET_NO_DIRECTORY;
-		goto out;
+		اذهب بهر;
 	}
 	ret = 0;
 
 	/* we first check '.' and '..' dir */
 	dirent.inode = ino;
 	dirent.name_len = 1;
-	ext2fs_set_rec_len(fs, EXT2_DIR_REC_LEN(2), &dirent);
+	ext2fs_سېټ_rec_len(fs, EXT2_DIR_REC_LEN(2), &dirent);
 	dirent.name[0] = '.';
 	dirent.name[1] = '\0';
-	ctx->buf = (char *)&dirent;
+	ctx->buf = (حرف *)&dirent;
 	ext2fs_get_rec_len(fs, &dirent, &ctx->buflen);
-	ret |= ext2fs_process_dir_block(fs, 0, blockcnt++, 0, 0, priv_data);
-	if (ret & BLOCK_ABORT)
-		goto out;
+	ret |= ext2fs_process_dir_بلاک(fs, 0, blockcnt++, 0, 0, priv_معلومات);
+	إذا (ret & بلاک_ABORT)
+		اذهب بهر;
 
-	dirent.inode = ext2fs_le32_to_cpu(inode.i_block[0]);
+	dirent.inode = ext2fs_le32_منزل_cpu(inode.i_بلاک[0]);
 	dirent.name_len = 2;
-	ext2fs_set_rec_len(fs, EXT2_DIR_REC_LEN(3), &dirent);
+	ext2fs_سېټ_rec_len(fs, EXT2_DIR_REC_LEN(3), &dirent);
 	dirent.name[0] = '.';
 	dirent.name[1] = '.';
 	dirent.name[2] = '\0';
-	ctx->buf = (char *)&dirent;
+	ctx->buf = (حرف *)&dirent;
 	ext2fs_get_rec_len(fs, &dirent, &ctx->buflen);
-	ret |= ext2fs_process_dir_block(fs, 0, blockcnt++, 0, 0, priv_data);
-	if (ret & BLOCK_INLINE_DATA_CHANGED) {
+	ret |= ext2fs_process_dir_بلاک(fs, 0, blockcnt++, 0, 0, priv_معلومات);
+	إذا (ret & بلاک_INLINE_معلومات_بدل_شوی) {
 		errcode_t err;
 
-		inode.i_block[0] = ext2fs_cpu_to_le32(dirent.inode);
+		inode.i_بلاک[0] = ext2fs_cpu_منزل_le32(dirent.inode);
 		err = ext2fs_write_inode(fs, ino, &inode);
-		if (err)
-			goto out;
-		ret &= ~BLOCK_INLINE_DATA_CHANGED;
+		إذا (err)
+			اذهب بهر;
+		ret &= ~بلاک_INLINE_معلومات_بدل_شوی;
 	}
-	if (ret & BLOCK_ABORT)
-		goto out;
+	إذا (ret & بلاک_ABORT)
+		اذهب بهر;
 
-	ctx->buf = (char *)inode.i_block + EXT4_INLINE_DATA_DOTDOT_SIZE;
-	ctx->buflen = EXT4_MIN_INLINE_DATA_SIZE - EXT4_INLINE_DATA_DOTDOT_SIZE;
-#ifdef WORDS_BIGENDIAN
+	ctx->buf = (حرف *)inode.i_بلاک + EXT4_INLINE_معلومات_DOTDOT_اندازه;
+	ctx->buflen = EXT4_MIN_INLINE_معلومات_اندازه - EXT4_INLINE_معلومات_DOTDOT_اندازه;
+#که_تعریف_شوی ټکي_BIGENDIAN
 	ctx->errcode = ext2fs_dirent_swab_in2(fs, ctx->buf, ctx->buflen, 0);
-	if (ctx->errcode) {
-		ret |= BLOCK_ABORT;
-		goto out;
+	إذا (ctx->errcode) {
+		ret |= بلاک_ABORT;
+		اذهب بهر;
 	}
-#endif
-	ret |= ext2fs_process_dir_block(fs, 0, blockcnt++, 0, 0, priv_data);
-	if (ret & BLOCK_INLINE_DATA_CHANGED) {
-#ifdef WORDS_BIGENDIAN
+#د_که_پای
+	ret |= ext2fs_process_dir_بلاک(fs, 0, blockcnt++, 0, 0, priv_معلومات);
+	إذا (ret & بلاک_INLINE_معلومات_بدل_شوی) {
+#که_تعریف_شوی ټکي_BIGENDIAN
 		ctx->errcode = ext2fs_dirent_swab_out2(fs, ctx->buf,
 						       ctx->buflen, 0);
-		if (ctx->errcode) {
-			ret |= BLOCK_ABORT;
-			goto out;
+		إذا (ctx->errcode) {
+			ret |= بلاک_ABORT;
+			اذهب بهر;
 		}
-#endif
+#د_که_پای
 		ctx->errcode = ext2fs_write_inode(fs, ino, &inode);
-		if (ctx->errcode)
-			ret |= BLOCK_ABORT;
-		ret &= ~BLOCK_INLINE_DATA_CHANGED;
+		إذا (ctx->errcode)
+			ret |= بلاک_ABORT;
+		ret &= ~بلاک_INLINE_معلومات_بدل_شوی;
 	}
-	if (ret & BLOCK_ABORT)
-		goto out;
+	إذا (ret & بلاک_ABORT)
+		اذهب بهر;
 
-	data.fs = fs;
-	data.ino = ino;
-	ctx->errcode = ext2fs_inline_data_ea_get(&data);
-	if (ctx->errcode) {
-		ret |= BLOCK_ABORT;
-		goto out;
+	معلومات.fs = fs;
+	معلومات.ino = ino;
+	ctx->errcode = ext2fs_inline_معلومات_ea_get(&معلومات);
+	إذا (ctx->errcode) {
+		ret |= بلاک_ABORT;
+		اذهب بهر;
 	}
-	if (data.ea_size <= 0)
-		goto out1;
+	إذا (معلومات.ea_اندازه <= 0)
+		اذهب out1;
 
-	ctx->buf = data.ea_data;
-	ctx->buflen = data.ea_size;
-#ifdef WORDS_BIGENDIAN
+	ctx->buf = معلومات.ea_معلومات;
+	ctx->buflen = معلومات.ea_اندازه;
+#که_تعریف_شوی ټکي_BIGENDIAN
 	ctx->errcode = ext2fs_dirent_swab_in2(fs, ctx->buf, ctx->buflen, 0);
-	if (ctx->errcode) {
-		ret |= BLOCK_ABORT;
-		goto out1;
+	إذا (ctx->errcode) {
+		ret |= بلاک_ABORT;
+		اذهب out1;
 	}
-#endif
+#د_که_پای
 
-	ret |= ext2fs_process_dir_block(fs, 0, blockcnt++, 0, 0, priv_data);
-	if (ret & BLOCK_INLINE_DATA_CHANGED) {
-#ifdef WORDS_BIGENDIAN
+	ret |= ext2fs_process_dir_بلاک(fs, 0, blockcnt++, 0, 0, priv_معلومات);
+	إذا (ret & بلاک_INLINE_معلومات_بدل_شوی) {
+#که_تعریف_شوی ټکي_BIGENDIAN
 		ctx->errcode = ext2fs_dirent_swab_out2(fs, ctx->buf,
 						      ctx->buflen, 0);
-		if (ctx->errcode) {
-			ret |= BLOCK_ABORT;
-			goto out1;
+		إذا (ctx->errcode) {
+			ret |= بلاک_ABORT;
+			اذهب out1;
 		}
-#endif
-		ctx->errcode = ext2fs_inline_data_ea_set(&data);
-		if (ctx->errcode)
-			ret |= BLOCK_ABORT;
+#د_که_پای
+		ctx->errcode = ext2fs_inline_معلومات_ea_سېټ(&معلومات);
+		إذا (ctx->errcode)
+			ret |= بلاک_ABORT;
 	}
 
 out1:
-	ext2fs_free_mem(&data.ea_data);
-out:
+	ext2fs_free_mem(&معلومات.ea_معلومات);
+بهر:
 	ctx->buf = old_buf;
 	ctx->buflen = old_buflen;
 	ctx->flags = old_flags;
-	ret &= ~(BLOCK_ABORT | BLOCK_INLINE_DATA_CHANGED);
-	return ret;
+	ret &= ~(بلاک_ABORT | بلاک_INLINE_معلومات_بدل_شوی);
+	أرجع ret;
 }
 
-errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino)
+errcode_t ext2fs_inline_معلومات_ea_remove(ext2_filsys fs, ext2_ino_t ino)
 {
-	struct ext2_xattr_handle *handle;
+	بنية ext2_xattr_handle *handle;
 	errcode_t retval;
 
 	retval = ext2fs_xattrs_open(fs, ino, &handle);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
 	retval = ext2fs_xattrs_read(handle);
-	if (retval)
-		goto err;
+	إذا (retval)
+		اذهب err;
 
 	retval = ext2fs_xattr_remove(handle, "system.data");
 err:
-	(void) ext2fs_xattrs_close(&handle);
-	return retval;
+	(فراغ) ext2fs_xattrs_close(&handle);
+	أرجع retval;
 }
 
-static errcode_t ext2fs_inline_data_convert_dir(ext2_filsys fs, ext2_ino_t ino,
-						char *bbuf, char *ibuf, int size)
+ساكن errcode_t ext2fs_inline_معلومات_convert_dir(ext2_filsys fs, ext2_ino_t ino,
+						حرف *bbuf, حرف *ibuf, صحيح اندازه)
 {
-	struct ext2_dir_entry *dir, *dir2;
-	struct ext2_dir_entry_tail *t;
+	بنية ext2_dir_ثبت *dir, *dir2;
+	بنية ext2_dir_ثبت_لکۍ *t;
 	errcode_t retval;
-	int offset;
-	unsigned int rec_len;
-	int csum_size = 0;
-	int filetype = 0;
+	صحيح دننه_واټن;
+	بینښه صحيح rec_len;
+	صحيح csum_اندازه = 0;
+	صحيح filetype = 0;
 
-	if (ext2fs_has_feature_metadata_csum(fs->super))
-		csum_size = sizeof(struct ext2_dir_entry_tail);
+	إذا (ext2fs_has_feature_metadata_csum(fs->super))
+		csum_اندازه = حجم(بنية ext2_dir_ثبت_لکۍ);
 
 	/* Create '.' and '..' */
-	if (ext2fs_has_feature_filetype(fs->super))
+	إذا (ext2fs_has_feature_filetype(fs->super))
 		filetype = EXT2_FT_DIR;
 
 	/*
 	 * Set up entry for '.'
 	 */
-	dir = (struct ext2_dir_entry *) bbuf;
+	dir = (بنية ext2_dir_ثبت *) bbuf;
 	dir->inode = ino;
-	ext2fs_dirent_set_name_len(dir, 1);
-	ext2fs_dirent_set_file_type(dir, filetype);
+	ext2fs_dirent_سېټ_name_len(dir, 1);
+	ext2fs_dirent_سېټ_file_type(dir, filetype);
 	dir->name[0] = '.';
-	rec_len = (fs->blocksize - csum_size) - EXT2_DIR_REC_LEN(1);
+	rec_len = (fs->blocksize - csum_اندازه) - EXT2_DIR_REC_LEN(1);
 	dir->rec_len = EXT2_DIR_REC_LEN(1);
 
 	/*
 	 * Set up entry for '..'
 	 */
-	dir = (struct ext2_dir_entry *) (bbuf + dir->rec_len);
+	dir = (بنية ext2_dir_ثبت *) (bbuf + dir->rec_len);
 	dir->rec_len = EXT2_DIR_REC_LEN(2);
-	dir->inode = ext2fs_le32_to_cpu(((__u32 *)ibuf)[0]);
-	ext2fs_dirent_set_name_len(dir, 2);
-	ext2fs_dirent_set_file_type(dir, filetype);
+	dir->inode = ext2fs_le32_منزل_cpu(((__u32 *)ibuf)[0]);
+	ext2fs_dirent_سېټ_name_len(dir, 2);
+	ext2fs_dirent_سېټ_file_type(dir, filetype);
 	dir->name[0] = '.';
 	dir->name[1] = '.';
 
 	/*
 	 * Adjust the last rec_len
 	 */
-	offset = EXT2_DIR_REC_LEN(1) + EXT2_DIR_REC_LEN(2);
-	dir = (struct ext2_dir_entry *) (bbuf + offset);
-	memcpy(bbuf + offset, ibuf + EXT4_INLINE_DATA_DOTDOT_SIZE,
-	       size - EXT4_INLINE_DATA_DOTDOT_SIZE);
-	size += EXT2_DIR_REC_LEN(1) + EXT2_DIR_REC_LEN(2) -
-		EXT4_INLINE_DATA_DOTDOT_SIZE;
+	دننه_واټن = EXT2_DIR_REC_LEN(1) + EXT2_DIR_REC_LEN(2);
+	dir = (بنية ext2_dir_ثبت *) (bbuf + دننه_واټن);
+	حافظه_نقل(bbuf + دننه_واټن, ibuf + EXT4_INLINE_معلومات_DOTDOT_اندازه,
+	       اندازه - EXT4_INLINE_معلومات_DOTDOT_اندازه);
+	اندازه += EXT2_DIR_REC_LEN(1) + EXT2_DIR_REC_LEN(2) -
+		EXT4_INLINE_معلومات_DOTDOT_اندازه;
 
-	do {
+	افعل {
 		dir2 = dir;
 		retval = ext2fs_get_rec_len(fs, dir, &rec_len);
-		if (retval)
-			goto err;
-		offset += rec_len;
-		dir = (struct ext2_dir_entry *) (bbuf + offset);
-	} while (offset < size);
-	rec_len += fs->blocksize - csum_size - offset;
-	retval = ext2fs_set_rec_len(fs, rec_len, dir2);
-	if (retval)
-		goto err;
+		إذا (retval)
+			اذهب err;
+		دننه_واټن += rec_len;
+		dir = (بنية ext2_dir_ثبت *) (bbuf + دننه_واټن);
+	} طالما (دننه_واټن < اندازه);
+	rec_len += fs->blocksize - csum_اندازه - دننه_واټن;
+	retval = ext2fs_سېټ_rec_len(fs, rec_len, dir2);
+	إذا (retval)
+		اذهب err;
 
-	if (csum_size) {
-		t = EXT2_DIRENT_TAIL(bbuf, fs->blocksize);
-		ext2fs_initialize_dirent_tail(fs, t);
+	إذا (csum_اندازه) {
+		t = EXT2_DIRENT_لکۍ(bbuf, fs->blocksize);
+		ext2fs_initialize_dirent_لکۍ(fs, t);
 	}
 
 err:
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t
-ext2fs_inline_data_dir_expand(ext2_filsys fs, ext2_ino_t ino,
-			      struct ext2_inode *inode, char *buf, size_t size)
+ساكن errcode_t
+ext2fs_inline_معلومات_dir_expand(ext2_filsys fs, ext2_ino_t ino,
+			      بنية ext2_inode *inode, حرف *buf, size_t اندازه)
 {
 	errcode_t retval;
 	blk64_t blk;
-	char *blk_buf;
+	حرف *blk_buf;
 
 	retval = ext2fs_get_memzero(fs->blocksize, &blk_buf);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-#ifdef WORDS_BIGENDIAN
-	retval = ext2fs_dirent_swab_in2(fs, buf + EXT4_INLINE_DATA_DOTDOT_SIZE,
-					size, 0);
-	if (retval)
-		goto errout;
-#endif
+#که_تعریف_شوی ټکي_BIGENDIAN
+	retval = ext2fs_dirent_swab_in2(fs, buf + EXT4_INLINE_معلومات_DOTDOT_اندازه,
+					اندازه, 0);
+	إذا (retval)
+		اذهب errout;
+#د_که_پای
 
 	/* Adjust the rec_len */
-	retval = ext2fs_inline_data_convert_dir(fs, ino, blk_buf, buf, size);
-	if (retval)
-		goto errout;
+	retval = ext2fs_inline_معلومات_convert_dir(fs, ino, blk_buf, buf, اندازه);
+	إذا (retval)
+		اذهب errout;
 	/* Allocate a new block */
 	retval = ext2fs_new_block2(fs, 0, 0, &blk);
-	if (retval)
-		goto errout;
+	إذا (retval)
+		اذهب errout;
 	retval = ext2fs_write_dir_block4(fs, blk, blk_buf, 0, ino);
-	if (retval)
-		goto errout;
+	إذا (retval)
+		اذهب errout;
 
 	/* Update inode */
-	if (ext2fs_has_feature_extents(fs->super))
+	إذا (ext2fs_has_feature_extents(fs->super))
 		inode->i_flags |= EXT4_EXTENTS_FL;
-	inode->i_flags &= ~EXT4_INLINE_DATA_FL;
-	retval = ext2fs_iblk_add_blocks(fs, inode, 1);
-	if (retval)
-		goto errout;
-	inode->i_size = fs->blocksize;
-	retval = ext2fs_bmap2(fs, ino, inode, 0, BMAP_SET, 0, 0, &blk);
-	if (retval)
-		goto errout;
+	inode->i_flags &= ~EXT4_INLINE_معلومات_FL;
+	retval = ext2fs_iblk_جمع_کړه_بلاکونه(fs, inode, 1);
+	إذا (retval)
+		اذهب errout;
+	inode->i_اندازه = fs->blocksize;
+	retval = ext2fs_bmap2(fs, ino, inode, 0, BMAP_سېټ, 0, 0, &blk);
+	إذا (retval)
+		اذهب errout;
 	retval = ext2fs_write_inode(fs, ino, inode);
-	if (retval)
-		goto errout;
-	ext2fs_block_alloc_stats(fs, blk, +1);
+	إذا (retval)
+		اذهب errout;
+	ext2fs_بلاک_alloc_stats(fs, blk, +1);
 
 errout:
 	ext2fs_free_mem(&blk_buf);
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t
-ext2fs_inline_data_file_expand(ext2_filsys fs, ext2_ino_t ino,
-			       struct ext2_inode *inode, char *buf, size_t size)
+ساكن errcode_t
+ext2fs_inline_معلومات_file_expand(ext2_filsys fs, ext2_ino_t ino,
+			       بنية ext2_inode *inode, حرف *buf, size_t اندازه)
 {
 	ext2_file_t e2_file;
 	errcode_t retval;
 
 	/* Update inode */
-	memset(inode->i_block, 0, sizeof(inode->i_block));
-	if (ext2fs_has_feature_extents(fs->super)) {
+	memset(inode->i_بلاک, 0, حجم(inode->i_بلاک));
+	إذا (ext2fs_has_feature_extents(fs->super)) {
 		ext2_extent_handle_t handle;
 
 		inode->i_flags &= ~EXT4_EXTENTS_FL;
 		retval = ext2fs_extent_open2(fs, ino, inode, &handle);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 		ext2fs_extent_free(handle);
 	}
-	inode->i_flags &= ~EXT4_INLINE_DATA_FL;
-	inode->i_size = 0;
+	inode->i_flags &= ~EXT4_INLINE_معلومات_FL;
+	inode->i_اندازه = 0;
 	retval = ext2fs_write_inode(fs, ino, inode);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
 	/* Write out the block buffer */
 	retval = ext2fs_file_open(fs, ino, EXT2_FILE_WRITE, &e2_file);
-	if (retval)
-		return retval;
-	retval = ext2fs_file_write(e2_file, buf, size, 0);
+	إذا (retval)
+		أرجع retval;
+	retval = ext2fs_file_write(e2_file, buf, اندازه, 0);
 	ext2fs_file_close(e2_file);
-	return retval;
+	أرجع retval;
 }
 
-errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino)
+errcode_t ext2fs_inline_معلومات_expand(ext2_filsys fs, ext2_ino_t ino)
 {
-	struct ext2_inode inode;
-	struct ext2_inline_data data;
+	بنية ext2_inode inode;
+	بنية ext2_inline_معلومات معلومات;
 	errcode_t retval;
-	size_t inline_size;
-	char *inline_buf = 0;
+	size_t inline_اندازه;
+	حرف *inline_buf = 0;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-	if (!(inode.i_flags & EXT4_INLINE_DATA_FL))
-		return EXT2_ET_NO_INLINE_DATA;
+	إذا (!(inode.i_flags & EXT4_INLINE_معلومات_FL))
+		أرجع EXT2_ET_NO_INLINE_معلومات;
 
-	data.fs = fs;
-	data.ino = ino;
-	retval = ext2fs_inline_data_ea_get(&data);
-	if (retval)
-		return retval;
-	inline_size = data.ea_size + EXT4_MIN_INLINE_DATA_SIZE;
-	retval = ext2fs_get_mem(inline_size, &inline_buf);
-	if (retval)
-		goto errout;
+	معلومات.fs = fs;
+	معلومات.ino = ino;
+	retval = ext2fs_inline_معلومات_ea_get(&معلومات);
+	إذا (retval)
+		أرجع retval;
+	inline_اندازه = معلومات.ea_اندازه + EXT4_MIN_INLINE_معلومات_اندازه;
+	retval = ext2fs_get_mem(inline_اندازه, &inline_buf);
+	إذا (retval)
+		اذهب errout;
 
-	memcpy(inline_buf, (void *)inode.i_block, EXT4_MIN_INLINE_DATA_SIZE);
-	if (data.ea_size > 0) {
-		memcpy(inline_buf + EXT4_MIN_INLINE_DATA_SIZE,
-		       data.ea_data, data.ea_size);
+	حافظه_نقل(inline_buf, (فراغ *)inode.i_بلاک, EXT4_MIN_INLINE_معلومات_اندازه);
+	إذا (معلومات.ea_اندازه > 0) {
+		حافظه_نقل(inline_buf + EXT4_MIN_INLINE_معلومات_اندازه,
+		       معلومات.ea_معلومات, معلومات.ea_اندازه);
 	}
 
-	memset((void *)inode.i_block, 0, EXT4_MIN_INLINE_DATA_SIZE);
+	memset((فراغ *)inode.i_بلاک, 0, EXT4_MIN_INLINE_معلومات_اندازه);
 	/*
 	 * NOTE: We must do this write -> ea_remove -> read cycle here because
 	 * removing the inline data EA can free the EA block, which is a change
@@ -469,28 +469,28 @@ errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino)
 	 * pblk, which is bad news.
 	 */
 	retval = ext2fs_write_inode(fs, ino, &inode);
-	if (retval)
-		goto errout;
-	retval = ext2fs_inline_data_ea_remove(fs, ino);
-	if (retval)
-		goto errout;
+	إذا (retval)
+		اذهب errout;
+	retval = ext2fs_inline_معلومات_ea_remove(fs, ino);
+	إذا (retval)
+		اذهب errout;
 	retval = ext2fs_read_inode(fs, ino, &inode);
-	if (retval)
-		goto errout;
+	إذا (retval)
+		اذهب errout;
 
-	if (LINUX_S_ISDIR(inode.i_mode)) {
-		retval = ext2fs_inline_data_dir_expand(fs, ino, &inode,
-						inline_buf, inline_size);
-	} else {
-		retval = ext2fs_inline_data_file_expand(fs, ino, &inode,
-						inline_buf, inline_size);
+	إذا (LINUX_S_ISDIR(inode.i_ډېرپېښ)) {
+		retval = ext2fs_inline_معلومات_dir_expand(fs, ino, &inode,
+						inline_buf, inline_اندازه);
+	} وإلا {
+		retval = ext2fs_inline_معلومات_file_expand(fs, ino, &inode,
+						inline_buf, inline_اندازه);
 	}
 
 errout:
-	if (inline_buf)
+	إذا (inline_buf)
 		ext2fs_free_mem(&inline_buf);
-	ext2fs_free_mem(&data.ea_data);
-	return retval;
+	ext2fs_free_mem(&معلومات.ea_معلومات);
+	أرجع retval;
 }
 
 /*
@@ -498,345 +498,345 @@ errout:
  * allocate a buffer which has the size of inline data.  The size of
  * inline data can be know by ext2fs_inline_data_get_size().
  */
-errcode_t ext2fs_inline_data_get(ext2_filsys fs, ext2_ino_t ino,
-				 struct ext2_inode *inode,
-				 void *buf, size_t *size)
+errcode_t ext2fs_inline_معلومات_get(ext2_filsys fs, ext2_ino_t ino,
+				 بنية ext2_inode *inode,
+				 فراغ *buf, size_t *اندازه)
 {
-	struct ext2_inode inode_buf;
-	struct ext2_inline_data data;
+	بنية ext2_inode inode_buf;
+	بنية ext2_inline_معلومات معلومات;
 	errcode_t retval;
 
-	if (!inode) {
+	إذا (!inode) {
 		retval = ext2fs_read_inode(fs, ino, &inode_buf);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 		inode = &inode_buf;
 	}
 
-	data.fs = fs;
-	data.ino = ino;
-	retval = ext2fs_inline_data_ea_get(&data);
-	if (retval)
-		return retval;
+	معلومات.fs = fs;
+	معلومات.ino = ino;
+	retval = ext2fs_inline_معلومات_ea_get(&معلومات);
+	إذا (retval)
+		أرجع retval;
 
-	memcpy(buf, (void *)inode->i_block, EXT4_MIN_INLINE_DATA_SIZE);
-	if (data.ea_size > 0)
-		memcpy((char *) buf + EXT4_MIN_INLINE_DATA_SIZE,
-		       data.ea_data, data.ea_size);
+	حافظه_نقل(buf, (فراغ *)inode->i_بلاک, EXT4_MIN_INLINE_معلومات_اندازه);
+	إذا (معلومات.ea_اندازه > 0)
+		حافظه_نقل((حرف *) buf + EXT4_MIN_INLINE_معلومات_اندازه,
+		       معلومات.ea_معلومات, معلومات.ea_اندازه);
 
-	if (size)
-		*size = EXT4_MIN_INLINE_DATA_SIZE + data.ea_size;
-	ext2fs_free_mem(&data.ea_data);
-	return 0;
+	إذا (اندازه)
+		*اندازه = EXT4_MIN_INLINE_معلومات_اندازه + معلومات.ea_اندازه;
+	ext2fs_free_mem(&معلومات.ea_معلومات);
+	أرجع 0;
 }
 
-errcode_t ext2fs_inline_data_set(ext2_filsys fs, ext2_ino_t ino,
-				 struct ext2_inode *inode,
-				 void *buf, size_t size)
+errcode_t ext2fs_inline_معلومات_سېټ(ext2_filsys fs, ext2_ino_t ino,
+				 بنية ext2_inode *inode,
+				 فراغ *buf, size_t اندازه)
 {
-	struct ext2_inode inode_buf;
-	struct ext2_inline_data data = {
+	بنية ext2_inode inode_buf;
+	بنية ext2_inline_معلومات معلومات = {
 		.fs = fs,
 		.ino = ino,
 	};
 	errcode_t retval;
-	size_t free_ea_size, existing_size, free_inode_size;
+	size_t free_ea_اندازه, existing_اندازه, free_inode_اندازه;
 
-	if (!inode) {
+	إذا (!inode) {
 		retval = ext2fs_read_inode(fs, ino, &inode_buf);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 		inode = &inode_buf;
 	}
 
-	if (size <= EXT4_MIN_INLINE_DATA_SIZE) {
-		memcpy((void *)inode->i_block, buf, size);
-	} else {
-		retval = ext2fs_xattr_inode_max_size(fs, ino, &free_ea_size);
-		if (retval)
-			return retval;
+	إذا (اندازه <= EXT4_MIN_INLINE_معلومات_اندازه) {
+		حافظه_نقل((فراغ *)inode->i_بلاک, buf, اندازه);
+	} وإلا {
+		retval = ext2fs_xattr_inode_max_اندازه(fs, ino, &free_ea_اندازه);
+		إذا (retval)
+			أرجع retval;
 
-		retval = ext2fs_inline_data_size(fs, ino, &existing_size);
-		if (retval)
-			return retval;
+		retval = ext2fs_inline_معلومات_اندازه(fs, ino, &existing_اندازه);
+		إذا (retval)
+			أرجع retval;
 
-		if (existing_size < EXT4_MIN_INLINE_DATA_SIZE) {
-			free_inode_size = EXT4_MIN_INLINE_DATA_SIZE -
-					  existing_size;
-		} else {
-			free_inode_size = 0;
+		إذا (existing_اندازه < EXT4_MIN_INLINE_معلومات_اندازه) {
+			free_inode_اندازه = EXT4_MIN_INLINE_معلومات_اندازه -
+					  existing_اندازه;
+		} وإلا {
+			free_inode_اندازه = 0;
 		}
 
-		if (size != existing_size &&
-		    size > existing_size + free_ea_size + free_inode_size)
-			return EXT2_ET_INLINE_DATA_NO_SPACE;
+		إذا (اندازه != existing_اندازه &&
+		    اندازه > existing_اندازه + free_ea_اندازه + free_inode_اندازه)
+			أرجع EXT2_ET_INLINE_معلومات_NO_SPACE;
 
-		memcpy((void *)inode->i_block, buf, EXT4_MIN_INLINE_DATA_SIZE);
-		if (size > EXT4_MIN_INLINE_DATA_SIZE)
-			data.ea_size = size - EXT4_MIN_INLINE_DATA_SIZE;
-		data.ea_data = (char *) buf + EXT4_MIN_INLINE_DATA_SIZE;
+		حافظه_نقل((فراغ *)inode->i_بلاک, buf, EXT4_MIN_INLINE_معلومات_اندازه);
+		إذا (اندازه > EXT4_MIN_INLINE_معلومات_اندازه)
+			معلومات.ea_اندازه = اندازه - EXT4_MIN_INLINE_معلومات_اندازه;
+		معلومات.ea_معلومات = (حرف *) buf + EXT4_MIN_INLINE_معلومات_اندازه;
 	}
 	retval = ext2fs_write_inode(fs, ino, inode);
-	if (retval)
-		return retval;
-	return ext2fs_inline_data_ea_set(&data);
+	إذا (retval)
+		أرجع retval;
+	أرجع ext2fs_inline_معلومات_ea_سېټ(&معلومات);
 }
 
-#ifdef DEBUG
-#include "e2p/e2p.h"
+#که_تعریف_شوی DEBUG
+#ضمن "e2p/e2p.h"
 
 /*
  * The length of buffer is set to 64 because in inode's i_block member it only
  * can save 60 bytes.  Thus this value can let the data being saved in extra
  * space.
  */
-#define BUFF_SIZE (64)
+#تعریف_کړه BUFF_اندازه (64)
 
-static errcode_t file_test(ext2_filsys fs)
+ساكن errcode_t file_test(ext2_filsys fs)
 {
-	struct ext2_inode inode;
+	بنية ext2_inode inode;
 	ext2_ino_t newfile;
 	errcode_t retval;
-	size_t size;
-	char *buf = 0, *cmpbuf = 0;
+	size_t اندازه;
+	حرف *buf = 0, *cmpbuf = 0;
 
 	/* create a new file */
 	retval = ext2fs_new_inode(fs, 2, 010755, 0, &newfile);
-	if (retval) {
+	إذا (retval) {
 		com_err("file_test", retval, "while allocating a new inode");
-		return 1;
+		أرجع 1;
 	}
 
-	memset(&inode, 0, sizeof(inode));
-	inode.i_flags |= EXT4_INLINE_DATA_FL;
-	inode.i_size = EXT4_MIN_INLINE_DATA_SIZE;
-	inode.i_mode = LINUX_S_IFREG;
+	memset(&inode, 0, حجم(inode));
+	inode.i_flags |= EXT4_INLINE_معلومات_FL;
+	inode.i_اندازه = EXT4_MIN_INLINE_معلومات_اندازه;
+	inode.i_ډېرپېښ = LINUX_S_IFREG;
 	retval = ext2fs_write_new_inode(fs, newfile, &inode);
-	if (retval) {
+	إذا (retval) {
 		com_err("file_test", retval, "while writing a new inode");
-		return 1;
+		أرجع 1;
 	}
 
-	retval = ext2fs_inline_data_init(fs, newfile);
-	if (retval) {
+	retval = ext2fs_inline_معلومات_init(fs, newfile);
+	إذا (retval) {
 		com_err("file_test", retval, "while init 'system.data'");
-		return 1;
+		أرجع 1;
 	}
 
-	retval = ext2fs_inline_data_size(fs, newfile, &size);
-	if (retval) {
+	retval = ext2fs_inline_معلومات_اندازه(fs, newfile, &اندازه);
+	إذا (retval) {
 		com_err("file_test", retval, "while getting size");
-		return 1;
+		أرجع 1;
 	}
 
-	if (size != EXT4_MIN_INLINE_DATA_SIZE) {
+	إذا (اندازه != EXT4_MIN_INLINE_معلومات_اندازه) {
 		fprintf(stderr,
 			"tst_inline_data: size of inline data is wrong\n");
-		return 1;
+		أرجع 1;
 	}
 
-	ext2fs_get_mem(BUFF_SIZE, &buf);
-	memset(buf, 'a', BUFF_SIZE);
-	retval = ext2fs_inline_data_set(fs, newfile, 0, buf, BUFF_SIZE);
-	if (retval) {
+	ext2fs_get_mem(BUFF_اندازه, &buf);
+	memset(buf, 'a', BUFF_اندازه);
+	retval = ext2fs_inline_معلومات_سېټ(fs, newfile, 0, buf, BUFF_اندازه);
+	إذا (retval) {
 		com_err("file_test", retval,
 			"while setting inline data %s", buf);
-		goto err;
+		اذهب err;
 	}
 
-	ext2fs_get_mem(BUFF_SIZE, &cmpbuf);
-	retval = ext2fs_inline_data_get(fs, newfile, 0, cmpbuf, &size);
-	if (retval) {
+	ext2fs_get_mem(BUFF_اندازه, &cmpbuf);
+	retval = ext2fs_inline_معلومات_get(fs, newfile, 0, cmpbuf, &اندازه);
+	إذا (retval) {
 		com_err("file_test", retval, "while getting inline data");
-		goto err;
+		اذهب err;
 	}
 
-	if (size != BUFF_SIZE) {
+	إذا (اندازه != BUFF_اندازه) {
 		fprintf(stderr,
 			"tst_inline_data: size %zu != buflen %u\n",
-			size, BUFF_SIZE);
+			اندازه, BUFF_اندازه);
 		retval = 1;
-		goto err;
+		اذهب err;
 	}
 
-	if (memcmp(buf, cmpbuf, BUFF_SIZE)) {
+	إذا (memcmp(buf, cmpbuf, BUFF_اندازه)) {
 		fprintf(stderr, "tst_inline_data: buf != cmpbuf\n");
 		retval = 1;
-		goto err;
+		اذهب err;
 	}
 
 	retval = ext2fs_punch(fs, newfile, 0, 0, 0, ~0ULL);
-	if (retval) {
+	إذا (retval) {
 		com_err("file_test", retval, "while truncating inode");
-		goto err;
+		اذهب err;
 	}
 
 	/* reload inode and check isize */
 	ext2fs_read_inode(fs, newfile, &inode);
-	if (inode.i_size != 0) {
+	إذا (inode.i_اندازه != 0) {
 		fprintf(stderr, "tst_inline_data: i_size should be 0\n");
 		retval = 1;
 	}
 
 err:
-	if (cmpbuf)
+	إذا (cmpbuf)
 		ext2fs_free_mem(&cmpbuf);
-	if (buf)
+	إذا (buf)
 		ext2fs_free_mem(&buf);
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t dir_test(ext2_filsys fs)
+ساكن errcode_t dir_test(ext2_filsys fs)
 {
-	const char *dot_name = ".";
-	const char *stub_name = "stub";
-	const char *parent_name = "test";
-	ext2_ino_t parent, dir, tmp;
+	ثابت حرف *dot_name = ".";
+	ثابت حرف *stub_name = "stub";
+	ثابت حرف *پلار_name = "test";
+	ext2_ino_t پلار, dir, tmp;
 	errcode_t retval;
-	char dirname[32];
-	int i;
+	حرف dirname[32];
+	صحيح i;
 
 	retval = ext2fs_mkdir(fs, 11, 11, stub_name);
-	if (retval) {
+	إذا (retval) {
 		com_err("dir_test", retval, "while creating %s dir", stub_name);
-		return retval;
+		أرجع retval;
 	}
 
-	retval = ext2fs_mkdir(fs, 11, 0, parent_name);
-	if (retval) {
+	retval = ext2fs_mkdir(fs, 11, 0, پلار_name);
+	إذا (retval) {
 		com_err("dir_test", retval,
-			"while creating %s dir", parent_name);
-		return retval;
+			"while creating %s dir", پلار_name);
+		أرجع retval;
 	}
 
-	retval = ext2fs_lookup(fs, 11, parent_name, strlen(parent_name),
-			       0, &parent);
-	if (retval) {
+	retval = ext2fs_lookup(fs, 11, پلار_name, مزي_اوږدوالی(پلار_name),
+			       0, &پلار);
+	إذا (retval) {
 		com_err("dir_test", retval,
-			"while looking up %s dir", parent_name);
-		return retval;
+			"while looking up %s dir", پلار_name);
+		أرجع retval;
 	}
 
-	retval = ext2fs_lookup(fs, parent, dot_name, strlen(dot_name),
+	retval = ext2fs_lookup(fs, پلار, dot_name, مزي_اوږدوالی(dot_name),
 			       0, &tmp);
-	if (retval) {
+	إذا (retval) {
 		com_err("dir_test", retval,
-			"while looking up %s dir", parent_name);
-		return retval;
+			"while looking up %s dir", پلار_name);
+		أرجع retval;
 	}
 
-	if (parent != tmp) {
+	إذا (پلار != tmp) {
 		fprintf(stderr, "tst_inline_data: parent (%u) != tmp (%u)\n",
-			parent, tmp);
-		return 1;
+			پلار, tmp);
+		أرجع 1;
 	}
 
-	for (i = 0, dir = 13; i < 4; i++, dir++) {
+	لكل (i = 0, dir = 13; i < 4; i++, dir++) {
 		tmp = 0;
-		snprintf(dirname, sizeof(dirname), "%d", i);
-		retval = ext2fs_mkdir(fs, parent, 0, dirname);
-		if (retval) {
+		snprintf(dirname, حجم(dirname), "%d", i);
+		retval = ext2fs_mkdir(fs, پلار, 0, dirname);
+		إذا (retval) {
 			com_err("dir_test", retval,
 				"while creating %s dir", dirname);
-			return retval;
+			أرجع retval;
 		}
 
-		retval = ext2fs_lookup(fs, parent, dirname, strlen(dirname),
+		retval = ext2fs_lookup(fs, پلار, dirname, مزي_اوږدوالی(dirname),
 				       0, &tmp);
-		if (retval) {
+		إذا (retval) {
 			com_err("dir_test", retval,
-				"while looking up %s dir", parent_name);
-			return retval;
+				"while looking up %s dir", پلار_name);
+			أرجع retval;
 		}
 
-		if (dir != tmp) {
+		إذا (dir != tmp) {
 			fprintf(stderr,
 				"tst_inline_data: dir (%u) != tmp (%u)\n",
 				dir, tmp);
-			return 1;
+			أرجع 1;
 		}
 	}
 
-	snprintf(dirname, sizeof(dirname), "%d", i);
-	retval = ext2fs_mkdir(fs, parent, 0, dirname);
-	if (retval && retval != EXT2_ET_DIR_NO_SPACE) {
+	snprintf(dirname, حجم(dirname), "%d", i);
+	retval = ext2fs_mkdir(fs, پلار, 0, dirname);
+	إذا (retval && retval != EXT2_ET_DIR_NO_SPACE) {
 		com_err("dir_test", retval, "while creating %s dir", dirname);
-		return retval;
+		أرجع retval;
 	}
 
-	retval = ext2fs_expand_dir(fs, parent);
-	if (retval) {
-		com_err("dir_test", retval, "while expanding %s dir", parent_name);
-		return retval;
+	retval = ext2fs_expand_dir(fs, پلار);
+	إذا (retval) {
+		com_err("dir_test", retval, "while expanding %s dir", پلار_name);
+		أرجع retval;
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-int main(int argc, char *argv[])
+صحيح اصلي(صحيح argc, حرف *argv[])
 {
 	ext2_filsys		fs;
-	struct ext2_super_block param;
+	بنية ext2_super_بلاک param;
 	errcode_t		retval;
 
-	/* setup */
-	initialize_ext2_error_table();
+	/*تیاری*/
+	initialize_ext2_error_جدول();
 
-	memset(&param, 0, sizeof(param));
-	ext2fs_blocks_count_set(&param, 32768);
-	param.s_inodes_count = 100;
+	memset(&param, 0, حجم(param));
+	ext2fs_بلاکونه_شمېر_سېټ(&param, 32768);
+	param.s_inodes_شمېر = 100;
 
-	param.s_feature_incompat |= EXT4_FEATURE_INCOMPAT_INLINE_DATA;
+	param.s_feature_incompat |= EXT4_FEATURE_INCOMPAT_INLINE_معلومات;
 	param.s_rev_level = EXT2_DYNAMIC_REV;
-	param.s_inode_size = 256;
+	param.s_inode_اندازه = 256;
 
-	retval = ext2fs_initialize("test fs", EXT2_FLAG_64BITS, &param,
+	retval = ext2fs_initialize("test fs", EXT2_FLAG_64_بټونه, &param,
 				   test_io_manager, &fs);
-	if (retval) {
+	إذا (retval) {
 		com_err("setup", retval,
 			"while initializing filesystem");
-		exit(1);
+		وتل(1);
 	}
 
 	retval = ext2fs_allocate_tables(fs);
-	if (retval) {
+	إذا (retval) {
 		com_err("setup", retval,
 			"while allocating tables for test filesystem");
-		exit(1);
+		وتل(1);
 	}
 
 	/* initialize inode cache */
-	if (!fs->icache) {
-		ext2_ino_t first_ino = EXT2_FIRST_INO(fs->super);
-		int i;
+	إذا (!fs->icache) {
+		ext2_ino_t لومړی_ino = EXT2_لومړی_INO(fs->super);
+		صحيح i;
 
 		/* we just want to init inode cache.  So ignore error */
 		ext2fs_create_inode_cache(fs, 16);
-		if (!fs->icache) {
+		إذا (!fs->icache) {
 			fprintf(stderr,
 				"tst_inline_data: init inode cache failed\n");
-			exit(1);
+			وتل(1);
 		}
 
 		/* setup inode cache */
-		for (i = 0; i < fs->icache->cache_size; i++)
-			fs->icache->cache[i].ino = first_ino++;
+		لكل (i = 0; i < fs->icache->cache_اندازه; i++)
+			fs->icache->cache[i].ino = لومړی_ino++;
 	}
 
 	/* test */
-	if (file_test(fs)) {
+	إذا (file_test(fs)) {
 		fprintf(stderr, "tst_inline_data(FILE): FAILED\n");
-		return 1;
+		أرجع 1;
 	}
-	printf("tst_inline_data(FILE): OK\n");
+	چاپ_کړه("tst_inline_data(FILE): OK\n");
 
-	if (dir_test(fs)) {
+	إذا (dir_test(fs)) {
 		fprintf(stderr, "tst_inline_data(DIR): FAILED\n");
-		return 1;
+		أرجع 1;
 	}
-	printf("tst_inline_data(DIR): OK\n");
+	چاپ_کړه("tst_inline_data(DIR): OK\n");
 	ext2fs_free(fs);
 
-	return 0;
+	أرجع 0;
 }
-#endif
+#د_که_پای

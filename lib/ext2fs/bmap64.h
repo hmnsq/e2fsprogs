@@ -9,98 +9,98 @@
  * %End-Header%
  */
 
-struct ext2_bmap_statistics {
-	int		type;
-	struct timeval	created;
+بنية ext2_bmap_statistics {
+	صحيح		type;
+	بنية timeval	created;
 
-#ifdef ENABLE_BMAP_STATS_OPS
-	unsigned long	copy_count;
-	unsigned long	resize_count;
-	unsigned long	mark_count;
-	unsigned long	unmark_count;
-	unsigned long	test_count;
-	unsigned long	mark_ext_count;
-	unsigned long	unmark_ext_count;
-	unsigned long	test_ext_count;
-	unsigned long	set_range_count;
-	unsigned long	get_range_count;
-	unsigned long	clear_count;
+#که_تعریف_شوی ENABLE_BMAP_STATS_OPS
+	بینښه اوږد	copy_شمېر;
+	بینښه اوږد	resize_شمېر;
+	بینښه اوږد	mark_شمېر;
+	بینښه اوږد	unmark_شمېر;
+	بینښه اوږد	test_شمېر;
+	بینښه اوږد	mark_ext_شمېر;
+	بینښه اوږد	unmark_ext_شمېر;
+	بینښه اوږد	test_ext_شمېر;
+	بینښه اوږد	سېټ_range_شمېر;
+	بینښه اوږد	get_range_شمېر;
+	بینښه اوږد	clear_شمېر;
 
-	blk64_t		last_marked;
-	blk64_t		last_tested;
-	blk64_t		mark_back;
-	blk64_t		test_back;
+	blk64_t		وروستی_marked;
+	blk64_t		وروستی_tested;
+	blk64_t		mark_شا;
+	blk64_t		test_شا;
 
-	unsigned long	mark_seq;
-	unsigned long	test_seq;
-#endif /* ENABLE_BMAP_STATS_OPS */
+	بینښه اوږد	mark_seq;
+	بینښه اوږد	test_seq;
+#د_که_پای /* ENABLE_BMAP_STATS_OPS */
 };
 
 
-struct ext2fs_struct_generic_bitmap_64 {
+بنية ext2fs_struct_generic_bitmap_64 {
 	errcode_t		magic;
 	ext2_filsys 		fs;
-	struct ext2_bitmap_ops	*bitmap_ops;
-	int			flags;
-	__u64			start, end;
-	__u64			real_end;
-	int			cluster_bits;
-	char			*description;
-	void			*private;
-	errcode_t		base_error_code;
-#ifdef ENABLE_BMAP_STATS
-	struct ext2_bmap_statistics	stats;
-#endif
+	بنية ext2_bitmap_ops	*bitmap_ops;
+	صحيح			flags;
+	__u64			پیل, پای_ټکی;
+	__u64			real_پای_ټکی;
+	صحيح			cluster_بټونه;
+	حرف			*description;
+	فراغ			*خاص;
+	errcode_t		بنسټ_error_کوډ;
+#که_تعریف_شوی ENABLE_BMAP_STATS
+	بنية ext2_bmap_statistics	stats;
+#د_که_پای
 };
 
-typedef struct ext2fs_struct_generic_bitmap_64 *ext2fs_generic_bitmap_64;
+تعريفنوع بنية ext2fs_struct_generic_bitmap_64 *ext2fs_generic_bitmap_64;
 
-#define EXT2FS_IS_32_BITMAP(bmap) \
+#تعریف_کړه EXT2FS_IS_32_BITMAP(bmap) \
 	(((bmap)->magic == EXT2_ET_MAGIC_GENERIC_BITMAP) || \
-	 ((bmap)->magic == EXT2_ET_MAGIC_BLOCK_BITMAP) || \
+	 ((bmap)->magic == EXT2_ET_MAGIC_بلاک_BITMAP) || \
 	 ((bmap)->magic == EXT2_ET_MAGIC_INODE_BITMAP))
 
-#define EXT2FS_IS_64_BITMAP(bmap) \
+#تعریف_کړه EXT2FS_IS_64_BITMAP(bmap) \
 	(((bmap)->magic == EXT2_ET_MAGIC_GENERIC_BITMAP64) || \
-	 ((bmap)->magic == EXT2_ET_MAGIC_BLOCK_BITMAP64) || \
+	 ((bmap)->magic == EXT2_ET_MAGIC_بلاک_BITMAP64) || \
 	 ((bmap)->magic == EXT2_ET_MAGIC_INODE_BITMAP64))
 
-struct ext2_bitmap_ops {
-	int	type;
+بنية ext2_bitmap_ops {
+	صحيح	type;
 	/* Generic bmap operators */
 	errcode_t (*new_bmap)(ext2_filsys fs, ext2fs_generic_bitmap_64 bmap);
-	void	(*free_bmap)(ext2fs_generic_bitmap_64 bitmap);
+	فراغ	(*free_bmap)(ext2fs_generic_bitmap_64 bitmap);
 	errcode_t (*copy_bmap)(ext2fs_generic_bitmap_64 src,
 			     ext2fs_generic_bitmap_64 dest);
 	errcode_t (*resize_bmap)(ext2fs_generic_bitmap_64 bitmap,
-			       __u64 new_end,
-			       __u64 new_real_end);
+			       __u64 new_پای_ټکی,
+			       __u64 new_real_پای_ټکی);
 	/* bit set/test operators */
-	int	(*mark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
-	int	(*unmark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
-	int	(*test_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
-	void	(*mark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				    unsigned int num);
-	void	(*unmark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				      unsigned int num);
-	int	(*test_clear_bmap_extent)(ext2fs_generic_bitmap_64 bitmap,
-					  __u64 arg, unsigned int num);
-	errcode_t (*set_bmap_range)(ext2fs_generic_bitmap_64 bitmap,
-				    __u64 start, size_t num, void *in);
+	صحيح	(*mark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
+	صحيح	(*unmark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
+	صحيح	(*test_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
+	فراغ	(*mark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				    بینښه صحيح عدد);
+	فراغ	(*unmark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				      بینښه صحيح عدد);
+	صحيح	(*test_clear_bmap_extent)(ext2fs_generic_bitmap_64 bitmap,
+					  __u64 arg, بینښه صحيح عدد);
+	errcode_t (*سېټ_bmap_range)(ext2fs_generic_bitmap_64 bitmap,
+				    __u64 پیل, size_t عدد, فراغ *دننه);
 	errcode_t (*get_bmap_range)(ext2fs_generic_bitmap_64 bitmap,
-				    __u64 start, size_t num, void *out);
-	void (*clear_bmap)(ext2fs_generic_bitmap_64 bitmap);
-	void (*print_stats)(ext2fs_generic_bitmap_64);
+				    __u64 پیل, size_t عدد, فراغ *بهر);
+	فراغ (*clear_bmap)(ext2fs_generic_bitmap_64 bitmap);
+	فراغ (*print_stats)(ext2fs_generic_bitmap_64);
 
 	/* Find the first zero bit between start and end, inclusive.
 	 * May be NULL, in which case a generic function is used. */
-	errcode_t (*find_first_zero)(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, __u64 end, __u64 *out);
+	errcode_t (*پیدا_کړه_لومړی_zero)(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 پیل, __u64 پای_ټکی, __u64 *بهر);
 	/* Find the first set bit between start and end, inclusive.
 	 * May be NULL, in which case a generic function is used. */
-	errcode_t (*find_first_set)(ext2fs_generic_bitmap_64 bitmap,
-				    __u64 start, __u64 end, __u64 *out);
+	errcode_t (*پیدا_کړه_لومړی_سېټ)(ext2fs_generic_bitmap_64 bitmap,
+				    __u64 پیل, __u64 پای_ټکی, __u64 *بهر);
 };
 
-extern struct ext2_bitmap_ops ext2fs_blkmap64_bitarray;
-extern struct ext2_bitmap_ops ext2fs_blkmap64_rbtree;
+خارجي بنية ext2_bitmap_ops ext2fs_blkmap64_bitarray;
+خارجي بنية ext2_bitmap_ops ext2fs_blkmap64_rbtree;

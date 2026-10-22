@@ -12,241 +12,241 @@
  * %End-Header%
  */
 
-#ifndef _LARGEFILE_SOURCE
-#define _LARGEFILE_SOURCE
-#endif
-#ifndef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE
-#endif
+#که_نه_تعریف_شوی LARGEFILE_سرچینه
+#تعریف_کړه LARGEFILE_سرچینه
+#د_که_پای
+#که_نه_تعریف_شوی LARGEFILE64_سرچینه
+#تعریف_کړه LARGEFILE64_سرچینه
+#د_که_پای
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#include <fcntl.h>
-#ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
-#endif
-#ifdef HAVE_LINUX_FD_H
-#include <linux/fd.h>
-#endif
-#ifdef HAVE_SYS_DISKLABEL_H
-#include <sys/disklabel.h>
-#endif
-#ifdef HAVE_SYS_DISK_H
-#include <sys/disk.h>
-#endif
-#ifdef __linux__
-#include <sys/utsname.h>
-#endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#include <ctype.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#د_که_پای
+#إذا HAVE_ERRNO_H
+#ضمن <errno.h>
+#د_که_پای
+#ضمن <fcntl.h>
+#که_تعریف_شوی HAVE_SYS_IOCTL_H
+#ضمن <sys/ioctl.h>
+#د_که_پای
+#که_تعریف_شوی HAVE_LINUX_FD_H
+#ضمن <linux/fd.h>
+#د_که_پای
+#که_تعریف_شوی HAVE_SYS_DISKLABEL_H
+#ضمن <sys/disklabel.h>
+#د_که_پای
+#که_تعریف_شوی HAVE_SYS_DISK_H
+#ضمن <sys/disk.h>
+#د_که_پای
+#که_تعریف_شوی __linux__
+#ضمن <sys/utsname.h>
+#د_که_پای
+#إذا HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
+#د_که_پای
+#ضمن <ctype.h>
 
-#if defined(__linux__) && defined(_IO) && !defined(BLKGETSIZE)
-#define BLKGETSIZE _IO(0x12,96)	/* return device size */
-#endif
+#إذا defined(__linux__) && defined(_IO) && !defined(BLKGETSIZE)
+#تعریف_کړه BLKGETSIZE _IO(0x12,96)	/* return device size */
+#د_که_پای
 
-#if defined(__linux__) && defined(_IOR) && !defined(BLKGETSIZE64)
-#define BLKGETSIZE64 _IOR(0x12,114,size_t)	/* return device size in bytes (u64 *arg) */
-#endif
+#إذا defined(__linux__) && defined(_IOR) && !defined(BLKGETSIZE64)
+#تعریف_کړه BLKGETSIZE64 _IOR(0x12,114,size_t)	/* return device size in bytes (u64 *arg) */
+#د_که_پای
 
-#ifdef APPLE_DARWIN
-#define BLKGETSIZE DKIOCGETBLOCKCOUNT32
-#endif /* APPLE_DARWIN */
+#که_تعریف_شوی APPLE_DARWIN
+#تعریف_کړه BLKGETSIZE DKIOCGETBLOCKCOUNT32
+#د_که_پای /* APPLE_DARWIN */
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
-#if defined(__CYGWIN__) || defined (WIN32)
-#include "windows.h"
-#include "winioctl.h"
+#إذا defined(__CYGWIN__) || defined (WIN32)
+#ضمن "windows.h"
+#ضمن "winioctl.h"
 
-#if (_WIN32_WINNT >= 0x0500)
-#define HAVE_GET_FILE_SIZE_EX 1
-#endif
+#إذا (_WIN32_WINNT >= 0x0500)
+#تعریف_کړه HAVE_GET_FILE_اندازه_EX 1
+#د_که_پای
 
-errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
+errcode_t ext2fs_get_device_size2(ثابت حرف *file, صحيح blocksize,
 				  blk64_t *retblocks)
 {
-	int fd;
+	صحيح fd;
 	HANDLE h;
-	PARTITION_INFORMATION pi;
+	برخه_کول_INFORMATION pi;
 	DISK_GEOMETRY gi;
 	DWORD retbytes;
-#ifdef HAVE_GET_FILE_SIZE_EX
+#که_تعریف_شوی HAVE_GET_FILE_اندازه_EX
 	LARGE_INTEGER filesize;
-#else
+#وإلا
 	DWORD filesize;
-#endif /* HAVE_GET_FILE_SIZE_EX */
+#د_که_پای /* HAVE_GET_FILE_SIZE_EX */
 
 	fd = ext2fs_open_file(file, O_RDONLY, 0);
-	if (fd < 0)
-		return errno;
+	إذا (fd < 0)
+		أرجع errno;
 	h = (HANDLE)_get_osfhandle(fd);
-	if (DeviceIoControl(h, IOCTL_DISK_GET_PARTITION_INFO,
-			    &pi, sizeof(PARTITION_INFORMATION),
-			    &pi, sizeof(PARTITION_INFORMATION),
-			    &retbytes, NULL)) {
+	إذا (DeviceIoControl(h, IOCTL_DISK_GET_برخه_کول_INFO,
+			    &pi, حجم(برخه_کول_INFORMATION),
+			    &pi, حجم(برخه_کول_INFORMATION),
+			    &retbytes, عدم)) {
 
-		*retblocks = pi.PartitionLength.QuadPart / blocksize;
+		*retblocks = pi.برخه_کول_اوږدتیا.QuadPart / blocksize;
 
-	} else if (DeviceIoControl(h, IOCTL_DISK_GET_DRIVE_GEOMETRY,
-				&gi, sizeof(DISK_GEOMETRY),
-				&gi, sizeof(DISK_GEOMETRY),
-				&retbytes, NULL)) {
+	} وإلا إذا (DeviceIoControl(h, IOCTL_DISK_GET_DRIVE_GEOMETRY,
+				&gi, حجم(DISK_GEOMETRY),
+				&gi, حجم(DISK_GEOMETRY),
+				&retbytes, عدم)) {
 
-		*retblocks = gi.BytesPerSector *
-			     gi.SectorsPerTrack *
-			     gi.TracksPerCylinder *
+		*retblocks = gi.بایټونه_فی_Sector *
+			     gi.Sectors_فی_Track *
+			     gi.Tracks_فی_Cylinder *
 			     gi.Cylinders.QuadPart / blocksize;
 
-#ifdef HAVE_GET_FILE_SIZE_EX
-	} else if (GetFileSizeEx(h, &filesize)) {
+#که_تعریف_شوی HAVE_GET_FILE_اندازه_EX
+	} وإلا إذا (Get_File_اندازه_Ex(h, &filesize)) {
 		*retblocks = filesize.QuadPart / blocksize;
 	}
-#else
-	} else {
-		filesize = GetFileSize(h, NULL);
-		if (INVALID_FILE_SIZE != filesize) {
+#وإلا
+	} وإلا {
+		filesize = Get_File_اندازه(h, عدم);
+		إذا (INVALID_FILE_اندازه != filesize) {
 			*retblocks = filesize / blocksize;
 		}
 	}
-#endif /* HAVE_GET_FILE_SIZE_EX */
+#د_که_پای /* HAVE_GET_FILE_SIZE_EX */
 
 	close(fd);
-	return 0;
+	أرجع 0;
 }
 
-#else
+#وإلا
 
-static int valid_offset (int fd, ext2_loff_t offset)
+ساكن صحيح valid_دننه_واټن (صحيح fd, ext2_loff_t دننه_واټن)
 {
-	char ch;
+	حرف ch;
 
-	if (ext2fs_llseek (fd, offset, 0) < 0)
-		return 0;
-	if (read (fd, &ch, 1) < 1)
-		return 0;
-	return 1;
+	إذا (ext2fs_llseek (fd, دننه_واټن, 0) < 0)
+		أرجع 0;
+	إذا (اقرأ (fd, &ch, 1) < 1)
+		أرجع 0;
+	أرجع 1;
 }
 
 /*
  * Returns the number of blocks in a partition
  */
-errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
+errcode_t ext2fs_get_device_size2(ثابت حرف *file, صحيح blocksize,
 				  blk64_t *retblocks)
 {
-	int	fd, rc = 0;
-	unsigned long long size64;
-	ext2_loff_t high, low;
+	صحيح	fd, rc = 0;
+	بینښه اوږد اوږد size64;
+	ext2_loff_t لوړ, ټیټ;
 
 	fd = ext2fs_open_file(file, O_RDONLY, 0);
-	if (fd < 0)
-		return errno;
+	إذا (fd < 0)
+		أرجع errno;
 
-#if defined DKIOCGETBLOCKCOUNT && defined DKIOCGETBLOCKSIZE	/* For Apple Darwin */
-	unsigned int size;
+#إذا defined DKIOCGETBLOCKCOUNT && defined DKIOCGETBLOCKSIZE	/* For Apple Darwin */
+	بینښه صحيح اندازه;
 
-	if (ioctl(fd, DKIOCGETBLOCKCOUNT, &size64) >= 0 &&
-	    ioctl(fd, DKIOCGETBLOCKSIZE, &size) >= 0) {
-		*retblocks = size64 * size / blocksize;
-		goto out;
+	إذا (ioctl(fd, DKIOCGETBLOCKCOUNT, &size64) >= 0 &&
+	    ioctl(fd, DKIOCGETBLOCKSIZE, &اندازه) >= 0) {
+		*retblocks = size64 * اندازه / blocksize;
+		اذهب بهر;
 	}
-#endif
+#د_که_پای
 
-#ifdef BLKGETSIZE64
+#که_تعریف_شوی BLKGETSIZE64
 	{
-		int valid_blkgetsize64 = 1;
-#ifdef __linux__
-		struct utsname ut;
+		صحيح valid_blkgetsize64 = 1;
+#که_تعریف_شوی __linux__
+		بنية utsname ut;
 
-		if ((uname(&ut) == 0) &&
+		إذا ((uname(&ut) == 0) &&
 		    ((ut.release[0] == '2') && (ut.release[1] == '.') &&
 		     (ut.release[2] < '6') && (ut.release[3] == '.')))
 			valid_blkgetsize64 = 0;
-#endif
-		if (valid_blkgetsize64 &&
+#د_که_پای
+		إذا (valid_blkgetsize64 &&
 		    ioctl(fd, BLKGETSIZE64, &size64) >= 0) {
 			*retblocks = size64 / blocksize;
-			goto out;
+			اذهب بهر;
 		}
 	}
-#endif /* BLKGETSIZE64 */
+#د_که_پای /* BLKGETSIZE64 */
 
-#ifdef BLKGETSIZE
+#که_تعریف_شوی BLKGETSIZE
 	{
-		unsigned long	size;
+		بینښه اوږد	اندازه;
 
-		if (ioctl(fd, BLKGETSIZE, &size) >= 0) {
-			*retblocks = size / (blocksize / 512);
-			goto out;
+		إذا (ioctl(fd, BLKGETSIZE, &اندازه) >= 0) {
+			*retblocks = اندازه / (blocksize / 512);
+			اذهب بهر;
 		}
 	}
-#endif
+#د_که_پای
 
-#ifdef FDGETPRM
+#که_تعریف_شوی FDGETPRM
 	{
-		struct floppy_struct this_floppy;
+		بنية floppy_struct this_floppy;
 
-		if (ioctl(fd, FDGETPRM, &this_floppy) >= 0) {
-			*retblocks = this_floppy.size / (blocksize / 512);
-			goto out;
+		إذا (ioctl(fd, FDGETPRM, &this_floppy) >= 0) {
+			*retblocks = this_floppy.اندازه / (blocksize / 512);
+			اذهب بهر;
 		}
 	}
-#endif
+#د_که_پای
 
-#ifdef HAVE_SYS_DISKLABEL_H
+#که_تعریف_شوی HAVE_SYS_DISKLABEL_H
 	{
-		int part;
-		struct disklabel lab;
-		struct partition *pp;
-		char ch;
+		صحيح part;
+		بنية disklabel lab;
+		بنية برخه_کول_2 *pp;
+		حرف ch;
 
-#if defined(DIOCGMEDIASIZE)
+#إذا defined(DIOCGMEDIASIZE)
 		{
 			off_t ms;
 			u_int bs;
-			if (ioctl(fd, DIOCGMEDIASIZE, &ms) >= 0) {
+			إذا (ioctl(fd, DIOCGMEDIASIZE, &ms) >= 0) {
 				*retblocks = ms / blocksize;
-				goto out;
+				اذهب بهر;
 			}
 		}
-#elif defined(DIOCGDINFO)
+#وإلاإذا defined(DIOCGDINFO)
 		/* old disklabel interface */
-		part = strlen(file) - 1;
-		if (part >= 0) {
+		part = مزي_اوږدوالی(file) - 1;
+		إذا (part >= 0) {
 			ch = file[part];
-			if (isdigit(ch))
+			إذا (که_عدد(ch))
 				part = 0;
-			else if (ch >= 'a' && ch <= 'h')
+			وإلا إذا (ch >= 'a' && ch <= 'h')
 				part = ch - 'a';
-			else
+			وإلا
 				part = -1;
 		}
-		if (part >= 0 && (ioctl(fd, DIOCGDINFO, (char *)&lab) >= 0)) {
+		إذا (part >= 0 && (ioctl(fd, DIOCGDINFO, (حرف *)&lab) >= 0)) {
 			pp = &lab.d_partitions[part];
-			if (pp->p_size) {
-				*retblocks = pp->p_size / (blocksize / 512);
-				goto out;
+			إذا (pp->p_اندازه) {
+				*retblocks = pp->p_اندازه / (blocksize / 512);
+				اذهب بهر;
 			}
 		}
-#endif /* defined(DIOCG*) */
+#د_که_پای /* defined(DIOCG*) */
 	}
-#endif /* HAVE_SYS_DISKLABEL_H */
+#د_که_پای /* HAVE_SYS_DISKLABEL_H */
 
 	{
 		ext2fs_struct_stat st;
 
-		if (ext2fs_fstat(fd, &st) == 0)
-			if (S_ISREG(st.st_mode)) {
-				*retblocks = st.st_size / blocksize;
-				goto out;
+		إذا (ext2fs_fstat(fd, &st) == 0)
+			إذا (S_ISREG(st.st_ډېرپېښ)) {
+				*retblocks = st.st_اندازه / blocksize;
+				اذهب بهر;
 			}
 	}
 
@@ -255,61 +255,61 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 	 * which is generally the best way.  So do binary search to
 	 * find the size of the partition.
 	 */
-	low = 0;
-	for (high = 1024; valid_offset(fd, high); high *= 2)
-		low = high;
-	while (low < high - 1) {
-		const ext2_loff_t mid = (low + high) / 2;
+	ټیټ = 0;
+	لكل (لوړ = 1024; valid_دننه_واټن(fd, لوړ); لوړ *= 2)
+		ټیټ = لوړ;
+	طالما (ټیټ < لوړ - 1) {
+		ثابت ext2_loff_t mid = (ټیټ + لوړ) / 2;
 
-		if (valid_offset (fd, mid))
-			low = mid;
-		else
-			high = mid;
+		إذا (valid_دننه_واټن (fd, mid))
+			ټیټ = mid;
+		وإلا
+			لوړ = mid;
 	}
-	valid_offset(fd, 0);
-	size64 = low + 1;
+	valid_دننه_واټن(fd, 0);
+	size64 = ټیټ + 1;
 	*retblocks = size64 / blocksize;
-out:
+بهر:
 	close(fd);
-	return rc;
+	أرجع rc;
 }
 
-#endif /* WIN32 */
+#د_که_پای /* WIN32 */
 
-errcode_t ext2fs_get_device_size(const char *file, int blocksize,
+errcode_t ext2fs_get_device_اندازه(ثابت حرف *file, صحيح blocksize,
 				 blk_t *retblocks)
 {
 	errcode_t retval;
-	blk64_t	blocks;
+	blk64_t	بلاکونه;
 
-	retval = ext2fs_get_device_size2(file, blocksize, &blocks);
-	if (retval)
-		return retval;
-	if (blocks >= (1ULL << 32))
-		return EFBIG;
-	*retblocks = (blk_t) blocks;
-	return 0;
+	retval = ext2fs_get_device_size2(file, blocksize, &بلاکونه);
+	إذا (retval)
+		أرجع retval;
+	إذا (بلاکونه >= (1ULL << 32))
+		أرجع EFBIG;
+	*retblocks = (blk_t) بلاکونه;
+	أرجع 0;
 }
 
-#ifdef DEBUG
-int main(int argc, char **argv)
+#که_تعریف_شوی DEBUG
+صحيح اصلي(صحيح argc, حرف **argv)
 {
-	blk64_t	blocks;
-	int	retval;
+	blk64_t	بلاکونه;
+	صحيح	retval;
 
-	if (argc < 2) {
+	إذا (argc < 2) {
 		fprintf(stderr, "Usage: %s device\n", argv[0]);
-		exit(1);
+		وتل(1);
 	}
 
-	retval = ext2fs_get_device_size2(argv[1], 1024, &blocks);
-	if (retval) {
+	retval = ext2fs_get_device_size2(argv[1], 1024, &بلاکونه);
+	إذا (retval) {
 		com_err(argv[0], retval,
 			"while calling ext2fs_get_device_size");
-		exit(1);
+		وتل(1);
 	}
-	printf("Device %s has %llu 1k blocks.\n", argv[1],
-	       (unsigned long long) locks);
-	exit(0);
+	چاپ_کړه("Device %s has %llu 1k blocks.\n", argv[1],
+	       (بینښه اوږد اوږد) locks);
+	وتل(0);
 }
-#endif
+#د_که_پای

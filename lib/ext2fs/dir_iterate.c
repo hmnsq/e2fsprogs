@@ -9,54 +9,54 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#د_که_پای
+#إذا HAVE_ERRNO_H
+#ضمن <errno.h>
+#د_که_پای
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fsP.h"
 
-#define EXT4_MAX_REC_LEN		((1<<16)-1)
+#تعریف_کړه EXT4_MAX_REC_LEN		((1<<16)-1)
 
 errcode_t ext2fs_get_rec_len(ext2_filsys fs,
-			     struct ext2_dir_entry *dirent,
-			     unsigned int *rec_len)
+			     بنية ext2_dir_ثبت *dirent,
+			     بینښه صحيح *rec_len)
 {
-	unsigned int len = dirent->rec_len;
+	بینښه صحيح len = dirent->rec_len;
 
-	if (fs->blocksize < 65536)
+	إذا (fs->blocksize < 65536)
 		*rec_len = len;
-	else if (len == EXT4_MAX_REC_LEN || len == 0)
+	وإلا إذا (len == EXT4_MAX_REC_LEN || len == 0)
 		*rec_len = fs->blocksize;
-	else 
+	وإلا 
 		*rec_len = (len & 65532) | ((len & 3) << 16);
-	return 0;
+	أرجع 0;
 }
 
-errcode_t ext2fs_set_rec_len(ext2_filsys fs,
-			     unsigned int len,
-			     struct ext2_dir_entry *dirent)
+errcode_t ext2fs_سېټ_rec_len(ext2_filsys fs,
+			     بینښه صحيح len,
+			     بنية ext2_dir_ثبت *dirent)
 {
-	if ((len > fs->blocksize) || (fs->blocksize > (1 << 18)) || (len & 3))
-		return EINVAL;
-	if (len < 65536) {
+	إذا ((len > fs->blocksize) || (fs->blocksize > (1 << 18)) || (len & 3))
+		أرجع EINVAL;
+	إذا (len < 65536) {
 		dirent->rec_len = len;
-		return 0;
+		أرجع 0;
 	}
-	if (len == fs->blocksize) {
-		if (fs->blocksize == 65536)
+	إذا (len == fs->blocksize) {
+		إذا (fs->blocksize == 65536)
 			dirent->rec_len = EXT4_MAX_REC_LEN;
-		else 
+		وإلا 
 			dirent->rec_len = 0;
-	} else
+	} وإلا
 		dirent->rec_len = (len & 65532) | ((len >> 16) & 3);
-	return 0;
+	أرجع 0;
 }
 
 /*
@@ -67,111 +67,111 @@ errcode_t ext2fs_set_rec_len(ext2_filsys fs,
  * undeleted entry.  Returns 1 if the deleted entry looks valid, zero
  * if not valid.
  */
-static int ext2fs_validate_entry(ext2_filsys fs, char *buf,
-				 unsigned int offset,
-				 unsigned int final_offset)
+ساكن صحيح ext2fs_validate_ثبت(ext2_filsys fs, حرف *buf,
+				 بینښه صحيح دننه_واټن,
+				 بینښه صحيح final_دننه_واټن)
 {
-	struct ext2_dir_entry *dirent;
-	unsigned int rec_len;
-#define DIRENT_MIN_LENGTH 12
+	بنية ext2_dir_ثبت *dirent;
+	بینښه صحيح rec_len;
+#تعریف_کړه DIRENT_MIN_اوږدتیا 12
 
-	while ((offset < final_offset) &&
-	       (offset <= fs->blocksize - DIRENT_MIN_LENGTH)) {
-		dirent = (struct ext2_dir_entry *)(buf + offset);
-		if (ext2fs_get_rec_len(fs, dirent, &rec_len))
-			return 0;
-		offset += rec_len;
-		if ((rec_len < 8) ||
+	طالما ((دننه_واټن < final_دننه_واټن) &&
+	       (دننه_واټن <= fs->blocksize - DIRENT_MIN_اوږدتیا)) {
+		dirent = (بنية ext2_dir_ثبت *)(buf + دننه_واټن);
+		إذا (ext2fs_get_rec_len(fs, dirent, &rec_len))
+			أرجع 0;
+		دننه_واټن += rec_len;
+		إذا ((rec_len < 8) ||
 		    ((rec_len % 4) != 0) ||
-		    ((ext2fs_dirent_name_len(dirent)+8) > (int) rec_len))
-			return 0;
+		    ((ext2fs_dirent_name_len(dirent)+8) > (صحيح) rec_len))
+			أرجع 0;
 	}
-	return (offset == final_offset);
+	أرجع (دننه_واټن == final_دننه_واټن);
 }
 
 errcode_t ext2fs_dir_iterate2(ext2_filsys fs,
 			      ext2_ino_t dir,
-			      int flags,
-			      char *block_buf,
-			      int (*func)(ext2_ino_t	dir,
-					  int		entry,
-					  struct ext2_dir_entry *dirent,
-					  int	offset,
-					  int	blocksize,
-					  char	*buf,
-					  void	*priv_data),
-			      void *priv_data)
+			      صحيح flags,
+			      حرف *بلاک_buf,
+			      صحيح (*func)(ext2_ino_t	dir,
+					  صحيح		ثبت,
+					  بنية ext2_dir_ثبت *dirent,
+					  صحيح	دننه_واټن,
+					  صحيح	blocksize,
+					  حرف	*buf,
+					  فراغ	*priv_معلومات),
+			      فراغ *priv_معلومات)
 {
-	struct		dir_context	ctx;
+	بنية		dir_context	ctx;
 	errcode_t	retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_check_directory(fs, dir);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
 	ctx.dir = dir;
 	ctx.flags = flags;
-	if (block_buf)
-		ctx.buf = block_buf;
-	else {
+	إذا (بلاک_buf)
+		ctx.buf = بلاک_buf;
+	وإلا {
 		retval = ext2fs_get_mem(fs->blocksize, &ctx.buf);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 	}
 	ctx.func = func;
-	ctx.priv_data = priv_data;
+	ctx.priv_معلومات = priv_معلومات;
 	ctx.errcode = 0;
-	retval = ext2fs_block_iterate3(fs, dir, BLOCK_FLAG_READ_ONLY, 0,
-				       ext2fs_process_dir_block, &ctx);
-	if (!block_buf)
+	retval = ext2fs_بلاک_iterate3(fs, dir, بلاک_FLAG_READ_ONLY, 0,
+				       ext2fs_process_dir_بلاک, &ctx);
+	إذا (!بلاک_buf)
 		ext2fs_free_mem(&ctx.buf);
-	if (retval == EXT2_ET_INLINE_DATA_CANT_ITERATE) {
-		(void) ext2fs_inline_data_dir_iterate(fs, dir, &ctx);
+	إذا (retval == EXT2_ET_INLINE_معلومات_CANT_ITERATE) {
+		(فراغ) ext2fs_inline_معلومات_dir_iterate(fs, dir, &ctx);
 		retval = 0;
 	}
-	if (retval)
-		return retval;
-	return ctx.errcode;
+	إذا (retval)
+		أرجع retval;
+	أرجع ctx.errcode;
 }
 
-struct xlate {
-	int (*func)(struct ext2_dir_entry *dirent,
-		    int		offset,
-		    int		blocksize,
-		    char	*buf,
-		    void	*priv_data);
-	void *real_private;
+بنية xlate {
+	صحيح (*func)(بنية ext2_dir_ثبت *dirent,
+		    صحيح		دننه_واټن,
+		    صحيح		blocksize,
+		    حرف	*buf,
+		    فراغ	*priv_معلومات);
+	فراغ *real_شخصي;
 };
 
-static int xlate_func(ext2_ino_t dir EXT2FS_ATTR((unused)),
-		      int entry EXT2FS_ATTR((unused)),
-		      struct ext2_dir_entry *dirent, int offset,
-		      int blocksize, char *buf, void *priv_data)
+ساكن صحيح xlate_func(ext2_ino_t dir EXT2FS_ATTR((ناکارول_شوی)),
+		      صحيح ثبت EXT2FS_ATTR((ناکارول_شوی)),
+		      بنية ext2_dir_ثبت *dirent, صحيح دننه_واټن,
+		      صحيح blocksize, حرف *buf, فراغ *priv_معلومات)
 {
-	struct xlate *xl = (struct xlate *) priv_data;
+	بنية xlate *xl = (بنية xlate *) priv_معلومات;
 
-	return (*xl->func)(dirent, offset, blocksize, buf, xl->real_private);
+	أرجع (*xl->func)(dirent, دننه_واټن, blocksize, buf, xl->real_شخصي);
 }
 
 errcode_t ext2fs_dir_iterate(ext2_filsys fs,
 			     ext2_ino_t dir,
-			     int flags,
-			     char *block_buf,
-			     int (*func)(struct ext2_dir_entry *dirent,
-					 int	offset,
-					 int	blocksize,
-					 char	*buf,
-					 void	*priv_data),
-			     void *priv_data)
+			     صحيح flags,
+			     حرف *بلاک_buf,
+			     صحيح (*func)(بنية ext2_dir_ثبت *dirent,
+					 صحيح	دننه_واټن,
+					 صحيح	blocksize,
+					 حرف	*buf,
+					 فراغ	*priv_معلومات),
+			     فراغ *priv_معلومات)
 {
-	struct xlate xl;
+	بنية xlate xl;
 
-	xl.real_private = priv_data;
+	xl.real_شخصي = priv_معلومات;
 	xl.func = func;
 
-	return ext2fs_dir_iterate2(fs, dir, flags, block_buf,
+	أرجع ext2fs_dir_iterate2(fs, dir, flags, بلاک_buf,
 				   xlate_func, &xl);
 }
 
@@ -180,136 +180,136 @@ errcode_t ext2fs_dir_iterate(ext2_filsys fs,
  * Helper function which is private to this module.  Used by
  * ext2fs_dir_iterate() and ext2fs_dblist_dir_iterate()
  */
-int ext2fs_process_dir_block(ext2_filsys fs,
+صحيح ext2fs_process_dir_بلاک(ext2_filsys fs,
 			     blk64_t	*blocknr,
 			     e2_blkcnt_t blockcnt,
-			     blk64_t	ref_block EXT2FS_ATTR((unused)),
-			     int	ref_offset EXT2FS_ATTR((unused)),
-			     void	*priv_data)
+			     blk64_t	ref_بلاک EXT2FS_ATTR((ناکارول_شوی)),
+			     صحيح	ref_دننه_واټن EXT2FS_ATTR((ناکارول_شوی)),
+			     فراغ	*priv_معلومات)
 {
-	struct dir_context *ctx = (struct dir_context *) priv_data;
-	unsigned int	offset = 0;
-	unsigned int	next_real_entry = 0;
-	int		ret = 0;
-	int		changed = 0;
-	int		do_abort = 0;
-	unsigned int	rec_len, size, buflen;
-	int		entry;
-	struct ext2_dir_entry *dirent;
-	int		csum_size = 0;
-	int		inline_data;
+	بنية dir_context *ctx = (بنية dir_context *) priv_معلومات;
+	بینښه صحيح	دننه_واټن = 0;
+	بینښه صحيح	بل_real_ثبت = 0;
+	صحيح		ret = 0;
+	صحيح		بدل_شوی = 0;
+	صحيح		do_abort = 0;
+	بینښه صحيح	rec_len, اندازه, buflen;
+	صحيح		ثبت;
+	بنية ext2_dir_ثبت *dirent;
+	صحيح		csum_اندازه = 0;
+	صحيح		inline_معلومات;
 	errcode_t	retval = 0;
 
-	if (blockcnt < 0)
-		return 0;
+	إذا (blockcnt < 0)
+		أرجع 0;
 
-	entry = blockcnt ? DIRENT_OTHER_FILE : DIRENT_DOT_FILE;
+	ثبت = blockcnt ? DIRENT_OTHER_FILE : DIRENT_DOT_FILE;
 
 	/* If a dir has inline data, we don't need to read block */
-	inline_data = !!(ctx->flags & DIRENT_FLAG_INCLUDE_INLINE_DATA);
-	if (!inline_data) {
+	inline_معلومات = !!(ctx->flags & DIRENT_FLAG_INCLUDE_INLINE_معلومات);
+	إذا (!inline_معلومات) {
 		ctx->errcode = ext2fs_read_dir_block4(fs, *blocknr, ctx->buf, 0,
 						      ctx->dir);
-		if (ctx->errcode)
-			return BLOCK_ABORT;
+		إذا (ctx->errcode)
+			أرجع بلاک_ABORT;
 		/* If we handle a normal dir, we traverse the entire block */
 		buflen = fs->blocksize;
-	} else {
+	} وإلا {
 		buflen = ctx->buflen;
 	}
 
-	if (ext2fs_has_feature_metadata_csum(fs->super))
-		csum_size = sizeof(struct ext2_dir_entry_tail);
+	إذا (ext2fs_has_feature_metadata_csum(fs->super))
+		csum_اندازه = حجم(بنية ext2_dir_ثبت_لکۍ);
 
-	if (buflen < 8) {
+	إذا (buflen < 8) {
 		ctx->errcode = EXT2_ET_DIR_CORRUPTED;
-		return BLOCK_ABORT;
+		أرجع بلاک_ABORT;
 	}
-	while (offset < buflen - 8) {
-		dirent = (struct ext2_dir_entry *) (ctx->buf + offset);
-		if (ext2fs_get_rec_len(fs, dirent, &rec_len))
-			return BLOCK_ABORT;
-		if (((offset + rec_len) > buflen) ||
+	طالما (دننه_واټن < buflen - 8) {
+		dirent = (بنية ext2_dir_ثبت *) (ctx->buf + دننه_واټن);
+		إذا (ext2fs_get_rec_len(fs, dirent, &rec_len))
+			أرجع بلاک_ABORT;
+		إذا (((دننه_واټن + rec_len) > buflen) ||
 		    (rec_len < 8) ||
 		    ((rec_len % 4) != 0) ||
-		    ((ext2fs_dirent_name_len(dirent)+8) > (int) rec_len)) {
+		    ((ext2fs_dirent_name_len(dirent)+8) > (صحيح) rec_len)) {
 			ctx->errcode = EXT2_ET_DIR_CORRUPTED;
-			return BLOCK_ABORT;
+			أرجع بلاک_ABORT;
 		}
-		if (!dirent->inode) {
+		إذا (!dirent->inode) {
 			/*
 			 * We just need to check metadata_csum when this
 			 * dir hasn't inline data.  That means that 'buflen'
 			 * should be blocksize.
 			 */
-			if (!inline_data &&
-			    (offset == buflen - csum_size) &&
-			    (dirent->rec_len == csum_size) &&
+			إذا (!inline_معلومات &&
+			    (دننه_واټن == buflen - csum_اندازه) &&
+			    (dirent->rec_len == csum_اندازه) &&
 			    (dirent->name_len == EXT2_DIR_NAME_LEN_CSUM)) {
-				if (!(ctx->flags & DIRENT_FLAG_INCLUDE_CSUM))
-					goto next;
-				entry = DIRENT_CHECKSUM;
-			} else if (!(ctx->flags & DIRENT_FLAG_INCLUDE_EMPTY))
-				goto next;
+				إذا (!(ctx->flags & DIRENT_FLAG_INCLUDE_CSUM))
+					اذهب بل;
+				ثبت = DIRENT_CHECKSUM;
+			} وإلا إذا (!(ctx->flags & DIRENT_FLAG_INCLUDE_تشه))
+				اذهب بل;
 		}
 
 		ret = (ctx->func)(ctx->dir,
-				  (next_real_entry > offset) ?
-				  DIRENT_DELETED_FILE : entry,
-				  dirent, offset,
+				  (بل_real_ثبت > دننه_واټن) ?
+				  DIRENT_DELETED_FILE : ثبت,
+				  dirent, دننه_واټن,
 				  buflen, ctx->buf,
-				  ctx->priv_data);
-		if (entry < DIRENT_OTHER_FILE)
-			entry++;
+				  ctx->priv_معلومات);
+		إذا (ثبت < DIRENT_OTHER_FILE)
+			ثبت++;
 
-		if (ret & DIRENT_CHANGED) {
-			if (ext2fs_get_rec_len(fs, dirent, &rec_len))
-				return BLOCK_ABORT;
-			changed++;
+		إذا (ret & DIRENT_بدل_شوی) {
+			إذا (ext2fs_get_rec_len(fs, dirent, &rec_len))
+				أرجع بلاک_ABORT;
+			بدل_شوی++;
 		}
-		if (ret & DIRENT_ABORT) {
+		إذا (ret & DIRENT_ABORT) {
 			do_abort++;
-			break;
+			اكسر;
 		}
-next:
- 		if (next_real_entry == offset)
-			next_real_entry += rec_len;
+بل:
+ 		إذا (بل_real_ثبت == دننه_واټن)
+			بل_real_ثبت += rec_len;
 
- 		if (ctx->flags & DIRENT_FLAG_INCLUDE_REMOVED) {
-			size = (ext2fs_dirent_name_len(dirent) + 11) & ~3;
+ 		إذا (ctx->flags & DIRENT_FLAG_INCLUDE_REMOVED) {
+			اندازه = (ext2fs_dirent_name_len(dirent) + 11) & ~3;
 
-			if (rec_len != size)  {
-				unsigned int final_offset;
+			إذا (rec_len != اندازه)  {
+				بینښه صحيح final_دننه_واټن;
 
-				final_offset = offset + rec_len;
-				offset += size;
-				while (offset < final_offset &&
-				       !ext2fs_validate_entry(fs, ctx->buf,
-							      offset,
-							      final_offset))
-					offset += 4;
-				continue;
+				final_دننه_واټن = دننه_واټن + rec_len;
+				دننه_واټن += اندازه;
+				طالما (دننه_واټن < final_دننه_واټن &&
+				       !ext2fs_validate_ثبت(fs, ctx->buf,
+							      دننه_واټن,
+							      final_دننه_واټن))
+					دننه_واټن += 4;
+				استمر;
 			}
 		}
-		offset += rec_len;
+		دننه_واټن += rec_len;
 	}
 
-	if (changed) {
-		if (!inline_data) {
+	إذا (بدل_شوی) {
+		إذا (!inline_معلومات) {
 			ctx->errcode = ext2fs_write_dir_block4(fs, *blocknr,
 							       ctx->buf,
 							       0, ctx->dir);
-			if (ctx->errcode)
-				return BLOCK_ABORT;
-		} else {
+			إذا (ctx->errcode)
+				أرجع بلاک_ABORT;
+		} وإلا {
 			/*
 			 * return BLOCK_INLINE_DATA_CHANGED to notify caller
 			 * that inline data has been changed.
 			 */
-			retval = BLOCK_INLINE_DATA_CHANGED;
+			retval = بلاک_INLINE_معلومات_بدل_شوی;
 		}
 	}
-	if (do_abort)
-		return retval | BLOCK_ABORT;
-	return retval;
+	إذا (do_abort)
+		أرجع retval | بلاک_ABORT;
+	أرجع retval;
 }

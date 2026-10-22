@@ -13,31 +13,31 @@
  *  Copyright (C) 1991, 1992  Linus Torvalds
  */
 
-#ifndef _LINUX_EXT2_FS_H
-#define _LINUX_EXT2_FS_H
+#که_نه_تعریف_شوی _LINUX_EXT2_FS_H
+#تعریف_کړه _LINUX_EXT2_FS_H
 
-#include <ext2fs/ext2_types.h>		/* Changed from linux/types.h */
+#ضمن <ext2fs/ext2_types.h>		/* Changed from linux/types.h */
 
-#ifndef __GNUC_PREREQ
-#if defined(__GNUC__) && defined(__GNUC_MINOR__)
-#define __GNUC_PREREQ(maj, min) \
+#که_نه_تعریف_شوی __GNUC_PREREQ
+#إذا defined(__GNUC__) && defined(__GNUC_MINOR__)
+#تعریف_کړه __GNUC_PREREQ(maj, min) \
 	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
-#else
-#define __GNUC_PREREQ(maj, min) 0
-#endif
-#endif
+#وإلا
+#تعریف_کړه __GNUC_PREREQ(maj, min) 0
+#د_که_پای
+#د_که_پای
 
-#ifndef __nonstring
-#ifdef __has_attribute
-#if __has_attribute(__nonstring__)
-#define __nonstring                    __attribute__((__nonstring__))
-#else
-#define __nonstring
-#endif /* __has_attribute(__nonstring__) */
-#else
+#که_نه_تعریف_شوی __nonstring
+#که_تعریف_شوی __has_attribute
+#إذا __has_attribute(__nonstring__)
+#تعریف_کړه __nonstring                    __attribute__((__nonstring__))
+#وإلا
+#تعریف_کړه __nonstring
+#د_که_پای /* __has_attribute(__nonstring__) */
+#وإلا
 # define __nonstring
-#endif /* __has_attribute */
-#endif /* __nonstring */
+#د_که_پای /* __has_attribute */
+#د_که_پای /* __nonstring */
 
 /*
  * The second extended filesystem constants/structures
@@ -46,89 +46,89 @@
 /*
  * Define EXT2FS_DEBUG to produce debug messages
  */
-#undef EXT2FS_DEBUG
+#تعریف_لغوه EXT2FS_DEBUG
 
 /*
  * Define EXT2_PREALLOCATE to preallocate data blocks for expanding files
  */
-#define EXT2_PREALLOCATE
-#define EXT2_DEFAULT_PREALLOC_BLOCKS	8
+#تعریف_کړه EXT2_PREALLOCATE
+#تعریف_کړه EXT2_DEFAULT_PREALLOC_بلاکونه	8
 
 /*
  * The second extended file system version
  */
-#define EXT2FS_DATE		"95/08/09"
-#define EXT2FS_VERSION		"0.5b"
+#تعریف_کړه EXT2FS_DATE		"95/08/09"
+#تعریف_کړه EXT2_FS_نسخه		"0.5b"
 
 /*
  * Special inode numbers
  */
-#define EXT2_BAD_INO		 1	/* Bad blocks inode */
-#define EXT2_ROOT_INO		 2	/* Root inode */
-#define EXT4_USR_QUOTA_INO	 3	/* User quota inode */
-#define EXT4_GRP_QUOTA_INO	 4	/* Group quota inode */
-#define EXT2_BOOT_LOADER_INO	 5	/* Boot loader inode */
-#define EXT2_UNDEL_DIR_INO	 6	/* Undelete directory inode */
-#define EXT2_RESIZE_INO		 7	/* Reserved group descriptors inode */
-#define EXT2_JOURNAL_INO	 8	/* Journal inode */
-#define EXT2_EXCLUDE_INO	 9	/* The "exclude" inode, for snapshots */
-#define EXT4_REPLICA_INO	10	/* Used by non-upstream feature */
+#تعریف_کړه EXT2_BAD_INO		 1	/* Bad blocks inode */
+#تعریف_کړه EXT2_ریښه_INO		 2	/* Root inode */
+#تعریف_کړه EXT4_USR_QUOTA_INO	 3	/* User quota inode */
+#تعریف_کړه EXT4_GRP_QUOTA_INO	 4	/* Group quota inode */
+#تعریف_کړه EXT2_BOOT_LOADER_INO	 5	/* Boot loader inode */
+#تعریف_کړه EXT2_UNDEL_DIR_INO	 6	/* Undelete directory inode */
+#تعریف_کړه EXT2_RESIZE_INO		 7	/* Reserved group descriptors inode */
+#تعریف_کړه EXT2_JOURNAL_INO	 8	/* Journal inode */
+#تعریف_کړه EXT2_EXCLUDE_INO	 9	/* The "exclude" inode, for snapshots */
+#تعریف_کړه EXT4_REPLICA_INO	10	/* Used by non-upstream feature */
 
 /* First non-reserved inode for old ext2 filesystems */
-#define EXT2_GOOD_OLD_FIRST_INO	11
+#تعریف_کړه EXT2_GOOD_OLD_لومړی_INO	11
 
 /*
  * The second extended file system magic number
  */
-#define EXT2_SUPER_MAGIC	0xEF53
+#تعریف_کړه EXT2_SUPER_MAGIC	0xEF53
 
-#ifdef __KERNEL__
-#define EXT2_SB(sb)	(&((sb)->u.ext2_sb))
-#else
+#که_تعریف_شوی __KERNEL__
+#تعریف_کړه EXT2_SB(sb)	(&((sb)->u.ext2_sb))
+#وإلا
 /* Assume that user mode programs are passing in an ext2fs superblock, not
  * a kernel struct super_block.  This will allow us to call the feature-test
  * macros from user land. */
-#define EXT2_SB(sb)	(sb)
-#endif
+#تعریف_کړه EXT2_SB(sb)	(sb)
+#د_که_پای
 
 /*
  * Maximal count of links to a file
  */
-#define EXT2_LINK_MAX		65000
+#تعریف_کړه EXT2_LINK_MAX		65000
 
 /*
  * Macro-instructions used to manage several block sizes
  */
-#define EXT2_MIN_BLOCK_LOG_SIZE		10	/* 1024 */
-#define EXT2_MAX_BLOCK_LOG_SIZE		16	/* 65536 */
-#define EXT2_MIN_BLOCK_SIZE	(1 << EXT2_MIN_BLOCK_LOG_SIZE)
-#define EXT2_MAX_BLOCK_SIZE	(1 << EXT2_MAX_BLOCK_LOG_SIZE)
-#ifdef __KERNEL__
-#define EXT2_BLOCK_SIZE(s)	((s)->s_blocksize)
-#define EXT2_BLOCK_SIZE_BITS(s)	((s)->s_blocksize_bits)
-#define EXT2_ADDR_PER_BLOCK_BITS(s)	(EXT2_SB(s)->addr_per_block_bits)
-#define EXT2_INODE_SIZE(s)	(EXT2_SB(s)->s_inode_size)
-#define EXT2_FIRST_INO(s)	(EXT2_SB(s)->s_first_ino)
-#else
-#define EXT2_BLOCK_SIZE(s)	(EXT2_MIN_BLOCK_SIZE << (s)->s_log_block_size)
-#define EXT2_BLOCK_SIZE_BITS(s)	((s)->s_log_block_size + 10)
-#define EXT2_INODE_SIZE(s)	(((s)->s_rev_level == EXT2_GOOD_OLD_REV) ? \
-				 EXT2_GOOD_OLD_INODE_SIZE : (s)->s_inode_size)
-#define EXT2_FIRST_INO(s)	(((s)->s_rev_level == EXT2_GOOD_OLD_REV) ? \
-				 EXT2_GOOD_OLD_FIRST_INO : (s)->s_first_ino)
-#endif
-#define EXT2_ADDR_PER_BLOCK(s)	(EXT2_BLOCK_SIZE(s) / sizeof(__u32))
+#تعریف_کړه EXT2_MIN_بلاک_LOG_اندازه		10	/* 1024 */
+#تعریف_کړه EXT2_MAX_بلاک_LOG_اندازه		16	/* 65536 */
+#تعریف_کړه EXT2_MIN_بلاک_اندازه	(1 << EXT2_MIN_بلاک_LOG_اندازه)
+#تعریف_کړه EXT2_MAX_بلاک_اندازه	(1 << EXT2_MAX_بلاک_LOG_اندازه)
+#که_تعریف_شوی __KERNEL__
+#تعریف_کړه EXT2_بلاک_اندازه(s)	((s)->s_blocksize)
+#تعریف_کړه EXT2_بلاک_اندازه_بټونه(s)	((s)->s_blocksize_بټونه)
+#تعریف_کړه EXT2_ADDR_فی_بلاک_بټونه(s)	(EXT2_SB(s)->addr_فی_بلاک_بټونه)
+#تعریف_کړه EXT2_INODE_اندازه(s)	(EXT2_SB(s)->s_inode_اندازه)
+#تعریف_کړه EXT2_لومړی_INO(s)	(EXT2_SB(s)->s_لومړی_ino)
+#وإلا
+#تعریف_کړه EXT2_بلاک_اندازه(s)	(EXT2_MIN_بلاک_اندازه << (s)->s_log_بلاک_اندازه)
+#تعریف_کړه EXT2_بلاک_اندازه_بټونه(s)	((s)->s_log_بلاک_اندازه + 10)
+#تعریف_کړه EXT2_INODE_اندازه(s)	(((s)->s_rev_level == EXT2_GOOD_OLD_REV) ? \
+				 EXT2_GOOD_OLD_INODE_اندازه : (s)->s_inode_اندازه)
+#تعریف_کړه EXT2_لومړی_INO(s)	(((s)->s_rev_level == EXT2_GOOD_OLD_REV) ? \
+				 EXT2_GOOD_OLD_لومړی_INO : (s)->s_لومړی_ino)
+#د_که_پای
+#تعریف_کړه EXT2_ADDR_فی_بلاک(s)	(EXT2_بلاک_اندازه(s) / حجم(__u32))
 
 /*
  * Macro-instructions used to manage allocation clusters
  */
-#define EXT2_MIN_CLUSTER_LOG_SIZE	EXT2_MIN_BLOCK_LOG_SIZE
-#define EXT2_MAX_CLUSTER_LOG_SIZE	29	/* 512MB  */
-#define EXT2_MIN_CLUSTER_SIZE		EXT2_MIN_BLOCK_SIZE
-#define EXT2_MAX_CLUSTER_SIZE		(1 << EXT2_MAX_CLUSTER_LOG_SIZE)
-#define EXT2_CLUSTER_SIZE(s)		(EXT2_MIN_BLOCK_SIZE << \
-						(s)->s_log_cluster_size)
-#define EXT2_CLUSTER_SIZE_BITS(s)	((s)->s_log_cluster_size + 10)
+#تعریف_کړه EXT2_MIN_CLUSTER_LOG_اندازه	EXT2_MIN_بلاک_LOG_اندازه
+#تعریف_کړه EXT2_MAX_CLUSTER_LOG_اندازه	29	/* 512MB  */
+#تعریف_کړه EXT2_MIN_CLUSTER_اندازه		EXT2_MIN_بلاک_اندازه
+#تعریف_کړه EXT2_MAX_CLUSTER_اندازه		(1 << EXT2_MAX_CLUSTER_LOG_اندازه)
+#تعریف_کړه EXT2_CLUSTER_اندازه(s)		(EXT2_MIN_بلاک_اندازه << \
+						(s)->s_log_cluster_اندازه)
+#تعریف_کړه EXT2_CLUSTER_اندازه_بټونه(s)	((s)->s_log_cluster_اندازه + 10)
 
 /*
  * Macro-instructions used to manage fragments
@@ -136,93 +136,93 @@
  * Note: for backwards compatibility only, for the dump program.
  * Ext2/3/4 will never support fragments....
  */
-#define EXT2_MIN_FRAG_SIZE              EXT2_MIN_BLOCK_SIZE
-#define EXT2_MAX_FRAG_SIZE              EXT2_MAX_BLOCK_SIZE
-#define EXT2_MIN_FRAG_LOG_SIZE          EXT2_MIN_BLOCK_LOG_SIZE
-#define EXT2_FRAG_SIZE(s)		EXT2_BLOCK_SIZE(s)
-#define EXT2_FRAGS_PER_BLOCK(s)		1
+#تعریف_کړه EXT2_MIN_FRAG_اندازه              EXT2_MIN_بلاک_اندازه
+#تعریف_کړه EXT2_MAX_FRAG_اندازه              EXT2_MAX_بلاک_اندازه
+#تعریف_کړه EXT2_MIN_FRAG_LOG_اندازه          EXT2_MIN_بلاک_LOG_اندازه
+#تعریف_کړه EXT2_FRAG_اندازه(s)		EXT2_بلاک_اندازه(s)
+#تعریف_کړه EXT2_FRAGS_فی_بلاک(s)		1
 
 /*
  * ACL structures
  */
-struct ext2_acl_header	/* Header of Access Control Lists */
+بنية ext2_acl_سرلیک	/* Header of Access Control Lists */
 {
-	__u32	aclh_size;
-	__u32	aclh_file_count;
-	__u32	aclh_acle_count;
-	__u32	aclh_first_acle;
+	__u32	aclh_اندازه;
+	__u32	aclh_file_شمېر;
+	__u32	aclh_acle_شمېر;
+	__u32	aclh_لومړی_acle;
 };
 
-struct ext2_acl_entry	/* Access Control List Entry */
+بنية ext2_acl_ثبت	/* Access Control List Entry */
 {
-	__u32	acle_size;
+	__u32	acle_اندازه;
 	__u16	acle_perms;	/* Access permissions */
 	__u16	acle_type;	/* Type of entry */
-	__u16	acle_tag;	/* User or group identity */
+	__u16	acle_نښان;	/* User or group identity */
 	__u16	acle_pad1;
-	__u32	acle_next;	/* Pointer on next entry for the */
+	__u32	acle_بل;	/* Pointer on next entry for the */
 					/* same inode or on next free entry */
 };
 
 /*
  * Structure of a blocks group descriptor
  */
-struct ext2_group_desc
+بنية ext2_ډله_desc
 {
-	__u32	bg_block_bitmap;	/* Blocks bitmap block */
+	__u32	bg_بلاک_bitmap;	/* Blocks bitmap block */
 	__u32	bg_inode_bitmap;	/* Inodes bitmap block */
-	__u32	bg_inode_table;		/* Inodes table block */
-	__u16	bg_free_blocks_count;	/* Free blocks count */
-	__u16	bg_free_inodes_count;	/* Free inodes count */
-	__u16	bg_used_dirs_count;	/* Directories count */
+	__u32	bg_inode_جدول;		/* Inodes table block */
+	__u16	bg_free_بلاکونه_شمېر;	/* Free blocks count */
+	__u16	bg_free_inodes_شمېر;	/* Free inodes count */
+	__u16	bg_کارول_شوی_dirs_شمېر;	/* Directories count */
 	__u16	bg_flags;
 	__u32	bg_exclude_bitmap_lo;	/* Exclude bitmap for snapshots */
-	__u16	bg_block_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */
+	__u16	bg_بلاک_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */
 	__u16	bg_inode_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */
-	__u16	bg_itable_unused;	/* Unused inodes count */
+	__u16	bg_itable_ناکارول_شوی;	/* Unused inodes count */
 	__u16	bg_checksum;		/* crc16(s_uuid+group_num+group_desc)*/
 };
 
 /*
  * Structure of a blocks group descriptor
  */
-struct ext4_group_desc
+بنية ext4_ډله_desc
 {
-	__u32	bg_block_bitmap;	/* Blocks bitmap block */
+	__u32	bg_بلاک_bitmap;	/* Blocks bitmap block */
 	__u32	bg_inode_bitmap;	/* Inodes bitmap block */
-	__u32	bg_inode_table;		/* Inodes table block */
-	__u16	bg_free_blocks_count;	/* Free blocks count */
-	__u16	bg_free_inodes_count;	/* Free inodes count */
-	__u16	bg_used_dirs_count;	/* Directories count */
+	__u32	bg_inode_جدول;		/* Inodes table block */
+	__u16	bg_free_بلاکونه_شمېر;	/* Free blocks count */
+	__u16	bg_free_inodes_شمېر;	/* Free inodes count */
+	__u16	bg_کارول_شوی_dirs_شمېر;	/* Directories count */
 	__u16	bg_flags;		/* EXT4_BG_flags (INODE_UNINIT, etc) */
 	__u32	bg_exclude_bitmap_lo;	/* Exclude bitmap for snapshots */
-	__u16	bg_block_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */
+	__u16	bg_بلاک_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */
 	__u16	bg_inode_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */
-	__u16	bg_itable_unused;	/* Unused inodes count */
+	__u16	bg_itable_ناکارول_شوی;	/* Unused inodes count */
 	__u16	bg_checksum;		/* crc16(sb_uuid+group+desc) */
-	__u32	bg_block_bitmap_hi;	/* Blocks bitmap block MSB */
+	__u32	bg_بلاک_bitmap_hi;	/* Blocks bitmap block MSB */
 	__u32	bg_inode_bitmap_hi;	/* Inodes bitmap block MSB */
-	__u32	bg_inode_table_hi;	/* Inodes table block MSB */
-	__u16	bg_free_blocks_count_hi;/* Free blocks count MSB */
-	__u16	bg_free_inodes_count_hi;/* Free inodes count MSB */
-	__u16	bg_used_dirs_count_hi;	/* Directories count MSB */
-	__u16	bg_itable_unused_hi;	/* Unused inodes count MSB */
+	__u32	bg_inode_جدول_hi;	/* Inodes table block MSB */
+	__u16	bg_free_بلاکونه_شمېر_hi;/* Free blocks count MSB */
+	__u16	bg_free_inodes_شمېر_hi;/* Free inodes count MSB */
+	__u16	bg_کارول_شوی_dirs_شمېر_hi;	/* Directories count MSB */
+	__u16	bg_itable_ناکارول_شوی_hi;	/* Unused inodes count MSB */
 	__u32	bg_exclude_bitmap_hi;	/* Exclude bitmap block MSB */
-	__u16	bg_block_bitmap_csum_hi;/* crc32c(s_uuid+grp_num+bitmap) MSB */
+	__u16	bg_بلاک_bitmap_csum_hi;/* crc32c(s_uuid+grp_num+bitmap) MSB */
 	__u16	bg_inode_bitmap_csum_hi;/* crc32c(s_uuid+grp_num+bitmap) MSB */
 	__u32	bg_reserved;
 };
 
-#define EXT4_BG_INODE_BITMAP_CSUM_HI_END	\
-	(offsetof(struct ext4_group_desc, bg_inode_bitmap_csum_hi) + \
-	 sizeof(__u16))
-#define EXT4_BG_BLOCK_BITMAP_CSUM_HI_LOCATION	\
-	(offsetof(struct ext4_group_desc, bg_block_bitmap_csum_hi) + \
-	 sizeof(__u16))
+#تعریف_کړه EXT4_BG_INODE_BITMAP_CSUM_HI_پای_ټکی	\
+	(offsetof(بنية ext4_ډله_desc, bg_inode_bitmap_csum_hi) + \
+	 حجم(__u16))
+#تعریف_کړه EXT4_BG_بلاک_BITMAP_CSUM_HI_LOCATION	\
+	(offsetof(بنية ext4_ډله_desc, bg_بلاک_bitmap_csum_hi) + \
+	 حجم(__u16))
 
-#define EXT2_BG_INODE_UNINIT	0x0001 /* Inode table/bitmap not initialized */
-#define EXT2_BG_BLOCK_UNINIT	0x0002 /* Block bitmap not initialized */
-#define EXT2_BG_INODE_ZEROED	0x0004 /* On-disk itable initialized to zero */
+#تعریف_کړه EXT2_BG_INODE_UNINIT	0x0001 /* Inode table/bitmap not initialized */
+#تعریف_کړه EXT2_BG_بلاک_UNINIT	0x0002 /* Block bitmap not initialized */
+#تعریف_کړه EXT2_BG_INODE_ZEROED	0x0004 /* On-disk itable initialized to zero */
 
 /*
  * Data structures used by the directory indexing feature
@@ -236,40 +236,40 @@ struct ext4_group_desc
  * zero.  Therefore, the hash version mod 4 should never be 0.
  * Sincerely, the paranoia department.
  */
-struct ext2_dx_root_info {
+بنية ext2_dx_ریښه_info {
 	__u32 reserved_zero;
-	__u8 hash_version; /* 0 now, 1 at release */
-	__u8 info_length; /* 8 */
-	__u8 indirect_levels;
-	__u8 unused_flags;
+	__u8 hash_نسخه; /* 0 now, 1 at release */
+	__u8 info_اوږدتیا; /* 8 */
+	__u8 غیرمستقیم_پوړونه;
+	__u8 ناکارول_شوی_flags;
 };
 
-#define EXT2_HASH_LEGACY		0
-#define EXT2_HASH_HALF_MD4		1
-#define EXT2_HASH_TEA			2
-#define EXT2_HASH_LEGACY_UNSIGNED	3 /* reserved for userspace lib */
-#define EXT2_HASH_HALF_MD4_UNSIGNED	4 /* reserved for userspace lib */
-#define EXT2_HASH_TEA_UNSIGNED		5 /* reserved for userspace lib */
-#define EXT2_HASH_SIPHASH		6
+#تعریف_کړه EXT2_HASH_LEGACY		0
+#تعریف_کړه EXT2_HASH_HALF_MD4		1
+#تعریف_کړه EXT2_HASH_TEA			2
+#تعریف_کړه EXT2_HASH_LEGACY_UNSIGNED	3 /* reserved for userspace lib */
+#تعریف_کړه EXT2_HASH_HALF_MD4_UNSIGNED	4 /* reserved for userspace lib */
+#تعریف_کړه EXT2_HASH_TEA_UNSIGNED		5 /* reserved for userspace lib */
+#تعریف_کړه EXT2_HASH_SIPHASH		6
 
-#define EXT2_HASH_FLAG_INCOMPAT	0x1
+#تعریف_کړه EXT2_HASH_FLAG_INCOMPAT	0x1
 
-#define EXT4_DX_BLOCK_MASK 0x0fffffff
+#تعریف_کړه EXT4_DX_بلاک_ماسک 0x0fffffff
 
-struct ext2_dx_entry {
+بنية ext2_dx_ثبت {
 	__le32 hash;
-	__le32 block;
+	__le32 بلاک;
 };
 
-struct ext2_dx_countlimit {
-	__le16 limit;
-	__le16 count;
+بنية ext2_dx_countlimit {
+	__le16 حد;
+	__le16 شمېر;
 };
 
 /*
  * This goes at the end of each htree block.
  */
-struct ext2_dx_tail {
+بنية ext2_dx_لکۍ {
 	__le32 dt_reserved;
 	__le32 dt_checksum;	/* crc32c(uuid+inum+dxblock) */
 };
@@ -277,170 +277,170 @@ struct ext2_dx_tail {
 /*
  * Macro-instructions used to manage group descriptors
  */
-#define EXT2_MIN_DESC_SIZE             32
-#define EXT2_MIN_DESC_SIZE_64BIT       64
-#define EXT2_MAX_DESC_SIZE             EXT2_MIN_BLOCK_SIZE
-#define EXT2_DESC_SIZE(s)                                                \
-	(ext2fs_has_feature_64bit(s) ? (s)->s_desc_size : EXT2_MIN_DESC_SIZE)
+#تعریف_کړه EXT2_MIN_DESC_اندازه             32
+#تعریف_کړه EXT2_MIN_DESC_اندازه_64_بټ       64
+#تعریف_کړه EXT2_MAX_DESC_اندازه             EXT2_MIN_بلاک_اندازه
+#تعریف_کړه EXT2_DESC_اندازه(s)                                                \
+	(ext2fs_has_feature_64bit(s) ? (s)->s_desc_اندازه : EXT2_MIN_DESC_اندازه)
 
-#define EXT2_BLOCKS_PER_GROUP(s)	(EXT2_SB(s)->s_blocks_per_group)
-#define EXT2_INODES_PER_GROUP(s)	(EXT2_SB(s)->s_inodes_per_group)
-#define EXT2_CLUSTERS_PER_GROUP(s)	(EXT2_SB(s)->s_clusters_per_group)
-#define EXT2_INODES_PER_BLOCK(s)	(EXT2_BLOCK_SIZE(s)/EXT2_INODE_SIZE(s))
+#تعریف_کړه EXT2_بلاکونه_فی_ډله(s)	(EXT2_SB(s)->s_بلاکونه_فی_ډله)
+#تعریف_کړه EXT2_INODES_فی_ډله(s)	(EXT2_SB(s)->s_inodes_فی_ډله)
+#تعریف_کړه EXT2_CLUSTERS_فی_ډله(s)	(EXT2_SB(s)->s_clusters_فی_ډله)
+#تعریف_کړه EXT2_INODES_فی_بلاک(s)	(EXT2_بلاک_اندازه(s)/EXT2_INODE_اندازه(s))
 /* limits imposed by 16-bit value gd_free_{blocks,inode}_count */
-#define EXT2_MAX_BLOCKS_PER_GROUP(s)	((((unsigned) 1 << 16) - 8) *	\
-					 (EXT2_CLUSTER_SIZE(s) / \
-					  EXT2_BLOCK_SIZE(s)))
-#define EXT2_MAX_CLUSTERS_PER_GROUP(s)	(((unsigned) 1 << 16) - 8)
-#define EXT2_MAX_INODES_PER_GROUP(s)	(((unsigned) 1 << 16) - \
-					 EXT2_INODES_PER_BLOCK(s))
-#ifdef __KERNEL__
-#define EXT2_DESC_PER_BLOCK(s)		(EXT2_SB(s)->s_desc_per_block)
-#define EXT2_DESC_PER_BLOCK_BITS(s)	(EXT2_SB(s)->s_desc_per_block_bits)
-#else
-#define EXT2_DESC_PER_BLOCK(s)		(EXT2_BLOCK_SIZE(s) / EXT2_DESC_SIZE(s))
-#endif
+#تعریف_کړه EXT2_MAX_بلاکونه_فی_ډله(s)	((((بینښه) 1 << 16) - 8) *	\
+					 (EXT2_CLUSTER_اندازه(s) / \
+					  EXT2_بلاک_اندازه(s)))
+#تعریف_کړه EXT2_MAX_CLUSTERS_فی_ډله(s)	(((بینښه) 1 << 16) - 8)
+#تعریف_کړه EXT2_MAX_INODES_فی_ډله(s)	(((بینښه) 1 << 16) - \
+					 EXT2_INODES_فی_بلاک(s))
+#که_تعریف_شوی __KERNEL__
+#تعریف_کړه EXT2_DESC_فی_بلاک(s)		(EXT2_SB(s)->s_desc_فی_بلاک)
+#تعریف_کړه EXT2_DESC_فی_بلاک_بټونه(s)	(EXT2_SB(s)->s_desc_فی_بلاک_بټونه)
+#وإلا
+#تعریف_کړه EXT2_DESC_فی_بلاک(s)		(EXT2_بلاک_اندازه(s) / EXT2_DESC_اندازه(s))
+#د_که_پای
 
-#define EXT2_GROUPS_TO_BLOCKS(s, g)   ((blk64_t) EXT2_BLOCKS_PER_GROUP(s) * \
+#تعریف_کړه EXT2_GROUPS_منزل_بلاکونه(s, g)   ((blk64_t) EXT2_بلاکونه_فی_ډله(s) * \
 				       (g))
-#define EXT2_GROUPS_TO_CLUSTERS(s, g) ((blk64_t) EXT2_CLUSTERS_PER_GROUP(s) * \
+#تعریف_کړه EXT2_GROUPS_منزل_CLUSTERS(s, g) ((blk64_t) EXT2_CLUSTERS_فی_ډله(s) * \
 				       (g))
 
 /*
  * Constants relative to the data blocks
  */
-#define EXT2_NDIR_BLOCKS		12
-#define EXT2_IND_BLOCK			EXT2_NDIR_BLOCKS
-#define EXT2_DIND_BLOCK			(EXT2_IND_BLOCK + 1)
-#define EXT2_TIND_BLOCK			(EXT2_DIND_BLOCK + 1)
-#define EXT2_N_BLOCKS			(EXT2_TIND_BLOCK + 1)
+#تعریف_کړه EXT2_NDIR_بلاکونه		12
+#تعریف_کړه EXT2_IND_بلاک			EXT2_NDIR_بلاکونه
+#تعریف_کړه EXT2_DIND_بلاک			(EXT2_IND_بلاک + 1)
+#تعریف_کړه EXT2_TIND_بلاک			(EXT2_DIND_بلاک + 1)
+#تعریف_کړه EXT2_N_بلاکونه			(EXT2_TIND_بلاک + 1)
 
 /*
  * Inode flags
  */
-#define EXT2_SECRM_FL			0x00000001 /* Secure deletion */
-#define EXT2_UNRM_FL			0x00000002 /* Undelete */
-#define EXT2_COMPR_FL			0x00000004 /* Compress file */
-#define EXT2_SYNC_FL			0x00000008 /* Synchronous updates */
-#define EXT2_IMMUTABLE_FL		0x00000010 /* Immutable file */
-#define EXT2_APPEND_FL			0x00000020 /* writes to file may only append */
-#define EXT2_NODUMP_FL			0x00000040 /* do not dump file */
-#define EXT2_NOATIME_FL			0x00000080 /* do not update atime */
+#تعریف_کړه EXT2_SECRM_FL			0x00000001 /* Secure deletion */
+#تعریف_کړه EXT2_UNRM_FL			0x00000002 /* Undelete */
+#تعریف_کړه EXT2_COMPR_FL			0x00000004 /* Compress file */
+#تعریف_کړه EXT2_SYNC_FL			0x00000008 /* Synchronous updates */
+#تعریف_کړه EXT2_IMMUTABLE_FL		0x00000010 /* Immutable file */
+#تعریف_کړه EXT2_APPEND_FL			0x00000020 /* writes to file may only append */
+#تعریف_کړه EXT2_NODUMP_FL			0x00000040 /* do not dump file */
+#تعریف_کړه EXT2_NOATIME_FL			0x00000080 /* do not update atime */
 /* Reserved for compression usage... */
-#define EXT2_DIRTY_FL			0x00000100
-#define EXT2_COMPRBLK_FL		0x00000200 /* One or more compressed clusters */
-#define EXT2_NOCOMPR_FL			0x00000400 /* Access raw compressed data */
+#تعریف_کړه EXT2_DIRTY_FL			0x00000100
+#تعریف_کړه EXT2_COMPRBLK_FL		0x00000200 /* One or more compressed clusters */
+#تعریف_کړه EXT2_NOCOMPR_FL			0x00000400 /* Access raw compressed data */
 	/* nb: was previously EXT2_ECOMPR_FL */
-#define EXT4_ENCRYPT_FL			0x00000800 /* encrypted inode */
+#تعریف_کړه EXT4_ENCRYPT_FL			0x00000800 /* encrypted inode */
 /* End compression flags --- maybe not all used */
-#define EXT2_BTREE_FL			0x00001000 /* btree format dir */
-#define EXT2_INDEX_FL			0x00001000 /* hash-indexed directory */
-#define EXT2_IMAGIC_FL			0x00002000
-#define EXT3_JOURNAL_DATA_FL		0x00004000 /* file data should be journaled */
-#define EXT2_NOTAIL_FL			0x00008000 /* file tail should not be merged */
-#define EXT2_DIRSYNC_FL 		0x00010000 /* Synchronous directory modifications */
-#define EXT2_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
-#define EXT4_HUGE_FILE_FL               0x00040000 /* Set to each huge file */
-#define EXT4_EXTENTS_FL 		0x00080000 /* Inode uses extents */
-#define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
-#define EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
+#تعریف_کړه EXT2_BTREE_FL			0x00001000 /* btree format dir */
+#تعریف_کړه EXT2_شاخص_FL			0x00001000 /* hash-indexed directory */
+#تعریف_کړه EXT2_IMAGIC_FL			0x00002000
+#تعریف_کړه EXT3_JOURNAL_معلومات_FL		0x00004000 /* file data should be journaled */
+#تعریف_کړه EXT2_NOTAIL_FL			0x00008000 /* file tail should not be merged */
+#تعریف_کړه EXT2_DIRSYNC_FL 		0x00010000 /* Synchronous directory modifications */
+#تعریف_کړه EXT2_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
+#تعریف_کړه EXT4_HUGE_FILE_FL               0x00040000 /* Set to each huge file */
+#تعریف_کړه EXT4_EXTENTS_FL 		0x00080000 /* Inode uses extents */
+#تعریف_کړه EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
+#تعریف_کړه EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
 /* EXT4_EOFBLOCKS_FL 0x00400000 was here */
-#define FS_NOCOW_FL			0x00800000 /* Do not cow file */
-#define EXT4_SNAPFILE_FL		0x01000000  /* Inode is a snapshot */
-#define FS_DAX_FL			0x02000000 /* Inode is DAX */
-#define EXT4_SNAPFILE_DELETED_FL	0x04000000  /* Snapshot is being deleted */
-#define EXT4_SNAPFILE_SHRUNK_FL		0x08000000  /* Snapshot shrink has completed */
-#define EXT4_INLINE_DATA_FL		0x10000000 /* Inode has inline data */
-#define EXT4_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
-#define EXT4_CASEFOLD_FL		0x40000000 /* Casefolded file */
-#define EXT2_RESERVED_FL		0x80000000 /* reserved for ext2 lib */
+#تعریف_کړه FS_NOCOW_FL			0x00800000 /* Do not cow file */
+#تعریف_کړه EXT4_SNAPFILE_FL		0x01000000  /* Inode is a snapshot */
+#تعریف_کړه FS_DAX_FL			0x02000000 /* Inode is DAX */
+#تعریف_کړه EXT4_SNAPFILE_DELETED_FL	0x04000000  /* Snapshot is being deleted */
+#تعریف_کړه EXT4_SNAPFILE_SHRUNK_FL		0x08000000  /* Snapshot shrink has completed */
+#تعریف_کړه EXT4_INLINE_معلومات_FL		0x10000000 /* Inode has inline data */
+#تعریف_کړه EXT4_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
+#تعریف_کړه EXT4_CASEFOLD_FL		0x40000000 /* Casefolded file */
+#تعریف_کړه EXT2_RESERVED_FL		0x80000000 /* reserved for ext2 lib */
 
-#define EXT2_FL_USER_VISIBLE		0x604BDFFF /* User visible flags */
-#define EXT2_FL_USER_MODIFIABLE		0x604B80FF /* User modifiable flags */
+#تعریف_کړه EXT2_FL_USER_VISIBLE		0x604BDFFF /* User visible flags */
+#تعریف_کړه EXT2_FL_USER_MODIFIABLE		0x604B80FF /* User modifiable flags */
 
 /*
  * ioctl commands
  */
 
 /* Used for online resize */
-struct ext2_new_group_input {
-	__u32 group;		/* Group number for this data */
-	__u32 block_bitmap;	/* Absolute block number of block bitmap */
+بنية ext2_new_ډله_ننوت {
+	__u32 ډله;		/* Group number for this data */
+	__u32 بلاک_bitmap;	/* Absolute block number of block bitmap */
 	__u32 inode_bitmap;	/* Absolute block number of inode bitmap */
-	__u32 inode_table;	/* Absolute block number of inode table start */
-	__u32 blocks_count;	/* Total number of blocks in this group */
-	__u16 reserved_blocks;	/* Number of reserved blocks in this group */
-	__u16 unused;		/* Number of reserved GDT blocks in group */
+	__u32 inode_جدول;	/* Absolute block number of inode table start */
+	__u32 بلاکونه_شمېر;	/* Total number of blocks in this group */
+	__u16 reserved_بلاکونه;	/* Number of reserved blocks in this group */
+	__u16 ناکارول_شوی;		/* Number of reserved GDT blocks in group */
 };
 
-struct ext4_new_group_input {
-	__u32 group;		/* Group number for this data */
-	__u64 block_bitmap;	/* Absolute block number of block bitmap */
+بنية ext4_new_ډله_ننوت {
+	__u32 ډله;		/* Group number for this data */
+	__u64 بلاک_bitmap;	/* Absolute block number of block bitmap */
 	__u64 inode_bitmap;	/* Absolute block number of inode bitmap */
-	__u64 inode_table;	/* Absolute block number of inode table start */
-	__u32 blocks_count;	/* Total number of blocks in this group */
-	__u16 reserved_blocks;	/* Number of reserved blocks in this group */
-	__u16 unused;
+	__u64 inode_جدول;	/* Absolute block number of inode table start */
+	__u32 بلاکونه_شمېر;	/* Total number of blocks in this group */
+	__u16 reserved_بلاکونه;	/* Number of reserved blocks in this group */
+	__u16 ناکارول_شوی;
 };
 
-#ifdef __GNU__			/* Needed for the Hurd */
-#define _IOT_ext2_new_group_input _IOT (_IOTS(__u32), 5, _IOTS(__u16), 2, 0, 0)
-#endif
+#که_تعریف_شوی __GNU__			/* Needed for the Hurd */
+#تعریف_کړه IOT_ext2_new_ډله_ننوت _IOT (_IOTS(__u32), 5, _IOTS(__u16), 2, 0, 0)
+#د_که_پای
 
-#define EXT2_IOC_GETFLAGS		_IOR('f', 1, long)
-#define EXT2_IOC_SETFLAGS		_IOW('f', 2, long)
-#define EXT2_IOC_GETVERSION		_IOR('v', 1, long)
-#define EXT2_IOC_SETVERSION		_IOW('v', 2, long)
-#define EXT2_IOC_GETVERSION_NEW		_IOR('f', 3, long)
-#define EXT2_IOC_SETVERSION_NEW		_IOW('f', 4, long)
-#define EXT2_IOC_GROUP_EXTEND		_IOW('f', 7, unsigned long)
-#define EXT2_IOC_GROUP_ADD		_IOW('f', 8,struct ext2_new_group_input)
-#define EXT4_IOC_GROUP_ADD		_IOW('f', 8,struct ext4_new_group_input)
-#define EXT4_IOC_RESIZE_FS		_IOW('f', 16, __u64)
+#تعریف_کړه EXT2_IOC_GETFLAGS		_IOR('f', 1, اوږد)
+#تعریف_کړه EXT2_IOC_SETFLAGS		_IOW('f', 2, اوږد)
+#تعریف_کړه EXT2_IOC_GETVERSION		_IOR('v', 1, اوږد)
+#تعریف_کړه EXT2_IOC_SETVERSION		_IOW('v', 2, اوږد)
+#تعریف_کړه EXT2_IOC_GETVERSION_NEW		_IOR('f', 3, اوږد)
+#تعریف_کړه EXT2_IOC_SETVERSION_NEW		_IOW('f', 4, اوږد)
+#تعریف_کړه EXT2_IOC_ډله_EXTEND		_IOW('f', 7, بینښه اوږد)
+#تعریف_کړه EXT2_IOC_ډله_جمع_کړه		_IOW('f', 8,بنية ext2_new_ډله_ننوت)
+#تعریف_کړه EXT4_IOC_ډله_جمع_کړه		_IOW('f', 8,بنية ext4_new_ډله_ننوت)
+#تعریف_کړه EXT4_IOC_RESIZE_FS		_IOW('f', 16, __u64)
 
 /*
  * Structure of an inode on the disk
  */
-struct ext2_inode {
-/*00*/	__u16	i_mode;		/* File mode */
+بنية ext2_inode {
+/*00*/	__u16	i_ډېرپېښ;		/* File mode */
 	__u16	i_uid;		/* Low 16 bits of Owner Uid */
-	__u32	i_size;		/* Size in bytes */
+	__u32	i_اندازه;		/* Size in bytes */
 	__u32	i_atime;	/* Access time */
 	__u32	i_ctime;	/* Inode change time */
 /*10*/	__u32	i_mtime;	/* Modification time */
 	__u32	i_dtime;	/* Deletion Time */
 	__u16	i_gid;		/* Low 16 bits of Group Id */
-	__u16	i_links_count;	/* Links count */
-	__u32	i_blocks;	/* Blocks count */
+	__u16	i_links_شمېر;	/* Links count */
+	__u32	i_بلاکونه;	/* Blocks count */
 /*20*/	__u32	i_flags;	/* File flags */
-	union {
-		struct {
-			__u32	l_i_version; /* was l_i_reserved1 */
+	اتحاد {
+		بنية {
+			__u32	l_i_نسخه; /* was l_i_reserved1 */
 		} linux1;
-		struct {
+		بنية {
 			__u32  h_i_translator;
 		} hurd1;
 	} osd1;				/* OS dependent 1 */
-/*28*/	__u32	i_block[EXT2_N_BLOCKS];/* Pointers to blocks */
+/*28*/	__u32	i_بلاک[EXT2_N_بلاکونه];/* Pointers to blocks */
 /*64*/	__u32	i_generation;	/* File version (for NFS) */
 	__u32	i_file_acl;	/* File ACL */
-	__u32	i_size_high;
+	__u32	i_اندازه_لوړ;
 /*70*/	__u32	i_faddr;	/* Fragment address */
-	union {
-		struct {
-			__u16	l_i_blocks_hi;
-			__u16	l_i_file_acl_high;
-			__u16	l_i_uid_high;	/* these 2 fields    */
-			__u16	l_i_gid_high;	/* were reserved2[0] */
+	اتحاد {
+		بنية {
+			__u16	l_i_بلاکونه_hi;
+			__u16	l_i_file_acl_لوړ;
+			__u16	l_i_uid_لوړ;	/* these 2 fields    */
+			__u16	l_i_gid_لوړ;	/* were reserved2[0] */
 			__u16	l_i_checksum_lo; /* crc32c(uuid+inum+inode) */
 			__u16	l_i_reserved;
 		} linux2;
-		struct {
+		بنية {
 			__u8	h_i_frag;	/* Fragment number */
 			__u8	h_i_fsize;	/* Fragment size */
-			__u16	h_i_mode_high;
-			__u16	h_i_uid_high;
-			__u16	h_i_gid_high;
+			__u16	h_i_ډېرپېښ_لوړ;
+			__u16	h_i_uid_لوړ;
+			__u16	h_i_gid_لوړ;
 			__u32	h_i_author;
 		} hurd2;
 	} osd2;				/* OS dependent 2 */
@@ -449,46 +449,46 @@ struct ext2_inode {
 /*
  * Permanent part of an large inode on the disk
  */
-struct ext2_inode_large {
-/*00*/	__u16	i_mode;		/* File mode */
+بنية ext2_inode_large {
+/*00*/	__u16	i_ډېرپېښ;		/* File mode */
 	__u16	i_uid;		/* Low 16 bits of Owner Uid */
-	__u32	i_size;		/* Size in bytes */
+	__u32	i_اندازه;		/* Size in bytes */
 	__u32	i_atime;	/* Access time */
 	__u32	i_ctime;	/* Inode Change time */
 /*10*/	__u32	i_mtime;	/* Modification time */
 	__u32	i_dtime;	/* Deletion Time */
 	__u16	i_gid;		/* Low 16 bits of Group Id */
-	__u16	i_links_count;	/* Links count */
-	__u32	i_blocks;	/* Blocks count */
+	__u16	i_links_شمېر;	/* Links count */
+	__u32	i_بلاکونه;	/* Blocks count */
 /*20*/	__u32	i_flags;	/* File flags */
-	union {
-		struct {
-			__u32	l_i_version; /* was l_i_reserved1 */
+	اتحاد {
+		بنية {
+			__u32	l_i_نسخه; /* was l_i_reserved1 */
 		} linux1;
-		struct {
+		بنية {
 			__u32  h_i_translator;
 		} hurd1;
 	} osd1;				/* OS dependent 1 */
-/*28*/	__u32	i_block[EXT2_N_BLOCKS];/* Pointers to blocks */
+/*28*/	__u32	i_بلاک[EXT2_N_بلاکونه];/* Pointers to blocks */
 /*64*/	__u32	i_generation;	/* File version (for NFS) */
 	__u32	i_file_acl;	/* File ACL */
-	__u32	i_size_high;
+	__u32	i_اندازه_لوړ;
 /*70*/	__u32	i_faddr;	/* Fragment address */
-	union {
-		struct {
-			__u16	l_i_blocks_hi;
-			__u16	l_i_file_acl_high;
-			__u16	l_i_uid_high;	/* these 2 fields    */
-			__u16	l_i_gid_high;	/* were reserved2[0] */
+	اتحاد {
+		بنية {
+			__u16	l_i_بلاکونه_hi;
+			__u16	l_i_file_acl_لوړ;
+			__u16	l_i_uid_لوړ;	/* these 2 fields    */
+			__u16	l_i_gid_لوړ;	/* were reserved2[0] */
 			__u16	l_i_checksum_lo; /* crc32c(uuid+inum+inode) */
 			__u16	l_i_reserved;
 		} linux2;
-		struct {
+		بنية {
 			__u8	h_i_frag;	/* Fragment number */
 			__u8	h_i_fsize;	/* Fragment size */
-			__u16	h_i_mode_high;
-			__u16	h_i_uid_high;
-			__u16	h_i_gid_high;
+			__u16	h_i_ډېرپېښ_لوړ;
+			__u16	h_i_uid_لوړ;
+			__u16	h_i_gid_لوړ;
 			__u32	h_i_author;
 		} hurd2;
 	} osd2;				/* OS dependent 2 */
@@ -499,173 +499,173 @@ struct ext2_inode_large {
 	__u32	i_atime_extra;	/* extra Access time (nsec << 2 | epoch) */
 /*90*/	__u32	i_crtime;	/* File creation time */
 	__u32	i_crtime_extra;	/* extra File creation time (nsec << 2 | epoch)*/
-	__u32	i_version_hi;	/* high 32 bits for 64-bit version */
+	__u32	i_نسخه_hi;	/* high 32 bits for 64-bit version */
 /*9c*/	__u32   i_projid;       /* Project ID */
 };
 
-#define EXT4_INODE_CSUM_HI_EXTRA_END	\
-	(offsetof(struct ext2_inode_large, i_checksum_hi) + sizeof(__u16) - \
-	 EXT2_GOOD_OLD_INODE_SIZE)
+#تعریف_کړه EXT4_INODE_CSUM_HI_EXTRA_پای_ټکی	\
+	(offsetof(بنية ext2_inode_large, i_checksum_hi) + حجم(__u16) - \
+	 EXT2_GOOD_OLD_INODE_اندازه)
 
-#define EXT4_EPOCH_BITS 2
-#define EXT4_EPOCH_MASK ((1 << EXT4_EPOCH_BITS) - 1)
+#تعریف_کړه EXT4_EPOCH_بټونه 2
+#تعریف_کړه EXT4_EPOCH_ماسک ((1 << EXT4_EPOCH_بټونه) - 1)
 
-#define i_checksum_lo	osd2.linux2.l_i_checksum_lo
+#تعریف_کړه i_checksum_lo	osd2.linux2.l_i_checksum_lo
 
-#define ext2fs_inode_includes(size, field)				\
-	((size) >= (sizeof(((struct ext2_inode_large *)0)->field) +	\
-		    offsetof(struct ext2_inode_large, field)))
+#تعریف_کړه ext2fs_inode_includes(اندازه, ډګر)				\
+	((اندازه) >= (حجم(((بنية ext2_inode_large *)0)->ډګر) +	\
+		    offsetof(بنية ext2_inode_large, ډګر)))
 
-#if defined(__KERNEL__) || defined(__linux__)
-#define i_reserved1	osd1.linux1.l_i_reserved1
-#define i_frag		osd2.linux2.l_i_frag
-#define i_fsize		osd2.linux2.l_i_fsize
-#define i_uid_low	i_uid
-#define i_gid_low	i_gid
-#define i_uid_high	osd2.linux2.l_i_uid_high
-#define i_gid_high	osd2.linux2.l_i_gid_high
-#else
-#if defined(__GNU__)
+#إذا defined(__KERNEL__) || defined(__linux__)
+#تعریف_کړه i_reserved1	osd1.linux1.l_i_reserved1
+#تعریف_کړه i_frag		osd2.linux2.l_i_frag
+#تعریف_کړه i_fsize		osd2.linux2.l_i_fsize
+#تعریف_کړه i_uid_ټیټ	i_uid
+#تعریف_کړه i_gid_ټیټ	i_gid
+#تعریف_کړه i_uid_لوړ	osd2.linux2.l_i_uid_لوړ
+#تعریف_کړه i_gid_لوړ	osd2.linux2.l_i_gid_لوړ
+#وإلا
+#إذا defined(__GNU__)
 
-#define i_translator	osd1.hurd1.h_i_translator
-#define i_frag		osd2.hurd2.h_i_frag;
-#define i_fsize		osd2.hurd2.h_i_fsize;
-#define i_uid_high	osd2.hurd2.h_i_uid_high
-#define i_gid_high	osd2.hurd2.h_i_gid_high
-#define i_author	osd2.hurd2.h_i_author
+#تعریف_کړه i_translator	osd1.hurd1.h_i_translator
+#تعریف_کړه i_frag		osd2.hurd2.h_i_frag;
+#تعریف_کړه i_fsize		osd2.hurd2.h_i_fsize;
+#تعریف_کړه i_uid_لوړ	osd2.hurd2.h_i_uid_لوړ
+#تعریف_کړه i_gid_لوړ	osd2.hurd2.h_i_gid_لوړ
+#تعریف_کړه i_author	osd2.hurd2.h_i_author
 
-#endif  /* __GNU__ */
-#endif	/* defined(__KERNEL__) || defined(__linux__) */
+#د_که_پای  /* __GNU__ */
+#د_که_پای	/* defined(__KERNEL__) || defined(__linux__) */
 
-#define inode_uid(inode)	((inode).i_uid | (unsigned)(inode).osd2.linux2.l_i_uid_high << 16)
-#define inode_gid(inode)	((inode).i_gid | (unsigned)(inode).osd2.linux2.l_i_gid_high << 16)
-#define inode_projid(inode)	((inode).i_projid)
-#define ext2fs_set_i_uid_high(inode,x) ((inode).osd2.linux2.l_i_uid_high = (x))
-#define ext2fs_set_i_gid_high(inode,x) ((inode).osd2.linux2.l_i_gid_high = (x))
+#تعریف_کړه inode_uid(inode)	((inode).i_uid | (بینښه)(inode).osd2.linux2.l_i_uid_لوړ << 16)
+#تعریف_کړه inode_gid(inode)	((inode).i_gid | (بینښه)(inode).osd2.linux2.l_i_gid_لوړ << 16)
+#تعریف_کړه inode_projid(inode)	((inode).i_projid)
+#تعریف_کړه ext2fs_سېټ_i_uid_لوړ(inode,x) ((inode).osd2.linux2.l_i_uid_لوړ = (x))
+#تعریف_کړه ext2fs_سېټ_i_gid_لوړ(inode,x) ((inode).osd2.linux2.l_i_gid_لوړ = (x))
 
-static inline
-struct ext2_inode *EXT2_INODE(struct ext2_inode_large *large_inode)
+ساكن مضمن
+بنية ext2_inode *EXT2_INODE(بنية ext2_inode_large *large_inode)
 {
-	return (struct ext2_inode *) large_inode;
+	أرجع (بنية ext2_inode *) large_inode;
 }
 
 /*
  * File system states
  */
-#define EXT2_VALID_FS			0x0001	/* Unmounted cleanly */
-#define EXT2_ERROR_FS			0x0002	/* Errors detected */
-#define EXT3_ORPHAN_FS			0x0004	/* Orphans being recovered */
-#define EXT4_FC_REPLAY			0x0020	/* Ext4 fast commit replay ongoing */
+#تعریف_کړه EXT2_VALID_FS			0x0001	/* Unmounted cleanly */
+#تعریف_کړه EXT2_ERROR_FS			0x0002	/* Errors detected */
+#تعریف_کړه EXT3_ORPHAN_FS			0x0004	/* Orphans being recovered */
+#تعریف_کړه EXT4_FC_REPLAY			0x0020	/* Ext4 fast commit replay ongoing */
 
 /*
  * Misc. filesystem flags
  */
-#define EXT2_FLAGS_SIGNED_HASH		0x0001  /* Signed dirhash in use */
-#define EXT2_FLAGS_UNSIGNED_HASH	0x0002  /* Unsigned dirhash in use */
-#define EXT2_FLAGS_TEST_FILESYS		0x0004	/* OK for use on development code */
-#define EXT2_FLAGS_IS_SNAPSHOT		0x0010	/* This is a snapshot image */
-#define EXT2_FLAGS_FIX_SNAPSHOT		0x0020	/* Snapshot inodes corrupted */
-#define EXT2_FLAGS_FIX_EXCLUDE		0x0040	/* Exclude bitmaps corrupted */
+#تعریف_کړه EXT2_FLAGS_SIGNED_HASH		0x0001  /* Signed dirhash in use */
+#تعریف_کړه EXT2_FLAGS_UNSIGNED_HASH	0x0002  /* Unsigned dirhash in use */
+#تعریف_کړه EXT2_FLAGS_TEST_FILESYS		0x0004	/* OK for use on development code */
+#تعریف_کړه EXT2_FLAGS_IS_SNAPSHOT		0x0010	/* This is a snapshot image */
+#تعریف_کړه EXT2_FLAGS_FIX_SNAPSHOT		0x0020	/* Snapshot inodes corrupted */
+#تعریف_کړه EXT2_FLAGS_FIX_EXCLUDE		0x0040	/* Exclude bitmaps corrupted */
 
 /*
  * Mount flags
  */
-#define EXT2_MOUNT_CHECK		0x0001	/* Do mount-time checks */
-#define EXT2_MOUNT_GRPID		0x0004	/* Create files with directory's group */
-#define EXT2_MOUNT_DEBUG		0x0008	/* Some debugging messages */
-#define EXT2_MOUNT_ERRORS_CONT		0x0010	/* Continue on errors */
-#define EXT2_MOUNT_ERRORS_RO		0x0020	/* Remount fs ro on errors */
-#define EXT2_MOUNT_ERRORS_PANIC		0x0040	/* Panic on errors */
-#define EXT2_MOUNT_MINIX_DF		0x0080	/* Mimics the Minix statfs */
-#define EXT2_MOUNT_NO_UID32		0x0200  /* Disable 32-bit UIDs */
+#تعریف_کړه EXT2_MOUNT_CHECK		0x0001	/* Do mount-time checks */
+#تعریف_کړه EXT2_MOUNT_GRPID		0x0004	/* Create files with directory's group */
+#تعریف_کړه EXT2_MOUNT_DEBUG		0x0008	/* Some debugging messages */
+#تعریف_کړه EXT2_MOUNT_ERRORS_CONT		0x0010	/* Continue on errors */
+#تعریف_کړه EXT2_MOUNT_ERRORS_RO		0x0020	/* Remount fs ro on errors */
+#تعریف_کړه EXT2_MOUNT_ERRORS_PANIC		0x0040	/* Panic on errors */
+#تعریف_کړه EXT2_MOUNT_MINIX_DF		0x0080	/* Mimics the Minix statfs */
+#تعریف_کړه EXT2_MOUNT_NO_UID32		0x0200  /* Disable 32-bit UIDs */
 
-#define clear_opt(o, opt)		o &= ~EXT2_MOUNT_##opt
-#define set_opt(o, opt)			o |= EXT2_MOUNT_##opt
-#define test_opt(sb, opt)		(EXT2_SB(sb)->s_mount_opt & \
+#تعریف_کړه clear_opt(o, opt)		o &= ~EXT2_MOUNT_##opt
+#تعریف_کړه سېټ_opt(o, opt)			o |= EXT2_MOUNT_##opt
+#تعریف_کړه test_opt(sb, opt)		(EXT2_SB(sb)->s_mount_opt & \
 					 EXT2_MOUNT_##opt)
 /*
  * Maximal mount counts between two filesystem checks
  */
-#define EXT2_DFL_MAX_MNT_COUNT		20	/* Allow 20 mounts */
-#define EXT2_DFL_CHECKINTERVAL		0	/* Don't use interval check */
+#تعریف_کړه EXT2_DFL_MAX_MNT_شمېر		20	/* Allow 20 mounts */
+#تعریف_کړه EXT2_DFL_CHECKINTERVAL		0	/* Don't use interval check */
 
 /*
  * Behaviour when detecting errors
  */
-#define EXT2_ERRORS_CONTINUE		1	/* Continue execution */
-#define EXT2_ERRORS_RO			2	/* Remount fs read-only */
-#define EXT2_ERRORS_PANIC		3	/* Panic */
-#define EXT2_ERRORS_DEFAULT		EXT2_ERRORS_CONTINUE
+#تعریف_کړه EXT2_ERRORS_CONTINUE		1	/* Continue execution */
+#تعریف_کړه EXT2_ERRORS_RO			2	/* Remount fs read-only */
+#تعریف_کړه EXT2_ERRORS_PANIC		3	/* Panic */
+#تعریف_کړه EXT2_ERRORS_DEFAULT		EXT2_ERRORS_CONTINUE
 
-#if (__GNUC__ >= 4)
-#define ext4_offsetof(TYPE,MEMBER) __builtin_offsetof(TYPE,MEMBER)
-#else
-#define ext4_offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
-#endif
+#إذا (__GNUC__ >= 4)
+#تعریف_کړه ext4_offsetof(TYPE,MEMBER) __builtin_offsetof(TYPE,MEMBER)
+#وإلا
+#تعریف_کړه ext4_offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
+#د_که_پای
 
 /* Metadata checksum algorithms */
-#define EXT2_CRC32C_CHKSUM		1
+#تعریف_کړه EXT2_دوراني_ازموینه_32_C_CHKSUM		1
 
 /* Encryption algorithms, key size and key reference len */
-#define EXT4_ENCRYPTION_MODE_INVALID		0
-#define EXT4_ENCRYPTION_MODE_AES_256_XTS	1
-#define EXT4_ENCRYPTION_MODE_AES_256_GCM	2
-#define EXT4_ENCRYPTION_MODE_AES_256_CBC	3
-#define EXT4_ENCRYPTION_MODE_AES_256_CTS	4
+#تعریف_کړه EXT4_ENCRYPTION_ډېرپېښ_INVALID		0
+#تعریف_کړه EXT4_ENCRYPTION_ډېرپېښ_AES_256_XTS	1
+#تعریف_کړه EXT4_ENCRYPTION_ډېرپېښ_AES_256_GCM	2
+#تعریف_کړه EXT4_ENCRYPTION_ډېرپېښ_AES_256_CBC	3
+#تعریف_کړه EXT4_ENCRYPTION_ډېرپېښ_AES_256_CTS	4
 
-#define EXT4_AES_256_XTS_KEY_SIZE		64
-#define EXT4_AES_256_GCM_KEY_SIZE		32
-#define EXT4_AES_256_CBC_KEY_SIZE		32
-#define EXT4_AES_256_CTS_KEY_SIZE		32
-#define EXT4_MAX_KEY_SIZE			64
+#تعریف_کړه EXT4_AES_256_XTS_کلی_اندازه		64
+#تعریف_کړه EXT4_AES_256_GCM_کلی_اندازه		32
+#تعریف_کړه EXT4_AES_256_CBC_کلی_اندازه		32
+#تعریف_کړه EXT4_AES_256_CTS_کلی_اندازه		32
+#تعریف_کړه EXT4_MAX_کلی_اندازه			64
 
-#define EXT4_KEY_DESCRIPTOR_SIZE		8
-#define EXT4_CRYPTO_BLOCK_SIZE			16
+#تعریف_کړه EXT4_کلی_DESCRIPTOR_اندازه		8
+#تعریف_کړه EXT4_CRYPTO_بلاک_اندازه			16
 
 /* Password derivation constants */
-#define EXT4_MAX_PASSPHRASE_SIZE		1024
-#define EXT4_MAX_SALT_SIZE			256
-#define EXT4_PBKDF2_ITERATIONS			0xFFFF
+#تعریف_کړه EXT4_MAX_PASSPHRASE_اندازه		1024
+#تعریف_کړه EXT4_MAX_SALT_اندازه			256
+#تعریف_کړه EXT4_PBKDF2_ITERATIONS			0xFFFF
 
-#define EXT2_LABEL_LEN				16
+#تعریف_کړه EXT2_LABEL_LEN				16
 
 /*
  * Policy provided via an ioctl on the topmost directory. This
  * structure is also in the kernel.
  */
-struct ext4_encryption_policy {
-  char version;
-  char contents_encryption_mode;
-  char filenames_encryption_mode;
-  char flags;
-  char master_key_descriptor[EXT4_KEY_DESCRIPTOR_SIZE];
+بنية ext4_encryption_policy {
+  حرف نسخه;
+  حرف contents_encryption_ډېرپېښ;
+  حرف filenames_encryption_ډېرپېښ;
+  حرف flags;
+  حرف master_کلی_descriptor[EXT4_کلی_DESCRIPTOR_اندازه];
 } __attribute__((__packed__));
 
-struct ext4_encryption_key {
-        __u32 mode;
-        char raw[EXT4_MAX_KEY_SIZE];
-        __u32 size;
+بنية ext4_encryption_کلی {
+        __u32 ډېرپېښ;
+        حرف raw[EXT4_MAX_کلی_اندازه];
+        __u32 اندازه;
 } __attribute__((__packed__));
 
 /*
  * Structure of the super block
  */
-struct ext2_super_block {
-/*000*/	__u32	s_inodes_count;		/* Inodes count */
-	__u32	s_blocks_count;		/* Blocks count */
-	__u32	s_r_blocks_count;	/* Reserved blocks count */
-	__u32	s_free_blocks_count;	/* Free blocks count */
-/*010*/	__u32	s_free_inodes_count;	/* Free inodes count */
-	__u32	s_first_data_block;	/* First Data Block */
-	__u32	s_log_block_size;	/* Block size */
-	__u32	s_log_cluster_size;	/* Allocation cluster size */
-/*020*/	__u32	s_blocks_per_group;	/* # Blocks per group */
-	__u32	s_clusters_per_group;	/* # Fragments per group */
-	__u32	s_inodes_per_group;	/* # Inodes per group */
+بنية ext2_super_بلاک {
+/*000*/	__u32	s_inodes_شمېر;		/* Inodes count */
+	__u32	s_بلاکونه_شمېر;		/* Blocks count */
+	__u32	s_r_بلاکونه_شمېر;	/* Reserved blocks count */
+	__u32	s_free_بلاکونه_شمېر;	/* Free blocks count */
+/*010*/	__u32	s_free_inodes_شمېر;	/* Free inodes count */
+	__u32	s_لومړی_معلومات_بلاک;	/* First Data Block */
+	__u32	s_log_بلاک_اندازه;	/* Block size */
+	__u32	s_log_cluster_اندازه;	/* Allocation cluster size */
+/*020*/	__u32	s_بلاکونه_فی_ډله;	/* # Blocks per group */
+	__u32	s_clusters_فی_ډله;	/* # Fragments per group */
+	__u32	s_inodes_فی_ډله;	/* # Inodes per group */
 	__u32	s_mtime;		/* Mount time */
 /*030*/	__u32	s_wtime;		/* Write time */
-	__u16	s_mnt_count;		/* Mount count */
-	__s16	s_max_mnt_count;	/* Maximal mount count */
+	__u16	s_mnt_شمېر;		/* Mount count */
+	__s16	s_max_mnt_شمېر;	/* Maximal mount count */
 	__u16	s_magic;		/* Magic signature */
 	__u16	s_state;		/* File system state */
 	__u16	s_errors;		/* Behaviour when detecting errors */
@@ -689,70 +689,70 @@ struct ext2_super_block {
 	 * feature set, it must abort and not try to meddle with
 	 * things it doesn't understand...
 	 */
-	__u32	s_first_ino;		/* First non-reserved inode */
-	__u16   s_inode_size;		/* size of inode structure */
-	__u16	s_block_group_nr;	/* block group # of this superblock */
+	__u32	s_لومړی_ino;		/* First non-reserved inode */
+	__u16   s_inode_اندازه;		/* size of inode structure */
+	__u16	s_بلاک_ډله_nr;	/* block group # of this superblock */
 	__u32	s_feature_compat;	/* compatible feature set */
 /*060*/	__u32	s_feature_incompat;	/* incompatible feature set */
 	__u32	s_feature_ro_compat;	/* readonly-compatible feature set */
 /*068*/	__u8	s_uuid[16] __nonstring;		/* 128-bit uuid for volume */
 /*078*/	__u8	s_volume_name[EXT2_LABEL_LEN] __nonstring;	/* volume name, no NUL? */
-/*088*/	__u8	s_last_mounted[64] __nonstring;	/* directory last mounted on, no NUL? */
+/*088*/	__u8	s_وروستی_mounted[64] __nonstring;	/* directory last mounted on, no NUL? */
 /*0c8*/	__u32	s_algorithm_usage_bitmap; /* For compression */
 	/*
 	 * Performance hints.  Directory preallocation should only
 	 * happen if the EXT2_FEATURE_COMPAT_DIR_PREALLOC flag is on.
 	 */
-	__u8	s_prealloc_blocks;	/* Nr of blocks to try to preallocate*/
-	__u8	s_prealloc_dir_blocks;	/* Nr to preallocate for dirs */
-	__u16	s_reserved_gdt_blocks;	/* Per group table for online growth */
+	__u8	s_prealloc_بلاکونه;	/* Nr of blocks to try to preallocate*/
+	__u8	s_prealloc_dir_بلاکونه;	/* Nr to preallocate for dirs */
+	__u16	s_reserved_gdt_بلاکونه;	/* Per group table for online growth */
 	/*
 	 * Journaling support valid if EXT2_FEATURE_COMPAT_HAS_JOURNAL set.
 	 */
 /*0d0*/	__u8	s_journal_uuid[16] __nonstring;	/* uuid of journal superblock */
 /*0e0*/	__u32	s_journal_inum;		/* inode number of journal file */
 	__u32	s_journal_dev;		/* device number of journal file */
-	__u32	s_last_orphan;		/* start of list of inodes to delete */
-/*0ec*/	__u32	s_hash_seed[4];		/* HTREE hash seed */
-/*0fc*/	__u8	s_def_hash_version;	/* Default hash version to use */
+	__u32	s_وروستی_orphan;		/* start of list of inodes to delete */
+/*0ec*/	__u32	s_hash_تخم[4];		/* HTREE hash seed */
+/*0fc*/	__u8	s_def_hash_نسخه;	/* Default hash version to use */
 	__u8	s_jnl_backup_type;	/* Default type of journal backup */
-	__u16	s_desc_size;		/* Group desc. size: INCOMPAT_64BIT */
+	__u16	s_desc_اندازه;		/* Group desc. size: INCOMPAT_64BIT */
 /*100*/	__u32	s_default_mount_opts;	/* default EXT2_MOUNT_* flags used */
-	__u32	s_first_meta_bg;	/* First metablock group */
-	__u32	s_mkfs_time;		/* When the filesystem was created */
-/*10c*/	__u32	s_jnl_blocks[17];	/* Backup of the journal inode */
-/*150*/	__u32	s_blocks_count_hi;	/* Blocks count high 32bits */
-	__u32	s_r_blocks_count_hi;	/* Reserved blocks count high 32 bits*/
-	__u32	s_free_blocks_hi;	/* Free blocks count */
+	__u32	s_لومړی_meta_bg;	/* First metablock group */
+	__u32	s_mkfs_وخت;		/* When the filesystem was created */
+/*10c*/	__u32	s_jnl_بلاکونه[17];	/* Backup of the journal inode */
+/*150*/	__u32	s_بلاکونه_شمېر_hi;	/* Blocks count high 32bits */
+	__u32	s_r_بلاکونه_شمېر_hi;	/* Reserved blocks count high 32 bits*/
+	__u32	s_free_بلاکونه_hi;	/* Free blocks count */
 	__u16	s_min_extra_isize;	/* All inodes have at least # bytes */
 	__u16	s_want_extra_isize;	/* New inodes should reserve # bytes */
 /*160*/	__u32	s_flags;		/* Miscellaneous flags */
 	__u16	s_raid_stride;		/* RAID stride in blocks */
 	__u16	s_mmp_update_interval;  /* # seconds to wait in MMP checking */
-	__u64	s_mmp_block;		/* Block for multi-mount protection */
-/*170*/	__u32	s_raid_stripe_width;	/* blocks on all data disks (N*stride)*/
-	__u8	s_log_groups_per_flex;	/* FLEX_BG group size */
+	__u64	s_mmp_بلاک;		/* Block for multi-mount protection */
+/*170*/	__u32	s_raid_stripe_پلنوالی;	/* blocks on all data disks (N*stride)*/
+	__u8	s_log_groups_فی_flex;	/* FLEX_BG group size */
 	__u8	s_checksum_type;	/* metadata checksum algorithm */
 	__u8	s_encryption_level;	/* versioning level for encryption */
 	__u8	s_reserved_pad;		/* Padding to next 32bits */
 	__u64	s_kbytes_written;	/* nr of lifetime kilobytes written */
 /*180*/	__u32	s_snapshot_inum;	/* Inode number of active snapshot */
 	__u32	s_snapshot_id;		/* sequential ID of active snapshot */
-	__u64	s_snapshot_r_blocks_count; /* active snapshot reserved blocks */
+	__u64	s_snapshot_r_بلاکونه_شمېر; /* active snapshot reserved blocks */
 /*190*/	__u32	s_snapshot_list;	/* inode number of disk snapshot list */
-#define EXT4_S_ERR_START ext4_offsetof(struct ext2_super_block, s_error_count)
-	__u32	s_error_count;		/* number of fs errors */
-	__u32	s_first_error_time;	/* first time an error happened */
-	__u32	s_first_error_ino;	/* inode involved in first error */
-/*1a0*/	__u64	s_first_error_block;	/* block involved in first error */
-	__u8	s_first_error_func[32] __nonstring;	/* function where error hit, no NUL? */
-/*1c8*/	__u32	s_first_error_line;	/* line number where error happened */
-	__u32	s_last_error_time;	/* most recent time of an error */
-/*1d0*/	__u32	s_last_error_ino;	/* inode involved in last error */
-	__u32	s_last_error_line;	/* line number where error happened */
-	__u64	s_last_error_block;	/* block involved of last error */
-/*1e0*/	__u8	s_last_error_func[32] __nonstring;	/* function where error hit, no NUL? */
-#define EXT4_S_ERR_END ext4_offsetof(struct ext2_super_block, s_mount_opts)
+#تعریف_کړه EXT4_S_ERR_پیل ext4_offsetof(بنية ext2_super_بلاک, s_error_شمېر)
+	__u32	s_error_شمېر;		/* number of fs errors */
+	__u32	s_لومړی_error_وخت;	/* first time an error happened */
+	__u32	s_لومړی_error_ino;	/* inode involved in first error */
+/*1a0*/	__u64	s_لومړی_error_بلاک;	/* block involved in first error */
+	__u8	s_لومړی_error_func[32] __nonstring;	/* function where error hit, no NUL? */
+/*1c8*/	__u32	s_لومړی_error_کرښه;	/* line number where error happened */
+	__u32	s_وروستی_error_وخت;	/* most recent time of an error */
+/*1d0*/	__u32	s_وروستی_error_ino;	/* inode involved in last error */
+	__u32	s_وروستی_error_کرښه;	/* line number where error happened */
+	__u64	s_وروستی_error_بلاک;	/* block involved of last error */
+/*1e0*/	__u8	s_وروستی_error_func[32] __nonstring;	/* function where error hit, no NUL? */
+#تعریف_کړه EXT4_S_ERR_پای_ټکی ext4_offsetof(بنية ext2_super_بلاک, s_mount_opts)
 /*200*/	__u8	s_mount_opts[64] __nonstring;	/* default mount options, no NUL? */
 /*240*/	__u32	s_usr_quota_inum;	/* inode number of user quota file */
 	__u32	s_grp_quota_inum;	/* inode number of group quota file */
@@ -762,15 +762,15 @@ struct ext2_super_block {
 /*258*/	__u8	s_encrypt_pw_salt[16];	/* Salt used for string2key algorithm */
 /*268*/	__le32	s_lpf_ino;		/* Location of the lost+found inode */
 	__le32  s_prj_quota_inum;	/* inode for tracking project quota */
-/*270*/	__le32	s_checksum_seed;	/* crc32c(orig_uuid) if csum_seed set */
+/*270*/	__le32	s_checksum_تخم;	/* crc32c(orig_uuid) if csum_seed set */
 /*274*/	__u8	s_wtime_hi;
 	__u8	s_mtime_hi;
-	__u8	s_mkfs_time_hi;
+	__u8	s_mkfs_وخت_hi;
 	__u8	s_lastcheck_hi;
-	__u8	s_first_error_time_hi;
-	__u8	s_last_error_time_hi;
-	__u8	s_first_error_errcode;
-	__u8    s_last_error_errcode;
+	__u8	s_لومړی_error_وخت_hi;
+	__u8	s_وروستی_error_وخت_hi;
+	__u8	s_لومړی_error_errcode;
+	__u8    s_وروستی_error_errcode;
 /*27c*/ __le16	s_encoding;		/* Filename charset encoding */
 	__le16	s_encoding_flags;	/* Filename charset encoding flags */
 	__le32  s_orphan_file_inum;	/* Inode for tracking orphan inodes */
@@ -778,149 +778,149 @@ struct ext2_super_block {
 /*3fc*/	__u32	s_checksum;		/* crc32c(superblock) */
 };
 
-#define EXT4_S_ERR_LEN (EXT4_S_ERR_END - EXT4_S_ERR_START)
-#define EXT2_LEN_STR(buf) (int)sizeof(buf), (char *)buf
+#تعریف_کړه EXT4_S_ERR_LEN (EXT4_S_ERR_پای_ټکی - EXT4_S_ERR_پیل)
+#تعریف_کړه EXT2_LEN_STR(buf) (صحيح)حجم(buf), (حرف *)buf
 
 /*
  * Codes for operating systems
  */
-#define EXT2_OS_LINUX		0
-#define EXT2_OS_HURD		1
-#define EXT2_OBSO_OS_MASIX	2
-#define EXT2_OS_FREEBSD		3
-#define EXT2_OS_LITES		4
+#تعریف_کړه EXT2_OS_LINUX		0
+#تعریف_کړه EXT2_OS_HURD		1
+#تعریف_کړه EXT2_OBSO_OS_MASIX	2
+#تعریف_کړه EXT2_OS_FREEBSD		3
+#تعریف_کړه EXT2_OS_LITES		4
 
 /*
  * Revision levels
  */
-#define EXT2_GOOD_OLD_REV	0	/* The good old (original) format */
-#define EXT2_DYNAMIC_REV	1	/* V2 format w/ dynamic inode sizes */
+#تعریف_کړه EXT2_GOOD_OLD_REV	0	/* The good old (original) format */
+#تعریف_کړه EXT2_DYNAMIC_REV	1	/* V2 format w/ dynamic inode sizes */
 
-#define EXT2_CURRENT_REV	EXT2_GOOD_OLD_REV
-#define EXT2_MAX_SUPP_REV	EXT2_DYNAMIC_REV
+#تعریف_کړه EXT2_CURRENT_REV	EXT2_GOOD_OLD_REV
+#تعریف_کړه EXT2_MAX_SUPP_REV	EXT2_DYNAMIC_REV
 
-#define EXT2_GOOD_OLD_INODE_SIZE 128
+#تعریف_کړه EXT2_GOOD_OLD_INODE_اندازه 128
 
-#define EXT4_EXTRA_TIMESTAMP_MAX	(((int64_t)1 << 34) - 1  + INT32_MIN)
-#define EXT4_NON_EXTRA_TIMESTAMP_MAX	INT32_MAX
-#define EXT4_TIMESTAMP_MIN		INT32_MIN
+#تعریف_کړه EXT4_EXTRA_TIMESTAMP_MAX	(((int64_t)1 << 34) - 1  + INT32_MIN)
+#تعریف_کړه EXT4_NON_EXTRA_TIMESTAMP_MAX	INT32_MAX
+#تعریف_کړه EXT4_TIMESTAMP_MIN		INT32_MIN
 
 /*
  * Journal inode backup types
  */
-#define EXT3_JNL_BACKUP_BLOCKS	1
+#تعریف_کړه EXT3_JNL_BACKUP_بلاکونه	1
 
 /*
  * Feature set definitions
  */
 
-#define EXT2_HAS_COMPAT_FEATURE(sb,mask)			\
-	( EXT2_SB(sb)->s_feature_compat & (mask) )
-#define EXT2_HAS_RO_COMPAT_FEATURE(sb,mask)			\
-	( EXT2_SB(sb)->s_feature_ro_compat & (mask) )
-#define EXT2_HAS_INCOMPAT_FEATURE(sb,mask)			\
-	( EXT2_SB(sb)->s_feature_incompat & (mask) )
+#تعریف_کړه EXT2_HAS_COMPAT_FEATURE(sb,ماسک)			\
+	( EXT2_SB(sb)->s_feature_compat & (ماسک) )
+#تعریف_کړه EXT2_HAS_RO_COMPAT_FEATURE(sb,ماسک)			\
+	( EXT2_SB(sb)->s_feature_ro_compat & (ماسک) )
+#تعریف_کړه EXT2_HAS_INCOMPAT_FEATURE(sb,ماسک)			\
+	( EXT2_SB(sb)->s_feature_incompat & (ماسک) )
 
-#define EXT2_FEATURE_COMPAT_DIR_PREALLOC	0x0001
-#define EXT2_FEATURE_COMPAT_IMAGIC_INODES	0x0002
-#define EXT3_FEATURE_COMPAT_HAS_JOURNAL		0x0004
-#define EXT2_FEATURE_COMPAT_EXT_ATTR		0x0008
-#define EXT2_FEATURE_COMPAT_RESIZE_INODE	0x0010
-#define EXT2_FEATURE_COMPAT_DIR_INDEX		0x0020
-#define EXT2_FEATURE_COMPAT_LAZY_BG		0x0040
+#تعریف_کړه EXT2_FEATURE_COMPAT_DIR_PREALLOC	0x0001
+#تعریف_کړه EXT2_FEATURE_COMPAT_IMAGIC_INODES	0x0002
+#تعریف_کړه EXT3_FEATURE_COMPAT_HAS_JOURNAL		0x0004
+#تعریف_کړه EXT2_FEATURE_COMPAT_EXT_ATTR		0x0008
+#تعریف_کړه EXT2_FEATURE_COMPAT_RESIZE_INODE	0x0010
+#تعریف_کړه EXT2_FEATURE_COMPAT_DIR_شاخص		0x0020
+#تعریف_کړه EXT2_FEATURE_COMPAT_LAZY_BG		0x0040
 /* #define EXT2_FEATURE_COMPAT_EXCLUDE_INODE	0x0080 not used, legacy */
-#define EXT2_FEATURE_COMPAT_EXCLUDE_BITMAP	0x0100
-#define EXT4_FEATURE_COMPAT_SPARSE_SUPER2	0x0200
-#define EXT4_FEATURE_COMPAT_FAST_COMMIT		0x0400
-#define EXT4_FEATURE_COMPAT_STABLE_INODES	0x0800
-#define EXT4_FEATURE_COMPAT_ORPHAN_FILE		0x1000
+#تعریف_کړه EXT2_FEATURE_COMPAT_EXCLUDE_BITMAP	0x0100
+#تعریف_کړه EXT4_FEATURE_COMPAT_SPARSE_SUPER2	0x0200
+#تعریف_کړه EXT4_FEATURE_COMPAT_FAST_COMMIT		0x0400
+#تعریف_کړه EXT4_FEATURE_COMPAT_STABLE_INODES	0x0800
+#تعریف_کړه EXT4_FEATURE_COMPAT_ORPHAN_FILE		0x1000
 
-#define EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER	0x0001
-#define EXT2_FEATURE_RO_COMPAT_LARGE_FILE	0x0002
+#تعریف_کړه EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER	0x0001
+#تعریف_کړه EXT2_FEATURE_RO_COMPAT_LARGE_FILE	0x0002
 /* #define EXT2_FEATURE_RO_COMPAT_BTREE_DIR	0x0004 not used */
-#define EXT4_FEATURE_RO_COMPAT_HUGE_FILE	0x0008
-#define EXT4_FEATURE_RO_COMPAT_GDT_CSUM		0x0010
-#define EXT4_FEATURE_RO_COMPAT_DIR_NLINK	0x0020
-#define EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE	0x0040
-#define EXT4_FEATURE_RO_COMPAT_HAS_SNAPSHOT	0x0080
-#define EXT4_FEATURE_RO_COMPAT_QUOTA		0x0100
-#define EXT4_FEATURE_RO_COMPAT_BIGALLOC		0x0200
+#تعریف_کړه EXT4_FEATURE_RO_COMPAT_HUGE_FILE	0x0008
+#تعریف_کړه EXT4_FEATURE_RO_COMPAT_GDT_CSUM		0x0010
+#تعریف_کړه EXT4_FEATURE_RO_COMPAT_DIR_NLINK	0x0020
+#تعریف_کړه EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE	0x0040
+#تعریف_کړه EXT4_FEATURE_RO_COMPAT_HAS_SNAPSHOT	0x0080
+#تعریف_کړه EXT4_FEATURE_RO_COMPAT_QUOTA		0x0100
+#تعریف_کړه EXT4_FEATURE_RO_COMPAT_BIGALLOC		0x0200
 /*
  * METADATA_CSUM implies GDT_CSUM.  When METADATA_CSUM is set, group
  * descriptor checksums use the same algorithm as all other data
  * structures' checksums.
  */
-#define EXT4_FEATURE_RO_COMPAT_METADATA_CSUM	0x0400
-#define EXT4_FEATURE_RO_COMPAT_REPLICA		0x0800
-#define EXT4_FEATURE_RO_COMPAT_READONLY		0x1000
-#define EXT4_FEATURE_RO_COMPAT_PROJECT		0x2000 /* Project quota */
-#define EXT4_FEATURE_RO_COMPAT_SHARED_BLOCKS	0x4000
-#define EXT4_FEATURE_RO_COMPAT_VERITY		0x8000
-#define EXT4_FEATURE_RO_COMPAT_ORPHAN_PRESENT	0x10000
+#تعریف_کړه EXT4_FEATURE_RO_COMPAT_METADATA_CSUM	0x0400
+#تعریف_کړه EXT4_FEATURE_RO_COMPAT_REPLICA		0x0800
+#تعریف_کړه EXT4_FEATURE_RO_COMPAT_READONLY		0x1000
+#تعریف_کړه EXT4_FEATURE_RO_COMPAT_PROJECT		0x2000 /* Project quota */
+#تعریف_کړه EXT4_FEATURE_RO_COMPAT_SHARED_بلاکونه	0x4000
+#تعریف_کړه EXT4_FEATURE_RO_COMPAT_VERITY		0x8000
+#تعریف_کړه EXT4_FEATURE_RO_COMPAT_ORPHAN_PRESENT	0x10000
 
-#define EXT2_FEATURE_INCOMPAT_COMPRESSION	0x0001
-#define EXT2_FEATURE_INCOMPAT_FILETYPE		0x0002
-#define EXT3_FEATURE_INCOMPAT_RECOVER		0x0004 /* Needs recovery */
-#define EXT3_FEATURE_INCOMPAT_JOURNAL_DEV	0x0008 /* Journal device */
-#define EXT2_FEATURE_INCOMPAT_META_BG		0x0010
-#define EXT3_FEATURE_INCOMPAT_EXTENTS		0x0040
-#define EXT4_FEATURE_INCOMPAT_64BIT		0x0080
-#define EXT4_FEATURE_INCOMPAT_MMP		0x0100
-#define EXT4_FEATURE_INCOMPAT_FLEX_BG		0x0200
-#define EXT4_FEATURE_INCOMPAT_EA_INODE		0x0400
-#define EXT4_FEATURE_INCOMPAT_DIRDATA		0x1000
-#define EXT4_FEATURE_INCOMPAT_CSUM_SEED		0x2000
-#define EXT4_FEATURE_INCOMPAT_LARGEDIR		0x4000 /* >2GB or 3-lvl htree */
-#define EXT4_FEATURE_INCOMPAT_INLINE_DATA	0x8000 /* data in inode */
-#define EXT4_FEATURE_INCOMPAT_ENCRYPT		0x10000
-#define EXT4_FEATURE_INCOMPAT_CASEFOLD		0x20000
+#تعریف_کړه EXT2_FEATURE_INCOMPAT_COMPRESSION	0x0001
+#تعریف_کړه EXT2_FEATURE_INCOMPAT_FILETYPE		0x0002
+#تعریف_کړه EXT3_FEATURE_INCOMPAT_RECOVER		0x0004 /* Needs recovery */
+#تعریف_کړه EXT3_FEATURE_INCOMPAT_JOURNAL_DEV	0x0008 /* Journal device */
+#تعریف_کړه EXT2_FEATURE_INCOMPAT_META_BG		0x0010
+#تعریف_کړه EXT3_FEATURE_INCOMPAT_EXTENTS		0x0040
+#تعریف_کړه EXT4_FEATURE_INCOMPAT_64_بټ		0x0080
+#تعریف_کړه EXT4_FEATURE_INCOMPAT_MMP		0x0100
+#تعریف_کړه EXT4_FEATURE_INCOMPAT_FLEX_BG		0x0200
+#تعریف_کړه EXT4_FEATURE_INCOMPAT_EA_INODE		0x0400
+#تعریف_کړه EXT4_FEATURE_INCOMPAT_DIRDATA		0x1000
+#تعریف_کړه EXT4_FEATURE_INCOMPAT_CSUM_تخم		0x2000
+#تعریف_کړه EXT4_FEATURE_INCOMPAT_LARGEDIR		0x4000 /* >2GB or 3-lvl htree */
+#تعریف_کړه EXT4_FEATURE_INCOMPAT_INLINE_معلومات	0x8000 /* data in inode */
+#تعریف_کړه EXT4_FEATURE_INCOMPAT_ENCRYPT		0x10000
+#تعریف_کړه EXT4_FEATURE_INCOMPAT_CASEFOLD		0x20000
 
-#define EXT4_FEATURE_COMPAT_FUNCS(name, ver, flagname) \
-static inline int ext2fs_has_feature_##name(struct ext2_super_block *sb) \
+#تعریف_کړه EXT4_FEATURE_COMPAT_FUNCS(name, ver, flagname) \
+ساكن مضمن صحيح ext2fs_has_feature_##name(بنية ext2_super_بلاک *sb) \
 { \
-	return ((EXT2_SB(sb)->s_feature_compat & \
+	أرجع ((EXT2_SB(sb)->s_feature_compat & \
 		 EXT##ver##_FEATURE_COMPAT_##flagname) != 0); \
 } \
-static inline void ext2fs_set_feature_##name(struct ext2_super_block *sb) \
+ساكن مضمن فراغ ext2fs_سېټ_feature##name(بنية ext2_super_بلاک *sb) \
 { \
 	EXT2_SB(sb)->s_feature_compat |= \
 		EXT##ver##_FEATURE_COMPAT_##flagname; \
 } \
-static inline void ext2fs_clear_feature_##name(struct ext2_super_block *sb) \
+ساكن مضمن فراغ ext2fs_clear_feature_##name(بنية ext2_super_بلاک *sb) \
 { \
 	EXT2_SB(sb)->s_feature_compat &= \
 		~EXT##ver##_FEATURE_COMPAT_##flagname; \
 }
 
-#define EXT4_FEATURE_RO_COMPAT_FUNCS(name, ver, flagname) \
-static inline int ext2fs_has_feature_##name(struct ext2_super_block *sb) \
+#تعریف_کړه EXT4_FEATURE_RO_COMPAT_FUNCS(name, ver, flagname) \
+ساكن مضمن صحيح ext2fs_has_feature_##name(بنية ext2_super_بلاک *sb) \
 { \
-	return ((EXT2_SB(sb)->s_feature_ro_compat & \
+	أرجع ((EXT2_SB(sb)->s_feature_ro_compat & \
 		 EXT##ver##_FEATURE_RO_COMPAT_##flagname) != 0); \
 } \
-static inline void ext2fs_set_feature_##name(struct ext2_super_block *sb) \
+ساكن مضمن فراغ ext2fs_سېټ_feature##name(بنية ext2_super_بلاک *sb) \
 { \
 	EXT2_SB(sb)->s_feature_ro_compat |= \
 		EXT##ver##_FEATURE_RO_COMPAT_##flagname; \
 } \
-static inline void ext2fs_clear_feature_##name(struct ext2_super_block *sb) \
+ساكن مضمن فراغ ext2fs_clear_feature_##name(بنية ext2_super_بلاک *sb) \
 { \
 	EXT2_SB(sb)->s_feature_ro_compat &= \
 		~EXT##ver##_FEATURE_RO_COMPAT_##flagname; \
 }
 
-#define EXT4_FEATURE_INCOMPAT_FUNCS(name, ver, flagname) \
-static inline int ext2fs_has_feature_##name(struct ext2_super_block *sb) \
+#تعریف_کړه EXT4_FEATURE_INCOMPAT_FUNCS(name, ver, flagname) \
+ساكن مضمن صحيح ext2fs_has_feature_##name(بنية ext2_super_بلاک *sb) \
 { \
-	return ((EXT2_SB(sb)->s_feature_incompat & \
+	أرجع ((EXT2_SB(sb)->s_feature_incompat & \
 		 EXT##ver##_FEATURE_INCOMPAT_##flagname) != 0); \
 } \
-static inline void ext2fs_set_feature_##name(struct ext2_super_block *sb) \
+ساكن مضمن فراغ ext2fs_سېټ_feature##name(بنية ext2_super_بلاک *sb) \
 { \
 	EXT2_SB(sb)->s_feature_incompat |= \
 		EXT##ver##_FEATURE_INCOMPAT_##flagname; \
 } \
-static inline void ext2fs_clear_feature_##name(struct ext2_super_block *sb) \
+ساكن مضمن فراغ ext2fs_clear_feature_##name(بنية ext2_super_بلاک *sb) \
 { \
 	EXT2_SB(sb)->s_feature_incompat &= \
 		~EXT##ver##_FEATURE_INCOMPAT_##flagname; \
@@ -931,7 +931,7 @@ EXT4_FEATURE_COMPAT_FUNCS(imagic_inodes,	2, IMAGIC_INODES)
 EXT4_FEATURE_COMPAT_FUNCS(journal,		3, HAS_JOURNAL)
 EXT4_FEATURE_COMPAT_FUNCS(xattr,		2, EXT_ATTR)
 EXT4_FEATURE_COMPAT_FUNCS(resize_inode,		2, RESIZE_INODE)
-EXT4_FEATURE_COMPAT_FUNCS(dir_index,		2, DIR_INDEX)
+EXT4_FEATURE_COMPAT_FUNCS(dir_شاخص,		2, DIR_شاخص)
 EXT4_FEATURE_COMPAT_FUNCS(lazy_bg,		2, LAZY_BG)
 EXT4_FEATURE_COMPAT_FUNCS(exclude_bitmap,	2, EXCLUDE_BITMAP)
 EXT4_FEATURE_COMPAT_FUNCS(sparse_super2,	4, SPARSE_SUPER2)
@@ -952,7 +952,7 @@ EXT4_FEATURE_RO_COMPAT_FUNCS(metadata_csum,	4, METADATA_CSUM)
 EXT4_FEATURE_RO_COMPAT_FUNCS(replica,		4, REPLICA)
 EXT4_FEATURE_RO_COMPAT_FUNCS(readonly,		4, READONLY)
 EXT4_FEATURE_RO_COMPAT_FUNCS(project,		4, PROJECT)
-EXT4_FEATURE_RO_COMPAT_FUNCS(shared_blocks,	4, SHARED_BLOCKS)
+EXT4_FEATURE_RO_COMPAT_FUNCS(shared_بلاکونه,	4, SHARED_بلاکونه)
 EXT4_FEATURE_RO_COMPAT_FUNCS(verity,		4, VERITY)
 EXT4_FEATURE_RO_COMPAT_FUNCS(orphan_present,	4, ORPHAN_PRESENT)
 
@@ -962,23 +962,23 @@ EXT4_FEATURE_INCOMPAT_FUNCS(journal_needs_recovery,	3, RECOVER)
 EXT4_FEATURE_INCOMPAT_FUNCS(journal_dev,	3, JOURNAL_DEV)
 EXT4_FEATURE_INCOMPAT_FUNCS(meta_bg,		2, META_BG)
 EXT4_FEATURE_INCOMPAT_FUNCS(extents,		3, EXTENTS)
-EXT4_FEATURE_INCOMPAT_FUNCS(64bit,		4, 64BIT)
+EXT4_FEATURE_INCOMPAT_FUNCS(64بټ,		4, 64بټ_2)
 EXT4_FEATURE_INCOMPAT_FUNCS(mmp,		4, MMP)
 EXT4_FEATURE_INCOMPAT_FUNCS(flex_bg,		4, FLEX_BG)
 EXT4_FEATURE_INCOMPAT_FUNCS(ea_inode,		4, EA_INODE)
 EXT4_FEATURE_INCOMPAT_FUNCS(dirdata,		4, DIRDATA)
-EXT4_FEATURE_INCOMPAT_FUNCS(csum_seed,		4, CSUM_SEED)
+EXT4_FEATURE_INCOMPAT_FUNCS(csum_تخم,		4, CSUM_تخم)
 EXT4_FEATURE_INCOMPAT_FUNCS(largedir,		4, LARGEDIR)
-EXT4_FEATURE_INCOMPAT_FUNCS(inline_data,	4, INLINE_DATA)
+EXT4_FEATURE_INCOMPAT_FUNCS(inline_معلومات,	4, INLINE_معلومات)
 EXT4_FEATURE_INCOMPAT_FUNCS(encrypt,		4, ENCRYPT)
 EXT4_FEATURE_INCOMPAT_FUNCS(casefold,		4, CASEFOLD)
 
-#define EXT2_FEATURE_COMPAT_SUPP	0
-#define EXT2_FEATURE_INCOMPAT_SUPP    (EXT2_FEATURE_INCOMPAT_FILETYPE| \
+#تعریف_کړه EXT2_FEATURE_COMPAT_SUPP	0
+#تعریف_کړه EXT2_FEATURE_INCOMPAT_SUPP    (EXT2_FEATURE_INCOMPAT_FILETYPE| \
 				       EXT4_FEATURE_INCOMPAT_MMP| \
 				       EXT4_FEATURE_INCOMPAT_LARGEDIR| \
 				       EXT4_FEATURE_INCOMPAT_EA_INODE)
-#define EXT2_FEATURE_RO_COMPAT_SUPP	(EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER| \
+#تعریف_کړه EXT2_FEATURE_RO_COMPAT_SUPP	(EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER| \
 					 EXT2_FEATURE_RO_COMPAT_LARGE_FILE| \
 					 EXT4_FEATURE_RO_COMPAT_DIR_NLINK| \
 					 EXT2_FEATURE_RO_COMPAT_BTREE_DIR| \
@@ -987,42 +987,42 @@ EXT4_FEATURE_INCOMPAT_FUNCS(casefold,		4, CASEFOLD)
 /*
  * Default values for user and/or group using reserved blocks
  */
-#define EXT2_DEF_RESUID		0
-#define EXT2_DEF_RESGID		0
+#تعریف_کړه EXT2_DEF_RESUID		0
+#تعریف_کړه EXT2_DEF_RESGID		0
 
 /*
  * Default mount options
  */
-#define EXT2_DEFM_DEBUG		0x0001
-#define EXT2_DEFM_BSDGROUPS	0x0002
-#define EXT2_DEFM_XATTR_USER	0x0004
-#define EXT2_DEFM_ACL		0x0008
-#define EXT2_DEFM_UID16		0x0010
-#define EXT3_DEFM_JMODE		0x0060
-#define EXT3_DEFM_JMODE_DATA	0x0020
-#define EXT3_DEFM_JMODE_ORDERED	0x0040
-#define EXT3_DEFM_JMODE_WBACK	0x0060
-#define EXT4_DEFM_NOBARRIER	0x0100
-#define EXT4_DEFM_BLOCK_VALIDITY 0x0200
-#define EXT4_DEFM_DISCARD	0x0400
-#define EXT4_DEFM_NODELALLOC	0x0800
+#تعریف_کړه EXT2_DEFM_DEBUG		0x0001
+#تعریف_کړه EXT2_DEFM_BSDGROUPS	0x0002
+#تعریف_کړه EXT2_DEFM_XATTR_USER	0x0004
+#تعریف_کړه EXT2_DEFM_ACL		0x0008
+#تعریف_کړه EXT2_DEFM_UID16		0x0010
+#تعریف_کړه EXT3_DEFM_JMODE		0x0060
+#تعریف_کړه EXT3_DEFM_JMODE_معلومات	0x0020
+#تعریف_کړه EXT3_DEFM_JMODE_ORDERED	0x0040
+#تعریف_کړه EXT3_DEFM_JMODE_WBACK	0x0060
+#تعریف_کړه EXT4_DEFM_NOBARRIER	0x0100
+#تعریف_کړه EXT4_DEFM_بلاک_VALIDITY 0x0200
+#تعریف_کړه EXT4_DEFM_DISCARD	0x0400
+#تعریف_کړه EXT4_DEFM_NODELALLOC	0x0800
 
-static inline int ext4_hash_in_dirent(const struct ext2_inode *inode)
+ساكن مضمن صحيح ext4_hash_دننه_dirent(ثابت بنية ext2_inode *inode)
 {
-	return (inode->i_flags & EXT4_ENCRYPT_FL) &&
+	أرجع (inode->i_flags & EXT4_ENCRYPT_FL) &&
 		(inode->i_flags & EXT4_CASEFOLD_FL);
 }
 
 /*
  * Structure of a directory entry
  */
-#define EXT2_NAME_LEN 255
+#تعریف_کړه EXT2_NAME_LEN 255
 
-struct ext2_dir_entry {
+بنية ext2_dir_ثبت {
 	__u32	inode;			/* Inode number */
 	__u16	rec_len;		/* Directory entry length */
 	__u16	name_len;		/* Name length */
-	char	name[EXT2_NAME_LEN];	/* File name */
+	حرف	name[EXT2_NAME_LEN];	/* File name */
 };
 
 /*
@@ -1039,12 +1039,12 @@ struct ext2_dir_entry {
  *   ext2fs_dirent_set_file_type
  * to get and set name_len and file_type fields.
  */
-struct ext2_dir_entry_2 {
+بنية ext2_dir_ثبت_2 {
 	__u32	inode;			/* Inode number */
 	__u16	rec_len;		/* Directory entry length */
 	__u8	name_len;		/* Name length */
 	__u8	file_type;
-	char	name[EXT2_NAME_LEN];	/* File name */
+	حرف	name[EXT2_NAME_LEN];	/* File name */
 };
 
 /*
@@ -1052,25 +1052,25 @@ struct ext2_dir_entry_2 {
  * This is located at the first 4 bit aligned location after the name.
  */
 
-struct ext2_dir_entry_hash {
+بنية ext2_dir_ثبت_hash {
 	__le32 hash;
 	__le32 minor_hash;
 };
 
-#define EXT2_DIRENT_HASHES(entry) \
-	((struct ext2_dir_entry_hash *) &entry->name[\
-		(ext2fs_dirent_name_len(entry) + \
-			EXT2_DIR_ROUND) & ~EXT2_DIR_ROUND])
-#define EXT2_DIRENT_HASH(entry) \
-		ext2fs_le32_to_cpu(EXT2_DIRENT_HASHES(entry)->hash)
-#define EXT2_DIRENT_MINOR_HASH(entry) \
-		ext2fs_le32_to_cpu(EXT2_DIRENT_HASHES(entry)->minor_hash)
+#تعریف_کړه EXT2_DIRENT_HASHES(ثبت) \
+	((بنية ext2_dir_ثبت_hash *) &ثبت->name[\
+		(ext2fs_dirent_name_len(ثبت) + \
+			EXT2_DIR_پړاو) & ~EXT2_DIR_پړاو])
+#تعریف_کړه EXT2_DIRENT_HASH(ثبت) \
+		ext2fs_le32_منزل_cpu(EXT2_DIRENT_HASHES(ثبت)->hash)
+#تعریف_کړه EXT2_DIRENT_MINOR_HASH(ثبت) \
+		ext2fs_le32_منزل_cpu(EXT2_DIRENT_HASHES(ثبت)->minor_hash)
 
 /*
  * This is a bogus directory entry at the end of each leaf block that
  * records checksums.
  */
-struct ext2_dir_entry_tail {
+بنية ext2_dir_ثبت_لکۍ {
 	__u32	det_reserved_zero1;	/* Pretend to be unused */
 	__u16	det_rec_len;		/* 12 */
 	__u16	det_reserved_name_len;	/* 0xDE00, fake namelen/filetype */
@@ -1081,16 +1081,16 @@ struct ext2_dir_entry_tail {
  * Ext2 directory file types.  Only the low 3 bits are used.  The
  * other bits are reserved for now.
  */
-#define EXT2_FT_UNKNOWN		0
-#define EXT2_FT_REG_FILE	1
-#define EXT2_FT_DIR		2
-#define EXT2_FT_CHRDEV		3
-#define EXT2_FT_BLKDEV		4
-#define EXT2_FT_FIFO		5
-#define EXT2_FT_SOCK		6
-#define EXT2_FT_SYMLINK		7
+#تعریف_کړه EXT2_FT_UNKNOWN		0
+#تعریف_کړه EXT2_FT_REG_FILE	1
+#تعریف_کړه EXT2_FT_DIR		2
+#تعریف_کړه EXT2_FT_CHRDEV		3
+#تعریف_کړه EXT2_FT_BLKDEV		4
+#تعریف_کړه EXT2_FT_FIFO		5
+#تعریف_کړه EXT2_FT_SOCK		6
+#تعریف_کړه EXT2_FT_SYMLINK		7
 
-#define EXT2_FT_MAX		8
+#تعریف_کړه EXT2_FT_MAX		8
 
 /*
  * Annoyingly, e2fsprogs always swab16s ext2_dir_entry.name_len, so we
@@ -1098,34 +1098,34 @@ struct ext2_dir_entry_tail {
  * constant helps to build the dir_entry_tail to look like it has an
  * "invalid" file type.
  */
-#define EXT2_DIR_NAME_LEN_CSUM	0xDE00
+#تعریف_کړه EXT2_DIR_NAME_LEN_CSUM	0xDE00
 
 /*
  * EXT2_DIR_PAD defines the directory entries boundaries
  *
  * NOTE: It must be a multiple of 4
  */
-#define EXT2_DIR_ENTRY_HEADER_LEN	8
-#define EXT2_DIR_ENTRY_HASH_LEN		8
-#define EXT2_DIR_PAD			4
-#define EXT2_DIR_ROUND			(EXT2_DIR_PAD - 1)
-#define EXT2_DIR_REC_LEN(name_len) ext2fs_dir_rec_len(name_len, 0)
+#تعریف_کړه EXT2_DIR_ثبت_سرلیک_LEN	8
+#تعریف_کړه EXT2_DIR_ثبت_HASH_LEN		8
+#تعریف_کړه EXT2_DIR_PAD			4
+#تعریف_کړه EXT2_DIR_پړاو			(EXT2_DIR_PAD - 1)
+#تعریف_کړه EXT2_DIR_REC_LEN(name_len) ext2fs_dir_rec_len(name_len, 0)
 
-static inline unsigned int ext2fs_dir_rec_len(__u8 name_len,
-						int extended)
+ساكن مضمن بینښه صحيح ext2fs_dir_rec_len(__u8 name_len,
+						صحيح extended)
 {
-	int rec_len = (name_len + EXT2_DIR_ENTRY_HEADER_LEN + EXT2_DIR_ROUND);
+	صحيح rec_len = (name_len + EXT2_DIR_ثبت_سرلیک_LEN + EXT2_DIR_پړاو);
 
-	rec_len &= ~EXT2_DIR_ROUND;
-	if (extended)
-		rec_len += EXT2_DIR_ENTRY_HASH_LEN;
-	return rec_len;
+	rec_len &= ~EXT2_DIR_پړاو;
+	إذا (extended)
+		rec_len += EXT2_DIR_ثبت_HASH_LEN;
+	أرجع rec_len;
 }
 
-#define EXT4_ORPHAN_BLOCK_MAGIC 0x0b10ca04
+#تعریف_کړه EXT4_ORPHAN_بلاک_MAGIC 0x0b10ca04
 
 /* Structure at the tail of orphan block */
-struct ext4_orphan_block_tail {
+بنية ext4_orphan_بلاک_لکۍ {
 	__le32 ob_magic;
 	__le32 ob_checksum;
 };
@@ -1133,9 +1133,9 @@ struct ext4_orphan_block_tail {
 /*
  * Constants for ext4's extended time encoding
  */
-#define EXT4_EPOCH_BITS 2
-#define EXT4_EPOCH_MASK ((1 << EXT4_EPOCH_BITS) - 1)
-#define EXT4_NSEC_MASK  (~0UL << EXT4_EPOCH_BITS)
+#تعریف_کړه EXT4_EPOCH_بټونه 2
+#تعریف_کړه EXT4_EPOCH_ماسک ((1 << EXT4_EPOCH_بټونه) - 1)
+#تعریف_کړه EXT4_NSEC_ماسک  (~0UL << EXT4_EPOCH_بټونه)
 
 /*
  * This structure is used for multiple mount protection. It is written
@@ -1155,16 +1155,16 @@ struct ext4_orphan_block_tail {
  *	fields are only for informational purposes for the administrator,
  *	due to clock skew between nodes and hostname HA service takeover.
  */
-#define EXT4_MMP_MAGIC     0x004D4D50U /* ASCII for MMP */
-#define EXT4_MMP_SEQ_CLEAN 0xFF4D4D50U /* mmp_seq value for clean unmount */
-#define EXT4_MMP_SEQ_FSCK  0xE24D4D50U /* mmp_seq value when being fscked */
-#define EXT4_MMP_SEQ_MAX   0xE24D4D4FU /* maximum valid mmp_seq value */
+#تعریف_کړه EXT4_MMP_MAGIC     0x004D4D50U /* ASCII for MMP */
+#تعریف_کړه EXT4_MMP_SEQ_CLEAN 0xFF4D4D50U /* mmp_seq value for clean unmount */
+#تعریف_کړه EXT4_MMP_SEQ_FSCK  0xE24D4D50U /* mmp_seq value when being fscked */
+#تعریف_کړه EXT4_MMP_SEQ_MAX   0xE24D4D4FU /* maximum valid mmp_seq value */
 
 /* Not endian-annotated; it's swapped at read/write time */
-struct mmp_struct {
+بنية mmp_struct {
 	__u32	mmp_magic;		/* Magic number for MMP */
 	__u32	mmp_seq;		/* Sequence no. updated periodically */
-	__u64	mmp_time;		/* Time last updated (seconds) */
+	__u64	mmp_وخت;		/* Time last updated (seconds) */
 	__u8	mmp_nodename[64] __nonstring;	/* Node updating MMP block, no NUL? */
 	__u8	mmp_bdevname[32] __nonstring;	/* Bdev updating MMP block, no NUL? */
 	__u16	mmp_check_interval;	/* Changed mmp_check_interval */
@@ -1176,30 +1176,30 @@ struct mmp_struct {
 /*
  * Default interval for MMP update in seconds.
  */
-#define EXT4_MMP_UPDATE_INTERVAL	5
+#تعریف_کړه EXT4_MMP_UPDATE_INTERVAL	5
 
 /*
  * Maximum interval for MMP update in seconds.
  */
-#define EXT4_MMP_MAX_UPDATE_INTERVAL	300
+#تعریف_کړه EXT4_MMP_MAX_UPDATE_INTERVAL	300
 
 /*
  * Minimum interval for MMP checking in seconds.
  */
-#define EXT4_MMP_MIN_CHECK_INTERVAL     5
+#تعریف_کړه EXT4_MMP_MIN_CHECK_INTERVAL     5
 
 /*
  * Minimum size of inline data.
  */
-#define EXT4_MIN_INLINE_DATA_SIZE	((sizeof(__u32) * EXT2_N_BLOCKS))
+#تعریف_کړه EXT4_MIN_INLINE_معلومات_اندازه	((حجم(__u32) * EXT2_N_بلاکونه))
 
 /*
  * Size of a parent inode in inline data directory.
  */
-#define EXT4_INLINE_DATA_DOTDOT_SIZE	(4)
+#تعریف_کړه EXT4_INLINE_معلومات_DOTDOT_اندازه	(4)
 
-#define EXT4_ENC_UTF8_12_1	1
+#تعریف_کړه EXT4_ENC_UTF8_12_1	1
 
-#define EXT4_ENC_STRICT_MODE_FL			(1 << 0) /* Reject invalid sequences */
+#تعریف_کړه EXT4_ENC_STRICT_ډېرپېښ_FL			(1 << 0) /* Reject invalid sequences */
 
-#endif	/* _LINUX_EXT2_FS_H */
+#د_که_پای	/* _LINUX_EXT2_FS_H */

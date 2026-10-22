@@ -11,13 +11,13 @@
  */
 
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#include "ext2fs.h"
+#ضمن "config.h"
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#د_که_پای
+#ضمن "ext2fs.h"
 
-static const __u32 K[64] = {
+ساكن ثابت __u32 K[64] = {
     0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL, 0x3956c25bUL,
     0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL, 0xd807aa98UL, 0x12835b01UL,
     0x243185beUL, 0x550c7dc3UL, 0x72be5d74UL, 0x80deb1feUL, 0x9bdc06a7UL,
@@ -34,92 +34,92 @@ static const __u32 K[64] = {
 };
 
 /* Various logical functions */
-#define Ch(x,y,z)       (z ^ (x & (y ^ z)))
-#define Maj(x,y,z)      (((x | y) & z) | (x & y)) 
-#define S(x, n)         RORc((x),(n))
-#define R(x, n)         (((x)&0xFFFFFFFFUL)>>(n))
-#define Sigma0(x)       (S(x, 2) ^ S(x, 13) ^ S(x, 22))
-#define Sigma1(x)       (S(x, 6) ^ S(x, 11) ^ S(x, 25))
-#define Gamma0(x)       (S(x, 7) ^ S(x, 18) ^ R(x, 3))
-#define Gamma1(x)       (S(x, 17) ^ S(x, 19) ^ R(x, 10))
-#define RORc(x, y) ( ((((__u32)(x)&0xFFFFFFFFUL)>>(__u32)((y)&31)) | ((__u32)(x)<<(__u32)(32-((y)&31)))) & 0xFFFFFFFFUL)
+#تعریف_کړه Ch(x,y,z)       (z ^ (x & (y ^ z)))
+#تعریف_کړه Maj(x,y,z)      (((x | y) & z) | (x & y)) 
+#تعریف_کړه S(x, n)         RORc((x),(n))
+#تعریف_کړه R(x, n)         (((x)&0xFFFFFFFFUL)>>(n))
+#تعریف_کړه Sigma0(x)       (S(x, 2) ^ S(x, 13) ^ S(x, 22))
+#تعریف_کړه Sigma1(x)       (S(x, 6) ^ S(x, 11) ^ S(x, 25))
+#تعریف_کړه Gamma0(x)       (S(x, 7) ^ S(x, 18) ^ R(x, 3))
+#تعریف_کړه Gamma1(x)       (S(x, 17) ^ S(x, 19) ^ R(x, 10))
+#تعریف_کړه RORc(x, y) ( ((((__u32)(x)&0xFFFFFFFFUL)>>(__u32)((y)&31)) | ((__u32)(x)<<(__u32)(32-((y)&31)))) & 0xFFFFFFFFUL)
 
-#define RND(a,b,c,d,e,f,g,h,i)                         \
+#تعریف_کړه RND(a,b,c,d,e,f,g,h,i)                         \
      t0 = h + Sigma1(e) + Ch(e, f, g) + K[i] + W[i];   \
      t1 = Sigma0(a) + Maj(a, b, c);                    \
      d += t0;                                          \
      h  = t0 + t1;
 
-#define STORE64H(x, y) \
-	do { \
-		(y)[0] = (unsigned char)(((x)>>56)&255);\
-		(y)[1] = (unsigned char)(((x)>>48)&255);\
-		(y)[2] = (unsigned char)(((x)>>40)&255);\
-		(y)[3] = (unsigned char)(((x)>>32)&255);\
-		(y)[4] = (unsigned char)(((x)>>24)&255);\
-		(y)[5] = (unsigned char)(((x)>>16)&255);\
-		(y)[6] = (unsigned char)(((x)>>8)&255);\
-		(y)[7] = (unsigned char)((x)&255); } while(0)
+#تعریف_کړه STORE64H(x, y) \
+	افعل { \
+		(y)[0] = (بینښه حرف)(((x)>>56)&255);\
+		(y)[1] = (بینښه حرف)(((x)>>48)&255);\
+		(y)[2] = (بینښه حرف)(((x)>>40)&255);\
+		(y)[3] = (بینښه حرف)(((x)>>32)&255);\
+		(y)[4] = (بینښه حرف)(((x)>>24)&255);\
+		(y)[5] = (بینښه حرف)(((x)>>16)&255);\
+		(y)[6] = (بینښه حرف)(((x)>>8)&255);\
+		(y)[7] = (بینښه حرف)((x)&255); } طالما(0)
 
-#define STORE32H(x, y)                                                                     \
-  do { (y)[0] = (unsigned char)(((x)>>24)&255); (y)[1] = (unsigned char)(((x)>>16)&255);   \
-       (y)[2] = (unsigned char)(((x)>>8)&255); (y)[3] = (unsigned char)((x)&255); } while(0)
+#تعریف_کړه STORE32H(x, y)                                                                     \
+  افعل { (y)[0] = (بینښه حرف)(((x)>>24)&255); (y)[1] = (بینښه حرف)(((x)>>16)&255);   \
+       (y)[2] = (بینښه حرف)(((x)>>8)&255); (y)[3] = (بینښه حرف)((x)&255); } طالما(0)
 
-#define LOAD32H(x, y)                            \
-  do { x = ((__u32)((y)[0] & 255)<<24) | \
+#تعریف_کړه LOAD32H(x, y)                            \
+  افعل { x = ((__u32)((y)[0] & 255)<<24) | \
            ((__u32)((y)[1] & 255)<<16) | \
            ((__u32)((y)[2] & 255)<<8)  | \
-           ((__u32)((y)[3] & 255)); } while(0)
+           ((__u32)((y)[3] & 255)); } طالما(0)
 
-struct sha256_state {
-    __u64 length;
+بنية sha256_state {
+    __u64 اوږدتیا;
     __u32 state[8], curlen;
-    unsigned char buf[64];
+    بینښه حرف buf[64];
 };
 
 /* This is a highly simplified version from libtomcrypt */
-struct hash_state {
-	struct sha256_state sha256;
+بنية hash_state {
+	بنية sha256_state sha256;
 };
 
-static void sha256_compress(struct hash_state * md, const unsigned char *buf)
+ساكن فراغ sha256_compress(بنية hash_state * md, ثابت بینښه حرف *buf)
 {
     __u32 S[8], W[64], t0, t1;
     __u32 t;
-    int i;
+    صحيح i;
 
     /* copy state into S */
-    for (i = 0; i < 8; i++) {
+    لكل (i = 0; i < 8; i++) {
         S[i] = md->sha256.state[i];
     }
 
     /* copy the state into 512-bits into W[0..15] */
-    for (i = 0; i < 16; i++) {
+    لكل (i = 0; i < 16; i++) {
         LOAD32H(W[i], buf + (4*i));
     }
 
     /* fill W[16..63] */
-    for (i = 16; i < 64; i++) {
+    لكل (i = 16; i < 64; i++) {
         W[i] = Gamma1(W[i - 2]) + W[i - 7] + Gamma0(W[i - 15]) + W[i - 16];
     }        
 
     /* Compress */
-     for (i = 0; i < 64; ++i) {
+     لكل (i = 0; i < 64; ++i) {
          RND(S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7],i);
          t = S[7]; S[7] = S[6]; S[6] = S[5]; S[5] = S[4]; 
          S[4] = S[3]; S[3] = S[2]; S[2] = S[1]; S[1] = S[0]; S[0] = t;
      }  
 
     /* feedback */
-    for (i = 0; i < 8; i++) {
+    لكل (i = 0; i < 8; i++) {
         md->sha256.state[i] = md->sha256.state[i] + S[i];
     }
 }
 
-static void sha256_init(struct hash_state * md)
+ساكن فراغ sha256_init(بنية hash_state * md)
 {
     md->sha256.curlen = 0;
-    md->sha256.length = 0;
+    md->sha256.اوږدتیا = 0;
     md->sha256.state[0] = 0x6A09E667UL;
     md->sha256.state[1] = 0xBB67AE85UL;
     md->sha256.state[2] = 0x3C6EF372UL;
@@ -130,27 +130,27 @@ static void sha256_init(struct hash_state * md)
     md->sha256.state[7] = 0x5BE0CD19UL;
 }
 
-#define MIN(x, y) ( ((x)<(y))?(x):(y) )
-#define SHA256_BLOCKSIZE 64
-static void sha256_process(struct hash_state * md, const unsigned char *in, unsigned long inlen)
+#تعریف_کړه MIN(x, y) ( ((x)<(y))?(x):(y) )
+#تعریف_کړه SHA256_BLOCKSIZE 64
+ساكن فراغ sha256_process(بنية hash_state * md, ثابت بینښه حرف *دننه, بینښه اوږد inlen)
 {
-    unsigned long n;
+    بینښه اوږد n;
 
-    while (inlen > 0) {
-	    if (md->sha256.curlen == 0 && inlen >= SHA256_BLOCKSIZE) {
-		    sha256_compress(md, in);
-		    md->sha256.length += SHA256_BLOCKSIZE * 8;
-		    in += SHA256_BLOCKSIZE;
+    طالما (inlen > 0) {
+	    إذا (md->sha256.curlen == 0 && inlen >= SHA256_BLOCKSIZE) {
+		    sha256_compress(md, دننه);
+		    md->sha256.اوږدتیا += SHA256_BLOCKSIZE * 8;
+		    دننه += SHA256_BLOCKSIZE;
 		    inlen -= SHA256_BLOCKSIZE;
-	    } else {
+	    } وإلا {
 		    n = MIN(inlen, (SHA256_BLOCKSIZE - md->sha256.curlen));
-		    memcpy(md->sha256.buf + md->sha256.curlen, in, (size_t)n);
+		    حافظه_نقل(md->sha256.buf + md->sha256.curlen, دننه, (size_t)n);
 		    md->sha256.curlen += n;
-		    in += n;
+		    دننه += n;
 		    inlen -= n;
-		    if (md->sha256.curlen == SHA256_BLOCKSIZE) {
+		    إذا (md->sha256.curlen == SHA256_BLOCKSIZE) {
 			    sha256_compress(md, md->sha256.buf);
-			    md->sha256.length += 8*SHA256_BLOCKSIZE;
+			    md->sha256.اوږدتیا += 8*SHA256_BLOCKSIZE;
 			    md->sha256.curlen = 0;
 		    }
 	    }
@@ -158,57 +158,57 @@ static void sha256_process(struct hash_state * md, const unsigned char *in, unsi
 }
 
 
-static void sha256_done(struct hash_state * md, unsigned char *out)
+ساكن فراغ sha256_بشپړ(بنية hash_state * md, بینښه حرف *بهر)
 {
-    int i;
+    صحيح i;
 
     /* increase the length of the message */
-    md->sha256.length += md->sha256.curlen * 8;
+    md->sha256.اوږدتیا += md->sha256.curlen * 8;
 
     /* append the '1' bit */
-    md->sha256.buf[md->sha256.curlen++] = (unsigned char)0x80;
+    md->sha256.buf[md->sha256.curlen++] = (بینښه حرف)0x80;
 
     /* if the length is currently above 56 bytes we append zeros
      * then compress.  Then we can fall back to padding zeros and length
      * encoding like normal.
      */
-    if (md->sha256.curlen > 56) {
-        while (md->sha256.curlen < 64) {
-            md->sha256.buf[md->sha256.curlen++] = (unsigned char)0;
+    إذا (md->sha256.curlen > 56) {
+        طالما (md->sha256.curlen < 64) {
+            md->sha256.buf[md->sha256.curlen++] = (بینښه حرف)0;
         }
         sha256_compress(md, md->sha256.buf);
         md->sha256.curlen = 0;
     }
 
     /* pad up to 56 bytes of zeroes */
-    while (md->sha256.curlen < 56) {
-        md->sha256.buf[md->sha256.curlen++] = (unsigned char)0;
+    طالما (md->sha256.curlen < 56) {
+        md->sha256.buf[md->sha256.curlen++] = (بینښه حرف)0;
     }
 
     /* store length */
-    STORE64H(md->sha256.length, md->sha256.buf+56);
+    STORE64H(md->sha256.اوږدتیا, md->sha256.buf+56);
     sha256_compress(md, md->sha256.buf);
 
     /* copy output */
-    for (i = 0; i < 8; i++) {
-        STORE32H(md->sha256.state[i], out+(4*i));
+    لكل (i = 0; i < 8; i++) {
+        STORE32H(md->sha256.state[i], بهر+(4*i));
     }
 }
 
-void ext2fs_sha256(const unsigned char *in, unsigned long in_size,
-		   unsigned char out[EXT2FS_SHA256_LENGTH])
+فراغ ext2fs_sha256(ثابت بینښه حرف *دننه, بینښه اوږد دننه_اندازه,
+		   بینښه حرف بهر[EXT2_FS_SHA256_اوږدتیا])
 {
-	struct hash_state md;
+	بنية hash_state md;
 
 	sha256_init(&md);
-	sha256_process(&md, in, in_size);
-	sha256_done(&md, out);
+	sha256_process(&md, دننه, دننه_اندازه);
+	sha256_بشپړ(&md, بهر);
 }
 
-#ifdef UNITTEST
-static const struct {
-	char *msg;
-	unsigned char hash[32];
+#که_تعریف_شوی UNITTEST
+ساكن ثابت بنية {
+	حرف *پیغام;
+	بینښه حرف hash[32];
 } tests[] = {
 	{ "",
 	  { 0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14,
@@ -230,25 +230,25 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+صحيح اصلي(صحيح argc, حرف **argv)
 {
-	int i;
-	int errors = 0;
-	unsigned char tmp[32];
+	صحيح i;
+	صحيح errors = 0;
+	بینښه حرف tmp[32];
 
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
-		unsigned char *msg = (unsigned char *) tests[i].msg;
-		int len = strlen(tests[i].msg);
+	لكل (i = 0; i < (صحيح)(حجم(tests) / حجم(tests[0])); i++) {
+		بینښه حرف *پیغام = (بینښه حرف *) tests[i].پیغام;
+		صحيح len = مزي_اوږدوالی(tests[i].پیغام);
 
-		ext2fs_sha256(msg, len, tmp);
-		printf("SHA256 test message %d: ", i);
-		if (memcmp(tmp, tests[i].hash, 32) != 0) {
-			printf("FAILED\n");
+		ext2fs_sha256(پیغام, len, tmp);
+		چاپ_کړه("SHA256 test message %d: ", i);
+		إذا (memcmp(tmp, tests[i].hash, 32) != 0) {
+			چاپ_کړه("FAILED\n");
 			errors++;
-		} else
-			printf("OK\n");
+		} وإلا
+			چاپ_کړه("OK\n");
 	}
-	return errors;
+	أرجع errors;
 }
 
-#endif /* UNITTEST */
+#د_که_پای /* UNITTEST */

@@ -9,27 +9,27 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#د_که_پای
+#إذا HAVE_ERRNO_H
+#ضمن <errno.h>
+#د_که_پای
+#إذا HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
+#د_که_پای
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#د_که_پای
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
-#include "e2image.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fsP.h"
+#ضمن "e2image.h"
 
-#undef DEBUG
+#تعریف_لغوه DEBUG
 
 /*
  * Definitions to be dropped in lib/ext2fs/ext2fs.h
@@ -39,35 +39,35 @@
  * Private definitions
  */
 
-struct extent_path {
-	char		*buf;
-	int		entries;
-	int		max_entries;
-	int		left;
-	int		visit_num;
-	int		flags;
-	blk64_t		end_blk;
+بنية extent_لار {
+	حرف		*buf;
+	صحيح		entries;
+	صحيح		max_entries;
+	صحيح		کیڼ;
+	صحيح		لیدنه_عدد;
+	صحيح		flags;
+	blk64_t		پای_ټکی_blk;
 	blk64_t		blk;
-	void		*curr;
+	فراغ		*curr;
 };
 
 
-struct ext2_extent_handle {
+بنية ext2_extent_handle {
 	errcode_t		magic;
 	ext2_filsys		fs;
 	ext2_ino_t 		ino;
-	struct ext2_inode	*inode;
-	struct ext2_inode	inodebuf;
-	int			type;
-	int			level;
-	int			max_depth;
-	int			max_paths;
-	struct extent_path	*path;
+	بنية ext2_inode	*inode;
+	بنية ext2_inode	inodebuf;
+	صحيح			type;
+	صحيح			level;
+	صحيح			max_ژوروالی;
+	صحيح			max_paths;
+	بنية extent_لار	*لار;
 };
 
-struct ext2_extent_path {
+بنية ext2_extent_لار {
 	errcode_t		magic;
-	int			leaf_height;
+	صحيح			ونې_پاڼه_لوړوالی;
 	blk64_t			lblk;
 };
 
@@ -75,136 +75,136 @@ struct ext2_extent_path {
  *  Useful Debugging stuff
  */
 
-#ifdef DEBUG
-static void dbg_show_header(struct ext3_extent_header *eh)
+#که_تعریف_شوی DEBUG
+ساكن فراغ dbg_show_سرلیک(بنية ext3_extent_سرلیک *eh)
 {
-	printf("header: magic=%x entries=%u max=%u depth=%u generation=%u\n",
-			ext2fs_le16_to_cpu(eh->eh_magic),
-			ext2fs_le16_to_cpu(eh->eh_entries),
-			ext2fs_le16_to_cpu(eh->eh_max),
-			ext2fs_le16_to_cpu(eh->eh_depth),
-			ext2fs_le32_to_cpu(eh->eh_generation));
+	چاپ_کړه("header: magic=%x entries=%u max=%u depth=%u generation=%u\n",
+			ext2fs_le16_منزل_cpu(eh->eh_magic),
+			ext2fs_le16_منزل_cpu(eh->eh_entries),
+			ext2fs_le16_منزل_cpu(eh->eh_max),
+			ext2fs_le16_منزل_cpu(eh->eh_ژوروالی),
+			ext2fs_le32_منزل_cpu(eh->eh_generation));
 }
 
-static void dbg_show_index(struct ext3_extent_idx *ix)
+ساكن فراغ dbg_show_شاخص(بنية ext3_extent_idx *ix)
 {
-	printf("index: block=%u leaf=%u leaf_hi=%u unused=%u\n",
-			ext2fs_le32_to_cpu(ix->ei_block),
-			ext2fs_le32_to_cpu(ix->ei_leaf),
-			ext2fs_le16_to_cpu(ix->ei_leaf_hi),
-			ext2fs_le16_to_cpu(ix->ei_unused));
+	چاپ_کړه("index: block=%u leaf=%u leaf_hi=%u unused=%u\n",
+			ext2fs_le32_منزل_cpu(ix->ei_بلاک),
+			ext2fs_le32_منزل_cpu(ix->ei_ونې_پاڼه),
+			ext2fs_le16_منزل_cpu(ix->ei_ونې_پاڼه_hi),
+			ext2fs_le16_منزل_cpu(ix->ei_ناکارول_شوی));
 }
 
-static void dbg_show_extent(struct ext3_extent *ex)
+ساكن فراغ dbg_show_extent(بنية ext3_extent *ex)
 {
-	printf("extent: block=%u-%u len=%u start=%u start_hi=%u\n",
-			ext2fs_le32_to_cpu(ex->ee_block),
-			ext2fs_le32_to_cpu(ex->ee_block) +
-			ext2fs_le16_to_cpu(ex->ee_len) - 1,
-			ext2fs_le16_to_cpu(ex->ee_len),
-			ext2fs_le32_to_cpu(ex->ee_start),
-			ext2fs_le16_to_cpu(ex->ee_start_hi));
+	چاپ_کړه("extent: block=%u-%u len=%u start=%u start_hi=%u\n",
+			ext2fs_le32_منزل_cpu(ex->ee_بلاک),
+			ext2fs_le32_منزل_cpu(ex->ee_بلاک) +
+			ext2fs_le16_منزل_cpu(ex->ee_len) - 1,
+			ext2fs_le16_منزل_cpu(ex->ee_len),
+			ext2fs_le32_منزل_cpu(ex->ee_پیل),
+			ext2fs_le16_منزل_cpu(ex->ee_پیل_hi));
 }
 
-static void dbg_print_extent(char *desc, struct ext2fs_extent *extent)
+ساكن فراغ dbg_print_extent(حرف *desc, بنية ext2fs_extent *extent)
 {
-	if (desc)
-		printf("%s: ", desc);
-	printf("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
+	إذا (desc)
+		چاپ_کړه("%s: ", desc);
+	چاپ_کړه("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
 	       extent->e_lblk, extent->e_lblk + extent->e_len - 1,
 	       extent->e_len, extent->e_pblk);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_LEAF)
+	إذا (extent->e_flags & EXT2_EXTENT_FLAGS_ونې_پاڼه)
 		fputs("LEAF ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	إذا (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 		fputs("UNINIT ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_SECOND_VISIT)
+	إذا (extent->e_flags & EXT2_EXTENT_FLAGS_دوهم_لیدنه)
 		fputs("2ND_VISIT ", stdout);
-	if (!extent->e_flags)
+	إذا (!extent->e_flags)
 		fputs("(none)", stdout);
 	fputc('\n', stdout);
 
 }
 
-static void dump_path(const char *tag, struct ext2_extent_handle *handle,
-		      struct extent_path *path)
+ساكن فراغ dump_لار(ثابت حرف *نښان, بنية ext2_extent_handle *handle,
+		      بنية extent_لار *لار)
 {
-	struct extent_path *ppp = path;
-	printf("%s: level=%d\n", tag, handle->level);
+	بنية extent_لار *ppp = لار;
+	چاپ_کړه("%s: level=%d\n", نښان, handle->level);
 
-	do {
-		printf("%s: path=%ld buf=%p entries=%d max_entries=%d left=%d "
+	افعل {
+		چاپ_کړه("%s: path=%ld buf=%p entries=%d max_entries=%d left=%d "
 		       "visit_num=%d flags=0x%x end_blk=%llu curr=%p(%ld)\n",
-		       tag, (ppp - handle->path), ppp->buf, ppp->entries,
-		       ppp->max_entries, ppp->left, ppp->visit_num, ppp->flags,
-		       ppp->end_blk, ppp->curr, ppp->curr - (void *)ppp->buf);
-		printf("  ");
-		dbg_show_header((struct ext3_extent_header *)ppp->buf);
-		if (ppp->curr) {
-			printf("  ");
-			dbg_show_index(ppp->curr);
-			printf("  ");
+		       نښان, (ppp - handle->لار), ppp->buf, ppp->entries,
+		       ppp->max_entries, ppp->کیڼ, ppp->لیدنه_عدد, ppp->flags,
+		       ppp->پای_ټکی_blk, ppp->curr, ppp->curr - (فراغ *)ppp->buf);
+		چاپ_کړه("  ");
+		dbg_show_سرلیک((بنية ext3_extent_سرلیک *)ppp->buf);
+		إذا (ppp->curr) {
+			چاپ_کړه("  ");
+			dbg_show_شاخص(ppp->curr);
+			چاپ_کړه("  ");
 			dbg_show_extent(ppp->curr);
 		}
 		ppp--;
-	} while (ppp >= handle->path);
+	} طالما (ppp >= handle->لار);
 	fflush(stdout);
 
-	return;
+	أرجع;
 }
 
-#else
-#define dbg_show_header(eh) do { } while (0)
-#define dbg_show_index(ix) do { } while (0)
-#define dbg_show_extent(ex) do { } while (0)
-#define dbg_print_extent(desc, ex) do { } while (0)
-#define dump_path(tag, handle, path) do { } while (0)
-#endif
+#وإلا
+#تعریف_کړه dbg_show_سرلیک(eh) افعل { } طالما (0)
+#تعریف_کړه dbg_show_شاخص(ix) افعل { } طالما (0)
+#تعریف_کړه dbg_show_extent(ex) افعل { } طالما (0)
+#تعریف_کړه dbg_print_extent(desc, ex) افعل { } طالما (0)
+#تعریف_کړه dump_لار(نښان, handle, لار) افعل { } طالما (0)
+#د_که_پای
 
 /*
  * Verify the extent header as being sane
  */
-errcode_t ext2fs_extent_header_verify(void *ptr, int size)
+errcode_t ext2fs_extent_سرلیک_verify(فراغ *ptr, صحيح اندازه)
 {
-	int eh_max, entry_size;
-	struct ext3_extent_header *eh = ptr;
+	صحيح eh_max, ثبت_اندازه;
+	بنية ext3_extent_سرلیک *eh = ptr;
 
-	dbg_show_header(eh);
-	if (ext2fs_le16_to_cpu(eh->eh_magic) != EXT3_EXT_MAGIC)
-		return EXT2_ET_EXTENT_HEADER_BAD;
-	if (ext2fs_le16_to_cpu(eh->eh_entries) > ext2fs_le16_to_cpu(eh->eh_max))
-		return EXT2_ET_EXTENT_HEADER_BAD;
-	if (eh->eh_depth == 0)
-		entry_size = sizeof(struct ext3_extent);
-	else
-		entry_size = sizeof(struct ext3_extent_idx);
+	dbg_show_سرلیک(eh);
+	إذا (ext2fs_le16_منزل_cpu(eh->eh_magic) != EXT3_EXT_MAGIC)
+		أرجع EXT2_ET_EXTENT_سرلیک_BAD;
+	إذا (ext2fs_le16_منزل_cpu(eh->eh_entries) > ext2fs_le16_منزل_cpu(eh->eh_max))
+		أرجع EXT2_ET_EXTENT_سرلیک_BAD;
+	إذا (eh->eh_ژوروالی == 0)
+		ثبت_اندازه = حجم(بنية ext3_extent);
+	وإلا
+		ثبت_اندازه = حجم(بنية ext3_extent_idx);
 
-	eh_max = (size - sizeof(*eh)) / entry_size;
+	eh_max = (اندازه - حجم(*eh)) / ثبت_اندازه;
 	/* Allow two extent-sized items at the end of the block, for
 	 * ext4_extent_tail with checksum in the future. */
-	if ((ext2fs_le16_to_cpu(eh->eh_max) > eh_max) ||
-	    (ext2fs_le16_to_cpu(eh->eh_max) < (eh_max - 2)))
-		return EXT2_ET_EXTENT_HEADER_BAD;
+	إذا ((ext2fs_le16_منزل_cpu(eh->eh_max) > eh_max) ||
+	    (ext2fs_le16_منزل_cpu(eh->eh_max) < (eh_max - 2)))
+		أرجع EXT2_ET_EXTENT_سرلیک_BAD;
 
-	return 0;
+	أرجع 0;
 }
 
 
 /*
  * Begin functions to handle an inode's extent information
  */
-void ext2fs_extent_free(ext2_extent_handle_t handle)
+فراغ ext2fs_extent_free(ext2_extent_handle_t handle)
 {
-	int			i;
+	صحيح			i;
 
-	if (!handle)
-		return;
+	إذا (!handle)
+		أرجع;
 
-	if (handle->path) {
-		for (i = 1; i < handle->max_paths; i++) {
-			if (handle->path[i].buf)
-				ext2fs_free_mem(&handle->path[i].buf);
+	إذا (handle->لار) {
+		لكل (i = 1; i < handle->max_paths; i++) {
+			إذا (handle->لار[i].buf)
+				ext2fs_free_mem(&handle->لار[i].buf);
 		}
-		ext2fs_free_mem(&handle->path);
+		ext2fs_free_mem(&handle->لار);
 	}
 	ext2fs_free_mem(&handle);
 }
@@ -212,92 +212,92 @@ void ext2fs_extent_free(ext2_extent_handle_t handle)
 errcode_t ext2fs_extent_open(ext2_filsys fs, ext2_ino_t ino,
 				    ext2_extent_handle_t *ret_handle)
 {
-	return ext2fs_extent_open2(fs, ino, NULL, ret_handle);
+	أرجع ext2fs_extent_open2(fs, ino, عدم, ret_handle);
 }
 
 errcode_t ext2fs_extent_open2(ext2_filsys fs, ext2_ino_t ino,
-				    struct ext2_inode *inode,
+				    بنية ext2_inode *inode,
 				    ext2_extent_handle_t *ret_handle)
 {
-	struct ext2_extent_handle	*handle;
+	بنية ext2_extent_handle	*handle;
 	errcode_t			retval;
-	int				i;
-	struct ext3_extent_header	*eh;
+	صحيح				i;
+	بنية ext3_extent_سرلیک	*eh;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!inode)
-		if ((ino == 0) || (ino > fs->super->s_inodes_count))
-			return EXT2_ET_BAD_INODE_NUM;
+	إذا (!inode)
+		إذا ((ino == 0) || (ino > fs->super->s_inodes_شمېر))
+			أرجع EXT2_ET_BAD_INODE_عدد;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_extent_handle), &handle);
-	if (retval)
-		return retval;
-	memset(handle, 0, sizeof(struct ext2_extent_handle));
+	retval = ext2fs_get_mem(حجم(بنية ext2_extent_handle), &handle);
+	إذا (retval)
+		أرجع retval;
+	memset(handle, 0, حجم(بنية ext2_extent_handle));
 
 	handle->ino = ino;
 	handle->fs = fs;
 
-	if (inode) {
+	إذا (inode) {
 		handle->inode = inode;
-	} else {
+	} وإلا {
 		handle->inode = &handle->inodebuf;
 		retval = ext2fs_read_inode(fs, ino, handle->inode);
-		if (retval)
-			goto errout;
+		إذا (retval)
+			اذهب errout;
 	}
 
-	eh = (struct ext3_extent_header *) &handle->inode->i_block[0];
+	eh = (بنية ext3_extent_سرلیک *) &handle->inode->i_بلاک[0];
 
-	for (i=0; i < EXT2_N_BLOCKS; i++)
-		if (handle->inode->i_block[i])
-			break;
-	if (i >= EXT2_N_BLOCKS) {
-		eh->eh_magic = ext2fs_cpu_to_le16(EXT3_EXT_MAGIC);
-		eh->eh_depth = 0;
+	لكل (i=0; i < EXT2_N_بلاکونه; i++)
+		إذا (handle->inode->i_بلاک[i])
+			اكسر;
+	إذا (i >= EXT2_N_بلاکونه) {
+		eh->eh_magic = ext2fs_cpu_منزل_le16(EXT3_EXT_MAGIC);
+		eh->eh_ژوروالی = 0;
 		eh->eh_entries = 0;
-		i = (sizeof(handle->inode->i_block) - sizeof(*eh)) /
-			sizeof(struct ext3_extent);
-		eh->eh_max = ext2fs_cpu_to_le16(i);
+		i = (حجم(handle->inode->i_بلاک) - حجم(*eh)) /
+			حجم(بنية ext3_extent);
+		eh->eh_max = ext2fs_cpu_منزل_le16(i);
 		handle->inode->i_flags |= EXT4_EXTENTS_FL;
 	}
 
-	if (!(handle->inode->i_flags & EXT4_EXTENTS_FL)) {
+	إذا (!(handle->inode->i_flags & EXT4_EXTENTS_FL)) {
 		retval = EXT2_ET_INODE_NOT_EXTENT;
-		goto errout;
+		اذهب errout;
 	}
 
-	retval = ext2fs_extent_header_verify(eh, sizeof(handle->inode->i_block));
-	if (retval)
-		goto errout;
+	retval = ext2fs_extent_سرلیک_verify(eh, حجم(handle->inode->i_بلاک));
+	إذا (retval)
+		اذهب errout;
 
-	handle->max_depth = ext2fs_le16_to_cpu(eh->eh_depth);
-	handle->type = ext2fs_le16_to_cpu(eh->eh_magic);
+	handle->max_ژوروالی = ext2fs_le16_منزل_cpu(eh->eh_ژوروالی);
+	handle->type = ext2fs_le16_منزل_cpu(eh->eh_magic);
 
-	handle->max_paths = handle->max_depth + 1;
+	handle->max_paths = handle->max_ژوروالی + 1;
 	retval = ext2fs_get_memzero(handle->max_paths *
-				    sizeof(struct extent_path),
-				    &handle->path);
-	handle->path[0].buf = (char *) handle->inode->i_block;
+				    حجم(بنية extent_لار),
+				    &handle->لار);
+	handle->لار[0].buf = (حرف *) handle->inode->i_بلاک;
 
-	handle->path[0].left = handle->path[0].entries =
-		ext2fs_le16_to_cpu(eh->eh_entries);
-	handle->path[0].max_entries = ext2fs_le16_to_cpu(eh->eh_max);
-	handle->path[0].curr = 0;
-	handle->path[0].end_blk =
-		(EXT2_I_SIZE(handle->inode) + fs->blocksize - 1) >>
-		 EXT2_BLOCK_SIZE_BITS(fs->super);
-	handle->path[0].blk = 0;
-	handle->path[0].visit_num = 1;
+	handle->لار[0].کیڼ = handle->لار[0].entries =
+		ext2fs_le16_منزل_cpu(eh->eh_entries);
+	handle->لار[0].max_entries = ext2fs_le16_منزل_cpu(eh->eh_max);
+	handle->لار[0].curr = 0;
+	handle->لار[0].پای_ټکی_blk =
+		(EXT2_I_اندازه(handle->inode) + fs->blocksize - 1) >>
+		 EXT2_بلاک_اندازه_بټونه(fs->super);
+	handle->لار[0].blk = 0;
+	handle->لار[0].لیدنه_عدد = 1;
 	handle->level = 0;
 	handle->magic = EXT2_ET_MAGIC_EXTENT_HANDLE;
 
 	*ret_handle = handle;
-	return 0;
+	أرجع 0;
 
 errout:
 	ext2fs_extent_free(handle);
-	return retval;
+	أرجع retval;
 }
 
 /*
@@ -305,354 +305,354 @@ errout:
  * extent tree and then returning the current extent
  */
 errcode_t ext2fs_extent_get(ext2_extent_handle_t handle,
-			    int flags, struct ext2fs_extent *extent)
+			    صحيح flags, بنية ext2fs_extent *extent)
 {
-	struct extent_path	*path, *newpath, *tp;
-	struct ext3_extent_header	*eh;
-	struct ext3_extent_idx		*ix = 0;
-	struct ext3_extent		*ex;
+	بنية extent_لار	*لار, *newpath, *tp;
+	بنية ext3_extent_سرلیک	*eh;
+	بنية ext3_extent_idx		*ix = 0;
+	بنية ext3_extent		*ex;
 	errcode_t			retval;
 	blk64_t				blk;
-	blk64_t				end_blk;
-	int				orig_op, op, l;
-	int				failed_csum = 0;
+	blk64_t				پای_ټکی_blk;
+	صحيح				orig_op, op, l;
+	صحيح				failed_csum = 0;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	إذا (!handle->لار)
+		أرجع EXT2_ET_NO_CURRENT_غوټه;
 
-	orig_op = op = flags & EXT2_EXTENT_MOVE_MASK;
+	orig_op = op = flags & EXT2_EXTENT_MOVE_ماسک;
 
 retry:
-	path = handle->path + handle->level;
-	if ((orig_op == EXT2_EXTENT_NEXT) ||
-	    (orig_op == EXT2_EXTENT_NEXT_LEAF)) {
-		if (handle->level < handle->max_depth) {
+	لار = handle->لار + handle->level;
+	إذا ((orig_op == EXT2_EXTENT_بل) ||
+	    (orig_op == EXT2_EXTENT_بل_ونې_پاڼه)) {
+		إذا (handle->level < handle->max_ژوروالی) {
 			/* interior node */
-			if (path->visit_num == 0) {
-				path->visit_num++;
-				op = EXT2_EXTENT_DOWN;
-			} else if (path->left > 0)
-				op = EXT2_EXTENT_NEXT_SIB;
-			else if (handle->level > 0)
-				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_NEXT;
-		} else {
+			إذا (لار->لیدنه_عدد == 0) {
+				لار->لیدنه_عدد++;
+				op = EXT2_EXTENT_ښکته;
+			} وإلا إذا (لار->کیڼ > 0)
+				op = EXT2_EXTENT_بل_SIB;
+			وإلا إذا (handle->level > 0)
+				op = EXT2_EXTENT_پورته;
+			وإلا
+				أرجع EXT2_ET_EXTENT_NO_بل;
+		} وإلا {
 			/* leaf node */
-			if (path->left > 0)
-				op = EXT2_EXTENT_NEXT_SIB;
-			else if (handle->level > 0)
-				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_NEXT;
+			إذا (لار->کیڼ > 0)
+				op = EXT2_EXTENT_بل_SIB;
+			وإلا إذا (handle->level > 0)
+				op = EXT2_EXTENT_پورته;
+			وإلا
+				أرجع EXT2_ET_EXTENT_NO_بل;
 		}
-		if (op != EXT2_EXTENT_NEXT_SIB) {
-#ifdef DEBUG_GET_EXTENT
-			printf("<<<< OP = %s\n",
-			       (op == EXT2_EXTENT_DOWN) ? "down" :
-			       ((op == EXT2_EXTENT_UP) ? "up" : "unknown"));
-#endif
+		إذا (op != EXT2_EXTENT_بل_SIB) {
+#که_تعریف_شوی DEBUG_GET_EXTENT
+			چاپ_کړه("<<<< OP = %s\n",
+			       (op == EXT2_EXTENT_ښکته) ? "down" :
+			       ((op == EXT2_EXTENT_پورته) ? "up" : "unknown"));
+#د_که_پای
 		}
 	}
 
-	if ((orig_op == EXT2_EXTENT_PREV) ||
-	    (orig_op == EXT2_EXTENT_PREV_LEAF)) {
-		if (handle->level < handle->max_depth) {
+	إذا ((orig_op == EXT2_EXTENT_PREV) ||
+	    (orig_op == EXT2_EXTENT_PREV_ونې_پاڼه)) {
+		إذا (handle->level < handle->max_ژوروالی) {
 			/* interior node */
-			if (path->visit_num > 0 ) {
+			إذا (لار->لیدنه_عدد > 0 ) {
 				/* path->visit_num = 0; */
-				op = EXT2_EXTENT_DOWN_AND_LAST;
-			} else if (path->left < path->entries-1)
+				op = EXT2_EXTENT_ښکته_AND_وروستی;
+			} وإلا إذا (لار->کیڼ < لار->entries-1)
 				op = EXT2_EXTENT_PREV_SIB;
-			else if (handle->level > 0)
-				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_PREV;
-		} else {
+			وإلا إذا (handle->level > 0)
+				op = EXT2_EXTENT_پورته;
+			وإلا
+				أرجع EXT2_ET_EXTENT_NO_PREV;
+		} وإلا {
 			/* leaf node */
-			if (path->left < path->entries-1)
+			إذا (لار->کیڼ < لار->entries-1)
 				op = EXT2_EXTENT_PREV_SIB;
-			else if (handle->level > 0)
-				op = EXT2_EXTENT_UP;
-			else
-				return EXT2_ET_EXTENT_NO_PREV;
+			وإلا إذا (handle->level > 0)
+				op = EXT2_EXTENT_پورته;
+			وإلا
+				أرجع EXT2_ET_EXTENT_NO_PREV;
 		}
-		if (op != EXT2_EXTENT_PREV_SIB) {
-#ifdef DEBUG_GET_EXTENT
-			printf("<<<< OP = %s\n",
-			       (op == EXT2_EXTENT_DOWN_AND_LAST) ? "down/last" :
-			       ((op == EXT2_EXTENT_UP) ? "up" : "unknown"));
-#endif
+		إذا (op != EXT2_EXTENT_PREV_SIB) {
+#که_تعریف_شوی DEBUG_GET_EXTENT
+			چاپ_کړه("<<<< OP = %s\n",
+			       (op == EXT2_EXTENT_ښکته_AND_وروستی) ? "down/last" :
+			       ((op == EXT2_EXTENT_پورته) ? "up" : "unknown"));
+#د_که_پای
 		}
 	}
 
-	if (orig_op == EXT2_EXTENT_LAST_LEAF) {
-		if ((handle->level < handle->max_depth) &&
-		    (path->left == 0))
-			op = EXT2_EXTENT_DOWN;
-		else
-			op = EXT2_EXTENT_LAST_SIB;
-#ifdef DEBUG_GET_EXTENT
-		printf("<<<< OP = %s\n",
-			   (op == EXT2_EXTENT_DOWN) ? "down" : "last_sib");
-#endif
+	إذا (orig_op == EXT2_EXTENT_وروستی_ونې_پاڼه) {
+		إذا ((handle->level < handle->max_ژوروالی) &&
+		    (لار->کیڼ == 0))
+			op = EXT2_EXTENT_ښکته;
+		وإلا
+			op = EXT2_EXTENT_وروستی_SIB;
+#که_تعریف_شوی DEBUG_GET_EXTENT
+		چاپ_کړه("<<<< OP = %s\n",
+			   (op == EXT2_EXTENT_ښکته) ? "down" : "last_sib");
+#د_که_پای
 	}
 
-	switch (op) {
-	case EXT2_EXTENT_CURRENT:
-		ix = path->curr;
-		break;
-	case EXT2_EXTENT_ROOT:
+	بدل (op) {
+	حالة EXT2_EXTENT_CURRENT:
+		ix = لار->curr;
+		اكسر;
+	حالة EXT2_EXTENT_ریښه:
 		handle->level = 0;
-		path = handle->path + handle->level;
+		لار = handle->لار + handle->level;
 		/* fallthrough */
-	case EXT2_EXTENT_FIRST_SIB:
-		path->left = path->entries;
-		path->curr = 0;
+	حالة EXT2_EXTENT_لومړی_SIB:
+		لار->کیڼ = لار->entries;
+		لار->curr = 0;
 		/* fallthrough */
-	case EXT2_EXTENT_NEXT_SIB:
-		if (path->left <= 0)
-			return EXT2_ET_EXTENT_NO_NEXT;
-		if (path->curr) {
-			ix = path->curr;
+	حالة EXT2_EXTENT_بل_SIB:
+		إذا (لار->کیڼ <= 0)
+			أرجع EXT2_ET_EXTENT_NO_بل;
+		إذا (لار->curr) {
+			ix = لار->curr;
 			ix++;
-		} else {
-			eh = (struct ext3_extent_header *) path->buf;
-			ix = EXT_FIRST_INDEX(eh);
+		} وإلا {
+			eh = (بنية ext3_extent_سرلیک *) لار->buf;
+			ix = EXT_لومړی_شاخص(eh);
 		}
-		path->left--;
-		path->curr = ix;
-		path->visit_num = 0;
-		break;
-	case EXT2_EXTENT_PREV_SIB:
-		if (!path->curr ||
-		    path->left+1 >= path->entries)
-			return EXT2_ET_EXTENT_NO_PREV;
-		ix = path->curr;
+		لار->کیڼ--;
+		لار->curr = ix;
+		لار->لیدنه_عدد = 0;
+		اكسر;
+	حالة EXT2_EXTENT_PREV_SIB:
+		إذا (!لار->curr ||
+		    لار->کیڼ+1 >= لار->entries)
+			أرجع EXT2_ET_EXTENT_NO_PREV;
+		ix = لار->curr;
 		ix--;
-		path->curr = ix;
-		path->left++;
-		if (handle->level < handle->max_depth)
-			path->visit_num = 1;
-		break;
-	case EXT2_EXTENT_LAST_SIB:
-		eh = (struct ext3_extent_header *) path->buf;
-		path->curr = EXT_LAST_EXTENT(eh);
-		ix = path->curr;
-		path->left = 0;
-		path->visit_num = 0;
-		break;
-	case EXT2_EXTENT_UP:
-		if (handle->level <= 0)
-			return EXT2_ET_EXTENT_NO_UP;
+		لار->curr = ix;
+		لار->کیڼ++;
+		إذا (handle->level < handle->max_ژوروالی)
+			لار->لیدنه_عدد = 1;
+		اكسر;
+	حالة EXT2_EXTENT_وروستی_SIB:
+		eh = (بنية ext3_extent_سرلیک *) لار->buf;
+		لار->curr = EXT_وروستی_EXTENT(eh);
+		ix = لار->curr;
+		لار->کیڼ = 0;
+		لار->لیدنه_عدد = 0;
+		اكسر;
+	حالة EXT2_EXTENT_پورته:
+		إذا (handle->level <= 0)
+			أرجع EXT2_ET_EXTENT_NO_پورته;
 		handle->level--;
-		path--;
-		ix = path->curr;
-		if ((orig_op == EXT2_EXTENT_PREV) ||
-		    (orig_op == EXT2_EXTENT_PREV_LEAF))
-			path->visit_num = 0;
-		break;
-	case EXT2_EXTENT_DOWN:
-	case EXT2_EXTENT_DOWN_AND_LAST:
-		if (!path->curr ||(handle->level >= handle->max_depth))
-			return EXT2_ET_EXTENT_NO_DOWN;
+		لار--;
+		ix = لار->curr;
+		إذا ((orig_op == EXT2_EXTENT_PREV) ||
+		    (orig_op == EXT2_EXTENT_PREV_ونې_پاڼه))
+			لار->لیدنه_عدد = 0;
+		اكسر;
+	حالة EXT2_EXTENT_ښکته:
+	حالة EXT2_EXTENT_ښکته_AND_وروستی:
+		إذا (!لار->curr ||(handle->level >= handle->max_ژوروالی))
+			أرجع EXT2_ET_EXTENT_NO_ښکته;
 
-		ix = path->curr;
-		newpath = path + 1;
-		if (!newpath->buf) {
+		ix = لار->curr;
+		newpath = لار + 1;
+		إذا (!newpath->buf) {
 			retval = ext2fs_get_mem(handle->fs->blocksize,
 						&newpath->buf);
-			if (retval)
-				return retval;
+			إذا (retval)
+				أرجع retval;
 		}
-		blk = ext2fs_le32_to_cpu(ix->ei_leaf) +
-			((__u64) ext2fs_le16_to_cpu(ix->ei_leaf_hi) << 32);
-		for (l = handle->level, tp = path; l > 0; l--, tp--) {
-			if (blk == tp->blk)
-				return EXT2_ET_EXTENT_CYCLE;
+		blk = ext2fs_le32_منزل_cpu(ix->ei_ونې_پاڼه) +
+			((__u64) ext2fs_le16_منزل_cpu(ix->ei_ونې_پاڼه_hi) << 32);
+		لكل (l = handle->level, tp = لار; l > 0; l--, tp--) {
+			إذا (blk == tp->blk)
+				أرجع EXT2_ET_EXTENT_دوره;
 		}
 		newpath->blk = blk;
-		if ((handle->fs->flags & EXT2_FLAG_IMAGE_FILE) &&
+		إذا ((handle->fs->flags & EXT2_FLAG_IMAGE_FILE) &&
 		    (handle->fs->io != handle->fs->image_io))
 			memset(newpath->buf, 0, handle->fs->blocksize);
-		else {
+		وإلا {
 			retval = io_channel_read_blk64(handle->fs->io,
 						     blk, 1, newpath->buf);
-			if (retval)
-				return retval;
+			إذا (retval)
+				أرجع retval;
 		}
 		handle->level++;
 
-		eh = (struct ext3_extent_header *) newpath->buf;
+		eh = (بنية ext3_extent_سرلیک *) newpath->buf;
 
-		retval = ext2fs_extent_header_verify(eh, handle->fs->blocksize);
-		if (retval) {
+		retval = ext2fs_extent_سرلیک_verify(eh, handle->fs->blocksize);
+		إذا (retval) {
 			handle->level--;
-			return retval;
+			أرجع retval;
 		}
 
-		if (!(handle->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
-		    !ext2fs_extent_block_csum_verify(handle->fs, handle->ino,
+		إذا (!(handle->fs->flags & EXT2_FLAG_IGNORE_CSUM_ERRORS) &&
+		    !ext2fs_extent_بلاک_csum_verify(handle->fs, handle->ino,
 						     eh))
 			failed_csum = 1;
 
-		newpath->left = newpath->entries =
-			ext2fs_le16_to_cpu(eh->eh_entries);
-		newpath->max_entries = ext2fs_le16_to_cpu(eh->eh_max);
+		newpath->کیڼ = newpath->entries =
+			ext2fs_le16_منزل_cpu(eh->eh_entries);
+		newpath->max_entries = ext2fs_le16_منزل_cpu(eh->eh_max);
 
 		/* Make sure there is at least one extent present */
-		if (newpath->left <= 0)
-			return EXT2_ET_EXTENT_NO_DOWN;
+		إذا (newpath->کیڼ <= 0)
+			أرجع EXT2_ET_EXTENT_NO_ښکته;
 
-		if (path->left > 0) {
+		إذا (لار->کیڼ > 0) {
 			ix++;
-			newpath->end_blk = ext2fs_le32_to_cpu(ix->ei_block);
-		} else
-			newpath->end_blk = path->end_blk;
+			newpath->پای_ټکی_blk = ext2fs_le32_منزل_cpu(ix->ei_بلاک);
+		} وإلا
+			newpath->پای_ټکی_blk = لار->پای_ټکی_blk;
 
-		path = newpath;
-		if (op == EXT2_EXTENT_DOWN) {
-			ix = EXT_FIRST_INDEX((struct ext3_extent_header *) eh);
-			path->curr = ix;
-			path->left = path->entries - 1;
-			path->visit_num = 0;
-		} else {
-			ix = EXT_LAST_INDEX((struct ext3_extent_header *) eh);
-			path->curr = ix;
-			path->left = 0;
-			if (handle->level < handle->max_depth)
-				path->visit_num = 1;
+		لار = newpath;
+		إذا (op == EXT2_EXTENT_ښکته) {
+			ix = EXT_لومړی_شاخص((بنية ext3_extent_سرلیک *) eh);
+			لار->curr = ix;
+			لار->کیڼ = لار->entries - 1;
+			لار->لیدنه_عدد = 0;
+		} وإلا {
+			ix = EXT_وروستی_شاخص((بنية ext3_extent_سرلیک *) eh);
+			لار->curr = ix;
+			لار->کیڼ = 0;
+			إذا (handle->level < handle->max_ژوروالی)
+				لار->لیدنه_عدد = 1;
 		}
-#ifdef DEBUG_GET_EXTENT
-		printf("Down to level %d/%d, end_blk=%llu\n",
-			   handle->level, handle->max_depth,
-			   path->end_blk);
-#endif
-		break;
-	default:
-		return EXT2_ET_OP_NOT_SUPPORTED;
+#که_تعریف_شوی DEBUG_GET_EXTENT
+		چاپ_کړه("Down to level %d/%d, end_blk=%llu\n",
+			   handle->level, handle->max_ژوروالی,
+			   لار->پای_ټکی_blk);
+#د_که_پای
+		اكسر;
+	افتراضي:
+		أرجع EXT2_ET_OP_NOT_SUPPORTED;
 	}
 
-	if (!ix)
-		return EXT2_ET_NO_CURRENT_NODE;
+	إذا (!ix)
+		أرجع EXT2_ET_NO_CURRENT_غوټه;
 
 	extent->e_flags = 0;
-#ifdef DEBUG_GET_EXTENT
-	printf("(Left %d)\n", path->left);
-#endif
+#که_تعریف_شوی DEBUG_GET_EXTENT
+	چاپ_کړه("(Left %d)\n", لار->کیڼ);
+#د_که_پای
 
-	if (handle->level == handle->max_depth) {
-		ex = (struct ext3_extent *) ix;
+	إذا (handle->level == handle->max_ژوروالی) {
+		ex = (بنية ext3_extent *) ix;
 
-		extent->e_pblk = ext2fs_le32_to_cpu(ex->ee_start) +
-			((__u64) ext2fs_le16_to_cpu(ex->ee_start_hi) << 32);
-		extent->e_lblk = ext2fs_le32_to_cpu(ex->ee_block);
-		extent->e_len = ext2fs_le16_to_cpu(ex->ee_len);
-		extent->e_flags |= EXT2_EXTENT_FLAGS_LEAF;
-		if (extent->e_len > EXT_INIT_MAX_LEN) {
+		extent->e_pblk = ext2fs_le32_منزل_cpu(ex->ee_پیل) +
+			((__u64) ext2fs_le16_منزل_cpu(ex->ee_پیل_hi) << 32);
+		extent->e_lblk = ext2fs_le32_منزل_cpu(ex->ee_بلاک);
+		extent->e_len = ext2fs_le16_منزل_cpu(ex->ee_len);
+		extent->e_flags |= EXT2_EXTENT_FLAGS_ونې_پاڼه;
+		إذا (extent->e_len > EXT_INIT_MAX_LEN) {
 			extent->e_len -= EXT_INIT_MAX_LEN;
 			extent->e_flags |= EXT2_EXTENT_FLAGS_UNINIT;
 		}
-	} else {
-		extent->e_pblk = ext2fs_le32_to_cpu(ix->ei_leaf) +
-			((__u64) ext2fs_le16_to_cpu(ix->ei_leaf_hi) << 32);
-		extent->e_lblk = ext2fs_le32_to_cpu(ix->ei_block);
-		if (path->left > 0) {
+	} وإلا {
+		extent->e_pblk = ext2fs_le32_منزل_cpu(ix->ei_ونې_پاڼه) +
+			((__u64) ext2fs_le16_منزل_cpu(ix->ei_ونې_پاڼه_hi) << 32);
+		extent->e_lblk = ext2fs_le32_منزل_cpu(ix->ei_بلاک);
+		إذا (لار->کیڼ > 0) {
 			ix++;
-			end_blk = ext2fs_le32_to_cpu(ix->ei_block);
-		} else
-			end_blk = path->end_blk;
+			پای_ټکی_blk = ext2fs_le32_منزل_cpu(ix->ei_بلاک);
+		} وإلا
+			پای_ټکی_blk = لار->پای_ټکی_blk;
 
-		extent->e_len = end_blk - extent->e_lblk;
+		extent->e_len = پای_ټکی_blk - extent->e_lblk;
 	}
-	if (path->visit_num)
-		extent->e_flags |= EXT2_EXTENT_FLAGS_SECOND_VISIT;
+	إذا (لار->لیدنه_عدد)
+		extent->e_flags |= EXT2_EXTENT_FLAGS_دوهم_لیدنه;
 
-	if (((orig_op == EXT2_EXTENT_NEXT_LEAF) ||
-	     (orig_op == EXT2_EXTENT_PREV_LEAF)) &&
-	    (handle->level != handle->max_depth))
-		goto retry;
+	إذا (((orig_op == EXT2_EXTENT_بل_ونې_پاڼه) ||
+	     (orig_op == EXT2_EXTENT_PREV_ونې_پاڼه)) &&
+	    (handle->level != handle->max_ژوروالی))
+		اذهب retry;
 
-	if ((orig_op == EXT2_EXTENT_LAST_LEAF) &&
-	    ((handle->level != handle->max_depth) ||
-	     (path->left != 0)))
-		goto retry;
+	إذا ((orig_op == EXT2_EXTENT_وروستی_ونې_پاڼه) &&
+	    ((handle->level != handle->max_ژوروالی) ||
+	     (لار->کیڼ != 0)))
+		اذهب retry;
 
-	if (failed_csum)
-		return EXT2_ET_EXTENT_CSUM_INVALID;
+	إذا (failed_csum)
+		أرجع EXT2_ET_EXTENT_CSUM_INVALID;
 
-	return 0;
+	أرجع 0;
 }
 
-static errcode_t update_path(ext2_extent_handle_t handle)
+ساكن errcode_t update_لار(ext2_extent_handle_t handle)
 {
 	blk64_t				blk;
 	errcode_t			retval;
-	struct ext3_extent_idx		*ix;
-	struct ext3_extent_header	*eh;
+	بنية ext3_extent_idx		*ix;
+	بنية ext3_extent_سرلیک	*eh;
 
-	if (handle->level == 0) {
+	إذا (handle->level == 0) {
 		retval = ext2fs_write_inode(handle->fs, handle->ino,
 					    handle->inode);
-	} else {
-		ix = handle->path[handle->level - 1].curr;
-		blk = ext2fs_le32_to_cpu(ix->ei_leaf) +
-			((__u64) ext2fs_le16_to_cpu(ix->ei_leaf_hi) << 32);
+	} وإلا {
+		ix = handle->لار[handle->level - 1].curr;
+		blk = ext2fs_le32_منزل_cpu(ix->ei_ونې_پاڼه) +
+			((__u64) ext2fs_le16_منزل_cpu(ix->ei_ونې_پاڼه_hi) << 32);
 
 		/* then update the checksum */
-		eh = (struct ext3_extent_header *)
-				handle->path[handle->level].buf;
-		retval = ext2fs_extent_block_csum_set(handle->fs, handle->ino,
+		eh = (بنية ext3_extent_سرلیک *)
+				handle->لار[handle->level].buf;
+		retval = ext2fs_extent_بلاک_csum_سېټ(handle->fs, handle->ino,
 						      eh);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 
 		retval = io_channel_write_blk64(handle->fs->io,
-				      blk, 1, handle->path[handle->level].buf);
+				      blk, 1, handle->لار[handle->level].buf);
 	}
-	return retval;
+	أرجع retval;
 }
 
-#if 0
-errcode_t ext2fs_extent_save_path(ext2_extent_handle_t handle,
-				  ext2_extent_path_t *ret_path)
+#إذا 0
+errcode_t ext2fs_extent_save_لار(ext2_extent_handle_t handle,
+				  ext2_extent_لار_t *ret_لار)
 {
-	ext2_extent_path_t	save_path;
-	struct ext2fs_extent	extent;
-	struct ext2_extent_info	info;
+	ext2_extent_لار_t	save_لار;
+	بنية ext2fs_extent	extent;
+	بنية ext2_extent_info	info;
 	errcode_t		retval;
 
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
 	retval = ext2fs_extent_get_info(handle, &info);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_extent_path), &save_path);
-	if (retval)
-		return retval;
-	memset(save_path, 0, sizeof(struct ext2_extent_path));
+	retval = ext2fs_get_mem(حجم(بنية ext2_extent_لار), &save_لار);
+	إذا (retval)
+		أرجع retval;
+	memset(save_لار, 0, حجم(بنية ext2_extent_لار));
 
-	save_path->magic = EXT2_ET_MAGIC_EXTENT_PATH;
-	save_path->leaf_height = info.max_depth - info.curr_level - 1;
-	save_path->lblk = extent.e_lblk;
+	save_لار->magic = EXT2_ET_MAGIC_EXTENT_لار;
+	save_لار->ونې_پاڼه_لوړوالی = info.max_ژوروالی - info.curr_level - 1;
+	save_لار->lblk = extent.e_lblk;
 
-	*ret_path = save_path;
-	return 0;
+	*ret_لار = save_لار;
+	أرجع 0;
 }
 
-errcode_t ext2fs_extent_free_path(ext2_extent_path_t path)
+errcode_t ext2fs_extent_free_لار(ext2_extent_لار_t لار)
 {
-	EXT2_CHECK_MAGIC(path, EXT2_ET_MAGIC_EXTENT_PATH);
+	EXT2_CHECK_MAGIC(لار, EXT2_ET_MAGIC_EXTENT_لار);
 
-	ext2fs_free_mem(&path);
-	return 0;
+	ext2fs_free_mem(&لار);
+	أرجع 0;
 }
-#endif
+#د_که_پای
 
 /*
  * Go to the node at leaf_level which contains logical block blk.
@@ -664,96 +664,96 @@ errcode_t ext2fs_extent_free_path(ext2_extent_path_t path)
  * extent before blk.
  */
 errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
-			      int leaf_level, blk64_t blk)
+			      صحيح ونې_پاڼه_level, blk64_t blk)
 {
-	struct ext2fs_extent	extent;
+	بنية ext2fs_extent	extent;
 	errcode_t		retval;
 
-	retval = ext2fs_extent_get(handle, EXT2_EXTENT_ROOT, &extent);
-	if (retval) {
-		if (retval == EXT2_ET_EXTENT_NO_NEXT)
-			retval = EXT2_ET_EXTENT_NOT_FOUND;
-		return retval;
+	retval = ext2fs_extent_get(handle, EXT2_EXTENT_ریښه, &extent);
+	إذا (retval) {
+		إذا (retval == EXT2_ET_EXTENT_NO_بل)
+			retval = EXT2_ET_EXTENT_NOT_وموندل;
+		أرجع retval;
 	}
 
-	if (leaf_level > handle->max_depth) {
-#ifdef DEBUG
-		printf("leaf level %d greater than tree depth %d\n",
-			leaf_level, handle->max_depth);
-#endif
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	إذا (ونې_پاڼه_level > handle->max_ژوروالی) {
+#که_تعریف_شوی DEBUG
+		چاپ_کړه("leaf level %d greater than tree depth %d\n",
+			ونې_پاڼه_level, handle->max_ژوروالی);
+#د_که_پای
+		أرجع EXT2_ET_OP_NOT_SUPPORTED;
 	}
 
-#ifdef DEBUG
-	printf("goto extent ino %u, level %d, %llu\n", handle->ino,
-	       leaf_level, blk);
-#endif
+#که_تعریف_شوی DEBUG
+	چاپ_کړه("goto extent ino %u, level %d, %llu\n", handle->ino,
+	       ونې_پاڼه_level, blk);
+#د_که_پای
 
-#ifdef DEBUG_GOTO_EXTENTS
+#که_تعریف_شوی DEBUG_GOTO_EXTENTS
 	dbg_print_extent("root", &extent);
-#endif
-	while (1) {
-		if (handle->max_depth - handle->level == leaf_level) {
+#د_که_پای
+	طالما (1) {
+		إذا (handle->max_ژوروالی - handle->level == ونې_پاڼه_level) {
 			/* block is in this &extent */
-			if ((blk >= extent.e_lblk) &&
+			إذا ((blk >= extent.e_lblk) &&
 			    (blk < extent.e_lblk + extent.e_len))
-				return 0;
-			if (blk < extent.e_lblk) {
+				أرجع 0;
+			إذا (blk < extent.e_lblk) {
 				retval = ext2fs_extent_get(handle,
 							   EXT2_EXTENT_PREV_SIB,
 							   &extent);
-				return EXT2_ET_EXTENT_NOT_FOUND;
+				أرجع EXT2_ET_EXTENT_NOT_وموندل;
 			}
 			retval = ext2fs_extent_get(handle,
-						   EXT2_EXTENT_NEXT_SIB,
+						   EXT2_EXTENT_بل_SIB,
 						   &extent);
-			if (retval == EXT2_ET_EXTENT_NO_NEXT)
-				return EXT2_ET_EXTENT_NOT_FOUND;
-			if (retval)
-				return retval;
-			continue;
+			إذا (retval == EXT2_ET_EXTENT_NO_بل)
+				أرجع EXT2_ET_EXTENT_NOT_وموندل;
+			إذا (retval)
+				أرجع retval;
+			استمر;
 		}
 
-		retval = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT_SIB,
+		retval = ext2fs_extent_get(handle, EXT2_EXTENT_بل_SIB,
 					   &extent);
-		if (retval == EXT2_ET_EXTENT_NO_NEXT)
-			goto go_down;
-		if (retval)
-			return retval;
+		إذا (retval == EXT2_ET_EXTENT_NO_بل)
+			اذهب go_ښکته;
+		إذا (retval)
+			أرجع retval;
 
-#ifdef DEBUG_GOTO_EXTENTS
+#که_تعریف_شوی DEBUG_GOTO_EXTENTS
 		dbg_print_extent("next", &extent);
-#endif
-		if (blk == extent.e_lblk)
-			goto go_down;
-		if (blk > extent.e_lblk)
-			continue;
+#د_که_پای
+		إذا (blk == extent.e_lblk)
+			اذهب go_ښکته;
+		إذا (blk > extent.e_lblk)
+			استمر;
 
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_PREV_SIB,
 					   &extent);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 
-#ifdef DEBUG_GOTO_EXTENTS
+#که_تعریف_شوی DEBUG_GOTO_EXTENTS
 		dbg_print_extent("prev", &extent);
-#endif
+#د_که_پای
 
-	go_down:
-		retval = ext2fs_extent_get(handle, EXT2_EXTENT_DOWN,
+	go_ښکته:
+		retval = ext2fs_extent_get(handle, EXT2_EXTENT_ښکته,
 					   &extent);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 
-#ifdef DEBUG_GOTO_EXTENTS
+#که_تعریف_شوی DEBUG_GOTO_EXTENTS
 		dbg_print_extent("down", &extent);
-#endif
+#د_که_پای
 	}
 }
 
 errcode_t ext2fs_extent_goto(ext2_extent_handle_t handle,
 			     blk64_t blk)
 {
-	return ext2fs_extent_goto2(handle, 0, blk);
+	أرجع ext2fs_extent_goto2(handle, 0, blk);
 }
 
 /*
@@ -774,128 +774,128 @@ errcode_t ext2fs_extent_goto(ext2_extent_handle_t handle,
  */
 errcode_t ext2fs_extent_fix_parents(ext2_extent_handle_t handle)
 {
-	int				retval = 0;
-	int				orig_height;
-	blk64_t				start;
-	struct extent_path		*path;
-	struct ext2fs_extent		extent;
-	struct ext2_extent_info		info;
+	صحيح				retval = 0;
+	صحيح				orig_لوړوالی;
+	blk64_t				پیل;
+	بنية extent_لار		*لار;
+	بنية ext2fs_extent		extent;
+	بنية ext2_extent_info		info;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	إذا (!(handle->fs->flags & EXT2_FLAG_RW))
+		أرجع EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	إذا (!handle->لار)
+		أرجع EXT2_ET_NO_CURRENT_غوټه;
 
-	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	لار = handle->لار + handle->level;
+	إذا (!لار->curr)
+		أرجع EXT2_ET_NO_CURRENT_غوټه;
 
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
-		goto done;
+	إذا (retval)
+		اذهب بشپړ;
 
 	/* modified node's start block */
-	start = extent.e_lblk;
+	پیل = extent.e_lblk;
 
-	if ((retval = ext2fs_extent_get_info(handle, &info)))
-		return retval;
-	orig_height = info.max_depth - info.curr_level;
+	إذا ((retval = ext2fs_extent_get_info(handle, &info)))
+		أرجع retval;
+	orig_لوړوالی = info.max_ژوروالی - info.curr_level;
 
 	/* traverse up until index not first, or startblk matches, or top */
-	while (handle->level > 0 &&
-	       (path->left == path->entries - 1)) {
-		retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP, &extent);
-		if (retval)
-			goto done;
-		if (extent.e_lblk == start)
-			break;
-		path = handle->path + handle->level;
-		extent.e_len += (extent.e_lblk - start);
-		extent.e_lblk = start;
+	طالما (handle->level > 0 &&
+	       (لار->کیڼ == لار->entries - 1)) {
+		retval = ext2fs_extent_get(handle, EXT2_EXTENT_پورته, &extent);
+		إذا (retval)
+			اذهب بشپړ;
+		إذا (extent.e_lblk == پیل)
+			اكسر;
+		لار = handle->لار + handle->level;
+		extent.e_len += (extent.e_lblk - پیل);
+		extent.e_lblk = پیل;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
-			goto done;
-		update_path(handle);
+		إذا (retval)
+			اذهب بشپړ;
+		update_لار(handle);
 	}
 
 	/* put handle back to where we started */
-	retval = ext2fs_extent_goto2(handle, orig_height, start);
-done:
-	return retval;
+	retval = ext2fs_extent_goto2(handle, orig_لوړوالی, پیل);
+بشپړ:
+	أرجع retval;
 }
 
 errcode_t ext2fs_extent_replace(ext2_extent_handle_t handle,
-				int flags EXT2FS_ATTR((unused)),
-				struct ext2fs_extent *extent)
+				صحيح flags EXT2FS_ATTR((ناکارول_شوی)),
+				بنية ext2fs_extent *extent)
 {
-	struct extent_path		*path;
-	struct ext3_extent_idx		*ix;
-	struct ext3_extent		*ex;
+	بنية extent_لار		*لار;
+	بنية ext3_extent_idx		*ix;
+	بنية ext3_extent		*ex;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	إذا (!(handle->fs->flags & EXT2_FLAG_RW))
+		أرجع EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	إذا (!handle->لار)
+		أرجع EXT2_ET_NO_CURRENT_غوټه;
 
-	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	لار = handle->لار + handle->level;
+	إذا (!لار->curr)
+		أرجع EXT2_ET_NO_CURRENT_غوټه;
 
-#ifdef DEBUG
-	printf("extent replace: %u ", handle->ino);
+#که_تعریف_شوی DEBUG
+	چاپ_کړه("extent replace: %u ", handle->ino);
 	dbg_print_extent(0, extent);
-#endif
+#د_که_پای
 
-	if (handle->level == handle->max_depth) {
-		ex = path->curr;
+	إذا (handle->level == handle->max_ژوروالی) {
+		ex = لار->curr;
 
-		ex->ee_block = ext2fs_cpu_to_le32(extent->e_lblk);
-		ex->ee_start = ext2fs_cpu_to_le32(extent->e_pblk & 0xFFFFFFFF);
-		ex->ee_start_hi = ext2fs_cpu_to_le16(extent->e_pblk >> 32);
-		if (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT) {
-			if (extent->e_len > EXT_UNINIT_MAX_LEN)
-				return EXT2_ET_EXTENT_INVALID_LENGTH;
-			ex->ee_len = ext2fs_cpu_to_le16(extent->e_len +
+		ex->ee_بلاک = ext2fs_cpu_منزل_le32(extent->e_lblk);
+		ex->ee_پیل = ext2fs_cpu_منزل_le32(extent->e_pblk & 0xFFFFFFFF);
+		ex->ee_پیل_hi = ext2fs_cpu_منزل_le16(extent->e_pblk >> 32);
+		إذا (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT) {
+			إذا (extent->e_len > EXT_UNINIT_MAX_LEN)
+				أرجع EXT2_ET_EXTENT_INVALID_اوږدتیا;
+			ex->ee_len = ext2fs_cpu_منزل_le16(extent->e_len +
 							EXT_INIT_MAX_LEN);
-		} else {
-			if (extent->e_len > EXT_INIT_MAX_LEN)
-				return EXT2_ET_EXTENT_INVALID_LENGTH;
-			ex->ee_len = ext2fs_cpu_to_le16(extent->e_len);
+		} وإلا {
+			إذا (extent->e_len > EXT_INIT_MAX_LEN)
+				أرجع EXT2_ET_EXTENT_INVALID_اوږدتیا;
+			ex->ee_len = ext2fs_cpu_منزل_le16(extent->e_len);
 		}
-	} else {
-		ix = path->curr;
+	} وإلا {
+		ix = لار->curr;
 
-		ix->ei_leaf = ext2fs_cpu_to_le32(extent->e_pblk & 0xFFFFFFFF);
-		ix->ei_leaf_hi = ext2fs_cpu_to_le16(extent->e_pblk >> 32);
-		ix->ei_block = ext2fs_cpu_to_le32(extent->e_lblk);
-		ix->ei_unused = 0;
+		ix->ei_ونې_پاڼه = ext2fs_cpu_منزل_le32(extent->e_pblk & 0xFFFFFFFF);
+		ix->ei_ونې_پاڼه_hi = ext2fs_cpu_منزل_le16(extent->e_pblk >> 32);
+		ix->ei_بلاک = ext2fs_cpu_منزل_le32(extent->e_lblk);
+		ix->ei_ناکارول_شوی = 0;
 	}
-	update_path(handle);
-	return 0;
+	update_لار(handle);
+	أرجع 0;
 }
 
-static int splitting_at_eof(struct ext2_extent_handle *handle,
-			    struct extent_path *path)
+ساكن صحيح splitting_at_eof(بنية ext2_extent_handle *handle,
+			    بنية extent_لار *لار)
 {
-	struct extent_path *ppp = path;
-	dump_path(__func__, handle, path);
+	بنية extent_لار *ppp = لار;
+	dump_لار(__func__, handle, لار);
 
-	if (handle->level == 0)
-		return 0;
+	إذا (handle->level == 0)
+		أرجع 0;
 
-	do {
-		if (ppp->left)
-			return 0;
+	افعل {
+		إذا (ppp->کیڼ)
+			أرجع 0;
 		ppp--;
-	} while (ppp >= handle->path);
+	} طالما (ppp >= handle->لار);
 
-	return 1;
+	أرجع 1;
 }
 
 /*
@@ -903,95 +903,95 @@ static int splitting_at_eof(struct ext2_extent_handle *handle,
  *
  * handle will be left pointing at original record.
  */
-static errcode_t extent_node_split(ext2_extent_handle_t handle,
-				   int expand_allowed)
+ساكن errcode_t extent_غوټه_وېشل(ext2_extent_handle_t handle,
+				   صحيح expand_allowed)
 {
 	errcode_t			retval = 0;
-	blk64_t				new_node_pblk;
-	blk64_t				new_node_start;
+	blk64_t				new_غوټه_pblk;
+	blk64_t				new_غوټه_پیل;
 	blk64_t				orig_lblk;
 	blk64_t				goal_blk = 0;
-	int				orig_height;
-	char				*block_buf = NULL;
-	struct ext2fs_extent		extent;
-	struct extent_path		*path, *newpath = 0;
-	struct ext3_extent_header	*eh, *neweh;
-	int				tocopy;
-	int				new_root = 0;
-	struct ext2_extent_info		info;
-	int				no_balance;
+	صحيح				orig_لوړوالی;
+	حرف				*بلاک_buf = عدم;
+	بنية ext2fs_extent		extent;
+	بنية extent_لار		*لار, *newpath = 0;
+	بنية ext3_extent_سرلیک	*eh, *neweh;
+	صحيح				tocopy;
+	صحيح				new_ریښه = 0;
+	بنية ext2_extent_info		info;
+	صحيح				no_balance;
 
 	/* basic sanity */
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	إذا (!(handle->fs->flags & EXT2_FLAG_RW))
+		أرجع EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	إذا (!handle->لار)
+		أرجع EXT2_ET_NO_CURRENT_غوټه;
 
-#ifdef DEBUG
-	printf("splitting node at level %d\n", handle->level);
-#endif
+#که_تعریف_شوی DEBUG
+	چاپ_کړه("splitting node at level %d\n", handle->level);
+#د_که_پای
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
-		goto done;
+	إذا (retval)
+		اذهب بشپړ;
 
 	retval = ext2fs_extent_get_info(handle, &info);
-	if (retval)
-		goto done;
+	إذا (retval)
+		اذهب بشپړ;
 
 	/* save the position we were originally splitting... */
-	orig_height = info.max_depth - info.curr_level;
+	orig_لوړوالی = info.max_ژوروالی - info.curr_level;
 	orig_lblk = extent.e_lblk;
 
 	/* Try to put the index block before the first extent */
-	path = handle->path + handle->level;
-	eh = (struct ext3_extent_header *) path->buf;
-	if (handle->level == handle->max_depth) {
-		struct ext3_extent	*ex;
+	لار = handle->لار + handle->level;
+	eh = (بنية ext3_extent_سرلیک *) لار->buf;
+	إذا (handle->level == handle->max_ژوروالی) {
+		بنية ext3_extent	*ex;
 
-		ex = EXT_FIRST_EXTENT(eh);
-		goal_blk = ext2fs_le32_to_cpu(ex->ee_start) +
-			((__u64) ext2fs_le16_to_cpu(ex->ee_start_hi) << 32);
-	} else {
-		struct ext3_extent_idx	*ix;
+		ex = EXT_لومړی_EXTENT(eh);
+		goal_blk = ext2fs_le32_منزل_cpu(ex->ee_پیل) +
+			((__u64) ext2fs_le16_منزل_cpu(ex->ee_پیل_hi) << 32);
+	} وإلا {
+		بنية ext3_extent_idx	*ix;
 
-		ix = EXT_FIRST_INDEX(eh);
-		goal_blk = ext2fs_le32_to_cpu(ix->ei_leaf) +
-			((__u64) ext2fs_le16_to_cpu(ix->ei_leaf_hi) << 32);
+		ix = EXT_لومړی_شاخص(eh);
+		goal_blk = ext2fs_le32_منزل_cpu(ix->ei_ونې_پاڼه) +
+			((__u64) ext2fs_le16_منزل_cpu(ix->ei_ونې_پاڼه_hi) << 32);
 	}
-	goal_blk -= EXT2FS_CLUSTER_RATIO(handle->fs);
-	goal_blk &= ~EXT2FS_CLUSTER_MASK(handle->fs);
+	goal_blk -= EXT2_FS_CLUSTER_نسبت(handle->fs);
+	goal_blk &= ~EXT2_FS_CLUSTER_ماسک(handle->fs);
 
 	/* Is there room in the parent for a new entry? */
-	if (handle->level &&
-			(handle->path[handle->level - 1].entries >=
-			 handle->path[handle->level - 1].max_entries)) {
+	إذا (handle->level &&
+			(handle->لار[handle->level - 1].entries >=
+			 handle->لار[handle->level - 1].max_entries)) {
 
-#ifdef DEBUG
-		printf("parent level %d full; splitting it too\n",
+#که_تعریف_شوی DEBUG
+		چاپ_کړه("parent level %d full; splitting it too\n",
 							handle->level - 1);
-#endif
+#د_که_پای
 		/* split the parent */
-		retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP, &extent);
-		if (retval)
-			goto done;
+		retval = ext2fs_extent_get(handle, EXT2_EXTENT_پورته, &extent);
+		إذا (retval)
+			اذهب بشپړ;
 
-		retval = extent_node_split(handle, expand_allowed);
-		if (retval)
-			goto done;
+		retval = extent_غوټه_وېشل(handle, expand_allowed);
+		إذا (retval)
+			اذهب بشپړ;
 
 		/* get handle back to our original split position */
-		retval = ext2fs_extent_goto2(handle, orig_height, orig_lblk);
-		if (retval)
-			goto done;
+		retval = ext2fs_extent_goto2(handle, orig_لوړوالی, orig_lblk);
+		إذا (retval)
+			اذهب بشپړ;
 	}
 
 	/* At this point, parent should have room for this split */
-	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	لار = handle->لار + handle->level;
+	إذا (!لار->curr)
+		أرجع EXT2_ET_NO_CURRENT_غوټه;
 
 	/*
 	 * Normally, we try to split a full node in half.  This doesn't turn
@@ -999,246 +999,246 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 	 * then we're stuck with a tree of half-full extent blocks.  This of
 	 * course doesn't apply to the root level.
 	 */
-	no_balance = expand_allowed ? splitting_at_eof(handle, path) : 0;
+	no_balance = expand_allowed ? splitting_at_eof(handle, لار) : 0;
 
 	/* extent header of the current node we'll split */
-	eh = (struct ext3_extent_header *)path->buf;
+	eh = (بنية ext3_extent_سرلیک *)لار->buf;
 
 	/* splitting root level means moving them all out */
-	if (handle->level == 0) {
-		new_root = 1;
-		tocopy = ext2fs_le16_to_cpu(eh->eh_entries);
+	إذا (handle->level == 0) {
+		new_ریښه = 1;
+		tocopy = ext2fs_le16_منزل_cpu(eh->eh_entries);
 		retval = ext2fs_get_memzero((handle->max_paths + 1) *
-					    sizeof(struct extent_path),
+					    حجم(بنية extent_لار),
 					    &newpath);
-		if (retval)
-			goto done;
-	} else {
-		if (no_balance)
+		إذا (retval)
+			اذهب بشپړ;
+	} وإلا {
+		إذا (no_balance)
 			tocopy = 1;
-		else
-			tocopy = ext2fs_le16_to_cpu(eh->eh_entries) / 2;
+		وإلا
+			tocopy = ext2fs_le16_منزل_cpu(eh->eh_entries) / 2;
 	}
 
-#ifdef DEBUG
-	printf("will copy out %d of %d entries at level %d\n",
-				tocopy, ext2fs_le16_to_cpu(eh->eh_entries),
+#که_تعریف_شوی DEBUG
+	چاپ_کړه("will copy out %d of %d entries at level %d\n",
+				tocopy, ext2fs_le16_منزل_cpu(eh->eh_entries),
 				handle->level);
-#endif
+#د_که_پای
 
-	if (!tocopy && !no_balance) {
-#ifdef DEBUG
-		printf("Nothing to copy to new block!\n");
-#endif
-		retval = EXT2_ET_CANT_SPLIT_EXTENT;
-		goto done;
+	إذا (!tocopy && !no_balance) {
+#که_تعریف_شوی DEBUG
+		چاپ_کړه("Nothing to copy to new block!\n");
+#د_که_پای
+		retval = EXT2_ET_CANT_وېشل_EXTENT;
+		اذهب بشپړ;
 	}
 
 	/* first we need a new block, or can do nothing. */
-	block_buf = malloc(handle->fs->blocksize);
-	if (!block_buf) {
+	بلاک_buf = حافظه_ورکړه(handle->fs->blocksize);
+	إذا (!بلاک_buf) {
 		retval = ENOMEM;
-		goto done;
+		اذهب بشپړ;
 	}
 
-	if (!goal_blk)
-		goal_blk = ext2fs_find_inode_goal(handle->fs, handle->ino,
+	إذا (!goal_blk)
+		goal_blk = ext2fs_پیدا_کړه_inode_goal(handle->fs, handle->ino,
 						  handle->inode, 0);
-	retval = ext2fs_alloc_block2(handle->fs, goal_blk, block_buf,
-				    &new_node_pblk);
-	if (retval)
-		goto done;
+	retval = ext2fs_alloc_block2(handle->fs, goal_blk, بلاک_buf,
+				    &new_غوټه_pblk);
+	إذا (retval)
+		اذهب بشپړ;
 
-#ifdef DEBUG
-	printf("will copy to new node at block %lu\n",
-	       (unsigned long) new_node_pblk);
-#endif
+#که_تعریف_شوی DEBUG
+	چاپ_کړه("will copy to new node at block %lu\n",
+	       (بینښه اوږد) new_غوټه_pblk);
+#د_که_پای
 
 	/* Copy data into new block buffer */
 	/* First the header for the new block... */
-	neweh = (struct ext3_extent_header *) block_buf;
-	memcpy(neweh, eh, sizeof(struct ext3_extent_header));
-	neweh->eh_entries = ext2fs_cpu_to_le16(tocopy);
-	neweh->eh_max = ext2fs_cpu_to_le16((handle->fs->blocksize -
-			 sizeof(struct ext3_extent_header)) /
-				sizeof(struct ext3_extent));
+	neweh = (بنية ext3_extent_سرلیک *) بلاک_buf;
+	حافظه_نقل(neweh, eh, حجم(بنية ext3_extent_سرلیک));
+	neweh->eh_entries = ext2fs_cpu_منزل_le16(tocopy);
+	neweh->eh_max = ext2fs_cpu_منزل_le16((handle->fs->blocksize -
+			 حجم(بنية ext3_extent_سرلیک)) /
+				حجم(بنية ext3_extent));
 
 	/* then the entries for the new block... */
-	memcpy(EXT_FIRST_INDEX(neweh),
-		EXT_FIRST_INDEX(eh) +
-			(ext2fs_le16_to_cpu(eh->eh_entries) - tocopy),
-		sizeof(struct ext3_extent_idx) * tocopy);
+	حافظه_نقل(EXT_لومړی_شاخص(neweh),
+		EXT_لومړی_شاخص(eh) +
+			(ext2fs_le16_منزل_cpu(eh->eh_entries) - tocopy),
+		حجم(بنية ext3_extent_idx) * tocopy);
 
-	new_node_start = ext2fs_le32_to_cpu(EXT_FIRST_INDEX(neweh)->ei_block);
+	new_غوټه_پیل = ext2fs_le32_منزل_cpu(EXT_لومړی_شاخص(neweh)->ei_بلاک);
 
 	/* then update the checksum */
-	retval = ext2fs_extent_block_csum_set(handle->fs, handle->ino, neweh);
-	if (retval)
-		goto done;
+	retval = ext2fs_extent_بلاک_csum_سېټ(handle->fs, handle->ino, neweh);
+	إذا (retval)
+		اذهب بشپړ;
 
 	/* ...and write the new node block out to disk. */
-	retval = io_channel_write_blk64(handle->fs->io, new_node_pblk, 1,
-					block_buf);
+	retval = io_channel_write_blk64(handle->fs->io, new_غوټه_pblk, 1,
+					بلاک_buf);
 
-	if (retval)
-		goto done;
+	إذا (retval)
+		اذهب بشپړ;
 
 	/* OK! we've created the new node; now adjust the tree */
 
 	/* current path now has fewer active entries, we copied some out */
-	if (handle->level == 0) {
-		memcpy(newpath, path,
-		       sizeof(struct extent_path) * handle->max_paths);
-		handle->path = newpath;
-		newpath = path;
-		path = handle->path;
-		path->entries = 1;
-		path->left = path->max_entries - 1;
-		handle->max_depth++;
+	إذا (handle->level == 0) {
+		حافظه_نقل(newpath, لار,
+		       حجم(بنية extent_لار) * handle->max_paths);
+		handle->لار = newpath;
+		newpath = لار;
+		لار = handle->لار;
+		لار->entries = 1;
+		لار->کیڼ = لار->max_entries - 1;
+		handle->max_ژوروالی++;
 		handle->max_paths++;
-		eh->eh_depth = ext2fs_cpu_to_le16(handle->max_depth);
-	} else {
-		path->entries -= tocopy;
-		path->left -= tocopy;
+		eh->eh_ژوروالی = ext2fs_cpu_منزل_le16(handle->max_ژوروالی);
+	} وإلا {
+		لار->entries -= tocopy;
+		لار->کیڼ -= tocopy;
 	}
 
-	eh->eh_entries = ext2fs_cpu_to_le16(path->entries);
+	eh->eh_entries = ext2fs_cpu_منزل_le16(لار->entries);
 	/* this writes out the node, incl. the modified header */
-	retval = update_path(handle);
-	if (retval)
-		goto done;
+	retval = update_لار(handle);
+	إذا (retval)
+		اذهب بشپړ;
 
 	/* now go up and insert/replace index for new node we created */
-	if (new_root) {
-		retval = ext2fs_extent_get(handle, EXT2_EXTENT_FIRST_SIB, &extent);
-		if (retval)
-			goto done;
+	إذا (new_ریښه) {
+		retval = ext2fs_extent_get(handle, EXT2_EXTENT_لومړی_SIB, &extent);
+		إذا (retval)
+			اذهب بشپړ;
 
-		extent.e_lblk = new_node_start;
-		extent.e_pblk = new_node_pblk;
-		extent.e_len = handle->path[0].end_blk - extent.e_lblk;
+		extent.e_lblk = new_غوټه_پیل;
+		extent.e_pblk = new_غوټه_pblk;
+		extent.e_len = handle->لار[0].پای_ټکی_blk - extent.e_lblk;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
-			goto done;
-	} else {
-		__u32 new_node_length;
+		إذا (retval)
+			اذهب بشپړ;
+	} وإلا {
+		__u32 new_غوټه_اوږدتیا;
 
-		retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP, &extent);
+		retval = ext2fs_extent_get(handle, EXT2_EXTENT_پورته, &extent);
 		/* will insert after this one; it's length is shorter now */
-		new_node_length = new_node_start - extent.e_lblk;
-		extent.e_len -= new_node_length;
+		new_غوټه_اوږدتیا = new_غوټه_پیل - extent.e_lblk;
+		extent.e_len -= new_غوټه_اوږدتیا;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
-			goto done;
+		إذا (retval)
+			اذهب بشپړ;
 
 		/* now set up the new extent and insert it */
-		extent.e_lblk = new_node_start;
-		extent.e_pblk = new_node_pblk;
-		extent.e_len = new_node_length;
-		retval = ext2fs_extent_insert(handle, EXT2_EXTENT_INSERT_AFTER, &extent);
-		if (retval)
-			goto done;
+		extent.e_lblk = new_غوټه_پیل;
+		extent.e_pblk = new_غوټه_pblk;
+		extent.e_len = new_غوټه_اوږدتیا;
+		retval = ext2fs_extent_ورننباسه(handle, EXT2_EXTENT_ورننباسه_AFTER, &extent);
+		إذا (retval)
+			اذهب بشپړ;
 	}
 
 	/* get handle back to our original position */
-	retval = ext2fs_extent_goto2(handle, orig_height, orig_lblk);
-	if (retval)
-		goto done;
+	retval = ext2fs_extent_goto2(handle, orig_لوړوالی, orig_lblk);
+	إذا (retval)
+		اذهب بشپړ;
 
 	/* new node hooked in, so update inode block count (do this here?) */
-	ext2fs_iblk_add_blocks(handle->fs, handle->inode, 1);
+	ext2fs_iblk_جمع_کړه_بلاکونه(handle->fs, handle->inode, 1);
 	retval = ext2fs_write_inode(handle->fs, handle->ino,
 				    handle->inode);
-	if (retval)
-		goto done;
+	إذا (retval)
+		اذهب بشپړ;
 
-done:
-	if (newpath)
+بشپړ:
+	إذا (newpath)
 		ext2fs_free_mem(&newpath);
-	free(block_buf);
+	حرر(بلاک_buf);
 
-	return retval;
+	أرجع retval;
 }
 
-errcode_t ext2fs_extent_node_split(ext2_extent_handle_t handle)
+errcode_t ext2fs_extent_غوټه_وېشل(ext2_extent_handle_t handle)
 {
-	return extent_node_split(handle, 0);
+	أرجع extent_غوټه_وېشل(handle, 0);
 }
 
-errcode_t ext2fs_extent_insert(ext2_extent_handle_t handle, int flags,
-				      struct ext2fs_extent *extent)
+errcode_t ext2fs_extent_ورننباسه(ext2_extent_handle_t handle, صحيح flags,
+				      بنية ext2fs_extent *extent)
 {
-	struct extent_path		*path;
-	struct ext3_extent_idx		*ix;
-	struct ext3_extent_header	*eh;
+	بنية extent_لار		*لار;
+	بنية ext3_extent_idx		*ix;
+	بنية ext3_extent_سرلیک	*eh;
 	errcode_t			retval;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	إذا (!(handle->fs->flags & EXT2_FLAG_RW))
+		أرجع EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	إذا (!handle->لار)
+		أرجع EXT2_ET_NO_CURRENT_غوټه;
 
-#ifdef DEBUG
-	printf("extent insert: %u ", handle->ino);
+#که_تعریف_شوی DEBUG
+	چاپ_کړه("extent insert: %u ", handle->ino);
 	dbg_print_extent(0, extent);
-#endif
+#د_که_پای
 
-	path = handle->path + handle->level;
+	لار = handle->لار + handle->level;
 
-	if (path->entries >= path->max_entries) {
-		if (flags & EXT2_EXTENT_INSERT_NOSPLIT) {
-			return EXT2_ET_CANT_INSERT_EXTENT;
-		} else {
-#ifdef DEBUG
-			printf("node full (level %d) - splitting\n",
+	إذا (لار->entries >= لار->max_entries) {
+		إذا (flags & EXT2_EXTENT_ورننباسه_NOSPLIT) {
+			أرجع EXT2_ET_CANT_ورننباسه_EXTENT;
+		} وإلا {
+#که_تعریف_شوی DEBUG
+			چاپ_کړه("node full (level %d) - splitting\n",
 				   handle->level);
-#endif
-			retval = extent_node_split(handle, 1);
-			if (retval)
-				return retval;
-			path = handle->path + handle->level;
+#د_که_پای
+			retval = extent_غوټه_وېشل(handle, 1);
+			إذا (retval)
+				أرجع retval;
+			لار = handle->لار + handle->level;
 		}
 	}
 
-	eh = (struct ext3_extent_header *) path->buf;
-	if (path->curr) {
-		ix = path->curr;
-		if (flags & EXT2_EXTENT_INSERT_AFTER) {
+	eh = (بنية ext3_extent_سرلیک *) لار->buf;
+	إذا (لار->curr) {
+		ix = لار->curr;
+		إذا (flags & EXT2_EXTENT_ورننباسه_AFTER) {
 			ix++;
-			path->left--;
+			لار->کیڼ--;
 		}
-	} else {
-		ix = EXT_FIRST_INDEX(eh);
-		path->left = -1;
+	} وإلا {
+		ix = EXT_لومړی_شاخص(eh);
+		لار->کیڼ = -1;
 	}
 
-	path->curr = ix;
+	لار->curr = ix;
 
-	if (path->left >= 0)
+	إذا (لار->کیڼ >= 0)
 		memmove(ix + 1, ix,
-			(path->left+1) * sizeof(struct ext3_extent_idx));
-	path->left++;
-	path->entries++;
+			(لار->کیڼ+1) * حجم(بنية ext3_extent_idx));
+	لار->کیڼ++;
+	لار->entries++;
 
-	eh = (struct ext3_extent_header *) path->buf;
-	eh->eh_entries = ext2fs_cpu_to_le16(path->entries);
+	eh = (بنية ext3_extent_سرلیک *) لار->buf;
+	eh->eh_entries = ext2fs_cpu_منزل_le16(لار->entries);
 
 	retval = ext2fs_extent_replace(handle, 0, extent);
-	if (retval)
-		goto errout;
+	إذا (retval)
+		اذهب errout;
 
-	retval = update_path(handle);
-	if (retval)
-		goto errout;
+	retval = update_لار(handle);
+	إذا (retval)
+		اذهب errout;
 
-	return 0;
+	أرجع 0;
 
 errout:
 	ext2fs_extent_delete(handle, 0);
-	return retval;
+	أرجع retval;
 }
 
 /*
@@ -1263,87 +1263,87 @@ errout:
  * We really need extent adding to be smart about merging.
  */
 
-errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
-				 blk64_t logical, blk64_t physical, int flags)
+errcode_t ext2fs_extent_سېټ_bmap(ext2_extent_handle_t handle,
+				 blk64_t logical, blk64_t physical, صحيح flags)
 {
 	errcode_t		ec, retval = 0;
-	int			mapped = 1; /* logical is mapped? */
-	int			orig_height;
-	int			extent_uninit = 0;
-	int			prev_uninit = 0;
-	int			next_uninit = 0;
-	int			new_uninit = 0;
-	int			max_len = EXT_INIT_MAX_LEN;
-	int			has_prev, has_next;
+	صحيح			mapped = 1; /* logical is mapped? */
+	صحيح			orig_لوړوالی;
+	صحيح			extent_uninit = 0;
+	صحيح			prev_uninit = 0;
+	صحيح			بل_uninit = 0;
+	صحيح			new_uninit = 0;
+	صحيح			max_len = EXT_INIT_MAX_LEN;
+	صحيح			has_prev, has_بل;
 	blk64_t			orig_lblk;
-	struct extent_path	*path;
-	struct ext2fs_extent	extent, next_extent, prev_extent;
-	struct ext2fs_extent	newextent;
-	struct ext2_extent_info	info;
+	بنية extent_لار	*لار;
+	بنية ext2fs_extent	extent, بل_extent, prev_extent;
+	بنية ext2fs_extent	newextent;
+	بنية ext2_extent_info	info;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-#ifdef DEBUG
-	printf("set_bmap ino %u log %lld phys %lld flags %d\n",
+#که_تعریف_شوی DEBUG
+	چاپ_کړه("set_bmap ino %u log %lld phys %lld flags %d\n",
 	       handle->ino, logical, physical, flags);
-#endif
+#د_که_پای
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	إذا (!(handle->fs->flags & EXT2_FLAG_RW))
+		أرجع EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	إذا (!handle->لار)
+		أرجع EXT2_ET_NO_CURRENT_غوټه;
 
-	path = handle->path + handle->level;
+	لار = handle->لار + handle->level;
 
-	if (flags & EXT2_EXTENT_SET_BMAP_UNINIT) {
+	إذا (flags & EXT2_EXTENT_سېټ_BMAP_UNINIT) {
 		new_uninit = 1;
 		max_len = EXT_UNINIT_MAX_LEN;
 	}
 
 	/* if (re)mapping, set up new extent to insert */
-	if (physical) {
+	إذا (physical) {
 		newextent.e_len = 1;
 		newextent.e_pblk = physical;
 		newextent.e_lblk = logical;
-		newextent.e_flags = EXT2_EXTENT_FLAGS_LEAF;
-		if (new_uninit)
+		newextent.e_flags = EXT2_EXTENT_FLAGS_ونې_پاڼه;
+		إذا (new_uninit)
 			newextent.e_flags |= EXT2_EXTENT_FLAGS_UNINIT;
 	}
 
 	/* special case if the extent tree is completely empty */
-	if ((handle->max_depth == 0) && (path->entries == 0)) {
-		retval = ext2fs_extent_insert(handle, 0, &newextent);
-		return retval;
+	إذا ((handle->max_ژوروالی == 0) && (لار->entries == 0)) {
+		retval = ext2fs_extent_ورننباسه(handle, 0, &newextent);
+		أرجع retval;
 	}
 
 	/* save our original location in the extent tree */
-	if ((retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
+	إذا ((retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					&extent))) {
-		if (retval != EXT2_ET_NO_CURRENT_NODE)
-			return retval;
-		memset(&extent, 0, sizeof(extent));
+		إذا (retval != EXT2_ET_NO_CURRENT_غوټه)
+			أرجع retval;
+		memset(&extent, 0, حجم(extent));
 	}
-	if ((retval = ext2fs_extent_get_info(handle, &info)))
-		return retval;
-	orig_height = info.max_depth - info.curr_level;
+	إذا ((retval = ext2fs_extent_get_info(handle, &info)))
+		أرجع retval;
+	orig_لوړوالی = info.max_ژوروالی - info.curr_level;
 	orig_lblk = extent.e_lblk;
 
 	/* go to the logical spot we want to (re/un)map */
 	retval = ext2fs_extent_goto(handle, logical);
-	if (retval) {
-		if (retval == EXT2_ET_EXTENT_NOT_FOUND) {
+	إذا (retval) {
+		إذا (retval == EXT2_ET_EXTENT_NOT_وموندل) {
 			retval = 0;
 			mapped = 0;
-			if (!physical) {
-#ifdef DEBUG
-				printf("block %llu already unmapped\n",
+			إذا (!physical) {
+#که_تعریف_شوی DEBUG
+				چاپ_کړه("block %llu already unmapped\n",
 					logical);
-#endif
-				goto done;
+#د_که_پای
+				اذهب بشپړ;
 			}
-		} else
-			goto done;
+		} وإلا
+			اذهب بشپړ;
 	}
 
 	/*
@@ -1353,161 +1353,161 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 	 * Get the previous and next leaf extents, if they are present.
 	 */
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
-	if (retval)
-		goto done;
-	if (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	إذا (retval)
+		اذهب بشپړ;
+	إذا (extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 		extent_uninit = 1;
-	retval = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT_LEAF, &next_extent);
-	if (retval) {
-		has_next = 0;
-		if (retval != EXT2_ET_EXTENT_NO_NEXT)
-			goto done;
-	} else {
+	retval = ext2fs_extent_get(handle, EXT2_EXTENT_بل_ونې_پاڼه, &بل_extent);
+	إذا (retval) {
+		has_بل = 0;
+		إذا (retval != EXT2_ET_EXTENT_NO_بل)
+			اذهب بشپړ;
+	} وإلا {
 		dbg_print_extent("set_bmap: next_extent",
-				 &next_extent);
-		has_next = 1;
-		if (next_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-			next_uninit = 1;
+				 &بل_extent);
+		has_بل = 1;
+		إذا (بل_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+			بل_uninit = 1;
 	}
 	retval = ext2fs_extent_goto(handle, logical);
-	if (retval && retval != EXT2_ET_EXTENT_NOT_FOUND)
-		goto done;
-	retval = ext2fs_extent_get(handle, EXT2_EXTENT_PREV_LEAF, &prev_extent);
-	if (retval) {
+	إذا (retval && retval != EXT2_ET_EXTENT_NOT_وموندل)
+		اذهب بشپړ;
+	retval = ext2fs_extent_get(handle, EXT2_EXTENT_PREV_ونې_پاڼه, &prev_extent);
+	إذا (retval) {
 		has_prev = 0;
-		if (retval != EXT2_ET_EXTENT_NO_PREV)
-			goto done;
-	} else {
+		إذا (retval != EXT2_ET_EXTENT_NO_PREV)
+			اذهب بشپړ;
+	} وإلا {
 		has_prev = 1;
 		dbg_print_extent("set_bmap: prev_extent",
 				 &prev_extent);
-		if (prev_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+		إذا (prev_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 			prev_uninit = 1;
 	}
 	retval = ext2fs_extent_goto(handle, logical);
-	if (retval && retval != EXT2_ET_EXTENT_NOT_FOUND)
-		goto done;
+	إذا (retval && retval != EXT2_ET_EXTENT_NOT_وموندل)
+		اذهب بشپړ;
 
 	/* check if already pointing to the requested physical */
-	if (mapped && (new_uninit == extent_uninit) &&
+	إذا (mapped && (new_uninit == extent_uninit) &&
 	    (extent.e_pblk + (logical - extent.e_lblk) == physical)) {
-#ifdef DEBUG
-		printf("physical block (at %llu) unchanged\n", logical);
-#endif
-		goto done;
+#که_تعریف_شوی DEBUG
+		چاپ_کړه("physical block (at %llu) unchanged\n", logical);
+#د_که_پای
+		اذهب بشپړ;
 	}
 
-	if (!mapped) {
-#ifdef DEBUG
-		printf("mapping unmapped logical block %llu\n", logical);
-#endif
-		if ((logical == extent.e_lblk + extent.e_len) &&
+	إذا (!mapped) {
+#که_تعریف_شوی DEBUG
+		چاپ_کړه("mapping unmapped logical block %llu\n", logical);
+#د_که_پای
+		إذا ((logical == extent.e_lblk + extent.e_len) &&
 		    (physical == extent.e_pblk + extent.e_len) &&
 		    (new_uninit == extent_uninit) &&
-		    ((int) extent.e_len < max_len-1)) {
+		    ((صحيح) extent.e_len < max_len-1)) {
 			extent.e_len++;
 			retval = ext2fs_extent_replace(handle, 0, &extent);
-		} else if ((logical == extent.e_lblk - 1) &&
+		} وإلا إذا ((logical == extent.e_lblk - 1) &&
 			   (physical == extent.e_pblk - 1) &&
 			   (new_uninit == extent_uninit) &&
-			   ((int) extent.e_len < max_len - 1)) {
+			   ((صحيح) extent.e_len < max_len - 1)) {
 			extent.e_len++;
 			extent.e_lblk--;
 			extent.e_pblk--;
 			retval = ext2fs_extent_replace(handle, 0, &extent);
-		} else if (has_next &&
-			   (logical == next_extent.e_lblk - 1) &&
-			   (physical == next_extent.e_pblk - 1) &&
-			   (new_uninit == next_uninit) &&
-			   ((int) next_extent.e_len < max_len - 1)) {
+		} وإلا إذا (has_بل &&
+			   (logical == بل_extent.e_lblk - 1) &&
+			   (physical == بل_extent.e_pblk - 1) &&
+			   (new_uninit == بل_uninit) &&
+			   ((صحيح) بل_extent.e_len < max_len - 1)) {
 			retval = ext2fs_extent_get(handle,
-						   EXT2_EXTENT_NEXT_LEAF,
-						   &next_extent);
-			if (retval)
-				goto done;
-			next_extent.e_len++;
-			next_extent.e_lblk--;
-			next_extent.e_pblk--;
-			retval = ext2fs_extent_replace(handle, 0, &next_extent);
-		} else if (logical < extent.e_lblk)
-			retval = ext2fs_extent_insert(handle, 0, &newextent);
-		else
-			retval = ext2fs_extent_insert(handle,
-				      EXT2_EXTENT_INSERT_AFTER, &newextent);
-		if (retval)
-			goto done;
+						   EXT2_EXTENT_بل_ونې_پاڼه,
+						   &بل_extent);
+			إذا (retval)
+				اذهب بشپړ;
+			بل_extent.e_len++;
+			بل_extent.e_lblk--;
+			بل_extent.e_pblk--;
+			retval = ext2fs_extent_replace(handle, 0, &بل_extent);
+		} وإلا إذا (logical < extent.e_lblk)
+			retval = ext2fs_extent_ورننباسه(handle, 0, &newextent);
+		وإلا
+			retval = ext2fs_extent_ورننباسه(handle,
+				      EXT2_EXTENT_ورننباسه_AFTER, &newextent);
+		إذا (retval)
+			اذهب بشپړ;
 		retval = ext2fs_extent_fix_parents(handle);
-		if (retval)
-			goto done;
-	} else if ((logical == extent.e_lblk) && (extent.e_len == 1))  {
-#ifdef DEBUG
-		printf("(re/un)mapping only block in extent\n");
-#endif
-		if (physical) {
-			if (has_prev &&
+		إذا (retval)
+			اذهب بشپړ;
+	} وإلا إذا ((logical == extent.e_lblk) && (extent.e_len == 1))  {
+#که_تعریف_شوی DEBUG
+		چاپ_کړه("(re/un)mapping only block in extent\n");
+#د_که_پای
+		إذا (physical) {
+			إذا (has_prev &&
 			    (logical == (prev_extent.e_lblk +
 					 prev_extent.e_len)) &&
 			    (physical == (prev_extent.e_pblk +
 					  prev_extent.e_len)) &&
 			    (new_uninit == prev_uninit) &&
-			    ((int) prev_extent.e_len < max_len-1)) {
+			    ((صحيح) prev_extent.e_len < max_len-1)) {
 				retval = ext2fs_extent_get(handle,
-					EXT2_EXTENT_PREV_LEAF, &prev_extent);
-				if (retval)
-					goto done;
+					EXT2_EXTENT_PREV_ونې_پاڼه, &prev_extent);
+				إذا (retval)
+					اذهب بشپړ;
 				prev_extent.e_len++;
 				retval = ext2fs_extent_replace(handle, 0,
 							       &prev_extent);
 				retval = ext2fs_extent_get(handle,
-							   EXT2_EXTENT_NEXT_LEAF,
+							   EXT2_EXTENT_بل_ونې_پاڼه,
 							   &extent);
-				if (retval)
-					goto done;
-				goto delete_node;
+				إذا (retval)
+					اذهب بشپړ;
+				اذهب delete_غوټه;
 
-			} else
+			} وإلا
 				retval = ext2fs_extent_replace(handle, 0, &newextent);
-		} else {
-		delete_node:
+		} وإلا {
+		delete_غوټه:
 			retval = ext2fs_extent_delete(handle, 0);
-			if (retval)
-				goto done;
+			إذا (retval)
+				اذهب بشپړ;
 			ec = ext2fs_extent_fix_parents(handle);
-			if (ec != EXT2_ET_NO_CURRENT_NODE)
+			إذا (ec != EXT2_ET_NO_CURRENT_غوټه)
 				retval = ec;
 		}
 
-		if (retval)
-			goto done;
-	} else if (logical == extent.e_lblk + extent.e_len - 1)  {
-#ifdef DEBUG
-		printf("(re/un)mapping last block in extent\n");
-#endif
-		if (physical) {
-			if (has_next &&
-			    (logical == (next_extent.e_lblk - 1)) &&
-			    (physical == (next_extent.e_pblk - 1)) &&
-			    (new_uninit == next_uninit) &&
-			    ((int) next_extent.e_len < max_len - 1)) {
+		إذا (retval)
+			اذهب بشپړ;
+	} وإلا إذا (logical == extent.e_lblk + extent.e_len - 1)  {
+#که_تعریف_شوی DEBUG
+		چاپ_کړه("(re/un)mapping last block in extent\n");
+#د_که_پای
+		إذا (physical) {
+			إذا (has_بل &&
+			    (logical == (بل_extent.e_lblk - 1)) &&
+			    (physical == (بل_extent.e_pblk - 1)) &&
+			    (new_uninit == بل_uninit) &&
+			    ((صحيح) بل_extent.e_len < max_len - 1)) {
 				retval = ext2fs_extent_get(handle,
-					EXT2_EXTENT_NEXT_LEAF, &next_extent);
-				if (retval)
-					goto done;
-				next_extent.e_len++;
-				next_extent.e_lblk--;
-				next_extent.e_pblk--;
+					EXT2_EXTENT_بل_ونې_پاڼه, &بل_extent);
+				إذا (retval)
+					اذهب بشپړ;
+				بل_extent.e_len++;
+				بل_extent.e_lblk--;
+				بل_extent.e_pblk--;
 				retval = ext2fs_extent_replace(handle, 0,
-							       &next_extent);
-				if (retval)
-					goto done;
-			} else
-				retval = ext2fs_extent_insert(handle,
-				      EXT2_EXTENT_INSERT_AFTER, &newextent);
-			if (retval)
-				goto done;
+							       &بل_extent);
+				إذا (retval)
+					اذهب بشپړ;
+			} وإلا
+				retval = ext2fs_extent_ورننباسه(handle,
+				      EXT2_EXTENT_ورننباسه_AFTER, &newextent);
+			إذا (retval)
+				اذهب بشپړ;
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval)
-				goto done;
+			إذا (retval)
+				اذهب بشپړ;
 			/*
 			 * Now pointing at inserted extent; move back to prev.
 			 *
@@ -1515,375 +1515,375 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 			 * subtlety in the comment for fix_parents().
 			 */
 			retval = ext2fs_extent_goto(handle, logical);
-			if (retval)
-				goto done;
+			إذا (retval)
+				اذهب بشپړ;
 			retval = ext2fs_extent_get(handle,
 						   EXT2_EXTENT_CURRENT,
 						   &extent);
-			if (retval)
-				goto done;
+			إذا (retval)
+				اذهب بشپړ;
 		}
 		extent.e_len--;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
-			goto done;
-	} else if (logical == extent.e_lblk) {
-#ifdef DEBUG
-		printf("(re/un)mapping first block in extent\n");
-#endif
+		إذا (retval)
+			اذهب بشپړ;
+	} وإلا إذا (logical == extent.e_lblk) {
+#که_تعریف_شوی DEBUG
+		چاپ_کړه("(re/un)mapping first block in extent\n");
+#د_که_پای
 		extent.e_pblk++;
 		extent.e_lblk++;
 		extent.e_len--;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
-			goto done;
+		إذا (retval)
+			اذهب بشپړ;
 		retval = ext2fs_extent_fix_parents(handle);
-		if (retval)
-			goto done;
-		if (physical) {
-			if (has_prev &&
+		إذا (retval)
+			اذهب بشپړ;
+		إذا (physical) {
+			إذا (has_prev &&
 			    (logical == (prev_extent.e_lblk +
 					 prev_extent.e_len)) &&
 			    (physical == (prev_extent.e_pblk +
 					  prev_extent.e_len)) &&
 			    (new_uninit == prev_uninit) &&
-			    ((int) prev_extent.e_len < max_len-1)) {
+			    ((صحيح) prev_extent.e_len < max_len-1)) {
 				retval = ext2fs_extent_get(handle, 
-					EXT2_EXTENT_PREV_LEAF, &prev_extent);
-				if (retval)
-					goto done;
+					EXT2_EXTENT_PREV_ونې_پاڼه, &prev_extent);
+				إذا (retval)
+					اذهب بشپړ;
 				prev_extent.e_len++;
 				retval = ext2fs_extent_replace(handle, 0,
 							       &prev_extent);
-			} else
-				retval = ext2fs_extent_insert(handle,
+			} وإلا
+				retval = ext2fs_extent_ورننباسه(handle,
 							      0, &newextent);
-			if (retval)
-				goto done;
+			إذا (retval)
+				اذهب بشپړ;
 			retval = ext2fs_extent_fix_parents(handle);
-			if (retval)
-				goto done;
+			إذا (retval)
+				اذهب بشپړ;
 			retval = ext2fs_extent_get(handle,
-						   EXT2_EXTENT_NEXT_LEAF,
+						   EXT2_EXTENT_بل_ونې_پاڼه,
 						   &extent);
-			if (retval)
-				goto done;
+			إذا (retval)
+				اذهب بشپړ;
 		}
-	} else {
-		__u32	save_length;
+	} وإلا {
+		__u32	save_اوږدتیا;
 		blk64_t	save_lblk;
-		struct ext2fs_extent save_extent;
+		بنية ext2fs_extent save_extent;
 		errcode_t r2;
 
-#ifdef DEBUG
-		printf("(re/un)mapping in middle of extent\n");
-#endif
+#که_تعریف_شوی DEBUG
+		چاپ_کړه("(re/un)mapping in middle of extent\n");
+#د_که_پای
 		/* need to split this extent; later */
 		save_lblk = extent.e_lblk;
-		save_length = extent.e_len;
+		save_اوږدتیا = extent.e_len;
 		save_extent = extent;
 
 		/* shorten pre-split extent */
 		extent.e_len = (logical - extent.e_lblk);
 		retval = ext2fs_extent_replace(handle, 0, &extent);
-		if (retval)
-			goto done;
+		إذا (retval)
+			اذهب بشپړ;
 		/* insert our new extent, if any */
-		if (physical) {
+		إذا (physical) {
 			/* insert new extent after current */
-			retval = ext2fs_extent_insert(handle,
-					EXT2_EXTENT_INSERT_AFTER, &newextent);
-			if (retval) {
+			retval = ext2fs_extent_ورننباسه(handle,
+					EXT2_EXTENT_ورننباسه_AFTER, &newextent);
+			إذا (retval) {
 				r2 = ext2fs_extent_goto(handle, save_lblk);
-				if (r2 == 0)
-					(void)ext2fs_extent_replace(handle, 0,
+				إذا (r2 == 0)
+					(فراغ)ext2fs_extent_replace(handle, 0,
 							      &save_extent);
-				goto done;
+				اذهب بشپړ;
 			}
 		}
 		/* add post-split extent */
 		extent.e_pblk += extent.e_len + 1;
 		extent.e_lblk += extent.e_len + 1;
-		extent.e_len = save_length - extent.e_len - 1;
-		retval = ext2fs_extent_insert(handle,
-				EXT2_EXTENT_INSERT_AFTER, &extent);
-		if (retval) {
-			if (physical) {
+		extent.e_len = save_اوږدتیا - extent.e_len - 1;
+		retval = ext2fs_extent_ورننباسه(handle,
+				EXT2_EXTENT_ورننباسه_AFTER, &extent);
+		إذا (retval) {
+			إذا (physical) {
 				r2 = ext2fs_extent_goto(handle,
 							newextent.e_lblk);
-				if (r2 == 0)
-					(void)ext2fs_extent_delete(handle, 0);
+				إذا (r2 == 0)
+					(فراغ)ext2fs_extent_delete(handle, 0);
 			}
 			r2 = ext2fs_extent_goto(handle, save_lblk);
-			if (r2 == 0)
-				(void)ext2fs_extent_replace(handle, 0,
+			إذا (r2 == 0)
+				(فراغ)ext2fs_extent_replace(handle, 0,
 							    &save_extent);
-			goto done;
+			اذهب بشپړ;
 		}
 	}
 
-done:
+بشپړ:
 	/* get handle back to its position */
-	if (orig_height > handle->max_depth)
-		orig_height = handle->max_depth; /* In case we shortened the tree */
-	ext2fs_extent_goto2(handle, orig_height, orig_lblk);
-	return retval;
+	إذا (orig_لوړوالی > handle->max_ژوروالی)
+		orig_لوړوالی = handle->max_ژوروالی; /* In case we shortened the tree */
+	ext2fs_extent_goto2(handle, orig_لوړوالی, orig_lblk);
+	أرجع retval;
 }
 
-errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, int flags)
+errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, صحيح flags)
 {
-	struct extent_path		*path;
-	char 				*cp;
-	struct ext3_extent_header	*eh;
+	بنية extent_لار		*لار;
+	حرف 				*cp;
+	بنية ext3_extent_سرلیک	*eh;
 	errcode_t			retval = 0;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	if (!(handle->fs->flags & EXT2_FLAG_RW))
-		return EXT2_ET_RO_FILSYS;
+	إذا (!(handle->fs->flags & EXT2_FLAG_RW))
+		أرجع EXT2_ET_RO_FILSYS;
 
-	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+	إذا (!handle->لار)
+		أرجع EXT2_ET_NO_CURRENT_غوټه;
 
-#ifdef DEBUG
+#که_تعریف_شوی DEBUG
 	{
-		struct ext2fs_extent	extent;
+		بنية ext2fs_extent	extent;
 
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					   &extent);
-		if (retval == 0) {
-			printf("extent delete %u ", handle->ino);
+		إذا (retval == 0) {
+			چاپ_کړه("extent delete %u ", handle->ino);
 			dbg_print_extent(0, &extent);
 		}
 	}
-#endif
+#د_که_پای
 
-	path = handle->path + handle->level;
-	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+	لار = handle->لار + handle->level;
+	إذا (!لار->curr)
+		أرجع EXT2_ET_NO_CURRENT_غوټه;
 
-	cp = path->curr;
+	cp = لار->curr;
 
 	/* Sanity check before memmove() */
-	if (path->left < 0)
-		return EXT2_ET_EXTENT_LEAF_BAD;
+	إذا (لار->کیڼ < 0)
+		أرجع EXT2_ET_EXTENT_ونې_پاڼه_BAD;
 
-	if (path->left) {
-		memmove(cp, cp + sizeof(struct ext3_extent_idx),
-			path->left * sizeof(struct ext3_extent_idx));
-		path->left--;
-	} else {
-		struct ext3_extent_idx	*ix = path->curr;
+	إذا (لار->کیڼ) {
+		memmove(cp, cp + حجم(بنية ext3_extent_idx),
+			لار->کیڼ * حجم(بنية ext3_extent_idx));
+		لار->کیڼ--;
+	} وإلا {
+		بنية ext3_extent_idx	*ix = لار->curr;
 		ix--;
-		path->curr = ix;
+		لار->curr = ix;
 	}
-	if (--path->entries == 0)
-		path->curr = 0;
+	إذا (--لار->entries == 0)
+		لار->curr = 0;
 
 	/* if non-root node has no entries left, remove it & parent ptr to it */
-	if (path->entries == 0 && handle->level) {
-		if (!(flags & EXT2_EXTENT_DELETE_KEEP_EMPTY)) {
-			struct ext2fs_extent	extent;
+	إذا (لار->entries == 0 && handle->level) {
+		إذا (!(flags & EXT2_EXTENT_DELETE_KEEP_تشه)) {
+			بنية ext2fs_extent	extent;
 
-			retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP,
+			retval = ext2fs_extent_get(handle, EXT2_EXTENT_پورته,
 								&extent);
-			if (retval)
-				return retval;
+			إذا (retval)
+				أرجع retval;
 
 			retval = ext2fs_extent_delete(handle, flags);
-			handle->inode->i_blocks -=
+			handle->inode->i_بلاکونه -=
 				(handle->fs->blocksize *
-				 EXT2FS_CLUSTER_RATIO(handle->fs)) / 512;
+				 EXT2_FS_CLUSTER_نسبت(handle->fs)) / 512;
 			retval = ext2fs_write_inode(handle->fs, handle->ino,
 						    handle->inode);
-			ext2fs_block_alloc_stats2(handle->fs,
+			ext2fs_بلاک_alloc_stats2(handle->fs,
 						  extent.e_pblk, -1);
 		}
-	} else {
-		eh = (struct ext3_extent_header *) path->buf;
-		eh->eh_entries = ext2fs_cpu_to_le16(path->entries);
-		if ((path->entries == 0) && (handle->level == 0)) {
-			eh->eh_depth = 0;
-			handle->max_depth = 0;
+	} وإلا {
+		eh = (بنية ext3_extent_سرلیک *) لار->buf;
+		eh->eh_entries = ext2fs_cpu_منزل_le16(لار->entries);
+		إذا ((لار->entries == 0) && (handle->level == 0)) {
+			eh->eh_ژوروالی = 0;
+			handle->max_ژوروالی = 0;
 		}
-		retval = update_path(handle);
+		retval = update_لار(handle);
 	}
-	return retval;
+	أرجع retval;
 }
 
 errcode_t ext2fs_extent_get_info(ext2_extent_handle_t handle,
-				 struct ext2_extent_info *info)
+				 بنية ext2_extent_info *info)
 {
-	struct extent_path		*path;
+	بنية extent_لار		*لار;
 
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
-	memset(info, 0, sizeof(struct ext2_extent_info));
+	memset(info, 0, حجم(بنية ext2_extent_info));
 
-	path = handle->path + handle->level;
-	if (path) {
-		if (path->curr)
-			info->curr_entry = ((char *) path->curr - path->buf) /
-				sizeof(struct ext3_extent_idx);
-		else
-			info->curr_entry = 0;
-		info->num_entries = path->entries;
-		info->max_entries = path->max_entries;
-		info->bytes_avail = (path->max_entries - path->entries) *
-			sizeof(struct ext3_extent);
+	لار = handle->لار + handle->level;
+	إذا (لار) {
+		إذا (لار->curr)
+			info->curr_ثبت = ((حرف *) لار->curr - لار->buf) /
+				حجم(بنية ext3_extent_idx);
+		وإلا
+			info->curr_ثبت = 0;
+		info->عدد_entries = لار->entries;
+		info->max_entries = لار->max_entries;
+		info->بایټونه_avail = (لار->max_entries - لار->entries) *
+			حجم(بنية ext3_extent);
 	}
 
 	info->curr_level = handle->level;
-	info->max_depth = handle->max_depth;
+	info->max_ژوروالی = handle->max_ژوروالی;
 	info->max_lblk = EXT_MAX_EXTENT_LBLK;
 	info->max_pblk = EXT_MAX_EXTENT_PBLK;
 	info->max_len = EXT_INIT_MAX_LEN;
 	info->max_uninit_len = EXT_UNINIT_MAX_LEN;
 
-	return 0;
+	أرجع 0;
 }
 
-size_t ext2fs_max_extent_depth(ext2_extent_handle_t handle)
+size_t ext2fs_max_extent_ژوروالی(ext2_extent_handle_t handle)
 {
-	size_t iblock_sz = sizeof(((struct ext2_inode *)NULL)->i_block);
-	size_t iblock_extents = (iblock_sz - sizeof(struct ext3_extent_header)) /
-				sizeof(struct ext3_extent);
-	size_t extents_per_block = (handle->fs->blocksize -
-				    sizeof(struct ext3_extent_header)) /
-				   sizeof(struct ext3_extent);
-	static unsigned int last_blocksize = 0;
-	static size_t last_result = 0;
+	size_t iblock_sz = حجم(((بنية ext2_inode *)عدم)->i_بلاک);
+	size_t iblock_extents = (iblock_sz - حجم(بنية ext3_extent_سرلیک)) /
+				حجم(بنية ext3_extent);
+	size_t extents_فی_بلاک = (handle->fs->blocksize -
+				    حجم(بنية ext3_extent_سرلیک)) /
+				   حجم(بنية ext3_extent);
+	ساكن بینښه صحيح وروستی_blocksize = 0;
+	ساكن size_t وروستی_پایله = 0;
 
-	if (last_blocksize && last_blocksize == handle->fs->blocksize)
-		return last_result;
+	إذا (وروستی_blocksize && وروستی_blocksize == handle->fs->blocksize)
+		أرجع وروستی_پایله;
 
-	last_result = 1 + ((ext2fs_log2_u64(EXT_MAX_EXTENT_LBLK) -
+	وروستی_پایله = 1 + ((ext2fs_log2_u64(EXT_MAX_EXTENT_LBLK) -
 			    ext2fs_log2_u64(iblock_extents)) /
-			   ext2fs_log2_u32(extents_per_block));
-	last_blocksize = handle->fs->blocksize;
-	return last_result;
+			   ext2fs_log2_u32(extents_فی_بلاک));
+	وروستی_blocksize = handle->fs->blocksize;
+	أرجع وروستی_پایله;
 }
 
 errcode_t ext2fs_fix_extents_checksums(ext2_filsys fs, ext2_ino_t ino,
-				       struct ext2_inode *inode)
+				       بنية ext2_inode *inode)
 {
 	ext2_extent_handle_t	handle;
-	struct ext2fs_extent	extent;
+	بنية ext2fs_extent	extent;
 	errcode_t		errcode;
-	int    			save_flags = fs->flags;
+	صحيح    			save_flags = fs->flags;
 
-	if (!ext2fs_has_feature_metadata_csum(fs->super) ||
+	إذا (!ext2fs_has_feature_metadata_csum(fs->super) ||
 	    (inode && !(inode->i_flags & EXT4_EXTENTS_FL)))
-		return 0;
+		أرجع 0;
 
 	errcode = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (errcode) {
-		if (errcode == EXT2_ET_INODE_NOT_EXTENT)
+	إذا (errcode) {
+		إذا (errcode == EXT2_ET_INODE_NOT_EXTENT)
 			errcode = 0;
-		return errcode;
+		أرجع errcode;
 	}
 
 	fs->flags &= ~EXT2_FLAG_IGNORE_CSUM_ERRORS;
-	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_ROOT, &extent);
-	if (errcode)
-		goto out;
+	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_ریښه, &extent);
+	إذا (errcode)
+		اذهب بهر;
 
-	do {
+	افعل {
 		/* Skip to the end of a block of leaf nodes */
-		if (extent.e_flags & EXT2_EXTENT_FLAGS_LEAF) {
+		إذا (extent.e_flags & EXT2_EXTENT_FLAGS_ونې_پاڼه) {
 			errcode = ext2fs_extent_get(handle,
-						    EXT2_EXTENT_LAST_SIB,
+						    EXT2_EXTENT_وروستی_SIB,
 						    &extent);
-			if (errcode)
-				break;
+			إذا (errcode)
+				اكسر;
 		}
 
-		errcode = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT, &extent);
-		if (errcode == EXT2_ET_EXTENT_CSUM_INVALID)
-			errcode = update_path(handle);
-	} while (errcode == 0);
+		errcode = ext2fs_extent_get(handle, EXT2_EXTENT_بل, &extent);
+		إذا (errcode == EXT2_ET_EXTENT_CSUM_INVALID)
+			errcode = update_لار(handle);
+	} طالما (errcode == 0);
 
-out:
+بهر:
 	/* Ok if we run off the end */
-	if (errcode == EXT2_ET_EXTENT_NO_NEXT)
+	إذا (errcode == EXT2_ET_EXTENT_NO_بل)
 		errcode = 0;
 	ext2fs_extent_free(handle);
 	fs->flags = save_flags;
-	return errcode;
+	أرجع errcode;
 }
 
-errcode_t ext2fs_decode_extent(struct ext2fs_extent *to, void *addr, int len)
+errcode_t ext2fs_decode_extent(بنية ext2fs_extent *منزل, فراغ *addr, صحيح len)
 {
-	struct ext3_extent *from = (struct ext3_extent *)addr;
+	بنية ext3_extent *from = (بنية ext3_extent *)addr;
 
-	if (len != sizeof(struct ext3_extent))
-		return EXT2_ET_INVALID_ARGUMENT;
+	إذا (len != حجم(بنية ext3_extent))
+		أرجع EXT2_ET_INVALID_دلیل;
 
-	to->e_pblk = ext2fs_le32_to_cpu(from->ee_start) +
-		((__u64) ext2fs_le16_to_cpu(from->ee_start_hi)
+	منزل->e_pblk = ext2fs_le32_منزل_cpu(from->ee_پیل) +
+		((__u64) ext2fs_le16_منزل_cpu(from->ee_پیل_hi)
 			<< 32);
-	to->e_lblk = ext2fs_le32_to_cpu(from->ee_block);
-	to->e_len = ext2fs_le16_to_cpu(from->ee_len);
-	to->e_flags = EXT2_EXTENT_FLAGS_LEAF;
-	if (to->e_len > EXT_INIT_MAX_LEN) {
-		to->e_len -= EXT_INIT_MAX_LEN;
-		to->e_flags |= EXT2_EXTENT_FLAGS_UNINIT;
+	منزل->e_lblk = ext2fs_le32_منزل_cpu(from->ee_بلاک);
+	منزل->e_len = ext2fs_le16_منزل_cpu(from->ee_len);
+	منزل->e_flags = EXT2_EXTENT_FLAGS_ونې_پاڼه;
+	إذا (منزل->e_len > EXT_INIT_MAX_LEN) {
+		منزل->e_len -= EXT_INIT_MAX_LEN;
+		منزل->e_flags |= EXT2_EXTENT_FLAGS_UNINIT;
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-errcode_t ext2fs_count_blocks(ext2_filsys fs, ext2_ino_t ino,
-			      struct ext2_inode *inode, blk64_t *ret_count)
+errcode_t ext2fs_شمېر_بلاکونه(ext2_filsys fs, ext2_ino_t ino,
+			      بنية ext2_inode *inode, blk64_t *ret_شمېر)
 {
-	ext2_extent_handle_t	handle = NULL;
-	struct ext2fs_extent	extent;
+	ext2_extent_handle_t	handle = عدم;
+	بنية ext2fs_extent	extent;
 	errcode_t		errcode;
-	int			i;
+	صحيح			i;
 	blk64_t			blkcount = 0;
 	blk64_t			*intermediate_nodes;
 
 	errcode = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (errcode)
-		goto out;
+	إذا (errcode)
+		اذهب بهر;
 
-	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_ROOT, &extent);
-	if (errcode)
-		goto out;
+	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_ریښه, &extent);
+	إذا (errcode)
+		اذهب بهر;
 
-	errcode = ext2fs_get_array(handle->max_depth, sizeof(blk64_t),
+	errcode = ext2fs_get_array(handle->max_ژوروالی, حجم(blk64_t),
 				   &intermediate_nodes);
-	if (errcode)
-		goto out;
+	إذا (errcode)
+		اذهب بهر;
 
 	blkcount = handle->level;
-	while (!errcode) {
-		if (extent.e_flags & EXT2_EXTENT_FLAGS_LEAF) {
+	طالما (!errcode) {
+		إذا (extent.e_flags & EXT2_EXTENT_FLAGS_ونې_پاڼه) {
 			blkcount += extent.e_len;
-			for (i = 0; i < handle->level; i++) {
-				if (intermediate_nodes[i] !=
-					handle->path[i].end_blk) {
+			لكل (i = 0; i < handle->level; i++) {
+				إذا (intermediate_nodes[i] !=
+					handle->لار[i].پای_ټکی_blk) {
 					blkcount++;
 					intermediate_nodes[i] =
-						handle->path[i].end_blk;
+						handle->لار[i].پای_ټکی_blk;
 				}
 			}
 		}
-		errcode = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT, &extent);
+		errcode = ext2fs_extent_get(handle, EXT2_EXTENT_بل, &extent);
 	}
 	ext2fs_free_mem(&intermediate_nodes);
-out:
-	*ret_count = blkcount;
+بهر:
+	*ret_شمېر = blkcount;
 	ext2fs_extent_free(handle);
 
-	return 0;
+	أرجع 0;
 }
 
-#ifdef DEBUG
+#که_تعریف_شوی DEBUG
 /*
  * Override debugfs's prompt
  */
-const char *debug_prog_name = "tst_extents";
+ثابت حرف *debug_prog_name = "tst_extents";
 
-#endif
+#د_که_پای
 

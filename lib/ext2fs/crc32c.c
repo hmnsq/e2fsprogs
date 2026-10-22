@@ -28,120 +28,120 @@
  * This source code is licensed under the GNU General Public License,
  * Version 2.  See the file COPYING for more details.
  */
-#include "config.h"
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#define min(x, y)		((x) > (y) ? (y) : (x))
-#define __ALIGN_KERNEL_MASK(x, mask)	(((x) + (mask)) & ~(mask))
-#define __ALIGN_KERNEL(x, a)	__ALIGN_KERNEL_MASK(x, (__typeof__(x))(a) - 1)
-#define ALIGN(x, a)		__ALIGN_KERNEL((x), (a))
-#define PTR_ALIGN(p, a)		((__typeof__(p))ALIGN((unsigned long)(p), (a)))
-#include "crc32c_defs.h"
+#ضمن "config.h"
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <stdio.h>
+#تعریف_کړه min(x, y)		((x) > (y) ? (y) : (x))
+#تعریف_کړه __ALIGN_KERNEL_MASK(x, ماسک)	(((x) + (ماسک)) & ~(ماسک))
+#تعریف_کړه __ALIGN_KERNEL(x, a)	__ALIGN_KERNEL_MASK(x, (__typeof__(x))(a) - 1)
+#تعریف_کړه ALIGN(x, a)		__ALIGN_KERNEL((x), (a))
+#تعریف_کړه PTR_ALIGN(p, a)		((__typeof__(p))ALIGN((بینښه اوږد)(p), (a)))
+#ضمن "crc32c_defs.h"
 
-#include "ext2fs.h"
-#ifdef WORDS_BIGENDIAN
-#define __constant_cpu_to_le32(x) ___constant_swab32((x))
-#define __constant_cpu_to_be32(x) (x)
-#define __be32_to_cpu(x) (x)
-#define __cpu_to_be32(x) (x)
-#define __cpu_to_le32(x) (ext2fs_cpu_to_le32((x)))
-#define __le32_to_cpu(x) (ext2fs_le32_to_cpu((x)))
-#else
-#define __constant_cpu_to_le32(x) (x)
-#define __constant_cpu_to_be32(x) ___constant_swab32((x))
-#define __be32_to_cpu(x) (ext2fs_be32_to_cpu((x)))
-#define __cpu_to_be32(x) (ext2fs_cpu_to_be32((x)))
-#define __cpu_to_le32(x) (x)
-#define __le32_to_cpu(x) (x)
-#endif
+#ضمن "ext2fs.h"
+#که_تعریف_شوی ټکي_BIGENDIAN
+#تعریف_کړه __constant_cpu_to_le32(x) ___constant_swab32((x))
+#تعریف_کړه __constant_cpu_to_be32(x) (x)
+#تعریف_کړه __be32_to_cpu(x) (x)
+#تعریف_کړه __cpu_to_be32(x) (x)
+#تعریف_کړه __cpu_to_le32(x) (ext2fs_cpu_منزل_le32((x)))
+#تعریف_کړه __le32_to_cpu(x) (ext2fs_le32_منزل_cpu((x)))
+#وإلا
+#تعریف_کړه __constant_cpu_to_le32(x) (x)
+#تعریف_کړه __constant_cpu_to_be32(x) ___constant_swab32((x))
+#تعریف_کړه __be32_to_cpu(x) (ext2fs_be32_منزل_cpu((x)))
+#تعریف_کړه __cpu_to_be32(x) (ext2fs_cpu_منزل_be32((x)))
+#تعریف_کړه __cpu_to_le32(x) (x)
+#تعریف_کړه __le32_to_cpu(x) (x)
+#د_که_پای
 
-#if CRC_LE_BITS > 8
+#إذا دوراني_ازموینه_LE_بټونه > 8
 # define tole(x) __constant_cpu_to_le32(x)
-#else
+#وإلا
 # define tole(x) (x)
-#endif
+#د_که_پای
 
-#if CRC_BE_BITS > 8
+#إذا دوراني_ازموینه_BE_بټونه > 8
 # define tobe(x) __constant_cpu_to_be32(x)
-#else
+#وإلا
 # define tobe(x) (x)
-#endif
+#د_که_پای
 
-#include "crc32c_table.h"
+#ضمن "crc32c_table.h"
 
-#if CRC_LE_BITS > 8 || CRC_BE_BITS > 8
+#إذا دوراني_ازموینه_LE_بټونه > 8 || دوراني_ازموینه_BE_بټونه > 8
 
-#if CRC_LE_BITS < 64 && CRC_BE_BITS < 64
-#define CRC_INLINE inline
-#else
-#define CRC_INLINE
-#endif
+#إذا دوراني_ازموینه_LE_بټونه < 64 && دوراني_ازموینه_BE_بټونه < 64
+#تعریف_کړه دوراني_ازموینه_INLINE مضمن
+#وإلا
+#تعریف_کړه دوراني_ازموینه_INLINE
+#د_که_پای
 
 /* implements slicing-by-4 or slicing-by-8 algorithm */
-static CRC_INLINE uint32_t
-crc32_body(uint32_t crc, unsigned char const *buf, size_t len,
-	   const uint32_t (*tab)[256])
+ساكن دوراني_ازموینه_INLINE uint32_t
+دوراني_ازموینه_32_body(uint32_t دوراني_ازموینه, بینښه حرف ثابت *buf, size_t len,
+	   ثابت uint32_t (*tab)[256])
 {
-# ifndef WORDS_BIGENDIAN
-#  define DO_CRC(x) (crc = t0[(crc ^ (x)) & 255] ^ (crc >> 8))
+# ifndef ټکي_BIGENDIAN
+#  define DO_دوراني_ازموینه(x) (دوراني_ازموینه = t0[(دوراني_ازموینه ^ (x)) & 255] ^ (دوراني_ازموینه >> 8))
 #  define DO_CRC4 (t3[(q) & 255] ^ t2[(q >> 8) & 255] ^ \
 		   t1[(q >> 16) & 255] ^ t0[(q >> 24) & 255])
 #  define DO_CRC8 (t7[(q) & 255] ^ t6[(q >> 8) & 255] ^ \
 		   t5[(q >> 16) & 255] ^ t4[(q >> 24) & 255])
-# else
-#  define DO_CRC(x) (crc = t0[((crc >> 24) ^ (x)) & 255] ^ (crc << 8))
+# وإلا
+#  define DO_دوراني_ازموینه(x) (دوراني_ازموینه = t0[((دوراني_ازموینه >> 24) ^ (x)) & 255] ^ (دوراني_ازموینه << 8))
 #  define DO_CRC4 (t0[(q) & 255] ^ t1[(q >> 8) & 255] ^ \
 		   t2[(q >> 16) & 255] ^ t3[(q >> 24) & 255])
 #  define DO_CRC8 (t4[(q) & 255] ^ t5[(q >> 8) & 255] ^ \
 		   t6[(q >> 16) & 255] ^ t7[(q >> 24) & 255])
 # endif
-	const uint32_t *b;
+	ثابت uint32_t *b;
 	size_t rem_len;
-	const uint32_t *t0 = tab[0], *t1 = tab[1], *t2 = tab[2], *t3 = tab[3];
-	const uint32_t *t4 = tab[4], *t5 = tab[5], *t6 = tab[6], *t7 = tab[7];
+	ثابت uint32_t *t0 = tab[0], *t1 = tab[1], *t2 = tab[2], *t3 = tab[3];
+	ثابت uint32_t *t4 = tab[4], *t5 = tab[5], *t6 = tab[6], *t7 = tab[7];
 	uint32_t q;
 
 	/* Align it */
-	if (unlikely((uintptr_t)buf & 3 && len)) {
-		do {
-			DO_CRC(*buf++);
-		} while ((--len) && ((uintptr_t)buf)&3);
+	إذا (unlikely((uintptr_t)buf & 3 && len)) {
+		افعل {
+			DO_دوراني_ازموینه(*buf++);
+		} طالما ((--len) && ((uintptr_t)buf)&3);
 	}
 
-# if CRC_LE_BITS == 32
+# إذا دوراني_ازموینه_LE_بټونه == 32
 	rem_len = len & 3;
 	len = len >> 2;
-# else
+# وإلا
 	rem_len = len & 7;
 	len = len >> 3;
 # endif
 
-	b = (const uint32_t *)buf;
-	for (--b; len; --len) {
-		q = crc ^ *++b; /* use pre increment for speed */
-# if CRC_LE_BITS == 32
-		crc = DO_CRC4;
-# else
-		crc = DO_CRC8;
+	b = (ثابت uint32_t *)buf;
+	لكل (--b; len; --len) {
+		q = دوراني_ازموینه ^ *++b; /* use pre increment for speed */
+# إذا دوراني_ازموینه_LE_بټونه == 32
+		دوراني_ازموینه = DO_CRC4;
+# وإلا
+		دوراني_ازموینه = DO_CRC8;
 		q = *++b;
-		crc ^= DO_CRC4;
+		دوراني_ازموینه ^= DO_CRC4;
 # endif
 	}
 	len = rem_len;
 	/* And the last few bytes */
-	if (len) {
-		const uint8_t *p = (const uint8_t *)(b + 1) - 1;
-		do {
-			DO_CRC(*++p); /* use pre increment for speed */
-		} while (--len);
+	إذا (len) {
+		ثابت uint8_t *p = (ثابت uint8_t *)(b + 1) - 1;
+		افعل {
+			DO_دوراني_ازموینه(*++p); /* use pre increment for speed */
+		} طالما (--len);
 	}
-	return crc;
-#undef DO_CRC
-#undef DO_CRC4
-#undef DO_CRC8
+	أرجع دوراني_ازموینه;
+#تعریف_لغوه DO_دوراني_ازموینه
+#تعریف_لغوه DO_CRC4
+#تعریف_لغوه DO_CRC8
 }
-#endif
+#د_که_پای
 
 /**
  * crc32_le() - Calculate bitwise little-endian Ethernet AUTODIN II CRC32
@@ -150,48 +150,48 @@ crc32_body(uint32_t crc, unsigned char const *buf, size_t len,
  * @p: pointer to buffer over which CRC is run
  * @len: length of buffer @p
  */
-static inline uint32_t crc32_le_generic(uint32_t crc, unsigned char const *p,
-					size_t len, const uint32_t (*tab)[256],
-					uint32_t polynomial EXT2FS_ATTR((unused)))
+ساكن مضمن uint32_t دوراني_ازموینه_32_le_generic(uint32_t دوراني_ازموینه, بینښه حرف ثابت *p,
+					size_t len, ثابت uint32_t (*tab)[256],
+					uint32_t polynomial EXT2FS_ATTR((ناکارول_شوی)))
 {
-#if CRC_LE_BITS == 1
-	int i;
-	while (len--) {
-		crc ^= *p++;
-		for (i = 0; i < 8; i++)
-			crc = (crc >> 1) ^ ((crc & 1) ? polynomial : 0);
+#إذا دوراني_ازموینه_LE_بټونه == 1
+	صحيح i;
+	طالما (len--) {
+		دوراني_ازموینه ^= *p++;
+		لكل (i = 0; i < 8; i++)
+			دوراني_ازموینه = (دوراني_ازموینه >> 1) ^ ((دوراني_ازموینه & 1) ? polynomial : 0);
 	}
-# elif CRC_LE_BITS == 2
-	while (len--) {
-		crc ^= *p++;
-		crc = (crc >> 2) ^ tab[0][crc & 3];
-		crc = (crc >> 2) ^ tab[0][crc & 3];
-		crc = (crc >> 2) ^ tab[0][crc & 3];
-		crc = (crc >> 2) ^ tab[0][crc & 3];
+# elif دوراني_ازموینه_LE_بټونه == 2
+	طالما (len--) {
+		دوراني_ازموینه ^= *p++;
+		دوراني_ازموینه = (دوراني_ازموینه >> 2) ^ tab[0][دوراني_ازموینه & 3];
+		دوراني_ازموینه = (دوراني_ازموینه >> 2) ^ tab[0][دوراني_ازموینه & 3];
+		دوراني_ازموینه = (دوراني_ازموینه >> 2) ^ tab[0][دوراني_ازموینه & 3];
+		دوراني_ازموینه = (دوراني_ازموینه >> 2) ^ tab[0][دوراني_ازموینه & 3];
 	}
-# elif CRC_LE_BITS == 4
-	while (len--) {
-		crc ^= *p++;
-		crc = (crc >> 4) ^ tab[0][crc & 15];
-		crc = (crc >> 4) ^ tab[0][crc & 15];
+# elif دوراني_ازموینه_LE_بټونه == 4
+	طالما (len--) {
+		دوراني_ازموینه ^= *p++;
+		دوراني_ازموینه = (دوراني_ازموینه >> 4) ^ tab[0][دوراني_ازموینه & 15];
+		دوراني_ازموینه = (دوراني_ازموینه >> 4) ^ tab[0][دوراني_ازموینه & 15];
 	}
-# elif CRC_LE_BITS == 8
+# elif دوراني_ازموینه_LE_بټونه == 8
 	/* aka Sarwate algorithm */
-	while (len--) {
-		crc ^= *p++;
-		crc = (crc >> 8) ^ tab[0][crc & 255];
+	طالما (len--) {
+		دوراني_ازموینه ^= *p++;
+		دوراني_ازموینه = (دوراني_ازموینه >> 8) ^ tab[0][دوراني_ازموینه & 255];
 	}
-# else
-	crc = __cpu_to_le32(crc);
-	crc = crc32_body(crc, p, len, tab);
-	crc = __le32_to_cpu(crc);
-#endif
-	return crc;
+# وإلا
+	دوراني_ازموینه = __cpu_to_le32(دوراني_ازموینه);
+	دوراني_ازموینه = دوراني_ازموینه_32_body(دوراني_ازموینه, p, len, tab);
+	دوراني_ازموینه = __le32_to_cpu(دوراني_ازموینه);
+#د_که_پای
+	أرجع دوراني_ازموینه;
 }
 
-uint32_t ext2fs_crc32c_le(uint32_t crc, unsigned char const *p, size_t len)
+uint32_t ext2fs_crc32c_le(uint32_t دوراني_ازموینه, بینښه حرف ثابت *p, size_t len)
 {
-	return crc32_le_generic(crc, p, len, crc32ctable_le, CRC32C_POLY_LE);
+	أرجع دوراني_ازموینه_32_le_generic(دوراني_ازموینه, p, len, crc32ctable_le, دوراني_ازموینه_32_C_POLY_LE);
 }
 
 /**
@@ -201,53 +201,53 @@ uint32_t ext2fs_crc32c_le(uint32_t crc, unsigned char const *p, size_t len)
  * @p: pointer to buffer over which CRC is run
  * @len: length of buffer @p
  */
-static inline uint32_t crc32_be_generic(uint32_t crc, unsigned char const *p,
-					size_t len, const uint32_t (*tab)[256],
-					uint32_t polynomial EXT2FS_ATTR((unused)))
+ساكن مضمن uint32_t دوراني_ازموینه_32_be_generic(uint32_t دوراني_ازموینه, بینښه حرف ثابت *p,
+					size_t len, ثابت uint32_t (*tab)[256],
+					uint32_t polynomial EXT2FS_ATTR((ناکارول_شوی)))
 {
-#if CRC_BE_BITS == 1
-	int i;
-	while (len--) {
-		crc ^= *p++ << 24;
-		for (i = 0; i < 8; i++)
-			crc =
-			    (crc << 1) ^ ((crc & 0x80000000) ? polynomial :
+#إذا دوراني_ازموینه_BE_بټونه == 1
+	صحيح i;
+	طالما (len--) {
+		دوراني_ازموینه ^= *p++ << 24;
+		لكل (i = 0; i < 8; i++)
+			دوراني_ازموینه =
+			    (دوراني_ازموینه << 1) ^ ((دوراني_ازموینه & 0x80000000) ? polynomial :
 					  0);
 	}
-# elif CRC_BE_BITS == 2
-	while (len--) {
-		crc ^= *p++ << 24;
-		crc = (crc << 2) ^ tab[0][crc >> 30];
-		crc = (crc << 2) ^ tab[0][crc >> 30];
-		crc = (crc << 2) ^ tab[0][crc >> 30];
-		crc = (crc << 2) ^ tab[0][crc >> 30];
+# elif دوراني_ازموینه_BE_بټونه == 2
+	طالما (len--) {
+		دوراني_ازموینه ^= *p++ << 24;
+		دوراني_ازموینه = (دوراني_ازموینه << 2) ^ tab[0][دوراني_ازموینه >> 30];
+		دوراني_ازموینه = (دوراني_ازموینه << 2) ^ tab[0][دوراني_ازموینه >> 30];
+		دوراني_ازموینه = (دوراني_ازموینه << 2) ^ tab[0][دوراني_ازموینه >> 30];
+		دوراني_ازموینه = (دوراني_ازموینه << 2) ^ tab[0][دوراني_ازموینه >> 30];
 	}
-# elif CRC_BE_BITS == 4
-	while (len--) {
-		crc ^= *p++ << 24;
-		crc = (crc << 4) ^ tab[0][crc >> 28];
-		crc = (crc << 4) ^ tab[0][crc >> 28];
+# elif دوراني_ازموینه_BE_بټونه == 4
+	طالما (len--) {
+		دوراني_ازموینه ^= *p++ << 24;
+		دوراني_ازموینه = (دوراني_ازموینه << 4) ^ tab[0][دوراني_ازموینه >> 28];
+		دوراني_ازموینه = (دوراني_ازموینه << 4) ^ tab[0][دوراني_ازموینه >> 28];
 	}
-# elif CRC_BE_BITS == 8
-	while (len--) {
-		crc ^= *p++ << 24;
-		crc = (crc << 8) ^ tab[0][crc >> 24];
+# elif دوراني_ازموینه_BE_بټونه == 8
+	طالما (len--) {
+		دوراني_ازموینه ^= *p++ << 24;
+		دوراني_ازموینه = (دوراني_ازموینه << 8) ^ tab[0][دوراني_ازموینه >> 24];
 	}
-# else
-	crc = __cpu_to_be32(crc);
-	crc = crc32_body(crc, p, len, tab);
-	crc = __be32_to_cpu(crc);
+# وإلا
+	دوراني_ازموینه = __cpu_to_be32(دوراني_ازموینه);
+	دوراني_ازموینه = دوراني_ازموینه_32_body(دوراني_ازموینه, p, len, tab);
+	دوراني_ازموینه = __be32_to_cpu(دوراني_ازموینه);
 # endif
-	return crc;
+	أرجع دوراني_ازموینه;
 }
 
-uint32_t ext2fs_crc32_be(uint32_t crc, unsigned char const *p, size_t len)
+uint32_t ext2fs_دوراني_ازموینه_32_be(uint32_t دوراني_ازموینه, بینښه حرف ثابت *p, size_t len)
 {
-	return crc32_be_generic(crc, p, len, crc32table_be, CRCPOLY_BE);
+	أرجع دوراني_ازموینه_32_be_generic(دوراني_ازموینه, p, len, crc32table_be, CRCPOLY_BE);
 }
 
-#ifdef UNITTEST
-static uint8_t test_buf[] = {
+#که_تعریف_شوی UNITTEST
+ساكن uint8_t test_buf[] = {
 	0xd9, 0xd7, 0x6a, 0x13, 0x3a, 0xb1, 0x05, 0x48,
 	0xda, 0xad, 0x14, 0xbd, 0x03, 0x3a, 0x58, 0x5e,
 	0x6e, 0xd1, 0x56, 0xc9, 0x2e, 0xc4, 0xcb, 0x6b,
@@ -762,12 +762,12 @@ static uint8_t test_buf[] = {
 	0x02, 0x21, 0x16, 0x8f, 0x0f, 0xdf, 0xa5, 0xf0,
 };
 
-static struct crc_test {
-	uint32_t crc;		/* random starting crc */
-	uint32_t start;		/* random offset in buf */
-	uint32_t length;	/* random length of test */
+ساكن بنية دوراني_ازموینه_test {
+	uint32_t دوراني_ازموینه;		/* random starting crc */
+	uint32_t پیل;		/* random offset in buf */
+	uint32_t اوږدتیا;	/* random length of test */
 	uint32_t crc32c_le;	/* expected crc32c_le result */
-	uint32_t crc32_be;	/* expected crc32_be result */
+	uint32_t دوراني_ازموینه_32_be;	/* expected crc32_be result */
 } test[] = {
 	{0xffffffff, 0x00000000, 0x00001000, 0x13934bef, 0xd8ddcdc3},
 	{0xfe7328ea, 0x00000763, 0x00000717, 0xed2c0d70, 0xc863aef8},
@@ -900,39 +900,39 @@ static struct crc_test {
 	{0, 0, 0, 0, 0},
 };
 
-static int test_crc32c(void)
+ساكن صحيح test_crc32c(فراغ)
 {
-	struct crc_test *t = test;
-	int failures = 0;
+	بنية دوراني_ازموینه_test *t = test;
+	صحيح failures = 0;
 
-	while (t->length) {
+	طالما (t->اوږدتیا) {
 		uint32_t be, le;
-		le = ext2fs_crc32c_le(t->crc, test_buf + t->start, t->length);
-		be = ext2fs_crc32_be(t->crc, test_buf + t->start, t->length);
-		if (le != t->crc32c_le) {
-			printf("Test %d LE fails, %x != %x\n",
-			       (int) (t - test), le, t->crc32c_le);
+		le = ext2fs_crc32c_le(t->دوراني_ازموینه, test_buf + t->پیل, t->اوږدتیا);
+		be = ext2fs_دوراني_ازموینه_32_be(t->دوراني_ازموینه, test_buf + t->پیل, t->اوږدتیا);
+		إذا (le != t->crc32c_le) {
+			چاپ_کړه("Test %d LE fails, %x != %x\n",
+			       (صحيح) (t - test), le, t->crc32c_le);
 			failures++;
 		}
-		if (be != t->crc32_be) {
-			printf("Test %d BE fails, %x != %x\n",
-			       (int) (t - test), be, t->crc32_be);
+		إذا (be != t->دوراني_ازموینه_32_be) {
+			چاپ_کړه("Test %d BE fails, %x != %x\n",
+			       (صحيح) (t - test), be, t->دوراني_ازموینه_32_be);
 			failures++;
 		}
 		t++;
 	}
 
-	return failures;
+	أرجع failures;
 }
 
-int main(int argc, char *argv[])
+صحيح اصلي(صحيح argc, حرف *argv[])
 {
-	int ret;
+	صحيح ret;
 
 	ret = test_crc32c();
-	if (!ret)
-		printf("No failures.\n");
+	إذا (!ret)
+		چاپ_کړه("No failures.\n");
 
-	return ret;
+	أرجع ret;
 }
-#endif /* UNITTEST */
+#د_که_پای /* UNITTEST */

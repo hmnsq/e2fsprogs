@@ -9,44 +9,44 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
+#د_که_پای
+#ضمن <fcntl.h>
+#ضمن <time.h>
+#إذا HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
+#د_که_پای
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
+#د_که_پای
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
 /*
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#تعریف_کړه EXT2_CHECK_MAGIC(بنية, کوډ) \
+	  إذا ((بنية)->magic != (کوډ)) أرجع (کوډ)
 
-struct test_private_data {
-	int	magic;
+بنية test_شخصي_معلومات {
+	صحيح	magic;
 	io_channel real;
-	int flags;
+	صحيح flags;
 	FILE *outfile;
-	unsigned long block;
-	int read_abort_count, write_abort_count;
-	void (*read_blk)(unsigned long block, int count, errcode_t err);
-	void (*write_blk)(unsigned long block, int count, errcode_t err);
-	void (*set_blksize)(int blksize, errcode_t err);
-	void (*write_byte)(unsigned long block, int count, errcode_t err);
-	void (*read_blk64)(unsigned long long block, int count, errcode_t err);
-	void (*write_blk64)(unsigned long long block, int count, errcode_t err);
+	بینښه اوږد بلاک;
+	صحيح read_abort_شمېر, write_abort_شمېر;
+	فراغ (*read_blk)(بینښه اوږد بلاک, صحيح شمېر, errcode_t err);
+	فراغ (*write_blk)(بینښه اوږد بلاک, صحيح شمېر, errcode_t err);
+	فراغ (*سېټ_blksize)(صحيح blksize, errcode_t err);
+	فراغ (*write_byte)(بینښه اوږد بلاک, صحيح شمېر, errcode_t err);
+	فراغ (*read_blk64)(بینښه اوږد اوږد بلاک, صحيح شمېر, errcode_t err);
+	فراغ (*write_blk64)(بینښه اوږد اوږد بلاک, صحيح شمېر, errcode_t err);
 };
 
 /*
@@ -54,47 +54,47 @@ struct test_private_data {
  * necessary *before* calling test_open
  */
 io_manager test_io_backing_manager = 0;
-void (*test_io_cb_read_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
-void (*test_io_cb_write_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
-void (*test_io_cb_read_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
-void (*test_io_cb_write_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
-void (*test_io_cb_set_blksize)
-	(int blksize, errcode_t err) = 0;
-void (*test_io_cb_write_byte)
-	(unsigned long block, int count, errcode_t err) = 0;
+فراغ (*test_io_cb_read_blk)
+	(بینښه اوږد بلاک, صحيح شمېر, errcode_t err) = 0;
+فراغ (*test_io_cb_write_blk)
+	(بینښه اوږد بلاک, صحيح شمېر, errcode_t err) = 0;
+فراغ (*test_io_cb_read_blk64)
+	(بینښه اوږد اوږد بلاک, صحيح شمېر, errcode_t err) = 0;
+فراغ (*test_io_cb_write_blk64)
+	(بینښه اوږد اوږد بلاک, صحيح شمېر, errcode_t err) = 0;
+فراغ (*test_io_cb_سېټ_blksize)
+	(صحيح blksize, errcode_t err) = 0;
+فراغ (*test_io_cb_write_byte)
+	(بینښه اوږد بلاک, صحيح شمېر, errcode_t err) = 0;
 
 /*
  * Test flags
  */
-#define TEST_FLAG_READ			0x01
-#define TEST_FLAG_WRITE			0x02
-#define TEST_FLAG_SET_BLKSIZE		0x04
-#define TEST_FLAG_FLUSH			0x08
-#define TEST_FLAG_DUMP			0x10
-#define TEST_FLAG_SET_OPTION		0x20
-#define TEST_FLAG_DISCARD		0x40
-#define TEST_FLAG_READAHEAD		0x80
-#define TEST_FLAG_ZEROOUT		0x100
+#تعریف_کړه TEST_FLAG_READ			0x01
+#تعریف_کړه TEST_FLAG_WRITE			0x02
+#تعریف_کړه TEST_FLAG_سېټ_BLKSIZE		0x04
+#تعریف_کړه TEST_FLAG_FLUSH			0x08
+#تعریف_کړه TEST_FLAG_DUMP			0x10
+#تعریف_کړه TEST_FLAG_سېټ_OPTION		0x20
+#تعریف_کړه TEST_FLAG_DISCARD		0x40
+#تعریف_کړه TEST_FLAG_READAHEAD		0x80
+#تعریف_کړه TEST_FLAG_ZEROOUT		0x100
 
-static void test_dump_block(io_channel channel,
-			    struct test_private_data *data,
-			    unsigned long block, const void *buf)
+ساكن فراغ test_dump_بلاک(io_channel channel,
+			    بنية test_شخصي_معلومات *معلومات,
+			    بینښه اوږد بلاک, ثابت فراغ *buf)
 {
-	const unsigned char *cp;
-	FILE *f = data->outfile;
-	int	i;
-	unsigned long	cksum = 0;
+	ثابت بینښه حرف *cp;
+	FILE *f = معلومات->outfile;
+	صحيح	i;
+	بینښه اوږد	cksum = 0;
 
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
+	لكل (i=0, cp = buf; i < channel->بلاک_اندازه; i++, cp++) {
 		cksum += *cp;
 	}
-	fprintf(f, "Contents of block %lu, checksum %08lu: \n", block, cksum);
-	for (i=0, cp = buf; i < channel->block_size; i++, cp++) {
-		if ((i % 16) == 0)
+	fprintf(f, "Contents of block %lu, checksum %08lu: \n", بلاک, cksum);
+	لكل (i=0, cp = buf; i < channel->بلاک_اندازه; i++, cp++) {
+		إذا ((i % 16) == 0)
 			fprintf(f, "%04x: ", i);
 		fprintf(f, "%02x%c", *cp, ((i % 16) == 15) ? '\n' : ' ');
 	}
@@ -103,416 +103,416 @@ static void test_dump_block(io_channel channel,
 /*
  * Flush data buffers to disk.
  */
-static errcode_t test_flush(io_channel channel)
+ساكن errcode_t test_flush(io_channel channel)
 {
-	struct test_private_data	*data;
+	بنية test_شخصي_معلومات	*معلومات;
 	errcode_t			retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *)channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	معلومات = (بنية test_شخصي_معلومات *)channel->شخصي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_flush(data->real);
+	إذا (معلومات->real)
+		retval = io_channel_flush(معلومات->real);
 
-	if (data->flags & TEST_FLAG_FLUSH)
-		fprintf(data->outfile, "Test_io: flush() returned %s\n",
-			retval ? error_message(retval) : "OK");
+	إذا (معلومات->flags & TEST_FLAG_FLUSH)
+		fprintf(معلومات->outfile, "Test_io: flush() returned %s\n",
+			retval ? error_پیغام(retval) : "OK");
 
-	return retval;
+	أرجع retval;
 }
 
-static void test_abort(io_channel channel, unsigned long block)
+ساكن فراغ test_abort(io_channel channel, بینښه اوږد بلاک)
 {
-	struct test_private_data *data;
+	بنية test_شخصي_معلومات *معلومات;
 	FILE *f;
 
-	data = (struct test_private_data *) channel->private_data;
-	f = data->outfile;
+	معلومات = (بنية test_شخصي_معلومات *) channel->شخصي_معلومات;
+	f = معلومات->outfile;
 	test_flush(channel);
 
-	fprintf(f, "Aborting due to I/O to block %lu\n", block);
+	fprintf(f, "Aborting due to I/O to block %lu\n", بلاک);
 	fflush(f);
 	abort();
 }
 
-static errcode_t test_open(const char *name, int flags, io_channel *channel)
+ساكن errcode_t test_open(ثابت حرف *name, صحيح flags, io_channel *channel)
 {
-	io_channel	io = NULL;
-	struct test_private_data *data = NULL;
+	io_channel	io = عدم;
+	بنية test_شخصي_معلومات *معلومات = عدم;
 	errcode_t	retval;
-	char		*value;
+	حرف		*ارزښت;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
-		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	إذا (name == 0)
+		أرجع EXT2_ET_BAD_DEVICE_NAME;
+	retval = ext2fs_get_mem(حجم(بنية struct_io_channel), &io);
+	إذا (retval)
+		اذهب cleanup;
+	memset(io, 0, حجم(بنية struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
-	retval = ext2fs_get_mem(sizeof(struct test_private_data), &data);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(حجم(بنية test_شخصي_معلومات), &معلومات);
+	إذا (retval)
+		اذهب cleanup;
 	io->manager = test_io_manager;
-	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
-		goto cleanup;
+	retval = ext2fs_get_mem(مزي_اوږدوالی(name)+1, &io->name);
+	إذا (retval)
+		اذهب cleanup;
 
 	strcpy(io->name, name);
-	io->private_data = data;
-	io->block_size = 1024;
+	io->شخصي_معلومات = معلومات;
+	io->بلاک_اندازه = 1024;
 	io->read_error = 0;
 	io->write_error = 0;
 	io->refcount = 1;
 	io->flags = 0;
 
-	memset(data, 0, sizeof(struct test_private_data));
-	data->magic = EXT2_ET_MAGIC_TEST_IO_CHANNEL;
-	if (test_io_backing_manager) {
+	memset(معلومات, 0, حجم(بنية test_شخصي_معلومات));
+	معلومات->magic = EXT2_ET_MAGIC_TEST_IO_CHANNEL;
+	إذا (test_io_backing_manager) {
 		retval = test_io_backing_manager->open(name, flags,
-						       &data->real);
-		if (retval)
-			goto cleanup;
-	} else {
-		data->real = 0;
+						       &معلومات->real);
+		إذا (retval)
+			اذهب cleanup;
+	} وإلا {
+		معلومات->real = 0;
 	}
-	data->read_blk =	test_io_cb_read_blk;
-	data->write_blk =	test_io_cb_write_blk;
-	data->set_blksize =	test_io_cb_set_blksize;
-	data->write_byte =	test_io_cb_write_byte;
-	data->read_blk64 =	test_io_cb_read_blk64;
-	data->write_blk64 =	test_io_cb_write_blk64;
+	معلومات->read_blk =	test_io_cb_read_blk;
+	معلومات->write_blk =	test_io_cb_write_blk;
+	معلومات->سېټ_blksize =	test_io_cb_سېټ_blksize;
+	معلومات->write_byte =	test_io_cb_write_byte;
+	معلومات->read_blk64 =	test_io_cb_read_blk64;
+	معلومات->write_blk64 =	test_io_cb_write_blk64;
 
-	data->outfile = NULL;
-	if ((value = ext2fs_safe_getenv("TEST_IO_LOGFILE")) != NULL)
-		data->outfile = fopen(value, "w");
-	if (!data->outfile)
-		data->outfile = stderr;
+	معلومات->outfile = عدم;
+	إذا ((ارزښت = ext2fs_خوندي_getenv("TEST_IO_LOGFILE")) != عدم)
+		معلومات->outfile = fopen(ارزښت, "w");
+	إذا (!معلومات->outfile)
+		معلومات->outfile = stderr;
 
-	data->flags = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_FLAGS")) != NULL)
-		data->flags = strtoul(value, NULL, 0);
+	معلومات->flags = 0;
+	إذا ((ارزښت = ext2fs_خوندي_getenv("TEST_IO_FLAGS")) != عدم)
+		معلومات->flags = strtoul(ارزښت, عدم, 0);
 
-	data->block = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_BLOCK")) != NULL)
-		data->block = strtoul(value, NULL, 0);
+	معلومات->بلاک = 0;
+	إذا ((ارزښت = ext2fs_خوندي_getenv("TEST_IO_BLOCK")) != عدم)
+		معلومات->بلاک = strtoul(ارزښت, عدم, 0);
 
-	data->read_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_READ_ABORT")) != NULL)
-		data->read_abort_count = strtoul(value, NULL, 0);
+	معلومات->read_abort_شمېر = 0;
+	إذا ((ارزښت = ext2fs_خوندي_getenv("TEST_IO_READ_ABORT")) != عدم)
+		معلومات->read_abort_شمېر = strtoul(ارزښت, عدم, 0);
 
-	data->write_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_WRITE_ABORT")) != NULL)
-		data->write_abort_count = strtoul(value, NULL, 0);
+	معلومات->write_abort_شمېر = 0;
+	إذا ((ارزښت = ext2fs_خوندي_getenv("TEST_IO_WRITE_ABORT")) != عدم)
+		معلومات->write_abort_شمېر = strtoul(ارزښت, عدم, 0);
 
-	if (data->real) {
-		io->align = data->real->align;
-		if (data->real->flags & CHANNEL_FLAGS_THREADS)
-			io->flags |= CHANNEL_FLAGS_THREADS;
+	إذا (معلومات->real) {
+		io->align = معلومات->real->align;
+		إذا (معلومات->real->flags & CHANNEL_FLAGS_تارونه)
+			io->flags |= CHANNEL_FLAGS_تارونه;
 	}
 
 	*channel = io;
-	return 0;
+	أرجع 0;
 
 cleanup:
-	if (io && io->name)
+	إذا (io && io->name)
 		ext2fs_free_mem(&io->name);
-	if (io)
+	إذا (io)
 		ext2fs_free_mem(&io);
-	if (data)
-		ext2fs_free_mem(&data);
-	return retval;
+	إذا (معلومات)
+		ext2fs_free_mem(&معلومات);
+	أرجع retval;
 }
 
-static errcode_t test_close(io_channel channel)
+ساكن errcode_t test_close(io_channel channel)
 {
-	struct test_private_data *data;
+	بنية test_شخصي_معلومات *معلومات;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	معلومات = (بنية test_شخصي_معلومات *) channel->شخصي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	إذا (--channel->refcount > 0)
+		أرجع 0;
 
-	if (data->real)
-		retval = io_channel_close(data->real);
+	إذا (معلومات->real)
+		retval = io_channel_close(معلومات->real);
 
-	if (data->outfile && data->outfile != stderr)
-		fclose(data->outfile);
+	إذا (معلومات->outfile && معلومات->outfile != stderr)
+		fclose(معلومات->outfile);
 
-	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	ext2fs_free_mem(&channel->شخصي_معلومات);
+	إذا (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t test_set_blksize(io_channel channel, int blksize)
+ساكن errcode_t test_سېټ_blksize(io_channel channel, صحيح blksize)
 {
-	struct test_private_data *data;
+	بنية test_شخصي_معلومات *معلومات;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	معلومات = (بنية test_شخصي_معلومات *) channel->شخصي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real) {
-		retval = io_channel_set_blksize(data->real, blksize);
-		channel->align = data->real->align;
+	إذا (معلومات->real) {
+		retval = io_channel_سېټ_blksize(معلومات->real, blksize);
+		channel->align = معلومات->real->align;
 	}
-	if (data->set_blksize)
-		data->set_blksize(blksize, retval);
-	if (data->flags & TEST_FLAG_SET_BLKSIZE)
-		fprintf(data->outfile,
+	إذا (معلومات->سېټ_blksize)
+		معلومات->سېټ_blksize(blksize, retval);
+	إذا (معلومات->flags & TEST_FLAG_سېټ_BLKSIZE)
+		fprintf(معلومات->outfile,
 			"Test_io: set_blksize(%d) returned %s\n",
-			blksize, retval ? error_message(retval) : "OK");
-	channel->block_size = blksize;
-	return retval;
+			blksize, retval ? error_پیغام(retval) : "OK");
+	channel->بلاک_اندازه = blksize;
+	أرجع retval;
 }
 
 
-static errcode_t test_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+ساكن errcode_t test_read_blk(io_channel channel, بینښه اوږد بلاک,
+			       صحيح شمېر, فراغ *buf)
 {
-	struct test_private_data *data;
+	بنية test_شخصي_معلومات *معلومات;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	معلومات = (بنية test_شخصي_معلومات *) channel->شخصي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_read_blk(data->real, block, count, buf);
-	if (data->read_blk)
-		data->read_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
-		fprintf(data->outfile,
+	إذا (معلومات->real)
+		retval = io_channel_read_blk(معلومات->real, بلاک, شمېر, buf);
+	إذا (معلومات->read_blk)
+		معلومات->read_blk(بلاک, شمېر, retval);
+	إذا (معلومات->flags & TEST_FLAG_READ)
+		fprintf(معلومات->outfile,
 			"Test_io: read_blk(%lu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
-			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
-			test_abort(channel, block);
+			بلاک, شمېر, retval ? error_پیغام(retval) : "OK");
+	إذا (معلومات->بلاک && معلومات->بلاک == بلاک) {
+		إذا (معلومات->flags & TEST_FLAG_DUMP)
+			test_dump_بلاک(channel, معلومات, بلاک, buf);
+		إذا (--معلومات->read_abort_شمېر == 0)
+			test_abort(channel, بلاک);
 	}
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t test_write_blk(io_channel channel, unsigned long block,
-			       int count, const void *buf)
+ساكن errcode_t test_write_blk(io_channel channel, بینښه اوږد بلاک,
+			       صحيح شمېر, ثابت فراغ *buf)
 {
-	struct test_private_data *data;
+	بنية test_شخصي_معلومات *معلومات;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	معلومات = (بنية test_شخصي_معلومات *) channel->شخصي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_write_blk(data->real, block, count, buf);
-	if (data->write_blk)
-		data->write_blk(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
-		fprintf(data->outfile,
+	إذا (معلومات->real)
+		retval = io_channel_write_blk(معلومات->real, بلاک, شمېر, buf);
+	إذا (معلومات->write_blk)
+		معلومات->write_blk(بلاک, شمېر, retval);
+	إذا (معلومات->flags & TEST_FLAG_WRITE)
+		fprintf(معلومات->outfile,
 			"Test_io: write_blk(%lu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
-			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
-			test_abort(channel, block);
+			بلاک, شمېر, retval ? error_پیغام(retval) : "OK");
+	إذا (معلومات->بلاک && معلومات->بلاک == بلاک) {
+		إذا (معلومات->flags & TEST_FLAG_DUMP)
+			test_dump_بلاک(channel, معلومات, بلاک, buf);
+		إذا (--معلومات->write_abort_شمېر == 0)
+			test_abort(channel, بلاک);
 	}
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t test_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+ساكن errcode_t test_read_blk64(io_channel channel, بینښه اوږد اوږد بلاک,
+			       صحيح شمېر, فراغ *buf)
 {
-	struct test_private_data *data;
+	بنية test_شخصي_معلومات *معلومات;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	معلومات = (بنية test_شخصي_معلومات *) channel->شخصي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_read_blk64(data->real, block, count, buf);
-	if (data->read_blk64)
-		data->read_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_READ)
-		fprintf(data->outfile,
+	إذا (معلومات->real)
+		retval = io_channel_read_blk64(معلومات->real, بلاک, شمېر, buf);
+	إذا (معلومات->read_blk64)
+		معلومات->read_blk64(بلاک, شمېر, retval);
+	إذا (معلومات->flags & TEST_FLAG_READ)
+		fprintf(معلومات->outfile,
 			"Test_io: read_blk64(%llu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
-			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
-			test_abort(channel, block);
+			بلاک, شمېر, retval ? error_پیغام(retval) : "OK");
+	إذا (معلومات->بلاک && معلومات->بلاک == بلاک) {
+		إذا (معلومات->flags & TEST_FLAG_DUMP)
+			test_dump_بلاک(channel, معلومات, بلاک, buf);
+		إذا (--معلومات->read_abort_شمېر == 0)
+			test_abort(channel, بلاک);
 	}
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t test_write_blk64(io_channel channel, unsigned long long block,
-			       int count, const void *buf)
+ساكن errcode_t test_write_blk64(io_channel channel, بینښه اوږد اوږد بلاک,
+			       صحيح شمېر, ثابت فراغ *buf)
 {
-	struct test_private_data *data;
+	بنية test_شخصي_معلومات *معلومات;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	معلومات = (بنية test_شخصي_معلومات *) channel->شخصي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_write_blk64(data->real, block, count, buf);
-	if (data->write_blk64)
-		data->write_blk64(block, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
-		fprintf(data->outfile,
+	إذا (معلومات->real)
+		retval = io_channel_write_blk64(معلومات->real, بلاک, شمېر, buf);
+	إذا (معلومات->write_blk64)
+		معلومات->write_blk64(بلاک, شمېر, retval);
+	إذا (معلومات->flags & TEST_FLAG_WRITE)
+		fprintf(معلومات->outfile,
 			"Test_io: write_blk64(%llu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	if (data->block && data->block == block) {
-		if (data->flags & TEST_FLAG_DUMP)
-			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
-			test_abort(channel, block);
+			بلاک, شمېر, retval ? error_پیغام(retval) : "OK");
+	إذا (معلومات->بلاک && معلومات->بلاک == بلاک) {
+		إذا (معلومات->flags & TEST_FLAG_DUMP)
+			test_dump_بلاک(channel, معلومات, بلاک, buf);
+		إذا (--معلومات->write_abort_شمېر == 0)
+			test_abort(channel, بلاک);
 	}
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t test_write_byte(io_channel channel, unsigned long offset,
-			       int count, const void *buf)
+ساكن errcode_t test_write_byte(io_channel channel, بینښه اوږد دننه_واټن,
+			       صحيح شمېر, ثابت فراغ *buf)
 {
-	struct test_private_data *data;
+	بنية test_شخصي_معلومات *معلومات;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	معلومات = (بنية test_شخصي_معلومات *) channel->شخصي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->write_byte)
-		retval = io_channel_write_byte(data->real, offset, count, buf);
-	if (data->write_byte)
-		data->write_byte(offset, count, retval);
-	if (data->flags & TEST_FLAG_WRITE)
-		fprintf(data->outfile,
+	إذا (معلومات->real && معلومات->real->manager->write_byte)
+		retval = io_channel_write_byte(معلومات->real, دننه_واټن, شمېر, buf);
+	إذا (معلومات->write_byte)
+		معلومات->write_byte(دننه_واټن, شمېر, retval);
+	إذا (معلومات->flags & TEST_FLAG_WRITE)
+		fprintf(معلومات->outfile,
 			"Test_io: write_byte(%lu, %d) returned %s\n",
-			offset, count, retval ? error_message(retval) : "OK");
-	return retval;
+			دننه_واټن, شمېر, retval ? error_پیغام(retval) : "OK");
+	أرجع retval;
 }
 
-static errcode_t test_set_option(io_channel channel, const char *option,
-				 const char *arg)
+ساكن errcode_t test_سېټ_option(io_channel channel, ثابت حرف *option,
+				 ثابت حرف *arg)
 {
-	struct test_private_data *data;
+	بنية test_شخصي_معلومات *معلومات;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	معلومات = (بنية test_شخصي_معلومات *) channel->شخصي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 
-	if (data->flags & TEST_FLAG_SET_OPTION)
-		fprintf(data->outfile, "Test_io: set_option(%s, %s) ",
+	إذا (معلومات->flags & TEST_FLAG_سېټ_OPTION)
+		fprintf(معلومات->outfile, "Test_io: set_option(%s, %s) ",
 			option, arg);
-	if (data->real && data->real->manager->set_option) {
-		retval = (data->real->manager->set_option)(data->real,
+	إذا (معلومات->real && معلومات->real->manager->سېټ_option) {
+		retval = (معلومات->real->manager->سېټ_option)(معلومات->real,
 							   option, arg);
-		if (data->flags & TEST_FLAG_SET_OPTION)
-			fprintf(data->outfile, "returned %s\n",
-				retval ? error_message(retval) : "OK");
-	} else {
-		if (data->flags & TEST_FLAG_SET_OPTION)
-			fprintf(data->outfile, "not implemented\n");
+		إذا (معلومات->flags & TEST_FLAG_سېټ_OPTION)
+			fprintf(معلومات->outfile, "returned %s\n",
+				retval ? error_پیغام(retval) : "OK");
+	} وإلا {
+		إذا (معلومات->flags & TEST_FLAG_سېټ_OPTION)
+			fprintf(معلومات->outfile, "not implemented\n");
 	}
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t test_get_stats(io_channel channel, io_stats *stats)
+ساكن errcode_t test_get_stats(io_channel channel, io_stats *stats)
 {
-	struct test_private_data *data;
+	بنية test_شخصي_معلومات *معلومات;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	معلومات = (بنية test_شخصي_معلومات *) channel->شخصي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real && data->real->manager->get_stats) {
-		retval = (data->real->manager->get_stats)(data->real, stats);
+	إذا (معلومات->real && معلومات->real->manager->get_stats) {
+		retval = (معلومات->real->manager->get_stats)(معلومات->real, stats);
 	}
-	return retval;
+	أرجع retval;
 }
 
-static errcode_t test_discard(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+ساكن errcode_t test_discard(io_channel channel, بینښه اوږد اوږد بلاک,
+			      بینښه اوږد اوږد شمېر)
 {
-	struct test_private_data *data;
+	بنية test_شخصي_معلومات *معلومات;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	معلومات = (بنية test_شخصي_معلومات *) channel->شخصي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_discard(data->real, block, count);
-	if (data->flags & TEST_FLAG_DISCARD)
-		fprintf(data->outfile,
+	إذا (معلومات->real)
+		retval = io_channel_discard(معلومات->real, بلاک, شمېر);
+	إذا (معلومات->flags & TEST_FLAG_DISCARD)
+		fprintf(معلومات->outfile,
 			"Test_io: discard(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			بلاک, شمېر, retval ? error_پیغام(retval) : "OK");
+	أرجع retval;
 }
 
-static errcode_t test_cache_readahead(io_channel channel,
-				      unsigned long long block,
-				      unsigned long long count)
+ساكن errcode_t test_cache_readahead(io_channel channel,
+				      بینښه اوږد اوږد بلاک,
+				      بینښه اوږد اوږد شمېر)
 {
-	struct test_private_data *data;
+	بنية test_شخصي_معلومات *معلومات;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	معلومات = (بنية test_شخصي_معلومات *) channel->شخصي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_cache_readahead(data->real, block, count);
-	if (data->flags & TEST_FLAG_READAHEAD)
-		fprintf(data->outfile,
+	إذا (معلومات->real)
+		retval = io_channel_cache_readahead(معلومات->real, بلاک, شمېر);
+	إذا (معلومات->flags & TEST_FLAG_READAHEAD)
+		fprintf(معلومات->outfile,
 			"Test_io: readahead(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			بلاک, شمېر, retval ? error_پیغام(retval) : "OK");
+	أرجع retval;
 }
 
-static errcode_t test_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+ساكن errcode_t test_zeroout(io_channel channel, بینښه اوږد اوږد بلاک,
+			      بینښه اوږد اوږد شمېر)
 {
-	struct test_private_data *data;
+	بنية test_شخصي_معلومات *معلومات;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct test_private_data *) channel->private_data;
-	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
+	معلومات = (بنية test_شخصي_معلومات *) channel->شخصي_معلومات;
+	EXT2_CHECK_MAGIC(معلومات, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
-	if (data->real)
-		retval = io_channel_zeroout(data->real, block, count);
-	if (data->flags & TEST_FLAG_ZEROOUT)
-		fprintf(data->outfile,
+	إذا (معلومات->real)
+		retval = io_channel_zeroout(معلومات->real, بلاک, شمېر);
+	إذا (معلومات->flags & TEST_FLAG_ZEROOUT)
+		fprintf(معلومات->outfile,
 			"Test_io: zeroout(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
-	return retval;
+			بلاک, شمېر, retval ? error_پیغام(retval) : "OK");
+	أرجع retval;
 }
 
-static struct struct_io_manager struct_test_manager = {
+ساكن بنية struct_io_manager struct_test_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Test I/O Manager",
 	.open		= test_open,
 	.close		= test_close,
-	.set_blksize	= test_set_blksize,
+	.سېټ_blksize	= test_سېټ_blksize,
 	.read_blk	= test_read_blk,
 	.write_blk	= test_write_blk,
 	.flush		= test_flush,
 	.write_byte	= test_write_byte,
-	.set_option	= test_set_option,
+	.سېټ_option	= test_سېټ_option,
 	.get_stats	= test_get_stats,
 	.read_blk64	= test_read_blk64,
 	.write_blk64	= test_write_blk64,
