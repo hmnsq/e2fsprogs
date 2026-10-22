@@ -10,14 +10,14 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ "config.h"
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଯଦି HAVE_SYS_TYPES_H
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ଅନ୍ତର୍ଭାଵ "ext2_fs.h"
+#ଅନ୍ତର୍ଭାଵ "ext2fs.h"
 
 /*
  * C language bitmap functions written by Theodore Ts'o, 9/26/92.
@@ -25,124 +25,124 @@
  * systems, as well as non-32 bit systems.
  */
 
-int ext2fs_set_bit(unsigned int nr,void * addr)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_set_bit(unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା nr,ଶୂନ୍ୟ * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା		mask, retval;
+	unsigned ଅକ୍ଷର	*ADDR = (unsigned ଅକ୍ଷର *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR |= mask;
-	return retval;
+	ଫେରନ୍ତୁ retval;
 }
 
-int ext2fs_clear_bit(unsigned int nr, void * addr)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_clear_bit(unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା nr, ଶୂନ୍ୟ * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା		mask, retval;
+	unsigned ଅକ୍ଷର	*ADDR = (unsigned ଅକ୍ଷର *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR &= ~mask;
-	return retval;
+	ଫେରନ୍ତୁ retval;
 }
 
-int ext2fs_test_bit(unsigned int nr, const void * addr)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_test_bit(unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା nr, ଅଚଳ ଶୂନ୍ୟ * addr)
 {
-	int			mask;
-	const unsigned char	*ADDR = (const unsigned char *) addr;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା			mask;
+	ଅଚଳ unsigned ଅକ୍ଷର	*ADDR = (ଅଚଳ unsigned ଅକ୍ଷର *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
-	return (mask & *ADDR);
+	ଫେରନ୍ତୁ (mask & *ADDR);
 }
 
-void ext2fs_warn_bitmap(errcode_t errcode, unsigned long arg,
-			const char *description)
+ଶୂନ୍ୟ ext2fs_warn_bitmap(errcode_t errcode, unsigned long arg,
+			ଅଚଳ ଅକ୍ଷର *description)
 {
 #ifndef OMIT_COM_ERR
-	if (description)
+	ଯଦି (description)
 		com_err(0, errcode, "#%lu for %s", arg, description);
-	else
+	ଅନ୍ୟଥା
 		com_err(0, errcode, "#%lu", arg);
 #endif
 }
 
 /* Bitmap functions that take a 64-bit offset */
 
-int ext2fs_set_bit64(__u64 nr, void * addr)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_set_bit64(__u64 nr, ଶୂନ୍ୟ * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା		mask, retval;
+	unsigned ଅକ୍ଷର	*ADDR = (unsigned ଅକ୍ଷର *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR |= mask;
-	return retval;
+	ଫେରନ୍ତୁ retval;
 }
 
-int ext2fs_clear_bit64(__u64 nr, void * addr)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_clear_bit64(__u64 nr, ଶୂନ୍ୟ * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା		mask, retval;
+	unsigned ଅକ୍ଷର	*ADDR = (unsigned ଅକ୍ଷର *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR &= ~mask;
-	return retval;
+	ଫେରନ୍ତୁ retval;
 }
 
-int ext2fs_test_bit64(__u64 nr, const void * addr)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_test_bit64(__u64 nr, ଅଚଳ ଶୂନ୍ୟ * addr)
 {
-	int			mask;
-	const unsigned char	*ADDR = (const unsigned char *) addr;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା			mask;
+	ଅଚଳ unsigned ଅକ୍ଷର	*ADDR = (ଅଚଳ unsigned ଅକ୍ଷର *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
-	return (mask & *ADDR);
+	ଫେରନ୍ତୁ (mask & *ADDR);
 }
 
-static unsigned int popcount8(unsigned int w)
+ସ୍ଥିର unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା popcount8(unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା w)
 {
-	unsigned int res = w - ((w >> 1) & 0x55);
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା res = w - ((w >> 1) & 0x55);
 	res = (res & 0x33) + ((res >> 2) & 0x33);
-	return (res + (res >> 4)) & 0x0F;
+	ଫେରନ୍ତୁ (res + (res >> 4)) & 0x0F;
 }
 
-static unsigned int popcount32(unsigned int w)
+ସ୍ଥିର unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା popcount32(unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା w)
 {
-	unsigned int res = w - ((w >> 1) & 0x55555555);
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା res = w - ((w >> 1) & 0x55555555);
 	res = (res & 0x33333333) + ((res >> 2) & 0x33333333);
 	res = (res + (res >> 4)) & 0x0F0F0F0F;
 	res = res + (res >> 8);
-	return (res + (res >> 16)) & 0x000000FF;
+	ଫେରନ୍ତୁ (res + (res >> 16)) & 0x000000FF;
 }
 
-unsigned int ext2fs_bitcount(const void *addr, unsigned int nbytes)
+unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_bitcount(ଅଚଳ ଶୂନ୍ୟ *addr, unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା nbytes)
 {
-	const unsigned char *cp = addr;
-	const __u32 *p;
-	unsigned int res = 0;
+	ଅଚଳ unsigned ଅକ୍ଷର *cp = addr;
+	ଅଚଳ __u32 *p;
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା res = 0;
 
-	while (((((uintptr_t) cp) & 3) != 0) && (nbytes > 0)) {
+	ଯେତେବେଳେ (((((uintptr_t) cp) & 3) != 0) && (nbytes > 0)) {
 		res += popcount8(*cp++);
 		nbytes--;
 	}
-	p = (const __u32 *) cp;
+	p = (ଅଚଳ __u32 *) cp;
 
-	while (nbytes > 4) {
+	ଯେତେବେଳେ (nbytes > 4) {
 		res += popcount32(*p++);
 		nbytes -= 4;
 	}
-	cp = (const unsigned char *) p;
+	cp = (ଅଚଳ unsigned ଅକ୍ଷର *) p;
 
-	while (nbytes > 0) {
+	ଯେତେବେଳେ (nbytes > 0) {
 		res += popcount8(*cp++);
 		nbytes--;
 	}
-	return res;
+	ଫେରନ୍ତୁ res;
 }

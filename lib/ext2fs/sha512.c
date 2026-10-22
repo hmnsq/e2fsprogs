@@ -11,15 +11,15 @@
  */
 
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ "config.h"
+#ଯଦି HAVE_SYS_TYPES_H
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 #endif
-#include "ext2fs.h"
+#ଅନ୍ତର୍ଭାଵ "ext2fs.h"
 
 /* the K array */
 #define CONST64(n) n
-static const __u64 K[80] = {
+ସ୍ଥିର ଅଚଳ __u64 K[80] = {
 	CONST64(0x428a2f98d728ae22), CONST64(0x7137449123ef65cd),
 	CONST64(0xb5c0fbcfec4d3b2f), CONST64(0xe9b5dba58189dbbc),
 	CONST64(0x3956c25bf348b538), CONST64(0x59f111f1b605d019),
@@ -75,18 +75,18 @@ static const __u64 K[80] = {
 		d += t0;\
 		h  = t0 + t1;
 #define STORE64H(x, y) \
-	do { \
-		(y)[0] = (unsigned char)(((x)>>56)&255);\
-		(y)[1] = (unsigned char)(((x)>>48)&255);\
-		(y)[2] = (unsigned char)(((x)>>40)&255);\
-		(y)[3] = (unsigned char)(((x)>>32)&255);\
-		(y)[4] = (unsigned char)(((x)>>24)&255);\
-		(y)[5] = (unsigned char)(((x)>>16)&255);\
-		(y)[6] = (unsigned char)(((x)>>8)&255);\
-		(y)[7] = (unsigned char)((x)&255); } while(0)
+	କର { \
+		(y)[0] = (unsigned ଅକ୍ଷର)(((x)>>56)&255);\
+		(y)[1] = (unsigned ଅକ୍ଷର)(((x)>>48)&255);\
+		(y)[2] = (unsigned ଅକ୍ଷର)(((x)>>40)&255);\
+		(y)[3] = (unsigned ଅକ୍ଷର)(((x)>>32)&255);\
+		(y)[4] = (unsigned ଅକ୍ଷର)(((x)>>24)&255);\
+		(y)[5] = (unsigned ଅକ୍ଷର)(((x)>>16)&255);\
+		(y)[6] = (unsigned ଅକ୍ଷର)(((x)>>8)&255);\
+		(y)[7] = (unsigned ଅକ୍ଷର)((x)&255); } ଯେତେବେଳେ(0)
 
 #define LOAD64H(x, y)\
-	do {x = \
+	କର {x = \
 		(((__u64)((y)[0] & 255)) << 56) |\
 		(((__u64)((y)[1] & 255)) << 48) |\
 		(((__u64)((y)[2] & 255)) << 40) |\
@@ -95,45 +95,45 @@ static const __u64 K[80] = {
 		(((__u64)((y)[5] & 255)) << 16) |\
 		(((__u64)((y)[6] & 255)) << 8) |\
 		(((__u64)((y)[7] & 255)));\
-	} while(0)
+	} ଯେତେବେଳେ(0)
 
 #define ROR64c(x, y) \
     ( ((((x)&CONST64(0xFFFFFFFFFFFFFFFF))>>((__u64)(y)&CONST64(63))) | \
       ((x)<<((__u64)(64-((y)&CONST64(63)))))) & CONST64(0xFFFFFFFFFFFFFFFF))
 
-struct sha512_state {
+ସଂରଚନା sha512_state {
 	__u64  length, state[8];
 	unsigned long curlen;
-	unsigned char buf[128];
+	unsigned ଅକ୍ଷର buf[128];
 };
 
 /* This is a highly simplified version from libtomcrypt */
-struct hash_state {
-	struct sha512_state sha512;
+ସଂରଚନା hash_state {
+	ସଂରଚନା sha512_state sha512;
 };
 
-static void sha512_compress(struct hash_state * md, const unsigned char *buf)
+ସ୍ଥିର ଶୂନ୍ୟ sha512_compress(ସଂରଚନା hash_state * md, ଅଚଳ unsigned ଅକ୍ଷର *buf)
 {
 	__u64 S[8], W[80], t0, t1;
-	int i;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
 
 	/* copy state into S */
-	for (i = 0; i < 8; i++) {
+	ପାଇଁ (i = 0; i < 8; i++) {
 		S[i] = md->sha512.state[i];
 	}
 
 	/* copy the state into 1024-bits into W[0..15] */
-	for (i = 0; i < 16; i++) {
+	ପାଇଁ (i = 0; i < 16; i++) {
 		LOAD64H(W[i], buf + (8*i));
 	}
 
 	/* fill W[16..79] */
-	for (i = 16; i < 80; i++) {
+	ପାଇଁ (i = 16; i < 80; i++) {
 		W[i] = Gamma1(W[i - 2]) + W[i - 7] +
 			Gamma0(W[i - 15]) + W[i - 16];
 	}
 
-	for (i = 0; i < 80; i += 8) {
+	ପାଇଁ (i = 0; i < 80; i += 8) {
 		RND(S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7],i+0);
 		RND(S[7],S[0],S[1],S[2],S[3],S[4],S[5],S[6],i+1);
 		RND(S[6],S[7],S[0],S[1],S[2],S[3],S[4],S[5],i+2);
@@ -145,12 +145,12 @@ static void sha512_compress(struct hash_state * md, const unsigned char *buf)
 	}
 
 	 /* feedback */
-	for (i = 0; i < 8; i++) {
+	ପାଇଁ (i = 0; i < 8; i++) {
 		md->sha512.state[i] = md->sha512.state[i] + S[i];
 	}
 }
 
-static void sha512_init(struct hash_state * md)
+ସ୍ଥିର ଶୂନ୍ୟ sha512_init(ସଂରଚନା hash_state * md)
 {
 	md->sha512.curlen = 0;
 	md->sha512.length = 0;
@@ -164,22 +164,22 @@ static void sha512_init(struct hash_state * md)
 	md->sha512.state[7] = CONST64(0x5be0cd19137e2179);
 }
 
-static void sha512_done(struct hash_state * md, unsigned char *out)
+ସ୍ଥିର ଶୂନ୍ୟ sha512_done(ସଂରଚନା hash_state * md, unsigned ଅକ୍ଷର *out)
 {
-	int i;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
 
 	/* increase the length of the message */
 	md->sha512.length += md->sha512.curlen * CONST64(8);
 
 	/* append the '1' bit */
-	md->sha512.buf[md->sha512.curlen++] = (unsigned char)0x80;
+	md->sha512.buf[md->sha512.curlen++] = (unsigned ଅକ୍ଷର)0x80;
 
 	/* if the length is currently above 112 bytes we append zeros then
 	 * compress. Then we can fall back to padding zeros and length encoding
 	 * like normal. */
-	if (md->sha512.curlen > 112) {
-		while (md->sha512.curlen < 128) {
-			md->sha512.buf[md->sha512.curlen++] = (unsigned char)0;
+	ଯଦି (md->sha512.curlen > 112) {
+		ଯେତେବେଳେ (md->sha512.curlen < 128) {
+			md->sha512.buf[md->sha512.curlen++] = (unsigned ଅକ୍ଷର)0;
 		}
 		sha512_compress(md, md->sha512.buf);
 		md->sha512.curlen = 0;
@@ -187,8 +187,8 @@ static void sha512_done(struct hash_state * md, unsigned char *out)
 
 	/* pad up to 120 bytes of zeroes note: that from 112 to 120 is the 64 MSB
 	 * of the length. We assume that you won't hash > 2^64 bits of data. */
-	while (md->sha512.curlen < 120) {
-		md->sha512.buf[md->sha512.curlen++] = (unsigned char)0;
+	ଯେତେବେଳେ (md->sha512.curlen < 120) {
+		md->sha512.buf[md->sha512.curlen++] = (unsigned ଅକ୍ଷର)0;
 	}
 
 	/* store length */
@@ -196,33 +196,33 @@ static void sha512_done(struct hash_state * md, unsigned char *out)
 	sha512_compress(md, md->sha512.buf);
 
 	/* copy output */
-	for (i = 0; i < 8; i++) {
+	ପାଇଁ (i = 0; i < 8; i++) {
 		STORE64H(md->sha512.state[i], out+(8 * i));
 	}
 }
 
 #define MIN(x, y) ( ((x)<(y))?(x):(y) )
 #define SHA512_BLOCKSIZE 128
-static void sha512_process(struct hash_state * md,
-			   const unsigned char *in,
+ସ୍ଥିର ଶୂନ୍ୟ sha512_process(ସଂରଚନା hash_state * md,
+			   ଅଚଳ unsigned ଅକ୍ଷର *in,
 			   unsigned long inlen)
 {
 	unsigned long n;
 
-	while (inlen > 0) {
-		if (md->sha512.curlen == 0 && inlen >= SHA512_BLOCKSIZE) {
+	ଯେତେବେଳେ (inlen > 0) {
+		ଯଦି (md->sha512.curlen == 0 && inlen >= SHA512_BLOCKSIZE) {
 			sha512_compress(md, in);
 			md->sha512.length += SHA512_BLOCKSIZE * 8;
 			in += SHA512_BLOCKSIZE;
 			inlen -= SHA512_BLOCKSIZE;
-		} else {
+		} ଅନ୍ୟଥା {
 			n = MIN(inlen, (SHA512_BLOCKSIZE - md->sha512.curlen));
 			memcpy(md->sha512.buf + md->sha512.curlen,
 			       in, (size_t)n);
 			md->sha512.curlen += n;
 			in += n;
 			inlen -= n;
-			if (md->sha512.curlen == SHA512_BLOCKSIZE) {
+			ଯଦି (md->sha512.curlen == SHA512_BLOCKSIZE) {
 				sha512_compress(md, md->sha512.buf);
 				md->sha512.length += SHA512_BLOCKSIZE * 8;
 				md->sha512.curlen = 0;
@@ -231,10 +231,10 @@ static void sha512_process(struct hash_state * md,
 	}
 }
 
-void ext2fs_sha512(const unsigned char *in, unsigned long in_size,
-		   unsigned char out[EXT2FS_SHA512_LENGTH])
+ଶୂନ୍ୟ ext2fs_sha512(ଅଚଳ unsigned ଅକ୍ଷର *in, unsigned long in_size,
+		   unsigned ଅକ୍ଷର out[EXT2FS_SHA512_LENGTH])
 {
-	struct hash_state md;
+	ସଂରଚନା hash_state md;
 
 	sha512_init(&md);
 	sha512_process(&md, in, in_size);
@@ -242,9 +242,9 @@ void ext2fs_sha512(const unsigned char *in, unsigned long in_size,
 }
 
 #ifdef UNITTEST
-static const struct {
-	char *msg;
-	unsigned char hash[64];
+ସ୍ଥିର ଅଚଳ ସଂରଚନା {
+	ଅକ୍ଷର *ସନ୍ଦେଶ;
+	unsigned ଅକ୍ଷର hash[64];
 } tests[] = {
 	{ "",
 	  { 0xcf, 0x83, 0xe1, 0x35, 0x7e, 0xef, 0xb8, 0xbd,
@@ -278,25 +278,25 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ମୁଖ୍ୟ(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv)
 {
-	int i;
-	int errors = 0;
-	unsigned char tmp[64];
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା errors = 0;
+	unsigned ଅକ୍ଷର tmp[64];
 
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
-		unsigned char *msg = (unsigned char *) tests[i].msg;
-		int len = strlen(tests[i].msg);
+	ପାଇଁ (i = 0; i < (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)(ଆକାର(tests) / ଆକାର(tests[0])); i++) {
+		unsigned ଅକ୍ଷର *ସନ୍ଦେଶ = (unsigned ଅକ୍ଷର *) tests[i].ସନ୍ଦେଶ;
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା len = strlen(tests[i].ସନ୍ଦେଶ);
 
-		ext2fs_sha512(msg, len, tmp);
+		ext2fs_sha512(ସନ୍ଦେଶ, len, tmp);
 		printf("SHA512 test message %d: ", i);
-		if (memcmp(tmp, tests[i].hash, 64) != 0) {
+		ଯଦି (memcmp(tmp, tests[i].hash, 64) != 0) {
 			printf("FAILED\n");
 			errors++;
-		} else
+		} ଅନ୍ୟଥା
 			printf("OK\n");
 	}
-	return errors;
+	ଫେରନ୍ତୁ errors;
 }
 
 #endif /* UNITTEST */

@@ -9,22 +9,22 @@
  * %End-Header%
  */
 
-struct ext2_bmap_statistics {
-	int		type;
-	struct timeval	created;
+ସଂରଚନା ext2_bmap_statistics {
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା		type;
+	ସଂରଚନା timeval	created;
 
 #ifdef ENABLE_BMAP_STATS_OPS
-	unsigned long	copy_count;
-	unsigned long	resize_count;
-	unsigned long	mark_count;
-	unsigned long	unmark_count;
-	unsigned long	test_count;
-	unsigned long	mark_ext_count;
-	unsigned long	unmark_ext_count;
-	unsigned long	test_ext_count;
-	unsigned long	set_range_count;
-	unsigned long	get_range_count;
-	unsigned long	clear_count;
+	unsigned long	copy_ଗଣନା;
+	unsigned long	resize_ଗଣନା;
+	unsigned long	mark_ଗଣନା;
+	unsigned long	unmark_ଗଣନା;
+	unsigned long	test_ଗଣନା;
+	unsigned long	mark_ext_ଗଣନା;
+	unsigned long	unmark_ext_ଗଣନା;
+	unsigned long	test_ext_ଗଣନା;
+	unsigned long	set_range_ଗଣନା;
+	unsigned long	get_range_ଗଣନା;
+	unsigned long	clear_ଗଣନା;
 
 	blk64_t		last_marked;
 	blk64_t		last_tested;
@@ -37,23 +37,23 @@ struct ext2_bmap_statistics {
 };
 
 
-struct ext2fs_struct_generic_bitmap_64 {
+ସଂରଚନା ext2fs_struct_generic_bitmap_64 {
 	errcode_t		magic;
 	ext2_filsys 		fs;
-	struct ext2_bitmap_ops	*bitmap_ops;
-	int			flags;
+	ସଂରଚନା ext2_bitmap_ops	*bitmap_ops;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା			flags;
 	__u64			start, end;
 	__u64			real_end;
-	int			cluster_bits;
-	char			*description;
-	void			*private;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା			cluster_bits;
+	ଅକ୍ଷର			*description;
+	ଶୂନ୍ୟ			*ବ୍ୟକ୍ତିଗତ;
 	errcode_t		base_error_code;
 #ifdef ENABLE_BMAP_STATS
-	struct ext2_bmap_statistics	stats;
+	ସଂରଚନା ext2_bmap_statistics	stats;
 #endif
 };
 
-typedef struct ext2fs_struct_generic_bitmap_64 *ext2fs_generic_bitmap_64;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା ext2fs_struct_generic_bitmap_64 *ext2fs_generic_bitmap_64;
 
 #define EXT2FS_IS_32_BITMAP(bmap) \
 	(((bmap)->magic == EXT2_ET_MAGIC_GENERIC_BITMAP) || \
@@ -65,32 +65,32 @@ typedef struct ext2fs_struct_generic_bitmap_64 *ext2fs_generic_bitmap_64;
 	 ((bmap)->magic == EXT2_ET_MAGIC_BLOCK_BITMAP64) || \
 	 ((bmap)->magic == EXT2_ET_MAGIC_INODE_BITMAP64))
 
-struct ext2_bitmap_ops {
-	int	type;
+ସଂରଚନା ext2_bitmap_ops {
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	type;
 	/* Generic bmap operators */
 	errcode_t (*new_bmap)(ext2_filsys fs, ext2fs_generic_bitmap_64 bmap);
-	void	(*free_bmap)(ext2fs_generic_bitmap_64 bitmap);
+	ଶୂନ୍ୟ	(*free_bmap)(ext2fs_generic_bitmap_64 bitmap);
 	errcode_t (*copy_bmap)(ext2fs_generic_bitmap_64 src,
 			     ext2fs_generic_bitmap_64 dest);
 	errcode_t (*resize_bmap)(ext2fs_generic_bitmap_64 bitmap,
 			       __u64 new_end,
 			       __u64 new_real_end);
 	/* bit set/test operators */
-	int	(*mark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
-	int	(*unmark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
-	int	(*test_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
-	void	(*mark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				    unsigned int num);
-	void	(*unmark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				      unsigned int num);
-	int	(*test_clear_bmap_extent)(ext2fs_generic_bitmap_64 bitmap,
-					  __u64 arg, unsigned int num);
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	(*mark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	(*unmark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	(*test_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
+	ଶୂନ୍ୟ	(*mark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				    unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଅଙ୍କ);
+	ଶୂନ୍ୟ	(*unmark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
+				      unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଅଙ୍କ);
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	(*test_clear_bmap_extent)(ext2fs_generic_bitmap_64 bitmap,
+					  __u64 arg, unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଅଙ୍କ);
 	errcode_t (*set_bmap_range)(ext2fs_generic_bitmap_64 bitmap,
-				    __u64 start, size_t num, void *in);
+				    __u64 start, size_t ଅଙ୍କ, ଶୂନ୍ୟ *in);
 	errcode_t (*get_bmap_range)(ext2fs_generic_bitmap_64 bitmap,
-				    __u64 start, size_t num, void *out);
-	void (*clear_bmap)(ext2fs_generic_bitmap_64 bitmap);
-	void (*print_stats)(ext2fs_generic_bitmap_64);
+				    __u64 start, size_t ଅଙ୍କ, ଶୂନ୍ୟ *out);
+	ଶୂନ୍ୟ (*clear_bmap)(ext2fs_generic_bitmap_64 bitmap);
+	ଶୂନ୍ୟ (*print_stats)(ext2fs_generic_bitmap_64);
 
 	/* Find the first zero bit between start and end, inclusive.
 	 * May be NULL, in which case a generic function is used. */
@@ -102,5 +102,5 @@ struct ext2_bitmap_ops {
 				    __u64 start, __u64 end, __u64 *out);
 };
 
-extern struct ext2_bitmap_ops ext2fs_blkmap64_bitarray;
-extern struct ext2_bitmap_ops ext2fs_blkmap64_rbtree;
+ବାହ୍ୟ ସଂରଚନା ext2_bitmap_ops ext2fs_blkmap64_bitarray;
+ବାହ୍ୟ ସଂରଚନା ext2_bitmap_ops ext2fs_blkmap64_rbtree;

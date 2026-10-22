@@ -1,109 +1,109 @@
-#include "hashmap.h"
-#include <string.h>
+#ଅନ୍ତର୍ଭାଵ "hashmap.h"
+#ଅନ୍ତର୍ଭାଵ <string.h>
 
-struct ext2fs_hashmap {
+ସଂରଚନା ext2fs_hashmap {
 	uint32_t size;
-	uint32_t(*hash)(const void *key, size_t len);
-	void(*free)(void*);
-	struct ext2fs_hashmap_entry *first;
-	struct ext2fs_hashmap_entry *last;
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic push
+	uint32_t(*hash)(ଅଚଳ ଶୂନ୍ୟ *ଚାବି, size_t len);
+	ଶୂନ୍ୟ(*ମୁକ୍ତ)(ଶୂନ୍ୟ*);
+	ସଂରଚନା ext2fs_hashmap_entry *first;
+	ସଂରଚନା ext2fs_hashmap_entry *last;
+#ଯଦି __GNUC_PREREQ (4, 8)
+#pragma GCC diagnostic ଠେଲ
 #pragma GCC diagnostic ignored "-Wpedantic"
 #endif
-	struct ext2fs_hashmap_entry *entries[0];
-#if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic pop
+	ସଂରଚନା ext2fs_hashmap_entry *entries[0];
+#ଯଦି __GNUC_PREREQ (4, 8)
+#pragma GCC diagnostic କାଢ଼
 #endif
 };
 
-uint32_t ext2fs_djb2_hash(const void *str, size_t size)
+uint32_t ext2fs_djb2_hash(ଅଚଳ ଶୂନ୍ୟ *str, size_t size)
 {
-	int c;
-	const char *s = str;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା c;
+	ଅଚଳ ଅକ୍ଷର *s = str;
 	uint32_t hash = 5381;
 
-	while (size-- > 0) {
+	ଯେତେବେଳେ (size-- > 0) {
 		c = *s++;
 		hash = ((hash << 5) + hash) + c;
 	}
-	return hash;
+	ଫେରନ୍ତୁ hash;
 }
 
-struct ext2fs_hashmap *ext2fs_hashmap_create(
-				uint32_t(*hash_fct)(const void*, size_t),
-				void(*free_fct)(void*), size_t size)
+ସଂରଚନା ext2fs_hashmap *ext2fs_hashmap_create(
+				uint32_t(*hash_fct)(ଅଚଳ ଶୂନ୍ୟ*, size_t),
+				ଶୂନ୍ୟ(*free_fct)(ଶୂନ୍ୟ*), size_t size)
 {
-	struct ext2fs_hashmap *h = calloc(1, sizeof(struct ext2fs_hashmap) +
-				sizeof(struct ext2fs_hashmap_entry) * size);
-	if (!h)
-		return NULL;
+	ସଂରଚନା ext2fs_hashmap *h = calloc(1, ଆକାର(ସଂରଚନା ext2fs_hashmap) +
+				ଆକାର(ସଂରଚନା ext2fs_hashmap_entry) * size);
+	ଯଦି (!h)
+		ଫେରନ୍ତୁ ଖାଲି;
 
 	h->size = size;
-	h->free = free_fct;
+	h->ମୁକ୍ତ = free_fct;
 	h->hash = hash_fct;
-	h->first = h->last = NULL;
-	return h;
+	h->first = h->last = ଖାଲି;
+	ଫେରନ୍ତୁ h;
 }
 
-int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
-		       void *data, const void *key, size_t key_len)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_hashmap_add(ସଂରଚନା ext2fs_hashmap *h,
+		       ଶୂନ୍ୟ *data, ଅଚଳ ଶୂନ୍ୟ *ଚାବି, size_t ଚାବି_len)
 {
-	uint32_t hash = h->hash(key, key_len) % h->size;
-	struct ext2fs_hashmap_entry *e = malloc(sizeof(*e));
+	uint32_t hash = h->hash(ଚାବି, ଚାବି_len) % h->size;
+	ସଂରଚନା ext2fs_hashmap_entry *e = malloc(ଆକାର(*e));
 
-	if (!e)
-		return -1;
+	ଯଦି (!e)
+		ଫେରନ୍ତୁ -1;
 
 	e->data = data;
-	e->key = key;
-	e->key_len = key_len;
+	e->ଚାବି = ଚାବି;
+	e->ଚାବି_len = ଚାବି_len;
 	e->next = h->entries[hash];
 	h->entries[hash] = e;
 
-	e->list_prev = NULL;
+	e->list_prev = ଖାଲି;
 	e->list_next = h->first;
-	if (h->first)
+	ଯଦି (h->first)
 		h->first->list_prev = e;
 	h->first = e;
-	if (!h->last)
+	ଯଦି (!h->last)
 		h->last = e;
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *key,
-			    size_t key_len)
+ଶୂନ୍ୟ *ext2fs_hashmap_lookup(ସଂରଚନା ext2fs_hashmap *h, ଅଚଳ ଶୂନ୍ୟ *ଚାବି,
+			    size_t ଚାବି_len)
 {
-	struct ext2fs_hashmap_entry *iter;
-	uint32_t hash = h->hash(key, key_len) % h->size;
+	ସଂରଚନା ext2fs_hashmap_entry *iter;
+	uint32_t hash = h->hash(ଚାବି, ଚାବି_len) % h->size;
 
-	for (iter = h->entries[hash]; iter; iter = iter->next)
-		if (iter->key_len == key_len && !memcmp(iter->key, key, key_len))
-			return iter->data;
-	return NULL;
+	ପାଇଁ (iter = h->entries[hash]; iter; iter = iter->next)
+		ଯଦି (iter->ଚାବି_len == ଚାବି_len && !memcmp(iter->ଚାବି, ଚାବି, ଚାବି_len))
+			ଫେରନ୍ତୁ iter->data;
+	ଫେରନ୍ତୁ ଖାଲି;
 }
 
-void *ext2fs_hashmap_iter_in_order(struct ext2fs_hashmap *h,
-				   struct ext2fs_hashmap_entry **it)
+ଶୂନ୍ୟ *ext2fs_hashmap_iter_in_order(ସଂରଚନା ext2fs_hashmap *h,
+				   ସଂରଚନା ext2fs_hashmap_entry **it)
 {
 	*it = *it ? (*it)->list_next : h->first;
-	return *it ? (*it)->data : NULL;
+	ଫେରନ୍ତୁ *it ? (*it)->data : ଖାଲି;
 }
 
-void ext2fs_hashmap_free(struct ext2fs_hashmap *h)
+ଶୂନ୍ୟ ext2fs_hashmap_free(ସଂରଚନା ext2fs_hashmap *h)
 {
 	size_t	i;
 
-	for (i = 0; i < h->size; ++i) {
-		struct ext2fs_hashmap_entry *it = h->entries[i];
-		while (it) {
-			struct ext2fs_hashmap_entry *tmp = it->next;
-			if (h->free)
-				h->free(it->data);
-			free(it);
+	ପାଇଁ (i = 0; i < h->size; ++i) {
+		ସଂରଚନା ext2fs_hashmap_entry *it = h->entries[i];
+		ଯେତେବେଳେ (it) {
+			ସଂରଚନା ext2fs_hashmap_entry *tmp = it->next;
+			ଯଦି (h->ମୁକ୍ତ)
+				h->ମୁକ୍ତ(it->data);
+			ମୁକ୍ତ(it);
 			it = tmp;
 		}
 	}
-	free(h);
+	ମୁକ୍ତ(h);
 }

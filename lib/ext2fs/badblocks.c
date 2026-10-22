@@ -9,68 +9,68 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ଅନ୍ତର୍ଭାଵ "config.h"
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଯଦି HAVE_UNISTD_H
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#ଅନ୍ତର୍ଭାଵ <fcntl.h>
+#ଅନ୍ତର୍ଭାଵ <time.h>
+#ଯଦି HAVE_SYS_STAT_H
+#ଅନ୍ତର୍ଭାଵ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#ଯଦି HAVE_SYS_TYPES_H
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ଅନ୍ତର୍ଭାଵ "ext2_fs.h"
+#ଅନ୍ତର୍ଭାଵ "ext2fsP.h"
 
 /*
  * Helper function for making a badblocks list
  */
-static errcode_t make_u32_list(int size, int num, __u32 *list,
+ସ୍ଥିର errcode_t make_u32_list(ପୂର୍ଣ୍ଣସଂଖ୍ୟା size, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଅଙ୍କ, __u32 *list,
 			       ext2_u32_list *ret)
 {
 	ext2_u32_list	bb;
 	errcode_t	retval;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_struct_u32_list), &bb);
-	if (retval)
-		return retval;
-	memset(bb, 0, sizeof(struct ext2_struct_u32_list));
+	retval = ext2fs_get_mem(ଆକାର(ସଂରଚନା ext2_struct_u32_list), &bb);
+	ଯଦି (retval)
+		ଫେରନ୍ତୁ retval;
+	memset(bb, 0, ଆକାର(ସଂରଚନା ext2_struct_u32_list));
 	bb->magic = EXT2_ET_MAGIC_BADBLOCKS_LIST;
 	bb->size = size ? size : 10;
-	bb->num = num;
-	retval = ext2fs_get_array(bb->size, sizeof(blk_t), &bb->list);
-	if (retval) {
+	bb->ଅଙ୍କ = ଅଙ୍କ;
+	retval = ext2fs_get_array(bb->size, ଆକାର(blk_t), &bb->list);
+	ଯଦି (retval) {
 		ext2fs_free_mem(&bb);
-		return retval;
+		ଫେରନ୍ତୁ retval;
 	}
-	if (list)
-		memcpy(bb->list, list, bb->size * sizeof(blk_t));
-	else
-		memset(bb->list, 0, bb->size * sizeof(blk_t));
+	ଯଦି (list)
+		memcpy(bb->list, list, bb->size * ଆକାର(blk_t));
+	ଅନ୍ୟଥା
+		memset(bb->list, 0, bb->size * ଆକାର(blk_t));
 	*ret = bb;
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
 
 /*
  * This procedure creates an empty u32 list.
  */
-errcode_t ext2fs_u32_list_create(ext2_u32_list *ret, int size)
+errcode_t ext2fs_u32_list_create(ext2_u32_list *ret, ପୂର୍ଣ୍ଣସଂଖ୍ୟା size)
 {
-	return make_u32_list(size, 0, 0, ret);
+	ଫେରନ୍ତୁ make_u32_list(size, 0, 0, ret);
 }
 
 /*
  * This procedure creates an empty badblocks list.
  */
-errcode_t ext2fs_badblocks_list_create(ext2_badblocks_list *ret, int size)
+errcode_t ext2fs_badblocks_list_create(ext2_badblocks_list *ret, ପୂର୍ଣ୍ଣସଂଖ୍ୟା size)
 {
-	return make_u32_list(size, 0, 0, (ext2_badblocks_list *) ret);
+	ଫେରନ୍ତୁ make_u32_list(size, 0, 0, (ext2_badblocks_list *) ret);
 }
 
 
@@ -81,17 +81,17 @@ errcode_t ext2fs_u32_copy(ext2_u32_list src, ext2_u32_list *dest)
 {
 	errcode_t	retval;
 
-	retval = make_u32_list(src->size, src->num, src->list, dest);
-	if (retval)
-		return retval;
+	retval = make_u32_list(src->size, src->ଅଙ୍କ, src->list, dest);
+	ଯଦି (retval)
+		ଫେରନ୍ତୁ retval;
 	(*dest)->badblocks_flags = src->badblocks_flags;
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
 errcode_t ext2fs_badblocks_copy(ext2_badblocks_list src,
 				ext2_badblocks_list *dest)
 {
-	return ext2fs_u32_copy((ext2_u32_list) src,
+	ଫେରନ୍ତୁ ext2fs_u32_copy((ext2_u32_list) src,
 			       (ext2_u32_list *) dest);
 }
 
@@ -108,128 +108,128 @@ errcode_t ext2fs_badblocks_copy(ext2_badblocks_list src,
 errcode_t ext2fs_u32_list_add(ext2_u32_list bb, __u32 blk)
 {
 	errcode_t	retval;
-	int		i, j;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା		i, j;
 	unsigned long	old_size;
 
 	EXT2_CHECK_MAGIC(bb, EXT2_ET_MAGIC_BADBLOCKS_LIST);
 
-	if (bb->num >= bb->size) {
-		old_size = bb->size * sizeof(__u32);
+	ଯଦି (bb->ଅଙ୍କ >= bb->size) {
+		old_size = bb->size * ଆକାର(__u32);
 		bb->size += 100;
-		retval = ext2fs_resize_mem(old_size, bb->size * sizeof(__u32),
+		retval = ext2fs_resize_mem(old_size, bb->size * ଆକାର(__u32),
 					   &bb->list);
-		if (retval) {
+		ଯଦି (retval) {
 			bb->size -= 100;
-			return retval;
+			ଫେରନ୍ତୁ retval;
 		}
 	}
 
 	/*
 	 * Add special case code for appending to the end of the list
 	 */
-	i = bb->num-1;
-	if ((bb->num != 0) && (bb->list[i] == blk))
-		return 0;
-	if ((bb->num == 0) || (bb->list[i] < blk)) {
-		bb->list[bb->num++] = blk;
-		return 0;
+	i = bb->ଅଙ୍କ-1;
+	ଯଦି ((bb->ଅଙ୍କ != 0) && (bb->list[i] == blk))
+		ଫେରନ୍ତୁ 0;
+	ଯଦି ((bb->ଅଙ୍କ == 0) || (bb->list[i] < blk)) {
+		bb->list[bb->ଅଙ୍କ++] = blk;
+		ଫେରନ୍ତୁ 0;
 	}
 
-	j = bb->num;
-	for (i=0; i < bb->num; i++) {
-		if (bb->list[i] == blk)
-			return 0;
-		if (bb->list[i] > blk) {
+	j = bb->ଅଙ୍କ;
+	ପାଇଁ (i=0; i < bb->ଅଙ୍କ; i++) {
+		ଯଦି (bb->list[i] == blk)
+			ଫେରନ୍ତୁ 0;
+		ଯଦି (bb->list[i] > blk) {
 			j = i;
-			break;
+			ଭାଙ୍ଗ;
 		}
 	}
-	for (i=bb->num; i > j; i--)
+	ପାଇଁ (i=bb->ଅଙ୍କ; i > j; i--)
 		bb->list[i] = bb->list[i-1];
 	bb->list[j] = blk;
-	bb->num++;
-	return 0;
+	bb->ଅଙ୍କ++;
+	ଫେରନ୍ତୁ 0;
 }
 
 errcode_t ext2fs_badblocks_list_add(ext2_badblocks_list bb, blk_t blk)
 {
-	return ext2fs_u32_list_add((ext2_u32_list) bb, (__u32) blk);
+	ଫେରନ୍ତୁ ext2fs_u32_list_add((ext2_u32_list) bb, (__u32) blk);
 }
 
 /*
  * This procedure finds a particular block is on a badblocks
  * list.
  */
-int ext2fs_u32_list_find(ext2_u32_list bb, __u32 blk)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_u32_list_find(ext2_u32_list bb, __u32 blk)
 {
-	int	low, high, mid;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	ତଳ, ଉପର, mid;
 
-	if (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
-		return -1;
+	ଯଦି (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
+		ଫେରନ୍ତୁ -1;
 
-	if (bb->num == 0)
-		return -1;
+	ଯଦି (bb->ଅଙ୍କ == 0)
+		ଫେରନ୍ତୁ -1;
 
-	low = 0;
-	high = bb->num-1;
-	if (blk == bb->list[low])
-		return low;
-	if (blk == bb->list[high])
-		return high;
+	ତଳ = 0;
+	ଉପର = bb->ଅଙ୍କ-1;
+	ଯଦି (blk == bb->list[ତଳ])
+		ଫେରନ୍ତୁ ତଳ;
+	ଯଦି (blk == bb->list[ଉପର])
+		ଫେରନ୍ତୁ ଉପର;
 
-	while (low < high) {
-		mid = ((unsigned)low + (unsigned)high)/2;
-		if (mid == low || mid == high)
-			break;
-		if (blk == bb->list[mid])
-			return mid;
-		if (blk < bb->list[mid])
-			high = mid;
-		else
-			low = mid;
+	ଯେତେବେଳେ (ତଳ < ଉପର) {
+		mid = ((unsigned)ତଳ + (unsigned)ଉପର)/2;
+		ଯଦି (mid == ତଳ || mid == ଉପର)
+			ଭାଙ୍ଗ;
+		ଯଦି (blk == bb->list[mid])
+			ଫେରନ୍ତୁ mid;
+		ଯଦି (blk < bb->list[mid])
+			ଉପର = mid;
+		ଅନ୍ୟଥା
+			ତଳ = mid;
 	}
-	return -1;
+	ଫେରନ୍ତୁ -1;
 }
 
 /*
  * This procedure tests to see if a particular block is on a badblocks
  * list.
  */
-int ext2fs_u32_list_test(ext2_u32_list bb, __u32 blk)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_u32_list_test(ext2_u32_list bb, __u32 blk)
 {
-	if (ext2fs_u32_list_find(bb, blk) < 0)
-		return 0;
-	else
-		return 1;
+	ଯଦି (ext2fs_u32_list_find(bb, blk) < 0)
+		ଫେରନ୍ତୁ 0;
+	ଅନ୍ୟଥା
+		ଫେରନ୍ତୁ 1;
 }
 
-int ext2fs_badblocks_list_test(ext2_badblocks_list bb, blk_t blk)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_badblocks_list_test(ext2_badblocks_list bb, blk_t blk)
 {
-	return ext2fs_u32_list_test((ext2_u32_list) bb, (__u32) blk);
+	ଫେରନ୍ତୁ ext2fs_u32_list_test((ext2_u32_list) bb, (__u32) blk);
 }
 
 
 /*
  * Remove a block from the badblock list
  */
-int ext2fs_u32_list_del(ext2_u32_list bb, __u32 blk)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_u32_list_del(ext2_u32_list bb, __u32 blk)
 {
-	int	remloc, i;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	remloc, i;
 
-	if (bb->num == 0)
-		return -1;
+	ଯଦି (bb->ଅଙ୍କ == 0)
+		ଫେରନ୍ତୁ -1;
 
 	remloc = ext2fs_u32_list_find(bb, blk);
-	if (remloc < 0)
-		return -1;
+	ଯଦି (remloc < 0)
+		ଫେରନ୍ତୁ -1;
 
-	for (i = remloc ; i < bb->num-1; i++)
+	ପାଇଁ (i = remloc ; i < bb->ଅଙ୍କ-1; i++)
 		bb->list[i] = bb->list[i+1];
-	bb->num--;
-	return 0;
+	bb->ଅଙ୍କ--;
+	ଫେରନ୍ତୁ 0;
 }
 
-void ext2fs_badblocks_list_del(ext2_u32_list bb, __u32 blk)
+ଶୂନ୍ୟ ext2fs_badblocks_list_del(ext2_u32_list bb, __u32 blk)
 {
 	ext2fs_u32_list_del(bb, blk);
 }
@@ -242,87 +242,87 @@ errcode_t ext2fs_u32_list_iterate_begin(ext2_u32_list bb,
 
 	EXT2_CHECK_MAGIC(bb, EXT2_ET_MAGIC_BADBLOCKS_LIST);
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_struct_u32_iterate), &iter);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(ଆକାର(ସଂରଚନା ext2_struct_u32_iterate), &iter);
+	ଯଦି (retval)
+		ଫେରନ୍ତୁ retval;
 
 	iter->magic = EXT2_ET_MAGIC_BADBLOCKS_ITERATE;
 	iter->bb = bb;
 	iter->ptr = 0;
 	*ret = iter;
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
 errcode_t ext2fs_badblocks_list_iterate_begin(ext2_badblocks_list bb,
 					      ext2_badblocks_iterate *ret)
 {
-	return ext2fs_u32_list_iterate_begin((ext2_u32_list) bb,
+	ଫେରନ୍ତୁ ext2fs_u32_list_iterate_begin((ext2_u32_list) bb,
 					      (ext2_u32_iterate *) ret);
 }
 
 
-int ext2fs_u32_list_iterate(ext2_u32_iterate iter, __u32 *blk)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_u32_list_iterate(ext2_u32_iterate iter, __u32 *blk)
 {
 	ext2_u32_list	bb;
 
-	if (iter->magic != EXT2_ET_MAGIC_BADBLOCKS_ITERATE)
-		return 0;
+	ଯଦି (iter->magic != EXT2_ET_MAGIC_BADBLOCKS_ITERATE)
+		ଫେରନ୍ତୁ 0;
 
 	bb = iter->bb;
 
-	if (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
-		return 0;
+	ଯଦି (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
+		ଫେରନ୍ତୁ 0;
 
-	if (iter->ptr < bb->num) {
+	ଯଦି (iter->ptr < bb->ଅଙ୍କ) {
 		*blk = bb->list[iter->ptr++];
-		return 1;
+		ଫେରନ୍ତୁ 1;
 	}
 	*blk = 0;
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-int ext2fs_badblocks_list_iterate(ext2_badblocks_iterate iter, blk_t *blk)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_badblocks_list_iterate(ext2_badblocks_iterate iter, blk_t *blk)
 {
-	return ext2fs_u32_list_iterate((ext2_u32_iterate) iter,
+	ଫେରନ୍ତୁ ext2fs_u32_list_iterate((ext2_u32_iterate) iter,
 				       (__u32 *) blk);
 }
 
 
-void ext2fs_u32_list_iterate_end(ext2_u32_iterate iter)
+ଶୂନ୍ୟ ext2fs_u32_list_iterate_end(ext2_u32_iterate iter)
 {
-	if (!iter || (iter->magic != EXT2_ET_MAGIC_BADBLOCKS_ITERATE))
-		return;
+	ଯଦି (!iter || (iter->magic != EXT2_ET_MAGIC_BADBLOCKS_ITERATE))
+		ଫେରନ୍ତୁ;
 
 	iter->bb = 0;
 	ext2fs_free_mem(&iter);
 }
 
-void ext2fs_badblocks_list_iterate_end(ext2_badblocks_iterate iter)
+ଶୂନ୍ୟ ext2fs_badblocks_list_iterate_end(ext2_badblocks_iterate iter)
 {
 	ext2fs_u32_list_iterate_end((ext2_u32_iterate) iter);
 }
 
 
-int ext2fs_u32_list_equal(ext2_u32_list bb1, ext2_u32_list bb2)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_u32_list_equal(ext2_u32_list bb1, ext2_u32_list bb2)
 {
 	EXT2_CHECK_MAGIC(bb1, EXT2_ET_MAGIC_BADBLOCKS_LIST);
 	EXT2_CHECK_MAGIC(bb2, EXT2_ET_MAGIC_BADBLOCKS_LIST);
 
-	if (bb1->num != bb2->num)
-		return 0;
+	ଯଦି (bb1->ଅଙ୍କ != bb2->ଅଙ୍କ)
+		ଫେରନ୍ତୁ 0;
 
-	if (memcmp(bb1->list, bb2->list, bb1->num * sizeof(blk_t)) != 0)
-		return 0;
-	return 1;
+	ଯଦି (memcmp(bb1->list, bb2->list, bb1->ଅଙ୍କ * ଆକାର(blk_t)) != 0)
+		ଫେରନ୍ତୁ 0;
+	ଫେରନ୍ତୁ 1;
 }
 
-int ext2fs_badblocks_equal(ext2_badblocks_list bb1, ext2_badblocks_list bb2)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_badblocks_equal(ext2_badblocks_list bb1, ext2_badblocks_list bb2)
 {
-	return ext2fs_u32_list_equal((ext2_u32_list) bb1,
+	ଫେରନ୍ତୁ ext2fs_u32_list_equal((ext2_u32_list) bb1,
 				     (ext2_u32_list) bb2);
 }
 
-int ext2fs_u32_list_count(ext2_u32_list bb)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_u32_list_ଗଣନା(ext2_u32_list bb)
 {
-	return bb->num;
+	ଫେରନ୍ତୁ bb->ଅଙ୍କ;
 }

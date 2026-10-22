@@ -17,66 +17,66 @@
 #define _LARGEFILE64_SOURCE
 #endif
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ଅନ୍ତର୍ଭାଵ "config.h"
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଯଦି HAVE_UNISTD_H
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#ଯଦି HAVE_ERRNO_H
+#ଅନ୍ତର୍ଭାଵ <errno.h>
 #endif
-#include <fcntl.h>
+#ଅନ୍ତର୍ଭାଵ <fcntl.h>
 #ifdef HAVE_SYS_DISK_H
-#include <sys/disk.h>
+#ଅନ୍ତର୍ଭାଵ <sys/disk.h>
 #endif
 #ifdef HAVE_LINUX_FD_H
-#include <sys/ioctl.h>
-#include <linux/fd.h>
+#ଅନ୍ତର୍ଭାଵ <sys/ioctl.h>
+#ଅନ୍ତର୍ଭାଵ <linux/fd.h>
 #endif
 
-#if defined(__linux__) && defined(_IO)
-#if !defined(BLKSSZGET)
+#ଯଦି defined(__linux__) && defined(_IO)
+#ଯଦି !defined(BLKSSZGET)
 #define BLKSSZGET  _IO(0x12,104)/* get block device sector size */
 #endif
-#if !defined(BLKPBSZGET)
+#ଯଦି !defined(BLKPBSZGET)
 #define BLKPBSZGET _IO(0x12,123)/* get block physical sector size */
 #endif
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ଅନ୍ତର୍ଭାଵ "ext2_fs.h"
+#ଅନ୍ତର୍ଭାଵ "ext2fs.h"
 
 /*
  * Returns the logical sector size of a device
  */
-errcode_t ext2fs_get_device_sectsize(const char *file, int *sectsize)
+errcode_t ext2fs_get_device_sectsize(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *sectsize)
 {
 #ifdef _WIN32
 	*sectsize = 512; // just guessing
-	return 0;
-#else // not _WIN32
+	ଫେରନ୍ତୁ 0;
+#ଅନ୍ୟଥା // not _WIN32
 
-	int	fd;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	fd;
 
 	fd = ext2fs_open_file(file, O_RDONLY, 0);
-	if (fd < 0)
-		return errno;
+	ଯଦି (fd < 0)
+		ଫେରନ୍ତୁ errno;
 
 #ifdef BLKSSZGET
-	if (ioctl(fd, BLKSSZGET, sectsize) >= 0) {
+	ଯଦି (ioctl(fd, BLKSSZGET, sectsize) >= 0) {
 		close(fd);
-		return 0;
+		ଫେରନ୍ତୁ 0;
 	}
 #endif
 #ifdef DIOCGSECTORSIZE
-	if (ioctl(fd, DIOCGSECTORSIZE, sectsize) >= 0) {
+	ଯଦି (ioctl(fd, DIOCGSECTORSIZE, sectsize) >= 0) {
 		close(fd);
-		return 0;
+		ଫେରନ୍ତୁ 0;
 	}
 #endif
 	*sectsize = 0;
 	close(fd);
-	return 0;
+	ଫେରନ୍ତୁ 0;
 
 #endif // ifdef _WIN32
 }
@@ -84,68 +84,68 @@ errcode_t ext2fs_get_device_sectsize(const char *file, int *sectsize)
 /*
  * Return desired alignment for direct I/O
  */
-int ext2fs_get_dio_alignment(int fd)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_get_dio_alignment(ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd)
 {
-	int align = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା align = 0;
 
 #ifdef BLKSSZGET
-	if (ioctl(fd, BLKSSZGET, &align) < 0)
+	ଯଦି (ioctl(fd, BLKSSZGET, &align) < 0)
 		align = 0;
 #endif
 #ifdef DIOCGSECTORSIZE
-	if (align <= 0 &&
+	ଯଦି (align <= 0 &&
 	    ioctl(fd, DIOCGSECTORSIZE, &align) < 0)
 		align = 0;
 #endif
 
 #ifdef _SC_PAGESIZE
-	if (align <= 0)
+	ଯଦି (align <= 0)
 		align = sysconf(_SC_PAGESIZE);
 #endif
 #ifdef HAVE_GETPAGESIZE
-	if (align <= 0)
+	ଯଦି (align <= 0)
 		align = getpagesize();
 #endif
-	if (align <= 0)
+	ଯଦି (align <= 0)
 		align = 4096;
 
-	return align;
+	ଫେରନ୍ତୁ align;
 }
 
 /*
  * Returns the physical sector size of a device
  */
-errcode_t ext2fs_get_device_phys_sectsize(const char *file, int *sectsize)
+errcode_t ext2fs_get_device_phys_sectsize(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *sectsize)
 {
 #ifdef _WIN32
 
-	return ext2fs_get_device_sectsize(file, sectsize);
+	ଫେରନ୍ତୁ ext2fs_get_device_sectsize(file, sectsize);
 
-#else // not _WIN32
+#ଅନ୍ୟଥା // not _WIN32
 
-	int	fd;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	fd;
 
 	fd = ext2fs_open_file(file, O_RDONLY, 0);
-	if (fd < 0)
-		return errno;
+	ଯଦି (fd < 0)
+		ଫେରନ୍ତୁ errno;
 
 #ifdef BLKPBSZGET
-	if (ioctl(fd, BLKPBSZGET, sectsize) >= 0) {
+	ଯଦି (ioctl(fd, BLKPBSZGET, sectsize) >= 0) {
 		close(fd);
-		return 0;
+		ଫେରନ୍ତୁ 0;
 	}
 #endif
 #ifdef DIOCGSECTORSIZE
 	/* This isn't really the physical sector size, but FreeBSD
 	 * doesn't seem to have this concept. */
-	if (ioctl(fd, DIOCGSECTORSIZE, sectsize) >= 0) {
+	ଯଦି (ioctl(fd, DIOCGSECTORSIZE, sectsize) >= 0) {
 		close(fd);
-		return 0;
+		ଫେରନ୍ତୁ 0;
 	}
 #endif
 	*sectsize = 0;
 	close(fd);
-	return 0;
+	ଫେରନ୍ତୁ 0;
 
 #endif // ifdef _WIN32
 }

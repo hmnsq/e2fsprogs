@@ -16,90 +16,90 @@
 #define _LARGEFILE64_SOURCE
 #endif
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ "config.h"
+#ଯଦି HAVE_SYS_TYPES_H
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 #endif
 
-#if HAVE_ERRNO_H
-#include <errno.h>
+#ଯଦି HAVE_ERRNO_H
+#ଅନ୍ତର୍ଭାଵ <errno.h>
 #endif
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ଯଦି HAVE_UNISTD_H
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
 #endif
 #ifdef __MSDOS__
-#include <io.h>
+#ଅନ୍ତର୍ଭାଵ <io.h>
 #endif
-#include "et/com_err.h"
-#include "ext2fs/ext2_io.h"
+#ଅନ୍ତର୍ଭାଵ "et/com_err.h"
+#ଅନ୍ତର୍ଭାଵ "ext2fs/ext2_io.h"
 
 #ifdef __linux__
 
-#include <sys/syscall.h>
+#ଅନ୍ତର୍ଭାଵ <sys/syscall.h>
 
-static ext2_loff_t my_llseek (int fd, ext2_loff_t offset, int origin)
+ସ୍ଥିର ext2_loff_t my_llseek (ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd, ext2_loff_t offset, ପୂର୍ଣ୍ଣସଂଖ୍ୟା origin)
 {
-#if SIZEOF_OFF_T >= 8
-	return lseek(fd, offset, origin);
-#elif HAVE_LSEEK64_PROTOTYPE
-	return lseek64(fd, offset, origin);
-#elif HAVE_LLSEEK_PROTOTYPE
-	return llseek(fd, offset, origin);
-#elif defined(__NR__llseek)
+#ଯଦି SIZEOF_OFF_T >= 8
+	ଫେରନ୍ତୁ lseek(fd, offset, origin);
+#ନଚେତଯଦି HAVE_LSEEK64_PROTOTYPE
+	ଫେରନ୍ତୁ lseek64(fd, offset, origin);
+#ନଚେତଯଦି HAVE_LLSEEK_PROTOTYPE
+	ଫେରନ୍ତୁ llseek(fd, offset, origin);
+#ନଚେତଯଦି defined(__NR__llseek)
 	loff_t result;
-	int retval;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା retval;
 	retval = syscall(__NR__llseek, fd,
 		(unsigned long)(offset >> 32),
 		(unsigned long)(offset & 0xffffffff),
 		&result, origin);
-	return (retval == -1 ? retval : result);
-#else
+	ଫେରନ୍ତୁ (retval == -1 ? retval : result);
+#ଅନ୍ୟଥା
 	errno = ENOSYS;
-	return -1;
+	ଫେରନ୍ତୁ -1;
 #endif
 }
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd, ext2_loff_t offset, ପୂର୍ଣ୍ଣସଂଖ୍ୟା origin)
 {
 	ext2_loff_t result;
-	static int do_compat = 0;
+	ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା do_compat = 0;
 
-	if (do_compat)
-		goto fallback;
+	ଯଦି (do_compat)
+		ଯାଅ fallback;
 
 	result = my_llseek (fd, offset, origin);
-	if (result == -1 && errno == ENOSYS) {
+	ଯଦି (result == -1 && errno == ENOSYS) {
 		/*
 		 * Just in case this code runs on top of an old kernel
 		 * which does not support the llseek system call
 		 */
 		do_compat++;
 	fallback:
-		if (offset < ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))
-			return lseek(fd, (off_t) offset, origin);
+		ଯଦି (offset < ((ext2_loff_t) 1 << ((ଆକାର(off_t)*8) -1)))
+			ଫେରନ୍ତୁ lseek(fd, (off_t) offset, origin);
 		errno = EINVAL;
-		return -1;
+		ଫେରନ୍ତୁ -1;
 	}
-	return result;
+	ଫେରନ୍ତୁ result;
 }
 
-#else /* !linux */
+#ଅନ୍ୟଥା /* !linux */
 
 #ifndef EINVAL
 #define EINVAL EXT2_ET_INVALID_ARGUMENT
 #endif
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd, ext2_loff_t offset, ପୂର୍ଣ୍ଣସଂଖ୍ୟା origin)
 {
-#if defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
-	return lseek64 (fd, offset, origin);
-#else
-	if ((sizeof(off_t) < sizeof(ext2_loff_t)) &&
-	    (offset >= ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))) {
+#ଯଦି defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
+	ଫେରନ୍ତୁ lseek64 (fd, offset, origin);
+#ଅନ୍ୟଥା
+	ଯଦି ((ଆକାର(off_t) < ଆକାର(ext2_loff_t)) &&
+	    (offset >= ((ext2_loff_t) 1 << ((ଆକାର(off_t)*8) -1)))) {
 		errno = EINVAL;
-		return -1;
+		ଫେରନ୍ତୁ -1;
 	}
-	return lseek (fd, (off_t) offset, origin);
+	ଫେରନ୍ତୁ lseek (fd, (off_t) offset, origin);
 #endif
 }
 

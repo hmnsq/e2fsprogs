@@ -94,90 +94,90 @@ static inline struct page * rb_insert_page_cache(struct inode * inode,
 #ifndef	_LINUX_RBTREE_H
 #define	_LINUX_RBTREE_H
 
-#include <stdlib.h>
-#include <stdint.h>
-#include "compiler.h"
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <stdint.h>
+#ଅନ୍ତର୍ଭାଵ "compiler.h"
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
+#ଯଦି __GNUC_PREREQ (4, 6)
+#pragma GCC diagnostic ଠେଲ
 #pragma GCC diagnostic ignored "-Wunused-function"
 #endif
 
-struct rb_node
+ସଂରଚନା rb_ଗଣ୍ଠି
 {
 	uintptr_t  rb_parent_color;
 #define	RB_RED		0
 #define	RB_BLACK	1
-	struct rb_node *rb_right;
-	struct rb_node *rb_left;
-} __attribute__((aligned(sizeof(long))));
+	ସଂରଚନା rb_ଗଣ୍ଠି *rb_ଡାହାଣ;
+	ସଂରଚନା rb_ଗଣ୍ଠି *rb_ବାମ;
+} __attribute__((aligned(ଆକାର(long))));
     /* The alignment might seem pointless, but allegedly CRIS needs it */
 
-struct rb_root
+ସଂରଚନା rb_ମୂଳ
 {
-	struct rb_node *rb_node;
+	ସଂରଚନା rb_ଗଣ୍ଠି *rb_ଗଣ୍ଠି;
 };
 
 
-#define ext2fs_rb_parent(r)   ((struct rb_node *)((r)->rb_parent_color & ~3))
+#define ext2fs_rb_parent(r)   ((ସଂରଚନା rb_ଗଣ୍ଠି *)((r)->rb_parent_color & ~3))
 #define ext2fs_rb_color(r)   ((r)->rb_parent_color & 1)
 #define ext2fs_rb_is_red(r)   (!ext2fs_rb_color(r))
 #define ext2fs_rb_is_black(r) ext2fs_rb_color(r)
-#define ext2fs_rb_set_red(r)  do { (r)->rb_parent_color &= ~1; } while (0)
-#define ext2fs_rb_set_black(r)  do { (r)->rb_parent_color |= 1; } while (0)
+#define ext2fs_rb_set_red(r)  କର { (r)->rb_parent_color &= ~1; } ଯେତେବେଳେ (0)
+#define ext2fs_rb_set_black(r)  କର { (r)->rb_parent_color |= 1; } ଯେତେବେଳେ (0)
 
-static inline void ext2fs_rb_set_parent(struct rb_node *rb, struct rb_node *p)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ ext2fs_rb_set_parent(ସଂରଚନା rb_ଗଣ୍ଠି *rb, ସଂରଚନା rb_ଗଣ୍ଠି *p)
 {
 	rb->rb_parent_color = (rb->rb_parent_color & 3) | (uintptr_t)p;
 }
-static inline void ext2fs_rb_set_color(struct rb_node *rb, int color)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ ext2fs_rb_set_color(ସଂରଚନା rb_ଗଣ୍ଠି *rb, ପୂର୍ଣ୍ଣସଂଖ୍ୟା color)
 {
 	rb->rb_parent_color = (rb->rb_parent_color & ~1) | color;
 }
 
-#define RB_ROOT	(struct rb_root) { NULL, }
+#define RB_ମୂଳ	(ସଂରଚନା rb_ମୂଳ) { ଖାଲି, }
 #define	ext2fs_rb_entry(ptr, type, member) container_of(ptr, type, member)
 
-static inline int ext2fs_rb_empty_root(struct rb_root *root)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_rb_empty_ମୂଳ(ସଂରଚନା rb_ମୂଳ *ମୂଳ)
 {
-	return root->rb_node == NULL;
+	ଫେରନ୍ତୁ ମୂଳ->rb_ଗଣ୍ଠି == ଖାଲି;
 }
 
-static inline int ext2fs_rb_empty_node(struct rb_node *node)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ପୂର୍ଣ୍ଣସଂଖ୍ୟା ext2fs_rb_empty_ଗଣ୍ଠି(ସଂରଚନା rb_ଗଣ୍ଠି *ଗଣ୍ଠି)
 {
-	return ext2fs_rb_parent(node) == node;
+	ଫେରନ୍ତୁ ext2fs_rb_parent(ଗଣ୍ଠି) == ଗଣ୍ଠି;
 }
 
-static inline void ext2fs_rb_clear_node(struct rb_node *node)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ ext2fs_rb_clear_ଗଣ୍ଠି(ସଂରଚନା rb_ଗଣ୍ଠି *ଗଣ୍ଠି)
 {
-	ext2fs_rb_set_parent(node, node);
+	ext2fs_rb_set_parent(ଗଣ୍ଠି, ଗଣ୍ଠି);
 }
 
-extern void ext2fs_rb_insert_color(struct rb_node *, struct rb_root *);
-extern void ext2fs_rb_erase(struct rb_node *, struct rb_root *);
+ବାହ୍ୟ ଶୂନ୍ୟ ext2fs_rb_ଭର୍ତ୍ତି_color(ସଂରଚନା rb_ଗଣ୍ଠି *, ସଂରଚନା rb_ମୂଳ *);
+ବାହ୍ୟ ଶୂନ୍ୟ ext2fs_rb_erase(ସଂରଚନା rb_ଗଣ୍ଠି *, ସଂରଚନା rb_ମୂଳ *);
 
 /* Find logical next and previous nodes in a tree */
-extern struct rb_node *ext2fs_rb_next(struct rb_node *);
-extern struct rb_node *ext2fs_rb_prev(struct rb_node *);
-extern struct rb_node *ext2fs_rb_first(const struct rb_root *);
-extern struct rb_node *ext2fs_rb_last(const struct rb_root *);
+ବାହ୍ୟ ସଂରଚନା rb_ଗଣ୍ଠି *ext2fs_rb_next(ସଂରଚନା rb_ଗଣ୍ଠି *);
+ବାହ୍ୟ ସଂରଚନା rb_ଗଣ୍ଠି *ext2fs_rb_prev(ସଂରଚନା rb_ଗଣ୍ଠି *);
+ବାହ୍ୟ ସଂରଚନା rb_ଗଣ୍ଠି *ext2fs_rb_first(ଅଚଳ ସଂରଚନା rb_ମୂଳ *);
+ବାହ୍ୟ ସଂରଚନା rb_ଗଣ୍ଠି *ext2fs_rb_last(ଅଚଳ ସଂରଚନା rb_ମୂଳ *);
 
 /* Fast replacement of a single node without remove/rebalance/add/rebalance */
-extern void ext2fs_rb_replace_node(struct rb_node *victim, struct rb_node *new_,
-				 struct rb_root *root);
+ବାହ୍ୟ ଶୂନ୍ୟ ext2fs_rb_replace_ଗଣ୍ଠି(ସଂରଚନା rb_ଗଣ୍ଠି *victim, ସଂରଚନା rb_ଗଣ୍ଠି *new_,
+				 ସଂରଚନା rb_ମୂଳ *ମୂଳ);
 
-static inline void ext2fs_rb_link_node(struct rb_node * node,
-				     struct rb_node * parent,
-				     struct rb_node ** rb_link)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ ext2fs_rb_link_ଗଣ୍ଠି(ସଂରଚନା rb_ଗଣ୍ଠି * ଗଣ୍ଠି,
+				     ସଂରଚନା rb_ଗଣ୍ଠି * parent,
+				     ସଂରଚନା rb_ଗଣ୍ଠି ** rb_link)
 {
-	node->rb_parent_color = (uintptr_t)parent;
-	node->rb_left = node->rb_right = NULL;
+	ଗଣ୍ଠି->rb_parent_color = (uintptr_t)parent;
+	ଗଣ୍ଠି->rb_ବାମ = ଗଣ୍ଠି->rb_ଡାହାଣ = ଖାଲି;
 
-	*rb_link = node;
+	*rb_link = ଗଣ୍ଠି;
 }
 
-#if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
+#ଯଦି __GNUC_PREREQ (4, 6)
+#pragma GCC diagnostic କାଢ଼
 #endif
 
 #endif	/* _LINUX_RBTREE_H */

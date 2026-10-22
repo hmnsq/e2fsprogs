@@ -9,22 +9,22 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ଅନ୍ତର୍ଭାଵ "config.h"
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଯଦି HAVE_UNISTD_H
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
+#ଅନ୍ତର୍ଭାଵ <fcntl.h>
+#ଅନ୍ତର୍ଭାଵ <time.h>
+#ଅନ୍ତର୍ଭାଵ <sys/stat.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଯଦି HAVE_ERRNO_H
+#ଅନ୍ତର୍ଭାଵ <errno.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ଅନ୍ତର୍ଭାଵ "ext2_fs.h"
+#ଅନ୍ତର୍ଭାଵ "ext2fs.h"
 
 __u16 test1[] = {
 	0x0001, 0x0100,
@@ -45,49 +45,49 @@ __u32 test2[] = {
 	0x00000000, 0x00000000
 	};
 
-int main(int argc, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ମୁଖ୍ୟ(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv)
 {
-	int	i;
-	int	errors = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	i;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	errors = 0;
 
 	printf("Testing ext2fs_swab16\n");
 	i=0;
-	do {
+	କର {
 		printf("swab16(0x%04x) = 0x%04x\n", test1[i],
 		       ext2fs_swab16(test1[i]));
-		if (ext2fs_swab16(test1[i]) != test1[i+1]) {
+		ଯଦି (ext2fs_swab16(test1[i]) != test1[i+1]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab16(test1[i]), test1[i+1]);
 			errors++;
 		}
-		if (ext2fs_swab16(test1[i+1]) != test1[i]) {
+		ଯଦି (ext2fs_swab16(test1[i+1]) != test1[i]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab16(test1[i+1]), test1[i]);
 			errors++;
 		}
 		i += 2;
-	} while (test1[i] != 0);
+	} ଯେତେବେଳେ (test1[i] != 0);
 
 	printf("Testing ext2fs_swab32\n");
 	i = 0;
-	do {
+	କର {
 		printf("swab32(0x%08x) = 0x%08x\n", test2[i],
 		       ext2fs_swab32(test2[i]));
-		if (ext2fs_swab32(test2[i]) != test2[i+1]) {
+		ଯଦି (ext2fs_swab32(test2[i]) != test2[i+1]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab32(test2[i]), test2[i+1]);
 			errors++;
 		}
-		if (ext2fs_swab32(test2[i+1]) != test2[i]) {
+		ଯଦି (ext2fs_swab32(test2[i+1]) != test2[i]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab32(test2[i+1]), test2[i]);
 			errors++;
 		}
 		i += 2;
-	} while (test2[i] != 0);
+	} ଯେତେବେଳେ (test2[i] != 0);
 
-	if (!errors)
+	ଯଦି (!errors)
 		printf("No errors found in the byteswap implementation!\n");
 
-	return errors;
+	ଫେରନ୍ତୁ errors;
 }

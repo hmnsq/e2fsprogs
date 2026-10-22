@@ -19,40 +19,40 @@
 #define _LARGEFILE64_SOURCE
 #endif
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ଅନ୍ତର୍ଭାଵ "config.h"
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଯଦି HAVE_UNISTD_H
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#ଯଦି HAVE_ERRNO_H
+#ଅନ୍ତର୍ଭାଵ <errno.h>
 #endif
-#include <fcntl.h>
+#ଅନ୍ତର୍ଭାଵ <fcntl.h>
 #ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
+#ଅନ୍ତର୍ଭାଵ <sys/ioctl.h>
 #endif
 #ifdef HAVE_LINUX_FD_H
-#include <linux/fd.h>
+#ଅନ୍ତର୍ଭାଵ <linux/fd.h>
 #endif
 #ifdef HAVE_SYS_DISKLABEL_H
-#include <sys/disklabel.h>
+#ଅନ୍ତର୍ଭାଵ <sys/disklabel.h>
 #endif
 #ifdef HAVE_SYS_DISK_H
-#include <sys/disk.h>
+#ଅନ୍ତର୍ଭାଵ <sys/disk.h>
 #endif
 #ifdef __linux__
-#include <sys/utsname.h>
+#ଅନ୍ତର୍ଭାଵ <sys/utsname.h>
 #endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#ଯଦି HAVE_SYS_STAT_H
+#ଅନ୍ତର୍ଭାଵ <sys/stat.h>
 #endif
-#include <ctype.h>
+#ଅନ୍ତର୍ଭାଵ <ctype.h>
 
-#if defined(__linux__) && defined(_IO) && !defined(BLKGETSIZE)
+#ଯଦି defined(__linux__) && defined(_IO) && !defined(BLKGETSIZE)
 #define BLKGETSIZE _IO(0x12,96)	/* return device size */
 #endif
 
-#if defined(__linux__) && defined(_IOR) && !defined(BLKGETSIZE64)
+#ଯଦି defined(__linux__) && defined(_IOR) && !defined(BLKGETSIZE64)
 #define BLKGETSIZE64 _IOR(0x12,114,size_t)	/* return device size in bytes (u64 *arg) */
 #endif
 
@@ -60,46 +60,46 @@
 #define BLKGETSIZE DKIOCGETBLOCKCOUNT32
 #endif /* APPLE_DARWIN */
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ଅନ୍ତର୍ଭାଵ "ext2_fs.h"
+#ଅନ୍ତର୍ଭାଵ "ext2fs.h"
 
-#if defined(__CYGWIN__) || defined (WIN32)
-#include "windows.h"
-#include "winioctl.h"
+#ଯଦି defined(__CYGWIN__) || defined (WIN32)
+#ଅନ୍ତର୍ଭାଵ "windows.h"
+#ଅନ୍ତର୍ଭାଵ "winioctl.h"
 
-#if (_WIN32_WINNT >= 0x0500)
+#ଯଦି (_WIN32_WINNT >= 0x0500)
 #define HAVE_GET_FILE_SIZE_EX 1
 #endif
 
-errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
+errcode_t ext2fs_get_device_size2(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା blocksize,
 				  blk64_t *retblocks)
 {
-	int fd;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd;
 	HANDLE h;
 	PARTITION_INFORMATION pi;
 	DISK_GEOMETRY gi;
 	DWORD retbytes;
 #ifdef HAVE_GET_FILE_SIZE_EX
 	LARGE_INTEGER filesize;
-#else
+#ଅନ୍ୟଥା
 	DWORD filesize;
 #endif /* HAVE_GET_FILE_SIZE_EX */
 
 	fd = ext2fs_open_file(file, O_RDONLY, 0);
-	if (fd < 0)
-		return errno;
+	ଯଦି (fd < 0)
+		ଫେରନ୍ତୁ errno;
 	h = (HANDLE)_get_osfhandle(fd);
-	if (DeviceIoControl(h, IOCTL_DISK_GET_PARTITION_INFO,
-			    &pi, sizeof(PARTITION_INFORMATION),
-			    &pi, sizeof(PARTITION_INFORMATION),
-			    &retbytes, NULL)) {
+	ଯଦି (DeviceIoControl(h, IOCTL_DISK_GET_PARTITION_INFO,
+			    &pi, ଆକାର(PARTITION_INFORMATION),
+			    &pi, ଆକାର(PARTITION_INFORMATION),
+			    &retbytes, ଖାଲି)) {
 
 		*retblocks = pi.PartitionLength.QuadPart / blocksize;
 
-	} else if (DeviceIoControl(h, IOCTL_DISK_GET_DRIVE_GEOMETRY,
-				&gi, sizeof(DISK_GEOMETRY),
-				&gi, sizeof(DISK_GEOMETRY),
-				&retbytes, NULL)) {
+	} ଅନ୍ୟଥା ଯଦି (DeviceIoControl(h, IOCTL_DISK_GET_DRIVE_GEOMETRY,
+				&gi, ଆକାର(DISK_GEOMETRY),
+				&gi, ଆକାର(DISK_GEOMETRY),
+				&retbytes, ଖାଲି)) {
 
 		*retblocks = gi.BytesPerSector *
 			     gi.SectorsPerTrack *
@@ -107,74 +107,74 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 			     gi.Cylinders.QuadPart / blocksize;
 
 #ifdef HAVE_GET_FILE_SIZE_EX
-	} else if (GetFileSizeEx(h, &filesize)) {
+	} ଅନ୍ୟଥା ଯଦି (GetFileSizeEx(h, &filesize)) {
 		*retblocks = filesize.QuadPart / blocksize;
 	}
-#else
-	} else {
-		filesize = GetFileSize(h, NULL);
-		if (INVALID_FILE_SIZE != filesize) {
+#ଅନ୍ୟଥା
+	} ଅନ୍ୟଥା {
+		filesize = GetFileSize(h, ଖାଲି);
+		ଯଦି (INVALID_FILE_SIZE != filesize) {
 			*retblocks = filesize / blocksize;
 		}
 	}
 #endif /* HAVE_GET_FILE_SIZE_EX */
 
 	close(fd);
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-#else
+#ଅନ୍ୟଥା
 
-static int valid_offset (int fd, ext2_loff_t offset)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା valid_offset (ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd, ext2_loff_t offset)
 {
-	char ch;
+	ଅକ୍ଷର ch;
 
-	if (ext2fs_llseek (fd, offset, 0) < 0)
-		return 0;
-	if (read (fd, &ch, 1) < 1)
-		return 0;
-	return 1;
+	ଯଦି (ext2fs_llseek (fd, offset, 0) < 0)
+		ଫେରନ୍ତୁ 0;
+	ଯଦି (ପଠ (fd, &ch, 1) < 1)
+		ଫେରନ୍ତୁ 0;
+	ଫେରନ୍ତୁ 1;
 }
 
 /*
  * Returns the number of blocks in a partition
  */
-errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
+errcode_t ext2fs_get_device_size2(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା blocksize,
 				  blk64_t *retblocks)
 {
-	int	fd, rc = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	fd, rc = 0;
 	unsigned long long size64;
-	ext2_loff_t high, low;
+	ext2_loff_t ଉପର, ତଳ;
 
 	fd = ext2fs_open_file(file, O_RDONLY, 0);
-	if (fd < 0)
-		return errno;
+	ଯଦି (fd < 0)
+		ଫେରନ୍ତୁ errno;
 
-#if defined DKIOCGETBLOCKCOUNT && defined DKIOCGETBLOCKSIZE	/* For Apple Darwin */
-	unsigned int size;
+#ଯଦି defined DKIOCGETBLOCKCOUNT && defined DKIOCGETBLOCKSIZE	/* For Apple Darwin */
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା size;
 
-	if (ioctl(fd, DKIOCGETBLOCKCOUNT, &size64) >= 0 &&
+	ଯଦି (ioctl(fd, DKIOCGETBLOCKCOUNT, &size64) >= 0 &&
 	    ioctl(fd, DKIOCGETBLOCKSIZE, &size) >= 0) {
 		*retblocks = size64 * size / blocksize;
-		goto out;
+		ଯାଅ out;
 	}
 #endif
 
 #ifdef BLKGETSIZE64
 	{
-		int valid_blkgetsize64 = 1;
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା valid_blkgetsize64 = 1;
 #ifdef __linux__
-		struct utsname ut;
+		ସଂରଚନା utsname ut;
 
-		if ((uname(&ut) == 0) &&
+		ଯଦି ((uname(&ut) == 0) &&
 		    ((ut.release[0] == '2') && (ut.release[1] == '.') &&
 		     (ut.release[2] < '6') && (ut.release[3] == '.')))
 			valid_blkgetsize64 = 0;
 #endif
-		if (valid_blkgetsize64 &&
+		ଯଦି (valid_blkgetsize64 &&
 		    ioctl(fd, BLKGETSIZE64, &size64) >= 0) {
 			*retblocks = size64 / blocksize;
-			goto out;
+			ଯାଅ out;
 		}
 	}
 #endif /* BLKGETSIZE64 */
@@ -183,57 +183,57 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 	{
 		unsigned long	size;
 
-		if (ioctl(fd, BLKGETSIZE, &size) >= 0) {
+		ଯଦି (ioctl(fd, BLKGETSIZE, &size) >= 0) {
 			*retblocks = size / (blocksize / 512);
-			goto out;
+			ଯାଅ out;
 		}
 	}
 #endif
 
 #ifdef FDGETPRM
 	{
-		struct floppy_struct this_floppy;
+		ସଂରଚନା floppy_struct this_floppy;
 
-		if (ioctl(fd, FDGETPRM, &this_floppy) >= 0) {
+		ଯଦି (ioctl(fd, FDGETPRM, &this_floppy) >= 0) {
 			*retblocks = this_floppy.size / (blocksize / 512);
-			goto out;
+			ଯାଅ out;
 		}
 	}
 #endif
 
 #ifdef HAVE_SYS_DISKLABEL_H
 	{
-		int part;
-		struct disklabel lab;
-		struct partition *pp;
-		char ch;
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା part;
+		ସଂରଚନା disklabel lab;
+		ସଂରଚନା partition *pp;
+		ଅକ୍ଷର ch;
 
-#if defined(DIOCGMEDIASIZE)
+#ଯଦି defined(DIOCGMEDIASIZE)
 		{
 			off_t ms;
 			u_int bs;
-			if (ioctl(fd, DIOCGMEDIASIZE, &ms) >= 0) {
+			ଯଦି (ioctl(fd, DIOCGMEDIASIZE, &ms) >= 0) {
 				*retblocks = ms / blocksize;
-				goto out;
+				ଯାଅ out;
 			}
 		}
-#elif defined(DIOCGDINFO)
+#ନଚେତଯଦି defined(DIOCGDINFO)
 		/* old disklabel interface */
 		part = strlen(file) - 1;
-		if (part >= 0) {
+		ଯଦି (part >= 0) {
 			ch = file[part];
-			if (isdigit(ch))
+			ଯଦି (isdigit(ch))
 				part = 0;
-			else if (ch >= 'a' && ch <= 'h')
+			ଅନ୍ୟଥା ଯଦି (ch >= 'a' && ch <= 'h')
 				part = ch - 'a';
-			else
+			ଅନ୍ୟଥା
 				part = -1;
 		}
-		if (part >= 0 && (ioctl(fd, DIOCGDINFO, (char *)&lab) >= 0)) {
+		ଯଦି (part >= 0 && (ioctl(fd, DIOCGDINFO, (ଅକ୍ଷର *)&lab) >= 0)) {
 			pp = &lab.d_partitions[part];
-			if (pp->p_size) {
+			ଯଦି (pp->p_size) {
 				*retblocks = pp->p_size / (blocksize / 512);
-				goto out;
+				ଯାଅ out;
 			}
 		}
 #endif /* defined(DIOCG*) */
@@ -243,10 +243,10 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 	{
 		ext2fs_struct_stat st;
 
-		if (ext2fs_fstat(fd, &st) == 0)
-			if (S_ISREG(st.st_mode)) {
+		ଯଦି (ext2fs_fstat(fd, &st) == 0)
+			ଯଦି (S_ISREG(st.st_mode)) {
 				*retblocks = st.st_size / blocksize;
-				goto out;
+				ଯାଅ out;
 			}
 	}
 
@@ -255,55 +255,55 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 	 * which is generally the best way.  So do binary search to
 	 * find the size of the partition.
 	 */
-	low = 0;
-	for (high = 1024; valid_offset(fd, high); high *= 2)
-		low = high;
-	while (low < high - 1) {
-		const ext2_loff_t mid = (low + high) / 2;
+	ତଳ = 0;
+	ପାଇଁ (ଉପର = 1024; valid_offset(fd, ଉପର); ଉପର *= 2)
+		ତଳ = ଉପର;
+	ଯେତେବେଳେ (ତଳ < ଉପର - 1) {
+		ଅଚଳ ext2_loff_t mid = (ତଳ + ଉପର) / 2;
 
-		if (valid_offset (fd, mid))
-			low = mid;
-		else
-			high = mid;
+		ଯଦି (valid_offset (fd, mid))
+			ତଳ = mid;
+		ଅନ୍ୟଥା
+			ଉପର = mid;
 	}
 	valid_offset(fd, 0);
-	size64 = low + 1;
+	size64 = ତଳ + 1;
 	*retblocks = size64 / blocksize;
 out:
 	close(fd);
-	return rc;
+	ଫେରନ୍ତୁ rc;
 }
 
 #endif /* WIN32 */
 
-errcode_t ext2fs_get_device_size(const char *file, int blocksize,
+errcode_t ext2fs_get_device_size(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା blocksize,
 				 blk_t *retblocks)
 {
 	errcode_t retval;
 	blk64_t	blocks;
 
 	retval = ext2fs_get_device_size2(file, blocksize, &blocks);
-	if (retval)
-		return retval;
-	if (blocks >= (1ULL << 32))
-		return EFBIG;
+	ଯଦି (retval)
+		ଫେରନ୍ତୁ retval;
+	ଯଦି (blocks >= (1ULL << 32))
+		ଫେରନ୍ତୁ EFBIG;
 	*retblocks = (blk_t) blocks;
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
 #ifdef DEBUG
-int main(int argc, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ମୁଖ୍ୟ(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv)
 {
 	blk64_t	blocks;
-	int	retval;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	retval;
 
-	if (argc < 2) {
+	ଯଦି (argc < 2) {
 		fprintf(stderr, "Usage: %s device\n", argv[0]);
 		exit(1);
 	}
 
 	retval = ext2fs_get_device_size2(argv[1], 1024, &blocks);
-	if (retval) {
+	ଯଦି (retval) {
 		com_err(argv[0], retval,
 			"while calling ext2fs_get_device_size");
 		exit(1);

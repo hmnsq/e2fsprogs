@@ -11,13 +11,13 @@
  */
 
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ "config.h"
+#ଯଦି HAVE_SYS_TYPES_H
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 #endif
-#include "ext2fs.h"
+#ଅନ୍ତର୍ଭାଵ "ext2fs.h"
 
-static const __u32 K[64] = {
+ସ୍ଥିର ଅଚଳ __u32 K[64] = {
     0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL, 0x3956c25bUL,
     0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL, 0xd807aa98UL, 0x12835b01UL,
     0x243185beUL, 0x550c7dc3UL, 0x72be5d74UL, 0x80deb1feUL, 0x9bdc06a7UL,
@@ -51,72 +51,72 @@ static const __u32 K[64] = {
      h  = t0 + t1;
 
 #define STORE64H(x, y) \
-	do { \
-		(y)[0] = (unsigned char)(((x)>>56)&255);\
-		(y)[1] = (unsigned char)(((x)>>48)&255);\
-		(y)[2] = (unsigned char)(((x)>>40)&255);\
-		(y)[3] = (unsigned char)(((x)>>32)&255);\
-		(y)[4] = (unsigned char)(((x)>>24)&255);\
-		(y)[5] = (unsigned char)(((x)>>16)&255);\
-		(y)[6] = (unsigned char)(((x)>>8)&255);\
-		(y)[7] = (unsigned char)((x)&255); } while(0)
+	କର { \
+		(y)[0] = (unsigned ଅକ୍ଷର)(((x)>>56)&255);\
+		(y)[1] = (unsigned ଅକ୍ଷର)(((x)>>48)&255);\
+		(y)[2] = (unsigned ଅକ୍ଷର)(((x)>>40)&255);\
+		(y)[3] = (unsigned ଅକ୍ଷର)(((x)>>32)&255);\
+		(y)[4] = (unsigned ଅକ୍ଷର)(((x)>>24)&255);\
+		(y)[5] = (unsigned ଅକ୍ଷର)(((x)>>16)&255);\
+		(y)[6] = (unsigned ଅକ୍ଷର)(((x)>>8)&255);\
+		(y)[7] = (unsigned ଅକ୍ଷର)((x)&255); } ଯେତେବେଳେ(0)
 
 #define STORE32H(x, y)                                                                     \
-  do { (y)[0] = (unsigned char)(((x)>>24)&255); (y)[1] = (unsigned char)(((x)>>16)&255);   \
-       (y)[2] = (unsigned char)(((x)>>8)&255); (y)[3] = (unsigned char)((x)&255); } while(0)
+  କର { (y)[0] = (unsigned ଅକ୍ଷର)(((x)>>24)&255); (y)[1] = (unsigned ଅକ୍ଷର)(((x)>>16)&255);   \
+       (y)[2] = (unsigned ଅକ୍ଷର)(((x)>>8)&255); (y)[3] = (unsigned ଅକ୍ଷର)((x)&255); } ଯେତେବେଳେ(0)
 
 #define LOAD32H(x, y)                            \
-  do { x = ((__u32)((y)[0] & 255)<<24) | \
+  କର { x = ((__u32)((y)[0] & 255)<<24) | \
            ((__u32)((y)[1] & 255)<<16) | \
            ((__u32)((y)[2] & 255)<<8)  | \
-           ((__u32)((y)[3] & 255)); } while(0)
+           ((__u32)((y)[3] & 255)); } ଯେତେବେଳେ(0)
 
-struct sha256_state {
+ସଂରଚନା sha256_state {
     __u64 length;
     __u32 state[8], curlen;
-    unsigned char buf[64];
+    unsigned ଅକ୍ଷର buf[64];
 };
 
 /* This is a highly simplified version from libtomcrypt */
-struct hash_state {
-	struct sha256_state sha256;
+ସଂରଚନା hash_state {
+	ସଂରଚନା sha256_state sha256;
 };
 
-static void sha256_compress(struct hash_state * md, const unsigned char *buf)
+ସ୍ଥିର ଶୂନ୍ୟ sha256_compress(ସଂରଚନା hash_state * md, ଅଚଳ unsigned ଅକ୍ଷର *buf)
 {
     __u32 S[8], W[64], t0, t1;
     __u32 t;
-    int i;
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
 
     /* copy state into S */
-    for (i = 0; i < 8; i++) {
+    ପାଇଁ (i = 0; i < 8; i++) {
         S[i] = md->sha256.state[i];
     }
 
     /* copy the state into 512-bits into W[0..15] */
-    for (i = 0; i < 16; i++) {
+    ପାଇଁ (i = 0; i < 16; i++) {
         LOAD32H(W[i], buf + (4*i));
     }
 
     /* fill W[16..63] */
-    for (i = 16; i < 64; i++) {
+    ପାଇଁ (i = 16; i < 64; i++) {
         W[i] = Gamma1(W[i - 2]) + W[i - 7] + Gamma0(W[i - 15]) + W[i - 16];
     }        
 
     /* Compress */
-     for (i = 0; i < 64; ++i) {
+     ପାଇଁ (i = 0; i < 64; ++i) {
          RND(S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7],i);
          t = S[7]; S[7] = S[6]; S[6] = S[5]; S[5] = S[4]; 
          S[4] = S[3]; S[3] = S[2]; S[2] = S[1]; S[1] = S[0]; S[0] = t;
      }  
 
     /* feedback */
-    for (i = 0; i < 8; i++) {
+    ପାଇଁ (i = 0; i < 8; i++) {
         md->sha256.state[i] = md->sha256.state[i] + S[i];
     }
 }
 
-static void sha256_init(struct hash_state * md)
+ସ୍ଥିର ଶୂନ୍ୟ sha256_init(ସଂରଚନା hash_state * md)
 {
     md->sha256.curlen = 0;
     md->sha256.length = 0;
@@ -132,23 +132,23 @@ static void sha256_init(struct hash_state * md)
 
 #define MIN(x, y) ( ((x)<(y))?(x):(y) )
 #define SHA256_BLOCKSIZE 64
-static void sha256_process(struct hash_state * md, const unsigned char *in, unsigned long inlen)
+ସ୍ଥିର ଶୂନ୍ୟ sha256_process(ସଂରଚନା hash_state * md, ଅଚଳ unsigned ଅକ୍ଷର *in, unsigned long inlen)
 {
     unsigned long n;
 
-    while (inlen > 0) {
-	    if (md->sha256.curlen == 0 && inlen >= SHA256_BLOCKSIZE) {
+    ଯେତେବେଳେ (inlen > 0) {
+	    ଯଦି (md->sha256.curlen == 0 && inlen >= SHA256_BLOCKSIZE) {
 		    sha256_compress(md, in);
 		    md->sha256.length += SHA256_BLOCKSIZE * 8;
 		    in += SHA256_BLOCKSIZE;
 		    inlen -= SHA256_BLOCKSIZE;
-	    } else {
+	    } ଅନ୍ୟଥା {
 		    n = MIN(inlen, (SHA256_BLOCKSIZE - md->sha256.curlen));
 		    memcpy(md->sha256.buf + md->sha256.curlen, in, (size_t)n);
 		    md->sha256.curlen += n;
 		    in += n;
 		    inlen -= n;
-		    if (md->sha256.curlen == SHA256_BLOCKSIZE) {
+		    ଯଦି (md->sha256.curlen == SHA256_BLOCKSIZE) {
 			    sha256_compress(md, md->sha256.buf);
 			    md->sha256.length += 8*SHA256_BLOCKSIZE;
 			    md->sha256.curlen = 0;
@@ -158,31 +158,31 @@ static void sha256_process(struct hash_state * md, const unsigned char *in, unsi
 }
 
 
-static void sha256_done(struct hash_state * md, unsigned char *out)
+ସ୍ଥିର ଶୂନ୍ୟ sha256_done(ସଂରଚନା hash_state * md, unsigned ଅକ୍ଷର *out)
 {
-    int i;
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
 
     /* increase the length of the message */
     md->sha256.length += md->sha256.curlen * 8;
 
     /* append the '1' bit */
-    md->sha256.buf[md->sha256.curlen++] = (unsigned char)0x80;
+    md->sha256.buf[md->sha256.curlen++] = (unsigned ଅକ୍ଷର)0x80;
 
     /* if the length is currently above 56 bytes we append zeros
      * then compress.  Then we can fall back to padding zeros and length
      * encoding like normal.
      */
-    if (md->sha256.curlen > 56) {
-        while (md->sha256.curlen < 64) {
-            md->sha256.buf[md->sha256.curlen++] = (unsigned char)0;
+    ଯଦି (md->sha256.curlen > 56) {
+        ଯେତେବେଳେ (md->sha256.curlen < 64) {
+            md->sha256.buf[md->sha256.curlen++] = (unsigned ଅକ୍ଷର)0;
         }
         sha256_compress(md, md->sha256.buf);
         md->sha256.curlen = 0;
     }
 
     /* pad up to 56 bytes of zeroes */
-    while (md->sha256.curlen < 56) {
-        md->sha256.buf[md->sha256.curlen++] = (unsigned char)0;
+    ଯେତେବେଳେ (md->sha256.curlen < 56) {
+        md->sha256.buf[md->sha256.curlen++] = (unsigned ଅକ୍ଷର)0;
     }
 
     /* store length */
@@ -190,15 +190,15 @@ static void sha256_done(struct hash_state * md, unsigned char *out)
     sha256_compress(md, md->sha256.buf);
 
     /* copy output */
-    for (i = 0; i < 8; i++) {
+    ପାଇଁ (i = 0; i < 8; i++) {
         STORE32H(md->sha256.state[i], out+(4*i));
     }
 }
 
-void ext2fs_sha256(const unsigned char *in, unsigned long in_size,
-		   unsigned char out[EXT2FS_SHA256_LENGTH])
+ଶୂନ୍ୟ ext2fs_sha256(ଅଚଳ unsigned ଅକ୍ଷର *in, unsigned long in_size,
+		   unsigned ଅକ୍ଷର out[EXT2FS_SHA256_LENGTH])
 {
-	struct hash_state md;
+	ସଂରଚନା hash_state md;
 
 	sha256_init(&md);
 	sha256_process(&md, in, in_size);
@@ -206,9 +206,9 @@ void ext2fs_sha256(const unsigned char *in, unsigned long in_size,
 }
 
 #ifdef UNITTEST
-static const struct {
-	char *msg;
-	unsigned char hash[32];
+ସ୍ଥିର ଅଚଳ ସଂରଚନା {
+	ଅକ୍ଷର *ସନ୍ଦେଶ;
+	unsigned ଅକ୍ଷର hash[32];
 } tests[] = {
 	{ "",
 	  { 0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14,
@@ -230,25 +230,25 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ମୁଖ୍ୟ(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv)
 {
-	int i;
-	int errors = 0;
-	unsigned char tmp[32];
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା errors = 0;
+	unsigned ଅକ୍ଷର tmp[32];
 
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
-		unsigned char *msg = (unsigned char *) tests[i].msg;
-		int len = strlen(tests[i].msg);
+	ପାଇଁ (i = 0; i < (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)(ଆକାର(tests) / ଆକାର(tests[0])); i++) {
+		unsigned ଅକ୍ଷର *ସନ୍ଦେଶ = (unsigned ଅକ୍ଷର *) tests[i].ସନ୍ଦେଶ;
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା len = strlen(tests[i].ସନ୍ଦେଶ);
 
-		ext2fs_sha256(msg, len, tmp);
+		ext2fs_sha256(ସନ୍ଦେଶ, len, tmp);
 		printf("SHA256 test message %d: ", i);
-		if (memcmp(tmp, tests[i].hash, 32) != 0) {
+		ଯଦି (memcmp(tmp, tests[i].hash, 32) != 0) {
 			printf("FAILED\n");
 			errors++;
-		} else
+		} ଅନ୍ୟଥା
 			printf("OK\n");
 	}
-	return errors;
+	ଫେରନ୍ତୁ errors;
 }
 
 #endif /* UNITTEST */

@@ -2,71 +2,71 @@
  * tst_libext2fs.c
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ଅନ୍ତର୍ଭାଵ "config.h"
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଯଦି HAVE_UNISTD_H
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#ଯଦି HAVE_ERRNO_H
+#ଅନ୍ତର୍ଭାଵ <errno.h>
 #endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#ଯଦି HAVE_SYS_STAT_H
+#ଅନ୍ତର୍ଭାଵ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#ଯଦି HAVE_SYS_TYPES_H
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ଅନ୍ତର୍ଭାଵ "ext2_fs.h"
+#ଅନ୍ତର୍ଭାଵ "ext2fsP.h"
 
-#include "ss/ss.h"
-#include "debugfs.h"
+#ଅନ୍ତର୍ଭାଵ "ss/ss.h"
+#ଅନ୍ତର୍ଭାଵ "debugfs.h"
 
 /*
  * Hook in new commands into debugfs
  * Override debugfs's prompt
  */
-const char *debug_prog_name = "tst_libext2fs";
-extern ss_request_table libext2fs_cmds;
+ଅଚଳ ଅକ୍ଷର *debug_prog_name = "tst_libext2fs";
+ବାହ୍ୟ ss_request_table libext2fs_cmds;
 ss_request_table *extra_cmds = &libext2fs_cmds;
 
-static int print_blocks_proc(ext2_filsys fs EXT2FS_ATTR((unused)),
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା print_blocks_proc(ext2_filsys fs EXT2FS_ATTR((unused)),
 			     blk64_t *blocknr, e2_blkcnt_t blockcnt,
-			     blk64_t ref_block, int ref_offset,
-			     void *private EXT2FS_ATTR((unused)))
+			     blk64_t ref_block, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ref_offset,
+			     ଶୂନ୍ୟ *ବ୍ୟକ୍ତିଗତ EXT2FS_ATTR((unused)))
 {
 	printf("%6lld %8llu (%d %llu)\n", (long long) blockcnt,
 	       (unsigned long long) *blocknr, ref_offset,
 	       (unsigned long long) ref_block);
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
 
-void do_block_iterate(int argc, char **argv, int sci_idx EXT2FS_ATTR((unused)),
-		      void *infop EXT2FS_ATTR((unused)))
+ଶୂନ୍ୟ do_block_iterate(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv, ପୂର୍ଣ୍ଣସଂଖ୍ୟା sci_idx EXT2FS_ATTR((unused)),
+		      ଶୂନ୍ୟ *infop EXT2FS_ATTR((unused)))
 {
-	const char	*usage = "block_iterate <file> <flags";
+	ଅଚଳ ଅକ୍ଷର	*usage = "block_iterate <file> <flags";
 	ext2_ino_t	ino;
-	int		err = 0;
-	int		flags = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା		err = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା		flags = 0;
 
-	if (common_args_process(argc, argv, 2, 3, argv[0], usage, 0))
-		return;
+	ଯଦି (common_args_process(argc, argv, 2, 3, argv[0], usage, 0))
+		ଫେରନ୍ତୁ;
 
 	ino = string_to_inode(argv[1]);
-	if (!ino)
-		return;
+	ଯଦି (!ino)
+		ଫେରନ୍ତୁ;
 
-	if (argc > 2) {
+	ଯଦି (argc > 2) {
 		flags = parse_ulong(argv[2], argv[0], "flags", &err);
-		if (err)
-			return;
+		ଯଦି (err)
+			ଫେରନ୍ତୁ;
 	}
 	flags |= BLOCK_FLAG_READ_ONLY;
 
-	ext2fs_block_iterate3(current_fs, ino, flags, NULL,
-			      print_blocks_proc, NULL);
+	ext2fs_block_iterate3(current_fs, ino, flags, ଖାଲି,
+			      print_blocks_proc, ଖାଲି);
 	putc('\n', stdout);
 }

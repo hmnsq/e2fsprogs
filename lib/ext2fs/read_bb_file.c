@@ -9,84 +9,84 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ଅନ୍ତର୍ଭାଵ "config.h"
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଯଦି HAVE_UNISTD_H
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#ଅନ୍ତର୍ଭାଵ <fcntl.h>
+#ଅନ୍ତର୍ଭାଵ <time.h>
+#ଯଦି HAVE_SYS_STAT_H
+#ଅନ୍ତର୍ଭାଵ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#ଯଦି HAVE_SYS_TYPES_H
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ଅନ୍ତର୍ଭାଵ "ext2_fs.h"
+#ଅନ୍ତର୍ଭାଵ "ext2fs.h"
 
 /*
  * Reads a list of bad blocks from  a FILE *
  */
 errcode_t ext2fs_read_bb_FILE2(ext2_filsys fs, FILE *f,
 			       ext2_badblocks_list *bb_list,
-			       void *priv_data,
-			       void (*invalid)(ext2_filsys fs,
+			       ଶୂନ୍ୟ *priv_data,
+			       ଶୂନ୍ୟ (*invalid)(ext2_filsys fs,
 					       blk_t blk,
-					       char *badstr,
-					       void *priv_data))
+					       ଅକ୍ଷର *badstr,
+					       ଶୂନ୍ୟ *priv_data))
 {
 	errcode_t	retval;
 	unsigned long long blockno;
-	int		count;
-	char		buf[128];
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା		ଗଣନା_2;
+	ଅକ୍ଷର		buf[128];
 
-	if (fs)
+	ଯଦି (fs)
 		EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!*bb_list) {
+	ଯଦି (!*bb_list) {
 		retval = ext2fs_badblocks_list_create(bb_list, 10);
-		if (retval)
-			return retval;
+		ଯଦି (retval)
+			ଫେରନ୍ତୁ retval;
 	}
 
-	while (!feof (f)) {
-		if (fgets(buf, sizeof(buf), f) == NULL)
-			break;
-		count = sscanf(buf, "%llu", &blockno);
-		if (count <= 0)
-			continue;
+	ଯେତେବେଳେ (!feof (f)) {
+		ଯଦି (fgets(buf, ଆକାର(buf), f) == ଖାଲି)
+			ଭାଙ୍ଗ;
+		ଗଣନା_2 = sscanf(buf, "%llu", &blockno);
+		ଯଦି (ଗଣନା_2 <= 0)
+			ଜାରି;
 		/* Badblocks isn't going to be updated for 64bit */
-		if (blockno >> 32)
-			return EOVERFLOW;
-		if (fs &&
+		ଯଦି (blockno >> 32)
+			ଫେରନ୍ତୁ EOVERFLOW;
+		ଯଦି (fs &&
 		    ((blockno < fs->super->s_first_data_block) ||
-		     (blockno >= ext2fs_blocks_count(fs->super)))) {
-			if (invalid)
+		     (blockno >= ext2fs_blocks_ଗଣନା(fs->super)))) {
+			ଯଦି (invalid)
 				(invalid)(fs, (blk64_t) blockno, buf, priv_data);
-			continue;
+			ଜାରି;
 		}
 		retval = ext2fs_badblocks_list_add(*bb_list, (blk64_t) blockno);
-		if (retval)
-			return retval;
+		ଯଦି (retval)
+			ଫେରନ୍ତୁ retval;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-struct compat_struct {
-	void (*invalid)(ext2_filsys, blk_t);
+ସଂରଚନା compat_struct {
+	ଶୂନ୍ୟ (*invalid)(ext2_filsys, blk_t);
 };
 
-static void call_compat_invalid(ext2_filsys fs, blk_t blk,
-				char *badstr EXT2FS_ATTR((unused)),
-				void *priv_data)
+ସ୍ଥିର ଶୂନ୍ୟ call_compat_invalid(ext2_filsys fs, blk_t blk,
+				ଅକ୍ଷର *badstr EXT2FS_ATTR((unused)),
+				ଶୂନ୍ୟ *priv_data)
 {
-	struct compat_struct *st;
+	ସଂରଚନା compat_struct *st;
 
-	st = (struct compat_struct *) priv_data;
-	if (st->invalid)
+	st = (ସଂରଚନା compat_struct *) priv_data;
+	ଯଦି (st->invalid)
 		(st->invalid)(fs, blk);
 }
 
@@ -96,13 +96,13 @@ static void call_compat_invalid(ext2_filsys fs, blk_t blk,
  */
 errcode_t ext2fs_read_bb_FILE(ext2_filsys fs, FILE *f,
 			      ext2_badblocks_list *bb_list,
-			      void (*invalid)(ext2_filsys fs, blk_t blk))
+			      ଶୂନ୍ୟ (*invalid)(ext2_filsys fs, blk_t blk))
 {
-	struct compat_struct st;
+	ସଂରଚନା compat_struct st;
 
 	st.invalid = invalid;
 
-	return ext2fs_read_bb_FILE2(fs, f, bb_list, &st,
+	ଫେରନ୍ତୁ ext2fs_read_bb_FILE2(fs, f, bb_list, &st,
 				    call_compat_invalid);
 }
 
