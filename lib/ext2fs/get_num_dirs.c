@@ -9,16 +9,16 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#𐡄𐡍 HAVE_UNISTD_H
+#ضمن <unistd.h>
 #endif
-#include <string.h>
-#include <time.h>
+#ضمن <string.h>
+#ضمن <time.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fsP.h"
 
 /*
  * Returns the number of directories in the filesystem as reported by
@@ -34,17 +34,17 @@ errcode_t ext2fs_get_num_dirs(ext2_filsys fs, ext2_ino_t *ret_num_dirs)
 
 	num_dirs = 0;
 	max_dirs = fs->super->s_inodes_per_group;
-	for (i = 0; i < fs->group_desc_count; i++) {
-		if (ext2fs_bg_used_dirs_count(fs, i) > max_dirs)
+	لكل (i = 0; i < fs->group_desc_count; i++) {
+		𐡄𐡍 (ext2fs_bg_used_dirs_count(fs, i) > max_dirs)
 			num_dirs += max_dirs / 8;
-		else
+		وإلا
 			num_dirs += ext2fs_bg_used_dirs_count(fs, i);
 	}
-	if (num_dirs > fs->super->s_inodes_count)
+	𐡄𐡍 (num_dirs > fs->super->s_inodes_count)
 		num_dirs = fs->super->s_inodes_count;
 
 	*ret_num_dirs = num_dirs;
 
-	return 0;
+	أرجع 0;
 }
 

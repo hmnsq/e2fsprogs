@@ -9,22 +9,22 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#𐡄𐡍 HAVE_UNISTD_H
+#ضمن <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
+#ضمن <fcntl.h>
+#ضمن <time.h>
+#ضمن <sys/stat.h>
+#ضمن <sys/types.h>
+#𐡄𐡍 HAVE_ERRNO_H
+#ضمن <errno.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fs.h"
 
 __u16 test1[] = {
 	0x0001, 0x0100,
@@ -45,49 +45,49 @@ __u32 test2[] = {
 	0x00000000, 0x00000000
 	};
 
-int main(int argc, char **argv)
+صحيح main(صحيح argc, حرف **argv)
 {
-	int	i;
-	int	errors = 0;
+	صحيح	i;
+	صحيح	errors = 0;
 
 	printf("Testing ext2fs_swab16\n");
 	i=0;
-	do {
+	𐡏𐡁𐡃 {
 		printf("swab16(0x%04x) = 0x%04x\n", test1[i],
 		       ext2fs_swab16(test1[i]));
-		if (ext2fs_swab16(test1[i]) != test1[i+1]) {
+		𐡄𐡍 (ext2fs_swab16(test1[i]) != test1[i+1]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab16(test1[i]), test1[i+1]);
 			errors++;
 		}
-		if (ext2fs_swab16(test1[i+1]) != test1[i]) {
+		𐡄𐡍 (ext2fs_swab16(test1[i+1]) != test1[i]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab16(test1[i+1]), test1[i]);
 			errors++;
 		}
 		i += 2;
-	} while (test1[i] != 0);
+	} طالما (test1[i] != 0);
 
 	printf("Testing ext2fs_swab32\n");
 	i = 0;
-	do {
+	𐡏𐡁𐡃 {
 		printf("swab32(0x%08x) = 0x%08x\n", test2[i],
 		       ext2fs_swab32(test2[i]));
-		if (ext2fs_swab32(test2[i]) != test2[i+1]) {
+		𐡄𐡍 (ext2fs_swab32(test2[i]) != test2[i+1]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab32(test2[i]), test2[i+1]);
 			errors++;
 		}
-		if (ext2fs_swab32(test2[i+1]) != test2[i]) {
+		𐡄𐡍 (ext2fs_swab32(test2[i+1]) != test2[i]) {
 			printf("Error!!!   %04x != %04x\n",
 			       ext2fs_swab32(test2[i+1]), test2[i]);
 			errors++;
 		}
 		i += 2;
-	} while (test2[i] != 0);
+	} طالما (test2[i] != 0);
 
-	if (!errors)
+	𐡄𐡍 (!errors)
 		printf("No errors found in the byteswap implementation!\n");
 
-	return errors;
+	أرجع errors;
 }
