@@ -9,19 +9,19 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#अन्तर्भाव "config.h"
+#जर HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
 #endif
-#include <string.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <errno.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "tdb.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
+#अन्तर्भाव "tdb.h"
 
 /*
  * The data storage strategy used by icount relies on the observation
@@ -42,23 +42,23 @@
  * particular inode is on the sorted list already.
  */
 
-struct ext2_icount_el {
+संरचना ext2_icount_el {
 	ext2_ino_t	ino;
-	__u32		count;
+	__u32		मोजणी;
 };
 
-struct ext2_icount {
+संरचना ext2_icount {
 	errcode_t		magic;
 	ext2fs_inode_bitmap	single;
 	ext2fs_inode_bitmap	multiple;
-	ext2_ino_t		count;
+	ext2_ino_t		मोजणी;
 	ext2_ino_t		size;
-	ext2_ino_t		num_inodes;
+	ext2_ino_t		अंक_inodes;
 	ext2_ino_t		cursor;
-	struct ext2_icount_el	*list;
-	struct ext2_icount_el	*last_lookup;
+	संरचना ext2_icount_el	*list;
+	संरचना ext2_icount_el	*last_lookup;
 #ifdef CONFIG_TDB
-	char			*tdb_fn;
+	अक्षर			*tdb_fn;
 	TDB_CONTEXT		*tdb;
 #endif
 	__u16			*fullmap;
@@ -73,90 +73,90 @@ struct ext2_icount {
  */
 #define icount_16_xlate(x) (((x) > 65500) ? 65500 : (x))
 
-void ext2fs_free_icount(ext2_icount_t icount)
+शून्य ext2fs_free_icount(ext2_icount_t icount)
 {
-	if (!icount)
-		return;
+	जर (!icount)
+		परत;
 
 	icount->magic = 0;
-	if (icount->list)
+	जर (icount->list)
 		ext2fs_free_mem(&icount->list);
-	if (icount->single)
+	जर (icount->single)
 		ext2fs_free_inode_bitmap(icount->single);
-	if (icount->multiple)
+	जर (icount->multiple)
 		ext2fs_free_inode_bitmap(icount->multiple);
 #ifdef CONFIG_TDB
-	if (icount->tdb)
+	जर (icount->tdb)
 		tdb_close(icount->tdb);
-	if (icount->tdb_fn) {
-		(void) unlink(icount->tdb_fn);
-		free(icount->tdb_fn);
+	जर (icount->tdb_fn) {
+		(शून्य) unlink(icount->tdb_fn);
+		मुक्त(icount->tdb_fn);
 	}
 #endif
 
-	if (icount->fullmap)
+	जर (icount->fullmap)
 		ext2fs_free_mem(&icount->fullmap);
 
 	ext2fs_free_mem(&icount);
 }
 
-static errcode_t alloc_icount(ext2_filsys fs, int flags, ext2_icount_t *ret)
+स्थिर errcode_t alloc_icount(ext2_filsys fs, पूर्णांक flags, ext2_icount_t *ret)
 {
 	ext2_icount_t	icount;
 	errcode_t	retval;
 
 	*ret = 0;
 
-	retval = ext2fs_get_mem(sizeof(struct ext2_icount), &icount);
-	if (retval)
-		return retval;
-	memset(icount, 0, sizeof(struct ext2_icount));
+	retval = ext2fs_get_mem(आकार(संरचना ext2_icount), &icount);
+	जर (retval)
+		परत retval;
+	स_रखो(icount, 0, आकार(संरचना ext2_icount));
 	icount->magic = EXT2_ET_MAGIC_ICOUNT;
-	icount->num_inodes = fs->super->s_inodes_count;
+	icount->अंक_inodes = fs->super->s_inodes_मोजणी;
 
-	if ((flags & EXT2_ICOUNT_OPT_FULLMAP) &&
+	जर ((flags & EXT2_ICOUNT_OPT_FULLMAP) &&
 	    (flags & EXT2_ICOUNT_OPT_INCREMENT)) {
-		unsigned sz = sizeof(*icount->fullmap) * icount->num_inodes;
+		अचिन्हित sz = आकार(*icount->fullmap) * icount->अंक_inodes;
 
 		retval = ext2fs_get_mem(sz, &icount->fullmap);
 		/* If we can't allocate, fall back */
-		if (!retval) {
-			memset(icount->fullmap, 0, sz);
+		जर (!retval) {
+			स_रखो(icount->fullmap, 0, sz);
 			*ret = icount;
-			return 0;
+			परत 0;
 		}
 	}
 
 	retval = ext2fs_allocate_inode_bitmap(fs, "icount", &icount->single);
-	if (retval)
-		goto errout;
+	जर (retval)
+		जा errout;
 
-	if (flags & EXT2_ICOUNT_OPT_INCREMENT) {
+	जर (flags & EXT2_ICOUNT_OPT_INCREMENT) {
 		retval = ext2fs_allocate_inode_bitmap(fs, "icount_inc",
 						      &icount->multiple);
-		if (retval)
-			goto errout;
-	} else
+		जर (retval)
+			जा errout;
+	} अन्यथा
 		icount->multiple = 0;
 
 	*ret = icount;
-	return 0;
+	परत 0;
 
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
+	परत(retval);
 }
 
 #ifdef CONFIG_TDB
-struct uuid {
-	__u32	time_low;
+संरचना uuid {
+	__u32	time_खालचा;
 	__u16	time_mid;
 	__u16	time_hi_and_version;
 	__u16	clock_seq;
-	__u8	node[6];
+	__u8	गाठ[6];
 };
 
-static void unpack_uuid(void *in, struct uuid *uu)
+स्थिर शून्य unpack_uuid(शून्य *in, संरचना uuid *uu)
 {
 	__u8	*ptr = in;
 	__u32	tmp;
@@ -165,7 +165,7 @@ static void unpack_uuid(void *in, struct uuid *uu)
 	tmp = (tmp << 8) | *ptr++;
 	tmp = (tmp << 8) | *ptr++;
 	tmp = (tmp << 8) | *ptr++;
-	uu->time_low = tmp;
+	uu->time_खालचा = tmp;
 
 	tmp = *ptr++;
 	tmp = (tmp << 8) | *ptr++;
@@ -179,51 +179,51 @@ static void unpack_uuid(void *in, struct uuid *uu)
 	tmp = (tmp << 8) | *ptr++;
 	uu->clock_seq = tmp;
 
-	memcpy(uu->node, ptr, 6);
+	स_नकल(uu->गाठ, ptr, 6);
 }
 
-static void uuid_unparse(void *uu, char *out)
+स्थिर शून्य uuid_unparse(शून्य *uu, अक्षर *out)
 {
-	struct uuid uuid;
+	संरचना uuid uuid;
 
 	unpack_uuid(uu, &uuid);
-	sprintf(out,
+	प्र_लिखो(out,
 		"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-		uuid.time_low, uuid.time_mid, uuid.time_hi_and_version,
+		uuid.time_खालचा, uuid.time_mid, uuid.time_hi_and_version,
 		uuid.clock_seq >> 8, uuid.clock_seq & 0xFF,
-		uuid.node[0], uuid.node[1], uuid.node[2],
-		uuid.node[3], uuid.node[4], uuid.node[5]);
+		uuid.गाठ[0], uuid.गाठ[1], uuid.गाठ[2],
+		uuid.गाठ[3], uuid.गाठ[4], uuid.गाठ[5]);
 }
 #endif
 
 errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2FS_NO_TDB_UNUSED,
-				   char *tdb_dir EXT2FS_NO_TDB_UNUSED,
-				   int flags EXT2FS_NO_TDB_UNUSED,
+				   अक्षर *tdb_dir EXT2FS_NO_TDB_UNUSED,
+				   पूर्णांक flags EXT2FS_NO_TDB_UNUSED,
 				   ext2_icount_t *ret EXT2FS_NO_TDB_UNUSED)
 {
 #ifdef CONFIG_TDB
 	ext2_icount_t	icount;
 	errcode_t	retval;
-	char 		*fn, uuid[40];
-	ext2_ino_t	num_inodes;
+	अक्षर 		*fn, uuid[40];
+	ext2_ino_t	अंक_inodes;
 	mode_t		save_umask;
-	int		fd;
+	पूर्णांक		fd;
 
 	retval = alloc_icount(fs, flags,  &icount);
-	if (retval)
-		return retval;
+	जर (retval)
+		परत retval;
 
-	retval = ext2fs_get_mem(strlen(tdb_dir) + 64, &fn);
-	if (retval)
-		goto errout;
+	retval = ext2fs_get_mem(म_माप(tdb_dir) + 64, &fn);
+	जर (retval)
+		जा errout;
 	uuid_unparse(fs->super->s_uuid, uuid);
-	sprintf(fn, "%s/%s-icount-XXXXXX", tdb_dir, uuid);
+	प्र_लिखो(fn, "%s/%s-icount-XXXXXX", tdb_dir, uuid);
 	save_umask = umask(077);
 	fd = mkstemp(fn);
-	if (fd < 0) {
-		retval = errno;
+	जर (fd < 0) {
+		retval = त्रुटि_सं;
 		ext2fs_free_mem(&fn);
-		goto errout;
+		जा errout;
 	}
 	icount->tdb_fn = fn;
 	umask(save_umask);
@@ -235,72 +235,72 @@ errcode_t ext2fs_create_icount_tdb(ext2_filsys fs EXT2FS_NO_TDB_UNUSED,
 	 * which case the number of inodes in use approaches the ideal
 	 * value.
 	 */
-	num_inodes = fs->super->s_inodes_count - fs->super->s_free_inodes_count;
+	अंक_inodes = fs->super->s_inodes_मोजणी - fs->super->s_free_inodes_मोजणी;
 
-	icount->tdb = tdb_open(fn, num_inodes, TDB_NOLOCK | TDB_NOSYNC,
+	icount->tdb = tdb_open(fn, अंक_inodes, TDB_NOLOCK | TDB_NOSYNC,
 			       O_RDWR | O_CREAT | O_TRUNC, 0600);
-	close(fd);
-	if (icount->tdb == NULL) {
-		retval = errno;
-		goto errout;
+	बंद(fd);
+	जर (icount->tdb == रिक्त) {
+		retval = त्रुटि_सं;
+		जा errout;
 	}
 	*ret = icount;
-	return 0;
+	परत 0;
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
-#else
-	return EXT2_ET_UNIMPLEMENTED;
+	परत(retval);
+#अन्यथा
+	परत EXT2_ET_UNIMPLEMENTED;
 #endif
 }
 
-errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
+errcode_t ext2fs_create_icount2(ext2_filsys fs, पूर्णांक flags, अचिन्हित पूर्णांक size,
 				ext2_icount_t hint, ext2_icount_t *ret)
 {
 	ext2_icount_t	icount;
 	errcode_t	retval;
-	size_t		bytes;
+	माप_प्रकार		bytes;
 	ext2_ino_t	i;
 
-	if (hint) {
+	जर (hint) {
 		EXT2_CHECK_MAGIC(hint, EXT2_ET_MAGIC_ICOUNT);
-		if (hint->size > size)
-			size = (size_t) hint->size;
+		जर (hint->size > size)
+			size = (माप_प्रकार) hint->size;
 	}
 
 	retval = alloc_icount(fs, flags, &icount);
-	if (retval)
-		return retval;
+	जर (retval)
+		परत retval;
 
-	if (icount->fullmap)
-		goto successout;
+	जर (icount->fullmap)
+		जा successout;
 
-	if (size) {
+	जर (size) {
 		icount->size = size;
-	} else {
+	} अन्यथा {
 		/*
 		 * Figure out how many special case inode counts we will
 		 * have.  We know we will need one for each directory;
 		 * we also need to reserve some extra room for file links
 		 */
-		retval = ext2fs_get_num_dirs(fs, &icount->size);
-		if (retval)
-			goto errout;
-		icount->size += fs->super->s_inodes_count / 50;
+		retval = ext2fs_get_अंक_dirs(fs, &icount->size);
+		जर (retval)
+			जा errout;
+		icount->size += fs->super->s_inodes_मोजणी / 50;
 	}
 
-	bytes = (size_t) (icount->size * sizeof(struct ext2_icount_el));
-#if 0
-	printf("Icount allocated %u entries, %d bytes.\n",
+	bytes = (माप_प्रकार) (icount->size * आकार(संरचना ext2_icount_el));
+#जर 0
+	म_लिखो("Icount allocated %u entries, %d bytes.\n",
 	       icount->size, bytes);
 #endif
-	retval = ext2fs_get_array(icount->size, sizeof(struct ext2_icount_el),
+	retval = ext2fs_get_array(icount->size, आकार(संरचना ext2_icount_el),
 			 &icount->list);
-	if (retval)
-		goto errout;
-	memset(icount->list, 0, bytes);
+	जर (retval)
+		जा errout;
+	स_रखो(icount->list, 0, bytes);
 
-	icount->count = 0;
+	icount->मोजणी = 0;
 	icount->cursor = 0;
 
 	/*
@@ -308,76 +308,76 @@ errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags, unsigned int size,
 	 * found in the hint icount (since those are ones which will
 	 * likely need to be in the sorted list this time around).
 	 */
-	if (hint) {
-		for (i=0; i < hint->count; i++)
+	जर (hint) {
+		साठी (i=0; i < hint->मोजणी; i++)
 			icount->list[i].ino = hint->list[i].ino;
-		icount->count = hint->count;
+		icount->मोजणी = hint->मोजणी;
 	}
 
 successout:
 	*ret = icount;
-	return 0;
+	परत 0;
 
 errout:
 	ext2fs_free_icount(icount);
-	return(retval);
+	परत(retval);
 }
 
-errcode_t ext2fs_create_icount(ext2_filsys fs, int flags,
-			       unsigned int size,
+errcode_t ext2fs_create_icount(ext2_filsys fs, पूर्णांक flags,
+			       अचिन्हित पूर्णांक size,
 			       ext2_icount_t *ret)
 {
-	return ext2fs_create_icount2(fs, flags, size, 0, ret);
+	परत ext2fs_create_icount2(fs, flags, size, 0, ret);
 }
 
 /*
  * insert_icount_el() --- Insert a new entry into the sorted list at a
  * 	specified position.
  */
-static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
-					    ext2_ino_t ino, int pos)
+स्थिर संरचना ext2_icount_el *घाला_icount_el(ext2_icount_t icount,
+					    ext2_ino_t ino, पूर्णांक pos)
 {
-	struct ext2_icount_el 	*el;
+	संरचना ext2_icount_el 	*el;
 	errcode_t		retval;
 	ext2_ino_t		new_size = 0;
-	int			num;
+	पूर्णांक			अंक;
 
-	if (icount->last_lookup && icount->last_lookup->ino == ino)
-		return icount->last_lookup;
+	जर (icount->last_lookup && icount->last_lookup->ino == ino)
+		परत icount->last_lookup;
 
-	if (icount->count >= icount->size) {
-		if (icount->count) {
-			new_size = icount->list[(unsigned)icount->count-1].ino;
-			new_size = (ext2_ino_t) (icount->count *
-				((float) icount->num_inodes / new_size));
+	जर (icount->मोजणी >= icount->size) {
+		जर (icount->मोजणी) {
+			new_size = icount->list[(अचिन्हित)icount->मोजणी-1].ino;
+			new_size = (ext2_ino_t) (icount->मोजणी *
+				((दशांश) icount->अंक_inodes / new_size));
 		}
-		if (new_size < (icount->size + 100))
+		जर (new_size < (icount->size + 100))
 			new_size = icount->size + 100;
-#if 0
-		printf("Reallocating icount %u entries...\n", new_size);
+#जर 0
+		म_लिखो("Reallocating icount %u entries...\n", new_size);
 #endif
-		retval = ext2fs_resize_mem((size_t) icount->size *
-					   sizeof(struct ext2_icount_el),
-					   (size_t) new_size *
-					   sizeof(struct ext2_icount_el),
+		retval = ext2fs_resize_mem((माप_प्रकार) icount->size *
+					   आकार(संरचना ext2_icount_el),
+					   (माप_प्रकार) new_size *
+					   आकार(संरचना ext2_icount_el),
 					   &icount->list);
-		if (retval)
-			return 0;
+		जर (retval)
+			परत 0;
 		icount->size = new_size;
 	}
-	num = (int) icount->count - pos;
-	if (num < 0)
-		return 0;	/* should never happen */
-	if (num) {
-		memmove(&icount->list[pos+1], &icount->list[pos],
-			sizeof(struct ext2_icount_el) * num);
+	अंक = (पूर्णांक) icount->मोजणी - pos;
+	जर (अंक < 0)
+		परत 0;	/* should never happen */
+	जर (अंक) {
+		स_हटाओ(&icount->list[pos+1], &icount->list[pos],
+			आकार(संरचना ext2_icount_el) * अंक);
 	}
-	icount->count++;
+	icount->मोजणी++;
 	el = &icount->list[pos];
-	el->count = 0;
+	el->मोजणी = 0;
 	el->ino = ino;
 	icount->last_lookup = el;
-	return el;
+	परत el;
 }
 
 /*
@@ -385,145 +385,145 @@ static struct ext2_icount_el *insert_icount_el(ext2_icount_t icount,
  * 	information in the sorted list.  If the create flag is set,
  * 	and we can't find an entry, create one in the sorted list.
  */
-static struct ext2_icount_el *get_icount_el(ext2_icount_t icount,
-					    ext2_ino_t ino, int create)
+स्थिर संरचना ext2_icount_el *get_icount_el(ext2_icount_t icount,
+					    ext2_ino_t ino, पूर्णांक create)
 {
-	int	low, high, mid;
+	पूर्णांक	खालचा, वरचा, mid;
 
-	if (!icount || !icount->list)
-		return 0;
+	जर (!icount || !icount->list)
+		परत 0;
 
-	if (create && ((icount->count == 0) ||
-		       (ino > icount->list[(unsigned)icount->count-1].ino))) {
-		return insert_icount_el(icount, ino, (unsigned) icount->count);
+	जर (create && ((icount->मोजणी == 0) ||
+		       (ino > icount->list[(अचिन्हित)icount->मोजणी-1].ino))) {
+		परत घाला_icount_el(icount, ino, (अचिन्हित) icount->मोजणी);
 	}
-	if (icount->count == 0)
-		return 0;
+	जर (icount->मोजणी == 0)
+		परत 0;
 
-	if (icount->cursor >= icount->count)
+	जर (icount->cursor >= icount->मोजणी)
 		icount->cursor = 0;
-	if (ino == icount->list[icount->cursor].ino)
-		return &icount->list[icount->cursor++];
-#if 0
-	printf("Non-cursor get_icount_el: %u\n", ino);
+	जर (ino == icount->list[icount->cursor].ino)
+		परत &icount->list[icount->cursor++];
+#जर 0
+	म_लिखो("Non-cursor get_icount_el: %u\n", ino);
 #endif
-	low = 0;
-	high = (int) icount->count-1;
-	while (low <= high) {
-		mid = ((unsigned)low + (unsigned)high) >> 1;
-		if (ino == icount->list[mid].ino) {
+	खालचा = 0;
+	वरचा = (पूर्णांक) icount->मोजणी-1;
+	पर्यंत (खालचा <= वरचा) {
+		mid = ((अचिन्हित)खालचा + (अचिन्हित)वरचा) >> 1;
+		जर (ino == icount->list[mid].ino) {
 			icount->cursor = mid+1;
-			return &icount->list[mid];
+			परत &icount->list[mid];
 		}
-		if (ino < icount->list[mid].ino)
-			high = mid-1;
-		else
-			low = mid+1;
+		जर (ino < icount->list[mid].ino)
+			वरचा = mid-1;
+		अन्यथा
+			खालचा = mid+1;
 	}
 	/*
 	 * If we need to create a new entry, it should be right at
 	 * low (where high will be left at low-1).
 	 */
-	if (create)
-		return insert_icount_el(icount, ino, low);
-	return 0;
+	जर (create)
+		परत घाला_icount_el(icount, ino, खालचा);
+	परत 0;
 }
 
-static errcode_t set_inode_count(ext2_icount_t icount, ext2_ino_t ino,
-				 __u32 count)
+स्थिर errcode_t set_inode_मोजणी(ext2_icount_t icount, ext2_ino_t ino,
+				 __u32 मोजणी)
 {
-	struct ext2_icount_el 	*el;
+	संरचना ext2_icount_el 	*el;
 #ifdef CONFIG_TDB
-	TDB_DATA key, data;
+	TDB_DATA किल्ली, data;
 
-	if (icount->tdb) {
-		key.dptr = (unsigned char *) &ino;
-		key.dsize = sizeof(ext2_ino_t);
-		data.dptr = (unsigned char *) &count;
-		data.dsize = sizeof(__u32);
-		if (count) {
-			if (tdb_store(icount->tdb, key, data, TDB_REPLACE))
-				return tdb_error(icount->tdb) +
+	जर (icount->tdb) {
+		किल्ली.dptr = (अचिन्हित अक्षर *) &ino;
+		किल्ली.dsize = आकार(ext2_ino_t);
+		data.dptr = (अचिन्हित अक्षर *) &मोजणी;
+		data.dsize = आकार(__u32);
+		जर (मोजणी) {
+			जर (tdb_store(icount->tdb, किल्ली, data, TDB_REPLACE))
+				परत tdb_error(icount->tdb) +
 					EXT2_ET_TDB_SUCCESS;
-		} else {
-			if (tdb_delete(icount->tdb, key))
-				return tdb_error(icount->tdb) +
+		} अन्यथा {
+			जर (tdb_delete(icount->tdb, किल्ली))
+				परत tdb_error(icount->tdb) +
 					EXT2_ET_TDB_SUCCESS;
 		}
-		return 0;
+		परत 0;
 	}
 #endif
-	if (icount->fullmap) {
-		icount->fullmap[ino] = icount_16_xlate(count);
-		return 0;
+	जर (icount->fullmap) {
+		icount->fullmap[ino] = icount_16_xlate(मोजणी);
+		परत 0;
 	}
 
 	el = get_icount_el(icount, ino, 1);
-	if (!el)
-		return EXT2_ET_NO_MEMORY;
+	जर (!el)
+		परत EXT2_ET_NO_MEMORY;
 
-	el->count = count;
-	return 0;
+	el->मोजणी = मोजणी;
+	परत 0;
 }
 
-static errcode_t get_inode_count(ext2_icount_t icount, ext2_ino_t ino,
-				 __u32 *count)
+स्थिर errcode_t get_inode_मोजणी(ext2_icount_t icount, ext2_ino_t ino,
+				 __u32 *मोजणी)
 {
-	struct ext2_icount_el 	*el;
+	संरचना ext2_icount_el 	*el;
 #ifdef CONFIG_TDB
-	TDB_DATA key, data;
+	TDB_DATA किल्ली, data;
 
-	if (icount->tdb) {
-		key.dptr = (unsigned char *) &ino;
-		key.dsize = sizeof(ext2_ino_t);
+	जर (icount->tdb) {
+		किल्ली.dptr = (अचिन्हित अक्षर *) &ino;
+		किल्ली.dsize = आकार(ext2_ino_t);
 
-		data = tdb_fetch(icount->tdb, key);
-		if (data.dptr == NULL) {
-			*count = 0;
-			return tdb_error(icount->tdb) + EXT2_ET_TDB_SUCCESS;
+		data = tdb_fetch(icount->tdb, किल्ली);
+		जर (data.dptr == रिक्त) {
+			*मोजणी = 0;
+			परत tdb_error(icount->tdb) + EXT2_ET_TDB_SUCCESS;
 		}
 
-		*count = *((__u32 *) data.dptr);
-		free(data.dptr);
-		return 0;
+		*मोजणी = *((__u32 *) data.dptr);
+		मुक्त(data.dptr);
+		परत 0;
 	}
 #endif
-	if (icount->fullmap) {
-		*count = icount->fullmap[ino];
-		return 0;
+	जर (icount->fullmap) {
+		*मोजणी = icount->fullmap[ino];
+		परत 0;
 	}
 
 	el = get_icount_el(icount, ino, 0);
-	if (!el) {
-		*count = 0;
-		return ENOENT;
+	जर (!el) {
+		*मोजणी = 0;
+		परत ENOENT;
 	}
 
-	*count = el->count;
-	return 0;
+	*मोजणी = el->मोजणी;
+	परत 0;
 }
 
-errcode_t ext2fs_icount_validate(ext2_icount_t icount, FILE *out)
+errcode_t ext2fs_icount_validate(ext2_icount_t icount, खाता *out)
 {
 	errcode_t	ret = 0;
-	unsigned int	i;
-	const char *bad = "bad icount";
+	अचिन्हित पूर्णांक	i;
+	स्थिरांक अक्षर *bad = "bad icount";
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->count > icount->size) {
-		fprintf(out, "%s: count > size\n", bad);
-		return EXT2_ET_INVALID_ARGUMENT;
+	जर (icount->मोजणी > icount->size) {
+		ख_लिखो(out, "%s: count > size\n", bad);
+		परत EXT2_ET_INVALID_ARGUMENT;
 	}
-	for (i=1; i < icount->count; i++) {
-		if (icount->list[i-1].ino >= icount->list[i].ino) {
-			fprintf(out, "%s: list[%d].ino=%u, list[%d].ino=%u\n",
+	साठी (i=1; i < icount->मोजणी; i++) {
+		जर (icount->list[i-1].ino >= icount->list[i].ino) {
+			ख_लिखो(out, "%s: list[%d].ino=%u, list[%d].ino=%u\n",
 				bad, i-1, icount->list[i-1].ino,
 				i, icount->list[i].ino);
 			ret = EXT2_ET_INVALID_ARGUMENT;
 		}
 	}
-	return ret;
+	परत ret;
 }
 
 errcode_t ext2fs_icount_fetch(ext2_icount_t icount, ext2_ino_t ino, __u16 *ret)
@@ -531,182 +531,182 @@ errcode_t ext2fs_icount_fetch(ext2_icount_t icount, ext2_ino_t ino, __u16 *ret)
 	__u32	val;
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	जर (!ino || (ino > icount->अंक_inodes))
+		परत EXT2_ET_INVALID_ARGUMENT;
 
-	if (!icount->fullmap) {
-		if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	जर (!icount->fullmap) {
+		जर (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 			*ret = 1;
-			return 0;
+			परत 0;
 		}
-		if (icount->multiple &&
+		जर (icount->multiple &&
 			!ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
 			*ret = 0;
-			return 0;
+			परत 0;
 		}
 	}
-	get_inode_count(icount, ino, &val);
+	get_inode_मोजणी(icount, ino, &val);
 	*ret = icount_16_xlate(val);
-	return 0;
+	परत 0;
 }
 
 errcode_t ext2fs_icount_increment(ext2_icount_t icount, ext2_ino_t ino,
 				  __u16 *ret)
 {
-	__u32			curr_value;
+	__u32			curr_मूल्य;
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	जर (!ino || (ino > icount->अंक_inodes))
+		परत EXT2_ET_INVALID_ARGUMENT;
 
-	if (icount->fullmap) {
-		curr_value = icount_16_xlate(icount->fullmap[ino] + 1);
-		icount->fullmap[ino] = curr_value;
-	} else if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	जर (icount->fullmap) {
+		curr_मूल्य = icount_16_xlate(icount->fullmap[ino] + 1);
+		icount->fullmap[ino] = curr_मूल्य;
+	} अन्यथा जर (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 		/*
 		 * If the existing count is 1, then we know there is
 		 * no entry in the list.
 		 */
-		if (set_inode_count(icount, ino, 2))
-			return EXT2_ET_NO_MEMORY;
-		curr_value = 2;
+		जर (set_inode_मोजणी(icount, ino, 2))
+			परत EXT2_ET_NO_MEMORY;
+		curr_मूल्य = 2;
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-	} else if (icount->multiple) {
+	} अन्यथा जर (icount->multiple) {
 		/*
 		 * The count is either zero or greater than 1; if the
 		 * inode is set in icount->multiple, then there should
 		 * be an entry in the list, so we need to fix it.
 		 */
-		if (ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
-			get_inode_count(icount, ino, &curr_value);
-			curr_value++;
-			if (set_inode_count(icount, ino, curr_value))
-				return EXT2_ET_NO_MEMORY;
-		} else {
+		जर (ext2fs_test_inode_bitmap2(icount->multiple, ino)) {
+			get_inode_मोजणी(icount, ino, &curr_मूल्य);
+			curr_मूल्य++;
+			जर (set_inode_मोजणी(icount, ino, curr_मूल्य))
+				परत EXT2_ET_NO_MEMORY;
+		} अन्यथा {
 			/*
 			 * The count was zero; mark the single bitmap
 			 * and return.
 			 */
 			ext2fs_mark_inode_bitmap2(icount->single, ino);
-			if (ret)
+			जर (ret)
 				*ret = 1;
-			return 0;
+			परत 0;
 		}
-	} else {
+	} अन्यथा {
 		/*
 		 * The count is either zero or greater than 1; try to
 		 * find an entry in the list to determine which.
 		 */
-		get_inode_count(icount, ino, &curr_value);
-		curr_value++;
-		if (set_inode_count(icount, ino, curr_value))
-			return EXT2_ET_NO_MEMORY;
+		get_inode_मोजणी(icount, ino, &curr_मूल्य);
+		curr_मूल्य++;
+		जर (set_inode_मोजणी(icount, ino, curr_मूल्य))
+			परत EXT2_ET_NO_MEMORY;
 	}
-	if (icount->multiple)
+	जर (icount->multiple)
 		ext2fs_mark_inode_bitmap2(icount->multiple, ino);
-	if (ret)
-		*ret = icount_16_xlate(curr_value);
-	return 0;
+	जर (ret)
+		*ret = icount_16_xlate(curr_मूल्य);
+	परत 0;
 }
 
 errcode_t ext2fs_icount_decrement(ext2_icount_t icount, ext2_ino_t ino,
 				  __u16 *ret)
 {
-	__u32			curr_value;
+	__u32			curr_मूल्य;
 
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	जर (!ino || (ino > icount->अंक_inodes))
+		परत EXT2_ET_INVALID_ARGUMENT;
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->fullmap) {
-		if (!icount->fullmap[ino])
-			return EXT2_ET_INVALID_ARGUMENT;
+	जर (icount->fullmap) {
+		जर (!icount->fullmap[ino])
+			परत EXT2_ET_INVALID_ARGUMENT;
 
-		curr_value = --icount->fullmap[ino];
-		if (ret)
-			*ret = icount_16_xlate(curr_value);
-		return 0;
+		curr_मूल्य = --icount->fullmap[ino];
+		जर (ret)
+			*ret = icount_16_xlate(curr_मूल्य);
+		परत 0;
 	}
 
-	if (ext2fs_test_inode_bitmap2(icount->single, ino)) {
+	जर (ext2fs_test_inode_bitmap2(icount->single, ino)) {
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple)
+		जर (icount->multiple)
 			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		else {
-			set_inode_count(icount, ino, 0);
+		अन्यथा {
+			set_inode_मोजणी(icount, ino, 0);
 		}
-		if (ret)
+		जर (ret)
 			*ret = 0;
-		return 0;
+		परत 0;
 	}
 
-	if (icount->multiple &&
+	जर (icount->multiple &&
 	    !ext2fs_test_inode_bitmap2(icount->multiple, ino))
-		return EXT2_ET_INVALID_ARGUMENT;
+		परत EXT2_ET_INVALID_ARGUMENT;
 
-	get_inode_count(icount, ino, &curr_value);
-	if (!curr_value)
-		return EXT2_ET_INVALID_ARGUMENT;
-	curr_value--;
-	if (set_inode_count(icount, ino, curr_value))
-		return EXT2_ET_NO_MEMORY;
+	get_inode_मोजणी(icount, ino, &curr_मूल्य);
+	जर (!curr_मूल्य)
+		परत EXT2_ET_INVALID_ARGUMENT;
+	curr_मूल्य--;
+	जर (set_inode_मोजणी(icount, ino, curr_मूल्य))
+		परत EXT2_ET_NO_MEMORY;
 
-	if (curr_value == 1)
+	जर (curr_मूल्य == 1)
 		ext2fs_mark_inode_bitmap2(icount->single, ino);
-	if ((curr_value == 0) && icount->multiple)
+	जर ((curr_मूल्य == 0) && icount->multiple)
 		ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
 
-	if (ret)
-		*ret = icount_16_xlate(curr_value);
-	return 0;
+	जर (ret)
+		*ret = icount_16_xlate(curr_मूल्य);
+	परत 0;
 }
 
 errcode_t ext2fs_icount_store(ext2_icount_t icount, ext2_ino_t ino,
-			      __u16 count)
+			      __u16 मोजणी)
 {
-	if (!ino || (ino > icount->num_inodes))
-		return EXT2_ET_INVALID_ARGUMENT;
+	जर (!ino || (ino > icount->अंक_inodes))
+		परत EXT2_ET_INVALID_ARGUMENT;
 
 	EXT2_CHECK_MAGIC(icount, EXT2_ET_MAGIC_ICOUNT);
 
-	if (icount->fullmap)
-		return set_inode_count(icount, ino, count);
+	जर (icount->fullmap)
+		परत set_inode_मोजणी(icount, ino, मोजणी);
 
-	if (count == 1) {
+	जर (मोजणी == 1) {
 		ext2fs_mark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple)
+		जर (icount->multiple)
 			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		return 0;
+		परत 0;
 	}
-	if (count == 0) {
+	जर (मोजणी == 0) {
 		ext2fs_unmark_inode_bitmap2(icount->single, ino);
-		if (icount->multiple) {
+		जर (icount->multiple) {
 			/*
 			 * If the icount->multiple bitmap is enabled,
 			 * we can just clear both bitmaps and we're done
 			 */
 			ext2fs_unmark_inode_bitmap2(icount->multiple, ino);
-		} else
-			set_inode_count(icount, ino, 0);
-		return 0;
+		} अन्यथा
+			set_inode_मोजणी(icount, ino, 0);
+		परत 0;
 	}
 
-	if (set_inode_count(icount, ino, count))
-		return EXT2_ET_NO_MEMORY;
+	जर (set_inode_मोजणी(icount, ino, मोजणी))
+		परत EXT2_ET_NO_MEMORY;
 	ext2fs_unmark_inode_bitmap2(icount->single, ino);
-	if (icount->multiple)
+	जर (icount->multiple)
 		ext2fs_mark_inode_bitmap2(icount->multiple, ino);
-	return 0;
+	परत 0;
 }
 
 ext2_ino_t ext2fs_get_icount_size(ext2_icount_t icount)
 {
-	if (!icount || icount->magic != EXT2_ET_MAGIC_ICOUNT)
-		return 0;
+	जर (!icount || icount->magic != EXT2_ET_MAGIC_ICOUNT)
+		परत 0;
 
-	return icount->size;
+	परत icount->size;
 }
 
 #ifdef DEBUG
@@ -720,14 +720,14 @@ ext2_icount_t	icount;
 #define INCREMENT	0x03
 #define DECREMENT	0x04
 
-struct test_program {
-	int		cmd;
+संरचना test_program {
+	पूर्णांक		cmd;
 	ext2_ino_t	ino;
 	__u16		arg;
 	__u16		expected;
 };
 
-struct test_program prog[] = {
+संरचना test_program prog[] = {
 	{ STORE, 42, 42, 42 },
 	{ STORE, 1,  1, 1 },
 	{ STORE, 2,  2, 2 },
@@ -753,7 +753,7 @@ struct test_program prog[] = {
 	{ EXIT, 0, 0, 0 }
 };
 
-struct test_program extended[] = {
+संरचना test_program extended[] = {
 	{ STORE, 1,  1, 1 },
 	{ STORE, 2,  2, 2 },
 	{ STORE, 3,  3, 3 },
@@ -790,132 +790,132 @@ struct test_program extended[] = {
 /*
  * Setup the variables for doing the inode scan test.
  */
-static void setup(void)
+स्थिर शून्य setup(शून्य)
 {
 	errcode_t	retval;
-	struct ext2_super_block param;
+	संरचना ext2_super_block param;
 
 	initialize_ext2_error_table();
 
-	memset(&param, 0, sizeof(param));
-	ext2fs_blocks_count_set(&param, 12000);
+	स_रखो(&param, 0, आकार(param));
+	ext2fs_blocks_मोजणी_set(&param, 12000);
 
 	retval = ext2fs_initialize("test fs", EXT2_FLAG_64BITS, &param,
 				   test_io_manager, &test_fs);
-	if (retval) {
+	जर (retval) {
 		com_err("setup", retval,
 			"while initializing filesystem");
-		exit(1);
+		निकास(1);
 	}
 	retval = ext2fs_allocate_tables(test_fs);
-	if (retval) {
+	जर (retval) {
 		com_err("setup", retval,
 			"while allocating tables for test filesystem");
-		exit(1);
+		निकास(1);
 	}
 }
 
-int run_test(int flags, int size, char *dir, struct test_program *prog)
+पूर्णांक run_test(पूर्णांक flags, पूर्णांक size, अक्षर *dir, संरचना test_program *prog)
 {
 	errcode_t	retval;
 	ext2_icount_t	icount;
-	struct test_program *pc;
+	संरचना test_program *pc;
 	__u16		result;
-	int		problem = 0;
+	पूर्णांक		problem = 0;
 
-	if (dir) {
+	जर (dir) {
 #ifdef CONFIG_TDB
 		retval = ext2fs_create_icount_tdb(test_fs, dir,
 						  flags, &icount);
-		if (retval) {
+		जर (retval) {
 			com_err("run_test", retval,
 				"while creating icount using tdb");
-			exit(1);
+			निकास(1);
 		}
-#else
-		printf("Skipped\n");
-		return 0;
+#अन्यथा
+		म_लिखो("Skipped\n");
+		परत 0;
 #endif
-	} else {
+	} अन्यथा {
 		retval = ext2fs_create_icount2(test_fs, flags, size, 0,
 					       &icount);
-		if (retval) {
+		जर (retval) {
 			com_err("run_test", retval, "while creating icount");
-			exit(1);
+			निकास(1);
 		}
 	}
-	for (pc = prog; pc->cmd != EXIT; pc++) {
-		switch (pc->cmd) {
-		case FETCH:
-			printf("icount_fetch(%u) = ", pc->ino);
-			break;
-		case STORE:
+	साठी (pc = prog; pc->cmd != EXIT; pc++) {
+		निवड (pc->cmd) {
+		स्थिती FETCH:
+			म_लिखो("icount_fetch(%u) = ", pc->ino);
+			थांबा;
+		स्थिती STORE:
 			retval = ext2fs_icount_store(icount, pc->ino, pc->arg);
-			if (retval) {
+			जर (retval) {
 				com_err("run_test", retval,
 					"while calling icount_store");
-				exit(1);
+				निकास(1);
 			}
-			printf("icount_store(%u, %u) = ", pc->ino, pc->arg);
-			break;
-		case INCREMENT:
+			म_लिखो("icount_store(%u, %u) = ", pc->ino, pc->arg);
+			थांबा;
+		स्थिती INCREMENT:
 			retval = ext2fs_icount_increment(icount, pc->ino, 0);
-			if (retval) {
+			जर (retval) {
 				com_err("run_test", retval,
 					"while calling icount_increment");
-				exit(1);
+				निकास(1);
 			}
-			printf("icount_increment(%u) = ", pc->ino);
-			break;
-		case DECREMENT:
+			म_लिखो("icount_increment(%u) = ", pc->ino);
+			थांबा;
+		स्थिती DECREMENT:
 			retval = ext2fs_icount_decrement(icount, pc->ino, 0);
-			if (retval) {
+			जर (retval) {
 				com_err("run_test", retval,
 					"while calling icount_decrement");
-				exit(1);
+				निकास(1);
 			}
-			printf("icount_decrement(%u) = ", pc->ino);
-			break;
+			म_लिखो("icount_decrement(%u) = ", pc->ino);
+			थांबा;
 		}
 		retval = ext2fs_icount_fetch(icount, pc->ino, &result);
-		if (retval) {
+		जर (retval) {
 			com_err("run_test", retval,
 				"while calling icount_fetch");
-			exit(1);
+			निकास(1);
 		}
-		printf("%u (%s)\n", result, (result == pc->expected) ?
+		म_लिखो("%u (%s)\n", result, (result == pc->expected) ?
 		       "OK" : "NOT OK");
-		if (result != pc->expected)
+		जर (result != pc->expected)
 			problem++;
 	}
-	printf("icount size is %u\n", ext2fs_get_icount_size(icount));
-	retval = ext2fs_icount_validate(icount, stdout);
-	if (retval) {
+	म_लिखो("icount size is %u\n", ext2fs_get_icount_size(icount));
+	retval = ext2fs_icount_validate(icount, मानक_निकास);
+	जर (retval) {
 		com_err("run_test", retval, "while calling icount_validate");
-		exit(1);
+		निकास(1);
 	}
 	ext2fs_free_icount(icount);
-	return problem;
+	परत problem;
 }
 
 
-int main(int argc, char **argv)
+पूर्णांक main(पूर्णांक argc, अक्षर **argv)
 {
-	int failed = 0;
+	पूर्णांक failed = 0;
 
 	setup();
-	printf("Standard icount run:\n");
+	म_लिखो("Standard icount run:\n");
 	failed += run_test(0, 0, 0, prog);
-	printf("\nMultiple bitmap test:\n");
+	म_लिखो("\nMultiple bitmap test:\n");
 	failed += run_test(EXT2_ICOUNT_OPT_INCREMENT, 0, 0, prog);
-	printf("\nResizing icount:\n");
+	म_लिखो("\nResizing icount:\n");
 	failed += run_test(0, 3, 0, extended);
-	printf("\nStandard icount run with tdb:\n");
+	म_लिखो("\nStandard icount run with tdb:\n");
 	failed += run_test(0, 0, ".", prog);
-	printf("\nMultiple bitmap test with tdb:\n");
+	म_लिखो("\nMultiple bitmap test with tdb:\n");
 	failed += run_test(EXT2_ICOUNT_OPT_INCREMENT, 0, ".", prog);
-	if (failed)
-		printf("FAILED!\n");
-	return failed;
+	जर (failed)
+		म_लिखो("FAILED!\n");
+	परत failed;
 }
 #endif

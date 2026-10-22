@@ -2,71 +2,71 @@
  * tst_libext2fs.c
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#जर HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#जर HAVE_ERRNO_H
+#अन्तर्भाव <errno.h>
 #endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#जर HAVE_SYS_STAT_H
+#अन्तर्भाव <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#जर HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fsP.h"
 
-#include "ss/ss.h"
-#include "debugfs.h"
+#अन्तर्भाव "ss/ss.h"
+#अन्तर्भाव "debugfs.h"
 
 /*
  * Hook in new commands into debugfs
  * Override debugfs's prompt
  */
-const char *debug_prog_name = "tst_libext2fs";
-extern ss_request_table libext2fs_cmds;
+स्थिरांक अक्षर *debug_prog_name = "tst_libext2fs";
+बाह्य ss_request_table libext2fs_cmds;
 ss_request_table *extra_cmds = &libext2fs_cmds;
 
-static int print_blocks_proc(ext2_filsys fs EXT2FS_ATTR((unused)),
+स्थिर पूर्णांक print_blocks_proc(ext2_filsys fs EXT2FS_ATTR((unused)),
 			     blk64_t *blocknr, e2_blkcnt_t blockcnt,
-			     blk64_t ref_block, int ref_offset,
-			     void *private EXT2FS_ATTR((unused)))
+			     blk64_t ref_block, पूर्णांक ref_offset,
+			     शून्य *खाजगी EXT2FS_ATTR((unused)))
 {
-	printf("%6lld %8llu (%d %llu)\n", (long long) blockcnt,
-	       (unsigned long long) *blocknr, ref_offset,
-	       (unsigned long long) ref_block);
-	return 0;
+	म_लिखो("%6lld %8llu (%d %llu)\n", (दीर्घ दीर्घ) blockcnt,
+	       (अचिन्हित दीर्घ दीर्घ) *blocknr, ref_offset,
+	       (अचिन्हित दीर्घ दीर्घ) ref_block);
+	परत 0;
 }
 
 
-void do_block_iterate(int argc, char **argv, int sci_idx EXT2FS_ATTR((unused)),
-		      void *infop EXT2FS_ATTR((unused)))
+शून्य do_block_iterate(पूर्णांक argc, अक्षर **argv, पूर्णांक sci_idx EXT2FS_ATTR((unused)),
+		      शून्य *infop EXT2FS_ATTR((unused)))
 {
-	const char	*usage = "block_iterate <file> <flags";
+	स्थिरांक अक्षर	*usage = "block_iterate <file> <flags";
 	ext2_ino_t	ino;
-	int		err = 0;
-	int		flags = 0;
+	पूर्णांक		err = 0;
+	पूर्णांक		flags = 0;
 
-	if (common_args_process(argc, argv, 2, 3, argv[0], usage, 0))
-		return;
+	जर (common_args_process(argc, argv, 2, 3, argv[0], usage, 0))
+		परत;
 
 	ino = string_to_inode(argv[1]);
-	if (!ino)
-		return;
+	जर (!ino)
+		परत;
 
-	if (argc > 2) {
+	जर (argc > 2) {
 		flags = parse_ulong(argv[2], argv[0], "flags", &err);
-		if (err)
-			return;
+		जर (err)
+			परत;
 	}
 	flags |= BLOCK_FLAG_READ_ONLY;
 
-	ext2fs_block_iterate3(current_fs, ino, flags, NULL,
-			      print_blocks_proc, NULL);
-	putc('\n', stdout);
+	ext2fs_block_iterate3(current_fs, ino, flags, रिक्त,
+			      print_blocks_proc, रिक्त);
+	अ_दो('\n', मानक_निकास);
 }

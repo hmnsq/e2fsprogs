@@ -9,54 +9,54 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#जर HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#जर HAVE_ERRNO_H
+#अन्तर्भाव <errno.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fsP.h"
 
 #define EXT4_MAX_REC_LEN		((1<<16)-1)
 
 errcode_t ext2fs_get_rec_len(ext2_filsys fs,
-			     struct ext2_dir_entry *dirent,
-			     unsigned int *rec_len)
+			     संरचना ext2_dir_entry *dirent,
+			     अचिन्हित पूर्णांक *rec_len)
 {
-	unsigned int len = dirent->rec_len;
+	अचिन्हित पूर्णांक len = dirent->rec_len;
 
-	if (fs->blocksize < 65536)
+	जर (fs->blocksize < 65536)
 		*rec_len = len;
-	else if (len == EXT4_MAX_REC_LEN || len == 0)
+	अन्यथा जर (len == EXT4_MAX_REC_LEN || len == 0)
 		*rec_len = fs->blocksize;
-	else 
+	अन्यथा 
 		*rec_len = (len & 65532) | ((len & 3) << 16);
-	return 0;
+	परत 0;
 }
 
 errcode_t ext2fs_set_rec_len(ext2_filsys fs,
-			     unsigned int len,
-			     struct ext2_dir_entry *dirent)
+			     अचिन्हित पूर्णांक len,
+			     संरचना ext2_dir_entry *dirent)
 {
-	if ((len > fs->blocksize) || (fs->blocksize > (1 << 18)) || (len & 3))
-		return EINVAL;
-	if (len < 65536) {
+	जर ((len > fs->blocksize) || (fs->blocksize > (1 << 18)) || (len & 3))
+		परत EINVAL;
+	जर (len < 65536) {
 		dirent->rec_len = len;
-		return 0;
+		परत 0;
 	}
-	if (len == fs->blocksize) {
-		if (fs->blocksize == 65536)
+	जर (len == fs->blocksize) {
+		जर (fs->blocksize == 65536)
 			dirent->rec_len = EXT4_MAX_REC_LEN;
-		else 
+		अन्यथा 
 			dirent->rec_len = 0;
-	} else
+	} अन्यथा
 		dirent->rec_len = (len & 65532) | ((len >> 16) & 3);
-	return 0;
+	परत 0;
 }
 
 /*
@@ -67,111 +67,111 @@ errcode_t ext2fs_set_rec_len(ext2_filsys fs,
  * undeleted entry.  Returns 1 if the deleted entry looks valid, zero
  * if not valid.
  */
-static int ext2fs_validate_entry(ext2_filsys fs, char *buf,
-				 unsigned int offset,
-				 unsigned int final_offset)
+स्थिर पूर्णांक ext2fs_validate_entry(ext2_filsys fs, अक्षर *buf,
+				 अचिन्हित पूर्णांक offset,
+				 अचिन्हित पूर्णांक final_offset)
 {
-	struct ext2_dir_entry *dirent;
-	unsigned int rec_len;
+	संरचना ext2_dir_entry *dirent;
+	अचिन्हित पूर्णांक rec_len;
 #define DIRENT_MIN_LENGTH 12
 
-	while ((offset < final_offset) &&
+	पर्यंत ((offset < final_offset) &&
 	       (offset <= fs->blocksize - DIRENT_MIN_LENGTH)) {
-		dirent = (struct ext2_dir_entry *)(buf + offset);
-		if (ext2fs_get_rec_len(fs, dirent, &rec_len))
-			return 0;
+		dirent = (संरचना ext2_dir_entry *)(buf + offset);
+		जर (ext2fs_get_rec_len(fs, dirent, &rec_len))
+			परत 0;
 		offset += rec_len;
-		if ((rec_len < 8) ||
+		जर ((rec_len < 8) ||
 		    ((rec_len % 4) != 0) ||
-		    ((ext2fs_dirent_name_len(dirent)+8) > (int) rec_len))
-			return 0;
+		    ((ext2fs_dirent_name_len(dirent)+8) > (पूर्णांक) rec_len))
+			परत 0;
 	}
-	return (offset == final_offset);
+	परत (offset == final_offset);
 }
 
 errcode_t ext2fs_dir_iterate2(ext2_filsys fs,
 			      ext2_ino_t dir,
-			      int flags,
-			      char *block_buf,
-			      int (*func)(ext2_ino_t	dir,
-					  int		entry,
-					  struct ext2_dir_entry *dirent,
-					  int	offset,
-					  int	blocksize,
-					  char	*buf,
-					  void	*priv_data),
-			      void *priv_data)
+			      पूर्णांक flags,
+			      अक्षर *block_buf,
+			      पूर्णांक (*func)(ext2_ino_t	dir,
+					  पूर्णांक		entry,
+					  संरचना ext2_dir_entry *dirent,
+					  पूर्णांक	offset,
+					  पूर्णांक	blocksize,
+					  अक्षर	*buf,
+					  शून्य	*priv_data),
+			      शून्य *priv_data)
 {
-	struct		dir_context	ctx;
+	संरचना		dir_context	ctx;
 	errcode_t	retval;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	retval = ext2fs_check_directory(fs, dir);
-	if (retval)
-		return retval;
+	जर (retval)
+		परत retval;
 
 	ctx.dir = dir;
 	ctx.flags = flags;
-	if (block_buf)
+	जर (block_buf)
 		ctx.buf = block_buf;
-	else {
+	अन्यथा {
 		retval = ext2fs_get_mem(fs->blocksize, &ctx.buf);
-		if (retval)
-			return retval;
+		जर (retval)
+			परत retval;
 	}
 	ctx.func = func;
 	ctx.priv_data = priv_data;
 	ctx.errcode = 0;
 	retval = ext2fs_block_iterate3(fs, dir, BLOCK_FLAG_READ_ONLY, 0,
 				       ext2fs_process_dir_block, &ctx);
-	if (!block_buf)
+	जर (!block_buf)
 		ext2fs_free_mem(&ctx.buf);
-	if (retval == EXT2_ET_INLINE_DATA_CANT_ITERATE) {
-		(void) ext2fs_inline_data_dir_iterate(fs, dir, &ctx);
+	जर (retval == EXT2_ET_INLINE_DATA_CANT_ITERATE) {
+		(शून्य) ext2fs_inline_data_dir_iterate(fs, dir, &ctx);
 		retval = 0;
 	}
-	if (retval)
-		return retval;
-	return ctx.errcode;
+	जर (retval)
+		परत retval;
+	परत ctx.errcode;
 }
 
-struct xlate {
-	int (*func)(struct ext2_dir_entry *dirent,
-		    int		offset,
-		    int		blocksize,
-		    char	*buf,
-		    void	*priv_data);
-	void *real_private;
+संरचना xlate {
+	पूर्णांक (*func)(संरचना ext2_dir_entry *dirent,
+		    पूर्णांक		offset,
+		    पूर्णांक		blocksize,
+		    अक्षर	*buf,
+		    शून्य	*priv_data);
+	शून्य *real_private;
 };
 
-static int xlate_func(ext2_ino_t dir EXT2FS_ATTR((unused)),
-		      int entry EXT2FS_ATTR((unused)),
-		      struct ext2_dir_entry *dirent, int offset,
-		      int blocksize, char *buf, void *priv_data)
+स्थिर पूर्णांक xlate_func(ext2_ino_t dir EXT2FS_ATTR((unused)),
+		      पूर्णांक entry EXT2FS_ATTR((unused)),
+		      संरचना ext2_dir_entry *dirent, पूर्णांक offset,
+		      पूर्णांक blocksize, अक्षर *buf, शून्य *priv_data)
 {
-	struct xlate *xl = (struct xlate *) priv_data;
+	संरचना xlate *xl = (संरचना xlate *) priv_data;
 
-	return (*xl->func)(dirent, offset, blocksize, buf, xl->real_private);
+	परत (*xl->func)(dirent, offset, blocksize, buf, xl->real_private);
 }
 
 errcode_t ext2fs_dir_iterate(ext2_filsys fs,
 			     ext2_ino_t dir,
-			     int flags,
-			     char *block_buf,
-			     int (*func)(struct ext2_dir_entry *dirent,
-					 int	offset,
-					 int	blocksize,
-					 char	*buf,
-					 void	*priv_data),
-			     void *priv_data)
+			     पूर्णांक flags,
+			     अक्षर *block_buf,
+			     पूर्णांक (*func)(संरचना ext2_dir_entry *dirent,
+					 पूर्णांक	offset,
+					 पूर्णांक	blocksize,
+					 अक्षर	*buf,
+					 शून्य	*priv_data),
+			     शून्य *priv_data)
 {
-	struct xlate xl;
+	संरचना xlate xl;
 
 	xl.real_private = priv_data;
 	xl.func = func;
 
-	return ext2fs_dir_iterate2(fs, dir, flags, block_buf,
+	परत ext2fs_dir_iterate2(fs, dir, flags, block_buf,
 				   xlate_func, &xl);
 }
 
@@ -180,77 +180,77 @@ errcode_t ext2fs_dir_iterate(ext2_filsys fs,
  * Helper function which is private to this module.  Used by
  * ext2fs_dir_iterate() and ext2fs_dblist_dir_iterate()
  */
-int ext2fs_process_dir_block(ext2_filsys fs,
+पूर्णांक ext2fs_process_dir_block(ext2_filsys fs,
 			     blk64_t	*blocknr,
 			     e2_blkcnt_t blockcnt,
 			     blk64_t	ref_block EXT2FS_ATTR((unused)),
-			     int	ref_offset EXT2FS_ATTR((unused)),
-			     void	*priv_data)
+			     पूर्णांक	ref_offset EXT2FS_ATTR((unused)),
+			     शून्य	*priv_data)
 {
-	struct dir_context *ctx = (struct dir_context *) priv_data;
-	unsigned int	offset = 0;
-	unsigned int	next_real_entry = 0;
-	int		ret = 0;
-	int		changed = 0;
-	int		do_abort = 0;
-	unsigned int	rec_len, size, buflen;
-	int		entry;
-	struct ext2_dir_entry *dirent;
-	int		csum_size = 0;
-	int		inline_data;
+	संरचना dir_context *ctx = (संरचना dir_context *) priv_data;
+	अचिन्हित पूर्णांक	offset = 0;
+	अचिन्हित पूर्णांक	next_real_entry = 0;
+	पूर्णांक		ret = 0;
+	पूर्णांक		changed = 0;
+	पूर्णांक		do_abort = 0;
+	अचिन्हित पूर्णांक	rec_len, size, buflen;
+	पूर्णांक		entry;
+	संरचना ext2_dir_entry *dirent;
+	पूर्णांक		csum_size = 0;
+	पूर्णांक		inline_data;
 	errcode_t	retval = 0;
 
-	if (blockcnt < 0)
-		return 0;
+	जर (blockcnt < 0)
+		परत 0;
 
 	entry = blockcnt ? DIRENT_OTHER_FILE : DIRENT_DOT_FILE;
 
 	/* If a dir has inline data, we don't need to read block */
 	inline_data = !!(ctx->flags & DIRENT_FLAG_INCLUDE_INLINE_DATA);
-	if (!inline_data) {
+	जर (!inline_data) {
 		ctx->errcode = ext2fs_read_dir_block4(fs, *blocknr, ctx->buf, 0,
 						      ctx->dir);
-		if (ctx->errcode)
-			return BLOCK_ABORT;
+		जर (ctx->errcode)
+			परत BLOCK_ABORT;
 		/* If we handle a normal dir, we traverse the entire block */
 		buflen = fs->blocksize;
-	} else {
+	} अन्यथा {
 		buflen = ctx->buflen;
 	}
 
-	if (ext2fs_has_feature_metadata_csum(fs->super))
-		csum_size = sizeof(struct ext2_dir_entry_tail);
+	जर (ext2fs_has_feature_metadata_csum(fs->super))
+		csum_size = आकार(संरचना ext2_dir_entry_tail);
 
-	if (buflen < 8) {
+	जर (buflen < 8) {
 		ctx->errcode = EXT2_ET_DIR_CORRUPTED;
-		return BLOCK_ABORT;
+		परत BLOCK_ABORT;
 	}
-	while (offset < buflen - 8) {
-		dirent = (struct ext2_dir_entry *) (ctx->buf + offset);
-		if (ext2fs_get_rec_len(fs, dirent, &rec_len))
-			return BLOCK_ABORT;
-		if (((offset + rec_len) > buflen) ||
+	पर्यंत (offset < buflen - 8) {
+		dirent = (संरचना ext2_dir_entry *) (ctx->buf + offset);
+		जर (ext2fs_get_rec_len(fs, dirent, &rec_len))
+			परत BLOCK_ABORT;
+		जर (((offset + rec_len) > buflen) ||
 		    (rec_len < 8) ||
 		    ((rec_len % 4) != 0) ||
-		    ((ext2fs_dirent_name_len(dirent)+8) > (int) rec_len)) {
+		    ((ext2fs_dirent_name_len(dirent)+8) > (पूर्णांक) rec_len)) {
 			ctx->errcode = EXT2_ET_DIR_CORRUPTED;
-			return BLOCK_ABORT;
+			परत BLOCK_ABORT;
 		}
-		if (!dirent->inode) {
+		जर (!dirent->inode) {
 			/*
 			 * We just need to check metadata_csum when this
 			 * dir hasn't inline data.  That means that 'buflen'
 			 * should be blocksize.
 			 */
-			if (!inline_data &&
+			जर (!inline_data &&
 			    (offset == buflen - csum_size) &&
 			    (dirent->rec_len == csum_size) &&
 			    (dirent->name_len == EXT2_DIR_NAME_LEN_CSUM)) {
-				if (!(ctx->flags & DIRENT_FLAG_INCLUDE_CSUM))
-					goto next;
+				जर (!(ctx->flags & DIRENT_FLAG_INCLUDE_CSUM))
+					जा next;
 				entry = DIRENT_CHECKSUM;
-			} else if (!(ctx->flags & DIRENT_FLAG_INCLUDE_EMPTY))
-				goto next;
+			} अन्यथा जर (!(ctx->flags & DIRENT_FLAG_INCLUDE_EMPTY))
+				जा next;
 		}
 
 		ret = (ctx->func)(ctx->dir,
@@ -259,49 +259,49 @@ int ext2fs_process_dir_block(ext2_filsys fs,
 				  dirent, offset,
 				  buflen, ctx->buf,
 				  ctx->priv_data);
-		if (entry < DIRENT_OTHER_FILE)
+		जर (entry < DIRENT_OTHER_FILE)
 			entry++;
 
-		if (ret & DIRENT_CHANGED) {
-			if (ext2fs_get_rec_len(fs, dirent, &rec_len))
-				return BLOCK_ABORT;
+		जर (ret & DIRENT_CHANGED) {
+			जर (ext2fs_get_rec_len(fs, dirent, &rec_len))
+				परत BLOCK_ABORT;
 			changed++;
 		}
-		if (ret & DIRENT_ABORT) {
+		जर (ret & DIRENT_ABORT) {
 			do_abort++;
-			break;
+			थांबा;
 		}
 next:
- 		if (next_real_entry == offset)
+ 		जर (next_real_entry == offset)
 			next_real_entry += rec_len;
 
- 		if (ctx->flags & DIRENT_FLAG_INCLUDE_REMOVED) {
+ 		जर (ctx->flags & DIRENT_FLAG_INCLUDE_REMOVED) {
 			size = (ext2fs_dirent_name_len(dirent) + 11) & ~3;
 
-			if (rec_len != size)  {
-				unsigned int final_offset;
+			जर (rec_len != size)  {
+				अचिन्हित पूर्णांक final_offset;
 
 				final_offset = offset + rec_len;
 				offset += size;
-				while (offset < final_offset &&
+				पर्यंत (offset < final_offset &&
 				       !ext2fs_validate_entry(fs, ctx->buf,
 							      offset,
 							      final_offset))
 					offset += 4;
-				continue;
+				सुरूठेवा;
 			}
 		}
 		offset += rec_len;
 	}
 
-	if (changed) {
-		if (!inline_data) {
+	जर (changed) {
+		जर (!inline_data) {
 			ctx->errcode = ext2fs_write_dir_block4(fs, *blocknr,
 							       ctx->buf,
 							       0, ctx->dir);
-			if (ctx->errcode)
-				return BLOCK_ABORT;
-		} else {
+			जर (ctx->errcode)
+				परत BLOCK_ABORT;
+		} अन्यथा {
 			/*
 			 * return BLOCK_INLINE_DATA_CHANGED to notify caller
 			 * that inline data has been changed.
@@ -309,7 +309,7 @@ next:
 			retval = BLOCK_INLINE_DATA_CHANGED;
 		}
 	}
-	if (do_abort)
-		return retval | BLOCK_ABORT;
-	return retval;
+	जर (do_abort)
+		परत retval | BLOCK_ABORT;
+	परत retval;
 }

@@ -10,105 +10,105 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#जर HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#जर HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
 #endif
-#if HAVE_SYS_TIME_H
-#include <sys/time.h>
+#जर HAVE_SYS_TIME_H
+#अन्तर्भाव <sys/time.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fsP.h"
 
-struct process_block_struct {
+संरचना process_block_struct {
 	ext2_ino_t		ino;
-	struct ext2_inode *	inode;
+	संरचना ext2_inode *	inode;
 	ext2fs_block_bitmap	reserve;
 	ext2fs_block_bitmap	alloc_map;
 	errcode_t		error;
-	char			*buf;
-	int			add_dir;
-	int			flags;
+	अक्षर			*buf;
+	पूर्णांक			add_dir;
+	पूर्णांक			flags;
 };
 
-static int process_block(ext2_filsys fs, blk64_t *block_nr,
+स्थिर पूर्णांक process_block(ext2_filsys fs, blk64_t *block_nr,
 			 e2_blkcnt_t blockcnt, blk64_t ref_block,
-			 int ref_offset, void *priv_data)
+			 पूर्णांक ref_offset, शून्य *priv_data)
 {
-	struct process_block_struct *pb;
+	संरचना process_block_struct *pb;
 	errcode_t	retval;
-	int		ret;
+	पूर्णांक		ret;
 	blk64_t		block, orig;
 
-	pb = (struct process_block_struct *) priv_data;
+	pb = (संरचना process_block_struct *) priv_data;
 	block = orig = *block_nr;
 	ret = 0;
 
 	/*
 	 * Let's see if this is one which we need to relocate
 	 */
-	if (ext2fs_test_block_bitmap2(pb->reserve, block)) {
-		do {
-			if (++block >= ext2fs_blocks_count(fs->super))
+	जर (ext2fs_test_block_bitmap2(pb->reserve, block)) {
+		करा {
+			जर (++block >= ext2fs_blocks_मोजणी(fs->super))
 				block = fs->super->s_first_data_block;
-			if (block == orig) {
+			जर (block == orig) {
 				pb->error = EXT2_ET_BLOCK_ALLOC_FAIL;
-				return BLOCK_ABORT;
+				परत BLOCK_ABORT;
 			}
-		} while (ext2fs_test_block_bitmap2(pb->reserve, block) ||
+		} पर्यंत (ext2fs_test_block_bitmap2(pb->reserve, block) ||
 			 ext2fs_test_block_bitmap2(pb->alloc_map, block));
 
 		retval = io_channel_read_blk64(fs->io, orig, 1, pb->buf);
-		if (retval) {
+		जर (retval) {
 			pb->error = retval;
-			return BLOCK_ABORT;
+			परत BLOCK_ABORT;
 		}
 		retval = io_channel_write_blk64(fs->io, block, 1, pb->buf);
-		if (retval) {
+		जर (retval) {
 			pb->error = retval;
-			return BLOCK_ABORT;
+			परत BLOCK_ABORT;
 		}
 		*block_nr = block;
 		ext2fs_mark_block_bitmap2(pb->alloc_map, block);
 		ret = BLOCK_CHANGED;
-		if (pb->flags & EXT2_BMOVE_DEBUG)
-			printf("ino=%u, blockcnt=%lld, %llu->%llu\n",
-			       (unsigned) pb->ino, blockcnt, 
-			       (unsigned long long) orig,
-			       (unsigned long long) block);
+		जर (pb->flags & EXT2_BMOVE_DEBUG)
+			म_लिखो("ino=%u, blockcnt=%lld, %llu->%llu\n",
+			       (अचिन्हित) pb->ino, blockcnt, 
+			       (अचिन्हित दीर्घ दीर्घ) orig,
+			       (अचिन्हित दीर्घ दीर्घ) block);
 	}
-	if (pb->add_dir) {
+	जर (pb->add_dir) {
 		retval = ext2fs_add_dir_block2(fs->dblist, pb->ino,
 					       block, blockcnt);
-		if (retval) {
+		जर (retval) {
 			pb->error = retval;
 			ret |= BLOCK_ABORT;
 		}
 	}
-	return ret;
+	परत ret;
 }
 
 errcode_t ext2fs_move_blocks(ext2_filsys fs,
 			     ext2fs_block_bitmap reserve,
 			     ext2fs_block_bitmap alloc_map,
-			     int flags)
+			     पूर्णांक flags)
 {
 	ext2_ino_t	ino;
-	struct ext2_inode inode;
+	संरचना ext2_inode inode;
 	errcode_t	retval;
-	struct process_block_struct pb;
+	संरचना process_block_struct pb;
 	ext2_inode_scan	scan;
-	char		*block_buf;
+	अक्षर		*block_buf;
 
 	retval = ext2fs_open_inode_scan(fs, 0, &scan);
-	if (retval)
-		return retval;
+	जर (retval)
+		परत retval;
 
 	pb.reserve = reserve;
 	pb.error = 0;
@@ -116,8 +116,8 @@ errcode_t ext2fs_move_blocks(ext2_filsys fs,
 	pb.flags = flags;
 
 	retval = ext2fs_get_array(4, fs->blocksize, &block_buf);
-	if (retval)
-		return retval;
+	जर (retval)
+		परत retval;
 	pb.buf = block_buf + fs->blocksize * 3;
 
 	/*
@@ -125,24 +125,24 @@ errcode_t ext2fs_move_blocks(ext2_filsys fs,
 	 * gather directory block information while we're doing the
 	 * block move.
 	 */
-	if (flags & EXT2_BMOVE_GET_DBLIST) {
-		if (fs->dblist) {
+	जर (flags & EXT2_BMOVE_GET_DBLIST) {
+		जर (fs->dblist) {
 			ext2fs_free_dblist(fs->dblist);
-			fs->dblist = NULL;
+			fs->dblist = रिक्त;
 		}
 		retval = ext2fs_init_dblist(fs, 0);
-		if (retval)
-			return retval;
+		जर (retval)
+			परत retval;
 	}
 
 	retval = ext2fs_get_next_inode(scan, &ino, &inode);
-	if (retval)
-		return retval;
+	जर (retval)
+		परत retval;
 
-	while (ino) {
-		if ((inode.i_links_count == 0) ||
+	पर्यंत (ino) {
+		जर ((inode.i_links_मोजणी == 0) ||
 		    !ext2fs_inode_has_valid_blocks2(fs, &inode))
-			goto next;
+			जा next;
 
 		pb.ino = ino;
 		pb.inode = &inode;
@@ -152,16 +152,16 @@ errcode_t ext2fs_move_blocks(ext2_filsys fs,
 
 		retval = ext2fs_block_iterate3(fs, ino, 0, block_buf,
 					       process_block, &pb);
-		if (retval)
-			return retval;
-		if (pb.error)
-			return pb.error;
+		जर (retval)
+			परत retval;
+		जर (pb.error)
+			परत pb.error;
 
 	next:
 		retval = ext2fs_get_next_inode(scan, &ino, &inode);
-		if (retval == EXT2_ET_BAD_BLOCK_IN_INODE_TABLE)
-			goto next;
+		जर (retval == EXT2_ET_BAD_BLOCK_IN_INODE_TABLE)
+			जा next;
 	}
-	return 0;
+	परत 0;
 }
 

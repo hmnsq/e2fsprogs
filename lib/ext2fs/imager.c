@@ -13,45 +13,45 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#जर HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
 #endif
-#if HAVE_ERRNO_H
-#include <errno.h>
+#जर HAVE_ERRNO_H
+#अन्तर्भाव <errno.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <time.h>
+#जर HAVE_SYS_STAT_H
+#अन्तर्भाव <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#जर HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
 
 #ifndef HAVE_TYPE_SSIZE_T
-typedef int ssize_t;
+प्रकारव्याख्या पूर्णांक ssize_t;
 #endif
 
 /*
  * This function returns 1 if the specified block is all zeros
  */
-static int check_zero_block(char *buf, int blocksize)
+स्थिर पूर्णांक check_zero_block(अक्षर *buf, पूर्णांक blocksize)
 {
-	char	*cp = buf;
-	int	left = blocksize;
+	अक्षर	*cp = buf;
+	पूर्णांक	डावा = blocksize;
 
-	while (left > 0) {
-		if (*cp++)
-			return 0;
-		left--;
+	पर्यंत (डावा > 0) {
+		जर (*cp++)
+			परत 0;
+		डावा--;
 	}
-	return 1;
+	परत 1;
 }
 
 /*
@@ -59,78 +59,78 @@ static int check_zero_block(char *buf, int blocksize)
  */
 #define BUF_BLOCKS	32
 
-errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_inode_write(ext2_filsys fs, पूर्णांक fd, पूर्णांक flags)
 {
 	dgrp_t		group;
-	ssize_t		left, c, d;
-	char		*buf, *cp;
+	ssize_t		डावा, c, d;
+	अक्षर		*buf, *cp;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 	ext2_loff_t	r;
 
-	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	buf = दो_स्मृति(fs->blocksize * BUF_BLOCKS);
+	जर (!buf)
+		परत ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
+	साठी (group = 0; group < fs->group_desc_मोजणी; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
+		जर (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
-			goto errout;
+			जा errout;
 		}
-		left = fs->inode_blocks_per_group;
-		if ((blk < fs->super->s_first_data_block) ||
-		    (blk + left - 1 >= ext2fs_blocks_count(fs->super))) {
+		डावा = fs->inode_blocks_per_group;
+		जर ((blk < fs->super->s_first_data_block) ||
+		    (blk + डावा - 1 >= ext2fs_blocks_मोजणी(fs->super))) {
 			retval = EXT2_ET_GDESC_BAD_INODE_TABLE;
-			goto errout;
+			जा errout;
 		}
-		while (left) {
+		पर्यंत (डावा) {
 			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
+			जर (c > डावा)
+				c = डावा;
 			retval = io_channel_read_blk64(fs->io, blk, c, buf);
-			if (retval)
-				goto errout;
+			जर (retval)
+				जा errout;
 			cp = buf;
-			while (c) {
-				if (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
+			पर्यंत (c) {
+				जर (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
 					d = c;
-					goto skip_sparse;
+					जा skip_sparse;
 				}
 				/* Skip zero blocks */
-				if (check_zero_block(cp, fs->blocksize)) {
+				जर (check_zero_block(cp, fs->blocksize)) {
 					c--;
 					blk++;
-					left--;
+					डावा--;
 					cp += fs->blocksize;
 					r = ext2fs_llseek(fd, fs->blocksize,
-							  SEEK_CUR);
-					if (r < 0) {
-						retval = errno;
-						goto errout;
+							  प्रस्तुत_से);
+					जर (r < 0) {
+						retval = त्रुटि_सं;
+						जा errout;
 					}
-					continue;
+					सुरूठेवा;
 				}
 				/* Find non-zero blocks */
-				for (d = 1; d < c; d++) {
-					if (check_zero_block(cp +
+				साठी (d = 1; d < c; d++) {
+					जर (check_zero_block(cp +
 							     d * fs->blocksize,
 							     fs->blocksize))
-						break;
+						थांबा;
 				}
 			skip_sparse:
-				actual = write(fd, cp, d * fs->blocksize);
-				if (actual == -1) {
-					retval = errno;
-					goto errout;
+				actual = लिख(fd, cp, d * fs->blocksize);
+				जर (actual == -1) {
+					retval = त्रुटि_सं;
+					जा errout;
 				}
-				if (actual != d * fs->blocksize) {
+				जर (actual != d * fs->blocksize) {
 					retval = EXT2_ET_SHORT_WRITE;
-					goto errout;
+					जा errout;
 				}
 				blk += d;
-				left -= d;
+				डावा -= d;
 				cp += d * fs->blocksize;
 				c -= d;
 			}
@@ -139,332 +139,332 @@ errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	मुक्त(buf);
+	परत retval;
 }
 
 /*
  * Read in the inode table and stuff it into place
  */
-errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_inode_read(ext2_filsys fs, पूर्णांक fd,
+				  पूर्णांक flags EXT2FS_ATTR((unused)))
 {
 	dgrp_t		group;
-	ssize_t		c, left;
-	char		*buf;
+	ssize_t		c, डावा;
+	अक्षर		*buf;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 
-	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	buf = दो_स्मृति(fs->blocksize * BUF_BLOCKS);
+	जर (!buf)
+		परत ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
+	साठी (group = 0; group < fs->group_desc_मोजणी; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
+		जर (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
-			goto errout;
+			जा errout;
 		}
-		left = fs->inode_blocks_per_group;
-		while (left) {
+		डावा = fs->inode_blocks_per_group;
+		पर्यंत (डावा) {
 			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
-			actual = read(fd, buf, fs->blocksize * c);
-			if (actual == -1) {
-				retval = errno;
-				goto errout;
+			जर (c > डावा)
+				c = डावा;
+			actual = पठ(fd, buf, fs->blocksize * c);
+			जर (actual == -1) {
+				retval = त्रुटि_सं;
+				जा errout;
 			}
-			if (actual != fs->blocksize * c) {
+			जर (actual != fs->blocksize * c) {
 				retval = EXT2_ET_SHORT_READ;
-				goto errout;
+				जा errout;
 			}
 			retval = io_channel_write_blk64(fs->io, blk, c, buf);
-			if (retval)
-				goto errout;
+			जर (retval)
+				जा errout;
 
 			blk += c;
-			left -= c;
+			डावा -= c;
 		}
 	}
 	retval = ext2fs_flush_icache(fs);
 
 errout:
-	free(buf);
-	return retval;
+	मुक्त(buf);
+	परत retval;
 }
 
 /*
  * Write out superblock and group descriptors
  */
-errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
-				   int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_write(ext2_filsys fs, पूर्णांक fd,
+				   पूर्णांक flags EXT2FS_ATTR((unused)))
 {
-	char		*buf, *cp;
+	अक्षर		*buf, *cp;
 	ssize_t		actual;
 	errcode_t	retval;
-#ifdef WORDS_BIGENDIAN
-	unsigned int	groups_per_block;
-	struct		ext2_group_desc *gdp;
-	int		j;
+#ifdef शब्द_BIGENDIAN
+	अचिन्हित पूर्णांक	groups_per_block;
+	संरचना		ext2_group_desc *gdp;
+	पूर्णांक		j;
 #endif
 
-	if (fs->group_desc == NULL)
-		return EXT2_ET_NO_GDESC;
+	जर (fs->group_desc == रिक्त)
+		परत EXT2_ET_NO_GDESC;
 
-	buf = malloc(fs->blocksize);
-	if (!buf)
-		return ENOMEM;
+	buf = दो_स्मृति(fs->blocksize);
+	जर (!buf)
+		परत ENOMEM;
 
 	/*
 	 * Write out the superblock
 	 */
-	memset(buf, 0, fs->blocksize);
-#ifdef WORDS_BIGENDIAN
+	स_रखो(buf, 0, fs->blocksize);
+#ifdef शब्द_BIGENDIAN
 	/*
 	 * We're writing out superblock so let's convert
 	 * it to little endian and then back if needed
 	 */
 	ext2fs_swap_super(fs->super);
-	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
+	स_नकल(buf, fs->super, SUPERBLOCK_SIZE);
 	ext2fs_swap_super(fs->super);
-#else
-	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
+#अन्यथा
+	स_नकल(buf, fs->super, SUPERBLOCK_SIZE);
 #endif
-	actual = write(fd, buf, fs->blocksize);
-	if (actual == -1) {
-		retval = errno;
-		goto errout;
+	actual = लिख(fd, buf, fs->blocksize);
+	जर (actual == -1) {
+		retval = त्रुटि_सं;
+		जा errout;
 	}
-	if (actual != (ssize_t) fs->blocksize) {
+	जर (actual != (ssize_t) fs->blocksize) {
 		retval = EXT2_ET_SHORT_WRITE;
-		goto errout;
+		जा errout;
 	}
 
 	/*
 	 * Now write out the block group descriptors
 	 */
 
-	cp = (char *) fs->group_desc;
+	cp = (अक्षर *) fs->group_desc;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef शब्द_BIGENDIAN
 	/*
 	 * Convert group descriptors to little endian and back
 	 * if needed
 	 */
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
+	साठी (j=0; j < groups_per_block*fs->desc_blocks; j++) {
 		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
+		जर (gdp)
 			ext2fs_swap_group_desc2(fs, gdp);
 	}
 #endif
 
-	actual = write(fd, cp, (ssize_t)fs->blocksize * fs->desc_blocks);
+	actual = लिख(fd, cp, (ssize_t)fs->blocksize * fs->desc_blocks);
 
 
-#ifdef WORDS_BIGENDIAN
+#ifdef शब्द_BIGENDIAN
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
-	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
+	साठी (j=0; j < groups_per_block*fs->desc_blocks; j++) {
 		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
+		जर (gdp)
 			ext2fs_swap_group_desc2(fs, gdp);
 	}
 #endif
 
-	if (actual == -1) {
-		retval = errno;
-		goto errout;
+	जर (actual == -1) {
+		retval = त्रुटि_सं;
+		जा errout;
 	}
-	if (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
+	जर (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
 		retval = EXT2_ET_SHORT_WRITE;
-		goto errout;
+		जा errout;
 	}
 
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	मुक्त(buf);
+	परत retval;
 }
 
 /*
  * Read the superblock and group descriptors and overwrite them.
  */
-errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_read(ext2_filsys fs, पूर्णांक fd,
+				  पूर्णांक flags EXT2FS_ATTR((unused)))
 {
-	char		*buf;
+	अक्षर		*buf;
 	ssize_t		actual, size;
 	errcode_t	retval;
 
 	size = (ssize_t)fs->blocksize * (fs->desc_blocks + 1);
-	buf = malloc(size);
-	if (!buf)
-		return ENOMEM;
+	buf = दो_स्मृति(size);
+	जर (!buf)
+		परत ENOMEM;
 
 	/*
 	 * Read it all in.
 	 */
-	actual = read(fd, buf, size);
-	if (actual == -1) {
-		retval = errno;
-		goto errout;
+	actual = पठ(fd, buf, size);
+	जर (actual == -1) {
+		retval = त्रुटि_सं;
+		जा errout;
 	}
-	if (actual != size) {
+	जर (actual != size) {
 		retval = EXT2_ET_SHORT_READ;
-		goto errout;
+		जा errout;
 	}
 
 	/*
 	 * Now copy in the superblock and group descriptors
 	 */
-	memcpy(fs->super, buf, SUPERBLOCK_SIZE);
+	स_नकल(fs->super, buf, SUPERBLOCK_SIZE);
 
-	memcpy(fs->group_desc, buf + fs->blocksize,
+	स_नकल(fs->group_desc, buf + fs->blocksize,
 	       (ssize_t)fs->blocksize * fs->desc_blocks);
 
 	retval = 0;
 
 errout:
-	free(buf);
-	return retval;
+	मुक्त(buf);
+	परत retval;
 }
 
 /*
  * Write the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, पूर्णांक fd, पूर्णांक flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	ssize_t			actual;
-	size_t			c;
+	माप_प्रकार			c;
 	__u64			itr, cnt, size, total_size;
-	char			buf[1024];
+	अक्षर			buf[1024];
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	जर (flags & IMAGER_FLAG_INODEMAP) {
+		जर (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			जर (retval)
+				परत retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
+			fs->group_desc_मोजणी;
 		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
+	} अन्यथा {
+		जर (!fs->block_map) {
 			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+			जर (retval)
+				परत retval;
 		}
 		bmap = fs->block_map;
 		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super, fs->group_desc_count);
+		cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super, fs->group_desc_मोजणी);
 		size = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
 	}
-	total_size = size * fs->group_desc_count;
+	total_size = size * fs->group_desc_मोजणी;
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
+	पर्यंत (cnt > 0) {
+		size = आकार(buf);
+		जर (size > (cnt >> 3))
 			size = (cnt >> 3);
-		if (size == 0)
-			break;
+		जर (size == 0)
+			थांबा;
 
 		retval = ext2fs_get_generic_bmap_range(bmap, itr,
 						       size << 3, buf);
-		if (retval)
-			return retval;
+		जर (retval)
+			परत retval;
 
-		actual = write(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		actual = लिख(fd, buf, size);
+		जर (actual == -1)
+			परत त्रुटि_सं;
+		जर (actual != (पूर्णांक) size)
+			परत EXT2_ET_SHORT_READ;
 
 		itr += size << 3;
 		cnt -= size << 3;
 	}
 
 	size = total_size % fs->blocksize;
-	memset(buf, 0, sizeof(buf));
-	if (size) {
+	स_रखो(buf, 0, आकार(buf));
+	जर (size) {
 		size = fs->blocksize - size;
-		while (size) {
+		पर्यंत (size) {
 			c = size;
-			if (c > (int) sizeof(buf))
-				c = sizeof(buf);
-			actual = write(fd, buf, c);
-			if (actual < 0)
-				return errno;
-			if ((size_t) actual != c)
-				return EXT2_ET_SHORT_WRITE;
+			जर (c > (पूर्णांक) आकार(buf))
+				c = आकार(buf);
+			actual = लिख(fd, buf, c);
+			जर (actual < 0)
+				परत त्रुटि_सं;
+			जर ((माप_प्रकार) actual != c)
+				परत EXT2_ET_SHORT_WRITE;
 			size -= c;
 		}
 	}
-	return 0;
+	परत 0;
 }
 
 
 /*
  * Read the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, पूर्णांक fd, पूर्णांक flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	__u64			itr, cnt;
-	char			buf[1024];
-	unsigned int		size;
+	अक्षर			buf[1024];
+	अचिन्हित पूर्णांक		size;
 	ssize_t			actual;
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	जर (flags & IMAGER_FLAG_INODEMAP) {
+		जर (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			जर (retval)
+				परत retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
+			fs->group_desc_मोजणी;
 		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
+	} अन्यथा {
+		जर (!fs->block_map) {
 			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+			जर (retval)
+				परत retval;
 		}
 		bmap = fs->block_map;
 		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_BLOCKS(fs->super, fs->group_desc_count);
+		cnt = EXT2_GROUPS_TO_BLOCKS(fs->super, fs->group_desc_मोजणी);
 		size = EXT2_BLOCKS_PER_GROUP(fs->super) / 8;
 	}
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
+	पर्यंत (cnt > 0) {
+		size = आकार(buf);
+		जर (size > (cnt >> 3))
 			size = (cnt >> 3);
-		if (size == 0)
-			break;
+		जर (size == 0)
+			थांबा;
 
-		actual = read(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		actual = पठ(fd, buf, size);
+		जर (actual == -1)
+			परत त्रुटि_सं;
+		जर (actual != (पूर्णांक) size)
+			परत EXT2_ET_SHORT_READ;
 
 		retval = ext2fs_set_generic_bmap_range(bmap, itr,
 						       size << 3, buf);
-		if (retval)
-			return retval;
+		जर (retval)
+			परत retval;
 
 		itr += size << 3;
 		cnt -= size << 3;
 	}
-	return 0;
+	परत 0;
 }

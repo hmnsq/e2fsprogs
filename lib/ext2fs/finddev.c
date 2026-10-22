@@ -10,56 +10,56 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#जर HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
 #endif
-#include <stdlib.h>
-#include <string.h>
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#जर HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
 #endif
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#जर HAVE_SYS_STAT_H
+#अन्तर्भाव <sys/stat.h>
 #endif
-#include <dirent.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
+#अन्तर्भाव <dirent.h>
+#जर HAVE_ERRNO_H
+#अन्तर्भाव <errno.h>
 #endif
-#if HAVE_SYS_MKDEV_H
-#include <sys/mkdev.h>
+#जर HAVE_SYS_MKDEV_H
+#अन्तर्भाव <sys/mkdev.h>
 #endif
 #ifdef HAVE_SYS_SYSMACROS_H
-#include <sys/sysmacros.h>
+#अन्तर्भाव <sys/sysmacros.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
-#include "ext2fsP.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
+#अन्तर्भाव "ext2fsP.h"
 
-struct dir_list {
-	char	*name;
-	struct dir_list *next;
+संरचना dir_list {
+	अक्षर	*name;
+	संरचना dir_list *next;
 };
 
 /*
  * This function adds an entry to the directory list
  */
-static void add_to_dirlist(const char *name, struct dir_list **list)
+स्थिर शून्य add_to_dirlist(स्थिरांक अक्षर *name, संरचना dir_list **list)
 {
-	struct dir_list *dp;
+	संरचना dir_list *dp;
 
-	dp = malloc(sizeof(struct dir_list));
-	if (!dp)
-		return;
-	dp->name = malloc(strlen(name)+1);
-	if (!dp->name) {
-		free(dp);
-		return;
+	dp = दो_स्मृति(आकार(संरचना dir_list));
+	जर (!dp)
+		परत;
+	dp->name = दो_स्मृति(म_माप(name)+1);
+	जर (!dp->name) {
+		मुक्त(dp);
+		परत;
 	}
-	strcpy(dp->name, name);
+	म_नकल(dp->name, name);
 	dp->next = *list;
 	*list = dp;
 }
@@ -67,60 +67,60 @@ static void add_to_dirlist(const char *name, struct dir_list **list)
 /*
  * This function frees a directory list
  */
-static void free_dirlist(struct dir_list **list)
+स्थिर शून्य free_dirlist(संरचना dir_list **list)
 {
-	struct dir_list *dp, *next;
+	संरचना dir_list *dp, *next;
 
-	for (dp = *list; dp; dp = next) {
+	साठी (dp = *list; dp; dp = next) {
 		next = dp->next;
-		free(dp->name);
-		free(dp);
+		मुक्त(dp->name);
+		मुक्त(dp);
 	}
 	*list = 0;
 }
 
-static int scan_dir(char *dirname, dev_t device, struct dir_list **list,
-		    char **ret_path)
+स्थिर पूर्णांक scan_dir(अक्षर *स_नाम, dev_t device, संरचना dir_list **list,
+		    अक्षर **ret_path)
 {
-	DIR	*dir;
-	struct dirent *dp;
-	char	path[1024], *cp;
-	int	dirlen;
-	struct stat st;
+	सूची	*dir;
+	संरचना dirent *dp;
+	अक्षर	path[1024], *cp;
+	पूर्णांक	dirlen;
+	संरचना stat st;
 
-	dirlen = strlen(dirname);
-	if ((dir = opendir(dirname)) == NULL)
-		return errno;
-	dp = readdir(dir);
-	while (dp) {
-		if (dirlen + strlen(dp->d_name) + 2 >= sizeof(path))
-			goto skip_to_next;
-		if (dp->d_name[0] == '.' &&
+	dirlen = म_माप(स_नाम);
+	जर ((dir = सूची_खोलो(स_नाम)) == रिक्त)
+		परत त्रुटि_सं;
+	dp = सूची_पढ़ो(dir);
+	पर्यंत (dp) {
+		जर (dirlen + म_माप(dp->d_name) + 2 >= आकार(path))
+			जा skip_to_next;
+		जर (dp->d_name[0] == '.' &&
 		    ((dp->d_name[1] == 0) ||
 		     ((dp->d_name[1] == '.') && (dp->d_name[2] == 0))))
-			goto skip_to_next;
-		sprintf(path, "%s/%s", dirname, dp->d_name);
-		if (stat(path, &st) < 0)
-			goto skip_to_next;
-		if (S_ISDIR(st.st_mode))
+			जा skip_to_next;
+		प्र_लिखो(path, "%s/%s", स_नाम, dp->d_name);
+		जर (stat(path, &st) < 0)
+			जा skip_to_next;
+		जर (S_ISDIR(st.st_mode))
 			add_to_dirlist(path, list);
-		if (ext2fsP_is_disk_device(st.st_mode) &&
+		जर (ext2fsP_is_disk_device(st.st_mode) &&
 		    st.st_rdev == device) {
-			cp = malloc(strlen(path)+1);
-			if (!cp) {
-				closedir(dir);
-				return ENOMEM;
+			cp = दो_स्मृति(म_माप(path)+1);
+			जर (!cp) {
+				बंद_सूची(dir);
+				परत ENOMEM;
 			}
-			strcpy(cp, path);
+			म_नकल(cp, path);
 			*ret_path = cp;
-			goto success;
+			जा success;
 		}
 	skip_to_next:
-		dp = readdir(dir);
+		dp = सूची_पढ़ो(dir);
 	}
 success:
-	closedir(dir);
-	return 0;
+	बंद_सूची(dir);
+	परत 0;
 }
 
 /*
@@ -128,12 +128,12 @@ success:
  * device number.  It returns a pointer to allocated memory to the
  * pathname on success, and NULL on failure.
  */
-char *ext2fs_find_block_device(dev_t device)
+अक्षर *ext2fs_find_block_device(dev_t device)
 {
-	struct dir_list *list = 0, *new_list = 0;
-	struct dir_list *current;
-	char	*ret_path = 0;
-	int    level = 0;
+	संरचना dir_list *list = 0, *new_list = 0;
+	संरचना dir_list *current;
+	अक्षर	*ret_path = 0;
+	पूर्णांक    level = 0;
 
 	/*
 	 * Add the starting directories to search...
@@ -142,77 +142,77 @@ char *ext2fs_find_block_device(dev_t device)
 	add_to_dirlist("/devfs", &list);
 	add_to_dirlist("/dev", &list);
 
-	while (list) {
+	पर्यंत (list) {
 		current = list;
 		list = list->next;
 #ifdef DEBUG
-		printf("Scanning directory %s\n", current->name);
+		म_लिखो("Scanning directory %s\n", current->name);
 #endif
 		scan_dir(current->name, device, &new_list, &ret_path);
-		free(current->name);
-		free(current);
-		if (ret_path)
-			break;
+		मुक्त(current->name);
+		मुक्त(current);
+		जर (ret_path)
+			थांबा;
 		/*
 		 * If we're done checking at this level, descend to
 		 * the next level of subdirectories. (breadth-first)
 		 */
-		if (list == 0) {
+		जर (list == 0) {
 			list = new_list;
 			new_list = 0;
 			/* Avoid infinite loop */
-			if (++level >= EXT2FS_MAX_NESTED_LINKS)
-				break;
+			जर (++level >= EXT2FS_MAX_NESTED_LINKS)
+				थांबा;
 		}
 	}
 	free_dirlist(&list);
 	free_dirlist(&new_list);
-	return ret_path;
+	परत ret_path;
 }
 
 
 #ifdef DEBUG
-int main(int argc, char** argv)
+पूर्णांक main(पूर्णांक argc, अक्षर** argv)
 {
-	char	*devname, *tmp;
-	int	major, minor;
+	अक्षर	*devname, *tmp;
+	पूर्णांक	major, minor;
 	dev_t	device;
-	const char *errmsg = "Couldn't parse %s: %s\n";
+	स्थिरांक अक्षर *errmsg = "Couldn't parse %s: %s\n";
 
-	if ((argc != 2) && (argc != 3)) {
-		fprintf(stderr, "Usage: %s device_number\n", argv[0]);
-		fprintf(stderr, "\t: %s major minor\n", argv[0]);
-		exit(1);
+	जर ((argc != 2) && (argc != 3)) {
+		ख_लिखो(मानक_त्रुटि, "Usage: %s device_number\n", argv[0]);
+		ख_लिखो(मानक_त्रुटि, "\t: %s major minor\n", argv[0]);
+		निकास(1);
 	}
-	if (argc == 2) {
-		device = strtoul(argv[1], &tmp, 0);
-		if (*tmp) {
-			fprintf(stderr, errmsg, "device number", argv[1]);
-			exit(1);
+	जर (argc == 2) {
+		device = म_से_अदीर्घ(argv[1], &tmp, 0);
+		जर (*tmp) {
+			ख_लिखो(मानक_त्रुटि, errmsg, "device number", argv[1]);
+			निकास(1);
 		}
-	} else {
-		major = strtoul(argv[1], &tmp, 0);
-		if (*tmp) {
-			fprintf(stderr, errmsg, "major number", argv[1]);
-			exit(1);
+	} अन्यथा {
+		major = म_से_अदीर्घ(argv[1], &tmp, 0);
+		जर (*tmp) {
+			ख_लिखो(मानक_त्रुटि, errmsg, "major number", argv[1]);
+			निकास(1);
 		}
-		minor = strtoul(argv[2], &tmp, 0);
-		if (*tmp) {
-			fprintf(stderr, errmsg, "minor number", argv[2]);
-			exit(1);
+		minor = म_से_अदीर्घ(argv[2], &tmp, 0);
+		जर (*tmp) {
+			ख_लिखो(मानक_त्रुटि, errmsg, "minor number", argv[2]);
+			निकास(1);
 		}
 		device = makedev(major, minor);
-		printf("Looking for device 0x%04x (%d:%d)\n", device,
+		म_लिखो("Looking for device 0x%04x (%d:%d)\n", device,
 		       major, minor);
 	}
 	devname = ext2fs_find_block_device(device);
-	if (devname) {
-		printf("Found device!  %s\n", devname);
-		free(devname);
-	} else {
-		printf("Couldn't find device.\n");
+	जर (devname) {
+		म_लिखो("Found device!  %s\n", devname);
+		मुक्त(devname);
+	} अन्यथा {
+		म_लिखो("Couldn't find device.\n");
 	}
-	return 0;
+	परत 0;
 }
 
 #endif

@@ -14,13 +14,13 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#अन्तर्भाव "config.h"
+#जर HAVE_SYS_TYPES_H
+#अन्तर्भाव <sys/types.h>
 #endif
-#include "ext2fs.h"
+#अन्तर्भाव "ext2fs.h"
 
-static const char *lookup_table =
+स्थिर स्थिरांक अक्षर *lookup_table =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
 
 /**
@@ -29,56 +29,56 @@ static const char *lookup_table =
  * Encodes the input digest using characters from the set [a-zA-Z0-9_+].
  * The encoded string is roughly 4/3 times the size of the input string.
  */
-int ext2fs_digest_encode(const char *src, int len, char *dst)
+पूर्णांक ext2fs_digest_encode(स्थिरांक अक्षर *src, पूर्णांक len, अक्षर *dst)
 {
-	int i = 0, bits = 0, ac = 0;
-	char *cp = dst;
+	पूर्णांक i = 0, bits = 0, ac = 0;
+	अक्षर *cp = dst;
 
-	while (i < len) {
-		ac += (((unsigned char) src[i]) << bits);
+	पर्यंत (i < len) {
+		ac += (((अचिन्हित अक्षर) src[i]) << bits);
 		bits += 8;
-		do {
+		करा {
 			*cp++ = lookup_table[ac & 0x3f];
 			ac >>= 6;
 			bits -= 6;
-		} while (bits >= 6);
+		} पर्यंत (bits >= 6);
 		i++;
 	}
-	if (bits)
+	जर (bits)
 		*cp++ = lookup_table[ac & 0x3f];
-	return cp - dst;
+	परत cp - dst;
 }
 
-int ext2fs_digest_decode(const char *src, int len, char *dst)
+पूर्णांक ext2fs_digest_decode(स्थिरांक अक्षर *src, पूर्णांक len, अक्षर *dst)
 {
-	int i = 0, bits = 0, ac = 0;
-	const char *p;
-	char *cp = dst;
+	पूर्णांक i = 0, bits = 0, ac = 0;
+	स्थिरांक अक्षर *p;
+	अक्षर *cp = dst;
 
-	while (i < len) {
-		p = strchr(lookup_table, src[i]);
-		if (p == NULL || src[i] == 0)
-			return -1;
+	पर्यंत (i < len) {
+		p = म_अक्षर(lookup_table, src[i]);
+		जर (p == रिक्त || src[i] == 0)
+			परत -1;
 		ac += (p - lookup_table) << bits;
 		bits += 6;
-		if (bits >= 8) {
+		जर (bits >= 8) {
 			*cp++ = ac & 0xff;
 			ac >>= 8;
 			bits -= 8;
 		}
 		i++;
 	}
-	if (ac)
-		return -1;
-	return cp - dst;
+	जर (ac)
+		परत -1;
+	परत cp - dst;
 }
 
 
 #ifdef UNITTEST
-static const struct {
-	unsigned char d[32];
-	unsigned int len;
-	const char *ed;
+स्थिर स्थिरांक संरचना {
+	अचिन्हित अक्षर d[32];
+	अचिन्हित पूर्णांक len;
+	स्थिरांक अक्षर *ed;
 } tests[] = {
 	{ { 0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14,
 	    0x9a, 0xfb, 0xf4, 0xc8, 0x99, 0x6f, 0xb9, 0x24,
@@ -124,64 +124,64 @@ static const struct {
 	},
 };
 
-int main(int argc, char **argv)
+पूर्णांक main(पूर्णांक argc, अक्षर **argv)
 {
-	int i, ret, len;
-	int errors = 0;
-	char tmp[1024], tmp2[1024];
+	पूर्णांक i, ret, len;
+	पूर्णांक errors = 0;
+	अक्षर tmp[1024], tmp2[1024];
 
-	if (argc == 3 && !strcmp(argv[1], "encode")) {
-		memset(tmp, 0, sizeof(tmp));
-		ext2fs_digest_encode(argv[2], strlen(argv[2]), tmp);
-		puts(tmp);
-		exit(0);
+	जर (argc == 3 && !म_भेद(argv[1], "encode")) {
+		स_रखो(tmp, 0, आकार(tmp));
+		ext2fs_digest_encode(argv[2], म_माप(argv[2]), tmp);
+		माला_दो(tmp);
+		निकास(0);
 	}
-	if (argc == 3 && !strcmp(argv[1], "decode")) {
-		memset(tmp, 0, sizeof(tmp));
-		ret = ext2fs_digest_decode(argv[2], strlen(argv[2]), tmp);
-		puts(tmp);
-		fprintf(stderr, "returned %d\n", ret);
-		exit(0);
+	जर (argc == 3 && !म_भेद(argv[1], "decode")) {
+		स_रखो(tmp, 0, आकार(tmp));
+		ret = ext2fs_digest_decode(argv[2], म_माप(argv[2]), tmp);
+		माला_दो(tmp);
+		ख_लिखो(मानक_त्रुटि, "returned %d\n", ret);
+		निकास(0);
 	}
-	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
-		memset(tmp, 0, sizeof(tmp));
-		ret = ext2fs_digest_encode((const char *) tests[i].d,
+	साठी (i = 0; i < (पूर्णांक)(आकार(tests) / आकार(tests[0])); i++) {
+		स_रखो(tmp, 0, आकार(tmp));
+		ret = ext2fs_digest_encode((स्थिरांक अक्षर *) tests[i].d,
 					   tests[i].len, tmp);
-		len = strlen(tmp);
-		printf("Test Digest %d (returned %d): ", i, ret);
-		if (ret != len) {
-			printf("FAILED returned %d, string length was %d\n",
+		len = म_माप(tmp);
+		म_लिखो("Test Digest %d (returned %d): ", i, ret);
+		जर (ret != len) {
+			म_लिखो("FAILED returned %d, string length was %d\n",
 			       ret, len);
 			errors++;
-			continue;
-		} else if (strcmp(tmp, tests[i].ed) != 0) {
-			printf("FAILED: got %s, expected %s\n", tmp,
+			सुरूठेवा;
+		} अन्यथा जर (म_भेद(tmp, tests[i].ed) != 0) {
+			म_लिखो("FAILED: got %s, expected %s\n", tmp,
 			       tests[i].ed);
 			errors++;
-			continue;
+			सुरूठेवा;
 		}
 		ret = ext2fs_digest_decode(tmp, len, tmp2);
-		if (ret != tests[i].len) {
-			printf("FAILED decode returned %d, expected %d\n",
+		जर (ret != tests[i].len) {
+			म_लिखो("FAILED decode returned %d, expected %d\n",
 			       ret, tests[i].len);
 			errors++;
-			continue;
+			सुरूठेवा;
 		}
-		if (memcmp(tmp2, tests[i].d, ret) != 0) {
-			puts("FAILED: decode mismatched");
+		जर (स_भेद(tmp2, tests[i].d, ret) != 0) {
+			माला_दो("FAILED: decode mismatched");
 			errors++;
-			continue;
+			सुरूठेवा;
 		}
-		printf("OK\n");
+		म_लिखो("OK\n");
 	}
-	for (i = 1; i < argc; i++) {
-		memset(tmp, 0, sizeof(tmp));
-		ret = ext2fs_digest_encode(argv[i], strlen(argv[i]), tmp);
-		len = strlen(tmp);
-		printf("Digest of '%s' is '%s' (returned %d, length %d)\n",
+	साठी (i = 1; i < argc; i++) {
+		स_रखो(tmp, 0, आकार(tmp));
+		ret = ext2fs_digest_encode(argv[i], म_माप(argv[i]), tmp);
+		len = म_माप(tmp);
+		म_लिखो("Digest of '%s' is '%s' (returned %d, length %d)\n",
 		       argv[i], tmp, ret, len);
 	}
-	return errors;
+	परत errors;
 }
 
 #endif /* UNITTEST */

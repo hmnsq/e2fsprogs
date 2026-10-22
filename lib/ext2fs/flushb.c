@@ -10,24 +10,24 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
+#जर HAVE_ERRNO_H
+#अन्तर्भाव <errno.h>
 #endif
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#जर HAVE_UNISTD_H
+#अन्तर्भाव <unistd.h>
 #endif
-#if HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
+#जर HAVE_SYS_IOCTL_H
+#अन्तर्भाव <sys/ioctl.h>
 #endif
-#if HAVE_SYS_MOUNT_H
-#include <sys/param.h>
-#include <sys/mount.h>		/* This may define BLKFLSBUF */
+#जर HAVE_SYS_MOUNT_H
+#अन्तर्भाव <sys/param.h>
+#अन्तर्भाव <sys/mount.h>		/* This may define BLKFLSBUF */
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
 
 /*
  * For Linux, define BLKFLSBUF and FDFLUSH if necessary, since
@@ -50,7 +50,7 @@
  * flush the buffer cache.  The latter is basically only useful for
  * system benchmarks and for torturing systems in burn-in tests.  :)
  */
-errcode_t ext2fs_sync_device(int fd, int flushb)
+errcode_t ext2fs_sync_device(पूर्णांक fd, पूर्णांक flushb)
 {
 	/*
 	 * We always sync the device in case we're running on old
@@ -58,31 +58,31 @@ errcode_t ext2fs_sync_device(int fd, int flushb)
 	 * still is a race condition for those kernels, but this
 	 * reduces it greatly.)
 	 */
-#if defined(HAVE_FSYNC)
-	if (fsync (fd) == -1)
-		return errno;
+#जर defined(HAVE_FSYNC)
+	जर (fsync (fd) == -1)
+		परत त्रुटि_सं;
 #endif
 
-	if (flushb) {
+	जर (flushb) {
 		errcode_t	retval = 0;
 
 #ifdef BLKFLSBUF
-		if (ioctl (fd, BLKFLSBUF, 0) == 0)
-			return 0;
-		retval = errno;
-#elif defined(__linux__)
+		जर (ioctl (fd, BLKFLSBUF, 0) == 0)
+			परत 0;
+		retval = त्रुटि_सं;
+#किंवाजर defined(__linux__)
 #warning BLKFLSBUF not defined
 #endif
 #ifdef FDFLUSH
 		/* In case this is a floppy */
-		if (ioctl(fd, FDFLUSH, 0) == 0)
-			return 0;
-		if (retval == 0)
-			retval = errno;
-#elif defined(__linux__)
+		जर (ioctl(fd, FDFLUSH, 0) == 0)
+			परत 0;
+		जर (retval == 0)
+			retval = त्रुटि_सं;
+#किंवाजर defined(__linux__)
 #warning FDFLUSH not defined
 #endif
-		return retval;
+		परत retval;
 	}
-	return 0;
+	परत 0;
 }
