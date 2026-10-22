@@ -12,14 +12,14 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ถ้า HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#if HAVE_ERRNO_H
+#ถ้า HAVE_ERRNO_H
 #include <errno.h>
 #endif
 
@@ -33,25 +33,25 @@ ext2fs_block_bitmap bad_block_map, touched_map;
 ext2fs_inode_bitmap bad_inode_map;
 badblocks_list	test_badblocks;
 
-int first_no_comma = 1;
-int failed = 0;
+จำนวนเต็ม first_no_comma = 1;
+จำนวนเต็ม failed = 0;
 
-static void iscan_test_read_blk64(unsigned long long block, int count, errcode_t err)
+static void iscan_test_read_blk64(unsigned long long block, จำนวนเต็ม count, errcode_t err)
 {
-	int	i;
+	จำนวนเต็ม	i;
 
-	if (first_no_comma)
+	ถ้า (first_no_comma)
 		first_no_comma = 0;
-	else
+	มิฉะนั้น
 		printf(", ");
 
-	if (count > 1)
+	ถ้า (count > 1)
 		printf("%llu-%llu", block, block+count-1);
-	else
+	มิฉะนั้น
 		printf("%llu", block);
 
-	for (i=0; i < count; i++, block++) {
-		if (ext2fs_test_block_bitmap2(touched_map, block)) {
+	สำหรับ (i=0; i < count; i++, block++) {
+		ถ้า (ext2fs_test_block_bitmap2(touched_map, block)) {
 			printf("\nDuplicate block?!? --- %llu\n", block);
 			failed++;
 			first_no_comma = 1;
@@ -60,7 +60,7 @@ static void iscan_test_read_blk64(unsigned long long block, int count, errcode_t
 	}
 }
 
-static void iscan_test_read_blk(unsigned long block, int count, errcode_t err)
+static void iscan_test_read_blk(unsigned long block, จำนวนเต็ม count, errcode_t err)
 {
 	iscan_test_read_blk64(block, count, err);
 }
@@ -71,12 +71,12 @@ static void iscan_test_read_blk(unsigned long block, int count, errcode_t err)
 static void setup(void)
 {
 	errcode_t	retval;
-	int		i;
-	struct ext2_super_block param;
+	จำนวนเต็ม		i;
+	sa_nracanaa ext2_super_block param;
 
 	initialize_ext2_error_table();
 
-	memset(&param, 0, sizeof(param));
+	memset(&param, 0, parimaa_na(param));
 	ext2fs_blocks_count_set(&param, 12000);
 
 
@@ -85,47 +85,47 @@ static void setup(void)
 
 	retval = ext2fs_initialize("test fs", EXT2_FLAG_64BITS, &param,
 				   test_io_manager, &test_fs);
-	if (retval) {
+	ถ้า (retval) {
 		com_err("setup", retval,
 			"While initializing filesystem");
 		exit(1);
 	}
 	retval = ext2fs_allocate_tables(test_fs);
-	if (retval) {
+	ถ้า (retval) {
 		com_err("setup", retval,
 			"While allocating tables for test filesystem");
 		exit(1);
 	}
 	retval = ext2fs_allocate_block_bitmap(test_fs, "bad block map",
 					      &bad_block_map);
-	if (retval) {
+	ถ้า (retval) {
 		com_err("setup", retval,
 			"While allocating bad_block bitmap");
 		exit(1);
 	}
 	retval = ext2fs_allocate_block_bitmap(test_fs, "touched map",
 					      &touched_map);
-	if (retval) {
+	ถ้า (retval) {
 		com_err("setup", retval,
 			"While allocating touched block bitmap");
 		exit(1);
 	}
 	retval = ext2fs_allocate_inode_bitmap(test_fs, "bad inode map",
 					      &bad_inode_map);
-	if (retval) {
+	ถ้า (retval) {
 		com_err("setup", retval,
 			"While allocating bad inode bitmap");
 		exit(1);
 	}
 
 	retval = ext2fs_badblocks_list_create(&test_badblocks, 5);
-	if (retval) {
+	ถ้า (retval) {
 		com_err("setup", retval, "while creating badblocks list");
 		exit(1);
 	}
-	for (i=0; test_vec[i]; i++) {
+	สำหรับ (i=0; test_vec[i]; i++) {
 		retval = ext2fs_badblocks_list_add(test_badblocks, test_vec[i]);
-		if (retval) {
+		ถ้า (retval) {
 			com_err("setup", retval,
 				"while adding test vector %d", i);
 			exit(1);
@@ -140,29 +140,29 @@ static void setup(void)
  */
 static void iterate(void)
 {
-	struct ext2_inode inode;
+	sa_nracanaa ext2_inode inode;
 	ext2_inode_scan	scan;
 	errcode_t	retval;
 	ext2_ino_t	ino;
 
 	retval = ext2fs_open_inode_scan(test_fs, 8, &scan);
-	if (retval) {
+	ถ้า (retval) {
 		com_err("iterate", retval, "While opening inode scan");
 		exit(1);
 	}
 	printf("Reading blocks: ");
 	retval = ext2fs_get_next_inode(scan, &ino, &inode);
-	if (retval) {
+	ถ้า (retval) {
 		com_err("iterate", retval, "while reading first inode");
 		exit(1);
 	}
-	while (ino) {
+	ขณะ (ino) {
 		retval = ext2fs_get_next_inode(scan, &ino, &inode);
-		if (retval == EXT2_ET_BAD_BLOCK_IN_INODE_TABLE) {
+		ถ้า (retval == EXT2_ET_BAD_BLOCK_IN_INODE_TABLE) {
 			ext2fs_mark_inode_bitmap2(bad_inode_map, ino);
 			continue;
 		}
-		if (retval) {
+		ถ้า (retval) {
 			com_err("iterate", retval,
 				"while getting next inode");
 			exit(1);
@@ -177,11 +177,11 @@ static void iterate(void)
  */
 static void check_map(void)
 {
-	int	i, j, first=1;
+	จำนวนเต็ม	i, j, first=1;
 	blk64_t	blk;
 
-	for (i=0; test_vec[i]; i++) {
-		if (ext2fs_test_block_bitmap2(touched_map, test_vec[i])) {
+	สำหรับ (i=0; test_vec[i]; i++) {
+		ถ้า (ext2fs_test_block_bitmap2(touched_map, test_vec[i])) {
 			printf("Bad block was touched --- %llu\n",
 			       (unsigned long long) test_vec[i]);
 			failed++;
@@ -189,11 +189,11 @@ static void check_map(void)
 		}
 		ext2fs_mark_block_bitmap2(touched_map, test_vec[i]);
 	}
-	for (i = 0; i < test_fs->group_desc_count; i++) {
-		for (j=0, blk = ext2fs_inode_table_loc(test_fs, i);
+	สำหรับ (i = 0; i < test_fs->group_desc_count; i++) {
+		สำหรับ (j=0, blk = ext2fs_inode_table_loc(test_fs, i);
 		     j < test_fs->inode_blocks_per_group;
 		     j++, blk++) {
-			if (!ext2fs_test_block_bitmap2(touched_map, blk) &&
+			ถ้า (!ext2fs_test_block_bitmap2(touched_map, blk) &&
 			    !ext2fs_test_block_bitmap2(bad_block_map, blk)) {
 				printf("Missing block --- %llu\n",
 				       (unsigned long long) blk);
@@ -202,11 +202,11 @@ static void check_map(void)
 		}
 	}
 	printf("Bad inodes: ");
-	for (i=1; i <= test_fs->super->s_inodes_count; i++) {
-		if (ext2fs_test_inode_bitmap2(bad_inode_map, i)) {
-			if (first)
+	สำหรับ (i=1; i <= test_fs->super->s_inodes_count; i++) {
+		ถ้า (ext2fs_test_inode_bitmap2(bad_inode_map, i)) {
+			ถ้า (first)
 				first = 0;
-			else
+			มิฉะนั้น
 				printf(", ");
 			printf("%u", i);
 		}
@@ -215,13 +215,13 @@ static void check_map(void)
 }
 
 
-int main(int argc, char **argv)
+จำนวนเต็ม หลัก(จำนวนเต็ม argc, var_na **argv)
 {
 	setup();
 	iterate();
 	check_map();
-	if (!failed)
+	ถ้า (!failed)
 		printf("Inode scan tested OK!\n");
-	return failed;
+	คืน failed;
 }
 

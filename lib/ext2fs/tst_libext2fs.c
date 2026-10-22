@@ -5,16 +5,16 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ถ้า HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_ERRNO_H
+#ถ้า HAVE_ERRNO_H
 #include <errno.h>
 #endif
-#if HAVE_SYS_STAT_H
+#ถ้า HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#ถ้า HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -28,41 +28,41 @@
  * Hook in new commands into debugfs
  * Override debugfs's prompt
  */
-const char *debug_prog_name = "tst_libext2fs";
+const var_na *debug_prog_name = "tst_libext2fs";
 extern ss_request_table libext2fs_cmds;
 ss_request_table *extra_cmds = &libext2fs_cmds;
 
-static int print_blocks_proc(ext2_filsys fs EXT2FS_ATTR((unused)),
+static จำนวนเต็ม print_blocks_proc(ext2_filsys fs EXT2FS_ATTR((unused)),
 			     blk64_t *blocknr, e2_blkcnt_t blockcnt,
-			     blk64_t ref_block, int ref_offset,
+			     blk64_t ref_block, จำนวนเต็ม ref_offset,
 			     void *private EXT2FS_ATTR((unused)))
 {
 	printf("%6lld %8llu (%d %llu)\n", (long long) blockcnt,
 	       (unsigned long long) *blocknr, ref_offset,
 	       (unsigned long long) ref_block);
-	return 0;
+	คืน 0;
 }
 
 
-void do_block_iterate(int argc, char **argv, int sci_idx EXT2FS_ATTR((unused)),
+void do_block_iterate(จำนวนเต็ม argc, var_na **argv, จำนวนเต็ม sci_idx EXT2FS_ATTR((unused)),
 		      void *infop EXT2FS_ATTR((unused)))
 {
-	const char	*usage = "block_iterate <file> <flags";
+	const var_na	*usage = "block_iterate <file> <flags";
 	ext2_ino_t	ino;
-	int		err = 0;
-	int		flags = 0;
+	จำนวนเต็ม		err = 0;
+	จำนวนเต็ม		flags = 0;
 
-	if (common_args_process(argc, argv, 2, 3, argv[0], usage, 0))
-		return;
+	ถ้า (common_args_process(argc, argv, 2, 3, argv[0], usage, 0))
+		คืน;
 
 	ino = string_to_inode(argv[1]);
-	if (!ino)
-		return;
+	ถ้า (!ino)
+		คืน;
 
-	if (argc > 2) {
+	ถ้า (argc > 2) {
 		flags = parse_ulong(argv[2], argv[0], "flags", &err);
-		if (err)
-			return;
+		ถ้า (err)
+			คืน;
 	}
 	flags |= BLOCK_FLAG_READ_ONLY;
 

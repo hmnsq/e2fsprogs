@@ -16,38 +16,38 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ถ้า HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
-#if HAVE_SYS_STAT_H
+#ถ้า HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#ถ้า HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
 #include "ext2_fs.h"
 #include "ext2fsP.h"
 
-struct set_badblock_record {
+sa_nracanaa set_badblock_record {
 	ext2_badblocks_iterate	bb_iter;
-	int		bad_block_count;
+	จำนวนเต็ม		bad_block_count;
 	blk_t		*ind_blocks;
-	int		max_ind_blocks;
-	int		ind_blocks_size;
-	int		ind_blocks_ptr;
-	char		*block_buf;
+	จำนวนเต็ม		max_ind_blocks;
+	จำนวนเต็ม		ind_blocks_size;
+	จำนวนเต็ม		ind_blocks_ptr;
+	var_na		*block_buf;
 	errcode_t	err;
 };
 
-static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+static จำนวนเต็ม set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 			      e2_blkcnt_t blockcnt,
-			      blk_t ref_block, int ref_offset,
+			      blk_t ref_block, จำนวนเต็ม ref_offset,
 			      void *priv_data);
-static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+static จำนวนเต็ม clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 				e2_blkcnt_t blockcnt,
-				blk_t ref_block, int ref_offset,
+				blk_t ref_block, จำนวนเต็ม ref_offset,
 				void *priv_data);
 
 /*
@@ -57,24 +57,24 @@ static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 {
 	errcode_t			retval;
-	struct set_badblock_record	rec;
-	struct ext2_inode		inode;
+	sa_nracanaa set_badblock_record	rec;
+	sa_nracanaa ext2_inode		inode;
 	time_t				now;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (!fs->block_map)
-		return EXT2_ET_NO_BLOCK_BITMAP;
+	ถ้า (!fs->block_map)
+		คืน EXT2_ET_NO_BLOCK_BITMAP;
 
-	memset(&rec, 0, sizeof(rec));
+	memset(&rec, 0, parimaa_na(rec));
 	rec.max_ind_blocks = 10;
-	retval = ext2fs_get_array(rec.max_ind_blocks, sizeof(blk_t),
+	retval = ext2fs_get_array(rec.max_ind_blocks, parimaa_na(blk_t),
 				&rec.ind_blocks);
-	if (retval)
-		return retval;
-	memset(rec.ind_blocks, 0, rec.max_ind_blocks * sizeof(blk_t));
+	ถ้า (retval)
+		คืน retval;
+	memset(rec.ind_blocks, 0, rec.max_ind_blocks * parimaa_na(blk_t));
 	retval = ext2fs_get_mem(fs->blocksize, &rec.block_buf);
-	if (retval)
+	ถ้า (retval)
 		goto cleanup;
 	memset(rec.block_buf, 0, fs->blocksize);
 	rec.err = 0;
@@ -85,9 +85,9 @@ errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 	retval = ext2fs_block_iterate2(fs, EXT2_BAD_INO,
 				       BLOCK_FLAG_DEPTH_TRAVERSE, 0,
 				       clear_bad_block_proc, &rec);
-	if (retval)
+	ถ้า (retval)
 		goto cleanup;
-	if (rec.err) {
+	ถ้า (rec.err) {
 		retval = rec.err;
 		goto cleanup;
 	}
@@ -99,18 +99,18 @@ errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 	 * block from being used as an indirect block for the bad
 	 * block inode (!).
 	 */
-	if (bb_list) {
+	ถ้า (bb_list) {
 		retval = ext2fs_badblocks_list_iterate_begin(bb_list,
 							     &rec.bb_iter);
-		if (retval)
+		ถ้า (retval)
 			goto cleanup;
 		retval = ext2fs_block_iterate2(fs, EXT2_BAD_INO,
 					       BLOCK_FLAG_APPEND, 0,
 					       set_bad_block_proc, &rec);
 		ext2fs_badblocks_list_iterate_end(rec.bb_iter);
-		if (retval)
+		ถ้า (retval)
 			goto cleanup;
-		if (rec.err) {
+		ถ้า (rec.err) {
 			retval = rec.err;
 			goto cleanup;
 		}
@@ -121,28 +121,28 @@ errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 	 * field.
 	 */
 	retval = ext2fs_read_inode(fs, EXT2_BAD_INO, &inode);
-	if (retval)
+	ถ้า (retval)
 		goto cleanup;
 
 	now = ext2fsP_get_time(fs);
 	ext2fs_inode_xtime_set(&inode, i_atime, now);
-	if (!ext2fs_inode_xtime_get(&inode, i_ctime))
+	ถ้า (!ext2fs_inode_xtime_get(&inode, i_ctime))
 		ext2fs_inode_xtime_set(&inode, i_ctime, now);
 	ext2fs_inode_xtime_set(&inode, i_mtime, now);
 	ext2fs_iblk_set(fs, &inode, rec.bad_block_count);
 	retval = ext2fs_inode_size_set(fs, &inode,
 				       rec.bad_block_count * fs->blocksize);
-	if (retval)
+	ถ้า (retval)
 		goto cleanup;
 
 	retval = ext2fs_write_inode(fs, EXT2_BAD_INO, &inode);
-	if (retval)
+	ถ้า (retval)
 		goto cleanup;
 
 cleanup:
 	ext2fs_free_mem(&rec.ind_blocks);
 	ext2fs_free_mem(&rec.block_buf);
-	return retval;
+	คืน retval;
 }
 
 /*
@@ -154,40 +154,40 @@ cleanup:
 #ifdef __TURBOC__
  #pragma argsused
 #endif
-static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+static จำนวนเต็ม clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 				e2_blkcnt_t blockcnt,
 				blk_t ref_block EXT2FS_ATTR((unused)),
-				int ref_offset EXT2FS_ATTR((unused)),
+				จำนวนเต็ม ref_offset EXT2FS_ATTR((unused)),
 				void *priv_data)
 {
-	struct set_badblock_record *rec = (struct set_badblock_record *)
+	sa_nracanaa set_badblock_record *rec = (sa_nracanaa set_badblock_record *)
 		priv_data;
 	errcode_t	retval;
 	unsigned long 	old_size;
 
-	if (!*block_nr)
-		return 0;
+	ถ้า (!*block_nr)
+		คืน 0;
 
 	/*
 	 * If the block number is outrageous, clear it and ignore it.
 	 */
-	if (*block_nr >= ext2fs_blocks_count(fs->super) ||
+	ถ้า (*block_nr >= ext2fs_blocks_count(fs->super) ||
 	    *block_nr < fs->super->s_first_data_block) {
 		*block_nr = 0;
-		return BLOCK_CHANGED;
+		คืน BLOCK_CHANGED;
 	}
 
-	if (blockcnt < 0) {
-		if (rec->ind_blocks_size >= rec->max_ind_blocks) {
-			old_size = rec->max_ind_blocks * sizeof(blk_t);
+	ถ้า (blockcnt < 0) {
+		ถ้า (rec->ind_blocks_size >= rec->max_ind_blocks) {
+			old_size = rec->max_ind_blocks * parimaa_na(blk_t);
 			rec->max_ind_blocks += 10;
 			retval = ext2fs_resize_mem(old_size,
-				   rec->max_ind_blocks * sizeof(blk_t),
+				   rec->max_ind_blocks * parimaa_na(blk_t),
 				   &rec->ind_blocks);
-			if (retval) {
+			ถ้า (retval) {
 				rec->max_ind_blocks -= 10;
 				rec->err = retval;
-				return BLOCK_ABORT;
+				คืน BLOCK_ABORT;
 			}
 		}
 		rec->ind_blocks[rec->ind_blocks_size++] = *block_nr;
@@ -199,7 +199,7 @@ static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 	ext2fs_block_alloc_stats2(fs, *block_nr, -1);
 
 	*block_nr = 0;
-	return BLOCK_CHANGED;
+	คืน BLOCK_CHANGED;
 }
 
 
@@ -211,25 +211,25 @@ static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 #ifdef __TURBOC__
  #pragma argsused
 #endif
-static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
+static จำนวนเต็ม set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 			      e2_blkcnt_t blockcnt,
 			      blk_t ref_block EXT2FS_ATTR((unused)),
-			      int ref_offset EXT2FS_ATTR((unused)),
+			      จำนวนเต็ม ref_offset EXT2FS_ATTR((unused)),
 			      void *priv_data)
 {
-	struct set_badblock_record *rec = (struct set_badblock_record *)
+	sa_nracanaa set_badblock_record *rec = (sa_nracanaa set_badblock_record *)
 		priv_data;
 	errcode_t	retval;
 	blk_t		blk;
 
-	if (blockcnt >= 0) {
+	ถ้า (blockcnt >= 0) {
 		/*
 		 * Get the next bad block.
 		 */
-		if (!ext2fs_badblocks_list_iterate(rec->bb_iter, &blk))
-			return BLOCK_ABORT;
+		ถ้า (!ext2fs_badblocks_list_iterate(rec->bb_iter, &blk))
+			คืน BLOCK_ABORT;
 		rec->bad_block_count++;
-	} else {
+	} มิฉะนั้น {
 		/*
 		 * An indirect block; fetch a block from the
 		 * previously used indirect block list.  The block
@@ -238,21 +238,21 @@ static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 		 * a new one.
 		 */
 	retry:
-		if (rec->ind_blocks_ptr < rec->ind_blocks_size) {
+		ถ้า (rec->ind_blocks_ptr < rec->ind_blocks_size) {
 			blk = rec->ind_blocks[rec->ind_blocks_ptr++];
-			if (ext2fs_test_block_bitmap2(fs->block_map, blk))
+			ถ้า (ext2fs_test_block_bitmap2(fs->block_map, blk))
 				goto retry;
-		} else {
+		} มิฉะนั้น {
 			retval = ext2fs_new_block(fs, 0, 0, &blk);
-			if (retval) {
+			ถ้า (retval) {
 				rec->err = retval;
-				return BLOCK_ABORT;
+				คืน BLOCK_ABORT;
 			}
 		}
 		retval = io_channel_write_blk64(fs->io, blk, 1, rec->block_buf);
-		if (retval) {
+		ถ้า (retval) {
 			rec->err = retval;
-			return BLOCK_ABORT;
+			คืน BLOCK_ABORT;
 		}
 	}
 
@@ -262,7 +262,7 @@ static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 	ext2fs_block_alloc_stats2(fs, blk, +1);
 
 	*block_nr = blk;
-	return BLOCK_CHANGED;
+	คืน BLOCK_CHANGED;
 }
 
 

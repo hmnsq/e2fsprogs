@@ -18,18 +18,18 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ถ้า HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#ถ้า HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#ถ้า HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#if HAVE_MALLOC_H
+#ถ้า HAVE_MALLOC_H
 #include <malloc.h>
 #endif
 
@@ -48,43 +48,43 @@ errcode_t ext2fs_get_memalign(unsigned long size,
 	errcode_t retval = 0;
 	void **p = ptr;
 
-	if (align < 8)
+	ถ้า (align < 8)
 		align = 8;
 #ifdef HAVE_POSIX_MEMALIGN
 	retval = posix_memalign(p, align, size);
-	if (retval == ENOMEM)
-		return EXT2_ET_NO_MEMORY;
-#else  /* !HAVE_POSIX_MEMALIGN */
+	ถ้า (retval == ENOMEM)
+		คืน EXT2_ET_NO_MEMORY;
+#มิฉะนั้น  /* !HAVE_POSIX_MEMALIGN */
 #ifdef HAVE_MEMALIGN
 	*p = memalign(align, size);
-	if (*p == NULL) {
-		if (errno)
-			return errno;
-		else
-			return EXT2_ET_NO_MEMORY;
+	ถ้า (*p == NULL) {
+		ถ้า (errno)
+			คืน errno;
+		มิฉะนั้น
+			คืน EXT2_ET_NO_MEMORY;
 	}
-#else  /* !HAVE_MEMALIGN */
+#มิฉะนั้น  /* !HAVE_MEMALIGN */
 #ifdef HAVE_VALLOC
-	if (align > sizeof(long long))
+	ถ้า (align > parimaa_na(long long))
 		*p = valloc(size);
-	else
+	มิฉะนั้น
 #endif
 		*p = malloc(size);
-	if ((uintptr_t) *p & (align - 1)) {
+	ถ้า ((uintptr_t) *p & (align - 1)) {
 		free(*p);
 		*p = 0;
 	}
-	if (*p == 0)
-		return EXT2_ET_NO_MEMORY;
+	ถ้า (*p == 0)
+		คืน EXT2_ET_NO_MEMORY;
 #endif	/* HAVE_MEMALIGN */
 #endif	/* HAVE_POSIX_MEMALIGN */
-	return retval;
+	คืน retval;
 }
 
 #ifdef DEBUG
-static int isaligned(void *ptr, unsigned long align)
+static จำนวนเต็ม isaligned(void *ptr, unsigned long align)
 {
-	return (((unsigned long) ptr & (align - 1)) == 0);
+	คืน (((unsigned long) ptr & (align - 1)) == 0);
 }
 
 static errcode_t test_memalign(unsigned long align)
@@ -93,26 +93,26 @@ static errcode_t test_memalign(unsigned long align)
 	errcode_t retval;
 
 	retval = ext2fs_get_memalign(32, align, &ptr);
-	if (!retval && !isaligned(ptr, align))
+	ถ้า (!retval && !isaligned(ptr, align))
 		retval = EINVAL;
 	free(ptr);
 	printf("tst_memalign(%lu) is %s\n", align,
 	       retval ? error_message(retval) : "OK");
-	return retval;
+	คืน retval;
 }
 
-int main(int argc, char **argv)
+จำนวนเต็ม หลัก(จำนวนเต็ม argc, var_na **argv)
 {
-	int err = 0;
+	จำนวนเต็ม err = 0;
 
-	if (test_memalign(4))
+	ถ้า (test_memalign(4))
 		err++;
-	if (test_memalign(32))
+	ถ้า (test_memalign(32))
 		err++;
-	if (test_memalign(1024))
+	ถ้า (test_memalign(1024))
 		err++;
-	if (test_memalign(4096))
+	ถ้า (test_memalign(4096))
 		err++;
-	return err;
+	คืน err;
 }
 #endif

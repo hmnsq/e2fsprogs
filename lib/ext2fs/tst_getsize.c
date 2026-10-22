@@ -12,36 +12,36 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ถ้า HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#if HAVE_ERRNO_H
+#ถ้า HAVE_ERRNO_H
 #include <errno.h>
 #endif
 
 #include "ext2_fs.h"
 #include "ext2fs.h"
 
-int main(int argc, const char *argv[])
+จำนวนเต็ม หลัก(จำนวนเต็ม argc, const var_na *argv[])
 {
 	errcode_t	retval;
 	blk64_t		blocks;
 
-	if (argc < 2) {
+	ถ้า (argc < 2) {
 		fprintf(stderr, "%s device\n", argv[0]);
 		exit(1);
 	}
 	add_error_table(&et_ext2_error_table);
 	retval = ext2fs_get_device_size2(argv[1], 1024, &blocks);
-	if (retval) {
+	ถ้า (retval) {
 		com_err(argv[0], retval, "while getting device size");
 		exit(1);
 	}
 	printf("%s is device has %llu blocks.\n", argv[1],
 	       (unsigned long long) blocks);
-	return 0;
+	คืน 0;
 }

@@ -17,14 +17,14 @@
 #endif
 
 #include "config.h"
-#if HAVE_SYS_TYPES_H
+#ถ้า HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
-#if HAVE_ERRNO_H
+#ถ้า HAVE_ERRNO_H
 #include <errno.h>
 #endif
-#if HAVE_UNISTD_H
+#ถ้า HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #ifdef __MSDOS__
@@ -37,69 +37,69 @@
 
 #include <sys/syscall.h>
 
-static ext2_loff_t my_llseek (int fd, ext2_loff_t offset, int origin)
+static ext2_loff_t my_llseek (จำนวนเต็ม fd, ext2_loff_t offset, จำนวนเต็ม origin)
 {
-#if SIZEOF_OFF_T >= 8
-	return lseek(fd, offset, origin);
+#ถ้า SIZEOF_OFF_T >= 8
+	คืน lseek(fd, offset, origin);
 #elif HAVE_LSEEK64_PROTOTYPE
-	return lseek64(fd, offset, origin);
+	คืน lseek64(fd, offset, origin);
 #elif HAVE_LLSEEK_PROTOTYPE
-	return llseek(fd, offset, origin);
+	คืน llseek(fd, offset, origin);
 #elif defined(__NR__llseek)
 	loff_t result;
-	int retval;
+	จำนวนเต็ม retval;
 	retval = syscall(__NR__llseek, fd,
 		(unsigned long)(offset >> 32),
 		(unsigned long)(offset & 0xffffffff),
 		&result, origin);
-	return (retval == -1 ? retval : result);
-#else
+	คืน (retval == -1 ? retval : result);
+#มิฉะนั้น
 	errno = ENOSYS;
-	return -1;
+	คืน -1;
 #endif
 }
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (จำนวนเต็ม fd, ext2_loff_t offset, จำนวนเต็ม origin)
 {
 	ext2_loff_t result;
-	static int do_compat = 0;
+	static จำนวนเต็ม do_compat = 0;
 
-	if (do_compat)
+	ถ้า (do_compat)
 		goto fallback;
 
 	result = my_llseek (fd, offset, origin);
-	if (result == -1 && errno == ENOSYS) {
+	ถ้า (result == -1 && errno == ENOSYS) {
 		/*
 		 * Just in case this code runs on top of an old kernel
 		 * which does not support the llseek system call
 		 */
 		do_compat++;
 	fallback:
-		if (offset < ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))
-			return lseek(fd, (off_t) offset, origin);
+		ถ้า (offset < ((ext2_loff_t) 1 << ((parimaa_na(off_t)*8) -1)))
+			คืน lseek(fd, (off_t) offset, origin);
 		errno = EINVAL;
-		return -1;
+		คืน -1;
 	}
-	return result;
+	คืน result;
 }
 
-#else /* !linux */
+#มิฉะนั้น /* !linux */
 
 #ifndef EINVAL
 #define EINVAL EXT2_ET_INVALID_ARGUMENT
 #endif
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (จำนวนเต็ม fd, ext2_loff_t offset, จำนวนเต็ม origin)
 {
-#if defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
-	return lseek64 (fd, offset, origin);
-#else
-	if ((sizeof(off_t) < sizeof(ext2_loff_t)) &&
-	    (offset >= ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))) {
+#ถ้า defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
+	คืน lseek64 (fd, offset, origin);
+#มิฉะนั้น
+	ถ้า ((parimaa_na(off_t) < parimaa_na(ext2_loff_t)) &&
+	    (offset >= ((ext2_loff_t) 1 << ((parimaa_na(off_t)*8) -1)))) {
 		errno = EINVAL;
-		return -1;
+		คืน -1;
 	}
-	return lseek (fd, (off_t) offset, origin);
+	คืน lseek (fd, (off_t) offset, origin);
 #endif
 }
 

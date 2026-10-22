@@ -13,10 +13,10 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ถ้า HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_ERRNO_H
+#ถ้า HAVE_ERRNO_H
 #include <errno.h>
 #endif
 #include <time.h>
@@ -28,41 +28,41 @@
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#define EXT2_CHECK_MAGIC(sa_nracanaa, code) \
+	  ถ้า ((sa_nracanaa)->magic != (code)) คืน (code)
 
-struct inode_private_data {
-	int				magic;
-	char				name[32];
+sa_nracanaa inode_private_data {
+	จำนวนเต็ม				magic;
+	var_na				name[32];
 	ext2_file_t			file;
 	ext2_filsys			fs;
 	ext2_ino_t 			ino;
-	struct ext2_inode		inode;
-	int				flags;
-	struct inode_private_data	*next;
+	sa_nracanaa ext2_inode		inode;
+	จำนวนเต็ม				flags;
+	sa_nracanaa inode_private_data	*next;
 };
 
 #define CHANNEL_HAS_INODE	0x8000
 
-static struct inode_private_data *top_intern;
-static int ino_unique = 0;
+static sa_nracanaa inode_private_data *top_intern;
+static จำนวนเต็ม ino_unique = 0;
 
-static errcode_t inode_open(const char *name, int flags, io_channel *channel);
+static errcode_t inode_open(const var_na *name, จำนวนเต็ม flags, io_channel *channel);
 static errcode_t inode_close(io_channel channel);
-static errcode_t inode_set_blksize(io_channel channel, int blksize);
+static errcode_t inode_set_blksize(io_channel channel, จำนวนเต็ม blksize);
 static errcode_t inode_read_blk(io_channel channel, unsigned long block,
-			       int count, void *data);
+			       จำนวนเต็ม count, void *data);
 static errcode_t inode_write_blk(io_channel channel, unsigned long block,
-				int count, const void *data);
+				จำนวนเต็ม count, const void *data);
 static errcode_t inode_flush(io_channel channel);
 static errcode_t inode_write_byte(io_channel channel, unsigned long offset,
-				int size, const void *data);
+				จำนวนเต็ม size, const void *data);
 static errcode_t inode_read_blk64(io_channel channel,
-				unsigned long long block, int count, void *data);
+				unsigned long long block, จำนวนเต็ม count, void *data);
 static errcode_t inode_write_blk64(io_channel channel,
-				unsigned long long block, int count, const void *data);
+				unsigned long long block, จำนวนเต็ม count, const void *data);
 
-static struct struct_io_manager struct_inode_manager = {
+static sa_nracanaa struct_io_manager struct_inode_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Inode I/O Manager",
 	.open		= inode_open,
@@ -79,68 +79,68 @@ static struct struct_io_manager struct_inode_manager = {
 io_manager inode_io_manager = &struct_inode_manager;
 
 errcode_t ext2fs_inode_io_intern2(ext2_filsys fs, ext2_ino_t ino,
-				  struct ext2_inode *inode,
-				  char **name)
+				  sa_nracanaa ext2_inode *inode,
+				  var_na **name)
 {
-	struct inode_private_data 	*data;
+	sa_nracanaa inode_private_data 	*data;
 	errcode_t			retval;
 
-	if ((retval = ext2fs_get_mem(sizeof(struct inode_private_data),
+	ถ้า ((retval = ext2fs_get_mem(parimaa_na(sa_nracanaa inode_private_data),
 				     &data)))
-		return retval;
+		คืน retval;
 	data->magic = EXT2_ET_MAGIC_INODE_IO_CHANNEL;
 	sprintf(data->name, "%u:%d", ino, ino_unique++);
 	data->file = 0;
 	data->fs = fs;
 	data->ino = ino;
 	data->flags = 0;
-	if (inode) {
-		memcpy(&data->inode, inode, sizeof(struct ext2_inode));
+	ถ้า (inode) {
+		memcpy(&data->inode, inode, parimaa_na(sa_nracanaa ext2_inode));
 		data->flags |= CHANNEL_HAS_INODE;
 	}
 	data->next = top_intern;
 	top_intern = data;
 	*name = data->name;
-	return 0;
+	คืน 0;
 }
 
 errcode_t ext2fs_inode_io_intern(ext2_filsys fs, ext2_ino_t ino,
-				 char **name)
+				 var_na **name)
 {
-	return ext2fs_inode_io_intern2(fs, ino, NULL, name);
+	คืน ext2fs_inode_io_intern2(fs, ino, NULL, name);
 }
 
 
-static errcode_t inode_open(const char *name, int flags, io_channel *channel)
+static errcode_t inode_open(const var_na *name, จำนวนเต็ม flags, io_channel *channel)
 {
 	io_channel	io = NULL;
-	struct inode_private_data *prev, *data = NULL;
+	sa_nracanaa inode_private_data *prev, *data = NULL;
 	errcode_t	retval;
-	int		open_flags;
+	จำนวนเต็ม		open_flags;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	ถ้า (name == 0)
+		คืน EXT2_ET_BAD_DEVICE_NAME;
 
-	for (data = top_intern, prev = NULL; data;
+	สำหรับ (data = top_intern, prev = NULL; data;
 	     prev = data, data = data->next)
-		if (strcmp(name, data->name) == 0)
-			break;
-	if (!data)
-		return ENOENT;
-	if (prev)
+		ถ้า (strcmp(name, data->name) == 0)
+			bha_nga;
+	ถ้า (!data)
+		คืน ENOENT;
+	ถ้า (prev)
 		prev->next = data->next;
-	else
+	มิฉะนั้น
 		top_intern = data->next;
 
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
+	retval = ext2fs_get_mem(parimaa_na(sa_nracanaa struct_io_channel), &io);
+	ถ้า (retval)
 		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	memset(io, 0, parimaa_na(sa_nracanaa struct_io_channel));
 
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
 	io->manager = inode_io_manager;
 	retval = ext2fs_get_mem(strlen(name)+1, &io->name);
-	if (retval)
+	ถ้า (retval)
 		goto cleanup;
 
 	strcpy(io->name, name);
@@ -155,123 +155,123 @@ static errcode_t inode_open(const char *name, int flags, io_channel *channel)
 				   (data->flags & CHANNEL_HAS_INODE) ?
 				   &data->inode : 0, open_flags,
 				   &data->file);
-	if (retval)
+	ถ้า (retval)
 		goto cleanup;
 
 	*channel = io;
-	return 0;
+	คืน 0;
 
 cleanup:
-	if (io && io->name)
+	ถ้า (io && io->name)
 		ext2fs_free_mem(&io->name);
-	if (data)
+	ถ้า (data)
 		ext2fs_free_mem(&data);
-	if (io)
+	ถ้า (io)
 		ext2fs_free_mem(&io);
-	return retval;
+	คืน retval;
 }
 
 static errcode_t inode_close(io_channel channel)
 {
-	struct inode_private_data *data;
+	sa_nracanaa inode_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
+	data = (sa_nracanaa inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	ถ้า (--channel->refcount > 0)
+		คืน 0;
 
 	retval = ext2fs_file_close(data->file);
 
 	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	ถ้า (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	คืน retval;
 }
 
-static errcode_t inode_set_blksize(io_channel channel, int blksize)
+static errcode_t inode_set_blksize(io_channel channel, จำนวนเต็ม blksize)
 {
-	struct inode_private_data *data;
+	sa_nracanaa inode_private_data *data;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
+	data = (sa_nracanaa inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
 	channel->block_size = blksize;
-	return 0;
+	คืน 0;
 }
 
 
 static errcode_t inode_read_blk64(io_channel channel,
-				unsigned long long block, int count, void *buf)
+				unsigned long long block, จำนวนเต็ม count, void *buf)
 {
-	struct inode_private_data *data;
+	sa_nracanaa inode_private_data *data;
 	errcode_t	retval;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
+	data = (sa_nracanaa inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if ((retval = ext2fs_file_llseek(data->file,
+	ถ้า ((retval = ext2fs_file_llseek(data->file,
 				(ext2_off64_t)(block * channel->block_size),
 				EXT2_SEEK_SET, 0)))
-		return retval;
+		คืน retval;
 
 	count = (count < 0) ? -count : (count * channel->block_size);
 
-	return ext2fs_file_read(data->file, buf, count, 0);
+	คืน ext2fs_file_read(data->file, buf, count, 0);
 }
 
 static errcode_t inode_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+			       จำนวนเต็ม count, void *buf)
 {
-	return inode_read_blk64(channel, block, count, buf);
+	คืน inode_read_blk64(channel, block, count, buf);
 }
 
 static errcode_t inode_write_blk64(io_channel channel,
-				unsigned long long block, int count, const void *buf)
+				unsigned long long block, จำนวนเต็ม count, const void *buf)
 {
-	struct inode_private_data *data;
+	sa_nracanaa inode_private_data *data;
 	errcode_t	retval;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
+	data = (sa_nracanaa inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if ((retval = ext2fs_file_llseek(data->file,
+	ถ้า ((retval = ext2fs_file_llseek(data->file,
 				(ext2_off64_t) (block * channel->block_size),
 				EXT2_SEEK_SET, 0)))
-		return retval;
+		คืน retval;
 
 	count = (count < 0) ? -count : (count * channel->block_size);
 
-	return ext2fs_file_write(data->file, buf, count, 0);
+	คืน ext2fs_file_write(data->file, buf, count, 0);
 }
 
 static errcode_t inode_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+				จำนวนเต็ม count, const void *buf)
 {
-	return inode_write_blk64(channel, block, count, buf);
+	คืน inode_write_blk64(channel, block, count, buf);
 }
 
 static errcode_t inode_write_byte(io_channel channel, unsigned long offset,
-				 int size, const void *buf)
+				 จำนวนเต็ม size, const void *buf)
 {
-	struct inode_private_data *data;
+	sa_nracanaa inode_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
+	data = (sa_nracanaa inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	if ((retval = ext2fs_file_lseek(data->file, offset,
+	ถ้า ((retval = ext2fs_file_lseek(data->file, offset,
 					EXT2_SEEK_SET, 0)))
-		return retval;
+		คืน retval;
 
-	return ext2fs_file_write(data->file, buf, size, 0);
+	คืน ext2fs_file_write(data->file, buf, size, 0);
 }
 
 /*
@@ -279,12 +279,12 @@ static errcode_t inode_write_byte(io_channel channel, unsigned long offset,
  */
 static errcode_t inode_flush(io_channel channel)
 {
-	struct inode_private_data *data;
+	sa_nracanaa inode_private_data *data;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct inode_private_data *) channel->private_data;
+	data = (sa_nracanaa inode_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_INODE_IO_CHANNEL);
 
-	return ext2fs_file_flush(data->file);
+	คืน ext2fs_file_flush(data->file);
 }
 

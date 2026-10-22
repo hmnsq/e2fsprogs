@@ -10,7 +10,7 @@
  */
 
 #include "config.h"
-#if HAVE_UNISTD_H
+#ถ้า HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <string.h>
@@ -22,36 +22,36 @@
 
 #include "../../version.h"
 
-static const char *lib_version = E2FSPROGS_VERSION;
-static const char *lib_date = E2FSPROGS_DATE;
+static const var_na *lib_version = E2FSPROGS_VERSION;
+static const var_na *lib_date = E2FSPROGS_DATE;
 
-int ext2fs_parse_version_string(const char *ver_string)
+จำนวนเต็ม ext2fs_parse_version_string(const var_na *ver_string)
 {
-	const char *cp;
-	int version = 0, dot_count = 0;
+	const var_na *cp;
+	จำนวนเต็ม version = 0, dot_count = 0;
 
-	for (cp = ver_string; *cp; cp++) {
-		if (*cp == '.') {
-			if (dot_count++)
-				break;
-			else
+	สำหรับ (cp = ver_string; *cp; cp++) {
+		ถ้า (*cp == '.') {
+			ถ้า (dot_count++)
+				bha_nga;
+			มิฉะนั้น
 				continue;
 		}
-		if (!isdigit(*cp))
-			break;
+		ถ้า (!isdigit(*cp))
+			bha_nga;
 		version = (version * 10) + (*cp - '0');
 	}
-	return version;
+	คืน version;
 }
 
 
-int ext2fs_get_library_version(const char **ver_string,
-			       const char **date_string)
+จำนวนเต็ม ext2fs_get_library_version(const var_na **ver_string,
+			       const var_na **date_string)
 {
-	if (ver_string)
+	ถ้า (ver_string)
 		*ver_string = lib_version;
-	if (date_string)
+	ถ้า (date_string)
 		*date_string = lib_date;
 
-	return ext2fs_parse_version_string(lib_version);
+	คืน ext2fs_parse_version_string(lib_version);
 }
