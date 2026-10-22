@@ -11,7 +11,7 @@
 
 #include "config.h"
 #include <stdio.h>
-#if HAVE_UNISTD_H
+#ប្រសិនបើ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <string.h>
@@ -20,34 +20,34 @@
 #include "ext2_fs.h"
 #include "ext2fsP.h"
 
-static int db_dir_proc(ext2_filsys fs, struct ext2_db_entry2 *db_info,
+static ចំនួនគត់ db_dir_proc(ext2_filsys fs, sa_nracanaa ext2_db_entry2 *db_info,
 		       void *priv_data);
 
 errcode_t ext2fs_dblist_dir_iterate(ext2_dblist dblist,
-				    int	flags,
-				    char	*block_buf,
-				    int (*func)(ext2_ino_t dir,
-						int	entry,
-						struct ext2_dir_entry *dirent,
-						int	offset,
-						int	blocksize,
-						char	*buf,
+				    ចំនួនគត់	flags,
+				    var_na	*block_buf,
+				    ចំនួនគត់ (*func)(ext2_ino_t dir,
+						ចំនួនគត់	entry,
+						sa_nracanaa ext2_dir_entry *dirent,
+						ចំនួនគត់	offset,
+						ចំនួនគត់	blocksize,
+						var_na	*buf,
 						void	*priv_data),
 				    void *priv_data)
 {
 	errcode_t		retval;
-	struct dir_context	ctx;
+	sa_nracanaa dir_context	ctx;
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
 	ctx.dir = 0;
 	ctx.flags = flags;
-	if (block_buf)
+	ប្រសិនបើ (block_buf)
 		ctx.buf = block_buf;
-	else {
+	បើមិនដូច្នេះ {
 		retval = ext2fs_get_mem(dblist->fs->blocksize, &ctx.buf);
-		if (retval)
-			return retval;
+		ប្រសិនបើ (retval)
+			ត្រឡប់ retval;
 	}
 	ctx.func = func;
 	ctx.priv_data = priv_data;
@@ -55,34 +55,34 @@ errcode_t ext2fs_dblist_dir_iterate(ext2_dblist dblist,
 
 	retval = ext2fs_dblist_iterate2(dblist, db_dir_proc, &ctx);
 
-	if (!block_buf)
+	ប្រសិនបើ (!block_buf)
 		ext2fs_free_mem(&ctx.buf);
-	if (retval)
-		return retval;
-	return ctx.errcode;
+	ប្រសិនបើ (retval)
+		ត្រឡប់ retval;
+	ត្រឡប់ ctx.errcode;
 }
 
-static int db_dir_proc(ext2_filsys fs, struct ext2_db_entry2 *db_info,
+static ចំនួនគត់ db_dir_proc(ext2_filsys fs, sa_nracanaa ext2_db_entry2 *db_info,
 		       void *priv_data)
 {
-	struct ext2_inode	inode;
-	struct dir_context	*ctx;
-	int			ret;
+	sa_nracanaa ext2_inode	inode;
+	sa_nracanaa dir_context	*ctx;
+	ចំនួនគត់			ret;
 
-	ctx = (struct dir_context *) priv_data;
+	ctx = (sa_nracanaa dir_context *) priv_data;
 	ctx->dir = db_info->ino;
 	ctx->errcode = 0;
 
 	ctx->errcode = ext2fs_read_inode(fs, ctx->dir, &inode);
-	if (ctx->errcode)
-		return DBLIST_ABORT;
-	if (inode.i_flags & EXT4_INLINE_DATA_FL)
+	ប្រសិនបើ (ctx->errcode)
+		ត្រឡប់ DBLIST_ABORT;
+	ប្រសិនបើ (inode.i_flags & EXT4_INLINE_DATA_FL)
 		ret = ext2fs_inline_data_dir_iterate(fs, ctx->dir, ctx);
-	else
+	បើមិនដូច្នេះ
 		ret = ext2fs_process_dir_block(fs, &db_info->blk,
 					       db_info->blockcnt, 0, 0,
 					       priv_data);
-	if ((ret & BLOCK_ABORT) && !ctx->errcode)
-		return DBLIST_ABORT;
-	return 0;
+	ប្រសិនបើ ((ret & BLOCK_ABORT) && !ctx->errcode)
+		ត្រឡប់ DBLIST_ABORT;
+	ត្រឡប់ 0;
 }

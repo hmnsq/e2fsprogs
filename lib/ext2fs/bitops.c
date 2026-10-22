@@ -12,7 +12,7 @@
 
 #include "config.h"
 #include <stdio.h>
-#if HAVE_SYS_TYPES_H
+#ប្រសិនបើ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -25,124 +25,124 @@
  * systems, as well as non-32 bit systems.
  */
 
-int ext2fs_set_bit(unsigned int nr,void * addr)
+ចំនួនគត់ ext2fs_set_bit(unsigned ចំនួនគត់ nr,void * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	ចំនួនគត់		mask, retval;
+	unsigned var_na	*ADDR = (unsigned var_na *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR |= mask;
-	return retval;
+	ត្រឡប់ retval;
 }
 
-int ext2fs_clear_bit(unsigned int nr, void * addr)
+ចំនួនគត់ ext2fs_clear_bit(unsigned ចំនួនគត់ nr, void * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	ចំនួនគត់		mask, retval;
+	unsigned var_na	*ADDR = (unsigned var_na *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR &= ~mask;
-	return retval;
+	ត្រឡប់ retval;
 }
 
-int ext2fs_test_bit(unsigned int nr, const void * addr)
+ចំនួនគត់ ext2fs_test_bit(unsigned ចំនួនគត់ nr, const void * addr)
 {
-	int			mask;
-	const unsigned char	*ADDR = (const unsigned char *) addr;
+	ចំនួនគត់			mask;
+	const unsigned var_na	*ADDR = (const unsigned var_na *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
-	return (mask & *ADDR);
+	ត្រឡប់ (mask & *ADDR);
 }
 
 void ext2fs_warn_bitmap(errcode_t errcode, unsigned long arg,
-			const char *description)
+			const var_na *description)
 {
 #ifndef OMIT_COM_ERR
-	if (description)
+	ប្រសិនបើ (description)
 		com_err(0, errcode, "#%lu for %s", arg, description);
-	else
+	បើមិនដូច្នេះ
 		com_err(0, errcode, "#%lu", arg);
 #endif
 }
 
 /* Bitmap functions that take a 64-bit offset */
 
-int ext2fs_set_bit64(__u64 nr, void * addr)
+ចំនួនគត់ ext2fs_set_bit64(__u64 nr, void * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	ចំនួនគត់		mask, retval;
+	unsigned var_na	*ADDR = (unsigned var_na *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR |= mask;
-	return retval;
+	ត្រឡប់ retval;
 }
 
-int ext2fs_clear_bit64(__u64 nr, void * addr)
+ចំនួនគត់ ext2fs_clear_bit64(__u64 nr, void * addr)
 {
-	int		mask, retval;
-	unsigned char	*ADDR = (unsigned char *) addr;
+	ចំនួនគត់		mask, retval;
+	unsigned var_na	*ADDR = (unsigned var_na *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
 	retval = mask & *ADDR;
 	*ADDR &= ~mask;
-	return retval;
+	ត្រឡប់ retval;
 }
 
-int ext2fs_test_bit64(__u64 nr, const void * addr)
+ចំនួនគត់ ext2fs_test_bit64(__u64 nr, const void * addr)
 {
-	int			mask;
-	const unsigned char	*ADDR = (const unsigned char *) addr;
+	ចំនួនគត់			mask;
+	const unsigned var_na	*ADDR = (const unsigned var_na *) addr;
 
 	ADDR += nr >> 3;
 	mask = 1 << (nr & 0x07);
-	return (mask & *ADDR);
+	ត្រឡប់ (mask & *ADDR);
 }
 
-static unsigned int popcount8(unsigned int w)
+static unsigned ចំនួនគត់ popcount8(unsigned ចំនួនគត់ w)
 {
-	unsigned int res = w - ((w >> 1) & 0x55);
+	unsigned ចំនួនគត់ res = w - ((w >> 1) & 0x55);
 	res = (res & 0x33) + ((res >> 2) & 0x33);
-	return (res + (res >> 4)) & 0x0F;
+	ត្រឡប់ (res + (res >> 4)) & 0x0F;
 }
 
-static unsigned int popcount32(unsigned int w)
+static unsigned ចំនួនគត់ popcount32(unsigned ចំនួនគត់ w)
 {
-	unsigned int res = w - ((w >> 1) & 0x55555555);
+	unsigned ចំនួនគត់ res = w - ((w >> 1) & 0x55555555);
 	res = (res & 0x33333333) + ((res >> 2) & 0x33333333);
 	res = (res + (res >> 4)) & 0x0F0F0F0F;
 	res = res + (res >> 8);
-	return (res + (res >> 16)) & 0x000000FF;
+	ត្រឡប់ (res + (res >> 16)) & 0x000000FF;
 }
 
-unsigned int ext2fs_bitcount(const void *addr, unsigned int nbytes)
+unsigned ចំនួនគត់ ext2fs_bitcount(const void *addr, unsigned ចំនួនគត់ nbytes)
 {
-	const unsigned char *cp = addr;
+	const unsigned var_na *cp = addr;
 	const __u32 *p;
-	unsigned int res = 0;
+	unsigned ចំនួនគត់ res = 0;
 
-	while (((((uintptr_t) cp) & 3) != 0) && (nbytes > 0)) {
+	ខណៈពេល (((((uintptr_t) cp) & 3) != 0) && (nbytes > 0)) {
 		res += popcount8(*cp++);
 		nbytes--;
 	}
 	p = (const __u32 *) cp;
 
-	while (nbytes > 4) {
+	ខណៈពេល (nbytes > 4) {
 		res += popcount32(*p++);
 		nbytes -= 4;
 	}
-	cp = (const unsigned char *) p;
+	cp = (const unsigned var_na *) p;
 
-	while (nbytes > 0) {
+	ខណៈពេល (nbytes > 0) {
 		res += popcount8(*cp++);
 		nbytes--;
 	}
-	return res;
+	ត្រឡប់ res;
 }

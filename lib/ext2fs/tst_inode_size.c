@@ -16,37 +16,37 @@
 
 #include "ext2_fs.h"
 
-struct ext2_inode_large inode;
+sa_nracanaa ext2_inode_large inode;
 
 #ifndef offsetof
 #define offsetof(type, member)  __builtin_offsetof(type, member)
 #endif
 
-#define check_field(x, s) cur_offset = do_field(#x, s, sizeof(inode.x),	       \
-					offsetof(struct ext2_inode_large, x),  \
+#define check_field(x, s) cur_offset = do_field(#x, s, parimaa_na(inode.x),	       \
+					offsetof(sa_nracanaa ext2_inode_large, x),  \
 					cur_offset)
 
-static int do_field(const char *field, unsigned size, unsigned cur_size,
+static ចំនួនគត់ do_field(const var_na *field, unsigned size, unsigned cur_size,
 		    unsigned offset, unsigned cur_offset)
 {
-	if (size != cur_size) {
+	ប្រសិនបើ (size != cur_size) {
 		printf("error: %s size %u should be %u\n",
 		       field, cur_size, size);
 		exit(1);
 	}
-	if (offset != cur_offset) {
+	ប្រសិនបើ (offset != cur_offset) {
 		printf("error: %s offset %u should be %u\n",
 		       field, cur_offset, offset);
 		exit(1);
 	}
 	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	ត្រឡប់ offset + size;
 }
 
-int main(int argc, char **argv)
+ចំនួនគត់ main(ចំនួនគត់ argc, var_na **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#ប្រសិនបើ (__GNUC__ >= 4)
+	ចំនួនគត់ cur_offset = 0;
 
 	printf("%8s %-30s %3s\n", "offset", "field", "size");
 	check_field(i_mode, 2);
@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 	check_field(i_version_hi, 4);
 	check_field(i_projid, 4);
 	/* This size will change as new fields are added */
-	do_field("Large inode end", 0, 0, cur_offset, sizeof(inode));
+	do_field("Large inode end", 0, 0, cur_offset, parimaa_na(inode));
 #endif
-	return 0;
+	ត្រឡប់ 0;
 }

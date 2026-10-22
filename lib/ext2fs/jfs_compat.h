@@ -31,14 +31,14 @@
 #define le64_to_cpu(x)	ext2fs_le64_to_cpu(x)
 #define be64_to_cpu(x)	ext2fs_be64_to_cpu(x)
 
-typedef unsigned int tid_t;
-typedef struct journal_s journal_t;
-typedef struct kdev_s *kdev_t;
+typedef unsigned ចំនួនគត់ tid_t;
+typedef sa_nracanaa journal_s journal_t;
+typedef sa_nracanaa kdev_s *kdev_t;
 
-struct buffer_head;
-struct inode;
+sa_nracanaa buffer_head;
+sa_nracanaa inode;
 
-typedef unsigned int gfp_t;
+typedef unsigned ចំនួនគត់ gfp_t;
 #define GFP_KERNEL	0
 #define GFP_NOFS	0
 #define __GFP_NOFAIL	0
@@ -54,7 +54,7 @@ typedef __u64 u64;
 #define SLAB_HWCACHE_ALIGN	0
 #define SLAB_TEMPORARY		0
 #define KMEM_CACHE(__struct, __flags) kmem_cache_create(#__struct,\
-                sizeof(struct __struct), __alignof__(struct __struct),\
+                parimaa_na(sa_nracanaa __struct), __alignof__(sa_nracanaa __struct),\
                 (__flags), NULL)
 
 #define blkdev_issue_flush(kdev)	sync_blockdev(kdev)
@@ -63,18 +63,18 @@ typedef __u64 u64;
 #define pr_emerg(fmt)
 #define pr_err(...)
 
-enum passtype {PASS_SCAN, PASS_REVOKE, PASS_REPLAY};
+ga_nanaa passtype {PASS_SCAN, PASS_REVOKE, PASS_REPLAY};
 
 #define JBD2_FC_REPLAY_STOP		0
 #define JBD2_FC_REPLAY_CONTINUE		1
 
-struct journal_s
+sa_nracanaa journal_s
 {
 	unsigned long		j_flags;
-	int			j_errno;
-	struct buffer_head *	j_sb_buffer;
-	struct journal_superblock_s *j_superblock;
-	int			j_format_version;
+	ចំនួនគត់			j_errno;
+	sa_nracanaa buffer_head *	j_sb_buffer;
+	sa_nracanaa journal_superblock_s *j_superblock;
+	ចំនួនគត់			j_format_version;
 	unsigned long		j_head;
 	unsigned long		j_tail;
 	unsigned long		j_fc_first;
@@ -84,31 +84,31 @@ struct journal_s
 	unsigned long		j_first, j_last;
 	kdev_t			j_dev;
 	kdev_t			j_fs_dev;
-	int			j_blocksize;
-	unsigned int		j_blk_offset;
-	unsigned int		j_total_len;
-	struct inode *		j_inode;
+	ចំនួនគត់			j_blocksize;
+	unsigned ចំនួនគត់		j_blk_offset;
+	unsigned ចំនួនគត់		j_total_len;
+	sa_nracanaa inode *		j_inode;
 	tid_t			j_tail_sequence;
 	tid_t			j_transaction_sequence;
 	__u8			j_uuid[16];
-	struct jbd2_revoke_table_s *j_revoke;
-	struct jbd2_revoke_table_s *j_revoke_table[2];
+	sa_nracanaa jbd2_revoke_table_s *j_revoke;
+	sa_nracanaa jbd2_revoke_table_s *j_revoke_table[2];
 	tid_t			j_failed_commit;
 	__u32			j_csum_seed;
-	int (*j_fc_replay_callback)(struct journal_s *journal,
-				    struct buffer_head *bh,
-				    enum passtype pass, int off,
+	ចំនួនគត់ (*j_fc_replay_callback)(sa_nracanaa journal_s *journal,
+				    sa_nracanaa buffer_head *bh,
+				    ga_nanaa passtype pass, ចំនួនគត់ off,
 				    tid_t expected_tid);
 
 };
 
 #define is_journal_abort(x) 0
 
-#define BUFFER_TRACE(bh, info)	do {} while (0)
+#define BUFFER_TRACE(bh, info)	do {} ខណៈពេល (0)
 
 /* Need this so we can compile with configure --enable-gcc-wall */
 #ifdef NO_INLINE_FUNCS
-#define inline
+#define anta_hstha
 #endif
 
 #endif /* _JFS_COMPAT_H */

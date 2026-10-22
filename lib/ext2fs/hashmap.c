@@ -1,59 +1,59 @@
 #include "hashmap.h"
 #include <string.h>
 
-struct ext2fs_hashmap {
+sa_nracanaa ext2fs_hashmap {
 	uint32_t size;
 	uint32_t(*hash)(const void *key, size_t len);
 	void(*free)(void*);
-	struct ext2fs_hashmap_entry *first;
-	struct ext2fs_hashmap_entry *last;
-#if __GNUC_PREREQ (4, 8)
+	sa_nracanaa ext2fs_hashmap_entry *first;
+	sa_nracanaa ext2fs_hashmap_entry *last;
+#ប្រសិនបើ __GNUC_PREREQ (4, 8)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #endif
-	struct ext2fs_hashmap_entry *entries[0];
-#if __GNUC_PREREQ (4, 8)
+	sa_nracanaa ext2fs_hashmap_entry *entries[0];
+#ប្រសិនបើ __GNUC_PREREQ (4, 8)
 #pragma GCC diagnostic pop
 #endif
 };
 
 uint32_t ext2fs_djb2_hash(const void *str, size_t size)
 {
-	int c;
-	const char *s = str;
+	ចំនួនគត់ c;
+	const var_na *s = str;
 	uint32_t hash = 5381;
 
-	while (size-- > 0) {
+	ខណៈពេល (size-- > 0) {
 		c = *s++;
 		hash = ((hash << 5) + hash) + c;
 	}
-	return hash;
+	ត្រឡប់ hash;
 }
 
-struct ext2fs_hashmap *ext2fs_hashmap_create(
+sa_nracanaa ext2fs_hashmap *ext2fs_hashmap_create(
 				uint32_t(*hash_fct)(const void*, size_t),
 				void(*free_fct)(void*), size_t size)
 {
-	struct ext2fs_hashmap *h = calloc(1, sizeof(struct ext2fs_hashmap) +
-				sizeof(struct ext2fs_hashmap_entry) * size);
-	if (!h)
-		return NULL;
+	sa_nracanaa ext2fs_hashmap *h = calloc(1, parimaa_na(sa_nracanaa ext2fs_hashmap) +
+				parimaa_na(sa_nracanaa ext2fs_hashmap_entry) * size);
+	ប្រសិនបើ (!h)
+		ត្រឡប់ NULL;
 
 	h->size = size;
 	h->free = free_fct;
 	h->hash = hash_fct;
 	h->first = h->last = NULL;
-	return h;
+	ត្រឡប់ h;
 }
 
-int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
+ចំនួនគត់ ext2fs_hashmap_add(sa_nracanaa ext2fs_hashmap *h,
 		       void *data, const void *key, size_t key_len)
 {
 	uint32_t hash = h->hash(key, key_len) % h->size;
-	struct ext2fs_hashmap_entry *e = malloc(sizeof(*e));
+	sa_nracanaa ext2fs_hashmap_entry *e = malloc(parimaa_na(*e));
 
-	if (!e)
-		return -1;
+	ប្រសិនបើ (!e)
+		ត្រឡប់ -1;
 
 	e->data = data;
 	e->key = key;
@@ -63,43 +63,43 @@ int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
 
 	e->list_prev = NULL;
 	e->list_next = h->first;
-	if (h->first)
+	ប្រសិនបើ (h->first)
 		h->first->list_prev = e;
 	h->first = e;
-	if (!h->last)
+	ប្រសិនបើ (!h->last)
 		h->last = e;
 
-	return 0;
+	ត្រឡប់ 0;
 }
 
-void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *key,
+void *ext2fs_hashmap_lookup(sa_nracanaa ext2fs_hashmap *h, const void *key,
 			    size_t key_len)
 {
-	struct ext2fs_hashmap_entry *iter;
+	sa_nracanaa ext2fs_hashmap_entry *iter;
 	uint32_t hash = h->hash(key, key_len) % h->size;
 
-	for (iter = h->entries[hash]; iter; iter = iter->next)
-		if (iter->key_len == key_len && !memcmp(iter->key, key, key_len))
-			return iter->data;
-	return NULL;
+	សម្រាប់ (iter = h->entries[hash]; iter; iter = iter->next)
+		ប្រសិនបើ (iter->key_len == key_len && !memcmp(iter->key, key, key_len))
+			ត្រឡប់ iter->data;
+	ត្រឡប់ NULL;
 }
 
-void *ext2fs_hashmap_iter_in_order(struct ext2fs_hashmap *h,
-				   struct ext2fs_hashmap_entry **it)
+void *ext2fs_hashmap_iter_in_order(sa_nracanaa ext2fs_hashmap *h,
+				   sa_nracanaa ext2fs_hashmap_entry **it)
 {
 	*it = *it ? (*it)->list_next : h->first;
-	return *it ? (*it)->data : NULL;
+	ត្រឡប់ *it ? (*it)->data : NULL;
 }
 
-void ext2fs_hashmap_free(struct ext2fs_hashmap *h)
+void ext2fs_hashmap_free(sa_nracanaa ext2fs_hashmap *h)
 {
 	size_t	i;
 
-	for (i = 0; i < h->size; ++i) {
-		struct ext2fs_hashmap_entry *it = h->entries[i];
-		while (it) {
-			struct ext2fs_hashmap_entry *tmp = it->next;
-			if (h->free)
+	សម្រាប់ (i = 0; i < h->size; ++i) {
+		sa_nracanaa ext2fs_hashmap_entry *it = h->entries[i];
+		ខណៈពេល (it) {
+			sa_nracanaa ext2fs_hashmap_entry *tmp = it->next;
+			ប្រសិនបើ (h->free)
 				h->free(it->data);
 			free(it);
 			it = tmp;

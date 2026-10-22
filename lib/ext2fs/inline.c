@@ -18,18 +18,18 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ប្រសិនបើ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#ប្រសិនបើ HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#ប្រសិនបើ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#if HAVE_MALLOC_H
+#ប្រសិនបើ HAVE_MALLOC_H
 #include <malloc.h>
 #endif
 
@@ -48,43 +48,43 @@ errcode_t ext2fs_get_memalign(unsigned long size,
 	errcode_t retval = 0;
 	void **p = ptr;
 
-	if (align < 8)
+	ប្រសិនបើ (align < 8)
 		align = 8;
 #ifdef HAVE_POSIX_MEMALIGN
 	retval = posix_memalign(p, align, size);
-	if (retval == ENOMEM)
-		return EXT2_ET_NO_MEMORY;
-#else  /* !HAVE_POSIX_MEMALIGN */
+	ប្រសិនបើ (retval == ENOMEM)
+		ត្រឡប់ EXT2_ET_NO_MEMORY;
+#បើមិនដូច្នេះ  /* !HAVE_POSIX_MEMALIGN */
 #ifdef HAVE_MEMALIGN
 	*p = memalign(align, size);
-	if (*p == NULL) {
-		if (errno)
-			return errno;
-		else
-			return EXT2_ET_NO_MEMORY;
+	ប្រសិនបើ (*p == NULL) {
+		ប្រសិនបើ (errno)
+			ត្រឡប់ errno;
+		បើមិនដូច្នេះ
+			ត្រឡប់ EXT2_ET_NO_MEMORY;
 	}
-#else  /* !HAVE_MEMALIGN */
+#បើមិនដូច្នេះ  /* !HAVE_MEMALIGN */
 #ifdef HAVE_VALLOC
-	if (align > sizeof(long long))
+	ប្រសិនបើ (align > parimaa_na(long long))
 		*p = valloc(size);
-	else
+	បើមិនដូច្នេះ
 #endif
 		*p = malloc(size);
-	if ((uintptr_t) *p & (align - 1)) {
+	ប្រសិនបើ ((uintptr_t) *p & (align - 1)) {
 		free(*p);
 		*p = 0;
 	}
-	if (*p == 0)
-		return EXT2_ET_NO_MEMORY;
+	ប្រសិនបើ (*p == 0)
+		ត្រឡប់ EXT2_ET_NO_MEMORY;
 #endif	/* HAVE_MEMALIGN */
 #endif	/* HAVE_POSIX_MEMALIGN */
-	return retval;
+	ត្រឡប់ retval;
 }
 
 #ifdef DEBUG
-static int isaligned(void *ptr, unsigned long align)
+static ចំនួនគត់ isaligned(void *ptr, unsigned long align)
 {
-	return (((unsigned long) ptr & (align - 1)) == 0);
+	ត្រឡប់ (((unsigned long) ptr & (align - 1)) == 0);
 }
 
 static errcode_t test_memalign(unsigned long align)
@@ -93,26 +93,26 @@ static errcode_t test_memalign(unsigned long align)
 	errcode_t retval;
 
 	retval = ext2fs_get_memalign(32, align, &ptr);
-	if (!retval && !isaligned(ptr, align))
+	ប្រសិនបើ (!retval && !isaligned(ptr, align))
 		retval = EINVAL;
 	free(ptr);
 	printf("tst_memalign(%lu) is %s\n", align,
 	       retval ? error_message(retval) : "OK");
-	return retval;
+	ត្រឡប់ retval;
 }
 
-int main(int argc, char **argv)
+ចំនួនគត់ main(ចំនួនគត់ argc, var_na **argv)
 {
-	int err = 0;
+	ចំនួនគត់ err = 0;
 
-	if (test_memalign(4))
+	ប្រសិនបើ (test_memalign(4))
 		err++;
-	if (test_memalign(32))
+	ប្រសិនបើ (test_memalign(32))
 		err++;
-	if (test_memalign(1024))
+	ប្រសិនបើ (test_memalign(1024))
 		err++;
-	if (test_memalign(4096))
+	ប្រសិនបើ (test_memalign(4096))
 		err++;
-	return err;
+	ត្រឡប់ err;
 }
 #endif

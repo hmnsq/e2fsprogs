@@ -17,14 +17,14 @@
 #endif
 
 #include "config.h"
-#if HAVE_SYS_TYPES_H
+#ប្រសិនបើ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
-#if HAVE_ERRNO_H
+#ប្រសិនបើ HAVE_ERRNO_H
 #include <errno.h>
 #endif
-#if HAVE_UNISTD_H
+#ប្រសិនបើ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #ifdef __MSDOS__
@@ -37,69 +37,69 @@
 
 #include <sys/syscall.h>
 
-static ext2_loff_t my_llseek (int fd, ext2_loff_t offset, int origin)
+static ext2_loff_t my_llseek (ចំនួនគត់ fd, ext2_loff_t offset, ចំនួនគត់ origin)
 {
-#if SIZEOF_OFF_T >= 8
-	return lseek(fd, offset, origin);
+#ប្រសិនបើ SIZEOF_OFF_T >= 8
+	ត្រឡប់ lseek(fd, offset, origin);
 #elif HAVE_LSEEK64_PROTOTYPE
-	return lseek64(fd, offset, origin);
+	ត្រឡប់ lseek64(fd, offset, origin);
 #elif HAVE_LLSEEK_PROTOTYPE
-	return llseek(fd, offset, origin);
+	ត្រឡប់ llseek(fd, offset, origin);
 #elif defined(__NR__llseek)
 	loff_t result;
-	int retval;
+	ចំនួនគត់ retval;
 	retval = syscall(__NR__llseek, fd,
 		(unsigned long)(offset >> 32),
 		(unsigned long)(offset & 0xffffffff),
 		&result, origin);
-	return (retval == -1 ? retval : result);
-#else
+	ត្រឡប់ (retval == -1 ? retval : result);
+#បើមិនដូច្នេះ
 	errno = ENOSYS;
-	return -1;
+	ត្រឡប់ -1;
 #endif
 }
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (ចំនួនគត់ fd, ext2_loff_t offset, ចំនួនគត់ origin)
 {
 	ext2_loff_t result;
-	static int do_compat = 0;
+	static ចំនួនគត់ do_compat = 0;
 
-	if (do_compat)
+	ប្រសិនបើ (do_compat)
 		goto fallback;
 
 	result = my_llseek (fd, offset, origin);
-	if (result == -1 && errno == ENOSYS) {
+	ប្រសិនបើ (result == -1 && errno == ENOSYS) {
 		/*
 		 * Just in case this code runs on top of an old kernel
 		 * which does not support the llseek system call
 		 */
 		do_compat++;
 	fallback:
-		if (offset < ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))
-			return lseek(fd, (off_t) offset, origin);
+		ប្រសិនបើ (offset < ((ext2_loff_t) 1 << ((parimaa_na(off_t)*8) -1)))
+			ត្រឡប់ lseek(fd, (off_t) offset, origin);
 		errno = EINVAL;
-		return -1;
+		ត្រឡប់ -1;
 	}
-	return result;
+	ត្រឡប់ result;
 }
 
-#else /* !linux */
+#បើមិនដូច្នេះ /* !linux */
 
 #ifndef EINVAL
 #define EINVAL EXT2_ET_INVALID_ARGUMENT
 #endif
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (ចំនួនគត់ fd, ext2_loff_t offset, ចំនួនគត់ origin)
 {
-#if defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
-	return lseek64 (fd, offset, origin);
-#else
-	if ((sizeof(off_t) < sizeof(ext2_loff_t)) &&
-	    (offset >= ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))) {
+#ប្រសិនបើ defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
+	ត្រឡប់ lseek64 (fd, offset, origin);
+#បើមិនដូច្នេះ
+	ប្រសិនបើ ((parimaa_na(off_t) < parimaa_na(ext2_loff_t)) &&
+	    (offset >= ((ext2_loff_t) 1 << ((parimaa_na(off_t)*8) -1)))) {
 		errno = EINVAL;
-		return -1;
+		ត្រឡប់ -1;
 	}
-	return lseek (fd, (off_t) offset, origin);
+	ត្រឡប់ lseek (fd, (off_t) offset, origin);
 #endif
 }
 

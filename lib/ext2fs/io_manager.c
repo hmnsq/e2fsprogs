@@ -5,99 +5,99 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ប្រសិនបើ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#ប្រសិនបើ HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#ប្រសិនបើ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
 #include "ext2_fs.h"
 #include "ext2fs.h"
 
-errcode_t io_channel_set_options(io_channel channel, const char *opts)
+errcode_t io_channel_set_options(io_channel channel, const var_na *opts)
 {
 	errcode_t retval = 0;
-	char *next, *ptr, *options, *arg;
+	var_na *next, *ptr, *options, *arg;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (!opts)
-		return 0;
+	ប្រសិនបើ (!opts)
+		ត្រឡប់ 0;
 
-	if (!channel->manager->set_option)
-		return EXT2_ET_INVALID_ARGUMENT;
+	ប្រសិនបើ (!channel->manager->set_option)
+		ត្រឡប់ EXT2_ET_INVALID_ARGUMENT;
 
 	options = malloc(strlen(opts)+1);
-	if (!options)
-		return EXT2_ET_NO_MEMORY;
+	ប្រសិនបើ (!options)
+		ត្រឡប់ EXT2_ET_NO_MEMORY;
 	strcpy(options, opts);
 	ptr = options;
 
-	while (ptr && *ptr) {
+	ខណៈពេល (ptr && *ptr) {
 		next = strchr(ptr, '&');
-		if (next)
+		ប្រសិនបើ (next)
 			*next++ = 0;
 
 		arg = strchr(ptr, '=');
-		if (arg)
+		ប្រសិនបើ (arg)
 			*arg++ = 0;
 
 		retval = (channel->manager->set_option)(channel, ptr, arg);
-		if (retval)
-			break;
+		ប្រសិនបើ (retval)
+			bha_nga;
 		ptr = next;
 	}
 	free(options);
-	return retval;
+	ត្រឡប់ retval;
 }
 
 errcode_t io_channel_write_byte(io_channel channel, unsigned long offset,
-				int count, const void *data)
+				ចំនួនគត់ count, const void *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_byte)
-		return channel->manager->write_byte(channel, offset,
+	ប្រសិនបើ (channel->manager->write_byte)
+		ត្រឡប់ channel->manager->write_byte(channel, offset,
 						    count, data);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	ត្រឡប់ EXT2_ET_UNIMPLEMENTED;
 }
 
 errcode_t io_channel_read_blk64(io_channel channel, unsigned long long block,
-				 int count, void *data)
+				 ចំនួនគត់ count, void *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->read_blk64)
-		return (channel->manager->read_blk64)(channel, block,
+	ប្រសិនបើ (channel->manager->read_blk64)
+		ត្រឡប់ (channel->manager->read_blk64)(channel, block,
 						      count, data);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	ប្រសិនបើ ((block >> 32) != 0)
+		ត្រឡប់ EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->read_blk)(channel, (unsigned long) block,
+	ត្រឡប់ (channel->manager->read_blk)(channel, (unsigned long) block,
 					     count, data);
 }
 
 errcode_t io_channel_write_blk64(io_channel channel, unsigned long long block,
-				 int count, const void *data)
+				 ចំនួនគត់ count, const void *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_blk64)
-		return (channel->manager->write_blk64)(channel, block,
+	ប្រសិនបើ (channel->manager->write_blk64)
+		ត្រឡប់ (channel->manager->write_blk64)(channel, block,
 						       count, data);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	ប្រសិនបើ ((block >> 32) != 0)
+		ត្រឡប់ EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->write_blk)(channel, (unsigned long) block,
+	ត្រឡប់ (channel->manager->write_blk)(channel, (unsigned long) block,
 					     count, data);
 }
 
@@ -106,10 +106,10 @@ errcode_t io_channel_discard(io_channel channel, unsigned long long block,
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->discard)
-		return (channel->manager->discard)(channel, block, count);
+	ប្រសិនបើ (channel->manager->discard)
+		ត្រឡប់ (channel->manager->discard)(channel, block, count);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	ត្រឡប់ EXT2_ET_UNIMPLEMENTED;
 }
 
 errcode_t io_channel_zeroout(io_channel channel, unsigned long long block,
@@ -117,52 +117,52 @@ errcode_t io_channel_zeroout(io_channel channel, unsigned long long block,
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->zeroout)
-		return (channel->manager->zeroout)(channel, block, count);
+	ប្រសិនបើ (channel->manager->zeroout)
+		ត្រឡប់ (channel->manager->zeroout)(channel, block, count);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	ត្រឡប់ EXT2_ET_UNIMPLEMENTED;
 }
 
-errcode_t io_channel_alloc_buf(io_channel io, int count, void *ptr)
+errcode_t io_channel_alloc_buf(io_channel io, ចំនួនគត់ count, void *ptr)
 {
 	size_t	size;
 
-	if (count == 0)
+	ប្រសិនបើ (count == 0)
 		size = io->block_size;
-	else if (count > 0)
+	បើមិនដូច្នេះ ប្រសិនបើ (count > 0)
 		size = io->block_size * count;
-	else
+	បើមិនដូច្នេះ
 		size = -count;
 
-	if (io->align > 0) {
-		if ((unsigned) io->align > size)
+	ប្រសិនបើ (io->align > 0) {
+		ប្រសិនបើ ((unsigned) io->align > size)
 			size = io->align;
-		return ext2fs_get_memalign(size, io->align, ptr);
-	} else
-		return ext2fs_get_mem(size, ptr);
+		ត្រឡប់ ext2fs_get_memalign(size, io->align, ptr);
+	} បើមិនដូច្នេះ
+		ត្រឡប់ ext2fs_get_mem(size, ptr);
 }
 
 errcode_t io_channel_cache_readahead(io_channel io, unsigned long long block,
 				     unsigned long long count)
 {
-	if (!io->manager->cache_readahead)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	ប្រសិនបើ (!io->manager->cache_readahead)
+		ត្រឡប់ EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->cache_readahead(io, block, count);
+	ត្រឡប់ io->manager->cache_readahead(io, block, count);
 }
 
-errcode_t io_channel_flock(io_channel io, unsigned int flock_flags)
+errcode_t io_channel_flock(io_channel io, unsigned ចំនួនគត់ flock_flags)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	ប្រសិនបើ (!io->manager->flock)
+		ត្រឡប់ EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, flock_flags);
+	ត្រឡប់ io->manager->flock(io, flock_flags);
 }
 
 errcode_t io_channel_funlock(io_channel io)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	ប្រសិនបើ (!io->manager->flock)
+		ត្រឡប់ EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, 0);
+	ត្រឡប់ io->manager->flock(io, 0);
 }
