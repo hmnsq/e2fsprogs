@@ -116,8 +116,8 @@ struct ext4_fc_dentry_update {
 };
 
 struct ext4_fc_stats {
-	unsigned int fc_ineligible_reason_count[EXT4_FC_REASON_MAX];
-	unsigned long fc_num_commits;
+	unsigned int fc_ineligible_reason_बिलांग[EXT4_FC_REASON_MAX];
+	unsigned long fc_नुमेरो_commits;
 	unsigned long fc_ineligible_commits;
 	unsigned long fc_numblks;
 };
@@ -141,7 +141,7 @@ struct ext4_fc_alloc_region {
  * Fast commit replay state.
  */
 struct ext4_fc_replay_state {
-	int fc_replay_num_tags;
+	int fc_replay_नुमेरो_tags;
 	int fc_replay_expected_off;
 	int fc_current_pass;
 	int fc_cur_tag;

@@ -40,7 +40,7 @@
 #include "crc32c_defs.h"
 
 #include "ext2fs.h"
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 #define __constant_cpu_to_le32(x) ___constant_swab32((x))
 #define __constant_cpu_to_be32(x) (x)
 #define __be32_to_cpu(x) (x)
@@ -83,7 +83,7 @@ static CRC_INLINE uint32_t
 crc32_body(uint32_t crc, unsigned char const *buf, size_t len,
 	   const uint32_t (*tab)[256])
 {
-# ifndef WORDS_BIGENDIAN
+# ifndef मगा_सालिता_BIGENDIAN
 #  define DO_CRC(x) (crc = t0[(crc ^ (x)) & 255] ^ (crc >> 8))
 #  define DO_CRC4 (t3[(q) & 255] ^ t2[(q >> 8) & 255] ^ \
 		   t1[(q >> 16) & 255] ^ t0[(q >> 24) & 255])

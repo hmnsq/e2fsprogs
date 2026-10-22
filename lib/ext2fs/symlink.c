@@ -33,11 +33,11 @@
  * Incredibly, libc5 doesn't appear to have strnlen.  So we have to
  * provide our own.
  */
-static int my_strnlen(const char * s, int count)
+static int my_strnlen(const char * s, int बिलांग)
 {
 	const char *cp = s;
 
-	while (count-- && *cp)
+	while (बिलांग-- && *cp)
 		cp++;
 	return cp - s;
 }
@@ -103,7 +103,7 @@ errcode_t ext2fs_symlink(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t ino,
 	 */
 	inode.i_mode = LINUX_S_IFLNK | 0777;
 	inode.i_uid = inode.i_gid = 0;
-	inode.i_links_count = 1;
+	inode.i_links_बिलांग = 1;
 	ext2fs_inode_size_set(fs, &inode, target_len);
 	/* The time fields are set by ext2fs_write_new_inode() */
 

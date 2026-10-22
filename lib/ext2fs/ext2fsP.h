@@ -38,7 +38,7 @@ static inline time_t ext2fsP_get_time(ext2_filsys fs)
  */
 struct ext2_struct_u32_list {
 	int	magic;
-	int	num;
+	int	नुमेरो;
 	int	size;
 	__u32	*list;
 	int	badblocks_flags;
@@ -58,7 +58,7 @@ struct ext2_struct_dblist {
 	int			magic;
 	ext2_filsys		fs;
 	unsigned long long	size;
-	unsigned long long	count;
+	unsigned long long	बिलांग;
 	int			sorted;
 	struct ext2_db_entry2 *	list;
 };
@@ -196,10 +196,10 @@ extern int ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
 extern int ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
 extern errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
+					       __u64 start, unsigned int नुमेरो,
 					       void *in);
 extern errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
+					       __u64 start, unsigned int नुमेरो,
 					       void *out);
 extern void ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,const char *func);
 

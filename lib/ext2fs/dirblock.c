@@ -36,7 +36,7 @@ errcode_t ext2fs_read_dir_block4(ext2_filsys fs, blk64_t block,
 					  (struct ext2_dir_entry *)buf))
 		corrupt = 1;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	retval = ext2fs_dirent_swab_in(fs, buf, flags);
 #endif
 	if (!retval && corrupt)
@@ -70,7 +70,7 @@ errcode_t ext2fs_write_dir_block4(ext2_filsys fs, blk64_t block,
 	errcode_t	retval;
 	char		*buf = inbuf;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	retval = ext2fs_get_mem(fs->blocksize, &buf);
 	if (retval)
 		return retval;
@@ -87,7 +87,7 @@ errcode_t ext2fs_write_dir_block4(ext2_filsys fs, blk64_t block,
 	retval = io_channel_write_blk64(fs->io, block, 1, buf);
 
 out:
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	ext2fs_free_mem(&buf);
 #endif
 	return retval;

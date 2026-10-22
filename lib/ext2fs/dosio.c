@@ -33,8 +33,8 @@
  */
 #define LINUX_EXT2FS       0x83
 #define LINUX_SWAP         0x82
-#define WRITE_ERR(_msg_) write(2, _msg_, strlen(_msg_))
-#define WRITE_ERR_S(_msg_) write(2, _msg_, sizeof(_msg_))
+#define WRITE_ERR(मेनसाहे_2) write(2, मेनसाहे_2, strlen(मेनसाहे_2))
+#define WRITE_ERR_S(मेनसाहे_2) write(2, मेनसाहे_2, sizeof(मेनसाहे_2))
 
 /*
  * Exported variables
@@ -56,9 +56,9 @@ static errcode_t dos_open(const char *dev, int flags, io_channel *channel);
 static errcode_t dos_close(io_channel channel);
 static errcode_t dos_set_blksize(io_channel channel, int blksize);
 static errcode_t dos_read_blk(io_channel channel, unsigned long block,
-                                             int count, void *buf);
+                                             int बिलांग, void *buf);
 static errcode_t dos_write_blk(io_channel channel, unsigned long block,
-                               int count, const void *buf);
+                               int बिलांग, const void *buf);
 static errcode_t dos_flush(io_channel channel);
 
 static struct struct_io_manager struct_dos_manager = {
@@ -371,7 +371,7 @@ static errcode_t dos_set_blksize(io_channel channel, int blksize)
 }
 
 static errcode_t dos_read_blk(io_channel channel, unsigned long block,
-                                             int count, void *buf)
+                                             int बिलांग, void *buf)
 {
   PARTITION     *part;
   size_t        size;
@@ -381,7 +381,7 @@ static errcode_t dos_read_blk(io_channel channel, unsigned long block,
   EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
   part = (PARTITION*)channel->private_data;
 
-  size = (size_t)((count < 0) ? -count : count * channel->block_size);
+  size = (size_t)((बिलांग < 0) ? -बिलांग : बिलांग * channel->block_size);
   loc = (ext2_loff_t) block * channel->block_size;
 
   lba2chs(loc, &chs, part);
@@ -408,7 +408,7 @@ static errcode_t dos_read_blk(io_channel channel, unsigned long block,
 }
 
 static errcode_t dos_write_blk(io_channel channel, unsigned long block,
-                               int count, const void *buf)
+                               int बिलांग, const void *buf)
 {
   PARTITION     *part;
   size_t        size;
@@ -418,14 +418,14 @@ static errcode_t dos_write_blk(io_channel channel, unsigned long block,
   EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
   part = (PARTITION*)channel->private_data;
 
-  if(count == 1)
+  if(बिलांग == 1)
     size = (size_t)channel->block_size;
   else
   {
-    if (count < 0)
-      size = (size_t)-count;
+    if (बिलांग < 0)
+      size = (size_t)-बिलांग;
     else
-      size = (size_t)(count * channel->block_size);
+      size = (size_t)(बिलांग * channel->block_size);
   }
 
   loc = (ext2_loff_t)block * channel->block_size;

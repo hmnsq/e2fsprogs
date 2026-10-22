@@ -55,7 +55,7 @@ static int process_block(ext2_filsys fs, blk64_t *block_nr,
 	 */
 	if (ext2fs_test_block_bitmap2(pb->reserve, block)) {
 		do {
-			if (++block >= ext2fs_blocks_count(fs->super))
+			if (++block >= ext2fs_blocks_बिलांग(fs->super))
 				block = fs->super->s_first_data_block;
 			if (block == orig) {
 				pb->error = EXT2_ET_BLOCK_ALLOC_FAIL;
@@ -140,7 +140,7 @@ errcode_t ext2fs_move_blocks(ext2_filsys fs,
 		return retval;
 
 	while (ino) {
-		if ((inode.i_links_count == 0) ||
+		if ((inode.i_links_बिलांग == 0) ||
 		    !ext2fs_inode_has_valid_blocks2(fs, &inode))
 			goto next;
 

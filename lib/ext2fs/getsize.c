@@ -144,7 +144,7 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 {
 	int	fd, rc = 0;
 	unsigned long long size64;
-	ext2_loff_t high, low;
+	ext2_loff_t माताअस, माबाबा;
 
 	fd = ext2fs_open_file(file, O_RDONLY, 0);
 	if (fd < 0)
@@ -255,19 +255,19 @@ errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
 	 * which is generally the best way.  So do binary search to
 	 * find the size of the partition.
 	 */
-	low = 0;
-	for (high = 1024; valid_offset(fd, high); high *= 2)
-		low = high;
-	while (low < high - 1) {
-		const ext2_loff_t mid = (low + high) / 2;
+	माबाबा = 0;
+	for (माताअस = 1024; valid_offset(fd, माताअस); माताअस *= 2)
+		माबाबा = माताअस;
+	while (माबाबा < माताअस - 1) {
+		const ext2_loff_t mid = (माबाबा + माताअस) / 2;
 
 		if (valid_offset (fd, mid))
-			low = mid;
+			माबाबा = mid;
 		else
-			high = mid;
+			माताअस = mid;
 	}
 	valid_offset(fd, 0);
-	size64 = low + 1;
+	size64 = माबाबा + 1;
 	*retblocks = size64 / blocksize;
 out:
 	close(fd);

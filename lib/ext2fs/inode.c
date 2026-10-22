@@ -40,14 +40,14 @@ struct ext2_struct_inode_scan {
 	ext2_ino_t		current_inode;
 	blk64_t			current_block;
 	dgrp_t			current_group;
-	ext2_ino_t		inodes_left;
-	blk_t			blocks_left;
-	dgrp_t			groups_left;
+	ext2_ino_t		inodes_कालिवा;
+	blk_t			blocks_कालिवा;
+	dgrp_t			groups_कालिवा;
 	blk_t			inode_buffer_blocks;
 	char *			inode_buffer;
 	int			inode_size;
 	char *			ptr;
-	int			bytes_left;
+	int			bytes_कालिवा;
 	char			*temp_buffer;
 	errcode_t		(*done_group)(ext2_filsys fs,
 					      ext2_inode_scan scan,
@@ -178,9 +178,9 @@ errcode_t ext2fs_open_inode_scan(ext2_filsys fs, int buffer_blocks,
 	scan->magic = EXT2_ET_MAGIC_INODE_SCAN;
 	scan->fs = fs;
 	scan->inode_size = EXT2_INODE_SIZE(fs->super);
-	scan->bytes_left = 0;
+	scan->bytes_कालिवा = 0;
 	scan->current_group = 0;
-	scan->groups_left = fs->group_desc_count - 1;
+	scan->groups_कालिवा = fs->group_desc_बिलांग - 1;
 	scan->inode_buffer_blocks = buffer_blocks ? buffer_blocks :
 				    EXT2_INODE_SCAN_DEFAULT_BUFFER_BLOCKS;
 	scan->current_block = ext2fs_inode_table_loc(scan->fs,
@@ -188,21 +188,21 @@ errcode_t ext2fs_open_inode_scan(ext2_filsys fs, int buffer_blocks,
 	if (scan->current_block &&
 	    ((scan->current_block < fs->super->s_first_data_block) ||
 	     (scan->current_block + fs->inode_blocks_per_group - 1 >=
-	      ext2fs_blocks_count(fs->super)))) {
+	      ext2fs_blocks_बिलांग(fs->super)))) {
 		ext2fs_free_mem(&scan);
 		return EXT2_ET_GDESC_BAD_INODE_TABLE;
 	}
 
-	scan->inodes_left = EXT2_INODES_PER_GROUP(scan->fs->super);
-	scan->blocks_left = scan->fs->inode_blocks_per_group;
+	scan->inodes_कालिवा = EXT2_INODES_PER_GROUP(scan->fs->super);
+	scan->blocks_कालिवा = scan->fs->inode_blocks_per_group;
 	if (ext2fs_has_group_desc_csum(fs)) {
 		__u32 unused = ext2fs_bg_itable_unused(fs, scan->current_group);
-		if (scan->inodes_left > unused)
-			scan->inodes_left -= unused;
+		if (scan->inodes_कालिवा > unused)
+			scan->inodes_कालिवा -= unused;
 		else
-			scan->inodes_left = 0;
-		scan->blocks_left =
-			(scan->inodes_left +
+			scan->inodes_कालिवा = 0;
+		scan->blocks_कालिवा =
+			(scan->inodes_कालिवा +
 			 (fs->blocksize / scan->inode_size - 1)) *
 			scan->inode_size / fs->blocksize;
 	}
@@ -223,7 +223,7 @@ errcode_t ext2fs_open_inode_scan(ext2_filsys fs, int buffer_blocks,
 		return retval;
 	}
 	memset(SCAN_BLOCK_STATUS(scan), 0, scan->inode_buffer_blocks);
-	if (scan->fs->badblocks && scan->fs->badblocks->num)
+	if (scan->fs->badblocks && scan->fs->badblocks->नुमेरो)
 		scan->scan_flags |= EXT2_SF_CHK_BADBLOCKS;
 	if (ext2fs_has_group_desc_csum(fs))
 		scan->scan_flags |= EXT2_SF_DO_LAZY;
@@ -281,31 +281,31 @@ static errcode_t get_next_blockgroup(ext2_inode_scan scan)
 	ext2_filsys fs = scan->fs;
 
 	scan->current_group++;
-	scan->groups_left--;
+	scan->groups_कालिवा--;
 
 	scan->current_block = ext2fs_inode_table_loc(scan->fs,
 						     scan->current_group);
 	scan->current_inode = scan->current_group *
 		EXT2_INODES_PER_GROUP(fs->super);
 
-	scan->bytes_left = 0;
-	scan->inodes_left = EXT2_INODES_PER_GROUP(fs->super);
-	scan->blocks_left = fs->inode_blocks_per_group;
+	scan->bytes_कालिवा = 0;
+	scan->inodes_कालिवा = EXT2_INODES_PER_GROUP(fs->super);
+	scan->blocks_कालिवा = fs->inode_blocks_per_group;
 	if (ext2fs_has_group_desc_csum(fs)) {
 		__u32 unused = ext2fs_bg_itable_unused(fs, scan->current_group);
-		if (scan->inodes_left > unused)
-			scan->inodes_left -= unused;
+		if (scan->inodes_कालिवा > unused)
+			scan->inodes_कालिवा -= unused;
 		else
-			scan->inodes_left = 0;
-		scan->blocks_left =
-			(scan->inodes_left +
+			scan->inodes_कालिवा = 0;
+		scan->blocks_कालिवा =
+			(scan->inodes_कालिवा +
 			 (fs->blocksize / scan->inode_size - 1)) *
 			scan->inode_size / fs->blocksize;
 	}
 	if (scan->current_block &&
 	    ((scan->current_block < fs->super->s_first_data_block) ||
 	     (scan->current_block + fs->inode_blocks_per_group - 1 >=
-	      ext2fs_blocks_count(fs->super))))
+	      ext2fs_blocks_बिलांग(fs->super))))
 		return EXT2_ET_GDESC_BAD_INODE_TABLE;
 	return 0;
 }
@@ -314,7 +314,7 @@ errcode_t ext2fs_inode_scan_goto_blockgroup(ext2_inode_scan scan,
 					    int	group)
 {
 	scan->current_group = group - 1;
-	scan->groups_left = scan->fs->group_desc_count - group;
+	scan->groups_कालिवा = scan->fs->group_desc_बिलांग - group;
 	scan->bad_block_ptr = 0;
 	return get_next_blockgroup(scan);
 }
@@ -327,7 +327,7 @@ errcode_t ext2fs_inode_scan_goto_blockgroup(ext2_inode_scan scan,
  * increasing order.
  */
 static errcode_t check_for_inode_bad_blocks(ext2_inode_scan scan,
-					    blk64_t *num_blocks)
+					    blk64_t *नुमेरो_blocks)
 {
 	blk64_t	blk = scan->current_block;
 	badblocks_list	bb = scan->fs->badblocks;
@@ -340,7 +340,7 @@ static errcode_t check_for_inode_bad_blocks(ext2_inode_scan scan,
 		return 0;
 
 	/* Make sure bad_block_ptr is still valid */
-	if (scan->bad_block_ptr >= bb->num) {
+	if (scan->bad_block_ptr >= bb->नुमेरो) {
 		scan->scan_flags &= ~EXT2_SF_CHK_BADBLOCKS;
 		return 0;
 	}
@@ -352,7 +352,7 @@ static errcode_t check_for_inode_bad_blocks(ext2_inode_scan scan,
 	 * we don't need to do any more checking!
 	 */
 	while (blk > bb->list[scan->bad_block_ptr]) {
-		if (++scan->bad_block_ptr >= bb->num) {
+		if (++scan->bad_block_ptr >= bb->नुमेरो) {
 			scan->scan_flags &= ~EXT2_SF_CHK_BADBLOCKS;
 			return 0;
 		}
@@ -368,8 +368,8 @@ static errcode_t check_for_inode_bad_blocks(ext2_inode_scan scan,
 	 */
 	if (blk == bb->list[scan->bad_block_ptr]) {
 		scan->scan_flags |= EXT2_SF_BAD_INODE_BLK;
-		*num_blocks = 1;
-		if (++scan->bad_block_ptr >= bb->num)
+		*नुमेरो_blocks = 1;
+		if (++scan->bad_block_ptr >= bb->नुमेरो)
 			scan->scan_flags &= ~EXT2_SF_CHK_BADBLOCKS;
 		return 0;
 	}
@@ -380,8 +380,8 @@ static errcode_t check_for_inode_bad_blocks(ext2_inode_scan scan,
 	 * don't read in the bad block.  (Then the next block to read
 	 * will be the bad block, which is handled in the above case.)
 	 */
-	if ((blk + *num_blocks) > bb->list[scan->bad_block_ptr])
-		*num_blocks = (int) (bb->list[scan->bad_block_ptr] - blk);
+	if ((blk + *नुमेरो_blocks) > bb->list[scan->bad_block_ptr])
+		*नुमेरो_blocks = (int) (bb->list[scan->bad_block_ptr] - blk);
 
 	return 0;
 }
@@ -404,14 +404,14 @@ static int block_map_looks_insane(ext2_filsys fs,
 		return 0;
 
 	/* Unused inodes probably aren't insane */
-	if (inode->i_links_count == 0)
+	if (inode->i_links_बिलांग == 0)
 		return 0;
 
 	/* See if more than half the block maps are insane */
 	for (i = 0, bad = 0; i < EXT2_N_BLOCKS; i++)
 		if (inode->i_block[i] != 0 &&
 		    (inode->i_block[i] < fs->super->s_first_data_block ||
-		     inode->i_block[i] >= ext2fs_blocks_count(fs->super)))
+		     inode->i_block[i] >= ext2fs_blocks_बिलांग(fs->super)))
 			bad++;
 	return bad > EXT2_N_BLOCKS / 2;
 }
@@ -430,7 +430,7 @@ static int extent_head_looks_insane(struct ext2_inode_large *inode)
  * find here -- currently, we can observe that all checksums are ok; more
  * than half the inodes are insane; or no conclusions at all.
  */
-static void check_inode_block_sanity(ext2_inode_scan scan, blk64_t num_blocks)
+static void check_inode_block_sanity(ext2_inode_scan scan, blk64_t नुमेरो_blocks)
 {
 	ext2_ino_t	ino, inodes_to_scan;
 	unsigned int	badness, checksum_failures;
@@ -443,8 +443,8 @@ static void check_inode_block_sanity(ext2_inode_scan scan, blk64_t num_blocks)
 	if (!(scan->scan_flags & EXT2_SF_WARN_GARBAGE_INODES))
 		return;
 
-	inodes_to_scan = scan->inodes_left;
-	inodes_in_buf = num_blocks * scan->fs->blocksize / scan->inode_size;
+	inodes_to_scan = scan->inodes_कालिवा;
+	inodes_in_buf = नुमेरो_blocks * scan->fs->blocksize / scan->inode_size;
 	if (inodes_to_scan > inodes_in_buf)
 		inodes_to_scan = inodes_in_buf;
 
@@ -458,7 +458,7 @@ static void check_inode_block_sanity(ext2_inode_scan scan, blk64_t num_blocks)
 	if (inodes_per_block < 2)
 		return;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	if (ext2fs_get_mem(EXT2_INODE_SIZE(scan->fs->super), &inode))
 		return;
 #endif
@@ -468,7 +468,7 @@ static void check_inode_block_sanity(ext2_inode_scan scan, blk64_t num_blocks)
 		bad_csum = ext2fs_inode_csum_verify(scan->fs, ino,
 				(struct ext2_inode_large *) p) == 0;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 		ext2fs_swap_inode_full(scan->fs,
 			       (struct ext2_inode_large *) inode,
 			       (struct ext2_inode_large *) p,
@@ -511,7 +511,7 @@ static void check_inode_block_sanity(ext2_inode_scan scan, blk64_t num_blocks)
 		ino++;
 	};
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	ext2fs_free_mem(&inode);
 #endif
 }
@@ -522,7 +522,7 @@ static void check_inode_block_sanity(ext2_inode_scan scan, blk64_t num_blocks)
  */
 static errcode_t get_next_blocks(ext2_inode_scan scan)
 {
-	blk64_t		num_blocks;
+	blk64_t		नुमेरो_blocks;
 	errcode_t	retval;
 
 	/*
@@ -530,16 +530,16 @@ static errcode_t get_next_blocks(ext2_inode_scan scan)
 	 * inode_buffer_blocks, and perhaps less if there aren't that
 	 * many blocks left to read.
 	 */
-	num_blocks = scan->inode_buffer_blocks;
-	if (num_blocks > scan->blocks_left)
-		num_blocks = scan->blocks_left;
+	नुमेरो_blocks = scan->inode_buffer_blocks;
+	if (नुमेरो_blocks > scan->blocks_कालिवा)
+		नुमेरो_blocks = scan->blocks_कालिवा;
 
 	/*
 	 * If the past block "read" was a bad block, then mark the
 	 * left-over extra bytes as also being bad.
 	 */
 	if (scan->scan_flags & EXT2_SF_BAD_INODE_BLK) {
-		if (scan->bytes_left)
+		if (scan->bytes_कालिवा)
 			scan->scan_flags |= EXT2_SF_BAD_EXTRA_BYTES;
 		scan->scan_flags &= ~EXT2_SF_BAD_INODE_BLK;
 	}
@@ -548,7 +548,7 @@ static errcode_t get_next_blocks(ext2_inode_scan scan)
 	 * Do inode bad block processing, if necessary.
 	 */
 	if (scan->scan_flags & EXT2_SF_CHK_BADBLOCKS) {
-		retval = check_for_inode_bad_blocks(scan, &num_blocks);
+		retval = check_for_inode_bad_blocks(scan, &नुमेरो_blocks);
 		if (retval)
 			return retval;
 	}
@@ -556,23 +556,23 @@ static errcode_t get_next_blocks(ext2_inode_scan scan)
 	if ((scan->scan_flags & EXT2_SF_BAD_INODE_BLK) ||
 	    (scan->current_block == 0)) {
 		memset(scan->inode_buffer, 0,
-		       (size_t) num_blocks * scan->fs->blocksize);
+		       (size_t) नुमेरो_blocks * scan->fs->blocksize);
 	} else {
 		retval = io_channel_read_blk64(scan->fs->io,
 					     scan->current_block,
-					     (int) num_blocks,
+					     (int) नुमेरो_blocks,
 					     scan->inode_buffer);
 		if (retval)
 			return EXT2_ET_NEXT_INODE_READ;
 	}
-	check_inode_block_sanity(scan, num_blocks);
+	check_inode_block_sanity(scan, नुमेरो_blocks);
 
 	scan->ptr = scan->inode_buffer;
-	scan->bytes_left = num_blocks * scan->fs->blocksize;
+	scan->bytes_कालिवा = नुमेरो_blocks * scan->fs->blocksize;
 
-	scan->blocks_left -= num_blocks;
+	scan->blocks_कालिवा -= नुमेरो_blocks;
 	if (scan->current_block)
-		scan->current_block += num_blocks;
+		scan->current_block += नुमेरो_blocks;
 
 	return 0;
 }
@@ -588,10 +588,10 @@ static inline int is_empty_scan(ext2_inode_scan scan)
 {
 	int	i;
 
-	if (scan->bytes_left == 0)
+	if (scan->bytes_कालिवा == 0)
 		return 0;
 
-	for (i=0; i < scan->bytes_left; i++)
+	for (i=0; i < scan->bytes_कालिवा; i++)
 		if (scan->ptr[i])
 			return 0;
 	return 1;
@@ -615,7 +615,7 @@ errcode_t ext2fs_get_next_inode_full(ext2_inode_scan scan, ext2_ino_t *ino,
 	/*
 	 * Do we need to start reading a new block group?
 	 */
-	if (scan->inodes_left <= 0) {
+	if (scan->inodes_कालिवा <= 0) {
 	force_new_group:
 		if (scan->done_group) {
 			retval = (scan->done_group)
@@ -624,7 +624,7 @@ errcode_t ext2fs_get_next_inode_full(ext2_inode_scan scan, ext2_ino_t *ino,
 			if (retval)
 				return retval;
 		}
-		if (scan->groups_left <= 0) {
+		if (scan->groups_कालिवा <= 0) {
 			*ino = 0;
 			return 0;
 		}
@@ -640,7 +640,7 @@ errcode_t ext2fs_get_next_inode_full(ext2_inode_scan scan, ext2_ino_t *ino,
 	    (ext2fs_bg_flags_test(scan->fs, scan->current_group, EXT2_BG_INODE_UNINIT)
 	     ))
 		goto force_new_group;
-	if (scan->inodes_left == 0)
+	if (scan->inodes_कालिवा == 0)
 		goto force_new_group;
 	if (scan->current_block == 0) {
 		if (scan->scan_flags & EXT2_SF_SKIP_MISSING_ITABLE) {
@@ -654,10 +654,10 @@ errcode_t ext2fs_get_next_inode_full(ext2_inode_scan scan, ext2_ino_t *ino,
 	 * Have we run out of space in the inode buffer?  If so, we
 	 * need to read in more blocks.
 	 */
-	if (scan->bytes_left < scan->inode_size) {
-		if (scan->bytes_left)
-			memcpy(scan->temp_buffer, scan->ptr, scan->bytes_left);
-		extra_bytes = scan->bytes_left;
+	if (scan->bytes_कालिवा < scan->inode_size) {
+		if (scan->bytes_कालिवा)
+			memcpy(scan->temp_buffer, scan->ptr, scan->bytes_कालिवा);
+		extra_bytes = scan->bytes_कालिवा;
 
 		retval = get_next_blocks(scan);
 		if (retval)
@@ -686,7 +686,7 @@ errcode_t ext2fs_get_next_inode_full(ext2_inode_scan scan, ext2_ino_t *ino,
 		memcpy(scan->temp_buffer+extra_bytes, scan->ptr,
 		       scan->inode_size - extra_bytes);
 		scan->ptr += scan->inode_size - extra_bytes;
-		scan->bytes_left -= scan->inode_size - extra_bytes;
+		scan->bytes_कालिवा -= scan->inode_size - extra_bytes;
 
 		/* Verify the inode checksum. */
 		if (!(iblock_status[iblk] & IBLOCK_STATUS_CSUMS_OK) &&
@@ -695,7 +695,7 @@ errcode_t ext2fs_get_next_inode_full(ext2_inode_scan scan, ext2_ino_t *ino,
 				(struct ext2_inode_large *)scan->temp_buffer))
 			retval = EXT2_ET_INODE_CSUM_INVALID;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 		memset(iptr, 0, length);
 		ext2fs_swap_inode_full(scan->fs,
 			       (struct ext2_inode_large *) iptr,
@@ -715,7 +715,7 @@ errcode_t ext2fs_get_next_inode_full(ext2_inode_scan scan, ext2_ino_t *ino,
 				(struct ext2_inode_large *)scan->ptr))
 			retval = EXT2_ET_INODE_CSUM_INVALID;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 		memset(iptr, 0, length);
 		ext2fs_swap_inode_full(scan->fs,
 				(struct ext2_inode_large *) iptr,
@@ -725,7 +725,7 @@ errcode_t ext2fs_get_next_inode_full(ext2_inode_scan scan, ext2_ino_t *ino,
 		memcpy(iptr, scan->ptr, length);
 #endif
 		scan->ptr += scan->inode_size;
-		scan->bytes_left -= scan->inode_size;
+		scan->bytes_कालिवा -= scan->inode_size;
 		if (scan->scan_flags & EXT2_SF_BAD_INODE_BLK)
 			retval = EXT2_ET_BAD_BLOCK_IN_INODE_TABLE;
 	}
@@ -733,7 +733,7 @@ errcode_t ext2fs_get_next_inode_full(ext2_inode_scan scan, ext2_ino_t *ino,
 	    (retval == 0 || retval == EXT2_ET_INODE_CSUM_INVALID))
 		retval = EXT2_ET_INODE_IS_GARBAGE;
 
-	scan->inodes_left--;
+	scan->inodes_कालिवा--;
 	scan->current_inode++;
 	*ino = scan->current_inode;
 	if (iptr != (struct ext2_inode_large *)inode) {
@@ -785,8 +785,8 @@ errcode_t ext2fs_read_inode2(ext2_filsys fs, ext2_ino_t ino,
 		if (retval != EXT2_ET_CALLBACK_NOTHANDLED)
 			return retval;
 	}
-	if ((ino == 0) || (ino > fs->super->s_inodes_count))
-		return EXT2_ET_BAD_INODE_NUM;
+	if ((ino == 0) || (ino > fs->super->s_inodes_बिलांग))
+		return EXT2_ET_BAD_INODE_नुमेरो;
 	/* Create inode cache if not present */
 	if (!fs->icache) {
 		retval = ext2fs_create_inode_cache(fs, 4);
@@ -810,8 +810,8 @@ errcode_t ext2fs_read_inode2(ext2_filsys fs, ext2_ino_t ino,
 		io = fs->image_io;
 	} else {
 		group = (ino - 1) / EXT2_INODES_PER_GROUP(fs->super);
-		if (group > fs->group_desc_count)
-			return EXT2_ET_BAD_INODE_NUM;
+		if (group > fs->group_desc_बिलांग)
+			return EXT2_ET_BAD_INODE_नुमेरो;
 		offset = ((ino - 1) % EXT2_INODES_PER_GROUP(fs->super)) *
 			EXT2_INODE_SIZE(fs->super);
 		block = offset >> EXT2_BLOCK_SIZE_BITS(fs->super);
@@ -820,7 +820,7 @@ errcode_t ext2fs_read_inode2(ext2_filsys fs, ext2_ino_t ino,
 			return EXT2_ET_MISSING_INODE_TABLE;
 		if ((block_nr < fs->super->s_first_data_block) ||
 		    (block_nr + fs->inode_blocks_per_group - 1 >=
-		     ext2fs_blocks_count(fs->super)))
+		     ext2fs_blocks_बिलांग(fs->super)))
 			return EXT2_ET_GDESC_BAD_INODE_TABLE;
 		block_nr += block;
 		io = fs->io;
@@ -857,7 +857,7 @@ errcode_t ext2fs_read_inode2(ext2_filsys fs, ext2_ino_t ino,
 	/* Verify the inode checksum. */
 	fail_csum = !ext2fs_inode_csum_verify(fs, ino, iptr);
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	ext2fs_swap_inode_full(fs, (struct ext2_inode_large *) iptr,
 			       (struct ext2_inode_large *) iptr,
 			       0, length);
@@ -916,8 +916,8 @@ errcode_t ext2fs_write_inode2(ext2_filsys fs, ext2_ino_t ino,
 			return retval;
 	}
 
-	if ((ino == 0) || (ino > fs->super->s_inodes_count))
-		return EXT2_ET_BAD_INODE_NUM;
+	if ((ino == 0) || (ino > fs->super->s_inodes_बिलांग))
+		return EXT2_ET_BAD_INODE_नुमेरो;
 
 	/* Prepare our shadow buffer for read/modify/byteswap/write */
 	retval = ext2fs_get_mem(length, &w_inode);
@@ -953,7 +953,7 @@ errcode_t ext2fs_write_inode2(ext2_filsys fs, ext2_ino_t ino,
 		goto errout;
 	}
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	ext2fs_swap_inode_full(fs, w_inode, w_inode, 1, length);
 #endif
 
@@ -974,7 +974,7 @@ errcode_t ext2fs_write_inode2(ext2_filsys fs, ext2_ino_t ino,
 	}
 	if ((block_nr < fs->super->s_first_data_block) ||
 	    (block_nr + fs->inode_blocks_per_group - 1 >=
-	     ext2fs_blocks_count(fs->super))) {
+	     ext2fs_blocks_बिलांग(fs->super))) {
 		retval = EXT2_ET_GDESC_BAD_INODE_TABLE;
 		goto errout;
 	}
@@ -1082,8 +1082,8 @@ errcode_t ext2fs_get_blocks(ext2_filsys fs, ext2_ino_t ino, blk_t *blocks)
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (ino > fs->super->s_inodes_count)
-		return EXT2_ET_BAD_INODE_NUM;
+	if (ino > fs->super->s_inodes_बिलांग)
+		return EXT2_ET_BAD_INODE_नुमेरो;
 
 	if (fs->get_blocks) {
 		if (!(*fs->get_blocks)(fs, ino, blocks))
@@ -1104,8 +1104,8 @@ errcode_t ext2fs_check_directory(ext2_filsys fs, ext2_ino_t ino)
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	if (ino > fs->super->s_inodes_count)
-		return EXT2_ET_BAD_INODE_NUM;
+	if (ino > fs->super->s_inodes_बिलांग)
+		return EXT2_ET_BAD_INODE_नुमेरो;
 
 	if (fs->check_directory) {
 		retval = (fs->check_directory)(fs, ino);

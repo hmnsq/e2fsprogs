@@ -401,7 +401,7 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
 	int		offlen;
 	int		offset;
 	int		mask;
-	int		node;
+	int		बुहोल;
 
 	if (!data)
 		return NULL;
@@ -409,8 +409,8 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
 		return NULL;
 
 	trie = utf8data + data->offset;
-	node = 1;
-	while (node) {
+	बुहोल = 1;
+	while (बुहोल) {
 		offlen = (*trie & OFFLEN) >> OFFLEN_SHIFT;
 		if (*trie & NEXTBYTE) {
 			if (--len == 0)
@@ -422,7 +422,7 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
 			/* Right leg */
 			if (offlen) {
 				/* Right node at offset of trie */
-				node = (*trie & RIGHTNODE);
+				बुहोल = (*trie & RIGHTNODE);
 				offset = trie[offlen];
 				while (--offlen) {
 					offset <<= 8;
@@ -431,7 +431,7 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
 				trie += offset;
 			} else if (*trie & RIGHTPATH) {
 				/* Right node after this node */
-				node = (*trie & TRIENODE);
+				बुहोल = (*trie & TRIENODE);
 				trie++;
 			} else {
 				/* No right node. */
@@ -441,14 +441,14 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
 			/* Left leg */
 			if (offlen) {
 				/* Left node after this node. */
-				node = (*trie & LEFTNODE);
+				बुहोल = (*trie & LEFTNODE);
 				trie += offlen + 1;
 			} else if (*trie & RIGHTPATH) {
 				/* No left node. */
 				return NULL;
 			} else {
 				/* Left node after this node */
-				node = (*trie & TRIENODE);
+				बुहोल = (*trie & TRIENODE);
 				trie++;
 			}
 		}

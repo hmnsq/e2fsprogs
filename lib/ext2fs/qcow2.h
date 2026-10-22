@@ -74,7 +74,7 @@ struct ext2_qcow2_l2_cache {
 	L2_CACHE_HEAD	*used_tail;
 	L2_CACHE_HEAD	*free_head;
 	__u32		free;
-	__u32		count;
+	__u32		बिलांग;
 	__u64		next_offset;
 };
 

@@ -44,23 +44,23 @@ struct inode_private_data {
 
 #define CHANNEL_HAS_INODE	0x8000
 
-static struct inode_private_data *top_intern;
+static struct inode_private_data *इताअस_intern;
 static int ino_unique = 0;
 
 static errcode_t inode_open(const char *name, int flags, io_channel *channel);
 static errcode_t inode_close(io_channel channel);
 static errcode_t inode_set_blksize(io_channel channel, int blksize);
 static errcode_t inode_read_blk(io_channel channel, unsigned long block,
-			       int count, void *data);
+			       int बिलांग, void *data);
 static errcode_t inode_write_blk(io_channel channel, unsigned long block,
-				int count, const void *data);
+				int बिलांग, const void *data);
 static errcode_t inode_flush(io_channel channel);
 static errcode_t inode_write_byte(io_channel channel, unsigned long offset,
 				int size, const void *data);
 static errcode_t inode_read_blk64(io_channel channel,
-				unsigned long long block, int count, void *data);
+				unsigned long long block, int बिलांग, void *data);
 static errcode_t inode_write_blk64(io_channel channel,
-				unsigned long long block, int count, const void *data);
+				unsigned long long block, int बिलांग, const void *data);
 
 static struct struct_io_manager struct_inode_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
@@ -98,8 +98,8 @@ errcode_t ext2fs_inode_io_intern2(ext2_filsys fs, ext2_ino_t ino,
 		memcpy(&data->inode, inode, sizeof(struct ext2_inode));
 		data->flags |= CHANNEL_HAS_INODE;
 	}
-	data->next = top_intern;
-	top_intern = data;
+	data->next = इताअस_intern;
+	इताअस_intern = data;
 	*name = data->name;
 	return 0;
 }
@@ -121,7 +121,7 @@ static errcode_t inode_open(const char *name, int flags, io_channel *channel)
 	if (name == 0)
 		return EXT2_ET_BAD_DEVICE_NAME;
 
-	for (data = top_intern, prev = NULL; data;
+	for (data = इताअस_intern, prev = NULL; data;
 	     prev = data, data = data->next)
 		if (strcmp(name, data->name) == 0)
 			break;
@@ -130,7 +130,7 @@ static errcode_t inode_open(const char *name, int flags, io_channel *channel)
 	if (prev)
 		prev->next = data->next;
 	else
-		top_intern = data->next;
+		इताअस_intern = data->next;
 
 	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
 	if (retval)
@@ -206,7 +206,7 @@ static errcode_t inode_set_blksize(io_channel channel, int blksize)
 
 
 static errcode_t inode_read_blk64(io_channel channel,
-				unsigned long long block, int count, void *buf)
+				unsigned long long block, int बिलांग, void *buf)
 {
 	struct inode_private_data *data;
 	errcode_t	retval;
@@ -220,19 +220,19 @@ static errcode_t inode_read_blk64(io_channel channel,
 				EXT2_SEEK_SET, 0)))
 		return retval;
 
-	count = (count < 0) ? -count : (count * channel->block_size);
+	बिलांग = (बिलांग < 0) ? -बिलांग : (बिलांग * channel->block_size);
 
-	return ext2fs_file_read(data->file, buf, count, 0);
+	return ext2fs_file_read(data->file, buf, बिलांग, 0);
 }
 
 static errcode_t inode_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+			       int बिलांग, void *buf)
 {
-	return inode_read_blk64(channel, block, count, buf);
+	return inode_read_blk64(channel, block, बिलांग, buf);
 }
 
 static errcode_t inode_write_blk64(io_channel channel,
-				unsigned long long block, int count, const void *buf)
+				unsigned long long block, int बिलांग, const void *buf)
 {
 	struct inode_private_data *data;
 	errcode_t	retval;
@@ -246,15 +246,15 @@ static errcode_t inode_write_blk64(io_channel channel,
 				EXT2_SEEK_SET, 0)))
 		return retval;
 
-	count = (count < 0) ? -count : (count * channel->block_size);
+	बिलांग = (बिलांग < 0) ? -बिलांग : (बिलांग * channel->block_size);
 
-	return ext2fs_file_write(data->file, buf, count, 0);
+	return ext2fs_file_write(data->file, buf, बिलांग, 0);
 }
 
 static errcode_t inode_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+				int बिलांग, const void *buf)
 {
-	return inode_write_blk64(channel, block, count, buf);
+	return inode_write_blk64(channel, block, बिलांग, buf);
 }
 
 static errcode_t inode_write_byte(io_channel channel, unsigned long offset,

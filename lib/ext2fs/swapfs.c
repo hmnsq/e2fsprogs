@@ -26,11 +26,11 @@ void ext2fs_swap_super(struct ext2_super_block * sb)
 {
 	int i;
 
-	sb->s_inodes_count = ext2fs_swab32(sb->s_inodes_count);
-	sb->s_blocks_count = ext2fs_swab32(sb->s_blocks_count);
-	sb->s_r_blocks_count = ext2fs_swab32(sb->s_r_blocks_count);
-	sb->s_free_blocks_count = ext2fs_swab32(sb->s_free_blocks_count);
-	sb->s_free_inodes_count = ext2fs_swab32(sb->s_free_inodes_count);
+	sb->s_inodes_बिलांग = ext2fs_swab32(sb->s_inodes_बिलांग);
+	sb->s_blocks_बिलांग = ext2fs_swab32(sb->s_blocks_बिलांग);
+	sb->s_r_blocks_बिलांग = ext2fs_swab32(sb->s_r_blocks_बिलांग);
+	sb->s_free_blocks_बिलांग = ext2fs_swab32(sb->s_free_blocks_बिलांग);
+	sb->s_free_inodes_बिलांग = ext2fs_swab32(sb->s_free_inodes_बिलांग);
 	sb->s_first_data_block = ext2fs_swab32(sb->s_first_data_block);
 	sb->s_log_block_size = ext2fs_swab32(sb->s_log_block_size);
 	sb->s_log_cluster_size = ext2fs_swab32(sb->s_log_cluster_size);
@@ -39,8 +39,8 @@ void ext2fs_swap_super(struct ext2_super_block * sb)
 	sb->s_inodes_per_group = ext2fs_swab32(sb->s_inodes_per_group);
 	sb->s_mtime = ext2fs_swab32(sb->s_mtime);
 	sb->s_wtime = ext2fs_swab32(sb->s_wtime);
-	sb->s_mnt_count = ext2fs_swab16(sb->s_mnt_count);
-	sb->s_max_mnt_count = ext2fs_swab16(sb->s_max_mnt_count);
+	sb->s_mnt_बिलांग = ext2fs_swab16(sb->s_mnt_बिलांग);
+	sb->s_max_mnt_बिलांग = ext2fs_swab16(sb->s_max_mnt_बिलांग);
 	sb->s_magic = ext2fs_swab16(sb->s_magic);
 	sb->s_state = ext2fs_swab16(sb->s_state);
 	sb->s_errors = ext2fs_swab16(sb->s_errors);
@@ -88,8 +88,8 @@ void ext2fs_swap_super(struct ext2_super_block * sb)
 	}
 	for (; i < 17; i++)
 		sb->s_jnl_blocks[i] = ext2fs_swab32(sb->s_jnl_blocks[i]);
-	sb->s_blocks_count_hi = ext2fs_swab32(sb->s_blocks_count_hi);
-	sb->s_r_blocks_count_hi = ext2fs_swab32(sb->s_r_blocks_count_hi);
+	sb->s_blocks_बिलांग_hi = ext2fs_swab32(sb->s_blocks_बिलांग_hi);
+	sb->s_r_blocks_बिलांग_hi = ext2fs_swab32(sb->s_r_blocks_बिलांग_hi);
 	sb->s_free_blocks_hi = ext2fs_swab32(sb->s_free_blocks_hi);
 	sb->s_min_extra_isize = ext2fs_swab16(sb->s_min_extra_isize);
 	sb->s_want_extra_isize = ext2fs_swab16(sb->s_want_extra_isize);
@@ -105,10 +105,10 @@ void ext2fs_swap_super(struct ext2_super_block * sb)
 	sb->s_kbytes_written = ext2fs_swab64(sb->s_kbytes_written);
 	sb->s_snapshot_inum = ext2fs_swab32(sb->s_snapshot_inum);
 	sb->s_snapshot_id = ext2fs_swab32(sb->s_snapshot_id);
-	sb->s_snapshot_r_blocks_count =
-		ext2fs_swab64(sb->s_snapshot_r_blocks_count);
+	sb->s_snapshot_r_blocks_बिलांग =
+		ext2fs_swab64(sb->s_snapshot_r_blocks_बिलांग);
 	sb->s_snapshot_list = ext2fs_swab32(sb->s_snapshot_list);
-	sb->s_error_count = ext2fs_swab32(sb->s_error_count);
+	sb->s_error_बिलांग = ext2fs_swab32(sb->s_error_बिलांग);
 	sb->s_first_error_time = ext2fs_swab32(sb->s_first_error_time);
 	sb->s_first_error_ino = ext2fs_swab32(sb->s_first_error_ino);
 	sb->s_first_error_block = ext2fs_swab64(sb->s_first_error_block);
@@ -145,9 +145,9 @@ void ext2fs_swap_group_desc2(ext2_filsys fs, struct ext2_group_desc *gdp)
 	gdp->bg_block_bitmap = ext2fs_swab32(gdp->bg_block_bitmap);
 	gdp->bg_inode_bitmap = ext2fs_swab32(gdp->bg_inode_bitmap);
 	gdp->bg_inode_table = ext2fs_swab32(gdp->bg_inode_table);
-	gdp->bg_free_blocks_count = ext2fs_swab16(gdp->bg_free_blocks_count);
-	gdp->bg_free_inodes_count = ext2fs_swab16(gdp->bg_free_inodes_count);
-	gdp->bg_used_dirs_count = ext2fs_swab16(gdp->bg_used_dirs_count);
+	gdp->bg_free_blocks_बिलांग = ext2fs_swab16(gdp->bg_free_blocks_बिलांग);
+	gdp->bg_free_inodes_बिलांग = ext2fs_swab16(gdp->bg_free_inodes_बिलांग);
+	gdp->bg_used_dirs_बिलांग = ext2fs_swab16(gdp->bg_used_dirs_बिलांग);
 	gdp->bg_flags = ext2fs_swab16(gdp->bg_flags);
 	gdp->bg_exclude_bitmap_lo = ext2fs_swab32(gdp->bg_exclude_bitmap_lo);
 	gdp->bg_block_bitmap_csum_lo =
@@ -164,12 +164,12 @@ void ext2fs_swap_group_desc2(ext2_filsys fs, struct ext2_group_desc *gdp)
 	gdp4->bg_block_bitmap_hi = ext2fs_swab32(gdp4->bg_block_bitmap_hi);
 	gdp4->bg_inode_bitmap_hi = ext2fs_swab32(gdp4->bg_inode_bitmap_hi);
 	gdp4->bg_inode_table_hi = ext2fs_swab32(gdp4->bg_inode_table_hi);
-	gdp4->bg_free_blocks_count_hi =
-		ext2fs_swab16(gdp4->bg_free_blocks_count_hi);
-	gdp4->bg_free_inodes_count_hi =
-		ext2fs_swab16(gdp4->bg_free_inodes_count_hi);
-	gdp4->bg_used_dirs_count_hi =
-		ext2fs_swab16(gdp4->bg_used_dirs_count_hi);
+	gdp4->bg_free_blocks_बिलांग_hi =
+		ext2fs_swab16(gdp4->bg_free_blocks_बिलांग_hi);
+	gdp4->bg_free_inodes_बिलांग_hi =
+		ext2fs_swab16(gdp4->bg_free_inodes_बिलांग_hi);
+	gdp4->bg_used_dirs_बिलांग_hi =
+		ext2fs_swab16(gdp4->bg_used_dirs_बिलांग_hi);
 	gdp4->bg_itable_unused_hi = ext2fs_swab16(gdp4->bg_itable_unused_hi);
 	gdp4->bg_exclude_bitmap_hi = ext2fs_swab16(gdp4->bg_exclude_bitmap_hi);
 	gdp4->bg_block_bitmap_csum_hi =
@@ -203,9 +203,9 @@ void ext2fs_swap_ext_attr_header(struct ext2_ext_attr_header *to_header,
 void ext2fs_swap_ext_attr_entry(struct ext2_ext_attr_entry *to_entry,
 				struct ext2_ext_attr_entry *from_entry)
 {
-	to_entry->e_value_offs  = ext2fs_swab16(from_entry->e_value_offs);
-	to_entry->e_value_inum  = ext2fs_swab32(from_entry->e_value_inum);
-	to_entry->e_value_size  = ext2fs_swab32(from_entry->e_value_size);
+	to_entry->e_हालागा_offs  = ext2fs_swab16(from_entry->e_हालागा_offs);
+	to_entry->e_हालागा_inum  = ext2fs_swab32(from_entry->e_हालागा_inum);
+	to_entry->e_हालागा_size  = ext2fs_swab32(from_entry->e_हालागा_size);
 	to_entry->e_hash	= ext2fs_swab32(from_entry->e_hash);
 }
 
@@ -269,11 +269,11 @@ void ext2fs_swap_inode_full(ext2_filsys fs, struct ext2_inode_large *t,
 	t->i_mtime = ext2fs_swab32(f->i_mtime);
 	t->i_dtime = ext2fs_swab32(f->i_dtime);
 	t->i_gid = ext2fs_swab16(f->i_gid);
-	t->i_links_count = ext2fs_swab16(f->i_links_count);
+	t->i_links_बिलांग = ext2fs_swab16(f->i_links_बिलांग);
 	t->i_file_acl = ext2fs_swab32(f->i_file_acl);
 	t->i_blocks = ext2fs_swab32(f->i_blocks);
 	t->i_flags = ext2fs_swab32(f->i_flags);
-	t->i_size_high = ext2fs_swab32(f->i_size_high);
+	t->i_size_माताअस = ext2fs_swab32(f->i_size_माताअस);
 
 	if (!hostorder) {
 		islnk = LINUX_S_ISLNK(t->i_mode);
@@ -301,12 +301,12 @@ void ext2fs_swap_inode_full(ext2_filsys fs, struct ext2_inode_large *t,
 			ext2fs_swab32(f->osd1.linux1.l_i_version);
 		t->osd2.linux2.l_i_blocks_hi =
 			ext2fs_swab16(f->osd2.linux2.l_i_blocks_hi);
-		t->osd2.linux2.l_i_file_acl_high =
-			ext2fs_swab16(f->osd2.linux2.l_i_file_acl_high);
-		t->osd2.linux2.l_i_uid_high =
-		  ext2fs_swab16 (f->osd2.linux2.l_i_uid_high);
-		t->osd2.linux2.l_i_gid_high =
-		  ext2fs_swab16 (f->osd2.linux2.l_i_gid_high);
+		t->osd2.linux2.l_i_file_acl_माताअस =
+			ext2fs_swab16(f->osd2.linux2.l_i_file_acl_माताअस);
+		t->osd2.linux2.l_i_uid_माताअस =
+		  ext2fs_swab16 (f->osd2.linux2.l_i_uid_माताअस);
+		t->osd2.linux2.l_i_gid_माताअस =
+		  ext2fs_swab16 (f->osd2.linux2.l_i_gid_माताअस);
 		t->osd2.linux2.l_i_checksum_lo =
 			ext2fs_swab16(f->osd2.linux2.l_i_checksum_lo);
 		break;
@@ -315,12 +315,12 @@ void ext2fs_swap_inode_full(ext2_filsys fs, struct ext2_inode_large *t,
 		  ext2fs_swab32 (f->osd1.hurd1.h_i_translator);
 		t->osd2.hurd2.h_i_frag = f->osd2.hurd2.h_i_frag;
 		t->osd2.hurd2.h_i_fsize = f->osd2.hurd2.h_i_fsize;
-		t->osd2.hurd2.h_i_mode_high =
-		  ext2fs_swab16 (f->osd2.hurd2.h_i_mode_high);
-		t->osd2.hurd2.h_i_uid_high =
-		  ext2fs_swab16 (f->osd2.hurd2.h_i_uid_high);
-		t->osd2.hurd2.h_i_gid_high =
-		  ext2fs_swab16 (f->osd2.hurd2.h_i_gid_high);
+		t->osd2.hurd2.h_i_mode_माताअस =
+		  ext2fs_swab16 (f->osd2.hurd2.h_i_mode_माताअस);
+		t->osd2.hurd2.h_i_uid_माताअस =
+		  ext2fs_swab16 (f->osd2.hurd2.h_i_uid_माताअस);
+		t->osd2.hurd2.h_i_gid_माताअस =
+		  ext2fs_swab16 (f->osd2.hurd2.h_i_gid_माताअस);
 		t->osd2.hurd2.h_i_author =
 		  ext2fs_swab32 (f->osd2.hurd2.h_i_author);
 		break;
@@ -417,11 +417,11 @@ errcode_t ext2fs_dirent_swab_in2(ext2_filsys fs, char *buf,
 	errcode_t	retval;
 	char		*p, *end;
 	struct ext2_dir_entry *dirent;
-	unsigned int	name_len, rec_len, left;
+	unsigned int	name_len, rec_len, कालिवा;
 
 	p = (char *) buf;
 	end = (char *) buf + size;
-	left = size;
+	कालिवा = size;
 	while (p < end-8) {
 		dirent = (struct ext2_dir_entry *) p;
 		dirent->inode = ext2fs_swab32(dirent->inode);
@@ -440,10 +440,10 @@ errcode_t ext2fs_dirent_swab_in2(ext2_filsys fs, char *buf,
 		} else if (((name_len & 0xFF) + 8) > rec_len)
 			if (!(fs->flags & EXT2_FLAG_IGNORE_SWAP_DIRENT))
 				return EXT2_ET_DIR_CORRUPTED;
-		if (rec_len > left)
+		if (rec_len > कालिवा)
 			if (!(fs->flags & EXT2_FLAG_IGNORE_SWAP_DIRENT))
 				return EXT2_ET_DIR_CORRUPTED;
-		left -= rec_len;
+		कालिवा -= rec_len;
 		p += rec_len;
 	}
 

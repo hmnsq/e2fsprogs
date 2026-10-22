@@ -66,7 +66,7 @@ __u32 ext2fs_do_orphan_file_block_csum(ext2_filsys fs, ext2_ino_t ino,
 struct mkorphan_info {
 	char *buf;
 	char *zerobuf;
-	blk_t num_blocks;
+	blk_t नुमेरो_blocks;
 	blk_t alloc_blocks;
 	blk64_t last_blk;
 	errcode_t err;
@@ -116,12 +116,12 @@ static int mkorphan_proc(ext2_filsys	fs,
 	}
 	oi->last_blk = new_blk;
 	*blocknr = new_blk;
-	if (blockcnt >= 0 && --oi->num_blocks == 0)
+	if (blockcnt >= 0 && --oi->नुमेरो_blocks == 0)
 		return BLOCK_CHANGED | BLOCK_ABORT;
 	return BLOCK_CHANGED;
 }
 
-errcode_t ext2fs_create_orphan_file(ext2_filsys fs, blk_t num_blocks)
+errcode_t ext2fs_create_orphan_file(ext2_filsys fs, blk_t नुमेरो_blocks)
 {
 	struct ext2_inode inode;
 	ext2_ino_t ino = fs->super->s_orphan_file_inum;
@@ -131,8 +131,8 @@ errcode_t ext2fs_create_orphan_file(ext2_filsys fs, blk_t num_blocks)
 	struct ext4_orphan_block_tail *ob_tail;
 	time_t now;
 
-	if (num_blocks > EXT4_MAX_ORPHAN_FILE_BLOCKS)
-		num_blocks = EXT4_MAX_ORPHAN_FILE_BLOCKS;
+	if (नुमेरो_blocks > EXT4_MAX_ORPHAN_FILE_BLOCKS)
+		नुमेरो_blocks = EXT4_MAX_ORPHAN_FILE_BLOCKS;
 
 	if (ino) {
 		err = ext2fs_read_inode(fs, ino, &inode);
@@ -144,7 +144,7 @@ errcode_t ext2fs_create_orphan_file(ext2_filsys fs, blk_t num_blocks)
 				return err;
 		}
 	} else {
-		err = ext2fs_new_inode(fs, EXT2_ROOT_INO, LINUX_S_IFREG | 0600,
+		err = ext2fs_new_inode(fs, EXT2_उगात_INO, LINUX_S_IFREG | 0600,
 				       0, &ino);
 		if (err)
 			return err;
@@ -169,7 +169,7 @@ errcode_t ext2fs_create_orphan_file(ext2_filsys fs, blk_t num_blocks)
 	memset(zerobuf, 0, fs->blocksize);
 	ob_tail = ext2fs_orphan_block_tail(fs, buf);
 	ob_tail->ob_magic = ext2fs_cpu_to_le32(EXT4_ORPHAN_BLOCK_MAGIC);
-	oi.num_blocks = num_blocks;
+	oi.नुमेरो_blocks = नुमेरो_blocks;
 	oi.alloc_blocks = 0;
 	oi.last_blk = 0;
 	oi.generation = inode.i_generation;
@@ -195,11 +195,11 @@ errcode_t ext2fs_create_orphan_file(ext2_filsys fs, blk_t num_blocks)
 	ext2fs_inode_xtime_set(&inode, i_atime, now);
 	ext2fs_inode_xtime_set(&inode, i_ctime, now);
 	ext2fs_inode_xtime_set(&inode, i_mtime, now);
-	inode.i_links_count = 1;
+	inode.i_links_बिलांग = 1;
 	inode.i_mode = LINUX_S_IFREG | 0600;
 	ext2fs_iblk_add_blocks(fs, &inode, oi.alloc_blocks);
 	err = ext2fs_inode_size_set(fs, &inode,
-			(unsigned long long)fs->blocksize * num_blocks);
+			(unsigned long long)fs->blocksize * नुमेरो_blocks);
 	if (err)
 		goto out;
 	err = ext2fs_write_new_inode(fs, ino, &inode);
@@ -226,13 +226,13 @@ out:
  */
 e2_blkcnt_t ext2fs_default_orphan_file_blocks(ext2_filsys fs)
 {
-	__u64 num_blocks = ext2fs_blocks_count(fs->super);
+	__u64 नुमेरो_blocks = ext2fs_blocks_बिलांग(fs->super);
 	e2_blkcnt_t blks = 512;
 
-	if (num_blocks < 128 * 1024)
+	if (नुमेरो_blocks < 128 * 1024)
 		blks = 32;
-	else if (num_blocks < 2 * 1024 * 1024)
-		blks = num_blocks / 4096;
+	else if (नुमेरो_blocks < 2 * 1024 * 1024)
+		blks = नुमेरो_blocks / 4096;
 	return (blks + EXT2FS_CLUSTER_MASK(fs)) & ~EXT2FS_CLUSTER_MASK(fs);
 }
 

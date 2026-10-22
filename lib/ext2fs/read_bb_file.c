@@ -40,7 +40,7 @@ errcode_t ext2fs_read_bb_FILE2(ext2_filsys fs, FILE *f,
 {
 	errcode_t	retval;
 	unsigned long long blockno;
-	int		count;
+	int		बिलांग;
 	char		buf[128];
 
 	if (fs)
@@ -55,15 +55,15 @@ errcode_t ext2fs_read_bb_FILE2(ext2_filsys fs, FILE *f,
 	while (!feof (f)) {
 		if (fgets(buf, sizeof(buf), f) == NULL)
 			break;
-		count = sscanf(buf, "%llu", &blockno);
-		if (count <= 0)
+		बिलांग = sscanf(buf, "%llu", &blockno);
+		if (बिलांग <= 0)
 			continue;
 		/* Badblocks isn't going to be updated for 64bit */
 		if (blockno >> 32)
 			return EOVERFLOW;
 		if (fs &&
 		    ((blockno < fs->super->s_first_data_block) ||
-		     (blockno >= ext2fs_blocks_count(fs->super)))) {
+		     (blockno >= ext2fs_blocks_बिलांग(fs->super)))) {
 			if (invalid)
 				(invalid)(fs, (blk64_t) blockno, buf, priv_data);
 			continue;

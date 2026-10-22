@@ -32,7 +32,7 @@
 
 struct set_badblock_record {
 	ext2_badblocks_iterate	bb_iter;
-	int		bad_block_count;
+	int		bad_block_बिलांग;
 	blk_t		*ind_blocks;
 	int		max_ind_blocks;
 	int		ind_blocks_size;
@@ -129,9 +129,9 @@ errcode_t ext2fs_update_bb_inode(ext2_filsys fs, ext2_badblocks_list bb_list)
 	if (!ext2fs_inode_xtime_get(&inode, i_ctime))
 		ext2fs_inode_xtime_set(&inode, i_ctime, now);
 	ext2fs_inode_xtime_set(&inode, i_mtime, now);
-	ext2fs_iblk_set(fs, &inode, rec.bad_block_count);
+	ext2fs_iblk_set(fs, &inode, rec.bad_block_बिलांग);
 	retval = ext2fs_inode_size_set(fs, &inode,
-				       rec.bad_block_count * fs->blocksize);
+				       rec.bad_block_बिलांग * fs->blocksize);
 	if (retval)
 		goto cleanup;
 
@@ -171,7 +171,7 @@ static int clear_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 	/*
 	 * If the block number is outrageous, clear it and ignore it.
 	 */
-	if (*block_nr >= ext2fs_blocks_count(fs->super) ||
+	if (*block_nr >= ext2fs_blocks_बिलांग(fs->super) ||
 	    *block_nr < fs->super->s_first_data_block) {
 		*block_nr = 0;
 		return BLOCK_CHANGED;
@@ -228,7 +228,7 @@ static int set_bad_block_proc(ext2_filsys fs, blk_t *block_nr,
 		 */
 		if (!ext2fs_badblocks_list_iterate(rec->bb_iter, &blk))
 			return BLOCK_ABORT;
-		rec->bad_block_count++;
+		rec->bad_block_बिलांग++;
 	} else {
 		/*
 		 * An indirect block; fetch a block from the

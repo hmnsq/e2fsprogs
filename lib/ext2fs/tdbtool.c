@@ -44,7 +44,7 @@ const char *cmdname;
 char *arg1, *arg2;
 size_t arg1len, arg2len;
 int bIterate = 0;
-char *line;
+char *लिन्या;
 TDB_DATA iterate_kbuf;
 char cmdline[1024];
 
@@ -53,11 +53,11 @@ enum commands {
 	CMD_OPEN_TDB,
 	CMD_ERASE,
 	CMD_DUMP,
-	CMD_INSERT,
+	CMD_इसिंगित,
 	CMD_MOVE,
 	CMD_STORE,
 	CMD_SHOW,
-	CMD_KEYS,
+	CMD_मगा_सुसि,
 	CMD_HEXKEYS,
 	CMD_DELETE,
 	CMD_LIST_HASH_FREE,
@@ -80,11 +80,11 @@ COMMAND_TABLE cmd_table[] = {
 	{"open",	CMD_OPEN_TDB},
 	{"erase",	CMD_ERASE},
 	{"dump",	CMD_DUMP},
-	{"insert",	CMD_INSERT},
+	{"insert",	CMD_इसिंगित},
 	{"move",	CMD_MOVE},
 	{"store",	CMD_STORE},
 	{"show",	CMD_SHOW},
-	{"keys",	CMD_KEYS},
+	{"keys",	CMD_मगा_सुसि},
 	{"hexkeys",	CMD_HEXKEYS},
 	{"delete",	CMD_DELETE},
 	{"list",	CMD_LIST_HASH_FREE},
@@ -104,11 +104,11 @@ COMMAND_TABLE cmd_table[] = {
 
 static TDB_CONTEXT *tdb;
 
-static int print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
-static int print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
-static int print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
+static int इलिम्बाग_rec(TDB_CONTEXT *the_tdb, TDB_DATA सुसि, TDB_DATA dbuf, void *state);
+static int इलिम्बाग_सुसि(TDB_CONTEXT *the_tdb, TDB_DATA सुसि, TDB_DATA dbuf, void *state);
+static int इलिम्बाग_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA सुसि, TDB_DATA dbuf, void *state);
 
-static void print_asc(const char *buf,int len)
+static void इलिम्बाग_asc(const char *buf,int len)
 {
 	int i;
 
@@ -122,7 +122,7 @@ static void print_asc(const char *buf,int len)
 		printf("%c",isprint(buf[i])?buf[i]:'.');
 }
 
-static void print_data(const char *buf,int len)
+static void इलिम्बाग_data(const char *buf,int len)
 {
 	int i=0;
 	if (len<=0) return;
@@ -132,8 +132,8 @@ static void print_data(const char *buf,int len)
 		i++;
 		if (i%8 == 0) printf(" ");
 		if (i%16 == 0) {
-			print_asc(&buf[i-16],8); printf(" ");
-			print_asc(&buf[i-8],8); printf("\n");
+			इलिम्बाग_asc(&buf[i-16],8); printf(" ");
+			इलिम्बाग_asc(&buf[i-8],8); printf("\n");
 			if (i<len) printf("[%03X] ",i);
 		}
 	}
@@ -147,9 +147,9 @@ static void print_data(const char *buf,int len)
 
 		n = i%16;
 		if (n > 8) n = 8;
-		print_asc(&buf[i-(i%16)],n); printf(" ");
+		इलिम्बाग_asc(&buf[i-(i%16)],n); printf(" ");
 		n = (i%16) - n;
-		if (n>0) print_asc(&buf[i-n],n);
+		if (n>0) इलिम्बाग_asc(&buf[i-n],n);
 		printf("\n");
 	}
 }
@@ -204,28 +204,28 @@ static void open_tdb(const char *tdbname)
 	}
 }
 
-static void insert_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
+static void इसिंगित_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
 {
-	TDB_DATA key, dbuf;
+	TDB_DATA सुसि, dbuf;
 
 	if ((keyname == NULL) || (keylen == 0)) {
 		terror("need key");
 		return;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	सुसि.dptr = (unsigned char *)keyname;
+	सुसि.dsize = keylen;
 	dbuf.dptr = (unsigned char *)data;
 	dbuf.dsize = datalen;
 
-	if (tdb_store(tdb, key, dbuf, TDB_INSERT) == -1) {
+	if (tdb_store(tdb, सुसि, dbuf, TDB_इसिंगित) == -1) {
 		terror("insert failed");
 	}
 }
 
 static void store_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
 {
-	TDB_DATA key, dbuf;
+	TDB_DATA सुसि, dbuf;
 
 	if ((keyname == NULL) || (keylen == 0)) {
 		terror("need key");
@@ -237,38 +237,38 @@ static void store_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
 		return;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	सुसि.dptr = (unsigned char *)keyname;
+	सुसि.dsize = keylen;
 	dbuf.dptr = (unsigned char *)data;
 	dbuf.dsize = datalen;
 
 	printf("Storing key:\n");
-	print_rec(tdb, key, dbuf, NULL);
+	इलिम्बाग_rec(tdb, सुसि, dbuf, NULL);
 
-	if (tdb_store(tdb, key, dbuf, TDB_REPLACE) == -1) {
+	if (tdb_store(tdb, सुसि, dbuf, TDB_REPLACE) == -1) {
 		terror("store failed");
 	}
 }
 
 static void show_tdb(char *keyname, size_t keylen)
 {
-	TDB_DATA key, dbuf;
+	TDB_DATA सुसि, dbuf;
 
 	if ((keyname == NULL) || (keylen == 0)) {
 		terror("need key");
 		return;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	सुसि.dptr = (unsigned char *)keyname;
+	सुसि.dsize = keylen;
 
-	dbuf = tdb_fetch(tdb, key);
+	dbuf = tdb_fetch(tdb, सुसि);
 	if (!dbuf.dptr) {
 	    terror("fetch failed");
 	    return;
 	}
 
-	print_rec(tdb, key, dbuf, NULL);
+	इलिम्बाग_rec(tdb, सुसि, dbuf, NULL);
 
 	free( dbuf.dptr );
 
@@ -277,24 +277,24 @@ static void show_tdb(char *keyname, size_t keylen)
 
 static void delete_tdb(char *keyname, size_t keylen)
 {
-	TDB_DATA key;
+	TDB_DATA सुसि;
 
 	if ((keyname == NULL) || (keylen == 0)) {
 		terror("need key");
 		return;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	सुसि.dptr = (unsigned char *)keyname;
+	सुसि.dsize = keylen;
 
-	if (tdb_delete(tdb, key) != 0) {
+	if (tdb_delete(tdb, सुसि) != 0) {
 		terror("delete failed");
 	}
 }
 
 static void move_rec(char *keyname, size_t keylen, char* tdbname)
 {
-	TDB_DATA key, dbuf;
+	TDB_DATA सुसि, dbuf;
 	TDB_CONTEXT *dst_tdb;
 
 	if ((keyname == NULL) || (keylen == 0)) {
@@ -307,16 +307,16 @@ static void move_rec(char *keyname, size_t keylen, char* tdbname)
 		return;
 	}
 
-	key.dptr = (unsigned char *)keyname;
-	key.dsize = keylen;
+	सुसि.dptr = (unsigned char *)keyname;
+	सुसि.dsize = keylen;
 
-	dbuf = tdb_fetch(tdb, key);
+	dbuf = tdb_fetch(tdb, सुसि);
 	if (!dbuf.dptr) {
 		terror("fetch failed");
 		return;
 	}
 
-	print_rec(tdb, key, dbuf, NULL);
+	इलिम्बाग_rec(tdb, सुसि, dbuf, NULL);
 
 	dst_tdb = tdb_open(tdbname, 0, 0, O_RDWR, 0600);
 	if ( !dst_tdb ) {
@@ -324,7 +324,7 @@ static void move_rec(char *keyname, size_t keylen, char* tdbname)
 		return;
 	}
 
-	if ( tdb_store( dst_tdb, key, dbuf, TDB_REPLACE ) == -1 ) {
+	if ( tdb_store( dst_tdb, सुसि, dbuf, TDB_REPLACE ) == -1 ) {
 		terror("failed to move record");
 	}
 	else
@@ -335,34 +335,34 @@ static void move_rec(char *keyname, size_t keylen, char* tdbname)
 	return;
 }
 
-static int print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+static int इलिम्बाग_rec(TDB_CONTEXT *the_tdb, TDB_DATA सुसि, TDB_DATA dbuf, void *state)
 {
-	printf("\nkey %d bytes\n", (int)key.dsize);
-	print_asc((const char *)key.dptr, key.dsize);
+	printf("\nkey %d bytes\n", (int)सुसि.dsize);
+	इलिम्बाग_asc((const char *)सुसि.dptr, सुसि.dsize);
 	printf("\ndata %d bytes\n", (int)dbuf.dsize);
-	print_data((const char *)dbuf.dptr, dbuf.dsize);
+	इलिम्बाग_data((const char *)dbuf.dptr, dbuf.dsize);
 	return 0;
 }
 
-static int print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+static int इलिम्बाग_सुसि(TDB_CONTEXT *the_tdb, TDB_DATA सुसि, TDB_DATA dbuf, void *state)
 {
-	printf("key %d bytes: ", (int)key.dsize);
-	print_asc((const char *)key.dptr, key.dsize);
+	printf("key %d bytes: ", (int)सुसि.dsize);
+	इलिम्बाग_asc((const char *)सुसि.dptr, सुसि.dsize);
 	printf("\n");
 	return 0;
 }
 
-static int print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+static int इलिम्बाग_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA सुसि, TDB_DATA dbuf, void *state)
 {
-	printf("key %d bytes\n", (int)key.dsize);
-	print_data((const char *)key.dptr, key.dsize);
+	printf("key %d bytes\n", (int)सुसि.dsize);
+	इलिम्बाग_data((const char *)सुसि.dptr, सुसि.dsize);
 	printf("\n");
 	return 0;
 }
 
 static int total_bytes;
 
-static int traverse_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+static int traverse_fn(TDB_CONTEXT *the_tdb, TDB_DATA सुसि, TDB_DATA dbuf, void *state)
 {
 	total_bytes += dbuf.dsize;
 	return 0;
@@ -370,12 +370,12 @@ static int traverse_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *
 
 static void info_tdb(void)
 {
-	int count;
+	int बिलांग;
 	total_bytes = 0;
-	if ((count = tdb_traverse(tdb, traverse_fn, NULL)) == -1)
+	if ((बिलांग = tdb_traverse(tdb, traverse_fn, NULL)) == -1)
 		printf("Error = %s\n", tdb_errorstr(tdb));
 	else
-		printf("%d records totalling %d bytes\n", count, total_bytes);
+		printf("%d records totalling %d bytes\n", बिलांग, total_bytes);
 }
 
 static char *tdb_getline(const char *prompt)
@@ -390,10 +390,10 @@ static char *tdb_getline(const char *prompt)
 	return p?thisline:NULL;
 }
 
-static int do_delete_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf,
+static int do_delete_fn(TDB_CONTEXT *the_tdb, TDB_DATA सुसि, TDB_DATA dbuf,
                      void *state)
 {
-    return tdb_delete(the_tdb, key);
+    return tdb_delete(the_tdb, सुसि);
 }
 
 static void first_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
@@ -404,7 +404,7 @@ static void first_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
 	dbuf = tdb_fetch(the_tdb, *pkey);
 	if (!dbuf.dptr) terror("fetch failed");
 	else {
-		print_rec(the_tdb, *pkey, dbuf, NULL);
+		इलिम्बाग_rec(the_tdb, *pkey, dbuf, NULL);
 	}
 }
 
@@ -417,7 +417,7 @@ static void next_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
 	if (!dbuf.dptr)
 		terror("fetch failed");
 	else
-		print_rec(the_tdb, *pkey, dbuf, NULL);
+		इलिम्बाग_rec(the_tdb, *pkey, dbuf, NULL);
 }
 
 static int do_command(void)
@@ -469,11 +469,11 @@ static int do_command(void)
 		return 0;
 	    case CMD_DUMP:
 		bIterate = 0;
-		tdb_traverse(tdb, print_rec, NULL);
+		tdb_traverse(tdb, इलिम्बाग_rec, NULL);
 		return 0;
-	    case CMD_INSERT:
+	    case CMD_इसिंगित:
 		bIterate = 0;
-		insert_tdb(arg1, arg1len,arg2,arg2len);
+		इसिंगित_tdb(arg1, arg1len,arg2,arg2len);
 		return 0;
 	    case CMD_MOVE:
 		bIterate = 0;
@@ -487,11 +487,11 @@ static int do_command(void)
 		bIterate = 0;
 		show_tdb(arg1, arg1len);
 		return 0;
-	    case CMD_KEYS:
-		tdb_traverse(tdb, print_key, NULL);
+	    case CMD_मगा_सुसि:
+		tdb_traverse(tdb, इलिम्बाग_सुसि, NULL);
 		return 0;
 	    case CMD_HEXKEYS:
-		tdb_traverse(tdb, print_hexkey, NULL);
+		tdb_traverse(tdb, इलिम्बाग_hexkey, NULL);
 		return 0;
 	    case CMD_DELETE:
 		bIterate = 0;

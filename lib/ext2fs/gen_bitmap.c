@@ -407,7 +407,7 @@ void ext2fs_set_generic_bitmap_padding(ext2fs_generic_bitmap gen_map)
 
 errcode_t ext2fs_get_generic_bitmap_range(ext2fs_generic_bitmap gen_bmap,
 					  errcode_t magic,
-					  __u32 start, __u32 num,
+					  __u32 start, __u32 नुमेरो,
 					  void *out)
 {
 	ext2fs_generic_bitmap_32 bmap = (ext2fs_generic_bitmap_32) gen_bmap;
@@ -415,16 +415,16 @@ errcode_t ext2fs_get_generic_bitmap_range(ext2fs_generic_bitmap gen_bmap,
 	if (!bmap || (bmap->magic != magic))
 		return magic;
 
-	if ((start < bmap->start) || (start+num-1 > bmap->real_end))
+	if ((start < bmap->start) || (start+नुमेरो-1 > bmap->real_end))
 		return EXT2_ET_INVALID_ARGUMENT;
 
-	memcpy(out, bmap->bitmap + ((start - bmap->start) >> 3), (num+7) >> 3);
+	memcpy(out, bmap->bitmap + ((start - bmap->start) >> 3), (नुमेरो+7) >> 3);
 	return 0;
 }
 
 errcode_t ext2fs_set_generic_bitmap_range(ext2fs_generic_bitmap gen_bmap,
 					  errcode_t magic,
-					  __u32 start, __u32 num,
+					  __u32 start, __u32 नुमेरो,
 					  void *in)
 {
 	ext2fs_generic_bitmap_32 bmap = (ext2fs_generic_bitmap_32) gen_bmap;
@@ -432,10 +432,10 @@ errcode_t ext2fs_set_generic_bitmap_range(ext2fs_generic_bitmap gen_bmap,
 	if (!bmap || (bmap->magic != magic))
 		return magic;
 
-	if ((start < bmap->start) || (start+num-1 > bmap->real_end))
+	if ((start < bmap->start) || (start+नुमेरो-1 > bmap->real_end))
 		return EXT2_ET_INVALID_ARGUMENT;
 
-	memcpy(bmap->bitmap + ((start - bmap->start) >> 3), in, (num+7) >> 3);
+	memcpy(bmap->bitmap + ((start - bmap->start) >> 3), in, (नुमेरो+7) >> 3);
 	return 0;
 }
 
@@ -471,7 +471,7 @@ static int ext2fs_test_clear_generic_bitmap_range(ext2fs_generic_bitmap gen_bitm
 	unsigned int start_bit, len_bit = len % 8;
 	int first_bit = 0;
 	int last_bit  = 0;
-	int mark_count = 0;
+	int mark_बिलांग = 0;
 	int mark_bit = 0;
 	int i;
 	const char *ADDR = bitmap->bitmap;
@@ -485,14 +485,14 @@ static int ext2fs_test_clear_generic_bitmap_range(ext2fs_generic_bitmap gen_bitm
 		 * The compared start block number or start inode number
 		 * is not the first bit in a byte.
 		 */
-		mark_count = 8 - start_bit;
+		mark_बिलांग = 8 - start_bit;
 		if (len < 8 - start_bit) {
-			mark_count = (int)len;
+			mark_बिलांग = (int)len;
 			mark_bit = len + start_bit - 1;
 		} else
 			mark_bit = 7;
 
-		for (i = mark_count; i > 0; i--, mark_bit--)
+		for (i = mark_बिलांग; i > 0; i--, mark_bit--)
 			first_bit |= 1 << mark_bit;
 
 		/*
@@ -505,8 +505,8 @@ static int ext2fs_test_clear_generic_bitmap_range(ext2fs_generic_bitmap gen_bitm
 			return 1;
 
 		start_byte++;
-		len_bit = (len - mark_count) % 8;
-		len_byte = (len - mark_count) >> 3;
+		len_bit = (len - mark_बिलांग) % 8;
+		len_byte = (len - mark_बिलांग) >> 3;
 	}
 
 	/*
@@ -584,66 +584,66 @@ errcode_t ext2fs_find_first_set_generic_bitmap(ext2fs_generic_bitmap gen_bitmap,
 }
 
 int ext2fs_test_block_bitmap_range(ext2fs_block_bitmap gen_bitmap,
-				   blk_t block, int num)
+				   blk_t block, int नुमेरो)
 {
 	ext2fs_generic_bitmap_32 bitmap = (ext2fs_generic_bitmap_32) gen_bitmap;
 
 	EXT2_CHECK_MAGIC(bitmap, EXT2_ET_MAGIC_BLOCK_BITMAP);
 	if ((block < bitmap->start) || (block > bitmap->real_end) ||
-	    (block+num-1 > bitmap->real_end)) {
+	    (block+नुमेरो-1 > bitmap->real_end)) {
 		ext2fs_warn_bitmap(EXT2_ET_BAD_BLOCK_TEST,
 				   block, bitmap->description);
 		return 0;
 	}
 	return ext2fs_test_clear_generic_bitmap_range((ext2fs_generic_bitmap)
-						      bitmap, block, num);
+						      bitmap, block, नुमेरो);
 }
 
 int ext2fs_test_inode_bitmap_range(ext2fs_inode_bitmap gen_bitmap,
-				   ext2_ino_t inode, int num)
+				   ext2_ino_t inode, int नुमेरो)
 {
 	ext2fs_generic_bitmap_32 bitmap = (ext2fs_generic_bitmap_32) gen_bitmap;
 
 	EXT2_CHECK_MAGIC(bitmap, EXT2_ET_MAGIC_INODE_BITMAP);
 	if ((inode < bitmap->start) || (inode > bitmap->real_end) ||
-	    (inode+num-1 > bitmap->real_end)) {
+	    (inode+नुमेरो-1 > bitmap->real_end)) {
 		ext2fs_warn_bitmap(EXT2_ET_BAD_INODE_TEST,
 				   inode, bitmap->description);
 		return 0;
 	}
 	return ext2fs_test_clear_generic_bitmap_range((ext2fs_generic_bitmap)
-						      bitmap, inode, num);
+						      bitmap, inode, नुमेरो);
 }
 
 void ext2fs_mark_block_bitmap_range(ext2fs_block_bitmap gen_bitmap,
-				    blk_t block, int num)
+				    blk_t block, int नुमेरो)
 {
 	ext2fs_generic_bitmap_32 bitmap = (ext2fs_generic_bitmap_32) gen_bitmap;
 	int	i;
 
 	if ((block < bitmap->start) || (block > bitmap->end) ||
-	    (block+num-1 > bitmap->end)) {
+	    (block+नुमेरो-1 > bitmap->end)) {
 		ext2fs_warn_bitmap(EXT2_ET_BAD_BLOCK_MARK, block,
 				   bitmap->description);
 		return;
 	}
-	for (i=0; i < num; i++)
+	for (i=0; i < नुमेरो; i++)
 		ext2fs_fast_set_bit(block + i - bitmap->start, bitmap->bitmap);
 }
 
 void ext2fs_unmark_block_bitmap_range(ext2fs_block_bitmap gen_bitmap,
-				      blk_t block, int num)
+				      blk_t block, int नुमेरो)
 {
 	ext2fs_generic_bitmap_32 bitmap = (ext2fs_generic_bitmap_32) gen_bitmap;
 	int	i;
 
 	if ((block < bitmap->start) || (block > bitmap->end) ||
-	    (block+num-1 > bitmap->end)) {
+	    (block+नुमेरो-1 > bitmap->end)) {
 		ext2fs_warn_bitmap(EXT2_ET_BAD_BLOCK_UNMARK, block,
 				   bitmap->description);
 		return;
 	}
-	for (i=0; i < num; i++)
+	for (i=0; i < नुमेरो; i++)
 		ext2fs_fast_clear_bit(block + i - bitmap->start,
 				      bitmap->bitmap);
 }

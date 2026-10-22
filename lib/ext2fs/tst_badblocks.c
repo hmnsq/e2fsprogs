@@ -90,7 +90,7 @@ static errcode_t create_test_list(blk_t *vec, badblocks_list *ret)
 	return 0;
 }
 
-static void print_list(badblocks_list bb, int verify)
+static void इलिम्बाग_list(badblocks_list bb, int verify)
 {
 	errcode_t	retval;
 	badblocks_iterate	iter;
@@ -229,7 +229,7 @@ void file_test_invalid(badblocks_list bb)
 	fs->super = malloc(SUPERBLOCK_SIZE);
 	memset(fs->super, 0, SUPERBLOCK_SIZE);
 	fs->super->s_first_data_block = 1;
-	ext2fs_blocks_count_set(fs->super, 100);
+	ext2fs_blocks_बिलांग_set(fs->super, 100);
 
 	f = tmpfile();
 	if (!f) {
@@ -286,25 +286,25 @@ int main(int argc, char **argv)
 	printf("test1: ");
 	retval = create_test_list(test1, &bb1);
 	if (retval == 0)
-		print_list(bb1, 1);
+		इलिम्बाग_list(bb1, 1);
 	printf("\n");
 
 	printf("test2: ");
 	retval = create_test_list(test2, &bb2);
 	if (retval == 0)
-		print_list(bb2, 1);
+		इलिम्बाग_list(bb2, 1);
 	printf("\n");
 
 	printf("test3: ");
 	retval = create_test_list(test3, &bb3);
 	if (retval == 0)
-		print_list(bb3, 1);
+		इलिम्बाग_list(bb3, 1);
 	printf("\n");
 
 	printf("test4: ");
 	retval = create_test_list(test4, &bb4);
 	if (retval == 0) {
-		print_list(bb4, 0);
+		इलिम्बाग_list(bb4, 0);
 		printf("\n");
 		validate_test_seq(bb4, test4a);
 	}
@@ -313,11 +313,11 @@ int main(int argc, char **argv)
 	printf("test5: ");
 	retval = create_test_list(test5, &bb5);
 	if (retval == 0) {
-		print_list(bb5, 0);
+		इलिम्बाग_list(bb5, 0);
 		printf("\n");
 		do_test_seq(bb5, test5a);
 		printf("After test5 sequence: ");
-		print_list(bb5, 0);
+		इलिम्बाग_list(bb5, 0);
 		printf("\n");
 	}
 	printf("\n");

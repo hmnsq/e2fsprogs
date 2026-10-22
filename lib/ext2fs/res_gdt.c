@@ -44,7 +44,7 @@ dgrp_t ext2fs_list_backups(ext2_filsys fs, dgrp_t *three,
 				return fs->super->s_backup_bgs[1];
 		}
 
-		return fs->group_desc_count;
+		return fs->group_desc_बिलांग;
 	}
 
 	if (fs && !ext2fs_has_feature_sparse_super(fs->super)) {
@@ -130,7 +130,7 @@ errcode_t ext2fs_create_resize_inode(ext2_filsys fs)
 		if (retval)
 			goto out_free;
 		inode.i_mode = LINUX_S_IFREG | 0600;
-		inode.i_links_count = 1;
+		inode.i_links_बिलांग = 1;
 		inode.i_block[EXT2_DIND_BLOCK] = dindir_blk;
 		ext2fs_iblk_set(fs, &inode, 1);
 		memset(dindir_buf, 0, fs->blocksize);
@@ -192,7 +192,7 @@ errcode_t ext2fs_create_resize_inode(ext2_filsys fs)
 		}
 
 		while ((grp = ext2fs_list_backups(fs, &three, &five, &seven)) <
-		       fs->group_desc_count) {
+		       fs->group_desc_बिलांग) {
 			blk_t expect = gdt_blk + grp * sb->s_blocks_per_group;
 
 			if (!gdt_buf[last]) {

@@ -207,7 +207,7 @@ void ext2fs_sha256(const unsigned char *in, unsigned long in_size,
 
 #ifdef UNITTEST
 static const struct {
-	char *msg;
+	char *मेनसाहे;
 	unsigned char hash[32];
 } tests[] = {
 	{ "",
@@ -237,10 +237,10 @@ int main(int argc, char **argv)
 	unsigned char tmp[32];
 
 	for (i = 0; i < (int)(sizeof(tests) / sizeof(tests[0])); i++) {
-		unsigned char *msg = (unsigned char *) tests[i].msg;
-		int len = strlen(tests[i].msg);
+		unsigned char *मेनसाहे = (unsigned char *) tests[i].मेनसाहे;
+		int len = strlen(tests[i].मेनसाहे);
 
-		ext2fs_sha256(msg, len, tmp);
+		ext2fs_sha256(मेनसाहे, len, tmp);
 		printf("SHA256 test message %d: ", i);
 		if (memcmp(tmp, tests[i].hash, 32) != 0) {
 			printf("FAILED\n");

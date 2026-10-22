@@ -28,8 +28,8 @@
 #include "ext2_fs.h"
 #include "ext2fsP.h"
 
-#ifndef O_BINARY
-#define O_BINARY 0
+#ifndef O_दालावाहान
+#define O_दालावाहान 0
 #endif
 
 #if defined(__linux__)    &&	defined(EXT2_OS_LINUX)
@@ -67,8 +67,8 @@ static unsigned int calc_reserved_gdt_blocks(ext2_filsys fs)
 	/* We set it at 1024x the current filesystem size, or
 	 * the upper block count limit (2^32), whichever is lower.
 	 */
-	if (ext2fs_blocks_count(sb) < max_blocks / 1024)
-		max_blocks = ext2fs_blocks_count(sb) * 1024;
+	if (ext2fs_blocks_बिलांग(sb) < max_blocks / 1024)
+		max_blocks = ext2fs_blocks_बिलांग(sb) * 1024;
 	/*
 	 * ext2fs_div64_ceil() is unnecessary because max_blocks is
 	 * max _GDT_ blocks, which is limited to 32 bits.
@@ -109,7 +109,7 @@ errcode_t ext2fs_initialize(const char *name, int flags,
 	double		reserved_ratio;
 	char		*time_env;
 
-	if (!param || !ext2fs_blocks_count(param))
+	if (!param || !ext2fs_blocks_बिलांग(param))
 		return EXT2_ET_INVALID_ARGUMENT;
 
 	retval = ext2fs_get_mem(sizeof(struct struct_ext2_filsys), &fs);
@@ -121,7 +121,7 @@ errcode_t ext2fs_initialize(const char *name, int flags,
 	fs->flags = flags | EXT2_FLAG_RW;
 	fs->umask = 022;
 	fs->default_bitmap_type = EXT2FS_BMAP64_RBTREE;
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	fs->flags |= EXT2_FLAG_SWAP_BYTES;
 #endif
 
@@ -140,7 +140,7 @@ errcode_t ext2fs_initialize(const char *name, int flags,
 		io_flags |= IO_FLAG_EXCLUSIVE;
 	if (flags & EXT2_FLAG_DIRECT_IO)
 		io_flags |= IO_FLAG_DIRECT_IO;
-	io_flags |= O_BINARY;
+	io_flags |= O_दालावाहान;
 	retval = manager->open(name, io_flags, &fs->io);
 	if (retval)
 		goto cleanup;
@@ -179,7 +179,7 @@ errcode_t ext2fs_initialize(const char *name, int flags,
 		super->s_log_cluster_size = super->s_log_block_size;
 
 	set_field(s_first_data_block, super->s_log_cluster_size ? 0 : 1);
-	set_field(s_max_mnt_count, 0);
+	set_field(s_max_mnt_बिलांग, 0);
 	set_field(s_errors, EXT2_ERRORS_DEFAULT);
 	set_field(s_feature_compat, 0);
 	set_field(s_feature_incompat, 0);
@@ -269,10 +269,10 @@ errcode_t ext2fs_initialize(const char *name, int flags,
 		super->s_clusters_per_group = super->s_blocks_per_group;
 	}
 
-	ext2fs_blocks_count_set(super, ext2fs_blocks_count(param) &
+	ext2fs_blocks_बिलांग_set(super, ext2fs_blocks_बिलांग(param) &
 				~((blk64_t) EXT2FS_CLUSTER_MASK(fs)));
-	ext2fs_r_blocks_count_set(super, ext2fs_r_blocks_count(param));
-	if (ext2fs_r_blocks_count(super) >= ext2fs_blocks_count(param)) {
+	ext2fs_r_blocks_बिलांग_set(super, ext2fs_r_blocks_बिलांग(param));
+	if (ext2fs_r_blocks_बिलांग(super) >= ext2fs_blocks_बिलांग(param)) {
 		retval = EXT2_ET_INVALID_ARGUMENT;
 		goto cleanup;
 	}
@@ -284,17 +284,17 @@ errcode_t ext2fs_initialize(const char *name, int flags,
 	 * to bother with the rest.
 	 */
 	if (ext2fs_has_feature_journal_dev(super)) {
-		fs->group_desc_count = 0;
+		fs->group_desc_बिलांग = 0;
 		ext2fs_mark_super_dirty(fs);
 		*ret_fs = fs;
 		return 0;
 	}
 
 retry:
-	fs->group_desc_count = (dgrp_t) ext2fs_div64_ceil(
-		ext2fs_blocks_count(super) - super->s_first_data_block,
+	fs->group_desc_बिलांग = (dgrp_t) ext2fs_div64_ceil(
+		ext2fs_blocks_बिलांग(super) - super->s_first_data_block,
 		EXT2_BLOCKS_PER_GROUP(super));
-	if (fs->group_desc_count == 0) {
+	if (fs->group_desc_बिलांग == 0) {
 		retval = EXT2_ET_TOOSMALL;
 		goto cleanup;
 	}
@@ -303,16 +303,16 @@ retry:
 		  ext2fs_has_feature_64bit(super) ?
 		  EXT2_MIN_DESC_SIZE_64BIT : 0);
 
-	fs->desc_blocks = ext2fs_div_ceil(fs->group_desc_count,
+	fs->desc_blocks = ext2fs_div_ceil(fs->group_desc_बिलांग,
 					  EXT2_DESC_PER_BLOCK(super));
 
 	i = fs->blocksize >= 4096 ? 1 : 4096 / fs->blocksize;
 
 	if (ext2fs_has_feature_64bit(super) &&
-	    (ext2fs_blocks_count(super) / i) >= (1ULL << 32))
-		set_field(s_inodes_count, ~0U);
+	    (ext2fs_blocks_बिलांग(super) / i) >= (1ULL << 32))
+		set_field(s_inodes_बिलांग, ~0U);
 	else
-		set_field(s_inodes_count, ext2fs_blocks_count(super) / i);
+		set_field(s_inodes_बिलांग, ext2fs_blocks_बिलांग(super) / i);
 
 	/*
 	 * There should be at least as many inodes as the user
@@ -320,13 +320,13 @@ retry:
 	 * should be.  But make sure that we don't allocate more than
 	 * one bitmap's worth of inodes each group.
 	 */
-	ipg = ext2fs_div_ceil(super->s_inodes_count, fs->group_desc_count);
+	ipg = ext2fs_div_ceil(super->s_inodes_बिलांग, fs->group_desc_बिलांग);
 	if (ipg > fs->blocksize * 8) {
 		if (!bigalloc_flag && super->s_blocks_per_group >= 256) {
 			/* Try again with slightly different parameters */
 			super->s_blocks_per_group -= 8;
-			ext2fs_blocks_count_set(super,
-						ext2fs_blocks_count(param));
+			ext2fs_blocks_बिलांग_set(super,
+						ext2fs_blocks_बिलांग(param));
 			super->s_clusters_per_group = super->s_blocks_per_group;
 			goto retry;
 		} else {
@@ -369,22 +369,22 @@ ipg_retry:
 	/*
 	 * adjust inode count to reflect the adjusted inodes_per_group
 	 */
-	if ((__u64)super->s_inodes_per_group * fs->group_desc_count > ~0U) {
+	if ((__u64)super->s_inodes_per_group * fs->group_desc_बिलांग > ~0U) {
 		ipg--;
 		goto ipg_retry;
 	}
-	super->s_inodes_count = super->s_inodes_per_group *
-		fs->group_desc_count;
+	super->s_inodes_बिलांग = super->s_inodes_per_group *
+		fs->group_desc_बिलांग;
 	/*
 	 * Make sure we have at least EXT2_FIRST_INO + 1 inodes, so
 	 * that we have enough inodes for the filesystem(!)
 	 */
-	if (super->s_inodes_count < EXT2_FIRST_INODE(super)+1) {
+	if (super->s_inodes_बिलांग < EXT2_FIRST_INODE(super)+1) {
 		ipg += 8;
 		goto ipg_retry;
 	}
 
-	super->s_free_inodes_count = super->s_inodes_count;
+	super->s_free_inodes_बिलांग = super->s_inodes_बिलांग;
 
 	/*
 	 * check the number of reserved group descriptor table blocks
@@ -440,31 +440,31 @@ ipg_retry:
 		 * We have to do this manually since
 		 * super->s_backup_bgs hasn't been set up yet.
 		 */
-		if (fs->group_desc_count == 2)
+		if (fs->group_desc_बिलांग == 2)
 			has_bg = param->s_backup_bgs[0] != 0;
 		else
 			has_bg = param->s_backup_bgs[1] != 0;
 	} else
-		has_bg = ext2fs_bg_has_super(fs, fs->group_desc_count - 1);
+		has_bg = ext2fs_bg_has_super(fs, fs->group_desc_बिलांग - 1);
 	if (has_bg)
 		overhead += 1 + fs->desc_blocks + super->s_reserved_gdt_blocks;
-	rem = ((ext2fs_blocks_count(super) - super->s_first_data_block) %
+	rem = ((ext2fs_blocks_बिलांग(super) - super->s_first_data_block) %
 	       super->s_blocks_per_group);
-	if ((fs->group_desc_count == 1) && rem && (rem < overhead)) {
+	if ((fs->group_desc_बिलांग == 1) && rem && (rem < overhead)) {
 		retval = EXT2_ET_TOOSMALL;
 		goto cleanup;
 	}
 	if (rem && (rem < overhead+50)) {
-		ext2fs_blocks_count_set(super, ext2fs_blocks_count(super) -
+		ext2fs_blocks_बिलांग_set(super, ext2fs_blocks_बिलांग(super) -
 					rem);
 		/*
 		 * If blocks count is changed, we need to recalculate
 		 * reserved blocks count not to exceed 50%.
 		 */
-		reserved_ratio = 100.0 * ext2fs_r_blocks_count(param) /
-			ext2fs_blocks_count(param);
-		ext2fs_r_blocks_count_set(super, reserved_ratio *
-			ext2fs_blocks_count(super) / 100.0);
+		reserved_ratio = 100.0 * ext2fs_r_blocks_बिलांग(param) /
+			ext2fs_blocks_बिलांग(param);
+		ext2fs_r_blocks_बिलांग_set(super, reserved_ratio *
+			ext2fs_blocks_बिलांग(super) / 100.0);
 
 		goto retry;
 	}
@@ -477,10 +477,10 @@ ipg_retry:
 
 	/* Set up the locations of the backup superblocks */
 	if (ext2fs_has_feature_sparse_super2(super)) {
-		if (super->s_backup_bgs[0] >= fs->group_desc_count)
-			super->s_backup_bgs[0] = fs->group_desc_count - 1;
-		if (super->s_backup_bgs[1] >= fs->group_desc_count)
-			super->s_backup_bgs[1] = fs->group_desc_count - 1;
+		if (super->s_backup_bgs[0] >= fs->group_desc_बिलांग)
+			super->s_backup_bgs[0] = fs->group_desc_बिलांग - 1;
+		if (super->s_backup_bgs[1] >= fs->group_desc_बिलांग)
+			super->s_backup_bgs[1] = fs->group_desc_बिलांग - 1;
 		if (super->s_backup_bgs[0] == super->s_backup_bgs[1])
 			super->s_backup_bgs[1] = 0;
 		if (super->s_backup_bgs[0] > super->s_backup_bgs[1]) {
@@ -529,7 +529,7 @@ ipg_retry:
 	free_blocks = 0;
 	csum_flag = ext2fs_has_group_desc_csum(fs);
 	reserved_inos = super->s_first_ino;
-	for (i = 0; i < fs->group_desc_count; i++) {
+	for (i = 0; i < fs->group_desc_बिलांग; i++) {
 		blk_t grp_free_blocks;
 		ext2_ino_t inodes;
 
@@ -544,7 +544,7 @@ ipg_retry:
 		 * because the block bitmap needs to be padded.
 		 */
 		if (csum_flag) {
-			if (i != fs->group_desc_count - 1 && numblocks == 0)
+			if (i != fs->group_desc_बिलांग - 1 && numblocks == 0)
 				ext2fs_bg_flags_set(fs, i,
 						    EXT2_BG_BLOCK_UNINIT);
 			ext2fs_bg_flags_set(fs, i, EXT2_BG_INODE_UNINIT);
@@ -564,15 +564,15 @@ ipg_retry:
 		if (!fs->super->s_log_groups_per_flex)
 			numblocks += 2 + fs->inode_blocks_per_group;
 
-		grp_free_blocks = ext2fs_group_blocks_count(fs, i) - numblocks;
+		grp_free_blocks = ext2fs_group_blocks_बिलांग(fs, i) - numblocks;
 		free_blocks += grp_free_blocks;
-		ext2fs_bg_free_blocks_count_set(fs, i, grp_free_blocks);
-		ext2fs_bg_free_inodes_count_set(fs, i, fs->super->s_inodes_per_group);
-		ext2fs_bg_used_dirs_count_set(fs, i, 0);
+		ext2fs_bg_free_blocks_बिलांग_set(fs, i, grp_free_blocks);
+		ext2fs_bg_free_inodes_बिलांग_set(fs, i, fs->super->s_inodes_per_group);
+		ext2fs_bg_used_dirs_बिलांग_set(fs, i, 0);
 		ext2fs_group_desc_csum_set(fs, i);
 	}
 	free_blocks &= ~EXT2FS_CLUSTER_MASK(fs);
-	ext2fs_free_blocks_count_set(super, free_blocks);
+	ext2fs_free_blocks_बिलांग_set(super, free_blocks);
 
 	c = (char) 255;
 	if (((int) c) == -1) {
@@ -600,7 +600,7 @@ errcode_t ext2fs_calculate_summary_stats(ext2_filsys fs, int super_only)
 	blk64_t		blk;
 	ext2_ino_t	ino;
 	unsigned int	group = 0;
-	unsigned int	count = 0;
+	unsigned int	बिलांग = 0;
 	int		total_free = 0;
 	int		group_free = 0;
 	int		last_allocated = 0;
@@ -611,35 +611,35 @@ errcode_t ext2fs_calculate_summary_stats(ext2_filsys fs, int super_only)
 	 */
 	uninit = 1;
 	for (blk = fs->super->s_first_data_block;
-	     blk < ext2fs_blocks_count(fs->super); blk++) {
+	     blk < ext2fs_blocks_बिलांग(fs->super); blk++) {
 		if (!ext2fs_fast_test_block_bitmap2(fs->block_map, blk)) {
 			group_free++;
 			total_free++;
 		} else {
 			uninit = 0;
 		}
-		count++;
-		if ((count == fs->super->s_blocks_per_group) ||
-		    (blk == ext2fs_blocks_count(fs->super)-1)) {
-			ext2fs_bg_free_blocks_count_set(fs, group,
+		बिलांग++;
+		if ((बिलांग == fs->super->s_blocks_per_group) ||
+		    (blk == ext2fs_blocks_बिलांग(fs->super)-1)) {
+			ext2fs_bg_free_blocks_बिलांग_set(fs, group,
 							group_free);
 			if (!super_only) {
 				if (uninit && blk !=
-					ext2fs_blocks_count(fs->super) - 1)
+					ext2fs_blocks_बिलांग(fs->super) - 1)
 					ext2fs_bg_flags_set(fs, group,
 							EXT2_BG_BLOCK_UNINIT);
 				else
 					ext2fs_bg_flags_clear(fs, group,
 							EXT2_BG_BLOCK_UNINIT);
 			}
-			count = 0;
+			बिलांग = 0;
 			group_free = 0;
 			uninit = 1;
 			group++;
 		}
 	}
 	total_free = EXT2FS_C2B(fs, total_free);
-	ext2fs_free_blocks_count_set(fs->super, total_free);
+	ext2fs_free_blocks_बिलांग_set(fs->super, total_free);
 
 	/*
 	 * Next, calculate the inode statistics
@@ -647,20 +647,20 @@ errcode_t ext2fs_calculate_summary_stats(ext2_filsys fs, int super_only)
 	group_free = 0;
 	total_free = 0;
 	last_allocated = 0;
-	count = 0;
+	बिलांग = 0;
 	group = 0;
 
 	/* Protect loop from wrap-around if s_inodes_count maxed */
-	for (ino = 1; ino <= fs->super->s_inodes_count && ino > 0; ino++) {
+	for (ino = 1; ino <= fs->super->s_inodes_बिलांग && ino > 0; ino++) {
 		if (!ext2fs_test_inode_bitmap2(fs->inode_map, ino)) {
 			group_free++;
 			total_free++;
 		} else {
 			last_allocated = ino;
 		}
-		count++;
-		if ((count == fs->super->s_inodes_per_group) ||
-		    (ino == fs->super->s_inodes_count)) {
+		बिलांग++;
+		if ((बिलांग == fs->super->s_inodes_per_group) ||
+		    (ino == fs->super->s_inodes_बिलांग)) {
 			if (!super_only) {
 				if (last_allocated) {
 					ext2fs_bg_flags_clear(fs, group,
@@ -675,16 +675,16 @@ errcode_t ext2fs_calculate_summary_stats(ext2_filsys fs, int super_only)
 					ext2fs_bg_itable_unused_set(fs, group,
 									0);
 				}
-				ext2fs_bg_free_inodes_count_set(fs, group,
+				ext2fs_bg_free_inodes_बिलांग_set(fs, group,
 								group_free);
 			}
 			group++;
-			count = 0;
+			बिलांग = 0;
 			group_free = 0;
 			last_allocated = 0;
 		}
 	}
-	fs->super->s_free_inodes_count = total_free;
+	fs->super->s_free_inodes_बिलांग = total_free;
 	ext2fs_mark_super_dirty(fs);
 	return 0;
 }

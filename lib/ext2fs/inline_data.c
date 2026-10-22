@@ -65,7 +65,7 @@ static errcode_t ext2fs_inline_data_ea_get(struct ext2_inline_data *data)
 
 	retval = ext2fs_xattr_get(handle, "system.data",
 				  (void **)&data->ea_data, &data->ea_size);
-	if (retval == EXT2_ET_EA_KEY_NOT_FOUND) {
+	if (retval == EXT2_ET_EA_सुसि_NOT_FOUND) {
 		data->ea_size = 0;
 		data->ea_data = NULL;
 		retval = 0;
@@ -181,7 +181,7 @@ int ext2fs_inline_data_dir_iterate(ext2_filsys fs, ext2_ino_t ino,
 
 	ctx->buf = (char *)inode.i_block + EXT4_INLINE_DATA_DOTDOT_SIZE;
 	ctx->buflen = EXT4_MIN_INLINE_DATA_SIZE - EXT4_INLINE_DATA_DOTDOT_SIZE;
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	ctx->errcode = ext2fs_dirent_swab_in2(fs, ctx->buf, ctx->buflen, 0);
 	if (ctx->errcode) {
 		ret |= BLOCK_ABORT;
@@ -190,7 +190,7 @@ int ext2fs_inline_data_dir_iterate(ext2_filsys fs, ext2_ino_t ino,
 #endif
 	ret |= ext2fs_process_dir_block(fs, 0, blockcnt++, 0, 0, priv_data);
 	if (ret & BLOCK_INLINE_DATA_CHANGED) {
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 		ctx->errcode = ext2fs_dirent_swab_out2(fs, ctx->buf,
 						       ctx->buflen, 0);
 		if (ctx->errcode) {
@@ -218,7 +218,7 @@ int ext2fs_inline_data_dir_iterate(ext2_filsys fs, ext2_ino_t ino,
 
 	ctx->buf = data.ea_data;
 	ctx->buflen = data.ea_size;
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	ctx->errcode = ext2fs_dirent_swab_in2(fs, ctx->buf, ctx->buflen, 0);
 	if (ctx->errcode) {
 		ret |= BLOCK_ABORT;
@@ -228,7 +228,7 @@ int ext2fs_inline_data_dir_iterate(ext2_filsys fs, ext2_ino_t ino,
 
 	ret |= ext2fs_process_dir_block(fs, 0, blockcnt++, 0, 0, priv_data);
 	if (ret & BLOCK_INLINE_DATA_CHANGED) {
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 		ctx->errcode = ext2fs_dirent_swab_out2(fs, ctx->buf,
 						      ctx->buflen, 0);
 		if (ctx->errcode) {
@@ -354,7 +354,7 @@ ext2fs_inline_data_dir_expand(ext2_filsys fs, ext2_ino_t ino,
 	if (retval)
 		return retval;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	retval = ext2fs_dirent_swab_in2(fs, buf + EXT4_INLINE_DATA_DOTDOT_SIZE,
 					size, 0);
 	if (retval)
@@ -783,8 +783,8 @@ int main(int argc, char *argv[])
 	initialize_ext2_error_table();
 
 	memset(&param, 0, sizeof(param));
-	ext2fs_blocks_count_set(&param, 32768);
-	param.s_inodes_count = 100;
+	ext2fs_blocks_बिलांग_set(&param, 32768);
+	param.s_inodes_बिलांग = 100;
 
 	param.s_feature_incompat |= EXT4_FEATURE_INCOMPAT_INLINE_DATA;
 	param.s_rev_level = EXT2_DYNAMIC_REV;

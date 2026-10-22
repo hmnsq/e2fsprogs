@@ -115,7 +115,7 @@ errcode_t ext2fs_new_dir_inline_data(ext2_filsys fs,
 	if (retval)
 		goto errout;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	retval = ext2fs_dirent_swab_out2(fs, (char *)dir, rec_len, 0);
 	if (retval)
 		goto errout;

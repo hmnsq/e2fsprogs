@@ -34,7 +34,7 @@ extern "C" {
 
 /* flags to tdb_store() */
 #define TDB_REPLACE 1
-#define TDB_INSERT 2
+#define TDB_इसिंगित 2
 #define TDB_MODIFY 3
 
 /* flags for tdb_open() */
@@ -136,7 +136,7 @@ typedef struct tdb_context TDB_CONTEXT;
 
 typedef int (*tdb_traverse_func)(struct tdb_context *, TDB_DATA, TDB_DATA, void *);
 typedef void (*tdb_log_func)(struct tdb_context *, enum tdb_debug_level, const char *, ...) PRINTF_ATTRIBUTE(3, 4);
-typedef unsigned int (*tdb_hash_func)(TDB_DATA *key);
+typedef unsigned int (*tdb_hash_func)(TDB_DATA *सुसि);
 
 struct tdb_logging_context {
         tdb_log_func log_fn;
@@ -156,20 +156,20 @@ int tdb_reopen_all(int parent_longlived);
 void tdb_set_logging_function(struct tdb_context *tdb, const struct tdb_logging_context *log_ctx);
 enum TDB_ERROR tdb_error(struct tdb_context *tdb);
 const char *tdb_errorstr(struct tdb_context *tdb);
-TDB_DATA tdb_fetch(struct tdb_context *tdb, TDB_DATA key);
-int tdb_parse_record(struct tdb_context *tdb, TDB_DATA key,
-		     int (*parser)(TDB_DATA key, TDB_DATA data,
+TDB_DATA tdb_fetch(struct tdb_context *tdb, TDB_DATA सुसि);
+int tdb_parse_record(struct tdb_context *tdb, TDB_DATA सुसि,
+		     int (*parser)(TDB_DATA सुसि, TDB_DATA data,
 				   void *private_data),
 		     void *private_data);
-int tdb_delete(struct tdb_context *tdb, TDB_DATA key);
-int tdb_store(struct tdb_context *tdb, TDB_DATA key, TDB_DATA dbuf, int flag);
-int tdb_append(struct tdb_context *tdb, TDB_DATA key, TDB_DATA new_dbuf);
+int tdb_delete(struct tdb_context *tdb, TDB_DATA सुसि);
+int tdb_store(struct tdb_context *tdb, TDB_DATA सुसि, TDB_DATA dbuf, int flag);
+int tdb_append(struct tdb_context *tdb, TDB_DATA सुसि, TDB_DATA new_dbuf);
 int tdb_close(struct tdb_context *tdb);
 TDB_DATA tdb_firstkey(struct tdb_context *tdb);
-TDB_DATA tdb_nextkey(struct tdb_context *tdb, TDB_DATA key);
+TDB_DATA tdb_nextkey(struct tdb_context *tdb, TDB_DATA सुसि);
 int tdb_traverse(struct tdb_context *tdb, tdb_traverse_func fn, void *);
 int tdb_traverse_read(struct tdb_context *tdb, tdb_traverse_func fn, void *);
-int tdb_exists(struct tdb_context *tdb, TDB_DATA key);
+int tdb_exists(struct tdb_context *tdb, TDB_DATA सुसि);
 int tdb_lockall(struct tdb_context *tdb);
 int tdb_lockall_nonblock(struct tdb_context *tdb);
 int tdb_unlockall(struct tdb_context *tdb);
@@ -195,13 +195,13 @@ void tdb_increment_seqnum_nonblock(struct tdb_context *tdb);
 int tdb_flush(struct tdb_context *tdb);
 
 /* Low level locking functions: use with care */
-int tdb_chainlock(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_nonblock(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainunlock(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_read(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainunlock_read(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_mark(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_unmark(struct tdb_context *tdb, TDB_DATA key);
+int tdb_chainlock(struct tdb_context *tdb, TDB_DATA सुसि);
+int tdb_chainlock_nonblock(struct tdb_context *tdb, TDB_DATA सुसि);
+int tdb_chainunlock(struct tdb_context *tdb, TDB_DATA सुसि);
+int tdb_chainlock_read(struct tdb_context *tdb, TDB_DATA सुसि);
+int tdb_chainunlock_read(struct tdb_context *tdb, TDB_DATA सुसि);
+int tdb_chainlock_mark(struct tdb_context *tdb, TDB_DATA सुसि);
+int tdb_chainlock_unmark(struct tdb_context *tdb, TDB_DATA सुसि);
 
 /* Debug functions. Not used in production. */
 void tdb_dump_all(struct tdb_context *tdb);

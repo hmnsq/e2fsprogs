@@ -7,8 +7,8 @@
 #include "ext2_fs.h"
 #include "ext2fs.h"
 
-#ifndef O_BINARY
-#define O_BINARY 0
+#ifndef O_दालावाहान
+#define O_दालावाहान 0
 #endif
 
 #if !defined(ENABLE_LIBSPARSE)
@@ -41,7 +41,7 @@ struct sparse_map {
 	int			fd;
 	char			**blocks;
 	int			block_size;
-	uint64_t		blocks_count;
+	uint64_t		blocks_बिलांग;
 	char			*file;
 	struct sparse_file	*sparse_file;
 	io_channel		channel;
@@ -50,18 +50,18 @@ struct sparse_map {
 struct sparse_io_params {
 	int			fd;
 	char			*file;
-	uint64_t		blocks_count;
+	uint64_t		blocks_बिलांग;
 	unsigned int		block_size;
 };
 
 static errcode_t sparse_write_blk(io_channel channel, unsigned long block,
-				  int count, const void *buf);
+				  int बिलांग, const void *buf);
 
 static void free_sparse_blocks(struct sparse_map *sm)
 {
 	uint64_t i;
 
-	for (i = 0; i < sm->blocks_count; ++i)
+	for (i = 0; i < sm->blocks_बिलांग; ++i)
 		free(sm->blocks[i]);
 	free(sm->blocks);
 	sm->blocks = NULL;
@@ -101,9 +101,9 @@ static errcode_t io_manager_import_sparse(struct sparse_io_params *params,
 	}
 
 	sm->block_size = sparse_file_block_size(sparse_file);
-	sm->blocks_count = (sparse_file_len(sparse_file, 0, 0) - 1)
+	sm->blocks_बिलांग = (sparse_file_len(sparse_file, 0, 0) - 1)
 				/ sm->block_size + 1;
-	sm->blocks = calloc(sm->blocks_count, sizeof(char*));
+	sm->blocks = calloc(sm->blocks_बिलांग, sizeof(char*));
 	if (!sm->blocks) {
 		retval = -1;
 		goto err_alloc;
@@ -137,20 +137,20 @@ static errcode_t io_manager_configure(struct sparse_io_params *params,
 	io->private_data = sm;
 	retval = io_manager_import_sparse(params, sm, io);
 	if (retval) {
-		if (!params->block_size || !params->blocks_count) {
+		if (!params->block_size || !params->blocks_बिलांग) {
 			retval = EINVAL;
 			goto err_params;
 		}
 		sm->block_size = params->block_size;
-		sm->blocks_count = params->blocks_count;
-		sm->blocks = calloc(params->blocks_count, sizeof(void*));
+		sm->blocks_बिलांग = params->blocks_बिलांग;
+		sm->blocks = calloc(params->blocks_बिलांग, sizeof(void*));
 		if (!sm->blocks) {
 			retval = EXT2_ET_NO_MEMORY;
 			goto err_alloc;
 		}
 	}
 	io->block_size = sm->block_size;
-	img_size = (uint64_t)sm->block_size * sm->blocks_count;
+	img_size = (uint64_t)sm->block_size * sm->blocks_बिलांग;
 
 	if (flags & IO_FLAG_RW) {
 		sm->sparse_file = sparse_file_new(sm->block_size, img_size);
@@ -159,7 +159,7 @@ static errcode_t io_manager_configure(struct sparse_io_params *params,
 			goto err_alloc;
 		}
 		if (params->fd < 0) {
-			sm->fd = open(params->file, O_CREAT | O_RDWR | O_TRUNC | O_BINARY,
+			sm->fd = open(params->file, O_CREAT | O_RDWR | O_TRUNC | O_दालावाहान,
 				      0644);
 			if (sm->fd < 0) {
 				retval = errno;
@@ -209,7 +209,7 @@ static errcode_t read_sparse_argv(const char *name, bool is_fd,
 	int ret;
 	sparse_params->fd = -1;
 	sparse_params->block_size = 0;
-	sparse_params->blocks_count = 0;
+	sparse_params->blocks_बिलांग = 0;
 
 	sparse_params->file = malloc(strlen(name) + 1);
 	if (!sparse_params->file) {
@@ -219,11 +219,11 @@ static errcode_t read_sparse_argv(const char *name, bool is_fd,
 
 	if (is_fd) {
 		ret = sscanf(name, "(%d):%llu:%u", &sparse_params->fd,
-			     (unsigned long long *)&sparse_params->blocks_count,
+			     (unsigned long long *)&sparse_params->blocks_बिलांग,
 			     &sparse_params->block_size);
 	} else {
 		ret = sscanf(name, "(%[^)])%*[:]%llu%*[:]%u", sparse_params->file,
-			     (unsigned long long *)&sparse_params->blocks_count,
+			     (unsigned long long *)&sparse_params->blocks_बिलांग,
 			     &sparse_params->block_size);
 	}
 
@@ -269,21 +269,21 @@ static errcode_t sparsefd_open(const char *name, int flags, io_channel *channel)
 }
 
 static errcode_t sparse_merge_blocks(struct sparse_map *sm, uint64_t start,
-					uint64_t num)
+					uint64_t नुमेरो)
 {
 	char *buf;
 	uint64_t i;
 	unsigned int block_size = sm->block_size;
 	errcode_t retval = 0;
 
-	buf = calloc(num, block_size);
+	buf = calloc(नुमेरो, block_size);
 	if (!buf) {
 		fprintf(stderr, "failed to alloc %llu\n",
-			(unsigned long long)num * block_size);
+			(unsigned long long)नुमेरो * block_size);
 		return EXT2_ET_NO_MEMORY;
 	}
 
-	for (i = 0; i < num; i++) {
+	for (i = 0; i < नुमेरो; i++) {
 		memcpy(buf + i * block_size, sm->blocks[start + i] , block_size);
 		free(sm->blocks[start + i]);
 		sm->blocks[start + i] = NULL;
@@ -293,7 +293,7 @@ static errcode_t sparse_merge_blocks(struct sparse_map *sm, uint64_t start,
 	sm->blocks[start] = buf;
 
 	retval = sparse_file_add_data(sm->sparse_file, sm->blocks[start],
-					block_size * num, start);
+					block_size * नुमेरो, start);
 
 	return retval;
 }
@@ -306,7 +306,7 @@ static errcode_t sparse_close_channel(io_channel channel)
 
 	if (sm->sparse_file) {
 		int64_t chunk_start = (sm->blocks[0] == NULL) ? -1 : 0;
-		for (i = 0; i < sm->blocks_count; ++i) {
+		for (i = 0; i < sm->blocks_बिलांग; ++i) {
 			if (!sm->blocks[i] && chunk_start != -1) {
 				retval = sparse_merge_blocks(sm, chunk_start, i - chunk_start);
 				chunk_start = -1;
@@ -318,7 +318,7 @@ static errcode_t sparse_close_channel(io_channel channel)
 		}
 		if (chunk_start != -1) {
 			retval = sparse_merge_blocks(sm, chunk_start,
-							sm->blocks_count - chunk_start);
+							sm->blocks_बिलांग - chunk_start);
 			if (retval)
 				goto ret;
 		}
@@ -376,7 +376,7 @@ static errcode_t check_block_size(io_channel channel, struct sparse_map *sm)
 }
 
 static errcode_t sparse_read_blk64(io_channel channel, blk64_t block,
-				   int count, void *buf)
+				   int बिलांग, void *buf)
 {
 	int i;
 	char *out = buf;
@@ -386,15 +386,15 @@ static errcode_t sparse_read_blk64(io_channel channel, blk64_t block,
 	if (check_block_size(channel, sm))
 		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
 
-	if (count < 0) { //partial read
-		count = -count;
+	if (बिलांग < 0) { //partial read
+		बिलांग = -बिलांग;
 		cur_block = block_to_sparse_block(block, &offset, channel, sm);
 		if (sm->blocks[cur_block])
-			memcpy(out, (sm->blocks[cur_block]) + offset, count);
+			memcpy(out, (sm->blocks[cur_block]) + offset, बिलांग);
 		else
-			memset(out, 0, count);
+			memset(out, 0, बिलांग);
 	} else {
-		for (i = 0; i < count; ++i) {
+		for (i = 0; i < बिलांग; ++i) {
 			cur_block = block_to_sparse_block(block + i, &offset,
 						    channel, sm);
 			if (sm->blocks[cur_block])
@@ -410,13 +410,13 @@ static errcode_t sparse_read_blk64(io_channel channel, blk64_t block,
 }
 
 static errcode_t sparse_read_blk(io_channel channel, unsigned long block,
-				 int count, void *buf)
+				 int बिलांग, void *buf)
 {
-	return sparse_read_blk64(channel, block, count, buf);
+	return sparse_read_blk64(channel, block, बिलांग, buf);
 }
 
 static errcode_t sparse_write_blk64(io_channel channel, blk64_t block,
-				    int count, const void *buf)
+				    int बिलांग, const void *buf)
 {
 	int i;
 	blk64_t offset = 0, cur_block;
@@ -426,8 +426,8 @@ static errcode_t sparse_write_blk64(io_channel channel, blk64_t block,
 	if (check_block_size(channel, sm))
 		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
 
-	if (count < 0) { //partial write
-		count = -count;
+	if (बिलांग < 0) { //partial write
+		बिलांग = -बिलांग;
 		cur_block = block_to_sparse_block(block, &offset, channel,
 						  sm);
 		if (!sm->blocks[cur_block]) {
@@ -435,10 +435,10 @@ static errcode_t sparse_write_blk64(io_channel channel, blk64_t block,
 			if (!sm->blocks[cur_block])
 				return EXT2_ET_NO_MEMORY;
 		}
-		memcpy(sm->blocks[cur_block] + offset, in, count);
+		memcpy(sm->blocks[cur_block] + offset, in, बिलांग);
 	} else {
-		for (i = 0; i < count; ++i) {
-			if (block + i >= sm->blocks_count)
+		for (i = 0; i < बिलांग; ++i) {
+			if (block + i >= sm->blocks_बिलांग)
 				return 0;
 			cur_block = block_to_sparse_block(block + i, &offset,
 						    channel, sm);
@@ -457,13 +457,13 @@ static errcode_t sparse_write_blk64(io_channel channel, blk64_t block,
 }
 
 static errcode_t sparse_write_blk(io_channel channel, unsigned long block,
-				  int count, const void *buf)
+				  int बिलांग, const void *buf)
 {
-	return sparse_write_blk64(channel, block, count, buf);
+	return sparse_write_blk64(channel, block, बिलांग, buf);
 }
 
 static errcode_t sparse_discard(io_channel channel __attribute__((unused)),
-				blk64_t blk, unsigned long long count)
+				blk64_t blk, unsigned long long बिलांग)
 {
 	blk64_t cur_block, offset;
 	struct sparse_map *sm = channel->private_data;
@@ -471,8 +471,8 @@ static errcode_t sparse_discard(io_channel channel __attribute__((unused)),
 	if (check_block_size(channel, sm))
 		return EXT2_ET_UNEXPECTED_BLOCK_SIZE;
 
-	for (unsigned long long i = 0; i < count; ++i) {
-		if (blk + i >= sm->blocks_count)
+	for (unsigned long long i = 0; i < बिलांग; ++i) {
+		if (blk + i >= sm->blocks_बिलांग)
 			return 0;
 		cur_block = block_to_sparse_block(blk + i, &offset, channel,
 						  sm);
@@ -485,9 +485,9 @@ static errcode_t sparse_discard(io_channel channel __attribute__((unused)),
 }
 
 static errcode_t sparse_zeroout(io_channel channel, blk64_t blk,
-				unsigned long long count)
+				unsigned long long बिलांग)
 {
-	return sparse_discard(channel, blk, count);
+	return sparse_discard(channel, blk, बिलांग);
 }
 
 static errcode_t sparse_flush(io_channel channel __attribute__((unused)))
@@ -505,7 +505,7 @@ static errcode_t sparse_set_option(io_channel channel __attribute__((unused)),
 static errcode_t sparse_cache_readahead(
 			io_channel channel __attribute__((unused)),
 			blk64_t blk __attribute__((unused)),
-			unsigned long long count __attribute__((unused)))
+			unsigned long long बिलांग __attribute__((unused)))
 {
 	return 0;
 }

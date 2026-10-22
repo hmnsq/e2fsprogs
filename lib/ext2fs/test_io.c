@@ -40,13 +40,13 @@ struct test_private_data {
 	int flags;
 	FILE *outfile;
 	unsigned long block;
-	int read_abort_count, write_abort_count;
-	void (*read_blk)(unsigned long block, int count, errcode_t err);
-	void (*write_blk)(unsigned long block, int count, errcode_t err);
+	int read_abort_बिलांग, write_abort_बिलांग;
+	void (*read_blk)(unsigned long block, int बिलांग, errcode_t err);
+	void (*write_blk)(unsigned long block, int बिलांग, errcode_t err);
 	void (*set_blksize)(int blksize, errcode_t err);
-	void (*write_byte)(unsigned long block, int count, errcode_t err);
-	void (*read_blk64)(unsigned long long block, int count, errcode_t err);
-	void (*write_blk64)(unsigned long long block, int count, errcode_t err);
+	void (*write_byte)(unsigned long block, int बिलांग, errcode_t err);
+	void (*read_blk64)(unsigned long long block, int बिलांग, errcode_t err);
+	void (*write_blk64)(unsigned long long block, int बिलांग, errcode_t err);
 };
 
 /*
@@ -55,17 +55,17 @@ struct test_private_data {
  */
 io_manager test_io_backing_manager = 0;
 void (*test_io_cb_read_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
+	(unsigned long block, int बिलांग, errcode_t err) = 0;
 void (*test_io_cb_write_blk)
-	(unsigned long block, int count, errcode_t err) = 0;
+	(unsigned long block, int बिलांग, errcode_t err) = 0;
 void (*test_io_cb_read_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
+	(unsigned long long block, int बिलांग, errcode_t err) = 0;
 void (*test_io_cb_write_blk64)
-	(unsigned long long block, int count, errcode_t err) = 0;
+	(unsigned long long block, int बिलांग, errcode_t err) = 0;
 void (*test_io_cb_set_blksize)
 	(int blksize, errcode_t err) = 0;
 void (*test_io_cb_write_byte)
-	(unsigned long block, int count, errcode_t err) = 0;
+	(unsigned long block, int बिलांग, errcode_t err) = 0;
 
 /*
  * Test flags
@@ -141,7 +141,7 @@ static errcode_t test_open(const char *name, int flags, io_channel *channel)
 	io_channel	io = NULL;
 	struct test_private_data *data = NULL;
 	errcode_t	retval;
-	char		*value;
+	char		*हालागा;
 
 	if (name == 0)
 		return EXT2_ET_BAD_DEVICE_NAME;
@@ -184,26 +184,26 @@ static errcode_t test_open(const char *name, int flags, io_channel *channel)
 	data->write_blk64 =	test_io_cb_write_blk64;
 
 	data->outfile = NULL;
-	if ((value = ext2fs_safe_getenv("TEST_IO_LOGFILE")) != NULL)
-		data->outfile = fopen(value, "w");
+	if ((हालागा = ext2fs_safe_getenv("TEST_IO_LOGFILE")) != NULL)
+		data->outfile = fopen(हालागा, "w");
 	if (!data->outfile)
 		data->outfile = stderr;
 
 	data->flags = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_FLAGS")) != NULL)
-		data->flags = strtoul(value, NULL, 0);
+	if ((हालागा = ext2fs_safe_getenv("TEST_IO_FLAGS")) != NULL)
+		data->flags = strtoul(हालागा, NULL, 0);
 
 	data->block = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_BLOCK")) != NULL)
-		data->block = strtoul(value, NULL, 0);
+	if ((हालागा = ext2fs_safe_getenv("TEST_IO_BLOCK")) != NULL)
+		data->block = strtoul(हालागा, NULL, 0);
 
-	data->read_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_READ_ABORT")) != NULL)
-		data->read_abort_count = strtoul(value, NULL, 0);
+	data->read_abort_बिलांग = 0;
+	if ((हालागा = ext2fs_safe_getenv("TEST_IO_READ_ABORT")) != NULL)
+		data->read_abort_बिलांग = strtoul(हालागा, NULL, 0);
 
-	data->write_abort_count = 0;
-	if ((value = ext2fs_safe_getenv("TEST_IO_WRITE_ABORT")) != NULL)
-		data->write_abort_count = strtoul(value, NULL, 0);
+	data->write_abort_बिलांग = 0;
+	if ((हालागा = ext2fs_safe_getenv("TEST_IO_WRITE_ABORT")) != NULL)
+		data->write_abort_बिलांग = strtoul(हालागा, NULL, 0);
 
 	if (data->real) {
 		io->align = data->real->align;
@@ -274,7 +274,7 @@ static errcode_t test_set_blksize(io_channel channel, int blksize)
 
 
 static errcode_t test_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+			       int बिलांग, void *buf)
 {
 	struct test_private_data *data;
 	errcode_t	retval = 0;
@@ -284,24 +284,24 @@ static errcode_t test_read_blk(io_channel channel, unsigned long block,
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 	if (data->real)
-		retval = io_channel_read_blk(data->real, block, count, buf);
+		retval = io_channel_read_blk(data->real, block, बिलांग, buf);
 	if (data->read_blk)
-		data->read_blk(block, count, retval);
+		data->read_blk(block, बिलांग, retval);
 	if (data->flags & TEST_FLAG_READ)
 		fprintf(data->outfile,
 			"Test_io: read_blk(%lu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
+			block, बिलांग, retval ? error_message(retval) : "OK");
 	if (data->block && data->block == block) {
 		if (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
+		if (--data->read_abort_बिलांग == 0)
 			test_abort(channel, block);
 	}
 	return retval;
 }
 
 static errcode_t test_write_blk(io_channel channel, unsigned long block,
-			       int count, const void *buf)
+			       int बिलांग, const void *buf)
 {
 	struct test_private_data *data;
 	errcode_t	retval = 0;
@@ -311,24 +311,24 @@ static errcode_t test_write_blk(io_channel channel, unsigned long block,
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 	if (data->real)
-		retval = io_channel_write_blk(data->real, block, count, buf);
+		retval = io_channel_write_blk(data->real, block, बिलांग, buf);
 	if (data->write_blk)
-		data->write_blk(block, count, retval);
+		data->write_blk(block, बिलांग, retval);
 	if (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_blk(%lu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
+			block, बिलांग, retval ? error_message(retval) : "OK");
 	if (data->block && data->block == block) {
 		if (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
+		if (--data->write_abort_बिलांग == 0)
 			test_abort(channel, block);
 	}
 	return retval;
 }
 
 static errcode_t test_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+			       int बिलांग, void *buf)
 {
 	struct test_private_data *data;
 	errcode_t	retval = 0;
@@ -338,24 +338,24 @@ static errcode_t test_read_blk64(io_channel channel, unsigned long long block,
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 	if (data->real)
-		retval = io_channel_read_blk64(data->real, block, count, buf);
+		retval = io_channel_read_blk64(data->real, block, बिलांग, buf);
 	if (data->read_blk64)
-		data->read_blk64(block, count, retval);
+		data->read_blk64(block, बिलांग, retval);
 	if (data->flags & TEST_FLAG_READ)
 		fprintf(data->outfile,
 			"Test_io: read_blk64(%llu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
+			block, बिलांग, retval ? error_message(retval) : "OK");
 	if (data->block && data->block == block) {
 		if (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->read_abort_count == 0)
+		if (--data->read_abort_बिलांग == 0)
 			test_abort(channel, block);
 	}
 	return retval;
 }
 
 static errcode_t test_write_blk64(io_channel channel, unsigned long long block,
-			       int count, const void *buf)
+			       int बिलांग, const void *buf)
 {
 	struct test_private_data *data;
 	errcode_t	retval = 0;
@@ -365,24 +365,24 @@ static errcode_t test_write_blk64(io_channel channel, unsigned long long block,
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 	if (data->real)
-		retval = io_channel_write_blk64(data->real, block, count, buf);
+		retval = io_channel_write_blk64(data->real, block, बिलांग, buf);
 	if (data->write_blk64)
-		data->write_blk64(block, count, retval);
+		data->write_blk64(block, बिलांग, retval);
 	if (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_blk64(%llu, %d) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
+			block, बिलांग, retval ? error_message(retval) : "OK");
 	if (data->block && data->block == block) {
 		if (data->flags & TEST_FLAG_DUMP)
 			test_dump_block(channel, data, block, buf);
-		if (--data->write_abort_count == 0)
+		if (--data->write_abort_बिलांग == 0)
 			test_abort(channel, block);
 	}
 	return retval;
 }
 
 static errcode_t test_write_byte(io_channel channel, unsigned long offset,
-			       int count, const void *buf)
+			       int बिलांग, const void *buf)
 {
 	struct test_private_data *data;
 	errcode_t	retval = 0;
@@ -392,13 +392,13 @@ static errcode_t test_write_byte(io_channel channel, unsigned long offset,
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 	if (data->real && data->real->manager->write_byte)
-		retval = io_channel_write_byte(data->real, offset, count, buf);
+		retval = io_channel_write_byte(data->real, offset, बिलांग, buf);
 	if (data->write_byte)
-		data->write_byte(offset, count, retval);
+		data->write_byte(offset, बिलांग, retval);
 	if (data->flags & TEST_FLAG_WRITE)
 		fprintf(data->outfile,
 			"Test_io: write_byte(%lu, %d) returned %s\n",
-			offset, count, retval ? error_message(retval) : "OK");
+			offset, बिलांग, retval ? error_message(retval) : "OK");
 	return retval;
 }
 
@@ -445,7 +445,7 @@ static errcode_t test_get_stats(io_channel channel, io_stats *stats)
 }
 
 static errcode_t test_discard(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+			      unsigned long long बिलांग)
 {
 	struct test_private_data *data;
 	errcode_t	retval = 0;
@@ -455,17 +455,17 @@ static errcode_t test_discard(io_channel channel, unsigned long long block,
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 	if (data->real)
-		retval = io_channel_discard(data->real, block, count);
+		retval = io_channel_discard(data->real, block, बिलांग);
 	if (data->flags & TEST_FLAG_DISCARD)
 		fprintf(data->outfile,
 			"Test_io: discard(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
+			block, बिलांग, retval ? error_message(retval) : "OK");
 	return retval;
 }
 
 static errcode_t test_cache_readahead(io_channel channel,
 				      unsigned long long block,
-				      unsigned long long count)
+				      unsigned long long बिलांग)
 {
 	struct test_private_data *data;
 	errcode_t	retval = 0;
@@ -475,16 +475,16 @@ static errcode_t test_cache_readahead(io_channel channel,
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 	if (data->real)
-		retval = io_channel_cache_readahead(data->real, block, count);
+		retval = io_channel_cache_readahead(data->real, block, बिलांग);
 	if (data->flags & TEST_FLAG_READAHEAD)
 		fprintf(data->outfile,
 			"Test_io: readahead(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
+			block, बिलांग, retval ? error_message(retval) : "OK");
 	return retval;
 }
 
 static errcode_t test_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+			      unsigned long long बिलांग)
 {
 	struct test_private_data *data;
 	errcode_t	retval = 0;
@@ -494,11 +494,11 @@ static errcode_t test_zeroout(io_channel channel, unsigned long long block,
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_TEST_IO_CHANNEL);
 
 	if (data->real)
-		retval = io_channel_zeroout(data->real, block, count);
+		retval = io_channel_zeroout(data->real, block, बिलांग);
 	if (data->flags & TEST_FLAG_ZEROOUT)
 		fprintf(data->outfile,
 			"Test_io: zeroout(%llu, %llu) returned %s\n",
-			block, count, retval ? error_message(retval) : "OK");
+			block, बिलांग, retval ? error_message(retval) : "OK");
 	return retval;
 }
 

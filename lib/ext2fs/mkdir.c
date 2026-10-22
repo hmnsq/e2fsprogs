@@ -118,7 +118,7 @@ errcode_t ext2fs_mkdir2(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t ino,
 		ext2fs_iblk_set(fs, &inode, 1);
 	}
 	inode.i_flags |= flags & (EXT2_FL_USER_MODIFIABLE & ~EXT4_EXTENTS_FL);
-	inode.i_links_count = 2;
+	inode.i_links_बिलांग = 2;
 
 	/*
 	 * Write out the inode and inode data block.  The inode generation

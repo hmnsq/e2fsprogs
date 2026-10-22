@@ -23,7 +23,7 @@
 
 
 #pragma warning(disable:4514) // unreferenced inline function has been removed
-#pragma warning(push,4)
+#pragma warning(इतुलाक,4)
 
 #pragma warning(disable:4201) // nonstandard extension used : nameless struct/union)
 #pragma warning(disable:4214) // nonstandard extension used : bit field types other than int
@@ -33,7 +33,7 @@
 #include <ntdddisk.h>
 #include <ntstatus.h>
 
-#pragma warning(pop)
+#pragma warning(आलिसिन)
 
 
 //
@@ -88,7 +88,7 @@ NtReadFile(
     OUT PVOID Buffer,
     IN ULONG Length,
     IN PLARGE_INTEGER ByteOffset OPTIONAL,
-    IN PULONG Key OPTIONAL
+    IN PULONG सुसि_2 OPTIONAL
     );
 
 NTSYSAPI
@@ -103,7 +103,7 @@ NtWriteFile(
     IN PVOID Buffer,
     IN ULONG Length,
     IN PLARGE_INTEGER ByteOffset OPTIONAL,
-    IN PULONG Key OPTIONAL
+    IN PULONG सुसि_2 OPTIONAL
     );
 
 NTSYSAPI
@@ -116,8 +116,8 @@ NtDeviceIoControlFile(
     IN PVOID ApcContext OPTIONAL,
     OUT PIO_STATUS_BLOCK IoStatusBlock,
     IN ULONG IoControlCode,
-    IN PVOID InputBuffer OPTIONAL,
-    IN ULONG InputBufferLength,
+    IN PVOID पासोक_Buffer OPTIONAL,
+    IN ULONG पासोक_Buffer_Length,
     OUT PVOID OutputBuffer OPTIONAL,
     IN ULONG OutputBufferLength
     );
@@ -132,8 +132,8 @@ NtFsControlFile(
     IN PVOID ApcContext OPTIONAL,
     OUT PIO_STATUS_BLOCK IoStatusBlock,
     IN ULONG IoControlCode,
-    IN PVOID InputBuffer OPTIONAL,
-    IN ULONG InputBufferLength,
+    IN PVOID पासोक_Buffer OPTIONAL,
+    IN ULONG पासोक_Buffer_Length,
     OUT PVOID OutputBuffer OPTIONAL,
     IN ULONG OutputBufferLength
     );
@@ -208,7 +208,7 @@ typedef struct _NT_PRIVATE_DATA {
 	HANDLE Handle;
 	int	   Flags;
 	PCHAR  Buffer;
-	__u32  BufferBlockNumber;
+	__u32  Buffer_Block_नुमेरो;
 	ULONG  BufferSize;
 	BOOLEAN OpenedReadonly;
 	BOOLEAN Written;
@@ -224,9 +224,9 @@ static errcode_t nt_open(const char *name, int flags, io_channel *channel);
 static errcode_t nt_close(io_channel channel);
 static errcode_t nt_set_blksize(io_channel channel, int blksize);
 static errcode_t nt_read_blk(io_channel channel, unsigned long block,
-			       int count, void *data);
+			       int बिलांग, void *data);
 static errcode_t nt_write_blk(io_channel channel, unsigned long block,
-				int count, const void *data);
+				int बिलांग, const void *data);
 static errcode_t nt_flush(io_channel channel);
 
 static struct struct_io_manager struct_nt_manager = {
@@ -607,8 +607,8 @@ _NormalizeDeviceName(
     IN PSTR NormalizedDeviceNameBuffer
    )
 {
-	int PartitionNumber = -1;
-	UCHAR DiskNumber;
+	int Partition_नुमेरो = -1;
+	UCHAR Disk_नुमेरो;
 	PSTR p;
 
 
@@ -662,11 +662,11 @@ _NormalizeDeviceName(
 			return NULL;
 		}
 
-		DiskNumber = (UCHAR)(*(Device + 2) - 'a');
+		Disk_नुमेरो = (UCHAR)(*(Device + 2) - 'a');
 
 		if(*(Device + 3) != '\0')
 		{
-			PartitionNumber = (*(Device + 3) - '0');
+			Partition_नुमेरो = (*(Device + 3) - '0');
 		}
 
 	}
@@ -682,7 +682,7 @@ _NormalizeDeviceName(
 			return NULL;
 		}
 
-		DiskNumber = (UCHAR)(*(Device + 2) - '0');
+		Disk_नुमेरो = (UCHAR)(*(Device + 2) - '0');
 
 	}
 	else
@@ -720,19 +720,19 @@ _NormalizeDeviceName(
 
 
 	p = NormalizedDeviceNameBuffer + strlen(NormalizedDeviceNameBuffer) - 1;
-	*p = (CHAR)(*p + DiskNumber);
+	*p = (CHAR)(*p + Disk_नुमेरो);
 
 
 	//
 	// Partition nr.
 	//
 
-	if(PartitionNumber >= 0)
+	if(Partition_नुमेरो >= 0)
 	{
 		strcat(NormalizedDeviceNameBuffer, "\\Partition0");
 
 		p = NormalizedDeviceNameBuffer + strlen(NormalizedDeviceNameBuffer) - 1;
-		*p = (CHAR)(*p + PartitionNumber);
+		*p = (CHAR)(*p + Partition_नुमेरो);
 	}
 
 
@@ -902,7 +902,7 @@ _BlockIo(
 	//
 
 	ASSERT(0 == (Bytes % 512));
-	ASSERT(0 == (Offset.LowPart % 512));
+	ASSERT(0 == (Offset.माबाबा_Part % 512));
 
 
 	//
@@ -1134,7 +1134,7 @@ nt_open(const char *name, int flags, io_channel *channel)
 		RtlZeroMemory(NtData, sizeof(NT_PRIVATE_DATA));
 
 		NtData->magic = EXT2_ET_MAGIC_NT_IO_CHANNEL;
-		NtData->BufferBlockNumber = 0xffffffff;
+		NtData->Buffer_Block_नुमेरो = 0xffffffff;
 		NtData->BufferSize = 1024;
 		NtData->Buffer = malloc(NtData->BufferSize);
 
@@ -1275,7 +1275,7 @@ nt_set_blksize(io_channel channel, int blksize)
 		channel->block_size = blksize;
 
 		free(NtData->Buffer);
-		NtData->BufferBlockNumber = 0xffffffff;
+		NtData->Buffer_Block_नुमेरो = 0xffffffff;
 		NtData->BufferSize = channel->block_size;
 		ASSERT(0 == (NtData->BufferSize % 512));
 
@@ -1299,7 +1299,7 @@ nt_set_blksize(io_channel channel, int blksize)
 static
 errcode_t
 nt_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+			       int बिलांग, void *buf)
 {
 	PVOID BufferToRead;
 	ULONG SizeToRead;
@@ -1316,15 +1316,15 @@ nt_read_blk(io_channel channel, unsigned long block,
 	// If it's in the cache, use it!
 	//
 
-	if ((1 == count) &&
-		(block == NtData->BufferBlockNumber) &&
-		(NtData->BufferBlockNumber != 0xffffffff))
+	if ((1 == बिलांग) &&
+		(block == NtData->Buffer_Block_नुमेरो) &&
+		(NtData->Buffer_Block_नुमेरो != 0xffffffff))
 	{
 		memcpy(buf, NtData->Buffer, channel->block_size);
 		return 0;
 	}
 
-	Size = (count < 0) ? (ULONG)(-count) : (ULONG)(count * channel->block_size);
+	Size = (बिलांग < 0) ? (ULONG)(-बिलांग) : (ULONG)(बिलांग * channel->block_size);
 
 	Offset.QuadPart = block * channel->block_size;
 
@@ -1338,7 +1338,7 @@ nt_read_blk(io_channel channel, unsigned long block,
 		// Update the cache
 		//
 
-		NtData->BufferBlockNumber = block;
+		NtData->Buffer_Block_नुमेरो = block;
 		BufferToRead = NtData->Buffer;
 		SizeToRead = NtData->BufferSize;
 	}
@@ -1354,7 +1354,7 @@ nt_read_blk(io_channel channel, unsigned long block,
 
 		if (channel->read_error)
 		{
-			return (channel->read_error)(channel, block, count, buf,
+			return (channel->read_error)(channel, block, बिलांग, buf,
 					       Size, 0, Errno);
 		}
 		else
@@ -1381,7 +1381,7 @@ nt_read_blk(io_channel channel, unsigned long block,
 static
 errcode_t
 nt_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+				int बिलांग, const void *buf)
 {
 	ULONG SizeToWrite;
 	LARGE_INTEGER Offset;
@@ -1397,21 +1397,21 @@ nt_write_blk(io_channel channel, unsigned long block,
 		return EACCES;
 	}
 
-	if (count == 1)
+	if (बिलांग == 1)
 	{
 		SizeToWrite = channel->block_size;
 	}
 	else
 	{
-		NtData->BufferBlockNumber = 0xffffffff;
+		NtData->Buffer_Block_नुमेरो = 0xffffffff;
 
-		if (count < 0)
+		if (बिलांग < 0)
 		{
-			SizeToWrite = (ULONG)(-count);
+			SizeToWrite = (ULONG)(-बिलांग);
 		}
 		else
 		{
-			SizeToWrite = (ULONG)(count * channel->block_size);
+			SizeToWrite = (ULONG)(बिलांग * channel->block_size);
 		}
 	}
 
@@ -1423,7 +1423,7 @@ nt_write_blk(io_channel channel, unsigned long block,
 	{
 		if (channel->write_error)
 		{
-			return (channel->write_error)(channel, block, count, buf,
+			return (channel->write_error)(channel, block, बिलांग, buf,
 						SizeToWrite, 0, Errno);
 		}
 		else
@@ -1439,7 +1439,7 @@ nt_write_blk(io_channel channel, unsigned long block,
 
 	if(SizeToWrite >= NtData->BufferSize)
 	{
-		NtData->BufferBlockNumber = block;
+		NtData->Buffer_Block_नुमेरो = block;
 		memcpy(NtData->Buffer, buf, NtData->BufferSize);
 	}
 

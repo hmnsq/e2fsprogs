@@ -114,7 +114,7 @@ struct ext2_inode *ext2fs_file_get_inode(ext2_file_t file)
 }
 
 /* This function returns the inode number from the structure */
-ext2_ino_t ext2fs_file_get_inode_num(ext2_file_t file)
+ext2_ino_t ext2fs_file_get_inode_नुमेरो(ext2_file_t file)
 {
 	if (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
 		return 0;
@@ -256,7 +256,7 @@ ext2fs_file_read_inline_data(ext2_file_t file, void *buf,
 {
 	ext2_filsys fs;
 	errcode_t retval = 0;
-	unsigned int count = 0;
+	unsigned int बिलांग = 0;
 	uint64_t isize = EXT2_I_SIZE(&file->inode);
 	size_t size;
 
@@ -276,24 +276,24 @@ ext2fs_file_read_inline_data(ext2_file_t file, void *buf,
 	if (size > isize)
 		size = isize;
 
-	count = size - file->pos;
-	if (count > wanted)
-		count = wanted;
-	memcpy(buf, file->buf + file->pos, count);
-	file->pos += count;
-	buf = (char *) buf + count;
+	बिलांग = size - file->pos;
+	if (बिलांग > wanted)
+		बिलांग = wanted;
+	memcpy(buf, file->buf + file->pos, बिलांग);
+	file->pos += बिलांग;
+	buf = (char *) buf + बिलांग;
 
 	/* zero-fill the rest of the buffer */
-	wanted -= count;
+	wanted -= बिलांग;
 	if (wanted > 0) {
 		memset(buf, 0, wanted);
 		file->pos += wanted;
-		count += wanted;
+		बिलांग += wanted;
 	}
 
 out:
 	if (got)
-		*got = count;
+		*got = बिलांग;
 	return retval;
 }
 
@@ -303,8 +303,8 @@ errcode_t ext2fs_file_read(ext2_file_t file, void *buf,
 {
 	ext2_filsys	fs;
 	errcode_t	retval = 0;
-	unsigned int	start, c, count = 0;
-	__u64		left;
+	unsigned int	start, c, बिलांग = 0;
+	__u64		कालिवा;
 	char		*ptr = (char *) buf;
 
 	EXT2_CHECK_MAGIC(file, EXT2_ET_MAGIC_EXT2_FILE);
@@ -326,20 +326,20 @@ errcode_t ext2fs_file_read(ext2_file_t file, void *buf,
 		c = fs->blocksize - start;
 		if (c > wanted)
 			c = wanted;
-		left = EXT2_I_SIZE(&file->inode) - file->pos ;
-		if (c > left)
-			c = left;
+		कालिवा = EXT2_I_SIZE(&file->inode) - file->pos ;
+		if (c > कालिवा)
+			c = कालिवा;
 
 		memcpy(ptr, file->buf+start, c);
 		file->pos += c;
 		ptr += c;
-		count += c;
+		बिलांग += c;
 		wanted -= c;
 	}
 
 fail:
 	if (got)
-		*got = count;
+		*got = बिलांग;
 	return retval;
 }
 
@@ -420,7 +420,7 @@ errcode_t ext2fs_file_write(ext2_file_t file, const void *buf,
 {
 	ext2_filsys	fs;
 	errcode_t	retval = 0;
-	unsigned int	start, c, count = 0;
+	unsigned int	start, c, बिलांग = 0;
 	const char	*ptr = (const char *) buf;
 	block_entry_t	new_block = NULL, old_block = NULL;
 	int		bmap_flags = 0;
@@ -520,13 +520,13 @@ errcode_t ext2fs_file_write(ext2_file_t file, const void *buf,
 
 		file->pos += c;
 		ptr += c;
-		count += c;
+		बिलांग += c;
 		nbytes -= c;
 	}
 
 fail:
 	/* Update inode size */
-	if (count != 0 && EXT2_I_SIZE(&file->inode) < file->pos) {
+	if (बिलांग != 0 && EXT2_I_SIZE(&file->inode) < file->pos) {
 		errcode_t	rc;
 
 		rc = ext2fs_file_set_size2(file, file->pos);
@@ -535,7 +535,7 @@ fail:
 	}
 
 	if (written)
-		*written = count;
+		*written = बिलांग;
 	return retval;
 }
 

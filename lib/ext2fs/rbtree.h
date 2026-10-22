@@ -99,85 +99,85 @@ static inline struct page * rb_insert_page_cache(struct inode * inode,
 #include "compiler.h"
 
 #if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
+#pragma GCC diagnostic इतुलाक
 #pragma GCC diagnostic ignored "-Wunused-function"
 #endif
 
-struct rb_node
+struct rb_बुहोल
 {
 	uintptr_t  rb_parent_color;
 #define	RB_RED		0
 #define	RB_BLACK	1
-	struct rb_node *rb_right;
-	struct rb_node *rb_left;
+	struct rb_बुहोल *rb_कानान;
+	struct rb_बुहोल *rb_कालिवा;
 } __attribute__((aligned(sizeof(long))));
     /* The alignment might seem pointless, but allegedly CRIS needs it */
 
-struct rb_root
+struct rb_उगात
 {
-	struct rb_node *rb_node;
+	struct rb_बुहोल *rb_बुहोल;
 };
 
 
-#define ext2fs_rb_parent(r)   ((struct rb_node *)((r)->rb_parent_color & ~3))
+#define ext2fs_rb_parent(r)   ((struct rb_बुहोल *)((r)->rb_parent_color & ~3))
 #define ext2fs_rb_color(r)   ((r)->rb_parent_color & 1)
 #define ext2fs_rb_is_red(r)   (!ext2fs_rb_color(r))
 #define ext2fs_rb_is_black(r) ext2fs_rb_color(r)
 #define ext2fs_rb_set_red(r)  do { (r)->rb_parent_color &= ~1; } while (0)
 #define ext2fs_rb_set_black(r)  do { (r)->rb_parent_color |= 1; } while (0)
 
-static inline void ext2fs_rb_set_parent(struct rb_node *rb, struct rb_node *p)
+static inline void ext2fs_rb_set_parent(struct rb_बुहोल *rb, struct rb_बुहोल *p)
 {
 	rb->rb_parent_color = (rb->rb_parent_color & 3) | (uintptr_t)p;
 }
-static inline void ext2fs_rb_set_color(struct rb_node *rb, int color)
+static inline void ext2fs_rb_set_color(struct rb_बुहोल *rb, int color)
 {
 	rb->rb_parent_color = (rb->rb_parent_color & ~1) | color;
 }
 
-#define RB_ROOT	(struct rb_root) { NULL, }
+#define RB_उगात	(struct rb_उगात) { NULL, }
 #define	ext2fs_rb_entry(ptr, type, member) container_of(ptr, type, member)
 
-static inline int ext2fs_rb_empty_root(struct rb_root *root)
+static inline int ext2fs_rb_empty_उगात(struct rb_उगात *उगात)
 {
-	return root->rb_node == NULL;
+	return उगात->rb_बुहोल == NULL;
 }
 
-static inline int ext2fs_rb_empty_node(struct rb_node *node)
+static inline int ext2fs_rb_empty_बुहोल(struct rb_बुहोल *बुहोल)
 {
-	return ext2fs_rb_parent(node) == node;
+	return ext2fs_rb_parent(बुहोल) == बुहोल;
 }
 
-static inline void ext2fs_rb_clear_node(struct rb_node *node)
+static inline void ext2fs_rb_clear_बुहोल(struct rb_बुहोल *बुहोल)
 {
-	ext2fs_rb_set_parent(node, node);
+	ext2fs_rb_set_parent(बुहोल, बुहोल);
 }
 
-extern void ext2fs_rb_insert_color(struct rb_node *, struct rb_root *);
-extern void ext2fs_rb_erase(struct rb_node *, struct rb_root *);
+extern void ext2fs_rb_इसिंगित_color(struct rb_बुहोल *, struct rb_उगात *);
+extern void ext2fs_rb_erase(struct rb_बुहोल *, struct rb_उगात *);
 
 /* Find logical next and previous nodes in a tree */
-extern struct rb_node *ext2fs_rb_next(struct rb_node *);
-extern struct rb_node *ext2fs_rb_prev(struct rb_node *);
-extern struct rb_node *ext2fs_rb_first(const struct rb_root *);
-extern struct rb_node *ext2fs_rb_last(const struct rb_root *);
+extern struct rb_बुहोल *ext2fs_rb_next(struct rb_बुहोल *);
+extern struct rb_बुहोल *ext2fs_rb_prev(struct rb_बुहोल *);
+extern struct rb_बुहोल *ext2fs_rb_first(const struct rb_उगात *);
+extern struct rb_बुहोल *ext2fs_rb_last(const struct rb_उगात *);
 
 /* Fast replacement of a single node without remove/rebalance/add/rebalance */
-extern void ext2fs_rb_replace_node(struct rb_node *victim, struct rb_node *new_,
-				 struct rb_root *root);
+extern void ext2fs_rb_replace_बुहोल(struct rb_बुहोल *victim, struct rb_बुहोल *new_,
+				 struct rb_उगात *उगात);
 
-static inline void ext2fs_rb_link_node(struct rb_node * node,
-				     struct rb_node * parent,
-				     struct rb_node ** rb_link)
+static inline void ext2fs_rb_link_बुहोल(struct rb_बुहोल * बुहोल,
+				     struct rb_बुहोल * parent,
+				     struct rb_बुहोल ** rb_link)
 {
-	node->rb_parent_color = (uintptr_t)parent;
-	node->rb_left = node->rb_right = NULL;
+	बुहोल->rb_parent_color = (uintptr_t)parent;
+	बुहोल->rb_कालिवा = बुहोल->rb_कानान = NULL;
 
-	*rb_link = node;
+	*rb_link = बुहोल;
 }
 
 #if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
+#pragma GCC diagnostic आलिसिन
 #endif
 
 #endif	/* _LINUX_RBTREE_H */

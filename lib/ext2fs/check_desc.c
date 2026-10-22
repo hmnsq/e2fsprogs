@@ -36,7 +36,7 @@ errcode_t ext2fs_check_desc(ext2_filsys fs)
 	errcode_t retval;
 	dgrp_t i;
 	blk64_t first_block = fs->super->s_first_data_block;
-	blk64_t last_block = ext2fs_blocks_count(fs->super)-1;
+	blk64_t last_block = ext2fs_blocks_बिलांग(fs->super)-1;
 	blk64_t blk, b;
 	unsigned int j;
 
@@ -49,10 +49,10 @@ errcode_t ext2fs_check_desc(ext2_filsys fs)
 	if (retval)
 		return retval;
 
-	for (i = 0; i < fs->group_desc_count; i++)
+	for (i = 0; i < fs->group_desc_बिलांग; i++)
 		ext2fs_reserve_super_and_bgd(fs, i, bmap);
 
-	for (i = 0; i < fs->group_desc_count; i++) {
+	for (i = 0; i < fs->group_desc_बिलांग; i++) {
 		if (!ext2fs_has_feature_flex_bg(fs->super)) {
 			first_block = ext2fs_group_first_block2(fs, i);
 			last_block = ext2fs_group_last_block2(fs, i);

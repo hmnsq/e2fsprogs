@@ -10,7 +10,7 @@
  * %End-Header%
  */
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 #define ext2fs_cpu_to_le64(x) ((__force __le64)ext2fs_swab64((__u64)(x)))
 #define ext2fs_le64_to_cpu(x) ext2fs_swab64((__force __u64)(__le64)(x))
 #define ext2fs_cpu_to_le32(x) ((__force __le32)ext2fs_swab32((__u32)(x)))
@@ -93,22 +93,22 @@ extern blk_t ext2fs_get_block_bitmap_end(ext2fs_block_bitmap bitmap);
 extern ext2_ino_t ext2fs_get_inode_bitmap_end(ext2fs_inode_bitmap bitmap);
 
 extern void ext2fs_fast_mark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-						blk_t block, int num);
+						blk_t block, int नुमेरो);
 extern void ext2fs_fast_unmark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-						  blk_t block, int num);
+						  blk_t block, int नुमेरो);
 extern int ext2fs_fast_test_block_bitmap_range(ext2fs_block_bitmap bitmap,
-					       blk_t block, int num);
+					       blk_t block, int नुमेरो);
 #endif
 
 /* These functions routines moved to gen_bitmap.c */
 extern void ext2fs_mark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-					   blk_t block, int num);
+					   blk_t block, int नुमेरो);
 extern void ext2fs_unmark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-					     blk_t block, int num);
+					     blk_t block, int नुमेरो);
 extern int ext2fs_test_block_bitmap_range(ext2fs_block_bitmap bitmap,
-					  blk_t block, int num);
+					  blk_t block, int नुमेरो);
 extern int ext2fs_test_inode_bitmap_range(ext2fs_inode_bitmap bitmap,
-					  ext2_ino_t inode, int num);
+					  ext2_ino_t inode, int नुमेरो);
 extern int ext2fs_mark_generic_bitmap(ext2fs_generic_bitmap bitmap,
 					 __u32 bitno);
 extern int ext2fs_unmark_generic_bitmap(ext2fs_generic_bitmap bitmap,
@@ -116,7 +116,7 @@ extern int ext2fs_unmark_generic_bitmap(ext2fs_generic_bitmap bitmap,
 extern int ext2fs_test_generic_bitmap(ext2fs_generic_bitmap bitmap,
 				      blk_t bitno);
 extern int ext2fs_test_block_bitmap_range(ext2fs_block_bitmap bitmap,
-					  blk_t block, int num);
+					  blk_t block, int नुमेरो);
 extern void ext2fs_set_bitmap_padding(ext2fs_generic_bitmap map);
 extern __u32 ext2fs_get_generic_bitmap_start(ext2fs_generic_bitmap bitmap);
 extern __u32 ext2fs_get_generic_bitmap_end(ext2fs_generic_bitmap bitmap);
@@ -174,13 +174,13 @@ extern ext2_ino_t ext2fs_get_inode_bitmap_end2(ext2fs_inode_bitmap bitmap);
 
 extern int ext2fs_fast_test_block_bitmap_range2(ext2fs_block_bitmap bitmap,
 						blk64_t block,
-						unsigned int num);
+						unsigned int नुमेरो);
 extern void ext2fs_fast_mark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
 						 blk64_t block,
-						 unsigned int num);
+						 unsigned int नुमेरो);
 extern void ext2fs_fast_unmark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
 						   blk64_t block,
-						   unsigned int num);
+						   unsigned int नुमेरो);
 #endif
 
 /* These routines moved to gen_bitmap64.c */
@@ -196,15 +196,15 @@ extern int ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
 extern int ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    blk64_t bitno);
 extern int ext2fs_test_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-					   blk64_t block, unsigned int num);
+					   blk64_t block, unsigned int नुमेरो);
 extern __u64 ext2fs_get_generic_bmap_start(ext2fs_generic_bitmap bitmap);
 extern __u64 ext2fs_get_generic_bmap_end(ext2fs_generic_bitmap bitmap);
 extern int ext2fs_test_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-					   blk64_t block, unsigned int num);
+					   blk64_t block, unsigned int नुमेरो);
 extern void ext2fs_mark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-					    blk64_t block, unsigned int num);
+					    blk64_t block, unsigned int नुमेरो);
 extern void ext2fs_unmark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
-					      blk64_t block, unsigned int num);
+					      blk64_t block, unsigned int नुमेरो);
 extern errcode_t ext2fs_find_first_zero_generic_bmap(ext2fs_generic_bitmap bitmap,
 						     __u64 start, __u64 end,
 						     __u64 *out);
@@ -395,21 +395,21 @@ _INLINE_ ext2_ino_t ext2fs_get_inode_bitmap_end(ext2fs_inode_bitmap bitmap)
 }
 
 _INLINE_ int ext2fs_fast_test_block_bitmap_range(ext2fs_block_bitmap bitmap,
-						 blk_t block, int num)
+						 blk_t block, int नुमेरो)
 {
-	return ext2fs_test_block_bitmap_range(bitmap, block, num);
+	return ext2fs_test_block_bitmap_range(bitmap, block, नुमेरो);
 }
 
 _INLINE_ void ext2fs_fast_mark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-						  blk_t block, int num)
+						  blk_t block, int नुमेरो)
 {
-	ext2fs_mark_block_bitmap_range(bitmap, block, num);
+	ext2fs_mark_block_bitmap_range(bitmap, block, नुमेरो);
 }
 
 _INLINE_ void ext2fs_fast_unmark_block_bitmap_range(ext2fs_block_bitmap bitmap,
-						    blk_t block, int num)
+						    blk_t block, int नुमेरो)
 {
-	ext2fs_unmark_block_bitmap_range(bitmap, block, num);
+	ext2fs_unmark_block_bitmap_range(bitmap, block, नुमेरो);
 }
 
 /* 64-bit versions */
@@ -575,23 +575,23 @@ _INLINE_ ext2_ino_t ext2fs_get_inode_bitmap_end2(ext2fs_inode_bitmap bitmap)
 
 _INLINE_ int ext2fs_fast_test_block_bitmap_range2(ext2fs_block_bitmap bitmap,
 						  blk64_t block,
-						  unsigned int num)
+						  unsigned int नुमेरो)
 {
-	return ext2fs_test_block_bitmap_range2(bitmap, block, num);
+	return ext2fs_test_block_bitmap_range2(bitmap, block, नुमेरो);
 }
 
 _INLINE_ void ext2fs_fast_mark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
 						   blk64_t block,
-						   unsigned int num)
+						   unsigned int नुमेरो)
 {
-	ext2fs_mark_block_bitmap_range2(bitmap, block, num);
+	ext2fs_mark_block_bitmap_range2(bitmap, block, नुमेरो);
 }
 
 _INLINE_ void ext2fs_fast_unmark_block_bitmap_range2(ext2fs_block_bitmap bitmap,
 						     blk64_t block,
-						     unsigned int num)
+						     unsigned int नुमेरो)
 {
-	ext2fs_unmark_block_bitmap_range2(bitmap, block, num);
+	ext2fs_unmark_block_bitmap_range2(bitmap, block, नुमेरो);
 }
 
 #undef _INLINE_

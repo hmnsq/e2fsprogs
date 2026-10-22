@@ -65,7 +65,7 @@ extern void * __jbd_kmalloc (char *where, size_t size, int flags, int retry);
  * Internal structures used by the logging mechanism:
  */
 
-#define JBD2_MAGIC_NUMBER 0xc03b3998U /* The first 4 bytes of /dev/random! */
+#define JBD2_MAGIC_नुमेरो 0xc03b3998U /* The first 4 bytes of /dev/random! */
 
 /*
  * On-disk structures
@@ -140,7 +140,7 @@ typedef struct journal_block_tag3_s
 {
 	__be32		t_blocknr;	/* The on-disk block number */
 	__be32		t_flags;	/* See below */
-	__be32		t_blocknr_high; /* most-significant high 32bits. */
+	__be32		t_blocknr_माताअस; /* most-significant high 32bits. */
 	__be32		t_checksum;	/* crc32c(uuid+seq+block) */
 } journal_block_tag3_t;
 
@@ -149,7 +149,7 @@ typedef struct journal_block_tag_s
 	__be32		t_blocknr;	/* The on-disk block number */
 	__be16		t_checksum;	/* truncated crc32c(uuid+seq+block) */
 	__be16		t_flags;	/* See below */
-	__be32		t_blocknr_high; /* most-significant high 32bits. */
+	__be32		t_blocknr_माताअस; /* most-significant high 32bits. */
 } journal_block_tag_t;
 
 /* Tail of descriptor or revoke block, for checksumming */
@@ -164,7 +164,7 @@ struct jbd2_journal_block_tail {
 typedef struct journal_revoke_header_s
 {
 	journal_header_t r_header;
-	__be32		 r_count;	/* Count of bytes used in the block */
+	__be32		 r_बिलांग;	/* Count of bytes used in the block */
 } jbd2_journal_revoke_header_t;
 
 /* Definitions for the journal tag flags word: */
@@ -221,7 +221,7 @@ typedef struct journal_superblock_s
 	__u8	s_checksum_type;	/* checksum type */
 	__u8	s_padding2[3];
 /* 0x0054 */
-	__be32	s_num_fc_blks;		/* Number of fast commit blocks */
+	__be32	s_नुमेरो_fc_blks;		/* Number of fast commit blocks */
 /* 0x0058 */
 	__be32	s_padding[41];
 	__be32	s_checksum;		/* crc32c(superblock) */
@@ -264,7 +264,7 @@ typedef struct journal_superblock_s
 #ifdef NO_INLINE_FUNCS
 extern size_t journal_tag_bytes(journal_t *journal);
 extern int jbd2_journal_has_csum_v2or3(journal_t *journal);
-extern int jbd2_journal_get_num_fc_blks(journal_superblock_t *jsb);
+extern int jbd2_journal_get_नुमेरो_fc_blks(journal_superblock_t *jsb);
 extern int tid_gt(tid_t x, tid_t y) EXT2FS_ATTR((unused));
 extern int tid_geq(tid_t x, tid_t y) EXT2FS_ATTR((unused));
 #endif
@@ -409,11 +409,11 @@ _INLINE_ int jbd2_journal_has_csum_v2or3(journal_t *journal)
 	return 0;
 }
 
-_INLINE_ int jbd2_journal_get_num_fc_blks(journal_superblock_t *jsb)
+_INLINE_ int jbd2_journal_get_नुमेरो_fc_blks(journal_superblock_t *jsb)
 {
-	int num_fc_blocks = be32_to_cpu(jsb->s_num_fc_blks);
+	int नुमेरो_fc_blocks = be32_to_cpu(jsb->s_नुमेरो_fc_blks);
 
-	return num_fc_blocks ? num_fc_blocks : JBD2_DEFAULT_FAST_COMMIT_BLOCKS;
+	return नुमेरो_fc_blocks ? नुमेरो_fc_blocks : JBD2_DEFAULT_FAST_COMMIT_BLOCKS;
 }
 
 /* Comparison functions for transaction IDs: perform comparisons using

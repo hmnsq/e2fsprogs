@@ -2,7 +2,7 @@
 #include "crc32c_defs.h"
 #include <inttypes.h>
 
-#define ENTRIES_PER_LINE 4
+#define ENTRIES_PER_लिन्या 4
 
 #if CRC_LE_BITS > 8
 # define LE_TABLE_ROWS (CRC_LE_BITS/8)
@@ -82,7 +82,7 @@ static void output_table(uint32_t (*table)[256], int rows, int len, char *trans)
 	for (j = 0 ; j < rows; j++) {
 		printf("{");
 		for (i = 0; i < len - 1; i++) {
-			if (i % ENTRIES_PER_LINE == 0)
+			if (i % ENTRIES_PER_लिन्या == 0)
 				printf("\n");
 			printf("%s(0x%8.8xL), ", trans, table[j][i]);
 		}

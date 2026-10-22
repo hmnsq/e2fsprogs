@@ -222,7 +222,7 @@ static errcode_t unix_get_stats(io_channel channel, io_stats *stats)
 static errcode_t raw_read_blk(io_channel channel,
 			      struct unix_private_data *data,
 			      unsigned long long block,
-			      int count, void *bufv)
+			      int बिलांग, void *bufv)
 {
 	errcode_t	retval;
 	ssize_t		size;
@@ -233,7 +233,7 @@ static errcode_t raw_read_blk(io_channel channel,
 	unsigned long long aligned_blk;
 	int		align_size, offset;
 
-	size = (count < 0) ? -count : (ext2_loff_t) count * channel->block_size;
+	size = (बिलांग < 0) ? -बिलांग : (ext2_loff_t) बिलांग * channel->block_size;
 	mutex_lock(data, STATS_MTX);
 	data->io_stats.bytes_read += size;
 	mutex_unlock(data, STATS_MTX);
@@ -343,7 +343,7 @@ error_unlock:
 	if (actual >= 0 && actual < size)
 		memset((char *) buf+actual, 0, size-actual);
 	if (channel->read_error)
-		retval = (channel->read_error)(channel, block, count, buf,
+		retval = (channel->read_error)(channel, block, बिलांग, buf,
 					       size, actual, retval);
 	return retval;
 }
@@ -354,7 +354,7 @@ error_unlock:
 static errcode_t raw_write_blk(io_channel channel,
 			       struct unix_private_data *data,
 			       unsigned long long block,
-			       int count, const void *bufv,
+			       int बिलांग, const void *bufv,
 			       int flags)
 {
 	ssize_t		size;
@@ -365,13 +365,13 @@ static errcode_t raw_write_blk(io_channel channel,
 	unsigned long long aligned_blk;
 	int		align_size, offset;
 
-	if (count == 1)
+	if (बिलांग == 1)
 		size = channel->block_size;
 	else {
-		if (count < 0)
-			size = -count;
+		if (बिलांग < 0)
+			size = -बिलांग;
 		else
-			size = (ext2_loff_t) count * channel->block_size;
+			size = (ext2_loff_t) बिलांग * channel->block_size;
 	}
 	mutex_lock(data, STATS_MTX);
 	data->io_stats.bytes_written += size;
@@ -503,7 +503,7 @@ error_unlock:
 		mutex_unlock(data, BOUNCE_MTX);
 error_out:
 	if (((flags & RAW_WRITE_NO_HANDLER) == 0) && channel->write_error)
-		retval = (channel->write_error)(channel, block, count, buf,
+		retval = (channel->write_error)(channel, block, बिलांग, buf,
 						size, actual, retval);
 	return retval;
 }
@@ -563,10 +563,10 @@ static void free_cache(struct unix_private_data *data)
 #ifndef NO_IO_CACHE
 
 /*  2^63 + 2^61 - 2^57 + 2^54 - 2^51 - 2^18 + 1 */
-#define GOLDEN_RATIO_PRIME	0x9e37fffffffc0001UL
-#ifndef CACHE_LINE_SIZE
+#define GOLDEN_RATIO_पांगुनाहिन	0x9e37fffffffc0001UL
+#ifndef CACHE_लिन्या_SIZE
 /* if the system didn't tell us, guess something reasonable */
-#define CACHE_LINE_SIZE		64
+#define CACHE_लिन्या_SIZE		64
 #endif
 
 /* buffer cache hashing function, crudely stolen from xfsprogs */
@@ -580,8 +580,8 @@ cache_hash(struct unix_private_data *data, blk64_t blkno)
 	if (data->cache_size <= DEFAULT_CACHE_SIZE)
 		return 0;
 
-	tmp = hashval ^ (GOLDEN_RATIO_PRIME + hashval) / CACHE_LINE_SIZE;
-	tmp = tmp ^ ((tmp ^ GOLDEN_RATIO_PRIME) >> data->cache_hash_shift);
+	tmp = hashval ^ (GOLDEN_RATIO_पांगुनाहिन + hashval) / CACHE_लिन्या_SIZE;
+	tmp = tmp ^ ((tmp ^ GOLDEN_RATIO_पांगुनाहिन) >> data->cache_hash_shift);
 	return tmp % data->cache_size;
 }
 
@@ -992,7 +992,7 @@ static errcode_t unix_open_channel(const char *name, int fd,
 
 	memset(data, 0, sizeof(struct unix_private_data));
 	data->magic = EXT2_ET_MAGIC_UNIX_IO_CHANNEL;
-	data->io_stats.num_fields = 4;
+	data->io_stats.नुमेरो_fields = 4;
 	data->flags = flags;
 	data->dev = fd;
 
@@ -1265,7 +1265,7 @@ static errcode_t unix_set_blksize(io_channel channel, int blksize)
 }
 
 static errcode_t unix_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+			       int बिलांग, void *buf)
 {
 	struct unix_private_data *data;
 	struct unix_cache *cache;
@@ -1278,30 +1278,30 @@ static errcode_t unix_read_blk64(io_channel channel, unsigned long long block,
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
 #ifdef NO_IO_CACHE
-	return raw_read_blk(channel, data, block, count, buf);
+	return raw_read_blk(channel, data, block, बिलांग, buf);
 #else
 	if (data->flags & IO_FLAG_NOCACHE)
-		return raw_read_blk(channel, data, block, count, buf);
+		return raw_read_blk(channel, data, block, बिलांग, buf);
 	/*
 	 * If we're doing an odd-sized read or a very large read,
 	 * flush out the cache and then do a direct read.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
+	if (बिलांग < 0 || बिलांग > WRITE_DIRECT_SIZE) {
 		if ((retval = flush_cached_blocks(channel, data, 0)))
 			return retval;
-		return raw_read_blk(channel, data, block, count, buf);
+		return raw_read_blk(channel, data, block, बिलांग, buf);
 	}
 
 	cp = buf;
 	mutex_lock(data, CACHE_MTX);
-	while (count > 0) {
+	while (बिलांग > 0) {
 		/* If it's in the cache, use it! */
 		if ((cache = find_cached_block(data, block, NULL))) {
 #ifdef DEBUG
 			printf("Using cached block %lu\n", block);
 #endif
 			memcpy(cp, cache->buf, channel->block_size);
-			count--;
+			बिलांग--;
 			block++;
 			cp += channel->block_size;
 			continue;
@@ -1311,7 +1311,7 @@ static errcode_t unix_read_blk64(io_channel channel, unsigned long long block,
 		 * Find the number of uncached blocks so we can do a
 		 * single read request
 		 */
-		for (i=1; i < count; i++)
+		for (i=1; i < बिलांग; i++)
 			if (find_cached_block(data, block+i, NULL))
 				break;
 #ifdef DEBUG
@@ -1331,7 +1331,7 @@ static errcode_t unix_read_blk64(io_channel channel, unsigned long long block,
 					goto call_write_handler;
 				memcpy(cache->buf, cp, channel->block_size);
 			}
-			count--;
+			बिलांग--;
 			block++;
 			cp += channel->block_size;
 		}
@@ -1364,13 +1364,13 @@ call_write_handler:
 }
 
 static errcode_t unix_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+			       int बिलांग, void *buf)
 {
-	return unix_read_blk64(channel, block, count, buf);
+	return unix_read_blk64(channel, block, बिलांग, buf);
 }
 
 static errcode_t unix_write_blk64(io_channel channel, unsigned long long block,
-				int count, const void *buf)
+				int बिलांग, const void *buf)
 {
 	struct unix_private_data *data;
 	struct unix_cache *cache, *reuse;
@@ -1383,19 +1383,19 @@ static errcode_t unix_write_blk64(io_channel channel, unsigned long long block,
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
 #ifdef NO_IO_CACHE
-	return raw_write_blk(channel, data, block, count, buf, 0);
+	return raw_write_blk(channel, data, block, बिलांग, buf, 0);
 #else
 	if (data->flags & IO_FLAG_NOCACHE)
-		return raw_write_blk(channel, data, block, count, buf, 0);
+		return raw_write_blk(channel, data, block, बिलांग, buf, 0);
 	/*
 	 * If we're doing an odd-sized write or a very large write,
 	 * flush out the cache completely and then do a direct write.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
+	if (बिलांग < 0 || बिलांग > WRITE_DIRECT_SIZE) {
 		if ((retval = flush_cached_blocks(channel, data,
 						  FLUSH_INVALIDATE)))
 			return retval;
-		return raw_write_blk(channel, data, block, count, buf, 0);
+		return raw_write_blk(channel, data, block, बिलांग, buf, 0);
 	}
 
 	/*
@@ -1405,11 +1405,11 @@ static errcode_t unix_write_blk64(io_channel channel, unsigned long long block,
 	 */
 	writethrough = channel->flags & CHANNEL_FLAGS_WRITETHROUGH;
 	if (writethrough)
-		retval = raw_write_blk(channel, data, block, count, buf, 0);
+		retval = raw_write_blk(channel, data, block, बिलांग, buf, 0);
 
 	cp = buf;
 	mutex_lock(data, CACHE_MTX);
-	while (count > 0) {
+	while (बिलांग > 0) {
 		cache = find_cached_block(data, block, &reuse);
 		if (!cache) {
 			errcode_t err;
@@ -1422,7 +1422,7 @@ static errcode_t unix_write_blk64(io_channel channel, unsigned long long block,
 		if (cache->buf != cp)
 			memcpy(cache->buf, cp, channel->block_size);
 		cache->dirty = !writethrough;
-		count--;
+		बिलांग--;
 		block++;
 		cp += channel->block_size;
 	}
@@ -1455,7 +1455,7 @@ call_write_handler:
 
 static errcode_t unix_cache_readahead(io_channel channel,
 				      unsigned long long block,
-				      unsigned long long count)
+				      unsigned long long बिलांग)
 {
 #ifdef POSIX_FADV_WILLNEED
 	struct unix_private_data *data;
@@ -1464,7 +1464,7 @@ static errcode_t unix_cache_readahead(io_channel channel,
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 	return posix_fadvise(data->dev,
 			     (ext2_loff_t)block * channel->block_size + data->offset,
-			     (ext2_loff_t)count * channel->block_size,
+			     (ext2_loff_t)बिलांग * channel->block_size,
 			     POSIX_FADV_WILLNEED);
 #else
 	return EXT2_ET_OP_NOT_SUPPORTED;
@@ -1472,9 +1472,9 @@ static errcode_t unix_cache_readahead(io_channel channel,
 }
 
 static errcode_t unix_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+				int बिलांग, const void *buf)
 {
-	return unix_write_blk64(channel, block, count, buf);
+	return unix_write_blk64(channel, block, बिलांग, buf);
 }
 
 static errcode_t unix_write_byte(io_channel channel, unsigned long offset,
@@ -1602,7 +1602,7 @@ static errcode_t unix_set_option(io_channel channel, const char *option,
 #endif
 
 static errcode_t unix_discard(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+			      unsigned long long बिलांग)
 {
 	struct unix_private_data *data;
 	int		ret = EOPNOTSUPP;
@@ -1619,7 +1619,7 @@ static errcode_t unix_discard(io_channel channel, unsigned long long block,
 		__u64 range[2];
 
 		range[0] = (__u64)(block) * channel->block_size + data->offset;
-		range[1] = (__u64)(count) * channel->block_size;
+		range[1] = (__u64)(बिलांग) * channel->block_size;
 
 		ret = ioctl(data->dev, BLKDISCARD, &range);
 #else
@@ -1634,7 +1634,7 @@ static errcode_t unix_discard(io_channel channel, unsigned long long block,
 		ret = fallocate(data->dev,
 				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
 				(off_t)(block) * channel->block_size + data->offset,
-				(off_t)(count) * channel->block_size);
+				(off_t)(बिलांग) * channel->block_size);
 #else
 		goto unimplemented;
 #endif
@@ -1678,11 +1678,11 @@ static int __unix_zeroout(int fd, off_t offset, off_t len)
 
 /* parameters might not be used if OS doesn't support zeroout */
 #if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
+#pragma GCC diagnostic इतुलाक
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 static errcode_t unix_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+			      unsigned long long बिलांग)
 {
 	struct unix_private_data *data;
 	int		ret;
@@ -1695,7 +1695,7 @@ static errcode_t unix_zeroout(io_channel channel, unsigned long long block,
 		/* Regular file, try to use truncate/punch/zero. */
 		struct stat statbuf;
 
-		if (count == 0)
+		if (बिलांग == 0)
 			return 0;
 		/*
 		 * If we're trying to zero a range past the end of the file,
@@ -1705,9 +1705,9 @@ static errcode_t unix_zeroout(io_channel channel, unsigned long long block,
 		if (ret)
 			goto err;
 		if ((unsigned long long) statbuf.st_size <
-			(block + count) * channel->block_size + data->offset) {
+			(block + बिलांग) * channel->block_size + data->offset) {
 			ret = ftruncate(data->dev,
-					(block + count) * channel->block_size + data->offset);
+					(block + बिलांग) * channel->block_size + data->offset);
 			if (ret)
 				goto err;
 		}
@@ -1718,7 +1718,7 @@ static errcode_t unix_zeroout(io_channel channel, unsigned long long block,
 
 	ret = __unix_zeroout(data->dev,
 			(off_t)(block) * channel->block_size + data->offset,
-			(off_t)(count) * channel->block_size);
+			(off_t)(बिलांग) * channel->block_size);
 err:
 	if (ret < 0) {
 		if (errno == EOPNOTSUPP) {
@@ -1732,7 +1732,7 @@ unimplemented:
 	return EXT2_ET_UNIMPLEMENTED;
 }
 #if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
+#pragma GCC diagnostic आलिसिन
 #endif
 
 static struct struct_io_manager struct_unix_manager = {

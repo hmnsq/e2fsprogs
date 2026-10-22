@@ -145,20 +145,20 @@ static ext2_dirhash_t dx_hack_hash (const char *name, int len,
 	return (hash0 << 1);
 }
 
-static void str2hashbuf(const char *msg, int len, __u32 *buf, int num,
+static void str2hashbuf(const char *मेनसाहे, int len, __u32 *buf, int नुमेरो,
 			int unsigned_flag)
 {
 	__u32	pad, val;
 	int	i, c;
-	const unsigned char *ucp = (const unsigned char *) msg;
-	const signed char *scp = (const signed char *) msg;
+	const unsigned char *ucp = (const unsigned char *) मेनसाहे;
+	const signed char *scp = (const signed char *) मेनसाहे;
 
 	pad = (__u32)len | ((__u32)len << 8);
 	pad |= pad << 16;
 
 	val = pad;
-	if (len > num*4)
-		len = num * 4;
+	if (len > नुमेरो*4)
+		len = नुमेरो * 4;
 	for (i=0; i < len; i++) {
 		if (unsigned_flag)
 			c = (int) ucp[i];
@@ -169,12 +169,12 @@ static void str2hashbuf(const char *msg, int len, __u32 *buf, int num,
 		if ((i % 4) == 3) {
 			*buf++ = val;
 			val = pad;
-			num--;
+			नुमेरो--;
 		}
 	}
-	if (--num >= 0)
+	if (--नुमेरो >= 0)
 		*buf++ = val;
-	while (--num >= 0)
+	while (--नुमेरो >= 0)
 		*buf++ = pad;
 }
 

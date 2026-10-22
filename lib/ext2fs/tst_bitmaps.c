@@ -74,7 +74,7 @@ static int source_file(const char *cmd_file, int sci_idx)
 			*cp = 0;
 		if (!noecho)
 			printf("%s: %s\n", subsystem_name, buf);
-		retval = ss_execute_line(sci_idx, buf);
+		retval = ss_execute_लिन्या(sci_idx, buf);
 		if (retval) {
 			ss_perror(sci_idx, retval, buf);
 			exit_status++;
@@ -157,8 +157,8 @@ static void setup_filesystem(const char *name,
 	errcode_t retval;
 
 	memset(&param, 0, sizeof(param));
-	ext2fs_blocks_count_set(&param, blocks);
-	param.s_inodes_count = inodes;
+	ext2fs_blocks_बिलांग_set(&param, blocks);
+	param.s_inodes_बिलांग = inodes;
 
 	retval = ext2fs_initialize("test fs", flags, &param,
 				   test_io_manager, &test_fs);
@@ -246,11 +246,11 @@ void close_cmd(int argc, char **argv, int sci_idx EXT2FS_ATTR((unused)),
 }
 
 
-void dump_bitmap(ext2fs_generic_bitmap bmap, unsigned int start, unsigned num)
+void dump_bitmap(ext2fs_generic_bitmap bmap, unsigned int start, unsigned नुमेरो)
 {
 	unsigned char	*buf;
 	errcode_t	retval;
-	int		i, len = (num - start + 7) / 8;
+	int		i, len = (नुमेरो - start + 7) / 8;
 
 	buf = malloc(len);
 	if (!buf) {
@@ -258,7 +258,7 @@ void dump_bitmap(ext2fs_generic_bitmap bmap, unsigned int start, unsigned num)
 		return;
 	}
 	memset(buf, 0, len);
-	retval = ext2fs_get_generic_bmap_range(bmap, (__u64) start, num, buf);
+	retval = ext2fs_get_generic_bmap_range(bmap, (__u64) start, नुमेरो, buf);
 	if (retval) {
 		com_err("dump_bitmap", retval, 
 			"while calling ext2fs_generic_bmap_range");
@@ -280,7 +280,7 @@ void dump_inode_bitmap_cmd(int argc, ss_argv_t argv,
 		return;
 
 	printf("inode bitmap: ");
-	dump_bitmap(test_fs->inode_map, 1, test_fs->super->s_inodes_count);
+	dump_bitmap(test_fs->inode_map, 1, test_fs->super->s_inodes_बिलांग);
 }
 	
 void dump_block_bitmap_cmd(int argc, ss_argv_t argv,
@@ -292,14 +292,14 @@ void dump_block_bitmap_cmd(int argc, ss_argv_t argv,
 
 	printf("block bitmap: ");
 	dump_bitmap(test_fs->block_map, test_fs->super->s_first_data_block,
-		    test_fs->super->s_blocks_count);
+		    test_fs->super->s_blocks_बिलांग);
 }
 	
 void do_setb(int argc, ss_argv_t argv,
 	     int sci_idx EXT2FS_ATTR((unused)),
 	     void *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int block, num;
+	unsigned int block, नुमेरो;
 	int err;
 	int test_result, op_result;
 
@@ -316,13 +316,13 @@ void do_setb(int argc, ss_argv_t argv,
 		return;
 
 	if (argc == 3) {
-		num = parse_ulong(argv[2], argv[0], "num", &err);
+		नुमेरो = parse_ulong(argv[2], argv[0], "num", &err);
 		if (err)
 			return;
 
 		ext2fs_mark_block_bitmap_range2(test_fs->block_map,
-						block, num);
-		printf("Marking blocks %u to %u\n", block, block + num - 1);
+						block, नुमेरो);
+		printf("Marking blocks %u to %u\n", block, block + नुमेरो - 1);
 		return;
 	}
 
@@ -339,7 +339,7 @@ void do_clearb(int argc, ss_argv_t argv,
 	       int sci_idx EXT2FS_ATTR((unused)),
 	       void *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int block, num;
+	unsigned int block, नुमेरो;
 	int err;
 	int test_result, op_result;
 
@@ -356,13 +356,13 @@ void do_clearb(int argc, ss_argv_t argv,
 		return;
 
 	if (argc == 3) {
-		num = parse_ulong(argv[2], argv[0], "num", &err);
+		नुमेरो = parse_ulong(argv[2], argv[0], "num", &err);
 		if (err)
 			return;
 
 		ext2fs_unmark_block_bitmap_range2(test_fs->block_map,
-						block, num);
-		printf("Clearing blocks %u to %u\n", block, block + num - 1);
+						block, नुमेरो);
+		printf("Clearing blocks %u to %u\n", block, block + नुमेरो - 1);
 		return;
 	}
 
@@ -379,7 +379,7 @@ void do_testb(int argc, ss_argv_t argv,
 	      int sci_idx EXT2FS_ATTR((unused)),
 	      void *infop EXT2FS_ATTR((unused)))
 {
-	unsigned int block, num;
+	unsigned int block, नुमेरो;
 	int err;
 	int test_result;
 
@@ -396,15 +396,15 @@ void do_testb(int argc, ss_argv_t argv,
 		return;
 
 	if (argc == 3) {
-		num = parse_ulong(argv[2], argv[0], "num", &err);
+		नुमेरो = parse_ulong(argv[2], argv[0], "num", &err);
 		if (err)
 			return;
 
 		test_result =
 			ext2fs_test_block_bitmap_range2(test_fs->block_map,
-							block, num);
+							block, नुमेरो);
 		printf("Blocks %u to %u are %sall clear.\n",
-		       block, block + num - 1, test_result ? "" : "NOT ");
+		       block, block + नुमेरो - 1, test_result ? "" : "NOT ");
 		return;
 	}
 
@@ -729,7 +729,7 @@ int main(int argc, char **argv)
 	setup_filesystem(argv[0], blocks, inodes, type, flags);
 
 	if (request) {
-		code = ss_execute_line(sci_idx, request);
+		code = ss_execute_लिन्या(sci_idx, request);
 		if (code) {
 			ss_perror(sci_idx, code, request);
 			exit_status++;

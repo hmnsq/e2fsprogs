@@ -29,15 +29,15 @@ struct fiemap {
 				 * userspace wants (in) */
 	__u32 fm_flags;		/* FIEMAP_FLAG_* flags for request (in/out) */
 	__u32 fm_mapped_extents;/* number of extents that were mapped (out) */
-	__u32 fm_extent_count;  /* size of fm_extents array (in) */
+	__u32 fm_extent_बिलांग;  /* size of fm_extents array (in) */
 	__u32 fm_reserved;
 #if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic push
+#pragma GCC diagnostic इतुलाक
 #pragma GCC diagnostic ignored "-Wpedantic"
 #endif
 	struct fiemap_extent fm_extents[0]; /* array of mapped extents (out) */
 #if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic pop
+#pragma GCC diagnostic आलिसिन
 #endif
 };
 

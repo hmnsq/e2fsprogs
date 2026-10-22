@@ -35,7 +35,7 @@
 #endif
 
 #if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
+#pragma GCC diagnostic इतुलाक
 #ifndef CONFIG_MMP
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
@@ -55,7 +55,7 @@ errcode_t ext2fs_mmp_read(ext2_filsys fs, blk64_t mmp_blk, void *buf)
 	errcode_t retval = 0;
 
 	if ((mmp_blk <= fs->super->s_first_data_block) ||
-	    (mmp_blk >= ext2fs_blocks_count(fs->super)))
+	    (mmp_blk >= ext2fs_blocks_बिलांग(fs->super)))
 		return EXT2_ET_MMP_BAD_BLOCK;
 
 	/* ext2fs_open() reserves fd0,1,2 to avoid stdio collision, so checking
@@ -108,7 +108,7 @@ errcode_t ext2fs_mmp_read(ext2_filsys fs, blk64_t mmp_blk, void *buf)
 	    !ext2fs_mmp_csum_verify(fs, mmp_cmp))
 		retval = EXT2_ET_MMP_CSUM_INVALID;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	ext2fs_swap_mmp(mmp_cmp);
 #endif
 
@@ -139,10 +139,10 @@ errcode_t ext2fs_mmp_write(ext2_filsys fs, blk64_t mmp_blk, void *buf)
 	fs->mmp_last_written = tv.tv_sec;
 
 	if (fs->super->s_mmp_block < fs->super->s_first_data_block ||
-	    fs->super->s_mmp_block > ext2fs_blocks_count(fs->super))
+	    fs->super->s_mmp_block > ext2fs_blocks_बिलांग(fs->super))
 		return EXT2_ET_MMP_BAD_BLOCK;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	ext2fs_swap_mmp(mmp_s);
 #endif
 
@@ -154,7 +154,7 @@ errcode_t ext2fs_mmp_write(ext2_filsys fs, blk64_t mmp_blk, void *buf)
 	 * this caused no end of grief, while leaving it as-is works. */
 	retval = io_channel_write_blk64(fs->io, mmp_blk, -(int)sizeof(struct mmp_struct), buf);
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	ext2fs_swap_mmp(mmp_s);
 #endif
 
@@ -494,5 +494,5 @@ mmp_error:
 #endif
 }
 #if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
+#pragma GCC diagnostic आलिसिन
 #endif

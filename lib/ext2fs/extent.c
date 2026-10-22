@@ -43,8 +43,8 @@ struct extent_path {
 	char		*buf;
 	int		entries;
 	int		max_entries;
-	int		left;
-	int		visit_num;
+	int		कालिवा;
+	int		visit_नुमेरो;
 	int		flags;
 	blk64_t		end_blk;
 	blk64_t		blk;
@@ -106,7 +106,7 @@ static void dbg_show_extent(struct ext3_extent *ex)
 			ext2fs_le16_to_cpu(ex->ee_start_hi));
 }
 
-static void dbg_print_extent(char *desc, struct ext2fs_extent *extent)
+static void dbg_इलिम्बाग_extent(char *desc, struct ext2fs_extent *extent)
 {
 	if (desc)
 		printf("%s: ", desc);
@@ -135,7 +135,7 @@ static void dump_path(const char *tag, struct ext2_extent_handle *handle,
 		printf("%s: path=%ld buf=%p entries=%d max_entries=%d left=%d "
 		       "visit_num=%d flags=0x%x end_blk=%llu curr=%p(%ld)\n",
 		       tag, (ppp - handle->path), ppp->buf, ppp->entries,
-		       ppp->max_entries, ppp->left, ppp->visit_num, ppp->flags,
+		       ppp->max_entries, ppp->कालिवा, ppp->visit_नुमेरो, ppp->flags,
 		       ppp->end_blk, ppp->curr, ppp->curr - (void *)ppp->buf);
 		printf("  ");
 		dbg_show_header((struct ext3_extent_header *)ppp->buf);
@@ -156,7 +156,7 @@ static void dump_path(const char *tag, struct ext2_extent_handle *handle,
 #define dbg_show_header(eh) do { } while (0)
 #define dbg_show_index(ix) do { } while (0)
 #define dbg_show_extent(ex) do { } while (0)
-#define dbg_print_extent(desc, ex) do { } while (0)
+#define dbg_इलिम्बाग_extent(desc, ex) do { } while (0)
 #define dump_path(tag, handle, path) do { } while (0)
 #endif
 
@@ -227,8 +227,8 @@ errcode_t ext2fs_extent_open2(ext2_filsys fs, ext2_ino_t ino,
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	if (!inode)
-		if ((ino == 0) || (ino > fs->super->s_inodes_count))
-			return EXT2_ET_BAD_INODE_NUM;
+		if ((ino == 0) || (ino > fs->super->s_inodes_बिलांग))
+			return EXT2_ET_BAD_INODE_नुमेरो;
 
 	retval = ext2fs_get_mem(sizeof(struct ext2_extent_handle), &handle);
 	if (retval)
@@ -280,7 +280,7 @@ errcode_t ext2fs_extent_open2(ext2_filsys fs, ext2_ino_t ino,
 				    &handle->path);
 	handle->path[0].buf = (char *) handle->inode->i_block;
 
-	handle->path[0].left = handle->path[0].entries =
+	handle->path[0].कालिवा = handle->path[0].entries =
 		ext2fs_le16_to_cpu(eh->eh_entries);
 	handle->path[0].max_entries = ext2fs_le16_to_cpu(eh->eh_max);
 	handle->path[0].curr = 0;
@@ -288,7 +288,7 @@ errcode_t ext2fs_extent_open2(ext2_filsys fs, ext2_ino_t ino,
 		(EXT2_I_SIZE(handle->inode) + fs->blocksize - 1) >>
 		 EXT2_BLOCK_SIZE_BITS(fs->super);
 	handle->path[0].blk = 0;
-	handle->path[0].visit_num = 1;
+	handle->path[0].visit_नुमेरो = 1;
 	handle->level = 0;
 	handle->magic = EXT2_ET_MAGIC_EXTENT_HANDLE;
 
@@ -320,7 +320,7 @@ errcode_t ext2fs_extent_get(ext2_extent_handle_t handle,
 	EXT2_CHECK_MAGIC(handle, EXT2_ET_MAGIC_EXTENT_HANDLE);
 
 	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+		return EXT2_ET_NO_CURRENT_बुहोल;
 
 	orig_op = op = flags & EXT2_EXTENT_MOVE_MASK;
 
@@ -330,10 +330,10 @@ retry:
 	    (orig_op == EXT2_EXTENT_NEXT_LEAF)) {
 		if (handle->level < handle->max_depth) {
 			/* interior node */
-			if (path->visit_num == 0) {
-				path->visit_num++;
+			if (path->visit_नुमेरो == 0) {
+				path->visit_नुमेरो++;
 				op = EXT2_EXTENT_DOWN;
-			} else if (path->left > 0)
+			} else if (path->कालिवा > 0)
 				op = EXT2_EXTENT_NEXT_SIB;
 			else if (handle->level > 0)
 				op = EXT2_EXTENT_UP;
@@ -341,7 +341,7 @@ retry:
 				return EXT2_ET_EXTENT_NO_NEXT;
 		} else {
 			/* leaf node */
-			if (path->left > 0)
+			if (path->कालिवा > 0)
 				op = EXT2_EXTENT_NEXT_SIB;
 			else if (handle->level > 0)
 				op = EXT2_EXTENT_UP;
@@ -361,10 +361,10 @@ retry:
 	    (orig_op == EXT2_EXTENT_PREV_LEAF)) {
 		if (handle->level < handle->max_depth) {
 			/* interior node */
-			if (path->visit_num > 0 ) {
+			if (path->visit_नुमेरो > 0 ) {
 				/* path->visit_num = 0; */
 				op = EXT2_EXTENT_DOWN_AND_LAST;
-			} else if (path->left < path->entries-1)
+			} else if (path->कालिवा < path->entries-1)
 				op = EXT2_EXTENT_PREV_SIB;
 			else if (handle->level > 0)
 				op = EXT2_EXTENT_UP;
@@ -372,7 +372,7 @@ retry:
 				return EXT2_ET_EXTENT_NO_PREV;
 		} else {
 			/* leaf node */
-			if (path->left < path->entries-1)
+			if (path->कालिवा < path->entries-1)
 				op = EXT2_EXTENT_PREV_SIB;
 			else if (handle->level > 0)
 				op = EXT2_EXTENT_UP;
@@ -390,7 +390,7 @@ retry:
 
 	if (orig_op == EXT2_EXTENT_LAST_LEAF) {
 		if ((handle->level < handle->max_depth) &&
-		    (path->left == 0))
+		    (path->कालिवा == 0))
 			op = EXT2_EXTENT_DOWN;
 		else
 			op = EXT2_EXTENT_LAST_SIB;
@@ -404,16 +404,16 @@ retry:
 	case EXT2_EXTENT_CURRENT:
 		ix = path->curr;
 		break;
-	case EXT2_EXTENT_ROOT:
+	case EXT2_EXTENT_उगात:
 		handle->level = 0;
 		path = handle->path + handle->level;
 		/* fallthrough */
 	case EXT2_EXTENT_FIRST_SIB:
-		path->left = path->entries;
+		path->कालिवा = path->entries;
 		path->curr = 0;
 		/* fallthrough */
 	case EXT2_EXTENT_NEXT_SIB:
-		if (path->left <= 0)
+		if (path->कालिवा <= 0)
 			return EXT2_ET_EXTENT_NO_NEXT;
 		if (path->curr) {
 			ix = path->curr;
@@ -422,27 +422,27 @@ retry:
 			eh = (struct ext3_extent_header *) path->buf;
 			ix = EXT_FIRST_INDEX(eh);
 		}
-		path->left--;
+		path->कालिवा--;
 		path->curr = ix;
-		path->visit_num = 0;
+		path->visit_नुमेरो = 0;
 		break;
 	case EXT2_EXTENT_PREV_SIB:
 		if (!path->curr ||
-		    path->left+1 >= path->entries)
+		    path->कालिवा+1 >= path->entries)
 			return EXT2_ET_EXTENT_NO_PREV;
 		ix = path->curr;
 		ix--;
 		path->curr = ix;
-		path->left++;
+		path->कालिवा++;
 		if (handle->level < handle->max_depth)
-			path->visit_num = 1;
+			path->visit_नुमेरो = 1;
 		break;
 	case EXT2_EXTENT_LAST_SIB:
 		eh = (struct ext3_extent_header *) path->buf;
 		path->curr = EXT_LAST_EXTENT(eh);
 		ix = path->curr;
-		path->left = 0;
-		path->visit_num = 0;
+		path->कालिवा = 0;
+		path->visit_नुमेरो = 0;
 		break;
 	case EXT2_EXTENT_UP:
 		if (handle->level <= 0)
@@ -452,7 +452,7 @@ retry:
 		ix = path->curr;
 		if ((orig_op == EXT2_EXTENT_PREV) ||
 		    (orig_op == EXT2_EXTENT_PREV_LEAF))
-			path->visit_num = 0;
+			path->visit_नुमेरो = 0;
 		break;
 	case EXT2_EXTENT_DOWN:
 	case EXT2_EXTENT_DOWN_AND_LAST:
@@ -498,15 +498,15 @@ retry:
 						     eh))
 			failed_csum = 1;
 
-		newpath->left = newpath->entries =
+		newpath->कालिवा = newpath->entries =
 			ext2fs_le16_to_cpu(eh->eh_entries);
 		newpath->max_entries = ext2fs_le16_to_cpu(eh->eh_max);
 
 		/* Make sure there is at least one extent present */
-		if (newpath->left <= 0)
+		if (newpath->कालिवा <= 0)
 			return EXT2_ET_EXTENT_NO_DOWN;
 
-		if (path->left > 0) {
+		if (path->कालिवा > 0) {
 			ix++;
 			newpath->end_blk = ext2fs_le32_to_cpu(ix->ei_block);
 		} else
@@ -516,14 +516,14 @@ retry:
 		if (op == EXT2_EXTENT_DOWN) {
 			ix = EXT_FIRST_INDEX((struct ext3_extent_header *) eh);
 			path->curr = ix;
-			path->left = path->entries - 1;
-			path->visit_num = 0;
+			path->कालिवा = path->entries - 1;
+			path->visit_नुमेरो = 0;
 		} else {
 			ix = EXT_LAST_INDEX((struct ext3_extent_header *) eh);
 			path->curr = ix;
-			path->left = 0;
+			path->कालिवा = 0;
 			if (handle->level < handle->max_depth)
-				path->visit_num = 1;
+				path->visit_नुमेरो = 1;
 		}
 #ifdef DEBUG_GET_EXTENT
 		printf("Down to level %d/%d, end_blk=%llu\n",
@@ -536,11 +536,11 @@ retry:
 	}
 
 	if (!ix)
-		return EXT2_ET_NO_CURRENT_NODE;
+		return EXT2_ET_NO_CURRENT_बुहोल;
 
 	extent->e_flags = 0;
 #ifdef DEBUG_GET_EXTENT
-	printf("(Left %d)\n", path->left);
+	printf("(Left %d)\n", path->कालिवा);
 #endif
 
 	if (handle->level == handle->max_depth) {
@@ -559,7 +559,7 @@ retry:
 		extent->e_pblk = ext2fs_le32_to_cpu(ix->ei_leaf) +
 			((__u64) ext2fs_le16_to_cpu(ix->ei_leaf_hi) << 32);
 		extent->e_lblk = ext2fs_le32_to_cpu(ix->ei_block);
-		if (path->left > 0) {
+		if (path->कालिवा > 0) {
 			ix++;
 			end_blk = ext2fs_le32_to_cpu(ix->ei_block);
 		} else
@@ -567,7 +567,7 @@ retry:
 
 		extent->e_len = end_blk - extent->e_lblk;
 	}
-	if (path->visit_num)
+	if (path->visit_नुमेरो)
 		extent->e_flags |= EXT2_EXTENT_FLAGS_SECOND_VISIT;
 
 	if (((orig_op == EXT2_EXTENT_NEXT_LEAF) ||
@@ -577,7 +577,7 @@ retry:
 
 	if ((orig_op == EXT2_EXTENT_LAST_LEAF) &&
 	    ((handle->level != handle->max_depth) ||
-	     (path->left != 0)))
+	     (path->कालिवा != 0)))
 		goto retry;
 
 	if (failed_csum)
@@ -669,7 +669,7 @@ errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
 	struct ext2fs_extent	extent;
 	errcode_t		retval;
 
-	retval = ext2fs_extent_get(handle, EXT2_EXTENT_ROOT, &extent);
+	retval = ext2fs_extent_get(handle, EXT2_EXTENT_उगात, &extent);
 	if (retval) {
 		if (retval == EXT2_ET_EXTENT_NO_NEXT)
 			retval = EXT2_ET_EXTENT_NOT_FOUND;
@@ -690,7 +690,7 @@ errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
 #endif
 
 #ifdef DEBUG_GOTO_EXTENTS
-	dbg_print_extent("root", &extent);
+	dbg_इलिम्बाग_extent("root", &extent);
 #endif
 	while (1) {
 		if (handle->max_depth - handle->level == leaf_level) {
@@ -722,7 +722,7 @@ errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
 			return retval;
 
 #ifdef DEBUG_GOTO_EXTENTS
-		dbg_print_extent("next", &extent);
+		dbg_इलिम्बाग_extent("next", &extent);
 #endif
 		if (blk == extent.e_lblk)
 			goto go_down;
@@ -735,7 +735,7 @@ errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
 			return retval;
 
 #ifdef DEBUG_GOTO_EXTENTS
-		dbg_print_extent("prev", &extent);
+		dbg_इलिम्बाग_extent("prev", &extent);
 #endif
 
 	go_down:
@@ -745,7 +745,7 @@ errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
 			return retval;
 
 #ifdef DEBUG_GOTO_EXTENTS
-		dbg_print_extent("down", &extent);
+		dbg_इलिम्बाग_extent("down", &extent);
 #endif
 	}
 }
@@ -787,11 +787,11 @@ errcode_t ext2fs_extent_fix_parents(ext2_extent_handle_t handle)
 		return EXT2_ET_RO_FILSYS;
 
 	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+		return EXT2_ET_NO_CURRENT_बुहोल;
 
 	path = handle->path + handle->level;
 	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+		return EXT2_ET_NO_CURRENT_बुहोल;
 
 	retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &extent);
 	if (retval)
@@ -806,7 +806,7 @@ errcode_t ext2fs_extent_fix_parents(ext2_extent_handle_t handle)
 
 	/* traverse up until index not first, or startblk matches, or top */
 	while (handle->level > 0 &&
-	       (path->left == path->entries - 1)) {
+	       (path->कालिवा == path->entries - 1)) {
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP, &extent);
 		if (retval)
 			goto done;
@@ -841,15 +841,15 @@ errcode_t ext2fs_extent_replace(ext2_extent_handle_t handle,
 		return EXT2_ET_RO_FILSYS;
 
 	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+		return EXT2_ET_NO_CURRENT_बुहोल;
 
 	path = handle->path + handle->level;
 	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+		return EXT2_ET_NO_CURRENT_बुहोल;
 
 #ifdef DEBUG
 	printf("extent replace: %u ", handle->ino);
-	dbg_print_extent(0, extent);
+	dbg_इलिम्बाग_extent(0, extent);
 #endif
 
 	if (handle->level == handle->max_depth) {
@@ -890,7 +890,7 @@ static int splitting_at_eof(struct ext2_extent_handle *handle,
 		return 0;
 
 	do {
-		if (ppp->left)
+		if (ppp->कालिवा)
 			return 0;
 		ppp--;
 	} while (ppp >= handle->path);
@@ -903,12 +903,12 @@ static int splitting_at_eof(struct ext2_extent_handle *handle,
  *
  * handle will be left pointing at original record.
  */
-static errcode_t extent_node_split(ext2_extent_handle_t handle,
+static errcode_t extent_बुहोल_split(ext2_extent_handle_t handle,
 				   int expand_allowed)
 {
 	errcode_t			retval = 0;
-	blk64_t				new_node_pblk;
-	blk64_t				new_node_start;
+	blk64_t				new_बुहोल_pblk;
+	blk64_t				new_बुहोल_start;
 	blk64_t				orig_lblk;
 	blk64_t				goal_blk = 0;
 	int				orig_height;
@@ -917,7 +917,7 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 	struct extent_path		*path, *newpath = 0;
 	struct ext3_extent_header	*eh, *neweh;
 	int				tocopy;
-	int				new_root = 0;
+	int				new_उगात = 0;
 	struct ext2_extent_info		info;
 	int				no_balance;
 
@@ -928,7 +928,7 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 		return EXT2_ET_RO_FILSYS;
 
 	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+		return EXT2_ET_NO_CURRENT_बुहोल;
 
 #ifdef DEBUG
 	printf("splitting node at level %d\n", handle->level);
@@ -978,7 +978,7 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 		if (retval)
 			goto done;
 
-		retval = extent_node_split(handle, expand_allowed);
+		retval = extent_बुहोल_split(handle, expand_allowed);
 		if (retval)
 			goto done;
 
@@ -991,7 +991,7 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 	/* At this point, parent should have room for this split */
 	path = handle->path + handle->level;
 	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+		return EXT2_ET_NO_CURRENT_बुहोल;
 
 	/*
 	 * Normally, we try to split a full node in half.  This doesn't turn
@@ -1006,7 +1006,7 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 
 	/* splitting root level means moving them all out */
 	if (handle->level == 0) {
-		new_root = 1;
+		new_उगात = 1;
 		tocopy = ext2fs_le16_to_cpu(eh->eh_entries);
 		retval = ext2fs_get_memzero((handle->max_paths + 1) *
 					    sizeof(struct extent_path),
@@ -1045,13 +1045,13 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 		goal_blk = ext2fs_find_inode_goal(handle->fs, handle->ino,
 						  handle->inode, 0);
 	retval = ext2fs_alloc_block2(handle->fs, goal_blk, block_buf,
-				    &new_node_pblk);
+				    &new_बुहोल_pblk);
 	if (retval)
 		goto done;
 
 #ifdef DEBUG
 	printf("will copy to new node at block %lu\n",
-	       (unsigned long) new_node_pblk);
+	       (unsigned long) new_बुहोल_pblk);
 #endif
 
 	/* Copy data into new block buffer */
@@ -1069,7 +1069,7 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 			(ext2fs_le16_to_cpu(eh->eh_entries) - tocopy),
 		sizeof(struct ext3_extent_idx) * tocopy);
 
-	new_node_start = ext2fs_le32_to_cpu(EXT_FIRST_INDEX(neweh)->ei_block);
+	new_बुहोल_start = ext2fs_le32_to_cpu(EXT_FIRST_INDEX(neweh)->ei_block);
 
 	/* then update the checksum */
 	retval = ext2fs_extent_block_csum_set(handle->fs, handle->ino, neweh);
@@ -1077,7 +1077,7 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 		goto done;
 
 	/* ...and write the new node block out to disk. */
-	retval = io_channel_write_blk64(handle->fs->io, new_node_pblk, 1,
+	retval = io_channel_write_blk64(handle->fs->io, new_बुहोल_pblk, 1,
 					block_buf);
 
 	if (retval)
@@ -1093,13 +1093,13 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 		newpath = path;
 		path = handle->path;
 		path->entries = 1;
-		path->left = path->max_entries - 1;
+		path->कालिवा = path->max_entries - 1;
 		handle->max_depth++;
 		handle->max_paths++;
 		eh->eh_depth = ext2fs_cpu_to_le16(handle->max_depth);
 	} else {
 		path->entries -= tocopy;
-		path->left -= tocopy;
+		path->कालिवा -= tocopy;
 	}
 
 	eh->eh_entries = ext2fs_cpu_to_le16(path->entries);
@@ -1109,33 +1109,33 @@ static errcode_t extent_node_split(ext2_extent_handle_t handle,
 		goto done;
 
 	/* now go up and insert/replace index for new node we created */
-	if (new_root) {
+	if (new_उगात) {
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_FIRST_SIB, &extent);
 		if (retval)
 			goto done;
 
-		extent.e_lblk = new_node_start;
-		extent.e_pblk = new_node_pblk;
+		extent.e_lblk = new_बुहोल_start;
+		extent.e_pblk = new_बुहोल_pblk;
 		extent.e_len = handle->path[0].end_blk - extent.e_lblk;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
 		if (retval)
 			goto done;
 	} else {
-		__u32 new_node_length;
+		__u32 new_बुहोल_length;
 
 		retval = ext2fs_extent_get(handle, EXT2_EXTENT_UP, &extent);
 		/* will insert after this one; it's length is shorter now */
-		new_node_length = new_node_start - extent.e_lblk;
-		extent.e_len -= new_node_length;
+		new_बुहोल_length = new_बुहोल_start - extent.e_lblk;
+		extent.e_len -= new_बुहोल_length;
 		retval = ext2fs_extent_replace(handle, 0, &extent);
 		if (retval)
 			goto done;
 
 		/* now set up the new extent and insert it */
-		extent.e_lblk = new_node_start;
-		extent.e_pblk = new_node_pblk;
-		extent.e_len = new_node_length;
-		retval = ext2fs_extent_insert(handle, EXT2_EXTENT_INSERT_AFTER, &extent);
+		extent.e_lblk = new_बुहोल_start;
+		extent.e_pblk = new_बुहोल_pblk;
+		extent.e_len = new_बुहोल_length;
+		retval = ext2fs_extent_इसिंगित(handle, EXT2_EXTENT_इसिंगित_AFTER, &extent);
 		if (retval)
 			goto done;
 	}
@@ -1160,12 +1160,12 @@ done:
 	return retval;
 }
 
-errcode_t ext2fs_extent_node_split(ext2_extent_handle_t handle)
+errcode_t ext2fs_extent_बुहोल_split(ext2_extent_handle_t handle)
 {
-	return extent_node_split(handle, 0);
+	return extent_बुहोल_split(handle, 0);
 }
 
-errcode_t ext2fs_extent_insert(ext2_extent_handle_t handle, int flags,
+errcode_t ext2fs_extent_इसिंगित(ext2_extent_handle_t handle, int flags,
 				      struct ext2fs_extent *extent)
 {
 	struct extent_path		*path;
@@ -1179,24 +1179,24 @@ errcode_t ext2fs_extent_insert(ext2_extent_handle_t handle, int flags,
 		return EXT2_ET_RO_FILSYS;
 
 	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+		return EXT2_ET_NO_CURRENT_बुहोल;
 
 #ifdef DEBUG
 	printf("extent insert: %u ", handle->ino);
-	dbg_print_extent(0, extent);
+	dbg_इलिम्बाग_extent(0, extent);
 #endif
 
 	path = handle->path + handle->level;
 
 	if (path->entries >= path->max_entries) {
-		if (flags & EXT2_EXTENT_INSERT_NOSPLIT) {
-			return EXT2_ET_CANT_INSERT_EXTENT;
+		if (flags & EXT2_EXTENT_इसिंगित_NOSPLIT) {
+			return EXT2_ET_CANT_इसिंगित_EXTENT;
 		} else {
 #ifdef DEBUG
 			printf("node full (level %d) - splitting\n",
 				   handle->level);
 #endif
-			retval = extent_node_split(handle, 1);
+			retval = extent_बुहोल_split(handle, 1);
 			if (retval)
 				return retval;
 			path = handle->path + handle->level;
@@ -1206,21 +1206,21 @@ errcode_t ext2fs_extent_insert(ext2_extent_handle_t handle, int flags,
 	eh = (struct ext3_extent_header *) path->buf;
 	if (path->curr) {
 		ix = path->curr;
-		if (flags & EXT2_EXTENT_INSERT_AFTER) {
+		if (flags & EXT2_EXTENT_इसिंगित_AFTER) {
 			ix++;
-			path->left--;
+			path->कालिवा--;
 		}
 	} else {
 		ix = EXT_FIRST_INDEX(eh);
-		path->left = -1;
+		path->कालिवा = -1;
 	}
 
 	path->curr = ix;
 
-	if (path->left >= 0)
+	if (path->कालिवा >= 0)
 		memmove(ix + 1, ix,
-			(path->left+1) * sizeof(struct ext3_extent_idx));
-	path->left++;
+			(path->कालिवा+1) * sizeof(struct ext3_extent_idx));
+	path->कालिवा++;
 	path->entries++;
 
 	eh = (struct ext3_extent_header *) path->buf;
@@ -1292,7 +1292,7 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 		return EXT2_ET_RO_FILSYS;
 
 	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+		return EXT2_ET_NO_CURRENT_बुहोल;
 
 	path = handle->path + handle->level;
 
@@ -1313,14 +1313,14 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 
 	/* special case if the extent tree is completely empty */
 	if ((handle->max_depth == 0) && (path->entries == 0)) {
-		retval = ext2fs_extent_insert(handle, 0, &newextent);
+		retval = ext2fs_extent_इसिंगित(handle, 0, &newextent);
 		return retval;
 	}
 
 	/* save our original location in the extent tree */
 	if ((retval = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					&extent))) {
-		if (retval != EXT2_ET_NO_CURRENT_NODE)
+		if (retval != EXT2_ET_NO_CURRENT_बुहोल)
 			return retval;
 		memset(&extent, 0, sizeof(extent));
 	}
@@ -1363,7 +1363,7 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 		if (retval != EXT2_ET_EXTENT_NO_NEXT)
 			goto done;
 	} else {
-		dbg_print_extent("set_bmap: next_extent",
+		dbg_इलिम्बाग_extent("set_bmap: next_extent",
 				 &next_extent);
 		has_next = 1;
 		if (next_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
@@ -1379,7 +1379,7 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 			goto done;
 	} else {
 		has_prev = 1;
-		dbg_print_extent("set_bmap: prev_extent",
+		dbg_इलिम्बाग_extent("set_bmap: prev_extent",
 				 &prev_extent);
 		if (prev_extent.e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 			prev_uninit = 1;
@@ -1430,10 +1430,10 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 			next_extent.e_pblk--;
 			retval = ext2fs_extent_replace(handle, 0, &next_extent);
 		} else if (logical < extent.e_lblk)
-			retval = ext2fs_extent_insert(handle, 0, &newextent);
+			retval = ext2fs_extent_इसिंगित(handle, 0, &newextent);
 		else
-			retval = ext2fs_extent_insert(handle,
-				      EXT2_EXTENT_INSERT_AFTER, &newextent);
+			retval = ext2fs_extent_इसिंगित(handle,
+				      EXT2_EXTENT_इसिंगित_AFTER, &newextent);
 		if (retval)
 			goto done;
 		retval = ext2fs_extent_fix_parents(handle);
@@ -1463,17 +1463,17 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 							   &extent);
 				if (retval)
 					goto done;
-				goto delete_node;
+				goto delete_बुहोल;
 
 			} else
 				retval = ext2fs_extent_replace(handle, 0, &newextent);
 		} else {
-		delete_node:
+		delete_बुहोल:
 			retval = ext2fs_extent_delete(handle, 0);
 			if (retval)
 				goto done;
 			ec = ext2fs_extent_fix_parents(handle);
-			if (ec != EXT2_ET_NO_CURRENT_NODE)
+			if (ec != EXT2_ET_NO_CURRENT_बुहोल)
 				retval = ec;
 		}
 
@@ -1501,8 +1501,8 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 				if (retval)
 					goto done;
 			} else
-				retval = ext2fs_extent_insert(handle,
-				      EXT2_EXTENT_INSERT_AFTER, &newextent);
+				retval = ext2fs_extent_इसिंगित(handle,
+				      EXT2_EXTENT_इसिंगित_AFTER, &newextent);
 			if (retval)
 				goto done;
 			retval = ext2fs_extent_fix_parents(handle);
@@ -1556,7 +1556,7 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 				retval = ext2fs_extent_replace(handle, 0,
 							       &prev_extent);
 			} else
-				retval = ext2fs_extent_insert(handle,
+				retval = ext2fs_extent_इसिंगित(handle,
 							      0, &newextent);
 			if (retval)
 				goto done;
@@ -1591,8 +1591,8 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 		/* insert our new extent, if any */
 		if (physical) {
 			/* insert new extent after current */
-			retval = ext2fs_extent_insert(handle,
-					EXT2_EXTENT_INSERT_AFTER, &newextent);
+			retval = ext2fs_extent_इसिंगित(handle,
+					EXT2_EXTENT_इसिंगित_AFTER, &newextent);
 			if (retval) {
 				r2 = ext2fs_extent_goto(handle, save_lblk);
 				if (r2 == 0)
@@ -1605,8 +1605,8 @@ errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 		extent.e_pblk += extent.e_len + 1;
 		extent.e_lblk += extent.e_len + 1;
 		extent.e_len = save_length - extent.e_len - 1;
-		retval = ext2fs_extent_insert(handle,
-				EXT2_EXTENT_INSERT_AFTER, &extent);
+		retval = ext2fs_extent_इसिंगित(handle,
+				EXT2_EXTENT_इसिंगित_AFTER, &extent);
 		if (retval) {
 			if (physical) {
 				r2 = ext2fs_extent_goto(handle,
@@ -1643,7 +1643,7 @@ errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, int flags)
 		return EXT2_ET_RO_FILSYS;
 
 	if (!handle->path)
-		return EXT2_ET_NO_CURRENT_NODE;
+		return EXT2_ET_NO_CURRENT_बुहोल;
 
 #ifdef DEBUG
 	{
@@ -1653,25 +1653,25 @@ errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, int flags)
 					   &extent);
 		if (retval == 0) {
 			printf("extent delete %u ", handle->ino);
-			dbg_print_extent(0, &extent);
+			dbg_इलिम्बाग_extent(0, &extent);
 		}
 	}
 #endif
 
 	path = handle->path + handle->level;
 	if (!path->curr)
-		return EXT2_ET_NO_CURRENT_NODE;
+		return EXT2_ET_NO_CURRENT_बुहोल;
 
 	cp = path->curr;
 
 	/* Sanity check before memmove() */
-	if (path->left < 0)
+	if (path->कालिवा < 0)
 		return EXT2_ET_EXTENT_LEAF_BAD;
 
-	if (path->left) {
+	if (path->कालिवा) {
 		memmove(cp, cp + sizeof(struct ext3_extent_idx),
-			path->left * sizeof(struct ext3_extent_idx));
-		path->left--;
+			path->कालिवा * sizeof(struct ext3_extent_idx));
+		path->कालिवा--;
 	} else {
 		struct ext3_extent_idx	*ix = path->curr;
 		ix--;
@@ -1727,7 +1727,7 @@ errcode_t ext2fs_extent_get_info(ext2_extent_handle_t handle,
 				sizeof(struct ext3_extent_idx);
 		else
 			info->curr_entry = 0;
-		info->num_entries = path->entries;
+		info->नुमेरो_entries = path->entries;
 		info->max_entries = path->max_entries;
 		info->bytes_avail = (path->max_entries - path->entries) *
 			sizeof(struct ext3_extent);
@@ -1784,7 +1784,7 @@ errcode_t ext2fs_fix_extents_checksums(ext2_filsys fs, ext2_ino_t ino,
 	}
 
 	fs->flags &= ~EXT2_FLAG_IGNORE_CSUM_ERRORS;
-	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_ROOT, &extent);
+	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_उगात, &extent);
 	if (errcode)
 		goto out;
 
@@ -1833,8 +1833,8 @@ errcode_t ext2fs_decode_extent(struct ext2fs_extent *to, void *addr, int len)
 	return 0;
 }
 
-errcode_t ext2fs_count_blocks(ext2_filsys fs, ext2_ino_t ino,
-			      struct ext2_inode *inode, blk64_t *ret_count)
+errcode_t ext2fs_बिलांग_blocks(ext2_filsys fs, ext2_ino_t ino,
+			      struct ext2_inode *inode, blk64_t *ret_बिलांग)
 {
 	ext2_extent_handle_t	handle = NULL;
 	struct ext2fs_extent	extent;
@@ -1847,7 +1847,7 @@ errcode_t ext2fs_count_blocks(ext2_filsys fs, ext2_ino_t ino,
 	if (errcode)
 		goto out;
 
-	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_ROOT, &extent);
+	errcode = ext2fs_extent_get(handle, EXT2_EXTENT_उगात, &extent);
 	if (errcode)
 		goto out;
 
@@ -1873,7 +1873,7 @@ errcode_t ext2fs_count_blocks(ext2_filsys fs, ext2_ino_t ino,
 	}
 	ext2fs_free_mem(&intermediate_nodes);
 out:
-	*ret_count = blkcount;
+	*ret_बिलांग = blkcount;
 	ext2fs_extent_free(handle);
 
 	return 0;

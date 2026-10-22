@@ -87,7 +87,7 @@ static errcode_t write_bitmaps(ext2_filsys fs, int do_inode, int do_block)
 		memset(inode_buf, 0xff, fs->blocksize);
 	}
 
-	for (i = 0; i < fs->group_desc_count; i++) {
+	for (i = 0; i < fs->group_desc_बिलांग; i++) {
 		if (!do_block)
 			goto skip_block_bitmap;
 
@@ -100,10 +100,10 @@ static errcode_t write_bitmaps(ext2_filsys fs, int do_inode, int do_block)
 		if (retval)
 			goto errout;
 
-		if (i == fs->group_desc_count - 1) {
+		if (i == fs->group_desc_बिलांग - 1) {
 			/* Force bitmap padding for the last group */
-			nbits = EXT2FS_NUM_B2C(fs,
-				((ext2fs_blocks_count(fs->super)
+			nbits = EXT2_FS_नुमेरो_B2_C(fs,
+				((ext2fs_blocks_बिलांग(fs->super)
 				  - (__u64) fs->super->s_first_data_block)
 				 % (__u64) EXT2_BLOCKS_PER_GROUP(fs->super)));
 			if (nbits)
@@ -119,7 +119,7 @@ static errcode_t write_bitmaps(ext2_filsys fs, int do_inode, int do_block)
 		fs->flags |= EXT2_FLAG_DIRTY;
 
 		blk = ext2fs_block_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super)) {
+		if (blk && blk < ext2fs_blocks_बिलांग(fs->super)) {
 			retval = io_channel_write_blk64(fs->io, blk, 1,
 							block_buf);
 			if (retval) {
@@ -151,7 +151,7 @@ static errcode_t write_bitmaps(ext2_filsys fs, int do_inode, int do_block)
 		fs->flags |= EXT2_FLAG_DIRTY;
 
 		blk = ext2fs_inode_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super)) {
+		if (blk && blk < ext2fs_blocks_बिलांग(fs->super)) {
 			retval = io_channel_write_blk64(fs->io, blk, 1,
 						      inode_buf);
 			if (retval) {
@@ -186,7 +186,7 @@ static errcode_t mark_uninit_bg_group_blocks(ext2_filsys fs)
 	blk64_t			blk;
 	ext2fs_block_bitmap	bmap = fs->block_map;
 
-	for (i = 0; i < fs->group_desc_count; i++) {
+	for (i = 0; i < fs->group_desc_बिलांग; i++) {
 		if (!ext2fs_bg_flags_test(fs, i, EXT2_BG_BLOCK_UNINIT))
 			continue;
 
@@ -204,14 +204,14 @@ static errcode_t mark_uninit_bg_group_blocks(ext2_filsys fs)
 		 * Mark block used for the block bitmap
 		 */
 		blk = ext2fs_block_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super))
+		if (blk && blk < ext2fs_blocks_बिलांग(fs->super))
 			ext2fs_mark_block_bitmap2(bmap, blk);
 
 		/*
 		 * Mark block used for the inode bitmap
 		 */
 		blk = ext2fs_inode_bitmap_loc(fs, i);
-		if (blk && blk < ext2fs_blocks_count(fs->super))
+		if (blk && blk < ext2fs_blocks_बिलांग(fs->super))
 			ext2fs_mark_block_bitmap2(bmap, blk);
 	}
 	return 0;
@@ -320,7 +320,7 @@ static errcode_t read_bitmaps_range_start(ext2_filsys fs, int flags,
 	/* io should be null */
 	if (fs->flags & EXT2_FLAG_IMAGE_FILE) {
 		blk = (ext2fs_le32_to_cpu(fs->image_header->offset_inodemap) / fs->blocksize);
-		ino_cnt = fs->super->s_inodes_count;
+		ino_cnt = fs->super->s_inodes_बिलांग;
 		while (inode_bitmap && ino_cnt > 0) {
 			retval = io_channel_read_blk64(fs->image_io, blk++,
 						     1, inode_bitmap);
@@ -339,7 +339,7 @@ static errcode_t read_bitmaps_range_start(ext2_filsys fs, int flags,
 		blk = (ext2fs_le32_to_cpu(fs->image_header->offset_blockmap) /
 		       fs->blocksize);
 		blk_cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super,
-						  fs->group_desc_count);
+						  fs->group_desc_बिलांग);
 		while (block_bitmap && blk_cnt > 0) {
 			retval = io_channel_read_blk64(fs->image_io, blk++,
 						     1, block_bitmap);
@@ -366,7 +366,7 @@ static errcode_t read_bitmaps_range_start(ext2_filsys fs, int flags,
 			if ((csum_flag &&
 			     ext2fs_bg_flags_test(fs, i, EXT2_BG_BLOCK_UNINIT) &&
 			     ext2fs_group_desc_csum_verify(fs, i)) ||
-			    (blk >= ext2fs_blocks_count(fs->super)))
+			    (blk >= ext2fs_blocks_बिलांग(fs->super)))
 				blk = 0;
 			if (blk) {
 				retval = io_channel_read_blk64(fs->io, blk,
@@ -403,7 +403,7 @@ static errcode_t read_bitmaps_range_start(ext2_filsys fs, int flags,
 			if ((csum_flag &&
 			     ext2fs_bg_flags_test(fs, i, EXT2_BG_INODE_UNINIT) &&
 			     ext2fs_group_desc_csum_verify(fs, i)) ||
-			    (blk >= ext2fs_blocks_count(fs->super)))
+			    (blk >= ext2fs_blocks_बिलांग(fs->super)))
 				blk = 0;
 			if (blk) {
 				retval = io_channel_read_blk64(fs->io, blk,
@@ -518,7 +518,7 @@ static void *read_bitmaps_thread(void *data)
 }
 #endif
 
-errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, int flags, int num_threads)
+errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, int flags, int नुमेरो_threads)
 {
 #ifdef HAVE_PTHREAD
 	pthread_attr_t	attr;
@@ -544,12 +544,12 @@ errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, int flags, int num_threads)
 
 #ifdef HAVE_PTHREAD
 	if (((fs->io->flags & CHANNEL_FLAGS_THREADS) == 0) ||
-	    (num_threads == 1) || (fs->flags & EXT2_FLAG_IMAGE_FILE))
+	    (नुमेरो_threads == 1) || (fs->flags & EXT2_FLAG_IMAGE_FILE))
 		goto fallback;
 
 #if defined(HAVE_SYSCONF) && defined(_SC_NPROCESSORS_CONF)
-	if (num_threads < 0)
-		num_threads = sysconf(_SC_NPROCESSORS_CONF);
+	if (नुमेरो_threads < 0)
+		नुमेरो_threads = sysconf(_SC_NPROCESSORS_CONF);
 #endif
 	/*
 	 * Guess for now; eventually we should probably define
@@ -557,16 +557,16 @@ errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, int flags, int num_threads)
 	 * MacOS, FreeBSD, etc.
 	 * ref: https://stackoverflow.com/questions/150355
 	 */
-	if (num_threads <= 0)
-		num_threads = 4;
+	if (नुमेरो_threads <= 0)
+		नुमेरो_threads = 4;
 
-	if ((unsigned) num_threads > fs->group_desc_count)
-		num_threads = fs->group_desc_count;
-	average_group = fs->group_desc_count / num_threads;
+	if ((unsigned) नुमेरो_threads > fs->group_desc_बिलांग)
+		नुमेरो_threads = fs->group_desc_बिलांग;
+	average_group = fs->group_desc_बिलांग / नुमेरो_threads;
 	if (ext2fs_has_feature_flex_bg(fs->super)) {
 		average_group = (average_group / flexbg_size) * flexbg_size;
 	}
-	if ((num_threads <= 1) || (average_group == 0))
+	if ((नुमेरो_threads <= 1) || (average_group == 0))
 		goto fallback;
 
 	io_channel_set_options(fs->io, "cache=off");
@@ -574,12 +574,12 @@ errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, int flags, int num_threads)
 	if (retval)
 		return retval;
 
-	thread_ids = calloc(sizeof(pthread_t), num_threads);
+	thread_ids = calloc(sizeof(pthread_t), नुमेरो_threads);
 	if (!thread_ids)
 		return ENOMEM;
 
 	thread_infos = calloc(sizeof(struct read_bitmaps_thread_info),
-				num_threads);
+				नुमेरो_threads);
 	if (!thread_infos)
 		goto out;
 
@@ -588,7 +588,7 @@ errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, int flags, int num_threads)
 		goto out;
 
 //	fprintf(stdout, "Multiple threads triggered to read bitmaps\n");
-	for (i = 0; i < num_threads; i++) {
+	for (i = 0; i < नुमेरो_threads; i++) {
 		thread_infos[i].rbt_fs = fs;
 		thread_infos[i].rbt_flags = flags;
 		thread_infos[i].rbt_mutex = &rbt_mutex;
@@ -598,8 +598,8 @@ errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, int flags, int num_threads)
 		else
 			thread_infos[i].rbt_grp_start = average_group * i + 1;
 
-		if (i == num_threads - 1)
-			thread_infos[i].rbt_grp_end = fs->group_desc_count - 1;
+		if (i == नुमेरो_threads - 1)
+			thread_infos[i].rbt_grp_end = fs->group_desc_बिलांग - 1;
 		else
 			thread_infos[i].rbt_grp_end = average_group * (i + 1);
 		retval = pthread_create(&thread_ids[i], &attr,
@@ -607,7 +607,7 @@ errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, int flags, int num_threads)
 		if (retval)
 			break;
 	}
-	for (i = 0; i < num_threads; i++) {
+	for (i = 0; i < नुमेरो_threads; i++) {
 		if (!thread_ids[i])
 			break;
 		rc = pthread_join(thread_ids[i], NULL);
@@ -634,7 +634,7 @@ out:
 	return retval;
 fallback:
 #endif /* HAVE_PTHREAD */
-	return read_bitmaps_range(fs, flags, 0, fs->group_desc_count - 1);
+	return read_bitmaps_range(fs, flags, 0, fs->group_desc_बिलांग - 1);
 }
 
 errcode_t ext2fs_read_inode_bitmap(ext2_filsys fs)

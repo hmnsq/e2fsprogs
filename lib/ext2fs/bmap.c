@@ -53,7 +53,7 @@ static _BMAP_INLINE_ errcode_t block_ind_bmap(ext2_filsys fs, int flags,
 
 	if (flags & BMAP_SET) {
 		b = *ret_blk;
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 		b = ext2fs_swab32(b);
 #endif
 		((blk_t *) block_buf)[nr] = b;
@@ -62,7 +62,7 @@ static _BMAP_INLINE_ errcode_t block_ind_bmap(ext2_filsys fs, int flags,
 
 	b = ((blk_t *) block_buf)[nr];
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	b = ext2fs_swab32(b);
 #endif
 
@@ -73,7 +73,7 @@ static _BMAP_INLINE_ errcode_t block_ind_bmap(ext2_filsys fs, int flags,
 		if (retval)
 			return retval;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 		((blk_t *) block_buf)[nr] = ext2fs_swab32(b);
 #else
 		((blk_t *) block_buf)[nr] = b;

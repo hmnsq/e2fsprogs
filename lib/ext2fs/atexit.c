@@ -29,21 +29,21 @@ struct exit_data {
 	void *data;
 };
 
-static struct exit_data *items;
-static size_t nr_items;
+static struct exit_data *मगा_बागाय;
+static size_t nr_मगा_बागाय;
 
 static void handle_exit(void)
 {
 	struct exit_data *ed;
 
-	for (ed = items + nr_items - 1; ed >= items; ed--) {
+	for (ed = मगा_बागाय + nr_मगा_बागाय - 1; ed >= मगा_बागाय; ed--) {
 		if (ed->func == NULL)
 			continue;
 		ed->func(ed->data);
 	}
 
-	ext2fs_free_mem(&items);
-	nr_items = 0;
+	ext2fs_free_mem(&मगा_बागाय);
+	nr_मगा_बागाय = 0;
 }
 
 /*
@@ -60,7 +60,7 @@ errcode_t ext2fs_add_exit_fn(ext2_exit_fn func, void *data)
 	if (func == NULL)
 		return EXT2_ET_INVALID_ARGUMENT;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
+	for (x = 0, ed = मगा_बागाय; x < nr_मगा_बागाय; x++, ed++) {
 		if (ed->func == func && ed->data == data)
 			return EXT2_ET_FILE_EXISTS;
 		if (ed->func == NULL)
@@ -73,20 +73,20 @@ errcode_t ext2fs_add_exit_fn(ext2_exit_fn func, void *data)
 		return 0;
 	}
 
-	if (nr_items == 0) {
+	if (nr_मगा_बागाय == 0) {
 		ret = atexit(handle_exit);
 		if (ret)
 			return ret;
 	}
 
-	ret = ext2fs_resize_mem(0, (nr_items + 1) * sizeof(struct exit_data),
-				&items);
+	ret = ext2fs_resize_mem(0, (nr_मगा_बागाय + 1) * sizeof(struct exit_data),
+				&मगा_बागाय);
 	if (ret)
 		return ret;
 
-	items[nr_items].func = func;
-	items[nr_items].data = data;
-	nr_items++;
+	मगा_बागाय[nr_मगा_बागाय].func = func;
+	मगा_बागाय[nr_मगा_बागाय].data = data;
+	nr_मगा_बागाय++;
 
 	return 0;
 }
@@ -100,14 +100,14 @@ errcode_t ext2fs_remove_exit_fn(ext2_exit_fn func, void *data)
 	if (func == NULL)
 		return EXT2_ET_INVALID_ARGUMENT;
 
-	for (x = 0, ed = items; x < nr_items; x++, ed++) {
+	for (x = 0, ed = मगा_बागाय; x < nr_मगा_बागाय; x++, ed++) {
 		if (ed->func == NULL)
 			return 0;
 		if (ed->func == func && ed->data == data) {
-			size_t sz = (nr_items - (x + 1)) *
+			size_t sz = (nr_मगा_बागाय - (x + 1)) *
 				    sizeof(struct exit_data);
 			memmove(ed, ed + 1, sz);
-			memset(items + nr_items - 1, 0,
+			memset(मगा_बागाय + nr_मगा_बागाय - 1, 0,
 			       sizeof(struct exit_data));
 		}
 	}

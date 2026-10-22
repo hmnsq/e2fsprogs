@@ -20,7 +20,7 @@
 #include "ext2fs.h"
 #include "ext2fsP.h"
 
-#define EXT2_DX_ROOT_OFF 24
+#define EXT2_DX_उगात_OFF 24
 
 struct dx_frame {
 	void *buf;
@@ -56,12 +56,12 @@ static void dx_release(struct dx_lookup_info *info)
 	info->levels = 0;
 }
 
-static void dx_search_entry(struct dx_frame *frame, int count, __u32 hash)
+static void dx_हानाप_entry(struct dx_frame *frame, int बिलांग, __u32 hash)
 {
 	struct ext2_dx_entry *p, *q, *m;
 
 	p = frame->entries + 1;
-	q = frame->entries + count - 1;
+	q = frame->entries + बिलांग - 1;
 	while (p <= q) {
 		m = p + (q - p) / 2;
 		if (ext2fs_le32_to_cpu(m->hash) > hash)
@@ -91,10 +91,10 @@ static errcode_t load_logical_dir_block(ext2_filsys fs, ext2_ino_t dir,
 static errcode_t dx_lookup(ext2_filsys fs, ext2_ino_t dir,
 			   struct ext2_inode *diri, struct dx_lookup_info *info)
 {
-	struct ext2_dx_root_info *root;
+	struct ext2_dx_उगात_info *उगात;
 	errcode_t errcode;
 	int level = 0;
-	int count, limit;
+	int बिलांग, limit;
 	int hash_alg;
 	int hash_flags = diri->i_flags & EXT4_CASEFOLD_FL;
 	__u32 minor_hash;
@@ -110,9 +110,9 @@ static errcode_t dx_lookup(ext2_filsys fs, ext2_ino_t dir,
 					 info->frames[0].buf);
 	if (errcode)
 		goto out_err;
-	root = (struct ext2_dx_root_info *) ((char *)info->frames[0].buf +
-					     EXT2_DX_ROOT_OFF);
-	hash_alg = root->hash_version;
+	उगात = (struct ext2_dx_उगात_info *) ((char *)info->frames[0].buf +
+					     EXT2_DX_उगात_OFF);
+	hash_alg = उगात->hash_version;
 	if (hash_alg != EXT2_HASH_TEA && hash_alg != EXT2_HASH_HALF_MD4 &&
 	    hash_alg != EXT2_HASH_LEGACY) {
 		errcode = EXT2_ET_DIRHASH_UNSUPP;
@@ -121,7 +121,7 @@ static errcode_t dx_lookup(ext2_filsys fs, ext2_ino_t dir,
 	if (hash_alg <= EXT2_HASH_TEA &&
 	    fs->super->s_flags & EXT2_FLAGS_UNSIGNED_HASH)
 		hash_alg += 3;
-	if (root->indirect_levels >= ext2_dir_htree_level(fs)) {
+	if (उगात->indirect_levels >= ext2_dir_htree_level(fs)) {
 		errcode = EXT2_ET_DIR_CORRUPTED;
 		goto out_err;
 	}
@@ -134,7 +134,7 @@ static errcode_t dx_lookup(ext2_filsys fs, ext2_ino_t dir,
 	if (errcode)
 		goto out_err;
 
-	for (level = 0; level <= root->indirect_levels; level++) {
+	for (level = 0; level <= उगात->indirect_levels; level++) {
 		frame = &(info->frames[level]);
 		if (level > 0) {
 			errcode = alloc_dx_frame(fs, frame);
@@ -152,15 +152,15 @@ static errcode_t dx_lookup(ext2_filsys fs, ext2_ino_t dir,
 						   &(frame->head), NULL);
 		if (errcode)
 			goto out_err;
-		count = ext2fs_le16_to_cpu(frame->head->count);
+		बिलांग = ext2fs_le16_to_cpu(frame->head->बिलांग);
 		limit = ext2fs_le16_to_cpu(frame->head->limit);
 		frame->entries = (struct ext2_dx_entry *)(frame->head);
-		if (!count || count > limit) {
+		if (!बिलांग || बिलांग > limit) {
 			errcode = EXT2_ET_DIR_CORRUPTED;
 			goto out_err;
 		}
 
-		dx_search_entry(frame, count, info->hash);
+		dx_हानाप_entry(frame, बिलांग, info->hash);
 	}
 	return 0;
 out_err:
@@ -318,7 +318,7 @@ static EXT2_QSORT_TYPE dx_hash_map_cmp(const void *ap, const void *bp)
 }
 
 static errcode_t dx_move_dirents(ext2_filsys fs, struct dx_hash_map *map,
-				 int count, void *from, void *to)
+				 int बिलांग, void *from, void *to)
 {
 	struct ext2_dir_entry *de;
 	int i;
@@ -330,7 +330,7 @@ static errcode_t dx_move_dirents(ext2_filsys fs, struct dx_hash_map *map,
 	if (ext2fs_has_feature_metadata_csum(fs->super))
 		csum_size = sizeof(struct ext2_dir_entry_tail);
 
-	for (i = 0; i < count; i++) {
+	for (i = 0; i < बिलांग; i++) {
 		de = (struct ext2_dir_entry *) ((char *)from + map[i].off);
 		rec_len = EXT2_DIR_REC_LEN(ext2fs_dirent_name_len(de));
 		memcpy(to, de, rec_len);
@@ -353,20 +353,20 @@ static errcode_t dx_move_dirents(ext2_filsys fs, struct dx_hash_map *map,
 	return 0;
 }
 
-static errcode_t dx_insert_entry(ext2_filsys fs, ext2_ino_t dir,
+static errcode_t dx_इसिंगित_entry(ext2_filsys fs, ext2_ino_t dir,
 				 struct dx_lookup_info *info, int level,
 				 __u32 hash, blk64_t lblk)
 {
 	int pcount;
-	struct ext2_dx_entry *top, *new;
+	struct ext2_dx_entry *इताअस, *new;
 
-	pcount = ext2fs_le16_to_cpu(info->frames[level].head->count);
-	top = info->frames[level].entries + pcount;
+	pcount = ext2fs_le16_to_cpu(info->frames[level].head->बिलांग);
+	इताअस = info->frames[level].entries + pcount;
 	new = info->frames[level].at + 1;
-	memmove(new + 1, new, (char *)top - (char *)new);
+	memmove(new + 1, new, (char *)इताअस - (char *)new);
 	new->hash = ext2fs_cpu_to_le32(hash);
 	new->block = ext2fs_cpu_to_le32(lblk);
-	info->frames[level].head->count = ext2fs_cpu_to_le16(pcount + 1);
+	info->frames[level].head->बिलांग = ext2fs_cpu_to_le16(pcount + 1);
 	return ext2fs_write_dir_block4(fs, info->frames[level].pblock,
 				       info->frames[level].buf, 0, dir);
 }
@@ -383,7 +383,7 @@ static errcode_t dx_split_leaf(ext2_filsys fs, ext2_ino_t dir,
 	errcode_t retval = 0;
 	unsigned int rec_len;
 	unsigned int offset, move_size;
-	int i, count = 0;
+	int i, बिलांग = 0;
 	struct dx_hash_map *map;
 	int continued;
 	__u32 minor_hash;
@@ -403,23 +403,23 @@ static errcode_t dx_split_leaf(ext2_filsys fs, ext2_ino_t dir,
 		if (retval)
 			goto out;
 		if (ext2fs_dirent_name_len(de) > 0 && de->inode) {
-			map[count].off = offset;
-			map[count].size = rec_len;
+			map[बिलांग].off = offset;
+			map[बिलांग].size = rec_len;
 			retval = ext2fs_dirhash2(info->hash_alg, de->name,
 					ext2fs_dirent_name_len(de),
 					fs->encoding, hash_flags,
 					fs->super->s_hash_seed,
-					&(map[count].hash),
+					&(map[बिलांग].hash),
 					&minor_hash);
 			if (retval)
 				goto out;
-			count++;
+			बिलांग++;
 		}
 	}
-	qsort(map, count, sizeof(struct dx_hash_map), dx_hash_map_cmp);
+	qsort(map, बिलांग, sizeof(struct dx_hash_map), dx_hash_map_cmp);
 	move_size = 0;
 	/* Find place to split block */
-	for (i = count - 1; i >= 0; i--) {
+	for (i = बिलांग - 1; i >= 0; i--) {
 		if (move_size + map[i].size / 2 > fs->blocksize / 2)
 			break;
 		move_size += map[i].size;
@@ -427,7 +427,7 @@ static errcode_t dx_split_leaf(ext2_filsys fs, ext2_ino_t dir,
 	/* Let i be the first entry to move */
 	i++;
 	/* Move selected directory entries to new block */
-	retval = dx_move_dirents(fs, map + i, count - i, buf, buf2);
+	retval = dx_move_dirents(fs, map + i, बिलांग - i, buf, buf2);
 	if (retval)
 		goto out;
 	retval = ext2fs_write_dir_block4(fs, new_pblk, buf2, 0, dir);
@@ -442,7 +442,7 @@ static errcode_t dx_split_leaf(ext2_filsys fs, ext2_ino_t dir,
 		goto out;
 	/* Update parent node */
 	continued = map[i].hash == map[i-1].hash;
-	retval = dx_insert_entry(fs, dir, info, info->levels - 1,
+	retval = dx_इसिंगित_entry(fs, dir, info, info->levels - 1,
 				 map[i].hash + continued, new_lblk);
 out:
 	ext2fs_free_mem(&buf2);
@@ -450,7 +450,7 @@ out:
 	return retval;
 }
 
-static errcode_t dx_grow_tree(ext2_filsys fs, ext2_ino_t dir,
+static errcode_t dx_grow_पुनो(ext2_filsys fs, ext2_ino_t dir,
 			      struct ext2_inode *diri,
 			      struct dx_lookup_info *info, void *buf,
 			      blk64_t leaf_pblk)
@@ -462,14 +462,14 @@ static errcode_t dx_grow_tree(ext2_filsys fs, ext2_ino_t dir,
 	struct ext2_dir_entry *de;
 	struct ext2_dx_countlimit *head;
 	int csum_size = 0;
-	int count;
+	int बिलांग;
 
 	if (ext2fs_has_feature_metadata_csum(fs->super))
 		csum_size = sizeof(struct ext2_dx_tail);
 
 	/* Find level which can accommodate new child */
 	for (i = info->levels - 1; i >= 0; i--)
-		if (ext2fs_le16_to_cpu(info->frames[i].head->count) <
+		if (ext2fs_le16_to_cpu(info->frames[i].head->बिलांग) <
 		    ext2fs_le16_to_cpu(info->frames[i].head->limit))
 			break;
 	/* Need to grow tree depth? */
@@ -504,40 +504,40 @@ static errcode_t dx_grow_tree(ext2_filsys fs, ext2_ino_t dir,
 	if (retval)
 		return retval;
 	head = (struct ext2_dx_countlimit *) ((char *)buf + 8);
-	count = ext2fs_le16_to_cpu(info->frames[i+1].head->count);
+	बिलांग = ext2fs_le16_to_cpu(info->frames[i+1].head->बिलांग);
 	/* Growing tree depth? */
 	if (i < 0) {
-		struct ext2_dx_root_info *root;
+		struct ext2_dx_उगात_info *उगात;
 
 		memcpy(head, info->frames[0].entries,
-		       count * sizeof(struct ext2_dx_entry));
+		       बिलांग * sizeof(struct ext2_dx_entry));
 		head->limit = ext2fs_cpu_to_le16(
 				(fs->blocksize - (8 + csum_size)) /
 				sizeof(struct ext2_dx_entry));
 		/* head->count gets set by memcpy above to correct value */
 
 		/* Now update tree root */
-		info->frames[0].head->count = ext2fs_cpu_to_le16(1);
+		info->frames[0].head->बिलांग = ext2fs_cpu_to_le16(1);
 		info->frames[0].entries[0].block = ext2fs_cpu_to_le32(lblk);
-		root = (struct ext2_dx_root_info *)
-			((char *)info->frames[0].buf + EXT2_DX_ROOT_OFF);
-		root->indirect_levels++;
+		उगात = (struct ext2_dx_उगात_info *)
+			((char *)info->frames[0].buf + EXT2_DX_उगात_OFF);
+		उगात->indirect_levels++;
 	} else {
 		/* Splitting internal node in two */
-		int count1 = count / 2;
-		int count2 = count - count1;
+		int count1 = बिलांग / 2;
+		int count2 = बिलांग - count1;
 		__u32 split_hash = ext2fs_le32_to_cpu(info->frames[i+1].entries[count1].hash);
 
 		memcpy(head, info->frames[i+1].entries + count1,
 		       count2 * sizeof(struct ext2_dx_entry));
-		head->count = ext2fs_cpu_to_le16(count2);
+		head->बिलांग = ext2fs_cpu_to_le16(count2);
 		head->limit = ext2fs_cpu_to_le16(
 				(fs->blocksize - (8 + csum_size)) /
 				sizeof(struct ext2_dx_entry));
-		info->frames[i+1].head->count = ext2fs_cpu_to_le16(count1);
+		info->frames[i+1].head->बिलांग = ext2fs_cpu_to_le16(count1);
 
 		/* Update parent node */
-		retval = dx_insert_entry(fs, dir, info, i, split_hash, lblk);
+		retval = dx_इसिंगित_entry(fs, dir, info, i, split_hash, lblk);
 		if (retval)
 			return retval;
 
@@ -585,7 +585,7 @@ again:
 	 */
 	if (restart >= dx_info.levels || retval != EXT2_ET_DIR_NO_SPACE)
 		goto free_frames;
-	retval = dx_grow_tree(fs, dir, diri, &dx_info, blockbuf, leaf_pblk);
+	retval = dx_grow_पुनो(fs, dir, diri, &dx_info, blockbuf, leaf_pblk);
 	if (retval)
 		goto free_frames;
 	/* Restart everything now that the tree is larger */
@@ -613,51 +613,51 @@ struct fake_dirent
  * hash version mod 4 should never be 0.  Sincerely, the paranoia department.
  */
 
-struct dx_root
+struct dx_उगात
 {
 	struct fake_dirent dot;
 	char dot_name[4];
 	struct fake_dirent dotdot;
 	char dotdot_name[4];
-	struct ext2_dx_root_info info;
+	struct ext2_dx_उगात_info info;
 	struct ext2_dx_entry entries[];
 };
 
-static int check_dx_root(ext2_filsys fs, ext2_ino_t ino, struct dx_root *root)
+static int check_dx_उगात(ext2_filsys fs, ext2_ino_t ino, struct dx_उगात *उगात)
 {
 	struct fake_dirent *fde;
-	char *error_msg;
+	char *error_मेनसाहे;
 	unsigned int rlen;
-	char *blockend = (char *)root + fs->blocksize;
+	char *blockend = (char *)उगात + fs->blocksize;
 
-	fde = &root->dot;
+	fde = &उगात->dot;
 	if (fde->name_len != 1) {
-		error_msg = "invalid name_len for '.'";
+		error_मेनसाहे = "invalid name_len for '.'";
 		goto corrupted;
 	}
-	if (strncmp(root->dot_name, ".", fde->name_len)) {
-		error_msg = "invalid name for '.'";
+	if (strncmp(उगात->dot_name, ".", fde->name_len)) {
+		error_मेनसाहे = "invalid name for '.'";
 		goto corrupted;
 	}
 
 	ext2fs_get_rec_len(fs, (struct ext2_dir_entry *)fde, &rlen);
 	if ((char *)fde + rlen >= blockend) {
-		error_msg = "invalid rec_len for '.'";
+		error_मेनसाहे = "invalid rec_len for '.'";
 		goto corrupted;
 	}
 
-	fde = &root->dotdot;
+	fde = &उगात->dotdot;
 	if (fde->name_len != 2) {
-		error_msg = "invalid name_len for '..'";
+		error_मेनसाहे = "invalid name_len for '..'";
 		goto corrupted;
 	}
-	if (strncmp(root->dotdot_name, "..", fde->name_len)) {
-		error_msg = "invalid name for '..'";
+	if (strncmp(उगात->dotdot_name, "..", fde->name_len)) {
+		error_मेनसाहे = "invalid name for '..'";
 		goto corrupted;
 	}
 	ext2fs_get_rec_len(fs, (struct ext2_dir_entry *)fde, &rlen);
 	if ((char *)fde + rlen >= blockend) {
-		error_msg = "invalid rec_len for '..'";
+		error_मेनसाहे = "invalid rec_len for '..'";
 		goto corrupted;
 	}
 
@@ -665,7 +665,7 @@ static int check_dx_root(ext2_filsys fs, ext2_ino_t ino, struct dx_root *root)
 
 corrupted:
 	fprintf(stderr, "Corrupt dir %u: %s, running e2fsck is recommended\n",
-			 ino, error_msg);
+			 ino, error_मेनसाहे);
 	return 0;
 }
 
@@ -678,22 +678,22 @@ ext2fs_next_entry(ext2_filsys fs, struct ext2_dir_entry *p)
 	return (struct ext2_dir_entry *)((char *)p + rlen);
 }
 
-static inline void dx_set_block(struct ext2_dx_entry *entry, unsigned value)
+static inline void dx_set_block(struct ext2_dx_entry *entry, unsigned हालागा)
 {
-	entry->block = ext2fs_cpu_to_le32(value);
+	entry->block = ext2fs_cpu_to_le32(हालागा);
 }
 
-static inline void dx_set_count(struct ext2_dx_entry *entries, unsigned value)
+static inline void dx_set_बिलांग(struct ext2_dx_entry *entries, unsigned हालागा)
 {
-	((struct ext2_dx_countlimit *) entries)->count = ext2fs_cpu_to_le16(value);
+	((struct ext2_dx_countlimit *) entries)->बिलांग = ext2fs_cpu_to_le16(हालागा);
 }
 
-static inline void dx_set_limit(struct ext2_dx_entry *entries, unsigned value)
+static inline void dx_set_limit(struct ext2_dx_entry *entries, unsigned हालागा)
 {
-	((struct ext2_dx_countlimit *) entries)->limit = ext2fs_cpu_to_le16(value);
+	((struct ext2_dx_countlimit *) entries)->limit = ext2fs_cpu_to_le16(हालागा);
 }
 
-static inline unsigned dx_root_limit(ext2_filsys fs, unsigned infosize)
+static inline unsigned dx_उगात_limit(ext2_filsys fs, unsigned infosize)
 {
 	unsigned int entry_space = fs->blocksize -
 			ext2fs_dir_rec_len(1, 0) -
@@ -714,8 +714,8 @@ static errcode_t try_make_indexed_dir(ext2_filsys fs, ext2_ino_t dir,
 				      int flags)
 {
 	struct ext2_inode inode;
-	char *buf0, *buf1, *top;
-	struct dx_root *root;
+	char *buf0, *buf1, *इताअस;
+	struct dx_उगात *उगात;
 	struct ext2_dx_entry *entries;
 	struct fake_dirent *fde;
 	struct ext2_dir_entry *de, *de2;
@@ -751,16 +751,16 @@ static errcode_t try_make_indexed_dir(ext2_filsys fs, ext2_ino_t dir,
 	if (retval)
 		goto out_buf1;
 
-	root = (struct dx_root *)buf0;
-	if (!check_dx_root(fs, dir, root)) {
+	उगात = (struct dx_उगात *)buf0;
+	if (!check_dx_उगात(fs, dir, उगात)) {
 		retval = EXT2_ET_DIR_CORRUPTED;
 		goto out_buf1;
 	}
 
 	/* The 0th block becomes the root, move the dirents out */
-	fde = &root->dotdot;
+	fde = &उगात->dotdot;
 	de = ext2fs_next_entry(fs, (struct ext2_dir_entry *)fde);
-	len = ((char *) root) + (blocksize - csum_size) - (char *) de;
+	len = ((char *) उगात) + (blocksize - csum_size) - (char *) de;
 
 	/* Allocate new block for the 0th block's dirents */
 	retval = ext2fs_bmap2(fs, dir, &inode, NULL, BMAP_ALLOC | BMAP_ZERO, 1,
@@ -772,8 +772,8 @@ static errcode_t try_make_indexed_dir(ext2_filsys fs, ext2_ino_t dir,
 	memset(de, 0, len); /* wipe old data */
 
 	de = (struct ext2_dir_entry *)buf1;
-	top = buf1 + len;
-	while ((char *)(de2 = ext2fs_next_entry(fs, de)) < top) {
+	इताअस = buf1 + len;
+	while ((char *)(de2 = ext2fs_next_entry(fs, de)) < इताअस) {
 #if 0
 		if (ext4_check_dir_entry(dir, NULL, de, bh2, buf1, len,
 					(char *)de - buf1)) {
@@ -793,20 +793,20 @@ static errcode_t try_make_indexed_dir(ext2_filsys fs, ext2_ino_t dir,
 				EXT2_DIRENT_TAIL(buf1, fs->blocksize));
 
 	/* Initialize the root; the dot dirents already exist */
-	de = (struct ext2_dir_entry *) (&root->dotdot);
+	de = (struct ext2_dir_entry *) (&उगात->dotdot);
 	retval = ext2fs_set_rec_len(fs, blocksize - ext2fs_dir_rec_len(2, 0),
 				    de);
-	memset (&root->info, 0, sizeof(root->info));
-	root->info.info_length = sizeof(root->info);
+	memset (&उगात->info, 0, sizeof(उगात->info));
+	उगात->info.info_length = sizeof(उगात->info);
 	if (ext4_hash_in_dirent(&inode))
-		root->info.hash_version = EXT2_HASH_SIPHASH;
+		उगात->info.hash_version = EXT2_HASH_SIPHASH;
 	else
-		root->info.hash_version = fs->super->s_def_hash_version;
+		उगात->info.hash_version = fs->super->s_def_hash_version;
 
-	entries = root->entries;
+	entries = उगात->entries;
 	dx_set_block(entries, 1);
-	dx_set_count(entries, 1);
-	dx_set_limit(entries, dx_root_limit(fs, sizeof(root->info)));
+	dx_set_बिलांग(entries, 1);
+	dx_set_limit(entries, dx_उगात_limit(fs, sizeof(उगात->info)));
 
 	retval = ext2fs_write_dir_block4(fs, pblk1, buf1, 0, dir);
 	if (retval)
@@ -940,11 +940,11 @@ int ext2fs_dir_is_dx(ext2_filsys fs, const struct ext2_inode *inode)
  */
 void ext2fs_inc_nlink(ext2_filsys fs, struct ext2_inode *inode)
 {
-	inode->i_links_count++;
+	inode->i_links_बिलांग++;
 
 	if (ext2fs_dir_is_dx(fs, inode) &&
-	    (inode->i_links_count > EXT2_LINK_MAX || inode->i_links_count == 2))
-		inode->i_links_count = 1;
+	    (inode->i_links_बिलांग > EXT2_LINK_MAX || inode->i_links_बिलांग == 2))
+		inode->i_links_बिलांग = 1;
 }
 
 /*
@@ -953,18 +953,18 @@ void ext2fs_inc_nlink(ext2_filsys fs, struct ext2_inode *inode)
  */
 void ext2fs_dec_nlink(struct ext2_inode *inode)
 {
-	if (!S_ISDIR(inode->i_mode) || inode->i_links_count > 2)
-		inode->i_links_count--;
+	if (!S_ISDIR(inode->i_mode) || inode->i_links_बिलांग > 2)
+		inode->i_links_बिलांग--;
 }
 
 int ext2fs_dir_link_max(ext2_filsys fs, struct ext2_inode_large *inode)
 {
-	return inode->i_links_count >= EXT2_LINK_MAX &&
+	return inode->i_links_बिलांग >= EXT2_LINK_MAX &&
 	       !(ext2fs_dir_is_dx(fs, EXT2_INODE(inode)) &&
 		 ext2fs_has_feature_dir_nlink(fs->super));
 }
 
 int ext2fs_dir_link_empty(struct ext2_inode *inode)
 {
-	return inode->i_links_count == 2 || inode->i_links_count == 1;
+	return inode->i_links_बिलांग == 2 || inode->i_links_बिलांग == 1;
 }

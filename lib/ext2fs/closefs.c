@@ -20,7 +20,7 @@
 #include "ext2_fs.h"
 #include "ext2fsP.h"
 
-static int test_root(unsigned int a, unsigned int b)
+static int test_उगात(unsigned int a, unsigned int b)
 {
 	while (1) {
 		if (a < b)
@@ -47,8 +47,8 @@ int ext2fs_bg_has_super(ext2_filsys fs, dgrp_t group)
 		return 1;
 	if (!(group & 1))
 		return 0;
-	if (test_root(group, 3) || (test_root(group, 5)) ||
-	    test_root(group, 7))
+	if (test_उगात(group, 3) || (test_उगात(group, 5)) ||
+	    test_उगात(group, 7))
 		return 1;
 
 	return 0;
@@ -161,7 +161,7 @@ int ext2fs_super_and_bgd_loc(ext2_filsys fs,
 					&ret_new_desc_blk2,
 					&ret_used_blks);
 
-	numblocks = ext2fs_group_blocks_count(fs, group);
+	numblocks = ext2fs_group_blocks_बिलांग(fs, group);
 
 	if (ret_super_blk)
 		*ret_super_blk = (blk_t)ret_super_blk2;
@@ -283,7 +283,7 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 	__u32		feature_incompat;
 	struct ext2_super_block *super_shadow = 0;
 	struct opaque_ext2_group_desc *group_shadow = 0;
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	struct ext2_group_desc *gdp;
 	dgrp_t		j;
 #endif
@@ -328,7 +328,7 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 	ext2fs_clear_feature_journal_needs_recovery(fs->super);
 
 	/* Byte swap the superblock and the group descriptors if necessary */
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	retval = EXT2_ET_NO_MEMORY;
 	retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &super_shadow);
 	if (retval)
@@ -345,7 +345,7 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 		memcpy(group_shadow, fs->group_desc, (size_t) fs->blocksize *
 		       fs->desc_blocks);
 
-		for (j = 0; j < fs->group_desc_count; j++) {
+		for (j = 0; j < fs->group_desc_बिलांग; j++) {
 			gdp = ext2fs_group_desc(fs, group_shadow, j);
 			ext2fs_swap_group_desc2(fs, gdp);
 		}
@@ -376,10 +376,10 @@ errcode_t ext2fs_flush2(ext2_filsys fs, int flags)
 
 	if (fs->progress_ops && fs->progress_ops->init)
 		(fs->progress_ops->init)(fs, &progress, NULL,
-					 fs->group_desc_count);
+					 fs->group_desc_बिलांग);
 
 
-	for (i = 0; i < fs->group_desc_count; i++) {
+	for (i = 0; i < fs->group_desc_बिलांग; i++) {
 		blk64_t	super_blk, old_desc_blk, new_desc_blk;
 
 		if (fs->progress_ops && fs->progress_ops->update)
@@ -427,7 +427,7 @@ write_primary_superblock_only:
 	fs->super->s_block_group_nr = 0;
 	fs->super->s_state = fs_state;
 	fs->super->s_feature_incompat = feature_incompat;
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	*super_shadow = *fs->super;
 	ext2fs_swap_super(super_shadow);
 #endif
@@ -454,7 +454,7 @@ write_primary_superblock_only:
 	}
 errout:
 	fs->super->s_state = fs_state;
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	if (super_shadow)
 		ext2fs_free_mem(&super_shadow);
 	if (group_shadow)

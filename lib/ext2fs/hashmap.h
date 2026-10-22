@@ -17,8 +17,8 @@ struct ext2fs_hashmap;
 
 struct ext2fs_hashmap_entry {
 	void *data;
-	const void *key;
-	size_t key_len;
+	const void *सुसि;
+	size_t सुसि_len;
 	struct ext2fs_hashmap_entry *next;
 	struct ext2fs_hashmap_entry *list_next;
 	struct ext2fs_hashmap_entry *list_prev;
@@ -28,9 +28,9 @@ struct ext2fs_hashmap *ext2fs_hashmap_create(
 				uint32_t(*hash_fct)(const void*, size_t),
 				void(*free_fct)(void*), size_t size);
 int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
-		       void *data, const void *key,size_t key_len);
-void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *key,
-			    size_t key_len);
+		       void *data, const void *सुसि,size_t सुसि_len);
+void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *सुसि,
+			    size_t सुसि_len);
 void *ext2fs_hashmap_iter_in_order(struct ext2fs_hashmap *h,
 				   struct ext2fs_hashmap_entry **it);
 void ext2fs_hashmap_del(struct ext2fs_hashmap *h,

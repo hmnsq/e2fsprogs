@@ -41,7 +41,7 @@
  */
 void ext2fs_clear_block_uninit(ext2_filsys fs, dgrp_t group)
 {
-	if (group >= fs->group_desc_count ||
+	if (group >= fs->group_desc_बिलांग ||
 	    !ext2fs_has_group_desc_csum(fs) ||
 	    !(ext2fs_bg_flags_test(fs, group, EXT2_BG_BLOCK_UNINIT)))
 		return;
@@ -62,7 +62,7 @@ static void check_inode_uninit(ext2_filsys fs, ext2fs_inode_bitmap map,
 {
 	ext2_ino_t	i, ino;
 
-	if (group >= fs->group_desc_count ||
+	if (group >= fs->group_desc_बिलांग ||
 	    !ext2fs_has_group_desc_csum(fs) ||
 	    !(ext2fs_bg_flags_test(fs, group, EXT2_BG_INODE_UNINIT)))
 		return;
@@ -107,7 +107,7 @@ errcode_t ext2fs_new_inode(ext2_filsys fs, ext2_ino_t dir,
 	}
 	if (start_inode < EXT2_FIRST_INODE(fs->super))
 		start_inode = EXT2_FIRST_INODE(fs->super);
-	if (start_inode > fs->super->s_inodes_count)
+	if (start_inode > fs->super->s_inodes_बिलांग)
 		return EXT2_ET_INODE_ALLOC_FAIL;
 	i = start_inode;
 	do {
@@ -118,8 +118,8 @@ errcode_t ext2fs_new_inode(ext2_filsys fs, ext2_ino_t dir,
 		upto = i + (EXT2_INODES_PER_GROUP(fs->super) - ino_in_group);
 		if (i < start_inode && upto >= start_inode)
 			upto = start_inode - 1;
-		if (upto > fs->super->s_inodes_count)
-			upto = fs->super->s_inodes_count;
+		if (upto > fs->super->s_inodes_बिलांग)
+			upto = fs->super->s_inodes_बिलांग;
 
 		retval = ext2fs_find_first_zero_inode_bitmap2(map, i, upto,
 							      &first_zero);
@@ -130,7 +130,7 @@ errcode_t ext2fs_new_inode(ext2_filsys fs, ext2_ino_t dir,
 		if (retval != ENOENT)
 			return EXT2_ET_INODE_ALLOC_FAIL;
 		i = upto + 1;
-		if (i > fs->super->s_inodes_count)
+		if (i > fs->super->s_inodes_बिलांग)
 			i = EXT2_FIRST_INODE(fs->super);
 	} while (i != start_inode);
 
@@ -181,12 +181,12 @@ errcode_t ext2fs_new_block3(ext2_filsys fs, blk64_t goal,
 		map = fs->block_map;
 	if (!map)
 		return EXT2_ET_NO_BLOCK_BITMAP;
-	if (!goal || (goal >= ext2fs_blocks_count(fs->super)))
+	if (!goal || (goal >= ext2fs_blocks_बिलांग(fs->super)))
 		goal = fs->super->s_first_data_block;
 	goal &= ~EXT2FS_CLUSTER_MASK(fs);
 
 	retval = ext2fs_find_first_zero_block_bitmap2(map,
-			goal, ext2fs_blocks_count(fs->super) - 1, &b);
+			goal, ext2fs_blocks_बिलांग(fs->super) - 1, &b);
 	if ((retval == ENOENT) && (goal != fs->super->s_first_data_block))
 		retval = ext2fs_find_first_zero_block_bitmap2(map,
 			fs->super->s_first_data_block, goal - 1, &b);
@@ -281,7 +281,7 @@ errcode_t ext2fs_alloc_block(ext2_filsys fs, blk_t goal,
 }
 
 errcode_t ext2fs_get_free_blocks2(ext2_filsys fs, blk64_t start, blk64_t finish,
-				 int num, ext2fs_block_bitmap map, blk64_t *ret)
+				 int नुमेरो, ext2fs_block_bitmap map, blk64_t *ret)
 {
 	blk64_t	b = start;
 	int	c_ratio;
@@ -296,18 +296,18 @@ errcode_t ext2fs_get_free_blocks2(ext2_filsys fs, blk64_t start, blk64_t finish,
 		b = fs->super->s_first_data_block;
 	if (!finish)
 		finish = start;
-	if (!num)
-		num = 1;
+	if (!नुमेरो)
+		नुमेरो = 1;
 	c_ratio = 1 << ext2fs_get_bitmap_granularity(map);
 	b &= ~(c_ratio - 1);
 	finish &= ~(c_ratio -1);
 	do {
-		if (b + num - 1 >= ext2fs_blocks_count(fs->super)) {
+		if (b + नुमेरो - 1 >= ext2fs_blocks_बिलांग(fs->super)) {
 			if (finish > start)
 				return EXT2_ET_BLOCK_ALLOC_FAIL;
 			b = fs->super->s_first_data_block;
 		}
-		if (ext2fs_fast_test_block_bitmap_range2(map, b, num)) {
+		if (ext2fs_fast_test_block_bitmap_range2(map, b, नुमेरो)) {
 			*ret = b;
 			return 0;
 		}
@@ -317,11 +317,11 @@ errcode_t ext2fs_get_free_blocks2(ext2_filsys fs, blk64_t start, blk64_t finish,
 }
 
 errcode_t ext2fs_get_free_blocks(ext2_filsys fs, blk_t start, blk_t finish,
-				 int num, ext2fs_block_bitmap map, blk_t *ret)
+				 int नुमेरो, ext2fs_block_bitmap map, blk_t *ret)
 {
 	errcode_t retval;
 	blk64_t val;
-	retval = ext2fs_get_free_blocks2(fs, start, finish, num, map, &val);
+	retval = ext2fs_get_free_blocks2(fs, start, finish, नुमेरो, map, &val);
 	if(!retval)
 		*ret = (blk_t) val;
 	return retval;
@@ -408,7 +408,7 @@ errcode_t ext2fs_new_range(ext2_filsys fs, int flags, blk64_t goal,
 	errcode_t retval;
 	blk64_t start, end, b;
 	int looped = 0;
-	blk64_t max_blocks = ext2fs_blocks_count(fs->super);
+	blk64_t max_blocks = ext2fs_blocks_बिलांग(fs->super);
 	errcode_t (*nrf)(ext2_filsys fs, int flags, blk64_t goal,
 			 blk64_t len, blk64_t *pblk, blk64_t *plen);
 
@@ -439,7 +439,7 @@ errcode_t ext2fs_new_range(ext2_filsys fs, int flags, blk64_t goal,
 		map = fs->block_map;
 	if (!map)
 		return EXT2_ET_NO_BLOCK_BITMAP;
-	if (!goal || goal >= ext2fs_blocks_count(fs->super))
+	if (!goal || goal >= ext2fs_blocks_बिलांग(fs->super))
 		goal = fs->super->s_first_data_block;
 
 	start = goal;

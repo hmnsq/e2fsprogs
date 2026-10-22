@@ -70,7 +70,7 @@ static int block_iterate_ind(blk_t *ind_block, blk_t ref_block,
 	    !(ctx->flags & BLOCK_FLAG_DATA_ONLY)) {
 		blk64 = *ind_block;
 		ret = (*ctx->func)(ctx->fs, &blk64,
-				   BLOCK_COUNT_IND, ref_block,
+				   BLOCK_बिलांग_IND, ref_block,
 				   ref_offset, ctx->priv_data);
 		*ind_block = blk64;
 	}
@@ -79,7 +79,7 @@ static int block_iterate_ind(blk_t *ind_block, blk_t ref_block,
 		ctx->bcount += limit;
 		return ret;
 	}
-	if (*ind_block >= ext2fs_blocks_count(ctx->fs->super) ||
+	if (*ind_block >= ext2fs_blocks_बिलांग(ctx->fs->super) ||
 	    *ind_block < ctx->fs->super->s_first_data_block) {
 		ctx->errcode = EXT2_ET_BAD_IND_BLOCK;
 		ret |= BLOCK_ERROR;
@@ -138,7 +138,7 @@ static int block_iterate_ind(blk_t *ind_block, blk_t ref_block,
 	    !(ret & BLOCK_ABORT)) {
 		blk64 = *ind_block;
 		ret |= (*ctx->func)(ctx->fs, &blk64,
-				    BLOCK_COUNT_IND, ref_block,
+				    BLOCK_बिलांग_IND, ref_block,
 				    ref_offset, ctx->priv_data);
 		*ind_block = blk64;
 	}
@@ -159,7 +159,7 @@ static int block_iterate_dind(blk_t *dind_block, blk_t ref_block,
 			    BLOCK_FLAG_DATA_ONLY))) {
 		blk64 = *dind_block;
 		ret = (*ctx->func)(ctx->fs, &blk64,
-				   BLOCK_COUNT_DIND, ref_block,
+				   BLOCK_बिलांग_DIND, ref_block,
 				   ref_offset, ctx->priv_data);
 		*dind_block = blk64;
 	}
@@ -168,7 +168,7 @@ static int block_iterate_dind(blk_t *dind_block, blk_t ref_block,
 		ctx->bcount += limit*limit;
 		return ret;
 	}
-	if (*dind_block >= ext2fs_blocks_count(ctx->fs->super) ||
+	if (*dind_block >= ext2fs_blocks_बिलांग(ctx->fs->super) ||
 	    *dind_block < ctx->fs->super->s_first_data_block) {
 		ctx->errcode = EXT2_ET_BAD_DIND_BLOCK;
 		ret |= BLOCK_ERROR;
@@ -224,7 +224,7 @@ static int block_iterate_dind(blk_t *dind_block, blk_t ref_block,
 	    !(ret & BLOCK_ABORT)) {
 		blk64 = *dind_block;
 		ret |= (*ctx->func)(ctx->fs, &blk64,
-				    BLOCK_COUNT_DIND, ref_block,
+				    BLOCK_बिलांग_DIND, ref_block,
 				    ref_offset, ctx->priv_data);
 		*dind_block = blk64;
 	}
@@ -245,7 +245,7 @@ static int block_iterate_tind(blk_t *tind_block, blk_t ref_block,
 			    BLOCK_FLAG_DATA_ONLY))) {
 		blk64 = *tind_block;
 		ret = (*ctx->func)(ctx->fs, &blk64,
-				   BLOCK_COUNT_TIND, ref_block,
+				   BLOCK_बिलांग_TIND, ref_block,
 				   ref_offset, ctx->priv_data);
 		*tind_block = blk64;
 	}
@@ -254,7 +254,7 @@ static int block_iterate_tind(blk_t *tind_block, blk_t ref_block,
 		ctx->bcount += ((unsigned long long) limit)*limit*limit;
 		return ret;
 	}
-	if (*tind_block >= ext2fs_blocks_count(ctx->fs->super) ||
+	if (*tind_block >= ext2fs_blocks_बिलांग(ctx->fs->super) ||
 	    *tind_block < ctx->fs->super->s_first_data_block) {
 		ctx->errcode = EXT2_ET_BAD_TIND_BLOCK;
 		ret |= BLOCK_ERROR;
@@ -310,7 +310,7 @@ static int block_iterate_tind(blk_t *tind_block, blk_t ref_block,
 	    !(ret & BLOCK_ABORT)) {
 		blk64 = *tind_block;
 		ret |= (*ctx->func)(ctx->fs, &blk64,
-				    BLOCK_COUNT_TIND, ref_block,
+				    BLOCK_बिलांग_TIND, ref_block,
 				    ref_offset, ctx->priv_data);
 		*tind_block = blk64;
 	}
@@ -356,7 +356,7 @@ errcode_t ext2fs_block_iterate3(ext2_filsys fs,
 	 */
 	if (flags & BLOCK_FLAG_NO_LARGE) {
 		if (!LINUX_S_ISDIR(inode.i_mode) &&
-		    (inode.i_size_high != 0))
+		    (inode.i_size_माताअस != 0))
 			return EXT2_ET_FILE_TOO_BIG;
 	}
 
@@ -385,7 +385,7 @@ errcode_t ext2fs_block_iterate3(ext2_filsys fs,
 		if (inode.osd1.hurd1.h_i_translator) {
 			blk64 = inode.osd1.hurd1.h_i_translator;
 			ret |= (*ctx.func)(fs, &blk64,
-					   BLOCK_COUNT_TRANSLATOR,
+					   BLOCK_बिलांग_TRANSLATOR,
 					   0, 0, priv_data);
 			inode.osd1.hurd1.h_i_translator = (blk_t) blk64;
 			if (ret & BLOCK_ABORT)
@@ -399,7 +399,7 @@ errcode_t ext2fs_block_iterate3(ext2_filsys fs,
 		struct ext2fs_extent	extent, next;
 		e2_blkcnt_t		blockcnt = 0;
 		blk64_t			blk, new_blk;
-		int			op = EXT2_EXTENT_ROOT;
+		int			op = EXT2_EXTENT_उगात;
 		int			uninit;
 		unsigned int		j;
 

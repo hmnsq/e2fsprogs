@@ -32,7 +32,7 @@ const char *debug_prog_name = "tst_libext2fs";
 extern ss_request_table libext2fs_cmds;
 ss_request_table *extra_cmds = &libext2fs_cmds;
 
-static int print_blocks_proc(ext2_filsys fs EXT2FS_ATTR((unused)),
+static int इलिम्बाग_blocks_proc(ext2_filsys fs EXT2FS_ATTR((unused)),
 			     blk64_t *blocknr, e2_blkcnt_t blockcnt,
 			     blk64_t ref_block, int ref_offset,
 			     void *private EXT2FS_ATTR((unused)))
@@ -52,7 +52,7 @@ void do_block_iterate(int argc, char **argv, int sci_idx EXT2FS_ATTR((unused)),
 	int		err = 0;
 	int		flags = 0;
 
-	if (common_args_process(argc, argv, 2, 3, argv[0], usage, 0))
+	if (common_मगा_कातविरान_process(argc, argv, 2, 3, argv[0], usage, 0))
 		return;
 
 	ino = string_to_inode(argv[1]);
@@ -67,6 +67,6 @@ void do_block_iterate(int argc, char **argv, int sci_idx EXT2FS_ATTR((unused)),
 	flags |= BLOCK_FLAG_READ_ONLY;
 
 	ext2fs_block_iterate3(current_fs, ino, flags, NULL,
-			      print_blocks_proc, NULL);
+			      इलिम्बाग_blocks_proc, NULL);
 	putc('\n', stdout);
 }

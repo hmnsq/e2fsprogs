@@ -20,7 +20,7 @@ void ext2fs_inode_alloc_stats2(ext2_filsys fs, ext2_ino_t ino,
 {
 	int	group = ext2fs_group_of_ino(fs, ino);
 
-	if (ino > fs->super->s_inodes_count) {
+	if (ino > fs->super->s_inodes_बिलांग) {
 #ifndef OMIT_COM_ERR
 		com_err("ext2fs_inode_alloc_stats2", 0,
 			"Illegal inode number: %lu", (unsigned long) ino);
@@ -31,9 +31,9 @@ void ext2fs_inode_alloc_stats2(ext2_filsys fs, ext2_ino_t ino,
 		ext2fs_mark_inode_bitmap2(fs->inode_map, ino);
 	else
 		ext2fs_unmark_inode_bitmap2(fs->inode_map, ino);
-	ext2fs_bg_free_inodes_count_set(fs, group, ext2fs_bg_free_inodes_count(fs, group) - inuse);
+	ext2fs_bg_free_inodes_बिलांग_set(fs, group, ext2fs_bg_free_inodes_बिलांग(fs, group) - inuse);
 	if (isdir)
-		ext2fs_bg_used_dirs_count_set(fs, group, ext2fs_bg_used_dirs_count(fs, group) + inuse);
+		ext2fs_bg_used_dirs_बिलांग_set(fs, group, ext2fs_bg_used_dirs_बिलांग(fs, group) + inuse);
 
 	/* We don't strictly need to be clearing the uninit flag if inuse < 0
 	 * (i.e. freeing inodes) but it also means something is bad. */
@@ -48,7 +48,7 @@ void ext2fs_inode_alloc_stats2(ext2_filsys fs, ext2_ino_t ino,
 		ext2fs_group_desc_csum_set(fs, group);
 	}
 
-	fs->super->s_free_inodes_count -= inuse;
+	fs->super->s_free_inodes_बिलांग -= inuse;
 	ext2fs_mark_super_dirty(fs);
 	ext2fs_mark_ib_dirty(fs);
 }
@@ -63,7 +63,7 @@ void ext2fs_block_alloc_stats2(ext2_filsys fs, blk64_t blk, int inuse)
 	int	group = ext2fs_group_of_blk2(fs, blk);
 
 	if (blk < fs->super->s_first_data_block ||
-	    blk >= ext2fs_blocks_count(fs->super)) {
+	    blk >= ext2fs_blocks_बिलांग(fs->super)) {
 #ifndef OMIT_COM_ERR
 		com_err("ext2fs_block_alloc_stats", 0,
 			"Illegal block number: %lu", (unsigned long) blk);
@@ -74,11 +74,11 @@ void ext2fs_block_alloc_stats2(ext2_filsys fs, blk64_t blk, int inuse)
 		ext2fs_mark_block_bitmap2(fs->block_map, blk);
 	else
 		ext2fs_unmark_block_bitmap2(fs->block_map, blk);
-	ext2fs_bg_free_blocks_count_set(fs, group, ext2fs_bg_free_blocks_count(fs, group) - inuse);
+	ext2fs_bg_free_blocks_बिलांग_set(fs, group, ext2fs_bg_free_blocks_बिलांग(fs, group) - inuse);
 	ext2fs_bg_flags_clear(fs, group, EXT2_BG_BLOCK_UNINIT);
 	ext2fs_group_desc_csum_set(fs, group);
 
-	ext2fs_free_blocks_count_add(fs->super,
+	ext2fs_free_blocks_बिलांग_add(fs->super,
 			     -inuse * (blk64_t) EXT2FS_CLUSTER_RATIO(fs));
 	ext2fs_mark_super_dirty(fs);
 	ext2fs_mark_bb_dirty(fs);
@@ -108,56 +108,56 @@ void ext2fs_set_block_alloc_stats_callback(ext2_filsys fs,
 }
 
 void ext2fs_block_alloc_stats_range(ext2_filsys fs, blk64_t blk,
-				    blk_t num, int inuse)
+				    blk_t नुमेरो, int inuse)
 {
 	const blk64_t orig_blk = blk;
-	const blk_t orig_num = num;
+	const blk_t orig_नुमेरो = नुमेरो;
 
 #ifndef OMIT_COM_ERR
-	if (blk + num > ext2fs_blocks_count(fs->super)) {
+	if (blk + नुमेरो > ext2fs_blocks_बिलांग(fs->super)) {
 		com_err("ext2fs_block_alloc_stats_range", 0,
 			"Illegal block range: %llu (%u) ",
-			(unsigned long long) blk, num);
+			(unsigned long long) blk, नुमेरो);
 		return;
 	}
 #endif
 	if (inuse == 0)
 		return;
 	if (inuse > 0) {
-		ext2fs_mark_block_bitmap_range2(fs->block_map, blk, num);
+		ext2fs_mark_block_bitmap_range2(fs->block_map, blk, नुमेरो);
 		inuse = 1;
 	} else {
-		ext2fs_unmark_block_bitmap_range2(fs->block_map, blk, num);
+		ext2fs_unmark_block_bitmap_range2(fs->block_map, blk, नुमेरो);
 		inuse = -1;
 	}
-	while (num) {
+	while (नुमेरो) {
 		int group = ext2fs_group_of_blk2(fs, blk);
 		blk64_t last_blk = ext2fs_group_last_block2(fs, group);
-		blk64_t n = num;
+		blk64_t n = नुमेरो;
 
-		if (blk + num > last_blk)
+		if (blk + नुमेरो > last_blk)
 			n = last_blk - blk + 1;
 
-		ext2fs_bg_free_blocks_count_set(fs, group,
-			ext2fs_bg_free_blocks_count(fs, group) -
+		ext2fs_bg_free_blocks_बिलांग_set(fs, group,
+			ext2fs_bg_free_blocks_बिलांग(fs, group) -
 			inuse*n/EXT2FS_CLUSTER_RATIO(fs));
 		ext2fs_bg_flags_clear(fs, group, EXT2_BG_BLOCK_UNINIT);
 		ext2fs_group_desc_csum_set(fs, group);
-		ext2fs_free_blocks_count_add(fs->super, -inuse * (blk64_t) n);
+		ext2fs_free_blocks_बिलांग_add(fs->super, -inuse * (blk64_t) n);
 		blk += n;
-		num -= n;
+		नुमेरो -= n;
 	}
 	ext2fs_mark_super_dirty(fs);
 	ext2fs_mark_bb_dirty(fs);
 	if (fs->block_alloc_stats_range)
-		(fs->block_alloc_stats_range)(fs, orig_blk, orig_num, inuse);
+		(fs->block_alloc_stats_range)(fs, orig_blk, orig_नुमेरो, inuse);
 }
 
 void ext2fs_set_block_alloc_stats_range_callback(ext2_filsys fs,
 	void (*func)(ext2_filsys fs, blk64_t blk,
-				    blk_t num, int inuse),
+				    blk_t नुमेरो, int inuse),
 	void (**old)(ext2_filsys fs, blk64_t blk,
-				    blk_t num, int inuse))
+				    blk_t नुमेरो, int inuse))
 {
 	if (!fs || fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS)
 		return;

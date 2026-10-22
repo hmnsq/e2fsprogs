@@ -50,7 +50,7 @@ errcode_t ext2fs_create_journal_superblock2(ext2_filsys fs,
 	errcode_t		retval;
 	journal_superblock_t	*jsb;
 
-	if (jparams->num_journal_blocks < JBD2_MIN_JOURNAL_BLOCKS)
+	if (jparams->नुमेरो_journal_blocks < JBD2_MIN_JOURNAL_BLOCKS)
 		return EXT2_ET_JOURNAL_TOO_SMALL;
 
 	if ((retval = ext2fs_get_mem(fs->blocksize, &jsb)))
@@ -58,17 +58,17 @@ errcode_t ext2fs_create_journal_superblock2(ext2_filsys fs,
 
 	memset (jsb, 0, fs->blocksize);
 
-	jsb->s_header.h_magic = htonl(JBD2_MAGIC_NUMBER);
+	jsb->s_header.h_magic = htonl(JBD2_MAGIC_नुमेरो);
 	if (flags & EXT2_MKJOURNAL_V1_SUPER)
 		jsb->s_header.h_blocktype = htonl(JBD2_SUPERBLOCK_V1);
 	else
 		jsb->s_header.h_blocktype = htonl(JBD2_SUPERBLOCK_V2);
 	jsb->s_blocksize = htonl(fs->blocksize);
-	jsb->s_maxlen = htonl(jparams->num_journal_blocks + jparams->num_fc_blocks);
+	jsb->s_maxlen = htonl(jparams->नुमेरो_journal_blocks + jparams->नुमेरो_fc_blocks);
 	jsb->s_nr_users = htonl(1);
 	jsb->s_first = htonl(1);
 	jsb->s_sequence = htonl(1);
-	jsb->s_num_fc_blks = htonl(jparams->num_fc_blocks);
+	jsb->s_नुमेरो_fc_blks = htonl(jparams->नुमेरो_fc_blocks);
 	memcpy(jsb->s_uuid, fs->super->s_uuid, sizeof(fs->super->s_uuid));
 	/*
 	 * If we're creating an external journal device, we need to
@@ -83,13 +83,13 @@ errcode_t ext2fs_create_journal_superblock2(ext2_filsys fs,
 	return 0;
 }
 
-errcode_t ext2fs_create_journal_superblock(ext2_filsys fs, __u32 num_blocks,
+errcode_t ext2fs_create_journal_superblock(ext2_filsys fs, __u32 नुमेरो_blocks,
 					int flags, char **ret_sb)
 {
 	struct ext2fs_journal_params jparams;
 
-	jparams.num_journal_blocks = num_blocks;
-	jparams.num_fc_blocks = 0;
+	jparams.नुमेरो_journal_blocks = नुमेरो_blocks;
+	jparams.नुमेरो_fc_blocks = 0;
 
 	return ext2fs_create_journal_superblock2(fs, &jparams, flags, ret_sb);
 }
@@ -132,7 +132,7 @@ static errcode_t write_journal_file(ext2_filsys fs, char *filename,
 	if (flags & EXT2_MKJOURNAL_LAZYINIT)
 		goto success;
 
-	for (i = 1; i < jparams->num_journal_blocks + jparams->num_fc_blocks; i++) {
+	for (i = 1; i < jparams->नुमेरो_journal_blocks + jparams->नुमेरो_fc_blocks; i++) {
 		ret_size = write(fd, buf, fs->blocksize);
 		if (ret_size < 0) {
 			retval = errno;
@@ -162,10 +162,10 @@ errfree:
  * programs that check for memory leaks happy.)
  */
 #define MAX_STRIDE_LENGTH (4194304 / (int) fs->blocksize)
-errcode_t ext2fs_zero_blocks2(ext2_filsys fs, blk64_t blk, int num,
-			      blk64_t *ret_blk, int *ret_count)
+errcode_t ext2fs_zero_blocks2(ext2_filsys fs, blk64_t blk, int नुमेरो,
+			      blk64_t *ret_blk, int *ret_बिलांग)
 {
-	int		j, count;
+	int		j, बिलांग;
 	static void	*buf;
 	static int	stride_length;
 	errcode_t	retval;
@@ -181,18 +181,18 @@ errcode_t ext2fs_zero_blocks2(ext2_filsys fs, blk64_t blk, int num,
 	}
 
 	/* Deal with zeroing less than 1 block */
-	if (num <= 0)
+	if (नुमेरो <= 0)
 		return 0;
 
 	/* Try a zero out command, if supported */
-	retval = io_channel_zeroout(fs->io, blk, num);
+	retval = io_channel_zeroout(fs->io, blk, नुमेरो);
 	if (retval == 0)
 		return 0;
 
 	/* Allocate the zeroizing buffer if necessary */
-	if (num > stride_length && stride_length < MAX_STRIDE_LENGTH) {
+	if (नुमेरो > stride_length && stride_length < MAX_STRIDE_LENGTH) {
 		void *p;
-		int new_stride = num;
+		int new_stride = नुमेरो;
 
 		if (new_stride > MAX_STRIDE_LENGTH)
 			new_stride = MAX_STRIDE_LENGTH;
@@ -205,36 +205,36 @@ errcode_t ext2fs_zero_blocks2(ext2_filsys fs, blk64_t blk, int num,
 	}
 	/* OK, do the write loop */
 	j=0;
-	while (j < num) {
+	while (j < नुमेरो) {
 		if (blk % stride_length) {
-			count = stride_length - (blk % stride_length);
-			if (count > (num - j))
-				count = num - j;
+			बिलांग = stride_length - (blk % stride_length);
+			if (बिलांग > (नुमेरो - j))
+				बिलांग = नुमेरो - j;
 		} else {
-			count = num - j;
-			if (count > stride_length)
-				count = stride_length;
+			बिलांग = नुमेरो - j;
+			if (बिलांग > stride_length)
+				बिलांग = stride_length;
 		}
-		retval = io_channel_write_blk64(fs->io, blk, count, buf);
+		retval = io_channel_write_blk64(fs->io, blk, बिलांग, buf);
 		if (retval) {
-			if (ret_count)
-				*ret_count = count;
+			if (ret_बिलांग)
+				*ret_बिलांग = बिलांग;
 			if (ret_blk)
 				*ret_blk = blk;
 			return retval;
 		}
-		j += count; blk += count;
+		j += बिलांग; blk += बिलांग;
 	}
 	return 0;
 }
 
-errcode_t ext2fs_zero_blocks(ext2_filsys fs, blk_t blk, int num,
-			     blk_t *ret_blk, int *ret_count)
+errcode_t ext2fs_zero_blocks(ext2_filsys fs, blk_t blk, int नुमेरो,
+			     blk_t *ret_blk, int *ret_बिलांग)
 {
 	blk64_t ret_blk2;
 	errcode_t retval;
 
-	retval = ext2fs_zero_blocks2(fs, blk, num, &ret_blk2, ret_count);
+	retval = ext2fs_zero_blocks2(fs, blk, नुमेरो, &ret_blk2, ret_बिलांग);
 	if (retval)
 		*ret_blk = (blk_t) ret_blk2;
 	return retval;
@@ -249,24 +249,24 @@ static blk64_t get_midpoint_journal_block(ext2_filsys fs)
 {
 	dgrp_t	group, start, end, i, log_flex;
 
-	group = ext2fs_group_of_blk2(fs, (ext2fs_blocks_count(fs->super) -
+	group = ext2fs_group_of_blk2(fs, (ext2fs_blocks_बिलांग(fs->super) -
 					 fs->super->s_first_data_block) / 2);
 	log_flex = 1U << fs->super->s_log_groups_per_flex;
 	if (fs->super->s_log_groups_per_flex && (group > log_flex)) {
 		group = group & ~(log_flex - 1);
-		while ((group < fs->group_desc_count) &&
-		       ext2fs_bg_free_blocks_count(fs, group) == 0)
+		while ((group < fs->group_desc_बिलांग) &&
+		       ext2fs_bg_free_blocks_बिलांग(fs, group) == 0)
 			group++;
-		if (group == fs->group_desc_count)
+		if (group == fs->group_desc_बिलांग)
 			group = 0;
 		start = group;
 	} else
 		start = (group > 0) ? group-1 : group;
-	end = ((group+1) < fs->group_desc_count) ? group+1 : group;
+	end = ((group+1) < fs->group_desc_बिलांग) ? group+1 : group;
 	group = start;
 	for (i = start + 1; i <= end; i++)
-		if (ext2fs_bg_free_blocks_count(fs, i) >
-		    ext2fs_bg_free_blocks_count(fs, group))
+		if (ext2fs_bg_free_blocks_बिलांग(fs, i) >
+		    ext2fs_bg_free_blocks_बिलांग(fs, group))
 			group = i;
 	return ext2fs_group_first_block2(fs, group);
 }
@@ -311,11 +311,11 @@ static errcode_t write_journal_inode(ext2_filsys fs, ext2_ino_t journal_ino,
 		falloc_flags |= EXT2_FALLOCATE_ZERO_BLOCKS;
 
 	inode_size = (unsigned long long)fs->blocksize *
-			(jparams->num_journal_blocks + jparams->num_fc_blocks);
+			(jparams->नुमेरो_journal_blocks + jparams->नुमेरो_fc_blocks);
 	now = ext2fsP_get_time(fs);
 	ext2fs_inode_xtime_set(&inode, i_mtime, now);
 	ext2fs_inode_xtime_set(&inode, i_ctime, now);
-	inode.i_links_count = 1;
+	inode.i_links_बिलांग = 1;
 	inode.i_mode = LINUX_S_IFREG | 0600;
 	retval = ext2fs_inode_size_set(fs, &inode, inode_size);
 	if (retval)
@@ -323,7 +323,7 @@ static errcode_t write_journal_inode(ext2_filsys fs, ext2_ino_t journal_ino,
 
 	retval = ext2fs_fallocate(fs, falloc_flags, journal_ino,
 				  &inode, goal, 0,
-				  jparams->num_journal_blocks + jparams->num_fc_blocks);
+				  jparams->नुमेरो_journal_blocks + jparams->नुमेरो_fc_blocks);
 	if (retval)
 		goto out2;
 
@@ -339,7 +339,7 @@ static errcode_t write_journal_inode(ext2_filsys fs, ext2_ino_t journal_ino,
 		goto out2;
 
 	memcpy(fs->super->s_jnl_blocks, inode.i_block, EXT2_N_BLOCKS*4);
-	fs->super->s_jnl_blocks[15] = inode.i_size_high;
+	fs->super->s_jnl_blocks[15] = inode.i_size_माताअस;
 	fs->super->s_jnl_blocks[16] = inode.i_size;
 	fs->super->s_jnl_backup_type = EXT3_JNL_BACKUP_BLOCKS;
 	ext2fs_mark_super_dirty(fs);
@@ -356,23 +356,23 @@ out2:
  *
  * n.b. comments assume 4k blocks
  */
-int ext2fs_default_journal_size(__u64 num_blocks)
+int ext2fs_default_journal_size(__u64 नुमेरो_blocks)
 {
-	if (num_blocks < 2048)
+	if (नुमेरो_blocks < 2048)
 		return -1;
-	if (num_blocks < 32768)		/* 128 MB */
+	if (नुमेरो_blocks < 32768)		/* 128 MB */
 		return (1024);			/* 4 MB */
-	if (num_blocks < 256*1024)	/* 1 GB */
+	if (नुमेरो_blocks < 256*1024)	/* 1 GB */
 		return (4096);			/* 16 MB */
-	if (num_blocks < 512*1024)	/* 2 GB */
+	if (नुमेरो_blocks < 512*1024)	/* 2 GB */
 		return (8192);			/* 32 MB */
-	if (num_blocks < 4096*1024)	/* 16 GB */
+	if (नुमेरो_blocks < 4096*1024)	/* 16 GB */
 		return (16384);			/* 64 MB */
-	if (num_blocks < 8192*1024)	/* 32 GB */
+	if (नुमेरो_blocks < 8192*1024)	/* 32 GB */
 		return (32768);			/* 128 MB */
-	if (num_blocks < 16384*1024)	/* 64 GB */
+	if (नुमेरो_blocks < 16384*1024)	/* 64 GB */
 		return (65536);			/* 256 MB */
-	if (num_blocks < 32768*1024)	/* 128 GB */
+	if (नुमेरो_blocks < 32768*1024)	/* 128 GB */
 		return (131072);		/* 512 MB */
 	return 262144;				/* 1 GB */
 }
@@ -385,31 +385,31 @@ errcode_t ext2fs_get_journal_params(struct ext2fs_journal_params *params,
 
 	memset(params, 0, sizeof(*params));
 	if (ext2fs_has_feature_journal_dev(fs->super)) {
-		total_blks = ext2fs_blocks_count(fs->super);
+		total_blks = ext2fs_blocks_बिलांग(fs->super);
 		if (total_blks < JBD2_MIN_JOURNAL_BLOCKS)
 			return EXT2_ET_JOURNAL_TOO_SMALL;
 
 		if (!ext2fs_has_feature_fast_commit(fs->super)) {
-			params->num_journal_blocks = total_blks;
-			params->num_fc_blocks = 0;
+			params->नुमेरो_journal_blocks = total_blks;
+			params->नुमेरो_fc_blocks = 0;
 			return 0;
 		}
-		params->num_journal_blocks = ext2fs_blocks_count(fs->super) *
+		params->नुमेरो_journal_blocks = ext2fs_blocks_बिलांग(fs->super) *
 				EXT2_JOURNAL_TO_FC_BLKS_RATIO /
 				(EXT2_JOURNAL_TO_FC_BLKS_RATIO + 1);
-		if (JBD2_MIN_JOURNAL_BLOCKS > params->num_journal_blocks)
-			params->num_journal_blocks = JBD2_MIN_JOURNAL_BLOCKS;
-		params->num_fc_blocks = total_blks - params->num_journal_blocks;
+		if (JBD2_MIN_JOURNAL_BLOCKS > params->नुमेरो_journal_blocks)
+			params->नुमेरो_journal_blocks = JBD2_MIN_JOURNAL_BLOCKS;
+		params->नुमेरो_fc_blocks = total_blks - params->नुमेरो_journal_blocks;
 		return 0;
 	}
 
-	ret = ext2fs_default_journal_size(ext2fs_blocks_count(fs->super));
+	ret = ext2fs_default_journal_size(ext2fs_blocks_बिलांग(fs->super));
 	if (ret < 0)
 		return EXT2_ET_JOURNAL_TOO_SMALL;
 
-	params->num_journal_blocks = ret;
+	params->नुमेरो_journal_blocks = ret;
 	if (ext2fs_has_feature_fast_commit(fs->super))
-		params->num_fc_blocks = params->num_journal_blocks /
+		params->नुमेरो_fc_blocks = params->नुमेरो_journal_blocks /
 			EXT2_JOURNAL_TO_FC_BLKS_RATIO;
 	return 0;
 }
@@ -448,7 +448,7 @@ errcode_t ext2fs_add_journal_device(ext2_filsys fs, ext2_filsys journal_dev)
 		return retval;
 
 	jsb = (journal_superblock_t *) buf;
-	if ((jsb->s_header.h_magic != (unsigned) ntohl(JBD2_MAGIC_NUMBER)) ||
+	if ((jsb->s_header.h_magic != (unsigned) ntohl(JBD2_MAGIC_नुमेरो)) ||
 	    (jsb->s_header.h_blocktype != (unsigned) ntohl(JBD2_SUPERBLOCK_V2)))
 		return EXT2_ET_NO_JOURNAL_SB;
 
@@ -602,20 +602,20 @@ errout:
 	return retval;
 }
 
-errcode_t ext2fs_add_journal_inode2(ext2_filsys fs, blk_t num_blocks,
+errcode_t ext2fs_add_journal_inode2(ext2_filsys fs, blk_t नुमेरो_blocks,
 				    blk64_t goal, int flags)
 {
 	struct ext2fs_journal_params jparams;
 
-	jparams.num_journal_blocks = num_blocks;
-	jparams.num_fc_blocks = 0;
+	jparams.नुमेरो_journal_blocks = नुमेरो_blocks;
+	jparams.नुमेरो_fc_blocks = 0;
 
 	return ext2fs_add_journal_inode3(fs, &jparams, goal, flags);
 }
 
-errcode_t ext2fs_add_journal_inode(ext2_filsys fs, blk_t num_blocks, int flags)
+errcode_t ext2fs_add_journal_inode(ext2_filsys fs, blk_t नुमेरो_blocks, int flags)
 {
-	return ext2fs_add_journal_inode2(fs, num_blocks, ~0ULL, flags);
+	return ext2fs_add_journal_inode2(fs, नुमेरो_blocks, ~0ULL, flags);
 }
 
 

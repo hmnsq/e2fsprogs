@@ -13,7 +13,7 @@
  */
 
 struct ext2_image_hdr {
-	__u32	magic_number;	/* This must be EXT2_ET_MAGIC_E2IMAGE */
+	__u32	magic_नुमेरो;	/* This must be EXT2_ET_MAGIC_E2IMAGE */
 	char	magic_descriptor[16]; /* "Ext2 Image 1.0", w/ null padding */
 	char	fs_hostname[64];/* Hostname of machine of image */
 	char	fs_netaddr[32];	/* Network address */

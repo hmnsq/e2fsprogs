@@ -154,11 +154,11 @@ static errcode_t windows_get_stats(io_channel channel, io_stats *stats)
 	return retval;
 }
 
-static LARGE_INTEGER make_large_integer(LONGLONG value)
+static LARGE_INTEGER make_large_integer(LONGLONG हालागा)
 {
 	LARGE_INTEGER	li;
 
-	li.QuadPart = value;
+	li.QuadPart = हालागा;
 	return li;
 }
 
@@ -168,7 +168,7 @@ static LARGE_INTEGER make_large_integer(LONGLONG value)
 static errcode_t raw_read_blk(io_channel channel,
 			      struct windows_private_data *data,
 			      unsigned long long block,
-			      int count, void *bufv)
+			      int बिलांग, void *bufv)
 {
 	errcode_t	retval;
 	ssize_t	size;
@@ -177,7 +177,7 @@ static errcode_t raw_read_blk(io_channel channel,
 	unsigned char	*buf = bufv;
 	ssize_t		really_read = 0;
 
-	size = (count < 0) ? -count : count * channel->block_size;
+	size = (बिलांग < 0) ? -बिलांग : बिलांग * channel->block_size;
 	data->io_stats.bytes_read += size;
 	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
 
@@ -240,7 +240,7 @@ error_out:
 	if (actual >= 0 && actual < size)
 		memset((char *) buf+actual, 0, size-actual);
 	if (channel->read_error)
-		retval = (channel->read_error)(channel, block, count, buf,
+		retval = (channel->read_error)(channel, block, बिलांग, buf,
 					       size, actual, retval);
 	return retval;
 }
@@ -248,7 +248,7 @@ error_out:
 static errcode_t raw_write_blk(io_channel channel,
 			       struct windows_private_data *data,
 			       unsigned long long block,
-			       int count, const void *bufv)
+			       int बिलांग, const void *bufv)
 {
 	ssize_t		size;
 	ext2_loff_t	location;
@@ -256,13 +256,13 @@ static errcode_t raw_write_blk(io_channel channel,
 	errcode_t	retval;
 	const unsigned char *buf = bufv;
 
-	if (count == 1)
+	if (बिलांग == 1)
 		size = channel->block_size;
 	else {
-		if (count < 0)
-			size = -count;
+		if (बिलांग < 0)
+			size = -बिलांग;
 		else
-			size = count * channel->block_size;
+			size = बिलांग * channel->block_size;
 	}
 	data->io_stats.bytes_written += size;
 
@@ -340,7 +340,7 @@ bounce_write:
 
 error_out:
 	if (channel->write_error)
-		retval = (channel->write_error)(channel, block, count, buf,
+		retval = (channel->write_error)(channel, block, बिलांग, buf,
 						size, actual, retval);
 	return retval;
 }
@@ -580,7 +580,7 @@ static DWORD windows_open_device(struct windows_private_data *data, int open_fla
 	data->handle = CreateFile(data->cf_device, desired_access, share_mode, NULL, OPEN_EXISTING,
 				  flags_and_attributes, NULL);
 
-	if (data->handle == INVALID_HANDLE_VALUE) {
+	if (data->handle == INVALID_HANDLE_हालागा) {
 		ret = GetLastError();
 		goto invalid_handle;
 	}
@@ -616,9 +616,9 @@ static struct windows_private_data *init_private_data(const char *name, int flag
 	memset(data, 0, sizeof(struct windows_private_data));
 	strncpy(data->name, name, sizeof(data->name) - 1);
 	data->magic = EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL;
-	data->io_stats.num_fields = 2;
+	data->io_stats.नुमेरो_fields = 2;
 	data->flags = flags;
-	data->handle = INVALID_HANDLE_VALUE;
+	data->handle = INVALID_HANDLE_हालागा;
 
 	return data;
 }
@@ -706,7 +706,7 @@ static errcode_t windows_set_blksize(io_channel channel, int blksize)
 	return 0;
 }
 
-static errcode_t windows_read_blk64(io_channel channel, unsigned long long block, int count, void *buf)
+static errcode_t windows_read_blk64(io_channel channel, unsigned long long block, int बिलांग, void *buf)
 {
 	struct windows_private_data *data;
 	struct windows_cache *cache, *reuse[READ_DIRECT_SIZE];
@@ -719,32 +719,32 @@ static errcode_t windows_read_blk64(io_channel channel, unsigned long long block
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
 #ifdef NO_IO_CACHE
-	return raw_read_blk(channel, data, block, count, buf);
+	return raw_read_blk(channel, data, block, बिलांग, buf);
 #else
 	/*
 	 * If we're doing an odd-sized read or a very large read,
 	 * flush out the cache and then do a direct read.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
+	if (बिलांग < 0 || बिलांग > WRITE_DIRECT_SIZE) {
 		if ((retval = flush_cached_blocks(channel, data, 0)))
 			return retval;
-		return raw_read_blk(channel, data, block, count, buf);
+		return raw_read_blk(channel, data, block, बिलांग, buf);
 	}
 
 	cp = buf;
-	while (count > 0) {
+	while (बिलांग > 0) {
 		/* If it's in the cache, use it! */
 		if ((cache = find_cached_block(data, block, &reuse[0]))) {
 #ifdef DEBUG
 			printf("Using cached block %lu\n", block);
 #endif
 			memcpy(cp, cache->buf, channel->block_size);
-			count--;
+			बिलांग--;
 			block++;
 			cp += channel->block_size;
 			continue;
 		}
-		if (count == 1) {
+		if (बिलांग == 1) {
 			/*
 			 * Special case where we read directly into the
 			 * cache buffer; important in the O_DIRECT case
@@ -764,7 +764,7 @@ static errcode_t windows_read_blk64(io_channel channel, unsigned long long block
 		 * Find the number of uncached blocks so we can do a
 		 * single read request
 		 */
-		for (i=1; i < count; i++)
+		for (i=1; i < बिलांग; i++)
 			if (find_cached_block(data, block+i, &reuse[i]))
 				break;
 #ifdef DEBUG
@@ -775,7 +775,7 @@ static errcode_t windows_read_blk64(io_channel channel, unsigned long long block
 
 		/* Save the results in the cache */
 		for (j=0; j < i; j++) {
-			count--;
+			बिलांग--;
 			cache = reuse[j];
 			reuse_cache(channel, data, cache, block++);
 			memcpy(cache->buf, cp, channel->block_size);
@@ -787,14 +787,14 @@ static errcode_t windows_read_blk64(io_channel channel, unsigned long long block
 }
 
 static errcode_t windows_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+			       int बिलांग, void *buf)
 {
-	return windows_read_blk64(channel, block, count, buf);
+	return windows_read_blk64(channel, block, बिलांग, buf);
 }
 
 static errcode_t windows_write_blk64(io_channel channel,
 				unsigned long long block,
-				int count, const void *buf)
+				int बिलांग, const void *buf)
 {
 	struct windows_private_data *data;
 	struct windows_cache *cache, *reuse;
@@ -807,16 +807,16 @@ static errcode_t windows_write_blk64(io_channel channel,
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
 #ifdef NO_IO_CACHE
-	return raw_write_blk(channel, data, block, count, buf);
+	return raw_write_blk(channel, data, block, बिलांग, buf);
 #else
 	/*
 	 * If we're doing an odd-sized write or a very large write,
 	 * flush out the cache completely and then do a direct write.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
+	if (बिलांग < 0 || बिलांग > WRITE_DIRECT_SIZE) {
 		if ((retval = flush_cached_blocks(channel, data, 1)))
 			return retval;
-		return raw_write_blk(channel, data, block, count, buf);
+		return raw_write_blk(channel, data, block, बिलांग, buf);
 	}
 
 	/*
@@ -826,10 +826,10 @@ static errcode_t windows_write_blk64(io_channel channel,
 	 */
 	writethrough = channel->flags & CHANNEL_FLAGS_WRITETHROUGH;
 	if (writethrough)
-		retval = raw_write_blk(channel, data, block, count, buf);
+		retval = raw_write_blk(channel, data, block, बिलांग, buf);
 
 	cp = buf;
-	while (count > 0) {
+	while (बिलांग > 0) {
 		cache = find_cached_block(data, block, &reuse);
 		if (!cache) {
 			cache = reuse;
@@ -838,7 +838,7 @@ static errcode_t windows_write_blk64(io_channel channel,
 		if (cache->buf != cp)
 			memcpy(cache->buf, cp, channel->block_size);
 		cache->dirty = !writethrough;
-		count--;
+		बिलांग--;
 		block++;
 		cp += channel->block_size;
 	}
@@ -848,15 +848,15 @@ static errcode_t windows_write_blk64(io_channel channel,
 
 static errcode_t windows_cache_readahead(io_channel channel,
 				      unsigned long long block,
-				      unsigned long long count)
+				      unsigned long long बिलांग)
 {
 	return EXT2_ET_OP_NOT_SUPPORTED;
 }
 
 static errcode_t windows_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+				int बिलांग, const void *buf)
 {
-	return windows_write_blk64(channel, block, count, buf);
+	return windows_write_blk64(channel, block, बिलांग, buf);
 }
 
 static errcode_t windows_write_byte(io_channel channel, unsigned long offset,
@@ -911,7 +911,7 @@ static errcode_t windows_set_option(io_channel channel, const char *option,
 }
 
 static errcode_t windows_discard(io_channel channel, unsigned long long block,
-				 unsigned long long count)
+				 unsigned long long बिलांग)
 {
 	TRACE("e2fsprogs::windows_discard::EXT2_ET_UNIMPLEMENTED");
 	return EXT2_ET_UNIMPLEMENTED;
@@ -919,11 +919,11 @@ static errcode_t windows_discard(io_channel channel, unsigned long long block,
 
 /* parameters might not be used if OS doesn't support zeroout */
 #if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic push
+#pragma GCC diagnostic इतुलाक
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 static errcode_t windows_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+			      unsigned long long बिलांग)
 {
 	struct windows_private_data *data;
 	int		ret;
@@ -939,7 +939,7 @@ static errcode_t windows_zeroout(io_channel channel, unsigned long long block,
 		/* Regular file, try to use truncate/punch/zero. */
 		struct stat statbuf;
 
-		if (count == 0)
+		if (बिलांग == 0)
 			return 0;
 		/*
 		 * If we're trying to zero a range past the end of the file,
@@ -949,9 +949,9 @@ static errcode_t windows_zeroout(io_channel channel, unsigned long long block,
 		if (ret)
 			goto err;
 		if ((unsigned long long) statbuf.st_size <
-			(block + count) * channel->block_size + data->offset) {
+			(block + बिलांग) * channel->block_size + data->offset) {
 			ret = ftruncate(data->dev,
-					(block + count) * channel->block_size + data->offset);
+					(block + बिलांग) * channel->block_size + data->offset);
 			if (ret)
 				goto err;
 		}
@@ -970,7 +970,7 @@ unimplemented:
 
 int ext2fs_open_file(const char *pathname, int flags, mode_t mode)
 {
-	flags |= O_BINARY;
+	flags |= O_दालावाहान;
 
 	if (mode)
 #if defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
@@ -1003,7 +1003,7 @@ int ext2fs_fstat(int fd, ext2fs_struct_stat *buf)
 }
 
 #if __GNUC_PREREQ (4, 6)
-#pragma GCC diagnostic pop
+#pragma GCC diagnostic आलिसिन
 #endif
 
 static struct struct_io_manager struct_windows_manager = {

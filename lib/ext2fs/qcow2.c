@@ -132,7 +132,7 @@ static int qcow2_read_l2_table(struct ext2_qcow2_image *img,
 }
 
 static int qcow2_copy_data(int fdin, int fdout, __u64 off_in,
-			   __u64 off_out, void *buf, size_t count)
+			   __u64 off_out, void *buf, size_t बिलांग)
 {
 	ssize_t c1, c2, c;
 	void *ptr;
@@ -146,9 +146,9 @@ static int qcow2_copy_data(int fdin, int fdout, __u64 off_in,
 	if (ext2fs_llseek(fdin, off_in, SEEK_SET) < 0)
 		return errno;
 
-	while (count > 0) {
+	while (बिलांग > 0) {
 		errno = 0;
-		c1 = read(fdin, buf, count);
+		c1 = read(fdin, buf, बिलांग);
 		if (c1 < 0 || ((c1 == 0) && errno))
 			return errno;
 		if (c1 == 0)
@@ -162,7 +162,7 @@ static int qcow2_copy_data(int fdin, int fdout, __u64 off_in,
 			if (c2 == 0 && --retries <= 0)
 				break; /* This should never happen...  */
 		}
-		count -= c1;
+		बिलांग -= c1;
 	}
 	return 0;
 }

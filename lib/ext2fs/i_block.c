@@ -28,7 +28,7 @@
 #include "ext2fs.h"
 
 errcode_t ext2fs_iblk_add_blocks(ext2_filsys fs, struct ext2_inode *inode,
-				 blk64_t num_blocks)
+				 blk64_t नुमेरो_blocks)
 {
 	unsigned long long b = inode->i_blocks;
 
@@ -37,10 +37,10 @@ errcode_t ext2fs_iblk_add_blocks(ext2_filsys fs, struct ext2_inode *inode,
 
 	if (!ext2fs_has_feature_huge_file(fs->super) ||
 	    !(inode->i_flags & EXT4_HUGE_FILE_FL))
-	    num_blocks *= fs->blocksize / 512;
-	num_blocks *= EXT2FS_CLUSTER_RATIO(fs);
+	    नुमेरो_blocks *= fs->blocksize / 512;
+	नुमेरो_blocks *= EXT2FS_CLUSTER_RATIO(fs);
 
-	b += num_blocks;
+	b += नुमेरो_blocks;
 
 	if (ext2fs_has_feature_huge_file(fs->super))
 		inode->osd2.linux2.l_i_blocks_hi = b >> 32;
@@ -51,7 +51,7 @@ errcode_t ext2fs_iblk_add_blocks(ext2_filsys fs, struct ext2_inode *inode,
 }
 
 errcode_t ext2fs_iblk_sub_blocks(ext2_filsys fs, struct ext2_inode *inode,
-				 blk64_t num_blocks)
+				 blk64_t नुमेरो_blocks)
 {
 	unsigned long long b = inode->i_blocks;
 
@@ -60,13 +60,13 @@ errcode_t ext2fs_iblk_sub_blocks(ext2_filsys fs, struct ext2_inode *inode,
 
 	if (!ext2fs_has_feature_huge_file(fs->super) ||
 	    !(inode->i_flags & EXT4_HUGE_FILE_FL))
-	    num_blocks *= fs->blocksize / 512;
-	num_blocks *= EXT2FS_CLUSTER_RATIO(fs);
+	    नुमेरो_blocks *= fs->blocksize / 512;
+	नुमेरो_blocks *= EXT2FS_CLUSTER_RATIO(fs);
 
-	if (num_blocks > b)
+	if (नुमेरो_blocks > b)
 		return EOVERFLOW;
 
-	b -= num_blocks;
+	b -= नुमेरो_blocks;
 
 	if (ext2fs_has_feature_huge_file(fs->super))
 		inode->osd2.linux2.l_i_blocks_hi = b >> 32;

@@ -22,12 +22,12 @@
 #include "ext2fs.h"
 #include "ext2fsP.h"
 
-static errcode_t open_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t base,
+static errcode_t open_namei(ext2_filsys fs, ext2_ino_t उगात, ext2_ino_t base,
 			    const char *pathname, size_t pathlen, int follow,
-			    int link_count, char *buf, ext2_ino_t *res_inode);
+			    int link_बिलांग, char *buf, ext2_ino_t *res_inode);
 
-static errcode_t follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
-			     ext2_ino_t inode, int link_count,
+static errcode_t follow_link(ext2_filsys fs, ext2_ino_t उगात, ext2_ino_t dir,
+			     ext2_ino_t inode, int link_बिलांग,
 			     char *buf, ext2_ino_t *res_inode)
 {
 	char *pathname;
@@ -38,7 +38,7 @@ static errcode_t follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
 
 #ifdef NAMEI_DEBUG
 	printf("follow_link: root=%lu, dir=%lu, inode=%lu, lc=%d\n",
-	       root, dir, inode, link_count);
+	       उगात, dir, inode, link_बिलांग);
 
 #endif
 	retval = ext2fs_read_inode (fs, inode, &ei);
@@ -47,7 +47,7 @@ static errcode_t follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
 		*res_inode = inode;
 		return 0;
 	}
-	if (link_count++ >= EXT2FS_MAX_NESTED_LINKS)
+	if (link_बिलांग++ >= EXT2FS_MAX_NESTED_LINKS)
 		return EXT2_ET_SYMLINK_LOOP;
 
 	if (ext2fs_is_fast_symlink(&ei))
@@ -81,8 +81,8 @@ static errcode_t follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
 		pathname = buffer;
 	}
 
-	retval = open_namei(fs, root, dir, pathname, ei.i_size, 1,
-			    link_count, buf, res_inode);
+	retval = open_namei(fs, उगात, dir, pathname, ei.i_size, 1,
+			    link_बिलांग, buf, res_inode);
 	if (buffer)
 		ext2fs_free_mem(&buffer);
 	return retval;
@@ -94,9 +94,9 @@ static errcode_t follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
  * containing directory, and a pointer to the filename of the file
  * (pointing into the pathname) and the length of the filename.
  */
-static errcode_t dir_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
+static errcode_t dir_namei(ext2_filsys fs, ext2_ino_t उगात, ext2_ino_t dir,
 			   const char *pathname, int pathlen,
-			   int link_count, char *buf,
+			   int link_बिलांग, char *buf,
 			   const char **name, int *namelen,
 			   ext2_ino_t *res_inode)
 {
@@ -107,7 +107,7 @@ static errcode_t dir_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
 	errcode_t retval;
 
 	if ((c = *pathname) == '/') {
-        	dir = root;
+        	dir = उगात;
 		pathname++;
 		pathlen--;
 	}
@@ -122,8 +122,8 @@ static errcode_t dir_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
 			break;
 		retval = ext2fs_lookup (fs, dir, thisname, len, buf, &inode);
 		if (retval) return retval;
-        	retval = follow_link (fs, root, dir, inode,
-				      link_count, buf, &dir);
+        	retval = follow_link (fs, उगात, dir, inode,
+				      link_बिलांग, buf, &dir);
         	if (retval) return retval;
     	}
 	*name = thisname;
@@ -132,9 +132,9 @@ static errcode_t dir_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t dir,
 	return 0;
 }
 
-static errcode_t open_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t base,
+static errcode_t open_namei(ext2_filsys fs, ext2_ino_t उगात, ext2_ino_t base,
 			    const char *pathname, size_t pathlen, int follow,
-			    int link_count, char *buf, ext2_ino_t *res_inode)
+			    int link_बिलांग, char *buf, ext2_ino_t *res_inode)
 {
 	const char *base_name;
 	int namelen;
@@ -143,10 +143,10 @@ static errcode_t open_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t base,
 
 #ifdef NAMEI_DEBUG
 	printf("open_namei: root=%lu, dir=%lu, path=%.*s, lc=%d\n",
-	       root, base, pathlen, pathname, link_count);
+	       उगात, base, pathlen, pathname, link_बिलांग);
 #endif
-	retval = dir_namei(fs, root, base, pathname, pathlen,
-			   link_count, buf, &base_name, &namelen, &dir);
+	retval = dir_namei(fs, उगात, base, pathname, pathlen,
+			   link_बिलांग, buf, &base_name, &namelen, &dir);
 	if (retval) return retval;
 	if (!namelen) {                     /* special case: '/usr/' etc */
 		*res_inode=dir;
@@ -156,20 +156,20 @@ static errcode_t open_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t base,
 	if (retval)
 		return retval;
 	if (follow) {
-		retval = follow_link(fs, root, dir, inode, link_count,
+		retval = follow_link(fs, उगात, dir, inode, link_बिलांग,
 				     buf, &inode);
 		if (retval)
 			return retval;
 	}
 #ifdef NAMEI_DEBUG
 	printf("open_namei: (link_count=%d) returns %lu\n",
-	       link_count, inode);
+	       link_बिलांग, inode);
 #endif
 	*res_inode = inode;
 	return 0;
 }
 
-errcode_t ext2fs_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
+errcode_t ext2fs_namei(ext2_filsys fs, ext2_ino_t उगात, ext2_ino_t cwd,
 		       const char *name, ext2_ino_t *inode)
 {
 	char *buf;
@@ -181,14 +181,14 @@ errcode_t ext2fs_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
 	if (retval)
 		return retval;
 
-	retval = open_namei(fs, root, cwd, name, strlen(name), 0, 0,
+	retval = open_namei(fs, उगात, cwd, name, strlen(name), 0, 0,
 			    buf, inode);
 
 	ext2fs_free_mem(&buf);
 	return retval;
 }
 
-errcode_t ext2fs_namei_follow(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
+errcode_t ext2fs_namei_follow(ext2_filsys fs, ext2_ino_t उगात, ext2_ino_t cwd,
 			      const char *name, ext2_ino_t *inode)
 {
 	char *buf;
@@ -200,14 +200,14 @@ errcode_t ext2fs_namei_follow(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
 	if (retval)
 		return retval;
 
-	retval = open_namei(fs, root, cwd, name, strlen(name), 1, 0,
+	retval = open_namei(fs, उगात, cwd, name, strlen(name), 1, 0,
 			    buf, inode);
 
 	ext2fs_free_mem(&buf);
 	return retval;
 }
 
-errcode_t ext2fs_follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
+errcode_t ext2fs_follow_link(ext2_filsys fs, ext2_ino_t उगात, ext2_ino_t cwd,
 			ext2_ino_t inode, ext2_ino_t *res_inode)
 {
 	char *buf;
@@ -219,7 +219,7 @@ errcode_t ext2fs_follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
 	if (retval)
 		return retval;
 
-	retval = follow_link(fs, root, cwd, inode, 0, buf, res_inode);
+	retval = follow_link(fs, उगात, cwd, inode, 0, buf, res_inode);
 
 	ext2fs_free_mem(&buf);
 	return retval;

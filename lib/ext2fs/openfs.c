@@ -64,7 +64,7 @@ blk64_t ext2fs_descriptor_block_loc2(ext2_filsys fs, blk64_t group_block,
 	 */
 	if (group_block != fs->super->s_first_data_block &&
 	    ((ret_blk + has_super + fs->super->s_blocks_per_group) <
-	     ext2fs_blocks_count(fs->super))) {
+	     ext2fs_blocks_बिलांग(fs->super))) {
 		ret_blk += fs->super->s_blocks_per_group;
 
 		/*
@@ -128,7 +128,7 @@ errcode_t ext2fs_open2(const char *name, const char *io_options,
 	int		group_zero_adjust = 0;
 	unsigned int	inode_size;
 	__u64		groups_cnt;
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	unsigned int	groups_per_block;
 	struct ext2_group_desc *gdp;
 	int		j;
@@ -199,7 +199,7 @@ errcode_t ext2fs_open2(const char *name, const char *io_options,
 					     fs->image_header);
 		if (retval)
 			goto cleanup;
-		if (ext2fs_le32_to_cpu(fs->image_header->magic_number) != EXT2_ET_MAGIC_E2IMAGE)
+		if (ext2fs_le32_to_cpu(fs->image_header->magic_नुमेरो) != EXT2_ET_MAGIC_E2IMAGE)
 			return EXT2_ET_MAGIC_E2IMAGE;
 		superblock = 1;
 		block_size = ext2fs_le32_to_cpu(fs->image_header->fs_blocksize);
@@ -249,7 +249,7 @@ retry:
 		}
 	}
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	fs->flags |= EXT2_FLAG_SWAP_BYTES;
 	ext2fs_swap_super(fs->super);
 #else
@@ -265,7 +265,7 @@ retry:
 		goto cleanup;
 
 	if (fs->super->s_rev_level > EXT2_LIB_CURRENT_REV) {
-		retval = EXT2_ET_REV_TOO_HIGH;
+		retval = EXT2_ET_REV_TOO_माताअस;
 		goto cleanup;
 	}
 
@@ -376,7 +376,7 @@ retry:
 	 * the group descriptors, because they're not there.
 	 */
 	if (ext2fs_has_feature_journal_dev(fs->super)) {
-		fs->group_desc_count = 0;
+		fs->group_desc_बिलांग = 0;
 		*ret_fs = fs;
 		return 0;
 	}
@@ -396,25 +396,25 @@ retry:
 	    blocks_per_group > EXT2_MAX_BLOCKS_PER_GROUP(fs->super) ||
 	    fs->inode_blocks_per_group > EXT2_MAX_INODES_PER_GROUP(fs->super) ||
            EXT2_DESC_PER_BLOCK(fs->super) == 0 ||
-           fs->super->s_first_data_block >= ext2fs_blocks_count(fs->super)) {
+           fs->super->s_first_data_block >= ext2fs_blocks_बिलांग(fs->super)) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
 		goto cleanup;
 	}
-	groups_cnt = ext2fs_div64_ceil(ext2fs_blocks_count(fs->super) -
+	groups_cnt = ext2fs_div64_ceil(ext2fs_blocks_बिलांग(fs->super) -
 				       fs->super->s_first_data_block,
 				       blocks_per_group);
 	if (groups_cnt >> 32) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
 		goto cleanup;
 	}
-	fs->group_desc_count = 	groups_cnt;
+	fs->group_desc_बिलांग = 	groups_cnt;
 	if (!(flags & EXT2_FLAG_IGNORE_SB_ERRORS) &&
-	    (__u64)fs->group_desc_count * EXT2_INODES_PER_GROUP(fs->super) !=
-	    fs->super->s_inodes_count) {
+	    (__u64)fs->group_desc_बिलांग * EXT2_INODES_PER_GROUP(fs->super) !=
+	    fs->super->s_inodes_बिलांग) {
 		retval = EXT2_ET_CORRUPT_SUPERBLOCK;
 		goto cleanup;
 	}
-	fs->desc_blocks = ext2fs_div_ceil(fs->group_desc_count,
+	fs->desc_blocks = ext2fs_div_ceil(fs->group_desc_बिलांग,
 					  EXT2_DESC_PER_BLOCK(fs->super));
 	if (ext2fs_has_feature_meta_bg(fs->super) &&
 	    (fs->super->s_first_meta_bg > fs->desc_blocks) &&
@@ -444,7 +444,7 @@ retry:
 	if (group_block == 0 && fs->blocksize == 1024)
 		group_zero_adjust = 1;
 	dest = (char *) fs->group_desc;
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
 #endif
 	if (ext2fs_has_feature_meta_bg(fs->super) &&
@@ -460,7 +460,7 @@ retry:
 					     first_meta_bg, dest);
 		if (retval)
 			goto cleanup;
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 		gdp = (struct ext2_group_desc *) dest;
 		for (j=0; j < groups_per_block*first_meta_bg; j++) {
 			gdp = ext2fs_group_desc(fs, fs->group_desc, j);
@@ -481,7 +481,7 @@ retry:
 		retval = io_channel_read_blk64(fs->io, blk, 1, dest);
 		if (retval)
 			goto cleanup;
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 		for (j=0; j < groups_per_block; j++) {
 			gdp = ext2fs_group_desc(fs, fs->group_desc,
 						i * groups_per_block + j);
@@ -501,7 +501,7 @@ retry:
 	if (superblock > 1 && ext2fs_has_group_desc_csum(fs)) {
 		dgrp_t group;
 
-		for (group = 0; group < fs->group_desc_count; group++) {
+		for (group = 0; group < fs->group_desc_बिलांग; group++) {
 			ext2fs_bg_flags_clear(fs, group, EXT2_BG_BLOCK_UNINIT);
 			ext2fs_bg_flags_clear(fs, group, EXT2_BG_INODE_UNINIT);
 			ext2fs_bg_itable_unused_set(fs, group, 0);

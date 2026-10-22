@@ -36,7 +36,7 @@ badblocks_list	test_badblocks;
 int first_no_comma = 1;
 int failed = 0;
 
-static void iscan_test_read_blk64(unsigned long long block, int count, errcode_t err)
+static void iscan_test_read_blk64(unsigned long long block, int बिलांग, errcode_t err)
 {
 	int	i;
 
@@ -45,12 +45,12 @@ static void iscan_test_read_blk64(unsigned long long block, int count, errcode_t
 	else
 		printf(", ");
 
-	if (count > 1)
-		printf("%llu-%llu", block, block+count-1);
+	if (बिलांग > 1)
+		printf("%llu-%llu", block, block+बिलांग-1);
 	else
 		printf("%llu", block);
 
-	for (i=0; i < count; i++, block++) {
+	for (i=0; i < बिलांग; i++, block++) {
 		if (ext2fs_test_block_bitmap2(touched_map, block)) {
 			printf("\nDuplicate block?!? --- %llu\n", block);
 			failed++;
@@ -60,9 +60,9 @@ static void iscan_test_read_blk64(unsigned long long block, int count, errcode_t
 	}
 }
 
-static void iscan_test_read_blk(unsigned long block, int count, errcode_t err)
+static void iscan_test_read_blk(unsigned long block, int बिलांग, errcode_t err)
 {
-	iscan_test_read_blk64(block, count, err);
+	iscan_test_read_blk64(block, बिलांग, err);
 }
 
 /*
@@ -77,7 +77,7 @@ static void setup(void)
 	initialize_ext2_error_table();
 
 	memset(&param, 0, sizeof(param));
-	ext2fs_blocks_count_set(&param, 12000);
+	ext2fs_blocks_बिलांग_set(&param, 12000);
 
 
 	test_io_cb_read_blk = iscan_test_read_blk;
@@ -189,7 +189,7 @@ static void check_map(void)
 		}
 		ext2fs_mark_block_bitmap2(touched_map, test_vec[i]);
 	}
-	for (i = 0; i < test_fs->group_desc_count; i++) {
+	for (i = 0; i < test_fs->group_desc_बिलांग; i++) {
 		for (j=0, blk = ext2fs_inode_table_loc(test_fs, i);
 		     j < test_fs->inode_blocks_per_group;
 		     j++, blk++) {
@@ -202,7 +202,7 @@ static void check_map(void)
 		}
 	}
 	printf("Bad inodes: ");
-	for (i=1; i <= test_fs->super->s_inodes_count; i++) {
+	for (i=1; i <= test_fs->super->s_inodes_बिलांग; i++) {
 		if (ext2fs_test_inode_bitmap2(bad_inode_map, i)) {
 			if (first)
 				first = 0;

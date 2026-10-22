@@ -196,38 +196,38 @@ static errcode_t __get_dx_countlimit(ext2_filsys fs,
 				     int need_swab)
 {
 	struct ext2_dir_entry *dp;
-	struct ext2_dx_root_info *root;
+	struct ext2_dx_उगात_info *उगात;
 	struct ext2_dx_countlimit *c;
-	int count_offset, max_sane_entries;
+	int बिलांग_offset, max_sane_entries;
 	unsigned int rec_len;
 	__u16 (*translate)(__u16) = (need_swab ? disk_to_host16 : do_nothing16);
 
 	rec_len = translate(dirent->rec_len);
 
 	if (rec_len == fs->blocksize && translate(dirent->name_len) == 0)
-		count_offset = 8;
+		बिलांग_offset = 8;
 	else if (rec_len == 12) {
 		dp = (struct ext2_dir_entry *)(((char *)dirent) + rec_len);
 		rec_len = translate(dp->rec_len);
 		if (rec_len != fs->blocksize - 12)
 			return EXT2_ET_DB_NOT_FOUND;
-		root = (struct ext2_dx_root_info *)(((char *)dp + 12));
-		if (root->reserved_zero ||
-		    root->info_length != sizeof(struct ext2_dx_root_info))
+		उगात = (struct ext2_dx_उगात_info *)(((char *)dp + 12));
+		if (उगात->reserved_zero ||
+		    उगात->info_length != sizeof(struct ext2_dx_उगात_info))
 			return EXT2_ET_DB_NOT_FOUND;
-		count_offset = 32;
+		बिलांग_offset = 32;
 	} else
 		return EXT2_ET_DB_NOT_FOUND;
 
-	c = (struct ext2_dx_countlimit *)(((char *)dirent) + count_offset);
-	max_sane_entries = (fs->blocksize - count_offset) /
+	c = (struct ext2_dx_countlimit *)(((char *)dirent) + बिलांग_offset);
+	max_sane_entries = (fs->blocksize - बिलांग_offset) /
 			   sizeof(struct ext2_dx_entry);
 	if (ext2fs_le16_to_cpu(c->limit) > max_sane_entries ||
-	    ext2fs_le16_to_cpu(c->count) > max_sane_entries)
+	    ext2fs_le16_to_cpu(c->बिलांग) > max_sane_entries)
 		return EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
 
 	if (offset)
-		*offset = count_offset;
+		*offset = बिलांग_offset;
 	if (cc)
 		*cc = c;
 
@@ -257,7 +257,7 @@ static errcode_t __get_dirent_tail(ext2_filsys fs,
 				   int need_swab)
 {
 	struct ext2_dir_entry *d;
-	void *top;
+	void *इताअस;
 	struct ext2_dir_entry_tail *t;
 	unsigned int rec_len;
 	errcode_t retval = 0;
@@ -267,9 +267,9 @@ static errcode_t __get_dirent_tail(ext2_filsys fs,
 		return EXT2_FILSYS_CORRUPTED; /* Should never happen */
 
 	d = dirent;
-	top = EXT2_DIRENT_TAIL(dirent, fs->blocksize);
+	इताअस = EXT2_DIRENT_TAIL(dirent, fs->blocksize);
 
-	while ((void *) d < top) {
+	while ((void *) d < इताअस) {
 		rec_len = translate(d->rec_len);
 		if ((rec_len < 8) || (rec_len & 0x03))
 			return EXT2_ET_DIR_CORRUPTED;
@@ -278,7 +278,7 @@ static errcode_t __get_dirent_tail(ext2_filsys fs,
 
 	if ((char *)d > ((char *)dirent + fs->blocksize))
 			return EXT2_ET_DIR_CORRUPTED;
-	if (d != top)
+	if (d != इताअस)
 		return EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
 
 	t = (struct ext2_dir_entry_tail *)d;
@@ -374,20 +374,20 @@ errcode_t ext2fs_dx_csum(ext2_filsys fs, ext2_ino_t inum,
 	struct ext2_inode inode;
 	struct ext2_dx_tail *t;
 	struct ext2_dx_countlimit *c;
-	int count_offset, limit, count;
+	int बिलांग_offset, limit, बिलांग;
 
-	retval = __get_dx_countlimit(fs, dirent, &c, &count_offset, 1);
+	retval = __get_dx_countlimit(fs, dirent, &c, &बिलांग_offset, 1);
 	if (retval)
 		return retval;
 	limit = ext2fs_le16_to_cpu(c->limit);
-	count = ext2fs_le16_to_cpu(c->count);
-	if (count_offset + (limit * sizeof(struct ext2_dx_entry)) >
+	बिलांग = ext2fs_le16_to_cpu(c->बिलांग);
+	if (बिलांग_offset + (limit * sizeof(struct ext2_dx_entry)) >
 	    fs->blocksize - sizeof(struct ext2_dx_tail))
 		return EXT2_ET_DIR_NO_SPACE_FOR_CSUM;
 	/* htree structs are accessed in LE order */
 	t = (struct ext2_dx_tail *)(((struct ext2_dx_entry *)c) + limit);
 
-	size = count_offset + (count * sizeof(struct ext2_dx_entry));
+	size = बिलांग_offset + (बिलांग * sizeof(struct ext2_dx_entry));
 
 	retval = ext2fs_read_inode(fs, inum, &inode);
 	if (retval)
@@ -719,7 +719,7 @@ __u16 ext2fs_group_desc_csum(ext2_filsys fs, dgrp_t group)
 							 group);
 	size_t offset, size = EXT2_DESC_SIZE(fs->super);
 	__u16 crc = 0;
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	struct ext4_group_desc swabdesc;
 	size_t save_size = size;
 	const size_t ext4_bg_size = sizeof(struct ext4_group_desc);
@@ -746,7 +746,7 @@ __u16 ext2fs_group_desc_csum(ext2_filsys fs, dgrp_t group)
 		crc32 = ext2fs_crc32c_le(crc32, (unsigned char *)desc,
 					 size);
 		desc->bg_checksum = old_crc;
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 		if (save_size > ext4_bg_size)
 			crc32 = ext2fs_crc32c_le(crc32,
 				     (unsigned char *)save_desc + ext4_bg_size,
@@ -768,7 +768,7 @@ __u16 ext2fs_group_desc_csum(ext2_filsys fs, dgrp_t group)
 		crc = ext2fs_crc16(crc, (char *)desc + offset,
 				   size - offset);
 	}
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	/*
 	 * If the size of the bg descriptor is greater than 64
 	 * bytes, which is the size of the traditional ext4 bg
@@ -832,18 +832,18 @@ errcode_t ext2fs_set_gdt_csum(ext2_filsys fs)
 	if (!ext2fs_has_group_desc_csum(fs))
 		return 0;
 
-	for (i = 0; i < fs->group_desc_count; i++) {
+	for (i = 0; i < fs->group_desc_बिलांग; i++) {
 		__u32 old_csum = ext2fs_bg_checksum(fs, i);
 		__u32 old_unused = ext2fs_bg_itable_unused(fs, i);
 		__u32 old_flags = ext2fs_bg_flags(fs, i);
-		__u32 old_free_inodes_count = ext2fs_bg_free_inodes_count(fs, i);
-		__u32 old_free_blocks_count = ext2fs_bg_free_blocks_count(fs, i);
+		__u32 old_free_inodes_बिलांग = ext2fs_bg_free_inodes_बिलांग(fs, i);
+		__u32 old_free_blocks_बिलांग = ext2fs_bg_free_blocks_बिलांग(fs, i);
 
-		if (old_free_blocks_count == sb->s_blocks_per_group &&
-		    i != fs->group_desc_count - 1)
+		if (old_free_blocks_बिलांग == sb->s_blocks_per_group &&
+		    i != fs->group_desc_बिलांग - 1)
 			ext2fs_bg_flags_set(fs, i, EXT2_BG_BLOCK_UNINIT);
 
-		if (old_free_inodes_count == sb->s_inodes_per_group) {
+		if (old_free_inodes_बिलांग == sb->s_inodes_per_group) {
 			ext2fs_bg_flags_set(fs, i, EXT2_BG_INODE_UNINIT);
 			ext2fs_bg_itable_unused_set(fs, i, sb->s_inodes_per_group);
 		} else {
@@ -872,7 +872,7 @@ errcode_t ext2fs_set_gdt_csum(ext2_filsys fs)
 #ifdef DEBUG
 #include "e2p/e2p.h"
 
-void print_csum(const char *msg, ext2_filsys fs, dgrp_t group)
+void इलिम्बाग_csum(const char *मेनसाहे, ext2_filsys fs, dgrp_t group)
 {
 	__u16 crc1, crc2, crc3;
 	dgrp_t swabgroup;
@@ -881,14 +881,14 @@ void print_csum(const char *msg, ext2_filsys fs, dgrp_t group)
 	size_t size = EXT2_DESC_SIZE(fs->super);
 	struct ext2_super_block *sb = fs->super;
 	int offset = offsetof(struct ext2_group_desc, bg_checksum);
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	struct ext4_group_desc swabdesc;
 	struct ext2_group_desc *save_desc = desc;
 	const size_t ext4_bg_size = sizeof(struct ext4_group_desc);
 	size_t save_size = size;
 #endif
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	/* Have to swab back to little-endian to do the checksum */
 	if (size > ext4_bg_size)
 		size = ext4_bg_size;
@@ -908,14 +908,14 @@ void print_csum(const char *msg, ext2_filsys fs, dgrp_t group)
 	/* for checksum of struct ext4_group_desc do the rest...*/
 	if (offset < size)
 		crc3 = ext2fs_crc16(crc3, (char *)desc + offset, size - offset);
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	if (save_size > ext4_bg_size)
 		crc3 = ext2fs_crc16(crc3, (char *)save_desc + ext4_bg_size,
 				    save_size - ext4_bg_size);
 #endif
 
 	printf("%s UUID %s=%04x, grp %u=%04x: %04x=%04x\n",
-	       msg, e2p_uuid2str(sb->s_uuid), crc1, group, crc2, crc3,
+	       मेनसाहे, e2p_uuid2str(sb->s_uuid), crc1, group, crc2, crc3,
 	       ext2fs_group_desc_csum(fs, group));
 }
 
@@ -931,7 +931,7 @@ int main(int argc, char **argv)
 	__u16 csum1, csum2, csum_known = 0xd3a4;
 
 	memset(&param, 0, sizeof(param));
-	ext2fs_blocks_count_set(&param, 32768);
+	ext2fs_blocks_बिलांग_set(&param, 32768);
 #if 0
 	param.s_feature_incompat |= EXT4_FEATURE_INCOMPAT_64BIT;
 	param.s_desc_size = 128;
@@ -948,38 +948,38 @@ int main(int argc, char **argv)
 	memcpy(fs->super->s_uuid, sb_uuid, 16);
 	fs->super->s_feature_ro_compat = EXT4_FEATURE_RO_COMPAT_GDT_CSUM;
 
-	for (i=0; i < fs->group_desc_count; i++) {
+	for (i=0; i < fs->group_desc_बिलांग; i++) {
 		ext2fs_block_bitmap_loc_set(fs, i, 124);
 		ext2fs_inode_bitmap_loc_set(fs, i, 125);
 		ext2fs_inode_table_loc_set(fs, i, 126);
-		ext2fs_bg_free_blocks_count_set(fs, i, 31119);
-		ext2fs_bg_free_inodes_count_set(fs, i, 15701);
-		ext2fs_bg_used_dirs_count_set(fs, i, 2);
+		ext2fs_bg_free_blocks_बिलांग_set(fs, i, 31119);
+		ext2fs_bg_free_inodes_बिलांग_set(fs, i, 15701);
+		ext2fs_bg_used_dirs_बिलांग_set(fs, i, 2);
 		ext2fs_bg_flags_zap(fs, i);
 	};
 
 	csum1 = ext2fs_group_desc_csum(fs, 0);
-	print_csum("csum0000", fs, 0);
+	इलिम्बाग_csum("csum0000", fs, 0);
 
 	if (csum1 != csum_known) {
 		printf("checksum for group 0 should be %04x\n", csum_known);
 		exit(1);
 	}
 	csum2 = ext2fs_group_desc_csum(fs, 1);
-	print_csum("csum0001", fs, 1);
+	इलिम्बाग_csum("csum0001", fs, 1);
 	if (csum1 == csum2) {
 		printf("checksums for different groups shouldn't match\n");
 		exit(1);
 	}
 	csum2 = ext2fs_group_desc_csum(fs, 2);
-	print_csum("csumffff", fs, 2);
+	इलिम्बाग_csum("csumffff", fs, 2);
 	if (csum1 == csum2) {
 		printf("checksums for different groups shouldn't match\n");
 		exit(1);
 	}
 	ext2fs_bg_checksum_set(fs, 0, csum1);
 	csum2 = ext2fs_group_desc_csum(fs, 0);
-	print_csum("csum_set", fs, 0);
+	इलिम्बाग_csum("csum_set", fs, 0);
 	if (csum1 != csum2) {
 		printf("checksums should not depend on checksum field\n");
 		exit(1);
@@ -989,17 +989,17 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 	memset(fs->super->s_uuid, 0x30, sizeof(fs->super->s_uuid));
-	print_csum("new_uuid", fs, 0);
+	इलिम्बाग_csum("new_uuid", fs, 0);
 	if (ext2fs_group_desc_csum_verify(fs, 0) != 0) {
 		printf("checksums for different filesystems shouldn't match\n");
 		exit(1);
 	}
 	csum1 = ext2fs_group_desc_csum(fs, 0);
 	ext2fs_bg_checksum_set(fs, 0, csum1);
-	print_csum("csum_new", fs, 0);
-	ext2fs_bg_free_blocks_count_set(fs, 0, 1);
+	इलिम्बाग_csum("csum_new", fs, 0);
+	ext2fs_bg_free_blocks_बिलांग_set(fs, 0, 1);
 	csum2 = ext2fs_group_desc_csum(fs, 0);
-	print_csum("csum_blk", fs, 0);
+	इलिम्बाग_csum("csum_blk", fs, 0);
 	if (csum1 == csum2) {
 		printf("checksums for different data shouldn't match\n");
 		exit(1);

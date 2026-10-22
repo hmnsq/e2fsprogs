@@ -14,17 +14,17 @@ struct ext2_bmap_statistics {
 	struct timeval	created;
 
 #ifdef ENABLE_BMAP_STATS_OPS
-	unsigned long	copy_count;
-	unsigned long	resize_count;
-	unsigned long	mark_count;
-	unsigned long	unmark_count;
-	unsigned long	test_count;
-	unsigned long	mark_ext_count;
-	unsigned long	unmark_ext_count;
-	unsigned long	test_ext_count;
-	unsigned long	set_range_count;
-	unsigned long	get_range_count;
-	unsigned long	clear_count;
+	unsigned long	copy_बिलांग;
+	unsigned long	resize_बिलांग;
+	unsigned long	mark_बिलांग;
+	unsigned long	unmark_बिलांग;
+	unsigned long	test_बिलांग;
+	unsigned long	mark_ext_बिलांग;
+	unsigned long	unmark_ext_बिलांग;
+	unsigned long	test_ext_बिलांग;
+	unsigned long	set_range_बिलांग;
+	unsigned long	get_range_बिलांग;
+	unsigned long	clear_बिलांग;
 
 	blk64_t		last_marked;
 	blk64_t		last_tested;
@@ -80,17 +80,17 @@ struct ext2_bitmap_ops {
 	int	(*unmark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
 	int	(*test_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
 	void	(*mark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				    unsigned int num);
+				    unsigned int नुमेरो);
 	void	(*unmark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				      unsigned int num);
+				      unsigned int नुमेरो);
 	int	(*test_clear_bmap_extent)(ext2fs_generic_bitmap_64 bitmap,
-					  __u64 arg, unsigned int num);
+					  __u64 arg, unsigned int नुमेरो);
 	errcode_t (*set_bmap_range)(ext2fs_generic_bitmap_64 bitmap,
-				    __u64 start, size_t num, void *in);
+				    __u64 start, size_t नुमेरो, void *in);
 	errcode_t (*get_bmap_range)(ext2fs_generic_bitmap_64 bitmap,
-				    __u64 start, size_t num, void *out);
+				    __u64 start, size_t नुमेरो, void *out);
 	void (*clear_bmap)(ext2fs_generic_bitmap_64 bitmap);
-	void (*print_stats)(ext2fs_generic_bitmap_64);
+	void (*इलिम्बाग_stats)(ext2fs_generic_bitmap_64);
 
 	/* Find the first zero bit between start and end, inclusive.
 	 * May be NULL, in which case a generic function is used. */

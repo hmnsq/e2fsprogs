@@ -46,7 +46,7 @@ static errcode_t ima_free(ext2_irel irel);
  * a structure for each inode.
  */
 struct inode_reference_entry {
-	__u16 num;
+	__u16 नुमेरो;
 	struct ext2_inode_reference *refs;
 };
 
@@ -258,13 +258,13 @@ static errcode_t ima_add_ref(ext2_irel irel, ext2_ino_t ino,
 		if (retval)
 			return retval;
 		memset(ref_ent->refs, 0, size);
-		ref_ent->num = 0;
+		ref_ent->नुमेरो = 0;
 	}
 
-	if (ref_ent->num >= ent->max_refs)
+	if (ref_ent->नुमेरो >= ent->max_refs)
 		return EXT2_ET_TOO_MANY_REFS;
 
-	ref_ent->refs[(unsigned) ref_ent->num++] = *ref;
+	ref_ent->refs[(unsigned) ref_ent->नुमेरो++] = *ref;
 	return 0;
 }
 
@@ -293,7 +293,7 @@ static errcode_t ima_next_ref(ext2_irel irel,
 	ref_ent = ma->ref_entries + ma->ref_current;
 
 	if ((ref_ent->refs == NULL) ||
-	    (ma->ref_iter >= ref_ent->num)) {
+	    (ma->ref_iter >= ref_ent->नुमेरो)) {
 		ref->block = 0;
 		ref->offset = 0;
 		return 0;
@@ -319,7 +319,7 @@ static errcode_t ima_move(ext2_irel irel, ext2_ino_t old, ext2_ino_t new)
 	ma->ref_entries[(unsigned) new] = ma->ref_entries[(unsigned) old];
 
 	ma->entries[(unsigned) old].new = 0;
-	ma->ref_entries[(unsigned) old].num = 0;
+	ma->ref_entries[(unsigned) old].नुमेरो = 0;
 	ma->ref_entries[(unsigned) old].refs = 0;
 
 	ma->orig_map[ma->entries[new].orig] = new;
@@ -341,7 +341,7 @@ static errcode_t ima_delete(ext2_irel irel, ext2_ino_t old)
 		ext2fs_free_mem(&ma->ref_entries[(unsigned) old].refs);
 	ma->orig_map[ma->entries[(unsigned) old].orig] = 0;
 
-	ma->ref_entries[(unsigned) old].num = 0;
+	ma->ref_entries[(unsigned) old].नुमेरो = 0;
 	ma->ref_entries[(unsigned) old].refs = 0;
 	return 0;
 }

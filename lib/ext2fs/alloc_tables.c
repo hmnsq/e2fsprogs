@@ -54,15 +54,15 @@ static blk64_t flexbg_offset(ext2_filsys fs, dgrp_t group, blk64_t start_blk,
 	 * Don't do a long search if the previous block search is still valid,
 	 * but skip minor obstructions such as group descriptor backups.
 	 */
-	if (start_blk && start_blk < ext2fs_blocks_count(fs->super) &&
+	if (start_blk && start_blk < ext2fs_blocks_बिलांग(fs->super) &&
 	    ext2fs_get_free_blocks2(fs, start_blk, start_blk + size, elem_size,
 				    bmap, &first_free) == 0)
 		return first_free;
 
 	start_blk = ext2fs_group_first_block2(fs, flexbg_size * flexbg);
 	last_grp = group | (flexbg_size - 1);
-	if (last_grp > fs->group_desc_count-1)
-		last_grp = fs->group_desc_count-1;
+	if (last_grp > fs->group_desc_बिलांग-1)
+		last_grp = fs->group_desc_बिलांग-1;
 	last_blk = ext2fs_group_last_block2(fs, last_grp);
 
 	/* Find the first available block */
@@ -99,8 +99,8 @@ errcode_t ext2fs_allocate_group_table(ext2_filsys fs, dgrp_t group,
 	    fs->super->s_log_groups_per_flex) {
 		flexbg_size = 1U << fs->super->s_log_groups_per_flex;
 		last_grp = group | (flexbg_size - 1);
-		if (last_grp > fs->group_desc_count-1)
-			last_grp = fs->group_desc_count-1;
+		if (last_grp > fs->group_desc_बिलांग-1)
+			last_grp = fs->group_desc_बिलांग-1;
 		rem_grps = last_grp - group + 1;
 	}
 
@@ -126,7 +126,7 @@ errcode_t ext2fs_allocate_group_table(ext2_filsys fs, dgrp_t group,
 		table_offset = flexbg_size;
 		if (group % flexbg_size)
 			prev_block = ext2fs_block_bitmap_loc(fs, group - 1) + 1;
-		else if (last_grp == fs->group_desc_count-1) {
+		else if (last_grp == fs->group_desc_बिलांग-1) {
 			/*
 			 * If we are allocating for the last flex_bg
 			 * keep the metadata tables contiguous
@@ -156,8 +156,8 @@ errcode_t ext2fs_allocate_group_table(ext2_filsys fs, dgrp_t group,
 		ext2fs_block_bitmap_loc_set(fs, group, new_blk);
 		if (flexbg_size) {
 			dgrp_t gr = ext2fs_group_of_blk2(fs, new_blk);
-			ext2fs_bg_free_blocks_count_set(fs, gr, ext2fs_bg_free_blocks_count(fs, gr) - 1);
-			ext2fs_free_blocks_count_add(fs->super, -1);
+			ext2fs_bg_free_blocks_बिलांग_set(fs, gr, ext2fs_bg_free_blocks_बिलांग(fs, gr) - 1);
+			ext2fs_free_blocks_बिलांग_add(fs->super, -1);
 			ext2fs_bg_flags_clear(fs, gr, EXT2_BG_BLOCK_UNINIT);
 			ext2fs_group_desc_csum_set(fs, gr);
 		}
@@ -189,8 +189,8 @@ errcode_t ext2fs_allocate_group_table(ext2_filsys fs, dgrp_t group,
 		ext2fs_inode_bitmap_loc_set(fs, group, new_blk);
 		if (flexbg_size) {
 			dgrp_t gr = ext2fs_group_of_blk2(fs, new_blk);
-			ext2fs_bg_free_blocks_count_set(fs, gr, ext2fs_bg_free_blocks_count(fs, gr) - 1);
-			ext2fs_free_blocks_count_add(fs->super, -1);
+			ext2fs_bg_free_blocks_बिलांग_set(fs, gr, ext2fs_bg_free_blocks_बिलांग(fs, gr) - 1);
+			ext2fs_free_blocks_बिलांग_add(fs->super, -1);
 			ext2fs_bg_flags_clear(fs, gr, EXT2_BG_BLOCK_UNINIT);
 			ext2fs_group_desc_csum_set(fs, gr);
 		}
@@ -226,26 +226,26 @@ errcode_t ext2fs_allocate_group_table(ext2_filsys fs, dgrp_t group,
 		ext2fs_mark_block_bitmap_range2(bmap,
 			new_blk, fs->inode_blocks_per_group);
 		if (flexbg_size) {
-			blk64_t num, blk;
-			num = fs->inode_blocks_per_group;
+			blk64_t नुमेरो, blk;
+			नुमेरो = fs->inode_blocks_per_group;
 			blk = new_blk;
-			while (num) {
+			while (नुमेरो) {
 				int gr = ext2fs_group_of_blk2(fs, blk);
 				last_blk = ext2fs_group_last_block2(fs, gr);
-				blk64_t n = num;
+				blk64_t n = नुमेरो;
 
-				if (blk + num > last_blk)
+				if (blk + नुमेरो > last_blk)
 					n = last_blk - blk + 1;
 
-				ext2fs_bg_free_blocks_count_set(fs, gr,
-					ext2fs_bg_free_blocks_count(fs, gr) -
+				ext2fs_bg_free_blocks_बिलांग_set(fs, gr,
+					ext2fs_bg_free_blocks_बिलांग(fs, gr) -
 					n/EXT2FS_CLUSTER_RATIO(fs));
 				ext2fs_bg_flags_clear(fs, gr,
 					EXT2_BG_BLOCK_UNINIT);
 				ext2fs_group_desc_csum_set(fs, gr);
-				ext2fs_free_blocks_count_add(fs->super, -n);
+				ext2fs_free_blocks_बिलांग_add(fs->super, -n);
 				blk += n;
-				num -= n;
+				नुमेरो -= n;
 			}
 		}
 		ext2fs_inode_table_loc_set(fs, group, new_blk);
@@ -262,9 +262,9 @@ errcode_t ext2fs_allocate_tables(ext2_filsys fs)
 
 	if (fs->progress_ops && fs->progress_ops->init)
 		(fs->progress_ops->init)(fs, &progress, NULL,
-					 fs->group_desc_count);
+					 fs->group_desc_बिलांग);
 
-	for (i = 0; i < fs->group_desc_count; i++) {
+	for (i = 0; i < fs->group_desc_बिलांग; i++) {
 		if (fs->progress_ops && fs->progress_ops->update)
 			(fs->progress_ops->update)(fs, &progress, i);
 		retval = ext2fs_allocate_group_table(fs, i, fs->block_map);

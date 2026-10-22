@@ -44,12 +44,12 @@ typedef int ssize_t;
 static int check_zero_block(char *buf, int blocksize)
 {
 	char	*cp = buf;
-	int	left = blocksize;
+	int	कालिवा = blocksize;
 
-	while (left > 0) {
+	while (कालिवा > 0) {
 		if (*cp++)
 			return 0;
-		left--;
+		कालिवा--;
 	}
 	return 1;
 }
@@ -62,7 +62,7 @@ static int check_zero_block(char *buf, int blocksize)
 errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
 {
 	dgrp_t		group;
-	ssize_t		left, c, d;
+	ssize_t		कालिवा, c, d;
 	char		*buf, *cp;
 	blk64_t		blk;
 	ssize_t		actual;
@@ -73,22 +73,22 @@ errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
 	if (!buf)
 		return ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
+	for (group = 0; group < fs->group_desc_बिलांग; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
 		if (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
 			goto errout;
 		}
-		left = fs->inode_blocks_per_group;
+		कालिवा = fs->inode_blocks_per_group;
 		if ((blk < fs->super->s_first_data_block) ||
-		    (blk + left - 1 >= ext2fs_blocks_count(fs->super))) {
+		    (blk + कालिवा - 1 >= ext2fs_blocks_बिलांग(fs->super))) {
 			retval = EXT2_ET_GDESC_BAD_INODE_TABLE;
 			goto errout;
 		}
-		while (left) {
+		while (कालिवा) {
 			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
+			if (c > कालिवा)
+				c = कालिवा;
 			retval = io_channel_read_blk64(fs->io, blk, c, buf);
 			if (retval)
 				goto errout;
@@ -102,7 +102,7 @@ errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
 				if (check_zero_block(cp, fs->blocksize)) {
 					c--;
 					blk++;
-					left--;
+					कालिवा--;
 					cp += fs->blocksize;
 					r = ext2fs_llseek(fd, fs->blocksize,
 							  SEEK_CUR);
@@ -130,7 +130,7 @@ errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
 					goto errout;
 				}
 				blk += d;
-				left -= d;
+				कालिवा -= d;
 				cp += d * fs->blocksize;
 				c -= d;
 			}
@@ -150,7 +150,7 @@ errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd,
 				  int flags EXT2FS_ATTR((unused)))
 {
 	dgrp_t		group;
-	ssize_t		c, left;
+	ssize_t		c, कालिवा;
 	char		*buf;
 	blk64_t		blk;
 	ssize_t		actual;
@@ -160,17 +160,17 @@ errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd,
 	if (!buf)
 		return ENOMEM;
 
-	for (group = 0; group < fs->group_desc_count; group++) {
+	for (group = 0; group < fs->group_desc_बिलांग; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
 		if (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
 			goto errout;
 		}
-		left = fs->inode_blocks_per_group;
-		while (left) {
+		कालिवा = fs->inode_blocks_per_group;
+		while (कालिवा) {
 			c = BUF_BLOCKS;
-			if (c > left)
-				c = left;
+			if (c > कालिवा)
+				c = कालिवा;
 			actual = read(fd, buf, fs->blocksize * c);
 			if (actual == -1) {
 				retval = errno;
@@ -185,7 +185,7 @@ errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd,
 				goto errout;
 
 			blk += c;
-			left -= c;
+			कालिवा -= c;
 		}
 	}
 	retval = ext2fs_flush_icache(fs);
@@ -204,7 +204,7 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 	char		*buf, *cp;
 	ssize_t		actual;
 	errcode_t	retval;
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	unsigned int	groups_per_block;
 	struct		ext2_group_desc *gdp;
 	int		j;
@@ -221,7 +221,7 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 	 * Write out the superblock
 	 */
 	memset(buf, 0, fs->blocksize);
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	/*
 	 * We're writing out superblock so let's convert
 	 * it to little endian and then back if needed
@@ -248,7 +248,7 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 
 	cp = (char *) fs->group_desc;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	/*
 	 * Convert group descriptors to little endian and back
 	 * if needed
@@ -264,7 +264,7 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 	actual = write(fd, cp, (ssize_t)fs->blocksize * fs->desc_blocks);
 
 
-#ifdef WORDS_BIGENDIAN
+#ifdef मगा_सालिता_BIGENDIAN
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
 	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
 		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
@@ -353,7 +353,7 @@ errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags)
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
+			fs->group_desc_बिलांग;
 		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
 	} else {
 		if (!fs->block_map) {
@@ -363,10 +363,10 @@ errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags)
 		}
 		bmap = fs->block_map;
 		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super, fs->group_desc_count);
+		cnt = EXT2_GROUPS_TO_CLUSTERS(fs->super, fs->group_desc_बिलांग);
 		size = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
 	}
-	total_size = size * fs->group_desc_count;
+	total_size = size * fs->group_desc_बिलांग;
 
 	while (cnt > 0) {
 		size = sizeof(buf);
@@ -431,7 +431,7 @@ errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, int fd, int flags)
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
-			fs->group_desc_count;
+			fs->group_desc_बिलांग;
 		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
 	} else {
 		if (!fs->block_map) {
@@ -441,7 +441,7 @@ errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, int fd, int flags)
 		}
 		bmap = fs->block_map;
 		itr = fs->super->s_first_data_block;
-		cnt = EXT2_GROUPS_TO_BLOCKS(fs->super, fs->group_desc_count);
+		cnt = EXT2_GROUPS_TO_BLOCKS(fs->super, fs->group_desc_बिलांग);
 		size = EXT2_BLOCKS_PER_GROUP(fs->super) / 8;
 	}
 

@@ -97,7 +97,7 @@ errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
 {
 	ext2fs_generic_bitmap_64 bitmap;
 	struct ext2_bitmap_ops	*ops;
-	ext2_ino_t num_dirs;
+	ext2_ino_t नुमेरो_dirs;
 	errcode_t retval;
 
 	if (!type)
@@ -111,8 +111,8 @@ errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
 		ops = &ext2fs_blkmap64_rbtree;
 		break;
 	case EXT2FS_BMAP64_AUTODIR:
-		retval = ext2fs_get_num_dirs(fs, &num_dirs);
-		if (retval || num_dirs > (fs->super->s_inodes_count / 320))
+		retval = ext2fs_get_नुमेरो_dirs(fs, &नुमेरो_dirs);
+		if (retval || नुमेरो_dirs > (fs->super->s_inodes_बिलांग / 320))
 			ops = &ext2fs_blkmap64_bitarray;
 		else
 			ops = &ext2fs_blkmap64_rbtree;
@@ -177,7 +177,7 @@ errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
 }
 
 #ifdef ENABLE_BMAP_STATS
-static void ext2fs_print_bmap_statistics(ext2fs_generic_bitmap_64 bitmap)
+static void ext2fs_इलिम्बाग_bmap_statistics(ext2fs_generic_bitmap_64 bitmap)
 {
 	struct ext2_bmap_statistics *stats = &bitmap->stats;
 #ifdef ENABLE_BMAP_STATS_OPS
@@ -186,18 +186,18 @@ static void ext2fs_print_bmap_statistics(ext2fs_generic_bitmap_64 bitmap)
 	struct timeval now;
 	double inuse;
 
-	if (stats->test_count) {
+	if (stats->test_बिलांग) {
 		test_seq_perc = ((float)stats->test_seq /
-				 stats->test_count) * 100;
+				 stats->test_बिलांग) * 100;
 		test_back_perc = ((float)stats->test_back /
-				  stats->test_count) * 100;
+				  stats->test_बिलांग) * 100;
 	}
 
-	if (stats->mark_count) {
+	if (stats->mark_बिलांग) {
 		mark_seq_perc = ((float)stats->mark_seq /
-				 stats->mark_count) * 100;
+				 stats->mark_बिलांग) * 100;
 		mark_back_perc = ((float)stats->mark_back /
-				  stats->mark_count) * 100;
+				  stats->mark_बिलांग) * 100;
 	}
 
 	if (gettimeofday(&now, (struct timezone *) NULL) == -1) {
@@ -218,18 +218,18 @@ static void ext2fs_print_bmap_statistics(ext2fs_generic_bitmap_64 bitmap)
 	fprintf(stderr, "%16llu bits long\n",
 		bitmap->real_end - bitmap->start);
 	fprintf(stderr, "%16lu copy_bmap\n%16lu resize_bmap\n",
-		stats->copy_count, stats->resize_count);
+		stats->copy_बिलांग, stats->resize_बिलांग);
 	fprintf(stderr, "%16lu mark bmap\n%16lu unmark_bmap\n",
-		stats->mark_count, stats->unmark_count);
+		stats->mark_बिलांग, stats->unmark_बिलांग);
 	fprintf(stderr, "%16lu test_bmap\n%16lu mark_bmap_extent\n",
-		stats->test_count, stats->mark_ext_count);
+		stats->test_बिलांग, stats->mark_ext_बिलांग);
 	fprintf(stderr, "%16lu unmark_bmap_extent\n"
 		"%16lu test_clear_bmap_extent\n",
-		stats->unmark_ext_count, stats->test_ext_count);
+		stats->unmark_ext_बिलांग, stats->test_ext_बिलांग);
 	fprintf(stderr, "%16lu set_bmap_range\n%16lu set_bmap_range\n",
-		stats->set_range_count, stats->get_range_count);
+		stats->set_range_बिलांग, stats->get_range_बिलांग);
 	fprintf(stderr, "%16lu clear_bmap\n%16lu contiguous bit test (%.2f%%)\n",
-		stats->clear_count, stats->test_seq, test_seq_perc);
+		stats->clear_बिलांग, stats->test_seq, test_seq_perc);
 	fprintf(stderr, "%16lu contiguous bit mark (%.2f%%)\n"
 		"%16llu bits tested backwards (%.2f%%)\n",
 		stats->mark_seq, mark_seq_perc,
@@ -258,8 +258,8 @@ void ext2fs_free_generic_bmap(ext2fs_generic_bitmap gen_bmap)
 
 #ifdef ENABLE_BMAP_STATS
 	if (ext2fs_safe_getenv("E2FSPROGS_BITMAP_STATS")) {
-		ext2fs_print_bmap_statistics(bmap);
-		bmap->bitmap_ops->print_stats(bmap);
+		ext2fs_इलिम्बाग_bmap_statistics(bmap);
+		bmap->bitmap_ops->इलिम्बाग_stats(bmap);
 	}
 #endif
 
@@ -298,7 +298,7 @@ errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap gen_src,
 
 
 #ifdef ENABLE_BMAP_STATS_OPS
-	src->stats.copy_count++;
+	src->stats.copy_बिलांग++;
 #endif
 #ifdef ENABLE_BMAP_STATS
 	if (gettimeofday(&new_bmap->stats.created,
@@ -360,7 +360,7 @@ errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap gen_bmap,
 	if (!EXT2FS_IS_64_BITMAP(bmap))
 		return EINVAL;
 
-	INC_STAT(bmap, resize_count);
+	INC_STAT(bmap, resize_बिलांग);
 
 	return bmap->bitmap_ops->resize_bmap(bmap, new_end, new_real_end);
 }
@@ -467,7 +467,7 @@ int ext2fs_mark_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
 	if (arg < bitmap->stats.last_marked)
 		bitmap->stats.mark_back++;
 	bitmap->stats.last_marked = arg;
-	bitmap->stats.mark_count++;
+	bitmap->stats.mark_बिलांग++;
 #endif
 
 	if ((arg < bitmap->start) || (arg > bitmap->end)) {
@@ -500,7 +500,7 @@ int ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
 
 	arg >>= bitmap->cluster_bits;
 
-	INC_STAT(bitmap, unmark_count);
+	INC_STAT(bitmap, unmark_बिलांग);
 
 	if ((arg < bitmap->start) || (arg > bitmap->end)) {
 		warn_bitmap(bitmap, EXT2FS_UNMARK_ERROR, arg);
@@ -532,7 +532,7 @@ int ext2fs_test_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
 	arg >>= bitmap->cluster_bits;
 
 #ifdef ENABLE_BMAP_STATS_OPS
-	bitmap->stats.test_count++;
+	bitmap->stats.test_बिलांग++;
 	if (arg == bitmap->stats.last_tested + 1)
 		bitmap->stats.test_seq++;
 	if (arg < bitmap->stats.last_tested)
@@ -549,7 +549,7 @@ int ext2fs_test_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
 }
 
 errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap gen_bmap,
-					__u64 start, unsigned int num,
+					__u64 start, unsigned int नुमेरो,
 					void *in)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
@@ -558,25 +558,25 @@ errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap gen_bmap,
 		return EINVAL;
 
 	if (EXT2FS_IS_32_BITMAP(bmap)) {
-		if ((start+num-1) & ~0xffffffffULL) {
+		if ((start+नुमेरो-1) & ~0xffffffffULL) {
 			ext2fs_warn_bitmap2(gen_bmap, EXT2FS_UNMARK_ERROR,
 					    0xffffffff);
 			return EINVAL;
 		}
 		return ext2fs_set_generic_bitmap_range(gen_bmap, bmap->magic,
-						       start, num, in);
+						       start, नुमेरो, in);
 	}
 
 	if (!EXT2FS_IS_64_BITMAP(bmap))
 		return EINVAL;
 
-	INC_STAT(bmap, set_range_count);
+	INC_STAT(bmap, set_range_बिलांग);
 
-	return bmap->bitmap_ops->set_bmap_range(bmap, start, num, in);
+	return bmap->bitmap_ops->set_bmap_range(bmap, start, नुमेरो, in);
 }
 
 errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap gen_bmap,
-					__u64 start, unsigned int num,
+					__u64 start, unsigned int नुमेरो,
 					void *out)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
@@ -585,21 +585,21 @@ errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap gen_bmap,
 		return EINVAL;
 
 	if (EXT2FS_IS_32_BITMAP(bmap)) {
-		if ((start+num-1) & ~0xffffffffULL) {
+		if ((start+नुमेरो-1) & ~0xffffffffULL) {
 			ext2fs_warn_bitmap2(gen_bmap,
 					    EXT2FS_UNMARK_ERROR, 0xffffffff);
 			return EINVAL;
 		}
 		return ext2fs_get_generic_bitmap_range(gen_bmap, bmap->magic,
-						       start, num, out);
+						       start, नुमेरो, out);
 	}
 
 	if (!EXT2FS_IS_64_BITMAP(bmap))
 		return EINVAL;
 
-	INC_STAT(bmap, get_range_count);
+	INC_STAT(bmap, get_range_बिलांग);
 
-	return bmap->bitmap_ops->get_bmap_range(bmap, start, num, out);
+	return bmap->bitmap_ops->get_bmap_range(bmap, start, नुमेरो, out);
 }
 
 errcode_t ext2fs_compare_generic_bmap(errcode_t neq,
@@ -642,7 +642,7 @@ errcode_t ext2fs_compare_generic_bmap(errcode_t neq,
 void ext2fs_set_generic_bmap_padding(ext2fs_generic_bitmap gen_bmap)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
-	__u64	start, num;
+	__u64	start, नुमेरो;
 
 	if (EXT2FS_IS_32_BITMAP(bmap)) {
 		ext2fs_set_generic_bitmap_padding(gen_bmap);
@@ -650,136 +650,136 @@ void ext2fs_set_generic_bmap_padding(ext2fs_generic_bitmap gen_bmap)
 	}
 
 	start = bmap->end + 1;
-	num = bmap->real_end - bmap->end;
-	bmap->bitmap_ops->mark_bmap_extent(bmap, start, num);
+	नुमेरो = bmap->real_end - bmap->end;
+	bmap->bitmap_ops->mark_bmap_extent(bmap, start, नुमेरो);
 	/* XXX ought to warn on error */
 }
 
 int ext2fs_test_block_bitmap_range2(ext2fs_block_bitmap gen_bmap,
-				    blk64_t block, unsigned int num)
+				    blk64_t block, unsigned int नुमेरो)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
-	__u64	end = block + num;
+	__u64	end = block + नुमेरो;
 
 	if (!bmap)
 		return EINVAL;
 
-	if (num == 1)
+	if (नुमेरो == 1)
 		return !ext2fs_test_generic_bmap((ext2fs_generic_bitmap)
 						 bmap, block);
 
 	if (EXT2FS_IS_32_BITMAP(bmap)) {
 		if ((block & ~0xffffffffULL) ||
-		    ((block+num-1) & ~0xffffffffULL)) {
+		    ((block+नुमेरो-1) & ~0xffffffffULL)) {
 			ext2fs_warn_bitmap2((ext2fs_generic_bitmap) bmap,
 					    EXT2FS_UNMARK_ERROR, 0xffffffff);
 			return EINVAL;
 		}
 		return ext2fs_test_block_bitmap_range(
-			(ext2fs_generic_bitmap) bmap, block, num);
+			(ext2fs_generic_bitmap) bmap, block, नुमेरो);
 	}
 
 	if (!EXT2FS_IS_64_BITMAP(bmap))
 		return EINVAL;
 
-	INC_STAT(bmap, test_ext_count);
+	INC_STAT(bmap, test_ext_बिलांग);
 
 	/* convert to clusters if necessary */
 	block >>= bmap->cluster_bits;
 	end += (1ULL << bmap->cluster_bits) - 1;
 	end >>= bmap->cluster_bits;
-	num = end - block;
+	नुमेरो = end - block;
 
 	if ((block < bmap->start) || (block > bmap->end) ||
-	    (block+num-1 > bmap->end)) {
+	    (block+नुमेरो-1 > bmap->end)) {
 		ext2fs_warn_bitmap(EXT2_ET_BAD_BLOCK_TEST, block,
 				   bmap->description);
 		return EINVAL;
 	}
 
-	return bmap->bitmap_ops->test_clear_bmap_extent(bmap, block, num);
+	return bmap->bitmap_ops->test_clear_bmap_extent(bmap, block, नुमेरो);
 }
 
 void ext2fs_mark_block_bitmap_range2(ext2fs_block_bitmap gen_bmap,
-				     blk64_t block, unsigned int num)
+				     blk64_t block, unsigned int नुमेरो)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
-	__u64	end = block + num;
+	__u64	end = block + नुमेरो;
 
 	if (!bmap)
 		return;
 
 	if (EXT2FS_IS_32_BITMAP(bmap)) {
 		if ((block & ~0xffffffffULL) ||
-		    ((block+num-1) & ~0xffffffffULL)) {
+		    ((block+नुमेरो-1) & ~0xffffffffULL)) {
 			ext2fs_warn_bitmap2((ext2fs_generic_bitmap) bmap,
 					    EXT2FS_UNMARK_ERROR, 0xffffffff);
 			return;
 		}
 		ext2fs_mark_block_bitmap_range((ext2fs_generic_bitmap) bmap,
-					       block, num);
+					       block, नुमेरो);
 	}
 
 	if (!EXT2FS_IS_64_BITMAP(bmap))
 		return;
 
-	INC_STAT(bmap, mark_ext_count);
+	INC_STAT(bmap, mark_ext_बिलांग);
 
 	/* convert to clusters if necessary */
 	block >>= bmap->cluster_bits;
 	end += (1ULL << bmap->cluster_bits) - 1;
 	end >>= bmap->cluster_bits;
-	num = end - block;
+	नुमेरो = end - block;
 
 	if ((block < bmap->start) || (block > bmap->end) ||
-	    (block+num-1 > bmap->end)) {
+	    (block+नुमेरो-1 > bmap->end)) {
 		ext2fs_warn_bitmap(EXT2_ET_BAD_BLOCK_MARK, block,
 				   bmap->description);
 		return;
 	}
 
-	bmap->bitmap_ops->mark_bmap_extent(bmap, block, num);
+	bmap->bitmap_ops->mark_bmap_extent(bmap, block, नुमेरो);
 }
 
 void ext2fs_unmark_block_bitmap_range2(ext2fs_block_bitmap gen_bmap,
-				       blk64_t block, unsigned int num)
+				       blk64_t block, unsigned int नुमेरो)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
-	__u64	end = block + num;
+	__u64	end = block + नुमेरो;
 
 	if (!bmap)
 		return;
 
 	if (EXT2FS_IS_32_BITMAP(bmap)) {
 		if ((block & ~0xffffffffULL) ||
-		    ((block+num-1) & ~0xffffffffULL)) {
+		    ((block+नुमेरो-1) & ~0xffffffffULL)) {
 			ext2fs_warn_bitmap2((ext2fs_generic_bitmap) bmap,
 					    EXT2FS_UNMARK_ERROR, 0xffffffff);
 			return;
 		}
 		ext2fs_unmark_block_bitmap_range((ext2fs_generic_bitmap) bmap,
-						 block, num);
+						 block, नुमेरो);
 	}
 
 	if (!EXT2FS_IS_64_BITMAP(bmap))
 		return;
 
-	INC_STAT(bmap, unmark_ext_count);
+	INC_STAT(bmap, unmark_ext_बिलांग);
 
 	/* convert to clusters if necessary */
 	block >>= bmap->cluster_bits;
 	end += (1ULL << bmap->cluster_bits) - 1;
 	end >>= bmap->cluster_bits;
-	num = end - block;
+	नुमेरो = end - block;
 
 	if ((block < bmap->start) || (block > bmap->end) ||
-	    (block+num-1 > bmap->end)) {
+	    (block+नुमेरो-1 > bmap->end)) {
 		ext2fs_warn_bitmap(EXT2_ET_BAD_BLOCK_UNMARK, block,
 				   bmap->description);
 		return;
 	}
 
-	bmap->bitmap_ops->unmark_bmap_extent(bmap, block, num);
+	bmap->bitmap_ops->unmark_bmap_extent(bmap, block, नुमेरो);
 }
 
 void ext2fs_warn_bitmap32(ext2fs_generic_bitmap gen_bitmap, const char *func)
@@ -945,7 +945,7 @@ errcode_t ext2fs_find_first_set_generic_bmap(ext2fs_generic_bitmap bitmap,
 	return ENOENT;
 }
 
-errcode_t ext2fs_count_used_blocks(ext2_filsys fs, blk64_t start,
+errcode_t ext2fs_बिलांग_used_blocks(ext2_filsys fs, blk64_t start,
 				   blk64_t end, blk64_t *out)
 {
 	blk64_t		next;
@@ -980,15 +980,15 @@ errcode_t ext2fs_count_used_blocks(ext2_filsys fs, blk64_t start,
 	return retval;
 }
 
-errcode_t ext2fs_count_used_clusters(ext2_filsys fs, blk64_t start,
+errcode_t ext2fs_बिलांग_used_clusters(ext2_filsys fs, blk64_t start,
 				     blk64_t end, blk64_t *out)
 {
 	blk64_t		tot_set = 0;
 	errcode_t	retval = 0;
 
-	retval = ext2fs_count_used_blocks(fs, start, end, &tot_set);
+	retval = ext2fs_बिलांग_used_blocks(fs, start, end, &tot_set);
 
 	if (!retval)
-		*out = EXT2FS_NUM_B2C(fs, tot_set);
+		*out = EXT2_FS_नुमेरो_B2_C(fs, tot_set);
 	return retval;
 }

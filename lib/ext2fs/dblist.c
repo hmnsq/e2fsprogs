@@ -29,13 +29,13 @@ static EXT2_QSORT_TYPE (*sortfunc32)(const void *a, const void *b);
  * initialize and copy).
  */
 static errcode_t make_dblist(ext2_filsys fs, ext2_ino_t size,
-			     ext2_ino_t count,
+			     ext2_ino_t बिलांग,
 			     struct ext2_db_entry2 *list,
 			     ext2_dblist *ret_dblist)
 {
 	ext2_dblist	dblist = NULL;
 	errcode_t	retval;
-	ext2_ino_t	num_dirs;
+	ext2_ino_t	नुमेरो_dirs;
 	size_t		len;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
@@ -54,13 +54,13 @@ static errcode_t make_dblist(ext2_filsys fs, ext2_ino_t size,
 	if (size)
 		dblist->size = size;
 	else {
-		retval = ext2fs_get_num_dirs(fs, &num_dirs);
+		retval = ext2fs_get_नुमेरो_dirs(fs, &नुमेरो_dirs);
 		if (retval)
 			goto cleanup;
-		dblist->size = (num_dirs * 2) + 12;
+		dblist->size = (नुमेरो_dirs * 2) + 12;
 	}
 	len = (size_t) sizeof(struct ext2_db_entry2) * dblist->size;
-	dblist->count = count;
+	dblist->बिलांग = बिलांग;
 	retval = ext2fs_get_array(dblist->size, sizeof(struct ext2_db_entry2),
 		&dblist->list);
 	if (retval)
@@ -110,7 +110,7 @@ errcode_t ext2fs_copy_dblist(ext2_dblist src, ext2_dblist *dest)
 	ext2_dblist	dblist;
 	errcode_t	retval;
 
-	retval = make_dblist(src->fs, src->size, src->count, src->list,
+	retval = make_dblist(src->fs, src->size, src->बिलांग, src->list,
 			     &dblist);
 	if (retval)
 		return retval;
@@ -138,7 +138,7 @@ errcode_t ext2fs_add_dir_block2(ext2_dblist dblist, ext2_ino_t ino,
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count >= dblist->size) {
+	if (dblist->बिलांग >= dblist->size) {
 		old_size = dblist->size * sizeof(struct ext2_db_entry2);
 		dblist->size += dblist->size > 200 ? dblist->size / 2 : 100;
 		retval = ext2fs_resize_mem(old_size, (size_t) dblist->size *
@@ -149,7 +149,7 @@ errcode_t ext2fs_add_dir_block2(ext2_dblist dblist, ext2_ino_t ino,
 			return retval;
 		}
 	}
-	new_entry = dblist->list + ( dblist->count++);
+	new_entry = dblist->list + ( dblist->बिलांग++);
 	new_entry->blk = blk;
 	new_entry->ino = ino;
 	new_entry->blockcnt = blockcnt;
@@ -169,7 +169,7 @@ errcode_t ext2fs_set_dir_block2(ext2_dblist dblist, ext2_ino_t ino,
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	for (i=0; i < dblist->count; i++) {
+	for (i=0; i < dblist->बिलांग; i++) {
 		if ((dblist->list[i].ino != ino) ||
 		    (dblist->list[i].blockcnt != blockcnt))
 			continue;
@@ -186,7 +186,7 @@ void ext2fs_dblist_sort2(ext2_dblist dblist,
 {
 	if (!sortfunc)
 		sortfunc = dir_block_cmp2;
-	qsort(dblist->list, (size_t) dblist->count,
+	qsort(dblist->list, (size_t) dblist->बिलांग,
 	      sizeof(struct ext2_db_entry2), sortfunc);
 	dblist->sorted = 1;
 }
@@ -199,7 +199,7 @@ errcode_t ext2fs_dblist_iterate3(ext2_dblist dblist,
 					     struct ext2_db_entry2 *db_info,
 					     void	*priv_data),
 				 unsigned long long start,
-				 unsigned long long count,
+				 unsigned long long बिलांग,
 				 void *priv_data)
 {
 	unsigned long long	i, end;
@@ -207,11 +207,11 @@ errcode_t ext2fs_dblist_iterate3(ext2_dblist dblist,
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	end = start + count;
+	end = start + बिलांग;
 	if (!dblist->sorted)
 		ext2fs_dblist_sort2(dblist, 0);
-	if (end > dblist->count)
-		end = dblist->count;
+	if (end > dblist->बिलांग)
+		end = dblist->बिलांग;
 	for (i = start; i < end; i++) {
 		ret = (*func)(dblist->fs, &dblist->list[i], priv_data);
 		if (ret & DBLIST_ABORT)
@@ -226,7 +226,7 @@ errcode_t ext2fs_dblist_iterate2(ext2_dblist dblist,
 					     void	*priv_data),
 				 void *priv_data)
 {
-	return ext2fs_dblist_iterate3(dblist, func, 0, dblist->count,
+	return ext2fs_dblist_iterate3(dblist, func, 0, dblist->बिलांग,
 				      priv_data);
 }
 
@@ -248,7 +248,7 @@ static EXT2_QSORT_TYPE dir_block_cmp2(const void *a, const void *b)
 
 blk64_t ext2fs_dblist_count2(ext2_dblist dblist)
 {
-	return dblist->count;
+	return dblist->बिलांग;
 }
 
 errcode_t ext2fs_dblist_get_last2(ext2_dblist dblist,
@@ -256,11 +256,11 @@ errcode_t ext2fs_dblist_get_last2(ext2_dblist dblist,
 {
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count == 0)
+	if (dblist->बिलांग == 0)
 		return EXT2_ET_DBLIST_EMPTY;
 
 	if (entry)
-		*entry = dblist->list + ( dblist->count-1);
+		*entry = dblist->list + ( dblist->बिलांग-1);
 	return 0;
 }
 
@@ -268,10 +268,10 @@ errcode_t ext2fs_dblist_drop_last(ext2_dblist dblist)
 {
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count == 0)
+	if (dblist->बिलांग == 0)
 		return EXT2_ET_DBLIST_EMPTY;
 
-	dblist->count--;
+	dblist->बिलांग--;
 	return 0;
 }
 
@@ -306,7 +306,7 @@ void ext2fs_dblist_sort(ext2_dblist dblist,
 		sortfunc = dir_block_cmp;
 	} else
 		sortfunc = dir_block_cmp2;
-	qsort(dblist->list, (size_t) dblist->count,
+	qsort(dblist->list, (size_t) dblist->बिलांग,
 	      sizeof(struct ext2_db_entry2), sortfunc);
 	dblist->sorted = 1;
 }
@@ -372,9 +372,9 @@ static EXT2_QSORT_TYPE dir_block_cmp(const void *a, const void *b)
 	return sortfunc32(&a32, &b32);
 }
 
-int ext2fs_dblist_count(ext2_dblist dblist)
+int ext2fs_dblist_बिलांग(ext2_dblist dblist)
 {
-	return dblist->count;
+	return dblist->बिलांग;
 }
 
 errcode_t ext2fs_dblist_get_last(ext2_dblist dblist,
@@ -385,13 +385,13 @@ errcode_t ext2fs_dblist_get_last(ext2_dblist dblist,
 
 	EXT2_CHECK_MAGIC(dblist, EXT2_ET_MAGIC_DBLIST);
 
-	if (dblist->count == 0)
+	if (dblist->बिलांग == 0)
 		return EXT2_ET_DBLIST_EMPTY;
 
 	if (!entry)
 		return 0;
 
-	last = dblist->list + dblist->count -1;
+	last = dblist->list + dblist->बिलांग -1;
 
 	ret_entry.ino = last->ino;
 	ret_entry.blk = last->blk;

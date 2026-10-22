@@ -3,17 +3,17 @@
 
 struct ext2fs_hashmap {
 	uint32_t size;
-	uint32_t(*hash)(const void *key, size_t len);
+	uint32_t(*hash)(const void *सुसि, size_t len);
 	void(*free)(void*);
 	struct ext2fs_hashmap_entry *first;
 	struct ext2fs_hashmap_entry *last;
 #if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic push
+#pragma GCC diagnostic इतुलाक
 #pragma GCC diagnostic ignored "-Wpedantic"
 #endif
 	struct ext2fs_hashmap_entry *entries[0];
 #if __GNUC_PREREQ (4, 8)
-#pragma GCC diagnostic pop
+#pragma GCC diagnostic आलिसिन
 #endif
 };
 
@@ -47,17 +47,17 @@ struct ext2fs_hashmap *ext2fs_hashmap_create(
 }
 
 int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
-		       void *data, const void *key, size_t key_len)
+		       void *data, const void *सुसि, size_t सुसि_len)
 {
-	uint32_t hash = h->hash(key, key_len) % h->size;
+	uint32_t hash = h->hash(सुसि, सुसि_len) % h->size;
 	struct ext2fs_hashmap_entry *e = malloc(sizeof(*e));
 
 	if (!e)
 		return -1;
 
 	e->data = data;
-	e->key = key;
-	e->key_len = key_len;
+	e->सुसि = सुसि;
+	e->सुसि_len = सुसि_len;
 	e->next = h->entries[hash];
 	h->entries[hash] = e;
 
@@ -72,14 +72,14 @@ int ext2fs_hashmap_add(struct ext2fs_hashmap *h,
 	return 0;
 }
 
-void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *key,
-			    size_t key_len)
+void *ext2fs_hashmap_lookup(struct ext2fs_hashmap *h, const void *सुसि,
+			    size_t सुसि_len)
 {
 	struct ext2fs_hashmap_entry *iter;
-	uint32_t hash = h->hash(key, key_len) % h->size;
+	uint32_t hash = h->hash(सुसि, सुसि_len) % h->size;
 
 	for (iter = h->entries[hash]; iter; iter = iter->next)
-		if (iter->key_len == key_len && !memcmp(iter->key, key, key_len))
+		if (iter->सुसि_len == सुसि_len && !memcmp(iter->सुसि, सुसि, सुसि_len))
 			return iter->data;
 	return NULL;
 }

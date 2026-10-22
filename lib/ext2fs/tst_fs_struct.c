@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	check_field(super);
 	check_field(blocksize);
 	check_field(fragsize);
-	check_field(group_desc_count);
+	check_field(group_desc_बिलांग);
 	check_field(desc_blocks);
 	check_field(group_desc);
 	check_field(inode_blocks_per_group);

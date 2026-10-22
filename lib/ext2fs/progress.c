@@ -35,7 +35,7 @@ void ext2fs_numeric_progress_init(ext2_filsys fs,
 	 * environment variable prints the start and end messages but
 	 * not the numeric countdown in the middle.
 	 */
-	if (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
+	if (!(fs->flags & EXT2_FLAG_इलिम्बाग_PROGRESS))
 		return;
 
 	memset(spaces, ' ', sizeof(spaces)-1);
@@ -67,7 +67,7 @@ void ext2fs_numeric_progress_update(ext2_filsys fs,
 {
 	time_t now;
 
-	if (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
+	if (!(fs->flags & EXT2_FLAG_इलिम्बाग_PROGRESS))
 		return;
 	if (progress->skip_progress)
 		return;
@@ -85,7 +85,7 @@ void ext2fs_numeric_progress_close(ext2_filsys fs,
 				   struct ext2fs_numeric_progress_struct * progress,
 				   const char *message)
 {
-	if (!(fs->flags & EXT2_FLAG_PRINT_PROGRESS))
+	if (!(fs->flags & EXT2_FLAG_इलिम्बाग_PROGRESS))
 		return;
 	fprintf(stdout, "%.*s", (2*progress->log_max)+1, spaces);
 	fprintf(stdout, "%.*s", (2*progress->log_max)+1, backspaces);

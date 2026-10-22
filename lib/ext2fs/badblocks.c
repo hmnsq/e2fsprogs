@@ -30,7 +30,7 @@
 /*
  * Helper function for making a badblocks list
  */
-static errcode_t make_u32_list(int size, int num, __u32 *list,
+static errcode_t make_u32_list(int size, int नुमेरो, __u32 *list,
 			       ext2_u32_list *ret)
 {
 	ext2_u32_list	bb;
@@ -42,7 +42,7 @@ static errcode_t make_u32_list(int size, int num, __u32 *list,
 	memset(bb, 0, sizeof(struct ext2_struct_u32_list));
 	bb->magic = EXT2_ET_MAGIC_BADBLOCKS_LIST;
 	bb->size = size ? size : 10;
-	bb->num = num;
+	bb->नुमेरो = नुमेरो;
 	retval = ext2fs_get_array(bb->size, sizeof(blk_t), &bb->list);
 	if (retval) {
 		ext2fs_free_mem(&bb);
@@ -81,7 +81,7 @@ errcode_t ext2fs_u32_copy(ext2_u32_list src, ext2_u32_list *dest)
 {
 	errcode_t	retval;
 
-	retval = make_u32_list(src->size, src->num, src->list, dest);
+	retval = make_u32_list(src->size, src->नुमेरो, src->list, dest);
 	if (retval)
 		return retval;
 	(*dest)->badblocks_flags = src->badblocks_flags;
@@ -113,7 +113,7 @@ errcode_t ext2fs_u32_list_add(ext2_u32_list bb, __u32 blk)
 
 	EXT2_CHECK_MAGIC(bb, EXT2_ET_MAGIC_BADBLOCKS_LIST);
 
-	if (bb->num >= bb->size) {
+	if (bb->नुमेरो >= bb->size) {
 		old_size = bb->size * sizeof(__u32);
 		bb->size += 100;
 		retval = ext2fs_resize_mem(old_size, bb->size * sizeof(__u32),
@@ -127,16 +127,16 @@ errcode_t ext2fs_u32_list_add(ext2_u32_list bb, __u32 blk)
 	/*
 	 * Add special case code for appending to the end of the list
 	 */
-	i = bb->num-1;
-	if ((bb->num != 0) && (bb->list[i] == blk))
+	i = bb->नुमेरो-1;
+	if ((bb->नुमेरो != 0) && (bb->list[i] == blk))
 		return 0;
-	if ((bb->num == 0) || (bb->list[i] < blk)) {
-		bb->list[bb->num++] = blk;
+	if ((bb->नुमेरो == 0) || (bb->list[i] < blk)) {
+		bb->list[bb->नुमेरो++] = blk;
 		return 0;
 	}
 
-	j = bb->num;
-	for (i=0; i < bb->num; i++) {
+	j = bb->नुमेरो;
+	for (i=0; i < bb->नुमेरो; i++) {
 		if (bb->list[i] == blk)
 			return 0;
 		if (bb->list[i] > blk) {
@@ -144,10 +144,10 @@ errcode_t ext2fs_u32_list_add(ext2_u32_list bb, __u32 blk)
 			break;
 		}
 	}
-	for (i=bb->num; i > j; i--)
+	for (i=bb->नुमेरो; i > j; i--)
 		bb->list[i] = bb->list[i-1];
 	bb->list[j] = blk;
-	bb->num++;
+	bb->नुमेरो++;
 	return 0;
 }
 
@@ -162,31 +162,31 @@ errcode_t ext2fs_badblocks_list_add(ext2_badblocks_list bb, blk_t blk)
  */
 int ext2fs_u32_list_find(ext2_u32_list bb, __u32 blk)
 {
-	int	low, high, mid;
+	int	माबाबा, माताअस, mid;
 
 	if (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
 		return -1;
 
-	if (bb->num == 0)
+	if (bb->नुमेरो == 0)
 		return -1;
 
-	low = 0;
-	high = bb->num-1;
-	if (blk == bb->list[low])
-		return low;
-	if (blk == bb->list[high])
-		return high;
+	माबाबा = 0;
+	माताअस = bb->नुमेरो-1;
+	if (blk == bb->list[माबाबा])
+		return माबाबा;
+	if (blk == bb->list[माताअस])
+		return माताअस;
 
-	while (low < high) {
-		mid = ((unsigned)low + (unsigned)high)/2;
-		if (mid == low || mid == high)
+	while (माबाबा < माताअस) {
+		mid = ((unsigned)माबाबा + (unsigned)माताअस)/2;
+		if (mid == माबाबा || mid == माताअस)
 			break;
 		if (blk == bb->list[mid])
 			return mid;
 		if (blk < bb->list[mid])
-			high = mid;
+			माताअस = mid;
 		else
-			low = mid;
+			माबाबा = mid;
 	}
 	return -1;
 }
@@ -216,16 +216,16 @@ int ext2fs_u32_list_del(ext2_u32_list bb, __u32 blk)
 {
 	int	remloc, i;
 
-	if (bb->num == 0)
+	if (bb->नुमेरो == 0)
 		return -1;
 
 	remloc = ext2fs_u32_list_find(bb, blk);
 	if (remloc < 0)
 		return -1;
 
-	for (i = remloc ; i < bb->num-1; i++)
+	for (i = remloc ; i < bb->नुमेरो-1; i++)
 		bb->list[i] = bb->list[i+1];
-	bb->num--;
+	bb->नुमेरो--;
 	return 0;
 }
 
@@ -273,7 +273,7 @@ int ext2fs_u32_list_iterate(ext2_u32_iterate iter, __u32 *blk)
 	if (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
 		return 0;
 
-	if (iter->ptr < bb->num) {
+	if (iter->ptr < bb->नुमेरो) {
 		*blk = bb->list[iter->ptr++];
 		return 1;
 	}
@@ -308,10 +308,10 @@ int ext2fs_u32_list_equal(ext2_u32_list bb1, ext2_u32_list bb2)
 	EXT2_CHECK_MAGIC(bb1, EXT2_ET_MAGIC_BADBLOCKS_LIST);
 	EXT2_CHECK_MAGIC(bb2, EXT2_ET_MAGIC_BADBLOCKS_LIST);
 
-	if (bb1->num != bb2->num)
+	if (bb1->नुमेरो != bb2->नुमेरो)
 		return 0;
 
-	if (memcmp(bb1->list, bb2->list, bb1->num * sizeof(blk_t)) != 0)
+	if (memcmp(bb1->list, bb2->list, bb1->नुमेरो * sizeof(blk_t)) != 0)
 		return 0;
 	return 1;
 }
@@ -322,7 +322,7 @@ int ext2fs_badblocks_equal(ext2_badblocks_list bb1, ext2_badblocks_list bb2)
 				     (ext2_u32_list) bb2);
 }
 
-int ext2fs_u32_list_count(ext2_u32_list bb)
+int ext2fs_u32_list_बिलांग(ext2_u32_list bb)
 {
-	return bb->num;
+	return bb->नुमेरो;
 }

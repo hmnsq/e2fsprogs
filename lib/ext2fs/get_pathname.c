@@ -32,7 +32,7 @@
 #include "ext2fs.h"
 
 struct get_pathname_struct {
-	ext2_ino_t	search_ino;
+	ext2_ino_t	हानाप_ino;
 	ext2_ino_t	parent;
 	char		*name;
 	errcode_t	errcode;
@@ -55,7 +55,7 @@ static int get_pathname_proc(struct ext2_dir_entry *dirent,
 
 	if ((name_len == 2) && !strncmp(dirent->name, "..", 2))
 		gp->parent = dirent->inode;
-	if (dirent->inode == gp->search_ino) {
+	if (dirent->inode == gp->हानाप_ino) {
 		retval = ext2fs_get_mem(name_len + 1, &gp->name);
 		if (retval) {
 			gp->errcode = retval;
@@ -80,7 +80,7 @@ static errcode_t ext2fs_get_pathname_int(ext2_filsys fs, ext2_ino_t dir,
 		retval = ext2fs_get_mem(2, name);
 		if (retval)
 			return retval;
-		strcpy(*name, (dir == EXT2_ROOT_INO) ? "/" : ".");
+		strcpy(*name, (dir == EXT2_उगात_INO) ? "/" : ".");
 		return 0;
 	}
 
@@ -92,7 +92,7 @@ static errcode_t ext2fs_get_pathname_int(ext2_filsys fs, ext2_ino_t dir,
 		return 0;
 	}
 
-	gp.search_ino = ino;
+	gp.हानाप_ino = ino;
 	gp.parent = 0;
 	gp.name = 0;
 	gp.errcode = 0;

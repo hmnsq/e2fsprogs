@@ -28,11 +28,11 @@ static const char *lib_date = E2FSPROGS_DATE;
 int ext2fs_parse_version_string(const char *ver_string)
 {
 	const char *cp;
-	int version = 0, dot_count = 0;
+	int version = 0, dot_बिलांग = 0;
 
 	for (cp = ver_string; *cp; cp++) {
 		if (*cp == '.') {
-			if (dot_count++)
+			if (dot_बिलांग++)
 				break;
 			else
 				continue;

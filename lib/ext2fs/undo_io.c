@@ -87,9 +87,9 @@
 
 struct undo_header {
 	char magic[8];		/* "E2UNDO02" */
-	__le64 num_keys;	/* how many keys? */
+	__le64 नुमेरो_मगा_सुसि;	/* how many keys? */
 	__le64 super_offset;	/* where in the file is the superblock copy? */
-	__le64 key_offset;	/* where do the key/data block chunks start? */
+	__le64 सुसि_offset;	/* where do the key/data block chunks start? */
 	__le32 block_size;	/* block size of the undo file */
 	__le32 fs_block_size;	/* block size of the target device */
 	__le32 sb_crc;		/* crc32c of the superblock */
@@ -105,21 +105,21 @@ struct undo_header {
 
 #define E2UNDO_MAX_EXTENT_BLOCKS	512	/* max extent size, in blocks */
 
-struct undo_key {
+struct undo_सुसि {
 	__le64 fsblk;		/* where in the fs does the block go */
 	__le32 blk_crc;		/* crc32c of the block */
 	__le32 size;		/* how many bytes in this block? */
 };
 
-struct undo_key_block {
+struct undo_सुसि_block {
 	__le32 magic;		/* KEYBLOCK_MAGIC number */
 	__le32 crc;		/* block checksum */
 	__le64 reserved;	/* zero */
 
 #if __STDC_VERSION__ >= 199901L
-	struct undo_key keys[];		/* keys, which come immediately after */
+	struct undo_सुसि मगा_सुसि[];		/* keys, which come immediately after */
 #else
-	struct undo_key keys[0];	/* keys, which come immediately after */
+	struct undo_सुसि मगा_सुसि[0];	/* keys, which come immediately after */
 #endif
 };
 
@@ -128,12 +128,12 @@ struct undo_private_data {
 
 	/* the undo file io channel */
 	io_channel undo_file;
-	blk64_t undo_blk_num;			/* next free block */
-	blk64_t key_blk_num;			/* current key block location */
-	blk64_t super_blk_num;			/* superblock location */
-	blk64_t first_key_blk;			/* first key block location */
-	struct undo_key_block *keyb;
-	size_t num_keys, keys_in_block;
+	blk64_t undo_blk_नुमेरो;			/* next free block */
+	blk64_t सुसि_blk_नुमेरो;			/* current key block location */
+	blk64_t super_blk_नुमेरो;			/* superblock location */
+	blk64_t first_सुसि_blk;			/* first key block location */
+	struct undo_सुसि_block *keyb;
+	size_t नुमेरो_मगा_सुसि, मगा_सुसि_in_block;
 
 	/* The backing io channel */
 	io_channel real;
@@ -149,7 +149,7 @@ struct undo_private_data {
 	char *tdb_file;
 	struct undo_header hdr;
 };
-#define KEYS_PER_BLOCK(d) (((d)->tdb_data_size / sizeof(struct undo_key)) - 1)
+#define मगा_सुसि_PER_BLOCK(d) (((d)->tdb_data_size / sizeof(struct undo_सुसि)) - 1)
 
 #define E2UNDO_FEATURE_COMPAT_FS_OFFSET 0x1	/* the filesystem offset */
 
@@ -194,25 +194,25 @@ static errcode_t write_undo_indexes(struct undo_private_data *data, int flush)
 	__u32 sb_crc, hdr_crc;
 
 	/* Spit out a key block, if there's any data */
-	if (data->keys_in_block) {
+	if (data->मगा_सुसि_in_block) {
 		data->keyb->magic = ext2fs_cpu_to_le32(KEYBLOCK_MAGIC);
 		data->keyb->crc = 0;
 		data->keyb->crc = ext2fs_cpu_to_le32(
 					 ext2fs_crc32c_le(~0,
 					 (unsigned char *)data->keyb,
 					 data->tdb_data_size));
-		dbg_printf("Writing keyblock to blk %llu\n", data->key_blk_num);
+		dbg_printf("Writing keyblock to blk %llu\n", data->सुसि_blk_नुमेरो);
 		retval = io_channel_write_blk64(data->undo_file,
-						data->key_blk_num,
+						data->सुसि_blk_नुमेरो,
 						1, data->keyb);
 		if (retval)
 			return retval;
 		/* Move on to the next key block if it's full. */
-		if (data->keys_in_block == KEYS_PER_BLOCK(data)) {
+		if (data->मगा_सुसि_in_block == मगा_सुसि_PER_BLOCK(data)) {
 			memset(data->keyb, 0, data->tdb_data_size);
-			data->keys_in_block = 0;
-			data->key_blk_num = data->undo_blk_num;
-			data->undo_blk_num++;
+			data->मगा_सुसि_in_block = 0;
+			data->सुसि_blk_नुमेरो = data->undo_blk_नुमेरो;
+			data->undo_blk_नुमेरो++;
 		}
 	}
 
@@ -229,9 +229,9 @@ static errcode_t write_undo_indexes(struct undo_private_data *data, int flush)
 
 	/* Write the undo header to disk. */
 	memcpy(data->hdr.magic, E2UNDO_MAGIC, sizeof(data->hdr.magic));
-	data->hdr.num_keys = ext2fs_cpu_to_le64(data->num_keys);
-	data->hdr.super_offset = ext2fs_cpu_to_le64(data->super_blk_num);
-	data->hdr.key_offset = ext2fs_cpu_to_le64(data->first_key_blk);
+	data->hdr.नुमेरो_मगा_सुसि = ext2fs_cpu_to_le64(data->नुमेरो_मगा_सुसि);
+	data->hdr.super_offset = ext2fs_cpu_to_le64(data->super_blk_नुमेरो);
+	data->hdr.सुसि_offset = ext2fs_cpu_to_le64(data->first_सुसि_blk);
 	data->hdr.fs_block_size = ext2fs_cpu_to_le32(block_size);
 	data->hdr.sb_crc = ext2fs_cpu_to_le32(sb_crc);
 	data->hdr.fs_offset = ext2fs_cpu_to_le64(data->offset);
@@ -253,8 +253,8 @@ static errcode_t write_undo_indexes(struct undo_private_data *data, int flush)
 	 * Record the entire superblock (in FS byte order) so that we can't
 	 * apply e2undo files to the wrong FS or out of order.
 	 */
-	dbg_printf("Writing superblock to block %llu\n", data->super_blk_num);
-	retval = io_channel_write_blk64(data->undo_file, data->super_blk_num,
+	dbg_printf("Writing superblock to block %llu\n", data->super_blk_नुमेरो);
+	retval = io_channel_write_blk64(data->undo_file, data->super_blk_नुमेरो,
 					-SUPERBLOCK_SIZE, &super);
 	if (retval)
 		goto err_out;
@@ -291,11 +291,11 @@ static errcode_t undo_setup_tdb(struct undo_private_data *data)
 	retval = ext2fs_get_mem(data->tdb_data_size, &data->keyb);
 	if (retval)
 		return retval;
-	data->key_blk_num = data->first_key_blk;
+	data->सुसि_blk_नुमेरो = data->first_सुसि_blk;
 
 	/* Record block size */
 	dbg_printf("Undo block size %llu\n", data->tdb_data_size);
-	dbg_printf("Keys per block %llu\n", KEYS_PER_BLOCK(data));
+	dbg_printf("Keys per block %llu\n", मगा_सुसि_PER_BLOCK(data));
 	data->hdr.block_size = ext2fs_cpu_to_le32(data->tdb_data_size);
 	io_channel_set_blksize(data->undo_file, data->tdb_data_size);
 
@@ -318,18 +318,18 @@ static errcode_t undo_setup_tdb(struct undo_private_data *data)
 }
 
 static errcode_t undo_write_tdb(io_channel channel,
-				unsigned long long block, int count)
+				unsigned long long block, int बिलांग)
 
 {
 	int size, sz;
-	unsigned long long block_num, backing_blk_num;
+	unsigned long long block_नुमेरो, backing_blk_नुमेरो;
 	errcode_t retval = 0;
 	ext2_loff_t offset;
 	struct undo_private_data *data;
 	unsigned char *read_ptr;
 	unsigned long long end_block;
 	unsigned long long data_size;
-	struct undo_key *key;
+	struct undo_सुसि *सुसि;
 	__u32 blk_crc;
 
 	data = (struct undo_private_data *) channel->private_data;
@@ -341,13 +341,13 @@ static errcode_t undo_write_tdb(io_channel channel,
 		return 0;
 	}
 
-	if (count == 1)
+	if (बिलांग == 1)
 		size = channel->block_size;
 	else {
-		if (count < 0)
-			size = -count;
+		if (बिलांग < 0)
+			size = -बिलांग;
 		else
-			size = count * channel->block_size;
+			size = बिलांग * channel->block_size;
 	}
 
 	retval = undo_setup_tdb(data);
@@ -360,22 +360,22 @@ static errcode_t undo_write_tdb(io_channel channel,
 	 * We divide the disk to blocks of tdb_data_size.
 	 */
 	offset = (block * channel->block_size) + data->offset ;
-	block_num = offset / data->tdb_data_size;
+	block_नुमेरो = offset / data->tdb_data_size;
 	end_block = (offset + size - 1) / data->tdb_data_size;
 
-	while (block_num <= end_block) {
+	while (block_नुमेरो <= end_block) {
 		__u32 keysz;
 
 		/*
 		 * Check if we have the record already
 		 */
 		if (ext2fs_test_block_bitmap2(data->written_block_map,
-						   block_num)) {
+						   block_नुमेरो)) {
 			/* Try the next block */
-			block_num++;
+			block_नुमेरो++;
 			continue;
 		}
-		ext2fs_mark_block_bitmap2(data->written_block_map, block_num);
+		ext2fs_mark_block_bitmap2(data->written_block_map, block_नुमेरो);
 
 		/*
 		 * Read one block using the backing I/O manager
@@ -384,9 +384,9 @@ static errcode_t undo_write_tdb(io_channel channel,
 		 * Also we need to recalculate the block number with respect
 		 * to the backing I/O manager.
 		 */
-		offset = block_num * data->tdb_data_size +
+		offset = block_नुमेरो * data->tdb_data_size +
 				(data->offset % data->tdb_data_size);
-		backing_blk_num = (offset - data->offset) / channel->block_size;
+		backing_blk_नुमेरो = (offset - data->offset) / channel->block_size;
 
 		retval = ext2fs_get_mem(data->tdb_data_size, &read_ptr);
 		if (retval) {
@@ -399,7 +399,7 @@ static errcode_t undo_write_tdb(io_channel channel,
 			sz = data->tdb_data_size / channel->block_size;
 		else
 			sz = -data->tdb_data_size;
-		retval = io_channel_read_blk64(data->real, backing_blk_num,
+		retval = io_channel_read_blk64(data->real, backing_blk_नुमेरो,
 					     sz, read_ptr);
 		if (retval) {
 			if (retval != EXT2_ET_SHORT_READ) {
@@ -416,53 +416,53 @@ static errcode_t undo_write_tdb(io_channel channel,
 		}
 		if (data_size == 0) {
 			free(read_ptr);
-			block_num++;
+			block_नुमेरो++;
 			continue;
 		}
 		dbg_printf("Read %llu bytes from FS block %llu (blk=%llu cnt=%llu)\n",
-		       data_size, backing_blk_num, block, data->tdb_data_size);
+		       data_size, backing_blk_नुमेरो, block, data->tdb_data_size);
 		if ((data_size % data->undo_file->block_size) == 0)
 			sz = data_size / data->undo_file->block_size;
 		else
 			sz = -data_size;;
 		/* extend this key? */
-		if (data->keys_in_block) {
-			key = data->keyb->keys + data->keys_in_block - 1;
-			keysz = ext2fs_le32_to_cpu(key->size);
+		if (data->मगा_सुसि_in_block) {
+			सुसि = data->keyb->मगा_सुसि + data->मगा_सुसि_in_block - 1;
+			keysz = ext2fs_le32_to_cpu(सुसि->size);
 		} else {
-			key = NULL;
+			सुसि = NULL;
 			keysz = 0;
 		}
-		if (key != NULL &&
-		    (ext2fs_le64_to_cpu(key->fsblk) * channel->block_size +
+		if (सुसि != NULL &&
+		    (ext2fs_le64_to_cpu(सुसि->fsblk) * channel->block_size +
 		     channel->block_size - 1 +
-		     keysz) / channel->block_size == backing_blk_num &&
+		     keysz) / channel->block_size == backing_blk_नुमेरो &&
 		    E2UNDO_MAX_EXTENT_BLOCKS * data->tdb_data_size >
 		    keysz + data_size) {
-			blk_crc = ext2fs_le32_to_cpu(key->blk_crc);
+			blk_crc = ext2fs_le32_to_cpu(सुसि->blk_crc);
 			blk_crc = ext2fs_crc32c_le(blk_crc, read_ptr, data_size);
-			key->blk_crc = ext2fs_cpu_to_le32(blk_crc);
-			key->size = ext2fs_cpu_to_le32(keysz + data_size);
+			सुसि->blk_crc = ext2fs_cpu_to_le32(blk_crc);
+			सुसि->size = ext2fs_cpu_to_le32(keysz + data_size);
 		} else {
-			data->num_keys++;
-			key = data->keyb->keys + data->keys_in_block;
-			data->keys_in_block++;
-			key->fsblk = ext2fs_cpu_to_le64(backing_blk_num);
+			data->नुमेरो_मगा_सुसि++;
+			सुसि = data->keyb->मगा_सुसि + data->मगा_सुसि_in_block;
+			data->मगा_सुसि_in_block++;
+			सुसि->fsblk = ext2fs_cpu_to_le64(backing_blk_नुमेरो);
 			blk_crc = ext2fs_crc32c_le(~0, read_ptr, data_size);
-			key->blk_crc = ext2fs_cpu_to_le32(blk_crc);
-			key->size = ext2fs_cpu_to_le32(data_size);
+			सुसि->blk_crc = ext2fs_cpu_to_le32(blk_crc);
+			सुसि->size = ext2fs_cpu_to_le32(data_size);
 		}
 		dbg_printf("Writing block %llu to offset %llu size %d key %zu\n",
-		       block_num,
-		       data->undo_blk_num,
-		       sz, data->num_keys - 1);
+		       block_नुमेरो,
+		       data->undo_blk_नुमेरो,
+		       sz, data->नुमेरो_मगा_सुसि - 1);
 		retval = io_channel_write_blk64(data->undo_file,
-					data->undo_blk_num, sz, read_ptr);
+					data->undo_blk_नुमेरो, sz, read_ptr);
 		if (retval) {
 			free(read_ptr);
 			return retval;
 		}
-		data->undo_blk_num++;
+		data->undo_blk_नुमेरो++;
 		free(read_ptr);
 
 		/* Write out the key block */
@@ -471,7 +471,7 @@ static errcode_t undo_write_tdb(io_channel channel,
 			return retval;
 
 		/* Next block */
-		block_num++;
+		block_नुमेरो++;
 	}
 
 	return retval;
@@ -479,7 +479,7 @@ static errcode_t undo_write_tdb(io_channel channel,
 
 static errcode_t undo_io_read_error(io_channel channel ATTR((unused)),
 				    unsigned long block ATTR((unused)),
-				    int count ATTR((unused)),
+				    int बिलांग ATTR((unused)),
 				    void *data ATTR((unused)),
 				    size_t size ATTR((unused)),
 				    int actual,
@@ -546,12 +546,12 @@ static errcode_t try_reopen_undo_file(int undo_fd,
 				      struct undo_private_data *data)
 {
 	struct undo_header hdr;
-	struct undo_key *dkey;
+	struct undo_सुसि *dkey;
 	ext2fs_struct_stat statbuf;
 	unsigned int blocksize, fs_blocksize;
 	blk64_t super_block, lblk;
-	size_t num_keys, keys_per_block, i;
-	__u32 hdr_crc, key_crc;
+	size_t नुमेरो_मगा_सुसि, मगा_सुसि_per_block, i;
+	__u32 hdr_crc, सुसि_crc;
 	errcode_t retval;
 
 	/* Zero size already? */
@@ -582,7 +582,7 @@ static errcode_t try_reopen_undo_file(int undo_fd,
 	    !blocksize || !fs_blocksize)
 		goto bad_file;
 	super_block = ext2fs_le64_to_cpu(hdr.super_offset);
-	num_keys = ext2fs_le64_to_cpu(hdr.num_keys);
+	नुमेरो_मगा_सुसि = ext2fs_le64_to_cpu(hdr.नुमेरो_मगा_सुसि);
 	io_channel_set_blksize(data->undo_file, blocksize);
 	/*
 	 * Do not compare hdr.f_compat with the available compatible
@@ -604,45 +604,45 @@ static errcode_t try_reopen_undo_file(int undo_fd,
 	retval = undo_setup_tdb(data);
 	if (retval)
 		goto bad_file;
-	data->num_keys = num_keys;
-	data->super_blk_num = super_block;
-	data->first_key_blk = ext2fs_le64_to_cpu(hdr.key_offset);
+	data->नुमेरो_मगा_सुसि = नुमेरो_मगा_सुसि;
+	data->super_blk_नुमेरो = super_block;
+	data->first_सुसि_blk = ext2fs_le64_to_cpu(hdr.सुसि_offset);
 
 	/* load the written block map */
-	keys_per_block = KEYS_PER_BLOCK(data);
-	lblk = data->first_key_blk;
+	मगा_सुसि_per_block = मगा_सुसि_PER_BLOCK(data);
+	lblk = data->first_सुसि_blk;
 	dbg_printf("nr_keys=%lu, kpb=%zu, blksz=%u\n",
-		   num_keys, keys_per_block, blocksize);
-	for (i = 0; i < num_keys; i += keys_per_block) {
+		   नुमेरो_मगा_सुसि, मगा_सुसि_per_block, blocksize);
+	for (i = 0; i < नुमेरो_मगा_सुसि; i += मगा_सुसि_per_block) {
 		size_t j, max_j;
 		__le32 crc;
 
-		data->key_blk_num = lblk;
+		data->सुसि_blk_नुमेरो = lblk;
 		retval = io_channel_read_blk64(data->undo_file,
 					       lblk, 1, data->keyb);
 		if (retval)
-			goto bad_key_replay;
+			goto bad_सुसि_replay;
 
 		/* check keys */
 		if (ext2fs_le32_to_cpu(data->keyb->magic) != KEYBLOCK_MAGIC) {
 			retval = EXT2_ET_UNDO_FILE_CORRUPT;
-			goto bad_key_replay;
+			goto bad_सुसि_replay;
 		}
 		crc = data->keyb->crc;
 		data->keyb->crc = 0;
-		key_crc = ext2fs_crc32c_le(~0, (unsigned char *)data->keyb,
+		सुसि_crc = ext2fs_crc32c_le(~0, (unsigned char *)data->keyb,
 					   blocksize);
-		if (ext2fs_le32_to_cpu(crc) != key_crc) {
+		if (ext2fs_le32_to_cpu(crc) != सुसि_crc) {
 			retval = EXT2_ET_UNDO_FILE_CORRUPT;
-			goto bad_key_replay;
+			goto bad_सुसि_replay;
 		}
 
 		/* load keys from key block */
 		lblk++;
-		max_j = data->num_keys - i;
-		if (max_j > keys_per_block)
-			max_j = keys_per_block;
-		for (j = 0, dkey = data->keyb->keys;
+		max_j = data->नुमेरो_मगा_सुसि - i;
+		if (max_j > मगा_सुसि_per_block)
+			max_j = मगा_सुसि_per_block;
+		for (j = 0, dkey = data->keyb->मगा_सुसि;
 		     j < max_j;
 		     j++, dkey++) {
 			blk64_t fsblk = ext2fs_le64_to_cpu(dkey->fsblk);
@@ -653,13 +653,13 @@ static errcode_t try_reopen_undo_file(int undo_fd,
 					 undo_blk,
 					(size + blocksize - 1) / blocksize);
 			lblk += (size + blocksize - 1) / blocksize;
-			data->undo_blk_num = lblk;
-			data->keys_in_block = j + 1;
+			data->undo_blk_नुमेरो = lblk;
+			data->मगा_सुसि_in_block = j + 1;
 		}
 	}
 	dbg_printf("Reopen undo, keyblk=%llu undoblk=%llu nrkeys=%zu kib=%zu\n",
-		   data->key_blk_num, data->undo_blk_num, data->num_keys,
-		   data->keys_in_block);
+		   data->सुसि_blk_नुमेरो, data->undo_blk_नुमेरो, data->नुमेरो_मगा_सुसि,
+		   data->मगा_सुसि_in_block);
 
 	data->hdr.state = hdr.state & ~E2UNDO_STATE_FINISHED;
 	data->hdr.f_compat = hdr.f_compat;
@@ -667,9 +667,9 @@ static errcode_t try_reopen_undo_file(int undo_fd,
 	data->hdr.f_rocompat = hdr.f_rocompat;
 	return retval;
 
-bad_key_replay:
-	data->key_blk_num = data->undo_blk_num = 0;
-	data->keys_in_block = 0;
+bad_सुसि_replay:
+	data->सुसि_blk_नुमेरो = data->undo_blk_नुमेरो = 0;
+	data->मगा_सुसि_in_block = 0;
 	ext2fs_free_mem(&data->keyb);
 	ext2fs_free_generic_bitmap(data->written_block_map);
 	data->tdb_written = 0;
@@ -725,9 +725,9 @@ static errcode_t undo_open(const char *name, int flags, io_channel *channel)
 
 	memset(data, 0, sizeof(struct undo_private_data));
 	data->magic = EXT2_ET_MAGIC_UNIX_IO_CHANNEL;
-	data->super_blk_num = 1;
-	data->first_key_blk = 2;
-	data->undo_blk_num = 3;
+	data->super_blk_नुमेरो = 1;
+	data->first_सुसि_blk = 2;
+	data->undo_blk_नुमेरो = 3;
 
 	if (undo_io_backing_manager) {
 		retval = undo_io_backing_manager->open(name, flags,
@@ -856,7 +856,7 @@ static errcode_t undo_set_blksize(io_channel channel, int blksize)
 }
 
 static errcode_t undo_read_blk64(io_channel channel, unsigned long long block,
-			       int count, void *buf)
+			       int बिलांग, void *buf)
 {
 	errcode_t	retval = 0;
 	struct undo_private_data *data;
@@ -866,19 +866,19 @@ static errcode_t undo_read_blk64(io_channel channel, unsigned long long block,
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
 	if (data->real)
-		retval = io_channel_read_blk64(data->real, block, count, buf);
+		retval = io_channel_read_blk64(data->real, block, बिलांग, buf);
 
 	return retval;
 }
 
 static errcode_t undo_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+			       int बिलांग, void *buf)
 {
-	return undo_read_blk64(channel, block, count, buf);
+	return undo_read_blk64(channel, block, बिलांग, buf);
 }
 
 static errcode_t undo_write_blk64(io_channel channel, unsigned long long block,
-				int count, const void *buf)
+				int बिलांग, const void *buf)
 {
 	struct undo_private_data *data;
 	errcode_t	retval = 0;
@@ -889,19 +889,19 @@ static errcode_t undo_write_blk64(io_channel channel, unsigned long long block,
 	/*
 	 * First write the existing content into database
 	 */
-	retval = undo_write_tdb(channel, block, count);
+	retval = undo_write_tdb(channel, block, बिलांग);
 	if (retval)
 		 return retval;
 	if (data->real)
-		retval = io_channel_write_blk64(data->real, block, count, buf);
+		retval = io_channel_write_blk64(data->real, block, बिलांग, buf);
 
 	return retval;
 }
 
 static errcode_t undo_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+				int बिलांग, const void *buf)
 {
-	return undo_write_blk64(channel, block, count, buf);
+	return undo_write_blk64(channel, block, बिलांग, buf);
 }
 
 static errcode_t undo_write_byte(io_channel channel, unsigned long offset,
@@ -910,23 +910,23 @@ static errcode_t undo_write_byte(io_channel channel, unsigned long offset,
 	struct undo_private_data *data;
 	errcode_t	retval = 0;
 	ext2_loff_t	location;
-	unsigned long blk_num, count;;
+	unsigned long blk_नुमेरो, बिलांग;;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 	data = (struct undo_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
 	location = offset + data->offset;
-	blk_num = location/channel->block_size;
+	blk_नुमेरो = location/channel->block_size;
 	/*
 	 * the size specified may spread across multiple blocks
 	 * also make sure we account for the fact that block start
 	 * offset for tdb is different from the backing I/O manager
 	 * due to possible different block size
 	 */
-	count = (size + (location % channel->block_size) +
+	बिलांग = (size + (location % channel->block_size) +
 			channel->block_size  -1)/channel->block_size;
-	retval = undo_write_tdb(channel, blk_num, count);
+	retval = undo_write_tdb(channel, blk_नुमेरो, बिलांग);
 	if (retval)
 		return retval;
 	if (data->real && data->real->manager->write_byte)
@@ -936,7 +936,7 @@ static errcode_t undo_write_byte(io_channel channel, unsigned long offset,
 }
 
 static errcode_t undo_discard(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+			      unsigned long long बिलांग)
 {
 	struct undo_private_data *data;
 	errcode_t	retval = 0;
@@ -946,9 +946,9 @@ static errcode_t undo_discard(io_channel channel, unsigned long long block,
 	data = (struct undo_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (count > INT_MAX)
+	if (बिलांग > INT_MAX)
 		return EXT2_ET_UNIMPLEMENTED;
-	icount = count;
+	icount = बिलांग;
 
 	/*
 	 * First write the existing content into database
@@ -957,13 +957,13 @@ static errcode_t undo_discard(io_channel channel, unsigned long long block,
 	if (retval)
 		return retval;
 	if (data->real)
-		retval = io_channel_discard(data->real, block, count);
+		retval = io_channel_discard(data->real, block, बिलांग);
 
 	return retval;
 }
 
 static errcode_t undo_zeroout(io_channel channel, unsigned long long block,
-			      unsigned long long count)
+			      unsigned long long बिलांग)
 {
 	struct undo_private_data *data;
 	errcode_t	retval = 0;
@@ -973,9 +973,9 @@ static errcode_t undo_zeroout(io_channel channel, unsigned long long block,
 	data = (struct undo_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
-	if (count > INT_MAX)
+	if (बिलांग > INT_MAX)
 		return EXT2_ET_UNIMPLEMENTED;
-	icount = count;
+	icount = बिलांग;
 
 	/*
 	 * First write the existing content into database
@@ -984,14 +984,14 @@ static errcode_t undo_zeroout(io_channel channel, unsigned long long block,
 	if (retval)
 		return retval;
 	if (data->real)
-		retval = io_channel_zeroout(data->real, block, count);
+		retval = io_channel_zeroout(data->real, block, बिलांग);
 
 	return retval;
 }
 
 static errcode_t undo_cache_readahead(io_channel channel,
 				      unsigned long long block,
-				      unsigned long long count)
+				      unsigned long long बिलांग)
 {
 	struct undo_private_data *data;
 	errcode_t	retval = 0;
@@ -1001,7 +1001,7 @@ static errcode_t undo_cache_readahead(io_channel channel,
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_UNIX_IO_CHANNEL);
 
 	if (data->real)
-		retval = io_channel_cache_readahead(data->real, block, count);
+		retval = io_channel_cache_readahead(data->real, block, बिलांग);
 
 	return retval;
 }
