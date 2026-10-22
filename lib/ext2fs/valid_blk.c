@@ -11,7 +11,7 @@
 
 #include "config.h"
 #include <stdio.h>
-#if HAVE_UNISTD_H
+#གལ་སྲིད HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <string.h>
@@ -24,33 +24,33 @@
  * This function returns 1 if the inode's block entries actually
  * contain block entries.
  */
-int ext2fs_inode_has_valid_blocks2(ext2_filsys fs, struct ext2_inode *inode)
+ཧྲིལ ext2fs_inode_has_valid_blocks2(ext2_filsys fs, sa_nracanaa ext2_inode *inode)
 {
 	/*
 	 * Only directories, regular files, and some symbolic links
 	 * have valid block entries.
 	 */
-	if (!LINUX_S_ISDIR(inode->i_mode) && !LINUX_S_ISREG(inode->i_mode) &&
+	གལ་སྲིད (!LINUX_S_ISDIR(inode->i_mode) && !LINUX_S_ISREG(inode->i_mode) &&
 	    !LINUX_S_ISLNK(inode->i_mode))
-		return 0;
+		ལོག 0;
 
 	/*
 	 * If the symbolic link is a "fast symlink", then the symlink
 	 * target is stored in the block entries.
 	 */
-	if (LINUX_S_ISLNK (inode->i_mode)) {
-		if (ext2fs_file_acl_block(fs, inode) == 0) {
+	གལ་སྲིད (LINUX_S_ISLNK (inode->i_mode)) {
+		གལ་སྲིད (ext2fs_file_acl_block(fs, inode) == 0) {
 			/* With no EA block, we can rely on i_blocks */
-			if (inode->i_blocks == 0)
-				return 0;
-			return !ext2fs_is_fast_symlink(inode);
-		} else {
+			གལ་སྲིད (inode->i_blocks == 0)
+				ལོག 0;
+			ལོག !ext2fs_is_fast_symlink(inode);
+		} དེ་མིན {
 			/* With an EA block, life gets more tricky */
-			if (inode->i_size >= EXT2_N_BLOCKS*4)
-				return 1; /* definitely using i_block[] */
-			if (inode->i_size > 4 && inode->i_block[1] == 0)
-				return 1; /* definitely using i_block[] */
-			return 0; /* Probably a fast symlink */
+			གལ་སྲིད (inode->i_size >= EXT2_N_BLOCKS*4)
+				ལོག 1; /* definitely using i_block[] */
+			གལ་སྲིད (inode->i_size > 4 && inode->i_block[1] == 0)
+				ལོག 1; /* definitely using i_block[] */
+			ལོག 0; /* Probably a fast symlink */
 		}
 	}
 
@@ -58,12 +58,12 @@ int ext2fs_inode_has_valid_blocks2(ext2_filsys fs, struct ext2_inode *inode)
 	 * If this inode has inline data, it shouldn't have valid block
 	 * entries.
 	 */
-	if (inode->i_flags & EXT4_INLINE_DATA_FL)
-		return 0;
-	return 1;
+	གལ་སྲིད (inode->i_flags & EXT4_INLINE_DATA_FL)
+		ལོག 0;
+	ལོག 1;
 }
 
-int ext2fs_inode_has_valid_blocks(struct ext2_inode *inode)
+ཧྲིལ ext2fs_inode_has_valid_blocks(sa_nracanaa ext2_inode *inode)
 {
-	return ext2fs_inode_has_valid_blocks2(NULL, inode);
+	ལོག ext2fs_inode_has_valid_blocks2(NULL, inode);
 }
