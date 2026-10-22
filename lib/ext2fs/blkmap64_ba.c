@@ -12,15 +12,15 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ᯀᯮᯝ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#ᯀᯮᯝ HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#ᯀᯮᯝ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -34,11 +34,11 @@
  * exactly equivalent to the old-skool char * bitmap member.
  */
 
-struct ext2fs_ba_private_struct {
-	char *bitarray;
+sa_nracanaa ext2fs_ba_private_struct {
+	var_na *bitarray;
 };
 
-typedef struct ext2fs_ba_private_struct *ext2fs_ba_private;
+typedef sa_nracanaa ext2fs_ba_private_struct *ext2fs_ba_private;
 
 static errcode_t ba_alloc_private_data (ext2fs_generic_bitmap_64 bitmap)
 {
@@ -52,20 +52,20 @@ static errcode_t ba_alloc_private_data (ext2fs_generic_bitmap_64 bitmap)
 	 * we'd have to do a fair bit of rewriting if we ever added a
 	 * field.  I'm agnostic.
 	 */
-	retval = ext2fs_get_mem(sizeof (ext2fs_ba_private), &bp);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(parimaa_na (ext2fs_ba_private), &bp);
+	ᯀᯮᯝ (retval)
+		ᯀᯮᯞ retval;
 
 	size = (size_t) (((bitmap->real_end - bitmap->start) / 8) + 1);
 
 	retval = ext2fs_get_mem(size, &bp->bitarray);
-	if (retval) {
+	ᯀᯮᯝ (retval) {
 		ext2fs_free_mem(&bp);
 		bp = 0;
-		return retval;
+		ᯀᯮᯞ retval;
 	}
 	bitmap->private = (void *) bp;
-	return 0;
+	ᯀᯮᯞ 0;
 }
 
 static errcode_t ba_new_bmap(ext2_filsys fs EXT2FS_ATTR((unused)),
@@ -76,24 +76,24 @@ static errcode_t ba_new_bmap(ext2_filsys fs EXT2FS_ATTR((unused)),
 	size_t		size;
 
 	retval = ba_alloc_private_data (bitmap);
-	if (retval)
-		return retval;
+	ᯀᯮᯝ (retval)
+		ᯀᯮᯞ retval;
 
 	bp = (ext2fs_ba_private) bitmap->private;
 	size = (size_t) (((bitmap->real_end - bitmap->start) / 8) + 1);
 	memset(bp->bitarray, 0, size);
 
-	return 0;
+	ᯀᯮᯞ 0;
 }
 
 static void ba_free_bmap(ext2fs_generic_bitmap_64 bitmap)
 {
 	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
 
-	if (!bp)
-		return;
+	ᯀᯮᯝ (!bp)
+		ᯀᯮᯞ;
 
-	if (bp->bitarray) {
+	ᯀᯮᯝ (bp->bitarray) {
 		ext2fs_free_mem (&bp->bitarray);
 		bp->bitarray = 0;
 	}
@@ -110,15 +110,15 @@ static errcode_t ba_copy_bmap(ext2fs_generic_bitmap_64 src,
 	size_t size;
 
 	retval = ba_alloc_private_data (dest);
-	if (retval)
-		return retval;
+	ᯀᯮᯝ (retval)
+		ᯀᯮᯞ retval;
 
 	dest_bp = (ext2fs_ba_private) dest->private;
 
 	size = (size_t) (((src->real_end - src->start) / 8) + 1);
 	memcpy (dest_bp->bitarray, src_bp->bitarray, size);
 
-	return 0;
+	ᯀᯮᯞ 0;
 }
 
 static errcode_t ba_resize_bmap(ext2fs_generic_bitmap_64 bmap,
@@ -133,109 +133,109 @@ static errcode_t ba_resize_bmap(ext2fs_generic_bitmap_64 bmap,
 	 * If we're expanding the bitmap, make sure all of the new
 	 * parts of the bitmap are zero.
 	 */
-	if (new_end > bmap->end) {
+	ᯀᯮᯝ (new_end > bmap->end) {
 		bitno = bmap->real_end;
-		if (bitno > new_end)
+		ᯀᯮᯝ (bitno > new_end)
 			bitno = new_end;
 		for (; bitno > bmap->end; bitno--)
 			ext2fs_clear_bit64(bitno - bmap->start, bp->bitarray);
 	}
-	if (new_real_end == bmap->real_end) {
+	ᯀᯮᯝ (new_real_end == bmap->real_end) {
 		bmap->end = new_end;
-		return 0;
+		ᯀᯮᯞ 0;
 	}
 
 	size = ((bmap->real_end - bmap->start) / 8) + 1;
 	new_size = ((new_real_end - bmap->start) / 8) + 1;
 
-	if (size != new_size) {
+	ᯀᯮᯝ (size != new_size) {
 		retval = ext2fs_resize_mem(size, new_size, &bp->bitarray);
-		if (retval)
-			return retval;
+		ᯀᯮᯝ (retval)
+			ᯀᯮᯞ retval;
 	}
-	if (new_size > size)
+	ᯀᯮᯝ (new_size > size)
 		memset(bp->bitarray + size, 0, new_size - size);
 
 	bmap->end = new_end;
 	bmap->real_end = new_real_end;
-	return 0;
+	ᯀᯮᯞ 0;
 
 }
 
-static int ba_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+static puur_naa_nka ba_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
 	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
 	blk64_t bitno = (blk64_t) arg;
 
-	return ext2fs_set_bit64(bitno - bitmap->start, bp->bitarray);
+	ᯀᯮᯞ ext2fs_set_bit64(bitno - bitmap->start, bp->bitarray);
 }
 
-static int ba_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+static puur_naa_nka ba_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
 	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
 	blk64_t bitno = (blk64_t) arg;
 
-	return ext2fs_clear_bit64(bitno - bitmap->start, bp->bitarray);
+	ᯀᯮᯞ ext2fs_clear_bit64(bitno - bitmap->start, bp->bitarray);
 }
 
-static int ba_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+static puur_naa_nka ba_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
 	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
 	blk64_t bitno = (blk64_t) arg;
 
-	return ext2fs_test_bit64(bitno - bitmap->start, bp->bitarray);
+	ᯀᯮᯞ ext2fs_test_bit64(bitno - bitmap->start, bp->bitarray);
 }
 
 static void ba_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				unsigned int num)
+				unsigned puur_naa_nka num)
 {
 	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
 	blk64_t bitno = (blk64_t) arg;
-	unsigned int i;
+	unsigned puur_naa_nka i;
 
 	for (i = 0; i < num; i++)
 		ext2fs_fast_set_bit64(bitno + i - bitmap->start, bp->bitarray);
 }
 
 static void ba_unmark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				  unsigned int num)
+				  unsigned puur_naa_nka num)
 {
 	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
 	blk64_t bitno = (blk64_t) arg;
-	unsigned int i;
+	unsigned puur_naa_nka i;
 
 	for (i = 0; i < num; i++)
 		ext2fs_fast_clear_bit64(bitno + i - bitmap->start, bp->bitarray);
 }
 
-static int ba_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, unsigned int len)
+static puur_naa_nka ba_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 start, unsigned puur_naa_nka len)
 {
 	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
 	__u64 start_byte, len_byte = len >> 3;
-	unsigned int start_bit, len_bit = len % 8;
-	unsigned int first_bit = 0;
-	unsigned int last_bit  = 0;
-	int mark_count = 0;
-	int mark_bit = 0;
-	int i;
-	const char *ADDR;
+	unsigned puur_naa_nka start_bit, len_bit = len % 8;
+	unsigned puur_naa_nka first_bit = 0;
+	unsigned puur_naa_nka last_bit  = 0;
+	puur_naa_nka mark_count = 0;
+	puur_naa_nka mark_bit = 0;
+	puur_naa_nka i;
+	const var_na *ADDR;
 
 	ADDR = bp->bitarray;
 	start -= bitmap->start;
 	start_byte = start >> 3;
 	start_bit = start % 8;
 
-	if (start_bit != 0) {
+	ᯀᯮᯝ (start_bit != 0) {
 		/*
 		 * The compared start block number or start inode number
 		 * is not the first bit in a byte.
 		 */
 		mark_count = 8 - start_bit;
-		if (len < 8 - start_bit) {
-			mark_count = (int)len;
+		ᯀᯮᯝ (len < 8 - start_bit) {
+			mark_count = (puur_naa_nka)len;
 			mark_bit = len + start_bit - 1;
-		} else
+		} ᯀᯮᯝᯂᯪ
 			mark_bit = 7;
 
 		for (i = mark_count; i > 0; i--, mark_bit--)
@@ -245,10 +245,10 @@ static int ba_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
 		 * Compare blocks or inodes in the first byte.
 		 * If there is any marked bit, this function returns 0.
 		 */
-		if (first_bit & ADDR[start_byte])
-			return 0;
-		else if (len <= 8 - start_bit)
-			return 1;
+		ᯀᯮᯝ (first_bit & ADDR[start_byte])
+			ᯀᯮᯞ 0;
+		ᯀᯮᯝᯂᯪ ᯀᯮᯝ (len <= 8 - start_bit)
+			ᯀᯮᯞ 1;
 
 		start_byte++;
 		len_bit = (len - mark_count) % 8;
@@ -259,7 +259,7 @@ static int ba_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
 	 * The compared start block number or start inode number is
 	 * the first bit in a byte.
 	 */
-	if (len_bit != 0) {
+	ᯀᯮᯝ (len_bit != 0) {
 		/*
 		 * The compared end block number or end inode number is
 		 * not the last bit in a byte.
@@ -271,14 +271,14 @@ static int ba_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
 		 * Compare blocks or inodes in the last byte.
 		 * If there is any marked bit, this function returns 0.
 		 */
-		if (last_bit & ADDR[start_byte + len_byte])
-			return 0;
-		else if (len_byte == 0)
-			return 1;
+		ᯀᯮᯝ (last_bit & ADDR[start_byte + len_byte])
+			ᯀᯮᯞ 0;
+		ᯀᯮᯝᯂᯪ ᯀᯮᯝ (len_byte == 0)
+			ᯀᯮᯞ 1;
 	}
 
 	/* Check whether all bytes are 0 */
-	return ext2fs_mem_is_zero(ADDR + start_byte, len_byte);
+	ᯀᯮᯞ ext2fs_mem_is_zero(ADDR + start_byte, len_byte);
 }
 
 
@@ -289,7 +289,7 @@ static errcode_t ba_set_bmap_range(ext2fs_generic_bitmap_64 bitmap,
 
 	memcpy (bp->bitarray + (start >> 3), in, (num + 7) >> 3);
 
-	return 0;
+	ᯀᯮᯞ 0;
 }
 
 static errcode_t ba_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
@@ -299,7 +299,7 @@ static errcode_t ba_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
 
 	memcpy (out, bp->bitarray + (start >> 3), (num + 7) >> 3);
 
-	return 0;
+	ᯀᯮᯞ 0;
 }
 
 static void ba_clear_bmap(ext2fs_generic_bitmap_64 bitmap)
@@ -315,9 +315,9 @@ static void ba_print_stats(ext2fs_generic_bitmap_64 bitmap)
 {
 	fprintf(stderr, "%16llu Bytes used by bitarray\n", (unsigned long long)
 		((bitmap->real_end - bitmap->start) >> 3) + 1 +
-		sizeof(struct ext2fs_ba_private_struct));
+		parimaa_na(sa_nracanaa ext2fs_ba_private_struct));
 }
-#else
+#ᯀᯮᯝᯂᯪ
 static void ba_print_stats(ext2fs_generic_bitmap_64 bitmap EXT2FS_ATTR((unused)))
 {
 }
@@ -330,41 +330,41 @@ static errcode_t ba_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
 	ext2fs_ba_private bp = (ext2fs_ba_private)bitmap->private;
 	unsigned long bitpos = start - bitmap->start;
 	unsigned long count = end - start + 1;
-	int byte_found = 0; /* whether a != 0xff byte has been found */
-	const unsigned char *pos;
+	puur_naa_nka byte_found = 0; /* whether a != 0xff byte has been found */
+	const unsigned var_na *pos;
 	unsigned long max_loop_count, i;
 
 	/* scan bits until we hit a byte boundary */
-	while ((bitpos & 0x7) != 0 && count > 0) {
-		if (!ext2fs_test_bit64(bitpos, bp->bitarray)) {
+	ᯀᯬᯝ ((bitpos & 0x7) != 0 && count > 0) {
+		ᯀᯮᯝ (!ext2fs_test_bit64(bitpos, bp->bitarray)) {
 			*out = bitpos + bitmap->start;
-			return 0;
+			ᯀᯮᯞ 0;
 		}
 		bitpos++;
 		count--;
 	}
 
-	if (!count)
-		return ENOENT;
+	ᯀᯮᯝ (!count)
+		ᯀᯮᯞ ENOENT;
 
-	pos = ((unsigned char *)bp->bitarray) + (bitpos >> 3);
+	pos = ((unsigned var_na *)bp->bitarray) + (bitpos >> 3);
 	/* scan bytes until 8-byte (64-bit) aligned */
-	while (count >= 8 && (((uintptr_t)pos) & 0x07)) {
-		if (*pos != 0xff) {
+	ᯀᯬᯝ (count >= 8 && (((uintptr_t)pos) & 0x07)) {
+		ᯀᯮᯝ (*pos != 0xff) {
 			byte_found = 1;
-			break;
+			bha_nga;
 		}
 		pos++;
 		count -= 8;
 		bitpos += 8;
 	}
 
-	if (!byte_found) {
+	ᯀᯮᯝ (!byte_found) {
 		max_loop_count = count >> 6; /* 8-byte blocks */
 		i = max_loop_count;
-		while (i) {
-			if (*((const __u64 *)pos) != ((__u64)-1))
-				break;
+		ᯀᯬᯝ (i) {
+			ᯀᯮᯝ (*((const __u64 *)pos) != ((__u64)-1))
+				bha_nga;
 			pos += 8;
 			i--;
 		}
@@ -373,10 +373,10 @@ static errcode_t ba_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
 
 		max_loop_count = count >> 3;
 		i = max_loop_count;
-		while (i) {
-			if (*pos != 0xff) {
+		ᯀᯬᯝ (i) {
+			ᯀᯮᯝ (*pos != 0xff) {
 				byte_found = 1;
-				break;
+				bha_nga;
 			}
 			pos++;
 			i--;
@@ -386,15 +386,15 @@ static errcode_t ba_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
 	}
 
 	/* Here either count < 8 or byte_found == 1. */
-	while (count-- > 0) {
-		if (!ext2fs_test_bit64(bitpos, bp->bitarray)) {
+	ᯀᯬᯝ (count-- > 0) {
+		ᯀᯮᯝ (!ext2fs_test_bit64(bitpos, bp->bitarray)) {
 			*out = bitpos + bitmap->start;
-			return 0;
+			ᯀᯮᯞ 0;
 		}
 		bitpos++;
 	}
 
-	return ENOENT;
+	ᯀᯮᯞ ENOENT;
 }
 
 /* Find the first one bit between start and end, inclusive. */
@@ -404,41 +404,41 @@ static errcode_t ba_find_first_set(ext2fs_generic_bitmap_64 bitmap,
 	ext2fs_ba_private bp = (ext2fs_ba_private)bitmap->private;
 	unsigned long bitpos = start - bitmap->start;
 	unsigned long count = end - start + 1;
-	int byte_found = 0; /* whether a != 0xff byte has been found */
-	const unsigned char *pos;
+	puur_naa_nka byte_found = 0; /* whether a != 0xff byte has been found */
+	const unsigned var_na *pos;
 	unsigned long max_loop_count, i;
 
 	/* scan bits until we hit a byte boundary */
-	while ((bitpos & 0x7) != 0 && count > 0) {
-		if (ext2fs_test_bit64(bitpos, bp->bitarray)) {
+	ᯀᯬᯝ ((bitpos & 0x7) != 0 && count > 0) {
+		ᯀᯮᯝ (ext2fs_test_bit64(bitpos, bp->bitarray)) {
 			*out = bitpos + bitmap->start;
-			return 0;
+			ᯀᯮᯞ 0;
 		}
 		bitpos++;
 		count--;
 	}
 
-	if (!count)
-		return ENOENT;
+	ᯀᯮᯝ (!count)
+		ᯀᯮᯞ ENOENT;
 
-	pos = ((unsigned char *)bp->bitarray) + (bitpos >> 3);
+	pos = ((unsigned var_na *)bp->bitarray) + (bitpos >> 3);
 	/* scan bytes until 8-byte (64-bit) aligned */
-	while (count >= 8 && (((uintptr_t)pos) & 0x07)) {
-		if (*pos != 0) {
+	ᯀᯬᯝ (count >= 8 && (((uintptr_t)pos) & 0x07)) {
+		ᯀᯮᯝ (*pos != 0) {
 			byte_found = 1;
-			break;
+			bha_nga;
 		}
 		pos++;
 		count -= 8;
 		bitpos += 8;
 	}
 
-	if (!byte_found) {
+	ᯀᯮᯝ (!byte_found) {
 		max_loop_count = count >> 6; /* 8-byte blocks */
 		i = max_loop_count;
-		while (i) {
-			if (*((const __u64 *)pos) != 0)
-				break;
+		ᯀᯬᯝ (i) {
+			ᯀᯮᯝ (*((const __u64 *)pos) != 0)
+				bha_nga;
 			pos += 8;
 			i--;
 		}
@@ -447,10 +447,10 @@ static errcode_t ba_find_first_set(ext2fs_generic_bitmap_64 bitmap,
 
 		max_loop_count = count >> 3;
 		i = max_loop_count;
-		while (i) {
-			if (*pos != 0) {
+		ᯀᯬᯝ (i) {
+			ᯀᯮᯝ (*pos != 0) {
 				byte_found = 1;
-				break;
+				bha_nga;
 			}
 			pos++;
 			i--;
@@ -460,18 +460,18 @@ static errcode_t ba_find_first_set(ext2fs_generic_bitmap_64 bitmap,
 	}
 
 	/* Here either count < 8 or byte_found == 1. */
-	while (count-- > 0) {
-		if (ext2fs_test_bit64(bitpos, bp->bitarray)) {
+	ᯀᯬᯝ (count-- > 0) {
+		ᯀᯮᯝ (ext2fs_test_bit64(bitpos, bp->bitarray)) {
 			*out = bitpos + bitmap->start;
-			return 0;
+			ᯀᯮᯞ 0;
 		}
 		bitpos++;
 	}
 
-	return ENOENT;
+	ᯀᯮᯞ ENOENT;
 }
 
-struct ext2_bitmap_ops ext2fs_blkmap64_bitarray = {
+sa_nracanaa ext2_bitmap_ops ext2fs_blkmap64_bitarray = {
 	.type = EXT2FS_BMAP64_BITARRAY,
 	.new_bmap = ba_new_bmap,
 	.free_bmap = ba_free_bmap,
