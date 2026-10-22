@@ -9,49 +9,49 @@
  * %End-Header%
  */
 
-#include "config.h"
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#অন্তর্ভাৱ "config.h"
+#যদি HAVE_UNISTD_H
+#অন্তর্ভাৱ <unistd.h>
 #endif
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
+#অন্তর্ভাৱ <string.h>
+#অন্তর্ভাৱ <stdio.h>
+#অন্তর্ভাৱ <ctype.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#অন্তর্ভাৱ "ext2_fs.h"
+#অন্তর্ভাৱ "ext2fs.h"
 
-#include "../../version.h"
+#অন্তর্ভাৱ "../../version.h"
 
-static const char *lib_version = E2FSPROGS_VERSION;
-static const char *lib_date = E2FSPROGS_DATE;
+স্থির ধ্রুৱ ৱর্ণ *lib_version = E2FSPROGS_VERSION;
+স্থির ধ্রুৱ ৱর্ণ *lib_date = E2FSPROGS_DATE;
 
-int ext2fs_parse_version_string(const char *ver_string)
+পূর্ণাঙ্ক ext2fs_parse_version_string(ধ্রুৱ ৱর্ণ *ver_string)
 {
-	const char *cp;
-	int version = 0, dot_count = 0;
+	ধ্রুৱ ৱর্ণ *cp;
+	পূর্ণাঙ্ক version = 0, dot_গুনতি = 0;
 
-	for (cp = ver_string; *cp; cp++) {
-		if (*cp == '.') {
-			if (dot_count++)
-				break;
-			else
-				continue;
+	বাবে (cp = ver_string; *cp; cp++) {
+		যদি (*cp == '.') {
+			যদি (dot_গুনতি++)
+				ভঙ্গ;
+			অন্যথা
+				অনুৱর্ত;
 		}
-		if (!isdigit(*cp))
-			break;
+		যদি (!isdigit(*cp))
+			ভঙ্গ;
 		version = (version * 10) + (*cp - '0');
 	}
-	return version;
+	ঘূৰাই version;
 }
 
 
-int ext2fs_get_library_version(const char **ver_string,
-			       const char **date_string)
+পূর্ণাঙ্ক ext2fs_get_library_version(ধ্রুৱ ৱর্ণ **ver_string,
+			       ধ্রুৱ ৱর্ণ **date_string)
 {
-	if (ver_string)
+	যদি (ver_string)
 		*ver_string = lib_version;
-	if (date_string)
+	যদি (date_string)
 		*date_string = lib_date;
 
-	return ext2fs_parse_version_string(lib_version);
+	ঘূৰাই ext2fs_parse_version_string(lib_version);
 }

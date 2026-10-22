@@ -9,21 +9,21 @@
  * %End-Header%
  */
 
-#include "config.h"
+#অন্তর্ভাৱ "config.h"
 
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#যদি HAVE_SYS_TYPES_H
+#অন্তর্ভাৱ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#অন্তর্ভাৱ "ext2_fs.h"
+#অন্তর্ভাৱ "ext2fs.h"
 #define min(a, b) ((a) < (b) ? (a) : (b))
 
 #undef DEBUG
 
 #ifdef DEBUG
-# define dbg_printf(f, a...)  do {printf(f, ## a); fflush(stdout); } while (0)
-#else
+# define dbg_printf(f, a...)  কৰা {printf(f, ## a); fflush(stdout); } যেতিয়ালৈ (0)
+#অন্যথা
 # define dbg_printf(f, a...)
 #endif
 
@@ -58,29 +58,29 @@
  * At the end, update i_blocks and i_size appropriately.
  */
 
-static void dbg_print_extent(const char *desc EXT2FS_ATTR((unused)),
-		const struct ext2fs_extent *extent EXT2FS_ATTR((unused)))
+স্থির শূন্য dbg_print_extent(ধ্রুৱ ৱর্ণ *desc EXT2FS_ATTR((unused)),
+		ধ্রুৱ সংরচনা ext2fs_extent *extent EXT2FS_ATTR((unused)))
 {
 #ifdef DEBUG
-	if (desc)
+	যদি (desc)
 		printf("%s: ", desc);
 	printf("extent: lblk %llu--%llu, len %u, pblk %llu, flags: ",
 	       extent->e_lblk, extent->e_lblk + extent->e_len - 1,
 	       extent->e_len, extent->e_pblk);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_LEAF)
+	যদি (extent->e_flags & EXT2_EXTENT_FLAGS_LEAF)
 		fputs("LEAF ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+	যদি (extent->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
 		fputs("UNINIT ", stdout);
-	if (extent->e_flags & EXT2_EXTENT_FLAGS_SECOND_VISIT)
+	যদি (extent->e_flags & EXT2_EXTENT_FLAGS_SECOND_VISIT)
 		fputs("2ND_VISIT ", stdout);
-	if (!extent->e_flags)
+	যদি (!extent->e_flags)
 		fputs("(none)", stdout);
 	fputc('\n', stdout);
 	fflush(stdout);
 #endif
 }
 
-static errcode_t claim_range(ext2_filsys fs, struct ext2_inode *inode,
+স্থির errcode_t claim_range(ext2_filsys fs, সংরচনা ext2_inode *inode,
 			     blk64_t blk, blk64_t len)
 {
 	blk64_t	clusters;
@@ -89,21 +89,21 @@ static errcode_t claim_range(ext2_filsys fs, struct ext2_inode *inode,
 		   EXT2FS_CLUSTER_RATIO(fs);
 	ext2fs_block_alloc_stats_range(fs, blk,
 			clusters * EXT2FS_CLUSTER_RATIO(fs), +1);
-	return ext2fs_iblk_add_blocks(fs, inode, clusters);
+	ঘূৰাই ext2fs_iblk_add_blocks(fs, inode, clusters);
 }
 
-static errcode_t ext_falloc_helper(ext2_filsys fs,
-				   int flags,
+স্থির errcode_t ext_falloc_helper(ext2_filsys fs,
+				   পূর্ণাঙ্ক flags,
 				   ext2_ino_t ino,
-				   struct ext2_inode *inode,
+				   সংরচনা ext2_inode *inode,
 				   ext2_extent_handle_t handle,
-				   struct ext2fs_extent *left_ext,
-				   struct ext2fs_extent *right_ext,
+				   সংরচনা ext2fs_extent *বাম_ext,
+				   সংরচনা ext2fs_extent *ডান_ext,
 				   blk64_t range_start, blk64_t range_len,
 				   blk64_t alloc_goal)
 {
-	struct ext2fs_extent	newex, ex;
-	int			op;
+	সংরচনা ext2fs_extent	newex, ex;
+	পূর্ণাঙ্ক			op;
 	blk64_t			fillable, pblk, plen, x, y;
 	blk64_t			eof_blk = 0, cluster_fill = 0;
 	errcode_t		err;
@@ -111,18 +111,18 @@ static errcode_t ext_falloc_helper(ext2_filsys fs,
 
 #ifdef DEBUG
 	printf("%s: ", __func__);
-	if (left_ext)
-		printf("left_ext=%llu--%llu, ", left_ext->e_lblk,
-		       left_ext->e_lblk + left_ext->e_len - 1);
-	if (right_ext)
-		printf("right_ext=%llu--%llu, ", right_ext->e_lblk,
-		       right_ext->e_lblk + right_ext->e_len - 1);
+	যদি (বাম_ext)
+		printf("left_ext=%llu--%llu, ", বাম_ext->e_lblk,
+		       বাম_ext->e_lblk + বাম_ext->e_len - 1);
+	যদি (ডান_ext)
+		printf("right_ext=%llu--%llu, ", ডান_ext->e_lblk,
+		       ডান_ext->e_lblk + ডান_ext->e_len - 1);
 	printf("start=%llu len=%llu, goal=%llu\n", range_start, range_len,
 	       alloc_goal);
 	fflush(stdout);
 #endif
 	/* Can't create initialized extents past EOF? */
-	if (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF))
+	যদি (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF))
 		eof_blk = EXT2_I_SIZE(inode) / fs->blocksize;
 
 	/* The allocation goal must be as far into a cluster as range_start. */
@@ -133,17 +133,17 @@ static errcode_t ext_falloc_helper(ext2_filsys fs,
 	max_init_len = EXT_INIT_MAX_LEN & ~EXT2FS_CLUSTER_MASK(fs);
 
 	/* We must lengthen the left extent to the end of the cluster */
-	if (left_ext && EXT2FS_CLUSTER_RATIO(fs) > 1) {
+	যদি (বাম_ext && EXT2FS_CLUSTER_RATIO(fs) > 1) {
 		/* How many more blocks can be attached to left_ext? */
-		if (left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-			fillable = max_uninit_len - left_ext->e_len;
-		else
-			fillable = max_init_len - left_ext->e_len;
+		যদি (বাম_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+			fillable = max_uninit_len - বাম_ext->e_len;
+		অন্যথা
+			fillable = max_init_len - বাম_ext->e_len;
 
-		if (fillable > range_len)
+		যদি (fillable > range_len)
 			fillable = range_len;
-		if (fillable == 0)
-			goto expand_right;
+		যদি (fillable == 0)
+			গচ্ছ expand_ডান;
 
 		/*
 		 * If range_start isn't on a cluster boundary, try an
@@ -152,301 +152,301 @@ static errcode_t ext_falloc_helper(ext2_filsys fs,
 		cluster_fill = EXT2FS_CLUSTER_RATIO(fs) -
 			       (range_start & EXT2FS_CLUSTER_MASK(fs));
 		cluster_fill &= EXT2FS_CLUSTER_MASK(fs);
-		if (cluster_fill == 0)
-			goto expand_right;
+		যদি (cluster_fill == 0)
+			গচ্ছ expand_ডান;
 
-		if (cluster_fill > fillable)
+		যদি (cluster_fill > fillable)
 			cluster_fill = fillable;
 
 		/* Don't expand an initialized left_ext beyond EOF */
-		if (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF)) {
-			x = left_ext->e_lblk + left_ext->e_len - 1;
+		যদি (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF)) {
+			x = বাম_ext->e_lblk + বাম_ext->e_len - 1;
 			dbg_printf("%s: lend=%llu newlend=%llu eofblk=%llu\n",
 				   __func__, x, x + cluster_fill, eof_blk);
-			if (eof_blk >= x && eof_blk <= x + cluster_fill)
+			যদি (eof_blk >= x && eof_blk <= x + cluster_fill)
 				cluster_fill = eof_blk - x;
-			if (cluster_fill == 0)
-				goto expand_right;
+			যদি (cluster_fill == 0)
+				গচ্ছ expand_ডান;
 		}
 
-		err = ext2fs_extent_goto(handle, left_ext->e_lblk);
-		if (err)
-			goto expand_right;
-		left_ext->e_len += cluster_fill;
+		err = ext2fs_extent_goto(handle, বাম_ext->e_lblk);
+		যদি (err)
+			গচ্ছ expand_ডান;
+		বাম_ext->e_len += cluster_fill;
 		range_start += cluster_fill;
 		range_len -= cluster_fill;
 		alloc_goal += cluster_fill;
 
-		dbg_print_extent("ext_falloc clus left+", left_ext);
-		err = ext2fs_extent_replace(handle, 0, left_ext);
-		if (err)
-			goto out;
+		dbg_print_extent("ext_falloc clus left+", বাম_ext);
+		err = ext2fs_extent_replace(handle, 0, বাম_ext);
+		যদি (err)
+			গচ্ছ out;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		যদি (err)
+			গচ্ছ out;
 
 		/* Zero blocks */
-		if (!(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) {
-			err = ext2fs_zero_blocks2(fs, left_ext->e_pblk +
-						  left_ext->e_len -
+		যদি (!(বাম_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) {
+			err = ext2fs_zero_blocks2(fs, বাম_ext->e_pblk +
+						  বাম_ext->e_len -
 						  cluster_fill, cluster_fill,
-						  NULL, NULL);
-			if (err)
-				goto out;
+						  রিক্ত, রিক্ত);
+			যদি (err)
+				গচ্ছ out;
 		}
 	}
 
-expand_right:
+expand_ডান:
 	/* We must lengthen the right extent to the beginning of the cluster */
-	if (right_ext && EXT2FS_CLUSTER_RATIO(fs) > 1) {
+	যদি (ডান_ext && EXT2FS_CLUSTER_RATIO(fs) > 1) {
 		/* How much can we attach to right_ext? */
-		if (right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-			fillable = max_uninit_len - right_ext->e_len;
-		else
-			fillable = max_init_len - right_ext->e_len;
+		যদি (ডান_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+			fillable = max_uninit_len - ডান_ext->e_len;
+		অন্যথা
+			fillable = max_init_len - ডান_ext->e_len;
 
-		if (fillable > range_len)
+		যদি (fillable > range_len)
 			fillable = range_len;
-		if (fillable == 0)
-			goto try_merge;
+		যদি (fillable == 0)
+			গচ্ছ try_merge;
 
 		/*
 		 * If range_end isn't on a cluster boundary, try an implied
 		 * cluster allocation for right_ext.
 		 */
-		cluster_fill = right_ext->e_lblk & EXT2FS_CLUSTER_MASK(fs);
-		if (cluster_fill == 0)
-			goto try_merge;
+		cluster_fill = ডান_ext->e_lblk & EXT2FS_CLUSTER_MASK(fs);
+		যদি (cluster_fill == 0)
+			গচ্ছ try_merge;
 
-		err = ext2fs_extent_goto(handle, right_ext->e_lblk);
-		if (err)
-			goto out;
+		err = ext2fs_extent_goto(handle, ডান_ext->e_lblk);
+		যদি (err)
+			গচ্ছ out;
 
-		if (cluster_fill > fillable)
+		যদি (cluster_fill > fillable)
 			cluster_fill = fillable;
-		right_ext->e_lblk -= cluster_fill;
-		right_ext->e_pblk -= cluster_fill;
-		right_ext->e_len += cluster_fill;
+		ডান_ext->e_lblk -= cluster_fill;
+		ডান_ext->e_pblk -= cluster_fill;
+		ডান_ext->e_len += cluster_fill;
 		range_len -= cluster_fill;
 
-		dbg_print_extent("ext_falloc clus right+", right_ext);
-		err = ext2fs_extent_replace(handle, 0, right_ext);
-		if (err)
-			goto out;
+		dbg_print_extent("ext_falloc clus right+", ডান_ext);
+		err = ext2fs_extent_replace(handle, 0, ডান_ext);
+		যদি (err)
+			গচ্ছ out;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		যদি (err)
+			গচ্ছ out;
 
 		/* Zero blocks if necessary */
-		if (!(right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) {
-			err = ext2fs_zero_blocks2(fs, right_ext->e_pblk,
-						  cluster_fill, NULL, NULL);
-			if (err)
-				goto out;
+		যদি (!(ডান_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) {
+			err = ext2fs_zero_blocks2(fs, ডান_ext->e_pblk,
+						  cluster_fill, রিক্ত, রিক্ত);
+			যদি (err)
+				গচ্ছ out;
 		}
 	}
 
 try_merge:
 	/* Merge both extents together, perhaps? */
-	if (left_ext && right_ext) {
+	যদি (বাম_ext && ডান_ext) {
 		/* Are the two extents mergeable? */
-		if ((left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) !=
-		    (right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT))
-			goto try_left;
+		যদি ((বাম_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) !=
+		    (ডান_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT))
+			গচ্ছ try_বাম;
 
 		/* User requires init/uninit but extent is uninit/init. */
-		if (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
-		     (left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
+		যদি (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
+		     (বাম_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
 		    ((flags & EXT2_FALLOCATE_FORCE_UNINIT) &&
-		     !(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
-			goto try_left;
+		     !(বাম_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
+			গচ্ছ try_বাম;
 
 		/*
 		 * Skip initialized extent unless user wants to zero blocks
 		 * or requires init extent.
 		 */
-		if (!(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		যদি (!(বাম_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
 		    (!(flags & EXT2_FALLOCATE_ZERO_BLOCKS) ||
 		     !(flags & EXT2_FALLOCATE_FORCE_INIT)))
-			goto try_left;
+			গচ্ছ try_বাম;
 
 		/* Will it even fit? */
-		x = left_ext->e_len + range_len + right_ext->e_len;
-		if (x > (left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT ?
+		x = বাম_ext->e_len + range_len + ডান_ext->e_len;
+		যদি (x > (বাম_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT ?
 				max_uninit_len : max_init_len))
-			goto try_left;
+			গচ্ছ try_বাম;
 
 		/* Would they even be physically contiguous if merged? */
-		if (left_ext->e_pblk + left_ext->e_len + range_len !=
-				right_ext->e_pblk)
-			goto try_left;
+		যদি (বাম_ext->e_pblk + বাম_ext->e_len + range_len !=
+				ডান_ext->e_pblk)
+			গচ্ছ try_বাম;
 
-		err = ext2fs_extent_goto(handle, left_ext->e_lblk);
-		if (err)
-			goto try_left;
+		err = ext2fs_extent_goto(handle, বাম_ext->e_lblk);
+		যদি (err)
+			গচ্ছ try_বাম;
 
 		/* Allocate blocks */
-		y = left_ext->e_pblk + left_ext->e_len;
+		y = বাম_ext->e_pblk + বাম_ext->e_len;
 		err = ext2fs_new_range(fs, EXT2_NEWRANGE_FIXED_GOAL |
 				       EXT2_NEWRANGE_MIN_LENGTH, y,
-				       right_ext->e_pblk - y + 1, NULL,
+				       ডান_ext->e_pblk - y + 1, রিক্ত,
 				       &pblk, &plen);
-		if (err)
-			goto try_left;
-		if (pblk + plen != right_ext->e_pblk)
-			goto try_left;
+		যদি (err)
+			গচ্ছ try_বাম;
+		যদি (pblk + plen != ডান_ext->e_pblk)
+			গচ্ছ try_বাম;
 		err = claim_range(fs, inode, pblk, plen);
-		if (err)
-			goto out;
+		যদি (err)
+			গচ্ছ out;
 
 		/* Modify extents */
-		left_ext->e_len = x;
-		dbg_print_extent("ext_falloc merge", left_ext);
-		err = ext2fs_extent_replace(handle, 0, left_ext);
-		if (err)
-			goto out;
+		বাম_ext->e_len = x;
+		dbg_print_extent("ext_falloc merge", বাম_ext);
+		err = ext2fs_extent_replace(handle, 0, বাম_ext);
+		যদি (err)
+			গচ্ছ out;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		যদি (err)
+			গচ্ছ out;
 		err = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT_LEAF, &newex);
-		if (err)
-			goto out;
+		যদি (err)
+			গচ্ছ out;
 		err = ext2fs_extent_delete(handle, 0);
-		if (err)
-			goto out;
+		যদি (err)
+			গচ্ছ out;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
-		*right_ext = *left_ext;
+		যদি (err)
+			গচ্ছ out;
+		*ডান_ext = *বাম_ext;
 
 		/* Zero blocks */
-		if (!(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		যদি (!(বাম_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
 		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
 			err = ext2fs_zero_blocks2(fs, range_start, range_len,
-						  NULL, NULL);
-			if (err)
-				goto out;
+						  রিক্ত, রিক্ত);
+			যদি (err)
+				গচ্ছ out;
 		}
 
-		return 0;
+		ঘূৰাই 0;
 	}
 
-try_left:
+try_বাম:
 	/* Extend the left extent */
-	if (left_ext) {
+	যদি (বাম_ext) {
 		/* How many more blocks can be attached to left_ext? */
-		if (left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-			fillable = max_uninit_len - left_ext->e_len;
-		else if (flags & EXT2_FALLOCATE_ZERO_BLOCKS)
-			fillable = max_init_len - left_ext->e_len;
-		else
+		যদি (বাম_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+			fillable = max_uninit_len - বাম_ext->e_len;
+		অন্যথা যদি (flags & EXT2_FALLOCATE_ZERO_BLOCKS)
+			fillable = max_init_len - বাম_ext->e_len;
+		অন্যথা
 			fillable = 0;
 
 		/* User requires init/uninit but extent is uninit/init. */
-		if (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
-		     (left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
+		যদি (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
+		     (বাম_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
 		    ((flags & EXT2_FALLOCATE_FORCE_UNINIT) &&
-		     !(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
-			goto try_right;
+		     !(বাম_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
+			গচ্ছ try_ডান;
 
-		if (fillable > range_len)
+		যদি (fillable > range_len)
 			fillable = range_len;
 
 		/* Don't expand an initialized left_ext beyond EOF */
-		x = left_ext->e_lblk + left_ext->e_len - 1;
-		if (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF)) {
+		x = বাম_ext->e_lblk + বাম_ext->e_len - 1;
+		যদি (!(flags & EXT2_FALLOCATE_INIT_BEYOND_EOF)) {
 			dbg_printf("%s: lend=%llu newlend=%llu eofblk=%llu\n",
 				   __func__, x, x + fillable, eof_blk);
-			if (eof_blk >= x && eof_blk <= x + fillable)
+			যদি (eof_blk >= x && eof_blk <= x + fillable)
 				fillable = eof_blk - x;
 		}
 
-		if (fillable == 0)
-			goto try_right;
+		যদি (fillable == 0)
+			গচ্ছ try_ডান;
 
 		/* Test if the right edge of the range is already mapped? */
-		if (EXT2FS_CLUSTER_RATIO(fs) > 1) {
+		যদি (EXT2FS_CLUSTER_RATIO(fs) > 1) {
 			err = ext2fs_map_cluster_block(fs, ino, inode,
 					x + fillable, &pblk);
-			if (err)
-				goto out;
-			if (pblk)
+			যদি (err)
+				গচ্ছ out;
+			যদি (pblk)
 				fillable -= 1 + ((x + fillable)
 						 & EXT2FS_CLUSTER_MASK(fs));
-			if (fillable == 0)
-				goto try_right;
+			যদি (fillable == 0)
+				গচ্ছ try_ডান;
 		}
 
 		/* Allocate range of blocks */
-		x = left_ext->e_pblk + left_ext->e_len;
+		x = বাম_ext->e_pblk + বাম_ext->e_len;
 		err = ext2fs_new_range(fs, EXT2_NEWRANGE_FIXED_GOAL |
 				EXT2_NEWRANGE_MIN_LENGTH,
-				x, fillable, NULL, &pblk, &plen);
-		if (err)
-			goto try_right;
+				x, fillable, রিক্ত, &pblk, &plen);
+		যদি (err)
+			গচ্ছ try_ডান;
 		err = claim_range(fs, inode, pblk, plen);
-		if (err)
-			goto out;
+		যদি (err)
+			গচ্ছ out;
 
 		/* Modify left_ext */
-		err = ext2fs_extent_goto(handle, left_ext->e_lblk);
-		if (err)
-			goto out;
+		err = ext2fs_extent_goto(handle, বাম_ext->e_lblk);
+		যদি (err)
+			গচ্ছ out;
 		range_start += plen;
 		range_len -= plen;
-		left_ext->e_len += plen;
-		dbg_print_extent("ext_falloc left+", left_ext);
-		err = ext2fs_extent_replace(handle, 0, left_ext);
-		if (err)
-			goto out;
+		বাম_ext->e_len += plen;
+		dbg_print_extent("ext_falloc left+", বাম_ext);
+		err = ext2fs_extent_replace(handle, 0, বাম_ext);
+		যদি (err)
+			গচ্ছ out;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		যদি (err)
+			গচ্ছ out;
 
 		/* Zero blocks if necessary */
-		if (!(left_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		যদি (!(বাম_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
 		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
-			err = ext2fs_zero_blocks2(fs, pblk, plen, NULL, NULL);
-			if (err)
-				goto out;
+			err = ext2fs_zero_blocks2(fs, pblk, plen, রিক্ত, রিক্ত);
+			যদি (err)
+				গচ্ছ out;
 		}
 	}
 
-try_right:
+try_ডান:
 	/* Extend the right extent */
-	if (right_ext) {
+	যদি (ডান_ext) {
 		/* How much can we attach to right_ext? */
-		if (right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
-			fillable = max_uninit_len - right_ext->e_len;
-		else if (flags & EXT2_FALLOCATE_ZERO_BLOCKS)
-			fillable = max_init_len - right_ext->e_len;
-		else
+		যদি (ডান_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)
+			fillable = max_uninit_len - ডান_ext->e_len;
+		অন্যথা যদি (flags & EXT2_FALLOCATE_ZERO_BLOCKS)
+			fillable = max_init_len - ডান_ext->e_len;
+		অন্যথা
 			fillable = 0;
 
 		/* User requires init/uninit but extent is uninit/init. */
-		if (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
-		     (right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
+		যদি (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
+		     (ডান_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)) ||
 		    ((flags & EXT2_FALLOCATE_FORCE_UNINIT) &&
-		     !(right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
-			goto try_anywhere;
+		     !(ডান_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT)))
+			গচ্ছ try_anywhere;
 
-		if (fillable > range_len)
+		যদি (fillable > range_len)
 			fillable = range_len;
-		if (fillable == 0)
-			goto try_anywhere;
+		যদি (fillable == 0)
+			গচ্ছ try_anywhere;
 
 		/* Test if the left edge of the range is already mapped? */
-		if (EXT2FS_CLUSTER_RATIO(fs) > 1) {
+		যদি (EXT2FS_CLUSTER_RATIO(fs) > 1) {
 			err = ext2fs_map_cluster_block(fs, ino, inode,
-					right_ext->e_lblk - fillable, &pblk);
-			if (err)
-				goto out;
-			if (pblk)
+					ডান_ext->e_lblk - fillable, &pblk);
+			যদি (err)
+				গচ্ছ out;
+			যদি (pblk)
 				fillable -= EXT2FS_CLUSTER_RATIO(fs) -
-						((right_ext->e_lblk - fillable)
+						((ডান_ext->e_lblk - fillable)
 						 & EXT2FS_CLUSTER_MASK(fs));
-			if (fillable == 0)
-				goto try_anywhere;
+			যদি (fillable == 0)
+				গচ্ছ try_anywhere;
 		}
 
 		/*
@@ -457,57 +457,57 @@ try_right:
 		 */
 		err = ext2fs_new_range(fs, EXT2_NEWRANGE_FIXED_GOAL |
 				EXT2_NEWRANGE_MIN_LENGTH,
-				right_ext->e_pblk - fillable,
-				fillable, NULL, &pblk, &plen);
-		if (err)
-			goto try_anywhere;
+				ডান_ext->e_pblk - fillable,
+				fillable, রিক্ত, &pblk, &plen);
+		যদি (err)
+			গচ্ছ try_anywhere;
 		err = claim_range(fs, inode,
 			      pblk & ~EXT2FS_CLUSTER_MASK(fs),
 			      plen + (pblk & EXT2FS_CLUSTER_MASK(fs)));
-		if (err)
-			goto out;
+		যদি (err)
+			গচ্ছ out;
 
 		/* Modify right_ext */
-		err = ext2fs_extent_goto(handle, right_ext->e_lblk);
-		if (err)
-			goto out;
+		err = ext2fs_extent_goto(handle, ডান_ext->e_lblk);
+		যদি (err)
+			গচ্ছ out;
 		range_len -= plen;
-		right_ext->e_lblk -= plen;
-		right_ext->e_pblk -= plen;
-		right_ext->e_len += plen;
-		dbg_print_extent("ext_falloc right+", right_ext);
-		err = ext2fs_extent_replace(handle, 0, right_ext);
-		if (err)
-			goto out;
+		ডান_ext->e_lblk -= plen;
+		ডান_ext->e_pblk -= plen;
+		ডান_ext->e_len += plen;
+		dbg_print_extent("ext_falloc right+", ডান_ext);
+		err = ext2fs_extent_replace(handle, 0, ডান_ext);
+		যদি (err)
+			গচ্ছ out;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		যদি (err)
+			গচ্ছ out;
 
 		/* Zero blocks if necessary */
-		if (!(right_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		যদি (!(ডান_ext->e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
 		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
 			err = ext2fs_zero_blocks2(fs, pblk,
-					plen + cluster_fill, NULL, NULL);
-			if (err)
-				goto out;
+					plen + cluster_fill, রিক্ত, রিক্ত);
+			যদি (err)
+				গচ্ছ out;
 		}
 	}
 
 try_anywhere:
 	/* Try implied cluster alloc on the left and right ends */
-	if (range_len > 0 && (range_start & EXT2FS_CLUSTER_MASK(fs))) {
+	যদি (range_len > 0 && (range_start & EXT2FS_CLUSTER_MASK(fs))) {
 		cluster_fill = EXT2FS_CLUSTER_RATIO(fs) -
 			       (range_start & EXT2FS_CLUSTER_MASK(fs));
 		cluster_fill &= EXT2FS_CLUSTER_MASK(fs);
-		if (cluster_fill > range_len)
+		যদি (cluster_fill > range_len)
 			cluster_fill = range_len;
 		newex.e_lblk = range_start;
 		err = ext2fs_map_cluster_block(fs, ino, inode, newex.e_lblk,
 					       &pblk);
-		if (err)
-			goto out;
-		if (pblk == 0)
-			goto try_right_implied;
+		যদি (err)
+			গচ্ছ out;
+		যদি (pblk == 0)
+			গচ্ছ try_ডান_implied;
 		newex.e_pblk = pblk;
 		newex.e_len = cluster_fill;
 		newex.e_flags = (flags & EXT2_FALLOCATE_FORCE_INIT ? 0 :
@@ -516,50 +516,50 @@ try_anywhere:
 		ext2fs_extent_goto(handle, newex.e_lblk);
 		err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					&ex);
-		if (err == EXT2_ET_NO_CURRENT_NODE)
+		যদি (err == EXT2_ET_NO_CURRENT_গ্ৰন্থি)
 			ex.e_lblk = 0;
-		else if (err)
-			goto out;
+		অন্যথা যদি (err)
+			গচ্ছ out;
 
-		if (ex.e_lblk > newex.e_lblk)
+		যদি (ex.e_lblk > newex.e_lblk)
 			op = 0; /* insert before */
-		else
-			op = EXT2_EXTENT_INSERT_AFTER;
+		অন্যথা
+			op = EXT2_EXTENT_ঢোকাও_AFTER;
 		dbg_printf("%s: inserting %s lblk %llu newex=%llu\n",
 			   __func__, op ? "after" : "before", ex.e_lblk,
 			   newex.e_lblk);
-		err = ext2fs_extent_insert(handle, op, &newex);
-		if (err)
-			goto out;
+		err = ext2fs_extent_ঢোকাও(handle, op, &newex);
+		যদি (err)
+			গচ্ছ out;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		যদি (err)
+			গচ্ছ out;
 
-		if (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		যদি (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
 		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
 			err = ext2fs_zero_blocks2(fs, newex.e_pblk,
-						  newex.e_len, NULL, NULL);
-			if (err)
-				goto out;
+						  newex.e_len, রিক্ত, রিক্ত);
+			যদি (err)
+				গচ্ছ out;
 		}
 
 		range_start += cluster_fill;
 		range_len -= cluster_fill;
 	}
 
-try_right_implied:
+try_ডান_implied:
 	y = range_start + range_len;
-	if (range_len > 0 && (y & EXT2FS_CLUSTER_MASK(fs))) {
+	যদি (range_len > 0 && (y & EXT2FS_CLUSTER_MASK(fs))) {
 		cluster_fill = y & EXT2FS_CLUSTER_MASK(fs);
-		if (cluster_fill > range_len)
+		যদি (cluster_fill > range_len)
 			cluster_fill = range_len;
 		newex.e_lblk = y & ~EXT2FS_CLUSTER_MASK(fs);
 		err = ext2fs_map_cluster_block(fs, ino, inode, newex.e_lblk,
 					       &pblk);
-		if (err)
-			goto out;
-		if (pblk == 0)
-			goto no_implied;
+		যদি (err)
+			গচ্ছ out;
+		যদি (pblk == 0)
+			গচ্ছ no_implied;
 		newex.e_pblk = pblk;
 		newex.e_len = cluster_fill;
 		newex.e_flags = (flags & EXT2_FALLOCATE_FORCE_INIT ? 0 :
@@ -568,61 +568,61 @@ try_right_implied:
 		ext2fs_extent_goto(handle, newex.e_lblk);
 		err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					&ex);
-		if (err == EXT2_ET_NO_CURRENT_NODE)
+		যদি (err == EXT2_ET_NO_CURRENT_গ্ৰন্থি)
 			ex.e_lblk = 0;
-		else if (err)
-			goto out;
+		অন্যথা যদি (err)
+			গচ্ছ out;
 
-		if (ex.e_lblk > newex.e_lblk)
+		যদি (ex.e_lblk > newex.e_lblk)
 			op = 0; /* insert before */
-		else
-			op = EXT2_EXTENT_INSERT_AFTER;
+		অন্যথা
+			op = EXT2_EXTENT_ঢোকাও_AFTER;
 		dbg_printf("%s: inserting %s lblk %llu newex=%llu\n",
 			   __func__, op ? "after" : "before", ex.e_lblk,
 			   newex.e_lblk);
-		err = ext2fs_extent_insert(handle, op, &newex);
-		if (err)
-			goto out;
+		err = ext2fs_extent_ঢোকাও(handle, op, &newex);
+		যদি (err)
+			গচ্ছ out;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		যদি (err)
+			গচ্ছ out;
 
-		if (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		যদি (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
 		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
 			err = ext2fs_zero_blocks2(fs, newex.e_pblk,
-						  newex.e_len, NULL, NULL);
-			if (err)
-				goto out;
+						  newex.e_len, রিক্ত, রিক্ত);
+			যদি (err)
+				গচ্ছ out;
 		}
 
 		range_len -= cluster_fill;
 	}
 
 no_implied:
-	if (range_len == 0)
-		return 0;
+	যদি (range_len == 0)
+		ঘূৰাই 0;
 
 	newex.e_lblk = range_start;
-	if (flags & EXT2_FALLOCATE_FORCE_INIT) {
+	যদি (flags & EXT2_FALLOCATE_FORCE_INIT) {
 		max_extent_len = max_init_len;
 		newex.e_flags = 0;
-	} else {
+	} অন্যথা {
 		max_extent_len = max_uninit_len;
 		newex.e_flags = EXT2_EXTENT_FLAGS_UNINIT;
 	}
 	pblk = alloc_goal;
 	y = range_len;
-	for (x = 0; x < y;) {
+	বাবে (x = 0; x < y;) {
 		cluster_fill = newex.e_lblk & EXT2FS_CLUSTER_MASK(fs);
 		fillable = min(range_len + cluster_fill, max_extent_len);
 		err = ext2fs_new_range(fs, 0, pblk & ~EXT2FS_CLUSTER_MASK(fs),
 				       fillable,
-				       NULL, &pblk, &plen);
-		if (err)
-			goto out;
+				       রিক্ত, &pblk, &plen);
+		যদি (err)
+			গচ্ছ out;
 		err = claim_range(fs, inode, pblk, plen);
-		if (err)
-			goto out;
+		যদি (err)
+			গচ্ছ out;
 
 		/* Create extent */
 		newex.e_pblk = pblk + cluster_fill;
@@ -631,30 +631,30 @@ no_implied:
 		ext2fs_extent_goto(handle, newex.e_lblk);
 		err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT,
 					&ex);
-		if (err == EXT2_ET_NO_CURRENT_NODE)
+		যদি (err == EXT2_ET_NO_CURRENT_গ্ৰন্থি)
 			ex.e_lblk = 0;
-		else if (err)
-			goto out;
+		অন্যথা যদি (err)
+			গচ্ছ out;
 
-		if (ex.e_lblk > newex.e_lblk)
+		যদি (ex.e_lblk > newex.e_lblk)
 			op = 0; /* insert before */
-		else
-			op = EXT2_EXTENT_INSERT_AFTER;
+		অন্যথা
+			op = EXT2_EXTENT_ঢোকাও_AFTER;
 		dbg_printf("%s: inserting %s lblk %llu newex=%llu\n",
 			   __func__, op ? "after" : "before", ex.e_lblk,
 			   newex.e_lblk);
-		err = ext2fs_extent_insert(handle, op, &newex);
-		if (err)
-			goto out;
+		err = ext2fs_extent_ঢোকাও(handle, op, &newex);
+		যদি (err)
+			গচ্ছ out;
 		err = ext2fs_extent_fix_parents(handle);
-		if (err)
-			goto out;
+		যদি (err)
+			গচ্ছ out;
 
-		if (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
+		যদি (!(newex.e_flags & EXT2_EXTENT_FLAGS_UNINIT) &&
 		    (flags & EXT2_FALLOCATE_ZERO_BLOCKS)) {
-			err = ext2fs_zero_blocks2(fs, pblk, plen, NULL, NULL);
-			if (err)
-				goto out;
+			err = ext2fs_zero_blocks2(fs, pblk, plen, রিক্ত, রিক্ত);
+			যদি (err)
+				গচ্ছ out;
 		}
 
 		/* Update variables at end of loop */
@@ -662,29 +662,29 @@ no_implied:
 		range_len -= plen - cluster_fill;
 		newex.e_lblk += plen - cluster_fill;
 		pblk += plen - cluster_fill;
-		if (pblk >= ext2fs_blocks_count(fs->super))
+		যদি (pblk >= ext2fs_blocks_গুনতি(fs->super))
 			pblk = fs->super->s_first_data_block;
 	}
 
 out:
-	return err;
+	ঘূৰাই err;
 }
 
-static errcode_t extent_fallocate(ext2_filsys fs, int flags, ext2_ino_t ino,
-				      struct ext2_inode *inode, blk64_t goal,
+স্থির errcode_t extent_fallocate(ext2_filsys fs, পূর্ণাঙ্ক flags, ext2_ino_t ino,
+				      সংরচনা ext2_inode *inode, blk64_t goal,
 				      blk64_t start, blk64_t len)
 {
 	ext2_extent_handle_t	handle;
-	struct ext2fs_extent	left_extent, right_extent;
-	struct ext2fs_extent	*left_adjacent, *right_adjacent;
+	সংরচনা ext2fs_extent	বাম_extent, ডান_extent;
+	সংরচনা ext2fs_extent	*বাম_adjacent, *ডান_adjacent;
 	errcode_t		err;
 	blk64_t			range_start, range_end = 0, end, next;
-	blk64_t			count, goal_distance;
+	blk64_t			গুনতি, goal_distance;
 
 	end = start + len - 1;
 	err = ext2fs_extent_open2(fs, ino, inode, &handle);
-	if (err)
-		return err;
+	যদি (err)
+		ঘূৰাই err;
 
 	/*
 	 * Find the extent closest to the start of the alloc range.  We don't
@@ -696,98 +696,98 @@ static errcode_t extent_fallocate(ext2_filsys fs, int flags, ext2_ino_t ino,
 	 */
 start_again:
 	ext2fs_extent_goto(handle, start);
-	err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &left_extent);
-	if (err == EXT2_ET_NO_CURRENT_NODE) {
-		blk64_t max_blocks = ext2fs_blocks_count(fs->super);
+	err = ext2fs_extent_get(handle, EXT2_EXTENT_CURRENT, &বাম_extent);
+	যদি (err == EXT2_ET_NO_CURRENT_গ্ৰন্থি) {
+		blk64_t max_blocks = ext2fs_blocks_গুনতি(fs->super);
 
-		if (goal == ~0ULL)
+		যদি (goal == ~0ULL)
 			goal = ext2fs_find_inode_goal(fs, ino, inode, start);
 		err = ext2fs_find_first_zero_block_bitmap2(fs->block_map,
 						goal, max_blocks - 1, &goal);
 		goal += start;
-		err = ext_falloc_helper(fs, flags, ino, inode, handle, NULL,
-					NULL, start, len, goal);
-		goto errout;
-	} else if (err)
-		goto errout;
+		err = ext_falloc_helper(fs, flags, ino, inode, handle, রিক্ত,
+					রিক্ত, start, len, goal);
+		গচ্ছ errout;
+	} অন্যথা যদি (err)
+		গচ্ছ errout;
 
-	dbg_print_extent("ext_falloc initial", &left_extent);
-	next = left_extent.e_lblk + left_extent.e_len;
-	if (left_extent.e_lblk > start) {
+	dbg_print_extent("ext_falloc initial", &বাম_extent);
+	next = বাম_extent.e_lblk + বাম_extent.e_len;
+	যদি (বাম_extent.e_lblk > start) {
 		/* The nearest extent we found was beyond start??? */
-		goal = left_extent.e_pblk - (left_extent.e_lblk - start);
-		err = ext_falloc_helper(fs, flags, ino, inode, handle, NULL,
-					&left_extent, start,
-					min(len, left_extent.e_lblk - start),
+		goal = বাম_extent.e_pblk - (বাম_extent.e_lblk - start);
+		err = ext_falloc_helper(fs, flags, ino, inode, handle, রিক্ত,
+					&বাম_extent, start,
+					min(len, বাম_extent.e_lblk - start),
 					goal);
-		if (err)
-			goto errout;
+		যদি (err)
+			গচ্ছ errout;
 
-		goto start_again;
-	} else if (next >= start) {
+		গচ্ছ start_again;
+	} অন্যথা যদি (next >= start) {
 		range_start = next;
-		left_adjacent = &left_extent;
-	} else {
+		বাম_adjacent = &বাম_extent;
+	} অন্যথা {
 		range_start = start;
-		left_adjacent = NULL;
+		বাম_adjacent = রিক্ত;
 	}
-	goal = left_extent.e_pblk + (range_start - left_extent.e_lblk);
+	goal = বাম_extent.e_pblk + (range_start - বাম_extent.e_lblk);
 
-	do {
+	কৰা {
 		err = ext2fs_extent_get(handle, EXT2_EXTENT_NEXT_LEAF,
-					   &right_extent);
+					   &ডান_extent);
 		dbg_printf("%s: ino=%d get next =%d\n", __func__, ino,
-			   (int)err);
-		dbg_print_extent("ext_falloc next", &right_extent);
+			   (পূর্ণাঙ্ক)err);
+		dbg_print_extent("ext_falloc next", &ডান_extent);
 		/* Stop if we've seen this extent before */
-		if (!err && right_extent.e_lblk <= left_extent.e_lblk)
+		যদি (!err && ডান_extent.e_lblk <= বাম_extent.e_lblk)
 			err = EXT2_ET_EXTENT_NO_NEXT;
 
-		if (err && err != EXT2_ET_EXTENT_NO_NEXT)
-			goto errout;
-		if (err == EXT2_ET_EXTENT_NO_NEXT ||
-		    right_extent.e_lblk > end + 1) {
+		যদি (err && err != EXT2_ET_EXTENT_NO_NEXT)
+			গচ্ছ errout;
+		যদি (err == EXT2_ET_EXTENT_NO_NEXT ||
+		    ডান_extent.e_lblk > end + 1) {
 			range_end = end;
-			right_adjacent = NULL;
-		} else {
+			ডান_adjacent = রিক্ত;
+		} অন্যথা {
 			/* Handle right_extent.e_lblk <= end */
-			range_end = right_extent.e_lblk - 1;
-			right_adjacent = &right_extent;
+			range_end = ডান_extent.e_lblk - 1;
+			ডান_adjacent = &ডান_extent;
 		}
 		goal_distance = range_start - next;
-		if (err != EXT2_ET_EXTENT_NO_NEXT &&
-		    goal_distance > (range_end - right_extent.e_lblk))
-			goal = right_extent.e_pblk -
-					(right_extent.e_lblk - range_start);
+		যদি (err != EXT2_ET_EXTENT_NO_NEXT &&
+		    goal_distance > (range_end - ডান_extent.e_lblk))
+			goal = ডান_extent.e_pblk -
+					(ডান_extent.e_lblk - range_start);
 
 		dbg_printf("%s: ino=%d rstart=%llu rend=%llu\n", __func__, ino,
 			   range_start, range_end);
 		err = 0;
-		if (range_start <= range_end) {
-			count = range_end - range_start + 1;
+		যদি (range_start <= range_end) {
+			গুনতি = range_end - range_start + 1;
 			err = ext_falloc_helper(fs, flags, ino, inode, handle,
-						left_adjacent, right_adjacent,
-						range_start, count, goal);
-			if (err)
-				goto errout;
+						বাম_adjacent, ডান_adjacent,
+						range_start, গুনতি, goal);
+			যদি (err)
+				গচ্ছ errout;
 		}
 
-		if (range_end == end)
-			break;
+		যদি (range_end == end)
+			ভঙ্গ;
 
-		err = ext2fs_extent_goto(handle, right_extent.e_lblk);
-		if (err)
-			goto errout;
-		next = right_extent.e_lblk + right_extent.e_len;
-		left_extent = right_extent;
-		left_adjacent = &left_extent;
+		err = ext2fs_extent_goto(handle, ডান_extent.e_lblk);
+		যদি (err)
+			গচ্ছ errout;
+		next = ডান_extent.e_lblk + ডান_extent.e_len;
+		বাম_extent = ডান_extent;
+		বাম_adjacent = &বাম_extent;
 		range_start = next;
-		goal = left_extent.e_pblk + (range_start - left_extent.e_lblk);
-	} while (range_end < end);
+		goal = বাম_extent.e_pblk + (range_start - বাম_extent.e_lblk);
+	} যেতিয়ালৈ (range_end < end);
 
 errout:
 	ext2fs_extent_free(handle);
-	return err;
+	ঘূৰাই err;
 }
 
 /*
@@ -806,74 +806,74 @@ errout:
  * If neither FORCE_INIT nor FORCE_UNINIT are specified, this function will
  * try to expand any extents it finds, zeroing blocks as necessary.
  */
-errcode_t ext2fs_fallocate(ext2_filsys fs, int flags, ext2_ino_t ino,
-			   struct ext2_inode *inode, blk64_t goal,
+errcode_t ext2fs_fallocate(ext2_filsys fs, পূর্ণাঙ্ক flags, ext2_ino_t ino,
+			   সংরচনা ext2_inode *inode, blk64_t goal,
 			   blk64_t start, blk64_t len)
 {
-	struct ext2_inode	inode_buf;
+	সংরচনা ext2_inode	inode_buf;
 	blk64_t			blk, x, zero_blk, last = 0;
-	int			zero_len = 0;
+	পূর্ণাঙ্ক			zero_len = 0;
 	errcode_t		err;
 
-	if (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
+	যদি (((flags & EXT2_FALLOCATE_FORCE_INIT) &&
 	    (flags & EXT2_FALLOCATE_FORCE_UNINIT)) ||
 	   (flags & ~EXT2_FALLOCATE_ALL_FLAGS))
-		return EXT2_ET_INVALID_ARGUMENT;
+		ঘূৰাই EXT2_ET_INVALID_ARGUMENT;
 
-	if (len > ext2fs_blocks_count(fs->super))
-		return EXT2_ET_BLOCK_ALLOC_FAIL;
-	else if (len == 0)
-		return 0;
+	যদি (len > ext2fs_blocks_গুনতি(fs->super))
+		ঘূৰাই EXT2_ET_BLOCK_ALLOC_FAIL;
+	অন্যথা যদি (len == 0)
+		ঘূৰাই 0;
 
 	/* Read inode structure if necessary */
-	if (!inode) {
+	যদি (!inode) {
 		err = ext2fs_read_inode(fs, ino, &inode_buf);
-		if (err)
-			return err;
+		যদি (err)
+			ঘূৰাই err;
 		inode = &inode_buf;
 	}
 	dbg_printf("%s: ino=%d start=%llu len=%llu goal=%llu\n", __func__, ino,
 		   start, len, goal);
 
-	if (inode->i_flags & EXT4_EXTENTS_FL) {
+	যদি (inode->i_flags & EXT4_EXTENTS_FL) {
 		err = extent_fallocate(fs, flags, ino, inode, goal, start, len);
-		goto out;
+		গচ্ছ out;
 	}
 
 	/* XXX: Allocate a bunch of blocks the slow way */
-	for (blk = start; blk < start + len; blk++) {
-		err = ext2fs_bmap2(fs, ino, inode, NULL, 0, blk, 0, &x);
-		if (err)
-			return err;
-		if (x)
-			continue;
+	বাবে (blk = start; blk < start + len; blk++) {
+		err = ext2fs_bmap2(fs, ino, inode, রিক্ত, 0, blk, 0, &x);
+		যদি (err)
+			ঘূৰাই err;
+		যদি (x)
+			অনুৱর্ত;
 
-		err = ext2fs_bmap2(fs, ino, inode, NULL, BMAP_ALLOC,
+		err = ext2fs_bmap2(fs, ino, inode, রিক্ত, BMAP_ALLOC,
 				   blk, 0, &x);
-		if (err)
-			goto errout;
-		if ((zero_len && (x != last+1)) ||
+		যদি (err)
+			গচ্ছ errout;
+		যদি ((zero_len && (x != last+1)) ||
 		    (zero_len >= 65536)) {
 			err = ext2fs_zero_blocks2(fs, zero_blk, zero_len,
-						  NULL, NULL);
+						  রিক্ত, রিক্ত);
 			zero_len = 0;
-			if (err)
-				goto errout;
+			যদি (err)
+				গচ্ছ errout;
 		}
-		if (zero_len == 0) {
+		যদি (zero_len == 0) {
 			zero_blk = x;
 			zero_len = 1;
-		} else {
+		} অন্যথা {
 			zero_len++;
 		}
 		last = x;
 	}
 
 out:
-	if (inode == &inode_buf)
+	যদি (inode == &inode_buf)
 		ext2fs_write_inode(fs, ino, inode);
 errout:
-	if (zero_len)
-		ext2fs_zero_blocks2(fs, zero_blk, zero_len, NULL, NULL);
-	return err;
+	যদি (zero_len)
+		ext2fs_zero_blocks2(fs, zero_blk, zero_len, রিক্ত, রিক্ত);
+	ঘূৰাই err;
 }

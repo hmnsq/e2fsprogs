@@ -9,16 +9,16 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#অন্তর্ভাৱ "config.h"
+#অন্তর্ভাৱ <stdio.h>
+#যদি HAVE_UNISTD_H
+#অন্তর্ভাৱ <unistd.h>
 #endif
-#include <time.h>
-#include <string.h>
+#অন্তর্ভাৱ <time.h>
+#অন্তর্ভাৱ <string.h>
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
+#অন্তর্ভাৱ "ext2_fs.h"
+#অন্তর্ভাৱ "ext2fsP.h"
 
 errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest)
 {
@@ -27,9 +27,9 @@ errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest)
 
 	EXT2_CHECK_MAGIC(src, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
-	retval = ext2fs_get_mem(sizeof(struct struct_ext2_filsys), &fs);
-	if (retval)
-		return retval;
+	retval = ext2fs_get_mem(পরিমাণ(সংরচনা struct_ext2_filsys), &fs);
+	যদি (retval)
+		ঘূৰাই retval;
 
 	*fs = *src;
 	fs->device_name = 0;
@@ -45,75 +45,75 @@ errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest)
 	fs->mmp_fd = -1;
 
 	io_channel_bumpcount(fs->io);
-	if (fs->icache)
+	যদি (fs->icache)
 		fs->icache->refcount++;
 
 	retval = ext2fs_get_mem(strlen(src->device_name)+1, &fs->device_name);
-	if (retval)
-		goto errout;
+	যদি (retval)
+		গচ্ছ errout;
 	strcpy(fs->device_name, src->device_name);
 
 	retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &fs->super);
-	if (retval)
-		goto errout;
+	যদি (retval)
+		গচ্ছ errout;
 	memcpy(fs->super, src->super, SUPERBLOCK_SIZE);
 
 	retval = ext2fs_get_mem(SUPERBLOCK_SIZE, &fs->orig_super);
-	if (retval)
-		goto errout;
+	যদি (retval)
+		গচ্ছ errout;
 	memcpy(fs->orig_super, src->orig_super, SUPERBLOCK_SIZE);
 
 	retval = ext2fs_get_array(fs->desc_blocks, fs->blocksize,
 				&fs->group_desc);
-	if (retval)
-		goto errout;
+	যদি (retval)
+		গচ্ছ errout;
 	memcpy(fs->group_desc, src->group_desc,
 	       (size_t) fs->desc_blocks * fs->blocksize);
 
-	if (src->inode_map) {
+	যদি (src->inode_map) {
 		retval = ext2fs_copy_bitmap(src->inode_map, &fs->inode_map);
-		if (retval)
-			goto errout;
+		যদি (retval)
+			গচ্ছ errout;
 	}
-	if (src->block_map) {
+	যদি (src->block_map) {
 		retval = ext2fs_copy_bitmap(src->block_map, &fs->block_map);
-		if (retval)
-			goto errout;
+		যদি (retval)
+			গচ্ছ errout;
 	}
-	if (src->badblocks) {
+	যদি (src->badblocks) {
 		retval = ext2fs_badblocks_copy(src->badblocks, &fs->badblocks);
-		if (retval)
-			goto errout;
+		যদি (retval)
+			গচ্ছ errout;
 	}
-	if (src->dblist) {
+	যদি (src->dblist) {
 		retval = ext2fs_copy_dblist(src->dblist, &fs->dblist);
-		if (retval)
-			goto errout;
+		যদি (retval)
+			গচ্ছ errout;
 	}
-	if (src->mmp_buf) {
+	যদি (src->mmp_buf) {
 		retval = ext2fs_mmp_get_mem(src, &fs->mmp_buf);
-		if (retval)
-			goto errout;
+		যদি (retval)
+			গচ্ছ errout;
 		memcpy(fs->mmp_buf, src->mmp_buf, src->blocksize);
 	}
-	if (src->mmp_fd >= 0) {
+	যদি (src->mmp_fd >= 0) {
 		fs->mmp_fd = dup(src->mmp_fd);
-		if (fs->mmp_fd < 0) {
+		যদি (fs->mmp_fd < 0) {
 			retval = EXT2_ET_MMP_OPEN_DIRECT;
-			goto errout;
+			গচ্ছ errout;
 		}
 	}
-	if (src->mmp_cmp) {
+	যদি (src->mmp_cmp) {
 		retval = ext2fs_mmp_get_mem(src, &fs->mmp_cmp);
-		if (retval)
-			goto errout;
+		যদি (retval)
+			গচ্ছ errout;
 		memcpy(fs->mmp_cmp, src->mmp_cmp, src->blocksize);
 	}
 	*dest = fs;
-	return 0;
+	ঘূৰাই 0;
 errout:
 	ext2fs_free(fs);
-	return retval;
+	ঘূৰাই retval;
 
 }
 

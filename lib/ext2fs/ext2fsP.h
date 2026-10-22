@@ -9,212 +9,212 @@
  * %End-Header%
  */
 
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#যদি HAVE_SYS_STAT_H
+#অন্তর্ভাৱ <sys/stat.h>
 #endif
 
-#include "ext2fs.h"
+#অন্তর্ভাৱ "ext2fs.h"
 
 #define EXT2FS_MAX_NESTED_LINKS  8
 
-static inline int ext2fsP_is_disk_device(mode_t mode)
+স্থির অন্তঃস্থ পূর্ণাঙ্ক ext2fsP_is_disk_device(mode_t mode)
 {
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-	return S_ISBLK(mode) || S_ISCHR(mode);
-#else
-	return S_ISBLK(mode);
+#যদি defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+	ঘূৰাই S_ISBLK(mode) || S_ISCHR(mode);
+#অন্যথা
+	ঘূৰাই S_ISBLK(mode);
 #endif
 }
 
-static inline time_t ext2fsP_get_time(ext2_filsys fs)
+স্থির অন্তঃস্থ time_t ext2fsP_get_time(ext2_filsys fs)
 {
-	if (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
-		return fs->now;
-	return time(NULL);
+	যদি (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
+		ঘূৰাই fs->now;
+	ঘূৰাই time(রিক্ত);
 }
 
 /*
  * Badblocks list
  */
-struct ext2_struct_u32_list {
-	int	magic;
-	int	num;
-	int	size;
+সংরচনা ext2_struct_u32_list {
+	পূর্ণাঙ্ক	magic;
+	পূর্ণাঙ্ক	অঙ্ক;
+	পূর্ণাঙ্ক	size;
 	__u32	*list;
-	int	badblocks_flags;
+	পূর্ণাঙ্ক	badblocks_flags;
 };
 
-struct ext2_struct_u32_iterate {
-	int			magic;
+সংরচনা ext2_struct_u32_iterate {
+	পূর্ণাঙ্ক			magic;
 	ext2_u32_list		bb;
-	int			ptr;
+	পূর্ণাঙ্ক			ptr;
 };
 
 
 /*
  * Directory block iterator definition
  */
-struct ext2_struct_dblist {
-	int			magic;
+সংরচনা ext2_struct_dblist {
+	পূর্ণাঙ্ক			magic;
 	ext2_filsys		fs;
 	unsigned long long	size;
-	unsigned long long	count;
-	int			sorted;
-	struct ext2_db_entry2 *	list;
+	unsigned long long	গুনতি;
+	পূর্ণাঙ্ক			sorted;
+	সংরচনা ext2_db_entry2 *	list;
 };
 
 /*
  * For directory iterators
  */
-struct dir_context {
+সংরচনা dir_context {
 	ext2_ino_t		dir;
-	int		flags;
-	char		*buf;
-	unsigned int	buflen;
-	int (*func)(ext2_ino_t	dir,
-		    int	entry,
-		    struct ext2_dir_entry *dirent,
-		    int	offset,
-		    int	blocksize,
-		    char	*buf,
-		    void	*priv_data);
-	void		*priv_data;
+	পূর্ণাঙ্ক		flags;
+	ৱর্ণ		*buf;
+	unsigned পূর্ণাঙ্ক	buflen;
+	পূর্ণাঙ্ক (*func)(ext2_ino_t	dir,
+		    পূর্ণাঙ্ক	entry,
+		    সংরচনা ext2_dir_entry *dirent,
+		    পূর্ণাঙ্ক	offset,
+		    পূর্ণাঙ্ক	blocksize,
+		    ৱর্ণ	*buf,
+		    শূন্য	*priv_data);
+	শূন্য		*priv_data;
 	errcode_t	errcode;
 };
 
 /*
  * Inode cache structure
  */
-struct ext2_inode_cache {
-	void *				buffer;
+সংরচনা ext2_inode_cache {
+	শূন্য *				buffer;
 	blk64_t				buffer_blk;
-	int				cache_last;
-	unsigned int			cache_size;
-	int				refcount;
-	struct ext2_inode_cache_ent	*cache;
+	পূর্ণাঙ্ক				cache_last;
+	unsigned পূর্ণাঙ্ক			cache_size;
+	পূর্ণাঙ্ক				refcount;
+	সংরচনা ext2_inode_cache_ent	*cache;
 };
 
-struct ext2_inode_cache_ent {
+সংরচনা ext2_inode_cache_ent {
 	ext2_ino_t		ino;
-	struct ext2_inode	*inode;
+	সংরচনা ext2_inode	*inode;
 };
 
 /*
  * NLS definitions
  */
-struct ext2fs_nls_table {
-	int version;
-	const struct ext2fs_nls_ops *ops;
+সংরচনা ext2fs_nls_table {
+	পূর্ণাঙ্ক version;
+	ধ্রুৱ সংরচনা ext2fs_nls_ops *ops;
 };
 
-struct ext2fs_nls_ops {
-	int (*casefold)(const struct ext2fs_nls_table *charset,
-			const unsigned char *str, size_t len,
-			unsigned char *dest, size_t dlen);
-	int (*validate)(const struct ext2fs_nls_table *table,
-			char *s, size_t len, char **pos);
-	int (*casefold_cmp)(const struct ext2fs_nls_table *table,
-			    const unsigned char *str1, size_t len1,
-			    const unsigned char *str2, size_t len2);
+সংরচনা ext2fs_nls_ops {
+	পূর্ণাঙ্ক (*casefold)(ধ্রুৱ সংরচনা ext2fs_nls_table *charset,
+			ধ্রুৱ unsigned ৱর্ণ *str, size_t len,
+			unsigned ৱর্ণ *dest, size_t dlen);
+	পূর্ণাঙ্ক (*validate)(ধ্রুৱ সংরচনা ext2fs_nls_table *table,
+			ৱর্ণ *s, size_t len, ৱর্ণ **pos);
+	পূর্ণাঙ্ক (*casefold_cmp)(ধ্রুৱ সংরচনা ext2fs_nls_table *table,
+			    ধ্রুৱ unsigned ৱর্ণ *str1, size_t len1,
+			    ধ্রুৱ unsigned ৱর্ণ *str2, size_t len2);
 };
 
 /* Function prototypes */
 
-extern int ext2fs_process_dir_block(ext2_filsys  	fs,
+বাহ্য পূর্ণাঙ্ক ext2fs_process_dir_block(ext2_filsys  	fs,
 				    blk64_t		*blocknr,
 				    e2_blkcnt_t		blockcnt,
 				    blk64_t		ref_block,
-				    int			ref_offset,
-				    void		*priv_data);
+				    পূর্ণাঙ্ক			ref_offset,
+				    শূন্য		*priv_data);
 
-extern errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino);
-extern errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino);
-extern int ext2fs_inline_data_dir_iterate(ext2_filsys fs,
+বাহ্য errcode_t ext2fs_inline_data_ea_remove(ext2_filsys fs, ext2_ino_t ino);
+বাহ্য errcode_t ext2fs_inline_data_expand(ext2_filsys fs, ext2_ino_t ino);
+বাহ্য পূর্ণাঙ্ক ext2fs_inline_data_dir_iterate(ext2_filsys fs,
 					  ext2_ino_t ino,
-					  void *priv_data);
+					  শূন্য *priv_data);
 
 /* Generic numeric progress meter */
 
-struct ext2fs_numeric_progress_struct {
+সংরচনা ext2fs_numeric_progress_struct {
 	__u64		max;
-	int		log_max;
-	int		skip_progress;
+	পূর্ণাঙ্ক		log_max;
+	পূর্ণাঙ্ক		skip_progress;
 };
 
 /*
  * progress callback functions
  */
-struct ext2fs_progress_ops {
-	void (*init)(ext2_filsys fs,
-		     struct ext2fs_numeric_progress_struct * progress,
-		     const char *label, __u64 max);
-	void (*update)(ext2_filsys fs,
-		       struct ext2fs_numeric_progress_struct * progress,
+সংরচনা ext2fs_progress_ops {
+	শূন্য (*init)(ext2_filsys fs,
+		     সংরচনা ext2fs_numeric_progress_struct * progress,
+		     ধ্রুৱ ৱর্ণ *label, __u64 max);
+	শূন্য (*update)(ext2_filsys fs,
+		       সংরচনা ext2fs_numeric_progress_struct * progress,
 		       __u64 val);
-	void (*close)(ext2_filsys fs,
-		      struct ext2fs_numeric_progress_struct * progress,
-		      const char *message);
+	শূন্য (*close)(ext2_filsys fs,
+		      সংরচনা ext2fs_numeric_progress_struct * progress,
+		      ধ্রুৱ ৱর্ণ *message);
 };
 
-extern struct ext2fs_progress_ops ext2fs_numeric_progress_ops;
+বাহ্য সংরচনা ext2fs_progress_ops ext2fs_numeric_progress_ops;
 
-extern void ext2fs_numeric_progress_init(ext2_filsys fs,
-					 struct ext2fs_numeric_progress_struct * progress,
-					 const char *label, __u64 max);
-extern void ext2fs_numeric_progress_update(ext2_filsys fs,
-					   struct ext2fs_numeric_progress_struct * progress,
+বাহ্য শূন্য ext2fs_numeric_progress_init(ext2_filsys fs,
+					 সংরচনা ext2fs_numeric_progress_struct * progress,
+					 ধ্রুৱ ৱর্ণ *label, __u64 max);
+বাহ্য শূন্য ext2fs_numeric_progress_update(ext2_filsys fs,
+					   সংরচনা ext2fs_numeric_progress_struct * progress,
 					   __u64 val);
-extern void ext2fs_numeric_progress_close(ext2_filsys fs,
-					  struct ext2fs_numeric_progress_struct * progress,
-					  const char *message);
+বাহ্য শূন্য ext2fs_numeric_progress_close(ext2_filsys fs,
+					  সংরচনা ext2fs_numeric_progress_struct * progress,
+					  ধ্রুৱ ৱর্ণ *message);
 
 /*
  * 64-bit bitmap support
  */
 
-extern errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
-					   int type, __u64 start, __u64 end,
+বাহ্য errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
+					   পূর্ণাঙ্ক type, __u64 start, __u64 end,
 					   __u64 real_end,
-					   const char * description,
+					   ধ্রুৱ ৱর্ণ * description,
 					   ext2fs_generic_bitmap *bmap);
 
-extern void ext2fs_free_generic_bmap(ext2fs_generic_bitmap bmap);
+বাহ্য শূন্য ext2fs_free_generic_bmap(ext2fs_generic_bitmap bmap);
 
-extern errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap src,
+বাহ্য errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap src,
 					  ext2fs_generic_bitmap *dest);
 
-extern errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap bmap,
+বাহ্য errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap bmap,
 					    __u64 new_end,
 					    __u64 new_real_end);
-extern errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap bitmap,
+বাহ্য errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap bitmap,
 					       errcode_t neq,
 					       __u64 end, __u64 *oend);
-extern int ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
+বাহ্য পূর্ণাঙ্ক ext2fs_mark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
-extern int ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
+বাহ্য পূর্ণাঙ্ক ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap bitmap,
 				      __u64 arg);
-extern int ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
+বাহ্য পূর্ণাঙ্ক ext2fs_test_generic_bmap(ext2fs_generic_bitmap bitmap,
 				    __u64 arg);
-extern errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
-					       void *in);
-extern errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bitmap,
-					       __u64 start, unsigned int num,
-					       void *out);
-extern void ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,const char *func);
+বাহ্য errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap bitmap,
+					       __u64 start, unsigned পূর্ণাঙ্ক অঙ্ক,
+					       শূন্য *in);
+বাহ্য errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bitmap,
+					       __u64 start, unsigned পূর্ণাঙ্ক অঙ্ক,
+					       শূন্য *out);
+বাহ্য শূন্য ext2fs_warn_bitmap32(ext2fs_generic_bitmap bitmap,ধ্রুৱ ৱর্ণ *func);
 
-extern int ext2fs_mem_is_zero(const char *mem, size_t len);
+বাহ্য পূর্ণাঙ্ক ext2fs_mem_is_zero(ধ্রুৱ ৱর্ণ *mem, size_t len);
 
-extern int ext2fs_file_block_offset_too_big(ext2_filsys fs,
-					    struct ext2_inode *inode,
+বাহ্য পূর্ণাঙ্ক ext2fs_file_block_offset_too_big(ext2_filsys fs,
+					    সংরচনা ext2_inode *inode,
 					    blk64_t offset);
 
 /* atexit support */
-typedef void (*ext2_exit_fn)(void *);
-errcode_t ext2fs_add_exit_fn(ext2_exit_fn fn, void *data);
-errcode_t ext2fs_remove_exit_fn(ext2_exit_fn fn, void *data);
+প্রকারনির্দেশ শূন্য (*ext2_exit_fn)(শূন্য *);
+errcode_t ext2fs_add_exit_fn(ext2_exit_fn fn, শূন্য *data);
+errcode_t ext2fs_remove_exit_fn(ext2_exit_fn fn, শূন্য *data);
 
 #define ARRAY_SIZE(array)			\
-        (sizeof(array) / sizeof(array[0]))
+        (পরিমাণ(array) / পরিমাণ(array[0]))
 
-#define EXT2FS_BUILD_BUG_ON(cond) ((void)sizeof(char[1 - 2*!!(cond)]))
+#define EXT2FS_BUILD_BUG_ON(cond) ((শূন্য)পরিমাণ(ৱর্ণ[1 - 2*!!(cond)]))

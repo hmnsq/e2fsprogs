@@ -28,13 +28,13 @@
 */
 
 #ifdef  __cplusplus
-extern "C" {
+বাহ্য "C" {
 #endif
 
 
 /* flags to tdb_store() */
 #define TDB_REPLACE 1
-#define TDB_INSERT 2
+#define TDB_ঢোকাও 2
 #define TDB_MODIFY 3
 
 /* flags for tdb_open() */
@@ -51,27 +51,27 @@ extern "C" {
 #define TDB_ERRCODE(code, ret) ((tdb->ecode = (code)), ret)
 
 /* error codes */
-enum TDB_ERROR {TDB_SUCCESS=0, TDB_ERR_CORRUPT, TDB_ERR_IO, TDB_ERR_LOCK,
+গণনা TDB_ERROR {TDB_SUCCESS=0, TDB_ERR_CORRUPT, TDB_ERR_IO, TDB_ERR_LOCK,
 		TDB_ERR_OOM, TDB_ERR_EXISTS, TDB_ERR_NOLOCK, TDB_ERR_LOCK_TIMEOUT,
 		TDB_ERR_NOEXIST, TDB_ERR_EINVAL, TDB_ERR_RDONLY};
 
 /* debugging uses one of the following levels */
-enum tdb_debug_level {TDB_DEBUG_FATAL = 0, TDB_DEBUG_ERROR,
+গণনা tdb_debug_level {TDB_DEBUG_FATAL = 0, TDB_DEBUG_ERROR,
 		      TDB_DEBUG_WARNING, TDB_DEBUG_TRACE};
 
-typedef struct TDB_DATA {
-	unsigned char *dptr;
+প্রকারনির্দেশ সংরচনা TDB_DATA {
+	unsigned ৱর্ণ *dptr;
 	size_t dsize;
 } TDB_DATA;
 
 #ifndef PRINTF_ATTRIBUTE
-#if (__GNUC__ >= 3)
+#যদি (__GNUC__ >= 3)
 /** Use gcc attribute to check printf fns.  a1 is the 1-based index of
  * the parameter containing the format, and a2 the index of the first
  * argument. Note that some gcc 2.x versions don't handle this
  * properly **/
 #define PRINTF_ATTRIBUTE(a1, a2) __attribute__ ((format (__printf__, a1, a2)))
-#else
+#অন্যথা
 #define PRINTF_ATTRIBUTE(a1, a2)
 #endif
 #endif
@@ -132,81 +132,81 @@ typedef struct TDB_DATA {
 #define tdb_flush ext2fs_tdb_flush
 
 /* this is the context structure that is returned from a db open */
-typedef struct tdb_context TDB_CONTEXT;
+প্রকারনির্দেশ সংরচনা tdb_context TDB_CONTEXT;
 
-typedef int (*tdb_traverse_func)(struct tdb_context *, TDB_DATA, TDB_DATA, void *);
-typedef void (*tdb_log_func)(struct tdb_context *, enum tdb_debug_level, const char *, ...) PRINTF_ATTRIBUTE(3, 4);
-typedef unsigned int (*tdb_hash_func)(TDB_DATA *key);
+প্রকারনির্দেশ পূর্ণাঙ্ক (*tdb_traverse_func)(সংরচনা tdb_context *, TDB_DATA, TDB_DATA, শূন্য *);
+প্রকারনির্দেশ শূন্য (*tdb_log_func)(সংরচনা tdb_context *, গণনা tdb_debug_level, ধ্রুৱ ৱর্ণ *, ...) PRINTF_ATTRIBUTE(3, 4);
+প্রকারনির্দেশ unsigned পূর্ণাঙ্ক (*tdb_hash_func)(TDB_DATA *চাবি);
 
-struct tdb_logging_context {
+সংরচনা tdb_logging_context {
         tdb_log_func log_fn;
-        void *log_private;
+        শূন্য *log_private;
 };
 
-struct tdb_context *tdb_open(const char *name, int hash_size, int tdb_flags,
-		      int open_flags, mode_t mode);
-struct tdb_context *tdb_open_ex(const char *name, int hash_size, int tdb_flags,
-			 int open_flags, mode_t mode,
-			 const struct tdb_logging_context *log_ctx,
+সংরচনা tdb_context *tdb_open(ধ্রুৱ ৱর্ণ *name, পূর্ণাঙ্ক hash_size, পূর্ণাঙ্ক tdb_flags,
+		      পূর্ণাঙ্ক open_flags, mode_t mode);
+সংরচনা tdb_context *tdb_open_ex(ধ্রুৱ ৱর্ণ *name, পূর্ণাঙ্ক hash_size, পূর্ণাঙ্ক tdb_flags,
+			 পূর্ণাঙ্ক open_flags, mode_t mode,
+			 ধ্রুৱ সংরচনা tdb_logging_context *log_ctx,
 			 tdb_hash_func hash_fn);
-void tdb_set_max_dead(struct tdb_context *tdb, int max_dead);
+শূন্য tdb_set_max_dead(সংরচনা tdb_context *tdb, পূর্ণাঙ্ক max_dead);
 
-int tdb_reopen(struct tdb_context *tdb);
-int tdb_reopen_all(int parent_longlived);
-void tdb_set_logging_function(struct tdb_context *tdb, const struct tdb_logging_context *log_ctx);
-enum TDB_ERROR tdb_error(struct tdb_context *tdb);
-const char *tdb_errorstr(struct tdb_context *tdb);
-TDB_DATA tdb_fetch(struct tdb_context *tdb, TDB_DATA key);
-int tdb_parse_record(struct tdb_context *tdb, TDB_DATA key,
-		     int (*parser)(TDB_DATA key, TDB_DATA data,
-				   void *private_data),
-		     void *private_data);
-int tdb_delete(struct tdb_context *tdb, TDB_DATA key);
-int tdb_store(struct tdb_context *tdb, TDB_DATA key, TDB_DATA dbuf, int flag);
-int tdb_append(struct tdb_context *tdb, TDB_DATA key, TDB_DATA new_dbuf);
-int tdb_close(struct tdb_context *tdb);
-TDB_DATA tdb_firstkey(struct tdb_context *tdb);
-TDB_DATA tdb_nextkey(struct tdb_context *tdb, TDB_DATA key);
-int tdb_traverse(struct tdb_context *tdb, tdb_traverse_func fn, void *);
-int tdb_traverse_read(struct tdb_context *tdb, tdb_traverse_func fn, void *);
-int tdb_exists(struct tdb_context *tdb, TDB_DATA key);
-int tdb_lockall(struct tdb_context *tdb);
-int tdb_lockall_nonblock(struct tdb_context *tdb);
-int tdb_unlockall(struct tdb_context *tdb);
-int tdb_lockall_read(struct tdb_context *tdb);
-int tdb_lockall_read_nonblock(struct tdb_context *tdb);
-int tdb_unlockall_read(struct tdb_context *tdb);
-int tdb_lockall_mark(struct tdb_context *tdb);
-int tdb_lockall_unmark(struct tdb_context *tdb);
-const char *tdb_name(struct tdb_context *tdb);
-int tdb_fd(struct tdb_context *tdb);
-tdb_log_func tdb_log_fn(struct tdb_context *tdb);
-void *tdb_get_logging_private(struct tdb_context *tdb);
-int tdb_transaction_start(struct tdb_context *tdb);
-int tdb_transaction_commit(struct tdb_context *tdb);
-int tdb_transaction_cancel(struct tdb_context *tdb);
-int tdb_transaction_recover(struct tdb_context *tdb);
-int tdb_get_seqnum(struct tdb_context *tdb);
-int tdb_hash_size(struct tdb_context *tdb);
-size_t tdb_map_size(struct tdb_context *tdb);
-int tdb_get_flags(struct tdb_context *tdb);
-void tdb_enable_seqnum(struct tdb_context *tdb);
-void tdb_increment_seqnum_nonblock(struct tdb_context *tdb);
-int tdb_flush(struct tdb_context *tdb);
+পূর্ণাঙ্ক tdb_reopen(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_reopen_all(পূর্ণাঙ্ক parent_longlived);
+শূন্য tdb_set_logging_function(সংরচনা tdb_context *tdb, ধ্রুৱ সংরচনা tdb_logging_context *log_ctx);
+গণনা TDB_ERROR tdb_error(সংরচনা tdb_context *tdb);
+ধ্রুৱ ৱর্ণ *tdb_errorstr(সংরচনা tdb_context *tdb);
+TDB_DATA tdb_fetch(সংরচনা tdb_context *tdb, TDB_DATA চাবি);
+পূর্ণাঙ্ক tdb_parse_record(সংরচনা tdb_context *tdb, TDB_DATA চাবি,
+		     পূর্ণাঙ্ক (*parser)(TDB_DATA চাবি, TDB_DATA data,
+				   শূন্য *private_data),
+		     শূন্য *private_data);
+পূর্ণাঙ্ক tdb_delete(সংরচনা tdb_context *tdb, TDB_DATA চাবি);
+পূর্ণাঙ্ক tdb_store(সংরচনা tdb_context *tdb, TDB_DATA চাবি, TDB_DATA dbuf, পূর্ণাঙ্ক flag);
+পূর্ণাঙ্ক tdb_append(সংরচনা tdb_context *tdb, TDB_DATA চাবি, TDB_DATA new_dbuf);
+পূর্ণাঙ্ক tdb_close(সংরচনা tdb_context *tdb);
+TDB_DATA tdb_firstkey(সংরচনা tdb_context *tdb);
+TDB_DATA tdb_nextkey(সংরচনা tdb_context *tdb, TDB_DATA চাবি);
+পূর্ণাঙ্ক tdb_traverse(সংরচনা tdb_context *tdb, tdb_traverse_func fn, শূন্য *);
+পূর্ণাঙ্ক tdb_traverse_read(সংরচনা tdb_context *tdb, tdb_traverse_func fn, শূন্য *);
+পূর্ণাঙ্ক tdb_exists(সংরচনা tdb_context *tdb, TDB_DATA চাবি);
+পূর্ণাঙ্ক tdb_lockall(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_lockall_nonblock(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_unlockall(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_lockall_read(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_lockall_read_nonblock(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_unlockall_read(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_lockall_mark(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_lockall_unmark(সংরচনা tdb_context *tdb);
+ধ্রুৱ ৱর্ণ *tdb_name(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_fd(সংরচনা tdb_context *tdb);
+tdb_log_func tdb_log_fn(সংরচনা tdb_context *tdb);
+শূন্য *tdb_get_logging_private(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_transaction_start(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_transaction_commit(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_transaction_cancel(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_transaction_recover(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_get_seqnum(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_hash_size(সংরচনা tdb_context *tdb);
+size_t tdb_map_size(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_get_flags(সংরচনা tdb_context *tdb);
+শূন্য tdb_enable_seqnum(সংরচনা tdb_context *tdb);
+শূন্য tdb_increment_seqnum_nonblock(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_flush(সংরচনা tdb_context *tdb);
 
 /* Low level locking functions: use with care */
-int tdb_chainlock(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_nonblock(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainunlock(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_read(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainunlock_read(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_mark(struct tdb_context *tdb, TDB_DATA key);
-int tdb_chainlock_unmark(struct tdb_context *tdb, TDB_DATA key);
+পূর্ণাঙ্ক tdb_chainlock(সংরচনা tdb_context *tdb, TDB_DATA চাবি);
+পূর্ণাঙ্ক tdb_chainlock_nonblock(সংরচনা tdb_context *tdb, TDB_DATA চাবি);
+পূর্ণাঙ্ক tdb_chainunlock(সংরচনা tdb_context *tdb, TDB_DATA চাবি);
+পূর্ণাঙ্ক tdb_chainlock_read(সংরচনা tdb_context *tdb, TDB_DATA চাবি);
+পূর্ণাঙ্ক tdb_chainunlock_read(সংরচনা tdb_context *tdb, TDB_DATA চাবি);
+পূর্ণাঙ্ক tdb_chainlock_mark(সংরচনা tdb_context *tdb, TDB_DATA চাবি);
+পূর্ণাঙ্ক tdb_chainlock_unmark(সংরচনা tdb_context *tdb, TDB_DATA চাবি);
 
 /* Debug functions. Not used in production. */
-void tdb_dump_all(struct tdb_context *tdb);
-int tdb_printfreelist(struct tdb_context *tdb);
-int tdb_validate_freelist(struct tdb_context *tdb, int *pnum_entries);
+শূন্য tdb_dump_all(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_printfreelist(সংরচনা tdb_context *tdb);
+পূর্ণাঙ্ক tdb_validate_freelist(সংরচনা tdb_context *tdb, পূর্ণাঙ্ক *pnum_entries);
 
 #ifdef  __cplusplus
 }

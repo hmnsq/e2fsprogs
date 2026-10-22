@@ -10,24 +10,24 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#if HAVE_ERRNO_H
-#include <errno.h>
+#অন্তর্ভাৱ "config.h"
+#অন্তর্ভাৱ <stdio.h>
+#যদি HAVE_ERRNO_H
+#অন্তর্ভাৱ <errno.h>
 #endif
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#যদি HAVE_UNISTD_H
+#অন্তর্ভাৱ <unistd.h>
 #endif
-#if HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
+#যদি HAVE_SYS_IOCTL_H
+#অন্তর্ভাৱ <sys/ioctl.h>
 #endif
-#if HAVE_SYS_MOUNT_H
-#include <sys/param.h>
-#include <sys/mount.h>		/* This may define BLKFLSBUF */
+#যদি HAVE_SYS_MOUNT_H
+#অন্তর্ভাৱ <sys/param.h>
+#অন্তর্ভাৱ <sys/mount.h>		/* This may define BLKFLSBUF */
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#অন্তর্ভাৱ "ext2_fs.h"
+#অন্তর্ভাৱ "ext2fs.h"
 
 /*
  * For Linux, define BLKFLSBUF and FDFLUSH if necessary, since
@@ -50,7 +50,7 @@
  * flush the buffer cache.  The latter is basically only useful for
  * system benchmarks and for torturing systems in burn-in tests.  :)
  */
-errcode_t ext2fs_sync_device(int fd, int flushb)
+errcode_t ext2fs_sync_device(পূর্ণাঙ্ক fd, পূর্ণাঙ্ক flushb)
 {
 	/*
 	 * We always sync the device in case we're running on old
@@ -58,31 +58,31 @@ errcode_t ext2fs_sync_device(int fd, int flushb)
 	 * still is a race condition for those kernels, but this
 	 * reduces it greatly.)
 	 */
-#if defined(HAVE_FSYNC)
-	if (fsync (fd) == -1)
-		return errno;
+#যদি defined(HAVE_FSYNC)
+	যদি (fsync (fd) == -1)
+		ঘূৰাই errno;
 #endif
 
-	if (flushb) {
+	যদি (flushb) {
 		errcode_t	retval = 0;
 
 #ifdef BLKFLSBUF
-		if (ioctl (fd, BLKFLSBUF, 0) == 0)
-			return 0;
+		যদি (ioctl (fd, BLKFLSBUF, 0) == 0)
+			ঘূৰাই 0;
 		retval = errno;
-#elif defined(__linux__)
+#নোচেদ্যদি defined(__linux__)
 #warning BLKFLSBUF not defined
 #endif
 #ifdef FDFLUSH
 		/* In case this is a floppy */
-		if (ioctl(fd, FDFLUSH, 0) == 0)
-			return 0;
-		if (retval == 0)
+		যদি (ioctl(fd, FDFLUSH, 0) == 0)
+			ঘূৰাই 0;
+		যদি (retval == 0)
 			retval = errno;
-#elif defined(__linux__)
+#নোচেদ্যদি defined(__linux__)
 #warning FDFLUSH not defined
 #endif
-		return retval;
+		ঘূৰাই retval;
 	}
-	return 0;
+	ঘূৰাই 0;
 }

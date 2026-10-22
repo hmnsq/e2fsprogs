@@ -2,167 +2,167 @@
  * io_manager.c --- the I/O manager abstraction
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#অন্তর্ভাৱ "config.h"
+#অন্তর্ভাৱ <stdio.h>
+#অন্তর্ভাৱ <string.h>
+#যদি HAVE_UNISTD_H
+#অন্তর্ভাৱ <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#অন্তর্ভাৱ <fcntl.h>
+#অন্তর্ভাৱ <time.h>
+#যদি HAVE_SYS_STAT_H
+#অন্তর্ভাৱ <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#যদি HAVE_SYS_TYPES_H
+#অন্তর্ভাৱ <sys/types.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#অন্তর্ভাৱ "ext2_fs.h"
+#অন্তর্ভাৱ "ext2fs.h"
 
-errcode_t io_channel_set_options(io_channel channel, const char *opts)
+errcode_t io_channel_set_options(io_channel channel, ধ্রুৱ ৱর্ণ *opts)
 {
 	errcode_t retval = 0;
-	char *next, *ptr, *options, *arg;
+	ৱর্ণ *next, *ptr, *options, *arg;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (!opts)
-		return 0;
+	যদি (!opts)
+		ঘূৰাই 0;
 
-	if (!channel->manager->set_option)
-		return EXT2_ET_INVALID_ARGUMENT;
+	যদি (!channel->manager->set_option)
+		ঘূৰাই EXT2_ET_INVALID_ARGUMENT;
 
 	options = malloc(strlen(opts)+1);
-	if (!options)
-		return EXT2_ET_NO_MEMORY;
+	যদি (!options)
+		ঘূৰাই EXT2_ET_NO_MEMORY;
 	strcpy(options, opts);
 	ptr = options;
 
-	while (ptr && *ptr) {
+	যেতিয়ালৈ (ptr && *ptr) {
 		next = strchr(ptr, '&');
-		if (next)
+		যদি (next)
 			*next++ = 0;
 
 		arg = strchr(ptr, '=');
-		if (arg)
+		যদি (arg)
 			*arg++ = 0;
 
 		retval = (channel->manager->set_option)(channel, ptr, arg);
-		if (retval)
-			break;
+		যদি (retval)
+			ভঙ্গ;
 		ptr = next;
 	}
-	free(options);
-	return retval;
+	মুক্ত(options);
+	ঘূৰাই retval;
 }
 
 errcode_t io_channel_write_byte(io_channel channel, unsigned long offset,
-				int count, const void *data)
+				পূর্ণাঙ্ক গুনতি, ধ্রুৱ শূন্য *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_byte)
-		return channel->manager->write_byte(channel, offset,
-						    count, data);
+	যদি (channel->manager->write_byte)
+		ঘূৰাই channel->manager->write_byte(channel, offset,
+						    গুনতি, data);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	ঘূৰাই EXT2_ET_UNIMPLEMENTED;
 }
 
 errcode_t io_channel_read_blk64(io_channel channel, unsigned long long block,
-				 int count, void *data)
+				 পূর্ণাঙ্ক গুনতি, শূন্য *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->read_blk64)
-		return (channel->manager->read_blk64)(channel, block,
-						      count, data);
+	যদি (channel->manager->read_blk64)
+		ঘূৰাই (channel->manager->read_blk64)(channel, block,
+						      গুনতি, data);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	যদি ((block >> 32) != 0)
+		ঘূৰাই EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->read_blk)(channel, (unsigned long) block,
-					     count, data);
+	ঘূৰাই (channel->manager->read_blk)(channel, (unsigned long) block,
+					     গুনতি, data);
 }
 
 errcode_t io_channel_write_blk64(io_channel channel, unsigned long long block,
-				 int count, const void *data)
+				 পূর্ণাঙ্ক গুনতি, ধ্রুৱ শূন্য *data)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->write_blk64)
-		return (channel->manager->write_blk64)(channel, block,
-						       count, data);
+	যদি (channel->manager->write_blk64)
+		ঘূৰাই (channel->manager->write_blk64)(channel, block,
+						       গুনতি, data);
 
-	if ((block >> 32) != 0)
-		return EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
+	যদি ((block >> 32) != 0)
+		ঘূৰাই EXT2_ET_IO_CHANNEL_NO_SUPPORT_64;
 
-	return (channel->manager->write_blk)(channel, (unsigned long) block,
-					     count, data);
+	ঘূৰাই (channel->manager->write_blk)(channel, (unsigned long) block,
+					     গুনতি, data);
 }
 
 errcode_t io_channel_discard(io_channel channel, unsigned long long block,
-			     unsigned long long count)
+			     unsigned long long গুনতি)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->discard)
-		return (channel->manager->discard)(channel, block, count);
+	যদি (channel->manager->discard)
+		ঘূৰাই (channel->manager->discard)(channel, block, গুনতি);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	ঘূৰাই EXT2_ET_UNIMPLEMENTED;
 }
 
 errcode_t io_channel_zeroout(io_channel channel, unsigned long long block,
-			     unsigned long long count)
+			     unsigned long long গুনতি)
 {
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
 
-	if (channel->manager->zeroout)
-		return (channel->manager->zeroout)(channel, block, count);
+	যদি (channel->manager->zeroout)
+		ঘূৰাই (channel->manager->zeroout)(channel, block, গুনতি);
 
-	return EXT2_ET_UNIMPLEMENTED;
+	ঘূৰাই EXT2_ET_UNIMPLEMENTED;
 }
 
-errcode_t io_channel_alloc_buf(io_channel io, int count, void *ptr)
+errcode_t io_channel_alloc_buf(io_channel io, পূর্ণাঙ্ক গুনতি, শূন্য *ptr)
 {
 	size_t	size;
 
-	if (count == 0)
+	যদি (গুনতি == 0)
 		size = io->block_size;
-	else if (count > 0)
-		size = io->block_size * count;
-	else
-		size = -count;
+	অন্যথা যদি (গুনতি > 0)
+		size = io->block_size * গুনতি;
+	অন্যথা
+		size = -গুনতি;
 
-	if (io->align > 0) {
-		if ((unsigned) io->align > size)
+	যদি (io->align > 0) {
+		যদি ((unsigned) io->align > size)
 			size = io->align;
-		return ext2fs_get_memalign(size, io->align, ptr);
-	} else
-		return ext2fs_get_mem(size, ptr);
+		ঘূৰাই ext2fs_get_memalign(size, io->align, ptr);
+	} অন্যথা
+		ঘূৰাই ext2fs_get_mem(size, ptr);
 }
 
 errcode_t io_channel_cache_readahead(io_channel io, unsigned long long block,
-				     unsigned long long count)
+				     unsigned long long গুনতি)
 {
-	if (!io->manager->cache_readahead)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	যদি (!io->manager->cache_readahead)
+		ঘূৰাই EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->cache_readahead(io, block, count);
+	ঘূৰাই io->manager->cache_readahead(io, block, গুনতি);
 }
 
-errcode_t io_channel_flock(io_channel io, unsigned int flock_flags)
+errcode_t io_channel_flock(io_channel io, unsigned পূর্ণাঙ্ক flock_flags)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	যদি (!io->manager->flock)
+		ঘূৰাই EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, flock_flags);
+	ঘূৰাই io->manager->flock(io, flock_flags);
 }
 
 errcode_t io_channel_funlock(io_channel io)
 {
-	if (!io->manager->flock)
-		return EXT2_ET_OP_NOT_SUPPORTED;
+	যদি (!io->manager->flock)
+		ঘূৰাই EXT2_ET_OP_NOT_SUPPORTED;
 
-	return io->manager->flock(io, 0);
+	ঘূৰাই io->manager->flock(io, 0);
 }
