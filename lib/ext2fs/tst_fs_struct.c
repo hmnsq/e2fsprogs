@@ -24,19 +24,19 @@ struct struct_ext2_filsys fs;
 					offsetof(struct struct_ext2_filsys, x), \
 					cur_offset)
 
-static int do_field(const char *field, size_t size, int offset, int cur_offset)
+static цео do_field(const char *field, size_t size, цео offset, цео cur_offset)
 {
-	if (offset != cur_offset) {
+	ако (offset != cur_offset) {
 		printf("\t(padding %d bytes?)\n", offset - cur_offset);
 	}
 	printf("%8d %-30s %3u\n", offset, field, (unsigned) size);
-	return offset + size;
+	врати offset + size;
 }
 
-int main(int argc, char **argv)
+цео main(цео argc, char **argv)
 {
-#if (__GNUC__ >= 4)
-	int cur_offset = 0;
+#ако (__GNUC__ >= 4)
+	цео cur_offset = 0;
 
 	printf("%8s %-30s %3s\n", "offset", "field", "size");
 	check_field(magic);

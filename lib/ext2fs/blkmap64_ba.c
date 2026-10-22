@@ -12,15 +12,15 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ако HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#ако HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#ако HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -53,19 +53,19 @@ static errcode_t ba_alloc_private_data (ext2fs_generic_bitmap_64 bitmap)
 	 * field.  I'm agnostic.
 	 */
 	retval = ext2fs_get_mem(sizeof (ext2fs_ba_private), &bp);
-	if (retval)
-		return retval;
+	ако (retval)
+		врати retval;
 
 	size = (size_t) (((bitmap->real_end - bitmap->start) / 8) + 1);
 
 	retval = ext2fs_get_mem(size, &bp->bitarray);
-	if (retval) {
+	ако (retval) {
 		ext2fs_free_mem(&bp);
 		bp = 0;
-		return retval;
+		врати retval;
 	}
 	bitmap->private = (void *) bp;
-	return 0;
+	врати 0;
 }
 
 static errcode_t ba_new_bmap(ext2_filsys fs EXT2FS_ATTR((unused)),
@@ -76,24 +76,24 @@ static errcode_t ba_new_bmap(ext2_filsys fs EXT2FS_ATTR((unused)),
 	size_t		size;
 
 	retval = ba_alloc_private_data (bitmap);
-	if (retval)
-		return retval;
+	ако (retval)
+		врати retval;
 
 	bp = (ext2fs_ba_private) bitmap->private;
 	size = (size_t) (((bitmap->real_end - bitmap->start) / 8) + 1);
 	memset(bp->bitarray, 0, size);
 
-	return 0;
+	врати 0;
 }
 
 static void ba_free_bmap(ext2fs_generic_bitmap_64 bitmap)
 {
 	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
 
-	if (!bp)
-		return;
+	ако (!bp)
+		врати;
 
-	if (bp->bitarray) {
+	ако (bp->bitarray) {
 		ext2fs_free_mem (&bp->bitarray);
 		bp->bitarray = 0;
 	}
@@ -110,15 +110,15 @@ static errcode_t ba_copy_bmap(ext2fs_generic_bitmap_64 src,
 	size_t size;
 
 	retval = ba_alloc_private_data (dest);
-	if (retval)
-		return retval;
+	ако (retval)
+		врати retval;
 
 	dest_bp = (ext2fs_ba_private) dest->private;
 
 	size = (size_t) (((src->real_end - src->start) / 8) + 1);
 	memcpy (dest_bp->bitarray, src_bp->bitarray, size);
 
-	return 0;
+	врати 0;
 }
 
 static errcode_t ba_resize_bmap(ext2fs_generic_bitmap_64 bmap,
@@ -133,92 +133,92 @@ static errcode_t ba_resize_bmap(ext2fs_generic_bitmap_64 bmap,
 	 * If we're expanding the bitmap, make sure all of the new
 	 * parts of the bitmap are zero.
 	 */
-	if (new_end > bmap->end) {
+	ако (new_end > bmap->end) {
 		bitno = bmap->real_end;
-		if (bitno > new_end)
+		ако (bitno > new_end)
 			bitno = new_end;
-		for (; bitno > bmap->end; bitno--)
+		за (; bitno > bmap->end; bitno--)
 			ext2fs_clear_bit64(bitno - bmap->start, bp->bitarray);
 	}
-	if (new_real_end == bmap->real_end) {
+	ако (new_real_end == bmap->real_end) {
 		bmap->end = new_end;
-		return 0;
+		врати 0;
 	}
 
 	size = ((bmap->real_end - bmap->start) / 8) + 1;
 	new_size = ((new_real_end - bmap->start) / 8) + 1;
 
-	if (size != new_size) {
+	ако (size != new_size) {
 		retval = ext2fs_resize_mem(size, new_size, &bp->bitarray);
-		if (retval)
-			return retval;
+		ако (retval)
+			врати retval;
 	}
-	if (new_size > size)
+	ако (new_size > size)
 		memset(bp->bitarray + size, 0, new_size - size);
 
 	bmap->end = new_end;
 	bmap->real_end = new_real_end;
-	return 0;
+	врати 0;
 
 }
 
-static int ba_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+static цео ba_mark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
 	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
 	blk64_t bitno = (blk64_t) arg;
 
-	return ext2fs_set_bit64(bitno - bitmap->start, bp->bitarray);
+	врати ext2fs_set_bit64(bitno - bitmap->start, bp->bitarray);
 }
 
-static int ba_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+static цео ba_unmark_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
 	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
 	blk64_t bitno = (blk64_t) arg;
 
-	return ext2fs_clear_bit64(bitno - bitmap->start, bp->bitarray);
+	врати ext2fs_clear_bit64(bitno - bitmap->start, bp->bitarray);
 }
 
-static int ba_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
+static цео ba_test_bmap(ext2fs_generic_bitmap_64 bitmap, __u64 arg)
 {
 	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
 	blk64_t bitno = (blk64_t) arg;
 
-	return ext2fs_test_bit64(bitno - bitmap->start, bp->bitarray);
+	врати ext2fs_test_bit64(bitno - bitmap->start, bp->bitarray);
 }
 
 static void ba_mark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				unsigned int num)
+				unsigned цео num)
 {
 	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
 	blk64_t bitno = (blk64_t) arg;
-	unsigned int i;
+	unsigned цео i;
 
-	for (i = 0; i < num; i++)
+	за (i = 0; i < num; i++)
 		ext2fs_fast_set_bit64(bitno + i - bitmap->start, bp->bitarray);
 }
 
 static void ba_unmark_bmap_extent(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				  unsigned int num)
+				  unsigned цео num)
 {
 	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
 	blk64_t bitno = (blk64_t) arg;
-	unsigned int i;
+	unsigned цео i;
 
-	for (i = 0; i < num; i++)
+	за (i = 0; i < num; i++)
 		ext2fs_fast_clear_bit64(bitno + i - bitmap->start, bp->bitarray);
 }
 
-static int ba_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
-				     __u64 start, unsigned int len)
+static цео ba_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
+				     __u64 start, unsigned цео len)
 {
 	ext2fs_ba_private bp = (ext2fs_ba_private) bitmap->private;
 	__u64 start_byte, len_byte = len >> 3;
-	unsigned int start_bit, len_bit = len % 8;
-	unsigned int first_bit = 0;
-	unsigned int last_bit  = 0;
-	int mark_count = 0;
-	int mark_bit = 0;
-	int i;
+	unsigned цео start_bit, len_bit = len % 8;
+	unsigned цео first_bit = 0;
+	unsigned цео last_bit  = 0;
+	цео mark_count = 0;
+	цео mark_bit = 0;
+	цео i;
 	const char *ADDR;
 
 	ADDR = bp->bitarray;
@@ -226,29 +226,29 @@ static int ba_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
 	start_byte = start >> 3;
 	start_bit = start % 8;
 
-	if (start_bit != 0) {
+	ако (start_bit != 0) {
 		/*
 		 * The compared start block number or start inode number
 		 * is not the first bit in a byte.
 		 */
 		mark_count = 8 - start_bit;
-		if (len < 8 - start_bit) {
-			mark_count = (int)len;
+		ако (len < 8 - start_bit) {
+			mark_count = (цео)len;
 			mark_bit = len + start_bit - 1;
-		} else
+		} инако
 			mark_bit = 7;
 
-		for (i = mark_count; i > 0; i--, mark_bit--)
+		за (i = mark_count; i > 0; i--, mark_bit--)
 			first_bit |= 1 << mark_bit;
 
 		/*
 		 * Compare blocks or inodes in the first byte.
 		 * If there is any marked bit, this function returns 0.
 		 */
-		if (first_bit & ADDR[start_byte])
-			return 0;
-		else if (len <= 8 - start_bit)
-			return 1;
+		ако (first_bit & ADDR[start_byte])
+			врати 0;
+		инако ако (len <= 8 - start_bit)
+			врати 1;
 
 		start_byte++;
 		len_bit = (len - mark_count) % 8;
@@ -259,26 +259,26 @@ static int ba_test_clear_bmap_extent(ext2fs_generic_bitmap_64 bitmap,
 	 * The compared start block number or start inode number is
 	 * the first bit in a byte.
 	 */
-	if (len_bit != 0) {
+	ако (len_bit != 0) {
 		/*
 		 * The compared end block number or end inode number is
 		 * not the last bit in a byte.
 		 */
-		for (mark_bit = len_bit - 1; mark_bit >= 0; mark_bit--)
+		за (mark_bit = len_bit - 1; mark_bit >= 0; mark_bit--)
 			last_bit |= 1 << mark_bit;
 
 		/*
 		 * Compare blocks or inodes in the last byte.
 		 * If there is any marked bit, this function returns 0.
 		 */
-		if (last_bit & ADDR[start_byte + len_byte])
-			return 0;
-		else if (len_byte == 0)
-			return 1;
+		ако (last_bit & ADDR[start_byte + len_byte])
+			врати 0;
+		инако ако (len_byte == 0)
+			врати 1;
 	}
 
 	/* Check whether all bytes are 0 */
-	return ext2fs_mem_is_zero(ADDR + start_byte, len_byte);
+	врати ext2fs_mem_is_zero(ADDR + start_byte, len_byte);
 }
 
 
@@ -289,7 +289,7 @@ static errcode_t ba_set_bmap_range(ext2fs_generic_bitmap_64 bitmap,
 
 	memcpy (bp->bitarray + (start >> 3), in, (num + 7) >> 3);
 
-	return 0;
+	врати 0;
 }
 
 static errcode_t ba_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
@@ -299,7 +299,7 @@ static errcode_t ba_get_bmap_range(ext2fs_generic_bitmap_64 bitmap,
 
 	memcpy (out, bp->bitarray + (start >> 3), (num + 7) >> 3);
 
-	return 0;
+	врати 0;
 }
 
 static void ba_clear_bmap(ext2fs_generic_bitmap_64 bitmap)
@@ -317,7 +317,7 @@ static void ba_print_stats(ext2fs_generic_bitmap_64 bitmap)
 		((bitmap->real_end - bitmap->start) >> 3) + 1 +
 		sizeof(struct ext2fs_ba_private_struct));
 }
-#else
+#инако
 static void ba_print_stats(ext2fs_generic_bitmap_64 bitmap EXT2FS_ATTR((unused)))
 {
 }
@@ -330,27 +330,27 @@ static errcode_t ba_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
 	ext2fs_ba_private bp = (ext2fs_ba_private)bitmap->private;
 	unsigned long bitpos = start - bitmap->start;
 	unsigned long count = end - start + 1;
-	int byte_found = 0; /* whether a != 0xff byte has been found */
+	цео byte_found = 0; /* whether a != 0xff byte has been found */
 	const unsigned char *pos;
 	unsigned long max_loop_count, i;
 
 	/* scan bits until we hit a byte boundary */
-	while ((bitpos & 0x7) != 0 && count > 0) {
-		if (!ext2fs_test_bit64(bitpos, bp->bitarray)) {
+	док ((bitpos & 0x7) != 0 && count > 0) {
+		ако (!ext2fs_test_bit64(bitpos, bp->bitarray)) {
 			*out = bitpos + bitmap->start;
-			return 0;
+			врати 0;
 		}
 		bitpos++;
 		count--;
 	}
 
-	if (!count)
-		return ENOENT;
+	ако (!count)
+		врати ENOENT;
 
 	pos = ((unsigned char *)bp->bitarray) + (bitpos >> 3);
 	/* scan bytes until 8-byte (64-bit) aligned */
-	while (count >= 8 && (((uintptr_t)pos) & 0x07)) {
-		if (*pos != 0xff) {
+	док (count >= 8 && (((uintptr_t)pos) & 0x07)) {
+		ако (*pos != 0xff) {
 			byte_found = 1;
 			break;
 		}
@@ -359,11 +359,11 @@ static errcode_t ba_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
 		bitpos += 8;
 	}
 
-	if (!byte_found) {
+	ако (!byte_found) {
 		max_loop_count = count >> 6; /* 8-byte blocks */
 		i = max_loop_count;
-		while (i) {
-			if (*((const __u64 *)pos) != ((__u64)-1))
+		док (i) {
+			ако (*((const __u64 *)pos) != ((__u64)-1))
 				break;
 			pos += 8;
 			i--;
@@ -373,8 +373,8 @@ static errcode_t ba_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
 
 		max_loop_count = count >> 3;
 		i = max_loop_count;
-		while (i) {
-			if (*pos != 0xff) {
+		док (i) {
+			ако (*pos != 0xff) {
 				byte_found = 1;
 				break;
 			}
@@ -386,15 +386,15 @@ static errcode_t ba_find_first_zero(ext2fs_generic_bitmap_64 bitmap,
 	}
 
 	/* Here either count < 8 or byte_found == 1. */
-	while (count-- > 0) {
-		if (!ext2fs_test_bit64(bitpos, bp->bitarray)) {
+	док (count-- > 0) {
+		ако (!ext2fs_test_bit64(bitpos, bp->bitarray)) {
 			*out = bitpos + bitmap->start;
-			return 0;
+			врати 0;
 		}
 		bitpos++;
 	}
 
-	return ENOENT;
+	врати ENOENT;
 }
 
 /* Find the first one bit between start and end, inclusive. */
@@ -404,27 +404,27 @@ static errcode_t ba_find_first_set(ext2fs_generic_bitmap_64 bitmap,
 	ext2fs_ba_private bp = (ext2fs_ba_private)bitmap->private;
 	unsigned long bitpos = start - bitmap->start;
 	unsigned long count = end - start + 1;
-	int byte_found = 0; /* whether a != 0xff byte has been found */
+	цео byte_found = 0; /* whether a != 0xff byte has been found */
 	const unsigned char *pos;
 	unsigned long max_loop_count, i;
 
 	/* scan bits until we hit a byte boundary */
-	while ((bitpos & 0x7) != 0 && count > 0) {
-		if (ext2fs_test_bit64(bitpos, bp->bitarray)) {
+	док ((bitpos & 0x7) != 0 && count > 0) {
+		ако (ext2fs_test_bit64(bitpos, bp->bitarray)) {
 			*out = bitpos + bitmap->start;
-			return 0;
+			врати 0;
 		}
 		bitpos++;
 		count--;
 	}
 
-	if (!count)
-		return ENOENT;
+	ако (!count)
+		врати ENOENT;
 
 	pos = ((unsigned char *)bp->bitarray) + (bitpos >> 3);
 	/* scan bytes until 8-byte (64-bit) aligned */
-	while (count >= 8 && (((uintptr_t)pos) & 0x07)) {
-		if (*pos != 0) {
+	док (count >= 8 && (((uintptr_t)pos) & 0x07)) {
+		ако (*pos != 0) {
 			byte_found = 1;
 			break;
 		}
@@ -433,11 +433,11 @@ static errcode_t ba_find_first_set(ext2fs_generic_bitmap_64 bitmap,
 		bitpos += 8;
 	}
 
-	if (!byte_found) {
+	ако (!byte_found) {
 		max_loop_count = count >> 6; /* 8-byte blocks */
 		i = max_loop_count;
-		while (i) {
-			if (*((const __u64 *)pos) != 0)
+		док (i) {
+			ако (*((const __u64 *)pos) != 0)
 				break;
 			pos += 8;
 			i--;
@@ -447,8 +447,8 @@ static errcode_t ba_find_first_set(ext2fs_generic_bitmap_64 bitmap,
 
 		max_loop_count = count >> 3;
 		i = max_loop_count;
-		while (i) {
-			if (*pos != 0) {
+		док (i) {
+			ако (*pos != 0) {
 				byte_found = 1;
 				break;
 			}
@@ -460,15 +460,15 @@ static errcode_t ba_find_first_set(ext2fs_generic_bitmap_64 bitmap,
 	}
 
 	/* Here either count < 8 or byte_found == 1. */
-	while (count-- > 0) {
-		if (ext2fs_test_bit64(bitpos, bp->bitarray)) {
+	док (count-- > 0) {
+		ако (ext2fs_test_bit64(bitpos, bp->bitarray)) {
 			*out = bitpos + bitmap->start;
-			return 0;
+			врати 0;
 		}
 		bitpos++;
 	}
 
-	return ENOENT;
+	врати ENOENT;
 }
 
 struct ext2_bitmap_ops ext2fs_blkmap64_bitarray = {

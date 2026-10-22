@@ -19,22 +19,22 @@
 #include <ext2fs/ext2_types.h>		/* Changed from linux/types.h */
 
 #ifndef __GNUC_PREREQ
-#if defined(__GNUC__) && defined(__GNUC_MINOR__)
+#ако defined(__GNUC__) && defined(__GNUC_MINOR__)
 #define __GNUC_PREREQ(maj, min) \
 	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
-#else
+#инако
 #define __GNUC_PREREQ(maj, min) 0
 #endif
 #endif
 
 #ifndef __nonstring
 #ifdef __has_attribute
-#if __has_attribute(__nonstring__)
+#ако __has_attribute(__nonstring__)
 #define __nonstring                    __attribute__((__nonstring__))
-#else
+#инако
 #define __nonstring
 #endif /* __has_attribute(__nonstring__) */
-#else
+#инако
 # define __nonstring
 #endif /* __has_attribute */
 #endif /* __nonstring */
@@ -84,7 +84,7 @@
 
 #ifdef __KERNEL__
 #define EXT2_SB(sb)	(&((sb)->u.ext2_sb))
-#else
+#инако
 /* Assume that user mode programs are passing in an ext2fs superblock, not
  * a kernel struct super_block.  This will allow us to call the feature-test
  * macros from user land. */
@@ -109,7 +109,7 @@
 #define EXT2_ADDR_PER_BLOCK_BITS(s)	(EXT2_SB(s)->addr_per_block_bits)
 #define EXT2_INODE_SIZE(s)	(EXT2_SB(s)->s_inode_size)
 #define EXT2_FIRST_INO(s)	(EXT2_SB(s)->s_first_ino)
-#else
+#инако
 #define EXT2_BLOCK_SIZE(s)	(EXT2_MIN_BLOCK_SIZE << (s)->s_log_block_size)
 #define EXT2_BLOCK_SIZE_BITS(s)	((s)->s_log_block_size + 10)
 #define EXT2_INODE_SIZE(s)	(((s)->s_rev_level == EXT2_GOOD_OLD_REV) ? \
@@ -297,7 +297,7 @@ struct ext2_dx_tail {
 #ifdef __KERNEL__
 #define EXT2_DESC_PER_BLOCK(s)		(EXT2_SB(s)->s_desc_per_block)
 #define EXT2_DESC_PER_BLOCK_BITS(s)	(EXT2_SB(s)->s_desc_per_block_bits)
-#else
+#инако
 #define EXT2_DESC_PER_BLOCK(s)		(EXT2_BLOCK_SIZE(s) / EXT2_DESC_SIZE(s))
 #endif
 
@@ -516,7 +516,7 @@ struct ext2_inode_large {
 	((size) >= (sizeof(((struct ext2_inode_large *)0)->field) +	\
 		    offsetof(struct ext2_inode_large, field)))
 
-#if defined(__KERNEL__) || defined(__linux__)
+#ако defined(__KERNEL__) || defined(__linux__)
 #define i_reserved1	osd1.linux1.l_i_reserved1
 #define i_frag		osd2.linux2.l_i_frag
 #define i_fsize		osd2.linux2.l_i_fsize
@@ -524,8 +524,8 @@ struct ext2_inode_large {
 #define i_gid_low	i_gid
 #define i_uid_high	osd2.linux2.l_i_uid_high
 #define i_gid_high	osd2.linux2.l_i_gid_high
-#else
-#if defined(__GNU__)
+#инако
+#ако defined(__GNU__)
 
 #define i_translator	osd1.hurd1.h_i_translator
 #define i_frag		osd2.hurd2.h_i_frag;
@@ -546,7 +546,7 @@ struct ext2_inode_large {
 static inline
 struct ext2_inode *EXT2_INODE(struct ext2_inode_large *large_inode)
 {
-	return (struct ext2_inode *) large_inode;
+	врати (struct ext2_inode *) large_inode;
 }
 
 /*
@@ -597,9 +597,9 @@ struct ext2_inode *EXT2_INODE(struct ext2_inode_large *large_inode)
 #define EXT2_ERRORS_PANIC		3	/* Panic */
 #define EXT2_ERRORS_DEFAULT		EXT2_ERRORS_CONTINUE
 
-#if (__GNUC__ >= 4)
+#ако (__GNUC__ >= 4)
 #define ext4_offsetof(TYPE,MEMBER) __builtin_offsetof(TYPE,MEMBER)
-#else
+#инако
 #define ext4_offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
 #endif
 
@@ -779,7 +779,7 @@ struct ext2_super_block {
 };
 
 #define EXT4_S_ERR_LEN (EXT4_S_ERR_END - EXT4_S_ERR_START)
-#define EXT2_LEN_STR(buf) (int)sizeof(buf), (char *)buf
+#define EXT2_LEN_STR(buf) (цео)sizeof(buf), (char *)buf
 
 /*
  * Codes for operating systems
@@ -876,9 +876,9 @@ struct ext2_super_block {
 #define EXT4_FEATURE_INCOMPAT_CASEFOLD		0x20000
 
 #define EXT4_FEATURE_COMPAT_FUNCS(name, ver, flagname) \
-static inline int ext2fs_has_feature_##name(struct ext2_super_block *sb) \
+static inline цео ext2fs_has_feature_##name(struct ext2_super_block *sb) \
 { \
-	return ((EXT2_SB(sb)->s_feature_compat & \
+	врати ((EXT2_SB(sb)->s_feature_compat & \
 		 EXT##ver##_FEATURE_COMPAT_##flagname) != 0); \
 } \
 static inline void ext2fs_set_feature_##name(struct ext2_super_block *sb) \
@@ -893,9 +893,9 @@ static inline void ext2fs_clear_feature_##name(struct ext2_super_block *sb) \
 }
 
 #define EXT4_FEATURE_RO_COMPAT_FUNCS(name, ver, flagname) \
-static inline int ext2fs_has_feature_##name(struct ext2_super_block *sb) \
+static inline цео ext2fs_has_feature_##name(struct ext2_super_block *sb) \
 { \
-	return ((EXT2_SB(sb)->s_feature_ro_compat & \
+	врати ((EXT2_SB(sb)->s_feature_ro_compat & \
 		 EXT##ver##_FEATURE_RO_COMPAT_##flagname) != 0); \
 } \
 static inline void ext2fs_set_feature_##name(struct ext2_super_block *sb) \
@@ -910,9 +910,9 @@ static inline void ext2fs_clear_feature_##name(struct ext2_super_block *sb) \
 }
 
 #define EXT4_FEATURE_INCOMPAT_FUNCS(name, ver, flagname) \
-static inline int ext2fs_has_feature_##name(struct ext2_super_block *sb) \
+static inline цео ext2fs_has_feature_##name(struct ext2_super_block *sb) \
 { \
-	return ((EXT2_SB(sb)->s_feature_incompat & \
+	врати ((EXT2_SB(sb)->s_feature_incompat & \
 		 EXT##ver##_FEATURE_INCOMPAT_##flagname) != 0); \
 } \
 static inline void ext2fs_set_feature_##name(struct ext2_super_block *sb) \
@@ -1007,9 +1007,9 @@ EXT4_FEATURE_INCOMPAT_FUNCS(casefold,		4, CASEFOLD)
 #define EXT4_DEFM_DISCARD	0x0400
 #define EXT4_DEFM_NODELALLOC	0x0800
 
-static inline int ext4_hash_in_dirent(const struct ext2_inode *inode)
+static inline цео ext4_hash_in_dirent(const struct ext2_inode *inode)
 {
-	return (inode->i_flags & EXT4_ENCRYPT_FL) &&
+	врати (inode->i_flags & EXT4_ENCRYPT_FL) &&
 		(inode->i_flags & EXT4_CASEFOLD_FL);
 }
 
@@ -1111,15 +1111,15 @@ struct ext2_dir_entry_tail {
 #define EXT2_DIR_ROUND			(EXT2_DIR_PAD - 1)
 #define EXT2_DIR_REC_LEN(name_len) ext2fs_dir_rec_len(name_len, 0)
 
-static inline unsigned int ext2fs_dir_rec_len(__u8 name_len,
-						int extended)
+static inline unsigned цео ext2fs_dir_rec_len(__u8 name_len,
+						цео extended)
 {
-	int rec_len = (name_len + EXT2_DIR_ENTRY_HEADER_LEN + EXT2_DIR_ROUND);
+	цео rec_len = (name_len + EXT2_DIR_ENTRY_HEADER_LEN + EXT2_DIR_ROUND);
 
 	rec_len &= ~EXT2_DIR_ROUND;
-	if (extended)
+	ако (extended)
 		rec_len += EXT2_DIR_ENTRY_HASH_LEN;
-	return rec_len;
+	врати rec_len;
 }
 
 #define EXT4_ORPHAN_BLOCK_MAGIC 0x0b10ca04
