@@ -18,18 +18,18 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ຖ້າ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#ຖ້າ HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#ຖ້າ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#if HAVE_MALLOC_H
+#ຖ້າ HAVE_MALLOC_H
 #include <malloc.h>
 #endif
 
@@ -48,43 +48,43 @@ errcode_t ext2fs_get_memalign(unsigned long size,
 	errcode_t retval = 0;
 	void **p = ptr;
 
-	if (align < 8)
+	ຖ້າ (align < 8)
 		align = 8;
 #ifdef HAVE_POSIX_MEMALIGN
 	retval = posix_memalign(p, align, size);
-	if (retval == ENOMEM)
-		return EXT2_ET_NO_MEMORY;
-#else  /* !HAVE_POSIX_MEMALIGN */
+	ຖ້າ (retval == ENOMEM)
+		ສົ່ງຄືນ EXT2_ET_NO_MEMORY;
+#ບໍ່ດັ່ງນັ້ນ  /* !HAVE_POSIX_MEMALIGN */
 #ifdef HAVE_MEMALIGN
 	*p = memalign(align, size);
-	if (*p == NULL) {
-		if (errno)
-			return errno;
-		else
-			return EXT2_ET_NO_MEMORY;
+	ຖ້າ (*p == NULL) {
+		ຖ້າ (errno)
+			ສົ່ງຄືນ errno;
+		ບໍ່ດັ່ງນັ້ນ
+			ສົ່ງຄືນ EXT2_ET_NO_MEMORY;
 	}
-#else  /* !HAVE_MEMALIGN */
+#ບໍ່ດັ່ງນັ້ນ  /* !HAVE_MEMALIGN */
 #ifdef HAVE_VALLOC
-	if (align > sizeof(long long))
+	ຖ້າ (align > parimaa_na(long long))
 		*p = valloc(size);
-	else
+	ບໍ່ດັ່ງນັ້ນ
 #endif
 		*p = malloc(size);
-	if ((uintptr_t) *p & (align - 1)) {
+	ຖ້າ ((uintptr_t) *p & (align - 1)) {
 		free(*p);
 		*p = 0;
 	}
-	if (*p == 0)
-		return EXT2_ET_NO_MEMORY;
+	ຖ້າ (*p == 0)
+		ສົ່ງຄືນ EXT2_ET_NO_MEMORY;
 #endif	/* HAVE_MEMALIGN */
 #endif	/* HAVE_POSIX_MEMALIGN */
-	return retval;
+	ສົ່ງຄືນ retval;
 }
 
 #ifdef DEBUG
-static int isaligned(void *ptr, unsigned long align)
+static ຈຳນວນເຕັມ isaligned(void *ptr, unsigned long align)
 {
-	return (((unsigned long) ptr & (align - 1)) == 0);
+	ສົ່ງຄືນ (((unsigned long) ptr & (align - 1)) == 0);
 }
 
 static errcode_t test_memalign(unsigned long align)
@@ -93,26 +93,26 @@ static errcode_t test_memalign(unsigned long align)
 	errcode_t retval;
 
 	retval = ext2fs_get_memalign(32, align, &ptr);
-	if (!retval && !isaligned(ptr, align))
+	ຖ້າ (!retval && !isaligned(ptr, align))
 		retval = EINVAL;
 	free(ptr);
 	printf("tst_memalign(%lu) is %s\n", align,
 	       retval ? error_message(retval) : "OK");
-	return retval;
+	ສົ່ງຄືນ retval;
 }
 
-int main(int argc, char **argv)
+ຈຳນວນເຕັມ main(ຈຳນວນເຕັມ argc, var_na **argv)
 {
-	int err = 0;
+	ຈຳນວນເຕັມ err = 0;
 
-	if (test_memalign(4))
+	ຖ້າ (test_memalign(4))
 		err++;
-	if (test_memalign(32))
+	ຖ້າ (test_memalign(32))
 		err++;
-	if (test_memalign(1024))
+	ຖ້າ (test_memalign(1024))
 		err++;
-	if (test_memalign(4096))
+	ຖ້າ (test_memalign(4096))
 		err++;
-	return err;
+	ສົ່ງຄືນ err;
 }
 #endif

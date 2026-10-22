@@ -13,102 +13,102 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ຖ້າ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#ຖ້າ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#if HAVE_SYS_TIME_H
+#ຖ້າ HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
 
 #include "ext2_fs.h"
 #include "ext2fsP.h"
 
-struct process_block_struct {
+sa_nracanaa process_block_struct {
 	ext2_ino_t		ino;
-	struct ext2_inode *	inode;
+	sa_nracanaa ext2_inode *	inode;
 	ext2fs_block_bitmap	reserve;
 	ext2fs_block_bitmap	alloc_map;
 	errcode_t		error;
-	char			*buf;
-	int			add_dir;
-	int			flags;
+	var_na			*buf;
+	ຈຳນວນເຕັມ			add_dir;
+	ຈຳນວນເຕັມ			flags;
 };
 
-static int process_block(ext2_filsys fs, blk64_t *block_nr,
+static ຈຳນວນເຕັມ process_block(ext2_filsys fs, blk64_t *block_nr,
 			 e2_blkcnt_t blockcnt, blk64_t ref_block,
-			 int ref_offset, void *priv_data)
+			 ຈຳນວນເຕັມ ref_offset, void *priv_data)
 {
-	struct process_block_struct *pb;
+	sa_nracanaa process_block_struct *pb;
 	errcode_t	retval;
-	int		ret;
+	ຈຳນວນເຕັມ		ret;
 	blk64_t		block, orig;
 
-	pb = (struct process_block_struct *) priv_data;
+	pb = (sa_nracanaa process_block_struct *) priv_data;
 	block = orig = *block_nr;
 	ret = 0;
 
 	/*
 	 * Let's see if this is one which we need to relocate
 	 */
-	if (ext2fs_test_block_bitmap2(pb->reserve, block)) {
+	ຖ້າ (ext2fs_test_block_bitmap2(pb->reserve, block)) {
 		do {
-			if (++block >= ext2fs_blocks_count(fs->super))
+			ຖ້າ (++block >= ext2fs_blocks_count(fs->super))
 				block = fs->super->s_first_data_block;
-			if (block == orig) {
+			ຖ້າ (block == orig) {
 				pb->error = EXT2_ET_BLOCK_ALLOC_FAIL;
-				return BLOCK_ABORT;
+				ສົ່ງຄືນ BLOCK_ABORT;
 			}
-		} while (ext2fs_test_block_bitmap2(pb->reserve, block) ||
+		} ໃນຂະນະທີ່ (ext2fs_test_block_bitmap2(pb->reserve, block) ||
 			 ext2fs_test_block_bitmap2(pb->alloc_map, block));
 
 		retval = io_channel_read_blk64(fs->io, orig, 1, pb->buf);
-		if (retval) {
+		ຖ້າ (retval) {
 			pb->error = retval;
-			return BLOCK_ABORT;
+			ສົ່ງຄືນ BLOCK_ABORT;
 		}
 		retval = io_channel_write_blk64(fs->io, block, 1, pb->buf);
-		if (retval) {
+		ຖ້າ (retval) {
 			pb->error = retval;
-			return BLOCK_ABORT;
+			ສົ່ງຄືນ BLOCK_ABORT;
 		}
 		*block_nr = block;
 		ext2fs_mark_block_bitmap2(pb->alloc_map, block);
 		ret = BLOCK_CHANGED;
-		if (pb->flags & EXT2_BMOVE_DEBUG)
+		ຖ້າ (pb->flags & EXT2_BMOVE_DEBUG)
 			printf("ino=%u, blockcnt=%lld, %llu->%llu\n",
 			       (unsigned) pb->ino, blockcnt, 
 			       (unsigned long long) orig,
 			       (unsigned long long) block);
 	}
-	if (pb->add_dir) {
+	ຖ້າ (pb->add_dir) {
 		retval = ext2fs_add_dir_block2(fs->dblist, pb->ino,
 					       block, blockcnt);
-		if (retval) {
+		ຖ້າ (retval) {
 			pb->error = retval;
 			ret |= BLOCK_ABORT;
 		}
 	}
-	return ret;
+	ສົ່ງຄືນ ret;
 }
 
 errcode_t ext2fs_move_blocks(ext2_filsys fs,
 			     ext2fs_block_bitmap reserve,
 			     ext2fs_block_bitmap alloc_map,
-			     int flags)
+			     ຈຳນວນເຕັມ flags)
 {
 	ext2_ino_t	ino;
-	struct ext2_inode inode;
+	sa_nracanaa ext2_inode inode;
 	errcode_t	retval;
-	struct process_block_struct pb;
+	sa_nracanaa process_block_struct pb;
 	ext2_inode_scan	scan;
-	char		*block_buf;
+	var_na		*block_buf;
 
 	retval = ext2fs_open_inode_scan(fs, 0, &scan);
-	if (retval)
-		return retval;
+	ຖ້າ (retval)
+		ສົ່ງຄືນ retval;
 
 	pb.reserve = reserve;
 	pb.error = 0;
@@ -116,8 +116,8 @@ errcode_t ext2fs_move_blocks(ext2_filsys fs,
 	pb.flags = flags;
 
 	retval = ext2fs_get_array(4, fs->blocksize, &block_buf);
-	if (retval)
-		return retval;
+	ຖ້າ (retval)
+		ສົ່ງຄືນ retval;
 	pb.buf = block_buf + fs->blocksize * 3;
 
 	/*
@@ -125,22 +125,22 @@ errcode_t ext2fs_move_blocks(ext2_filsys fs,
 	 * gather directory block information while we're doing the
 	 * block move.
 	 */
-	if (flags & EXT2_BMOVE_GET_DBLIST) {
-		if (fs->dblist) {
+	ຖ້າ (flags & EXT2_BMOVE_GET_DBLIST) {
+		ຖ້າ (fs->dblist) {
 			ext2fs_free_dblist(fs->dblist);
 			fs->dblist = NULL;
 		}
 		retval = ext2fs_init_dblist(fs, 0);
-		if (retval)
-			return retval;
+		ຖ້າ (retval)
+			ສົ່ງຄືນ retval;
 	}
 
 	retval = ext2fs_get_next_inode(scan, &ino, &inode);
-	if (retval)
-		return retval;
+	ຖ້າ (retval)
+		ສົ່ງຄືນ retval;
 
-	while (ino) {
-		if ((inode.i_links_count == 0) ||
+	ໃນຂະນະທີ່ (ino) {
+		ຖ້າ ((inode.i_links_count == 0) ||
 		    !ext2fs_inode_has_valid_blocks2(fs, &inode))
 			goto next;
 
@@ -152,16 +152,16 @@ errcode_t ext2fs_move_blocks(ext2_filsys fs,
 
 		retval = ext2fs_block_iterate3(fs, ino, 0, block_buf,
 					       process_block, &pb);
-		if (retval)
-			return retval;
-		if (pb.error)
-			return pb.error;
+		ຖ້າ (retval)
+			ສົ່ງຄືນ retval;
+		ຖ້າ (pb.error)
+			ສົ່ງຄືນ pb.error;
 
 	next:
 		retval = ext2fs_get_next_inode(scan, &ino, &inode);
-		if (retval == EXT2_ET_BAD_BLOCK_IN_INODE_TABLE)
+		ຖ້າ (retval == EXT2_ET_BAD_BLOCK_IN_INODE_TABLE)
 			goto next;
 	}
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 

@@ -15,12 +15,12 @@
 #include "ext2_fs.h"
 #include "ext2fs.h"
 
-int ext2fs_native_flag(void)
+ຈຳນວນເຕັມ ext2fs_native_flag(void)
 {
 #ifdef WORDS_BIGENDIAN
-	return EXT2_FLAG_SWAP_BYTES;
-#else
-	return 0;
+	ສົ່ງຄືນ EXT2_FLAG_SWAP_BYTES;
+#ບໍ່ດັ່ງນັ້ນ
+	ສົ່ງຄືນ 0;
 #endif
 }
 

@@ -42,13 +42,13 @@ static void TEA_transform(__u32 buf[4], __u32 const in[])
 	__u32	sum = 0;
 	__u32	b0 = buf[0], b1 = buf[1];
 	__u32	a = in[0], b = in[1], c = in[2], d = in[3];
-	int	n = 16;
+	ຈຳນວນເຕັມ	n = 16;
 
 	do {
 		sum += DELTA;
 		b0 += ((b1 << 4)+a) ^ (b1+sum) ^ ((b1 >> 5)+b);
 		b1 += ((b0 << 4)+c) ^ (b0+sum) ^ ((b0 >> 5)+d);
-	} while(--n);
+	} ໃນຂະນະທີ່(--n);
 
 	buf[0] += b0;
 	buf[1] += b1;
@@ -123,58 +123,58 @@ static void halfMD4Transform (__u32 buf[4], __u32 const in[])
 #undef K3
 
 /* The old legacy hash */
-static ext2_dirhash_t dx_hack_hash (const char *name, int len,
-				    int unsigned_flag)
+static ext2_dirhash_t dx_hack_hash (const var_na *name, ຈຳນວນເຕັມ len,
+				    ຈຳນວນເຕັມ unsigned_flag)
 {
 	__u32 hash, hash0 = 0x12a3fe2d, hash1 = 0x37abe8f9;
-	const unsigned char *ucp = (const unsigned char *) name;
-	const signed char *scp = (const signed char *) name;
-	int c;
+	const unsigned var_na *ucp = (const unsigned var_na *) name;
+	const signed var_na *scp = (const signed var_na *) name;
+	ຈຳນວນເຕັມ c;
 
-	while (len--) {
-		if (unsigned_flag)
-			c = (int) *ucp++;
-		else
-			c = (int) *scp++;
+	ໃນຂະນະທີ່ (len--) {
+		ຖ້າ (unsigned_flag)
+			c = (ຈຳນວນເຕັມ) *ucp++;
+		ບໍ່ດັ່ງນັ້ນ
+			c = (ຈຳນວນເຕັມ) *scp++;
 		hash = hash1 + (hash0 ^ (c * 7152373));
 
-		if (hash & 0x80000000) hash -= 0x7fffffff;
+		ຖ້າ (hash & 0x80000000) hash -= 0x7fffffff;
 		hash1 = hash0;
 		hash0 = hash;
 	}
-	return (hash0 << 1);
+	ສົ່ງຄືນ (hash0 << 1);
 }
 
-static void str2hashbuf(const char *msg, int len, __u32 *buf, int num,
-			int unsigned_flag)
+static void str2hashbuf(const var_na *msg, ຈຳນວນເຕັມ len, __u32 *buf, ຈຳນວນເຕັມ num,
+			ຈຳນວນເຕັມ unsigned_flag)
 {
 	__u32	pad, val;
-	int	i, c;
-	const unsigned char *ucp = (const unsigned char *) msg;
-	const signed char *scp = (const signed char *) msg;
+	ຈຳນວນເຕັມ	i, c;
+	const unsigned var_na *ucp = (const unsigned var_na *) msg;
+	const signed var_na *scp = (const signed var_na *) msg;
 
 	pad = (__u32)len | ((__u32)len << 8);
 	pad |= pad << 16;
 
 	val = pad;
-	if (len > num*4)
+	ຖ້າ (len > num*4)
 		len = num * 4;
-	for (i=0; i < len; i++) {
-		if (unsigned_flag)
-			c = (int) ucp[i];
-		else
-			c = (int) scp[i];
+	ສຳລັບ (i=0; i < len; i++) {
+		ຖ້າ (unsigned_flag)
+			c = (ຈຳນວນເຕັມ) ucp[i];
+		ບໍ່ດັ່ງນັ້ນ
+			c = (ຈຳນວນເຕັມ) scp[i];
 
 		val = c + (val << 8);
-		if ((i % 4) == 3) {
+		ຖ້າ ((i % 4) == 3) {
 			*buf++ = val;
 			val = pad;
 			num--;
 		}
 	}
-	if (--num >= 0)
+	ຖ້າ (--num >= 0)
 		*buf++ = val;
-	while (--num >= 0)
+	ໃນຂະນະທີ່ (--num >= 0)
 		*buf++ = pad;
 }
 
@@ -196,17 +196,17 @@ static void str2hashbuf(const char *msg, int len, __u32 *buf, int num,
  * ext2fs_dirhash2.
  *
  */
-errcode_t ext2fs_dirhash(int version, const char *name, int len,
+errcode_t ext2fs_dirhash(ຈຳນວນເຕັມ version, const var_na *name, ຈຳນວນເຕັມ len,
 			 const __u32 *seed,
 			 ext2_dirhash_t *ret_hash,
 			 ext2_dirhash_t *ret_minor_hash)
 {
 	__u32	hash;
 	__u32	minor_hash = 0;
-	const char	*p;
-	int		i;
+	const var_na	*p;
+	ຈຳນວນເຕັມ		i;
 	__u32 		in[8], buf[4];
-	int		unsigned_flag = 0;
+	ຈຳນວນເຕັມ		unsigned_flag = 0;
 
 	/* Initialize the default seed for the hash checksum functions */
 	buf[0] = 0x67452301;
@@ -215,28 +215,28 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 	buf[3] = 0x10325476;
 
 	/* Check to see if the seed is all zero's */
-	if (seed) {
-		for (i=0; i < 4; i++) {
-			if (seed[i])
-				break;
+	ຖ້າ (seed) {
+		ສຳລັບ (i=0; i < 4; i++) {
+			ຖ້າ (seed[i])
+				bha_nga;
 		}
-		if (i < 4)
-			memcpy(buf, seed, sizeof(buf));
+		ຖ້າ (i < 4)
+			memcpy(buf, seed, parimaa_na(buf));
 	}
 
 	switch (version) {
-	case EXT2_HASH_LEGACY_UNSIGNED:
+	pak_sa EXT2_HASH_LEGACY_UNSIGNED:
 		unsigned_flag++;
 		/* fallthrough */
-	case EXT2_HASH_LEGACY:
+	pak_sa EXT2_HASH_LEGACY:
 		hash = dx_hack_hash(name, len, unsigned_flag);
-		break;
-	case EXT2_HASH_HALF_MD4_UNSIGNED:
+		bha_nga;
+	pak_sa EXT2_HASH_HALF_MD4_UNSIGNED:
 		unsigned_flag++;
 		/* fallthrough */
-	case EXT2_HASH_HALF_MD4:
+	pak_sa EXT2_HASH_HALF_MD4:
 		p = name;
-		while (len > 0) {
+		ໃນຂະນະທີ່ (len > 0) {
 			str2hashbuf(p, len, in, 8, unsigned_flag);
 			halfMD4Transform(buf, in);
 			len -= 32;
@@ -244,13 +244,13 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 		}
 		minor_hash = buf[2];
 		hash = buf[1];
-		break;
-	case EXT2_HASH_TEA_UNSIGNED:
+		bha_nga;
+	pak_sa EXT2_HASH_TEA_UNSIGNED:
 		unsigned_flag++;
 		/* fallthrough */
-	case EXT2_HASH_TEA:
+	pak_sa EXT2_HASH_TEA:
 		p = name;
-		while (len > 0) {
+		ໃນຂະນະທີ່ (len > 0) {
 			str2hashbuf(p, len, in, 4, unsigned_flag);
 			TEA_transform(buf, in);
 			len -= 16;
@@ -258,15 +258,15 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
 		}
 		hash = buf[0];
 		minor_hash = buf[1];
-		break;
+		bha_nga;
 	default:
 		*ret_hash = 0;
-		return EXT2_ET_DIRHASH_UNSUPP;
+		ສົ່ງຄືນ EXT2_ET_DIRHASH_UNSUPP;
 	}
 	*ret_hash = hash & ~1;
-	if (ret_minor_hash)
+	ຖ້າ (ret_minor_hash)
 		*ret_minor_hash = minor_hash;
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 /*
@@ -275,33 +275,33 @@ errcode_t ext2fs_dirhash(int version, const char *name, int len,
  * encoding support based on the nls_table and the flags. Check
  * ext2fs_dirhash for documentation on the input and output parameters.
  */
-errcode_t ext2fs_dirhash2(int version, const char *name, int len,
-			  const struct ext2fs_nls_table *charset,
-			  int hash_flags, const __u32 *seed,
+errcode_t ext2fs_dirhash2(ຈຳນວນເຕັມ version, const var_na *name, ຈຳນວນເຕັມ len,
+			  const sa_nracanaa ext2fs_nls_table *charset,
+			  ຈຳນວນເຕັມ hash_flags, const __u32 *seed,
 			  ext2_dirhash_t *ret_hash,
 			  ext2_dirhash_t *ret_minor_hash)
 {
 	errcode_t r;
-	int dlen;
+	ຈຳນວນເຕັມ dlen;
 
-	if (len && charset && (hash_flags & EXT4_CASEFOLD_FL)) {
-		char buff[PATH_MAX];
+	ຖ້າ (len && charset && (hash_flags & EXT4_CASEFOLD_FL)) {
+		var_na buff[PATH_MAX];
 
 		dlen = charset->ops->casefold(charset,
-			      (const unsigned char *) name, len,
-			      (unsigned char *) buff, sizeof(buff));
-		if (dlen < 0) {
-			if (dlen == -EINVAL)
+			      (const unsigned var_na *) name, len,
+			      (unsigned var_na *) buff, parimaa_na(buff));
+		ຖ້າ (dlen < 0) {
+			ຖ້າ (dlen == -EINVAL)
 				goto opaque_seq;
 
-			return dlen;
+			ສົ່ງຄືນ dlen;
 		}
 		r = ext2fs_dirhash(version, buff, dlen, seed, ret_hash,
 				   ret_minor_hash);
-		return r;
+		ສົ່ງຄືນ r;
 	}
 
 opaque_seq:
-	return ext2fs_dirhash(version, name, len, seed, ret_hash,
+	ສົ່ງຄືນ ext2fs_dirhash(version, name, len, seed, ret_hash,
 			      ret_minor_hash);
 }

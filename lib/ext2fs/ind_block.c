@@ -13,7 +13,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ຖ້າ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
@@ -25,43 +25,43 @@ errcode_t ext2fs_read_ind_block(ext2_filsys fs, blk_t blk, void *buf)
 	errcode_t	retval;
 #ifdef WORDS_BIGENDIAN
 	blk_t		*block_nr;
-	int		i;
-	int		limit = fs->blocksize >> 2;
+	ຈຳນວນເຕັມ		i;
+	ຈຳນວນເຕັມ		limit = fs->blocksize >> 2;
 #endif
 
-	if ((fs->flags & EXT2_FLAG_IMAGE_FILE) &&
+	ຖ້າ ((fs->flags & EXT2_FLAG_IMAGE_FILE) &&
 	    (fs->io != fs->image_io))
 		memset(buf, 0, fs->blocksize);
-	else {
+	ບໍ່ດັ່ງນັ້ນ {
 		retval = io_channel_read_blk(fs->io, blk, 1, buf);
-		if (retval)
-			return retval;
+		ຖ້າ (retval)
+			ສົ່ງຄືນ retval;
 	}
 #ifdef WORDS_BIGENDIAN
 	block_nr = (blk_t *) buf;
-	for (i = 0; i < limit; i++, block_nr++)
+	ສຳລັບ (i = 0; i < limit; i++, block_nr++)
 		*block_nr = ext2fs_swab32(*block_nr);
 #endif
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 errcode_t ext2fs_write_ind_block(ext2_filsys fs, blk_t blk, void *buf)
 {
 #ifdef WORDS_BIGENDIAN
 	blk_t		*block_nr;
-	int		i;
-	int		limit = fs->blocksize >> 2;
+	ຈຳນວນເຕັມ		i;
+	ຈຳນວນເຕັມ		limit = fs->blocksize >> 2;
 #endif
 
-	if (fs->flags & EXT2_FLAG_IMAGE_FILE)
-		return 0;
+	ຖ້າ (fs->flags & EXT2_FLAG_IMAGE_FILE)
+		ສົ່ງຄືນ 0;
 
 #ifdef WORDS_BIGENDIAN
 	block_nr = (blk_t *) buf;
-	for (i = 0; i < limit; i++, block_nr++)
+	ສຳລັບ (i = 0; i < limit; i++, block_nr++)
 		*block_nr = ext2fs_swab32(*block_nr);
 #endif
-	return io_channel_write_blk(fs->io, blk, 1, buf);
+	ສົ່ງຄືນ io_channel_write_blk(fs->io, blk, 1, buf);
 }
 
 

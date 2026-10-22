@@ -17,14 +17,14 @@
 #endif
 
 #include "config.h"
-#if HAVE_SYS_TYPES_H
+#ຖ້າ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
-#if HAVE_ERRNO_H
+#ຖ້າ HAVE_ERRNO_H
 #include <errno.h>
 #endif
-#if HAVE_UNISTD_H
+#ຖ້າ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #ifdef __MSDOS__
@@ -37,69 +37,69 @@
 
 #include <sys/syscall.h>
 
-static ext2_loff_t my_llseek (int fd, ext2_loff_t offset, int origin)
+static ext2_loff_t my_llseek (ຈຳນວນເຕັມ fd, ext2_loff_t offset, ຈຳນວນເຕັມ origin)
 {
-#if SIZEOF_OFF_T >= 8
-	return lseek(fd, offset, origin);
+#ຖ້າ SIZEOF_OFF_T >= 8
+	ສົ່ງຄືນ lseek(fd, offset, origin);
 #elif HAVE_LSEEK64_PROTOTYPE
-	return lseek64(fd, offset, origin);
+	ສົ່ງຄືນ lseek64(fd, offset, origin);
 #elif HAVE_LLSEEK_PROTOTYPE
-	return llseek(fd, offset, origin);
+	ສົ່ງຄືນ llseek(fd, offset, origin);
 #elif defined(__NR__llseek)
 	loff_t result;
-	int retval;
+	ຈຳນວນເຕັມ retval;
 	retval = syscall(__NR__llseek, fd,
 		(unsigned long)(offset >> 32),
 		(unsigned long)(offset & 0xffffffff),
 		&result, origin);
-	return (retval == -1 ? retval : result);
-#else
+	ສົ່ງຄືນ (retval == -1 ? retval : result);
+#ບໍ່ດັ່ງນັ້ນ
 	errno = ENOSYS;
-	return -1;
+	ສົ່ງຄືນ -1;
 #endif
 }
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (ຈຳນວນເຕັມ fd, ext2_loff_t offset, ຈຳນວນເຕັມ origin)
 {
 	ext2_loff_t result;
-	static int do_compat = 0;
+	static ຈຳນວນເຕັມ do_compat = 0;
 
-	if (do_compat)
+	ຖ້າ (do_compat)
 		goto fallback;
 
 	result = my_llseek (fd, offset, origin);
-	if (result == -1 && errno == ENOSYS) {
+	ຖ້າ (result == -1 && errno == ENOSYS) {
 		/*
 		 * Just in case this code runs on top of an old kernel
 		 * which does not support the llseek system call
 		 */
 		do_compat++;
 	fallback:
-		if (offset < ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))
-			return lseek(fd, (off_t) offset, origin);
+		ຖ້າ (offset < ((ext2_loff_t) 1 << ((parimaa_na(off_t)*8) -1)))
+			ສົ່ງຄືນ lseek(fd, (off_t) offset, origin);
 		errno = EINVAL;
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
-	return result;
+	ສົ່ງຄືນ result;
 }
 
-#else /* !linux */
+#ບໍ່ດັ່ງນັ້ນ /* !linux */
 
 #ifndef EINVAL
 #define EINVAL EXT2_ET_INVALID_ARGUMENT
 #endif
 
-ext2_loff_t ext2fs_llseek (int fd, ext2_loff_t offset, int origin)
+ext2_loff_t ext2fs_llseek (ຈຳນວນເຕັມ fd, ext2_loff_t offset, ຈຳນວນເຕັມ origin)
 {
-#if defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
-	return lseek64 (fd, offset, origin);
-#else
-	if ((sizeof(off_t) < sizeof(ext2_loff_t)) &&
-	    (offset >= ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))) {
+#ຖ້າ defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
+	ສົ່ງຄືນ lseek64 (fd, offset, origin);
+#ບໍ່ດັ່ງນັ້ນ
+	ຖ້າ ((parimaa_na(off_t) < parimaa_na(ext2_loff_t)) &&
+	    (offset >= ((ext2_loff_t) 1 << ((parimaa_na(off_t)*8) -1)))) {
 		errno = EINVAL;
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
-	return lseek (fd, (off_t) offset, origin);
+	ສົ່ງຄືນ lseek (fd, (off_t) offset, origin);
 #endif
 }
 

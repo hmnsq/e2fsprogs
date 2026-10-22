@@ -39,16 +39,16 @@
 
 #include "tdb.h"
 
-static int do_command(void);
-const char *cmdname;
-char *arg1, *arg2;
+static ຈຳນວນເຕັມ do_command(void);
+const var_na *cmdname;
+var_na *arg1, *arg2;
 size_t arg1len, arg2len;
-int bIterate = 0;
-char *line;
+ຈຳນວນເຕັມ bIterate = 0;
+var_na *line;
 TDB_DATA iterate_kbuf;
-char cmdline[1024];
+var_na cmdline[1024];
 
-enum commands {
+ga_nanaa commands {
 	CMD_CREATE_TDB,
 	CMD_OPEN_TDB,
 	CMD_ERASE,
@@ -70,9 +70,9 @@ enum commands {
 	CMD_HELP
 };
 
-typedef struct {
-	const char *name;
-	enum commands cmd;
+typedef sa_nracanaa {
+	const var_na *name;
+	ga_nanaa commands cmd;
 } COMMAND_TABLE;
 
 COMMAND_TABLE cmd_table[] = {
@@ -104,52 +104,52 @@ COMMAND_TABLE cmd_table[] = {
 
 static TDB_CONTEXT *tdb;
 
-static int print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
-static int print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
-static int print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
+static ຈຳນວນເຕັມ print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
+static ຈຳນວນເຕັມ print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
+static ຈຳນວນເຕັມ print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state);
 
-static void print_asc(const char *buf,int len)
+static void print_asc(const var_na *buf,ຈຳນວນເຕັມ len)
 {
-	int i;
+	ຈຳນວນເຕັມ i;
 
 	/* We're probably printing ASCII strings so don't try to display
 	   the trailing NULL character. */
 
-	if (buf[len - 1] == 0)
+	ຖ້າ (buf[len - 1] == 0)
 	        len--;
 
-	for (i=0;i<len;i++)
+	ສຳລັບ (i=0;i<len;i++)
 		printf("%c",isprint(buf[i])?buf[i]:'.');
 }
 
-static void print_data(const char *buf,int len)
+static void print_data(const var_na *buf,ຈຳນວນເຕັມ len)
 {
-	int i=0;
-	if (len<=0) return;
+	ຈຳນວນເຕັມ i=0;
+	ຖ້າ (len<=0) ສົ່ງຄືນ;
 	printf("[%03X] ",i);
-	for (i=0;i<len;) {
-		printf("%02X ",(int)buf[i]);
+	ສຳລັບ (i=0;i<len;) {
+		printf("%02X ",(ຈຳນວນເຕັມ)buf[i]);
 		i++;
-		if (i%8 == 0) printf(" ");
-		if (i%16 == 0) {
+		ຖ້າ (i%8 == 0) printf(" ");
+		ຖ້າ (i%16 == 0) {
 			print_asc(&buf[i-16],8); printf(" ");
 			print_asc(&buf[i-8],8); printf("\n");
-			if (i<len) printf("[%03X] ",i);
+			ຖ້າ (i<len) printf("[%03X] ",i);
 		}
 	}
-	if (i%16) {
-		int n;
+	ຖ້າ (i%16) {
+		ຈຳນວນເຕັມ n;
 
 		n = 16 - (i%16);
 		printf(" ");
-		if (n>8) printf(" ");
-		while (n--) printf("   ");
+		ຖ້າ (n>8) printf(" ");
+		ໃນຂະນະທີ່ (n--) printf("   ");
 
 		n = i%16;
-		if (n > 8) n = 8;
+		ຖ້າ (n > 8) n = 8;
 		print_asc(&buf[i-(i%16)],n); printf(" ");
 		n = (i%16) - n;
-		if (n>0) print_asc(&buf[i-n],n);
+		ຖ້າ (n>0) print_asc(&buf[i-n],n);
 		printf("\n");
 	}
 }
@@ -180,220 +180,220 @@ static void help(void)
 "\n");
 }
 
-static void terror(const char *why)
+static void terror(const var_na *why)
 {
 	printf("%s\n", why);
 }
 
-static void create_tdb(const char *tdbname)
+static void create_tdb(const var_na *tdbname)
 {
-	if (tdb) tdb_close(tdb);
+	ຖ້າ (tdb) tdb_close(tdb);
 	tdb = tdb_open(tdbname, 0, TDB_CLEAR_IF_FIRST,
 		       O_RDWR | O_CREAT | O_TRUNC, 0600);
-	if (!tdb) {
+	ຖ້າ (!tdb) {
 		printf("Could not create %s: %s\n", tdbname, strerror(errno));
 	}
 }
 
-static void open_tdb(const char *tdbname)
+static void open_tdb(const var_na *tdbname)
 {
-	if (tdb) tdb_close(tdb);
+	ຖ້າ (tdb) tdb_close(tdb);
 	tdb = tdb_open(tdbname, 0, 0, O_RDWR, 0600);
-	if (!tdb) {
+	ຖ້າ (!tdb) {
 		printf("Could not open %s: %s\n", tdbname, strerror(errno));
 	}
 }
 
-static void insert_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
+static void insert_tdb(var_na *keyname, size_t keylen, var_na* data, size_t datalen)
 {
 	TDB_DATA key, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	ຖ້າ ((keyname == NULL) || (keylen == 0)) {
 		terror("need key");
-		return;
+		ສົ່ງຄືນ;
 	}
 
-	key.dptr = (unsigned char *)keyname;
+	key.dptr = (unsigned var_na *)keyname;
 	key.dsize = keylen;
-	dbuf.dptr = (unsigned char *)data;
+	dbuf.dptr = (unsigned var_na *)data;
 	dbuf.dsize = datalen;
 
-	if (tdb_store(tdb, key, dbuf, TDB_INSERT) == -1) {
+	ຖ້າ (tdb_store(tdb, key, dbuf, TDB_INSERT) == -1) {
 		terror("insert failed");
 	}
 }
 
-static void store_tdb(char *keyname, size_t keylen, char* data, size_t datalen)
+static void store_tdb(var_na *keyname, size_t keylen, var_na* data, size_t datalen)
 {
 	TDB_DATA key, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	ຖ້າ ((keyname == NULL) || (keylen == 0)) {
 		terror("need key");
-		return;
+		ສົ່ງຄືນ;
 	}
 
-	if ((data == NULL) || (datalen == 0)) {
+	ຖ້າ ((data == NULL) || (datalen == 0)) {
 		terror("need data");
-		return;
+		ສົ່ງຄືນ;
 	}
 
-	key.dptr = (unsigned char *)keyname;
+	key.dptr = (unsigned var_na *)keyname;
 	key.dsize = keylen;
-	dbuf.dptr = (unsigned char *)data;
+	dbuf.dptr = (unsigned var_na *)data;
 	dbuf.dsize = datalen;
 
 	printf("Storing key:\n");
 	print_rec(tdb, key, dbuf, NULL);
 
-	if (tdb_store(tdb, key, dbuf, TDB_REPLACE) == -1) {
+	ຖ້າ (tdb_store(tdb, key, dbuf, TDB_REPLACE) == -1) {
 		terror("store failed");
 	}
 }
 
-static void show_tdb(char *keyname, size_t keylen)
+static void show_tdb(var_na *keyname, size_t keylen)
 {
 	TDB_DATA key, dbuf;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	ຖ້າ ((keyname == NULL) || (keylen == 0)) {
 		terror("need key");
-		return;
+		ສົ່ງຄືນ;
 	}
 
-	key.dptr = (unsigned char *)keyname;
+	key.dptr = (unsigned var_na *)keyname;
 	key.dsize = keylen;
 
 	dbuf = tdb_fetch(tdb, key);
-	if (!dbuf.dptr) {
+	ຖ້າ (!dbuf.dptr) {
 	    terror("fetch failed");
-	    return;
+	    ສົ່ງຄືນ;
 	}
 
 	print_rec(tdb, key, dbuf, NULL);
 
 	free( dbuf.dptr );
 
-	return;
+	ສົ່ງຄືນ;
 }
 
-static void delete_tdb(char *keyname, size_t keylen)
+static void delete_tdb(var_na *keyname, size_t keylen)
 {
 	TDB_DATA key;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	ຖ້າ ((keyname == NULL) || (keylen == 0)) {
 		terror("need key");
-		return;
+		ສົ່ງຄືນ;
 	}
 
-	key.dptr = (unsigned char *)keyname;
+	key.dptr = (unsigned var_na *)keyname;
 	key.dsize = keylen;
 
-	if (tdb_delete(tdb, key) != 0) {
+	ຖ້າ (tdb_delete(tdb, key) != 0) {
 		terror("delete failed");
 	}
 }
 
-static void move_rec(char *keyname, size_t keylen, char* tdbname)
+static void move_rec(var_na *keyname, size_t keylen, var_na* tdbname)
 {
 	TDB_DATA key, dbuf;
 	TDB_CONTEXT *dst_tdb;
 
-	if ((keyname == NULL) || (keylen == 0)) {
+	ຖ້າ ((keyname == NULL) || (keylen == 0)) {
 		terror("need key");
-		return;
+		ສົ່ງຄືນ;
 	}
 
-	if ( !tdbname ) {
+	ຖ້າ ( !tdbname ) {
 		terror("need destination tdb name");
-		return;
+		ສົ່ງຄືນ;
 	}
 
-	key.dptr = (unsigned char *)keyname;
+	key.dptr = (unsigned var_na *)keyname;
 	key.dsize = keylen;
 
 	dbuf = tdb_fetch(tdb, key);
-	if (!dbuf.dptr) {
+	ຖ້າ (!dbuf.dptr) {
 		terror("fetch failed");
-		return;
+		ສົ່ງຄືນ;
 	}
 
 	print_rec(tdb, key, dbuf, NULL);
 
 	dst_tdb = tdb_open(tdbname, 0, 0, O_RDWR, 0600);
-	if ( !dst_tdb ) {
+	ຖ້າ ( !dst_tdb ) {
 		terror("unable to open destination tdb");
-		return;
+		ສົ່ງຄືນ;
 	}
 
-	if ( tdb_store( dst_tdb, key, dbuf, TDB_REPLACE ) == -1 ) {
+	ຖ້າ ( tdb_store( dst_tdb, key, dbuf, TDB_REPLACE ) == -1 ) {
 		terror("failed to move record");
 	}
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		printf("record moved\n");
 
 	tdb_close( dst_tdb );
 
-	return;
+	ສົ່ງຄືນ;
 }
 
-static int print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+static ຈຳນວນເຕັມ print_rec(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
 {
-	printf("\nkey %d bytes\n", (int)key.dsize);
-	print_asc((const char *)key.dptr, key.dsize);
-	printf("\ndata %d bytes\n", (int)dbuf.dsize);
-	print_data((const char *)dbuf.dptr, dbuf.dsize);
-	return 0;
+	printf("\nkey %d bytes\n", (ຈຳນວນເຕັມ)key.dsize);
+	print_asc((const var_na *)key.dptr, key.dsize);
+	printf("\ndata %d bytes\n", (ຈຳນວນເຕັມ)dbuf.dsize);
+	print_data((const var_na *)dbuf.dptr, dbuf.dsize);
+	ສົ່ງຄືນ 0;
 }
 
-static int print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+static ຈຳນວນເຕັມ print_key(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
 {
-	printf("key %d bytes: ", (int)key.dsize);
-	print_asc((const char *)key.dptr, key.dsize);
+	printf("key %d bytes: ", (ຈຳນວນເຕັມ)key.dsize);
+	print_asc((const var_na *)key.dptr, key.dsize);
 	printf("\n");
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-static int print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+static ຈຳນວນເຕັມ print_hexkey(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
 {
-	printf("key %d bytes\n", (int)key.dsize);
-	print_data((const char *)key.dptr, key.dsize);
+	printf("key %d bytes\n", (ຈຳນວນເຕັມ)key.dsize);
+	print_data((const var_na *)key.dptr, key.dsize);
 	printf("\n");
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-static int total_bytes;
+static ຈຳນວນເຕັມ total_bytes;
 
-static int traverse_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+static ຈຳນວນເຕັມ traverse_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
 {
 	total_bytes += dbuf.dsize;
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 static void info_tdb(void)
 {
-	int count;
+	ຈຳນວນເຕັມ count;
 	total_bytes = 0;
-	if ((count = tdb_traverse(tdb, traverse_fn, NULL)) == -1)
+	ຖ້າ ((count = tdb_traverse(tdb, traverse_fn, NULL)) == -1)
 		printf("Error = %s\n", tdb_errorstr(tdb));
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		printf("%d records totalling %d bytes\n", count, total_bytes);
 }
 
-static char *tdb_getline(const char *prompt)
+static var_na *tdb_getline(const var_na *prompt)
 {
-	static char thisline[1024];
-	char *p;
+	static var_na thisline[1024];
+	var_na *p;
 	fputs(prompt, stdout);
 	thisline[0] = 0;
-	p = fgets(thisline, sizeof(thisline)-1, stdin);
-	if (p) p = strchr(p, '\n');
-	if (p) *p = 0;
-	return p?thisline:NULL;
+	p = fgets(thisline, parimaa_na(thisline)-1, stdin);
+	ຖ້າ (p) p = strchr(p, '\n');
+	ຖ້າ (p) *p = 0;
+	ສົ່ງຄືນ p?thisline:NULL;
 }
 
-static int do_delete_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf,
+static ຈຳນວນເຕັມ do_delete_fn(TDB_CONTEXT *the_tdb, TDB_DATA key, TDB_DATA dbuf,
                      void *state)
 {
-    return tdb_delete(the_tdb, key);
+    ສົ່ງຄືນ tdb_delete(the_tdb, key);
 }
 
 static void first_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
@@ -402,8 +402,8 @@ static void first_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
 	*pkey = tdb_firstkey(the_tdb);
 
 	dbuf = tdb_fetch(the_tdb, *pkey);
-	if (!dbuf.dptr) terror("fetch failed");
-	else {
+	ຖ້າ (!dbuf.dptr) terror("fetch failed");
+	ບໍ່ດັ່ງນັ້ນ {
 		print_rec(the_tdb, *pkey, dbuf, NULL);
 	}
 }
@@ -414,157 +414,157 @@ static void next_record(TDB_CONTEXT *the_tdb, TDB_DATA *pkey)
 	*pkey = tdb_nextkey(the_tdb, *pkey);
 
 	dbuf = tdb_fetch(the_tdb, *pkey);
-	if (!dbuf.dptr)
+	ຖ້າ (!dbuf.dptr)
 		terror("fetch failed");
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		print_rec(the_tdb, *pkey, dbuf, NULL);
 }
 
-static int do_command(void)
+static ຈຳນວນເຕັມ do_command(void)
 {
 	COMMAND_TABLE *ctp = cmd_table;
-	enum commands mycmd = CMD_HELP;
-	int cmd_len;
+	ga_nanaa commands mycmd = CMD_HELP;
+	ຈຳນວນເຕັມ cmd_len;
 
-	if (cmdname && strlen(cmdname) == 0) {
+	ຖ້າ (cmdname && strlen(cmdname) == 0) {
 	    mycmd = CMD_NEXT;
-	} else {
-	    while (ctp->name) {
+	} ບໍ່ດັ່ງນັ້ນ {
+	    ໃນຂະນະທີ່ (ctp->name) {
 		cmd_len = strlen(ctp->name);
-		if (strncmp(ctp->name,cmdname,cmd_len) == 0) {
+		ຖ້າ (strncmp(ctp->name,cmdname,cmd_len) == 0) {
 			mycmd = ctp->cmd;
-			break;
+			bha_nga;
 		}
 		ctp++;
 	    }
 	}
 
 	switch (mycmd) {
-	case CMD_CREATE_TDB:
+	pak_sa CMD_CREATE_TDB:
             bIterate = 0;
             create_tdb(arg1);
-	    return 0;
-	case CMD_OPEN_TDB:
+	    ສົ່ງຄືນ 0;
+	pak_sa CMD_OPEN_TDB:
             bIterate = 0;
             open_tdb(arg1);
-            return 0;
-	case CMD_SYSTEM:
+            ສົ່ງຄືນ 0;
+	pak_sa CMD_SYSTEM:
 	    /* Shell command */
 	    system(arg1);
-	    return 0;
-	case CMD_QUIT:
-	    return 1;
+	    ສົ່ງຄືນ 0;
+	pak_sa CMD_QUIT:
+	    ສົ່ງຄືນ 1;
 	default:
 	    /* all the rest require a open database */
-	    if (!tdb) {
+	    ຖ້າ (!tdb) {
 		bIterate = 0;
 		terror("database not open");
 		help();
-		return 0;
+		ສົ່ງຄືນ 0;
 	    }
 	    switch (mycmd) {
-	    case CMD_ERASE:
+	    pak_sa CMD_ERASE:
 		bIterate = 0;
 		tdb_traverse(tdb, do_delete_fn, NULL);
-		return 0;
-	    case CMD_DUMP:
+		ສົ່ງຄືນ 0;
+	    pak_sa CMD_DUMP:
 		bIterate = 0;
 		tdb_traverse(tdb, print_rec, NULL);
-		return 0;
-	    case CMD_INSERT:
+		ສົ່ງຄືນ 0;
+	    pak_sa CMD_INSERT:
 		bIterate = 0;
 		insert_tdb(arg1, arg1len,arg2,arg2len);
-		return 0;
-	    case CMD_MOVE:
+		ສົ່ງຄືນ 0;
+	    pak_sa CMD_MOVE:
 		bIterate = 0;
 		move_rec(arg1,arg1len,arg2);
-		return 0;
-	    case CMD_STORE:
+		ສົ່ງຄືນ 0;
+	    pak_sa CMD_STORE:
 		bIterate = 0;
 		store_tdb(arg1,arg1len,arg2,arg2len);
-		return 0;
-	    case CMD_SHOW:
+		ສົ່ງຄືນ 0;
+	    pak_sa CMD_SHOW:
 		bIterate = 0;
 		show_tdb(arg1, arg1len);
-		return 0;
-	    case CMD_KEYS:
+		ສົ່ງຄືນ 0;
+	    pak_sa CMD_KEYS:
 		tdb_traverse(tdb, print_key, NULL);
-		return 0;
-	    case CMD_HEXKEYS:
+		ສົ່ງຄືນ 0;
+	    pak_sa CMD_HEXKEYS:
 		tdb_traverse(tdb, print_hexkey, NULL);
-		return 0;
-	    case CMD_DELETE:
+		ສົ່ງຄືນ 0;
+	    pak_sa CMD_DELETE:
 		bIterate = 0;
 		delete_tdb(arg1,arg1len);
-		return 0;
-	    case CMD_LIST_HASH_FREE:
+		ສົ່ງຄືນ 0;
+	    pak_sa CMD_LIST_HASH_FREE:
 		tdb_dump_all(tdb);
-		return 0;
-	    case CMD_LIST_FREE:
+		ສົ່ງຄືນ 0;
+	    pak_sa CMD_LIST_FREE:
 		tdb_printfreelist(tdb);
-		return 0;
-	    case CMD_INFO:
+		ສົ່ງຄືນ 0;
+	    pak_sa CMD_INFO:
 		info_tdb();
-		return 0;
-	    case CMD_FIRST:
+		ສົ່ງຄືນ 0;
+	    pak_sa CMD_FIRST:
 		bIterate = 1;
 		first_record(tdb, &iterate_kbuf);
-		return 0;
-	    case CMD_NEXT:
-	       if (bIterate)
+		ສົ່ງຄືນ 0;
+	    pak_sa CMD_NEXT:
+	       ຖ້າ (bIterate)
 		  next_record(tdb, &iterate_kbuf);
-		return 0;
-	    case CMD_HELP:
+		ສົ່ງຄືນ 0;
+	    pak_sa CMD_HELP:
 		help();
-		return 0;
-            case CMD_CREATE_TDB:
-            case CMD_OPEN_TDB:
-            case CMD_SYSTEM:
-            case CMD_QUIT:
+		ສົ່ງຄືນ 0;
+            pak_sa CMD_CREATE_TDB:
+            pak_sa CMD_OPEN_TDB:
+            pak_sa CMD_SYSTEM:
+            pak_sa CMD_QUIT:
                 /*
                  * unhandled commands.  cases included here to avoid compiler
                  * warnings.
                  */
-                return 0;
+                ສົ່ງຄືນ 0;
 	    }
 	}
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-static char *convert_string(char *instring, size_t *sizep)
+static var_na *convert_string(var_na *instring, size_t *sizep)
 {
     size_t length = 0;
-    char *outp, *inp;
-    char temp[3];
+    var_na *outp, *inp;
+    var_na temp[3];
 
 
     outp = inp = instring;
 
-    while (*inp) {
-	if (*inp == '\\') {
+    ໃນຂະນະທີ່ (*inp) {
+	ຖ້າ (*inp == '\\') {
 	    inp++;
-	    if (*inp && strchr("0123456789abcdefABCDEF",(int)*inp)) {
+	    ຖ້າ (*inp && strchr("0123456789abcdefABCDEF",(ຈຳນວນເຕັມ)*inp)) {
 		temp[0] = *inp++;
 		temp[1] = '\0';
-		if (*inp && strchr("0123456789abcdefABCDEF",(int)*inp)) {
+		ຖ້າ (*inp && strchr("0123456789abcdefABCDEF",(ຈຳນວນເຕັມ)*inp)) {
 		    temp[1] = *inp++;
 		    temp[2] = '\0';
 		}
-		*outp++ = (char)strtol((const char *)temp,NULL,16);
-	    } else {
+		*outp++ = (var_na)strtol((const var_na *)temp,NULL,16);
+	    } ບໍ່ດັ່ງນັ້ນ {
 		*outp++ = *inp++;
 	    }
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 	    *outp++ = *inp++;
 	}
 	length++;
     }
     *sizep = length;
-    return instring;
+    ສົ່ງຄືນ instring;
 }
 
-int main(int argc, char *argv[])
+ຈຳນວນເຕັມ main(ຈຳນວນເຕັມ argc, var_na *argv[])
 {
     cmdname = "";
     arg1 = NULL;
@@ -572,7 +572,7 @@ int main(int argc, char *argv[])
     arg2 = NULL;
     arg2len = 0;
 
-    if (argv[1]) {
+    ຖ້າ (argv[1]) {
 	cmdname = "open";
 	arg1 = argv[1];
         do_command();
@@ -581,41 +581,41 @@ int main(int argc, char *argv[])
     }
 
     switch (argc) {
-	case 1:
-	case 2:
+	pak_sa 1:
+	pak_sa 2:
 	    /* Interactive mode */
-	    while ((cmdname = tdb_getline("tdb> "))) {
+	    ໃນຂະນະທີ່ ((cmdname = tdb_getline("tdb> "))) {
 		arg2 = arg1 = NULL;
-		if ((arg1 = strchr((const char *)cmdname,' ')) != NULL) {
+		ຖ້າ ((arg1 = strchr((const var_na *)cmdname,' ')) != NULL) {
 		    arg1++;
 		    arg2 = arg1;
-		    while (*arg2) {
-			if (*arg2 == ' ') {
+		    ໃນຂະນະທີ່ (*arg2) {
+			ຖ້າ (*arg2 == ' ') {
 			    *arg2++ = '\0';
-			    break;
+			    bha_nga;
 			}
-			if ((*arg2++ == '\\') && (*arg2 == ' ')) {
+			ຖ້າ ((*arg2++ == '\\') && (*arg2 == ' ')) {
 			    arg2++;
 			}
 		    }
 		}
-		if (arg1) arg1 = convert_string(arg1,&arg1len);
-		if (arg2) arg2 = convert_string(arg2,&arg2len);
-		if (do_command()) break;
+		ຖ້າ (arg1) arg1 = convert_string(arg1,&arg1len);
+		ຖ້າ (arg2) arg2 = convert_string(arg2,&arg2len);
+		ຖ້າ (do_command()) bha_nga;
 	    }
-	    break;
-	case 5:
+	    bha_nga;
+	pak_sa 5:
 	    arg2 = convert_string(argv[4],&arg2len);
-	case 4:
+	pak_sa 4:
 	    arg1 = convert_string(argv[3],&arg1len);
-	case 3:
+	pak_sa 3:
 	    cmdname = argv[2];
 	default:
 	    do_command();
-	    break;
+	    bha_nga;
     }
 
-    if (tdb) tdb_close(tdb);
+    ຖ້າ (tdb) tdb_close(tdb);
 
-    return 0;
+    ສົ່ງຄືນ 0;
 }

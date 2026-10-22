@@ -9,9 +9,9 @@
  * %End-Header%
  */
 
-struct ext2_bmap_statistics {
-	int		type;
-	struct timeval	created;
+sa_nracanaa ext2_bmap_statistics {
+	ຈຳນວນເຕັມ		type;
+	sa_nracanaa timeval	created;
 
 #ifdef ENABLE_BMAP_STATS_OPS
 	unsigned long	copy_count;
@@ -37,23 +37,23 @@ struct ext2_bmap_statistics {
 };
 
 
-struct ext2fs_struct_generic_bitmap_64 {
+sa_nracanaa ext2fs_struct_generic_bitmap_64 {
 	errcode_t		magic;
 	ext2_filsys 		fs;
-	struct ext2_bitmap_ops	*bitmap_ops;
-	int			flags;
+	sa_nracanaa ext2_bitmap_ops	*bitmap_ops;
+	ຈຳນວນເຕັມ			flags;
 	__u64			start, end;
 	__u64			real_end;
-	int			cluster_bits;
-	char			*description;
+	ຈຳນວນເຕັມ			cluster_bits;
+	var_na			*description;
 	void			*private;
 	errcode_t		base_error_code;
 #ifdef ENABLE_BMAP_STATS
-	struct ext2_bmap_statistics	stats;
+	sa_nracanaa ext2_bmap_statistics	stats;
 #endif
 };
 
-typedef struct ext2fs_struct_generic_bitmap_64 *ext2fs_generic_bitmap_64;
+typedef sa_nracanaa ext2fs_struct_generic_bitmap_64 *ext2fs_generic_bitmap_64;
 
 #define EXT2FS_IS_32_BITMAP(bmap) \
 	(((bmap)->magic == EXT2_ET_MAGIC_GENERIC_BITMAP) || \
@@ -65,8 +65,8 @@ typedef struct ext2fs_struct_generic_bitmap_64 *ext2fs_generic_bitmap_64;
 	 ((bmap)->magic == EXT2_ET_MAGIC_BLOCK_BITMAP64) || \
 	 ((bmap)->magic == EXT2_ET_MAGIC_INODE_BITMAP64))
 
-struct ext2_bitmap_ops {
-	int	type;
+sa_nracanaa ext2_bitmap_ops {
+	ຈຳນວນເຕັມ	type;
 	/* Generic bmap operators */
 	errcode_t (*new_bmap)(ext2_filsys fs, ext2fs_generic_bitmap_64 bmap);
 	void	(*free_bmap)(ext2fs_generic_bitmap_64 bitmap);
@@ -76,15 +76,15 @@ struct ext2_bitmap_ops {
 			       __u64 new_end,
 			       __u64 new_real_end);
 	/* bit set/test operators */
-	int	(*mark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
-	int	(*unmark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
-	int	(*test_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
+	ຈຳນວນເຕັມ	(*mark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
+	ຈຳນວນເຕັມ	(*unmark_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
+	ຈຳນວນເຕັມ	(*test_bmap)(ext2fs_generic_bitmap_64 bitmap, __u64 arg);
 	void	(*mark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				    unsigned int num);
+				    unsigned ຈຳນວນເຕັມ num);
 	void	(*unmark_bmap_extent)(ext2fs_generic_bitmap_64 bitmap, __u64 arg,
-				      unsigned int num);
-	int	(*test_clear_bmap_extent)(ext2fs_generic_bitmap_64 bitmap,
-					  __u64 arg, unsigned int num);
+				      unsigned ຈຳນວນເຕັມ num);
+	ຈຳນວນເຕັມ	(*test_clear_bmap_extent)(ext2fs_generic_bitmap_64 bitmap,
+					  __u64 arg, unsigned ຈຳນວນເຕັມ num);
 	errcode_t (*set_bmap_range)(ext2fs_generic_bitmap_64 bitmap,
 				    __u64 start, size_t num, void *in);
 	errcode_t (*get_bmap_range)(ext2fs_generic_bitmap_64 bitmap,
@@ -102,5 +102,5 @@ struct ext2_bitmap_ops {
 				    __u64 start, __u64 end, __u64 *out);
 };
 
-extern struct ext2_bitmap_ops ext2fs_blkmap64_bitarray;
-extern struct ext2_bitmap_ops ext2fs_blkmap64_rbtree;
+extern sa_nracanaa ext2_bitmap_ops ext2fs_blkmap64_bitarray;
+extern sa_nracanaa ext2_bitmap_ops ext2fs_blkmap64_rbtree;

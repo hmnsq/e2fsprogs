@@ -13,15 +13,15 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ຖ້າ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#ຖ້າ HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#ຖ້າ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -41,7 +41,7 @@
  *
  * See also the comment for ext2fs_super_and_bgd_loc()
  */
-int ext2fs_reserve_super_and_bgd(ext2_filsys fs,
+ຈຳນວນເຕັມ ext2fs_reserve_super_and_bgd(ext2_filsys fs,
 				 dgrp_t group,
 				 ext2fs_block_bitmap bmap)
 {
@@ -51,32 +51,32 @@ int ext2fs_reserve_super_and_bgd(ext2_filsys fs,
 	ext2fs_super_and_bgd_loc2(fs, group, &super_blk,
 				  &old_desc_blk, &new_desc_blk, &used_blks);
 
-	if (ext2fs_has_feature_meta_bg(fs->super))
+	ຖ້າ (ext2fs_has_feature_meta_bg(fs->super))
 		old_desc_blocks = fs->super->s_first_meta_bg;
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		old_desc_blocks =
 			fs->desc_blocks + fs->super->s_reserved_gdt_blocks;
 
-	if (super_blk || (group == 0))
+	ຖ້າ (super_blk || (group == 0))
 		ext2fs_mark_block_bitmap2(bmap, super_blk);
-	if ((group == 0) && (fs->blocksize == 1024) &&
+	ຖ້າ ((group == 0) && (fs->blocksize == 1024) &&
 	    EXT2FS_CLUSTER_RATIO(fs) > 1)
 		ext2fs_mark_block_bitmap2(bmap, 0);
 
-	if (old_desc_blk) {
+	ຖ້າ (old_desc_blk) {
 		num_blocks = old_desc_blocks;
-		if (old_desc_blk + num_blocks >= ext2fs_blocks_count(fs->super))
+		ຖ້າ (old_desc_blk + num_blocks >= ext2fs_blocks_count(fs->super))
 			num_blocks = ext2fs_blocks_count(fs->super) -
 				old_desc_blk;
 		ext2fs_mark_block_bitmap_range2(bmap, old_desc_blk, num_blocks);
 	}
-	if (new_desc_blk)
+	ຖ້າ (new_desc_blk)
 		ext2fs_mark_block_bitmap2(bmap, new_desc_blk);
 
 	num_blocks = ext2fs_group_blocks_count(fs, group);
 	num_blocks -= 2 + fs->inode_blocks_per_group + used_blks;
 
-	return num_blocks  ;
+	ສົ່ງຄືນ num_blocks  ;
 }
 
 /*
@@ -98,8 +98,8 @@ errcode_t ext2fs_reserve_super_and_bgd2(ext2_filsys fs,
 					ext2fs_group_first_block2(fs, group),
 					ext2fs_group_last_block2(fs, group),
 					&num_blocks);
-	if (!retval)
+	ຖ້າ (!retval)
 		*desc_blocks = num_blocks;
 
-	return retval;
+	ສົ່ງຄືນ retval;
 }
