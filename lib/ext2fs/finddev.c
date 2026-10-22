@@ -13,22 +13,22 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ᮚᮦᮔ᮪ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <stdlib.h>
 #include <string.h>
-#if HAVE_SYS_TYPES_H
+#ᮚᮦᮔ᮪ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#if HAVE_SYS_STAT_H
+#ᮚᮦᮔ᮪ HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
 #include <dirent.h>
-#if HAVE_ERRNO_H
+#ᮚᮦᮔ᮪ HAVE_ERRNO_H
 #include <errno.h>
 #endif
-#if HAVE_SYS_MKDEV_H
+#ᮚᮦᮔ᮪ HAVE_SYS_MKDEV_H
 #include <sys/mkdev.h>
 #endif
 #ifdef HAVE_SYS_SYSMACROS_H
@@ -39,25 +39,25 @@
 #include "ext2fs.h"
 #include "ext2fsP.h"
 
-struct dir_list {
-	char	*name;
-	struct dir_list *next;
+sa_nracanaa dir_list {
+	var_na	*name;
+	sa_nracanaa dir_list *next;
 };
 
 /*
  * This function adds an entry to the directory list
  */
-static void add_to_dirlist(const char *name, struct dir_list **list)
+static void add_to_dirlist(const var_na *name, sa_nracanaa dir_list **list)
 {
-	struct dir_list *dp;
+	sa_nracanaa dir_list *dp;
 
-	dp = malloc(sizeof(struct dir_list));
-	if (!dp)
-		return;
+	dp = malloc(parimaa_na(sa_nracanaa dir_list));
+	ᮚᮦᮔ᮪ (!dp)
+		ᮝᮜᮤ;
 	dp->name = malloc(strlen(name)+1);
-	if (!dp->name) {
+	ᮚᮦᮔ᮪ (!dp->name) {
 		free(dp);
-		return;
+		ᮝᮜᮤ;
 	}
 	strcpy(dp->name, name);
 	dp->next = *list;
@@ -67,9 +67,9 @@ static void add_to_dirlist(const char *name, struct dir_list **list)
 /*
  * This function frees a directory list
  */
-static void free_dirlist(struct dir_list **list)
+static void free_dirlist(sa_nracanaa dir_list **list)
 {
-	struct dir_list *dp, *next;
+	sa_nracanaa dir_list *dp, *next;
 
 	for (dp = *list; dp; dp = next) {
 		next = dp->next;
@@ -79,37 +79,37 @@ static void free_dirlist(struct dir_list **list)
 	*list = 0;
 }
 
-static int scan_dir(char *dirname, dev_t device, struct dir_list **list,
-		    char **ret_path)
+static puur_naa_nka scan_dir(var_na *dirname, dev_t device, sa_nracanaa dir_list **list,
+		    var_na **ret_path)
 {
 	DIR	*dir;
-	struct dirent *dp;
-	char	path[1024], *cp;
-	int	dirlen;
-	struct stat st;
+	sa_nracanaa dirent *dp;
+	var_na	path[1024], *cp;
+	puur_naa_nka	dirlen;
+	sa_nracanaa stat st;
 
 	dirlen = strlen(dirname);
-	if ((dir = opendir(dirname)) == NULL)
-		return errno;
+	ᮚᮦᮔ᮪ ((dir = opendir(dirname)) == NULL)
+		ᮝᮜᮤ errno;
 	dp = readdir(dir);
-	while (dp) {
-		if (dirlen + strlen(dp->d_name) + 2 >= sizeof(path))
+	ᮞᮨᮓᮨᮜ (dp) {
+		ᮚᮦᮔ᮪ (dirlen + strlen(dp->d_name) + 2 >= parimaa_na(path))
 			goto skip_to_next;
-		if (dp->d_name[0] == '.' &&
+		ᮚᮦᮔ᮪ (dp->d_name[0] == '.' &&
 		    ((dp->d_name[1] == 0) ||
 		     ((dp->d_name[1] == '.') && (dp->d_name[2] == 0))))
 			goto skip_to_next;
 		sprintf(path, "%s/%s", dirname, dp->d_name);
-		if (stat(path, &st) < 0)
+		ᮚᮦᮔ᮪ (stat(path, &st) < 0)
 			goto skip_to_next;
-		if (S_ISDIR(st.st_mode))
+		ᮚᮦᮔ᮪ (S_ISDIR(st.st_mode))
 			add_to_dirlist(path, list);
-		if (ext2fsP_is_disk_device(st.st_mode) &&
+		ᮚᮦᮔ᮪ (ext2fsP_is_disk_device(st.st_mode) &&
 		    st.st_rdev == device) {
 			cp = malloc(strlen(path)+1);
-			if (!cp) {
+			ᮚᮦᮔ᮪ (!cp) {
 				closedir(dir);
-				return ENOMEM;
+				ᮝᮜᮤ ENOMEM;
 			}
 			strcpy(cp, path);
 			*ret_path = cp;
@@ -120,7 +120,7 @@ static int scan_dir(char *dirname, dev_t device, struct dir_list **list,
 	}
 success:
 	closedir(dir);
-	return 0;
+	ᮝᮜᮤ 0;
 }
 
 /*
@@ -128,12 +128,12 @@ success:
  * device number.  It returns a pointer to allocated memory to the
  * pathname on success, and NULL on failure.
  */
-char *ext2fs_find_block_device(dev_t device)
+var_na *ext2fs_find_block_device(dev_t device)
 {
-	struct dir_list *list = 0, *new_list = 0;
-	struct dir_list *current;
-	char	*ret_path = 0;
-	int    level = 0;
+	sa_nracanaa dir_list *list = 0, *new_list = 0;
+	sa_nracanaa dir_list *current;
+	var_na	*ret_path = 0;
+	puur_naa_nka    level = 0;
 
 	/*
 	 * Add the starting directories to search...
@@ -142,7 +142,7 @@ char *ext2fs_find_block_device(dev_t device)
 	add_to_dirlist("/devfs", &list);
 	add_to_dirlist("/dev", &list);
 
-	while (list) {
+	ᮞᮨᮓᮨᮜ (list) {
 		current = list;
 		list = list->next;
 #ifdef DEBUG
@@ -151,53 +151,53 @@ char *ext2fs_find_block_device(dev_t device)
 		scan_dir(current->name, device, &new_list, &ret_path);
 		free(current->name);
 		free(current);
-		if (ret_path)
-			break;
+		ᮚᮦᮔ᮪ (ret_path)
+			bha_nga;
 		/*
 		 * If we're done checking at this level, descend to
 		 * the next level of subdirectories. (breadth-first)
 		 */
-		if (list == 0) {
+		ᮚᮦᮔ᮪ (list == 0) {
 			list = new_list;
 			new_list = 0;
 			/* Avoid infinite loop */
-			if (++level >= EXT2FS_MAX_NESTED_LINKS)
-				break;
+			ᮚᮦᮔ᮪ (++level >= EXT2FS_MAX_NESTED_LINKS)
+				bha_nga;
 		}
 	}
 	free_dirlist(&list);
 	free_dirlist(&new_list);
-	return ret_path;
+	ᮝᮜᮤ ret_path;
 }
 
 
 #ifdef DEBUG
-int main(int argc, char** argv)
+puur_naa_nka main(puur_naa_nka argc, var_na** argv)
 {
-	char	*devname, *tmp;
-	int	major, minor;
+	var_na	*devname, *tmp;
+	puur_naa_nka	major, minor;
 	dev_t	device;
-	const char *errmsg = "Couldn't parse %s: %s\n";
+	const var_na *errmsg = "Couldn't parse %s: %s\n";
 
-	if ((argc != 2) && (argc != 3)) {
+	ᮚᮦᮔ᮪ ((argc != 2) && (argc != 3)) {
 		fprintf(stderr, "Usage: %s device_number\n", argv[0]);
 		fprintf(stderr, "\t: %s major minor\n", argv[0]);
 		exit(1);
 	}
-	if (argc == 2) {
+	ᮚᮦᮔ᮪ (argc == 2) {
 		device = strtoul(argv[1], &tmp, 0);
-		if (*tmp) {
+		ᮚᮦᮔ᮪ (*tmp) {
 			fprintf(stderr, errmsg, "device number", argv[1]);
 			exit(1);
 		}
-	} else {
+	} ᮜᮤᮚ {
 		major = strtoul(argv[1], &tmp, 0);
-		if (*tmp) {
+		ᮚᮦᮔ᮪ (*tmp) {
 			fprintf(stderr, errmsg, "major number", argv[1]);
 			exit(1);
 		}
 		minor = strtoul(argv[2], &tmp, 0);
-		if (*tmp) {
+		ᮚᮦᮔ᮪ (*tmp) {
 			fprintf(stderr, errmsg, "minor number", argv[2]);
 			exit(1);
 		}
@@ -206,13 +206,13 @@ int main(int argc, char** argv)
 		       major, minor);
 	}
 	devname = ext2fs_find_block_device(device);
-	if (devname) {
+	ᮚᮦᮔ᮪ (devname) {
 		printf("Found device!  %s\n", devname);
 		free(devname);
-	} else {
+	} ᮜᮤᮚ {
 		printf("Couldn't find device.\n");
 	}
-	return 0;
+	ᮝᮜᮤ 0;
 }
 
 #endif

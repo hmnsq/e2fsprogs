@@ -12,15 +12,15 @@
  * %End-Header%
  */
 
-struct ext2_image_hdr {
+sa_nracanaa ext2_image_hdr {
 	__u32	magic_number;	/* This must be EXT2_ET_MAGIC_E2IMAGE */
-	char	magic_descriptor[16]; /* "Ext2 Image 1.0", w/ null padding */
-	char	fs_hostname[64];/* Hostname of machine of image */
-	char	fs_netaddr[32];	/* Network address */
+	var_na	magic_descriptor[16]; /* "Ext2 Image 1.0", w/ null padding */
+	var_na	fs_hostname[64];/* Hostname of machine of image */
+	var_na	fs_netaddr[32];	/* Network address */
 	__u32	fs_netaddr_type;/* 0 = IPV4, 1 = IPV6, etc. */
 	__u32	fs_device;	/* Device number of image */
-	char	fs_device_name[64]; /* Device name */
-	char	fs_uuid[16];	/* UUID of filesystem */
+	var_na	fs_device_name[64]; /* Device name */
+	var_na	fs_uuid[16];	/* UUID of filesystem */
 	__u32	fs_blocksize;	/* Block size of the filesystem */
 	__u32	fs_reserved[8];
 

@@ -22,65 +22,65 @@
 
 #include "rbtree.h"
 
-static void __rb_rotate_left(struct rb_node *node, struct rb_root *root)
+static void __rb_rotate_left(sa_nracanaa rb_node *node, sa_nracanaa rb_root *root)
 {
-	struct rb_node *right = node->rb_right;
-	struct rb_node *parent = ext2fs_rb_parent(node);
+	sa_nracanaa rb_node *right = node->rb_right;
+	sa_nracanaa rb_node *parent = ext2fs_rb_parent(node);
 
-	if ((node->rb_right = right->rb_left))
+	ᮚᮦᮔ᮪ ((node->rb_right = right->rb_left))
 		ext2fs_rb_set_parent(right->rb_left, node);
 	right->rb_left = node;
 
 	ext2fs_rb_set_parent(right, parent);
 
-	if (parent)
+	ᮚᮦᮔ᮪ (parent)
 	{
-		if (node == parent->rb_left)
+		ᮚᮦᮔ᮪ (node == parent->rb_left)
 			parent->rb_left = right;
-		else
+		ᮜᮤᮚ
 			parent->rb_right = right;
 	}
-	else
+	ᮜᮤᮚ
 		root->rb_node = right;
 	ext2fs_rb_set_parent(node, right);
 }
 
-static void __rb_rotate_right(struct rb_node *node, struct rb_root *root)
+static void __rb_rotate_right(sa_nracanaa rb_node *node, sa_nracanaa rb_root *root)
 {
-	struct rb_node *left = node->rb_left;
-	struct rb_node *parent = ext2fs_rb_parent(node);
+	sa_nracanaa rb_node *left = node->rb_left;
+	sa_nracanaa rb_node *parent = ext2fs_rb_parent(node);
 
-	if ((node->rb_left = left->rb_right))
+	ᮚᮦᮔ᮪ ((node->rb_left = left->rb_right))
 		ext2fs_rb_set_parent(left->rb_right, node);
 	left->rb_right = node;
 
 	ext2fs_rb_set_parent(left, parent);
 
-	if (parent)
+	ᮚᮦᮔ᮪ (parent)
 	{
-		if (node == parent->rb_right)
+		ᮚᮦᮔ᮪ (node == parent->rb_right)
 			parent->rb_right = left;
-		else
+		ᮜᮤᮚ
 			parent->rb_left = left;
 	}
-	else
+	ᮜᮤᮚ
 		root->rb_node = left;
 	ext2fs_rb_set_parent(node, left);
 }
 
-void ext2fs_rb_insert_color(struct rb_node *node, struct rb_root *root)
+void ext2fs_rb_insert_color(sa_nracanaa rb_node *node, sa_nracanaa rb_root *root)
 {
-	struct rb_node *parent, *gparent;
+	sa_nracanaa rb_node *parent, *gparent;
 
-	while ((parent = ext2fs_rb_parent(node)) && ext2fs_rb_is_red(parent))
+	ᮞᮨᮓᮨᮜ ((parent = ext2fs_rb_parent(node)) && ext2fs_rb_is_red(parent))
 	{
 		gparent = ext2fs_rb_parent(parent);
 
-		if (parent == gparent->rb_left)
+		ᮚᮦᮔ᮪ (parent == gparent->rb_left)
 		{
 			{
-				register struct rb_node *uncle = gparent->rb_right;
-				if (uncle && ext2fs_rb_is_red(uncle))
+				pa_njikaa sa_nracanaa rb_node *uncle = gparent->rb_right;
+				ᮚᮦᮔ᮪ (uncle && ext2fs_rb_is_red(uncle))
 				{
 					ext2fs_rb_set_black(uncle);
 					ext2fs_rb_set_black(parent);
@@ -90,9 +90,9 @@ void ext2fs_rb_insert_color(struct rb_node *node, struct rb_root *root)
 				}
 			}
 
-			if (parent->rb_right == node)
+			ᮚᮦᮔ᮪ (parent->rb_right == node)
 			{
-				register struct rb_node *tmp;
+				pa_njikaa sa_nracanaa rb_node *tmp;
 				__rb_rotate_left(parent, root);
 				tmp = parent;
 				parent = node;
@@ -102,10 +102,10 @@ void ext2fs_rb_insert_color(struct rb_node *node, struct rb_root *root)
 			ext2fs_rb_set_black(parent);
 			ext2fs_rb_set_red(gparent);
 			__rb_rotate_right(gparent, root);
-		} else {
+		} ᮜᮤᮚ {
 			{
-				register struct rb_node *uncle = gparent->rb_left;
-				if (uncle && ext2fs_rb_is_red(uncle))
+				pa_njikaa sa_nracanaa rb_node *uncle = gparent->rb_left;
+				ᮚᮦᮔ᮪ (uncle && ext2fs_rb_is_red(uncle))
 				{
 					ext2fs_rb_set_black(uncle);
 					ext2fs_rb_set_black(parent);
@@ -115,9 +115,9 @@ void ext2fs_rb_insert_color(struct rb_node *node, struct rb_root *root)
 				}
 			}
 
-			if (parent->rb_left == node)
+			ᮚᮦᮔ᮪ (parent->rb_left == node)
 			{
-				register struct rb_node *tmp;
+				pa_njikaa sa_nracanaa rb_node *tmp;
 				__rb_rotate_right(parent, root);
 				tmp = parent;
 				parent = node;
@@ -133,33 +133,33 @@ void ext2fs_rb_insert_color(struct rb_node *node, struct rb_root *root)
 	ext2fs_rb_set_black(root->rb_node);
 }
 
-static void __rb_erase_color(struct rb_node *node, struct rb_node *parent,
-			     struct rb_root *root)
+static void __rb_erase_color(sa_nracanaa rb_node *node, sa_nracanaa rb_node *parent,
+			     sa_nracanaa rb_root *root)
 {
-	struct rb_node *other;
+	sa_nracanaa rb_node *other;
 
-	while ((!node || ext2fs_rb_is_black(node)) && node != root->rb_node)
+	ᮞᮨᮓᮨᮜ ((!node || ext2fs_rb_is_black(node)) && node != root->rb_node)
 	{
-		if (parent->rb_left == node)
+		ᮚᮦᮔ᮪ (parent->rb_left == node)
 		{
 			other = parent->rb_right;
-			if (ext2fs_rb_is_red(other))
+			ᮚᮦᮔ᮪ (ext2fs_rb_is_red(other))
 			{
 				ext2fs_rb_set_black(other);
 				ext2fs_rb_set_red(parent);
 				__rb_rotate_left(parent, root);
 				other = parent->rb_right;
 			}
-			if ((!other->rb_left || ext2fs_rb_is_black(other->rb_left)) &&
+			ᮚᮦᮔ᮪ ((!other->rb_left || ext2fs_rb_is_black(other->rb_left)) &&
 			    (!other->rb_right || ext2fs_rb_is_black(other->rb_right)))
 			{
 				ext2fs_rb_set_red(other);
 				node = parent;
 				parent = ext2fs_rb_parent(node);
 			}
-			else
+			ᮜᮤᮚ
 			{
-				if (!other->rb_right || ext2fs_rb_is_black(other->rb_right))
+				ᮚᮦᮔ᮪ (!other->rb_right || ext2fs_rb_is_black(other->rb_right))
 				{
 					ext2fs_rb_set_black(other->rb_left);
 					ext2fs_rb_set_red(other);
@@ -171,29 +171,29 @@ static void __rb_erase_color(struct rb_node *node, struct rb_node *parent,
 				ext2fs_rb_set_black(other->rb_right);
 				__rb_rotate_left(parent, root);
 				node = root->rb_node;
-				break;
+				bha_nga;
 			}
 		}
-		else
+		ᮜᮤᮚ
 		{
 			other = parent->rb_left;
-			if (ext2fs_rb_is_red(other))
+			ᮚᮦᮔ᮪ (ext2fs_rb_is_red(other))
 			{
 				ext2fs_rb_set_black(other);
 				ext2fs_rb_set_red(parent);
 				__rb_rotate_right(parent, root);
 				other = parent->rb_left;
 			}
-			if ((!other->rb_left || ext2fs_rb_is_black(other->rb_left)) &&
+			ᮚᮦᮔ᮪ ((!other->rb_left || ext2fs_rb_is_black(other->rb_left)) &&
 			    (!other->rb_right || ext2fs_rb_is_black(other->rb_right)))
 			{
 				ext2fs_rb_set_red(other);
 				node = parent;
 				parent = ext2fs_rb_parent(node);
 			}
-			else
+			ᮜᮤᮚ
 			{
-				if (!other->rb_left || ext2fs_rb_is_black(other->rb_left))
+				ᮚᮦᮔ᮪ (!other->rb_left || ext2fs_rb_is_black(other->rb_left))
 				{
 					ext2fs_rb_set_black(other->rb_right);
 					ext2fs_rb_set_red(other);
@@ -205,47 +205,47 @@ static void __rb_erase_color(struct rb_node *node, struct rb_node *parent,
 				ext2fs_rb_set_black(other->rb_left);
 				__rb_rotate_right(parent, root);
 				node = root->rb_node;
-				break;
+				bha_nga;
 			}
 		}
 	}
-	if (node)
+	ᮚᮦᮔ᮪ (node)
 		ext2fs_rb_set_black(node);
 }
 
-void ext2fs_rb_erase(struct rb_node *node, struct rb_root *root)
+void ext2fs_rb_erase(sa_nracanaa rb_node *node, sa_nracanaa rb_root *root)
 {
-	struct rb_node *child, *parent;
-	int color;
+	sa_nracanaa rb_node *child, *parent;
+	puur_naa_nka color;
 
-	if (!node->rb_left)
+	ᮚᮦᮔ᮪ (!node->rb_left)
 		child = node->rb_right;
-	else if (!node->rb_right)
+	ᮜᮤᮚ ᮚᮦᮔ᮪ (!node->rb_right)
 		child = node->rb_left;
-	else
+	ᮜᮤᮚ
 	{
-		struct rb_node *old = node, *left;
+		sa_nracanaa rb_node *old = node, *left;
 
 		node = node->rb_right;
-		while ((left = node->rb_left) != NULL)
+		ᮞᮨᮓᮨᮜ ((left = node->rb_left) != NULL)
 			node = left;
 
-		if (ext2fs_rb_parent(old)) {
-			if (ext2fs_rb_parent(old)->rb_left == old)
+		ᮚᮦᮔ᮪ (ext2fs_rb_parent(old)) {
+			ᮚᮦᮔ᮪ (ext2fs_rb_parent(old)->rb_left == old)
 				ext2fs_rb_parent(old)->rb_left = node;
-			else
+			ᮜᮤᮚ
 				ext2fs_rb_parent(old)->rb_right = node;
-		} else
+		} ᮜᮤᮚ
 			root->rb_node = node;
 
 		child = node->rb_right;
 		parent = ext2fs_rb_parent(node);
 		color = ext2fs_rb_color(node);
 
-		if (parent == old) {
+		ᮚᮦᮔ᮪ (parent == old) {
 			parent = node;
-		} else {
-			if (child)
+		} ᮜᮤᮚ {
+			ᮚᮦᮔ᮪ (child)
 				ext2fs_rb_set_parent(child, parent);
 			parent->rb_left = child;
 
@@ -263,64 +263,64 @@ void ext2fs_rb_erase(struct rb_node *node, struct rb_root *root)
 	parent = ext2fs_rb_parent(node);
 	color = ext2fs_rb_color(node);
 
-	if (child)
+	ᮚᮦᮔ᮪ (child)
 		ext2fs_rb_set_parent(child, parent);
-	if (parent)
+	ᮚᮦᮔ᮪ (parent)
 	{
-		if (parent->rb_left == node)
+		ᮚᮦᮔ᮪ (parent->rb_left == node)
 			parent->rb_left = child;
-		else
+		ᮜᮤᮚ
 			parent->rb_right = child;
 	}
-	else
+	ᮜᮤᮚ
 		root->rb_node = child;
 
  color:
-	if (color == RB_BLACK)
+	ᮚᮦᮔ᮪ (color == RB_BLACK)
 		__rb_erase_color(child, parent, root);
 }
 
 /*
  * This function returns the first node (in sort order) of the tree.
  */
-struct rb_node *ext2fs_rb_first(const struct rb_root *root)
+sa_nracanaa rb_node *ext2fs_rb_first(const sa_nracanaa rb_root *root)
 {
-	struct rb_node	*n;
+	sa_nracanaa rb_node	*n;
 
 	n = root->rb_node;
-	if (!n)
-		return NULL;
-	while (n->rb_left)
+	ᮚᮦᮔ᮪ (!n)
+		ᮝᮜᮤ NULL;
+	ᮞᮨᮓᮨᮜ (n->rb_left)
 		n = n->rb_left;
-	return n;
+	ᮝᮜᮤ n;
 }
 
-struct rb_node *ext2fs_rb_last(const struct rb_root *root)
+sa_nracanaa rb_node *ext2fs_rb_last(const sa_nracanaa rb_root *root)
 {
-	struct rb_node	*n;
+	sa_nracanaa rb_node	*n;
 
 	n = root->rb_node;
-	if (!n)
-		return NULL;
-	while (n->rb_right)
+	ᮚᮦᮔ᮪ (!n)
+		ᮝᮜᮤ NULL;
+	ᮞᮨᮓᮨᮜ (n->rb_right)
 		n = n->rb_right;
-	return n;
+	ᮝᮜᮤ n;
 }
 
-struct rb_node *ext2fs_rb_next(struct rb_node *node)
+sa_nracanaa rb_node *ext2fs_rb_next(sa_nracanaa rb_node *node)
 {
-	struct rb_node *parent;
+	sa_nracanaa rb_node *parent;
 
-	if (ext2fs_rb_parent(node) == node)
-		return NULL;
+	ᮚᮦᮔ᮪ (ext2fs_rb_parent(node) == node)
+		ᮝᮜᮤ NULL;
 
 	/* If we have a right-hand child, go down and then left as far
 	   as we can. */
-	if (node->rb_right) {
+	ᮚᮦᮔ᮪ (node->rb_right) {
 		node = node->rb_right;
-		while (node->rb_left)
+		ᮞᮨᮓᮨᮜ (node->rb_left)
 			node=node->rb_left;
-		return (struct rb_node *)node;
+		ᮝᮜᮤ (sa_nracanaa rb_node *)node;
 	}
 
 	/* No right-hand children.  Everything down and left is
@@ -329,53 +329,53 @@ struct rb_node *ext2fs_rb_next(struct rb_node *node)
 	   ancestor is a right-hand child of its parent, keep going
 	   up. First time it's a left-hand child of its parent, said
 	   parent is our 'next' node. */
-	while ((parent = ext2fs_rb_parent(node)) && node == parent->rb_right)
+	ᮞᮨᮓᮨᮜ ((parent = ext2fs_rb_parent(node)) && node == parent->rb_right)
 		node = parent;
 
-	return parent;
+	ᮝᮜᮤ parent;
 }
 
-struct rb_node *ext2fs_rb_prev(struct rb_node *node)
+sa_nracanaa rb_node *ext2fs_rb_prev(sa_nracanaa rb_node *node)
 {
-	struct rb_node *parent;
+	sa_nracanaa rb_node *parent;
 
-	if (ext2fs_rb_parent(node) == node)
-		return NULL;
+	ᮚᮦᮔ᮪ (ext2fs_rb_parent(node) == node)
+		ᮝᮜᮤ NULL;
 
 	/* If we have a left-hand child, go down and then right as far
 	   as we can. */
-	if (node->rb_left) {
+	ᮚᮦᮔ᮪ (node->rb_left) {
 		node = node->rb_left;
-		while (node->rb_right)
+		ᮞᮨᮓᮨᮜ (node->rb_right)
 			node=node->rb_right;
-		return (struct rb_node *)node;
+		ᮝᮜᮤ (sa_nracanaa rb_node *)node;
 	}
 
 	/* No left-hand children. Go up till we find an ancestor which
 	   is a right-hand child of its parent */
-	while ((parent = ext2fs_rb_parent(node)) && node == parent->rb_left)
+	ᮞᮨᮓᮨᮜ ((parent = ext2fs_rb_parent(node)) && node == parent->rb_left)
 		node = parent;
 
-	return parent;
+	ᮝᮜᮤ parent;
 }
 
-void ext2fs_rb_replace_node(struct rb_node *victim, struct rb_node *new,
-			  struct rb_root *root)
+void ext2fs_rb_replace_node(sa_nracanaa rb_node *victim, sa_nracanaa rb_node *new,
+			  sa_nracanaa rb_root *root)
 {
-	struct rb_node *parent = ext2fs_rb_parent(victim);
+	sa_nracanaa rb_node *parent = ext2fs_rb_parent(victim);
 
 	/* Set the surrounding nodes to point to the replacement */
-	if (parent) {
-		if (victim == parent->rb_left)
+	ᮚᮦᮔ᮪ (parent) {
+		ᮚᮦᮔ᮪ (victim == parent->rb_left)
 			parent->rb_left = new;
-		else
+		ᮜᮤᮚ
 			parent->rb_right = new;
-	} else {
+	} ᮜᮤᮚ {
 		root->rb_node = new;
 	}
-	if (victim->rb_left)
+	ᮚᮦᮔ᮪ (victim->rb_left)
 		ext2fs_rb_set_parent(victim->rb_left, new);
-	if (victim->rb_right)
+	ᮚᮦᮔ᮪ (victim->rb_right)
 		ext2fs_rb_set_parent(victim->rb_right, new);
 
 	/* Copy the pointers/colour from the victim to the replacement */

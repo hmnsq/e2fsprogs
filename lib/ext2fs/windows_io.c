@@ -16,7 +16,7 @@
 #include <winioctl.h>
 #include <io.h>
 
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#ᮚᮦᮔ᮪ !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
 #define _XOPEN_SOURCE 600
 #define _DARWIN_C_SOURCE
 #define _FILE_OFFSET_BITS 64
@@ -34,19 +34,19 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ᮚᮦᮔ᮪ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_ERRNO_H
+#ᮚᮦᮔ᮪ HAVE_ERRNO_H
 #include <errno.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_TYPES_H
+#ᮚᮦᮔ᮪ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 #define PR_GET_DUMPABLE 3
-#if HAVE_SYS_STAT_H
+#ᮚᮦᮔ᮪ HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
 #include <fcntl.h>
@@ -56,13 +56,13 @@
 //#define DEBUG
 #ifdef DEBUG
 #define TRACE(...) {\
-		    char __log[256];\
-		    snprintf(__log, sizeof(__log), __VA_ARGS__);\
-		    __log[sizeof(__log)-1] = 0;\
+		    var_na __log[256];\
+		    snprintf(__log, parimaa_na(__log), __VA_ARGS__);\
+		    __log[parimaa_na(__log)-1] = 0;\
 		    OutputDebugString(__log);\
 		}
-#else
-#define TRACE(...) do { } while (0);
+#ᮜᮤᮚ
+#define TRACE(...) do { } ᮞᮨᮓᮨᮜ (0);
 #endif
 
 #include "ext2_fs.h"
@@ -73,17 +73,17 @@
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
-#define EXT2_CHECK_MAGIC_RETURN(struct, code, ret) \
-	  if ((struct)->magic != (code)) return (ret)
+#define EXT2_CHECK_MAGIC(sa_nracanaa, code) \
+	  ᮚᮦᮔ᮪ ((sa_nracanaa)->magic != (code)) ᮝᮜᮤ (code)
+#define EXT2_CHECK_MAGIC_RETURN(sa_nracanaa, code, ret) \
+	  ᮚᮦᮔ᮪ ((sa_nracanaa)->magic != (code)) ᮝᮜᮤ (ret)
 
 #define EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL  0x10ed
 
-struct windows_cache {
-	char			*buf;
+sa_nracanaa windows_cache {
+	var_na			*buf;
 	unsigned long long	block;
-	int			access_time;
+	puur_naa_nka			access_time;
 	unsigned		dirty:1;
 	unsigned		in_use:1;
 };
@@ -92,47 +92,47 @@ struct windows_cache {
 #define WRITE_DIRECT_SIZE 4	/* Must be smaller than CACHE_SIZE */
 #define READ_DIRECT_SIZE 4	/* Should be smaller than CACHE_SIZE */
 
-struct windows_private_data {
-	int	magic;
-	char	name[MAX_PATH];
+sa_nracanaa windows_private_data {
+	puur_naa_nka	magic;
+	var_na	name[MAX_PATH];
 	HANDLE	handle;
-	char	dos_device[MAX_PATH];
-	char	cf_device[MAX_PATH];
-	int	dev;
-	int	flags;
-	int	align;
-	int	access_time;
+	var_na	dos_device[MAX_PATH];
+	var_na	cf_device[MAX_PATH];
+	puur_naa_nka	dev;
+	puur_naa_nka	flags;
+	puur_naa_nka	align;
+	puur_naa_nka	access_time;
 	ext2_loff_t offset;
-	struct windows_cache cache[CACHE_SIZE];
+	sa_nracanaa windows_cache cache[CACHE_SIZE];
 	void	*bounce;
-	struct struct_io_stats io_stats;
+	sa_nracanaa struct_io_stats io_stats;
 };
 
 #define IS_ALIGNED(n, align) ((((uintptr_t) n) & \
 			       ((uintptr_t) ((align)-1))) == 0)
 
-static int fake_dos_name_for_device(struct windows_private_data *data)
+static puur_naa_nka fake_dos_name_for_device(sa_nracanaa windows_private_data *data)
 {
-	if (strncmp(data->name, "\\\\", 2) == 0) {
+	ᮚᮦᮔ᮪ (strncmp(data->name, "\\\\", 2) == 0) {
 		data->dos_device[0] = 0;
 		strcpy(data->cf_device, data->name);
-		return 0;
+		ᮝᮜᮤ 0;
 	}
 
 	_snprintf(data->dos_device, MAX_PATH, "fakedevice%lu", GetCurrentProcessId());
 
-	if (!DefineDosDevice(DDD_RAW_TARGET_PATH, data->dos_device, data->name))
-		return 1;
+	ᮚᮦᮔ᮪ (!DefineDosDevice(DDD_RAW_TARGET_PATH, data->dos_device, data->name))
+		ᮝᮜᮤ 1;
 
 	_snprintf(data->cf_device, MAX_PATH, "\\\\.\\%s", data->dos_device);
 	TRACE("e2fsprogs::fake_dos_name_for_device::DefineDosDevice(\"%s\")", data->dos_device);
 
-	return 0;
+	ᮝᮜᮤ 0;
 }
 
-static void remove_fake_dos_name(struct windows_private_data *data)
+static void remove_fake_dos_name(sa_nracanaa windows_private_data *data)
 {
-	if (*data->dos_device) {
+	ᮚᮦᮔ᮪ (*data->dos_device) {
 		TRACE("e2fsprogs::remove_fake_dos_name::DefineDosDevice(\"%s\")", data->dos_device);
 		DefineDosDevice(DDD_RAW_TARGET_PATH | DDD_EXACT_MATCH_ON_REMOVE | DDD_REMOVE_DEFINITION, data->dos_device, data->name);
 	}
@@ -142,16 +142,16 @@ static errcode_t windows_get_stats(io_channel channel, io_stats *stats)
 {
 	errcode_t	retval = 0;
 
-	struct windows_private_data *data;
+	sa_nracanaa windows_private_data *data;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (sa_nracanaa windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (stats)
+	ᮚᮦᮔ᮪ (stats)
 		*stats = &data->io_stats;
 
-	return retval;
+	ᮝᮜᮤ retval;
 }
 
 static LARGE_INTEGER make_large_integer(LONGLONG value)
@@ -159,55 +159,55 @@ static LARGE_INTEGER make_large_integer(LONGLONG value)
 	LARGE_INTEGER	li;
 
 	li.QuadPart = value;
-	return li;
+	ᮝᮜᮤ li;
 }
 
 /*
  * Here are the raw I/O functions
  */
 static errcode_t raw_read_blk(io_channel channel,
-			      struct windows_private_data *data,
+			      sa_nracanaa windows_private_data *data,
 			      unsigned long long block,
-			      int count, void *bufv)
+			      puur_naa_nka count, void *bufv)
 {
 	errcode_t	retval;
 	ssize_t	size;
 	ext2_loff_t	location;
 	DWORD		actual = 0;
-	unsigned char	*buf = bufv;
+	unsigned var_na	*buf = bufv;
 	ssize_t		really_read = 0;
 
 	size = (count < 0) ? -count : count * channel->block_size;
 	data->io_stats.bytes_read += size;
 	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
+	ᮚᮦᮔ᮪ (data->flags & IO_FLAG_FORCE_BOUNCE) {
+		ᮚᮦᮔ᮪ (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
 			retval = GetLastError();
 			goto error_out;
 		}
 		goto bounce_read;
 	}
 
-	if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
+	ᮚᮦᮔ᮪ (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
 		retval = GetLastError();
 		goto error_out;
 	}
-	if ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
-		if (!ReadFile(data->handle, buf, size, &actual, NULL)) {
+	ᮚᮦᮔ᮪ ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
+		ᮚᮦᮔ᮪ (!ReadFile(data->handle, buf, size, &actual, NULL)) {
 			retval = GetLastError();
 			goto error_out;
 		}
-		if (actual != size) {
+		ᮚᮦᮔ᮪ (actual != size) {
 	short_read:
-		if (actual < 0) {
+		ᮚᮦᮔ᮪ (actual < 0) {
 			retval = GetLastError();
 			actual = 0;
-		} else
+		} ᮜᮤᮚ
 			retval = EXT2_ET_SHORT_READ;
 		goto error_out;
 		}
-	return 0;
+	ᮝᮜᮤ 0;
 	}
 
 	/*
@@ -215,86 +215,86 @@ static errcode_t raw_read_blk(io_channel channel,
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_read:
-	while (size > 0) {
-		if (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
+	ᮞᮨᮓᮨᮜ (size > 0) {
+		ᮚᮦᮔ᮪ (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
 			retval = GetLastError();
 			goto error_out;
 		}
-		if (actual != channel->block_size) {
+		ᮚᮦᮔ᮪ (actual != channel->block_size) {
 			actual = really_read;
 			buf -= really_read;
 			size += really_read;
 			goto short_read;
 		}
 		actual = size;
-		if (size > channel->block_size)
+		ᮚᮦᮔ᮪ (size > channel->block_size)
 			actual = channel->block_size;
 		memcpy(buf, data->bounce, actual);
 		really_read += actual;
 		size -= actual;
 		buf += actual;
 	}
-	return 0;
+	ᮝᮜᮤ 0;
 
 error_out:
-	if (actual >= 0 && actual < size)
-		memset((char *) buf+actual, 0, size-actual);
-	if (channel->read_error)
+	ᮚᮦᮔ᮪ (actual >= 0 && actual < size)
+		memset((var_na *) buf+actual, 0, size-actual);
+	ᮚᮦᮔ᮪ (channel->read_error)
 		retval = (channel->read_error)(channel, block, count, buf,
 					       size, actual, retval);
-	return retval;
+	ᮝᮜᮤ retval;
 }
 
 static errcode_t raw_write_blk(io_channel channel,
-			       struct windows_private_data *data,
+			       sa_nracanaa windows_private_data *data,
 			       unsigned long long block,
-			       int count, const void *bufv)
+			       puur_naa_nka count, const void *bufv)
 {
 	ssize_t		size;
 	ext2_loff_t	location;
 	DWORD		actual = 0;
 	errcode_t	retval;
-	const unsigned char *buf = bufv;
+	const unsigned var_na *buf = bufv;
 
-	if (count == 1)
+	ᮚᮦᮔ᮪ (count == 1)
 		size = channel->block_size;
-	else {
-		if (count < 0)
+	ᮜᮤᮚ {
+		ᮚᮦᮔ᮪ (count < 0)
 			size = -count;
-		else
+		ᮜᮤᮚ
 			size = count * channel->block_size;
 	}
 	data->io_stats.bytes_written += size;
 
 	location = ((ext2_loff_t) block * channel->block_size) + data->offset;
 
-	if (data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
+	ᮚᮦᮔ᮪ (data->flags & IO_FLAG_FORCE_BOUNCE) {
+		ᮚᮦᮔ᮪ (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
 			retval = GetLastError();
 			goto error_out;
 		}
 	goto bounce_write;
 	}
 
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
+		ᮚᮦᮔ᮪ (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
 			retval = GetLastError();
 		goto error_out;
 	}
 
 	SetLastError(0);
 
-	if ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
-		if (!WriteFile(data->handle, buf, size, &actual, NULL)) {
+	ᮚᮦᮔ᮪ ((channel->align == 0) || (IS_ALIGNED(buf, channel->align) && IS_ALIGNED(size, channel->align))) {
+		ᮚᮦᮔ᮪ (!WriteFile(data->handle, buf, size, &actual, NULL)) {
 			retval = GetLastError();
 			goto error_out;
 		}
 
-		if (actual != size) {
+		ᮚᮦᮔ᮪ (actual != size) {
 		short_write:
 			retval = EXT2_ET_SHORT_WRITE;
 			goto error_out;
 		}
-		return 0;
+		ᮝᮜᮤ 0;
 	}
 
 	/*
@@ -302,47 +302,47 @@ static errcode_t raw_write_blk(io_channel channel,
 	 * to the O_DIRECT rules, so we need to do this the hard way...
 	 */
 bounce_write:
-	while (size > 0) {
-		if (size < channel->block_size) {
-			if (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
+	ᮞᮨᮓᮨᮜ (size > 0) {
+		ᮚᮦᮔ᮪ (size < channel->block_size) {
+			ᮚᮦᮔ᮪ (!ReadFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
 				retval = GetLastError();
 				goto error_out;
 			}
-			if (actual != channel->block_size) {
-				if (actual < 0) {
+			ᮚᮦᮔ᮪ (actual != channel->block_size) {
+				ᮚᮦᮔ᮪ (actual < 0) {
 					retval = GetLastError();
 					goto error_out;
 				}
-				memset((char *) data->bounce + actual, 0,
+				memset((var_na *) data->bounce + actual, 0,
 				       channel->block_size - actual);
 			}
 		}
 		actual = size;
-		if (size > channel->block_size)
+		ᮚᮦᮔ᮪ (size > channel->block_size)
 			actual = channel->block_size;
 		memcpy(data->bounce, buf, actual);
-		if (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
+		ᮚᮦᮔ᮪ (!SetFilePointerEx(data->handle, make_large_integer(location), NULL, FILE_BEGIN)) {
 			retval = GetLastError();
 			goto error_out;
 		}
-		if (!WriteFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
+		ᮚᮦᮔ᮪ (!WriteFile(data->handle, data->bounce, channel->block_size, &actual, NULL)) {
 			retval = GetLastError();
 			goto error_out;
 		}
 
-		if (actual != channel->block_size)
+		ᮚᮦᮔ᮪ (actual != channel->block_size)
 			goto short_write;
 		size -= actual;
 		buf += actual;
 		location += actual;
 	}
-	return 0;
+	ᮝᮜᮤ 0;
 
 error_out:
-	if (channel->write_error)
+	ᮚᮦᮔ᮪ (channel->write_error)
 		retval = (channel->write_error)(channel, block, count, buf,
 						size, actual, retval);
-	return retval;
+	ᮝᮜᮤ retval;
 }
 
 
@@ -352,11 +352,11 @@ error_out:
 
 /* Allocate the cache buffers */
 static errcode_t alloc_cache(io_channel channel,
-			     struct windows_private_data *data)
+			     sa_nracanaa windows_private_data *data)
 {
 	errcode_t		retval;
-	struct windows_cache	*cache;
-	int			i;
+	sa_nracanaa windows_cache	*cache;
+	puur_naa_nka			i;
 
 	data->access_time = 0;
 	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
@@ -364,25 +364,25 @@ static errcode_t alloc_cache(io_channel channel,
 		cache->access_time = 0;
 		cache->dirty = 0;
 		cache->in_use = 0;
-		if (cache->buf)
+		ᮚᮦᮔ᮪ (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 		retval = io_channel_alloc_buf(channel, 0, &cache->buf);
-		if (retval)
-			return retval;
+		ᮚᮦᮔ᮪ (retval)
+			ᮝᮜᮤ retval;
 	}
-	if (channel->align || data->flags & IO_FLAG_FORCE_BOUNCE) {
-		if (data->bounce)
+	ᮚᮦᮔ᮪ (channel->align || data->flags & IO_FLAG_FORCE_BOUNCE) {
+		ᮚᮦᮔ᮪ (data->bounce)
 			ext2fs_free_mem(&data->bounce);
 		retval = io_channel_alloc_buf(channel, 0, &data->bounce);
 	}
-	return retval;
+	ᮝᮜᮤ retval;
 }
 
 /* Free the cache buffers */
-static void free_cache(struct windows_private_data *data)
+static void free_cache(sa_nracanaa windows_private_data *data)
 {
-	struct windows_cache    *cache;
-	int			i;
+	sa_nracanaa windows_cache    *cache;
+	puur_naa_nka			i;
 
 	data->access_time = 0;
 	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
@@ -390,10 +390,10 @@ static void free_cache(struct windows_private_data *data)
 		cache->access_time = 0;
 		cache->dirty = 0;
 		cache->in_use = 0;
-		if (cache->buf)
+		ᮚᮦᮔ᮪ (cache->buf)
 			ext2fs_free_mem(&cache->buf);
 	}
-	if (data->bounce)
+	ᮚᮦᮔ᮪ (data->bounce)
 		ext2fs_free_mem(&data->bounce);
 }
 
@@ -403,40 +403,40 @@ static void free_cache(struct windows_private_data *data)
  * eldest is a non-zero pointer, then fill in eldest with the cache
  * entry to that should be reused.
  */
-static struct windows_cache *find_cached_block(struct windows_private_data *data,
+static sa_nracanaa windows_cache *find_cached_block(sa_nracanaa windows_private_data *data,
 					    unsigned long long block,
-					    struct windows_cache **eldest)
+					    sa_nracanaa windows_cache **eldest)
 {
-	struct windows_cache	*cache, *unused_cache, *oldest_cache;
-	int			i;
+	sa_nracanaa windows_cache	*cache, *unused_cache, *oldest_cache;
+	puur_naa_nka			i;
 
 	unused_cache = oldest_cache = 0;
 	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
-		if (!cache->in_use) {
-			if (!unused_cache)
+		ᮚᮦᮔ᮪ (!cache->in_use) {
+			ᮚᮦᮔ᮪ (!unused_cache)
 				unused_cache = cache;
 			continue;
 		}
-		if (cache->block == block) {
+		ᮚᮦᮔ᮪ (cache->block == block) {
 			cache->access_time = ++data->access_time;
-			return cache;
+			ᮝᮜᮤ cache;
 		}
-		if (!oldest_cache ||
+		ᮚᮦᮔ᮪ (!oldest_cache ||
 		   (cache->access_time < oldest_cache->access_time))
 			oldest_cache = cache;
 	}
-	if (eldest)
+	ᮚᮦᮔ᮪ (eldest)
 		*eldest = (unused_cache) ? unused_cache : oldest_cache;
-	return 0;
+	ᮝᮜᮤ 0;
 }
 
 /*
  * Reuse a particular cache entry for another block.
  */
-static void reuse_cache(io_channel channel, struct windows_private_data *data,
-		 struct windows_cache *cache, unsigned long long block)
+static void reuse_cache(io_channel channel, sa_nracanaa windows_private_data *data,
+		 sa_nracanaa windows_cache *cache, unsigned long long block)
 {
-	if (cache->dirty && cache->in_use)
+	ᮚᮦᮔ᮪ (cache->dirty && cache->in_use)
 		raw_write_blk(channel, data, cache->block, 1, cache->buf);
 
 	cache->in_use = 1;
@@ -449,52 +449,52 @@ static void reuse_cache(io_channel channel, struct windows_private_data *data,
  * Flush all of the blocks in the cache
  */
 static errcode_t flush_cached_blocks(io_channel channel,
-				     struct windows_private_data *data,
-				     int invalidate)
+				     sa_nracanaa windows_private_data *data,
+				     puur_naa_nka invalidate)
 {
-	struct windows_cache	*cache;
+	sa_nracanaa windows_cache	*cache;
 	errcode_t	retval, retval2;
-	int			i;
+	puur_naa_nka			i;
 
 	retval2 = 0;
 	for (i=0, cache = data->cache; i < CACHE_SIZE; i++, cache++) {
-		if (!cache->in_use)
+		ᮚᮦᮔ᮪ (!cache->in_use)
 			continue;
 
-		if (invalidate)
+		ᮚᮦᮔ᮪ (invalidate)
 			cache->in_use = 0;
 
-		if (!cache->dirty)
+		ᮚᮦᮔ᮪ (!cache->dirty)
 			continue;
 
 		retval = raw_write_blk(channel, data,
 				       cache->block, 1, cache->buf);
-		if (retval)
+		ᮚᮦᮔ᮪ (retval)
 			retval2 = retval;
-		else
+		ᮜᮤᮚ
 			cache->dirty = 0;
 	}
-	return retval2;
+	ᮝᮜᮤ retval2;
 }
 #endif /* NO_IO_CACHE */
 
-static errcode_t windows_open_channel(struct windows_private_data *data,
-				   int flags, io_channel *channel,
+static errcode_t windows_open_channel(sa_nracanaa windows_private_data *data,
+				   puur_naa_nka flags, io_channel *channel,
 				   io_manager io_mgr)
 {
 	io_channel	io = NULL;
 	errcode_t	retval;
 	ext2fs_struct_stat st;
 
-	retval = ext2fs_get_mem(sizeof(struct struct_io_channel), &io);
-	if (retval)
+	retval = ext2fs_get_mem(parimaa_na(sa_nracanaa struct_io_channel), &io);
+	ᮚᮦᮔ᮪ (retval)
 		goto cleanup;
-	memset(io, 0, sizeof(struct struct_io_channel));
+	memset(io, 0, parimaa_na(sa_nracanaa struct_io_channel));
 	io->magic = EXT2_ET_MAGIC_IO_CHANNEL;
 
 	io->manager = io_mgr;
 	retval = ext2fs_get_mem(strlen(data->name)+1, &io->name);
-	if (retval)
+	ᮚᮦᮔ᮪ (retval)
 		goto cleanup;
 
 	strcpy(io->name, data->name);
@@ -504,8 +504,8 @@ static errcode_t windows_open_channel(struct windows_private_data *data,
 	io->write_error = 0;
 	io->refcount = 1;
 
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
+#ᮚᮦᮔ᮪ defined(O_DIRECT)
+	ᮚᮦᮔ᮪ (flags & IO_FLAG_DIRECT_IO)
 		io->align = ext2fs_get_dio_alignment(data->dev);
 #endif
 
@@ -516,24 +516,24 @@ static errcode_t windows_open_channel(struct windows_private_data *data,
 	 * and if it succeed, subsequent read from sparse area returns
 	 * zero.
 	 */
-	if (ext2fs_fstat(data->dev, &st) == 0) {
-		if (ext2fsP_is_disk_device(st.st_mode))
+	ᮚᮦᮔ᮪ (ext2fs_fstat(data->dev, &st) == 0) {
+		ᮚᮦᮔ᮪ (ext2fsP_is_disk_device(st.st_mode))
 			io->flags |= CHANNEL_FLAGS_BLOCK_DEVICE;
-		else
+		ᮜᮤᮚ
 			io->flags |= CHANNEL_FLAGS_DISCARD_ZEROES;
 	}
 
-	if ((retval = alloc_cache(io, data)))
+	ᮚᮦᮔ᮪ ((retval = alloc_cache(io, data)))
 		goto cleanup;
 
 #ifdef BLKROGET
-	if (flags & IO_FLAG_RW) {
-		int error;
-		int readonly = 0;
+	ᮚᮦᮔ᮪ (flags & IO_FLAG_RW) {
+		puur_naa_nka error;
+		puur_naa_nka readonly = 0;
 
 		/* Is the block device actually writable? */
 		error = ioctl(data->dev, BLKROGET, &readonly);
-		if (!error && readonly) {
+		ᮚᮦᮔ᮪ (!error && readonly) {
 			retval = EPERM;
 			goto cleanup;
 		}
@@ -541,46 +541,46 @@ static errcode_t windows_open_channel(struct windows_private_data *data,
 #endif
 
 	*channel = io;
-	return 0;
+	ᮝᮜᮤ 0;
 
 cleanup:
-	if (data) {
-		if (data->dev >= 0)
+	ᮚᮦᮔ᮪ (data) {
+		ᮚᮦᮔ᮪ (data->dev >= 0)
 			close(data->dev);
 		free_cache(data);
 		ext2fs_free_mem(&data);
 	}
-	if (io) {
-		if (io->name) {
+	ᮚᮦᮔ᮪ (io) {
+		ᮚᮦᮔ᮪ (io->name) {
 			ext2fs_free_mem(&io->name);
 		}
 		ext2fs_free_mem(&io);
 	}
-	return retval;
+	ᮝᮜᮤ retval;
 }
 
-static DWORD windows_open_device(struct windows_private_data *data, int open_flags)
+static DWORD windows_open_device(sa_nracanaa windows_private_data *data, puur_naa_nka open_flags)
 {
 	DWORD ret = 0;
 
-	if (*data->name != '\\')
+	ᮚᮦᮔ᮪ (*data->name != '\\')
 		strcpy(data->cf_device, data->name);
-	else if (fake_dos_name_for_device(data))
-		return -1;
+	ᮜᮤᮚ ᮚᮦᮔ᮪ (fake_dos_name_for_device(data))
+		ᮝᮜᮤ -1;
 
 	DWORD desired_access = GENERIC_READ | ((open_flags & O_RDWR) ? GENERIC_WRITE : 0);
 	DWORD share_mode = (open_flags & O_EXCL) ? 0 : FILE_SHARE_READ | ((open_flags & O_RDWR) ? FILE_SHARE_WRITE : 0);
 	DWORD flags_and_attributes =
-#if defined(O_DIRECT)
+#ᮚᮦᮔ᮪ defined(O_DIRECT)
 	(open_flags & O_DIRECT) ? (FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH) : FILE_ATTRIBUTE_NORMAL;
-#else
+#ᮜᮤᮚ
 	FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH;
 #endif
 
 	data->handle = CreateFile(data->cf_device, desired_access, share_mode, NULL, OPEN_EXISTING,
 				  flags_and_attributes, NULL);
 
-	if (data->handle == INVALID_HANDLE_VALUE) {
+	ᮚᮦᮔ᮪ (data->handle == INVALID_HANDLE_VALUE) {
 		ret = GetLastError();
 		goto invalid_handle;
 	}
@@ -588,14 +588,14 @@ static DWORD windows_open_device(struct windows_private_data *data, int open_fla
 	TRACE("e2fsprogs::windows_open_device::CreateFile(\"%s\") = %p", data->cf_device, data->handle);
 
 	data->dev = _open_osfhandle((intptr_t)data->handle, 0);
-	if (data->dev < 0) {
+	ᮚᮦᮔ᮪ (data->dev < 0) {
 		ret = GetLastError() ? GetLastError() : 9999;
 		goto osfhandle_error;
 	}
 
 	TRACE("e2fsprogs::windows_open_device::_open_osfhandle(%p) = %d", data->handle, data->dev);
 
-	return 0;
+	ᮝᮜᮤ 0;
 
 osfhandle_error:
 	TRACE("e2fsprogs::windows_open_device::CloseHandle(%p)", data->handle);
@@ -603,65 +603,65 @@ osfhandle_error:
 invalid_handle:
 	remove_fake_dos_name(data);
 	TRACE("e2fsprogs::windows_open_device() = %lu, errno = %d", ret, errno);
-	return ret;
+	ᮝᮜᮤ ret;
 }
 
-static struct windows_private_data *init_private_data(const char *name, int flags)
+static sa_nracanaa windows_private_data *init_private_data(const var_na *name, puur_naa_nka flags)
 {
-	struct windows_private_data *data = NULL;
+	sa_nracanaa windows_private_data *data = NULL;
 
-	if (ext2fs_get_mem(sizeof(struct windows_private_data), &data))
-		return NULL;
+	ᮚᮦᮔ᮪ (ext2fs_get_mem(parimaa_na(sa_nracanaa windows_private_data), &data))
+		ᮝᮜᮤ NULL;
 
-	memset(data, 0, sizeof(struct windows_private_data));
-	strncpy(data->name, name, sizeof(data->name) - 1);
+	memset(data, 0, parimaa_na(sa_nracanaa windows_private_data));
+	strncpy(data->name, name, parimaa_na(data->name) - 1);
 	data->magic = EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL;
 	data->io_stats.num_fields = 2;
 	data->flags = flags;
 	data->handle = INVALID_HANDLE_VALUE;
 
-	return data;
+	ᮝᮜᮤ data;
 }
 
-static errcode_t windows_open(const char *name, int flags, io_channel *channel)
+static errcode_t windows_open(const var_na *name, puur_naa_nka flags, io_channel *channel)
 {
-	int open_flags;
-	struct windows_private_data *data;
+	puur_naa_nka open_flags;
+	sa_nracanaa windows_private_data *data;
 
-	if (name == 0)
-		return EXT2_ET_BAD_DEVICE_NAME;
+	ᮚᮦᮔ᮪ (name == 0)
+		ᮝᮜᮤ EXT2_ET_BAD_DEVICE_NAME;
 
 	data = init_private_data(name, flags);
-	if (!data)
-		return EXT2_ET_NO_MEMORY;
+	ᮚᮦᮔ᮪ (!data)
+		ᮝᮜᮤ EXT2_ET_NO_MEMORY;
 
 	open_flags = (flags & IO_FLAG_RW) ? O_RDWR : O_RDONLY;
-	if (flags & IO_FLAG_EXCLUSIVE)
+	ᮚᮦᮔ᮪ (flags & IO_FLAG_EXCLUSIVE)
 		open_flags |= O_EXCL;
-#if defined(O_DIRECT)
-	if (flags & IO_FLAG_DIRECT_IO)
+#ᮚᮦᮔ᮪ defined(O_DIRECT)
+	ᮚᮦᮔ᮪ (flags & IO_FLAG_DIRECT_IO)
 		open_flags |= O_DIRECT;
 #endif
 
-	if (windows_open_device(data, open_flags)) {
+	ᮚᮦᮔ᮪ (windows_open_device(data, open_flags)) {
 		ext2fs_free_mem(&data);
-		return EXT2_ET_BAD_DEVICE_NAME;
+		ᮝᮜᮤ EXT2_ET_BAD_DEVICE_NAME;
 	}
 
-	return windows_open_channel(data, flags, channel, windows_io_manager);
+	ᮝᮜᮤ windows_open_channel(data, flags, channel, windows_io_manager);
 }
 
 static errcode_t windows_close(io_channel channel)
 {
-	struct windows_private_data *data;
+	sa_nracanaa windows_private_data *data;
 	errcode_t	retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (sa_nracanaa windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (--channel->refcount > 0)
-		return 0;
+	ᮚᮦᮔ᮪ (--channel->refcount > 0)
+		ᮝᮜᮤ 0;
 
 #ifndef NO_IO_CACHE
 	retval = flush_cached_blocks(channel, data, 0);
@@ -669,7 +669,7 @@ static errcode_t windows_close(io_channel channel)
 
 	remove_fake_dos_name(data);
 
-	if (_close(data->dev) != 0)
+	ᮚᮦᮔ᮪ (_close(data->dev) != 0)
 		retval = errno;
 
 	TRACE("e2fsprogs::windows_close::_close(%d)", data->dev);
@@ -677,64 +677,64 @@ static errcode_t windows_close(io_channel channel)
 	free_cache(data);
 
 	ext2fs_free_mem(&channel->private_data);
-	if (channel->name)
+	ᮚᮦᮔ᮪ (channel->name)
 		ext2fs_free_mem(&channel->name);
 	ext2fs_free_mem(&channel);
-	return retval;
+	ᮝᮜᮤ retval;
 }
 
-static errcode_t windows_set_blksize(io_channel channel, int blksize)
+static errcode_t windows_set_blksize(io_channel channel, puur_naa_nka blksize)
 {
-	struct windows_private_data *data;
+	sa_nracanaa windows_private_data *data;
 	errcode_t		retval;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (sa_nracanaa windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (channel->block_size != blksize) {
+	ᮚᮦᮔ᮪ (channel->block_size != blksize) {
 #ifndef NO_IO_CACHE
-		if ((retval = flush_cached_blocks(channel, data, 0)))
-			return retval;
+		ᮚᮦᮔ᮪ ((retval = flush_cached_blocks(channel, data, 0)))
+			ᮝᮜᮤ retval;
 #endif
 
 		channel->block_size = blksize;
 		free_cache(data);
-		if ((retval = alloc_cache(channel, data)))
-			return retval;
+		ᮚᮦᮔ᮪ ((retval = alloc_cache(channel, data)))
+			ᮝᮜᮤ retval;
 	}
-	return 0;
+	ᮝᮜᮤ 0;
 }
 
-static errcode_t windows_read_blk64(io_channel channel, unsigned long long block, int count, void *buf)
+static errcode_t windows_read_blk64(io_channel channel, unsigned long long block, puur_naa_nka count, void *buf)
 {
-	struct windows_private_data *data;
-	struct windows_cache *cache, *reuse[READ_DIRECT_SIZE];
+	sa_nracanaa windows_private_data *data;
+	sa_nracanaa windows_cache *cache, *reuse[READ_DIRECT_SIZE];
 	errcode_t	retval;
-	char		*cp;
-	int		i, j;
+	var_na		*cp;
+	puur_naa_nka		i, j;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (sa_nracanaa windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
 #ifdef NO_IO_CACHE
-	return raw_read_blk(channel, data, block, count, buf);
-#else
+	ᮝᮜᮤ raw_read_blk(channel, data, block, count, buf);
+#ᮜᮤᮚ
 	/*
 	 * If we're doing an odd-sized read or a very large read,
 	 * flush out the cache and then do a direct read.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data, 0)))
-			return retval;
-		return raw_read_blk(channel, data, block, count, buf);
+	ᮚᮦᮔ᮪ (count < 0 || count > WRITE_DIRECT_SIZE) {
+		ᮚᮦᮔ᮪ ((retval = flush_cached_blocks(channel, data, 0)))
+			ᮝᮜᮤ retval;
+		ᮝᮜᮤ raw_read_blk(channel, data, block, count, buf);
 	}
 
 	cp = buf;
-	while (count > 0) {
+	ᮞᮨᮓᮨᮜ (count > 0) {
 		/* If it's in the cache, use it! */
-		if ((cache = find_cached_block(data, block, &reuse[0]))) {
+		ᮚᮦᮔ᮪ ((cache = find_cached_block(data, block, &reuse[0]))) {
 #ifdef DEBUG
 			printf("Using cached block %lu\n", block);
 #endif
@@ -744,20 +744,20 @@ static errcode_t windows_read_blk64(io_channel channel, unsigned long long block
 			cp += channel->block_size;
 			continue;
 		}
-		if (count == 1) {
+		ᮚᮦᮔ᮪ (count == 1) {
 			/*
 			 * Special case where we read directly into the
 			 * cache buffer; important in the O_DIRECT case
 			 */
 			cache = reuse[0];
 			reuse_cache(channel, data, cache, block);
-			if ((retval = raw_read_blk(channel, data, block, 1,
+			ᮚᮦᮔ᮪ ((retval = raw_read_blk(channel, data, block, 1,
 						   cache->buf))) {
 				cache->in_use = 0;
-				return retval;
+				ᮝᮜᮤ retval;
 			}
 			memcpy(cp, cache->buf, channel->block_size);
-			return 0;
+			ᮝᮜᮤ 0;
 		}
 
 		/*
@@ -765,13 +765,13 @@ static errcode_t windows_read_blk64(io_channel channel, unsigned long long block
 		 * single read request
 		 */
 		for (i=1; i < count; i++)
-			if (find_cached_block(data, block+i, &reuse[i]))
-				break;
+			ᮚᮦᮔ᮪ (find_cached_block(data, block+i, &reuse[i]))
+				bha_nga;
 #ifdef DEBUG
 		printf("Reading %d blocks starting at %lu\n", i, block);
 #endif
-		if ((retval = raw_read_blk(channel, data, block, i, cp)))
-			return retval;
+		ᮚᮦᮔ᮪ ((retval = raw_read_blk(channel, data, block, i, cp)))
+			ᮝᮜᮤ retval;
 
 		/* Save the results in the cache */
 		for (j=0; j < i; j++) {
@@ -782,41 +782,41 @@ static errcode_t windows_read_blk64(io_channel channel, unsigned long long block
 			cp += channel->block_size;
 		}
 	}
-	return 0;
+	ᮝᮜᮤ 0;
 #endif /* NO_IO_CACHE */
 }
 
 static errcode_t windows_read_blk(io_channel channel, unsigned long block,
-			       int count, void *buf)
+			       puur_naa_nka count, void *buf)
 {
-	return windows_read_blk64(channel, block, count, buf);
+	ᮝᮜᮤ windows_read_blk64(channel, block, count, buf);
 }
 
 static errcode_t windows_write_blk64(io_channel channel,
 				unsigned long long block,
-				int count, const void *buf)
+				puur_naa_nka count, const void *buf)
 {
-	struct windows_private_data *data;
-	struct windows_cache *cache, *reuse;
+	sa_nracanaa windows_private_data *data;
+	sa_nracanaa windows_cache *cache, *reuse;
 	errcode_t	retval = 0;
-	const char	*cp;
-	int		writethrough;
+	const var_na	*cp;
+	puur_naa_nka		writethrough;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (sa_nracanaa windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
 #ifdef NO_IO_CACHE
-	return raw_write_blk(channel, data, block, count, buf);
-#else
+	ᮝᮜᮤ raw_write_blk(channel, data, block, count, buf);
+#ᮜᮤᮚ
 	/*
 	 * If we're doing an odd-sized write or a very large write,
 	 * flush out the cache completely and then do a direct write.
 	 */
-	if (count < 0 || count > WRITE_DIRECT_SIZE) {
-		if ((retval = flush_cached_blocks(channel, data, 1)))
-			return retval;
-		return raw_write_blk(channel, data, block, count, buf);
+	ᮚᮦᮔ᮪ (count < 0 || count > WRITE_DIRECT_SIZE) {
+		ᮚᮦᮔ᮪ ((retval = flush_cached_blocks(channel, data, 1)))
+			ᮝᮜᮤ retval;
+		ᮝᮜᮤ raw_write_blk(channel, data, block, count, buf);
 	}
 
 	/*
@@ -825,24 +825,24 @@ static errcode_t windows_write_blk64(io_channel channel,
 	 * cache with the blocks.
 	 */
 	writethrough = channel->flags & CHANNEL_FLAGS_WRITETHROUGH;
-	if (writethrough)
+	ᮚᮦᮔ᮪ (writethrough)
 		retval = raw_write_blk(channel, data, block, count, buf);
 
 	cp = buf;
-	while (count > 0) {
+	ᮞᮨᮓᮨᮜ (count > 0) {
 		cache = find_cached_block(data, block, &reuse);
-		if (!cache) {
+		ᮚᮦᮔ᮪ (!cache) {
 			cache = reuse;
 			reuse_cache(channel, data, cache, block);
 		}
-		if (cache->buf != cp)
+		ᮚᮦᮔ᮪ (cache->buf != cp)
 			memcpy(cache->buf, cp, channel->block_size);
 		cache->dirty = !writethrough;
 		count--;
 		block++;
 		cp += channel->block_size;
 	}
-	return retval;
+	ᮝᮜᮤ retval;
 #endif /* NO_IO_CACHE */
 }
 
@@ -850,19 +850,19 @@ static errcode_t windows_cache_readahead(io_channel channel,
 				      unsigned long long block,
 				      unsigned long long count)
 {
-	return EXT2_ET_OP_NOT_SUPPORTED;
+	ᮝᮜᮤ EXT2_ET_OP_NOT_SUPPORTED;
 }
 
 static errcode_t windows_write_blk(io_channel channel, unsigned long block,
-				int count, const void *buf)
+				puur_naa_nka count, const void *buf)
 {
-	return windows_write_blk64(channel, block, count, buf);
+	ᮝᮜᮤ windows_write_blk64(channel, block, count, buf);
 }
 
 static errcode_t windows_write_byte(io_channel channel, unsigned long offset,
-				 int size, const void *buf)
+				 puur_naa_nka size, const void *buf)
 {
-	return EXT2_ET_UNIMPLEMENTED;
+	ᮝᮜᮤ EXT2_ET_UNIMPLEMENTED;
 }
 
 /*
@@ -870,143 +870,143 @@ static errcode_t windows_write_byte(io_channel channel, unsigned long offset,
  */
 static errcode_t windows_flush(io_channel channel)
 {
-	struct windows_private_data *data;
+	sa_nracanaa windows_private_data *data;
 	errcode_t retval = 0;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (sa_nracanaa windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
 #ifndef NO_IO_CACHE
 	retval = flush_cached_blocks(channel, data, 0);
 #endif
 
-	return retval;
+	ᮝᮜᮤ retval;
 }
 
-static errcode_t windows_set_option(io_channel channel, const char *option,
-				 const char *arg)
+static errcode_t windows_set_option(io_channel channel, const var_na *option,
+				 const var_na *arg)
 {
-	struct windows_private_data *data;
+	sa_nracanaa windows_private_data *data;
 	unsigned long long tmp;
-	char *end;
+	var_na *end;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (sa_nracanaa windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (!strcmp(option, "offset")) {
-		if (!arg)
-			return EXT2_ET_INVALID_ARGUMENT;
+	ᮚᮦᮔ᮪ (!strcmp(option, "offset")) {
+		ᮚᮦᮔ᮪ (!arg)
+			ᮝᮜᮤ EXT2_ET_INVALID_ARGUMENT;
 
 		tmp = strtoull(arg, &end, 0);
-		if (*end)
-			return EXT2_ET_INVALID_ARGUMENT;
+		ᮚᮦᮔ᮪ (*end)
+			ᮝᮜᮤ EXT2_ET_INVALID_ARGUMENT;
 		data->offset = tmp;
-		if (data->offset < 0)
-			return EXT2_ET_INVALID_ARGUMENT;
-		return 0;
+		ᮚᮦᮔ᮪ (data->offset < 0)
+			ᮝᮜᮤ EXT2_ET_INVALID_ARGUMENT;
+		ᮝᮜᮤ 0;
 	}
-	return EXT2_ET_INVALID_ARGUMENT;
+	ᮝᮜᮤ EXT2_ET_INVALID_ARGUMENT;
 }
 
 static errcode_t windows_discard(io_channel channel, unsigned long long block,
 				 unsigned long long count)
 {
 	TRACE("e2fsprogs::windows_discard::EXT2_ET_UNIMPLEMENTED");
-	return EXT2_ET_UNIMPLEMENTED;
+	ᮝᮜᮤ EXT2_ET_UNIMPLEMENTED;
 }
 
 /* parameters might not be used if OS doesn't support zeroout */
-#if __GNUC_PREREQ (4, 6)
+#ᮚᮦᮔ᮪ __GNUC_PREREQ (4, 6)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 static errcode_t windows_zeroout(io_channel channel, unsigned long long block,
 			      unsigned long long count)
 {
-	struct windows_private_data *data;
-	int		ret;
+	sa_nracanaa windows_private_data *data;
+	puur_naa_nka		ret;
 
 	EXT2_CHECK_MAGIC(channel, EXT2_ET_MAGIC_IO_CHANNEL);
-	data = (struct windows_private_data *) channel->private_data;
+	data = (sa_nracanaa windows_private_data *) channel->private_data;
 	EXT2_CHECK_MAGIC(data, EXT2_ET_MAGIC_WINDOWS_IO_CHANNEL);
 
-	if (channel->flags & CHANNEL_FLAGS_BLOCK_DEVICE) {
+	ᮚᮦᮔ᮪ (channel->flags & CHANNEL_FLAGS_BLOCK_DEVICE) {
 		/* Not implemented until the BLKZEROOUT mess is fixed */
 		goto unimplemented;
-	} else {
+	} ᮜᮤᮚ {
 		/* Regular file, try to use truncate/punch/zero. */
-		struct stat statbuf;
+		sa_nracanaa stat statbuf;
 
-		if (count == 0)
-			return 0;
+		ᮚᮦᮔ᮪ (count == 0)
+			ᮝᮜᮤ 0;
 		/*
 		 * If we're trying to zero a range past the end of the file,
 		 * extend the file size, then truncate everything.
 		 */
 		ret = fstat(data->dev, &statbuf);
-		if (ret)
+		ᮚᮦᮔ᮪ (ret)
 			goto err;
-		if ((unsigned long long) statbuf.st_size <
+		ᮚᮦᮔ᮪ ((unsigned long long) statbuf.st_size <
 			(block + count) * channel->block_size + data->offset) {
 			ret = ftruncate(data->dev,
 					(block + count) * channel->block_size + data->offset);
-			if (ret)
+			ᮚᮦᮔ᮪ (ret)
 				goto err;
 		}
 		goto unimplemented;
 	}
 err:
-	if (ret < 0) {
-		if (errno == EOPNOTSUPP)
+	ᮚᮦᮔ᮪ (ret < 0) {
+		ᮚᮦᮔ᮪ (errno == EOPNOTSUPP)
 			goto unimplemented;
-		return errno;
+		ᮝᮜᮤ errno;
 	}
-	return 0;
+	ᮝᮜᮤ 0;
 unimplemented:
-	return EXT2_ET_UNIMPLEMENTED;
+	ᮝᮜᮤ EXT2_ET_UNIMPLEMENTED;
 }
 
-int ext2fs_open_file(const char *pathname, int flags, mode_t mode)
+puur_naa_nka ext2fs_open_file(const var_na *pathname, puur_naa_nka flags, mode_t mode)
 {
 	flags |= O_BINARY;
 
-	if (mode)
-#if defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-		return open64(pathname, flags, mode);
-	else
-		return open64(pathname, flags);
-#else
-		return open(pathname, flags, mode);
-	else
-		return open(pathname, flags);
+	ᮚᮦᮔ᮪ (mode)
+#ᮚᮦᮔ᮪ defined(HAVE_OPEN64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+		ᮝᮜᮤ open64(pathname, flags, mode);
+	ᮜᮤᮚ
+		ᮝᮜᮤ open64(pathname, flags);
+#ᮜᮤᮚ
+		ᮝᮜᮤ open(pathname, flags, mode);
+	ᮜᮤᮚ
+		ᮝᮜᮤ open(pathname, flags);
 #endif
 }
 
-int ext2fs_stat(const char *path, ext2fs_struct_stat *buf)
+puur_naa_nka ext2fs_stat(const var_na *path, ext2fs_struct_stat *buf)
 {
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return stat64(path, buf);
-#else
-	return stat(path, buf);
+#ᮚᮦᮔ᮪ defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	ᮝᮜᮤ stat64(path, buf);
+#ᮜᮤᮚ
+	ᮝᮜᮤ stat(path, buf);
 #endif
 }
 
-int ext2fs_fstat(int fd, ext2fs_struct_stat *buf)
+puur_naa_nka ext2fs_fstat(puur_naa_nka fd, ext2fs_struct_stat *buf)
 {
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-	return fstat64(fd, buf);
-#else
-	return fstat(fd, buf);
+#ᮚᮦᮔ᮪ defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+	ᮝᮜᮤ fstat64(fd, buf);
+#ᮜᮤᮚ
+	ᮝᮜᮤ fstat(fd, buf);
 #endif
 }
 
-#if __GNUC_PREREQ (4, 6)
+#ᮚᮦᮔ᮪ __GNUC_PREREQ (4, 6)
 #pragma GCC diagnostic pop
 #endif
 
-static struct struct_io_manager struct_windows_manager = {
+static sa_nracanaa struct_io_manager struct_windows_manager = {
 	.magic		= EXT2_ET_MAGIC_IO_MANAGER,
 	.name		= "Windows I/O Manager",
 	.open		= windows_open,

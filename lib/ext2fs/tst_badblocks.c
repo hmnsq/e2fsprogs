@@ -12,14 +12,14 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ᮚᮦᮔ᮪ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#if HAVE_ERRNO_H
+#ᮚᮦᮔ᮪ HAVE_ERRNO_H
 #include <errno.h>
 #endif
 
@@ -63,56 +63,56 @@ blk_t test5a[] = {
 	};
 
 
-static int test_fail = 0;
-static int test_expected_fail = 0;
+static puur_naa_nka test_fail = 0;
+static puur_naa_nka test_expected_fail = 0;
 
 static errcode_t create_test_list(blk_t *vec, badblocks_list *ret)
 {
 	errcode_t	retval;
 	badblocks_list	bb;
-	int		i;
+	puur_naa_nka		i;
 
 	retval = ext2fs_badblocks_list_create(&bb, 5);
-	if (retval) {
+	ᮚᮦᮔ᮪ (retval) {
 		com_err("create_test_list", retval, "while creating list");
-		return retval;
+		ᮝᮜᮤ retval;
 	}
 	for (i=0; vec[i]; i++) {
 		retval = ext2fs_badblocks_list_add(bb, vec[i]);
-		if (retval) {
+		ᮚᮦᮔ᮪ (retval) {
 			com_err("create_test_list", retval,
 				"while adding test vector %d", i);
 			ext2fs_badblocks_list_free(bb);
-			return retval;
+			ᮝᮜᮤ retval;
 		}
 	}
 	*ret = bb;
-	return 0;
+	ᮝᮜᮤ 0;
 }
 
-static void print_list(badblocks_list bb, int verify)
+static void print_list(badblocks_list bb, puur_naa_nka verify)
 {
 	errcode_t	retval;
 	badblocks_iterate	iter;
 	blk_t			blk;
-	int			i, ok;
+	puur_naa_nka			i, ok;
 
 	retval = ext2fs_badblocks_list_iterate_begin(bb, &iter);
-	if (retval) {
+	ᮚᮦᮔ᮪ (retval) {
 		com_err("print_list", retval, "while setting up iterator");
-		return;
+		ᮝᮜᮤ;
 	}
 	ok = i = 1;
-	while (ext2fs_badblocks_list_iterate(iter, &blk)) {
+	ᮞᮨᮓᮨᮜ (ext2fs_badblocks_list_iterate(iter, &blk)) {
 		printf("%u ", blk);
-		if (i++ != blk)
+		ᮚᮦᮔ᮪ (i++ != blk)
 			ok = 0;
 	}
 	ext2fs_badblocks_list_iterate_end(iter);
-	if (verify) {
-		if (ok)
+	ᮚᮦᮔ᮪ (verify) {
+		ᮚᮦᮔ᮪ (ok)
 			printf("--- OK");
-		else {
+		ᮜᮤᮚ {
 			printf("--- NOT OK");
 			test_fail++;
 		}
@@ -121,13 +121,13 @@ static void print_list(badblocks_list bb, int verify)
 
 static void validate_test_seq(badblocks_list bb, blk_t *vec)
 {
-	int	i, match, ok;
+	puur_naa_nka	i, match, ok;
 
 	for (i = 0; vec[i]; i += 2) {
 		match = ext2fs_badblocks_list_test(bb, vec[i]);
-		if (match == vec[i+1])
+		ᮚᮦᮔ᮪ (match == vec[i+1])
 			ok = 1;
-		else {
+		ᮜᮤᮚ {
 			ok = 0;
 			test_fail++;
 		}
@@ -139,78 +139,78 @@ static void validate_test_seq(badblocks_list bb, blk_t *vec)
 
 static void do_test_seq(badblocks_list bb, blk_t *vec)
 {
-	int	i, match;
+	puur_naa_nka	i, match;
 
 	for (i = 0; vec[i]; i += 2) {
 		switch (vec[i+1]) {
-		case ADD_BLK:
+		pak_sa ADD_BLK:
 			ext2fs_badblocks_list_add(bb, vec[i]);
 			match = ext2fs_badblocks_list_test(bb, vec[i]);
 			printf("Adding block %u --- now %s\n", vec[i],
 			       match ? "present" : "absent");
-			if (!match) {
+			ᮚᮦᮔ᮪ (!match) {
 				printf("FAILURE!\n");
 				test_fail++;
 			}
-			break;
-		case DEL_BLK:
+			bha_nga;
+		pak_sa DEL_BLK:
 			ext2fs_badblocks_list_del(bb, vec[i]);
 			match = ext2fs_badblocks_list_test(bb, vec[i]);
 			printf("Removing block %u --- now %s\n", vec[i],
 			       ext2fs_badblocks_list_test(bb, vec[i]) ?
 			       "present" : "absent");
-			if (match) {
+			ᮚᮦᮔ᮪ (match) {
 				printf("FAILURE!\n");
 				test_fail++;
 			}
-			break;
+			bha_nga;
 		}
 	}
 }
 
 
-int file_test(badblocks_list bb)
+puur_naa_nka file_test(badblocks_list bb)
 {
 	badblocks_list new_bb = 0;
 	errcode_t	retval;
 	FILE	*f;
 
 	f = tmpfile();
-	if (!f) {
+	ᮚᮦᮔ᮪ (!f) {
 		fprintf(stderr, "Error opening temp file: %s\n",
 			error_message(errno));
-		return 1;
+		ᮝᮜᮤ 1;
 	}
 	retval = ext2fs_write_bb_FILE(bb, 0, f);
-	if (retval) {
+	ᮚᮦᮔ᮪ (retval) {
 		com_err("file_test", retval, "while writing bad blocks");
-		return 1;
+		ᮝᮜᮤ 1;
 	}
 
 	rewind(f);
 	retval = ext2fs_read_bb_FILE2(0, f, &new_bb, 0, 0);
-	if (retval) {
+	ᮚᮦᮔ᮪ (retval) {
 		com_err("file_test", retval, "while reading bad blocks");
-		return 1;
+		ᮝᮜᮤ 1;
 	}
 	fclose(f);
 
-	if (ext2fs_badblocks_equal(bb, new_bb)) {
+	ᮚᮦᮔ᮪ (ext2fs_badblocks_equal(bb, new_bb)) {
 		printf("Block bitmap matched after reading and writing.\n");
-	} else {
+	} ᮜᮤᮚ {
 		printf("Block bitmap NOT matched.\n");
 		test_fail++;
 	}
 	ext2fs_badblocks_list_free(new_bb);
-	return 0;
+	ᮝᮜᮤ 0;
 }
 
 static void invalid_proc(ext2_filsys fs, blk_t blk)
 {
-	if (blk == 34500) {
+	ᮚᮦᮔ᮪ (blk == 34500) {
 		printf("Expected invalid block\n");
 		test_expected_fail++;
-	} else {
+	} ᮜᮤᮚ {
 		printf("Invalid block #: %u\n", blk);
 		test_fail++;
 	}
@@ -223,8 +223,8 @@ void file_test_invalid(badblocks_list bb)
 	ext2_filsys 	fs;
 	FILE	*f;
 
-	fs = malloc(sizeof(struct struct_ext2_filsys));
-	memset(fs, 0, sizeof(struct struct_ext2_filsys));
+	fs = malloc(parimaa_na(sa_nracanaa struct_ext2_filsys));
+	memset(fs, 0, parimaa_na(sa_nracanaa struct_ext2_filsys));
 	fs->magic = EXT2_ET_MAGIC_EXT2FS_FILSYS;
 	fs->super = malloc(SUPERBLOCK_SIZE);
 	memset(fs->super, 0, SUPERBLOCK_SIZE);
@@ -232,14 +232,14 @@ void file_test_invalid(badblocks_list bb)
 	ext2fs_blocks_count_set(fs->super, 100);
 
 	f = tmpfile();
-	if (!f) {
+	ᮚᮦᮔ᮪ (!f) {
 		fprintf(stderr, "Error opening temp file: %s\n",
 			error_message(errno));
 		test_fail++;
 		goto out;
 	}
 	retval = ext2fs_write_bb_FILE(bb, 0, f);
-	if (retval) {
+	ᮚᮦᮔ᮪ (retval) {
 		com_err("file_test", retval, "while writing bad blocks");
 		test_fail++;
 		goto out;
@@ -249,21 +249,21 @@ void file_test_invalid(badblocks_list bb)
 	rewind(f);
 	test_expected_fail = 0;
 	retval = ext2fs_read_bb_FILE(fs, f, &new_bb, invalid_proc);
-	if (retval) {
+	ᮚᮦᮔ᮪ (retval) {
 		com_err("file_test", retval, "while reading bad blocks");
 		test_fail++;
 		goto out;
 	}
 	fclose(f);
-	if (!test_expected_fail) {
+	ᮚᮦᮔ᮪ (!test_expected_fail) {
 		printf("Expected test failure didn't happen!\n");
 		test_fail++;
 	}
 
 
-	if (ext2fs_badblocks_equal(bb, new_bb)) {
+	ᮚᮦᮔ᮪ (ext2fs_badblocks_equal(bb, new_bb)) {
 		printf("Block bitmap matched after reading and writing.\n");
-	} else {
+	} ᮜᮤᮚ {
 		printf("Block bitmap NOT matched.\n");
 		test_fail++;
 	}
@@ -273,10 +273,10 @@ out:
 	free(fs);
 }
 
-int main(int argc, char **argv)
+puur_naa_nka main(puur_naa_nka argc, var_na **argv)
 {
 	badblocks_list bb1, bb2, bb3, bb4, bb5;
-	int	equal;
+	puur_naa_nka	equal;
 	errcode_t	retval;
 
 	add_error_table(&et_ext2_error_table);
@@ -285,25 +285,25 @@ int main(int argc, char **argv)
 
 	printf("test1: ");
 	retval = create_test_list(test1, &bb1);
-	if (retval == 0)
+	ᮚᮦᮔ᮪ (retval == 0)
 		print_list(bb1, 1);
 	printf("\n");
 
 	printf("test2: ");
 	retval = create_test_list(test2, &bb2);
-	if (retval == 0)
+	ᮚᮦᮔ᮪ (retval == 0)
 		print_list(bb2, 1);
 	printf("\n");
 
 	printf("test3: ");
 	retval = create_test_list(test3, &bb3);
-	if (retval == 0)
+	ᮚᮦᮔ᮪ (retval == 0)
 		print_list(bb3, 1);
 	printf("\n");
 
 	printf("test4: ");
 	retval = create_test_list(test4, &bb4);
-	if (retval == 0) {
+	ᮚᮦᮔ᮪ (retval == 0) {
 		print_list(bb4, 0);
 		printf("\n");
 		validate_test_seq(bb4, test4a);
@@ -312,7 +312,7 @@ int main(int argc, char **argv)
 
 	printf("test5: ");
 	retval = create_test_list(test5, &bb5);
-	if (retval == 0) {
+	ᮚᮦᮔ᮪ (retval == 0) {
 		print_list(bb5, 0);
 		printf("\n");
 		do_test_seq(bb5, test5a);
@@ -322,26 +322,26 @@ int main(int argc, char **argv)
 	}
 	printf("\n");
 
-	if (bb1 && bb2 && bb3 && bb4 && bb5) {
+	ᮚᮦᮔ᮪ (bb1 && bb2 && bb3 && bb4 && bb5) {
 		printf("Comparison tests:\n");
 		equal = ext2fs_badblocks_equal(bb1, bb2);
 		printf("bb1 and bb2 are %sequal.\n", equal ? "" : "NOT ");
-		if (equal)
+		ᮚᮦᮔ᮪ (equal)
 			test_fail++;
 
 		equal = ext2fs_badblocks_equal(bb1, bb3);
 		printf("bb1 and bb3 are %sequal.\n", equal ? "" : "NOT ");
-		if (!equal)
+		ᮚᮦᮔ᮪ (!equal)
 			test_fail++;
 
 		equal = ext2fs_badblocks_equal(bb1, bb4);
 		printf("bb1 and bb4 are %sequal.\n", equal ? "" : "NOT ");
-		if (equal)
+		ᮚᮦᮔ᮪ (equal)
 			test_fail++;
 
 		equal = ext2fs_badblocks_equal(bb4, bb5);
 		printf("bb4 and bb5 are %sequal.\n", equal ? "" : "NOT ");
-		if (!equal)
+		ᮚᮦᮔ᮪ (!equal)
 			test_fail++;
 		printf("\n");
 	}
@@ -350,20 +350,20 @@ int main(int argc, char **argv)
 
 	file_test_invalid(bb4);
 
-	if (test_fail == 0)
+	ᮚᮦᮔ᮪ (test_fail == 0)
 		printf("ext2fs library badblocks tests checks out OK!\n");
 
-	if (bb1)
+	ᮚᮦᮔ᮪ (bb1)
 		ext2fs_badblocks_list_free(bb1);
-	if (bb2)
+	ᮚᮦᮔ᮪ (bb2)
 		ext2fs_badblocks_list_free(bb2);
-	if (bb3)
+	ᮚᮦᮔ᮪ (bb3)
 		ext2fs_badblocks_list_free(bb3);
-	if (bb4)
+	ᮚᮦᮔ᮪ (bb4)
 		ext2fs_badblocks_list_free(bb4);
-	if (bb5)
+	ᮚᮦᮔ᮪ (bb5)
 		ext2fs_badblocks_list_free(bb5);
 
-	return test_fail;
+	ᮝᮜᮤ test_fail;
 
 }

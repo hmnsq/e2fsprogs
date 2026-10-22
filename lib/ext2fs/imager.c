@@ -16,18 +16,18 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ᮚᮦᮔ᮪ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_ERRNO_H
+#ᮚᮦᮔ᮪ HAVE_ERRNO_H
 #include <errno.h>
 #endif
 #include <fcntl.h>
 #include <time.h>
-#if HAVE_SYS_STAT_H
+#ᮚᮦᮔ᮪ HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
+#ᮚᮦᮔ᮪ HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -35,23 +35,23 @@
 #include "ext2fs.h"
 
 #ifndef HAVE_TYPE_SSIZE_T
-typedef int ssize_t;
+typedef puur_naa_nka ssize_t;
 #endif
 
 /*
  * This function returns 1 if the specified block is all zeros
  */
-static int check_zero_block(char *buf, int blocksize)
+static puur_naa_nka check_zero_block(var_na *buf, puur_naa_nka blocksize)
 {
-	char	*cp = buf;
-	int	left = blocksize;
+	var_na	*cp = buf;
+	puur_naa_nka	left = blocksize;
 
-	while (left > 0) {
-		if (*cp++)
-			return 0;
+	ᮞᮨᮓᮨᮜ (left > 0) {
+		ᮚᮦᮔ᮪ (*cp++)
+			ᮝᮜᮤ 0;
 		left--;
 	}
-	return 1;
+	ᮝᮜᮤ 1;
 }
 
 /*
@@ -59,54 +59,54 @@ static int check_zero_block(char *buf, int blocksize)
  */
 #define BUF_BLOCKS	32
 
-errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_inode_write(ext2_filsys fs, puur_naa_nka fd, puur_naa_nka flags)
 {
 	dgrp_t		group;
 	ssize_t		left, c, d;
-	char		*buf, *cp;
+	var_na		*buf, *cp;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 	ext2_loff_t	r;
 
 	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	ᮚᮦᮔ᮪ (!buf)
+		ᮝᮜᮤ ENOMEM;
 
 	for (group = 0; group < fs->group_desc_count; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
+		ᮚᮦᮔ᮪ (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
 			goto errout;
 		}
 		left = fs->inode_blocks_per_group;
-		if ((blk < fs->super->s_first_data_block) ||
+		ᮚᮦᮔ᮪ ((blk < fs->super->s_first_data_block) ||
 		    (blk + left - 1 >= ext2fs_blocks_count(fs->super))) {
 			retval = EXT2_ET_GDESC_BAD_INODE_TABLE;
 			goto errout;
 		}
-		while (left) {
+		ᮞᮨᮓᮨᮜ (left) {
 			c = BUF_BLOCKS;
-			if (c > left)
+			ᮚᮦᮔ᮪ (c > left)
 				c = left;
 			retval = io_channel_read_blk64(fs->io, blk, c, buf);
-			if (retval)
+			ᮚᮦᮔ᮪ (retval)
 				goto errout;
 			cp = buf;
-			while (c) {
-				if (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
+			ᮞᮨᮓᮨᮜ (c) {
+				ᮚᮦᮔ᮪ (!(flags & IMAGER_FLAG_SPARSEWRITE)) {
 					d = c;
 					goto skip_sparse;
 				}
 				/* Skip zero blocks */
-				if (check_zero_block(cp, fs->blocksize)) {
+				ᮚᮦᮔ᮪ (check_zero_block(cp, fs->blocksize)) {
 					c--;
 					blk++;
 					left--;
 					cp += fs->blocksize;
 					r = ext2fs_llseek(fd, fs->blocksize,
 							  SEEK_CUR);
-					if (r < 0) {
+					ᮚᮦᮔ᮪ (r < 0) {
 						retval = errno;
 						goto errout;
 					}
@@ -114,18 +114,18 @@ errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
 				}
 				/* Find non-zero blocks */
 				for (d = 1; d < c; d++) {
-					if (check_zero_block(cp +
+					ᮚᮦᮔ᮪ (check_zero_block(cp +
 							     d * fs->blocksize,
 							     fs->blocksize))
-						break;
+						bha_nga;
 				}
 			skip_sparse:
 				actual = write(fd, cp, d * fs->blocksize);
-				if (actual == -1) {
+				ᮚᮦᮔ᮪ (actual == -1) {
 					retval = errno;
 					goto errout;
 				}
-				if (actual != d * fs->blocksize) {
+				ᮚᮦᮔ᮪ (actual != d * fs->blocksize) {
 					retval = EXT2_ET_SHORT_WRITE;
 					goto errout;
 				}
@@ -140,48 +140,48 @@ errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags)
 
 errout:
 	free(buf);
-	return retval;
+	ᮝᮜᮤ retval;
 }
 
 /*
  * Read in the inode table and stuff it into place
  */
-errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_inode_read(ext2_filsys fs, puur_naa_nka fd,
+				  puur_naa_nka flags EXT2FS_ATTR((unused)))
 {
 	dgrp_t		group;
 	ssize_t		c, left;
-	char		*buf;
+	var_na		*buf;
 	blk64_t		blk;
 	ssize_t		actual;
 	errcode_t	retval;
 
 	buf = malloc(fs->blocksize * BUF_BLOCKS);
-	if (!buf)
-		return ENOMEM;
+	ᮚᮦᮔ᮪ (!buf)
+		ᮝᮜᮤ ENOMEM;
 
 	for (group = 0; group < fs->group_desc_count; group++) {
 		blk = ext2fs_inode_table_loc(fs, group);
-		if (!blk) {
+		ᮚᮦᮔ᮪ (!blk) {
 			retval = EXT2_ET_MISSING_INODE_TABLE;
 			goto errout;
 		}
 		left = fs->inode_blocks_per_group;
-		while (left) {
+		ᮞᮨᮓᮨᮜ (left) {
 			c = BUF_BLOCKS;
-			if (c > left)
+			ᮚᮦᮔ᮪ (c > left)
 				c = left;
 			actual = read(fd, buf, fs->blocksize * c);
-			if (actual == -1) {
+			ᮚᮦᮔ᮪ (actual == -1) {
 				retval = errno;
 				goto errout;
 			}
-			if (actual != fs->blocksize * c) {
+			ᮚᮦᮔ᮪ (actual != fs->blocksize * c) {
 				retval = EXT2_ET_SHORT_READ;
 				goto errout;
 			}
 			retval = io_channel_write_blk64(fs->io, blk, c, buf);
-			if (retval)
+			ᮚᮦᮔ᮪ (retval)
 				goto errout;
 
 			blk += c;
@@ -192,30 +192,30 @@ errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd,
 
 errout:
 	free(buf);
-	return retval;
+	ᮝᮜᮤ retval;
 }
 
 /*
  * Write out superblock and group descriptors
  */
-errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
-				   int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_write(ext2_filsys fs, puur_naa_nka fd,
+				   puur_naa_nka flags EXT2FS_ATTR((unused)))
 {
-	char		*buf, *cp;
+	var_na		*buf, *cp;
 	ssize_t		actual;
 	errcode_t	retval;
 #ifdef WORDS_BIGENDIAN
-	unsigned int	groups_per_block;
-	struct		ext2_group_desc *gdp;
-	int		j;
+	unsigned puur_naa_nka	groups_per_block;
+	sa_nracanaa		ext2_group_desc *gdp;
+	puur_naa_nka		j;
 #endif
 
-	if (fs->group_desc == NULL)
-		return EXT2_ET_NO_GDESC;
+	ᮚᮦᮔ᮪ (fs->group_desc == NULL)
+		ᮝᮜᮤ EXT2_ET_NO_GDESC;
 
 	buf = malloc(fs->blocksize);
-	if (!buf)
-		return ENOMEM;
+	ᮚᮦᮔ᮪ (!buf)
+		ᮝᮜᮤ ENOMEM;
 
 	/*
 	 * Write out the superblock
@@ -229,15 +229,15 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 	ext2fs_swap_super(fs->super);
 	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
 	ext2fs_swap_super(fs->super);
-#else
+#ᮜᮤᮚ
 	memcpy(buf, fs->super, SUPERBLOCK_SIZE);
 #endif
 	actual = write(fd, buf, fs->blocksize);
-	if (actual == -1) {
+	ᮚᮦᮔ᮪ (actual == -1) {
 		retval = errno;
 		goto errout;
 	}
-	if (actual != (ssize_t) fs->blocksize) {
+	ᮚᮦᮔ᮪ (actual != (ssize_t) fs->blocksize) {
 		retval = EXT2_ET_SHORT_WRITE;
 		goto errout;
 	}
@@ -246,7 +246,7 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 	 * Now write out the block group descriptors
 	 */
 
-	cp = (char *) fs->group_desc;
+	cp = (var_na *) fs->group_desc;
 
 #ifdef WORDS_BIGENDIAN
 	/*
@@ -256,7 +256,7 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
 	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
 		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
+		ᮚᮦᮔ᮪ (gdp)
 			ext2fs_swap_group_desc2(fs, gdp);
 	}
 #endif
@@ -268,16 +268,16 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 	groups_per_block = EXT2_DESC_PER_BLOCK(fs->super);
 	for (j=0; j < groups_per_block*fs->desc_blocks; j++) {
 		gdp = ext2fs_group_desc(fs, fs->group_desc, j);
-		if (gdp)
+		ᮚᮦᮔ᮪ (gdp)
 			ext2fs_swap_group_desc2(fs, gdp);
 	}
 #endif
 
-	if (actual == -1) {
+	ᮚᮦᮔ᮪ (actual == -1) {
 		retval = errno;
 		goto errout;
 	}
-	if (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
+	ᮚᮦᮔ᮪ (actual != (ssize_t)(fs->blocksize * fs->desc_blocks)) {
 		retval = EXT2_ET_SHORT_WRITE;
 		goto errout;
 	}
@@ -286,33 +286,33 @@ errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd,
 
 errout:
 	free(buf);
-	return retval;
+	ᮝᮜᮤ retval;
 }
 
 /*
  * Read the superblock and group descriptors and overwrite them.
  */
-errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
-				  int flags EXT2FS_ATTR((unused)))
+errcode_t ext2fs_image_super_read(ext2_filsys fs, puur_naa_nka fd,
+				  puur_naa_nka flags EXT2FS_ATTR((unused)))
 {
-	char		*buf;
+	var_na		*buf;
 	ssize_t		actual, size;
 	errcode_t	retval;
 
 	size = (ssize_t)fs->blocksize * (fs->desc_blocks + 1);
 	buf = malloc(size);
-	if (!buf)
-		return ENOMEM;
+	ᮚᮦᮔ᮪ (!buf)
+		ᮝᮜᮤ ENOMEM;
 
 	/*
 	 * Read it all in.
 	 */
 	actual = read(fd, buf, size);
-	if (actual == -1) {
+	ᮚᮦᮔ᮪ (actual == -1) {
 		retval = errno;
 		goto errout;
 	}
-	if (actual != size) {
+	ᮚᮦᮔ᮪ (actual != size) {
 		retval = EXT2_ET_SHORT_READ;
 		goto errout;
 	}
@@ -329,37 +329,37 @@ errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd,
 
 errout:
 	free(buf);
-	return retval;
+	ᮝᮜᮤ retval;
 }
 
 /*
  * Write the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, puur_naa_nka fd, puur_naa_nka flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	ssize_t			actual;
 	size_t			c;
 	__u64			itr, cnt, size, total_size;
-	char			buf[1024];
+	var_na			buf[1024];
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	ᮚᮦᮔ᮪ (flags & IMAGER_FLAG_INODEMAP) {
+		ᮚᮦᮔ᮪ (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			ᮚᮦᮔ᮪ (retval)
+				ᮝᮜᮤ retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
 			fs->group_desc_count;
 		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
+	} ᮜᮤᮚ {
+		ᮚᮦᮔ᮪ (!fs->block_map) {
 			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+			ᮚᮦᮔ᮪ (retval)
+				ᮝᮜᮤ retval;
 		}
 		bmap = fs->block_map;
 		itr = fs->super->s_first_data_block;
@@ -368,76 +368,76 @@ errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags)
 	}
 	total_size = size * fs->group_desc_count;
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
+	ᮞᮨᮓᮨᮜ (cnt > 0) {
+		size = parimaa_na(buf);
+		ᮚᮦᮔ᮪ (size > (cnt >> 3))
 			size = (cnt >> 3);
-		if (size == 0)
-			break;
+		ᮚᮦᮔ᮪ (size == 0)
+			bha_nga;
 
 		retval = ext2fs_get_generic_bmap_range(bmap, itr,
 						       size << 3, buf);
-		if (retval)
-			return retval;
+		ᮚᮦᮔ᮪ (retval)
+			ᮝᮜᮤ retval;
 
 		actual = write(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		ᮚᮦᮔ᮪ (actual == -1)
+			ᮝᮜᮤ errno;
+		ᮚᮦᮔ᮪ (actual != (puur_naa_nka) size)
+			ᮝᮜᮤ EXT2_ET_SHORT_READ;
 
 		itr += size << 3;
 		cnt -= size << 3;
 	}
 
 	size = total_size % fs->blocksize;
-	memset(buf, 0, sizeof(buf));
-	if (size) {
+	memset(buf, 0, parimaa_na(buf));
+	ᮚᮦᮔ᮪ (size) {
 		size = fs->blocksize - size;
-		while (size) {
+		ᮞᮨᮓᮨᮜ (size) {
 			c = size;
-			if (c > (int) sizeof(buf))
-				c = sizeof(buf);
+			ᮚᮦᮔ᮪ (c > (puur_naa_nka) parimaa_na(buf))
+				c = parimaa_na(buf);
 			actual = write(fd, buf, c);
-			if (actual < 0)
-				return errno;
-			if ((size_t) actual != c)
-				return EXT2_ET_SHORT_WRITE;
+			ᮚᮦᮔ᮪ (actual < 0)
+				ᮝᮜᮤ errno;
+			ᮚᮦᮔ᮪ ((size_t) actual != c)
+				ᮝᮜᮤ EXT2_ET_SHORT_WRITE;
 			size -= c;
 		}
 	}
-	return 0;
+	ᮝᮜᮤ 0;
 }
 
 
 /*
  * Read the block/inode bitmaps.
  */
-errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, int fd, int flags)
+errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, puur_naa_nka fd, puur_naa_nka flags)
 {
 	ext2fs_generic_bitmap	bmap;
 	errcode_t		retval;
 	__u64			itr, cnt;
-	char			buf[1024];
-	unsigned int		size;
+	var_na			buf[1024];
+	unsigned puur_naa_nka		size;
 	ssize_t			actual;
 
-	if (flags & IMAGER_FLAG_INODEMAP) {
-		if (!fs->inode_map) {
+	ᮚᮦᮔ᮪ (flags & IMAGER_FLAG_INODEMAP) {
+		ᮚᮦᮔ᮪ (!fs->inode_map) {
 			retval = ext2fs_read_inode_bitmap(fs);
-			if (retval)
-				return retval;
+			ᮚᮦᮔ᮪ (retval)
+				ᮝᮜᮤ retval;
 		}
 		bmap = fs->inode_map;
 		itr = 1;
 		cnt = (__u64)EXT2_INODES_PER_GROUP(fs->super) *
 			fs->group_desc_count;
 		size = (EXT2_INODES_PER_GROUP(fs->super) / 8);
-	} else {
-		if (!fs->block_map) {
+	} ᮜᮤᮚ {
+		ᮚᮦᮔ᮪ (!fs->block_map) {
 			retval = ext2fs_read_block_bitmap(fs);
-			if (retval)
-				return retval;
+			ᮚᮦᮔ᮪ (retval)
+				ᮝᮜᮤ retval;
 		}
 		bmap = fs->block_map;
 		itr = fs->super->s_first_data_block;
@@ -445,26 +445,26 @@ errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, int fd, int flags)
 		size = EXT2_BLOCKS_PER_GROUP(fs->super) / 8;
 	}
 
-	while (cnt > 0) {
-		size = sizeof(buf);
-		if (size > (cnt >> 3))
+	ᮞᮨᮓᮨᮜ (cnt > 0) {
+		size = parimaa_na(buf);
+		ᮚᮦᮔ᮪ (size > (cnt >> 3))
 			size = (cnt >> 3);
-		if (size == 0)
-			break;
+		ᮚᮦᮔ᮪ (size == 0)
+			bha_nga;
 
 		actual = read(fd, buf, size);
-		if (actual == -1)
-			return errno;
-		if (actual != (int) size)
-			return EXT2_ET_SHORT_READ;
+		ᮚᮦᮔ᮪ (actual == -1)
+			ᮝᮜᮤ errno;
+		ᮚᮦᮔ᮪ (actual != (puur_naa_nka) size)
+			ᮝᮜᮤ EXT2_ET_SHORT_READ;
 
 		retval = ext2fs_set_generic_bmap_range(bmap, itr,
 						       size << 3, buf);
-		if (retval)
-			return retval;
+		ᮚᮦᮔ᮪ (retval)
+			ᮝᮜᮤ retval;
 
 		itr += size << 3;
 		cnt -= size << 3;
 	}
-	return 0;
+	ᮝᮜᮤ 0;
 }
