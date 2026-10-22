@@ -9,27 +9,27 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
+#अन्तर्भाव "config.h"
+#अन्तर्भाव <stdio.h>
 
-#include "ext2_fs.h"
-#include "ext2fs.h"
+#अन्तर्भाव "ext2_fs.h"
+#अन्तर्भाव "ext2fs.h"
 
 errcode_t ext2fs_write_bb_FILE(ext2_badblocks_list bb_list,
-			       unsigned int flags EXT2FS_ATTR((unused)),
-			       FILE *f)
+			       अचिन्हित पूर्णाङ्क flags EXT2FS_ATTR((unused)),
+			       खाता *f)
 {
 	badblocks_iterate	bb_iter;
 	blk_t			blk;
 	errcode_t		retval;
 
 	retval = ext2fs_badblocks_list_iterate_begin(bb_list, &bb_iter);
-	if (retval)
-		return retval;
+	यदि (retval)
+		प्रत्यागम retval;
 
-	while (ext2fs_badblocks_list_iterate(bb_iter, &blk)) {
-		fprintf(f, "%u\n", blk);
+	यावत् (ext2fs_badblocks_list_iterate(bb_iter, &blk)) {
+		ख_लिखो(f, "%u\n", blk);
 	}
 	ext2fs_badblocks_list_iterate_end(bb_iter);
-	return 0;
+	प्रत्यागम 0;
 }
