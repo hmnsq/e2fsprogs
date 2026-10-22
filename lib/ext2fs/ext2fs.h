@@ -14,36 +14,36 @@
 
 #ifdef __GNUC__
 #define EXT2FS_ATTR(x) __attribute__(x)
-#else
+#وإلا
 #define EXT2FS_ATTR(x)
 #endif
 
 #ifndef __nonstring
 #ifdef __has_attribute
-#if __has_attribute(__nonstring__)
+#إذا __has_attribute(__nonstring__)
 #define __nonstring                    __attribute__((__nonstring__))
-#else
+#وإلا
 #define __nonstring
 #endif /* __has_attribute(__nonstring__) */
-#else
+#وإلا
 # define __nonstring
 #endif /* __has_attribute */
 #endif /* __nonstring */
 
 #ifdef CONFIG_TDB
 #define EXT2FS_NO_TDB_UNUSED
-#else
+#وإلا
 #define EXT2FS_NO_TDB_UNUSED	EXT2FS_ATTR((unused))
 #endif
 
 #ifdef __cplusplus
-extern "C" {
+خارجي "C" {
 #endif
 
 /*
  * Non-GNU C compilers won't necessarily understand inline
  */
-#if (!defined(__GNUC__) && !defined(__WATCOMC__))
+#إذا (!defined(__GNUC__) && !defined(__WATCOMC__))
 #define NO_INLINE_FUNCS
 #endif
 
@@ -66,71 +66,71 @@ extern "C" {
 #define EXT2_LIB_CURRENT_REV	EXT2_DYNAMIC_REV
 
 #ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#ضمن <sys/types.h>
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <errno.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <time.h>
+#ضمن <errno.h>
 
-#if EXT2_FLAT_INCLUDES
-#include "e2_types.h"
-#include "ext2_fs.h"
-#include "ext3_extents.h"
-#else
-#include <ext2fs/ext2_types.h>
-#include <ext2fs/ext2_fs.h>
-#include <ext2fs/ext3_extents.h>
+#إذا EXT2_FLAT_INCLUDES
+#ضمن "e2_types.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext3_extents.h"
+#وإلا
+#ضمن <ext2fs/ext2_types.h>
+#ضمن <ext2fs/ext2_fs.h>
+#ضمن <ext2fs/ext3_extents.h>
 #endif /* EXT2_FLAT_INCLUDES */
 
-typedef __u32 __bitwise		ext2_ino_t;
-typedef __u32 __bitwise		blk_t;
-typedef __u64 __bitwise		blk64_t;
-typedef __u32 __bitwise		dgrp_t;
-typedef __s32 __bitwise		ext2_off_t;
-typedef __s64 __bitwise		ext2_off64_t;
-typedef __s64 __bitwise		e2_blkcnt_t;
-typedef __u32 __bitwise		ext2_dirhash_t;
+تعريفنوع __u32 __bitwise		ext2_ino_t;
+تعريفنوع __u32 __bitwise		blk_t;
+تعريفنوع __u64 __bitwise		blk64_t;
+تعريفنوع __u32 __bitwise		dgrp_t;
+تعريفنوع __s32 __bitwise		ext2_off_t;
+تعريفنوع __s64 __bitwise		ext2_off64_t;
+تعريفنوع __s64 __bitwise		e2_blkcnt_t;
+تعريفنوع __u32 __bitwise		ext2_dirhash_t;
 
-#if EXT2_FLAT_INCLUDES
-#include "com_err.h"
-#include "ext2_io.h"
-#include "ext2_err.h"
-#include "ext2_ext_attr.h"
-#else
-#include <et/com_err.h>
-#include <ext2fs/ext2_io.h>
-#include <ext2fs/ext2_err.h>
-#include <ext2fs/ext2_ext_attr.h>
+#إذا EXT2_FLAT_INCLUDES
+#ضمن "com_err.h"
+#ضمن "ext2_io.h"
+#ضمن "ext2_err.h"
+#ضمن "ext2_ext_attr.h"
+#وإلا
+#ضمن <et/com_err.h>
+#ضمن <ext2fs/ext2_io.h>
+#ضمن <ext2fs/ext2_err.h>
+#ضمن <ext2fs/ext2_ext_attr.h>
 #endif
 
-#include "hashmap.h"
+#ضمن "hashmap.h"
 
 /*
  * Portability help for Microsoft Visual C++
  */
 #ifdef _MSC_VER
-#define EXT2_QSORT_TYPE int __cdecl
-#else
-#define EXT2_QSORT_TYPE int
+#define EXT2_QSORT_TYPE صحيح __cdecl
+#وإلا
+#define EXT2_QSORT_TYPE صحيح
 #endif
 
-typedef struct struct_ext2_filsys *ext2_filsys;
+تعريفنوع بنية struct_ext2_filsys *ext2_filsys;
 
 #define EXT2FS_MARK_ERROR 	0
 #define EXT2FS_UNMARK_ERROR 	1
 #define EXT2FS_TEST_ERROR	2
 
-struct ext2fs_struct_generic_bitmap_base {
+بنية ext2fs_struct_generic_bitmap_base {
 	errcode_t		magic;
 	ext2_filsys 		fs;
 };
 
-typedef struct ext2fs_struct_generic_bitmap_base *ext2fs_generic_bitmap;
-typedef struct ext2fs_struct_generic_bitmap_base *ext2fs_inode_bitmap;
-typedef struct ext2fs_struct_generic_bitmap_base *ext2fs_block_bitmap;
+تعريفنوع بنية ext2fs_struct_generic_bitmap_base *ext2fs_generic_bitmap;
+تعريفنوع بنية ext2fs_struct_generic_bitmap_base *ext2fs_inode_bitmap;
+تعريفنوع بنية ext2fs_struct_generic_bitmap_base *ext2fs_block_bitmap;
 
 #define EXT2_FIRST_INODE(s)	EXT2_FIRST_INO(s)
 
@@ -139,35 +139,35 @@ typedef struct ext2fs_struct_generic_bitmap_base *ext2fs_block_bitmap;
  * Badblocks list definitions
  */
 
-typedef struct ext2_struct_u32_list *ext2_badblocks_list;
-typedef struct ext2_struct_u32_iterate *ext2_badblocks_iterate;
+تعريفنوع بنية ext2_struct_u32_list *ext2_badblocks_list;
+تعريفنوع بنية ext2_struct_u32_iterate *ext2_badblocks_iterate;
 
-typedef struct ext2_struct_u32_list *ext2_u32_list;
-typedef struct ext2_struct_u32_iterate *ext2_u32_iterate;
+تعريفنوع بنية ext2_struct_u32_list *ext2_u32_list;
+تعريفنوع بنية ext2_struct_u32_iterate *ext2_u32_iterate;
 
 /* old */
-typedef struct ext2_struct_u32_list *badblocks_list;
-typedef struct ext2_struct_u32_iterate *badblocks_iterate;
+تعريفنوع بنية ext2_struct_u32_list *badblocks_list;
+تعريفنوع بنية ext2_struct_u32_iterate *badblocks_iterate;
 
 #define BADBLOCKS_FLAG_DIRTY	1
 
 /*
  * ext2_dblist structure and abstractions (see dblist.c)
  */
-struct ext2_db_entry2 {
+بنية ext2_db_entry2 {
 	ext2_ino_t	ino;
 	blk64_t	blk;
 	e2_blkcnt_t	blockcnt;
 };
 
 /* Ye Olde 32-bit version */
-struct ext2_db_entry {
+بنية ext2_db_entry {
 	ext2_ino_t	ino;
 	blk_t	blk;
-	int	blockcnt;
+	صحيح	blockcnt;
 };
 
-typedef struct ext2_struct_dblist *ext2_dblist;
+تعريفنوع بنية ext2_struct_dblist *ext2_dblist;
 
 #define DBLIST_ABORT	1
 
@@ -183,7 +183,7 @@ typedef struct ext2_struct_dblist *ext2_dblist;
 #define EXT2_FILE_BUF_DIRTY	0x4000
 #define EXT2_FILE_BUF_VALID	0x2000
 
-typedef struct ext2_file *ext2_file_t;
+تعريفنوع بنية ext2_file *ext2_file_t;
 
 #define EXT2_SEEK_SET	0
 #define EXT2_SEEK_CUR	1
@@ -245,21 +245,21 @@ typedef struct ext2_file *ext2_file_t;
  */
 #define EXT2_JOURNAL_TO_FC_BLKS_RATIO		64
 
-struct blk_alloc_ctx;
-struct opaque_ext2_group_desc;
+بنية blk_alloc_ctx;
+بنية opaque_ext2_group_desc;
 
-struct struct_ext2_filsys {
+بنية struct_ext2_filsys {
 	errcode_t			magic;
 	io_channel			io;
-	int				flags;
-	char *				device_name;
-	struct ext2_super_block	* 	super;
-	unsigned int			blocksize;
-	int				fragsize;
-	dgrp_t				group_desc_count;
+	صحيح				flags;
+	حرف *				device_name;
+	بنية ext2_super_block	* 	super;
+	unsigned صحيح			blocksize;
+	صحيح				fragsize;
+	dgrp_t				group_desc_گنتی;
 	unsigned long			desc_blocks;
-	struct opaque_ext2_group_desc *	group_desc;
-	unsigned int			inode_blocks_per_group;
+	بنية opaque_ext2_group_desc *	group_desc;
+	unsigned صحيح			inode_blocks_per_group;
 	ext2fs_inode_bitmap		inode_map;
 	ext2fs_block_bitmap		block_map;
 	/* XXX FIXME-64: not 64-bit safe, but not used? */
@@ -267,17 +267,17 @@ struct struct_ext2_filsys {
 	errcode_t (*check_directory)(ext2_filsys fs, ext2_ino_t ino);
 	errcode_t (*write_bitmaps)(ext2_filsys fs);
 	errcode_t (*read_inode)(ext2_filsys fs, ext2_ino_t ino,
-				struct ext2_inode *inode);
+				بنية ext2_inode *inode);
 	errcode_t (*write_inode)(ext2_filsys fs, ext2_ino_t ino,
-				struct ext2_inode *inode);
+				بنية ext2_inode *inode);
 	ext2_badblocks_list		badblocks;
 	ext2_dblist			dblist;
 	__u32				stride;	/* for mke2fs */
-	struct ext2_super_block *	orig_super;
-	struct ext2_image_hdr *		image_header;
+	بنية ext2_super_block *	orig_super;
+	بنية ext2_image_hdr *		image_header;
 	__u32				umask;
 	time_t				now;
-	int				cluster_ratio_bits;
+	صحيح				cluster_ratio_bits;
 	__u16				default_bitmap_type;
 	__u16				pad;
 	__u32				flags2;
@@ -289,12 +289,12 @@ struct struct_ext2_filsys {
 	/*
 	 * Reserved for the use of the calling application.
 	 */
-	void *				priv_data;
+	فراغ *				priv_data;
 
 	/*
 	 * Inode cache
 	 */
-	struct ext2_inode_cache		*icache;
+	بنية ext2_inode_cache		*icache;
 	io_channel			image_io;
 
 	/*
@@ -303,15 +303,15 @@ struct struct_ext2_filsys {
 	errcode_t (*get_alloc_block)(ext2_filsys fs, blk64_t goal,
 				     blk64_t *ret);
 	errcode_t (*get_alloc_block2)(ext2_filsys fs, blk64_t goal,
-				      blk64_t *ret, struct blk_alloc_ctx *ctx);
-	void (*block_alloc_stats)(ext2_filsys fs, blk64_t blk, int inuse);
+				      blk64_t *ret, بنية blk_alloc_ctx *ctx);
+	فراغ (*block_alloc_stats)(ext2_filsys fs, blk64_t blk, صحيح inuse);
 
 	/*
 	 * Buffers for Multiple mount protection(MMP) block.
 	 */
-	void *mmp_buf;
-	void *mmp_cmp;
-	int mmp_fd;
+	فراغ *mmp_buf;
+	فراغ *mmp_cmp;
+	صحيح mmp_fd;
 
 	/*
 	 * Time at which e2fsck last updated the MMP block.
@@ -319,30 +319,30 @@ struct struct_ext2_filsys {
 	long mmp_last_written;
 
 	/* progress operation functions */
-	struct ext2fs_progress_ops *progress_ops;
+	بنية ext2fs_progress_ops *progress_ops;
 
 	/* Precomputed FS UUID checksum for seeding other checksums */
 	__u32 csum_seed;
 
 	io_channel			journal_io;
-	char				*journal_name;
+	حرف				*journal_name;
 
 	/* New block range allocation hooks */
-	errcode_t (*new_range)(ext2_filsys fs, int flags, blk64_t goal,
+	errcode_t (*new_range)(ext2_filsys fs, صحيح flags, blk64_t goal,
 			       blk64_t len, blk64_t *pblk, blk64_t *plen);
-	void (*block_alloc_stats_range)(ext2_filsys fs, blk64_t blk, blk_t num,
-					int inuse);
+	فراغ (*block_alloc_stats_range)(ext2_filsys fs, blk64_t blk, blk_t عدد,
+					صحيح inuse);
 
 	/* hashmap for SHA of data blocks */
-	struct ext2fs_hashmap* block_sha_map;
+	بنية ext2fs_hashmap* block_sha_map;
 
-	const struct ext2fs_nls_table *encoding;
+	ثابت بنية ext2fs_nls_table *encoding;
 };
 
-#if EXT2_FLAT_INCLUDES
-#include "e2_bitops.h"
-#else
-#include <ext2fs/bitops.h>
+#إذا EXT2_FLAT_INCLUDES
+#ضمن "e2_bitops.h"
+#وإلا
+#ضمن <ext2fs/bitops.h>
 #endif
 
 /*
@@ -395,23 +395,23 @@ struct struct_ext2_filsys {
 /*
  * Magic "block count" return values for the block iterator function.
  */
-#define BLOCK_COUNT_IND		(-1)
-#define BLOCK_COUNT_DIND	(-2)
-#define BLOCK_COUNT_TIND	(-3)
-#define BLOCK_COUNT_TRANSLATOR	(-4)
+#define BLOCK_گنتی_IND		(-1)
+#define BLOCK_گنتی_DIND	(-2)
+#define BLOCK_گنتی_TIND	(-3)
+#define BLOCK_گنتی_TRANSLATOR	(-4)
 
 #define BLOCK_ALLOC_UNKNOWN	0
 #define BLOCK_ALLOC_DATA	1
 #define BLOCK_ALLOC_METADATA	2
 
-struct blk_alloc_ctx {
+بنية blk_alloc_ctx {
 	ext2_ino_t		ino;
-	struct ext2_inode	*inode;
+	بنية ext2_inode	*inode;
 	blk64_t			lblk;
-	int			flags;
+	صحيح			flags;
 };
 
-#if 0
+#إذا 0
 /*
  * Flags for ext2fs_move_blocks
  */
@@ -427,22 +427,22 @@ struct blk_alloc_ctx {
 #define EXT2_EXTENT_FLAGS_UNINIT	0x0002
 #define EXT2_EXTENT_FLAGS_SECOND_VISIT	0x0004
 
-struct ext2fs_extent {
+بنية ext2fs_extent {
 	blk64_t	e_pblk;		/* first physical block */
 	blk64_t	e_lblk;		/* first logical block extent covers */
 	__u32	e_len;		/* number of blocks covered by extent */
 	__u32	e_flags;	/* extent flags */
 };
 
-typedef struct ext2_extent_handle *ext2_extent_handle_t;
-typedef struct ext2_extent_path *ext2_extent_path_t;
+تعريفنوع بنية ext2_extent_handle *ext2_extent_handle_t;
+تعريفنوع بنية ext2_extent_path *ext2_extent_path_t;
 
 /*
  * Flags used by ext2fs_extent_get()
  */
 #define EXT2_EXTENT_CURRENT	0x0000
 #define EXT2_EXTENT_MOVE_MASK	0x000F
-#define EXT2_EXTENT_ROOT	0x0001
+#define EXT2_EXTENT_جڑ	0x0001
 #define EXT2_EXTENT_LAST_LEAF	0x0002
 #define EXT2_EXTENT_FIRST_SIB	0x0003
 #define EXT2_EXTENT_LAST_SIB	0x0004
@@ -459,8 +459,8 @@ typedef struct ext2_extent_path *ext2_extent_path_t;
 /*
  * Flags used by ext2fs_extent_insert()
  */
-#define EXT2_EXTENT_INSERT_AFTER	0x0001 /* insert after handle loc'n */
-#define EXT2_EXTENT_INSERT_NOSPLIT	0x0002 /* insert may not cause split */
+#define EXT2_EXTENT_داخل_کرو_AFTER	0x0001 /* insert after handle loc'n */
+#define EXT2_EXTENT_داخل_کرو_NOSPLIT	0x0002 /* insert may not cause split */
 
 /*
  * Flags used by ext2fs_extent_delete()
@@ -475,13 +475,13 @@ typedef struct ext2_extent_path *ext2_extent_path_t;
 /*
  * Data structure returned by ext2fs_extent_get_info()
  */
-struct ext2_extent_info {
-	int		curr_entry;
-	int		curr_level;
-	int		num_entries;
-	int		max_entries;
-	int		max_depth;
-	int		bytes_avail;
+بنية ext2_extent_info {
+	صحيح		curr_entry;
+	صحيح		curr_level;
+	صحيح		عدد_entries;
+	صحيح		max_entries;
+	صحيح		max_depth;
+	صحيح		bytes_avail;
 	blk64_t		max_lblk;
 	blk64_t		max_pblk;
 	__u32		max_len;
@@ -518,7 +518,7 @@ struct ext2_extent_info {
 /*
  * Inode scan definitions
  */
-typedef struct ext2_struct_inode_scan *ext2_inode_scan;
+تعريفنوع بنية ext2_struct_inode_scan *ext2_inode_scan;
 
 /*
  * ext2fs_scan flags
@@ -583,71 +583,71 @@ typedef struct ext2_struct_inode_scan *ext2_inode_scan;
 /*
  * ext2 size of an inode
  */
-#define EXT2_I_SIZE(i)	((i)->i_size | ((__u64) (i)->i_size_high << 32))
+#define EXT2_I_SIZE(i)	((i)->i_size | ((__u64) (i)->i_size_بلند << 32))
 
-static inline __u32 __encode_extra_time(time_t seconds EXT2FS_ATTR((unused)),
+ساكن مضمن __u32 __encode_extra_time(time_t seconds EXT2FS_ATTR((unused)),
 					__u32 nsec)
 {
 	__u32 extra = 0;
 
-#if (SIZEOF_TIME_T > 4)
+#إذا (SIZEOF_TIME_T > 4)
 	extra = ((seconds - (__s32)(seconds & 0xffffffff)) >> 32) &
 		EXT4_EPOCH_MASK;
 #endif
-	return extra | (nsec << EXT4_EPOCH_BITS);
+	أرجع extra | (nsec << EXT4_EPOCH_BITS);
 }
-static inline time_t __decode_extra_sec(time_t seconds,
+ساكن مضمن time_t __decode_extra_sec(time_t seconds,
 					__u32 extra EXT2FS_ATTR((unused)))
 {
-#if (SIZEOF_TIME_T > 4)
-	if (extra & EXT4_EPOCH_MASK)
+#إذا (SIZEOF_TIME_T > 4)
+	إذا (extra & EXT4_EPOCH_MASK)
 		seconds += ((time_t)(extra & EXT4_EPOCH_MASK) << 32);
 #endif
-	return seconds;
+	أرجع seconds;
 }
-static inline __u32 __decode_extra_nsec(__u32 extra)
+ساكن مضمن __u32 __decode_extra_nsec(__u32 extra)
 {
-	return (extra & EXT4_NSEC_MASK) >> EXT4_EPOCH_BITS;
+	أرجع (extra & EXT4_NSEC_MASK) >> EXT4_EPOCH_BITS;
 }
 #define ext2fs_inode_actual_size(inode)					      \
 	((size_t)(EXT2_GOOD_OLD_INODE_SIZE +				      \
-		  (sizeof(*inode) > EXT2_GOOD_OLD_INODE_SIZE ?		      \
-		   ((struct ext2_inode_large *)(inode))->i_extra_isize : 0)))
+		  (حجم(*inode) > EXT2_GOOD_OLD_INODE_SIZE ?		      \
+		   ((بنية ext2_inode_large *)(inode))->i_extra_isize : 0)))
 #define clamp(val, min, max) ((val) < (min) ? (min) : ((val) > (max) ?	      \
 						       (max) : (val)))
 #define ext2fs_inode_xtime_set(inode, field, sec)			      \
-do {									      \
-	if (ext2fs_inode_includes(ext2fs_inode_actual_size(inode),	      \
+افعل {									      \
+	إذا (ext2fs_inode_includes(ext2fs_inode_actual_size(inode),	      \
 				  field ## _extra)) {			      \
 		(inode)->field = (__u32)(sec & 0xfffffff);		      \
-		((struct ext2_inode_large *)(inode))->field ## _extra =       \
+		((بنية ext2_inode_large *)(inode))->field ## _extra =       \
 			__encode_extra_time(sec, 0);			      \
-	} else {							      \
+	} وإلا {							      \
 		(inode)->field = (__u32) clamp(sec, INT32_MIN, INT32_MAX);    \
 	}								      \
-} while (0)
+} طالما (0)
 #define ext2fs_inode_xtime_get(inode, field)				      \
 (ext2fs_inode_includes(ext2fs_inode_actual_size(inode), field ## _extra) ?    \
 	__decode_extra_sec((inode)->field,				      \
-		((struct ext2_inode_large *)(inode))->field ## _extra) :      \
+		((بنية ext2_inode_large *)(inode))->field ## _extra) :      \
 		(time_t)(inode)->field)
 
-static inline void __sb_set_tstamp(__u32 *lo, __u8 *hi EXT2FS_ATTR((unused)),
+ساكن مضمن فراغ __sb_set_tstamp(__u32 *lo, __u8 *hi EXT2FS_ATTR((unused)),
 				   time_t seconds)
 {
 	*lo = seconds & 0xffffffff;
-#if (SIZEOF_TIME_T > 4)
+#إذا (SIZEOF_TIME_T > 4)
 	*hi = (seconds >> 32) & EXT4_EPOCH_MASK;
-#else
+#وإلا
 	*hi = 0;
 #endif
 }
-static inline time_t __sb_get_tstamp(__u32 *lo, __u8 *hi EXT2FS_ATTR((unused)))
+ساكن مضمن time_t __sb_get_tstamp(__u32 *lo, __u8 *hi EXT2FS_ATTR((unused)))
 {
-#if (SIZEOF_TIME_T == 4)
-	return *lo;
-#else
-	return ((time_t)(*hi) << 32) | *lo;
+#إذا (SIZEOF_TIME_T == 4)
+	أرجع *lo;
+#وإلا
+	أرجع ((time_t)(*hi) << 32) | *lo;
 #endif
 }
 #define ext2fs_set_tstamp(sb, field, seconds) \
@@ -661,7 +661,7 @@ static inline time_t __sb_get_tstamp(__u32 *lo, __u8 *hi EXT2FS_ATTR((unused)))
 #define EXT2_ICOUNT_OPT_INCREMENT	0x01
 #define EXT2_ICOUNT_OPT_FULLMAP		0x02
 
-typedef struct ext2_icount *ext2_icount_t;
+تعريفنوع بنية ext2_icount *ext2_icount_t;
 
 /*
  * Flags for ext2fs_bmap
@@ -696,8 +696,8 @@ typedef struct ext2_icount *ext2_icount_t;
  * For checking structure magic numbers...
  */
 
-#define EXT2_CHECK_MAGIC(struct, code) \
-	  if ((struct)->magic != (code)) return (code)
+#define EXT2_CHECK_MAGIC(بنية, code) \
+	  إذا ((بنية)->magic != (code)) أرجع (code)
 
 /*
  * Features supported by this version of the library
@@ -715,7 +715,7 @@ typedef struct ext2_icount *ext2_icount_t;
 
 #ifdef CONFIG_MMP
 #define EXT4_LIB_INCOMPAT_MMP		EXT4_FEATURE_INCOMPAT_MMP
-#else
+#وإلا
 #define EXT4_LIB_INCOMPAT_MMP		(0)
 #endif
 
@@ -764,13 +764,13 @@ typedef struct ext2_icount *ext2_icount_t;
 /* Translate a cluster number to a block number */
 #define EXT2FS_C2B(fs, cluster)		((cluster) << (fs)->cluster_ratio_bits)
 /* Translate # of blks to # of clusters */
-#define EXT2FS_NUM_B2C(fs, blks)	(((blks) + EXT2FS_CLUSTER_MASK(fs)) >> \
+#define EXT2_FS_عدد_B2_C(fs, blks)	(((blks) + EXT2FS_CLUSTER_MASK(fs)) >> \
 					 (fs)->cluster_ratio_bits)
 
-#if defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
-typedef struct stat64 ext2fs_struct_stat;
-#else
-typedef struct stat ext2fs_struct_stat;
+#إذا defined(HAVE_FSTAT64) && !defined(__OSX_AVAILABLE_BUT_DEPRECATED)
+تعريفنوع بنية stat64 ext2fs_struct_stat;
+#وإلا
+تعريفنوع بنية stat ext2fs_struct_stat;
 #endif
 
 /*
@@ -782,7 +782,7 @@ typedef struct stat ext2fs_struct_stat;
 /*
  * Modify and iterate extended attributes
  */
-struct ext2_xattr_handle;
+بنية ext2_xattr_handle;
 #define XATTR_ABORT	1
 #define XATTR_CHANGED	2
 
@@ -812,46 +812,46 @@ struct ext2_xattr_handle;
 /*
  * function prototypes
  */
-static inline int ext2fs_has_group_desc_csum(ext2_filsys fs)
+ساكن مضمن صحيح ext2fs_has_group_desc_csum(ext2_filsys fs)
 {
-	return ext2fs_has_feature_metadata_csum(fs->super) ||
+	أرجع ext2fs_has_feature_metadata_csum(fs->super) ||
 	       ext2fs_has_feature_gdt_csum(fs->super);
 }
 
 /* The LARGE_FILE feature should be set if we have stored files 2GB+ in size */
-static inline int ext2fs_needs_large_file_feature(unsigned long long file_size)
+ساكن مضمن صحيح ext2fs_needs_large_file_feature(unsigned long long file_size)
 {
-	return file_size >= 0x80000000ULL;
+	أرجع file_size >= 0x80000000ULL;
 }
 
 /* alloc.c */
-extern void ext2fs_clear_block_uninit(ext2_filsys fs, dgrp_t group);
-extern errcode_t ext2fs_new_inode(ext2_filsys fs, ext2_ino_t dir, int mode,
+خارجي فراغ ext2fs_clear_block_uninit(ext2_filsys fs, dgrp_t group);
+خارجي errcode_t ext2fs_new_inode(ext2_filsys fs, ext2_ino_t dir, صحيح mode,
 				  ext2fs_inode_bitmap map, ext2_ino_t *ret);
-extern errcode_t ext2fs_new_block(ext2_filsys fs, blk_t goal,
+خارجي errcode_t ext2fs_new_block(ext2_filsys fs, blk_t goal,
 				  ext2fs_block_bitmap map, blk_t *ret);
-extern errcode_t ext2fs_new_block2(ext2_filsys fs, blk64_t goal,
+خارجي errcode_t ext2fs_new_block2(ext2_filsys fs, blk64_t goal,
 				   ext2fs_block_bitmap map, blk64_t *ret);
-extern errcode_t ext2fs_new_block3(ext2_filsys fs, blk64_t goal,
+خارجي errcode_t ext2fs_new_block3(ext2_filsys fs, blk64_t goal,
 				   ext2fs_block_bitmap map, blk64_t *ret,
-				   struct blk_alloc_ctx *ctx);
-extern errcode_t ext2fs_get_free_blocks(ext2_filsys fs, blk_t start,
-					blk_t finish, int num,
+				   بنية blk_alloc_ctx *ctx);
+خارجي errcode_t ext2fs_get_free_blocks(ext2_filsys fs, blk_t start,
+					blk_t finish, صحيح عدد,
 					ext2fs_block_bitmap map,
 					blk_t *ret);
-extern errcode_t ext2fs_get_free_blocks2(ext2_filsys fs, blk64_t start,
-					 blk64_t finish, int num,
+خارجي errcode_t ext2fs_get_free_blocks2(ext2_filsys fs, blk64_t start,
+					 blk64_t finish, صحيح عدد,
 					 ext2fs_block_bitmap map,
 					 blk64_t *ret);
-extern errcode_t ext2fs_alloc_block(ext2_filsys fs, blk_t goal,
-				    char *block_buf, blk_t *ret);
-extern errcode_t ext2fs_alloc_block2(ext2_filsys fs, blk64_t goal,
-				     char *block_buf, blk64_t *ret);
-extern errcode_t ext2fs_alloc_block3(ext2_filsys fs, blk64_t goal,
-				     char *block_buf, blk64_t *ret,
-				     struct blk_alloc_ctx *ctx);
+خارجي errcode_t ext2fs_alloc_block(ext2_filsys fs, blk_t goal,
+				    حرف *block_buf, blk_t *ret);
+خارجي errcode_t ext2fs_alloc_block2(ext2_filsys fs, blk64_t goal,
+				     حرف *block_buf, blk64_t *ret);
+خارجي errcode_t ext2fs_alloc_block3(ext2_filsys fs, blk64_t goal,
+				     حرف *block_buf, blk64_t *ret,
+				     بنية blk_alloc_ctx *ctx);
 
-extern void ext2fs_set_alloc_block_callback(ext2_filsys fs,
+خارجي فراغ ext2fs_set_alloc_block_callback(ext2_filsys fs,
 					    errcode_t (*func)(ext2_filsys fs,
 							      blk64_t goal,
 							      blk64_t *ret),
@@ -859,606 +859,606 @@ extern void ext2fs_set_alloc_block_callback(ext2_filsys fs,
 							      blk64_t goal,
 							      blk64_t *ret));
 blk64_t ext2fs_find_inode_goal(ext2_filsys fs, ext2_ino_t ino,
-			       struct ext2_inode *inode, blk64_t lblk);
-extern void ext2fs_set_new_range_callback(ext2_filsys fs,
-	errcode_t (*func)(ext2_filsys fs, int flags, blk64_t goal,
+			       بنية ext2_inode *inode, blk64_t lblk);
+خارجي فراغ ext2fs_set_new_range_callback(ext2_filsys fs,
+	errcode_t (*func)(ext2_filsys fs, صحيح flags, blk64_t goal,
 			       blk64_t len, blk64_t *pblk, blk64_t *plen),
-	errcode_t (**old)(ext2_filsys fs, int flags, blk64_t goal,
+	errcode_t (**old)(ext2_filsys fs, صحيح flags, blk64_t goal,
 			       blk64_t len, blk64_t *pblk, blk64_t *plen));
-extern void ext2fs_set_block_alloc_stats_range_callback(ext2_filsys fs,
-	void (*func)(ext2_filsys fs, blk64_t blk,
-				    blk_t num, int inuse),
-	void (**old)(ext2_filsys fs, blk64_t blk,
-				    blk_t num, int inuse));
+خارجي فراغ ext2fs_set_block_alloc_stats_range_callback(ext2_filsys fs,
+	فراغ (*func)(ext2_filsys fs, blk64_t blk,
+				    blk_t عدد, صحيح inuse),
+	فراغ (**old)(ext2_filsys fs, blk64_t blk,
+				    blk_t عدد, صحيح inuse));
 #define EXT2_NEWRANGE_FIXED_GOAL	(0x1)
 #define EXT2_NEWRANGE_MIN_LENGTH	(0x2)
 #define EXT2_NEWRANGE_ALL_FLAGS		(0x3)
-errcode_t ext2fs_new_range(ext2_filsys fs, int flags, blk64_t goal,
+errcode_t ext2fs_new_range(ext2_filsys fs, صحيح flags, blk64_t goal,
 			   blk64_t len, ext2fs_block_bitmap map, blk64_t *pblk,
 			   blk64_t *plen);
 #define EXT2_ALLOCRANGE_FIXED_GOAL	(0x1)
 #define EXT2_ALLOCRANGE_ZERO_BLOCKS	(0x2)
 #define EXT2_ALLOCRANGE_ALL_FLAGS	(0x3)
-errcode_t ext2fs_alloc_range(ext2_filsys fs, int flags, blk64_t goal,
+errcode_t ext2fs_alloc_range(ext2_filsys fs, صحيح flags, blk64_t goal,
 			     blk_t len, blk64_t *ret);
 
 /* alloc_sb.c */
-extern int ext2fs_reserve_super_and_bgd(ext2_filsys fs,
+خارجي صحيح ext2fs_reserve_super_and_bgd(ext2_filsys fs,
 					dgrp_t group,
 					ext2fs_block_bitmap bmap);
-extern errcode_t ext2fs_reserve_super_and_bgd2(ext2_filsys fs,
+خارجي errcode_t ext2fs_reserve_super_and_bgd2(ext2_filsys fs,
 					       dgrp_t group,
 					       ext2fs_block_bitmap bmap,
 					       blk_t *desc_blocks);
-extern void ext2fs_set_block_alloc_stats_callback(ext2_filsys fs,
-						  void (*func)(ext2_filsys fs,
+خارجي فراغ ext2fs_set_block_alloc_stats_callback(ext2_filsys fs,
+						  فراغ (*func)(ext2_filsys fs,
 							       blk64_t blk,
-							       int inuse),
-						  void (**old)(ext2_filsys fs,
+							       صحيح inuse),
+						  فراغ (**old)(ext2_filsys fs,
 							       blk64_t blk,
-							       int inuse));
+							       صحيح inuse));
 
 /* alloc_stats.c */
-void ext2fs_inode_alloc_stats(ext2_filsys fs, ext2_ino_t ino, int inuse);
-void ext2fs_inode_alloc_stats2(ext2_filsys fs, ext2_ino_t ino,
-			       int inuse, int isdir);
-void ext2fs_block_alloc_stats(ext2_filsys fs, blk_t blk, int inuse);
-void ext2fs_block_alloc_stats2(ext2_filsys fs, blk64_t blk, int inuse);
-void ext2fs_block_alloc_stats_range(ext2_filsys fs, blk64_t blk,
-				    blk_t num, int inuse);
+فراغ ext2fs_inode_alloc_stats(ext2_filsys fs, ext2_ino_t ino, صحيح inuse);
+فراغ ext2fs_inode_alloc_stats2(ext2_filsys fs, ext2_ino_t ino,
+			       صحيح inuse, صحيح isdir);
+فراغ ext2fs_block_alloc_stats(ext2_filsys fs, blk_t blk, صحيح inuse);
+فراغ ext2fs_block_alloc_stats2(ext2_filsys fs, blk64_t blk, صحيح inuse);
+فراغ ext2fs_block_alloc_stats_range(ext2_filsys fs, blk64_t blk,
+				    blk_t عدد, صحيح inuse);
 
 /* alloc_tables.c */
-extern errcode_t ext2fs_allocate_tables(ext2_filsys fs);
-extern errcode_t ext2fs_allocate_group_table(ext2_filsys fs, dgrp_t group,
+خارجي errcode_t ext2fs_allocate_tables(ext2_filsys fs);
+خارجي errcode_t ext2fs_allocate_group_table(ext2_filsys fs, dgrp_t group,
 					     ext2fs_block_bitmap bmap);
 
 /* badblocks.c */
-extern errcode_t ext2fs_u32_list_create(ext2_u32_list *ret, int size);
-extern errcode_t ext2fs_u32_list_add(ext2_u32_list bb, __u32 blk);
-extern int ext2fs_u32_list_find(ext2_u32_list bb, __u32 blk);
-extern int ext2fs_u32_list_test(ext2_u32_list bb, blk_t blk);
-extern errcode_t ext2fs_u32_list_iterate_begin(ext2_u32_list bb,
+خارجي errcode_t ext2fs_u32_list_create(ext2_u32_list *ret, صحيح size);
+خارجي errcode_t ext2fs_u32_list_add(ext2_u32_list bb, __u32 blk);
+خارجي صحيح ext2fs_u32_list_find(ext2_u32_list bb, __u32 blk);
+خارجي صحيح ext2fs_u32_list_test(ext2_u32_list bb, blk_t blk);
+خارجي errcode_t ext2fs_u32_list_iterate_begin(ext2_u32_list bb,
 					       ext2_u32_iterate *ret);
-extern int ext2fs_u32_list_iterate(ext2_u32_iterate iter, blk_t *blk);
-extern void ext2fs_u32_list_iterate_end(ext2_u32_iterate iter);
-extern errcode_t ext2fs_u32_copy(ext2_u32_list src, ext2_u32_list *dest);
-extern int ext2fs_u32_list_equal(ext2_u32_list bb1, ext2_u32_list bb2);
+خارجي صحيح ext2fs_u32_list_iterate(ext2_u32_iterate iter, blk_t *blk);
+خارجي فراغ ext2fs_u32_list_iterate_end(ext2_u32_iterate iter);
+خارجي errcode_t ext2fs_u32_copy(ext2_u32_list src, ext2_u32_list *dest);
+خارجي صحيح ext2fs_u32_list_equal(ext2_u32_list bb1, ext2_u32_list bb2);
 
-extern errcode_t ext2fs_badblocks_list_create(ext2_badblocks_list *ret,
-					    int size);
-extern errcode_t ext2fs_badblocks_list_add(ext2_badblocks_list bb,
+خارجي errcode_t ext2fs_badblocks_list_create(ext2_badblocks_list *ret,
+					    صحيح size);
+خارجي errcode_t ext2fs_badblocks_list_add(ext2_badblocks_list bb,
 					   blk_t blk);
-extern int ext2fs_badblocks_list_test(ext2_badblocks_list bb,
+خارجي صحيح ext2fs_badblocks_list_test(ext2_badblocks_list bb,
 				    blk_t blk);
-extern int ext2fs_u32_list_del(ext2_u32_list bb, __u32 blk);
-extern void ext2fs_badblocks_list_del(ext2_u32_list bb, __u32 blk);
-extern errcode_t
+خارجي صحيح ext2fs_u32_list_del(ext2_u32_list bb, __u32 blk);
+خارجي فراغ ext2fs_badblocks_list_del(ext2_u32_list bb, __u32 blk);
+خارجي errcode_t
 	ext2fs_badblocks_list_iterate_begin(ext2_badblocks_list bb,
 					    ext2_badblocks_iterate *ret);
-extern int ext2fs_badblocks_list_iterate(ext2_badblocks_iterate iter,
+خارجي صحيح ext2fs_badblocks_list_iterate(ext2_badblocks_iterate iter,
 					 blk_t *blk);
-extern void ext2fs_badblocks_list_iterate_end(ext2_badblocks_iterate iter);
-extern errcode_t ext2fs_badblocks_copy(ext2_badblocks_list src,
+خارجي فراغ ext2fs_badblocks_list_iterate_end(ext2_badblocks_iterate iter);
+خارجي errcode_t ext2fs_badblocks_copy(ext2_badblocks_list src,
 				       ext2_badblocks_list *dest);
-extern int ext2fs_badblocks_equal(ext2_badblocks_list bb1,
+خارجي صحيح ext2fs_badblocks_equal(ext2_badblocks_list bb1,
 				  ext2_badblocks_list bb2);
-extern int ext2fs_u32_list_count(ext2_u32_list bb);
+خارجي صحيح ext2fs_u32_list_گنتی(ext2_u32_list bb);
 
 /* bb_compat */
-extern errcode_t badblocks_list_create(badblocks_list *ret, int size);
-extern errcode_t badblocks_list_add(badblocks_list bb, blk_t blk);
-extern int badblocks_list_test(badblocks_list bb, blk_t blk);
-extern errcode_t badblocks_list_iterate_begin(badblocks_list bb,
+خارجي errcode_t badblocks_list_create(badblocks_list *ret, صحيح size);
+خارجي errcode_t badblocks_list_add(badblocks_list bb, blk_t blk);
+خارجي صحيح badblocks_list_test(badblocks_list bb, blk_t blk);
+خارجي errcode_t badblocks_list_iterate_begin(badblocks_list bb,
 					      badblocks_iterate *ret);
-extern int badblocks_list_iterate(badblocks_iterate iter, blk_t *blk);
-extern void badblocks_list_iterate_end(badblocks_iterate iter);
-extern void badblocks_list_free(badblocks_list bb);
+خارجي صحيح badblocks_list_iterate(badblocks_iterate iter, blk_t *blk);
+خارجي فراغ badblocks_list_iterate_end(badblocks_iterate iter);
+خارجي فراغ badblocks_list_free(badblocks_list bb);
 
 /* bb_inode.c */
-extern errcode_t ext2fs_update_bb_inode(ext2_filsys fs,
+خارجي errcode_t ext2fs_update_bb_inode(ext2_filsys fs,
 					ext2_badblocks_list bb_list);
 
 /* bitmaps.c */
-extern void ext2fs_free_block_bitmap(ext2fs_block_bitmap bitmap);
-extern void ext2fs_free_inode_bitmap(ext2fs_inode_bitmap bitmap);
-extern errcode_t ext2fs_copy_bitmap(ext2fs_generic_bitmap src,
+خارجي فراغ ext2fs_free_block_bitmap(ext2fs_block_bitmap bitmap);
+خارجي فراغ ext2fs_free_inode_bitmap(ext2fs_inode_bitmap bitmap);
+خارجي errcode_t ext2fs_copy_bitmap(ext2fs_generic_bitmap src,
 				    ext2fs_generic_bitmap *dest);
-extern errcode_t ext2fs_allocate_block_bitmap(ext2_filsys fs,
-					      const char *descr,
+خارجي errcode_t ext2fs_allocate_block_bitmap(ext2_filsys fs,
+					      ثابت حرف *descr,
 					      ext2fs_block_bitmap *ret);
-extern errcode_t ext2fs_allocate_subcluster_bitmap(ext2_filsys fs,
-						   const char *descr,
+خارجي errcode_t ext2fs_allocate_subcluster_bitmap(ext2_filsys fs,
+						   ثابت حرف *descr,
 						   ext2fs_block_bitmap *ret);
-extern int ext2fs_get_bitmap_granularity(ext2fs_block_bitmap bitmap);
-extern errcode_t ext2fs_allocate_inode_bitmap(ext2_filsys fs,
-					      const char *descr,
+خارجي صحيح ext2fs_get_bitmap_granularity(ext2fs_block_bitmap bitmap);
+خارجي errcode_t ext2fs_allocate_inode_bitmap(ext2_filsys fs,
+					      ثابت حرف *descr,
 					      ext2fs_inode_bitmap *ret);
-extern errcode_t ext2fs_fudge_inode_bitmap_end(ext2fs_inode_bitmap bitmap,
+خارجي errcode_t ext2fs_fudge_inode_bitmap_end(ext2fs_inode_bitmap bitmap,
 					       ext2_ino_t end, ext2_ino_t *oend);
-extern errcode_t ext2fs_fudge_block_bitmap_end(ext2fs_block_bitmap bitmap,
+خارجي errcode_t ext2fs_fudge_block_bitmap_end(ext2fs_block_bitmap bitmap,
 					       blk_t end, blk_t *oend);
-extern errcode_t ext2fs_fudge_block_bitmap_end2(ext2fs_block_bitmap bitmap,
+خارجي errcode_t ext2fs_fudge_block_bitmap_end2(ext2fs_block_bitmap bitmap,
 					 blk64_t end, blk64_t *oend);
-extern void ext2fs_clear_inode_bitmap(ext2fs_inode_bitmap bitmap);
-extern void ext2fs_clear_block_bitmap(ext2fs_block_bitmap bitmap);
-extern errcode_t ext2fs_resize_inode_bitmap(__u32 new_end, __u32 new_real_end,
+خارجي فراغ ext2fs_clear_inode_bitmap(ext2fs_inode_bitmap bitmap);
+خارجي فراغ ext2fs_clear_block_bitmap(ext2fs_block_bitmap bitmap);
+خارجي errcode_t ext2fs_resize_inode_bitmap(__u32 new_end, __u32 new_real_end,
 					    ext2fs_inode_bitmap bmap);
-extern errcode_t ext2fs_resize_inode_bitmap2(__u64 new_end,
+خارجي errcode_t ext2fs_resize_inode_bitmap2(__u64 new_end,
 					     __u64 new_real_end,
 					     ext2fs_inode_bitmap bmap);
-extern errcode_t ext2fs_resize_block_bitmap(__u32 new_end, __u32 new_real_end,
+خارجي errcode_t ext2fs_resize_block_bitmap(__u32 new_end, __u32 new_real_end,
 					    ext2fs_block_bitmap bmap);
-extern errcode_t ext2fs_resize_block_bitmap2(__u64 new_end,
+خارجي errcode_t ext2fs_resize_block_bitmap2(__u64 new_end,
 					     __u64 new_real_end,
 					     ext2fs_block_bitmap bmap);
-extern errcode_t ext2fs_compare_block_bitmap(ext2fs_block_bitmap bm1,
+خارجي errcode_t ext2fs_compare_block_bitmap(ext2fs_block_bitmap bm1,
 					     ext2fs_block_bitmap bm2);
-extern errcode_t ext2fs_compare_inode_bitmap(ext2fs_inode_bitmap bm1,
+خارجي errcode_t ext2fs_compare_inode_bitmap(ext2fs_inode_bitmap bm1,
 					     ext2fs_inode_bitmap bm2);
-extern errcode_t ext2fs_set_inode_bitmap_range(ext2fs_inode_bitmap bmap,
-					ext2_ino_t start, unsigned int num,
-					void *in);
-extern errcode_t ext2fs_set_inode_bitmap_range2(ext2fs_inode_bitmap bmap,
-					 __u64 start, size_t num,
-					 void *in);
-extern errcode_t ext2fs_get_inode_bitmap_range(ext2fs_inode_bitmap bmap,
-					ext2_ino_t start, unsigned int num,
-					void *out);
-extern errcode_t ext2fs_get_inode_bitmap_range2(ext2fs_inode_bitmap bmap,
-					 __u64 start, size_t num,
-					 void *out);
-extern errcode_t ext2fs_set_block_bitmap_range(ext2fs_block_bitmap bmap,
-					blk_t start, unsigned int num,
-					void *in);
-extern errcode_t ext2fs_set_block_bitmap_range2(ext2fs_block_bitmap bmap,
-					 blk64_t start, size_t num,
-					 void *in);
-extern errcode_t ext2fs_get_block_bitmap_range(ext2fs_block_bitmap bmap,
-					blk_t start, unsigned int num,
-					void *out);
-extern errcode_t ext2fs_get_block_bitmap_range2(ext2fs_block_bitmap bmap,
-					 blk64_t start, size_t num,
-					 void *out);
+خارجي errcode_t ext2fs_set_inode_bitmap_range(ext2fs_inode_bitmap bmap,
+					ext2_ino_t start, unsigned صحيح عدد,
+					فراغ *in);
+خارجي errcode_t ext2fs_set_inode_bitmap_range2(ext2fs_inode_bitmap bmap,
+					 __u64 start, size_t عدد,
+					 فراغ *in);
+خارجي errcode_t ext2fs_get_inode_bitmap_range(ext2fs_inode_bitmap bmap,
+					ext2_ino_t start, unsigned صحيح عدد,
+					فراغ *out);
+خارجي errcode_t ext2fs_get_inode_bitmap_range2(ext2fs_inode_bitmap bmap,
+					 __u64 start, size_t عدد,
+					 فراغ *out);
+خارجي errcode_t ext2fs_set_block_bitmap_range(ext2fs_block_bitmap bmap,
+					blk_t start, unsigned صحيح عدد,
+					فراغ *in);
+خارجي errcode_t ext2fs_set_block_bitmap_range2(ext2fs_block_bitmap bmap,
+					 blk64_t start, size_t عدد,
+					 فراغ *in);
+خارجي errcode_t ext2fs_get_block_bitmap_range(ext2fs_block_bitmap bmap,
+					blk_t start, unsigned صحيح عدد,
+					فراغ *out);
+خارجي errcode_t ext2fs_get_block_bitmap_range2(ext2fs_block_bitmap bmap,
+					 blk64_t start, size_t عدد,
+					 فراغ *out);
 
 /* blknum.c */
-extern __u32 ext2fs_inode_bitmap_checksum(ext2_filsys fs, dgrp_t group);
-extern __u32 ext2fs_block_bitmap_checksum(ext2_filsys fs, dgrp_t group);
-extern dgrp_t ext2fs_group_of_blk2(ext2_filsys fs, blk64_t);
-extern blk64_t ext2fs_group_first_block2(ext2_filsys fs, dgrp_t group);
-extern blk64_t ext2fs_group_last_block2(ext2_filsys fs, dgrp_t group);
-extern int ext2fs_group_blocks_count(ext2_filsys fs, dgrp_t group);
-extern blk64_t ext2fs_inode_data_blocks2(ext2_filsys fs,
-					 struct ext2_inode *inode);
-extern blk64_t ext2fs_inode_i_blocks(ext2_filsys fs,
-				     struct ext2_inode *inode);
-extern blk64_t ext2fs_get_stat_i_blocks(ext2_filsys fs,
-					struct ext2_inode *inode);
-extern blk64_t ext2fs_blocks_count(struct ext2_super_block *super);
-extern void ext2fs_blocks_count_set(struct ext2_super_block *super,
+خارجي __u32 ext2fs_inode_bitmap_checksum(ext2_filsys fs, dgrp_t group);
+خارجي __u32 ext2fs_block_bitmap_checksum(ext2_filsys fs, dgrp_t group);
+خارجي dgrp_t ext2fs_group_of_blk2(ext2_filsys fs, blk64_t);
+خارجي blk64_t ext2fs_group_first_block2(ext2_filsys fs, dgrp_t group);
+خارجي blk64_t ext2fs_group_last_block2(ext2_filsys fs, dgrp_t group);
+خارجي صحيح ext2fs_group_blocks_گنتی(ext2_filsys fs, dgrp_t group);
+خارجي blk64_t ext2fs_inode_data_blocks2(ext2_filsys fs,
+					 بنية ext2_inode *inode);
+خارجي blk64_t ext2fs_inode_i_blocks(ext2_filsys fs,
+				     بنية ext2_inode *inode);
+خارجي blk64_t ext2fs_get_stat_i_blocks(ext2_filsys fs,
+					بنية ext2_inode *inode);
+خارجي blk64_t ext2fs_blocks_گنتی(بنية ext2_super_block *super);
+خارجي فراغ ext2fs_blocks_گنتی_set(بنية ext2_super_block *super,
 				    blk64_t blk);
-extern void ext2fs_blocks_count_add(struct ext2_super_block *super,
+خارجي فراغ ext2fs_blocks_گنتی_add(بنية ext2_super_block *super,
 				    blk64_t blk);
-extern blk64_t ext2fs_r_blocks_count(struct ext2_super_block *super);
-extern void ext2fs_r_blocks_count_set(struct ext2_super_block *super,
+خارجي blk64_t ext2fs_r_blocks_گنتی(بنية ext2_super_block *super);
+خارجي فراغ ext2fs_r_blocks_گنتی_set(بنية ext2_super_block *super,
 				      blk64_t blk);
-extern void ext2fs_r_blocks_count_add(struct ext2_super_block *super,
+خارجي فراغ ext2fs_r_blocks_گنتی_add(بنية ext2_super_block *super,
 				      blk64_t blk);
-extern blk64_t ext2fs_free_blocks_count(struct ext2_super_block *super);
-extern void ext2fs_free_blocks_count_set(struct ext2_super_block *super,
+خارجي blk64_t ext2fs_free_blocks_گنتی(بنية ext2_super_block *super);
+خارجي فراغ ext2fs_free_blocks_گنتی_set(بنية ext2_super_block *super,
 					 blk64_t blk);
-extern void ext2fs_free_blocks_count_add(struct ext2_super_block *super,
+خارجي فراغ ext2fs_free_blocks_گنتی_add(بنية ext2_super_block *super,
 					 blk64_t blk);
 /* Block group descriptor accessor functions */
-extern struct ext2_group_desc *ext2fs_group_desc(ext2_filsys fs,
-					  struct opaque_ext2_group_desc *gdp,
+خارجي بنية ext2_group_desc *ext2fs_group_desc(ext2_filsys fs,
+					  بنية opaque_ext2_group_desc *gdp,
 					  dgrp_t group);
-extern blk64_t ext2fs_block_bitmap_csum(ext2_filsys fs, dgrp_t group);
-extern blk64_t ext2fs_block_bitmap_loc(ext2_filsys fs, dgrp_t group);
-extern void ext2fs_block_bitmap_loc_set(ext2_filsys fs, dgrp_t group,
+خارجي blk64_t ext2fs_block_bitmap_csum(ext2_filsys fs, dgrp_t group);
+خارجي blk64_t ext2fs_block_bitmap_loc(ext2_filsys fs, dgrp_t group);
+خارجي فراغ ext2fs_block_bitmap_loc_set(ext2_filsys fs, dgrp_t group,
 					blk64_t blk);
-extern __u32 ext2fs_inode_bitmap_csum(ext2_filsys fs, dgrp_t group);
-extern blk64_t ext2fs_inode_bitmap_loc(ext2_filsys fs, dgrp_t group);
-extern void ext2fs_inode_bitmap_loc_set(ext2_filsys fs, dgrp_t group,
+خارجي __u32 ext2fs_inode_bitmap_csum(ext2_filsys fs, dgrp_t group);
+خارجي blk64_t ext2fs_inode_bitmap_loc(ext2_filsys fs, dgrp_t group);
+خارجي فراغ ext2fs_inode_bitmap_loc_set(ext2_filsys fs, dgrp_t group,
 					blk64_t blk);
-extern blk64_t ext2fs_inode_table_loc(ext2_filsys fs, dgrp_t group);
-extern void ext2fs_inode_table_loc_set(ext2_filsys fs, dgrp_t group,
+خارجي blk64_t ext2fs_inode_table_loc(ext2_filsys fs, dgrp_t group);
+خارجي فراغ ext2fs_inode_table_loc_set(ext2_filsys fs, dgrp_t group,
 				       blk64_t blk);
-extern __u32 ext2fs_bg_free_blocks_count(ext2_filsys fs, dgrp_t group);
-extern void ext2fs_bg_free_blocks_count_set(ext2_filsys fs, dgrp_t group,
+خارجي __u32 ext2fs_bg_free_blocks_گنتی(ext2_filsys fs, dgrp_t group);
+خارجي فراغ ext2fs_bg_free_blocks_گنتی_set(ext2_filsys fs, dgrp_t group,
 					 __u32 n);
-extern __u32 ext2fs_bg_free_inodes_count(ext2_filsys fs, dgrp_t group);
-extern void ext2fs_bg_free_inodes_count_set(ext2_filsys fs, dgrp_t group,
+خارجي __u32 ext2fs_bg_free_inodes_گنتی(ext2_filsys fs, dgrp_t group);
+خارجي فراغ ext2fs_bg_free_inodes_گنتی_set(ext2_filsys fs, dgrp_t group,
 					 __u32 n);
-extern __u32 ext2fs_bg_used_dirs_count(ext2_filsys fs, dgrp_t group);
-extern void ext2fs_bg_used_dirs_count_set(ext2_filsys fs, dgrp_t group,
+خارجي __u32 ext2fs_bg_used_dirs_گنتی(ext2_filsys fs, dgrp_t group);
+خارجي فراغ ext2fs_bg_used_dirs_گنتی_set(ext2_filsys fs, dgrp_t group,
 				       __u32 n);
-extern __u32 ext2fs_bg_itable_unused(ext2_filsys fs, dgrp_t group);
-extern void ext2fs_bg_itable_unused_set(ext2_filsys fs, dgrp_t group,
+خارجي __u32 ext2fs_bg_itable_unused(ext2_filsys fs, dgrp_t group);
+خارجي فراغ ext2fs_bg_itable_unused_set(ext2_filsys fs, dgrp_t group,
 				     __u32 n);
-extern __u16 ext2fs_bg_flags(ext2_filsys fs, dgrp_t group);
-extern void ext2fs_bg_flags_zap(ext2_filsys fs, dgrp_t group);
-extern int ext2fs_bg_flags_test(ext2_filsys fs, dgrp_t group, __u16 bg_flag);
-extern void ext2fs_bg_flags_set(ext2_filsys fs, dgrp_t group, __u16 bg_flags);
-extern void ext2fs_bg_flags_clear(ext2_filsys fs, dgrp_t group, __u16 bg_flags);
-extern __u16 ext2fs_bg_checksum(ext2_filsys fs, dgrp_t group);
-extern void ext2fs_bg_checksum_set(ext2_filsys fs, dgrp_t group, __u16 checksum);
-extern blk64_t ext2fs_file_acl_block(ext2_filsys fs,
-				     const struct ext2_inode *inode);
-extern void ext2fs_file_acl_block_set(ext2_filsys fs,
-				      struct ext2_inode *inode, blk64_t blk);
-extern errcode_t ext2fs_inode_size_set(ext2_filsys fs, struct ext2_inode *inode,
+خارجي __u16 ext2fs_bg_flags(ext2_filsys fs, dgrp_t group);
+خارجي فراغ ext2fs_bg_flags_zap(ext2_filsys fs, dgrp_t group);
+خارجي صحيح ext2fs_bg_flags_test(ext2_filsys fs, dgrp_t group, __u16 bg_flag);
+خارجي فراغ ext2fs_bg_flags_set(ext2_filsys fs, dgrp_t group, __u16 bg_flags);
+خارجي فراغ ext2fs_bg_flags_clear(ext2_filsys fs, dgrp_t group, __u16 bg_flags);
+خارجي __u16 ext2fs_bg_checksum(ext2_filsys fs, dgrp_t group);
+خارجي فراغ ext2fs_bg_checksum_set(ext2_filsys fs, dgrp_t group, __u16 checksum);
+خارجي blk64_t ext2fs_file_acl_block(ext2_filsys fs,
+				     ثابت بنية ext2_inode *inode);
+خارجي فراغ ext2fs_file_acl_block_set(ext2_filsys fs,
+				      بنية ext2_inode *inode, blk64_t blk);
+خارجي errcode_t ext2fs_inode_size_set(ext2_filsys fs, بنية ext2_inode *inode,
 				       ext2_off64_t size);
 
 /* block.c */
-extern errcode_t ext2fs_block_iterate(ext2_filsys fs,
+خارجي errcode_t ext2fs_block_iterate(ext2_filsys fs,
 				      ext2_ino_t	ino,
-				      int	flags,
-				      char *block_buf,
-				      int (*func)(ext2_filsys fs,
+				      صحيح	flags,
+				      حرف *block_buf,
+				      صحيح (*func)(ext2_filsys fs,
 						  blk_t	*blocknr,
-						  int	blockcnt,
-						  void	*priv_data),
-				      void *priv_data);
+						  صحيح	blockcnt,
+						  فراغ	*priv_data),
+				      فراغ *priv_data);
 errcode_t ext2fs_block_iterate2(ext2_filsys fs,
 				ext2_ino_t	ino,
-				int	flags,
-				char *block_buf,
-				int (*func)(ext2_filsys fs,
+				صحيح	flags,
+				حرف *block_buf,
+				صحيح (*func)(ext2_filsys fs,
 					    blk_t	*blocknr,
 					    e2_blkcnt_t	blockcnt,
 					    blk_t	ref_blk,
-					    int		ref_offset,
-					    void	*priv_data),
-				void *priv_data);
+					    صحيح		ref_offset,
+					    فراغ	*priv_data),
+				فراغ *priv_data);
 errcode_t ext2fs_block_iterate3(ext2_filsys fs,
 				ext2_ino_t ino,
-				int	flags,
-				char *block_buf,
-				int (*func)(ext2_filsys fs,
+				صحيح	flags,
+				حرف *block_buf,
+				صحيح (*func)(ext2_filsys fs,
 					    blk64_t	*blocknr,
 					    e2_blkcnt_t	blockcnt,
 					    blk64_t	ref_blk,
-					    int		ref_offset,
-					    void	*priv_data),
-				void *priv_data);
+					    صحيح		ref_offset,
+					    فراغ	*priv_data),
+				فراغ *priv_data);
 
 /* bmap.c */
-extern errcode_t ext2fs_bmap(ext2_filsys fs, ext2_ino_t ino,
-			     struct ext2_inode *inode,
-			     char *block_buf, int bmap_flags,
+خارجي errcode_t ext2fs_bmap(ext2_filsys fs, ext2_ino_t ino,
+			     بنية ext2_inode *inode,
+			     حرف *block_buf, صحيح bmap_flags,
 			     blk_t block, blk_t *phys_blk);
-extern errcode_t ext2fs_bmap2(ext2_filsys fs, ext2_ino_t ino,
-			      struct ext2_inode *inode,
-			      char *block_buf, int bmap_flags, blk64_t block,
-			      int *ret_flags, blk64_t *phys_blk);
+خارجي errcode_t ext2fs_bmap2(ext2_filsys fs, ext2_ino_t ino,
+			      بنية ext2_inode *inode,
+			      حرف *block_buf, صحيح bmap_flags, blk64_t block,
+			      صحيح *ret_flags, blk64_t *phys_blk);
 errcode_t ext2fs_map_cluster_block(ext2_filsys fs, ext2_ino_t ino,
-				   struct ext2_inode *inode, blk64_t lblk,
+				   بنية ext2_inode *inode, blk64_t lblk,
 				   blk64_t *pblk);
 
-#if 0
+#إذا 0
 /* bmove.c */
-extern errcode_t ext2fs_move_blocks(ext2_filsys fs,
+خارجي errcode_t ext2fs_move_blocks(ext2_filsys fs,
 				    ext2fs_block_bitmap reserve,
 				    ext2fs_block_bitmap alloc_map,
-				    int flags);
+				    صحيح flags);
 #endif
 
 /* check_desc.c */
-extern errcode_t ext2fs_check_desc(ext2_filsys fs);
+خارجي errcode_t ext2fs_check_desc(ext2_filsys fs);
 
 /* closefs.c */
-extern errcode_t ext2fs_close(ext2_filsys fs);
-extern errcode_t ext2fs_close2(ext2_filsys fs, int flags);
-extern errcode_t ext2fs_close_free(ext2_filsys *fs);
-extern errcode_t ext2fs_flush(ext2_filsys fs);
-extern errcode_t ext2fs_flush2(ext2_filsys fs, int flags);
-extern int ext2fs_bg_has_super(ext2_filsys fs, dgrp_t group_block);
-extern errcode_t ext2fs_super_and_bgd_loc2(ext2_filsys fs,
+خارجي errcode_t ext2fs_close(ext2_filsys fs);
+خارجي errcode_t ext2fs_close2(ext2_filsys fs, صحيح flags);
+خارجي errcode_t ext2fs_close_free(ext2_filsys *fs);
+خارجي errcode_t ext2fs_flush(ext2_filsys fs);
+خارجي errcode_t ext2fs_flush2(ext2_filsys fs, صحيح flags);
+خارجي صحيح ext2fs_bg_has_super(ext2_filsys fs, dgrp_t group_block);
+خارجي errcode_t ext2fs_super_and_bgd_loc2(ext2_filsys fs,
 				    dgrp_t group,
 				    blk64_t *ret_super_blk,
 				    blk64_t *ret_old_desc_blk,
 				    blk64_t *ret_new_desc_blk,
 				    blk_t *ret_used_blks);
-extern int ext2fs_super_and_bgd_loc(ext2_filsys fs,
+خارجي صحيح ext2fs_super_and_bgd_loc(ext2_filsys fs,
 				    dgrp_t group,
 				    blk_t *ret_super_blk,
 				    blk_t *ret_old_desc_blk,
 				    blk_t *ret_new_desc_blk,
-				    int *ret_meta_bg);
-extern void ext2fs_update_dynamic_rev(ext2_filsys fs);
+				    صحيح *ret_meta_bg);
+خارجي فراغ ext2fs_update_dynamic_rev(ext2_filsys fs);
 
 /* crc32c.c */
-extern __u32 ext2fs_crc32_be(__u32 crc, unsigned char const *p, size_t len);
-extern __u32 ext2fs_crc32c_le(__u32 crc, unsigned char const *p, size_t len);
+خارجي __u32 ext2fs_crc32_be(__u32 crc, unsigned حرف ثابت *p, size_t len);
+خارجي __u32 ext2fs_crc32c_le(__u32 crc, unsigned حرف ثابت *p, size_t len);
 
 /* csum.c */
-extern void ext2fs_init_csum_seed(ext2_filsys fs);
-extern errcode_t ext2fs_mmp_csum_set(ext2_filsys fs, struct mmp_struct *mmp);
-extern int ext2fs_mmp_csum_verify(ext2_filsys, struct mmp_struct *mmp);
-extern int ext2fs_verify_csum_type(ext2_filsys fs, struct ext2_super_block *sb);
-extern errcode_t ext2fs_superblock_csum_set(ext2_filsys fs,
-					    struct ext2_super_block *sb);
-extern int ext2fs_superblock_csum_verify(ext2_filsys fs,
-					 struct ext2_super_block *sb);
-extern errcode_t ext2fs_ext_attr_block_csum_set(ext2_filsys fs,
+خارجي فراغ ext2fs_init_csum_seed(ext2_filsys fs);
+خارجي errcode_t ext2fs_mmp_csum_set(ext2_filsys fs, بنية mmp_struct *mmp);
+خارجي صحيح ext2fs_mmp_csum_verify(ext2_filsys, بنية mmp_struct *mmp);
+خارجي صحيح ext2fs_verify_csum_type(ext2_filsys fs, بنية ext2_super_block *sb);
+خارجي errcode_t ext2fs_superblock_csum_set(ext2_filsys fs,
+					    بنية ext2_super_block *sb);
+خارجي صحيح ext2fs_superblock_csum_verify(ext2_filsys fs,
+					 بنية ext2_super_block *sb);
+خارجي errcode_t ext2fs_ext_attr_block_csum_set(ext2_filsys fs,
 					ext2_ino_t inum, blk64_t block,
-					struct ext2_ext_attr_header *hdr);
-extern int ext2fs_ext_attr_block_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+					بنية ext2_ext_attr_header *hdr);
+خارجي صحيح ext2fs_ext_attr_block_csum_verify(ext2_filsys fs, ext2_ino_t inum,
 					     blk64_t block,
-					     struct ext2_ext_attr_header *hdr);
+					     بنية ext2_ext_attr_header *hdr);
 #define EXT2_DIRENT_TAIL(block, blocksize) \
-	((struct ext2_dir_entry_tail *)(((char *)(block)) + \
-	(blocksize) - sizeof(struct ext2_dir_entry_tail)))
+	((بنية ext2_dir_entry_tail *)(((حرف *)(block)) + \
+	(blocksize) - حجم(بنية ext2_dir_entry_tail)))
 
-extern void ext2fs_initialize_dirent_tail(ext2_filsys fs,
-					  struct ext2_dir_entry_tail *t);
-extern int ext2fs_dirent_has_tail(ext2_filsys fs,
-				  struct ext2_dir_entry *dirent);
-extern int ext2fs_dirent_csum_verify(ext2_filsys fs, ext2_ino_t inum,
-				     struct ext2_dir_entry *dirent);
-extern int ext2fs_dir_block_csum_verify(ext2_filsys fs, ext2_ino_t inum,
-					struct ext2_dir_entry *dirent);
-extern errcode_t ext2fs_dir_block_csum_set(ext2_filsys fs, ext2_ino_t inum,
-					   struct ext2_dir_entry *dirent);
-extern errcode_t ext2fs_get_dx_countlimit(ext2_filsys fs,
-					  struct ext2_dir_entry *dirent,
-					  struct ext2_dx_countlimit **cc,
-					  int *offset);
-extern errcode_t ext2fs_dx_csum(ext2_filsys fs, ext2_ino_t inum,
-				struct ext2_dir_entry *dirent,
-				__u32 *crc, struct ext2_dx_tail **ret_t);
-extern errcode_t ext2fs_extent_block_csum_set(ext2_filsys fs,
+خارجي فراغ ext2fs_initialize_dirent_tail(ext2_filsys fs,
+					  بنية ext2_dir_entry_tail *t);
+خارجي صحيح ext2fs_dirent_has_tail(ext2_filsys fs,
+				  بنية ext2_dir_entry *dirent);
+خارجي صحيح ext2fs_dirent_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+				     بنية ext2_dir_entry *dirent);
+خارجي صحيح ext2fs_dir_block_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+					بنية ext2_dir_entry *dirent);
+خارجي errcode_t ext2fs_dir_block_csum_set(ext2_filsys fs, ext2_ino_t inum,
+					   بنية ext2_dir_entry *dirent);
+خارجي errcode_t ext2fs_get_dx_countlimit(ext2_filsys fs,
+					  بنية ext2_dir_entry *dirent,
+					  بنية ext2_dx_countlimit **cc,
+					  صحيح *offset);
+خارجي errcode_t ext2fs_dx_csum(ext2_filsys fs, ext2_ino_t inum,
+				بنية ext2_dir_entry *dirent,
+				__u32 *crc, بنية ext2_dx_tail **ret_t);
+خارجي errcode_t ext2fs_extent_block_csum_set(ext2_filsys fs,
 					      ext2_ino_t inum,
-					      struct ext3_extent_header *eh);
-extern int ext2fs_extent_block_csum_verify(ext2_filsys fs,
+					      بنية ext3_extent_header *eh);
+خارجي صحيح ext2fs_extent_block_csum_verify(ext2_filsys fs,
 					   ext2_ino_t inum,
-					   struct ext3_extent_header *eh);
-extern errcode_t ext2fs_block_bitmap_csum_set(ext2_filsys fs, dgrp_t group,
-					      char *bitmap, int size);
-extern int ext2fs_block_bitmap_csum_verify(ext2_filsys fs, dgrp_t group,
-					   char *bitmap, int size);
-extern errcode_t ext2fs_inode_bitmap_csum_set(ext2_filsys fs, dgrp_t group,
-					      char *bitmap, int size);
-extern int ext2fs_inode_bitmap_csum_verify(ext2_filsys fs, dgrp_t group,
-					   char *bitmap, int size);
-extern errcode_t ext2fs_inode_csum_set(ext2_filsys fs, ext2_ino_t inum,
-				       struct ext2_inode_large *inode);
-extern int ext2fs_inode_csum_verify(ext2_filsys fs, ext2_ino_t inum,
-				    struct ext2_inode_large *inode);
-extern void ext2fs_group_desc_csum_set(ext2_filsys fs, dgrp_t group);
-extern int ext2fs_group_desc_csum_verify(ext2_filsys fs, dgrp_t group);
-extern errcode_t ext2fs_set_gdt_csum(ext2_filsys fs);
-extern __u16 ext2fs_group_desc_csum(ext2_filsys fs, dgrp_t group);
+					   بنية ext3_extent_header *eh);
+خارجي errcode_t ext2fs_block_bitmap_csum_set(ext2_filsys fs, dgrp_t group,
+					      حرف *bitmap, صحيح size);
+خارجي صحيح ext2fs_block_bitmap_csum_verify(ext2_filsys fs, dgrp_t group,
+					   حرف *bitmap, صحيح size);
+خارجي errcode_t ext2fs_inode_bitmap_csum_set(ext2_filsys fs, dgrp_t group,
+					      حرف *bitmap, صحيح size);
+خارجي صحيح ext2fs_inode_bitmap_csum_verify(ext2_filsys fs, dgrp_t group,
+					   حرف *bitmap, صحيح size);
+خارجي errcode_t ext2fs_inode_csum_set(ext2_filsys fs, ext2_ino_t inum,
+				       بنية ext2_inode_large *inode);
+خارجي صحيح ext2fs_inode_csum_verify(ext2_filsys fs, ext2_ino_t inum,
+				    بنية ext2_inode_large *inode);
+خارجي فراغ ext2fs_group_desc_csum_set(ext2_filsys fs, dgrp_t group);
+خارجي صحيح ext2fs_group_desc_csum_verify(ext2_filsys fs, dgrp_t group);
+خارجي errcode_t ext2fs_set_gdt_csum(ext2_filsys fs);
+خارجي __u16 ext2fs_group_desc_csum(ext2_filsys fs, dgrp_t group);
 
 /* dblist.c */
-extern errcode_t ext2fs_init_dblist(ext2_filsys fs, ext2_dblist *ret_dblist);
-extern errcode_t ext2fs_add_dir_block(ext2_dblist dblist, ext2_ino_t ino,
-				      blk_t blk, int blockcnt);
-extern errcode_t ext2fs_add_dir_block2(ext2_dblist dblist, ext2_ino_t ino,
+خارجي errcode_t ext2fs_init_dblist(ext2_filsys fs, ext2_dblist *ret_dblist);
+خارجي errcode_t ext2fs_add_dir_block(ext2_dblist dblist, ext2_ino_t ino,
+				      blk_t blk, صحيح blockcnt);
+خارجي errcode_t ext2fs_add_dir_block2(ext2_dblist dblist, ext2_ino_t ino,
 				       blk64_t blk, e2_blkcnt_t blockcnt);
-extern void ext2fs_dblist_sort(ext2_dblist dblist,
-			       EXT2_QSORT_TYPE (*sortfunc)(const void *,
-							   const void *));
-extern void ext2fs_dblist_sort2(ext2_dblist dblist,
-				EXT2_QSORT_TYPE (*sortfunc)(const void *,
-							    const void *));
-extern errcode_t ext2fs_dblist_iterate(ext2_dblist dblist,
-	int (*func)(ext2_filsys fs, struct ext2_db_entry *db_info,
-		    void	*priv_data),
-	void *priv_data);
-extern errcode_t ext2fs_dblist_iterate2(ext2_dblist dblist,
-	int (*func)(ext2_filsys fs, struct ext2_db_entry2 *db_info,
-		    void	*priv_data),
-	void *priv_data);
-extern errcode_t ext2fs_dblist_iterate3(ext2_dblist dblist,
-	int (*func)(ext2_filsys fs, struct ext2_db_entry2 *db_info,
-		    void	*priv_data),
+خارجي فراغ ext2fs_dblist_sort(ext2_dblist dblist,
+			       EXT2_QSORT_TYPE (*sortfunc)(ثابت فراغ *,
+							   ثابت فراغ *));
+خارجي فراغ ext2fs_dblist_sort2(ext2_dblist dblist,
+				EXT2_QSORT_TYPE (*sortfunc)(ثابت فراغ *,
+							    ثابت فراغ *));
+خارجي errcode_t ext2fs_dblist_iterate(ext2_dblist dblist,
+	صحيح (*func)(ext2_filsys fs, بنية ext2_db_entry *db_info,
+		    فراغ	*priv_data),
+	فراغ *priv_data);
+خارجي errcode_t ext2fs_dblist_iterate2(ext2_dblist dblist,
+	صحيح (*func)(ext2_filsys fs, بنية ext2_db_entry2 *db_info,
+		    فراغ	*priv_data),
+	فراغ *priv_data);
+خارجي errcode_t ext2fs_dblist_iterate3(ext2_dblist dblist,
+	صحيح (*func)(ext2_filsys fs, بنية ext2_db_entry2 *db_info,
+		    فراغ	*priv_data),
 	unsigned long long start,
-	unsigned long long count,
-	void *priv_data);
-extern errcode_t ext2fs_set_dir_block(ext2_dblist dblist, ext2_ino_t ino,
-				      blk_t blk, int blockcnt);
-extern errcode_t ext2fs_set_dir_block2(ext2_dblist dblist, ext2_ino_t ino,
+	unsigned long long گنتی,
+	فراغ *priv_data);
+خارجي errcode_t ext2fs_set_dir_block(ext2_dblist dblist, ext2_ino_t ino,
+				      blk_t blk, صحيح blockcnt);
+خارجي errcode_t ext2fs_set_dir_block2(ext2_dblist dblist, ext2_ino_t ino,
 				       blk64_t blk, e2_blkcnt_t blockcnt);
-extern errcode_t ext2fs_copy_dblist(ext2_dblist src,
+خارجي errcode_t ext2fs_copy_dblist(ext2_dblist src,
 				    ext2_dblist *dest);
-extern int ext2fs_dblist_count(ext2_dblist dblist);
-extern blk64_t ext2fs_dblist_count2(ext2_dblist dblist);
-extern errcode_t ext2fs_dblist_get_last(ext2_dblist dblist,
-					struct ext2_db_entry **entry);
-extern errcode_t ext2fs_dblist_get_last2(ext2_dblist dblist,
-					struct ext2_db_entry2 **entry);
-extern errcode_t ext2fs_dblist_drop_last(ext2_dblist dblist);
+خارجي صحيح ext2fs_dblist_گنتی(ext2_dblist dblist);
+خارجي blk64_t ext2fs_dblist_count2(ext2_dblist dblist);
+خارجي errcode_t ext2fs_dblist_get_last(ext2_dblist dblist,
+					بنية ext2_db_entry **entry);
+خارجي errcode_t ext2fs_dblist_get_last2(ext2_dblist dblist,
+					بنية ext2_db_entry2 **entry);
+خارجي errcode_t ext2fs_dblist_drop_last(ext2_dblist dblist);
 
 /* dblist_dir.c */
-extern errcode_t
+خارجي errcode_t
 	ext2fs_dblist_dir_iterate(ext2_dblist dblist,
-				  int	flags,
-				  char	*block_buf,
-				  int (*func)(ext2_ino_t	dir,
-					      int		entry,
-					      struct ext2_dir_entry *dirent,
-					      int	offset,
-					      int	blocksize,
-					      char	*buf,
-					      void	*priv_data),
-				  void *priv_data);
+				  صحيح	flags,
+				  حرف	*block_buf,
+				  صحيح (*func)(ext2_ino_t	dir,
+					      صحيح		entry,
+					      بنية ext2_dir_entry *dirent,
+					      صحيح	offset,
+					      صحيح	blocksize,
+					      حرف	*buf,
+					      فراغ	*priv_data),
+				  فراغ *priv_data);
 
-#if 0
+#إذا 0
 /* digest_encode.c */
 #define EXT2FS_DIGEST_SIZE EXT2FS_SHA256_LENGTH
-extern int ext2fs_digest_encode(const char *src, int len, char *dst);
-extern int ext2fs_digest_decode(const char *src, int len, char *dst);
+خارجي صحيح ext2fs_digest_encode(ثابت حرف *src, صحيح len, حرف *dst);
+خارجي صحيح ext2fs_digest_decode(ثابت حرف *src, صحيح len, حرف *dst);
 #endif
 
 /* dirblock.c */
-extern errcode_t ext2fs_read_dir_block(ext2_filsys fs, blk_t block,
-				       void *buf);
-extern errcode_t ext2fs_read_dir_block2(ext2_filsys fs, blk_t block,
-					void *buf, int flags);
-extern errcode_t ext2fs_read_dir_block3(ext2_filsys fs, blk64_t block,
-					void *buf, int flags);
-extern errcode_t ext2fs_read_dir_block4(ext2_filsys fs, blk64_t block,
-					void *buf, int flags, ext2_ino_t ino);
-extern errcode_t ext2fs_write_dir_block(ext2_filsys fs, blk_t block,
-					void *buf);
-extern errcode_t ext2fs_write_dir_block2(ext2_filsys fs, blk_t block,
-					 void *buf, int flags);
-extern errcode_t ext2fs_write_dir_block3(ext2_filsys fs, blk64_t block,
-					 void *buf, int flags);
-extern errcode_t ext2fs_write_dir_block4(ext2_filsys fs, blk64_t block,
-					 void *buf, int flags, ext2_ino_t ino);
+خارجي errcode_t ext2fs_read_dir_block(ext2_filsys fs, blk_t block,
+				       فراغ *buf);
+خارجي errcode_t ext2fs_read_dir_block2(ext2_filsys fs, blk_t block,
+					فراغ *buf, صحيح flags);
+خارجي errcode_t ext2fs_read_dir_block3(ext2_filsys fs, blk64_t block,
+					فراغ *buf, صحيح flags);
+خارجي errcode_t ext2fs_read_dir_block4(ext2_filsys fs, blk64_t block,
+					فراغ *buf, صحيح flags, ext2_ino_t ino);
+خارجي errcode_t ext2fs_write_dir_block(ext2_filsys fs, blk_t block,
+					فراغ *buf);
+خارجي errcode_t ext2fs_write_dir_block2(ext2_filsys fs, blk_t block,
+					 فراغ *buf, صحيح flags);
+خارجي errcode_t ext2fs_write_dir_block3(ext2_filsys fs, blk64_t block,
+					 فراغ *buf, صحيح flags);
+خارجي errcode_t ext2fs_write_dir_block4(ext2_filsys fs, blk64_t block,
+					 فراغ *buf, صحيح flags, ext2_ino_t ino);
 
 /* dirhash.c */
-extern errcode_t ext2fs_dirhash(int version, const char *name, int len,
-				const __u32 *seed,
+خارجي errcode_t ext2fs_dirhash(صحيح version, ثابت حرف *name, صحيح len,
+				ثابت __u32 *seed,
 				ext2_dirhash_t *ret_hash,
 				ext2_dirhash_t *ret_minor_hash);
 
-extern errcode_t ext2fs_dirhash2(int version, const char *name, int len,
-				 const struct ext2fs_nls_table *charset,
-				 int hash_flags,
-				 const __u32 *seed,
+خارجي errcode_t ext2fs_dirhash2(صحيح version, ثابت حرف *name, صحيح len,
+				 ثابت بنية ext2fs_nls_table *charset,
+				 صحيح hash_flags,
+				 ثابت __u32 *seed,
 				 ext2_dirhash_t *ret_hash,
 				 ext2_dirhash_t *ret_minor_hash);
 
 /* dir_iterate.c */
-extern errcode_t ext2fs_get_rec_len(ext2_filsys fs,
-				    struct ext2_dir_entry *dirent,
-				    unsigned int *rec_len);
-extern errcode_t ext2fs_set_rec_len(ext2_filsys fs,
-				    unsigned int len,
-				    struct ext2_dir_entry *dirent);
-extern errcode_t ext2fs_dir_iterate(ext2_filsys fs,
+خارجي errcode_t ext2fs_get_rec_len(ext2_filsys fs,
+				    بنية ext2_dir_entry *dirent,
+				    unsigned صحيح *rec_len);
+خارجي errcode_t ext2fs_set_rec_len(ext2_filsys fs,
+				    unsigned صحيح len,
+				    بنية ext2_dir_entry *dirent);
+خارجي errcode_t ext2fs_dir_iterate(ext2_filsys fs,
 			      ext2_ino_t dir,
-			      int flags,
-			      char *block_buf,
-			      int (*func)(struct ext2_dir_entry *dirent,
-					  int	offset,
-					  int	blocksize,
-					  char	*buf,
-					  void	*priv_data),
-			      void *priv_data);
-extern errcode_t ext2fs_dir_iterate2(ext2_filsys fs,
+			      صحيح flags,
+			      حرف *block_buf,
+			      صحيح (*func)(بنية ext2_dir_entry *dirent,
+					  صحيح	offset,
+					  صحيح	blocksize,
+					  حرف	*buf,
+					  فراغ	*priv_data),
+			      فراغ *priv_data);
+خارجي errcode_t ext2fs_dir_iterate2(ext2_filsys fs,
 			      ext2_ino_t dir,
-			      int flags,
-			      char *block_buf,
-			      int (*func)(ext2_ino_t	dir,
-					  int	entry,
-					  struct ext2_dir_entry *dirent,
-					  int	offset,
-					  int	blocksize,
-					  char	*buf,
-					  void	*priv_data),
-			      void *priv_data);
+			      صحيح flags,
+			      حرف *block_buf,
+			      صحيح (*func)(ext2_ino_t	dir,
+					  صحيح	entry,
+					  بنية ext2_dir_entry *dirent,
+					  صحيح	offset,
+					  صحيح	blocksize,
+					  حرف	*buf,
+					  فراغ	*priv_data),
+			      فراغ *priv_data);
 
 /* dupfs.c */
-extern errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest);
+خارجي errcode_t ext2fs_dup_handle(ext2_filsys src, ext2_filsys *dest);
 
 /* expanddir.c */
-extern errcode_t ext2fs_expand_dir(ext2_filsys fs, ext2_ino_t dir);
+خارجي errcode_t ext2fs_expand_dir(ext2_filsys fs, ext2_ino_t dir);
 
 /* ext_attr.c */
-extern __u32 ext2fs_ext_attr_hash_entry(struct ext2_ext_attr_entry *entry,
-					void *data);
-extern __u32 ext2fs_ext_attr_hash_entry_signed(struct ext2_ext_attr_entry *entry,
-					       void *data);
-extern errcode_t ext2fs_ext_attr_hash_entry2(ext2_filsys fs,
-					     struct ext2_ext_attr_entry *entry,
-					     void *data, __u32 *hash);
-extern errcode_t ext2fs_ext_attr_hash_entry3(ext2_filsys fs,
-					     struct ext2_ext_attr_entry *entry,
-					     void *data, __u32 *hash,
+خارجي __u32 ext2fs_ext_attr_hash_entry(بنية ext2_ext_attr_entry *entry,
+					فراغ *data);
+خارجي __u32 ext2fs_ext_attr_hash_entry_signed(بنية ext2_ext_attr_entry *entry,
+					       فراغ *data);
+خارجي errcode_t ext2fs_ext_attr_hash_entry2(ext2_filsys fs,
+					     بنية ext2_ext_attr_entry *entry,
+					     فراغ *data, __u32 *hash);
+خارجي errcode_t ext2fs_ext_attr_hash_entry3(ext2_filsys fs,
+					     بنية ext2_ext_attr_entry *entry,
+					     فراغ *data, __u32 *hash,
 					     __u32 *signed_hash);
-extern errcode_t ext2fs_read_ext_attr(ext2_filsys fs, blk_t block, void *buf);
-extern errcode_t ext2fs_read_ext_attr2(ext2_filsys fs, blk64_t block,
-				       void *buf);
-extern errcode_t ext2fs_read_ext_attr3(ext2_filsys fs, blk64_t block,
-				       void *buf, ext2_ino_t inum);
-extern errcode_t ext2fs_write_ext_attr(ext2_filsys fs, blk_t block,
-				       void *buf);
-extern errcode_t ext2fs_write_ext_attr2(ext2_filsys fs, blk64_t block,
-				       void *buf);
-extern errcode_t ext2fs_write_ext_attr3(ext2_filsys fs, blk64_t block,
-				       void *buf, ext2_ino_t inum);
-extern errcode_t ext2fs_adjust_ea_refcount(ext2_filsys fs, blk_t blk,
-					   char *block_buf,
-					   int adjust, __u32 *newcount);
-extern errcode_t ext2fs_adjust_ea_refcount2(ext2_filsys fs, blk64_t blk,
-					   char *block_buf,
-					   int adjust, __u32 *newcount);
-extern errcode_t ext2fs_adjust_ea_refcount3(ext2_filsys fs, blk64_t blk,
-					   char *block_buf,
-					   int adjust, __u32 *newcount,
+خارجي errcode_t ext2fs_read_ext_attr(ext2_filsys fs, blk_t block, فراغ *buf);
+خارجي errcode_t ext2fs_read_ext_attr2(ext2_filsys fs, blk64_t block,
+				       فراغ *buf);
+خارجي errcode_t ext2fs_read_ext_attr3(ext2_filsys fs, blk64_t block,
+				       فراغ *buf, ext2_ino_t inum);
+خارجي errcode_t ext2fs_write_ext_attr(ext2_filsys fs, blk_t block,
+				       فراغ *buf);
+خارجي errcode_t ext2fs_write_ext_attr2(ext2_filsys fs, blk64_t block,
+				       فراغ *buf);
+خارجي errcode_t ext2fs_write_ext_attr3(ext2_filsys fs, blk64_t block,
+				       فراغ *buf, ext2_ino_t inum);
+خارجي errcode_t ext2fs_adjust_ea_refcount(ext2_filsys fs, blk_t blk,
+					   حرف *block_buf,
+					   صحيح adjust, __u32 *newcount);
+خارجي errcode_t ext2fs_adjust_ea_refcount2(ext2_filsys fs, blk64_t blk,
+					   حرف *block_buf,
+					   صحيح adjust, __u32 *newcount);
+خارجي errcode_t ext2fs_adjust_ea_refcount3(ext2_filsys fs, blk64_t blk,
+					   حرف *block_buf,
+					   صحيح adjust, __u32 *newcount,
 					   ext2_ino_t inum);
-errcode_t ext2fs_xattrs_write(struct ext2_xattr_handle *handle);
-errcode_t ext2fs_xattrs_read(struct ext2_xattr_handle *handle);
-errcode_t ext2fs_xattrs_read_inode(struct ext2_xattr_handle *handle,
-				   struct ext2_inode_large *inode);
-errcode_t ext2fs_xattrs_iterate(struct ext2_xattr_handle *h,
-				int (*func)(char *name, char *value,
-					    size_t value_len, void *data),
-				void *data);
-errcode_t ext2fs_xattr_get(struct ext2_xattr_handle *h, const char *key,
-			   void **value, size_t *value_len);
-errcode_t ext2fs_xattr_set(struct ext2_xattr_handle *handle,
-			   const char *key,
-			   const void *value,
-			   size_t value_len);
-errcode_t ext2fs_xattr_remove(struct ext2_xattr_handle *handle,
-			      const char *key);
-errcode_t ext2fs_xattr_remove_all(struct ext2_xattr_handle *handle);
+errcode_t ext2fs_xattrs_write(بنية ext2_xattr_handle *handle);
+errcode_t ext2fs_xattrs_read(بنية ext2_xattr_handle *handle);
+errcode_t ext2fs_xattrs_read_inode(بنية ext2_xattr_handle *handle,
+				   بنية ext2_inode_large *inode);
+errcode_t ext2fs_xattrs_iterate(بنية ext2_xattr_handle *h,
+				صحيح (*func)(حرف *name, حرف *قدر,
+					    size_t قدر_len, فراغ *data),
+				فراغ *data);
+errcode_t ext2fs_xattr_get(بنية ext2_xattr_handle *h, ثابت حرف *کلید,
+			   فراغ **قدر, size_t *قدر_len);
+errcode_t ext2fs_xattr_set(بنية ext2_xattr_handle *handle,
+			   ثابت حرف *کلید,
+			   ثابت فراغ *قدر,
+			   size_t قدر_len);
+errcode_t ext2fs_xattr_remove(بنية ext2_xattr_handle *handle,
+			      ثابت حرف *کلید);
+errcode_t ext2fs_xattr_remove_all(بنية ext2_xattr_handle *handle);
 errcode_t ext2fs_xattrs_open(ext2_filsys fs, ext2_ino_t ino,
-			     struct ext2_xattr_handle **handle);
-errcode_t ext2fs_xattrs_close(struct ext2_xattr_handle **handle);
+			     بنية ext2_xattr_handle **handle);
+errcode_t ext2fs_xattrs_close(بنية ext2_xattr_handle **handle);
 errcode_t ext2fs_free_ext_attr(ext2_filsys fs, ext2_ino_t ino,
-			       struct ext2_inode_large *inode);
-errcode_t ext2fs_xattrs_count(struct ext2_xattr_handle *handle, size_t *count);
+			       بنية ext2_inode_large *inode);
+errcode_t ext2fs_xattrs_گنتی(بنية ext2_xattr_handle *handle, size_t *گنتی);
 errcode_t ext2fs_xattr_inode_max_size(ext2_filsys fs, ext2_ino_t ino,
 				      size_t *size);
 #define XATTR_HANDLE_FLAG_RAW	0x0001
-errcode_t ext2fs_xattrs_flags(struct ext2_xattr_handle *handle,
-			      unsigned int *new_flags, unsigned int *old_flags);
-extern void ext2fs_ext_attr_block_rehash(struct ext2_ext_attr_header *header,
-					 struct ext2_ext_attr_entry *end);
-extern __u32 ext2fs_get_ea_inode_hash(struct ext2_inode *inode);
-extern void ext2fs_set_ea_inode_hash(struct ext2_inode *inode, __u32 hash);
-extern __u64 ext2fs_get_ea_inode_ref(struct ext2_inode *inode);
-extern void ext2fs_set_ea_inode_ref(struct ext2_inode *inode, __u64 ref_count);
+errcode_t ext2fs_xattrs_flags(بنية ext2_xattr_handle *handle,
+			      unsigned صحيح *new_flags, unsigned صحيح *old_flags);
+خارجي فراغ ext2fs_ext_attr_block_rehash(بنية ext2_ext_attr_header *header,
+					 بنية ext2_ext_attr_entry *end);
+خارجي __u32 ext2fs_get_ea_inode_hash(بنية ext2_inode *inode);
+خارجي فراغ ext2fs_set_ea_inode_hash(بنية ext2_inode *inode, __u32 hash);
+خارجي __u64 ext2fs_get_ea_inode_ref(بنية ext2_inode *inode);
+خارجي فراغ ext2fs_set_ea_inode_ref(بنية ext2_inode *inode, __u64 ref_گنتی);
 
 /* extent.c */
-extern errcode_t ext2fs_extent_header_verify(void *ptr, int size);
-extern errcode_t ext2fs_extent_open(ext2_filsys fs, ext2_ino_t ino,
+خارجي errcode_t ext2fs_extent_header_verify(فراغ *ptr, صحيح size);
+خارجي errcode_t ext2fs_extent_open(ext2_filsys fs, ext2_ino_t ino,
 				    ext2_extent_handle_t *handle);
-extern errcode_t ext2fs_extent_open2(ext2_filsys fs, ext2_ino_t ino,
-					struct ext2_inode *inode,
+خارجي errcode_t ext2fs_extent_open2(ext2_filsys fs, ext2_ino_t ino,
+					بنية ext2_inode *inode,
 					ext2_extent_handle_t *ret_handle);
-extern void ext2fs_extent_free(ext2_extent_handle_t handle);
-extern errcode_t ext2fs_extent_get(ext2_extent_handle_t handle,
-				   int flags, struct ext2fs_extent *extent);
-extern errcode_t ext2fs_extent_node_split(ext2_extent_handle_t handle);
-extern errcode_t ext2fs_extent_replace(ext2_extent_handle_t handle, int flags,
-				       struct ext2fs_extent *extent);
-extern errcode_t ext2fs_extent_insert(ext2_extent_handle_t handle, int flags,
-				      struct ext2fs_extent *extent);
-extern errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
+خارجي فراغ ext2fs_extent_free(ext2_extent_handle_t handle);
+خارجي errcode_t ext2fs_extent_get(ext2_extent_handle_t handle,
+				   صحيح flags, بنية ext2fs_extent *extent);
+خارجي errcode_t ext2fs_extent_گرہ_split(ext2_extent_handle_t handle);
+خارجي errcode_t ext2fs_extent_replace(ext2_extent_handle_t handle, صحيح flags,
+				       بنية ext2fs_extent *extent);
+خارجي errcode_t ext2fs_extent_داخل_کرو(ext2_extent_handle_t handle, صحيح flags,
+				      بنية ext2fs_extent *extent);
+خارجي errcode_t ext2fs_extent_set_bmap(ext2_extent_handle_t handle,
 					blk64_t logical, blk64_t physical,
-					int flags);
-extern errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, int flags);
-extern errcode_t ext2fs_extent_get_info(ext2_extent_handle_t handle,
-					struct ext2_extent_info *info);
-extern errcode_t ext2fs_extent_goto(ext2_extent_handle_t handle,
+					صحيح flags);
+خارجي errcode_t ext2fs_extent_delete(ext2_extent_handle_t handle, صحيح flags);
+خارجي errcode_t ext2fs_extent_get_info(ext2_extent_handle_t handle,
+					بنية ext2_extent_info *info);
+خارجي errcode_t ext2fs_extent_goto(ext2_extent_handle_t handle,
 				    blk64_t blk);
-extern errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
-				     int leaf_level, blk64_t blk);
-extern errcode_t ext2fs_extent_fix_parents(ext2_extent_handle_t handle);
-extern size_t ext2fs_max_extent_depth(ext2_extent_handle_t handle);
-extern errcode_t ext2fs_fix_extents_checksums(ext2_filsys fs, ext2_ino_t ino,
-					      struct ext2_inode *inode);
-extern errcode_t ext2fs_count_blocks(ext2_filsys fs, ext2_ino_t ino,
-				     struct ext2_inode *inode, blk64_t *ret_count);
-extern errcode_t ext2fs_decode_extent(struct ext2fs_extent *to, void *from,
-				      int len);
+خارجي errcode_t ext2fs_extent_goto2(ext2_extent_handle_t handle,
+				     صحيح leaf_level, blk64_t blk);
+خارجي errcode_t ext2fs_extent_fix_parents(ext2_extent_handle_t handle);
+خارجي size_t ext2fs_max_extent_depth(ext2_extent_handle_t handle);
+خارجي errcode_t ext2fs_fix_extents_checksums(ext2_filsys fs, ext2_ino_t ino,
+					      بنية ext2_inode *inode);
+خارجي errcode_t ext2fs_گنتی_blocks(ext2_filsys fs, ext2_ino_t ino,
+				     بنية ext2_inode *inode, blk64_t *ret_گنتی);
+خارجي errcode_t ext2fs_decode_extent(بنية ext2fs_extent *to, فراغ *from,
+				      صحيح len);
 
 /* fallocate.c */
 #define EXT2_FALLOCATE_ZERO_BLOCKS	(0x1)
@@ -1466,103 +1466,103 @@ extern errcode_t ext2fs_decode_extent(struct ext2fs_extent *to, void *from,
 #define EXT2_FALLOCATE_FORCE_UNINIT	(0x4)
 #define EXT2_FALLOCATE_INIT_BEYOND_EOF	(0x8)
 #define EXT2_FALLOCATE_ALL_FLAGS	(0xF)
-errcode_t ext2fs_fallocate(ext2_filsys fs, int flags, ext2_ino_t ino,
-			   struct ext2_inode *inode, blk64_t goal,
+errcode_t ext2fs_fallocate(ext2_filsys fs, صحيح flags, ext2_ino_t ino,
+			   بنية ext2_inode *inode, blk64_t goal,
 			   blk64_t start, blk64_t len);
 
 /* fileio.c */
-extern errcode_t ext2fs_file_open2(ext2_filsys fs, ext2_ino_t ino,
-				   struct ext2_inode *inode,
-				   int flags, ext2_file_t *ret);
-extern errcode_t ext2fs_file_open(ext2_filsys fs, ext2_ino_t ino,
-				  int flags, ext2_file_t *ret);
-extern ext2_filsys ext2fs_file_get_fs(ext2_file_t file);
-struct ext2_inode *ext2fs_file_get_inode(ext2_file_t file);
-extern ext2_ino_t ext2fs_file_get_inode_num(ext2_file_t file);
-extern errcode_t ext2fs_file_close(ext2_file_t file);
-extern errcode_t ext2fs_file_flush(ext2_file_t file);
-extern errcode_t ext2fs_file_read(ext2_file_t file, void *buf,
-				  unsigned int wanted, unsigned int *got);
-extern errcode_t ext2fs_file_write(ext2_file_t file, const void *buf,
-				   unsigned int nbytes, unsigned int *written);
-extern errcode_t ext2fs_file_llseek(ext2_file_t file, __u64 offset,
-				   int whence, __u64 *ret_pos);
-extern errcode_t ext2fs_file_lseek(ext2_file_t file, ext2_off_t offset,
-				   int whence, ext2_off_t *ret_pos);
+خارجي errcode_t ext2fs_file_open2(ext2_filsys fs, ext2_ino_t ino,
+				   بنية ext2_inode *inode,
+				   صحيح flags, ext2_file_t *ret);
+خارجي errcode_t ext2fs_file_open(ext2_filsys fs, ext2_ino_t ino,
+				  صحيح flags, ext2_file_t *ret);
+خارجي ext2_filsys ext2fs_file_get_fs(ext2_file_t file);
+بنية ext2_inode *ext2fs_file_get_inode(ext2_file_t file);
+خارجي ext2_ino_t ext2fs_file_get_inode_عدد(ext2_file_t file);
+خارجي errcode_t ext2fs_file_close(ext2_file_t file);
+خارجي errcode_t ext2fs_file_flush(ext2_file_t file);
+خارجي errcode_t ext2fs_file_read(ext2_file_t file, فراغ *buf,
+				  unsigned صحيح wanted, unsigned صحيح *got);
+خارجي errcode_t ext2fs_file_write(ext2_file_t file, ثابت فراغ *buf,
+				   unsigned صحيح nbytes, unsigned صحيح *written);
+خارجي errcode_t ext2fs_file_llseek(ext2_file_t file, __u64 offset,
+				   صحيح whence, __u64 *ret_pos);
+خارجي errcode_t ext2fs_file_lseek(ext2_file_t file, ext2_off_t offset,
+				   صحيح whence, ext2_off_t *ret_pos);
 errcode_t ext2fs_file_get_lsize(ext2_file_t file, __u64 *ret_size);
-extern ext2_off_t ext2fs_file_get_size(ext2_file_t file);
-extern errcode_t ext2fs_file_set_size(ext2_file_t file, ext2_off_t size);
-extern errcode_t ext2fs_file_set_size2(ext2_file_t file, ext2_off64_t size);
+خارجي ext2_off_t ext2fs_file_get_size(ext2_file_t file);
+خارجي errcode_t ext2fs_file_set_size(ext2_file_t file, ext2_off_t size);
+خارجي errcode_t ext2fs_file_set_size2(ext2_file_t file, ext2_off64_t size);
 
 /* finddev.c */
-extern char *ext2fs_find_block_device(dev_t device);
+خارجي حرف *ext2fs_find_block_device(dev_t device);
 
 /* flushb.c */
-extern errcode_t ext2fs_sync_device(int fd, int flushb);
+خارجي errcode_t ext2fs_sync_device(صحيح fd, صحيح flushb);
 
 /* freefs.c */
-extern void ext2fs_free(ext2_filsys fs);
-extern void ext2fs_free_dblist(ext2_dblist dblist);
-extern void ext2fs_badblocks_list_free(ext2_badblocks_list bb);
-extern void ext2fs_u32_list_free(ext2_u32_list bb);
+خارجي فراغ ext2fs_free(ext2_filsys fs);
+خارجي فراغ ext2fs_free_dblist(ext2_dblist dblist);
+خارجي فراغ ext2fs_badblocks_list_free(ext2_badblocks_list bb);
+خارجي فراغ ext2fs_u32_list_free(ext2_u32_list bb);
 
 /* gen_bitmap.c */
-extern void ext2fs_free_generic_bitmap(ext2fs_inode_bitmap bitmap);
-extern errcode_t ext2fs_make_generic_bitmap(errcode_t magic, ext2_filsys fs,
+خارجي فراغ ext2fs_free_generic_bitmap(ext2fs_inode_bitmap bitmap);
+خارجي errcode_t ext2fs_make_generic_bitmap(errcode_t magic, ext2_filsys fs,
 					    __u32 start, __u32 end,
 					    __u32 real_end,
-					    const char *descr, char *init_map,
+					    ثابت حرف *descr, حرف *init_map,
 					    ext2fs_generic_bitmap *ret);
-extern errcode_t ext2fs_allocate_generic_bitmap(__u32 start,
+خارجي errcode_t ext2fs_allocate_generic_bitmap(__u32 start,
 						__u32 end,
 						__u32 real_end,
-						const char *descr,
+						ثابت حرف *descr,
 						ext2fs_generic_bitmap *ret);
-extern errcode_t ext2fs_copy_generic_bitmap(ext2fs_generic_bitmap src,
+خارجي errcode_t ext2fs_copy_generic_bitmap(ext2fs_generic_bitmap src,
 					    ext2fs_generic_bitmap *dest);
-extern void ext2fs_clear_generic_bitmap(ext2fs_generic_bitmap bitmap);
-extern errcode_t ext2fs_fudge_generic_bitmap_end(ext2fs_inode_bitmap bitmap,
+خارجي فراغ ext2fs_clear_generic_bitmap(ext2fs_generic_bitmap bitmap);
+خارجي errcode_t ext2fs_fudge_generic_bitmap_end(ext2fs_inode_bitmap bitmap,
 						 errcode_t magic,
 						 errcode_t neq,
 						 ext2_ino_t end,
 						 ext2_ino_t *oend);
-extern void ext2fs_set_generic_bitmap_padding(ext2fs_generic_bitmap map);
-extern errcode_t ext2fs_resize_generic_bitmap(errcode_t magic,
+خارجي فراغ ext2fs_set_generic_bitmap_padding(ext2fs_generic_bitmap map);
+خارجي errcode_t ext2fs_resize_generic_bitmap(errcode_t magic,
 					      __u32 new_end,
 					      __u32 new_real_end,
 					      ext2fs_generic_bitmap bmap);
-extern errcode_t ext2fs_compare_generic_bitmap(errcode_t magic, errcode_t neq,
+خارجي errcode_t ext2fs_compare_generic_bitmap(errcode_t magic, errcode_t neq,
 					       ext2fs_generic_bitmap bm1,
 					       ext2fs_generic_bitmap bm2);
-extern errcode_t ext2fs_get_generic_bitmap_range(ext2fs_generic_bitmap bmap,
+خارجي errcode_t ext2fs_get_generic_bitmap_range(ext2fs_generic_bitmap bmap,
 						 errcode_t magic,
-						 __u32 start, __u32 num,
-						 void *out);
-extern errcode_t ext2fs_set_generic_bitmap_range(ext2fs_generic_bitmap bmap,
+						 __u32 start, __u32 عدد,
+						 فراغ *out);
+خارجي errcode_t ext2fs_set_generic_bitmap_range(ext2fs_generic_bitmap bmap,
 						 errcode_t magic,
-						 __u32 start, __u32 num,
-						 void *in);
-extern errcode_t ext2fs_find_first_zero_generic_bitmap(ext2fs_generic_bitmap bitmap,
+						 __u32 start, __u32 عدد,
+						 فراغ *in);
+خارجي errcode_t ext2fs_find_first_zero_generic_bitmap(ext2fs_generic_bitmap bitmap,
 						       __u32 start, __u32 end,
 						       __u32 *out);
-extern errcode_t ext2fs_find_first_set_generic_bitmap(ext2fs_generic_bitmap bitmap,
+خارجي errcode_t ext2fs_find_first_set_generic_bitmap(ext2fs_generic_bitmap bitmap,
 						       __u32 start, __u32 end,
 						       __u32 *out);
 
 /* gen_bitmap64.c */
-void ext2fs_free_generic_bmap(ext2fs_generic_bitmap bmap);
+فراغ ext2fs_free_generic_bmap(ext2fs_generic_bitmap bmap);
 errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
-				    int type, __u64 start, __u64 end,
+				    صحيح type, __u64 start, __u64 end,
 				    __u64 real_end,
-				    const char *descr,
+				    ثابت حرف *descr,
 				    ext2fs_generic_bitmap *ret);
 errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap src,
 				   ext2fs_generic_bitmap *dest);
-void ext2fs_clear_generic_bmap(ext2fs_generic_bitmap bitmap);
+فراغ ext2fs_clear_generic_bmap(ext2fs_generic_bitmap bitmap);
 errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap bitmap,
 					errcode_t neq,
 					__u64 end, __u64 *oend);
-void ext2fs_set_generic_bmap_padding(ext2fs_generic_bitmap bmap);
+فراغ ext2fs_set_generic_bmap_padding(ext2fs_generic_bitmap bmap);
 errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap bmap,
 				     __u64 new_end,
 				     __u64 new_real_end);
@@ -1570,429 +1570,429 @@ errcode_t ext2fs_compare_generic_bmap(errcode_t neq,
 				      ext2fs_generic_bitmap bm1,
 				      ext2fs_generic_bitmap bm2);
 errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap bmap,
-					__u64 start, unsigned int num,
-					void *out);
+					__u64 start, unsigned صحيح عدد,
+					فراغ *out);
 errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap bmap,
-					__u64 start, unsigned int num,
-					void *in);
+					__u64 start, unsigned صحيح عدد,
+					فراغ *in);
 errcode_t ext2fs_convert_subcluster_bitmap(ext2_filsys fs,
 					   ext2fs_block_bitmap *bitmap);
-errcode_t ext2fs_count_used_clusters(ext2_filsys fs, blk64_t start,
+errcode_t ext2fs_گنتی_used_clusters(ext2_filsys fs, blk64_t start,
 				     blk64_t end, blk64_t *out);
-errcode_t ext2fs_count_used_blocks(ext2_filsys fs, blk64_t start,
+errcode_t ext2fs_گنتی_used_blocks(ext2_filsys fs, blk64_t start,
 				   blk64_t end, blk64_t *out);
-extern unsigned int ext2fs_list_backups(ext2_filsys fs, unsigned int *three,
-				unsigned int *five, unsigned int *seven);
+خارجي unsigned صحيح ext2fs_list_backups(ext2_filsys fs, unsigned صحيح *three,
+				unsigned صحيح *five, unsigned صحيح *seven);
 
 /* getenv.c */
-extern char *ext2fs_safe_getenv(const char *arg);
+خارجي حرف *ext2fs_safe_getenv(ثابت حرف *arg);
 
 /* get_num_dirs.c */
-extern errcode_t ext2fs_get_num_dirs(ext2_filsys fs, ext2_ino_t *ret_num_dirs);
+خارجي errcode_t ext2fs_get_عدد_dirs(ext2_filsys fs, ext2_ino_t *ret_عدد_dirs);
 
 /* getsize.c */
-extern errcode_t ext2fs_get_device_size(const char *file, int blocksize,
+خارجي errcode_t ext2fs_get_device_size(ثابت حرف *file, صحيح blocksize,
 					blk_t *retblocks);
-extern errcode_t ext2fs_get_device_size2(const char *file, int blocksize,
+خارجي errcode_t ext2fs_get_device_size2(ثابت حرف *file, صحيح blocksize,
 					blk64_t *retblocks);
 
 /* getsectsize.c */
-extern int ext2fs_get_dio_alignment(int fd);
-errcode_t ext2fs_get_device_sectsize(const char *file, int *sectsize);
-errcode_t ext2fs_get_device_phys_sectsize(const char *file, int *sectsize);
+خارجي صحيح ext2fs_get_dio_alignment(صحيح fd);
+errcode_t ext2fs_get_device_sectsize(ثابت حرف *file, صحيح *sectsize);
+errcode_t ext2fs_get_device_phys_sectsize(ثابت حرف *file, صحيح *sectsize);
 
 /* i_block.c */
-errcode_t ext2fs_iblk_add_blocks(ext2_filsys fs, struct ext2_inode *inode,
-				 blk64_t num_blocks);
-errcode_t ext2fs_iblk_sub_blocks(ext2_filsys fs, struct ext2_inode *inode,
-				 blk64_t num_blocks);
-errcode_t ext2fs_iblk_set(ext2_filsys fs, struct ext2_inode *inode, blk64_t b);
+errcode_t ext2fs_iblk_add_blocks(ext2_filsys fs, بنية ext2_inode *inode,
+				 blk64_t عدد_blocks);
+errcode_t ext2fs_iblk_sub_blocks(ext2_filsys fs, بنية ext2_inode *inode,
+				 blk64_t عدد_blocks);
+errcode_t ext2fs_iblk_set(ext2_filsys fs, بنية ext2_inode *inode, blk64_t b);
 
 /* imager.c */
-extern errcode_t ext2fs_image_inode_write(ext2_filsys fs, int fd, int flags);
-extern errcode_t ext2fs_image_inode_read(ext2_filsys fs, int fd, int flags);
-extern errcode_t ext2fs_image_super_write(ext2_filsys fs, int fd, int flags);
-extern errcode_t ext2fs_image_super_read(ext2_filsys fs, int fd, int flags);
-extern errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, int fd, int flags);
-extern errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, int fd, int flags);
+خارجي errcode_t ext2fs_image_inode_write(ext2_filsys fs, صحيح fd, صحيح flags);
+خارجي errcode_t ext2fs_image_inode_read(ext2_filsys fs, صحيح fd, صحيح flags);
+خارجي errcode_t ext2fs_image_super_write(ext2_filsys fs, صحيح fd, صحيح flags);
+خارجي errcode_t ext2fs_image_super_read(ext2_filsys fs, صحيح fd, صحيح flags);
+خارجي errcode_t ext2fs_image_bitmap_write(ext2_filsys fs, صحيح fd, صحيح flags);
+خارجي errcode_t ext2fs_image_bitmap_read(ext2_filsys fs, صحيح fd, صحيح flags);
 
 /* ind_block.c */
-errcode_t ext2fs_read_ind_block(ext2_filsys fs, blk_t blk, void *buf);
-errcode_t ext2fs_write_ind_block(ext2_filsys fs, blk_t blk, void *buf);
+errcode_t ext2fs_read_ind_block(ext2_filsys fs, blk_t blk, فراغ *buf);
+errcode_t ext2fs_write_ind_block(ext2_filsys fs, blk_t blk, فراغ *buf);
 
 /* initialize.c */
-extern errcode_t ext2fs_initialize(const char *name, int flags,
-				   struct ext2_super_block *param,
+خارجي errcode_t ext2fs_initialize(ثابت حرف *name, صحيح flags,
+				   بنية ext2_super_block *param,
 				   io_manager manager, ext2_filsys *ret_fs);
-extern errcode_t ext2fs_calculate_summary_stats(ext2_filsys fs, int super_only);
+خارجي errcode_t ext2fs_calculate_summary_stats(ext2_filsys fs, صحيح super_only);
 
 /* icount.c */
-extern void ext2fs_free_icount(ext2_icount_t icount);
-extern errcode_t ext2fs_create_icount_tdb(ext2_filsys fs, char *tdb_dir,
-					  int flags, ext2_icount_t *ret);
-extern errcode_t ext2fs_create_icount2(ext2_filsys fs, int flags,
-				       unsigned int size,
+خارجي فراغ ext2fs_free_icount(ext2_icount_t icount);
+خارجي errcode_t ext2fs_create_icount_tdb(ext2_filsys fs, حرف *tdb_dir,
+					  صحيح flags, ext2_icount_t *ret);
+خارجي errcode_t ext2fs_create_icount2(ext2_filsys fs, صحيح flags,
+				       unsigned صحيح size,
 				       ext2_icount_t hint, ext2_icount_t *ret);
-extern errcode_t ext2fs_create_icount(ext2_filsys fs, int flags,
-				      unsigned int size,
+خارجي errcode_t ext2fs_create_icount(ext2_filsys fs, صحيح flags,
+				      unsigned صحيح size,
 				      ext2_icount_t *ret);
-extern errcode_t ext2fs_icount_fetch(ext2_icount_t icount, ext2_ino_t ino,
+خارجي errcode_t ext2fs_icount_fetch(ext2_icount_t icount, ext2_ino_t ino,
 				     __u16 *ret);
-extern errcode_t ext2fs_icount_increment(ext2_icount_t icount, ext2_ino_t ino,
+خارجي errcode_t ext2fs_icount_increment(ext2_icount_t icount, ext2_ino_t ino,
 					 __u16 *ret);
-extern errcode_t ext2fs_icount_decrement(ext2_icount_t icount, ext2_ino_t ino,
+خارجي errcode_t ext2fs_icount_decrement(ext2_icount_t icount, ext2_ino_t ino,
 					 __u16 *ret);
-extern errcode_t ext2fs_icount_store(ext2_icount_t icount, ext2_ino_t ino,
-				     __u16 count);
-extern ext2_ino_t ext2fs_get_icount_size(ext2_icount_t icount);
+خارجي errcode_t ext2fs_icount_store(ext2_icount_t icount, ext2_ino_t ino,
+				     __u16 گنتی);
+خارجي ext2_ino_t ext2fs_get_icount_size(ext2_icount_t icount);
 errcode_t ext2fs_icount_validate(ext2_icount_t icount, FILE *);
 
 /* inline.c */
 
-extern errcode_t ext2fs_get_memalign(unsigned long size,
-				     unsigned long align, void *ptr);
+خارجي errcode_t ext2fs_get_memalign(unsigned long size,
+				     unsigned long align, فراغ *ptr);
 
 /* inline_data.c */
-extern errcode_t ext2fs_inline_data_init(ext2_filsys fs, ext2_ino_t ino);
-extern errcode_t ext2fs_inline_data_size(ext2_filsys fs, ext2_ino_t ino,
+خارجي errcode_t ext2fs_inline_data_init(ext2_filsys fs, ext2_ino_t ino);
+خارجي errcode_t ext2fs_inline_data_size(ext2_filsys fs, ext2_ino_t ino,
 					 size_t *size);
-extern errcode_t ext2fs_inline_data_get(ext2_filsys fs, ext2_ino_t ino,
-					struct ext2_inode *inode,
-					void *buf, size_t *size);
-extern errcode_t ext2fs_inline_data_set(ext2_filsys fs, ext2_ino_t ino,
-					struct ext2_inode *inode,
-					void *buf, size_t size);
+خارجي errcode_t ext2fs_inline_data_get(ext2_filsys fs, ext2_ino_t ino,
+					بنية ext2_inode *inode,
+					فراغ *buf, size_t *size);
+خارجي errcode_t ext2fs_inline_data_set(ext2_filsys fs, ext2_ino_t ino,
+					بنية ext2_inode *inode,
+					فراغ *buf, size_t size);
 
 /* inode.c */
-extern errcode_t ext2fs_create_inode_cache(ext2_filsys fs,
-					   unsigned int cache_size);
-extern void ext2fs_free_inode_cache(struct ext2_inode_cache *icache);
-extern errcode_t ext2fs_flush_icache(ext2_filsys fs);
-extern errcode_t ext2fs_get_next_inode_full(ext2_inode_scan scan,
+خارجي errcode_t ext2fs_create_inode_cache(ext2_filsys fs,
+					   unsigned صحيح cache_size);
+خارجي فراغ ext2fs_free_inode_cache(بنية ext2_inode_cache *icache);
+خارجي errcode_t ext2fs_flush_icache(ext2_filsys fs);
+خارجي errcode_t ext2fs_get_next_inode_full(ext2_inode_scan scan,
 					    ext2_ino_t *ino,
-					    struct ext2_inode *inode,
-					    int bufsize);
+					    بنية ext2_inode *inode,
+					    صحيح bufsize);
 #define EXT2_INODE_SCAN_DEFAULT_BUFFER_BLOCKS	8
-extern errcode_t ext2fs_open_inode_scan(ext2_filsys fs, int buffer_blocks,
+خارجي errcode_t ext2fs_open_inode_scan(ext2_filsys fs, صحيح buffer_blocks,
 				  ext2_inode_scan *ret_scan);
-extern void ext2fs_close_inode_scan(ext2_inode_scan scan);
-extern errcode_t ext2fs_get_next_inode(ext2_inode_scan scan, ext2_ino_t *ino,
-			       struct ext2_inode *inode);
-extern errcode_t ext2fs_inode_scan_goto_blockgroup(ext2_inode_scan scan,
-						   int	group);
-extern void ext2fs_set_inode_callback
+خارجي فراغ ext2fs_close_inode_scan(ext2_inode_scan scan);
+خارجي errcode_t ext2fs_get_next_inode(ext2_inode_scan scan, ext2_ino_t *ino,
+			       بنية ext2_inode *inode);
+خارجي errcode_t ext2fs_inode_scan_goto_blockgroup(ext2_inode_scan scan,
+						   صحيح	group);
+خارجي فراغ ext2fs_set_inode_callback
 	(ext2_inode_scan scan,
 	 errcode_t (*done_group)(ext2_filsys fs,
 				 ext2_inode_scan scan,
 				 dgrp_t group,
-				 void * priv_data),
-	 void *done_group_data);
-extern int ext2fs_inode_scan_flags(ext2_inode_scan scan, int set_flags,
-				   int clear_flags);
-extern errcode_t ext2fs_read_inode_full(ext2_filsys fs, ext2_ino_t ino,
-					struct ext2_inode * inode,
-					int bufsize);
-extern errcode_t ext2fs_read_inode(ext2_filsys fs, ext2_ino_t ino,
-			    struct ext2_inode * inode);
-extern errcode_t ext2fs_read_inode2(ext2_filsys fs, ext2_ino_t ino,
-				    struct ext2_inode * inode,
-				    int bufsize, int flags);
-extern errcode_t ext2fs_write_inode_full(ext2_filsys fs, ext2_ino_t ino,
-					 struct ext2_inode * inode,
-					 int bufsize);
-extern errcode_t ext2fs_write_inode(ext2_filsys fs, ext2_ino_t ino,
-			    struct ext2_inode * inode);
-extern errcode_t ext2fs_write_inode2(ext2_filsys fs, ext2_ino_t ino,
-				     struct ext2_inode * inode,
-				     int bufsize, int flags);
-extern errcode_t ext2fs_write_new_inode(ext2_filsys fs, ext2_ino_t ino,
-			    struct ext2_inode * inode);
-extern errcode_t ext2fs_get_blocks(ext2_filsys fs, ext2_ino_t ino, blk_t *blocks);
-extern errcode_t ext2fs_check_directory(ext2_filsys fs, ext2_ino_t ino);
+				 فراغ * priv_data),
+	 فراغ *done_group_data);
+خارجي صحيح ext2fs_inode_scan_flags(ext2_inode_scan scan, صحيح set_flags,
+				   صحيح clear_flags);
+خارجي errcode_t ext2fs_read_inode_full(ext2_filsys fs, ext2_ino_t ino,
+					بنية ext2_inode * inode,
+					صحيح bufsize);
+خارجي errcode_t ext2fs_read_inode(ext2_filsys fs, ext2_ino_t ino,
+			    بنية ext2_inode * inode);
+خارجي errcode_t ext2fs_read_inode2(ext2_filsys fs, ext2_ino_t ino,
+				    بنية ext2_inode * inode,
+				    صحيح bufsize, صحيح flags);
+خارجي errcode_t ext2fs_write_inode_full(ext2_filsys fs, ext2_ino_t ino,
+					 بنية ext2_inode * inode,
+					 صحيح bufsize);
+خارجي errcode_t ext2fs_write_inode(ext2_filsys fs, ext2_ino_t ino,
+			    بنية ext2_inode * inode);
+خارجي errcode_t ext2fs_write_inode2(ext2_filsys fs, ext2_ino_t ino,
+				     بنية ext2_inode * inode,
+				     صحيح bufsize, صحيح flags);
+خارجي errcode_t ext2fs_write_new_inode(ext2_filsys fs, ext2_ino_t ino,
+			    بنية ext2_inode * inode);
+خارجي errcode_t ext2fs_get_blocks(ext2_filsys fs, ext2_ino_t ino, blk_t *blocks);
+خارجي errcode_t ext2fs_check_directory(ext2_filsys fs, ext2_ino_t ino);
 
 /* inode_io.c */
-extern io_manager inode_io_manager;
-extern errcode_t ext2fs_inode_io_intern(ext2_filsys fs, ext2_ino_t ino,
-					char **name);
-extern errcode_t ext2fs_inode_io_intern2(ext2_filsys fs, ext2_ino_t ino,
-					 struct ext2_inode *inode,
-					 char **name);
+خارجي io_manager inode_io_manager;
+خارجي errcode_t ext2fs_inode_io_intern(ext2_filsys fs, ext2_ino_t ino,
+					حرف **name);
+خارجي errcode_t ext2fs_inode_io_intern2(ext2_filsys fs, ext2_ino_t ino,
+					 بنية ext2_inode *inode,
+					 حرف **name);
 
 /* ismounted.c */
-extern errcode_t ext2fs_check_if_mounted(const char *file, int *mount_flags);
-extern errcode_t ext2fs_check_mount_point(const char *device, int *mount_flags,
-					  char *mtpt, int mtlen);
+خارجي errcode_t ext2fs_check_if_mounted(ثابت حرف *file, صحيح *mount_flags);
+خارجي errcode_t ext2fs_check_mount_point(ثابت حرف *device, صحيح *mount_flags,
+					  حرف *mtpt, صحيح mtlen);
 
 /* punch.c */
 /*
  * NOTE: This function removes from an inode the blocks "start", "end", and
  * every block in between.
  */
-extern errcode_t ext2fs_punch(ext2_filsys fs, ext2_ino_t ino,
-			      struct ext2_inode *inode,
-			      char *block_buf, blk64_t start,
+خارجي errcode_t ext2fs_punch(ext2_filsys fs, ext2_ino_t ino,
+			      بنية ext2_inode *inode,
+			      حرف *block_buf, blk64_t start,
 			      blk64_t end);
 
 /* namei.c */
-extern errcode_t ext2fs_lookup(ext2_filsys fs, ext2_ino_t dir, const char *name,
-			 int namelen, char *buf, ext2_ino_t *inode);
-extern errcode_t ext2fs_namei(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
-			const char *name, ext2_ino_t *inode);
-errcode_t ext2fs_namei_follow(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
-			      const char *name, ext2_ino_t *inode);
-extern errcode_t ext2fs_follow_link(ext2_filsys fs, ext2_ino_t root, ext2_ino_t cwd,
+خارجي errcode_t ext2fs_lookup(ext2_filsys fs, ext2_ino_t dir, ثابت حرف *name,
+			 صحيح namelen, حرف *buf, ext2_ino_t *inode);
+خارجي errcode_t ext2fs_namei(ext2_filsys fs, ext2_ino_t جڑ, ext2_ino_t cwd,
+			ثابت حرف *name, ext2_ino_t *inode);
+errcode_t ext2fs_namei_follow(ext2_filsys fs, ext2_ino_t جڑ, ext2_ino_t cwd,
+			      ثابت حرف *name, ext2_ino_t *inode);
+خارجي errcode_t ext2fs_follow_link(ext2_filsys fs, ext2_ino_t جڑ, ext2_ino_t cwd,
 			ext2_ino_t inode, ext2_ino_t *res_inode);
 
 /* native.c */
-int ext2fs_native_flag(void);
+صحيح ext2fs_native_flag(فراغ);
 
 /* newdir.c */
-extern errcode_t ext2fs_new_dir_block(ext2_filsys fs, ext2_ino_t dir_ino,
-				ext2_ino_t parent_ino, char **block);
-extern errcode_t ext2fs_new_dir_inline_data(ext2_filsys fs, ext2_ino_t dir_ino,
+خارجي errcode_t ext2fs_new_dir_block(ext2_filsys fs, ext2_ino_t dir_ino,
+				ext2_ino_t parent_ino, حرف **block);
+خارجي errcode_t ext2fs_new_dir_inline_data(ext2_filsys fs, ext2_ino_t dir_ino,
 				ext2_ino_t parent_ino, __u32 *iblock);
 
 /* nls_utf8.c */
-extern const struct ext2fs_nls_table *ext2fs_load_nls_table(int encoding);
-extern int ext2fs_check_encoded_name(const struct ext2fs_nls_table *table,
-				     char *s, size_t len, char **pos);
-extern int ext2fs_casefold_cmp(const struct ext2fs_nls_table *table,
-			       const unsigned char *str1, size_t len1,
-			       const unsigned char *str2, size_t len2);
+خارجي ثابت بنية ext2fs_nls_table *ext2fs_load_nls_table(صحيح encoding);
+خارجي صحيح ext2fs_check_encoded_name(ثابت بنية ext2fs_nls_table *table,
+				     حرف *s, size_t len, حرف **pos);
+خارجي صحيح ext2fs_casefold_cmp(ثابت بنية ext2fs_nls_table *table,
+			       ثابت unsigned حرف *str1, size_t len1,
+			       ثابت unsigned حرف *str2, size_t len2);
 
 /* mkdir.c */
-extern errcode_t ext2fs_mkdir(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t inum,
-			      const char *name);
-extern errcode_t ext2fs_mkdir2(ext2_filsys fs, ext2_ino_t parent,
+خارجي errcode_t ext2fs_mkdir(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t inum,
+			      ثابت حرف *name);
+خارجي errcode_t ext2fs_mkdir2(ext2_filsys fs, ext2_ino_t parent,
 			       ext2_ino_t ino, unsigned long flags,
-			       int link_flags, const char *name,
+			       صحيح link_flags, ثابت حرف *name,
 			       ext2_ino_t *ret_ino);
 
 /* mkjournal.c */
-struct ext2fs_journal_params {
-	blk_t num_journal_blocks;
-	blk_t num_fc_blocks;
+بنية ext2fs_journal_params {
+	blk_t عدد_journal_blocks;
+	blk_t عدد_fc_blocks;
 };
-extern errcode_t ext2fs_get_journal_params(
-		struct ext2fs_journal_params *params, ext2_filsys fs);
-extern errcode_t ext2fs_zero_blocks(ext2_filsys fs, blk_t blk, int num,
-				    blk_t *ret_blk, int *ret_count);
-extern errcode_t ext2fs_zero_blocks2(ext2_filsys fs, blk64_t blk, int num,
-				     blk64_t *ret_blk, int *ret_count);
-extern errcode_t ext2fs_create_journal_superblock(ext2_filsys fs,
-						  __u32 num_blocks, int flags,
-						  char  **ret_jsb);
-extern errcode_t ext2fs_create_journal_superblock2(ext2_filsys fs,
-						  struct ext2fs_journal_params *params,
-						  int flags, char  **ret_jsb);
-extern errcode_t ext2fs_add_journal_device(ext2_filsys fs,
+خارجي errcode_t ext2fs_get_journal_params(
+		بنية ext2fs_journal_params *params, ext2_filsys fs);
+خارجي errcode_t ext2fs_zero_blocks(ext2_filsys fs, blk_t blk, صحيح عدد,
+				    blk_t *ret_blk, صحيح *ret_گنتی);
+خارجي errcode_t ext2fs_zero_blocks2(ext2_filsys fs, blk64_t blk, صحيح عدد,
+				     blk64_t *ret_blk, صحيح *ret_گنتی);
+خارجي errcode_t ext2fs_create_journal_superblock(ext2_filsys fs,
+						  __u32 عدد_blocks, صحيح flags,
+						  حرف  **ret_jsb);
+خارجي errcode_t ext2fs_create_journal_superblock2(ext2_filsys fs,
+						  بنية ext2fs_journal_params *params,
+						  صحيح flags, حرف  **ret_jsb);
+خارجي errcode_t ext2fs_add_journal_device(ext2_filsys fs,
 					   ext2_filsys journal_dev);
-extern errcode_t ext2fs_add_journal_inode(ext2_filsys fs, blk_t num_blocks,
-					  int flags);
-extern errcode_t ext2fs_add_journal_inode2(ext2_filsys fs, blk_t num_blocks,
-					   blk64_t goal, int flags);
-extern errcode_t ext2fs_add_journal_inode3(ext2_filsys fs,
-				    struct ext2fs_journal_params *params,
-				    blk64_t goal, int flags);
-extern int ext2fs_default_journal_size(__u64 num_blocks);
-extern int ext2fs_journal_sb_start(int blocksize);
+خارجي errcode_t ext2fs_add_journal_inode(ext2_filsys fs, blk_t عدد_blocks,
+					  صحيح flags);
+خارجي errcode_t ext2fs_add_journal_inode2(ext2_filsys fs, blk_t عدد_blocks,
+					   blk64_t goal, صحيح flags);
+خارجي errcode_t ext2fs_add_journal_inode3(ext2_filsys fs,
+				    بنية ext2fs_journal_params *params,
+				    blk64_t goal, صحيح flags);
+خارجي صحيح ext2fs_default_journal_size(__u64 عدد_blocks);
+خارجي صحيح ext2fs_journal_sb_start(صحيح blocksize);
 
 /* openfs.c */
-extern errcode_t ext2fs_open(const char *name, int flags, int superblock,
-			     unsigned int block_size, io_manager manager,
+خارجي errcode_t ext2fs_open(ثابت حرف *name, صحيح flags, صحيح superblock,
+			     unsigned صحيح block_size, io_manager manager,
 			     ext2_filsys *ret_fs);
-extern errcode_t ext2fs_open2(const char *name, const char *io_options,
-			      int flags, int superblock,
-			      unsigned int block_size, io_manager manager,
+خارجي errcode_t ext2fs_open2(ثابت حرف *name, ثابت حرف *io_options,
+			      صحيح flags, صحيح superblock,
+			      unsigned صحيح block_size, io_manager manager,
 			      ext2_filsys *ret_fs);
 /*
  * The dgrp_t argument to these two functions is not actually a group number
  * but a block number offset within a group table!  Convert with the formula
  * (group_number / groups_per_block).
  */
-extern blk64_t ext2fs_descriptor_block_loc2(ext2_filsys fs,
+خارجي blk64_t ext2fs_descriptor_block_loc2(ext2_filsys fs,
 					blk64_t group_block, dgrp_t i);
-extern blk_t ext2fs_descriptor_block_loc(ext2_filsys fs, blk_t group_block,
+خارجي blk_t ext2fs_descriptor_block_loc(ext2_filsys fs, blk_t group_block,
 					 dgrp_t i);
 errcode_t ext2fs_get_data_io(ext2_filsys fs, io_channel *old_io);
 errcode_t ext2fs_set_data_io(ext2_filsys fs, io_channel new_io);
 errcode_t ext2fs_rewrite_to_io(ext2_filsys fs, io_channel new_io);
 
 /* orphan.c */
-extern errcode_t ext2fs_create_orphan_file(ext2_filsys fs, blk_t num_blocks);
-extern errcode_t ext2fs_truncate_orphan_file(ext2_filsys fs);
-extern e2_blkcnt_t ext2fs_default_orphan_file_blocks(ext2_filsys fs);
-extern __u32 ext2fs_do_orphan_file_block_csum(ext2_filsys fs, ext2_ino_t ino,
+خارجي errcode_t ext2fs_create_orphan_file(ext2_filsys fs, blk_t عدد_blocks);
+خارجي errcode_t ext2fs_truncate_orphan_file(ext2_filsys fs);
+خارجي e2_blkcnt_t ext2fs_default_orphan_file_blocks(ext2_filsys fs);
+خارجي __u32 ext2fs_do_orphan_file_block_csum(ext2_filsys fs, ext2_ino_t ino,
 					      __u32 gen, blk64_t blk,
-					      char *buf);
-extern errcode_t ext2fs_orphan_file_block_csum_set(ext2_filsys fs,
+					      حرف *buf);
+خارجي errcode_t ext2fs_orphan_file_block_csum_set(ext2_filsys fs,
 						   ext2_ino_t ino, blk64_t blk,
-						   char *buf);
-extern int ext2fs_orphan_file_block_csum_verify(ext2_filsys fs, ext2_ino_t ino,
-						blk64_t blk, char *buf);
+						   حرف *buf);
+خارجي صحيح ext2fs_orphan_file_block_csum_verify(ext2_filsys fs, ext2_ino_t ino,
+						blk64_t blk, حرف *buf);
 
 /* get_pathname.c */
-extern errcode_t ext2fs_get_pathname(ext2_filsys fs, ext2_ino_t dir, ext2_ino_t ino,
-			       char **name);
+خارجي errcode_t ext2fs_get_pathname(ext2_filsys fs, ext2_ino_t dir, ext2_ino_t ino,
+			       حرف **name);
 
 /* link.c */
-errcode_t ext2fs_link(ext2_filsys fs, ext2_ino_t dir, const char *name,
-		      ext2_ino_t ino, int flags);
-errcode_t ext2fs_unlink(ext2_filsys fs, ext2_ino_t dir, const char *name,
-			ext2_ino_t ino, int flags);
-int ext2fs_dir_is_dx(ext2_filsys fs, const struct ext2_inode *inode);
-void ext2fs_inc_nlink(ext2_filsys fs, struct ext2_inode *inode);
-void ext2fs_dec_nlink(struct ext2_inode *inode);
-int ext2fs_dir_link_max(ext2_filsys fs, struct ext2_inode_large *inode);
-int ext2fs_dir_link_empty(struct ext2_inode *inode);
+errcode_t ext2fs_link(ext2_filsys fs, ext2_ino_t dir, ثابت حرف *name,
+		      ext2_ino_t ino, صحيح flags);
+errcode_t ext2fs_unlink(ext2_filsys fs, ext2_ino_t dir, ثابت حرف *name,
+			ext2_ino_t ino, صحيح flags);
+صحيح ext2fs_dir_is_dx(ext2_filsys fs, ثابت بنية ext2_inode *inode);
+فراغ ext2fs_inc_nlink(ext2_filsys fs, بنية ext2_inode *inode);
+فراغ ext2fs_dec_nlink(بنية ext2_inode *inode);
+صحيح ext2fs_dir_link_max(ext2_filsys fs, بنية ext2_inode_large *inode);
+صحيح ext2fs_dir_link_empty(بنية ext2_inode *inode);
 
 /* symlink.c */
 errcode_t ext2fs_symlink(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t ino,
-			 const char *name, const char *target);
-int ext2fs_is_fast_symlink(struct ext2_inode *inode);
+			 ثابت حرف *name, ثابت حرف *target);
+صحيح ext2fs_is_fast_symlink(بنية ext2_inode *inode);
 
 /* mmp.c */
-errcode_t ext2fs_mmp_read(ext2_filsys fs, blk64_t mmp_blk, void *buf);
-errcode_t ext2fs_mmp_write(ext2_filsys fs, blk64_t mmp_blk, void *buf);
+errcode_t ext2fs_mmp_read(ext2_filsys fs, blk64_t mmp_blk, فراغ *buf);
+errcode_t ext2fs_mmp_write(ext2_filsys fs, blk64_t mmp_blk, فراغ *buf);
 errcode_t ext2fs_mmp_clear(ext2_filsys fs);
 errcode_t ext2fs_mmp_init(ext2_filsys fs);
 errcode_t ext2fs_mmp_start(ext2_filsys fs);
 errcode_t ext2fs_mmp_update(ext2_filsys fs);
-errcode_t ext2fs_mmp_update2(ext2_filsys fs, int immediately);
+errcode_t ext2fs_mmp_update2(ext2_filsys fs, صحيح immediately);
 errcode_t ext2fs_mmp_stop(ext2_filsys fs);
-unsigned ext2fs_mmp_new_seq(void);
-errcode_t ext2fs_mmp_get_mem(ext2_filsys fs, void **ptr);
+unsigned ext2fs_mmp_new_seq(فراغ);
+errcode_t ext2fs_mmp_get_mem(ext2_filsys fs, فراغ **ptr);
 
 /* read_bb.c */
-extern errcode_t ext2fs_read_bb_inode(ext2_filsys fs,
+خارجي errcode_t ext2fs_read_bb_inode(ext2_filsys fs,
 				      ext2_badblocks_list *bb_list);
 
 /* read_bb_file.c */
-extern errcode_t ext2fs_read_bb_FILE2(ext2_filsys fs, FILE *f,
+خارجي errcode_t ext2fs_read_bb_FILE2(ext2_filsys fs, FILE *f,
 				      ext2_badblocks_list *bb_list,
-				      void *priv_data,
-				      void (*invalid)(ext2_filsys fs,
+				      فراغ *priv_data,
+				      فراغ (*invalid)(ext2_filsys fs,
 						      blk_t blk,
-						      char *badstr,
-						      void *priv_data));
-extern errcode_t ext2fs_read_bb_FILE(ext2_filsys fs, FILE *f,
+						      حرف *badstr,
+						      فراغ *priv_data));
+خارجي errcode_t ext2fs_read_bb_FILE(ext2_filsys fs, FILE *f,
 				     ext2_badblocks_list *bb_list,
-				     void (*invalid)(ext2_filsys fs,
+				     فراغ (*invalid)(ext2_filsys fs,
 						     blk_t blk));
 
 /* res_gdt.c */
-extern errcode_t ext2fs_create_resize_inode(ext2_filsys fs);
+خارجي errcode_t ext2fs_create_resize_inode(ext2_filsys fs);
 
 /* rw_bitmaps.c */
-extern errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, int flags, int num_threads);
-extern errcode_t ext2fs_read_bitmaps(ext2_filsys fs);
-extern errcode_t ext2fs_read_inode_bitmap (ext2_filsys fs);
-extern errcode_t ext2fs_read_block_bitmap(ext2_filsys fs);
-extern errcode_t ext2fs_write_bitmaps(ext2_filsys fs);
-extern errcode_t ext2fs_write_inode_bitmap(ext2_filsys fs);
-extern errcode_t ext2fs_write_block_bitmap (ext2_filsys fs);
+خارجي errcode_t ext2fs_rw_bitmaps(ext2_filsys fs, صحيح flags, صحيح عدد_threads);
+خارجي errcode_t ext2fs_read_bitmaps(ext2_filsys fs);
+خارجي errcode_t ext2fs_read_inode_bitmap (ext2_filsys fs);
+خارجي errcode_t ext2fs_read_block_bitmap(ext2_filsys fs);
+خارجي errcode_t ext2fs_write_bitmaps(ext2_filsys fs);
+خارجي errcode_t ext2fs_write_inode_bitmap(ext2_filsys fs);
+خارجي errcode_t ext2fs_write_block_bitmap (ext2_filsys fs);
 
 /*sha256.c */
 #define EXT2FS_SHA256_LENGTH 32
-#if 0
-extern void ext2fs_sha256(const unsigned char *in, unsigned long in_size,
-		   unsigned char out[EXT2FS_SHA256_LENGTH]);
+#إذا 0
+خارجي فراغ ext2fs_sha256(ثابت unsigned حرف *in, unsigned long in_size,
+		   unsigned حرف out[EXT2FS_SHA256_LENGTH]);
 #endif
 
 /* sha512.c */
 #define EXT2FS_SHA512_LENGTH 64
-extern void ext2fs_sha512(const unsigned char *in, unsigned long in_size,
-			  unsigned char out[EXT2FS_SHA512_LENGTH]);
+خارجي فراغ ext2fs_sha512(ثابت unsigned حرف *in, unsigned long in_size,
+			  unsigned حرف out[EXT2FS_SHA512_LENGTH]);
 
 /* swapfs.c */
-extern errcode_t ext2fs_dirent_swab_in2(ext2_filsys fs, char *buf, size_t size,
-					int flags);
-extern errcode_t ext2fs_dirent_swab_in(ext2_filsys fs, char *buf, int flags);
-extern errcode_t ext2fs_dirent_swab_out2(ext2_filsys fs, char *buf, size_t size,
-					 int flags);
-extern errcode_t ext2fs_dirent_swab_out(ext2_filsys fs, char *buf, int flags);
-extern void ext2fs_swap_ext_attr(char *to, char *from, int bufsize,
-				 int has_header);
-extern void ext2fs_swap_ext_attr_header(struct ext2_ext_attr_header *to_header,
-					struct ext2_ext_attr_header *from_hdr);
-extern void ext2fs_swap_ext_attr_entry(struct ext2_ext_attr_entry *to_entry,
-				       struct ext2_ext_attr_entry *from_entry);
-extern void ext2fs_swap_super(struct ext2_super_block * super);
-extern void ext2fs_swap_group_desc(struct ext2_group_desc *gdp);
-extern void ext2fs_swap_group_desc2(ext2_filsys, struct ext2_group_desc *gdp);
-extern void ext2fs_swap_inode_full(ext2_filsys fs, struct ext2_inode_large *t,
-				   struct ext2_inode_large *f, int hostorder,
-				   int bufsize);
-extern void ext2fs_swap_inode(ext2_filsys fs,struct ext2_inode *t,
-			      struct ext2_inode *f, int hostorder);
-extern void ext2fs_swap_mmp(struct mmp_struct *mmp);
+خارجي errcode_t ext2fs_dirent_swab_in2(ext2_filsys fs, حرف *buf, size_t size,
+					صحيح flags);
+خارجي errcode_t ext2fs_dirent_swab_in(ext2_filsys fs, حرف *buf, صحيح flags);
+خارجي errcode_t ext2fs_dirent_swab_out2(ext2_filsys fs, حرف *buf, size_t size,
+					 صحيح flags);
+خارجي errcode_t ext2fs_dirent_swab_out(ext2_filsys fs, حرف *buf, صحيح flags);
+خارجي فراغ ext2fs_swap_ext_attr(حرف *to, حرف *from, صحيح bufsize,
+				 صحيح has_header);
+خارجي فراغ ext2fs_swap_ext_attr_header(بنية ext2_ext_attr_header *to_header,
+					بنية ext2_ext_attr_header *from_hdr);
+خارجي فراغ ext2fs_swap_ext_attr_entry(بنية ext2_ext_attr_entry *to_entry,
+				       بنية ext2_ext_attr_entry *from_entry);
+خارجي فراغ ext2fs_swap_super(بنية ext2_super_block * super);
+خارجي فراغ ext2fs_swap_group_desc(بنية ext2_group_desc *gdp);
+خارجي فراغ ext2fs_swap_group_desc2(ext2_filsys, بنية ext2_group_desc *gdp);
+خارجي فراغ ext2fs_swap_inode_full(ext2_filsys fs, بنية ext2_inode_large *t,
+				   بنية ext2_inode_large *f, صحيح hostorder,
+				   صحيح bufsize);
+خارجي فراغ ext2fs_swap_inode(ext2_filsys fs,بنية ext2_inode *t,
+			      بنية ext2_inode *f, صحيح hostorder);
+خارجي فراغ ext2fs_swap_mmp(بنية mmp_struct *mmp);
 
 /* unix_io.c */
-extern int ext2fs_open_file(const char *pathname, int flags, mode_t mode);
-extern int ext2fs_stat(const char *path, ext2fs_struct_stat *buf);
-extern int ext2fs_fstat(int fd, ext2fs_struct_stat *buf);
+خارجي صحيح ext2fs_open_file(ثابت حرف *pathname, صحيح flags, mode_t mode);
+خارجي صحيح ext2fs_stat(ثابت حرف *path, ext2fs_struct_stat *buf);
+خارجي صحيح ext2fs_fstat(صحيح fd, ext2fs_struct_stat *buf);
 
 /* valid_blk.c */
-extern int ext2fs_inode_has_valid_blocks(struct ext2_inode *inode);
-extern int ext2fs_inode_has_valid_blocks2(ext2_filsys fs,
-					  struct ext2_inode *inode);
+خارجي صحيح ext2fs_inode_has_valid_blocks(بنية ext2_inode *inode);
+خارجي صحيح ext2fs_inode_has_valid_blocks2(ext2_filsys fs,
+					  بنية ext2_inode *inode);
 
 /* version.c */
-extern int ext2fs_parse_version_string(const char *ver_string);
-extern int ext2fs_get_library_version(const char **ver_string,
-				      const char **date_string);
+خارجي صحيح ext2fs_parse_version_string(ثابت حرف *ver_string);
+خارجي صحيح ext2fs_get_library_version(ثابت حرف **ver_string,
+				      ثابت حرف **date_string);
 
 /* write_bb_file.c */
-extern errcode_t ext2fs_write_bb_FILE(ext2_badblocks_list bb_list,
-				      unsigned int flags,
+خارجي errcode_t ext2fs_write_bb_FILE(ext2_badblocks_list bb_list,
+				      unsigned صحيح flags,
 				      FILE *f);
 
 
 /* inline functions */
 #ifdef NO_INLINE_FUNCS
-extern errcode_t ext2fs_get_mem(unsigned long size, void *ptr);
-extern errcode_t ext2fs_get_memzero(unsigned long size, void *ptr);
-extern errcode_t ext2fs_get_array(unsigned long count,
-				  unsigned long size, void *ptr);
-extern errcode_t ext2fs_get_arrayzero(unsigned long count,
-				      unsigned long size, void *ptr);
-extern errcode_t ext2fs_free_mem(void *ptr);
-extern errcode_t ext2fs_resize_mem(unsigned long old_size,
-				   unsigned long size, void *ptr);
-extern errcode_t ext2fs_resize_array(unsigned long old_count, unsigned long count,
-				     unsigned long size, void *ptr);
-extern void ext2fs_mark_super_dirty(ext2_filsys fs);
-extern void ext2fs_mark_changed(ext2_filsys fs);
-extern int ext2fs_test_changed(ext2_filsys fs);
-extern void ext2fs_mark_valid(ext2_filsys fs);
-extern void ext2fs_unmark_valid(ext2_filsys fs);
-extern int ext2fs_test_valid(ext2_filsys fs);
-extern void ext2fs_mark_ib_dirty(ext2_filsys fs);
-extern void ext2fs_mark_bb_dirty(ext2_filsys fs);
-extern int ext2fs_test_ib_dirty(ext2_filsys fs);
-extern int ext2fs_test_bb_dirty(ext2_filsys fs);
-extern dgrp_t ext2fs_group_of_blk(ext2_filsys fs, blk_t blk);
-extern dgrp_t ext2fs_group_of_ino(ext2_filsys fs, ext2_ino_t ino);
-extern blk_t ext2fs_group_first_block(ext2_filsys fs, dgrp_t group);
-extern blk_t ext2fs_group_last_block(ext2_filsys fs, dgrp_t group);
-extern blk_t ext2fs_inode_data_blocks(ext2_filsys fs,
-				      struct ext2_inode *inode);
-extern int ext2fs_htree_intnode_maxrecs(ext2_filsys fs, int blocks);
-extern int ext2fs_log2_u32(__u32 arg);
-extern int ext2fs_log2_u64(__u64 arg);
-extern int ext2fs_log10_u32(__u32 arg);
-extern int ext2fs_log10_u64(__u64 arg);
-extern unsigned int ext2fs_div_ceil(unsigned int a, unsigned int b);
-extern __u64 ext2fs_div64_ceil(__u64 a, __u64 b);
-extern int ext2fs_dirent_name_len(const struct ext2_dir_entry *entry);
-extern void ext2fs_dirent_set_name_len(struct ext2_dir_entry *entry, int len);
-extern int ext2fs_dirent_file_type(const struct ext2_dir_entry *entry);
-extern void ext2fs_dirent_set_file_type(struct ext2_dir_entry *entry, int type);
-extern struct ext2_inode *ext2fs_inode(struct ext2_inode_large * large_inode);
-extern const struct ext2_inode *ext2fs_const_inode(const struct ext2_inode_large * large_inode);
-extern int ext2fs_inodes_per_orphan_block(ext2_filsys fs);
-extern struct ext4_orphan_block_tail *ext2fs_orphan_block_tail(ext2_filsys fs,
-							       char *buf);
+خارجي errcode_t ext2fs_get_mem(unsigned long size, فراغ *ptr);
+خارجي errcode_t ext2fs_get_memzero(unsigned long size, فراغ *ptr);
+خارجي errcode_t ext2fs_get_array(unsigned long گنتی,
+				  unsigned long size, فراغ *ptr);
+خارجي errcode_t ext2fs_get_arrayzero(unsigned long گنتی,
+				      unsigned long size, فراغ *ptr);
+خارجي errcode_t ext2fs_free_mem(فراغ *ptr);
+خارجي errcode_t ext2fs_resize_mem(unsigned long old_size,
+				   unsigned long size, فراغ *ptr);
+خارجي errcode_t ext2fs_resize_array(unsigned long old_گنتی, unsigned long گنتی,
+				     unsigned long size, فراغ *ptr);
+خارجي فراغ ext2fs_mark_super_dirty(ext2_filsys fs);
+خارجي فراغ ext2fs_mark_changed(ext2_filsys fs);
+خارجي صحيح ext2fs_test_changed(ext2_filsys fs);
+خارجي فراغ ext2fs_mark_valid(ext2_filsys fs);
+خارجي فراغ ext2fs_unmark_valid(ext2_filsys fs);
+خارجي صحيح ext2fs_test_valid(ext2_filsys fs);
+خارجي فراغ ext2fs_mark_ib_dirty(ext2_filsys fs);
+خارجي فراغ ext2fs_mark_bb_dirty(ext2_filsys fs);
+خارجي صحيح ext2fs_test_ib_dirty(ext2_filsys fs);
+خارجي صحيح ext2fs_test_bb_dirty(ext2_filsys fs);
+خارجي dgrp_t ext2fs_group_of_blk(ext2_filsys fs, blk_t blk);
+خارجي dgrp_t ext2fs_group_of_ino(ext2_filsys fs, ext2_ino_t ino);
+خارجي blk_t ext2fs_group_first_block(ext2_filsys fs, dgrp_t group);
+خارجي blk_t ext2fs_group_last_block(ext2_filsys fs, dgrp_t group);
+خارجي blk_t ext2fs_inode_data_blocks(ext2_filsys fs,
+				      بنية ext2_inode *inode);
+خارجي صحيح ext2fs_htree_intnode_maxrecs(ext2_filsys fs, صحيح blocks);
+خارجي صحيح ext2fs_log2_u32(__u32 arg);
+خارجي صحيح ext2fs_log2_u64(__u64 arg);
+خارجي صحيح ext2fs_log10_u32(__u32 arg);
+خارجي صحيح ext2fs_log10_u64(__u64 arg);
+خارجي unsigned صحيح ext2fs_div_ceil(unsigned صحيح a, unsigned صحيح b);
+خارجي __u64 ext2fs_div64_ceil(__u64 a, __u64 b);
+خارجي صحيح ext2fs_dirent_name_len(ثابت بنية ext2_dir_entry *entry);
+خارجي فراغ ext2fs_dirent_set_name_len(بنية ext2_dir_entry *entry, صحيح len);
+خارجي صحيح ext2fs_dirent_file_type(ثابت بنية ext2_dir_entry *entry);
+خارجي فراغ ext2fs_dirent_set_file_type(بنية ext2_dir_entry *entry, صحيح type);
+خارجي بنية ext2_inode *ext2fs_inode(بنية ext2_inode_large * large_inode);
+خارجي ثابت بنية ext2_inode *ext2fs_const_inode(ثابت بنية ext2_inode_large * large_inode);
+خارجي صحيح ext2fs_inodes_per_orphan_block(ext2_filsys fs);
+خارجي بنية ext4_orphan_block_tail *ext2fs_orphan_block_tail(ext2_filsys fs,
+							       حرف *buf);
 #endif
 
 /*
@@ -2001,133 +2001,133 @@ extern struct ext4_orphan_block_tail *ext2fs_orphan_block_tail(ext2_filsys fs,
  * If NO_INLINE_FUNCS is defined, then we won't try to do inline
  * functions at all!
  */
-#if (defined(INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
+#إذا (defined(INCLUDE_INLINE_FUNCS) || !defined(NO_INLINE_FUNCS))
 #ifdef INCLUDE_INLINE_FUNCS
-#define _INLINE_ extern
-#else
-#if (__STDC_VERSION__ >= 199901L)
-#define _INLINE_ inline
-#else
+#define _INLINE_ خارجي
+#وإلا
+#إذا (__STDC_VERSION__ >= 199901L)
+#define _INLINE_ مضمن
+#وإلا
 #ifdef __GNUC__
-#define _INLINE_ extern __inline__
-#else				/* For Watcom C */
-#define _INLINE_ extern inline
+#define _INLINE_ خارجي __inline__
+#وإلا				/* For Watcom C */
+#define _INLINE_ خارجي مضمن
 #endif /* __GNUC__ */
 #endif /* __STDC_VERSION__ >= 199901L */
 #endif
 
 #ifndef EXT2_CUSTOM_MEMORY_ROUTINES
-#include <string.h>
+#ضمن <string.h>
 /*
  *  Allocate memory.  The 'ptr' arg must point to a pointer.
  */
-_INLINE_ errcode_t ext2fs_get_mem(unsigned long size, void *ptr)
+_INLINE_ errcode_t ext2fs_get_mem(unsigned long size, فراغ *ptr)
 {
-	void *pp;
+	فراغ *pp;
 
 	pp = malloc(size);
-	if (!pp)
-		return EXT2_ET_NO_MEMORY;
-	memcpy(ptr, &pp, sizeof (pp));
-	return 0;
+	إذا (!pp)
+		أرجع EXT2_ET_NO_MEMORY;
+	memcpy(ptr, &pp, حجم (pp));
+	أرجع 0;
 }
 
-_INLINE_ errcode_t ext2fs_get_memzero(unsigned long size, void *ptr)
+_INLINE_ errcode_t ext2fs_get_memzero(unsigned long size, فراغ *ptr)
 {
-	void *pp;
+	فراغ *pp;
 
 	pp = malloc(size);
-	if (!pp)
-		return EXT2_ET_NO_MEMORY;
+	إذا (!pp)
+		أرجع EXT2_ET_NO_MEMORY;
 	memset(pp, 0, size);
-	memcpy(ptr, &pp, sizeof(pp));
-	return 0;
+	memcpy(ptr, &pp, حجم(pp));
+	أرجع 0;
 }
 
-_INLINE_ errcode_t ext2fs_get_array(unsigned long count, unsigned long size,
-				    void *ptr)
+_INLINE_ errcode_t ext2fs_get_array(unsigned long گنتی, unsigned long size,
+				    فراغ *ptr)
 {
-	if (count && (~0UL)/count < size)
-		return EXT2_ET_NO_MEMORY;
-	return ext2fs_get_mem(count*size, ptr);
+	إذا (گنتی && (~0UL)/گنتی < size)
+		أرجع EXT2_ET_NO_MEMORY;
+	أرجع ext2fs_get_mem(گنتی*size, ptr);
 }
 
-_INLINE_ errcode_t ext2fs_get_arrayzero(unsigned long count,
-					unsigned long size, void *ptr)
+_INLINE_ errcode_t ext2fs_get_arrayzero(unsigned long گنتی,
+					unsigned long size, فراغ *ptr)
 {
-	if (count && (~0UL)/count < size)
-		return EXT2_ET_NO_MEMORY;
+	إذا (گنتی && (~0UL)/گنتی < size)
+		أرجع EXT2_ET_NO_MEMORY;
 
-	return ext2fs_get_memzero((size_t)count * size, ptr);
+	أرجع ext2fs_get_memzero((size_t)گنتی * size, ptr);
 }
 
 /*
  * Free memory.  The 'ptr' arg must point to a pointer.
  */
-_INLINE_ errcode_t ext2fs_free_mem(void *ptr)
+_INLINE_ errcode_t ext2fs_free_mem(فراغ *ptr)
 {
-	void *p;
+	فراغ *p;
 
-	memcpy(&p, ptr, sizeof(p));
-	free(p);
+	memcpy(&p, ptr, حجم(p));
+	حرر(p);
 	p = 0;
-	memcpy(ptr, &p, sizeof(p));
-	return 0;
+	memcpy(ptr, &p, حجم(p));
+	أرجع 0;
 }
 
 /*
  *  Resize memory.  The 'ptr' arg must point to a pointer.
  */
 _INLINE_ errcode_t ext2fs_resize_mem(unsigned long EXT2FS_ATTR((unused)) old_size,
-				     unsigned long size, void *ptr)
+				     unsigned long size, فراغ *ptr)
 {
-	void *p;
+	فراغ *p;
 
 	/* Use "memcpy" for pointer assignments here to avoid problems
 	 * with C99 strict type aliasing rules. */
-	memcpy(&p, ptr, sizeof(p));
+	memcpy(&p, ptr, حجم(p));
 	p = realloc(p, size);
-	if (!p)
-		return EXT2_ET_NO_MEMORY;
-	memcpy(ptr, &p, sizeof(p));
-	return 0;
+	إذا (!p)
+		أرجع EXT2_ET_NO_MEMORY;
+	memcpy(ptr, &p, حجم(p));
+	أرجع 0;
 }
 
 /*
  *  Resize array.  The 'ptr' arg must point to a pointer.
  */
 _INLINE_ errcode_t ext2fs_resize_array(unsigned long size,
-				       unsigned long old_count,
-				       unsigned long count, void *ptr)
+				       unsigned long old_گنتی,
+				       unsigned long گنتی, فراغ *ptr)
 {
 	unsigned long old_size;
 	errcode_t retval;
 
-	if (count && (~0UL)/count < size)
-		return EXT2_ET_NO_MEMORY;
+	إذا (گنتی && (~0UL)/گنتی < size)
+		أرجع EXT2_ET_NO_MEMORY;
 
-	size *= count;
-	old_size = size * old_count;
+	size *= گنتی;
+	old_size = size * old_گنتی;
 	retval = ext2fs_resize_mem(old_size, size, ptr);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
-	if (size > old_size) {
-		void *p;
+	إذا (size > old_size) {
+		فراغ *p;
 
-		memcpy(&p, ptr, sizeof(p));
-		memset((char *)p + old_size, 0, size - old_size);
-		memcpy(ptr, &p, sizeof(p));
+		memcpy(&p, ptr, حجم(p));
+		memset((حرف *)p + old_size, 0, size - old_size);
+		memcpy(ptr, &p, حجم(p));
 	}
 
-	return 0;
+	أرجع 0;
 }
 #endif	/* Custom memory routines */
 
 /*
  * Mark a filesystem superblock as dirty
  */
-_INLINE_ void ext2fs_mark_super_dirty(ext2_filsys fs)
+_INLINE_ فراغ ext2fs_mark_super_dirty(ext2_filsys fs)
 {
 	fs->flags |= EXT2_FLAG_DIRTY | EXT2_FLAG_CHANGED;
 }
@@ -2135,7 +2135,7 @@ _INLINE_ void ext2fs_mark_super_dirty(ext2_filsys fs)
 /*
  * Mark a filesystem as changed
  */
-_INLINE_ void ext2fs_mark_changed(ext2_filsys fs)
+_INLINE_ فراغ ext2fs_mark_changed(ext2_filsys fs)
 {
 	fs->flags |= EXT2_FLAG_CHANGED;
 }
@@ -2143,15 +2143,15 @@ _INLINE_ void ext2fs_mark_changed(ext2_filsys fs)
 /*
  * Check to see if a filesystem has changed
  */
-_INLINE_ int ext2fs_test_changed(ext2_filsys fs)
+_INLINE_ صحيح ext2fs_test_changed(ext2_filsys fs)
 {
-	return (fs->flags & EXT2_FLAG_CHANGED);
+	أرجع (fs->flags & EXT2_FLAG_CHANGED);
 }
 
 /*
  * Mark a filesystem as valid
  */
-_INLINE_ void ext2fs_mark_valid(ext2_filsys fs)
+_INLINE_ فراغ ext2fs_mark_valid(ext2_filsys fs)
 {
 	fs->flags |= EXT2_FLAG_VALID;
 }
@@ -2159,7 +2159,7 @@ _INLINE_ void ext2fs_mark_valid(ext2_filsys fs)
 /*
  * Mark a filesystem as NOT valid
  */
-_INLINE_ void ext2fs_unmark_valid(ext2_filsys fs)
+_INLINE_ فراغ ext2fs_unmark_valid(ext2_filsys fs)
 {
 	fs->flags &= ~EXT2_FLAG_VALID;
 }
@@ -2167,15 +2167,15 @@ _INLINE_ void ext2fs_unmark_valid(ext2_filsys fs)
 /*
  * Check to see if a filesystem is valid
  */
-_INLINE_ int ext2fs_test_valid(ext2_filsys fs)
+_INLINE_ صحيح ext2fs_test_valid(ext2_filsys fs)
 {
-	return (fs->flags & EXT2_FLAG_VALID);
+	أرجع (fs->flags & EXT2_FLAG_VALID);
 }
 
 /*
  * Mark the inode bitmap as dirty
  */
-_INLINE_ void ext2fs_mark_ib_dirty(ext2_filsys fs)
+_INLINE_ فراغ ext2fs_mark_ib_dirty(ext2_filsys fs)
 {
 	fs->flags |= EXT2_FLAG_IB_DIRTY | EXT2_FLAG_CHANGED;
 }
@@ -2183,7 +2183,7 @@ _INLINE_ void ext2fs_mark_ib_dirty(ext2_filsys fs)
 /*
  * Mark the block bitmap as dirty
  */
-_INLINE_ void ext2fs_mark_bb_dirty(ext2_filsys fs)
+_INLINE_ فراغ ext2fs_mark_bb_dirty(ext2_filsys fs)
 {
 	fs->flags |= EXT2_FLAG_BB_DIRTY | EXT2_FLAG_CHANGED;
 }
@@ -2191,17 +2191,17 @@ _INLINE_ void ext2fs_mark_bb_dirty(ext2_filsys fs)
 /*
  * Check to see if a filesystem's inode bitmap is dirty
  */
-_INLINE_ int ext2fs_test_ib_dirty(ext2_filsys fs)
+_INLINE_ صحيح ext2fs_test_ib_dirty(ext2_filsys fs)
 {
-	return (fs->flags & EXT2_FLAG_IB_DIRTY);
+	أرجع (fs->flags & EXT2_FLAG_IB_DIRTY);
 }
 
 /*
  * Check to see if a filesystem's block bitmap is dirty
  */
-_INLINE_ int ext2fs_test_bb_dirty(ext2_filsys fs)
+_INLINE_ صحيح ext2fs_test_bb_dirty(ext2_filsys fs)
 {
-	return (fs->flags & EXT2_FLAG_BB_DIRTY);
+	أرجع (fs->flags & EXT2_FLAG_BB_DIRTY);
 }
 
 /*
@@ -2209,14 +2209,14 @@ _INLINE_ int ext2fs_test_bb_dirty(ext2_filsys fs)
  */
 _INLINE_ dgrp_t ext2fs_group_of_blk(ext2_filsys fs, blk_t blk)
 {
-	return ext2fs_group_of_blk2(fs, blk);
+	أرجع ext2fs_group_of_blk2(fs, blk);
 }
 /*
  * Return the group # of an inode number
  */
 _INLINE_ dgrp_t ext2fs_group_of_ino(ext2_filsys fs, ext2_ino_t ino)
 {
-	return (ino - 1) / fs->super->s_inodes_per_group;
+	أرجع (ino - 1) / fs->super->s_inodes_per_group;
 }
 
 /*
@@ -2224,7 +2224,7 @@ _INLINE_ dgrp_t ext2fs_group_of_ino(ext2_filsys fs, ext2_ino_t ino)
  */
 _INLINE_ blk_t ext2fs_group_first_block(ext2_filsys fs, dgrp_t group)
 {
-	return (blk_t) ext2fs_group_first_block2(fs, group);
+	أرجع (blk_t) ext2fs_group_first_block2(fs, group);
 }
 
 /*
@@ -2232,147 +2232,147 @@ _INLINE_ blk_t ext2fs_group_first_block(ext2_filsys fs, dgrp_t group)
  */
 _INLINE_ blk_t ext2fs_group_last_block(ext2_filsys fs, dgrp_t group)
 {
-	return (blk_t) ext2fs_group_last_block2(fs, group);
+	أرجع (blk_t) ext2fs_group_last_block2(fs, group);
 }
 
 _INLINE_ blk_t ext2fs_inode_data_blocks(ext2_filsys fs,
-					struct ext2_inode *inode)
+					بنية ext2_inode *inode)
 {
-	return (blk_t) ext2fs_inode_data_blocks2(fs, inode);
+	أرجع (blk_t) ext2fs_inode_data_blocks2(fs, inode);
 }
 
-_INLINE_ int ext2fs_htree_intnode_maxrecs(ext2_filsys fs, int blocks)
+_INLINE_ صحيح ext2fs_htree_intnode_maxrecs(ext2_filsys fs, صحيح blocks)
 {
-	int csum_size = 0;
+	صحيح csum_size = 0;
 
-	if ((EXT2_SB(fs->super)->s_feature_ro_compat &
+	إذا ((EXT2_SB(fs->super)->s_feature_ro_compat &
 	     EXT4_FEATURE_RO_COMPAT_METADATA_CSUM) != 0)
-		csum_size = sizeof(struct ext2_dx_tail);
-	return blocks * ((fs->blocksize - (8 + csum_size)) /
-						sizeof(struct ext2_dx_entry));
+		csum_size = حجم(بنية ext2_dx_tail);
+	أرجع blocks * ((fs->blocksize - (8 + csum_size)) /
+						حجم(بنية ext2_dx_entry));
 }
 
 /*
  * log base 2, rounded down
  */
-_INLINE_ int ext2fs_log2_u32(__u32 arg)
+_INLINE_ صحيح ext2fs_log2_u32(__u32 arg)
 {
-	int l = 0;
+	صحيح l = 0;
 
 	arg >>= 1;
-	while (arg) {
+	طالما (arg) {
 		l++;
 		arg >>= 1;
 	}
-	return l;
+	أرجع l;
 }
 
 /*
  * log base 2, rounded down
  */
-_INLINE_ int ext2fs_log2_u64(__u64 arg)
+_INLINE_ صحيح ext2fs_log2_u64(__u64 arg)
 {
-	int l = 0;
+	صحيح l = 0;
 
 	arg >>= 1;
-	while (arg) {
+	طالما (arg) {
 		l++;
 		arg >>= 1;
 	}
-	return l;
+	أرجع l;
 }
 
 /*
  * log base 10, rounded down
  */
-_INLINE_ int ext2fs_log10_u32(__u32 arg)
+_INLINE_ صحيح ext2fs_log10_u32(__u32 arg)
 {
-	int l = 0;
+	صحيح l = 0;
 
 	arg /= 10;
-	while (arg) {
+	طالما (arg) {
 		l++;
 		arg /= 10;
 	}
-	return l;
+	أرجع l;
 }
 
 /*
  * log base 10, rounded down
  */
-_INLINE_ int ext2fs_log10_u64(__u64 arg)
+_INLINE_ صحيح ext2fs_log10_u64(__u64 arg)
 {
-	int l = 0;
+	صحيح l = 0;
 
 	arg /= 10;
-	while (arg) {
+	طالما (arg) {
 		l++;
 		arg /= 10;
 	}
-	return l;
+	أرجع l;
 }
 
 /*
  * This is an efficient, overflow safe way of calculating ceil((1.0 * a) / b)
  */
-_INLINE_ unsigned int ext2fs_div_ceil(unsigned int a, unsigned int b)
+_INLINE_ unsigned صحيح ext2fs_div_ceil(unsigned صحيح a, unsigned صحيح b)
 {
-	if (!a)
-		return 0;
-	return ((a - 1) / b) + 1;
+	إذا (!a)
+		أرجع 0;
+	أرجع ((a - 1) / b) + 1;
 }
 
 _INLINE_ __u64 ext2fs_div64_ceil(__u64 a, __u64 b)
 {
-	if (!a)
-		return 0;
-	return ((a - 1) / b) + 1;
+	إذا (!a)
+		أرجع 0;
+	أرجع ((a - 1) / b) + 1;
 }
 
-_INLINE_ int ext2fs_dirent_name_len(const struct ext2_dir_entry *entry)
+_INLINE_ صحيح ext2fs_dirent_name_len(ثابت بنية ext2_dir_entry *entry)
 {
-	return entry->name_len & 0xff;
+	أرجع entry->name_len & 0xff;
 }
 
-_INLINE_ void ext2fs_dirent_set_name_len(struct ext2_dir_entry *entry, int len)
+_INLINE_ فراغ ext2fs_dirent_set_name_len(بنية ext2_dir_entry *entry, صحيح len)
 {
 	entry->name_len = (entry->name_len & 0xff00) | (len & 0xff);
 }
 
-_INLINE_ int ext2fs_dirent_file_type(const struct ext2_dir_entry *entry)
+_INLINE_ صحيح ext2fs_dirent_file_type(ثابت بنية ext2_dir_entry *entry)
 {
-	return entry->name_len >> 8;
+	أرجع entry->name_len >> 8;
 }
 
-_INLINE_ void ext2fs_dirent_set_file_type(struct ext2_dir_entry *entry, int type)
+_INLINE_ فراغ ext2fs_dirent_set_file_type(بنية ext2_dir_entry *entry, صحيح type)
 {
 	entry->name_len = (entry->name_len & 0xff) | (type << 8);
 }
 
-_INLINE_ struct ext2_inode *ext2fs_inode(struct ext2_inode_large * large_inode)
+_INLINE_ بنية ext2_inode *ext2fs_inode(بنية ext2_inode_large * large_inode)
 {
 	/* It is always safe to convert large inode to a small inode */
-	return (struct ext2_inode *) large_inode;
+	أرجع (بنية ext2_inode *) large_inode;
 }
 
-_INLINE_ const struct ext2_inode *
-ext2fs_const_inode(const struct ext2_inode_large * large_inode)
+_INLINE_ ثابت بنية ext2_inode *
+ext2fs_const_inode(ثابت بنية ext2_inode_large * large_inode)
 {
 	/* It is always safe to convert large inode to a small inode */
-	return (const struct ext2_inode *) large_inode;
+	أرجع (ثابت بنية ext2_inode *) large_inode;
 }
 
-_INLINE_ int ext2fs_inodes_per_orphan_block(ext2_filsys fs)
+_INLINE_ صحيح ext2fs_inodes_per_orphan_block(ext2_filsys fs)
 {
-	return (fs->blocksize - sizeof(struct ext4_orphan_block_tail)) /
-		sizeof(__u32);
+	أرجع (fs->blocksize - حجم(بنية ext4_orphan_block_tail)) /
+		حجم(__u32);
 }
 
-_INLINE_ struct ext4_orphan_block_tail *
-ext2fs_orphan_block_tail(ext2_filsys fs, char *buf)
+_INLINE_ بنية ext4_orphan_block_tail *
+ext2fs_orphan_block_tail(ext2_filsys fs, حرف *buf)
 {
-	return (struct ext4_orphan_block_tail *)(buf + fs->blocksize -
-		sizeof(struct ext4_orphan_block_tail));
+	أرجع (بنية ext4_orphan_block_tail *)(buf + fs->blocksize -
+		حجم(بنية ext4_orphan_block_tail));
 }
 
 #undef _INLINE_
@@ -2382,12 +2382,12 @@ ext2fs_orphan_block_tail(ext2_filsys fs, char *buf)
 #define EXT4_HTREE_LEVEL_COMPAT 2
 #define EXT4_HTREE_LEVEL	3
 
-static inline unsigned int ext2_dir_htree_level(ext2_filsys fs)
+ساكن مضمن unsigned صحيح ext2_dir_htree_level(ext2_filsys fs)
 {
-	if (ext2fs_has_feature_largedir(fs->super))
-		return EXT4_HTREE_LEVEL;
+	إذا (ext2fs_has_feature_largedir(fs->super))
+		أرجع EXT4_HTREE_LEVEL;
 
-	return EXT4_HTREE_LEVEL_COMPAT;
+	أرجع EXT4_HTREE_LEVEL_COMPAT;
 }
 
 /*
@@ -2401,16 +2401,16 @@ static inline unsigned int ext2_dir_htree_level(ext2_filsys fs)
  * set the dtime, make sure that the dtime won't be mistaken for an
  * inode number.
  */
-static inline void ext2fs_set_dtime(ext2_filsys fs, struct ext2_inode *inode)
+ساكن مضمن فراغ ext2fs_set_dtime(ext2_filsys fs, بنية ext2_inode *inode)
 {
 	__u32	t;
 
-	if (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
+	إذا (fs->now || (fs->flags2 & EXT2_FLAG2_USE_FAKE_TIME))
 		t = fs->now & 0xFFFFFFFF;
-	else
-		t = time(NULL) & 0xFFFFFFFF;
-	if (t < fs->super->s_inodes_count)
-		t = fs->super->s_inodes_count;
+	وإلا
+		t = time(عدم) & 0xFFFFFFFF;
+	إذا (t < fs->super->s_inodes_گنتی)
+		t = fs->super->s_inodes_گنتی;
 	inode->i_dtime = t;
 }
 
