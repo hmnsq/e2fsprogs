@@ -11,7 +11,7 @@
 
 #include "config.h"
 #include <stdio.h>
-#if HAVE_UNISTD_H
+#ᱡᱩᱫᱤ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
@@ -21,46 +21,46 @@
 
 void ext2fs_free(ext2_filsys fs)
 {
-	if (!fs || (fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS))
-		return;
-	if (fs->image_io != fs->io) {
-		if (fs->image_io)
+	ᱡᱩᱫᱤ (!fs || (fs->magic != EXT2_ET_MAGIC_EXT2FS_FILSYS))
+		ᱨᱩᱣᱟᱹᱲ;
+	ᱡᱩᱫᱤ (fs->image_io != fs->io) {
+		ᱡᱩᱫᱤ (fs->image_io)
 			io_channel_close(fs->image_io);
 	}
-	if (fs->io) {
+	ᱡᱩᱫᱤ (fs->io) {
 		io_channel_close(fs->io);
 	}
-	if (fs->device_name)
+	ᱡᱩᱫᱤ (fs->device_name)
 		ext2fs_free_mem(&fs->device_name);
-	if (fs->super)
+	ᱡᱩᱫᱤ (fs->super)
 		ext2fs_free_mem(&fs->super);
-	if (fs->orig_super)
+	ᱡᱩᱫᱤ (fs->orig_super)
 		ext2fs_free_mem(&fs->orig_super);
-	if (fs->group_desc)
+	ᱡᱩᱫᱤ (fs->group_desc)
 		ext2fs_free_mem(&fs->group_desc);
-	if (fs->block_map)
+	ᱡᱩᱫᱤ (fs->block_map)
 		ext2fs_free_block_bitmap(fs->block_map);
-	if (fs->inode_map)
+	ᱡᱩᱫᱤ (fs->inode_map)
 		ext2fs_free_inode_bitmap(fs->inode_map);
-	if (fs->image_header)
+	ᱡᱩᱫᱤ (fs->image_header)
 		ext2fs_free_mem(&fs->image_header);
 
-	if (fs->badblocks)
+	ᱡᱩᱫᱤ (fs->badblocks)
 		ext2fs_badblocks_list_free(fs->badblocks);
 	fs->badblocks = 0;
 
-	if (fs->dblist)
+	ᱡᱩᱫᱤ (fs->dblist)
 		ext2fs_free_dblist(fs->dblist);
 
-	if (fs->icache)
+	ᱡᱩᱫᱤ (fs->icache)
 		ext2fs_free_inode_cache(fs->icache);
 
-	if (fs->mmp_buf)
+	ᱡᱩᱫᱤ (fs->mmp_buf)
 		ext2fs_free_mem(&fs->mmp_buf);
-	if (fs->mmp_cmp)
+	ᱡᱩᱫᱤ (fs->mmp_cmp)
 		ext2fs_free_mem(&fs->mmp_cmp);
 
-	if (fs->block_sha_map)
+	ᱡᱩᱫᱤ (fs->block_sha_map)
 		ext2fs_hashmap_free(fs->block_sha_map);
 
 	fs->magic = 0;
@@ -74,10 +74,10 @@ void ext2fs_free(ext2_filsys fs)
  */
 void ext2fs_u32_list_free(ext2_u32_list bb)
 {
-	if (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
-		return;
+	ᱡᱩᱫᱤ (bb->magic != EXT2_ET_MAGIC_BADBLOCKS_LIST)
+		ᱨᱩᱣᱟᱹᱲ;
 
-	if (bb->list)
+	ᱡᱩᱫᱤ (bb->list)
 		ext2fs_free_mem(&bb->list);
 	bb->list = 0;
 	ext2fs_free_mem(&bb);
@@ -94,13 +94,13 @@ void ext2fs_badblocks_list_free(ext2_badblocks_list bb)
  */
 void ext2fs_free_dblist(ext2_dblist dblist)
 {
-	if (!dblist || (dblist->magic != EXT2_ET_MAGIC_DBLIST))
-		return;
+	ᱡᱩᱫᱤ (!dblist || (dblist->magic != EXT2_ET_MAGIC_DBLIST))
+		ᱨᱩᱣᱟᱹᱲ;
 
-	if (dblist->list)
+	ᱡᱩᱫᱤ (dblist->list)
 		ext2fs_free_mem(&dblist->list);
 	dblist->list = 0;
-	if (dblist->fs && dblist->fs->dblist == dblist)
+	ᱡᱩᱫᱤ (dblist->fs && dblist->fs->dblist == dblist)
 		dblist->fs->dblist = 0;
 	dblist->magic = 0;
 	ext2fs_free_mem(&dblist);

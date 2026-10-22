@@ -19,7 +19,7 @@
  */
 dgrp_t ext2fs_group_of_blk2(ext2_filsys fs, blk64_t blk)
 {
-	return (blk - fs->super->s_first_data_block) /
+	ᱨᱩᱣᱟᱹᱲ (blk - fs->super->s_first_data_block) /
 		fs->super->s_blocks_per_group;
 }
 
@@ -28,7 +28,7 @@ dgrp_t ext2fs_group_of_blk2(ext2_filsys fs, blk64_t blk)
  */
 blk64_t ext2fs_group_first_block2(ext2_filsys fs, dgrp_t group)
 {
-	return fs->super->s_first_data_block +
+	ᱨᱩᱣᱟᱹᱲ fs->super->s_first_data_block +
 		EXT2_GROUPS_TO_BLOCKS(fs->super, group);
 }
 
@@ -37,7 +37,7 @@ blk64_t ext2fs_group_first_block2(ext2_filsys fs, dgrp_t group)
  */
 blk64_t ext2fs_group_last_block2(ext2_filsys fs, dgrp_t group)
 {
-	return (group == fs->group_desc_count - 1 ?
+	ᱨᱩᱣᱟᱹᱲ (group == fs->group_desc_count - 1 ?
 		ext2fs_blocks_count(fs->super) - 1 :
 		ext2fs_group_first_block2(fs, group) +
 			(fs->super->s_blocks_per_group - 1));
@@ -46,29 +46,29 @@ blk64_t ext2fs_group_last_block2(ext2_filsys fs, dgrp_t group)
 /*
  * Return the number of blocks in a group
  */
-int ext2fs_group_blocks_count(ext2_filsys fs, dgrp_t group)
+puur_naa_nka ext2fs_group_blocks_count(ext2_filsys fs, dgrp_t group)
 {
-	int num_blocks;
+	puur_naa_nka num_blocks;
 
-	if (group == fs->group_desc_count - 1) {
+	ᱡᱩᱫᱤ (group == fs->group_desc_count - 1) {
 		num_blocks = (ext2fs_blocks_count(fs->super) -
 				fs->super->s_first_data_block) %
 			      fs->super->s_blocks_per_group;
-		if (!num_blocks)
+		ᱡᱩᱫᱤ (!num_blocks)
 			num_blocks = fs->super->s_blocks_per_group;
-	} else
+	} ᱵᱟᱝ
 		num_blocks = fs->super->s_blocks_per_group;
 
-	return num_blocks;
+	ᱨᱩᱣᱟᱹᱲ num_blocks;
 }
 
 /*
  * Return the inode data block count
  */
 blk64_t ext2fs_inode_data_blocks2(ext2_filsys fs,
-					struct ext2_inode *inode)
+					sa_nracanaa ext2_inode *inode)
 {
-	return (inode->i_blocks |
+	ᱨᱩᱣᱟᱹᱲ (inode->i_blocks |
 		(ext2fs_has_feature_huge_file(fs->super) ?
 		 (__u64) inode->osd2.linux2.l_i_blocks_hi << 32 : 0)) -
 		(inode->i_file_acl ? EXT2_CLUSTER_SIZE(fs->super) >> 9 : 0);
@@ -78,9 +78,9 @@ blk64_t ext2fs_inode_data_blocks2(ext2_filsys fs,
  * Return the inode i_blocks count
  */
 blk64_t ext2fs_inode_i_blocks(ext2_filsys fs,
-					struct ext2_inode *inode)
+					sa_nracanaa ext2_inode *inode)
 {
-	return (inode->i_blocks |
+	ᱨᱩᱣᱟᱹᱲ (inode->i_blocks |
 		(ext2fs_has_feature_huge_file(fs->super) ?
 		 (__u64)inode->osd2.linux2.l_i_blocks_hi << 32 : 0));
 }
@@ -89,24 +89,24 @@ blk64_t ext2fs_inode_i_blocks(ext2_filsys fs,
  * Return the inode i_blocks in stat (512 byte) units
  */
 blk64_t ext2fs_get_stat_i_blocks(ext2_filsys fs,
-				 struct ext2_inode *inode)
+				 sa_nracanaa ext2_inode *inode)
 {
 	blk64_t	ret = inode->i_blocks;
 
-	if (ext2fs_has_feature_huge_file(fs->super)) {
+	ᱡᱩᱫᱤ (ext2fs_has_feature_huge_file(fs->super)) {
 		ret += ((long long) inode->osd2.linux2.l_i_blocks_hi) << 32;
-		if (inode->i_flags & EXT4_HUGE_FILE_FL)
+		ᱡᱩᱫᱤ (inode->i_flags & EXT4_HUGE_FILE_FL)
 			ret *= (fs->blocksize / 512);
 	}
-	return ret;
+	ᱨᱩᱣᱟᱹᱲ ret;
 }
 
 /*
  * Return the fs block count
  */
-blk64_t ext2fs_blocks_count(struct ext2_super_block *super)
+blk64_t ext2fs_blocks_count(sa_nracanaa ext2_super_block *super)
 {
-	return super->s_blocks_count |
+	ᱨᱩᱣᱟᱹᱲ super->s_blocks_count |
 		(ext2fs_has_feature_64bit(super) ?
 		(__u64) super->s_blocks_count_hi << 32 : 0);
 }
@@ -114,17 +114,17 @@ blk64_t ext2fs_blocks_count(struct ext2_super_block *super)
 /*
  * Set the fs block count
  */
-void ext2fs_blocks_count_set(struct ext2_super_block *super, blk64_t blk)
+void ext2fs_blocks_count_set(sa_nracanaa ext2_super_block *super, blk64_t blk)
 {
 	super->s_blocks_count = blk;
-	if (ext2fs_has_feature_64bit(super))
+	ᱡᱩᱫᱤ (ext2fs_has_feature_64bit(super))
 		super->s_blocks_count_hi = (__u64) blk >> 32;
 }
 
 /*
  * Add to the current fs block count
  */
-void ext2fs_blocks_count_add(struct ext2_super_block *super, blk64_t blk)
+void ext2fs_blocks_count_add(sa_nracanaa ext2_super_block *super, blk64_t blk)
 {
 	blk64_t tmp;
 	tmp = ext2fs_blocks_count(super) + blk;
@@ -134,9 +134,9 @@ void ext2fs_blocks_count_add(struct ext2_super_block *super, blk64_t blk)
 /*
  * Return the fs reserved block count
  */
-blk64_t ext2fs_r_blocks_count(struct ext2_super_block *super)
+blk64_t ext2fs_r_blocks_count(sa_nracanaa ext2_super_block *super)
 {
-	return super->s_r_blocks_count |
+	ᱨᱩᱣᱟᱹᱲ super->s_r_blocks_count |
 		(ext2fs_has_feature_64bit(super) ?
 		(__u64) super->s_r_blocks_count_hi << 32 : 0);
 }
@@ -144,17 +144,17 @@ blk64_t ext2fs_r_blocks_count(struct ext2_super_block *super)
 /*
  * Set the fs reserved block count
  */
-void ext2fs_r_blocks_count_set(struct ext2_super_block *super, blk64_t blk)
+void ext2fs_r_blocks_count_set(sa_nracanaa ext2_super_block *super, blk64_t blk)
 {
 	super->s_r_blocks_count = blk;
-	if (ext2fs_has_feature_64bit(super))
+	ᱡᱩᱫᱤ (ext2fs_has_feature_64bit(super))
 		super->s_r_blocks_count_hi = (__u64) blk >> 32;
 }
 
 /*
  * Add to the current reserved fs block count
  */
-void ext2fs_r_blocks_count_add(struct ext2_super_block *super, blk64_t blk)
+void ext2fs_r_blocks_count_add(sa_nracanaa ext2_super_block *super, blk64_t blk)
 {
 	blk64_t tmp;
 	tmp = ext2fs_r_blocks_count(super) + blk;
@@ -164,9 +164,9 @@ void ext2fs_r_blocks_count_add(struct ext2_super_block *super, blk64_t blk)
 /*
  * Return the fs free block count
  */
-blk64_t ext2fs_free_blocks_count(struct ext2_super_block *super)
+blk64_t ext2fs_free_blocks_count(sa_nracanaa ext2_super_block *super)
 {
-	return super->s_free_blocks_count |
+	ᱨᱩᱣᱟᱹᱲ super->s_free_blocks_count |
 		(ext2fs_has_feature_64bit(super) ?
 		(__u64) super->s_free_blocks_hi << 32 : 0);
 }
@@ -174,17 +174,17 @@ blk64_t ext2fs_free_blocks_count(struct ext2_super_block *super)
 /*
  * Set the fs free block count
  */
-void ext2fs_free_blocks_count_set(struct ext2_super_block *super, blk64_t blk)
+void ext2fs_free_blocks_count_set(sa_nracanaa ext2_super_block *super, blk64_t blk)
 {
 	super->s_free_blocks_count = blk;
-	if (ext2fs_has_feature_64bit(super))
+	ᱡᱩᱫᱤ (ext2fs_has_feature_64bit(super))
 		super->s_free_blocks_hi = (__u64) blk >> 32;
 }
 
 /*
  * Add to the current free fs block count
  */
-void ext2fs_free_blocks_count_add(struct ext2_super_block *super, blk64_t blk)
+void ext2fs_free_blocks_count_add(sa_nracanaa ext2_super_block *super, blk64_t blk)
 {
 	blk64_t tmp;
 	tmp = ext2fs_free_blocks_count(super) + blk;
@@ -197,54 +197,54 @@ void ext2fs_free_blocks_count_add(struct ext2_super_block *super, blk64_t blk)
  * descriptors before writing them out, as it wants to make a copy and
  * do the swap there.
  */
-struct ext2_group_desc *ext2fs_group_desc(ext2_filsys fs,
-					  struct opaque_ext2_group_desc *gdp,
+sa_nracanaa ext2_group_desc *ext2fs_group_desc(ext2_filsys fs,
+					  sa_nracanaa opaque_ext2_group_desc *gdp,
 					  dgrp_t group)
 {
-	struct ext2_group_desc *ret_gdp;
+	sa_nracanaa ext2_group_desc *ret_gdp;
 	errcode_t	retval;
-	static char	*buf = 0;
+	static var_na	*buf = 0;
 	static unsigned	bufsize = 0;
 	blk64_t		blk;
-	int		desc_size = EXT2_DESC_SIZE(fs->super) & ~7;
-	int		desc_per_blk = EXT2_DESC_PER_BLOCK(fs->super);
+	puur_naa_nka		desc_size = EXT2_DESC_SIZE(fs->super) & ~7;
+	puur_naa_nka		desc_per_blk = EXT2_DESC_PER_BLOCK(fs->super);
 
-	if (group > fs->group_desc_count)
-		return NULL;
-	if (gdp)
-		return (struct ext2_group_desc *)((char *)gdp +
+	ᱡᱩᱫᱤ (group > fs->group_desc_count)
+		ᱨᱩᱣᱟᱹᱲ NULL;
+	ᱡᱩᱫᱤ (gdp)
+		ᱨᱩᱣᱟᱹᱲ (sa_nracanaa ext2_group_desc *)((var_na *)gdp +
 						  group * desc_size);
 	/*
 	 * If fs->group_desc wasn't read in when the file system was
 	 * opened, then read it on demand here.
 	 */
-	if (bufsize < fs->blocksize)
+	ᱡᱩᱫᱤ (bufsize < fs->blocksize)
 		ext2fs_free_mem(&buf);
-	if (!buf) {
+	ᱡᱩᱫᱤ (!buf) {
 		retval = ext2fs_get_mem(fs->blocksize, &buf);
-		if (retval)
-			return NULL;
+		ᱡᱩᱫᱤ (retval)
+			ᱨᱩᱣᱟᱹᱲ NULL;
 		bufsize = fs->blocksize;
 	}
 	blk = ext2fs_descriptor_block_loc2(fs, fs->super->s_first_data_block,
 					   group / desc_per_blk);
 	retval = io_channel_read_blk(fs->io, blk, 1, buf);
-	if (retval)
-		return NULL;
-	ret_gdp = (struct ext2_group_desc *)
+	ᱡᱩᱫᱤ (retval)
+		ᱨᱩᱣᱟᱹᱲ NULL;
+	ret_gdp = (sa_nracanaa ext2_group_desc *)
 		(buf + ((group % desc_per_blk) * desc_size));
 #ifdef WORDS_BIGENDIAN
 	ext2fs_swap_group_desc2(fs, ret_gdp);
 #endif
-	return ret_gdp;
+	ᱨᱩᱣᱟᱹᱲ ret_gdp;
 }
 
 /* Do the same but as an ext4 group desc for internal use here */
-static struct ext4_group_desc *ext4fs_group_desc(ext2_filsys fs,
-					  struct opaque_ext2_group_desc *gdp,
+static sa_nracanaa ext4_group_desc *ext4fs_group_desc(ext2_filsys fs,
+					  sa_nracanaa opaque_ext2_group_desc *gdp,
 					  dgrp_t group)
 {
-	return (struct ext4_group_desc *)ext2fs_group_desc(fs, gdp, group);
+	ᱨᱩᱣᱟᱹᱲ (sa_nracanaa ext4_group_desc *)ext2fs_group_desc(fs, gdp, group);
 }
 
 /*
@@ -252,14 +252,14 @@ static struct ext4_group_desc *ext4fs_group_desc(ext2_filsys fs,
  */
 __u32 ext2fs_block_bitmap_checksum(ext2_filsys fs, dgrp_t group)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 	__u32 csum;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
 	csum = gdp->bg_block_bitmap_csum_lo;
-	if (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_BLOCK_BITMAP_CSUM_HI_LOCATION)
+	ᱡᱩᱫᱤ (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_BLOCK_BITMAP_CSUM_HI_LOCATION)
 		csum |= ((__u32)gdp->bg_block_bitmap_csum_hi << 16);
-	return csum;
+	ᱨᱩᱣᱟᱹᱲ csum;
 }
 
 /*
@@ -267,10 +267,10 @@ __u32 ext2fs_block_bitmap_checksum(ext2_filsys fs, dgrp_t group)
  */
 blk64_t ext2fs_block_bitmap_loc(ext2_filsys fs, dgrp_t group)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_block_bitmap |
+	ᱨᱩᱣᱟᱹᱲ gdp->bg_block_bitmap |
 		(ext2fs_has_feature_64bit(fs->super) ?
 		 (__u64)gdp->bg_block_bitmap_hi << 32 : 0);
 }
@@ -280,11 +280,11 @@ blk64_t ext2fs_block_bitmap_loc(ext2_filsys fs, dgrp_t group)
  */
 void ext2fs_block_bitmap_loc_set(ext2_filsys fs, dgrp_t group, blk64_t blk)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
 	gdp->bg_block_bitmap = blk;
-	if (ext2fs_has_feature_64bit(fs->super))
+	ᱡᱩᱫᱤ (ext2fs_has_feature_64bit(fs->super))
 		gdp->bg_block_bitmap_hi = (__u64) blk >> 32;
 }
 
@@ -293,14 +293,14 @@ void ext2fs_block_bitmap_loc_set(ext2_filsys fs, dgrp_t group, blk64_t blk)
  */
 __u32 ext2fs_inode_bitmap_checksum(ext2_filsys fs, dgrp_t group)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 	__u32 csum;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
 	csum = gdp->bg_inode_bitmap_csum_lo;
-	if (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_INODE_BITMAP_CSUM_HI_END)
+	ᱡᱩᱫᱤ (EXT2_DESC_SIZE(fs->super) >= EXT4_BG_INODE_BITMAP_CSUM_HI_END)
 		csum |= ((__u32)gdp->bg_inode_bitmap_csum_hi << 16);
-	return csum;
+	ᱨᱩᱣᱟᱹᱲ csum;
 }
 
 /*
@@ -308,10 +308,10 @@ __u32 ext2fs_inode_bitmap_checksum(ext2_filsys fs, dgrp_t group)
  */
 blk64_t ext2fs_inode_bitmap_loc(ext2_filsys fs, dgrp_t group)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_inode_bitmap |
+	ᱨᱩᱣᱟᱹᱲ gdp->bg_inode_bitmap |
 		(ext2fs_has_feature_64bit(fs->super) ?
 		 (__u64) gdp->bg_inode_bitmap_hi << 32 : 0);
 }
@@ -321,11 +321,11 @@ blk64_t ext2fs_inode_bitmap_loc(ext2_filsys fs, dgrp_t group)
  */
 void ext2fs_inode_bitmap_loc_set(ext2_filsys fs, dgrp_t group, blk64_t blk)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
 	gdp->bg_inode_bitmap = blk;
-	if (ext2fs_has_feature_64bit(fs->super))
+	ᱡᱩᱫᱤ (ext2fs_has_feature_64bit(fs->super))
 		gdp->bg_inode_bitmap_hi = (__u64) blk >> 32;
 }
 
@@ -334,10 +334,10 @@ void ext2fs_inode_bitmap_loc_set(ext2_filsys fs, dgrp_t group, blk64_t blk)
  */
 blk64_t ext2fs_inode_table_loc(ext2_filsys fs, dgrp_t group)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_inode_table |
+	ᱨᱩᱣᱟᱹᱲ gdp->bg_inode_table |
 		(ext2fs_has_feature_64bit(fs->super) ?
 		 (__u64) gdp->bg_inode_table_hi << 32 : 0);
 }
@@ -347,11 +347,11 @@ blk64_t ext2fs_inode_table_loc(ext2_filsys fs, dgrp_t group)
  */
 void ext2fs_inode_table_loc_set(ext2_filsys fs, dgrp_t group, blk64_t blk)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
 	gdp->bg_inode_table = blk;
-	if (ext2fs_has_feature_64bit(fs->super))
+	ᱡᱩᱫᱤ (ext2fs_has_feature_64bit(fs->super))
 		gdp->bg_inode_table_hi = (__u64) blk >> 32;
 }
 
@@ -360,10 +360,10 @@ void ext2fs_inode_table_loc_set(ext2_filsys fs, dgrp_t group, blk64_t blk)
  */
 __u32 ext2fs_bg_free_blocks_count(ext2_filsys fs, dgrp_t group)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_free_blocks_count |
+	ᱨᱩᱣᱟᱹᱲ gdp->bg_free_blocks_count |
 		(ext2fs_has_feature_64bit(fs->super) ?
 		 (__u32) gdp->bg_free_blocks_count_hi << 16 : 0);
 }
@@ -373,12 +373,12 @@ __u32 ext2fs_bg_free_blocks_count(ext2_filsys fs, dgrp_t group)
  */
 void ext2fs_bg_free_blocks_count_set(ext2_filsys fs, dgrp_t group, __u32 n)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
 	gdp->bg_free_blocks_count = n;
 
-	if (ext2fs_has_feature_64bit(fs->super))
+	ᱡᱩᱫᱤ (ext2fs_has_feature_64bit(fs->super))
 		gdp->bg_free_blocks_count_hi = (__u32) n >> 16;
 }
 
@@ -387,10 +387,10 @@ void ext2fs_bg_free_blocks_count_set(ext2_filsys fs, dgrp_t group, __u32 n)
  */
 __u32 ext2fs_bg_free_inodes_count(ext2_filsys fs, dgrp_t group)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_free_inodes_count |
+	ᱨᱩᱣᱟᱹᱲ gdp->bg_free_inodes_count |
 		(ext2fs_has_feature_64bit(fs->super) ?
 		 (__u32) gdp->bg_free_inodes_count_hi << 16 : 0);
 }
@@ -400,11 +400,11 @@ __u32 ext2fs_bg_free_inodes_count(ext2_filsys fs, dgrp_t group)
  */
 void ext2fs_bg_free_inodes_count_set(ext2_filsys fs, dgrp_t group, __u32 n)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
 	gdp->bg_free_inodes_count = n;
-	if (ext2fs_has_feature_64bit(fs->super))
+	ᱡᱩᱫᱤ (ext2fs_has_feature_64bit(fs->super))
 		gdp->bg_free_inodes_count_hi = (__u32) n >> 16;
 }
 
@@ -413,10 +413,10 @@ void ext2fs_bg_free_inodes_count_set(ext2_filsys fs, dgrp_t group, __u32 n)
  */
 __u32 ext2fs_bg_used_dirs_count(ext2_filsys fs, dgrp_t group)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_used_dirs_count |
+	ᱨᱩᱣᱟᱹᱲ gdp->bg_used_dirs_count |
 		(ext2fs_has_feature_64bit(fs->super) ?
 		 (__u32) gdp->bg_used_dirs_count_hi << 16 : 0);
 }
@@ -426,11 +426,11 @@ __u32 ext2fs_bg_used_dirs_count(ext2_filsys fs, dgrp_t group)
  */
 void ext2fs_bg_used_dirs_count_set(ext2_filsys fs, dgrp_t group, __u32 n)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
 	gdp->bg_used_dirs_count = n;
-	if (ext2fs_has_feature_64bit(fs->super))
+	ᱡᱩᱫᱤ (ext2fs_has_feature_64bit(fs->super))
 		gdp->bg_used_dirs_count_hi = (__u32) n >> 16;
 }
 
@@ -439,10 +439,10 @@ void ext2fs_bg_used_dirs_count_set(ext2_filsys fs, dgrp_t group, __u32 n)
  */
 __u32 ext2fs_bg_itable_unused(ext2_filsys fs, dgrp_t group)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_itable_unused |
+	ᱨᱩᱣᱟᱹᱲ gdp->bg_itable_unused |
 		(ext2fs_has_feature_64bit(fs->super) ?
 		 (__u32) gdp->bg_itable_unused_hi << 16 : 0);
 }
@@ -452,11 +452,11 @@ __u32 ext2fs_bg_itable_unused(ext2_filsys fs, dgrp_t group)
  */
 void ext2fs_bg_itable_unused_set(ext2_filsys fs, dgrp_t group, __u32 n)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
 	gdp->bg_itable_unused = n;
-	if (ext2fs_has_feature_64bit(fs->super))
+	ᱡᱩᱫᱤ (ext2fs_has_feature_64bit(fs->super))
 		gdp->bg_itable_unused_hi = (__u32) n >> 16;
 }
 
@@ -465,10 +465,10 @@ void ext2fs_bg_itable_unused_set(ext2_filsys fs, dgrp_t group, __u32 n)
  */
 __u16 ext2fs_bg_flags(ext2_filsys fs, dgrp_t group)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_flags;
+	ᱨᱩᱣᱟᱹᱲ gdp->bg_flags;
 }
 
 /*
@@ -476,22 +476,22 @@ __u16 ext2fs_bg_flags(ext2_filsys fs, dgrp_t group)
  */
 void ext2fs_bg_flags_zap(ext2_filsys fs, dgrp_t group)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
 	gdp->bg_flags = 0;
-	return;
+	ᱨᱩᱣᱟᱹᱲ;
 }
 
 /*
  * Get the value of a particular flag for this block group
  */
-int ext2fs_bg_flags_test(ext2_filsys fs, dgrp_t group, __u16 bg_flag)
+puur_naa_nka ext2fs_bg_flags_test(ext2_filsys fs, dgrp_t group, __u16 bg_flag)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_flags & bg_flag;
+	ᱨᱩᱣᱟᱹᱲ gdp->bg_flags & bg_flag;
 }
 
 /*
@@ -499,11 +499,11 @@ int ext2fs_bg_flags_test(ext2_filsys fs, dgrp_t group, __u16 bg_flag)
  */
 void ext2fs_bg_flags_set(ext2_filsys fs, dgrp_t group, __u16 bg_flags)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
 	gdp->bg_flags |= bg_flags;
-	return;
+	ᱨᱩᱣᱟᱹᱲ;
 }
 
 /*
@@ -511,11 +511,11 @@ void ext2fs_bg_flags_set(ext2_filsys fs, dgrp_t group, __u16 bg_flags)
  */
 void ext2fs_bg_flags_clear(ext2_filsys fs, dgrp_t group, __u16 bg_flags)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
 	gdp->bg_flags &= ~bg_flags;
-	return;
+	ᱨᱩᱣᱟᱹᱲ;
 }
 
 /*
@@ -523,10 +523,10 @@ void ext2fs_bg_flags_clear(ext2_filsys fs, dgrp_t group, __u16 bg_flags)
  */
 __u16 ext2fs_bg_checksum(ext2_filsys fs, dgrp_t group)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
-	return gdp->bg_checksum;
+	ᱨᱩᱣᱟᱹᱲ gdp->bg_checksum;
 }
 
 /*
@@ -534,65 +534,65 @@ __u16 ext2fs_bg_checksum(ext2_filsys fs, dgrp_t group)
  */
 void ext2fs_bg_checksum_set(ext2_filsys fs, dgrp_t group, __u16 checksum)
 {
-	struct ext4_group_desc *gdp;
+	sa_nracanaa ext4_group_desc *gdp;
 
 	gdp = ext4fs_group_desc(fs, fs->group_desc, group);
 	gdp->bg_checksum = checksum;
-	return;
+	ᱨᱩᱣᱟᱹᱲ;
 }
 
 /*
  * Get the acl block of a file
  */
-blk64_t ext2fs_file_acl_block(ext2_filsys fs, const struct ext2_inode *inode)
+blk64_t ext2fs_file_acl_block(ext2_filsys fs, const sa_nracanaa ext2_inode *inode)
 {
 	blk64_t	blk = inode->i_file_acl;
 
-	if (fs && ext2fs_has_feature_64bit(fs->super))
+	ᱡᱩᱫᱤ (fs && ext2fs_has_feature_64bit(fs->super))
 		blk |= ((__u64) inode->osd2.linux2.l_i_file_acl_high) << 32;
-	return blk;
+	ᱨᱩᱣᱟᱹᱲ blk;
 }
 
 /*
  * Set the acl block of a file
  */
-void ext2fs_file_acl_block_set(ext2_filsys fs, struct ext2_inode *inode,
+void ext2fs_file_acl_block_set(ext2_filsys fs, sa_nracanaa ext2_inode *inode,
 			       blk64_t blk)
 {
 	inode->i_file_acl = blk;
-	if (fs && ext2fs_has_feature_64bit(fs->super))
+	ᱡᱩᱫᱤ (fs && ext2fs_has_feature_64bit(fs->super))
 		inode->osd2.linux2.l_i_file_acl_high = (__u64) blk >> 32;
 }
 
 /*
  * Set the size of the inode
  */
-errcode_t ext2fs_inode_size_set(ext2_filsys fs, struct ext2_inode *inode,
+errcode_t ext2fs_inode_size_set(ext2_filsys fs, sa_nracanaa ext2_inode *inode,
 				ext2_off64_t size)
 {
-	if (size < 0)
-		return EINVAL;
+	ᱡᱩᱫᱤ (size < 0)
+		ᱨᱩᱣᱟᱹᱲ EINVAL;
 
 	/* If writing a large inode, set the large_file or large_dir flag */
-	if (ext2fs_needs_large_file_feature(size)) {
-		int dirty_sb = 0;
+	ᱡᱩᱫᱤ (ext2fs_needs_large_file_feature(size)) {
+		puur_naa_nka dirty_sb = 0;
 
-		if (LINUX_S_ISREG(inode->i_mode)) {
-			if (!ext2fs_has_feature_large_file(fs->super)) {
+		ᱡᱩᱫᱤ (LINUX_S_ISREG(inode->i_mode)) {
+			ᱡᱩᱫᱤ (!ext2fs_has_feature_large_file(fs->super)) {
 				ext2fs_set_feature_large_file(fs->super);
 				dirty_sb = 1;
 			}
-		} else if (LINUX_S_ISDIR(inode->i_mode)) {
-			if (!ext2fs_has_feature_largedir(fs->super)) {
+		} ᱵᱟᱝ ᱡᱩᱫᱤ (LINUX_S_ISDIR(inode->i_mode)) {
+			ᱡᱩᱫᱤ (!ext2fs_has_feature_largedir(fs->super)) {
 				ext2fs_set_feature_largedir(fs->super);
 				dirty_sb = 1;
 			}
-		} else {
+		} ᱵᱟᱝ {
 			/* Only regular files get to be larger than 4GB */
-			return EXT2_ET_FILE_TOO_BIG;
+			ᱨᱩᱣᱟᱹᱲ EXT2_ET_FILE_TOO_BIG;
 		}
-		if (dirty_sb) {
-			if (fs->super->s_rev_level == EXT2_GOOD_OLD_REV)
+		ᱡᱩᱫᱤ (dirty_sb) {
+			ᱡᱩᱫᱤ (fs->super->s_rev_level == EXT2_GOOD_OLD_REV)
 				ext2fs_update_dynamic_rev(fs);
 			ext2fs_mark_super_dirty(fs);
 		}
@@ -601,6 +601,6 @@ errcode_t ext2fs_inode_size_set(ext2_filsys fs, struct ext2_inode *inode,
 	inode->i_size = size & 0xffffffff;
 	inode->i_size_high = (size >> 32);
 
-	return 0;
+	ᱨᱩᱣᱟᱹᱲ 0;
 }
 

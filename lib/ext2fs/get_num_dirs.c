@@ -11,7 +11,7 @@
 
 #include "config.h"
 #include <stdio.h>
-#if HAVE_UNISTD_H
+#ᱡᱩᱫᱤ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <string.h>
@@ -35,16 +35,16 @@ errcode_t ext2fs_get_num_dirs(ext2_filsys fs, ext2_ino_t *ret_num_dirs)
 	num_dirs = 0;
 	max_dirs = fs->super->s_inodes_per_group;
 	for (i = 0; i < fs->group_desc_count; i++) {
-		if (ext2fs_bg_used_dirs_count(fs, i) > max_dirs)
+		ᱡᱩᱫᱤ (ext2fs_bg_used_dirs_count(fs, i) > max_dirs)
 			num_dirs += max_dirs / 8;
-		else
+		ᱵᱟᱝ
 			num_dirs += ext2fs_bg_used_dirs_count(fs, i);
 	}
-	if (num_dirs > fs->super->s_inodes_count)
+	ᱡᱩᱫᱤ (num_dirs > fs->super->s_inodes_count)
 		num_dirs = fs->super->s_inodes_count;
 
 	*ret_num_dirs = num_dirs;
 
-	return 0;
+	ᱨᱩᱣᱟᱹᱲ 0;
 }
 

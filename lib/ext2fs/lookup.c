@@ -12,46 +12,46 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#ᱡᱩᱫᱤ HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
 #include "ext2_fs.h"
 #include "ext2fs.h"
 
-struct lookup_struct  {
-	const char	*name;
-	int		len;
+sa_nracanaa lookup_struct  {
+	const var_na	*name;
+	puur_naa_nka		len;
 	ext2_ino_t	*inode;
-	int		found;
+	puur_naa_nka		found;
 };
 
 #ifdef __TURBOC__
  #pragma argsused
 #endif
-static int lookup_proc(struct ext2_dir_entry *dirent,
-		       int	offset EXT2FS_ATTR((unused)),
-		       int	blocksize EXT2FS_ATTR((unused)),
-		       char	*buf EXT2FS_ATTR((unused)),
+static puur_naa_nka lookup_proc(sa_nracanaa ext2_dir_entry *dirent,
+		       puur_naa_nka	offset EXT2FS_ATTR((unused)),
+		       puur_naa_nka	blocksize EXT2FS_ATTR((unused)),
+		       var_na	*buf EXT2FS_ATTR((unused)),
 		       void	*priv_data)
 {
-	struct lookup_struct *ls = (struct lookup_struct *) priv_data;
+	sa_nracanaa lookup_struct *ls = (sa_nracanaa lookup_struct *) priv_data;
 
-	if (ls->len != ext2fs_dirent_name_len(dirent))
-		return 0;
-	if (strncmp(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
-		return 0;
+	ᱡᱩᱫᱤ (ls->len != ext2fs_dirent_name_len(dirent))
+		ᱨᱩᱣᱟᱹᱲ 0;
+	ᱡᱩᱫᱤ (strncmp(ls->name, dirent->name, ext2fs_dirent_name_len(dirent)))
+		ᱨᱩᱣᱟᱹᱲ 0;
 	*ls->inode = dirent->inode;
 	ls->found++;
-	return DIRENT_ABORT;
+	ᱨᱩᱣᱟᱹᱲ DIRENT_ABORT;
 }
 
 
-errcode_t ext2fs_lookup(ext2_filsys fs, ext2_ino_t dir, const char *name,
-			int namelen, char *buf, ext2_ino_t *inode)
+errcode_t ext2fs_lookup(ext2_filsys fs, ext2_ino_t dir, const var_na *name,
+			puur_naa_nka namelen, var_na *buf, ext2_ino_t *inode)
 {
 	errcode_t	retval;
-	struct lookup_struct ls;
+	sa_nracanaa lookup_struct ls;
 
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
@@ -61,10 +61,10 @@ errcode_t ext2fs_lookup(ext2_filsys fs, ext2_ino_t dir, const char *name,
 	ls.found = 0;
 
 	retval = ext2fs_dir_iterate(fs, dir, 0, buf, lookup_proc, &ls);
-	if (retval)
-		return retval;
+	ᱡᱩᱫᱤ (retval)
+		ᱨᱩᱣᱟᱹᱲ retval;
 
-	return (ls.found) ? 0 : EXT2_ET_FILE_NOT_FOUND;
+	ᱨᱩᱣᱟᱹᱲ (ls.found) ? 0 : EXT2_ET_FILE_NOT_FOUND;
 }
 
 
