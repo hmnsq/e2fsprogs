@@ -10,28 +10,28 @@
  * %End-Header%
  */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#if HAVE_UNISTD_H
-#include <unistd.h>
+#ضمن "config.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
+#ضمن <unistd.h>
 #endif
-#include <fcntl.h>
-#include <time.h>
-#include <errno.h>
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+#ضمن <fcntl.h>
+#ضمن <time.h>
+#ضمن <errno.h>
+#إذا HAVE_SYS_STAT_H
+#ضمن <sys/stat.h>
 #endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#إذا HAVE_SYS_TYPES_H
+#ضمن <sys/types.h>
 #endif
 #ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
+#ضمن <sys/time.h>
 #endif
 
-#include "ext2_fs.h"
-#include "ext2fsP.h"
-#include "bmap64.h"
+#ضمن "ext2_fs.h"
+#ضمن "ext2fsP.h"
+#ضمن "bmap64.h"
 
 /*
  * Design of 64-bit bitmaps
@@ -68,15 +68,15 @@
  * e2fsck can request an encoding which is optimized for that.
  */
 
-static void warn_bitmap(ext2fs_generic_bitmap_64 bitmap,
-			int code, __u64 arg)
+ساكن فراغ warn_bitmap(ext2fs_generic_bitmap_64 bitmap,
+			صحيح code, __u64 arg)
 {
 #ifndef OMIT_COM_ERR
-	if (bitmap->description)
+	إذا (bitmap->description)
 		com_err(0, bitmap->base_error_code+code,
 			"#%llu for %s", (unsigned long long) arg,
 			bitmap->description);
-	else
+	وإلا
 		com_err(0, bitmap->base_error_code + code, "#%llu",
 			(unsigned long long) arg);
 #endif
@@ -84,54 +84,54 @@ static void warn_bitmap(ext2fs_generic_bitmap_64 bitmap,
 
 #ifdef ENABLE_BMAP_STATS_OPS
 #define INC_STAT(map, name) map->stats.name
-#else
+#وإلا
 #define INC_STAT(map, name) ;;
 #endif
 
 
 errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
-				    int type, __u64 start, __u64 end,
+				    صحيح type, __u64 start, __u64 end,
 				    __u64 real_end,
-				    const char *descr,
+				    ثابت حرف *descr,
 				    ext2fs_generic_bitmap *ret)
 {
 	ext2fs_generic_bitmap_64 bitmap;
-	struct ext2_bitmap_ops	*ops;
-	ext2_ino_t num_dirs;
+	بنية ext2_bitmap_ops	*ops;
+	ext2_ino_t رقم_dirs;
 	errcode_t retval;
 
-	if (!type)
+	إذا (!type)
 		type = EXT2FS_BMAP64_BITARRAY;
 
-	switch (type) {
-	case EXT2FS_BMAP64_BITARRAY:
+	بدل (type) {
+	حالة EXT2FS_BMAP64_BITARRAY:
 		ops = &ext2fs_blkmap64_bitarray;
-		break;
-	case EXT2FS_BMAP64_RBTREE:
+		اكسر;
+	حالة EXT2FS_BMAP64_RBTREE:
 		ops = &ext2fs_blkmap64_rbtree;
-		break;
-	case EXT2FS_BMAP64_AUTODIR:
-		retval = ext2fs_get_num_dirs(fs, &num_dirs);
-		if (retval || num_dirs > (fs->super->s_inodes_count / 320))
+		اكسر;
+	حالة EXT2FS_BMAP64_AUTODIR:
+		retval = ext2fs_get_رقم_dirs(fs, &رقم_dirs);
+		إذا (retval || رقم_dirs > (fs->super->s_inodes_عدد / 320))
 			ops = &ext2fs_blkmap64_bitarray;
-		else
+		وإلا
 			ops = &ext2fs_blkmap64_rbtree;
-		break;
-	default:
-		return EINVAL;
+		اكسر;
+	افتراضي:
+		أرجع EINVAL;
 	}
 
-	retval = ext2fs_get_memzero(sizeof(struct ext2fs_struct_generic_bitmap_64),
+	retval = ext2fs_get_memzero(حجم(بنية ext2fs_struct_generic_bitmap_64),
 				    &bitmap);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
 #ifdef ENABLE_BMAP_STATS
-	if (gettimeofday(&bitmap->stats.created,
-			 (struct timezone *) NULL) == -1) {
+	إذا (gettimeofday(&bitmap->stats.created,
+			 (بنية timezone *) عدم) == -1) {
 		perror("gettimeofday");
 		ext2fs_free_mem(&bitmap);
-		return 1;
+		أرجع 1;
 	}
 	bitmap->stats.type = type;
 #endif
@@ -144,71 +144,71 @@ errcode_t ext2fs_alloc_generic_bmap(ext2_filsys fs, errcode_t magic,
 	bitmap->real_end = real_end;
 	bitmap->bitmap_ops = ops;
 	bitmap->cluster_bits = 0;
-	switch (magic) {
-	case EXT2_ET_MAGIC_INODE_BITMAP64:
+	بدل (magic) {
+	حالة EXT2_ET_MAGIC_INODE_BITMAP64:
 		bitmap->base_error_code = EXT2_ET_BAD_INODE_MARK;
-		break;
-	case EXT2_ET_MAGIC_BLOCK_BITMAP64:
+		اكسر;
+	حالة EXT2_ET_MAGIC_BLOCK_BITMAP64:
 		bitmap->base_error_code = EXT2_ET_BAD_BLOCK_MARK;
 		bitmap->cluster_bits = fs->cluster_ratio_bits;
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		bitmap->base_error_code = EXT2_ET_BAD_GENERIC_MARK;
 	}
-	if (descr) {
+	إذا (descr) {
 		retval = ext2fs_get_mem(strlen(descr)+1, &bitmap->description);
-		if (retval) {
+		إذا (retval) {
 			ext2fs_free_mem(&bitmap);
-			return retval;
+			أرجع retval;
 		}
 		strcpy(bitmap->description, descr);
-	} else
+	} وإلا
 		bitmap->description = 0;
 
 	retval = bitmap->bitmap_ops->new_bmap(fs, bitmap);
-	if (retval) {
+	إذا (retval) {
 		ext2fs_free_mem(&bitmap->description);
 		ext2fs_free_mem(&bitmap);
-		return retval;
+		أرجع retval;
 	}
 
 	*ret = (ext2fs_generic_bitmap) bitmap;
-	return 0;
+	أرجع 0;
 }
 
 #ifdef ENABLE_BMAP_STATS
-static void ext2fs_print_bmap_statistics(ext2fs_generic_bitmap_64 bitmap)
+ساكن فراغ ext2fs_اطبع_bmap_statistics(ext2fs_generic_bitmap_64 bitmap)
 {
-	struct ext2_bmap_statistics *stats = &bitmap->stats;
+	بنية ext2_bmap_statistics *stats = &bitmap->stats;
 #ifdef ENABLE_BMAP_STATS_OPS
-	float mark_seq_perc = 0.0, test_seq_perc = 0.0;
-	float mark_back_perc = 0.0, test_back_perc = 0.0;
-	struct timeval now;
-	double inuse;
+	عائم mark_seq_perc = 0.0, test_seq_perc = 0.0;
+	عائم mark_back_perc = 0.0, test_back_perc = 0.0;
+	بنية timeval now;
+	مزدوج inuse;
 
-	if (stats->test_count) {
-		test_seq_perc = ((float)stats->test_seq /
-				 stats->test_count) * 100;
-		test_back_perc = ((float)stats->test_back /
-				  stats->test_count) * 100;
+	إذا (stats->test_عدد) {
+		test_seq_perc = ((عائم)stats->test_seq /
+				 stats->test_عدد) * 100;
+		test_back_perc = ((عائم)stats->test_back /
+				  stats->test_عدد) * 100;
 	}
 
-	if (stats->mark_count) {
-		mark_seq_perc = ((float)stats->mark_seq /
-				 stats->mark_count) * 100;
-		mark_back_perc = ((float)stats->mark_back /
-				  stats->mark_count) * 100;
+	إذا (stats->mark_عدد) {
+		mark_seq_perc = ((عائم)stats->mark_seq /
+				 stats->mark_عدد) * 100;
+		mark_back_perc = ((عائم)stats->mark_back /
+				  stats->mark_عدد) * 100;
 	}
 
-	if (gettimeofday(&now, (struct timezone *) NULL) == -1) {
+	إذا (gettimeofday(&now, (بنية timezone *) عدم) == -1) {
 		perror("gettimeofday");
-		return;
+		أرجع;
 	}
 
-	inuse = (double) now.tv_sec + \
-		(((double) now.tv_usec) * 0.000001);
-	inuse -= (double) stats->created.tv_sec + \
-		(((double) stats->created.tv_usec) * 0.000001);
+	inuse = (مزدوج) now.tv_sec + \
+		(((مزدوج) now.tv_usec) * 0.000001);
+	inuse -= (مزدوج) stats->created.tv_sec + \
+		(((مزدوج) stats->created.tv_usec) * 0.000001);
 #endif /* ENABLE_BMAP_STATS_OPS */
 
 	fprintf(stderr, "\n[+] %s bitmap (type %d)\n", bitmap->description,
@@ -218,18 +218,18 @@ static void ext2fs_print_bmap_statistics(ext2fs_generic_bitmap_64 bitmap)
 	fprintf(stderr, "%16llu bits long\n",
 		bitmap->real_end - bitmap->start);
 	fprintf(stderr, "%16lu copy_bmap\n%16lu resize_bmap\n",
-		stats->copy_count, stats->resize_count);
+		stats->copy_عدد, stats->resize_عدد);
 	fprintf(stderr, "%16lu mark bmap\n%16lu unmark_bmap\n",
-		stats->mark_count, stats->unmark_count);
+		stats->mark_عدد, stats->unmark_عدد);
 	fprintf(stderr, "%16lu test_bmap\n%16lu mark_bmap_extent\n",
-		stats->test_count, stats->mark_ext_count);
+		stats->test_عدد, stats->mark_ext_عدد);
 	fprintf(stderr, "%16lu unmark_bmap_extent\n"
 		"%16lu test_clear_bmap_extent\n",
-		stats->unmark_ext_count, stats->test_ext_count);
+		stats->unmark_ext_عدد, stats->test_ext_عدد);
 	fprintf(stderr, "%16lu set_bmap_range\n%16lu set_bmap_range\n",
-		stats->set_range_count, stats->get_range_count);
+		stats->set_range_عدد, stats->get_range_عدد);
 	fprintf(stderr, "%16lu clear_bmap\n%16lu contiguous bit test (%.2f%%)\n",
-		stats->clear_count, stats->test_seq, test_seq_perc);
+		stats->clear_عدد, stats->test_seq, test_seq_perc);
 	fprintf(stderr, "%16lu contiguous bit mark (%.2f%%)\n"
 		"%16llu bits tested backwards (%.2f%%)\n",
 		stats->mark_seq, mark_seq_perc,
@@ -241,31 +241,31 @@ static void ext2fs_print_bmap_statistics(ext2fs_generic_bitmap_64 bitmap)
 }
 #endif
 
-void ext2fs_free_generic_bmap(ext2fs_generic_bitmap gen_bmap)
+فراغ ext2fs_free_generic_bmap(ext2fs_generic_bitmap gen_bmap)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
 
-	if (!bmap)
-		return;
+	إذا (!bmap)
+		أرجع;
 
-	if (EXT2FS_IS_32_BITMAP(bmap)) {
+	إذا (EXT2FS_IS_32_BITMAP(bmap)) {
 		ext2fs_free_generic_bitmap(gen_bmap);
-		return;
+		أرجع;
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bmap))
-		return;
+	إذا (!EXT2FS_IS_64_BITMAP(bmap))
+		أرجع;
 
 #ifdef ENABLE_BMAP_STATS
-	if (ext2fs_safe_getenv("E2FSPROGS_BITMAP_STATS")) {
-		ext2fs_print_bmap_statistics(bmap);
-		bmap->bitmap_ops->print_stats(bmap);
+	إذا (ext2fs_safe_getenv("E2FSPROGS_BITMAP_STATS")) {
+		ext2fs_اطبع_bmap_statistics(bmap);
+		bmap->bitmap_ops->اطبع_stats(bmap);
 	}
 #endif
 
 	bmap->bitmap_ops->free_bmap(bmap);
 
-	if (bmap->description) {
+	إذا (bmap->description) {
 		ext2fs_free_mem(&bmap->description);
 		bmap->description = 0;
 	}
@@ -277,35 +277,35 @@ errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap gen_src,
 				   ext2fs_generic_bitmap *dest)
 {
 	ext2fs_generic_bitmap_64 src = (ext2fs_generic_bitmap_64) gen_src;
-	char *descr, *new_descr;
+	حرف *descr, *new_descr;
 	ext2fs_generic_bitmap_64 new_bmap;
 	errcode_t retval;
 
-	if (!src)
-		return EINVAL;
+	إذا (!src)
+		أرجع EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(src))
-		return ext2fs_copy_generic_bitmap(gen_src, dest);
+	إذا (EXT2FS_IS_32_BITMAP(src))
+		أرجع ext2fs_copy_generic_bitmap(gen_src, dest);
 
-	if (!EXT2FS_IS_64_BITMAP(src))
-		return EINVAL;
+	إذا (!EXT2FS_IS_64_BITMAP(src))
+		أرجع EINVAL;
 
 	/* Allocate a new bitmap struct */
-	retval = ext2fs_get_memzero(sizeof(struct ext2fs_struct_generic_bitmap_64),
+	retval = ext2fs_get_memzero(حجم(بنية ext2fs_struct_generic_bitmap_64),
 				    &new_bmap);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
 
 #ifdef ENABLE_BMAP_STATS_OPS
-	src->stats.copy_count++;
+	src->stats.copy_عدد++;
 #endif
 #ifdef ENABLE_BMAP_STATS
-	if (gettimeofday(&new_bmap->stats.created,
-			 (struct timezone *) NULL) == -1) {
+	إذا (gettimeofday(&new_bmap->stats.created,
+			 (بنية timezone *) عدم) == -1) {
 		perror("gettimeofday");
 		ext2fs_free_mem(&new_bmap);
-		return 1;
+		أرجع 1;
 	}
 	new_bmap->stats.type = src->stats.type;
 #endif
@@ -321,11 +321,11 @@ errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap gen_src,
 	new_bmap->cluster_bits = src->cluster_bits;
 
 	descr = src->description;
-	if (descr) {
+	إذا (descr) {
 		retval = ext2fs_get_mem(strlen(descr)+10, &new_descr);
-		if (retval) {
+		إذا (retval) {
 			ext2fs_free_mem(&new_bmap);
-			return retval;
+			أرجع retval;
 		}
 		strcpy(new_descr, "copy of ");
 		strcat(new_descr, descr);
@@ -333,15 +333,15 @@ errcode_t ext2fs_copy_generic_bmap(ext2fs_generic_bitmap gen_src,
 	}
 
 	retval = src->bitmap_ops->copy_bmap(src, new_bmap);
-	if (retval) {
+	إذا (retval) {
 		ext2fs_free_mem(&new_bmap->description);
 		ext2fs_free_mem(&new_bmap);
-		return retval;
+		أرجع retval;
 	}
 
 	*dest = (ext2fs_generic_bitmap) new_bmap;
 
-	return 0;
+	أرجع 0;
 }
 
 errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap gen_bmap,
@@ -350,19 +350,19 @@ errcode_t ext2fs_resize_generic_bmap(ext2fs_generic_bitmap gen_bmap,
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
 
-	if (!bmap)
-		return EINVAL;
+	إذا (!bmap)
+		أرجع EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bmap))
-		return ext2fs_resize_generic_bitmap(gen_bmap->magic, new_end,
+	إذا (EXT2FS_IS_32_BITMAP(bmap))
+		أرجع ext2fs_resize_generic_bitmap(gen_bmap->magic, new_end,
 						    new_real_end, gen_bmap);
 
-	if (!EXT2FS_IS_64_BITMAP(bmap))
-		return EINVAL;
+	إذا (!EXT2FS_IS_64_BITMAP(bmap))
+		أرجع EINVAL;
 
-	INC_STAT(bmap, resize_count);
+	INC_STAT(bmap, resize_عدد);
 
-	return bmap->bitmap_ops->resize_bmap(bmap, new_end, new_real_end);
+	أرجع bmap->bitmap_ops->resize_bmap(bmap, new_end, new_real_end);
 }
 
 errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap gen_bitmap,
@@ -371,235 +371,235 @@ errcode_t ext2fs_fudge_generic_bmap_end(ext2fs_generic_bitmap gen_bitmap,
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
 
-	if (!bitmap)
-		return EINVAL;
+	إذا (!bitmap)
+		أرجع EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap)) {
+	إذا (EXT2FS_IS_32_BITMAP(bitmap)) {
 		ext2_ino_t tmp_oend;
-		int retval;
+		صحيح retval;
 
 		retval = ext2fs_fudge_generic_bitmap_end(gen_bitmap,
 							 bitmap->magic,
 							 neq, end, &tmp_oend);
-		if (oend)
+		إذا (oend)
 			*oend = tmp_oend;
-		return retval;
+		أرجع retval;
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return EINVAL;
+	إذا (!EXT2FS_IS_64_BITMAP(bitmap))
+		أرجع EINVAL;
 
-	if (end > bitmap->real_end)
-		return neq;
-	if (oend)
+	إذا (end > bitmap->real_end)
+		أرجع neq;
+	إذا (oend)
 		*oend = bitmap->end;
 	bitmap->end = end;
-	return 0;
+	أرجع 0;
 }
 
 __u64 ext2fs_get_generic_bmap_start(ext2fs_generic_bitmap gen_bitmap)
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
 
-	if (!bitmap)
-		return EINVAL;
+	إذا (!bitmap)
+		أرجع EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap))
-		return ext2fs_get_generic_bitmap_start(gen_bitmap);
+	إذا (EXT2FS_IS_32_BITMAP(bitmap))
+		أرجع ext2fs_get_generic_bitmap_start(gen_bitmap);
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return EINVAL;
+	إذا (!EXT2FS_IS_64_BITMAP(bitmap))
+		أرجع EINVAL;
 
-	return bitmap->start;
+	أرجع bitmap->start;
 }
 
 __u64 ext2fs_get_generic_bmap_end(ext2fs_generic_bitmap gen_bitmap)
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
 
-	if (!bitmap)
-		return EINVAL;
+	إذا (!bitmap)
+		أرجع EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap))
-		return ext2fs_get_generic_bitmap_end(gen_bitmap);
+	إذا (EXT2FS_IS_32_BITMAP(bitmap))
+		أرجع ext2fs_get_generic_bitmap_end(gen_bitmap);
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return EINVAL;
+	إذا (!EXT2FS_IS_64_BITMAP(bitmap))
+		أرجع EINVAL;
 
-	return bitmap->end;
+	أرجع bitmap->end;
 }
 
-void ext2fs_clear_generic_bmap(ext2fs_generic_bitmap gen_bitmap)
+فراغ ext2fs_clear_generic_bmap(ext2fs_generic_bitmap gen_bitmap)
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap))
+	إذا (EXT2FS_IS_32_BITMAP(bitmap))
 		ext2fs_clear_generic_bitmap(gen_bitmap);
-	else
+	وإلا
 		bitmap->bitmap_ops->clear_bmap(bitmap);
 }
 
-int ext2fs_mark_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
+صحيح ext2fs_mark_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
 			     __u64 arg)
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
 
-	if (!bitmap)
-		return 0;
+	إذا (!bitmap)
+		أرجع 0;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap)) {
-		if (arg & ~0xffffffffULL) {
+	إذا (EXT2FS_IS_32_BITMAP(bitmap)) {
+		إذا (arg & ~0xffffffffULL) {
 			ext2fs_warn_bitmap2(gen_bitmap,
 					    EXT2FS_MARK_ERROR, 0xffffffff);
-			return 0;
+			أرجع 0;
 		}
-		return ext2fs_mark_generic_bitmap(gen_bitmap, arg);
+		أرجع ext2fs_mark_generic_bitmap(gen_bitmap, arg);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return 0;
+	إذا (!EXT2FS_IS_64_BITMAP(bitmap))
+		أرجع 0;
 
 	arg >>= bitmap->cluster_bits;
 
 #ifdef ENABLE_BMAP_STATS_OPS
-	if (arg == bitmap->stats.last_marked + 1)
+	إذا (arg == bitmap->stats.last_marked + 1)
 		bitmap->stats.mark_seq++;
-	if (arg < bitmap->stats.last_marked)
+	إذا (arg < bitmap->stats.last_marked)
 		bitmap->stats.mark_back++;
 	bitmap->stats.last_marked = arg;
-	bitmap->stats.mark_count++;
+	bitmap->stats.mark_عدد++;
 #endif
 
-	if ((arg < bitmap->start) || (arg > bitmap->end)) {
+	إذا ((arg < bitmap->start) || (arg > bitmap->end)) {
 		warn_bitmap(bitmap, EXT2FS_MARK_ERROR, arg);
-		return 0;
+		أرجع 0;
 	}
 
-	return bitmap->bitmap_ops->mark_bmap(bitmap, arg);
+	أرجع bitmap->bitmap_ops->mark_bmap(bitmap, arg);
 }
 
-int ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
+صحيح ext2fs_unmark_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
 			       __u64 arg)
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
 
-	if (!bitmap)
-		return 0;
+	إذا (!bitmap)
+		أرجع 0;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap)) {
-		if (arg & ~0xffffffffULL) {
+	إذا (EXT2FS_IS_32_BITMAP(bitmap)) {
+		إذا (arg & ~0xffffffffULL) {
 			ext2fs_warn_bitmap2(gen_bitmap, EXT2FS_UNMARK_ERROR,
 					    0xffffffff);
-			return 0;
+			أرجع 0;
 		}
-		return ext2fs_unmark_generic_bitmap(gen_bitmap, arg);
+		أرجع ext2fs_unmark_generic_bitmap(gen_bitmap, arg);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return 0;
+	إذا (!EXT2FS_IS_64_BITMAP(bitmap))
+		أرجع 0;
 
 	arg >>= bitmap->cluster_bits;
 
-	INC_STAT(bitmap, unmark_count);
+	INC_STAT(bitmap, unmark_عدد);
 
-	if ((arg < bitmap->start) || (arg > bitmap->end)) {
+	إذا ((arg < bitmap->start) || (arg > bitmap->end)) {
 		warn_bitmap(bitmap, EXT2FS_UNMARK_ERROR, arg);
-		return 0;
+		أرجع 0;
 	}
 
-	return bitmap->bitmap_ops->unmark_bmap(bitmap, arg);
+	أرجع bitmap->bitmap_ops->unmark_bmap(bitmap, arg);
 }
 
-int ext2fs_test_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
+صحيح ext2fs_test_generic_bmap(ext2fs_generic_bitmap gen_bitmap,
 			     __u64 arg)
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
-	if (!bitmap)
-		return 0;
+	إذا (!bitmap)
+		أرجع 0;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap)) {
-		if (arg & ~0xffffffffULL) {
+	إذا (EXT2FS_IS_32_BITMAP(bitmap)) {
+		إذا (arg & ~0xffffffffULL) {
 			ext2fs_warn_bitmap2(gen_bitmap, EXT2FS_TEST_ERROR,
 					    0xffffffff);
-			return 0;
+			أرجع 0;
 		}
-		return ext2fs_test_generic_bitmap(gen_bitmap, arg);
+		أرجع ext2fs_test_generic_bitmap(gen_bitmap, arg);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return 0;
+	إذا (!EXT2FS_IS_64_BITMAP(bitmap))
+		أرجع 0;
 
 	arg >>= bitmap->cluster_bits;
 
 #ifdef ENABLE_BMAP_STATS_OPS
-	bitmap->stats.test_count++;
-	if (arg == bitmap->stats.last_tested + 1)
+	bitmap->stats.test_عدد++;
+	إذا (arg == bitmap->stats.last_tested + 1)
 		bitmap->stats.test_seq++;
-	if (arg < bitmap->stats.last_tested)
+	إذا (arg < bitmap->stats.last_tested)
 		bitmap->stats.test_back++;
 	bitmap->stats.last_tested = arg;
 #endif
 
-	if ((arg < bitmap->start) || (arg > bitmap->end)) {
+	إذا ((arg < bitmap->start) || (arg > bitmap->end)) {
 		warn_bitmap(bitmap, EXT2FS_TEST_ERROR, arg);
-		return 0;
+		أرجع 0;
 	}
 
-	return bitmap->bitmap_ops->test_bmap(bitmap, arg);
+	أرجع bitmap->bitmap_ops->test_bmap(bitmap, arg);
 }
 
 errcode_t ext2fs_set_generic_bmap_range(ext2fs_generic_bitmap gen_bmap,
-					__u64 start, unsigned int num,
-					void *in)
+					__u64 start, unsigned صحيح رقم,
+					فراغ *in)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
 
-	if (!bmap)
-		return EINVAL;
+	إذا (!bmap)
+		أرجع EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bmap)) {
-		if ((start+num-1) & ~0xffffffffULL) {
+	إذا (EXT2FS_IS_32_BITMAP(bmap)) {
+		إذا ((start+رقم-1) & ~0xffffffffULL) {
 			ext2fs_warn_bitmap2(gen_bmap, EXT2FS_UNMARK_ERROR,
 					    0xffffffff);
-			return EINVAL;
+			أرجع EINVAL;
 		}
-		return ext2fs_set_generic_bitmap_range(gen_bmap, bmap->magic,
-						       start, num, in);
+		أرجع ext2fs_set_generic_bitmap_range(gen_bmap, bmap->magic,
+						       start, رقم, in);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bmap))
-		return EINVAL;
+	إذا (!EXT2FS_IS_64_BITMAP(bmap))
+		أرجع EINVAL;
 
-	INC_STAT(bmap, set_range_count);
+	INC_STAT(bmap, set_range_عدد);
 
-	return bmap->bitmap_ops->set_bmap_range(bmap, start, num, in);
+	أرجع bmap->bitmap_ops->set_bmap_range(bmap, start, رقم, in);
 }
 
 errcode_t ext2fs_get_generic_bmap_range(ext2fs_generic_bitmap gen_bmap,
-					__u64 start, unsigned int num,
-					void *out)
+					__u64 start, unsigned صحيح رقم,
+					فراغ *out)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
 
-	if (!bmap)
-		return EINVAL;
+	إذا (!bmap)
+		أرجع EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bmap)) {
-		if ((start+num-1) & ~0xffffffffULL) {
+	إذا (EXT2FS_IS_32_BITMAP(bmap)) {
+		إذا ((start+رقم-1) & ~0xffffffffULL) {
 			ext2fs_warn_bitmap2(gen_bmap,
 					    EXT2FS_UNMARK_ERROR, 0xffffffff);
-			return EINVAL;
+			أرجع EINVAL;
 		}
-		return ext2fs_get_generic_bitmap_range(gen_bmap, bmap->magic,
-						       start, num, out);
+		أرجع ext2fs_get_generic_bitmap_range(gen_bmap, bmap->magic,
+						       start, رقم, out);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bmap))
-		return EINVAL;
+	إذا (!EXT2FS_IS_64_BITMAP(bmap))
+		أرجع EINVAL;
 
-	INC_STAT(bmap, get_range_count);
+	INC_STAT(bmap, get_range_عدد);
 
-	return bmap->bitmap_ops->get_bmap_range(bmap, start, num, out);
+	أرجع bmap->bitmap_ops->get_bmap_range(bmap, start, رقم, out);
 }
 
 errcode_t ext2fs_compare_generic_bmap(errcode_t neq,
@@ -610,188 +610,188 @@ errcode_t ext2fs_compare_generic_bmap(errcode_t neq,
 	ext2fs_generic_bitmap_64 bm2 = (ext2fs_generic_bitmap_64) gen_bm2;
 	blk64_t	i;
 
-	if (!bm1 || !bm2)
-		return EINVAL;
-	if (bm1->magic != bm2->magic)
-		return EINVAL;
+	إذا (!bm1 || !bm2)
+		أرجع EINVAL;
+	إذا (bm1->magic != bm2->magic)
+		أرجع EINVAL;
 
 	/* Now we know both bitmaps have the same magic */
-	if (EXT2FS_IS_32_BITMAP(bm1))
-		return ext2fs_compare_generic_bitmap(bm1->magic, neq,
+	إذا (EXT2FS_IS_32_BITMAP(bm1))
+		أرجع ext2fs_compare_generic_bitmap(bm1->magic, neq,
 						     gen_bm1, gen_bm2);
 
-	if (!EXT2FS_IS_64_BITMAP(bm1))
-		return EINVAL;
+	إذا (!EXT2FS_IS_64_BITMAP(bm1))
+		أرجع EINVAL;
 
-	if ((bm1->start != bm2->start) ||
+	إذا ((bm1->start != bm2->start) ||
 	    (bm1->end != bm2->end))
-		return neq;
+		أرجع neq;
 
-	for (i = bm1->start; i < bm1->end; i++) {
-		int ret1, ret2;
+	لكل (i = bm1->start; i < bm1->end; i++) {
+		صحيح ret1, ret2;
 		ret1 = !!ext2fs_test_generic_bmap(gen_bm1, i);
 		ret2 = !!ext2fs_test_generic_bmap(gen_bm2, i);
-		if (ret1 != ret2) {
-			return neq;
+		إذا (ret1 != ret2) {
+			أرجع neq;
 		}
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-void ext2fs_set_generic_bmap_padding(ext2fs_generic_bitmap gen_bmap)
+فراغ ext2fs_set_generic_bmap_padding(ext2fs_generic_bitmap gen_bmap)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
-	__u64	start, num;
+	__u64	start, رقم;
 
-	if (EXT2FS_IS_32_BITMAP(bmap)) {
+	إذا (EXT2FS_IS_32_BITMAP(bmap)) {
 		ext2fs_set_generic_bitmap_padding(gen_bmap);
-		return;
+		أرجع;
 	}
 
 	start = bmap->end + 1;
-	num = bmap->real_end - bmap->end;
-	bmap->bitmap_ops->mark_bmap_extent(bmap, start, num);
+	رقم = bmap->real_end - bmap->end;
+	bmap->bitmap_ops->mark_bmap_extent(bmap, start, رقم);
 	/* XXX ought to warn on error */
 }
 
-int ext2fs_test_block_bitmap_range2(ext2fs_block_bitmap gen_bmap,
-				    blk64_t block, unsigned int num)
+صحيح ext2fs_test_block_bitmap_range2(ext2fs_block_bitmap gen_bmap,
+				    blk64_t block, unsigned صحيح رقم)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
-	__u64	end = block + num;
+	__u64	end = block + رقم;
 
-	if (!bmap)
-		return EINVAL;
+	إذا (!bmap)
+		أرجع EINVAL;
 
-	if (num == 1)
-		return !ext2fs_test_generic_bmap((ext2fs_generic_bitmap)
+	إذا (رقم == 1)
+		أرجع !ext2fs_test_generic_bmap((ext2fs_generic_bitmap)
 						 bmap, block);
 
-	if (EXT2FS_IS_32_BITMAP(bmap)) {
-		if ((block & ~0xffffffffULL) ||
-		    ((block+num-1) & ~0xffffffffULL)) {
+	إذا (EXT2FS_IS_32_BITMAP(bmap)) {
+		إذا ((block & ~0xffffffffULL) ||
+		    ((block+رقم-1) & ~0xffffffffULL)) {
 			ext2fs_warn_bitmap2((ext2fs_generic_bitmap) bmap,
 					    EXT2FS_UNMARK_ERROR, 0xffffffff);
-			return EINVAL;
+			أرجع EINVAL;
 		}
-		return ext2fs_test_block_bitmap_range(
-			(ext2fs_generic_bitmap) bmap, block, num);
+		أرجع ext2fs_test_block_bitmap_range(
+			(ext2fs_generic_bitmap) bmap, block, رقم);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bmap))
-		return EINVAL;
+	إذا (!EXT2FS_IS_64_BITMAP(bmap))
+		أرجع EINVAL;
 
-	INC_STAT(bmap, test_ext_count);
+	INC_STAT(bmap, test_ext_عدد);
 
 	/* convert to clusters if necessary */
 	block >>= bmap->cluster_bits;
 	end += (1ULL << bmap->cluster_bits) - 1;
 	end >>= bmap->cluster_bits;
-	num = end - block;
+	رقم = end - block;
 
-	if ((block < bmap->start) || (block > bmap->end) ||
-	    (block+num-1 > bmap->end)) {
+	إذا ((block < bmap->start) || (block > bmap->end) ||
+	    (block+رقم-1 > bmap->end)) {
 		ext2fs_warn_bitmap(EXT2_ET_BAD_BLOCK_TEST, block,
 				   bmap->description);
-		return EINVAL;
+		أرجع EINVAL;
 	}
 
-	return bmap->bitmap_ops->test_clear_bmap_extent(bmap, block, num);
+	أرجع bmap->bitmap_ops->test_clear_bmap_extent(bmap, block, رقم);
 }
 
-void ext2fs_mark_block_bitmap_range2(ext2fs_block_bitmap gen_bmap,
-				     blk64_t block, unsigned int num)
+فراغ ext2fs_mark_block_bitmap_range2(ext2fs_block_bitmap gen_bmap,
+				     blk64_t block, unsigned صحيح رقم)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
-	__u64	end = block + num;
+	__u64	end = block + رقم;
 
-	if (!bmap)
-		return;
+	إذا (!bmap)
+		أرجع;
 
-	if (EXT2FS_IS_32_BITMAP(bmap)) {
-		if ((block & ~0xffffffffULL) ||
-		    ((block+num-1) & ~0xffffffffULL)) {
+	إذا (EXT2FS_IS_32_BITMAP(bmap)) {
+		إذا ((block & ~0xffffffffULL) ||
+		    ((block+رقم-1) & ~0xffffffffULL)) {
 			ext2fs_warn_bitmap2((ext2fs_generic_bitmap) bmap,
 					    EXT2FS_UNMARK_ERROR, 0xffffffff);
-			return;
+			أرجع;
 		}
 		ext2fs_mark_block_bitmap_range((ext2fs_generic_bitmap) bmap,
-					       block, num);
+					       block, رقم);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bmap))
-		return;
+	إذا (!EXT2FS_IS_64_BITMAP(bmap))
+		أرجع;
 
-	INC_STAT(bmap, mark_ext_count);
+	INC_STAT(bmap, mark_ext_عدد);
 
 	/* convert to clusters if necessary */
 	block >>= bmap->cluster_bits;
 	end += (1ULL << bmap->cluster_bits) - 1;
 	end >>= bmap->cluster_bits;
-	num = end - block;
+	رقم = end - block;
 
-	if ((block < bmap->start) || (block > bmap->end) ||
-	    (block+num-1 > bmap->end)) {
+	إذا ((block < bmap->start) || (block > bmap->end) ||
+	    (block+رقم-1 > bmap->end)) {
 		ext2fs_warn_bitmap(EXT2_ET_BAD_BLOCK_MARK, block,
 				   bmap->description);
-		return;
+		أرجع;
 	}
 
-	bmap->bitmap_ops->mark_bmap_extent(bmap, block, num);
+	bmap->bitmap_ops->mark_bmap_extent(bmap, block, رقم);
 }
 
-void ext2fs_unmark_block_bitmap_range2(ext2fs_block_bitmap gen_bmap,
-				       blk64_t block, unsigned int num)
+فراغ ext2fs_unmark_block_bitmap_range2(ext2fs_block_bitmap gen_bmap,
+				       blk64_t block, unsigned صحيح رقم)
 {
 	ext2fs_generic_bitmap_64 bmap = (ext2fs_generic_bitmap_64) gen_bmap;
-	__u64	end = block + num;
+	__u64	end = block + رقم;
 
-	if (!bmap)
-		return;
+	إذا (!bmap)
+		أرجع;
 
-	if (EXT2FS_IS_32_BITMAP(bmap)) {
-		if ((block & ~0xffffffffULL) ||
-		    ((block+num-1) & ~0xffffffffULL)) {
+	إذا (EXT2FS_IS_32_BITMAP(bmap)) {
+		إذا ((block & ~0xffffffffULL) ||
+		    ((block+رقم-1) & ~0xffffffffULL)) {
 			ext2fs_warn_bitmap2((ext2fs_generic_bitmap) bmap,
 					    EXT2FS_UNMARK_ERROR, 0xffffffff);
-			return;
+			أرجع;
 		}
 		ext2fs_unmark_block_bitmap_range((ext2fs_generic_bitmap) bmap,
-						 block, num);
+						 block, رقم);
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bmap))
-		return;
+	إذا (!EXT2FS_IS_64_BITMAP(bmap))
+		أرجع;
 
-	INC_STAT(bmap, unmark_ext_count);
+	INC_STAT(bmap, unmark_ext_عدد);
 
 	/* convert to clusters if necessary */
 	block >>= bmap->cluster_bits;
 	end += (1ULL << bmap->cluster_bits) - 1;
 	end >>= bmap->cluster_bits;
-	num = end - block;
+	رقم = end - block;
 
-	if ((block < bmap->start) || (block > bmap->end) ||
-	    (block+num-1 > bmap->end)) {
+	إذا ((block < bmap->start) || (block > bmap->end) ||
+	    (block+رقم-1 > bmap->end)) {
 		ext2fs_warn_bitmap(EXT2_ET_BAD_BLOCK_UNMARK, block,
 				   bmap->description);
-		return;
+		أرجع;
 	}
 
-	bmap->bitmap_ops->unmark_bmap_extent(bmap, block, num);
+	bmap->bitmap_ops->unmark_bmap_extent(bmap, block, رقم);
 }
 
-void ext2fs_warn_bitmap32(ext2fs_generic_bitmap gen_bitmap, const char *func)
+فراغ ext2fs_warn_bitmap32(ext2fs_generic_bitmap gen_bitmap, ثابت حرف *func)
 {
 	ext2fs_generic_bitmap_64 bitmap = (ext2fs_generic_bitmap_64) gen_bitmap;
 
 #ifndef OMIT_COM_ERR
-	if (bitmap && bitmap->description)
+	إذا (bitmap && bitmap->description)
 		com_err(0, EXT2_ET_MAGIC_GENERIC_BITMAP,
 			"called %s with 64-bit bitmap for %s", func,
 			bitmap->description);
-	else
+	وإلا
 		com_err(0, EXT2_ET_MAGIC_GENERIC_BITMAP,
 			"called %s with 64-bit bitmap", func);
 #endif
@@ -806,13 +806,13 @@ errcode_t ext2fs_convert_subcluster_bitmap(ext2_filsys fs,
 	blk64_t			i, next, b_end, c_end;
 
 	bmap = (ext2fs_generic_bitmap_64) gen_bmap;
-	if (fs->cluster_ratio_bits == ext2fs_get_bitmap_granularity(gen_bmap))
-		return 0;	/* Nothing to do */
+	إذا (fs->cluster_ratio_bits == ext2fs_get_bitmap_granularity(gen_bmap))
+		أرجع 0;	/* Nothing to do */
 
 	retval = ext2fs_allocate_block_bitmap(fs, "converted cluster bitmap",
 					      &gen_cmap);
-	if (retval)
-		return retval;
+	إذا (retval)
+		أرجع retval;
 
 	cmap = (ext2fs_generic_bitmap_64) gen_cmap;
 	i = bmap->start;
@@ -820,11 +820,11 @@ errcode_t ext2fs_convert_subcluster_bitmap(ext2_filsys fs,
 	bmap->end = bmap->real_end;
 	c_end = cmap->end;
 	cmap->end = cmap->real_end;
-	while (i < bmap->real_end) {
+	طالما (i < bmap->real_end) {
 		retval = ext2fs_find_first_set_block_bitmap2(gen_bmap,
 						i, bmap->real_end, &next);
-		if (retval)
-			break;
+		إذا (retval)
+			اكسر;
 		ext2fs_mark_block_bitmap2(gen_cmap, next);
 		i = EXT2FS_C2B(fs, EXT2FS_B2C(fs, next) + 1);
 	}
@@ -832,7 +832,7 @@ errcode_t ext2fs_convert_subcluster_bitmap(ext2_filsys fs,
 	cmap->end = c_end;
 	ext2fs_free_block_bitmap(gen_bmap);
 	*bitmap = (ext2fs_block_bitmap) cmap;
-	return 0;
+	أرجع 0;
 }
 
 errcode_t ext2fs_find_first_zero_generic_bmap(ext2fs_generic_bitmap bitmap,
@@ -842,52 +842,52 @@ errcode_t ext2fs_find_first_zero_generic_bmap(ext2fs_generic_bitmap bitmap,
 	__u64 cstart, cend, cout;
 	errcode_t retval;
 
-	if (!bitmap)
-		return EINVAL;
+	إذا (!bitmap)
+		أرجع EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap)) {
+	إذا (EXT2FS_IS_32_BITMAP(bitmap)) {
 		blk_t blk = 0;
 
-		if (((start) & ~0xffffffffULL) ||
+		إذا (((start) & ~0xffffffffULL) ||
 		    ((end) & ~0xffffffffULL)) {
 			ext2fs_warn_bitmap2(bitmap, EXT2FS_TEST_ERROR, start);
-			return EINVAL;
+			أرجع EINVAL;
 		}
 
 		retval = ext2fs_find_first_zero_generic_bitmap(bitmap, start,
 							       end, &blk);
-		if (retval == 0)
+		إذا (retval == 0)
 			*out = blk;
-		return retval;
+		أرجع retval;
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return EINVAL;
+	إذا (!EXT2FS_IS_64_BITMAP(bitmap))
+		أرجع EINVAL;
 
 	cstart = start >> bmap64->cluster_bits;
 	cend = end >> bmap64->cluster_bits;
 
-	if (cstart < bmap64->start || cend > bmap64->end || start > end) {
+	إذا (cstart < bmap64->start || cend > bmap64->end || start > end) {
 		warn_bitmap(bmap64, EXT2FS_TEST_ERROR, start);
-		return EINVAL;
+		أرجع EINVAL;
 	}
 
-	if (bmap64->bitmap_ops->find_first_zero) {
+	إذا (bmap64->bitmap_ops->find_first_zero) {
 		retval = bmap64->bitmap_ops->find_first_zero(bmap64, cstart,
 							     cend, &cout);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 	found:
 		cout <<= bmap64->cluster_bits;
 		*out = (cout >= start) ? cout : start;
-		return 0;
+		أرجع 0;
 	}
 
-	for (cout = cstart; cout <= cend; cout++)
-		if (!bmap64->bitmap_ops->test_bmap(bmap64, cout))
-			goto found;
+	لكل (cout = cstart; cout <= cend; cout++)
+		إذا (!bmap64->bitmap_ops->test_bmap(bmap64, cout))
+			اذهب found;
 
-	return ENOENT;
+	أرجع ENOENT;
 }
 
 errcode_t ext2fs_find_first_set_generic_bmap(ext2fs_generic_bitmap bitmap,
@@ -897,98 +897,98 @@ errcode_t ext2fs_find_first_set_generic_bmap(ext2fs_generic_bitmap bitmap,
 	__u64 cstart, cend, cout;
 	errcode_t retval;
 
-	if (!bitmap)
-		return EINVAL;
+	إذا (!bitmap)
+		أرجع EINVAL;
 
-	if (EXT2FS_IS_32_BITMAP(bitmap)) {
+	إذا (EXT2FS_IS_32_BITMAP(bitmap)) {
 		blk_t blk = 0;
 
-		if (((start) & ~0xffffffffULL) ||
+		إذا (((start) & ~0xffffffffULL) ||
 		    ((end) & ~0xffffffffULL)) {
 			ext2fs_warn_bitmap2(bitmap, EXT2FS_TEST_ERROR, start);
-			return EINVAL;
+			أرجع EINVAL;
 		}
 
 		retval = ext2fs_find_first_set_generic_bitmap(bitmap, start,
 							      end, &blk);
-		if (retval == 0)
+		إذا (retval == 0)
 			*out = blk;
-		return retval;
+		أرجع retval;
 	}
 
-	if (!EXT2FS_IS_64_BITMAP(bitmap))
-		return EINVAL;
+	إذا (!EXT2FS_IS_64_BITMAP(bitmap))
+		أرجع EINVAL;
 
 	cstart = start >> bmap64->cluster_bits;
 	cend = end >> bmap64->cluster_bits;
 
-	if (cstart < bmap64->start || cend > bmap64->end || start > end) {
+	إذا (cstart < bmap64->start || cend > bmap64->end || start > end) {
 		warn_bitmap(bmap64, EXT2FS_TEST_ERROR, start);
-		return EINVAL;
+		أرجع EINVAL;
 	}
 
-	if (bmap64->bitmap_ops->find_first_set) {
+	إذا (bmap64->bitmap_ops->find_first_set) {
 		retval = bmap64->bitmap_ops->find_first_set(bmap64, cstart,
 							    cend, &cout);
-		if (retval)
-			return retval;
+		إذا (retval)
+			أرجع retval;
 	found:
 		cout <<= bmap64->cluster_bits;
 		*out = (cout >= start) ? cout : start;
-		return 0;
+		أرجع 0;
 	}
 
-	for (cout = cstart; cout <= cend; cout++)
-		if (bmap64->bitmap_ops->test_bmap(bmap64, cout))
-			goto found;
+	لكل (cout = cstart; cout <= cend; cout++)
+		إذا (bmap64->bitmap_ops->test_bmap(bmap64, cout))
+			اذهب found;
 
-	return ENOENT;
+	أرجع ENOENT;
 }
 
-errcode_t ext2fs_count_used_blocks(ext2_filsys fs, blk64_t start,
+errcode_t ext2fs_عدد_used_blocks(ext2_filsys fs, blk64_t start,
 				   blk64_t end, blk64_t *out)
 {
 	blk64_t		next;
 	blk64_t		tot_set = 0;
 	errcode_t	retval = 0;
 
-	while (start < end) {
+	طالما (start < end) {
 		retval = ext2fs_find_first_set_block_bitmap2(fs->block_map,
 							start, end, &next);
-		if (retval) {
-			if (retval == ENOENT)
+		إذا (retval) {
+			إذا (retval == ENOENT)
 				retval = 0;
-			break;
+			اكسر;
 		}
 		start = next;
 
 		retval = ext2fs_find_first_zero_block_bitmap2(fs->block_map,
 							start, end, &next);
-		if (retval == 0) {
+		إذا (retval == 0) {
 			tot_set += next - start;
 			start  = next + 1;
-		} else if (retval == ENOENT) {
+		} وإلا إذا (retval == ENOENT) {
 			retval = 0;
 			tot_set += end - start + 1;
-			break;
-		} else
-			break;
+			اكسر;
+		} وإلا
+			اكسر;
 	}
 
-	if (!retval)
+	إذا (!retval)
 		*out = tot_set;
-	return retval;
+	أرجع retval;
 }
 
-errcode_t ext2fs_count_used_clusters(ext2_filsys fs, blk64_t start,
+errcode_t ext2fs_عدد_used_clusters(ext2_filsys fs, blk64_t start,
 				     blk64_t end, blk64_t *out)
 {
 	blk64_t		tot_set = 0;
 	errcode_t	retval = 0;
 
-	retval = ext2fs_count_used_blocks(fs, start, end, &tot_set);
+	retval = ext2fs_عدد_used_blocks(fs, start, end, &tot_set);
 
-	if (!retval)
-		*out = EXT2FS_NUM_B2C(fs, tot_set);
-	return retval;
+	إذا (!retval)
+		*out = EXT2_FS_رقم_B2_C(fs, tot_set);
+	أرجع retval;
 }
